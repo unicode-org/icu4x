@@ -153,7 +153,7 @@ fn test_fixture(fixture_name: &str, file: &str) {
                 CalendarAlgorithm::Hijri(Some(HijriCalendarAlgorithm::Umalqura)) => {
                     assert_fixture_element(
                         prefs,
-                        HijriUmmAlQura::new_always_calculating(),
+                        HijriUmmAlQura::new(),
                         input,
                         &expected,
                         field_set,

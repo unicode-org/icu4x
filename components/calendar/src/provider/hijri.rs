@@ -12,7 +12,6 @@
 //!
 //! Read more about data providers: [`icu_provider`]
 
-use core::fmt;
 use icu_provider::prelude::*;
 use zerovec::ule::{AsULE, ULE};
 use zerovec::ZeroVec;
@@ -73,23 +72,15 @@ icu_provider::data_struct!(
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[derive(Copy, Clone, Hash, PartialEq, Eq, PartialOrd, Ord, ULE)]
+#[derive(Copy, Clone, Hash, PartialEq, Eq, PartialOrd, Ord, ULE, Debug)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_calendar::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[repr(C, packed)]
 pub struct PackedHijriYearInfo(pub u8, pub u8);
 
-impl fmt::Debug for PackedHijriYearInfo {
-    fn fmt(&self, fmt: &mut fmt::Formatter<'_>) -> Result<(), fmt::Error> {
-        fmt.debug_struct("PackedHijriYearInfo")
-            .field("ny_offset", &self.ny_offset())
-            .field("month_lengths", &self.month_lengths())
-            .finish()
-    }
-}
-
 impl PackedHijriYearInfo {
+    #[cfg(feature = "datagen")]
     pub(crate) fn new(month_lengths: [bool; 12], ny_offset: i64) -> Self {
         debug_assert!(
             -8 < ny_offset && ny_offset < 8,
@@ -113,38 +104,16 @@ impl PackedHijriYearInfo {
         Self(le[0], le[1])
     }
 
-    fn month_lengths(self) -> [u8; 12] {
-        let months: [u8; 12] = core::array::from_fn(|i| 1 + i as u8);
-        months.map(|x| if self.month_has_30_days(x) { 30 } else { 29 })
-    }
-
-    // Get the new year offset from the mean synodic new year
-    pub(crate) fn ny_offset(self) -> i64 {
-        let masked = (self.1 >> 5) as i8;
-        (if (self.1 & 0b10000) != 0 {
-            -masked
-        } else {
-            masked
-        }) as i64
-    }
-
-    // Whether a particular month has 30 days (month is 1-indexed)
-    pub(crate) fn month_has_30_days(self, month: u8) -> bool {
+    pub(crate) fn unpack(self) -> ([bool; 12], i64) {
         let months = u16::from_le_bytes([self.0, self.1]);
-        months & (1 << (month - 1) as u16) != 0
-    }
-
-    // Which day of year is the last day of a month (month is 1-indexed)
-    pub(crate) fn last_day_of_month(self, month: u8) -> u16 {
-        let months = u16::from_le_bytes([self.0, self.1]);
-        // month is 1-indexed, so `29 * month` includes the current month
-        let mut prev_month_lengths = 29 * month as u16;
-        // month is 1-indexed, so `1 << month` is a mask with all zeroes except
-        // for a 1 at the bit index at the next month. Subtracting 1 from it gets us
-        // a bitmask for all months up to now
-        let long_month_bits = months & ((1 << month as u16) - 1);
-        prev_month_lengths += long_month_bits.count_ones().try_into().unwrap_or(0);
-        prev_month_lengths
+        (
+            core::array::from_fn(|i| months & (1 << (i as u8) as u16) != 0),
+            (if (self.1 & 0b10000) != 0 {
+                -((self.1 >> 5) as i8)
+            } else {
+                (self.1 >> 5) as i8
+            }) as i64,
+        )
     }
 }
 
@@ -164,10 +133,9 @@ mod tests {
 
     fn single_roundtrip(month_lengths: [bool; 12], ny_offset: i64) {
         let packed = PackedHijriYearInfo::new(month_lengths, ny_offset);
-        for i in 0..12 {
-            assert_eq!(packed.month_has_30_days(i + 1), month_lengths[i as usize], "Month lengths must match for testcase {month_lengths:?} / {ny_offset}, with packed repr: {packed:?}");
-        }
-        assert_eq!(packed.ny_offset(), ny_offset, "Month lengths must match for testcase {month_lengths:?} / {ny_offset}, with packed repr: {packed:?}");
+        let (month_lengths2, ny_offset2) = packed.unpack();
+        assert_eq!(month_lengths, month_lengths2, "Month lengths must match for testcase {month_lengths:?} / {ny_offset}, with packed repr: {packed:?}");
+        assert_eq!(ny_offset, ny_offset2, "Month lengths must match for testcase {month_lengths:?} / {ny_offset}, with packed repr: {packed:?}");
     }
     const ALL_FALSE: [bool; 12] = [false; 12];
     const ALL_TRUE: [bool; 12] = [true; 12];

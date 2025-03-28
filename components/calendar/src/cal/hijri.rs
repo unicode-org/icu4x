@@ -23,11 +23,14 @@ use crate::cal::Iso;
 use crate::calendar_arithmetic::PrecomputedDataSource;
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
 use crate::error::DateError;
+#[cfg(feature = "datagen")]
+use crate::provider::hijri::PackedHijriYearInfo;
 use crate::provider::hijri::{
-    CalendarHijriObservationalMeccaV1, CalendarHijriUmmalquraV1, HijriCache, PackedHijriYearInfo,
+    CalendarHijriObservationalMeccaV1, CalendarHijriUmmalquraV1, HijriCache,
 };
 use crate::{types, Calendar, Date, DateDuration, DateDurationUnit};
 use crate::{AsCalendar, RangeError};
+use calendrical_calculations::islamic::ISLAMIC_EPOCH_FRIDAY;
 use calendrical_calculations::rata_die::RataDie;
 use icu_provider::marker::ErasedMarker;
 use icu_provider::prelude::*;
@@ -180,7 +183,14 @@ impl HijriObservational {
     /// Compute a cache for this calendar
     #[cfg(feature = "datagen")]
     pub fn build_cache(&self, extended_years: core::ops::Range<i32>) -> HijriCache<'static> {
-        HijriCache::compute_for(extended_years, self.location)
+        let data = extended_years
+            .clone()
+            .map(|year| HijriYearInfo::compute_for_year(year, self.location).pack())
+            .collect();
+        HijriCache {
+            first_extended_year: extended_years.start,
+            data,
+        }
     }
 }
 
@@ -223,15 +233,28 @@ impl HijriUmmAlQura {
         })
     }
 
-    /// Construct a new [`HijriUmmAlQura`] without any precomputed calendrical calculations.
-    pub fn new_always_calculating() -> Self {
-        Self { data: None }
-    }
-
     /// Compute a cache for this calendar
     #[cfg(feature = "datagen")]
-    pub fn build_cache(&self, extended_years: core::ops::Range<i32>) -> HijriCache<'static> {
-        HijriCache::compute_for(extended_years, HijriUmmAlQuraMarker)
+    pub fn build_cache(
+        first_extended_year: i32,
+        month_lengths: impl Iterator<Item = ([bool; 12], i64)>,
+    ) -> HijriCache<'static> {
+        let data = month_lengths
+            .enumerate()
+            .map(|(offset, (month_lengths, ny_offset))| {
+                HijriYearInfo::from_parts(
+                    first_extended_year + offset as i32,
+                    month_lengths,
+                    ny_offset,
+                    HijriUmmAlQuraMarker,
+                )
+                .pack()
+            })
+            .collect();
+        HijriCache {
+            first_extended_year,
+            data,
+        }
     }
 }
 
@@ -243,19 +266,22 @@ impl HijriTabular {
 }
 
 pub trait CacheableHijri: Copy {
-    /// The epoch of the calendar. Different calendars use a different epoch (Thu or Fri) due to disagreement on the exact date of Mohammed's migration to Mecca.
-    const EPOCH: RataDie;
     /// The name of the calendar for debugging.
     const DEBUG_NAME: &'static str;
     /// Convert a Hijri date in this calendar to a R.D.
     fn fixed_from_hijri(&self, year: i32, month: u8, day: u8) -> RataDie;
     /// Convert an R.D. to a Hijri date in this calendar
     fn hijri_from_fixed(&self, date: RataDie) -> (i32, u8, u8);
+
+    /// A regression to guess a new year day. These differ by calendar and affect how big the
+    /// stored offsets will become. Offsets are currently limited to 4 bits (-8..8)
+    fn ny_regression(extended_year: i32) -> RataDie;
 }
 
 #[derive(Copy, Clone, Debug, Hash, PartialEq, Eq, PartialOrd, Ord)]
 pub(crate) struct HijriYearInfo<IB: CacheableHijri> {
-    pub(crate) packed_data: PackedHijriYearInfo,
+    month_lengths: [bool; 12],
+    ny_offset: i64,
     model: IB,
     value: i32,
 }
@@ -267,26 +293,16 @@ impl<IB: CacheableHijri> From<HijriYearInfo<IB>> for i32 {
 }
 
 impl HijriCache<'_> {
-    #[cfg(feature = "datagen")]
-    fn compute_for<IB: CacheableHijri>(extended_years: core::ops::Range<i32>, model: IB) -> Self {
-        let data = extended_years
-            .clone()
-            .map(|year| HijriYearInfo::compute_for_year(year, model).packed_data)
-            .collect();
-        HijriCache {
-            first_extended_year: extended_years.start,
-            data,
-        }
-    }
-
     /// Get the cached data for a given extended year
     fn get<IB: CacheableHijri>(&self, extended_year: i32, model: IB) -> Option<HijriYearInfo<IB>> {
-        let packed_data = self
+        let (month_lengths, ny_offset) = self
             .data
-            .get(usize::try_from(extended_year - self.first_extended_year).ok()?)?;
+            .get(usize::try_from(extended_year - self.first_extended_year).ok()?)?
+            .unpack();
 
         Some(HijriYearInfo {
-            packed_data,
+            month_lengths,
+            ny_offset,
             model,
             value: extended_year,
         })
@@ -297,6 +313,21 @@ const LONG_YEAR_LEN: u16 = 355;
 const SHORT_YEAR_LEN: u16 = 354;
 
 impl<IB: CacheableHijri> HijriYearInfo<IB> {
+    #[cfg(feature = "datagen")]
+    fn from_parts(
+        extended_year: i32,
+        month_lengths: [bool; 12],
+        ny_offset: i64,
+        model: IB,
+    ) -> Self {
+        Self {
+            month_lengths,
+            ny_offset,
+            model,
+            value: extended_year,
+        }
+    }
+
     fn compute_for_year(extended_year: i32, model: IB) -> Self {
         let ny = model.fixed_from_hijri(extended_year, 1, 1);
         let next_ny = model.fixed_from_hijri(extended_year + 1, 1, 1);
@@ -319,7 +350,7 @@ impl<IB: CacheableHijri> HijriYearInfo<IB> {
             }
         }
 
-        let ny_offset = ny - Self::mean_synodic_ny(extended_year);
+        let ny_offset = ny - IB::ny_regression(extended_year);
 
         let month_lengths = {
             let mut excess_days = 0;
@@ -372,7 +403,8 @@ impl<IB: CacheableHijri> HijriYearInfo<IB> {
             month_lengths
         };
         Self {
-            packed_data: PackedHijriYearInfo::new(month_lengths, ny_offset),
+            month_lengths,
+            ny_offset,
             model,
             value: extended_year,
         }
@@ -383,9 +415,18 @@ impl<IB: CacheableHijri> HijriYearInfo<IB> {
         Self::compute_for_year(y, model)
     }
 
+    #[cfg(feature = "datagen")]
+    fn pack(&self) -> PackedHijriYearInfo {
+        PackedHijriYearInfo::new(self.month_lengths, self.ny_offset)
+    }
+
     /// The number of days in a given 1-indexed month
     fn days_in_month(self, month: u8) -> u8 {
-        if self.packed_data.month_has_30_days(month) {
+        let Some(zero_month) = month.checked_sub(1) else {
+            return 29;
+        };
+
+        if self.month_lengths.get(zero_month as usize) == Some(&true) {
             30
         } else {
             29
@@ -393,21 +434,12 @@ impl<IB: CacheableHijri> HijriYearInfo<IB> {
     }
 
     fn days_in_year(self) -> u16 {
-        self.packed_data.last_day_of_month(12)
-    }
-
-    fn mean_synodic_ny(extended_year: i32) -> RataDie {
-        // -1 because the epoch is new year of year 1
-        // truncating instead of flooring does not matter, as this is well-defined for
-        // positive years only
-        IB::EPOCH
-            + ((extended_year - 1) as f64 * calendrical_calculations::islamic::MEAN_YEAR_LENGTH)
-                as i64
+        self.last_day_of_month(12)
     }
 
     /// Get the new year R.D. given the extended year that this yearinfo is for    
     fn new_year(self) -> RataDie {
-        Self::mean_synodic_ny(self.value) + self.packed_data.ny_offset()
+        IB::ny_regression(self.value) + self.ny_offset
     }
 
     /// Get the date's R.D. given (m, d) in this info's year
@@ -416,7 +448,7 @@ impl<IB: CacheableHijri> HijriYearInfo<IB> {
         let month_offset = if month == 1 {
             0
         } else {
-            self.packed_data.last_day_of_month(month - 1)
+            self.last_day_of_month(month - 1)
         };
         // -1 since the offset is 1-indexed but the new year is also day 1
         ny - 1 + month_offset.into() + day.into()
@@ -430,17 +462,17 @@ impl<IB: CacheableHijri> HijriYearInfo<IB> {
         let mut month = (day_of_year / 30) as u8 + 1;
 
         let day_of_year = day_of_year + 1;
-        let mut last_day_of_month = self.packed_data.last_day_of_month(month);
+        let mut last_day_of_month = self.last_day_of_month(month);
         let mut last_day_of_prev_month = if month == 1 {
             0
         } else {
-            self.packed_data.last_day_of_month(month - 1)
+            self.last_day_of_month(month - 1)
         };
 
         while day_of_year > last_day_of_month && month <= 12 {
             month += 1;
             last_day_of_prev_month = last_day_of_month;
-            last_day_of_month = self.packed_data.last_day_of_month(month);
+            last_day_of_month = self.last_day_of_month(month);
         }
         debug_assert!(
             day_of_year - last_day_of_prev_month <= 30,
@@ -449,6 +481,18 @@ impl<IB: CacheableHijri> HijriYearInfo<IB> {
         );
         let day = (day_of_year - last_day_of_prev_month) as u8;
         (month, day)
+    }
+
+    // Which day of year is the last day of a month (month is 1-indexed)
+    fn last_day_of_month(self, month: u8) -> u16 {
+        29 * month as u16
+            + self
+                .month_lengths
+                .get(..month as usize)
+                .unwrap_or_default()
+                .iter()
+                .filter(|&&x| x)
+                .count() as u16
     }
 }
 
@@ -472,10 +516,11 @@ impl<'b, IB: CacheableHijri> HijriPrecomputedData<'b, IB> {
                 // +1 because the epoch is new year of year 1
                 // truncating instead of flooring does not matter, as this is well-defined for
                 // positive years only
-                let extended_year = ((fixed - IB::EPOCH) as f64
-                    / calendrical_calculations::islamic::MEAN_YEAR_LENGTH)
-                    as i32
-                    + 1;
+                let extended_year =
+                    ((fixed - calendrical_calculations::islamic::ISLAMIC_EPOCH_FRIDAY) as f64
+                        / calendrical_calculations::islamic::MEAN_YEAR_LENGTH)
+                        as i32
+                        + 1;
 
                 let year = d.get(extended_year, self.model)?;
 
@@ -629,8 +674,6 @@ impl Calendar for HijriObservational {
 }
 
 impl CacheableHijri for HijriObservationalLocation {
-    const EPOCH: RataDie = calendrical_calculations::islamic::ISLAMIC_EPOCH_FRIDAY;
-
     const DEBUG_NAME: &'static str = HijriObservational::DEBUG_NAME;
 
     fn fixed_from_hijri(&self, year: i32, month: u8, day: u8) -> RataDie {
@@ -643,6 +686,15 @@ impl CacheableHijri for HijriObservationalLocation {
     }
     fn hijri_from_fixed(&self, date: RataDie) -> (i32, u8, u8) {
         calendrical_calculations::islamic::observational_islamic_from_fixed(date, self.location())
+    }
+
+    fn ny_regression(extended_year: i32) -> RataDie {
+        // -1 because the epoch is new year of year 1
+        // truncating instead of flooring does not matter, as this is well-defined for
+        // positive years only
+        calendrical_calculations::islamic::ISLAMIC_EPOCH_FRIDAY
+            + ((extended_year - 1) as f64 * calendrical_calculations::islamic::MEAN_YEAR_LENGTH)
+                as i64
     }
 }
 
@@ -820,13 +872,16 @@ impl Calendar for HijriUmmAlQura {
 }
 
 impl CacheableHijri for HijriUmmAlQuraMarker {
-    const EPOCH: RataDie = calendrical_calculations::islamic::ISLAMIC_EPOCH_FRIDAY;
     const DEBUG_NAME: &'static str = HijriUmmAlQura::DEBUG_NAME;
     fn fixed_from_hijri(&self, year: i32, month: u8, day: u8) -> RataDie {
         calendrical_calculations::islamic::fixed_from_saudi_islamic(year, month, day)
     }
     fn hijri_from_fixed(&self, date: RataDie) -> (i32, u8, u8) {
         calendrical_calculations::islamic::saudi_islamic_from_fixed(date)
+    }
+    fn ny_regression(extended_year: i32) -> RataDie {
+        // From https://github.com/unicode-org/icu/blob/1bf6bf774dbc8c6c2051963a81100ea1114b497f/icu4c/source/i18n/islamcal.cpp#L813
+        ISLAMIC_EPOCH_FRIDAY + (extended_year as f64 * 354.36720 - 354.81000) as i64
     }
 }
 
@@ -847,7 +902,7 @@ impl<A: AsCalendar<Calendar = HijriUmmAlQura>> Date<A> {
     /// use icu::calendar::cal::HijriUmmAlQura;
     /// use icu::calendar::Date;
     ///
-    /// let hijri = HijriUmmAlQura::new_always_calculating();
+    /// let hijri = HijriUmmAlQura::new();
     ///
     /// let date_hijri =
     ///     Date::try_new_ummalqura_with_calendar(1392, 4, 25, hijri)
@@ -1251,14 +1306,8 @@ mod test {
         470160, 473837, 507850, 524156, 544676, 567118, 569477, 601716, 613424, 626596, 645554,
         664224, 671401, 694799, 704424, 708842, 709409, 709580, 727274, 728714, 744313, 764652,
     ];
-    // Removed: 601716 and 727274 fixed dates
-    static TEST_FIXED_DATE_UMMALQURA: [i64; 31] = [
-        -214193, -61387, 25469, 49217, 171307, 210155, 253427, 369740, 400085, 434355, 452605,
-        470160, 473837, 507850, 524156, 544676, 567118, 569477, 613424, 626596, 645554, 664224,
-        671401, 694799, 704424, 708842, 709409, 709580, 728714, 744313, 764652,
-    ];
 
-    static UMMALQURA_DATE_EXPECTED: [DateCase; 31] = [
+    static UMMALQURA_CASES: [DateCase; 33] = [
         DateCase {
             year: -1245,
             month: 12,
@@ -1350,6 +1399,11 @@ mod test {
             day: 28,
         },
         DateCase {
+            year: 1058,
+            month: 5,
+            day: 18,
+        },
+        DateCase {
             year: 1091,
             month: 6,
             day: 4,
@@ -1387,7 +1441,7 @@ mod test {
         DateCase {
             year: 1360,
             month: 9,
-            day: 8,
+            day: 7,
         },
         DateCase {
             year: 1362,
@@ -1397,7 +1451,12 @@ mod test {
         DateCase {
             year: 1362,
             month: 10,
-            day: 8,
+            day: 7,
+        },
+        DateCase {
+            year: 1412,
+            month: 9,
+            day: 12,
         },
         DateCase {
             year: 1416,
@@ -1412,7 +1471,7 @@ mod test {
         DateCase {
             year: 1518,
             month: 3,
-            day: 6,
+            day: 5,
         },
     ];
 
@@ -2018,10 +2077,7 @@ mod test {
     fn test_saudi_hijri_from_fixed() {
         let calendar = HijriUmmAlQura::new();
         let calendar = Ref(&calendar);
-        for (case, f_date) in UMMALQURA_DATE_EXPECTED
-            .iter()
-            .zip(TEST_FIXED_DATE_UMMALQURA.iter())
-        {
+        for (case, f_date) in UMMALQURA_CASES.iter().zip(TEST_FIXED_DATE.iter()) {
             let date =
                 Date::try_new_ummalqura_with_calendar(case.year, case.month, case.day, calendar)
                     .unwrap();
@@ -2035,10 +2091,7 @@ mod test {
     fn test_fixed_from_saudi_hijri() {
         let calendar = HijriUmmAlQura::new();
         let calendar = Ref(&calendar);
-        for (case, f_date) in UMMALQURA_DATE_EXPECTED
-            .iter()
-            .zip(TEST_FIXED_DATE_UMMALQURA.iter())
-        {
+        for (case, f_date) in UMMALQURA_CASES.iter().zip(TEST_FIXED_DATE.iter()) {
             let date =
                 Date::try_new_ummalqura_with_calendar(case.year, case.month, case.day, calendar)
                     .unwrap();
@@ -2118,7 +2171,7 @@ mod test {
     #[test]
     fn test_regression_4914() {
         // https://github.com/unicode-org/icu4x/issues/4914
-        let cal = HijriUmmAlQura::new_always_calculating();
+        let cal = HijriUmmAlQura::new();
         let era = "islamic-umalqura";
         let year = -6823;
         let month_code = MonthCode(tinystr!(4, "M01"));
@@ -2131,17 +2184,11 @@ mod test {
     #[test]
     fn test_regression_5069_uaq() {
         let cached = HijriUmmAlQura::new();
-        let comp = HijriUmmAlQura::new_always_calculating();
 
         let cached = crate::Ref(&cached);
-        let comp = crate::Ref(&comp);
 
-        let dt_cached = Date::try_new_ummalqura_with_calendar(1391, 1, 30, cached).unwrap();
-        let dt_comp = Date::try_new_ummalqura_with_calendar(1391, 1, 30, comp).unwrap();
+        let dt_cached = Date::try_new_ummalqura_with_calendar(1391, 1, 29, cached).unwrap();
 
-        assert_eq!(dt_cached.to_iso(), dt_comp.to_iso());
-
-        assert_eq!(dt_comp.to_iso().to_calendar(comp), dt_comp);
         assert_eq!(dt_cached.to_iso().to_calendar(cached), dt_cached);
     }
 
@@ -2166,5 +2213,26 @@ mod test {
 
         assert!(dt.to_calendar(comp).day_of_month().0 > 0);
         assert!(dt.to_calendar(cached).day_of_month().0 > 0);
+    }
+
+    #[test]
+    fn test_regression_6197() {
+        let cached = HijriUmmAlQura::new();
+
+        let cached = crate::Ref(&cached);
+
+        let iso = Date::try_new_iso(2025, 2, 26).unwrap();
+
+        let cached = iso.to_calendar(cached);
+
+        // Data from https://www.ummulqura.org.sa/
+        assert_eq!(
+            (
+                cached.day_of_month().0,
+                cached.month().ordinal,
+                cached.year().era_year_or_extended()
+            ),
+            (27, 8, 1446)
+        );
     }
 }
