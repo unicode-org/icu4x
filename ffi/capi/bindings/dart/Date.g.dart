@@ -3,7 +3,7 @@
 
 part of 'lib.g.dart';
 
-/// An ICU4X Date object capable of containing a date and time for any calendar.
+/// An ICU4X Date object capable of containing a date for any calendar.
 ///
 /// See the [Rust documentation for `Date`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html) for more information.
 final class Date implements ffi.Finalizable {
@@ -25,7 +25,7 @@ final class Date implements ffi.Finalizable {
 
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_Date_destroy_mv1));
 
-  /// Creates a new [`Date`] representing the ISO date and time
+  /// Creates a new [`Date`] representing the ISO date
   /// given but in a given calendar
   ///
   /// See the [Rust documentation for `new_from_iso`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.new_from_iso) for more information.
@@ -49,6 +49,19 @@ final class Date implements ffi.Finalizable {
   factory Date.fromCodesInCalendar(String eraCode, int year, String monthCode, int day, Calendar calendar) {
     final temp = _FinalizedArena();
     final result = _icu4x_Date_from_codes_in_calendar_mv1(eraCode._utf8AllocIn(temp.arena), year, monthCode._utf8AllocIn(temp.arena), day, calendar._ffi);
+    if (!result.isOk) {
+      throw CalendarError.values[result.union.err];
+    }
+    return Date._fromFfi(result.union.ok, []);
+  }
+
+  /// Creates a new [`Date`] from the given Rata Die
+  ///
+  /// See the [Rust documentation for `from_rata_die`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.from_rata_die) for more information.
+  ///
+  /// Throws [CalendarError] on failure.
+  factory Date.fromRataDie(int rd, Calendar calendar) {
+    final result = _icu4x_Date_from_rata_die_mv1(rd, calendar._ffi);
     if (!result.isOk) {
       throw CalendarError.values[result.union.err];
     }
@@ -83,6 +96,14 @@ final class Date implements ffi.Finalizable {
   IsoDate toIso() {
     final result = _icu4x_Date_to_iso_mv1(_ffi);
     return IsoDate._fromFfi(result, []);
+  }
+
+  /// Returns this date's Rata Die
+  ///
+  /// See the [Rust documentation for `to_rata_die`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.to_rata_die) for more information.
+  int get rataDie {
+    final result = _icu4x_Date_to_rata_die_mv1(_ffi);
+    return result;
   }
 
   /// Returns the 1-indexed day in the year for this date
@@ -230,6 +251,11 @@ external _ResultOpaqueInt32 _icu4x_Date_from_iso_in_calendar_mv1(int year, int m
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_Date_from_codes_in_calendar_mv1(_SliceUtf8 eraCode, int year, _SliceUtf8 monthCode, int day, ffi.Pointer<ffi.Opaque> calendar);
 
+@_DiplomatFfiUse('icu4x_Date_from_rata_die_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Int64, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_Date_from_rata_die_mv1')
+// ignore: non_constant_identifier_names
+external _ResultOpaqueInt32 _icu4x_Date_from_rata_die_mv1(int rd, ffi.Pointer<ffi.Opaque> calendar);
+
 @_DiplomatFfiUse('icu4x_Date_from_string_mv1')
 @ffi.Native<_ResultOpaqueInt32 Function(_SliceUtf8, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_Date_from_string_mv1')
 // ignore: non_constant_identifier_names
@@ -244,6 +270,11 @@ external ffi.Pointer<ffi.Opaque> _icu4x_Date_to_calendar_mv1(ffi.Pointer<ffi.Opa
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_Date_to_iso_mv1')
 // ignore: non_constant_identifier_names
 external ffi.Pointer<ffi.Opaque> _icu4x_Date_to_iso_mv1(ffi.Pointer<ffi.Opaque> self);
+
+@_DiplomatFfiUse('icu4x_Date_to_rata_die_mv1')
+@ffi.Native<ffi.Int64 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_Date_to_rata_die_mv1')
+// ignore: non_constant_identifier_names
+external int _icu4x_Date_to_rata_die_mv1(ffi.Pointer<ffi.Opaque> self);
 
 @_DiplomatFfiUse('icu4x_Date_day_of_year_mv1')
 @ffi.Native<ffi.Uint16 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_Date_day_of_year_mv1')

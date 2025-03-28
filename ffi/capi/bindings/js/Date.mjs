@@ -9,7 +9,7 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
 /** 
- * An ICU4X Date object capable of containing a date and time for any calendar.
+ * An ICU4X Date object capable of containing a date for any calendar.
  *
  * See the [Rust documentation for `Date`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html) for more information.
  */
@@ -47,7 +47,7 @@ export class Date {
     }
 
     /** 
-     * Creates a new [`Date`] representing the ISO date and time
+     * Creates a new [`Date`] representing the ISO date
      * given but in a given calendar
      *
      * See the [Rust documentation for `new_from_iso`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.new_from_iso) for more information.
@@ -99,6 +99,29 @@ export class Date {
         finally {
             functionCleanupArena.free();
         
+            diplomatReceive.free();
+        }
+    }
+
+    /** 
+     * Creates a new [`Date`] from the given Rata Die
+     *
+     * See the [Rust documentation for `from_rata_die`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.from_rata_die) for more information.
+     */
+    static fromRataDie(rd, calendar) {
+        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
+        const result = wasm.icu4x_Date_from_rata_die_mv1(diplomatReceive.buffer, rd, calendar.ffiValue);
+    
+        try {
+            if (!diplomatReceive.resultFlag) {
+                const cause = new CalendarError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
+                throw new globalThis.Error('CalendarError: ' + cause.value, { cause });
+            }
+            return new Date(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
+        }
+        
+        finally {
             diplomatReceive.free();
         }
     }
@@ -157,6 +180,21 @@ export class Date {
     
         try {
             return new IsoDate(diplomatRuntime.internalConstructor, result, []);
+        }
+        
+        finally {}
+    }
+
+    /** 
+     * Returns this date's Rata Die
+     *
+     * See the [Rust documentation for `to_rata_die`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.to_rata_die) for more information.
+     */
+    get rataDie() {
+        const result = wasm.icu4x_Date_to_rata_die_mv1(this.ffiValue);
+    
+        try {
+            return result;
         }
         
         finally {}

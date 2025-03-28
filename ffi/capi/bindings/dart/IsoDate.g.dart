@@ -25,7 +25,7 @@ final class IsoDate implements ffi.Finalizable {
 
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_IsoDate_destroy_mv1));
 
-  /// Creates a new [`IsoDate`] from the specified date and time.
+  /// Creates a new [`IsoDate`] from the specified date.
   ///
   /// See the [Rust documentation for `try_new_iso`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.try_new_iso) for more information.
   ///
@@ -36,6 +36,14 @@ final class IsoDate implements ffi.Finalizable {
       throw CalendarError.values[result.union.err];
     }
     return IsoDate._fromFfi(result.union.ok, []);
+  }
+
+  /// Creates a new [`IsoDate`] from the given Rata Die
+  ///
+  /// See the [Rust documentation for `from_rata_die`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.from_rata_die) for more information.
+  factory IsoDate.fromRataDie(int rd) {
+    final result = _icu4x_IsoDate_from_rata_die_mv1(rd);
+    return IsoDate._fromFfi(result, []);
   }
 
   /// Creates a new [`IsoDate`] from an IXDTF string.
@@ -64,6 +72,14 @@ final class IsoDate implements ffi.Finalizable {
   Date toAny() {
     final result = _icu4x_IsoDate_to_any_mv1(_ffi);
     return Date._fromFfi(result, []);
+  }
+
+  /// Returns this date's Rata Die
+  ///
+  /// See the [Rust documentation for `to_rata_die`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.to_rata_die) for more information.
+  int get rataDie {
+    final result = _icu4x_IsoDate_to_rata_die_mv1(_ffi);
+    return result;
   }
 
   /// Returns the 1-indexed day in the year for this date
@@ -161,6 +177,11 @@ external void _icu4x_IsoDate_destroy_mv1(ffi.Pointer<ffi.Void> self);
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_IsoDate_create_mv1(int year, int month, int day);
 
+@_DiplomatFfiUse('icu4x_IsoDate_from_rata_die_mv1')
+@ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Int64)>(isLeaf: true, symbol: 'icu4x_IsoDate_from_rata_die_mv1')
+// ignore: non_constant_identifier_names
+external ffi.Pointer<ffi.Opaque> _icu4x_IsoDate_from_rata_die_mv1(int rd);
+
 @_DiplomatFfiUse('icu4x_IsoDate_from_string_mv1')
 @ffi.Native<_ResultOpaqueInt32 Function(_SliceUtf8)>(isLeaf: true, symbol: 'icu4x_IsoDate_from_string_mv1')
 // ignore: non_constant_identifier_names
@@ -175,6 +196,11 @@ external ffi.Pointer<ffi.Opaque> _icu4x_IsoDate_to_calendar_mv1(ffi.Pointer<ffi.
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_IsoDate_to_any_mv1')
 // ignore: non_constant_identifier_names
 external ffi.Pointer<ffi.Opaque> _icu4x_IsoDate_to_any_mv1(ffi.Pointer<ffi.Opaque> self);
+
+@_DiplomatFfiUse('icu4x_IsoDate_to_rata_die_mv1')
+@ffi.Native<ffi.Int64 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_IsoDate_to_rata_die_mv1')
+// ignore: non_constant_identifier_names
+external int _icu4x_IsoDate_to_rata_die_mv1(ffi.Pointer<ffi.Opaque> self);
 
 @_DiplomatFfiUse('icu4x_IsoDate_day_of_year_mv1')
 @ffi.Native<ffi.Uint16 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_IsoDate_day_of_year_mv1')

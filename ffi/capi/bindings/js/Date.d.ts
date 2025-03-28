@@ -8,7 +8,7 @@ import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
 /** 
- * An ICU4X Date object capable of containing a date and time for any calendar.
+ * An ICU4X Date object capable of containing a date for any calendar.
  *
  * See the [Rust documentation for `Date`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html) for more information.
  */
@@ -19,7 +19,7 @@ export class Date {
     get ffiValue(): pointer;
 
     /** 
-     * Creates a new [`Date`] representing the ISO date and time
+     * Creates a new [`Date`] representing the ISO date
      * given but in a given calendar
      *
      * See the [Rust documentation for `new_from_iso`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.new_from_iso) for more information.
@@ -34,6 +34,13 @@ export class Date {
      * See the [Rust documentation for `try_new_from_codes`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.try_new_from_codes) for more information.
      */
     static fromCodesInCalendar(eraCode: string, year: number, monthCode: string, day: number, calendar: Calendar): Date;
+
+    /** 
+     * Creates a new [`Date`] from the given Rata Die
+     *
+     * See the [Rust documentation for `from_rata_die`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.from_rata_die) for more information.
+     */
+    static fromRataDie(rd: bigint, calendar: Calendar): Date;
 
     /** 
      * Creates a new [`Date`] from an IXDTF string.
@@ -55,6 +62,13 @@ export class Date {
      * See the [Rust documentation for `to_iso`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.to_iso) for more information.
      */
     toIso(): IsoDate;
+
+    /** 
+     * Returns this date's Rata Die
+     *
+     * See the [Rust documentation for `to_rata_die`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.to_rata_die) for more information.
+     */
+    get rataDie(): bigint;
 
     /** 
      * Returns the 1-indexed day in the year for this date

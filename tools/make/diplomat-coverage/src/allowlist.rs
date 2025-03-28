@@ -151,6 +151,7 @@ lazy_static::lazy_static! {
         "icu::calendar::Date::formattable_year",
         "icu::calendar::types::FormattableYear",
         "icu::calendar::types::FormattableYearKind",
+        "icu::calendar::types::RataDie",
 
         // Not planned for 2.0: Temporal doesn't yet want this.
         "icu::calendar::types::CyclicYear",
