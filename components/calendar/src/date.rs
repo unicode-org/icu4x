@@ -134,7 +134,9 @@ impl<A: AsCalendar> Date<A> {
         Ok(Date { inner, calendar })
     }
 
-    /// Construct a date from a fixed day and some calendar representation
+    /// Construct a date from a fixed day and some calendar representation.
+    ///
+    /// See [`RataDie`] for more information on fixed day numbers.
     #[inline]
     pub fn from_fixed(fixed: RataDie, calendar: A) -> Self {
         Date {
@@ -143,7 +145,9 @@ impl<A: AsCalendar> Date<A> {
         }
     }
 
-    /// Convert the Date to a fixed day
+    /// Convert the Date to a fixed day.
+    ///
+    /// See [`RataDie`] for more information on fixed day numbers.
     #[inline]
     pub fn to_fixed(&self) -> RataDie {
         self.calendar.as_calendar().to_fixed(self.inner())
