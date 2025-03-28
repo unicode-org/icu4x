@@ -4,6 +4,11 @@ use crate::rata_die::{Moment, RataDie};
 #[allow(unused_imports)]
 use core_maths::*;
 
+pub use crate::astronomy::Location;
+
+/// The average length of an Islamic year, equal to 12 moon cycles
+pub const MEAN_YEAR_LENGTH: f64 = MEAN_SYNODIC_MONTH * 12.;
+
 /// Different islamic calendars use different epochs (Thursday vs Friday) due to disagreement on the exact date of Mohammed's migration to Mecca.
 /// Lisp code reference: <https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L2066>
 pub const ISLAMIC_EPOCH_FRIDAY: RataDie = crate::julian::fixed_from_julian(622, 7, 16);

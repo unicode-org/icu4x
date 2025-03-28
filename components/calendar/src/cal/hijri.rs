@@ -67,7 +67,7 @@ pub(crate) enum HijriObservationalLocation {
 }
 
 impl HijriObservationalLocation {
-    fn location(self) -> calendrical_calculations::astronomy::Location {
+    fn location(self) -> calendrical_calculations::islamic::Location {
         match self {
             Self::Mecca => calendrical_calculations::islamic::MECCA,
         }
@@ -401,8 +401,7 @@ impl<IB: CacheableHijri> HijriYearInfo<IB> {
         // truncating instead of flooring does not matter, as this is well-defined for
         // positive years only
         IB::EPOCH
-            + ((extended_year - 1) as f64
-                * (calendrical_calculations::astronomy::MEAN_SYNODIC_MONTH * 12.))
+            + ((extended_year - 1) as f64 * calendrical_calculations::islamic::MEAN_YEAR_LENGTH)
                 as i64
     }
 
@@ -474,7 +473,7 @@ impl<'b, IB: CacheableHijri> HijriPrecomputedData<'b, IB> {
                 // truncating instead of flooring does not matter, as this is well-defined for
                 // positive years only
                 let extended_year = ((fixed - IB::EPOCH) as f64
-                    / (calendrical_calculations::astronomy::MEAN_SYNODIC_MONTH * 12.))
+                    / calendrical_calculations::islamic::MEAN_YEAR_LENGTH)
                     as i32
                     + 1;
 

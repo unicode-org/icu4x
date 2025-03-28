@@ -35,13 +35,13 @@
 )]
 #![warn(missing_docs)]
 
-pub mod astronomy;
+mod astronomy;
 /// Chinese-like lunar calendars (Chinese, Dangi)
 pub mod chinese_based;
 /// The Coptic calendar
 pub mod coptic;
 /// Error handling
-pub mod error;
+mod error;
 /// The ethiopian calendar
 pub mod ethiopian;
 /// The Hebrew calendar
