@@ -28,9 +28,9 @@ export class CalendarKind {
         ["Dangi", 9],
         ["Chinese", 10],
         ["Hebrew", 11],
-        ["HijriCivil", 12],
+        ["HijriTabularCivil", 12],
         ["HijriObservationalMecca", 18],
-        ["HijriTabular", 14],
+        ["HijriTabularAstronomical", 14],
         ["HijriUmmAlQura", 15],
         ["Persian", 16],
         ["Roc", 17]
@@ -113,9 +113,9 @@ export class CalendarKind {
     static Dangi = CalendarKind.#objectValues[9];
     static Chinese = CalendarKind.#objectValues[10];
     static Hebrew = CalendarKind.#objectValues[11];
-    static HijriCivil = CalendarKind.#objectValues[12];
+    static HijriTabularCivil = CalendarKind.#objectValues[12];
     static HijriObservationalMecca = CalendarKind.#objectValues[18];
-    static HijriTabular = CalendarKind.#objectValues[14];
+    static HijriTabularAstronomical = CalendarKind.#objectValues[14];
     static HijriUmmAlQura = CalendarKind.#objectValues[15];
     static Persian = CalendarKind.#objectValues[16];
     static Roc = CalendarKind.#objectValues[17];
