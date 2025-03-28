@@ -310,6 +310,12 @@ impl<IB: IslamicBased> HijriYearInfo<IB> {
             value: extended_year,
         }
     }
+
+    fn compute_for_fixed(fixed: RataDie, model: IB) -> Self {
+        let (y, _m, _d) = model.islamic_from_fixed(fixed);
+        Self::compute_for_year(y, model)
+    }
+
     /// Get the new year R.D. given the extended year that this yearinfo is for    
     fn new_year(self) -> RataDie {
         IB::mean_synodic_ny(self.value) + self.packed_data.ny_offset()
@@ -326,6 +332,35 @@ impl<IB: IslamicBased> HijriYearInfo<IB> {
         // -1 since the offset is 1-indexed but the new year is also day 1
         ny - 1 + month_offset.into() + day.into()
     }
+
+    fn md_from_fixed(self, fixed: RataDie) -> (u8, u8) {
+        let day_of_year = (fixed - self.new_year()) as u16;
+        debug_assert!(day_of_year < 360);
+        // We divide by 30, not 29, to account for the case where all months before this
+        // were length 30 (possible near the beginning of the year)
+        let mut month = (day_of_year / 30) as u8 + 1;
+
+        let day_of_year = day_of_year + 1;
+        let mut last_day_of_month = self.packed_data.last_day_of_month(month);
+        let mut last_day_of_prev_month = if month == 1 {
+            0
+        } else {
+            self.packed_data.last_day_of_month(month - 1)
+        };
+
+        while day_of_year > last_day_of_month && month <= 12 {
+            month += 1;
+            last_day_of_prev_month = last_day_of_month;
+            last_day_of_month = self.packed_data.last_day_of_month(month);
+        }
+        debug_assert!(
+            day_of_year - last_day_of_prev_month <= 30,
+            "Found day {} that doesn't fit in month!",
+            day_of_year - last_day_of_prev_month
+        );
+        let day = (day_of_year - last_day_of_prev_month) as u8;
+        (month, day)
+    }
 }
 
 /// Contains any loaded precomputed data. If constructed with Default, will
@@ -336,74 +371,24 @@ pub(crate) struct HijriPrecomputedData<'a, IB: IslamicBased> {
     model: IB,
 }
 
+impl<'b, IB: IslamicBased> HijriPrecomputedData<'b, IB> {
+    pub(crate) fn new(data: Option<&'b HijriCache<'b>>, model: IB) -> Self {
+        Self { data, model }
+    }
+
+    /// Returns the [`HijriYearInfo`] loading from cache or computing.
+    fn load_or_compute_info_for_fixed(&self, fixed: RataDie) -> HijriYearInfo<IB> {
+        self.data
+            .and_then(|d| d.get_for_fixed(fixed, self.model))
+            .unwrap_or_else(|| HijriYearInfo::compute_for_fixed(fixed, self.model))
+    }
+}
+
 impl<IB: IslamicBased> PrecomputedDataSource<HijriYearInfo<IB>> for HijriPrecomputedData<'_, IB> {
     fn load_or_compute_info(&self, extended_year: i32) -> HijriYearInfo<IB> {
         self.data
             .and_then(|d| d.get_for_extended_year(extended_year, self.model))
             .unwrap_or_else(|| HijriYearInfo::compute_for_year(extended_year, self.model))
-    }
-}
-
-/// Given a year info and the first month it is possible for this date to be in, return the
-/// month and day this is in
-fn compute_month_day<IB: IslamicBased>(
-    info: HijriYearInfo<IB>,
-    mut possible_month: u8,
-    day_of_year: u16,
-) -> (u8, u8) {
-    let mut last_day_of_month = info.packed_data.last_day_of_month(possible_month);
-    let mut last_day_of_prev_month = if possible_month == 1 {
-        0
-    } else {
-        info.packed_data.last_day_of_month(possible_month - 1)
-    };
-
-    while day_of_year > last_day_of_month && possible_month <= 12 {
-        possible_month += 1;
-        last_day_of_prev_month = last_day_of_month;
-        last_day_of_month = info.packed_data.last_day_of_month(possible_month);
-    }
-    let day = u8::try_from(day_of_year - last_day_of_prev_month);
-    debug_assert!(
-        day.is_ok(),
-        "Found day {} that doesn't fit in month!",
-        day_of_year - last_day_of_prev_month
-    );
-    (possible_month, day.unwrap_or(29))
-}
-impl<'b, IB: IslamicBased> HijriPrecomputedData<'b, IB> {
-    pub(crate) fn new(data: Option<&'b HijriCache<'b>>, model: IB) -> Self {
-        Self { data, model }
-    }
-    /// Given an ISO date (in both ArithmeticDate and R.D. format), returns the [`HijriYearInfo`] and extended year for that date, loading
-    /// from cache or computing.
-    fn load_or_compute_info_for_iso(&self, fixed: RataDie) -> (HijriYearInfo<IB>, u8, u8) {
-        let cached = self.data.and_then(|d| d.get_for_fixed(fixed, self.model));
-        if let Some(cached) = cached {
-            let ny = cached.new_year();
-            let day_of_year = (fixed - ny) as u16 + 1;
-            debug_assert!(day_of_year < 360);
-            // We divide by 30, not 29, to account for the case where all months before this
-            // were length 30 (possible near the beginning of the year)
-            // We add +1 because months are 1-indexed
-            let possible_month = u8::try_from(1 + (day_of_year / 30)).unwrap_or(1);
-            let (m, d) = compute_month_day(cached, possible_month, day_of_year);
-            return (cached, m, d);
-        };
-        // compute
-
-        let (y, m, d) = self.model.islamic_from_fixed(fixed);
-        let info = HijriYearInfo::compute_for_year(y, self.model);
-        let ny = info.new_year();
-        let day_of_year = (fixed - ny) as u16 + 1;
-        // We can't use the m/d from islamic_from_fixed because that code
-        // occasionally throws up 31-day months, which we normalize out. So we instead back-compute, starting with the previous month
-        let (m, d) = if m > 1 {
-            compute_month_day(info, m - 1, day_of_year)
-        } else {
-            (m, d)
-        };
-        (info, m, d)
     }
 }
 
@@ -465,9 +450,10 @@ impl Calendar for HijriObservational {
     fn date_from_iso(&self, iso: Date<crate::Iso>) -> Self::DateInner {
         let fixed_iso = Iso::to_fixed(iso);
 
-        let (y, m, d) = self
+        let y = self
             .precomputed_data()
-            .load_or_compute_info_for_iso(fixed_iso);
+            .load_or_compute_info_for_fixed(fixed_iso);
+        let (m, d) = y.md_from_fixed(fixed_iso);
         HijriDateInner(ArithmeticDate::new_unchecked(y, m, d))
     }
 
@@ -637,9 +623,10 @@ impl Calendar for HijriUmmAlQura {
     fn date_from_iso(&self, iso: Date<Iso>) -> Self::DateInner {
         let fixed_iso = Iso::to_fixed(iso);
 
-        let (y, m, d) = self
+        let y = self
             .precomputed_data()
-            .load_or_compute_info_for_iso(fixed_iso);
+            .load_or_compute_info_for_fixed(fixed_iso);
+        let (m, d) = y.md_from_fixed(fixed_iso);
         HijriUmmAlQuraDateInner(ArithmeticDate::new_unchecked(y, m, d))
     }
 
@@ -2000,5 +1987,45 @@ mod test {
         assert_eq!(dt.0.day, 1);
         assert_eq!(dt.0.month, 1);
         assert_eq!(dt.0.year.value, -6823);
+    }
+
+    #[test]
+    fn test_regression_5069_uaq() {
+        let cached = HijriUmmAlQura::new();
+        let comp = HijriUmmAlQura::new_always_calculating();
+
+        let cached = crate::Ref(&cached);
+        let comp = crate::Ref(&comp);
+
+        let dt_cached = Date::try_new_ummalqura_with_calendar(1391, 1, 30, cached).unwrap();
+        let dt_comp = Date::try_new_ummalqura_with_calendar(1391, 1, 30, comp).unwrap();
+
+        assert_eq!(dt_cached.to_iso(), dt_comp.to_iso());
+
+        assert_eq!(dt_comp.to_iso().to_calendar(comp), dt_comp);
+        assert_eq!(dt_cached.to_iso().to_calendar(cached), dt_cached);
+    }
+
+    #[test]
+    fn test_regression_5069_obs() {
+        let cached = HijriObservational::new_mecca();
+        let comp = HijriObservational::new_mecca_always_calculating();
+
+        let cached = crate::Ref(&cached);
+        let comp = crate::Ref(&comp);
+
+        let dt_cached =
+            Date::try_new_observational_hijri_with_calendar(1390, 1, 30, cached).unwrap();
+        let dt_comp = Date::try_new_observational_hijri_with_calendar(1390, 1, 30, comp).unwrap();
+
+        assert_eq!(dt_cached.to_iso(), dt_comp.to_iso());
+
+        assert_eq!(dt_comp.to_iso().to_calendar(comp), dt_comp);
+        assert_eq!(dt_cached.to_iso().to_calendar(cached), dt_cached);
+
+        let dt = Date::try_new_iso(2000, 5, 5).unwrap();
+
+        assert!(dt.to_calendar(comp).day_of_month().0 > 0);
+        assert!(dt.to_calendar(cached).day_of_month().0 > 0);
     }
 }
