@@ -84,7 +84,7 @@ fn convert_benches(c: &mut Criterion) {
     bench_calendar(
         &mut group,
         "calendar/islamic/ummalqura",
-        icu::calendar::cal::HijriUmmAlQura::new_always_calculating(),
+        icu::calendar::cal::HijriUmmAlQura::new(),
     );
 
     bench_calendar(
