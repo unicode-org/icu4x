@@ -12,6 +12,8 @@
 #include <optional>
 #include "../diplomat_runtime.hpp"
 #include "DataProvider.hpp"
+#include "DateTimeFieldSetBuilder.hpp"
+#include "DateTimeFormatterBuildOrLoadError.hpp"
 #include "DateTimeFormatterLoadError.hpp"
 #include "DateTimeWriteError.hpp"
 #include "Locale.hpp"
@@ -21,6 +23,12 @@
 namespace icu4x {
 namespace capi {
     extern "C" {
+    
+    typedef struct icu4x_TimeZoneFormatter_create_from_field_set_builder_mv1_result {union {icu4x::capi::TimeZoneFormatter* ok; icu4x::capi::DateTimeFormatterBuildOrLoadError err;}; bool is_ok;} icu4x_TimeZoneFormatter_create_from_field_set_builder_mv1_result;
+    icu4x_TimeZoneFormatter_create_from_field_set_builder_mv1_result icu4x_TimeZoneFormatter_create_from_field_set_builder_mv1(const icu4x::capi::Locale* locale, icu4x::capi::DateTimeFieldSetBuilder builder);
+    
+    typedef struct icu4x_TimeZoneFormatter_create_from_field_set_builder_with_provider_mv1_result {union {icu4x::capi::TimeZoneFormatter* ok; icu4x::capi::DateTimeFormatterBuildOrLoadError err;}; bool is_ok;} icu4x_TimeZoneFormatter_create_from_field_set_builder_with_provider_mv1_result;
+    icu4x_TimeZoneFormatter_create_from_field_set_builder_with_provider_mv1_result icu4x_TimeZoneFormatter_create_from_field_set_builder_with_provider_mv1(const icu4x::capi::DataProvider* provider, const icu4x::capi::Locale* locale, icu4x::capi::DateTimeFieldSetBuilder builder);
     
     typedef struct icu4x_TimeZoneFormatter_create_specific_long_mv1_result {union {icu4x::capi::TimeZoneFormatter* ok; icu4x::capi::DateTimeFormatterLoadError err;}; bool is_ok;} icu4x_TimeZoneFormatter_create_specific_long_mv1_result;
     icu4x_TimeZoneFormatter_create_specific_long_mv1_result icu4x_TimeZoneFormatter_create_specific_long_mv1(const icu4x::capi::Locale* locale);
@@ -79,6 +87,19 @@ namespace capi {
     } // extern "C"
 } // namespace capi
 } // namespace
+
+inline diplomat::result<std::unique_ptr<icu4x::TimeZoneFormatter>, icu4x::DateTimeFormatterBuildOrLoadError> icu4x::TimeZoneFormatter::create_from_field_set_builder(const icu4x::Locale& locale, icu4x::DateTimeFieldSetBuilder builder) {
+  auto result = icu4x::capi::icu4x_TimeZoneFormatter_create_from_field_set_builder_mv1(locale.AsFFI(),
+    builder.AsFFI());
+  return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::TimeZoneFormatter>, icu4x::DateTimeFormatterBuildOrLoadError>(diplomat::Ok<std::unique_ptr<icu4x::TimeZoneFormatter>>(std::unique_ptr<icu4x::TimeZoneFormatter>(icu4x::TimeZoneFormatter::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::TimeZoneFormatter>, icu4x::DateTimeFormatterBuildOrLoadError>(diplomat::Err<icu4x::DateTimeFormatterBuildOrLoadError>(icu4x::DateTimeFormatterBuildOrLoadError::FromFFI(result.err)));
+}
+
+inline diplomat::result<std::unique_ptr<icu4x::TimeZoneFormatter>, icu4x::DateTimeFormatterBuildOrLoadError> icu4x::TimeZoneFormatter::create_from_field_set_builder_with_provider(const icu4x::DataProvider& provider, const icu4x::Locale& locale, icu4x::DateTimeFieldSetBuilder builder) {
+  auto result = icu4x::capi::icu4x_TimeZoneFormatter_create_from_field_set_builder_with_provider_mv1(provider.AsFFI(),
+    locale.AsFFI(),
+    builder.AsFFI());
+  return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::TimeZoneFormatter>, icu4x::DateTimeFormatterBuildOrLoadError>(diplomat::Ok<std::unique_ptr<icu4x::TimeZoneFormatter>>(std::unique_ptr<icu4x::TimeZoneFormatter>(icu4x::TimeZoneFormatter::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::TimeZoneFormatter>, icu4x::DateTimeFormatterBuildOrLoadError>(diplomat::Err<icu4x::DateTimeFormatterBuildOrLoadError>(icu4x::DateTimeFormatterBuildOrLoadError::FromFFI(result.err)));
+}
 
 inline diplomat::result<std::unique_ptr<icu4x::TimeZoneFormatter>, icu4x::DateTimeFormatterLoadError> icu4x::TimeZoneFormatter::create_specific_long(const icu4x::Locale& locale) {
   auto result = icu4x::capi::icu4x_TimeZoneFormatter_create_specific_long_mv1(locale.AsFFI());

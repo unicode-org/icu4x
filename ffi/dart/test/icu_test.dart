@@ -268,6 +268,23 @@ void main() {
       '14.07.46 AH, 14:32:12 MEZ',
     );
 
+    expect(
+      ZonedDateTimeFormatter.fromFieldSetBuilder(
+        locale,
+        DateTimeFieldSetBuilder(
+          length: DateTimeLength.short,
+          dateFields: DateFields.ymd,
+          timePrecision: TimePrecision.second,
+          zoneStyle: ZoneStyle.specificShort,
+        ),
+      ).formatIso(
+        zonedDateTimeIso.date,
+        zonedDateTimeIso.time,
+        zonedDateTimeIso.zone,
+      ),
+      '14.07.46 AH, 14:32:12 MEZ',
+    );
+
     ///// ZonedDateTimeFormatterGregorian /////
 
     expect(

@@ -9,6 +9,8 @@
 
 #include "DataProvider.d.h"
 #include "DateFormatterGregorian.d.h"
+#include "DateTimeFieldSetBuilder.d.h"
+#include "DateTimeFormatterBuildOrLoadError.d.h"
 #include "DateTimeFormatterLoadError.d.h"
 #include "DateTimeWriteError.d.h"
 #include "IsoDate.d.h"
@@ -21,6 +23,12 @@
 
 
 
+
+typedef struct icu4x_ZonedDateFormatterGregorian_create_from_field_set_builder_mv1_result {union {ZonedDateFormatterGregorian* ok; DateTimeFormatterBuildOrLoadError err;}; bool is_ok;} icu4x_ZonedDateFormatterGregorian_create_from_field_set_builder_mv1_result;
+icu4x_ZonedDateFormatterGregorian_create_from_field_set_builder_mv1_result icu4x_ZonedDateFormatterGregorian_create_from_field_set_builder_mv1(const Locale* locale, DateTimeFieldSetBuilder builder);
+
+typedef struct icu4x_ZonedDateFormatterGregorian_create_from_field_set_builder_with_provider_mv1_result {union {ZonedDateFormatterGregorian* ok; DateTimeFormatterBuildOrLoadError err;}; bool is_ok;} icu4x_ZonedDateFormatterGregorian_create_from_field_set_builder_with_provider_mv1_result;
+icu4x_ZonedDateFormatterGregorian_create_from_field_set_builder_with_provider_mv1_result icu4x_ZonedDateFormatterGregorian_create_from_field_set_builder_with_provider_mv1(const DataProvider* provider, const Locale* locale, DateTimeFieldSetBuilder builder);
 
 typedef struct icu4x_ZonedDateFormatterGregorian_create_specific_long_mv1_result {union {ZonedDateFormatterGregorian* ok; DateTimeFormatterLoadError err;}; bool is_ok;} icu4x_ZonedDateFormatterGregorian_create_specific_long_mv1_result;
 icu4x_ZonedDateFormatterGregorian_create_specific_long_mv1_result icu4x_ZonedDateFormatterGregorian_create_specific_long_mv1(const Locale* locale, const DateFormatterGregorian* formatter);

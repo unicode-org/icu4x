@@ -21,7 +21,9 @@ namespace capi { struct TimeZoneInfo; }
 class TimeZoneInfo;
 namespace capi { struct ZonedTimeFormatter; }
 class ZonedTimeFormatter;
+struct DateTimeFieldSetBuilder;
 class DateTimeAlignment;
+class DateTimeFormatterBuildOrLoadError;
 class DateTimeFormatterLoadError;
 class DateTimeLength;
 class DateTimeWriteError;
@@ -41,6 +43,10 @@ namespace icu4x {
  */
 class ZonedTimeFormatter {
 public:
+
+  inline static diplomat::result<std::unique_ptr<icu4x::ZonedTimeFormatter>, icu4x::DateTimeFormatterBuildOrLoadError> create_from_field_set_builder(const icu4x::Locale& locale, icu4x::DateTimeFieldSetBuilder builder);
+
+  inline static diplomat::result<std::unique_ptr<icu4x::ZonedTimeFormatter>, icu4x::DateTimeFormatterBuildOrLoadError> create_from_field_set_builder_with_provider(const icu4x::DataProvider& provider, const icu4x::Locale& locale, icu4x::DateTimeFieldSetBuilder builder);
 
   inline static diplomat::result<std::unique_ptr<icu4x::ZonedTimeFormatter>, icu4x::DateTimeFormatterLoadError> create_specific_long(const icu4x::Locale& locale, std::optional<icu4x::DateTimeLength> length, std::optional<icu4x::TimePrecision> time_precision, std::optional<icu4x::DateTimeAlignment> alignment);
 

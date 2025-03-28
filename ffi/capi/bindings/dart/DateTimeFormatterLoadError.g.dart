@@ -36,7 +36,7 @@ enum DateTimeFormatterLoadError {
       case unknown:
         return 0;
       case invalidDateFields:
-        return 2049;
+        return 1028;
       case unsupportedLength:
         return 2051;
       case conflictingField:
