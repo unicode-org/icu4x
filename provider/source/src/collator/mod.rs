@@ -105,7 +105,7 @@ impl SourceDataProvider {
         self.icuexport()?
             .read_and_parse_toml(&format!(
                 "collation/{}/{}{}.toml",
-                self.collation_han_database(),
+                self.collation_root_han(),
                 id_to_file_name(id),
                 suffix
             ))
@@ -120,7 +120,7 @@ impl SourceDataProvider {
     fn list_ids(&self, suffix: &str) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         Ok(self
             .icuexport()?
-            .list(&format!("collation/{}", self.collation_han_database()))?
+            .list(&format!("collation/{}", self.collation_root_han()))?
             .filter_map(|mut file_name| {
                 file_name.truncate(file_name.len() - ".toml".len());
                 file_name.ends_with(suffix).then(|| {

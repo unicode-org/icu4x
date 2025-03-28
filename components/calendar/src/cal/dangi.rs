@@ -22,12 +22,14 @@ use crate::cal::chinese_based::{
     chinese_based_ordinal_lunar_month_from_code, ChineseBasedPrecomputedData,
     ChineseBasedWithDataLoading,
 };
+use crate::cal::iso::{Iso, IsoDateInner};
 use crate::calendar_arithmetic::CalendarArithmetic;
 use crate::calendar_arithmetic::PrecomputedDataSource;
 use crate::error::DateError;
 use crate::provider::chinese_based::CalendarDangiV1;
 use crate::AsCalendar;
-use crate::{cal::chinese_based::ChineseBasedDateInner, types, Calendar, Date, Iso};
+use crate::{cal::chinese_based::ChineseBasedDateInner, types, Calendar, Date};
+use calendrical_calculations::rata_die::RataDie;
 use core::cmp::Ordering;
 use core::num::NonZeroU8;
 use icu_provider::prelude::*;
@@ -155,7 +157,7 @@ impl Dangi {
 impl Calendar for Dangi {
     type DateInner = DangiDateInner;
 
-    fn date_from_codes(
+    fn from_codes(
         &self,
         era: Option<&str>,
         year: i32,
@@ -177,18 +179,25 @@ impl Calendar for Dangi {
             .map(DangiDateInner)
     }
 
-    fn date_from_iso(&self, iso: Date<crate::Iso>) -> Self::DateInner {
-        let fixed = Iso::to_fixed(iso);
-        DangiDateInner(Inner::chinese_based_date_from_fixed(
+    fn from_rata_die(&self, rd: RataDie) -> Self::DateInner {
+        let iso = Iso.from_rata_die(rd);
+        DangiDateInner(Inner::chinese_based_date_from_rd(self, rd, iso.0))
+    }
+
+    fn to_rata_die(&self, date: &Self::DateInner) -> RataDie {
+        Inner::rd_from_chinese_based_date_inner(date.0)
+    }
+
+    fn from_iso(&self, iso: IsoDateInner) -> Self::DateInner {
+        DangiDateInner(Inner::chinese_based_date_from_rd(
             self,
-            fixed,
-            iso.inner.0,
+            Iso.to_rata_die(&iso),
+            iso.0,
         ))
     }
 
-    fn date_to_iso(&self, date: &Self::DateInner) -> Date<crate::Iso> {
-        let fixed = Inner::fixed_from_chinese_based_date_inner(date.0);
-        Iso::from_fixed(fixed)
+    fn to_iso(&self, date: &Self::DateInner) -> IsoDateInner {
+        Iso.from_rata_die(self.to_rata_die(date))
     }
 
     fn months_in_year(&self, date: &Self::DateInner) -> u8 {
@@ -228,8 +237,7 @@ impl Calendar for Dangi {
         let cyclic = (year.value as i64 - 1 + 364).rem_euclid(60) as u8;
         let cyclic = NonZeroU8::new(cyclic + 1).unwrap_or(NonZeroU8::MIN); // 1-indexed
         let rata_die_in_year = date.0 .0.year.new_year::<DangiCB>();
-        let iso_year = Iso::from_fixed(rata_die_in_year).year();
-        let related_iso = iso_year.era_year_or_extended();
+        let related_iso = Iso.from_rata_die(rata_die_in_year).0.year;
         types::YearInfo::new_cyclic(year.value, cyclic, related_iso)
     }
 
@@ -355,25 +363,25 @@ mod test {
 
     #[test]
     fn test_iso_to_dangi_roundtrip() {
-        let mut fixed = -1963020;
-        let max_fixed = 1963020;
+        let mut rd = -1963020;
+        let max_rd = 1963020;
         let mut iters = 0;
         let max_iters = 560;
         let dangi_calculating = Dangi::new_always_calculating();
         let dangi_cached = Dangi::new();
-        while fixed < max_fixed && iters < max_iters {
-            let rata_die = RataDie::new(fixed);
-            let iso = Iso::from_fixed(rata_die);
+        while rd < max_rd && iters < max_iters {
+            let rata_die = RataDie::new(rd);
+            let iso = Date::from_rata_die(rata_die, Iso);
             do_twice(&dangi_calculating, &dangi_cached, |dangi, calendar_type| {
                 let korean = iso.to_calendar(dangi);
                 let result = korean.to_calendar(Iso);
                 assert_eq!(
                     iso, result,
-                    "[{calendar_type}] Failed roundtrip ISO -> Dangi -> ISO for fixed: {fixed}"
+                    "[{calendar_type}] Failed roundtrip ISO -> Dangi -> ISO for RD: {rd}"
                 );
             });
 
-            fixed += 7043;
+            rd += 7043;
             iters += 1;
         }
     }

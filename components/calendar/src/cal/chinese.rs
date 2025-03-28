@@ -21,13 +21,14 @@ use crate::cal::chinese_based::{
     chinese_based_ordinal_lunar_month_from_code, ChineseBasedDateInner,
     ChineseBasedPrecomputedData, ChineseBasedWithDataLoading,
 };
-use crate::cal::iso::Iso;
+use crate::cal::iso::{Iso, IsoDateInner};
 use crate::calendar_arithmetic::CalendarArithmetic;
 use crate::calendar_arithmetic::PrecomputedDataSource;
 use crate::error::DateError;
 use crate::provider::chinese_based::CalendarChineseV1;
 use crate::AsCalendar;
 use crate::{types, Calendar, Date, DateDuration, DateDurationUnit};
+use calendrical_calculations::rata_die::RataDie;
 use core::cmp::Ordering;
 use core::num::NonZeroU8;
 use icu_provider::prelude::*;
@@ -166,7 +167,7 @@ impl Calendar for Chinese {
     type DateInner = ChineseDateInner;
 
     // Construct a date from era/month codes and fields
-    fn date_from_codes(
+    fn from_codes(
         &self,
         era: Option<&str>,
         year: i32,
@@ -189,20 +190,25 @@ impl Calendar for Chinese {
             .map(ChineseDateInner)
     }
 
-    // Construct the date from an ISO date
-    fn date_from_iso(&self, iso: Date<Iso>) -> Self::DateInner {
-        let fixed = Iso::to_fixed(iso);
-        ChineseDateInner(Inner::chinese_based_date_from_fixed(
+    fn from_rata_die(&self, rd: RataDie) -> Self::DateInner {
+        let iso = Iso.from_rata_die(rd);
+        ChineseDateInner(Inner::chinese_based_date_from_rd(self, rd, iso.0))
+    }
+
+    fn to_rata_die(&self, date: &Self::DateInner) -> RataDie {
+        Inner::rd_from_chinese_based_date_inner(date.0)
+    }
+
+    fn from_iso(&self, iso: IsoDateInner) -> Self::DateInner {
+        ChineseDateInner(Inner::chinese_based_date_from_rd(
             self,
-            fixed,
-            iso.inner.0,
+            Iso.to_rata_die(&iso),
+            iso.0,
         ))
     }
 
-    // Obtain an ISO date from a Chinese date
-    fn date_to_iso(&self, date: &Self::DateInner) -> Date<Iso> {
-        let fixed = Inner::fixed_from_chinese_based_date_inner(date.0);
-        Iso::from_fixed(fixed)
+    fn to_iso(&self, date: &Self::DateInner) -> IsoDateInner {
+        Iso.from_rata_die(self.to_rata_die(date))
     }
 
     //Count the number of months in a given year, specified by providing a date
@@ -247,8 +253,7 @@ impl Calendar for Chinese {
         let cyclic = (year.value - 1).rem_euclid(60) as u8;
         let cyclic = NonZeroU8::new(cyclic + 1).unwrap_or(NonZeroU8::MIN); // 1-indexed
         let rata_die_in_year = date.0 .0.year.new_year::<ChineseCB>();
-        let iso_year = Iso::from_fixed(rata_die_in_year).year();
-        let related_iso = iso_year.era_year_or_extended();
+        let related_iso = Iso.from_rata_die(rata_die_in_year).0.year;
         types::YearInfo::new_cyclic(year.value, cyclic, related_iso)
     }
 
@@ -351,10 +356,10 @@ mod test {
     }
 
     #[test]
-    fn test_chinese_from_fixed() {
+    fn test_chinese_from_rd() {
         #[derive(Debug)]
         struct TestCase {
-            fixed: i64,
+            rd: i64,
             expected_year: i32,
             expected_month: u8,
             expected_day: u8,
@@ -362,85 +367,85 @@ mod test {
 
         let cases = [
             TestCase {
-                fixed: -964192,
+                rd: -964192,
                 expected_year: -2,
                 expected_month: 1,
                 expected_day: 1,
             },
             TestCase {
-                fixed: -963838,
+                rd: -963838,
                 expected_year: -1,
                 expected_month: 1,
                 expected_day: 1,
             },
             TestCase {
-                fixed: -963129,
+                rd: -963129,
                 expected_year: 0,
                 expected_month: 13,
                 expected_day: 1,
             },
             TestCase {
-                fixed: -963100,
+                rd: -963100,
                 expected_year: 0,
                 expected_month: 13,
                 expected_day: 30,
             },
             TestCase {
-                fixed: -963099,
+                rd: -963099,
                 expected_year: 1,
                 expected_month: 1,
                 expected_day: 1,
             },
             TestCase {
-                fixed: 738700,
+                rd: 738700,
                 expected_year: 4660,
                 expected_month: 6,
                 expected_day: 12,
             },
             TestCase {
-                fixed: fixed_from_iso(2319, 2, 20).to_i64_date(),
+                rd: fixed_from_iso(2319, 2, 20).to_i64_date(),
                 expected_year: 2319 + 2636,
                 expected_month: 13,
                 expected_day: 30,
             },
             TestCase {
-                fixed: fixed_from_iso(2319, 2, 21).to_i64_date(),
+                rd: fixed_from_iso(2319, 2, 21).to_i64_date(),
                 expected_year: 2319 + 2636 + 1,
                 expected_month: 1,
                 expected_day: 1,
             },
             TestCase {
-                fixed: 738718,
+                rd: 738718,
                 expected_year: 4660,
                 expected_month: 6,
                 expected_day: 30,
             },
             TestCase {
-                fixed: 738747,
+                rd: 738747,
                 expected_year: 4660,
                 expected_month: 7,
                 expected_day: 29,
             },
             TestCase {
-                fixed: 738748,
+                rd: 738748,
                 expected_year: 4660,
                 expected_month: 8,
                 expected_day: 1,
             },
             TestCase {
-                fixed: 738865,
+                rd: 738865,
                 expected_year: 4660,
                 expected_month: 11,
                 expected_day: 29,
             },
             TestCase {
-                fixed: 738895,
+                rd: 738895,
                 expected_year: 4660,
                 expected_month: 12,
                 expected_day: 29,
             },
             TestCase {
-                fixed: 738925,
+                rd: 738925,
                 expected_year: 4660,
                 expected_month: 13,
                 expected_day: 30,
@@ -450,26 +455,25 @@ mod test {
         let chinese_calculating = Chinese::new_always_calculating();
         let chinese_cached = Chinese::new();
         for case in cases {
-            let rata_die = RataDie::new(case.fixed);
-            let iso = Iso::from_fixed(rata_die);
+            let rata_die = RataDie::new(case.rd);
+            let iso = Iso.from_rata_die(rata_die);
 
             do_twice(
                 &chinese_calculating,
                 &chinese_cached,
                 |chinese, calendar_type| {
-                    let chinese =
-                        Inner::chinese_based_date_from_fixed(chinese.0, rata_die, iso.inner.0);
+                    let chinese = Inner::chinese_based_date_from_rd(chinese.0, rata_die, iso.0);
                     assert_eq!(
                         case.expected_year, chinese.0.year.value,
-                        "[{calendar_type}] Chinese from fixed failed, case: {case:?}"
+                        "[{calendar_type}] Chinese from RD failed, case: {case:?}"
                     );
                     assert_eq!(
                         case.expected_month, chinese.0.month,
-                        "[{calendar_type}] Chinese from fixed failed, case: {case:?}"
+                        "[{calendar_type}] Chinese from RD failed, case: {case:?}"
                     );
                     assert_eq!(
                         case.expected_day, chinese.0.day,
-                        "[{calendar_type}] Chinese from fixed failed, case: {case:?}"
+                        "[{calendar_type}] Chinese from RD failed, case: {case:?}"
                     );
                 },
             );
@@ -477,7 +481,7 @@ mod test {
     }
 
     #[test]
-    fn test_fixed_from_chinese() {
+    fn test_rd_from_chinese() {
         #[derive(Debug)]
         struct TestCase {
             year: i32,
@@ -513,39 +517,37 @@ mod test {
                         case.year, case.month, case.day, chinese,
                     )
                     .unwrap();
-                    let fixed =
-                        Inner::fixed_from_chinese_based_date_inner(date.inner.0).to_i64_date();
+                    let rd = Inner::rd_from_chinese_based_date_inner(date.inner.0).to_i64_date();
                     let expected = case.expected;
-                    assert_eq!(fixed, expected, "[{calendar_type}] Fixed from Chinese failed, with expected: {fixed} and calculated: {expected}, for test case: {case:?}");
+                    assert_eq!(rd, expected, "[{calendar_type}] RD from Chinese failed, with expected: {rd} and calculated: {expected}, for test case: {case:?}");
                 },
             );
         }
     }
 
     #[test]
-    fn test_fixed_chinese_roundtrip() {
-        let mut fixed = -1963020;
-        let max_fixed = 1963020;
+    fn test_rd_chinese_roundtrip() {
+        let mut rd = -1963020;
+        let max_rd = 1963020;
         let mut iters = 0;
         let max_iters = 560;
         let chinese_calculating = Chinese::new_always_calculating();
         let chinese_cached = Chinese::new();
-        while fixed < max_fixed && iters < max_iters {
-            let rata_die = RataDie::new(fixed);
-            let iso = Iso::from_fixed(rata_die);
+        while rd < max_rd && iters < max_iters {
+            let rata_die = RataDie::new(rd);
+            let iso = Iso.from_rata_die(rata_die);
 
             do_twice(
                 &chinese_calculating,
                 &chinese_cached,
                 |chinese, calendar_type| {
-                    let chinese =
-                        Inner::chinese_based_date_from_fixed(&chinese, rata_die, iso.inner.0);
-                    let result = Inner::fixed_from_chinese_based_date_inner(chinese);
+                    let chinese = Inner::chinese_based_date_from_rd(&chinese, rata_die, iso.0);
+                    let result = Inner::rd_from_chinese_based_date_inner(chinese);
                     let result_debug = result.to_i64_date();
-                    assert_eq!(result, rata_die, "[{calendar_type}] Failed roundtrip fixed -> Chinese -> fixed for fixed: {fixed}, with calculated: {result_debug} from Chinese date:\n{chinese:?}");
+                    assert_eq!(result, rata_die, "[{calendar_type}] Failed roundtrip RD -> Chinese -> RD for RD: {rd}, with calculated: {result_debug} from Chinese date:\n{chinese:?}");
                 },
             );
-            fixed += 7043;
+            rd += 7043;
             iters += 1;
         }
     }

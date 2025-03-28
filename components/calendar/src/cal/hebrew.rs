@@ -15,14 +15,16 @@
 //! assert_eq!(hebrew_date.day_of_month().0, 11);
 //! ```
 
+use crate::cal::iso::{Iso, IsoDateInner};
 use crate::calendar_arithmetic::PrecomputedDataSource;
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
 use crate::error::DateError;
 use crate::types::MonthInfo;
+use crate::RangeError;
 use crate::{types, Calendar, Date, DateDuration, DateDurationUnit};
-use crate::{Iso, RangeError};
 use ::tinystr::tinystr;
 use calendrical_calculations::hebrew_keviyah::{Keviyah, YearInfo};
+use calendrical_calculations::rata_die::RataDie;
 
 /// The [Hebrew Calendar](https://en.wikipedia.org/wiki/Hebrew_calendar)
 ///
@@ -131,7 +133,7 @@ impl PrecomputedDataSource<HebrewYearInfo> for () {
 impl Calendar for Hebrew {
     type DateInner = HebrewDateInner;
 
-    fn date_from_codes(
+    fn from_codes(
         &self,
         era: Option<&str>,
         year: i32,
@@ -196,11 +198,10 @@ impl Calendar for Hebrew {
         )?))
     }
 
-    fn date_from_iso(&self, iso: Date<Iso>) -> Self::DateInner {
-        let fixed_iso = Iso::to_fixed(iso);
-        let (year, h_year) = YearInfo::year_containing_rd(fixed_iso);
+    fn from_rata_die(&self, rd: RataDie) -> Self::DateInner {
+        let (year, h_year) = YearInfo::year_containing_rd(rd);
         // Obtaining a 1-indexed day-in-year value
-        let day = fixed_iso - year.new_year() + 1;
+        let day = rd - year.new_year() + 1;
         let day = u16::try_from(day).unwrap_or(u16::MAX);
 
         let year = HebrewYearInfo::compute_with_keviyah(year.keviyah, h_year);
@@ -208,14 +209,22 @@ impl Calendar for Hebrew {
         HebrewDateInner(ArithmeticDate::new_unchecked(year, month, day))
     }
 
-    fn date_to_iso(&self, date: &Self::DateInner) -> Date<Iso> {
+    fn to_rata_die(&self, date: &Self::DateInner) -> RataDie {
         let year = date.0.year.keviyah.year_info(date.0.year.value);
 
         let ny = year.new_year();
         let days_preceding = year.keviyah.days_preceding(date.0.month);
 
         // Need to subtract 1 since the new year is itself in this year
-        Iso::from_fixed(ny + i64::from(days_preceding) + i64::from(date.0.day) - 1)
+        ny + i64::from(days_preceding) + i64::from(date.0.day) - 1
+    }
+
+    fn from_iso(&self, iso: IsoDateInner) -> Self::DateInner {
+        self.from_rata_die(Iso.to_rata_die(&iso))
+    }
+
+    fn to_iso(&self, date: &Self::DateInner) -> IsoDateInner {
+        Iso.from_rata_die(self.to_rata_die(date))
     }
 
     fn months_in_year(&self, date: &Self::DateInner) -> u8 {

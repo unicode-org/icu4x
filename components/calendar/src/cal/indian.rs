@@ -16,10 +16,11 @@
 //! assert_eq!(date_indian.day_of_month().0, 12);
 //! ```
 
-use crate::cal::iso::Iso;
+use crate::cal::iso::{Iso, IsoDateInner};
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
 use crate::error::DateError;
 use crate::{types, Calendar, Date, DateDuration, DateDurationUnit, RangeError};
+use calendrical_calculations::rata_die::RataDie;
 use tinystr::tinystr;
 
 /// The [Indian National (Śaka) Calendar](https://en.wikipedia.org/wiki/Indian_national_calendar)
@@ -91,7 +92,7 @@ const YEAR_OFFSET: i32 = 78;
 
 impl Calendar for Indian {
     type DateInner = IndianDateInner;
-    fn date_from_codes(
+    fn from_codes(
         &self,
         era: Option<&str>,
         year: i32,
@@ -105,12 +106,20 @@ impl Calendar for Indian {
         ArithmeticDate::new_from_codes(self, year, month_code, day).map(IndianDateInner)
     }
 
+    fn from_rata_die(&self, rd: RataDie) -> Self::DateInner {
+        self.from_iso(Iso.from_rata_die(rd))
+    }
+
+    fn to_rata_die(&self, date: &Self::DateInner) -> RataDie {
+        Iso.to_rata_die(&self.to_iso(date))
+    }
+
     // Algorithms directly implemented in icu_calendar since they're not from the book
-    fn date_from_iso(&self, iso: Date<Iso>) -> IndianDateInner {
+    fn from_iso(&self, iso: IsoDateInner) -> IndianDateInner {
         // Get day number in year (1 indexed)
-        let day_of_year_iso = Iso::day_of_year(*iso.inner());
+        let day_of_year_iso = Iso::day_of_year(iso);
         // Convert to Saka year
-        let mut year = iso.inner().0.year - YEAR_OFFSET;
+        let mut year = iso.0.year - YEAR_OFFSET;
         // This is in the previous Indian year
         let day_of_year_indian = if day_of_year_iso <= DAY_OFFSET {
             year -= 1;
@@ -128,7 +137,7 @@ impl Calendar for Indian {
     }
 
     // Algorithms directly implemented in icu_calendar since they're not from the book
-    fn date_to_iso(&self, date: &Self::DateInner) -> Date<Iso> {
+    fn to_iso(&self, date: &Self::DateInner) -> IsoDateInner {
         let day_of_year_indian = date.0.day_of_year().0; // 1-indexed
         let days_in_year = date.0.days_in_year();
 
@@ -438,11 +447,10 @@ mod tests {
     fn test_roundtrip_near_rd_zero() {
         for i in -1000..=1000 {
             let initial = RataDie::new(i);
-            let result = Iso::to_fixed(
-                Iso::from_fixed(initial)
-                    .to_calendar(Indian)
-                    .to_calendar(Iso),
-            );
+            let result = Date::from_rata_die(initial, Iso)
+                .to_calendar(Indian)
+                .to_iso()
+                .to_rata_die();
             assert_eq!(
                 initial, result,
                 "Roundtrip failed for initial: {initial:?}, result: {result:?}"
@@ -455,11 +463,10 @@ mod tests {
         // Epoch start: RD 28570
         for i in 27570..=29570 {
             let initial = RataDie::new(i);
-            let result = Iso::to_fixed(
-                Iso::from_fixed(initial)
-                    .to_calendar(Indian)
-                    .to_calendar(Iso),
-            );
+            let result = Date::from_rata_die(initial, Iso)
+                .to_calendar(Indian)
+                .to_iso()
+                .to_rata_die();
             assert_eq!(
                 initial, result,
                 "Roundtrip failed for initial: {initial:?}, result: {result:?}"
@@ -474,8 +481,8 @@ mod tests {
                 let rd_i = RataDie::new(i);
                 let rd_j = RataDie::new(j);
 
-                let indian_i = Iso::from_fixed(rd_i).to_calendar(Indian);
-                let indian_j = Iso::from_fixed(rd_j).to_calendar(Indian);
+                let indian_i = Date::from_rata_die(rd_i, Indian);
+                let indian_j = Date::from_rata_die(rd_j, Indian);
 
                 assert_eq!(i.cmp(&j), indian_i.cmp(&indian_j), "Directionality test failed for i: {i}, j: {j}, indian_i: {indian_i:?}, indian_j: {indian_j:?}");
             }
@@ -487,8 +494,8 @@ mod tests {
         // Epoch start: RD 28570
         for i in 28470..=28670 {
             for j in 28470..=28670 {
-                let indian_i = Iso::from_fixed(RataDie::new(i)).to_calendar(Indian);
-                let indian_j = Iso::from_fixed(RataDie::new(j)).to_calendar(Indian);
+                let indian_i = Date::from_rata_die(RataDie::new(i), Indian);
+                let indian_j = Date::from_rata_die(RataDie::new(j), Indian);
 
                 assert_eq!(i.cmp(&j), indian_i.cmp(&indian_j), "Directionality test failed for i: {i}, j: {j}, indian_i: {indian_i:?}, indian_j: {indian_j:?}");
             }
