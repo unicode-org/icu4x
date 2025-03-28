@@ -12,7 +12,7 @@ use icu_calendar::any_calendar::AnyCalendarKind;
 use icu_calendar::cal::Roc;
 use icu_calendar::cal::{self, Chinese};
 use icu_calendar::cal::{
-    Buddhist, Coptic, Dangi, Ethiopian, Gregorian, Hebrew, HijriObservational, HijriTabular,
+    Buddhist, Coptic, Dangi, Ethiopian, Gregorian, Hebrew, HijriSimulated, HijriTabular,
     HijriUmmAlQura, Indian, Japanese, JapaneseExtended, Persian,
 };
 use icu_calendar::{any_calendar::IntoAnyCalendar, AnyCalendar, AsCalendar, Calendar, Date, Ref};
@@ -117,8 +117,8 @@ impl CldrCalendar for HijriTabular {
     type SkeletaV1 = HijriDateNeoSkeletonPatternsV1;
 }
 
-impl private::Sealed for HijriObservational {}
-impl CldrCalendar for HijriObservational {
+impl private::Sealed for HijriSimulated {}
+impl CldrCalendar for HijriSimulated {
     type YearNamesV1 = HijriYearNamesV1;
     type MonthNamesV1 = HijriMonthNamesV1;
     type SkeletaV1 = HijriDateNeoSkeletonPatternsV1;
@@ -169,7 +169,7 @@ impl UnstableSealed for Gregorian {}
 impl UnstableSealed for Hebrew {}
 impl UnstableSealed for Indian {}
 impl UnstableSealed for HijriTabular {}
-impl UnstableSealed for HijriObservational {}
+impl UnstableSealed for HijriSimulated {}
 impl UnstableSealed for HijriUmmAlQura {}
 impl UnstableSealed for Japanese {}
 impl UnstableSealed for JapaneseExtended {}
@@ -264,7 +264,7 @@ impl IntoFormattableAnyCalendar for Gregorian {}
 impl IntoFormattableAnyCalendar for Hebrew {}
 impl IntoFormattableAnyCalendar for Indian {}
 impl IntoFormattableAnyCalendar for HijriTabular {}
-impl IntoFormattableAnyCalendar for HijriObservational {}
+impl IntoFormattableAnyCalendar for HijriSimulated {}
 impl IntoFormattableAnyCalendar for HijriUmmAlQura {}
 impl IntoFormattableAnyCalendar for Japanese {}
 // _NOT_ JapaneseExtended
@@ -284,7 +284,7 @@ pub(crate) enum FormattableAnyCalendarKind {
     Hebrew,
     Indian,
     HijriTabularCivil,
-    HijriObservationalMecca,
+    HijriSimulatedMecca,
     HijriTabularAstronomical,
     HijriUmmAlQura,
     Japanese,
@@ -307,7 +307,7 @@ impl FormattableAnyCalendarKind {
             Hebrew => Self::Hebrew,
             Indian => Self::Indian,
             HijriTabularCivil => Self::HijriTabularCivil,
-            HijriObservationalMecca => Self::HijriObservationalMecca,
+            HijriSimulatedMecca => Self::HijriSimulatedMecca,
             HijriTabularAstronomical => Self::HijriTabularAstronomical,
             HijriUmmAlQura => Self::HijriUmmAlQura,
             Iso => return None,
@@ -393,9 +393,7 @@ impl FormattableAnyCalendar {
             HijriTabularCivil => {
                 AnyCalendar::HijriTabularCivil(cal::HijriTabular::new_civil_epoch())
             }
-            HijriObservationalMecca => {
-                AnyCalendar::HijriObservational(cal::HijriObservational::new_mecca())
-            }
+            HijriSimulatedMecca => AnyCalendar::HijriSimulated(cal::HijriSimulated::new_mecca()),
             HijriTabularAstronomical => {
                 AnyCalendar::HijriTabularAstronomical(cal::HijriTabular::new_astronomical_epoch())
             }
@@ -431,8 +429,8 @@ impl FormattableAnyCalendar {
             HijriTabularCivil => {
                 AnyCalendar::HijriTabularCivil(cal::HijriTabular::new_civil_epoch())
             }
-            HijriObservationalMecca => AnyCalendar::HijriObservational(
-                cal::HijriObservational::try_new_mecca_with_buffer_provider(provider)?,
+            HijriSimulatedMecca => AnyCalendar::HijriSimulated(
+                cal::HijriSimulated::try_new_mecca_with_buffer_provider(provider)?,
             ),
             HijriTabularAstronomical => {
                 AnyCalendar::HijriTabularAstronomical(cal::HijriTabular::new_astronomical_epoch())
@@ -458,7 +456,7 @@ impl FormattableAnyCalendar {
             + DataProvider<icu_calendar::provider::CalendarJapaneseModernV1>
             + DataProvider<icu_calendar::provider::CalendarChineseV1>
             + DataProvider<icu_calendar::provider::CalendarDangiV1>
-            + DataProvider<icu_calendar::provider::CalendarHijriObservationalMeccaV1>
+            + DataProvider<icu_calendar::provider::CalendarHijriSimulatedMeccaV1>
             + DataProvider<icu_calendar::provider::CalendarHijriUmmalquraV1>,
     {
         use FormattableAnyCalendarKind::*;
@@ -477,9 +475,9 @@ impl FormattableAnyCalendar {
             HijriTabularCivil => {
                 AnyCalendar::HijriTabularCivil(cal::HijriTabular::new_civil_epoch())
             }
-            HijriObservationalMecca => AnyCalendar::HijriObservational(
-                cal::HijriObservational::try_new_mecca_unstable(provider)?,
-            ),
+            HijriSimulatedMecca => {
+                AnyCalendar::HijriSimulated(cal::HijriSimulated::try_new_mecca_unstable(provider)?)
+            }
             HijriTabularAstronomical => {
                 AnyCalendar::HijriTabularAstronomical(cal::HijriTabular::new_astronomical_epoch())
             }
@@ -576,10 +574,9 @@ where
             Gregorian => H::Gregorian::bind(p).load_bound(req),
             Hebrew => H::Hebrew::bind(p).load_bound(req),
             Indian => H::Indian::bind(p).load_bound(req),
-            HijriTabularCivil
-            | HijriTabularAstronomical
-            | HijriObservationalMecca
-            | HijriUmmAlQura => H::Hijri::bind(p).load_bound(req),
+            HijriTabularCivil | HijriTabularAstronomical | HijriSimulatedMecca | HijriUmmAlQura => {
+                H::Hijri::bind(p).load_bound(req)
+            }
             Japanese => H::Japanese::bind(p).load_bound(req),
             Persian => H::Persian::bind(p).load_bound(req),
             Roc => H::Roc::bind(p).load_bound(req),
@@ -596,10 +593,9 @@ where
             Gregorian => H::Gregorian::INFO,
             Hebrew => H::Hebrew::INFO,
             Indian => H::Indian::INFO,
-            HijriTabularCivil
-            | HijriTabularAstronomical
-            | HijriObservationalMecca
-            | HijriUmmAlQura => H::Hijri::INFO,
+            HijriTabularCivil | HijriTabularAstronomical | HijriSimulatedMecca | HijriUmmAlQura => {
+                H::Hijri::INFO
+            }
             Japanese => H::Japanese::INFO,
             Persian => H::Persian::INFO,
             Roc => H::Roc::INFO,
