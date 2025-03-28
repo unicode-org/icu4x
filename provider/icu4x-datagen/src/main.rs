@@ -145,10 +145,10 @@ struct Cli {
     #[cfg(feature = "provider")]
     trie_type: TrieType,
 
-    #[arg(long, value_enum, default_value_t = CollationHanDatabase::Implicit)]
+    #[arg(long, value_enum, default_value_t = CollationRootHan::Implicit)]
     #[arg(help = "Which collation han database to use.")]
     #[cfg(feature = "provider")]
-    collation_han_database: CollationHanDatabase,
+    collation_root_han: CollationRootHan,
 
     #[arg(long, value_enum, num_args = 1..)]
     #[arg(
@@ -237,8 +237,8 @@ enum TrieType {
 }
 
 #[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, ValueEnum, Debug)]
-// Mirrors icu_provider_export::CollationHanDatabase
-enum CollationHanDatabase {
+// Mirrors icu_provider_export::CollationRootHan
+enum CollationRootHan {
     Unihan,
     Implicit,
 }
@@ -360,10 +360,10 @@ fn main() -> eyre::Result<()> {
         () => {
             let mut p = SourceDataProvider::new_custom();
 
-            p = p.with_collation_han_database(match cli.collation_han_database {
-                CollationHanDatabase::Unihan => icu_provider_source::CollationHanDatabase::Unihan,
-                CollationHanDatabase::Implicit => {
-                    icu_provider_source::CollationHanDatabase::Implicit
+            p = p.with_collation_root_han(match cli.collation_root_han {
+                CollationRootHan::Unihan => icu_provider_source::CollationRootHan::Unihan,
+                CollationRootHan::Implicit => {
+                    icu_provider_source::CollationRootHan::Implicit
                 }
             });
 
