@@ -25,7 +25,7 @@ typedef enum CalendarKind {
   CalendarKind_Chinese = 10,
   CalendarKind_Hebrew = 11,
   CalendarKind_HijriTabularCivil = 12,
-  CalendarKind_HijriObservationalMecca = 18,
+  CalendarKind_HijriSimulatedMecca = 18,
   CalendarKind_HijriTabularAstronomical = 14,
   CalendarKind_HijriUmmAlQura = 15,
   CalendarKind_Persian = 16,

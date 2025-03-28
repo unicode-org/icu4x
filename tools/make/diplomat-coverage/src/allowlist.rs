@@ -139,7 +139,7 @@ lazy_static::lazy_static! {
         "icu::calendar::Date::try_new_japanese_with_calendar",
         "icu::calendar::Date::try_new_japanese_extended_with_calendar",
         "icu::calendar::Date::try_new_julian",
-        "icu::calendar::Date::try_new_observational_hijri_with_calendar",
+        "icu::calendar::Date::try_new_simulated_hijri_with_calendar",
         "icu::calendar::Date::try_new_persian",
         "icu::calendar::Date::try_new_roc",
         "icu::calendar::Date::try_new_ummalqura_with_calendar",
