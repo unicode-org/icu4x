@@ -85,7 +85,14 @@ impl DataProvider<CalendarHijriUmmalquraV1> for crate::SourceDataProvider {
             ICU4C_ENCODED_MONTH_LENGTHS
                 .into_iter()
                 .zip(ICU4C_YEAR_START_ESTIMATE_FIX)
-                .map(|(l, ny)| (core::array::from_fn(|i| (1 << (11 - i)) & l != 0), ny)),
+                .enumerate()
+                .map(|(year, (encoded_months_lengths, year_start_estimate_fix))| {
+                    // https://github.com/unicode-org/icu/blob/1bf6bf774dbc8c6c2051963a81100ea1114b497f/icu4c/source/i18n/islamcal.cpp#L858
+                    let month_lengths = core::array::from_fn(|i| (1 << (11 - i)) & encoded_months_lengths != 0);
+                    // From https://github.com/unicode-org/icu/blob/1bf6bf774dbc8c6c2051963a81100ea1114b497f/icu4c/source/i18n/islamcal.cpp#L813
+                    let year_start = ((354.36720 * year as f64) + 460322.05 + 0.5) as i64 + year_start_estimate_fix;
+                    (month_lengths, year_start)
+                }),
         );
 
         Ok(DataResponse {

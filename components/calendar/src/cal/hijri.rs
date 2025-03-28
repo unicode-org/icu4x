@@ -237,15 +237,15 @@ impl HijriUmmAlQura {
     #[cfg(feature = "datagen")]
     pub fn build_cache(
         first_extended_year: i32,
-        month_lengths: impl Iterator<Item = ([bool; 12], i64)>,
+        month_lengths_and_year_starts: impl Iterator<Item = ([bool; 12], i64)>,
     ) -> HijriCache<'static> {
-        let data = month_lengths
+        let data = month_lengths_and_year_starts
             .enumerate()
-            .map(|(offset, (month_lengths, ny_offset))| {
+            .map(|(offset, (month_lengths, year_start))| {
                 HijriYearInfo::from_parts(
                     first_extended_year + offset as i32,
                     month_lengths,
-                    ny_offset,
+                    ISLAMIC_EPOCH_FRIDAY + year_start,
                     HijriUmmAlQuraMarker,
                 )
                 .pack()
@@ -272,10 +272,6 @@ pub trait CacheableHijri: Copy {
     fn fixed_from_hijri(&self, year: i32, month: u8, day: u8) -> RataDie;
     /// Convert an R.D. to a Hijri date in this calendar
     fn hijri_from_fixed(&self, date: RataDie) -> (i32, u8, u8);
-
-    /// A regression to guess a new year day. These differ by calendar and affect how big the
-    /// stored offsets will become. Offsets are currently limited to 4 bits (-8..8)
-    fn ny_regression(extended_year: i32) -> RataDie;
 }
 
 #[derive(Copy, Clone, Debug, Hash, PartialEq, Eq, PartialOrd, Ord)]
@@ -317,12 +313,12 @@ impl<IB: CacheableHijri> HijriYearInfo<IB> {
     fn from_parts(
         extended_year: i32,
         month_lengths: [bool; 12],
-        ny_offset: i64,
+        year_start: RataDie,
         model: IB,
     ) -> Self {
         Self {
             month_lengths,
-            ny_offset,
+            ny_offset: year_start - Self::mean_synodic_ny(extended_year),
             model,
             value: extended_year,
         }
@@ -350,7 +346,7 @@ impl<IB: CacheableHijri> HijriYearInfo<IB> {
             }
         }
 
-        let ny_offset = ny - IB::ny_regression(extended_year);
+        let ny_offset = ny - Self::mean_synodic_ny(extended_year);
 
         let month_lengths = {
             let mut excess_days = 0;
@@ -437,9 +433,18 @@ impl<IB: CacheableHijri> HijriYearInfo<IB> {
         self.last_day_of_month(12)
     }
 
+    fn mean_synodic_ny(extended_year: i32) -> RataDie {
+        // -1 because the epoch is new year of year 1
+        // truncating instead of flooring does not matter, as this is well-defined for
+        // positive years only
+        ISLAMIC_EPOCH_FRIDAY
+            + ((extended_year - 1) as f64 * calendrical_calculations::islamic::MEAN_YEAR_LENGTH)
+                as i64
+    }
+
     /// Get the new year R.D. given the extended year that this yearinfo is for    
     fn new_year(self) -> RataDie {
-        IB::ny_regression(self.value) + self.ny_offset
+        Self::mean_synodic_ny(self.value) + self.ny_offset
     }
 
     /// Get the date's R.D. given (m, d) in this info's year
@@ -687,15 +692,6 @@ impl CacheableHijri for HijriObservationalLocation {
     fn hijri_from_fixed(&self, date: RataDie) -> (i32, u8, u8) {
         calendrical_calculations::islamic::observational_islamic_from_fixed(date, self.location())
     }
-
-    fn ny_regression(extended_year: i32) -> RataDie {
-        // -1 because the epoch is new year of year 1
-        // truncating instead of flooring does not matter, as this is well-defined for
-        // positive years only
-        calendrical_calculations::islamic::ISLAMIC_EPOCH_FRIDAY
-            + ((extended_year - 1) as f64 * calendrical_calculations::islamic::MEAN_YEAR_LENGTH)
-                as i64
-    }
 }
 
 impl HijriObservational {
@@ -878,10 +874,6 @@ impl CacheableHijri for HijriUmmAlQuraMarker {
     }
     fn hijri_from_fixed(&self, date: RataDie) -> (i32, u8, u8) {
         calendrical_calculations::islamic::saudi_islamic_from_fixed(date)
-    }
-    fn ny_regression(extended_year: i32) -> RataDie {
-        // From https://github.com/unicode-org/icu/blob/1bf6bf774dbc8c6c2051963a81100ea1114b497f/icu4c/source/i18n/islamcal.cpp#L813
-        ISLAMIC_EPOCH_FRIDAY + (extended_year as f64 * 354.36720 - 354.81000) as i64
     }
 }
 
