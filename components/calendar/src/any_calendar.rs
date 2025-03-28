@@ -505,10 +505,10 @@ impl Calendar for AnyCalendar {
             Self::Gregorian(_) => "AnyCalendar (Gregorian)",
             Self::Hebrew(_) => "AnyCalendar (Hebrew)",
             Self::Indian(_) => "AnyCalendar (Indian)",
-            Self::HijriTabularCivil(_) => "AnyCalendar (Hijri, rule-based, civil epoch)",
+            Self::HijriTabularCivil(_) => "AnyCalendar (Hijri, tabular, civil epoch)",
             Self::HijriObservational(_) => "AnyCalendar (Hijri, observational)",
             Self::HijriTabularAstronomical(_) => {
-                "AnyCalendar (Hijri, rule-based, astronomical epoch)"
+                "AnyCalendar (Hijri, tabular, astronomical epoch)"
             }
             Self::HijriUmmAlQura(_) => "AnyCalendar (Hijri, Umm al-Qura)",
             Self::Iso(_) => "AnyCalendar (Iso)",
