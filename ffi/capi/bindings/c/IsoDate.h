@@ -24,12 +24,16 @@
 typedef struct icu4x_IsoDate_create_mv1_result {union {IsoDate* ok; CalendarError err;}; bool is_ok;} icu4x_IsoDate_create_mv1_result;
 icu4x_IsoDate_create_mv1_result icu4x_IsoDate_create_mv1(int32_t year, uint8_t month, uint8_t day);
 
+IsoDate* icu4x_IsoDate_from_rata_die_mv1(int64_t rd);
+
 typedef struct icu4x_IsoDate_from_string_mv1_result {union {IsoDate* ok; CalendarParseError err;}; bool is_ok;} icu4x_IsoDate_from_string_mv1_result;
 icu4x_IsoDate_from_string_mv1_result icu4x_IsoDate_from_string_mv1(DiplomatStringView v);
 
 Date* icu4x_IsoDate_to_calendar_mv1(const IsoDate* self, const Calendar* calendar);
 
 Date* icu4x_IsoDate_to_any_mv1(const IsoDate* self);
+
+int64_t icu4x_IsoDate_to_rata_die_mv1(const IsoDate* self);
 
 uint16_t icu4x_IsoDate_day_of_year_mv1(const IsoDate* self);
 

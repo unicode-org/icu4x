@@ -35,13 +35,24 @@ pub mod ffi {
     pub struct IsoDate(pub icu_calendar::Date<icu_calendar::Iso>);
 
     impl IsoDate {
-        /// Creates a new [`IsoDate`] from the specified date and time.
+        /// Creates a new [`IsoDate`] from the specified date.
         #[diplomat::rust_link(icu::calendar::Date::try_new_iso, FnInStruct)]
         #[diplomat::attr(supports = fallible_constructors, constructor)]
         pub fn create(year: i32, month: u8, day: u8) -> Result<Box<IsoDate>, CalendarError> {
             Ok(Box::new(IsoDate(icu_calendar::Date::try_new_iso(
                 year, month, day,
             )?)))
+        }
+
+        /// Creates a new [`IsoDate`] from the given Rata Die
+        #[diplomat::rust_link(icu::calendar::Date::from_rata_die, FnInStruct)]
+        #[diplomat::attr(all(supports = named_constructors), named_constructor)]
+        #[diplomat::demo(default_constructor)]
+        pub fn from_rata_die(rd: i64) -> Box<IsoDate> {
+            Box::new(IsoDate(icu_calendar::Date::from_rata_die(
+                icu_calendar::types::RataDie::new(rd),
+                Iso,
+            )))
         }
 
         /// Creates a new [`IsoDate`] from an IXDTF string.
@@ -64,6 +75,13 @@ pub mod ffi {
         #[diplomat::rust_link(icu::calendar::Date::to_any, FnInStruct)]
         pub fn to_any(&self) -> Box<Date> {
             Box::new(Date(self.0.to_any().wrap_calendar_in_arc()))
+        }
+
+        /// Returns this date's Rata Die
+        #[diplomat::rust_link(icu::calendar::Date::to_rata_die, FnInStruct)]
+        #[diplomat::attr(auto, getter = "rata_die")]
+        pub fn to_rata_die(&self) -> i64 {
+            self.0.to_rata_die().to_i64_date()
         }
 
         /// Returns the 1-indexed day in the year for this date
@@ -142,12 +160,12 @@ pub mod ffi {
 
     #[diplomat::opaque]
     #[diplomat::transparent_convert]
-    /// An ICU4X Date object capable of containing a date and time for any calendar.
+    /// An ICU4X Date object capable of containing a date for any calendar.
     #[diplomat::rust_link(icu::calendar::Date, Struct)]
     pub struct Date(pub icu_calendar::Date<Arc<icu_calendar::AnyCalendar>>);
 
     impl Date {
-        /// Creates a new [`Date`] representing the ISO date and time
+        /// Creates a new [`Date`] representing the ISO date
         /// given but in a given calendar
         #[diplomat::rust_link(icu::calendar::Date::new_from_iso, FnInStruct)]
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor)]
@@ -191,6 +209,18 @@ pub mod ffi {
             )?)))
         }
 
+        /// Creates a new [`Date`] from the given Rata Die
+        #[diplomat::rust_link(icu::calendar::Date::from_rata_die, FnInStruct)]
+        #[diplomat::attr(all(supports = named_constructors), named_constructor)]
+        #[diplomat::demo(default_constructor)]
+        pub fn from_rata_die(rd: i64, calendar: &Calendar) -> Result<Box<Date>, CalendarError> {
+            let cal = calendar.0.clone();
+            Ok(Box::new(Date(icu_calendar::Date::from_rata_die(
+                icu_calendar::types::RataDie::new(rd),
+                cal,
+            ))))
+        }
+
         /// Creates a new [`Date`] from an IXDTF string.
         #[diplomat::rust_link(icu::calendar::Date::try_from_str, FnInStruct)]
         #[diplomat::rust_link(icu::calendar::Date::try_from_utf8, FnInStruct, hidden)]
@@ -217,6 +247,13 @@ pub mod ffi {
         #[diplomat::rust_link(icu::calendar::Date::to_iso, FnInStruct)]
         pub fn to_iso(&self) -> Box<IsoDate> {
             Box::new(IsoDate(self.0.to_iso()))
+        }
+
+        /// Returns this date's Rata Die
+        #[diplomat::rust_link(icu::calendar::Date::to_rata_die, FnInStruct)]
+        #[diplomat::attr(auto, getter = "rata_die")]
+        pub fn to_rata_die(&self) -> i64 {
+            self.0.to_rata_die().to_i64_date()
         }
 
         /// Returns the 1-indexed day in the year for this date

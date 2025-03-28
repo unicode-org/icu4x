@@ -14,8 +14,6 @@
 # Please check in with @Manishearth, @robertbastian, or @sffc if you have questions
 
 
-icu::calendar::Date::from_fixed#FnInStruct
-icu::calendar::Date::to_fixed#FnInStruct
 icu::datetime::DateTimeFormatter#Struct
 icu::datetime::DateTimeFormatter::calendar#FnInStruct
 icu::datetime::DateTimeFormatter::format_unchecked#FnInStruct

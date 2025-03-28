@@ -20,6 +20,13 @@ export class IsoDate {
     get ffiValue(): pointer;
 
     /** 
+     * Creates a new [`IsoDate`] from the given Rata Die
+     *
+     * See the [Rust documentation for `from_rata_die`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.from_rata_die) for more information.
+     */
+    static fromRataDie(rd: bigint): IsoDate;
+
+    /** 
      * Creates a new [`IsoDate`] from an IXDTF string.
      *
      * See the [Rust documentation for `try_iso_from_str`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.try_iso_from_str) for more information.
@@ -37,6 +44,13 @@ export class IsoDate {
      * See the [Rust documentation for `to_any`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.to_any) for more information.
      */
     toAny(): Date;
+
+    /** 
+     * Returns this date's Rata Die
+     *
+     * See the [Rust documentation for `to_rata_die`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.to_rata_die) for more information.
+     */
+    get rataDie(): bigint;
 
     /** 
      * Returns the 1-indexed day in the year for this date
