@@ -265,8 +265,8 @@ impl<IB: IslamicBased> HijriYearInfo<IB> {
         r
     }
 
-    fn compute_for_fixed(fixed: RataDie, model: IB) -> Self {
-        let (y, _m, _d) = model.islamic_from_fixed(fixed);
+    fn compute_for_rd(rd: RataDie, model: IB) -> Self {
+        let (y, _m, _d) = model.islamic_from_fixed(rd);
         Self::compute_for_year(y, model)
     }
 
@@ -289,7 +289,7 @@ impl<IB: IslamicBased> HijriYearInfo<IB> {
     }
 
     /// Get the date's R.D. given (m, d) in this info's year
-    fn md_to_fixed(self, month: u8, day: u8) -> RataDie {
+    fn md_to_rd(self, month: u8, day: u8) -> RataDie {
         let ny = self.new_year();
         let month_offset = if month == 1 {
             0
@@ -300,8 +300,8 @@ impl<IB: IslamicBased> HijriYearInfo<IB> {
         ny - 1 + month_offset.into() + day.into()
     }
 
-    fn md_from_fixed(self, fixed: RataDie) -> (u8, u8) {
-        let day_of_year = (fixed - self.new_year()) as u16;
+    fn md_from_rd(self, rd: RataDie) -> (u8, u8) {
+        let day_of_year = (rd - self.new_year()) as u16;
         debug_assert!(day_of_year < 360);
         // We divide by 30, not 29, to account for the case where all months before this
         // were length 30 (possible near the beginning of the year)
@@ -344,10 +344,10 @@ impl<'b, IB: IslamicBased> HijriPrecomputedData<'b, IB> {
     }
 
     /// Returns the [`HijriYearInfo`] loading from cache or computing.
-    fn load_or_compute_info_for_fixed(&self, fixed: RataDie) -> HijriYearInfo<IB> {
+    fn load_or_compute_info_for_rd(&self, rd: RataDie) -> HijriYearInfo<IB> {
         self.data
-            .and_then(|d| d.get_for_fixed(fixed, self.model))
-            .unwrap_or_else(|| HijriYearInfo::compute_for_fixed(fixed, self.model))
+            .and_then(|d| d.get_for_rd(rd, self.model))
+            .unwrap_or_else(|| HijriYearInfo::compute_for_rd(rd, self.model))
     }
 }
 
@@ -414,24 +414,22 @@ impl Calendar for HijriObservational {
         )?))
     }
 
-    fn from_fixed(&self, fixed: RataDie) -> Self::DateInner {
-        let y = self
-            .precomputed_data()
-            .load_or_compute_info_for_fixed(fixed);
-        let (m, d) = y.md_from_fixed(fixed);
+    fn from_rata_die(&self, rd: RataDie) -> Self::DateInner {
+        let y = self.precomputed_data().load_or_compute_info_for_rd(rd);
+        let (m, d) = y.md_from_rd(rd);
         HijriDateInner(ArithmeticDate::new_unchecked(y, m, d))
     }
 
-    fn to_fixed(&self, date: &Self::DateInner) -> RataDie {
-        date.0.year.md_to_fixed(date.0.month, date.0.day)
+    fn to_rata_die(&self, date: &Self::DateInner) -> RataDie {
+        date.0.year.md_to_rd(date.0.month, date.0.day)
     }
 
     fn from_iso(&self, iso: IsoDateInner) -> Self::DateInner {
-        self.from_fixed(Iso.to_fixed(&iso))
+        self.from_rata_die(Iso.to_rata_die(&iso))
     }
 
     fn to_iso(&self, date: &Self::DateInner) -> IsoDateInner {
-        Iso.from_fixed(self.to_fixed(date))
+        Iso.from_rata_die(self.to_rata_die(date))
     }
 
     fn months_in_year(&self, date: &Self::DateInner) -> u8 {
@@ -592,24 +590,22 @@ impl Calendar for HijriUmmAlQura {
         )?))
     }
 
-    fn from_fixed(&self, fixed: RataDie) -> Self::DateInner {
-        let y = self
-            .precomputed_data()
-            .load_or_compute_info_for_fixed(fixed);
-        let (m, d) = y.md_from_fixed(fixed);
+    fn from_rata_die(&self, rd: RataDie) -> Self::DateInner {
+        let y = self.precomputed_data().load_or_compute_info_for_rd(rd);
+        let (m, d) = y.md_from_rd(rd);
         HijriUmmAlQuraDateInner(ArithmeticDate::new_unchecked(y, m, d))
     }
 
-    fn to_fixed(&self, date: &Self::DateInner) -> RataDie {
-        date.0.year.md_to_fixed(date.0.month, date.0.day)
+    fn to_rata_die(&self, date: &Self::DateInner) -> RataDie {
+        date.0.year.md_to_rd(date.0.month, date.0.day)
     }
 
     fn from_iso(&self, iso: IsoDateInner) -> Self::DateInner {
-        self.from_fixed(Iso.to_fixed(&iso))
+        self.from_rata_die(Iso.to_rata_die(&iso))
     }
 
     fn to_iso(&self, date: &Self::DateInner) -> IsoDateInner {
-        Iso.from_fixed(self.to_fixed(date))
+        Iso.from_rata_die(self.to_rata_die(date))
     }
 
     fn months_in_year(&self, date: &Self::DateInner) -> u8 {
@@ -773,14 +769,14 @@ impl Calendar for HijriCivil {
         ArithmeticDate::new_from_codes(self, year, month_code, day).map(HijriCivilDateInner)
     }
 
-    fn from_fixed(&self, fixed: RataDie) -> Self::DateInner {
-        let (y, m, d) = calendrical_calculations::islamic::islamic_civil_from_fixed(fixed);
+    fn from_rata_die(&self, rd: RataDie) -> Self::DateInner {
+        let (y, m, d) = calendrical_calculations::islamic::islamic_civil_from_fixed(rd);
 
         debug_assert!(Date::try_new_hijri_civil_with_calendar(y, m, d, HijriCivil).is_ok());
         HijriCivilDateInner(ArithmeticDate::new_unchecked(y, m, d))
     }
 
-    fn to_fixed(&self, date: &Self::DateInner) -> RataDie {
+    fn to_rata_die(&self, date: &Self::DateInner) -> RataDie {
         calendrical_calculations::islamic::fixed_from_islamic_civil(
             date.0.year,
             date.0.month,
@@ -789,11 +785,11 @@ impl Calendar for HijriCivil {
     }
 
     fn from_iso(&self, iso: IsoDateInner) -> Self::DateInner {
-        self.from_fixed(Iso.to_fixed(&iso))
+        self.from_rata_die(Iso.to_rata_die(&iso))
     }
 
     fn to_iso(&self, date: &Self::DateInner) -> IsoDateInner {
-        Iso.from_fixed(self.to_fixed(date))
+        Iso.from_rata_die(self.to_rata_die(date))
     }
 
     fn months_in_year(&self, date: &Self::DateInner) -> u8 {
@@ -943,14 +939,14 @@ impl Calendar for HijriTabular {
         ArithmeticDate::new_from_codes(self, year, month_code, day).map(HijriTabularDateInner)
     }
 
-    fn from_fixed(&self, fixed: RataDie) -> Self::DateInner {
-        let (y, m, d) = calendrical_calculations::islamic::islamic_tabular_from_fixed(fixed);
+    fn from_rata_die(&self, rd: RataDie) -> Self::DateInner {
+        let (y, m, d) = calendrical_calculations::islamic::islamic_tabular_from_fixed(rd);
 
         debug_assert!(Date::try_new_hijri_civil_with_calendar(y, m, d, HijriCivil).is_ok());
         HijriTabularDateInner(ArithmeticDate::new_unchecked(y, m, d))
     }
 
-    fn to_fixed(&self, date: &Self::DateInner) -> RataDie {
+    fn to_rata_die(&self, date: &Self::DateInner) -> RataDie {
         calendrical_calculations::islamic::fixed_from_islamic_tabular(
             date.0.year,
             date.0.month,
@@ -959,11 +955,11 @@ impl Calendar for HijriTabular {
     }
 
     fn from_iso(&self, iso: IsoDateInner) -> Self::DateInner {
-        self.from_fixed(Iso.to_fixed(&iso))
+        self.from_rata_die(Iso.to_rata_die(&iso))
     }
 
     fn to_iso(&self, date: &Self::DateInner) -> IsoDateInner {
-        Iso.from_fixed(self.to_fixed(date))
+        Iso.from_rata_die(self.to_rata_die(date))
     }
 
     fn months_in_year(&self, date: &Self::DateInner) -> u8 {
@@ -1070,13 +1066,13 @@ mod test {
         day: u8,
     }
 
-    static TEST_FIXED_DATE: [i64; 33] = [
+    static TEST_RD: [i64; 33] = [
         -214193, -61387, 25469, 49217, 171307, 210155, 253427, 369740, 400085, 434355, 452605,
         470160, 473837, 507850, 524156, 544676, 567118, 569477, 601716, 613424, 626596, 645554,
         664224, 671401, 694799, 704424, 708842, 709409, 709580, 727274, 728714, 744313, 764652,
     ];
-    // Removed: 601716 and 727274 fixed dates
-    static TEST_FIXED_DATE_UMMALQURA: [i64; 31] = [
+    // Removed: 601716 and 727274
+    static TEST_RD_UMMALQURA: [i64; 31] = [
         -214193, -61387, 25469, 49217, 171307, 210155, 253427, 369740, 400085, 434355, 452605,
         470160, 473837, 507850, 524156, 544676, 567118, 569477, 613424, 626596, 645554, 664224,
         671401, 694799, 704424, 708842, 709409, 709580, 728714, 744313, 764652,
@@ -1745,116 +1741,110 @@ mod test {
     ];
 
     #[test]
-    fn test_observational_hijri_from_fixed() {
+    fn test_observational_hijri_from_rd() {
         let calendar = HijriObservational::new_mecca();
         let calendar = Ref(&calendar);
-        for (case, f_date) in OBSERVATIONAL_CASES.iter().zip(TEST_FIXED_DATE.iter()) {
+        for (case, f_date) in OBSERVATIONAL_CASES.iter().zip(TEST_RD.iter()) {
             let date = Date::try_new_observational_hijri_with_calendar(
                 case.year, case.month, case.day, calendar,
             )
             .unwrap();
-            let iso = Date::from_fixed(RataDie::new(*f_date), Iso);
+            let iso = Date::from_rata_die(RataDie::new(*f_date), Iso);
 
             assert_eq!(iso.to_calendar(calendar).inner, date.inner, "{case:?}");
         }
     }
 
     #[test]
-    fn test_fixed_from_observational_hijri() {
+    fn test_rd_from_observational_hijri() {
         let calendar = HijriObservational::new_mecca();
         let calendar = Ref(&calendar);
-        for (case, f_date) in OBSERVATIONAL_CASES.iter().zip(TEST_FIXED_DATE.iter()) {
+        for (case, f_date) in OBSERVATIONAL_CASES.iter().zip(TEST_RD.iter()) {
             let date = Date::try_new_observational_hijri_with_calendar(
                 case.year, case.month, case.day, calendar,
             )
             .unwrap();
-            assert_eq!(date.to_fixed(), RataDie::new(*f_date), "{case:?}");
+            assert_eq!(date.to_rata_die(), RataDie::new(*f_date), "{case:?}");
         }
     }
 
     #[test]
-    fn test_fixed_from_hijri() {
+    fn test_rd_from_hijri() {
         let calendar = HijriCivil::new();
         let calendar = Ref(&calendar);
-        for (case, f_date) in ARITHMETIC_CASES.iter().zip(TEST_FIXED_DATE.iter()) {
+        for (case, f_date) in ARITHMETIC_CASES.iter().zip(TEST_RD.iter()) {
             let date =
                 Date::try_new_hijri_civil_with_calendar(case.year, case.month, case.day, calendar)
                     .unwrap();
-            assert_eq!(date.to_fixed(), RataDie::new(*f_date), "{case:?}");
+            assert_eq!(date.to_rata_die(), RataDie::new(*f_date), "{case:?}");
         }
     }
 
     #[test]
-    fn test_hijri_from_fixed() {
+    fn test_hijri_from_rd() {
         let calendar = HijriCivil::new();
         let calendar = Ref(&calendar);
-        for (case, f_date) in ARITHMETIC_CASES.iter().zip(TEST_FIXED_DATE.iter()) {
+        for (case, f_date) in ARITHMETIC_CASES.iter().zip(TEST_RD.iter()) {
             let date =
                 Date::try_new_hijri_civil_with_calendar(case.year, case.month, case.day, calendar)
                     .unwrap();
-            let date_fixed = Date::from_fixed(RataDie::new(*f_date), calendar);
+            let date_rd = Date::from_rata_die(RataDie::new(*f_date), calendar);
 
-            assert_eq!(date, date_fixed, "{case:?}");
+            assert_eq!(date, date_rd, "{case:?}");
         }
     }
 
     #[test]
-    fn test_fixed_from_hijri_tbla() {
+    fn test_rd_from_hijri_tbla() {
         let calendar = HijriTabular::new();
         let calendar = Ref(&calendar);
-        for (case, f_date) in TABULAR_CASES.iter().zip(TEST_FIXED_DATE.iter()) {
+        for (case, f_date) in TABULAR_CASES.iter().zip(TEST_RD.iter()) {
             let date = Date::try_new_hijri_tabular_with_calendar(
                 case.year, case.month, case.day, calendar,
             )
             .unwrap();
-            assert_eq!(date.to_fixed(), RataDie::new(*f_date), "{case:?}");
+            assert_eq!(date.to_rata_die(), RataDie::new(*f_date), "{case:?}");
         }
     }
 
     #[test]
-    fn test_hijri_tbla_from_fixed() {
+    fn test_hijri_tbla_from_rd() {
         let calendar = HijriTabular::new();
         let calendar = Ref(&calendar);
-        for (case, f_date) in TABULAR_CASES.iter().zip(TEST_FIXED_DATE.iter()) {
+        for (case, f_date) in TABULAR_CASES.iter().zip(TEST_RD.iter()) {
             let date = Date::try_new_hijri_tabular_with_calendar(
                 case.year, case.month, case.day, calendar,
             )
             .unwrap();
-            let date_fixed = Date::from_fixed(RataDie::new(*f_date), calendar);
+            let date_rd = Date::from_rata_die(RataDie::new(*f_date), calendar);
 
-            assert_eq!(date, date_fixed, "{case:?}");
+            assert_eq!(date, date_rd, "{case:?}");
         }
     }
 
     #[test]
-    fn test_saudi_hijri_from_fixed() {
+    fn test_saudi_hijri_from_rd() {
         let calendar = HijriUmmAlQura::new();
         let calendar = Ref(&calendar);
-        for (case, f_date) in UMMALQURA_DATE_EXPECTED
-            .iter()
-            .zip(TEST_FIXED_DATE_UMMALQURA.iter())
-        {
+        for (case, f_date) in UMMALQURA_DATE_EXPECTED.iter().zip(TEST_RD_UMMALQURA.iter()) {
             let date =
                 Date::try_new_ummalqura_with_calendar(case.year, case.month, case.day, calendar)
                     .unwrap();
-            let date_fixed = Date::from_fixed(RataDie::new(*f_date), calendar);
+            let date_rd = Date::from_rata_die(RataDie::new(*f_date), calendar);
 
-            assert_eq!(date, date_fixed, "{case:?}");
+            assert_eq!(date, date_rd, "{case:?}");
         }
     }
 
     #[test]
-    fn test_fixed_from_saudi_hijri() {
+    fn test_rd_from_saudi_hijri() {
         let calendar = HijriUmmAlQura::new();
         let calendar = Ref(&calendar);
-        for (case, f_date) in UMMALQURA_DATE_EXPECTED
-            .iter()
-            .zip(TEST_FIXED_DATE_UMMALQURA.iter())
-        {
+        for (case, f_date) in UMMALQURA_DATE_EXPECTED.iter().zip(TEST_RD_UMMALQURA.iter()) {
             let date =
                 Date::try_new_ummalqura_with_calendar(case.year, case.month, case.day, calendar)
                     .unwrap();
-            assert_eq!(date.to_fixed(), RataDie::new(*f_date), "{case:?}");
+            assert_eq!(date.to_rata_die(), RataDie::new(*f_date), "{case:?}");
         }
     }
 
@@ -1876,10 +1866,10 @@ mod test {
         let expected_number_of_days =
             Date::try_new_observational_hijri_with_calendar(END_YEAR, 1, 1, calendar)
                 .unwrap()
-                .to_fixed()
+                .to_rata_die()
                 - Date::try_new_observational_hijri_with_calendar(START_YEAR, 1, 1, calendar)
                     .unwrap()
-                    .to_fixed(); // The number of days between Hijri years -1245 and 1518
+                    .to_rata_die(); // The number of days between Hijri years -1245 and 1518
         let tolerance = 1; // One day tolerance (See Astronomical::month_length for more context)
 
         assert!(
@@ -1906,9 +1896,9 @@ mod test {
         let expected_number_of_days =
             Date::try_new_ummalqura_with_calendar(END_YEAR, 1, 1, calendar)
                 .unwrap()
-                .to_fixed()
+                .to_rata_die()
                 - (Date::try_new_ummalqura_with_calendar(START_YEAR, 1, 1, calendar).unwrap())
-                    .to_fixed(); // The number of days between Umm al-Qura Hijri years -1245 and 1518
+                    .to_rata_die(); // The number of days between Umm al-Qura Hijri years -1245 and 1518
 
         assert_eq!(sum_days_in_year, expected_number_of_days);
     }

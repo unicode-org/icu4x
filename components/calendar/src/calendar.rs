@@ -41,11 +41,11 @@ pub trait Calendar {
     /// Obtain an ISO date from this date
     fn to_iso(&self, date: &Self::DateInner) -> IsoDateInner;
 
-    /// Construct the date from a fixed day
+    /// Construct the date from a [`RataDie`]
     #[allow(clippy::wrong_self_convention)]
-    fn from_fixed(&self, fixed: RataDie) -> Self::DateInner;
-    /// Obtain a fixed day from this date
-    fn to_fixed(&self, date: &Self::DateInner) -> RataDie;
+    fn from_rata_die(&self, rd: RataDie) -> Self::DateInner;
+    /// Obtain a [`RataDie`] from this date
+    fn to_rata_die(&self, date: &Self::DateInner) -> RataDie;
 
     /// Count the number of months in a given year, specified by providing a date
     /// from that year

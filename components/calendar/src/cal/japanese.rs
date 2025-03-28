@@ -190,12 +190,12 @@ impl Calendar for Japanese {
         self.new_japanese_date_inner(era.unwrap_or("gregory"), year, month, day)
     }
 
-    fn from_fixed(&self, fixed: RataDie) -> Self::DateInner {
-        self.from_iso(Iso.from_fixed(fixed))
+    fn from_rata_die(&self, rd: RataDie) -> Self::DateInner {
+        self.from_iso(Iso.from_rata_die(rd))
     }
 
-    fn to_fixed(&self, date: &Self::DateInner) -> RataDie {
-        Iso.to_fixed(&self.to_iso(date))
+    fn to_rata_die(&self, date: &Self::DateInner) -> RataDie {
+        Iso.to_rata_die(&self.to_iso(date))
     }
 
     fn from_iso(&self, iso: IsoDateInner) -> JapaneseDateInner {
@@ -300,12 +300,12 @@ impl Calendar for JapaneseExtended {
         self.0.from_codes(era, year, month_code, day)
     }
 
-    fn from_fixed(&self, fixed: RataDie) -> Self::DateInner {
-        Japanese::from_fixed(&self.0, fixed)
+    fn from_rata_die(&self, rd: RataDie) -> Self::DateInner {
+        Japanese::from_rata_die(&self.0, rd)
     }
 
-    fn to_fixed(&self, date: &Self::DateInner) -> RataDie {
-        Japanese::to_fixed(&self.0, date)
+    fn to_rata_die(&self, date: &Self::DateInner) -> RataDie {
+        Japanese::to_rata_die(&self.0, date)
     }
 
     fn from_iso(&self, iso: IsoDateInner) -> JapaneseDateInner {

@@ -110,9 +110,9 @@ impl Calendar for Coptic {
         ArithmeticDate::new_from_codes(self, year, month_code, day).map(CopticDateInner)
     }
 
-    fn from_fixed(&self, fixed: RataDie) -> Self::DateInner {
+    fn from_rata_die(&self, rd: RataDie) -> Self::DateInner {
         CopticDateInner(
-            match calendrical_calculations::coptic::coptic_from_fixed(fixed) {
+            match calendrical_calculations::coptic::coptic_from_fixed(rd) {
                 Err(I32CastError::BelowMin) => ArithmeticDate::min_date(),
                 Err(I32CastError::AboveMax) => ArithmeticDate::max_date(),
                 Ok((year, month, day)) => ArithmeticDate::new_unchecked(year, month, day),
@@ -120,16 +120,16 @@ impl Calendar for Coptic {
         )
     }
 
-    fn to_fixed(&self, date: &Self::DateInner) -> RataDie {
+    fn to_rata_die(&self, date: &Self::DateInner) -> RataDie {
         calendrical_calculations::coptic::fixed_from_coptic(date.0.year, date.0.month, date.0.day)
     }
 
     fn from_iso(&self, iso: IsoDateInner) -> CopticDateInner {
-        self.from_fixed(Iso.to_fixed(&iso))
+        self.from_rata_die(Iso.to_rata_die(&iso))
     }
 
     fn to_iso(&self, date: &Self::DateInner) -> IsoDateInner {
-        Iso.from_fixed(self.to_fixed(date))
+        Iso.from_rata_die(self.to_rata_die(date))
     }
 
     fn months_in_year(&self, date: &Self::DateInner) -> u8 {

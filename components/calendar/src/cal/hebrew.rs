@@ -198,10 +198,10 @@ impl Calendar for Hebrew {
         )?))
     }
 
-    fn from_fixed(&self, fixed: RataDie) -> Self::DateInner {
-        let (year, h_year) = YearInfo::year_containing_rd(fixed);
+    fn from_rata_die(&self, rd: RataDie) -> Self::DateInner {
+        let (year, h_year) = YearInfo::year_containing_rd(rd);
         // Obtaining a 1-indexed day-in-year value
-        let day = fixed - year.new_year() + 1;
+        let day = rd - year.new_year() + 1;
         let day = u16::try_from(day).unwrap_or(u16::MAX);
 
         let year = HebrewYearInfo::compute_with_keviyah(year.keviyah, h_year);
@@ -209,7 +209,7 @@ impl Calendar for Hebrew {
         HebrewDateInner(ArithmeticDate::new_unchecked(year, month, day))
     }
 
-    fn to_fixed(&self, date: &Self::DateInner) -> RataDie {
+    fn to_rata_die(&self, date: &Self::DateInner) -> RataDie {
         let year = date.0.year.keviyah.year_info(date.0.year.value);
 
         let ny = year.new_year();
@@ -220,11 +220,11 @@ impl Calendar for Hebrew {
     }
 
     fn from_iso(&self, iso: IsoDateInner) -> Self::DateInner {
-        self.from_fixed(Iso.to_fixed(&iso))
+        self.from_rata_die(Iso.to_rata_die(&iso))
     }
 
     fn to_iso(&self, date: &Self::DateInner) -> IsoDateInner {
-        Iso.from_fixed(self.to_fixed(date))
+        Iso.from_rata_die(self.to_rata_die(date))
     }
 
     fn months_in_year(&self, date: &Self::DateInner) -> u8 {

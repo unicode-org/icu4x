@@ -235,12 +235,12 @@ impl Calendar for AnyCalendar {
         match_cal!(match self: (c) => c.from_iso(iso))
     }
 
-    fn from_fixed(&self, fixed: calendrical_calculations::rata_die::RataDie) -> Self::DateInner {
-        match_cal!(match self: (c) => c.from_fixed(fixed))
+    fn from_rata_die(&self, rd: calendrical_calculations::rata_die::RataDie) -> Self::DateInner {
+        match_cal!(match self: (c) => c.from_rata_die(rd))
     }
 
-    fn to_fixed(&self, date: &Self::DateInner) -> calendrical_calculations::rata_die::RataDie {
-        match_cal_and_date!(match (self, date): (c, d) => c.to_fixed(d))
+    fn to_rata_die(&self, date: &Self::DateInner) -> calendrical_calculations::rata_die::RataDie {
+        match_cal_and_date!(match (self, date): (c, d) => c.to_rata_die(d))
     }
 
     fn to_iso(&self, date: &Self::DateInner) -> IsoDateInner {

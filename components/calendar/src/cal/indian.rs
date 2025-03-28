@@ -106,12 +106,12 @@ impl Calendar for Indian {
         ArithmeticDate::new_from_codes(self, year, month_code, day).map(IndianDateInner)
     }
 
-    fn from_fixed(&self, fixed: RataDie) -> Self::DateInner {
-        self.from_iso(Iso.from_fixed(fixed))
+    fn from_rata_die(&self, rd: RataDie) -> Self::DateInner {
+        self.from_iso(Iso.from_rata_die(rd))
     }
 
-    fn to_fixed(&self, date: &Self::DateInner) -> RataDie {
-        Iso.to_fixed(&self.to_iso(date))
+    fn to_rata_die(&self, date: &Self::DateInner) -> RataDie {
+        Iso.to_rata_die(&self.to_iso(date))
     }
 
     // Algorithms directly implemented in icu_calendar since they're not from the book
@@ -447,10 +447,10 @@ mod tests {
     fn test_roundtrip_near_rd_zero() {
         for i in -1000..=1000 {
             let initial = RataDie::new(i);
-            let result = Date::from_fixed(initial, Iso)
+            let result = Date::from_rata_die(initial, Iso)
                 .to_calendar(Indian)
                 .to_iso()
-                .to_fixed();
+                .to_rata_die();
             assert_eq!(
                 initial, result,
                 "Roundtrip failed for initial: {initial:?}, result: {result:?}"
@@ -463,10 +463,10 @@ mod tests {
         // Epoch start: RD 28570
         for i in 27570..=29570 {
             let initial = RataDie::new(i);
-            let result = Date::from_fixed(initial, Iso)
+            let result = Date::from_rata_die(initial, Iso)
                 .to_calendar(Indian)
                 .to_iso()
-                .to_fixed();
+                .to_rata_die();
             assert_eq!(
                 initial, result,
                 "Roundtrip failed for initial: {initial:?}, result: {result:?}"
@@ -481,8 +481,8 @@ mod tests {
                 let rd_i = RataDie::new(i);
                 let rd_j = RataDie::new(j);
 
-                let indian_i = Date::from_fixed(rd_i, Indian);
-                let indian_j = Date::from_fixed(rd_j, Indian);
+                let indian_i = Date::from_rata_die(rd_i, Indian);
+                let indian_j = Date::from_rata_die(rd_j, Indian);
 
                 assert_eq!(i.cmp(&j), indian_i.cmp(&indian_j), "Directionality test failed for i: {i}, j: {j}, indian_i: {indian_i:?}, indian_j: {indian_j:?}");
             }
@@ -494,8 +494,8 @@ mod tests {
         // Epoch start: RD 28570
         for i in 28470..=28670 {
             for j in 28470..=28670 {
-                let indian_i = Date::from_fixed(RataDie::new(i), Indian);
-                let indian_j = Date::from_fixed(RataDie::new(j), Indian);
+                let indian_i = Date::from_rata_die(RataDie::new(i), Indian);
+                let indian_j = Date::from_rata_die(RataDie::new(j), Indian);
 
                 assert_eq!(i.cmp(&j), indian_i.cmp(&indian_j), "Directionality test failed for i: {i}, j: {j}, indian_i: {indian_i:?}, indian_j: {indian_j:?}");
             }

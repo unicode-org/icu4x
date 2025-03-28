@@ -75,12 +75,12 @@ impl Calendar for Roc {
             .map(RocDateInner)
     }
 
-    fn from_fixed(&self, fixed: RataDie) -> Self::DateInner {
-        RocDateInner(Iso.from_fixed(fixed))
+    fn from_rata_die(&self, rd: RataDie) -> Self::DateInner {
+        RocDateInner(Iso.from_rata_die(rd))
     }
 
-    fn to_fixed(&self, date: &Self::DateInner) -> RataDie {
-        Iso.to_fixed(&date.0)
+    fn to_rata_die(&self, date: &Self::DateInner) -> RataDie {
+        Iso.to_rata_die(&date.0)
     }
 
     fn from_iso(&self, iso: IsoDateInner) -> Self::DateInner {
@@ -210,7 +210,7 @@ mod test {
 
     #[derive(Debug)]
     struct TestCase {
-        fixed_date: RataDie,
+        rd: RataDie,
         iso_year: i32,
         iso_month: u8,
         iso_day: u8,
@@ -221,24 +221,33 @@ mod test {
     }
 
     fn check_test_case(case: TestCase) {
-        let iso_from_fixed = Date::from_fixed(case.fixed_date, Iso);
-        let roc_from_fixed = Date::from_fixed(case.fixed_date, Roc);
-        assert_eq!(roc_from_fixed.year().era_year().unwrap(), case.expected_year,
-            "Failed year check from fixed: {case:?}\nISO: {iso_from_fixed:?}\nROC: {roc_from_fixed:?}");
-        assert_eq!(roc_from_fixed.year().standard_era().unwrap(), case.expected_era,
-            "Failed era check from fixed: {case:?}\nISO: {iso_from_fixed:?}\nROC: {roc_from_fixed:?}");
-        assert_eq!(roc_from_fixed.month().ordinal, case.expected_month,
-            "Failed month check from fixed: {case:?}\nISO: {iso_from_fixed:?}\nROC: {roc_from_fixed:?}");
-        assert_eq!(roc_from_fixed.day_of_month().0, case.expected_day,
-            "Failed day_of_month check from fixed: {case:?}\nISO: {iso_from_fixed:?}\nROC: {roc_from_fixed:?}");
+        let iso_from_rd = Date::from_rata_die(case.rd, Iso);
+        let roc_from_rd = Date::from_rata_die(case.rd, Roc);
+        assert_eq!(
+            roc_from_rd.year().era_year().unwrap(),
+            case.expected_year,
+            "Failed year check from RD: {case:?}\nISO: {iso_from_rd:?}\nROC: {roc_from_rd:?}"
+        );
+        assert_eq!(
+            roc_from_rd.year().standard_era().unwrap(),
+            case.expected_era,
+            "Failed era check from RD: {case:?}\nISO: {iso_from_rd:?}\nROC: {roc_from_rd:?}"
+        );
+        assert_eq!(
+            roc_from_rd.month().ordinal,
+            case.expected_month,
+            "Failed month check from RD: {case:?}\nISO: {iso_from_rd:?}\nROC: {roc_from_rd:?}"
+        );
+        assert_eq!(roc_from_rd.day_of_month().0, case.expected_day,
+            "Failed day_of_month check from RD: {case:?}\nISO: {iso_from_rd:?}\nROC: {roc_from_rd:?}");
 
         let iso_from_case = Date::try_new_iso(case.iso_year, case.iso_month, case.iso_day)
             .expect("Failed to initialize ISO date for {case:?}");
         let roc_from_case = Date::new_from_iso(iso_from_case, Roc);
-        assert_eq!(iso_from_fixed, iso_from_case,
-            "ISO from fixed not equal to ISO generated from manually-input ymd\nCase: {case:?}\nFixed: {iso_from_fixed:?}\nManual: {iso_from_case:?}");
-        assert_eq!(roc_from_fixed, roc_from_case,
-            "ROC date from fixed not equal to ROC generated from manually-input ymd\nCase: {case:?}\nFixed: {roc_from_fixed:?}\nManual: {roc_from_case:?}");
+        assert_eq!(iso_from_rd, iso_from_case,
+            "ISO from RD not equal to ISO generated from manually-input ymd\nCase: {case:?}\nRD: {iso_from_rd:?}\nManual: {iso_from_case:?}");
+        assert_eq!(roc_from_rd, roc_from_case,
+            "ROC date from RD not equal to ROC generated from manually-input ymd\nCase: {case:?}\nRD: {roc_from_rd:?}\nManual: {roc_from_case:?}");
     }
 
     #[test]
@@ -250,7 +259,7 @@ mod test {
 
         let cases = [
             TestCase {
-                fixed_date: RataDie::new(697978),
+                rd: RataDie::new(697978),
                 iso_year: 1912,
                 iso_month: 1,
                 iso_day: 1,
@@ -260,7 +269,7 @@ mod test {
                 expected_day: 1,
             },
             TestCase {
-                fixed_date: RataDie::new(698037),
+                rd: RataDie::new(698037),
                 iso_year: 1912,
                 iso_month: 2,
                 iso_day: 29,
@@ -270,7 +279,7 @@ mod test {
                 expected_day: 29,
             },
             TestCase {
-                fixed_date: RataDie::new(698524),
+                rd: RataDie::new(698524),
                 iso_year: 1913,
                 iso_month: 6,
                 iso_day: 30,
@@ -280,7 +289,7 @@ mod test {
                 expected_day: 30,
             },
             TestCase {
-                fixed_date: RataDie::new(738714),
+                rd: RataDie::new(738714),
                 iso_year: 2023,
                 iso_month: 7,
                 iso_day: 13,
@@ -304,7 +313,7 @@ mod test {
         // Jan 1. 1912 CE = RD 697978
         let cases = [
             TestCase {
-                fixed_date: RataDie::new(697977),
+                rd: RataDie::new(697977),
                 iso_year: 1911,
                 iso_month: 12,
                 iso_day: 31,
@@ -314,7 +323,7 @@ mod test {
                 expected_day: 31,
             },
             TestCase {
-                fixed_date: RataDie::new(697613),
+                rd: RataDie::new(697613),
                 iso_year: 1911,
                 iso_month: 1,
                 iso_day: 1,
@@ -324,7 +333,7 @@ mod test {
                 expected_day: 1,
             },
             TestCase {
-                fixed_date: RataDie::new(697612),
+                rd: RataDie::new(697612),
                 iso_year: 1910,
                 iso_month: 12,
                 iso_day: 31,
@@ -334,7 +343,7 @@ mod test {
                 expected_day: 31,
             },
             TestCase {
-                fixed_date: RataDie::new(696576),
+                rd: RataDie::new(696576),
                 iso_year: 1908,
                 iso_month: 2,
                 iso_day: 29,
@@ -344,7 +353,7 @@ mod test {
                 expected_day: 29,
             },
             TestCase {
-                fixed_date: RataDie::new(1),
+                rd: RataDie::new(1),
                 iso_year: 1,
                 iso_month: 1,
                 iso_day: 1,
@@ -354,7 +363,7 @@ mod test {
                 expected_day: 1,
             },
             TestCase {
-                fixed_date: RataDie::new(0),
+                rd: RataDie::new(0),
                 iso_year: 0,
                 iso_month: 12,
                 iso_day: 31,
@@ -372,17 +381,17 @@ mod test {
 
     #[test]
     fn test_roc_directionality_near_epoch() {
-        // Tests that for a large range of fixed dates near the beginning of the minguo era (CE 1912),
-        // the comparison between those two fixed dates should be equal to the comparison between their
+        // Tests that for a large range of RDs near the beginning of the minguo era (CE 1912),
+        // the comparison between those two RDs should be equal to the comparison between their
         // corresponding YMD.
         let rd_epoch_start = 697978;
         for i in (rd_epoch_start - 100)..=(rd_epoch_start + 100) {
             for j in (rd_epoch_start - 100)..=(rd_epoch_start + 100) {
-                let iso_i = Date::from_fixed(RataDie::new(i), Iso);
-                let iso_j = Date::from_fixed(RataDie::new(j), Iso);
+                let iso_i = Date::from_rata_die(RataDie::new(i), Iso);
+                let iso_j = Date::from_rata_die(RataDie::new(j), Iso);
 
-                let roc_i = Date::from_fixed(RataDie::new(i), Roc);
-                let roc_j = Date::from_fixed(RataDie::new(j), Roc);
+                let roc_i = Date::from_rata_die(RataDie::new(i), Roc);
+                let roc_j = Date::from_rata_die(RataDie::new(j), Roc);
 
                 assert_eq!(
                     i.cmp(&j),
@@ -403,11 +412,11 @@ mod test {
         // Same as `test_directionality_near_epoch`, but with a focus around RD 0
         for i in -100..=100 {
             for j in -100..100 {
-                let iso_i = Date::from_fixed(RataDie::new(i), Iso);
-                let iso_j = Date::from_fixed(RataDie::new(j), Iso);
+                let iso_i = Date::from_rata_die(RataDie::new(i), Iso);
+                let iso_j = Date::from_rata_die(RataDie::new(j), Iso);
 
-                let roc_i = Date::from_fixed(RataDie::new(i), Roc);
-                let roc_j = Date::from_fixed(RataDie::new(j), Roc);
+                let roc_i = Date::from_rata_die(RataDie::new(i), Roc);
+                let roc_j = Date::from_rata_die(RataDie::new(j), Roc);
 
                 assert_eq!(
                     i.cmp(&j),

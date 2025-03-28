@@ -134,23 +134,19 @@ impl<A: AsCalendar> Date<A> {
         Ok(Date { inner, calendar })
     }
 
-    /// Construct a date from a fixed day and some calendar representation.
-    ///
-    /// See [`RataDie`] for more information on fixed day numbers.
+    /// Construct a date from a [`RataDie`] and some calendar representation
     #[inline]
-    pub fn from_fixed(fixed: RataDie, calendar: A) -> Self {
+    pub fn from_rata_die(rd: RataDie, calendar: A) -> Self {
         Date {
-            inner: calendar.as_calendar().from_fixed(fixed),
+            inner: calendar.as_calendar().from_rata_die(rd),
             calendar,
         }
     }
 
-    /// Convert the Date to a fixed day.
-    ///
-    /// See [`RataDie`] for more information on fixed day numbers.
+    /// Convert the date to a [`RataDie`]
     #[inline]
-    pub fn to_fixed(&self) -> RataDie {
-        self.calendar.as_calendar().to_fixed(self.inner())
+    pub fn to_rata_die(&self) -> RataDie {
+        self.calendar.as_calendar().to_rata_die(self.inner())
     }
 
     /// Construct a date from an ISO date and some calendar representation
@@ -193,7 +189,7 @@ impl<A: AsCalendar> Date<A> {
     /// The day of the week for this date
     #[inline]
     pub fn day_of_week(&self) -> types::Weekday {
-        self.to_fixed().into()
+        self.to_rata_die().into()
     }
 
     /// Add a `duration` to this date, mutating it

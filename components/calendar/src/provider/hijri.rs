@@ -89,20 +89,20 @@ impl HijriCache<'_> {
     /// Get the cached data for the Hijri Year corresponding to a given day.
     ///
     /// Also returns the corresponding extended year.
-    pub(crate) fn get_for_fixed<IB: IslamicBased>(
+    pub(crate) fn get_for_rd<IB: IslamicBased>(
         &self,
-        fixed: RataDie,
+        rd: RataDie,
         model: IB,
     ) -> Option<HijriYearInfo<IB>> {
-        let extended_year = IB::approximate_islamic_from_fixed(fixed);
+        let extended_year = IB::approximate_islamic_from_fixed(rd);
 
         let year = self.get_for_extended_year(extended_year, model)?;
 
-        if fixed < year.new_year() {
+        if rd < year.new_year() {
             self.get_for_extended_year(extended_year - 1, model)
         } else {
             let next_year = self.get_for_extended_year(extended_year + 1, model)?;
-            Some(if fixed < next_year.new_year() {
+            Some(if rd < next_year.new_year() {
                 year
             } else {
                 next_year
