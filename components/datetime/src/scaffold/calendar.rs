@@ -210,12 +210,8 @@ where
     type Hebrew: DataMarker<DataStruct = M::DataStruct>;
     /// The type for a [`Indian`] calendar
     type Indian: DataMarker<DataStruct = M::DataStruct>;
-    /// The type for an [`HijriRuleBased`] calendar
-    type HijriRuleBased: DataMarker<DataStruct = M::DataStruct>;
-    /// The type for an [`HijriObservational`] calendar
-    type HijriObservational: DataMarker<DataStruct = M::DataStruct>;
-    /// The type for an [`HijriUmmAlQura`] calendar
-    type HijriUmmAlQura: DataMarker<DataStruct = M::DataStruct>;
+    /// The type for Hirji calendars
+    type Hijri: DataMarker<DataStruct = M::DataStruct>;
     /// The type for a [`Japanese`] calendar
     type Japanese: DataMarker<DataStruct = M::DataStruct>;
     /// The type for a [`Persian`] calendar
@@ -250,9 +246,7 @@ where
     type Gregorian = NeverMarker<M::DataStruct>;
     type Hebrew = NeverMarker<M::DataStruct>;
     type Indian = NeverMarker<M::DataStruct>;
-    type HijriRuleBased = NeverMarker<M::DataStruct>;
-    type HijriObservational = NeverMarker<M::DataStruct>;
-    type HijriUmmAlQura = NeverMarker<M::DataStruct>;
+    type Hijri = NeverMarker<M::DataStruct>;
     type Japanese = NeverMarker<M::DataStruct>;
     type Persian = NeverMarker<M::DataStruct>;
     type Roc = NeverMarker<M::DataStruct>;
@@ -568,9 +562,7 @@ where
         + DataProvider<H::Gregorian>
         + DataProvider<H::Hebrew>
         + DataProvider<H::Indian>
-        + DataProvider<H::HijriRuleBased>
-        + DataProvider<H::HijriObservational>
-        + DataProvider<H::HijriUmmAlQura>
+        + DataProvider<H::Hijri>
         + DataProvider<H::Japanese>
         + DataProvider<H::Persian>
         + DataProvider<H::Roc>,
@@ -587,11 +579,10 @@ where
             Gregorian => H::Gregorian::bind(p).load_bound(req),
             Hebrew => H::Hebrew::bind(p).load_bound(req),
             Indian => H::Indian::bind(p).load_bound(req),
-            HijriRuleBasedCivil | HijriRuleBasedAstronomical => {
-                H::HijriRuleBased::bind(p).load_bound(req)
-            }
-            HijriObservationalMecca => H::HijriObservational::bind(p).load_bound(req),
-            HijriUmmAlQura => H::HijriUmmAlQura::bind(p).load_bound(req),
+            HijriRuleBasedCivil
+            | HijriRuleBasedAstronomical
+            | HijriObservationalMecca
+            | HijriUmmAlQura => H::Hijri::bind(p).load_bound(req),
             Japanese => H::Japanese::bind(p).load_bound(req),
             Persian => H::Persian::bind(p).load_bound(req),
             Roc => H::Roc::bind(p).load_bound(req),
@@ -608,9 +599,10 @@ where
             Gregorian => H::Gregorian::INFO,
             Hebrew => H::Hebrew::INFO,
             Indian => H::Indian::INFO,
-            HijriRuleBasedCivil | HijriRuleBasedAstronomical => H::HijriRuleBased::INFO,
-            HijriObservationalMecca => H::HijriObservational::INFO,
-            HijriUmmAlQura => H::HijriUmmAlQura::INFO,
+            HijriRuleBasedCivil
+            | HijriRuleBasedAstronomical
+            | HijriObservationalMecca
+            | HijriUmmAlQura => H::Hijri::INFO,
             Japanese => H::Japanese::INFO,
             Persian => H::Persian::INFO,
             Roc => H::Roc::INFO,
@@ -618,45 +610,50 @@ where
     }
 }
 
-macro_rules! impl_load_any_calendar {
-    ([$(($erased:ident, $marker:ident)),+], [$($kind_cal:ident),+]) => {
-        impl_load_any_calendar!(@expand [$(($erased, $marker)),+], [$($kind_cal),+]);
-    };
-    (@expand [$(($erased:ident, $marker:ident)),+], $tail1:tt) => {
-        $(impl_load_any_calendar!(@single_impl $erased, $marker, $tail1);)+
-    };
-    (@single_impl $erased:ident, $marker:ident, [$($kind_cal:ident),+]) => {
-        impl CalMarkers<$erased> for FullDataCalMarkers {
-            $(
-                type $kind_cal = <$kind_cal as CldrCalendar>::$marker;
-            )+
-        }
-    };
+impl CalMarkers<YearNamesV1> for FullDataCalMarkers {
+    type Buddhist = <Buddhist as CldrCalendar>::YearNamesV1;
+    type Chinese = <Chinese as CldrCalendar>::YearNamesV1;
+    type Coptic = <Coptic as CldrCalendar>::YearNamesV1;
+    type Dangi = <Dangi as CldrCalendar>::YearNamesV1;
+    type Ethiopian = <Ethiopian as CldrCalendar>::YearNamesV1;
+    type Gregorian = <Gregorian as CldrCalendar>::YearNamesV1;
+    type Hebrew = <Hebrew as CldrCalendar>::YearNamesV1;
+    type Indian = <Indian as CldrCalendar>::YearNamesV1;
+    type Hijri = <HijriUmmAlQura as CldrCalendar>::YearNamesV1;
+    type Japanese = <Japanese as CldrCalendar>::YearNamesV1;
+    type Persian = <Persian as CldrCalendar>::YearNamesV1;
+    type Roc = <Roc as CldrCalendar>::YearNamesV1;
 }
 
-impl_load_any_calendar!(
-    [
-        (YearNamesV1, YearNamesV1),
-        (MonthNamesV1, MonthNamesV1),
-        (ErasedPackedPatterns, SkeletaV1)
-    ],
-    [
-        Buddhist,
-        Chinese,
-        Coptic,
-        Dangi,
-        Ethiopian,
-        Gregorian,
-        Hebrew,
-        Indian,
-        HijriRuleBased,
-        HijriObservational,
-        HijriUmmAlQura,
-        Japanese,
-        Persian,
-        Roc
-    ]
-);
+impl CalMarkers<MonthNamesV1> for FullDataCalMarkers {
+    type Buddhist = <Buddhist as CldrCalendar>::MonthNamesV1;
+    type Chinese = <Chinese as CldrCalendar>::MonthNamesV1;
+    type Coptic = <Coptic as CldrCalendar>::MonthNamesV1;
+    type Dangi = <Dangi as CldrCalendar>::MonthNamesV1;
+    type Ethiopian = <Ethiopian as CldrCalendar>::MonthNamesV1;
+    type Gregorian = <Gregorian as CldrCalendar>::MonthNamesV1;
+    type Hebrew = <Hebrew as CldrCalendar>::MonthNamesV1;
+    type Indian = <Indian as CldrCalendar>::MonthNamesV1;
+    type Hijri = <HijriUmmAlQura as CldrCalendar>::MonthNamesV1;
+    type Japanese = <Japanese as CldrCalendar>::MonthNamesV1;
+    type Persian = <Persian as CldrCalendar>::MonthNamesV1;
+    type Roc = <Roc as CldrCalendar>::MonthNamesV1;
+}
+
+impl CalMarkers<ErasedPackedPatterns> for FullDataCalMarkers {
+    type Buddhist = <Buddhist as CldrCalendar>::SkeletaV1;
+    type Chinese = <Chinese as CldrCalendar>::SkeletaV1;
+    type Coptic = <Coptic as CldrCalendar>::SkeletaV1;
+    type Dangi = <Dangi as CldrCalendar>::SkeletaV1;
+    type Ethiopian = <Ethiopian as CldrCalendar>::SkeletaV1;
+    type Gregorian = <Gregorian as CldrCalendar>::SkeletaV1;
+    type Hebrew = <Hebrew as CldrCalendar>::SkeletaV1;
+    type Indian = <Indian as CldrCalendar>::SkeletaV1;
+    type Hijri = <HijriUmmAlQura as CldrCalendar>::SkeletaV1;
+    type Japanese = <Japanese as CldrCalendar>::SkeletaV1;
+    type Persian = <Persian as CldrCalendar>::SkeletaV1;
+    type Roc = <Roc as CldrCalendar>::SkeletaV1;
+}
 
 /// A type that can be converted into a specific calendar system.
 // This trait is implementable
