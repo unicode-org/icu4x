@@ -36,6 +36,7 @@ icu_calendar_data = { workspace = true, optional = true }
 icu_locale = { workspace = true, optional = true }
 
 [dev-dependencies]
+icu_provider = { path = "../../provider/core", features = ["logging"] }
 icu = { path = "../../components/icu", default-features = false }
 icu_benchmark_macros = { path = "../../tools/benchmark/macros" }
 serde = { workspace = true, features = ["derive", "alloc"] }

@@ -12,9 +12,6 @@
 //!
 //! Read more about data providers: [`icu_provider`]
 
-use crate::cal::hijri::HijriYearInfo;
-use calendrical_calculations::islamic::IslamicBased;
-use calendrical_calculations::rata_die::RataDie;
 use core::fmt;
 use icu_provider::prelude::*;
 use zerovec::ule::{AsULE, ULE};
@@ -55,61 +52,6 @@ icu_provider::data_struct!(
     HijriCache<'_>,
     #[cfg(feature = "datagen")]
 );
-
-impl HijriCache<'_> {
-    /// Compute this data for a range of years
-    #[cfg(feature = "datagen")]
-    pub fn compute_for<IB: IslamicBased>(extended_years: core::ops::Range<i32>, model: IB) -> Self {
-        let data = extended_years
-            .clone()
-            .map(|year| HijriYearInfo::compute_for_year(year, model).packed_data)
-            .collect();
-        HijriCache {
-            first_extended_year: extended_years.start,
-            data,
-        }
-    }
-
-    /// Get the cached data for a given extended year
-    pub(crate) fn get_for_extended_year<IB: IslamicBased>(
-        &self,
-        extended_year: i32,
-        model: IB,
-    ) -> Option<HijriYearInfo<IB>> {
-        let packed_data = self
-            .data
-            .get(usize::try_from(extended_year - self.first_extended_year).ok()?)?;
-
-        Some(HijriYearInfo::from_packed(
-            packed_data,
-            extended_year,
-            model,
-        ))
-    }
-    /// Get the cached data for the Hijri Year corresponding to a given day.
-    ///
-    /// Also returns the corresponding extended year.
-    pub(crate) fn get_for_rd<IB: IslamicBased>(
-        &self,
-        rd: RataDie,
-        model: IB,
-    ) -> Option<HijriYearInfo<IB>> {
-        let extended_year = IB::approximate_islamic_from_fixed(rd);
-
-        let year = self.get_for_extended_year(extended_year, model)?;
-
-        if rd < year.new_year() {
-            self.get_for_extended_year(extended_year - 1, model)
-        } else {
-            let next_year = self.get_for_extended_year(extended_year + 1, model)?;
-            Some(if rd < next_year.new_year() {
-                year
-            } else {
-                next_year
-            })
-        }
-    }
-}
 
 /// The struct containing compiled Hijri YearInfo
 ///
