@@ -62,7 +62,7 @@ impl HijriCache<'_> {
     pub fn compute_for<IB: IslamicBased>(extended_years: core::ops::Range<i32>, model: IB) -> Self {
         let data = extended_years
             .clone()
-            .map(|year| PackedHijriYearInfo::compute(year, model))
+            .map(|year| HijriYearInfo::compute_for_year(year, model).packed_data)
             .collect();
         HijriCache {
             first_extended_year: extended_years.start,
@@ -76,22 +76,12 @@ impl HijriCache<'_> {
         extended_year: i32,
         model: IB,
     ) -> Option<HijriYearInfo<IB>> {
-        let delta = extended_year - self.first_extended_year;
-        let delta = usize::try_from(delta).ok()?;
+        let packed_data = self
+            .data
+            .get(usize::try_from(extended_year - self.first_extended_year).ok()?)?;
 
-        if delta == 0 {
-            return None;
-        }
-
-        let (Some(this_packed), Some(prev_packed)) =
-            (self.data.get(delta), self.data.get(delta - 1))
-        else {
-            return None;
-        };
-
-        Some(HijriYearInfo::new(
-            prev_packed,
-            this_packed,
+        Some(HijriYearInfo::from_packed(
+            packed_data,
             extended_year,
             model,
         ))
@@ -106,44 +96,17 @@ impl HijriCache<'_> {
     ) -> Option<HijriYearInfo<IB>> {
         let extended_year = IB::approximate_islamic_from_fixed(fixed);
 
-        let delta = extended_year - self.first_extended_year;
-        let delta = usize::try_from(delta).ok()?;
+        let year = self.get_for_extended_year(extended_year, model)?;
 
-        if delta <= 1 {
-            return None;
-        }
-
-        let this_packed = self.data.get(delta)?;
-        let prev_packed = self.data.get(delta + 1)?;
-
-        let this_ny = IB::mean_synodic_ny(extended_year) + this_packed.ny_offset();
-
-        if fixed < this_ny {
-            let prev2_packed = self.data.get(delta - 2)?;
-            return Some(HijriYearInfo::new(
-                prev2_packed,
-                prev_packed,
-                extended_year - 1,
-                model,
-            ));
-        }
-        let next_packed = self.data.get(delta + 1)?;
-        let next_ny = IB::mean_synodic_ny(extended_year + 1) + next_packed.ny_offset();
-
-        if fixed >= next_ny {
-            Some(HijriYearInfo::new(
-                this_packed,
-                next_packed,
-                extended_year + 1,
-                model,
-            ))
+        if fixed < year.new_year() {
+            self.get_for_extended_year(extended_year - 1, model)
         } else {
-            Some(HijriYearInfo::new(
-                prev_packed,
-                this_packed,
-                extended_year,
-                model,
-            ))
+            let next_year = self.get_for_extended_year(extended_year + 1, model)?;
+            Some(if fixed < next_year.new_year() {
+                year
+            } else {
+                next_year
+            })
         }
     }
 }
@@ -195,7 +158,6 @@ impl PackedHijriYearInfo {
         let mut all = 0u16; // last byte unused
 
         for (month, length_30) in month_lengths.iter().enumerate() {
-            #[allow(clippy::indexing_slicing)]
             if *length_30 {
                 all |= 1 << month as u16;
             }
@@ -230,15 +192,6 @@ impl PackedHijriYearInfo {
         months & (1 << (month - 1) as u16) != 0
     }
 
-    /// The number of days in a given 1-indexed month
-    pub(crate) fn days_in_month(self, month: u8) -> u8 {
-        if self.month_has_30_days(month) {
-            30
-        } else {
-            29
-        }
-    }
-
     // Which day of year is the last day of a month (month is 1-indexed)
     pub(crate) fn last_day_of_month(self, month: u8) -> u16 {
         let months = u16::from_le_bytes([self.0, self.1]);
@@ -250,25 +203,6 @@ impl PackedHijriYearInfo {
         let long_month_bits = months & ((1 << month as u16) - 1);
         prev_month_lengths += long_month_bits.count_ones().try_into().unwrap_or(0);
         prev_month_lengths
-    }
-
-    pub(crate) fn days_in_year(self) -> u16 {
-        self.last_day_of_month(12)
-    }
-
-    pub(crate) fn compute_with_ny<IB: IslamicBased>(
-        extended_year: i32,
-        ny: RataDie,
-        model: IB,
-    ) -> Self {
-        let month_lengths = model.month_lengths_for_year(extended_year, ny);
-        let ny_offset = ny - IB::mean_synodic_ny(extended_year);
-        Self::new(month_lengths, ny_offset)
-    }
-    #[cfg(feature = "datagen")]
-    pub(crate) fn compute<IB: IslamicBased>(extended_year: i32, model: IB) -> Self {
-        let ny = model.fixed_from_islamic(extended_year, 1, 1);
-        Self::compute_with_ny(extended_year, ny, model)
     }
 }
 
