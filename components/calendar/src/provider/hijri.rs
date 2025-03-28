@@ -108,11 +108,11 @@ impl PackedHijriYearInfo {
         let months = u16::from_le_bytes([self.0, self.1]);
         (
             core::array::from_fn(|i| months & (1 << (i as u8) as u16) != 0),
-            (if (self.1 & 0b10000) != 0 {
-                -((self.1 >> 5) as i8)
+            if (self.1 & 0b10000) != 0 {
+                -((self.1 >> 5) as i64)
             } else {
-                (self.1 >> 5) as i8
-            }) as i64,
+                (self.1 >> 5) as i64
+            },
         )
     }
 }
