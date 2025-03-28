@@ -5,19 +5,9 @@
 use std::collections::HashSet;
 
 use crate::SourceDataProvider;
-use calendrical_calculations::islamic::{IslamicBased, ObservationalIslamic, SaudiIslamic};
-use calendrical_calculations::iso;
+use icu::calendar::cal::{HijriObservational, HijriUmmAlQura};
 use icu::calendar::provider::hijri::*;
 use icu_provider::prelude::*;
-
-const YEARS: i32 = 250;
-const ISO_START: i32 = 1900;
-
-fn load<IB: IslamicBased>(model: IB) -> HijriCache<'static> {
-    let extended_start = IB::approximate_islamic_from_fixed(iso::fixed_from_iso(ISO_START, 1, 1));
-    let extended_end = extended_start + YEARS;
-    HijriCache::compute_for(extended_start..extended_end, model)
-}
 
 impl DataProvider<CalendarHijriObservationalMeccaV1> for SourceDataProvider {
     fn load(
@@ -25,7 +15,7 @@ impl DataProvider<CalendarHijriObservationalMeccaV1> for SourceDataProvider {
         req: DataRequest,
     ) -> Result<DataResponse<CalendarHijriObservationalMeccaV1>, DataError> {
         self.check_req::<CalendarHijriObservationalMeccaV1>(req)?;
-        let cache = load(ObservationalIslamic::mecca());
+        let cache = HijriObservational::new_mecca_always_calculating().build_cache(1317..1567);
         Ok(DataResponse {
             metadata: Default::default(),
             payload: DataPayload::from_owned(cache),
@@ -42,7 +32,7 @@ impl crate::IterableDataProviderCached<CalendarHijriObservationalMeccaV1> for So
 impl DataProvider<CalendarHijriUmmalquraV1> for crate::SourceDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<CalendarHijriUmmalquraV1>, DataError> {
         self.check_req::<CalendarHijriUmmalquraV1>(req)?;
-        let cache = load(SaudiIslamic);
+        let cache = HijriUmmAlQura::new_always_calculating().build_cache(1317..1567);
         Ok(DataResponse {
             metadata: Default::default(),
             payload: DataPayload::from_owned(cache),
