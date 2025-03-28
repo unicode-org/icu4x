@@ -220,44 +220,9 @@ impl HijriTabular {
     }
 }
 
-/// Compact representation of the length of a Hijri year.
-#[derive(Copy, Clone, Debug, Hash, PartialEq, Eq, PartialOrd, Ord)]
-enum HijriYearLength {
-    /// Long (355-day) Hijri year
-    L355,
-    /// Short (354-day) Hijri year
-    L354,
-    /// Unexpectedly Short (353-day) Hijri year
-    ///
-    /// It is probably a bug when this year length is returned. See:
-    /// <https://github.com/unicode-org/icu4x/issues/4930>
-    L353,
-}
-
-impl Default for HijriYearLength {
-    fn default() -> Self {
-        Self::L354
-    }
-}
-
-impl HijriYearLength {
-    const LONG: u16 = 355;
-    const SHORT: u16 = 354;
-
-    fn try_from_int(value: i64) -> Option<Self> {
-        match value {
-            355 => Some(Self::L355),
-            354 => Some(Self::L354),
-            353 => Some(Self::L353),
-            _ => None,
-        }
-    }
-}
-
 #[derive(Copy, Clone, Debug, Hash, PartialEq, Eq, PartialOrd, Ord)]
 pub(crate) struct HijriYearInfo<IB: IslamicBased> {
-    packed_data: PackedHijriYearInfo,
-    prev_year_length: HijriYearLength,
+    pub(crate) packed_data: PackedHijriYearInfo,
     model: IB,
     value: i32,
 }
@@ -268,47 +233,36 @@ impl<IB: IslamicBased> From<HijriYearInfo<IB>> for i32 {
     }
 }
 
+const LONG_YEAR_LEN: u16 = 355;
+const SHORT_YEAR_LEN: u16 = 354;
+
 impl<IB: IslamicBased> HijriYearInfo<IB> {
-    pub(crate) fn new(
-        prev_packed: PackedHijriYearInfo,
-        this_packed: PackedHijriYearInfo,
+    pub(crate) fn from_packed(
+        packed_data: PackedHijriYearInfo,
         extended_year: i32,
         model: IB,
     ) -> Self {
-        let days_in_year = prev_packed.days_in_year();
-        let days_in_year = match HijriYearLength::try_from_int(days_in_year as i64) {
-            Some(x) => x,
-            None => {
-                debug_assert!(false, "Found wrong year length for Hijri year {extended_year}: Expected 355, 354, or 353, got {days_in_year}");
-                Default::default()
-            }
-        };
         Self {
-            prev_year_length: days_in_year,
-            packed_data: this_packed,
+            packed_data,
             model,
             value: extended_year,
         }
     }
 
-    fn compute_for_year(extended_year: i32, model: IB) -> Self {
+    pub(crate) fn compute_for_year(extended_year: i32, model: IB) -> Self {
         let ny = model.fixed_from_islamic(extended_year, 1, 1);
-        let packed_data = PackedHijriYearInfo::compute_with_ny(extended_year, ny, model);
-        let prev_ny = model.fixed_from_islamic(extended_year - 1, 1, 1);
-        let rd_diff = ny - prev_ny;
-        let rd_diff = match HijriYearLength::try_from_int(rd_diff) {
-            Some(x) => x,
-            None => {
-                debug_assert!(false, "({}) Found wrong year length for Hijri year {extended_year}: Expected 355, 354, or 353, got {rd_diff}", IB::DEBUG_NAME);
-                Default::default()
-            }
-        };
-        Self {
-            prev_year_length: rd_diff,
-            packed_data,
+        let month_lengths = model.month_lengths_for_year(extended_year, ny);
+        let ny_offset = ny - IB::mean_synodic_ny(extended_year);
+        let r = Self {
+            packed_data: PackedHijriYearInfo::new(month_lengths, ny_offset),
             model,
             value: extended_year,
+        };
+        if !matches!(r.days_in_year(), SHORT_YEAR_LEN | LONG_YEAR_LEN | 353) {
+            // See https://github.com/unicode-org/icu4x/issues/4930
+            debug_assert!(false, "({}) Found wrong year length for Hijri year {extended_year}: Expected 355, 354, or 353, got {}", IB::DEBUG_NAME, r.days_in_year());
         }
+        r
     }
 
     fn compute_for_fixed(fixed: RataDie, model: IB) -> Self {
@@ -316,8 +270,21 @@ impl<IB: IslamicBased> HijriYearInfo<IB> {
         Self::compute_for_year(y, model)
     }
 
+    /// The number of days in a given 1-indexed month
+    pub(crate) fn days_in_month(self, month: u8) -> u8 {
+        if self.packed_data.month_has_30_days(month) {
+            30
+        } else {
+            29
+        }
+    }
+
+    pub(crate) fn days_in_year(self) -> u16 {
+        self.packed_data.last_day_of_month(12)
+    }
+
     /// Get the new year R.D. given the extended year that this yearinfo is for    
-    fn new_year(self) -> RataDie {
+    pub(crate) fn new_year(self) -> RataDie {
         IB::mean_synodic_ny(self.value) + self.packed_data.ny_offset()
     }
 
@@ -401,7 +368,7 @@ impl CalendarArithmetic for HijriObservational {
     type YearInfo = HijriYearInfo<ObservationalIslamic>;
 
     fn days_in_provided_month(year: Self::YearInfo, month: u8) -> u8 {
-        year.packed_data.days_in_month(month)
+        year.days_in_month(month)
     }
 
     fn months_in_provided_year(_year: Self::YearInfo) -> u8 {
@@ -409,12 +376,12 @@ impl CalendarArithmetic for HijriObservational {
     }
 
     fn days_in_provided_year(year: Self::YearInfo) -> u16 {
-        year.packed_data.days_in_year()
+        year.days_in_year()
     }
 
     // As an true lunar calendar, it does not have leap years.
     fn provided_year_is_leap(year: Self::YearInfo) -> bool {
-        year.packed_data.days_in_year() != HijriYearLength::SHORT
+        year.days_in_year() != SHORT_YEAR_LEN
     }
 
     fn last_month_day_in_provided_year(year: Self::YearInfo) -> (u8, u8) {
@@ -579,7 +546,7 @@ impl CalendarArithmetic for HijriUmmAlQura {
     type YearInfo = HijriYearInfo<SaudiIslamic>;
 
     fn days_in_provided_month(year: Self::YearInfo, month: u8) -> u8 {
-        year.packed_data.days_in_month(month)
+        year.days_in_month(month)
     }
 
     fn months_in_provided_year(_year: HijriYearInfo<SaudiIslamic>) -> u8 {
@@ -587,12 +554,12 @@ impl CalendarArithmetic for HijriUmmAlQura {
     }
 
     fn days_in_provided_year(year: Self::YearInfo) -> u16 {
-        year.packed_data.days_in_year()
+        year.days_in_year()
     }
 
     // As an true lunar calendar, it does not have leap years.
     fn provided_year_is_leap(year: Self::YearInfo) -> bool {
-        year.packed_data.days_in_year() != HijriYearLength::SHORT
+        year.days_in_year() != SHORT_YEAR_LEN
     }
 
     fn last_month_day_in_provided_year(year: HijriYearInfo<SaudiIslamic>) -> (u8, u8) {
@@ -769,9 +736,9 @@ impl CalendarArithmetic for HijriCivil {
 
     fn days_in_provided_year(year: i32) -> u16 {
         if Self::provided_year_is_leap(year) {
-            HijriYearLength::LONG
+            LONG_YEAR_LEN
         } else {
-            HijriYearLength::SHORT
+            SHORT_YEAR_LEN
         }
     }
 
@@ -940,9 +907,9 @@ impl CalendarArithmetic for HijriTabular {
 
     fn days_in_provided_year(year: i32) -> u16 {
         if Self::provided_year_is_leap(year) {
-            HijriYearLength::LONG
+            LONG_YEAR_LEN
         } else {
-            HijriYearLength::SHORT
+            SHORT_YEAR_LEN
         }
     }
 
