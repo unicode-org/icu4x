@@ -147,29 +147,29 @@ fn test_indian_continuity() {
 
 #[test]
 fn test_hijri_civil_continuity() {
-    let cal = crate::cal::HijriCivil::new();
+    let cal = crate::cal::HijriTabular::new_civil_epoch();
     let cal = Ref(&cal);
-    let date = Date::try_new_hijri_civil_with_calendar(-10, 1, 1, cal);
+    let date = Date::try_new_hijri_tabular_with_calendar(-10, 1, 1, cal);
     check_continuity(date.unwrap());
-    let date = Date::try_new_hijri_civil_with_calendar(-300, 1, 1, cal);
+    let date = Date::try_new_hijri_tabular_with_calendar(-300, 1, 1, cal);
     check_every_250_days(date.unwrap());
 }
 
 #[test]
-fn test_hijri_observational_mecca_continuity() {
+fn test_hijri_simulated_mecca_continuity() {
     #[cfg(feature = "logging")]
     let _ = simple_logger::SimpleLogger::new().env().init();
-    let cal = crate::cal::HijriObservational::new_mecca_always_calculating();
+    let cal = crate::cal::HijriSimulated::new_mecca_always_calculating();
     let cal = Ref(&cal);
-    let date = Date::try_new_observational_hijri_with_calendar(-10, 1, 1, cal);
+    let date = Date::try_new_simulated_hijri_with_calendar(-10, 1, 1, cal);
     check_continuity(date.unwrap());
-    let date = Date::try_new_observational_hijri_with_calendar(-300, 1, 1, cal);
+    let date = Date::try_new_simulated_hijri_with_calendar(-300, 1, 1, cal);
     check_every_250_days(date.unwrap());
 }
 
 #[test]
 fn test_hijri_tabular_continuity() {
-    let cal = crate::cal::HijriTabular::new();
+    let cal = crate::cal::HijriTabular::new_astronomical_epoch();
     let cal = Ref(&cal);
     let date = Date::try_new_hijri_tabular_with_calendar(-10, 1, 1, cal);
     check_continuity(date.unwrap());

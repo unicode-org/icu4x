@@ -8,7 +8,7 @@ use crate::{
 };
 use icu_calendar::{
     provider::{
-        CalendarChineseV1, CalendarDangiV1, CalendarHijriObservationalMeccaV1,
+        CalendarChineseV1, CalendarDangiV1, CalendarHijriSimulatedMeccaV1,
         CalendarHijriUmmalquraV1, CalendarJapaneseModernV1,
     },
     types::{DayOfMonth, DayOfYear, MonthInfo, Weekday, YearInfo},
@@ -349,10 +349,7 @@ pub trait AllAnyCalendarPatternDataMarkers<FSet: DateTimeMarkers>:
     + DataProvider<<<FSet::D as DateDataMarkers>::Skel as CalMarkers<ErasedPackedPatterns>>::Gregorian>
     + DataProvider<<<FSet::D as DateDataMarkers>::Skel as CalMarkers<ErasedPackedPatterns>>::Hebrew>
     + DataProvider<<<FSet::D as DateDataMarkers>::Skel as CalMarkers<ErasedPackedPatterns>>::Indian>
-    + DataProvider<<<FSet::D as DateDataMarkers>::Skel as CalMarkers<ErasedPackedPatterns>>::HijriCivil>
-    + DataProvider<<<FSet::D as DateDataMarkers>::Skel as CalMarkers<ErasedPackedPatterns>>::HijriObservational>
-    + DataProvider<<<FSet::D as DateDataMarkers>::Skel as CalMarkers<ErasedPackedPatterns>>::HijriTabular>
-    + DataProvider<<<FSet::D as DateDataMarkers>::Skel as CalMarkers<ErasedPackedPatterns>>::HijriUmmAlQura>
+    + DataProvider<<<FSet::D as DateDataMarkers>::Skel as CalMarkers<ErasedPackedPatterns>>::Hijri>
     + DataProvider<<<FSet::D as DateDataMarkers>::Skel as CalMarkers<ErasedPackedPatterns>>::Japanese>
     + DataProvider<<<FSet::D as DateDataMarkers>::Skel as CalMarkers<ErasedPackedPatterns>>::Persian>
     + DataProvider<<<FSet::D as DateDataMarkers>::Skel as CalMarkers<ErasedPackedPatterns>>::Roc>
@@ -381,10 +378,7 @@ where
         + DataProvider<<<FSet::D as DateDataMarkers>::Skel as CalMarkers<ErasedPackedPatterns>>::Gregorian>
         + DataProvider<<<FSet::D as DateDataMarkers>::Skel as CalMarkers<ErasedPackedPatterns>>::Hebrew>
         + DataProvider<<<FSet::D as DateDataMarkers>::Skel as CalMarkers<ErasedPackedPatterns>>::Indian>
-        + DataProvider<<<FSet::D as DateDataMarkers>::Skel as CalMarkers<ErasedPackedPatterns>>::HijriCivil>
-        + DataProvider<<<FSet::D as DateDataMarkers>::Skel as CalMarkers<ErasedPackedPatterns>>::HijriObservational>
-        + DataProvider<<<FSet::D as DateDataMarkers>::Skel as CalMarkers<ErasedPackedPatterns>>::HijriTabular>
-        + DataProvider<<<FSet::D as DateDataMarkers>::Skel as CalMarkers<ErasedPackedPatterns>>::HijriUmmAlQura>
+        + DataProvider<<<FSet::D as DateDataMarkers>::Skel as CalMarkers<ErasedPackedPatterns>>::Hijri>
         + DataProvider<<<FSet::D as DateDataMarkers>::Skel as CalMarkers<ErasedPackedPatterns>>::Japanese>
         + DataProvider<<<FSet::D as DateDataMarkers>::Skel as CalMarkers<ErasedPackedPatterns>>::Persian>
         + DataProvider<<<FSet::D as DateDataMarkers>::Skel as CalMarkers<ErasedPackedPatterns>>::Roc>
@@ -409,10 +403,7 @@ pub trait AllAnyCalendarFormattingDataMarkers<FSet: DateTimeMarkers>:
     + DataProvider<<<FSet::D as DateDataMarkers>::Year as CalMarkers<YearNamesV1>>::Gregorian>
     + DataProvider<<<FSet::D as DateDataMarkers>::Year as CalMarkers<YearNamesV1>>::Hebrew>
     + DataProvider<<<FSet::D as DateDataMarkers>::Year as CalMarkers<YearNamesV1>>::Indian>
-    + DataProvider<<<FSet::D as DateDataMarkers>::Year as CalMarkers<YearNamesV1>>::HijriCivil>
-    + DataProvider<<<FSet::D as DateDataMarkers>::Year as CalMarkers<YearNamesV1>>::HijriObservational>
-    + DataProvider<<<FSet::D as DateDataMarkers>::Year as CalMarkers<YearNamesV1>>::HijriTabular>
-    + DataProvider<<<FSet::D as DateDataMarkers>::Year as CalMarkers<YearNamesV1>>::HijriUmmAlQura>
+    + DataProvider<<<FSet::D as DateDataMarkers>::Year as CalMarkers<YearNamesV1>>::Hijri>
     + DataProvider<<<FSet::D as DateDataMarkers>::Year as CalMarkers<YearNamesV1>>::Japanese>
     + DataProvider<<<FSet::D as DateDataMarkers>::Year as CalMarkers<YearNamesV1>>::Persian>
     + DataProvider<<<FSet::D as DateDataMarkers>::Year as CalMarkers<YearNamesV1>>::Roc>
@@ -424,10 +415,7 @@ pub trait AllAnyCalendarFormattingDataMarkers<FSet: DateTimeMarkers>:
     + DataProvider<<<FSet::D as DateDataMarkers>::Month as CalMarkers<MonthNamesV1>>::Gregorian>
     + DataProvider<<<FSet::D as DateDataMarkers>::Month as CalMarkers<MonthNamesV1>>::Hebrew>
     + DataProvider<<<FSet::D as DateDataMarkers>::Month as CalMarkers<MonthNamesV1>>::Indian>
-    + DataProvider<<<FSet::D as DateDataMarkers>::Month as CalMarkers<MonthNamesV1>>::HijriCivil>
-    + DataProvider<<<FSet::D as DateDataMarkers>::Month as CalMarkers<MonthNamesV1>>::HijriObservational>
-    + DataProvider<<<FSet::D as DateDataMarkers>::Month as CalMarkers<MonthNamesV1>>::HijriTabular>
-    + DataProvider<<<FSet::D as DateDataMarkers>::Month as CalMarkers<MonthNamesV1>>::HijriUmmAlQura>
+    + DataProvider<<<FSet::D as DateDataMarkers>::Month as CalMarkers<MonthNamesV1>>::Hijri>
     + DataProvider<<<FSet::D as DateDataMarkers>::Month as CalMarkers<MonthNamesV1>>::Japanese>
     + DataProvider<<<FSet::D as DateDataMarkers>::Month as CalMarkers<MonthNamesV1>>::Persian>
     + DataProvider<<<FSet::D as DateDataMarkers>::Month as CalMarkers<MonthNamesV1>>::Roc>
@@ -468,10 +456,7 @@ where
         + DataProvider<<<FSet::D as DateDataMarkers>::Year as CalMarkers<YearNamesV1>>::Gregorian>
         + DataProvider<<<FSet::D as DateDataMarkers>::Year as CalMarkers<YearNamesV1>>::Hebrew>
         + DataProvider<<<FSet::D as DateDataMarkers>::Year as CalMarkers<YearNamesV1>>::Indian>
-        + DataProvider<<<FSet::D as DateDataMarkers>::Year as CalMarkers<YearNamesV1>>::HijriCivil>
-        + DataProvider<<<FSet::D as DateDataMarkers>::Year as CalMarkers<YearNamesV1>>::HijriObservational>
-        + DataProvider<<<FSet::D as DateDataMarkers>::Year as CalMarkers<YearNamesV1>>::HijriTabular>
-        + DataProvider<<<FSet::D as DateDataMarkers>::Year as CalMarkers<YearNamesV1>>::HijriUmmAlQura>
+        + DataProvider<<<FSet::D as DateDataMarkers>::Year as CalMarkers<YearNamesV1>>::Hijri>
         + DataProvider<<<FSet::D as DateDataMarkers>::Year as CalMarkers<YearNamesV1>>::Japanese>
         + DataProvider<<<FSet::D as DateDataMarkers>::Year as CalMarkers<YearNamesV1>>::Persian>
         + DataProvider<<<FSet::D as DateDataMarkers>::Year as CalMarkers<YearNamesV1>>::Roc>
@@ -483,10 +468,7 @@ where
         + DataProvider<<<FSet::D as DateDataMarkers>::Month as CalMarkers<MonthNamesV1>>::Gregorian>
         + DataProvider<<<FSet::D as DateDataMarkers>::Month as CalMarkers<MonthNamesV1>>::Hebrew>
         + DataProvider<<<FSet::D as DateDataMarkers>::Month as CalMarkers<MonthNamesV1>>::Indian>
-        + DataProvider<<<FSet::D as DateDataMarkers>::Month as CalMarkers<MonthNamesV1>>::HijriCivil>
-        + DataProvider<<<FSet::D as DateDataMarkers>::Month as CalMarkers<MonthNamesV1>>::HijriObservational>
-        + DataProvider<<<FSet::D as DateDataMarkers>::Month as CalMarkers<MonthNamesV1>>::HijriTabular>
-        + DataProvider<<<FSet::D as DateDataMarkers>::Month as CalMarkers<MonthNamesV1>>::HijriUmmAlQura>
+        + DataProvider<<<FSet::D as DateDataMarkers>::Month as CalMarkers<MonthNamesV1>>::Hijri>
         + DataProvider<<<FSet::D as DateDataMarkers>::Month as CalMarkers<MonthNamesV1>>::Japanese>
         + DataProvider<<<FSet::D as DateDataMarkers>::Month as CalMarkers<MonthNamesV1>>::Persian>
         + DataProvider<<<FSet::D as DateDataMarkers>::Month as CalMarkers<MonthNamesV1>>::Roc>
@@ -526,7 +508,7 @@ impl<T> AllFixedCalendarExternalDataMarkers for T where
 pub trait AllAnyCalendarExternalDataMarkers:
     DataProvider<CalendarChineseV1>
     + DataProvider<CalendarDangiV1>
-    + DataProvider<CalendarHijriObservationalMeccaV1>
+    + DataProvider<CalendarHijriSimulatedMeccaV1>
     + DataProvider<CalendarHijriUmmalquraV1>
     + DataProvider<CalendarJapaneseModernV1>
     + DataProvider<DecimalSymbolsV1>
@@ -538,7 +520,7 @@ impl<T> AllAnyCalendarExternalDataMarkers for T where
     T: ?Sized
         + DataProvider<CalendarChineseV1>
         + DataProvider<CalendarDangiV1>
-        + DataProvider<CalendarHijriObservationalMeccaV1>
+        + DataProvider<CalendarHijriSimulatedMeccaV1>
         + DataProvider<CalendarHijriUmmalquraV1>
         + DataProvider<CalendarJapaneseModernV1>
         + DataProvider<DecimalSymbolsV1>
