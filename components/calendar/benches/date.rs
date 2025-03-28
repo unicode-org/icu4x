@@ -197,13 +197,13 @@ fn date_benches(c: &mut Criterion) {
         &mut group,
         "calendar/islamic/civil",
         &fxs,
-        icu::calendar::cal::HijriRuleBased::new_civil_epoch(),
+        icu::calendar::cal::HijriTabular::new_civil_epoch(),
         |y, m, d| {
-            Date::try_new_hijri_rule_based_with_calendar(
+            Date::try_new_hijri_tabular_with_calendar(
                 y,
                 m,
                 d,
-                icu::calendar::cal::HijriRuleBased::new_civil_epoch(),
+                icu::calendar::cal::HijriTabular::new_civil_epoch(),
             )
             .unwrap()
         },
@@ -213,13 +213,13 @@ fn date_benches(c: &mut Criterion) {
         &mut group,
         "calendar/islamic/tabular",
         &fxs,
-        icu::calendar::cal::HijriRuleBased::new_astronomical_epoch(),
+        icu::calendar::cal::HijriTabular::new_astronomical_epoch(),
         |y, m, d| {
-            Date::try_new_hijri_rule_based_with_calendar(
+            Date::try_new_hijri_tabular_with_calendar(
                 y,
                 m,
                 d,
-                icu::calendar::cal::HijriRuleBased::new_astronomical_epoch(),
+                icu::calendar::cal::HijriTabular::new_astronomical_epoch(),
             )
             .unwrap()
         },

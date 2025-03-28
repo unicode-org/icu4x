@@ -7,7 +7,7 @@
 use crate::cal::hijri::HijriObservationalLocation;
 use crate::cal::{
     Buddhist, Chinese, Coptic, Dangi, Ethiopian, EthiopianEraStyle, Gregorian, Hebrew,
-    HijriObservational, HijriRuleBased, HijriUmmAlQura, Indian, Iso, Japanese, JapaneseExtended,
+    HijriObservational, HijriTabular, HijriUmmAlQura, Indian, Iso, Japanese, JapaneseExtended,
     Persian, Roc,
 };
 use crate::error::DateError;
@@ -90,12 +90,12 @@ pub enum AnyCalendar {
     Hebrew(Hebrew),
     /// An [`Indian`] calendar
     Indian(Indian),
-    /// A [`HijriRuleBased`], civil epoch calendar
-    HijriRuleBasedCivil(HijriRuleBased),
+    /// A [`HijriTabular`], civil epoch calendar
+    HijriTabularCivil(HijriTabular),
     /// A [`HijriObservational`] calendar
     HijriObservational(HijriObservational),
-    /// A [`HijriRuleBased`], astronomical epoch calendar
-    HijriRuleBasedAstronomical(HijriRuleBased),
+    /// A [`HijriTabular`], astronomical epoch calendar
+    HijriTabularAstronomical(HijriTabular),
     /// A [`HijriUmmAlQura`] calendar
     HijriUmmAlQura(HijriUmmAlQura),
     /// An [`Iso`] calendar
@@ -131,12 +131,12 @@ pub enum AnyDateInner {
     Hebrew(<Hebrew as Calendar>::DateInner),
     /// A date for an [`Indian`] calendar
     Indian(<Indian as Calendar>::DateInner),
-    /// A date for a [`HijriRuleBased`], civil epoch calendar
-    HijriRuleBasedCivil(<HijriRuleBased as Calendar>::DateInner),
+    /// A date for a [`HijriTabular`], civil epoch calendar
+    HijriTabularCivil(<HijriTabular as Calendar>::DateInner),
     /// A date for a [`HijriObservational`] calendar
     HijriObservational(<HijriObservational as Calendar>::DateInner),
-    /// A date for a [`HijriRuleBased`], astronomical epoch calendar
-    HijriRuleBasedAstronomical(<HijriRuleBased as Calendar>::DateInner),
+    /// A date for a [`HijriTabular`], astronomical epoch calendar
+    HijriTabularAstronomical(<HijriTabular as Calendar>::DateInner),
     /// A date for a [`HijriUmmAlQura`] calendar
     HijriUmmAlQura(<HijriUmmAlQura as Calendar>::DateInner),
     /// A date for an [`Iso`] calendar
@@ -163,16 +163,16 @@ macro_rules! match_cal_and_date {
             (&Self::Hebrew(ref $cal_matched), &AnyDateInner::Hebrew(ref $date_matched)) => $e,
             (&Self::Indian(ref $cal_matched), &AnyDateInner::Indian(ref $date_matched)) => $e,
             (
-                &Self::HijriRuleBasedCivil(ref $cal_matched),
-                &AnyDateInner::HijriRuleBasedCivil(ref $date_matched),
+                &Self::HijriTabularCivil(ref $cal_matched),
+                &AnyDateInner::HijriTabularCivil(ref $date_matched),
             ) => $e,
             (
                 &Self::HijriObservational(ref $cal_matched),
                 &AnyDateInner::HijriObservational(ref $date_matched),
             ) => $e,
             (
-                &Self::HijriRuleBasedAstronomical(ref $cal_matched),
-                &AnyDateInner::HijriRuleBasedAstronomical(ref $date_matched),
+                &Self::HijriTabularAstronomical(ref $cal_matched),
+                &AnyDateInner::HijriTabularAstronomical(ref $date_matched),
             ) => $e,
             (
                 &Self::HijriUmmAlQura(ref $cal_matched),
@@ -229,13 +229,13 @@ impl Calendar for AnyCalendar {
             Self::Indian(ref c) => {
                 AnyDateInner::Indian(c.date_from_codes(era, year, month_code, day)?)
             }
-            Self::HijriRuleBasedCivil(ref c) => {
-                AnyDateInner::HijriRuleBasedCivil(c.date_from_codes(era, year, month_code, day)?)
+            Self::HijriTabularCivil(ref c) => {
+                AnyDateInner::HijriTabularCivil(c.date_from_codes(era, year, month_code, day)?)
             }
             Self::HijriObservational(ref c) => {
                 AnyDateInner::HijriObservational(c.date_from_codes(era, year, month_code, day)?)
             }
-            Self::HijriRuleBasedAstronomical(ref c) => AnyDateInner::HijriRuleBasedAstronomical(
+            Self::HijriTabularAstronomical(ref c) => AnyDateInner::HijriTabularAstronomical(
                 c.date_from_codes(era, year, month_code, day)?,
             ),
             Self::HijriUmmAlQura(ref c) => {
@@ -265,14 +265,12 @@ impl Calendar for AnyCalendar {
             Self::Gregorian(ref c) => AnyDateInner::Gregorian(c.date_from_iso(iso)),
             Self::Hebrew(ref c) => AnyDateInner::Hebrew(c.date_from_iso(iso)),
             Self::Indian(ref c) => AnyDateInner::Indian(c.date_from_iso(iso)),
-            Self::HijriRuleBasedCivil(ref c) => {
-                AnyDateInner::HijriRuleBasedCivil(c.date_from_iso(iso))
-            }
+            Self::HijriTabularCivil(ref c) => AnyDateInner::HijriTabularCivil(c.date_from_iso(iso)),
             Self::HijriObservational(ref c) => {
                 AnyDateInner::HijriObservational(c.date_from_iso(iso))
             }
-            Self::HijriRuleBasedAstronomical(ref c) => {
-                AnyDateInner::HijriRuleBasedAstronomical(c.date_from_iso(iso))
+            Self::HijriTabularAstronomical(ref c) => {
+                AnyDateInner::HijriTabularAstronomical(c.date_from_iso(iso))
             }
             Self::HijriUmmAlQura(ref c) => AnyDateInner::HijriUmmAlQura(c.date_from_iso(iso)),
             Self::Iso(ref c) => AnyDateInner::Iso(c.date_from_iso(iso)),
@@ -325,15 +323,15 @@ impl Calendar for AnyCalendar {
             (Self::Indian(c), &mut AnyDateInner::Indian(ref mut d)) => {
                 c.offset_date(d, offset.cast_unit())
             }
-            (Self::HijriRuleBasedCivil(c), &mut AnyDateInner::HijriRuleBasedCivil(ref mut d)) => {
+            (Self::HijriTabularCivil(c), &mut AnyDateInner::HijriTabularCivil(ref mut d)) => {
                 c.offset_date(d, offset.cast_unit())
             }
             (Self::HijriObservational(c), &mut AnyDateInner::HijriObservational(ref mut d)) => {
                 c.offset_date(d, offset.cast_unit())
             }
             (
-                Self::HijriRuleBasedAstronomical(c),
-                &mut AnyDateInner::HijriRuleBasedAstronomical(ref mut d),
+                Self::HijriTabularAstronomical(c),
+                &mut AnyDateInner::HijriTabularAstronomical(ref mut d),
             ) => c.offset_date(d, offset.cast_unit()),
             (Self::HijriUmmAlQura(c), &mut AnyDateInner::HijriUmmAlQura(ref mut d)) => {
                 c.offset_date(d, offset.cast_unit())
@@ -437,10 +435,10 @@ impl Calendar for AnyCalendar {
                 .until(d1, d2, c2, largest_unit, smallest_unit)
                 .cast_unit(),
             (
-                Self::HijriRuleBasedCivil(c1),
-                Self::HijriRuleBasedCivil(c2),
-                AnyDateInner::HijriRuleBasedCivil(d1),
-                AnyDateInner::HijriRuleBasedCivil(d2),
+                Self::HijriTabularCivil(c1),
+                Self::HijriTabularCivil(c2),
+                AnyDateInner::HijriTabularCivil(d1),
+                AnyDateInner::HijriTabularCivil(d2),
             ) => c1
                 .until(d1, d2, c2, largest_unit, smallest_unit)
                 .cast_unit(),
@@ -453,10 +451,10 @@ impl Calendar for AnyCalendar {
                 .until(d1, d2, c2, largest_unit, smallest_unit)
                 .cast_unit(),
             (
-                Self::HijriRuleBasedAstronomical(c1),
-                Self::HijriRuleBasedAstronomical(c2),
-                AnyDateInner::HijriRuleBasedAstronomical(d1),
-                AnyDateInner::HijriRuleBasedAstronomical(d2),
+                Self::HijriTabularAstronomical(c1),
+                Self::HijriTabularAstronomical(c2),
+                AnyDateInner::HijriTabularAstronomical(d1),
+                AnyDateInner::HijriTabularAstronomical(d2),
             ) => c1
                 .until(d1, d2, c2, largest_unit, smallest_unit)
                 .cast_unit(),
@@ -546,9 +544,9 @@ impl Calendar for AnyCalendar {
             Self::Gregorian(_) => "AnyCalendar (Gregorian)",
             Self::Hebrew(_) => "AnyCalendar (Hebrew)",
             Self::Indian(_) => "AnyCalendar (Indian)",
-            Self::HijriRuleBasedCivil(_) => "AnyCalendar (Hijri, rule-based, civil epoch)",
+            Self::HijriTabularCivil(_) => "AnyCalendar (Hijri, rule-based, civil epoch)",
             Self::HijriObservational(_) => "AnyCalendar (Hijri, observational)",
-            Self::HijriRuleBasedAstronomical(_) => {
+            Self::HijriTabularAstronomical(_) => {
                 "AnyCalendar (Hijri, rule-based, astronomical epoch)"
             }
             Self::HijriUmmAlQura(_) => "AnyCalendar (Hijri, Umm al-Qura)",
@@ -587,14 +585,14 @@ impl AnyCalendar {
             AnyCalendarKind::Gregorian => AnyCalendar::Gregorian(Gregorian),
             AnyCalendarKind::Hebrew => AnyCalendar::Hebrew(Hebrew),
             AnyCalendarKind::Indian => AnyCalendar::Indian(Indian),
-            AnyCalendarKind::HijriRuleBasedCivil => {
-                AnyCalendar::HijriRuleBasedCivil(HijriRuleBased::new_civil_epoch())
+            AnyCalendarKind::HijriTabularCivil => {
+                AnyCalendar::HijriTabularCivil(HijriTabular::new_civil_epoch())
             }
             AnyCalendarKind::HijriObservationalMecca => {
                 AnyCalendar::HijriObservational(HijriObservational::new_mecca())
             }
-            AnyCalendarKind::HijriRuleBasedAstronomical => {
-                AnyCalendar::HijriRuleBasedAstronomical(HijriRuleBased::new_astronomical_epoch())
+            AnyCalendarKind::HijriTabularAstronomical => {
+                AnyCalendar::HijriTabularAstronomical(HijriTabular::new_astronomical_epoch())
             }
             AnyCalendarKind::HijriUmmAlQura => AnyCalendar::HijriUmmAlQura(HijriUmmAlQura::new()),
             AnyCalendarKind::Iso => AnyCalendar::Iso(Iso),
@@ -634,14 +632,14 @@ impl AnyCalendar {
             AnyCalendarKind::Gregorian => AnyCalendar::Gregorian(Gregorian),
             AnyCalendarKind::Hebrew => AnyCalendar::Hebrew(Hebrew),
             AnyCalendarKind::Indian => AnyCalendar::Indian(Indian),
-            AnyCalendarKind::HijriRuleBasedCivil => {
-                AnyCalendar::HijriRuleBasedCivil(HijriRuleBased::new_civil_epoch())
+            AnyCalendarKind::HijriTabularCivil => {
+                AnyCalendar::HijriTabularCivil(HijriTabular::new_civil_epoch())
             }
             AnyCalendarKind::HijriObservationalMecca => AnyCalendar::HijriObservational(
                 HijriObservational::try_new_mecca_with_buffer_provider(provider)?,
             ),
-            AnyCalendarKind::HijriRuleBasedAstronomical => {
-                AnyCalendar::HijriRuleBasedAstronomical(HijriRuleBased::new_astronomical_epoch())
+            AnyCalendarKind::HijriTabularAstronomical => {
+                AnyCalendar::HijriTabularAstronomical(HijriTabular::new_astronomical_epoch())
             }
             AnyCalendarKind::HijriUmmAlQura => {
                 AnyCalendar::HijriUmmAlQura(HijriUmmAlQura::try_new_with_buffer_provider(provider)?)
@@ -683,14 +681,14 @@ impl AnyCalendar {
             AnyCalendarKind::Gregorian => AnyCalendar::Gregorian(Gregorian),
             AnyCalendarKind::Hebrew => AnyCalendar::Hebrew(Hebrew),
             AnyCalendarKind::Indian => AnyCalendar::Indian(Indian),
-            AnyCalendarKind::HijriRuleBasedCivil => {
-                AnyCalendar::HijriRuleBasedCivil(HijriRuleBased::new_civil_epoch())
+            AnyCalendarKind::HijriTabularCivil => {
+                AnyCalendar::HijriTabularCivil(HijriTabular::new_civil_epoch())
             }
             AnyCalendarKind::HijriObservationalMecca => AnyCalendar::HijriObservational(
                 HijriObservational::try_new_mecca_unstable(provider)?,
             ),
-            AnyCalendarKind::HijriRuleBasedAstronomical => {
-                AnyCalendar::HijriRuleBasedAstronomical(HijriRuleBased::new_astronomical_epoch())
+            AnyCalendarKind::HijriTabularAstronomical => {
+                AnyCalendar::HijriTabularAstronomical(HijriTabular::new_astronomical_epoch())
             }
             AnyCalendarKind::HijriUmmAlQura => {
                 AnyCalendar::HijriUmmAlQura(HijriUmmAlQura::try_new_unstable(provider)?)
@@ -718,9 +716,9 @@ impl AnyCalendar {
             Self::Gregorian(_) => AnyCalendarKind::Gregorian,
             Self::Hebrew(_) => AnyCalendarKind::Hebrew,
             Self::Indian(_) => AnyCalendarKind::Indian,
-            Self::HijriRuleBasedCivil(_) => AnyCalendarKind::HijriRuleBasedCivil,
+            Self::HijriTabularCivil(_) => AnyCalendarKind::HijriTabularCivil,
             Self::HijriObservational(ref h) => IntoAnyCalendar::kind(h),
-            Self::HijriRuleBasedAstronomical(_) => AnyCalendarKind::HijriRuleBasedAstronomical,
+            Self::HijriTabularAstronomical(_) => AnyCalendarKind::HijriTabularAstronomical,
             Self::HijriUmmAlQura(_) => AnyCalendarKind::HijriUmmAlQura,
             Self::Iso(_) => AnyCalendarKind::Iso,
             Self::Japanese(_) => AnyCalendarKind::Japanese,
@@ -758,11 +756,9 @@ impl AnyDateInner {
             AnyDateInner::Gregorian(_) => AnyCalendarKind::Gregorian,
             AnyDateInner::Hebrew(_) => AnyCalendarKind::Hebrew,
             AnyDateInner::Indian(_) => AnyCalendarKind::Indian,
-            AnyDateInner::HijriRuleBasedCivil(_) => AnyCalendarKind::HijriRuleBasedCivil,
+            AnyDateInner::HijriTabularCivil(_) => AnyCalendarKind::HijriTabularCivil,
             AnyDateInner::HijriObservational(_) => AnyCalendarKind::HijriObservationalMecca,
-            AnyDateInner::HijriRuleBasedAstronomical(_) => {
-                AnyCalendarKind::HijriRuleBasedAstronomical
-            }
+            AnyDateInner::HijriTabularAstronomical(_) => AnyCalendarKind::HijriTabularAstronomical,
             AnyDateInner::HijriUmmAlQura(_) => AnyCalendarKind::HijriUmmAlQura,
             AnyDateInner::Iso(_) => AnyCalendarKind::Iso,
             AnyDateInner::Japanese(_) => AnyCalendarKind::Japanese,
@@ -795,12 +791,12 @@ pub enum AnyCalendarKind {
     Hebrew,
     /// The kind of a [`Indian`] calendar
     Indian,
-    /// The kind of an [`HijriRuleBased`], civil epoch calendar
-    HijriRuleBasedCivil,
+    /// The kind of an [`HijriTabular`], civil epoch calendar
+    HijriTabularCivil,
     /// The kind of an [`HijriObservational`], Mecca calendar
     HijriObservationalMecca,
-    /// The kind of an [`HijriRuleBased`], astronomical epoch calendar
-    HijriRuleBasedAstronomical,
+    /// The kind of an [`HijriTabular`], astronomical epoch calendar
+    HijriTabularAstronomical,
     /// The kind of an [`HijriUmmAlQura`] calendar
     HijriUmmAlQura,
     /// The kind of an [`Iso`] calendar
@@ -845,10 +841,10 @@ impl AnyCalendarKind {
             AnyCalendarKind::Gregorian => Gregorian.debug_name(),
             AnyCalendarKind::Hebrew => Hebrew.debug_name(),
             AnyCalendarKind::Indian => Indian.debug_name(),
-            AnyCalendarKind::HijriRuleBasedCivil => HijriRuleBased::new_civil_epoch().debug_name(),
+            AnyCalendarKind::HijriTabularCivil => HijriTabular::new_civil_epoch().debug_name(),
             AnyCalendarKind::HijriObservationalMecca => HijriObservational::DEBUG_NAME,
-            AnyCalendarKind::HijriRuleBasedAstronomical => {
-                HijriRuleBased::new_astronomical_epoch().debug_name()
+            AnyCalendarKind::HijriTabularAstronomical => {
+                HijriTabular::new_astronomical_epoch().debug_name()
             }
             AnyCalendarKind::HijriUmmAlQura => HijriUmmAlQura::DEBUG_NAME,
             AnyCalendarKind::Iso => Iso.debug_name(),
@@ -877,9 +873,9 @@ impl TryFrom<CalendarAlgorithm> for AnyCalendarKind {
             Hijri(None) => Err(()),
             Hijri(Some(HijriCalendarAlgorithm::Umalqura)) => Ok(AnyCalendarKind::HijriUmmAlQura),
             Hijri(Some(HijriCalendarAlgorithm::Tbla)) => {
-                Ok(AnyCalendarKind::HijriRuleBasedAstronomical)
+                Ok(AnyCalendarKind::HijriTabularAstronomical)
             }
-            Hijri(Some(HijriCalendarAlgorithm::Civil)) => Ok(AnyCalendarKind::HijriRuleBasedCivil),
+            Hijri(Some(HijriCalendarAlgorithm::Civil)) => Ok(AnyCalendarKind::HijriTabularCivil),
             Hijri(Some(HijriCalendarAlgorithm::Rgsa)) => {
                 Ok(AnyCalendarKind::HijriObservationalMecca)
             }
@@ -1252,23 +1248,23 @@ impl From<Indian> for AnyCalendar {
     }
 }
 
-impl IntoAnyCalendar for HijriRuleBased {
+impl IntoAnyCalendar for HijriTabular {
     #[inline]
     fn to_any(self) -> AnyCalendar {
-        AnyCalendar::HijriRuleBasedCivil(self)
+        AnyCalendar::HijriTabularCivil(self)
     }
     #[inline]
     fn kind(&self) -> AnyCalendarKind {
         match self.0 {
             calendrical_calculations::islamic::ISLAMIC_EPOCH_FRIDAY => {
-                AnyCalendarKind::HijriRuleBasedCivil
+                AnyCalendarKind::HijriTabularCivil
             }
-            _ => AnyCalendarKind::HijriRuleBasedAstronomical,
+            _ => AnyCalendarKind::HijriTabularAstronomical,
         }
     }
     #[inline]
     fn from_any(any: AnyCalendar) -> Result<Self, AnyCalendar> {
-        if let AnyCalendar::HijriRuleBasedCivil(cal) = any {
+        if let AnyCalendar::HijriTabularCivil(cal) = any {
             Ok(cal)
         } else {
             Err(any)
@@ -1276,7 +1272,7 @@ impl IntoAnyCalendar for HijriRuleBased {
     }
     #[inline]
     fn from_any_ref(any: &AnyCalendar) -> Option<&Self> {
-        if let AnyCalendar::HijriRuleBasedCivil(cal) = any {
+        if let AnyCalendar::HijriTabularCivil(cal) = any {
             Some(cal)
         } else {
             None
@@ -1284,12 +1280,12 @@ impl IntoAnyCalendar for HijriRuleBased {
     }
     #[inline]
     fn date_to_any(&self, d: &Self::DateInner) -> AnyDateInner {
-        AnyDateInner::HijriRuleBasedCivil(*d)
+        AnyDateInner::HijriTabularCivil(*d)
     }
 }
 
-impl From<HijriRuleBased> for AnyCalendar {
-    fn from(value: HijriRuleBased) -> AnyCalendar {
+impl From<HijriTabular> for AnyCalendar {
+    fn from(value: HijriTabular) -> AnyCalendar {
         value.to_any()
     }
 }
@@ -1630,11 +1626,11 @@ mod tests {
         let gregorian = AnyCalendar::new(AnyCalendarKind::Gregorian);
         let hebrew = AnyCalendar::new(AnyCalendarKind::Hebrew);
         let indian = AnyCalendar::new(AnyCalendarKind::Indian);
-        let hijri_civil: AnyCalendar = AnyCalendar::new(AnyCalendarKind::HijriRuleBasedCivil);
+        let hijri_civil: AnyCalendar = AnyCalendar::new(AnyCalendarKind::HijriTabularCivil);
         let hijri_observational: AnyCalendar =
             AnyCalendar::new(AnyCalendarKind::HijriObservationalMecca);
         let hijri_astronomical: AnyCalendar =
-            AnyCalendar::new(AnyCalendarKind::HijriRuleBasedAstronomical);
+            AnyCalendar::new(AnyCalendarKind::HijriTabularAstronomical);
         let hijri_umm_al_qura: AnyCalendar = AnyCalendar::new(AnyCalendarKind::HijriUmmAlQura);
         let japanese = AnyCalendar::new(AnyCalendarKind::Japanese);
         let japanext = AnyCalendar::new(AnyCalendarKind::JapaneseExtended);

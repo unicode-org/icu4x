@@ -43,9 +43,9 @@ inline icu4x::CalendarKind icu4x::CalendarKind::FromFFI(icu4x::capi::CalendarKin
     case icu4x::capi::CalendarKind_Dangi:
     case icu4x::capi::CalendarKind_Chinese:
     case icu4x::capi::CalendarKind_Hebrew:
-    case icu4x::capi::CalendarKind_HijriRuleBasedCivil:
+    case icu4x::capi::CalendarKind_HijriTabularCivil:
     case icu4x::capi::CalendarKind_HijriObservationalMecca:
-    case icu4x::capi::CalendarKind_HijriRuleBasedAstronomical:
+    case icu4x::capi::CalendarKind_HijriTabularAstronomical:
     case icu4x::capi::CalendarKind_HijriUmmAlQura:
     case icu4x::capi::CalendarKind_Persian:
     case icu4x::capi::CalendarKind_Roc:

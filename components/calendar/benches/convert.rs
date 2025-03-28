@@ -78,7 +78,7 @@ fn convert_benches(c: &mut Criterion) {
     bench_calendar(
         &mut group,
         "calendar/islamic/civil",
-        icu::calendar::cal::HijriRuleBased::new_civil_epoch(),
+        icu::calendar::cal::HijriTabular::new_civil_epoch(),
     );
 
     bench_calendar(
@@ -90,7 +90,7 @@ fn convert_benches(c: &mut Criterion) {
     bench_calendar(
         &mut group,
         "calendar/islamic/tabular",
-        icu::calendar::cal::HijriRuleBased::new_astronomical_epoch(),
+        icu::calendar::cal::HijriTabular::new_astronomical_epoch(),
     );
 
     group.finish();

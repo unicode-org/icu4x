@@ -43,14 +43,14 @@ enum CalendarKind {
   /// The kind of a Hebrew calendar
   hebrew,
 
-  /// The kind of a Hijri rule-based, civil epoch calendar
-  hijriRuleBasedCivil,
+  /// The kind of a Hijri tabular, civil epoch calendar
+  hijriTabularCivil,
 
   /// The kind of a Hijri observational, Mecca calendar
   hijriObservationalMecca,
 
-  /// The kind of a Hijri rule-based, astronomical epoch calendar
-  hijriRuleBasedAstronomical,
+  /// The kind of a Hijri tabular, astronomical epoch calendar
+  hijriTabularAstronomical,
 
   /// The kind of a Hijri Umm al-Qura calendar
   hijriUmmAlQura,
@@ -87,11 +87,11 @@ enum CalendarKind {
         return 10;
       case hebrew:
         return 11;
-      case hijriRuleBasedCivil:
+      case hijriTabularCivil:
         return 12;
       case hijriObservationalMecca:
         return 18;
-      case hijriRuleBasedAstronomical:
+      case hijriTabularAstronomical:
         return 14;
       case hijriUmmAlQura:
         return 15;

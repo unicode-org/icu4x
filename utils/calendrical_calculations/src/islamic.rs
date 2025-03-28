@@ -124,7 +124,7 @@ pub fn fixed_from_saudi_islamic(year: i32, month: u8, day: u8) -> RataDie {
 }
 
 /// Lisp code reference: <https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L2076>
-pub fn fixed_from_rule_based_islamic(year: i32, month: u8, day: u8, epoch: RataDie) -> RataDie {
+pub fn fixed_from_tabular_islamic(year: i32, month: u8, day: u8, epoch: RataDie) -> RataDie {
     let year = i64::from(year);
     let month = i64::from(month);
     let day = i64::from(day);
@@ -139,16 +139,15 @@ pub fn fixed_from_rule_based_islamic(year: i32, month: u8, day: u8, epoch: RataD
     )
 }
 /// Lisp code reference: <https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L2090>
-pub fn rule_based_islamic_from_fixed(date: RataDie, epoch: RataDie) -> (i32, u8, u8) {
+pub fn tabular_islamic_from_fixed(date: RataDie, epoch: RataDie) -> (i32, u8, u8) {
     let year = i64_to_saturated_i32(((date - epoch) * 30 + 10646).div_euclid(10631));
     let prior_days =
-        date.to_f64_date() - fixed_from_rule_based_islamic(year, 1, 1, epoch).to_f64_date();
+        date.to_f64_date() - fixed_from_tabular_islamic(year, 1, 1, epoch).to_f64_date();
     debug_assert!(prior_days >= 0.0);
     debug_assert!(prior_days <= 354.);
     let month = (((prior_days * 11.0) + 330.0) / 325.0) as u8; // Prior days is maximum 354 (when year length is 355), making the value always less than 12
     debug_assert!(month <= 12);
-    let day = (date.to_f64_date()
-        - fixed_from_rule_based_islamic(year, month, 1, epoch).to_f64_date()
+    let day = (date.to_f64_date() - fixed_from_tabular_islamic(year, month, 1, epoch).to_f64_date()
         + 1.0) as u8; // The value will always be number between 1-30 because of the difference between the date and lunar ordinals function.
 
     (year, month, day)
