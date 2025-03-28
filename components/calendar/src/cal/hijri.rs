@@ -299,6 +299,25 @@ const SHORT_YEAR_LEN: u16 = 354;
 impl<IB: CacheableHijri> HijriYearInfo<IB> {
     fn compute_for_year(extended_year: i32, model: IB) -> Self {
         let ny = model.fixed_from_hijri(extended_year, 1, 1);
+        let next_ny = model.fixed_from_hijri(extended_year + 1, 1, 1);
+        match (next_ny - ny) as u16 {
+            LONG_YEAR_LEN | SHORT_YEAR_LEN => (),
+            353 => {
+                icu_provider::log::trace!(
+                    "({}) Found year {extended_year} AH with length {}. See <https://github.com/unicode-org/icu4x/issues/4930>",
+                    IB::DEBUG_NAME,
+                    next_ny - ny
+                );
+            }
+            other => {
+                debug_assert!(
+                    false,
+                    "({}) Found year {extended_year} AH with length {}!",
+                    IB::DEBUG_NAME,
+                    other
+                )
+            }
+        }
 
         let ny_offset = ny - Self::mean_synodic_ny(extended_year);
 
@@ -309,7 +328,7 @@ impl<IB: CacheableHijri> HijriYearInfo<IB> {
                 let end_of_month = if month_idx < 11 {
                     model.fixed_from_hijri(extended_year, month_idx as u8 + 2, 1)
                 } else {
-                    model.fixed_from_hijri(extended_year + 1, 1, 1)
+                    next_ny
                 };
                 let days_in_month = end_of_month - start_of_month;
                 start_of_month = end_of_month;
@@ -326,7 +345,7 @@ impl<IB: CacheableHijri> HijriYearInfo<IB> {
                         true
                     }
                     _ => {
-                        core::debug_assert!(
+                        debug_assert!(
                             false,
                             "({}) Found year {extended_year} AH with month length {days_in_month} for month {}!",
                             IB::DEBUG_NAME,
@@ -340,7 +359,7 @@ impl<IB: CacheableHijri> HijriYearInfo<IB> {
             // a 31-day month, "move" the day to the first 29-day month in the
             // same year to maintain all months at 29 or 30 days.
             if excess_days != 0 {
-                core::debug_assert_eq!(
+                debug_assert_eq!(
                     excess_days,
                     1,
                     "({}) Found year {extended_year} AH with more than one excess day!",
@@ -352,16 +371,11 @@ impl<IB: CacheableHijri> HijriYearInfo<IB> {
             }
             month_lengths
         };
-        let r = Self {
+        Self {
             packed_data: PackedHijriYearInfo::new(month_lengths, ny_offset),
             model,
             value: extended_year,
-        };
-        if !matches!(r.days_in_year(), SHORT_YEAR_LEN | LONG_YEAR_LEN | 353) {
-            // See https://github.com/unicode-org/icu4x/issues/4930
-            debug_assert!(false, "({}) Found wrong year length for Hijri year {extended_year}: Expected 355, 354, or 353, got {}", IB::DEBUG_NAME, r.days_in_year());
         }
-        r
     }
 
     fn compute_for_fixed(fixed: RataDie, model: IB) -> Self {
