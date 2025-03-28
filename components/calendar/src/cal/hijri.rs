@@ -521,11 +521,11 @@ impl<'b, IB: CacheableHijri> HijriPrecomputedData<'b, IB> {
                 // +1 because the epoch is new year of year 1
                 // truncating instead of flooring does not matter, as this is well-defined for
                 // positive years only
-                let extended_year =
-                    ((rd - calendrical_calculations::islamic::ISLAMIC_EPOCH_FRIDAY) as f64
-                        / calendrical_calculations::islamic::MEAN_YEAR_LENGTH)
-                        as i32
-                        + 1;
+                let extended_year = ((rd - calendrical_calculations::islamic::ISLAMIC_EPOCH_FRIDAY)
+                    as f64
+                    / calendrical_calculations::islamic::MEAN_YEAR_LENGTH)
+                    as i32
+                    + 1;
 
                 let year = d.get(extended_year, self.model)?;
 
