@@ -62,6 +62,13 @@ impl Hebrew {
 pub(crate) struct HebrewYearInfo {
     keviyah: Keviyah,
     prev_keviyah: Keviyah,
+    value: i32,
+}
+
+impl From<HebrewYearInfo> for i32 {
+    fn from(value: HebrewYearInfo) -> Self {
+        value.value
+    }
 }
 
 impl HebrewYearInfo {
@@ -81,6 +88,7 @@ impl HebrewYearInfo {
         Self {
             keviyah,
             prev_keviyah,
+            value: h_year,
         }
     }
 }
@@ -89,11 +97,11 @@ impl HebrewYearInfo {
 impl CalendarArithmetic for Hebrew {
     type YearInfo = HebrewYearInfo;
 
-    fn month_days(_h_year: i32, ordinal_month: u8, info: HebrewYearInfo) -> u8 {
+    fn days_in_provided_month(info: HebrewYearInfo, ordinal_month: u8) -> u8 {
         info.keviyah.month_len(ordinal_month)
     }
 
-    fn months_for_every_year(_h_year: i32, info: HebrewYearInfo) -> u8 {
+    fn months_in_provided_year(info: HebrewYearInfo) -> u8 {
         if info.keviyah.is_leap() {
             13
         } else {
@@ -101,15 +109,15 @@ impl CalendarArithmetic for Hebrew {
         }
     }
 
-    fn days_in_provided_year(_h_year: i32, info: HebrewYearInfo) -> u16 {
+    fn days_in_provided_year(info: HebrewYearInfo) -> u16 {
         info.keviyah.year_length()
     }
 
-    fn is_leap_year(_h_year: i32, info: HebrewYearInfo) -> bool {
+    fn provided_year_is_leap(info: HebrewYearInfo) -> bool {
         info.keviyah.is_leap()
     }
 
-    fn last_month_day_in_year(_h_year: i32, info: HebrewYearInfo) -> (u8, u8) {
+    fn last_month_day_in_provided_year(info: HebrewYearInfo) -> (u8, u8) {
         info.keviyah.last_month_day_in_year()
     }
 }
@@ -135,9 +143,9 @@ impl Calendar for Hebrew {
             _ => return Err(DateError::UnknownEra),
         }
 
-        let year_info = HebrewYearInfo::compute(year);
+        let year = HebrewYearInfo::compute(year);
 
-        let is_leap_year = year_info.keviyah.is_leap();
+        let is_leap_year = year.keviyah.is_leap();
 
         let month_code_str = month_code.0.as_str();
 
@@ -181,30 +189,30 @@ impl Calendar for Hebrew {
             }
         };
 
-        Ok(HebrewDateInner(
-            ArithmeticDate::new_from_ordinals_with_info(year, month_ordinal, day, year_info)?,
-        ))
+        Ok(HebrewDateInner(ArithmeticDate::new_from_ordinals(
+            year,
+            month_ordinal,
+            day,
+        )?))
     }
 
     fn date_from_iso(&self, iso: Date<Iso>) -> Self::DateInner {
         let fixed_iso = Iso::to_fixed(iso);
-        let (year_info, h_year) = YearInfo::year_containing_rd(fixed_iso);
+        let (year, h_year) = YearInfo::year_containing_rd(fixed_iso);
         // Obtaining a 1-indexed day-in-year value
-        let day = fixed_iso - year_info.new_year() + 1;
+        let day = fixed_iso - year.new_year() + 1;
         let day = u16::try_from(day).unwrap_or(u16::MAX);
 
-        let year_info = HebrewYearInfo::compute_with_keviyah(year_info.keviyah, h_year);
-        let (month, day) = year_info.keviyah.month_day_for(day);
-        HebrewDateInner(ArithmeticDate::new_unchecked_with_info(
-            h_year, month, day, year_info,
-        ))
+        let year = HebrewYearInfo::compute_with_keviyah(year.keviyah, h_year);
+        let (month, day) = year.keviyah.month_day_for(day);
+        HebrewDateInner(ArithmeticDate::new_unchecked(year, month, day))
     }
 
     fn date_to_iso(&self, date: &Self::DateInner) -> Date<Iso> {
-        let year_info = date.0.year_info.keviyah.year_info(date.0.year);
+        let year = date.0.year.keviyah.year_info(date.0.year.value);
 
-        let ny = year_info.new_year();
-        let days_preceding = year_info.keviyah.days_preceding(date.0.month);
+        let ny = year.new_year();
+        let days_preceding = year.keviyah.days_preceding(date.0.month);
 
         // Need to subtract 1 since the new year is itself in this year
         Iso::from_fixed(ny + i64::from(days_preceding) + i64::from(date.0.day) - 1)
@@ -242,16 +250,24 @@ impl Calendar for Hebrew {
     }
 
     fn year(&self, date: &Self::DateInner) -> types::YearInfo {
-        Self::year_as_hebrew(date.0.year)
+        types::YearInfo::new(
+            date.0.year.value,
+            types::EraYear {
+                formatting_era: types::FormattingEra::Index(0, tinystr!(16, "AM")),
+                standard_era: tinystr!(16, "hebrew").into(),
+                era_year: date.0.year.value,
+                ambiguity: types::YearAmbiguity::CenturyRequired,
+            },
+        )
     }
 
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
-        Self::is_leap_year(date.0.year, date.0.year_info)
+        Self::provided_year_is_leap(date.0.year)
     }
 
     fn month(&self, date: &Self::DateInner) -> MonthInfo {
         let mut ordinal = date.0.month;
-        let is_leap_year = Self::is_leap_year(date.0.year, date.0.year_info);
+        let is_leap_year = Self::provided_year_is_leap(date.0.year);
 
         if is_leap_year {
             if ordinal == 6 {
@@ -310,20 +326,6 @@ impl Calendar for Hebrew {
     }
 }
 
-impl Hebrew {
-    fn year_as_hebrew(civil_year: i32) -> types::YearInfo {
-        types::YearInfo::new(
-            civil_year,
-            types::EraYear {
-                formatting_era: types::FormattingEra::Index(0, tinystr!(16, "AM")),
-                standard_era: tinystr!(16, "hebrew").into(),
-                era_year: civil_year,
-                ambiguity: types::YearAmbiguity::CenturyRequired,
-            },
-        )
-    }
-}
-
 impl Date<Hebrew> {
     /// Construct new Hebrew Date.
     ///
@@ -342,9 +344,9 @@ impl Date<Hebrew> {
     /// assert_eq!(date_hebrew.day_of_month().0, 25);
     /// ```
     pub fn try_new_hebrew(year: i32, month: u8, day: u8) -> Result<Date<Hebrew>, RangeError> {
-        let year_info = HebrewYearInfo::compute(year);
+        let year = HebrewYearInfo::compute(year);
 
-        ArithmeticDate::new_from_ordinals_with_info(year, month, day, year_info)
+        ArithmeticDate::new_from_ordinals(year, month, day)
             .map(HebrewDateInner)
             .map(|inner| Date::from_raw(inner, Hebrew))
     }
@@ -485,7 +487,7 @@ mod tests {
         // In Gregorian, era year is 1 - extended year
         assert_eq!(greg_date.year().era_year().unwrap(), 5001);
         let hebr_date = greg_date.to_calendar(Hebrew);
-        assert_eq!(hebr_date.inner.0.year, -1240);
+        assert_eq!(hebr_date.inner.0.year.value, -1240);
         assert_eq!(hebr_date.year().standard_era().unwrap().0, "hebrew");
         // In Hebrew, there is no inverse era, so negative extended years are negative era years
         assert_eq!(hebr_date.year().era_year_or_extended(), -1240);

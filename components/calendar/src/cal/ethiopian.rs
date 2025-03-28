@@ -69,13 +69,13 @@ pub struct Ethiopian(pub(crate) bool);
 pub struct EthiopianDateInner(ArithmeticDate<Ethiopian>);
 
 impl CalendarArithmetic for Ethiopian {
-    type YearInfo = ();
+    type YearInfo = i32;
 
-    fn month_days(year: i32, month: u8, _data: ()) -> u8 {
+    fn days_in_provided_month(year: i32, month: u8) -> u8 {
         if (1..=12).contains(&month) {
             30
         } else if month == 13 {
-            if Self::is_leap_year(year, ()) {
+            if Self::provided_year_is_leap(year) {
                 6
             } else {
                 5
@@ -85,24 +85,24 @@ impl CalendarArithmetic for Ethiopian {
         }
     }
 
-    fn months_for_every_year(_: i32, _data: ()) -> u8 {
+    fn months_in_provided_year(_: i32) -> u8 {
         13
     }
 
-    fn is_leap_year(year: i32, _data: ()) -> bool {
+    fn provided_year_is_leap(year: i32) -> bool {
         year.rem_euclid(4) == 3
     }
 
-    fn last_month_day_in_year(year: i32, _data: ()) -> (u8, u8) {
-        if Self::is_leap_year(year, ()) {
+    fn last_month_day_in_provided_year(year: i32) -> (u8, u8) {
+        if Self::provided_year_is_leap(year) {
             (13, 6)
         } else {
             (13, 5)
         }
     }
 
-    fn days_in_provided_year(year: i32, _data: ()) -> u16 {
-        if Self::is_leap_year(year, ()) {
+    fn days_in_provided_year(year: i32) -> u16 {
+        if Self::provided_year_is_leap(year) {
             366
         } else {
             365
@@ -175,11 +175,32 @@ impl Calendar for Ethiopian {
     }
 
     fn year(&self, date: &Self::DateInner) -> types::YearInfo {
-        Self::year_as_ethiopian(date.0.year, self.0)
+        let year = date.0.year;
+        if self.0 || year <= INCARNATION_OFFSET {
+            types::YearInfo::new(
+                year,
+                types::EraYear {
+                    standard_era: tinystr!(16, "ethioaa").into(),
+                    formatting_era: types::FormattingEra::Index(0, tinystr!(16, "Anno Mundi")),
+                    era_year: year,
+                    ambiguity: types::YearAmbiguity::CenturyRequired,
+                },
+            )
+        } else {
+            types::YearInfo::new(
+                year - INCARNATION_OFFSET,
+                types::EraYear {
+                    standard_era: tinystr!(16, "ethiopic").into(),
+                    formatting_era: types::FormattingEra::Index(1, tinystr!(16, "Incarnation")),
+                    era_year: year - INCARNATION_OFFSET,
+                    ambiguity: types::YearAmbiguity::CenturyRequired,
+                },
+            )
+        }
     }
 
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
-        Self::is_leap_year(date.0.year, ())
+        Self::provided_year_is_leap(date.0.year)
     }
 
     fn month(&self, date: &Self::DateInner) -> types::MonthInfo {
@@ -248,30 +269,6 @@ impl Ethiopian {
             month,
             day,
         ))
-    }
-
-    fn year_as_ethiopian(year: i32, amete_alem: bool) -> types::YearInfo {
-        if amete_alem || year <= INCARNATION_OFFSET {
-            types::YearInfo::new(
-                year,
-                types::EraYear {
-                    standard_era: tinystr!(16, "ethioaa").into(),
-                    formatting_era: types::FormattingEra::Index(0, tinystr!(16, "Anno Mundi")),
-                    era_year: year,
-                    ambiguity: types::YearAmbiguity::CenturyRequired,
-                },
-            )
-        } else {
-            types::YearInfo::new(
-                year - INCARNATION_OFFSET,
-                types::EraYear {
-                    standard_era: tinystr!(16, "ethiopic").into(),
-                    formatting_era: types::FormattingEra::Index(1, tinystr!(16, "Incarnation")),
-                    era_year: year - INCARNATION_OFFSET,
-                    ambiguity: types::YearAmbiguity::CenturyRequired,
-                },
-            )
-        }
     }
 }
 

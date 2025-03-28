@@ -130,24 +130,6 @@ impl Japanese {
         })
     }
 
-    fn japanese_date_from_codes(
-        &self,
-        era: Option<&str>,
-        year: i32,
-        month_code: types::MonthCode,
-        day: u8,
-    ) -> Result<JapaneseDateInner, DateError> {
-        let Some((month, false)) = month_code.parsed() else {
-            return Err(DateError::UnknownMonthCode(month_code));
-        };
-
-        if month > 12 {
-            return Err(DateError::UnknownMonthCode(month_code));
-        }
-
-        self.new_japanese_date_inner(era.unwrap_or("gregory"), year, month, day)
-    }
-
     pub(crate) const DEBUG_NAME: &'static str = "Japanese";
 }
 
@@ -196,7 +178,15 @@ impl Calendar for Japanese {
         month_code: types::MonthCode,
         day: u8,
     ) -> Result<Self::DateInner, DateError> {
-        self.japanese_date_from_codes(era, year, month_code, day)
+        let Some((month, false)) = month_code.parsed() else {
+            return Err(DateError::UnknownMonthCode(month_code));
+        };
+
+        if month > 12 {
+            return Err(DateError::UnknownMonthCode(month_code));
+        }
+
+        self.new_japanese_date_inner(era.unwrap_or("gregory"), year, month, day)
     }
 
     fn date_from_iso(&self, iso: Date<Iso>) -> JapaneseDateInner {
@@ -298,7 +288,7 @@ impl Calendar for JapaneseExtended {
         month_code: types::MonthCode,
         day: u8,
     ) -> Result<Self::DateInner, DateError> {
-        self.0.japanese_date_from_codes(era, year, month_code, day)
+        self.0.date_from_codes(era, year, month_code, day)
     }
 
     fn date_from_iso(&self, iso: Date<Iso>) -> JapaneseDateInner {
@@ -516,7 +506,11 @@ impl Japanese {
     ///
     /// This will also use Gregorian eras for eras that are before the earliest era
     fn adjusted_year_for(&self, date: IsoDateInner) -> (i32, TinyStr16) {
-        let date: EraStartDate = (&date).into();
+        let date: EraStartDate = EraStartDate {
+            year: date.0.year,
+            month: date.0.month,
+            day: date.0.day,
+        };
         let (start, era) = self.japanese_era_for(date);
         // The year in which an era starts is Year 1, and it may be short
         // The only time this function will experience dates that are *before*

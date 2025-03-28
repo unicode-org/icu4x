@@ -106,7 +106,16 @@ impl Calendar for Buddhist {
 
     /// The calendar-specific year represented by `date`
     fn year(&self, date: &Self::DateInner) -> types::YearInfo {
-        iso_year_as_buddhist(date.0.year)
+        let buddhist_year = date.0.year + BUDDHIST_ERA_OFFSET;
+        types::YearInfo::new(
+            buddhist_year,
+            types::EraYear {
+                standard_era: tinystr!(16, "buddhist").into(),
+                formatting_era: types::FormattingEra::Index(0, tinystr!(16, "BE")),
+                era_year: buddhist_year,
+                ambiguity: types::YearAmbiguity::CenturyRequired,
+            },
+        )
     }
 
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
@@ -156,19 +165,6 @@ impl Date<Buddhist> {
         Date::try_new_iso(year - BUDDHIST_ERA_OFFSET, month, day)
             .map(|d| Date::new_from_iso(d, Buddhist))
     }
-}
-
-fn iso_year_as_buddhist(year: i32) -> types::YearInfo {
-    let buddhist_year = year + BUDDHIST_ERA_OFFSET;
-    types::YearInfo::new(
-        buddhist_year,
-        types::EraYear {
-            standard_era: tinystr!(16, "buddhist").into(),
-            formatting_era: types::FormattingEra::Index(0, tinystr!(16, "BE")),
-            era_year: buddhist_year,
-            ambiguity: types::YearAmbiguity::CenturyRequired,
-        },
-    )
 }
 
 #[cfg(test)]

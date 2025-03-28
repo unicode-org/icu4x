@@ -85,7 +85,11 @@ impl ChineseBasedCache<'_> {
 
         let days_in_prev_year = prev_packed.days_in_year();
 
-        Some(ChineseBasedYearInfo::new(days_in_prev_year, this_packed))
+        Some(ChineseBasedYearInfo::new(
+            extended_year,
+            days_in_prev_year,
+            this_packed,
+        ))
     }
     /// Get the cached data for the Chinese Year corresponding to a given day.
     ///
@@ -93,7 +97,7 @@ impl ChineseBasedCache<'_> {
     pub(crate) fn get_for_iso<CB: ChineseBased>(
         &self,
         iso: ArithmeticDate<Iso>,
-    ) -> Option<(ChineseBasedYearInfo, i32)> {
+    ) -> Option<ChineseBasedYearInfo> {
         let extended_year = CB::extended_from_iso(iso.year);
         let delta = extended_year - self.first_extended_year;
         let delta = usize::try_from(delta).ok()?;
@@ -108,9 +112,10 @@ impl ChineseBasedCache<'_> {
         let fetched_data_ny_in_iso = u16::from(this_packed.ny_day_of_iso_year());
 
         if iso_in_year >= fetched_data_ny_in_iso {
-            Some((
-                ChineseBasedYearInfo::new(prev_packed.days_in_year(), this_packed),
+            Some(ChineseBasedYearInfo::new(
                 extended_year,
+                prev_packed.days_in_year(),
+                this_packed,
             ))
         } else {
             // We're dealing with an ISO day in the beginning of the year, before Chinese New Year.
@@ -122,9 +127,10 @@ impl ChineseBasedCache<'_> {
 
             let days_in_prev_year = prev2_packed.days_in_year();
 
-            Some((
-                ChineseBasedYearInfo::new(days_in_prev_year, prev_packed),
+            Some(ChineseBasedYearInfo::new(
                 extended_year - 1,
+                days_in_prev_year,
+                prev_packed,
             ))
         }
     }

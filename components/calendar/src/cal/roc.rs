@@ -21,7 +21,6 @@ use crate::{
     cal::iso::IsoDateInner, calendar_arithmetic::ArithmeticDate, error::DateError, types, Calendar,
     Date, Iso, RangeError,
 };
-use calendrical_calculations::helpers::i64_to_saturated_i32;
 use tinystr::tinystr;
 
 /// Year of the beginning of the Taiwanese (ROC/Minguo) calendar.
@@ -116,7 +115,28 @@ impl Calendar for Roc {
     }
 
     fn year(&self, date: &Self::DateInner) -> crate::types::YearInfo {
-        year_as_roc(date.0 .0.year as i64)
+        let year = date.0 .0.year;
+        if year > ROC_ERA_OFFSET {
+            types::YearInfo::new(
+                year,
+                types::EraYear {
+                    standard_era: tinystr!(16, "roc").into(),
+                    formatting_era: types::FormattingEra::Index(1, tinystr!(16, "ROC")),
+                    era_year: year.saturating_sub(ROC_ERA_OFFSET),
+                    ambiguity: types::YearAmbiguity::CenturyRequired,
+                },
+            )
+        } else {
+            types::YearInfo::new(
+                year,
+                types::EraYear {
+                    standard_era: tinystr!(16, "roc-inverse").into(),
+                    formatting_era: types::FormattingEra::Index(0, tinystr!(16, "B. ROC")),
+                    era_year: (ROC_ERA_OFFSET + 1).saturating_sub(year),
+                    ambiguity: types::YearAmbiguity::EraAndCenturyRequired,
+                },
+            )
+        }
     }
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
         Iso.is_in_leap_year(&date.0)
@@ -169,32 +189,6 @@ impl Date<Roc> {
     pub fn try_new_roc(year: i32, month: u8, day: u8) -> Result<Date<Roc>, RangeError> {
         let iso_year = year.saturating_add(ROC_ERA_OFFSET);
         Date::try_new_iso(iso_year, month, day).map(|d| Date::new_from_iso(d, Roc))
-    }
-}
-
-pub(crate) fn year_as_roc(year: i64) -> types::YearInfo {
-    let year_i32 = i64_to_saturated_i32(year);
-    let offset_i64 = ROC_ERA_OFFSET as i64;
-    if year > offset_i64 {
-        types::YearInfo::new(
-            year_i32,
-            types::EraYear {
-                standard_era: tinystr!(16, "roc").into(),
-                formatting_era: types::FormattingEra::Index(1, tinystr!(16, "ROC")),
-                era_year: year_i32.saturating_sub(ROC_ERA_OFFSET),
-                ambiguity: types::YearAmbiguity::CenturyRequired,
-            },
-        )
-    } else {
-        types::YearInfo::new(
-            year_i32,
-            types::EraYear {
-                standard_era: tinystr!(16, "roc-inverse").into(),
-                formatting_era: types::FormattingEra::Index(0, tinystr!(16, "B. ROC")),
-                era_year: (ROC_ERA_OFFSET + 1).saturating_sub(year_i32),
-                ambiguity: types::YearAmbiguity::EraAndCenturyRequired,
-            },
-        )
     }
 }
 

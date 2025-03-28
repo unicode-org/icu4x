@@ -44,11 +44,11 @@ pub struct Indian;
 pub struct IndianDateInner(ArithmeticDate<Indian>);
 
 impl CalendarArithmetic for Indian {
-    type YearInfo = ();
+    type YearInfo = i32;
 
-    fn month_days(year: i32, month: u8, _data: ()) -> u8 {
+    fn days_in_provided_month(year: i32, month: u8) -> u8 {
         if month == 1 {
-            if Self::is_leap_year(year, ()) {
+            if Self::provided_year_is_leap(year) {
                 31
             } else {
                 30
@@ -62,20 +62,20 @@ impl CalendarArithmetic for Indian {
         }
     }
 
-    fn months_for_every_year(_: i32, _data: ()) -> u8 {
+    fn months_in_provided_year(_: i32) -> u8 {
         12
     }
 
-    fn is_leap_year(year: i32, _data: ()) -> bool {
-        Iso::is_leap_year(year + 78, ())
+    fn provided_year_is_leap(year: i32) -> bool {
+        Iso::provided_year_is_leap(year + 78)
     }
 
-    fn last_month_day_in_year(_year: i32, _data: ()) -> (u8, u8) {
+    fn last_month_day_in_provided_year(_year: i32) -> (u8, u8) {
         (12, 30)
     }
 
-    fn days_in_provided_year(year: i32, _data: ()) -> u16 {
-        if Self::is_leap_year(year, ()) {
+    fn days_in_provided_year(year: i32) -> u16 {
+        if Self::provided_year_is_leap(year) {
             366
         } else {
             365
@@ -114,7 +114,7 @@ impl Calendar for Indian {
         // This is in the previous Indian year
         let day_of_year_indian = if day_of_year_iso <= DAY_OFFSET {
             year -= 1;
-            let n_days = Self::days_in_provided_year(year, ());
+            let n_days = Self::days_in_provided_year(year);
 
             // calculate day of year in previous year
             n_days + day_of_year_iso - DAY_OFFSET
@@ -173,11 +173,19 @@ impl Calendar for Indian {
     }
 
     fn year(&self, date: &Self::DateInner) -> types::YearInfo {
-        year_as_saka(date.0.year)
+        types::YearInfo::new(
+            date.0.year,
+            types::EraYear {
+                formatting_era: types::FormattingEra::Index(0, tinystr!(16, "Saka")),
+                standard_era: tinystr!(16, "indian").into(),
+                era_year: date.0.year,
+                ambiguity: types::YearAmbiguity::CenturyRequired,
+            },
+        )
     }
 
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
-        Self::is_leap_year(date.0.year, ())
+        Self::provided_year_is_leap(date.0.year)
     }
 
     fn month(&self, date: &Self::DateInner) -> types::MonthInfo {
@@ -199,18 +207,6 @@ impl Calendar for Indian {
     fn any_calendar_kind(&self) -> Option<crate::AnyCalendarKind> {
         Some(crate::any_calendar::IntoAnyCalendar::kind(self))
     }
-}
-
-fn year_as_saka(year: i32) -> types::YearInfo {
-    types::YearInfo::new(
-        year,
-        types::EraYear {
-            formatting_era: types::FormattingEra::Index(0, tinystr!(16, "Saka")),
-            standard_era: tinystr!(16, "indian").into(),
-            era_year: year,
-            ambiguity: types::YearAmbiguity::CenturyRequired,
-        },
-    )
 }
 
 impl Indian {

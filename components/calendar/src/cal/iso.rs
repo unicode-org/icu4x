@@ -43,32 +43,32 @@ pub struct Iso;
 pub struct IsoDateInner(pub(crate) ArithmeticDate<Iso>);
 
 impl CalendarArithmetic for Iso {
-    type YearInfo = ();
+    type YearInfo = i32;
 
-    fn month_days(year: i32, month: u8, _data: ()) -> u8 {
+    fn days_in_provided_month(year: i32, month: u8) -> u8 {
         match month {
             4 | 6 | 9 | 11 => 30,
-            2 if Self::is_leap_year(year, ()) => 29,
+            2 if Self::provided_year_is_leap(year) => 29,
             2 => 28,
             1 | 3 | 5 | 7 | 8 | 10 | 12 => 31,
             _ => 0,
         }
     }
 
-    fn months_for_every_year(_: i32, _data: ()) -> u8 {
+    fn months_in_provided_year(_: i32) -> u8 {
         12
     }
 
-    fn is_leap_year(year: i32, _data: ()) -> bool {
+    fn provided_year_is_leap(year: i32) -> bool {
         calendrical_calculations::iso::is_leap_year(year)
     }
 
-    fn last_month_day_in_year(_year: i32, _data: ()) -> (u8, u8) {
+    fn last_month_day_in_provided_year(_year: i32) -> (u8, u8) {
         (12, 31)
     }
 
-    fn days_in_provided_year(year: i32, _data: ()) -> u16 {
-        if Self::is_leap_year(year, ()) {
+    fn days_in_provided_year(year: i32) -> u16 {
+        if Self::provided_year_is_leap(year) {
             366
         } else {
             365
@@ -131,11 +131,19 @@ impl Calendar for Iso {
     }
 
     fn year(&self, date: &Self::DateInner) -> types::YearInfo {
-        Self::year_as_iso(date.0.year)
+        types::YearInfo::new(
+            date.0.year,
+            types::EraYear {
+                formatting_era: types::FormattingEra::Index(0, tinystr!(16, "")),
+                standard_era: tinystr!(16, "default").into(),
+                era_year: date.0.year,
+                ambiguity: types::YearAmbiguity::Unambiguous,
+            },
+        )
     }
 
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
-        Self::is_leap_year(date.0.year, ())
+        Self::provided_year_is_leap(date.0.year)
     }
 
     /// The calendar-specific month represented by `date`
@@ -187,24 +195,6 @@ impl Iso {
         Self
     }
 
-    /// Count the number of days in a given month/year combo
-    fn days_in_month(year: i32, month: u8) -> u8 {
-        match month {
-            4 | 6 | 9 | 11 => 30,
-            2 if Self::is_leap_year(year, ()) => 29,
-            2 => 28,
-            _ => 31,
-        }
-    }
-
-    pub(crate) fn days_in_year_direct(year: i32) -> u16 {
-        if Self::is_leap_year(year, ()) {
-            366
-        } else {
-            365
-        }
-    }
-
     // Fixed is day count representation of calendars starting from Jan 1st of year 1.
     // The fixed calculations algorithms are from the Calendrical Calculations book.
     #[doc(hidden)]
@@ -215,12 +205,23 @@ impl Iso {
             date.inner.0.day,
         )
     }
+    #[doc(hidden)]
+    pub fn from_fixed(date: RataDie) -> Date<Iso> {
+        Date::from_raw(
+            IsoDateInner(match calendrical_calculations::iso::iso_from_fixed(date) {
+                Err(I32CastError::BelowMin) => ArithmeticDate::min_date(),
+                Err(I32CastError::AboveMax) => ArithmeticDate::max_date(),
+                Ok((year, month, day)) => ArithmeticDate::new_unchecked(year, month, day),
+            }),
+            Iso,
+        )
+    }
 
     pub(crate) fn iso_from_year_day(year: i32, year_day: u16) -> Date<Iso> {
         let mut month = 1;
         let mut day = year_day as i32;
         while month <= 12 {
-            let month_days = Self::days_in_month(year, month) as i32;
+            let month_days = Self::days_in_provided_month(year, month) as i32;
             if day <= month_days {
                 break;
             } else {
@@ -234,20 +235,6 @@ impl Iso {
         #[allow(clippy::unwrap_used)] // month in 1..=12, day <= month_days
         Date::try_new_iso(year, month, day).unwrap()
     }
-    #[doc(hidden)]
-    pub fn from_fixed(date: RataDie) -> Date<Iso> {
-        let (year, month, day) = match calendrical_calculations::iso::iso_from_fixed(date) {
-            Err(I32CastError::BelowMin) => {
-                return Date::from_raw(IsoDateInner(ArithmeticDate::min_date()), Iso)
-            }
-            Err(I32CastError::AboveMax) => {
-                return Date::from_raw(IsoDateInner(ArithmeticDate::max_date()), Iso)
-            }
-            Ok(ymd) => ymd,
-        };
-        #[allow(clippy::unwrap_used)] // valid day and month
-        Date::try_new_iso(year, month, day).unwrap()
-    }
 
     pub(crate) fn day_of_year(date: IsoDateInner) -> u16 {
         // Cumulatively how much are dates in each month
@@ -255,36 +242,13 @@ impl Iso {
         let month_offset = [0, 1, -1, 0, 0, 1, 1, 2, 3, 3, 4, 4];
         #[allow(clippy::indexing_slicing)] // date.0.month in 1..=12
         let mut offset = month_offset[date.0.month as usize - 1];
-        if Self::is_leap_year(date.0.year, ()) && date.0.month > 2 {
+        if Self::provided_year_is_leap(date.0.year) && date.0.month > 2 {
             // Months after February in a leap year are offset by one less
             offset += 1;
         }
         let prev_month_days = (30 * (date.0.month as i32 - 1) + offset) as u16;
 
         prev_month_days + date.0.day as u16
-    }
-
-    /// Wrap the year in the appropriate era code
-    fn year_as_iso(year: i32) -> types::YearInfo {
-        types::YearInfo::new(
-            year,
-            types::EraYear {
-                formatting_era: types::FormattingEra::Index(0, tinystr!(16, "")),
-                standard_era: tinystr!(16, "default").into(),
-                era_year: year,
-                ambiguity: types::YearAmbiguity::Unambiguous,
-            },
-        )
-    }
-}
-
-impl From<&'_ IsoDateInner> for crate::provider::EraStartDate {
-    fn from(other: &'_ IsoDateInner) -> Self {
-        Self {
-            year: other.0.year,
-            month: other.0.month,
-            day: other.0.day,
-        }
     }
 }
 

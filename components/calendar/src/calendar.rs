@@ -30,14 +30,12 @@ pub trait Calendar {
         month_code: types::MonthCode,
         day: u8,
     ) -> Result<Self::DateInner, DateError>;
+
     /// Construct the date from an ISO date
     fn date_from_iso(&self, iso: Date<Iso>) -> Self::DateInner;
     /// Obtain an ISO date from this date
     fn date_to_iso(&self, date: &Self::DateInner) -> Date<Iso>;
-    // fn validate_date(&self, e: Era, y: Year, m: MonthCode, d: Day) -> bool;
-    // // similar validators for YearMonth, etc
 
-    // fn is_leap<A: AsCalendar<Calendar = Self>>(&self, date: &Date<A>) -> bool;
     /// Count the number of months in a given year, specified by providing a date
     /// from that year
     fn months_in_year(&self, date: &Self::DateInner) -> u8;
@@ -47,12 +45,21 @@ pub trait Calendar {
     /// Count the number of days in a given month, specified by providing a date
     /// from that year/month
     fn days_in_month(&self, date: &Self::DateInner) -> u8;
-    // fn week_of_year(&self, date: &Self::DateInner) -> u8;
+    /// Calculate if a date is in a leap year
+    fn is_in_leap_year(&self, date: &Self::DateInner) -> bool;
+
+    /// Information about the year
+    fn year(&self, date: &Self::DateInner) -> types::YearInfo;
+    /// The calendar-specific month represented by `date`
+    fn month(&self, date: &Self::DateInner) -> types::MonthInfo;
+    /// The calendar-specific day-of-month represented by `date`
+    fn day_of_month(&self, date: &Self::DateInner) -> types::DayOfMonth;
+    /// Information of the day of the year
+    fn day_of_year(&self, date: &Self::DateInner) -> types::DayOfYear;
 
     #[doc(hidden)] // unstable
     /// Add `offset` to `date`
     fn offset_date(&self, date: &mut Self::DateInner, offset: DateDuration<Self>);
-
     #[doc(hidden)] // unstable
     /// Calculate `date2 - date` as a duration
     ///
@@ -67,28 +74,9 @@ pub trait Calendar {
         smallest_unit: DateDurationUnit,
     ) -> DateDuration<Self>;
 
-    /// Obtain a name for the calendar for debug printing
-    fn debug_name(&self) -> &'static str;
-    // fn since(&self, from: &Date<Self>, to: &Date<Self>) -> Duration<Self>, Error;
-
-    /// Information about the year
-    fn year(&self, date: &Self::DateInner) -> types::YearInfo;
-
-    /// Calculate if a date is in a leap year
-    fn is_in_leap_year(&self, date: &Self::DateInner) -> bool;
-
-    /// The calendar-specific month represented by `date`
-    fn month(&self, date: &Self::DateInner) -> types::MonthInfo;
-
-    /// The calendar-specific day-of-month represented by `date`
-    fn day_of_month(&self, date: &Self::DateInner) -> types::DayOfMonth;
-
-    /// Information of the day of the year
-    fn day_of_year(&self, date: &Self::DateInner) -> types::DayOfYear;
-
     /// The [`AnyCalendarKind`] corresponding to this calendar,
     /// if one exists. Implementors outside of `icu::calendar` should return `None`
-    fn any_calendar_kind(&self) -> Option<AnyCalendarKind> {
-        None
-    }
+    fn any_calendar_kind(&self) -> Option<AnyCalendarKind>;
+    /// Obtain a name for the calendar for debug printing
+    fn debug_name(&self) -> &'static str;
 }

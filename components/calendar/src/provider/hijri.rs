@@ -89,7 +89,12 @@ impl HijriCache<'_> {
             return None;
         };
 
-        Some(HijriYearInfo::new(prev_packed, this_packed, extended_year, model).0)
+        Some(HijriYearInfo::new(
+            prev_packed,
+            this_packed,
+            extended_year,
+            model,
+        ))
     }
     /// Get the cached data for the Hijri Year corresponding to a given day.
     ///
@@ -98,7 +103,7 @@ impl HijriCache<'_> {
         &self,
         fixed: RataDie,
         model: IB,
-    ) -> Option<(HijriYearInfo<IB>, i32)> {
+    ) -> Option<HijriYearInfo<IB>> {
         let extended_year = IB::approximate_islamic_from_fixed(fixed);
 
         let delta = extended_year - self.first_extended_year;
@@ -111,7 +116,7 @@ impl HijriCache<'_> {
         let this_packed = self.data.get(delta)?;
         let prev_packed = self.data.get(delta + 1)?;
 
-        let this_ny = this_packed.ny::<IB>(extended_year);
+        let this_ny = IB::mean_synodic_ny(extended_year) + this_packed.ny_offset();
 
         if fixed < this_ny {
             let prev2_packed = self.data.get(delta - 2)?;
@@ -123,7 +128,7 @@ impl HijriCache<'_> {
             ));
         }
         let next_packed = self.data.get(delta + 1)?;
-        let next_ny = next_packed.ny::<IB>(extended_year + 1);
+        let next_ny = IB::mean_synodic_ny(extended_year + 1) + next_packed.ny_offset();
 
         if fixed >= next_ny {
             Some(HijriYearInfo::new(
@@ -180,11 +185,12 @@ impl fmt::Debug for PackedHijriYearInfo {
 }
 
 impl PackedHijriYearInfo {
-    pub(crate) fn new(month_lengths: [bool; 12], ny_offset: i8) -> Self {
+    pub(crate) fn new(month_lengths: [bool; 12], ny_offset: i64) -> Self {
         debug_assert!(
             -8 < ny_offset && ny_offset < 8,
             "Year offset too big to store"
         );
+        let ny_offset = ny_offset as i8;
 
         let mut all = 0u16; // last byte unused
 
@@ -209,18 +215,13 @@ impl PackedHijriYearInfo {
     }
 
     // Get the new year offset from the mean synodic new year
-    pub(crate) fn ny_offset(self) -> i8 {
+    pub(crate) fn ny_offset(self) -> i64 {
         let masked = (self.1 >> 5) as i8;
-        if (self.1 & 0b10000) != 0 {
+        (if (self.1 & 0b10000) != 0 {
             -masked
         } else {
             masked
-        }
-    }
-    // Get the new year offset from the mean synodic new year
-    pub(crate) fn ny<IB: IslamicBased>(self, extended_year: i32) -> RataDie {
-        let mean_synodic_ny = IB::mean_synodic_ny(extended_year);
-        mean_synodic_ny + i64::from(self.ny_offset())
+        }) as i64
     }
 
     // Whether a particular month has 30 days (month is 1-indexed)
@@ -262,11 +263,6 @@ impl PackedHijriYearInfo {
     ) -> Self {
         let month_lengths = model.month_lengths_for_year(extended_year, ny);
         let ny_offset = ny - IB::mean_synodic_ny(extended_year);
-        let ny_offset = if !(-7..=7).contains(&ny_offset) {
-            0
-        } else {
-            ny_offset as i8
-        };
         Self::new(month_lengths, ny_offset)
     }
     #[cfg(feature = "datagen")]
@@ -290,7 +286,7 @@ impl AsULE for PackedHijriYearInfo {
 mod tests {
     use super::*;
 
-    fn single_roundtrip(month_lengths: [bool; 12], ny_offset: i8) {
+    fn single_roundtrip(month_lengths: [bool; 12], ny_offset: i64) {
         let packed = PackedHijriYearInfo::new(month_lengths, ny_offset);
         for i in 0..12 {
             assert_eq!(packed.month_has_30_days(i + 1), month_lengths[i as usize], "Month lengths must match for testcase {month_lengths:?} / {ny_offset}, with packed repr: {packed:?}");

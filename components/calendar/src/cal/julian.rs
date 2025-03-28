@@ -50,32 +50,32 @@ pub struct Julian;
 pub struct JulianDateInner(pub(crate) ArithmeticDate<Julian>);
 
 impl CalendarArithmetic for Julian {
-    type YearInfo = ();
+    type YearInfo = i32;
 
-    fn month_days(year: i32, month: u8, _data: ()) -> u8 {
+    fn days_in_provided_month(year: i32, month: u8) -> u8 {
         match month {
             4 | 6 | 9 | 11 => 30,
-            2 if Self::is_leap_year(year, ()) => 29,
+            2 if Self::provided_year_is_leap(year) => 29,
             2 => 28,
             1 | 3 | 5 | 7 | 8 | 10 | 12 => 31,
             _ => 0,
         }
     }
 
-    fn months_for_every_year(_: i32, _data: ()) -> u8 {
+    fn months_in_provided_year(_: i32) -> u8 {
         12
     }
 
-    fn is_leap_year(year: i32, _data: ()) -> bool {
+    fn provided_year_is_leap(year: i32) -> bool {
         calendrical_calculations::julian::is_leap_year(year)
     }
 
-    fn last_month_day_in_year(_year: i32, _data: ()) -> (u8, u8) {
+    fn last_month_day_in_provided_year(_year: i32) -> (u8, u8) {
         (12, 31)
     }
 
-    fn days_in_provided_year(year: i32, _data: ()) -> u16 {
-        if Self::is_leap_year(year, ()) {
+    fn days_in_provided_year(year: i32) -> u16 {
+        if Self::provided_year_is_leap(year) {
             366
         } else {
             365
@@ -141,11 +141,32 @@ impl Calendar for Julian {
     /// The calendar-specific year represented by `date`
     /// Julian has the same era scheme as Gregorian
     fn year(&self, date: &Self::DateInner) -> types::YearInfo {
-        year_as_julian(date.0.year)
+        let year = date.0.year;
+        if year > 0 {
+            types::YearInfo::new(
+                year,
+                types::EraYear {
+                    standard_era: tinystr!(16, "julian").into(),
+                    formatting_era: types::FormattingEra::Index(1, tinystr!(16, "AD")),
+                    era_year: year,
+                    ambiguity: types::YearAmbiguity::CenturyRequired,
+                },
+            )
+        } else {
+            types::YearInfo::new(
+                year,
+                types::EraYear {
+                    standard_era: tinystr!(16, "julian-inverse").into(),
+                    formatting_era: types::FormattingEra::Index(0, tinystr!(16, "BC")),
+                    era_year: 1_i32.saturating_sub(year),
+                    ambiguity: types::YearAmbiguity::EraAndCenturyRequired,
+                },
+            )
+        }
     }
 
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
-        Self::is_leap_year(date.0.year, ())
+        Self::provided_year_is_leap(date.0.year)
     }
 
     /// The calendar-specific month represented by `date`
@@ -171,29 +192,6 @@ impl Calendar for Julian {
     }
 }
 
-fn year_as_julian(year: i32) -> types::YearInfo {
-    if year > 0 {
-        types::YearInfo::new(
-            year,
-            types::EraYear {
-                standard_era: tinystr!(16, "julian").into(),
-                formatting_era: types::FormattingEra::Index(1, tinystr!(16, "AD")),
-                era_year: year,
-                ambiguity: types::YearAmbiguity::CenturyRequired,
-            },
-        )
-    } else {
-        types::YearInfo::new(
-            year,
-            types::EraYear {
-                standard_era: tinystr!(16, "julian-inverse").into(),
-                formatting_era: types::FormattingEra::Index(0, tinystr!(16, "BC")),
-                era_year: 1_i32.saturating_sub(year),
-                ambiguity: types::YearAmbiguity::EraAndCenturyRequired,
-            },
-        )
-    }
-}
 impl Julian {
     /// Construct a new Julian Calendar
     pub fn new() -> Self {
@@ -489,9 +487,9 @@ mod test {
 
     #[test]
     fn test_julian_leap_years() {
-        assert!(Julian::is_leap_year(4, ()));
-        assert!(Julian::is_leap_year(0, ()));
-        assert!(Julian::is_leap_year(-4, ()));
+        assert!(Julian::provided_year_is_leap(4));
+        assert!(Julian::provided_year_is_leap(0));
+        assert!(Julian::provided_year_is_leap(-4));
 
         Date::try_new_julian(2020, 2, 29).unwrap();
     }

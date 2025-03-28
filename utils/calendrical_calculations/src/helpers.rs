@@ -316,7 +316,7 @@ pub const fn i64_to_i32(input: i64) -> Result<i32, I32CastError> {
 
 /// Convert an i64 to i32 but saturate at th ebounds
 #[inline]
-pub fn i64_to_saturated_i32(input: i64) -> i32 {
+pub(crate) fn i64_to_saturated_i32(input: i64) -> i32 {
     i64_to_i32(input).unwrap_or_else(|i| i.saturate())
 }
 
