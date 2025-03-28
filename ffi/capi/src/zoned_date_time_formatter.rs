@@ -51,7 +51,7 @@ pub mod ffi {
         ) -> Result<Box<Self>, DateTimeFormatterBuildOrLoadError> {
             let prefs = (&locale.0).into();
             let rust_builder = icu_datetime::fieldsets::builder::FieldSetBuilder::from(builder);
-            let options = rust_builder.build_zoned_datetime()?;
+            let options = rust_builder.build_zoned_date_and_time()?;
             Ok(Box::new(Self(
                 icu_datetime
                     ::DateTimeFormatter
@@ -72,7 +72,7 @@ pub mod ffi {
             let provider = provider.get()?;
             let prefs = (&locale.0).into();
             let rust_builder = icu_datetime::fieldsets::builder::FieldSetBuilder::from(builder);
-            let options = rust_builder.build_zoned_datetime()?;
+            let options = rust_builder.build_zoned_date_and_time()?;
             Ok(Box::new(Self(
                 icu_datetime
                     ::DateTimeFormatter
@@ -570,7 +570,7 @@ pub mod ffi {
         ) -> Result<Box<Self>, DateTimeFormatterBuildOrLoadError> {
             let prefs = (&locale.0).into();
             let rust_builder = icu_datetime::fieldsets::builder::FieldSetBuilder::from(builder);
-            let options = rust_builder.build_zoned_datetime()?;
+            let options = rust_builder.build_zoned_date_and_time()?;
             Ok(Box::new(Self(
                 icu_datetime
                     ::FixedCalendarDateTimeFormatter
@@ -591,7 +591,7 @@ pub mod ffi {
             let provider = provider.get()?;
             let prefs = (&locale.0).into();
             let rust_builder = icu_datetime::fieldsets::builder::FieldSetBuilder::from(builder);
-            let options = rust_builder.build_zoned_datetime()?;
+            let options = rust_builder.build_zoned_date_and_time()?;
             Ok(Box::new(Self(
                 icu_datetime
                     ::FixedCalendarDateTimeFormatter

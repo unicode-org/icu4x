@@ -42,10 +42,7 @@ enum ConstructorType {
 }
 
 impl ConstructorType {
-    pub const VALUES: &'static [Self] = &[
-        Self::CompiledData,
-        Self::WithProvider,
-    ];
+    pub const VALUES: &'static [Self] = &[Self::CompiledData, Self::WithProvider];
     pub fn is_with_provider(self) -> bool {
         matches!(self, Self::WithProvider)
     }
@@ -132,7 +129,7 @@ impl FormatterFlavor {
             FormatterFlavor::Date => "zoned_date",
             FormatterFlavor::Time => "zoned_time",
             FormatterFlavor::Zone => "zone",
-            FormatterFlavor::DateTime => "zoned_datetime",
+            FormatterFlavor::DateTime => "zoned_date_and_time",
         }
     }
     pub fn has_date(self) -> bool {
