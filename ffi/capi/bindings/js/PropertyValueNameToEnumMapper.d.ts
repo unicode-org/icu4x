@@ -94,6 +94,20 @@ export class PropertyValueNameToEnumMapper {
     static createBidiClassWithProvider(provider: DataProvider): PropertyValueNameToEnumMapper;
 
     /** 
+     * Create a name-to-enum mapper for the `Indic_Conjunct_Break` property, using compiled data.
+     *
+     * See the [Rust documentation for `IndicConjunctBreak`](https://docs.rs/icu_properties/latest/icu_properties/props/struct.IndicConjunctBreak.html) for more information.
+     */
+    static createIndicConjunctBreak(): PropertyValueNameToEnumMapper;
+
+    /** 
+     * Create a name-to-enum mapper for the `Indic_Conjunct_Break` property, using a particular data source.
+     *
+     * See the [Rust documentation for `IndicConjunctBreak`](https://docs.rs/icu_properties/latest/icu_properties/props/struct.IndicConjunctBreak.html) for more information.
+     */
+    static createIndicConjunctBreakWithProvider(provider: DataProvider): PropertyValueNameToEnumMapper;
+
+    /** 
      * Create a name-to-enum mapper for the `Indic_Syllabic_Category` property, using compiled data.
      *
      * See the [Rust documentation for `IndicSyllabicCategory`](https://docs.rs/icu_properties/latest/icu_properties/props/struct.IndicSyllabicCategory.html) for more information.

@@ -124,6 +124,20 @@ export class CodePointMapData8 {
     static createHangulSyllableTypeWithProvider(provider: DataProvider): CodePointMapData8;
 
     /** 
+     * Create a map for the `Indic_Conjunct_Break` property, using compiled data.
+     *
+     * See the [Rust documentation for `IndicConjunctBreak`](https://docs.rs/icu/latest/icu/properties/props/struct.IndicConjunctBreak.html) for more information.
+     */
+    static createIndicConjunctBreak(): CodePointMapData8;
+
+    /** 
+     * Create a map for the `Indic_Conjunct_Break` property, using a particular data source.
+     *
+     * See the [Rust documentation for `IndicConjunctBreak`](https://docs.rs/icu/latest/icu/properties/props/struct.IndicConjunctBreak.html) for more information.
+     */
+    static createIndicConjunctBreakWithProvider(provider: DataProvider): CodePointMapData8;
+
+    /** 
      * Create a map for the `Indic_Syllabic_Property` property, using compiled data.
      *
      * See the [Rust documentation for `IndicSyllabicCategory`](https://docs.rs/icu/latest/icu/properties/props/struct.IndicSyllabicCategory.html) for more information.

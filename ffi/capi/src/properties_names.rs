@@ -164,6 +164,31 @@ pub mod ffi {
                 .erase(),
             )))
         }
+        /// Create a name-to-enum mapper for the `Indic_Conjunct_Break` property, using compiled data.
+        #[diplomat::rust_link(icu_properties::props::IndicConjunctBreak, Struct)]
+        #[diplomat::attr(auto, named_constructor = "indic_conjunct_break")]
+        #[cfg(feature = "compiled_data")]
+        pub fn create_indic_conjunct_break() -> Box<PropertyValueNameToEnumMapper> {
+            Box::new(PropertyValueNameToEnumMapper(icu_properties::PropertyParser::<icu_properties::props::IndicConjunctBreak>::new().static_to_owned().erase()))
+        }
+        /// Create a name-to-enum mapper for the `Indic_Conjunct_Break` property, using a particular data source.
+        #[diplomat::rust_link(icu_properties::props::IndicConjunctBreak, Struct)]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "indic_conjunct_break_with_provider")]
+        #[cfg(feature = "buffer_provider")]
+        pub fn create_indic_conjunct_break_with_provider(
+            provider: &DataProvider,
+        ) -> Result<Box<PropertyValueNameToEnumMapper>, DataError> {
+            Ok(
+                Box::new(
+                    PropertyValueNameToEnumMapper(
+                        icu_properties::PropertyParser::<
+                            icu_properties::props::IndicConjunctBreak,
+                        >::try_new_unstable(&provider.get_unstable()?)?
+                        .erase(),
+                    ),
+                ),
+            )
+        }
         /// Create a name-to-enum mapper for the `Indic_Syllabic_Category` property, using compiled data.
         #[diplomat::rust_link(icu_properties::props::IndicSyllabicCategory, Struct)]
         #[diplomat::attr(auto, named_constructor = "indic_syllabic_category")]

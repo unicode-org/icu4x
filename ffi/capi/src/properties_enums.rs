@@ -1568,6 +1568,51 @@ pub mod ffi {
         }
     }
 
+    #[diplomat::rust_link(icu::properties::props::IndicConjunctBreak, Struct)]
+    #[diplomat::enum_convert(icu_properties::props::IndicConjunctBreak, needs_wildcard)]
+    pub enum IndicConjunctBreak {
+        #[diplomat::rust_link(icu::properties::props::IndicConjunctBreak::None, EnumVariant)]
+        None = 0,
+        #[diplomat::rust_link(icu::properties::props::IndicConjunctBreak::Consonant, EnumVariant)]
+        Consonant = 1,
+        #[diplomat::rust_link(icu::properties::props::IndicConjunctBreak::Extend, EnumVariant)]
+        Extend = 2,
+        #[diplomat::rust_link(icu::properties::props::IndicConjunctBreak::Linker, EnumVariant)]
+        Linker = 3,
+    }
+
+    impl IndicConjunctBreak {
+        #[diplomat::rust_link(icu::properties::props::EnumeratedProperty::for_char, FnInTrait)]
+        #[cfg(feature = "compiled_data")]
+        pub fn for_char(ch: DiplomatChar) -> Self {
+            icu_properties::CodePointMapData::<props::IndicConjunctBreak>::new()
+                .get32(ch)
+                .into()
+        }
+        #[diplomat::rust_link(
+            icu::properties::props::IndicConjunctBreak::to_icu4c_value,
+            FnInStruct
+        )]
+        /// Convert to an integer value usable with ICU4C and CodePointMapData
+        pub fn to_integer_value(self) -> u8 {
+            self as u8
+        }
+        #[diplomat::rust_link(
+            icu::properties::props::IndicConjunctBreak::from_icu4c_value,
+            FnInStruct
+        )]
+        /// Convert from an integer value from ICU4C or CodePointMapData
+        pub fn from_integer_value(other: u8) -> Option<Self> {
+            Some(match other {
+                0 => Self::None,
+                1 => Self::Consonant,
+                2 => Self::Extend,
+                3 => Self::Linker,
+                _ => return None,
+            })
+        }
+    }
+
     #[diplomat::rust_link(icu::properties::props::IndicSyllabicCategory, Struct)]
     #[diplomat::enum_convert(icu_properties::props::IndicSyllabicCategory, needs_wildcard)]
     pub enum IndicSyllabicCategory {
