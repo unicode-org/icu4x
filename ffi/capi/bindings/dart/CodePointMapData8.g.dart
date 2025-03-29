@@ -169,6 +169,27 @@ final class CodePointMapData8 implements ffi.Finalizable {
     return CodePointMapData8._fromFfi(result.union.ok, []);
   }
 
+  /// Create a map for the `Indic_Conjunct_Break` property, using compiled data.
+  ///
+  /// See the [Rust documentation for `IndicConjunctBreak`](https://docs.rs/icu/latest/icu/properties/props/struct.IndicConjunctBreak.html) for more information.
+  factory CodePointMapData8.indicConjunctBreak() {
+    final result = _icu4x_CodePointMapData8_create_indic_conjunct_break_mv1();
+    return CodePointMapData8._fromFfi(result, []);
+  }
+
+  /// Create a map for the `Indic_Conjunct_Break` property, using a particular data source.
+  ///
+  /// See the [Rust documentation for `IndicConjunctBreak`](https://docs.rs/icu/latest/icu/properties/props/struct.IndicConjunctBreak.html) for more information.
+  ///
+  /// Throws [DataError] on failure.
+  factory CodePointMapData8.indicConjunctBreakWithProvider(DataProvider provider) {
+    final result = _icu4x_CodePointMapData8_create_indic_conjunct_break_with_provider_mv1(provider._ffi);
+    if (!result.isOk) {
+      throw DataError.values[result.union.err];
+    }
+    return CodePointMapData8._fromFfi(result.union.ok, []);
+  }
+
   /// Create a map for the `Indic_Syllabic_Property` property, using compiled data.
   ///
   /// See the [Rust documentation for `IndicSyllabicCategory`](https://docs.rs/icu/latest/icu/properties/props/struct.IndicSyllabicCategory.html) for more information.
@@ -407,6 +428,16 @@ external ffi.Pointer<ffi.Opaque> _icu4x_CodePointMapData8_create_hangul_syllable
 @ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CodePointMapData8_create_hangul_syllable_type_with_provider_mv1')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_CodePointMapData8_create_hangul_syllable_type_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider);
+
+@_DiplomatFfiUse('icu4x_CodePointMapData8_create_indic_conjunct_break_mv1')
+@ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_CodePointMapData8_create_indic_conjunct_break_mv1')
+// ignore: non_constant_identifier_names
+external ffi.Pointer<ffi.Opaque> _icu4x_CodePointMapData8_create_indic_conjunct_break_mv1();
+
+@_DiplomatFfiUse('icu4x_CodePointMapData8_create_indic_conjunct_break_with_provider_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CodePointMapData8_create_indic_conjunct_break_with_provider_mv1')
+// ignore: non_constant_identifier_names
+external _ResultOpaqueInt32 _icu4x_CodePointMapData8_create_indic_conjunct_break_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider);
 
 @_DiplomatFfiUse('icu4x_CodePointMapData8_create_indic_syllabic_category_mv1')
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_CodePointMapData8_create_indic_syllabic_category_mv1')
