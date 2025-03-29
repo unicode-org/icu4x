@@ -6,8 +6,8 @@ use windows::{Globalization, System::UserProfile::GlobalizationPreferences};
 
 use crate::RetrievalError;
 
-/// Retrieves languages preffered by the user , it consumes [`GlobalizationPreferences::Languages`](https://learn.microsoft.com/en-us/uwp/api/windows.system.userprofile.globalizationpreferences.languages?view=winrt-26100)
-pub fn get_locales() -> Result<Vec<String>, RetrievalError> {
+/// Retrieves languages preferred by the user , it consumes [`GlobalizationPreferences::Languages`](https://learn.microsoft.com/en-us/uwp/api/windows.system.userprofile.globalizationpreferences.languages?view=winrt-26100)
+pub fn get_raw_locales() -> Result<Vec<String>, RetrievalError> {
     let mut locale_vec_str: Vec<String> = Vec::new();
     let locale = GlobalizationPreferences::Languages()?;
 
@@ -25,7 +25,7 @@ pub fn get_system_calendars() -> Result<Vec<(String, String)>, RetrievalError> {
     let calendar = Globalization::Calendar::new()?;
     let system_calendar = Globalization::Calendar::GetCalendarSystem(&calendar)?;
     let calendar_type: String = system_calendar.to_string();
-    let locale_list: Vec<String> = get_locales()?;
+    let locale_list: Vec<String> = get_raw_locales()?;
 
     let result: Vec<(String, String)> = locale_list
         .into_iter()
