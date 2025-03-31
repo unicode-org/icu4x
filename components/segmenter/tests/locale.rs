@@ -43,7 +43,7 @@ fn sentence_break_with_locale() {
     let langid = langid!("el");
     options_el.content_locale = Some(&langid);
     let segmenter = SentenceSegmenter::try_new(options_el).expect("Loading should succeed!");
-    let iter = segmenter.segment_str(s);
+    let iter = segmenter.as_borrowed().segment_str(s);
     assert_eq!(
         iter.collect::<Vec<usize>>(),
         vec![0, 7, 12],
@@ -54,7 +54,7 @@ fn sentence_break_with_locale() {
     let langid = langid!("en");
     options_en.content_locale = Some(&langid);
     let segmenter = SentenceSegmenter::try_new(options_en).expect("Loading should succeed!");
-    let iter = segmenter.segment_str(s);
+    let iter = segmenter.as_borrowed().segment_str(s);
     assert_eq!(
         iter.collect::<Vec<usize>>(),
         vec![0, 12],

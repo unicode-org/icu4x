@@ -618,7 +618,11 @@ where
     iter.iter = start_iter;
     iter.current_pos_data = start_point;
     #[allow(clippy::unwrap_used)] // iter.complex present for word segmenter
-    let breaks = complex_language_segment_str(iter.complex.unwrap(), &s);
+    let breaks = iter
+        .complex
+        .unwrap()
+        .as_borrowed()
+        .complex_language_segment_str(&s);
     iter.result_cache = breaks;
     let first_pos = *iter.result_cache.first()?;
     let mut i = left_codepoint.len_utf8();
@@ -685,7 +689,11 @@ impl<'s> RuleBreakType<'_, 's> for WordBreakTypeUtf16 {
         iter.iter = start_iter;
         iter.current_pos_data = start_point;
         #[allow(clippy::unwrap_used)] // iter.complex present for word segmenter
-        let breaks = complex_language_segment_utf16(iter.complex.unwrap(), &s);
+        let breaks = iter
+            .complex
+            .unwrap()
+            .as_borrowed()
+            .complex_language_segment_utf16(&s);
         iter.result_cache = breaks;
         // result_cache vector is utf-16 index that is in BMP.
         let first_pos = *iter.result_cache.first()?;

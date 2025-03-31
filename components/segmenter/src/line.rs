@@ -1161,7 +1161,7 @@ where
     // Restore iterator to move to head of complex string
     iter.iter = start_iter;
     iter.current_pos_data = start_point;
-    let breaks = complex_language_segment_str(iter.complex, &s);
+    let breaks = iter.complex.as_borrowed().complex_language_segment_str(&s);
     iter.result_cache = breaks;
     let first_pos = *iter.result_cache.first()?;
     let mut i = left_codepoint.len_utf8();
@@ -1270,7 +1270,10 @@ impl<'s> LineBreakType<'_, 's> for LineBreakTypeUtf16 {
         // Restore iterator to move to head of complex string
         iterator.iter = start_iter;
         iterator.current_pos_data = start_point;
-        let breaks = complex_language_segment_utf16(iterator.complex, &s);
+        let breaks = iterator
+            .complex
+            .as_borrowed()
+            .complex_language_segment_utf16(&s);
         iterator.result_cache = breaks;
         // result_cache vector is utf-16 index that is in BMP.
         let first_pos = *iterator.result_cache.first()?;
