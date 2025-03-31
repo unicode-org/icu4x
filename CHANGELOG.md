@@ -2,6 +2,14 @@
 
 ## Unreleased
 
+ICU4X 2.0 is ICU4X's new major release. Many things have changed, we recommend going through the full changelog for 2.0, 2.0-beta1, and 2.0-beta2 to understand the changes fully.
+
+Some major changes worth highlighting:
+- Most locale-dependent APIs now take type-safe "preferences" objects instead of locales.
+    - Preference bags are often built from a locale, but they can also be built manually or merged from other sources.
+    - Preference bags are taken by value, so most call sites will need to change from `&locale.into()` to `locale.into()` or `(&locale).into()`
+- The datetime formatting APIs have been completely redesigned for better data usage and performance. We recommend looking at the new API and using it from the ground up, rather than replacing API calls one at a time.
+
 - Components
     - General
         - ...
