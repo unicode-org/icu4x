@@ -416,6 +416,8 @@
   - (0.10.4) Enforce C,packed on OptionVarULE (https://github.com/unicode-org/icu4x/pull/5143)
 - `zerovec_derive`
   - (0.10.3) Enforce C,packed, not just packed, on ULE types, fixing for incoming changes to `repr(Rust)` (https://github.com/unicode-org/icu4x/pull/5049)
+  `icu_*_data`
+  - (1.5.1) Add build.rs to workspace includes (unicode-org#6356)
 
 ## icu4x 1.5 (May 28, 2024)
 
