@@ -93,7 +93,6 @@ impl<'data> LstmSegmenter<'data> {
         }
     }
 
-    
     /// Create an LSTM based break iterator for an `str` (a UTF-8 string).
     pub(super) fn segment_str<'a>(&'a self, input: &'a str) -> LstmSegmenterIterator<'a, 'data> {
         let input_seq = if let Some(grapheme) = self.grapheme {

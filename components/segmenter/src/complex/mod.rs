@@ -147,6 +147,64 @@ impl<'data> ComplexPayloadsBorrowed<'data> {
         result
     }
 }
+impl ComplexPayloadsBorrowed<'static> {
+    #[cfg(feature = "lstm")]
+    #[cfg(feature = "compiled_data")]
+    pub(crate) fn new_lstm() -> Self {
+        #[allow(clippy::unwrap_used)]
+        // try_load is infallible if the provider only returns `MissingLocale`.
+        Self {
+            grapheme: &crate::provider::Baked::SINGLETON_SEGMENTER_BREAK_GRAPHEME_CLUSTER_V1,
+            my: try_load_static::<SegmenterLstmAutoV1, _>(&crate::provider::Baked, MY_LSTM)
+                .unwrap()
+                .map(Err),
+            km: try_load_static::<SegmenterLstmAutoV1, _>(&crate::provider::Baked, KM_LSTM)
+                .unwrap()
+                .map(Err),
+            lo: try_load_static::<SegmenterLstmAutoV1, _>(&crate::provider::Baked, LO_LSTM)
+                .unwrap()
+                .map(Err),
+            th: try_load_static::<SegmenterLstmAutoV1, _>(&crate::provider::Baked, TH_LSTM)
+                .unwrap()
+                .map(Err),
+            ja: None,
+        }
+    }
+    #[cfg(feature = "compiled_data")]
+    pub(crate) fn new_dict() -> Self {
+        #[allow(clippy::unwrap_used)]
+        // try_load is infallible if the provider only returns `MissingLocale`.
+        Self {
+            grapheme: crate::provider::Baked::SINGLETON_SEGMENTER_BREAK_GRAPHEME_CLUSTER_V1,
+            my: try_load_static::<SegmenterDictionaryExtendedV1, _>(
+                &crate::provider::Baked,
+                MY_DICT,
+            )
+            .unwrap()
+            .map(Ok),
+            km: try_load_static::<SegmenterDictionaryExtendedV1, _>(
+                &crate::provider::Baked,
+                KM_DICT,
+            )
+            .unwrap()
+            .map(Ok),
+            lo: try_load_static::<SegmenterDictionaryExtendedV1, _>(
+                &crate::provider::Baked,
+                LO_DICT,
+            )
+            .unwrap()
+            .map(Ok),
+            th: try_load_static::<SegmenterDictionaryExtendedV1, _>(
+                &crate::provider::Baked,
+                TH_DICT,
+            )
+            .unwrap()
+            .map(Ok),
+            ja: try_load_static::<SegmenterDictionaryAutoV1, _>(&crate::provider::Baked, CJ_DICT)
+                .unwrap(),
+        }
+    }
+}
 
 impl ComplexPayloads {
     pub(crate) fn as_borrowed<'data>(&'data self) -> ComplexPayloadsBorrowed<'data> {
@@ -394,6 +452,24 @@ fn try_load<M: DataMarker, P: DataProvider<M> + ?Sized>(
         })
         .allow_identifier_not_found()
         .map(|r| r.map(|r| r.payload))
+}
+
+fn try_load_static<M: DataMarker, P: DataProvider<M> + ?Sized>(
+    provider: &P,
+    model: &'static DataMarkerAttributes,
+) -> Result<Option<&'static <M::DataStruct as yoke::Yokeable<'static>>::Output>, DataError> {
+    provider
+        .load(DataRequest {
+            id: DataIdentifierBorrowed::for_marker_attributes(model),
+            metadata: {
+                let mut m = DataRequestMetadata::default();
+                m.silent = true;
+                m.attributes_prefix_match = true;
+                m
+            },
+        })
+        .allow_identifier_not_found()
+        .map(|r| r.and_then(|r| r.payload.get_static()))
 }
 
 #[cfg(test)]
