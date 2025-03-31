@@ -86,6 +86,48 @@ let termini = Object.assign({
         ]
     },
 
+    "CaseMapper.lowercaseWithCompiledData": {
+        func: CaseMapperDemo.lowercaseWithCompiledData,
+        // For avoiding webpacking minifying issues:
+        funcName: "CaseMapper.lowercaseWithCompiledData",
+        parameters: [
+            
+            {
+                name: "S",
+                type: "string",
+                typeUse: "string"
+            },
+            
+            {
+                name: "Locale:Name",
+                type: "string",
+                typeUse: "string"
+            }
+            
+        ]
+    },
+
+    "CaseMapper.uppercaseWithCompiledData": {
+        func: CaseMapperDemo.uppercaseWithCompiledData,
+        // For avoiding webpacking minifying issues:
+        funcName: "CaseMapper.uppercaseWithCompiledData",
+        parameters: [
+            
+            {
+                name: "S",
+                type: "string",
+                typeUse: "string"
+            },
+            
+            {
+                name: "Locale:Name",
+                type: "string",
+                typeUse: "string"
+            }
+            
+        ]
+    },
+
     "CaseMapper.titlecaseSegmentWithOnlyCaseData": {
         func: CaseMapperDemo.titlecaseSegmentWithOnlyCaseData,
         // For avoiding webpacking minifying issues:
@@ -153,6 +195,39 @@ let termini = Object.assign({
         func: TitlecaseMapperDemo.titlecaseSegment,
         // For avoiding webpacking minifying issues:
         funcName: "TitlecaseMapper.titlecaseSegment",
+        parameters: [
+            
+            {
+                name: "S",
+                type: "string",
+                typeUse: "string"
+            },
+            
+            {
+                name: "Locale:Name",
+                type: "string",
+                typeUse: "string"
+            },
+            
+            {
+                name: "Options:LeadingAdjustment",
+                type: "LeadingAdjustment",
+                typeUse: "enumerator"
+            },
+            
+            {
+                name: "Options:TrailingCase",
+                type: "TrailingCase",
+                typeUse: "enumerator"
+            }
+            
+        ]
+    },
+
+    "TitlecaseMapper.titlecaseSegmentWithCompiledData": {
+        func: TitlecaseMapperDemo.titlecaseSegmentWithCompiledData,
+        // For avoiding webpacking minifying issues:
+        funcName: "TitlecaseMapper.titlecaseSegmentWithCompiledData",
         parameters: [
             
             {
