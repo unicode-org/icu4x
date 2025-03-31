@@ -13,6 +13,16 @@ While we hope that old ICU4X versions will always compile, this is not always go
 
 The main ICU4X library does not use nightly; however nightly is required for building our FreeRTOS port since it involves building a no_std binary. We shall attempt to keep such ports (and any future nightly-only ICU4X features) building on nightly compilers in a range of 3-6 months in the past and the future, however we cannot make concrete guarantees here.
 
+
+### Utils crates with different MSRVs
+
+Our "utils" crates (yoke, zerovec, zerofrom, etc) are not versioned alongside ICU4X: they may have major version updates between minor ICU4X releases, and they may choose to have minor version updates between major ICU4X releases.
+
+By default, these crates have the same MSRV as their corresponding ICU4X release, however at times we may give them a lower MSRV for a wider range of compatability.
+
+This is done on an as-requested basis and is best-effort.
+
+Currently, `zerofrom` is the only crate with a lower MSRV.
  
 ## For ICU4X developers
 

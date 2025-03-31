@@ -65,7 +65,15 @@ exec --fail-on-error rustup install 1.81 --profile minimal
 exec --fail-on-error cargo +1.81 check --all-targets --all-features
 '''
 
-[tasks.ci-job-msrv-zerofrom]
+[tasks.ci-job-msrv-utils]
+description = "Check utils that have different MSRVs"
+category = "ICU4X Development"
+dependencies = [
+    # This list should be kept in sync with the list in rust_versions.md
+    "msrv-zerofrom",
+]
+
+[tasks.msrv-zerofrom]
 description = "Run MSRV tests for the zerofrom MSRV job"
 category = "ICU4X Development"
 env = { ICU4X_DATA_DIR = "../stubdata" }
