@@ -51,9 +51,9 @@ pub mod ffi {
         #[diplomat::attr(auto, constructor)]
         #[cfg(feature = "compiled_data")]
         pub fn create() -> Box<SentenceSegmenter> {
-            Box::new(SentenceSegmenter(icu_segmenter::SentenceSegmenter::new(
-                Default::default(),
-            )))
+            Box::new(SentenceSegmenter(
+                icu_segmenter::SentenceSegmenter::new(Default::default()).static_to_owned(),
+            ))
         }
         /// Construct a [`SentenceSegmenter`] for content known to be of a given locale, using compiled data.
         #[diplomat::rust_link(icu::segmenter::SentenceSegmenter::try_new, FnInStruct, hidden)]
@@ -96,7 +96,9 @@ pub mod ffi {
             &'a self,
             input: &'a DiplomatStr,
         ) -> Box<SentenceBreakIteratorUtf8<'a>> {
-            Box::new(SentenceBreakIteratorUtf8(self.0.segment_utf8(input)))
+            Box::new(SentenceBreakIteratorUtf8(
+                self.0.as_borrowed().segment_utf8(input),
+            ))
         }
 
         /// Segments a string.
@@ -110,7 +112,9 @@ pub mod ffi {
             &'a self,
             input: &'a DiplomatStr16,
         ) -> Box<SentenceBreakIteratorUtf16<'a>> {
-            Box::new(SentenceBreakIteratorUtf16(self.0.segment_utf16(input)))
+            Box::new(SentenceBreakIteratorUtf16(
+                self.0.as_borrowed().segment_utf16(input),
+            ))
         }
 
         /// Segments a Latin-1 string.
@@ -120,7 +124,9 @@ pub mod ffi {
             &'a self,
             input: &'a [u8],
         ) -> Box<SentenceBreakIteratorLatin1<'a>> {
-            Box::new(SentenceBreakIteratorLatin1(self.0.segment_latin1(input)))
+            Box::new(SentenceBreakIteratorLatin1(
+                self.0.as_borrowed().segment_latin1(input),
+            ))
         }
     }
 

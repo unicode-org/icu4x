@@ -72,6 +72,9 @@ pub type SentenceBreakIteratorUtf16<'l, 's> = SentenceBreakIterator<'l, 's, Rule
 /// Supports loading sentence break data, and creating sentence break iterators for different string
 /// encodings.
 ///
+/// Most segmentation methods live on [`SentenceSegmenterBorrowed`], which can be obtained via
+/// [`SentenceSegmenter::new()`] or [`SentenceSegmenter::as_borrowed()`].
+///
 /// # Examples
 ///
 /// Segment a string:
@@ -127,19 +130,26 @@ pub struct SentenceSegmenter {
     payload_locale_override: Option<DataPayload<SegmenterBreakSentenceOverrideV1>>,
 }
 
+/// Segments a string into sentences (borrowed version).
+///
+/// See [`SentenceSegmenter`] for examples.
+#[derive(Clone, Debug, Copy)]
+pub struct SentenceSegmenterBorrowed<'data> {
+    data: &'data RuleBreakData<'data>,
+    locale_override: Option<&'data RuleBreakDataOverride<'data>>,
+}
+
 impl SentenceSegmenter {
-    /// Constructs a [`SentenceSegmenter`] with an invariant locale and compiled data.
+    /// Constructs a [`SentenceSegmenterBorrowed`] with an invariant locale and compiled data.
     ///
     /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
-    pub fn new(_options: SentenceBreakInvariantOptions) -> Self {
-        Self {
-            payload: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_SEGMENTER_BREAK_SENTENCE_V1,
-            ),
-            payload_locale_override: None,
+    pub const fn new(_options: SentenceBreakInvariantOptions) -> SentenceSegmenterBorrowed<'static> {
+        SentenceSegmenterBorrowed {
+            data: crate::provider::Baked::SINGLETON_SEGMENTER_BREAK_SENTENCE_V1,
+            locale_override: None,
         }
     }
 
@@ -189,23 +199,31 @@ impl SentenceSegmenter {
         })
     }
 
+    /// Constructs a borrowed version of this type for more efficient querying.
+    ///
+    /// Most useful methods for segmentation are on this type.
+    pub fn as_borrowed(&self) -> SentenceSegmenterBorrowed<'_> {
+        SentenceSegmenterBorrowed {
+            data: self.payload.get(),
+            locale_override: self.payload_locale_override.as_ref().map(|p| p.get()),
+        }
+    }
+}
+
+impl<'data> SentenceSegmenterBorrowed<'data> {
     /// Creates a sentence break iterator for an `str` (a UTF-8 string).
     ///
     /// There are always breakpoints at 0 and the string length, or only at 0 for the empty string.
-    pub fn segment_str<'l, 's>(&'l self, input: &'s str) -> SentenceBreakIteratorUtf8<'l, 's> {
-        let locale_override = self
-            .payload_locale_override
-            .as_ref()
-            .map(|payload| payload.get());
+    pub fn segment_str<'s>(self, input: &'s str) -> SentenceBreakIteratorUtf8<'data, 's> {
         SentenceBreakIterator(RuleBreakIterator {
             iter: input.char_indices(),
             len: input.len(),
             current_pos_data: None,
             result_cache: Vec::new(),
-            data: self.payload.get(),
+            data: self.data,
             complex: None,
             boundary_property: 0,
-            locale_override,
+            locale_override: self.locale_override,
         })
     }
     /// Creates a sentence break iterator for a potentially ill-formed UTF8 string
@@ -213,66 +231,69 @@ impl SentenceSegmenter {
     /// Invalid characters are treated as REPLACEMENT CHARACTER
     ///
     /// There are always breakpoints at 0 and the string length, or only at 0 for the empty string.
-    pub fn segment_utf8<'l, 's>(
-        &'l self,
+    pub fn segment_utf8<'s>(
+        self,
         input: &'s [u8],
-    ) -> SentenceBreakIteratorPotentiallyIllFormedUtf8<'l, 's> {
-        let locale_override = self
-            .payload_locale_override
-            .as_ref()
-            .map(|payload| payload.get());
+    ) -> SentenceBreakIteratorPotentiallyIllFormedUtf8<'data, 's> {
         SentenceBreakIterator(RuleBreakIterator {
             iter: Utf8CharIndices::new(input),
             len: input.len(),
             current_pos_data: None,
             result_cache: Vec::new(),
-            data: self.payload.get(),
+            data: self.data,
             complex: None,
             boundary_property: 0,
-            locale_override,
+            locale_override: self.locale_override,
         })
     }
     /// Creates a sentence break iterator for a Latin-1 (8-bit) string.
     ///
     /// There are always breakpoints at 0 and the string length, or only at 0 for the empty string.
-    pub fn segment_latin1<'l, 's>(
-        &'l self,
-        input: &'s [u8],
-    ) -> SentenceBreakIteratorLatin1<'l, 's> {
-        let locale_override = self
-            .payload_locale_override
-            .as_ref()
-            .map(|payload| payload.get());
+    pub fn segment_latin1<'s>(self, input: &'s [u8]) -> SentenceBreakIteratorLatin1<'data, 's> {
         SentenceBreakIterator(RuleBreakIterator {
             iter: Latin1Indices::new(input),
             len: input.len(),
             current_pos_data: None,
             result_cache: Vec::new(),
-            data: self.payload.get(),
+            data: self.data,
             complex: None,
             boundary_property: 0,
-            locale_override,
+            locale_override: self.locale_override,
         })
     }
 
     /// Creates a sentence break iterator for a UTF-16 string.
     ///
     /// There are always breakpoints at 0 and the string length, or only at 0 for the empty string.
-    pub fn segment_utf16<'l, 's>(&'l self, input: &'s [u16]) -> SentenceBreakIteratorUtf16<'l, 's> {
-        let locale_override = self
-            .payload_locale_override
-            .as_ref()
-            .map(|payload| payload.get());
+    pub fn segment_utf16<'s>(self, input: &'s [u16]) -> SentenceBreakIteratorUtf16<'data, 's> {
         SentenceBreakIterator(RuleBreakIterator {
             iter: Utf16Indices::new(input),
             len: input.len(),
             current_pos_data: None,
             result_cache: Vec::new(),
-            data: self.payload.get(),
+            data: self.data,
             complex: None,
             boundary_property: 0,
-            locale_override,
+            locale_override: self.locale_override,
         })
+    }
+}
+
+impl SentenceSegmenterBorrowed<'static> {
+    /// Cheaply converts a [`SentenceSegmenterBorrowed<'static>`] into a [`SentenceSegmenter`].
+    ///
+    /// Note: Due to branching and indirection, using [`SentenceSegmenter`] might inhibit some
+    /// compile-time optimizations that are possible with [`SentenceSegmenterBorrowed`].
+    pub const fn static_to_owned(self) -> SentenceSegmenter {
+        let payload_locale_override = if let Some(d) = self.locale_override {
+            Some(DataPayload::from_static_ref(d))
+        } else {
+            None
+        };
+        SentenceSegmenter {
+            payload: DataPayload::from_static_ref(self.data),
+            payload_locale_override,
+        }
     }
 }
 

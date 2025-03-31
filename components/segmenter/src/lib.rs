@@ -142,6 +142,7 @@ pub use crate::line::LineBreakIterator;
 pub use crate::line::LineSegmenter;
 pub use crate::sentence::SentenceBreakIterator;
 pub use crate::sentence::SentenceSegmenter;
+pub use crate::sentence::SentenceSegmenterBorrowed;
 pub use crate::word::WordBreakIterator;
 pub use crate::word::WordSegmenter;
 
