@@ -111,7 +111,7 @@ pub struct HijriCivil;
 /// `"M01" - "M12"`.
 #[derive(Clone, Debug, Default)]
 pub struct HijriUmmAlQura {
-    data: Option<DataPayload<CalendarHijriUmmalquraV1>>,
+    data: DataPayload<CalendarHijriUmmalquraV1>,
 }
 
 #[derive(Debug, Clone, Copy)]
@@ -210,9 +210,9 @@ impl HijriUmmAlQura {
     #[cfg(feature = "compiled_data")]
     pub const fn new() -> Self {
         Self {
-            data: Some(DataPayload::from_static_ref(
+            data: DataPayload::from_static_ref(
                 crate::provider::Baked::SINGLETON_CALENDAR_HIJRI_UMMALQURA_V1,
-            )),
+            ),
         }
     }
 
@@ -229,7 +229,7 @@ impl HijriUmmAlQura {
         provider: &D,
     ) -> Result<Self, DataError> {
         Ok(Self {
-            data: Some(provider.load(Default::default())?.payload),
+            data: provider.load(Default::default())?.payload,
         })
     }
 
@@ -876,16 +876,16 @@ impl Calendar for HijriUmmAlQura {
 impl CacheableHijri for HijriUmmAlQuraMarker {
     const DEBUG_NAME: &'static str = HijriUmmAlQura::DEBUG_NAME;
     fn fixed_from_hijri(&self, year: i32, month: u8, day: u8) -> RataDie {
-        calendrical_calculations::islamic::fixed_from_saudi_islamic(year, month, day)
+        calendrical_calculations::islamic::fixed_from_islamic_civil(year, month, day)
     }
     fn hijri_from_fixed(&self, date: RataDie) -> (i32, u8, u8) {
-        calendrical_calculations::islamic::saudi_islamic_from_fixed(date)
+        calendrical_calculations::islamic::islamic_civil_from_fixed(date)
     }
 }
 
 impl HijriUmmAlQura {
     fn precomputed_data(&self) -> HijriPrecomputedData<HijriUmmAlQuraMarker> {
-        HijriPrecomputedData::new(self.data.as_ref().map(|x| x.get()), HijriUmmAlQuraMarker)
+        HijriPrecomputedData::new(Some(self.data.get()), HijriUmmAlQuraMarker)
     }
 
     pub(crate) const DEBUG_NAME: &'static str = "Hijri (Umm al-Qura)";
@@ -1295,67 +1295,67 @@ mod test {
         DateCase {
             year: -1245,
             month: 12,
-            day: 11,
+            day: 9,
         },
         DateCase {
             year: -813,
             month: 2,
-            day: 26,
+            day: 23,
         },
         DateCase {
             year: -568,
             month: 4,
-            day: 3,
+            day: 1,
         },
         DateCase {
             year: -501,
             month: 4,
-            day: 8,
+            day: 6,
         },
         DateCase {
             year: -157,
             month: 10,
-            day: 18,
+            day: 17,
         },
         DateCase {
             year: -47,
             month: 6,
-            day: 4,
+            day: 3,
         },
         DateCase {
             year: 75,
             month: 7,
-            day: 14,
+            day: 13,
         },
         DateCase {
             year: 403,
             month: 10,
-            day: 6,
+            day: 5,
         },
         DateCase {
             year: 489,
             month: 5,
-            day: 23,
+            day: 22,
         },
         DateCase {
             year: 586,
             month: 2,
-            day: 8,
+            day: 7,
         },
         DateCase {
             year: 637,
             month: 8,
-            day: 8,
+            day: 7,
         },
         DateCase {
             year: 687,
             month: 2,
-            day: 22,
+            day: 20,
         },
         DateCase {
             year: 697,
             month: 7,
-            day: 8,
+            day: 7,
         },
         DateCase {
             year: 793,
@@ -1365,22 +1365,22 @@ mod test {
         DateCase {
             year: 839,
             month: 7,
-            day: 7,
+            day: 6,
         },
         DateCase {
             year: 897,
             month: 6,
-            day: 3,
+            day: 1,
         },
         DateCase {
             year: 960,
-            month: 10,
-            day: 1,
+            month: 9,
+            day: 30,
         },
         DateCase {
             year: 967,
             month: 5,
-            day: 28,
+            day: 27,
         },
         DateCase {
             year: 1058,
@@ -1390,22 +1390,22 @@ mod test {
         DateCase {
             year: 1091,
             month: 6,
-            day: 4,
+            day: 2,
         },
         DateCase {
             year: 1128,
             month: 8,
-            day: 5,
+            day: 4,
         },
         DateCase {
             year: 1182,
             month: 2,
-            day: 4,
+            day: 3,
         },
         DateCase {
             year: 1234,
             month: 10,
-            day: 11,
+            day: 10,
         },
         DateCase {
             year: 1255,
