@@ -74,7 +74,7 @@ pub mod ffi {
 
         #[diplomat::rust_link(icu::calendar::Date::to_any, FnInStruct)]
         pub fn to_any(&self) -> Box<Date> {
-            Box::new(Date(self.0.to_any().wrap_calendar_in_arc()))
+            Box::new(Date(self.0.to_any().as_arc()))
         }
 
         /// Returns this date's Rata Die

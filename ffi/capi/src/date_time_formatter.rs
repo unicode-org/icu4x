@@ -510,7 +510,7 @@ pub mod ffi {
             time: &Time,
             write: &mut diplomat_runtime::DiplomatWrite,
         ) -> Result<(), DateTimeMismatchedCalendarError> {
-            let date = date.0.wrap_calendar_in_ref();
+            let date = date.0.as_borrowed();
             let value = icu_time::DateTime {
                 date,
                 time: time.0,

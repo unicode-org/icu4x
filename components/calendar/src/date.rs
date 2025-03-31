@@ -353,7 +353,7 @@ impl<A: AsCalendar> Date<A> {
     ///
     /// Useful when paired with [`Self::to_any()`] to obtain a `Date<Rc<AnyCalendar>>`
     #[cfg(feature = "alloc")]
-    pub fn wrap_calendar_in_rc(self) -> Date<Rc<A>> {
+    pub fn as_rc(self) -> Date<Rc<A>> {
         Date::from_raw(self.inner, Rc::new(self.calendar))
     }
 
@@ -361,7 +361,7 @@ impl<A: AsCalendar> Date<A> {
     ///
     /// Useful when paired with [`Self::to_any()`] to obtain a `Date<Rc<AnyCalendar>>`
     #[cfg(feature = "alloc")]
-    pub fn wrap_calendar_in_arc(self) -> Date<Arc<A>> {
+    pub fn as_arc(self) -> Date<Arc<A>> {
         Date::from_raw(self.inner, Arc::new(self.calendar))
     }
 
@@ -369,7 +369,7 @@ impl<A: AsCalendar> Date<A> {
     ///
     /// Useful for converting a `&Date<C>` into an equivalent `Date<D>` without cloning
     /// the calendar.
-    pub fn wrap_calendar_in_ref(&self) -> Date<Ref<A>> {
+    pub fn as_borrowed(&self) -> Date<Ref<A>> {
         Date::from_raw(self.inner, Ref(&self.calendar))
     }
 }
