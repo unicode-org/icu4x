@@ -50,7 +50,7 @@ pub mod ffi {
         #[cfg(feature = "compiled_data")]
         pub fn create() -> Box<GraphemeClusterSegmenter> {
             Box::new(GraphemeClusterSegmenter(
-                icu_segmenter::GraphemeClusterSegmenter::new(),
+                icu_segmenter::GraphemeClusterSegmenter::new().static_to_owned(),
             ))
         }
         /// Construct an [`GraphemeClusterSegmenter`].
@@ -82,7 +82,9 @@ pub mod ffi {
             &'a self,
             input: &'a DiplomatStr,
         ) -> Box<GraphemeClusterBreakIteratorUtf8<'a>> {
-            Box::new(GraphemeClusterBreakIteratorUtf8(self.0.segment_utf8(input)))
+            Box::new(GraphemeClusterBreakIteratorUtf8(
+                self.0.as_borrowed().segment_utf8(input),
+            ))
         }
 
         /// Segments a string.
@@ -97,7 +99,7 @@ pub mod ffi {
             input: &'a DiplomatStr16,
         ) -> Box<GraphemeClusterBreakIteratorUtf16<'a>> {
             Box::new(GraphemeClusterBreakIteratorUtf16(
-                self.0.segment_utf16(input),
+                self.0.as_borrowed().segment_utf16(input),
             ))
         }
 
@@ -109,7 +111,7 @@ pub mod ffi {
             input: &'a [u8],
         ) -> Box<GraphemeClusterBreakIteratorLatin1<'a>> {
             Box::new(GraphemeClusterBreakIteratorLatin1(
-                self.0.segment_latin1(input),
+                self.0.as_borrowed().segment_latin1(input),
             ))
         }
     }

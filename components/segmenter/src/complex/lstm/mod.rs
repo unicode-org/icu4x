@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::grapheme::GraphemeClusterSegmenter;
+use crate::grapheme::GraphemeClusterSegmenterBorrowed;
 use crate::provider::*;
 use alloc::vec::Vec;
 use core::char::{decode_utf16, REPLACEMENT_CHARACTER};
@@ -101,7 +101,7 @@ impl<'l> LstmSegmenter<'l> {
     // For unit testing as we cannot inspect the opaque type's bies
     fn segment_str_p(&'l self, input: &'l str) -> LstmSegmenterIterator<'l> {
         let input_seq = if let Some(grapheme) = self.grapheme {
-            GraphemeClusterSegmenter::new_and_segment_str(input, grapheme)
+            GraphemeClusterSegmenterBorrowed::new_and_segment_str(input, grapheme)
                 .collect::<Vec<usize>>()
                 .windows(2)
                 .map(|chunk| {
@@ -141,7 +141,7 @@ impl<'l> LstmSegmenter<'l> {
     /// Create an LSTM based break iterator for a UTF-16 string.
     pub(super) fn segment_utf16(&'l self, input: &[u16]) -> impl Iterator<Item = usize> + 'l {
         let input_seq = if let Some(grapheme) = self.grapheme {
-            GraphemeClusterSegmenter::new_and_segment_utf16(input, grapheme)
+            GraphemeClusterSegmenterBorrowed::new_and_segment_utf16(input, grapheme)
                 .collect::<Vec<usize>>()
                 .windows(2)
                 .map(|chunk| {
