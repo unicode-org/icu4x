@@ -42,7 +42,7 @@ pub struct SentenceBreakInvariantOptions {}
 ///
 /// For examples of use, see [`SentenceSegmenter`].
 #[derive(Debug)]
-pub struct SentenceBreakIterator<'l, 's, Y: RuleBreakType<'l, 's> + ?Sized>(
+pub struct SentenceBreakIterator<'l, 's, Y: RuleBreakType<'s> + ?Sized>(
     RuleBreakIterator<'l, 's, Y>,
 );
 

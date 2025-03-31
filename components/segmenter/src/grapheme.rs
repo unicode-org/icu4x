@@ -24,7 +24,7 @@ use utf8_iter::Utf8CharIndices;
 ///
 /// For examples of use, see [`GraphemeClusterSegmenter`].
 #[derive(Debug)]
-pub struct GraphemeClusterBreakIterator<'l, 's, Y: RuleBreakType<'l, 's> + ?Sized>(
+pub struct GraphemeClusterBreakIterator<'l, 's, Y: RuleBreakType<'s> + ?Sized>(
     RuleBreakIterator<'l, 's, Y>,
 );
 

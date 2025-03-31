@@ -16,7 +16,7 @@ use utf8_iter::Utf8CharIndices;
 /// 🚫 This trait is sealed; it cannot be implemented by user code. If an API requests an item that implements this
 /// trait, please consider using a type from the implementors listed below.
 /// </div>
-pub trait RuleBreakType<'l, 's>: crate::private::Sealed {
+pub trait RuleBreakType<'s>: crate::private::Sealed {
     /// The iterator over characters.
     type IterAttr: Iterator<Item = (usize, Self::CharType)> + Clone + core::fmt::Debug;
 
@@ -24,10 +24,10 @@ pub trait RuleBreakType<'l, 's>: crate::private::Sealed {
     type CharType: Copy + Into<u32> + core::fmt::Debug;
 
     #[doc(hidden)]
-    fn get_current_position_character_len(iter: &RuleBreakIterator<'l, 's, Self>) -> usize;
+    fn get_current_position_character_len<'l>(iter: &RuleBreakIterator<'l, 's, Self>) -> usize;
 
     #[doc(hidden)]
-    fn handle_complex_language(
+    fn handle_complex_language<'l>(
         iter: &mut RuleBreakIterator<'l, 's, Self>,
         left_codepoint: Self::CharType,
     ) -> Option<usize>;
@@ -44,7 +44,7 @@ pub trait RuleBreakType<'l, 's>: crate::private::Sealed {
 /// _after_ the boundary (for a boundary at the end of text, this index is the length
 /// of the [`str`] or array of code units).
 #[derive(Debug)]
-pub struct RuleBreakIterator<'l, 's, Y: RuleBreakType<'l, 's> + ?Sized> {
+pub struct RuleBreakIterator<'l, 's, Y: RuleBreakType<'s> + ?Sized> {
     pub(crate) iter: Y::IterAttr,
     pub(crate) len: usize,
     pub(crate) current_pos_data: Option<(usize, Y::CharType)>,
@@ -55,7 +55,7 @@ pub struct RuleBreakIterator<'l, 's, Y: RuleBreakType<'l, 's> + ?Sized> {
     pub(crate) locale_override: Option<&'l RuleBreakDataOverride<'l>>,
 }
 
-impl<'l, 's, Y: RuleBreakType<'l, 's> + ?Sized> Iterator for RuleBreakIterator<'l, 's, Y> {
+impl<'l, 's, Y: RuleBreakType<'s> + ?Sized> Iterator for RuleBreakIterator<'l, 's, Y> {
     type Item = usize;
 
     fn next(&mut self) -> Option<Self::Item> {
@@ -194,7 +194,7 @@ impl<'l, 's, Y: RuleBreakType<'l, 's> + ?Sized> Iterator for RuleBreakIterator<'
     }
 }
 
-impl<'l, 's, Y: RuleBreakType<'l, 's> + ?Sized> RuleBreakIterator<'l, 's, Y> {
+impl<'l, 's, Y: RuleBreakType<'s> + ?Sized> RuleBreakIterator<'l, 's, Y> {
     pub(crate) fn advance_iter(&mut self) {
         self.current_pos_data = self.iter.next();
     }
@@ -267,7 +267,7 @@ pub struct RuleBreakTypeUtf8;
 
 impl crate::private::Sealed for RuleBreakTypeUtf8 {}
 
-impl<'s> RuleBreakType<'_, 's> for RuleBreakTypeUtf8 {
+impl<'s> RuleBreakType<'s> for RuleBreakTypeUtf8 {
     type IterAttr = CharIndices<'s>;
     type CharType = char;
 
@@ -288,7 +288,7 @@ pub struct RuleBreakTypePotentiallyIllFormedUtf8;
 
 impl crate::private::Sealed for RuleBreakTypePotentiallyIllFormedUtf8 {}
 
-impl<'s> RuleBreakType<'_, 's> for RuleBreakTypePotentiallyIllFormedUtf8 {
+impl<'s> RuleBreakType<'s> for RuleBreakTypePotentiallyIllFormedUtf8 {
     type IterAttr = Utf8CharIndices<'s>;
     type CharType = char;
 
@@ -309,7 +309,7 @@ pub struct RuleBreakTypeLatin1;
 
 impl crate::private::Sealed for RuleBreakTypeLatin1 {}
 
-impl<'s> RuleBreakType<'_, 's> for RuleBreakTypeLatin1 {
+impl<'s> RuleBreakType<'s> for RuleBreakTypeLatin1 {
     type IterAttr = Latin1Indices<'s>;
     type CharType = u8;
 
@@ -330,7 +330,7 @@ pub struct RuleBreakTypeUtf16;
 
 impl crate::private::Sealed for RuleBreakTypeUtf16 {}
 
-impl<'s> RuleBreakType<'_, 's> for RuleBreakTypeUtf16 {
+impl<'s> RuleBreakType<'s> for RuleBreakTypeUtf16 {
     type IterAttr = Utf16Indices<'s>;
     type CharType = u32;
 

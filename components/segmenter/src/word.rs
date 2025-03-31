@@ -45,7 +45,7 @@ pub struct WordBreakInvariantOptions {}
 ///
 /// For examples of use, see [`WordSegmenter`].
 #[derive(Debug)]
-pub struct WordBreakIterator<'l, 's, Y: RuleBreakType<'l, 's> + ?Sized>(
+pub struct WordBreakIterator<'l, 's, Y: RuleBreakType<'s> + ?Sized>(
     RuleBreakIterator<'l, 's, Y>,
 );
 
@@ -73,7 +73,7 @@ impl WordType {
     }
 }
 
-impl<'l, 's, Y: RuleBreakType<'l, 's> + ?Sized> WordBreakIterator<'l, 's, Y> {
+impl<'l, 's, Y: RuleBreakType<'s> + ?Sized> WordBreakIterator<'l, 's, Y> {
     /// Returns the word type of the segment preceding the current boundary.
     #[inline]
     pub fn word_type(&self) -> WordType {
@@ -551,7 +551,7 @@ impl WordSegmenter {
 pub struct WordBreakTypeUtf8;
 impl crate::private::Sealed for WordBreakTypeUtf8 {}
 
-impl<'l, 's> RuleBreakType<'l, 's> for WordBreakTypeUtf8 {
+impl<'l, 's> RuleBreakType<'s> for WordBreakTypeUtf8 {
     type IterAttr = CharIndices<'s>;
     type CharType = char;
 
@@ -560,7 +560,7 @@ impl<'l, 's> RuleBreakType<'l, 's> for WordBreakTypeUtf8 {
     }
 
     fn handle_complex_language(
-        iter: &mut RuleBreakIterator<'l, 's, Self>,
+        iter: &mut RuleBreakIterator<'_, 's, Self>,
         left_codepoint: Self::CharType,
     ) -> Option<usize> {
         handle_complex_language_utf8(iter, left_codepoint)
@@ -571,7 +571,7 @@ impl<'l, 's> RuleBreakType<'l, 's> for WordBreakTypeUtf8 {
 pub struct WordBreakTypePotentiallyIllFormedUtf8;
 impl crate::private::Sealed for WordBreakTypePotentiallyIllFormedUtf8 {}
 
-impl<'l, 's> RuleBreakType<'l, 's> for WordBreakTypePotentiallyIllFormedUtf8 {
+impl<'l, 's> RuleBreakType<'s> for WordBreakTypePotentiallyIllFormedUtf8 {
     type IterAttr = Utf8CharIndices<'s>;
     type CharType = char;
 
@@ -580,7 +580,7 @@ impl<'l, 's> RuleBreakType<'l, 's> for WordBreakTypePotentiallyIllFormedUtf8 {
     }
 
     fn handle_complex_language(
-        iter: &mut RuleBreakIterator<'l, 's, Self>,
+        iter: &mut RuleBreakIterator<'_, 's, Self>,
         left_codepoint: Self::CharType,
     ) -> Option<usize> {
         handle_complex_language_utf8(iter, left_codepoint)
@@ -593,7 +593,7 @@ fn handle_complex_language_utf8<'l, 's, T>(
     left_codepoint: T::CharType,
 ) -> Option<usize>
 where
-    T: RuleBreakType<'l, 's, CharType = char>,
+    T: RuleBreakType<'s, CharType = char>,
 {
     // word segmenter doesn't define break rules for some languages such as Thai.
     let start_iter = iter.iter.clone();
@@ -651,7 +651,7 @@ pub struct WordBreakTypeUtf16;
 
 impl crate::private::Sealed for WordBreakTypeUtf16 {}
 
-impl<'s> RuleBreakType<'_, 's> for WordBreakTypeUtf16 {
+impl<'s> RuleBreakType<'s> for WordBreakTypeUtf16 {
     type IterAttr = Utf16Indices<'s>;
     type CharType = u32;
 
