@@ -224,6 +224,41 @@ impl ComplexPayloadsBorrowed<'static> {
         }
     }
 
+
+    #[cfg(feature = "compiled_data")]
+    pub(crate) fn new_southeast_asian() -> Self {
+        #[allow(clippy::unwrap_used)]
+        // try_load is infallible if the provider only returns `MissingLocale`.
+        Self {
+            grapheme: crate::provider::Baked::SINGLETON_SEGMENTER_BREAK_GRAPHEME_CLUSTER_V1,
+            my: try_load_static::<SegmenterDictionaryExtendedV1, _>(
+                &crate::provider::Baked,
+                MY_DICT,
+            )
+            .unwrap()
+            .map(Ok),
+            km: try_load_static::<SegmenterDictionaryExtendedV1, _>(
+                &crate::provider::Baked,
+                KM_DICT,
+            )
+            .unwrap()
+            .map(Ok),
+            lo: try_load_static::<SegmenterDictionaryExtendedV1, _>(
+                &crate::provider::Baked,
+                LO_DICT,
+            )
+            .unwrap()
+            .map(Ok),
+            th: try_load_static::<SegmenterDictionaryExtendedV1, _>(
+                &crate::provider::Baked,
+                TH_DICT,
+            )
+            .unwrap()
+            .map(Ok),
+            ja: None,
+        }
+    }
+
     pub(crate) fn static_to_owned(self) -> ComplexPayloads {
         ComplexPayloads {
             grapheme: DataPayload::from_static_ref(self.grapheme),
@@ -245,35 +280,6 @@ impl ComplexPayloads {
             lo: self.lo.as_ref().map(borrow_dictor),
             th: self.th.as_ref().map(borrow_dictor),
             ja: self.ja.as_ref().map(|p| p.get()),
-        }
-    }
-
-    #[cfg(feature = "lstm")]
-    #[cfg(feature = "compiled_data")]
-    pub(crate) fn new_lstm() -> Self {
-        #[allow(clippy::unwrap_used)]
-        // try_load is infallible if the provider only returns `MissingLocale`.
-        Self {
-            grapheme: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_SEGMENTER_BREAK_GRAPHEME_CLUSTER_V1,
-            ),
-            my: try_load::<SegmenterLstmAutoV1, _>(&crate::provider::Baked, MY_LSTM)
-                .unwrap()
-                .map(DataPayload::cast)
-                .map(Err),
-            km: try_load::<SegmenterLstmAutoV1, _>(&crate::provider::Baked, KM_LSTM)
-                .unwrap()
-                .map(DataPayload::cast)
-                .map(Err),
-            lo: try_load::<SegmenterLstmAutoV1, _>(&crate::provider::Baked, LO_LSTM)
-                .unwrap()
-                .map(DataPayload::cast)
-                .map(Err),
-            th: try_load::<SegmenterLstmAutoV1, _>(&crate::provider::Baked, TH_LSTM)
-                .unwrap()
-                .map(DataPayload::cast)
-                .map(Err),
-            ja: None,
         }
     }
 
@@ -353,33 +359,6 @@ impl ComplexPayloads {
         })
     }
 
-    #[cfg(feature = "compiled_data")]
-    pub(crate) fn new_southeast_asian() -> Self {
-        #[allow(clippy::unwrap_used)]
-        // try_load is infallible if the provider only returns `MissingLocale`.
-        Self {
-            grapheme: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_SEGMENTER_BREAK_GRAPHEME_CLUSTER_V1,
-            ),
-            my: try_load::<SegmenterDictionaryExtendedV1, _>(&crate::provider::Baked, MY_DICT)
-                .unwrap()
-                .map(DataPayload::cast)
-                .map(Ok),
-            km: try_load::<SegmenterDictionaryExtendedV1, _>(&crate::provider::Baked, KM_DICT)
-                .unwrap()
-                .map(DataPayload::cast)
-                .map(Ok),
-            lo: try_load::<SegmenterDictionaryExtendedV1, _>(&crate::provider::Baked, LO_DICT)
-                .unwrap()
-                .map(DataPayload::cast)
-                .map(Ok),
-            th: try_load::<SegmenterDictionaryExtendedV1, _>(&crate::provider::Baked, TH_DICT)
-                .unwrap()
-                .map(DataPayload::cast)
-                .map(Ok),
-            ja: None,
-        }
-    }
 
     pub(crate) fn try_new_southeast_asian<D>(provider: &D) -> Result<Self, DataError>
     where

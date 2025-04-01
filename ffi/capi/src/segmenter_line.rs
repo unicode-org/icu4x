@@ -76,7 +76,7 @@ pub mod ffi {
         pub fn create_auto() -> Box<LineSegmenter> {
             Box::new(LineSegmenter(icu_segmenter::LineSegmenter::new_auto(
                 Default::default(),
-            )))
+            ).static_to_owned()))
         }
 
         /// Construct a [`LineSegmenter`] with default options (no locale-based tailoring) and LSTM payload data for
@@ -87,7 +87,7 @@ pub mod ffi {
         pub fn create_lstm() -> Box<LineSegmenter> {
             Box::new(LineSegmenter(icu_segmenter::LineSegmenter::new_lstm(
                 Default::default(),
-            )))
+            ).static_to_owned()))
         }
 
         /// Construct a [`LineSegmenter`] with default options (no locale-based tailoring) and dictionary payload data for
@@ -98,7 +98,7 @@ pub mod ffi {
         pub fn create_dictionary() -> Box<LineSegmenter> {
             Box::new(LineSegmenter(icu_segmenter::LineSegmenter::new_dictionary(
                 Default::default(),
-            )))
+            ).static_to_owned()))
         }
 
         /// Construct a [`LineSegmenter`] with custom options using compiled data. It automatically loads the best
@@ -116,7 +116,7 @@ pub mod ffi {
             options.content_locale = content_locale.map(|c| &c.0.id);
             Box::new(LineSegmenter(icu_segmenter::LineSegmenter::new_auto(
                 options,
-            )))
+            ).static_to_owned()))
         }
         /// Construct a [`LineSegmenter`] with custom options. It automatically loads the best
         /// available payload data for Burmese, Khmer, Lao, and Thai, using a particular data source.
@@ -156,7 +156,7 @@ pub mod ffi {
 
             Box::new(LineSegmenter(icu_segmenter::LineSegmenter::new_lstm(
                 options,
-            )))
+            ).static_to_owned()))
         }
         /// Construct a [`LineSegmenter`] with custom options and LSTM payload data for
         /// Burmese, Khmer, Lao, and Thai, using a particular data source.
@@ -196,7 +196,7 @@ pub mod ffi {
 
             Box::new(LineSegmenter(icu_segmenter::LineSegmenter::new_dictionary(
                 options,
-            )))
+            ).static_to_owned()))
         }
         /// Construct a [`LineSegmenter`] with custom options and dictionary payload data for
         /// Burmese, Khmer, Lao, and Thai, using a particular data source.
@@ -232,7 +232,7 @@ pub mod ffi {
             &'a self,
             input: &'a DiplomatStr,
         ) -> Box<LineBreakIteratorUtf8<'a>> {
-            Box::new(LineBreakIteratorUtf8(self.0.segment_utf8(input)))
+            Box::new(LineBreakIteratorUtf8(self.0.as_borrowed().segment_utf8(input)))
         }
 
         /// Segments a string.
@@ -246,14 +246,14 @@ pub mod ffi {
             &'a self,
             input: &'a DiplomatStr16,
         ) -> Box<LineBreakIteratorUtf16<'a>> {
-            Box::new(LineBreakIteratorUtf16(self.0.segment_utf16(input)))
+            Box::new(LineBreakIteratorUtf16(self.0.as_borrowed().segment_utf16(input)))
         }
 
         /// Segments a Latin-1 string.
         #[diplomat::rust_link(icu::segmenter::LineSegmenter::segment_latin1, FnInStruct)]
         #[diplomat::attr(not(supports = utf8_strings), disable)]
         pub fn segment_latin1<'a>(&'a self, input: &'a [u8]) -> Box<LineBreakIteratorLatin1<'a>> {
-            Box::new(LineBreakIteratorLatin1(self.0.segment_latin1(input)))
+            Box::new(LineBreakIteratorLatin1(self.0.as_borrowed().segment_latin1(input)))
         }
     }
 
