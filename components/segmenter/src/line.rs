@@ -1481,6 +1481,7 @@ mod tests {
         let segmenter =
             LineSegmenter::try_new_dictionary_unstable(&crate::provider::Baked, Default::default())
                 .expect("Data exists");
+        let segmenter = segmenter.as_borrowed();
 
         let mut iter = segmenter.segment_str("hello world");
         assert_eq!(Some(0), iter.next());
