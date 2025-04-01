@@ -613,20 +613,13 @@ impl CacheableHijri for HijriObservationalLocation {
 
         let month_lengths = {
             let mut excess_days = 0;
-            let mut start_of_month = ny;
             let mut month_lengths = core::array::from_fn(|month_idx| {
-                let end_of_month = if month_idx < 11 {
-                    calendrical_calculations::islamic::fixed_from_observational_islamic(
+                let days_in_month =
+                    calendrical_calculations::islamic::observational_islamic_month_days(
                         extended_year,
-                        month_idx as u8 + 2,
-                        1,
+                        month_idx as u8 + 1,
                         self.location(),
-                    )
-                } else {
-                    next_ny
-                };
-                let days_in_month = end_of_month - start_of_month;
-                start_of_month = end_of_month;
+                    );
                 match days_in_month {
                     29 => false,
                     30 => true,
