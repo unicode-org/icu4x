@@ -24,11 +24,13 @@ pub trait RuleBreakType<'s>: crate::private::Sealed {
     type CharType: Copy + Into<u32> + core::fmt::Debug;
 
     #[doc(hidden)]
-    fn get_current_position_character_len<'l>(iter: &RuleBreakIterator<'l, 's, Self>) -> usize;
+    fn get_current_position_character_len<'l, 'data>(
+        iter: &RuleBreakIterator<'l, 'data, 's, Self>,
+    ) -> usize;
 
     #[doc(hidden)]
-    fn handle_complex_language<'l>(
-        iter: &mut RuleBreakIterator<'l, 's, Self>,
+    fn handle_complex_language<'l, 'data>(
+        iter: &mut RuleBreakIterator<'l, 'data, 's, Self>,
         left_codepoint: Self::CharType,
     ) -> Option<usize>;
 }
@@ -38,24 +40,29 @@ pub trait RuleBreakType<'s>: crate::private::Sealed {
 /// Lifetimes:
 ///
 /// - `'l` = lifetime of the segmenter object from which this iterator was created
+/// - `'data` = lifetime of data borrowed by segmenter object
+///          (this largely exists because segmenter data is invariant due to ZeroMap constraints,
+///           think of it as a second 'l)
 /// - `'s` = lifetime of the string being segmented
 ///
 /// The [`Iterator::Item`] is an [`usize`] representing index of a code unit
 /// _after_ the boundary (for a boundary at the end of text, this index is the length
 /// of the [`str`] or array of code units).
 #[derive(Debug)]
-pub struct RuleBreakIterator<'l, 's, Y: RuleBreakType<'s> + ?Sized> {
+pub struct RuleBreakIterator<'l, 'data, 's, Y: RuleBreakType<'s> + ?Sized> {
     pub(crate) iter: Y::IterAttr,
     pub(crate) len: usize,
     pub(crate) current_pos_data: Option<(usize, Y::CharType)>,
     pub(crate) result_cache: alloc::vec::Vec<usize>,
-    pub(crate) data: &'l RuleBreakData<'l>,
-    pub(crate) complex: Option<ComplexPayloadsBorrowed<'l>>,
+    pub(crate) data: &'l RuleBreakData<'data>,
+    pub(crate) complex: Option<ComplexPayloadsBorrowed<'data>>,
     pub(crate) boundary_property: u8,
-    pub(crate) locale_override: Option<&'l RuleBreakDataOverride<'l>>,
+    pub(crate) locale_override: Option<&'l RuleBreakDataOverride<'data>>,
 }
 
-impl<'l, 's, Y: RuleBreakType<'s> + ?Sized> Iterator for RuleBreakIterator<'l, 's, Y> {
+impl<'l, 'data, 's, Y: RuleBreakType<'s> + ?Sized> Iterator
+    for RuleBreakIterator<'l, 'data, 's, Y>
+{
     type Item = usize;
 
     fn next(&mut self) -> Option<Self::Item> {
@@ -194,7 +201,7 @@ impl<'l, 's, Y: RuleBreakType<'s> + ?Sized> Iterator for RuleBreakIterator<'l, '
     }
 }
 
-impl<'l, 's, Y: RuleBreakType<'s> + ?Sized> RuleBreakIterator<'l, 's, Y> {
+impl<'l, 'data, 's, Y: RuleBreakType<'s> + ?Sized> RuleBreakIterator<'l, 'data, 's, Y> {
     pub(crate) fn advance_iter(&mut self) {
         self.current_pos_data = self.iter.next();
     }

@@ -45,7 +45,9 @@ pub struct WordBreakInvariantOptions {}
 ///
 /// For examples of use, see [`WordSegmenter`].
 #[derive(Debug)]
-pub struct WordBreakIterator<'l, 's, Y: RuleBreakType<'s> + ?Sized>(RuleBreakIterator<'l, 's, Y>);
+pub struct WordBreakIterator<'l, 's, Y: RuleBreakType<'s> + ?Sized>(
+    RuleBreakIterator<'l, 'l, 's, Y>,
+);
 
 derive_usize_iterator_with_type!(WordBreakIterator);
 
@@ -558,7 +560,7 @@ impl<'l, 's> RuleBreakType<'s> for WordBreakTypeUtf8 {
     }
 
     fn handle_complex_language(
-        iter: &mut RuleBreakIterator<'_, 's, Self>,
+        iter: &mut RuleBreakIterator<'_, '_, 's, Self>,
         left_codepoint: Self::CharType,
     ) -> Option<usize> {
         handle_complex_language_utf8(iter, left_codepoint)
@@ -578,7 +580,7 @@ impl<'l, 's> RuleBreakType<'s> for WordBreakTypePotentiallyIllFormedUtf8 {
     }
 
     fn handle_complex_language(
-        iter: &mut RuleBreakIterator<'_, 's, Self>,
+        iter: &mut RuleBreakIterator<'_, '_, 's, Self>,
         left_codepoint: Self::CharType,
     ) -> Option<usize> {
         handle_complex_language_utf8(iter, left_codepoint)
@@ -586,8 +588,8 @@ impl<'l, 's> RuleBreakType<'s> for WordBreakTypePotentiallyIllFormedUtf8 {
 }
 
 /// handle_complex_language impl for UTF8 iterators
-fn handle_complex_language_utf8<'l, 's, T>(
-    iter: &mut RuleBreakIterator<'l, 's, T>,
+fn handle_complex_language_utf8<'l, 'data, 's, T>(
+    iter: &mut RuleBreakIterator<'l, 'data, 's, T>,
     left_codepoint: T::CharType,
 ) -> Option<usize>
 where

@@ -43,7 +43,7 @@ pub struct SentenceBreakInvariantOptions {}
 /// For examples of use, see [`SentenceSegmenter`].
 #[derive(Debug)]
 pub struct SentenceBreakIterator<'l, 's, Y: RuleBreakType<'s> + ?Sized>(
-    RuleBreakIterator<'l, 's, Y>,
+    RuleBreakIterator<'l, 'l, 's, Y>,
 );
 
 derive_usize_iterator_with_type!(SentenceBreakIterator);
