@@ -248,7 +248,7 @@ fn assert_fixture_element<C>(
 
     if matches!(
         input.date.calendar().kind(),
-        AnyCalendarKind::JapaneseExtended
+        AnyCalendarKind::JapaneseExtended | AnyCalendarKind::HijriSimulatedMecca
     ) {
         // Not supported with FormattableAnyCalendar
         return;
