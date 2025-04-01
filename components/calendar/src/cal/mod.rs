@@ -26,7 +26,7 @@ pub use dangi::Dangi;
 pub use ethiopian::{Ethiopian, EthiopianEraStyle};
 pub use gregorian::Gregorian;
 pub use hebrew::Hebrew;
-pub use hijri::{HijriObservational, HijriTabular, HijriUmmAlQura};
+pub use hijri::{HijriSimulated, HijriTabular, HijriUmmAlQura};
 pub use indian::Indian;
 pub use iso::Iso;
 pub use japanese::{Japanese, JapaneseExtended};

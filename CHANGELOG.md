@@ -8,6 +8,7 @@
     - `icu_calendar`
         - Rename `Islamic` calendars to `Hijri` (unicode-org#6214)
         - Collapse `IslamicCivil` into `IslamicTabular` (unicode-org#6384)
+        - Rename `IslamicObservational` to `IslamicSimulated`
     - `icu_collections`
         - Remove some panics from `CodePointTrie`, which should no longer pull in panic machinery even with arithmetic panics enabled for lookup (unicode-org#6204)
 - Data model and providers
@@ -25,7 +26,7 @@
     - General
         - ...
     - `calendrical_calculations`
-      - Parametrise the HijriObservational calendar by location (unicode-org#6332)
+      - Parametrise the HijriSimulated calendar by location (unicode-org#6332)
 
 ## icu4x 2.0-beta2
 

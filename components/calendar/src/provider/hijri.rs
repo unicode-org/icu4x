@@ -18,8 +18,8 @@ use zerovec::ZeroVec;
 
 icu_provider::data_marker!(
     /// Precomputed data for the Hijri obsevational calendar
-    CalendarHijriObservationalMeccaV1,
-    "calendar/hijri/observational/mecca/v1",
+    CalendarHijriSimulatedMeccaV1,
+    "calendar/hijri/simulated/mecca/v1",
     HijriData<'static>,
     is_singleton = true,
 );
