@@ -186,9 +186,17 @@ impl GraphemeClusterSegmenter {
 impl<'data> GraphemeClusterSegmenterBorrowed<'data> {
     /// Creates a grapheme cluster break iterator for an `str` (a UTF-8 string).
     pub fn segment_str<'s>(self, input: &'s str) -> GraphemeClusterBreakIteratorUtf8<'data, 's> {
-        self.new_and_segment_str(input)
+        GraphemeClusterBreakIterator(RuleBreakIterator {
+            iter: input.char_indices(),
+            len: input.len(),
+            current_pos_data: None,
+            result_cache: Vec::new(),
+            data: self.data,
+            complex: None,
+            boundary_property: 0,
+            locale_override: None,
+        })
     }
-
     /// Creates a grapheme cluster break iterator for a potentially ill-formed UTF8 string
     ///
     /// Invalid characters are treated as REPLACEMENT CHARACTER
@@ -232,33 +240,6 @@ impl<'data> GraphemeClusterSegmenterBorrowed<'data> {
     ///
     /// There are always breakpoints at 0 and the string length, or only at 0 for the empty string.
     pub fn segment_utf16<'s>(
-        self,
-        input: &'s [u16],
-    ) -> GraphemeClusterBreakIteratorUtf16<'data, 's> {
-        self.new_and_segment_utf16(input)
-    }
-
-    /// Creates a grapheme cluster break iterator from grapheme cluster rule payload.
-    ///
-    /// There are always breakpoints at 0 and the string length, or only at 0 for the empty string.
-    pub(crate) fn new_and_segment_str<'s>(
-        self,
-        input: &'s str,
-    ) -> GraphemeClusterBreakIteratorUtf8<'data, 's> {
-        GraphemeClusterBreakIterator(RuleBreakIterator {
-            iter: input.char_indices(),
-            len: input.len(),
-            current_pos_data: None,
-            result_cache: Vec::new(),
-            data: self.data,
-            complex: None,
-            boundary_property: 0,
-            locale_override: None,
-        })
-    }
-
-    /// Creates a grapheme cluster break iterator from grapheme cluster rule payload.
-    pub(crate) fn new_and_segment_utf16<'s>(
         self,
         input: &'s [u16],
     ) -> GraphemeClusterBreakIteratorUtf16<'data, 's> {

@@ -100,7 +100,7 @@ impl<'data> LstmSegmenter<'data> {
     pub(super) fn segment_str<'a>(&'a self, input: &'a str) -> LstmSegmenterIterator<'a, 'data> {
         let input_seq = if let Some(grapheme) = self.grapheme {
             grapheme
-                .new_and_segment_str(input)
+                .segment_str(input)
                 .collect::<Vec<usize>>()
                 .windows(2)
                 .map(|chunk| {
@@ -144,7 +144,7 @@ impl<'data> LstmSegmenter<'data> {
     ) -> LstmSegmenterIteratorUtf16<'a, 'data> {
         let input_seq = if let Some(grapheme) = self.grapheme {
             grapheme
-                .new_and_segment_utf16(input)
+                .segment_utf16(input)
                 .collect::<Vec<usize>>()
                 .windows(2)
                 .map(|chunk| {

@@ -152,7 +152,7 @@ impl<'l> DictionarySegmenter<'l> {
 
     /// Create a dictionary based break iterator for an `str` (a UTF-8 string).
     pub(super) fn segment_str(&'l self, input: &'l str) -> impl Iterator<Item = usize> + 'l {
-        let grapheme_iter = self.grapheme.new_and_segment_str(input);
+        let grapheme_iter = self.grapheme.segment_str(input);
         DictionaryBreakIterator::<char, GraphemeClusterBreakIteratorUtf8> {
             trie: Char16Trie::new(self.dict.trie_data.clone()),
             iter: input.char_indices(),
@@ -163,7 +163,7 @@ impl<'l> DictionarySegmenter<'l> {
 
     /// Create a dictionary based break iterator for a UTF-16 string.
     pub(super) fn segment_utf16(&'l self, input: &'l [u16]) -> impl Iterator<Item = usize> + 'l {
-        let grapheme_iter = self.grapheme.new_and_segment_utf16(input);
+        let grapheme_iter = self.grapheme.segment_utf16(input);
         DictionaryBreakIterator::<u32, GraphemeClusterBreakIteratorUtf16> {
             trie: Char16Trie::new(self.dict.trie_data.clone()),
             iter: Utf16Indices::new(input),
