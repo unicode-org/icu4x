@@ -139,12 +139,8 @@ impl GraphemeClusterSegmenter {
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
     #[allow(clippy::new_without_default)] // Deliberate choice, see #5554
-    pub fn new() -> Self {
-        Self {
-            payload: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_SEGMENTER_BREAK_GRAPHEME_CLUSTER_V1,
-            ),
-        }
+    pub fn new() -> GraphemeClusterSegmenterBorrowed<'static> {
+        GraphemeClusterSegmenterBorrowed::new()
     }
 
     icu_provider::gen_buffer_data_constructors!(() -> error: DataError,
@@ -255,6 +251,36 @@ impl GraphemeClusterSegmenter {
             boundary_property: 0,
             locale_override: None,
         })
+    }
+}
+
+#[derive(Debug)]
+pub struct GraphemeClusterSegmenterBorrowed<'a> {
+    payload: &'a RuleBreakData<'a>,
+}
+
+impl GraphemeClusterSegmenterBorrowed<'static> {
+    #[cfg(feature = "compiled_data")]
+    pub(crate) fn new() -> Self {
+        Self {
+            payload: crate::provider::Baked::SINGLETON_SEGMENTER_BREAK_GRAPHEME_CLUSTER_V1,
+        }
+    }
+
+    pub fn static_to_owned(self) -> GraphemeClusterSegmenter {
+        GraphemeClusterSegmenter {
+            payload: DataPayload::from_static_ref(self.payload)
+        }
+    }
+}
+
+impl<'l> GraphemeClusterSegmenterBorrowed<'l> {
+    /// Creates a grapheme cluster break iterator for an `str` (a UTF-8 string).
+    pub fn segment_str<'s>(
+        &self,
+        input: &'s str,
+    ) -> GraphemeClusterBreakIteratorUtf8<'l, 's> {
+        GraphemeClusterSegmenter::new_and_segment_str(input, self.payload)
     }
 }
 

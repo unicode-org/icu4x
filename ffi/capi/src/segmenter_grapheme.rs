@@ -50,7 +50,7 @@ pub mod ffi {
         #[cfg(feature = "compiled_data")]
         pub fn create() -> Box<GraphemeClusterSegmenter> {
             Box::new(GraphemeClusterSegmenter(
-                icu_segmenter::GraphemeClusterSegmenter::new(),
+                icu_segmenter::GraphemeClusterSegmenter::new().static_to_owned(),
             ))
         }
         /// Construct an [`GraphemeClusterSegmenter`].

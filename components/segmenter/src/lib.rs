@@ -137,6 +137,7 @@ pub mod provider;
 // Main Segmenter and BreakIterator public types
 pub use crate::grapheme::GraphemeClusterBreakIterator;
 pub use crate::grapheme::GraphemeClusterSegmenter;
+pub use crate::grapheme::GraphemeClusterSegmenterBorrowed;
 pub use crate::line::LineBreakIterator;
 pub use crate::line::LineSegmenter;
 pub use crate::sentence::SentenceBreakIterator;
