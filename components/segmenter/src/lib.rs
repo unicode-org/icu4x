@@ -145,6 +145,7 @@ pub use crate::sentence::SentenceSegmenter;
 pub use crate::sentence::SentenceSegmenterBorrowed;
 pub use crate::word::WordBreakIterator;
 pub use crate::word::WordSegmenter;
+pub use crate::word::WordSegmenterBorrowed;
 
 /// Options structs and enums
 pub mod options {
@@ -175,6 +176,7 @@ pub use crate::word::WordBreakIteratorLatin1;
 pub use crate::word::WordBreakIteratorPotentiallyIllFormedUtf8;
 pub use crate::word::WordBreakIteratorUtf16;
 pub use crate::word::WordBreakIteratorUtf8;
+pub use crate::word::WordBreakIteratorWithWordType;
 
 pub(crate) mod private {
     /// Trait marking other traits that are considered unstable and should not generally be

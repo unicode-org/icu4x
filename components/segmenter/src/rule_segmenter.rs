@@ -24,13 +24,13 @@ pub trait RuleBreakType<'s>: crate::private::Sealed {
     type CharType: Copy + Into<u32> + core::fmt::Debug;
 
     #[doc(hidden)]
-    fn get_current_position_character_len<'l, 'data>(
-        iter: &RuleBreakIterator<'l, 'data, 's, Self>,
+    fn get_current_position_character_len<'data>(
+        iter: &RuleBreakIterator<'data, 's, Self>,
     ) -> usize;
 
     #[doc(hidden)]
-    fn handle_complex_language<'l, 'data>(
-        iter: &mut RuleBreakIterator<'l, 'data, 's, Self>,
+    fn handle_complex_language<'data>(
+        iter: &mut RuleBreakIterator<'data, 's, Self>,
         left_codepoint: Self::CharType,
     ) -> Option<usize>;
 }
@@ -49,20 +49,18 @@ pub trait RuleBreakType<'s>: crate::private::Sealed {
 /// _after_ the boundary (for a boundary at the end of text, this index is the length
 /// of the [`str`] or array of code units).
 #[derive(Debug)]
-pub struct RuleBreakIterator<'l, 'data, 's, Y: RuleBreakType<'s> + ?Sized> {
+pub struct RuleBreakIterator<'data, 's, Y: RuleBreakType<'s> + ?Sized> {
     pub(crate) iter: Y::IterAttr,
     pub(crate) len: usize,
     pub(crate) current_pos_data: Option<(usize, Y::CharType)>,
     pub(crate) result_cache: alloc::vec::Vec<usize>,
-    pub(crate) data: &'l RuleBreakData<'data>,
+    pub(crate) data: &'data RuleBreakData<'data>,
     pub(crate) complex: Option<ComplexPayloadsBorrowed<'data>>,
     pub(crate) boundary_property: u8,
-    pub(crate) locale_override: Option<&'l RuleBreakDataOverride<'data>>,
+    pub(crate) locale_override: Option<&'data RuleBreakDataOverride<'data>>,
 }
 
-impl<'l, 'data, 's, Y: RuleBreakType<'s> + ?Sized> Iterator
-    for RuleBreakIterator<'l, 'data, 's, Y>
-{
+impl<'data, 's, Y: RuleBreakType<'s> + ?Sized> Iterator for RuleBreakIterator<'data, 's, Y> {
     type Item = usize;
 
     fn next(&mut self) -> Option<Self::Item> {
@@ -201,7 +199,7 @@ impl<'l, 'data, 's, Y: RuleBreakType<'s> + ?Sized> Iterator
     }
 }
 
-impl<'l, 'data, 's, Y: RuleBreakType<'s> + ?Sized> RuleBreakIterator<'l, 'data, 's, Y> {
+impl<'data, 's, Y: RuleBreakType<'s> + ?Sized> RuleBreakIterator<'data, 's, Y> {
     pub(crate) fn advance_iter(&mut self) {
         self.current_pos_data = self.iter.next();
     }

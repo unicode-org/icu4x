@@ -33,7 +33,7 @@ pub struct SentenceBreakInvariantOptions {}
 ///
 /// Lifetimes:
 ///
-/// - `'l` = lifetime of the segmenter object from which this iterator was created
+/// - `'data` = lifetime of the segmenter object from which this iterator was created
 /// - `'s` = lifetime of the string being segmented
 ///
 /// The [`Iterator::Item`] is an [`usize`] representing index of a code unit
@@ -42,32 +42,34 @@ pub struct SentenceBreakInvariantOptions {}
 ///
 /// For examples of use, see [`SentenceSegmenter`].
 #[derive(Debug)]
-pub struct SentenceBreakIterator<'l, 's, Y: RuleBreakType<'s> + ?Sized>(
-    RuleBreakIterator<'l, 'l, 's, Y>,
+pub struct SentenceBreakIterator<'data, 's, Y: RuleBreakType<'s> + ?Sized>(
+    RuleBreakIterator<'data, 's, Y>,
 );
 
-derive_usize_iterator_with_type!(SentenceBreakIterator);
+derive_usize_iterator_with_type!(SentenceBreakIterator, 'data);
 
 /// Sentence break iterator for an `str` (a UTF-8 string).
 ///
 /// For examples of use, see [`SentenceSegmenter`].
-pub type SentenceBreakIteratorUtf8<'l, 's> = SentenceBreakIterator<'l, 's, RuleBreakTypeUtf8>;
+pub type SentenceBreakIteratorUtf8<'data, 's> = SentenceBreakIterator<'data, 's, RuleBreakTypeUtf8>;
 
 /// Sentence break iterator for a potentially invalid UTF-8 string.
 ///
 /// For examples of use, see [`SentenceSegmenter`].
-pub type SentenceBreakIteratorPotentiallyIllFormedUtf8<'l, 's> =
-    SentenceBreakIterator<'l, 's, RuleBreakTypePotentiallyIllFormedUtf8>;
+pub type SentenceBreakIteratorPotentiallyIllFormedUtf8<'data, 's> =
+    SentenceBreakIterator<'data, 's, RuleBreakTypePotentiallyIllFormedUtf8>;
 
 /// Sentence break iterator for a Latin-1 (8-bit) string.
 ///
 /// For examples of use, see [`SentenceSegmenter`].
-pub type SentenceBreakIteratorLatin1<'l, 's> = SentenceBreakIterator<'l, 's, RuleBreakTypeLatin1>;
+pub type SentenceBreakIteratorLatin1<'data, 's> =
+    SentenceBreakIterator<'data, 's, RuleBreakTypeLatin1>;
 
 /// Sentence break iterator for a UTF-16 string.
 ///
 /// For examples of use, see [`SentenceSegmenter`].
-pub type SentenceBreakIteratorUtf16<'l, 's> = SentenceBreakIterator<'l, 's, RuleBreakTypeUtf16>;
+pub type SentenceBreakIteratorUtf16<'data, 's> =
+    SentenceBreakIterator<'data, 's, RuleBreakTypeUtf16>;
 
 /// Supports loading sentence break data, and creating sentence break iterators for different string
 /// encodings.
