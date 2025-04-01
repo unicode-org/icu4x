@@ -41,7 +41,7 @@ fn fromstatic_dictor(dict_or: DictOrLstmBorrowed<'static>) -> DictOrLstm {
         #[cfg(feature = "lstm")]
         Err(lstm) => Err(DataPayload::from_static_ref(lstm)),
         #[cfg(not(feature = "lstm"))]
-        Err(infallible) => Err(*infallible),
+        Err(infallible) => Err(infallible),
     }
 }
 
@@ -224,7 +224,6 @@ impl ComplexPayloadsBorrowed<'static> {
         }
     }
 
-
     #[cfg(feature = "compiled_data")]
     pub(crate) fn new_southeast_asian() -> Self {
         #[allow(clippy::unwrap_used)]
@@ -358,7 +357,6 @@ impl ComplexPayloads {
             ja: try_load::<SegmenterDictionaryAutoV1, D>(provider, CJ_DICT)?.map(DataPayload::cast),
         })
     }
-
 
     pub(crate) fn try_new_southeast_asian<D>(provider: &D) -> Result<Self, DataError>
     where

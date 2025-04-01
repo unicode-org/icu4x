@@ -68,9 +68,9 @@ pub mod ffi {
         #[diplomat::attr(auto, named_constructor = "auto")]
         #[cfg(feature = "compiled_data")]
         pub fn create_auto() -> Box<WordSegmenter> {
-            Box::new(WordSegmenter(icu_segmenter::WordSegmenter::new_auto(
-                Default::default(),
-            ).static_to_owned()))
+            Box::new(WordSegmenter(
+                icu_segmenter::WordSegmenter::new_auto(Default::default()).static_to_owned(),
+            ))
         }
 
         /// Construct an [`WordSegmenter`] with automatically selecting the best available LSTM
@@ -119,9 +119,9 @@ pub mod ffi {
         #[diplomat::attr(auto, named_constructor = "lstm")]
         #[cfg(feature = "compiled_data")]
         pub fn create_lstm() -> Box<WordSegmenter> {
-            Box::new(WordSegmenter(icu_segmenter::WordSegmenter::new_lstm(
-                Default::default(),
-            ).static_to_owned()))
+            Box::new(WordSegmenter(
+                icu_segmenter::WordSegmenter::new_lstm(Default::default()).static_to_owned(),
+            ))
         }
 
         /// Construct an [`WordSegmenter`] with LSTM payload data for Burmese, Khmer, Lao, and
@@ -169,9 +169,9 @@ pub mod ffi {
         #[diplomat::attr(auto, named_constructor = "dictionary")]
         #[cfg(feature = "compiled_data")]
         pub fn create_dictionary() -> Box<WordSegmenter> {
-            Box::new(WordSegmenter(icu_segmenter::WordSegmenter::new_dictionary(
-                Default::default(),
-            ).static_to_owned()))
+            Box::new(WordSegmenter(
+                icu_segmenter::WordSegmenter::new_dictionary(Default::default()).static_to_owned(),
+            ))
         }
 
         /// Construct an [`WordSegmenter`] with dictionary payload data for Chinese, Japanese,
@@ -221,7 +221,9 @@ pub mod ffi {
             &'a self,
             input: &'a DiplomatStr,
         ) -> Box<WordBreakIteratorUtf8<'a>> {
-            Box::new(WordBreakIteratorUtf8(self.0.as_borrowed().segment_utf8(input)))
+            Box::new(WordBreakIteratorUtf8(
+                self.0.as_borrowed().segment_utf8(input),
+            ))
         }
 
         /// Segments a string.
@@ -235,14 +237,18 @@ pub mod ffi {
             &'a self,
             input: &'a DiplomatStr16,
         ) -> Box<WordBreakIteratorUtf16<'a>> {
-            Box::new(WordBreakIteratorUtf16(self.0.as_borrowed().segment_utf16(input)))
+            Box::new(WordBreakIteratorUtf16(
+                self.0.as_borrowed().segment_utf16(input),
+            ))
         }
 
         /// Segments a Latin-1 string.
         #[diplomat::rust_link(icu::segmenter::WordSegmenter::segment_latin1, FnInStruct)]
         #[diplomat::attr(not(supports = utf8_strings), disable)]
         pub fn segment_latin1<'a>(&'a self, input: &'a [u8]) -> Box<WordBreakIteratorLatin1<'a>> {
-            Box::new(WordBreakIteratorLatin1(self.0.as_borrowed().segment_latin1(input)))
+            Box::new(WordBreakIteratorLatin1(
+                self.0.as_borrowed().segment_latin1(input),
+            ))
         }
     }
 

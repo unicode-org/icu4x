@@ -1306,9 +1306,7 @@ impl<'s> LineBreakType<'s> for LineBreakTypeUtf16 {
         // Restore iterator to move to head of complex string
         iterator.iter = start_iter;
         iterator.current_pos_data = start_point;
-        let breaks = iterator
-            .complex
-            .complex_language_segment_utf16(&s);
+        let breaks = iterator.complex.complex_language_segment_utf16(&s);
         iterator.result_cache = breaks;
         // result_cache vector is utf-16 index that is in BMP.
         let first_pos = *iterator.result_cache.first()?;
