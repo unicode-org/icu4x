@@ -7,8 +7,8 @@ mod patterns;
 
 use fixtures::TestOutputItem;
 use icu_calendar::cal::{
-    Buddhist, Chinese, Coptic, Dangi, Gregorian, Hebrew, HijriCivil, HijriObservational,
-    HijriTabular, HijriUmmAlQura, Indian, Iso, Persian, Roc, {Ethiopian, EthiopianEraStyle},
+    Buddhist, Chinese, Coptic, Dangi, Gregorian, Hebrew, HijriObservational, HijriTabular,
+    HijriUmmAlQura, Indian, Iso, Persian, Roc, {Ethiopian, EthiopianEraStyle},
     {Japanese, JapaneseExtended},
 };
 use icu_datetime::fieldsets::enums::*;
@@ -123,7 +123,7 @@ fn test_fixture(fixture_name: &str, file: &str) {
                 CalendarAlgorithm::Hijri(Some(HijriCalendarAlgorithm::Civil)) => {
                     assert_fixture_element(
                         prefs,
-                        HijriCivil,
+                        HijriTabular::new_civil_epoch(),
                         input,
                         &expected,
                         field_set,
@@ -143,7 +143,7 @@ fn test_fixture(fixture_name: &str, file: &str) {
                 CalendarAlgorithm::Hijri(Some(HijriCalendarAlgorithm::Tbla)) => {
                     assert_fixture_element(
                         prefs,
-                        HijriTabular,
+                        HijriTabular::new_astronomical_epoch(),
                         input,
                         &expected,
                         field_set,
