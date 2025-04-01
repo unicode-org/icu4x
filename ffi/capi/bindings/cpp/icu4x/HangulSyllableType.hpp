@@ -52,7 +52,7 @@ inline icu4x::HangulSyllableType icu4x::HangulSyllableType::for_char(char32_t ch
   return icu4x::HangulSyllableType::FromFFI(result);
 }
 
-inline uint8_t icu4x::HangulSyllableType::to_integer_value() {
+inline uint8_t icu4x::HangulSyllableType::to_integer_value() const {
   auto result = icu4x::capi::icu4x_HangulSyllableType_to_integer_value_mv1(this->AsFFI());
   return result;
 }

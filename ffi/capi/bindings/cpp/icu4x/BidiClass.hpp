@@ -75,17 +75,17 @@ inline icu4x::BidiClass icu4x::BidiClass::for_char(char32_t ch) {
   return icu4x::BidiClass::FromFFI(result);
 }
 
-inline std::optional<std::string_view> icu4x::BidiClass::long_name() {
+inline std::optional<std::string_view> icu4x::BidiClass::long_name() const {
   auto result = icu4x::capi::icu4x_BidiClass_long_name_mv1(this->AsFFI());
   return result.is_ok ? std::optional<std::string_view>(std::string_view(result.ok.data, result.ok.len)) : std::nullopt;
 }
 
-inline std::optional<std::string_view> icu4x::BidiClass::short_name() {
+inline std::optional<std::string_view> icu4x::BidiClass::short_name() const {
   auto result = icu4x::capi::icu4x_BidiClass_short_name_mv1(this->AsFFI());
   return result.is_ok ? std::optional<std::string_view>(std::string_view(result.ok.data, result.ok.len)) : std::nullopt;
 }
 
-inline uint8_t icu4x::BidiClass::to_integer_value() {
+inline uint8_t icu4x::BidiClass::to_integer_value() const {
   auto result = icu4x::capi::icu4x_BidiClass_to_integer_value_mv1(this->AsFFI());
   return result;
 }

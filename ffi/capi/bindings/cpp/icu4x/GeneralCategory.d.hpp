@@ -112,28 +112,28 @@ public:
    *
    * See the [Rust documentation for `get`](https://docs.rs/icu/latest/icu/properties/struct.PropertyNamesLongBorrowed.html#method.get) for more information.
    */
-  inline std::optional<std::string_view> long_name();
+  inline std::optional<std::string_view> long_name() const;
 
   /**
    * Get the "short" name of this property value (returns empty if property value is unknown)
    *
    * See the [Rust documentation for `get`](https://docs.rs/icu/latest/icu/properties/struct.PropertyNamesShortBorrowed.html#method.get) for more information.
    */
-  inline std::optional<std::string_view> short_name();
+  inline std::optional<std::string_view> short_name() const;
 
   /**
    * Convert to an integer value usable with ICU4C and CodePointMapData
    *
    * See the [Rust documentation for `to_icu4c_value`](https://docs.rs/icu/latest/icu/properties/props/struct.GeneralCategory.html#method.to_icu4c_value) for more information.
    */
-  inline uint8_t to_integer_value();
+  inline uint8_t to_integer_value() const;
 
   /**
    * Produces a GeneralCategoryGroup mask that can represent a group of general categories
    *
    * See the [Rust documentation for `GeneralCategoryGroup`](https://docs.rs/icu/latest/icu/properties/props/struct.GeneralCategoryGroup.html) for more information.
    */
-  inline icu4x::GeneralCategoryGroup to_group();
+  inline icu4x::GeneralCategoryGroup to_group() const;
 
   /**
    * Convert from an integer using the ICU4C integer mappings for `General_Category`

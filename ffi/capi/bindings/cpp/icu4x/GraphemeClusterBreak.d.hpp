@@ -86,7 +86,7 @@ public:
    *
    * See the [Rust documentation for `to_icu4c_value`](https://docs.rs/icu/latest/icu/properties/props/struct.GraphemeClusterBreak.html#method.to_icu4c_value) for more information.
    */
-  inline uint8_t to_integer_value();
+  inline uint8_t to_integer_value() const;
 
   /**
    * Convert from an integer value from ICU4C or CodePointMapData

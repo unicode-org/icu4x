@@ -50,7 +50,7 @@ public:
    *
    * Additional information: [1](https://docs.rs/icu/latest/icu/time/zone/enum.TimeZoneVariant.html)
    */
-  inline icu4x::TimeZoneVariant from_rearguard_isdst(bool isdst);
+  inline icu4x::TimeZoneVariant from_rearguard_isdst(bool isdst) const;
 
   inline icu4x::capi::TimeZoneVariant AsFFI() const;
   inline static icu4x::TimeZoneVariant FromFFI(icu4x::capi::TimeZoneVariant c_enum);

@@ -10,7 +10,7 @@ checksum = "ace50bade8e6234aa140d9a2f552bbee1db4d353f69b8217bc503490fc1a9f26"
 
 [[package]]
 name = "calendrical_calculations"
-version = "0.1.3"
+version = "0.2.0-dev"
 dependencies = [
  "core_maths",
  "displaydoc",
@@ -53,7 +53,7 @@ dependencies = [
 [[package]]
 name = "diplomat"
 version = "0.10.0"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=76b030df6326070c314a5d6cacedf3357a5ed590#76b030df6326070c314a5d6cacedf3357a5ed590"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=f67862a22def6cb7954aa51e102630e019c99165#f67862a22def6cb7954aa51e102630e019c99165"
 dependencies = [
  "diplomat_core",
  "proc-macro2",
@@ -64,7 +64,7 @@ dependencies = [
 [[package]]
 name = "diplomat-runtime"
 version = "0.10.0"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=76b030df6326070c314a5d6cacedf3357a5ed590#76b030df6326070c314a5d6cacedf3357a5ed590"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=f67862a22def6cb7954aa51e102630e019c99165#f67862a22def6cb7954aa51e102630e019c99165"
 dependencies = [
  "log",
 ]
@@ -72,7 +72,7 @@ dependencies = [
 [[package]]
 name = "diplomat_core"
 version = "0.10.0"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=76b030df6326070c314a5d6cacedf3357a5ed590#76b030df6326070c314a5d6cacedf3357a5ed590"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=f67862a22def6cb7954aa51e102630e019c99165#f67862a22def6cb7954aa51e102630e019c99165"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -119,7 +119,6 @@ dependencies = [
  "icu_locale",
  "icu_locale_core",
  "icu_provider",
- "icu_provider_baked",
  "ixdtf",
  "serde",
  "tinystr",
@@ -177,7 +176,6 @@ dependencies = [
  "icu_locale_core",
  "icu_properties",
  "icu_provider",
- "icu_provider_baked",
  "potential_utf",
  "serde",
  "writeable",
@@ -200,7 +198,6 @@ dependencies = [
  "icu_normalizer",
  "icu_properties",
  "icu_provider",
- "icu_provider_baked",
  "serde",
  "smallvec",
  "utf16_iter",
@@ -239,7 +236,6 @@ dependencies = [
  "icu_pattern",
  "icu_plurals",
  "icu_provider",
- "icu_provider_baked",
  "icu_time",
  "litemap",
  "potential_utf",
@@ -264,7 +260,6 @@ dependencies = [
  "icu_locale",
  "icu_locale_core",
  "icu_provider",
- "icu_provider_baked",
  "serde",
  "tinystr",
  "writeable",
@@ -294,7 +289,6 @@ dependencies = [
  "icu_plurals",
  "icu_properties",
  "icu_provider",
- "icu_provider_baked",
  "litemap",
  "num-bigint",
  "num-rational",
@@ -321,7 +315,6 @@ dependencies = [
  "icu_list_data",
  "icu_locale",
  "icu_provider",
- "icu_provider_baked",
  "regex-automata",
  "serde",
  "writeable",
@@ -341,7 +334,6 @@ dependencies = [
  "icu_locale_core",
  "icu_locale_data",
  "icu_provider",
- "icu_provider_baked",
  "potential_utf",
  "serde",
  "tinystr",
@@ -373,7 +365,6 @@ dependencies = [
  "icu_normalizer_data",
  "icu_properties",
  "icu_provider",
- "icu_provider_baked",
  "serde",
  "smallvec",
  "utf16_iter",
@@ -407,7 +398,6 @@ dependencies = [
  "icu_locale",
  "icu_plurals_data",
  "icu_provider",
- "icu_provider_baked",
  "serde",
  "zerovec",
 ]
@@ -425,7 +415,6 @@ dependencies = [
  "icu_locale_core",
  "icu_properties_data",
  "icu_provider",
- "icu_provider_baked",
  "potential_utf",
  "serde",
  "unicode-bidi",
@@ -452,6 +441,7 @@ dependencies = [
  "writeable",
  "yoke",
  "zerofrom",
+ "zerotrie",
  "zerovec",
 ]
 
@@ -463,16 +453,6 @@ dependencies = [
  "icu_provider",
  "serde",
  "tinystr",
- "zerovec",
-]
-
-[[package]]
-name = "icu_provider_baked"
-version = "2.0.0-beta2"
-dependencies = [
- "icu_provider",
- "writeable",
- "zerotrie",
  "zerovec",
 ]
 
@@ -513,7 +493,6 @@ dependencies = [
  "icu_locale",
  "icu_locale_core",
  "icu_provider",
- "icu_provider_baked",
  "icu_segmenter_data",
  "potential_utf",
  "serde",
@@ -533,7 +512,6 @@ dependencies = [
  "displaydoc",
  "icu_calendar",
  "icu_provider",
- "icu_provider_baked",
  "icu_time_data",
  "ixdtf",
  "serde",
@@ -1147,6 +1125,10 @@ version = "2.0.0-beta2"
 [[patch.unused]]
 name = "icu_harfbuzz"
 version = "0.2.0"
+
+[[patch.unused]]
+name = "icu_provider_baked"
+version = "2.0.0-beta2"
 
 [[patch.unused]]
 name = "icu_provider_export"

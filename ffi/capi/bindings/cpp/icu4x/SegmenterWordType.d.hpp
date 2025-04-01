@@ -45,7 +45,7 @@ public:
   /**
    * See the [Rust documentation for `is_word_like`](https://docs.rs/icu/latest/icu/segmenter/options/enum.WordType.html#method.is_word_like) for more information.
    */
-  inline bool is_word_like();
+  inline bool is_word_like() const;
 
   inline icu4x::capi::SegmenterWordType AsFFI() const;
   inline static icu4x::SegmenterWordType FromFFI(icu4x::capi::SegmenterWordType c_enum);
