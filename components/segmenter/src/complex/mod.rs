@@ -25,7 +25,7 @@ type DictOrLstm = Result<DataPayload<UCharDictionaryBreakDataV1>, DataPayload<Se
 #[cfg(feature = "lstm")]
 type DictOrLstmBorrowed<'a> = Result<&'a UCharDictionaryBreakData<'a>, &'a LstmData<'a>>;
 
-fn borrow_dictor<'data>(dict_or: &'data DictOrLstm) -> DictOrLstmBorrowed<'data> {
+fn borrow_dictor(dict_or: &DictOrLstm) -> DictOrLstmBorrowed<'_> {
     match dict_or {
         Ok(dict) => Ok(dict.get()),
         #[cfg(feature = "lstm")]
@@ -164,7 +164,7 @@ impl ComplexPayloadsBorrowed<'static> {
         #[allow(clippy::unwrap_used)]
         // try_load is infallible if the provider only returns `MissingLocale`.
         Self {
-            grapheme: &crate::provider::Baked::SINGLETON_SEGMENTER_BREAK_GRAPHEME_CLUSTER_V1,
+            grapheme: crate::provider::Baked::SINGLETON_SEGMENTER_BREAK_GRAPHEME_CLUSTER_V1,
             my: try_load_static::<SegmenterLstmAutoV1, _>(&crate::provider::Baked, MY_LSTM)
                 .unwrap()
                 .map(Err),
@@ -271,7 +271,7 @@ impl ComplexPayloadsBorrowed<'static> {
 }
 
 impl ComplexPayloads {
-    pub(crate) fn as_borrowed<'data>(&'data self) -> ComplexPayloadsBorrowed<'data> {
+    pub(crate) fn as_borrowed(&self) -> ComplexPayloadsBorrowed<'_> {
         ComplexPayloadsBorrowed {
             grapheme: self.grapheme.get(),
             my: self.my.as_ref().map(borrow_dictor),

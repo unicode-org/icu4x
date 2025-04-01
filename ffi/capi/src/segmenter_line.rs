@@ -19,6 +19,7 @@ pub mod ffi {
     #[diplomat::opaque]
     /// An ICU4X line-break segmenter, capable of finding breakpoints in strings.
     #[diplomat::rust_link(icu::segmenter::LineSegmenter, Struct)]
+    #[diplomat::rust_link(icu::segmenter::LineSegmenterBorrowed, Struct, hidden)]
     pub struct LineSegmenter(icu_segmenter::LineSegmenter);
 
     #[diplomat::rust_link(icu::segmenter::options::LineBreakStrictness, Enum)]
@@ -224,8 +225,8 @@ pub mod ffi {
         ///
         /// Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
         /// to the WHATWG Encoding Standard.
-        #[diplomat::rust_link(icu::segmenter::LineSegmenter::segment_utf8, FnInStruct)]
-        #[diplomat::rust_link(icu::segmenter::LineSegmenter::segment_str, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::segmenter::LineSegmenterBorrowed::segment_utf8, FnInStruct)]
+        #[diplomat::rust_link(icu::segmenter::LineSegmenterBorrowed::segment_str, FnInStruct, hidden)]
         #[diplomat::attr(not(supports = utf8_strings), disable)]
         #[diplomat::attr(*, rename = "segment")]
         pub fn segment_utf8<'a>(
@@ -241,7 +242,7 @@ pub mod ffi {
         ///
         /// Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
         /// to the WHATWG Encoding Standard.
-        #[diplomat::rust_link(icu::segmenter::LineSegmenter::segment_utf16, FnInStruct)]
+        #[diplomat::rust_link(icu::segmenter::LineSegmenterBorrowed::segment_utf16, FnInStruct)]
         #[diplomat::attr(not(supports = utf8_strings), rename = "segment")]
         #[diplomat::attr(supports = utf8_strings, rename = "segment16")]
         pub fn segment_utf16<'a>(
@@ -254,7 +255,7 @@ pub mod ffi {
         }
 
         /// Segments a Latin-1 string.
-        #[diplomat::rust_link(icu::segmenter::LineSegmenter::segment_latin1, FnInStruct)]
+        #[diplomat::rust_link(icu::segmenter::LineSegmenterBorrowed::segment_latin1, FnInStruct)]
         #[diplomat::attr(not(supports = utf8_strings), disable)]
         pub fn segment_latin1<'a>(&'a self, input: &'a [u8]) -> Box<LineBreakIteratorLatin1<'a>> {
             Box::new(LineBreakIteratorLatin1(

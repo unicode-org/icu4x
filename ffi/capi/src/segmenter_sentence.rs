@@ -16,6 +16,7 @@ pub mod ffi {
     #[diplomat::opaque]
     /// An ICU4X sentence-break segmenter, capable of finding sentence breakpoints in strings.
     #[diplomat::rust_link(icu::segmenter::SentenceSegmenter, Struct)]
+    #[diplomat::rust_link(icu::segmenter::SentenceSegmenterBorrowed, Struct, hidden)]
     pub struct SentenceSegmenter(icu_segmenter::SentenceSegmenter);
 
     #[diplomat::opaque]
@@ -88,8 +89,8 @@ pub mod ffi {
         ///
         /// Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
         /// to the WHATWG Encoding Standard.
-        #[diplomat::rust_link(icu::segmenter::SentenceSegmenter::segment_utf8, FnInStruct)]
-        #[diplomat::rust_link(icu::segmenter::SentenceSegmenter::segment_str, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::segmenter::SentenceSegmenterBorrowed::segment_utf8, FnInStruct)]
+        #[diplomat::rust_link(icu::segmenter::SentenceSegmenterBorrowed::segment_str, FnInStruct, hidden)]
         #[diplomat::attr(not(supports = utf8_strings), disable)]
         #[diplomat::attr(*, rename = "segment")]
         pub fn segment_utf8<'a>(
@@ -105,7 +106,7 @@ pub mod ffi {
         ///
         /// Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
         /// to the WHATWG Encoding Standard.
-        #[diplomat::rust_link(icu::segmenter::SentenceSegmenter::segment_utf16, FnInStruct)]
+        #[diplomat::rust_link(icu::segmenter::SentenceSegmenterBorrowed::segment_utf16, FnInStruct)]
         #[diplomat::attr(not(supports = utf8_strings), rename = "segment")]
         #[diplomat::attr(supports = utf8_strings, rename = "segment16")]
         pub fn segment_utf16<'a>(
@@ -118,7 +119,7 @@ pub mod ffi {
         }
 
         /// Segments a Latin-1 string.
-        #[diplomat::rust_link(icu::segmenter::SentenceSegmenter::segment_latin1, FnInStruct)]
+        #[diplomat::rust_link(icu::segmenter::SentenceSegmenterBorrowed::segment_latin1, FnInStruct)]
         #[diplomat::attr(not(supports = utf8_strings), disable)]
         pub fn segment_latin1<'a>(
             &'a self,

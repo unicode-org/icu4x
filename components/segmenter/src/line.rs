@@ -798,7 +798,7 @@ pub struct LineBreakIterator<'data, 's, Y: LineBreakType<'s> + ?Sized> {
     complex: ComplexPayloadsBorrowed<'data>,
 }
 
-impl<'data, 's, Y: LineBreakType<'s>> Iterator for LineBreakIterator<'data, 's, Y> {
+impl<'s, Y: LineBreakType<'s>> Iterator for LineBreakIterator<'_, 's, Y> {
     type Item = usize;
 
     fn next(&mut self) -> Option<Self::Item> {
@@ -1044,7 +1044,7 @@ enum StringBoundaryPosType {
     End,
 }
 
-impl<'data, 's, Y: LineBreakType<'s>> LineBreakIterator<'data, 's, Y> {
+impl<'s, Y: LineBreakType<'s>> LineBreakIterator<'_, 's, Y> {
     fn advance_iter(&mut self) {
         self.current_pos_data = self.iter.next();
     }

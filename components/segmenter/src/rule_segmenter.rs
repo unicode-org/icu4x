@@ -60,7 +60,7 @@ pub struct RuleBreakIterator<'data, 's, Y: RuleBreakType<'s> + ?Sized> {
     pub(crate) locale_override: Option<&'data RuleBreakDataOverride<'data>>,
 }
 
-impl<'data, 's, Y: RuleBreakType<'s> + ?Sized> Iterator for RuleBreakIterator<'data, 's, Y> {
+impl<'s, Y: RuleBreakType<'s> + ?Sized> Iterator for RuleBreakIterator<'_, 's, Y> {
     type Item = usize;
 
     fn next(&mut self) -> Option<Self::Item> {
@@ -199,7 +199,7 @@ impl<'data, 's, Y: RuleBreakType<'s> + ?Sized> Iterator for RuleBreakIterator<'d
     }
 }
 
-impl<'data, 's, Y: RuleBreakType<'s> + ?Sized> RuleBreakIterator<'data, 's, Y> {
+impl<'s, Y: RuleBreakType<'s> + ?Sized> RuleBreakIterator<'_, 's, Y> {
     pub(crate) fn advance_iter(&mut self) {
         self.current_pos_data = self.iter.next();
     }
