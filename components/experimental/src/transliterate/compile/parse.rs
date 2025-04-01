@@ -315,12 +315,14 @@ where
         + DataProvider<PropertyEnumCanonicalCombiningClassV1>
         + DataProvider<PropertyEnumGeneralCategoryV1>
         + DataProvider<PropertyEnumGraphemeClusterBreakV1>
+        + DataProvider<PropertyEnumLineBreakV1>
         + DataProvider<PropertyEnumScriptV1>
         + DataProvider<PropertyEnumSentenceBreakV1>
         + DataProvider<PropertyEnumWordBreakV1>
         + DataProvider<PropertyNameParseCanonicalCombiningClassV1>
         + DataProvider<PropertyNameParseGeneralCategoryMaskV1>
         + DataProvider<PropertyNameParseGraphemeClusterBreakV1>
+        + DataProvider<PropertyNameParseLineBreakV1>
         + DataProvider<PropertyNameParseScriptV1>
         + DataProvider<PropertyNameParseSentenceBreakV1>
         + DataProvider<PropertyNameParseWordBreakV1>

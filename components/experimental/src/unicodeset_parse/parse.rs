@@ -18,7 +18,7 @@ use icu_properties::script::ScriptWithExtensions;
 use icu_properties::{
     props::{
         CanonicalCombiningClass, EnumeratedProperty, GeneralCategory, GeneralCategoryGroup,
-        GraphemeClusterBreak, Script, SentenceBreak, WordBreak,
+        GraphemeClusterBreak, LineBreak, Script, SentenceBreak, WordBreak,
     },
     CodePointMapData,
 };
@@ -487,12 +487,14 @@ where
         + DataProvider<PropertyEnumCanonicalCombiningClassV1>
         + DataProvider<PropertyEnumGeneralCategoryV1>
         + DataProvider<PropertyEnumGraphemeClusterBreakV1>
+        + DataProvider<PropertyEnumLineBreakV1>
         + DataProvider<PropertyEnumScriptV1>
         + DataProvider<PropertyEnumSentenceBreakV1>
         + DataProvider<PropertyEnumWordBreakV1>
         + DataProvider<PropertyNameParseCanonicalCombiningClassV1>
         + DataProvider<PropertyNameParseGeneralCategoryMaskV1>
         + DataProvider<PropertyNameParseGraphemeClusterBreakV1>
+        + DataProvider<PropertyNameParseLineBreakV1>
         + DataProvider<PropertyNameParseScriptV1>
         + DataProvider<PropertyNameParseSentenceBreakV1>
         + DataProvider<PropertyNameParseWordBreakV1>
@@ -1128,6 +1130,8 @@ where
         let mut try_scx = Err(PEK::UnknownProperty.into());
         // contains a value for the Grapheme_Cluster_Break property that needs to be tried
         let mut try_gcb = Err(PEK::UnknownProperty.into());
+        // contains a value for the Line_Break property that needs to be tried
+        let mut try_lb = Err(PEK::UnknownProperty.into());
         // contains a value for the Sentence_Break property that needs to be tried
         let mut try_sb = Err(PEK::UnknownProperty.into());
         // contains a value for the Word_Break property that needs to be tried
@@ -1150,6 +1154,7 @@ where
                 GraphemeClusterBreak::NAME | GraphemeClusterBreak::SHORT_NAME => {
                     try_gcb = Ok(value)
                 }
+                LineBreak::NAME | LineBreak::SHORT_NAME => try_lb = Ok(value),
                 Script::NAME | Script::SHORT_NAME => try_sc = Ok(value),
                 SentenceBreak::NAME | SentenceBreak::SHORT_NAME => try_sb = Ok(value),
                 WordBreak::NAME | WordBreak::SHORT_NAME => try_wb = Ok(value),
@@ -1187,6 +1192,7 @@ where
             .or_else(|_| try_scx.and_then(|value| self.try_load_script_extensions_set(value)))
             .or_else(|_| try_binary.and_then(|value| self.try_load_ecma262_binary_set(value)))
             .or_else(|_| try_gcb.and_then(|value| self.try_load_grapheme_cluster_break_set(value)))
+            .or_else(|_| try_lb.and_then(|value| self.try_load_line_break_set(value)))
             .or_else(|_| try_sb.and_then(|value| self.try_load_sentence_break_set(value)))
             .or_else(|_| try_wb.and_then(|value| self.try_load_word_break_set(value)))
             .or_else(|_| try_ccc.and_then(|value| self.try_load_ccc_set(value)))
@@ -1415,6 +1421,21 @@ where
             CodePointMapData::<GraphemeClusterBreak>::try_new_unstable(self.property_provider)
                 .map_err(|_| PEK::Internal)?;
         let set = property_map.as_borrowed().get_set_for_value(gcb_value);
+        self.single_set.add_set(&set.to_code_point_inversion_list());
+        Ok(())
+    }
+
+    fn try_load_line_break_set(&mut self, name: &str) -> Result<()> {
+        let parser = PropertyParser::<LineBreak>::try_new_unstable(self.property_provider)
+            .map_err(|_| PEK::Internal)?;
+        let lb_value = parser
+            .as_borrowed()
+            .get_loose(name)
+            .ok_or(PEK::UnknownProperty)?;
+        // TODO(#3550): This could be cached; does not depend on name.
+        let property_map = CodePointMapData::<LineBreak>::try_new_unstable(self.property_provider)
+            .map_err(|_| PEK::Internal)?;
+        let set = property_map.as_borrowed().get_set_for_value(lb_value);
         self.single_set.add_set(&set.to_code_point_inversion_list());
         Ok(())
     }
@@ -1670,12 +1691,14 @@ where
         + DataProvider<PropertyEnumCanonicalCombiningClassV1>
         + DataProvider<PropertyEnumGeneralCategoryV1>
         + DataProvider<PropertyEnumGraphemeClusterBreakV1>
+        + DataProvider<PropertyEnumLineBreakV1>
         + DataProvider<PropertyEnumScriptV1>
         + DataProvider<PropertyEnumSentenceBreakV1>
         + DataProvider<PropertyEnumWordBreakV1>
         + DataProvider<PropertyNameParseCanonicalCombiningClassV1>
         + DataProvider<PropertyNameParseGeneralCategoryMaskV1>
         + DataProvider<PropertyNameParseGraphemeClusterBreakV1>
+        + DataProvider<PropertyNameParseLineBreakV1>
         + DataProvider<PropertyNameParseScriptV1>
         + DataProvider<PropertyNameParseSentenceBreakV1>
         + DataProvider<PropertyNameParseWordBreakV1>
@@ -1786,12 +1809,14 @@ where
         + DataProvider<PropertyEnumCanonicalCombiningClassV1>
         + DataProvider<PropertyEnumGeneralCategoryV1>
         + DataProvider<PropertyEnumGraphemeClusterBreakV1>
+        + DataProvider<PropertyEnumLineBreakV1>
         + DataProvider<PropertyEnumScriptV1>
         + DataProvider<PropertyEnumSentenceBreakV1>
         + DataProvider<PropertyEnumWordBreakV1>
         + DataProvider<PropertyNameParseCanonicalCombiningClassV1>
         + DataProvider<PropertyNameParseGeneralCategoryMaskV1>
         + DataProvider<PropertyNameParseGraphemeClusterBreakV1>
+        + DataProvider<PropertyNameParseLineBreakV1>
         + DataProvider<PropertyNameParseScriptV1>
         + DataProvider<PropertyNameParseSentenceBreakV1>
         + DataProvider<PropertyNameParseWordBreakV1>
