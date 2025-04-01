@@ -65,12 +65,15 @@ pub(super) struct LstmSegmenter<'data> {
     timew_fw: MatrixZero<'data, 2>,
     timew_bw: MatrixZero<'data, 2>,
     time_b: MatrixZero<'data, 1>,
-    grapheme: Option<&'data RuleBreakData<'data>>,
+    grapheme: Option<GraphemeClusterSegmenterBorrowed<'data>>,
 }
 
 impl<'data> LstmSegmenter<'data> {
     /// Returns `Err` if grapheme data is required but not present
-    pub(super) fn new(lstm: &'data LstmData<'data>, grapheme: &'data RuleBreakData<'data>) -> Self {
+    pub(super) fn new(
+        lstm: &'data LstmData<'data>,
+        grapheme: GraphemeClusterSegmenterBorrowed<'data>,
+    ) -> Self {
         let LstmData::Float32(lstm) = lstm;
         let time_w = MatrixZero::from(&lstm.time_w);
         #[allow(clippy::unwrap_used)] // shape (2, 4, hunits)
@@ -96,7 +99,8 @@ impl<'data> LstmSegmenter<'data> {
     /// Create an LSTM based break iterator for an `str` (a UTF-8 string).
     pub(super) fn segment_str<'a>(&'a self, input: &'a str) -> LstmSegmenterIterator<'a, 'data> {
         let input_seq = if let Some(grapheme) = self.grapheme {
-            GraphemeClusterSegmenterBorrowed::new_and_segment_str(input, grapheme)
+            grapheme
+                .new_and_segment_str(input)
                 .collect::<Vec<usize>>()
                 .windows(2)
                 .map(|chunk| {
@@ -139,7 +143,8 @@ impl<'data> LstmSegmenter<'data> {
         input: &[u16],
     ) -> LstmSegmenterIteratorUtf16<'a, 'data> {
         let input_seq = if let Some(grapheme) = self.grapheme {
-            GraphemeClusterSegmenterBorrowed::new_and_segment_utf16(input, grapheme)
+            grapheme
+                .new_and_segment_utf16(input)
                 .collect::<Vec<usize>>()
                 .windows(2)
                 .map(|chunk| {
@@ -319,6 +324,7 @@ fn compute_hc<'a>(
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::GraphemeClusterSegmenter;
     use icu_provider::prelude::*;
     use serde::Deserialize;
 
@@ -355,10 +361,7 @@ mod tests {
                 ..Default::default()
             })
             .unwrap();
-        let lstm = LstmSegmenter::new(
-            lstm.payload.get(),
-            crate::provider::Baked::SINGLETON_SEGMENTER_BREAK_GRAPHEME_CLUSTER_V1,
-        );
+        let lstm = LstmSegmenter::new(lstm.payload.get(), GraphemeClusterSegmenter::new());
 
         // Importing the test data
         let test_text_data = serde_json::from_str(if lstm.grapheme.is_some() {

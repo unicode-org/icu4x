@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::provider::*;
+use crate::{GraphemeClusterSegmenter, GraphemeClusterSegmenterBorrowed};
 use alloc::vec::Vec;
 use either::Either;
 use icu_provider::prelude::*;
@@ -48,7 +49,7 @@ fn fromstatic_dictor(dict_or: DictOrLstmBorrowed<'static>) -> DictOrLstm {
 
 #[derive(Debug)]
 pub(crate) struct ComplexPayloads {
-    grapheme: DataPayload<SegmenterBreakGraphemeClusterV1>,
+    grapheme: GraphemeClusterSegmenter,
     my: Option<DictOrLstm>,
     km: Option<DictOrLstm>,
     lo: Option<DictOrLstm>,
@@ -58,7 +59,7 @@ pub(crate) struct ComplexPayloads {
 
 #[derive(Debug, Clone, Copy)]
 pub(crate) struct ComplexPayloadsBorrowed<'data> {
-    grapheme: &'data RuleBreakData<'data>,
+    grapheme: GraphemeClusterSegmenterBorrowed<'data>,
     my: Option<DictOrLstmBorrowed<'data>>,
     km: Option<DictOrLstmBorrowed<'data>>,
     lo: Option<DictOrLstmBorrowed<'data>>,
@@ -165,7 +166,7 @@ impl ComplexPayloadsBorrowed<'static> {
         #[allow(clippy::unwrap_used)]
         // try_load is infallible if the provider only returns `MissingLocale`.
         Self {
-            grapheme: crate::provider::Baked::SINGLETON_SEGMENTER_BREAK_GRAPHEME_CLUSTER_V1,
+            grapheme: GraphemeClusterSegmenter::new(),
             my: try_load_static::<SegmenterLstmAutoV1, _>(&crate::provider::Baked, MY_LSTM)
                 .unwrap()
                 .map(Either::Right),
@@ -195,7 +196,7 @@ impl ComplexPayloadsBorrowed<'static> {
         #[allow(clippy::unwrap_used)]
         // try_load is infallible if the provider only returns `MissingLocale`.
         Self {
-            grapheme: crate::provider::Baked::SINGLETON_SEGMENTER_BREAK_GRAPHEME_CLUSTER_V1,
+            grapheme: GraphemeClusterSegmenter::new(),
             my: try_load_static::<SegmenterDictionaryExtendedV1, _>(
                 &crate::provider::Baked,
                 MY_DICT,
@@ -230,7 +231,7 @@ impl ComplexPayloadsBorrowed<'static> {
         #[allow(clippy::unwrap_used)]
         // try_load is infallible if the provider only returns `MissingLocale`.
         Self {
-            grapheme: crate::provider::Baked::SINGLETON_SEGMENTER_BREAK_GRAPHEME_CLUSTER_V1,
+            grapheme: GraphemeClusterSegmenter::new(),
             my: try_load_static::<SegmenterDictionaryExtendedV1, _>(
                 &crate::provider::Baked,
                 MY_DICT,
@@ -261,7 +262,7 @@ impl ComplexPayloadsBorrowed<'static> {
 
     pub(crate) fn static_to_owned(self) -> ComplexPayloads {
         ComplexPayloads {
-            grapheme: DataPayload::from_static_ref(self.grapheme),
+            grapheme: self.grapheme.static_to_owned(),
             my: self.my.map(fromstatic_dictor),
             km: self.km.map(fromstatic_dictor),
             lo: self.lo.map(fromstatic_dictor),
@@ -274,7 +275,7 @@ impl ComplexPayloadsBorrowed<'static> {
 impl ComplexPayloads {
     pub(crate) fn as_borrowed(&self) -> ComplexPayloadsBorrowed<'_> {
         ComplexPayloadsBorrowed {
-            grapheme: self.grapheme.get(),
+            grapheme: self.grapheme.as_borrowed(),
             my: self.my.as_ref().map(borrow_dictor),
             km: self.km.as_ref().map(borrow_dictor),
             lo: self.lo.as_ref().map(borrow_dictor),
@@ -291,7 +292,7 @@ impl ComplexPayloads {
             + ?Sized,
     {
         Ok(Self {
-            grapheme: provider.load(Default::default())?.payload,
+            grapheme: GraphemeClusterSegmenter::try_new_unstable(provider)?,
             my: try_load::<SegmenterLstmAutoV1, D>(provider, MY_LSTM)?
                 .map(DataPayload::cast)
                 .map(Either::Right),
@@ -316,7 +317,7 @@ impl ComplexPayloads {
             + ?Sized,
     {
         Ok(Self {
-            grapheme: provider.load(Default::default())?.payload,
+            grapheme: GraphemeClusterSegmenter::try_new_unstable(provider)?,
             my: try_load::<SegmenterDictionaryExtendedV1, D>(provider, MY_DICT)?
                 .map(DataPayload::cast)
                 .map(Either::Left),
@@ -342,7 +343,7 @@ impl ComplexPayloads {
             + ?Sized,
     {
         Ok(Self {
-            grapheme: provider.load(Default::default())?.payload,
+            grapheme: GraphemeClusterSegmenter::try_new_unstable(provider)?,
             my: try_load::<SegmenterLstmAutoV1, D>(provider, MY_LSTM)?
                 .map(DataPayload::cast)
                 .map(Either::Right),
@@ -366,7 +367,7 @@ impl ComplexPayloads {
             + ?Sized,
     {
         Ok(Self {
-            grapheme: provider.load(Default::default())?.payload,
+            grapheme: GraphemeClusterSegmenter::try_new_unstable(provider)?,
             my: try_load::<SegmenterDictionaryExtendedV1, _>(provider, MY_DICT)?
                 .map(DataPayload::cast)
                 .map(Either::Left),

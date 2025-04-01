@@ -186,7 +186,7 @@ impl GraphemeClusterSegmenter {
 impl<'data> GraphemeClusterSegmenterBorrowed<'data> {
     /// Creates a grapheme cluster break iterator for an `str` (a UTF-8 string).
     pub fn segment_str<'s>(self, input: &'s str) -> GraphemeClusterBreakIteratorUtf8<'data, 's> {
-        Self::new_and_segment_str(input, self.data)
+        self.new_and_segment_str(input)
     }
 
     /// Creates a grapheme cluster break iterator for a potentially ill-formed UTF8 string
@@ -235,22 +235,22 @@ impl<'data> GraphemeClusterSegmenterBorrowed<'data> {
         self,
         input: &'s [u16],
     ) -> GraphemeClusterBreakIteratorUtf16<'data, 's> {
-        Self::new_and_segment_utf16(input, self.data)
+        self.new_and_segment_utf16(input)
     }
 
     /// Creates a grapheme cluster break iterator from grapheme cluster rule payload.
     ///
     /// There are always breakpoints at 0 and the string length, or only at 0 for the empty string.
     pub(crate) fn new_and_segment_str<'s>(
+        self,
         input: &'s str,
-        payload: &'data RuleBreakData<'data>,
     ) -> GraphemeClusterBreakIteratorUtf8<'data, 's> {
         GraphemeClusterBreakIterator(RuleBreakIterator {
             iter: input.char_indices(),
             len: input.len(),
             current_pos_data: None,
             result_cache: Vec::new(),
-            data: payload,
+            data: self.data,
             complex: None,
             boundary_property: 0,
             locale_override: None,
@@ -259,15 +259,15 @@ impl<'data> GraphemeClusterSegmenterBorrowed<'data> {
 
     /// Creates a grapheme cluster break iterator from grapheme cluster rule payload.
     pub(crate) fn new_and_segment_utf16<'s>(
+        self,
         input: &'s [u16],
-        payload: &'data RuleBreakData<'data>,
     ) -> GraphemeClusterBreakIteratorUtf16<'data, 's> {
         GraphemeClusterBreakIterator(RuleBreakIterator {
             iter: Utf16Indices::new(input),
             len: input.len(),
             current_pos_data: None,
             result_cache: Vec::new(),
-            data: payload,
+            data: self.data,
             complex: None,
             boundary_property: 0,
             locale_override: None,
