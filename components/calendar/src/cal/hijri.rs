@@ -25,9 +25,7 @@ use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
 use crate::error::DateError;
 #[cfg(feature = "datagen")]
 use crate::provider::hijri::PackedHijriYearInfo;
-use crate::provider::hijri::{
-    CalendarHijriSimulatedMeccaV1, CalendarHijriUmmalquraV1, HijriData,
-};
+use crate::provider::hijri::{CalendarHijriSimulatedMeccaV1, CalendarHijriUmmalquraV1, HijriData};
 use crate::{types, Calendar, Date, DateDuration, DateDurationUnit};
 use crate::{AsCalendar, RangeError};
 use calendrical_calculations::islamic::{ISLAMIC_EPOCH_FRIDAY, ISLAMIC_EPOCH_THURSDAY};
