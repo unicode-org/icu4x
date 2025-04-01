@@ -39,12 +39,12 @@ struct GeneralCategoryGroup {
   /**
    * See the [Rust documentation for `contains`](https://docs.rs/icu/latest/icu/properties/props/struct.GeneralCategoryGroup.html#method.contains) for more information.
    */
-  inline bool contains(icu4x::GeneralCategory val);
+  inline bool contains(icu4x::GeneralCategory val) const;
 
   /**
    * See the [Rust documentation for `complement`](https://docs.rs/icu/latest/icu/properties/props/struct.GeneralCategoryGroup.html#method.complement) for more information.
    */
-  inline icu4x::GeneralCategoryGroup complement();
+  inline icu4x::GeneralCategoryGroup complement() const;
 
   /**
    * See the [Rust documentation for `all`](https://docs.rs/icu/latest/icu/properties/props/struct.GeneralCategoryGroup.html#method.all) for more information.
@@ -59,12 +59,12 @@ struct GeneralCategoryGroup {
   /**
    * See the [Rust documentation for `union`](https://docs.rs/icu/latest/icu/properties/props/struct.GeneralCategoryGroup.html#method.union) for more information.
    */
-  inline icu4x::GeneralCategoryGroup union_(icu4x::GeneralCategoryGroup other);
+  inline icu4x::GeneralCategoryGroup union_(icu4x::GeneralCategoryGroup other) const;
 
   /**
    * See the [Rust documentation for `intersection`](https://docs.rs/icu/latest/icu/properties/props/struct.GeneralCategoryGroup.html#method.intersection) for more information.
    */
-  inline icu4x::GeneralCategoryGroup intersection(icu4x::GeneralCategoryGroup other);
+  inline icu4x::GeneralCategoryGroup intersection(icu4x::GeneralCategoryGroup other) const;
 
   /**
    * See the [Rust documentation for `CasedLetter`](https://docs.rs/icu/latest/icu/properties/props/struct.GeneralCategoryGroup.html#associatedconstant.CasedLetter) for more information.

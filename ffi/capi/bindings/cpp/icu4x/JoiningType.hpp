@@ -58,17 +58,17 @@ inline icu4x::JoiningType icu4x::JoiningType::for_char(char32_t ch) {
   return icu4x::JoiningType::FromFFI(result);
 }
 
-inline std::optional<std::string_view> icu4x::JoiningType::long_name() {
+inline std::optional<std::string_view> icu4x::JoiningType::long_name() const {
   auto result = icu4x::capi::icu4x_JoiningType_long_name_mv1(this->AsFFI());
   return result.is_ok ? std::optional<std::string_view>(std::string_view(result.ok.data, result.ok.len)) : std::nullopt;
 }
 
-inline std::optional<std::string_view> icu4x::JoiningType::short_name() {
+inline std::optional<std::string_view> icu4x::JoiningType::short_name() const {
   auto result = icu4x::capi::icu4x_JoiningType_short_name_mv1(this->AsFFI());
   return result.is_ok ? std::optional<std::string_view>(std::string_view(result.ok.data, result.ok.len)) : std::nullopt;
 }
 
-inline uint8_t icu4x::JoiningType::to_integer_value() {
+inline uint8_t icu4x::JoiningType::to_integer_value() const {
   auto result = icu4x::capi::icu4x_JoiningType_to_integer_value_mv1(this->AsFFI());
   return result;
 }
