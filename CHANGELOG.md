@@ -2,6 +2,14 @@
 
 ## Unreleased
 
+ICU4X 2.0 is ICU4X's new major release. Many things have changed, we recommend going through the full changelog for 2.0, 2.0-beta1, and 2.0-beta2 to understand the changes fully.
+
+Some major changes worth highlighting:
+- Most locale-dependent APIs now take type-safe "preferences" objects instead of locales.
+    - Preference bags are often built from a locale, but they can also be built manually or merged from other sources.
+    - Preference bags are taken by value, so most call sites will need to change from `&locale.into()` to `locale.into()` or `(&locale).into()`
+- The datetime formatting APIs have been completely redesigned for better data usage and performance. We recommend looking at the new API and using it from the ground up, rather than replacing API calls one at a time.
+
 - Components
     - General
         - ...
@@ -418,6 +426,8 @@
   - (0.10.4) Enforce C,packed on OptionVarULE (https://github.com/unicode-org/icu4x/pull/5143)
 - `zerovec_derive`
   - (0.10.3) Enforce C,packed, not just packed, on ULE types, fixing for incoming changes to `repr(Rust)` (https://github.com/unicode-org/icu4x/pull/5049)
+  `icu_*_data`
+  - (1.5.1) Add build.rs to workspace includes (unicode-org#6356)
 
 ## icu4x 1.5 (May 28, 2024)
 
