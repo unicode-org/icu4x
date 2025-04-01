@@ -17,7 +17,7 @@ Some major changes worth highlighting:
         - Rename `Islamic` calendars to `Hijri` (unicode-org#6214)
         - Collapse `IslamicCivil` into `IslamicTabular` (unicode-org#6384)
         - Rename `IslamicObservational` to `IslamicSimulated`
-        - Rename `wrap_calendar_in_*` APIs to `as_borrowed`, `as_rc`, `as_arc` (unicode-org#6392)
+        - Rename `wrap_calendar_in_*` APIs to `as_borrowed`, `into_ref_counted`, `into_atomic_ref_counted` (unicode-org#6392)
     - `icu_collections`
         - Remove some panics from `CodePointTrie`, which should no longer pull in panic machinery even with arithmetic panics enabled for lookup (unicode-org#6204)
 - Data model and providers
