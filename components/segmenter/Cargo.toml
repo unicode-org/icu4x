@@ -25,6 +25,7 @@ icu_collections = { workspace = true }
 icu_locale_core = { workspace = true }
 icu_provider = { workspace = true }
 utf8_iter = { workspace = true }
+either = { workspace = true }
 zerovec = { workspace = true, features = ["alloc", "yoke"] }
 
 databake = { workspace = true, optional = true, features = ["derive"] }

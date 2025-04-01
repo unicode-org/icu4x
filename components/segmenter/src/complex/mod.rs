@@ -4,6 +4,7 @@
 
 use crate::provider::*;
 use alloc::vec::Vec;
+use either::Either;
 use icu_provider::prelude::*;
 
 mod dictionary;
@@ -16,32 +17,32 @@ mod lstm;
 use lstm::*;
 
 #[cfg(not(feature = "lstm"))]
-type DictOrLstm = Result<DataPayload<UCharDictionaryBreakDataV1>, core::convert::Infallible>;
+type DictOrLstm = Either<DataPayload<UCharDictionaryBreakDataV1>, core::convert::Infallible>;
 #[cfg(not(feature = "lstm"))]
-type DictOrLstmBorrowed<'a> = Result<&'a UCharDictionaryBreakData<'a>, core::convert::Infallible>;
+type DictOrLstmBorrowed<'a> = Either<&'a UCharDictionaryBreakData<'a>, core::convert::Infallible>;
 
 #[cfg(feature = "lstm")]
-type DictOrLstm = Result<DataPayload<UCharDictionaryBreakDataV1>, DataPayload<SegmenterLstmAutoV1>>;
+type DictOrLstm = Either<DataPayload<UCharDictionaryBreakDataV1>, DataPayload<SegmenterLstmAutoV1>>;
 #[cfg(feature = "lstm")]
-type DictOrLstmBorrowed<'a> = Result<&'a UCharDictionaryBreakData<'a>, &'a LstmData<'a>>;
+type DictOrLstmBorrowed<'a> = Either<&'a UCharDictionaryBreakData<'a>, &'a LstmData<'a>>;
 
 fn borrow_dictor(dict_or: &DictOrLstm) -> DictOrLstmBorrowed<'_> {
     match dict_or {
-        Ok(dict) => Ok(dict.get()),
+        Either::Left(dict) => Either::Left(dict.get()),
         #[cfg(feature = "lstm")]
-        Err(lstm) => Err(lstm.get()),
+        Either::Right(lstm) => Either::Right(lstm.get()),
         #[cfg(not(feature = "lstm"))]
-        Err(infallible) => Err(*infallible),
+        Either::Right(infallible) => Either::Right(*infallible),
     }
 }
 
 fn fromstatic_dictor(dict_or: DictOrLstmBorrowed<'static>) -> DictOrLstm {
     match dict_or {
-        Ok(dict) => Ok(DataPayload::from_static_ref(dict)),
+        Either::Left(dict) => Either::Left(DataPayload::from_static_ref(dict)),
         #[cfg(feature = "lstm")]
-        Err(lstm) => Err(DataPayload::from_static_ref(lstm)),
+        Either::Right(lstm) => Either::Right(DataPayload::from_static_ref(lstm)),
         #[cfg(not(feature = "lstm"))]
-        Err(infallible) => Err(infallible),
+        Either::Right(infallible) => Either::Right(infallible),
     }
 }
 
@@ -100,7 +101,7 @@ impl<'data> ComplexPayloadsBorrowed<'data> {
                 ERR.with_display_context("th");
                 None
             }),
-            Language::ChineseOrJapanese => self.ja.map(Ok).or_else(|| {
+            Language::ChineseOrJapanese => self.ja.map(Either::Left).or_else(|| {
                 ERR.with_display_context("ja");
                 None
             }),
@@ -112,17 +113,17 @@ impl<'data> ComplexPayloadsBorrowed<'data> {
         let mut offset = 0;
         for (slice, lang) in LanguageIterator::new(input) {
             match self.select(lang) {
-                Some(Ok(dict)) => {
+                Some(Either::Left(dict)) => {
                     let seg = DictionarySegmenter::new(dict, self.grapheme);
                     result.extend(seg.segment_str(slice).map(|n| offset + n));
                 }
                 #[cfg(feature = "lstm")]
-                Some(Err(lstm)) => {
+                Some(Either::Right(lstm)) => {
                     let seg = LstmSegmenter::new(lstm, self.grapheme);
                     result.extend(seg.segment_str(slice).map(|n| offset + n));
                 }
                 #[cfg(not(feature = "lstm"))]
-                Some(Err(_infallible)) => {} // should be refutable
+                Some(Either::Right(_infallible)) => {} // should be refutable
                 None => {
                     result.push(offset + slice.len());
                 }
@@ -137,17 +138,17 @@ impl<'data> ComplexPayloadsBorrowed<'data> {
         let mut offset = 0;
         for (slice, lang) in LanguageIteratorUtf16::new(input) {
             match self.select(lang) {
-                Some(Ok(dict)) => {
+                Some(Either::Left(dict)) => {
                     let seg = DictionarySegmenter::new(dict, self.grapheme);
                     result.extend(seg.segment_utf16(slice).map(|n| offset + n));
                 }
                 #[cfg(feature = "lstm")]
-                Some(Err(lstm)) => {
+                Some(Either::Right(lstm)) => {
                     let seg = LstmSegmenter::new(lstm, self.grapheme);
                     result.extend(seg.segment_utf16(slice).map(|n| offset + n));
                 }
                 #[cfg(not(feature = "lstm"))]
-                Some(Err(_infallible)) => {} // should be refutable
+                Some(Either::Right(_infallible)) => {} // should be refutable
                 None => {
                     result.push(offset + slice.len());
                 }
@@ -167,16 +168,16 @@ impl ComplexPayloadsBorrowed<'static> {
             grapheme: crate::provider::Baked::SINGLETON_SEGMENTER_BREAK_GRAPHEME_CLUSTER_V1,
             my: try_load_static::<SegmenterLstmAutoV1, _>(&crate::provider::Baked, MY_LSTM)
                 .unwrap()
-                .map(Err),
+                .map(Either::Right),
             km: try_load_static::<SegmenterLstmAutoV1, _>(&crate::provider::Baked, KM_LSTM)
                 .unwrap()
-                .map(Err),
+                .map(Either::Right),
             lo: try_load_static::<SegmenterLstmAutoV1, _>(&crate::provider::Baked, LO_LSTM)
                 .unwrap()
-                .map(Err),
+                .map(Either::Right),
             th: try_load_static::<SegmenterLstmAutoV1, _>(&crate::provider::Baked, TH_LSTM)
                 .unwrap()
-                .map(Err),
+                .map(Either::Right),
             ja: None,
         }
     }
@@ -200,25 +201,25 @@ impl ComplexPayloadsBorrowed<'static> {
                 MY_DICT,
             )
             .unwrap()
-            .map(Ok),
+            .map(Either::Left),
             km: try_load_static::<SegmenterDictionaryExtendedV1, _>(
                 &crate::provider::Baked,
                 KM_DICT,
             )
             .unwrap()
-            .map(Ok),
+            .map(Either::Left),
             lo: try_load_static::<SegmenterDictionaryExtendedV1, _>(
                 &crate::provider::Baked,
                 LO_DICT,
             )
             .unwrap()
-            .map(Ok),
+            .map(Either::Left),
             th: try_load_static::<SegmenterDictionaryExtendedV1, _>(
                 &crate::provider::Baked,
                 TH_DICT,
             )
             .unwrap()
-            .map(Ok),
+            .map(Either::Left),
             ja: try_load_static::<SegmenterDictionaryAutoV1, _>(&crate::provider::Baked, CJ_DICT)
                 .unwrap(),
         }
@@ -235,25 +236,25 @@ impl ComplexPayloadsBorrowed<'static> {
                 MY_DICT,
             )
             .unwrap()
-            .map(Ok),
+            .map(Either::Left),
             km: try_load_static::<SegmenterDictionaryExtendedV1, _>(
                 &crate::provider::Baked,
                 KM_DICT,
             )
             .unwrap()
-            .map(Ok),
+            .map(Either::Left),
             lo: try_load_static::<SegmenterDictionaryExtendedV1, _>(
                 &crate::provider::Baked,
                 LO_DICT,
             )
             .unwrap()
-            .map(Ok),
+            .map(Either::Left),
             th: try_load_static::<SegmenterDictionaryExtendedV1, _>(
                 &crate::provider::Baked,
                 TH_DICT,
             )
             .unwrap()
-            .map(Ok),
+            .map(Either::Left),
             ja: None,
         }
     }
@@ -293,16 +294,16 @@ impl ComplexPayloads {
             grapheme: provider.load(Default::default())?.payload,
             my: try_load::<SegmenterLstmAutoV1, D>(provider, MY_LSTM)?
                 .map(DataPayload::cast)
-                .map(Err),
+                .map(Either::Right),
             km: try_load::<SegmenterLstmAutoV1, D>(provider, KM_LSTM)?
                 .map(DataPayload::cast)
-                .map(Err),
+                .map(Either::Right),
             lo: try_load::<SegmenterLstmAutoV1, D>(provider, LO_LSTM)?
                 .map(DataPayload::cast)
-                .map(Err),
+                .map(Either::Right),
             th: try_load::<SegmenterLstmAutoV1, D>(provider, TH_LSTM)?
                 .map(DataPayload::cast)
-                .map(Err),
+                .map(Either::Right),
             ja: None,
         })
     }
@@ -318,16 +319,16 @@ impl ComplexPayloads {
             grapheme: provider.load(Default::default())?.payload,
             my: try_load::<SegmenterDictionaryExtendedV1, D>(provider, MY_DICT)?
                 .map(DataPayload::cast)
-                .map(Ok),
+                .map(Either::Left),
             km: try_load::<SegmenterDictionaryExtendedV1, D>(provider, KM_DICT)?
                 .map(DataPayload::cast)
-                .map(Ok),
+                .map(Either::Left),
             lo: try_load::<SegmenterDictionaryExtendedV1, D>(provider, LO_DICT)?
                 .map(DataPayload::cast)
-                .map(Ok),
+                .map(Either::Left),
             th: try_load::<SegmenterDictionaryExtendedV1, D>(provider, TH_DICT)?
                 .map(DataPayload::cast)
-                .map(Ok),
+                .map(Either::Left),
             ja: try_load::<SegmenterDictionaryAutoV1, D>(provider, CJ_DICT)?.map(DataPayload::cast),
         })
     }
@@ -344,16 +345,16 @@ impl ComplexPayloads {
             grapheme: provider.load(Default::default())?.payload,
             my: try_load::<SegmenterLstmAutoV1, D>(provider, MY_LSTM)?
                 .map(DataPayload::cast)
-                .map(Err),
+                .map(Either::Right),
             km: try_load::<SegmenterLstmAutoV1, D>(provider, KM_LSTM)?
                 .map(DataPayload::cast)
-                .map(Err),
+                .map(Either::Right),
             lo: try_load::<SegmenterLstmAutoV1, D>(provider, LO_LSTM)?
                 .map(DataPayload::cast)
-                .map(Err),
+                .map(Either::Right),
             th: try_load::<SegmenterLstmAutoV1, D>(provider, TH_LSTM)?
                 .map(DataPayload::cast)
-                .map(Err),
+                .map(Either::Right),
             ja: try_load::<SegmenterDictionaryAutoV1, D>(provider, CJ_DICT)?.map(DataPayload::cast),
         })
     }
@@ -368,16 +369,16 @@ impl ComplexPayloads {
             grapheme: provider.load(Default::default())?.payload,
             my: try_load::<SegmenterDictionaryExtendedV1, _>(provider, MY_DICT)?
                 .map(DataPayload::cast)
-                .map(Ok),
+                .map(Either::Left),
             km: try_load::<SegmenterDictionaryExtendedV1, _>(provider, KM_DICT)?
                 .map(DataPayload::cast)
-                .map(Ok),
+                .map(Either::Left),
             lo: try_load::<SegmenterDictionaryExtendedV1, _>(provider, LO_DICT)?
                 .map(DataPayload::cast)
-                .map(Ok),
+                .map(Either::Left),
             th: try_load::<SegmenterDictionaryExtendedV1, _>(provider, TH_DICT)?
                 .map(DataPayload::cast)
-                .map(Ok),
+                .map(Either::Left),
             ja: None,
         })
     }

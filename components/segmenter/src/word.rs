@@ -569,9 +569,7 @@ impl WordSegmenterBorrowed<'static> {
     /// Note: Due to branching and indirection, using [`WordSegmenter`] might inhibit some
     /// compile-time optimizations that are possible with [`WordSegmenterBorrowed`].
     pub fn static_to_owned(self) -> WordSegmenter {
-        let payload_locale_override = self
-            .locale_override
-            .map(DataPayload::from_static_ref);
+        let payload_locale_override = self.locale_override.map(DataPayload::from_static_ref);
         WordSegmenter {
             payload: DataPayload::from_static_ref(self.data),
             complex: self.complex.static_to_owned(),

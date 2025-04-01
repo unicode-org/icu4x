@@ -1748,6 +1748,7 @@ dependencies = [
  "criterion",
  "databake",
  "displaydoc",
+ "either",
  "icu",
  "icu_collections",
  "icu_locale",
