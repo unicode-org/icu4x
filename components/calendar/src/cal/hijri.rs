@@ -162,7 +162,7 @@ impl HijriObservational {
     pub fn build_cache(&self, extended_years: core::ops::Range<i32>) -> HijriCache<'static> {
         let data = extended_years
             .clone()
-            .map(|year| HijriYearInfo::compute_for_year(year, self.location).pack())
+            .map(|year| self.location.info_for_year(year).pack())
             .collect();
         HijriCache {
             first_extended_year: extended_years.start,
@@ -246,13 +246,9 @@ impl HijriTabular {
     }
 }
 
-pub trait CacheableHijri: Copy {
-    /// The name of the calendar for debugging.
-    const DEBUG_NAME: &'static str;
-    /// Convert a Hijri date in this calendar to a R.D.
-    fn fixed_from_hijri(&self, year: i32, month: u8, day: u8) -> RataDie;
-    /// Convert an R.D. to a Hijri date in this calendar
-    fn hijri_from_fixed(&self, date: RataDie) -> (i32, u8, u8);
+pub(crate) trait CacheableHijri: Copy {
+    fn info_for_rd(&self, rd: RataDie) -> HijriYearInfo<Self>;
+    fn info_for_year(&self, extended_year: i32) -> HijriYearInfo<Self>;
 }
 
 #[derive(Copy, Clone, Debug, Hash, PartialEq, Eq, PartialOrd, Ord)]
@@ -290,7 +286,6 @@ const LONG_YEAR_LEN: u16 = 355;
 const SHORT_YEAR_LEN: u16 = 354;
 
 impl<IB: CacheableHijri> HijriYearInfo<IB> {
-    #[cfg(feature = "datagen")]
     fn from_parts(
         extended_year: i32,
         month_lengths: [bool; 12],
@@ -303,93 +298,6 @@ impl<IB: CacheableHijri> HijriYearInfo<IB> {
             model,
             value: extended_year,
         }
-    }
-
-    fn compute_for_year(extended_year: i32, model: IB) -> Self {
-        let ny = model.fixed_from_hijri(extended_year, 1, 1);
-        let next_ny = model.fixed_from_hijri(extended_year + 1, 1, 1);
-        match (next_ny - ny) as u16 {
-            LONG_YEAR_LEN | SHORT_YEAR_LEN => (),
-            353 => {
-                icu_provider::log::trace!(
-                    "({}) Found year {extended_year} AH with length {}. See <https://github.com/unicode-org/icu4x/issues/4930>",
-                    IB::DEBUG_NAME,
-                    next_ny - ny
-                );
-            }
-            other => {
-                debug_assert!(
-                    false,
-                    "({}) Found year {extended_year} AH with length {}!",
-                    IB::DEBUG_NAME,
-                    other
-                )
-            }
-        }
-
-        let ny_offset = ny - Self::mean_synodic_ny(extended_year);
-
-        let month_lengths = {
-            let mut excess_days = 0;
-            let mut start_of_month = ny;
-            let mut month_lengths = core::array::from_fn(|month_idx| {
-                let end_of_month = if month_idx < 11 {
-                    model.fixed_from_hijri(extended_year, month_idx as u8 + 2, 1)
-                } else {
-                    next_ny
-                };
-                let days_in_month = end_of_month - start_of_month;
-                start_of_month = end_of_month;
-                match days_in_month {
-                    29 => false,
-                    30 => true,
-                    31 => {
-                        icu_provider::log::trace!(
-                            "({}) Found year {extended_year} AH with month length {days_in_month} for month {}.",
-                            IB::DEBUG_NAME,
-                            month_idx + 1
-                        );
-                        excess_days += 1;
-                        true
-                    }
-                    _ => {
-                        debug_assert!(
-                            false,
-                            "({}) Found year {extended_year} AH with month length {days_in_month} for month {}!",
-                            IB::DEBUG_NAME,
-                            month_idx + 1
-                        );
-                        false
-                    }
-                }
-            });
-            // To maintain invariants for calendar arithmetic, if astronomy finds
-            // a 31-day month, "move" the day to the first 29-day month in the
-            // same year to maintain all months at 29 or 30 days.
-            if excess_days != 0 {
-                debug_assert_eq!(
-                    excess_days,
-                    1,
-                    "({}) Found year {extended_year} AH with more than one excess day!",
-                    IB::DEBUG_NAME
-                );
-                if let Some(l) = month_lengths.iter_mut().find(|l| !(**l)) {
-                    *l = true;
-                }
-            }
-            month_lengths
-        };
-        Self {
-            month_lengths,
-            ny_offset,
-            model,
-            value: extended_year,
-        }
-    }
-
-    fn compute_for_rd(rd: RataDie, model: IB) -> Self {
-        let (y, _m, _d) = model.hijri_from_fixed(rd);
-        Self::compute_for_year(y, model)
     }
 
     #[cfg(feature = "datagen")]
@@ -521,7 +429,7 @@ impl<'b, IB: CacheableHijri> HijriPrecomputedData<'b, IB> {
                     })
                 }
             })
-            .unwrap_or_else(|| HijriYearInfo::compute_for_rd(rd, self.model))
+            .unwrap_or_else(|| self.model.info_for_rd(rd))
     }
 }
 
@@ -529,7 +437,7 @@ impl<IB: CacheableHijri> PrecomputedDataSource<HijriYearInfo<IB>> for HijriPreco
     fn load_or_compute_info(&self, extended_year: i32) -> HijriYearInfo<IB> {
         self.data
             .and_then(|d| d.get(extended_year, self.model))
-            .unwrap_or_else(|| HijriYearInfo::compute_for_year(extended_year, self.model))
+            .unwrap_or_else(|| self.model.info_for_year(extended_year))
     }
 }
 
@@ -663,18 +571,102 @@ impl Calendar for HijriObservational {
 }
 
 impl CacheableHijri for HijriObservationalLocation {
-    const DEBUG_NAME: &'static str = HijriObservational::DEBUG_NAME;
-
-    fn fixed_from_hijri(&self, year: i32, month: u8, day: u8) -> RataDie {
-        calendrical_calculations::islamic::fixed_from_observational_islamic(
-            year,
-            month,
-            day,
+    fn info_for_rd(&self, rd: RataDie) -> HijriYearInfo<Self> {
+        let (y, _m, _d) = calendrical_calculations::islamic::observational_islamic_from_fixed(
+            rd,
             self.location(),
-        )
+        );
+        self.info_for_year(y)
     }
-    fn hijri_from_fixed(&self, date: RataDie) -> (i32, u8, u8) {
-        calendrical_calculations::islamic::observational_islamic_from_fixed(date, self.location())
+
+    fn info_for_year(&self, extended_year: i32) -> HijriYearInfo<Self> {
+        let ny = calendrical_calculations::islamic::fixed_from_observational_islamic(
+            extended_year,
+            1,
+            1,
+            self.location(),
+        );
+        let next_ny = calendrical_calculations::islamic::fixed_from_observational_islamic(
+            extended_year + 1,
+            1,
+            1,
+            self.location(),
+        );
+        match (next_ny - ny) as u16 {
+            LONG_YEAR_LEN | SHORT_YEAR_LEN => (),
+            353 => {
+                icu_provider::log::trace!(
+                    "({}) Found year {extended_year} AH with length {}. See <https://github.com/unicode-org/icu4x/issues/4930>",
+                    HijriObservational::DEBUG_NAME,
+                    next_ny - ny
+                );
+            }
+            other => {
+                debug_assert!(
+                    false,
+                    "({}) Found year {extended_year} AH with length {}!",
+                    HijriObservational::DEBUG_NAME,
+                    other
+                )
+            }
+        }
+
+        let month_lengths = {
+            let mut excess_days = 0;
+            let mut start_of_month = ny;
+            let mut month_lengths = core::array::from_fn(|month_idx| {
+                let end_of_month = if month_idx < 11 {
+                    calendrical_calculations::islamic::fixed_from_observational_islamic(
+                        extended_year,
+                        month_idx as u8 + 2,
+                        1,
+                        self.location(),
+                    )
+                } else {
+                    next_ny
+                };
+                let days_in_month = end_of_month - start_of_month;
+                start_of_month = end_of_month;
+                match days_in_month {
+                    29 => false,
+                    30 => true,
+                    31 => {
+                        icu_provider::log::trace!(
+                            "({}) Found year {extended_year} AH with month length {days_in_month} for month {}.",
+                            HijriObservational::DEBUG_NAME,
+                            month_idx + 1
+                        );
+                        excess_days += 1;
+                        true
+                    }
+                    _ => {
+                        debug_assert!(
+                            false,
+                            "({}) Found year {extended_year} AH with month length {days_in_month} for month {}!",
+                            HijriObservational::DEBUG_NAME,
+                            month_idx + 1
+                        );
+                        false
+                    }
+                }
+            });
+            // To maintain invariants for calendar arithmetic, if astronomy finds
+            // a 31-day month, "move" the day to the first 29-day month in the
+            // same year to maintain all months at 29 or 30 days.
+            if excess_days != 0 {
+                debug_assert_eq!(
+                    excess_days,
+                    1,
+                    "({}) Found year {extended_year} AH with more than one excess day!",
+                    HijriObservational::DEBUG_NAME
+                );
+                if let Some(l) = month_lengths.iter_mut().find(|l| !(**l)) {
+                    *l = true;
+                }
+            }
+            month_lengths
+        };
+        HijriYearInfo::from_parts(extended_year, month_lengths, ny, *self)
     }
 }
 
@@ -855,17 +847,26 @@ impl Calendar for HijriUmmAlQura {
 }
 
 impl CacheableHijri for HijriUmmAlQuraMarker {
-    const DEBUG_NAME: &'static str = HijriUmmAlQura::DEBUG_NAME;
-    fn fixed_from_hijri(&self, year: i32, month: u8, day: u8) -> RataDie {
-        calendrical_calculations::islamic::fixed_from_tabular_islamic(
-            year,
-            month,
-            day,
-            ISLAMIC_EPOCH_FRIDAY,
-        )
+    fn info_for_rd(&self, rd: RataDie) -> HijriYearInfo<Self> {
+        let (y, _m, _d) =
+            calendrical_calculations::islamic::tabular_islamic_from_fixed(rd, ISLAMIC_EPOCH_FRIDAY);
+        self.info_for_year(y)
     }
-    fn hijri_from_fixed(&self, date: RataDie) -> (i32, u8, u8) {
-        calendrical_calculations::islamic::tabular_islamic_from_fixed(date, ISLAMIC_EPOCH_FRIDAY)
+
+    fn info_for_year(&self, extended_year: i32) -> HijriYearInfo<Self> {
+        HijriYearInfo::from_parts(
+            extended_year,
+            core::array::from_fn(|i| {
+                HijriTabular::days_in_provided_month(extended_year, i as u8 + 1) == 30
+            }),
+            calendrical_calculations::islamic::fixed_from_tabular_islamic(
+                extended_year,
+                1,
+                1,
+                ISLAMIC_EPOCH_FRIDAY,
+            ),
+            *self,
+        )
     }
 }
 
@@ -1911,10 +1912,9 @@ mod test {
         // 1518 1 1 = 764589 (R.D Date)
         let sum_days_in_year: i64 = (START_YEAR..END_YEAR)
             .map(|year| {
-                HijriObservational::days_in_provided_year(HijriYearInfo::compute_for_year(
-                    year,
-                    HijriObservationalLocation::Mecca,
-                )) as i64
+                HijriObservational::days_in_provided_year(
+                    HijriObservationalLocation::Mecca.info_for_year(year),
+                ) as i64
             })
             .sum();
         let expected_number_of_days =
@@ -1941,10 +1941,8 @@ mod test {
         // 1518 1 1 = 764588 (R.D Date)
         let sum_days_in_year: i64 = (START_YEAR..END_YEAR)
             .map(|year| {
-                HijriUmmAlQura::days_in_provided_year(HijriYearInfo::compute_for_year(
-                    year,
-                    HijriUmmAlQuraMarker,
-                )) as i64
+                HijriUmmAlQura::days_in_provided_year(HijriUmmAlQuraMarker.info_for_year(year))
+                    as i64
             })
             .sum();
         let expected_number_of_days =
