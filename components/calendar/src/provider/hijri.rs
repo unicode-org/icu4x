@@ -20,7 +20,7 @@ icu_provider::data_marker!(
     /// Precomputed data for the Hijri obsevational calendar
     CalendarHijriObservationalMeccaV1,
     "calendar/hijri/observational/mecca/v1",
-    HijriCache<'static>,
+    HijriData<'static>,
     is_singleton = true,
 );
 
@@ -28,7 +28,7 @@ icu_provider::data_marker!(
     /// Precomputed data for the Hijri Umm-Al-Qura calendar
     CalendarHijriUmmalquraV1,
     "calendar/hijri/ummalqura/v1",
-    HijriCache<'static>,
+    HijriData<'static>,
     is_singleton = true,
 );
 
@@ -39,7 +39,7 @@ icu_provider::data_marker!(
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_calendar::provider::hijri))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-pub struct HijriCache<'data> {
+pub struct HijriData<'data> {
     /// The extended year corresponding to the first data entry for this year
     pub first_extended_year: i32,
     /// A list of precomputed data for each year beginning with first_extended_year
@@ -48,7 +48,7 @@ pub struct HijriCache<'data> {
 }
 
 icu_provider::data_struct!(
-    HijriCache<'_>,
+    HijriData<'_>,
     #[cfg(feature = "datagen")]
 );
 

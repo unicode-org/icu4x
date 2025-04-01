@@ -26,7 +26,7 @@ use crate::error::DateError;
 #[cfg(feature = "datagen")]
 use crate::provider::hijri::PackedHijriYearInfo;
 use crate::provider::hijri::{
-    CalendarHijriObservationalMeccaV1, CalendarHijriUmmalquraV1, HijriCache,
+    CalendarHijriObservationalMeccaV1, CalendarHijriUmmalquraV1, HijriData,
 };
 use crate::{types, Calendar, Date, DateDuration, DateDurationUnit};
 use crate::{AsCalendar, RangeError};
@@ -61,7 +61,7 @@ fn year_as_hijri(standard_era: tinystr::TinyStr16, year: i32) -> types::YearInfo
 #[derive(Clone, Debug)]
 pub struct HijriObservational {
     pub(crate) location: HijriObservationalLocation,
-    data: Option<DataPayload<ErasedMarker<HijriCache<'static>>>>,
+    data: Option<DataPayload<ErasedMarker<HijriData<'static>>>>,
 }
 
 #[derive(Clone, Debug, Copy, PartialEq)]
@@ -159,12 +159,12 @@ impl HijriObservational {
 
     /// Compute a cache for this calendar
     #[cfg(feature = "datagen")]
-    pub fn build_cache(&self, extended_years: core::ops::Range<i32>) -> HijriCache<'static> {
+    pub fn build_cache(&self, extended_years: core::ops::Range<i32>) -> HijriData<'static> {
         let data = extended_years
             .clone()
             .map(|year| self.location.info_for_year(year).pack())
             .collect();
-        HijriCache {
+        HijriData {
             first_extended_year: extended_years.start,
             data,
         }
@@ -205,10 +205,10 @@ impl HijriUmmAlQura {
 
     /// Compute a cache for this calendar
     #[cfg(feature = "datagen")]
-    pub fn build_cache(
+    pub fn build_data(
         first_extended_year: i32,
         month_lengths_and_year_starts: impl Iterator<Item = ([bool; 12], i64)>,
-    ) -> HijriCache<'static> {
+    ) -> HijriData<'static> {
         let data = month_lengths_and_year_starts
             .enumerate()
             .map(|(offset, (month_lengths, year_start))| {
@@ -221,7 +221,7 @@ impl HijriUmmAlQura {
                 .pack()
             })
             .collect();
-        HijriCache {
+        HijriData {
             first_extended_year,
             data,
         }
@@ -246,28 +246,28 @@ impl HijriTabular {
     }
 }
 
-pub(crate) trait CacheableHijri: Copy {
+pub(crate) trait DatafulHijri: Copy {
     fn info_for_rd(&self, rd: RataDie) -> HijriYearInfo<Self>;
     fn info_for_year(&self, extended_year: i32) -> HijriYearInfo<Self>;
 }
 
 #[derive(Copy, Clone, Debug, Hash, PartialEq, Eq, PartialOrd, Ord)]
-pub(crate) struct HijriYearInfo<IB: CacheableHijri> {
+pub(crate) struct HijriYearInfo<IB: DatafulHijri> {
     month_lengths: [bool; 12],
     ny_offset: i64,
     model: IB,
     value: i32,
 }
 
-impl<IB: CacheableHijri> From<HijriYearInfo<IB>> for i32 {
+impl<IB: DatafulHijri> From<HijriYearInfo<IB>> for i32 {
     fn from(value: HijriYearInfo<IB>) -> Self {
         value.value
     }
 }
 
-impl HijriCache<'_> {
+impl HijriData<'_> {
     /// Get the cached data for a given extended year
-    fn get<IB: CacheableHijri>(&self, extended_year: i32, model: IB) -> Option<HijriYearInfo<IB>> {
+    fn get<IB: DatafulHijri>(&self, extended_year: i32, model: IB) -> Option<HijriYearInfo<IB>> {
         let (month_lengths, ny_offset) = self
             .data
             .get(usize::try_from(extended_year - self.first_extended_year).ok()?)?
@@ -285,7 +285,7 @@ impl HijriCache<'_> {
 const LONG_YEAR_LEN: u16 = 355;
 const SHORT_YEAR_LEN: u16 = 354;
 
-impl<IB: CacheableHijri> HijriYearInfo<IB> {
+impl<IB: DatafulHijri> HijriYearInfo<IB> {
     fn from_parts(
         extended_year: i32,
         month_lengths: [bool; 12],
@@ -393,13 +393,13 @@ impl<IB: CacheableHijri> HijriYearInfo<IB> {
 /// Contains any loaded precomputed data. If constructed with Default, will
 /// *not* contain any extra data and will always compute stuff from scratch
 #[derive(Default)]
-struct HijriPrecomputedData<'a, IB: CacheableHijri> {
-    data: Option<&'a HijriCache<'a>>,
+struct HijriPrecomputedData<'a, IB: DatafulHijri> {
+    data: Option<&'a HijriData<'a>>,
     model: IB,
 }
 
-impl<'b, IB: CacheableHijri> HijriPrecomputedData<'b, IB> {
-    fn new(data: Option<&'b HijriCache<'b>>, model: IB) -> Self {
+impl<'b, IB: DatafulHijri> HijriPrecomputedData<'b, IB> {
+    fn new(data: Option<&'b HijriData<'b>>, model: IB) -> Self {
         Self { data, model }
     }
 
@@ -433,7 +433,7 @@ impl<'b, IB: CacheableHijri> HijriPrecomputedData<'b, IB> {
     }
 }
 
-impl<IB: CacheableHijri> PrecomputedDataSource<HijriYearInfo<IB>> for HijriPrecomputedData<'_, IB> {
+impl<IB: DatafulHijri> PrecomputedDataSource<HijriYearInfo<IB>> for HijriPrecomputedData<'_, IB> {
     fn load_or_compute_info(&self, extended_year: i32) -> HijriYearInfo<IB> {
         self.data
             .and_then(|d| d.get(extended_year, self.model))
@@ -570,7 +570,7 @@ impl Calendar for HijriObservational {
     }
 }
 
-impl CacheableHijri for HijriObservationalLocation {
+impl DatafulHijri for HijriObservationalLocation {
     fn info_for_rd(&self, rd: RataDie) -> HijriYearInfo<Self> {
         let (y, _m, _d) = calendrical_calculations::islamic::observational_islamic_from_fixed(
             rd,
@@ -839,7 +839,7 @@ impl Calendar for HijriUmmAlQura {
     }
 }
 
-impl CacheableHijri for HijriUmmAlQuraMarker {
+impl DatafulHijri for HijriUmmAlQuraMarker {
     fn info_for_rd(&self, rd: RataDie) -> HijriYearInfo<Self> {
         let (y, _m, _d) =
             calendrical_calculations::islamic::tabular_islamic_from_fixed(rd, ISLAMIC_EPOCH_FRIDAY);

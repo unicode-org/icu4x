@@ -80,7 +80,7 @@ impl DataProvider<CalendarHijriUmmalquraV1> for crate::SourceDataProvider {
             -1, 0, -1, 0, 1, 0, 0, -1, -1, 0, 0, 1, 1, 0, 0, -1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1,
         ];
 
-        let cache = HijriUmmAlQura::build_cache(
+        let cache = HijriUmmAlQura::build_data(
             1300,
             ICU4C_ENCODED_MONTH_LENGTHS
                 .into_iter()
