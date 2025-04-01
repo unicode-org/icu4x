@@ -254,6 +254,7 @@ impl GraphemeClusterSegmenter {
     }
 }
 
+#[allow(missing_docs)] // demo only
 #[derive(Debug)]
 pub struct GraphemeClusterSegmenterBorrowed<'a> {
     payload: &'a RuleBreakData<'a>,
@@ -267,19 +268,17 @@ impl GraphemeClusterSegmenterBorrowed<'static> {
         }
     }
 
+    #[allow(missing_docs)] // demo only
     pub fn static_to_owned(self) -> GraphemeClusterSegmenter {
         GraphemeClusterSegmenter {
-            payload: DataPayload::from_static_ref(self.payload)
+            payload: DataPayload::from_static_ref(self.payload),
         }
     }
 }
 
 impl<'l> GraphemeClusterSegmenterBorrowed<'l> {
     /// Creates a grapheme cluster break iterator for an `str` (a UTF-8 string).
-    pub fn segment_str<'s>(
-        &self,
-        input: &'s str,
-    ) -> GraphemeClusterBreakIteratorUtf8<'l, 's> {
+    pub fn segment_str<'s>(&self, input: &'s str) -> GraphemeClusterBreakIteratorUtf8<'l, 's> {
         GraphemeClusterSegmenter::new_and_segment_str(input, self.payload)
     }
 }
