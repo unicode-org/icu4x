@@ -123,11 +123,24 @@ version = "0.12.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b79091df18a97caea757e28cd2d5fda49c6cd4bd01ddffd7ff01ace0c0ad2c28"
 dependencies = [
- "askama_derive",
+ "askama_derive 0.12.5",
  "askama_escape",
  "humansize",
  "num-traits",
  "percent-encoding",
+]
+
+[[package]]
+name = "askama"
+version = "0.13.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "9a4e46abb203e00ef226442d452769233142bbfdd79c3941e84c8e61c4112543"
+dependencies = [
+ "askama_derive 0.13.0",
+ "itoa",
+ "percent-encoding",
+ "serde",
+ "serde_json",
 ]
 
 [[package]]
@@ -136,13 +149,30 @@ version = "0.12.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "19fe8d6cb13c4714962c072ea496f3392015f0989b1a2847bb4b2d9effd71d83"
 dependencies = [
- "askama_parser",
+ "askama_parser 0.2.1",
  "basic-toml",
  "mime",
  "mime_guess",
  "proc-macro2",
  "quote",
  "serde",
+ "syn 2.0.98",
+]
+
+[[package]]
+name = "askama_derive"
+version = "0.13.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "54398906821fd32c728135f7b351f0c7494ab95ae421d41b6f5a020e158f28a6"
+dependencies = [
+ "askama_parser 0.13.0",
+ "basic-toml",
+ "memchr",
+ "proc-macro2",
+ "quote",
+ "rustc-hash 2.1.1",
+ "serde",
+ "serde_derive",
  "syn 2.0.98",
 ]
 
@@ -159,6 +189,18 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "acb1161c6b64d1c3d83108213c2a2533a342ac225aabd0bda218278c2ddb00c0"
 dependencies = [
  "nom",
+]
+
+[[package]]
+name = "askama_parser"
+version = "0.13.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "cf315ce6524c857bb129ff794935cf6d42c82a6cff60526fe2a63593de4d0d4f"
+dependencies = [
+ "memchr",
+ "serde",
+ "serde_derive",
+ "winnow",
 ]
 
 [[package]]
@@ -451,7 +493,7 @@ checksum = "67ba02a97a2bd10f4b59b25c7973101c79642302776489e030cd13cdab09ed15"
 name = "codegen"
 version = "0.0.0"
 dependencies = [
- "askama",
+ "askama 0.13.0",
  "icu",
 ]
 
@@ -657,7 +699,7 @@ dependencies = [
  "lazy_static",
  "mintex",
  "parking_lot",
- "rustc-hash",
+ "rustc-hash 1.1.0",
  "serde",
  "serde_json",
  "thousands",
@@ -706,7 +748,7 @@ name = "diplomat-tool"
 version = "0.10.0"
 source = "git+https://github.com/rust-diplomat/diplomat?rev=76b030df6326070c314a5d6cacedf3357a5ed590#76b030df6326070c314a5d6cacedf3357a5ed590"
 dependencies = [
- "askama",
+ "askama 0.12.1",
  "clap",
  "colored",
  "diplomat_core",
@@ -2666,6 +2708,12 @@ name = "rustc-hash"
 version = "1.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "08d43f7aa6b08d49f382cde6a7982047c3426db949b1424bc4b7ec9ae12c6ce2"
+
+[[package]]
+name = "rustc-hash"
+version = "2.1.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "357703d41365b4b27c590e3ed91eabb1b663f07c4c084095e60cbed4362dff0d"
 
 [[package]]
 name = "rustc_version"
