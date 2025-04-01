@@ -248,10 +248,13 @@ fn process_era_dates_map(
         .eras
         .get_mut("0")
         .unwrap()
-        .start
-        .as_mut()
-        .into_iter()
-        .for_each(replace_julian_by_iso);
+        .start = data
+        .get_mut("islamic-civil")
+        .unwrap()
+        .eras
+        .get_mut("0")
+        .unwrap()
+        .start;
 
     data.get_mut("persian")
         .unwrap()
