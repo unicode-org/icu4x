@@ -95,11 +95,11 @@ void main() {
       VariantOffsetsCalculator(),
     );
 
-    var locale = Locale.fromString('de-u-ca-islamic-rgsa');
+    var locale = Locale.fromString('de-u-ca-islamic-umalqura');
 
     ///// DateFormatter /////
 
-    expect(DateFormatter.md(locale).formatIso(zonedDateTimeIso.date), '14.07.');
+    expect(DateFormatter.md(locale).formatIso(zonedDateTimeIso.date), '15.07.');
 
     ///// TimeFormatter /////
 
@@ -117,7 +117,7 @@ void main() {
       DateTimeFormatter.ymdet(
         locale,
       ).formatIso(zonedDateTimeIso.date, zonedDateTimeIso.time),
-      'Mi., 14. Raj. 1446 AH, 14:32:12',
+      'Mi., 15. Raj. 1446 AH, 14:32:12',
     );
 
     expect(
@@ -126,7 +126,7 @@ void main() {
         length: DateTimeLength.long,
         timePrecision: TimePrecision.minute,
       ).formatIso(zonedDateTimeIso.date, zonedDateTimeIso.time),
-      'Mittwoch, 14. Radschab 1446 AH, 14:32',
+      'Mittwoch, 15. Radschab 1446 AH, 14:32',
     );
 
     expect(
@@ -136,7 +136,7 @@ void main() {
       ),
       throwsA(
         DateTimeMismatchedCalendarError(
-          thisKind: CalendarKind.hijriSimulatedMecca,
+          thisKind: CalendarKind.hijriUmmAlQura,
           dateKind: CalendarKind.buddhist,
         ),
       ),
@@ -145,11 +145,11 @@ void main() {
     expect(
       DateTimeFormatter.ymdet(locale).formatSameCalendar(
         zonedDateTimeBuddhist.date.toCalendar(
-          Calendar(CalendarKind.hijriSimulatedMecca),
+          Calendar(CalendarKind.hijriUmmAlQura),
         ),
         zonedDateTimeBuddhist.time,
       ),
-      'Do., 25. Raj. 1447 AH, 05:32:12',
+      'Do., 26. Raj. 1447 AH, 05:32:12',
     );
 
     expect(
@@ -157,7 +157,7 @@ void main() {
         zonedDateTimeBuddhist.date.toIso(),
         zonedDateTimeBuddhist.time,
       ),
-      'Do., 25. Raj. 1447 AH, 05:32:12',
+      'Do., 26. Raj. 1447 AH, 05:32:12',
     );
 
     ///// DateTimeFormatterGregorian /////
@@ -192,7 +192,7 @@ void main() {
         locale,
         DateFormatter.md(locale),
       ).formatIso(zonedDateTimeIso.date, zonedDateTimeIso.zone),
-      '14.07. Mitteleuropäische Zeit',
+      '15.07. Mitteleuropäische Zeit',
     );
 
     expect(
@@ -229,7 +229,7 @@ void main() {
         zonedDateTimeIso.time,
         zonedDateTimeIso.zone,
       ),
-      'Mi., 14. Raj. 1446 AH, 14:32:12 Mitteleuropäische Zeit',
+      'Mi., 15. Raj. 1446 AH, 14:32:12 Mitteleuropäische Zeit',
     );
 
     expect(
@@ -253,7 +253,7 @@ void main() {
         zonedDateTimeIso.time,
         zonedDateTimeIso.zone,
       ),
-      '14. Radschab 1446 AH, 14:32:12 MEZ',
+      '15. Radschab 1446 AH, 14:32:12 MEZ',
     );
 
     expect(
@@ -265,7 +265,7 @@ void main() {
         zonedDateTimeIso.time,
         zonedDateTimeIso.zone,
       ),
-      '14.07.46 AH, 14:32:12 MEZ',
+      '15.07.46 AH, 14:32:12 MEZ',
     );
 
     ///// ZonedDateTimeFormatterGregorian /////
