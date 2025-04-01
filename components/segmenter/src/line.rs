@@ -255,7 +255,7 @@ pub type LineBreakIteratorUtf16<'l, 's> = LineBreakIterator<'l, 's, LineBreakTyp
 /// encodings.
 ///
 /// Most segmentation methods live on [`LineSegmenterBorrowed`], which can be obtained via
-/// [`LineSegmenter::new()`] or [`LineSegmenter::as_borrowed()`].
+/// [`LineSegmenter::new_auto()`] (etc) or [`LineSegmenter::as_borrowed()`].
 ///
 /// The segmenter returns mandatory breaks (as defined by [definition LD7][LD7] of
 /// Unicode Standard Annex #14, _Unicode Line Breaking Algorithm_) as well as

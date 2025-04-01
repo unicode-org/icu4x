@@ -133,7 +133,7 @@ pub type WordBreakIteratorUtf16<'data, 's> = WordBreakIterator<'data, 's, WordBr
 /// encodings.
 ///
 /// Most segmentation methods live on [`WordSegmenterBorrowed`], which can be obtained via
-/// [`WordSegmenter::new()`] or [`WordSegmenter::as_borrowed()`].
+/// [`WordSegmenter::new_auto()`] (etc) or [`WordSegmenter::as_borrowed()`].
 ///
 /// # Examples
 ///

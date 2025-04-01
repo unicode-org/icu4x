@@ -181,7 +181,7 @@ impl ComplexPayloadsBorrowed<'static> {
             ja: None,
         }
     }
-    #[cfg(feature = "lstm")]
+    #[cfg(feature = "auto")]
     #[cfg(feature = "compiled_data")]
     #[allow(clippy::unwrap_used)]
     pub(crate) fn new_auto() -> Self {
@@ -401,6 +401,7 @@ fn try_load<M: DataMarker, P: DataProvider<M> + ?Sized>(
         .map(|r| r.map(|r| r.payload))
 }
 
+#[cfg(feature = "compiled_data")]
 fn try_load_static<M: DataMarker, P: DataProvider<M> + ?Sized>(
     provider: &P,
     model: &'static DataMarkerAttributes,

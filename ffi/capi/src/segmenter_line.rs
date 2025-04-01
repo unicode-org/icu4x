@@ -226,7 +226,11 @@ pub mod ffi {
         /// Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
         /// to the WHATWG Encoding Standard.
         #[diplomat::rust_link(icu::segmenter::LineSegmenterBorrowed::segment_utf8, FnInStruct)]
-        #[diplomat::rust_link(icu::segmenter::LineSegmenterBorrowed::segment_str, FnInStruct, hidden)]
+        #[diplomat::rust_link(
+            icu::segmenter::LineSegmenterBorrowed::segment_str,
+            FnInStruct,
+            hidden
+        )]
         #[diplomat::attr(not(supports = utf8_strings), disable)]
         #[diplomat::attr(*, rename = "segment")]
         pub fn segment_utf8<'a>(

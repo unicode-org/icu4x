@@ -215,7 +215,11 @@ pub mod ffi {
         /// Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
         /// to the WHATWG Encoding Standard.
         #[diplomat::rust_link(icu::segmenter::WordSegmenterBorrowed::segment_utf8, FnInStruct)]
-        #[diplomat::rust_link(icu::segmenter::WordSegmenterBorrowed::segment_str, FnInStruct, hidden)]
+        #[diplomat::rust_link(
+            icu::segmenter::WordSegmenterBorrowed::segment_str,
+            FnInStruct,
+            hidden
+        )]
         #[diplomat::attr(not(supports = utf8_strings), disable)]
         #[diplomat::attr(*, rename = "segment")]
         pub fn segment_utf8<'a>(
@@ -271,6 +275,12 @@ pub mod ffi {
 
         /// Return the status value of break boundary.
         #[diplomat::rust_link(icu::segmenter::WordBreakIterator::word_type, FnInStruct)]
+        #[diplomat::rust_link(icu::segmenter::WordBreakIteratorWithWordType, Struct, hidden)]
+        #[diplomat::rust_link(
+            icu::segmenter::WordBreakIteratorWithWordType::next,
+            FnInStruct,
+            hidden
+        )]
         #[diplomat::attr(auto, getter)]
         pub fn word_type(&self) -> SegmenterWordType {
             self.0.word_type().into()
