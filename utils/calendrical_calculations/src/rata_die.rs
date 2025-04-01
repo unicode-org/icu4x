@@ -18,7 +18,7 @@ use core_maths::*;
 ///
 /// It is a logic error to construct a RataDie
 /// except from a date that is in range of one of the official calendars.
-#[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]
+#[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct RataDie(i64);
 
 impl RataDie {
