@@ -11,6 +11,7 @@ use icu_calendar::cal::{
     HijriUmmAlQura, Indian, Iso, Persian, Roc, {Ethiopian, EthiopianEraStyle},
     {Japanese, JapaneseExtended},
 };
+use icu_calendar::AnyCalendarKind;
 use icu_datetime::fieldsets::enums::*;
 use icu_datetime::scaffold::CldrCalendar;
 use icu_datetime::{
@@ -238,32 +239,38 @@ fn assert_fixture_element<C>(
     let any_dtf = DateTimeFormatter::try_new(prefs, field_set).expect(description);
 
     let output = dtf.format(&input);
-    let any_output = any_dtf.format_same_calendar(&any_input).unwrap();
-    let iso_any_output = any_dtf.format(&iso_any_input);
-
     assert_writeable_eq!(output, expected.expectation(), "{}", description);
+    let pattern = output.pattern();
 
+    if let Some(expected_pattern) = expected.pattern() {
+        assert_writeable_eq!(pattern, expected_pattern);
+    }
+
+    if matches!(
+        input.date.calendar().kind(),
+        AnyCalendarKind::JapaneseExtended
+    ) {
+        // Not supported with FormattableAnyCalendar
+        return;
+    }
+
+    let any_output = any_dtf.format_same_calendar(&any_input).unwrap();
     assert_writeable_eq!(
         any_output,
         expected.expectation(),
         "(DateTimeFormatter) {}",
         description
     );
+    assert_eq!(pattern, any_output.pattern());
 
+    let iso_any_output = any_dtf.format(&iso_any_input);
     assert_writeable_eq!(
         iso_any_output,
         expected.expectation(),
         "(DateTimeFormatter iso conversion) {}",
         description
     );
-
-    let pattern = output.pattern();
-    assert_eq!(pattern, any_output.pattern());
     assert_eq!(pattern, iso_any_output.pattern());
-
-    if let Some(expected_pattern) = expected.pattern() {
-        assert_writeable_eq!(pattern, expected_pattern);
-    }
 }
 
 fn test_fixture_with_time_zones(fixture_name: &str, file: &str) {
