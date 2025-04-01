@@ -103,9 +103,7 @@ pub struct WordBreakIteratorWithWordType<'data, 's, Y: RuleBreakType<'s> + ?Size
 impl<'s, Y: RuleBreakType<'s> + ?Sized> Iterator for WordBreakIteratorWithWordType<'_, 's, Y> {
     type Item = (usize, WordType);
     fn next(&mut self) -> Option<Self::Item> {
-        let Some(ret) = self.0.next() else {
-            return None;
-        };
+        let ret = self.0.next()?;
         Some((ret, self.0 .0.word_type()))
     }
 }
@@ -573,7 +571,7 @@ impl WordSegmenterBorrowed<'static> {
     pub fn static_to_owned(self) -> WordSegmenter {
         let payload_locale_override = self
             .locale_override
-            .map(|d| DataPayload::from_static_ref(d));
+            .map(DataPayload::from_static_ref);
         WordSegmenter {
             payload: DataPayload::from_static_ref(self.data),
             complex: self.complex.static_to_owned(),
@@ -586,7 +584,7 @@ impl WordSegmenterBorrowed<'static> {
 pub struct WordBreakTypeUtf8;
 impl crate::private::Sealed for WordBreakTypeUtf8 {}
 
-impl<'l, 's> RuleBreakType<'s> for WordBreakTypeUtf8 {
+impl<'s> RuleBreakType<'s> for WordBreakTypeUtf8 {
     type IterAttr = CharIndices<'s>;
     type CharType = char;
 
@@ -606,7 +604,7 @@ impl<'l, 's> RuleBreakType<'s> for WordBreakTypeUtf8 {
 pub struct WordBreakTypePotentiallyIllFormedUtf8;
 impl crate::private::Sealed for WordBreakTypePotentiallyIllFormedUtf8 {}
 
-impl<'l, 's> RuleBreakType<'s> for WordBreakTypePotentiallyIllFormedUtf8 {
+impl<'s> RuleBreakType<'s> for WordBreakTypePotentiallyIllFormedUtf8 {
     type IterAttr = Utf8CharIndices<'s>;
     type CharType = char;
 
