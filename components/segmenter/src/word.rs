@@ -548,6 +548,7 @@ impl WordSegmenter {
 }
 
 #[derive(Debug)]
+#[non_exhaustive]
 pub struct WordBreakTypeUtf8;
 impl crate::private::Sealed for WordBreakTypeUtf8 {}
 
@@ -568,6 +569,7 @@ impl<'l, 's> RuleBreakType<'l, 's> for WordBreakTypeUtf8 {
 }
 
 #[derive(Debug)]
+#[non_exhaustive]
 pub struct WordBreakTypePotentiallyIllFormedUtf8;
 impl crate::private::Sealed for WordBreakTypePotentiallyIllFormedUtf8 {}
 
@@ -643,6 +645,7 @@ where
 }
 
 #[derive(Debug)]
+#[non_exhaustive]
 pub struct WordBreakTypeUtf16;
 
 impl crate::private::Sealed for WordBreakTypeUtf16 {}

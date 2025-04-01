@@ -263,6 +263,7 @@ impl<'l, 's, Y: RuleBreakType<'l, 's> + ?Sized> RuleBreakIterator<'l, 's, Y> {
 }
 
 #[derive(Debug)]
+#[non_exhaustive]
 pub struct RuleBreakTypeUtf8;
 
 impl crate::private::Sealed for RuleBreakTypeUtf8 {}
@@ -284,6 +285,7 @@ impl<'s> RuleBreakType<'_, 's> for RuleBreakTypeUtf8 {
 }
 
 #[derive(Debug)]
+#[non_exhaustive]
 pub struct RuleBreakTypePotentiallyIllFormedUtf8;
 
 impl crate::private::Sealed for RuleBreakTypePotentiallyIllFormedUtf8 {}
@@ -305,6 +307,7 @@ impl<'s> RuleBreakType<'_, 's> for RuleBreakTypePotentiallyIllFormedUtf8 {
 }
 
 #[derive(Debug)]
+#[non_exhaustive]
 pub struct RuleBreakTypeLatin1;
 
 impl crate::private::Sealed for RuleBreakTypeLatin1 {}
@@ -326,6 +329,7 @@ impl<'s> RuleBreakType<'_, 's> for RuleBreakTypeLatin1 {
 }
 
 #[derive(Debug)]
+#[non_exhaustive]
 pub struct RuleBreakTypeUtf16;
 
 impl crate::private::Sealed for RuleBreakTypeUtf16 {}
