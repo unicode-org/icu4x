@@ -748,21 +748,17 @@ impl<C: Calendar, A: AsCalendar<Calendar = C>> InSameCalendar for DateTime<A> {
         &self,
         any_calendar_kind: AnyCalendarKind,
     ) -> Result<(), MismatchedCalendarError> {
-        if self.date.calendar().any_calendar_kind() == Some(any_calendar_kind) {
-            Ok(())
-        } else {
-            Err(MismatchedCalendarError {
-                this_kind: any_calendar_kind,
-                date_kind: self.date.calendar().any_calendar_kind(),
-            })
-        }
+        self.date.check_any_calendar_kind(any_calendar_kind)
     }
 }
 
 impl<C: Calendar, A: AsCalendar<Calendar = C>, Z> InSameCalendar for ZonedDateTime<A, Z> {
     #[inline]
-    fn check_any_calendar_kind(&self, _: AnyCalendarKind) -> Result<(), MismatchedCalendarError> {
-        Ok(())
+    fn check_any_calendar_kind(
+        &self,
+        any_calendar_kind: AnyCalendarKind,
+    ) -> Result<(), MismatchedCalendarError> {
+        self.date.check_any_calendar_kind(any_calendar_kind)
     }
 }
 

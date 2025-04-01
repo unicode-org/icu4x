@@ -1206,7 +1206,12 @@ impl From<Indian> for AnyCalendar {
 impl IntoAnyCalendar for HijriTabular {
     #[inline]
     fn to_any(self) -> AnyCalendar {
-        AnyCalendar::HijriTabularCivil(self)
+        match self.0 {
+            calendrical_calculations::islamic::ISLAMIC_EPOCH_FRIDAY => {
+                AnyCalendar::HijriTabularCivil(self)
+            }
+            _ => AnyCalendar::HijriTabularAstronomical(self),
+        }
     }
     #[inline]
     fn kind(&self) -> AnyCalendarKind {
@@ -1219,7 +1224,9 @@ impl IntoAnyCalendar for HijriTabular {
     }
     #[inline]
     fn from_any(any: AnyCalendar) -> Result<Self, AnyCalendar> {
-        if let AnyCalendar::HijriTabularCivil(cal) = any {
+        if let AnyCalendar::HijriTabularCivil(cal) | AnyCalendar::HijriTabularAstronomical(cal) =
+            any
+        {
             Ok(cal)
         } else {
             Err(any)
@@ -1227,7 +1234,9 @@ impl IntoAnyCalendar for HijriTabular {
     }
     #[inline]
     fn from_any_ref(any: &AnyCalendar) -> Option<&Self> {
-        if let AnyCalendar::HijriTabularCivil(cal) = any {
+        if let AnyCalendar::HijriTabularCivil(cal) | AnyCalendar::HijriTabularAstronomical(cal) =
+            any
+        {
             Some(cal)
         } else {
             None
@@ -1235,7 +1244,12 @@ impl IntoAnyCalendar for HijriTabular {
     }
     #[inline]
     fn date_to_any(&self, d: &Self::DateInner) -> AnyDateInner {
-        AnyDateInner::HijriTabularCivil(*d)
+        match self.0 {
+            calendrical_calculations::islamic::ISLAMIC_EPOCH_FRIDAY => {
+                AnyDateInner::HijriTabularCivil(*d)
+            }
+            _ => AnyDateInner::HijriTabularAstronomical(*d),
+        }
     }
 }
 
