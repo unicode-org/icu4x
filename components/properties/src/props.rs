@@ -1439,6 +1439,7 @@ make_enumerated_property! {
 /// assert_eq!(CodePointMapData::<IndicConjunctBreak>::new().get('\u{0915}'), IndicConjunctBreak::Consonant);
 /// assert_eq!(CodePointMapData::<IndicConjunctBreak>::new().get('\u{0300}'), IndicConjunctBreak::Extend);
 /// ```
+#[doc(hidden)] // draft API in ICU4C
 #[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[cfg_attr(feature = "datagen", derive(databake::Bake))]
