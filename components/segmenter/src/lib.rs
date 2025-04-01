@@ -140,6 +140,7 @@ pub use crate::grapheme::GraphemeClusterSegmenter;
 pub use crate::grapheme::GraphemeClusterSegmenterBorrowed;
 pub use crate::line::LineBreakIterator;
 pub use crate::line::LineSegmenter;
+pub use crate::line::LineSegmenterBorrowed;
 pub use crate::sentence::SentenceBreakIterator;
 pub use crate::sentence::SentenceSegmenter;
 pub use crate::sentence::SentenceSegmenterBorrowed;

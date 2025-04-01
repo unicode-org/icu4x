@@ -208,7 +208,7 @@ pub struct LineBreakOptions<'a> {
     pub content_locale: Option<&'a LanguageIdentifier>,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone, Copy)]
 struct ResolvedLineBreakOptions {
     strictness: LineBreakStrictness,
     word_option: LineBreakWordOption,
@@ -253,6 +253,9 @@ pub type LineBreakIteratorUtf16<'l, 's> = LineBreakIterator<'l, 's, LineBreakTyp
 
 /// Supports loading line break data, and creating line break iterators for different string
 /// encodings.
+///
+/// Most segmentation methods live on [`LineSegmenterBorrowed`], which can be obtained via
+/// [`LineSegmenter::new()`] or [`LineSegmenter::as_borrowed()`].
 ///
 /// The segmenter returns mandatory breaks (as defined by [definition LD7][LD7] of
 /// Unicode Standard Annex #14, _Unicode Line Breaking Algorithm_) as well as
@@ -375,6 +378,16 @@ pub struct LineSegmenter {
     options: ResolvedLineBreakOptions,
     payload: DataPayload<SegmenterBreakLineV1>,
     complex: ComplexPayloads,
+}
+
+/// Segments a string into lines (borrowed version).
+///
+/// See [`LineSegmenter`] for examples.
+#[derive(Clone, Debug, Copy)]
+pub struct LineSegmenterBorrowed<'data> {
+    options: ResolvedLineBreakOptions,
+    data: &'data RuleBreakData<'data>,
+    complex: ComplexPayloadsBorrowed<'data>,
 }
 
 impl LineSegmenter {
@@ -533,6 +546,17 @@ impl LineSegmenter {
             // [2]: https://www.unicode.org/reports/tr14/#SA
             complex: ComplexPayloads::try_new_southeast_asian(provider)?,
         })
+    }
+
+    /// Constructs a borrowed version of this type for more efficient querying.
+    ///
+    /// Most useful methods for segmentation are on this type.
+    pub fn as_borrowed(&self) -> LineSegmenterBorrowed<'_> {
+        LineSegmenterBorrowed {
+            options: self.options,
+            data: self.payload.get(),
+            complex: self.complex.as_borrowed(),
+        }
     }
 
     /// Creates a line break iterator for an `str` (a UTF-8 string).
