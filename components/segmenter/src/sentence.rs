@@ -146,7 +146,9 @@ impl SentenceSegmenter {
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
-    pub const fn new(_options: SentenceBreakInvariantOptions) -> SentenceSegmenterBorrowed<'static> {
+    pub const fn new(
+        _options: SentenceBreakInvariantOptions,
+    ) -> SentenceSegmenterBorrowed<'static> {
         SentenceSegmenterBorrowed {
             data: crate::provider::Baked::SINGLETON_SEGMENTER_BREAK_SENTENCE_V1,
             locale_override: None,

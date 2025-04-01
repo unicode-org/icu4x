@@ -45,9 +45,7 @@ pub struct WordBreakInvariantOptions {}
 ///
 /// For examples of use, see [`WordSegmenter`].
 #[derive(Debug)]
-pub struct WordBreakIterator<'l, 's, Y: RuleBreakType<'s> + ?Sized>(
-    RuleBreakIterator<'l, 's, Y>,
-);
+pub struct WordBreakIterator<'l, 's, Y: RuleBreakType<'s> + ?Sized>(RuleBreakIterator<'l, 's, Y>);
 
 derive_usize_iterator_with_type!(WordBreakIterator);
 
@@ -475,7 +473,7 @@ impl WordSegmenter {
             current_pos_data: None,
             result_cache: Vec::new(),
             data: self.payload.get(),
-            complex: Some(&self.complex),
+            complex: Some(self.complex.as_borrowed()),
             boundary_property: 0,
             locale_override,
         })
@@ -500,7 +498,7 @@ impl WordSegmenter {
             current_pos_data: None,
             result_cache: Vec::new(),
             data: self.payload.get(),
-            complex: Some(&self.complex),
+            complex: Some(self.complex.as_borrowed()),
             boundary_property: 0,
             locale_override,
         })
@@ -520,7 +518,7 @@ impl WordSegmenter {
             current_pos_data: None,
             result_cache: Vec::new(),
             data: self.payload.get(),
-            complex: Some(&self.complex),
+            complex: Some(self.complex.as_borrowed()),
             boundary_property: 0,
             locale_override,
         })
@@ -540,7 +538,7 @@ impl WordSegmenter {
             current_pos_data: None,
             result_cache: Vec::new(),
             data: self.payload.get(),
-            complex: Some(&self.complex),
+            complex: Some(self.complex.as_borrowed()),
             boundary_property: 0,
             locale_override,
         })
@@ -618,11 +616,7 @@ where
     iter.iter = start_iter;
     iter.current_pos_data = start_point;
     #[allow(clippy::unwrap_used)] // iter.complex present for word segmenter
-    let breaks = iter
-        .complex
-        .unwrap()
-        .as_borrowed()
-        .complex_language_segment_str(&s);
+    let breaks = iter.complex.unwrap().complex_language_segment_str(&s);
     iter.result_cache = breaks;
     let first_pos = *iter.result_cache.first()?;
     let mut i = left_codepoint.len_utf8();
@@ -689,11 +683,7 @@ impl<'s> RuleBreakType<'s> for WordBreakTypeUtf16 {
         iter.iter = start_iter;
         iter.current_pos_data = start_point;
         #[allow(clippy::unwrap_used)] // iter.complex present for word segmenter
-        let breaks = iter
-            .complex
-            .unwrap()
-            .as_borrowed()
-            .complex_language_segment_utf16(&s);
+        let breaks = iter.complex.unwrap().complex_language_segment_utf16(&s);
         iter.result_cache = breaks;
         // result_cache vector is utf-16 index that is in BMP.
         let first_pos = *iter.result_cache.first()?;
