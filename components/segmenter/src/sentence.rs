@@ -46,7 +46,7 @@ pub struct SentenceBreakIterator<'l, 's, Y: RuleBreakType<'s> + ?Sized>(
     RuleBreakIterator<'l, 'l, 's, Y>,
 );
 
-derive_usize_iterator_with_type!(SentenceBreakIterator);
+derive_usize_iterator_with_type!(SentenceBreakIterator, 'l);
 
 /// Sentence break iterator for an `str` (a UTF-8 string).
 ///

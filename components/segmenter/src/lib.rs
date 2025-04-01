@@ -175,6 +175,7 @@ pub use crate::word::WordBreakIteratorLatin1;
 pub use crate::word::WordBreakIteratorPotentiallyIllFormedUtf8;
 pub use crate::word::WordBreakIteratorUtf16;
 pub use crate::word::WordBreakIteratorUtf8;
+pub use crate::word::WordBreakIteratorWithWordType;
 
 pub(crate) mod private {
     /// Trait marking other traits that are considered unstable and should not generally be

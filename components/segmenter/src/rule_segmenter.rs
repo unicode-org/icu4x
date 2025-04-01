@@ -55,7 +55,7 @@ pub struct RuleBreakIterator<'l, 'data, 's, Y: RuleBreakType<'s> + ?Sized> {
     pub(crate) current_pos_data: Option<(usize, Y::CharType)>,
     pub(crate) result_cache: alloc::vec::Vec<usize>,
     pub(crate) data: &'l RuleBreakData<'data>,
-    pub(crate) complex: Option<ComplexPayloadsBorrowed<'data>>,
+    pub(crate) complex: Option<&'l ComplexPayloadsBorrowed<'data>>,
     pub(crate) boundary_property: u8,
     pub(crate) locale_override: Option<&'l RuleBreakDataOverride<'data>>,
 }

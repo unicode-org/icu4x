@@ -170,6 +170,15 @@ impl ComplexPayloadsBorrowed<'static> {
             ja: None,
         }
     }
+    #[cfg(feature = "lstm")]
+    #[cfg(feature = "compiled_data")]
+    #[allow(clippy::unwrap_used)]
+    pub(crate) fn new_auto() -> Self {
+        let mut this = Self::new_lstm();
+        this.ja = try_load_static::<SegmenterDictionaryAutoV1, _>(&crate::provider::Baked, CJ_DICT)
+            .unwrap();
+        this
+    }
     #[cfg(feature = "compiled_data")]
     pub(crate) fn new_dict() -> Self {
         #[allow(clippy::unwrap_used)]
@@ -272,36 +281,6 @@ impl ComplexPayloads {
         })
     }
 
-    #[cfg(feature = "compiled_data")]
-    pub(crate) fn new_dict() -> Self {
-        #[allow(clippy::unwrap_used)]
-        // try_load is infallible if the provider only returns `MissingLocale`.
-        Self {
-            grapheme: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_SEGMENTER_BREAK_GRAPHEME_CLUSTER_V1,
-            ),
-            my: try_load::<SegmenterDictionaryExtendedV1, _>(&crate::provider::Baked, MY_DICT)
-                .unwrap()
-                .map(DataPayload::cast)
-                .map(Ok),
-            km: try_load::<SegmenterDictionaryExtendedV1, _>(&crate::provider::Baked, KM_DICT)
-                .unwrap()
-                .map(DataPayload::cast)
-                .map(Ok),
-            lo: try_load::<SegmenterDictionaryExtendedV1, _>(&crate::provider::Baked, LO_DICT)
-                .unwrap()
-                .map(DataPayload::cast)
-                .map(Ok),
-            th: try_load::<SegmenterDictionaryExtendedV1, _>(&crate::provider::Baked, TH_DICT)
-                .unwrap()
-                .map(DataPayload::cast)
-                .map(Ok),
-            ja: try_load::<SegmenterDictionaryAutoV1, _>(&crate::provider::Baked, CJ_DICT)
-                .unwrap()
-                .map(DataPayload::cast),
-        }
-    }
-
     pub(crate) fn try_new_dict<D>(provider: &D) -> Result<Self, DataError>
     where
         D: DataProvider<SegmenterBreakGraphemeClusterV1>
@@ -325,37 +304,6 @@ impl ComplexPayloads {
                 .map(Ok),
             ja: try_load::<SegmenterDictionaryAutoV1, D>(provider, CJ_DICT)?.map(DataPayload::cast),
         })
-    }
-
-    #[cfg(feature = "auto")] // Use by WordSegmenter with "auto" enabled.
-    #[cfg(feature = "compiled_data")]
-    pub(crate) fn new_auto() -> Self {
-        #[allow(clippy::unwrap_used)]
-        // try_load is infallible if the provider only returns `MissingLocale`.
-        Self {
-            grapheme: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_SEGMENTER_BREAK_GRAPHEME_CLUSTER_V1,
-            ),
-            my: try_load::<SegmenterLstmAutoV1, _>(&crate::provider::Baked, MY_LSTM)
-                .unwrap()
-                .map(DataPayload::cast)
-                .map(Err),
-            km: try_load::<SegmenterLstmAutoV1, _>(&crate::provider::Baked, KM_LSTM)
-                .unwrap()
-                .map(DataPayload::cast)
-                .map(Err),
-            lo: try_load::<SegmenterLstmAutoV1, _>(&crate::provider::Baked, LO_LSTM)
-                .unwrap()
-                .map(DataPayload::cast)
-                .map(Err),
-            th: try_load::<SegmenterLstmAutoV1, _>(&crate::provider::Baked, TH_LSTM)
-                .unwrap()
-                .map(DataPayload::cast)
-                .map(Err),
-            ja: try_load::<SegmenterDictionaryAutoV1, _>(&crate::provider::Baked, CJ_DICT)
-                .unwrap()
-                .map(DataPayload::cast),
-        }
     }
 
     #[cfg(feature = "auto")] // Use by WordSegmenter with "auto" enabled.
@@ -482,25 +430,19 @@ mod tests {
         const TEST_STR: &str = "ภาษาไทยภาษาไทย";
         let utf16: Vec<u16> = TEST_STR.encode_utf16().collect();
 
-        let lstm = ComplexPayloads::new_lstm();
-        let dict = ComplexPayloads::new_dict();
+        let lstm = ComplexPayloadsBorrowed::new_lstm();
+        let dict = ComplexPayloadsBorrowed::new_dict();
 
         assert_eq!(
-            lstm.as_borrowed().complex_language_segment_str(TEST_STR),
+            lstm.complex_language_segment_str(TEST_STR),
             [12, 21, 33, 42]
         );
-        assert_eq!(
-            lstm.as_borrowed().complex_language_segment_utf16(&utf16),
-            [4, 7, 11, 14]
-        );
+        assert_eq!(lstm.complex_language_segment_utf16(&utf16), [4, 7, 11, 14]);
 
         assert_eq!(
-            dict.as_borrowed().complex_language_segment_str(TEST_STR),
+            dict.complex_language_segment_str(TEST_STR),
             [12, 21, 33, 42]
         );
-        assert_eq!(
-            dict.as_borrowed().complex_language_segment_utf16(&utf16),
-            [4, 7, 11, 14]
-        );
+        assert_eq!(dict.complex_language_segment_utf16(&utf16), [4, 7, 11, 14]);
     }
 }

@@ -28,7 +28,7 @@ pub struct GraphemeClusterBreakIterator<'l, 's, Y: RuleBreakType<'s> + ?Sized>(
     RuleBreakIterator<'l, 'l, 's, Y>,
 );
 
-derive_usize_iterator_with_type!(GraphemeClusterBreakIterator);
+derive_usize_iterator_with_type!(GraphemeClusterBreakIterator, 'l);
 
 /// Grapheme cluster break iterator for an `str` (a UTF-8 string).
 ///
