@@ -359,7 +359,7 @@ impl<A: AsCalendar> Date<A> {
 
     /// Wrap the calendar type in `Arc<T>`
     ///
-    /// Useful when paired with [`Self::to_any()`] to obtain a `Date<Rc<AnyCalendar>>`
+    /// Useful when paired with [`Self::to_any()`] to obtain a `Date<Arc<AnyCalendar>>`
     #[cfg(feature = "alloc")]
     pub fn into_atomic_ref_counted(self) -> Date<Arc<A>> {
         Date::from_raw(self.inner, Arc::new(self.calendar))
