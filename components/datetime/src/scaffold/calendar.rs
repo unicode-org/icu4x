@@ -390,11 +390,15 @@ impl FormattableAnyCalendar {
             Gregorian => AnyCalendar::Gregorian(cal::Gregorian),
             Hebrew => AnyCalendar::Hebrew(cal::Hebrew),
             Indian => AnyCalendar::Indian(cal::Indian),
-            HijriTabularCivil => {
-                AnyCalendar::HijriTabularCivil(cal::HijriTabular::new_civil_epoch())
-            }
+            HijriTabularCivil => AnyCalendar::HijriTabularCivil(cal::HijriTabular::new(
+                cal::HijriTabularEpoch::Friday,
+                cal::HijriTabularLeapYears::TypeII,
+            )),
             HijriTabularAstronomical => {
-                AnyCalendar::HijriTabularAstronomical(cal::HijriTabular::new_astronomical_epoch())
+                AnyCalendar::HijriTabularAstronomical(cal::HijriTabular::new(
+                    cal::HijriTabularEpoch::Thursday,
+                    cal::HijriTabularLeapYears::TypeII,
+                ))
             }
             HijriUmmAlQura => AnyCalendar::HijriUmmAlQura(cal::HijriUmmAlQura::new()),
             Japanese => AnyCalendar::Japanese(cal::Japanese::new()),
@@ -425,11 +429,15 @@ impl FormattableAnyCalendar {
             Gregorian => AnyCalendar::Gregorian(cal::Gregorian),
             Hebrew => AnyCalendar::Hebrew(cal::Hebrew),
             Indian => AnyCalendar::Indian(cal::Indian),
-            HijriTabularCivil => {
-                AnyCalendar::HijriTabularCivil(cal::HijriTabular::new_civil_epoch())
-            }
+            HijriTabularCivil => AnyCalendar::HijriTabularCivil(cal::HijriTabular::new(
+                cal::HijriTabularEpoch::Friday,
+                cal::HijriTabularLeapYears::TypeII,
+            )),
             HijriTabularAstronomical => {
-                AnyCalendar::HijriTabularAstronomical(cal::HijriTabular::new_astronomical_epoch())
+                AnyCalendar::HijriTabularAstronomical(cal::HijriTabular::new(
+                    cal::HijriTabularEpoch::Thursday,
+                    cal::HijriTabularLeapYears::TypeII,
+                ))
             }
             HijriUmmAlQura => AnyCalendar::HijriUmmAlQura(
                 cal::HijriUmmAlQura::try_new_with_buffer_provider(provider)?,
@@ -467,11 +475,15 @@ impl FormattableAnyCalendar {
             Gregorian => AnyCalendar::Gregorian(cal::Gregorian),
             Hebrew => AnyCalendar::Hebrew(cal::Hebrew),
             Indian => AnyCalendar::Indian(cal::Indian),
-            HijriTabularCivil => {
-                AnyCalendar::HijriTabularCivil(cal::HijriTabular::new_civil_epoch())
-            }
+            HijriTabularCivil => AnyCalendar::HijriTabularCivil(cal::HijriTabular::new(
+                cal::HijriTabularEpoch::Friday,
+                cal::HijriTabularLeapYears::TypeII,
+            )),
             HijriTabularAstronomical => {
-                AnyCalendar::HijriTabularAstronomical(cal::HijriTabular::new_astronomical_epoch())
+                AnyCalendar::HijriTabularAstronomical(cal::HijriTabular::new(
+                    cal::HijriTabularEpoch::Thursday,
+                    cal::HijriTabularLeapYears::TypeII,
+                ))
             }
             HijriUmmAlQura => {
                 AnyCalendar::HijriUmmAlQura(cal::HijriUmmAlQura::try_new_unstable(provider)?)
