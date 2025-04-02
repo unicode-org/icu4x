@@ -20,8 +20,6 @@ use lstm::*;
 #[allow(clippy::large_enum_variant)]
 enum DictOrLstm {
     Dict(DataPayload<UCharDictionaryBreakDataV1>),
-    #[cfg(not(feature = "lstm"))]
-    Lstm(core::convert::Infallible),
     #[cfg(feature = "lstm")]
     Lstm(DataPayload<SegmenterLstmAutoV1>),
 }
@@ -29,8 +27,6 @@ enum DictOrLstm {
 #[derive(Debug, Clone, Copy)]
 enum DictOrLstmBorrowed<'data> {
     Dict(&'data UCharDictionaryBreakData<'data>),
-    #[cfg(not(feature = "lstm"))]
-    Lstm(core::convert::Infallible),
     #[cfg(feature = "lstm")]
     Lstm(&'data LstmData<'data>),
 }
@@ -40,8 +36,6 @@ fn borrow_dictor(dict_or: &DictOrLstm) -> DictOrLstmBorrowed<'_> {
         DictOrLstm::Dict(dict) => DictOrLstmBorrowed::Dict(dict.get()),
         #[cfg(feature = "lstm")]
         DictOrLstm::Lstm(lstm) => DictOrLstmBorrowed::Lstm(lstm.get()),
-        #[cfg(not(feature = "lstm"))]
-        DictOrLstm::Lstm(infallible) => DictOrLstmBorrowed::Lstm(*infallible),
     }
 }
 
@@ -50,8 +44,6 @@ fn fromstatic_dictor(dict_or: DictOrLstmBorrowed<'static>) -> DictOrLstm {
         DictOrLstmBorrowed::Dict(dict) => DictOrLstm::Dict(DataPayload::from_static_ref(dict)),
         #[cfg(feature = "lstm")]
         DictOrLstmBorrowed::Lstm(lstm) => DictOrLstm::Lstm(DataPayload::from_static_ref(lstm)),
-        #[cfg(not(feature = "lstm"))]
-        DictOrLstmBorrowed::Lstm(infallible) => DictOrLstm::Lstm(infallible),
     }
 }
 
@@ -131,8 +123,6 @@ impl<'data> ComplexPayloadsBorrowed<'data> {
                     let seg = LstmSegmenter::new(lstm, self.grapheme);
                     result.extend(seg.segment_str(slice).map(|n| offset + n));
                 }
-                #[cfg(not(feature = "lstm"))]
-                Some(DictOrLstmBorrowed::Lstm(_infallible)) => {} // should be refutable
                 None => {
                     result.push(offset + slice.len());
                 }
@@ -156,8 +146,6 @@ impl<'data> ComplexPayloadsBorrowed<'data> {
                     let seg = LstmSegmenter::new(lstm, self.grapheme);
                     result.extend(seg.segment_utf16(slice).map(|n| offset + n));
                 }
-                #[cfg(not(feature = "lstm"))]
-                Some(DictOrLstmBorrowed::Lstm(_infallible)) => {} // should be refutable
                 None => {
                     result.push(offset + slice.len());
                 }
