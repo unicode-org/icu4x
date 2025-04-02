@@ -42,7 +42,7 @@ const BUDDHIST_ERA_OFFSET: i32 = 543;
 ///
 /// # Era codes
 ///
-/// This calendar uses a single era code, `buddhist` (alias `be`), with 1 B.E. being 543 BCE.
+/// This calendar uses a single era code `be`, with 1 Buddhist Era being 543 BCE. Dates before this era use negative years.
 ///
 /// # Month codes
 ///
@@ -61,7 +61,7 @@ impl Calendar for Buddhist {
         day: u8,
     ) -> Result<Self::DateInner, DateError> {
         match era {
-            Some("buddhist" | "be") | None => {}
+            Some("be") | None => {}
             _ => return Err(DateError::UnknownEra),
         }
         let year = year - BUDDHIST_ERA_OFFSET;
@@ -120,7 +120,7 @@ impl Calendar for Buddhist {
         types::YearInfo::new(
             buddhist_year,
             types::EraYear {
-                standard_era: tinystr!(16, "buddhist").into(),
+                standard_era: tinystr!(16, "be").into(),
                 formatting_era: types::FormattingEra::Index(0, tinystr!(16, "BE")),
                 era_year: buddhist_year,
                 ambiguity: types::YearAmbiguity::CenturyRequired,

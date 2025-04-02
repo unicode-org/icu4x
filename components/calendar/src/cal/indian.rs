@@ -31,7 +31,7 @@ use tinystr::tinystr;
 ///
 /// # Era codes
 ///
-/// This calendar uses a single era code: `indian` (alias `saka`), with Saka 0 being 78 CE. Dates before this era use negative years.
+/// This calendar uses a single era code: `saka`, with Saka 0 being 78 CE. Dates before this era use negative years.
 ///
 /// # Month codes
 ///
@@ -100,7 +100,7 @@ impl Calendar for Indian {
         day: u8,
     ) -> Result<Self::DateInner, DateError> {
         let year = match era {
-            Some("indian" | "saka") | None => year,
+            Some("saka") | None => year,
             Some(_) => return Err(DateError::UnknownEra),
         };
         ArithmeticDate::new_from_codes(self, year, month_code, day).map(IndianDateInner)
@@ -186,7 +186,7 @@ impl Calendar for Indian {
             date.0.year,
             types::EraYear {
                 formatting_era: types::FormattingEra::Index(0, tinystr!(16, "Saka")),
-                standard_era: tinystr!(16, "indian").into(),
+                standard_era: tinystr!(16, "saka").into(),
                 era_year: date.0.year,
                 ambiguity: types::YearAmbiguity::CenturyRequired,
             },
