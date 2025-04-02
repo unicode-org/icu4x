@@ -1968,7 +1968,7 @@ where
 
                                         // Set the exponent. 4 pairs->132, 5 pairs->133, ..., 127 pairs->255.
                                         let mut len = head.len();
-                                        let num_pairs = (len as u32 + 1) / 2; // as u32 OK, because capped to 254
+                                        let num_pairs = (len as u32).div_ceil(2); // as u32 OK, because capped to 254
                                         let mut primary =
                                             numeric_primary | ((132 - 4 + num_pairs) << 16);
                                         // Find the length without trailing 00 pairs.

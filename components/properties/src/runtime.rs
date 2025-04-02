@@ -227,16 +227,16 @@ impl CodePointSetData {
     ///
     /// - `Script` and `General_Category`: handle these directly using property values parsed via
     ///   [`PropertyParser<GeneralCategory>`] and [`PropertyParser<Script>`]
-    ///    if necessary.
+    ///   if necessary.
     /// - `Script_Extensions`: handle this directly using APIs from [`crate::script::ScriptWithExtensions`]
     /// - `General_Category` mask values: Handle this alongside `General_Category` using [`GeneralCategoryGroup`],
-    ///    using property values parsed via [`PropertyParser<GeneralCategory>`] if necessary
+    ///   using property values parsed via [`PropertyParser<GeneralCategory>`] if necessary
     /// - `Assigned`, `All`, and `ASCII` pseudoproperties: Handle these using their equivalent sets:
     ///    - `Any` can be expressed as the range `[\u{0}-\u{10FFFF}]`
     ///    - `Assigned` can be expressed as the inverse of the set `gc=Cn` (i.e., `\P{gc=Cn}`).
     ///    - `ASCII` can be expressed as the range `[\u{0}-\u{7F}]`
     /// - `General_Category` property values can themselves be treated like properties using a shorthand in ECMA262,
-    ///    simply create the corresponding `GeneralCategory` set.
+    ///   simply create the corresponding `GeneralCategory` set.
     ///
     /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///

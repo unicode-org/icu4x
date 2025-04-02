@@ -2753,7 +2753,7 @@ impl write16::Write16 for IsNormalizedSinkUtf16<'_> {
         // an indexing failure would be a code bug rather than
         // an input or data issue.
         #[allow(clippy::indexing_slicing)]
-        if s.as_ptr() == self.expect.as_ptr() {
+        if core::ptr::eq(s.as_ptr(), self.expect.as_ptr()) {
             self.expect = &self.expect[s.len()..];
             Ok(())
         } else {
@@ -2795,7 +2795,7 @@ impl core::fmt::Write for IsNormalizedSinkUtf8<'_> {
         // an indexing failure would be a code bug rather than
         // an input or data issue.
         #[allow(clippy::indexing_slicing)]
-        if s.as_ptr() == self.expect.as_ptr() {
+        if core::ptr::eq(s.as_ptr(), self.expect.as_ptr()) {
             self.expect = &self.expect[s.len()..];
             Ok(())
         } else {
@@ -2834,7 +2834,7 @@ impl core::fmt::Write for IsNormalizedSinkStr<'_> {
         // an indexing failure would be a code bug rather than
         // an input or data issue.
         #[allow(clippy::indexing_slicing)]
-        if s.as_ptr() == self.expect.as_ptr() {
+        if core::ptr::eq(s.as_ptr(), self.expect.as_ptr()) {
             self.expect = &self.expect[s.len()..];
             Ok(())
         } else {

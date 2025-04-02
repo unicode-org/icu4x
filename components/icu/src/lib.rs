@@ -99,11 +99,11 @@
 //! functionality are compiled. These features are:
 //!
 //! - `compiled_data` (default): Whether to include compiled data. Without this flag, only constructors with
-//!    explicit `provider` arguments are available.
+//!   explicit `provider` arguments are available.
 //! - `datagen`: Whether to implement functionality that is only required during data generation.
 //! - `logging`: Enables logging through the `log` crate.
 //! - `serde`: Activates `serde` implementations for core library types, such as [`Locale`], as well
-//!    as `*_with_buffer_provider` constructors for runtime data management.
+//!   as `*_with_buffer_provider` constructors for runtime data management.
 //! - `sync`: makes most ICU4X objects implement `Send + Sync`. Has a small performance impact when used with runtime data.
 //!
 //! # Experimental modules
