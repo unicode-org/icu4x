@@ -580,6 +580,7 @@ impl WordSegmenterBorrowed<'static> {
 
 #[derive(Debug)]
 #[non_exhaustive]
+/// Word breaks for UTF-16 strings
 pub struct WordBreakTypeUtf8;
 impl crate::private::Sealed for WordBreakTypeUtf8 {}
 
@@ -601,6 +602,7 @@ impl<'s> RuleBreakType<'s> for WordBreakTypeUtf8 {
 
 #[derive(Debug)]
 #[non_exhaustive]
+/// Word breaks for potentially ill-formed UTF-8 strings
 pub struct WordBreakTypePotentiallyIllFormedUtf8;
 impl crate::private::Sealed for WordBreakTypePotentiallyIllFormedUtf8 {}
 
@@ -677,6 +679,7 @@ where
 
 #[derive(Debug)]
 #[non_exhaustive]
+/// Word breaks for UTF-16 strings
 pub struct WordBreakTypeUtf16;
 
 impl crate::private::Sealed for WordBreakTypeUtf16 {}
