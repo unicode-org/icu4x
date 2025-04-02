@@ -341,9 +341,9 @@ lazy_static::lazy_static! {
         "icu::datetime::DateTimeFormatter::cast_into_fset",
         "icu::datetime::FixedCalendarDateTimeFormatter::cast_into_fset",
         // TODO-2.0: needs investigation
-        "icu::calendar::Date::wrap_calendar_in_rc",
-        "icu::calendar::Date::wrap_calendar_in_arc",
-        "icu::calendar::Date::wrap_calendar_in_ref",
+        "icu::calendar::Date::into_ref_counted",
+        "icu::calendar::Date::into_atomic_ref_counted",
+        "icu::calendar::Date::as_borrowed",
 
         // Generic type, primarily exists for use by ICU4X data struct internals.
         "icu::plurals::PluralElements",
