@@ -25,14 +25,6 @@ icu_provider::data_marker!(
     is_singleton = true,
 );
 
-icu_provider::data_marker!(
-    /// Precomputed data for the Hijri Umm-Al-Qura calendar
-    CalendarHijriUmmalquraV1,
-    "calendar/hijri/ummalqura/v1",
-    HijriData<'static>,
-    is_singleton = true,
-);
-
 /// Cached/precompiled data for a certain range of years for a chinese-based
 /// calendar. Avoids the need to perform lunar calendar arithmetic for most calendrical
 /// operations.
@@ -78,8 +70,11 @@ icu_provider::data_struct!(
 pub struct PackedHijriYearInfo(pub u16);
 
 impl PackedHijriYearInfo {
-    #[cfg(feature = "datagen")]
-    pub(crate) fn new(extended_year: i32, month_lengths: [bool; 12], start_day: RataDie) -> Self {
+    pub(crate) const fn new(
+        extended_year: i32,
+        month_lengths: [bool; 12],
+        start_day: RataDie,
+    ) -> Self {
         let start_offset = start_day.const_diff(Self::mean_synodic_start_day(extended_year));
 
         debug_assert!(
@@ -90,16 +85,19 @@ impl PackedHijriYearInfo {
 
         let mut all = 0u16; // last byte unused
 
-        for (month, length_30) in month_lengths.iter().enumerate() {
-            if *length_30 {
-                all |= 1 << month as u16;
+        let mut i = 0;
+        while i < 12 {
+            #[allow(clippy::indexing_slicing)]
+            if month_lengths[i] {
+                all |= 1 << i;
             }
+            i += 1;
         }
 
         if start_offset < 0 {
             all |= 1 << 12;
         }
-        all |= u16::from(start_offset.unsigned_abs()) << 13;
+        all |= (start_offset.unsigned_abs() as u16) << 13;
         Self(all)
     }
 

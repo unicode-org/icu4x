@@ -44,7 +44,9 @@ pub mod scaffold {
     pub use super::ethiopian::EthiopianDateInner;
     pub use super::gregorian::GregorianDateInner;
     pub use super::hebrew::HebrewDateInner;
-    pub use super::hijri::{HijriDateInner, HijriTabularDateInner, HijriUmmAlQuraDateInner};
+    pub use super::hijri::{
+        HijriSimulatedDateInner, HijriTabularDateInner, HijriUmmAlQuraDateInner,
+    };
     pub use super::indian::Indian;
     pub use super::iso::Iso;
     pub use super::japanese::Japanese;
