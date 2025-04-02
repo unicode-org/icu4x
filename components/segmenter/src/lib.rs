@@ -127,24 +127,24 @@ mod indices;
 mod iterator_helpers;
 mod rule_segmenter;
 
-mod grapheme;
-mod line;
-mod sentence;
-mod word;
+/// Code for [`GraphemeClusterSegmenter`]
+pub mod grapheme;
+/// Code for [`LineSegmenter`]
+pub mod line;
+/// Code for [`SentenceSegmenter`]
+pub mod sentence;
+/// Code for [`WordSegmenter`]
+pub mod word;
 
 pub mod provider;
 
 // Main Segmenter and BreakIterator public types
-pub use crate::grapheme::GraphemeClusterBreakIterator;
 pub use crate::grapheme::GraphemeClusterSegmenter;
 pub use crate::grapheme::GraphemeClusterSegmenterBorrowed;
-pub use crate::line::LineBreakIterator;
 pub use crate::line::LineSegmenter;
 pub use crate::line::LineSegmenterBorrowed;
-pub use crate::sentence::SentenceBreakIterator;
 pub use crate::sentence::SentenceSegmenter;
 pub use crate::sentence::SentenceSegmenterBorrowed;
-pub use crate::word::WordBreakIterator;
 pub use crate::word::WordSegmenter;
 pub use crate::word::WordSegmenterBorrowed;
 
@@ -159,25 +159,6 @@ pub mod options {
     pub use crate::word::WordBreakOptions;
     pub use crate::word::WordType;
 }
-
-// Typedefs
-pub use crate::grapheme::GraphemeClusterBreakIteratorLatin1;
-pub use crate::grapheme::GraphemeClusterBreakIteratorPotentiallyIllFormedUtf8;
-pub use crate::grapheme::GraphemeClusterBreakIteratorUtf16;
-pub use crate::grapheme::GraphemeClusterBreakIteratorUtf8;
-pub use crate::line::LineBreakIteratorLatin1;
-pub use crate::line::LineBreakIteratorPotentiallyIllFormedUtf8;
-pub use crate::line::LineBreakIteratorUtf16;
-pub use crate::line::LineBreakIteratorUtf8;
-pub use crate::sentence::SentenceBreakIteratorLatin1;
-pub use crate::sentence::SentenceBreakIteratorPotentiallyIllFormedUtf8;
-pub use crate::sentence::SentenceBreakIteratorUtf16;
-pub use crate::sentence::SentenceBreakIteratorUtf8;
-pub use crate::word::WordBreakIteratorLatin1;
-pub use crate::word::WordBreakIteratorPotentiallyIllFormedUtf8;
-pub use crate::word::WordBreakIteratorUtf16;
-pub use crate::word::WordBreakIteratorUtf8;
-pub use crate::word::WordBreakIteratorWithWordType;
 
 pub(crate) mod private {
     /// Trait marking other traits that are considered unstable and should not generally be
