@@ -8,14 +8,15 @@ use crate::provider::{neo::*, *};
 use crate::scaffold::UnstableSealed;
 use crate::{DateTimeFormatterPreferences, MismatchedCalendarError};
 use core::marker::PhantomData;
-use icu_calendar::any_calendar::AnyCalendarKind;
 use icu_calendar::cal::Roc;
 use icu_calendar::cal::{self, Chinese};
 use icu_calendar::cal::{
     Buddhist, Coptic, Dangi, Ethiopian, Gregorian, Hebrew, HijriSimulated, HijriTabular,
     HijriUmmAlQura, Indian, Japanese, JapaneseExtended, Persian,
 };
-use icu_calendar::{any_calendar::IntoAnyCalendar, AnyCalendar, AsCalendar, Calendar, Date, Ref};
+use icu_calendar::{
+    AnyCalendar, AnyCalendarKind, AsCalendar, Calendar, Date, IntoAnyCalendar, Ref,
+};
 use icu_provider::marker::NeverMarker;
 use icu_provider::prelude::*;
 use icu_time::{

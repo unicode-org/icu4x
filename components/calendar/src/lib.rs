@@ -96,7 +96,7 @@ extern crate alloc;
 mod date;
 
 // Public modules
-pub mod any_calendar;
+mod any_calendar;
 pub mod cal;
 pub mod provider;
 pub mod types;
@@ -110,6 +110,7 @@ mod error;
 mod ixdtf;
 
 // Top-level types
+pub use any_calendar::IntoAnyCalendar;
 pub use calendar::Calendar;
 pub use date::{AsCalendar, Date, Ref};
 #[doc(hidden)] // unstable
@@ -120,12 +121,11 @@ pub use ixdtf::ParseError;
 
 // Reexports
 #[doc(no_inline)]
-pub use any_calendar::{AnyCalendar, AnyCalendarKind, CalendarPreferences};
-#[doc(no_inline)]
-pub use cal::{Gregorian, Iso};
+pub use cal::{AnyCalendar, AnyCalendarKind, Gregorian, Iso};
 
 /// Locale preferences used by this crate
 pub mod preferences {
+    pub use crate::any_calendar::CalendarPreferences;
     #[doc(inline)]
     /// **This is a reexport of a type in [`icu::locale`](icu_locale_core::preferences::extensions::unicode::keywords)**.
     #[doc = "\n"] // prevent autoformatting

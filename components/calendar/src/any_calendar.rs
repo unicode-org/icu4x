@@ -904,7 +904,7 @@ pub trait IntoAnyCalendar: Calendar + Sized {
     /// You should not need to call this method directly
     fn from_any_ref(any: &AnyCalendar) -> Option<&Self>;
 
-    /// Convert a date for this calendar into an [`AnyDateInner`]
+    /// Convert a date for this calendar into an `AnyDateInner`
     ///
     /// You should not need to call this method directly
     fn date_to_any(&self, d: &Self::DateInner) -> AnyDateInner;

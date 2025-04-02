@@ -208,7 +208,7 @@ fn assert_fixture_element<C>(
     field_set: CompositeDateTimeFieldSet,
     description: &str,
 ) where
-    C: icu_calendar::Calendar + CldrCalendar + icu_calendar::any_calendar::IntoAnyCalendar + Clone,
+    C: icu_calendar::Calendar + CldrCalendar + icu_calendar::IntoAnyCalendar + Clone,
     icu_datetime::provider::Baked: DataProvider<<C as CldrCalendar>::YearNamesV1>,
     icu_datetime::provider::Baked: DataProvider<<C as CldrCalendar>::MonthNamesV1>,
     icu_datetime::provider::Baked: DataProvider<<C as CldrCalendar>::SkeletaV1>,
