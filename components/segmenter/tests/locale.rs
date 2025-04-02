@@ -16,6 +16,7 @@ fn word_break_with_locale() {
     let langid = langid!("sv");
     options_sv.content_locale = Some(&langid);
     let segmenter = WordSegmenter::try_new_auto(options_sv).expect("Loading should succeed!");
+    let segmenter = segmenter.as_borrowed();
     let iter = segmenter.segment_str(s);
     assert_eq!(
         iter.collect::<Vec<usize>>(),
@@ -27,6 +28,7 @@ fn word_break_with_locale() {
     let langid = langid!("en");
     options_en.content_locale = Some(&langid);
     let segmenter = WordSegmenter::try_new_auto(options_en).expect("Loading should succeed!");
+    let segmenter = segmenter.as_borrowed();
     let iter = segmenter.segment_str(s);
     assert_eq!(
         iter.collect::<Vec<usize>>(),
@@ -43,6 +45,7 @@ fn sentence_break_with_locale() {
     let langid = langid!("el");
     options_el.content_locale = Some(&langid);
     let segmenter = SentenceSegmenter::try_new(options_el).expect("Loading should succeed!");
+    let segmenter = segmenter.as_borrowed();
     let iter = segmenter.segment_str(s);
     assert_eq!(
         iter.collect::<Vec<usize>>(),
@@ -54,6 +57,7 @@ fn sentence_break_with_locale() {
     let langid = langid!("en");
     options_en.content_locale = Some(&langid);
     let segmenter = SentenceSegmenter::try_new(options_en).expect("Loading should succeed!");
+    let segmenter = segmenter.as_borrowed();
     let iter = segmenter.segment_str(s);
     assert_eq!(
         iter.collect::<Vec<usize>>(),

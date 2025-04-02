@@ -24,6 +24,7 @@ pub mod ffi {
     #[diplomat::opaque]
     /// An ICU4X word-break segmenter, capable of finding word breakpoints in strings.
     #[diplomat::rust_link(icu::segmenter::WordSegmenter, Struct)]
+    #[diplomat::rust_link(icu::segmenter::WordSegmenterBorrowed, Struct, hidden)]
     #[diplomat::demo(custom_func = "../../npm/demo_gen_custom/WordSegmenter.mjs")]
     pub struct WordSegmenter(icu_segmenter::WordSegmenter);
 
@@ -68,9 +69,9 @@ pub mod ffi {
         #[diplomat::attr(auto, named_constructor = "auto")]
         #[cfg(feature = "compiled_data")]
         pub fn create_auto() -> Box<WordSegmenter> {
-            Box::new(WordSegmenter(icu_segmenter::WordSegmenter::new_auto(
-                Default::default(),
-            )))
+            Box::new(WordSegmenter(
+                icu_segmenter::WordSegmenter::new_auto(Default::default()).static_to_owned(),
+            ))
         }
 
         /// Construct an [`WordSegmenter`] with automatically selecting the best available LSTM
@@ -119,9 +120,9 @@ pub mod ffi {
         #[diplomat::attr(auto, named_constructor = "lstm")]
         #[cfg(feature = "compiled_data")]
         pub fn create_lstm() -> Box<WordSegmenter> {
-            Box::new(WordSegmenter(icu_segmenter::WordSegmenter::new_lstm(
-                Default::default(),
-            )))
+            Box::new(WordSegmenter(
+                icu_segmenter::WordSegmenter::new_lstm(Default::default()).static_to_owned(),
+            ))
         }
 
         /// Construct an [`WordSegmenter`] with LSTM payload data for Burmese, Khmer, Lao, and
@@ -169,9 +170,9 @@ pub mod ffi {
         #[diplomat::attr(auto, named_constructor = "dictionary")]
         #[cfg(feature = "compiled_data")]
         pub fn create_dictionary() -> Box<WordSegmenter> {
-            Box::new(WordSegmenter(icu_segmenter::WordSegmenter::new_dictionary(
-                Default::default(),
-            )))
+            Box::new(WordSegmenter(
+                icu_segmenter::WordSegmenter::new_dictionary(Default::default()).static_to_owned(),
+            ))
         }
 
         /// Construct an [`WordSegmenter`] with dictionary payload data for Chinese, Japanese,
@@ -213,36 +214,46 @@ pub mod ffi {
         ///
         /// Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
         /// to the WHATWG Encoding Standard.
-        #[diplomat::rust_link(icu::segmenter::WordSegmenter::segment_utf8, FnInStruct)]
-        #[diplomat::rust_link(icu::segmenter::WordSegmenter::segment_str, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::segmenter::WordSegmenterBorrowed::segment_utf8, FnInStruct)]
+        #[diplomat::rust_link(
+            icu::segmenter::WordSegmenterBorrowed::segment_str,
+            FnInStruct,
+            hidden
+        )]
         #[diplomat::attr(not(supports = utf8_strings), disable)]
         #[diplomat::attr(*, rename = "segment")]
         pub fn segment_utf8<'a>(
             &'a self,
             input: &'a DiplomatStr,
         ) -> Box<WordBreakIteratorUtf8<'a>> {
-            Box::new(WordBreakIteratorUtf8(self.0.segment_utf8(input)))
+            Box::new(WordBreakIteratorUtf8(
+                self.0.as_borrowed().segment_utf8(input),
+            ))
         }
 
         /// Segments a string.
         ///
         /// Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
         /// to the WHATWG Encoding Standard.
-        #[diplomat::rust_link(icu::segmenter::WordSegmenter::segment_utf16, FnInStruct)]
+        #[diplomat::rust_link(icu::segmenter::WordSegmenterBorrowed::segment_utf16, FnInStruct)]
         #[diplomat::attr(not(supports = utf8_strings), rename = "segment")]
         #[diplomat::attr(supports = utf8_strings, rename = "segment16")]
         pub fn segment_utf16<'a>(
             &'a self,
             input: &'a DiplomatStr16,
         ) -> Box<WordBreakIteratorUtf16<'a>> {
-            Box::new(WordBreakIteratorUtf16(self.0.segment_utf16(input)))
+            Box::new(WordBreakIteratorUtf16(
+                self.0.as_borrowed().segment_utf16(input),
+            ))
         }
 
         /// Segments a Latin-1 string.
-        #[diplomat::rust_link(icu::segmenter::WordSegmenter::segment_latin1, FnInStruct)]
+        #[diplomat::rust_link(icu::segmenter::WordSegmenterBorrowed::segment_latin1, FnInStruct)]
         #[diplomat::attr(not(supports = utf8_strings), disable)]
         pub fn segment_latin1<'a>(&'a self, input: &'a [u8]) -> Box<WordBreakIteratorLatin1<'a>> {
-            Box::new(WordBreakIteratorLatin1(self.0.segment_latin1(input)))
+            Box::new(WordBreakIteratorLatin1(
+                self.0.as_borrowed().segment_latin1(input),
+            ))
         }
     }
 
@@ -264,6 +275,12 @@ pub mod ffi {
 
         /// Return the status value of break boundary.
         #[diplomat::rust_link(icu::segmenter::WordBreakIterator::word_type, FnInStruct)]
+        #[diplomat::rust_link(icu::segmenter::WordBreakIteratorWithWordType, Struct, hidden)]
+        #[diplomat::rust_link(
+            icu::segmenter::WordBreakIteratorWithWordType::next,
+            FnInStruct,
+            hidden
+        )]
         #[diplomat::attr(auto, getter)]
         pub fn word_type(&self) -> SegmenterWordType {
             self.0.word_type().into()

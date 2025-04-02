@@ -45,11 +45,11 @@ pub struct WordBreakInvariantOptions {}
 ///
 /// For examples of use, see [`WordSegmenter`].
 #[derive(Debug)]
-pub struct WordBreakIterator<'l, 's, Y: RuleBreakType<'l, 's> + ?Sized>(
-    RuleBreakIterator<'l, 's, Y>,
+pub struct WordBreakIterator<'data, 's, Y: RuleBreakType<'s> + ?Sized>(
+    RuleBreakIterator<'data, 's, Y>,
 );
 
-derive_usize_iterator_with_type!(WordBreakIterator);
+derive_usize_iterator_with_type!(WordBreakIterator, 'data);
 
 /// The word type tag that is returned by [`WordBreakIterator::word_type()`].
 #[non_exhaustive]
@@ -73,7 +73,7 @@ impl WordType {
     }
 }
 
-impl<'l, 's, Y: RuleBreakType<'l, 's> + ?Sized> WordBreakIterator<'l, 's, Y> {
+impl<'data, 's, Y: RuleBreakType<'s> + ?Sized> WordBreakIterator<'data, 's, Y> {
     /// Returns the word type of the segment preceding the current boundary.
     #[inline]
     pub fn word_type(&self) -> WordType {
@@ -81,10 +81,8 @@ impl<'l, 's, Y: RuleBreakType<'l, 's> + ?Sized> WordBreakIterator<'l, 's, Y> {
     }
 
     /// Returns an iterator over pairs of boundary position and word type.
-    pub fn iter_with_word_type<'i: 'l + 's>(
-        &'i mut self,
-    ) -> impl Iterator<Item = (usize, WordType)> + 'i {
-        core::iter::from_fn(move || self.next().map(|i| (i, self.word_type())))
+    pub fn iter_with_word_type(self) -> WordBreakIteratorWithWordType<'data, 's, Y> {
+        WordBreakIteratorWithWordType(self)
     }
 
     /// Returns `true` when the segment preceding the current boundary is word-like,
@@ -95,29 +93,47 @@ impl<'l, 's, Y: RuleBreakType<'l, 's> + ?Sized> WordBreakIterator<'l, 's, Y> {
     }
 }
 
+/// Word break iterator that also returns the word type
+// We can use impl Trait here once `use<..>` syntax is available, see https://github.com/rust-lang/rust/issues/61756
+#[derive(Debug)]
+pub struct WordBreakIteratorWithWordType<'data, 's, Y: RuleBreakType<'s> + ?Sized>(
+    WordBreakIterator<'data, 's, Y>,
+);
+
+impl<'s, Y: RuleBreakType<'s> + ?Sized> Iterator for WordBreakIteratorWithWordType<'_, 's, Y> {
+    type Item = (usize, WordType);
+    fn next(&mut self) -> Option<Self::Item> {
+        let ret = self.0.next()?;
+        Some((ret, self.0 .0.word_type()))
+    }
+}
+
 /// Word break iterator for an `str` (a UTF-8 string).
 ///
 /// For examples of use, see [`WordSegmenter`].
-pub type WordBreakIteratorUtf8<'l, 's> = WordBreakIterator<'l, 's, WordBreakTypeUtf8>;
+pub type WordBreakIteratorUtf8<'data, 's> = WordBreakIterator<'data, 's, WordBreakTypeUtf8>;
 
 /// Word break iterator for a potentially invalid UTF-8 string.
 ///
 /// For examples of use, see [`WordSegmenter`].
-pub type WordBreakIteratorPotentiallyIllFormedUtf8<'l, 's> =
-    WordBreakIterator<'l, 's, WordBreakTypePotentiallyIllFormedUtf8>;
+pub type WordBreakIteratorPotentiallyIllFormedUtf8<'data, 's> =
+    WordBreakIterator<'data, 's, WordBreakTypePotentiallyIllFormedUtf8>;
 
 /// Word break iterator for a Latin-1 (8-bit) string.
 ///
 /// For examples of use, see [`WordSegmenter`].
-pub type WordBreakIteratorLatin1<'l, 's> = WordBreakIterator<'l, 's, RuleBreakTypeLatin1>;
+pub type WordBreakIteratorLatin1<'data, 's> = WordBreakIterator<'data, 's, RuleBreakTypeLatin1>;
 
 /// Word break iterator for a UTF-16 string.
 ///
 /// For examples of use, see [`WordSegmenter`].
-pub type WordBreakIteratorUtf16<'l, 's> = WordBreakIterator<'l, 's, WordBreakTypeUtf16>;
+pub type WordBreakIteratorUtf16<'data, 's> = WordBreakIterator<'data, 's, WordBreakTypeUtf16>;
 
 /// Supports loading word break data, and creating word break iterators for different string
 /// encodings.
+///
+/// Most segmentation methods live on [`WordSegmenterBorrowed`], which can be obtained via
+/// [`WordSegmenter::new_auto()`] (etc) or [`WordSegmenter::as_borrowed()`].
 ///
 /// # Examples
 ///
@@ -192,6 +208,16 @@ pub struct WordSegmenter {
     payload_locale_override: Option<DataPayload<SegmenterBreakWordOverrideV1>>,
 }
 
+/// Segments a string into words (borrowed version).
+///
+/// See [`WordSegmenter`] for examples.
+#[derive(Clone, Debug, Copy)]
+pub struct WordSegmenterBorrowed<'data> {
+    data: &'data RuleBreakData<'data>,
+    complex: ComplexPayloadsBorrowed<'data>,
+    locale_override: Option<&'data RuleBreakDataOverride<'data>>,
+}
+
 impl WordSegmenter {
     /// Constructs a [`WordSegmenter`] with an invariant locale and the best available compiled data for
     /// complex scripts (Chinese, Japanese, Khmer, Lao, Myanmar, and Thai).
@@ -224,13 +250,11 @@ impl WordSegmenter {
     /// ```
     #[cfg(feature = "compiled_data")]
     #[cfg(feature = "auto")]
-    pub fn new_auto(_options: WordBreakInvariantOptions) -> Self {
-        Self {
-            payload: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_SEGMENTER_BREAK_WORD_V1,
-            ),
-            complex: ComplexPayloads::new_auto(),
-            payload_locale_override: None,
+    pub fn new_auto(_options: WordBreakInvariantOptions) -> WordSegmenterBorrowed<'static> {
+        WordSegmenterBorrowed {
+            data: crate::provider::Baked::SINGLETON_SEGMENTER_BREAK_WORD_V1,
+            complex: ComplexPayloadsBorrowed::new_auto(),
+            locale_override: None,
         }
     }
 
@@ -318,13 +342,11 @@ impl WordSegmenter {
     /// ```
     #[cfg(feature = "compiled_data")]
     #[cfg(feature = "lstm")]
-    pub fn new_lstm(_options: WordBreakInvariantOptions) -> Self {
-        Self {
-            payload: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_SEGMENTER_BREAK_WORD_V1,
-            ),
-            complex: ComplexPayloads::new_lstm(),
-            payload_locale_override: None,
+    pub fn new_lstm(_options: WordBreakInvariantOptions) -> WordSegmenterBorrowed<'static> {
+        WordSegmenterBorrowed {
+            data: crate::provider::Baked::SINGLETON_SEGMENTER_BREAK_WORD_V1,
+            complex: ComplexPayloadsBorrowed::new_lstm(),
+            locale_override: None,
         }
     }
 
@@ -405,13 +427,11 @@ impl WordSegmenter {
     /// assert_eq!(ja_bps, [0, 15, 21]);
     /// ```
     #[cfg(feature = "compiled_data")]
-    pub fn new_dictionary(_options: WordBreakInvariantOptions) -> Self {
-        Self {
-            payload: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_SEGMENTER_BREAK_WORD_V1,
-            ),
-            complex: ComplexPayloads::new_dict(),
-            payload_locale_override: None,
+    pub fn new_dictionary(_options: WordBreakInvariantOptions) -> WordSegmenterBorrowed<'static> {
+        WordSegmenterBorrowed {
+            data: crate::provider::Baked::SINGLETON_SEGMENTER_BREAK_WORD_V1,
+            complex: ComplexPayloadsBorrowed::new_dict(),
+            locale_override: None,
         }
     }
 
@@ -460,24 +480,32 @@ impl WordSegmenter {
             },
         })
     }
+    /// Constructs a borrowed version of this type for more efficient querying.
+    ///
+    /// Most useful methods for segmentation are on this type.
+    pub fn as_borrowed(&self) -> WordSegmenterBorrowed<'_> {
+        WordSegmenterBorrowed {
+            data: self.payload.get(),
+            complex: self.complex.as_borrowed(),
+            locale_override: self.payload_locale_override.as_ref().map(|p| p.get()),
+        }
+    }
+}
 
+impl<'data> WordSegmenterBorrowed<'data> {
     /// Creates a word break iterator for an `str` (a UTF-8 string).
     ///
     /// There are always breakpoints at 0 and the string length, or only at 0 for the empty string.
-    pub fn segment_str<'l, 's>(&'l self, input: &'s str) -> WordBreakIteratorUtf8<'l, 's> {
-        let locale_override = self
-            .payload_locale_override
-            .as_ref()
-            .map(|payload| payload.get());
+    pub fn segment_str<'s>(self, input: &'s str) -> WordBreakIteratorUtf8<'data, 's> {
         WordBreakIterator(RuleBreakIterator {
             iter: input.char_indices(),
             len: input.len(),
             current_pos_data: None,
             result_cache: Vec::new(),
-            data: self.payload.get(),
-            complex: Some(&self.complex),
+            data: self.data,
+            complex: Some(self.complex),
             boundary_property: 0,
-            locale_override,
+            locale_override: self.locale_override,
         })
     }
 
@@ -486,64 +514,67 @@ impl WordSegmenter {
     /// Invalid characters are treated as REPLACEMENT CHARACTER
     ///
     /// There are always breakpoints at 0 and the string length, or only at 0 for the empty string.
-    pub fn segment_utf8<'l, 's>(
-        &'l self,
+    pub fn segment_utf8<'s>(
+        self,
         input: &'s [u8],
-    ) -> WordBreakIteratorPotentiallyIllFormedUtf8<'l, 's> {
-        let locale_override = self
-            .payload_locale_override
-            .as_ref()
-            .map(|payload| payload.get());
+    ) -> WordBreakIteratorPotentiallyIllFormedUtf8<'data, 's> {
         WordBreakIterator(RuleBreakIterator {
             iter: Utf8CharIndices::new(input),
             len: input.len(),
             current_pos_data: None,
             result_cache: Vec::new(),
-            data: self.payload.get(),
-            complex: Some(&self.complex),
+            data: self.data,
+            complex: Some(self.complex),
             boundary_property: 0,
-            locale_override,
+            locale_override: self.locale_override,
         })
     }
 
     /// Creates a word break iterator for a Latin-1 (8-bit) string.
     ///
     /// There are always breakpoints at 0 and the string length, or only at 0 for the empty string.
-    pub fn segment_latin1<'l, 's>(&'l self, input: &'s [u8]) -> WordBreakIteratorLatin1<'l, 's> {
-        let locale_override = self
-            .payload_locale_override
-            .as_ref()
-            .map(|payload| payload.get());
+    pub fn segment_latin1<'s>(self, input: &'s [u8]) -> WordBreakIteratorLatin1<'data, 's> {
         WordBreakIterator(RuleBreakIterator {
             iter: Latin1Indices::new(input),
             len: input.len(),
             current_pos_data: None,
             result_cache: Vec::new(),
-            data: self.payload.get(),
-            complex: Some(&self.complex),
+            data: self.data,
+            complex: Some(self.complex),
             boundary_property: 0,
-            locale_override,
+            locale_override: self.locale_override,
         })
     }
 
     /// Creates a word break iterator for a UTF-16 string.
     ///
     /// There are always breakpoints at 0 and the string length, or only at 0 for the empty string.
-    pub fn segment_utf16<'l, 's>(&'l self, input: &'s [u16]) -> WordBreakIteratorUtf16<'l, 's> {
-        let locale_override = self
-            .payload_locale_override
-            .as_ref()
-            .map(|payload| payload.get());
+    pub fn segment_utf16<'s>(self, input: &'s [u16]) -> WordBreakIteratorUtf16<'data, 's> {
         WordBreakIterator(RuleBreakIterator {
             iter: Utf16Indices::new(input),
             len: input.len(),
             current_pos_data: None,
             result_cache: Vec::new(),
-            data: self.payload.get(),
-            complex: Some(&self.complex),
+            data: self.data,
+            complex: Some(self.complex),
             boundary_property: 0,
-            locale_override,
+            locale_override: self.locale_override,
         })
+    }
+}
+
+impl WordSegmenterBorrowed<'static> {
+    /// Cheaply converts a [`WordSegmenterBorrowed<'static>`] into a [`WordSegmenter`].
+    ///
+    /// Note: Due to branching and indirection, using [`WordSegmenter`] might inhibit some
+    /// compile-time optimizations that are possible with [`WordSegmenterBorrowed`].
+    pub fn static_to_owned(self) -> WordSegmenter {
+        let payload_locale_override = self.locale_override.map(DataPayload::from_static_ref);
+        WordSegmenter {
+            payload: DataPayload::from_static_ref(self.data),
+            complex: self.complex.static_to_owned(),
+            payload_locale_override,
+        }
     }
 }
 
@@ -552,7 +583,7 @@ impl WordSegmenter {
 pub struct WordBreakTypeUtf8;
 impl crate::private::Sealed for WordBreakTypeUtf8 {}
 
-impl<'l, 's> RuleBreakType<'l, 's> for WordBreakTypeUtf8 {
+impl<'s> RuleBreakType<'s> for WordBreakTypeUtf8 {
     type IterAttr = CharIndices<'s>;
     type CharType = char;
 
@@ -561,7 +592,7 @@ impl<'l, 's> RuleBreakType<'l, 's> for WordBreakTypeUtf8 {
     }
 
     fn handle_complex_language(
-        iter: &mut RuleBreakIterator<'l, 's, Self>,
+        iter: &mut RuleBreakIterator<'_, 's, Self>,
         left_codepoint: Self::CharType,
     ) -> Option<usize> {
         handle_complex_language_utf8(iter, left_codepoint)
@@ -573,7 +604,7 @@ impl<'l, 's> RuleBreakType<'l, 's> for WordBreakTypeUtf8 {
 pub struct WordBreakTypePotentiallyIllFormedUtf8;
 impl crate::private::Sealed for WordBreakTypePotentiallyIllFormedUtf8 {}
 
-impl<'l, 's> RuleBreakType<'l, 's> for WordBreakTypePotentiallyIllFormedUtf8 {
+impl<'s> RuleBreakType<'s> for WordBreakTypePotentiallyIllFormedUtf8 {
     type IterAttr = Utf8CharIndices<'s>;
     type CharType = char;
 
@@ -582,7 +613,7 @@ impl<'l, 's> RuleBreakType<'l, 's> for WordBreakTypePotentiallyIllFormedUtf8 {
     }
 
     fn handle_complex_language(
-        iter: &mut RuleBreakIterator<'l, 's, Self>,
+        iter: &mut RuleBreakIterator<'_, 's, Self>,
         left_codepoint: Self::CharType,
     ) -> Option<usize> {
         handle_complex_language_utf8(iter, left_codepoint)
@@ -590,12 +621,12 @@ impl<'l, 's> RuleBreakType<'l, 's> for WordBreakTypePotentiallyIllFormedUtf8 {
 }
 
 /// handle_complex_language impl for UTF8 iterators
-fn handle_complex_language_utf8<'l, 's, T>(
-    iter: &mut RuleBreakIterator<'l, 's, T>,
+fn handle_complex_language_utf8<'data, 's, T>(
+    iter: &mut RuleBreakIterator<'data, 's, T>,
     left_codepoint: T::CharType,
 ) -> Option<usize>
 where
-    T: RuleBreakType<'l, 's, CharType = char>,
+    T: RuleBreakType<'s, CharType = char>,
 {
     // word segmenter doesn't define break rules for some languages such as Thai.
     let start_iter = iter.iter.clone();
@@ -620,7 +651,7 @@ where
     iter.iter = start_iter;
     iter.current_pos_data = start_point;
     #[allow(clippy::unwrap_used)] // iter.complex present for word segmenter
-    let breaks = complex_language_segment_str(iter.complex.unwrap(), &s);
+    let breaks = iter.complex.unwrap().complex_language_segment_str(&s);
     iter.result_cache = breaks;
     let first_pos = *iter.result_cache.first()?;
     let mut i = left_codepoint.len_utf8();
@@ -650,7 +681,7 @@ pub struct WordBreakTypeUtf16;
 
 impl crate::private::Sealed for WordBreakTypeUtf16 {}
 
-impl<'s> RuleBreakType<'_, 's> for WordBreakTypeUtf16 {
+impl<'s> RuleBreakType<'s> for WordBreakTypeUtf16 {
     type IterAttr = Utf16Indices<'s>;
     type CharType = u32;
 
@@ -688,7 +719,7 @@ impl<'s> RuleBreakType<'_, 's> for WordBreakTypeUtf16 {
         iter.iter = start_iter;
         iter.current_pos_data = start_point;
         #[allow(clippy::unwrap_used)] // iter.complex present for word segmenter
-        let breaks = complex_language_segment_utf16(iter.complex.unwrap(), &s);
+        let breaks = iter.complex.unwrap().complex_language_segment_utf16(&s);
         iter.result_cache = breaks;
         // result_cache vector is utf-16 index that is in BMP.
         let first_pos = *iter.result_cache.first()?;
