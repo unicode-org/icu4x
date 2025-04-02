@@ -64,6 +64,26 @@ final class CaseMapper implements ffi.Finalizable {
     return write.finalize();
   }
 
+  /// Returns the full lowercase mapping of the given string, using compiled data (avoids having to allocate a CaseMapper object)
+  ///
+  /// See the [Rust documentation for `lowercase`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapperBorrowed.html#method.lowercase) for more information.
+  static String lowercaseWithCompiledData(String s, Locale locale) {
+    final temp = _FinalizedArena();
+    final write = _Write();
+    _icu4x_CaseMapper_lowercase_with_compiled_data_mv1(s._utf8AllocIn(temp.arena), locale._ffi, write._ffi);
+    return write.finalize();
+  }
+
+  /// Returns the full uppercase mapping of the given string, using compiled data (avoids having to allocate a CaseMapper object)
+  ///
+  /// See the [Rust documentation for `uppercase`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapperBorrowed.html#method.uppercase) for more information.
+  String uppercaseWithCompiledData(String s, Locale locale) {
+    final temp = _FinalizedArena();
+    final write = _Write();
+    _icu4x_CaseMapper_uppercase_with_compiled_data_mv1(_ffi, s._utf8AllocIn(temp.arena), locale._ffi, write._ffi);
+    return write.finalize();
+  }
+
   /// Returns the full titlecase mapping of the given string, performing head adjustment without
   /// loading additional data.
   /// (if head adjustment is enabled in the options)
@@ -199,6 +219,16 @@ external void _icu4x_CaseMapper_lowercase_mv1(ffi.Pointer<ffi.Opaque> self, _Sli
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, _SliceUtf8, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CaseMapper_uppercase_mv1')
 // ignore: non_constant_identifier_names
 external void _icu4x_CaseMapper_uppercase_mv1(ffi.Pointer<ffi.Opaque> self, _SliceUtf8 s, ffi.Pointer<ffi.Opaque> locale, ffi.Pointer<ffi.Opaque> write);
+
+@_DiplomatFfiUse('icu4x_CaseMapper_lowercase_with_compiled_data_mv1')
+@ffi.Native<ffi.Void Function(_SliceUtf8, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CaseMapper_lowercase_with_compiled_data_mv1')
+// ignore: non_constant_identifier_names
+external void _icu4x_CaseMapper_lowercase_with_compiled_data_mv1(_SliceUtf8 s, ffi.Pointer<ffi.Opaque> locale, ffi.Pointer<ffi.Opaque> write);
+
+@_DiplomatFfiUse('icu4x_CaseMapper_uppercase_with_compiled_data_mv1')
+@ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, _SliceUtf8, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CaseMapper_uppercase_with_compiled_data_mv1')
+// ignore: non_constant_identifier_names
+external void _icu4x_CaseMapper_uppercase_with_compiled_data_mv1(ffi.Pointer<ffi.Opaque> self, _SliceUtf8 s, ffi.Pointer<ffi.Opaque> locale, ffi.Pointer<ffi.Opaque> write);
 
 @_DiplomatFfiUse('icu4x_CaseMapper_titlecase_segment_with_only_case_data_v1_mv1')
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, _SliceUtf8, ffi.Pointer<ffi.Opaque>, _TitlecaseOptionsFfi, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_CaseMapper_titlecase_segment_with_only_case_data_v1_mv1')

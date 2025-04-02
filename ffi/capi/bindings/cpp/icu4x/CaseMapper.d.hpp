@@ -66,6 +66,20 @@ public:
   inline diplomat::result<std::string, diplomat::Utf8Error> uppercase(std::string_view s, const icu4x::Locale& locale) const;
 
   /**
+   * Returns the full lowercase mapping of the given string, using compiled data (avoids having to allocate a CaseMapper object)
+   *
+   * See the [Rust documentation for `lowercase`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapperBorrowed.html#method.lowercase) for more information.
+   */
+  inline static diplomat::result<std::string, diplomat::Utf8Error> lowercase_with_compiled_data(std::string_view s, const icu4x::Locale& locale);
+
+  /**
+   * Returns the full uppercase mapping of the given string, using compiled data (avoids having to allocate a CaseMapper object)
+   *
+   * See the [Rust documentation for `uppercase`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapperBorrowed.html#method.uppercase) for more information.
+   */
+  inline diplomat::result<std::string, diplomat::Utf8Error> uppercase_with_compiled_data(std::string_view s, const icu4x::Locale& locale) const;
+
+  /**
    * Returns the full titlecase mapping of the given string, performing head adjustment without
    * loading additional data.
    * (if head adjustment is enabled in the options)

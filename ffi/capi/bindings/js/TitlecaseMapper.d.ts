@@ -32,5 +32,14 @@ export class TitlecaseMapper {
      */
     titlecaseSegment(s: string, locale: Locale, options: TitlecaseOptions_obj): string;
 
+    /** 
+     * Returns the full titlecase mapping of the given string, using compiled data (avoids having to allocate a TitlecaseMapper object)
+     *
+     * The `v1` refers to the version of the options struct, which may change as we add more options
+     *
+     * See the [Rust documentation for `titlecase_segment`](https://docs.rs/icu/latest/icu/casemap/struct.TitlecaseMapperBorrowed.html#method.titlecase_segment) for more information.
+     */
+    static titlecaseSegmentWithCompiledData(s: string, locale: Locale, options: TitlecaseOptions_obj): string;
+
     constructor();
 }
