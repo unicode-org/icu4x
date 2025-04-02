@@ -62,7 +62,6 @@ pub struct HijriSimulated {
     data: Option<DataPayload<ErasedMarker<HijriData<'static>>>>,
 }
 
-#[non_exhaustive]
 #[derive(Clone, Debug, Copy, PartialEq)]
 pub(crate) enum HijriSimulatedLocation {
     Mecca,
@@ -94,7 +93,6 @@ pub struct HijriUmmAlQura {
 }
 
 #[derive(Debug, Clone, Copy)]
-#[non_exhaustive]
 pub struct HijriUmmAlQuraMarker;
 
 /// The [tabular Hijri Calendar](https://en.wikipedia.org/wiki/Tabular_Islamic_calendar) (astronomical epoch)
