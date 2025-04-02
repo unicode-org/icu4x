@@ -23,7 +23,6 @@ use crate::cal::iso::{Iso, IsoDateInner};
 use crate::calendar_arithmetic::PrecomputedDataSource;
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
 use crate::error::DateError;
-#[cfg(feature = "datagen")]
 use crate::provider::hijri::PackedHijriYearInfo;
 use crate::provider::hijri::{CalendarHijriSimulatedMeccaV1, CalendarHijriUmmalquraV1, HijriData};
 use crate::{types, Calendar, Date, DateDuration, DateDurationUnit};
@@ -205,17 +204,16 @@ impl HijriUmmAlQura {
     #[cfg(feature = "datagen")]
     pub fn build_data(
         first_extended_year: i32,
-        month_lengths_and_year_starts: impl Iterator<Item = ([bool; 12], i64)>,
+        month_lengths_and_start_days: impl Iterator<Item = ([bool; 12], i64)>,
     ) -> HijriData<'static> {
-        let data = month_lengths_and_year_starts
+        let data = month_lengths_and_start_days
             .enumerate()
-            .map(|(offset, (month_lengths, year_start))| {
-                HijriYearInfo::from_parts(
-                    first_extended_year + offset as i32,
+            .map(|(offset, (month_lengths, start_day))| {
+                HijriYearInfo {
                     month_lengths,
-                    ISLAMIC_EPOCH_FRIDAY + year_start,
-                    HijriUmmAlQuraMarker,
-                )
+                    start_day: ISLAMIC_EPOCH_FRIDAY + start_day,
+                    value: first_extended_year + offset as i32,
+                }
                 .pack()
             })
             .collect();
@@ -245,62 +243,51 @@ impl HijriTabular {
 }
 
 pub(crate) trait DatafulHijri: Copy {
-    fn info_for_rd(&self, rd: RataDie) -> HijriYearInfo<Self>;
-    fn info_for_year(&self, extended_year: i32) -> HijriYearInfo<Self>;
+    fn info_for_rd(&self, rd: RataDie) -> HijriYearInfo;
+    fn info_for_year(&self, extended_year: i32) -> HijriYearInfo;
 }
 
 #[derive(Copy, Clone, Debug, Hash, PartialEq, Eq, PartialOrd, Ord)]
-pub(crate) struct HijriYearInfo<IB: DatafulHijri> {
+pub(crate) struct HijriYearInfo {
     month_lengths: [bool; 12],
-    ny_offset: i64,
-    model: IB,
+    start_day: RataDie,
     value: i32,
 }
 
-impl<IB: DatafulHijri> From<HijriYearInfo<IB>> for i32 {
-    fn from(value: HijriYearInfo<IB>) -> Self {
+impl From<HijriYearInfo> for i32 {
+    fn from(value: HijriYearInfo) -> Self {
         value.value
     }
 }
 
 impl HijriData<'_> {
     /// Get the cached data for a given extended year
-    fn get<IB: DatafulHijri>(&self, extended_year: i32, model: IB) -> Option<HijriYearInfo<IB>> {
-        let (month_lengths, ny_offset) = self
-            .data
-            .get(usize::try_from(extended_year - self.first_extended_year).ok()?)?
-            .unpack();
-
-        Some(HijriYearInfo {
-            month_lengths,
-            ny_offset,
-            model,
-            value: extended_year,
-        })
+    fn get(&self, extended_year: i32) -> Option<HijriYearInfo> {
+        Some(HijriYearInfo::unpack(
+            extended_year,
+            self.data
+                .get(usize::try_from(extended_year - self.first_extended_year).ok()?)?,
+        ))
     }
 }
 
 const LONG_YEAR_LEN: u16 = 355;
 const SHORT_YEAR_LEN: u16 = 354;
 
-impl<IB: DatafulHijri> HijriYearInfo<IB> {
-    fn from_parts(
-        extended_year: i32,
-        month_lengths: [bool; 12],
-        year_start: RataDie,
-        model: IB,
-    ) -> Self {
-        Self {
-            month_lengths,
-            ny_offset: year_start - Self::mean_synodic_ny(extended_year),
-            model,
-            value: extended_year,
-        }
-    }
-
+impl HijriYearInfo {
     #[cfg(feature = "datagen")]
     fn pack(&self) -> PackedHijriYearInfo {
-        PackedHijriYearInfo::new(self.month_lengths, self.ny_offset)
+        PackedHijriYearInfo::new(self.value, self.month_lengths, self.start_day)
+    }
+
+    fn unpack(extended_year: i32, packed: PackedHijriYearInfo) -> Self {
+        let (month_lengths, start_day) = packed.unpack(extended_year);
+
+        HijriYearInfo {
+            month_lengths,
+            start_day,
+            value: extended_year,
+        }
     }
 
     /// The number of days in a given 1-indexed month
@@ -320,34 +307,18 @@ impl<IB: DatafulHijri> HijriYearInfo<IB> {
         self.last_day_of_month(12)
     }
 
-    fn mean_synodic_ny(extended_year: i32) -> RataDie {
-        // -1 because the epoch is new year of year 1
-        // truncating instead of flooring does not matter, as this is well-defined for
-        // positive years only
-        ISLAMIC_EPOCH_FRIDAY
-            + ((extended_year - 1) as f64 * calendrical_calculations::islamic::MEAN_YEAR_LENGTH)
-                as i64
-    }
-
-    /// Get the new year R.D. given the extended year that this yearinfo is for    
-    fn new_year(self) -> RataDie {
-        Self::mean_synodic_ny(self.value) + self.ny_offset
-    }
-
     /// Get the date's R.D. given (m, d) in this info's year
     fn md_to_rd(self, month: u8, day: u8) -> RataDie {
-        let ny = self.new_year();
         let month_offset = if month == 1 {
             0
         } else {
             self.last_day_of_month(month - 1)
         };
-        // -1 since the offset is 1-indexed but the new year is also day 1
-        ny - 1 + month_offset.into() + day.into()
+        self.start_day + month_offset as i64 + (day - 1) as i64
     }
 
     fn md_from_rd(self, rd: RataDie) -> (u8, u8) {
-        let day_of_year = (rd - self.new_year()) as u16;
+        let day_of_year = (rd - self.start_day) as u16;
         debug_assert!(day_of_year < 360);
         // We divide by 30, not 29, to account for the case where all months before this
         // were length 30 (possible near the beginning of the year)
@@ -402,7 +373,7 @@ impl<'b, IB: DatafulHijri> HijriPrecomputedData<'b, IB> {
     }
 
     /// Returns the [`HijriYearInfo`] loading from cache or computing.
-    fn load_or_compute_info_for_rd(&self, rd: RataDie) -> HijriYearInfo<IB> {
+    fn load_or_compute_info_for_rd(&self, rd: RataDie) -> HijriYearInfo {
         self.data
             .and_then(|d| {
                 // +1 because the epoch is new year of year 1
@@ -414,13 +385,13 @@ impl<'b, IB: DatafulHijri> HijriPrecomputedData<'b, IB> {
                     as i32
                     + 1;
 
-                let year = d.get(extended_year, self.model)?;
+                let year = d.get(extended_year)?;
 
-                if rd < year.new_year() {
-                    d.get(extended_year - 1, self.model)
+                if rd < year.start_day {
+                    d.get(extended_year - 1)
                 } else {
-                    let next_year = d.get(extended_year + 1, self.model)?;
-                    Some(if rd < next_year.new_year() {
+                    let next_year = d.get(extended_year + 1)?;
+                    Some(if rd < next_year.start_day {
                         year
                     } else {
                         next_year
@@ -431,10 +402,10 @@ impl<'b, IB: DatafulHijri> HijriPrecomputedData<'b, IB> {
     }
 }
 
-impl<IB: DatafulHijri> PrecomputedDataSource<HijriYearInfo<IB>> for HijriPrecomputedData<'_, IB> {
-    fn load_or_compute_info(&self, extended_year: i32) -> HijriYearInfo<IB> {
+impl<IB: DatafulHijri> PrecomputedDataSource<HijriYearInfo> for HijriPrecomputedData<'_, IB> {
+    fn load_or_compute_info(&self, extended_year: i32) -> HijriYearInfo {
         self.data
-            .and_then(|d| d.get(extended_year, self.model))
+            .and_then(|d| d.get(extended_year))
             .unwrap_or_else(|| self.model.info_for_year(extended_year))
     }
 }
@@ -445,7 +416,7 @@ impl<IB: DatafulHijri> PrecomputedDataSource<HijriYearInfo<IB>> for HijriPrecomp
 pub struct HijriDateInner(ArithmeticDate<HijriSimulated>);
 
 impl CalendarArithmetic for HijriSimulated {
-    type YearInfo = HijriYearInfo<HijriSimulatedLocation>;
+    type YearInfo = HijriYearInfo;
 
     fn days_in_provided_month(year: Self::YearInfo, month: u8) -> u8 {
         year.days_in_month(month)
@@ -569,7 +540,7 @@ impl Calendar for HijriSimulated {
 }
 
 impl DatafulHijri for HijriSimulatedLocation {
-    fn info_for_rd(&self, rd: RataDie) -> HijriYearInfo<Self> {
+    fn info_for_rd(&self, rd: RataDie) -> HijriYearInfo {
         let (y, _m, _d) = calendrical_calculations::islamic::observational_islamic_from_fixed(
             rd,
             self.location(),
@@ -577,26 +548,26 @@ impl DatafulHijri for HijriSimulatedLocation {
         self.info_for_year(y)
     }
 
-    fn info_for_year(&self, extended_year: i32) -> HijriYearInfo<Self> {
-        let ny = calendrical_calculations::islamic::fixed_from_observational_islamic(
+    fn info_for_year(&self, extended_year: i32) -> HijriYearInfo {
+        let start_day = calendrical_calculations::islamic::fixed_from_observational_islamic(
             extended_year,
             1,
             1,
             self.location(),
         );
-        let next_ny = calendrical_calculations::islamic::fixed_from_observational_islamic(
+        let next_start_day = calendrical_calculations::islamic::fixed_from_observational_islamic(
             extended_year + 1,
             1,
             1,
             self.location(),
         );
-        match (next_ny - ny) as u16 {
+        match (next_start_day - start_day) as u16 {
             LONG_YEAR_LEN | SHORT_YEAR_LEN => (),
             353 => {
                 icu_provider::log::trace!(
                     "({}) Found year {extended_year} AH with length {}. See <https://github.com/unicode-org/icu4x/issues/4930>",
                     HijriSimulated::DEBUG_NAME,
-                    next_ny - ny
+                    next_start_day - start_day
                 );
             }
             other => {
@@ -657,7 +628,11 @@ impl DatafulHijri for HijriSimulatedLocation {
             }
             month_lengths
         };
-        HijriYearInfo::from_parts(extended_year, month_lengths, ny, *self)
+        HijriYearInfo {
+            month_lengths,
+            start_day,
+            value: extended_year,
+        }
     }
 }
 
@@ -714,13 +689,13 @@ impl<A: AsCalendar<Calendar = HijriSimulated>> Date<A> {
 pub struct HijriUmmAlQuraDateInner(ArithmeticDate<HijriUmmAlQura>);
 
 impl CalendarArithmetic for HijriUmmAlQura {
-    type YearInfo = HijriYearInfo<HijriUmmAlQuraMarker>;
+    type YearInfo = HijriYearInfo;
 
     fn days_in_provided_month(year: Self::YearInfo, month: u8) -> u8 {
         year.days_in_month(month)
     }
 
-    fn months_in_provided_year(_year: HijriYearInfo<HijriUmmAlQuraMarker>) -> u8 {
+    fn months_in_provided_year(_year: HijriYearInfo) -> u8 {
         12
     }
 
@@ -733,7 +708,7 @@ impl CalendarArithmetic for HijriUmmAlQura {
         year.days_in_year() != SHORT_YEAR_LEN
     }
 
-    fn last_month_day_in_provided_year(year: HijriYearInfo<HijriUmmAlQuraMarker>) -> (u8, u8) {
+    fn last_month_day_in_provided_year(year: HijriYearInfo) -> (u8, u8) {
         let days = Self::days_in_provided_month(year, 12);
 
         (12, days)
@@ -838,26 +813,25 @@ impl Calendar for HijriUmmAlQura {
 }
 
 impl DatafulHijri for HijriUmmAlQuraMarker {
-    fn info_for_rd(&self, rd: RataDie) -> HijriYearInfo<Self> {
+    fn info_for_rd(&self, rd: RataDie) -> HijriYearInfo {
         let (y, _m, _d) =
             calendrical_calculations::islamic::tabular_islamic_from_fixed(rd, ISLAMIC_EPOCH_FRIDAY);
         self.info_for_year(y)
     }
 
-    fn info_for_year(&self, extended_year: i32) -> HijriYearInfo<Self> {
-        HijriYearInfo::from_parts(
-            extended_year,
-            core::array::from_fn(|i| {
+    fn info_for_year(&self, extended_year: i32) -> HijriYearInfo {
+        HijriYearInfo {
+            month_lengths: core::array::from_fn(|i| {
                 HijriTabular::days_in_provided_month(extended_year, i as u8 + 1) == 30
             }),
-            calendrical_calculations::islamic::fixed_from_tabular_islamic(
+            start_day: calendrical_calculations::islamic::fixed_from_tabular_islamic(
                 extended_year,
                 1,
                 1,
                 ISLAMIC_EPOCH_FRIDAY,
             ),
-            *self,
-        )
+            value: extended_year,
+        }
     }
 }
 

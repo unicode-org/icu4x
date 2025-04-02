@@ -68,6 +68,11 @@ impl RataDie {
         self.0 - rhs.0
     }
 
+    /// Adds a number of days to this RataDie in a const-friendly way
+    pub const fn const_add(self, rhs: i64) -> Self {
+        Self(self.0 + rhs)
+    }
+
     /// Convert this to a [`Moment`]
     pub const fn as_moment(&self) -> Moment {
         Moment::new(self.0 as f64)
