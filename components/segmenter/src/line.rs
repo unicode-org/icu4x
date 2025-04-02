@@ -1065,6 +1065,7 @@ impl<'l, 's, Y: LineBreakType<'l, 's>> LineBreakIterator<'l, 's, Y> {
 }
 
 #[derive(Debug)]
+#[non_exhaustive]
 pub struct LineBreakTypeUtf8;
 
 impl crate::private::Sealed for LineBreakTypeUtf8 {}
@@ -1099,6 +1100,7 @@ impl<'l, 's> LineBreakType<'l, 's> for LineBreakTypeUtf8 {
 }
 
 #[derive(Debug)]
+#[non_exhaustive]
 pub struct LineBreakTypePotentiallyIllFormedUtf8;
 
 impl crate::private::Sealed for LineBreakTypePotentiallyIllFormedUtf8 {}
@@ -1186,6 +1188,7 @@ where
 }
 
 #[derive(Debug)]
+#[non_exhaustive]
 pub struct LineBreakTypeLatin1;
 impl crate::private::Sealed for LineBreakTypeLatin1 {}
 
@@ -1217,6 +1220,7 @@ impl<'s> LineBreakType<'_, 's> for LineBreakTypeLatin1 {
 }
 
 #[derive(Debug)]
+#[non_exhaustive]
 pub struct LineBreakTypeUtf16;
 impl crate::private::Sealed for LineBreakTypeUtf16 {}
 
