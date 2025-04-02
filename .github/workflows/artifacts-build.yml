@@ -267,8 +267,6 @@ jobs:
       run: |
         npm -C ffi/npm ci
         npm -C tutorials/web-demo ci
-      env: 
-        PINNED_CI_NIGHTLY: nightly-2024-07-23
 
     - name: Run Webpack
       run: npm -C tutorials/web-demo run build
