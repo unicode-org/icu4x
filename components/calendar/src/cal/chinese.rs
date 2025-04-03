@@ -56,7 +56,7 @@ use icu_provider::prelude::*;
 ///
 /// # Year and Era codes
 ///
-/// This Calendar uses a single era code, `chinese`.
+/// This calendar does not use era codes.
 ///
 /// Unlike the Gregorian calendar, the Chinese calendar does not traditionally count years in an infinitely
 /// increasing sequence. Instead, 10 "celestial stems" and 12 "terrestrial branches" are combined to form a
@@ -181,7 +181,7 @@ impl Calendar for Chinese {
         };
 
         match era {
-            Some("chinese") | None => {}
+            None => {}
             _ => return Err(DateError::UnknownEra),
         }
 

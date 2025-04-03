@@ -39,8 +39,8 @@ const ROC_ERA_OFFSET: i32 = 1911;
 ///
 /// # Era codes
 ///
-/// This calendar uses two era codes: `roc` (alias `minguo`), corresponding to years in the 民國 (minguo) era (CE year 1912 and
-/// after), and `roc-inverse` (alias `before-roc`), corresponding to years before the 民國 (minguo) era (CE year 1911 and before).
+/// This calendar uses two era codes: `minguo`, corresponding to years in the 民國 era (CE year 1912 and
+/// after), and `minguo-qian`, corresponding to years before the 民國 era (CE year 1911 and before).
 ///
 ///
 /// # Month codes
@@ -65,8 +65,8 @@ impl Calendar for Roc {
         day: u8,
     ) -> Result<Self::DateInner, DateError> {
         let year = match era {
-            Some("roc" | "minguo") | None => ROC_ERA_OFFSET + year_check(year, 1..)?,
-            Some("roc-inverse" | "before-roc") => ROC_ERA_OFFSET + 1 - year_check(year, 1..)?,
+            Some("minguo") | None => ROC_ERA_OFFSET + year_check(year, 1..)?,
+            Some("minguo-qian") => ROC_ERA_OFFSET + 1 - year_check(year, 1..)?,
             Some(_) => return Err(DateError::UnknownEra),
         };
 
@@ -129,8 +129,8 @@ impl Calendar for Roc {
             types::YearInfo::new(
                 year,
                 types::EraYear {
-                    standard_era: tinystr!(16, "roc").into(),
-                    formatting_era: types::FormattingEra::Index(1, tinystr!(16, "ROC")),
+                    standard_era: tinystr!(16, "minguo").into(),
+                    formatting_era: types::FormattingEra::Index(1, tinystr!(16, "min guo")),
                     era_year: year.saturating_sub(ROC_ERA_OFFSET),
                     ambiguity: types::YearAmbiguity::CenturyRequired,
                 },
@@ -139,8 +139,8 @@ impl Calendar for Roc {
             types::YearInfo::new(
                 year,
                 types::EraYear {
-                    standard_era: tinystr!(16, "roc-inverse").into(),
-                    formatting_era: types::FormattingEra::Index(0, tinystr!(16, "B. ROC")),
+                    standard_era: tinystr!(16, "minguo-qian").into(),
+                    formatting_era: types::FormattingEra::Index(0, tinystr!(16, "min guo qian")),
                     era_year: (ROC_ERA_OFFSET + 1).saturating_sub(year),
                     ambiguity: types::YearAmbiguity::EraAndCenturyRequired,
                 },
@@ -184,7 +184,7 @@ impl Date<Roc> {
     /// let date_roc = Date::try_new_roc(1, 2, 3)
     ///     .expect("Failed to initialize ROC Date instance.");
     ///
-    /// assert_eq!(date_roc.year().standard_era().unwrap().0, tinystr!(16, "roc"));
+    /// assert_eq!(date_roc.year().standard_era().unwrap().0, tinystr!(16, "minguo"));
     /// assert_eq!(date_roc.year().era_year_or_extended(), 1, "ROC year check failed!");
     /// assert_eq!(date_roc.month().ordinal, 2, "ROC month check failed!");
     /// assert_eq!(date_roc.day_of_month().0, 3, "ROC day of month check failed!");
@@ -264,7 +264,7 @@ mod test {
                 iso_month: 1,
                 iso_day: 1,
                 expected_year: 1,
-                expected_era: Era(tinystr!(16, "roc")),
+                expected_era: Era(tinystr!(16, "minguo")),
                 expected_month: 1,
                 expected_day: 1,
             },
@@ -274,7 +274,7 @@ mod test {
                 iso_month: 2,
                 iso_day: 29,
                 expected_year: 1,
-                expected_era: Era(tinystr!(16, "roc")),
+                expected_era: Era(tinystr!(16, "minguo")),
                 expected_month: 2,
                 expected_day: 29,
             },
@@ -284,7 +284,7 @@ mod test {
                 iso_month: 6,
                 iso_day: 30,
                 expected_year: 2,
-                expected_era: Era(tinystr!(16, "roc")),
+                expected_era: Era(tinystr!(16, "minguo")),
                 expected_month: 6,
                 expected_day: 30,
             },
@@ -294,7 +294,7 @@ mod test {
                 iso_month: 7,
                 iso_day: 13,
                 expected_year: 112,
-                expected_era: Era(tinystr!(16, "roc")),
+                expected_era: Era(tinystr!(16, "minguo")),
                 expected_month: 7,
                 expected_day: 13,
             },
@@ -318,7 +318,7 @@ mod test {
                 iso_month: 12,
                 iso_day: 31,
                 expected_year: 1,
-                expected_era: Era(tinystr!(16, "roc-inverse")),
+                expected_era: Era(tinystr!(16, "minguo-qian")),
                 expected_month: 12,
                 expected_day: 31,
             },
@@ -328,7 +328,7 @@ mod test {
                 iso_month: 1,
                 iso_day: 1,
                 expected_year: 1,
-                expected_era: Era(tinystr!(16, "roc-inverse")),
+                expected_era: Era(tinystr!(16, "minguo-qian")),
                 expected_month: 1,
                 expected_day: 1,
             },
@@ -338,7 +338,7 @@ mod test {
                 iso_month: 12,
                 iso_day: 31,
                 expected_year: 2,
-                expected_era: Era(tinystr!(16, "roc-inverse")),
+                expected_era: Era(tinystr!(16, "minguo-qian")),
                 expected_month: 12,
                 expected_day: 31,
             },
@@ -348,7 +348,7 @@ mod test {
                 iso_month: 2,
                 iso_day: 29,
                 expected_year: 4,
-                expected_era: Era(tinystr!(16, "roc-inverse")),
+                expected_era: Era(tinystr!(16, "minguo-qian")),
                 expected_month: 2,
                 expected_day: 29,
             },
@@ -358,7 +358,7 @@ mod test {
                 iso_month: 1,
                 iso_day: 1,
                 expected_year: 1911,
-                expected_era: Era(tinystr!(16, "roc-inverse")),
+                expected_era: Era(tinystr!(16, "minguo-qian")),
                 expected_month: 1,
                 expected_day: 1,
             },
@@ -368,7 +368,7 @@ mod test {
                 iso_month: 12,
                 iso_day: 31,
                 expected_year: 1912,
-                expected_era: Era(tinystr!(16, "roc-inverse")),
+                expected_era: Era(tinystr!(16, "minguo-qian")),
                 expected_month: 12,
                 expected_day: 31,
             },

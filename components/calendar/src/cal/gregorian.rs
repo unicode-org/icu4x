@@ -31,7 +31,7 @@ use tinystr::tinystr;
 ///
 /// # Era codes
 ///
-/// This calendar uses two era codes: `gregory-inverse` (aliases `bce`, `bc`), and `gregory` (aliases `ce`, `ad`), corresponding to the BCE and CE eras.
+/// This calendar uses two era codes: `bce` (alias `bc`), and `ce` (alias `ad`), corresponding to the BCE and CE eras.
 #[derive(Copy, Clone, Debug, Default)]
 #[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct Gregorian;
@@ -50,8 +50,8 @@ impl Calendar for Gregorian {
         day: u8,
     ) -> Result<Self::DateInner, DateError> {
         let year = match era {
-            Some("gregory-inverse" | "bce" | "bc") | None => 1 - year_check(year, 1..)?,
-            Some("gregory" | "ad" | "ce") => year_check(year, 1..)?,
+            Some("bce" | "bc") | None => 1 - year_check(year, 1..)?,
+            Some("ad" | "ce") => year_check(year, 1..)?,
             Some(_) => return Err(DateError::UnknownEra),
         };
 
@@ -111,7 +111,7 @@ impl Calendar for Gregorian {
             types::YearInfo::new(
                 year,
                 types::EraYear {
-                    standard_era: tinystr!(16, "gregory").into(),
+                    standard_era: tinystr!(16, "ce").into(),
                     formatting_era: types::FormattingEra::Index(1, tinystr!(16, "CE")),
                     era_year: year,
                     ambiguity: match year {
@@ -126,7 +126,7 @@ impl Calendar for Gregorian {
             types::YearInfo::new(
                 year,
                 types::EraYear {
-                    standard_era: tinystr!(16, "gregory-inverse").into(),
+                    standard_era: tinystr!(16, "bce").into(),
                     formatting_era: types::FormattingEra::Index(0, tinystr!(16, "BCE")),
                     era_year: 1_i32.saturating_sub(year),
                     ambiguity: types::YearAmbiguity::EraAndCenturyRequired,
@@ -243,7 +243,7 @@ mod test {
                 iso_month: 1,
                 iso_day: 1,
                 expected_year: 1,
-                expected_era: Era(tinystr!(16, "gregory")),
+                expected_era: Era(tinystr!(16, "ce")),
                 expected_month: 1,
                 expected_day: 1,
             },
@@ -253,7 +253,7 @@ mod test {
                 iso_month: 6,
                 iso_day: 30,
                 expected_year: 1,
-                expected_era: Era(tinystr!(16, "gregory")),
+                expected_era: Era(tinystr!(16, "ce")),
                 expected_month: 6,
                 expected_day: 30,
             },
@@ -263,7 +263,7 @@ mod test {
                 iso_month: 2,
                 iso_day: 29,
                 expected_year: 4,
-                expected_era: Era(tinystr!(16, "gregory")),
+                expected_era: Era(tinystr!(16, "ce")),
                 expected_month: 2,
                 expected_day: 29,
             },
@@ -273,7 +273,7 @@ mod test {
                 iso_month: 9,
                 iso_day: 5,
                 expected_year: 4,
-                expected_era: Era(tinystr!(16, "gregory")),
+                expected_era: Era(tinystr!(16, "ce")),
                 expected_month: 9,
                 expected_day: 5,
             },
@@ -283,7 +283,7 @@ mod test {
                 iso_month: 3,
                 iso_day: 1,
                 expected_year: 100,
-                expected_era: Era(tinystr!(16, "gregory")),
+                expected_era: Era(tinystr!(16, "ce")),
                 expected_month: 3,
                 expected_day: 1,
             },
@@ -297,7 +297,7 @@ mod test {
     #[test]
     fn test_gregorian_bce() {
         // Tests that the Gregorian calendar gives the correct expected
-        // day, month, and year for negative years (BC/BCE/pre-gregory era)
+        // day, month, and year for negative years (BC/BCE era)
 
         let cases = [
             TestCase {
@@ -306,7 +306,7 @@ mod test {
                 iso_month: 12,
                 iso_day: 31,
                 expected_year: 1,
-                expected_era: Era(tinystr!(16, "gregory-inverse")),
+                expected_era: Era(tinystr!(16, "bce")),
                 expected_month: 12,
                 expected_day: 31,
             },
@@ -316,7 +316,7 @@ mod test {
                 iso_month: 1,
                 iso_day: 1,
                 expected_year: 1,
-                expected_era: Era(tinystr!(16, "gregory-inverse")),
+                expected_era: Era(tinystr!(16, "bce")),
                 expected_month: 1,
                 expected_day: 1,
             },
@@ -326,7 +326,7 @@ mod test {
                 iso_month: 12,
                 iso_day: 31,
                 expected_year: 2,
-                expected_era: Era(tinystr!(16, "gregory-inverse")),
+                expected_era: Era(tinystr!(16, "bce")),
                 expected_month: 12,
                 expected_day: 31,
             },
@@ -336,7 +336,7 @@ mod test {
                 iso_month: 12,
                 iso_day: 31,
                 expected_year: 5,
-                expected_era: Era(tinystr!(16, "gregory-inverse")),
+                expected_era: Era(tinystr!(16, "bce")),
                 expected_month: 12,
                 expected_day: 31,
             },
@@ -346,7 +346,7 @@ mod test {
                 iso_month: 1,
                 iso_day: 1,
                 expected_year: 5,
-                expected_era: Era(tinystr!(16, "gregory-inverse")),
+                expected_era: Era(tinystr!(16, "bce")),
                 expected_month: 1,
                 expected_day: 1,
             },

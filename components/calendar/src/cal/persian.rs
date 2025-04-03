@@ -32,7 +32,7 @@ use calendrical_calculations::rata_die::RataDie;
 ///
 /// # Era codes
 ///
-/// This calendar uses a single era code: `persian` (alias `ap`), with AP starting the year of the Hijra.
+/// This calendar uses a single era code `ap` (aliases `sh`, `hs`), with Anno Persico/Anno Persarum starting the year of the Hijra. Dates before this era use negative years.
 ///
 /// # Month codes
 ///
@@ -94,7 +94,7 @@ impl Calendar for Persian {
         day: u8,
     ) -> Result<Self::DateInner, DateError> {
         let year = match era {
-            Some("persian" | "ap") | None => year,
+            Some("ap" | "sh" | "hs") | None => year,
             Some(_) => return Err(DateError::UnknownEra),
         };
 
@@ -160,8 +160,8 @@ impl Calendar for Persian {
         types::YearInfo::new(
             year,
             types::EraYear {
-                standard_era: tinystr!(16, "persian").into(),
-                formatting_era: types::FormattingEra::Index(0, tinystr!(16, "AH")),
+                standard_era: tinystr!(16, "ap").into(),
+                formatting_era: types::FormattingEra::Index(0, tinystr!(16, "AP")),
                 era_year: year,
                 ambiguity: types::YearAmbiguity::CenturyRequired,
             },

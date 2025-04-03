@@ -52,9 +52,9 @@ pub enum EthiopianEraStyle {
 ///
 /// # Era codes
 ///
-/// This calendar always uses the `ethioaa` era (aliases `mundi`, `ethiopic-amete-alem`), where 1 Anno Mundi is 5493 BCE.
+/// This calendar always uses the `aa` era, where 1 Amete Alem is 5493 BCE. Dates before this era use negative years.
 /// Dates before that use negative year numbers.
-/// In the Amete Mihret scheme it uses the additional `ethiopic` era (alias `incar`), 1 Incarnation is 9 CE.
+/// In the Amete Mihret scheme it uses the additional `am` era, 1 Amete Mihret is 9 CE.
 ///
 /// # Month codes
 ///
@@ -120,16 +120,13 @@ impl Calendar for Ethiopian {
         day: u8,
     ) -> Result<Self::DateInner, DateError> {
         let year = match (self.era_style(), era) {
-            (EthiopianEraStyle::AmeteMihret, Some("incar" | "ethiopic") | None) => {
+            (EthiopianEraStyle::AmeteMihret, Some("am") | None) => {
                 year_check(year, 1..)? + INCARNATION_OFFSET
             }
-            (EthiopianEraStyle::AmeteMihret, Some("mundi" | "ethioaa" | "ethiopic-amete-alem")) => {
+            (EthiopianEraStyle::AmeteMihret, Some("aa")) => {
                 year_check(year, ..=INCARNATION_OFFSET)?
             }
-            (
-                EthiopianEraStyle::AmeteAlem,
-                Some("mundi" | "ethioaa" | "ethiopic-amete-alem") | None,
-            ) => year,
+            (EthiopianEraStyle::AmeteAlem, Some("aa") | None) => year,
             (_, Some(_)) => {
                 return Err(DateError::UnknownEra);
             }
@@ -203,8 +200,8 @@ impl Calendar for Ethiopian {
             types::YearInfo::new(
                 year,
                 types::EraYear {
-                    standard_era: tinystr!(16, "ethioaa").into(),
-                    formatting_era: types::FormattingEra::Index(0, tinystr!(16, "Anno Mundi")),
+                    standard_era: tinystr!(16, "aa").into(),
+                    formatting_era: types::FormattingEra::Index(0, tinystr!(16, "AA")),
                     era_year: year,
                     ambiguity: types::YearAmbiguity::CenturyRequired,
                 },
@@ -213,8 +210,8 @@ impl Calendar for Ethiopian {
             types::YearInfo::new(
                 year - INCARNATION_OFFSET,
                 types::EraYear {
-                    standard_era: tinystr!(16, "ethiopic").into(),
-                    formatting_era: types::FormattingEra::Index(1, tinystr!(16, "Incarnation")),
+                    standard_era: tinystr!(16, "am").into(),
+                    formatting_era: types::FormattingEra::Index(1, tinystr!(16, "AM")),
                     era_year: year - INCARNATION_OFFSET,
                     ambiguity: types::YearAmbiguity::CenturyRequired,
                 },

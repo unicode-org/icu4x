@@ -34,12 +34,12 @@ use icu_provider::marker::ErasedMarker;
 use icu_provider::prelude::*;
 use tinystr::tinystr;
 
-fn year_as_hijri(standard_era: tinystr::TinyStr16, year: i32) -> types::YearInfo {
+fn year_as_hijri(year: i32) -> types::YearInfo {
     types::YearInfo::new(
         year,
         types::EraYear {
+            standard_era: types::Era(tinystr!(16, "ah")),
             formatting_era: types::FormattingEra::Index(0, tinystr!(16, "AH")),
-            standard_era: standard_era.into(),
             era_year: year,
             ambiguity: types::YearAmbiguity::CenturyRequired,
         },
@@ -50,7 +50,7 @@ fn year_as_hijri(standard_era: tinystr::TinyStr16, year: i32) -> types::YearInfo
 ///
 /// # Era codes
 ///
-/// This calendar uses a single era code, `islamic-rgsa` (alias `ah`), Anno Hegirae.
+/// This calendar uses a single era code `ah`, Anno Hegirae. Dates before this era use negative years.
 ///
 /// # Month codes
 ///
@@ -81,7 +81,7 @@ impl HijriSimulatedLocation {
 ///
 /// # Era codes
 ///
-/// This calendar uses a single era code, `islamic-umalqura` (alias `ah`), Anno Hegirae.
+/// This calendar uses a single era code `ah`, Anno Hegirae. Dates before this era use negative years.
 ///
 /// # Month codes
 ///
@@ -103,9 +103,7 @@ pub struct HijriUmmAlQuraMarker;
 ///
 /// # Era codes
 ///
-/// In civil mode, this calendar uses a single era code, `islamic-civil` (aliases `ah`, `islamicc`), Anno Hegirae.
-///
-/// In astronomical mode, it uses a single era code, `islamic-tbla` (alias `ah`), Anno Hegirae.
+/// This calendar uses a single era code `ah`, Anno Hegirae. Dates before this era use negative years.
 ///
 /// # Month codes
 ///
@@ -567,7 +565,7 @@ impl Calendar for HijriSimulated {
     }
 
     fn year(&self, date: &Self::DateInner) -> types::YearInfo {
-        year_as_hijri(tinystr!(16, "islamic-rgsa"), date.0.year.value)
+        year_as_hijri(date.0.year.value)
     }
 
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
@@ -699,8 +697,6 @@ impl HijriSimulated {
 
 impl<A: AsCalendar<Calendar = HijriSimulated>> Date<A> {
     /// Construct new simulated Hijri Date.
-    ///
-    /// Has no negative years, only era is the AH.
     ///
     /// ```rust
     /// use icu::calendar::cal::HijriSimulated;
@@ -836,7 +832,7 @@ impl Calendar for HijriUmmAlQura {
     }
 
     fn year(&self, date: &Self::DateInner) -> types::YearInfo {
-        year_as_hijri(tinystr!(16, "islamic-umalqura"), date.0.year.value)
+        year_as_hijri(date.0.year.value)
     }
 
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
@@ -894,8 +890,6 @@ impl HijriUmmAlQura {
 
 impl<A: AsCalendar<Calendar = HijriUmmAlQura>> Date<A> {
     /// Construct new Hijri Umm al-Qura Date.
-    ///
-    /// Has no negative years, only era is the AH.
     ///
     /// ```rust
     /// use icu::calendar::cal::HijriUmmAlQura;
@@ -1061,13 +1055,7 @@ impl Calendar for HijriTabular {
     }
 
     fn year(&self, date: &Self::DateInner) -> types::YearInfo {
-        year_as_hijri(
-            match self.epoch {
-                HijriTabularEpoch::Friday => tinystr!(16, "islamic-civil"),
-                HijriTabularEpoch::Thursday => tinystr!(16, "islamic-tbla"),
-            },
-            date.0.year,
-        )
+        year_as_hijri(date.0.year)
     }
 
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
@@ -1093,8 +1081,6 @@ impl Calendar for HijriTabular {
 
 impl<A: AsCalendar<Calendar = HijriTabular>> Date<A> {
     /// Construct new Tabular Hijri Date.
-    ///
-    /// Has no negative years, only era is the AH.
     ///
     /// ```rust
     /// use icu::calendar::cal::{HijriTabular, HijriTabularEpoch, HijriTabularLeapYears};

@@ -35,7 +35,7 @@ use tinystr::tinystr;
 ///
 /// # Era codes
 ///
-/// This calendar uses two era codes: `coptic-inverse`, and `coptic`, corresponding to the Before Diocletian and After Diocletian/Anno Martyrum
+/// This calendar uses two era codes: `bd`, and `am`, corresponding to the Before Diocletian and After Diocletian/Anno Martyrum
 /// eras. 1 A.M. is equivalent to 284 C.E.
 ///
 /// # Month codes
@@ -102,8 +102,8 @@ impl Calendar for Coptic {
         day: u8,
     ) -> Result<Self::DateInner, DateError> {
         let year = match era {
-            Some("coptic") | None => year_check(year, 1..)?,
-            Some("coptic-inverse") => 1 - year_check(year, 1..)?,
+            Some("am") | None => year_check(year, 1..)?,
+            Some("bd") => 1 - year_check(year, 1..)?,
             Some(_) => return Err(DateError::UnknownEra),
         };
 
@@ -166,8 +166,8 @@ impl Calendar for Coptic {
             types::YearInfo::new(
                 year,
                 types::EraYear {
-                    standard_era: tinystr!(16, "coptic").into(),
-                    formatting_era: types::FormattingEra::Index(1, tinystr!(16, "AD")),
+                    standard_era: tinystr!(16, "am").into(),
+                    formatting_era: types::FormattingEra::Index(1, tinystr!(16, "AM")),
                     era_year: year,
                     ambiguity: types::YearAmbiguity::CenturyRequired,
                 },
@@ -176,7 +176,7 @@ impl Calendar for Coptic {
             types::YearInfo::new(
                 year,
                 types::EraYear {
-                    standard_era: tinystr!(16, "coptic-inverse").into(),
+                    standard_era: tinystr!(16, "bd").into(),
                     formatting_era: types::FormattingEra::Index(0, tinystr!(16, "BD")),
                     era_year: 1 - year,
                     ambiguity: types::YearAmbiguity::EraAndCenturyRequired,
