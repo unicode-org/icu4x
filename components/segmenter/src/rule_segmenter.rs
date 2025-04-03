@@ -41,8 +41,8 @@ pub trait RuleBreakType<'s>: crate::private::Sealed {
 ///
 /// - `'l` = lifetime of the segmenter object from which this iterator was created
 /// - `'data` = lifetime of data borrowed by segmenter object
-///          (this largely exists because segmenter data is invariant due to ZeroMap constraints,
-///           think of it as a second 'l)
+///   (this largely exists because segmenter data is invariant due to ZeroMap constraints,
+///   think of it as a second 'l)
 /// - `'s` = lifetime of the string being segmented
 ///
 /// The [`Iterator::Item`] is an [`usize`] representing index of a code unit

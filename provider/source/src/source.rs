@@ -287,9 +287,11 @@ impl AbstractFs {
                 .entries_with_seek()
                 .and_then(|e| {
                     for e in e {
-                        let e = e?;
+                        let mut e = e?;
                         if e.path()?.as_os_str() == path {
-                            return e.bytes().collect::<Result<Vec<_>, std::io::Error>>();
+                            let mut vec = vec![];
+                            e.read_to_end(&mut vec)?;
+                            return Ok(vec);
                         }
                     }
                     Err(std::io::ErrorKind::NotFound.into())
