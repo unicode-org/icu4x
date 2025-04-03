@@ -39,6 +39,20 @@ export class CaseMapper {
     uppercase(s: string, locale: Locale): string;
 
     /** 
+     * Returns the full lowercase mapping of the given string, using compiled data (avoids having to allocate a CaseMapper object)
+     *
+     * See the [Rust documentation for `lowercase`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapperBorrowed.html#method.lowercase) for more information.
+     */
+    static lowercaseWithCompiledData(s: string, locale: Locale): string;
+
+    /** 
+     * Returns the full uppercase mapping of the given string, using compiled data (avoids having to allocate a CaseMapper object)
+     *
+     * See the [Rust documentation for `uppercase`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapperBorrowed.html#method.uppercase) for more information.
+     */
+    uppercaseWithCompiledData(s: string, locale: Locale): string;
+
+    /** 
      * Returns the full titlecase mapping of the given string, performing head adjustment without
      * loading additional data.
      * (if head adjustment is enabled in the options)

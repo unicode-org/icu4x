@@ -123,7 +123,7 @@ lazy_static::lazy_static! {
         // since Diplomat can't do generics. We also support Gregorian *formatter*
         // but we don't need a separate Gregorian Date.
         "icu::calendar::cal",
-        "icu::calendar::any_calendar::IntoAnyCalendar",
+        "icu::calendar::IntoAnyCalendar",
         "icu::calendar::Date::try_new_buddhist",
         "icu::calendar::Date::try_new_chinese_with_calendar",
         "icu::calendar::Date::try_new_coptic",
@@ -341,9 +341,9 @@ lazy_static::lazy_static! {
         "icu::datetime::DateTimeFormatter::cast_into_fset",
         "icu::datetime::FixedCalendarDateTimeFormatter::cast_into_fset",
         // TODO-2.0: needs investigation
-        "icu::calendar::Date::wrap_calendar_in_rc",
-        "icu::calendar::Date::wrap_calendar_in_arc",
-        "icu::calendar::Date::wrap_calendar_in_ref",
+        "icu::calendar::Date::into_ref_counted",
+        "icu::calendar::Date::into_atomic_ref_counted",
+        "icu::calendar::Date::as_borrowed",
 
         // Generic type, primarily exists for use by ICU4X data struct internals.
         "icu::plurals::PluralElements",

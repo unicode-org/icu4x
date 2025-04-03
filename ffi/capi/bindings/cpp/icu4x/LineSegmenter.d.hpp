@@ -121,7 +121,7 @@ public:
    * Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
    * to the WHATWG Encoding Standard.
    *
-   * See the [Rust documentation for `segment_utf8`](https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html#method.segment_utf8) for more information.
+   * See the [Rust documentation for `segment_utf8`](https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenterBorrowed.html#method.segment_utf8) for more information.
    */
   inline std::unique_ptr<icu4x::LineBreakIteratorUtf8> segment(std::string_view input) const;
 
@@ -131,14 +131,14 @@ public:
    * Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
    * to the WHATWG Encoding Standard.
    *
-   * See the [Rust documentation for `segment_utf16`](https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html#method.segment_utf16) for more information.
+   * See the [Rust documentation for `segment_utf16`](https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenterBorrowed.html#method.segment_utf16) for more information.
    */
   inline std::unique_ptr<icu4x::LineBreakIteratorUtf16> segment16(std::u16string_view input) const;
 
   /**
    * Segments a Latin-1 string.
    *
-   * See the [Rust documentation for `segment_latin1`](https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html#method.segment_latin1) for more information.
+   * See the [Rust documentation for `segment_latin1`](https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenterBorrowed.html#method.segment_latin1) for more information.
    */
   inline std::unique_ptr<icu4x::LineBreakIteratorLatin1> segment_latin1(diplomat::span<const uint8_t> input) const;
 

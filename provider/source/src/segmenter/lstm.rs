@@ -260,6 +260,7 @@ mod tests {
 
         let segmenter =
             LineSegmenter::try_new_lstm_unstable(&provider, Default::default()).unwrap();
+        let segmenter = segmenter.as_borrowed();
 
         const TEST_STR: &str = "ภาษาไทยภาษาไทย";
         let utf16: Vec<u16> = TEST_STR.encode_utf16().collect();

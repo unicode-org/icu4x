@@ -51,13 +51,13 @@ namespace capi {
 } // namespace capi
 } // namespace
 
-inline bool icu4x::GeneralCategoryGroup::contains(icu4x::GeneralCategory val) {
+inline bool icu4x::GeneralCategoryGroup::contains(icu4x::GeneralCategory val) const {
   auto result = icu4x::capi::icu4x_GeneralCategoryGroup_contains_mv1(this->AsFFI(),
     val.AsFFI());
   return result;
 }
 
-inline icu4x::GeneralCategoryGroup icu4x::GeneralCategoryGroup::complement() {
+inline icu4x::GeneralCategoryGroup icu4x::GeneralCategoryGroup::complement() const {
   auto result = icu4x::capi::icu4x_GeneralCategoryGroup_complement_mv1(this->AsFFI());
   return icu4x::GeneralCategoryGroup::FromFFI(result);
 }
@@ -72,13 +72,13 @@ inline icu4x::GeneralCategoryGroup icu4x::GeneralCategoryGroup::empty() {
   return icu4x::GeneralCategoryGroup::FromFFI(result);
 }
 
-inline icu4x::GeneralCategoryGroup icu4x::GeneralCategoryGroup::union_(icu4x::GeneralCategoryGroup other) {
+inline icu4x::GeneralCategoryGroup icu4x::GeneralCategoryGroup::union_(icu4x::GeneralCategoryGroup other) const {
   auto result = icu4x::capi::icu4x_GeneralCategoryGroup_union_mv1(this->AsFFI(),
     other.AsFFI());
   return icu4x::GeneralCategoryGroup::FromFFI(result);
 }
 
-inline icu4x::GeneralCategoryGroup icu4x::GeneralCategoryGroup::intersection(icu4x::GeneralCategoryGroup other) {
+inline icu4x::GeneralCategoryGroup icu4x::GeneralCategoryGroup::intersection(icu4x::GeneralCategoryGroup other) const {
   auto result = icu4x::capi::icu4x_GeneralCategoryGroup_intersection_mv1(this->AsFFI(),
     other.AsFFI());
   return icu4x::GeneralCategoryGroup::FromFFI(result);

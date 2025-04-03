@@ -76,9 +76,9 @@ pub mod ffi {
 
     #[diplomat::opaque]
     #[diplomat::rust_link(icu::time::TimeZoneInfo, Struct)]
-    #[diplomat::rust_link(icu::time::zone::models::AtTime, Enum, hidden)]
-    #[diplomat::rust_link(icu::time::zone::models::Base, Enum, hidden)]
-    #[diplomat::rust_link(icu::time::zone::models::Full, Enum, hidden)]
+    #[diplomat::rust_link(icu::time::zone::models::AtTime, Struct, hidden)]
+    #[diplomat::rust_link(icu::time::zone::models::Base, Struct, hidden)]
+    #[diplomat::rust_link(icu::time::zone::models::Full, Struct, hidden)]
     pub struct TimeZoneInfo {
         pub(crate) time_zone_id: icu_time::TimeZone,
         pub(crate) offset: Option<icu_time::zone::UtcOffset>,

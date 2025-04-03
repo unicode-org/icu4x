@@ -129,9 +129,9 @@ fn naively_apply_time_zone_name(
 /// * `length_patterns` - Contains information on how to combine date and time patterns.
 /// * `fields` - The desired fields to match against.
 /// * `prefer_matched_pattern` - This algorithm does some extra steps of trying to respect
-///         the desired fields, even if the provider data doesn't completely match. This
-///         configuration option makes it so that the final pattern won't have additional work
-///         done to mutate it to match the fields. It will prefer the actual matched pattern.
+///   the desired fields, even if the provider data doesn't completely match. This
+///   configuration option makes it so that the final pattern won't have additional work
+///   done to mutate it to match the fields. It will prefer the actual matched pattern.
 pub fn create_best_pattern_for_fields<'data>(
     skeletons: &DateSkeletonPatterns<'data>,
     length_patterns: &GenericLengthPatterns<'data>,
@@ -375,9 +375,9 @@ fn apply_subseconds(pattern: &mut runtime::Pattern, subseconds: Option<Subsecond
 ///  * Compute a score based on the best possible match for the given fields.
 ///  * Select the skeleton with highest score.
 ///  * Modify the resulting pattern to have fields of the same length. For example requesting
-///      a skeleton "yMMMMd" can have a best match of ["yMMMd", "d MMM y"]. This pattern should
-///      then be modified to use the requested length to produce a pattern "d MMMM y".
-///      However, fields should not be changed from numeric to text.
+///    a skeleton "yMMMMd" can have a best match of ["yMMMd", "d MMM y"]. This pattern should
+///    then be modified to use the requested length to produce a pattern "d MMMM y".
+///    However, fields should not be changed from numeric to text.
 ///
 /// The following is not implemented:
 ///

@@ -99,13 +99,13 @@ fn collect_public_types(krate: &str) -> impl Iterator<Item = (Vec<String>, ast::
         if CRATES.get(krate).is_none() {
             eprintln!("Parsing crate {krate}");
             std::process::Command::new("rustup")
-                .args(["install", "nightly-2024-07-23"])
+                .args(["install", "nightly-2025-02-17"])
                 .output()
                 .expect("failed to install nightly");
             let output = std::process::Command::new("rustup")
                 .args([
                     "run",
-                    "nightly-2024-07-23",
+                    "nightly-2025-02-17",
                     "cargo",
                     "rustdoc",
                     "-p",
@@ -186,8 +186,8 @@ fn collect_public_types(krate: &str) -> impl Iterator<Item = (Vec<String>, ast::
             return;
         }
         match &item.inner {
-            ItemEnum::Import(import) => {
-                if !import.glob {
+            ItemEnum::Use(import) => {
+                if !import.is_glob {
                     path.push(import.name.clone());
                 }
 
@@ -235,7 +235,7 @@ fn collect_public_types(krate: &str) -> impl Iterator<Item = (Vec<String>, ast::
                                     .iter()
                                     .map(|id| &external_crate.index[id])
                                     .find(|item| match &item.inner {
-                                        ItemEnum::Import(import) => {
+                                        ItemEnum::Use(import) => {
                                             if import.name.as_str() == segment {
                                                 path.pop();
                                                 true
@@ -272,11 +272,10 @@ fn collect_public_types(krate: &str) -> impl Iterator<Item = (Vec<String>, ast::
                             if let ItemEnum::Impl(inner) = &krate.index[id].inner {
                                 let mut trait_name = None;
                                 if let Some(path) = &inner.trait_ {
-                                    let name = &path.name;
-                                    if IGNORED_TRAITS.contains(name.as_str()) {
+                                    if IGNORED_TRAITS.contains(path.path.as_str()) {
                                         continue;
                                     }
-                                    trait_name = Some(&*path.name);
+                                    trait_name = Some(path.path.as_str());
                                 }
                                 for id in &inner.items {
                                     recurse(
@@ -302,11 +301,10 @@ fn collect_public_types(krate: &str) -> impl Iterator<Item = (Vec<String>, ast::
                             if let ItemEnum::Impl(inner) = &krate.index[id].inner {
                                 let mut trait_name = None;
                                 if let Some(path) = &inner.trait_ {
-                                    let name = &path.name;
-                                    if IGNORED_TRAITS.contains(name.as_str()) {
+                                    if IGNORED_TRAITS.contains(path.path.as_str()) {
                                         continue;
                                     }
-                                    trait_name = Some(&*path.name);
+                                    trait_name = Some(path.path.as_str());
                                 }
                                 for id in &inner.items {
                                     recurse(

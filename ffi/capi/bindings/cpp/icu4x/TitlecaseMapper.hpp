@@ -29,6 +29,8 @@ namespace capi {
     
     void icu4x_TitlecaseMapper_titlecase_segment_v1_mv1(const icu4x::capi::TitlecaseMapper* self, diplomat::capi::DiplomatStringView s, const icu4x::capi::Locale* locale, icu4x::capi::TitlecaseOptionsV1 options, diplomat::capi::DiplomatWrite* write);
     
+    void icu4x_TitlecaseMapper_titlecase_segment_with_compiled_data_v1_mv1(diplomat::capi::DiplomatStringView s, const icu4x::capi::Locale* locale, icu4x::capi::TitlecaseOptionsV1 options, diplomat::capi::DiplomatWrite* write);
+    
     
     void icu4x_TitlecaseMapper_destroy_mv1(TitlecaseMapper* self);
     
@@ -54,6 +56,19 @@ inline diplomat::result<std::string, diplomat::Utf8Error> icu4x::TitlecaseMapper
   diplomat::capi::DiplomatWrite write = diplomat::WriteFromString(output);
   icu4x::capi::icu4x_TitlecaseMapper_titlecase_segment_v1_mv1(this->AsFFI(),
     {s.data(), s.size()},
+    locale.AsFFI(),
+    options.AsFFI(),
+    &write);
+  return diplomat::Ok<std::string>(std::move(output));
+}
+
+inline diplomat::result<std::string, diplomat::Utf8Error> icu4x::TitlecaseMapper::titlecase_segment_with_compiled_data_v1(std::string_view s, const icu4x::Locale& locale, icu4x::TitlecaseOptionsV1 options) {
+  if (!diplomat::capi::diplomat_is_str(s.data(), s.size())) {
+    return diplomat::Err<diplomat::Utf8Error>();
+  }
+  std::string output;
+  diplomat::capi::DiplomatWrite write = diplomat::WriteFromString(output);
+  icu4x::capi::icu4x_TitlecaseMapper_titlecase_segment_with_compiled_data_v1_mv1({s.data(), s.size()},
     locale.AsFFI(),
     options.AsFFI(),
     &write);

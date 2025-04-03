@@ -104,7 +104,7 @@ inline icu4x::CanonicalCombiningClass icu4x::CanonicalCombiningClass::for_char(c
   return icu4x::CanonicalCombiningClass::FromFFI(result);
 }
 
-inline uint8_t icu4x::CanonicalCombiningClass::to_integer_value() {
+inline uint8_t icu4x::CanonicalCombiningClass::to_integer_value() const {
   auto result = icu4x::capi::icu4x_CanonicalCombiningClass_to_integer_value_mv1(this->AsFFI());
   return result;
 }
