@@ -5,8 +5,8 @@
 use crate::pattern::PatternLoadError;
 use displaydoc::Display;
 use icu_calendar::{
-    any_calendar::AnyCalendarKind,
     types::{FormattingEra, MonthCode},
+    AnyCalendarKind,
 };
 use icu_provider::DataError;
 

@@ -95,10 +95,11 @@ pub struct HijriUmmAlQura {
 #[derive(Debug, Clone, Copy)]
 pub struct HijriUmmAlQuraMarker;
 
-/// The [tabular Hijri Calendar](https://en.wikipedia.org/wiki/Tabular_Islamic_calendar) (astronomical epoch)
+/// The [tabular Hijri Calendar](https://en.wikipedia.org/wiki/Tabular_Islamic_calendar).
 ///
-/// This is a tabular/arithmetic Hijri calendar with leap years (1-based) 2, 5, 7, 10,
-/// 13, 16, 18, 21, 24, 26, and 29 in the 30-year cycle.
+/// See [`HijriTabularEpoch`] and [`HijriTabularLeapYears`] for customization.
+///
+/// The most common version of this calendar uses [`HijriTabularEpoch::Friday`] and [`HijriTabularLeapYears::TypeII`].
 ///
 /// # Era codes
 ///
@@ -111,7 +112,10 @@ pub struct HijriUmmAlQuraMarker;
 /// This calendar is a pure lunar calendar with no leap months. It uses month codes
 /// `"M01" - "M12"`.
 #[derive(Copy, Clone, Debug, Hash, Eq, PartialEq, PartialOrd, Ord)]
-pub struct HijriTabular(pub(crate) RataDie);
+pub struct HijriTabular {
+    pub(crate) epoch: HijriTabularEpoch,
+    pub(crate) leap_years: HijriTabularLeapYears,
+}
 
 impl HijriSimulated {
     /// Creates a new [`HijriSimulated`] for reference location Mecca, with some compiled data containing precomputed calendrical calculations.
@@ -226,21 +230,40 @@ impl HijriUmmAlQura {
     }
 }
 
-impl HijriTabular {
-    /// Construct a new [`HijriTabular`] with the civil/Friday epoch. That is,
-    /// the year 1 starts on Friday July 16, 622 AD (0622-07-19 ISO).
-    ///
-    /// This is the most common version of the tabular Hijri calendar.
-    pub const fn new_civil_epoch() -> Self {
-        Self(ISLAMIC_EPOCH_FRIDAY)
-    }
+/// The epoch for the [`HijriTabular`] calendar.
+#[non_exhaustive]
+#[derive(Copy, Clone, Debug, Hash, Eq, PartialEq, PartialOrd, Ord)]
+pub enum HijriTabularEpoch {
+    /// Thusday July 15, 622 AD (0622-07-18 ISO)
+    Thursday,
+    /// Friday July 16, 622 AD (0622-07-19 ISO)
+    Friday,
+}
 
-    /// Construct a new [`HijriTabular`] with the astronomical/Thursday epoch.
-    /// That is, the AH era starts on Thusday July 15, 622 AD (0622-07-18 ISO).
-    ///
-    /// This version of the calendar is also known as the "Microsoft Kuwaiti calendar".
-    pub const fn new_astronomical_epoch() -> Self {
-        Self(ISLAMIC_EPOCH_THURSDAY)
+impl HijriTabularEpoch {
+    fn rata_die(self) -> RataDie {
+        match self {
+            Self::Thursday => ISLAMIC_EPOCH_THURSDAY,
+            Self::Friday => ISLAMIC_EPOCH_FRIDAY,
+        }
+    }
+}
+
+/// The leap year rule for the [`HijriTabular`] calendar.
+///
+/// This specifies which years of a 30-year cycle have an additional day at
+/// the end of the year.
+#[non_exhaustive]
+#[derive(Copy, Clone, Debug, Hash, Eq, PartialEq, PartialOrd, Ord)]
+pub enum HijriTabularLeapYears {
+    /// Leap years 2, 5, 7, 10, 13, 16, 18, 21, 24, 26, 29
+    TypeII,
+}
+
+impl HijriTabular {
+    /// Construct a new [`HijriTabular`] with the given epoch and leap year rule.
+    pub const fn new(epoch: HijriTabularEpoch, leap_years: HijriTabularLeapYears) -> Self {
+        Self { epoch, leap_years }
     }
 }
 
@@ -960,8 +983,8 @@ impl Calendar for HijriTabular {
     ) -> Result<Self::DateInner, DateError> {
         let year = match era {
             Some("ah") | None => year,
-            Some("islamic-civil" | "islamicc") if self.0 == ISLAMIC_EPOCH_FRIDAY => year,
-            Some("islamic-tbla") if self.0 == ISLAMIC_EPOCH_THURSDAY => year,
+            Some("islamic-civil" | "islamicc") if self.epoch == HijriTabularEpoch::Friday => year,
+            Some("islamic-tbla") if self.epoch == HijriTabularEpoch::Thursday => year,
             Some(_) => return Err(DateError::UnknownEra),
         };
 
@@ -969,19 +992,30 @@ impl Calendar for HijriTabular {
     }
 
     fn from_rata_die(&self, rd: RataDie) -> Self::DateInner {
-        let (y, m, d) = calendrical_calculations::islamic::tabular_islamic_from_fixed(rd, self.0);
+        let (y, m, d) = match self.leap_years {
+            HijriTabularLeapYears::TypeII => {
+                calendrical_calculations::islamic::tabular_islamic_from_fixed(
+                    rd,
+                    self.epoch.rata_die(),
+                )
+            }
+        };
 
         debug_assert!(Date::try_new_hijri_tabular_with_calendar(y, m, d, crate::Ref(self)).is_ok());
         HijriTabularDateInner(ArithmeticDate::new_unchecked(y, m, d))
     }
 
     fn to_rata_die(&self, date: &Self::DateInner) -> RataDie {
-        calendrical_calculations::islamic::fixed_from_tabular_islamic(
-            date.0.year,
-            date.0.month,
-            date.0.day,
-            self.0,
-        )
+        match self.leap_years {
+            HijriTabularLeapYears::TypeII => {
+                calendrical_calculations::islamic::fixed_from_tabular_islamic(
+                    date.0.year,
+                    date.0.month,
+                    date.0.day,
+                    self.epoch.rata_die(),
+                )
+            }
+        }
     }
 
     fn from_iso(&self, iso: IsoDateInner) -> Self::DateInner {
@@ -1020,18 +1054,17 @@ impl Calendar for HijriTabular {
     }
 
     fn debug_name(&self) -> &'static str {
-        match self.0 {
-            ISLAMIC_EPOCH_FRIDAY => "Hijri (civil)",
-            _ => "Hijri (astronomical)",
+        match self.epoch {
+            HijriTabularEpoch::Friday => "Hijri (civil)",
+            HijriTabularEpoch::Thursday => "Hijri (astronomical)",
         }
     }
 
     fn year(&self, date: &Self::DateInner) -> types::YearInfo {
         year_as_hijri(
-            if self.0 == ISLAMIC_EPOCH_FRIDAY {
-                tinystr!(16, "islamic-civil")
-            } else {
-                tinystr!(16, "islamic-tbla")
+            match self.epoch {
+                HijriTabularEpoch::Friday => tinystr!(16, "islamic-civil"),
+                HijriTabularEpoch::Thursday => tinystr!(16, "islamic-tbla"),
             },
             date.0.year,
         )
@@ -1064,10 +1097,10 @@ impl<A: AsCalendar<Calendar = HijriTabular>> Date<A> {
     /// Has no negative years, only era is the AH.
     ///
     /// ```rust
-    /// use icu::calendar::cal::HijriTabular;
+    /// use icu::calendar::cal::{HijriTabular, HijriTabularEpoch, HijriTabularLeapYears};
     /// use icu::calendar::Date;
     ///
-    /// let hijri = HijriTabular::new_civil_epoch();
+    /// let hijri = HijriTabular::new(HijriTabularEpoch::Thursday, HijriTabularLeapYears::TypeII);
     ///
     /// let date_hijri =
     ///     Date::try_new_hijri_tabular_with_calendar(1392, 4, 25, hijri)
@@ -1814,7 +1847,7 @@ mod test {
 
     #[test]
     fn test_rd_from_hijri() {
-        let calendar = HijriTabular::new_civil_epoch();
+        let calendar = HijriTabular::new(HijriTabularEpoch::Friday, HijriTabularLeapYears::TypeII);
         let calendar = Ref(&calendar);
         for (case, f_date) in ARITHMETIC_CASES.iter().zip(TEST_RD.iter()) {
             let date = Date::try_new_hijri_tabular_with_calendar(
@@ -1827,7 +1860,7 @@ mod test {
 
     #[test]
     fn test_hijri_from_rd() {
-        let calendar = HijriTabular::new_civil_epoch();
+        let calendar = HijriTabular::new(HijriTabularEpoch::Friday, HijriTabularLeapYears::TypeII);
         let calendar = Ref(&calendar);
         for (case, f_date) in ARITHMETIC_CASES.iter().zip(TEST_RD.iter()) {
             let date = Date::try_new_hijri_tabular_with_calendar(
@@ -1842,7 +1875,8 @@ mod test {
 
     #[test]
     fn test_rd_from_hijri_tbla() {
-        let calendar = HijriTabular::new_astronomical_epoch();
+        let calendar =
+            HijriTabular::new(HijriTabularEpoch::Thursday, HijriTabularLeapYears::TypeII);
         let calendar = Ref(&calendar);
         for (case, f_date) in ASTRONOMICAL_CASES.iter().zip(TEST_RD.iter()) {
             let date = Date::try_new_hijri_tabular_with_calendar(
@@ -1855,7 +1889,8 @@ mod test {
 
     #[test]
     fn test_hijri_tbla_from_rd() {
-        let calendar = HijriTabular::new_astronomical_epoch();
+        let calendar =
+            HijriTabular::new(HijriTabularEpoch::Thursday, HijriTabularLeapYears::TypeII);
         let calendar = Ref(&calendar);
         for (case, f_date) in ASTRONOMICAL_CASES.iter().zip(TEST_RD.iter()) {
             let date = Date::try_new_hijri_tabular_with_calendar(
