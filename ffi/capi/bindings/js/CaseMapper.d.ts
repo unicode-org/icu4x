@@ -50,7 +50,7 @@ export class CaseMapper {
      *
      * See the [Rust documentation for `uppercase`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapperBorrowed.html#method.uppercase) for more information.
      */
-    uppercaseWithCompiledData(s: string, locale: Locale): string;
+    static uppercaseWithCompiledData(s: string, locale: Locale): string;
 
     /** 
      * Returns the full titlecase mapping of the given string, performing head adjustment without

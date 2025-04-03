@@ -33,7 +33,7 @@ namespace capi {
     
     void icu4x_CaseMapper_lowercase_with_compiled_data_mv1(diplomat::capi::DiplomatStringView s, const icu4x::capi::Locale* locale, diplomat::capi::DiplomatWrite* write);
     
-    void icu4x_CaseMapper_uppercase_with_compiled_data_mv1(const icu4x::capi::CaseMapper* self, diplomat::capi::DiplomatStringView s, const icu4x::capi::Locale* locale, diplomat::capi::DiplomatWrite* write);
+    void icu4x_CaseMapper_uppercase_with_compiled_data_mv1(diplomat::capi::DiplomatStringView s, const icu4x::capi::Locale* locale, diplomat::capi::DiplomatWrite* write);
     
     void icu4x_CaseMapper_titlecase_segment_with_only_case_data_v1_mv1(const icu4x::capi::CaseMapper* self, diplomat::capi::DiplomatStringView s, const icu4x::capi::Locale* locale, icu4x::capi::TitlecaseOptionsV1 options, diplomat::capi::DiplomatWrite* write);
     
@@ -108,14 +108,13 @@ inline diplomat::result<std::string, diplomat::Utf8Error> icu4x::CaseMapper::low
   return diplomat::Ok<std::string>(std::move(output));
 }
 
-inline diplomat::result<std::string, diplomat::Utf8Error> icu4x::CaseMapper::uppercase_with_compiled_data(std::string_view s, const icu4x::Locale& locale) const {
+inline diplomat::result<std::string, diplomat::Utf8Error> icu4x::CaseMapper::uppercase_with_compiled_data(std::string_view s, const icu4x::Locale& locale) {
   if (!diplomat::capi::diplomat_is_str(s.data(), s.size())) {
     return diplomat::Err<diplomat::Utf8Error>();
   }
   std::string output;
   diplomat::capi::DiplomatWrite write = diplomat::WriteFromString(output);
-  icu4x::capi::icu4x_CaseMapper_uppercase_with_compiled_data_mv1(this->AsFFI(),
-    {s.data(), s.size()},
+  icu4x::capi::icu4x_CaseMapper_uppercase_with_compiled_data_mv1({s.data(), s.size()},
     locale.AsFFI(),
     &write);
   return diplomat::Ok<std::string>(std::move(output));
