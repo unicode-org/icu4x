@@ -353,6 +353,11 @@ fn run_grapheme_break_extra_test() {
     grapheme_break_test(include_str!("testdata/GraphemeBreakExtraTest.txt"));
 }
 
+#[test]
+fn run_grapheme_break_random_test() {
+    grapheme_break_test(include_str!("testdata/GraphemeBreakRandomTest.txt"));
+}
+
 fn sentence_break_test(file: &'static str) {
     let test_iter = TestContentIterator::new(file);
     let segmenter = SentenceSegmenter::new(Default::default());
