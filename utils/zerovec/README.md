@@ -35,12 +35,12 @@ works under the hood.
 ## Cargo features
 
 This crate has several optional Cargo features:
- -  `serde`: Allows serializing and deserializing `zerovec`'s abstractions via [`serde`](https://docs.rs/serde)
- -   `yoke`: Enables implementations of `Yokeable` from the [`yoke`](https://docs.rs/yoke/) crate, which is also useful
-             in situations involving a lot of zero-copy deserialization.
+ - `serde`: Allows serializing and deserializing `zerovec`'s abstractions via [`serde`](https://docs.rs/serde)
+ - `yoke`: Enables implementations of `Yokeable` from the [`yoke`](https://docs.rs/yoke/) crate, which is also useful
+   in situations involving a lot of zero-copy deserialization.
  - `derive`: Makes it easier to use custom types in these collections by providing the `#[make_ule]` and
-    `#[make_varule]` proc macros, which generate appropriate [`ULE`](https://docs.rs/zerovec/latest/zerovec/ule/trait.ULE.html) and
-    [`VarULE`](https://docs.rs/zerovec/latest/zerovec/ule/trait.VarULE.html)-conformant types for a given "normal" type.
+   `#[make_varule]` proc macros, which generate appropriate [`ULE`](https://docs.rs/zerovec/latest/zerovec/ule/trait.ULE.html) and
+   [`VarULE`](https://docs.rs/zerovec/latest/zerovec/ule/trait.VarULE.html)-conformant types for a given "normal" type.
  - `std`: Enabled `std::Error` implementations for error types. This crate is by default `no_std` with a dependency on `alloc`.
 
 [`ZeroVec<'a, T>`]: ZeroVec

@@ -1088,7 +1088,7 @@ impl<T: AsULE> FromIterator<T> for ZeroVec<'_, T> {
 ///
 /// * `$aligned` - The type of an element in its canonical, aligned form, e.g., `char`.
 /// * `$convert` - A const function that converts an `$aligned` into its unaligned equivalent, e.g.,
-///                 `const fn from_aligned(a: CanonicalType) -> CanonicalType::ULE`.
+///   const fn from_aligned(a: CanonicalType) -> CanonicalType::ULE`.
 /// * `$x` - The elements that the `ZeroSlice` will hold.
 ///
 /// # Examples
