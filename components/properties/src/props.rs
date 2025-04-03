@@ -3150,16 +3150,6 @@ mod test_enumerated_property_completeness {
         );
     }
 
-    // This test is ignored since all names aren't defined in IcCB.toml into icuexport.
-    #[test]
-    #[ignore]
-    fn test_incb() {
-        check_enum(
-            crate::provider::Baked::SINGLETON_PROPERTY_NAME_PARSE_INDIC_CONJUNCT_BREAK_V1,
-            IndicConjunctBreak::ALL_VALUES,
-        );
-    }
-
     #[test]
     fn test_insc() {
         check_enum(

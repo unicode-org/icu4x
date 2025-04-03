@@ -246,44 +246,6 @@ export class PropertyValueNameToEnumMapper {
     }
 
     /** 
-     * Create a name-to-enum mapper for the `Indic_Conjunct_Break` property, using compiled data.
-     *
-     * See the [Rust documentation for `IndicConjunctBreak`](https://docs.rs/icu_properties/latest/icu_properties/props/struct.IndicConjunctBreak.html) for more information.
-     */
-    static createIndicConjunctBreak() {
-        const result = wasm.icu4x_PropertyValueNameToEnumMapper_create_indic_conjunct_break_mv1();
-    
-        try {
-            return new PropertyValueNameToEnumMapper(diplomatRuntime.internalConstructor, result, []);
-        }
-        
-        finally {}
-    }
-
-    /** 
-     * Create a name-to-enum mapper for the `Indic_Conjunct_Break` property, using a particular data source.
-     *
-     * See the [Rust documentation for `IndicConjunctBreak`](https://docs.rs/icu_properties/latest/icu_properties/props/struct.IndicConjunctBreak.html) for more information.
-     */
-    static createIndicConjunctBreakWithProvider(provider) {
-        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
-        
-        const result = wasm.icu4x_PropertyValueNameToEnumMapper_create_indic_conjunct_break_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
-    
-        try {
-            if (!diplomatReceive.resultFlag) {
-                const cause = new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
-                throw new globalThis.Error('DataError: ' + cause.value, { cause });
-            }
-            return new PropertyValueNameToEnumMapper(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
-        }
-        
-        finally {
-            diplomatReceive.free();
-        }
-    }
-
-    /** 
      * Create a name-to-enum mapper for the `Indic_Syllabic_Category` property, using compiled data.
      *
      * See the [Rust documentation for `IndicSyllabicCategory`](https://docs.rs/icu_properties/latest/icu_properties/props/struct.IndicSyllabicCategory.html) for more information.

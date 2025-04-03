@@ -50,7 +50,7 @@ inline icu4x::IndicConjunctBreak icu4x::IndicConjunctBreak::for_char(char32_t ch
   return icu4x::IndicConjunctBreak::FromFFI(result);
 }
 
-inline uint8_t icu4x::IndicConjunctBreak::to_integer_value() {
+inline uint8_t icu4x::IndicConjunctBreak::to_integer_value() const {
   auto result = icu4x::capi::icu4x_IndicConjunctBreak_to_integer_value_mv1(this->AsFFI());
   return result;
 }

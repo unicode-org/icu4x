@@ -883,14 +883,6 @@ impl_value_getter! {
 }
 
 impl_value_getter! {
-    impl IndicConjunctBreak {
-        PropertyNameParseIndicConjunctBreakV1 / SINGLETON_PROPERTY_NAME_PARSE_INDIC_CONJUNCT_BREAK_V1;
-        PropertyEnumToValueNameLinearMap / PropertyNameShortIndicConjunctBreakV1 / SINGLETON_PROPERTY_NAME_SHORT_INDIC_CONJUNCT_BREAK_V1;
-        PropertyEnumToValueNameLinearMap / PropertyNameLongIndicConjunctBreakV1 / SINGLETON_PROPERTY_NAME_LONG_INDIC_CONJUNCT_BREAK_V1;
-    }
-}
-
-impl_value_getter! {
     impl IndicSyllabicCategory {
         PropertyNameParseIndicSyllabicCategoryV1 / SINGLETON_PROPERTY_NAME_PARSE_INDIC_SYLLABIC_CATEGORY_V1;
         PropertyEnumToValueNameLinearMap / PropertyNameShortIndicSyllabicCategoryV1 / SINGLETON_PROPERTY_NAME_SHORT_INDIC_SYLLABIC_CATEGORY_V1;
