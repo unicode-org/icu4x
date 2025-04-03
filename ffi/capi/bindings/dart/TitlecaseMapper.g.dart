@@ -60,6 +60,18 @@ final class TitlecaseMapper implements ffi.Finalizable {
     _icu4x_TitlecaseMapper_titlecase_segment_v1_mv1(_ffi, s._utf8AllocIn(temp.arena), locale._ffi, options._toFfi(temp.arena), write._ffi);
     return write.finalize();
   }
+
+  /// Returns the full titlecase mapping of the given string, using compiled data (avoids having to allocate a TitlecaseMapper object)
+  ///
+  /// The `v1` refers to the version of the options struct, which may change as we add more options
+  ///
+  /// See the [Rust documentation for `titlecase_segment`](https://docs.rs/icu/latest/icu/casemap/struct.TitlecaseMapperBorrowed.html#method.titlecase_segment) for more information.
+  static String titlecaseSegmentWithCompiledData(String s, Locale locale, TitlecaseOptions options) {
+    final temp = _FinalizedArena();
+    final write = _Write();
+    _icu4x_TitlecaseMapper_titlecase_segment_with_compiled_data_v1_mv1(s._utf8AllocIn(temp.arena), locale._ffi, options._toFfi(temp.arena), write._ffi);
+    return write.finalize();
+  }
 }
 
 @_DiplomatFfiUse('icu4x_TitlecaseMapper_destroy_mv1')
@@ -81,5 +93,10 @@ external _ResultOpaqueInt32 _icu4x_TitlecaseMapper_create_with_provider_mv1(ffi.
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, _SliceUtf8, ffi.Pointer<ffi.Opaque>, _TitlecaseOptionsFfi, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_TitlecaseMapper_titlecase_segment_v1_mv1')
 // ignore: non_constant_identifier_names
 external void _icu4x_TitlecaseMapper_titlecase_segment_v1_mv1(ffi.Pointer<ffi.Opaque> self, _SliceUtf8 s, ffi.Pointer<ffi.Opaque> locale, _TitlecaseOptionsFfi options, ffi.Pointer<ffi.Opaque> write);
+
+@_DiplomatFfiUse('icu4x_TitlecaseMapper_titlecase_segment_with_compiled_data_v1_mv1')
+@ffi.Native<ffi.Void Function(_SliceUtf8, ffi.Pointer<ffi.Opaque>, _TitlecaseOptionsFfi, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_TitlecaseMapper_titlecase_segment_with_compiled_data_v1_mv1')
+// ignore: non_constant_identifier_names
+external void _icu4x_TitlecaseMapper_titlecase_segment_with_compiled_data_v1_mv1(_SliceUtf8 s, ffi.Pointer<ffi.Opaque> locale, _TitlecaseOptionsFfi options, ffi.Pointer<ffi.Opaque> write);
 
 // dart format on

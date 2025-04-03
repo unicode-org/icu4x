@@ -560,6 +560,7 @@ pub use __data_marker_id as data_marker_id;
 macro_rules! data_marker {
     ($(#[$doc:meta])* $name:ident, $($debug:literal,)? $struct:ty $(, $(#[$meta:meta])* $info_field:ident = $info_val:expr)* $(,)?) => {
         $(#[$doc])*
+        #[non_exhaustive]
         pub struct $name;
         impl $crate::DynamicDataMarker for $name {
             type DataStruct = $struct;

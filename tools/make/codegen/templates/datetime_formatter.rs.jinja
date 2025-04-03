@@ -187,7 +187,7 @@ pub mod ffi {
             {%- endif %}
             write: &mut diplomat_runtime::DiplomatWrite,
         ) -> Result<(), DateTimeMismatchedCalendarError> {
-            let date = date.0.wrap_calendar_in_ref();
+            let date = date.0.as_borrowed();
             {%- if flavor.has_time() %}
             let value = icu_time::DateTime {
                 date,

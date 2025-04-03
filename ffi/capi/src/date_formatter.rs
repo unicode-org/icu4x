@@ -639,7 +639,7 @@ pub mod ffi {
             date: &Date,
             write: &mut diplomat_runtime::DiplomatWrite,
         ) -> Result<(), DateTimeMismatchedCalendarError> {
-            let date = date.0.wrap_calendar_in_ref();
+            let date = date.0.as_borrowed();
             let value = date;
             let _infallible = self.0.format_same_calendar(&value)?.write_to(write);
             Ok(())

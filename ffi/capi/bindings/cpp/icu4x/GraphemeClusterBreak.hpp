@@ -64,7 +64,7 @@ inline icu4x::GraphemeClusterBreak icu4x::GraphemeClusterBreak::for_char(char32_
   return icu4x::GraphemeClusterBreak::FromFFI(result);
 }
 
-inline uint8_t icu4x::GraphemeClusterBreak::to_integer_value() {
+inline uint8_t icu4x::GraphemeClusterBreak::to_integer_value() const {
   auto result = icu4x::capi::icu4x_GraphemeClusterBreak_to_integer_value_mv1(this->AsFFI());
   return result;
 }

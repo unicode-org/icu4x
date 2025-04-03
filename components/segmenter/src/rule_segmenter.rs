@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::complex::ComplexPayloads;
+use crate::complex::ComplexPayloadsBorrowed;
 use crate::indices::{Latin1Indices, Utf16Indices};
 use crate::options::WordType;
 use crate::provider::*;
@@ -16,7 +16,7 @@ use utf8_iter::Utf8CharIndices;
 /// 🚫 This trait is sealed; it cannot be implemented by user code. If an API requests an item that implements this
 /// trait, please consider using a type from the implementors listed below.
 /// </div>
-pub trait RuleBreakType<'l, 's>: crate::private::Sealed {
+pub trait RuleBreakType<'s>: crate::private::Sealed {
     /// The iterator over characters.
     type IterAttr: Iterator<Item = (usize, Self::CharType)> + Clone + core::fmt::Debug;
 
@@ -24,11 +24,13 @@ pub trait RuleBreakType<'l, 's>: crate::private::Sealed {
     type CharType: Copy + Into<u32> + core::fmt::Debug;
 
     #[doc(hidden)]
-    fn get_current_position_character_len(iter: &RuleBreakIterator<'l, 's, Self>) -> usize;
+    fn get_current_position_character_len<'data>(
+        iter: &RuleBreakIterator<'data, 's, Self>,
+    ) -> usize;
 
     #[doc(hidden)]
-    fn handle_complex_language(
-        iter: &mut RuleBreakIterator<'l, 's, Self>,
+    fn handle_complex_language<'data>(
+        iter: &mut RuleBreakIterator<'data, 's, Self>,
         left_codepoint: Self::CharType,
     ) -> Option<usize>;
 }
@@ -38,24 +40,27 @@ pub trait RuleBreakType<'l, 's>: crate::private::Sealed {
 /// Lifetimes:
 ///
 /// - `'l` = lifetime of the segmenter object from which this iterator was created
+/// - `'data` = lifetime of data borrowed by segmenter object
+///   (this largely exists because segmenter data is invariant due to ZeroMap constraints,
+///   think of it as a second 'l)
 /// - `'s` = lifetime of the string being segmented
 ///
 /// The [`Iterator::Item`] is an [`usize`] representing index of a code unit
 /// _after_ the boundary (for a boundary at the end of text, this index is the length
 /// of the [`str`] or array of code units).
 #[derive(Debug)]
-pub struct RuleBreakIterator<'l, 's, Y: RuleBreakType<'l, 's> + ?Sized> {
+pub struct RuleBreakIterator<'data, 's, Y: RuleBreakType<'s> + ?Sized> {
     pub(crate) iter: Y::IterAttr,
     pub(crate) len: usize,
     pub(crate) current_pos_data: Option<(usize, Y::CharType)>,
     pub(crate) result_cache: alloc::vec::Vec<usize>,
-    pub(crate) data: &'l RuleBreakData<'l>,
-    pub(crate) complex: Option<&'l ComplexPayloads>,
+    pub(crate) data: &'data RuleBreakData<'data>,
+    pub(crate) complex: Option<ComplexPayloadsBorrowed<'data>>,
     pub(crate) boundary_property: u8,
-    pub(crate) locale_override: Option<&'l RuleBreakDataOverride<'l>>,
+    pub(crate) locale_override: Option<&'data RuleBreakDataOverride<'data>>,
 }
 
-impl<'l, 's, Y: RuleBreakType<'l, 's> + ?Sized> Iterator for RuleBreakIterator<'l, 's, Y> {
+impl<'s, Y: RuleBreakType<'s> + ?Sized> Iterator for RuleBreakIterator<'_, 's, Y> {
     type Item = usize;
 
     fn next(&mut self) -> Option<Self::Item> {
@@ -194,7 +199,7 @@ impl<'l, 's, Y: RuleBreakType<'l, 's> + ?Sized> Iterator for RuleBreakIterator<'
     }
 }
 
-impl<'l, 's, Y: RuleBreakType<'l, 's> + ?Sized> RuleBreakIterator<'l, 's, Y> {
+impl<'s, Y: RuleBreakType<'s> + ?Sized> RuleBreakIterator<'_, 's, Y> {
     pub(crate) fn advance_iter(&mut self) {
         self.current_pos_data = self.iter.next();
     }
@@ -263,11 +268,12 @@ impl<'l, 's, Y: RuleBreakType<'l, 's> + ?Sized> RuleBreakIterator<'l, 's, Y> {
 }
 
 #[derive(Debug)]
+#[non_exhaustive]
 pub struct RuleBreakTypeUtf8;
 
 impl crate::private::Sealed for RuleBreakTypeUtf8 {}
 
-impl<'s> RuleBreakType<'_, 's> for RuleBreakTypeUtf8 {
+impl<'s> RuleBreakType<'s> for RuleBreakTypeUtf8 {
     type IterAttr = CharIndices<'s>;
     type CharType = char;
 
@@ -284,11 +290,12 @@ impl<'s> RuleBreakType<'_, 's> for RuleBreakTypeUtf8 {
 }
 
 #[derive(Debug)]
+#[non_exhaustive]
 pub struct RuleBreakTypePotentiallyIllFormedUtf8;
 
 impl crate::private::Sealed for RuleBreakTypePotentiallyIllFormedUtf8 {}
 
-impl<'s> RuleBreakType<'_, 's> for RuleBreakTypePotentiallyIllFormedUtf8 {
+impl<'s> RuleBreakType<'s> for RuleBreakTypePotentiallyIllFormedUtf8 {
     type IterAttr = Utf8CharIndices<'s>;
     type CharType = char;
 
@@ -305,11 +312,12 @@ impl<'s> RuleBreakType<'_, 's> for RuleBreakTypePotentiallyIllFormedUtf8 {
 }
 
 #[derive(Debug)]
+#[non_exhaustive]
 pub struct RuleBreakTypeLatin1;
 
 impl crate::private::Sealed for RuleBreakTypeLatin1 {}
 
-impl<'s> RuleBreakType<'_, 's> for RuleBreakTypeLatin1 {
+impl<'s> RuleBreakType<'s> for RuleBreakTypeLatin1 {
     type IterAttr = Latin1Indices<'s>;
     type CharType = u8;
 
@@ -326,11 +334,12 @@ impl<'s> RuleBreakType<'_, 's> for RuleBreakTypeLatin1 {
 }
 
 #[derive(Debug)]
+#[non_exhaustive]
 pub struct RuleBreakTypeUtf16;
 
 impl crate::private::Sealed for RuleBreakTypeUtf16 {}
 
-impl<'s> RuleBreakType<'_, 's> for RuleBreakTypeUtf16 {
+impl<'s> RuleBreakType<'s> for RuleBreakTypeUtf16 {
     type IterAttr = Utf16Indices<'s>;
     type CharType = u32;
 

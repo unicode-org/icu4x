@@ -58,6 +58,15 @@ public:
    */
   inline diplomat::result<std::string, diplomat::Utf8Error> titlecase_segment_v1(std::string_view s, const icu4x::Locale& locale, icu4x::TitlecaseOptionsV1 options) const;
 
+  /**
+   * Returns the full titlecase mapping of the given string, using compiled data (avoids having to allocate a TitlecaseMapper object)
+   *
+   * The `v1` refers to the version of the options struct, which may change as we add more options
+   *
+   * See the [Rust documentation for `titlecase_segment`](https://docs.rs/icu/latest/icu/casemap/struct.TitlecaseMapperBorrowed.html#method.titlecase_segment) for more information.
+   */
+  inline static diplomat::result<std::string, diplomat::Utf8Error> titlecase_segment_with_compiled_data_v1(std::string_view s, const icu4x::Locale& locale, icu4x::TitlecaseOptionsV1 options);
+
   inline const icu4x::capi::TitlecaseMapper* AsFFI() const;
   inline icu4x::capi::TitlecaseMapper* AsFFI();
   inline static const icu4x::TitlecaseMapper* FromFFI(const icu4x::capi::TitlecaseMapper* ptr);

@@ -60,7 +60,7 @@ final class SentenceSegmenter implements ffi.Finalizable {
   /// Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
   /// to the WHATWG Encoding Standard.
   ///
-  /// See the [Rust documentation for `segment_utf16`](https://docs.rs/icu/latest/icu/segmenter/struct.SentenceSegmenter.html#method.segment_utf16) for more information.
+  /// See the [Rust documentation for `segment_utf16`](https://docs.rs/icu/latest/icu/segmenter/struct.SentenceSegmenterBorrowed.html#method.segment_utf16) for more information.
   SentenceBreakIteratorUtf16 segment(String input) {
     final inputArena = _FinalizedArena();
     // This lifetime edge depends on lifetimes: 'a

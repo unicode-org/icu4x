@@ -85,22 +85,22 @@ inline icu4x::GeneralCategory icu4x::GeneralCategory::for_char(char32_t ch) {
   return icu4x::GeneralCategory::FromFFI(result);
 }
 
-inline std::optional<std::string_view> icu4x::GeneralCategory::long_name() {
+inline std::optional<std::string_view> icu4x::GeneralCategory::long_name() const {
   auto result = icu4x::capi::icu4x_GeneralCategory_long_name_mv1(this->AsFFI());
   return result.is_ok ? std::optional<std::string_view>(std::string_view(result.ok.data, result.ok.len)) : std::nullopt;
 }
 
-inline std::optional<std::string_view> icu4x::GeneralCategory::short_name() {
+inline std::optional<std::string_view> icu4x::GeneralCategory::short_name() const {
   auto result = icu4x::capi::icu4x_GeneralCategory_short_name_mv1(this->AsFFI());
   return result.is_ok ? std::optional<std::string_view>(std::string_view(result.ok.data, result.ok.len)) : std::nullopt;
 }
 
-inline uint8_t icu4x::GeneralCategory::to_integer_value() {
+inline uint8_t icu4x::GeneralCategory::to_integer_value() const {
   auto result = icu4x::capi::icu4x_GeneralCategory_to_integer_value_mv1(this->AsFFI());
   return result;
 }
 
-inline icu4x::GeneralCategoryGroup icu4x::GeneralCategory::to_group() {
+inline icu4x::GeneralCategoryGroup icu4x::GeneralCategory::to_group() const {
   auto result = icu4x::capi::icu4x_GeneralCategory_to_group_mv1(this->AsFFI());
   return icu4x::GeneralCategoryGroup::FromFFI(result);
 }

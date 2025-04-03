@@ -138,13 +138,13 @@ impl<'s> DictionaryType<'_, 's> for char {
 
 pub(super) struct DictionarySegmenter<'l> {
     dict: &'l UCharDictionaryBreakData<'l>,
-    grapheme: &'l RuleBreakData<'l>,
+    grapheme: GraphemeClusterSegmenterBorrowed<'l>,
 }
 
 impl<'l> DictionarySegmenter<'l> {
     pub(super) fn new(
         dict: &'l UCharDictionaryBreakData<'l>,
-        grapheme: &'l RuleBreakData<'l>,
+        grapheme: GraphemeClusterSegmenterBorrowed<'l>,
     ) -> Self {
         // TODO: no way to verify trie data
         Self { dict, grapheme }
@@ -152,7 +152,7 @@ impl<'l> DictionarySegmenter<'l> {
 
     /// Create a dictionary based break iterator for an `str` (a UTF-8 string).
     pub(super) fn segment_str(&'l self, input: &'l str) -> impl Iterator<Item = usize> + 'l {
-        let grapheme_iter = GraphemeClusterSegmenter::new_and_segment_str(input, self.grapheme);
+        let grapheme_iter = self.grapheme.segment_str(input);
         DictionaryBreakIterator::<char, GraphemeClusterBreakIteratorUtf8> {
             trie: Char16Trie::new(self.dict.trie_data.clone()),
             iter: input.char_indices(),
@@ -163,7 +163,7 @@ impl<'l> DictionarySegmenter<'l> {
 
     /// Create a dictionary based break iterator for a UTF-16 string.
     pub(super) fn segment_utf16(&'l self, input: &'l [u16]) -> impl Iterator<Item = usize> + 'l {
-        let grapheme_iter = GraphemeClusterSegmenter::new_and_segment_utf16(input, self.grapheme);
+        let grapheme_iter = self.grapheme.segment_utf16(input);
         DictionaryBreakIterator::<u32, GraphemeClusterBreakIteratorUtf16> {
             trie: Char16Trie::new(self.dict.trie_data.clone()),
             iter: Utf16Indices::new(input),
@@ -177,7 +177,7 @@ impl<'l> DictionarySegmenter<'l> {
 #[cfg(feature = "serde")]
 mod tests {
     use super::*;
-    use crate::{LineSegmenter, WordSegmenter};
+    use crate::{GraphemeClusterSegmenter, LineSegmenter, WordSegmenter};
     use icu_provider::prelude::*;
 
     #[test]
@@ -204,10 +204,8 @@ mod tests {
             })
             .unwrap();
         let word_segmenter = WordSegmenter::new_dictionary(Default::default());
-        let dict_segmenter = DictionarySegmenter::new(
-            response.payload.get(),
-            crate::provider::Baked::SINGLETON_SEGMENTER_BREAK_GRAPHEME_CLUSTER_V1,
-        );
+        let dict_segmenter =
+            DictionarySegmenter::new(response.payload.get(), GraphemeClusterSegmenter::new());
 
         // Match case
         let s = "龟山岛龟山岛";

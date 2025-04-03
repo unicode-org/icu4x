@@ -131,7 +131,7 @@ pub mod models {
     /// A time zone containing a time zone ID and optional offset.
     #[derive(Debug, PartialEq, Eq)]
     #[non_exhaustive]
-    pub enum Base {}
+    pub struct Base;
 
     impl private::Sealed for Base {}
     impl TimeZoneModel for Base {
@@ -142,7 +142,7 @@ pub mod models {
     /// A time zone containing a time zone ID, optional offset, and local time.
     #[derive(Debug, PartialEq, Eq)]
     #[non_exhaustive]
-    pub enum AtTime {}
+    pub struct AtTime;
 
     impl private::Sealed for AtTime {}
     impl TimeZoneModel for AtTime {
@@ -153,7 +153,7 @@ pub mod models {
     /// A time zone containing a time zone ID, optional offset, local time, and zone variant.
     #[derive(Debug, PartialEq, Eq)]
     #[non_exhaustive]
-    pub enum Full {}
+    pub struct Full;
 
     impl private::Sealed for Full {}
     impl TimeZoneModel for Full {

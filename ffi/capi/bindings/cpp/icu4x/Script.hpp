@@ -217,17 +217,17 @@ inline icu4x::Script icu4x::Script::for_char(char32_t ch) {
   return icu4x::Script::FromFFI(result);
 }
 
-inline std::optional<std::string_view> icu4x::Script::long_name() {
+inline std::optional<std::string_view> icu4x::Script::long_name() const {
   auto result = icu4x::capi::icu4x_Script_long_name_mv1(this->AsFFI());
   return result.is_ok ? std::optional<std::string_view>(std::string_view(result.ok.data, result.ok.len)) : std::nullopt;
 }
 
-inline std::optional<std::string_view> icu4x::Script::short_name() {
+inline std::optional<std::string_view> icu4x::Script::short_name() const {
   auto result = icu4x::capi::icu4x_Script_short_name_mv1(this->AsFFI());
   return result.is_ok ? std::optional<std::string_view>(std::string_view(result.ok.data, result.ok.len)) : std::nullopt;
 }
 
-inline uint16_t icu4x::Script::to_integer_value() {
+inline uint16_t icu4x::Script::to_integer_value() const {
   auto result = icu4x::capi::icu4x_Script_to_integer_value_mv1(this->AsFFI());
   return result;
 }

@@ -16,6 +16,7 @@ pub mod ffi {
     #[diplomat::opaque]
     /// An ICU4X sentence-break segmenter, capable of finding sentence breakpoints in strings.
     #[diplomat::rust_link(icu::segmenter::SentenceSegmenter, Struct)]
+    #[diplomat::rust_link(icu::segmenter::SentenceSegmenterBorrowed, Struct, hidden)]
     pub struct SentenceSegmenter(icu_segmenter::SentenceSegmenter);
 
     #[diplomat::opaque]
@@ -51,9 +52,9 @@ pub mod ffi {
         #[diplomat::attr(auto, constructor)]
         #[cfg(feature = "compiled_data")]
         pub fn create() -> Box<SentenceSegmenter> {
-            Box::new(SentenceSegmenter(icu_segmenter::SentenceSegmenter::new(
-                Default::default(),
-            )))
+            Box::new(SentenceSegmenter(
+                icu_segmenter::SentenceSegmenter::new(Default::default()).static_to_owned(),
+            ))
         }
         /// Construct a [`SentenceSegmenter`] for content known to be of a given locale, using compiled data.
         #[diplomat::rust_link(icu::segmenter::SentenceSegmenter::try_new, FnInStruct, hidden)]
@@ -88,39 +89,52 @@ pub mod ffi {
         ///
         /// Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
         /// to the WHATWG Encoding Standard.
-        #[diplomat::rust_link(icu::segmenter::SentenceSegmenter::segment_utf8, FnInStruct)]
-        #[diplomat::rust_link(icu::segmenter::SentenceSegmenter::segment_str, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::segmenter::SentenceSegmenterBorrowed::segment_utf8, FnInStruct)]
+        #[diplomat::rust_link(
+            icu::segmenter::SentenceSegmenterBorrowed::segment_str,
+            FnInStruct,
+            hidden
+        )]
         #[diplomat::attr(not(supports = utf8_strings), disable)]
         #[diplomat::attr(*, rename = "segment")]
         pub fn segment_utf8<'a>(
             &'a self,
             input: &'a DiplomatStr,
         ) -> Box<SentenceBreakIteratorUtf8<'a>> {
-            Box::new(SentenceBreakIteratorUtf8(self.0.segment_utf8(input)))
+            Box::new(SentenceBreakIteratorUtf8(
+                self.0.as_borrowed().segment_utf8(input),
+            ))
         }
 
         /// Segments a string.
         ///
         /// Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
         /// to the WHATWG Encoding Standard.
-        #[diplomat::rust_link(icu::segmenter::SentenceSegmenter::segment_utf16, FnInStruct)]
+        #[diplomat::rust_link(icu::segmenter::SentenceSegmenterBorrowed::segment_utf16, FnInStruct)]
         #[diplomat::attr(not(supports = utf8_strings), rename = "segment")]
         #[diplomat::attr(supports = utf8_strings, rename = "segment16")]
         pub fn segment_utf16<'a>(
             &'a self,
             input: &'a DiplomatStr16,
         ) -> Box<SentenceBreakIteratorUtf16<'a>> {
-            Box::new(SentenceBreakIteratorUtf16(self.0.segment_utf16(input)))
+            Box::new(SentenceBreakIteratorUtf16(
+                self.0.as_borrowed().segment_utf16(input),
+            ))
         }
 
         /// Segments a Latin-1 string.
-        #[diplomat::rust_link(icu::segmenter::SentenceSegmenter::segment_latin1, FnInStruct)]
+        #[diplomat::rust_link(
+            icu::segmenter::SentenceSegmenterBorrowed::segment_latin1,
+            FnInStruct
+        )]
         #[diplomat::attr(not(supports = utf8_strings), disable)]
         pub fn segment_latin1<'a>(
             &'a self,
             input: &'a [u8],
         ) -> Box<SentenceBreakIteratorLatin1<'a>> {
-            Box::new(SentenceBreakIteratorLatin1(self.0.segment_latin1(input)))
+            Box::new(SentenceBreakIteratorLatin1(
+                self.0.as_borrowed().segment_latin1(input),
+            ))
         }
     }
 

@@ -349,27 +349,27 @@ impl<C: IntoAnyCalendar> Date<C> {
 }
 
 impl<A: AsCalendar> Date<A> {
-    /// Wrap the calendar type in `Rc<T>`
+    /// Wrap the contained calendar type in `Rc<T>`, making it cheaper to clone.
     ///
     /// Useful when paired with [`Self::to_any()`] to obtain a `Date<Rc<AnyCalendar>>`
     #[cfg(feature = "alloc")]
-    pub fn wrap_calendar_in_rc(self) -> Date<Rc<A>> {
+    pub fn into_ref_counted(self) -> Date<Rc<A>> {
         Date::from_raw(self.inner, Rc::new(self.calendar))
     }
 
-    /// Wrap the calendar type in `Arc<T>`
+    /// Wrap the contained calendar type in `Arc<T>`, making it cheaper to clone in a thread-safe manner.
     ///
-    /// Useful when paired with [`Self::to_any()`] to obtain a `Date<Rc<AnyCalendar>>`
+    /// Useful when paired with [`Self::to_any()`] to obtain a `Date<Arc<AnyCalendar>>`
     #[cfg(feature = "alloc")]
-    pub fn wrap_calendar_in_arc(self) -> Date<Arc<A>> {
+    pub fn into_atomic_ref_counted(self) -> Date<Arc<A>> {
         Date::from_raw(self.inner, Arc::new(self.calendar))
     }
 
-    /// Wrap the calendar type in `Ref<T>`
+    /// Wrap the calendar type in `Ref<T>`, making it cheaper to clone (by introducing a borrow)
     ///
     /// Useful for converting a `&Date<C>` into an equivalent `Date<D>` without cloning
     /// the calendar.
-    pub fn wrap_calendar_in_ref(&self) -> Date<Ref<A>> {
+    pub fn as_borrowed(&self) -> Date<Ref<A>> {
         Date::from_raw(self.inner, Ref(&self.calendar))
     }
 }

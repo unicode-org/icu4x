@@ -21,7 +21,7 @@ pub trait ForkByErrorPredicate {
     /// - `&self` = Reference to the struct implementing the trait (for data capture)
     /// - `marker` = The [`DataMarkerInfo`] associated with the request
     /// - `req` = The [`DataRequest`]. This may be `None` if there is no request, such as
-    ///           inside [`IterableDynamicDataProvider`].
+    ///   inside [`IterableDynamicDataProvider`].
     /// - `err` = The error that occurred.
     ///
     /// Return value:
