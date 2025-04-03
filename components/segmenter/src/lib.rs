@@ -127,13 +127,13 @@ mod indices;
 mod iterator_helpers;
 mod rule_segmenter;
 
-/// Code for [`GraphemeClusterSegmenter`]
+/// [`GraphemeClusterSegmenter`] and its related iterators, borrowed types, and options.
 pub mod grapheme;
-/// Code for [`LineSegmenter`]
+/// [`LineSegmenter`] and its related iterators, borrowed types, and options.
 pub mod line;
-/// Code for [`SentenceSegmenter`]
+/// [`SentenceSegmenter`] and its related iterators, borrowed types, and options.
 pub mod sentence;
-/// Code for [`WordSegmenter`]
+/// [`WordSegmenter`] and its related iterators, borrowed types, and options.
 pub mod word;
 
 pub mod provider;
@@ -158,6 +158,14 @@ pub mod options {
     pub use crate::word::WordBreakInvariantOptions;
     pub use crate::word::WordBreakOptions;
     pub use crate::word::WordType;
+}
+
+/// Largely-internal scaffolding types (You should very rarely need to reference these directly)
+pub mod scaffold {
+    pub use crate::rule_segmenter::{
+        RuleBreakType, RuleBreakTypeLatin1, RuleBreakTypePotentiallyIllFormedUtf8,
+        RuleBreakTypeUtf16, RuleBreakTypeUtf8,
+    };
 }
 
 pub(crate) mod private {

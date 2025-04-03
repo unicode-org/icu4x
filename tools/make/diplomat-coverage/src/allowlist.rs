@@ -293,6 +293,7 @@ lazy_static::lazy_static! {
         // Scaffolding modules
         "icu::datetime::scaffold",
         "icu::time::scaffold",
+        "icu::segmenter::scaffold",
 
         // Provider modules
         // We could potentially expose them later, but it's hard to expose them
@@ -342,7 +343,6 @@ lazy_static::lazy_static! {
         "icu::segmenter::word::WordBreakInvariantOptions",
         "icu::segmenter::word::WordBreakOptions",
         "icu::segmenter::word::WordType",
-        "icu::segmenter::word::WordTypeULE",
 
         // Reexported input modules
         "icu::datetime::input",

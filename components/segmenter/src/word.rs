@@ -51,19 +51,26 @@ pub struct WordBreakIterator<'data, 's, Y: RuleBreakType<'s> + ?Sized>(
 
 derive_usize_iterator_with_type!(WordBreakIterator, 'data);
 
-/// The word type tag that is returned by [`WordBreakIterator::word_type()`].
-#[non_exhaustive]
-#[derive(Copy, Clone, PartialEq, Debug)]
-#[repr(u8)]
-#[zerovec::make_ule(WordTypeULE)]
-pub enum WordType {
-    /// No category tag.
-    None = 0,
-    /// Number category tag.
-    Number = 1,
-    /// Letter category tag, including CJK.
-    Letter = 2,
+/// Hide ULE type
+pub(crate) mod inner {
+    /// The word type tag that is returned by [`WordBreakIterator::word_type()`].
+    ///
+    /// [`WordBreakIterator::word_type()`]: super::WordBreakIterator::word_type
+    #[non_exhaustive]
+    #[derive(Copy, Clone, PartialEq, Debug)]
+    #[repr(u8)]
+    #[zerovec::make_ule(WordTypeULE)]
+    pub enum WordType {
+        /// No category tag.
+        None = 0,
+        /// Number category tag.
+        Number = 1,
+        /// Letter category tag, including CJK.
+        Letter = 2,
+    }
 }
+
+pub use inner::WordType;
 
 impl WordType {
     /// Whether the segment is word-like; word-like segments include numbers, as
@@ -580,7 +587,7 @@ impl WordSegmenterBorrowed<'static> {
 
 #[derive(Debug)]
 #[non_exhaustive]
-/// Word breaks for UTF-16 strings
+/// [`RuleBreakType`] for word-breaking UTF-16 strings
 pub struct WordBreakTypeUtf8;
 impl crate::private::Sealed for WordBreakTypeUtf8 {}
 
@@ -602,7 +609,7 @@ impl<'s> RuleBreakType<'s> for WordBreakTypeUtf8 {
 
 #[derive(Debug)]
 #[non_exhaustive]
-/// Word breaks for potentially ill-formed UTF-8 strings
+/// Word breaks for word-breaking potentially ill-formed UTF-8 strings
 pub struct WordBreakTypePotentiallyIllFormedUtf8;
 impl crate::private::Sealed for WordBreakTypePotentiallyIllFormedUtf8 {}
 
@@ -679,7 +686,7 @@ where
 
 #[derive(Debug)]
 #[non_exhaustive]
-/// Word breaks for UTF-16 strings
+/// Word breaks word-breaking for UTF-16 strings
 pub struct WordBreakTypeUtf16;
 
 impl crate::private::Sealed for WordBreakTypeUtf16 {}
