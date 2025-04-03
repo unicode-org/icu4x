@@ -183,6 +183,10 @@ fn test_hijri_umm_al_qura_continuity() {
     let _ = simple_logger::SimpleLogger::new().env().init();
     let date = Date::try_new_ummalqura(-10, 1, 1);
     check_continuity(date.unwrap());
+    let date = Date::try_new_ummalqura(1290, 1, 1);
+    check_continuity(date.unwrap());
+    let date = Date::try_new_ummalqura(1590, 1, 1);
+    check_continuity(date.unwrap());
     let date = Date::try_new_ummalqura(-300, 1, 1);
     check_every_250_days(date.unwrap());
 }
