@@ -87,6 +87,8 @@ pub mod date_time_formatter;
 #[cfg(any(feature = "datetime", feature = "timezone", feature = "calendar"))]
 pub mod datetime;
 #[cfg(feature = "datetime")]
+pub mod datetime_fieldset_builder;
+#[cfg(feature = "datetime")]
 pub mod datetime_options;
 #[cfg(feature = "decimal")]
 pub mod decimal;

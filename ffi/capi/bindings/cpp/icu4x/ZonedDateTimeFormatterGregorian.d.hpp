@@ -25,6 +25,8 @@ namespace capi { struct TimeZoneInfo; }
 class TimeZoneInfo;
 namespace capi { struct ZonedDateTimeFormatterGregorian; }
 class ZonedDateTimeFormatterGregorian;
+struct DateTimeFieldSetBuilder;
+class DateTimeFormatterBuildOrLoadError;
 class DateTimeFormatterLoadError;
 class DateTimeWriteError;
 }
@@ -42,6 +44,10 @@ namespace icu4x {
  */
 class ZonedDateTimeFormatterGregorian {
 public:
+
+  inline static diplomat::result<std::unique_ptr<icu4x::ZonedDateTimeFormatterGregorian>, icu4x::DateTimeFormatterBuildOrLoadError> create_from_field_set_builder(const icu4x::Locale& locale, icu4x::DateTimeFieldSetBuilder builder);
+
+  inline static diplomat::result<std::unique_ptr<icu4x::ZonedDateTimeFormatterGregorian>, icu4x::DateTimeFormatterBuildOrLoadError> create_from_field_set_builder_with_provider(const icu4x::DataProvider& provider, const icu4x::Locale& locale, icu4x::DateTimeFieldSetBuilder builder);
 
   inline static diplomat::result<std::unique_ptr<icu4x::ZonedDateTimeFormatterGregorian>, icu4x::DateTimeFormatterLoadError> create_specific_long(const icu4x::Locale& locale, const icu4x::DateTimeFormatterGregorian& formatter);
 

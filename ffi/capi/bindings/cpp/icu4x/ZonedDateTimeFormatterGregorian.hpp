@@ -12,6 +12,8 @@
 #include <optional>
 #include "../diplomat_runtime.hpp"
 #include "DataProvider.hpp"
+#include "DateTimeFieldSetBuilder.hpp"
+#include "DateTimeFormatterBuildOrLoadError.hpp"
 #include "DateTimeFormatterGregorian.hpp"
 #include "DateTimeFormatterLoadError.hpp"
 #include "DateTimeWriteError.hpp"
@@ -24,6 +26,12 @@
 namespace icu4x {
 namespace capi {
     extern "C" {
+    
+    typedef struct icu4x_ZonedDateTimeFormatterGregorian_create_from_field_set_builder_mv1_result {union {icu4x::capi::ZonedDateTimeFormatterGregorian* ok; icu4x::capi::DateTimeFormatterBuildOrLoadError err;}; bool is_ok;} icu4x_ZonedDateTimeFormatterGregorian_create_from_field_set_builder_mv1_result;
+    icu4x_ZonedDateTimeFormatterGregorian_create_from_field_set_builder_mv1_result icu4x_ZonedDateTimeFormatterGregorian_create_from_field_set_builder_mv1(const icu4x::capi::Locale* locale, icu4x::capi::DateTimeFieldSetBuilder builder);
+    
+    typedef struct icu4x_ZonedDateTimeFormatterGregorian_create_from_field_set_builder_with_provider_mv1_result {union {icu4x::capi::ZonedDateTimeFormatterGregorian* ok; icu4x::capi::DateTimeFormatterBuildOrLoadError err;}; bool is_ok;} icu4x_ZonedDateTimeFormatterGregorian_create_from_field_set_builder_with_provider_mv1_result;
+    icu4x_ZonedDateTimeFormatterGregorian_create_from_field_set_builder_with_provider_mv1_result icu4x_ZonedDateTimeFormatterGregorian_create_from_field_set_builder_with_provider_mv1(const icu4x::capi::DataProvider* provider, const icu4x::capi::Locale* locale, icu4x::capi::DateTimeFieldSetBuilder builder);
     
     typedef struct icu4x_ZonedDateTimeFormatterGregorian_create_specific_long_mv1_result {union {icu4x::capi::ZonedDateTimeFormatterGregorian* ok; icu4x::capi::DateTimeFormatterLoadError err;}; bool is_ok;} icu4x_ZonedDateTimeFormatterGregorian_create_specific_long_mv1_result;
     icu4x_ZonedDateTimeFormatterGregorian_create_specific_long_mv1_result icu4x_ZonedDateTimeFormatterGregorian_create_specific_long_mv1(const icu4x::capi::Locale* locale, const icu4x::capi::DateTimeFormatterGregorian* formatter);
@@ -82,6 +90,19 @@ namespace capi {
     } // extern "C"
 } // namespace capi
 } // namespace
+
+inline diplomat::result<std::unique_ptr<icu4x::ZonedDateTimeFormatterGregorian>, icu4x::DateTimeFormatterBuildOrLoadError> icu4x::ZonedDateTimeFormatterGregorian::create_from_field_set_builder(const icu4x::Locale& locale, icu4x::DateTimeFieldSetBuilder builder) {
+  auto result = icu4x::capi::icu4x_ZonedDateTimeFormatterGregorian_create_from_field_set_builder_mv1(locale.AsFFI(),
+    builder.AsFFI());
+  return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::ZonedDateTimeFormatterGregorian>, icu4x::DateTimeFormatterBuildOrLoadError>(diplomat::Ok<std::unique_ptr<icu4x::ZonedDateTimeFormatterGregorian>>(std::unique_ptr<icu4x::ZonedDateTimeFormatterGregorian>(icu4x::ZonedDateTimeFormatterGregorian::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::ZonedDateTimeFormatterGregorian>, icu4x::DateTimeFormatterBuildOrLoadError>(diplomat::Err<icu4x::DateTimeFormatterBuildOrLoadError>(icu4x::DateTimeFormatterBuildOrLoadError::FromFFI(result.err)));
+}
+
+inline diplomat::result<std::unique_ptr<icu4x::ZonedDateTimeFormatterGregorian>, icu4x::DateTimeFormatterBuildOrLoadError> icu4x::ZonedDateTimeFormatterGregorian::create_from_field_set_builder_with_provider(const icu4x::DataProvider& provider, const icu4x::Locale& locale, icu4x::DateTimeFieldSetBuilder builder) {
+  auto result = icu4x::capi::icu4x_ZonedDateTimeFormatterGregorian_create_from_field_set_builder_with_provider_mv1(provider.AsFFI(),
+    locale.AsFFI(),
+    builder.AsFFI());
+  return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::ZonedDateTimeFormatterGregorian>, icu4x::DateTimeFormatterBuildOrLoadError>(diplomat::Ok<std::unique_ptr<icu4x::ZonedDateTimeFormatterGregorian>>(std::unique_ptr<icu4x::ZonedDateTimeFormatterGregorian>(icu4x::ZonedDateTimeFormatterGregorian::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::ZonedDateTimeFormatterGregorian>, icu4x::DateTimeFormatterBuildOrLoadError>(diplomat::Err<icu4x::DateTimeFormatterBuildOrLoadError>(icu4x::DateTimeFormatterBuildOrLoadError::FromFFI(result.err)));
+}
 
 inline diplomat::result<std::unique_ptr<icu4x::ZonedDateTimeFormatterGregorian>, icu4x::DateTimeFormatterLoadError> icu4x::ZonedDateTimeFormatterGregorian::create_specific_long(const icu4x::Locale& locale, const icu4x::DateTimeFormatterGregorian& formatter) {
   auto result = icu4x::capi::icu4x_ZonedDateTimeFormatterGregorian_create_specific_long_mv1(locale.AsFFI(),
