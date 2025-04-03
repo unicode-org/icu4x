@@ -129,12 +129,7 @@ pub mod ffi {
             hidden
         )]
         #[cfg(feature = "compiled_data")]
-        pub fn uppercase_with_compiled_data(
-            &self,
-            s: &str,
-            locale: &Locale,
-            write: &mut DiplomatWrite,
-        ) {
+        pub fn uppercase_with_compiled_data(s: &str, locale: &Locale, write: &mut DiplomatWrite) {
             let _infallible = icu_casemap::CaseMapper::new()
                 .uppercase(s, &locale.0.id)
                 .write_to(write);

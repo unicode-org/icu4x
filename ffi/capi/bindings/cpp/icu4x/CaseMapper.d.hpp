@@ -77,7 +77,7 @@ public:
    *
    * See the [Rust documentation for `uppercase`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapperBorrowed.html#method.uppercase) for more information.
    */
-  inline diplomat::result<std::string, diplomat::Utf8Error> uppercase_with_compiled_data(std::string_view s, const icu4x::Locale& locale) const;
+  inline static diplomat::result<std::string, diplomat::Utf8Error> uppercase_with_compiled_data(std::string_view s, const icu4x::Locale& locale);
 
   /**
    * Returns the full titlecase mapping of the given string, performing head adjustment without

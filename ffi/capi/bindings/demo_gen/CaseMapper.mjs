@@ -34,11 +34,9 @@ export function lowercaseWithCompiledData(s, localeName) {
 }
 export function uppercaseWithCompiledData(s, localeName) {
     
-    let caseMapper = new CaseMapper();
-    
     let locale = Locale.fromString(localeName);
     
-    let out = caseMapper.uppercaseWithCompiledData(s,locale);
+    let out = CaseMapper.uppercaseWithCompiledData(s,locale);
     
 
     return out;
