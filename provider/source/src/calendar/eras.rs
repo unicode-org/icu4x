@@ -6,6 +6,7 @@ use crate::cldr_serde;
 use crate::cldr_serde::eras::EraData;
 use crate::datetime::DatagenCalendar;
 use crate::SourceDataProvider;
+use icu::calendar::cal::Chinese;
 use icu::calendar::provider::*;
 use icu::calendar::Date;
 use icu::locale::locale;
@@ -285,12 +286,31 @@ fn process_era_dates_map(
                 // https://unicode-org.atlassian.net/browse/CLDR-18388 for why we need to do + 2
                 let idx = (idx.parse::<usize>().unwrap() + 2).to_string();
                 if let Some(start) = era.start.as_mut() {
-                    if start.month == 2 && start.day > 28 {
-                        start.day = if calendrical_calculations::iso::is_leap_year(start.year) {
-                            29
+                    if start.year <= 1868 {
+                        // pre-Meiji eras seem to use Chinese/Japanese lunisolar months
+
+                        // (-2636 - 1) is the Gregorian/Chinese year offset
+                        let y = start.year - (-2636 - 1);
+                        let m = start.month;
+                        let d = start.day;
+
+                        if let Ok(date) = Date::try_new_chinese_with_calendar(
+                            y,
+                            m,
+                            d,
+                            Chinese::new_always_calculating(),
+                        ) {
+                            let date = date.to_iso();
+                            start.day = date.day_of_month().0;
+                            start.month = date.month().ordinal;
                         } else {
-                            28
-                        };
+                            log::error!(
+                                "({}, {}, {})/({y}, {m}, {d})",
+                                start.year,
+                                start.month,
+                                start.day,
+                            );
+                        }
                     }
                 }
                 (idx, era)
