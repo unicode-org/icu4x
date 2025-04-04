@@ -343,6 +343,8 @@ lazy_static::lazy_static! {
         "icu::segmenter::word::WordBreakInvariantOptions",
         "icu::segmenter::word::WordBreakOptions",
         "icu::segmenter::word::WordType",
+        "icu::segmenter::word::WordBreakType",
+        "icu::segmenter::line::LineBreakType",
 
         // Reexported input modules
         "icu::datetime::input",

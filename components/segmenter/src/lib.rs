@@ -162,10 +162,12 @@ pub mod options {
 
 /// Largely-internal scaffolding types (You should very rarely need to reference these directly)
 pub mod scaffold {
+    pub use crate::line::LineBreakType;
     pub use crate::rule_segmenter::{
         RuleBreakType, RuleBreakTypeLatin1, RuleBreakTypePotentiallyIllFormedUtf8,
         RuleBreakTypeUtf16, RuleBreakTypeUtf8,
     };
+    pub use crate::word::WordBreakType;
 }
 
 pub(crate) mod private {
