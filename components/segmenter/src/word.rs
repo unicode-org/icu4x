@@ -45,9 +45,7 @@ pub struct WordBreakInvariantOptions {}
 ///
 /// For examples of use, see [`WordSegmenter`].
 #[derive(Debug)]
-pub struct WordBreakIterator<'data, 's, Y: RuleBreakType<'s> + ?Sized>(
-    RuleBreakIterator<'data, 's, Y>,
-);
+pub struct WordBreakIterator<'data, 's, Y: RuleBreakType>(RuleBreakIterator<'data, 's, Y>);
 
 derive_usize_iterator_with_type!(WordBreakIterator, 'data);
 
@@ -80,7 +78,7 @@ impl WordType {
     }
 }
 
-impl<'data, 's, Y: RuleBreakType<'s> + ?Sized> WordBreakIterator<'data, 's, Y> {
+impl<'data, 's, Y: RuleBreakType> WordBreakIterator<'data, 's, Y> {
     /// Returns the word type of the segment preceding the current boundary.
     #[inline]
     pub fn word_type(&self) -> WordType {
@@ -103,11 +101,11 @@ impl<'data, 's, Y: RuleBreakType<'s> + ?Sized> WordBreakIterator<'data, 's, Y> {
 /// Word break iterator that also returns the word type
 // We can use impl Trait here once `use<..>` syntax is available, see https://github.com/rust-lang/rust/issues/61756
 #[derive(Debug)]
-pub struct WordBreakIteratorWithWordType<'data, 's, Y: RuleBreakType<'s> + ?Sized>(
+pub struct WordBreakIteratorWithWordType<'data, 's, Y: RuleBreakType>(
     WordBreakIterator<'data, 's, Y>,
 );
 
-impl<'s, Y: RuleBreakType<'s> + ?Sized> Iterator for WordBreakIteratorWithWordType<'_, 's, Y> {
+impl<'s, Y: RuleBreakType> Iterator for WordBreakIteratorWithWordType<'_, 's, Y> {
     type Item = (usize, WordType);
     fn next(&mut self) -> Option<Self::Item> {
         let ret = self.0.next()?;
@@ -591,8 +589,8 @@ impl WordSegmenterBorrowed<'static> {
 pub struct WordBreakTypeUtf8;
 impl crate::private::Sealed for WordBreakTypeUtf8 {}
 
-impl<'s> RuleBreakType<'s> for WordBreakTypeUtf8 {
-    type IterAttr = CharIndices<'s>;
+impl RuleBreakType for WordBreakTypeUtf8 {
+    type IterAttr<'s> = CharIndices<'s>;
     type CharType = char;
 
     fn get_current_position_character_len(iter: &RuleBreakIterator<Self>) -> usize {
@@ -600,7 +598,7 @@ impl<'s> RuleBreakType<'s> for WordBreakTypeUtf8 {
     }
 
     fn handle_complex_language(
-        iter: &mut RuleBreakIterator<'_, 's, Self>,
+        iter: &mut RuleBreakIterator<'_, '_, Self>,
         left_codepoint: Self::CharType,
     ) -> Option<usize> {
         handle_complex_language_utf8(iter, left_codepoint)
@@ -613,8 +611,8 @@ impl<'s> RuleBreakType<'s> for WordBreakTypeUtf8 {
 pub struct WordBreakTypePotentiallyIllFormedUtf8;
 impl crate::private::Sealed for WordBreakTypePotentiallyIllFormedUtf8 {}
 
-impl<'s> RuleBreakType<'s> for WordBreakTypePotentiallyIllFormedUtf8 {
-    type IterAttr = Utf8CharIndices<'s>;
+impl RuleBreakType for WordBreakTypePotentiallyIllFormedUtf8 {
+    type IterAttr<'s> = Utf8CharIndices<'s>;
     type CharType = char;
 
     fn get_current_position_character_len(iter: &RuleBreakIterator<Self>) -> usize {
@@ -622,7 +620,7 @@ impl<'s> RuleBreakType<'s> for WordBreakTypePotentiallyIllFormedUtf8 {
     }
 
     fn handle_complex_language(
-        iter: &mut RuleBreakIterator<'_, 's, Self>,
+        iter: &mut RuleBreakIterator<'_, '_, Self>,
         left_codepoint: Self::CharType,
     ) -> Option<usize> {
         handle_complex_language_utf8(iter, left_codepoint)
@@ -635,7 +633,7 @@ fn handle_complex_language_utf8<'data, 's, T>(
     left_codepoint: T::CharType,
 ) -> Option<usize>
 where
-    T: RuleBreakType<'s, CharType = char>,
+    T: RuleBreakType<CharType = char>,
 {
     // word segmenter doesn't define break rules for some languages such as Thai.
     let start_iter = iter.iter.clone();
@@ -691,8 +689,8 @@ pub struct WordBreakTypeUtf16;
 
 impl crate::private::Sealed for WordBreakTypeUtf16 {}
 
-impl<'s> RuleBreakType<'s> for WordBreakTypeUtf16 {
-    type IterAttr = Utf16Indices<'s>;
+impl RuleBreakType for WordBreakTypeUtf16 {
+    type IterAttr<'s> = Utf16Indices<'s>;
     type CharType = u32;
 
     fn get_current_position_character_len(iter: &RuleBreakIterator<Self>) -> usize {

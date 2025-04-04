@@ -42,9 +42,7 @@ pub struct SentenceBreakInvariantOptions {}
 ///
 /// For examples of use, see [`SentenceSegmenter`].
 #[derive(Debug)]
-pub struct SentenceBreakIterator<'data, 's, Y: RuleBreakType<'s> + ?Sized>(
-    RuleBreakIterator<'data, 's, Y>,
-);
+pub struct SentenceBreakIterator<'data, 's, Y: RuleBreakType>(RuleBreakIterator<'data, 's, Y>);
 
 derive_usize_iterator_with_type!(SentenceBreakIterator, 'data);
 

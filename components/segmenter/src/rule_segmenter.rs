@@ -16,20 +16,20 @@ use utf8_iter::Utf8CharIndices;
 /// 🚫 This trait is sealed; it cannot be implemented by user code. If an API requests an item that implements this
 /// trait, please consider using a type from the implementors listed below.
 /// </div>
-pub trait RuleBreakType<'s>: crate::private::Sealed {
+pub trait RuleBreakType: crate::private::Sealed + Sized {
     /// The iterator over characters.
-    type IterAttr: Iterator<Item = (usize, Self::CharType)> + Clone + core::fmt::Debug;
+    type IterAttr<'s>: Iterator<Item = (usize, Self::CharType)> + Clone + core::fmt::Debug;
 
     /// The character type.
     type CharType: Copy + Into<u32> + core::fmt::Debug;
 
     #[doc(hidden)]
-    fn get_current_position_character_len<'data>(
+    fn get_current_position_character_len<'data, 's>(
         iter: &RuleBreakIterator<'data, 's, Self>,
     ) -> usize;
 
     #[doc(hidden)]
-    fn handle_complex_language<'data>(
+    fn handle_complex_language<'data, 's>(
         iter: &mut RuleBreakIterator<'data, 's, Self>,
         left_codepoint: Self::CharType,
     ) -> Option<usize>;
@@ -49,8 +49,8 @@ pub trait RuleBreakType<'s>: crate::private::Sealed {
 /// _after_ the boundary (for a boundary at the end of text, this index is the length
 /// of the [`str`] or array of code units).
 #[derive(Debug)]
-pub(crate) struct RuleBreakIterator<'data, 's, Y: RuleBreakType<'s> + ?Sized> {
-    pub(crate) iter: Y::IterAttr,
+pub struct RuleBreakIterator<'data, 's, Y: RuleBreakType> {
+    pub(crate) iter: Y::IterAttr<'s>,
     pub(crate) len: usize,
     pub(crate) current_pos_data: Option<(usize, Y::CharType)>,
     pub(crate) result_cache: alloc::vec::Vec<usize>,
@@ -60,7 +60,7 @@ pub(crate) struct RuleBreakIterator<'data, 's, Y: RuleBreakType<'s> + ?Sized> {
     pub(crate) locale_override: Option<&'data RuleBreakDataOverride<'data>>,
 }
 
-impl<'s, Y: RuleBreakType<'s> + ?Sized> Iterator for RuleBreakIterator<'_, 's, Y> {
+impl<Y: RuleBreakType> Iterator for RuleBreakIterator<'_, '_, Y> {
     type Item = usize;
 
     fn next(&mut self) -> Option<Self::Item> {
@@ -199,7 +199,7 @@ impl<'s, Y: RuleBreakType<'s> + ?Sized> Iterator for RuleBreakIterator<'_, 's, Y
     }
 }
 
-impl<'s, Y: RuleBreakType<'s> + ?Sized> RuleBreakIterator<'_, 's, Y> {
+impl<Y: RuleBreakType> RuleBreakIterator<'_, '_, Y> {
     pub(crate) fn advance_iter(&mut self) {
         self.current_pos_data = self.iter.next();
     }
@@ -274,8 +274,8 @@ pub struct RuleBreakTypeUtf8;
 
 impl crate::private::Sealed for RuleBreakTypeUtf8 {}
 
-impl<'s> RuleBreakType<'s> for RuleBreakTypeUtf8 {
-    type IterAttr = CharIndices<'s>;
+impl RuleBreakType for RuleBreakTypeUtf8 {
+    type IterAttr<'s> = CharIndices<'s>;
     type CharType = char;
 
     fn get_current_position_character_len(iter: &RuleBreakIterator<Self>) -> usize {
@@ -297,8 +297,8 @@ pub struct RuleBreakTypePotentiallyIllFormedUtf8;
 
 impl crate::private::Sealed for RuleBreakTypePotentiallyIllFormedUtf8 {}
 
-impl<'s> RuleBreakType<'s> for RuleBreakTypePotentiallyIllFormedUtf8 {
-    type IterAttr = Utf8CharIndices<'s>;
+impl RuleBreakType for RuleBreakTypePotentiallyIllFormedUtf8 {
+    type IterAttr<'s> = Utf8CharIndices<'s>;
     type CharType = char;
 
     fn get_current_position_character_len(iter: &RuleBreakIterator<Self>) -> usize {
@@ -320,8 +320,8 @@ pub struct RuleBreakTypeLatin1;
 
 impl crate::private::Sealed for RuleBreakTypeLatin1 {}
 
-impl<'s> RuleBreakType<'s> for RuleBreakTypeLatin1 {
-    type IterAttr = Latin1Indices<'s>;
+impl RuleBreakType for RuleBreakTypeLatin1 {
+    type IterAttr<'s> = Latin1Indices<'s>;
     type CharType = u8;
 
     fn get_current_position_character_len(_: &RuleBreakIterator<Self>) -> usize {
@@ -343,8 +343,8 @@ pub struct RuleBreakTypeUtf16;
 
 impl crate::private::Sealed for RuleBreakTypeUtf16 {}
 
-impl<'s> RuleBreakType<'s> for RuleBreakTypeUtf16 {
-    type IterAttr = Utf16Indices<'s>;
+impl RuleBreakType for RuleBreakTypeUtf16 {
+    type IterAttr<'s> = Utf16Indices<'s>;
     type CharType = u32;
 
     fn get_current_position_character_len(iter: &RuleBreakIterator<Self>) -> usize {
