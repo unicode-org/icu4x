@@ -24,9 +24,7 @@ pub trait RuleBreakType: crate::private::Sealed + Sized {
     type CharType: Copy + Into<u32> + core::fmt::Debug;
 
     #[doc(hidden)]
-    fn get_current_position_character_len<'data, 's>(
-        iter: &RuleBreakIterator<'data, 's, Self>,
-    ) -> usize;
+    fn char_len(ch: Self::CharType) -> usize;
 
     #[doc(hidden)]
     fn handle_complex_language<'data, 's>(
@@ -72,7 +70,7 @@ impl<Y: RuleBreakType> Iterator for RuleBreakIterator<'_, '_, Y> {
                     self.result_cache = self.result_cache.iter().skip(1).map(|r| r - i).collect();
                     return self.get_current_position();
                 }
-                i += Y::get_current_position_character_len(self);
+                i += self.get_current_codepoint().map_or(0, Y::char_len);
                 self.advance_iter();
                 if self.is_eof() {
                     self.result_cache.clear();
@@ -278,8 +276,8 @@ impl RuleBreakType for RuleBreakTypeUtf8 {
     type IterAttr<'s> = CharIndices<'s>;
     type CharType = char;
 
-    fn get_current_position_character_len(iter: &RuleBreakIterator<Self>) -> usize {
-        iter.get_current_codepoint().map_or(0, |c| c.len_utf8())
+    fn char_len(ch: Self::CharType) -> usize {
+        ch.len_utf8()
     }
 
     fn handle_complex_language(
@@ -301,8 +299,8 @@ impl RuleBreakType for RuleBreakTypePotentiallyIllFormedUtf8 {
     type IterAttr<'s> = Utf8CharIndices<'s>;
     type CharType = char;
 
-    fn get_current_position_character_len(iter: &RuleBreakIterator<Self>) -> usize {
-        iter.get_current_codepoint().map_or(0, |c| c.len_utf8())
+    fn char_len(ch: Self::CharType) -> usize {
+        ch.len_utf8()
     }
 
     fn handle_complex_language(
@@ -324,7 +322,7 @@ impl RuleBreakType for RuleBreakTypeLatin1 {
     type IterAttr<'s> = Latin1Indices<'s>;
     type CharType = u8;
 
-    fn get_current_position_character_len(_: &RuleBreakIterator<Self>) -> usize {
+    fn char_len(_ch: Self::CharType) -> usize {
         unreachable!()
     }
 
@@ -347,11 +345,11 @@ impl RuleBreakType for RuleBreakTypeUtf16 {
     type IterAttr<'s> = Utf16Indices<'s>;
     type CharType = u32;
 
-    fn get_current_position_character_len(iter: &RuleBreakIterator<Self>) -> usize {
-        match iter.get_current_codepoint() {
-            None => 0,
-            Some(ch) if ch >= 0x10000 => 2,
-            _ => 1,
+    fn char_len(ch: Self::CharType) -> usize {
+        if ch >= 0x10000 {
+            2
+        } else {
+            1
         }
     }
 

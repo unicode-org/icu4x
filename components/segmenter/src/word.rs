@@ -593,8 +593,8 @@ impl RuleBreakType for WordBreakTypeUtf8 {
     type IterAttr<'s> = CharIndices<'s>;
     type CharType = char;
 
-    fn get_current_position_character_len(iter: &RuleBreakIterator<Self>) -> usize {
-        iter.get_current_codepoint().map_or(0, |c| c.len_utf8())
+    fn char_len(ch: Self::CharType) -> usize {
+        ch.len_utf8()
     }
 
     fn handle_complex_language(
@@ -615,8 +615,8 @@ impl RuleBreakType for WordBreakTypePotentiallyIllFormedUtf8 {
     type IterAttr<'s> = Utf8CharIndices<'s>;
     type CharType = char;
 
-    fn get_current_position_character_len(iter: &RuleBreakIterator<Self>) -> usize {
-        iter.get_current_codepoint().map_or(0, |c| c.len_utf8())
+    fn char_len(ch: Self::CharType) -> usize {
+        ch.len_utf8()
     }
 
     fn handle_complex_language(
@@ -673,7 +673,7 @@ where
             "we should always arrive at first_pos: near index {:?}",
             iter.get_current_position()
         );
-        i += T::get_current_position_character_len(iter);
+        i += iter.get_current_codepoint().map_or(0, T::char_len);
         iter.advance_iter();
         if iter.is_eof() {
             iter.result_cache.clear();
@@ -693,11 +693,11 @@ impl RuleBreakType for WordBreakTypeUtf16 {
     type IterAttr<'s> = Utf16Indices<'s>;
     type CharType = u32;
 
-    fn get_current_position_character_len(iter: &RuleBreakIterator<Self>) -> usize {
-        match iter.get_current_codepoint() {
-            None => 0,
-            Some(ch) if ch >= 0x10000 => 2,
-            _ => 1,
+    fn char_len(ch: Self::CharType) -> usize {
+        if ch >= 0x10000 {
+            2
+        } else {
+            1
         }
     }
 
