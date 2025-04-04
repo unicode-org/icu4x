@@ -49,7 +49,7 @@ pub trait RuleBreakType<'s>: crate::private::Sealed {
 /// _after_ the boundary (for a boundary at the end of text, this index is the length
 /// of the [`str`] or array of code units).
 #[derive(Debug)]
-pub struct RuleBreakIterator<'data, 's, Y: RuleBreakType<'s> + ?Sized> {
+pub(crate) struct RuleBreakIterator<'data, 's, Y: RuleBreakType<'s> + ?Sized> {
     pub(crate) iter: Y::IterAttr,
     pub(crate) len: usize,
     pub(crate) current_pos_data: Option<(usize, Y::CharType)>,
