@@ -1460,7 +1460,7 @@ impl IndicConjunctBreak {
 }
 
 create_const_array! {
-#[allow(missing_docs)] // These constants don't need individual documentation.
+#[doc(hidden)] // draft API in ICU4C
 #[allow(non_upper_case_globals)]
 impl IndicConjunctBreak {
     pub const None: IndicConjunctBreak = IndicConjunctBreak(0);
