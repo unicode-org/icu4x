@@ -18,7 +18,7 @@
 pub mod chinese_based;
 pub mod hijri;
 pub use chinese_based::{CalendarChineseV1, CalendarDangiV1};
-pub use hijri::{CalendarHijriSimulatedMeccaV1, CalendarHijriUmmalquraV1};
+pub use hijri::CalendarHijriSimulatedMeccaV1;
 
 use crate::types::Weekday;
 use icu_provider::fallback::{LocaleFallbackConfig, LocaleFallbackPriority};
@@ -49,7 +49,6 @@ const _: () = {
     impl_calendar_chinese_v1!(Baked);
     impl_calendar_dangi_v1!(Baked);
     impl_calendar_hijri_simulated_mecca_v1!(Baked);
-    impl_calendar_hijri_ummalqura_v1!(Baked);
     impl_calendar_japanese_modern_v1!(Baked);
     impl_calendar_japanese_extended_v1!(Baked);
     impl_calendar_week_v1!(Baked);
@@ -87,7 +86,6 @@ pub const MARKERS: &[DataMarkerInfo] = &[
     CalendarChineseV1::INFO,
     CalendarDangiV1::INFO,
     CalendarHijriSimulatedMeccaV1::INFO,
-    CalendarHijriUmmalquraV1::INFO,
     CalendarJapaneseModernV1::INFO,
     CalendarJapaneseExtendedV1::INFO,
     CalendarWeekV1::INFO,

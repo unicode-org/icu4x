@@ -12,22 +12,15 @@
 //!
 //! Read more about data providers: [`icu_provider`]
 
+use calendrical_calculations::rata_die::RataDie;
 use icu_provider::prelude::*;
-use zerovec::ule::{AsULE, ULE};
+use zerovec::ule::AsULE;
 use zerovec::ZeroVec;
 
 icu_provider::data_marker!(
     /// Precomputed data for the Hijri obsevational calendar
     CalendarHijriSimulatedMeccaV1,
     "calendar/hijri/simulated/mecca/v1",
-    HijriData<'static>,
-    is_singleton = true,
-);
-
-icu_provider::data_marker!(
-    /// Precomputed data for the Hijri Umm-Al-Qura calendar
-    CalendarHijriUmmalquraV1,
-    "calendar/hijri/ummalqura/v1",
     HijriData<'static>,
     is_singleton = true,
 );
@@ -54,17 +47,15 @@ icu_provider::data_struct!(
 
 /// The struct containing compiled Hijri YearInfo
 ///
-/// Bit structure (little endian: note that shifts go in the opposite direction!)
+/// Bit structure
 ///
 /// ```text
-/// Bit:             0   1   2   3   4   5   6   7
-/// Byte 0:          [  month lengths .............
-/// Byte 1:         .. months    ] | [ ny offset    ]
+/// Bit:              F.........C  B.............0
+/// Value:           [ start day ][ month lengths ]
 /// ```
 ///
-/// Where the New Year Offset is a signed offset from `epoch + MEAN_SYNODIC_MONTH * year * 12` for the given
-/// calendar. This number does not appear to be less than 2, however we use all remaining bits for it in case of drift
-/// in the math.
+/// The start day is encoded as a signed offset from `Self::mean_synodic_start_day`. This number does not
+/// appear to be less than 2, however we use all remaining bits for it in case of drift in the math.
 /// The month lengths are stored as 1 = 30, 0 = 29 for each month including the leap month.
 ///
 /// <div class="stab unstable">
@@ -72,91 +63,103 @@ icu_provider::data_struct!(
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[derive(Copy, Clone, Hash, PartialEq, Eq, PartialOrd, Ord, ULE, Debug)]
+#[derive(Copy, Clone, Hash, PartialEq, Eq, PartialOrd, Ord, Debug)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_calendar::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-#[repr(C, packed)]
-pub struct PackedHijriYearInfo(pub u8, pub u8);
+pub struct PackedHijriYearInfo(pub u16);
 
 impl PackedHijriYearInfo {
-    #[cfg(feature = "datagen")]
-    pub(crate) fn new(month_lengths: [bool; 12], ny_offset: i64) -> Self {
+    pub(crate) const fn new(
+        extended_year: i32,
+        month_lengths: [bool; 12],
+        start_day: RataDie,
+    ) -> Self {
+        let start_offset = start_day.const_diff(Self::mean_synodic_start_day(extended_year));
+
         debug_assert!(
-            -8 < ny_offset && ny_offset < 8,
+            -8 < start_offset && start_offset < 8,
             "Year offset too big to store"
         );
-        let ny_offset = ny_offset as i8;
+        let start_offset = start_offset as i8;
 
         let mut all = 0u16; // last byte unused
 
-        for (month, length_30) in month_lengths.iter().enumerate() {
-            if *length_30 {
-                all |= 1 << month as u16;
+        let mut i = 0;
+        while i < 12 {
+            #[allow(clippy::indexing_slicing)]
+            if month_lengths[i] {
+                all |= 1 << i;
             }
+            i += 1;
         }
 
-        if ny_offset < 0 {
+        if start_offset < 0 {
             all |= 1 << 12;
         }
-        all |= u16::from(ny_offset.unsigned_abs()) << 13;
-        let le = all.to_le_bytes();
-        Self(le[0], le[1])
+        all |= (start_offset.unsigned_abs() as u16) << 13;
+        Self(all)
     }
 
-    pub(crate) fn unpack(self) -> ([bool; 12], i64) {
-        let months = u16::from_le_bytes([self.0, self.1]);
+    pub(crate) fn unpack(self, extended_year: i32) -> ([bool; 12], RataDie) {
+        let month_lengths = core::array::from_fn(|i| self.0 & (1 << (i as u8) as u16) != 0);
+        let start_offset = if (self.0 & 0b1_0000_0000_0000) != 0 {
+            -((self.0 >> 13) as i64)
+        } else {
+            (self.0 >> 13) as i64
+        };
         (
-            core::array::from_fn(|i| months & (1 << (i as u8) as u16) != 0),
-            if (self.1 & 0b10000) != 0 {
-                -((self.1 >> 5) as i64)
-            } else {
-                (self.1 >> 5) as i64
-            },
+            month_lengths,
+            Self::mean_synodic_start_day(extended_year) + start_offset,
+        )
+    }
+
+    const fn mean_synodic_start_day(extended_year: i32) -> RataDie {
+        // -1 because the epoch is new year of year 1
+        // truncating instead of flooring does not matter, as this is used for positive years only
+        calendrical_calculations::islamic::ISLAMIC_EPOCH_FRIDAY.const_add(
+            ((extended_year - 1) as f64 * calendrical_calculations::islamic::MEAN_YEAR_LENGTH)
+                as i64,
         )
     }
 }
 
 impl AsULE for PackedHijriYearInfo {
-    type ULE = Self;
-    fn to_unaligned(self) -> Self {
-        self
+    type ULE = <u16 as AsULE>::ULE;
+    fn from_unaligned(unaligned: Self::ULE) -> Self {
+        Self(<u16 as AsULE>::from_unaligned(unaligned))
     }
-    fn from_unaligned(other: Self) -> Self {
-        other
+    fn to_unaligned(self) -> Self::ULE {
+        <u16 as AsULE>::to_unaligned(self.0)
     }
 }
 
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    fn single_roundtrip(month_lengths: [bool; 12], ny_offset: i64) {
-        let packed = PackedHijriYearInfo::new(month_lengths, ny_offset);
-        let (month_lengths2, ny_offset2) = packed.unpack();
-        assert_eq!(month_lengths, month_lengths2, "Month lengths must match for testcase {month_lengths:?} / {ny_offset}, with packed repr: {packed:?}");
-        assert_eq!(ny_offset, ny_offset2, "Month lengths must match for testcase {month_lengths:?} / {ny_offset}, with packed repr: {packed:?}");
+#[test]
+fn test_hijri_packed_roundtrip() {
+    fn single_roundtrip(month_lengths: [bool; 12], year_start: RataDie) {
+        let packed = PackedHijriYearInfo::new(1600, month_lengths, year_start);
+        let (month_lengths2, year_start2) = packed.unpack(1600);
+        assert_eq!(month_lengths, month_lengths2, "Month lengths must match for testcase {month_lengths:?} / {year_start:?}, with packed repr: {packed:?}");
+        assert_eq!(year_start, year_start2, "Month lengths must match for testcase {month_lengths:?} / {year_start:?}, with packed repr: {packed:?}");
     }
-    const ALL_FALSE: [bool; 12] = [false; 12];
-    const ALL_TRUE: [bool; 12] = [true; 12];
-    const MIXED1: [bool; 12] = [
-        true, false, true, false, true, false, true, false, true, false, true, false,
-    ];
-    const MIXED2: [bool; 12] = [
-        false, false, true, true, true, false, true, false, false, false, true, true,
-    ];
-    #[test]
-    fn test_hijri_packed_roundtrip() {
-        single_roundtrip(ALL_FALSE, 0);
-        single_roundtrip(ALL_TRUE, 0);
-        single_roundtrip(MIXED1, 0);
-        single_roundtrip(MIXED2, 0);
 
-        single_roundtrip(MIXED1, -7);
-        single_roundtrip(MIXED2, 7);
-        single_roundtrip(MIXED2, 4);
-        single_roundtrip(MIXED2, 1);
-        single_roundtrip(MIXED2, -1);
-        single_roundtrip(MIXED2, -4);
-    }
+    let l = true;
+    let s = false;
+    let all_short = [s; 12];
+    let all_long = [l; 12];
+    let mixed1 = [l, s, l, s, l, s, l, s, l, s, l, s];
+    let mixed2 = [s, s, l, l, l, s, l, s, s, s, l, l];
+
+    let start_1600 = PackedHijriYearInfo::mean_synodic_start_day(1600);
+    single_roundtrip(all_short, start_1600);
+    single_roundtrip(all_long, start_1600);
+    single_roundtrip(mixed1, start_1600);
+    single_roundtrip(mixed2, start_1600);
+
+    single_roundtrip(mixed1, start_1600 - 7);
+    single_roundtrip(mixed2, start_1600 + 7);
+    single_roundtrip(mixed2, start_1600 + 4);
+    single_roundtrip(mixed2, start_1600 + 1);
+    single_roundtrip(mixed2, start_1600 - 1);
+    single_roundtrip(mixed2, start_1600 - 4);
 }

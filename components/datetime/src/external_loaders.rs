@@ -106,7 +106,6 @@ where
     P: DataProvider<icu_calendar::provider::CalendarJapaneseModernV1>
         + DataProvider<icu_calendar::provider::CalendarChineseV1>
         + DataProvider<icu_calendar::provider::CalendarDangiV1>
-        + DataProvider<icu_calendar::provider::CalendarHijriUmmalquraV1>
         + ?Sized,
 {
     #[inline]
