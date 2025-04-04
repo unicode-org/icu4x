@@ -769,7 +769,7 @@ pub trait LineBreakType: crate::private::Sealed + Sized {
     fn get_current_position_character_len(iterator: &LineBreakIterator<'_, '_, Self>) -> usize;
 
     #[doc(hidden)]
-    fn handle_complex_language(
+    fn line_handle_complex_language(
         iterator: &mut LineBreakIterator<'_, '_, Self>,
         left_codepoint: Self::CharType,
     ) -> Option<usize>;
@@ -913,7 +913,7 @@ impl<'s, Y: LineBreakType> Iterator for LineBreakIterator<'_, 's, Y> {
                 && Y::use_complex_breaking(self, left_codepoint)
                 && Y::use_complex_breaking(self, right_codepoint)
             {
-                let result = Y::handle_complex_language(self, left_codepoint);
+                let result = Y::line_handle_complex_language(self, left_codepoint);
                 if result.is_some() {
                     return result;
                 }
@@ -1128,11 +1128,11 @@ impl LineBreakType for LineBreakTypeUtf8 {
         iterator.get_current_codepoint().map_or(0, |c| c.len_utf8())
     }
 
-    fn handle_complex_language(
+    fn line_handle_complex_language(
         iter: &mut LineBreakIterator<'_, '_, Self>,
         left_codepoint: char,
     ) -> Option<usize> {
-        handle_complex_language_utf8(iter, left_codepoint)
+        line_handle_complex_language_utf8(iter, left_codepoint)
     }
 }
 
@@ -1164,15 +1164,15 @@ impl LineBreakType for LineBreakTypePotentiallyIllFormedUtf8 {
         iterator.get_current_codepoint().map_or(0, |c| c.len_utf8())
     }
 
-    fn handle_complex_language(
+    fn line_handle_complex_language(
         iter: &mut LineBreakIterator<'_, '_, Self>,
         left_codepoint: char,
     ) -> Option<usize> {
-        handle_complex_language_utf8(iter, left_codepoint)
+        line_handle_complex_language_utf8(iter, left_codepoint)
     }
 }
-/// handle_complex_language impl for UTF8 iterators
-fn handle_complex_language_utf8<'data, 's, T>(
+/// line_handle_complex_language impl for UTF8 iterators
+fn line_handle_complex_language_utf8<'data, 's, T>(
     iter: &mut LineBreakIterator<'data, 's, T>,
     left_codepoint: char,
 ) -> Option<usize>
@@ -1250,7 +1250,7 @@ impl LineBreakType for LineBreakTypeLatin1 {
         unreachable!()
     }
 
-    fn handle_complex_language(
+    fn line_handle_complex_language(
         _: &mut LineBreakIterator<Self>,
         _: Self::CharType,
     ) -> Option<usize> {
@@ -1289,7 +1289,7 @@ impl LineBreakType for LineBreakTypeUtf16 {
         }
     }
 
-    fn handle_complex_language(
+    fn line_handle_complex_language(
         iterator: &mut LineBreakIterator<Self>,
         left_codepoint: Self::CharType,
     ) -> Option<usize> {
