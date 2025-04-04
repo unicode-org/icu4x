@@ -293,6 +293,7 @@ lazy_static::lazy_static! {
         // Scaffolding modules
         "icu::datetime::scaffold",
         "icu::time::scaffold",
+        "icu::segmenter::scaffold",
 
         // Provider modules
         // We could potentially expose them later, but it's hard to expose them
@@ -326,6 +327,22 @@ lazy_static::lazy_static! {
         "icu::time::zone::WindowsParser",
         "icu::time::zone::TimeZoneInfo",
         "icu::time::zone::TimeZone",
+        "icu::segmenter::grapheme::GraphemeClusterSegmenter",
+        "icu::segmenter::grapheme::GraphemeClusterSegmenterBorrowed",
+        "icu::segmenter::line::LineSegmenter",
+        "icu::segmenter::line::LineSegmenterBorrowed",
+        "icu::segmenter::line::LineBreakOptions",
+        "icu::segmenter::line::LineBreakStrictness",
+        "icu::segmenter::line::LineBreakWordOption",
+        "icu::segmenter::sentence::SentenceSegmenter",
+        "icu::segmenter::sentence::SentenceSegmenterBorrowed",
+        "icu::segmenter::sentence::SentenceBreakInvariantOptions",
+        "icu::segmenter::sentence::SentenceBreakOptions",
+        "icu::segmenter::word::WordSegmenter",
+        "icu::segmenter::word::WordSegmenterBorrowed",
+        "icu::segmenter::word::WordBreakInvariantOptions",
+        "icu::segmenter::word::WordBreakOptions",
+        "icu::segmenter::word::WordType",
 
         // Reexported input modules
         "icu::datetime::input",

@@ -47,26 +47,39 @@ pub mod ffi {
     }
 
     #[diplomat::opaque]
-    #[diplomat::rust_link(icu::segmenter::LineBreakIterator, Struct)]
+    #[diplomat::rust_link(icu::segmenter::line::LineBreakIterator, Struct)]
     #[diplomat::rust_link(
-        icu::segmenter::LineBreakIteratorPotentiallyIllFormedUtf8,
+        icu::segmenter::line::LineBreakIteratorPotentiallyIllFormedUtf8,
         Typedef,
         compact
     )]
-    #[diplomat::rust_link(icu::segmenter::LineBreakIteratorUtf8, Typedef, hidden)]
+    #[diplomat::rust_link(
+        icu::segmenter::line::LineBreakTypePotentiallyIllFormedUtf8,
+        Struct,
+        hidden
+    )]
+    #[diplomat::rust_link(icu::segmenter::line::LineBreakIteratorUtf8, Typedef, hidden)]
+    #[diplomat::rust_link(
+        icu::segmenter::line::LineBreakTypePotentiallyIllFormedUtf8,
+        Struct,
+        hidden
+    )]
+    #[diplomat::rust_link(icu::segmenter::line::LineBreakTypeUtf8, Struct, hidden)]
     pub struct LineBreakIteratorUtf8<'a>(
-        icu_segmenter::LineBreakIteratorPotentiallyIllFormedUtf8<'a, 'a>,
+        icu_segmenter::line::LineBreakIteratorPotentiallyIllFormedUtf8<'a, 'a>,
     );
 
     #[diplomat::opaque]
-    #[diplomat::rust_link(icu::segmenter::LineBreakIterator, Struct)]
-    #[diplomat::rust_link(icu::segmenter::LineBreakIteratorUtf16, Typedef, compact)]
-    pub struct LineBreakIteratorUtf16<'a>(icu_segmenter::LineBreakIteratorUtf16<'a, 'a>);
+    #[diplomat::rust_link(icu::segmenter::line::LineBreakIterator, Struct)]
+    #[diplomat::rust_link(icu::segmenter::line::LineBreakIteratorUtf16, Typedef, compact)]
+    #[diplomat::rust_link(icu::segmenter::line::LineBreakTypeUtf16, Struct, hidden)]
+    pub struct LineBreakIteratorUtf16<'a>(icu_segmenter::line::LineBreakIteratorUtf16<'a, 'a>);
 
     #[diplomat::opaque]
-    #[diplomat::rust_link(icu::segmenter::LineBreakIterator, Struct)]
-    #[diplomat::rust_link(icu::segmenter::LineBreakIteratorLatin1, Typedef, compact)]
-    pub struct LineBreakIteratorLatin1<'a>(icu_segmenter::LineBreakIteratorLatin1<'a, 'a>);
+    #[diplomat::rust_link(icu::segmenter::line::LineBreakIterator, Struct)]
+    #[diplomat::rust_link(icu::segmenter::line::LineBreakIteratorLatin1, Typedef, compact)]
+    #[diplomat::rust_link(icu::segmenter::line::LineBreakTypeLatin1, Struct, hidden)]
+    pub struct LineBreakIteratorLatin1<'a>(icu_segmenter::line::LineBreakIteratorLatin1<'a, 'a>);
 
     impl LineSegmenter {
         /// Construct a [`LineSegmenter`] with default options (no locale-based tailoring) using compiled data. It automatically loads the best
@@ -271,9 +284,9 @@ pub mod ffi {
     impl<'a> LineBreakIteratorUtf8<'a> {
         /// Finds the next breakpoint. Returns -1 if at the end of the string or if the index is
         /// out of range of a 32-bit signed integer.
-        #[diplomat::rust_link(icu::segmenter::LineBreakIterator::next, FnInStruct)]
+        #[diplomat::rust_link(icu::segmenter::line::LineBreakIterator::next, FnInStruct)]
         #[diplomat::rust_link(
-            icu::segmenter::LineBreakIterator::Item,
+            icu::segmenter::line::LineBreakIterator::Item,
             AssociatedTypeInStruct,
             hidden
         )]
@@ -288,9 +301,9 @@ pub mod ffi {
     impl<'a> LineBreakIteratorUtf16<'a> {
         /// Finds the next breakpoint. Returns -1 if at the end of the string or if the index is
         /// out of range of a 32-bit signed integer.
-        #[diplomat::rust_link(icu::segmenter::LineBreakIterator::next, FnInStruct)]
+        #[diplomat::rust_link(icu::segmenter::line::LineBreakIterator::next, FnInStruct)]
         #[diplomat::rust_link(
-            icu::segmenter::LineBreakIterator::Item,
+            icu::segmenter::line::LineBreakIterator::Item,
             AssociatedTypeInStruct,
             hidden
         )]
@@ -305,9 +318,9 @@ pub mod ffi {
     impl<'a> LineBreakIteratorLatin1<'a> {
         /// Finds the next breakpoint. Returns -1 if at the end of the string or if the index is
         /// out of range of a 32-bit signed integer.
-        #[diplomat::rust_link(icu::segmenter::LineBreakIterator::next, FnInStruct)]
+        #[diplomat::rust_link(icu::segmenter::line::LineBreakIterator::next, FnInStruct)]
         #[diplomat::rust_link(
-            icu::segmenter::LineBreakIterator::Item,
+            icu::segmenter::line::LineBreakIterator::Item,
             AssociatedTypeInStruct,
             hidden
         )]
