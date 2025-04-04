@@ -11,14 +11,14 @@
 #[macro_export]
 macro_rules! __impl_calendar_hijri_ummalqura_v1 {
     ($ provider : ty) => {
-        #[clippy::msrv = "1.81"]
+        #[clippy::msrv = "1.82"]
         const _: () = <$provider>::MUST_USE_MAKE_PROVIDER_MACRO;
-        #[clippy::msrv = "1.81"]
+        #[clippy::msrv = "1.82"]
         impl $provider {
             #[doc(hidden)]
             pub const SINGLETON_CALENDAR_HIJRI_UMMALQURA_V1: &'static <icu::calendar::provider::CalendarHijriUmmalquraV1 as icu_provider::DynamicDataMarker>::DataStruct = &icu::calendar::provider::hijri::HijriData { first_extended_year: 1300i32, data: unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"U\x05\xAB279\xB6\x02v5l\x03U;\xAA\nV\t\x9E4]9\xBA\x02\xB55\xAA\x03K\x0B\x96\n.\x05\xAD2m5Z\x0BR\x07%\x0F\x8A.\x16\rV\n\xB5\n\xB4\x06\xA9\r\x92\x0B%\x0BK\x06\x9B:Z\x03\xD9\x06\xD4\x05\xA5\rJ\r\x95\n6\x05u9\xF4\x02\xE9\x06\xD4\x06\xA9\x065\x05]2\xBD4\xBA9\xB4\x03i\x0B*\x0BU\n\xAD\x04]:\xDA\x02\xD96\xAA\x0E\x94.*\rV\x0C\xAE\x04m:j\x05U\rJ\r\x93\n+5[::\x05\xB56\xA9\x0ER-)\rU\n\xAD\x04m5\xEA\n\xE4\x06\xD1\x0E\xA2-\xAA\nZ\t\xDA\x02\xB95\xB2\x0Bd\x07\xC9\x06U\x05\xAB2\xDB4\xBA\n\xB4\x05\xA9\rR-\xA5\n-\tm2\xED8\xDA\x02\xD5:\xA5\nK\n\x97479\xB6\x02u9i\rR\r\x95\x0C+\t[2\xDB4\xD5\t\xD2\x05\xA5\rJ\r\x95\nM\x05\xAD:\xAA\x03\xD2\x0B\xC4\x0B\x89\x0B\x95\n-5\xAD5j;\xD4\x06\xC9\r\x92\r\xA6\nV\t\xAE2m5j3U;\xAA\nM9\x9D4]9\xBA2\xB55\xAA\x05U=\x9A\n.9n2]5\xDA:\xD4\x06\xA5\x06';M\n\xAD\x04m5Z\x0BT\x07I\x0F\x92.&\rV\nV\x03\xB56\xAA\x0B\x92\x0B%\x0B\x8B\x06\x9B:Z\x05\xDA\n\xB4\x05\xA9\rR+\x9A\n6\x05v2u5\xF2\n\xD4\x06\xA9\x06U\x05\xAD2\xBD4\xBA\tt\x05i\x0BR\x0B\x95\n-\x05]:\xDA\x04\xD9\n\xB2\x06\x95\x0E*\x0E\x96\x0C.\t\xAD:j\x05e\rJ\r\x15\r+\x06[<:\x05\xB56\xB2\rd-)\rU\n\xAD\x04m9\xEA\n\xE8\x06\xD1\x0E\xA4-J\rj\n\xDA\x02\xB95r\x0Bh+\xD1\x06U\x06\xAB4[9\xBA\x02\xB55\xA9\rR-\xA6\x0CN\tn\x04]9\xDA\x04\xD5:\xAA\nM\n\x9B479\xB6\x04u9j\rR\r\xA5\nK\t\xAB2[5\xD9\n\xD2\x05\xC5\r\x92-%\x0BU\x05\xB5:\xB4\x05\xA9\x0B\xA2\x07E\x07\x93\x05\xAB:\xD6\x04\xD6\t\xD2\x05\xA5\x0BJ\x0B\x95\n\xAD\x04]1\xDD2\xDA\t\xB4\x05\xA9\x05-5[2\xB78v1m5j\x0B\xCA\n\x96\n+\x05[1\xBB2\xB65\xAA\r\x94+F\r\x8D\n-\x05\x9D:Z\x05U7I\x07\x13\x0FJ\x0E\x96\nV\x05\xB56\xAA\x0B\x94+") } };
         }
-        #[clippy::msrv = "1.81"]
+        #[clippy::msrv = "1.82"]
         impl icu_provider::DataProvider<icu::calendar::provider::CalendarHijriUmmalquraV1> for $provider {
             fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu::calendar::provider::CalendarHijriUmmalquraV1>, icu_provider::DataError> {
                 if req.id.locale.is_default() {
@@ -31,7 +31,7 @@ macro_rules! __impl_calendar_hijri_ummalqura_v1 {
     };
     ($ provider : ty , ITER) => {
         __impl_calendar_hijri_ummalqura_v1!($provider);
-        #[clippy::msrv = "1.81"]
+        #[clippy::msrv = "1.82"]
         impl icu_provider::IterableDataProvider<icu::calendar::provider::CalendarHijriUmmalquraV1> for $provider {
             fn iter_ids(&self) -> Result<std::collections::BtreeSet<icu_provider::DataIdentifierCow<'static>>, icu_provider::DataError> {
                 Ok([Default::default()].into_iter().collect())
@@ -40,7 +40,7 @@ macro_rules! __impl_calendar_hijri_ummalqura_v1 {
     };
     ($ provider : ty , DRY) => {
         __impl_calendar_hijri_ummalqura_v1!($provider);
-        #[clippy::msrv = "1.81"]
+        #[clippy::msrv = "1.82"]
         impl icu_provider::DryDataProvider<icu::calendar::provider::CalendarHijriUmmalquraV1> for $provider {
             fn dry_load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponseMetadata, icu_provider::DataError> {
                 if req.id.locale.is_default() {
@@ -53,7 +53,7 @@ macro_rules! __impl_calendar_hijri_ummalqura_v1 {
     };
     ($ provider : ty , DRY , ITER) => {
         __impl_calendar_hijri_ummalqura_v1!($provider);
-        #[clippy::msrv = "1.81"]
+        #[clippy::msrv = "1.82"]
         impl icu_provider::DryDataProvider<icu::calendar::provider::CalendarHijriUmmalquraV1> for $provider {
             fn dry_load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponseMetadata, icu_provider::DataError> {
                 if req.id.locale.is_default() {
@@ -63,7 +63,7 @@ macro_rules! __impl_calendar_hijri_ummalqura_v1 {
                 }
             }
         }
-        #[clippy::msrv = "1.81"]
+        #[clippy::msrv = "1.82"]
         impl icu_provider::IterableDataProvider<icu::calendar::provider::CalendarHijriUmmalquraV1> for $provider {
             fn iter_ids(&self) -> Result<std::collections::BtreeSet<icu_provider::DataIdentifierCow<'static>>, icu_provider::DataError> {
                 Ok([Default::default()].into_iter().collect())

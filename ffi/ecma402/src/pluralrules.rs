@@ -81,10 +81,9 @@ pub(crate) mod internal {
         // Integer fragment.
         let leading_zeros = clamp_diff(display_integer_digits, int_part.len());
         let trailing_zeros_in_int_part = clamp_diff(int_part.len(), total_significant_digits);
-        let i = std::iter::repeat('0')
-            .take(leading_zeros)
+        let i = std::iter::repeat_n('0', leading_zeros)
             .chain(int_part.chars().take(total_significant_digits))
-            .chain(std::iter::repeat('0').take(trailing_zeros_in_int_part));
+            .chain(std::iter::repeat_n('0', trailing_zeros_in_int_part));
 
         // Decimal dot is printed only if decimals will follow.
         let dd = match display_fraction_digits == 0 {
