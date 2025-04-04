@@ -59,7 +59,10 @@ pub(crate) fn empty_handle_complex_language<Y: RuleBreakType>(
     _i: &mut RuleBreakIterator<'_, '_, Y>,
     _c: Y::CharType,
 ) -> Option<usize> {
-    debug_assert!(false, "grapheme/sentence segmenters should never need complex language handling");
+    debug_assert!(
+        false,
+        "grapheme/sentence segmenters should never need complex language handling"
+    );
     None
 }
 

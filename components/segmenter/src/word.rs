@@ -10,7 +10,6 @@ use crate::rule_segmenter::*;
 use alloc::string::String;
 use alloc::vec;
 use alloc::vec::Vec;
-use core::str::CharIndices;
 use icu_locale_core::LanguageIdentifier;
 use icu_provider::prelude::*;
 use utf8_iter::Utf8CharIndices;
@@ -627,7 +626,10 @@ impl WordBreakType for RuleBreakTypeLatin1 {
         _iter: &mut RuleBreakIterator<'_, '_, Self>,
         _left_codepoint: Self::CharType,
     ) -> Option<usize> {
-        debug_assert!(false, "latin-1 text should never need complex language handling");
+        debug_assert!(
+            false,
+            "latin-1 text should never need complex language handling"
+        );
         None
     }
 }
