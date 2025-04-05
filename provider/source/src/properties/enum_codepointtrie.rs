@@ -467,6 +467,15 @@ expand!(
         "ea"
     ),
     (
+        PropertyEnumIndicConjunctBreakV1,
+        PropertyNameParseIndicConjunctBreakV1,
+        (
+            linear: PropertyNameShortIndicConjunctBreakV1,
+            PropertyNameLongIndicConjunctBreakV1
+        ),
+        "InCB"
+    ),
+    (
         PropertyEnumIndicSyllabicCategoryV1,
         PropertyNameParseIndicSyllabicCategoryV1,
         (

@@ -143,6 +143,7 @@ const _: () = {
     impl_property_enum_general_category_v1!(Baked);
     impl_property_enum_grapheme_cluster_break_v1!(Baked);
     impl_property_enum_hangul_syllable_type_v1!(Baked);
+    impl_property_enum_indic_conjunct_break_v1!(Baked);
     impl_property_enum_indic_syllabic_category_v1!(Baked);
     impl_property_enum_joining_type_v1!(Baked);
     impl_property_enum_line_break_v1!(Baked);
@@ -620,6 +621,12 @@ icu_provider::data_marker!(
     is_singleton = true,
 );
 icu_provider::data_marker!(
+    /// Data marker for the 'IndicConjunctBreak' Unicode property
+    PropertyEnumIndicConjunctBreakV1,
+    PropertyCodePointMap<'static, crate::props::IndicConjunctBreak>,
+    is_singleton = true,
+);
+icu_provider::data_marker!(
     /// Data marker for the 'IndicSyllabicCategory' Unicode property
     PropertyEnumIndicSyllabicCategoryV1,
     PropertyCodePointMap<'static, crate::props::IndicSyllabicCategory>,
@@ -793,6 +800,7 @@ pub const MARKERS: &[DataMarkerInfo] = &[
     PropertyEnumGeneralCategoryV1::INFO,
     PropertyEnumGraphemeClusterBreakV1::INFO,
     PropertyEnumHangulSyllableTypeV1::INFO,
+    PropertyEnumIndicConjunctBreakV1::INFO,
     PropertyEnumIndicSyllabicCategoryV1::INFO,
     PropertyEnumJoiningTypeV1::INFO,
     PropertyEnumLineBreakV1::INFO,

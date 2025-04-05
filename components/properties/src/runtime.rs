@@ -138,6 +138,7 @@ enum EnumeratedProperty {
     GeneralCategory = 0x1005,
     GraphemeClusterBreak = 0x1012,
     HangulSyllableType = 0x100B,
+    IndicConjunctBreak = 0x101A,
     IndicPositionalCategory = 0x1016,
     IndicSyllabicCategory = 0x1017,
     JoiningGroup = 0x1006,
