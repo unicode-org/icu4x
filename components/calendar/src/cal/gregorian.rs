@@ -108,26 +108,26 @@ impl Calendar for Gregorian {
     fn year(&self, date: &Self::DateInner) -> types::YearInfo {
         let year = date.0 .0.year;
         if year > 0 {
-            types::YearInfo::new_era(
-                year,
-                types::FormattingEra::Index(1, tinystr!(16, "CE")),
-                tinystr!(16, "gregory").into(),
-                year,
-                match year {
+            types::YearInfo::Era {
+                extended_year: year,
+                formatting_era: types::FormattingEra::Index(1, tinystr!(16, "CE")),
+                standard_era: tinystr!(16, "gregory").into(),
+                era_year: year,
+                ambiguity: match year {
                     ..=999 => types::YearAmbiguity::EraAndCenturyRequired,
                     1000..=1949 => types::YearAmbiguity::CenturyRequired,
                     1950..=2049 => types::YearAmbiguity::Unambiguous,
                     2050.. => types::YearAmbiguity::CenturyRequired,
                 },
-            )
+            }
         } else {
-            types::YearInfo::new_era(
-                year,
-                types::FormattingEra::Index(0, tinystr!(16, "BCE")),
-                tinystr!(16, "gregory-inverse").into(),
-                1_i32.saturating_sub(year),
-                types::YearAmbiguity::EraAndCenturyRequired,
-            )
+            types::YearInfo::Era {
+                extended_year: year,
+                formatting_era: types::FormattingEra::Index(0, tinystr!(16, "BCE")),
+                standard_era: tinystr!(16, "gregory-inverse").into(),
+                era_year: 1_i32.saturating_sub(year),
+                ambiguity: types::YearAmbiguity::EraAndCenturyRequired,
+            }
         }
     }
 

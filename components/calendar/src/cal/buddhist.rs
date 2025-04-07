@@ -117,13 +117,13 @@ impl Calendar for Buddhist {
     /// The calendar-specific year represented by `date`
     fn year(&self, date: &Self::DateInner) -> types::YearInfo {
         let buddhist_year = date.0.year + BUDDHIST_ERA_OFFSET;
-        types::YearInfo::new_era(
-            buddhist_year,
-            types::FormattingEra::Index(0, tinystr!(16, "BE")),
-            tinystr!(16, "buddhist").into(),
-            buddhist_year,
-            types::YearAmbiguity::CenturyRequired,
-        )
+        types::YearInfo::Era {
+            extended_year: buddhist_year,
+            formatting_era: types::FormattingEra::Index(0, tinystr!(16, "BE")),
+            standard_era: tinystr!(16, "buddhist").into(),
+            era_year: buddhist_year,
+            ambiguity: types::YearAmbiguity::CenturyRequired,
+        }
     }
 
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {

@@ -182,13 +182,13 @@ impl Calendar for Indian {
     }
 
     fn year(&self, date: &Self::DateInner) -> types::YearInfo {
-        types::YearInfo::new_era(
-            date.0.year,
-            types::FormattingEra::Index(0, tinystr!(16, "Saka")),
-            tinystr!(16, "indian").into(),
-            date.0.year,
-            types::YearAmbiguity::CenturyRequired,
-        )
+        types::YearInfo::Era {
+            extended_year: date.0.year,
+            formatting_era: types::FormattingEra::Index(0, tinystr!(16, "Saka")),
+            standard_era: tinystr!(16, "indian").into(),
+            era_year: date.0.year,
+            ambiguity: types::YearAmbiguity::CenturyRequired,
+        }
     }
 
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {

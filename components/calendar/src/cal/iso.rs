@@ -143,13 +143,13 @@ impl Calendar for Iso {
     }
 
     fn year(&self, date: &Self::DateInner) -> types::YearInfo {
-        types::YearInfo::new_era(
-            date.0.year,
-            types::FormattingEra::Index(0, tinystr!(16, "")),
-            tinystr!(16, "default").into(),
-            date.0.year,
-            types::YearAmbiguity::Unambiguous,
-        )
+        types::YearInfo::Era {
+            extended_year: date.0.year,
+            formatting_era: types::FormattingEra::Index(0, tinystr!(16, "")),
+            standard_era: tinystr!(16, "default").into(),
+            era_year: date.0.year,
+            ambiguity: types::YearAmbiguity::Unambiguous,
+        }
     }
 
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {

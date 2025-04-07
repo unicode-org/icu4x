@@ -200,21 +200,21 @@ impl Calendar for Ethiopian {
     fn year(&self, date: &Self::DateInner) -> types::YearInfo {
         let year = date.0.year;
         if self.0 || year <= INCARNATION_OFFSET {
-            types::YearInfo::new_era(
-                year,
-                types::FormattingEra::Index(0, tinystr!(16, "Anno Mundi")),
-                tinystr!(16, "ethioaa").into(),
-                year,
-                types::YearAmbiguity::CenturyRequired,
-            )
+            types::YearInfo::Era {
+                extended_year: year,
+                formatting_era: types::FormattingEra::Index(0, tinystr!(16, "Anno Mundi")),
+                standard_era: tinystr!(16, "ethioaa").into(),
+                era_year: year,
+                ambiguity: types::YearAmbiguity::CenturyRequired,
+            }
         } else {
-            types::YearInfo::new_era(
-                year - INCARNATION_OFFSET,
-                types::FormattingEra::Index(1, tinystr!(16, "Incarnation")),
-                tinystr!(16, "ethiopic").into(),
-                year - INCARNATION_OFFSET,
-                types::YearAmbiguity::CenturyRequired,
-            )
+            types::YearInfo::Era {
+                extended_year: year - INCARNATION_OFFSET,
+                formatting_era: types::FormattingEra::Index(1, tinystr!(16, "Incarnation")),
+                standard_era: tinystr!(16, "ethiopic").into(),
+                era_year: year - INCARNATION_OFFSET,
+                ambiguity: types::YearAmbiguity::CenturyRequired,
+            }
         }
     }
 

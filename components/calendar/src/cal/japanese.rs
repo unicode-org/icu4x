@@ -249,13 +249,13 @@ impl Calendar for Japanese {
     }
 
     fn year(&self, date: &Self::DateInner) -> types::YearInfo {
-        types::YearInfo::new_era(
-            date.inner.0.year,
-            types::FormattingEra::Code(date.era.into()),
-            date.era.into(),
-            date.adjusted_year,
-            types::YearAmbiguity::CenturyRequired,
-        )
+        types::YearInfo::Era {
+            extended_year: date.inner.0.year,
+            formatting_era: types::FormattingEra::Code(date.era.into()),
+            standard_era: date.era.into(),
+            era_year: date.adjusted_year,
+            ambiguity: types::YearAmbiguity::CenturyRequired,
+        }
     }
 
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {

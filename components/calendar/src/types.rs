@@ -71,31 +71,6 @@ pub enum YearInfo {
 }
 
 impl YearInfo {
-    /// Construct a new Year given an era and number
-    pub(crate) fn new_era(
-        extended_year: i32,
-        formatting_era: FormattingEra,
-        standard_era: Era,
-        era_year: i32,
-        ambiguity: YearAmbiguity,
-    ) -> Self {
-        Self::Era {
-            extended_year,
-            formatting_era,
-            standard_era,
-            era_year,
-            ambiguity,
-        }
-    }
-
-    /// Construct a new cyclic Year given a cycle and a related_iso
-    pub(crate) fn new_cyclic(extended_year: i32, year: NonZeroU8, related_iso: i32) -> Self {
-        Self::Cyclic {
-            extended_year,
-            year,
-            related_iso,
-        }
-    }
     /// Get the year in the era if this is a non-cyclic calendar
     ///
     /// Gets the eraYear for era dates, otherwise falls back to Extended Year

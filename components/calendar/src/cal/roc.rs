@@ -126,21 +126,21 @@ impl Calendar for Roc {
     fn year(&self, date: &Self::DateInner) -> crate::types::YearInfo {
         let year = date.0 .0.year;
         if year > ROC_ERA_OFFSET {
-            types::YearInfo::new_era(
-                year,
-                types::FormattingEra::Index(1, tinystr!(16, "ROC")),
-                tinystr!(16, "roc").into(),
-                year.saturating_sub(ROC_ERA_OFFSET),
-                types::YearAmbiguity::CenturyRequired,
-            )
+            crate::types::YearInfo::Era {
+                extended_year: year,
+                formatting_era: types::FormattingEra::Index(1, tinystr!(16, "ROC")),
+                standard_era: tinystr!(16, "roc").into(),
+                era_year: year.saturating_sub(ROC_ERA_OFFSET),
+                ambiguity: types::YearAmbiguity::CenturyRequired,
+            }
         } else {
-            types::YearInfo::new_era(
-                year,
-                types::FormattingEra::Index(0, tinystr!(16, "B. ROC")),
-                tinystr!(16, "roc-inverse").into(),
-                (ROC_ERA_OFFSET + 1).saturating_sub(year),
-                types::YearAmbiguity::EraAndCenturyRequired,
-            )
+            crate::types::YearInfo::Era {
+                extended_year: year,
+                formatting_era: types::FormattingEra::Index(0, tinystr!(16, "B. ROC")),
+                standard_era: tinystr!(16, "roc-inverse").into(),
+                era_year: (ROC_ERA_OFFSET + 1).saturating_sub(year),
+                ambiguity: types::YearAmbiguity::EraAndCenturyRequired,
+            }
         }
     }
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {

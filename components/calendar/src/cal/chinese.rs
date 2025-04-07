@@ -249,12 +249,15 @@ impl Calendar for Chinese {
     }
 
     fn year(&self, date: &Self::DateInner) -> types::YearInfo {
-        let year = date.0 .0.year;
-        let cyclic = (year.value - 1).rem_euclid(60) as u8;
-        let cyclic = NonZeroU8::new(cyclic + 1).unwrap_or(NonZeroU8::MIN); // 1-indexed
-        let rata_die_in_year = date.0 .0.year.new_year::<ChineseCB>();
-        let related_iso = Iso.from_rata_die(rata_die_in_year).0.year;
-        types::YearInfo::new_cyclic(year.value, cyclic, related_iso)
+        types::YearInfo::Cyclic {
+            extended_year: date.0 .0.year.value,
+            year: NonZeroU8::new((date.0 .0.year.value - 1).rem_euclid(60) as u8 + 1)
+                .unwrap_or(NonZeroU8::MIN),
+            related_iso: Iso
+                .from_rata_die(date.0 .0.year.new_year::<ChineseCB>())
+                .0
+                .year,
+        }
     }
 
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {

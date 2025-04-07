@@ -232,13 +232,16 @@ impl Calendar for Dangi {
     }
 
     fn year(&self, date: &Self::DateInner) -> crate::types::YearInfo {
-        let year = date.0 .0.year;
-        // constant 364 from https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L5704
-        let cyclic = (year.value as i64 - 1 + 364).rem_euclid(60) as u8;
-        let cyclic = NonZeroU8::new(cyclic + 1).unwrap_or(NonZeroU8::MIN); // 1-indexed
-        let rata_die_in_year = date.0 .0.year.new_year::<DangiCB>();
-        let related_iso = Iso.from_rata_die(rata_die_in_year).0.year;
-        types::YearInfo::new_cyclic(year.value, cyclic, related_iso)
+        crate::types::YearInfo::Cyclic {
+            extended_year: date.0 .0.year.value,
+            // constant 364 from https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L5704
+            year: NonZeroU8::new((date.0 .0.year.value as i64 - 1 + 364).rem_euclid(60) as u8 + 1)
+                .unwrap_or(NonZeroU8::MIN),
+            related_iso: Iso
+                .from_rata_die(date.0 .0.year.new_year::<DangiCB>())
+                .0
+                .year,
+        }
     }
 
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
