@@ -143,14 +143,12 @@ impl Calendar for Iso {
     }
 
     fn year(&self, date: &Self::DateInner) -> types::YearInfo {
-        types::YearInfo::new(
+        types::YearInfo::new_era(
             date.0.year,
-            types::EraYear {
-                formatting_era: types::FormattingEra::Index(0, tinystr!(16, "")),
-                standard_era: tinystr!(16, "default").into(),
-                era_year: date.0.year,
-                ambiguity: types::YearAmbiguity::Unambiguous,
-            },
+            types::FormattingEra::Index(0, tinystr!(16, "")),
+            tinystr!(16, "default").into(),
+            date.0.year,
+            types::YearAmbiguity::Unambiguous,
         )
     }
 

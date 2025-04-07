@@ -156,24 +156,20 @@ impl Calendar for Julian {
     fn year(&self, date: &Self::DateInner) -> types::YearInfo {
         let year = date.0.year;
         if year > 0 {
-            types::YearInfo::new(
+            types::YearInfo::new_era(
                 year,
-                types::EraYear {
-                    standard_era: tinystr!(16, "julian").into(),
-                    formatting_era: types::FormattingEra::Index(1, tinystr!(16, "AD")),
-                    era_year: year,
-                    ambiguity: types::YearAmbiguity::CenturyRequired,
-                },
+                types::FormattingEra::Index(1, tinystr!(16, "AD")),
+                tinystr!(16, "julian").into(),
+                year,
+                types::YearAmbiguity::CenturyRequired,
             )
         } else {
-            types::YearInfo::new(
+            types::YearInfo::new_era(
                 year,
-                types::EraYear {
-                    standard_era: tinystr!(16, "julian-inverse").into(),
-                    formatting_era: types::FormattingEra::Index(0, tinystr!(16, "BC")),
-                    era_year: 1_i32.saturating_sub(year),
-                    ambiguity: types::YearAmbiguity::EraAndCenturyRequired,
-                },
+                types::FormattingEra::Index(0, tinystr!(16, "BC")),
+                tinystr!(16, "julian-inverse").into(),
+                1_i32.saturating_sub(year),
+                types::YearAmbiguity::EraAndCenturyRequired,
             )
         }
     }

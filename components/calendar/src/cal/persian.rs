@@ -157,14 +157,12 @@ impl Calendar for Persian {
 
     fn year(&self, date: &Self::DateInner) -> types::YearInfo {
         let year = date.0.year;
-        types::YearInfo::new(
+        types::YearInfo::new_era(
             year,
-            types::EraYear {
-                standard_era: tinystr!(16, "persian").into(),
-                formatting_era: types::FormattingEra::Index(0, tinystr!(16, "AH")),
-                era_year: year,
-                ambiguity: types::YearAmbiguity::CenturyRequired,
-            },
+            types::FormattingEra::Index(0, tinystr!(16, "AH")),
+            tinystr!(16, "persian").into(),
+            year,
+            types::YearAmbiguity::CenturyRequired,
         )
     }
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {

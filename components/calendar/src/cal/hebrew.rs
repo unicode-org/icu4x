@@ -259,14 +259,12 @@ impl Calendar for Hebrew {
     }
 
     fn year(&self, date: &Self::DateInner) -> types::YearInfo {
-        types::YearInfo::new(
+        types::YearInfo::new_era(
             date.0.year.value,
-            types::EraYear {
-                formatting_era: types::FormattingEra::Index(0, tinystr!(16, "AM")),
-                standard_era: tinystr!(16, "hebrew").into(),
-                era_year: date.0.year.value,
-                ambiguity: types::YearAmbiguity::CenturyRequired,
-            },
+            types::FormattingEra::Index(0, tinystr!(16, "AM")),
+            tinystr!(16, "hebrew").into(),
+            date.0.year.value,
+            types::YearAmbiguity::CenturyRequired,
         )
     }
 

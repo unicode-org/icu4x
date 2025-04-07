@@ -322,9 +322,9 @@ export class Date {
      *
      * For calendars without an era, returns the extended year
      *
-     * See the [Rust documentation for `era_year_or_extended`](https://docs.rs/icu/latest/icu/calendar/types/struct.YearInfo.html#method.era_year_or_extended) for more information.
+     * See the [Rust documentation for `era_year_or_extended`](https://docs.rs/icu/latest/icu/calendar/types/enum.YearInfo.html#method.era_year_or_extended) for more information.
      *
-     * Additional information: [1](https://docs.rs/icu/latest/icu/calendar/types/struct.EraYear.html#structfield.era_year), [2](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.year)
+     * Additional information: [1](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.year)
      */
     get yearInEra() {
         const result = wasm.icu4x_Date_year_in_era_mv1(this.ffiValue);
@@ -339,7 +339,7 @@ export class Date {
     /** 
      * Returns the extended year in the Date
      *
-     * See the [Rust documentation for `extended_year`](https://docs.rs/icu/latest/icu/calendar/types/struct.YearInfo.html#structfield.extended_year) for more information.
+     * See the [Rust documentation for `extended_year`](https://docs.rs/icu/latest/icu/calendar/types/enum.YearInfo.html#method.extended_year) for more information.
      */
     get extendedYear() {
         const result = wasm.icu4x_Date_extended_year_mv1(this.ffiValue);

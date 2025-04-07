@@ -126,24 +126,20 @@ impl Calendar for Roc {
     fn year(&self, date: &Self::DateInner) -> crate::types::YearInfo {
         let year = date.0 .0.year;
         if year > ROC_ERA_OFFSET {
-            types::YearInfo::new(
+            types::YearInfo::new_era(
                 year,
-                types::EraYear {
-                    standard_era: tinystr!(16, "roc").into(),
-                    formatting_era: types::FormattingEra::Index(1, tinystr!(16, "ROC")),
-                    era_year: year.saturating_sub(ROC_ERA_OFFSET),
-                    ambiguity: types::YearAmbiguity::CenturyRequired,
-                },
+                types::FormattingEra::Index(1, tinystr!(16, "ROC")),
+                tinystr!(16, "roc").into(),
+                year.saturating_sub(ROC_ERA_OFFSET),
+                types::YearAmbiguity::CenturyRequired,
             )
         } else {
-            types::YearInfo::new(
+            types::YearInfo::new_era(
                 year,
-                types::EraYear {
-                    standard_era: tinystr!(16, "roc-inverse").into(),
-                    formatting_era: types::FormattingEra::Index(0, tinystr!(16, "B. ROC")),
-                    era_year: (ROC_ERA_OFFSET + 1).saturating_sub(year),
-                    ambiguity: types::YearAmbiguity::EraAndCenturyRequired,
-                },
+                types::FormattingEra::Index(0, tinystr!(16, "B. ROC")),
+                tinystr!(16, "roc-inverse").into(),
+                (ROC_ERA_OFFSET + 1).saturating_sub(year),
+                types::YearAmbiguity::EraAndCenturyRequired,
             )
         }
     }

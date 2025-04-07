@@ -415,21 +415,26 @@ impl<A: AsCalendar> fmt::Debug for Date<A> {
         let month = self.month().ordinal;
         let day = self.day_of_month().0;
         let calendar = self.calendar.as_calendar().debug_name();
-        match self.year().kind {
-            types::YearKind::Era(e) => {
-                let era = e.standard_era.0;
-                let era_year = e.era_year;
+        match self.year() {
+            types::YearInfo::Era {
+                standard_era,
+                era_year,
+                ..
+            } => {
+                let era = standard_era.0;
                 write!(
                     f,
                     "Date({era_year}-{month}-{day}, {era} era, for calendar {calendar})"
                 )
             }
-            types::YearKind::Cyclic(cy) => {
-                let year = cy.year;
-                let related_iso = cy.related_iso;
+            types::YearInfo::Cyclic {
+                extended_year,
+                related_iso,
+                ..
+            } => {
                 write!(
                     f,
-                    "Date({year}-{month}-{day}, ISO year {related_iso}, for calendar {calendar})"
+                    "Date({extended_year}-{month}-{day}, ISO year {related_iso}, for calendar {calendar})"
                 )
             }
         }

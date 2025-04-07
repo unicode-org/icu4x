@@ -35,14 +35,12 @@ use icu_provider::prelude::*;
 use tinystr::tinystr;
 
 fn year_as_hijri(standard_era: tinystr::TinyStr16, year: i32) -> types::YearInfo {
-    types::YearInfo::new(
+    types::YearInfo::new_era(
         year,
-        types::EraYear {
-            formatting_era: types::FormattingEra::Index(0, tinystr!(16, "AH")),
-            standard_era: standard_era.into(),
-            era_year: year,
-            ambiguity: types::YearAmbiguity::CenturyRequired,
-        },
+        types::FormattingEra::Index(0, tinystr!(16, "AH")),
+        standard_era.into(),
+        year,
+        types::YearAmbiguity::CenturyRequired,
     )
 }
 

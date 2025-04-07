@@ -461,7 +461,7 @@ impl<A: AsCalendar> ZonedDateTime<A, TimeZoneInfo<models::Full>> {
     /// )
     /// .unwrap();
     ///
-    /// assert_eq!(zoneddatetime.date.year().extended_year, 5784);
+    /// assert_eq!(zoneddatetime.date.year().extended_year(), 5784);
     /// assert_eq!(
     ///     zoneddatetime.date.month().standard_code,
     ///     icu::calendar::types::MonthCode(tinystr::tinystr!(4, "M11"))

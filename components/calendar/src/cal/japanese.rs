@@ -249,14 +249,12 @@ impl Calendar for Japanese {
     }
 
     fn year(&self, date: &Self::DateInner) -> types::YearInfo {
-        types::YearInfo::new(
+        types::YearInfo::new_era(
             date.inner.0.year,
-            types::EraYear {
-                formatting_era: types::FormattingEra::Code(date.era.into()),
-                standard_era: date.era.into(),
-                era_year: date.adjusted_year,
-                ambiguity: types::YearAmbiguity::CenturyRequired,
-            },
+            types::FormattingEra::Code(date.era.into()),
+            date.era.into(),
+            date.adjusted_year,
+            types::YearAmbiguity::CenturyRequired,
         )
     }
 

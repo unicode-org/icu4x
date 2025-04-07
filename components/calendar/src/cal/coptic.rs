@@ -163,24 +163,20 @@ impl Calendar for Coptic {
     fn year(&self, date: &Self::DateInner) -> types::YearInfo {
         let year = date.0.year;
         if year > 0 {
-            types::YearInfo::new(
+            types::YearInfo::new_era(
                 year,
-                types::EraYear {
-                    standard_era: tinystr!(16, "coptic").into(),
-                    formatting_era: types::FormattingEra::Index(1, tinystr!(16, "AD")),
-                    era_year: year,
-                    ambiguity: types::YearAmbiguity::CenturyRequired,
-                },
+                types::FormattingEra::Index(1, tinystr!(16, "AD")),
+                tinystr!(16, "coptic").into(),
+                year,
+                types::YearAmbiguity::CenturyRequired,
             )
         } else {
-            types::YearInfo::new(
+            types::YearInfo::new_era(
                 year,
-                types::EraYear {
-                    standard_era: tinystr!(16, "coptic-inverse").into(),
-                    formatting_era: types::FormattingEra::Index(0, tinystr!(16, "BD")),
-                    era_year: 1 - year,
-                    ambiguity: types::YearAmbiguity::EraAndCenturyRequired,
-                },
+                types::FormattingEra::Index(0, tinystr!(16, "BD")),
+                tinystr!(16, "coptic-inverse").into(),
+                1 - year,
+                types::YearAmbiguity::EraAndCenturyRequired,
             )
         }
     }
