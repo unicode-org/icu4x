@@ -630,6 +630,7 @@ impl SourceDataProvider {
                         ("uprops/small/IDS.toml", include_bytes!("../../tests/data/icuexport/uprops/small/IDS.toml").as_slice()),
                         ("uprops/small/IDSB.toml", include_bytes!("../../tests/data/icuexport/uprops/small/IDSB.toml").as_slice()),
                         ("uprops/small/IDST.toml", include_bytes!("../../tests/data/icuexport/uprops/small/IDST.toml").as_slice()),
+                        ("uprops/small/InCB.toml", include_bytes!("../../tests/data/icuexport/uprops/small/InCB.toml").as_slice()),
                         ("uprops/small/InSC.toml", include_bytes!("../../tests/data/icuexport/uprops/small/InSC.toml").as_slice()),
                         ("uprops/small/Join_C.toml", include_bytes!("../../tests/data/icuexport/uprops/small/Join_C.toml").as_slice()),
                         ("uprops/small/jt.toml", include_bytes!("../../tests/data/icuexport/uprops/small/jt.toml").as_slice()),

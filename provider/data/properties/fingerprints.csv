@@ -71,6 +71,7 @@ property/enum/east/asian/width/v1, <singleton>, 5028B, 4971B, cbe33fdd284572e5
 property/enum/general/category/v1, <singleton>, 17572B, 17516B, fa8858c0d81ead14
 property/enum/grapheme/cluster/break/v1, <singleton>, 7840B, 7783B, bd0d2d3da35038da
 property/enum/hangul/syllable/type/v1, <singleton>, 888B, 829B, 67c6d3aaab48ff19
+property/enum/indic/conjunct/break/v1, <singleton>, 6724B, 6667B, 855285c232bd1220
 property/enum/indic/syllabic/category/v1, <singleton>, 6248B, 6189B, c10d1f8e12ae80ea
 property/enum/joining/type/v1, <singleton>, 7072B, 7015B, dff64b1d9027a0e6
 property/enum/line/break/v1, <singleton>, 15284B, 15228B, ec2f73fe17e5fb1c

@@ -5,8 +5,8 @@
 use crate::bidi::BidiMirroringGlyph;
 use crate::props::{
     BidiClass, CanonicalCombiningClass, EastAsianWidth, GeneralCategory, GeneralCategoryGroup,
-    GraphemeClusterBreak, HangulSyllableType, IndicSyllabicCategory, JoiningType, LineBreak,
-    Script, SentenceBreak, VerticalOrientation, WordBreak,
+    GraphemeClusterBreak, HangulSyllableType, IndicConjunctBreak, IndicSyllabicCategory,
+    JoiningType, LineBreak, Script, SentenceBreak, VerticalOrientation, WordBreak,
 };
 use crate::script::ScriptWithExt;
 use core::convert::TryInto;
@@ -140,6 +140,18 @@ impl TrieValue for WordBreak {
 }
 
 impl TrieValue for SentenceBreak {
+    type TryFromU32Error = TryFromIntError;
+
+    fn try_from_u32(i: u32) -> Result<Self, Self::TryFromU32Error> {
+        u8::try_from(i).map(Self)
+    }
+
+    fn to_u32(self) -> u32 {
+        u32::from(self.0)
+    }
+}
+
+impl TrieValue for IndicConjunctBreak {
     type TryFromU32Error = TryFromIntError;
 
     fn try_from_u32(i: u32) -> Result<Self, Self::TryFromU32Error> {

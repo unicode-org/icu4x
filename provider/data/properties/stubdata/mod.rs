@@ -85,6 +85,7 @@ include!("property_name_long_word_break_v1.rs.data");
 include!("property_binary_changes_when_titlecased_v1.rs.data");
 include!("property_enum_bidi_class_v1.rs.data");
 include!("property_binary_sentence_terminal_v1.rs.data");
+include!("property_enum_indic_conjunct_break_v1.rs.data");
 include!("property_name_long_general_category_v1.rs.data");
 include!("property_binary_ascii_hex_digit_v1.rs.data");
 include!("property_enum_line_break_v1.rs.data");
@@ -235,6 +236,7 @@ macro_rules! impl_data_provider {
         impl_property_binary_changes_when_titlecased_v1!($provider);
         impl_property_enum_bidi_class_v1!($provider);
         impl_property_binary_sentence_terminal_v1!($provider);
+        impl_property_enum_indic_conjunct_break_v1!($provider);
         impl_property_name_long_general_category_v1!($provider);
         impl_property_binary_ascii_hex_digit_v1!($provider);
         impl_property_enum_line_break_v1!($provider);
