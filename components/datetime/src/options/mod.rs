@@ -564,7 +564,7 @@ pub enum SubsecondDigits {
 #[derive(Debug, Copy, Clone, PartialEq, Eq, displaydoc::Display)]
 #[non_exhaustive]
 pub enum SubsecondError {
-    /// The provided value is out of range (0-9).
+    /// The provided value is out of range (1-9).
     OutOfRange,
 }
 
