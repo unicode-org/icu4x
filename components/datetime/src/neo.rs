@@ -1174,6 +1174,18 @@ impl<FSet: DateTimeMarkers> DateTimeFormatter<FSet> {
 ///
 /// # Examples
 ///
+/// A [`NoCalendarFormatter`] can be used to format a time:
+///
+/// ```
+/// use icu::datetime::fieldsets::T;
+/// use icu::datetime::NoCalendarFormatter;
+/// use icu::datetime::input::Time;
+/// use icu::locale::locale;
+///
+/// let formatter = NoCalendarFormatter::try_new(locale!("bn").into(), T::long()).unwrap();
+/// assert_eq!(formatter.format(&Time::midnight()).to_string(), "১২:০০:০০ AM");
+/// ```
+///
 /// A [`NoCalendarFormatter`] cannot be constructed with a fieldset that involves dates:
 ///
 /// ```
