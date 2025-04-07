@@ -27,7 +27,7 @@ with slightly different trade-offs as it's implemented on top of a flat storage 
 * Insertion is generally `O(n)`, but optimized to `O(1)` if the new item sorts greater than the current items. In `BTreeMap` it's `O(log(n))`.
 * Deletion is `O(n)` whereas `BTreeMap` is `O(log(n))`.
 * Bulk operations like `from_iter`, `extend` and deserialization have an optimized `O(n)` path
-   for inputs that are ordered and `O(n*log(n))` complexity otherwise.
+  for inputs that are ordered and `O(n*log(n))` complexity otherwise.
 
 ### Pluggable Backends
 
