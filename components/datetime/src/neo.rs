@@ -155,11 +155,6 @@ where
     /// This ignores the `calendar_kind` preference and instead uses the static calendar type,
     /// and supports calendars that are not expressible as preferences, such as [`JapaneseExtended`](icu_calendar::cal::JapaneseExtended).
     ///
-    /// Use this constructor for optimal data size and memory use
-    /// if you know the required datetime components at build time.
-    /// If you do not know the datetime components until runtime,
-    /// use a `with_components` constructor.
-    ///
     /// # Examples
     ///
     /// Basic usage:
@@ -472,11 +467,6 @@ where
     ///
     /// This method will pick the calendar off of the locale; and if unspecified or unknown will fall back to the default
     /// calendar for the locale. See [`AnyCalendarKind`] for a list of supported calendars.
-    ///
-    /// Use this constructor for optimal data size and memory use
-    /// if you know the required datetime components at build time.
-    /// If you do not know the datetime components until runtime,
-    /// use a `with_components` constructor.
     ///
     /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
