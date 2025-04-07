@@ -115,23 +115,23 @@ impl<Y: RuleBreakType> Iterator for WordBreakIteratorWithWordType<'_, '_, Y> {
 /// Word break iterator for an `str` (a UTF-8 string).
 ///
 /// For examples of use, see [`WordSegmenter`].
-pub type WordBreakIteratorUtf8<'data, 's> = WordBreakIterator<'data, 's, RuleBreakTypeUtf8>;
+pub type WordBreakIteratorUtf8<'data, 's> = WordBreakIterator<'data, 's, Utf8>;
 
 /// Word break iterator for a potentially invalid UTF-8 string.
 ///
 /// For examples of use, see [`WordSegmenter`].
 pub type WordBreakIteratorPotentiallyIllFormedUtf8<'data, 's> =
-    WordBreakIterator<'data, 's, RuleBreakTypePotentiallyIllFormedUtf8>;
+    WordBreakIterator<'data, 's, PotentiallyIllFormedUtf8>;
 
 /// Word break iterator for a Latin-1 (8-bit) string.
 ///
 /// For examples of use, see [`WordSegmenter`].
-pub type WordBreakIteratorLatin1<'data, 's> = WordBreakIterator<'data, 's, RuleBreakTypeLatin1>;
+pub type WordBreakIteratorLatin1<'data, 's> = WordBreakIterator<'data, 's, Latin1>;
 
 /// Word break iterator for a UTF-16 string.
 ///
 /// For examples of use, see [`WordSegmenter`].
-pub type WordBreakIteratorUtf16<'data, 's> = WordBreakIterator<'data, 's, RuleBreakTypeUtf16>;
+pub type WordBreakIteratorUtf16<'data, 's> = WordBreakIterator<'data, 's, Utf16>;
 
 /// Supports loading word break data, and creating word break iterators for different string
 /// encodings.
@@ -510,7 +510,7 @@ impl<'data> WordSegmenterBorrowed<'data> {
             complex: Some(self.complex),
             boundary_property: 0,
             locale_override: self.locale_override,
-            handle_complex_language: RuleBreakTypeUtf8::word_handle_complex_language,
+            handle_complex_language: Utf8::word_handle_complex_language,
         })
     }
 
@@ -532,8 +532,7 @@ impl<'data> WordSegmenterBorrowed<'data> {
             complex: Some(self.complex),
             boundary_property: 0,
             locale_override: self.locale_override,
-            handle_complex_language:
-                RuleBreakTypePotentiallyIllFormedUtf8::word_handle_complex_language,
+            handle_complex_language: PotentiallyIllFormedUtf8::word_handle_complex_language,
         })
     }
 
@@ -550,7 +549,7 @@ impl<'data> WordSegmenterBorrowed<'data> {
             complex: Some(self.complex),
             boundary_property: 0,
             locale_override: self.locale_override,
-            handle_complex_language: RuleBreakTypeLatin1::word_handle_complex_language,
+            handle_complex_language: Latin1::word_handle_complex_language,
         })
     }
 
@@ -567,7 +566,7 @@ impl<'data> WordSegmenterBorrowed<'data> {
             complex: Some(self.complex),
             boundary_property: 0,
             locale_override: self.locale_override,
-            handle_complex_language: RuleBreakTypeUtf16::word_handle_complex_language,
+            handle_complex_language: Utf16::word_handle_complex_language,
         })
     }
 }
@@ -603,7 +602,7 @@ pub trait WordBreakType: crate::private::Sealed + Sized + RuleBreakType {
     ) -> Option<usize>;
 }
 
-impl WordBreakType for RuleBreakTypeUtf8 {
+impl WordBreakType for Utf8 {
     fn word_handle_complex_language(
         iter: &mut RuleBreakIterator<'_, '_, Self>,
         left_codepoint: Self::CharType,
@@ -612,7 +611,7 @@ impl WordBreakType for RuleBreakTypeUtf8 {
     }
 }
 
-impl WordBreakType for RuleBreakTypePotentiallyIllFormedUtf8 {
+impl WordBreakType for PotentiallyIllFormedUtf8 {
     fn word_handle_complex_language(
         iter: &mut RuleBreakIterator<'_, '_, Self>,
         left_codepoint: Self::CharType,
@@ -621,7 +620,7 @@ impl WordBreakType for RuleBreakTypePotentiallyIllFormedUtf8 {
     }
 }
 
-impl WordBreakType for RuleBreakTypeLatin1 {
+impl WordBreakType for Latin1 {
     fn word_handle_complex_language(
         _iter: &mut RuleBreakIterator<'_, '_, Self>,
         _left_codepoint: Self::CharType,
@@ -689,7 +688,7 @@ where
     }
 }
 
-impl WordBreakType for RuleBreakTypeUtf16 {
+impl WordBreakType for Utf16 {
     fn word_handle_complex_language(
         iter: &mut RuleBreakIterator<Self>,
         left_codepoint: Self::CharType,

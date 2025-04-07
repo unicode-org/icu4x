@@ -276,11 +276,11 @@ impl<Y: RuleBreakType> RuleBreakIterator<'_, '_, Y> {
 #[derive(Debug)]
 #[non_exhaustive]
 /// [`RuleBreakType`] for UTF-8 strings
-pub struct RuleBreakTypeUtf8;
+pub struct Utf8;
 
-impl crate::private::Sealed for RuleBreakTypeUtf8 {}
+impl crate::private::Sealed for Utf8 {}
 
-impl RuleBreakType for RuleBreakTypeUtf8 {
+impl RuleBreakType for Utf8 {
     type IterAttr<'s> = CharIndices<'s>;
     type CharType = char;
 
@@ -292,11 +292,11 @@ impl RuleBreakType for RuleBreakTypeUtf8 {
 #[derive(Debug)]
 #[non_exhaustive]
 /// [`RuleBreakType`] for potentially ill-formed UTF-8 strings
-pub struct RuleBreakTypePotentiallyIllFormedUtf8;
+pub struct PotentiallyIllFormedUtf8;
 
-impl crate::private::Sealed for RuleBreakTypePotentiallyIllFormedUtf8 {}
+impl crate::private::Sealed for PotentiallyIllFormedUtf8 {}
 
-impl RuleBreakType for RuleBreakTypePotentiallyIllFormedUtf8 {
+impl RuleBreakType for PotentiallyIllFormedUtf8 {
     type IterAttr<'s> = Utf8CharIndices<'s>;
     type CharType = char;
 
@@ -308,11 +308,11 @@ impl RuleBreakType for RuleBreakTypePotentiallyIllFormedUtf8 {
 #[derive(Debug)]
 #[non_exhaustive]
 /// [`RuleBreakType`] for Latin-1 strings
-pub struct RuleBreakTypeLatin1;
+pub struct Latin1;
 
-impl crate::private::Sealed for RuleBreakTypeLatin1 {}
+impl crate::private::Sealed for Latin1 {}
 
-impl RuleBreakType for RuleBreakTypeLatin1 {
+impl RuleBreakType for Latin1 {
     type IterAttr<'s> = Latin1Indices<'s>;
     type CharType = u8;
 
@@ -324,11 +324,11 @@ impl RuleBreakType for RuleBreakTypeLatin1 {
 #[derive(Debug)]
 #[non_exhaustive]
 /// [`RuleBreakType`] for UTF-16 strings
-pub struct RuleBreakTypeUtf16;
+pub struct Utf16;
 
-impl crate::private::Sealed for RuleBreakTypeUtf16 {}
+impl crate::private::Sealed for Utf16 {}
 
-impl RuleBreakType for RuleBreakTypeUtf16 {
+impl RuleBreakType for Utf16 {
     type IterAttr<'s> = Utf16Indices<'s>;
     type CharType = u32;
 

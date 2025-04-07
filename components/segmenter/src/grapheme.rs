@@ -34,25 +34,25 @@ derive_usize_iterator_with_type!(GraphemeClusterBreakIterator, 'data);
 ///
 /// For examples of use, see [`GraphemeClusterSegmenter`].
 pub type GraphemeClusterBreakIteratorUtf8<'data, 's> =
-    GraphemeClusterBreakIterator<'data, 's, RuleBreakTypeUtf8>;
+    GraphemeClusterBreakIterator<'data, 's, Utf8>;
 
 /// Grapheme cluster break iterator for a potentially invalid UTF-8 string.
 ///
 /// For examples of use, see [`GraphemeClusterSegmenter`].
 pub type GraphemeClusterBreakIteratorPotentiallyIllFormedUtf8<'data, 's> =
-    GraphemeClusterBreakIterator<'data, 's, RuleBreakTypePotentiallyIllFormedUtf8>;
+    GraphemeClusterBreakIterator<'data, 's, PotentiallyIllFormedUtf8>;
 
 /// Grapheme cluster break iterator for a Latin-1 (8-bit) string.
 ///
 /// For examples of use, see [`GraphemeClusterSegmenter`].
 pub type GraphemeClusterBreakIteratorLatin1<'data, 's> =
-    GraphemeClusterBreakIterator<'data, 's, RuleBreakTypeLatin1>;
+    GraphemeClusterBreakIterator<'data, 's, Latin1>;
 
 /// Grapheme cluster break iterator for a UTF-16 string.
 ///
 /// For examples of use, see [`GraphemeClusterSegmenter`].
 pub type GraphemeClusterBreakIteratorUtf16<'data, 's> =
-    GraphemeClusterBreakIterator<'data, 's, RuleBreakTypeUtf16>;
+    GraphemeClusterBreakIterator<'data, 's, Utf16>;
 
 /// Segments a string into grapheme clusters.
 ///

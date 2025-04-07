@@ -233,23 +233,23 @@ impl From<LineBreakOptions<'_>> for ResolvedLineBreakOptions {
 /// Line break iterator for an `str` (a UTF-8 string).
 ///
 /// For examples of use, see [`LineSegmenter`].
-pub type LineBreakIteratorUtf8<'l, 's> = LineBreakIterator<'l, 's, RuleBreakTypeUtf8>;
+pub type LineBreakIteratorUtf8<'l, 's> = LineBreakIterator<'l, 's, Utf8>;
 
 /// Line break iterator for a potentially invalid UTF-8 string.
 ///
 /// For examples of use, see [`LineSegmenter`].
 pub type LineBreakIteratorPotentiallyIllFormedUtf8<'l, 's> =
-    LineBreakIterator<'l, 's, RuleBreakTypePotentiallyIllFormedUtf8>;
+    LineBreakIterator<'l, 's, PotentiallyIllFormedUtf8>;
 
 /// Line break iterator for a Latin-1 (8-bit) string.
 ///
 /// For examples of use, see [`LineSegmenter`].
-pub type LineBreakIteratorLatin1<'l, 's> = LineBreakIterator<'l, 's, RuleBreakTypeLatin1>;
+pub type LineBreakIteratorLatin1<'l, 's> = LineBreakIterator<'l, 's, Latin1>;
 
 /// Line break iterator for a UTF-16 string.
 ///
 /// For examples of use, see [`LineSegmenter`].
-pub type LineBreakIteratorUtf16<'l, 's> = LineBreakIterator<'l, 's, RuleBreakTypeUtf16>;
+pub type LineBreakIteratorUtf16<'l, 's> = LineBreakIterator<'l, 's, Utf16>;
 
 /// Supports loading line break data, and creating line break iterators for different string
 /// encodings.
@@ -1091,7 +1091,7 @@ impl<Y: LineBreakType> LineBreakIterator<'_, '_, Y> {
     }
 }
 
-impl LineBreakType for RuleBreakTypeUtf8 {
+impl LineBreakType for Utf8 {
     fn get_linebreak_property_with_rule(iterator: &LineBreakIterator<Self>, c: char) -> u8 {
         iterator.data.get_linebreak_property_utf32_with_rule(
             c as u32,
@@ -1113,7 +1113,7 @@ impl LineBreakType for RuleBreakTypeUtf8 {
     }
 }
 
-impl LineBreakType for RuleBreakTypePotentiallyIllFormedUtf8 {
+impl LineBreakType for PotentiallyIllFormedUtf8 {
     fn get_linebreak_property_with_rule(iterator: &LineBreakIterator<Self>, c: char) -> u8 {
         iterator.data.get_linebreak_property_utf32_with_rule(
             c as u32,
@@ -1188,7 +1188,7 @@ where
     }
 }
 
-impl LineBreakType for RuleBreakTypeLatin1 {
+impl LineBreakType for Latin1 {
     fn get_linebreak_property_with_rule(iterator: &LineBreakIterator<Self>, c: u8) -> u8 {
         // No CJ on Latin1
         // Note: Default value is 0 == UNKNOWN
@@ -1208,7 +1208,7 @@ impl LineBreakType for RuleBreakTypeLatin1 {
     }
 }
 
-impl LineBreakType for RuleBreakTypeUtf16 {
+impl LineBreakType for Utf16 {
     fn get_linebreak_property_with_rule(iterator: &LineBreakIterator<Self>, c: u32) -> u8 {
         iterator.data.get_linebreak_property_utf32_with_rule(
             c,
