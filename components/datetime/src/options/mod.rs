@@ -278,7 +278,7 @@ pub enum YearStyle {
     /// - `1000 BC`
     /// - `77 AD`
     /// - `1900`
-    /// - `'24`
+    /// - `24`
     #[default]
     Auto,
     /// Always display the century, and display the era when needed to
