@@ -30,7 +30,7 @@
 //!
 //! # Examples
 //!
-//! Two ways to configure the same field set:
+//! There are two ways to configure the same field set:
 //!
 //! ```
 //! use icu::datetime::fieldsets::YMDT;

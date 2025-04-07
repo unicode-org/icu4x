@@ -11,7 +11,7 @@ use crate::{provider::neo::*, scaffold::*};
 ///
 /// # Examples
 ///
-/// Only one way to construct a combo field set (in this case, weekday with location-based zone):
+/// The only way to construct a combo field set (in this case, weekday with location-based zone):
 ///
 /// ```
 /// use icu::datetime::fieldsets::{zone::Location, Combo, E};
