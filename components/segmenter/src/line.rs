@@ -789,7 +789,7 @@ pub struct LineBreakIterator<'data, 's, Y: LineBreakType> {
     complex: ComplexPayloadsBorrowed<'data>,
 }
 
-impl<'s, Y: LineBreakType> Iterator for LineBreakIterator<'_, 's, Y> {
+impl<Y: LineBreakType> Iterator for LineBreakIterator<'_, '_, Y> {
     type Item = usize;
 
     fn next(&mut self) -> Option<Self::Item> {
@@ -1035,7 +1035,7 @@ enum StringBoundaryPosType {
     End,
 }
 
-impl<'s, Y: LineBreakType> LineBreakIterator<'_, 's, Y> {
+impl<Y: LineBreakType> LineBreakIterator<'_, '_, Y> {
     fn advance_iter(&mut self) {
         self.current_pos_data = self.iter.next();
     }
@@ -1135,8 +1135,8 @@ impl LineBreakType for RuleBreakTypePotentiallyIllFormedUtf8 {
     }
 }
 /// line_handle_complex_language impl for UTF8 iterators
-fn line_handle_complex_language_utf8<'data, 's, T>(
-    iter: &mut LineBreakIterator<'data, 's, T>,
+fn line_handle_complex_language_utf8<T>(
+    iter: &mut LineBreakIterator<'_, '_, T>,
     left_codepoint: char,
 ) -> Option<usize>
 where

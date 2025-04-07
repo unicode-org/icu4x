@@ -41,8 +41,8 @@ struct DictionaryBreakIterator<
 /// - `'s` = lifetime of the string being segmented
 ///
 /// [`Iterator`]: core::iter::Iterator
-impl<'l, 's, Y: DictionaryType + ?Sized, X: Iterator<Item = usize> + ?Sized> Iterator
-    for DictionaryBreakIterator<'l, 's, Y, X>
+impl<Y: DictionaryType + ?Sized, X: Iterator<Item = usize> + ?Sized> Iterator
+    for DictionaryBreakIterator<'_, '_, Y, X>
 {
     type Item = usize;
 

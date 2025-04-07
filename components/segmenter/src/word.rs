@@ -104,7 +104,7 @@ pub struct WordBreakIteratorWithWordType<'data, 's, Y: RuleBreakType>(
     WordBreakIterator<'data, 's, Y>,
 );
 
-impl<'s, Y: RuleBreakType> Iterator for WordBreakIteratorWithWordType<'_, 's, Y> {
+impl<Y: RuleBreakType> Iterator for WordBreakIteratorWithWordType<'_, '_, Y> {
     type Item = (usize, WordType);
     fn next(&mut self) -> Option<Self::Item> {
         let ret = self.0.next()?;
@@ -635,8 +635,8 @@ impl WordBreakType for RuleBreakTypeLatin1 {
 }
 
 /// handle_complex_language impl for UTF8 iterators
-fn handle_complex_language_utf8<'data, 's, T>(
-    iter: &mut RuleBreakIterator<'data, 's, T>,
+fn handle_complex_language_utf8<T>(
+    iter: &mut RuleBreakIterator<'_, '_, T>,
     left_codepoint: T::CharType,
 ) -> Option<usize>
 where
