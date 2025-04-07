@@ -64,18 +64,17 @@ use icu_time::scaffold::IntoOption;
     all(feature = "serde", feature = "experimental"),
     serde(rename_all = "lowercase")
 )]
-#[repr(u8)] // discriminants come from symbol count in UTS 35
 #[non_exhaustive]
 pub enum Length {
     /// A long date; typically spelled-out, as in “January 1, 2000”.
-    Long = 4,
+    Long,
     /// A medium-sized date; typically abbreviated, as in “Jan. 1, 2000”.
     ///
     /// This is the default.
     #[default]
-    Medium = 3,
+    Medium,
     /// A short date; typically numeric, as in “1/1/2000”.
-    Short = 1,
+    Short,
 }
 
 impl IntoOption<Length> for Length {
