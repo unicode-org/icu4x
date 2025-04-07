@@ -22,7 +22,7 @@ use crate::{provider::neo::*, scaffold::*};
 /// Format the weekday, hour, and location-based zone:
 ///
 /// ```
-/// use icu::datetime::fieldsets::{zone::Location, Combo, ET};
+/// use icu::datetime::fieldsets::{self, zone, Combo};
 /// use icu::datetime::input::ZonedDateTime;
 /// use icu::datetime::DateTimeFormatter;
 /// use icu::locale::locale;
@@ -30,9 +30,9 @@ use crate::{provider::neo::*, scaffold::*};
 /// use writeable::assert_writeable_eq;
 ///
 /// // Note: Combo type can be elided, but it is shown here for demonstration
-/// let formatter = DateTimeFormatter::<Combo<ET, Location>>::try_new(
+/// let formatter = DateTimeFormatter::<Combo<fieldsets::ET, zone::Location>>::try_new(
 ///     locale!("en-US").into(),
-///     ET::short().with_hm().zone(Location),
+///     fieldsets::ET::short().with_hm().zone(zone::Location),
 /// )
 /// .unwrap();
 ///
