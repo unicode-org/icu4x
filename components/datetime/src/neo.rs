@@ -134,6 +134,71 @@ size_test!(FixedCalendarDateTimeFormatter<icu_calendar::Gregorian, crate::fields
 /// a calendar selected at compile time.
 ///
 /// For more details, please read the [crate root docs][crate].
+///
+/// # Examples
+///
+/// Basic usage:
+///
+/// ```
+/// use icu::calendar::cal::JapaneseExtended;
+/// use icu::datetime::fieldsets::YMD;
+/// use icu::datetime::input::Date;
+/// use icu::datetime::FixedCalendarDateTimeFormatter;
+/// use icu::locale::locale;
+/// use writeable::assert_writeable_eq;
+///
+/// // A JapaneseExtended formatter is implied by passing this a JapaneseExtended date
+/// let formatter = FixedCalendarDateTimeFormatter::try_new(
+///     locale!("es-MX").into(),
+///     YMD::long(),
+/// )
+/// .unwrap();
+///
+/// assert_writeable_eq!(
+///     formatter.format(&Date::try_new_iso(2023, 12, 20).unwrap().to_calendar(JapaneseExtended::new())),
+///     "20 de diciembre de 5 Reiwa"
+/// );
+/// ```
+///
+/// Mismatched calendars will not compile:
+///
+/// ```compile_fail
+/// use icu::datetime::input::Date;
+/// use icu::datetime::input::cal::Buddhist;
+/// use icu::datetime::FixedCalendarDateTimeFormatter;
+/// use icu::datetime::fieldsets::YMD;
+/// use icu::locale::locale;
+///
+/// let formatter =
+///     FixedCalendarDateTimeFormatter::<Buddhist, _>::try_new(
+///         locale!("es-MX").into(),
+///         YMD::long(),
+///     )
+///     .unwrap();
+///
+/// // type mismatch resolving `<Gregorian as AsCalendar>::Calendar == Buddhist`
+/// formatter.format(&Date::try_new_gregorian(2023, 12, 20).unwrap());
+/// ```
+///
+/// A time cannot be passed into the formatter when a date is expected:
+///
+/// ```compile_fail,E0277
+/// use icu::datetime::input::Time;
+/// use icu::calendar::Gregorian;
+/// use icu::datetime::FixedCalendarDateTimeFormatter;
+/// use icu::datetime::fieldsets::YMD;
+/// use icu::locale::locale;
+///
+/// let formatter =
+///     FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new(
+///         locale!("es-MX").into(),
+///         YMD::long(),
+///     )
+///     .unwrap();
+///
+/// // error[E0277]: the trait bound `Time: AllInputMarkers<fieldsets::YMD>` is not satisfied
+/// formatter.format(&Time::midnight());
+/// ```
 #[doc = typed_neo_year_month_day_formatter_size!()]
 #[derive(Debug, Clone)]
 pub struct FixedCalendarDateTimeFormatter<C: CldrCalendar, FSet: DateTimeNamesMarker> {
@@ -154,31 +219,6 @@ where
     ///
     /// This ignores the `calendar_kind` preference and instead uses the static calendar type,
     /// and supports calendars that are not expressible as preferences, such as [`JapaneseExtended`](icu_calendar::cal::JapaneseExtended).
-    ///
-    /// # Examples
-    ///
-    /// Basic usage:
-    ///
-    /// ```
-    /// use icu::calendar::cal::JapaneseExtended;
-    /// use icu::datetime::fieldsets::YMD;
-    /// use icu::datetime::input::Date;
-    /// use icu::datetime::FixedCalendarDateTimeFormatter;
-    /// use icu::locale::locale;
-    /// use writeable::assert_writeable_eq;
-    ///
-    /// // A JapaneseExtended formatter is implied by passing this a JapaneseExtended date
-    /// let formatter = FixedCalendarDateTimeFormatter::try_new(
-    ///     locale!("es-MX").into(),
-    ///     YMD::long(),
-    /// )
-    /// .unwrap();
-    ///
-    /// assert_writeable_eq!(
-    ///     formatter.format(&Date::try_new_iso(2023, 12, 20).unwrap().to_calendar(JapaneseExtended::new())),
-    ///     "20 de diciembre de 5 Reiwa"
-    /// );
-    /// ```
     #[cfg(feature = "compiled_data")]
     pub fn try_new(
         prefs: DateTimeFormatterPreferences,
@@ -308,48 +348,6 @@ where
     FSet::Z: ZoneMarkers,
 {
     /// Formats a datetime. Calendars and fields must match at compile time.
-    ///
-    /// # Examples
-    ///
-    /// Mismatched calendars will not compile:
-    ///
-    /// ```compile_fail
-    /// use icu::datetime::input::Date;
-    /// use icu::datetime::input::cal::Buddhist;
-    /// use icu::datetime::FixedCalendarDateTimeFormatter;
-    /// use icu::datetime::fieldsets::YMD;
-    /// use icu::locale::locale;
-    ///
-    /// let formatter =
-    ///     FixedCalendarDateTimeFormatter::<Buddhist, _>::try_new(
-    ///         locale!("es-MX").into(),
-    ///         YMD::long(),
-    ///     )
-    ///     .unwrap();
-    ///
-    /// // type mismatch resolving `<Gregorian as AsCalendar>::Calendar == Buddhist`
-    /// formatter.format(&Date::try_new_gregorian(2023, 12, 20).unwrap());
-    /// ```
-    ///
-    /// A time cannot be passed into the formatter when a date is expected:
-    ///
-    /// ```compile_fail,E0277
-    /// use icu::datetime::input::Time;
-    /// use icu::calendar::Gregorian;
-    /// use icu::datetime::FixedCalendarDateTimeFormatter;
-    /// use icu::datetime::fieldsets::YMD;
-    /// use icu::locale::locale;
-    ///
-    /// let formatter =
-    ///     FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new(
-    ///         locale!("es-MX").into(),
-    ///         YMD::long(),
-    ///     )
-    ///     .unwrap();
-    ///
-    /// // error[E0277]: the trait bound `Time: AllInputMarkers<fieldsets::YMD>` is not satisfied
-    /// formatter.format(&Time::midnight());
-    /// ```
     pub fn format<I>(&self, input: &I) -> FormattedDateTime
     where
         I: ?Sized + InFixedCalendar<C> + AllInputMarkers<FSet>,
