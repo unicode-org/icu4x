@@ -76,13 +76,13 @@ fn neo_datetime_lengths() {
     let mut expected_iter = EXPECTED_DATETIME.iter();
     for field_set in [
         DateAndTimeFieldSet::YMDET(fieldsets::YMDET::long()),
-        DateAndTimeFieldSet::YMDET(fieldsets::YMDET::long().hm()),
+        DateAndTimeFieldSet::YMDET(fieldsets::YMDET::long().with_hm()),
         DateAndTimeFieldSet::YMDT(fieldsets::YMDT::long()),
-        DateAndTimeFieldSet::YMDT(fieldsets::YMDT::long().hm()),
+        DateAndTimeFieldSet::YMDT(fieldsets::YMDT::long().with_hm()),
         DateAndTimeFieldSet::YMDT(fieldsets::YMDT::medium()),
-        DateAndTimeFieldSet::YMDT(fieldsets::YMDT::medium().hm()),
+        DateAndTimeFieldSet::YMDT(fieldsets::YMDT::medium().with_hm()),
         DateAndTimeFieldSet::YMDT(fieldsets::YMDT::short()),
-        DateAndTimeFieldSet::YMDT(fieldsets::YMDT::short().hm()),
+        DateAndTimeFieldSet::YMDT(fieldsets::YMDT::short().with_hm()),
     ] {
         for locale in [locale!("en"), locale!("fr"), locale!("zh"), locale!("hi")] {
             let prefs = DateTimeFormatterPreferences::from(&locale);

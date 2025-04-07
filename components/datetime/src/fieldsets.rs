@@ -255,7 +255,7 @@ macro_rules! impl_marker_with_options {
                     self
                 }
                 /// Sets the time precision to [`TimePrecision::Minute`]
-                pub fn hm(mut self) -> Self {
+                pub fn with_hm(mut self) -> Self {
                     self.time_precision = Some(TimePrecision::Minute);
                     self
                 }
@@ -1058,7 +1058,7 @@ impl_time_marker!(
     ///
     /// let formatter = NoCalendarFormatter::try_new(
     ///     locale!("en-US-u-hc-h12").into(),
-    ///     T::short().hm(),
+    ///     T::short().with_hm(),
     /// )
     /// .unwrap();
     /// assert_writeable_eq!(
@@ -1068,7 +1068,7 @@ impl_time_marker!(
     ///
     /// let formatter = NoCalendarFormatter::try_new(
     ///     locale!("en-US-u-hc-h23").into(),
-    ///     T::short().hm(),
+    ///     T::short().with_hm(),
     /// )
     /// .unwrap();
     /// assert_writeable_eq!(
@@ -1078,7 +1078,7 @@ impl_time_marker!(
     ///
     /// let formatter = NoCalendarFormatter::try_new(
     ///     locale!("fr-FR-u-hc-h12").into(),
-    ///     T::short().hm(),
+    ///     T::short().with_hm(),
     /// )
     /// .unwrap();
     /// assert_writeable_eq!(
@@ -1088,7 +1088,7 @@ impl_time_marker!(
     ///
     /// let formatter = NoCalendarFormatter::try_new(
     ///     locale!("fr-FR-u-hc-h23").into(),
-    ///     T::short().hm(),
+    ///     T::short().with_hm(),
     /// )
     /// .unwrap();
     /// assert_writeable_eq!(
@@ -1108,7 +1108,7 @@ impl_time_marker!(
     ///
     /// let formatter = NoCalendarFormatter::try_new(
     ///     locale!("und-u-hc-h11").into(),
-    ///     T::short().hm(),
+    ///     T::short().with_hm(),
     /// )
     /// .unwrap();
     ///
@@ -1119,7 +1119,7 @@ impl_time_marker!(
     ///
     /// let formatter = NoCalendarFormatter::try_new(
     ///     locale!("und-u-hc-h24").into(),
-    ///     T::short().hm(),
+    ///     T::short().with_hm(),
     /// )
     /// .unwrap();
     ///

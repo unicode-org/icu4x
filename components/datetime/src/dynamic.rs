@@ -38,7 +38,7 @@
 //!
 //! fn get_field_set(should_display_time: bool) -> CompositeDateTimeFieldSet {
 //!     if should_display_time {
-//!         let field_set = fieldsets::MDT::medium().hm();
+//!         let field_set = fieldsets::MDT::medium().with_hm();
 //!         CompositeDateTimeFieldSet::DateTime(
 //!             fieldsets::enums::DateAndTimeFieldSet::MDT(field_set),
 //!         )
