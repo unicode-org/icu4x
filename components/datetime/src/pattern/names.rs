@@ -2403,6 +2403,8 @@ impl<C, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, FSet> {
 impl<C: CldrCalendar, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, FSet> {
     /// Associates this [`FixedCalendarDateTimeNames`] with a pattern
     /// without checking that all necessary data is loaded.
+    ///
+    /// Use this function if you know at compile time what fields your pattern contains.
     #[inline]
     pub fn with_pattern_unchecked<'l>(
         &'l self,
