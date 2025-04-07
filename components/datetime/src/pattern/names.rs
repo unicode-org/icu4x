@@ -377,11 +377,11 @@ size_test!(
 /// Type parameters:
 ///
 /// 1. The calendar chosen at compile time for additional type safety
-/// 2. A components object type containing the fields that might be formatted
+/// 2. A field set object type containing the fields that might be formatted
 ///
-/// By default, the components object is set to [`CompositeDateTimeFieldSet`],
+/// By default, the field set object is set to [`CompositeDateTimeFieldSet`],
 /// meaning that dates and times, but not time zones, are supported. A smaller
-/// components object results in smaller stack size.
+/// field set object results in smaller stack size.
 ///
 /// To support all fields including time zones, use [`CompositeFieldSet`].
 ///
@@ -422,7 +422,7 @@ size_test!(
 /// assert_try_writeable_eq!(names.with_pattern_unchecked(&pattern).format(&datetime), "пн лист. 20 2023 -- 0:35 пп");
 /// ```
 ///
-/// If the correct data is not loaded, and error will occur:
+/// If the correct data is not loaded, an error will occur:
 ///
 /// ```
 /// use icu::calendar::Gregorian;
