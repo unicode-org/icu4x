@@ -144,20 +144,6 @@ public:
   inline static diplomat::result<std::unique_ptr<icu4x::CodePointMapData8>, icu4x::DataError> create_hangul_syllable_type_with_provider(const icu4x::DataProvider& provider);
 
   /**
-   * Create a map for the `Indic_Conjunct_Break` property, using compiled data.
-   *
-   * See the [Rust documentation for `IndicConjunctBreak`](https://docs.rs/icu/latest/icu/properties/props/struct.IndicConjunctBreak.html) for more information.
-   */
-  inline static std::unique_ptr<icu4x::CodePointMapData8> create_indic_conjunct_break();
-
-  /**
-   * Create a map for the `Indic_Conjunct_Break` property, using a particular data source.
-   *
-   * See the [Rust documentation for `IndicConjunctBreak`](https://docs.rs/icu/latest/icu/properties/props/struct.IndicConjunctBreak.html) for more information.
-   */
-  inline static diplomat::result<std::unique_ptr<icu4x::CodePointMapData8>, icu4x::DataError> create_indic_conjunct_break_with_provider(const icu4x::DataProvider& provider);
-
-  /**
    * Create a map for the `Indic_Syllabic_Property` property, using compiled data.
    *
    * See the [Rust documentation for `IndicSyllabicCategory`](https://docs.rs/icu/latest/icu/properties/props/struct.IndicSyllabicCategory.html) for more information.

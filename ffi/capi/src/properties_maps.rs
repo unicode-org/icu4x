@@ -10,8 +10,8 @@ pub mod ffi {
     #[cfg(any(feature = "compiled_data", feature = "buffer_provider"))]
     use icu_properties::props::{
         BidiClass, CanonicalCombiningClass, EastAsianWidth, GeneralCategory, GraphemeClusterBreak,
-        HangulSyllableType, IndicConjunctBreak, IndicSyllabicCategory, JoiningType, LineBreak,
-        Script, SentenceBreak, VerticalOrientation, WordBreak,
+        HangulSyllableType, IndicSyllabicCategory, JoiningType, LineBreak, Script, SentenceBreak,
+        VerticalOrientation, WordBreak,
     };
 
     use crate::properties_enums::ffi::GeneralCategoryGroup;
@@ -203,28 +203,6 @@ pub mod ffi {
         ) -> Result<Box<CodePointMapData8>, DataError> {
             Ok(convert_8(icu_properties::CodePointMapData::<
                 HangulSyllableType,
-            >::try_new_unstable(
-                &provider.get_unstable()?
-            )?))
-        }
-        /// Create a map for the `Indic_Conjunct_Break` property, using compiled data.
-        #[diplomat::rust_link(icu::properties::props::IndicConjunctBreak, Struct)]
-        #[diplomat::attr(auto, named_constructor = "indic_conjunct_break")]
-        #[cfg(feature = "compiled_data")]
-        pub fn create_indic_conjunct_break() -> Box<CodePointMapData8> {
-            convert_8(
-                icu_properties::CodePointMapData::<IndicConjunctBreak>::new().static_to_owned(),
-            )
-        }
-        /// Create a map for the `Indic_Conjunct_Break` property, using a particular data source.
-        #[diplomat::rust_link(icu::properties::props::IndicConjunctBreak, Struct)]
-        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "indic_conjunct_break_with_provider")]
-        #[cfg(feature = "buffer_provider")]
-        pub fn create_indic_conjunct_break_with_provider(
-            provider: &DataProvider,
-        ) -> Result<Box<CodePointMapData8>, DataError> {
-            Ok(convert_8(icu_properties::CodePointMapData::<
-                IndicConjunctBreak,
             >::try_new_unstable(
                 &provider.get_unstable()?
             )?))

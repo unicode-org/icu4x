@@ -306,8 +306,6 @@ export { GraphemeClusterBreak } from "./GraphemeClusterBreak"
 
 export { HangulSyllableType } from "./HangulSyllableType"
 
-export { IndicConjunctBreak } from "./IndicConjunctBreak"
-
 export { IndicSyllabicCategory } from "./IndicSyllabicCategory"
 
 export { JoiningType } from "./JoiningType"

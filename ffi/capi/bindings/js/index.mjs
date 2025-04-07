@@ -304,8 +304,6 @@ export { GraphemeClusterBreak } from "./GraphemeClusterBreak.mjs"
 
 export { HangulSyllableType } from "./HangulSyllableType.mjs"
 
-export { IndicConjunctBreak } from "./IndicConjunctBreak.mjs"
-
 export { IndicSyllabicCategory } from "./IndicSyllabicCategory.mjs"
 
 export { JoiningType } from "./JoiningType.mjs"
