@@ -1204,7 +1204,7 @@ impl<FSet: DateTimeNamesMarker> AsMut<FixedCalendarDateTimeNames<(), FSet>>
 impl<C: CldrCalendar, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, FSet> {
     /// Loads year (era or cycle) names for the specified length.
     ///
-    /// Does not support multiple field symbols or lengths. See #4337
+    /// Does not support multiple field symbols or lengths. See [#4337](https://github.com/unicode-org/icu4x/issues/4337)
     pub fn load_year_names<P>(
         &mut self,
         provider: &P,
@@ -1226,7 +1226,7 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, F
     ///
     /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
-    /// Does not support multiple field symbols or lengths. See #4337
+    /// Does not support multiple field symbols or lengths. See [#4337](https://github.com/unicode-org/icu4x/issues/4337)
     ///
     /// # Examples
     ///
@@ -1266,7 +1266,7 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, F
 
     /// Loads month names for the specified symbol and length.
     ///
-    /// Does not support multiple field symbols or lengths. See #4337
+    /// Does not support multiple field symbols or lengths. See [#4337](https://github.com/unicode-org/icu4x/issues/4337)
     pub fn load_month_names<P>(
         &mut self,
         provider: &P,
@@ -1288,7 +1288,7 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, F
     ///
     /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
-    /// Does not support multiple field symbols or lengths. See #4337
+    /// Does not support multiple field symbols or lengths. See [#4337](https://github.com/unicode-org/icu4x/issues/4337)
     ///
     /// # Examples
     ///
@@ -1334,7 +1334,7 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, F
 impl<C, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, FSet> {
     /// Loads day period names for the specified length.
     ///
-    /// Does not support multiple field symbols or lengths. See #4337
+    /// Does not support multiple field symbols or lengths. See [#4337](https://github.com/unicode-org/icu4x/issues/4337)
     pub fn load_day_period_names<P>(
         &mut self,
         provider: &P,
@@ -1357,7 +1357,7 @@ impl<C, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, FSet> {
     ///
     /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
-    /// Does not support multiple field symbols or lengths. See #4337
+    /// Does not support multiple field symbols or lengths. See [#4337](https://github.com/unicode-org/icu4x/issues/4337)
     ///
     /// # Examples
     ///
@@ -1398,7 +1398,7 @@ impl<C, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, FSet> {
 
     /// Loads weekday names for the specified symbol and length.
     ///
-    /// Does not support multiple field symbols or lengths. See #4337
+    /// Does not support multiple field symbols or lengths. See [#4337](https://github.com/unicode-org/icu4x/issues/4337)
     pub fn load_weekday_names<P>(
         &mut self,
         provider: &P,
@@ -1420,7 +1420,7 @@ impl<C, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, FSet> {
     ///
     /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
-    /// Does not support multiple field symbols or lengths. See #4337
+    /// Does not support multiple field symbols or lengths. See [#4337](https://github.com/unicode-org/icu4x/issues/4337)
     ///
     /// # Examples
     ///
@@ -2416,7 +2416,7 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, F
     /// Associates this [`FixedCalendarDateTimeNames`] with a datetime pattern
     /// and loads all data required for that pattern.
     ///
-    /// Does not duplicate textual field symbols. See #4337
+    /// Does not duplicate textual field symbols. See [#4337](https://github.com/unicode-org/icu4x/issues/4337)
     pub fn load_for_pattern<'l, P>(
         &'l mut self,
         provider: &P,
@@ -2475,7 +2475,7 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, F
     ///
     /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
-    /// Does not support duplicate textual field symbols. See #4337
+    /// Does not support duplicate textual field symbols. See [#4337](https://github.com/unicode-org/icu4x/issues/4337)
     ///
     /// # Examples
     ///
