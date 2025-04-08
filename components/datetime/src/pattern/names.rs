@@ -379,7 +379,7 @@ size_test!(
 /// 1. The calendar chosen at compile time for additional type safety
 /// 2. A field set containing the fields that might be formatted
 ///
-/// By default, the field set object is set to [`CompositeDateTimeFieldSet`],
+/// By default, the field set is set to [`CompositeDateTimeFieldSet`],
 /// meaning that dates and times, but not time zones, are supported. A smaller
 /// field set object results in smaller stack size.
 ///
