@@ -133,8 +133,8 @@ pub enum AnyDateInner {
     /// A date for a [`HijriTabular`] calendar
     HijriTabular(
         <HijriTabular as Calendar>::DateInner,
-        HijriTabularEpoch,
         HijriTabularLeapYears,
+        HijriTabularEpoch,
     ),
     /// A date for a [`HijriSimulated`] calendar
     HijriSimulated(<HijriSimulated as Calendar>::DateInner),
@@ -165,7 +165,7 @@ macro_rules! match_cal_and_date {
             (&Self::Indian(ref $cal_matched), &AnyDateInner::Indian(ref $date_matched)) => $e,
             (
                 &Self::HijriTabular(ref $cal_matched),
-                &AnyDateInner::HijriTabular(ref $date_matched, epoch, leap_years),
+                &AnyDateInner::HijriTabular(ref $date_matched, leap_years, epoch),
             ) if $cal_matched.epoch == epoch && $cal_matched.leap_years == leap_years => $e,
             (
                 &Self::HijriSimulated(ref $cal_matched),
@@ -205,7 +205,7 @@ macro_rules! match_cal {
             &Self::Indian(ref $cal_matched) => AnyDateInner::Indian($e),
             &Self::HijriSimulated(ref $cal_matched) => AnyDateInner::HijriSimulated($e),
             &Self::HijriTabular(ref $cal_matched) => {
-                AnyDateInner::HijriTabular($e, $cal_matched.epoch, $cal_matched.leap_years)
+                AnyDateInner::HijriTabular($e, $cal_matched.leap_years, $cal_matched.epoch)
             }
             &Self::HijriUmmAlQura(ref $cal_matched) => AnyDateInner::HijriUmmAlQura($e),
             &Self::Iso(ref $cal_matched) => AnyDateInner::Iso($e),
@@ -285,7 +285,7 @@ impl Calendar for AnyCalendar {
             }
             (
                 Self::HijriTabular(c),
-                &mut AnyDateInner::HijriTabular(ref mut d, epoch, leap_years),
+                &mut AnyDateInner::HijriTabular(ref mut d, leap_years, epoch),
             ) if c.epoch == epoch && c.leap_years == leap_years => {
                 c.offset_date(d, offset.cast_unit())
             }
@@ -392,8 +392,8 @@ impl Calendar for AnyCalendar {
             (
                 Self::HijriTabular(c1),
                 Self::HijriTabular(c2),
-                &AnyDateInner::HijriTabular(ref d1, e1, l1),
-                &AnyDateInner::HijriTabular(ref d2, e2, l2),
+                &AnyDateInner::HijriTabular(ref d1, l1, e1),
+                &AnyDateInner::HijriTabular(ref d2, l2, e2),
             ) if c1.epoch == c2.epoch
                 && c2.epoch == e1
                 && e1 == e2
@@ -499,11 +499,11 @@ impl Calendar for AnyCalendar {
             AnyCalendarKind::Gregorian => "AnyCalendar (Gregorian)",
             AnyCalendarKind::Hebrew => "AnyCalendar (Hebrew)",
             AnyCalendarKind::Indian => "AnyCalendar (Indian)",
-            AnyCalendarKind::HijriTabularFridayEpochTypeII => {
-                "AnyCalendar (Hijri, tabular, Friday epoch, type II leap years)"
+            AnyCalendarKind::HijriTabularTypeIIFriday => {
+                "AnyCalendar (Hijri, tabular, type II leap years, Friday epoch)"
             }
-            AnyCalendarKind::HijriTabularThursdayEpochTypeII => {
-                "AnyCalendar (Hijri, tabular, Thursday epoch, type II leap years)"
+            AnyCalendarKind::HijriTabularTypeIIThursday => {
+                "AnyCalendar (Hijri, tabular, type II leap years, Thursday epoch)"
             }
             AnyCalendarKind::HijriSimulatedMecca => "AnyCalendar (Hijri, simulated Mecca)",
             AnyCalendarKind::HijriUmmAlQura => "AnyCalendar (Hijri, Umm al-Qura)",
@@ -542,19 +542,19 @@ impl AnyCalendar {
             AnyCalendarKind::Gregorian => AnyCalendar::Gregorian(Gregorian),
             AnyCalendarKind::Hebrew => AnyCalendar::Hebrew(Hebrew),
             AnyCalendarKind::Indian => AnyCalendar::Indian(Indian),
-            AnyCalendarKind::HijriTabularFridayEpochTypeII => {
+            AnyCalendarKind::HijriTabularTypeIIFriday => {
                 AnyCalendar::HijriTabular(HijriTabular::new(
-                    HijriTabularEpoch::Friday,
                     crate::cal::hijri::HijriTabularLeapYears::TypeII,
+                    HijriTabularEpoch::Friday,
                 ))
             }
             AnyCalendarKind::HijriSimulatedMecca => {
                 AnyCalendar::HijriSimulated(HijriSimulated::new_mecca())
             }
-            AnyCalendarKind::HijriTabularThursdayEpochTypeII => {
+            AnyCalendarKind::HijriTabularTypeIIThursday => {
                 AnyCalendar::HijriTabular(HijriTabular::new(
-                    HijriTabularEpoch::Thursday,
                     crate::cal::hijri::HijriTabularLeapYears::TypeII,
+                    HijriTabularEpoch::Thursday,
                 ))
             }
             AnyCalendarKind::HijriUmmAlQura => AnyCalendar::HijriUmmAlQura(HijriUmmAlQura::new()),
@@ -595,19 +595,19 @@ impl AnyCalendar {
             AnyCalendarKind::Gregorian => AnyCalendar::Gregorian(Gregorian),
             AnyCalendarKind::Hebrew => AnyCalendar::Hebrew(Hebrew),
             AnyCalendarKind::Indian => AnyCalendar::Indian(Indian),
-            AnyCalendarKind::HijriTabularFridayEpochTypeII => {
+            AnyCalendarKind::HijriTabularTypeIIFriday => {
                 AnyCalendar::HijriTabular(HijriTabular::new(
-                    HijriTabularEpoch::Friday,
                     crate::cal::hijri::HijriTabularLeapYears::TypeII,
+                    HijriTabularEpoch::Friday,
                 ))
             }
             AnyCalendarKind::HijriSimulatedMecca => AnyCalendar::HijriSimulated(
                 HijriSimulated::try_new_mecca_with_buffer_provider(provider)?,
             ),
-            AnyCalendarKind::HijriTabularThursdayEpochTypeII => {
+            AnyCalendarKind::HijriTabularTypeIIThursday => {
                 AnyCalendar::HijriTabular(HijriTabular::new(
-                    HijriTabularEpoch::Thursday,
                     crate::cal::hijri::HijriTabularLeapYears::TypeII,
+                    HijriTabularEpoch::Thursday,
                 ))
             }
             AnyCalendarKind::HijriUmmAlQura => {
@@ -650,19 +650,19 @@ impl AnyCalendar {
             AnyCalendarKind::Gregorian => AnyCalendar::Gregorian(Gregorian),
             AnyCalendarKind::Hebrew => AnyCalendar::Hebrew(Hebrew),
             AnyCalendarKind::Indian => AnyCalendar::Indian(Indian),
-            AnyCalendarKind::HijriTabularFridayEpochTypeII => {
+            AnyCalendarKind::HijriTabularTypeIIFriday => {
                 AnyCalendar::HijriTabular(HijriTabular::new(
-                    HijriTabularEpoch::Friday,
                     crate::cal::hijri::HijriTabularLeapYears::TypeII,
+                    HijriTabularEpoch::Friday,
                 ))
             }
             AnyCalendarKind::HijriSimulatedMecca => {
                 AnyCalendar::HijriSimulated(HijriSimulated::try_new_mecca_unstable(provider)?)
             }
-            AnyCalendarKind::HijriTabularThursdayEpochTypeII => {
+            AnyCalendarKind::HijriTabularTypeIIThursday => {
                 AnyCalendar::HijriTabular(HijriTabular::new(
-                    HijriTabularEpoch::Thursday,
                     crate::cal::hijri::HijriTabularLeapYears::TypeII,
+                    HijriTabularEpoch::Thursday,
                 ))
             }
             AnyCalendarKind::HijriUmmAlQura => {
@@ -730,15 +730,15 @@ impl AnyDateInner {
             AnyDateInner::Indian(_) => AnyCalendarKind::Indian,
             AnyDateInner::HijriTabular(
                 _,
-                HijriTabularEpoch::Friday,
                 HijriTabularLeapYears::TypeII,
-            ) => AnyCalendarKind::HijriTabularFridayEpochTypeII,
+                HijriTabularEpoch::Friday,
+            ) => AnyCalendarKind::HijriTabularTypeIIFriday,
             AnyDateInner::HijriSimulated(_) => AnyCalendarKind::HijriSimulatedMecca,
             AnyDateInner::HijriTabular(
                 _,
-                HijriTabularEpoch::Thursday,
                 HijriTabularLeapYears::TypeII,
-            ) => AnyCalendarKind::HijriTabularThursdayEpochTypeII,
+                HijriTabularEpoch::Thursday,
+            ) => AnyCalendarKind::HijriTabularTypeIIThursday,
             AnyDateInner::HijriUmmAlQura(_) => AnyCalendarKind::HijriUmmAlQura,
             AnyDateInner::Iso(_) => AnyCalendarKind::Iso,
             AnyDateInner::Japanese(_) => AnyCalendarKind::Japanese,
@@ -771,12 +771,12 @@ pub enum AnyCalendarKind {
     Hebrew,
     /// The kind of a [`Indian`] calendar
     Indian,
-    /// The kind of an [`HijriTabular`] calendar using [`HijriTabularEpoch::Friday`] and [`HijriTabularLeapYears::TypeII`]
-    HijriTabularFridayEpochTypeII,
+    /// The kind of an [`HijriTabular`] calendar using [`HijriTabularLeapYears::TypeII`] and [`HijriTabularEpoch::Friday`]
+    HijriTabularTypeIIFriday,
     /// The kind of an [`HijriSimulated`], Mecca calendar
     HijriSimulatedMecca,
-    /// The kind of an [`HijriTabular`] calendar using [`HijriTabularEpoch::Thursday`] and [`HijriTabularLeapYears::TypeII`]
-    HijriTabularThursdayEpochTypeII,
+    /// The kind of an [`HijriTabular`] calendar using [`HijriTabularLeapYears::TypeII`] and [`HijriTabularEpoch::Thursday`]
+    HijriTabularTypeIIThursday,
     /// The kind of an [`HijriUmmAlQura`] calendar
     HijriUmmAlQura,
     /// The kind of an [`Iso`] calendar
@@ -821,15 +821,15 @@ impl AnyCalendarKind {
             AnyCalendarKind::Gregorian => Gregorian.debug_name(),
             AnyCalendarKind::Hebrew => Hebrew.debug_name(),
             AnyCalendarKind::Indian => Indian.debug_name(),
-            AnyCalendarKind::HijriTabularFridayEpochTypeII => HijriTabular::new(
-                HijriTabularEpoch::Friday,
+            AnyCalendarKind::HijriTabularTypeIIFriday => HijriTabular::new(
                 crate::cal::hijri::HijriTabularLeapYears::TypeII,
+                HijriTabularEpoch::Friday,
             )
             .debug_name(),
             AnyCalendarKind::HijriSimulatedMecca => HijriSimulated::DEBUG_NAME,
-            AnyCalendarKind::HijriTabularThursdayEpochTypeII => HijriTabular::new(
-                HijriTabularEpoch::Thursday,
+            AnyCalendarKind::HijriTabularTypeIIThursday => HijriTabular::new(
                 crate::cal::hijri::HijriTabularLeapYears::TypeII,
+                HijriTabularEpoch::Thursday,
             )
             .debug_name(),
             AnyCalendarKind::HijriUmmAlQura => HijriUmmAlQura::DEBUG_NAME,
@@ -859,10 +859,10 @@ impl TryFrom<CalendarAlgorithm> for AnyCalendarKind {
             Hijri(None) => Err(()),
             Hijri(Some(HijriCalendarAlgorithm::Umalqura)) => Ok(AnyCalendarKind::HijriUmmAlQura),
             Hijri(Some(HijriCalendarAlgorithm::Tbla)) => {
-                Ok(AnyCalendarKind::HijriTabularThursdayEpochTypeII)
+                Ok(AnyCalendarKind::HijriTabularTypeIIThursday)
             }
             Hijri(Some(HijriCalendarAlgorithm::Civil)) => {
-                Ok(AnyCalendarKind::HijriTabularFridayEpochTypeII)
+                Ok(AnyCalendarKind::HijriTabularTypeIIFriday)
             }
             Hijri(Some(HijriCalendarAlgorithm::Rgsa)) => Ok(AnyCalendarKind::HijriSimulatedMecca),
             Iso8601 => Ok(AnyCalendarKind::Iso),
@@ -1241,12 +1241,12 @@ impl IntoAnyCalendar for HijriTabular {
     }
     #[inline]
     fn kind(&self) -> AnyCalendarKind {
-        match (self.epoch, self.leap_years) {
-            (HijriTabularEpoch::Friday, HijriTabularLeapYears::TypeII) => {
-                AnyCalendarKind::HijriTabularFridayEpochTypeII
+        match (self.leap_years, self.epoch) {
+            (HijriTabularLeapYears::TypeII, HijriTabularEpoch::Friday) => {
+                AnyCalendarKind::HijriTabularTypeIIFriday
             }
-            (HijriTabularEpoch::Thursday, HijriTabularLeapYears::TypeII) => {
-                AnyCalendarKind::HijriTabularThursdayEpochTypeII
+            (HijriTabularLeapYears::TypeII, HijriTabularEpoch::Thursday) => {
+                AnyCalendarKind::HijriTabularTypeIIThursday
             }
         }
     }
@@ -1268,7 +1268,7 @@ impl IntoAnyCalendar for HijriTabular {
     }
     #[inline]
     fn date_to_any(&self, d: &Self::DateInner) -> AnyDateInner {
-        AnyDateInner::HijriTabular(*d, self.epoch, self.leap_years)
+        AnyDateInner::HijriTabular(*d, self.leap_years, self.epoch)
     }
 }
 
@@ -1614,11 +1614,10 @@ mod tests {
         let gregorian = AnyCalendar::new(AnyCalendarKind::Gregorian);
         let hebrew = AnyCalendar::new(AnyCalendarKind::Hebrew);
         let indian = AnyCalendar::new(AnyCalendarKind::Indian);
-        let hijri_civil: AnyCalendar =
-            AnyCalendar::new(AnyCalendarKind::HijriTabularFridayEpochTypeII);
+        let hijri_civil: AnyCalendar = AnyCalendar::new(AnyCalendarKind::HijriTabularTypeIIFriday);
         let hijri_simulated: AnyCalendar = AnyCalendar::new(AnyCalendarKind::HijriSimulatedMecca);
         let hijri_astronomical: AnyCalendar =
-            AnyCalendar::new(AnyCalendarKind::HijriTabularThursdayEpochTypeII);
+            AnyCalendar::new(AnyCalendarKind::HijriTabularTypeIIThursday);
         let hijri_umm_al_qura: AnyCalendar = AnyCalendar::new(AnyCalendarKind::HijriUmmAlQura);
         let japanese = AnyCalendar::new(AnyCalendarKind::Japanese);
         let japanext = AnyCalendar::new(AnyCalendarKind::JapaneseExtended);
