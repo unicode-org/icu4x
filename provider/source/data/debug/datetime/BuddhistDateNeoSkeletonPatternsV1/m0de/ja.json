@@ -9,7 +9,7 @@
     0
   ],
   "elements": [
-    "M/dEEEE",
+    "M月d日EEEE",
     "MM/dd(E)"
   ]
 }

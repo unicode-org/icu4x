@@ -1,5 +1,6 @@
 {
   "has_explicit_medium": true,
+  "has_explicit_short": true,
   "variant_pattern_indices": [
     0,
     0,
@@ -9,7 +10,8 @@
     0
   ],
   "elements": [
-    "M/dEEEE",
+    "M月d日EEEE",
+    "M月d日(E)",
     "M/d(E)"
   ]
 }
