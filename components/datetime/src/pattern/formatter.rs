@@ -74,7 +74,7 @@ where
     /// use icu::datetime::pattern::MonthNameLength;
     /// use icu::datetime::pattern::YearNameLength;
     /// use icu::locale::locale;
-    /// use writeable::assert_try_writeable_eq;
+    /// use writeable::TryWriteable;
     ///
     /// // Create an instance that can format wide month and era names:
     /// let mut names: FixedCalendarDateTimeNames<Gregorian, DateFieldSet> =
@@ -93,12 +93,15 @@ where
     /// // Note: extended year -50 is year 51 BCE
     /// let date_bce = Date::try_new_gregorian(-50, 3, 15).unwrap();
     /// let date_ce = Date::try_new_gregorian(1700, 11, 20).unwrap();
-    /// assert_try_writeable_eq!(
-    ///     names.with_pattern_unchecked(&pattern).format(&date_bce),
+    ///
+    /// let formatter = names.with_pattern_unchecked(&pattern);
+    ///
+    /// assert_eq!(
+    ///     formatter.format(&date_bce).try_write_to_string().unwrap(),
     ///     "The date is: March 15, 51 Before Christ"
     /// );
-    /// assert_try_writeable_eq!(
-    ///     names.with_pattern_unchecked(&pattern).format(&date_ce),
+    /// assert_eq!(
+    ///     formatter.format(&date_ce).try_write_to_string().unwrap(),
     ///     "The date is: November 20, 1700 Anno Domini"
     /// );
     /// ```
@@ -113,7 +116,7 @@ where
     /// use icu::datetime::pattern::DayPeriodNameLength;
     /// use icu::datetime::pattern::FixedCalendarDateTimeNames;
     /// use icu::locale::locale;
-    /// use writeable::assert_try_writeable_eq;
+    /// use writeable::TryWriteable;
     ///
     /// // Create an instance that can format abbreviated day periods:
     /// let mut names: FixedCalendarDateTimeNames<Gregorian, TimeFieldSet> =
@@ -131,22 +134,23 @@ where
     /// let time_pm = Time::try_new(13, 41, 28, 0).unwrap();
     /// let time_noon = Time::try_new(12, 0, 0, 0).unwrap();
     /// let time_midnight = Time::try_new(0, 0, 0, 0).unwrap();
-    /// assert_try_writeable_eq!(
-    ///     names.with_pattern_unchecked(&pattern).format(&time_am),
+    ///
+    /// let formatter = names.with_pattern_unchecked(&pattern);
+    ///
+    /// assert_eq!(
+    ///     formatter.format(&time_am).try_write_to_string().unwrap(),
     ///     "The time is: 11:04 AM"
     /// );
-    /// assert_try_writeable_eq!(
-    ///     names.with_pattern_unchecked(&pattern).format(&time_pm),
+    /// assert_eq!(
+    ///     formatter.format(&time_pm).try_write_to_string().unwrap(),
     ///     "The time is: 1:41 PM"
     /// );
-    /// assert_try_writeable_eq!(
-    ///     names.with_pattern_unchecked(&pattern).format(&time_noon),
+    /// assert_eq!(
+    ///     formatter.format(&time_noon).try_write_to_string().unwrap(),
     ///     "The time is: 12:00 noon"
     /// );
-    /// assert_try_writeable_eq!(
-    ///     names
-    ///         .with_pattern_unchecked(&pattern)
-    ///         .format(&time_midnight),
+    /// assert_eq!(
+    ///     formatter.format(&time_midnight).try_write_to_string().unwrap(),
     ///     "The time is: 12:00 midnight"
     /// );
     /// ```
@@ -161,7 +165,7 @@ where
     /// use icu::datetime::pattern::FixedCalendarDateTimeNames;
     /// use icu::locale::locale;
     /// use icu::time::zone::{IanaParser, VariantOffsetsCalculator};
-    /// use writeable::assert_try_writeable_eq;
+    /// use writeable::TryWriteable;
     ///
     /// let mut london_winter = ZonedDateTime::try_from_str(
     ///     "2024-01-01T00:00:00+00:00[Europe/London]",
@@ -191,16 +195,14 @@ where
     /// let pattern_str = "'Your time zone is:' z";
     /// let pattern: DateTimePattern = pattern_str.parse().unwrap();
     ///
-    /// assert_try_writeable_eq!(
-    ///     names
-    ///         .with_pattern_unchecked(&pattern)
-    ///         .format(&london_winter),
+    /// let formatter = names.with_pattern_unchecked(&pattern);
+    ///
+    /// assert_eq!(
+    ///     formatter.format(&london_winter).try_write_to_string().unwrap(),
     ///     "Your time zone is: GMT",
     /// );
-    /// assert_try_writeable_eq!(
-    ///     names
-    ///         .with_pattern_unchecked(&pattern)
-    ///         .format(&london_summer),
+    /// assert_eq!(
+    ///     formatter.format(&london_summer).try_write_to_string().unwrap(),
     ///     "Your time zone is: BST",
     /// );
     /// ```

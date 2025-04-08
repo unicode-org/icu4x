@@ -20,6 +20,9 @@ Some major changes worth highlighting:
         - Rename `wrap_calendar_in_*` APIs to `as_borrowed`, `into_ref_counted`, `into_atomic_ref_counted` (unicode-org#6392)
     - `icu_collections`
         - Remove some panics from `CodePointTrie`, which should no longer pull in panic machinery even with arithmetic panics enabled for lookup (unicode-org#6204)
+    - `icu_datetime`
+        - Rename `.hm()` to `.with_hm()` on fieldsets (unicode-org#6423)
+        - Length no longer has explicit `repr(u8)` discriminants (unicode-org#6423)
 - Data model and providers
     - `icu_experimental`
       - `dimension`

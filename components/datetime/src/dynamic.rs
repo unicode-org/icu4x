@@ -38,7 +38,7 @@
 //!
 //! fn get_field_set(should_display_time: bool) -> CompositeDateTimeFieldSet {
 //!     if should_display_time {
-//!         let field_set = fieldsets::MDT::medium().hm();
+//!         let field_set = fieldsets::MDT::medium().with_hm();
 //!         CompositeDateTimeFieldSet::DateTime(
 //!             fieldsets::enums::DateAndTimeFieldSet::MDT(field_set),
 //!         )
@@ -55,15 +55,11 @@
 //!     time: Time::try_new(16, 0, 0, 0).unwrap(),
 //! };
 //!
-//! let results = [true, false]
-//!     .map(get_field_set)
-//!     .map(|field_set| {
-//!         DateTimeFormatter::try_new(locale!("en-US").into(), field_set)
-//!             .unwrap()
-//!     })
-//!     .map(|formatter| formatter.format(&datetime).to_string());
+//! let with_time = DateTimeFormatter::try_new(locale!("en-US").into(), get_field_set(true)).unwrap();
+//! let without_time = DateTimeFormatter::try_new(locale!("en-US").into(), get_field_set(false)).unwrap();
 //!
-//! assert_eq!(results, ["Jan 15, 4:00 PM", "Jan 15"])
+//! assert_eq!(with_time.format(&datetime).to_string(), "Jan 15, 4:00 PM");
+//! assert_eq!(without_time.format(&datetime).to_string(), "Jan 15");
 //! ```
 
 use crate::fieldsets::{builder, Combo};
