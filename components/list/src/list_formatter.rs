@@ -339,7 +339,7 @@ mod tests {
         let formatter = formatter(crate::patterns::test::test_patterns_general());
 
         assert_writeable_parts_eq!(
-            formatter.format(core::iter::repeat(5).take(2)),
+            formatter.format(core::iter::repeat_n(5, 2)),
             "$5;5+",
             [
                 (0, 1, parts::LITERAL),
