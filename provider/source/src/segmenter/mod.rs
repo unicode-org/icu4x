@@ -20,8 +20,10 @@ use icu::segmenter::options::WordType;
 use icu::segmenter::provider::*;
 use icu_codepointtrie_builder::{CodePointTrieBuilder, CodePointTrieBuilderData};
 use icu_provider::prelude::*;
+use std::cmp;
 use std::collections::HashSet;
 use std::fmt::Debug;
+use std::ops::RangeInclusive;
 use std::sync::OnceLock;
 use zerovec::ZeroVec;
 
@@ -83,6 +85,16 @@ struct SegmenterRuleTable {
     segmenter_type: String,
     tables: Vec<SegmenterProperty>,
     rules: Vec<SegmenterState>,
+}
+
+/// Fill `dst` at range `r` with `value`, ignoring any out of bounds ranges
+fn fill_bounded(dst: &mut [u8], r: RangeInclusive<u32>, value: u8) {
+    let start = *r.start() as usize;
+    let end = cmp::min(*r.end() as usize, dst.len() - 1);
+    if start >= dst.len() {
+        return;
+    }
+    dst[start..=end].fill(value);
 }
 
 #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
@@ -214,33 +226,23 @@ fn generate_rule_break_data(
             match &*segmenter.segmenter_type {
                 "word" => {
                     // Extended_Pictographic isn't a part of word break property
-                    // Extended pictographic property is within 0..U+0x20000
                     if p.name == "Extended_Pictographic" {
-                        for i in 0..0x20000 {
-                            if let Some(c) = char::from_u32(i) {
-                                if extended_pictographic.contains(c) {
-                                    properties_map[c as usize] = property_index
-                                }
-                            }
+                        for range in extended_pictographic.iter_ranges() {
+                            fill_bounded(&mut properties_map, range, property_index);
                         }
                         continue;
                     }
 
                     if p.name == "SA" {
                         // Word break property doesn't define SA, but we will use non-UAX29 rules.
-                        // SA/CJ property is within 0..U+0x40000
-                        for c in 0..0x40000 {
-                            if lb.get32(c) == LineBreak::ComplexContext {
-                                properties_map[c as usize] = property_index
-                            } else if let Some(c) = char::from_u32(c) {
-                                match script.get(c) {
-                                    Script::Han | Script::Hiragana => {
-                                        properties_map[c as usize] = property_index;
-                                    }
-
-                                    _ => {}
-                                }
-                            }
+                        for range in script.iter_ranges_for_value(Script::Han) {
+                            fill_bounded(&mut properties_map, range, property_index);
+                        }
+                        for range in script.iter_ranges_for_value(Script::Hiragana) {
+                            fill_bounded(&mut properties_map, range, property_index);
+                        }
+                        for range in lb.iter_ranges_for_value(LineBreak::ComplexContext) {
+                            fill_bounded(&mut properties_map, range, property_index);
                         }
                         continue;
                     }
@@ -252,82 +254,67 @@ fn generate_rule_break_data(
                     let prop = wb_name_to_enum
                         .get_loose(&p.name)
                         .expect("property name should be valid!");
-                    for c in 0..(CODEPOINT_TABLE_LEN as u32) {
-                        if wb.get32(c) == prop {
+                    for range in wb.iter_ranges_for_value(prop) {
+                        if prop == WordBreak::MidLetter
+                            && (range.contains(&0x003a)
+                                || range.contains(&0xfe55)
+                                || range.contains(&0xff1a))
+                        {
                             // UAX29 defines the colon as MidLetter, but ICU4C's
                             // English data doesn't.
                             // See https://unicode-org.atlassian.net/browse/ICU-22112
                             //
                             // TODO: We have to consider this definition from CLDR instead.
-                            if (c == 0x003a || c == 0xfe55 || c == 0xff1a) && p.name == "MidLetter"
+                            for ch in
+                                range.filter(|ch| *ch != 0x003a && *ch != 0xfe55 && *ch != 0xff1a)
                             {
-                                // Default (en etc) is undefined class.
-                                continue;
+                                properties_map[ch as usize] = property_index;
                             }
-
-                            properties_map[c as usize] = property_index;
+                        } else {
+                            fill_bounded(&mut properties_map, range, property_index);
                         }
                     }
+
                     continue;
                 }
 
                 "grapheme" => {
                     // Extended_Pictographic isn't a part of grapheme break property
-                    // Extended pictographic property is within 0..U+0x20000
                     if p.name == "Extended_Pictographic" {
-                        for i in 0..0x20000 {
-                            if let Some(c) = char::from_u32(i) {
-                                if extended_pictographic.contains(c) {
-                                    properties_map[c as usize] = property_index
-                                }
-                            }
+                        for range in extended_pictographic.iter_ranges() {
+                            fill_bounded(&mut properties_map, range, property_index);
                         }
                         continue;
                     }
 
-                    if p.name == "InCBConsonant" {
-                        for i in 0..(CODEPOINT_TABLE_LEN as u32) {
-                            if let Some(c) = char::from_u32(i) {
-                                if incb.get(c) == IndicConjunctBreak::Consonant {
-                                    properties_map[c as usize] = property_index;
-                                }
-                            }
-                        }
-                        continue;
-                    }
+                    let relevant_incb = match &*p.name {
+                        "InCBConsonant" => Some(IndicConjunctBreak::Consonant),
+                        "InCBLinker" => Some(IndicConjunctBreak::Linker),
+                        "InCBExtend" => Some(IndicConjunctBreak::Extend),
+                        _ => None,
+                    };
 
-                    if p.name == "InCBLinker" {
-                        for i in 0..(CODEPOINT_TABLE_LEN as u32) {
-                            if let Some(c) = char::from_u32(i) {
-                                if incb.get(c) == IndicConjunctBreak::Linker {
-                                    properties_map[c as usize] = property_index;
+                    if let Some(relevant_incb) = relevant_incb {
+                        for range in incb.iter_ranges_for_value(relevant_incb) {
+                            if range.contains(&0x200D) {
+                                // ZWJ is handled as a separate rule
+                                for ch in range.filter(|ch| *ch != 0x200D) {
+                                    properties_map[ch as usize] = property_index;
                                 }
+                            } else {
+                                fill_bounded(&mut properties_map, range, property_index);
                             }
                         }
-                        continue;
-                    }
 
-                    if p.name == "InCBExtend" {
-                        for i in 0..(CODEPOINT_TABLE_LEN as u32) {
-                            if let Some(c) = char::from_u32(i) {
-                                // ZWJ is handled as another rules.
-                                if incb.get(c) == IndicConjunctBreak::Extend
-                                    && gb.get32(i) != GraphemeClusterBreak::ZWJ
-                                {
-                                    properties_map[c as usize] = property_index;
-                                }
-                            }
-                        }
                         continue;
                     }
 
                     let prop = gcb_name_to_enum
                         .get_loose(&p.name)
                         .expect("property name should be valid!");
-                    for c in 0..(CODEPOINT_TABLE_LEN as u32) {
-                        if gb.get32(c) == prop {
-                            properties_map[c as usize] = property_index;
-                        }
+
+                    for range in gb.iter_ranges_for_value(prop) {
+                        fill_bounded(&mut properties_map, range, property_index);
                     }
                     continue;
                 }
@@ -336,10 +323,8 @@ fn generate_rule_break_data(
                     let prop = sb_name_to_enum
                         .get_loose(&p.name)
                         .expect("property name should be valid!");
-                    for c in 0..(CODEPOINT_TABLE_LEN as u32) {
-                        if sb.get32(c) == prop {
-                            properties_map[c as usize] = property_index;
-                        }
+                    for range in sb.iter_ranges_for_value(prop) {
+                        fill_bounded(&mut properties_map, range, property_index);
                     }
                     continue;
                 }
@@ -435,10 +420,8 @@ fn generate_rule_break_data(
                     let prop = lb_name_to_enum
                         .get_loose(&p.name)
                         .expect("property name should be valid!");
-                    for c in 0..(CODEPOINT_TABLE_LEN as u32) {
-                        if lb.get32(c) == prop {
-                            properties_map[c as usize] = property_index;
-                        }
+                    for range in lb.iter_ranges_for_value(prop) {
+                        fill_bounded(&mut properties_map, range, property_index);
                     }
 
                     if p.name == "AL" {
