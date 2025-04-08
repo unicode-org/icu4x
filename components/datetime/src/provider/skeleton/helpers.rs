@@ -534,7 +534,7 @@ impl components::Bag {
 
         let default_hour_cycle = match preferred_hour_cycle {
             CoarseHourCycle::H11H12 => HourCycle::H12,
-            CoarseHourCycle::H23H24 => HourCycle::H23,
+            CoarseHourCycle::H23 => HourCycle::H23,
         };
         let fields = self.to_vec_fields(default_hour_cycle);
         match create_best_pattern_for_fields(skeletons, length_patterns, &fields, &self, false) {

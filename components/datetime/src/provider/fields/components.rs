@@ -249,7 +249,6 @@ impl Bag {
             // fields::Hour::H11
             // fields::Hour::H12
             // fields::Hour::H23
-            // fields::Hour::H24
 
             let hour_cycle = self.hour_cycle.unwrap_or(default_hour_cycle);
 
@@ -266,7 +265,7 @@ impl Bag {
                     }
                     // Skeletons only contain the h23, not h24. The pattern that is matched
                     // is free to use h23 or h24.
-                    HourCycle::H24 | HourCycle::H23 => {
+                    HourCycle::H23 => {
                         // H - symbol
                         fields::Hour::H23
                     }
@@ -714,7 +713,6 @@ impl Bag {
                         fields::Hour::H11 => HourCycle::H11,
                         fields::Hour::H12 => HourCycle::H12,
                         fields::Hour::H23 => HourCycle::H23,
-                        fields::Hour::H24 => HourCycle::H24,
                     });
                 }
                 FieldSymbol::Minute => {

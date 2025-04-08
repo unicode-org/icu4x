@@ -20,7 +20,7 @@ rust-version.workspace = true
 all-features = true
 
 [dependencies]
-ecma402_traits = "4"
+ecma402_traits = "5"
 fixed_decimal = { workspace = true, features = ["ryu"] }
 icu = { workspace = true, features = ["compiled_data", "experimental"] }
 icu_provider = { workspace = true }

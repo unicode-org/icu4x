@@ -476,7 +476,7 @@ impl TimeFieldSet {
         match hour_cycle {
             None => Self::ATTR_T,
             Some(H11 | H12) => Self::ATTR_T12,
-            Some(H23 | H24) => Self::ATTR_T24,
+            Some(H23) => Self::ATTR_T24,
         }
     }
 }
