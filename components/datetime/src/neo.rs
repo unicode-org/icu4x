@@ -464,8 +464,8 @@ where
     /// Creates a new [`DateTimeFormatter`] from compiled data with
     /// datetime components specified at build time.
     ///
-    /// This method will pick the calendar off of the locale; and if unspecified or unknown will fall back to the default
-    /// calendar for the locale. See [`AnyCalendarKind`] for a list of supported calendars.
+    /// This method will use the calendar specified in the `calendar_algorithm` preference, or fall back to the default 
+    /// calendar for the preferences if unspecified or unsupported. See [`IntoFormattableAnyCalendar`] for a list of supported calendars.
     ///
     /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
