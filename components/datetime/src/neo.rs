@@ -147,7 +147,7 @@ size_test!(FixedCalendarDateTimeFormatter<icu_calendar::Gregorian, crate::fields
 /// use icu::locale::locale;
 /// use writeable::assert_writeable_eq;
 ///
-/// // A JapaneseExtended formatter is implied by passing this a JapaneseExtended date
+/// // The JapaneseExtended generic is inferred by passing this a JapaneseExtended date later
 /// let formatter = FixedCalendarDateTimeFormatter::try_new(
 ///     locale!("es-MX").into(),
 ///     YMD::long(),
