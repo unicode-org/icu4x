@@ -377,7 +377,7 @@ size_test!(
 /// Type parameters:
 ///
 /// 1. The calendar chosen at compile time for additional type safety
-/// 2. A field set object type containing the fields that might be formatted
+/// 2. A field set containing the fields that might be formatted
 ///
 /// By default, the field set object is set to [`CompositeDateTimeFieldSet`],
 /// meaning that dates and times, but not time zones, are supported. A smaller
