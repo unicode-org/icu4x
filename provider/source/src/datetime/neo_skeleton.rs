@@ -309,14 +309,6 @@ fn gen_date_components(
     // Pull the field lengths from the date length patterns, and then use
     // those lengths for classical skeleton datetime pattern generation.
     //
-    // TODO: Should this use dateSkeletons?
-    // "full": "yMMMMEEEEd",
-    // "long": "yMMMMd",
-    // "medium": "yMMMd",
-    // "short": "yMMdd"
-    //
-    // Probably depends on CLDR data being higher quality.
-    // <https://unicode-org.atlassian.net/browse/CLDR-14993>
     // TODO(#308): Utilize the numbering system pattern variations.
     let date_pattern: reference::Pattern = match length {
         Length::Long => data.date_skeletons.long.get_pattern().parse().unwrap(),

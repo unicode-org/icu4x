@@ -107,6 +107,8 @@ impl From<&cldr_serde::ca::Dates> for TimeLengths<'_> {
         let length_combinations_v1 = patterns::GenericLengthPatterns::from(&other.datetime_formats);
         let skeletons_v1 = DateSkeletonPatterns::from(&other.datetime_formats.available_formats);
 
+        // Note: TimeLengths is only used for preferred_hour_cycle, we don't really use
+        // the rest of the pattern here.
         let pattern_str_full = other.time_skeletons.full.get_pattern();
         let pattern_str_long = other.time_skeletons.long.get_pattern();
         let pattern_str_medium = other.time_skeletons.medium.get_pattern();
