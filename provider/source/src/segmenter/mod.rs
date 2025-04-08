@@ -11,8 +11,8 @@ use crate::SourceDataProvider;
 use icu::collections::codepointtrie;
 use icu::properties::{
     props::{
-        CanonicalCombiningClass, EastAsianWidth, GeneralCategory, GraphemeClusterBreak,
-        IndicSyllabicCategory, LineBreak, Script, SentenceBreak, WordBreak,
+        EastAsianWidth, GeneralCategory, GraphemeClusterBreak, IndicConjunctBreak, LineBreak,
+        Script, SentenceBreak, WordBreak,
     },
     CodePointMapData, CodePointMapDataBorrowed, CodePointSetData,
 };
@@ -131,13 +131,9 @@ fn generate_rule_break_data(
         .expect("The data should be valid!");
     let extended_pictographic = data.as_borrowed();
 
-    let data = CodePointMapData::<IndicSyllabicCategory>::try_new_unstable(provider)
+    let data = CodePointMapData::<IndicConjunctBreak>::try_new_unstable(provider)
         .expect("The data should be valid!");
-    let insc = data.as_borrowed();
-
-    let data = CodePointMapData::<CanonicalCombiningClass>::try_new_unstable(provider)
-        .expect("The data should be valid!");
-    let ccc = data.as_borrowed();
+    let incb = data.as_borrowed();
 
     let data = PropertyParser::<GraphemeClusterBreak>::try_new_unstable(provider)
         .expect("The data should be valid!");
@@ -289,44 +285,34 @@ fn generate_rule_break_data(
                         continue;
                     }
 
-                    // The Indic_Conjunct_Break property is separate from the Grapheme_Cluster_Break property.
-                    // See https://unicode.org/reports/tr44/#Indic_Conjunct_Break
-                    if p.name == "InCBConsonant" || p.name == "InCBLinker" || p.name == "InCBExtend"
-                    {
-                        let gcb_extend = gcb_name_to_enum
-                            .get_loose("Extend")
-                            .expect("property name should be valid!");
-
+                    if p.name == "InCBConsonant" {
                         for i in 0..(CODEPOINT_TABLE_LEN as u32) {
                             if let Some(c) = char::from_u32(i) {
-                                let insc_value = insc.get(c);
-                                let sc = script.get(c);
-                                let is_gb9c_script = sc == Script::Bengali
-                                    || sc == Script::Devanagari
-                                    || sc == Script::Gujarati
-                                    || sc == Script::Malayalam
-                                    || sc == Script::Oriya
-                                    || sc == Script::Telugu;
-                                let is_incb_consonant = insc_value
-                                    == IndicSyllabicCategory::Consonant
-                                    && is_gb9c_script;
-                                let is_incb_linker =
-                                    insc_value == IndicSyllabicCategory::Virama && is_gb9c_script;
-                                // InCB = Linker or InCB = Consonant
-                                if (p.name == "InCBConsonant" && is_incb_consonant)
-                                    || (p.name == "InCBLinker" && is_incb_linker)
-                                    // ZWJ is InCB=Extend, but is in a different GCB class anyway so
-                                    // it needs to be special-cased in the tables.
-                                    // NOTE(eggrobin): UAX #44, Version 15.1, instead excludes based
-                                    // on InSC.
-                                    // I believe that to be a defect in that version of Unicode.
-                                    // This has been brought to the attention of the Properties and
-                                    // Algorithms Group.
-                                    || (p.name == "InCBExtend"
-                                        && (gb.get32(i) == gcb_extend
-                                            && ccc.get32(i) != CanonicalCombiningClass::NotReordered
-                                            && !is_incb_consonant
-                                            && !is_incb_linker))
+                                if incb.get(c) == IndicConjunctBreak::Consonant {
+                                    properties_map[c as usize] = property_index;
+                                }
+                            }
+                        }
+                        continue;
+                    }
+
+                    if p.name == "InCBLinker" {
+                        for i in 0..(CODEPOINT_TABLE_LEN as u32) {
+                            if let Some(c) = char::from_u32(i) {
+                                if incb.get(c) == IndicConjunctBreak::Linker {
+                                    properties_map[c as usize] = property_index;
+                                }
+                            }
+                        }
+                        continue;
+                    }
+
+                    if p.name == "InCBExtend" {
+                        for i in 0..(CODEPOINT_TABLE_LEN as u32) {
+                            if let Some(c) = char::from_u32(i) {
+                                // ZWJ is handled as another rules.
+                                if incb.get(c) == IndicConjunctBreak::Extend
+                                    && gb.get32(i) != GraphemeClusterBreak::ZWJ
                                 {
                                     properties_map[c as usize] = property_index;
                                 }
@@ -793,10 +779,6 @@ fn hardcoded_segmenter_provider() -> SourceDataProvider {
                 Some(std::sync::Arc::new(SerdeCache::new(AbstractFs::Memory(
                     [
                         (
-                            "uprops/small/ccc.toml",
-                            include_bytes!("../../data/segmenter/uprops/small/ccc.toml").as_slice(),
-                        ),
-                        (
                             "uprops/small/ea.toml",
                             include_bytes!("../../data/segmenter/uprops/small/ea.toml").as_slice(),
                         ),
@@ -814,8 +796,8 @@ fn hardcoded_segmenter_provider() -> SourceDataProvider {
                             include_bytes!("../../data/segmenter/uprops/small/GCB.toml").as_slice(),
                         ),
                         (
-                            "uprops/small/InSC.toml",
-                            include_bytes!("../../data/segmenter/uprops/small/InSC.toml")
+                            "uprops/small/InCB.toml",
+                            include_bytes!("../../data/segmenter/uprops/small/InCB.toml")
                                 .as_slice(),
                         ),
                         (
