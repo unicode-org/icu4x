@@ -43,14 +43,14 @@ enum CalendarKind {
   /// The kind of a Hebrew calendar
   hebrew,
 
-  /// The kind of a Hijri tabular, Friday epoch, type II leap years, calendar
-  hijriTabularFridayEpochTypeIi,
+  /// The kind of a Hijri tabular, type II leap years, Friday epoch, calendar
+  hijriTabularTypeIiFriday,
 
   /// The kind of a Hijri simulated, Mecca calendar
   hijriSimulatedMecca,
 
-  /// The kind of a Hijri tabular, Thursday epoch, type II leap years, calendar
-  hijriTabularThursdayEpochTypeIi,
+  /// The kind of a Hijri tabular, type II leap years, Thursday epoch, calendar
+  hijriTabularTypeIiThursday,
 
   /// The kind of a Hijri Umm al-Qura calendar
   hijriUmmAlQura,
@@ -87,11 +87,11 @@ enum CalendarKind {
         return 10;
       case hebrew:
         return 11;
-      case hijriTabularFridayEpochTypeIi:
+      case hijriTabularTypeIiFriday:
         return 12;
       case hijriSimulatedMecca:
         return 18;
-      case hijriTabularThursdayEpochTypeIi:
+      case hijriTabularTypeIiThursday:
         return 14;
       case hijriUmmAlQura:
         return 15;
