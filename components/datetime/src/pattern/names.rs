@@ -381,7 +381,7 @@ size_test!(
 ///
 /// By default, the field set is set to [`CompositeDateTimeFieldSet`],
 /// meaning that dates and times, but not time zones, are supported. A smaller
-/// field set object results in smaller stack size.
+/// field set results in smaller stack size.
 ///
 /// To support all fields including time zones, use [`CompositeFieldSet`].
 ///
