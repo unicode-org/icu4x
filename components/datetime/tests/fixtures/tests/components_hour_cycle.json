@@ -71,30 +71,6 @@
             }
         }
     },
-    {
-        "description": "h24 in the english locale",
-        "input": {
-            "value": "2020-01-07T00:25:07.000",
-            "options": {
-                "components": {
-                    "hour": "numeric",
-                    "minute": "numeric"
-                },
-                "semantic": {
-                    "length": "short",
-                    "timePrecision": "minute"
-                }
-            }
-        },
-        "output": {
-            "values": {
-                "en-u-hc-h24": {
-                    "formatted": "24:25",
-                    "pattern": "kk:mm"
-                }
-            }
-        }
-    },
 
     {
         "description": "h11 in the arabic locale",
@@ -160,27 +136,6 @@
         }
     },
     {
-        "description": "h24 in the arabic locale",
-        "input": {
-            "value": "2020-01-07T00:25:07.000",
-            "options": {
-                "components": {
-                    "hour": "numeric",
-                    "minute": "numeric"
-                },
-                "semantic": {
-                    "length": "short",
-                    "timePrecision": "minute"
-                }
-            }
-        },
-        "output": {
-            "values": {
-                "ar-EG-u-hc-h24": "٢٤:٢٥"
-            }
-        }
-    },
-    {
         "description": "h11 with singleton h",
         "input": {
             "value": "2002-12-31T00:05:07.000",
@@ -237,26 +192,6 @@
         "output": {
             "values": {
                 "en-u-hc-h23": "00"
-            }
-        }
-    },
-    {
-        "description": "h24 with singleton h",
-        "input": {
-            "value": "2002-12-31T00:05:07.000",
-            "options": {
-                "components": {
-                    "hour": "numeric"
-                },
-                "semantic": {
-                    "length": "short",
-                    "timePrecision": "hour"
-                }
-            }
-        },
-        "output": {
-            "values": {
-                "en-u-hc-h24": "24"
             }
         }
     }
