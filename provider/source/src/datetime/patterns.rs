@@ -96,7 +96,7 @@ impl From<&cldr_serde::ca::Dates> for DateLengths<'_> {
         let length_combinations_v1 = patterns::GenericLengthPatterns::from(&other.datetime_formats);
 
         Self {
-            date: (&other.date_formats).into(),
+            date: (&other.date_skeletons).into(),
             length_combinations: length_combinations_v1,
         }
     }
@@ -107,10 +107,10 @@ impl From<&cldr_serde::ca::Dates> for TimeLengths<'_> {
         let length_combinations_v1 = patterns::GenericLengthPatterns::from(&other.datetime_formats);
         let skeletons_v1 = DateSkeletonPatterns::from(&other.datetime_formats.available_formats);
 
-        let pattern_str_full = other.time_formats.full.get_pattern();
-        let pattern_str_long = other.time_formats.long.get_pattern();
-        let pattern_str_medium = other.time_formats.medium.get_pattern();
-        let pattern_str_short = other.time_formats.short.get_pattern();
+        let pattern_str_full = other.time_skeletons.full.get_pattern();
+        let pattern_str_long = other.time_skeletons.long.get_pattern();
+        let pattern_str_medium = other.time_skeletons.medium.get_pattern();
+        let pattern_str_short = other.time_skeletons.short.get_pattern();
 
         let pattern_full = pattern_str_full
             .parse()
@@ -153,7 +153,7 @@ impl From<&cldr_serde::ca::Dates> for TimeLengths<'_> {
         };
 
         let (time_h11_h12, time_h23_h24) = {
-            let time = (&other.time_formats).into();
+            let time = (&other.time_skeletons).into();
             let alt_time = patterns::LengthPatterns {
                 full: alt_hour_cycle
                     .apply_on_pattern(
