@@ -25,7 +25,7 @@ all-features = true
 [dependencies]
 indexmap = { workspace = true, optional = true }
 log = { workspace = true, optional = true }
-nom = { workspace = true, optional = true }
+nom = { version = "7.0.0", optional = true }
 serde = { workspace = true, features = ["alloc"]}
 
 [dev-dependencies]
