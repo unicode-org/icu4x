@@ -23,6 +23,7 @@ Some major changes worth highlighting:
     - `icu_datetime`
         - Rename `.hm()` to `.with_hm()` on fieldsets (unicode-org#6423)
         - Length no longer has explicit `repr(u8)` discriminants (unicode-org#6423)
+        - Fix incorrect datetime skeletons being used in datetime formatting (unicode-org#6428)
 - Data model and providers
     - `icu_experimental`
       - `dimension`
