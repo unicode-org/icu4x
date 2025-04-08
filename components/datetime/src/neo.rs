@@ -180,7 +180,7 @@ size_test!(FixedCalendarDateTimeFormatter<icu_calendar::Gregorian, crate::fields
 /// formatter.format(&Date::try_new_gregorian(2023, 12, 20).unwrap());
 /// ```
 ///
-/// A time cannot be passed into the formatter when a date is expected:
+/// As with [`DateTimeFormatter`], a time cannot be passed into the formatter when a date is expected:
 ///
 /// ```compile_fail,E0277
 /// use icu::datetime::input::Time;
