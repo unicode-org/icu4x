@@ -7,8 +7,5 @@ quick = "make quick"
 tidy = "make tidy"
 clippy-all = "clippy --all-features --all-targets -- -D warnings"
 
-# Use `cargo +nightly update` to update MSRV-aware (https://github.com/rust-lang/cargo/issues/13873)
-[unstable]
-msrv-policy = true
 [resolver]
-incompatible-rust-versions = 'fallback'
+incompatible-rust-versions = 'fallback' # default in resolver = "3", which we cannot use yet

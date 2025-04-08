@@ -184,6 +184,7 @@ macro_rules! registry(
             icu::properties::provider::PropertyEnumGeneralCategoryV1: PropertyEnumGeneralCategoryV1,
             icu::properties::provider::PropertyEnumGraphemeClusterBreakV1: PropertyEnumGraphemeClusterBreakV1,
             icu::properties::provider::PropertyEnumHangulSyllableTypeV1: PropertyEnumHangulSyllableTypeV1,
+            icu::properties::provider::PropertyEnumIndicConjunctBreakV1: PropertyEnumIndicConjunctBreakV1,
             icu::properties::provider::PropertyEnumIndicSyllabicCategoryV1: PropertyEnumIndicSyllabicCategoryV1,
             icu::properties::provider::PropertyEnumJoiningTypeV1: PropertyEnumJoiningTypeV1,
             icu::properties::provider::PropertyEnumLineBreakV1: PropertyEnumLineBreakV1,

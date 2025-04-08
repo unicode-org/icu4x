@@ -20,26 +20,30 @@ pub mod ffi {
     pub struct SentenceSegmenter(icu_segmenter::SentenceSegmenter);
 
     #[diplomat::opaque]
-    #[diplomat::rust_link(icu::segmenter::SentenceBreakIterator, Struct)]
+    #[diplomat::rust_link(icu::segmenter::sentence::SentenceBreakIterator, Struct)]
     #[diplomat::rust_link(
-        icu::segmenter::SentenceBreakIteratorPotentiallyIllFormedUtf8,
+        icu::segmenter::sentence::SentenceBreakIteratorPotentiallyIllFormedUtf8,
         Typedef,
         hidden
     )]
-    #[diplomat::rust_link(icu::segmenter::SentenceBreakIteratorUtf8, Typedef, hidden)]
+    #[diplomat::rust_link(icu::segmenter::sentence::SentenceBreakIteratorUtf8, Typedef, hidden)]
     pub struct SentenceBreakIteratorUtf8<'a>(
-        icu_segmenter::SentenceBreakIteratorPotentiallyIllFormedUtf8<'a, 'a>,
+        icu_segmenter::sentence::SentenceBreakIteratorPotentiallyIllFormedUtf8<'a, 'a>,
     );
 
     #[diplomat::opaque]
-    #[diplomat::rust_link(icu::segmenter::SentenceBreakIterator, Struct)]
-    #[diplomat::rust_link(icu::segmenter::SentenceBreakIteratorUtf16, Typedef, hidden)]
-    pub struct SentenceBreakIteratorUtf16<'a>(icu_segmenter::SentenceBreakIteratorUtf16<'a, 'a>);
+    #[diplomat::rust_link(icu::segmenter::sentence::SentenceBreakIterator, Struct)]
+    #[diplomat::rust_link(icu::segmenter::sentence::SentenceBreakIteratorUtf16, Typedef, hidden)]
+    pub struct SentenceBreakIteratorUtf16<'a>(
+        icu_segmenter::sentence::SentenceBreakIteratorUtf16<'a, 'a>,
+    );
 
     #[diplomat::opaque]
-    #[diplomat::rust_link(icu::segmenter::SentenceBreakIterator, Struct)]
-    #[diplomat::rust_link(icu::segmenter::SentenceBreakIteratorLatin1, Typedef, hidden)]
-    pub struct SentenceBreakIteratorLatin1<'a>(icu_segmenter::SentenceBreakIteratorLatin1<'a, 'a>);
+    #[diplomat::rust_link(icu::segmenter::sentence::SentenceBreakIterator, Struct)]
+    #[diplomat::rust_link(icu::segmenter::sentence::SentenceBreakIteratorLatin1, Typedef, hidden)]
+    pub struct SentenceBreakIteratorLatin1<'a>(
+        icu_segmenter::sentence::SentenceBreakIteratorLatin1<'a, 'a>,
+    );
 
     impl SentenceSegmenter {
         /// Construct a [`SentenceSegmenter`] using compiled data. This does not assume any content locale.
@@ -141,9 +145,9 @@ pub mod ffi {
     impl<'a> SentenceBreakIteratorUtf8<'a> {
         /// Finds the next breakpoint. Returns -1 if at the end of the string or if the index is
         /// out of range of a 32-bit signed integer.
-        #[diplomat::rust_link(icu::segmenter::SentenceBreakIterator::next, FnInStruct)]
+        #[diplomat::rust_link(icu::segmenter::sentence::SentenceBreakIterator::next, FnInStruct)]
         #[diplomat::rust_link(
-            icu::segmenter::SentenceBreakIterator::Item,
+            icu::segmenter::sentence::SentenceBreakIterator::Item,
             AssociatedTypeInStruct,
             hidden
         )]
@@ -158,9 +162,9 @@ pub mod ffi {
     impl<'a> SentenceBreakIteratorUtf16<'a> {
         /// Finds the next breakpoint. Returns -1 if at the end of the string or if the index is
         /// out of range of a 32-bit signed integer.
-        #[diplomat::rust_link(icu::segmenter::SentenceBreakIterator::next, FnInStruct)]
+        #[diplomat::rust_link(icu::segmenter::sentence::SentenceBreakIterator::next, FnInStruct)]
         #[diplomat::rust_link(
-            icu::segmenter::SentenceBreakIterator::Item,
+            icu::segmenter::sentence::SentenceBreakIterator::Item,
             AssociatedTypeInStruct,
             hidden
         )]
@@ -175,9 +179,9 @@ pub mod ffi {
     impl<'a> SentenceBreakIteratorLatin1<'a> {
         /// Finds the next breakpoint. Returns -1 if at the end of the string or if the index is
         /// out of range of a 32-bit signed integer.
-        #[diplomat::rust_link(icu::segmenter::SentenceBreakIterator::next, FnInStruct)]
+        #[diplomat::rust_link(icu::segmenter::sentence::SentenceBreakIterator::next, FnInStruct)]
         #[diplomat::rust_link(
-            icu::segmenter::SentenceBreakIterator::Item,
+            icu::segmenter::sentence::SentenceBreakIterator::Item,
             AssociatedTypeInStruct,
             hidden
         )]

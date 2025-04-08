@@ -198,8 +198,8 @@ fn date_benches(c: &mut Criterion) {
         "calendar/islamic/civil",
         &fxs,
         icu::calendar::cal::HijriTabular::new(
-            icu::calendar::cal::HijriTabularEpoch::Friday,
             icu::calendar::cal::HijriTabularLeapYears::TypeII,
+            icu::calendar::cal::HijriTabularEpoch::Friday,
         ),
         |y, m, d| {
             Date::try_new_hijri_tabular_with_calendar(
@@ -207,8 +207,8 @@ fn date_benches(c: &mut Criterion) {
                 m,
                 d,
                 icu::calendar::cal::HijriTabular::new(
-                    icu::calendar::cal::HijriTabularEpoch::Friday,
                     icu::calendar::cal::HijriTabularLeapYears::TypeII,
+                    icu::calendar::cal::HijriTabularEpoch::Friday,
                 ),
             )
             .unwrap()
@@ -220,8 +220,8 @@ fn date_benches(c: &mut Criterion) {
         "calendar/islamic/tabular",
         &fxs,
         icu::calendar::cal::HijriTabular::new(
-            icu::calendar::cal::HijriTabularEpoch::Thursday,
             icu::calendar::cal::HijriTabularLeapYears::TypeII,
+            icu::calendar::cal::HijriTabularEpoch::Thursday,
         ),
         |y, m, d| {
             Date::try_new_hijri_tabular_with_calendar(
@@ -229,8 +229,8 @@ fn date_benches(c: &mut Criterion) {
                 m,
                 d,
                 icu::calendar::cal::HijriTabular::new(
-                    icu::calendar::cal::HijriTabularEpoch::Thursday,
                     icu::calendar::cal::HijriTabularLeapYears::TypeII,
+                    icu::calendar::cal::HijriTabularEpoch::Thursday,
                 ),
             )
             .unwrap()

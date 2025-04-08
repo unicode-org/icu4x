@@ -108,8 +108,8 @@ pub struct HijriUmmAlQura;
 /// `"M01" - "M12"`.
 #[derive(Copy, Clone, Debug, Hash, Eq, PartialEq, PartialOrd, Ord)]
 pub struct HijriTabular {
-    pub(crate) epoch: HijriTabularEpoch,
     pub(crate) leap_years: HijriTabularLeapYears,
+    pub(crate) epoch: HijriTabularEpoch,
 }
 
 impl HijriSimulated {
@@ -206,8 +206,8 @@ pub enum HijriTabularLeapYears {
 }
 
 impl HijriTabular {
-    /// Construct a new [`HijriTabular`] with the given epoch and leap year rule.
-    pub const fn new(epoch: HijriTabularEpoch, leap_years: HijriTabularLeapYears) -> Self {
+    /// Construct a new [`HijriTabular`] with the given leap year rule and epoch.
+    pub const fn new(leap_years: HijriTabularLeapYears, epoch: HijriTabularEpoch) -> Self {
         Self { epoch, leap_years }
     }
 }
@@ -1289,7 +1289,7 @@ impl<A: AsCalendar<Calendar = HijriTabular>> Date<A> {
     /// use icu::calendar::cal::{HijriTabular, HijriTabularEpoch, HijriTabularLeapYears};
     /// use icu::calendar::Date;
     ///
-    /// let hijri = HijriTabular::new(HijriTabularEpoch::Thursday, HijriTabularLeapYears::TypeII);
+    /// let hijri = HijriTabular::new(HijriTabularLeapYears::TypeII, HijriTabularEpoch::Thursday);
     ///
     /// let date_hijri =
     ///     Date::try_new_hijri_tabular_with_calendar(1392, 4, 25, hijri)
@@ -2036,7 +2036,7 @@ mod test {
 
     #[test]
     fn test_rd_from_hijri() {
-        let calendar = HijriTabular::new(HijriTabularEpoch::Friday, HijriTabularLeapYears::TypeII);
+        let calendar = HijriTabular::new(HijriTabularLeapYears::TypeII, HijriTabularEpoch::Friday);
         let calendar = Ref(&calendar);
         for (case, f_date) in ARITHMETIC_CASES.iter().zip(TEST_RD.iter()) {
             let date = Date::try_new_hijri_tabular_with_calendar(
@@ -2049,7 +2049,7 @@ mod test {
 
     #[test]
     fn test_hijri_from_rd() {
-        let calendar = HijriTabular::new(HijriTabularEpoch::Friday, HijriTabularLeapYears::TypeII);
+        let calendar = HijriTabular::new(HijriTabularLeapYears::TypeII, HijriTabularEpoch::Friday);
         let calendar = Ref(&calendar);
         for (case, f_date) in ARITHMETIC_CASES.iter().zip(TEST_RD.iter()) {
             let date = Date::try_new_hijri_tabular_with_calendar(
@@ -2065,7 +2065,7 @@ mod test {
     #[test]
     fn test_rd_from_hijri_tbla() {
         let calendar =
-            HijriTabular::new(HijriTabularEpoch::Thursday, HijriTabularLeapYears::TypeII);
+            HijriTabular::new(HijriTabularLeapYears::TypeII, HijriTabularEpoch::Thursday);
         let calendar = Ref(&calendar);
         for (case, f_date) in ASTRONOMICAL_CASES.iter().zip(TEST_RD.iter()) {
             let date = Date::try_new_hijri_tabular_with_calendar(
@@ -2079,7 +2079,7 @@ mod test {
     #[test]
     fn test_hijri_tbla_from_rd() {
         let calendar =
-            HijriTabular::new(HijriTabularEpoch::Thursday, HijriTabularLeapYears::TypeII);
+            HijriTabular::new(HijriTabularLeapYears::TypeII, HijriTabularEpoch::Thursday);
         let calendar = Ref(&calendar);
         for (case, f_date) in ASTRONOMICAL_CASES.iter().zip(TEST_RD.iter()) {
             let date = Date::try_new_hijri_tabular_with_calendar(

@@ -147,7 +147,7 @@ impl From<&cldr_serde::ca::Dates> for TimeLengths<'_> {
         let preferred_hour_cycle =
             preferred_hour_cycle.expect("Could not find a preferred hour cycle.");
         let alt_hour_cycle = if preferred_hour_cycle == CoarseHourCycle::H11H12 {
-            CoarseHourCycle::H23H24
+            CoarseHourCycle::H23
         } else {
             CoarseHourCycle::H11H12
         };
@@ -199,7 +199,7 @@ impl From<&cldr_serde::ca::Dates> for TimeLengths<'_> {
 
             match preferred_hour_cycle {
                 CoarseHourCycle::H11H12 => (time, alt_time),
-                CoarseHourCycle::H23H24 => (alt_time, time),
+                CoarseHourCycle::H23 => (alt_time, time),
             }
         };
 
