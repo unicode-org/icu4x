@@ -53,7 +53,7 @@ use crate::{provider::neo::*, scaffold::*};
 ///
 /// ```
 /// use icu::calendar::Gregorian;
-/// use icu::datetime::fieldsets::{zone::Location, Combo, ET};
+/// use icu::datetime::fieldsets::{self, zone, Combo};
 /// use icu::datetime::input::ZonedDateTime;
 /// use icu::datetime::FixedCalendarDateTimeFormatter;
 /// use icu::locale::locale;
@@ -62,9 +62,9 @@ use crate::{provider::neo::*, scaffold::*};
 ///
 /// // Note: Combo type can be elided, but it is shown here for demonstration
 /// let formatter =
-///     FixedCalendarDateTimeFormatter::<_, Combo<ET, Location>>::try_new(
+///     FixedCalendarDateTimeFormatter::<_, Combo<fieldsets::ET, zone::Location>>::try_new(
 ///         locale!("en-US").into(),
-///         ET::short().with_hm().zone(Location),
+///         fieldsets::ET::short().with_hm().zone(zone::Location),
 ///     )
 ///     .unwrap();
 ///
