@@ -70,7 +70,6 @@ pub enum TestHourCycle {
     H11,
     H12,
     H23,
-    H24,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]

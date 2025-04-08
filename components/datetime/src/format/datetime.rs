@@ -342,13 +342,6 @@ where
                     }
                 }
                 fields::Hour::H23 => h,
-                fields::Hour::H24 => {
-                    if h == 0 {
-                        24
-                    } else {
-                        h
-                    }
-                }
             };
             try_write_number(PART, w, decimal_formatter, h.into(), l)?
         }

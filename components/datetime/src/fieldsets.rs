@@ -1118,14 +1118,14 @@ impl_time_marker!(
     /// );
     ///
     /// let formatter = NoCalendarFormatter::try_new(
-    ///     locale!("und-u-hc-h24").into(),
+    ///     locale!("und-u-hc-h23").into(),
     ///     T::short().hm(),
     /// )
     /// .unwrap();
     ///
     /// assert_writeable_eq!(
     ///     formatter.format(&Time::try_new(0, 0, 0, 0).unwrap()),
-    ///     "24:00"
+    ///     "00:00"
     /// );
     /// ```
     ///
