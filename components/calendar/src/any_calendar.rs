@@ -1867,7 +1867,7 @@ mod tests {
         single_test_roundtrip(japanext, "reiwa", 3, "M03", 1);
         single_test_roundtrip(japanext, "heisei", 6, "M12", 1);
         single_test_roundtrip(japanext, "meiji", 10, "M03", 1);
-        single_test_roundtrip(japanext, "tenpyokampo-749", 1, "M04", 20);
+        single_test_roundtrip(japanext, "tenpyokampo-749", 1, "M05", 20);
         single_test_roundtrip(japanext, "ce", 100, "M03", 1);
         single_test_roundtrip(japanext, "bce", 10, "M03", 1);
         single_test_error(

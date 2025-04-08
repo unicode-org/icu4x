@@ -495,7 +495,7 @@ impl Date<JapaneseExtended> {
 const MEIJI_START: EraStartDate = EraStartDate {
     year: 1868,
     month: 9,
-    day: 8,
+    day: 23,
 };
 const TAISHO_START: EraStartDate = EraStartDate {
     year: 1912,
@@ -706,7 +706,7 @@ impl Japanese {
                     field: "month",
                     value: month as i32,
                     min: 1,
-                    max: next_era_start.month as i32 - 1,
+                    max: next_era_start.month as i32,
                 }
             } else
             /* if date_in_iso.day >= era_start.day */
@@ -715,7 +715,7 @@ impl Japanese {
                     field: "day",
                     value: day as i32,
                     min: 1,
-                    max: next_era_start.day as i32 - 1,
+                    max: next_era_start.day as i32,
                 }
             });
         }
@@ -931,33 +931,33 @@ mod tests {
         );
 
         // There were multiple eras in this year
-        // This one is from Apr 14 to July 2
-        single_test_roundtrip_ext(calendar_ext, "tenpyokampo-749", 1, 4, 20);
-        single_test_roundtrip_ext(calendar_ext, "tenpyokampo-749", 1, 4, 14);
+        // This one is from May 9 to July 24
+        single_test_roundtrip_ext(calendar_ext, "tenpyokampo-749", 1, 5, 20);
+        single_test_roundtrip_ext(calendar_ext, "tenpyokampo-749", 1, 5, 14);
         single_test_roundtrip_ext(calendar_ext, "tenpyokampo-749", 1, 7, 1);
         single_test_error_ext(
             calendar_ext,
             "tenpyokampo-749",
             1,
-            7,
+            8,
             5,
             DateError::Range {
                 field: "month",
-                value: 7,
+                value: 8,
                 min: 1,
-                max: 6,
+                max: 7,
             },
         );
         single_test_error_ext(
             calendar_ext,
             "tenpyokampo-749",
             1,
-            4,
-            13,
+            5,
+            8,
             DateError::Range {
                 field: "day",
-                value: 13,
-                min: 14,
+                value: 8,
+                min: 9,
                 max: 31,
             },
         );
