@@ -7,7 +7,7 @@
 //!
 //! # Usage example
 //! ```
-//! # use icu_locale::locale;
+//! # use icu_locale_core::locale;
 //! # use env_preferences::parse::posix::PosixLocale;
 //! # use env_preferences::LocaleError;
 //! # fn main() -> Result<(), LocaleError> {
@@ -21,10 +21,10 @@
 //! ```
 
 use displaydoc::Display;
-use icu_locale::extensions::unicode::{key, value};
-use icu_locale::extensions::Extensions;
-use icu_locale::subtags::{language, script, variant, Language, Region, Variants};
-use icu_locale::{LanguageIdentifier, Locale, ParseError};
+use icu_locale_core::extensions::unicode::{key, value};
+use icu_locale_core::extensions::Extensions;
+use icu_locale_core::subtags::{language, script, variant, Language, Region, Variants};
+use icu_locale_core::{LanguageIdentifier, Locale, ParseError};
 
 use super::aliases::find_posix_alias;
 
@@ -198,7 +198,7 @@ impl<'src> PosixLocale<'src> {
     ///
     /// ## Parsing behaviour
     /// ```
-    /// # use icu_locale::locale;
+    /// # use icu_locale_core::locale;
     /// # use env_preferences::parse::posix::PosixLocale;
     /// # use env_preferences::LocaleError;
     /// # fn main() -> Result<(), LocaleError> {
@@ -223,7 +223,7 @@ impl<'src> PosixLocale<'src> {
     ///
     /// ## Edge cases
     /// ```
-    /// # use icu_locale::locale;
+    /// # use icu_locale_core::locale;
     /// # use env_preferences::parse::posix::PosixLocale;
     /// # use env_preferences::LocaleError;
     /// # fn main() -> Result<(), LocaleError> {

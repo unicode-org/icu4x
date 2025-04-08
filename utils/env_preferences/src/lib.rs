@@ -8,7 +8,7 @@
 //! Apple, Linux & Windows systems.
 //!
 //! It provides functionality to fetch preferred locales from the user's operating
-//! system and parse them lossily to an ICU4X [`Locale`](icu_locale::Locale).
+//! system and parse them lossily to an ICU4X [`Locale`](icu_locale_core::Locale).
 //!
 //! It also retrieves preferences for [`Calendar`](https://crates.io/crates/icu_calendar)
 //! & [`TimeZone`](https://crates.io/crates/icu_time)
@@ -66,7 +66,7 @@ pub fn get_raw_locales() -> Result<Vec<String>, RetrievalError> {
     system::get_raw_locales()
 }
 
-/// List the user's available locales as ICU4X [`Locale`](icu_locale::Locale)s, ordered by preference.
+/// List the user's available locales as ICU4X [`Locale`](icu_locale_core::Locale)s, ordered by preference.
 ///
 /// This performs a best-effort conversion that may lose some (or all!) data in certain cases.
 /// For getting a list of raw system locales, see [`get_raw_locales()`].
@@ -75,7 +75,7 @@ pub fn get_raw_locales() -> Result<Vec<String>, RetrievalError> {
 /// - [`parse::apple::AppleLocale`]
 /// - [`parse::posix::PosixLocale`]
 /// - [`parse::windows::WindowsLocale`]
-pub fn get_locales_lossy() -> Result<Vec<icu_locale::Locale>, LocaleError> {
+pub fn get_locales_lossy() -> Result<Vec<icu_locale_core::Locale>, LocaleError> {
     let raw_locales = get_raw_locales()?;
     let system_locales = raw_locales
         .iter()

@@ -7,7 +7,7 @@
 //!
 //! # Usage example
 //! ```
-//! # use icu_locale::locale;
+//! # use icu_locale_core::locale;
 //! # use env_preferences::parse::windows::WindowsLocale;
 //! # use env_preferences::LocaleError;
 //! # fn main() -> Result<(), LocaleError> {
@@ -20,9 +20,9 @@
 //! # }
 //! ```
 
-use icu_locale::extensions::unicode::{key, Keywords, Unicode};
-use icu_locale::extensions::Extensions;
-use icu_locale::{LanguageIdentifier, Locale, ParseError};
+use icu_locale_core::extensions::unicode::{key, Keywords, Unicode};
+use icu_locale_core::extensions::Extensions;
+use icu_locale_core::{LanguageIdentifier, Locale, ParseError};
 
 use super::aliases::{find_windows_language_alias_lossy, strip_windows_collation_suffix_lossy};
 use crate::RetrievalError;
@@ -38,7 +38,7 @@ impl<'src> WindowsLocale<'src> {
 
     /// ## Edge cases
     /// ```
-    /// # use icu_locale::locale;
+    /// # use icu_locale_core::locale;
     /// # use env_preferences::parse::windows::WindowsLocale;
     /// # use env_preferences::LocaleError;
     /// # fn main() -> Result<(), LocaleError> {

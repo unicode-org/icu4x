@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use displaydoc::Display;
-use icu_locale::ParseError;
+use icu_locale_core::ParseError;
 use std::{ffi::FromVecWithNulError, str::Utf8Error};
 
 /// An error encountered while retrieving the system locale

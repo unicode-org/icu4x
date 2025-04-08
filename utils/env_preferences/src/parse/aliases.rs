@@ -14,10 +14,10 @@
 pub fn find_posix_alias(
     alias: &str,
 ) -> Option<(
-    icu_locale::subtags::Language,
-    Option<icu_locale::subtags::Region>,
+    icu_locale_core::subtags::Language,
+    Option<icu_locale_core::subtags::Region>,
 )> {
-    use icu_locale::subtags::{language, region, Language};
+    use icu_locale_core::subtags::{language, region, Language};
 
     match alias {
         "C" | "POSIX" => Some((Language::UND, None)),
@@ -69,8 +69,8 @@ pub fn find_posix_alias(
 #[cfg(any(doc, feature = "parse_windows", target_os = "windows"))]
 pub fn strip_windows_collation_suffix_lossy(
     lcid: &str,
-) -> (&str, Option<icu_locale::extensions::unicode::Value>) {
-    use icu_locale::extensions::unicode::value;
+) -> (&str, Option<icu_locale_core::extensions::unicode::Value>) {
+    use icu_locale_core::extensions::unicode::value;
 
     // All known LCIDs containing an underscore are used for a collation suffix
     if let Some((prefix, suffix)) = lcid.split_once('_') {
@@ -94,8 +94,8 @@ pub fn strip_windows_collation_suffix_lossy(
 
 /// Find a BCP-47 identifier from a list of known Windows aliases.
 #[cfg(any(doc, feature = "parse_windows", target_os = "windows"))]
-pub fn find_windows_language_alias_lossy(lcid: &str) -> Option<icu_locale::LanguageIdentifier> {
-    use icu_locale::langid;
+pub fn find_windows_language_alias_lossy(lcid: &str) -> Option<icu_locale_core::LanguageIdentifier> {
+    use icu_locale_core::langid;
 
     match lcid {
         "zh-yue-HK" => Some(langid!("yue-HK")),

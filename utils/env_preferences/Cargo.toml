@@ -19,7 +19,7 @@ include.workspace = true
 [dependencies]
 core-foundation-sys = "0.8.6"
 displaydoc = { workspace = true }
-icu_locale = { workspace = true }
+icu_locale_core = { workspace = true, features = ["alloc"] }
 libc = "0.2.155"
 
 [dependencies.windows]
@@ -36,7 +36,6 @@ features = [
 ]
 
 [dev-dependencies]
-icu_locale = { workspace = true }
 windows-core = "0.60.1"
 
 [features]

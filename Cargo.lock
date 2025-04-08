@@ -772,7 +772,7 @@ version = "0.1.0"
 dependencies = [
  "core-foundation-sys",
  "displaydoc",
- "icu_locale",
+ "icu_locale_core",
  "libc",
  "windows",
  "windows-core",
