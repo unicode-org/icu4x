@@ -24,7 +24,7 @@ use utf8_iter::Utf8CharIndices;
 ///
 /// For examples of use, see [`GraphemeClusterSegmenter`].
 #[derive(Debug)]
-pub struct GraphemeClusterBreakIterator<'data, 's, Y: RuleBreakType<'s> + ?Sized>(
+pub struct GraphemeClusterBreakIterator<'data, 's, Y: RuleBreakType>(
     RuleBreakIterator<'data, 's, Y>,
 );
 
@@ -34,25 +34,25 @@ derive_usize_iterator_with_type!(GraphemeClusterBreakIterator, 'data);
 ///
 /// For examples of use, see [`GraphemeClusterSegmenter`].
 pub type GraphemeClusterBreakIteratorUtf8<'data, 's> =
-    GraphemeClusterBreakIterator<'data, 's, RuleBreakTypeUtf8>;
+    GraphemeClusterBreakIterator<'data, 's, Utf8>;
 
 /// Grapheme cluster break iterator for a potentially invalid UTF-8 string.
 ///
 /// For examples of use, see [`GraphemeClusterSegmenter`].
 pub type GraphemeClusterBreakIteratorPotentiallyIllFormedUtf8<'data, 's> =
-    GraphemeClusterBreakIterator<'data, 's, RuleBreakTypePotentiallyIllFormedUtf8>;
+    GraphemeClusterBreakIterator<'data, 's, PotentiallyIllFormedUtf8>;
 
 /// Grapheme cluster break iterator for a Latin-1 (8-bit) string.
 ///
 /// For examples of use, see [`GraphemeClusterSegmenter`].
 pub type GraphemeClusterBreakIteratorLatin1<'data, 's> =
-    GraphemeClusterBreakIterator<'data, 's, RuleBreakTypeLatin1>;
+    GraphemeClusterBreakIterator<'data, 's, Latin1>;
 
 /// Grapheme cluster break iterator for a UTF-16 string.
 ///
 /// For examples of use, see [`GraphemeClusterSegmenter`].
 pub type GraphemeClusterBreakIteratorUtf16<'data, 's> =
-    GraphemeClusterBreakIterator<'data, 's, RuleBreakTypeUtf16>;
+    GraphemeClusterBreakIterator<'data, 's, Utf16>;
 
 /// Segments a string into grapheme clusters.
 ///
@@ -195,6 +195,7 @@ impl<'data> GraphemeClusterSegmenterBorrowed<'data> {
             complex: None,
             boundary_property: 0,
             locale_override: None,
+            handle_complex_language: empty_handle_complex_language,
         })
     }
     /// Creates a grapheme cluster break iterator for a potentially ill-formed UTF8 string
@@ -215,6 +216,7 @@ impl<'data> GraphemeClusterSegmenterBorrowed<'data> {
             complex: None,
             boundary_property: 0,
             locale_override: None,
+            handle_complex_language: empty_handle_complex_language,
         })
     }
     /// Creates a grapheme cluster break iterator for a Latin-1 (8-bit) string.
@@ -233,6 +235,7 @@ impl<'data> GraphemeClusterSegmenterBorrowed<'data> {
             complex: None,
             boundary_property: 0,
             locale_override: None,
+            handle_complex_language: empty_handle_complex_language,
         })
     }
 
@@ -252,6 +255,7 @@ impl<'data> GraphemeClusterSegmenterBorrowed<'data> {
             complex: None,
             boundary_property: 0,
             locale_override: None,
+            handle_complex_language: empty_handle_complex_language,
         })
     }
 }

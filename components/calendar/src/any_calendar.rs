@@ -610,9 +610,7 @@ impl AnyCalendar {
                     HijriTabularEpoch::Thursday,
                 ))
             }
-            AnyCalendarKind::HijriUmmAlQura => {
-                AnyCalendar::HijriUmmAlQura(HijriUmmAlQura::try_new_with_buffer_provider(provider)?)
-            }
+            AnyCalendarKind::HijriUmmAlQura => AnyCalendar::HijriUmmAlQura(HijriUmmAlQura::new()),
             AnyCalendarKind::Iso => AnyCalendar::Iso(Iso),
             AnyCalendarKind::Japanese => {
                 AnyCalendar::Japanese(Japanese::try_new_with_buffer_provider(provider)?)
@@ -633,7 +631,6 @@ impl AnyCalendar {
             + DataProvider<crate::provider::CalendarChineseV1>
             + DataProvider<crate::provider::CalendarDangiV1>
             + DataProvider<crate::provider::CalendarHijriSimulatedMeccaV1>
-            + DataProvider<crate::provider::CalendarHijriUmmalquraV1>
             + ?Sized,
     {
         Ok(match kind {
@@ -665,9 +662,7 @@ impl AnyCalendar {
                     HijriTabularEpoch::Thursday,
                 ))
             }
-            AnyCalendarKind::HijriUmmAlQura => {
-                AnyCalendar::HijriUmmAlQura(HijriUmmAlQura::try_new_unstable(provider)?)
-            }
+            AnyCalendarKind::HijriUmmAlQura => AnyCalendar::HijriUmmAlQura(HijriUmmAlQura::new()),
             AnyCalendarKind::Iso => AnyCalendar::Iso(Iso),
             AnyCalendarKind::Japanese => {
                 AnyCalendar::Japanese(Japanese::try_new_unstable(provider)?)
@@ -804,7 +799,7 @@ impl AnyCalendarKind {
         } else if region == Some(region!("AF")) || region == Some(region!("IR")) {
             AnyCalendarKind::Persian
         } else if region == Some(region!("SA")) && algo == Some(CalendarAlgorithm::Hijri(None)) {
-            AnyCalendarKind::HijriUmmAlQura
+            AnyCalendarKind::HijriSimulatedMecca
         } else {
             AnyCalendarKind::Gregorian
         }

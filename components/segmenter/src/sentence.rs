@@ -42,34 +42,30 @@ pub struct SentenceBreakInvariantOptions {}
 ///
 /// For examples of use, see [`SentenceSegmenter`].
 #[derive(Debug)]
-pub struct SentenceBreakIterator<'data, 's, Y: RuleBreakType<'s> + ?Sized>(
-    RuleBreakIterator<'data, 's, Y>,
-);
+pub struct SentenceBreakIterator<'data, 's, Y: RuleBreakType>(RuleBreakIterator<'data, 's, Y>);
 
 derive_usize_iterator_with_type!(SentenceBreakIterator, 'data);
 
 /// Sentence break iterator for an `str` (a UTF-8 string).
 ///
 /// For examples of use, see [`SentenceSegmenter`].
-pub type SentenceBreakIteratorUtf8<'data, 's> = SentenceBreakIterator<'data, 's, RuleBreakTypeUtf8>;
+pub type SentenceBreakIteratorUtf8<'data, 's> = SentenceBreakIterator<'data, 's, Utf8>;
 
 /// Sentence break iterator for a potentially invalid UTF-8 string.
 ///
 /// For examples of use, see [`SentenceSegmenter`].
 pub type SentenceBreakIteratorPotentiallyIllFormedUtf8<'data, 's> =
-    SentenceBreakIterator<'data, 's, RuleBreakTypePotentiallyIllFormedUtf8>;
+    SentenceBreakIterator<'data, 's, PotentiallyIllFormedUtf8>;
 
 /// Sentence break iterator for a Latin-1 (8-bit) string.
 ///
 /// For examples of use, see [`SentenceSegmenter`].
-pub type SentenceBreakIteratorLatin1<'data, 's> =
-    SentenceBreakIterator<'data, 's, RuleBreakTypeLatin1>;
+pub type SentenceBreakIteratorLatin1<'data, 's> = SentenceBreakIterator<'data, 's, Latin1>;
 
 /// Sentence break iterator for a UTF-16 string.
 ///
 /// For examples of use, see [`SentenceSegmenter`].
-pub type SentenceBreakIteratorUtf16<'data, 's> =
-    SentenceBreakIterator<'data, 's, RuleBreakTypeUtf16>;
+pub type SentenceBreakIteratorUtf16<'data, 's> = SentenceBreakIterator<'data, 's, Utf16>;
 
 /// Supports loading sentence break data, and creating sentence break iterators for different string
 /// encodings.
@@ -229,6 +225,7 @@ impl<'data> SentenceSegmenterBorrowed<'data> {
             complex: None,
             boundary_property: 0,
             locale_override: self.locale_override,
+            handle_complex_language: empty_handle_complex_language,
         })
     }
     /// Creates a sentence break iterator for a potentially ill-formed UTF8 string
@@ -249,6 +246,7 @@ impl<'data> SentenceSegmenterBorrowed<'data> {
             complex: None,
             boundary_property: 0,
             locale_override: self.locale_override,
+            handle_complex_language: empty_handle_complex_language,
         })
     }
     /// Creates a sentence break iterator for a Latin-1 (8-bit) string.
@@ -264,6 +262,7 @@ impl<'data> SentenceSegmenterBorrowed<'data> {
             complex: None,
             boundary_property: 0,
             locale_override: self.locale_override,
+            handle_complex_language: empty_handle_complex_language,
         })
     }
 
@@ -280,6 +279,7 @@ impl<'data> SentenceSegmenterBorrowed<'data> {
             complex: None,
             boundary_property: 0,
             locale_override: self.locale_override,
+            handle_complex_language: empty_handle_complex_language,
         })
     }
 }

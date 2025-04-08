@@ -9,9 +9,9 @@ use core::str::CharIndices;
 use icu_collections::char16trie::{Char16Trie, TrieResult};
 
 /// A trait for dictionary based iterator
-trait DictionaryType<'l, 's> {
+trait DictionaryType {
     /// The iterator over characters.
-    type IterAttr: Iterator<Item = (usize, Self::CharType)> + Clone;
+    type IterAttr<'s>: Iterator<Item = (usize, Self::CharType)> + Clone;
 
     /// The character type.
     type CharType: Copy + Into<u32>;
@@ -23,11 +23,11 @@ trait DictionaryType<'l, 's> {
 struct DictionaryBreakIterator<
     'l,
     's,
-    Y: DictionaryType<'l, 's> + ?Sized,
+    Y: DictionaryType + ?Sized,
     X: Iterator<Item = usize> + ?Sized,
 > {
     trie: Char16Trie<'l>,
-    iter: Y::IterAttr,
+    iter: Y::IterAttr<'s>,
     len: usize,
     grapheme_iter: X,
     // TODO transform value for byte trie
@@ -41,8 +41,8 @@ struct DictionaryBreakIterator<
 /// - `'s` = lifetime of the string being segmented
 ///
 /// [`Iterator`]: core::iter::Iterator
-impl<'l, 's, Y: DictionaryType<'l, 's> + ?Sized, X: Iterator<Item = usize> + ?Sized> Iterator
-    for DictionaryBreakIterator<'l, 's, Y, X>
+impl<Y: DictionaryType + ?Sized, X: Iterator<Item = usize> + ?Sized> Iterator
+    for DictionaryBreakIterator<'_, '_, Y, X>
 {
     type Item = usize;
 
@@ -106,8 +106,8 @@ impl<'l, 's, Y: DictionaryType<'l, 's> + ?Sized, X: Iterator<Item = usize> + ?Si
     }
 }
 
-impl<'s> DictionaryType<'_, 's> for u32 {
-    type IterAttr = Utf16Indices<'s>;
+impl DictionaryType for u32 {
+    type IterAttr<'s> = Utf16Indices<'s>;
     type CharType = u32;
 
     fn to_char(c: u32) -> char {
@@ -123,8 +123,8 @@ impl<'s> DictionaryType<'_, 's> for u32 {
     }
 }
 
-impl<'s> DictionaryType<'_, 's> for char {
-    type IterAttr = CharIndices<'s>;
+impl DictionaryType for char {
+    type IterAttr<'s> = CharIndices<'s>;
     type CharType = char;
 
     fn to_char(c: char) -> char {

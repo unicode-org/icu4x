@@ -436,9 +436,7 @@ impl FormattableAnyCalendar {
                 cal::HijriTabularLeapYears::TypeII,
                 cal::HijriTabularEpoch::Thursday,
             )),
-            HijriUmmAlQura => AnyCalendar::HijriUmmAlQura(
-                cal::HijriUmmAlQura::try_new_with_buffer_provider(provider)?,
-            ),
+            HijriUmmAlQura => AnyCalendar::HijriUmmAlQura(cal::HijriUmmAlQura::new()),
             Japanese => {
                 AnyCalendar::Japanese(cal::Japanese::try_new_with_buffer_provider(provider)?)
             }
@@ -456,8 +454,7 @@ impl FormattableAnyCalendar {
         P: ?Sized
             + DataProvider<icu_calendar::provider::CalendarJapaneseModernV1>
             + DataProvider<icu_calendar::provider::CalendarChineseV1>
-            + DataProvider<icu_calendar::provider::CalendarDangiV1>
-            + DataProvider<icu_calendar::provider::CalendarHijriUmmalquraV1>,
+            + DataProvider<icu_calendar::provider::CalendarDangiV1>,
     {
         use FormattableAnyCalendarKind::*;
         let any_calendar = match kind {
@@ -480,9 +477,7 @@ impl FormattableAnyCalendar {
                 cal::HijriTabularLeapYears::TypeII,
                 cal::HijriTabularEpoch::Thursday,
             )),
-            HijriUmmAlQura => {
-                AnyCalendar::HijriUmmAlQura(cal::HijriUmmAlQura::try_new_unstable(provider)?)
-            }
+            HijriUmmAlQura => AnyCalendar::HijriUmmAlQura(cal::HijriUmmAlQura::new()),
             Japanese => AnyCalendar::Japanese(cal::Japanese::try_new_unstable(provider)?),
             Persian => AnyCalendar::Persian(cal::Persian),
             Roc => AnyCalendar::Roc(cal::Roc),

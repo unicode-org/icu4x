@@ -16,23 +16,15 @@ use utf8_iter::Utf8CharIndices;
 /// 🚫 This trait is sealed; it cannot be implemented by user code. If an API requests an item that implements this
 /// trait, please consider using a type from the implementors listed below.
 /// </div>
-pub trait RuleBreakType<'s>: crate::private::Sealed {
+pub trait RuleBreakType: crate::private::Sealed + Sized {
     /// The iterator over characters.
-    type IterAttr: Iterator<Item = (usize, Self::CharType)> + Clone + core::fmt::Debug;
+    type IterAttr<'s>: Iterator<Item = (usize, Self::CharType)> + Clone + core::fmt::Debug;
 
     /// The character type.
     type CharType: Copy + Into<u32> + core::fmt::Debug;
 
     #[doc(hidden)]
-    fn get_current_position_character_len<'data>(
-        iter: &RuleBreakIterator<'data, 's, Self>,
-    ) -> usize;
-
-    #[doc(hidden)]
-    fn handle_complex_language<'data>(
-        iter: &mut RuleBreakIterator<'data, 's, Self>,
-        left_codepoint: Self::CharType,
-    ) -> Option<usize>;
+    fn char_len(ch: Self::CharType) -> usize;
 }
 
 /// Implements the [`Iterator`] trait over the segmenter boundaries of the given string.
@@ -49,8 +41,8 @@ pub trait RuleBreakType<'s>: crate::private::Sealed {
 /// _after_ the boundary (for a boundary at the end of text, this index is the length
 /// of the [`str`] or array of code units).
 #[derive(Debug)]
-pub struct RuleBreakIterator<'data, 's, Y: RuleBreakType<'s> + ?Sized> {
-    pub(crate) iter: Y::IterAttr,
+pub struct RuleBreakIterator<'data, 's, Y: RuleBreakType> {
+    pub(crate) iter: Y::IterAttr<'s>,
     pub(crate) len: usize,
     pub(crate) current_pos_data: Option<(usize, Y::CharType)>,
     pub(crate) result_cache: alloc::vec::Vec<usize>,
@@ -58,9 +50,23 @@ pub struct RuleBreakIterator<'data, 's, Y: RuleBreakType<'s> + ?Sized> {
     pub(crate) complex: Option<ComplexPayloadsBorrowed<'data>>,
     pub(crate) boundary_property: u8,
     pub(crate) locale_override: Option<&'data RuleBreakDataOverride<'data>>,
+    // Should return None if there is no complex language handling
+    pub(crate) handle_complex_language:
+        fn(&mut RuleBreakIterator<'data, 's, Y>, Y::CharType) -> Option<usize>,
 }
 
-impl<'s, Y: RuleBreakType<'s> + ?Sized> Iterator for RuleBreakIterator<'_, 's, Y> {
+pub(crate) fn empty_handle_complex_language<Y: RuleBreakType>(
+    _i: &mut RuleBreakIterator<'_, '_, Y>,
+    _c: Y::CharType,
+) -> Option<usize> {
+    debug_assert!(
+        false,
+        "grapheme/sentence segmenters should never need complex language handling"
+    );
+    None
+}
+
+impl<Y: RuleBreakType> Iterator for RuleBreakIterator<'_, '_, Y> {
     type Item = usize;
 
     fn next(&mut self) -> Option<Self::Item> {
@@ -72,7 +78,7 @@ impl<'s, Y: RuleBreakType<'s> + ?Sized> Iterator for RuleBreakIterator<'_, 's, Y
                     self.result_cache = self.result_cache.iter().skip(1).map(|r| r - i).collect();
                     return self.get_current_position();
                 }
-                i += Y::get_current_position_character_len(self);
+                i += self.get_current_codepoint().map_or(0, Y::char_len);
                 self.advance_iter();
                 if self.is_eof() {
                     self.result_cache.clear();
@@ -125,7 +131,7 @@ impl<'s, Y: RuleBreakType<'s> + ?Sized> Iterator for RuleBreakIterator<'_, 's, Y
                     self.boundary_property = left_prop;
                     return self.get_current_position();
                 }
-                let break_offset = Y::handle_complex_language(self, left_codepoint);
+                let break_offset = (self.handle_complex_language)(self, left_codepoint);
                 if break_offset.is_some() {
                     return break_offset;
                 }
@@ -199,7 +205,7 @@ impl<'s, Y: RuleBreakType<'s> + ?Sized> Iterator for RuleBreakIterator<'_, 's, Y
     }
 }
 
-impl<'s, Y: RuleBreakType<'s> + ?Sized> RuleBreakIterator<'_, 's, Y> {
+impl<Y: RuleBreakType> RuleBreakIterator<'_, '_, Y> {
     pub(crate) fn advance_iter(&mut self) {
         self.current_pos_data = self.iter.next();
     }
@@ -270,68 +276,47 @@ impl<'s, Y: RuleBreakType<'s> + ?Sized> RuleBreakIterator<'_, 's, Y> {
 #[derive(Debug)]
 #[non_exhaustive]
 /// [`RuleBreakType`] for UTF-8 strings
-pub struct RuleBreakTypeUtf8;
+pub struct Utf8;
 
-impl crate::private::Sealed for RuleBreakTypeUtf8 {}
+impl crate::private::Sealed for Utf8 {}
 
-impl<'s> RuleBreakType<'s> for RuleBreakTypeUtf8 {
-    type IterAttr = CharIndices<'s>;
+impl RuleBreakType for Utf8 {
+    type IterAttr<'s> = CharIndices<'s>;
     type CharType = char;
 
-    fn get_current_position_character_len(iter: &RuleBreakIterator<Self>) -> usize {
-        iter.get_current_codepoint().map_or(0, |c| c.len_utf8())
-    }
-
-    fn handle_complex_language(
-        _: &mut RuleBreakIterator<Self>,
-        _: Self::CharType,
-    ) -> Option<usize> {
-        unreachable!()
+    fn char_len(ch: Self::CharType) -> usize {
+        ch.len_utf8()
     }
 }
 
 #[derive(Debug)]
 #[non_exhaustive]
 /// [`RuleBreakType`] for potentially ill-formed UTF-8 strings
-pub struct RuleBreakTypePotentiallyIllFormedUtf8;
+pub struct PotentiallyIllFormedUtf8;
 
-impl crate::private::Sealed for RuleBreakTypePotentiallyIllFormedUtf8 {}
+impl crate::private::Sealed for PotentiallyIllFormedUtf8 {}
 
-impl<'s> RuleBreakType<'s> for RuleBreakTypePotentiallyIllFormedUtf8 {
-    type IterAttr = Utf8CharIndices<'s>;
+impl RuleBreakType for PotentiallyIllFormedUtf8 {
+    type IterAttr<'s> = Utf8CharIndices<'s>;
     type CharType = char;
 
-    fn get_current_position_character_len(iter: &RuleBreakIterator<Self>) -> usize {
-        iter.get_current_codepoint().map_or(0, |c| c.len_utf8())
-    }
-
-    fn handle_complex_language(
-        _: &mut RuleBreakIterator<Self>,
-        _: Self::CharType,
-    ) -> Option<usize> {
-        unreachable!()
+    fn char_len(ch: Self::CharType) -> usize {
+        ch.len_utf8()
     }
 }
 
 #[derive(Debug)]
 #[non_exhaustive]
 /// [`RuleBreakType`] for Latin-1 strings
-pub struct RuleBreakTypeLatin1;
+pub struct Latin1;
 
-impl crate::private::Sealed for RuleBreakTypeLatin1 {}
+impl crate::private::Sealed for Latin1 {}
 
-impl<'s> RuleBreakType<'s> for RuleBreakTypeLatin1 {
-    type IterAttr = Latin1Indices<'s>;
+impl RuleBreakType for Latin1 {
+    type IterAttr<'s> = Latin1Indices<'s>;
     type CharType = u8;
 
-    fn get_current_position_character_len(_: &RuleBreakIterator<Self>) -> usize {
-        unreachable!()
-    }
-
-    fn handle_complex_language(
-        _: &mut RuleBreakIterator<Self>,
-        _: Self::CharType,
-    ) -> Option<usize> {
+    fn char_len(_ch: Self::CharType) -> usize {
         unreachable!()
     }
 }
@@ -339,26 +324,19 @@ impl<'s> RuleBreakType<'s> for RuleBreakTypeLatin1 {
 #[derive(Debug)]
 #[non_exhaustive]
 /// [`RuleBreakType`] for UTF-16 strings
-pub struct RuleBreakTypeUtf16;
+pub struct Utf16;
 
-impl crate::private::Sealed for RuleBreakTypeUtf16 {}
+impl crate::private::Sealed for Utf16 {}
 
-impl<'s> RuleBreakType<'s> for RuleBreakTypeUtf16 {
-    type IterAttr = Utf16Indices<'s>;
+impl RuleBreakType for Utf16 {
+    type IterAttr<'s> = Utf16Indices<'s>;
     type CharType = u32;
 
-    fn get_current_position_character_len(iter: &RuleBreakIterator<Self>) -> usize {
-        match iter.get_current_codepoint() {
-            None => 0,
-            Some(ch) if ch >= 0x10000 => 2,
-            _ => 1,
+    fn char_len(ch: Self::CharType) -> usize {
+        if ch >= 0x10000 {
+            2
+        } else {
+            1
         }
-    }
-
-    fn handle_complex_language(
-        _: &mut RuleBreakIterator<Self>,
-        _: Self::CharType,
-    ) -> Option<usize> {
-        unreachable!()
     }
 }

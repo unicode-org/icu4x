@@ -142,7 +142,7 @@ lazy_static::lazy_static! {
         "icu::calendar::Date::try_new_simulated_hijri_with_calendar",
         "icu::calendar::Date::try_new_persian",
         "icu::calendar::Date::try_new_roc",
-        "icu::calendar::Date::try_new_ummalqura_with_calendar",
+        "icu::calendar::Date::try_new_ummalqura",
 
         // Not planned for 2.0: Calendar structs mostly for internal use but which might expose
         // useful information to clients.
@@ -343,6 +343,8 @@ lazy_static::lazy_static! {
         "icu::segmenter::word::WordBreakInvariantOptions",
         "icu::segmenter::word::WordBreakOptions",
         "icu::segmenter::word::WordType",
+        "icu::segmenter::word::WordBreakType",
+        "icu::segmenter::line::LineBreakType",
 
         // Reexported input modules
         "icu::datetime::input",
