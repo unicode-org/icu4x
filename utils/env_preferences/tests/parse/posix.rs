@@ -6,14 +6,10 @@ use env_preferences::parse::posix::PosixLocale;
 use icu_locale::Locale;
 
 fn expect_success(src: &str, expected: &str) {
-    let posix_locale =
-        PosixLocale::try_from_str(src).expect(&format!("Unable to parse POSIX locale: `{src}`"));
-    let converted_locale = posix_locale
-        .try_convert_lossy()
-        .expect(&format!("Unable to convert to BCP-47 identifier: `{src}`"));
+    let posix_locale = PosixLocale::try_from_str(src).expect(src);
+    let converted_locale = posix_locale.try_convert_lossy().expect(src);
 
-    let expected_locale = Locale::try_from_str(expected)
-        .expect(&format!("Unable to parse BCP-47 identifier: `{expected}`"));
+    let expected_locale = Locale::try_from_str(expected).expect(src);
     assert_eq!(converted_locale, expected_locale, "POSIX locale: `{src}`");
 }
 
@@ -321,7 +317,7 @@ mod error {
 
         fn expect_error(src: &str, expected: ParseError) {
             let result = PosixLocale::try_from_str(src)
-                .expect(&format!("Unable to parse POSIX locale: `{src}`"))
+                .expect(src)
                 .try_convert_lossy();
             match result {
                 Ok(invalid_locale) => {

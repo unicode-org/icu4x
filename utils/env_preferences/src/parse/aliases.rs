@@ -81,7 +81,7 @@ pub fn strip_windows_collation_suffix_lossy(
             "stroke" => value!("stroke"),
             "tradnl" => value!("trad"),
             // Strip the suffix on LCIDs with an underscore but no (known) matching CLDR data
-            "tchncl" | "modern" | _ => return (prefix, None),
+            _ => return (prefix, None),
         };
 
         // Return the LCID with the stripped prefix, and the matching CLDR collation key
