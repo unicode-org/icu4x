@@ -11,7 +11,7 @@
 //!     .expect("Failed to initialize ISO Date instance.");
 //! let date_julian = Date::new_from_iso(date_iso, Julian);
 //!
-//! assert_eq!(date_julian.year().era_year_or_related_iso(), 1969);
+//! assert_eq!(date_julian.year().era().unwrap().era_year, 1969);
 //! assert_eq!(date_julian.month().ordinal, 12);
 //! assert_eq!(date_julian.day_of_month().0, 20);
 //! ```
@@ -223,7 +223,7 @@ impl Date<Julian> {
     /// let date_julian = Date::try_new_julian(1969, 12, 20)
     ///     .expect("Failed to initialize Julian Date instance.");
     ///
-    /// assert_eq!(date_julian.year().era_year_or_related_iso(), 1969);
+    /// assert_eq!(date_julian.year().era().unwrap().era_year, 1969);
     /// assert_eq!(date_julian.month().ordinal, 12);
     /// assert_eq!(date_julian.day_of_month().0, 20);
     /// ```
@@ -425,9 +425,9 @@ mod test {
         for case in cases {
             let iso_from_rd = Date::from_rata_die(RataDie::new(case.rd), crate::Iso);
             let julian_from_rd = Date::from_rata_die(RataDie::new(case.rd), Julian);
-            assert_eq!(julian_from_rd.year().era_year().unwrap(), case.expected_year,
+            assert_eq!(julian_from_rd.year().era().unwrap().era_year, case.expected_year,
                 "Failed year check from RD: {case:?}\nISO: {iso_from_rd:?}\nJulian: {julian_from_rd:?}");
-            assert_eq!(julian_from_rd.year().standard_era().unwrap(), case.expected_era,
+            assert_eq!(julian_from_rd.year().era().unwrap().standard_era, case.expected_era,
                 "Failed era check from RD: {case:?}\nISO: {iso_from_rd:?}\nJulian: {julian_from_rd:?}");
             assert_eq!(julian_from_rd.month().ordinal, case.expected_month,
                 "Failed month check from RD: {case:?}\nISO: {iso_from_rd:?}\nJulian: {julian_from_rd:?}");

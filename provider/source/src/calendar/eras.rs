@@ -476,6 +476,7 @@ fn test_calendar_eras() {
     for (calendar, data) in era_dates_map {
         let kind = match calendar.as_str() {
             "generic" | "islamic" => continue,
+            "chinese" | "dangi" => continue, // no eras
             "ethiopic-amete-alem" => AnyCalendarKind::EthiopianAmeteAlem,
             "gregorian" => AnyCalendarKind::Gregorian,
             "japanese" => AnyCalendarKind::JapaneseExtended,
@@ -516,7 +517,7 @@ fn test_calendar_eras() {
             //     assert_eq!(
             //         Date::try_new_from_codes(
             //             Some(era),
-            //             in_era.year().era_year_or_related_iso(),
+            //             in_era.year().era().unwrap().era_year,
             //             in_era.month().standard_code,
             //             in_era.day_of_month().0,
             //             cal,
@@ -525,32 +526,29 @@ fn test_calendar_eras() {
             //     );
             // }
 
+            let era_year = in_era.year().era().unwrap();
+
             // Unless this is the first era and it's not an inverse era, check that the
             // not_in_era date is in a different era
             if idx != "0" || era.end.is_some() {
                 assert_ne!(
-                    not_in_era.year().standard_era(),
-                    in_era.year().standard_era()
+                    not_in_era.year().era().unwrap().standard_era,
+                    era_year.standard_era
                 );
             }
 
-            // The remaining tests don't work for cyclic calendars
-            if calendar == "dangi" || calendar == "chinese" {
-                continue;
-            }
-
-            if let Some(FormattingEra::Index(i, _)) = in_era.year().formatting_era() {
+            if let FormattingEra::Index(i, _) = era_year.formatting_era {
                 assert_eq!(i.to_string(), idx);
             }
 
             // TODO: reenable with CLDR-48
             // // Check that the correct era code is returned
             // if let Some(code) = era.code.as_deref() {
-            //     assert_eq!(in_era.year().standard_era().unwrap().0, code);
+            //     assert_eq!(era_year.standard_era.0, code);
             // }
 
             // Check that the start/end date uses year 1, and minimal/maximal month/day
-            assert_eq!(in_era.year().era_year_or_related_iso(), 1);
+            assert_eq!(era_year.era_year, 1);
             if calendar == "japanese" {
                 // Japanese is the only calendar that doesn't have its own months
             } else if era.start.is_some() {

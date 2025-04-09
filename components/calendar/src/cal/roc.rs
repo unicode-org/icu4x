@@ -11,7 +11,7 @@
 //!     .expect("Failed to initialize ISO Date instance.");
 //! let date_roc = Date::new_from_iso(date_iso, Roc);
 //!
-//! assert_eq!(date_roc.year().era_year_or_related_iso(), 59);
+//! assert_eq!(date_roc.year().era().unwrap().era_year, 59);
 //! assert_eq!(date_roc.month().ordinal, 1);
 //! assert_eq!(date_roc.day_of_month().0, 2);
 //! ```
@@ -184,15 +184,15 @@ impl Date<Roc> {
     /// let date_roc = Date::try_new_roc(1, 2, 3)
     ///     .expect("Failed to initialize ROC Date instance.");
     ///
-    /// assert_eq!(date_roc.year().standard_era().unwrap().0, tinystr!(16, "minguo"));
-    /// assert_eq!(date_roc.year().era_year_or_related_iso(), 1, "ROC year check failed!");
+    /// assert_eq!(date_roc.year().era().unwrap().standard_era.0, tinystr!(16, "minguo"));
+    /// assert_eq!(date_roc.year().era().unwrap().era_year, 1, "ROC year check failed!");
     /// assert_eq!(date_roc.month().ordinal, 2, "ROC month check failed!");
     /// assert_eq!(date_roc.day_of_month().0, 3, "ROC day of month check failed!");
     ///
     /// // Convert to an equivalent Gregorian date
     /// let date_gregorian = date_roc.to_calendar(Gregorian);
     ///
-    /// assert_eq!(date_gregorian.year().era_year_or_related_iso(), 1912, "Gregorian from ROC year check failed!");
+    /// assert_eq!(date_gregorian.year().era().unwrap().era_year, 1912, "Gregorian from ROC year check failed!");
     /// assert_eq!(date_gregorian.month().ordinal, 2, "Gregorian from ROC month check failed!");
     /// assert_eq!(date_gregorian.day_of_month().0, 3, "Gregorian from ROC day of month check failed!");
     pub fn try_new_roc(year: i32, month: u8, day: u8) -> Result<Date<Roc>, RangeError> {
@@ -224,12 +224,12 @@ mod test {
         let iso_from_rd = Date::from_rata_die(case.rd, Iso);
         let roc_from_rd = Date::from_rata_die(case.rd, Roc);
         assert_eq!(
-            roc_from_rd.year().era_year().unwrap(),
+            roc_from_rd.year().era().unwrap().era_year,
             case.expected_year,
             "Failed year check from RD: {case:?}\nISO: {iso_from_rd:?}\nROC: {roc_from_rd:?}"
         );
         assert_eq!(
-            roc_from_rd.year().standard_era().unwrap(),
+            roc_from_rd.year().era().unwrap().standard_era,
             case.expected_era,
             "Failed era check from RD: {case:?}\nISO: {iso_from_rd:?}\nROC: {roc_from_rd:?}"
         );

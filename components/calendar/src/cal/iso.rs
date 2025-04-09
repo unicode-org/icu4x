@@ -10,7 +10,7 @@
 //! let date_iso = Date::try_new_iso(1970, 1, 2)
 //!     .expect("Failed to initialize ISO Date instance.");
 //!
-//! assert_eq!(date_iso.year().era_year_or_related_iso(), 1970);
+//! assert_eq!(date_iso.year().era().unwrap().era_year, 1970);
 //! assert_eq!(date_iso.month().ordinal, 1);
 //! assert_eq!(date_iso.day_of_month().0, 2);
 //! ```
@@ -190,7 +190,7 @@ impl Date<Iso> {
     /// let date_iso = Date::try_new_iso(1970, 1, 2)
     ///     .expect("Failed to initialize ISO Date instance.");
     ///
-    /// assert_eq!(date_iso.year().era_year_or_related_iso(), 1970);
+    /// assert_eq!(date_iso.year().era().unwrap().era_year, 1970);
     /// assert_eq!(date_iso.month().ordinal, 1);
     /// assert_eq!(date_iso.day_of_month().0, 2);
     /// ```
@@ -396,7 +396,9 @@ mod test {
         assert_eq!(
             Date::from_rata_die(RataDie::big_negative(), Iso)
                 .year()
-                .era_year_or_related_iso(),
+                .era()
+                .unwrap()
+                .era_year,
             i32::MIN
         );
     }

@@ -72,23 +72,6 @@ impl YearInfo {
             }),
         }
     }
-    /// Get the year in the era if this is a non-cyclic calendar
-    ///
-    /// Gets the eraYear for era dates, otherwise falls back to Extended Year
-    pub fn era_year(self) -> Option<i32> {
-        match self.kind {
-            YearKind::Era(e) => Some(e.era_year),
-            YearKind::Cyclic(..) => None,
-        }
-    }
-
-    /// Get the year ambiguity.
-    pub fn year_ambiguity(self) -> YearAmbiguity {
-        match self.kind {
-            YearKind::Cyclic(_) => YearAmbiguity::EraRequired,
-            YearKind::Era(e) => e.ambiguity,
-        }
-    }
 
     /// Get *some* year number that can be displayed
     ///
@@ -100,34 +83,19 @@ impl YearInfo {
         }
     }
 
-    /// Get the era, if available
-    pub fn formatting_era(self) -> Option<FormattingEra> {
+    /// Get the era year information, if available
+    pub fn era(self) -> Option<EraYear> {
         match self.kind {
-            YearKind::Era(e) => Some(e.formatting_era),
+            YearKind::Era(e) => Some(e),
             YearKind::Cyclic(..) => None,
         }
     }
 
-    /// Get the era, if available
-    pub fn standard_era(self) -> Option<Era> {
+    /// Get the cyclic year information, if available
+    pub fn cyclic(self) -> Option<CyclicYear> {
         match self.kind {
-            YearKind::Era(e) => Some(e.standard_era),
-            YearKind::Cyclic(..) => None,
-        }
-    }
-
-    /// Return the cyclic year, if any
-    pub fn cyclic(self) -> Option<NonZeroU8> {
-        match self.kind {
-            YearKind::Era(..) => None,
-            YearKind::Cyclic(cy) => Some(cy.year),
-        }
-    }
-    /// Return the Related ISO year, if any
-    pub fn related_iso(self) -> Option<i32> {
-        match self.kind {
-            YearKind::Era(..) => None,
-            YearKind::Cyclic(cy) => Some(cy.related_iso),
+            YearKind::Cyclic(cyclic) => Some(cyclic),
+            YearKind::Era(_) => None,
         }
     }
 }

@@ -14,7 +14,7 @@
 //! )
 //! .expect("Failed to initialize Hijri Date instance.");
 //!
-//! assert_eq!(hijri_date.year().era_year_or_related_iso(), 1348);
+//! assert_eq!(hijri_date.year().era().unwrap().era_year, 1348);
 //! assert_eq!(hijri_date.month().ordinal, 10);
 //! assert_eq!(hijri_date.day_of_month().0, 11);
 //! ```
@@ -585,7 +585,7 @@ impl<A: AsCalendar<Calendar = HijriSimulated>> Date<A> {
     ///     Date::try_new_simulated_hijri_with_calendar(1392, 4, 25, hijri)
     ///         .expect("Failed to initialize Hijri Date instance.");
     ///
-    /// assert_eq!(date_hijri.year().era_year_or_related_iso(), 1392);
+    /// assert_eq!(date_hijri.year().era().unwrap().era_year, 1392);
     /// assert_eq!(date_hijri.month().ordinal, 4);
     /// assert_eq!(date_hijri.day_of_month().0, 25);
     /// ```
@@ -1094,7 +1094,7 @@ impl Date<HijriUmmAlQura> {
     ///     Date::try_new_ummalqura(1392, 4, 25)
     ///         .expect("Failed to initialize Hijri Date instance.");
     ///
-    /// assert_eq!(date_hijri.year().era_year_or_related_iso(), 1392);
+    /// assert_eq!(date_hijri.year().era().unwrap().era_year, 1392);
     /// assert_eq!(date_hijri.month().ordinal, 4);
     /// assert_eq!(date_hijri.day_of_month().0, 25);
     /// ```
@@ -1281,7 +1281,7 @@ impl<A: AsCalendar<Calendar = HijriTabular>> Date<A> {
     ///     Date::try_new_hijri_tabular_with_calendar(1392, 4, 25, hijri)
     ///         .expect("Failed to initialize Hijri Date instance.");
     ///
-    /// assert_eq!(date_hijri.year().era_year_or_related_iso(), 1392);
+    /// assert_eq!(date_hijri.year().era().unwrap().era_year, 1392);
     /// assert_eq!(date_hijri.month().ordinal, 4);
     /// assert_eq!(date_hijri.day_of_month().0, 25);
     /// ```
@@ -2154,7 +2154,7 @@ mod test {
         // Data from https://www.ummulqura.org.sa/Index.aspx
         assert_eq!(hijri.day_of_month().0, 30);
         assert_eq!(hijri.month().ordinal, 4);
-        assert_eq!(hijri.year().era_year_or_related_iso(), 1432);
+        assert_eq!(hijri.year().era().unwrap().era_year, 1432);
     }
 
     #[test]
@@ -2218,7 +2218,7 @@ mod test {
             (
                 cached.day_of_month().0,
                 cached.month().ordinal,
-                cached.year().era_year_or_related_iso()
+                cached.year().era().unwrap().era_year
             ),
             (27, 8, 1446)
         );

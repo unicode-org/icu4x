@@ -674,7 +674,7 @@ impl<A: AsCalendar> DateTime<A> {
     ///     DateTime::try_from_str("2024-07-17T16:01:17.045[u-ca=hebrew]", Hebrew)
     ///         .unwrap();
     ///
-    /// assert_eq!(datetime.date.year().era_year_or_related_iso(), 5784);
+    /// assert_eq!(datetime.date.year().era().unwrap().era_year, 5784);
     /// assert_eq!(
     ///     datetime.date.month().standard_code,
     ///     icu::calendar::types::MonthCode(tinystr::tinystr!(4, "M10"))

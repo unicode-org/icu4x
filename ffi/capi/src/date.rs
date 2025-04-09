@@ -325,11 +325,14 @@ pub mod ffi {
         /// For calendars without an era, returns the related ISO year.
         #[diplomat::rust_link(icu::calendar::types::YearInfo::era_year_or_related_iso, FnInStruct)]
         #[diplomat::rust_link(icu::calendar::types::EraYear::era_year, StructField, compact)]
-        #[diplomat::rust_link(icu::calendar::types::YearInfo::era_year, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::calendar::types::CyclicYear::related_iso, StructField, compact)]
         #[diplomat::rust_link(icu::calendar::Date::year, FnInStruct, compact)]
-        #[diplomat::rust_link(icu::calendar::types::EraYear, Struct, hidden)]
-        #[diplomat::rust_link(icu::calendar::types::YearKind, Enum, hidden)]
         #[diplomat::rust_link(icu::calendar::types::YearInfo, Struct, hidden)]
+        #[diplomat::rust_link(icu::calendar::types::YearKind, Enum, hidden)]
+        #[diplomat::rust_link(icu::calendar::types::YearInfo::era, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::calendar::types::YearInfo::cyclic, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::calendar::types::EraYear, Struct, hidden)]
+        #[diplomat::rust_link(icu::calendar::types::CyclicYear, Struct, hidden)]
         #[diplomat::attr(auto, getter)]
         pub fn era_year_or_related_iso(&self) -> i32 {
             self.0.year().era_year_or_related_iso()
@@ -337,7 +340,6 @@ pub mod ffi {
 
         /// Returns the extended year in the Date
         #[diplomat::rust_link(icu::calendar::types::YearInfo::extended_year, StructField)]
-        #[diplomat::rust_link(icu::calendar::types::YearInfo, StructField, hidden)]
         #[diplomat::attr(auto, getter)]
         pub fn extended_year(&self) -> i32 {
             self.0.year().extended_year
@@ -345,17 +347,11 @@ pub mod ffi {
 
         /// Returns the era for this date, or an empty string
         #[diplomat::rust_link(icu::calendar::types::EraYear::standard_era, StructField)]
-        #[diplomat::rust_link(icu::calendar::types::YearInfo::standard_era, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::calendar::Date::year, FnInStruct, compact)]
-        #[diplomat::rust_link(icu::calendar::types::EraYear, Struct, hidden)]
-        #[diplomat::rust_link(icu::calendar::types::YearKind, Enum, hidden)]
-        #[diplomat::rust_link(icu::calendar::types::YearInfo, Struct, hidden)]
-        #[diplomat::rust_link(icu::calendar::types::EraYear::formatting_era, StructField, hidden)]
-        #[diplomat::rust_link(icu::calendar::types::YearInfo::formatting_era, FnInStruct, hidden)]
         #[diplomat::attr(auto, getter)]
         pub fn era(&self, write: &mut diplomat_runtime::DiplomatWrite) {
-            if let Some(era) = self.0.year().standard_era() {
-                let _infallible = write.write_str(&era.0);
+            if let Some(era) = self.0.year().era() {
+                let _infallible = write.write_str(&era.standard_era.0);
             }
         }
 

@@ -155,7 +155,7 @@ public:
    *
    * See the [Rust documentation for `era_year_or_related_iso`](https://docs.rs/icu/latest/icu/calendar/types/struct.YearInfo.html#method.era_year_or_related_iso) for more information.
    *
-   * Additional information: [1](https://docs.rs/icu/latest/icu/calendar/types/struct.EraYear.html#structfield.era_year), [2](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.year)
+   * Additional information: [1](https://docs.rs/icu/latest/icu/calendar/types/struct.EraYear.html#structfield.era_year), [2](https://docs.rs/icu/latest/icu/calendar/types/struct.CyclicYear.html#structfield.related_iso), [3](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.year)
    */
   inline int32_t era_year_or_related_iso() const;
 

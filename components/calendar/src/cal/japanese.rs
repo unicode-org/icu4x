@@ -15,12 +15,12 @@
 //!     .expect("Failed to initialize ISO Date instance.");
 //! let date_japanese = Date::new_from_iso(date_iso, japanese_calendar);
 //!
-//! assert_eq!(date_japanese.year().era_year_or_related_iso(), 45);
+//! assert_eq!(date_japanese.year().era().unwrap().era_year, 45);
 //! assert_eq!(date_japanese.month().ordinal, 1);
 //! assert_eq!(date_japanese.day_of_month().0, 2);
 //! assert_eq!(
-//!     date_japanese.year().standard_era().unwrap(),
-//!     Era(tinystr!(16, "showa"))
+//!     date_japanese.year().era().unwrap().standard_era.0,
+//!     "showa"
 //! );
 //! ```
 
@@ -407,8 +407,8 @@ impl Date<Japanese> {
     ///     Date::try_new_japanese_with_calendar(era, 14, 1, 2, japanese_calendar)
     ///         .expect("Constructing a date should succeed");
     ///
-    /// assert_eq!(date.year().standard_era().unwrap().0, era);
-    /// assert_eq!(date.year().era_year_or_related_iso(), 14);
+    /// assert_eq!(date.year().era().unwrap().standard_era.0, era);
+    /// assert_eq!(date.year().era().unwrap().era_year, 14);
     /// assert_eq!(date.month().ordinal, 1);
     /// assert_eq!(date.day_of_month().0, 2);
     ///
@@ -472,8 +472,8 @@ impl Date<JapaneseExtended> {
     /// )
     /// .expect("Constructing a date should succeed");
     ///
-    /// assert_eq!(date.year().standard_era().unwrap().0, era);
-    /// assert_eq!(date.year().era_year_or_related_iso(), 7);
+    /// assert_eq!(date.year().era().unwrap().standard_era.0, era);
+    /// assert_eq!(date.year().era().unwrap().era_year, 7);
     /// assert_eq!(date.month().ordinal, 1);
     /// assert_eq!(date.day_of_month().0, 2);
     /// ```
@@ -747,8 +747,8 @@ mod tests {
         );
 
         // Extra coverage for https://github.com/unicode-org/icu4x/issues/4968
-        assert_eq!(reconstructed.year().standard_era().unwrap().0, era);
-        assert_eq!(reconstructed.year().era_year().unwrap(), year);
+        assert_eq!(reconstructed.year().era().unwrap().standard_era.0, era);
+        assert_eq!(reconstructed.year().era().unwrap().era_year, year);
     }
 
     fn single_test_roundtrip_ext(
