@@ -99,11 +99,11 @@ fn alias() {
 mod error {
     mod parse {
         use env_preferences::parse::posix::{PosixLocale, PosixParseError};
-        use env_preferences::RetrievalError;
+        use env_preferences::ParseError;
 
         fn expect_error(src: &str, posix_error: PosixParseError) {
             let result = PosixLocale::try_from_str(src);
-            let expected = RetrievalError::Posix(posix_error);
+            let expected = ParseError::Posix(posix_error);
 
             match result {
                 Ok(invalid_locale) => {
@@ -271,7 +271,7 @@ mod error {
             // Empty section
             let src = "en_.utf8@euro";
             match PosixLocale::try_from_str(src) {
-                Err(RetrievalError::Posix(PosixParseError::EmptySection { offset })) => {
+                Err(ParseError::Posix(PosixParseError::EmptySection { offset })) => {
                     assert_eq!(&src[offset..offset + 1], "_");
                 }
                 _ => unreachable!(),
@@ -280,7 +280,7 @@ mod error {
             // Invalid character
             let src = "en_U/S";
             match PosixLocale::try_from_str(src) {
-                Err(RetrievalError::Posix(PosixParseError::InvalidCharacter { offset })) => {
+                Err(ParseError::Posix(PosixParseError::InvalidCharacter { offset })) => {
                     assert_eq!(&src[offset..offset + 1], "/");
                 }
                 _ => unreachable!(),
@@ -289,7 +289,7 @@ mod error {
             // Repeated delimiter
             let src = "en_US.utf8@euro_US";
             match PosixLocale::try_from_str(src) {
-                Err(RetrievalError::Posix(PosixParseError::RepeatedDelimiter {
+                Err(ParseError::Posix(PosixParseError::RepeatedDelimiter {
                     first_offset,
                     second_offset,
                 })) => {
@@ -302,7 +302,7 @@ mod error {
             // Unordered delimiter
             let src = "en_US@euro.utf8";
             match PosixLocale::try_from_str(src) {
-                Err(RetrievalError::Posix(PosixParseError::UnorderedDelimiter {
+                Err(ParseError::Posix(PosixParseError::UnorderedDelimiter {
                     first_offset,
                     second_offset,
                 })) => {
@@ -316,15 +316,15 @@ mod error {
 
     mod conversion {
         use env_preferences::parse::posix::PosixLocale;
-        use icu_locale_core::ParseError;
 
-        fn expect_error(src: &str, expected: ParseError) {
+        fn expect_error(src: &str, icu_error: icu_locale_core::ParseError) {
             let result = PosixLocale::try_from_str(src)
                 .expect(src)
                 .try_convert_lossy();
+            let expected = env_preferences::ParseError::Icu(icu_error);
             match result {
                 Ok(invalid_locale) => {
-                    panic!("Expected the error `{expected:?}`, got the locale `{invalid_locale:?}` from input of `{src}`")
+                    panic!("Expected the error `{icu_error:?}`, got the locale `{invalid_locale:?}` from input of `{src}`")
                 }
                 Err(error) => {
                     assert_eq!(error, expected, "Comparing expected output of `{src}`")
@@ -334,12 +334,12 @@ mod error {
 
         #[test]
         fn invalid_language() {
-            expect_error("invalid", ParseError::InvalidLanguage);
+            expect_error("invalid", icu_locale_core::ParseError::InvalidLanguage);
         }
 
         #[test]
         fn invalid_region() {
-            expect_error("en_invalid", ParseError::InvalidSubtag);
+            expect_error("en_invalid", icu_locale_core::ParseError::InvalidSubtag);
         }
     }
 }

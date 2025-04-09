@@ -22,17 +22,17 @@
 
 use icu_locale_core::extensions::unicode::{key, Keywords, Unicode};
 use icu_locale_core::extensions::Extensions;
-use icu_locale_core::{LanguageIdentifier, Locale, ParseError};
+use icu_locale_core::{LanguageIdentifier, Locale};
 
 use super::aliases::{find_windows_language_alias_lossy, strip_windows_collation_suffix_lossy};
-use crate::RetrievalError;
+use crate::ParseError;
 
 pub struct WindowsLocale<'src> {
     src: &'src str,
 }
 
 impl<'src> WindowsLocale<'src> {
-    pub fn try_from_str(src: &'src str) -> Result<Self, RetrievalError> {
+    pub fn try_from_str(src: &'src str) -> Result<Self, ParseError> {
         Ok(Self { src })
     }
 

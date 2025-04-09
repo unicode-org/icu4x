@@ -16,7 +16,7 @@
 mod error;
 pub mod parse;
 
-pub use error::{LocaleError, RetrievalError};
+pub use error::{LocaleError, ParseError, RetrievalError};
 
 #[cfg(any(doc, target_os = "macos"))]
 pub mod apple;
@@ -75,11 +75,11 @@ pub fn get_locales_lossy() -> Result<Vec<icu_locale_core::Locale>, LocaleError> 
         .iter()
         .map(String::as_str)
         .map(SystemLocale::try_from_str)
-        .collect::<Result<Vec<SystemLocale>, RetrievalError>>()?;
+        .collect::<Result<Vec<SystemLocale>, ParseError>>()?;
 
     system_locales
         .iter()
         .map(SystemLocale::try_convert_lossy)
         .map(|result| result.map_err(LocaleError::from))
-        .collect()
+        .collect::<Result<Vec<icu_locale_core::Locale>, LocaleError>>()
 }

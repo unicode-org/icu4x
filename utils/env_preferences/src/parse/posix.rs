@@ -24,9 +24,9 @@ use displaydoc::Display;
 use icu_locale_core::extensions::unicode::{key, value};
 use icu_locale_core::extensions::Extensions;
 use icu_locale_core::subtags::{language, script, variant, Language, Region, Variants};
-use icu_locale_core::{LanguageIdentifier, Locale, ParseError};
+use icu_locale_core::{LanguageIdentifier, Locale};
 
-use crate::RetrievalError;
+use crate::ParseError;
 
 use super::aliases::find_posix_alias;
 
@@ -127,21 +127,21 @@ impl<'src> PosixLocale<'src> {
     ///
     /// See section 8.2 of the POSIX spec for more details:
     /// <https://pubs.opengroup.org/onlinepubs/9799919799/basedefs/V1_chap08.html#tag_08_02>
-    pub fn try_from_str(src: &'src str) -> Result<Self, RetrievalError> {
+    pub fn try_from_str(src: &'src str) -> Result<Self, ParseError> {
         // These cases are implementation-defined and can be ignored:
         // - Empty locales
         if src.is_empty() {
-            return Err(RetrievalError::Posix(PosixParseError::EmptyLocale));
+            return Err(ParseError::Posix(PosixParseError::EmptyLocale));
         }
         // - Any locale containing '/'
         if let Some(offset) = src.find('/') {
-            return Err(RetrievalError::Posix(PosixParseError::InvalidCharacter {
+            return Err(ParseError::Posix(PosixParseError::InvalidCharacter {
                 offset,
             }));
         }
         // - Locales consisting of "." or ".."
         if src == "." || src == ".." {
-            return Err(RetrievalError::Posix(PosixParseError::InvalidLocale));
+            return Err(ParseError::Posix(PosixParseError::InvalidLocale));
         }
 
         // Find any optional sections, and return any delimiter-related errors
@@ -155,7 +155,7 @@ impl<'src> PosixLocale<'src> {
 
         // Make sure the language itself is non-empty
         if language.is_empty() {
-            return Err(RetrievalError::Posix(PosixParseError::EmptySection {
+            return Err(ParseError::Posix(PosixParseError::EmptySection {
                 offset: 0,
             }));
         }
@@ -176,7 +176,7 @@ impl<'src> PosixLocale<'src> {
 
             // Make sure this section is non-empty (more characters than just the delimiter)
             if start_offset + 1 >= end_offset {
-                return Err(RetrievalError::Posix(PosixParseError::EmptySection {
+                return Err(ParseError::Posix(PosixParseError::EmptySection {
                     offset: *start_offset,
                 }));
             }
