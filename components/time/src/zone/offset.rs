@@ -20,7 +20,7 @@ pub struct InvalidOffsetError;
 
 /// An offset from Coordinated Universal Time (UTC)
 ///
-/// **The primary definition of this type is in the [`icu_time`](docs.rs/icu_time) crate. Other ICU4X crates re-export it for convenience.**
+/// **The primary definition of this type is in the [`icu_time`](https://docs.rs/icu_time) crate. Other ICU4X crates re-export it for convenience.**
 #[derive(Copy, Clone, Debug, PartialEq, Eq, Default, PartialOrd, Ord)]
 pub struct UtcOffset(i32);
 

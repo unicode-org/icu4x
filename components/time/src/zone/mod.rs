@@ -164,7 +164,7 @@ pub mod models {
 
 /// A CLDR time zone identity.
 ///
-/// **The primary definition of this type is in the [`icu_time`](docs.rs/icu_time) crate. Other ICU4X crates re-export it for convenience.**
+/// **The primary definition of this type is in the [`icu_time`](https://docs.rs/icu_time) crate. Other ICU4X crates re-export it for convenience.**
 ///
 /// This can be created directly from BCP-47 strings, or it can be parsed from IANA IDs.
 ///
@@ -275,7 +275,7 @@ impl<'a> zerovec::maps::ZeroMapKV<'a> for TimeZone {
 
 /// A utility type that can hold time zone information.
 ///
-/// **The primary definition of this type is in the [`icu_time`](docs.rs/icu_time) crate. Other ICU4X crates re-export it for convenience.**
+/// **The primary definition of this type is in the [`icu_time`](https://docs.rs/icu_time) crate. Other ICU4X crates re-export it for convenience.**
 #[derive(Debug, PartialEq, Eq)]
 #[allow(clippy::exhaustive_structs)] // these four fields fully cover the needs of UTS 35
 pub struct TimeZoneInfo<Model: models::TimeZoneModel> {
