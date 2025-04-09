@@ -18,17 +18,14 @@
 //! assert_eq!(dangi_date.day_of_month().0, 6);
 //! ```
 
-use crate::cal::chinese_based::{
-    chinese_based_ordinal_lunar_month_from_code, ChineseBasedPrecomputedData,
-    ChineseBasedWithDataLoading,
-};
+use crate::cal::chinese_based::{ChineseBasedPrecomputedData, ChineseBasedWithDataLoading};
 use crate::cal::iso::{Iso, IsoDateInner};
-use crate::calendar_arithmetic::CalendarArithmetic;
 use crate::calendar_arithmetic::PrecomputedDataSource;
+use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
 use crate::error::DateError;
 use crate::provider::chinese_based::CalendarDangiV1;
 use crate::AsCalendar;
-use crate::{cal::chinese_based::ChineseBasedDateInner, types, Calendar, Date};
+use crate::{types, Calendar, Date};
 use calendrical_calculations::chinese_based::{self, ChineseBased};
 use calendrical_calculations::rata_die::RataDie;
 use core::cmp::Ordering;
@@ -82,9 +79,7 @@ pub struct Dangi {
 
 /// The inner date type used for representing [`Date`]s of [`Dangi`]. See [`Date`] and [`Dangi`] for more detail.
 #[derive(Debug, Eq, PartialEq, PartialOrd, Ord)]
-pub struct DangiDateInner(ChineseBasedDateInner<Dangi>);
-
-type Inner = ChineseBasedDateInner<Dangi>;
+pub struct DangiDateInner(ArithmeticDate<Dangi>);
 
 // we want these impls without the `C: Copy/Clone` bounds
 impl Copy for DangiDateInner {}
@@ -165,36 +160,44 @@ impl Calendar for Dangi {
         month_code: crate::types::MonthCode,
         day: u8,
     ) -> Result<Self::DateInner, DateError> {
-        let year = self.get_precomputed_data().load_or_compute_info(year);
-
-        let Some(month) = chinese_based_ordinal_lunar_month_from_code(month_code, year) else {
-            return Err(DateError::UnknownMonthCode(month_code));
-        };
         match era {
             Some("dangi") | None => {}
             _ => return Err(DateError::UnknownEra),
         }
 
-        Inner::new_from_ordinals(year, month, day)
-            .map(ChineseBasedDateInner)
-            .map(DangiDateInner)
+        let year = self.get_precomputed_data().load_or_compute_info(year);
+
+        let Some(month) = year.parse_month_code(month_code) else {
+            return Err(DateError::UnknownMonthCode(month_code));
+        };
+
+        year.validate_md(month, day)?;
+
+        Ok(DangiDateInner(ArithmeticDate::new_unchecked(
+            year, month, day,
+        )))
     }
 
     fn from_rata_die(&self, rd: RataDie) -> Self::DateInner {
         let iso = Iso.from_rata_die(rd);
-        DangiDateInner(Inner::chinese_based_date_from_rd(self, rd, iso.0))
+        let y = self
+            .get_precomputed_data()
+            .load_or_compute_info_for_rd(rd, iso.0);
+        let (m, d) = y.md_from_rd(rd);
+        DangiDateInner(ArithmeticDate::new_unchecked(y, m, d))
     }
 
     fn to_rata_die(&self, date: &Self::DateInner) -> RataDie {
-        Inner::rd_from_chinese_based_date_inner(date.0)
+        date.0.year.rd_from_md(date.0.month, date.0.day)
     }
 
     fn from_iso(&self, iso: IsoDateInner) -> Self::DateInner {
-        DangiDateInner(Inner::chinese_based_date_from_rd(
-            self,
-            Iso.to_rata_die(&iso),
-            iso.0,
-        ))
+        let rd = Iso.to_rata_die(&iso);
+        let y = self
+            .get_precomputed_data()
+            .load_or_compute_info_for_rd(rd, iso.0);
+        let (m, d) = y.md_from_rd(rd);
+        DangiDateInner(ArithmeticDate::new_unchecked(y, m, d))
     }
 
     fn to_iso(&self, date: &Self::DateInner) -> IsoDateInner {
@@ -202,19 +205,19 @@ impl Calendar for Dangi {
     }
 
     fn months_in_year(&self, date: &Self::DateInner) -> u8 {
-        date.0.months_in_year_inner()
+        date.0.months_in_year()
     }
 
     fn days_in_year(&self, date: &Self::DateInner) -> u16 {
-        date.0.days_in_year_inner()
+        date.0.days_in_year()
     }
 
     fn days_in_month(&self, date: &Self::DateInner) -> u8 {
-        date.0.days_in_month_inner()
+        date.0.days_in_month()
     }
 
     fn offset_date(&self, date: &mut Self::DateInner, offset: crate::DateDuration<Self>) {
-        date.0 .0.offset_date(offset, &self.get_precomputed_data());
+        date.0.offset_date(offset, &self.get_precomputed_data());
     }
 
     fn until(
@@ -225,7 +228,7 @@ impl Calendar for Dangi {
         largest_unit: crate::DateDurationUnit,
         smallest_unit: crate::DateDurationUnit,
     ) -> crate::DateDuration<Self> {
-        date1.0 .0.until(date2.0 .0, largest_unit, smallest_unit)
+        date1.0.until(date2.0, largest_unit, smallest_unit)
     }
 
     fn debug_name(&self) -> &'static str {
@@ -233,7 +236,7 @@ impl Calendar for Dangi {
     }
 
     fn year(&self, date: &Self::DateInner) -> crate::types::YearInfo {
-        let year = date.0 .0.year;
+        let year = date.0.year;
         let cyclic = (year.related_iso as i64 - 4).rem_euclid(60) as u8;
         let cyclic = NonZeroU8::new(cyclic + 1).unwrap_or(NonZeroU8::MIN); // 1-indexed
         types::YearInfo::new_cyclic(
@@ -244,19 +247,19 @@ impl Calendar for Dangi {
     }
 
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
-        Self::provided_year_is_leap(date.0 .0.year)
+        Self::provided_year_is_leap(date.0.year)
     }
 
     fn month(&self, date: &Self::DateInner) -> crate::types::MonthInfo {
-        date.0.month()
+        date.0.year.month(date.0.month)
     }
 
     fn day_of_month(&self, date: &Self::DateInner) -> crate::types::DayOfMonth {
-        types::DayOfMonth(date.0 .0.day)
+        date.0.day_of_month()
     }
 
     fn day_of_year(&self, date: &Self::DateInner) -> crate::types::DayOfYear {
-        date.0 .0.day_of_year()
+        types::DayOfYear(date.0.year.day_of_year(date.0.month, date.0.day))
     }
 
     fn any_calendar_kind(&self) -> Option<crate::AnyCalendarKind> {
@@ -297,17 +300,16 @@ impl<A: AsCalendar<Calendar = Dangi>> Date<A> {
             .as_calendar()
             .get_precomputed_data()
             .load_or_compute_info(related_iso_year);
-        let arithmetic = Inner::new_from_ordinals(year, month, day);
+        year.validate_md(month, day)?;
         Ok(Date::from_raw(
-            DangiDateInner(ChineseBasedDateInner(arithmetic?)),
+            DangiDateInner(ArithmeticDate::new_unchecked(year, month, day)),
             calendar,
         ))
     }
 }
 
-type DangiCB = calendrical_calculations::chinese_based::Dangi;
 impl ChineseBasedWithDataLoading for Dangi {
-    type CB = DangiCB;
+    type CB = calendrical_calculations::chinese_based::Dangi;
     fn get_precomputed_data(&self) -> ChineseBasedPrecomputedData<Self::CB> {
         ChineseBasedPrecomputedData::new(self.data.as_ref().map(|d| d.get()))
     }
