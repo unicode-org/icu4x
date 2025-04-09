@@ -322,7 +322,7 @@ pub mod ffi {
 
         /// Returns the year number in the current era for this date
         ///
-        /// For calendars without an era, returns the extended year
+        /// For calendars without an era, returns the related ISO year.
         #[diplomat::rust_link(icu::calendar::types::YearInfo::era_year_or_related_iso, FnInStruct)]
         #[diplomat::rust_link(icu::calendar::types::EraYear::era_year, StructField, compact)]
         #[diplomat::rust_link(icu::calendar::types::YearInfo::era_year, FnInStruct, hidden)]
@@ -331,7 +331,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::calendar::types::YearKind, Enum, hidden)]
         #[diplomat::rust_link(icu::calendar::types::YearInfo, Struct, hidden)]
         #[diplomat::attr(auto, getter)]
-        pub fn year_in_era(&self) -> i32 {
+        pub fn era_year_or_related_iso(&self) -> i32 {
             self.0.year().era_year_or_related_iso()
         }
 

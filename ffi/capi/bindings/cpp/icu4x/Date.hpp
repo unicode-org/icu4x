@@ -54,7 +54,7 @@ namespace capi {
     
     bool icu4x_Date_month_is_leap_mv1(const icu4x::capi::Date* self);
     
-    int32_t icu4x_Date_year_in_era_mv1(const icu4x::capi::Date* self);
+    int32_t icu4x_Date_era_year_or_related_iso_mv1(const icu4x::capi::Date* self);
     
     int32_t icu4x_Date_extended_year_mv1(const icu4x::capi::Date* self);
     
@@ -158,8 +158,8 @@ inline bool icu4x::Date::month_is_leap() const {
   return result;
 }
 
-inline int32_t icu4x::Date::year_in_era() const {
-  auto result = icu4x::capi::icu4x_Date_year_in_era_mv1(this->AsFFI());
+inline int32_t icu4x::Date::era_year_or_related_iso() const {
+  auto result = icu4x::capi::icu4x_Date_era_year_or_related_iso_mv1(this->AsFFI());
   return result;
 }
 

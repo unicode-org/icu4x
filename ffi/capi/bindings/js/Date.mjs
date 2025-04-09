@@ -320,14 +320,14 @@ export class Date {
     /** 
      * Returns the year number in the current era for this date
      *
-     * For calendars without an era, returns the extended year
+     * For calendars without an era, returns the related ISO year.
      *
      * See the [Rust documentation for `era_year_or_related_iso`](https://docs.rs/icu/latest/icu/calendar/types/struct.YearInfo.html#method.era_year_or_related_iso) for more information.
      *
      * Additional information: [1](https://docs.rs/icu/latest/icu/calendar/types/struct.EraYear.html#structfield.era_year), [2](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.year)
      */
-    get yearInEra() {
-        const result = wasm.icu4x_Date_year_in_era_mv1(this.ffiValue);
+    get eraYearOrRelatedIso() {
+        const result = wasm.icu4x_Date_era_year_or_related_iso_mv1(this.ffiValue);
     
         try {
             return result;
