@@ -11,7 +11,7 @@
 //!     .expect("Failed to initialize ISO Date instance.");
 //! let date_indian = Date::new_from_iso(date_iso, Indian);
 //!
-//! assert_eq!(date_indian.year().era_year_or_extended(), 1891);
+//! assert_eq!(date_indian.year().era_year_or_related_iso(), 1891);
 //! assert_eq!(date_indian.month().ordinal, 10);
 //! assert_eq!(date_indian.day_of_month().0, 12);
 //! ```
@@ -234,7 +234,7 @@ impl Date<Indian> {
     /// let date_indian = Date::try_new_indian(1891, 10, 12)
     ///     .expect("Failed to initialize Indian Date instance.");
     ///
-    /// assert_eq!(date_indian.year().era_year_or_extended(), 1891);
+    /// assert_eq!(date_indian.year().era_year_or_related_iso(), 1891);
     /// assert_eq!(date_indian.month().ordinal, 10);
     /// assert_eq!(date_indian.day_of_month().0, 12);
     /// ```
@@ -255,7 +255,7 @@ mod tests {
         let iso = indian.to_iso();
 
         assert_eq!(
-            iso.year().era_year_or_extended(),
+            iso.year().era_year_or_related_iso(),
             iso_y,
             "{y}-{m}-{d}: ISO year did not match"
         );
@@ -273,8 +273,8 @@ mod tests {
         let roundtrip = iso.to_calendar(Indian);
 
         assert_eq!(
-            roundtrip.year().era_year_or_extended(),
-            indian.year().era_year_or_extended(),
+            roundtrip.year().era_year_or_related_iso(),
+            indian.year().era_year_or_related_iso(),
             "{y}-{m}-{d}: roundtrip year did not match"
         );
         assert_eq!(
@@ -319,7 +319,7 @@ mod tests {
         let iso = Date::try_new_iso(case.iso_year, case.iso_month, case.iso_day).unwrap();
         let saka = iso.to_calendar(Indian);
         assert_eq!(
-            saka.year().era_year_or_extended(),
+            saka.year().era_year_or_related_iso(),
             case.expected_year,
             "Year check failed for case: {case:?}"
         );

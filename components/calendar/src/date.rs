@@ -107,7 +107,7 @@ impl<C> Deref for Ref<'_, C> {
 /// let date_iso = Date::try_new_iso(1970, 1, 2)
 ///     .expect("Failed to initialize ISO Date instance.");
 ///
-/// assert_eq!(date_iso.year().era_year_or_extended(), 1970);
+/// assert_eq!(date_iso.year().era_year_or_related_iso(), 1970);
 /// assert_eq!(date_iso.month().ordinal, 1);
 /// assert_eq!(date_iso.day_of_month().0, 2);
 /// ```

@@ -11,7 +11,7 @@
 //!     .expect("Failed to initialize ISO Date instance.");
 //! let date_gregorian = Date::new_from_iso(date_iso, Gregorian);
 //!
-//! assert_eq!(date_gregorian.year().era_year_or_extended(), 1970);
+//! assert_eq!(date_gregorian.year().era_year_or_related_iso(), 1970);
 //! assert_eq!(date_gregorian.month().ordinal, 1);
 //! assert_eq!(date_gregorian.day_of_month().0, 2);
 //! ```
@@ -175,7 +175,7 @@ impl Date<Gregorian> {
     /// let date_gregorian = Date::try_new_gregorian(1970, 1, 2)
     ///     .expect("Failed to initialize Gregorian Date instance.");
     ///
-    /// assert_eq!(date_gregorian.year().era_year_or_extended(), 1970);
+    /// assert_eq!(date_gregorian.year().era_year_or_related_iso(), 1970);
     /// assert_eq!(date_gregorian.month().ordinal, 1);
     /// assert_eq!(date_gregorian.day_of_month().0, 2);
     /// ```
@@ -206,7 +206,7 @@ mod test {
     fn check_test_case(case: TestCase) {
         let iso_from_rd = Date::from_rata_die(case.rd, Iso);
         let greg_date_from_rd = Date::from_rata_die(case.rd, Gregorian);
-        assert_eq!(greg_date_from_rd.year().era_year_or_extended(), case.expected_year,
+        assert_eq!(greg_date_from_rd.year().era_year_or_related_iso(), case.expected_year,
             "Failed year check from RD: {case:?}\nISO: {iso_from_rd:?}\nGreg: {greg_date_from_rd:?}");
         assert_eq!(
             greg_date_from_rd.year().standard_era().unwrap(),

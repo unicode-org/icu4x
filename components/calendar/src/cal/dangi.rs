@@ -12,7 +12,7 @@
 //! let dangi_date = Date::try_new_dangi_with_calendar(2023, 6, 6, dangi)
 //!     .expect("Failed to initialize Dangi Date instance.");
 //!
-//! assert_eq!(dangi_date.year().era_year_or_extended(), 2023);
+//! assert_eq!(dangi_date.year().era_year_or_related_iso(), 2023);
 //! assert_eq!(dangi_date.year().cyclic().unwrap().get(), 40);
 //! assert_eq!(dangi_date.month().ordinal, 6);
 //! assert_eq!(dangi_date.day_of_month().0, 6);
@@ -283,7 +283,7 @@ impl<A: AsCalendar<Calendar = Dangi>> Date<A> {
     /// let date_dangi = Date::try_new_dangi_with_calendar(2023, 6, 18, dangi)
     ///     .expect("Failed to initialize Dangi Date instance.");
     ///
-    /// assert_eq!(date_dangi.year().era_year_or_extended(), 2023);
+    /// assert_eq!(date_dangi.year().era_year_or_related_iso(), 2023);
     /// assert_eq!(date_dangi.year().cyclic().unwrap().get(), 40);
     /// assert_eq!(date_dangi.month().ordinal, 6);
     /// assert_eq!(date_dangi.day_of_month().0, 18);

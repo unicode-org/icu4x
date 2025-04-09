@@ -159,7 +159,7 @@ where
         (FieldSymbol::Year(Year::Calendar), l) => {
             const PART: Part = parts::YEAR;
             input!(PART, year = input.year);
-            let mut year = Decimal::from(year.era_year_or_extended());
+            let mut year = Decimal::from(year.era_year_or_related_iso());
             if matches!(l, FieldLength::Two) {
                 // 'yy' and 'YY' truncate
                 year.set_max_position(2);
@@ -179,7 +179,7 @@ where
                             try_write_number_without_part(
                                 w,
                                 decimal_formatter,
-                                year.era_year_or_extended().into(),
+                                year.era_year_or_related_iso().into(),
                                 FieldLength::One,
                             )
                             .map(|_| ())
