@@ -429,10 +429,8 @@ fn generate_rule_break_data(
                         let prop = lb_name_to_enum
                             .get_loose("SG")
                             .expect("property name should be valid!");
-                        for c in 0..(CODEPOINT_TABLE_LEN as u32) {
-                            if lb.get32(c) == prop {
-                                properties_map[c as usize] = property_index;
-                            }
+                        for range in lb.iter_ranges_for_value(prop) {
+                            fill_bounded(&mut properties_map, range, property_index);
                         }
                     }
                     continue;
