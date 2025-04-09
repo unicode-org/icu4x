@@ -30,7 +30,7 @@ pub enum RetrievalError {
     UnknownCategory,
 
     /// Error handling for windows system
-    #[cfg(any(doc, target_os = "windows"))]
+    #[cfg(target_os = "windows")]
     Windows(windows::core::Error),
 
     Other(String),
