@@ -25,10 +25,11 @@ pub enum RetrievalError {
     NullTimeZone,
 
     /// UnknownCategory when retrieving locale for linux
+    #[cfg(any(doc, target_os = "linux"))]
     UnknownCategory,
 
     /// Error handling for windows system
-    #[cfg(target_os = "windows")]
+    #[cfg(any(doc, target_os = "windows"))]
     Windows(windows::core::Error),
 
     /// Errors from parsing POSIX locales
