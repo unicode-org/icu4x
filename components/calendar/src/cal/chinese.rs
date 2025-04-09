@@ -293,7 +293,7 @@ impl Calendar for Chinese {
 
 impl<A: AsCalendar<Calendar = Chinese>> Date<A> {
     /// Construct a new Chinese date from a `year`, `month`, and `day`.
-    /// `year` represents the Chinese year counted infinitely with -2636 (2637 BCE) as Chinese year 1;
+    /// `year` represents the Gregorian year that roughly matches the Chinese year;
     /// `month` represents the month of the year ordinally (ex. if it is a leap year, the last month will be 13, not 12);
     /// `day` indicates the day of month
     ///

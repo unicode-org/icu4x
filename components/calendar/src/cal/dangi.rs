@@ -267,7 +267,7 @@ impl Calendar for Dangi {
 
 impl<A: AsCalendar<Calendar = Dangi>> Date<A> {
     /// Construct a new Dangi date from a `year`, `month`, and `day`.
-    /// `year` represents the Chinese year counted infinitely with -2332 (2333 BCE) as year 1;
+    /// `year` represents the Gregorian year that roughly matches the Dangi year;
     /// `month` represents the month of the year ordinally (ex. if it is a leap year, the last month will be 13, not 12);
     /// `day` indicates day of month.
     ///
