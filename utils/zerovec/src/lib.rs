@@ -19,7 +19,7 @@
 //! - [`ZeroMap2d<'a, K0, K1, V>`] to map from the pair `(K0, K1)` to `V`
 //!
 //! The first two are intended as close-to-drop-in replacements for `Vec<T>` in Serde structs. The third and fourth are
-//! intended as a replacement for `HashMap` or [`LiteMap`](docs.rs/litemap). When used with Serde derives, **be sure to apply
+//! intended as a replacement for `HashMap` or [`LiteMap`](https://docs.rs/litemap). When used with Serde derives, **be sure to apply
 //! `#[serde(borrow)]` to these types**, same as one would for [`Cow<'a, T>`].
 //!
 //! [`ZeroVec<'a, T>`], [`VarZeroVec<'a, T>`], [`ZeroMap<'a, K, V>`], and [`ZeroMap2d<'a, K0, K1, V>`] all behave like

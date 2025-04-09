@@ -143,7 +143,7 @@ pub enum RoundingIncrement {
 
 /// Specifies the precision of a floating point value when constructing a Decimal.
 ///
-/// **The primary definition of this type is in the [`fixed_decimal`](docs.rs/fixed_decimal) crate. Other ICU4X crates re-export it for convenience.**
+/// **The primary definition of this type is in the [`fixed_decimal`](https://docs.rs/fixed_decimal) crate. Other ICU4X crates re-export it for convenience.**
 ///
 /// IEEE 754 is a representation of a point on the number line. On the other hand, Decimal
 /// specifies not only the point on the number line but also the precision of the number to a
