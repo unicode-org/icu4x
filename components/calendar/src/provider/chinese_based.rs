@@ -15,6 +15,7 @@
 use crate::cal::chinese_based::ChineseBasedYearInfo;
 use crate::cal::Iso;
 use crate::calendar_arithmetic::ArithmeticDate;
+#[cfg(feature = "datagen")]
 use calendrical_calculations::chinese_based::ChineseBased;
 use calendrical_calculations::rata_die::RataDie;
 use core::num::NonZeroU8;
