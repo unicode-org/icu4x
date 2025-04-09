@@ -73,22 +73,9 @@ impl ChineseBasedCache<'_> {
         let delta = extended_year - self.first_extended_year;
         let delta = usize::try_from(delta).ok()?;
 
-        if delta == 0 {
-            return None;
-        }
-
-        let (Some(this_packed), Some(prev_packed)) =
-            (self.data.get(delta), self.data.get(delta - 1))
-        else {
-            return None;
-        };
-
-        let days_in_prev_year = prev_packed.days_in_year();
-
         Some(ChineseBasedYearInfo::new(
             extended_year,
-            days_in_prev_year,
-            this_packed,
+            self.data.get(delta)?,
         ))
     }
     /// Get the cached data for the Chinese Year corresponding to a given day.
@@ -101,7 +88,7 @@ impl ChineseBasedCache<'_> {
         let extended_year = CB::extended_from_iso(iso.year);
         let delta = extended_year - self.first_extended_year;
         let delta = usize::try_from(delta).ok()?;
-        if delta <= 1 {
+        if delta == 0 {
             return None;
         }
 
@@ -112,26 +99,14 @@ impl ChineseBasedCache<'_> {
         let fetched_data_ny_in_iso = u16::from(this_packed.ny_day_of_iso_year());
 
         if iso_in_year >= fetched_data_ny_in_iso {
-            Some(ChineseBasedYearInfo::new(
-                extended_year,
-                prev_packed.days_in_year(),
-                this_packed,
-            ))
+            Some(ChineseBasedYearInfo::new(extended_year, this_packed))
         } else {
             // We're dealing with an ISO day in the beginning of the year, before Chinese New Year.
             // Return data for the previous Chinese year instead.
-            if delta <= 2 {
+            if delta <= 1 {
                 return None;
             }
-            let prev2_packed = self.data.get(delta - 2)?;
-
-            let days_in_prev_year = prev2_packed.days_in_year();
-
-            Some(ChineseBasedYearInfo::new(
-                extended_year - 1,
-                days_in_prev_year,
-                prev_packed,
-            ))
+            Some(ChineseBasedYearInfo::new(extended_year - 1, prev_packed))
         }
     }
 }

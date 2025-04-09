@@ -61,14 +61,9 @@ fn compute_cache_with_yb<CB: ChineseBased>(
     extended_year: i32,
     year_bounds: YearBounds,
 ) -> ChineseBasedYearInfo {
-    let YearBounds { new_year, .. } = year_bounds;
-
-    let days_in_prev_year = chinese_based::days_in_prev_year::<CB>(new_year);
-
     let packed_data = compute_packed_with_yb::<CB>(extended_year, year_bounds);
 
     ChineseBasedYearInfo {
-        days_in_prev_year,
         packed_data,
         value: extended_year,
     }
@@ -161,7 +156,6 @@ impl<'b, CB: ChineseBased> ChineseBasedPrecomputedData<'b, CB> {
 #[derive(Copy, Clone, Debug, Eq, PartialEq, PartialOrd, Ord)]
 // TODO(#3933): potentially make this smaller
 pub(crate) struct ChineseBasedYearInfo {
-    days_in_prev_year: u16,
     /// Contains:
     /// - length of each month in the year
     /// - whether or not there is a leap month, and which month it is
@@ -177,13 +171,8 @@ impl From<ChineseBasedYearInfo> for i32 {
 }
 
 impl ChineseBasedYearInfo {
-    pub(crate) fn new(
-        extended_year: i32,
-        days_in_prev_year: u16,
-        packed_data: PackedChineseBasedYearInfo,
-    ) -> Self {
+    pub(crate) fn new(extended_year: i32, packed_data: PackedChineseBasedYearInfo) -> Self {
         Self {
-            days_in_prev_year,
             packed_data,
             value: extended_year,
         }
