@@ -517,7 +517,7 @@ pub fn days_in_prev_year<C: ChineseBased>(new_year: RataDie) -> u16 {
 pub fn month_structure_for_year<C: ChineseBased>(
     new_year: RataDie,
     next_new_year: RataDie,
-) -> ([bool; 13], Option<NonZeroU8>) {
+) -> ([bool; 13], Option<u8>) {
     let mut ret = [false; 13];
 
     let mut current_month_start = new_year;
@@ -528,7 +528,7 @@ pub fn month_structure_for_year<C: ChineseBased>(
         let next_month_major_solar_term = major_solar_term_from_fixed::<C>(next_month_start);
 
         if next_month_major_solar_term == current_month_major_solar_term {
-            leap_month_index = NonZeroU8::new(i + 1);
+            leap_month_index = Some(i + 1);
         }
 
         let diff = next_month_start - current_month_start;
@@ -561,7 +561,7 @@ pub fn month_structure_for_year<C: ChineseBased>(
         }
     }
     if current_month_start != next_new_year && leap_month_index.is_none() {
-        leap_month_index = NonZeroU8::new(13); // The last month is a leap month
+        leap_month_index = Some(13); // The last month is a leap month
         debug_assert!(
             major_solar_term_from_fixed::<C>(current_month_start) == current_month_major_solar_term,
             "A leap month is required here, but it had a major solar term!"

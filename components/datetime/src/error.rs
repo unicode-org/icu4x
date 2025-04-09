@@ -82,9 +82,9 @@ pub enum DateTimeWriteError {
     #[displaydoc("Invalid cyclic year {value} (maximum {max})")]
     InvalidCyclicYear {
         /// Value
-        value: usize,
+        value: u8,
         /// Max
-        max: usize,
+        max: u8,
     },
 
     /// The [`DecimalFormatter`] has not been loaded.

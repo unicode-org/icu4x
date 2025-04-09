@@ -19,7 +19,6 @@ use crate::{external_loaders::*, DateTimeFormatterPreferences};
 use crate::{scaffold::*, DateTimeFormatter, DateTimeFormatterLoadError};
 use core::fmt;
 use core::marker::PhantomData;
-use core::num::NonZeroU8;
 use icu_calendar::types::FormattingEra;
 use icu_calendar::types::MonthCode;
 use icu_calendar::AnyCalendar;
@@ -3593,7 +3592,7 @@ impl RawDateTimeNamesBorrowed<'_> {
     pub(crate) fn get_name_for_cyclic(
         &self,
         field_length: FieldLength,
-        cyclic: NonZeroU8,
+        cyclic: u8,
     ) -> Result<&str, GetNameForCyclicYearError> {
         let year_name_length = YearNameLength::from_field_length(field_length)
             .ok_or(GetNameForCyclicYearError::InvalidFieldLength)?;
@@ -3606,11 +3605,11 @@ impl RawDateTimeNamesBorrowed<'_> {
             return Err(GetNameForCyclicYearError::InvalidYearNumber { max: 0 });
         };
 
-        cyclics.get((cyclic.get() as usize) - 1).ok_or(
-            GetNameForCyclicYearError::InvalidYearNumber {
-                max: cyclics.len() + 1,
-            },
-        )
+        cyclics
+            .get(cyclic as usize - 1)
+            .ok_or(GetNameForCyclicYearError::InvalidYearNumber {
+                max: cyclics.len() as u8 + 1,
+            })
     }
 
     pub(crate) fn get_name_for_day_period(

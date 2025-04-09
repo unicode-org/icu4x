@@ -12,7 +12,6 @@
 //!
 //! Read more about data providers: [`icu_provider`]
 
-use core::num::NonZeroU8;
 use icu_provider::prelude::*;
 use zerovec::ule::{AsULE, ULE};
 use zerovec::ZeroVec;
@@ -91,7 +90,7 @@ impl PackedChineseBasedYearInfo {
 
     pub(crate) fn new(
         month_lengths: [bool; 13],
-        leap_month_idx: Option<NonZeroU8>,
+        leap_month_idx: Option<u8>,
         ny_offset: i64,
     ) -> Self {
         debug_assert!(
@@ -102,7 +101,7 @@ impl PackedChineseBasedYearInfo {
         debug_assert!(ny_offset >= 0, "Year offset too small to store");
         debug_assert!(ny_offset < 34, "Year offset too big to store");
         debug_assert!(
-            leap_month_idx.map(|l| l.get() <= 13).unwrap_or(true),
+            leap_month_idx.map(|l| l <= 13).unwrap_or(true),
             "Leap month indices must be 1 <= i <= 13"
         );
         let mut all = 0u32; // last byte unused
@@ -113,7 +112,7 @@ impl PackedChineseBasedYearInfo {
                 all |= 1 << month as u32;
             }
         }
-        let leap_month_idx = leap_month_idx.map(|x| x.get()).unwrap_or(0);
+        let leap_month_idx = leap_month_idx.unwrap_or(0);
         all |= (leap_month_idx as u32) << (8 + 5);
         all |= (ny_offset as u32) << (16 + 1);
         let le = all.to_le_bytes();
@@ -125,11 +124,10 @@ impl PackedChineseBasedYearInfo {
         Self::FIRST_NY as u8 + (self.2 >> 1)
     }
 
-    pub(crate) fn leap_month(self) -> Option<NonZeroU8> {
-        let low_bits = self.1 >> 5;
-        let high_bits = (self.2 & 0b1) << 3;
+    pub(crate) fn leap_month(self) -> Option<u8> {
+        let bits = (self.1 >> 5) + ((self.2 & 0b1) << 3);
 
-        NonZeroU8::new(low_bits + high_bits)
+        (bits != 0).then_some(bits)
     }
 
     // Whether a particular month has 30 days (month is 1-indexed)
@@ -180,7 +178,7 @@ mod serialization {
     struct SerdePackedChineseBasedYearInfo {
         ny_offset: u8,
         month_has_30_days: [bool; 13],
-        leap_month_idx: Option<NonZeroU8>,
+        leap_month_idx: Option<u8>,
     }
 
     impl<'de> Deserialize<'de> for PackedChineseBasedYearInfo {
@@ -239,7 +237,7 @@ mod test {
 
     fn packed_roundtrip_single(
         mut month_lengths: [bool; 13],
-        leap_month_idx: Option<NonZeroU8>,
+        leap_month_idx: Option<u8>,
         ny_offset: i64,
     ) {
         if leap_month_idx.is_none() {
@@ -283,18 +281,18 @@ mod test {
         ];
         packed_roundtrip_single(SHORT, None, 18 + 5);
         packed_roundtrip_single(SHORT, None, 18 + 10);
-        packed_roundtrip_single(SHORT, NonZeroU8::new(11), 18 + 15);
-        packed_roundtrip_single(LONG, NonZeroU8::new(12), 18 + 15);
+        packed_roundtrip_single(SHORT, Some(11), 18 + 15);
+        packed_roundtrip_single(LONG, Some(12), 18 + 15);
         packed_roundtrip_single(ALTERNATING1, None, 18 + 2);
-        packed_roundtrip_single(ALTERNATING1, NonZeroU8::new(3), 18 + 5);
+        packed_roundtrip_single(ALTERNATING1, Some(3), 18 + 5);
         packed_roundtrip_single(ALTERNATING2, None, 18 + 9);
-        packed_roundtrip_single(ALTERNATING2, NonZeroU8::new(7), 18 + 26);
+        packed_roundtrip_single(ALTERNATING2, Some(7), 18 + 26);
         packed_roundtrip_single(RANDOM1, None, 18 + 29);
-        packed_roundtrip_single(RANDOM1, NonZeroU8::new(12), 18 + 29);
-        packed_roundtrip_single(RANDOM1, NonZeroU8::new(2), 18 + 21);
+        packed_roundtrip_single(RANDOM1, Some(12), 18 + 29);
+        packed_roundtrip_single(RANDOM1, Some(2), 18 + 21);
         packed_roundtrip_single(RANDOM2, None, 18 + 25);
-        packed_roundtrip_single(RANDOM2, NonZeroU8::new(2), 18 + 19);
-        packed_roundtrip_single(RANDOM2, NonZeroU8::new(5), 18 + 2);
-        packed_roundtrip_single(RANDOM2, NonZeroU8::new(12), 18 + 5);
+        packed_roundtrip_single(RANDOM2, Some(2), 18 + 19);
+        packed_roundtrip_single(RANDOM2, Some(5), 18 + 2);
+        packed_roundtrip_single(RANDOM2, Some(12), 18 + 5);
     }
 }

@@ -187,10 +187,7 @@ where
                     })?;
                     return Ok(Err(match e {
                         GetNameForCyclicYearError::InvalidYearNumber { max } => {
-                            DateTimeWriteError::InvalidCyclicYear {
-                                value: cyclic.get() as usize,
-                                max,
-                            }
+                            DateTimeWriteError::InvalidCyclicYear { value: cyclic, max }
                         }
                         GetNameForCyclicYearError::InvalidFieldLength => {
                             DateTimeWriteError::UnsupportedLength(ErrorField(field))

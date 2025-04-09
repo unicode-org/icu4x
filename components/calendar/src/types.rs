@@ -6,7 +6,6 @@
 
 pub use calendrical_calculations::rata_die::RataDie;
 use core::fmt;
-use core::num::NonZeroU8;
 use tinystr::TinyAsciiStr;
 use tinystr::{TinyStr16, TinyStr4};
 use zerovec::maps::ZeroMapKV;
@@ -63,7 +62,7 @@ impl YearInfo {
         }
     }
     /// Construct a new cyclic Year given a cycle and a related_iso
-    pub(crate) fn new_cyclic(extended_year: i32, cycle: NonZeroU8, related_iso: i32) -> Self {
+    pub(crate) fn new_cyclic(extended_year: i32, cycle: u8, related_iso: i32) -> Self {
         Self {
             extended_year,
             kind: YearKind::Cyclic(CyclicYear {
@@ -117,7 +116,7 @@ impl YearInfo {
     }
 
     /// Return the cyclic year, if any
-    pub fn cyclic(self) -> Option<NonZeroU8> {
+    pub fn cyclic(self) -> Option<u8> {
         match self.kind {
             YearKind::Era(..) => None,
             YearKind::Cyclic(cy) => Some(cy.year),
@@ -206,8 +205,8 @@ pub struct EraYear {
 #[derive(Copy, Clone, Debug, PartialEq)]
 #[non_exhaustive]
 pub struct CyclicYear {
-    /// The year in the cycle.
-    pub year: NonZeroU8,
+    /// The year in the cycle, 1-based
+    pub year: u8,
     /// The ISO year corresponding to this year
     pub related_iso: i32,
 }

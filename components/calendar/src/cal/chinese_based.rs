@@ -16,7 +16,6 @@ use crate::{
 use calendrical_calculations::chinese_based::{self, ChineseBased, YearBounds};
 use calendrical_calculations::rata_die::RataDie;
 use core::marker::PhantomData;
-use core::num::NonZeroU8;
 use tinystr::tinystr;
 
 /// The trait ChineseBased is used by Chinese-based calendars to perform computations shared by such calendar.
@@ -166,7 +165,7 @@ impl ChineseBasedYearInfo {
     /// that is the leap month (not the ordinal month). In other words, for
     /// a year with an M05L, this will return Some(5). Note that the regular month precedes
     /// the leap month.
-    fn leap_month(self) -> Option<NonZeroU8> {
+    fn leap_month(self) -> Option<u8> {
         self.packed_data.leap_month()
     }
 
@@ -270,12 +269,8 @@ impl ChineseBasedYearInfo {
         // 1 indexed leap month name. This is also the ordinal for the leap month
         // in the year (e.g. in `M01, M01L, M02, ..`, the leap month is for month 1, and it is also
         // ordinally `month 2`, zero-indexed)
-        let leap_month = if let Some(leap) = self.leap_month() {
-            leap.get()
-        } else {
-            // sentinel value
-            14
-        };
+        // 14 is a sentinel value
+        let leap_month = self.leap_month().unwrap_or(14);
         let code_inner = if leap_month == month {
             // Month cannot be 1 because a year cannot have a leap month before the first actual month,
             // and the maximum num of months ina leap year is 13.
@@ -358,13 +353,9 @@ impl ChineseBasedYearInfo {
 
     /// Get the ordinal lunar month from a code for chinese-based calendars.
     pub(crate) fn parse_month_code(self, code: MonthCode) -> Option<u8> {
-        let leap_month = if let Some(leap) = self.leap_month() {
-            leap.get()
-        } else {
-            // 14 is a sentinel value, greater than all other months, for the purpose of computation only;
-            // it is impossible to actually have 14 months in a year.
-            14
-        };
+        // 14 is a sentinel value, greater than all other months, for the purpose of computation only;
+        // it is impossible to actually have 14 months in a year.
+        let leap_month = self.leap_month().unwrap_or(14);
 
         if code.0.len() < 3 {
             return None;

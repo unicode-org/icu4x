@@ -12,7 +12,7 @@
 //!     .expect("Failed to initialize Chinese Date instance.");
 //!
 //! assert_eq!(chinese_date.year().era_year_or_related_iso(), 2023);
-//! assert_eq!(chinese_date.year().cyclic().unwrap().get(), 40);
+//! assert_eq!(chinese_date.year().cyclic().unwrap(), 40);
 //! assert_eq!(chinese_date.month().ordinal, 6);
 //! assert_eq!(chinese_date.day_of_month().0, 6);
 //! ```
@@ -28,7 +28,6 @@ use crate::{types, Calendar, Date, DateDuration, DateDurationUnit};
 use calendrical_calculations::chinese_based::{self, ChineseBased};
 use calendrical_calculations::rata_die::RataDie;
 use core::cmp::Ordering;
-use core::num::NonZeroU8;
 use icu_provider::prelude::*;
 
 /// The [Chinese Calendar](https://en.wikipedia.org/wiki/Chinese_calendar)
@@ -253,11 +252,9 @@ impl Calendar for Chinese {
 
     fn year(&self, date: &Self::DateInner) -> types::YearInfo {
         let year = date.0.year;
-        let cyclic = (year.related_iso - 4).rem_euclid(60) as u8;
-        let cyclic = NonZeroU8::new(cyclic + 1).unwrap_or(NonZeroU8::MIN); // 1-indexed
         types::YearInfo::new_cyclic(
             chinese_based::Chinese::extended_from_iso(year.related_iso),
-            cyclic,
+            (year.related_iso - 4).rem_euclid(60) as u8 + 1,
             year.related_iso,
         )
     }
@@ -312,8 +309,8 @@ impl<A: AsCalendar<Calendar = Chinese>> Date<A> {
     ///         .expect("Failed to initialize Chinese Date instance.");
     ///
     /// assert_eq!(date_chinese.year().era_year_or_related_iso(), 2023);
-    /// assert_eq!(date_chinese.year().cyclic().unwrap().get(), 40);
-    /// assert_eq!(date_chinese.year().related_iso(), Some(2023));
+    /// assert_eq!(date_chinese.year().cyclic().unwrap(), 40);
+    /// assert_eq!(date_chinese.year().related_iso().unwrap(), 2023);
     /// assert_eq!(date_chinese.month().ordinal, 6);
     /// assert_eq!(date_chinese.day_of_month().0, 11);
     /// ```
@@ -571,7 +568,7 @@ mod test {
                 assert_eq!(chinese.month().ordinal, 1);
                 assert_eq!(chinese.month().standard_code.0, "M01");
                 assert_eq!(chinese.day_of_month().0, 1);
-                assert_eq!(chinese.year().cyclic().unwrap().get(), 1);
+                assert_eq!(chinese.year().cyclic().unwrap(), 1);
                 assert_eq!(chinese.year().related_iso(), Some(-2636));
             },
         )
@@ -1028,7 +1025,7 @@ mod test {
                         "[{calendar_type}] Related ISO failed for test case: {case:?}"
                     );
                     assert_eq!(
-                        chinese_cyclic.unwrap().get(),
+                        chinese_cyclic.unwrap(),
                         case.expected_cyclic,
                         "[{calendar_type}] Cyclic year failed for test case: {case:?}"
                     );

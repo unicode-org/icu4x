@@ -13,7 +13,7 @@
 //!     .expect("Failed to initialize Dangi Date instance.");
 //!
 //! assert_eq!(dangi_date.year().era_year_or_related_iso(), 2023);
-//! assert_eq!(dangi_date.year().cyclic().unwrap().get(), 40);
+//! assert_eq!(dangi_date.year().cyclic().unwrap(), 40);
 //! assert_eq!(dangi_date.month().ordinal, 6);
 //! assert_eq!(dangi_date.day_of_month().0, 6);
 //! ```
@@ -29,7 +29,6 @@ use crate::{types, Calendar, Date};
 use calendrical_calculations::chinese_based::{self, ChineseBased};
 use calendrical_calculations::rata_die::RataDie;
 use core::cmp::Ordering;
-use core::num::NonZeroU8;
 use icu_provider::prelude::*;
 
 /// The [Traditional Korean (Dangi) Calendar](https://en.wikipedia.org/wiki/Korean_calendar)
@@ -237,11 +236,9 @@ impl Calendar for Dangi {
 
     fn year(&self, date: &Self::DateInner) -> crate::types::YearInfo {
         let year = date.0.year;
-        let cyclic = (year.related_iso as i64 - 4).rem_euclid(60) as u8;
-        let cyclic = NonZeroU8::new(cyclic + 1).unwrap_or(NonZeroU8::MIN); // 1-indexed
         types::YearInfo::new_cyclic(
             chinese_based::Dangi::extended_from_iso(year.related_iso),
-            cyclic,
+            (year.related_iso as i64 - 4).rem_euclid(60) as u8 + 1,
             year.related_iso,
         )
     }
@@ -286,7 +283,7 @@ impl<A: AsCalendar<Calendar = Dangi>> Date<A> {
     ///     .expect("Failed to initialize Dangi Date instance.");
     ///
     /// assert_eq!(date_dangi.year().era_year_or_related_iso(), 2023);
-    /// assert_eq!(date_dangi.year().cyclic().unwrap().get(), 40);
+    /// assert_eq!(date_dangi.year().cyclic().unwrap(), 40);
     /// assert_eq!(date_dangi.month().ordinal, 6);
     /// assert_eq!(date_dangi.day_of_month().0, 18);
     /// ```
@@ -915,7 +912,7 @@ mod test {
                     "[{calendar_type}] Related ISO failed for test case: {case:?}"
                 );
                 assert_eq!(
-                    dangi_cyclic.unwrap().get(),
+                    dangi_cyclic.unwrap(),
                     case.expected_cyclic,
                     "[{calendar_type}] Cyclic year failed for test case: {case:?}"
                 );
