@@ -293,7 +293,7 @@ impl Calendar for Chinese {
 
 impl<A: AsCalendar<Calendar = Chinese>> Date<A> {
     /// Construct a new Chinese date from a `year`, `month`, and `day`.
-    /// `year` represents the Gregorian year that roughly matches the Chinese year;
+    /// `year` represents the [ISO](crate::Iso) year that roughly matches the Dangi year;
     /// `month` represents the month of the year ordinally (ex. if it is a leap year, the last month will be 13, not 12);
     /// `day` indicates the day of month
     ///
@@ -316,7 +316,7 @@ impl<A: AsCalendar<Calendar = Chinese>> Date<A> {
     /// assert_eq!(date_chinese.day_of_month().0, 11);
     /// ```
     pub fn try_new_chinese_with_calendar(
-        year: i32,
+        related_iso_year: i32,
         month: u8,
         day: u8,
         calendar: A,
@@ -324,7 +324,7 @@ impl<A: AsCalendar<Calendar = Chinese>> Date<A> {
         let year = calendar
             .as_calendar()
             .get_precomputed_data()
-            .load_or_compute_info(ChineseCB::extended_from_iso(year));
+            .load_or_compute_info(ChineseCB::extended_from_iso(related_iso_year));
         let arithmetic = Inner::new_from_ordinals(year, month, day);
         Ok(Date::from_raw(
             ChineseDateInner(ChineseBasedDateInner(arithmetic?)),

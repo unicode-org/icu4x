@@ -267,7 +267,7 @@ impl Calendar for Dangi {
 
 impl<A: AsCalendar<Calendar = Dangi>> Date<A> {
     /// Construct a new Dangi date from a `year`, `month`, and `day`.
-    /// `year` represents the Gregorian year that roughly matches the Dangi year;
+    /// `year` represents the [ISO](crate::Iso) year that roughly matches the Dangi year;
     /// `month` represents the month of the year ordinally (ex. if it is a leap year, the last month will be 13, not 12);
     /// `day` indicates day of month.
     ///
@@ -289,7 +289,7 @@ impl<A: AsCalendar<Calendar = Dangi>> Date<A> {
     /// assert_eq!(date_dangi.day_of_month().0, 18);
     /// ```
     pub fn try_new_dangi_with_calendar(
-        year: i32,
+        related_iso_year: i32,
         month: u8,
         day: u8,
         calendar: A,
@@ -297,7 +297,7 @@ impl<A: AsCalendar<Calendar = Dangi>> Date<A> {
         let year = calendar
             .as_calendar()
             .get_precomputed_data()
-            .load_or_compute_info(DangiCB::extended_from_iso(year));
+            .load_or_compute_info(DangiCB::extended_from_iso(related_iso_year));
         let arithmetic = Inner::new_from_ordinals(year, month, day);
         Ok(Date::from_raw(
             DangiDateInner(ChineseBasedDateInner(arithmetic?)),
