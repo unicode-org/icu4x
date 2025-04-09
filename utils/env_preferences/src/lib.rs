@@ -43,12 +43,6 @@ use parse::posix::PosixLocale as SystemLocale;
 #[cfg(target_os = "windows")]
 use parse::windows::WindowsLocale as SystemLocale;
 
-#[cfg(not(target_os = "linux"))]
-// There are no parsing errors on most platforms, so just alias to the broader [`LocaleError`] enum
-use error::RetrievalError as SystemLocaleError;
-#[cfg(target_os = "linux")]
-use parse::posix::PosixParseError as SystemLocaleError;
-
 /// List the user's available locales as the platform-provided [`String`]s, ordered by preference.
 ///
 /// <div class="warning">
@@ -81,7 +75,7 @@ pub fn get_locales_lossy() -> Result<Vec<icu_locale_core::Locale>, LocaleError> 
         .iter()
         .map(String::as_str)
         .map(SystemLocale::try_from_str)
-        .collect::<Result<Vec<SystemLocale>, SystemLocaleError>>()?;
+        .collect::<Result<Vec<SystemLocale>, RetrievalError>>()?;
 
     system_locales
         .iter()

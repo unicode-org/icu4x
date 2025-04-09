@@ -26,6 +26,8 @@ use icu_locale_core::extensions::Extensions;
 use icu_locale_core::subtags::{language, script, variant, Language, Region, Variants};
 use icu_locale_core::{LanguageIdentifier, Locale, ParseError};
 
+use crate::RetrievalError;
+
 use super::aliases::find_posix_alias;
 
 #[derive(Display, Debug, PartialEq)]
@@ -125,19 +127,21 @@ impl<'src> PosixLocale<'src> {
     ///
     /// See section 8.2 of the POSIX spec for more details:
     /// <https://pubs.opengroup.org/onlinepubs/9799919799/basedefs/V1_chap08.html#tag_08_02>
-    pub fn try_from_str(src: &'src str) -> Result<Self, PosixParseError> {
+    pub fn try_from_str(src: &'src str) -> Result<Self, RetrievalError> {
         // These cases are implementation-defined and can be ignored:
         // - Empty locales
         if src.is_empty() {
-            return Err(PosixParseError::EmptyLocale);
+            return Err(RetrievalError::Posix(PosixParseError::EmptyLocale));
         }
         // - Any locale containing '/'
         if let Some(offset) = src.find('/') {
-            return Err(PosixParseError::InvalidCharacter { offset });
+            return Err(RetrievalError::Posix(PosixParseError::InvalidCharacter {
+                offset,
+            }));
         }
         // - Locales consisting of "." or ".."
         if src == "." || src == ".." {
-            return Err(PosixParseError::InvalidLocale);
+            return Err(RetrievalError::Posix(PosixParseError::InvalidLocale));
         }
 
         // Find any optional sections, and return any delimiter-related errors
@@ -151,7 +155,9 @@ impl<'src> PosixLocale<'src> {
 
         // Make sure the language itself is non-empty
         if language.is_empty() {
-            return Err(PosixParseError::EmptySection { offset: 0 });
+            return Err(RetrievalError::Posix(PosixParseError::EmptySection {
+                offset: 0,
+            }));
         }
 
         let mut locale = Self {
@@ -170,9 +176,9 @@ impl<'src> PosixLocale<'src> {
 
             // Make sure this section is non-empty (more characters than just the delimiter)
             if start_offset + 1 >= end_offset {
-                return Err(PosixParseError::EmptySection {
+                return Err(RetrievalError::Posix(PosixParseError::EmptySection {
                     offset: *start_offset,
-                });
+                }));
             }
 
             // Write the section to the appropriate field

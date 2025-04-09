@@ -99,9 +99,12 @@ fn alias() {
 mod error {
     mod parse {
         use env_preferences::parse::posix::{PosixLocale, PosixParseError};
+        use env_preferences::RetrievalError;
 
-        fn expect_error(src: &str, expected: PosixParseError) {
+        fn expect_error(src: &str, posix_error: PosixParseError) {
             let result = PosixLocale::try_from_str(src);
+            let expected = RetrievalError::Posix(posix_error);
+
             match result {
                 Ok(invalid_locale) => {
                     panic!("Expected the error `{expected:?}`, got the locale `{invalid_locale:?}` from input of `{src}`")
@@ -268,7 +271,7 @@ mod error {
             // Empty section
             let src = "en_.utf8@euro";
             match PosixLocale::try_from_str(src) {
-                Err(PosixParseError::EmptySection { offset }) => {
+                Err(RetrievalError::Posix(PosixParseError::EmptySection { offset })) => {
                     assert_eq!(&src[offset..offset + 1], "_");
                 }
                 _ => unreachable!(),
@@ -277,7 +280,7 @@ mod error {
             // Invalid character
             let src = "en_U/S";
             match PosixLocale::try_from_str(src) {
-                Err(PosixParseError::InvalidCharacter { offset }) => {
+                Err(RetrievalError::Posix(PosixParseError::InvalidCharacter { offset })) => {
                     assert_eq!(&src[offset..offset + 1], "/");
                 }
                 _ => unreachable!(),
@@ -286,10 +289,10 @@ mod error {
             // Repeated delimiter
             let src = "en_US.utf8@euro_US";
             match PosixLocale::try_from_str(src) {
-                Err(PosixParseError::RepeatedDelimiter {
+                Err(RetrievalError::Posix(PosixParseError::RepeatedDelimiter {
                     first_offset,
                     second_offset,
-                }) => {
+                })) => {
                     assert_eq!(&src[first_offset..first_offset + 1], "_");
                     assert_eq!(&src[second_offset..second_offset + 1], "_");
                 }
@@ -299,10 +302,10 @@ mod error {
             // Unordered delimiter
             let src = "en_US@euro.utf8";
             match PosixLocale::try_from_str(src) {
-                Err(PosixParseError::UnorderedDelimiter {
+                Err(RetrievalError::Posix(PosixParseError::UnorderedDelimiter {
                     first_offset,
                     second_offset,
-                }) => {
+                })) => {
                     assert_eq!(&src[first_offset..first_offset + 1], "@");
                     assert_eq!(&src[second_offset..second_offset + 1], ".");
                 }

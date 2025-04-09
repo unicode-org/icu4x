@@ -7,7 +7,7 @@ use icu_locale_core::ParseError;
 use std::{ffi::FromVecWithNulError, str::Utf8Error};
 
 /// An error encountered while retrieving the system locale
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub enum RetrievalError {
     /// Error converting into `&CStr` to `&str`
     ConversionError(Utf8Error),
@@ -67,9 +67,9 @@ pub enum LocaleError {
 }
 
 #[cfg(any(feature = "parse_posix", target_os = "linux"))]
-impl From<crate::parse::posix::PosixParseError> for LocaleError {
+impl From<crate::parse::posix::PosixParseError> for RetrievalError {
     fn from(value: crate::parse::posix::PosixParseError) -> Self {
-        Self::Retrieval(RetrievalError::Posix(value))
+        RetrievalError::Posix(value)
     }
 }
 
