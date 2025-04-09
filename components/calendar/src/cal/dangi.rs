@@ -29,7 +29,7 @@ use crate::error::DateError;
 use crate::provider::chinese_based::CalendarDangiV1;
 use crate::AsCalendar;
 use crate::{cal::chinese_based::ChineseBasedDateInner, types, Calendar, Date};
-use calendrical_calculations::chinese_based::ChineseBased;
+use calendrical_calculations::chinese_based::{self, ChineseBased};
 use calendrical_calculations::rata_die::RataDie;
 use core::cmp::Ordering;
 use core::num::NonZeroU8;
@@ -165,9 +165,7 @@ impl Calendar for Dangi {
         month_code: crate::types::MonthCode,
         day: u8,
     ) -> Result<Self::DateInner, DateError> {
-        let year = self
-            .get_precomputed_data()
-            .load_or_compute_info(DangiCB::extended_from_iso(year));
+        let year = self.get_precomputed_data().load_or_compute_info(year);
 
         let Some(month) = chinese_based_ordinal_lunar_month_from_code(month_code, year) else {
             return Err(DateError::UnknownMonthCode(month_code));
@@ -236,12 +234,13 @@ impl Calendar for Dangi {
 
     fn year(&self, date: &Self::DateInner) -> crate::types::YearInfo {
         let year = date.0 .0.year;
-        // constant 364 from https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L5704
-        let cyclic = (year.value as i64 - 1 + 364).rem_euclid(60) as u8;
+        let cyclic = (year.related_iso as i64 - 4).rem_euclid(60) as u8;
         let cyclic = NonZeroU8::new(cyclic + 1).unwrap_or(NonZeroU8::MIN); // 1-indexed
-        let rata_die_in_year = date.0 .0.year.new_year::<DangiCB>();
-        let related_iso = Iso.from_rata_die(rata_die_in_year).0.year;
-        types::YearInfo::new_cyclic(year.value, cyclic, related_iso)
+        types::YearInfo::new_cyclic(
+            chinese_based::Dangi::extended_from_iso(year.related_iso),
+            cyclic,
+            year.related_iso,
+        )
     }
 
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
@@ -297,7 +296,7 @@ impl<A: AsCalendar<Calendar = Dangi>> Date<A> {
         let year = calendar
             .as_calendar()
             .get_precomputed_data()
-            .load_or_compute_info(DangiCB::extended_from_iso(related_iso_year));
+            .load_or_compute_info(related_iso_year);
         let arithmetic = Inner::new_from_ordinals(year, month, day);
         Ok(Date::from_raw(
             DangiDateInner(ChineseBasedDateInner(arithmetic?)),

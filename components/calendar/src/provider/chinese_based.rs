@@ -45,9 +45,9 @@ icu_provider::data_marker!(
 #[cfg_attr(feature = "datagen", databake(path = icu_calendar::provider::chinese_based))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct ChineseBasedCache<'data> {
-    /// The extended year corresponding to the first data entry for this year
-    pub first_extended_year: i32,
-    /// A list of precomputed data for each year beginning with first_extended_year
+    /// The ISO year corresponding to the first data entry for this year
+    pub first_related_iso_year: i32,
+    /// A list of precomputed data for each year beginning with first_related_iso_year
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub data: ZeroVec<'data, PackedChineseBasedYearInfo>,
 }
@@ -60,33 +60,33 @@ icu_provider::data_struct!(
 impl ChineseBasedCache<'_> {
     /// Compute this data for a range of years
     #[cfg(feature = "datagen")]
-    pub fn compute_for<CB: ChineseBased>(extended_years: core::ops::Range<i32>) -> Self {
-        let data = crate::cal::chinese_based::compute_many_packed::<CB>(extended_years.clone());
+    pub fn compute_for<CB: ChineseBased>(related_isos: core::ops::Range<i32>) -> Self {
+        let data = crate::cal::chinese_based::compute_many_packed::<CB>(related_isos.clone());
         ChineseBasedCache {
-            first_extended_year: extended_years.start,
+            first_related_iso_year: related_isos.start,
             data: data.into(),
         }
     }
 
     /// Get the cached data for a given extended year
-    pub(crate) fn get_for_extended_year(&self, extended_year: i32) -> Option<ChineseBasedYearInfo> {
-        let delta = extended_year - self.first_extended_year;
+    pub(crate) fn get_for_related_iso(&self, related_iso: i32) -> Option<ChineseBasedYearInfo> {
+        let delta = related_iso - self.first_related_iso_year;
         let delta = usize::try_from(delta).ok()?;
 
         Some(ChineseBasedYearInfo::new(
-            extended_year,
+            related_iso,
             self.data.get(delta)?,
         ))
     }
+
     /// Get the cached data for the Chinese Year corresponding to a given day.
     ///
     /// Also returns the corresponding extended year.
-    pub(crate) fn get_for_iso<CB: ChineseBased>(
+    pub(crate) fn get_for_iso_date(
         &self,
         iso: ArithmeticDate<Iso>,
     ) -> Option<ChineseBasedYearInfo> {
-        let extended_year = CB::extended_from_iso(iso.year);
-        let delta = extended_year - self.first_extended_year;
+        let delta = iso.year - self.first_related_iso_year;
         let delta = usize::try_from(delta).ok()?;
         if delta == 0 {
             return None;
@@ -99,14 +99,14 @@ impl ChineseBasedCache<'_> {
         let fetched_data_ny_in_iso = u16::from(this_packed.ny_day_of_iso_year());
 
         if iso_in_year >= fetched_data_ny_in_iso {
-            Some(ChineseBasedYearInfo::new(extended_year, this_packed))
+            Some(ChineseBasedYearInfo::new(iso.year, this_packed))
         } else {
             // We're dealing with an ISO day in the beginning of the year, before Chinese New Year.
             // Return data for the previous Chinese year instead.
             if delta <= 1 {
                 return None;
             }
-            Some(ChineseBasedYearInfo::new(extended_year - 1, prev_packed))
+            Some(ChineseBasedYearInfo::new(iso.year - 1, prev_packed))
         }
     }
 }

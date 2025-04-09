@@ -50,27 +50,27 @@ pub(crate) struct ChineseBasedPrecomputedData<'a, CB: ChineseBased> {
 }
 
 /// Compute ChineseBasedYearInfo for a given extended year
-fn compute_cache<CB: ChineseBased>(extended_year: i32) -> ChineseBasedYearInfo {
-    let mid_year = chinese_based::fixed_mid_year_from_year::<CB>(extended_year);
+fn compute_cache<CB: ChineseBased>(related_iso: i32) -> ChineseBasedYearInfo {
+    let mid_year = calendrical_calculations::iso::fixed_from_iso(related_iso, 7, 1);
     let year_bounds = YearBounds::compute::<CB>(mid_year);
-    compute_cache_with_yb::<CB>(extended_year, year_bounds)
+    compute_cache_with_yb::<CB>(related_iso, year_bounds)
 }
 
 /// Compute ChineseBasedYearInfo for a given extended year, for which you have already computed the YearBounds
 fn compute_cache_with_yb<CB: ChineseBased>(
-    extended_year: i32,
+    related_iso: i32,
     year_bounds: YearBounds,
 ) -> ChineseBasedYearInfo {
-    let packed_data = compute_packed_with_yb::<CB>(extended_year, year_bounds);
+    let packed_data = compute_packed_with_yb::<CB>(related_iso, year_bounds);
 
     ChineseBasedYearInfo {
         packed_data,
-        value: extended_year,
+        related_iso,
     }
 }
 
 fn compute_packed_with_yb<CB: ChineseBased>(
-    extended_year: i32,
+    related_iso: i32,
     year_bounds: YearBounds,
 ) -> PackedChineseBasedYearInfo {
     let YearBounds {
@@ -81,7 +81,6 @@ fn compute_packed_with_yb<CB: ChineseBased>(
     let (month_lengths, leap_month) =
         chinese_based::month_structure_for_year::<CB>(new_year, next_new_year);
 
-    let related_iso = CB::iso_from_extended(extended_year);
     let iso_ny = calendrical_calculations::iso::fixed_from_iso(related_iso, 1, 1);
 
     // +1 because `new_year - iso_ny` is zero-indexed, but `FIRST_NY` is 1-indexed
@@ -91,7 +90,7 @@ fn compute_packed_with_yb<CB: ChineseBased>(
     } else {
         debug_assert!(
             false,
-            "Expected small new years offset, got {ny_offset} in ISO year {related_iso}"
+            "Expected small new years offset, got {ny_offset} in ISO year {related_iso} (bounds {year_bounds:?})"
         );
         0
     };
@@ -100,14 +99,14 @@ fn compute_packed_with_yb<CB: ChineseBased>(
 
 #[cfg(feature = "datagen")]
 pub(crate) fn compute_many_packed<CB: ChineseBased>(
-    extended_years: core::ops::Range<i32>,
+    related_isos: core::ops::Range<i32>,
 ) -> alloc::vec::Vec<PackedChineseBasedYearInfo> {
-    extended_years
-        .map(|extended_year| {
-            let mid_year = chinese_based::fixed_mid_year_from_year::<CB>(extended_year);
+    related_isos
+        .map(|related_iso| {
+            let mid_year = calendrical_calculations::iso::fixed_from_iso(related_iso, 7, 1);
             let year_bounds = YearBounds::compute::<CB>(mid_year);
 
-            compute_packed_with_yb::<CB>(extended_year, year_bounds)
+            compute_packed_with_yb::<CB>(related_iso, year_bounds)
         })
         .collect()
 }
@@ -115,10 +114,10 @@ pub(crate) fn compute_many_packed<CB: ChineseBased>(
 impl<CB: ChineseBased> PrecomputedDataSource<ChineseBasedYearInfo>
     for ChineseBasedPrecomputedData<'_, CB>
 {
-    fn load_or_compute_info(&self, extended_year: i32) -> ChineseBasedYearInfo {
+    fn load_or_compute_info(&self, related_iso: i32) -> ChineseBasedYearInfo {
         self.data
-            .and_then(|d| d.get_for_extended_year(extended_year))
-            .unwrap_or_else(|| compute_cache::<CB>(extended_year))
+            .and_then(|d| d.get_for_related_iso(related_iso))
+            .unwrap_or_else(|| compute_cache::<CB>(related_iso))
     }
 }
 
@@ -136,19 +135,18 @@ impl<'b, CB: ChineseBased> ChineseBasedPrecomputedData<'b, CB> {
         rd: RataDie,
         iso: ArithmeticDate<Iso>,
     ) -> ChineseBasedYearInfo {
-        if let Some(cached) = self.data.and_then(|d| d.get_for_iso::<CB>(iso)) {
+        if let Some(cached) = self.data.and_then(|d| d.get_for_iso_date(iso)) {
             return cached;
         };
         // compute
 
-        let extended_year = CB::extended_from_iso(iso.year);
-        let mid_year = chinese_based::fixed_mid_year_from_year::<CB>(extended_year);
+        let mid_year = calendrical_calculations::iso::fixed_from_iso(iso.year, 7, 1);
         let year_bounds = YearBounds::compute::<CB>(mid_year);
         let YearBounds { new_year, .. } = year_bounds;
         if rd >= new_year {
-            compute_cache_with_yb::<CB>(extended_year, year_bounds)
+            compute_cache_with_yb::<CB>(iso.year, year_bounds)
         } else {
-            compute_cache::<CB>(extended_year - 1)
+            compute_cache::<CB>(iso.year - 1)
         }
     }
 }
@@ -161,32 +159,32 @@ pub(crate) struct ChineseBasedYearInfo {
     /// - whether or not there is a leap month, and which month it is
     /// - the date of Chinese New Year in the related ISO year
     packed_data: PackedChineseBasedYearInfo,
-    pub(crate) value: i32,
+    pub(crate) related_iso: i32,
 }
 
 impl From<ChineseBasedYearInfo> for i32 {
     fn from(value: ChineseBasedYearInfo) -> Self {
-        value.value
+        value.related_iso
     }
 }
 
 impl ChineseBasedYearInfo {
-    pub(crate) fn new(extended_year: i32, packed_data: PackedChineseBasedYearInfo) -> Self {
+    pub(crate) fn new(related_iso: i32, packed_data: PackedChineseBasedYearInfo) -> Self {
         Self {
             packed_data,
-            value: extended_year,
+            related_iso,
         }
     }
 
     /// Get the new year R.D. given the extended year that this yearinfo is for    
-    pub(crate) fn new_year<CB: ChineseBased>(self) -> RataDie {
-        self.packed_data.ny_rd(CB::iso_from_extended(self.value))
+    pub(crate) fn new_year(self) -> RataDie {
+        self.packed_data.ny_rd(self.related_iso)
     }
 
     /// Get the next new year R.D. given the extended year that this yearinfo is for
     /// (i.e, this year, not next year)
-    fn next_new_year<CB: ChineseBased>(self) -> RataDie {
-        self.new_year::<CB>() + i64::from(self.packed_data.days_in_year())
+    fn next_new_year(self) -> RataDie {
+        self.new_year() + i64::from(self.packed_data.days_in_year())
     }
 
     /// Get which month is the leap month. This produces the month *number*
@@ -246,11 +244,11 @@ impl<C: ChineseBasedWithDataLoading + CalendarArithmetic<YearInfo = ChineseBased
         year: ChineseBasedYearInfo,
     ) -> ChineseBasedDateInner<C> {
         debug_assert!(
-            date < year.next_new_year::<C::CB>(),
+            date < year.next_new_year(),
             "Stored date {date:?} out of bounds!"
         );
         // 1-indexed day of year
-        let day_of_year = u16::try_from(date - year.new_year::<C::CB>() + 1);
+        let day_of_year = u16::try_from(date - year.new_year() + 1);
         debug_assert!(day_of_year.is_ok(), "Somehow got a very large year in data");
         let day_of_year = day_of_year.unwrap_or(1);
         let mut month = 1;
@@ -296,7 +294,7 @@ impl<C: ChineseBasedWithDataLoading + CalendarArithmetic<YearInfo = ChineseBased
     }
 
     pub(crate) fn new_year(self) -> RataDie {
-        self.0.year.new_year::<C::CB>()
+        self.0.year.new_year()
     }
 
     /// Get a RataDie from a ChineseBasedDateInner
