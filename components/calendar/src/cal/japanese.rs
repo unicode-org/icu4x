@@ -494,8 +494,8 @@ impl Date<JapaneseExtended> {
 
 const MEIJI_START: EraStartDate = EraStartDate {
     year: 1868,
-    month: 9,
-    day: 8,
+    month: 10,
+    day: 23,
 };
 const TAISHO_START: EraStartDate = EraStartDate {
     year: 1912,
