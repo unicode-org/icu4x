@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use env_preferences::parse::windows::WindowsLocale;
-use icu_locale::Locale;
+use icu_locale_core::Locale;
 
 fn expect_success(src: &str, expected: &str) {
     let windows_locale = WindowsLocale::try_from_str(src).expect(src);

@@ -10,7 +10,7 @@ mod parse;
 mod linux_tests {
     use env_preferences::posix::{get_raw_locale_categories, get_system_calendars, LocaleCategory};
     use env_preferences::RetrievalError;
-    use icu_locale::Locale;
+    use icu_locale_core::Locale;
     use libc::setlocale;
 
     // Testing fetching of locale, as `get_locales` fetches the locales for category
@@ -74,7 +74,7 @@ mod linux_tests {
 #[cfg(test)]
 mod macos_test {
     use env_preferences::apple::{get_raw_locales, get_system_calendars, get_system_time_zone};
-    use icu_locale::Locale;
+    use icu_locale_core::Locale;
 
     #[test]
     fn test_get_raw_locales() {
@@ -126,7 +126,7 @@ mod macos_test {
 mod windows_test {
     use env_preferences::parse::windows::WindowsLocale;
     use env_preferences::windows::{get_raw_locales, get_system_calendars, get_system_time_zone};
-    use icu_locale::Locale;
+    use icu_locale_core::Locale;
     use std::sync::{LazyLock, Mutex};
     use windows::Win32::{
         Foundation::LPARAM,

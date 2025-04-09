@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use env_preferences::parse::posix::PosixLocale;
-use icu_locale::Locale;
+use icu_locale_core::Locale;
 
 fn expect_success(src: &str, expected: &str) {
     let posix_locale = PosixLocale::try_from_str(src).expect(src);
@@ -316,7 +316,7 @@ mod error {
 
     mod conversion {
         use env_preferences::parse::posix::PosixLocale;
-        use icu_locale::ParseError;
+        use icu_locale_core::ParseError;
 
         fn expect_error(src: &str, expected: ParseError) {
             let result = PosixLocale::try_from_str(src)
