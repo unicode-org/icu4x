@@ -37,8 +37,3 @@ features = [
 
 [dev-dependencies]
 windows-core = "0.60.1"
-
-[features]
-parse_apple = []
-parse_posix = []
-parse_windows = []

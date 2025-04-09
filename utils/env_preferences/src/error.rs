@@ -32,7 +32,6 @@ pub enum RetrievalError {
     Windows(windows::core::Error),
 
     /// Errors from parsing POSIX locales
-    #[cfg(any(feature = "parse_posix", target_os = "linux"))]
     Posix(crate::parse::posix::PosixParseError),
 
     Other(String),
@@ -66,7 +65,6 @@ pub enum LocaleError {
     Parse(ParseError),
 }
 
-#[cfg(any(feature = "parse_posix", target_os = "linux"))]
 impl From<crate::parse::posix::PosixParseError> for RetrievalError {
     fn from(value: crate::parse::posix::PosixParseError) -> Self {
         RetrievalError::Posix(value)

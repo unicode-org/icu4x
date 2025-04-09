@@ -8,9 +8,6 @@
 mod aliases;
 pub use aliases::*;
 
-#[cfg(any(doc, feature = "parse_apple", target_os = "macos"))]
 pub mod apple;
-#[cfg(any(doc, feature = "parse_posix", target_os = "linux"))]
 pub mod posix;
-#[cfg(any(doc, feature = "parse_windows", target_os = "windows"))]
 pub mod windows;

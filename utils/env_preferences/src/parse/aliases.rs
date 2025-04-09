@@ -10,7 +10,6 @@
 /// This is based on GNU libc's `intl/locale.alias` file, with some manual processing
 /// to remove duplicates. The original file is available at:
 /// <https://sourceware.org/git/?p=glibc.git;a=blob;f=intl/locale.alias;hb=HEAD>
-#[cfg(any(doc, feature = "parse_posix", target_os = "linux"))]
 pub fn find_posix_alias(
     alias: &str,
 ) -> Option<(
@@ -66,7 +65,6 @@ pub fn find_posix_alias(
 ///
 /// The full table is available at:
 /// <https://learn.microsoft.com/en-us/windows/win32/intl/sort-order-identifiers>
-#[cfg(any(doc, feature = "parse_windows", target_os = "windows"))]
 pub fn strip_windows_collation_suffix_lossy(
     lcid: &str,
 ) -> (&str, Option<icu_locale_core::extensions::unicode::Value>) {
@@ -93,8 +91,9 @@ pub fn strip_windows_collation_suffix_lossy(
 }
 
 /// Find a BCP-47 identifier from a list of known Windows aliases.
-#[cfg(any(doc, feature = "parse_windows", target_os = "windows"))]
-pub fn find_windows_language_alias_lossy(lcid: &str) -> Option<icu_locale_core::LanguageIdentifier> {
+pub fn find_windows_language_alias_lossy(
+    lcid: &str,
+) -> Option<icu_locale_core::LanguageIdentifier> {
     use icu_locale_core::langid;
 
     match lcid {
