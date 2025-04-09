@@ -11,7 +11,7 @@
 //!     .expect("Failed to initialize ISO Date instance.");
 //! let date_coptic = Date::new_from_iso(date_iso, Coptic);
 //!
-//! assert_eq!(date_coptic.year().era().unwrap().era_year, 1686);
+//! assert_eq!(date_coptic.era_year().era_year, 1686);
 //! assert_eq!(date_coptic.month().ordinal, 4);
 //! assert_eq!(date_coptic.day_of_month().0, 24);
 //! ```
@@ -94,6 +94,7 @@ impl CalendarArithmetic for Coptic {
 
 impl Calendar for Coptic {
     type DateInner = CopticDateInner;
+    type Year = types::EraYear;
     fn from_codes(
         &self,
         era: Option<&str>,
@@ -160,29 +161,27 @@ impl Calendar for Coptic {
         date1.0.until(date2.0, _largest_unit, _smallest_unit)
     }
 
-    fn year(&self, date: &Self::DateInner) -> types::YearInfo {
-        let year = date.0.year;
+    fn year_info(&self, date: &Self::DateInner) -> Self::Year {
+        let year = self.extended_year(date);
         if year > 0 {
-            types::YearInfo::new(
-                year,
-                types::EraYear {
-                    standard_era: tinystr!(16, "am").into(),
-                    formatting_era: types::FormattingEra::Index(1, tinystr!(16, "AM")),
-                    era_year: year,
-                    ambiguity: types::YearAmbiguity::CenturyRequired,
-                },
-            )
+            types::EraYear {
+                standard_era: tinystr!(16, "am").into(),
+                formatting_era: types::FormattingEra::Index(1, tinystr!(16, "AM")),
+                era_year: year,
+                ambiguity: types::YearAmbiguity::CenturyRequired,
+            }
         } else {
-            types::YearInfo::new(
-                year,
-                types::EraYear {
-                    standard_era: tinystr!(16, "bd").into(),
-                    formatting_era: types::FormattingEra::Index(0, tinystr!(16, "BD")),
-                    era_year: 1 - year,
-                    ambiguity: types::YearAmbiguity::EraAndCenturyRequired,
-                },
-            )
+            types::EraYear {
+                standard_era: tinystr!(16, "bd").into(),
+                formatting_era: types::FormattingEra::Index(0, tinystr!(16, "BD")),
+                era_year: 1 - year,
+                ambiguity: types::YearAmbiguity::EraAndCenturyRequired,
+            }
         }
+    }
+
+    fn extended_year(&self, date: &Self::DateInner) -> i32 {
+        date.0.extended_year()
     }
 
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
@@ -221,7 +220,7 @@ impl Date<Coptic> {
     /// let date_coptic = Date::try_new_coptic(1686, 5, 6)
     ///     .expect("Failed to initialize Coptic Date instance.");
     ///
-    /// assert_eq!(date_coptic.year().era().unwrap().era_year, 1686);
+    /// assert_eq!(date_coptic.era_year().era_year, 1686);
     /// assert_eq!(date_coptic.month().ordinal, 5);
     /// assert_eq!(date_coptic.day_of_month().0, 6);
     /// ```

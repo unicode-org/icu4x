@@ -10,7 +10,7 @@
 //! let date_iso = Date::try_new_iso(1970, 1, 2)
 //!     .expect("Failed to initialize ISO Date instance.");
 //!
-//! assert_eq!(date_iso.year().era().unwrap().era_year, 1970);
+//! assert_eq!(date_iso.era_year().era_year, 1970);
 //! assert_eq!(date_iso.month().ordinal, 1);
 //! assert_eq!(date_iso.day_of_month().0, 2);
 //! ```
@@ -78,6 +78,7 @@ impl CalendarArithmetic for Iso {
 
 impl Calendar for Iso {
     type DateInner = IsoDateInner;
+    type Year = types::EraYear;
     /// Construct a date from era/month codes and fields
     fn from_codes(
         &self,
@@ -142,16 +143,17 @@ impl Calendar for Iso {
         date1.0.until(date2.0, _largest_unit, _smallest_unit)
     }
 
-    fn year(&self, date: &Self::DateInner) -> types::YearInfo {
-        types::YearInfo::new(
-            date.0.year,
-            types::EraYear {
-                formatting_era: types::FormattingEra::Index(0, tinystr!(16, "")),
-                standard_era: tinystr!(16, "default").into(),
-                era_year: date.0.year,
-                ambiguity: types::YearAmbiguity::Unambiguous,
-            },
-        )
+    fn year_info(&self, date: &Self::DateInner) -> Self::Year {
+        types::EraYear {
+            formatting_era: types::FormattingEra::Index(0, tinystr!(16, "")),
+            standard_era: tinystr!(16, "default").into(),
+            era_year: self.extended_year(date),
+            ambiguity: types::YearAmbiguity::Unambiguous,
+        }
+    }
+
+    fn extended_year(&self, date: &Self::DateInner) -> i32 {
+        date.0.extended_year()
     }
 
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
@@ -190,7 +192,7 @@ impl Date<Iso> {
     /// let date_iso = Date::try_new_iso(1970, 1, 2)
     ///     .expect("Failed to initialize ISO Date instance.");
     ///
-    /// assert_eq!(date_iso.year().era().unwrap().era_year, 1970);
+    /// assert_eq!(date_iso.era_year().era_year, 1970);
     /// assert_eq!(date_iso.month().ordinal, 1);
     /// assert_eq!(date_iso.day_of_month().0, 2);
     /// ```

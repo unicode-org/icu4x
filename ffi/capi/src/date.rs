@@ -126,7 +126,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::calendar::Date::year, FnInStruct)]
         #[diplomat::attr(auto, getter)]
         pub fn year(&self) -> i32 {
-            self.0.year().extended_year
+            self.0.extended_year()
         }
 
         /// Returns if the year is a leap year for this date
@@ -323,14 +323,15 @@ pub mod ffi {
         /// Returns the year number in the current era for this date
         ///
         /// For calendars without an era, returns the related ISO year.
-        #[diplomat::rust_link(icu::calendar::types::YearInfo::era_year_or_related_iso, FnInStruct)]
+        #[diplomat::rust_link(icu::calendar::types::YearInfo::era_year_or_related_iso, FnInEnum)]
         #[diplomat::rust_link(icu::calendar::types::EraYear::era_year, StructField, compact)]
         #[diplomat::rust_link(icu::calendar::types::CyclicYear::related_iso, StructField, compact)]
         #[diplomat::rust_link(icu::calendar::Date::year, FnInStruct, compact)]
-        #[diplomat::rust_link(icu::calendar::types::YearInfo, Struct, hidden)]
-        #[diplomat::rust_link(icu::calendar::types::YearKind, Enum, hidden)]
-        #[diplomat::rust_link(icu::calendar::types::YearInfo::era, FnInStruct, hidden)]
-        #[diplomat::rust_link(icu::calendar::types::YearInfo::cyclic, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::calendar::Date::era_year, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::calendar::Date::cyclic_year, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::calendar::types::YearInfo, Enum, hidden)]
+        #[diplomat::rust_link(icu::calendar::types::YearInfo::era, FnInEnum, hidden)]
+        #[diplomat::rust_link(icu::calendar::types::YearInfo::cyclic, FnInEnum, hidden)]
         #[diplomat::rust_link(icu::calendar::types::EraYear, Struct, hidden)]
         #[diplomat::rust_link(icu::calendar::types::CyclicYear, Struct, hidden)]
         #[diplomat::attr(auto, getter)]
@@ -339,10 +340,10 @@ pub mod ffi {
         }
 
         /// Returns the extended year in the Date
-        #[diplomat::rust_link(icu::calendar::types::YearInfo::extended_year, StructField)]
+        #[diplomat::rust_link(icu::calendar::Date::extended_year, FnInStruct)]
         #[diplomat::attr(auto, getter)]
         pub fn extended_year(&self) -> i32 {
-            self.0.year().extended_year
+            self.0.extended_year()
         }
 
         /// Returns the era for this date, or an empty string

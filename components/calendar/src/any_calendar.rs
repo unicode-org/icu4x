@@ -12,6 +12,7 @@ use crate::cal::{
     Iso, Japanese, JapaneseExtended, Persian, Roc,
 };
 use crate::error::DateError;
+use crate::types::YearInfo;
 use crate::{types, AsCalendar, Calendar, Date, DateDuration, DateDurationUnit, Ref};
 
 use crate::preferences::{CalendarAlgorithm, HijriCalendarAlgorithm};
@@ -219,6 +220,8 @@ macro_rules! match_cal {
 
 impl Calendar for AnyCalendar {
     type DateInner = AnyDateInner;
+    type Year = YearInfo;
+
     fn from_codes(
         &self,
         era: Option<&str>,
@@ -465,9 +468,14 @@ impl Calendar for AnyCalendar {
         }
     }
 
-    fn year(&self, date: &Self::DateInner) -> types::YearInfo {
-        match_cal_and_date!(match (self, date): (c, d) => c.year(d))
+    fn year_info(&self, date: &Self::DateInner) -> types::YearInfo {
+        match_cal_and_date!(match (self, date): (c, d) => c.year_info(d).into())
     }
+
+    fn extended_year(&self, date: &Self::DateInner) -> i32 {
+        match_cal_and_date!(match (self, date): (c, d) => c.extended_year(d))
+    }
+
     /// The calendar-specific check if `date` is in a leap year
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
         match_cal_and_date!(match (self, date): (c, d) => c.is_in_leap_year(d))

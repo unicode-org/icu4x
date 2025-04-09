@@ -11,7 +11,7 @@
 //!     .expect("Failed to initialize ISO Date instance.");
 //! let date_gregorian = Date::new_from_iso(date_iso, Gregorian);
 //!
-//! assert_eq!(date_gregorian.year().era().unwrap().era_year, 1970);
+//! assert_eq!(date_gregorian.era_year().era_year, 1970);
 //! assert_eq!(date_gregorian.month().ordinal, 1);
 //! assert_eq!(date_gregorian.day_of_month().0, 2);
 //! ```
@@ -42,6 +42,7 @@ pub struct GregorianDateInner(pub(crate) IsoDateInner);
 
 impl Calendar for Gregorian {
     type DateInner = GregorianDateInner;
+    type Year = types::EraYear;
     fn from_codes(
         &self,
         era: Option<&str>,
@@ -105,34 +106,32 @@ impl Calendar for Gregorian {
             .cast_unit()
     }
     /// The calendar-specific year represented by `date`
-    fn year(&self, date: &Self::DateInner) -> types::YearInfo {
-        let year = date.0 .0.year;
-        if year > 0 {
-            types::YearInfo::new(
-                year,
-                types::EraYear {
-                    standard_era: tinystr!(16, "ce").into(),
-                    formatting_era: types::FormattingEra::Index(1, tinystr!(16, "CE")),
-                    era_year: year,
-                    ambiguity: match year {
-                        ..=999 => types::YearAmbiguity::EraAndCenturyRequired,
-                        1000..=1949 => types::YearAmbiguity::CenturyRequired,
-                        1950..=2049 => types::YearAmbiguity::Unambiguous,
-                        2050.. => types::YearAmbiguity::CenturyRequired,
-                    },
+    fn year_info(&self, date: &Self::DateInner) -> Self::Year {
+        let extended_year = self.extended_year(date);
+        if extended_year > 0 {
+            types::EraYear {
+                standard_era: tinystr!(16, "ce").into(),
+                formatting_era: types::FormattingEra::Index(1, tinystr!(16, "CE")),
+                era_year: extended_year,
+                ambiguity: match extended_year {
+                    ..=999 => types::YearAmbiguity::EraAndCenturyRequired,
+                    1000..=1949 => types::YearAmbiguity::CenturyRequired,
+                    1950..=2049 => types::YearAmbiguity::Unambiguous,
+                    2050.. => types::YearAmbiguity::CenturyRequired,
                 },
-            )
+            }
         } else {
-            types::YearInfo::new(
-                year,
-                types::EraYear {
-                    standard_era: tinystr!(16, "bce").into(),
-                    formatting_era: types::FormattingEra::Index(0, tinystr!(16, "BCE")),
-                    era_year: 1_i32.saturating_sub(year),
-                    ambiguity: types::YearAmbiguity::EraAndCenturyRequired,
-                },
-            )
+            types::EraYear {
+                standard_era: tinystr!(16, "bce").into(),
+                formatting_era: types::FormattingEra::Index(0, tinystr!(16, "BCE")),
+                era_year: 1_i32.saturating_sub(extended_year),
+                ambiguity: types::YearAmbiguity::EraAndCenturyRequired,
+            }
         }
+    }
+
+    fn extended_year(&self, date: &Self::DateInner) -> i32 {
+        Iso.extended_year(&date.0)
     }
 
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
@@ -175,7 +174,7 @@ impl Date<Gregorian> {
     /// let date_gregorian = Date::try_new_gregorian(1970, 1, 2)
     ///     .expect("Failed to initialize Gregorian Date instance.");
     ///
-    /// assert_eq!(date_gregorian.year().era().unwrap().era_year, 1970);
+    /// assert_eq!(date_gregorian.era_year().era_year, 1970);
     /// assert_eq!(date_gregorian.month().ordinal, 1);
     /// assert_eq!(date_gregorian.day_of_month().0, 2);
     /// ```
@@ -206,10 +205,10 @@ mod test {
     fn check_test_case(case: TestCase) {
         let iso_from_rd = Date::from_rata_die(case.rd, Iso);
         let greg_date_from_rd = Date::from_rata_die(case.rd, Gregorian);
-        assert_eq!(greg_date_from_rd.year().era().unwrap().era_year, case.expected_year,
+        assert_eq!(greg_date_from_rd.era_year().era_year, case.expected_year,
             "Failed year check from RD: {case:?}\nISO: {iso_from_rd:?}\nGreg: {greg_date_from_rd:?}");
         assert_eq!(
-            greg_date_from_rd.year().era().unwrap().standard_era,
+            greg_date_from_rd.era_year().standard_era,
             case.expected_era,
             "Failed era check from RD: {case:?}\nISO: {iso_from_rd:?}\nGreg: {greg_date_from_rd:?}"
         );

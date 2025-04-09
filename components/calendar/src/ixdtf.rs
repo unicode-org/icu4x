@@ -67,7 +67,7 @@ impl<A: AsCalendar> Date<A> {
     /// let _ =
     ///     Date::try_from_str("2024-07-17[u-ca=julian]", Gregorian).unwrap_err();
     ///
-    /// assert_eq!(date.year().era().unwrap().era_year, 2024);
+    /// assert_eq!(date.era_year().era_year, 2024);
     /// assert_eq!(
     ///     date.month().standard_code,
     ///     icu::calendar::types::MonthCode(tinystr::tinystr!(4, "M07"))

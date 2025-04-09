@@ -461,7 +461,7 @@ impl<A: AsCalendar> ZonedDateTime<A, TimeZoneInfo<models::Full>> {
     /// )
     /// .unwrap();
     ///
-    /// assert_eq!(zoneddatetime.date.year().extended_year, 5784);
+    /// assert_eq!(zoneddatetime.date.extended_year(), 5784);
     /// assert_eq!(
     ///     zoneddatetime.date.month().standard_code,
     ///     icu::calendar::types::MonthCode(tinystr::tinystr!(4, "M11"))
@@ -674,7 +674,7 @@ impl<A: AsCalendar> DateTime<A> {
     ///     DateTime::try_from_str("2024-07-17T16:01:17.045[u-ca=hebrew]", Hebrew)
     ///         .unwrap();
     ///
-    /// assert_eq!(datetime.date.year().era().unwrap().era_year, 5784);
+    /// assert_eq!(datetime.date.era_year().era_year, 5784);
     /// assert_eq!(
     ///     datetime.date.month().standard_code,
     ///     icu::calendar::types::MonthCode(tinystr::tinystr!(4, "M10"))

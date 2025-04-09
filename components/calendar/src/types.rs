@@ -30,21 +30,10 @@ impl From<TinyStr16> for Era {
     }
 }
 
-/// General information about a year
-#[derive(Copy, Clone, Debug, PartialEq)]
-#[non_exhaustive]
-pub struct YearInfo {
-    /// The "extended year", typically anchored with year 1 as the year 1 of either the most modern or
-    /// otherwise some "major" era for the calendar
-    pub extended_year: i32,
-    /// The rest of the details about the year
-    pub kind: YearKind,
-}
-
 /// The type of year: Calendars like Chinese don't have an era and instead format with cyclic years.
 #[derive(Copy, Clone, Debug, PartialEq)]
 #[non_exhaustive]
-pub enum YearKind {
+pub enum YearInfo {
     /// An era and a year in that era
     Era(EraYear),
     /// A cyclic year, and the related ISO year
@@ -54,48 +43,42 @@ pub enum YearKind {
     Cyclic(CyclicYear),
 }
 
-impl YearInfo {
-    /// Construct a new Year given an era and number
-    pub(crate) fn new(extended_year: i32, era: EraYear) -> Self {
-        Self {
-            extended_year,
-            kind: YearKind::Era(era),
-        }
+impl From<EraYear> for YearInfo {
+    fn from(value: EraYear) -> Self {
+        Self::Era(value)
     }
-    /// Construct a new cyclic Year given a cycle and a related_iso
-    pub(crate) fn new_cyclic(extended_year: i32, cycle: NonZeroU8, related_iso: i32) -> Self {
-        Self {
-            extended_year,
-            kind: YearKind::Cyclic(CyclicYear {
-                year: cycle,
-                related_iso,
-            }),
-        }
-    }
+}
 
+impl From<CyclicYear> for YearInfo {
+    fn from(value: CyclicYear) -> Self {
+        Self::Cyclic(value)
+    }
+}
+
+impl YearInfo {
     /// Get *some* year number that can be displayed
     ///
     /// Gets the era year for era calendars, and the related ISO year for cyclic calendars.
     pub fn era_year_or_related_iso(self) -> i32 {
-        match self.kind {
-            YearKind::Era(e) => e.era_year,
-            YearKind::Cyclic(c) => c.related_iso,
+        match self {
+            YearInfo::Era(e) => e.era_year,
+            YearInfo::Cyclic(c) => c.related_iso,
         }
     }
 
     /// Get the era year information, if available
     pub fn era(self) -> Option<EraYear> {
-        match self.kind {
-            YearKind::Era(e) => Some(e),
-            YearKind::Cyclic(..) => None,
+        match self {
+            Self::Era(e) => Some(e),
+            Self::Cyclic(_) => None,
         }
     }
 
-    /// Get the cyclic year information, if available
+    /// Get the cyclic year informat, if available
     pub fn cyclic(self) -> Option<CyclicYear> {
-        match self.kind {
-            YearKind::Cyclic(cyclic) => Some(cyclic),
-            YearKind::Era(_) => None,
+        match self {
+            Self::Era(_) => None,
+            Self::Cyclic(c) => Some(c),
         }
     }
 }
