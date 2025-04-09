@@ -8,10 +8,10 @@
 //! use icu::calendar::{cal::Chinese, Date};
 //!
 //! let chinese = Chinese::new();
-//! let chinese_date = Date::try_new_chinese_with_calendar(4660, 6, 6, chinese)
+//! let chinese_date = Date::try_new_chinese_with_calendar(2023, 6, 6, chinese)
 //!     .expect("Failed to initialize Chinese Date instance.");
 //!
-//! assert_eq!(chinese_date.year().era_year_or_extended(), 4660);
+//! assert_eq!(chinese_date.year().era_year_or_extended(), 2023);
 //! assert_eq!(chinese_date.year().cyclic().unwrap().get(), 40);
 //! assert_eq!(chinese_date.month().ordinal, 6);
 //! assert_eq!(chinese_date.day_of_month().0, 6);
@@ -28,6 +28,7 @@ use crate::error::DateError;
 use crate::provider::chinese_based::CalendarChineseV1;
 use crate::AsCalendar;
 use crate::{types, Calendar, Date, DateDuration, DateDurationUnit};
+use calendrical_calculations::chinese_based::ChineseBased;
 use calendrical_calculations::rata_die::RataDie;
 use core::cmp::Ordering;
 use core::num::NonZeroU8;
@@ -174,7 +175,9 @@ impl Calendar for Chinese {
         month_code: types::MonthCode,
         day: u8,
     ) -> Result<Self::DateInner, DateError> {
-        let year = self.get_precomputed_data().load_or_compute_info(year);
+        let year = self
+            .get_precomputed_data()
+            .load_or_compute_info(ChineseCB::extended_from_iso(year));
 
         let Some(month) = chinese_based_ordinal_lunar_month_from_code(month_code, year) else {
             return Err(DateError::UnknownMonthCode(month_code));
@@ -211,7 +214,7 @@ impl Calendar for Chinese {
         Iso.from_rata_die(self.to_rata_die(date))
     }
 
-    //Count the number of months in a given year, specified by providing a date
+    // Count the number of months in a given year, specified by providing a date
     // from that year
     fn days_in_year(&self, date: &Self::DateInner) -> u16 {
         date.0.days_in_year_inner()
@@ -303,10 +306,10 @@ impl<A: AsCalendar<Calendar = Chinese>> Date<A> {
     /// let chinese = Chinese::new_always_calculating();
     ///
     /// let date_chinese =
-    ///     Date::try_new_chinese_with_calendar(4660, 6, 11, chinese)
+    ///     Date::try_new_chinese_with_calendar(2023, 6, 11, chinese)
     ///         .expect("Failed to initialize Chinese Date instance.");
     ///
-    /// assert_eq!(date_chinese.year().era_year_or_extended(), 4660);
+    /// assert_eq!(date_chinese.year().era_year_or_extended(), 2023);
     /// assert_eq!(date_chinese.year().cyclic().unwrap().get(), 40);
     /// assert_eq!(date_chinese.year().related_iso(), Some(2023));
     /// assert_eq!(date_chinese.month().ordinal, 6);
@@ -321,7 +324,7 @@ impl<A: AsCalendar<Calendar = Chinese>> Date<A> {
         let year = calendar
             .as_calendar()
             .get_precomputed_data()
-            .load_or_compute_info(year);
+            .load_or_compute_info(ChineseCB::extended_from_iso(year));
         let arithmetic = Inner::new_from_ordinals(year, month, day);
         Ok(Date::from_raw(
             ChineseDateInner(ChineseBasedDateInner(arithmetic?)),
@@ -492,14 +495,14 @@ mod test {
 
         let cases = [
             TestCase {
-                year: 4660,
+                year: 2023,
                 month: 6,
                 day: 6,
                 // June 23 2023
                 expected: 738694,
             },
             TestCase {
-                year: 1,
+                year: -2636,
                 month: 1,
                 day: 1,
                 expected: -963099,
@@ -562,7 +565,7 @@ mod test {
             |chinese, _calendar_type| {
                 let chinese = iso.to_calendar(chinese);
 
-                assert_eq!(chinese.year().era_year_or_extended(), 1);
+                assert_eq!(chinese.year().era_year_or_extended(), -2636);
                 assert_eq!(chinese.month().ordinal, 1);
                 assert_eq!(chinese.month().standard_code.0, "M01");
                 assert_eq!(chinese.day_of_month().0, 1);
@@ -589,7 +592,7 @@ mod test {
                 iso_year: -2636,
                 iso_month: 2,
                 iso_day: 14,
-                expected_year: 0,
+                expected_year: -2637,
                 expected_month: 13,
                 expected_day: 30,
             },
@@ -597,7 +600,7 @@ mod test {
                 iso_year: -2636,
                 iso_month: 1,
                 iso_day: 15,
-                expected_year: 0,
+                expected_year: -2637,
                 expected_month: 12,
                 expected_day: 30,
             },
@@ -674,10 +677,9 @@ mod test {
 
     #[test]
     fn test_month_days() {
-        let year = 4660;
         let year =
             ChineseBasedPrecomputedData::<<Chinese as ChineseBasedWithDataLoading>::CB>::default()
-                .load_or_compute_info(year);
+                .load_or_compute_info(ChineseCB::extended_from_iso(2023));
         let cases = [
             (1, 29),
             (2, 30),
@@ -831,7 +833,7 @@ mod test {
         // construct using ::default() to force recomputation
         let year =
             ChineseBasedPrecomputedData::<<Chinese as ChineseBasedWithDataLoading>::CB>::default()
-                .load_or_compute_info(4660);
+                .load_or_compute_info(ChineseCB::extended_from_iso(2023));
         let codes = [
             (1, tinystr!(4, "M01")),
             (2, tinystr!(4, "M02")),

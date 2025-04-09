@@ -9,10 +9,10 @@
 //! use icu::calendar::Date;
 //!
 //! let dangi = Dangi::new();
-//! let dangi_date = Date::try_new_dangi_with_calendar(4356, 6, 6, dangi)
+//! let dangi_date = Date::try_new_dangi_with_calendar(2023, 6, 6, dangi)
 //!     .expect("Failed to initialize Dangi Date instance.");
 //!
-//! assert_eq!(dangi_date.year().era_year_or_extended(), 4356);
+//! assert_eq!(dangi_date.year().era_year_or_extended(), 2023);
 //! assert_eq!(dangi_date.year().cyclic().unwrap().get(), 40);
 //! assert_eq!(dangi_date.month().ordinal, 6);
 //! assert_eq!(dangi_date.day_of_month().0, 6);
@@ -29,6 +29,7 @@ use crate::error::DateError;
 use crate::provider::chinese_based::CalendarDangiV1;
 use crate::AsCalendar;
 use crate::{cal::chinese_based::ChineseBasedDateInner, types, Calendar, Date};
+use calendrical_calculations::chinese_based::ChineseBased;
 use calendrical_calculations::rata_die::RataDie;
 use core::cmp::Ordering;
 use core::num::NonZeroU8;
@@ -164,7 +165,9 @@ impl Calendar for Dangi {
         month_code: crate::types::MonthCode,
         day: u8,
     ) -> Result<Self::DateInner, DateError> {
-        let year = self.get_precomputed_data().load_or_compute_info(year);
+        let year = self
+            .get_precomputed_data()
+            .load_or_compute_info(DangiCB::extended_from_iso(year));
 
         let Some(month) = chinese_based_ordinal_lunar_month_from_code(month_code, year) else {
             return Err(DateError::UnknownMonthCode(month_code));
@@ -277,10 +280,10 @@ impl<A: AsCalendar<Calendar = Dangi>> Date<A> {
     ///
     /// let dangi = Dangi::new();
     ///
-    /// let date_dangi = Date::try_new_dangi_with_calendar(4356, 6, 18, dangi)
+    /// let date_dangi = Date::try_new_dangi_with_calendar(2023, 6, 18, dangi)
     ///     .expect("Failed to initialize Dangi Date instance.");
     ///
-    /// assert_eq!(date_dangi.year().era_year_or_extended(), 4356);
+    /// assert_eq!(date_dangi.year().era_year_or_extended(), 2023);
     /// assert_eq!(date_dangi.year().cyclic().unwrap().get(), 40);
     /// assert_eq!(date_dangi.month().ordinal, 6);
     /// assert_eq!(date_dangi.day_of_month().0, 18);
@@ -294,7 +297,7 @@ impl<A: AsCalendar<Calendar = Dangi>> Date<A> {
         let year = calendar
             .as_calendar()
             .get_precomputed_data()
-            .load_or_compute_info(year);
+            .load_or_compute_info(DangiCB::extended_from_iso(year));
         let arithmetic = Inner::new_from_ordinals(year, month, day);
         Ok(Date::from_raw(
             DangiDateInner(ChineseBasedDateInner(arithmetic?)),

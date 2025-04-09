@@ -4,18 +4,6 @@
 
 //! This module contains types and traits for use in the Chinese traditional lunar calendar,
 //! as well as in related and derived calendars such as the Korean and Vietnamese lunar calendars.
-//!
-//! ```rust
-//! use icu::calendar::{cal::Chinese, Date, Iso};
-//!
-//! let iso_date = Date::try_new_iso(2023, 6, 23).unwrap();
-//! let chinese_date = Date::new_from_iso(iso_date, Chinese::new());
-//!
-//! assert_eq!(chinese_date.year().era_year_or_extended(), 4660);
-//! assert_eq!(chinese_date.year().cyclic().unwrap().get(), 40);
-//! assert_eq!(chinese_date.month().ordinal, 6);
-//! assert_eq!(chinese_date.day_of_month().0, 6);
-//! ```
 
 use crate::{
     calendar_arithmetic::{ArithmeticDate, CalendarArithmetic, PrecomputedDataSource},
