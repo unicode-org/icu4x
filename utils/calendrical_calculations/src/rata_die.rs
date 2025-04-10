@@ -16,13 +16,17 @@ use core_maths::*;
 ///
 /// See: <https://en.wikipedia.org/wiki/Rata_Die>
 ///
-/// It is a logic error to construct a RataDie
-/// except from a date that is in range of one of the official calendars.
+/// Typically, one should obtain RataDies from other calendrical code, rather than constructing them from integers.
+/// The valid range for direct construction is deliberately not documented as it may change.
 #[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct RataDie(i64);
 
 impl RataDie {
-    /// Create a RataDie
+    /// Create a `RataDie`
+    ///
+    /// Typically, one should obtain `RataDie`s from other calendrical code, rather than
+    /// constructing them from integers. The valid range for direct construction is
+    /// deliberately not documented as it may change.
     pub const fn new(fixed_date: i64) -> Self {
         let result = Self(fixed_date);
         #[cfg(debug_assertions)]
@@ -32,7 +36,7 @@ impl RataDie {
 
     /// Check that it is in range
     #[cfg(debug_assertions)]
-    const fn check(&self) {
+    const fn check(self) {
         if self.0 > i64::MAX / 256 {
             debug_assert!(
                 false,
@@ -47,34 +51,34 @@ impl RataDie {
         }
     }
 
-    /// A valid RataDie that is intended to be below all dates representable in calendars
-    #[allow(dead_code)]
-    pub(crate) const fn big_negative() -> Self {
+    /// A valid `RataDie` that is intended to be below all dates representable in calendars
+    #[doc(hidden)]
+    pub const fn big_negative() -> Self {
         Self::new(i64::MIN / 256 / 256)
     }
 
-    /// Convert this to an i64 value representing the RataDie
+    /// Convert this to an `i64` value representing the `RataDie`
     pub const fn to_i64_date(self) -> i64 {
         self.0
     }
 
-    /// Convert this to an f64 value representing the RataDie
+    /// Convert this to an `f64` value representing the `RataDie`
     pub(crate) const fn to_f64_date(self) -> f64 {
         self.0 as f64
     }
 
-    /// Calculate the number of days between two RataDie in a const-friendly way
+    /// Calculate the number of days between two `RataDie` in a const-friendly way
     pub const fn const_diff(self, rhs: Self) -> i64 {
         self.0 - rhs.0
     }
 
-    /// Adds a number of days to this RataDie in a const-friendly way
+    /// Adds a number of days to this `RataDie` in a const-friendly way
     pub const fn const_add(self, rhs: i64) -> Self {
         Self(self.0 + rhs)
     }
 
     /// Convert this to a [`Moment`]
-    pub(crate) const fn as_moment(&self) -> Moment {
+    pub(crate) const fn as_moment(self) -> Moment {
         Moment::new(self.0 as f64)
     }
 }
@@ -186,12 +190,12 @@ impl Moment {
     }
 
     /// Get the inner field of a Moment
-    pub const fn inner(&self) -> f64 {
+    pub const fn inner(self) -> f64 {
         self.0
     }
 
     /// Get the RataDie of a Moment
-    pub fn as_rata_die(&self) -> RataDie {
+    pub fn as_rata_die(self) -> RataDie {
         RataDie::new(self.0.floor() as i64)
     }
 }
