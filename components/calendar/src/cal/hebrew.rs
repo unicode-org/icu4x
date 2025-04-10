@@ -10,7 +10,7 @@
 //! let hebrew_date = Date::try_new_hebrew(3425, 10, 11)
 //!     .expect("Failed to initialize hebrew Date instance.");
 //!
-//! assert_eq!(hebrew_date.era_year().era_year, 3425);
+//! assert_eq!(hebrew_date.era_year().year, 3425);
 //! assert_eq!(hebrew_date.month().ordinal, 10);
 //! assert_eq!(hebrew_date.day_of_month().0, 11);
 //! ```
@@ -263,7 +263,7 @@ impl Calendar for Hebrew {
         types::EraYear {
             formatting_era: types::FormattingEra::Index(0, tinystr!(16, "AM")),
             standard_era: tinystr!(16, "am").into(),
-            era_year: self.extended_year(date),
+            year: self.extended_year(date),
             ambiguity: types::YearAmbiguity::CenturyRequired,
         }
     }
@@ -350,7 +350,7 @@ impl Date<Hebrew> {
     /// let date_hebrew = Date::try_new_hebrew(3425, 4, 25)
     ///     .expect("Failed to initialize Hebrew Date instance.");
     ///
-    /// assert_eq!(date_hebrew.era_year().era_year, 3425);
+    /// assert_eq!(date_hebrew.era_year().year, 3425);
     /// assert_eq!(date_hebrew.month().ordinal, 4);
     /// assert_eq!(date_hebrew.day_of_month().0, 25);
     /// ```
@@ -491,13 +491,13 @@ mod tests {
         assert_eq!(greg_date.inner.0 .0.year, -5000);
         assert_eq!(greg_year.standard_era.0, "bce");
         // In Gregorian, era year is 1 - extended year
-        assert_eq!(greg_year.era_year, 5001);
+        assert_eq!(greg_year.year, 5001);
         let hebr_date = greg_date.to_calendar(Hebrew);
         let hebr_year = hebr_date.era_year();
         assert_eq!(hebr_date.inner.0.year.value, -1240);
         assert_eq!(hebr_year.standard_era.0, "am");
         // In Hebrew, there is no inverse era, so negative extended years are negative era years
-        assert_eq!(hebr_year.era_year, -1240);
+        assert_eq!(hebr_year.year, -1240);
     }
 
     #[test]

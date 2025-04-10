@@ -11,7 +11,7 @@
 //!     .expect("Failed to initialize ISO Date instance.");
 //! let date_ethiopian = Date::new_from_iso(date_iso, Ethiopian::new());
 //!
-//! assert_eq!(date_ethiopian.era_year().era_year, 1962);
+//! assert_eq!(date_ethiopian.era_year().year, 1962);
 //! assert_eq!(date_ethiopian.month().ordinal, 4);
 //! assert_eq!(date_ethiopian.day_of_month().0, 24);
 //! ```
@@ -201,14 +201,14 @@ impl Calendar for Ethiopian {
             types::EraYear {
                 standard_era: tinystr!(16, "aa").into(),
                 formatting_era: types::FormattingEra::Index(0, tinystr!(16, "AA")),
-                era_year: year,
+                year,
                 ambiguity: types::YearAmbiguity::CenturyRequired,
             }
         } else {
             types::EraYear {
                 standard_era: tinystr!(16, "am").into(),
                 formatting_era: types::FormattingEra::Index(1, tinystr!(16, "AM")),
-                era_year: year - INCARNATION_OFFSET,
+                year: year - INCARNATION_OFFSET,
                 ambiguity: types::YearAmbiguity::CenturyRequired,
             }
         }
@@ -279,7 +279,7 @@ impl Date<Ethiopian> {
     ///     Date::try_new_ethiopian(EthiopianEraStyle::AmeteMihret, 2014, 8, 25)
     ///         .expect("Failed to initialize Ethopic Date instance.");
     ///
-    /// assert_eq!(date_ethiopian.era_year().era_year, 2014);
+    /// assert_eq!(date_ethiopian.era_year().year, 2014);
     /// assert_eq!(date_ethiopian.month().ordinal, 8);
     /// assert_eq!(date_ethiopian.day_of_month().0, 25);
     /// ```

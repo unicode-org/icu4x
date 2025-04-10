@@ -11,7 +11,7 @@
 //!     .expect("Failed to initialize ISO Date instance.");
 //! let date_coptic = Date::new_from_iso(date_iso, Coptic);
 //!
-//! assert_eq!(date_coptic.era_year().era_year, 1686);
+//! assert_eq!(date_coptic.era_year().year, 1686);
 //! assert_eq!(date_coptic.month().ordinal, 4);
 //! assert_eq!(date_coptic.day_of_month().0, 24);
 //! ```
@@ -167,14 +167,14 @@ impl Calendar for Coptic {
             types::EraYear {
                 standard_era: tinystr!(16, "am").into(),
                 formatting_era: types::FormattingEra::Index(1, tinystr!(16, "AM")),
-                era_year: year,
+                year,
                 ambiguity: types::YearAmbiguity::CenturyRequired,
             }
         } else {
             types::EraYear {
                 standard_era: tinystr!(16, "bd").into(),
                 formatting_era: types::FormattingEra::Index(0, tinystr!(16, "BD")),
-                era_year: 1 - year,
+                year: 1 - year,
                 ambiguity: types::YearAmbiguity::EraAndCenturyRequired,
             }
         }
@@ -220,7 +220,7 @@ impl Date<Coptic> {
     /// let date_coptic = Date::try_new_coptic(1686, 5, 6)
     ///     .expect("Failed to initialize Coptic Date instance.");
     ///
-    /// assert_eq!(date_coptic.era_year().era_year, 1686);
+    /// assert_eq!(date_coptic.era_year().year, 1686);
     /// assert_eq!(date_coptic.month().ordinal, 5);
     /// assert_eq!(date_coptic.day_of_month().0, 6);
     /// ```

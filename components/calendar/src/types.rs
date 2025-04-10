@@ -61,7 +61,7 @@ impl YearInfo {
     /// Gets the era year for era calendars, and the related ISO year for cyclic calendars.
     pub fn era_year_or_related_iso(self) -> i32 {
         match self {
-            YearInfo::Era(e) => e.era_year,
+            YearInfo::Era(e) => e.year,
             YearInfo::Cyclic(c) => c.related_iso,
         }
     }
@@ -148,7 +148,7 @@ pub struct EraYear {
     /// <https://tc39.es/proposal-intl-era-monthcode/#table-eras>
     pub standard_era: Era,
     /// The numeric year in that era
-    pub era_year: i32,
+    pub year: i32,
     /// The ambiguity when formatting this year
     pub ambiguity: YearAmbiguity,
 }

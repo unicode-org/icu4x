@@ -11,7 +11,7 @@
 //!     .expect("Failed to initialize ISO Date instance.");
 //! let date_roc = Date::new_from_iso(date_iso, Roc);
 //!
-//! assert_eq!(date_roc.era_year().era_year, 59);
+//! assert_eq!(date_roc.era_year().year, 59);
 //! assert_eq!(date_roc.month().ordinal, 1);
 //! assert_eq!(date_roc.day_of_month().0, 2);
 //! ```
@@ -130,14 +130,14 @@ impl Calendar for Roc {
             types::EraYear {
                 standard_era: tinystr!(16, "minguo").into(),
                 formatting_era: types::FormattingEra::Index(1, tinystr!(16, "min guo")),
-                era_year: extended_year.saturating_sub(ROC_ERA_OFFSET),
+                year: extended_year.saturating_sub(ROC_ERA_OFFSET),
                 ambiguity: types::YearAmbiguity::CenturyRequired,
             }
         } else {
             types::EraYear {
                 standard_era: tinystr!(16, "minguo-qian").into(),
                 formatting_era: types::FormattingEra::Index(0, tinystr!(16, "min guo qian")),
-                era_year: (ROC_ERA_OFFSET + 1).saturating_sub(extended_year),
+                year: (ROC_ERA_OFFSET + 1).saturating_sub(extended_year),
                 ambiguity: types::YearAmbiguity::EraAndCenturyRequired,
             }
         }
@@ -185,14 +185,14 @@ impl Date<Roc> {
     ///     .expect("Failed to initialize ROC Date instance.");
     ///
     /// assert_eq!(date_roc.era_year().standard_era.0, tinystr!(16, "minguo"));
-    /// assert_eq!(date_roc.era_year().era_year, 1, "ROC year check failed!");
+    /// assert_eq!(date_roc.era_year().year, 1, "ROC year check failed!");
     /// assert_eq!(date_roc.month().ordinal, 2, "ROC month check failed!");
     /// assert_eq!(date_roc.day_of_month().0, 3, "ROC day of month check failed!");
     ///
     /// // Convert to an equivalent Gregorian date
     /// let date_gregorian = date_roc.to_calendar(Gregorian);
     ///
-    /// assert_eq!(date_gregorian.era_year().era_year, 1912, "Gregorian from ROC year check failed!");
+    /// assert_eq!(date_gregorian.era_year().year, 1912, "Gregorian from ROC year check failed!");
     /// assert_eq!(date_gregorian.month().ordinal, 2, "Gregorian from ROC month check failed!");
     /// assert_eq!(date_gregorian.day_of_month().0, 3, "Gregorian from ROC day of month check failed!");
     pub fn try_new_roc(year: i32, month: u8, day: u8) -> Result<Date<Roc>, RangeError> {
@@ -224,7 +224,7 @@ mod test {
         let iso_from_rd = Date::from_rata_die(case.rd, Iso);
         let roc_from_rd = Date::from_rata_die(case.rd, Roc);
         assert_eq!(
-            roc_from_rd.era_year().era_year,
+            roc_from_rd.era_year().year,
             case.expected_year,
             "Failed year check from RD: {case:?}\nISO: {iso_from_rd:?}\nROC: {roc_from_rd:?}"
         );

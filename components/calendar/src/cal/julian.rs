@@ -11,7 +11,7 @@
 //!     .expect("Failed to initialize ISO Date instance.");
 //! let date_julian = Date::new_from_iso(date_iso, Julian);
 //!
-//! assert_eq!(date_julian.era_year().era_year, 1969);
+//! assert_eq!(date_julian.era_year().year, 1969);
 //! assert_eq!(date_julian.month().ordinal, 12);
 //! assert_eq!(date_julian.day_of_month().0, 20);
 //! ```
@@ -161,14 +161,14 @@ impl Calendar for Julian {
             types::EraYear {
                 standard_era: tinystr!(16, "ad").into(),
                 formatting_era: types::FormattingEra::Index(1, tinystr!(16, "AD")),
-                era_year: extended_year,
+                year: extended_year,
                 ambiguity: types::YearAmbiguity::CenturyRequired,
             }
         } else {
             types::EraYear {
                 standard_era: tinystr!(16, "bc").into(),
                 formatting_era: types::FormattingEra::Index(0, tinystr!(16, "BC")),
-                era_year: 1_i32.saturating_sub(extended_year),
+                year: 1_i32.saturating_sub(extended_year),
                 ambiguity: types::YearAmbiguity::EraAndCenturyRequired,
             }
         }
@@ -223,7 +223,7 @@ impl Date<Julian> {
     /// let date_julian = Date::try_new_julian(1969, 12, 20)
     ///     .expect("Failed to initialize Julian Date instance.");
     ///
-    /// assert_eq!(date_julian.era_year().era_year, 1969);
+    /// assert_eq!(date_julian.era_year().year, 1969);
     /// assert_eq!(date_julian.month().ordinal, 12);
     /// assert_eq!(date_julian.day_of_month().0, 20);
     /// ```
@@ -425,7 +425,7 @@ mod test {
         for case in cases {
             let iso_from_rd = Date::from_rata_die(RataDie::new(case.rd), crate::Iso);
             let julian_from_rd = Date::from_rata_die(RataDie::new(case.rd), Julian);
-            assert_eq!(julian_from_rd.era_year().era_year, case.expected_year,
+            assert_eq!(julian_from_rd.era_year().year, case.expected_year,
                 "Failed year check from RD: {case:?}\nISO: {iso_from_rd:?}\nJulian: {julian_from_rd:?}");
             assert_eq!(julian_from_rd.era_year().standard_era, case.expected_era,
                 "Failed era check from RD: {case:?}\nISO: {iso_from_rd:?}\nJulian: {julian_from_rd:?}");

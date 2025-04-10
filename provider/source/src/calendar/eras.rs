@@ -548,7 +548,7 @@ fn test_calendar_eras() {
             // }
 
             // Check that the start/end date uses year 1, and minimal/maximal month/day
-            assert_eq!(era_year.era_year, 1);
+            assert_eq!(era_year.year, 1);
             if calendar == "japanese" {
                 // Japanese is the only calendar that doesn't have its own months
             } else if era.start.is_some() {

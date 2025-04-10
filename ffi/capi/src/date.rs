@@ -324,7 +324,7 @@ pub mod ffi {
         ///
         /// For calendars without an era, returns the related ISO year.
         #[diplomat::rust_link(icu::calendar::types::YearInfo::era_year_or_related_iso, FnInEnum)]
-        #[diplomat::rust_link(icu::calendar::types::EraYear::era_year, StructField, compact)]
+        #[diplomat::rust_link(icu::calendar::types::EraYear::year, StructField, compact)]
         #[diplomat::rust_link(icu::calendar::types::CyclicYear::related_iso, StructField, compact)]
         #[diplomat::rust_link(icu::calendar::Date::year, FnInStruct, compact)]
         #[diplomat::rust_link(icu::calendar::Date::era_year, FnInStruct, hidden)]

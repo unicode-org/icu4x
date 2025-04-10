@@ -178,7 +178,7 @@ final class Date implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `era_year_or_related_iso`](https://docs.rs/icu/latest/icu/calendar/types/enum.YearInfo.html#method.era_year_or_related_iso) for more information.
   ///
-  /// Additional information: [1](https://docs.rs/icu/latest/icu/calendar/types/struct.EraYear.html#structfield.era_year), [2](https://docs.rs/icu/latest/icu/calendar/types/struct.CyclicYear.html#structfield.related_iso), [3](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.year)
+  /// Additional information: [1](https://docs.rs/icu/latest/icu/calendar/types/struct.EraYear.html#structfield.year), [2](https://docs.rs/icu/latest/icu/calendar/types/struct.CyclicYear.html#structfield.related_iso), [3](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.year)
   int get eraYearOrRelatedIso {
     final result = _icu4x_Date_era_year_or_related_iso_mv1(_ffi);
     return result;

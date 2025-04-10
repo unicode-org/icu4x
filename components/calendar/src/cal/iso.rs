@@ -10,7 +10,7 @@
 //! let date_iso = Date::try_new_iso(1970, 1, 2)
 //!     .expect("Failed to initialize ISO Date instance.");
 //!
-//! assert_eq!(date_iso.era_year().era_year, 1970);
+//! assert_eq!(date_iso.era_year().year, 1970);
 //! assert_eq!(date_iso.month().ordinal, 1);
 //! assert_eq!(date_iso.day_of_month().0, 2);
 //! ```
@@ -147,7 +147,7 @@ impl Calendar for Iso {
         types::EraYear {
             formatting_era: types::FormattingEra::Index(0, tinystr!(16, "")),
             standard_era: tinystr!(16, "default").into(),
-            era_year: self.extended_year(date),
+            year: self.extended_year(date),
             ambiguity: types::YearAmbiguity::Unambiguous,
         }
     }
@@ -192,7 +192,7 @@ impl Date<Iso> {
     /// let date_iso = Date::try_new_iso(1970, 1, 2)
     ///     .expect("Failed to initialize ISO Date instance.");
     ///
-    /// assert_eq!(date_iso.era_year().era_year, 1970);
+    /// assert_eq!(date_iso.era_year().year, 1970);
     /// assert_eq!(date_iso.month().ordinal, 1);
     /// assert_eq!(date_iso.day_of_month().0, 2);
     /// ```
@@ -400,7 +400,7 @@ mod test {
                 .year()
                 .era()
                 .unwrap()
-                .era_year,
+                .year,
             i32::MIN
         );
     }

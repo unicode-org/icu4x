@@ -11,7 +11,7 @@
 //!     .expect("Failed to initialize ISO Date instance.");
 //! let date_buddhist = Date::new_from_iso(date_iso, Buddhist);
 //!
-//! assert_eq!(date_buddhist.era_year().era_year, 2513);
+//! assert_eq!(date_buddhist.era_year().year, 2513);
 //! assert_eq!(date_buddhist.month().ordinal, 1);
 //! assert_eq!(date_buddhist.day_of_month().0, 2);
 //! ```
@@ -120,7 +120,7 @@ impl Calendar for Buddhist {
         types::EraYear {
             standard_era: tinystr!(16, "be").into(),
             formatting_era: types::FormattingEra::Index(0, tinystr!(16, "BE")),
-            era_year: self.extended_year(date),
+            year: self.extended_year(date),
             ambiguity: types::YearAmbiguity::CenturyRequired,
         }
     }
@@ -168,7 +168,7 @@ impl Date<Buddhist> {
     /// let date_buddhist = Date::try_new_buddhist(1970, 1, 2)
     ///     .expect("Failed to initialize Buddhist Date instance.");
     ///
-    /// assert_eq!(date_buddhist.era_year().era_year, 1970);
+    /// assert_eq!(date_buddhist.era_year().year, 1970);
     /// assert_eq!(date_buddhist.month().ordinal, 1);
     /// assert_eq!(date_buddhist.day_of_month().0, 2);
     /// ```
@@ -281,7 +281,7 @@ mod test {
         let iso1 = Date::try_new_iso(iso_year, iso_month, iso_day).unwrap();
         let buddhist1 = iso1.to_calendar(Buddhist);
         assert_eq!(
-            buddhist1.era_year().era_year,
+            buddhist1.era_year().year,
             buddhist_year,
             "Iso -> Buddhist year check failed for case: {case:?}"
         );
@@ -300,7 +300,7 @@ mod test {
             Date::try_new_buddhist(buddhist_year, buddhist_month, buddhist_day).unwrap();
         let iso2 = buddhist2.to_calendar(Iso);
         assert_eq!(
-            iso2.era_year().era_year,
+            iso2.era_year().year,
             iso_year,
             "Buddhist -> Iso year check failed for case: {case:?}"
         );
