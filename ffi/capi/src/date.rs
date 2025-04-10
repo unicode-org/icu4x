@@ -347,12 +347,12 @@ pub mod ffi {
         }
 
         /// Returns the era for this date, or an empty string
-        #[diplomat::rust_link(icu::calendar::types::EraYear::standard_era, StructField)]
+        #[diplomat::rust_link(icu::calendar::types::EraYear::era, StructField)]
         #[diplomat::rust_link(icu::calendar::Date::year, FnInStruct, compact)]
         #[diplomat::attr(auto, getter)]
         pub fn era(&self, write: &mut diplomat_runtime::DiplomatWrite) {
             if let Some(era) = self.0.year().era() {
-                let _infallible = write.write_str(&era.standard_era.0);
+                let _infallible = write.write_str(&era.era);
             }
         }
 

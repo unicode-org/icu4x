@@ -455,7 +455,6 @@ pub fn japanese_and_japanext_are_compatible() {
 
 #[test]
 fn test_calendar_eras() {
-    use icu::calendar::types::FormattingEra;
     use icu::calendar::Iso;
     use icu::calendar::{AnyCalendar, AnyCalendarKind, Date};
     use icu::datetime::preferences::CalendarAlgorithm;
@@ -531,20 +530,17 @@ fn test_calendar_eras() {
             // Unless this is the first era and it's not an inverse era, check that the
             // not_in_era date is in a different era
             if idx != "0" || era.end.is_some() {
-                assert_ne!(
-                    not_in_era.year().era().unwrap().standard_era,
-                    era_year.standard_era
-                );
+                assert_ne!(not_in_era.year().era().unwrap().era, era_year.era);
             }
 
-            if let FormattingEra::Index(i, _) = era_year.formatting_era {
+            if let Some(i) = era_year.era_ordinal {
                 assert_eq!(i.to_string(), idx);
             }
 
             // TODO: reenable with CLDR-48
             // // Check that the correct era code is returned
             // if let Some(code) = era.code.as_deref() {
-            //     assert_eq!(era_year.standard_era.0, code);
+            //     assert_eq!(era_year.era, code);
             // }
 
             // Check that the start/end date uses year 1, and minimal/maximal month/day

@@ -159,8 +159,8 @@ impl Calendar for Persian {
 
     fn year_info(&self, date: &Self::DateInner) -> Self::Year {
         types::EraYear {
-            standard_era: tinystr!(16, "ap").into(),
-            formatting_era: types::FormattingEra::Index(0, tinystr!(16, "AP")),
+            era: tinystr!(16, "ap"),
+            era_ordinal: Some(0),
             year: self.extended_year(date),
             ambiguity: types::YearAmbiguity::CenturyRequired,
         }

@@ -128,15 +128,15 @@ impl Calendar for Roc {
         let extended_year = self.extended_year(date);
         if extended_year > ROC_ERA_OFFSET {
             types::EraYear {
-                standard_era: tinystr!(16, "minguo").into(),
-                formatting_era: types::FormattingEra::Index(1, tinystr!(16, "min guo")),
+                era: tinystr!(16, "minguo"),
+                era_ordinal: Some(1),
                 year: extended_year.saturating_sub(ROC_ERA_OFFSET),
                 ambiguity: types::YearAmbiguity::CenturyRequired,
             }
         } else {
             types::EraYear {
-                standard_era: tinystr!(16, "minguo-qian").into(),
-                formatting_era: types::FormattingEra::Index(0, tinystr!(16, "min guo qian")),
+                era: tinystr!(16, "minguo-qian"),
+                era_ordinal: Some(0),
                 year: (ROC_ERA_OFFSET + 1).saturating_sub(extended_year),
                 ambiguity: types::YearAmbiguity::EraAndCenturyRequired,
             }
@@ -184,7 +184,7 @@ impl Date<Roc> {
     /// let date_roc = Date::try_new_roc(1, 2, 3)
     ///     .expect("Failed to initialize ROC Date instance.");
     ///
-    /// assert_eq!(date_roc.era_year().standard_era.0, tinystr!(16, "minguo"));
+    /// assert_eq!(date_roc.era_year().era, tinystr!(16, "minguo"));
     /// assert_eq!(date_roc.era_year().year, 1, "ROC year check failed!");
     /// assert_eq!(date_roc.month().ordinal, 2, "ROC month check failed!");
     /// assert_eq!(date_roc.day_of_month().0, 3, "ROC day of month check failed!");
@@ -205,7 +205,6 @@ impl Date<Roc> {
 mod test {
 
     use super::*;
-    use crate::types::Era;
     use calendrical_calculations::rata_die::RataDie;
 
     #[derive(Debug)]
@@ -215,7 +214,7 @@ mod test {
         iso_month: u8,
         iso_day: u8,
         expected_year: i32,
-        expected_era: Era,
+        expected_era: &'static str,
         expected_month: u8,
         expected_day: u8,
     }
@@ -229,7 +228,7 @@ mod test {
             "Failed year check from RD: {case:?}\nISO: {iso_from_rd:?}\nROC: {roc_from_rd:?}"
         );
         assert_eq!(
-            roc_from_rd.era_year().standard_era,
+            roc_from_rd.era_year().era,
             case.expected_era,
             "Failed era check from RD: {case:?}\nISO: {iso_from_rd:?}\nROC: {roc_from_rd:?}"
         );
@@ -264,7 +263,7 @@ mod test {
                 iso_month: 1,
                 iso_day: 1,
                 expected_year: 1,
-                expected_era: Era(tinystr!(16, "minguo")),
+                expected_era: "minguo",
                 expected_month: 1,
                 expected_day: 1,
             },
@@ -274,7 +273,7 @@ mod test {
                 iso_month: 2,
                 iso_day: 29,
                 expected_year: 1,
-                expected_era: Era(tinystr!(16, "minguo")),
+                expected_era: "minguo",
                 expected_month: 2,
                 expected_day: 29,
             },
@@ -284,7 +283,7 @@ mod test {
                 iso_month: 6,
                 iso_day: 30,
                 expected_year: 2,
-                expected_era: Era(tinystr!(16, "minguo")),
+                expected_era: "minguo",
                 expected_month: 6,
                 expected_day: 30,
             },
@@ -294,7 +293,7 @@ mod test {
                 iso_month: 7,
                 iso_day: 13,
                 expected_year: 112,
-                expected_era: Era(tinystr!(16, "minguo")),
+                expected_era: "minguo",
                 expected_month: 7,
                 expected_day: 13,
             },
@@ -318,7 +317,7 @@ mod test {
                 iso_month: 12,
                 iso_day: 31,
                 expected_year: 1,
-                expected_era: Era(tinystr!(16, "minguo-qian")),
+                expected_era: "minguo-qian",
                 expected_month: 12,
                 expected_day: 31,
             },
@@ -328,7 +327,7 @@ mod test {
                 iso_month: 1,
                 iso_day: 1,
                 expected_year: 1,
-                expected_era: Era(tinystr!(16, "minguo-qian")),
+                expected_era: "minguo-qian",
                 expected_month: 1,
                 expected_day: 1,
             },
@@ -338,7 +337,7 @@ mod test {
                 iso_month: 12,
                 iso_day: 31,
                 expected_year: 2,
-                expected_era: Era(tinystr!(16, "minguo-qian")),
+                expected_era: "minguo-qian",
                 expected_month: 12,
                 expected_day: 31,
             },
@@ -348,7 +347,7 @@ mod test {
                 iso_month: 2,
                 iso_day: 29,
                 expected_year: 4,
-                expected_era: Era(tinystr!(16, "minguo-qian")),
+                expected_era: "minguo-qian",
                 expected_month: 2,
                 expected_day: 29,
             },
@@ -358,7 +357,7 @@ mod test {
                 iso_month: 1,
                 iso_day: 1,
                 expected_year: 1911,
-                expected_era: Era(tinystr!(16, "minguo-qian")),
+                expected_era: "minguo-qian",
                 expected_month: 1,
                 expected_day: 1,
             },
@@ -368,7 +367,7 @@ mod test {
                 iso_month: 12,
                 iso_day: 31,
                 expected_year: 1912,
-                expected_era: Era(tinystr!(16, "minguo-qian")),
+                expected_era: "minguo-qian",
                 expected_month: 12,
                 expected_day: 31,
             },

@@ -20,8 +20,7 @@ use crate::{scaffold::*, DateTimeFormatter, DateTimeFormatterLoadError};
 use core::fmt;
 use core::marker::PhantomData;
 use core::num::NonZeroU8;
-use icu_calendar::types::FormattingEra;
-use icu_calendar::types::MonthCode;
+use icu_calendar::types::{EraYear, MonthCode};
 use icu_calendar::AnyCalendar;
 use icu_decimal::options::DecimalFormatterOptions;
 use icu_decimal::options::GroupingStrategy;
@@ -457,7 +456,7 @@ size_test!(
 /// // Missing data is filled in on a best-effort basis, and an error is signaled.
 /// assert_try_writeable_parts_eq!(
 ///     names.with_pattern_unchecked(&pattern).format(&dtz),
-///     "It is: mon M11 20 2023 CE at 11:35:03.000 AM +0000",
+///     "It is: mon M11 20 2023 ce at 11:35:03.000 AM +0000",
 ///     Err(DateTimeWriteError::NamesNotLoaded(Field { symbol: FieldSymbol::Weekday(Weekday::Format), length: FieldLength::One }.into())),
 ///     [
 ///         (7, 10, Part::ERROR), // mon
@@ -3569,7 +3568,7 @@ impl RawDateTimeNamesBorrowed<'_> {
     pub(crate) fn get_name_for_era(
         &self,
         field_length: FieldLength,
-        era: FormattingEra,
+        era_year: EraYear,
     ) -> Result<&str, GetNameForEraError> {
         let year_name_length = YearNameLength::from_field_length(field_length)
             .ok_or(GetNameForEraError::InvalidFieldLength)?;
@@ -3578,13 +3577,16 @@ impl RawDateTimeNamesBorrowed<'_> {
             .get_with_variables(year_name_length)
             .ok_or(GetNameForEraError::NotLoaded)?;
 
-        match (year_names, era) {
-            (YearNames::VariableEras(era_names), FormattingEra::Code(era_code)) => {
-                crate::provider::neo::get_year_name_from_map(era_names, era_code.0.as_str().into())
-                    .ok_or(GetNameForEraError::InvalidEraCode)
+        match (year_names, era_year.era_ordinal) {
+            (YearNames::VariableEras(era_names), None) => {
+                crate::provider::neo::get_year_name_from_map(
+                    era_names,
+                    era_year.era.as_str().into(),
+                )
+                .ok_or(GetNameForEraError::InvalidEraCode)
             }
-            (YearNames::FixedEras(era_names), FormattingEra::Index(index, _fallback)) => era_names
-                .get(index.into())
+            (YearNames::FixedEras(era_names), Some(index)) => era_names
+                .get(index as usize)
                 .ok_or(GetNameForEraError::InvalidEraCode),
             _ => Err(GetNameForEraError::InvalidEraCode),
         }
