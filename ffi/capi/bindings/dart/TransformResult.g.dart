@@ -8,6 +8,7 @@ enum TransformResult {
   modified,
 
   unmodified;
+
 }
 
 // dart format on

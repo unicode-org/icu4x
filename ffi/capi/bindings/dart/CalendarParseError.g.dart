@@ -14,6 +14,7 @@ enum CalendarParseError {
   missingFields,
 
   unknownCalendar;
+
 }
 
 // dart format on

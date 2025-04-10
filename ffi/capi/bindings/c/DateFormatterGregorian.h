@@ -84,7 +84,6 @@ icu4x_DateFormatterGregorian_create_y_with_provider_mv1_result icu4x_DateFormatt
 
 void icu4x_DateFormatterGregorian_format_iso_mv1(const DateFormatterGregorian* self, const IsoDate* date, DiplomatWrite* write);
 
-
 void icu4x_DateFormatterGregorian_destroy_mv1(DateFormatterGregorian* self);
 
 

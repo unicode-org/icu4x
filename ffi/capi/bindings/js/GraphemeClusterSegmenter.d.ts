@@ -5,7 +5,7 @@ import type { GraphemeClusterBreakIteratorUtf16 } from "./GraphemeClusterBreakIt
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
-/** 
+/**
  * An ICU4X grapheme-cluster-break segmenter, capable of finding grapheme cluster breakpoints
  * in strings.
  *
@@ -14,17 +14,16 @@ import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
 export class GraphemeClusterSegmenter {
-    
     get ffiValue(): pointer;
 
-    /** 
+    /**
      * Construct an [`GraphemeClusterSegmenter`].
      *
      * See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/segmenter/struct.GraphemeClusterSegmenter.html#method.new) for more information.
      */
-    static createWithProvider(provider: DataProvider): GraphemeClusterSegmenter;
+        static createWithProvider(provider: DataProvider): GraphemeClusterSegmenter;
 
-    /** 
+    /**
      * Segments a string.
      *
      * Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
@@ -32,7 +31,7 @@ export class GraphemeClusterSegmenter {
      *
      * See the [Rust documentation for `segment_utf16`](https://docs.rs/icu/latest/icu/segmenter/struct.GraphemeClusterSegmenterBorrowed.html#method.segment_utf16) for more information.
      */
-    segment(input: string): GraphemeClusterBreakIteratorUtf16;
+        segment(input: string): GraphemeClusterBreakIteratorUtf16;
 
     constructor();
 }

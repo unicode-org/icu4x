@@ -2,19 +2,18 @@
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
-/** 
+/**
  * See the [Rust documentation for `YearStyle`](https://docs.rs/icu/latest/icu/datetime/enum.YearStyle.html) for more information.
  */
 
 
 export class YearStyle {
-    
 
-    static fromValue(value : YearStyle | string) : YearStyle; 
+    static fromValue(value : YearStyle | string) : YearStyle;
 
-    get value() : string;
+    get value(): string;
 
-    get ffiValue() : number;
+    get ffiValue(): number;
 
     static Auto : YearStyle;
     static Full : YearStyle;

@@ -19,5 +19,4 @@
 
 
 
-
 #endif // FixedDecimalLimitError_H

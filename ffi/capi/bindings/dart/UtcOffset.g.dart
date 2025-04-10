@@ -22,7 +22,6 @@ final class UtcOffset implements ffi.Finalizable {
   }
 
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_UtcOffset_destroy_mv1));
-
   /// Creates an offset from seconds.
   ///
   /// Errors if the offset seconds are out of range.
@@ -37,7 +36,6 @@ final class UtcOffset implements ffi.Finalizable {
     }
     return UtcOffset._fromFfi(result.union.ok, []);
   }
-
   /// Creates an offset from eighths of an hour.
   ///
   /// See the [Rust documentation for `from_eighths_of_hour`](https://docs.rs/icu/latest/icu/time/zone/struct.UtcOffset.html#method.from_eighths_of_hour) for more information.
@@ -47,7 +45,6 @@ final class UtcOffset implements ffi.Finalizable {
     final result = _icu4x_UtcOffset_from_eighths_of_hour_mv1(eighthsOfHour);
     return UtcOffset._fromFfi(result, []);
   }
-
   /// Creates an offset from a string.
   ///
   /// See the [Rust documentation for `try_from_str`](https://docs.rs/icu/latest/icu/time/zone/struct.UtcOffset.html#method.try_from_str) for more information.
@@ -63,7 +60,6 @@ final class UtcOffset implements ffi.Finalizable {
     }
     return UtcOffset._fromFfi(result.union.ok, []);
   }
-
   /// Gets the offset as eighths of an hour.
   ///
   /// See the [Rust documentation for `to_eighths_of_hour`](https://docs.rs/icu/latest/icu/time/zone/struct.UtcOffset.html#method.to_eighths_of_hour) for more information.
@@ -71,7 +67,6 @@ final class UtcOffset implements ffi.Finalizable {
     final result = _icu4x_UtcOffset_eighths_of_hour_mv1(_ffi);
     return result;
   }
-
   /// Returns the value as offset seconds.
   ///
   /// See the [Rust documentation for `offset`](https://docs.rs/icu/latest/icu/time/struct.TimeZoneInfo.html#method.offset) for more information.
@@ -83,7 +78,6 @@ final class UtcOffset implements ffi.Finalizable {
     final result = _icu4x_UtcOffset_seconds_mv1(_ffi);
     return result;
   }
-
   /// Returns whether the offset is positive.
   ///
   /// See the [Rust documentation for `is_non_negative`](https://docs.rs/icu/latest/icu/time/zone/struct.UtcOffset.html#method.is_non_negative) for more information.
@@ -93,7 +87,6 @@ final class UtcOffset implements ffi.Finalizable {
     final result = _icu4x_UtcOffset_is_non_negative_mv1(_ffi);
     return result;
   }
-
   /// Returns whether the offset is zero.
   ///
   /// See the [Rust documentation for `is_zero`](https://docs.rs/icu/latest/icu/time/zone/struct.UtcOffset.html#method.is_zero) for more information.
@@ -103,7 +96,6 @@ final class UtcOffset implements ffi.Finalizable {
     final result = _icu4x_UtcOffset_is_zero_mv1(_ffi);
     return result;
   }
-
   /// Returns the hours part of the offset.
   ///
   /// See the [Rust documentation for `hours_part`](https://docs.rs/icu/latest/icu/time/zone/struct.UtcOffset.html#method.hours_part) for more information.
@@ -113,7 +105,6 @@ final class UtcOffset implements ffi.Finalizable {
     final result = _icu4x_UtcOffset_hours_part_mv1(_ffi);
     return result;
   }
-
   /// Returns the minutes part of the offset.
   ///
   /// See the [Rust documentation for `minutes_part`](https://docs.rs/icu/latest/icu/time/zone/struct.UtcOffset.html#method.minutes_part) for more information.
@@ -123,7 +114,6 @@ final class UtcOffset implements ffi.Finalizable {
     final result = _icu4x_UtcOffset_minutes_part_mv1(_ffi);
     return result;
   }
-
   /// Returns the seconds part of the offset.
   ///
   /// See the [Rust documentation for `seconds_part`](https://docs.rs/icu/latest/icu/time/zone/struct.UtcOffset.html#method.seconds_part) for more information.
@@ -133,6 +123,7 @@ final class UtcOffset implements ffi.Finalizable {
     final result = _icu4x_UtcOffset_seconds_part_mv1(_ffi);
     return result;
   }
+
 }
 
 @_DiplomatFfiUse('icu4x_UtcOffset_destroy_mv1')

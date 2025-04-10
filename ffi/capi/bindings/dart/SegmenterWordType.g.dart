@@ -10,12 +10,12 @@ enum SegmenterWordType {
   number,
 
   letter;
-
   /// See the [Rust documentation for `is_word_like`](https://docs.rs/icu/latest/icu/segmenter/options/enum.WordType.html#method.is_word_like) for more information.
   bool get isWordLike {
     final result = _icu4x_SegmenterWordType_is_word_like_mv1(index);
     return result;
   }
+
 }
 
 @_DiplomatFfiUse('icu4x_SegmenterWordType_is_word_like_mv1')

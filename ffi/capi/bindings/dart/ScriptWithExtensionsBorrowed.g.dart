@@ -26,7 +26,6 @@ final class ScriptWithExtensionsBorrowed implements ffi.Finalizable {
   }
 
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_ScriptWithExtensionsBorrowed_destroy_mv1));
-
   /// Get the Script property value for a code point
   /// Get the Script property value for a code point
   ///
@@ -35,7 +34,6 @@ final class ScriptWithExtensionsBorrowed implements ffi.Finalizable {
     final result = _icu4x_ScriptWithExtensionsBorrowed_get_script_val_mv1(_ffi, ch);
     return result;
   }
-
   /// Get the Script property value for a code point
   ///
   /// See the [Rust documentation for `get_script_extensions_val`](https://docs.rs/icu/latest/icu/properties/script/struct.ScriptWithExtensionsBorrowed.html#method.get_script_extensions_val) for more information.
@@ -45,7 +43,6 @@ final class ScriptWithExtensionsBorrowed implements ffi.Finalizable {
     final result = _icu4x_ScriptWithExtensionsBorrowed_get_script_extensions_val_mv1(_ffi, ch);
     return ScriptExtensionsSet._fromFfi(result, [], aEdges);
   }
-
   /// Check if the Script_Extensions property of the given code point covers the given script
   ///
   /// See the [Rust documentation for `has_script`](https://docs.rs/icu/latest/icu/properties/script/struct.ScriptWithExtensionsBorrowed.html#method.has_script) for more information.
@@ -53,7 +50,6 @@ final class ScriptWithExtensionsBorrowed implements ffi.Finalizable {
     final result = _icu4x_ScriptWithExtensionsBorrowed_has_script_mv1(_ffi, ch, script);
     return result;
   }
-
   /// Build the CodePointSetData corresponding to a codepoints matching a particular script
   /// in their Script_Extensions
   ///
@@ -62,6 +58,7 @@ final class ScriptWithExtensionsBorrowed implements ffi.Finalizable {
     final result = _icu4x_ScriptWithExtensionsBorrowed_get_script_extensions_set_mv1(_ffi, script);
     return CodePointSetData._fromFfi(result, []);
   }
+
 }
 
 @_DiplomatFfiUse('icu4x_ScriptWithExtensionsBorrowed_destroy_mv1')

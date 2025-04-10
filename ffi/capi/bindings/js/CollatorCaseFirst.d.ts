@@ -2,19 +2,18 @@
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
-/** 
+/**
  * See the [Rust documentation for `CaseFirst`](https://docs.rs/icu/latest/icu/collator/options/enum.CaseFirst.html) for more information.
  */
 
 
 export class CollatorCaseFirst {
-    
 
-    static fromValue(value : CollatorCaseFirst | string) : CollatorCaseFirst; 
+    static fromValue(value : CollatorCaseFirst | string) : CollatorCaseFirst;
 
-    get value() : string;
+    get value(): string;
 
-    get ffiValue() : number;
+    get ffiValue(): number;
 
     static Off : CollatorCaseFirst;
     static Lower : CollatorCaseFirst;

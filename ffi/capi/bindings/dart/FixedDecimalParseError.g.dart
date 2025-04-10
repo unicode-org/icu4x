@@ -10,6 +10,7 @@ enum FixedDecimalParseError {
   limit,
 
   syntax;
+
 }
 
 // dart format on

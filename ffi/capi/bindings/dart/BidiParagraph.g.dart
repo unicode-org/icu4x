@@ -24,7 +24,6 @@ final class BidiParagraph implements ffi.Finalizable {
   }
 
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_BidiParagraph_destroy_mv1));
-
   /// Given a paragraph index `n` within the surrounding text, this sets this
   /// object to the paragraph at that index. Returns nothing when out of bounds.
   ///
@@ -34,7 +33,6 @@ final class BidiParagraph implements ffi.Finalizable {
     final result = _icu4x_BidiParagraph_set_paragraph_in_text_mv1(_ffi, n);
     return result;
   }
-
   /// The primary direction of this paragraph
   ///
   /// See the [Rust documentation for `level_at`](https://docs.rs/unicode_bidi/latest/unicode_bidi/struct.Paragraph.html#method.level_at) for more information.
@@ -42,7 +40,6 @@ final class BidiParagraph implements ffi.Finalizable {
     final result = _icu4x_BidiParagraph_direction_mv1(_ffi);
     return BidiDirection.values[result];
   }
-
   /// The number of bytes in this paragraph
   ///
   /// See the [Rust documentation for `len`](https://docs.rs/unicode_bidi/latest/unicode_bidi/struct.ParagraphInfo.html#method.len) for more information.
@@ -50,19 +47,16 @@ final class BidiParagraph implements ffi.Finalizable {
     final result = _icu4x_BidiParagraph_size_mv1(_ffi);
     return result;
   }
-
   /// The start index of this paragraph within the source text
   int get rangeStart {
     final result = _icu4x_BidiParagraph_range_start_mv1(_ffi);
     return result;
   }
-
   /// The end index of this paragraph within the source text
   int get rangeEnd {
     final result = _icu4x_BidiParagraph_range_end_mv1(_ffi);
     return result;
   }
-
   /// Reorder a line based on display order. The ranges are specified relative to the source text and must be contained
   /// within this paragraph's range.
   ///
@@ -75,7 +69,6 @@ final class BidiParagraph implements ffi.Finalizable {
     }
     return write.finalize();
   }
-
   /// Get the BIDI level at a particular byte index in this paragraph.
   /// This integer is conceptually a `unicode_bidi::Level`,
   /// and can be further inspected using the static methods on Bidi.
@@ -87,6 +80,7 @@ final class BidiParagraph implements ffi.Finalizable {
     final result = _icu4x_BidiParagraph_level_at_mv1(_ffi, pos);
     return result;
   }
+
 }
 
 @_DiplomatFfiUse('icu4x_BidiParagraph_destroy_mv1')

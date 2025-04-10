@@ -20,19 +20,18 @@
 namespace icu4x {
 namespace capi {
     extern "C" {
-    
+
     icu4x::capi::IanaParser* icu4x_IanaParser_create_mv1(void);
-    
+
     typedef struct icu4x_IanaParser_create_with_provider_mv1_result {union {icu4x::capi::IanaParser* ok; icu4x::capi::DataError err;}; bool is_ok;} icu4x_IanaParser_create_with_provider_mv1_result;
     icu4x_IanaParser_create_with_provider_mv1_result icu4x_IanaParser_create_with_provider_mv1(const icu4x::capi::DataProvider* provider);
-    
+
     icu4x::capi::TimeZone* icu4x_IanaParser_parse_mv1(const icu4x::capi::IanaParser* self, diplomat::capi::DiplomatStringView value);
-    
+
     icu4x::capi::TimeZoneIterator* icu4x_IanaParser_iter_mv1(const icu4x::capi::IanaParser* self);
-    
-    
+
     void icu4x_IanaParser_destroy_mv1(IanaParser* self);
-    
+
     } // extern "C"
 } // namespace capi
 } // namespace

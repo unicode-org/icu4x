@@ -16,6 +16,7 @@ enum FixedDecimalSignDisplay {
   exceptZero,
 
   negative;
+
 }
 
 // dart format on

@@ -23,18 +23,17 @@
 namespace icu4x {
 namespace capi {
     extern "C" {
-    
+
     typedef struct icu4x_TimeFormatter_create_mv1_result {union {icu4x::capi::TimeFormatter* ok; icu4x::capi::DateTimeFormatterLoadError err;}; bool is_ok;} icu4x_TimeFormatter_create_mv1_result;
     icu4x_TimeFormatter_create_mv1_result icu4x_TimeFormatter_create_mv1(const icu4x::capi::Locale* locale, icu4x::capi::DateTimeLength_option length, icu4x::capi::TimePrecision_option time_precision, icu4x::capi::DateTimeAlignment_option alignment);
-    
+
     typedef struct icu4x_TimeFormatter_create_with_provider_mv1_result {union {icu4x::capi::TimeFormatter* ok; icu4x::capi::DateTimeFormatterLoadError err;}; bool is_ok;} icu4x_TimeFormatter_create_with_provider_mv1_result;
     icu4x_TimeFormatter_create_with_provider_mv1_result icu4x_TimeFormatter_create_with_provider_mv1(const icu4x::capi::DataProvider* provider, const icu4x::capi::Locale* locale, icu4x::capi::DateTimeLength_option length, icu4x::capi::TimePrecision_option time_precision, icu4x::capi::DateTimeAlignment_option alignment);
-    
+
     void icu4x_TimeFormatter_format_mv1(const icu4x::capi::TimeFormatter* self, const icu4x::capi::Time* time, diplomat::capi::DiplomatWrite* write);
-    
-    
+
     void icu4x_TimeFormatter_destroy_mv1(TimeFormatter* self);
-    
+
     } // extern "C"
 } // namespace capi
 } // namespace

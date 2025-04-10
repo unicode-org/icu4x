@@ -26,7 +26,7 @@ namespace capi {
       icu4x::capi::IsoDate* date;
       icu4x::capi::Time* time;
     };
-    
+
     typedef struct IsoDateTime_option {union { IsoDateTime ok; }; bool is_ok; } IsoDateTime_option;
 } // namespace capi
 } // namespace

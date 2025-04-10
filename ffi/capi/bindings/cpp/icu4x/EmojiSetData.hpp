@@ -18,19 +18,18 @@
 namespace icu4x {
 namespace capi {
     extern "C" {
-    
+
     bool icu4x_EmojiSetData_contains_str_mv1(const icu4x::capi::EmojiSetData* self, diplomat::capi::DiplomatStringView s);
-    
+
     bool icu4x_EmojiSetData_contains_mv1(const icu4x::capi::EmojiSetData* self, char32_t cp);
-    
+
     icu4x::capi::EmojiSetData* icu4x_EmojiSetData_create_basic_mv1(void);
-    
+
     typedef struct icu4x_EmojiSetData_create_basic_with_provider_mv1_result {union {icu4x::capi::EmojiSetData* ok; icu4x::capi::DataError err;}; bool is_ok;} icu4x_EmojiSetData_create_basic_with_provider_mv1_result;
     icu4x_EmojiSetData_create_basic_with_provider_mv1_result icu4x_EmojiSetData_create_basic_with_provider_mv1(const icu4x::capi::DataProvider* provider);
-    
-    
+
     void icu4x_EmojiSetData_destroy_mv1(EmojiSetData* self);
-    
+
     } // extern "C"
 } // namespace capi
 } // namespace

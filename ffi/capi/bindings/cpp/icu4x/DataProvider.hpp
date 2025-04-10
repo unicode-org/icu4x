@@ -18,25 +18,24 @@
 namespace icu4x {
 namespace capi {
     extern "C" {
-    
+
     typedef struct icu4x_DataProvider_from_fs_mv1_result {union {icu4x::capi::DataProvider* ok; icu4x::capi::DataError err;}; bool is_ok;} icu4x_DataProvider_from_fs_mv1_result;
     icu4x_DataProvider_from_fs_mv1_result icu4x_DataProvider_from_fs_mv1(diplomat::capi::DiplomatStringView path);
-    
+
     typedef struct icu4x_DataProvider_from_byte_slice_mv1_result {union {icu4x::capi::DataProvider* ok; icu4x::capi::DataError err;}; bool is_ok;} icu4x_DataProvider_from_byte_slice_mv1_result;
     icu4x_DataProvider_from_byte_slice_mv1_result icu4x_DataProvider_from_byte_slice_mv1(diplomat::capi::DiplomatU8View blob);
-    
+
     typedef struct icu4x_DataProvider_fork_by_key_mv1_result {union { icu4x::capi::DataError err;}; bool is_ok;} icu4x_DataProvider_fork_by_key_mv1_result;
     icu4x_DataProvider_fork_by_key_mv1_result icu4x_DataProvider_fork_by_key_mv1(icu4x::capi::DataProvider* self, icu4x::capi::DataProvider* other);
-    
+
     typedef struct icu4x_DataProvider_fork_by_locale_mv1_result {union { icu4x::capi::DataError err;}; bool is_ok;} icu4x_DataProvider_fork_by_locale_mv1_result;
     icu4x_DataProvider_fork_by_locale_mv1_result icu4x_DataProvider_fork_by_locale_mv1(icu4x::capi::DataProvider* self, icu4x::capi::DataProvider* other);
-    
+
     typedef struct icu4x_DataProvider_enable_locale_fallback_with_mv1_result {union { icu4x::capi::DataError err;}; bool is_ok;} icu4x_DataProvider_enable_locale_fallback_with_mv1_result;
     icu4x_DataProvider_enable_locale_fallback_with_mv1_result icu4x_DataProvider_enable_locale_fallback_with_mv1(icu4x::capi::DataProvider* self, const icu4x::capi::LocaleFallbacker* fallbacker);
-    
-    
+
     void icu4x_DataProvider_destroy_mv1(DataProvider* self);
-    
+
     } // extern "C"
 } // namespace capi
 } // namespace

@@ -8,6 +8,7 @@ enum TrailingCase {
   lower,
 
   unchanged;
+
 }
 
 // dart format on

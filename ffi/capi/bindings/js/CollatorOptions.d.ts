@@ -6,7 +6,7 @@ import type { CollatorStrength } from "./CollatorStrength"
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
-/** 
+/**
  * See the [Rust documentation for `CollatorOptions`](https://docs.rs/icu/latest/icu/collator/options/struct.CollatorOptions.html) for more information.
  */
 type CollatorOptions_obj = {
@@ -19,19 +19,14 @@ type CollatorOptions_obj = {
 
 
 export class CollatorOptions {
-    
-    get strength() : CollatorStrength | null; 
-    set strength(value: CollatorStrength | null); 
-    
-    get alternateHandling() : CollatorAlternateHandling | null; 
-    set alternateHandling(value: CollatorAlternateHandling | null); 
-    
-    get maxVariable() : CollatorMaxVariable | null; 
-    set maxVariable(value: CollatorMaxVariable | null); 
-    
-    get caseLevel() : CollatorCaseLevel | null; 
-    set caseLevel(value: CollatorCaseLevel | null); 
-    
+    get strength(): CollatorStrength | null;
+    set strength(value: CollatorStrength | null);
+    get alternateHandling(): CollatorAlternateHandling | null;
+    set alternateHandling(value: CollatorAlternateHandling | null);
+    get maxVariable(): CollatorMaxVariable | null;
+    set maxVariable(value: CollatorMaxVariable | null);
+    get caseLevel(): CollatorCaseLevel | null;
+    set caseLevel(value: CollatorCaseLevel | null);
     /** Create `CollatorOptions` from an object that contains all of `CollatorOptions`s fields.
     * Optional fields do not need to be included in the provided object.
     */

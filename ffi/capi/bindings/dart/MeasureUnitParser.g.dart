@@ -24,7 +24,6 @@ final class MeasureUnitParser implements ffi.Finalizable {
   }
 
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_MeasureUnitParser_destroy_mv1));
-
   /// Construct a new [`MeasureUnitParser`] instance using compiled data.
   ///
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/experimental/measure/parser/struct.MeasureUnitParser.html#method.new) for more information.
@@ -32,7 +31,6 @@ final class MeasureUnitParser implements ffi.Finalizable {
     final result = _icu4x_MeasureUnitParser_create_mv1();
     return MeasureUnitParser._fromFfi(result, []);
   }
-
   /// Construct a new [`MeasureUnitParser`] instance using a particular data source.
   ///
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/experimental/measure/parser/struct.MeasureUnitParser.html#method.new) for more information.
@@ -45,13 +43,13 @@ final class MeasureUnitParser implements ffi.Finalizable {
     }
     return MeasureUnitParser._fromFfi(result.union.ok, []);
   }
-
   /// See the [Rust documentation for `parse`](https://docs.rs/icu/latest/icu/experimental/measure/parser/struct.MeasureUnitParser.html#method.parse) for more information.
   MeasureUnit? parse(String unitId) {
     final temp = _FinalizedArena();
     final result = _icu4x_MeasureUnitParser_parse_mv1(_ffi, unitId._utf8AllocIn(temp.arena));
     return result.address == 0 ? null : MeasureUnit._fromFfi(result, []);
   }
+
 }
 
 @_DiplomatFfiUse('icu4x_MeasureUnitParser_destroy_mv1')

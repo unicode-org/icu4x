@@ -22,7 +22,6 @@ final class PluralRules implements ffi.Finalizable {
   }
 
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_PluralRules_destroy_mv1));
-
   /// Construct an [`PluralRules`] for the given locale, for cardinal numbers, using compiled data.
   ///
   /// See the [Rust documentation for `try_new_cardinal`](https://docs.rs/icu/latest/icu/plurals/struct.PluralRules.html#method.try_new_cardinal) for more information.
@@ -35,7 +34,6 @@ final class PluralRules implements ffi.Finalizable {
     }
     return PluralRules._fromFfi(result.union.ok, []);
   }
-
   /// Construct an [`PluralRules`] for the given locale, for cardinal numbers, using a particular data source.
   ///
   /// See the [Rust documentation for `try_new_cardinal`](https://docs.rs/icu/latest/icu/plurals/struct.PluralRules.html#method.try_new_cardinal) for more information.
@@ -48,7 +46,6 @@ final class PluralRules implements ffi.Finalizable {
     }
     return PluralRules._fromFfi(result.union.ok, []);
   }
-
   /// Construct an [`PluralRules`] for the given locale, for ordinal numbers, using compiled data.
   ///
   /// See the [Rust documentation for `try_new_ordinal`](https://docs.rs/icu/latest/icu/plurals/struct.PluralRules.html#method.try_new_ordinal) for more information.
@@ -61,7 +58,6 @@ final class PluralRules implements ffi.Finalizable {
     }
     return PluralRules._fromFfi(result.union.ok, []);
   }
-
   /// Construct an [`PluralRules`] for the given locale, for ordinal numbers, using a particular data source.
   ///
   /// See the [Rust documentation for `try_new_ordinal`](https://docs.rs/icu/latest/icu/plurals/struct.PluralRules.html#method.try_new_ordinal) for more information.
@@ -74,7 +70,6 @@ final class PluralRules implements ffi.Finalizable {
     }
     return PluralRules._fromFfi(result.union.ok, []);
   }
-
   /// Get the category for a given number represented as operands
   ///
   /// See the [Rust documentation for `category_for`](https://docs.rs/icu/latest/icu/plurals/struct.PluralRules.html#method.category_for) for more information.
@@ -82,7 +77,6 @@ final class PluralRules implements ffi.Finalizable {
     final result = _icu4x_PluralRules_category_for_mv1(_ffi, op._ffi);
     return PluralCategory.values[result];
   }
-
   /// Get all of the categories needed in the current locale
   ///
   /// See the [Rust documentation for `categories`](https://docs.rs/icu/latest/icu/plurals/struct.PluralRules.html#method.categories) for more information.
@@ -90,6 +84,7 @@ final class PluralRules implements ffi.Finalizable {
     final result = _icu4x_PluralRules_categories_mv1(_ffi);
     return PluralCategories._fromFfi(result);
   }
+
 }
 
 @_DiplomatFfiUse('icu4x_PluralRules_destroy_mv1')

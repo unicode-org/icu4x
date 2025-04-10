@@ -19,7 +19,7 @@ namespace capi {
       CalendarError_UnknownEra = 2,
       CalendarError_UnknownMonthCode = 3,
     };
-    
+
     typedef struct CalendarError_option {union { CalendarError ok; }; bool is_ok; } CalendarError_option;
 } // namespace capi
 } // namespace

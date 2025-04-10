@@ -22,7 +22,6 @@ final class TitlecaseMapper implements ffi.Finalizable {
   }
 
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_TitlecaseMapper_destroy_mv1));
-
   /// Construct a new `TitlecaseMapper` instance using compiled data.
   ///
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/casemap/struct.TitlecaseMapper.html#method.new) for more information.
@@ -35,7 +34,6 @@ final class TitlecaseMapper implements ffi.Finalizable {
     }
     return TitlecaseMapper._fromFfi(result.union.ok, []);
   }
-
   /// Construct a new `TitlecaseMapper` instance using a particular data source.
   ///
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/casemap/struct.TitlecaseMapper.html#method.new) for more information.
@@ -48,7 +46,6 @@ final class TitlecaseMapper implements ffi.Finalizable {
     }
     return TitlecaseMapper._fromFfi(result.union.ok, []);
   }
-
   /// Returns the full titlecase mapping of the given string
   ///
   /// The `v1` refers to the version of the options struct, which may change as we add more options
@@ -60,7 +57,6 @@ final class TitlecaseMapper implements ffi.Finalizable {
     _icu4x_TitlecaseMapper_titlecase_segment_v1_mv1(_ffi, s._utf8AllocIn(temp.arena), locale._ffi, options._toFfi(temp.arena), write._ffi);
     return write.finalize();
   }
-
   /// Returns the full titlecase mapping of the given string, using compiled data (avoids having to allocate a TitlecaseMapper object)
   ///
   /// The `v1` refers to the version of the options struct, which may change as we add more options
@@ -72,6 +68,7 @@ final class TitlecaseMapper implements ffi.Finalizable {
     _icu4x_TitlecaseMapper_titlecase_segment_with_compiled_data_v1_mv1(s._utf8AllocIn(temp.arena), locale._ffi, options._toFfi(temp.arena), write._ffi);
     return write.finalize();
   }
+
 }
 
 @_DiplomatFfiUse('icu4x_TitlecaseMapper_destroy_mv1')

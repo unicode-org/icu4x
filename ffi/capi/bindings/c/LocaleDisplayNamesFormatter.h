@@ -27,7 +27,6 @@ icu4x_LocaleDisplayNamesFormatter_create_v1_with_provider_mv1_result icu4x_Local
 
 void icu4x_LocaleDisplayNamesFormatter_of_mv1(const LocaleDisplayNamesFormatter* self, const Locale* locale, DiplomatWrite* write);
 
-
 void icu4x_LocaleDisplayNamesFormatter_destroy_mv1(LocaleDisplayNamesFormatter* self);
 
 

@@ -24,7 +24,7 @@ namespace capi {
       icu4x::capi::LineBreakStrictness_option strictness;
       icu4x::capi::LineBreakWordOption_option word_option;
     };
-    
+
     typedef struct LineBreakOptionsV2_option {union { LineBreakOptionsV2 ok; }; bool is_ok; } LineBreakOptionsV2_option;
 } // namespace capi
 } // namespace

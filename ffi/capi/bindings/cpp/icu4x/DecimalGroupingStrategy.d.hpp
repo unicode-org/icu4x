@@ -19,7 +19,7 @@ namespace capi {
       DecimalGroupingStrategy_Always = 2,
       DecimalGroupingStrategy_Min2 = 3,
     };
-    
+
     typedef struct DecimalGroupingStrategy_option {union { DecimalGroupingStrategy ok; }; bool is_ok; } DecimalGroupingStrategy_option;
 } // namespace capi
 } // namespace

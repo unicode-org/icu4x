@@ -17,23 +17,22 @@
 namespace icu4x {
 namespace capi {
     extern "C" {
-    
+
     icu4x::capi::GeneralCategory icu4x_GeneralCategory_for_char_mv1(char32_t ch);
-    
+
     typedef struct icu4x_GeneralCategory_long_name_mv1_result {union {diplomat::capi::DiplomatStringView ok; }; bool is_ok;} icu4x_GeneralCategory_long_name_mv1_result;
     icu4x_GeneralCategory_long_name_mv1_result icu4x_GeneralCategory_long_name_mv1(icu4x::capi::GeneralCategory self);
-    
+
     typedef struct icu4x_GeneralCategory_short_name_mv1_result {union {diplomat::capi::DiplomatStringView ok; }; bool is_ok;} icu4x_GeneralCategory_short_name_mv1_result;
     icu4x_GeneralCategory_short_name_mv1_result icu4x_GeneralCategory_short_name_mv1(icu4x::capi::GeneralCategory self);
-    
+
     uint8_t icu4x_GeneralCategory_to_integer_value_mv1(icu4x::capi::GeneralCategory self);
-    
+
     icu4x::capi::GeneralCategoryGroup icu4x_GeneralCategory_to_group_mv1(icu4x::capi::GeneralCategory self);
-    
+
     typedef struct icu4x_GeneralCategory_from_integer_value_mv1_result {union {icu4x::capi::GeneralCategory ok; }; bool is_ok;} icu4x_GeneralCategory_from_integer_value_mv1_result;
     icu4x_GeneralCategory_from_integer_value_mv1_result icu4x_GeneralCategory_from_integer_value_mv1(uint8_t other);
-    
-    
+
     } // extern "C"
 } // namespace capi
 } // namespace

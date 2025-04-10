@@ -8,6 +8,7 @@ enum CollatorCaseLevel {
   off,
 
   on;
+
 }
 
 // dart format on

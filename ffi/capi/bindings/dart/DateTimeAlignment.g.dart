@@ -8,6 +8,7 @@ enum DateTimeAlignment {
   auto,
 
   column;
+
 }
 
 // dart format on

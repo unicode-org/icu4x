@@ -2,7 +2,7 @@
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
-/** 
+/**
  * Priority mode for the ICU4X fallback algorithm.
  *
  * See the [Rust documentation for `LocaleFallbackPriority`](https://docs.rs/icu/latest/icu/locale/fallback/enum.LocaleFallbackPriority.html) for more information.
@@ -10,13 +10,12 @@ import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
 export class LocaleFallbackPriority {
-    
 
-    static fromValue(value : LocaleFallbackPriority | string) : LocaleFallbackPriority; 
+    static fromValue(value : LocaleFallbackPriority | string) : LocaleFallbackPriority;
 
-    get value() : string;
+    get value(): string;
 
-    get ffiValue() : number;
+    get ffiValue(): number;
 
     static Language : LocaleFallbackPriority;
     static Region : LocaleFallbackPriority;

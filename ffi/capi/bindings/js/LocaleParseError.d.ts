@@ -2,19 +2,18 @@
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
-/** 
+/**
  * Additional information: [1](https://docs.rs/icu/latest/icu/locale/enum.ParseError.html)
  */
 
 
 export class LocaleParseError {
-    
 
-    static fromValue(value : LocaleParseError | string) : LocaleParseError; 
+    static fromValue(value : LocaleParseError | string) : LocaleParseError;
 
-    get value() : string;
+    get value(): string;
 
-    get ffiValue() : number;
+    get ffiValue(): number;
 
     static Unknown : LocaleParseError;
     static Language : LocaleParseError;

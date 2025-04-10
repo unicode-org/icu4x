@@ -16,11 +16,10 @@
 namespace icu4x {
 namespace capi {
     extern "C" {
-    
+
     typedef struct icu4x_PluralCategory_get_for_cldr_string_mv1_result {union {icu4x::capi::PluralCategory ok; }; bool is_ok;} icu4x_PluralCategory_get_for_cldr_string_mv1_result;
     icu4x_PluralCategory_get_for_cldr_string_mv1_result icu4x_PluralCategory_get_for_cldr_string_mv1(diplomat::capi::DiplomatStringView s);
-    
-    
+
     } // extern "C"
 } // namespace capi
 } // namespace

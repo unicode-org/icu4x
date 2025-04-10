@@ -5,7 +5,6 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
 export class TimeZoneVariant {
-    
     #value = undefined;
 
     static #values = new Map([
@@ -16,7 +15,7 @@ export class TimeZoneVariant {
     static getAllEntries() {
         return TimeZoneVariant.#values.entries();
     }
-    
+
     #internalConstructor(value) {
         if (arguments.length > 1 && arguments[0] === diplomatRuntime.internalConstructor) {
             // We pass in two internalConstructor arguments to create *new*
@@ -46,11 +45,11 @@ export class TimeZoneVariant {
         return new TimeZoneVariant(value);
     }
 
-    get value() {
+    get value(){
         return [...TimeZoneVariant.#values.keys()][this.#value];
     }
 
-    get ffiValue() {
+    get ffiValue(){
         return this.#value;
     }
     static #objectValues = [
@@ -61,7 +60,7 @@ export class TimeZoneVariant {
     static Standard = TimeZoneVariant.#objectValues[0];
     static Daylight = TimeZoneVariant.#objectValues[1];
 
-    /** 
+    /**
      * Sets the `zone_variant` field to "daylight" time.
      *
      * See the [Rust documentation for `from_rearguard_isdst`](https://docs.rs/icu/latest/icu/time/zone/enum.TimeZoneVariant.html#method.from_rearguard_isdst) for more information.
@@ -70,13 +69,13 @@ export class TimeZoneVariant {
      *
      * Additional information: [1](https://docs.rs/icu/latest/icu/time/zone/enum.TimeZoneVariant.html)
      */
-    fromRearguardIsdst(isdst) {
+        fromRearguardIsdst(isdst) {
+
         const result = wasm.icu4x_TimeZoneVariant_from_rearguard_isdst_mv1(this.ffiValue, isdst);
-    
-        try {
-            return new TimeZoneVariant(diplomatRuntime.internalConstructor, result);
+
+        try {        return new TimeZoneVariant(diplomatRuntime.internalConstructor, result);
         }
-        
+
         finally {}
     }
 

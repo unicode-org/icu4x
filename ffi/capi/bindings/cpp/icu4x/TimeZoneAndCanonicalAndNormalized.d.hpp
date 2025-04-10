@@ -23,7 +23,7 @@ namespace capi {
       diplomat::capi::DiplomatStringView canonical;
       diplomat::capi::DiplomatStringView normalized;
     };
-    
+
     typedef struct TimeZoneAndCanonicalAndNormalized_option {union { TimeZoneAndCanonicalAndNormalized ok; }; bool is_ok; } TimeZoneAndCanonicalAndNormalized_option;
 } // namespace capi
 } // namespace

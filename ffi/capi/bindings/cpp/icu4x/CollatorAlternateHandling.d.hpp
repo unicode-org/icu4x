@@ -17,7 +17,7 @@ namespace capi {
       CollatorAlternateHandling_NonIgnorable = 0,
       CollatorAlternateHandling_Shifted = 1,
     };
-    
+
     typedef struct CollatorAlternateHandling_option {union { CollatorAlternateHandling ok; }; bool is_ok; } CollatorAlternateHandling_option;
 } // namespace capi
 } // namespace

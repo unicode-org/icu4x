@@ -6,7 +6,7 @@ import type { UnitsConverter } from "./UnitsConverter"
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
-/** 
+/**
  * An ICU4X Units Converter Factory object, capable of creating converters a [`UnitsConverter`]
  * for converting between two [`MeasureUnit`]s.
  *
@@ -17,24 +17,23 @@ import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
 export class UnitsConverterFactory {
-    
     get ffiValue(): pointer;
 
-    /** 
+    /**
      * Construct a new [`UnitsConverterFactory`] instance using a particular data source.
      *
      * See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/experimental/units/converter_factory/struct.ConverterFactory.html#method.new) for more information.
      */
-    static createWithProvider(provider: DataProvider): UnitsConverterFactory;
+        static createWithProvider(provider: DataProvider): UnitsConverterFactory;
 
-    /** 
+    /**
      * Creates a new [`UnitsConverter`] from the input and output [`MeasureUnit`]s.
      * Returns nothing if the conversion between the two units is not possible.
      * For example, conversion between `meter` and `second` is not possible.
      *
      * See the [Rust documentation for `converter`](https://docs.rs/icu/latest/icu/experimental/units/converter_factory/struct.ConverterFactory.html#method.converter) for more information.
      */
-    converter(from: MeasureUnit, to: MeasureUnit): UnitsConverter | null;
+        converter(from: MeasureUnit, to: MeasureUnit): UnitsConverter | null;
 
     constructor();
 }

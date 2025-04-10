@@ -5,7 +5,7 @@ import type { TimeZone } from "./TimeZone"
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
-/** 
+/**
  * A mapper between Windows time zone identifiers and BCP-47 time zone identifiers.
  *
  * This mapper supports two-way mapping, but it is optimized for the case of Windows to BCP-47.
@@ -16,20 +16,19 @@ import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
 export class WindowsParser {
-    
     get ffiValue(): pointer;
 
-    /** 
+    /**
      * Create a new [`WindowsParser`] using a particular data source
      *
      * See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/time/zone/windows/struct.WindowsParser.html#method.new) for more information.
      */
-    static createWithProvider(provider: DataProvider): WindowsParser;
+        static createWithProvider(provider: DataProvider): WindowsParser;
 
-    /** 
+    /**
      * See the [Rust documentation for `parse`](https://docs.rs/icu/latest/icu/time/zone/windows/struct.WindowsParserBorrowed.html#method.parse) for more information.
      */
-    parse(value: string, region: string): TimeZone | null;
+        parse(value: string, region: string): TimeZone | null;
 
     constructor();
 }

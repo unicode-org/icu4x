@@ -8,7 +8,7 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
-/** 
+/**
  * See the [Rust documentation for `FixedCalendarDateTimeFormatter`](https://docs.rs/icu/latest/icu/datetime/type.FixedCalendarDateTimeFormatter.html) for more information.
  */
 const TimeZoneFormatter_box_destroy_registry = new FinalizationRegistry((ptr) => {
@@ -16,328 +16,308 @@ const TimeZoneFormatter_box_destroy_registry = new FinalizationRegistry((ptr) =>
 });
 
 export class TimeZoneFormatter {
-    
     // Internal ptr reference:
     #ptr = null;
 
     // Lifetimes are only to keep dependencies alive.
     // Since JS won't garbage collect until there are no incoming edges.
     #selfEdge = [];
-    
+
     #internalConstructor(symbol, ptr, selfEdge) {
         if (symbol !== diplomatRuntime.internalConstructor) {
             console.error("TimeZoneFormatter is an Opaque type. You cannot call its constructor.");
             return;
         }
-        
         this.#ptr = ptr;
         this.#selfEdge = selfEdge;
-        
+
         // Are we being borrowed? If not, we can register.
         if (this.#selfEdge.length === 0) {
             TimeZoneFormatter_box_destroy_registry.register(this, this.#ptr);
         }
-        
+
         return this;
     }
     get ffiValue() {
         return this.#ptr;
     }
-static createSpecificLong(locale) {
+    static createSpecificLong(locale) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
-        
+
+
         const result = wasm.icu4x_TimeZoneFormatter_create_specific_long_mv1(diplomatReceive.buffer, locale.ffiValue);
-    
-        try {
-            if (!diplomatReceive.resultFlag) {
+
+        try {        if (!diplomatReceive.resultFlag) {
                 const cause = new DateTimeFormatterLoadError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
                 throw new globalThis.Error('DateTimeFormatterLoadError: ' + cause.value, { cause });
             }
             return new TimeZoneFormatter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
-        
-        finally {
-            diplomatReceive.free();
+
+        finally {        diplomatReceive.free();
         }
     }
-static createSpecificLongWithProvider(provider, locale) {
+    static createSpecificLongWithProvider(provider, locale) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
-        
+
+
         const result = wasm.icu4x_TimeZoneFormatter_create_specific_long_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue);
-    
-        try {
-            if (!diplomatReceive.resultFlag) {
+
+        try {        if (!diplomatReceive.resultFlag) {
                 const cause = new DateTimeFormatterLoadError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
                 throw new globalThis.Error('DateTimeFormatterLoadError: ' + cause.value, { cause });
             }
             return new TimeZoneFormatter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
-        
-        finally {
-            diplomatReceive.free();
+
+        finally {        diplomatReceive.free();
         }
     }
-static createSpecificShort(locale) {
+    static createSpecificShort(locale) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
-        
+
+
         const result = wasm.icu4x_TimeZoneFormatter_create_specific_short_mv1(diplomatReceive.buffer, locale.ffiValue);
-    
-        try {
-            if (!diplomatReceive.resultFlag) {
+
+        try {        if (!diplomatReceive.resultFlag) {
                 const cause = new DateTimeFormatterLoadError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
                 throw new globalThis.Error('DateTimeFormatterLoadError: ' + cause.value, { cause });
             }
             return new TimeZoneFormatter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
-        
-        finally {
-            diplomatReceive.free();
+
+        finally {        diplomatReceive.free();
         }
     }
-static createSpecificShortWithProvider(provider, locale) {
+    static createSpecificShortWithProvider(provider, locale) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
-        
+
+
         const result = wasm.icu4x_TimeZoneFormatter_create_specific_short_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue);
-    
-        try {
-            if (!diplomatReceive.resultFlag) {
+
+        try {        if (!diplomatReceive.resultFlag) {
                 const cause = new DateTimeFormatterLoadError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
                 throw new globalThis.Error('DateTimeFormatterLoadError: ' + cause.value, { cause });
             }
             return new TimeZoneFormatter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
-        
-        finally {
-            diplomatReceive.free();
+
+        finally {        diplomatReceive.free();
         }
     }
-static createLocalizedOffsetLong(locale) {
+    static createLocalizedOffsetLong(locale) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
-        
+
+
         const result = wasm.icu4x_TimeZoneFormatter_create_localized_offset_long_mv1(diplomatReceive.buffer, locale.ffiValue);
-    
-        try {
-            if (!diplomatReceive.resultFlag) {
+
+        try {        if (!diplomatReceive.resultFlag) {
                 const cause = new DateTimeFormatterLoadError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
                 throw new globalThis.Error('DateTimeFormatterLoadError: ' + cause.value, { cause });
             }
             return new TimeZoneFormatter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
-        
-        finally {
-            diplomatReceive.free();
+
+        finally {        diplomatReceive.free();
         }
     }
-static createLocalizedOffsetLongWithProvider(provider, locale) {
+    static createLocalizedOffsetLongWithProvider(provider, locale) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
-        
+
+
         const result = wasm.icu4x_TimeZoneFormatter_create_localized_offset_long_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue);
-    
-        try {
-            if (!diplomatReceive.resultFlag) {
+
+        try {        if (!diplomatReceive.resultFlag) {
                 const cause = new DateTimeFormatterLoadError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
                 throw new globalThis.Error('DateTimeFormatterLoadError: ' + cause.value, { cause });
             }
             return new TimeZoneFormatter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
-        
-        finally {
-            diplomatReceive.free();
+
+        finally {        diplomatReceive.free();
         }
     }
-static createLocalizedOffsetShort(locale) {
+    static createLocalizedOffsetShort(locale) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
-        
+
+
         const result = wasm.icu4x_TimeZoneFormatter_create_localized_offset_short_mv1(diplomatReceive.buffer, locale.ffiValue);
-    
-        try {
-            if (!diplomatReceive.resultFlag) {
+
+        try {        if (!diplomatReceive.resultFlag) {
                 const cause = new DateTimeFormatterLoadError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
                 throw new globalThis.Error('DateTimeFormatterLoadError: ' + cause.value, { cause });
             }
             return new TimeZoneFormatter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
-        
-        finally {
-            diplomatReceive.free();
+
+        finally {        diplomatReceive.free();
         }
     }
-static createLocalizedOffsetShortWithProvider(provider, locale) {
+    static createLocalizedOffsetShortWithProvider(provider, locale) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
-        
+
+
         const result = wasm.icu4x_TimeZoneFormatter_create_localized_offset_short_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue);
-    
-        try {
-            if (!diplomatReceive.resultFlag) {
+
+        try {        if (!diplomatReceive.resultFlag) {
                 const cause = new DateTimeFormatterLoadError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
                 throw new globalThis.Error('DateTimeFormatterLoadError: ' + cause.value, { cause });
             }
             return new TimeZoneFormatter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
-        
-        finally {
-            diplomatReceive.free();
+
+        finally {        diplomatReceive.free();
         }
     }
-static createGenericLong(locale) {
+    static createGenericLong(locale) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
-        
+
+
         const result = wasm.icu4x_TimeZoneFormatter_create_generic_long_mv1(diplomatReceive.buffer, locale.ffiValue);
-    
-        try {
-            if (!diplomatReceive.resultFlag) {
+
+        try {        if (!diplomatReceive.resultFlag) {
                 const cause = new DateTimeFormatterLoadError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
                 throw new globalThis.Error('DateTimeFormatterLoadError: ' + cause.value, { cause });
             }
             return new TimeZoneFormatter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
-        
-        finally {
-            diplomatReceive.free();
+
+        finally {        diplomatReceive.free();
         }
     }
-static createGenericLongWithProvider(provider, locale) {
+    static createGenericLongWithProvider(provider, locale) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
-        
+
+
         const result = wasm.icu4x_TimeZoneFormatter_create_generic_long_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue);
-    
-        try {
-            if (!diplomatReceive.resultFlag) {
+
+        try {        if (!diplomatReceive.resultFlag) {
                 const cause = new DateTimeFormatterLoadError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
                 throw new globalThis.Error('DateTimeFormatterLoadError: ' + cause.value, { cause });
             }
             return new TimeZoneFormatter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
-        
-        finally {
-            diplomatReceive.free();
+
+        finally {        diplomatReceive.free();
         }
     }
-static createGenericShort(locale) {
+    static createGenericShort(locale) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
-        
+
+
         const result = wasm.icu4x_TimeZoneFormatter_create_generic_short_mv1(diplomatReceive.buffer, locale.ffiValue);
-    
-        try {
-            if (!diplomatReceive.resultFlag) {
+
+        try {        if (!diplomatReceive.resultFlag) {
                 const cause = new DateTimeFormatterLoadError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
                 throw new globalThis.Error('DateTimeFormatterLoadError: ' + cause.value, { cause });
             }
             return new TimeZoneFormatter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
-        
-        finally {
-            diplomatReceive.free();
+
+        finally {        diplomatReceive.free();
         }
     }
-static createGenericShortWithProvider(provider, locale) {
+    static createGenericShortWithProvider(provider, locale) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
-        
+
+
         const result = wasm.icu4x_TimeZoneFormatter_create_generic_short_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue);
-    
-        try {
-            if (!diplomatReceive.resultFlag) {
+
+        try {        if (!diplomatReceive.resultFlag) {
                 const cause = new DateTimeFormatterLoadError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
                 throw new globalThis.Error('DateTimeFormatterLoadError: ' + cause.value, { cause });
             }
             return new TimeZoneFormatter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
-        
-        finally {
-            diplomatReceive.free();
+
+        finally {        diplomatReceive.free();
         }
     }
-static createLocation(locale) {
+    static createLocation(locale) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
-        
+
+
         const result = wasm.icu4x_TimeZoneFormatter_create_location_mv1(diplomatReceive.buffer, locale.ffiValue);
-    
-        try {
-            if (!diplomatReceive.resultFlag) {
+
+        try {        if (!diplomatReceive.resultFlag) {
                 const cause = new DateTimeFormatterLoadError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
                 throw new globalThis.Error('DateTimeFormatterLoadError: ' + cause.value, { cause });
             }
             return new TimeZoneFormatter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
-        
-        finally {
-            diplomatReceive.free();
+
+        finally {        diplomatReceive.free();
         }
     }
-static createLocationWithProvider(provider, locale) {
+    static createLocationWithProvider(provider, locale) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
-        
+
+
         const result = wasm.icu4x_TimeZoneFormatter_create_location_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue);
-    
-        try {
-            if (!diplomatReceive.resultFlag) {
+
+        try {        if (!diplomatReceive.resultFlag) {
                 const cause = new DateTimeFormatterLoadError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
                 throw new globalThis.Error('DateTimeFormatterLoadError: ' + cause.value, { cause });
             }
             return new TimeZoneFormatter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
-        
-        finally {
-            diplomatReceive.free();
+
+        finally {        diplomatReceive.free();
         }
     }
-static createExemplarCity(locale) {
+    static createExemplarCity(locale) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
-        
+
+
         const result = wasm.icu4x_TimeZoneFormatter_create_exemplar_city_mv1(diplomatReceive.buffer, locale.ffiValue);
-    
-        try {
-            if (!diplomatReceive.resultFlag) {
+
+        try {        if (!diplomatReceive.resultFlag) {
                 const cause = new DateTimeFormatterLoadError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
                 throw new globalThis.Error('DateTimeFormatterLoadError: ' + cause.value, { cause });
             }
             return new TimeZoneFormatter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
-        
-        finally {
-            diplomatReceive.free();
+
+        finally {        diplomatReceive.free();
         }
     }
-static createExemplarCityWithProvider(provider, locale) {
+    static createExemplarCityWithProvider(provider, locale) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
-        
+
+
         const result = wasm.icu4x_TimeZoneFormatter_create_exemplar_city_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue);
-    
-        try {
-            if (!diplomatReceive.resultFlag) {
+
+        try {        if (!diplomatReceive.resultFlag) {
                 const cause = new DateTimeFormatterLoadError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
                 throw new globalThis.Error('DateTimeFormatterLoadError: ' + cause.value, { cause });
             }
             return new TimeZoneFormatter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
-        
-        finally {
-            diplomatReceive.free();
+
+        finally {        diplomatReceive.free();
         }
     }
 
-    /** 
+    /**
      * See the [Rust documentation for `format`](https://docs.rs/icu/latest/icu/datetime/struct.FixedCalendarDateTimeFormatter.html#method.format) for more information.
      */
-    format(zone) {
+        format(zone) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
-        
+
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
-        
+
+
         const result = wasm.icu4x_TimeZoneFormatter_format_mv1(diplomatReceive.buffer, this.ffiValue, zone.ffiValue, write.buffer);
-    
-        try {
-            if (!diplomatReceive.resultFlag) {
+
+        try {        if (!diplomatReceive.resultFlag) {
                 const cause = new DateTimeWriteError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
                 throw new globalThis.Error('DateTimeWriteError: ' + cause.value, { cause });
             }
             return write.readString8();
         }
-        
-        finally {
-            diplomatReceive.free();
-        
-            write.free();
+
+        finally {        diplomatReceive.free();
+                write.free();
         }
     }
 

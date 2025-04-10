@@ -32,7 +32,6 @@ final class DateTime {
     struct.time = time._ffi;
     return struct;
   }
-
   /// Creates a new [`DateTime`] from an IXDTF string.
   ///
   /// See the [Rust documentation for `try_from_str`](https://docs.rs/icu/latest/icu/time/struct.DateTime.html#method.try_from_str) for more information.
@@ -46,6 +45,7 @@ final class DateTime {
     }
     return DateTime._fromFfi(result.union.ok);
   }
+
 
   @override
   bool operator ==(Object other) =>

@@ -2,7 +2,7 @@
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
-/** 
+/**
  * Mode used in a rounding operation for signed numbers.
  *
  * See the [Rust documentation for `SignedRoundingMode`](https://docs.rs/fixed_decimal/latest/fixed_decimal/enum.SignedRoundingMode.html) for more information.
@@ -10,13 +10,12 @@ import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
 export class FixedDecimalSignedRoundingMode {
-    
 
-    static fromValue(value : FixedDecimalSignedRoundingMode | string) : FixedDecimalSignedRoundingMode; 
+    static fromValue(value : FixedDecimalSignedRoundingMode | string) : FixedDecimalSignedRoundingMode;
 
-    get value() : string;
+    get value(): string;
 
-    get ffiValue() : number;
+    get ffiValue(): number;
 
     static Expand : FixedDecimalSignedRoundingMode;
     static Trunc : FixedDecimalSignedRoundingMode;

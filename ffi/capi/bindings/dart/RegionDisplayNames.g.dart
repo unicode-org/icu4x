@@ -22,7 +22,6 @@ final class RegionDisplayNames implements ffi.Finalizable {
   }
 
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_RegionDisplayNames_destroy_mv1));
-
   /// Creates a new `RegionDisplayNames` from locale data and an options bag using compiled data.
   ///
   /// See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/displaynames/struct.RegionDisplayNames.html#method.try_new) for more information.
@@ -36,7 +35,6 @@ final class RegionDisplayNames implements ffi.Finalizable {
     }
     return RegionDisplayNames._fromFfi(result.union.ok, []);
   }
-
   /// Creates a new `RegionDisplayNames` from locale data and an options bag using a particular data source.
   ///
   /// See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/displaynames/struct.RegionDisplayNames.html#method.try_new) for more information.
@@ -50,7 +48,6 @@ final class RegionDisplayNames implements ffi.Finalizable {
     }
     return RegionDisplayNames._fromFfi(result.union.ok, []);
   }
-
   /// Returns the locale specific display name of a region.
   /// Note that the function returns an empty string in case the display name for a given
   /// region code is not found.
@@ -67,6 +64,7 @@ final class RegionDisplayNames implements ffi.Finalizable {
     }
     return write.finalize();
   }
+
 }
 
 @_DiplomatFfiUse('icu4x_RegionDisplayNames_destroy_mv1')

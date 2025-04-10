@@ -56,7 +56,6 @@ int8_t icu4x_Locale_compare_to_string_mv1(const Locale* self, DiplomatStringView
 
 int8_t icu4x_Locale_compare_to_mv1(const Locale* self, const Locale* other);
 
-
 void icu4x_Locale_destroy_mv1(Locale* self);
 
 

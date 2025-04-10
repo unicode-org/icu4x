@@ -2,19 +2,18 @@
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
-/** 
+/**
  * See the [Rust documentation for `JoiningType`](https://docs.rs/icu/latest/icu/properties/props/struct.JoiningType.html) for more information.
  */
 
 
 export class JoiningType {
-    
 
-    static fromValue(value : JoiningType | string) : JoiningType; 
+    static fromValue(value : JoiningType | string) : JoiningType;
 
-    get value() : string;
+    get value(): string;
 
-    get ffiValue() : number;
+    get ffiValue(): number;
 
     static NonJoining : JoiningType;
     static JoinCausing : JoiningType;
@@ -23,38 +22,38 @@ export class JoiningType {
     static RightJoining : JoiningType;
     static Transparent : JoiningType;
 
-    /** 
+    /**
      * See the [Rust documentation for `for_char`](https://docs.rs/icu/latest/icu/properties/props/trait.EnumeratedProperty.html#tymethod.for_char) for more information.
      */
-    static forChar(ch: codepoint): JoiningType;
+        static forChar(ch: codepoint): JoiningType;
 
-    /** 
+    /**
      * Get the "long" name of this property value (returns empty if property value is unknown)
      *
      * See the [Rust documentation for `get`](https://docs.rs/icu/latest/icu/properties/struct.PropertyNamesLongBorrowed.html#method.get) for more information.
      */
-    longName(): string | null;
+        longName(): string | null;
 
-    /** 
+    /**
      * Get the "short" name of this property value (returns empty if property value is unknown)
      *
      * See the [Rust documentation for `get`](https://docs.rs/icu/latest/icu/properties/struct.PropertyNamesShortBorrowed.html#method.get) for more information.
      */
-    shortName(): string | null;
+        shortName(): string | null;
 
-    /** 
+    /**
      * Convert to an integer value usable with ICU4C and CodePointMapData
      *
      * See the [Rust documentation for `to_icu4c_value`](https://docs.rs/icu/latest/icu/properties/props/struct.JoiningType.html#method.to_icu4c_value) for more information.
      */
-    toIntegerValue(): number;
+        toIntegerValue(): number;
 
-    /** 
+    /**
      * Convert from an integer value from ICU4C or CodePointMapData
      *
      * See the [Rust documentation for `from_icu4c_value`](https://docs.rs/icu/latest/icu/properties/props/struct.JoiningType.html#method.from_icu4c_value) for more information.
      */
-    static fromIntegerValue(other: number): JoiningType | null;
+        static fromIntegerValue(other: number): JoiningType | null;
 
     constructor(value: JoiningType | string );
 }

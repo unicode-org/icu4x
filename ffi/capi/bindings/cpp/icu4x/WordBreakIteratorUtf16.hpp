@@ -17,16 +17,15 @@
 namespace icu4x {
 namespace capi {
     extern "C" {
-    
+
     int32_t icu4x_WordBreakIteratorUtf16_next_mv1(icu4x::capi::WordBreakIteratorUtf16* self);
-    
+
     icu4x::capi::SegmenterWordType icu4x_WordBreakIteratorUtf16_word_type_mv1(const icu4x::capi::WordBreakIteratorUtf16* self);
-    
+
     bool icu4x_WordBreakIteratorUtf16_is_word_like_mv1(const icu4x::capi::WordBreakIteratorUtf16* self);
-    
-    
+
     void icu4x_WordBreakIteratorUtf16_destroy_mv1(WordBreakIteratorUtf16* self);
-    
+
     } // extern "C"
 } // namespace capi
 } // namespace

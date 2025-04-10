@@ -12,6 +12,7 @@ enum CalendarError {
   unknownEra,
 
   unknownMonthCode;
+
 }
 
 // dart format on

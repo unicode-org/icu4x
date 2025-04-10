@@ -17,13 +17,12 @@
 namespace icu4x {
 namespace capi {
     extern "C" {
-    
+
     typedef struct icu4x_WeekdaySetIterator_next_mv1_result {union {icu4x::capi::Weekday ok; }; bool is_ok;} icu4x_WeekdaySetIterator_next_mv1_result;
     icu4x_WeekdaySetIterator_next_mv1_result icu4x_WeekdaySetIterator_next_mv1(icu4x::capi::WeekdaySetIterator* self);
-    
-    
+
     void icu4x_WeekdaySetIterator_destroy_mv1(WeekdaySetIterator* self);
-    
+
     } // extern "C"
 } // namespace capi
 } // namespace

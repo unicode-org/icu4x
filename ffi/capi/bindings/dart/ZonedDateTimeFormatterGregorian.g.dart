@@ -22,8 +22,7 @@ final class ZonedDateTimeFormatterGregorian implements ffi.Finalizable {
   }
 
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_ZonedDateTimeFormatterGregorian_destroy_mv1));
-
-  /// 
+  ///
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   factory ZonedDateTimeFormatterGregorian.specificLong(Locale locale, DateTimeFormatterGregorian formatter) {
@@ -33,8 +32,7 @@ final class ZonedDateTimeFormatterGregorian implements ffi.Finalizable {
     }
     return ZonedDateTimeFormatterGregorian._fromFfi(result.union.ok, []);
   }
-
-  /// 
+  ///
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   factory ZonedDateTimeFormatterGregorian.specificLongWithProvider(DataProvider provider, Locale locale, DateTimeFormatterGregorian formatter) {
@@ -44,8 +42,7 @@ final class ZonedDateTimeFormatterGregorian implements ffi.Finalizable {
     }
     return ZonedDateTimeFormatterGregorian._fromFfi(result.union.ok, []);
   }
-
-  /// 
+  ///
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   factory ZonedDateTimeFormatterGregorian.specificShort(Locale locale, DateTimeFormatterGregorian formatter) {
@@ -55,8 +52,7 @@ final class ZonedDateTimeFormatterGregorian implements ffi.Finalizable {
     }
     return ZonedDateTimeFormatterGregorian._fromFfi(result.union.ok, []);
   }
-
-  /// 
+  ///
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   factory ZonedDateTimeFormatterGregorian.specificShortWithProvider(DataProvider provider, Locale locale, DateTimeFormatterGregorian formatter) {
@@ -66,8 +62,7 @@ final class ZonedDateTimeFormatterGregorian implements ffi.Finalizable {
     }
     return ZonedDateTimeFormatterGregorian._fromFfi(result.union.ok, []);
   }
-
-  /// 
+  ///
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   factory ZonedDateTimeFormatterGregorian.localizedOffsetLong(Locale locale, DateTimeFormatterGregorian formatter) {
@@ -77,8 +72,7 @@ final class ZonedDateTimeFormatterGregorian implements ffi.Finalizable {
     }
     return ZonedDateTimeFormatterGregorian._fromFfi(result.union.ok, []);
   }
-
-  /// 
+  ///
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   factory ZonedDateTimeFormatterGregorian.localizedOffsetLongWithProvider(DataProvider provider, Locale locale, DateTimeFormatterGregorian formatter) {
@@ -88,8 +82,7 @@ final class ZonedDateTimeFormatterGregorian implements ffi.Finalizable {
     }
     return ZonedDateTimeFormatterGregorian._fromFfi(result.union.ok, []);
   }
-
-  /// 
+  ///
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   factory ZonedDateTimeFormatterGregorian.localizedOffsetShort(Locale locale, DateTimeFormatterGregorian formatter) {
@@ -99,8 +92,7 @@ final class ZonedDateTimeFormatterGregorian implements ffi.Finalizable {
     }
     return ZonedDateTimeFormatterGregorian._fromFfi(result.union.ok, []);
   }
-
-  /// 
+  ///
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   factory ZonedDateTimeFormatterGregorian.localizedOffsetShortWithProvider(DataProvider provider, Locale locale, DateTimeFormatterGregorian formatter) {
@@ -110,8 +102,7 @@ final class ZonedDateTimeFormatterGregorian implements ffi.Finalizable {
     }
     return ZonedDateTimeFormatterGregorian._fromFfi(result.union.ok, []);
   }
-
-  /// 
+  ///
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   factory ZonedDateTimeFormatterGregorian.genericLong(Locale locale, DateTimeFormatterGregorian formatter) {
@@ -121,8 +112,7 @@ final class ZonedDateTimeFormatterGregorian implements ffi.Finalizable {
     }
     return ZonedDateTimeFormatterGregorian._fromFfi(result.union.ok, []);
   }
-
-  /// 
+  ///
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   factory ZonedDateTimeFormatterGregorian.genericLongWithProvider(DataProvider provider, Locale locale, DateTimeFormatterGregorian formatter) {
@@ -132,8 +122,7 @@ final class ZonedDateTimeFormatterGregorian implements ffi.Finalizable {
     }
     return ZonedDateTimeFormatterGregorian._fromFfi(result.union.ok, []);
   }
-
-  /// 
+  ///
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   factory ZonedDateTimeFormatterGregorian.genericShort(Locale locale, DateTimeFormatterGregorian formatter) {
@@ -143,8 +132,7 @@ final class ZonedDateTimeFormatterGregorian implements ffi.Finalizable {
     }
     return ZonedDateTimeFormatterGregorian._fromFfi(result.union.ok, []);
   }
-
-  /// 
+  ///
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   factory ZonedDateTimeFormatterGregorian.genericShortWithProvider(DataProvider provider, Locale locale, DateTimeFormatterGregorian formatter) {
@@ -154,8 +142,7 @@ final class ZonedDateTimeFormatterGregorian implements ffi.Finalizable {
     }
     return ZonedDateTimeFormatterGregorian._fromFfi(result.union.ok, []);
   }
-
-  /// 
+  ///
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   factory ZonedDateTimeFormatterGregorian.location(Locale locale, DateTimeFormatterGregorian formatter) {
@@ -165,8 +152,7 @@ final class ZonedDateTimeFormatterGregorian implements ffi.Finalizable {
     }
     return ZonedDateTimeFormatterGregorian._fromFfi(result.union.ok, []);
   }
-
-  /// 
+  ///
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   factory ZonedDateTimeFormatterGregorian.locationWithProvider(DataProvider provider, Locale locale, DateTimeFormatterGregorian formatter) {
@@ -176,8 +162,7 @@ final class ZonedDateTimeFormatterGregorian implements ffi.Finalizable {
     }
     return ZonedDateTimeFormatterGregorian._fromFfi(result.union.ok, []);
   }
-
-  /// 
+  ///
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   factory ZonedDateTimeFormatterGregorian.exemplarCity(Locale locale, DateTimeFormatterGregorian formatter) {
@@ -187,8 +172,7 @@ final class ZonedDateTimeFormatterGregorian implements ffi.Finalizable {
     }
     return ZonedDateTimeFormatterGregorian._fromFfi(result.union.ok, []);
   }
-
-  /// 
+  ///
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   factory ZonedDateTimeFormatterGregorian.exemplarCityWithProvider(DataProvider provider, Locale locale, DateTimeFormatterGregorian formatter) {
@@ -198,7 +182,6 @@ final class ZonedDateTimeFormatterGregorian implements ffi.Finalizable {
     }
     return ZonedDateTimeFormatterGregorian._fromFfi(result.union.ok, []);
   }
-
   /// See the [Rust documentation for `format`](https://docs.rs/icu/latest/icu/datetime/struct.FixedCalendarDateTimeFormatter.html#method.format) for more information.
   ///
   /// Throws [DateTimeWriteError] on failure.
@@ -210,6 +193,7 @@ final class ZonedDateTimeFormatterGregorian implements ffi.Finalizable {
     }
     return write.finalize();
   }
+
 }
 
 @_DiplomatFfiUse('icu4x_ZonedDateTimeFormatterGregorian_destroy_mv1')

@@ -2,19 +2,18 @@
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
-/** 
+/**
  * Additional information: [1](https://docs.rs/icu/latest/icu/datetime/enum.DateTimeFormatterLoadError.html), [2](https://docs.rs/icu/latest/icu/datetime/pattern/enum.PatternLoadError.html), [3](https://docs.rs/icu/latest/icu/provider/struct.DataError.html), [4](https://docs.rs/icu/latest/icu/provider/enum.DataErrorKind.html)
  */
 
 
 export class DateTimeFormatterLoadError {
-    
 
-    static fromValue(value : DateTimeFormatterLoadError | string) : DateTimeFormatterLoadError; 
+    static fromValue(value : DateTimeFormatterLoadError | string) : DateTimeFormatterLoadError;
 
-    get value() : string;
+    get value(): string;
 
-    get ffiValue() : number;
+    get ffiValue(): number;
 
     static Unknown : DateTimeFormatterLoadError;
     static InvalidDateFields : DateTimeFormatterLoadError;

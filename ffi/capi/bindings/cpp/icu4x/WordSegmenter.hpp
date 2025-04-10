@@ -22,40 +22,39 @@
 namespace icu4x {
 namespace capi {
     extern "C" {
-    
+
     icu4x::capi::WordSegmenter* icu4x_WordSegmenter_create_auto_mv1(void);
-    
+
     typedef struct icu4x_WordSegmenter_create_auto_with_content_locale_mv1_result {union {icu4x::capi::WordSegmenter* ok; icu4x::capi::DataError err;}; bool is_ok;} icu4x_WordSegmenter_create_auto_with_content_locale_mv1_result;
     icu4x_WordSegmenter_create_auto_with_content_locale_mv1_result icu4x_WordSegmenter_create_auto_with_content_locale_mv1(const icu4x::capi::Locale* locale);
-    
+
     typedef struct icu4x_WordSegmenter_create_auto_with_content_locale_and_provider_mv1_result {union {icu4x::capi::WordSegmenter* ok; icu4x::capi::DataError err;}; bool is_ok;} icu4x_WordSegmenter_create_auto_with_content_locale_and_provider_mv1_result;
     icu4x_WordSegmenter_create_auto_with_content_locale_and_provider_mv1_result icu4x_WordSegmenter_create_auto_with_content_locale_and_provider_mv1(const icu4x::capi::DataProvider* provider, const icu4x::capi::Locale* locale);
-    
+
     icu4x::capi::WordSegmenter* icu4x_WordSegmenter_create_lstm_mv1(void);
-    
+
     typedef struct icu4x_WordSegmenter_create_lstm_with_content_locale_mv1_result {union {icu4x::capi::WordSegmenter* ok; icu4x::capi::DataError err;}; bool is_ok;} icu4x_WordSegmenter_create_lstm_with_content_locale_mv1_result;
     icu4x_WordSegmenter_create_lstm_with_content_locale_mv1_result icu4x_WordSegmenter_create_lstm_with_content_locale_mv1(const icu4x::capi::Locale* locale);
-    
+
     typedef struct icu4x_WordSegmenter_create_lstm_with_content_locale_and_provider_mv1_result {union {icu4x::capi::WordSegmenter* ok; icu4x::capi::DataError err;}; bool is_ok;} icu4x_WordSegmenter_create_lstm_with_content_locale_and_provider_mv1_result;
     icu4x_WordSegmenter_create_lstm_with_content_locale_and_provider_mv1_result icu4x_WordSegmenter_create_lstm_with_content_locale_and_provider_mv1(const icu4x::capi::DataProvider* provider, const icu4x::capi::Locale* locale);
-    
+
     icu4x::capi::WordSegmenter* icu4x_WordSegmenter_create_dictionary_mv1(void);
-    
+
     typedef struct icu4x_WordSegmenter_create_dictionary_with_content_locale_mv1_result {union {icu4x::capi::WordSegmenter* ok; icu4x::capi::DataError err;}; bool is_ok;} icu4x_WordSegmenter_create_dictionary_with_content_locale_mv1_result;
     icu4x_WordSegmenter_create_dictionary_with_content_locale_mv1_result icu4x_WordSegmenter_create_dictionary_with_content_locale_mv1(const icu4x::capi::Locale* locale);
-    
+
     typedef struct icu4x_WordSegmenter_create_dictionary_with_content_locale_and_provider_mv1_result {union {icu4x::capi::WordSegmenter* ok; icu4x::capi::DataError err;}; bool is_ok;} icu4x_WordSegmenter_create_dictionary_with_content_locale_and_provider_mv1_result;
     icu4x_WordSegmenter_create_dictionary_with_content_locale_and_provider_mv1_result icu4x_WordSegmenter_create_dictionary_with_content_locale_and_provider_mv1(const icu4x::capi::DataProvider* provider, const icu4x::capi::Locale* locale);
-    
+
     icu4x::capi::WordBreakIteratorUtf8* icu4x_WordSegmenter_segment_utf8_mv1(const icu4x::capi::WordSegmenter* self, diplomat::capi::DiplomatStringView input);
-    
+
     icu4x::capi::WordBreakIteratorUtf16* icu4x_WordSegmenter_segment_utf16_mv1(const icu4x::capi::WordSegmenter* self, diplomat::capi::DiplomatString16View input);
-    
+
     icu4x::capi::WordBreakIteratorLatin1* icu4x_WordSegmenter_segment_latin1_mv1(const icu4x::capi::WordSegmenter* self, diplomat::capi::DiplomatU8View input);
-    
-    
+
     void icu4x_WordSegmenter_destroy_mv1(WordSegmenter* self);
-    
+
     } // extern "C"
 } // namespace capi
 } // namespace

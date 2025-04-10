@@ -34,6 +34,7 @@ final class IsoWeekOfYear {
     return struct;
   }
 
+
   @override
   bool operator ==(Object other) =>
       other is IsoWeekOfYear &&

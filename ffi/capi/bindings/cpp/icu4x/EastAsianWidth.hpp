@@ -16,21 +16,20 @@
 namespace icu4x {
 namespace capi {
     extern "C" {
-    
+
     icu4x::capi::EastAsianWidth icu4x_EastAsianWidth_for_char_mv1(char32_t ch);
-    
+
     typedef struct icu4x_EastAsianWidth_long_name_mv1_result {union {diplomat::capi::DiplomatStringView ok; }; bool is_ok;} icu4x_EastAsianWidth_long_name_mv1_result;
     icu4x_EastAsianWidth_long_name_mv1_result icu4x_EastAsianWidth_long_name_mv1(icu4x::capi::EastAsianWidth self);
-    
+
     typedef struct icu4x_EastAsianWidth_short_name_mv1_result {union {diplomat::capi::DiplomatStringView ok; }; bool is_ok;} icu4x_EastAsianWidth_short_name_mv1_result;
     icu4x_EastAsianWidth_short_name_mv1_result icu4x_EastAsianWidth_short_name_mv1(icu4x::capi::EastAsianWidth self);
-    
+
     uint8_t icu4x_EastAsianWidth_to_integer_value_mv1(icu4x::capi::EastAsianWidth self);
-    
+
     typedef struct icu4x_EastAsianWidth_from_integer_value_mv1_result {union {icu4x::capi::EastAsianWidth ok; }; bool is_ok;} icu4x_EastAsianWidth_from_integer_value_mv1_result;
     icu4x_EastAsianWidth_from_integer_value_mv1_result icu4x_EastAsianWidth_from_integer_value_mv1(uint8_t other);
-    
-    
+
     } // extern "C"
 } // namespace capi
 } // namespace

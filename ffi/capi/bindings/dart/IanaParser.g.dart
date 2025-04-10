@@ -27,7 +27,6 @@ final class IanaParser implements ffi.Finalizable {
   }
 
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_IanaParser_destroy_mv1));
-
   /// Create a new [`IanaParser`] using compiled data
   ///
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/time/zone/iana/struct.IanaParser.html#method.new) for more information.
@@ -35,7 +34,6 @@ final class IanaParser implements ffi.Finalizable {
     final result = _icu4x_IanaParser_create_mv1();
     return IanaParser._fromFfi(result, []);
   }
-
   /// Create a new [`IanaParser`] using a particular data source
   ///
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/time/zone/iana/struct.IanaParser.html#method.new) for more information.
@@ -48,14 +46,12 @@ final class IanaParser implements ffi.Finalizable {
     }
     return IanaParser._fromFfi(result.union.ok, []);
   }
-
   /// See the [Rust documentation for `parse`](https://docs.rs/icu/latest/icu/time/zone/iana/struct.IanaParserBorrowed.html#method.parse) for more information.
   TimeZone parse(String value) {
     final temp = _FinalizedArena();
     final result = _icu4x_IanaParser_parse_mv1(_ffi, value._utf8AllocIn(temp.arena));
     return TimeZone._fromFfi(result, []);
   }
-
   /// See the [Rust documentation for `iter`](https://docs.rs/icu/latest/icu/time/zone/iana/struct.IanaParserBorrowed.html#method.iter) for more information.
   TimeZoneIterator iter() {
     // This lifetime edge depends on lifetimes: 'a
@@ -63,6 +59,7 @@ final class IanaParser implements ffi.Finalizable {
     final result = _icu4x_IanaParser_iter_mv1(_ffi);
     return TimeZoneIterator._fromFfi(result, [], aEdges);
   }
+
 }
 
 @_DiplomatFfiUse('icu4x_IanaParser_destroy_mv1')

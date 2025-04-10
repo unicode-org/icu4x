@@ -491,7 +491,6 @@ icu4x_CodePointSetData_create_for_ecma262_mv1_result icu4x_CodePointSetData_crea
 typedef struct icu4x_CodePointSetData_create_for_ecma262_with_provider_mv1_result {union {CodePointSetData* ok; DataError err;}; bool is_ok;} icu4x_CodePointSetData_create_for_ecma262_with_provider_mv1_result;
 icu4x_CodePointSetData_create_for_ecma262_with_provider_mv1_result icu4x_CodePointSetData_create_for_ecma262_with_provider_mv1(const DataProvider* provider, DiplomatStringView property_name);
 
-
 void icu4x_CodePointSetData_destroy_mv1(CodePointSetData* self);
 
 

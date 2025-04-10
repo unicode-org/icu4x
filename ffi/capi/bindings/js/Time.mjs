@@ -5,7 +5,7 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
-/** 
+/**
  * An ICU4X Time object representing a time in terms of hour, minute, second, nanosecond
  *
  * See the [Rust documentation for `Time`](https://docs.rs/icu/latest/icu/time/struct.Time.html) for more information.
@@ -15,166 +15,160 @@ const Time_box_destroy_registry = new FinalizationRegistry((ptr) => {
 });
 
 export class Time {
-    
     // Internal ptr reference:
     #ptr = null;
 
     // Lifetimes are only to keep dependencies alive.
     // Since JS won't garbage collect until there are no incoming edges.
     #selfEdge = [];
-    
+
     #internalConstructor(symbol, ptr, selfEdge) {
         if (symbol !== diplomatRuntime.internalConstructor) {
             console.error("Time is an Opaque type. You cannot call its constructor.");
             return;
         }
-        
         this.#ptr = ptr;
         this.#selfEdge = selfEdge;
-        
+
         // Are we being borrowed? If not, we can register.
         if (this.#selfEdge.length === 0) {
             Time_box_destroy_registry.register(this, this.#ptr);
         }
-        
+
         return this;
     }
     get ffiValue() {
         return this.#ptr;
     }
 
-    /** 
+    /**
      * Creates a new [`Time`] given field values
      *
      * See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/time/struct.Time.html#method.try_new) for more information.
      */
-    #defaultConstructor(hour, minute, second, subsecond) {
+        #defaultConstructor(hour, minute, second, subsecond) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
-        
+
+
         const result = wasm.icu4x_Time_create_mv1(diplomatReceive.buffer, hour, minute, second, subsecond);
-    
-        try {
-            if (!diplomatReceive.resultFlag) {
+
+        try {        if (!diplomatReceive.resultFlag) {
                 const cause = new CalendarError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
                 throw new globalThis.Error('CalendarError: ' + cause.value, { cause });
             }
             return new Time(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
-        
-        finally {
-            diplomatReceive.free();
+
+        finally {        diplomatReceive.free();
         }
     }
 
-    /** 
+    /**
      * Creates a new [`Time`] from an IXDTF string.
      *
      * See the [Rust documentation for `try_from_str`](https://docs.rs/icu/latest/icu/time/struct.Time.html#method.try_from_str) for more information.
      */
-    static fromString(v) {
+        static fromString(v) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
-        
+
         const vSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, v));
-        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
-        
+
+
         const result = wasm.icu4x_Time_from_string_mv1(diplomatReceive.buffer, ...vSlice.splat());
-    
-        try {
-            if (!diplomatReceive.resultFlag) {
+
+        try {        if (!diplomatReceive.resultFlag) {
                 const cause = new CalendarParseError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
                 throw new globalThis.Error('CalendarParseError: ' + cause.value, { cause });
             }
             return new Time(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
-        
+
         finally {
             functionCleanupArena.free();
-        
-            diplomatReceive.free();
+                diplomatReceive.free();
         }
     }
 
-    /** 
+    /**
      * Creates a new [`Time`] representing midnight (00:00.000).
      *
      * See the [Rust documentation for `midnight`](https://docs.rs/icu/latest/icu/time/struct.Time.html#method.midnight) for more information.
      */
-    static midnight() {
+        static midnight() {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
-        
+
+
         const result = wasm.icu4x_Time_midnight_mv1(diplomatReceive.buffer);
-    
-        try {
-            if (!diplomatReceive.resultFlag) {
+
+        try {        if (!diplomatReceive.resultFlag) {
                 const cause = new CalendarError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
                 throw new globalThis.Error('CalendarError: ' + cause.value, { cause });
             }
             return new Time(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
-        
-        finally {
-            diplomatReceive.free();
+
+        finally {        diplomatReceive.free();
         }
     }
 
-    /** 
+    /**
      * Returns the hour in this time
      *
      * See the [Rust documentation for `hour`](https://docs.rs/icu/latest/icu/time/struct.Time.html#structfield.hour) for more information.
      */
-    get hour() {
+        get hour() {
+
         const result = wasm.icu4x_Time_hour_mv1(this.ffiValue);
-    
-        try {
-            return result;
+
+        try {        return result;
         }
-        
+
         finally {}
     }
 
-    /** 
+    /**
      * Returns the minute in this time
      *
      * See the [Rust documentation for `minute`](https://docs.rs/icu/latest/icu/time/struct.Time.html#structfield.minute) for more information.
      */
-    get minute() {
+        get minute() {
+
         const result = wasm.icu4x_Time_minute_mv1(this.ffiValue);
-    
-        try {
-            return result;
+
+        try {        return result;
         }
-        
+
         finally {}
     }
 
-    /** 
+    /**
      * Returns the second in this time
      *
      * See the [Rust documentation for `second`](https://docs.rs/icu/latest/icu/time/struct.Time.html#structfield.second) for more information.
      */
-    get second() {
+        get second() {
+
         const result = wasm.icu4x_Time_second_mv1(this.ffiValue);
-    
-        try {
-            return result;
+
+        try {        return result;
         }
-        
+
         finally {}
     }
 
-    /** 
+    /**
      * Returns the subsecond in this time as nanoseconds
      *
      * See the [Rust documentation for `subsecond`](https://docs.rs/icu/latest/icu/time/struct.Time.html#structfield.subsecond) for more information.
      */
-    get subsecond() {
+        get subsecond() {
+
         const result = wasm.icu4x_Time_subsecond_mv1(this.ffiValue);
-    
-        try {
-            return result;
+
+        try {        return result;
         }
-        
+
         finally {}
     }
 

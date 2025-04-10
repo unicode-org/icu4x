@@ -5,30 +5,28 @@ part of 'lib.g.dart';
 
 /// See the [Rust documentation for `HangulSyllableType`](https://docs.rs/icu/latest/icu/properties/props/struct.HangulSyllableType.html) for more information.
 enum HangulSyllableType {
-  /// See the [Rust documentation for `NotApplicable`](https://docs.rs/icu/latest/icu/properties/props/enum.HangulSyllableType.html#variant.NotApplicable) for more information.
+    /// See the [Rust documentation for `NotApplicable`](https://docs.rs/icu/latest/icu/properties/props/enum.HangulSyllableType.html#variant.NotApplicable) for more information.
   notApplicable,
 
-  /// See the [Rust documentation for `LeadingJamo`](https://docs.rs/icu/latest/icu/properties/props/enum.HangulSyllableType.html#variant.LeadingJamo) for more information.
+    /// See the [Rust documentation for `LeadingJamo`](https://docs.rs/icu/latest/icu/properties/props/enum.HangulSyllableType.html#variant.LeadingJamo) for more information.
   leadingJamo,
 
-  /// See the [Rust documentation for `VowelJamo`](https://docs.rs/icu/latest/icu/properties/props/enum.HangulSyllableType.html#variant.VowelJamo) for more information.
+    /// See the [Rust documentation for `VowelJamo`](https://docs.rs/icu/latest/icu/properties/props/enum.HangulSyllableType.html#variant.VowelJamo) for more information.
   vowelJamo,
 
-  /// See the [Rust documentation for `TrailingJamo`](https://docs.rs/icu/latest/icu/properties/props/enum.HangulSyllableType.html#variant.TrailingJamo) for more information.
+    /// See the [Rust documentation for `TrailingJamo`](https://docs.rs/icu/latest/icu/properties/props/enum.HangulSyllableType.html#variant.TrailingJamo) for more information.
   trailingJamo,
 
-  /// See the [Rust documentation for `LeadingVowelSyllable`](https://docs.rs/icu/latest/icu/properties/props/enum.HangulSyllableType.html#variant.LeadingVowelSyllable) for more information.
+    /// See the [Rust documentation for `LeadingVowelSyllable`](https://docs.rs/icu/latest/icu/properties/props/enum.HangulSyllableType.html#variant.LeadingVowelSyllable) for more information.
   leadingVowelSyllable,
 
-  /// See the [Rust documentation for `LeadingVowelTrailingSyllable`](https://docs.rs/icu/latest/icu/properties/props/enum.HangulSyllableType.html#variant.LeadingVowelTrailingSyllable) for more information.
+    /// See the [Rust documentation for `LeadingVowelTrailingSyllable`](https://docs.rs/icu/latest/icu/properties/props/enum.HangulSyllableType.html#variant.LeadingVowelTrailingSyllable) for more information.
   leadingVowelTrailingSyllable;
-
   /// See the [Rust documentation for `for_char`](https://docs.rs/icu/latest/icu/properties/props/trait.EnumeratedProperty.html#tymethod.for_char) for more information.
   static HangulSyllableType forChar(Rune ch) {
     final result = _icu4x_HangulSyllableType_for_char_mv1(ch);
     return HangulSyllableType.values[result];
   }
-
   /// Convert to an integer value usable with ICU4C and CodePointMapData
   ///
   /// See the [Rust documentation for `to_icu4c_value`](https://docs.rs/icu/latest/icu/properties/props/struct.HangulSyllableType.html#method.to_icu4c_value) for more information.
@@ -36,7 +34,6 @@ enum HangulSyllableType {
     final result = _icu4x_HangulSyllableType_to_integer_value_mv1(index);
     return result;
   }
-
   /// Convert from an integer value from ICU4C or CodePointMapData
   ///
   /// See the [Rust documentation for `from_icu4c_value`](https://docs.rs/icu/latest/icu/properties/props/struct.HangulSyllableType.html#method.from_icu4c_value) for more information.
@@ -47,6 +44,7 @@ enum HangulSyllableType {
     }
     return HangulSyllableType.values[result.union.ok];
   }
+
 }
 
 @_DiplomatFfiUse('icu4x_HangulSyllableType_for_char_mv1')

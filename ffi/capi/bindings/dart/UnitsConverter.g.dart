@@ -26,7 +26,6 @@ final class UnitsConverter implements ffi.Finalizable {
   }
 
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_UnitsConverter_destroy_mv1));
-
   /// Converts the input value from the input unit to the output unit (that have been used to create this converter).
   /// NOTE:
   /// The conversion using floating-point operations is not as accurate as the conversion using ratios.
@@ -36,7 +35,6 @@ final class UnitsConverter implements ffi.Finalizable {
     final result = _icu4x_UnitsConverter_convert_double_mv1(_ffi, value);
     return result;
   }
-
   /// Clones the current [`UnitsConverter`] object.
   ///
   /// See the [Rust documentation for `clone`](https://docs.rs/icu/latest/icu/experimental/units/converter/struct.UnitsConverter.html#method.clone) for more information.
@@ -44,6 +42,7 @@ final class UnitsConverter implements ffi.Finalizable {
     final result = _icu4x_UnitsConverter_clone_mv1(_ffi);
     return UnitsConverter._fromFfi(result, []);
   }
+
 }
 
 @_DiplomatFfiUse('icu4x_UnitsConverter_destroy_mv1')

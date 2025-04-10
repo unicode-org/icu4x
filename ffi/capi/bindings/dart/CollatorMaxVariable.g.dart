@@ -12,6 +12,7 @@ enum CollatorMaxVariable {
   symbol,
 
   currency;
+
 }
 
 // dart format on

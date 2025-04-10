@@ -24,7 +24,6 @@ final class CanonicalCombiningClassMap implements ffi.Finalizable {
   }
 
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_CanonicalCombiningClassMap_destroy_mv1));
-
   /// Construct a new CanonicalCombiningClassMap instance for NFC using compiled data.
   ///
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/normalizer/properties/struct.CanonicalCombiningClassMap.html#method.new) for more information.
@@ -32,7 +31,6 @@ final class CanonicalCombiningClassMap implements ffi.Finalizable {
     final result = _icu4x_CanonicalCombiningClassMap_create_mv1();
     return CanonicalCombiningClassMap._fromFfi(result, []);
   }
-
   /// Construct a new CanonicalCombiningClassMap instance for NFC using a particular data source.
   ///
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/normalizer/properties/struct.CanonicalCombiningClassMap.html#method.new) for more information.
@@ -45,7 +43,6 @@ final class CanonicalCombiningClassMap implements ffi.Finalizable {
     }
     return CanonicalCombiningClassMap._fromFfi(result.union.ok, []);
   }
-
   /// See the [Rust documentation for `get`](https://docs.rs/icu/latest/icu/normalizer/properties/struct.CanonicalCombiningClassMapBorrowed.html#method.get) for more information.
   ///
   /// Additional information: [1](https://docs.rs/icu/latest/icu/properties/properties/struct.CanonicalCombiningClassMapBorrowed.html)
@@ -53,6 +50,7 @@ final class CanonicalCombiningClassMap implements ffi.Finalizable {
     final result = _icu4x_CanonicalCombiningClassMap_get_mv1(_ffi, ch);
     return result;
   }
+
 }
 
 @_DiplomatFfiUse('icu4x_CanonicalCombiningClassMap_destroy_mv1')

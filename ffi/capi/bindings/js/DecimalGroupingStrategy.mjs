@@ -3,13 +3,12 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
-/** 
+/**
  * See the [Rust documentation for `GroupingStrategy`](https://docs.rs/icu/latest/icu/decimal/options/enum.GroupingStrategy.html) for more information.
  */
 
 
 export class DecimalGroupingStrategy {
-    
     #value = undefined;
 
     static #values = new Map([
@@ -22,7 +21,7 @@ export class DecimalGroupingStrategy {
     static getAllEntries() {
         return DecimalGroupingStrategy.#values.entries();
     }
-    
+
     #internalConstructor(value) {
         if (arguments.length > 1 && arguments[0] === diplomatRuntime.internalConstructor) {
             // We pass in two internalConstructor arguments to create *new*
@@ -52,11 +51,11 @@ export class DecimalGroupingStrategy {
         return new DecimalGroupingStrategy(value);
     }
 
-    get value() {
+    get value(){
         return [...DecimalGroupingStrategy.#values.keys()][this.#value];
     }
 
-    get ffiValue() {
+    get ffiValue(){
         return this.#value;
     }
     static #objectValues = [

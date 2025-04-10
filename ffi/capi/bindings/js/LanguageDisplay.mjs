@@ -3,13 +3,12 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
-/** 
+/**
  * See the [Rust documentation for `LanguageDisplay`](https://docs.rs/icu/latest/icu/displaynames/options/enum.LanguageDisplay.html) for more information.
  */
 
 
 export class LanguageDisplay {
-    
     #value = undefined;
 
     static #values = new Map([
@@ -20,7 +19,7 @@ export class LanguageDisplay {
     static getAllEntries() {
         return LanguageDisplay.#values.entries();
     }
-    
+
     #internalConstructor(value) {
         if (arguments.length > 1 && arguments[0] === diplomatRuntime.internalConstructor) {
             // We pass in two internalConstructor arguments to create *new*
@@ -50,11 +49,11 @@ export class LanguageDisplay {
         return new LanguageDisplay(value);
     }
 
-    get value() {
+    get value(){
         return [...LanguageDisplay.#values.keys()][this.#value];
     }
 
-    get ffiValue() {
+    get ffiValue(){
         return this.#value;
     }
     static #objectValues = [

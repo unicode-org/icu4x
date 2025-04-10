@@ -20,23 +20,22 @@
 namespace icu4x {
 namespace capi {
     extern "C" {
-    
+
     uint16_t icu4x_CodePointMapData16_get_mv1(const icu4x::capi::CodePointMapData16* self, char32_t cp);
-    
+
     icu4x::capi::CodePointRangeIterator* icu4x_CodePointMapData16_iter_ranges_for_value_mv1(const icu4x::capi::CodePointMapData16* self, uint16_t value);
-    
+
     icu4x::capi::CodePointRangeIterator* icu4x_CodePointMapData16_iter_ranges_for_value_complemented_mv1(const icu4x::capi::CodePointMapData16* self, uint16_t value);
-    
+
     icu4x::capi::CodePointSetData* icu4x_CodePointMapData16_get_set_for_value_mv1(const icu4x::capi::CodePointMapData16* self, uint16_t value);
-    
+
     icu4x::capi::CodePointMapData16* icu4x_CodePointMapData16_create_script_mv1(void);
-    
+
     typedef struct icu4x_CodePointMapData16_create_script_with_provider_mv1_result {union {icu4x::capi::CodePointMapData16* ok; icu4x::capi::DataError err;}; bool is_ok;} icu4x_CodePointMapData16_create_script_with_provider_mv1_result;
     icu4x_CodePointMapData16_create_script_with_provider_mv1_result icu4x_CodePointMapData16_create_script_with_provider_mv1(const icu4x::capi::DataProvider* provider);
-    
-    
+
     void icu4x_CodePointMapData16_destroy_mv1(CodePointMapData16* self);
-    
+
     } // extern "C"
 } // namespace capi
 } // namespace

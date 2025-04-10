@@ -11,33 +11,32 @@ import type { TimeZoneInfo } from "./TimeZoneInfo"
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
-/** 
+/**
  * See the [Rust documentation for `FixedCalendarDateTimeFormatter`](https://docs.rs/icu/latest/icu/datetime/type.FixedCalendarDateTimeFormatter.html) for more information.
  */
 
 
 export class ZonedTimeFormatter {
-    
     get ffiValue(): pointer;
-static createSpecificLong(locale: Locale, length: DateTimeLength | null, timePrecision: TimePrecision | null, alignment: DateTimeAlignment | null): ZonedTimeFormatter;
-static createSpecificLongWithProvider(provider: DataProvider, locale: Locale, length: DateTimeLength | null, timePrecision: TimePrecision | null, alignment: DateTimeAlignment | null): ZonedTimeFormatter;
-static createSpecificShort(locale: Locale, length: DateTimeLength | null, timePrecision: TimePrecision | null, alignment: DateTimeAlignment | null): ZonedTimeFormatter;
-static createSpecificShortWithProvider(provider: DataProvider, locale: Locale, length: DateTimeLength | null, timePrecision: TimePrecision | null, alignment: DateTimeAlignment | null): ZonedTimeFormatter;
-static createLocalizedOffsetLong(locale: Locale, length: DateTimeLength | null, timePrecision: TimePrecision | null, alignment: DateTimeAlignment | null): ZonedTimeFormatter;
-static createLocalizedOffsetLongWithProvider(provider: DataProvider, locale: Locale, length: DateTimeLength | null, timePrecision: TimePrecision | null, alignment: DateTimeAlignment | null): ZonedTimeFormatter;
-static createLocalizedOffsetShort(locale: Locale, length: DateTimeLength | null, timePrecision: TimePrecision | null, alignment: DateTimeAlignment | null): ZonedTimeFormatter;
-static createLocalizedOffsetShortWithProvider(provider: DataProvider, locale: Locale, length: DateTimeLength | null, timePrecision: TimePrecision | null, alignment: DateTimeAlignment | null): ZonedTimeFormatter;
-static createGenericLong(locale: Locale, length: DateTimeLength | null, timePrecision: TimePrecision | null, alignment: DateTimeAlignment | null): ZonedTimeFormatter;
-static createGenericLongWithProvider(provider: DataProvider, locale: Locale, length: DateTimeLength | null, timePrecision: TimePrecision | null, alignment: DateTimeAlignment | null): ZonedTimeFormatter;
-static createGenericShort(locale: Locale, length: DateTimeLength | null, timePrecision: TimePrecision | null, alignment: DateTimeAlignment | null): ZonedTimeFormatter;
-static createGenericShortWithProvider(provider: DataProvider, locale: Locale, length: DateTimeLength | null, timePrecision: TimePrecision | null, alignment: DateTimeAlignment | null): ZonedTimeFormatter;
-static createLocation(locale: Locale, length: DateTimeLength | null, timePrecision: TimePrecision | null, alignment: DateTimeAlignment | null): ZonedTimeFormatter;
-static createLocationWithProvider(provider: DataProvider, locale: Locale, length: DateTimeLength | null, timePrecision: TimePrecision | null, alignment: DateTimeAlignment | null): ZonedTimeFormatter;
-static createExemplarCity(locale: Locale, length: DateTimeLength | null, timePrecision: TimePrecision | null, alignment: DateTimeAlignment | null): ZonedTimeFormatter;
-static createExemplarCityWithProvider(provider: DataProvider, locale: Locale, length: DateTimeLength | null, timePrecision: TimePrecision | null, alignment: DateTimeAlignment | null): ZonedTimeFormatter;
+    static createSpecificLong(locale: Locale, length: DateTimeLength | null, timePrecision: TimePrecision | null, alignment: DateTimeAlignment | null): ZonedTimeFormatter;
+    static createSpecificLongWithProvider(provider: DataProvider, locale: Locale, length: DateTimeLength | null, timePrecision: TimePrecision | null, alignment: DateTimeAlignment | null): ZonedTimeFormatter;
+    static createSpecificShort(locale: Locale, length: DateTimeLength | null, timePrecision: TimePrecision | null, alignment: DateTimeAlignment | null): ZonedTimeFormatter;
+    static createSpecificShortWithProvider(provider: DataProvider, locale: Locale, length: DateTimeLength | null, timePrecision: TimePrecision | null, alignment: DateTimeAlignment | null): ZonedTimeFormatter;
+    static createLocalizedOffsetLong(locale: Locale, length: DateTimeLength | null, timePrecision: TimePrecision | null, alignment: DateTimeAlignment | null): ZonedTimeFormatter;
+    static createLocalizedOffsetLongWithProvider(provider: DataProvider, locale: Locale, length: DateTimeLength | null, timePrecision: TimePrecision | null, alignment: DateTimeAlignment | null): ZonedTimeFormatter;
+    static createLocalizedOffsetShort(locale: Locale, length: DateTimeLength | null, timePrecision: TimePrecision | null, alignment: DateTimeAlignment | null): ZonedTimeFormatter;
+    static createLocalizedOffsetShortWithProvider(provider: DataProvider, locale: Locale, length: DateTimeLength | null, timePrecision: TimePrecision | null, alignment: DateTimeAlignment | null): ZonedTimeFormatter;
+    static createGenericLong(locale: Locale, length: DateTimeLength | null, timePrecision: TimePrecision | null, alignment: DateTimeAlignment | null): ZonedTimeFormatter;
+    static createGenericLongWithProvider(provider: DataProvider, locale: Locale, length: DateTimeLength | null, timePrecision: TimePrecision | null, alignment: DateTimeAlignment | null): ZonedTimeFormatter;
+    static createGenericShort(locale: Locale, length: DateTimeLength | null, timePrecision: TimePrecision | null, alignment: DateTimeAlignment | null): ZonedTimeFormatter;
+    static createGenericShortWithProvider(provider: DataProvider, locale: Locale, length: DateTimeLength | null, timePrecision: TimePrecision | null, alignment: DateTimeAlignment | null): ZonedTimeFormatter;
+    static createLocation(locale: Locale, length: DateTimeLength | null, timePrecision: TimePrecision | null, alignment: DateTimeAlignment | null): ZonedTimeFormatter;
+    static createLocationWithProvider(provider: DataProvider, locale: Locale, length: DateTimeLength | null, timePrecision: TimePrecision | null, alignment: DateTimeAlignment | null): ZonedTimeFormatter;
+    static createExemplarCity(locale: Locale, length: DateTimeLength | null, timePrecision: TimePrecision | null, alignment: DateTimeAlignment | null): ZonedTimeFormatter;
+    static createExemplarCityWithProvider(provider: DataProvider, locale: Locale, length: DateTimeLength | null, timePrecision: TimePrecision | null, alignment: DateTimeAlignment | null): ZonedTimeFormatter;
 
-    /** 
+    /**
      * See the [Rust documentation for `format`](https://docs.rs/icu/latest/icu/datetime/struct.FixedCalendarDateTimeFormatter.html#method.format) for more information.
      */
-    format(time: Time, zone: TimeZoneInfo): string;
+        format(time: Time, zone: TimeZoneInfo): string;
 }

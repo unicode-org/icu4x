@@ -16,12 +16,11 @@
 namespace icu4x {
 namespace capi {
     extern "C" {
-    
+
     int32_t icu4x_LineBreakIteratorUtf16_next_mv1(icu4x::capi::LineBreakIteratorUtf16* self);
-    
-    
+
     void icu4x_LineBreakIteratorUtf16_destroy_mv1(LineBreakIteratorUtf16* self);
-    
+
     } // extern "C"
 } // namespace capi
 } // namespace

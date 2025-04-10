@@ -25,7 +25,6 @@ TimeZoneInfo* icu4x_TimeZone_with_offset_mv1(const TimeZone* self, const UtcOffs
 
 TimeZoneInfo* icu4x_TimeZone_without_offset_mv1(const TimeZone* self);
 
-
 void icu4x_TimeZone_destroy_mv1(TimeZone* self);
 
 

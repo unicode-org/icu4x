@@ -24,7 +24,7 @@ namespace capi {
       FixedDecimalSignedRoundingMode_HalfCeil = 7,
       FixedDecimalSignedRoundingMode_HalfFloor = 8,
     };
-    
+
     typedef struct FixedDecimalSignedRoundingMode_option {union { FixedDecimalSignedRoundingMode ok; }; bool is_ok; } FixedDecimalSignedRoundingMode_option;
 } // namespace capi
 } // namespace

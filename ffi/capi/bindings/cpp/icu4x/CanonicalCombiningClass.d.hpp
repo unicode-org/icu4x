@@ -77,7 +77,7 @@ namespace capi {
       CanonicalCombiningClass_DoubleAbove = 234,
       CanonicalCombiningClass_IotaSubscript = 240,
     };
-    
+
     typedef struct CanonicalCombiningClass_option {union { CanonicalCombiningClass ok; }; bool is_ok; } CanonicalCombiningClass_option;
 } // namespace capi
 } // namespace

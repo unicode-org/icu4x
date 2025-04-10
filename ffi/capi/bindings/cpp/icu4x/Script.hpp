@@ -16,21 +16,20 @@
 namespace icu4x {
 namespace capi {
     extern "C" {
-    
+
     icu4x::capi::Script icu4x_Script_for_char_mv1(char32_t ch);
-    
+
     typedef struct icu4x_Script_long_name_mv1_result {union {diplomat::capi::DiplomatStringView ok; }; bool is_ok;} icu4x_Script_long_name_mv1_result;
     icu4x_Script_long_name_mv1_result icu4x_Script_long_name_mv1(icu4x::capi::Script self);
-    
+
     typedef struct icu4x_Script_short_name_mv1_result {union {diplomat::capi::DiplomatStringView ok; }; bool is_ok;} icu4x_Script_short_name_mv1_result;
     icu4x_Script_short_name_mv1_result icu4x_Script_short_name_mv1(icu4x::capi::Script self);
-    
+
     uint16_t icu4x_Script_to_integer_value_mv1(icu4x::capi::Script self);
-    
+
     typedef struct icu4x_Script_from_integer_value_mv1_result {union {icu4x::capi::Script ok; }; bool is_ok;} icu4x_Script_from_integer_value_mv1_result;
     icu4x_Script_from_integer_value_mv1_result icu4x_Script_from_integer_value_mv1(uint16_t other);
-    
-    
+
     } // extern "C"
 } // namespace capi
 } // namespace

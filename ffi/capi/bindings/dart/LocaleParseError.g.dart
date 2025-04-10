@@ -12,6 +12,7 @@ enum LocaleParseError {
   subtag,
 
   extension;
+
 }
 
 // dart format on

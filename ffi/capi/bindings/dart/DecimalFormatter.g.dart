@@ -24,7 +24,6 @@ final class DecimalFormatter implements ffi.Finalizable {
   }
 
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_DecimalFormatter_destroy_mv1));
-
   /// Creates a new [`DecimalFormatter`], using compiled data
   ///
   /// See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/decimal/struct.DecimalFormatter.html#method.try_new) for more information.
@@ -37,7 +36,6 @@ final class DecimalFormatter implements ffi.Finalizable {
     }
     return DecimalFormatter._fromFfi(result.union.ok, []);
   }
-
   /// Creates a new [`DecimalFormatter`], using a particular data source.
   ///
   /// See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/decimal/struct.DecimalFormatter.html#method.try_new) for more information.
@@ -50,7 +48,6 @@ final class DecimalFormatter implements ffi.Finalizable {
     }
     return DecimalFormatter._fromFfi(result.union.ok, []);
   }
-
   /// Creates a new [`DecimalFormatter`] from preconstructed locale data.
   ///
   /// See the [Rust documentation for `DecimalSymbolsV1`](https://docs.rs/icu/latest/icu/decimal/provider/struct.DecimalSymbolsV1.html) for more information.
@@ -64,7 +61,6 @@ final class DecimalFormatter implements ffi.Finalizable {
     }
     return DecimalFormatter._fromFfi(result.union.ok, []);
   }
-
   /// Formats a [`Decimal`] to a string.
   ///
   /// See the [Rust documentation for `format`](https://docs.rs/icu/latest/icu/decimal/struct.DecimalFormatter.html#method.format) for more information.
@@ -73,6 +69,7 @@ final class DecimalFormatter implements ffi.Finalizable {
     _icu4x_DecimalFormatter_format_mv1(_ffi, value._ffi, write._ffi);
     return write.finalize();
   }
+
 }
 
 @_DiplomatFfiUse('icu4x_DecimalFormatter_destroy_mv1')

@@ -22,7 +22,6 @@ final class TimeZoneInfo implements ffi.Finalizable {
   }
 
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_TimeZoneInfo_destroy_mv1));
-
   /// Creates a time zone for UTC (Coordinated Universal Time).
   ///
   /// See the [Rust documentation for `utc`](https://docs.rs/icu/latest/icu/time/struct.TimeZoneInfo.html#method.utc) for more information.
@@ -30,25 +29,21 @@ final class TimeZoneInfo implements ffi.Finalizable {
     final result = _icu4x_TimeZoneInfo_utc_mv1();
     return TimeZoneInfo._fromFfi(result, []);
   }
-
   /// Creates a time zone info from parts.
   factory TimeZoneInfo(TimeZone timeZoneId, {UtcOffset? offset, TimeZoneVariant? zoneVariant}) {
     final result = _icu4x_TimeZoneInfo_from_parts_mv1(timeZoneId._ffi, offset?._ffi ?? ffi.Pointer.fromAddress(0), zoneVariant != null ? _ResultInt32Void.ok(zoneVariant.index) : _ResultInt32Void.err());
     return TimeZoneInfo._fromFfi(result, []);
   }
-
   /// See the [Rust documentation for `time_zone_id`](https://docs.rs/icu/latest/icu/time/struct.TimeZoneInfo.html#method.time_zone_id) for more information.
   TimeZone timeZoneId() {
     final result = _icu4x_TimeZoneInfo_time_zone_id_mv1(_ffi);
     return TimeZone._fromFfi(result, []);
   }
-
   /// See the [Rust documentation for `at_time`](https://docs.rs/icu/latest/icu/time/struct.TimeZoneInfo.html#method.at_time) for more information.
   TimeZoneInfo atTime(IsoDate date, Time time) {
     final result = _icu4x_TimeZoneInfo_at_time_mv1(_ffi, date._ffi, time._ffi);
     return TimeZoneInfo._fromFfi(result, []);
   }
-
   /// See the [Rust documentation for `local_time`](https://docs.rs/icu/latest/icu/time/struct.TimeZoneInfo.html#method.local_time) for more information.
   IsoDateTime? localTime() {
     final result = _icu4x_TimeZoneInfo_local_time_mv1(_ffi);
@@ -57,13 +52,11 @@ final class TimeZoneInfo implements ffi.Finalizable {
     }
     return IsoDateTime._fromFfi(result.union.ok);
   }
-
   /// See the [Rust documentation for `with_zone_variant`](https://docs.rs/icu/latest/icu/time/struct.TimeZoneInfo.html#method.with_zone_variant) for more information.
   TimeZoneInfo withZoneVariant(TimeZoneVariant timeZoneVariant) {
     final result = _icu4x_TimeZoneInfo_with_zone_variant_mv1(_ffi, timeZoneVariant.index);
     return TimeZoneInfo._fromFfi(result, []);
   }
-
   /// Infers the zone variant.
   ///
   /// Requires the offset and local time to be set.
@@ -75,7 +68,6 @@ final class TimeZoneInfo implements ffi.Finalizable {
     final result = _icu4x_TimeZoneInfo_infer_zone_variant_mv1(_ffi, offsetCalculator._ffi);
     return result.isOk;
   }
-
   /// See the [Rust documentation for `zone_variant`](https://docs.rs/icu/latest/icu/time/struct.TimeZoneInfo.html#method.zone_variant) for more information.
   TimeZoneVariant? zoneVariant() {
     final result = _icu4x_TimeZoneInfo_zone_variant_mv1(_ffi);
@@ -84,6 +76,7 @@ final class TimeZoneInfo implements ffi.Finalizable {
     }
     return TimeZoneVariant.values[result.union.ok];
   }
+
 }
 
 @_DiplomatFfiUse('icu4x_TimeZoneInfo_destroy_mv1')

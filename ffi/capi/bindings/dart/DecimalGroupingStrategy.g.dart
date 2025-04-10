@@ -12,6 +12,7 @@ enum DecimalGroupingStrategy {
   always,
 
   min2;
+
 }
 
 // dart format on

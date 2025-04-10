@@ -36,7 +36,6 @@ final class ZonedIsoDateTime {
     struct.zone = zone._ffi;
     return struct;
   }
-
   /// Creates a new [`ZonedIsoDateTime`] from an IXDTF string.
   ///
   /// See the [Rust documentation for `try_from_str`](https://docs.rs/icu/latest/icu/time/struct.ZonedDateTime.html#method.try_from_str) for more information.
@@ -50,6 +49,7 @@ final class ZonedIsoDateTime {
     }
     return ZonedIsoDateTime._fromFfi(result.union.ok);
   }
+
 
   @override
   bool operator ==(Object other) =>

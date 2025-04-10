@@ -27,7 +27,6 @@ final class IanaParserExtended implements ffi.Finalizable {
   }
 
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_IanaParserExtended_destroy_mv1));
-
   /// Create a new [`IanaParserExtended`] using compiled data
   ///
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/time/zone/iana/struct.IanaParserExtended.html#method.new) for more information.
@@ -35,7 +34,6 @@ final class IanaParserExtended implements ffi.Finalizable {
     final result = _icu4x_IanaParserExtended_create_mv1();
     return IanaParserExtended._fromFfi(result, []);
   }
-
   /// Create a new [`IanaParserExtended`] using a particular data source
   ///
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/time/zone/iana/struct.IanaParserExtended.html#method.new) for more information.
@@ -48,7 +46,6 @@ final class IanaParserExtended implements ffi.Finalizable {
     }
     return IanaParserExtended._fromFfi(result.union.ok, []);
   }
-
   /// See the [Rust documentation for `parse`](https://docs.rs/icu/latest/icu/time/zone/iana/struct.IanaParserExtendedBorrowed.html#method.parse) for more information.
   TimeZoneAndCanonicalAndNormalized parse(String value) {
     final temp = _FinalizedArena();
@@ -57,7 +54,6 @@ final class IanaParserExtended implements ffi.Finalizable {
     final result = _icu4x_IanaParserExtended_parse_mv1(_ffi, value._utf8AllocIn(temp.arena));
     return TimeZoneAndCanonicalAndNormalized._fromFfi(result, aEdges);
   }
-
   /// See the [Rust documentation for `iter`](https://docs.rs/icu/latest/icu/time/zone/iana/struct.IanaParserExtendedBorrowed.html#method.iter) for more information.
   TimeZoneAndCanonicalIterator iter() {
     // This lifetime edge depends on lifetimes: 'a
@@ -65,7 +61,6 @@ final class IanaParserExtended implements ffi.Finalizable {
     final result = _icu4x_IanaParserExtended_iter_mv1(_ffi);
     return TimeZoneAndCanonicalIterator._fromFfi(result, [], aEdges);
   }
-
   /// See the [Rust documentation for `iter_all`](https://docs.rs/icu/latest/icu/time/zone/iana/struct.IanaParserExtendedBorrowed.html#method.iter_all) for more information.
   TimeZoneAndCanonicalAndNormalizedIterator iterAll() {
     // This lifetime edge depends on lifetimes: 'a
@@ -73,6 +68,7 @@ final class IanaParserExtended implements ffi.Finalizable {
     final result = _icu4x_IanaParserExtended_iter_all_mv1(_ffi);
     return TimeZoneAndCanonicalAndNormalizedIterator._fromFfi(result, [], aEdges);
   }
+
 }
 
 @_DiplomatFfiUse('icu4x_IanaParserExtended_destroy_mv1')

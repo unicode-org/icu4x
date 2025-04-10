@@ -12,6 +12,7 @@ enum LineBreakStrictness {
   strict,
 
   anywhere;
+
 }
 
 // dart format on

@@ -19,11 +19,10 @@
 namespace icu4x {
 namespace capi {
     extern "C" {
-    
+
     typedef struct icu4x_IsoDateTime_from_string_mv1_result {union {icu4x::capi::IsoDateTime ok; icu4x::capi::CalendarParseError err;}; bool is_ok;} icu4x_IsoDateTime_from_string_mv1_result;
     icu4x_IsoDateTime_from_string_mv1_result icu4x_IsoDateTime_from_string_mv1(diplomat::capi::DiplomatStringView v);
-    
-    
+
     } // extern "C"
 } // namespace capi
 } // namespace

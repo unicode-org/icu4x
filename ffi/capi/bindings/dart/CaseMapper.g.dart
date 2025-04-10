@@ -22,7 +22,6 @@ final class CaseMapper implements ffi.Finalizable {
   }
 
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_CaseMapper_destroy_mv1));
-
   /// Construct a new CaseMapper instance using compiled data.
   ///
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.new) for more information.
@@ -30,7 +29,6 @@ final class CaseMapper implements ffi.Finalizable {
     final result = _icu4x_CaseMapper_create_mv1();
     return CaseMapper._fromFfi(result, []);
   }
-
   /// Construct a new CaseMapper instance using a particular data source.
   ///
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.new) for more information.
@@ -43,7 +41,6 @@ final class CaseMapper implements ffi.Finalizable {
     }
     return CaseMapper._fromFfi(result.union.ok, []);
   }
-
   /// Returns the full lowercase mapping of the given string
   ///
   /// See the [Rust documentation for `lowercase`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapperBorrowed.html#method.lowercase) for more information.
@@ -53,7 +50,6 @@ final class CaseMapper implements ffi.Finalizable {
     _icu4x_CaseMapper_lowercase_mv1(_ffi, s._utf8AllocIn(temp.arena), locale._ffi, write._ffi);
     return write.finalize();
   }
-
   /// Returns the full uppercase mapping of the given string
   ///
   /// See the [Rust documentation for `uppercase`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapperBorrowed.html#method.uppercase) for more information.
@@ -63,7 +59,6 @@ final class CaseMapper implements ffi.Finalizable {
     _icu4x_CaseMapper_uppercase_mv1(_ffi, s._utf8AllocIn(temp.arena), locale._ffi, write._ffi);
     return write.finalize();
   }
-
   /// Returns the full lowercase mapping of the given string, using compiled data (avoids having to allocate a CaseMapper object)
   ///
   /// See the [Rust documentation for `lowercase`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapperBorrowed.html#method.lowercase) for more information.
@@ -73,7 +68,6 @@ final class CaseMapper implements ffi.Finalizable {
     _icu4x_CaseMapper_lowercase_with_compiled_data_mv1(s._utf8AllocIn(temp.arena), locale._ffi, write._ffi);
     return write.finalize();
   }
-
   /// Returns the full uppercase mapping of the given string, using compiled data (avoids having to allocate a CaseMapper object)
   ///
   /// See the [Rust documentation for `uppercase`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapperBorrowed.html#method.uppercase) for more information.
@@ -83,7 +77,6 @@ final class CaseMapper implements ffi.Finalizable {
     _icu4x_CaseMapper_uppercase_with_compiled_data_mv1(s._utf8AllocIn(temp.arena), locale._ffi, write._ffi);
     return write.finalize();
   }
-
   /// Returns the full titlecase mapping of the given string, performing head adjustment without
   /// loading additional data.
   /// (if head adjustment is enabled in the options)
@@ -97,7 +90,6 @@ final class CaseMapper implements ffi.Finalizable {
     _icu4x_CaseMapper_titlecase_segment_with_only_case_data_v1_mv1(_ffi, s._utf8AllocIn(temp.arena), locale._ffi, options._toFfi(temp.arena), write._ffi);
     return write.finalize();
   }
-
   /// Case-folds the characters in the given string
   ///
   /// See the [Rust documentation for `fold`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapperBorrowed.html#method.fold) for more information.
@@ -107,7 +99,6 @@ final class CaseMapper implements ffi.Finalizable {
     _icu4x_CaseMapper_fold_mv1(_ffi, s._utf8AllocIn(temp.arena), write._ffi);
     return write.finalize();
   }
-
   /// Case-folds the characters in the given string
   /// using Turkic (T) mappings for dotted/dotless I.
   ///
@@ -118,7 +109,6 @@ final class CaseMapper implements ffi.Finalizable {
     _icu4x_CaseMapper_fold_turkic_mv1(_ffi, s._utf8AllocIn(temp.arena), write._ffi);
     return write.finalize();
   }
-
   /// Adds all simple case mappings and the full case folding for `c` to `builder`.
   /// Also adds special case closure mappings.
   ///
@@ -135,7 +125,6 @@ final class CaseMapper implements ffi.Finalizable {
   void addCaseClosureTo(Rune c, CodePointSetBuilder builder) {
     _icu4x_CaseMapper_add_case_closure_to_mv1(_ffi, c, builder._ffi);
   }
-
   /// Returns the simple lowercase mapping of the given character.
   ///
   /// This function only implements simple and common mappings.
@@ -147,7 +136,6 @@ final class CaseMapper implements ffi.Finalizable {
     final result = _icu4x_CaseMapper_simple_lowercase_mv1(_ffi, ch);
     return result;
   }
-
   /// Returns the simple uppercase mapping of the given character.
   ///
   /// This function only implements simple and common mappings.
@@ -159,7 +147,6 @@ final class CaseMapper implements ffi.Finalizable {
     final result = _icu4x_CaseMapper_simple_uppercase_mv1(_ffi, ch);
     return result;
   }
-
   /// Returns the simple titlecase mapping of the given character.
   ///
   /// This function only implements simple and common mappings.
@@ -171,7 +158,6 @@ final class CaseMapper implements ffi.Finalizable {
     final result = _icu4x_CaseMapper_simple_titlecase_mv1(_ffi, ch);
     return result;
   }
-
   /// Returns the simple casefolding of the given character.
   ///
   /// This function only implements simple folding.
@@ -182,7 +168,6 @@ final class CaseMapper implements ffi.Finalizable {
     final result = _icu4x_CaseMapper_simple_fold_mv1(_ffi, ch);
     return result;
   }
-
   /// Returns the simple casefolding of the given character in the Turkic locale
   ///
   /// This function only implements simple folding.
@@ -193,6 +178,7 @@ final class CaseMapper implements ffi.Finalizable {
     final result = _icu4x_CaseMapper_simple_fold_turkic_mv1(_ffi, ch);
     return result;
   }
+
 }
 
 @_DiplomatFfiUse('icu4x_CaseMapper_destroy_mv1')

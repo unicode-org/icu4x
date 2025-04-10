@@ -28,7 +28,6 @@ final class ExemplarCharacters implements ffi.Finalizable {
   }
 
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_ExemplarCharacters_destroy_mv1));
-
   /// Checks whether the string is in the set.
   ///
   /// See the [Rust documentation for `contains_str`](https://docs.rs/icu/latest/icu/collections/codepointinvliststringlist/struct.CodePointInversionListAndStringList.html#method.contains_str) for more information.
@@ -37,7 +36,6 @@ final class ExemplarCharacters implements ffi.Finalizable {
     final result = _icu4x_ExemplarCharacters_contains_str_mv1(_ffi, s._utf8AllocIn(temp.arena));
     return result;
   }
-
   /// Checks whether the code point is in the set.
   ///
   /// See the [Rust documentation for `contains`](https://docs.rs/icu/latest/icu/collections/codepointinvliststringlist/struct.CodePointInversionListAndStringList.html#method.contains) for more information.
@@ -45,7 +43,6 @@ final class ExemplarCharacters implements ffi.Finalizable {
     final result = _icu4x_ExemplarCharacters_contains_mv1(_ffi, cp);
     return result;
   }
-
   /// Create an [`ExemplarCharacters`] for the "main" set of exemplar characters for a given locale, using compiled data.
   ///
   /// See the [Rust documentation for `try_new_main`](https://docs.rs/icu/latest/icu/locale/exemplar_chars/struct.ExemplarCharacters.html#method.try_new_main) for more information.
@@ -58,7 +55,6 @@ final class ExemplarCharacters implements ffi.Finalizable {
     }
     return ExemplarCharacters._fromFfi(result.union.ok, []);
   }
-
   /// Create an [`ExemplarCharacters`] for the "main" set of exemplar characters for a given locale, using a particular data source
   ///
   /// See the [Rust documentation for `try_new_main`](https://docs.rs/icu/latest/icu/locale/exemplar_chars/struct.ExemplarCharacters.html#method.try_new_main) for more information.
@@ -71,7 +67,6 @@ final class ExemplarCharacters implements ffi.Finalizable {
     }
     return ExemplarCharacters._fromFfi(result.union.ok, []);
   }
-
   /// Create an [`ExemplarCharacters`] for the "auxiliary" set of exemplar characters for a given locale, using compiled data.
   ///
   /// See the [Rust documentation for `try_new_auxiliary`](https://docs.rs/icu/latest/icu/locale/exemplar_chars/struct.ExemplarCharacters.html#method.try_new_auxiliary) for more information.
@@ -84,7 +79,6 @@ final class ExemplarCharacters implements ffi.Finalizable {
     }
     return ExemplarCharacters._fromFfi(result.union.ok, []);
   }
-
   /// Create an [`ExemplarCharacters`] for the "auxiliary" set of exemplar characters for a given locale, using compiled data.
   ///
   /// See the [Rust documentation for `try_new_auxiliary`](https://docs.rs/icu/latest/icu/locale/exemplar_chars/struct.ExemplarCharacters.html#method.try_new_auxiliary) for more information.
@@ -97,7 +91,6 @@ final class ExemplarCharacters implements ffi.Finalizable {
     }
     return ExemplarCharacters._fromFfi(result.union.ok, []);
   }
-
   /// Create an [`ExemplarCharacters`] for the "punctuation" set of exemplar characters for a given locale, using compiled data.
   ///
   /// See the [Rust documentation for `try_new_punctuation`](https://docs.rs/icu/latest/icu/locale/exemplar_chars/struct.ExemplarCharacters.html#method.try_new_punctuation) for more information.
@@ -110,7 +103,6 @@ final class ExemplarCharacters implements ffi.Finalizable {
     }
     return ExemplarCharacters._fromFfi(result.union.ok, []);
   }
-
   /// Create an [`ExemplarCharacters`] for the "punctuation" set of exemplar characters for a given locale, using compiled data.
   ///
   /// See the [Rust documentation for `try_new_punctuation`](https://docs.rs/icu/latest/icu/locale/exemplar_chars/struct.ExemplarCharacters.html#method.try_new_punctuation) for more information.
@@ -123,7 +115,6 @@ final class ExemplarCharacters implements ffi.Finalizable {
     }
     return ExemplarCharacters._fromFfi(result.union.ok, []);
   }
-
   /// Create an [`ExemplarCharacters`] for the "numbers" set of exemplar characters for a given locale, using compiled data.
   ///
   /// See the [Rust documentation for `try_new_numbers`](https://docs.rs/icu/latest/icu/locale/exemplar_chars/struct.ExemplarCharacters.html#method.try_new_numbers) for more information.
@@ -136,7 +127,6 @@ final class ExemplarCharacters implements ffi.Finalizable {
     }
     return ExemplarCharacters._fromFfi(result.union.ok, []);
   }
-
   /// Create an [`ExemplarCharacters`] for the "numbers" set of exemplar characters for a given locale, using compiled data.
   ///
   /// See the [Rust documentation for `try_new_numbers`](https://docs.rs/icu/latest/icu/locale/exemplar_chars/struct.ExemplarCharacters.html#method.try_new_numbers) for more information.
@@ -149,7 +139,6 @@ final class ExemplarCharacters implements ffi.Finalizable {
     }
     return ExemplarCharacters._fromFfi(result.union.ok, []);
   }
-
   /// Create an [`ExemplarCharacters`] for the "index" set of exemplar characters for a given locale, using compiled data.
   ///
   /// See the [Rust documentation for `try_new_index`](https://docs.rs/icu/latest/icu/locale/exemplar_chars/struct.ExemplarCharacters.html#method.try_new_index) for more information.
@@ -162,7 +151,6 @@ final class ExemplarCharacters implements ffi.Finalizable {
     }
     return ExemplarCharacters._fromFfi(result.union.ok, []);
   }
-
   /// Create an [`ExemplarCharacters`] for the "index" set of exemplar characters for a given locale, using compiled data.
   ///
   /// See the [Rust documentation for `try_new_index`](https://docs.rs/icu/latest/icu/locale/exemplar_chars/struct.ExemplarCharacters.html#method.try_new_index) for more information.
@@ -175,6 +163,7 @@ final class ExemplarCharacters implements ffi.Finalizable {
     }
     return ExemplarCharacters._fromFfi(result.union.ok, []);
   }
+
 }
 
 @_DiplomatFfiUse('icu4x_ExemplarCharacters_destroy_mv1')

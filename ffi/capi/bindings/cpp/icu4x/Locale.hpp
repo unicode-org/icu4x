@@ -17,50 +17,49 @@
 namespace icu4x {
 namespace capi {
     extern "C" {
-    
+
     typedef struct icu4x_Locale_from_string_mv1_result {union {icu4x::capi::Locale* ok; icu4x::capi::LocaleParseError err;}; bool is_ok;} icu4x_Locale_from_string_mv1_result;
     icu4x_Locale_from_string_mv1_result icu4x_Locale_from_string_mv1(diplomat::capi::DiplomatStringView name);
-    
+
     icu4x::capi::Locale* icu4x_Locale_und_mv1(void);
-    
+
     icu4x::capi::Locale* icu4x_Locale_clone_mv1(const icu4x::capi::Locale* self);
-    
+
     void icu4x_Locale_basename_mv1(const icu4x::capi::Locale* self, diplomat::capi::DiplomatWrite* write);
-    
+
     typedef struct icu4x_Locale_get_unicode_extension_mv1_result { bool is_ok;} icu4x_Locale_get_unicode_extension_mv1_result;
     icu4x_Locale_get_unicode_extension_mv1_result icu4x_Locale_get_unicode_extension_mv1(const icu4x::capi::Locale* self, diplomat::capi::DiplomatStringView s, diplomat::capi::DiplomatWrite* write);
-    
+
     void icu4x_Locale_language_mv1(const icu4x::capi::Locale* self, diplomat::capi::DiplomatWrite* write);
-    
+
     typedef struct icu4x_Locale_set_language_mv1_result {union { icu4x::capi::LocaleParseError err;}; bool is_ok;} icu4x_Locale_set_language_mv1_result;
     icu4x_Locale_set_language_mv1_result icu4x_Locale_set_language_mv1(icu4x::capi::Locale* self, diplomat::capi::DiplomatStringView s);
-    
+
     typedef struct icu4x_Locale_region_mv1_result { bool is_ok;} icu4x_Locale_region_mv1_result;
     icu4x_Locale_region_mv1_result icu4x_Locale_region_mv1(const icu4x::capi::Locale* self, diplomat::capi::DiplomatWrite* write);
-    
+
     typedef struct icu4x_Locale_set_region_mv1_result {union { icu4x::capi::LocaleParseError err;}; bool is_ok;} icu4x_Locale_set_region_mv1_result;
     icu4x_Locale_set_region_mv1_result icu4x_Locale_set_region_mv1(icu4x::capi::Locale* self, diplomat::capi::DiplomatStringView s);
-    
+
     typedef struct icu4x_Locale_script_mv1_result { bool is_ok;} icu4x_Locale_script_mv1_result;
     icu4x_Locale_script_mv1_result icu4x_Locale_script_mv1(const icu4x::capi::Locale* self, diplomat::capi::DiplomatWrite* write);
-    
+
     typedef struct icu4x_Locale_set_script_mv1_result {union { icu4x::capi::LocaleParseError err;}; bool is_ok;} icu4x_Locale_set_script_mv1_result;
     icu4x_Locale_set_script_mv1_result icu4x_Locale_set_script_mv1(icu4x::capi::Locale* self, diplomat::capi::DiplomatStringView s);
-    
+
     typedef struct icu4x_Locale_normalize_mv1_result {union { icu4x::capi::LocaleParseError err;}; bool is_ok;} icu4x_Locale_normalize_mv1_result;
     icu4x_Locale_normalize_mv1_result icu4x_Locale_normalize_mv1(diplomat::capi::DiplomatStringView s, diplomat::capi::DiplomatWrite* write);
-    
+
     void icu4x_Locale_to_string_mv1(const icu4x::capi::Locale* self, diplomat::capi::DiplomatWrite* write);
-    
+
     bool icu4x_Locale_normalizing_eq_mv1(const icu4x::capi::Locale* self, diplomat::capi::DiplomatStringView other);
-    
+
     int8_t icu4x_Locale_compare_to_string_mv1(const icu4x::capi::Locale* self, diplomat::capi::DiplomatStringView other);
-    
+
     int8_t icu4x_Locale_compare_to_mv1(const icu4x::capi::Locale* self, const icu4x::capi::Locale* other);
-    
-    
+
     void icu4x_Locale_destroy_mv1(Locale* self);
-    
+
     } // extern "C"
 } // namespace capi
 } // namespace
@@ -171,6 +170,29 @@ inline int8_t icu4x::Locale::compare_to(const icu4x::Locale& other) const {
   auto result = icu4x::capi::icu4x_Locale_compare_to_mv1(this->AsFFI(),
     other.AsFFI());
   return result;
+}
+inline bool icu4x::Locale::operator==(const icu4x::Locale& other) const {
+  return this->compare_to(other) == 0;
+}
+
+inline bool icu4x::Locale::operator!=(const icu4x::Locale& other) const {
+  return this->compare_to(other) != 0;
+}
+
+inline bool icu4x::Locale::operator<=(const icu4x::Locale& other) const {
+  return this->compare_to(other) <= 0;
+}
+
+inline bool icu4x::Locale::operator>=(const icu4x::Locale& other) const {
+  return this->compare_to(other) >= 0;
+}
+
+inline bool icu4x::Locale::operator<(const icu4x::Locale& other) const {
+  return this->compare_to(other) < 0;
+}
+
+inline bool icu4x::Locale::operator>(const icu4x::Locale& other) const {
+  return this->compare_to(other) > 0;
 }
 
 inline const icu4x::capi::Locale* icu4x::Locale::AsFFI() const {

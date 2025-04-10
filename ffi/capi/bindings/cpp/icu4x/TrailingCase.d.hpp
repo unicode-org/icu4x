@@ -17,7 +17,7 @@ namespace capi {
       TrailingCase_Lower = 0,
       TrailingCase_Unchanged = 1,
     };
-    
+
     typedef struct TrailingCase_option {union { TrailingCase ok; }; bool is_ok; } TrailingCase_option;
 } // namespace capi
 } // namespace

@@ -10,6 +10,7 @@ enum LineBreakWordOption {
   breakAll,
 
   keepAll;
+
 }
 
 // dart format on

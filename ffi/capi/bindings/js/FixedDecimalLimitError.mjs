@@ -3,13 +3,12 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
-/** 
+/**
  * Additional information: [1](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.LimitError.html)
  */
 
 
 export class FixedDecimalLimitError {
-    
     /** Create `FixedDecimalLimitError` from an object that contains all of `FixedDecimalLimitError`s fields.
     * Optional fields do not need to be included in the provided object.
     */

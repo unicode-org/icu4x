@@ -22,6 +22,7 @@ enum DataError {
   custom,
 
   io;
+
 }
 
 // dart format on

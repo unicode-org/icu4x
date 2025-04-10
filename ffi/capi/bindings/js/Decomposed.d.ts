@@ -2,7 +2,7 @@
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
-/** 
+/**
  * The outcome of non-recursive canonical decomposition of a character.
  * `second` will be NUL when the decomposition expands to a single character
  * (which may or may not be the original one)
@@ -12,9 +12,6 @@ import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
 export class Decomposed {
-    
-    get first() : codepoint;
-    
-    get second() : codepoint;
-    
+    get first(): codepoint;
+    get second(): codepoint;
 }

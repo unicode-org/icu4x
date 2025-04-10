@@ -8,6 +8,7 @@ enum LanguageDisplay {
   dialect,
 
   standard;
+
 }
 
 // dart format on

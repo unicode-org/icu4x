@@ -16,7 +16,6 @@ enum PluralCategory {
   many,
 
   other;
-
   /// Construct from a string in the format
   /// [specified in TR35](https://unicode.org/reports/tr35/tr35-numbers.html#Language_Plural_Rules)
   ///
@@ -31,6 +30,7 @@ enum PluralCategory {
     }
     return PluralCategory.values[result.union.ok];
   }
+
 }
 
 @_DiplomatFfiUse('icu4x_PluralCategory_get_for_cldr_string_mv1')

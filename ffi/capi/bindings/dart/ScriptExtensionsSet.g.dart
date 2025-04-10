@@ -26,7 +26,6 @@ final class ScriptExtensionsSet implements ffi.Finalizable {
   }
 
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_ScriptExtensionsSet_destroy_mv1));
-
   /// Check if the Script_Extensions property of the given code point covers the given script
   ///
   /// See the [Rust documentation for `contains`](https://docs.rs/icu/latest/icu/properties/script/struct.ScriptExtensionsSet.html#method.contains) for more information.
@@ -34,7 +33,6 @@ final class ScriptExtensionsSet implements ffi.Finalizable {
     final result = _icu4x_ScriptExtensionsSet_contains_mv1(_ffi, script);
     return result;
   }
-
   /// Get the number of scripts contained in here
   ///
   /// See the [Rust documentation for `iter`](https://docs.rs/icu/latest/icu/properties/script/struct.ScriptExtensionsSet.html#method.iter) for more information.
@@ -42,7 +40,6 @@ final class ScriptExtensionsSet implements ffi.Finalizable {
     final result = _icu4x_ScriptExtensionsSet_count_mv1(_ffi);
     return result;
   }
-
   /// Get script at index
   ///
   /// See the [Rust documentation for `iter`](https://docs.rs/icu/latest/icu/properties/script/struct.ScriptExtensionsSet.html#method.iter) for more information.
@@ -53,6 +50,7 @@ final class ScriptExtensionsSet implements ffi.Finalizable {
     }
     return result.union.ok;
   }
+
 }
 
 @_DiplomatFfiUse('icu4x_ScriptExtensionsSet_destroy_mv1')

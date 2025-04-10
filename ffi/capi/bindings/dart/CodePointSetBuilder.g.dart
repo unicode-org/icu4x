@@ -22,7 +22,6 @@ final class CodePointSetBuilder implements ffi.Finalizable {
   }
 
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_CodePointSetBuilder_destroy_mv1));
-
   /// Make a new set builder containing nothing
   ///
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/collections/codepointinvlist/struct.CodePointInversionListBuilder.html#method.new) for more information.
@@ -30,7 +29,6 @@ final class CodePointSetBuilder implements ffi.Finalizable {
     final result = _icu4x_CodePointSetBuilder_create_mv1();
     return CodePointSetBuilder._fromFfi(result, []);
   }
-
   /// Build this into a set
   ///
   /// This object is repopulated with an empty builder
@@ -40,7 +38,6 @@ final class CodePointSetBuilder implements ffi.Finalizable {
     final result = _icu4x_CodePointSetBuilder_build_mv1(_ffi);
     return CodePointSetData._fromFfi(result, []);
   }
-
   /// Complements this set
   ///
   /// (Elements in this set are removed and vice versa)
@@ -49,7 +46,6 @@ final class CodePointSetBuilder implements ffi.Finalizable {
   void complement() {
     _icu4x_CodePointSetBuilder_complement_mv1(_ffi);
   }
-
   /// Returns whether this set is empty
   ///
   /// See the [Rust documentation for `is_empty`](https://docs.rs/icu/latest/icu/collections/codepointinvlist/struct.CodePointInversionListBuilder.html#method.is_empty) for more information.
@@ -57,70 +53,60 @@ final class CodePointSetBuilder implements ffi.Finalizable {
     final result = _icu4x_CodePointSetBuilder_is_empty_mv1(_ffi);
     return result;
   }
-
   /// Add a single character to the set
   ///
   /// See the [Rust documentation for `add_char`](https://docs.rs/icu/latest/icu/collections/codepointinvlist/struct.CodePointInversionListBuilder.html#method.add_char) for more information.
   void addChar(Rune ch) {
     _icu4x_CodePointSetBuilder_add_char_mv1(_ffi, ch);
   }
-
   /// Add an inclusive range of characters to the set
   ///
   /// See the [Rust documentation for `add_range`](https://docs.rs/icu/latest/icu/collections/codepointinvlist/struct.CodePointInversionListBuilder.html#method.add_range) for more information.
   void addInclusiveRange(Rune start, Rune end) {
     _icu4x_CodePointSetBuilder_add_inclusive_range_mv1(_ffi, start, end);
   }
-
   /// Add all elements that belong to the provided set to the set
   ///
   /// See the [Rust documentation for `add_set`](https://docs.rs/icu/latest/icu/collections/codepointinvlist/struct.CodePointInversionListBuilder.html#method.add_set) for more information.
   void addSet(CodePointSetData data) {
     _icu4x_CodePointSetBuilder_add_set_mv1(_ffi, data._ffi);
   }
-
   /// Remove a single character to the set
   ///
   /// See the [Rust documentation for `remove_char`](https://docs.rs/icu/latest/icu/collections/codepointinvlist/struct.CodePointInversionListBuilder.html#method.remove_char) for more information.
   void removeChar(Rune ch) {
     _icu4x_CodePointSetBuilder_remove_char_mv1(_ffi, ch);
   }
-
   /// Remove an inclusive range of characters from the set
   ///
   /// See the [Rust documentation for `remove_range`](https://docs.rs/icu/latest/icu/collections/codepointinvlist/struct.CodePointInversionListBuilder.html#method.remove_range) for more information.
   void removeInclusiveRange(Rune start, Rune end) {
     _icu4x_CodePointSetBuilder_remove_inclusive_range_mv1(_ffi, start, end);
   }
-
   /// Remove all elements that belong to the provided set from the set
   ///
   /// See the [Rust documentation for `remove_set`](https://docs.rs/icu/latest/icu/collections/codepointinvlist/struct.CodePointInversionListBuilder.html#method.remove_set) for more information.
   void removeSet(CodePointSetData data) {
     _icu4x_CodePointSetBuilder_remove_set_mv1(_ffi, data._ffi);
   }
-
   /// Removes all elements from the set except a single character
   ///
   /// See the [Rust documentation for `retain_char`](https://docs.rs/icu/latest/icu/collections/codepointinvlist/struct.CodePointInversionListBuilder.html#method.retain_char) for more information.
   void retainChar(Rune ch) {
     _icu4x_CodePointSetBuilder_retain_char_mv1(_ffi, ch);
   }
-
   /// Removes all elements from the set except an inclusive range of characters f
   ///
   /// See the [Rust documentation for `retain_range`](https://docs.rs/icu/latest/icu/collections/codepointinvlist/struct.CodePointInversionListBuilder.html#method.retain_range) for more information.
   void retainInclusiveRange(Rune start, Rune end) {
     _icu4x_CodePointSetBuilder_retain_inclusive_range_mv1(_ffi, start, end);
   }
-
   /// Removes all elements from the set except all elements in the provided set
   ///
   /// See the [Rust documentation for `retain_set`](https://docs.rs/icu/latest/icu/collections/codepointinvlist/struct.CodePointInversionListBuilder.html#method.retain_set) for more information.
   void retainSet(CodePointSetData data) {
     _icu4x_CodePointSetBuilder_retain_set_mv1(_ffi, data._ffi);
   }
-
   /// Complement a single character to the set
   ///
   /// (Characters which are in this set are removed and vice versa)
@@ -129,7 +115,6 @@ final class CodePointSetBuilder implements ffi.Finalizable {
   void complementChar(Rune ch) {
     _icu4x_CodePointSetBuilder_complement_char_mv1(_ffi, ch);
   }
-
   /// Complement an inclusive range of characters from the set
   ///
   /// (Characters which are in this set are removed and vice versa)
@@ -138,7 +123,6 @@ final class CodePointSetBuilder implements ffi.Finalizable {
   void complementInclusiveRange(Rune start, Rune end) {
     _icu4x_CodePointSetBuilder_complement_inclusive_range_mv1(_ffi, start, end);
   }
-
   /// Complement all elements that belong to the provided set from the set
   ///
   /// (Characters which are in this set are removed and vice versa)
@@ -147,6 +131,7 @@ final class CodePointSetBuilder implements ffi.Finalizable {
   void complementSet(CodePointSetData data) {
     _icu4x_CodePointSetBuilder_complement_set_mv1(_ffi, data._ffi);
   }
+
 }
 
 @_DiplomatFfiUse('icu4x_CodePointSetBuilder_destroy_mv1')

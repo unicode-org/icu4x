@@ -25,7 +25,6 @@ bool icu4x_ScriptWithExtensionsBorrowed_has_script_mv1(const ScriptWithExtension
 
 CodePointSetData* icu4x_ScriptWithExtensionsBorrowed_get_script_extensions_set_mv1(const ScriptWithExtensionsBorrowed* self, uint16_t script);
 
-
 void icu4x_ScriptWithExtensionsBorrowed_destroy_mv1(ScriptWithExtensionsBorrowed* self);
 
 

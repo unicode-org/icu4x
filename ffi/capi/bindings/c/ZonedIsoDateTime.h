@@ -25,5 +25,4 @@ icu4x_ZonedIsoDateTime_from_string_mv1_result icu4x_ZonedIsoDateTime_from_string
 
 
 
-
 #endif // ZonedIsoDateTime_H

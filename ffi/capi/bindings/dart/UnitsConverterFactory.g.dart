@@ -27,7 +27,6 @@ final class UnitsConverterFactory implements ffi.Finalizable {
   }
 
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_UnitsConverterFactory_destroy_mv1));
-
   /// Construct a new [`UnitsConverterFactory`] instance using compiled data.
   ///
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/experimental/units/converter_factory/struct.ConverterFactory.html#method.new) for more information.
@@ -35,7 +34,6 @@ final class UnitsConverterFactory implements ffi.Finalizable {
     final result = _icu4x_UnitsConverterFactory_create_mv1();
     return UnitsConverterFactory._fromFfi(result, []);
   }
-
   /// Construct a new [`UnitsConverterFactory`] instance using a particular data source.
   ///
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/experimental/units/converter_factory/struct.ConverterFactory.html#method.new) for more information.
@@ -48,7 +46,6 @@ final class UnitsConverterFactory implements ffi.Finalizable {
     }
     return UnitsConverterFactory._fromFfi(result.union.ok, []);
   }
-
   /// Creates a new [`UnitsConverter`] from the input and output [`MeasureUnit`]s.
   /// Returns nothing if the conversion between the two units is not possible.
   /// For example, conversion between `meter` and `second` is not possible.
@@ -58,6 +55,7 @@ final class UnitsConverterFactory implements ffi.Finalizable {
     final result = _icu4x_UnitsConverterFactory_converter_mv1(_ffi, from._ffi, to._ffi);
     return result.address == 0 ? null : UnitsConverter._fromFfi(result, []);
   }
+
 }
 
 @_DiplomatFfiUse('icu4x_UnitsConverterFactory_destroy_mv1')

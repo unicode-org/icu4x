@@ -34,7 +34,6 @@ uint8_t icu4x_Time_second_mv1(const Time* self);
 
 uint32_t icu4x_Time_subsecond_mv1(const Time* self);
 
-
 void icu4x_Time_destroy_mv1(Time* self);
 
 

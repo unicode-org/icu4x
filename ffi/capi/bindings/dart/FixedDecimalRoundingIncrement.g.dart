@@ -14,6 +14,7 @@ enum FixedDecimalRoundingIncrement {
   multiplesOf5,
 
   multiplesOf25;
+
 }
 
 // dart format on

@@ -22,26 +22,25 @@
 namespace icu4x {
 namespace capi {
     extern "C" {
-    
+
     typedef struct icu4x_PluralRules_create_cardinal_mv1_result {union {icu4x::capi::PluralRules* ok; icu4x::capi::DataError err;}; bool is_ok;} icu4x_PluralRules_create_cardinal_mv1_result;
     icu4x_PluralRules_create_cardinal_mv1_result icu4x_PluralRules_create_cardinal_mv1(const icu4x::capi::Locale* locale);
-    
+
     typedef struct icu4x_PluralRules_create_cardinal_with_provider_mv1_result {union {icu4x::capi::PluralRules* ok; icu4x::capi::DataError err;}; bool is_ok;} icu4x_PluralRules_create_cardinal_with_provider_mv1_result;
     icu4x_PluralRules_create_cardinal_with_provider_mv1_result icu4x_PluralRules_create_cardinal_with_provider_mv1(const icu4x::capi::DataProvider* provider, const icu4x::capi::Locale* locale);
-    
+
     typedef struct icu4x_PluralRules_create_ordinal_mv1_result {union {icu4x::capi::PluralRules* ok; icu4x::capi::DataError err;}; bool is_ok;} icu4x_PluralRules_create_ordinal_mv1_result;
     icu4x_PluralRules_create_ordinal_mv1_result icu4x_PluralRules_create_ordinal_mv1(const icu4x::capi::Locale* locale);
-    
+
     typedef struct icu4x_PluralRules_create_ordinal_with_provider_mv1_result {union {icu4x::capi::PluralRules* ok; icu4x::capi::DataError err;}; bool is_ok;} icu4x_PluralRules_create_ordinal_with_provider_mv1_result;
     icu4x_PluralRules_create_ordinal_with_provider_mv1_result icu4x_PluralRules_create_ordinal_with_provider_mv1(const icu4x::capi::DataProvider* provider, const icu4x::capi::Locale* locale);
-    
+
     icu4x::capi::PluralCategory icu4x_PluralRules_category_for_mv1(const icu4x::capi::PluralRules* self, const icu4x::capi::PluralOperands* op);
-    
+
     icu4x::capi::PluralCategories icu4x_PluralRules_categories_mv1(const icu4x::capi::PluralRules* self);
-    
-    
+
     void icu4x_PluralRules_destroy_mv1(PluralRules* self);
-    
+
     } // extern "C"
 } // namespace capi
 } // namespace

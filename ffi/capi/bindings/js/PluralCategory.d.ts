@@ -2,19 +2,18 @@
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
-/** 
+/**
  * See the [Rust documentation for `PluralCategory`](https://docs.rs/icu/latest/icu/plurals/enum.PluralCategory.html) for more information.
  */
 
 
 export class PluralCategory {
-    
 
-    static fromValue(value : PluralCategory | string) : PluralCategory; 
+    static fromValue(value : PluralCategory | string) : PluralCategory;
 
-    get value() : string;
+    get value(): string;
 
-    get ffiValue() : number;
+    get ffiValue(): number;
 
     static Zero : PluralCategory;
     static One : PluralCategory;
@@ -23,7 +22,7 @@ export class PluralCategory {
     static Many : PluralCategory;
     static Other : PluralCategory;
 
-    /** 
+    /**
      * Construct from a string in the format
      * [specified in TR35](https://unicode.org/reports/tr35/tr35-numbers.html#Language_Plural_Rules)
      *
@@ -31,7 +30,7 @@ export class PluralCategory {
      *
      * See the [Rust documentation for `get_for_cldr_bytes`](https://docs.rs/icu/latest/icu/plurals/enum.PluralCategory.html#method.get_for_cldr_bytes) for more information.
      */
-    static getForCldrString(s: string): PluralCategory | null;
+        static getForCldrString(s: string): PluralCategory | null;
 
     constructor(value: PluralCategory | string );
 }

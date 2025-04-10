@@ -7,14 +7,15 @@ part of 'lib.g.dart';
 ///
 /// See the [Rust documentation for `Sign`](https://docs.rs/fixed_decimal/latest/fixed_decimal/enum.Sign.html) for more information.
 enum FixedDecimalSign {
-  /// No sign (implicitly positive, e.g., 1729).
+    /// No sign (implicitly positive, e.g., 1729).
   none,
 
-  /// A negative sign, e.g., -1729.
+    /// A negative sign, e.g., -1729.
   negative,
 
-  /// An explicit positive sign, e.g., +1729.
+    /// An explicit positive sign, e.g., +1729.
   positive;
+
 }
 
 // dart format on

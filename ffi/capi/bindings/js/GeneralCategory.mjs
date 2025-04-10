@@ -4,13 +4,12 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
-/** 
+/**
  * See the [Rust documentation for `GeneralCategory`](https://docs.rs/icu/latest/icu/properties/props/struct.GeneralCategory.html) for more information.
  */
 
 
 export class GeneralCategory {
-    
     #value = undefined;
 
     static #values = new Map([
@@ -49,7 +48,7 @@ export class GeneralCategory {
     static getAllEntries() {
         return GeneralCategory.#values.entries();
     }
-    
+
     #internalConstructor(value) {
         if (arguments.length > 1 && arguments[0] === diplomatRuntime.internalConstructor) {
             // We pass in two internalConstructor arguments to create *new*
@@ -79,7 +78,7 @@ export class GeneralCategory {
         return new GeneralCategory(value);
     }
 
-    get value() {
+    get value(){
         for (let entry of GeneralCategory.#values) {
             if (entry[1] == this.#value) {
                 return entry[0];
@@ -87,7 +86,7 @@ export class GeneralCategory {
         }
     }
 
-    get ffiValue() {
+    get ffiValue(){
         return this.#value;
     }
     static #objectValues = {
@@ -154,114 +153,111 @@ export class GeneralCategory {
     static ModifierSymbol = GeneralCategory.#objectValues[26];
     static OtherSymbol = GeneralCategory.#objectValues[27];
 
-    /** 
+    /**
      * See the [Rust documentation for `for_char`](https://docs.rs/icu/latest/icu/properties/props/trait.EnumeratedProperty.html#tymethod.for_char) for more information.
      */
-    static forChar(ch) {
+        static forChar(ch) {
+
         const result = wasm.icu4x_GeneralCategory_for_char_mv1(ch);
-    
-        try {
-            return new GeneralCategory(diplomatRuntime.internalConstructor, result);
+
+        try {        return new GeneralCategory(diplomatRuntime.internalConstructor, result);
         }
-        
+
         finally {}
     }
 
-    /** 
+    /**
      * Convert to an integer using the ICU4C integer mappings for `General_Category`
      * Get the "long" name of this property value (returns empty if property value is unknown)
      *
      * See the [Rust documentation for `get`](https://docs.rs/icu/latest/icu/properties/struct.PropertyNamesLongBorrowed.html#method.get) for more information.
      */
-    longName() {
+        longName() {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 9, 4, true);
-        
+
+
         const result = wasm.icu4x_GeneralCategory_long_name_mv1(diplomatReceive.buffer, this.ffiValue);
-    
-        try {
-            if (!diplomatReceive.resultFlag) {
+
+        try {        if (!diplomatReceive.resultFlag) {
                 return null;
             }
             return new diplomatRuntime.DiplomatSliceStr(wasm, diplomatReceive.buffer,  "string8", []).getValue();
         }
-        
-        finally {
-            diplomatReceive.free();
+
+        finally {        diplomatReceive.free();
         }
     }
 
-    /** 
+    /**
      * Get the "short" name of this property value (returns empty if property value is unknown)
      *
      * See the [Rust documentation for `get`](https://docs.rs/icu/latest/icu/properties/struct.PropertyNamesShortBorrowed.html#method.get) for more information.
      */
-    shortName() {
+        shortName() {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 9, 4, true);
-        
+
+
         const result = wasm.icu4x_GeneralCategory_short_name_mv1(diplomatReceive.buffer, this.ffiValue);
-    
-        try {
-            if (!diplomatReceive.resultFlag) {
+
+        try {        if (!diplomatReceive.resultFlag) {
                 return null;
             }
             return new diplomatRuntime.DiplomatSliceStr(wasm, diplomatReceive.buffer,  "string8", []).getValue();
         }
-        
-        finally {
-            diplomatReceive.free();
+
+        finally {        diplomatReceive.free();
         }
     }
 
-    /** 
+    /**
      * Convert to an integer value usable with ICU4C and CodePointMapData
      *
      * See the [Rust documentation for `to_icu4c_value`](https://docs.rs/icu/latest/icu/properties/props/struct.GeneralCategory.html#method.to_icu4c_value) for more information.
      */
-    toIntegerValue() {
+        toIntegerValue() {
+
         const result = wasm.icu4x_GeneralCategory_to_integer_value_mv1(this.ffiValue);
-    
-        try {
-            return result;
+
+        try {        return result;
         }
-        
+
         finally {}
     }
 
-    /** 
+    /**
      * Produces a GeneralCategoryGroup mask that can represent a group of general categories
      *
      * See the [Rust documentation for `GeneralCategoryGroup`](https://docs.rs/icu/latest/icu/properties/props/struct.GeneralCategoryGroup.html) for more information.
      */
-    toGroup() {
+        toGroup() {
+
         const result = wasm.icu4x_GeneralCategory_to_group_mv1(this.ffiValue);
-    
-        try {
-            return GeneralCategoryGroup._fromFFI(diplomatRuntime.internalConstructor, result);
+
+        try {        return GeneralCategoryGroup._fromFFI(diplomatRuntime.internalConstructor, result);
         }
-        
+
         finally {}
     }
 
-    /** 
+    /**
      * Convert from an integer using the ICU4C integer mappings for `General_Category`
      * Convert from an integer value from ICU4C or CodePointMapData
      *
      * See the [Rust documentation for `from_icu4c_value`](https://docs.rs/icu/latest/icu/properties/props/struct.GeneralCategory.html#method.from_icu4c_value) for more information.
      */
-    static fromIntegerValue(other) {
+        static fromIntegerValue(other) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
-        
+
+
         const result = wasm.icu4x_GeneralCategory_from_integer_value_mv1(diplomatReceive.buffer, other);
-    
-        try {
-            if (!diplomatReceive.resultFlag) {
+
+        try {        if (!diplomatReceive.resultFlag) {
                 return null;
             }
             return new GeneralCategory(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
         }
-        
-        finally {
-            diplomatReceive.free();
+
+        finally {        diplomatReceive.free();
         }
     }
 

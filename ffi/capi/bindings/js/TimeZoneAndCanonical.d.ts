@@ -5,9 +5,6 @@ import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
 export class TimeZoneAndCanonical {
-    
-    get timeZone() : TimeZone;
-    
-    get canonical() : string;
-    
+    get timeZone(): TimeZone;
+    get canonical(): string;
 }

@@ -4,44 +4,43 @@ import type { DataProvider } from "./DataProvider"
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
-/** 
+/**
  * See the [Rust documentation for `ComposingNormalizer`](https://docs.rs/icu/latest/icu/normalizer/struct.ComposingNormalizer.html) for more information.
  */
 
 
 export class ComposingNormalizer {
-    
     get ffiValue(): pointer;
 
-    /** 
+    /**
      * Construct a new ComposingNormalizer instance for NFC using compiled data.
      *
      * See the [Rust documentation for `new_nfc`](https://docs.rs/icu/latest/icu/normalizer/struct.ComposingNormalizer.html#method.new_nfc) for more information.
      */
-    static createNfc(): ComposingNormalizer;
+        static createNfc(): ComposingNormalizer;
 
-    /** 
+    /**
      * Construct a new ComposingNormalizer instance for NFC using a particular data source.
      *
      * See the [Rust documentation for `new_nfc`](https://docs.rs/icu/latest/icu/normalizer/struct.ComposingNormalizer.html#method.new_nfc) for more information.
      */
-    static createNfcWithProvider(provider: DataProvider): ComposingNormalizer;
+        static createNfcWithProvider(provider: DataProvider): ComposingNormalizer;
 
-    /** 
+    /**
      * Construct a new ComposingNormalizer instance for NFKC using compiled data.
      *
      * See the [Rust documentation for `new_nfkc`](https://docs.rs/icu/latest/icu/normalizer/struct.ComposingNormalizer.html#method.new_nfkc) for more information.
      */
-    static createNfkc(): ComposingNormalizer;
+        static createNfkc(): ComposingNormalizer;
 
-    /** 
+    /**
      * Construct a new ComposingNormalizer instance for NFKC using a particular data source.
      *
      * See the [Rust documentation for `new_nfkc`](https://docs.rs/icu/latest/icu/normalizer/struct.ComposingNormalizer.html#method.new_nfkc) for more information.
      */
-    static createNfkcWithProvider(provider: DataProvider): ComposingNormalizer;
+        static createNfkcWithProvider(provider: DataProvider): ComposingNormalizer;
 
-    /** 
+    /**
      * Normalize a string
      *
      * Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
@@ -49,9 +48,9 @@ export class ComposingNormalizer {
      *
      * See the [Rust documentation for `normalize_utf8`](https://docs.rs/icu/latest/icu/normalizer/struct.ComposingNormalizerBorrowed.html#method.normalize_utf8) for more information.
      */
-    normalize(s: string): string;
+        normalize(s: string): string;
 
-    /** 
+    /**
      * Check if a string is normalized
      *
      * Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
@@ -59,14 +58,14 @@ export class ComposingNormalizer {
      *
      * See the [Rust documentation for `is_normalized_utf16`](https://docs.rs/icu/latest/icu/normalizer/struct.ComposingNormalizerBorrowed.html#method.is_normalized_utf16) for more information.
      */
-    isNormalized(s: string): boolean;
+        isNormalized(s: string): boolean;
 
-    /** 
+    /**
      * Return the index a slice of potentially-invalid UTF-16 is normalized up to
      *
      * See the [Rust documentation for `split_normalized_utf16`](https://docs.rs/icu/latest/icu/normalizer/struct.ComposingNormalizerBorrowed.html#method.split_normalized_utf16) for more information.
      *
      * See the [Rust documentation for `is_normalized_utf16_up_to`](https://docs.rs/icu/latest/icu/normalizer/struct.ComposingNormalizerBorrowed.html#method.is_normalized_utf16_up_to) for more information.
      */
-    isNormalizedUpTo(s: string): number;
+        isNormalizedUpTo(s: string): number;
 }

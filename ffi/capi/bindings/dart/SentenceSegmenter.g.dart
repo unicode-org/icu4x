@@ -24,7 +24,6 @@ final class SentenceSegmenter implements ffi.Finalizable {
   }
 
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_SentenceSegmenter_destroy_mv1));
-
   /// Construct a [`SentenceSegmenter`] using compiled data. This does not assume any content locale.
   ///
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/segmenter/struct.SentenceSegmenter.html#method.new) for more information.
@@ -32,7 +31,6 @@ final class SentenceSegmenter implements ffi.Finalizable {
     final result = _icu4x_SentenceSegmenter_create_mv1();
     return SentenceSegmenter._fromFfi(result, []);
   }
-
   /// Construct a [`SentenceSegmenter`] for content known to be of a given locale, using compiled data.
   ///
   /// Throws [DataError] on failure.
@@ -43,7 +41,6 @@ final class SentenceSegmenter implements ffi.Finalizable {
     }
     return SentenceSegmenter._fromFfi(result.union.ok, []);
   }
-
   /// Construct a [`SentenceSegmenter`]  for content known to be of a given locale, using a particular data source.
   ///
   /// Throws [DataError] on failure.
@@ -54,7 +51,6 @@ final class SentenceSegmenter implements ffi.Finalizable {
     }
     return SentenceSegmenter._fromFfi(result.union.ok, []);
   }
-
   /// Segments a string.
   ///
   /// Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
@@ -68,6 +64,7 @@ final class SentenceSegmenter implements ffi.Finalizable {
     final result = _icu4x_SentenceSegmenter_segment_utf16_mv1(_ffi, input._utf16AllocIn(inputArena.arena));
     return SentenceBreakIteratorUtf16._fromFfi(result, [], aEdges);
   }
+
 }
 
 @_DiplomatFfiUse('icu4x_SentenceSegmenter_destroy_mv1')

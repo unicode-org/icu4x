@@ -2,19 +2,18 @@
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
-/** 
+/**
  * Additional information: [1](https://docs.rs/icu/latest/icu/calendar/struct.RangeError.html), [2](https://docs.rs/icu/latest/icu/calendar/enum.DateError.html)
  */
 
 
 export class CalendarError {
-    
 
-    static fromValue(value : CalendarError | string) : CalendarError; 
+    static fromValue(value : CalendarError | string) : CalendarError;
 
-    get value() : string;
+    get value(): string;
 
-    get ffiValue() : number;
+    get ffiValue(): number;
 
     static Unknown : CalendarError;
     static OutOfRange : CalendarError;

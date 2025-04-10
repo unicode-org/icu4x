@@ -2,57 +2,56 @@
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
-/** 
+/**
  * See the [Rust documentation for `VerticalOrientation`](https://docs.rs/icu/latest/icu/properties/props/struct.VerticalOrientation.html) for more information.
  */
 
 
 export class VerticalOrientation {
-    
 
-    static fromValue(value : VerticalOrientation | string) : VerticalOrientation; 
+    static fromValue(value : VerticalOrientation | string) : VerticalOrientation;
 
-    get value() : string;
+    get value(): string;
 
-    get ffiValue() : number;
+    get ffiValue(): number;
 
     static Rotated : VerticalOrientation;
     static TransformedRotated : VerticalOrientation;
     static TransformedUpright : VerticalOrientation;
     static Upright : VerticalOrientation;
 
-    /** 
+    /**
      * See the [Rust documentation for `for_char`](https://docs.rs/icu/latest/icu/properties/props/trait.VerticalOrientation.html#tymethod.for_char) for more information.
      */
-    static forChar(ch: codepoint): VerticalOrientation;
+        static forChar(ch: codepoint): VerticalOrientation;
 
-    /** 
+    /**
      * Get the "long" name of this property value (returns empty if property value is unknown)
      *
      * See the [Rust documentation for `get`](https://docs.rs/icu/latest/icu/properties/struct.PropertyNamesLongBorrowed.html#method.get) for more information.
      */
-    longName(): string | null;
+        longName(): string | null;
 
-    /** 
+    /**
      * Get the "short" name of this property value (returns empty if property value is unknown)
      *
      * See the [Rust documentation for `get`](https://docs.rs/icu/latest/icu/properties/struct.PropertyNamesShortBorrowed.html#method.get) for more information.
      */
-    shortName(): string | null;
+        shortName(): string | null;
 
-    /** 
+    /**
      * Convert to an integer value usable with ICU4C and CodePointMapData
      *
      * See the [Rust documentation for `to_icu4c_value`](https://docs.rs/icu/latest/icu/properties/props/struct.VerticalOrientation.html#method.to_icu4c_value) for more information.
      */
-    toIntegerValue(): number;
+        toIntegerValue(): number;
 
-    /** 
+    /**
      * Convert from an integer value from ICU4C or CodePointMapData
      *
      * See the [Rust documentation for `from_icu4c_value`](https://docs.rs/icu/latest/icu/properties/props/struct.VerticalOrientation.html#method.from_icu4c_value) for more information.
      */
-    static fromIntegerValue(other: number): VerticalOrientation | null;
+        static fromIntegerValue(other: number): VerticalOrientation | null;
 
     constructor(value: VerticalOrientation | string );
 }

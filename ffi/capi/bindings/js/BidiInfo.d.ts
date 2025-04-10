@@ -3,7 +3,7 @@ import type { BidiParagraph } from "./BidiParagraph"
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
-/** 
+/**
  * An object containing bidi information for a given string, produced by `for_text()` on `Bidi`
  *
  * See the [Rust documentation for `BidiInfo`](https://docs.rs/unicode_bidi/latest/unicode_bidi/struct.BidiInfo.html) for more information.
@@ -11,30 +11,29 @@ import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
 export class BidiInfo {
-    
     get ffiValue(): pointer;
 
-    /** 
+    /**
      * The number of paragraphs contained here
      */
-    get paragraphCount(): number;
+        get paragraphCount(): number;
 
-    /** 
+    /**
      * Get the nth paragraph, returning `None` if out of bounds
      */
-    paragraphAt(n: number): BidiParagraph | null;
+        paragraphAt(n: number): BidiParagraph | null;
 
-    /** 
+    /**
      * The number of bytes in this full text
      */
-    get size(): number;
+        get size(): number;
 
-    /** 
+    /**
      * Get the BIDI level at a particular byte index in the full text.
      * This integer is conceptually a `unicode_bidi::Level`,
      * and can be further inspected using the static methods on Bidi.
      *
      * Returns 0 (equivalent to `Level::ltr()`) on error
      */
-    levelAt(pos: number): number;
+        levelAt(pos: number): number;
 }

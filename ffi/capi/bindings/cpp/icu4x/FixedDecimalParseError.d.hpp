@@ -18,7 +18,7 @@ namespace capi {
       FixedDecimalParseError_Limit = 1,
       FixedDecimalParseError_Syntax = 2,
     };
-    
+
     typedef struct FixedDecimalParseError_option {union { FixedDecimalParseError ok; }; bool is_ok; } FixedDecimalParseError_option;
 } // namespace capi
 } // namespace

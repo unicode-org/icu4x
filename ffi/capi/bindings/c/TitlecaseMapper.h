@@ -29,7 +29,6 @@ void icu4x_TitlecaseMapper_titlecase_segment_v1_mv1(const TitlecaseMapper* self,
 
 void icu4x_TitlecaseMapper_titlecase_segment_with_compiled_data_v1_mv1(DiplomatStringView s, const Locale* locale, TitlecaseOptionsV1 options, DiplomatWrite* write);
 
-
 void icu4x_TitlecaseMapper_destroy_mv1(TitlecaseMapper* self);
 
 

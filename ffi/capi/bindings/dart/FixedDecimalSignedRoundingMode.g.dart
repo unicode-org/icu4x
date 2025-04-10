@@ -24,6 +24,7 @@ enum FixedDecimalSignedRoundingMode {
   halfCeil,
 
   halfFloor;
+
 }
 
 // dart format on

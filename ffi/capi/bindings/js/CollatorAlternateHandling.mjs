@@ -3,13 +3,12 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
-/** 
+/**
  * See the [Rust documentation for `AlternateHandling`](https://docs.rs/icu/latest/icu/collator/options/enum.AlternateHandling.html) for more information.
  */
 
 
 export class CollatorAlternateHandling {
-    
     #value = undefined;
 
     static #values = new Map([
@@ -20,7 +19,7 @@ export class CollatorAlternateHandling {
     static getAllEntries() {
         return CollatorAlternateHandling.#values.entries();
     }
-    
+
     #internalConstructor(value) {
         if (arguments.length > 1 && arguments[0] === diplomatRuntime.internalConstructor) {
             // We pass in two internalConstructor arguments to create *new*
@@ -50,11 +49,11 @@ export class CollatorAlternateHandling {
         return new CollatorAlternateHandling(value);
     }
 
-    get value() {
+    get value(){
         return [...CollatorAlternateHandling.#values.keys()][this.#value];
     }
 
-    get ffiValue() {
+    get ffiValue(){
         return this.#value;
     }
     static #objectValues = [

@@ -35,5 +35,4 @@ icu4x_ZonedDateTime_loose_from_string_mv1_result icu4x_ZonedDateTime_loose_from_
 
 
 
-
 #endif // ZonedDateTime_H

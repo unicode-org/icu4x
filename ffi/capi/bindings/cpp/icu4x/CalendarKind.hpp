@@ -17,10 +17,9 @@
 namespace icu4x {
 namespace capi {
     extern "C" {
-    
+
     icu4x::capi::CalendarKind icu4x_CalendarKind_create_mv1(const icu4x::capi::Locale* locale);
-    
-    
+
     } // extern "C"
 } // namespace capi
 } // namespace

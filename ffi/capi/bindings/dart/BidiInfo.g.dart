@@ -26,13 +26,11 @@ final class BidiInfo implements ffi.Finalizable {
   }
 
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_BidiInfo_destroy_mv1));
-
   /// The number of paragraphs contained here
   int get paragraphCount {
     final result = _icu4x_BidiInfo_paragraph_count_mv1(_ffi);
     return result;
   }
-
   /// Get the nth paragraph, returning `None` if out of bounds
   BidiParagraph? paragraphAt(int n) {
     // This lifetime edge depends on lifetimes: 'text
@@ -40,13 +38,11 @@ final class BidiInfo implements ffi.Finalizable {
     final result = _icu4x_BidiInfo_paragraph_at_mv1(_ffi, n);
     return result.address == 0 ? null : BidiParagraph._fromFfi(result, [], textEdges);
   }
-
   /// The number of bytes in this full text
   int get size {
     final result = _icu4x_BidiInfo_size_mv1(_ffi);
     return result;
   }
-
   /// Get the BIDI level at a particular byte index in the full text.
   /// This integer is conceptually a `unicode_bidi::Level`,
   /// and can be further inspected using the static methods on Bidi.
@@ -56,6 +52,7 @@ final class BidiInfo implements ffi.Finalizable {
     final result = _icu4x_BidiInfo_level_at_mv1(_ffi, pos);
     return result;
   }
+
 }
 
 @_DiplomatFfiUse('icu4x_BidiInfo_destroy_mv1')

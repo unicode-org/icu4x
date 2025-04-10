@@ -8,6 +8,7 @@ enum CollatorAlternateHandling {
   nonIgnorable,
 
   shifted;
+
 }
 
 // dart format on

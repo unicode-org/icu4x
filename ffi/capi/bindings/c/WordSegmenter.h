@@ -51,7 +51,6 @@ WordBreakIteratorUtf16* icu4x_WordSegmenter_segment_utf16_mv1(const WordSegmente
 
 WordBreakIteratorLatin1* icu4x_WordSegmenter_segment_latin1_mv1(const WordSegmenter* self, DiplomatU8View input);
 
-
 void icu4x_WordSegmenter_destroy_mv1(WordSegmenter* self);
 
 

@@ -4,7 +4,7 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
-/** 
+/**
  * See the [Rust documentation for `UtcOffset`](https://docs.rs/icu/latest/icu/time/zone/struct.UtcOffset.html) for more information.
  */
 const UtcOffset_box_destroy_registry = new FinalizationRegistry((ptr) => {
@@ -12,123 +12,118 @@ const UtcOffset_box_destroy_registry = new FinalizationRegistry((ptr) => {
 });
 
 export class UtcOffset {
-    
     // Internal ptr reference:
     #ptr = null;
 
     // Lifetimes are only to keep dependencies alive.
     // Since JS won't garbage collect until there are no incoming edges.
     #selfEdge = [];
-    
+
     #internalConstructor(symbol, ptr, selfEdge) {
         if (symbol !== diplomatRuntime.internalConstructor) {
             console.error("UtcOffset is an Opaque type. You cannot call its constructor.");
             return;
         }
-        
         this.#ptr = ptr;
         this.#selfEdge = selfEdge;
-        
+
         // Are we being borrowed? If not, we can register.
         if (this.#selfEdge.length === 0) {
             UtcOffset_box_destroy_registry.register(this, this.#ptr);
         }
-        
+
         return this;
     }
     get ffiValue() {
         return this.#ptr;
     }
 
-    /** 
+    /**
      * Creates an offset from seconds.
      *
      * Errors if the offset seconds are out of range.
      *
      * See the [Rust documentation for `try_from_seconds`](https://docs.rs/icu/latest/icu/time/zone/struct.UtcOffset.html#method.try_from_seconds) for more information.
      */
-    static fromSeconds(seconds) {
+        static fromSeconds(seconds) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
-        
+
+
         const result = wasm.icu4x_UtcOffset_from_seconds_mv1(diplomatReceive.buffer, seconds);
-    
-        try {
-            if (!diplomatReceive.resultFlag) {
+
+        try {        if (!diplomatReceive.resultFlag) {
                 const cause = TimeZoneInvalidOffsetError.fromFields({}, diplomatRuntime.internalConstructor);
                 throw new globalThis.Error('TimeZoneInvalidOffsetError', { cause });
             }
             return new UtcOffset(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
-        
-        finally {
-            diplomatReceive.free();
+
+        finally {        diplomatReceive.free();
         }
     }
 
-    /** 
+    /**
      * Creates an offset from eighths of an hour.
      *
      * See the [Rust documentation for `from_eighths_of_hour`](https://docs.rs/icu/latest/icu/time/zone/struct.UtcOffset.html#method.from_eighths_of_hour) for more information.
      *
      * Additional information: [1](https://docs.rs/icu/latest/icu/time/zone/struct.UtcOffset.html)
      */
-    static fromEighthsOfHour(eighthsOfHour) {
+        static fromEighthsOfHour(eighthsOfHour) {
+
         const result = wasm.icu4x_UtcOffset_from_eighths_of_hour_mv1(eighthsOfHour);
-    
-        try {
-            return new UtcOffset(diplomatRuntime.internalConstructor, result, []);
+
+        try {        return new UtcOffset(diplomatRuntime.internalConstructor, result, []);
         }
-        
+
         finally {}
     }
 
-    /** 
+    /**
      * Creates an offset from a string.
      *
      * See the [Rust documentation for `try_from_str`](https://docs.rs/icu/latest/icu/time/zone/struct.UtcOffset.html#method.try_from_str) for more information.
      *
      * Additional information: [1](https://docs.rs/icu/latest/icu/time/zone/struct.UtcOffset.html)
      */
-    static fromString(offset) {
+        static fromString(offset) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
-        
+
         const offsetSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, offset));
-        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
-        
+
+
         const result = wasm.icu4x_UtcOffset_from_string_mv1(diplomatReceive.buffer, ...offsetSlice.splat());
-    
-        try {
-            if (!diplomatReceive.resultFlag) {
+
+        try {        if (!diplomatReceive.resultFlag) {
                 const cause = TimeZoneInvalidOffsetError.fromFields({}, diplomatRuntime.internalConstructor);
                 throw new globalThis.Error('TimeZoneInvalidOffsetError', { cause });
             }
             return new UtcOffset(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
-        
+
         finally {
             functionCleanupArena.free();
-        
-            diplomatReceive.free();
+                diplomatReceive.free();
         }
     }
 
-    /** 
+    /**
      * Gets the offset as eighths of an hour.
      *
      * See the [Rust documentation for `to_eighths_of_hour`](https://docs.rs/icu/latest/icu/time/zone/struct.UtcOffset.html#method.to_eighths_of_hour) for more information.
      */
-    get eighthsOfHour() {
+        get eighthsOfHour() {
+
         const result = wasm.icu4x_UtcOffset_eighths_of_hour_mv1(this.ffiValue);
-    
-        try {
-            return result;
+
+        try {        return result;
         }
-        
+
         finally {}
     }
 
-    /** 
+    /**
      * Returns the value as offset seconds.
      *
      * See the [Rust documentation for `offset`](https://docs.rs/icu/latest/icu/time/struct.TimeZoneInfo.html#method.offset) for more information.
@@ -137,98 +132,98 @@ export class UtcOffset {
      *
      * Additional information: [1](https://docs.rs/icu/latest/icu/time/zone/struct.UtcOffset.html)
      */
-    get seconds() {
+        get seconds() {
+
         const result = wasm.icu4x_UtcOffset_seconds_mv1(this.ffiValue);
-    
-        try {
-            return result;
+
+        try {        return result;
         }
-        
+
         finally {}
     }
 
-    /** 
+    /**
      * Returns whether the offset is positive.
      *
      * See the [Rust documentation for `is_non_negative`](https://docs.rs/icu/latest/icu/time/zone/struct.UtcOffset.html#method.is_non_negative) for more information.
      *
      * Additional information: [1](https://docs.rs/icu/latest/icu/time/zone/struct.UtcOffset.html)
      */
-    get isNonNegative() {
+        get isNonNegative() {
+
         const result = wasm.icu4x_UtcOffset_is_non_negative_mv1(this.ffiValue);
-    
-        try {
-            return result;
+
+        try {        return result;
         }
-        
+
         finally {}
     }
 
-    /** 
+    /**
      * Returns whether the offset is zero.
      *
      * See the [Rust documentation for `is_zero`](https://docs.rs/icu/latest/icu/time/zone/struct.UtcOffset.html#method.is_zero) for more information.
      *
      * Additional information: [1](https://docs.rs/icu/latest/icu/time/zone/struct.UtcOffset.html)
      */
-    get isZero() {
+        get isZero() {
+
         const result = wasm.icu4x_UtcOffset_is_zero_mv1(this.ffiValue);
-    
-        try {
-            return result;
+
+        try {        return result;
         }
-        
+
         finally {}
     }
 
-    /** 
+    /**
      * Returns the hours part of the offset.
      *
      * See the [Rust documentation for `hours_part`](https://docs.rs/icu/latest/icu/time/zone/struct.UtcOffset.html#method.hours_part) for more information.
      *
      * Additional information: [1](https://docs.rs/icu/latest/icu/time/zone/struct.UtcOffset.html)
      */
-    get hoursPart() {
+        get hoursPart() {
+
         const result = wasm.icu4x_UtcOffset_hours_part_mv1(this.ffiValue);
-    
-        try {
-            return result;
+
+        try {        return result;
         }
-        
+
         finally {}
     }
 
-    /** 
+    /**
      * Returns the minutes part of the offset.
      *
      * See the [Rust documentation for `minutes_part`](https://docs.rs/icu/latest/icu/time/zone/struct.UtcOffset.html#method.minutes_part) for more information.
      *
      * Additional information: [1](https://docs.rs/icu/latest/icu/time/zone/struct.UtcOffset.html)
      */
-    get minutesPart() {
+        get minutesPart() {
+
         const result = wasm.icu4x_UtcOffset_minutes_part_mv1(this.ffiValue);
-    
-        try {
-            return result;
+
+        try {        return result;
         }
-        
+
         finally {}
     }
 
-    /** 
+    /**
      * Returns the seconds part of the offset.
      *
      * See the [Rust documentation for `seconds_part`](https://docs.rs/icu/latest/icu/time/zone/struct.UtcOffset.html#method.seconds_part) for more information.
      *
      * Additional information: [1](https://docs.rs/icu/latest/icu/time/zone/struct.UtcOffset.html)
      */
-    get secondsPart() {
+        get secondsPart() {
+
         const result = wasm.icu4x_UtcOffset_seconds_part_mv1(this.ffiValue);
-    
-        try {
-            return result;
+
+        try {        return result;
         }
-        
+
         finally {}
     }
 

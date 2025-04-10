@@ -21,7 +21,7 @@ namespace capi {
     struct GeneralCategoryGroup {
       uint32_t mask;
     };
-    
+
     typedef struct GeneralCategoryGroup_option {union { GeneralCategoryGroup ok; }; bool is_ok; } GeneralCategoryGroup_option;
 } // namespace capi
 } // namespace

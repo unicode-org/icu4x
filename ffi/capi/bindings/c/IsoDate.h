@@ -55,7 +55,6 @@ uint8_t icu4x_IsoDate_days_in_month_mv1(const IsoDate* self);
 
 uint16_t icu4x_IsoDate_days_in_year_mv1(const IsoDate* self);
 
-
 void icu4x_IsoDate_destroy_mv1(IsoDate* self);
 
 

@@ -7,7 +7,7 @@ import type { LocaleFallbackerWithConfig } from "./LocaleFallbackerWithConfig"
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
-/** 
+/**
  * An object that runs the ICU4X locale fallback algorithm.
  *
  * See the [Rust documentation for `LocaleFallbacker`](https://docs.rs/icu/latest/icu/locale/fallback/struct.LocaleFallbacker.html) for more information.
@@ -15,29 +15,28 @@ import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
 export class LocaleFallbacker {
-    
     get ffiValue(): pointer;
 
-    /** 
+    /**
      * Creates a new `LocaleFallbacker` from a data provider.
      *
      * See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/locale/fallback/struct.LocaleFallbacker.html#method.new) for more information.
      */
-    static createWithProvider(provider: DataProvider): LocaleFallbacker;
+        static createWithProvider(provider: DataProvider): LocaleFallbacker;
 
-    /** 
+    /**
      * Creates a new `LocaleFallbacker` without data for limited functionality.
      *
      * See the [Rust documentation for `new_without_data`](https://docs.rs/icu/latest/icu/locale/fallback/struct.LocaleFallbacker.html#method.new_without_data) for more information.
      */
-    static withoutData(): LocaleFallbacker;
+        static withoutData(): LocaleFallbacker;
 
-    /** 
+    /**
      * Associates this `LocaleFallbacker` with configuration options.
      *
      * See the [Rust documentation for `for_config`](https://docs.rs/icu/latest/icu/locale/fallback/struct.LocaleFallbacker.html#method.for_config) for more information.
      */
-    forConfig(config: LocaleFallbackConfig_obj): LocaleFallbackerWithConfig;
+        forConfig(config: LocaleFallbackConfig_obj): LocaleFallbackerWithConfig;
 
     constructor();
 }

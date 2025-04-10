@@ -4,7 +4,7 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
-/** 
+/**
  * An iterator over the locale under fallback.
  *
  * See the [Rust documentation for `LocaleFallbackIterator`](https://docs.rs/icu/latest/icu/locale/fallback/struct.LocaleFallbackIterator.html) for more information.
@@ -14,7 +14,6 @@ const LocaleFallbackIterator_box_destroy_registry = new FinalizationRegistry((pt
 });
 
 export class LocaleFallbackIterator {
-    
     // Internal ptr reference:
     #ptr = null;
 
@@ -22,36 +21,33 @@ export class LocaleFallbackIterator {
     // Since JS won't garbage collect until there are no incoming edges.
     #selfEdge = [];
     #aEdge = [];
-    
+
     #internalConstructor(symbol, ptr, selfEdge, aEdge) {
         if (symbol !== diplomatRuntime.internalConstructor) {
             console.error("LocaleFallbackIterator is an Opaque type. You cannot call its constructor.");
             return;
         }
-        
-        
         this.#aEdge = aEdge;
-        
         this.#ptr = ptr;
         this.#selfEdge = selfEdge;
-        
+
         // Are we being borrowed? If not, we can register.
         if (this.#selfEdge.length === 0) {
             LocaleFallbackIterator_box_destroy_registry.register(this, this.#ptr);
         }
-        
+
         return this;
     }
     get ffiValue() {
         return this.#ptr;
     }
-#iteratorNext() {
+    #iteratorNext() {
+
         const result = wasm.icu4x_LocaleFallbackIterator_next_mv1(this.ffiValue);
-    
-        try {
-            return result === 0 ? null : new Locale(diplomatRuntime.internalConstructor, result, []);
+
+        try {        return result === 0 ? null : new Locale(diplomatRuntime.internalConstructor, result, []);
         }
-        
+
         finally {}
     }
 

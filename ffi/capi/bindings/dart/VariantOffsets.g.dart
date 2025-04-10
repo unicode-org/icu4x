@@ -31,6 +31,7 @@ final class VariantOffsets {
     return struct;
   }
 
+
   @override
   bool operator ==(Object other) =>
       other is VariantOffsets &&

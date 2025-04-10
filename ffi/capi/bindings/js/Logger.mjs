@@ -3,7 +3,7 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
-/** 
+/**
  * An object allowing control over the logging used
  */
 const Logger_box_destroy_registry = new FinalizationRegistry((ptr) => {
@@ -11,48 +11,46 @@ const Logger_box_destroy_registry = new FinalizationRegistry((ptr) => {
 });
 
 export class Logger {
-    
     // Internal ptr reference:
     #ptr = null;
 
     // Lifetimes are only to keep dependencies alive.
     // Since JS won't garbage collect until there are no incoming edges.
     #selfEdge = [];
-    
+
     #internalConstructor(symbol, ptr, selfEdge) {
         if (symbol !== diplomatRuntime.internalConstructor) {
             console.error("Logger is an Opaque type. You cannot call its constructor.");
             return;
         }
-        
         this.#ptr = ptr;
         this.#selfEdge = selfEdge;
-        
+
         // Are we being borrowed? If not, we can register.
         if (this.#selfEdge.length === 0) {
             Logger_box_destroy_registry.register(this, this.#ptr);
         }
-        
+
         return this;
     }
     get ffiValue() {
         return this.#ptr;
     }
 
-    /** 
+    /**
      * Initialize the logger using `simple_logger`
      *
      * Requires the `simple_logger` Cargo feature.
      *
      * Returns `false` if there was already a logger set.
      */
-    static initSimpleLogger() {
+        static initSimpleLogger() {
+
         const result = wasm.icu4x_Logger_init_simple_logger_mv1();
-    
-        try {
-            return result;
+
+        try {        return result;
         }
-        
+
         finally {}
     }
 

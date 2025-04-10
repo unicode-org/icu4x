@@ -3,13 +3,12 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
-/** 
+/**
  * See the [Rust documentation for `Direction`](https://docs.rs/icu/latest/icu/locale/enum.Direction.html) for more information.
  */
 
 
 export class LocaleDirection {
-    
     #value = undefined;
 
     static #values = new Map([
@@ -21,7 +20,7 @@ export class LocaleDirection {
     static getAllEntries() {
         return LocaleDirection.#values.entries();
     }
-    
+
     #internalConstructor(value) {
         if (arguments.length > 1 && arguments[0] === diplomatRuntime.internalConstructor) {
             // We pass in two internalConstructor arguments to create *new*
@@ -51,11 +50,11 @@ export class LocaleDirection {
         return new LocaleDirection(value);
     }
 
-    get value() {
+    get value(){
         return [...LocaleDirection.#values.keys()][this.#value];
     }
 
-    get ffiValue() {
+    get ffiValue(){
         return this.#value;
     }
     static #objectValues = [

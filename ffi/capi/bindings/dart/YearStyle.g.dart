@@ -10,6 +10,7 @@ enum YearStyle {
   full,
 
   withEra;
+
 }
 
 // dart format on

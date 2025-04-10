@@ -16,15 +16,14 @@
 namespace icu4x {
 namespace capi {
     extern "C" {
-    
+
     icu4x::capi::CanonicalCombiningClass icu4x_CanonicalCombiningClass_for_char_mv1(char32_t ch);
-    
+
     uint8_t icu4x_CanonicalCombiningClass_to_integer_value_mv1(icu4x::capi::CanonicalCombiningClass self);
-    
+
     typedef struct icu4x_CanonicalCombiningClass_from_integer_value_mv1_result {union {icu4x::capi::CanonicalCombiningClass ok; }; bool is_ok;} icu4x_CanonicalCombiningClass_from_integer_value_mv1_result;
     icu4x_CanonicalCombiningClass_from_integer_value_mv1_result icu4x_CanonicalCombiningClass_from_integer_value_mv1(uint8_t other);
-    
-    
+
     } // extern "C"
 } // namespace capi
 } // namespace

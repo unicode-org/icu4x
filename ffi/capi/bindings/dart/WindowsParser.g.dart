@@ -27,7 +27,6 @@ final class WindowsParser implements ffi.Finalizable {
   }
 
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_WindowsParser_destroy_mv1));
-
   /// Create a new [`WindowsParser`] using compiled data
   ///
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/time/zone/windows/struct.WindowsParser.html#method.new) for more information.
@@ -35,7 +34,6 @@ final class WindowsParser implements ffi.Finalizable {
     final result = _icu4x_WindowsParser_create_mv1();
     return WindowsParser._fromFfi(result, []);
   }
-
   /// Create a new [`WindowsParser`] using a particular data source
   ///
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/time/zone/windows/struct.WindowsParser.html#method.new) for more information.
@@ -48,13 +46,13 @@ final class WindowsParser implements ffi.Finalizable {
     }
     return WindowsParser._fromFfi(result.union.ok, []);
   }
-
   /// See the [Rust documentation for `parse`](https://docs.rs/icu/latest/icu/time/zone/windows/struct.WindowsParserBorrowed.html#method.parse) for more information.
   TimeZone? parse(String value, String region) {
     final temp = _FinalizedArena();
     final result = _icu4x_WindowsParser_parse_mv1(_ffi, value._utf8AllocIn(temp.arena), region._utf8AllocIn(temp.arena));
     return result.address == 0 ? null : TimeZone._fromFfi(result, []);
   }
+
 }
 
 @_DiplomatFfiUse('icu4x_WindowsParser_destroy_mv1')

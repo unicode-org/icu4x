@@ -41,7 +41,6 @@ icu4x_TimeZoneInfo_infer_zone_variant_mv1_result icu4x_TimeZoneInfo_infer_zone_v
 typedef struct icu4x_TimeZoneInfo_zone_variant_mv1_result {union {TimeZoneVariant ok; }; bool is_ok;} icu4x_TimeZoneInfo_zone_variant_mv1_result;
 icu4x_TimeZoneInfo_zone_variant_mv1_result icu4x_TimeZoneInfo_zone_variant_mv1(const TimeZoneInfo* self);
 
-
 void icu4x_TimeZoneInfo_destroy_mv1(TimeZoneInfo* self);
 
 

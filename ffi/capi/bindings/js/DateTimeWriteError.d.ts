@@ -2,19 +2,18 @@
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
-/** 
+/**
  * Additional information: [1](https://docs.rs/icu/latest/icu/datetime/enum.DateTimeWriteError.html)
  */
 
 
 export class DateTimeWriteError {
-    
 
-    static fromValue(value : DateTimeWriteError | string) : DateTimeWriteError; 
+    static fromValue(value : DateTimeWriteError | string) : DateTimeWriteError;
 
-    get value() : string;
+    get value(): string;
 
-    get ffiValue() : number;
+    get ffiValue(): number;
 
     static Unknown : DateTimeWriteError;
     static InvalidMonthCode : DateTimeWriteError;

@@ -32,7 +32,6 @@ icu4x_DataProvider_fork_by_locale_mv1_result icu4x_DataProvider_fork_by_locale_m
 typedef struct icu4x_DataProvider_enable_locale_fallback_with_mv1_result {union { DataError err;}; bool is_ok;} icu4x_DataProvider_enable_locale_fallback_with_mv1_result;
 icu4x_DataProvider_enable_locale_fallback_with_mv1_result icu4x_DataProvider_enable_locale_fallback_with_mv1(DataProvider* self, const LocaleFallbacker* fallbacker);
 
-
 void icu4x_DataProvider_destroy_mv1(DataProvider* self);
 
 

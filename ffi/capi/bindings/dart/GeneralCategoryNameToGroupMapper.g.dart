@@ -26,7 +26,6 @@ final class GeneralCategoryNameToGroupMapper implements ffi.Finalizable {
   }
 
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_GeneralCategoryNameToGroupMapper_destroy_mv1));
-
   /// Get the mask value matching the given name, using strict matching
   ///
   /// Returns 0 if the name is unknown for this property
@@ -37,7 +36,6 @@ final class GeneralCategoryNameToGroupMapper implements ffi.Finalizable {
     final result = _icu4x_GeneralCategoryNameToGroupMapper_get_strict_mv1(_ffi, name._utf8AllocIn(temp.arena));
     return GeneralCategoryGroup._fromFfi(result);
   }
-
   /// Get the mask value matching the given name, using loose matching
   ///
   /// Returns 0 if the name is unknown for this property
@@ -48,7 +46,6 @@ final class GeneralCategoryNameToGroupMapper implements ffi.Finalizable {
     final result = _icu4x_GeneralCategoryNameToGroupMapper_get_loose_mv1(_ffi, name._utf8AllocIn(temp.arena));
     return GeneralCategoryGroup._fromFfi(result);
   }
-
   /// Create a name-to-mask mapper for the `General_Category` property, using compiled data.
   ///
   /// See the [Rust documentation for `GeneralCategoryGroup`](https://docs.rs/icu_properties/latest/icu_properties/props/struct.GeneralCategoryGroup.html) for more information.
@@ -56,7 +53,6 @@ final class GeneralCategoryNameToGroupMapper implements ffi.Finalizable {
     final result = _icu4x_GeneralCategoryNameToGroupMapper_create_mv1();
     return GeneralCategoryNameToGroupMapper._fromFfi(result, []);
   }
-
   /// Create a name-to-mask mapper for the `General_Category` property, using a particular data source.
   ///
   /// See the [Rust documentation for `GeneralCategoryGroup`](https://docs.rs/icu_properties/latest/icu_properties/props/struct.GeneralCategoryGroup.html) for more information.
@@ -69,6 +65,7 @@ final class GeneralCategoryNameToGroupMapper implements ffi.Finalizable {
     }
     return GeneralCategoryNameToGroupMapper._fromFfi(result.union.ok, []);
   }
+
 }
 
 @_DiplomatFfiUse('icu4x_GeneralCategoryNameToGroupMapper_destroy_mv1')

@@ -5,57 +5,55 @@ part of 'lib.g.dart';
 
 /// See the [Rust documentation for `SentenceBreak`](https://docs.rs/icu/latest/icu/properties/props/struct.SentenceBreak.html) for more information.
 enum SentenceBreak {
-  /// See the [Rust documentation for `Other`](https://docs.rs/icu/latest/icu/properties/props/enum.SentenceBreak.html#variant.Other) for more information.
+    /// See the [Rust documentation for `Other`](https://docs.rs/icu/latest/icu/properties/props/enum.SentenceBreak.html#variant.Other) for more information.
   other,
 
-  /// See the [Rust documentation for `ATerm`](https://docs.rs/icu/latest/icu/properties/props/enum.SentenceBreak.html#variant.ATerm) for more information.
+    /// See the [Rust documentation for `ATerm`](https://docs.rs/icu/latest/icu/properties/props/enum.SentenceBreak.html#variant.ATerm) for more information.
   aTerm,
 
-  /// See the [Rust documentation for `Close`](https://docs.rs/icu/latest/icu/properties/props/enum.SentenceBreak.html#variant.Close) for more information.
+    /// See the [Rust documentation for `Close`](https://docs.rs/icu/latest/icu/properties/props/enum.SentenceBreak.html#variant.Close) for more information.
   close,
 
-  /// See the [Rust documentation for `Format`](https://docs.rs/icu/latest/icu/properties/props/enum.SentenceBreak.html#variant.Format) for more information.
+    /// See the [Rust documentation for `Format`](https://docs.rs/icu/latest/icu/properties/props/enum.SentenceBreak.html#variant.Format) for more information.
   format,
 
-  /// See the [Rust documentation for `Lower`](https://docs.rs/icu/latest/icu/properties/props/enum.SentenceBreak.html#variant.Lower) for more information.
+    /// See the [Rust documentation for `Lower`](https://docs.rs/icu/latest/icu/properties/props/enum.SentenceBreak.html#variant.Lower) for more information.
   lower,
 
-  /// See the [Rust documentation for `Numeric`](https://docs.rs/icu/latest/icu/properties/props/enum.SentenceBreak.html#variant.Numeric) for more information.
+    /// See the [Rust documentation for `Numeric`](https://docs.rs/icu/latest/icu/properties/props/enum.SentenceBreak.html#variant.Numeric) for more information.
   numeric,
 
-  /// See the [Rust documentation for `OLetter`](https://docs.rs/icu/latest/icu/properties/props/enum.SentenceBreak.html#variant.OLetter) for more information.
+    /// See the [Rust documentation for `OLetter`](https://docs.rs/icu/latest/icu/properties/props/enum.SentenceBreak.html#variant.OLetter) for more information.
   oLetter,
 
-  /// See the [Rust documentation for `Sep`](https://docs.rs/icu/latest/icu/properties/props/enum.SentenceBreak.html#variant.Sep) for more information.
+    /// See the [Rust documentation for `Sep`](https://docs.rs/icu/latest/icu/properties/props/enum.SentenceBreak.html#variant.Sep) for more information.
   sep,
 
-  /// See the [Rust documentation for `Sp`](https://docs.rs/icu/latest/icu/properties/props/enum.SentenceBreak.html#variant.Sp) for more information.
+    /// See the [Rust documentation for `Sp`](https://docs.rs/icu/latest/icu/properties/props/enum.SentenceBreak.html#variant.Sp) for more information.
   sp,
 
-  /// See the [Rust documentation for `STerm`](https://docs.rs/icu/latest/icu/properties/props/enum.SentenceBreak.html#variant.STerm) for more information.
+    /// See the [Rust documentation for `STerm`](https://docs.rs/icu/latest/icu/properties/props/enum.SentenceBreak.html#variant.STerm) for more information.
   sTerm,
 
-  /// See the [Rust documentation for `Upper`](https://docs.rs/icu/latest/icu/properties/props/enum.SentenceBreak.html#variant.Upper) for more information.
+    /// See the [Rust documentation for `Upper`](https://docs.rs/icu/latest/icu/properties/props/enum.SentenceBreak.html#variant.Upper) for more information.
   upper,
 
-  /// See the [Rust documentation for `CR`](https://docs.rs/icu/latest/icu/properties/props/enum.SentenceBreak.html#variant.CR) for more information.
+    /// See the [Rust documentation for `CR`](https://docs.rs/icu/latest/icu/properties/props/enum.SentenceBreak.html#variant.CR) for more information.
   cr,
 
-  /// See the [Rust documentation for `Extend`](https://docs.rs/icu/latest/icu/properties/props/enum.SentenceBreak.html#variant.Extend) for more information.
+    /// See the [Rust documentation for `Extend`](https://docs.rs/icu/latest/icu/properties/props/enum.SentenceBreak.html#variant.Extend) for more information.
   extend,
 
-  /// See the [Rust documentation for `LF`](https://docs.rs/icu/latest/icu/properties/props/enum.SentenceBreak.html#variant.LF) for more information.
+    /// See the [Rust documentation for `LF`](https://docs.rs/icu/latest/icu/properties/props/enum.SentenceBreak.html#variant.LF) for more information.
   lf,
 
-  /// See the [Rust documentation for `SContinue`](https://docs.rs/icu/latest/icu/properties/props/enum.SentenceBreak.html#variant.SContinue) for more information.
+    /// See the [Rust documentation for `SContinue`](https://docs.rs/icu/latest/icu/properties/props/enum.SentenceBreak.html#variant.SContinue) for more information.
   sContinue;
-
   /// See the [Rust documentation for `for_char`](https://docs.rs/icu/latest/icu/properties/props/trait.EnumeratedProperty.html#tymethod.for_char) for more information.
   static SentenceBreak forChar(Rune ch) {
     final result = _icu4x_SentenceBreak_for_char_mv1(ch);
     return SentenceBreak.values[result];
   }
-
   /// Get the "long" name of this property value (returns empty if property value is unknown)
   ///
   /// See the [Rust documentation for `get`](https://docs.rs/icu/latest/icu/properties/struct.PropertyNamesLongBorrowed.html#method.get) for more information.
@@ -66,7 +64,6 @@ enum SentenceBreak {
     }
     return result.union.ok._toDart([], isStatic: true);
   }
-
   /// Get the "short" name of this property value (returns empty if property value is unknown)
   ///
   /// See the [Rust documentation for `get`](https://docs.rs/icu/latest/icu/properties/struct.PropertyNamesShortBorrowed.html#method.get) for more information.
@@ -77,7 +74,6 @@ enum SentenceBreak {
     }
     return result.union.ok._toDart([], isStatic: true);
   }
-
   /// Convert to an integer value usable with ICU4C and CodePointMapData
   ///
   /// See the [Rust documentation for `to_icu4c_value`](https://docs.rs/icu/latest/icu/properties/props/struct.SentenceBreak.html#method.to_icu4c_value) for more information.
@@ -85,7 +81,6 @@ enum SentenceBreak {
     final result = _icu4x_SentenceBreak_to_integer_value_mv1(index);
     return result;
   }
-
   /// Convert from an integer value from ICU4C or CodePointMapData
   ///
   /// See the [Rust documentation for `from_icu4c_value`](https://docs.rs/icu/latest/icu/properties/props/struct.SentenceBreak.html#method.from_icu4c_value) for more information.
@@ -96,6 +91,7 @@ enum SentenceBreak {
     }
     return SentenceBreak.values[result.union.ok];
   }
+
 }
 
 @_DiplomatFfiUse('icu4x_SentenceBreak_for_char_mv1')

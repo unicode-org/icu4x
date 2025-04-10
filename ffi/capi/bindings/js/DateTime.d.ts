@@ -6,7 +6,7 @@ import type { Time } from "./Time"
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
-/** 
+/**
  * An ICU4X DateTime object capable of containing a date and time for any calendar.
  *
  * See the [Rust documentation for `DateTime`](https://docs.rs/icu/latest/icu/time/struct.DateTime.html) for more information.
@@ -14,16 +14,13 @@ import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
 export class DateTime {
-    
-    get date() : Date;
-    
-    get time() : Time;
-    
+    get date(): Date;
+    get time(): Time;
 
-    /** 
+    /**
      * Creates a new [`DateTime`] from an IXDTF string.
      *
      * See the [Rust documentation for `try_from_str`](https://docs.rs/icu/latest/icu/time/struct.DateTime.html#method.try_from_str) for more information.
      */
-    static fromString(v: string, calendar: Calendar): DateTime;
+        static fromString(v: string, calendar: Calendar): DateTime;
 }

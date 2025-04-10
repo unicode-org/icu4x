@@ -17,36 +17,35 @@
 namespace icu4x {
 namespace capi {
     extern "C" {
-    
+
     bool icu4x_GeneralCategoryGroup_contains_mv1(icu4x::capi::GeneralCategoryGroup self, icu4x::capi::GeneralCategory val);
-    
+
     icu4x::capi::GeneralCategoryGroup icu4x_GeneralCategoryGroup_complement_mv1(icu4x::capi::GeneralCategoryGroup self);
-    
+
     icu4x::capi::GeneralCategoryGroup icu4x_GeneralCategoryGroup_all_mv1(void);
-    
+
     icu4x::capi::GeneralCategoryGroup icu4x_GeneralCategoryGroup_empty_mv1(void);
-    
+
     icu4x::capi::GeneralCategoryGroup icu4x_GeneralCategoryGroup_union_mv1(icu4x::capi::GeneralCategoryGroup self, icu4x::capi::GeneralCategoryGroup other);
-    
+
     icu4x::capi::GeneralCategoryGroup icu4x_GeneralCategoryGroup_intersection_mv1(icu4x::capi::GeneralCategoryGroup self, icu4x::capi::GeneralCategoryGroup other);
-    
+
     icu4x::capi::GeneralCategoryGroup icu4x_GeneralCategoryGroup_cased_letter_mv1(void);
-    
+
     icu4x::capi::GeneralCategoryGroup icu4x_GeneralCategoryGroup_letter_mv1(void);
-    
+
     icu4x::capi::GeneralCategoryGroup icu4x_GeneralCategoryGroup_mark_mv1(void);
-    
+
     icu4x::capi::GeneralCategoryGroup icu4x_GeneralCategoryGroup_number_mv1(void);
-    
+
     icu4x::capi::GeneralCategoryGroup icu4x_GeneralCategoryGroup_separator_mv1(void);
-    
+
     icu4x::capi::GeneralCategoryGroup icu4x_GeneralCategoryGroup_other_mv1(void);
-    
+
     icu4x::capi::GeneralCategoryGroup icu4x_GeneralCategoryGroup_punctuation_mv1(void);
-    
+
     icu4x::capi::GeneralCategoryGroup icu4x_GeneralCategoryGroup_symbol_mv1(void);
-    
-    
+
     } // extern "C"
 } // namespace capi
 } // namespace

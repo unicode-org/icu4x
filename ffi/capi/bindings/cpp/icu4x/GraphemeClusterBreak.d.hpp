@@ -37,7 +37,7 @@ namespace capi {
       GraphemeClusterBreak_GlueAfterZwj = 16,
       GraphemeClusterBreak_ZWJ = 17,
     };
-    
+
     typedef struct GraphemeClusterBreak_option {union { GraphemeClusterBreak ok; }; bool is_ok; } GraphemeClusterBreak_option;
 } // namespace capi
 } // namespace

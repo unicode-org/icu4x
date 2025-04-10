@@ -2,7 +2,7 @@
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
-/** 
+/**
  * ECMA-402 compatible sign display preference.
  *
  * See the [Rust documentation for `SignDisplay`](https://docs.rs/fixed_decimal/latest/fixed_decimal/enum.SignDisplay.html) for more information.
@@ -10,13 +10,12 @@ import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
 export class FixedDecimalSignDisplay {
-    
 
-    static fromValue(value : FixedDecimalSignDisplay | string) : FixedDecimalSignDisplay; 
+    static fromValue(value : FixedDecimalSignDisplay | string) : FixedDecimalSignDisplay;
 
-    get value() : string;
+    get value(): string;
 
-    get ffiValue() : number;
+    get ffiValue(): number;
 
     static Auto : FixedDecimalSignDisplay;
     static Never : FixedDecimalSignDisplay;

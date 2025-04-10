@@ -18,27 +18,26 @@
 namespace icu4x {
 namespace capi {
     extern "C" {
-    
+
     typedef struct icu4x_Time_create_mv1_result {union {icu4x::capi::Time* ok; icu4x::capi::CalendarError err;}; bool is_ok;} icu4x_Time_create_mv1_result;
     icu4x_Time_create_mv1_result icu4x_Time_create_mv1(uint8_t hour, uint8_t minute, uint8_t second, uint32_t subsecond);
-    
+
     typedef struct icu4x_Time_from_string_mv1_result {union {icu4x::capi::Time* ok; icu4x::capi::CalendarParseError err;}; bool is_ok;} icu4x_Time_from_string_mv1_result;
     icu4x_Time_from_string_mv1_result icu4x_Time_from_string_mv1(diplomat::capi::DiplomatStringView v);
-    
+
     typedef struct icu4x_Time_midnight_mv1_result {union {icu4x::capi::Time* ok; icu4x::capi::CalendarError err;}; bool is_ok;} icu4x_Time_midnight_mv1_result;
     icu4x_Time_midnight_mv1_result icu4x_Time_midnight_mv1(void);
-    
+
     uint8_t icu4x_Time_hour_mv1(const icu4x::capi::Time* self);
-    
+
     uint8_t icu4x_Time_minute_mv1(const icu4x::capi::Time* self);
-    
+
     uint8_t icu4x_Time_second_mv1(const icu4x::capi::Time* self);
-    
+
     uint32_t icu4x_Time_subsecond_mv1(const icu4x::capi::Time* self);
-    
-    
+
     void icu4x_Time_destroy_mv1(Time* self);
-    
+
     } // extern "C"
 } // namespace capi
 } // namespace

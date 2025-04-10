@@ -9,7 +9,7 @@ import type { VariantOffsetsCalculator } from "./VariantOffsetsCalculator"
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
-/** 
+/**
  * An ICU4X DateTime object capable of containing a date, time, and zone for any calendar.
  *
  * See the [Rust documentation for `ZonedDateTime`](https://docs.rs/icu/latest/icu/time/struct.ZonedDateTime.html) for more information.
@@ -17,39 +17,35 @@ import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
 export class ZonedDateTime {
-    
-    get date() : Date;
-    
-    get time() : Time;
-    
-    get zone() : TimeZoneInfo;
-    
+    get date(): Date;
+    get time(): Time;
+    get zone(): TimeZoneInfo;
 
-    /** 
+    /**
      * Creates a new [`ZonedDateTime`] from an IXDTF string.
      *
      * See the [Rust documentation for `try_from_str`](https://docs.rs/icu/latest/icu/time/struct.ZonedDateTime.html#method.try_from_str) for more information.
      */
-    static fromString(v: string, calendar: Calendar, ianaParser: IanaParser, offsetCalculator: VariantOffsetsCalculator): ZonedDateTime;
+        static fromString(v: string, calendar: Calendar, ianaParser: IanaParser, offsetCalculator: VariantOffsetsCalculator): ZonedDateTime;
 
-    /** 
+    /**
      * Creates a new [`ZonedDateTime`] from a location-only IXDTF string.
      *
      * See the [Rust documentation for `try_location_only_from_str`](https://docs.rs/icu/latest/icu/time/struct.ZonedDateTime.html#method.try_location_only_from_str) for more information.
      */
-    static locationOnlyFromString(v: string, calendar: Calendar, ianaParser: IanaParser): ZonedDateTime;
+        static locationOnlyFromString(v: string, calendar: Calendar, ianaParser: IanaParser): ZonedDateTime;
 
-    /** 
+    /**
      * Creates a new [`ZonedDateTime`] from an offset-only IXDTF string.
      *
      * See the [Rust documentation for `try_offset_only_from_str`](https://docs.rs/icu/latest/icu/time/struct.ZonedDateTime.html#method.try_offset_only_from_str) for more information.
      */
-    static offsetOnlyFromString(v: string, calendar: Calendar): ZonedDateTime;
+        static offsetOnlyFromString(v: string, calendar: Calendar): ZonedDateTime;
 
-    /** 
+    /**
      * Creates a new [`ZonedDateTime`] from an IXDTF string, without requiring the offset or calculating the zone variant.
      *
      * See the [Rust documentation for `try_loose_from_str`](https://docs.rs/icu/latest/icu/time/struct.ZonedDateTime.html#method.try_loose_from_str) for more information.
      */
-    static looseFromString(v: string, calendar: Calendar, ianaParser: IanaParser): ZonedDateTime;
+        static looseFromString(v: string, calendar: Calendar, ianaParser: IanaParser): ZonedDateTime;
 }

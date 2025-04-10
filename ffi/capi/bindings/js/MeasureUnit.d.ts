@@ -2,7 +2,7 @@
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
-/** 
+/**
  * An ICU4X Measurement Unit object which represents a single unit of measurement
  * such as `meter`, `second`, `kilometer-per-hour`, `square-meter`, etc.
  *
@@ -13,6 +13,5 @@ import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
 export class MeasureUnit {
-    
     get ffiValue(): pointer;
 }

@@ -24,7 +24,6 @@ final class LineSegmenter implements ffi.Finalizable {
   }
 
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_LineSegmenter_destroy_mv1));
-
   /// Construct a [`LineSegmenter`] with default options (no locale-based tailoring) using compiled data. It automatically loads the best
   /// available payload data for Burmese, Khmer, Lao, and Thai.
   ///
@@ -33,7 +32,6 @@ final class LineSegmenter implements ffi.Finalizable {
     final result = _icu4x_LineSegmenter_create_auto_mv1();
     return LineSegmenter._fromFfi(result, []);
   }
-
   /// Construct a [`LineSegmenter`] with default options (no locale-based tailoring) and LSTM payload data for
   /// Burmese, Khmer, Lao, and Thai, using compiled data.
   ///
@@ -42,7 +40,6 @@ final class LineSegmenter implements ffi.Finalizable {
     final result = _icu4x_LineSegmenter_create_lstm_mv1();
     return LineSegmenter._fromFfi(result, []);
   }
-
   /// Construct a [`LineSegmenter`] with default options (no locale-based tailoring) and dictionary payload data for
   /// Burmese, Khmer, Lao, and Thai, using compiled data
   ///
@@ -51,7 +48,6 @@ final class LineSegmenter implements ffi.Finalizable {
     final result = _icu4x_LineSegmenter_create_dictionary_mv1();
     return LineSegmenter._fromFfi(result, []);
   }
-
   /// Construct a [`LineSegmenter`] with custom options using compiled data. It automatically loads the best
   /// available payload data for Burmese, Khmer, Lao, and Thai.
   ///
@@ -61,7 +57,6 @@ final class LineSegmenter implements ffi.Finalizable {
     final result = _icu4x_LineSegmenter_create_auto_with_options_v2_mv1(contentLocale?._ffi ?? ffi.Pointer.fromAddress(0), options._toFfi(temp.arena));
     return LineSegmenter._fromFfi(result, []);
   }
-
   /// Construct a [`LineSegmenter`] with custom options. It automatically loads the best
   /// available payload data for Burmese, Khmer, Lao, and Thai, using a particular data source.
   ///
@@ -76,7 +71,6 @@ final class LineSegmenter implements ffi.Finalizable {
     }
     return LineSegmenter._fromFfi(result.union.ok, []);
   }
-
   /// Construct a [`LineSegmenter`] with custom options and LSTM payload data for
   /// Burmese, Khmer, Lao, and Thai, using compiled data.
   ///
@@ -86,7 +80,6 @@ final class LineSegmenter implements ffi.Finalizable {
     final result = _icu4x_LineSegmenter_create_lstm_with_options_v2_mv1(contentLocale?._ffi ?? ffi.Pointer.fromAddress(0), options._toFfi(temp.arena));
     return LineSegmenter._fromFfi(result, []);
   }
-
   /// Construct a [`LineSegmenter`] with custom options and LSTM payload data for
   /// Burmese, Khmer, Lao, and Thai, using a particular data source.
   ///
@@ -101,7 +94,6 @@ final class LineSegmenter implements ffi.Finalizable {
     }
     return LineSegmenter._fromFfi(result.union.ok, []);
   }
-
   /// Construct a [`LineSegmenter`] with custom options and dictionary payload data for
   /// Burmese, Khmer, Lao, and Thai, using compiled data.
   ///
@@ -111,7 +103,6 @@ final class LineSegmenter implements ffi.Finalizable {
     final result = _icu4x_LineSegmenter_create_dictionary_with_options_v2_mv1(contentLocale?._ffi ?? ffi.Pointer.fromAddress(0), options._toFfi(temp.arena));
     return LineSegmenter._fromFfi(result, []);
   }
-
   /// Construct a [`LineSegmenter`] with custom options and dictionary payload data for
   /// Burmese, Khmer, Lao, and Thai, using a particular data source.
   ///
@@ -126,7 +117,6 @@ final class LineSegmenter implements ffi.Finalizable {
     }
     return LineSegmenter._fromFfi(result.union.ok, []);
   }
-
   /// Segments a string.
   ///
   /// Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
@@ -140,6 +130,7 @@ final class LineSegmenter implements ffi.Finalizable {
     final result = _icu4x_LineSegmenter_segment_utf16_mv1(_ffi, input._utf16AllocIn(inputArena.arena));
     return LineBreakIteratorUtf16._fromFfi(result, [], aEdges);
   }
+
 }
 
 @_DiplomatFfiUse('icu4x_LineSegmenter_destroy_mv1')

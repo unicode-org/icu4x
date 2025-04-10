@@ -2,19 +2,18 @@
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
-/** 
+/**
  * See the [Rust documentation for `Length`](https://docs.rs/icu/latest/icu/datetime/enum.Length.html) for more information.
  */
 
 
 export class DateTimeLength {
-    
 
-    static fromValue(value : DateTimeLength | string) : DateTimeLength; 
+    static fromValue(value : DateTimeLength | string) : DateTimeLength;
 
-    get value() : string;
+    get value(): string;
 
-    get ffiValue() : number;
+    get ffiValue(): number;
 
     static Long : DateTimeLength;
     static Medium : DateTimeLength;

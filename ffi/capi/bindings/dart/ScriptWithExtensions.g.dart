@@ -24,7 +24,6 @@ final class ScriptWithExtensions implements ffi.Finalizable {
   }
 
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_ScriptWithExtensions_destroy_mv1));
-
   /// Create a map for the `Script`/`Script_Extensions` properties, using compiled data.
   ///
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/properties/script/struct.ScriptWithExtensions.html#method.new) for more information.
@@ -32,7 +31,6 @@ final class ScriptWithExtensions implements ffi.Finalizable {
     final result = _icu4x_ScriptWithExtensions_create_mv1();
     return ScriptWithExtensions._fromFfi(result, []);
   }
-
   /// Create a map for the `Script`/`Script_Extensions` properties, using compiled data.
   ///
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/properties/script/struct.ScriptWithExtensions.html#method.new) for more information.
@@ -45,7 +43,6 @@ final class ScriptWithExtensions implements ffi.Finalizable {
     }
     return ScriptWithExtensions._fromFfi(result.union.ok, []);
   }
-
   /// Get the Script property value for a code point
   ///
   /// See the [Rust documentation for `get_script_val`](https://docs.rs/icu/latest/icu/properties/script/struct.ScriptWithExtensionsBorrowed.html#method.get_script_val) for more information.
@@ -53,7 +50,6 @@ final class ScriptWithExtensions implements ffi.Finalizable {
     final result = _icu4x_ScriptWithExtensions_get_script_val_mv1(_ffi, ch);
     return result;
   }
-
   /// Check if the Script_Extensions property of the given code point covers the given script
   ///
   /// See the [Rust documentation for `has_script`](https://docs.rs/icu/latest/icu/properties/script/struct.ScriptWithExtensionsBorrowed.html#method.has_script) for more information.
@@ -61,7 +57,6 @@ final class ScriptWithExtensions implements ffi.Finalizable {
     final result = _icu4x_ScriptWithExtensions_has_script_mv1(_ffi, ch, script);
     return result;
   }
-
   /// Borrow this object for a slightly faster variant with more operations
   ///
   /// See the [Rust documentation for `as_borrowed`](https://docs.rs/icu/latest/icu/properties/script/struct.ScriptWithExtensions.html#method.as_borrowed) for more information.
@@ -71,7 +66,6 @@ final class ScriptWithExtensions implements ffi.Finalizable {
     final result = _icu4x_ScriptWithExtensions_as_borrowed_mv1(_ffi);
     return ScriptWithExtensionsBorrowed._fromFfi(result, [], aEdges);
   }
-
   /// Get a list of ranges of code points that contain this script in their Script_Extensions values
   ///
   /// See the [Rust documentation for `get_script_extensions_ranges`](https://docs.rs/icu/latest/icu/properties/script/struct.ScriptWithExtensionsBorrowed.html#method.get_script_extensions_ranges) for more information.
@@ -81,6 +75,7 @@ final class ScriptWithExtensions implements ffi.Finalizable {
     final result = _icu4x_ScriptWithExtensions_iter_ranges_for_script_mv1(_ffi, script);
     return CodePointRangeIterator._fromFfi(result, [], aEdges);
   }
+
 }
 
 @_DiplomatFfiUse('icu4x_ScriptWithExtensions_destroy_mv1')

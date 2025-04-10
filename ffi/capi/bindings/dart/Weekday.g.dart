@@ -36,6 +36,7 @@ enum Weekday {
         return 7;
     }
   }
+
 }
 
 // dart format on

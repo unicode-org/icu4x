@@ -2,19 +2,18 @@
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
-/** 
+/**
  * See the [Rust documentation for `TimePrecision`](https://docs.rs/icu/latest/icu/datetime/enum.TimePrecision.html) for more information.
  */
 
 
 export class TimePrecision {
-    
 
-    static fromValue(value : TimePrecision | string) : TimePrecision; 
+    static fromValue(value : TimePrecision | string) : TimePrecision;
 
-    get value() : string;
+    get value(): string;
 
-    get ffiValue() : number;
+    get ffiValue(): number;
 
     static Hour : TimePrecision;
     static Minute : TimePrecision;

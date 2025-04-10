@@ -22,7 +22,6 @@ final class TimeFormatter implements ffi.Finalizable {
   }
 
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_TimeFormatter_destroy_mv1));
-
   /// See the [Rust documentation for `T`](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.T.html) for more information.
   ///
   /// Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.T.html#method.with_time_precision), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.T.html#method.with_alignment), [3](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.T.html#method.with_length)
@@ -35,7 +34,6 @@ final class TimeFormatter implements ffi.Finalizable {
     }
     return TimeFormatter._fromFfi(result.union.ok, []);
   }
-
   /// See the [Rust documentation for `T`](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.T.html) for more information.
   ///
   /// Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.T.html#method.with_time_precision), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.T.html#method.with_alignment), [3](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.T.html#method.with_length)
@@ -48,13 +46,13 @@ final class TimeFormatter implements ffi.Finalizable {
     }
     return TimeFormatter._fromFfi(result.union.ok, []);
   }
-
   /// See the [Rust documentation for `format`](https://docs.rs/icu/latest/icu/datetime/struct.FixedCalendarDateTimeFormatter.html#method.format) for more information.
   String format(Time time) {
     final write = _Write();
     _icu4x_TimeFormatter_format_mv1(_ffi, time._ffi, write._ffi);
     return write.finalize();
   }
+
 }
 
 @_DiplomatFfiUse('icu4x_TimeFormatter_destroy_mv1')

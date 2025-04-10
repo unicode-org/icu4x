@@ -26,7 +26,6 @@ final class ReorderedIndexMap implements ffi.Finalizable {
   }
 
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_ReorderedIndexMap_destroy_mv1));
-
   /// Get this as a slice/array of indices
   core.List<int> get asSlice {
     // This lifetime edge depends on lifetimes: 'a
@@ -34,19 +33,16 @@ final class ReorderedIndexMap implements ffi.Finalizable {
     final result = _icu4x_ReorderedIndexMap_as_slice_mv1(_ffi);
     return result._toDart(aEdges);
   }
-
   /// The length of this map
   int get length {
     final result = _icu4x_ReorderedIndexMap_len_mv1(_ffi);
     return result;
   }
-
   /// Whether this map is empty
   bool get isEmpty {
     final result = _icu4x_ReorderedIndexMap_is_empty_mv1(_ffi);
     return result;
   }
-
   /// Get element at `index`. Returns 0 when out of bounds
   /// (note that 0 is also a valid in-bounds value, please use `len()`
   /// to avoid out-of-bounds)
@@ -54,6 +50,7 @@ final class ReorderedIndexMap implements ffi.Finalizable {
     final result = _icu4x_ReorderedIndexMap_get_mv1(_ffi, index);
     return result;
   }
+
 }
 
 @_DiplomatFfiUse('icu4x_ReorderedIndexMap_destroy_mv1')

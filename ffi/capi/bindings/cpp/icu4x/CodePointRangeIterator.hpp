@@ -17,12 +17,11 @@
 namespace icu4x {
 namespace capi {
     extern "C" {
-    
+
     icu4x::capi::CodePointRangeIteratorResult icu4x_CodePointRangeIterator_next_mv1(icu4x::capi::CodePointRangeIterator* self);
-    
-    
+
     void icu4x_CodePointRangeIterator_destroy_mv1(CodePointRangeIterator* self);
-    
+
     } // extern "C"
 } // namespace capi
 } // namespace

@@ -22,7 +22,6 @@ final class Collator implements ffi.Finalizable {
   }
 
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_Collator_destroy_mv1));
-
   /// Construct a new Collator instance using compiled data.
   ///
   /// See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/collator/struct.Collator.html#method.try_new) for more information.
@@ -36,7 +35,6 @@ final class Collator implements ffi.Finalizable {
     }
     return Collator._fromFfi(result.union.ok, []);
   }
-
   /// Construct a new Collator instance using a particular data source.
   ///
   /// See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/collator/struct.Collator.html#method.try_new) for more information.
@@ -50,7 +48,6 @@ final class Collator implements ffi.Finalizable {
     }
     return Collator._fromFfi(result.union.ok, []);
   }
-
   /// Compare two strings.
   ///
   /// Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
@@ -62,7 +59,6 @@ final class Collator implements ffi.Finalizable {
     final result = _icu4x_Collator_compare_utf16_mv1(_ffi, left._utf16AllocIn(temp.arena), right._utf16AllocIn(temp.arena));
     return result;
   }
-
   /// The resolved options showing how the default options, the requested options,
   /// and the options from locale data were combined. None of the struct fields
   /// will have `Auto` as the value.
@@ -72,6 +68,7 @@ final class Collator implements ffi.Finalizable {
     final result = _icu4x_Collator_resolved_options_v1_mv1(_ffi);
     return CollatorResolvedOptions._fromFfi(result);
   }
+
 }
 
 @_DiplomatFfiUse('icu4x_Collator_destroy_mv1')

@@ -24,7 +24,6 @@ PluralOperands* icu4x_PluralOperands_from_int64_mv1(int64_t i);
 
 PluralOperands* icu4x_PluralOperands_from_fixed_decimal_mv1(const Decimal* x);
 
-
 void icu4x_PluralOperands_destroy_mv1(PluralOperands* self);
 
 

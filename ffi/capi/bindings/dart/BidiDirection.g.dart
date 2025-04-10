@@ -9,6 +9,7 @@ enum BidiDirection {
   rtl,
 
   mixed;
+
 }
 
 // dart format on

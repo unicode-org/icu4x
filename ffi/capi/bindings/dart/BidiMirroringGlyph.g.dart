@@ -39,12 +39,12 @@ final class BidiMirroringGlyph {
     struct.pairedBracketType = pairedBracketType.index;
     return struct;
   }
-
   /// See the [Rust documentation for `for_char`](https://docs.rs/icu/latest/icu/properties/props/trait.EnumeratedProperty.html#tymethod.for_char) for more information.
   static BidiMirroringGlyph forChar(Rune ch) {
     final result = _icu4x_BidiMirroringGlyph_for_char_mv1(ch);
     return BidiMirroringGlyph._fromFfi(result);
   }
+
 
   @override
   bool operator ==(Object other) =>

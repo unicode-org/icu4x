@@ -4,7 +4,7 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
-/** 
+/**
  * A mask that is capable of representing groups of `General_Category` values.
  *
  * See the [Rust documentation for `GeneralCategoryGroup`](https://docs.rs/icu/latest/icu/properties/props/struct.GeneralCategoryGroup.html) for more information.
@@ -12,16 +12,13 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
 export class GeneralCategoryGroup {
-    
     #mask;
-    
-    get mask()  {
+    get mask() {
         return this.#mask;
-    } 
-    set mask(value) {
+    }
+    set mask(value){
         this.#mask = value;
     }
-    
     /** Create `GeneralCategoryGroup` from an object that contains all of `GeneralCategoryGroup`s fields.
     * Optional fields do not need to be included in the provided object.
     */
@@ -45,7 +42,6 @@ export class GeneralCategoryGroup {
 
     // Return this struct in FFI function friendly format.
     // Returns an array that can be expanded with spread syntax (...)
-    
     _intoFFI(
         functionCleanupArena,
         appendArrayMap
@@ -85,206 +81,205 @@ export class GeneralCategoryGroup {
         }
         let structObj = {};
         structObj.mask = primitiveValue;
-        
 
         return new GeneralCategoryGroup(structObj);
     }
 
-    /** 
+    /**
      * See the [Rust documentation for `contains`](https://docs.rs/icu/latest/icu/properties/props/struct.GeneralCategoryGroup.html#method.contains) for more information.
      */
-    contains(val) {
+        contains(val) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
-        
-        const result = wasm.icu4x_GeneralCategoryGroup_contains_mv1(...this._intoFFI(), val.ffiValue);
-    
-        try {
-            return result;
+
+
+        const result = wasm.icu4x_GeneralCategoryGroup_contains_mv1(...GeneralCategoryGroup._fromSuppliedValue(diplomatRuntime.internalConstructor, this)._intoFFI(functionCleanupArena, {}), val.ffiValue);
+
+        try {        return result;
         }
-        
+
         finally {
             functionCleanupArena.free();
         }
     }
 
-    /** 
+    /**
      * See the [Rust documentation for `complement`](https://docs.rs/icu/latest/icu/properties/props/struct.GeneralCategoryGroup.html#method.complement) for more information.
      */
-    complement() {
+        complement() {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
-        
-        const result = wasm.icu4x_GeneralCategoryGroup_complement_mv1(...this._intoFFI());
-    
-        try {
-            return GeneralCategoryGroup._fromFFI(diplomatRuntime.internalConstructor, result);
+
+
+        const result = wasm.icu4x_GeneralCategoryGroup_complement_mv1(...GeneralCategoryGroup._fromSuppliedValue(diplomatRuntime.internalConstructor, this)._intoFFI(functionCleanupArena, {}));
+
+        try {        return GeneralCategoryGroup._fromFFI(diplomatRuntime.internalConstructor, result);
         }
-        
+
         finally {
             functionCleanupArena.free();
         }
     }
 
-    /** 
+    /**
      * See the [Rust documentation for `all`](https://docs.rs/icu/latest/icu/properties/props/struct.GeneralCategoryGroup.html#method.all) for more information.
      */
-    static all() {
+        static all() {
+
         const result = wasm.icu4x_GeneralCategoryGroup_all_mv1();
-    
-        try {
-            return GeneralCategoryGroup._fromFFI(diplomatRuntime.internalConstructor, result);
+
+        try {        return GeneralCategoryGroup._fromFFI(diplomatRuntime.internalConstructor, result);
         }
-        
+
         finally {}
     }
 
-    /** 
+    /**
      * See the [Rust documentation for `empty`](https://docs.rs/icu/latest/icu/properties/props/struct.GeneralCategoryGroup.html#method.empty) for more information.
      */
-    static empty() {
+        static empty() {
+
         const result = wasm.icu4x_GeneralCategoryGroup_empty_mv1();
-    
-        try {
-            return GeneralCategoryGroup._fromFFI(diplomatRuntime.internalConstructor, result);
+
+        try {        return GeneralCategoryGroup._fromFFI(diplomatRuntime.internalConstructor, result);
         }
-        
+
         finally {}
     }
 
-    /** 
+    /**
      * See the [Rust documentation for `union`](https://docs.rs/icu/latest/icu/properties/props/struct.GeneralCategoryGroup.html#method.union) for more information.
      */
-    union(other) {
+        union(other) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
-        
-        const result = wasm.icu4x_GeneralCategoryGroup_union_mv1(...this._intoFFI(), ...GeneralCategoryGroup._fromSuppliedValue(diplomatRuntime.internalConstructor, other)._intoFFI(functionCleanupArena, {}));
-    
-        try {
-            return GeneralCategoryGroup._fromFFI(diplomatRuntime.internalConstructor, result);
+
+
+        const result = wasm.icu4x_GeneralCategoryGroup_union_mv1(...GeneralCategoryGroup._fromSuppliedValue(diplomatRuntime.internalConstructor, this)._intoFFI(functionCleanupArena, {}), ...GeneralCategoryGroup._fromSuppliedValue(diplomatRuntime.internalConstructor, other)._intoFFI(functionCleanupArena, {}));
+
+        try {        return GeneralCategoryGroup._fromFFI(diplomatRuntime.internalConstructor, result);
         }
-        
+
         finally {
             functionCleanupArena.free();
         }
     }
 
-    /** 
+    /**
      * See the [Rust documentation for `intersection`](https://docs.rs/icu/latest/icu/properties/props/struct.GeneralCategoryGroup.html#method.intersection) for more information.
      */
-    intersection(other) {
+        intersection(other) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
-        
-        const result = wasm.icu4x_GeneralCategoryGroup_intersection_mv1(...this._intoFFI(), ...GeneralCategoryGroup._fromSuppliedValue(diplomatRuntime.internalConstructor, other)._intoFFI(functionCleanupArena, {}));
-    
-        try {
-            return GeneralCategoryGroup._fromFFI(diplomatRuntime.internalConstructor, result);
+
+
+        const result = wasm.icu4x_GeneralCategoryGroup_intersection_mv1(...GeneralCategoryGroup._fromSuppliedValue(diplomatRuntime.internalConstructor, this)._intoFFI(functionCleanupArena, {}), ...GeneralCategoryGroup._fromSuppliedValue(diplomatRuntime.internalConstructor, other)._intoFFI(functionCleanupArena, {}));
+
+        try {        return GeneralCategoryGroup._fromFFI(diplomatRuntime.internalConstructor, result);
         }
-        
+
         finally {
             functionCleanupArena.free();
         }
     }
 
-    /** 
+    /**
      * See the [Rust documentation for `CasedLetter`](https://docs.rs/icu/latest/icu/properties/props/struct.GeneralCategoryGroup.html#associatedconstant.CasedLetter) for more information.
      */
-    static casedLetter() {
+        static casedLetter() {
+
         const result = wasm.icu4x_GeneralCategoryGroup_cased_letter_mv1();
-    
-        try {
-            return GeneralCategoryGroup._fromFFI(diplomatRuntime.internalConstructor, result);
+
+        try {        return GeneralCategoryGroup._fromFFI(diplomatRuntime.internalConstructor, result);
         }
-        
+
         finally {}
     }
 
-    /** 
+    /**
      * See the [Rust documentation for `Letter`](https://docs.rs/icu/latest/icu/properties/props/struct.GeneralCategoryGroup.html#associatedconstant.Letter) for more information.
      */
-    static letter() {
+        static letter() {
+
         const result = wasm.icu4x_GeneralCategoryGroup_letter_mv1();
-    
-        try {
-            return GeneralCategoryGroup._fromFFI(diplomatRuntime.internalConstructor, result);
+
+        try {        return GeneralCategoryGroup._fromFFI(diplomatRuntime.internalConstructor, result);
         }
-        
+
         finally {}
     }
 
-    /** 
+    /**
      * See the [Rust documentation for `Mark`](https://docs.rs/icu/latest/icu/properties/props/struct.GeneralCategoryGroup.html#associatedconstant.Mark) for more information.
      */
-    static mark() {
+        static mark() {
+
         const result = wasm.icu4x_GeneralCategoryGroup_mark_mv1();
-    
-        try {
-            return GeneralCategoryGroup._fromFFI(diplomatRuntime.internalConstructor, result);
+
+        try {        return GeneralCategoryGroup._fromFFI(diplomatRuntime.internalConstructor, result);
         }
-        
+
         finally {}
     }
 
-    /** 
+    /**
      * See the [Rust documentation for `Number`](https://docs.rs/icu/latest/icu/properties/props/struct.GeneralCategoryGroup.html#associatedconstant.Number) for more information.
      */
-    static number() {
+        static number() {
+
         const result = wasm.icu4x_GeneralCategoryGroup_number_mv1();
-    
-        try {
-            return GeneralCategoryGroup._fromFFI(diplomatRuntime.internalConstructor, result);
+
+        try {        return GeneralCategoryGroup._fromFFI(diplomatRuntime.internalConstructor, result);
         }
-        
+
         finally {}
     }
 
-    /** 
+    /**
      * See the [Rust documentation for `Other`](https://docs.rs/icu/latest/icu/properties/props/struct.GeneralCategoryGroup.html#associatedconstant.Other) for more information.
      */
-    static separator() {
+        static separator() {
+
         const result = wasm.icu4x_GeneralCategoryGroup_separator_mv1();
-    
-        try {
-            return GeneralCategoryGroup._fromFFI(diplomatRuntime.internalConstructor, result);
+
+        try {        return GeneralCategoryGroup._fromFFI(diplomatRuntime.internalConstructor, result);
         }
-        
+
         finally {}
     }
 
-    /** 
+    /**
      * See the [Rust documentation for `Letter`](https://docs.rs/icu/latest/icu/properties/props/struct.GeneralCategoryGroup.html#associatedconstant.Letter) for more information.
      */
-    static other() {
+        static other() {
+
         const result = wasm.icu4x_GeneralCategoryGroup_other_mv1();
-    
-        try {
-            return GeneralCategoryGroup._fromFFI(diplomatRuntime.internalConstructor, result);
+
+        try {        return GeneralCategoryGroup._fromFFI(diplomatRuntime.internalConstructor, result);
         }
-        
+
         finally {}
     }
 
-    /** 
+    /**
      * See the [Rust documentation for `Punctuation`](https://docs.rs/icu/latest/icu/properties/props/struct.GeneralCategoryGroup.html#associatedconstant.Punctuation) for more information.
      */
-    static punctuation() {
+        static punctuation() {
+
         const result = wasm.icu4x_GeneralCategoryGroup_punctuation_mv1();
-    
-        try {
-            return GeneralCategoryGroup._fromFFI(diplomatRuntime.internalConstructor, result);
+
+        try {        return GeneralCategoryGroup._fromFFI(diplomatRuntime.internalConstructor, result);
         }
-        
+
         finally {}
     }
 
-    /** 
+    /**
      * See the [Rust documentation for `Symbol`](https://docs.rs/icu/latest/icu/properties/props/struct.GeneralCategoryGroup.html#associatedconstant.Symbol) for more information.
      */
-    static symbol() {
+        static symbol() {
+
         const result = wasm.icu4x_GeneralCategoryGroup_symbol_mv1();
-    
-        try {
-            return GeneralCategoryGroup._fromFFI(diplomatRuntime.internalConstructor, result);
+
+        try {        return GeneralCategoryGroup._fromFFI(diplomatRuntime.internalConstructor, result);
         }
-        
+
         finally {}
     }
 

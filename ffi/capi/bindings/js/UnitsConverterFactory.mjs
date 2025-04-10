@@ -7,7 +7,7 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
-/** 
+/**
  * An ICU4X Units Converter Factory object, capable of creating converters a [`UnitsConverter`]
  * for converting between two [`MeasureUnit`]s.
  *
@@ -20,86 +20,83 @@ const UnitsConverterFactory_box_destroy_registry = new FinalizationRegistry((ptr
 });
 
 export class UnitsConverterFactory {
-    
     // Internal ptr reference:
     #ptr = null;
 
     // Lifetimes are only to keep dependencies alive.
     // Since JS won't garbage collect until there are no incoming edges.
     #selfEdge = [];
-    
+
     #internalConstructor(symbol, ptr, selfEdge) {
         if (symbol !== diplomatRuntime.internalConstructor) {
             console.error("UnitsConverterFactory is an Opaque type. You cannot call its constructor.");
             return;
         }
-        
         this.#ptr = ptr;
         this.#selfEdge = selfEdge;
-        
+
         // Are we being borrowed? If not, we can register.
         if (this.#selfEdge.length === 0) {
             UnitsConverterFactory_box_destroy_registry.register(this, this.#ptr);
         }
-        
+
         return this;
     }
     get ffiValue() {
         return this.#ptr;
     }
 
-    /** 
+    /**
      * Construct a new [`UnitsConverterFactory`] instance using compiled data.
      *
      * See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/experimental/units/converter_factory/struct.ConverterFactory.html#method.new) for more information.
      */
-    #defaultConstructor() {
+        #defaultConstructor() {
+
         const result = wasm.icu4x_UnitsConverterFactory_create_mv1();
-    
-        try {
-            return new UnitsConverterFactory(diplomatRuntime.internalConstructor, result, []);
+
+        try {        return new UnitsConverterFactory(diplomatRuntime.internalConstructor, result, []);
         }
-        
+
         finally {}
     }
 
-    /** 
+    /**
      * Construct a new [`UnitsConverterFactory`] instance using a particular data source.
      *
      * See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/experimental/units/converter_factory/struct.ConverterFactory.html#method.new) for more information.
      */
-    static createWithProvider(provider) {
+        static createWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
-        
+
+
         const result = wasm.icu4x_UnitsConverterFactory_create_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
-    
-        try {
-            if (!diplomatReceive.resultFlag) {
+
+        try {        if (!diplomatReceive.resultFlag) {
                 const cause = new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
                 throw new globalThis.Error('DataError: ' + cause.value, { cause });
             }
             return new UnitsConverterFactory(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
-        
-        finally {
-            diplomatReceive.free();
+
+        finally {        diplomatReceive.free();
         }
     }
 
-    /** 
+    /**
      * Creates a new [`UnitsConverter`] from the input and output [`MeasureUnit`]s.
      * Returns nothing if the conversion between the two units is not possible.
      * For example, conversion between `meter` and `second` is not possible.
      *
      * See the [Rust documentation for `converter`](https://docs.rs/icu/latest/icu/experimental/units/converter_factory/struct.ConverterFactory.html#method.converter) for more information.
      */
-    converter(from, to) {
+        converter(from, to) {
+
         const result = wasm.icu4x_UnitsConverterFactory_converter_mv1(this.ffiValue, from.ffiValue, to.ffiValue);
-    
-        try {
-            return result === 0 ? null : new UnitsConverter(diplomatRuntime.internalConstructor, result, []);
+
+        try {        return result === 0 ? null : new UnitsConverter(diplomatRuntime.internalConstructor, result, []);
         }
-        
+
         finally {}
     }
 

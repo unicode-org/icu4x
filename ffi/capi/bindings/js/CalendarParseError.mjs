@@ -3,13 +3,12 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
-/** 
+/**
  * Additional information: [1](https://docs.rs/icu/latest/icu/calendar/enum.ParseError.html), [2](https://docs.rs/icu/latest/icu/time/enum.ParseError.html)
  */
 
 
 export class CalendarParseError {
-    
     #value = undefined;
 
     static #values = new Map([
@@ -23,7 +22,7 @@ export class CalendarParseError {
     static getAllEntries() {
         return CalendarParseError.#values.entries();
     }
-    
+
     #internalConstructor(value) {
         if (arguments.length > 1 && arguments[0] === diplomatRuntime.internalConstructor) {
             // We pass in two internalConstructor arguments to create *new*
@@ -53,11 +52,11 @@ export class CalendarParseError {
         return new CalendarParseError(value);
     }
 
-    get value() {
+    get value(){
         return [...CalendarParseError.#values.keys()][this.#value];
     }
 
-    get ffiValue() {
+    get ffiValue(){
         return this.#value;
     }
     static #objectValues = [

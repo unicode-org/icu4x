@@ -22,11 +22,10 @@
 namespace icu4x {
 namespace capi {
     extern "C" {
-    
+
     typedef struct icu4x_ZonedIsoDateTime_from_string_mv1_result {union {icu4x::capi::ZonedIsoDateTime ok; icu4x::capi::CalendarParseError err;}; bool is_ok;} icu4x_ZonedIsoDateTime_from_string_mv1_result;
     icu4x_ZonedIsoDateTime_from_string_mv1_result icu4x_ZonedIsoDateTime_from_string_mv1(diplomat::capi::DiplomatStringView v, const icu4x::capi::IanaParser* iana_parser, const icu4x::capi::VariantOffsetsCalculator* offset_calculator);
-    
-    
+
     } // extern "C"
 } // namespace capi
 } // namespace

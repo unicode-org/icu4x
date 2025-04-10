@@ -22,8 +22,7 @@ final class ZonedDateFormatter implements ffi.Finalizable {
   }
 
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_ZonedDateFormatter_destroy_mv1));
-
-  /// 
+  ///
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   factory ZonedDateFormatter.specificLong(Locale locale, DateFormatter formatter) {
@@ -33,8 +32,7 @@ final class ZonedDateFormatter implements ffi.Finalizable {
     }
     return ZonedDateFormatter._fromFfi(result.union.ok, []);
   }
-
-  /// 
+  ///
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   factory ZonedDateFormatter.specificLongWithProvider(DataProvider provider, Locale locale, DateFormatter formatter) {
@@ -44,8 +42,7 @@ final class ZonedDateFormatter implements ffi.Finalizable {
     }
     return ZonedDateFormatter._fromFfi(result.union.ok, []);
   }
-
-  /// 
+  ///
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   factory ZonedDateFormatter.specificShort(Locale locale, DateFormatter formatter) {
@@ -55,8 +52,7 @@ final class ZonedDateFormatter implements ffi.Finalizable {
     }
     return ZonedDateFormatter._fromFfi(result.union.ok, []);
   }
-
-  /// 
+  ///
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   factory ZonedDateFormatter.specificShortWithProvider(DataProvider provider, Locale locale, DateFormatter formatter) {
@@ -66,8 +62,7 @@ final class ZonedDateFormatter implements ffi.Finalizable {
     }
     return ZonedDateFormatter._fromFfi(result.union.ok, []);
   }
-
-  /// 
+  ///
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   factory ZonedDateFormatter.localizedOffsetLong(Locale locale, DateFormatter formatter) {
@@ -77,8 +72,7 @@ final class ZonedDateFormatter implements ffi.Finalizable {
     }
     return ZonedDateFormatter._fromFfi(result.union.ok, []);
   }
-
-  /// 
+  ///
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   factory ZonedDateFormatter.localizedOffsetLongWithProvider(DataProvider provider, Locale locale, DateFormatter formatter) {
@@ -88,8 +82,7 @@ final class ZonedDateFormatter implements ffi.Finalizable {
     }
     return ZonedDateFormatter._fromFfi(result.union.ok, []);
   }
-
-  /// 
+  ///
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   factory ZonedDateFormatter.localizedOffsetShort(Locale locale, DateFormatter formatter) {
@@ -99,8 +92,7 @@ final class ZonedDateFormatter implements ffi.Finalizable {
     }
     return ZonedDateFormatter._fromFfi(result.union.ok, []);
   }
-
-  /// 
+  ///
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   factory ZonedDateFormatter.localizedOffsetShortWithProvider(DataProvider provider, Locale locale, DateFormatter formatter) {
@@ -110,8 +102,7 @@ final class ZonedDateFormatter implements ffi.Finalizable {
     }
     return ZonedDateFormatter._fromFfi(result.union.ok, []);
   }
-
-  /// 
+  ///
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   factory ZonedDateFormatter.genericLong(Locale locale, DateFormatter formatter) {
@@ -121,8 +112,7 @@ final class ZonedDateFormatter implements ffi.Finalizable {
     }
     return ZonedDateFormatter._fromFfi(result.union.ok, []);
   }
-
-  /// 
+  ///
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   factory ZonedDateFormatter.genericLongWithProvider(DataProvider provider, Locale locale, DateFormatter formatter) {
@@ -132,8 +122,7 @@ final class ZonedDateFormatter implements ffi.Finalizable {
     }
     return ZonedDateFormatter._fromFfi(result.union.ok, []);
   }
-
-  /// 
+  ///
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   factory ZonedDateFormatter.genericShort(Locale locale, DateFormatter formatter) {
@@ -143,8 +132,7 @@ final class ZonedDateFormatter implements ffi.Finalizable {
     }
     return ZonedDateFormatter._fromFfi(result.union.ok, []);
   }
-
-  /// 
+  ///
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   factory ZonedDateFormatter.genericShortWithProvider(DataProvider provider, Locale locale, DateFormatter formatter) {
@@ -154,8 +142,7 @@ final class ZonedDateFormatter implements ffi.Finalizable {
     }
     return ZonedDateFormatter._fromFfi(result.union.ok, []);
   }
-
-  /// 
+  ///
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   factory ZonedDateFormatter.location(Locale locale, DateFormatter formatter) {
@@ -165,8 +152,7 @@ final class ZonedDateFormatter implements ffi.Finalizable {
     }
     return ZonedDateFormatter._fromFfi(result.union.ok, []);
   }
-
-  /// 
+  ///
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   factory ZonedDateFormatter.locationWithProvider(DataProvider provider, Locale locale, DateFormatter formatter) {
@@ -176,8 +162,7 @@ final class ZonedDateFormatter implements ffi.Finalizable {
     }
     return ZonedDateFormatter._fromFfi(result.union.ok, []);
   }
-
-  /// 
+  ///
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   factory ZonedDateFormatter.exemplarCity(Locale locale, DateFormatter formatter) {
@@ -187,8 +172,7 @@ final class ZonedDateFormatter implements ffi.Finalizable {
     }
     return ZonedDateFormatter._fromFfi(result.union.ok, []);
   }
-
-  /// 
+  ///
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   factory ZonedDateFormatter.exemplarCityWithProvider(DataProvider provider, Locale locale, DateFormatter formatter) {
@@ -198,7 +182,6 @@ final class ZonedDateFormatter implements ffi.Finalizable {
     }
     return ZonedDateFormatter._fromFfi(result.union.ok, []);
   }
-
   /// See the [Rust documentation for `format`](https://docs.rs/icu/latest/icu/datetime/struct.DateTimeFormatter.html#method.format) for more information.
   ///
   /// Throws [DateTimeWriteError] on failure.
@@ -210,6 +193,7 @@ final class ZonedDateFormatter implements ffi.Finalizable {
     }
     return write.finalize();
   }
+
 }
 
 @_DiplomatFfiUse('icu4x_ZonedDateFormatter_destroy_mv1')

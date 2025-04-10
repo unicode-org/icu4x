@@ -16,10 +16,9 @@
 namespace icu4x {
 namespace capi {
     extern "C" {
-    
+
     icu4x::capi::TimeZoneVariant icu4x_TimeZoneVariant_from_rearguard_isdst_mv1(icu4x::capi::TimeZoneVariant self, bool isdst);
-    
-    
+
     } // extern "C"
 } // namespace capi
 } // namespace

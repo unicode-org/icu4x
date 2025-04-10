@@ -32,7 +32,6 @@ final class TitlecaseOptions {
     struct.trailingCase = trailingCase != null ? _ResultInt32Void.ok(trailingCase.index) : _ResultInt32Void.err();
     return struct;
   }
-
   /// See the [Rust documentation for `default`](https://docs.rs/icu/latest/icu/casemap/options/struct.TitlecaseOptions.html#method.default) for more information.
   factory TitlecaseOptions({LeadingAdjustment? leadingAdjustment, TrailingCase? trailingCase}) {
     final result = _icu4x_TitlecaseOptionsV1_default_mv1();
@@ -45,6 +44,7 @@ final class TitlecaseOptions {
     }
     return dart;
   }
+
 
   @override
   bool operator ==(Object other) =>

@@ -8,7 +8,7 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
-/** 
+/**
  * An ICU4X line-break segmenter, capable of finding breakpoints in strings.
  *
  * See the [Rust documentation for `LineSegmenter`](https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html) for more information.
@@ -18,227 +18,222 @@ const LineSegmenter_box_destroy_registry = new FinalizationRegistry((ptr) => {
 });
 
 export class LineSegmenter {
-    
     // Internal ptr reference:
     #ptr = null;
 
     // Lifetimes are only to keep dependencies alive.
     // Since JS won't garbage collect until there are no incoming edges.
     #selfEdge = [];
-    
+
     #internalConstructor(symbol, ptr, selfEdge) {
         if (symbol !== diplomatRuntime.internalConstructor) {
             console.error("LineSegmenter is an Opaque type. You cannot call its constructor.");
             return;
         }
-        
         this.#ptr = ptr;
         this.#selfEdge = selfEdge;
-        
+
         // Are we being borrowed? If not, we can register.
         if (this.#selfEdge.length === 0) {
             LineSegmenter_box_destroy_registry.register(this, this.#ptr);
         }
-        
+
         return this;
     }
     get ffiValue() {
         return this.#ptr;
     }
 
-    /** 
+    /**
      * Construct a [`LineSegmenter`] with default options (no locale-based tailoring) using compiled data. It automatically loads the best
      * available payload data for Burmese, Khmer, Lao, and Thai.
      *
      * See the [Rust documentation for `new_auto`](https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html#method.new_auto) for more information.
      */
-    static createAuto() {
+        static createAuto() {
+
         const result = wasm.icu4x_LineSegmenter_create_auto_mv1();
-    
-        try {
-            return new LineSegmenter(diplomatRuntime.internalConstructor, result, []);
+
+        try {        return new LineSegmenter(diplomatRuntime.internalConstructor, result, []);
         }
-        
+
         finally {}
     }
 
-    /** 
+    /**
      * Construct a [`LineSegmenter`] with default options (no locale-based tailoring) and LSTM payload data for
      * Burmese, Khmer, Lao, and Thai, using compiled data.
      *
      * See the [Rust documentation for `new_lstm`](https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html#method.new_lstm) for more information.
      */
-    static createLstm() {
+        static createLstm() {
+
         const result = wasm.icu4x_LineSegmenter_create_lstm_mv1();
-    
-        try {
-            return new LineSegmenter(diplomatRuntime.internalConstructor, result, []);
+
+        try {        return new LineSegmenter(diplomatRuntime.internalConstructor, result, []);
         }
-        
+
         finally {}
     }
 
-    /** 
+    /**
      * Construct a [`LineSegmenter`] with default options (no locale-based tailoring) and dictionary payload data for
      * Burmese, Khmer, Lao, and Thai, using compiled data
      *
      * See the [Rust documentation for `new_dictionary`](https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html#method.new_dictionary) for more information.
      */
-    static createDictionary() {
+        static createDictionary() {
+
         const result = wasm.icu4x_LineSegmenter_create_dictionary_mv1();
-    
-        try {
-            return new LineSegmenter(diplomatRuntime.internalConstructor, result, []);
+
+        try {        return new LineSegmenter(diplomatRuntime.internalConstructor, result, []);
         }
-        
+
         finally {}
     }
 
-    /** 
+    /**
      * Construct a [`LineSegmenter`] with custom options using compiled data. It automatically loads the best
      * available payload data for Burmese, Khmer, Lao, and Thai.
      *
      * See the [Rust documentation for `new_auto`](https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html#method.new_auto) for more information.
      */
-    static autoWithOptions(contentLocale, options) {
+        static autoWithOptions(contentLocale, options) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
-        
+
+
         const result = wasm.icu4x_LineSegmenter_create_auto_with_options_v2_mv1(contentLocale.ffiValue ?? 0, ...LineBreakOptions._fromSuppliedValue(diplomatRuntime.internalConstructor, options)._intoFFI(functionCleanupArena, {}));
-    
-        try {
-            return new LineSegmenter(diplomatRuntime.internalConstructor, result, []);
+
+        try {        return new LineSegmenter(diplomatRuntime.internalConstructor, result, []);
         }
-        
+
         finally {
             functionCleanupArena.free();
         }
     }
 
-    /** 
+    /**
      * Construct a [`LineSegmenter`] with custom options. It automatically loads the best
      * available payload data for Burmese, Khmer, Lao, and Thai, using a particular data source.
      *
      * See the [Rust documentation for `new_auto`](https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html#method.new_auto) for more information.
      */
-    static autoWithOptionsAndProvider(provider, contentLocale, options) {
+        static autoWithOptionsAndProvider(provider, contentLocale, options) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
-        
+
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
-        
+
+
         const result = wasm.icu4x_LineSegmenter_create_auto_with_options_v2_and_provider_mv1(diplomatReceive.buffer, provider.ffiValue, contentLocale.ffiValue ?? 0, ...LineBreakOptions._fromSuppliedValue(diplomatRuntime.internalConstructor, options)._intoFFI(functionCleanupArena, {}));
-    
-        try {
-            if (!diplomatReceive.resultFlag) {
+
+        try {        if (!diplomatReceive.resultFlag) {
                 const cause = new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
                 throw new globalThis.Error('DataError: ' + cause.value, { cause });
             }
             return new LineSegmenter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
-        
+
         finally {
             functionCleanupArena.free();
-        
-            diplomatReceive.free();
+                diplomatReceive.free();
         }
     }
 
-    /** 
+    /**
      * Construct a [`LineSegmenter`] with custom options and LSTM payload data for
      * Burmese, Khmer, Lao, and Thai, using compiled data.
      *
      * See the [Rust documentation for `new_lstm`](https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html#method.new_lstm) for more information.
      */
-    static lstmWithOptions(contentLocale, options) {
+        static lstmWithOptions(contentLocale, options) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
-        
+
+
         const result = wasm.icu4x_LineSegmenter_create_lstm_with_options_v2_mv1(contentLocale.ffiValue ?? 0, ...LineBreakOptions._fromSuppliedValue(diplomatRuntime.internalConstructor, options)._intoFFI(functionCleanupArena, {}));
-    
-        try {
-            return new LineSegmenter(diplomatRuntime.internalConstructor, result, []);
+
+        try {        return new LineSegmenter(diplomatRuntime.internalConstructor, result, []);
         }
-        
+
         finally {
             functionCleanupArena.free();
         }
     }
 
-    /** 
+    /**
      * Construct a [`LineSegmenter`] with custom options and LSTM payload data for
      * Burmese, Khmer, Lao, and Thai, using a particular data source.
      *
      * See the [Rust documentation for `new_lstm`](https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html#method.new_lstm) for more information.
      */
-    static lstmWithOptionsAndProvider(provider, contentLocale, options) {
+        static lstmWithOptionsAndProvider(provider, contentLocale, options) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
-        
+
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
-        
+
+
         const result = wasm.icu4x_LineSegmenter_create_lstm_with_options_v2_and_provider_mv1(diplomatReceive.buffer, provider.ffiValue, contentLocale.ffiValue ?? 0, ...LineBreakOptions._fromSuppliedValue(diplomatRuntime.internalConstructor, options)._intoFFI(functionCleanupArena, {}));
-    
-        try {
-            if (!diplomatReceive.resultFlag) {
+
+        try {        if (!diplomatReceive.resultFlag) {
                 const cause = new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
                 throw new globalThis.Error('DataError: ' + cause.value, { cause });
             }
             return new LineSegmenter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
-        
+
         finally {
             functionCleanupArena.free();
-        
-            diplomatReceive.free();
+                diplomatReceive.free();
         }
     }
 
-    /** 
+    /**
      * Construct a [`LineSegmenter`] with custom options and dictionary payload data for
      * Burmese, Khmer, Lao, and Thai, using compiled data.
      *
      * See the [Rust documentation for `new_dictionary`](https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html#method.new_dictionary) for more information.
      */
-    static dictionaryWithOptions(contentLocale, options) {
+        static dictionaryWithOptions(contentLocale, options) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
-        
+
+
         const result = wasm.icu4x_LineSegmenter_create_dictionary_with_options_v2_mv1(contentLocale.ffiValue ?? 0, ...LineBreakOptions._fromSuppliedValue(diplomatRuntime.internalConstructor, options)._intoFFI(functionCleanupArena, {}));
-    
-        try {
-            return new LineSegmenter(diplomatRuntime.internalConstructor, result, []);
+
+        try {        return new LineSegmenter(diplomatRuntime.internalConstructor, result, []);
         }
-        
+
         finally {
             functionCleanupArena.free();
         }
     }
 
-    /** 
+    /**
      * Construct a [`LineSegmenter`] with custom options and dictionary payload data for
      * Burmese, Khmer, Lao, and Thai, using a particular data source.
      *
      * See the [Rust documentation for `new_dictionary`](https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html#method.new_dictionary) for more information.
      */
-    static dictionaryWithOptionsAndProvider(provider, contentLocale, options) {
+        static dictionaryWithOptionsAndProvider(provider, contentLocale, options) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
-        
+
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
-        
+
+
         const result = wasm.icu4x_LineSegmenter_create_dictionary_with_options_v2_and_provider_mv1(diplomatReceive.buffer, provider.ffiValue, contentLocale.ffiValue ?? 0, ...LineBreakOptions._fromSuppliedValue(diplomatRuntime.internalConstructor, options)._intoFFI(functionCleanupArena, {}));
-    
-        try {
-            if (!diplomatReceive.resultFlag) {
+
+        try {        if (!diplomatReceive.resultFlag) {
                 const cause = new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
                 throw new globalThis.Error('DataError: ' + cause.value, { cause });
             }
             return new LineSegmenter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
-        
+
         finally {
             functionCleanupArena.free();
-        
-            diplomatReceive.free();
+                diplomatReceive.free();
         }
     }
 
-    /** 
+    /**
      * Segments a string.
      *
      * Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
@@ -246,19 +241,18 @@ export class LineSegmenter {
      *
      * See the [Rust documentation for `segment_utf16`](https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenterBorrowed.html#method.segment_utf16) for more information.
      */
-    segment(input) {
+        segment(input) {
         let functionGarbageCollectorGrip = new diplomatRuntime.GarbageCollectorGrip();
         const inputSlice = functionGarbageCollectorGrip.alloc(diplomatRuntime.DiplomatBuf.str16(wasm, input));
-        
         // This lifetime edge depends on lifetimes 'a
         let aEdges = [this, inputSlice];
-        
+
+
         const result = wasm.icu4x_LineSegmenter_segment_utf16_mv1(this.ffiValue, ...inputSlice.splat());
-    
-        try {
-            return new LineBreakIteratorUtf16(diplomatRuntime.internalConstructor, result, [], aEdges);
+
+        try {        return new LineBreakIteratorUtf16(diplomatRuntime.internalConstructor, result, [], aEdges);
         }
-        
+
         finally {
             functionGarbageCollectorGrip.releaseToGarbageCollector();
         }

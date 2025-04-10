@@ -22,7 +22,6 @@ final class ListFormatter implements ffi.Finalizable {
   }
 
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_ListFormatter_destroy_mv1));
-
   /// Construct a new ListFormatter instance for And patterns from compiled data.
   ///
   /// See the [Rust documentation for `try_new_and`](https://docs.rs/icu/latest/icu/list/struct.ListFormatter.html#method.try_new_and) for more information.
@@ -35,7 +34,6 @@ final class ListFormatter implements ffi.Finalizable {
     }
     return ListFormatter._fromFfi(result.union.ok, []);
   }
-
   /// Construct a new ListFormatter instance for And patterns
   ///
   /// See the [Rust documentation for `try_new_and`](https://docs.rs/icu/latest/icu/list/struct.ListFormatter.html#method.try_new_and) for more information.
@@ -48,7 +46,6 @@ final class ListFormatter implements ffi.Finalizable {
     }
     return ListFormatter._fromFfi(result.union.ok, []);
   }
-
   /// Construct a new ListFormatter instance for And patterns from compiled data.
   ///
   /// See the [Rust documentation for `try_new_or`](https://docs.rs/icu/latest/icu/list/struct.ListFormatter.html#method.try_new_or) for more information.
@@ -61,7 +58,6 @@ final class ListFormatter implements ffi.Finalizable {
     }
     return ListFormatter._fromFfi(result.union.ok, []);
   }
-
   /// Construct a new ListFormatter instance for And patterns
   ///
   /// See the [Rust documentation for `try_new_or`](https://docs.rs/icu/latest/icu/list/struct.ListFormatter.html#method.try_new_or) for more information.
@@ -74,7 +70,6 @@ final class ListFormatter implements ffi.Finalizable {
     }
     return ListFormatter._fromFfi(result.union.ok, []);
   }
-
   /// Construct a new ListFormatter instance for And patterns from compiled data.
   ///
   /// See the [Rust documentation for `try_new_unit`](https://docs.rs/icu/latest/icu/list/struct.ListFormatter.html#method.try_new_unit) for more information.
@@ -87,7 +82,6 @@ final class ListFormatter implements ffi.Finalizable {
     }
     return ListFormatter._fromFfi(result.union.ok, []);
   }
-
   /// Construct a new ListFormatter instance for And patterns
   ///
   /// See the [Rust documentation for `try_new_unit`](https://docs.rs/icu/latest/icu/list/struct.ListFormatter.html#method.try_new_unit) for more information.
@@ -100,7 +94,6 @@ final class ListFormatter implements ffi.Finalizable {
     }
     return ListFormatter._fromFfi(result.union.ok, []);
   }
-
   /// See the [Rust documentation for `format`](https://docs.rs/icu/latest/icu/list/struct.ListFormatter.html#method.format) for more information.
   String format(core.List<core.String> list) {
     final temp = _FinalizedArena();
@@ -108,6 +101,7 @@ final class ListFormatter implements ffi.Finalizable {
     _icu4x_ListFormatter_format_utf16_mv1(_ffi, list._utf16SliceAllocIn(temp.arena), write._ffi);
     return write.finalize();
   }
+
 }
 
 @_DiplomatFfiUse('icu4x_ListFormatter_destroy_mv1')

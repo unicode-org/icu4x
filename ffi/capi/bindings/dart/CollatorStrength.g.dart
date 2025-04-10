@@ -14,6 +14,7 @@ enum CollatorStrength {
   quaternary,
 
   identical;
+
 }
 
 // dart format on

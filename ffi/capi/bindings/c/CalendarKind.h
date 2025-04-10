@@ -22,5 +22,4 @@ CalendarKind icu4x_CalendarKind_create_mv1(const Locale* locale);
 
 
 
-
 #endif // CalendarKind_H

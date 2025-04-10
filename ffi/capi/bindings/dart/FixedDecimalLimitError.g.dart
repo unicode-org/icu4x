@@ -8,6 +8,7 @@ final class FixedDecimalLimitError {
 
   FixedDecimalLimitError();
 
+
   @override
   bool operator ==(Object other) =>
       other is FixedDecimalLimitError;

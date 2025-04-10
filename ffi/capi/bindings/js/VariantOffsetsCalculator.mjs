@@ -9,7 +9,7 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
-/** 
+/**
  * See the [Rust documentation for `VariantOffsetsCalculator`](https://docs.rs/icu/latest/icu/time/zone/struct.VariantOffsetsCalculator.html) for more information.
  */
 const VariantOffsetsCalculator_box_destroy_registry = new FinalizationRegistry((ptr) => {
@@ -17,89 +17,85 @@ const VariantOffsetsCalculator_box_destroy_registry = new FinalizationRegistry((
 });
 
 export class VariantOffsetsCalculator {
-    
     // Internal ptr reference:
     #ptr = null;
 
     // Lifetimes are only to keep dependencies alive.
     // Since JS won't garbage collect until there are no incoming edges.
     #selfEdge = [];
-    
+
     #internalConstructor(symbol, ptr, selfEdge) {
         if (symbol !== diplomatRuntime.internalConstructor) {
             console.error("VariantOffsetsCalculator is an Opaque type. You cannot call its constructor.");
             return;
         }
-        
         this.#ptr = ptr;
         this.#selfEdge = selfEdge;
-        
+
         // Are we being borrowed? If not, we can register.
         if (this.#selfEdge.length === 0) {
             VariantOffsetsCalculator_box_destroy_registry.register(this, this.#ptr);
         }
-        
+
         return this;
     }
     get ffiValue() {
         return this.#ptr;
     }
 
-    /** 
+    /**
      * Construct a new [`VariantOffsetsCalculator`] instance using compiled data.
      *
      * See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/time/zone/struct.VariantOffsetsCalculator.html#method.new) for more information.
      */
-    #defaultConstructor() {
+        #defaultConstructor() {
+
         const result = wasm.icu4x_VariantOffsetsCalculator_create_mv1();
-    
-        try {
-            return new VariantOffsetsCalculator(diplomatRuntime.internalConstructor, result, []);
+
+        try {        return new VariantOffsetsCalculator(diplomatRuntime.internalConstructor, result, []);
         }
-        
+
         finally {}
     }
 
-    /** 
+    /**
      * Construct a new [`VariantOffsetsCalculator`] instance using a particular data source.
      *
      * See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/time/zone/struct.VariantOffsetsCalculator.html#method.new) for more information.
      */
-    static createWithProvider(provider) {
+        static createWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
-        
+
+
         const result = wasm.icu4x_VariantOffsetsCalculator_create_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
-    
-        try {
-            if (!diplomatReceive.resultFlag) {
+
+        try {        if (!diplomatReceive.resultFlag) {
                 const cause = new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
                 throw new globalThis.Error('DataError: ' + cause.value, { cause });
             }
             return new VariantOffsetsCalculator(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
-        
-        finally {
-            diplomatReceive.free();
+
+        finally {        diplomatReceive.free();
         }
     }
 
-    /** 
+    /**
      * See the [Rust documentation for `compute_offsets_from_time_zone`](https://docs.rs/icu/latest/icu/time/zone/struct.VariantOffsetsCalculatorBorrowed.html#method.compute_offsets_from_time_zone) for more information.
      */
-    computeOffsetsFromTimeZone(timeZone, localDate, localTime) {
+        computeOffsetsFromTimeZone(timeZone, localDate, localTime) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 9, 4, true);
-        
+
+
         const result = wasm.icu4x_VariantOffsetsCalculator_compute_offsets_from_time_zone_mv1(diplomatReceive.buffer, this.ffiValue, timeZone.ffiValue, localDate.ffiValue, localTime.ffiValue);
-    
-        try {
-            if (!diplomatReceive.resultFlag) {
+
+        try {        if (!diplomatReceive.resultFlag) {
                 return null;
             }
             return VariantOffsets._fromFFI(diplomatRuntime.internalConstructor, diplomatReceive.buffer);
         }
-        
-        finally {
-            diplomatReceive.free();
+
+        finally {        diplomatReceive.free();
         }
     }
 

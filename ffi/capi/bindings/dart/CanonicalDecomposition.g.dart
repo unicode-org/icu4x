@@ -26,7 +26,6 @@ final class CanonicalDecomposition implements ffi.Finalizable {
   }
 
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_CanonicalDecomposition_destroy_mv1));
-
   /// Construct a new CanonicalDecomposition instance for NFC using compiled data.
   ///
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/normalizer/properties/struct.CanonicalDecomposition.html#method.new) for more information.
@@ -34,7 +33,6 @@ final class CanonicalDecomposition implements ffi.Finalizable {
     final result = _icu4x_CanonicalDecomposition_create_mv1();
     return CanonicalDecomposition._fromFfi(result, []);
   }
-
   /// Construct a new CanonicalDecomposition instance for NFC using a particular data source.
   ///
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/normalizer/properties/struct.CanonicalDecomposition.html#method.new) for more information.
@@ -47,7 +45,6 @@ final class CanonicalDecomposition implements ffi.Finalizable {
     }
     return CanonicalDecomposition._fromFfi(result.union.ok, []);
   }
-
   /// Performs non-recursive canonical decomposition (including for Hangul).
   ///
   /// See the [Rust documentation for `decompose`](https://docs.rs/icu/latest/icu/normalizer/properties/struct.CanonicalDecompositionBorrowed.html#method.decompose) for more information.
@@ -55,6 +52,7 @@ final class CanonicalDecomposition implements ffi.Finalizable {
     final result = _icu4x_CanonicalDecomposition_decompose_mv1(_ffi, c);
     return Decomposed._fromFfi(result);
   }
+
 }
 
 @_DiplomatFfiUse('icu4x_CanonicalDecomposition_destroy_mv1')

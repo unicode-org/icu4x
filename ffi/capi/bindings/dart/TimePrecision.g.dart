@@ -30,6 +30,7 @@ enum TimePrecision {
   subsecond8,
 
   subsecond9;
+
 }
 
 // dart format on

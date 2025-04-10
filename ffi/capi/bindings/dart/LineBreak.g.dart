@@ -5,156 +5,154 @@ part of 'lib.g.dart';
 
 /// See the [Rust documentation for `LineBreak`](https://docs.rs/icu/latest/icu/properties/props/struct.LineBreak.html) for more information.
 enum LineBreak {
-  /// See the [Rust documentation for `Unknown`](https://docs.rs/icu/latest/icu/props/enum.LineBreak.html#variant.Unknown) for more information.
+    /// See the [Rust documentation for `Unknown`](https://docs.rs/icu/latest/icu/props/enum.LineBreak.html#variant.Unknown) for more information.
   unknown,
 
-  /// See the [Rust documentation for `Ambiguous`](https://docs.rs/icu/latest/icu/props/enum.LineBreak.html#variant.Ambiguous) for more information.
+    /// See the [Rust documentation for `Ambiguous`](https://docs.rs/icu/latest/icu/props/enum.LineBreak.html#variant.Ambiguous) for more information.
   ambiguous,
 
-  /// See the [Rust documentation for `Alphabetic`](https://docs.rs/icu/latest/icu/props/enum.LineBreak.html#variant.Alphabetic) for more information.
+    /// See the [Rust documentation for `Alphabetic`](https://docs.rs/icu/latest/icu/props/enum.LineBreak.html#variant.Alphabetic) for more information.
   alphabetic,
 
-  /// See the [Rust documentation for `BreakBoth`](https://docs.rs/icu/latest/icu/props/enum.LineBreak.html#variant.BreakBoth) for more information.
+    /// See the [Rust documentation for `BreakBoth`](https://docs.rs/icu/latest/icu/props/enum.LineBreak.html#variant.BreakBoth) for more information.
   breakBoth,
 
-  /// See the [Rust documentation for `BreakAfter`](https://docs.rs/icu/latest/icu/props/enum.LineBreak.html#variant.BreakAfter) for more information.
+    /// See the [Rust documentation for `BreakAfter`](https://docs.rs/icu/latest/icu/props/enum.LineBreak.html#variant.BreakAfter) for more information.
   breakAfter,
 
-  /// See the [Rust documentation for `BreakBefore`](https://docs.rs/icu/latest/icu/props/enum.LineBreak.html#variant.BreakBefore) for more information.
+    /// See the [Rust documentation for `BreakBefore`](https://docs.rs/icu/latest/icu/props/enum.LineBreak.html#variant.BreakBefore) for more information.
   breakBefore,
 
-  /// See the [Rust documentation for `MandatoryBreak`](https://docs.rs/icu/latest/icu/props/enum.LineBreak.html#variant.MandatoryBreak) for more information.
+    /// See the [Rust documentation for `MandatoryBreak`](https://docs.rs/icu/latest/icu/props/enum.LineBreak.html#variant.MandatoryBreak) for more information.
   mandatoryBreak,
 
-  /// See the [Rust documentation for `ContingentBreak`](https://docs.rs/icu/latest/icu/props/enum.LineBreak.html#variant.ContingentBreak) for more information.
+    /// See the [Rust documentation for `ContingentBreak`](https://docs.rs/icu/latest/icu/props/enum.LineBreak.html#variant.ContingentBreak) for more information.
   contingentBreak,
 
-  /// See the [Rust documentation for `ClosePunctuation`](https://docs.rs/icu/latest/icu/props/enum.LineBreak.html#variant.ClosePunctuation) for more information.
+    /// See the [Rust documentation for `ClosePunctuation`](https://docs.rs/icu/latest/icu/props/enum.LineBreak.html#variant.ClosePunctuation) for more information.
   closePunctuation,
 
-  /// See the [Rust documentation for `CombiningMark`](https://docs.rs/icu/latest/icu/props/enum.LineBreak.html#variant.CombiningMark) for more information.
+    /// See the [Rust documentation for `CombiningMark`](https://docs.rs/icu/latest/icu/props/enum.LineBreak.html#variant.CombiningMark) for more information.
   combiningMark,
 
-  /// See the [Rust documentation for `CarriageReturn`](https://docs.rs/icu/latest/icu/props/enum.LineBreak.html#variant.CarriageReturn) for more information.
+    /// See the [Rust documentation for `CarriageReturn`](https://docs.rs/icu/latest/icu/props/enum.LineBreak.html#variant.CarriageReturn) for more information.
   carriageReturn,
 
-  /// See the [Rust documentation for `Exclamation`](https://docs.rs/icu/latest/icu/props/enum.LineBreak.html#variant.Exclamation) for more information.
+    /// See the [Rust documentation for `Exclamation`](https://docs.rs/icu/latest/icu/props/enum.LineBreak.html#variant.Exclamation) for more information.
   exclamation,
 
-  /// See the [Rust documentation for `Glue`](https://docs.rs/icu/latest/icu/props/enum.LineBreak.html#variant.Glue) for more information.
+    /// See the [Rust documentation for `Glue`](https://docs.rs/icu/latest/icu/props/enum.LineBreak.html#variant.Glue) for more information.
   glue,
 
-  /// See the [Rust documentation for `Hyphen`](https://docs.rs/icu/latest/icu/props/enum.LineBreak.html#variant.Hyphen) for more information.
+    /// See the [Rust documentation for `Hyphen`](https://docs.rs/icu/latest/icu/props/enum.LineBreak.html#variant.Hyphen) for more information.
   hyphen,
 
-  /// See the [Rust documentation for `Ideographic`](https://docs.rs/icu/latest/icu/props/enum.LineBreak.html#variant.Ideographic) for more information.
+    /// See the [Rust documentation for `Ideographic`](https://docs.rs/icu/latest/icu/props/enum.LineBreak.html#variant.Ideographic) for more information.
   ideographic,
 
-  /// See the [Rust documentation for `Inseparable`](https://docs.rs/icu/latest/icu/props/enum.LineBreak.html#variant.Inseparable) for more information.
+    /// See the [Rust documentation for `Inseparable`](https://docs.rs/icu/latest/icu/props/enum.LineBreak.html#variant.Inseparable) for more information.
   inseparable,
 
-  /// See the [Rust documentation for `InfixNumeric`](https://docs.rs/icu/latest/icu/props/enum.LineBreak.html#variant.InfixNumeric) for more information.
+    /// See the [Rust documentation for `InfixNumeric`](https://docs.rs/icu/latest/icu/props/enum.LineBreak.html#variant.InfixNumeric) for more information.
   infixNumeric,
 
-  /// See the [Rust documentation for `LineFeed`](https://docs.rs/icu/latest/icu/props/enum.LineBreak.html#variant.LineFeed) for more information.
+    /// See the [Rust documentation for `LineFeed`](https://docs.rs/icu/latest/icu/props/enum.LineBreak.html#variant.LineFeed) for more information.
   lineFeed,
 
-  /// See the [Rust documentation for `Nonstarter`](https://docs.rs/icu/latest/icu/props/enum.LineBreak.html#variant.Nonstarter) for more information.
+    /// See the [Rust documentation for `Nonstarter`](https://docs.rs/icu/latest/icu/props/enum.LineBreak.html#variant.Nonstarter) for more information.
   nonstarter,
 
-  /// See the [Rust documentation for `Numeric`](https://docs.rs/icu/latest/icu/props/enum.LineBreak.html#variant.Numeric) for more information.
+    /// See the [Rust documentation for `Numeric`](https://docs.rs/icu/latest/icu/props/enum.LineBreak.html#variant.Numeric) for more information.
   numeric,
 
-  /// See the [Rust documentation for `OpenPunctuation`](https://docs.rs/icu/latest/icu/props/enum.LineBreak.html#variant.OpenPunctuation) for more information.
+    /// See the [Rust documentation for `OpenPunctuation`](https://docs.rs/icu/latest/icu/props/enum.LineBreak.html#variant.OpenPunctuation) for more information.
   openPunctuation,
 
-  /// See the [Rust documentation for `PostfixNumeric`](https://docs.rs/icu/latest/icu/props/enum.LineBreak.html#variant.PostfixNumeric) for more information.
+    /// See the [Rust documentation for `PostfixNumeric`](https://docs.rs/icu/latest/icu/props/enum.LineBreak.html#variant.PostfixNumeric) for more information.
   postfixNumeric,
 
-  /// See the [Rust documentation for `PrefixNumeric`](https://docs.rs/icu/latest/icu/props/enum.LineBreak.html#variant.PrefixNumeric) for more information.
+    /// See the [Rust documentation for `PrefixNumeric`](https://docs.rs/icu/latest/icu/props/enum.LineBreak.html#variant.PrefixNumeric) for more information.
   prefixNumeric,
 
-  /// See the [Rust documentation for `Quotation`](https://docs.rs/icu/latest/icu/props/enum.LineBreak.html#variant.Quotation) for more information.
+    /// See the [Rust documentation for `Quotation`](https://docs.rs/icu/latest/icu/props/enum.LineBreak.html#variant.Quotation) for more information.
   quotation,
 
-  /// See the [Rust documentation for `ComplexContext`](https://docs.rs/icu/latest/icu/props/enum.LineBreak.html#variant.ComplexContext) for more information.
+    /// See the [Rust documentation for `ComplexContext`](https://docs.rs/icu/latest/icu/props/enum.LineBreak.html#variant.ComplexContext) for more information.
   complexContext,
 
-  /// See the [Rust documentation for `Surrogate`](https://docs.rs/icu/latest/icu/props/enum.LineBreak.html#variant.Surrogate) for more information.
+    /// See the [Rust documentation for `Surrogate`](https://docs.rs/icu/latest/icu/props/enum.LineBreak.html#variant.Surrogate) for more information.
   surrogate,
 
-  /// See the [Rust documentation for `Space`](https://docs.rs/icu/latest/icu/props/enum.LineBreak.html#variant.Space) for more information.
+    /// See the [Rust documentation for `Space`](https://docs.rs/icu/latest/icu/props/enum.LineBreak.html#variant.Space) for more information.
   space,
 
-  /// See the [Rust documentation for `BreakSymbols`](https://docs.rs/icu/latest/icu/props/enum.LineBreak.html#variant.BreakSymbols) for more information.
+    /// See the [Rust documentation for `BreakSymbols`](https://docs.rs/icu/latest/icu/props/enum.LineBreak.html#variant.BreakSymbols) for more information.
   breakSymbols,
 
-  /// See the [Rust documentation for `ZWSpace`](https://docs.rs/icu/latest/icu/props/enum.LineBreak.html#variant.ZWSpace) for more information.
+    /// See the [Rust documentation for `ZWSpace`](https://docs.rs/icu/latest/icu/props/enum.LineBreak.html#variant.ZWSpace) for more information.
   zwSpace,
 
-  /// See the [Rust documentation for `NextLine`](https://docs.rs/icu/latest/icu/props/enum.LineBreak.html#variant.NextLine) for more information.
+    /// See the [Rust documentation for `NextLine`](https://docs.rs/icu/latest/icu/props/enum.LineBreak.html#variant.NextLine) for more information.
   nextLine,
 
-  /// See the [Rust documentation for `WordJoiner`](https://docs.rs/icu/latest/icu/props/enum.LineBreak.html#variant.WordJoiner) for more information.
+    /// See the [Rust documentation for `WordJoiner`](https://docs.rs/icu/latest/icu/props/enum.LineBreak.html#variant.WordJoiner) for more information.
   wordJoiner,
 
-  /// See the [Rust documentation for `H2`](https://docs.rs/icu/latest/icu/props/enum.LineBreak.html#variant.H2) for more information.
+    /// See the [Rust documentation for `H2`](https://docs.rs/icu/latest/icu/props/enum.LineBreak.html#variant.H2) for more information.
   h2,
 
-  /// See the [Rust documentation for `H3`](https://docs.rs/icu/latest/icu/props/enum.LineBreak.html#variant.H3) for more information.
+    /// See the [Rust documentation for `H3`](https://docs.rs/icu/latest/icu/props/enum.LineBreak.html#variant.H3) for more information.
   h3,
 
-  /// See the [Rust documentation for `JL`](https://docs.rs/icu/latest/icu/props/enum.LineBreak.html#variant.JL) for more information.
+    /// See the [Rust documentation for `JL`](https://docs.rs/icu/latest/icu/props/enum.LineBreak.html#variant.JL) for more information.
   jl,
 
-  /// See the [Rust documentation for `JT`](https://docs.rs/icu/latest/icu/props/enum.LineBreak.html#variant.JT) for more information.
+    /// See the [Rust documentation for `JT`](https://docs.rs/icu/latest/icu/props/enum.LineBreak.html#variant.JT) for more information.
   jt,
 
-  /// See the [Rust documentation for `JV`](https://docs.rs/icu/latest/icu/props/enum.LineBreak.html#variant.JV) for more information.
+    /// See the [Rust documentation for `JV`](https://docs.rs/icu/latest/icu/props/enum.LineBreak.html#variant.JV) for more information.
   jv,
 
-  /// See the [Rust documentation for `CloseParenthesis`](https://docs.rs/icu/latest/icu/props/enum.LineBreak.html#variant.CloseParenthesis) for more information.
+    /// See the [Rust documentation for `CloseParenthesis`](https://docs.rs/icu/latest/icu/props/enum.LineBreak.html#variant.CloseParenthesis) for more information.
   closeParenthesis,
 
-  /// See the [Rust documentation for `ConditionalJapaneseStarter`](https://docs.rs/icu/latest/icu/props/enum.LineBreak.html#variant.ConditionalJapaneseStarter) for more information.
+    /// See the [Rust documentation for `ConditionalJapaneseStarter`](https://docs.rs/icu/latest/icu/props/enum.LineBreak.html#variant.ConditionalJapaneseStarter) for more information.
   conditionalJapaneseStarter,
 
-  /// See the [Rust documentation for `HebrewLetter`](https://docs.rs/icu/latest/icu/props/enum.LineBreak.html#variant.HebrewLetter) for more information.
+    /// See the [Rust documentation for `HebrewLetter`](https://docs.rs/icu/latest/icu/props/enum.LineBreak.html#variant.HebrewLetter) for more information.
   hebrewLetter,
 
-  /// See the [Rust documentation for `RegionalIndicator`](https://docs.rs/icu/latest/icu/props/enum.LineBreak.html#variant.RegionalIndicator) for more information.
+    /// See the [Rust documentation for `RegionalIndicator`](https://docs.rs/icu/latest/icu/props/enum.LineBreak.html#variant.RegionalIndicator) for more information.
   regionalIndicator,
 
-  /// See the [Rust documentation for `EBase`](https://docs.rs/icu/latest/icu/props/enum.LineBreak.html#variant.EBase) for more information.
+    /// See the [Rust documentation for `EBase`](https://docs.rs/icu/latest/icu/props/enum.LineBreak.html#variant.EBase) for more information.
   eBase,
 
-  /// See the [Rust documentation for `EModifier`](https://docs.rs/icu/latest/icu/props/enum.LineBreak.html#variant.EModifier) for more information.
+    /// See the [Rust documentation for `EModifier`](https://docs.rs/icu/latest/icu/props/enum.LineBreak.html#variant.EModifier) for more information.
   eModifier,
 
-  /// See the [Rust documentation for `ZWJ`](https://docs.rs/icu/latest/icu/props/enum.LineBreak.html#variant.ZWJ) for more information.
+    /// See the [Rust documentation for `ZWJ`](https://docs.rs/icu/latest/icu/props/enum.LineBreak.html#variant.ZWJ) for more information.
   zwj,
 
-  /// See the [Rust documentation for `Aksara`](https://docs.rs/icu/latest/icu/props/enum.LineBreak.html#variant.Aksara) for more information.
+    /// See the [Rust documentation for `Aksara`](https://docs.rs/icu/latest/icu/props/enum.LineBreak.html#variant.Aksara) for more information.
   aksara,
 
-  /// See the [Rust documentation for `AksaraPrebase`](https://docs.rs/icu/latest/icu/props/enum.LineBreak.html#variant.AksaraPrebase) for more information.
+    /// See the [Rust documentation for `AksaraPrebase`](https://docs.rs/icu/latest/icu/props/enum.LineBreak.html#variant.AksaraPrebase) for more information.
   aksaraPrebase,
 
-  /// See the [Rust documentation for `AksaraStart`](https://docs.rs/icu/latest/icu/props/enum.LineBreak.html#variant.AksaraStart) for more information.
+    /// See the [Rust documentation for `AksaraStart`](https://docs.rs/icu/latest/icu/props/enum.LineBreak.html#variant.AksaraStart) for more information.
   aksaraStart,
 
-  /// See the [Rust documentation for `ViramaFinal`](https://docs.rs/icu/latest/icu/props/enum.LineBreak.html#variant.ViramaFinal) for more information.
+    /// See the [Rust documentation for `ViramaFinal`](https://docs.rs/icu/latest/icu/props/enum.LineBreak.html#variant.ViramaFinal) for more information.
   viramaFinal,
 
-  /// See the [Rust documentation for `Virama`](https://docs.rs/icu/latest/icu/props/enum.LineBreak.html#variant.Virama) for more information.
+    /// See the [Rust documentation for `Virama`](https://docs.rs/icu/latest/icu/props/enum.LineBreak.html#variant.Virama) for more information.
   virama;
-
   /// See the [Rust documentation for `for_char`](https://docs.rs/icu/latest/icu/properties/props/trait.EnumeratedProperty.html#tymethod.for_char) for more information.
   static LineBreak forChar(Rune ch) {
     final result = _icu4x_LineBreak_for_char_mv1(ch);
     return LineBreak.values[result];
   }
-
   /// Get the "long" name of this property value (returns empty if property value is unknown)
   ///
   /// See the [Rust documentation for `get`](https://docs.rs/icu/latest/icu/properties/struct.PropertyNamesLongBorrowed.html#method.get) for more information.
@@ -165,7 +163,6 @@ enum LineBreak {
     }
     return result.union.ok._toDart([], isStatic: true);
   }
-
   /// Get the "short" name of this property value (returns empty if property value is unknown)
   ///
   /// See the [Rust documentation for `get`](https://docs.rs/icu/latest/icu/properties/struct.PropertyNamesShortBorrowed.html#method.get) for more information.
@@ -176,7 +173,6 @@ enum LineBreak {
     }
     return result.union.ok._toDart([], isStatic: true);
   }
-
   /// Convert to an integer value usable with ICU4C and CodePointMapData
   ///
   /// See the [Rust documentation for `to_icu4c_value`](https://docs.rs/icu/latest/icu/properties/props/struct.LineBreak.html#method.to_icu4c_value) for more information.
@@ -184,7 +180,6 @@ enum LineBreak {
     final result = _icu4x_LineBreak_to_integer_value_mv1(index);
     return result;
   }
-
   /// Convert from an integer value from ICU4C or CodePointMapData
   ///
   /// See the [Rust documentation for `from_icu4c_value`](https://docs.rs/icu/latest/icu/properties/props/struct.LineBreak.html#method.from_icu4c_value) for more information.
@@ -195,6 +190,7 @@ enum LineBreak {
     }
     return LineBreak.values[result.union.ok];
   }
+
 }
 
 @_DiplomatFfiUse('icu4x_LineBreak_for_char_mv1')

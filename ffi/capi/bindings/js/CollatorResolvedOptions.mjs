@@ -9,49 +9,36 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
-/** 
+/**
  * See the [Rust documentation for `ResolvedCollatorOptions`](https://docs.rs/icu/latest/icu/collator/options/struct.ResolvedCollatorOptions.html) for more information.
  */
 
 
 export class CollatorResolvedOptions {
-    
     #strength;
-    
-    get strength()  {
+    get strength() {
         return this.#strength;
     }
-    
     #alternateHandling;
-    
-    get alternateHandling()  {
+    get alternateHandling() {
         return this.#alternateHandling;
     }
-    
     #caseFirst;
-    
-    get caseFirst()  {
+    get caseFirst() {
         return this.#caseFirst;
     }
-    
     #maxVariable;
-    
-    get maxVariable()  {
+    get maxVariable() {
         return this.#maxVariable;
     }
-    
     #caseLevel;
-    
-    get caseLevel()  {
+    get caseLevel() {
         return this.#caseLevel;
     }
-    
     #numeric;
-    
-    get numeric()  {
+    get numeric() {
         return this.#numeric;
     }
-    
     #internalConstructor(structObj, internalConstructor) {
         if (typeof structObj !== "object") {
             throw new Error("CollatorResolvedOptions's constructor takes an object of CollatorResolvedOptions's fields.");
@@ -101,7 +88,6 @@ export class CollatorResolvedOptions {
 
     // Return this struct in FFI function friendly format.
     // Returns an array that can be expanded with spread syntax (...)
-    
     _intoFFI(
         functionCleanupArena,
         appendArrayMap

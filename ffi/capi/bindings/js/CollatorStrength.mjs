@@ -3,13 +3,12 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
-/** 
+/**
  * See the [Rust documentation for `Strength`](https://docs.rs/icu/latest/icu/collator/options/enum.Strength.html) for more information.
  */
 
 
 export class CollatorStrength {
-    
     #value = undefined;
 
     static #values = new Map([
@@ -23,7 +22,7 @@ export class CollatorStrength {
     static getAllEntries() {
         return CollatorStrength.#values.entries();
     }
-    
+
     #internalConstructor(value) {
         if (arguments.length > 1 && arguments[0] === diplomatRuntime.internalConstructor) {
             // We pass in two internalConstructor arguments to create *new*
@@ -53,11 +52,11 @@ export class CollatorStrength {
         return new CollatorStrength(value);
     }
 
-    get value() {
+    get value(){
         return [...CollatorStrength.#values.keys()][this.#value];
     }
 
-    get ffiValue() {
+    get ffiValue(){
         return this.#value;
     }
     static #objectValues = [

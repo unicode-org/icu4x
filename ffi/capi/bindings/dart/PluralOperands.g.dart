@@ -22,7 +22,6 @@ final class PluralOperands implements ffi.Finalizable {
   }
 
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_PluralOperands_destroy_mv1));
-
   /// Construct for a given string representing a number
   ///
   /// See the [Rust documentation for `from_str`](https://docs.rs/icu/latest/icu/plurals/struct.PluralOperands.html#method.from_str) for more information.
@@ -36,13 +35,11 @@ final class PluralOperands implements ffi.Finalizable {
     }
     return PluralOperands._fromFfi(result.union.ok, []);
   }
-
   /// Construct for a given integer
   factory PluralOperands.fromInt(int i) {
     final result = _icu4x_PluralOperands_from_int64_mv1(i);
     return PluralOperands._fromFfi(result, []);
   }
-
   /// Construct from a FixedDecimal
   ///
   /// Retains at most 18 digits each from the integer and fraction parts.
@@ -50,6 +47,7 @@ final class PluralOperands implements ffi.Finalizable {
     final result = _icu4x_PluralOperands_from_fixed_decimal_mv1(x._ffi);
     return PluralOperands._fromFfi(result, []);
   }
+
 }
 
 @_DiplomatFfiUse('icu4x_PluralOperands_destroy_mv1')

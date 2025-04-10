@@ -28,7 +28,6 @@ final class LocaleFallbackerWithConfig implements ffi.Finalizable {
   }
 
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_LocaleFallbackerWithConfig_destroy_mv1));
-
   /// Creates an iterator from a locale with each step of fallback.
   ///
   /// See the [Rust documentation for `fallback_for`](https://docs.rs/icu/latest/icu/locale/fallback/struct.LocaleFallbacker.html#method.fallback_for) for more information.
@@ -38,6 +37,7 @@ final class LocaleFallbackerWithConfig implements ffi.Finalizable {
     final result = _icu4x_LocaleFallbackerWithConfig_fallback_for_locale_mv1(_ffi, locale._ffi);
     return LocaleFallbackIterator._fromFfi(result, [], aEdges);
   }
+
 }
 
 @_DiplomatFfiUse('icu4x_LocaleFallbackerWithConfig_destroy_mv1')

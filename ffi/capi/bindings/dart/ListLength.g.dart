@@ -10,6 +10,7 @@ enum ListLength {
   short,
 
   narrow;
+
 }
 
 // dart format on

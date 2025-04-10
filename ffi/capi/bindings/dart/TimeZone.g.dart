@@ -22,7 +22,6 @@ final class TimeZone implements ffi.Finalizable {
   }
 
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_TimeZone_destroy_mv1));
-
   /// The unknown time zone.
   ///
   /// See the [Rust documentation for `unknown`](https://docs.rs/icu/latest/icu/time/struct.TimeZoneInfo.html#method.unknown) for more information.
@@ -30,7 +29,6 @@ final class TimeZone implements ffi.Finalizable {
     final result = _icu4x_TimeZone_unknown_mv1();
     return TimeZone._fromFfi(result, []);
   }
-
   /// Creates a time zone from a BCP-47 string.
   ///
   /// Returns the unknown time zone if the string is not a valid BCP-47 subtag.
@@ -41,18 +39,17 @@ final class TimeZone implements ffi.Finalizable {
     final result = _icu4x_TimeZone_create_from_bcp47_mv1(id._utf8AllocIn(temp.arena));
     return TimeZone._fromFfi(result, []);
   }
-
   /// See the [Rust documentation for `with_offset`](https://docs.rs/icu/latest/icu/time/struct.TimeZone.html#method.with_offset) for more information.
   TimeZoneInfo withOffset(UtcOffset offset) {
     final result = _icu4x_TimeZone_with_offset_mv1(_ffi, offset._ffi);
     return TimeZoneInfo._fromFfi(result, []);
   }
-
   /// See the [Rust documentation for `without_offset`](https://docs.rs/icu/latest/icu/time/struct.TimeZone.html#method.without_offset) for more information.
   TimeZoneInfo withoutOffset() {
     final result = _icu4x_TimeZone_without_offset_mv1(_ffi);
     return TimeZoneInfo._fromFfi(result, []);
   }
+
 }
 
 @_DiplomatFfiUse('icu4x_TimeZone_destroy_mv1')

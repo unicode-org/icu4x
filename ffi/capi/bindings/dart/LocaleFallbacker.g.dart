@@ -24,7 +24,6 @@ final class LocaleFallbacker implements ffi.Finalizable {
   }
 
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_LocaleFallbacker_destroy_mv1));
-
   /// Creates a new `LocaleFallbacker` from compiled data.
   ///
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/locale/fallback/struct.LocaleFallbacker.html#method.new) for more information.
@@ -32,7 +31,6 @@ final class LocaleFallbacker implements ffi.Finalizable {
     final result = _icu4x_LocaleFallbacker_create_mv1();
     return LocaleFallbacker._fromFfi(result, []);
   }
-
   /// Creates a new `LocaleFallbacker` from a data provider.
   ///
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/locale/fallback/struct.LocaleFallbacker.html#method.new) for more information.
@@ -45,7 +43,6 @@ final class LocaleFallbacker implements ffi.Finalizable {
     }
     return LocaleFallbacker._fromFfi(result.union.ok, []);
   }
-
   /// Creates a new `LocaleFallbacker` without data for limited functionality.
   ///
   /// See the [Rust documentation for `new_without_data`](https://docs.rs/icu/latest/icu/locale/fallback/struct.LocaleFallbacker.html#method.new_without_data) for more information.
@@ -53,7 +50,6 @@ final class LocaleFallbacker implements ffi.Finalizable {
     final result = _icu4x_LocaleFallbacker_without_data_mv1();
     return LocaleFallbacker._fromFfi(result, []);
   }
-
   /// Associates this `LocaleFallbacker` with configuration options.
   ///
   /// See the [Rust documentation for `for_config`](https://docs.rs/icu/latest/icu/locale/fallback/struct.LocaleFallbacker.html#method.for_config) for more information.
@@ -64,6 +60,7 @@ final class LocaleFallbacker implements ffi.Finalizable {
     final result = _icu4x_LocaleFallbacker_for_config_mv1(_ffi, config._toFfi(temp.arena));
     return LocaleFallbackerWithConfig._fromFfi(result, [], aEdges);
   }
+
 }
 
 @_DiplomatFfiUse('icu4x_LocaleFallbacker_destroy_mv1')

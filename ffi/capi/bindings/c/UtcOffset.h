@@ -37,7 +37,6 @@ uint32_t icu4x_UtcOffset_minutes_part_mv1(const UtcOffset* self);
 
 uint32_t icu4x_UtcOffset_seconds_part_mv1(const UtcOffset* self);
 
-
 void icu4x_UtcOffset_destroy_mv1(UtcOffset* self);
 
 

@@ -9,33 +9,32 @@ import type { TimeZoneInfo } from "./TimeZoneInfo"
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
-/** 
+/**
  * See the [Rust documentation for `FixedCalendarDateTimeFormatter`](https://docs.rs/icu/latest/icu/datetime/type.FixedCalendarDateTimeFormatter.html) for more information.
  */
 
 
 export class ZonedDateFormatterGregorian {
-    
     get ffiValue(): pointer;
-static createSpecificLong(locale: Locale, formatter: DateFormatterGregorian): ZonedDateFormatterGregorian;
-static createSpecificLongWithProvider(provider: DataProvider, locale: Locale, formatter: DateFormatterGregorian): ZonedDateFormatterGregorian;
-static createSpecificShort(locale: Locale, formatter: DateFormatterGregorian): ZonedDateFormatterGregorian;
-static createSpecificShortWithProvider(provider: DataProvider, locale: Locale, formatter: DateFormatterGregorian): ZonedDateFormatterGregorian;
-static createLocalizedOffsetLong(locale: Locale, formatter: DateFormatterGregorian): ZonedDateFormatterGregorian;
-static createLocalizedOffsetLongWithProvider(provider: DataProvider, locale: Locale, formatter: DateFormatterGregorian): ZonedDateFormatterGregorian;
-static createLocalizedOffsetShort(locale: Locale, formatter: DateFormatterGregorian): ZonedDateFormatterGregorian;
-static createLocalizedOffsetShortWithProvider(provider: DataProvider, locale: Locale, formatter: DateFormatterGregorian): ZonedDateFormatterGregorian;
-static createGenericLong(locale: Locale, formatter: DateFormatterGregorian): ZonedDateFormatterGregorian;
-static createGenericLongWithProvider(provider: DataProvider, locale: Locale, formatter: DateFormatterGregorian): ZonedDateFormatterGregorian;
-static createGenericShort(locale: Locale, formatter: DateFormatterGregorian): ZonedDateFormatterGregorian;
-static createGenericShortWithProvider(provider: DataProvider, locale: Locale, formatter: DateFormatterGregorian): ZonedDateFormatterGregorian;
-static createLocation(locale: Locale, formatter: DateFormatterGregorian): ZonedDateFormatterGregorian;
-static createLocationWithProvider(provider: DataProvider, locale: Locale, formatter: DateFormatterGregorian): ZonedDateFormatterGregorian;
-static createExemplarCity(locale: Locale, formatter: DateFormatterGregorian): ZonedDateFormatterGregorian;
-static createExemplarCityWithProvider(provider: DataProvider, locale: Locale, formatter: DateFormatterGregorian): ZonedDateFormatterGregorian;
+    static createSpecificLong(locale: Locale, formatter: DateFormatterGregorian): ZonedDateFormatterGregorian;
+    static createSpecificLongWithProvider(provider: DataProvider, locale: Locale, formatter: DateFormatterGregorian): ZonedDateFormatterGregorian;
+    static createSpecificShort(locale: Locale, formatter: DateFormatterGregorian): ZonedDateFormatterGregorian;
+    static createSpecificShortWithProvider(provider: DataProvider, locale: Locale, formatter: DateFormatterGregorian): ZonedDateFormatterGregorian;
+    static createLocalizedOffsetLong(locale: Locale, formatter: DateFormatterGregorian): ZonedDateFormatterGregorian;
+    static createLocalizedOffsetLongWithProvider(provider: DataProvider, locale: Locale, formatter: DateFormatterGregorian): ZonedDateFormatterGregorian;
+    static createLocalizedOffsetShort(locale: Locale, formatter: DateFormatterGregorian): ZonedDateFormatterGregorian;
+    static createLocalizedOffsetShortWithProvider(provider: DataProvider, locale: Locale, formatter: DateFormatterGregorian): ZonedDateFormatterGregorian;
+    static createGenericLong(locale: Locale, formatter: DateFormatterGregorian): ZonedDateFormatterGregorian;
+    static createGenericLongWithProvider(provider: DataProvider, locale: Locale, formatter: DateFormatterGregorian): ZonedDateFormatterGregorian;
+    static createGenericShort(locale: Locale, formatter: DateFormatterGregorian): ZonedDateFormatterGregorian;
+    static createGenericShortWithProvider(provider: DataProvider, locale: Locale, formatter: DateFormatterGregorian): ZonedDateFormatterGregorian;
+    static createLocation(locale: Locale, formatter: DateFormatterGregorian): ZonedDateFormatterGregorian;
+    static createLocationWithProvider(provider: DataProvider, locale: Locale, formatter: DateFormatterGregorian): ZonedDateFormatterGregorian;
+    static createExemplarCity(locale: Locale, formatter: DateFormatterGregorian): ZonedDateFormatterGregorian;
+    static createExemplarCityWithProvider(provider: DataProvider, locale: Locale, formatter: DateFormatterGregorian): ZonedDateFormatterGregorian;
 
-    /** 
+    /**
      * See the [Rust documentation for `format`](https://docs.rs/icu/latest/icu/datetime/struct.FixedCalendarDateTimeFormatter.html#method.format) for more information.
      */
-    formatIso(date: IsoDate, zone: TimeZoneInfo): string;
+        formatIso(date: IsoDate, zone: TimeZoneInfo): string;
 }

@@ -2,7 +2,7 @@
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
-/** 
+/**
  * An object that represents the Script_Extensions property for a single character
  *
  * See the [Rust documentation for `ScriptExtensionsSet`](https://docs.rs/icu/latest/icu/properties/script/struct.ScriptExtensionsSet.html) for more information.
@@ -10,27 +10,26 @@ import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
 export class ScriptExtensionsSet {
-    
     get ffiValue(): pointer;
 
-    /** 
+    /**
      * Check if the Script_Extensions property of the given code point covers the given script
      *
      * See the [Rust documentation for `contains`](https://docs.rs/icu/latest/icu/properties/script/struct.ScriptExtensionsSet.html#method.contains) for more information.
      */
-    contains(script: number): boolean;
+        contains(script: number): boolean;
 
-    /** 
+    /**
      * Get the number of scripts contained in here
      *
      * See the [Rust documentation for `iter`](https://docs.rs/icu/latest/icu/properties/script/struct.ScriptExtensionsSet.html#method.iter) for more information.
      */
-    get count(): number;
+        get count(): number;
 
-    /** 
+    /**
      * Get script at index
      *
      * See the [Rust documentation for `iter`](https://docs.rs/icu/latest/icu/properties/script/struct.ScriptExtensionsSet.html#method.iter) for more information.
      */
-    scriptAt(index: number): number | null;
+        scriptAt(index: number): number | null;
 }

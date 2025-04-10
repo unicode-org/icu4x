@@ -10,6 +10,7 @@ enum LeadingAdjustment {
   none,
 
   toCased;
+
 }
 
 // dart format on

@@ -25,7 +25,6 @@ final class GraphemeClusterSegmenter implements ffi.Finalizable {
   }
 
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_GraphemeClusterSegmenter_destroy_mv1));
-
   /// Construct an [`GraphemeClusterSegmenter`] using compiled data.
   ///
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/segmenter/struct.GraphemeClusterSegmenter.html#method.new) for more information.
@@ -33,7 +32,6 @@ final class GraphemeClusterSegmenter implements ffi.Finalizable {
     final result = _icu4x_GraphemeClusterSegmenter_create_mv1();
     return GraphemeClusterSegmenter._fromFfi(result, []);
   }
-
   /// Construct an [`GraphemeClusterSegmenter`].
   ///
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/segmenter/struct.GraphemeClusterSegmenter.html#method.new) for more information.
@@ -46,7 +44,6 @@ final class GraphemeClusterSegmenter implements ffi.Finalizable {
     }
     return GraphemeClusterSegmenter._fromFfi(result.union.ok, []);
   }
-
   /// Segments a string.
   ///
   /// Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
@@ -60,6 +57,7 @@ final class GraphemeClusterSegmenter implements ffi.Finalizable {
     final result = _icu4x_GraphemeClusterSegmenter_segment_utf16_mv1(_ffi, input._utf16AllocIn(inputArena.arena));
     return GraphemeClusterBreakIteratorUtf16._fromFfi(result, [], aEdges);
   }
+
 }
 
 @_DiplomatFfiUse('icu4x_GraphemeClusterSegmenter_destroy_mv1')

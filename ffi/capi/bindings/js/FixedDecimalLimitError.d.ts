@@ -2,7 +2,7 @@
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
-/** 
+/**
  * Additional information: [1](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.LimitError.html)
  */
 type FixedDecimalLimitError_obj = {
@@ -11,7 +11,6 @@ type FixedDecimalLimitError_obj = {
 
 
 export class FixedDecimalLimitError {
-    
     /** Create `FixedDecimalLimitError` from an object that contains all of `FixedDecimalLimitError`s fields.
     * Optional fields do not need to be included in the provided object.
     */

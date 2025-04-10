@@ -8,6 +8,7 @@ enum CollatorNumericOrdering {
   off,
 
   on;
+
 }
 
 // dart format on

@@ -21,21 +21,20 @@
 namespace icu4x {
 namespace capi {
     extern "C" {
-    
+
     icu4x::capi::IanaParserExtended* icu4x_IanaParserExtended_create_mv1(void);
-    
+
     typedef struct icu4x_IanaParserExtended_create_with_provider_mv1_result {union {icu4x::capi::IanaParserExtended* ok; icu4x::capi::DataError err;}; bool is_ok;} icu4x_IanaParserExtended_create_with_provider_mv1_result;
     icu4x_IanaParserExtended_create_with_provider_mv1_result icu4x_IanaParserExtended_create_with_provider_mv1(const icu4x::capi::DataProvider* provider);
-    
+
     icu4x::capi::TimeZoneAndCanonicalAndNormalized icu4x_IanaParserExtended_parse_mv1(const icu4x::capi::IanaParserExtended* self, diplomat::capi::DiplomatStringView value);
-    
+
     icu4x::capi::TimeZoneAndCanonicalIterator* icu4x_IanaParserExtended_iter_mv1(const icu4x::capi::IanaParserExtended* self);
-    
+
     icu4x::capi::TimeZoneAndCanonicalAndNormalizedIterator* icu4x_IanaParserExtended_iter_all_mv1(const icu4x::capi::IanaParserExtended* self);
-    
-    
+
     void icu4x_IanaParserExtended_destroy_mv1(IanaParserExtended* self);
-    
+
     } // extern "C"
 } // namespace capi
 } // namespace

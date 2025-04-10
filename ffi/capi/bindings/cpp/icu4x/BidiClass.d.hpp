@@ -42,7 +42,7 @@ namespace capi {
       BidiClass_RightToLeftIsolate = 21,
       BidiClass_PopDirectionalIsolate = 22,
     };
-    
+
     typedef struct BidiClass_option {union { BidiClass ok; }; bool is_ok; } BidiClass_option;
 } // namespace capi
 } // namespace

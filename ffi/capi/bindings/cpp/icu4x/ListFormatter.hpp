@@ -20,32 +20,31 @@
 namespace icu4x {
 namespace capi {
     extern "C" {
-    
+
     typedef struct icu4x_ListFormatter_create_and_with_length_mv1_result {union {icu4x::capi::ListFormatter* ok; icu4x::capi::DataError err;}; bool is_ok;} icu4x_ListFormatter_create_and_with_length_mv1_result;
     icu4x_ListFormatter_create_and_with_length_mv1_result icu4x_ListFormatter_create_and_with_length_mv1(const icu4x::capi::Locale* locale, icu4x::capi::ListLength length);
-    
+
     typedef struct icu4x_ListFormatter_create_and_with_length_and_provider_mv1_result {union {icu4x::capi::ListFormatter* ok; icu4x::capi::DataError err;}; bool is_ok;} icu4x_ListFormatter_create_and_with_length_and_provider_mv1_result;
     icu4x_ListFormatter_create_and_with_length_and_provider_mv1_result icu4x_ListFormatter_create_and_with_length_and_provider_mv1(const icu4x::capi::DataProvider* provider, const icu4x::capi::Locale* locale, icu4x::capi::ListLength length);
-    
+
     typedef struct icu4x_ListFormatter_create_or_with_length_mv1_result {union {icu4x::capi::ListFormatter* ok; icu4x::capi::DataError err;}; bool is_ok;} icu4x_ListFormatter_create_or_with_length_mv1_result;
     icu4x_ListFormatter_create_or_with_length_mv1_result icu4x_ListFormatter_create_or_with_length_mv1(const icu4x::capi::Locale* locale, icu4x::capi::ListLength length);
-    
+
     typedef struct icu4x_ListFormatter_create_or_with_length_and_provider_mv1_result {union {icu4x::capi::ListFormatter* ok; icu4x::capi::DataError err;}; bool is_ok;} icu4x_ListFormatter_create_or_with_length_and_provider_mv1_result;
     icu4x_ListFormatter_create_or_with_length_and_provider_mv1_result icu4x_ListFormatter_create_or_with_length_and_provider_mv1(const icu4x::capi::DataProvider* provider, const icu4x::capi::Locale* locale, icu4x::capi::ListLength length);
-    
+
     typedef struct icu4x_ListFormatter_create_unit_with_length_mv1_result {union {icu4x::capi::ListFormatter* ok; icu4x::capi::DataError err;}; bool is_ok;} icu4x_ListFormatter_create_unit_with_length_mv1_result;
     icu4x_ListFormatter_create_unit_with_length_mv1_result icu4x_ListFormatter_create_unit_with_length_mv1(const icu4x::capi::Locale* locale, icu4x::capi::ListLength length);
-    
+
     typedef struct icu4x_ListFormatter_create_unit_with_length_and_provider_mv1_result {union {icu4x::capi::ListFormatter* ok; icu4x::capi::DataError err;}; bool is_ok;} icu4x_ListFormatter_create_unit_with_length_and_provider_mv1_result;
     icu4x_ListFormatter_create_unit_with_length_and_provider_mv1_result icu4x_ListFormatter_create_unit_with_length_and_provider_mv1(const icu4x::capi::DataProvider* provider, const icu4x::capi::Locale* locale, icu4x::capi::ListLength length);
-    
+
     void icu4x_ListFormatter_format_utf8_mv1(const icu4x::capi::ListFormatter* self, diplomat::capi::DiplomatStringsView list, diplomat::capi::DiplomatWrite* write);
-    
+
     void icu4x_ListFormatter_format_utf16_mv1(const icu4x::capi::ListFormatter* self, diplomat::capi::DiplomatStrings16View list, diplomat::capi::DiplomatWrite* write);
-    
-    
+
     void icu4x_ListFormatter_destroy_mv1(ListFormatter* self);
-    
+
     } // extern "C"
 } // namespace capi
 } // namespace

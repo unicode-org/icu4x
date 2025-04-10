@@ -10,6 +10,7 @@ enum LocaleFallbackPriority {
   language,
 
   region;
+
 }
 
 // dart format on

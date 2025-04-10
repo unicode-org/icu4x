@@ -20,19 +20,18 @@
 namespace icu4x {
 namespace capi {
     extern "C" {
-    
+
     icu4x::capi::LocaleFallbacker* icu4x_LocaleFallbacker_create_mv1(void);
-    
+
     typedef struct icu4x_LocaleFallbacker_create_with_provider_mv1_result {union {icu4x::capi::LocaleFallbacker* ok; icu4x::capi::DataError err;}; bool is_ok;} icu4x_LocaleFallbacker_create_with_provider_mv1_result;
     icu4x_LocaleFallbacker_create_with_provider_mv1_result icu4x_LocaleFallbacker_create_with_provider_mv1(const icu4x::capi::DataProvider* provider);
-    
+
     icu4x::capi::LocaleFallbacker* icu4x_LocaleFallbacker_without_data_mv1(void);
-    
+
     icu4x::capi::LocaleFallbackerWithConfig* icu4x_LocaleFallbacker_for_config_mv1(const icu4x::capi::LocaleFallbacker* self, icu4x::capi::LocaleFallbackConfig config);
-    
-    
+
     void icu4x_LocaleFallbacker_destroy_mv1(LocaleFallbacker* self);
-    
+
     } // extern "C"
 } // namespace capi
 } // namespace

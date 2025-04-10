@@ -19,7 +19,7 @@ namespace capi {
       DisplayNamesStyle_Long = 2,
       DisplayNamesStyle_Menu = 3,
     };
-    
+
     typedef struct DisplayNamesStyle_option {union { DisplayNamesStyle ok; }; bool is_ok; } DisplayNamesStyle_option;
 } // namespace capi
 } // namespace

@@ -19,20 +19,19 @@
 namespace icu4x {
 namespace capi {
     extern "C" {
-    
+
     typedef struct icu4x_CaseMapCloser_create_mv1_result {union {icu4x::capi::CaseMapCloser* ok; icu4x::capi::DataError err;}; bool is_ok;} icu4x_CaseMapCloser_create_mv1_result;
     icu4x_CaseMapCloser_create_mv1_result icu4x_CaseMapCloser_create_mv1(void);
-    
+
     typedef struct icu4x_CaseMapCloser_create_with_provider_mv1_result {union {icu4x::capi::CaseMapCloser* ok; icu4x::capi::DataError err;}; bool is_ok;} icu4x_CaseMapCloser_create_with_provider_mv1_result;
     icu4x_CaseMapCloser_create_with_provider_mv1_result icu4x_CaseMapCloser_create_with_provider_mv1(const icu4x::capi::DataProvider* provider);
-    
+
     void icu4x_CaseMapCloser_add_case_closure_to_mv1(const icu4x::capi::CaseMapCloser* self, char32_t c, icu4x::capi::CodePointSetBuilder* builder);
-    
+
     bool icu4x_CaseMapCloser_add_string_case_closure_to_mv1(const icu4x::capi::CaseMapCloser* self, diplomat::capi::DiplomatStringView s, icu4x::capi::CodePointSetBuilder* builder);
-    
-    
+
     void icu4x_CaseMapCloser_destroy_mv1(CaseMapCloser* self);
-    
+
     } // extern "C"
 } // namespace capi
 } // namespace

@@ -2,19 +2,18 @@
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
-/** 
+/**
  * Additional information: [1](https://docs.rs/fixed_decimal/latest/fixed_decimal/enum.ParseError.html)
  */
 
 
 export class FixedDecimalParseError {
-    
 
-    static fromValue(value : FixedDecimalParseError | string) : FixedDecimalParseError; 
+    static fromValue(value : FixedDecimalParseError | string) : FixedDecimalParseError;
 
-    get value() : string;
+    get value(): string;
 
-    get ffiValue() : number;
+    get ffiValue(): number;
 
     static Unknown : FixedDecimalParseError;
     static Limit : FixedDecimalParseError;

@@ -4,7 +4,7 @@ import type { DataProvider } from "./DataProvider"
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
-/** 
+/**
  * The raw canonical composition operation.
  *
  * Callers should generally use ComposingNormalizer unless they specifically need raw composition operations
@@ -14,23 +14,22 @@ import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
 export class CanonicalComposition {
-    
     get ffiValue(): pointer;
 
-    /** 
+    /**
      * Construct a new CanonicalComposition instance for NFC using a particular data source.
      *
      * See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/normalizer/properties/struct.CanonicalComposition.html#method.new) for more information.
      */
-    static createWithProvider(provider: DataProvider): CanonicalComposition;
+        static createWithProvider(provider: DataProvider): CanonicalComposition;
 
-    /** 
+    /**
      * Performs canonical composition (including Hangul) on a pair of characters
      * or returns NUL if these characters don’t compose. Composition exclusions are taken into account.
      *
      * See the [Rust documentation for `compose`](https://docs.rs/icu/latest/icu/normalizer/properties/struct.CanonicalCompositionBorrowed.html#method.compose) for more information.
      */
-    compose(starter: codepoint, second: codepoint): codepoint;
+        compose(starter: codepoint, second: codepoint): codepoint;
 
     constructor();
 }

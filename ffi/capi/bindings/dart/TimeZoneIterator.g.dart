@@ -35,12 +35,12 @@ final class TimeZoneIterator implements ffi.Finalizable, core.Iterator<TimeZone>
     _current = _iteratorNext();
     return _current != null;
   }
-
   /// See the [Rust documentation for `next`](https://docs.rs/icu/latest/icu/time/zone/iana/struct.TimeZoneIter.html#method.next) for more information.
   TimeZone? _iteratorNext() {
     final result = _icu4x_TimeZoneIterator_next_mv1(_ffi);
     return result.address == 0 ? null : TimeZone._fromFfi(result, []);
   }
+
 }
 
 @_DiplomatFfiUse('icu4x_TimeZoneIterator_destroy_mv1')

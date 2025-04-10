@@ -3,13 +3,12 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
-/** 
+/**
  * Additional information: [1](https://docs.rs/icu/latest/icu/datetime/enum.DateTimeWriteError.html)
  */
 
 
 export class DateTimeWriteError {
-    
     #value = undefined;
 
     static #values = new Map([
@@ -27,7 +26,7 @@ export class DateTimeWriteError {
     static getAllEntries() {
         return DateTimeWriteError.#values.entries();
     }
-    
+
     #internalConstructor(value) {
         if (arguments.length > 1 && arguments[0] === diplomatRuntime.internalConstructor) {
             // We pass in two internalConstructor arguments to create *new*
@@ -57,7 +56,7 @@ export class DateTimeWriteError {
         return new DateTimeWriteError(value);
     }
 
-    get value() {
+    get value(){
         for (let entry of DateTimeWriteError.#values) {
             if (entry[1] == this.#value) {
                 return entry[0];
@@ -65,7 +64,7 @@ export class DateTimeWriteError {
         }
     }
 
-    get ffiValue() {
+    get ffiValue(){
         return this.#value;
     }
     static #objectValues = {

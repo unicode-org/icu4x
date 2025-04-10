@@ -22,7 +22,6 @@ final class CaseMapCloser implements ffi.Finalizable {
   }
 
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_CaseMapCloser_destroy_mv1));
-
   /// Construct a new CaseMapCloser instance using compiled data.
   ///
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapCloser.html#method.new) for more information.
@@ -35,7 +34,6 @@ final class CaseMapCloser implements ffi.Finalizable {
     }
     return CaseMapCloser._fromFfi(result.union.ok, []);
   }
-
   /// Construct a new CaseMapCloser instance using a particular data source.
   ///
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapCloser.html#method.new) for more information.
@@ -48,7 +46,6 @@ final class CaseMapCloser implements ffi.Finalizable {
     }
     return CaseMapCloser._fromFfi(result.union.ok, []);
   }
-
   /// Adds all simple case mappings and the full case folding for `c` to `builder`.
   /// Also adds special case closure mappings.
   ///
@@ -56,7 +53,6 @@ final class CaseMapCloser implements ffi.Finalizable {
   void addCaseClosureTo(Rune c, CodePointSetBuilder builder) {
     _icu4x_CaseMapCloser_add_case_closure_to_mv1(_ffi, c, builder._ffi);
   }
-
   /// Finds all characters and strings which may casemap to `s` as their full case folding string
   /// and adds them to the set.
   ///
@@ -68,6 +64,7 @@ final class CaseMapCloser implements ffi.Finalizable {
     final result = _icu4x_CaseMapCloser_add_string_case_closure_to_mv1(_ffi, s._utf8AllocIn(temp.arena), builder._ffi);
     return result;
   }
+
 }
 
 @_DiplomatFfiUse('icu4x_CaseMapCloser_destroy_mv1')

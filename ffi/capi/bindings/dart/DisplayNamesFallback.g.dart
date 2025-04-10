@@ -8,6 +8,7 @@ enum DisplayNamesFallback {
   code,
 
   none;
+
 }
 
 // dart format on

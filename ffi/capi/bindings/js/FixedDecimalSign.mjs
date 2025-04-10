@@ -3,7 +3,7 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
-/** 
+/**
  * The sign of a FixedDecimal, as shown in formatting.
  *
  * See the [Rust documentation for `Sign`](https://docs.rs/fixed_decimal/latest/fixed_decimal/enum.Sign.html) for more information.
@@ -11,7 +11,6 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
 export class FixedDecimalSign {
-    
     #value = undefined;
 
     static #values = new Map([
@@ -23,7 +22,7 @@ export class FixedDecimalSign {
     static getAllEntries() {
         return FixedDecimalSign.#values.entries();
     }
-    
+
     #internalConstructor(value) {
         if (arguments.length > 1 && arguments[0] === diplomatRuntime.internalConstructor) {
             // We pass in two internalConstructor arguments to create *new*
@@ -53,11 +52,11 @@ export class FixedDecimalSign {
         return new FixedDecimalSign(value);
     }
 
-    get value() {
+    get value(){
         return [...FixedDecimalSign.#values.keys()][this.#value];
     }
 
-    get ffiValue() {
+    get ffiValue(){
         return this.#value;
     }
     static #objectValues = [

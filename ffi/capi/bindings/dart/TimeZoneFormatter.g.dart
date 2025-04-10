@@ -22,8 +22,7 @@ final class TimeZoneFormatter implements ffi.Finalizable {
   }
 
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_TimeZoneFormatter_destroy_mv1));
-
-  /// 
+  ///
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   factory TimeZoneFormatter.specificLong(Locale locale) {
@@ -33,8 +32,7 @@ final class TimeZoneFormatter implements ffi.Finalizable {
     }
     return TimeZoneFormatter._fromFfi(result.union.ok, []);
   }
-
-  /// 
+  ///
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   factory TimeZoneFormatter.specificLongWithProvider(DataProvider provider, Locale locale) {
@@ -44,8 +42,7 @@ final class TimeZoneFormatter implements ffi.Finalizable {
     }
     return TimeZoneFormatter._fromFfi(result.union.ok, []);
   }
-
-  /// 
+  ///
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   factory TimeZoneFormatter.specificShort(Locale locale) {
@@ -55,8 +52,7 @@ final class TimeZoneFormatter implements ffi.Finalizable {
     }
     return TimeZoneFormatter._fromFfi(result.union.ok, []);
   }
-
-  /// 
+  ///
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   factory TimeZoneFormatter.specificShortWithProvider(DataProvider provider, Locale locale) {
@@ -66,8 +62,7 @@ final class TimeZoneFormatter implements ffi.Finalizable {
     }
     return TimeZoneFormatter._fromFfi(result.union.ok, []);
   }
-
-  /// 
+  ///
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   factory TimeZoneFormatter.localizedOffsetLong(Locale locale) {
@@ -77,8 +72,7 @@ final class TimeZoneFormatter implements ffi.Finalizable {
     }
     return TimeZoneFormatter._fromFfi(result.union.ok, []);
   }
-
-  /// 
+  ///
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   factory TimeZoneFormatter.localizedOffsetLongWithProvider(DataProvider provider, Locale locale) {
@@ -88,8 +82,7 @@ final class TimeZoneFormatter implements ffi.Finalizable {
     }
     return TimeZoneFormatter._fromFfi(result.union.ok, []);
   }
-
-  /// 
+  ///
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   factory TimeZoneFormatter.localizedOffsetShort(Locale locale) {
@@ -99,8 +92,7 @@ final class TimeZoneFormatter implements ffi.Finalizable {
     }
     return TimeZoneFormatter._fromFfi(result.union.ok, []);
   }
-
-  /// 
+  ///
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   factory TimeZoneFormatter.localizedOffsetShortWithProvider(DataProvider provider, Locale locale) {
@@ -110,8 +102,7 @@ final class TimeZoneFormatter implements ffi.Finalizable {
     }
     return TimeZoneFormatter._fromFfi(result.union.ok, []);
   }
-
-  /// 
+  ///
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   factory TimeZoneFormatter.genericLong(Locale locale) {
@@ -121,8 +112,7 @@ final class TimeZoneFormatter implements ffi.Finalizable {
     }
     return TimeZoneFormatter._fromFfi(result.union.ok, []);
   }
-
-  /// 
+  ///
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   factory TimeZoneFormatter.genericLongWithProvider(DataProvider provider, Locale locale) {
@@ -132,8 +122,7 @@ final class TimeZoneFormatter implements ffi.Finalizable {
     }
     return TimeZoneFormatter._fromFfi(result.union.ok, []);
   }
-
-  /// 
+  ///
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   factory TimeZoneFormatter.genericShort(Locale locale) {
@@ -143,8 +132,7 @@ final class TimeZoneFormatter implements ffi.Finalizable {
     }
     return TimeZoneFormatter._fromFfi(result.union.ok, []);
   }
-
-  /// 
+  ///
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   factory TimeZoneFormatter.genericShortWithProvider(DataProvider provider, Locale locale) {
@@ -154,8 +142,7 @@ final class TimeZoneFormatter implements ffi.Finalizable {
     }
     return TimeZoneFormatter._fromFfi(result.union.ok, []);
   }
-
-  /// 
+  ///
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   factory TimeZoneFormatter.location(Locale locale) {
@@ -165,8 +152,7 @@ final class TimeZoneFormatter implements ffi.Finalizable {
     }
     return TimeZoneFormatter._fromFfi(result.union.ok, []);
   }
-
-  /// 
+  ///
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   factory TimeZoneFormatter.locationWithProvider(DataProvider provider, Locale locale) {
@@ -176,8 +162,7 @@ final class TimeZoneFormatter implements ffi.Finalizable {
     }
     return TimeZoneFormatter._fromFfi(result.union.ok, []);
   }
-
-  /// 
+  ///
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   factory TimeZoneFormatter.exemplarCity(Locale locale) {
@@ -187,8 +172,7 @@ final class TimeZoneFormatter implements ffi.Finalizable {
     }
     return TimeZoneFormatter._fromFfi(result.union.ok, []);
   }
-
-  /// 
+  ///
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   factory TimeZoneFormatter.exemplarCityWithProvider(DataProvider provider, Locale locale) {
@@ -198,7 +182,6 @@ final class TimeZoneFormatter implements ffi.Finalizable {
     }
     return TimeZoneFormatter._fromFfi(result.union.ok, []);
   }
-
   /// See the [Rust documentation for `format`](https://docs.rs/icu/latest/icu/datetime/struct.FixedCalendarDateTimeFormatter.html#method.format) for more information.
   ///
   /// Throws [DateTimeWriteError] on failure.
@@ -210,6 +193,7 @@ final class TimeZoneFormatter implements ffi.Finalizable {
     }
     return write.finalize();
   }
+
 }
 
 @_DiplomatFfiUse('icu4x_TimeZoneFormatter_destroy_mv1')

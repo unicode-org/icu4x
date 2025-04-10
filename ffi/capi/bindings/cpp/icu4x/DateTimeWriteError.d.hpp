@@ -24,7 +24,7 @@ namespace capi {
       DateTimeWriteError_UnsupportedLength = 8,
       DateTimeWriteError_UnsupportedField = 9,
     };
-    
+
     typedef struct DateTimeWriteError_option {union { DateTimeWriteError ok; }; bool is_ok; } DateTimeWriteError_option;
 } // namespace capi
 } // namespace

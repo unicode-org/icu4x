@@ -10,6 +10,7 @@ enum LocaleDirection {
   rightToLeft,
 
   unknown;
+
 }
 
 // dart format on

@@ -10,6 +10,7 @@ enum DateTimeLength {
   medium,
 
   short;
+
 }
 
 // dart format on

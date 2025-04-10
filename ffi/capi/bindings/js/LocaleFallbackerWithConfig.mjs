@@ -5,7 +5,7 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
-/** 
+/**
  * An object that runs the ICU4X locale fallback algorithm with specific configurations.
  *
  * See the [Rust documentation for `LocaleFallbacker`](https://docs.rs/icu/latest/icu/locale/fallback/struct.LocaleFallbacker.html) for more information.
@@ -17,7 +17,6 @@ const LocaleFallbackerWithConfig_box_destroy_registry = new FinalizationRegistry
 });
 
 export class LocaleFallbackerWithConfig {
-    
     // Internal ptr reference:
     #ptr = null;
 
@@ -25,45 +24,42 @@ export class LocaleFallbackerWithConfig {
     // Since JS won't garbage collect until there are no incoming edges.
     #selfEdge = [];
     #aEdge = [];
-    
+
     #internalConstructor(symbol, ptr, selfEdge, aEdge) {
         if (symbol !== diplomatRuntime.internalConstructor) {
             console.error("LocaleFallbackerWithConfig is an Opaque type. You cannot call its constructor.");
             return;
         }
-        
-        
         this.#aEdge = aEdge;
-        
         this.#ptr = ptr;
         this.#selfEdge = selfEdge;
-        
+
         // Are we being borrowed? If not, we can register.
         if (this.#selfEdge.length === 0) {
             LocaleFallbackerWithConfig_box_destroy_registry.register(this, this.#ptr);
         }
-        
+
         return this;
     }
     get ffiValue() {
         return this.#ptr;
     }
 
-    /** 
+    /**
      * Creates an iterator from a locale with each step of fallback.
      *
      * See the [Rust documentation for `fallback_for`](https://docs.rs/icu/latest/icu/locale/fallback/struct.LocaleFallbacker.html#method.fallback_for) for more information.
      */
-    fallbackForLocale(locale) {
+        fallbackForLocale(locale) {
         // This lifetime edge depends on lifetimes 'a, 'b
         let aEdges = [this];
-        
+
+
         const result = wasm.icu4x_LocaleFallbackerWithConfig_fallback_for_locale_mv1(this.ffiValue, locale.ffiValue);
-    
-        try {
-            return new LocaleFallbackIterator(diplomatRuntime.internalConstructor, result, [], aEdges);
+
+        try {        return new LocaleFallbackIterator(diplomatRuntime.internalConstructor, result, [], aEdges);
         }
-        
+
         finally {}
     }
 

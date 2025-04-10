@@ -18,17 +18,16 @@
 namespace icu4x {
 namespace capi {
     extern "C" {
-    
+
     typedef struct icu4x_PluralOperands_from_string_mv1_result {union {icu4x::capi::PluralOperands* ok; icu4x::capi::FixedDecimalParseError err;}; bool is_ok;} icu4x_PluralOperands_from_string_mv1_result;
     icu4x_PluralOperands_from_string_mv1_result icu4x_PluralOperands_from_string_mv1(diplomat::capi::DiplomatStringView s);
-    
+
     icu4x::capi::PluralOperands* icu4x_PluralOperands_from_int64_mv1(int64_t i);
-    
+
     icu4x::capi::PluralOperands* icu4x_PluralOperands_from_fixed_decimal_mv1(const icu4x::capi::Decimal* x);
-    
-    
+
     void icu4x_PluralOperands_destroy_mv1(PluralOperands* self);
-    
+
     } // extern "C"
 } // namespace capi
 } // namespace

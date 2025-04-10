@@ -3,13 +3,12 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
-/** 
+/**
  * See the [Rust documentation for `TimePrecision`](https://docs.rs/icu/latest/icu/datetime/enum.TimePrecision.html) for more information.
  */
 
 
 export class TimePrecision {
-    
     #value = undefined;
 
     static #values = new Map([
@@ -31,7 +30,7 @@ export class TimePrecision {
     static getAllEntries() {
         return TimePrecision.#values.entries();
     }
-    
+
     #internalConstructor(value) {
         if (arguments.length > 1 && arguments[0] === diplomatRuntime.internalConstructor) {
             // We pass in two internalConstructor arguments to create *new*
@@ -61,11 +60,11 @@ export class TimePrecision {
         return new TimePrecision(value);
     }
 
-    get value() {
+    get value(){
         return [...TimePrecision.#values.keys()][this.#value];
     }
 
-    get ffiValue() {
+    get ffiValue(){
         return this.#value;
     }
     static #objectValues = [

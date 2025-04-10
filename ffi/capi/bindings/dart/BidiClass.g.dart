@@ -5,81 +5,79 @@ part of 'lib.g.dart';
 
 /// See the [Rust documentation for `BidiClass`](https://docs.rs/icu/latest/icu/properties/props/struct.BidiClass.html) for more information.
 enum BidiClass {
-  /// See the [Rust documentation for `LeftToRight`](https://docs.rs/icu/latest/icu/properties/props/enum.BidiClass.html#variant.LeftToRight) for more information.
+    /// See the [Rust documentation for `LeftToRight`](https://docs.rs/icu/latest/icu/properties/props/enum.BidiClass.html#variant.LeftToRight) for more information.
   leftToRight,
 
-  /// See the [Rust documentation for `RightToLeft`](https://docs.rs/icu/latest/icu/properties/props/enum.BidiClass.html#variant.RightToLeft) for more information.
+    /// See the [Rust documentation for `RightToLeft`](https://docs.rs/icu/latest/icu/properties/props/enum.BidiClass.html#variant.RightToLeft) for more information.
   rightToLeft,
 
-  /// See the [Rust documentation for `EuropeanNumber`](https://docs.rs/icu/latest/icu/properties/props/enum.BidiClass.html#variant.EuropeanNumber) for more information.
+    /// See the [Rust documentation for `EuropeanNumber`](https://docs.rs/icu/latest/icu/properties/props/enum.BidiClass.html#variant.EuropeanNumber) for more information.
   europeanNumber,
 
-  /// See the [Rust documentation for `EuropeanSeparator`](https://docs.rs/icu/latest/icu/properties/props/enum.BidiClass.html#variant.EuropeanSeparator) for more information.
+    /// See the [Rust documentation for `EuropeanSeparator`](https://docs.rs/icu/latest/icu/properties/props/enum.BidiClass.html#variant.EuropeanSeparator) for more information.
   europeanSeparator,
 
-  /// See the [Rust documentation for `EuropeanTerminator`](https://docs.rs/icu/latest/icu/properties/props/enum.BidiClass.html#variant.EuropeanTerminator) for more information.
+    /// See the [Rust documentation for `EuropeanTerminator`](https://docs.rs/icu/latest/icu/properties/props/enum.BidiClass.html#variant.EuropeanTerminator) for more information.
   europeanTerminator,
 
-  /// See the [Rust documentation for `ArabicNumber`](https://docs.rs/icu/latest/icu/properties/props/enum.BidiClass.html#variant.ArabicNumber) for more information.
+    /// See the [Rust documentation for `ArabicNumber`](https://docs.rs/icu/latest/icu/properties/props/enum.BidiClass.html#variant.ArabicNumber) for more information.
   arabicNumber,
 
-  /// See the [Rust documentation for `CommonSeparator`](https://docs.rs/icu/latest/icu/properties/props/enum.BidiClass.html#variant.CommonSeparator) for more information.
+    /// See the [Rust documentation for `CommonSeparator`](https://docs.rs/icu/latest/icu/properties/props/enum.BidiClass.html#variant.CommonSeparator) for more information.
   commonSeparator,
 
-  /// See the [Rust documentation for `ParagraphSeparator`](https://docs.rs/icu/latest/icu/properties/props/enum.BidiClass.html#variant.ParagraphSeparator) for more information.
+    /// See the [Rust documentation for `ParagraphSeparator`](https://docs.rs/icu/latest/icu/properties/props/enum.BidiClass.html#variant.ParagraphSeparator) for more information.
   paragraphSeparator,
 
-  /// See the [Rust documentation for `SegmentSeparator`](https://docs.rs/icu/latest/icu/properties/props/enum.BidiClass.html#variant.SegmentSeparator) for more information.
+    /// See the [Rust documentation for `SegmentSeparator`](https://docs.rs/icu/latest/icu/properties/props/enum.BidiClass.html#variant.SegmentSeparator) for more information.
   segmentSeparator,
 
-  /// See the [Rust documentation for `WhiteSpace`](https://docs.rs/icu/latest/icu/properties/props/enum.BidiClass.html#variant.WhiteSpace) for more information.
+    /// See the [Rust documentation for `WhiteSpace`](https://docs.rs/icu/latest/icu/properties/props/enum.BidiClass.html#variant.WhiteSpace) for more information.
   whiteSpace,
 
-  /// See the [Rust documentation for `OtherNeutral`](https://docs.rs/icu/latest/icu/properties/props/enum.BidiClass.html#variant.OtherNeutral) for more information.
+    /// See the [Rust documentation for `OtherNeutral`](https://docs.rs/icu/latest/icu/properties/props/enum.BidiClass.html#variant.OtherNeutral) for more information.
   otherNeutral,
 
-  /// See the [Rust documentation for `LeftToRightEmbedding`](https://docs.rs/icu/latest/icu/properties/props/enum.BidiClass.html#variant.LeftToRightEmbedding) for more information.
+    /// See the [Rust documentation for `LeftToRightEmbedding`](https://docs.rs/icu/latest/icu/properties/props/enum.BidiClass.html#variant.LeftToRightEmbedding) for more information.
   leftToRightEmbedding,
 
-  /// See the [Rust documentation for `LeftToRightOverride`](https://docs.rs/icu/latest/icu/properties/props/enum.BidiClass.html#variant.LeftToRightOverride) for more information.
+    /// See the [Rust documentation for `LeftToRightOverride`](https://docs.rs/icu/latest/icu/properties/props/enum.BidiClass.html#variant.LeftToRightOverride) for more information.
   leftToRightOverride,
 
-  /// See the [Rust documentation for `ArabicLetter`](https://docs.rs/icu/latest/icu/properties/props/enum.BidiClass.html#variant.ArabicLetter) for more information.
+    /// See the [Rust documentation for `ArabicLetter`](https://docs.rs/icu/latest/icu/properties/props/enum.BidiClass.html#variant.ArabicLetter) for more information.
   arabicLetter,
 
-  /// See the [Rust documentation for `RightToLeftEmbedding`](https://docs.rs/icu/latest/icu/properties/props/enum.BidiClass.html#variant.RightToLeftEmbedding) for more information.
+    /// See the [Rust documentation for `RightToLeftEmbedding`](https://docs.rs/icu/latest/icu/properties/props/enum.BidiClass.html#variant.RightToLeftEmbedding) for more information.
   rightToLeftEmbedding,
 
-  /// See the [Rust documentation for `RightToLeftOverride`](https://docs.rs/icu/latest/icu/properties/props/enum.BidiClass.html#variant.RightToLeftOverride) for more information.
+    /// See the [Rust documentation for `RightToLeftOverride`](https://docs.rs/icu/latest/icu/properties/props/enum.BidiClass.html#variant.RightToLeftOverride) for more information.
   rightToLeftOverride,
 
-  /// See the [Rust documentation for `PopDirectionalFormat`](https://docs.rs/icu/latest/icu/properties/props/enum.BidiClass.html#variant.PopDirectionalFormat) for more information.
+    /// See the [Rust documentation for `PopDirectionalFormat`](https://docs.rs/icu/latest/icu/properties/props/enum.BidiClass.html#variant.PopDirectionalFormat) for more information.
   popDirectionalFormat,
 
-  /// See the [Rust documentation for `NonspacingMark`](https://docs.rs/icu/latest/icu/properties/props/enum.BidiClass.html#variant.NonspacingMark) for more information.
+    /// See the [Rust documentation for `NonspacingMark`](https://docs.rs/icu/latest/icu/properties/props/enum.BidiClass.html#variant.NonspacingMark) for more information.
   nonspacingMark,
 
-  /// See the [Rust documentation for `BoundaryNeutral`](https://docs.rs/icu/latest/icu/properties/props/enum.BidiClass.html#variant.BoundaryNeutral) for more information.
+    /// See the [Rust documentation for `BoundaryNeutral`](https://docs.rs/icu/latest/icu/properties/props/enum.BidiClass.html#variant.BoundaryNeutral) for more information.
   boundaryNeutral,
 
-  /// See the [Rust documentation for `FirstStrongIsolate`](https://docs.rs/icu/latest/icu/properties/props/enum.BidiClass.html#variant.FirstStrongIsolate) for more information.
+    /// See the [Rust documentation for `FirstStrongIsolate`](https://docs.rs/icu/latest/icu/properties/props/enum.BidiClass.html#variant.FirstStrongIsolate) for more information.
   firstStrongIsolate,
 
-  /// See the [Rust documentation for `LeftToRightIsolate`](https://docs.rs/icu/latest/icu/properties/props/enum.BidiClass.html#variant.LeftToRightIsolate) for more information.
+    /// See the [Rust documentation for `LeftToRightIsolate`](https://docs.rs/icu/latest/icu/properties/props/enum.BidiClass.html#variant.LeftToRightIsolate) for more information.
   leftToRightIsolate,
 
-  /// See the [Rust documentation for `RightToLeftIsolate`](https://docs.rs/icu/latest/icu/properties/props/enum.BidiClass.html#variant.RightToLeftIsolate) for more information.
+    /// See the [Rust documentation for `RightToLeftIsolate`](https://docs.rs/icu/latest/icu/properties/props/enum.BidiClass.html#variant.RightToLeftIsolate) for more information.
   rightToLeftIsolate,
 
-  /// See the [Rust documentation for `PopDirectionalIsolate`](https://docs.rs/icu/latest/icu/properties/props/enum.BidiClass.html#variant.PopDirectionalIsolate) for more information.
+    /// See the [Rust documentation for `PopDirectionalIsolate`](https://docs.rs/icu/latest/icu/properties/props/enum.BidiClass.html#variant.PopDirectionalIsolate) for more information.
   popDirectionalIsolate;
-
   /// See the [Rust documentation for `for_char`](https://docs.rs/icu/latest/icu/properties/props/trait.EnumeratedProperty.html#tymethod.for_char) for more information.
   static BidiClass forChar(Rune ch) {
     final result = _icu4x_BidiClass_for_char_mv1(ch);
     return BidiClass.values[result];
   }
-
   /// Get the "long" name of this property value (returns empty if property value is unknown)
   ///
   /// See the [Rust documentation for `get`](https://docs.rs/icu/latest/icu/properties/struct.PropertyNamesLongBorrowed.html#method.get) for more information.
@@ -90,7 +88,6 @@ enum BidiClass {
     }
     return result.union.ok._toDart([], isStatic: true);
   }
-
   /// Get the "short" name of this property value (returns empty if property value is unknown)
   ///
   /// See the [Rust documentation for `get`](https://docs.rs/icu/latest/icu/properties/struct.PropertyNamesShortBorrowed.html#method.get) for more information.
@@ -101,7 +98,6 @@ enum BidiClass {
     }
     return result.union.ok._toDart([], isStatic: true);
   }
-
   /// Convert to an integer value usable with ICU4C and CodePointMapData
   ///
   /// See the [Rust documentation for `to_icu4c_value`](https://docs.rs/icu/latest/icu/properties/props/struct.BidiClass.html#method.to_icu4c_value) for more information.
@@ -109,7 +105,6 @@ enum BidiClass {
     final result = _icu4x_BidiClass_to_integer_value_mv1(index);
     return result;
   }
-
   /// Convert from an integer value from ICU4C or CodePointMapData
   ///
   /// See the [Rust documentation for `from_icu4c_value`](https://docs.rs/icu/latest/icu/properties/props/struct.BidiClass.html#method.from_icu4c_value) for more information.
@@ -120,6 +115,7 @@ enum BidiClass {
     }
     return BidiClass.values[result.union.ok];
   }
+
 }
 
 @_DiplomatFfiUse('icu4x_BidiClass_for_char_mv1')

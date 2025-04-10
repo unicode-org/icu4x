@@ -3,7 +3,7 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
-/** 
+/**
  * Mode used in a rounding operation for signed numbers.
  *
  * See the [Rust documentation for `SignedRoundingMode`](https://docs.rs/fixed_decimal/latest/fixed_decimal/enum.SignedRoundingMode.html) for more information.
@@ -11,7 +11,6 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
 export class FixedDecimalSignedRoundingMode {
-    
     #value = undefined;
 
     static #values = new Map([
@@ -29,7 +28,7 @@ export class FixedDecimalSignedRoundingMode {
     static getAllEntries() {
         return FixedDecimalSignedRoundingMode.#values.entries();
     }
-    
+
     #internalConstructor(value) {
         if (arguments.length > 1 && arguments[0] === diplomatRuntime.internalConstructor) {
             // We pass in two internalConstructor arguments to create *new*
@@ -59,11 +58,11 @@ export class FixedDecimalSignedRoundingMode {
         return new FixedDecimalSignedRoundingMode(value);
     }
 
-    get value() {
+    get value(){
         return [...FixedDecimalSignedRoundingMode.#values.keys()][this.#value];
     }
 
-    get ffiValue() {
+    get ffiValue(){
         return this.#value;
     }
     static #objectValues = [

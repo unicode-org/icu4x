@@ -33,7 +33,7 @@ namespace capi {
       icu4x::capi::Time* time;
       icu4x::capi::TimeZoneInfo* zone;
     };
-    
+
     typedef struct ZonedIsoDateTime_option {union { ZonedIsoDateTime ok; }; bool is_ok; } ZonedIsoDateTime_option;
 } // namespace capi
 } // namespace

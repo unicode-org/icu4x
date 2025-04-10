@@ -24,7 +24,7 @@ class ParameterTemplate extends HTMLElement {
         if (this.inputElement !== null) {
             this.inputElement.addEventListener("input", this.input.bind(this));
         }
-        
+
         clone.slot = "parameter";
         baseClone.appendChild(clone);
 
@@ -84,7 +84,7 @@ class NumberTemplate extends ParameterTemplate {
     constructor(options) {
         super(options, NumberTemplate, "template#number", 0);
     }
-    
+
     getEventValue(event) {
         return parseFloat(event.target.value);
     }
@@ -122,7 +122,7 @@ class EnumOption extends HTMLElement {
         let clone = EnumOption.template.cloneNode(true);
 
         clone.querySelector("slot[name='option-text']").parentElement.innerText = optionText;
-        
+
         this.append(...clone.children);
     }
 }
@@ -140,9 +140,9 @@ class EnumTemplate extends ParameterTemplate {
 
     initialize(clone, enumType) {
         let options = clone.querySelector("*[data-options]");
-        
+
         for (let entry of enumType.getAllEntries()) {
-            
+
             if (this.default === null) {
                 this.default = entry[0];
             }

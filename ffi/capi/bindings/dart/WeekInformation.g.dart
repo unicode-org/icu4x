@@ -24,7 +24,6 @@ final class WeekInformation implements ffi.Finalizable {
   }
 
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_WeekInformation_destroy_mv1));
-
   /// Creates a new [`WeekInformation`] from locale data using compiled data.
   ///
   /// See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/calendar/week/struct.WeekInformation.html#method.try_new) for more information.
@@ -37,7 +36,6 @@ final class WeekInformation implements ffi.Finalizable {
     }
     return WeekInformation._fromFfi(result.union.ok, []);
   }
-
   /// Creates a new [`WeekInformation`] from locale data using a particular data source.
   ///
   /// See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/calendar/week/struct.WeekInformation.html#method.try_new) for more information.
@@ -50,7 +48,6 @@ final class WeekInformation implements ffi.Finalizable {
     }
     return WeekInformation._fromFfi(result.union.ok, []);
   }
-
   /// Returns the weekday that starts the week for this object's locale
   ///
   /// See the [Rust documentation for `first_weekday`](https://docs.rs/icu/latest/icu/calendar/week/struct.WeekInformation.html#structfield.first_weekday) for more information.
@@ -58,7 +55,6 @@ final class WeekInformation implements ffi.Finalizable {
     final result = _icu4x_WeekInformation_first_weekday_mv1(_ffi);
     return Weekday.values.firstWhere((v) => v._ffi == result);
   }
-
   /// See the [Rust documentation for `weekend`](https://docs.rs/icu/latest/icu/calendar/week/struct.WeekInformation.html#structfield.weekend) for more information.
   ///
   /// See the [Rust documentation for `contains`](https://docs.rs/icu/latest/icu/calendar/week/struct.WeekendSet.html#method.contains) for more information.
@@ -66,12 +62,12 @@ final class WeekInformation implements ffi.Finalizable {
     final result = _icu4x_WeekInformation_is_weekend_mv1(_ffi, day._ffi);
     return result;
   }
-
   /// See the [Rust documentation for `weekend`](https://docs.rs/icu/latest/icu/calendar/week/struct.WeekInformation.html#method.weekend) for more information.
   WeekdaySetIterator get weekend {
     final result = _icu4x_WeekInformation_weekend_mv1(_ffi);
     return WeekdaySetIterator._fromFfi(result, []);
   }
+
 }
 
 @_DiplomatFfiUse('icu4x_WeekInformation_destroy_mv1')

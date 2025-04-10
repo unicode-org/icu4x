@@ -40,6 +40,7 @@ final class DisplayNamesOptions {
     return struct;
   }
 
+
   @override
   bool operator ==(Object other) =>
       other is DisplayNamesOptions &&

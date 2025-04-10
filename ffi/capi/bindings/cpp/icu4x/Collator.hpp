@@ -21,22 +21,21 @@
 namespace icu4x {
 namespace capi {
     extern "C" {
-    
+
     typedef struct icu4x_Collator_create_v1_mv1_result {union {icu4x::capi::Collator* ok; icu4x::capi::DataError err;}; bool is_ok;} icu4x_Collator_create_v1_mv1_result;
     icu4x_Collator_create_v1_mv1_result icu4x_Collator_create_v1_mv1(const icu4x::capi::Locale* locale, icu4x::capi::CollatorOptionsV1 options);
-    
+
     typedef struct icu4x_Collator_create_v1_with_provider_mv1_result {union {icu4x::capi::Collator* ok; icu4x::capi::DataError err;}; bool is_ok;} icu4x_Collator_create_v1_with_provider_mv1_result;
     icu4x_Collator_create_v1_with_provider_mv1_result icu4x_Collator_create_v1_with_provider_mv1(const icu4x::capi::DataProvider* provider, const icu4x::capi::Locale* locale, icu4x::capi::CollatorOptionsV1 options);
-    
+
     int8_t icu4x_Collator_compare_utf8_mv1(const icu4x::capi::Collator* self, diplomat::capi::DiplomatStringView left, diplomat::capi::DiplomatStringView right);
-    
+
     int8_t icu4x_Collator_compare_utf16_mv1(const icu4x::capi::Collator* self, diplomat::capi::DiplomatString16View left, diplomat::capi::DiplomatString16View right);
-    
+
     icu4x::capi::CollatorResolvedOptionsV1 icu4x_Collator_resolved_options_v1_mv1(const icu4x::capi::Collator* self);
-    
-    
+
     void icu4x_Collator_destroy_mv1(Collator* self);
-    
+
     } // extern "C"
 } // namespace capi
 } // namespace

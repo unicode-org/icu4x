@@ -22,18 +22,17 @@
 namespace icu4x {
 namespace capi {
     extern "C" {
-    
+
     icu4x::capi::VariantOffsetsCalculator* icu4x_VariantOffsetsCalculator_create_mv1(void);
-    
+
     typedef struct icu4x_VariantOffsetsCalculator_create_with_provider_mv1_result {union {icu4x::capi::VariantOffsetsCalculator* ok; icu4x::capi::DataError err;}; bool is_ok;} icu4x_VariantOffsetsCalculator_create_with_provider_mv1_result;
     icu4x_VariantOffsetsCalculator_create_with_provider_mv1_result icu4x_VariantOffsetsCalculator_create_with_provider_mv1(const icu4x::capi::DataProvider* provider);
-    
+
     typedef struct icu4x_VariantOffsetsCalculator_compute_offsets_from_time_zone_mv1_result {union {icu4x::capi::VariantOffsets ok; }; bool is_ok;} icu4x_VariantOffsetsCalculator_compute_offsets_from_time_zone_mv1_result;
     icu4x_VariantOffsetsCalculator_compute_offsets_from_time_zone_mv1_result icu4x_VariantOffsetsCalculator_compute_offsets_from_time_zone_mv1(const icu4x::capi::VariantOffsetsCalculator* self, const icu4x::capi::TimeZone* time_zone, const icu4x::capi::IsoDate* local_date, const icu4x::capi::Time* local_time);
-    
-    
+
     void icu4x_VariantOffsetsCalculator_destroy_mv1(VariantOffsetsCalculator* self);
-    
+
     } // extern "C"
 } // namespace capi
 } // namespace

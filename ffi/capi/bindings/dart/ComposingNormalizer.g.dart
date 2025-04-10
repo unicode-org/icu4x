@@ -22,7 +22,6 @@ final class ComposingNormalizer implements ffi.Finalizable {
   }
 
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_ComposingNormalizer_destroy_mv1));
-
   /// Construct a new ComposingNormalizer instance for NFC using compiled data.
   ///
   /// See the [Rust documentation for `new_nfc`](https://docs.rs/icu/latest/icu/normalizer/struct.ComposingNormalizer.html#method.new_nfc) for more information.
@@ -30,7 +29,6 @@ final class ComposingNormalizer implements ffi.Finalizable {
     final result = _icu4x_ComposingNormalizer_create_nfc_mv1();
     return ComposingNormalizer._fromFfi(result, []);
   }
-
   /// Construct a new ComposingNormalizer instance for NFC using a particular data source.
   ///
   /// See the [Rust documentation for `new_nfc`](https://docs.rs/icu/latest/icu/normalizer/struct.ComposingNormalizer.html#method.new_nfc) for more information.
@@ -43,7 +41,6 @@ final class ComposingNormalizer implements ffi.Finalizable {
     }
     return ComposingNormalizer._fromFfi(result.union.ok, []);
   }
-
   /// Construct a new ComposingNormalizer instance for NFKC using compiled data.
   ///
   /// See the [Rust documentation for `new_nfkc`](https://docs.rs/icu/latest/icu/normalizer/struct.ComposingNormalizer.html#method.new_nfkc) for more information.
@@ -51,7 +48,6 @@ final class ComposingNormalizer implements ffi.Finalizable {
     final result = _icu4x_ComposingNormalizer_create_nfkc_mv1();
     return ComposingNormalizer._fromFfi(result, []);
   }
-
   /// Construct a new ComposingNormalizer instance for NFKC using a particular data source.
   ///
   /// See the [Rust documentation for `new_nfkc`](https://docs.rs/icu/latest/icu/normalizer/struct.ComposingNormalizer.html#method.new_nfkc) for more information.
@@ -64,7 +60,6 @@ final class ComposingNormalizer implements ffi.Finalizable {
     }
     return ComposingNormalizer._fromFfi(result.union.ok, []);
   }
-
   /// Normalize a string
   ///
   /// Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
@@ -77,7 +72,6 @@ final class ComposingNormalizer implements ffi.Finalizable {
     _icu4x_ComposingNormalizer_normalize_mv1(_ffi, s._utf8AllocIn(temp.arena), write._ffi);
     return write.finalize();
   }
-
   /// Check if a string is normalized
   ///
   /// Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
@@ -89,7 +83,6 @@ final class ComposingNormalizer implements ffi.Finalizable {
     final result = _icu4x_ComposingNormalizer_is_normalized_utf16_mv1(_ffi, s._utf16AllocIn(temp.arena));
     return result;
   }
-
   /// Return the index a slice of potentially-invalid UTF-16 is normalized up to
   ///
   /// See the [Rust documentation for `split_normalized_utf16`](https://docs.rs/icu/latest/icu/normalizer/struct.ComposingNormalizerBorrowed.html#method.split_normalized_utf16) for more information.
@@ -100,6 +93,7 @@ final class ComposingNormalizer implements ffi.Finalizable {
     final result = _icu4x_ComposingNormalizer_is_normalized_utf16_up_to_mv1(_ffi, s._utf16AllocIn(temp.arena));
     return result;
   }
+
 }
 
 @_DiplomatFfiUse('icu4x_ComposingNormalizer_destroy_mv1')

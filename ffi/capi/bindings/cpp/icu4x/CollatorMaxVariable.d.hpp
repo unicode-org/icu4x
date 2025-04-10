@@ -19,7 +19,7 @@ namespace capi {
       CollatorMaxVariable_Symbol = 2,
       CollatorMaxVariable_Currency = 3,
     };
-    
+
     typedef struct CollatorMaxVariable_option {union { CollatorMaxVariable ok; }; bool is_ok; } CollatorMaxVariable_option;
 } // namespace capi
 } // namespace

@@ -19,5 +19,4 @@
 
 
 
-
 #endif // FixedDecimalSignDisplay_H

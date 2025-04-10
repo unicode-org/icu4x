@@ -19,5 +19,4 @@
 
 
 
-
 #endif // YearStyle_H

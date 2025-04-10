@@ -28,7 +28,6 @@ LocaleFallbacker* icu4x_LocaleFallbacker_without_data_mv1(void);
 
 LocaleFallbackerWithConfig* icu4x_LocaleFallbacker_for_config_mv1(const LocaleFallbacker* self, LocaleFallbackConfig config);
 
-
 void icu4x_LocaleFallbacker_destroy_mv1(LocaleFallbacker* self);
 
 

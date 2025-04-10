@@ -12,6 +12,7 @@ enum DisplayNamesStyle {
   long,
 
   menu;
+
 }
 
 // dart format on

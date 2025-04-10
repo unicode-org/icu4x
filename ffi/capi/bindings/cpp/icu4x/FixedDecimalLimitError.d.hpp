@@ -13,7 +13,7 @@
 
 namespace icu4x {
 namespace capi {
-    
+
 } // namespace capi
 } // namespace
 

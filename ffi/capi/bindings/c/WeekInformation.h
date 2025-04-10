@@ -32,7 +32,6 @@ bool icu4x_WeekInformation_is_weekend_mv1(const WeekInformation* self, Weekday d
 
 WeekdaySetIterator* icu4x_WeekInformation_weekend_mv1(const WeekInformation* self);
 
-
 void icu4x_WeekInformation_destroy_mv1(WeekInformation* self);
 
 

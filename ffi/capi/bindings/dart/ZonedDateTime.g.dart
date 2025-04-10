@@ -36,7 +36,6 @@ final class ZonedDateTime {
     struct.zone = zone._ffi;
     return struct;
   }
-
   /// Creates a new [`ZonedDateTime`] from an IXDTF string.
   ///
   /// See the [Rust documentation for `try_from_str`](https://docs.rs/icu/latest/icu/time/struct.ZonedDateTime.html#method.try_from_str) for more information.
@@ -50,7 +49,6 @@ final class ZonedDateTime {
     }
     return ZonedDateTime._fromFfi(result.union.ok);
   }
-
   /// Creates a new [`ZonedDateTime`] from a location-only IXDTF string.
   ///
   /// See the [Rust documentation for `try_location_only_from_str`](https://docs.rs/icu/latest/icu/time/struct.ZonedDateTime.html#method.try_location_only_from_str) for more information.
@@ -64,7 +62,6 @@ final class ZonedDateTime {
     }
     return ZonedDateTime._fromFfi(result.union.ok);
   }
-
   /// Creates a new [`ZonedDateTime`] from an offset-only IXDTF string.
   ///
   /// See the [Rust documentation for `try_offset_only_from_str`](https://docs.rs/icu/latest/icu/time/struct.ZonedDateTime.html#method.try_offset_only_from_str) for more information.
@@ -78,7 +75,6 @@ final class ZonedDateTime {
     }
     return ZonedDateTime._fromFfi(result.union.ok);
   }
-
   /// Creates a new [`ZonedDateTime`] from an IXDTF string, without requiring the offset or calculating the zone variant.
   ///
   /// See the [Rust documentation for `try_loose_from_str`](https://docs.rs/icu/latest/icu/time/struct.ZonedDateTime.html#method.try_loose_from_str) for more information.
@@ -92,6 +88,7 @@ final class ZonedDateTime {
     }
     return ZonedDateTime._fromFfi(result.union.ok);
   }
+
 
   @override
   bool operator ==(Object other) =>

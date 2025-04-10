@@ -2,19 +2,18 @@
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
-/** 
+/**
  * Additional information: [1](https://docs.rs/icu/latest/icu/calendar/enum.ParseError.html), [2](https://docs.rs/icu/latest/icu/time/enum.ParseError.html)
  */
 
 
 export class CalendarParseError {
-    
 
-    static fromValue(value : CalendarParseError | string) : CalendarParseError; 
+    static fromValue(value : CalendarParseError | string) : CalendarParseError;
 
-    get value() : string;
+    get value(): string;
 
-    get ffiValue() : number;
+    get ffiValue(): number;
 
     static Unknown : CalendarParseError;
     static InvalidSyntax : CalendarParseError;

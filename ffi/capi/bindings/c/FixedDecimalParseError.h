@@ -19,5 +19,4 @@
 
 
 
-
 #endif // FixedDecimalParseError_H

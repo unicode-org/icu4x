@@ -19,17 +19,16 @@
 namespace icu4x {
 namespace capi {
     extern "C" {
-    
+
     icu4x::capi::WindowsParser* icu4x_WindowsParser_create_mv1(void);
-    
+
     typedef struct icu4x_WindowsParser_create_with_provider_mv1_result {union {icu4x::capi::WindowsParser* ok; icu4x::capi::DataError err;}; bool is_ok;} icu4x_WindowsParser_create_with_provider_mv1_result;
     icu4x_WindowsParser_create_with_provider_mv1_result icu4x_WindowsParser_create_with_provider_mv1(const icu4x::capi::DataProvider* provider);
-    
+
     icu4x::capi::TimeZone* icu4x_WindowsParser_parse_mv1(const icu4x::capi::WindowsParser* self, diplomat::capi::DiplomatStringView value, diplomat::capi::DiplomatStringView region);
-    
-    
+
     void icu4x_WindowsParser_destroy_mv1(WindowsParser* self);
-    
+
     } // extern "C"
 } // namespace capi
 } // namespace

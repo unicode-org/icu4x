@@ -30,7 +30,6 @@ final class EmojiSetData implements ffi.Finalizable {
   }
 
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_EmojiSetData_destroy_mv1));
-
   /// Checks whether the string is in the set.
   ///
   /// See the [Rust documentation for `contains_str`](https://docs.rs/icu/latest/icu/properties/struct.EmojiSetDataBorrowed.html#method.contains_str) for more information.
@@ -39,7 +38,6 @@ final class EmojiSetData implements ffi.Finalizable {
     final result = _icu4x_EmojiSetData_contains_str_mv1(_ffi, s._utf8AllocIn(temp.arena));
     return result;
   }
-
   /// Checks whether the code point is in the set.
   ///
   /// See the [Rust documentation for `contains`](https://docs.rs/icu/latest/icu/properties/struct.EmojiSetDataBorrowed.html#method.contains) for more information.
@@ -47,7 +45,6 @@ final class EmojiSetData implements ffi.Finalizable {
     final result = _icu4x_EmojiSetData_contains_mv1(_ffi, cp);
     return result;
   }
-
   /// Create a map for the `Basic_Emoji` property, using compiled data.
   ///
   /// See the [Rust documentation for `BasicEmoji`](https://docs.rs/icu/latest/icu/properties/props/struct.BasicEmoji.html) for more information.
@@ -55,7 +52,6 @@ final class EmojiSetData implements ffi.Finalizable {
     final result = _icu4x_EmojiSetData_create_basic_mv1();
     return EmojiSetData._fromFfi(result, []);
   }
-
   /// Create a map for the `Basic_Emoji` property, using a particular data source.
   ///
   /// See the [Rust documentation for `BasicEmoji`](https://docs.rs/icu/latest/icu/properties/props/struct.BasicEmoji.html) for more information.
@@ -68,6 +64,7 @@ final class EmojiSetData implements ffi.Finalizable {
     }
     return EmojiSetData._fromFfi(result.union.ok, []);
   }
+
 }
 
 @_DiplomatFfiUse('icu4x_EmojiSetData_destroy_mv1')

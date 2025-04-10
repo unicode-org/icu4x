@@ -35,7 +35,6 @@ final class WeekdaySetIterator implements ffi.Finalizable, core.Iterator<Weekday
     _current = _iteratorNext();
     return _current != null;
   }
-
   /// See the [Rust documentation for `next`](https://docs.rs/icu/latest/icu/calendar/week/struct.WeekdaySetIterator.html#method.next) for more information.
   Weekday? _iteratorNext() {
     final result = _icu4x_WeekdaySetIterator_next_mv1(_ffi);
@@ -44,6 +43,7 @@ final class WeekdaySetIterator implements ffi.Finalizable, core.Iterator<Weekday
     }
     return Weekday.values.firstWhere((v) => v._ffi == result.union.ok);
   }
+
 }
 
 @_DiplomatFfiUse('icu4x_WeekdaySetIterator_destroy_mv1')

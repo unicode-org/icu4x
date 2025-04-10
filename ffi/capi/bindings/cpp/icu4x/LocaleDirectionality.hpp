@@ -20,26 +20,25 @@
 namespace icu4x {
 namespace capi {
     extern "C" {
-    
+
     icu4x::capi::LocaleDirectionality* icu4x_LocaleDirectionality_create_common_mv1(void);
-    
+
     typedef struct icu4x_LocaleDirectionality_create_common_with_provider_mv1_result {union {icu4x::capi::LocaleDirectionality* ok; icu4x::capi::DataError err;}; bool is_ok;} icu4x_LocaleDirectionality_create_common_with_provider_mv1_result;
     icu4x_LocaleDirectionality_create_common_with_provider_mv1_result icu4x_LocaleDirectionality_create_common_with_provider_mv1(const icu4x::capi::DataProvider* provider);
-    
+
     icu4x::capi::LocaleDirectionality* icu4x_LocaleDirectionality_create_extended_mv1(void);
-    
+
     typedef struct icu4x_LocaleDirectionality_create_extended_with_provider_mv1_result {union {icu4x::capi::LocaleDirectionality* ok; icu4x::capi::DataError err;}; bool is_ok;} icu4x_LocaleDirectionality_create_extended_with_provider_mv1_result;
     icu4x_LocaleDirectionality_create_extended_with_provider_mv1_result icu4x_LocaleDirectionality_create_extended_with_provider_mv1(const icu4x::capi::DataProvider* provider);
-    
+
     icu4x::capi::LocaleDirection icu4x_LocaleDirectionality_get_mv1(const icu4x::capi::LocaleDirectionality* self, const icu4x::capi::Locale* locale);
-    
+
     bool icu4x_LocaleDirectionality_is_left_to_right_mv1(const icu4x::capi::LocaleDirectionality* self, const icu4x::capi::Locale* locale);
-    
+
     bool icu4x_LocaleDirectionality_is_right_to_left_mv1(const icu4x::capi::LocaleDirectionality* self, const icu4x::capi::Locale* locale);
-    
-    
+
     void icu4x_LocaleDirectionality_destroy_mv1(LocaleDirectionality* self);
-    
+
     } // extern "C"
 } // namespace capi
 } // namespace

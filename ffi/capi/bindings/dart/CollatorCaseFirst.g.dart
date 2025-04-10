@@ -10,6 +10,7 @@ enum CollatorCaseFirst {
   lower,
 
   upper;
+
 }
 
 // dart format on

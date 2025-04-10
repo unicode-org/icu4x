@@ -10,33 +10,32 @@ import type { TimeZoneInfo } from "./TimeZoneInfo"
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
-/** 
+/**
  * See the [Rust documentation for `DateTimeFormatter`](https://docs.rs/icu/latest/icu/datetime/type.DateTimeFormatter.html) for more information.
  */
 
 
 export class ZonedDateTimeFormatter {
-    
     get ffiValue(): pointer;
-static createSpecificLong(locale: Locale, formatter: DateTimeFormatter): ZonedDateTimeFormatter;
-static createSpecificLongWithProvider(provider: DataProvider, locale: Locale, formatter: DateTimeFormatter): ZonedDateTimeFormatter;
-static createSpecificShort(locale: Locale, formatter: DateTimeFormatter): ZonedDateTimeFormatter;
-static createSpecificShortWithProvider(provider: DataProvider, locale: Locale, formatter: DateTimeFormatter): ZonedDateTimeFormatter;
-static createLocalizedOffsetLong(locale: Locale, formatter: DateTimeFormatter): ZonedDateTimeFormatter;
-static createLocalizedOffsetLongWithProvider(provider: DataProvider, locale: Locale, formatter: DateTimeFormatter): ZonedDateTimeFormatter;
-static createLocalizedOffsetShort(locale: Locale, formatter: DateTimeFormatter): ZonedDateTimeFormatter;
-static createLocalizedOffsetShortWithProvider(provider: DataProvider, locale: Locale, formatter: DateTimeFormatter): ZonedDateTimeFormatter;
-static createGenericLong(locale: Locale, formatter: DateTimeFormatter): ZonedDateTimeFormatter;
-static createGenericLongWithProvider(provider: DataProvider, locale: Locale, formatter: DateTimeFormatter): ZonedDateTimeFormatter;
-static createGenericShort(locale: Locale, formatter: DateTimeFormatter): ZonedDateTimeFormatter;
-static createGenericShortWithProvider(provider: DataProvider, locale: Locale, formatter: DateTimeFormatter): ZonedDateTimeFormatter;
-static createLocation(locale: Locale, formatter: DateTimeFormatter): ZonedDateTimeFormatter;
-static createLocationWithProvider(provider: DataProvider, locale: Locale, formatter: DateTimeFormatter): ZonedDateTimeFormatter;
-static createExemplarCity(locale: Locale, formatter: DateTimeFormatter): ZonedDateTimeFormatter;
-static createExemplarCityWithProvider(provider: DataProvider, locale: Locale, formatter: DateTimeFormatter): ZonedDateTimeFormatter;
+    static createSpecificLong(locale: Locale, formatter: DateTimeFormatter): ZonedDateTimeFormatter;
+    static createSpecificLongWithProvider(provider: DataProvider, locale: Locale, formatter: DateTimeFormatter): ZonedDateTimeFormatter;
+    static createSpecificShort(locale: Locale, formatter: DateTimeFormatter): ZonedDateTimeFormatter;
+    static createSpecificShortWithProvider(provider: DataProvider, locale: Locale, formatter: DateTimeFormatter): ZonedDateTimeFormatter;
+    static createLocalizedOffsetLong(locale: Locale, formatter: DateTimeFormatter): ZonedDateTimeFormatter;
+    static createLocalizedOffsetLongWithProvider(provider: DataProvider, locale: Locale, formatter: DateTimeFormatter): ZonedDateTimeFormatter;
+    static createLocalizedOffsetShort(locale: Locale, formatter: DateTimeFormatter): ZonedDateTimeFormatter;
+    static createLocalizedOffsetShortWithProvider(provider: DataProvider, locale: Locale, formatter: DateTimeFormatter): ZonedDateTimeFormatter;
+    static createGenericLong(locale: Locale, formatter: DateTimeFormatter): ZonedDateTimeFormatter;
+    static createGenericLongWithProvider(provider: DataProvider, locale: Locale, formatter: DateTimeFormatter): ZonedDateTimeFormatter;
+    static createGenericShort(locale: Locale, formatter: DateTimeFormatter): ZonedDateTimeFormatter;
+    static createGenericShortWithProvider(provider: DataProvider, locale: Locale, formatter: DateTimeFormatter): ZonedDateTimeFormatter;
+    static createLocation(locale: Locale, formatter: DateTimeFormatter): ZonedDateTimeFormatter;
+    static createLocationWithProvider(provider: DataProvider, locale: Locale, formatter: DateTimeFormatter): ZonedDateTimeFormatter;
+    static createExemplarCity(locale: Locale, formatter: DateTimeFormatter): ZonedDateTimeFormatter;
+    static createExemplarCityWithProvider(provider: DataProvider, locale: Locale, formatter: DateTimeFormatter): ZonedDateTimeFormatter;
 
-    /** 
+    /**
      * See the [Rust documentation for `format`](https://docs.rs/icu/latest/icu/datetime/struct.DateTimeFormatter.html#method.format) for more information.
      */
-    formatIso(date: IsoDate, time: Time, zone: TimeZoneInfo): string;
+        formatIso(date: IsoDate, time: Time, zone: TimeZoneInfo): string;
 }

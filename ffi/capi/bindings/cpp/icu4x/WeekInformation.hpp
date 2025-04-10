@@ -21,22 +21,21 @@
 namespace icu4x {
 namespace capi {
     extern "C" {
-    
+
     typedef struct icu4x_WeekInformation_create_mv1_result {union {icu4x::capi::WeekInformation* ok; icu4x::capi::DataError err;}; bool is_ok;} icu4x_WeekInformation_create_mv1_result;
     icu4x_WeekInformation_create_mv1_result icu4x_WeekInformation_create_mv1(const icu4x::capi::Locale* locale);
-    
+
     typedef struct icu4x_WeekInformation_create_with_provider_mv1_result {union {icu4x::capi::WeekInformation* ok; icu4x::capi::DataError err;}; bool is_ok;} icu4x_WeekInformation_create_with_provider_mv1_result;
     icu4x_WeekInformation_create_with_provider_mv1_result icu4x_WeekInformation_create_with_provider_mv1(const icu4x::capi::DataProvider* provider, const icu4x::capi::Locale* locale);
-    
+
     icu4x::capi::Weekday icu4x_WeekInformation_first_weekday_mv1(const icu4x::capi::WeekInformation* self);
-    
+
     bool icu4x_WeekInformation_is_weekend_mv1(const icu4x::capi::WeekInformation* self, icu4x::capi::Weekday day);
-    
+
     icu4x::capi::WeekdaySetIterator* icu4x_WeekInformation_weekend_mv1(const icu4x::capi::WeekInformation* self);
-    
-    
+
     void icu4x_WeekInformation_destroy_mv1(WeekInformation* self);
-    
+
     } // extern "C"
 } // namespace capi
 } // namespace

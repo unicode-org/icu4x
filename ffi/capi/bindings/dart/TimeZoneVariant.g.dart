@@ -7,7 +7,6 @@ enum TimeZoneVariant {
   standard,
 
   daylight;
-
   /// Sets the `zone_variant` field to "daylight" time.
   ///
   /// See the [Rust documentation for `from_rearguard_isdst`](https://docs.rs/icu/latest/icu/time/zone/enum.TimeZoneVariant.html#method.from_rearguard_isdst) for more information.
@@ -19,6 +18,7 @@ enum TimeZoneVariant {
     final result = _icu4x_TimeZoneVariant_from_rearguard_isdst_mv1(index, isdst);
     return TimeZoneVariant.values[result];
   }
+
 }
 
 @_DiplomatFfiUse('icu4x_TimeZoneVariant_from_rearguard_isdst_mv1')

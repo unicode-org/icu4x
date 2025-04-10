@@ -28,7 +28,6 @@ final class PropertyValueNameToEnumMapper implements ffi.Finalizable {
   }
 
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_PropertyValueNameToEnumMapper_destroy_mv1));
-
   /// Get the property value matching the given name, using strict matching
   ///
   /// Returns -1 if the name is unknown for this property
@@ -39,7 +38,6 @@ final class PropertyValueNameToEnumMapper implements ffi.Finalizable {
     final result = _icu4x_PropertyValueNameToEnumMapper_get_strict_mv1(_ffi, name._utf8AllocIn(temp.arena));
     return result;
   }
-
   /// Get the property value matching the given name, using loose matching
   ///
   /// Returns -1 if the name is unknown for this property
@@ -50,7 +48,6 @@ final class PropertyValueNameToEnumMapper implements ffi.Finalizable {
     final result = _icu4x_PropertyValueNameToEnumMapper_get_loose_mv1(_ffi, name._utf8AllocIn(temp.arena));
     return result;
   }
-
   /// Create a name-to-enum mapper for the `General_Category` property, using compiled data.
   ///
   /// See the [Rust documentation for `GeneralCategory`](https://docs.rs/icu_properties/latest/icu_properties/props/enum.GeneralCategory.html) for more information.
@@ -58,7 +55,6 @@ final class PropertyValueNameToEnumMapper implements ffi.Finalizable {
     final result = _icu4x_PropertyValueNameToEnumMapper_create_general_category_mv1();
     return PropertyValueNameToEnumMapper._fromFfi(result, []);
   }
-
   /// Create a name-to-enum mapper for the `General_Category` property, using a particular data source.
   ///
   /// See the [Rust documentation for `GeneralCategory`](https://docs.rs/icu_properties/latest/icu_properties/props/enum.GeneralCategory.html) for more information.
@@ -71,7 +67,6 @@ final class PropertyValueNameToEnumMapper implements ffi.Finalizable {
     }
     return PropertyValueNameToEnumMapper._fromFfi(result.union.ok, []);
   }
-
   /// Create a name-to-enum mapper for the `Hangul_Syllable_Type` property, using compiled data.
   ///
   /// See the [Rust documentation for `HangulSyllableType`](https://docs.rs/icu_properties/latest/icu_properties/props/struct.HangulSyllableType.html) for more information.
@@ -79,7 +74,6 @@ final class PropertyValueNameToEnumMapper implements ffi.Finalizable {
     final result = _icu4x_PropertyValueNameToEnumMapper_create_hangul_syllable_type_mv1();
     return PropertyValueNameToEnumMapper._fromFfi(result, []);
   }
-
   /// Create a name-to-enum mapper for the `Hangul_Syllable_Type` property, using a particular data source.
   ///
   /// See the [Rust documentation for `HangulSyllableType`](https://docs.rs/icu_properties/latest/icu_properties/props/struct.HangulSyllableType.html) for more information.
@@ -92,7 +86,6 @@ final class PropertyValueNameToEnumMapper implements ffi.Finalizable {
     }
     return PropertyValueNameToEnumMapper._fromFfi(result.union.ok, []);
   }
-
   /// Create a name-to-enum mapper for the `East_Asian_Width` property, using compiled data.
   ///
   /// See the [Rust documentation for `EastAsianWidth`](https://docs.rs/icu_properties/latest/icu_properties/props/struct.EastAsianWidth.html) for more information.
@@ -100,7 +93,6 @@ final class PropertyValueNameToEnumMapper implements ffi.Finalizable {
     final result = _icu4x_PropertyValueNameToEnumMapper_create_east_asian_width_mv1();
     return PropertyValueNameToEnumMapper._fromFfi(result, []);
   }
-
   /// Create a name-to-enum mapper for the `East_Asian_Width` property, using a particular data source.
   ///
   /// See the [Rust documentation for `EastAsianWidth`](https://docs.rs/icu_properties/latest/icu_properties/props/struct.EastAsianWidth.html) for more information.
@@ -113,7 +105,6 @@ final class PropertyValueNameToEnumMapper implements ffi.Finalizable {
     }
     return PropertyValueNameToEnumMapper._fromFfi(result.union.ok, []);
   }
-
   /// Create a name-to-enum mapper for the `Bidi_Class` property, using compiled data.
   ///
   /// See the [Rust documentation for `BidiClass`](https://docs.rs/icu_properties/latest/icu_properties/props/struct.BidiClass.html) for more information.
@@ -121,7 +112,6 @@ final class PropertyValueNameToEnumMapper implements ffi.Finalizable {
     final result = _icu4x_PropertyValueNameToEnumMapper_create_bidi_class_mv1();
     return PropertyValueNameToEnumMapper._fromFfi(result, []);
   }
-
   /// Create a name-to-enum mapper for the `Bidi_Class` property, using a particular data source.
   ///
   /// See the [Rust documentation for `BidiClass`](https://docs.rs/icu_properties/latest/icu_properties/props/struct.BidiClass.html) for more information.
@@ -134,7 +124,6 @@ final class PropertyValueNameToEnumMapper implements ffi.Finalizable {
     }
     return PropertyValueNameToEnumMapper._fromFfi(result.union.ok, []);
   }
-
   /// Create a name-to-enum mapper for the `Indic_Syllabic_Category` property, using compiled data.
   ///
   /// See the [Rust documentation for `IndicSyllabicCategory`](https://docs.rs/icu_properties/latest/icu_properties/props/struct.IndicSyllabicCategory.html) for more information.
@@ -142,7 +131,6 @@ final class PropertyValueNameToEnumMapper implements ffi.Finalizable {
     final result = _icu4x_PropertyValueNameToEnumMapper_create_indic_syllabic_category_mv1();
     return PropertyValueNameToEnumMapper._fromFfi(result, []);
   }
-
   /// Create a name-to-enum mapper for the `Indic_Syllabic_Category` property, using a particular data source.
   ///
   /// See the [Rust documentation for `IndicSyllabicCategory`](https://docs.rs/icu_properties/latest/icu_properties/props/struct.IndicSyllabicCategory.html) for more information.
@@ -155,7 +143,6 @@ final class PropertyValueNameToEnumMapper implements ffi.Finalizable {
     }
     return PropertyValueNameToEnumMapper._fromFfi(result.union.ok, []);
   }
-
   /// Create a name-to-enum mapper for the `Line_Break` property, using compiled data.
   ///
   /// See the [Rust documentation for `LineBreak`](https://docs.rs/icu_properties/latest/icu_properties/props/struct.LineBreak.html) for more information.
@@ -163,7 +150,6 @@ final class PropertyValueNameToEnumMapper implements ffi.Finalizable {
     final result = _icu4x_PropertyValueNameToEnumMapper_create_line_break_mv1();
     return PropertyValueNameToEnumMapper._fromFfi(result, []);
   }
-
   /// Create a name-to-enum mapper for the `Line_Break` property, using a particular data source.
   ///
   /// See the [Rust documentation for `LineBreak`](https://docs.rs/icu_properties/latest/icu_properties/props/struct.LineBreak.html) for more information.
@@ -176,7 +162,6 @@ final class PropertyValueNameToEnumMapper implements ffi.Finalizable {
     }
     return PropertyValueNameToEnumMapper._fromFfi(result.union.ok, []);
   }
-
   /// Create a name-to-enum mapper for the `Grapheme_Cluster_Break` property, using compiled data.
   ///
   /// See the [Rust documentation for `GraphemeClusterBreak`](https://docs.rs/icu_properties/latest/icu_properties/props/struct.GraphemeClusterBreak.html) for more information.
@@ -184,7 +169,6 @@ final class PropertyValueNameToEnumMapper implements ffi.Finalizable {
     final result = _icu4x_PropertyValueNameToEnumMapper_create_grapheme_cluster_break_mv1();
     return PropertyValueNameToEnumMapper._fromFfi(result, []);
   }
-
   /// Create a name-to-enum mapper for the `Grapheme_Cluster_Break` property, using a particular data source.
   ///
   /// See the [Rust documentation for `GraphemeClusterBreak`](https://docs.rs/icu_properties/latest/icu_properties/props/struct.GraphemeClusterBreak.html) for more information.
@@ -197,7 +181,6 @@ final class PropertyValueNameToEnumMapper implements ffi.Finalizable {
     }
     return PropertyValueNameToEnumMapper._fromFfi(result.union.ok, []);
   }
-
   /// Create a name-to-enum mapper for the `Word_Break` property, using compiled data.
   ///
   /// See the [Rust documentation for `WordBreak`](https://docs.rs/icu_properties/latest/icu_properties/props/struct.WordBreak.html) for more information.
@@ -205,7 +188,6 @@ final class PropertyValueNameToEnumMapper implements ffi.Finalizable {
     final result = _icu4x_PropertyValueNameToEnumMapper_create_word_break_mv1();
     return PropertyValueNameToEnumMapper._fromFfi(result, []);
   }
-
   /// Create a name-to-enum mapper for the `Word_Break` property, using a particular data source.
   ///
   /// See the [Rust documentation for `WordBreak`](https://docs.rs/icu_properties/latest/icu_properties/props/struct.WordBreak.html) for more information.
@@ -218,7 +200,6 @@ final class PropertyValueNameToEnumMapper implements ffi.Finalizable {
     }
     return PropertyValueNameToEnumMapper._fromFfi(result.union.ok, []);
   }
-
   /// Create a name-to-enum mapper for the `Sentence_Break` property, using compiled data.
   ///
   /// See the [Rust documentation for `SentenceBreak`](https://docs.rs/icu_properties/latest/icu_properties/props/struct.SentenceBreak.html) for more information.
@@ -226,7 +207,6 @@ final class PropertyValueNameToEnumMapper implements ffi.Finalizable {
     final result = _icu4x_PropertyValueNameToEnumMapper_create_sentence_break_mv1();
     return PropertyValueNameToEnumMapper._fromFfi(result, []);
   }
-
   /// Create a name-to-enum mapper for the `Sentence_Break` property, using a particular data source.
   ///
   /// See the [Rust documentation for `SentenceBreak`](https://docs.rs/icu_properties/latest/icu_properties/props/struct.SentenceBreak.html) for more information.
@@ -239,7 +219,6 @@ final class PropertyValueNameToEnumMapper implements ffi.Finalizable {
     }
     return PropertyValueNameToEnumMapper._fromFfi(result.union.ok, []);
   }
-
   /// Create a name-to-enum mapper for the `Script` property, using compiled data.
   ///
   /// See the [Rust documentation for `Script`](https://docs.rs/icu_properties/latest/icu_properties/props/struct.Script.html) for more information.
@@ -247,7 +226,6 @@ final class PropertyValueNameToEnumMapper implements ffi.Finalizable {
     final result = _icu4x_PropertyValueNameToEnumMapper_create_script_mv1();
     return PropertyValueNameToEnumMapper._fromFfi(result, []);
   }
-
   /// Create a name-to-enum mapper for the `Script` property, using a particular data source.
   ///
   /// See the [Rust documentation for `Script`](https://docs.rs/icu_properties/latest/icu_properties/props/struct.Script.html) for more information.
@@ -260,7 +238,6 @@ final class PropertyValueNameToEnumMapper implements ffi.Finalizable {
     }
     return PropertyValueNameToEnumMapper._fromFfi(result.union.ok, []);
   }
-
   /// Create a name-to-enum mapper for the `Vertical_Orientation` property, using compiled data.
   ///
   /// See the [Rust documentation for `VerticalOrientation`](https://docs.rs/icu_properties/latest/icu_properties/props/struct.VerticalOrientation.html) for more information.
@@ -268,7 +245,6 @@ final class PropertyValueNameToEnumMapper implements ffi.Finalizable {
     final result = _icu4x_PropertyValueNameToEnumMapper_create_vertical_orientation_mv1();
     return PropertyValueNameToEnumMapper._fromFfi(result, []);
   }
-
   /// Create a name-to-enum mapper for the `Vertical_Orientation` property, using a particular data source.
   ///
   /// See the [Rust documentation for `VerticalOrientation`](https://docs.rs/icu_properties/latest/icu_properties/props/struct.VerticalOrientation.html) for more information.
@@ -281,6 +257,7 @@ final class PropertyValueNameToEnumMapper implements ffi.Finalizable {
     }
     return PropertyValueNameToEnumMapper._fromFfi(result.union.ok, []);
   }
+
 }
 
 @_DiplomatFfiUse('icu4x_PropertyValueNameToEnumMapper_destroy_mv1')
