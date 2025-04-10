@@ -15,7 +15,7 @@
 //!     .expect("Failed to initialize ISO Date instance.");
 //! let date_japanese = Date::new_from_iso(date_iso, japanese_calendar);
 //!
-//! assert_eq!(date_japanese.year().era_year_or_extended(), 45);
+//! assert_eq!(date_japanese.year().era_year_or_related_iso(), 45);
 //! assert_eq!(date_japanese.month().ordinal, 1);
 //! assert_eq!(date_japanese.day_of_month().0, 2);
 //! assert_eq!(
@@ -408,7 +408,7 @@ impl Date<Japanese> {
     ///         .expect("Constructing a date should succeed");
     ///
     /// assert_eq!(date.year().standard_era().unwrap().0, era);
-    /// assert_eq!(date.year().era_year_or_extended(), 14);
+    /// assert_eq!(date.year().era_year_or_related_iso(), 14);
     /// assert_eq!(date.month().ordinal, 1);
     /// assert_eq!(date.day_of_month().0, 2);
     ///
@@ -473,7 +473,7 @@ impl Date<JapaneseExtended> {
     /// .expect("Constructing a date should succeed");
     ///
     /// assert_eq!(date.year().standard_era().unwrap().0, era);
-    /// assert_eq!(date.year().era_year_or_extended(), 7);
+    /// assert_eq!(date.year().era_year_or_related_iso(), 7);
     /// assert_eq!(date.month().ordinal, 1);
     /// assert_eq!(date.day_of_month().0, 2);
     /// ```

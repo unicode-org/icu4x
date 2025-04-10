@@ -92,9 +92,12 @@ impl YearInfo {
 
     /// Get *some* year number that can be displayed
     ///
-    /// Gets the eraYear for era dates, otherwise falls back to Extended Year
-    pub fn era_year_or_extended(self) -> i32 {
-        self.era_year().unwrap_or(self.extended_year)
+    /// Gets the era year for era calendars, and the related ISO year for cyclic calendars.
+    pub fn era_year_or_related_iso(self) -> i32 {
+        match self.kind {
+            YearKind::Era(e) => e.era_year,
+            YearKind::Cyclic(c) => c.related_iso,
+        }
     }
 
     /// Get the era, if available

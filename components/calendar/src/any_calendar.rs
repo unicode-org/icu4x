@@ -1561,7 +1561,7 @@ mod tests {
 
         let roundtrip_year = date.year();
         // FIXME: these APIs should be improved
-        let roundtrip_year = roundtrip_year.era_year_or_extended();
+        let roundtrip_year = roundtrip_year.era_year_or_related_iso();
         let roundtrip_month = date.month().standard_code;
         let roundtrip_day = date.day_of_month().0;
 

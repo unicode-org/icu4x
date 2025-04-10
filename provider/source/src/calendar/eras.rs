@@ -515,7 +515,7 @@ fn test_calendar_eras() {
                 assert_eq!(
                     Date::try_new_from_codes(
                         Some(era),
-                        in_era.year().era_year_or_extended(),
+                        in_era.year().era_year_or_related_iso(),
                         in_era.month().standard_code,
                         in_era.day_of_month().0,
                         cal,
@@ -548,7 +548,7 @@ fn test_calendar_eras() {
             }
 
             // Check that the start/end date uses year 1, and minimal/maximal month/day
-            assert_eq!(in_era.year().era_year_or_extended(), 1);
+            assert_eq!(in_era.year().era_year_or_related_iso(), 1);
             if calendar == "japanese" {
                 // Japanese is the only calendar that doesn't have its own months
             } else if era.start.is_some() {

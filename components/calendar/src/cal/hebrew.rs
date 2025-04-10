@@ -10,7 +10,7 @@
 //! let hebrew_date = Date::try_new_hebrew(3425, 10, 11)
 //!     .expect("Failed to initialize hebrew Date instance.");
 //!
-//! assert_eq!(hebrew_date.year().era_year_or_extended(), 3425);
+//! assert_eq!(hebrew_date.year().era_year_or_related_iso(), 3425);
 //! assert_eq!(hebrew_date.month().ordinal, 10);
 //! assert_eq!(hebrew_date.day_of_month().0, 11);
 //! ```
@@ -348,7 +348,7 @@ impl Date<Hebrew> {
     /// let date_hebrew = Date::try_new_hebrew(3425, 4, 25)
     ///     .expect("Failed to initialize Hebrew Date instance.");
     ///
-    /// assert_eq!(date_hebrew.year().era_year_or_extended(), 3425);
+    /// assert_eq!(date_hebrew.year().era_year_or_related_iso(), 3425);
     /// assert_eq!(date_hebrew.month().ordinal, 4);
     /// assert_eq!(date_hebrew.day_of_month().0, 25);
     /// ```
@@ -499,7 +499,7 @@ mod tests {
         assert_eq!(hebr_date.inner.0.year.value, -1240);
         assert_eq!(hebr_date.year().standard_era().unwrap().0, "hebrew");
         // In Hebrew, there is no inverse era, so negative extended years are negative era years
-        assert_eq!(hebr_date.year().era_year_or_extended(), -1240);
+        assert_eq!(hebr_date.year().era_year_or_related_iso(), -1240);
     }
 
     #[test]
