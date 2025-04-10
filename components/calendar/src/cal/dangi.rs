@@ -64,8 +64,7 @@ use icu_provider::prelude::*;
 /// ```
 /// # Era codes
 ///
-/// This Calendar uses a single era code `dangi` based on the year -2332 ISO (2333 BCE) as year 1. Typically
-/// years will be formatted using cyclic years and the related ISO year.
+/// This calendar does not use era codes.
 ///
 /// # Month codes
 ///
@@ -160,7 +159,7 @@ impl Calendar for Dangi {
         day: u8,
     ) -> Result<Self::DateInner, DateError> {
         match era {
-            Some("dangi") | None => {}
+            None => {}
             _ => return Err(DateError::UnknownEra),
         }
 

@@ -504,25 +504,26 @@ fn test_calendar_eras() {
             let in_era = in_era_iso.to_calendar(cal);
             let not_in_era = not_in_era_iso.to_calendar(cal);
 
+            // TODO(#6437): reenable with CLDR-48
             // Check that code and aliases produce identical results
-            for era in era
-                .aliases
-                .as_deref()
-                .into_iter()
-                .flat_map(|s| s.split(' '))
-                .chain(era.code.as_deref())
-            {
-                assert_eq!(
-                    Date::try_new_from_codes(
-                        Some(era),
-                        in_era.year().era_year_or_related_iso(),
-                        in_era.month().standard_code,
-                        in_era.day_of_month().0,
-                        cal,
-                    ),
-                    Ok(in_era)
-                );
-            }
+            // for era in era
+            //     .aliases
+            //     .as_deref()
+            //     .into_iter()
+            //     .flat_map(|s| s.split(' '))
+            //     .chain(era.code.as_deref())
+            // {
+            //     assert_eq!(
+            //         Date::try_new_from_codes(
+            //             Some(era),
+            //             in_era.year().era_year_or_related_iso(),
+            //             in_era.month().standard_code,
+            //             in_era.day_of_month().0,
+            //             cal,
+            //         ),
+            //         Ok(in_era)
+            //     );
+            // }
 
             // Unless this is the first era and it's not an inverse era, check that the
             // not_in_era date is in a different era
@@ -542,10 +543,11 @@ fn test_calendar_eras() {
                 assert_eq!(i.to_string(), idx);
             }
 
-            // Check that the correct era code is returned
-            if let Some(code) = era.code.as_deref() {
-                assert_eq!(in_era.year().standard_era().unwrap().0, code);
-            }
+            // TODO: reenable with CLDR-48
+            // // Check that the correct era code is returned
+            // if let Some(code) = era.code.as_deref() {
+            //     assert_eq!(in_era.year().standard_era().unwrap().0, code);
+            // }
 
             // Check that the start/end date uses year 1, and minimal/maximal month/day
             assert_eq!(in_era.year().era_year_or_related_iso(), 1);
