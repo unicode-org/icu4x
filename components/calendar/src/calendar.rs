@@ -64,7 +64,7 @@ pub trait Calendar {
 
     /// Information about the year
     fn year_info(&self, date: &Self::DateInner) -> Self::Year;
-    /// TODO
+    /// The extended year value
     fn extended_year(&self, date: &Self::DateInner) -> i32;
     /// The calendar-specific month represented by `date`
     fn month(&self, date: &Self::DateInner) -> types::MonthInfo;
