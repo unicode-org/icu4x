@@ -170,9 +170,9 @@ pub mod scaffold {
 /// Types supporting iteration over segments. Obtained from the segmenter types.
 pub mod iterators {
     pub use crate::grapheme::GraphemeClusterBreakIterator;
+    pub use crate::line::LineBreakIterator;
     pub use crate::sentence::SentenceBreakIterator;
     pub use crate::word::{WordBreakIterator, WordBreakIteratorWithWordType};
-    pub use crate::line::LineBreakIterator;
 }
 
 pub(crate) mod private {

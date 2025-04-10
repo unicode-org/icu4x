@@ -272,7 +272,11 @@ pub mod ffi {
 
         /// Return the status value of break boundary.
         #[diplomat::rust_link(icu::segmenter::iterators::WordBreakIterator::word_type, FnInStruct)]
-        #[diplomat::rust_link(icu::segmenter::iterators::WordBreakIteratorWithWordType, Struct, hidden)]
+        #[diplomat::rust_link(
+            icu::segmenter::iterators::WordBreakIteratorWithWordType,
+            Struct,
+            hidden
+        )]
         #[diplomat::rust_link(
             icu::segmenter::iterators::WordBreakIteratorWithWordType::next,
             FnInStruct,
@@ -284,7 +288,10 @@ pub mod ffi {
         }
 
         /// Return true when break boundary is word-like such as letter/number/CJK
-        #[diplomat::rust_link(icu::segmenter::iterators::WordBreakIterator::is_word_like, FnInStruct)]
+        #[diplomat::rust_link(
+            icu::segmenter::iterators::WordBreakIterator::is_word_like,
+            FnInStruct
+        )]
         #[diplomat::attr(auto, getter)]
         pub fn is_word_like(&self) -> bool {
             self.0.is_word_like()
@@ -320,7 +327,10 @@ pub mod ffi {
         }
 
         /// Return true when break boundary is word-like such as letter/number/CJK
-        #[diplomat::rust_link(icu::segmenter::iterators::WordBreakIterator::is_word_like, FnInStruct)]
+        #[diplomat::rust_link(
+            icu::segmenter::iterators::WordBreakIterator::is_word_like,
+            FnInStruct
+        )]
         #[diplomat::attr(auto, getter)]
         pub fn is_word_like(&self) -> bool {
             self.0.is_word_like()
@@ -351,7 +361,10 @@ pub mod ffi {
         }
 
         /// Return true when break boundary is word-like such as letter/number/CJK
-        #[diplomat::rust_link(icu::segmenter::iterators::WordBreakIterator::is_word_like, FnInStruct)]
+        #[diplomat::rust_link(
+            icu::segmenter::iterators::WordBreakIterator::is_word_like,
+            FnInStruct
+        )]
         #[diplomat::attr(auto, getter)]
         pub fn is_word_like(&self) -> bool {
             self.0.is_word_like()
