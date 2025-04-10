@@ -3,7 +3,7 @@
 
 part of 'lib.g.dart';
 
-/// See the [Rust documentation for `SentenceBreakIterator`](https://docs.rs/icu/latest/icu/segmenter/sentence/struct.SentenceBreakIterator.html) for more information.
+/// See the [Rust documentation for `SentenceBreakIterator`](https://docs.rs/icu/latest/icu/segmenter/iterators/struct.SentenceBreakIterator.html) for more information.
 final class SentenceBreakIteratorLatin1 implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _ffi;
 
@@ -28,7 +28,7 @@ final class SentenceBreakIteratorLatin1 implements ffi.Finalizable {
   /// Finds the next breakpoint. Returns -1 if at the end of the string or if the index is
   /// out of range of a 32-bit signed integer.
   ///
-  /// See the [Rust documentation for `next`](https://docs.rs/icu/latest/icu/segmenter/sentence/struct.SentenceBreakIterator.html#method.next) for more information.
+  /// See the [Rust documentation for `next`](https://docs.rs/icu/latest/icu/segmenter/iterators/struct.SentenceBreakIterator.html#method.next) for more information.
   int next() {
     final result = _icu4x_SentenceBreakIteratorLatin1_next_mv1(_ffi);
     return result;
