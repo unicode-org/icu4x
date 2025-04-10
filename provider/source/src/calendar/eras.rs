@@ -504,7 +504,7 @@ fn test_calendar_eras() {
             let in_era = in_era_iso.to_calendar(cal);
             let not_in_era = not_in_era_iso.to_calendar(cal);
 
-            // TODO: reenable with CLDR-48
+            // TODO(#6437): reenable with CLDR-48
             // Check that code and aliases produce identical results
             // for era in era
             //     .aliases
