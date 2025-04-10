@@ -35,7 +35,7 @@ use calendrical_calculations::rata_die::RataDie;
 ///
 /// # Era codes
 ///
-/// This calendar uses a single era code `hebrew` (alias `am`), Anno Mundi.
+/// This calendar uses a single era code `am`, Anno Mundi. Dates before this era use negative years.
 ///
 /// # Month codes
 ///
@@ -141,7 +141,7 @@ impl Calendar for Hebrew {
         day: u8,
     ) -> Result<Self::DateInner, DateError> {
         match era {
-            Some("hebrew" | "am") | None => {}
+            Some("am") | None => {}
             _ => return Err(DateError::UnknownEra),
         }
 
@@ -262,8 +262,8 @@ impl Calendar for Hebrew {
         types::YearInfo::new(
             date.0.year.value,
             types::EraYear {
+                standard_era: tinystr!(16, "am").into(),
                 formatting_era: types::FormattingEra::Index(0, tinystr!(16, "AM")),
-                standard_era: tinystr!(16, "hebrew").into(),
                 era_year: date.0.year.value,
                 ambiguity: types::YearAmbiguity::CenturyRequired,
             },
@@ -489,15 +489,12 @@ mod tests {
         // Era year is accessible via the public getter.
         // TODO(#3962): Make extended year publicly accessible.
         assert_eq!(greg_date.inner.0 .0.year, -5000);
-        assert_eq!(
-            greg_date.year().standard_era().unwrap().0,
-            "gregory-inverse"
-        );
+        assert_eq!(greg_date.year().standard_era().unwrap().0, "bce");
         // In Gregorian, era year is 1 - extended year
         assert_eq!(greg_date.year().era_year().unwrap(), 5001);
         let hebr_date = greg_date.to_calendar(Hebrew);
         assert_eq!(hebr_date.inner.0.year.value, -1240);
-        assert_eq!(hebr_date.year().standard_era().unwrap().0, "hebrew");
+        assert_eq!(hebr_date.year().standard_era().unwrap().0, "am");
         // In Hebrew, there is no inverse era, so negative extended years are negative era years
         assert_eq!(hebr_date.year().era_year_or_related_iso(), -1240);
     }
