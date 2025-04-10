@@ -128,13 +128,13 @@ mod iterator_helpers;
 mod rule_segmenter;
 
 /// [`GraphemeClusterSegmenter`] and its related iterators, borrowed types, and options.
-pub mod grapheme;
+mod grapheme;
 /// [`LineSegmenter`] and its related iterators, borrowed types, and options.
-pub mod line;
+mod line;
 /// [`SentenceSegmenter`] and its related iterators, borrowed types, and options.
-pub mod sentence;
+mod sentence;
 /// [`WordSegmenter`] and its related iterators, borrowed types, and options.
-pub mod word;
+mod word;
 
 pub mod provider;
 
@@ -165,6 +165,14 @@ pub mod scaffold {
     pub use crate::line::LineBreakType;
     pub use crate::rule_segmenter::{Latin1, PotentiallyIllFormedUtf8, RuleBreakType, Utf16, Utf8};
     pub use crate::word::WordBreakType;
+}
+
+/// Types supporting iteration over segments. Obtained from the segmenter types.
+pub mod iterators {
+    pub use crate::grapheme::GraphemeClusterBreakIterator;
+    pub use crate::sentence::SentenceBreakIterator;
+    pub use crate::word::{WordBreakIterator, WordBreakIteratorWithWordType};
+    pub use crate::line::LineBreakIterator;
 }
 
 pub(crate) mod private {
