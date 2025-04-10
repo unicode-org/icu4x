@@ -20,38 +20,18 @@ pub mod ffi {
 
     #[diplomat::opaque]
     #[diplomat::rust_link(icu::segmenter::grapheme::GraphemeClusterBreakIterator, Struct)]
-    #[diplomat::rust_link(
-        icu::segmenter::grapheme::GraphemeClusterBreakIteratorPotentiallyIllFormedUtf8,
-        Typedef,
-        hidden
-    )]
-    #[diplomat::rust_link(
-        icu::segmenter::grapheme::GraphemeClusterBreakIteratorUtf8,
-        Typedef,
-        hidden
-    )]
     pub struct GraphemeClusterBreakIteratorUtf8<'a>(
         icu_segmenter::grapheme::GraphemeClusterBreakIteratorPotentiallyIllFormedUtf8<'a, 'a>,
     );
 
     #[diplomat::opaque]
     #[diplomat::rust_link(icu::segmenter::grapheme::GraphemeClusterBreakIterator, Struct)]
-    #[diplomat::rust_link(
-        icu::segmenter::grapheme::GraphemeClusterBreakIteratorUtf16,
-        Typedef,
-        hidden
-    )]
     pub struct GraphemeClusterBreakIteratorUtf16<'a>(
         icu_segmenter::grapheme::GraphemeClusterBreakIteratorUtf16<'a, 'a>,
     );
 
     #[diplomat::opaque]
     #[diplomat::rust_link(icu::segmenter::grapheme::GraphemeClusterBreakIterator, Struct)]
-    #[diplomat::rust_link(
-        icu::segmenter::grapheme::GraphemeClusterBreakIteratorLatin1,
-        Typedef,
-        hidden
-    )]
     pub struct GraphemeClusterBreakIteratorLatin1<'a>(
         icu_segmenter::grapheme::GraphemeClusterBreakIteratorLatin1<'a, 'a>,
     );

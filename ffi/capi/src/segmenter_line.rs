@@ -48,29 +48,16 @@ pub mod ffi {
 
     #[diplomat::opaque]
     #[diplomat::rust_link(icu::segmenter::line::LineBreakIterator, Struct)]
-    #[diplomat::rust_link(
-        icu::segmenter::line::LineBreakIteratorPotentiallyIllFormedUtf8,
-        Typedef,
-        compact
-    )]
-    #[diplomat::rust_link(icu::segmenter::line::LineBreakIteratorUtf8, Typedef, hidden)]
-    #[diplomat::rust_link(
-        icu::segmenter::line::LineBreakTypePotentiallyIllFormedUtf8,
-        Struct,
-        hidden
-    )]
     pub struct LineBreakIteratorUtf8<'a>(
         icu_segmenter::line::LineBreakIteratorPotentiallyIllFormedUtf8<'a, 'a>,
     );
 
     #[diplomat::opaque]
     #[diplomat::rust_link(icu::segmenter::line::LineBreakIterator, Struct)]
-    #[diplomat::rust_link(icu::segmenter::line::LineBreakIteratorUtf16, Typedef, compact)]
     pub struct LineBreakIteratorUtf16<'a>(icu_segmenter::line::LineBreakIteratorUtf16<'a, 'a>);
 
     #[diplomat::opaque]
     #[diplomat::rust_link(icu::segmenter::line::LineBreakIterator, Struct)]
-    #[diplomat::rust_link(icu::segmenter::line::LineBreakIteratorLatin1, Typedef, compact)]
     pub struct LineBreakIteratorLatin1<'a>(icu_segmenter::line::LineBreakIteratorLatin1<'a, 'a>);
 
     impl LineSegmenter {

@@ -30,24 +30,16 @@ pub mod ffi {
 
     #[diplomat::opaque]
     #[diplomat::rust_link(icu::segmenter::word::WordBreakIterator, Struct)]
-    #[diplomat::rust_link(
-        icu::segmenter::word::WordBreakIteratorPotentiallyIllFormedUtf8,
-        Typedef,
-        hidden
-    )]
-    #[diplomat::rust_link(icu::segmenter::word::WordBreakIteratorUtf8, Typedef, hidden)]
     pub struct WordBreakIteratorUtf8<'a>(
         icu_segmenter::word::WordBreakIteratorPotentiallyIllFormedUtf8<'a, 'a>,
     );
 
     #[diplomat::opaque]
     #[diplomat::rust_link(icu::segmenter::word::WordBreakIterator, Struct)]
-    #[diplomat::rust_link(icu::segmenter::word::WordBreakIteratorUtf16, Typedef, hidden)]
     pub struct WordBreakIteratorUtf16<'a>(icu_segmenter::word::WordBreakIteratorUtf16<'a, 'a>);
 
     #[diplomat::opaque]
     #[diplomat::rust_link(icu::segmenter::word::WordBreakIterator, Struct)]
-    #[diplomat::rust_link(icu::segmenter::word::WordBreakIteratorLatin1, Typedef, hidden)]
     pub struct WordBreakIteratorLatin1<'a>(icu_segmenter::word::WordBreakIteratorLatin1<'a, 'a>);
 
     impl SegmenterWordType {

@@ -21,26 +21,18 @@ pub mod ffi {
 
     #[diplomat::opaque]
     #[diplomat::rust_link(icu::segmenter::sentence::SentenceBreakIterator, Struct)]
-    #[diplomat::rust_link(
-        icu::segmenter::sentence::SentenceBreakIteratorPotentiallyIllFormedUtf8,
-        Typedef,
-        hidden
-    )]
-    #[diplomat::rust_link(icu::segmenter::sentence::SentenceBreakIteratorUtf8, Typedef, hidden)]
     pub struct SentenceBreakIteratorUtf8<'a>(
         icu_segmenter::sentence::SentenceBreakIteratorPotentiallyIllFormedUtf8<'a, 'a>,
     );
 
     #[diplomat::opaque]
     #[diplomat::rust_link(icu::segmenter::sentence::SentenceBreakIterator, Struct)]
-    #[diplomat::rust_link(icu::segmenter::sentence::SentenceBreakIteratorUtf16, Typedef, hidden)]
     pub struct SentenceBreakIteratorUtf16<'a>(
         icu_segmenter::sentence::SentenceBreakIteratorUtf16<'a, 'a>,
     );
 
     #[diplomat::opaque]
     #[diplomat::rust_link(icu::segmenter::sentence::SentenceBreakIterator, Struct)]
-    #[diplomat::rust_link(icu::segmenter::sentence::SentenceBreakIteratorLatin1, Typedef, hidden)]
     pub struct SentenceBreakIteratorLatin1<'a>(
         icu_segmenter::sentence::SentenceBreakIteratorLatin1<'a, 'a>,
     );
