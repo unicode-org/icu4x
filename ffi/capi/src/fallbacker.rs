@@ -8,9 +8,9 @@
 pub mod ffi {
     use alloc::boxed::Box;
 
-    use crate::locale_core::ffi::Locale;
+    use crate::unstable::locale_core::ffi::Locale;
     #[cfg(feature = "buffer_provider")]
-    use crate::{errors::ffi::DataError, provider::ffi::DataProvider};
+    use crate::unstable::{errors::ffi::DataError, provider::ffi::DataProvider};
 
     /// An object that runs the ICU4X locale fallback algorithm.
     #[diplomat::opaque]

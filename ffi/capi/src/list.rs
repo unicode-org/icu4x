@@ -12,9 +12,9 @@ pub mod ffi {
     use icu_list::{options::ListFormatterOptions, ListFormatterPreferences};
 
     #[cfg(feature = "buffer_provider")]
-    use crate::provider::ffi::DataProvider;
+    use crate::unstable::provider::ffi::DataProvider;
     #[cfg(any(feature = "compiled_data", feature = "buffer_provider"))]
-    use crate::{errors::ffi::DataError, locale_core::ffi::Locale};
+    use crate::unstable::{errors::ffi::DataError, locale_core::ffi::Locale};
 
     use writeable::Writeable;
 

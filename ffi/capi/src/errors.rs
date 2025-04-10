@@ -12,7 +12,7 @@ pub mod ffi {
     use diplomat_runtime::DiplomatOption;
 
     #[cfg(feature = "datetime")]
-    use crate::calendar::ffi::CalendarKind;
+    use crate::unstable::calendar::ffi::CalendarKind;
 
     #[derive(Debug, PartialEq, Eq)]
     #[repr(C)]

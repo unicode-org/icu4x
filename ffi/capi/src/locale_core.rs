@@ -8,7 +8,7 @@
 pub mod ffi {
     use alloc::boxed::Box;
 
-    use crate::errors::ffi::LocaleParseError;
+    use crate::unstable::errors::ffi::LocaleParseError;
 
     use writeable::Writeable;
 

@@ -56,9 +56,6 @@ extern crate alloc;
 #[cfg(all(not(feature = "std"), feature = "libc_alloc"))]
 extern crate libc_alloc;
 
-// *Private* reexports to keep paths simpler
-pub(crate) use unstable::*;
-
 #[cfg(feature = "datetime")]
 pub(crate) mod datetime_helpers;
 

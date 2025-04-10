@@ -13,10 +13,12 @@ pub mod ffi {
     use writeable::Writeable;
 
     #[allow(unused_imports)]
-    use crate::{
+    use crate::datetime_helpers::map_or_default;
+
+    #[allow(unused_imports)]
+    use crate::unstable::{
         date::ffi::{Date, IsoDate},
         datetime::ffi::DateTime,
-        datetime_helpers::map_or_default,
         datetime_options::ffi::{DateTimeAlignment, DateTimeLength, TimePrecision, YearStyle},
         errors::ffi::DateTimeFormatterLoadError,
         errors::ffi::DateTimeMismatchedCalendarError,
@@ -25,7 +27,7 @@ pub mod ffi {
     };
 
     #[cfg(feature = "buffer_provider")]
-    use crate::provider::ffi::DataProvider;
+    use crate::unstable::provider::ffi::DataProvider;
 
     #[diplomat::opaque]
     #[diplomat::rust_link(icu::datetime::FixedCalendarDateTimeFormatter, Typedef)]

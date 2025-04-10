@@ -9,11 +9,11 @@ pub mod ffi {
     use alloc::boxed::Box;
 
     #[cfg(any(feature = "compiled_data", feature = "buffer_provider"))]
-    use crate::errors::ffi::DataError;
-    use crate::errors::ffi::LocaleParseError;
-    use crate::locale_core::ffi::Locale;
+    use crate::unstable::errors::ffi::DataError;
+    use crate::unstable::errors::ffi::LocaleParseError;
+    use crate::unstable::locale_core::ffi::Locale;
     #[cfg(feature = "buffer_provider")]
-    use crate::provider::ffi::DataProvider;
+    use crate::unstable::provider::ffi::DataProvider;
     use diplomat_runtime::DiplomatOption;
 
     use writeable::Writeable;
