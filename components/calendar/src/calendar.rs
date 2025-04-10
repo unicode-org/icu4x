@@ -23,6 +23,9 @@ use core::fmt;
 pub trait Calendar {
     /// The internal type used to represent dates
     type DateInner: Eq + Copy + fmt::Debug;
+    /// The type of YearInfo returned by the date
+    type Year: fmt::Debug + Into<types::YearInfo>;
+
     /// Construct a date from era/month codes and fields
     ///
     /// The year is extended_year if no era is provided
@@ -60,7 +63,9 @@ pub trait Calendar {
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool;
 
     /// Information about the year
-    fn year(&self, date: &Self::DateInner) -> types::YearInfo;
+    fn year_info(&self, date: &Self::DateInner) -> Self::Year;
+    /// The extended year value
+    fn extended_year(&self, date: &Self::DateInner) -> i32;
     /// The calendar-specific month represented by `date`
     fn month(&self, date: &Self::DateInner) -> types::MonthInfo;
     /// The calendar-specific day-of-month represented by `date`

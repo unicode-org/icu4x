@@ -12,8 +12,8 @@
 //! let dangi_date = Date::try_new_dangi_with_calendar(2023, 6, 6, dangi)
 //!     .expect("Failed to initialize Dangi Date instance.");
 //!
-//! assert_eq!(dangi_date.year().era_year_or_related_iso(), 2023);
-//! assert_eq!(dangi_date.year().cyclic().unwrap(), 40);
+//! assert_eq!(dangi_date.cyclic_year().related_iso, 2023);
+//! assert_eq!(dangi_date.cyclic_year().year, 40);
 //! assert_eq!(dangi_date.month().ordinal, 6);
 //! assert_eq!(dangi_date.day_of_month().0, 6);
 //! ```
@@ -24,6 +24,7 @@ use crate::calendar_arithmetic::PrecomputedDataSource;
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
 use crate::error::DateError;
 use crate::provider::chinese_based::CalendarDangiV1;
+use crate::types::CyclicYear;
 use crate::AsCalendar;
 use crate::{types, Calendar, Date};
 use calendrical_calculations::chinese_based::{self, ChineseBased};
@@ -150,6 +151,7 @@ impl Dangi {
 
 impl Calendar for Dangi {
     type DateInner = DangiDateInner;
+    type Year = CyclicYear;
 
     fn from_codes(
         &self,
@@ -233,13 +235,16 @@ impl Calendar for Dangi {
         Self::DEBUG_NAME
     }
 
-    fn year(&self, date: &Self::DateInner) -> crate::types::YearInfo {
+    fn year_info(&self, date: &Self::DateInner) -> Self::Year {
         let year = date.0.year;
-        types::YearInfo::new_cyclic(
-            chinese_based::Dangi::extended_from_iso(year.related_iso),
-            (year.related_iso as i64 - 4).rem_euclid(60) as u8 + 1,
-            year.related_iso,
-        )
+        CyclicYear {
+            year: (year.related_iso as i64 - 4).rem_euclid(60) as u8 + 1,
+            related_iso: year.related_iso,
+        }
+    }
+
+    fn extended_year(&self, date: &Self::DateInner) -> i32 {
+        chinese_based::Dangi::extended_from_iso(date.0.year.related_iso)
     }
 
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
@@ -281,8 +286,8 @@ impl<A: AsCalendar<Calendar = Dangi>> Date<A> {
     /// let date_dangi = Date::try_new_dangi_with_calendar(2023, 6, 18, dangi)
     ///     .expect("Failed to initialize Dangi Date instance.");
     ///
-    /// assert_eq!(date_dangi.year().era_year_or_related_iso(), 2023);
-    /// assert_eq!(date_dangi.year().cyclic().unwrap(), 40);
+    /// assert_eq!(date_dangi.cyclic_year().related_iso, 2023);
+    /// assert_eq!(date_dangi.cyclic_year().year, 40);
     /// assert_eq!(date_dangi.month().ordinal, 6);
     /// assert_eq!(date_dangi.day_of_month().0, 18);
     /// ```
@@ -332,19 +337,19 @@ mod test {
         let iso = Date::try_new_iso(year, 6, 6).unwrap();
         let chinese = iso.to_calendar(Chinese::new_always_calculating());
         let dangi = iso.to_calendar(Dangi::new_always_calculating());
-        let chinese_year = chinese.year().cyclic();
-        let korean_year = dangi.year().cyclic();
+        let chinese_year = chinese.cyclic_year();
+        let korean_year = dangi.cyclic_year();
         assert_eq!(
             chinese_year, korean_year,
             "Cyclic year failed for year: {year}"
         );
-        let chinese_rel_iso = chinese.year().related_iso();
-        let korean_rel_iso = dangi.year().related_iso();
+        let chinese_rel_iso = chinese_year.related_iso;
+        let korean_rel_iso = korean_year.related_iso;
         assert_eq!(
             chinese_rel_iso, korean_rel_iso,
             "Rel. ISO year equality failed for year: {year}"
         );
-        assert_eq!(korean_rel_iso, Some(year), "Dangi Rel. ISO failed!");
+        assert_eq!(korean_rel_iso, year, "Dangi Rel. ISO failed!");
     }
 
     #[test]
@@ -900,19 +905,16 @@ mod test {
             let iso = Date::try_new_iso(case.iso_year, case.iso_month, case.iso_day).unwrap();
             do_twice(&dangi_calculating, &dangi_cached, |dangi, calendar_type| {
                 let dangi = iso.to_calendar(dangi);
-                let dangi_rel_iso = dangi.year().related_iso();
-                let dangi_cyclic = dangi.year().cyclic();
+                let dangi_cyclic = dangi.cyclic_year();
                 let dangi_month = dangi.month().ordinal;
                 let dangi_day = dangi.day_of_month().0;
 
                 assert_eq!(
-                    dangi_rel_iso,
-                    Some(case.expected_rel_iso),
+                    dangi_cyclic.related_iso, case.expected_rel_iso,
                     "[{calendar_type}] Related ISO failed for test case: {case:?}"
                 );
                 assert_eq!(
-                    dangi_cyclic.unwrap(),
-                    case.expected_cyclic,
+                    dangi_cyclic.year, case.expected_cyclic,
                     "[{calendar_type}] Cyclic year failed for test case: {case:?}"
                 );
                 assert_eq!(
