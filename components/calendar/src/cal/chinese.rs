@@ -57,20 +57,13 @@ use icu_provider::prelude::*;
 ///
 /// # Year and Era codes
 ///
-/// This calendar does not use era codes.
-///
 /// Unlike the Gregorian calendar, the Chinese calendar does not traditionally count years in an infinitely
 /// increasing sequence. Instead, 10 "celestial stems" and 12 "terrestrial branches" are combined to form a
 /// cycle of year names which repeats every 60 years. However, for the purposes of calendar calculations and
-/// conversions, this module counts Chinese years in an infinite system similar to ISO, with year 1 in the
-/// calendar corresponding to the inception of the calendar, marked as 2637 BCE (ISO: -2636), and negative
-/// years marking Chinese years before February 15, 2637 BCE.
+/// conversions, this calendar also counts years based on the ISO (Gregorian) calendar. This "related ISO year"
+/// marks the ISO year in which a Chinese year begins.
 ///
-/// Because the Chinese calendar does not traditionally count years, era codes are not used in this calendar;
-/// this crate supports a single era code "chinese".
-///
-/// This Chinese calendar implementation also supports a related ISO year, which marks the ISO year in which a
-/// Chinese year begins, and a cyclic year corresponding to the year in the 60 year cycle as described above.
+/// Because the Chinese calendar does not traditionally count years, era codes are not used in this calendar.
 ///
 /// For more information, suggested reading materials include:
 /// * _Calendrical Calculations_ by Reingold & Dershowitz
