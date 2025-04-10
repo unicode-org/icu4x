@@ -285,12 +285,18 @@ fn process_era_dates_map(
                 // https://unicode-org.atlassian.net/browse/CLDR-18388 for why we need to do + 2
                 let idx = (idx.parse::<usize>().unwrap() + 2).to_string();
                 if let Some(start) = era.start.as_mut() {
+                    // All pre-Taisho start dates are known to be wrong, this at least makes them valid.
+                    // See https://unicode-org.atlassian.net/browse/CLDR-11400
                     if start.month == 2 && start.day > 28 {
                         start.day = if calendrical_calculations::iso::is_leap_year(start.year) {
                             29
                         } else {
                             28
                         };
+                    }
+                    if era.code.as_deref() == Some("meiji") {
+                        start.month = 10;
+                        start.day = 23;
                     }
                 }
                 (idx, era)
@@ -510,7 +516,7 @@ fn test_calendar_eras() {
             //     assert_eq!(
             //         Date::try_new_from_codes(
             //             Some(era),
-            //             in_era.year().era_year_or_extended(),
+            //             in_era.year().era_year_or_related_iso(),
             //             in_era.month().standard_code,
             //             in_era.day_of_month().0,
             //             cal,
@@ -544,7 +550,7 @@ fn test_calendar_eras() {
             // }
 
             // Check that the start/end date uses year 1, and minimal/maximal month/day
-            assert_eq!(in_era.year().era_year_or_extended(), 1);
+            assert_eq!(in_era.year().era_year_or_related_iso(), 1);
             if calendar == "japanese" {
                 // Japanese is the only calendar that doesn't have its own months
             } else if era.start.is_some() {

@@ -67,12 +67,12 @@ fn test_length_time_preferences() {
     components_bag.hour = Some(components::Numeric::TwoDigit);
     components_bag.minute = Some(components::Numeric::TwoDigit);
     components_bag.second = Some(components::Numeric::TwoDigit);
-    components_bag.hour_cycle = Some(HourCycle::H24);
+    components_bag.hour_cycle = Some(HourCycle::H23);
 
     assert_resolved_components(
         skeleton,
         &components_bag,
-        "en-u-hc-h24".parse::<Locale>().unwrap(),
+        "en-u-hc-h23".parse::<Locale>().unwrap(),
     );
 }
 

@@ -21,7 +21,7 @@ fn bench_date<A: AsCalendar>(date: &mut Date<A>) {
     ));
 
     // Retrieving vals
-    let _ = black_box(date.year().era_year_or_extended());
+    let _ = black_box(date.year().era_year_or_related_iso());
     let _ = black_box(date.month().ordinal);
     let _ = black_box(date.day_of_month().0);
 
@@ -198,8 +198,8 @@ fn date_benches(c: &mut Criterion) {
         "calendar/islamic/civil",
         &fxs,
         icu::calendar::cal::HijriTabular::new(
-            icu::calendar::cal::HijriTabularEpoch::Friday,
             icu::calendar::cal::HijriTabularLeapYears::TypeII,
+            icu::calendar::cal::HijriTabularEpoch::Friday,
         ),
         |y, m, d| {
             Date::try_new_hijri_tabular_with_calendar(
@@ -207,8 +207,8 @@ fn date_benches(c: &mut Criterion) {
                 m,
                 d,
                 icu::calendar::cal::HijriTabular::new(
-                    icu::calendar::cal::HijriTabularEpoch::Friday,
                     icu::calendar::cal::HijriTabularLeapYears::TypeII,
+                    icu::calendar::cal::HijriTabularEpoch::Friday,
                 ),
             )
             .unwrap()
@@ -220,8 +220,8 @@ fn date_benches(c: &mut Criterion) {
         "calendar/islamic/tabular",
         &fxs,
         icu::calendar::cal::HijriTabular::new(
-            icu::calendar::cal::HijriTabularEpoch::Thursday,
             icu::calendar::cal::HijriTabularLeapYears::TypeII,
+            icu::calendar::cal::HijriTabularEpoch::Thursday,
         ),
         |y, m, d| {
             Date::try_new_hijri_tabular_with_calendar(
@@ -229,8 +229,8 @@ fn date_benches(c: &mut Criterion) {
                 m,
                 d,
                 icu::calendar::cal::HijriTabular::new(
-                    icu::calendar::cal::HijriTabularEpoch::Thursday,
                     icu::calendar::cal::HijriTabularLeapYears::TypeII,
+                    icu::calendar::cal::HijriTabularEpoch::Thursday,
                 ),
             )
             .unwrap()
@@ -242,15 +242,7 @@ fn date_benches(c: &mut Criterion) {
         "calendar/islamic/ummalqura",
         &fxs,
         icu::calendar::cal::HijriUmmAlQura::new(),
-        |y, m, d| {
-            Date::try_new_ummalqura_with_calendar(
-                y,
-                m,
-                d,
-                icu::calendar::cal::HijriUmmAlQura::new(),
-            )
-            .unwrap()
-        },
+        |y, m, d| Date::try_new_ummalqura(y, m, d).unwrap(),
     );
 
     bench_calendar(

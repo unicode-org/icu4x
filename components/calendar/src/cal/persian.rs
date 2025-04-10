@@ -10,7 +10,7 @@
 //! let persian_date = Date::try_new_persian(1348, 10, 11)
 //!     .expect("Failed to initialize Persian Date instance.");
 //!
-//! assert_eq!(persian_date.year().era_year_or_extended(), 1348);
+//! assert_eq!(persian_date.year().era_year_or_related_iso(), 1348);
 //! assert_eq!(persian_date.month().ordinal, 10);
 //! assert_eq!(persian_date.day_of_month().0, 11);
 //! ```
@@ -210,7 +210,7 @@ impl Date<Persian> {
     /// let date_persian = Date::try_new_persian(1392, 4, 25)
     ///     .expect("Failed to initialize Persian Date instance.");
     ///
-    /// assert_eq!(date_persian.year().era_year_or_extended(), 1392);
+    /// assert_eq!(date_persian.year().era_year_or_related_iso(), 1392);
     /// assert_eq!(date_persian.month().ordinal, 4);
     /// assert_eq!(date_persian.day_of_month().0, 25);
     /// ```
@@ -714,7 +714,7 @@ mod tests {
             assert_eq!(Persian::provided_year_is_leap(*p_year), *leap);
             let persian_date = Date::try_new_persian(*p_year, 1, 1).unwrap();
             let iso_date = persian_date.to_calendar(Iso);
-            assert_eq!(iso_date.year().era_year_or_extended(), *iso_year);
+            assert_eq!(iso_date.year().era_year_or_related_iso(), *iso_year);
             assert_eq!(iso_date.month().ordinal, *iso_month);
             assert_eq!(iso_date.day_of_month().0, *iso_day);
         }

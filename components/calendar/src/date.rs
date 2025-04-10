@@ -91,7 +91,7 @@ impl<C> Deref for Ref<'_, C> {
 
 /// A date for a given calendar.
 ///
-/// **The primary definition of this type is in the [`icu_calendar`](docs.rs/icu_calendar) crate. Other ICU4X crates re-export it for convenience.**
+/// **The primary definition of this type is in the [`icu_calendar`](https://docs.rs/icu_calendar) crate. Other ICU4X crates re-export it for convenience.**
 ///
 /// This can work with wrappers around [`Calendar`] types,
 /// e.g. `Rc<C>`, via the [`AsCalendar`] trait.
@@ -107,7 +107,7 @@ impl<C> Deref for Ref<'_, C> {
 /// let date_iso = Date::try_new_iso(1970, 1, 2)
 ///     .expect("Failed to initialize ISO Date instance.");
 ///
-/// assert_eq!(date_iso.year().era_year_or_extended(), 1970);
+/// assert_eq!(date_iso.year().era_year_or_related_iso(), 1970);
 /// assert_eq!(date_iso.month().ordinal, 1);
 /// assert_eq!(date_iso.day_of_month().0, 2);
 /// ```

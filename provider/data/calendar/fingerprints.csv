@@ -1,9 +1,8 @@
-calendar/chinese/v1, <singleton>, 782B, 754B, 134f5ec7c9bdc494
-calendar/dangi/v1, <singleton>, 782B, 754B, 79d5d32449956411
+calendar/chinese/v1, <singleton>, 782B, 754B, 20864d19a0fb69e7
+calendar/dangi/v1, <singleton>, 782B, 754B, 2f736da3a7652798
 calendar/hijri/simulated/mecca/v1, <singleton>, 532B, 504B, ad7346b38a43c235
-calendar/hijri/ummalqura/v1, <singleton>, 634B, 606B, c6cb587e4f5c8c2e
-calendar/japanese/extended/v1, <singleton>, 5238B, 5216B, 781ca7801695fa36
-calendar/japanese/modern/v1, <singleton>, 134B, 111B, b31e52deaf52706f
+calendar/japanese/extended/v1, <singleton>, 5238B, 5216B, e80e648736f019
+calendar/japanese/modern/v1, <singleton>, 134B, 111B, ec96742e22e8fc30
 calendar/week/v1, <lookup>, 292B, 72 identifiers
 calendar/week/v1, <total>, 20B, 20B, 10 unique payloads
 calendar/week/v1, und, 2B, 2B, db63f20c2a6a914a

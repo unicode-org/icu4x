@@ -33,7 +33,7 @@ impl core::error::Error for SymbolError {}
 /// Field symbols are a more granular distinction
 /// for a pattern field within the category of a field type. Examples of field types are:
 /// `Year`, `Month`, `Hour`.  Within the [`Hour`] field type, examples of field symbols are: [`Hour::H12`],
-/// [`Hour::H24`]. Each field symbol is represented within the date formatting pattern string
+/// [`Hour::H23`]. Each field symbol is represented within the date formatting pattern string
 /// by a distinct character from the set of `A..Z` and `a..z`.
 #[derive(Debug, Eq, PartialEq, Clone, Copy)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
@@ -297,7 +297,6 @@ impl FieldSymbol {
             Self::Hour(Hour::H11) => 18,
             Self::Hour(Hour::H12) => 19,
             Self::Hour(Hour::H23) => 20,
-            Self::Hour(Hour::H24) => 21,
             Self::Minute => 22,
             Self::Second(Second::Second) => 23,
             Self::Second(Second::MillisInDay) => 24,
@@ -583,8 +582,6 @@ field_type!(
         'h' => H12 = 1,
         /// Field symbol for numeric hour [0-23].
         'H' => H23 = 2,
-        /// Field symbol for numeric hour [1-24].
-        'k' => H24 = 3,
     };
     Numeric;
     HourULE
@@ -596,7 +593,6 @@ impl Hour {
             HourCycle::H11 => Self::H11,
             HourCycle::H12 => Self::H12,
             HourCycle::H23 => Self::H23,
-            HourCycle::H24 => Self::H24,
             _ => unreachable!(),
         }
     }

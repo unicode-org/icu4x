@@ -436,7 +436,6 @@ mod test {
         );
 
         assert_pattern_to_skeleton("K:mm", "hmm", "H11 maps to H12");
-        assert_pattern_to_skeleton("k:mm", "Hmm", "H23 maps to H24");
 
         assert_pattern_to_skeleton("ha mm", "hmm", "Day periods get removed");
         assert_pattern_to_skeleton("h 'at' b mm", "hmm", "Day periods get removed");

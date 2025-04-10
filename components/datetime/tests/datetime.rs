@@ -124,7 +124,7 @@ fn test_fixture(fixture_name: &str, file: &str) {
                 CalendarAlgorithm::Hijri(Some(HijriCalendarAlgorithm::Civil)) => {
                     assert_fixture_element(
                         prefs,
-                        HijriTabular::new(HijriTabularEpoch::Friday, HijriTabularLeapYears::TypeII),
+                        HijriTabular::new(HijriTabularLeapYears::TypeII, HijriTabularEpoch::Friday),
                         input,
                         &expected,
                         field_set,
@@ -145,8 +145,8 @@ fn test_fixture(fixture_name: &str, file: &str) {
                     assert_fixture_element(
                         prefs,
                         HijriTabular::new(
-                            HijriTabularEpoch::Thursday,
                             HijriTabularLeapYears::TypeII,
+                            HijriTabularEpoch::Thursday,
                         ),
                         input,
                         &expected,

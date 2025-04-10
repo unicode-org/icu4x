@@ -11,7 +11,7 @@
 //!     .expect("Failed to initialize ISO Date instance.");
 //! let date_julian = Date::new_from_iso(date_iso, Julian);
 //!
-//! assert_eq!(date_julian.year().era_year_or_extended(), 1969);
+//! assert_eq!(date_julian.year().era_year_or_related_iso(), 1969);
 //! assert_eq!(date_julian.month().ordinal, 12);
 //! assert_eq!(date_julian.day_of_month().0, 20);
 //! ```
@@ -223,7 +223,7 @@ impl Date<Julian> {
     /// let date_julian = Date::try_new_julian(1969, 12, 20)
     ///     .expect("Failed to initialize Julian Date instance.");
     ///
-    /// assert_eq!(date_julian.year().era_year_or_extended(), 1969);
+    /// assert_eq!(date_julian.year().era_year_or_related_iso(), 1969);
     /// assert_eq!(date_julian.month().ordinal, 12);
     /// assert_eq!(date_julian.day_of_month().0, 20);
     /// ```

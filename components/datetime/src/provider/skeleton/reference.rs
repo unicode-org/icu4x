@@ -98,9 +98,7 @@ impl From<&Pattern> for Skeleton {
                     FieldSymbol::Hour(fields::Hour::H11) | FieldSymbol::Hour(fields::Hour::H12) => {
                         FieldSymbol::Hour(fields::Hour::H12)
                     }
-                    FieldSymbol::Hour(fields::Hour::H23) | FieldSymbol::Hour(fields::Hour::H24) => {
-                        FieldSymbol::Hour(fields::Hour::H23)
-                    }
+                    FieldSymbol::Hour(fields::Hour::H23) => FieldSymbol::Hour(fields::Hour::H23),
 
                     // Pass through all of the following preferences unchanged.
                     FieldSymbol::Minute

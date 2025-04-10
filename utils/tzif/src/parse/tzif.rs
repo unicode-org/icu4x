@@ -505,7 +505,7 @@ where
                 |records| {
                     records
                         .first()
-                        .map_or(true, |first| first.occurrence >= Seconds(0))
+                        .is_none_or(|first| first.occurrence >= Seconds(0))
                 },
                 "The first leap-second occurrence, if present, must be non-negative",
             )
@@ -516,7 +516,7 @@ where
                 |records| {
                     records
                         .first()
-                        .map_or(true, |first| first.correction == 1 || first.correction == -1)
+                        .is_none_or(|first| first.correction == 1 || first.correction == -1)
                 },
                 "The first leap-second correction, if present, must be 1 or -1",
             )

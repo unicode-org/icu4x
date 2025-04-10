@@ -274,7 +274,7 @@ impl<M: DynamicDataMarker, Variables> MaybePayload<M, Variables> for () {
 }
 
 /// This can be extended in the future to support multiple lengths.
-/// For now, this type wraps a symbols object tagged with a single length. See #4337
+/// For now, this type wraps a symbols object tagged with a single length. See [#4337](https://github.com/unicode-org/icu4x/issues/4337)
 #[derive(Debug, Copy, Clone)]
 pub(crate) enum OptionalNames<Variables, Payload> {
     None,

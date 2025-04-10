@@ -121,6 +121,8 @@ icu_provider::data_marker!(
     is_singleton = true
 );
 
+pub use crate::word::inner::WordTypeULE;
+
 #[cfg(feature = "datagen")]
 /// The latest minimum set of markers required by this component.
 pub const MARKERS: &[DataMarkerInfo] = &[

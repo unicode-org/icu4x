@@ -159,13 +159,13 @@ export class CaseMapper {
      *
      * See the [Rust documentation for `uppercase`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapperBorrowed.html#method.uppercase) for more information.
      */
-    uppercaseWithCompiledData(s, locale) {
+    static uppercaseWithCompiledData(s, locale) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
         const sSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, s));
         
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
-        wasm.icu4x_CaseMapper_uppercase_with_compiled_data_mv1(this.ffiValue, ...sSlice.splat(), locale.ffiValue, write.buffer);
+        wasm.icu4x_CaseMapper_uppercase_with_compiled_data_mv1(...sSlice.splat(), locale.ffiValue, write.buffer);
     
         try {
             return write.readString8();

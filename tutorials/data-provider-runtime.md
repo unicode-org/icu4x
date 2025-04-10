@@ -97,7 +97,7 @@ struct CacheKey<'a>(DataMarkerInfo, Cow<'a, DataLocale>);
 struct CacheKeyWrap(CacheKey<'static>);
 
 // This impl enables a borrowed DataLocale to be used during cache retrieval.
-impl<'a> Borrow<CacheKey<'a>> for lru::KeyRef<CacheKeyWrap> {
+impl<'a> Borrow<CacheKey<'a>> for CacheKeyWrap {
     fn borrow(&self) -> &CacheKey<'a> {
         &Borrow::<CacheKeyWrap>::borrow(self).0
     }

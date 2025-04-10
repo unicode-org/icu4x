@@ -2,9 +2,10 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use std::{collections::HashMap, ffi::CStr, ptr};
-
 use libc::{setlocale, LC_ALL, LC_TIME};
+use std::collections::HashMap;
+use std::ffi::CStr;
+use std::ptr;
 use std::str::FromStr;
 
 use crate::RetrievalError;
@@ -49,11 +50,26 @@ impl FromStr for LocaleCategory {
     }
 }
 
+/// Use [`get_raw_locale_categories`] to find a list of the user's preferred locales
+pub fn get_raw_locales() -> Result<Vec<String>, RetrievalError> {
+    let mut categories = get_raw_locale_categories()?;
+    let mut locales = Vec::with_capacity(categories.len());
+
+    // Add LC_ALL if it exists
+    if let Some(primary_locale) = categories.remove(&LocaleCategory::All) {
+        locales.push(primary_locale);
+    }
+
+    // Add any remaining locales that were explicitly set
+    locales.extend(categories.into_values());
+    Ok(locales)
+}
+
 // TODO: Add a function to return all the locales POSIX categories explicitly
 
 /// Retrieves locale for `LC_ALL` POSIX category. Also returns other categories if any are explicitly
 /// set in the thread
-pub fn get_locales() -> Result<HashMap<LocaleCategory, String>, RetrievalError> {
+pub fn get_raw_locale_categories() -> Result<HashMap<LocaleCategory, String>, RetrievalError> {
     let mut locale_map = HashMap::new();
 
     // SAFETY: Safety is ensured because we pass a `NULL` pointer and retrieve the locale there is

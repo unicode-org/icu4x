@@ -29,26 +29,26 @@ pub mod ffi {
     pub struct WordSegmenter(icu_segmenter::WordSegmenter);
 
     #[diplomat::opaque]
-    #[diplomat::rust_link(icu::segmenter::WordBreakIterator, Struct)]
+    #[diplomat::rust_link(icu::segmenter::word::WordBreakIterator, Struct)]
     #[diplomat::rust_link(
-        icu::segmenter::WordBreakIteratorPotentiallyIllFormedUtf8,
+        icu::segmenter::word::WordBreakIteratorPotentiallyIllFormedUtf8,
         Typedef,
         hidden
     )]
-    #[diplomat::rust_link(icu::segmenter::WordBreakIteratorUtf8, Typedef, hidden)]
+    #[diplomat::rust_link(icu::segmenter::word::WordBreakIteratorUtf8, Typedef, hidden)]
     pub struct WordBreakIteratorUtf8<'a>(
-        icu_segmenter::WordBreakIteratorPotentiallyIllFormedUtf8<'a, 'a>,
+        icu_segmenter::word::WordBreakIteratorPotentiallyIllFormedUtf8<'a, 'a>,
     );
 
     #[diplomat::opaque]
-    #[diplomat::rust_link(icu::segmenter::WordBreakIterator, Struct)]
-    #[diplomat::rust_link(icu::segmenter::WordBreakIteratorUtf16, Typedef, hidden)]
-    pub struct WordBreakIteratorUtf16<'a>(icu_segmenter::WordBreakIteratorUtf16<'a, 'a>);
+    #[diplomat::rust_link(icu::segmenter::word::WordBreakIterator, Struct)]
+    #[diplomat::rust_link(icu::segmenter::word::WordBreakIteratorUtf16, Typedef, hidden)]
+    pub struct WordBreakIteratorUtf16<'a>(icu_segmenter::word::WordBreakIteratorUtf16<'a, 'a>);
 
     #[diplomat::opaque]
-    #[diplomat::rust_link(icu::segmenter::WordBreakIterator, Struct)]
-    #[diplomat::rust_link(icu::segmenter::WordBreakIteratorLatin1, Typedef, hidden)]
-    pub struct WordBreakIteratorLatin1<'a>(icu_segmenter::WordBreakIteratorLatin1<'a, 'a>);
+    #[diplomat::rust_link(icu::segmenter::word::WordBreakIterator, Struct)]
+    #[diplomat::rust_link(icu::segmenter::word::WordBreakIteratorLatin1, Typedef, hidden)]
+    pub struct WordBreakIteratorLatin1<'a>(icu_segmenter::word::WordBreakIteratorLatin1<'a, 'a>);
 
     impl SegmenterWordType {
         #[diplomat::rust_link(icu::segmenter::options::WordType::is_word_like, FnInEnum)]
@@ -260,9 +260,9 @@ pub mod ffi {
     impl<'a> WordBreakIteratorUtf8<'a> {
         /// Finds the next breakpoint. Returns -1 if at the end of the string or if the index is
         /// out of range of a 32-bit signed integer.
-        #[diplomat::rust_link(icu::segmenter::WordBreakIterator::next, FnInStruct)]
+        #[diplomat::rust_link(icu::segmenter::word::WordBreakIterator::next, FnInStruct)]
         #[diplomat::rust_link(
-            icu::segmenter::WordBreakIterator::Item,
+            icu::segmenter::word::WordBreakIterator::Item,
             AssociatedTypeInStruct,
             hidden
         )]
@@ -274,10 +274,10 @@ pub mod ffi {
         }
 
         /// Return the status value of break boundary.
-        #[diplomat::rust_link(icu::segmenter::WordBreakIterator::word_type, FnInStruct)]
-        #[diplomat::rust_link(icu::segmenter::WordBreakIteratorWithWordType, Struct, hidden)]
+        #[diplomat::rust_link(icu::segmenter::word::WordBreakIterator::word_type, FnInStruct)]
+        #[diplomat::rust_link(icu::segmenter::word::WordBreakIteratorWithWordType, Struct, hidden)]
         #[diplomat::rust_link(
-            icu::segmenter::WordBreakIteratorWithWordType::next,
+            icu::segmenter::word::WordBreakIteratorWithWordType::next,
             FnInStruct,
             hidden
         )]
@@ -287,7 +287,7 @@ pub mod ffi {
         }
 
         /// Return true when break boundary is word-like such as letter/number/CJK
-        #[diplomat::rust_link(icu::segmenter::WordBreakIterator::is_word_like, FnInStruct)]
+        #[diplomat::rust_link(icu::segmenter::word::WordBreakIterator::is_word_like, FnInStruct)]
         #[diplomat::attr(auto, getter)]
         pub fn is_word_like(&self) -> bool {
             self.0.is_word_like()
@@ -297,9 +297,9 @@ pub mod ffi {
     impl<'a> WordBreakIteratorUtf16<'a> {
         /// Finds the next breakpoint. Returns -1 if at the end of the string or if the index is
         /// out of range of a 32-bit signed integer.
-        #[diplomat::rust_link(icu::segmenter::WordBreakIterator::next, FnInStruct)]
+        #[diplomat::rust_link(icu::segmenter::word::WordBreakIterator::next, FnInStruct)]
         #[diplomat::rust_link(
-            icu::segmenter::WordBreakIterator::Item,
+            icu::segmenter::word::WordBreakIterator::Item,
             AssociatedTypeInStruct,
             hidden
         )]
@@ -311,9 +311,9 @@ pub mod ffi {
         }
 
         /// Return the status value of break boundary.
-        #[diplomat::rust_link(icu::segmenter::WordBreakIterator::word_type, FnInStruct)]
+        #[diplomat::rust_link(icu::segmenter::word::WordBreakIterator::word_type, FnInStruct)]
         #[diplomat::rust_link(
-            icu::segmenter::WordBreakIterator::iter_with_word_type,
+            icu::segmenter::word::WordBreakIterator::iter_with_word_type,
             FnInStruct,
             hidden
         )]
@@ -323,7 +323,7 @@ pub mod ffi {
         }
 
         /// Return true when break boundary is word-like such as letter/number/CJK
-        #[diplomat::rust_link(icu::segmenter::WordBreakIterator::is_word_like, FnInStruct)]
+        #[diplomat::rust_link(icu::segmenter::word::WordBreakIterator::is_word_like, FnInStruct)]
         #[diplomat::attr(auto, getter)]
         pub fn is_word_like(&self) -> bool {
             self.0.is_word_like()
@@ -333,9 +333,9 @@ pub mod ffi {
     impl<'a> WordBreakIteratorLatin1<'a> {
         /// Finds the next breakpoint. Returns -1 if at the end of the string or if the index is
         /// out of range of a 32-bit signed integer.
-        #[diplomat::rust_link(icu::segmenter::WordBreakIterator::next, FnInStruct)]
+        #[diplomat::rust_link(icu::segmenter::word::WordBreakIterator::next, FnInStruct)]
         #[diplomat::rust_link(
-            icu::segmenter::WordBreakIterator::Item,
+            icu::segmenter::word::WordBreakIterator::Item,
             AssociatedTypeInStruct,
             hidden
         )]
@@ -347,14 +347,14 @@ pub mod ffi {
         }
 
         /// Return the status value of break boundary.
-        #[diplomat::rust_link(icu::segmenter::WordBreakIterator::word_type, FnInStruct)]
+        #[diplomat::rust_link(icu::segmenter::word::WordBreakIterator::word_type, FnInStruct)]
         #[diplomat::attr(auto, getter)]
         pub fn word_type(&self) -> SegmenterWordType {
             self.0.word_type().into()
         }
 
         /// Return true when break boundary is word-like such as letter/number/CJK
-        #[diplomat::rust_link(icu::segmenter::WordBreakIterator::is_word_like, FnInStruct)]
+        #[diplomat::rust_link(icu::segmenter::word::WordBreakIterator::is_word_like, FnInStruct)]
         #[diplomat::attr(auto, getter)]
         pub fn is_word_like(&self) -> bool {
             self.0.is_word_like()

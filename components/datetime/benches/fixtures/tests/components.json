@@ -495,7 +495,7 @@
                         "length": "short",
                         "timePrecision": "minute"
                     },
-                    "hourCycle": "h24"
+                    "hourCycle": "h23"
                 }
             },
             {
@@ -551,7 +551,7 @@
                         "length": "short",
                         "timePrecision": "minute"
                     },
-                    "hourCycle": "h24"
+                    "hourCycle": "h23"
                 }
             }
         ],
