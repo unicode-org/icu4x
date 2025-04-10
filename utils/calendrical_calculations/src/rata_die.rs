@@ -12,7 +12,7 @@ use core::ops::{Add, AddAssign, Sub, SubAssign};
 #[allow(unused_imports)]
 use core_maths::*;
 
-/// The *Rata Die*, or *R.D.*, or `fixed_date`: number of days since January 1, 1 CE.
+/// The *Rata Die*, or *R.D.*: number of days since January 1, 1 CE.
 ///
 /// See: <https://en.wikipedia.org/wiki/Rata_Die>
 ///
@@ -32,7 +32,7 @@ impl RataDie {
 
     /// Check that it is in range
     #[cfg(debug_assertions)]
-    pub const fn check(&self) {
+    const fn check(&self) {
         if self.0 > i64::MAX / 256 {
             debug_assert!(
                 false,
@@ -48,8 +48,8 @@ impl RataDie {
     }
 
     /// A valid RataDie that is intended to be below all dates representable in calendars
-    #[doc(hidden)] // for testing only
-    pub const fn big_negative() -> Self {
+    #[allow(dead_code)]
+    pub(crate) const fn big_negative() -> Self {
         Self::new(i64::MIN / 256 / 256)
     }
 
@@ -59,7 +59,7 @@ impl RataDie {
     }
 
     /// Convert this to an f64 value representing the RataDie
-    pub const fn to_f64_date(self) -> f64 {
+    pub(crate) const fn to_f64_date(self) -> f64 {
         self.0 as f64
     }
 
@@ -74,7 +74,7 @@ impl RataDie {
     }
 
     /// Convert this to a [`Moment`]
-    pub const fn as_moment(&self) -> Moment {
+    pub(crate) const fn as_moment(&self) -> Moment {
         Moment::new(self.0 as f64)
     }
 }
@@ -141,7 +141,7 @@ impl Sub for RataDie {
 /// NOTE: This should not cause overflow errors for most cases, but consider
 /// alternative implementations if necessary.
 #[derive(Debug, Copy, Clone, PartialEq, PartialOrd)]
-pub struct Moment(f64);
+pub(crate) struct Moment(f64);
 
 /// Add a number of days to a Moment
 impl Add<f64> for Moment {
