@@ -14,12 +14,13 @@ pub mod ffi {
     use writeable::TryWriteable;
 
     #[allow(unused_imports)]
-    use crate::{
+    use crate::datetime_helpers::{self, map_or_default};
+
+    #[allow(unused_imports)]
+    use crate::unstable::{
         date_formatter::ffi::{DateFormatter, DateFormatterGregorian},
         date_time_formatter::ffi::{DateTimeFormatter, DateTimeFormatterGregorian},
         date::ffi::IsoDate,
-        datetime_helpers,
-        datetime_helpers::map_or_default,
         datetime_options::ffi::{DateTimeAlignment, DateTimeLength, TimePrecision},
         errors::ffi::DateTimeFormatterLoadError,
         errors::ffi::DateTimeWriteError,
@@ -30,7 +31,7 @@ pub mod ffi {
     };
 
     #[cfg(feature = "buffer_provider")]
-    use crate::provider::ffi::DataProvider;
+    use crate::unstable::provider::ffi::DataProvider;
 
     #[diplomat::opaque]
     #[diplomat::rust_link(icu::datetime::DateTimeFormatter, Typedef)]

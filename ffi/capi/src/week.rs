@@ -8,11 +8,11 @@
 pub mod ffi {
     use alloc::boxed::Box;
 
-    use crate::date::ffi::Weekday;
+    use crate::unstable::date::ffi::Weekday;
     #[cfg(feature = "buffer_provider")]
-    use crate::provider::ffi::DataProvider;
+    use crate::unstable::provider::ffi::DataProvider;
     #[cfg(any(feature = "compiled_data", feature = "buffer_provider"))]
-    use crate::{errors::ffi::DataError, locale_core::ffi::Locale};
+    use crate::unstable::{errors::ffi::DataError, locale_core::ffi::Locale};
 
     /// A Week calculator, useful to be passed in to `week_of_year()` on Date and DateTime types
     #[diplomat::opaque]

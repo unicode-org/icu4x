@@ -6,11 +6,11 @@
 #[diplomat::abi_rename = "icu4x_{0}_mv1"]
 #[diplomat::attr(auto, namespace = "icu4x")]
 pub mod ffi {
-    use crate::properties_enums::ffi::GeneralCategoryGroup;
+    use crate::unstable::properties_enums::ffi::GeneralCategoryGroup;
     use alloc::boxed::Box;
 
     #[cfg(feature = "buffer_provider")]
-    use crate::{errors::ffi::DataError, provider::ffi::DataProvider};
+    use crate::unstable::{errors::ffi::DataError, provider::ffi::DataProvider};
 
     /// A type capable of looking up a property value from a string name.
     #[diplomat::opaque]

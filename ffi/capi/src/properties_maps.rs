@@ -14,11 +14,11 @@ pub mod ffi {
         VerticalOrientation, WordBreak,
     };
 
-    use crate::properties_enums::ffi::GeneralCategoryGroup;
-    use crate::properties_iter::ffi::CodePointRangeIterator;
-    use crate::properties_sets::ffi::CodePointSetData;
+    use crate::unstable::properties_enums::ffi::GeneralCategoryGroup;
+    use crate::unstable::properties_iter::ffi::CodePointRangeIterator;
+    use crate::unstable::properties_sets::ffi::CodePointSetData;
     #[cfg(feature = "buffer_provider")]
-    use crate::{errors::ffi::DataError, provider::ffi::DataProvider};
+    use crate::unstable::{errors::ffi::DataError, provider::ffi::DataProvider};
 
     #[diplomat::opaque]
     /// An ICU4X Unicode Map Property object, capable of querying whether a code point (key) to obtain the Unicode property value, for a specific Unicode property.

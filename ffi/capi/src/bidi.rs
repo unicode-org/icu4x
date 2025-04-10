@@ -11,7 +11,7 @@ pub mod ffi {
     use core::fmt::Write;
 
     #[cfg(feature = "buffer_provider")]
-    use crate::{errors::ffi::DataError, provider::ffi::DataProvider};
+    use crate::unstable::{errors::ffi::DataError, provider::ffi::DataProvider};
 
     pub enum BidiDirection {
         Ltr,

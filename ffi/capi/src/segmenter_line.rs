@@ -9,9 +9,9 @@ pub mod ffi {
     use alloc::boxed::Box;
 
     #[cfg(any(feature = "compiled_data", feature = "buffer_provider"))]
-    use crate::locale_core::ffi::Locale;
+    use crate::unstable::locale_core::ffi::Locale;
     #[cfg(feature = "buffer_provider")]
-    use crate::{errors::ffi::DataError, provider::ffi::DataProvider};
+    use crate::unstable::{errors::ffi::DataError, provider::ffi::DataProvider};
     use diplomat_runtime::DiplomatOption;
     #[cfg(any(feature = "compiled_data", feature = "buffer_provider"))]
     use icu_segmenter::options::LineBreakOptions;

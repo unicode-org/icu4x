@@ -9,7 +9,7 @@ pub mod ffi {
     use alloc::boxed::Box;
 
     #[cfg(feature = "buffer_provider")]
-    use crate::{errors::ffi::DataError, provider::ffi::DataProvider};
+    use crate::unstable::{errors::ffi::DataError, provider::ffi::DataProvider};
 
     /// Lookup of the Canonical_Combining_Class Unicode property
     #[diplomat::opaque]
