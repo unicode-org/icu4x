@@ -166,6 +166,14 @@ lazy_static::lazy_static! {
         "icu::datetime::FixedCalendarDateTimeFormatter::to_field_set_builder",
         "icu::datetime::fieldsets::Combo::into_enums",
 
+        // Not planned for 2.0: Unchecked formatting. FFI always uses the concrete Date, Time,
+        // and TimeZoneInfo types. A composite formatter might need a format_unchecked-type
+        // of function.
+        "icu::datetime::DateTimeInputUnchecked",
+        "icu::datetime::FixedCalendarDateTimeFormatter::format_unchecked",
+        "icu::datetime::DateTimeFormatter::format_unchecked",
+        "icu::datetime::FormattedDateTimeUnchecked",
+
         // Not planned for 2.0: Would need to introduce diplomat writeable with parts
         "icu::list::parts",
         "icu::datetime::parts",
@@ -370,13 +378,6 @@ lazy_static::lazy_static! {
         "icu::calendar::Date::into_ref_counted",
         "icu::calendar::Date::into_atomic_ref_counted",
         "icu::calendar::Date::as_borrowed",
-
-        // Unchecked formatting: FFI does not have the type system safety. All format
-        // methods are already "unchecked" in the sense that anything goes.
-        "icu::datetime::DateTimeInputUnchecked",
-        "icu::datetime::FixedCalendarDateTimeFormatter::format_unchecked",
-        "icu::datetime::DateTimeFormatter::format_unchecked",
-        "icu::datetime::FormattedDateTimeUnchecked",
 
         // Generic type, primarily exists for use by ICU4X data struct internals.
         "icu::plurals::PluralElements",
