@@ -44,7 +44,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::datetime::fieldsets::T, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::T::with_time_precision, FnInStruct, compact)]
         #[diplomat::rust_link(icu::datetime::fieldsets::T::with_alignment, FnInStruct, compact)]
-        #[diplomat::rust_link(icu::datetime::fieldsets::T::with_length, FnInStruct, compact)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::T::for_length, FnInStruct, compact)]
         #[diplomat::rust_link(icu::datetime::fieldsets::T::short, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::T::medium, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::T::long, FnInStruct, hidden)]
@@ -58,7 +58,7 @@ pub mod ffi {
             alignment: Option<DateTimeAlignment>,
         ) -> Result<Box<Self>, DateTimeFormatterLoadError> {
             let prefs = (&locale.0).into();
-            let mut options = icu_datetime::fieldsets::T::with_length(map_or_default(length));
+            let mut options = icu_datetime::fieldsets::T::for_length(map_or_default(length));
             options.time_precision = time_precision.map(Into::into);
             options.alignment = alignment.map(Into::into);
             Ok(Box::new(Self(
@@ -77,7 +77,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::datetime::fieldsets::T, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::T::with_time_precision, FnInStruct, compact)]
         #[diplomat::rust_link(icu::datetime::fieldsets::T::with_alignment, FnInStruct, compact)]
-        #[diplomat::rust_link(icu::datetime::fieldsets::T::with_length, FnInStruct, compact)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::T::for_length, FnInStruct, compact)]
         #[diplomat::rust_link(icu::datetime::fieldsets::T::short, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::T::medium, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::T::long, FnInStruct, hidden)]
@@ -91,7 +91,7 @@ pub mod ffi {
             alignment: Option<DateTimeAlignment>,
         ) -> Result<Box<Self>, DateTimeFormatterLoadError> {
             let prefs = (&locale.0).into();
-            let mut options = icu_datetime::fieldsets::T::with_length(map_or_default(length));
+            let mut options = icu_datetime::fieldsets::T::for_length(map_or_default(length));
             options.time_precision = time_precision.map(Into::into);
             options.alignment = alignment.map(Into::into);
             Ok(Box::new(Self(

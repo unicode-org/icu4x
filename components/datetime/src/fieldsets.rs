@@ -137,7 +137,7 @@ macro_rules! impl_marker_length_constructors {
     ) => {
         impl $type {
             #[doc = concat!("Creates a ", stringify!($type), " skeleton with the given formatting length.")]
-            pub const fn with_length(length: Length) -> Self {
+            pub const fn for_length(length: Length) -> Self {
                 Self {
                     length,
                     $(
@@ -153,15 +153,15 @@ macro_rules! impl_marker_length_constructors {
             }
             #[doc = concat!("Creates a ", stringify!($type), " skeleton with a long length.")]
             pub const fn long() -> Self {
-                Self::with_length(Length::Long)
+                Self::for_length(Length::Long)
             }
             #[doc = concat!("Creates a ", stringify!($type), " skeleton with a medium length.")]
             pub const fn medium() -> Self {
-                Self::with_length(Length::Medium)
+                Self::for_length(Length::Medium)
             }
             #[doc = concat!("Creates a ", stringify!($type), " skeleton with a short length.")]
             pub const fn short() -> Self {
-                Self::with_length(Length::Short)
+                Self::for_length(Length::Short)
             }
         }
     };
@@ -174,11 +174,11 @@ macro_rules! impl_time_precision_constructors {
         impl $time_type {
             #[doc = concat!("Creates a ", stringify!($type), " that formats hours and minutes with the default length.")]
             pub fn hm() -> Self {
-                Self::with_length(Default::default()).with_time_precision(TimePrecision::Minute)
+                Self::for_length(Default::default()).with_time_precision(TimePrecision::Minute)
             }
             #[doc = concat!("Creates a ", stringify!($type), " that formats hours, minutes, and seconds with the default length.")]
             pub fn hms() -> Self {
-                Self::with_length(Default::default()).with_time_precision(TimePrecision::Second)
+                Self::for_length(Default::default()).with_time_precision(TimePrecision::Second)
             }
         }
     };

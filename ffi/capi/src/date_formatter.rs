@@ -43,7 +43,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::datetime::DateTimeFormatter::try_new, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::D, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::D::with_alignment, FnInStruct, compact)]
-        #[diplomat::rust_link(icu::datetime::fieldsets::D::with_length, FnInStruct, compact)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::D::for_length, FnInStruct, compact)]
         #[diplomat::rust_link(icu::datetime::fieldsets::D::short, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::D::medium, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::D::long, FnInStruct, hidden)]
@@ -55,7 +55,7 @@ pub mod ffi {
             alignment: Option<DateTimeAlignment>,
         ) -> Result<Box<Self>, DateTimeFormatterLoadError> {
             let prefs = (&locale.0).into();
-            let mut options = icu_datetime::fieldsets::D::with_length(map_or_default(length));
+            let mut options = icu_datetime::fieldsets::D::for_length(map_or_default(length));
             options.alignment = alignment.map(Into::into);
             Ok(Box::new(Self(
                 icu_datetime
@@ -72,7 +72,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::datetime::DateTimeFormatter::try_new, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::D, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::D::with_alignment, FnInStruct, compact)]
-        #[diplomat::rust_link(icu::datetime::fieldsets::D::with_length, FnInStruct, compact)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::D::for_length, FnInStruct, compact)]
         #[diplomat::rust_link(icu::datetime::fieldsets::D::short, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::D::medium, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::D::long, FnInStruct, hidden)]
@@ -85,7 +85,7 @@ pub mod ffi {
             alignment: Option<DateTimeAlignment>,
         ) -> Result<Box<Self>, DateTimeFormatterLoadError> {
             let prefs = (&locale.0).into();
-            let mut options = icu_datetime::fieldsets::D::with_length(map_or_default(length));
+            let mut options = icu_datetime::fieldsets::D::for_length(map_or_default(length));
             options.alignment = alignment.map(Into::into);
             Ok(Box::new(Self(
                 icu_datetime
@@ -103,7 +103,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::datetime::DateTimeFormatter::try_new, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::MD, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::MD::with_alignment, FnInStruct, compact)]
-        #[diplomat::rust_link(icu::datetime::fieldsets::MD::with_length, FnInStruct, compact)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::MD::for_length, FnInStruct, compact)]
         #[diplomat::rust_link(icu::datetime::fieldsets::MD::short, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::MD::medium, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::MD::long, FnInStruct, hidden)]
@@ -115,7 +115,7 @@ pub mod ffi {
             alignment: Option<DateTimeAlignment>,
         ) -> Result<Box<Self>, DateTimeFormatterLoadError> {
             let prefs = (&locale.0).into();
-            let mut options = icu_datetime::fieldsets::MD::with_length(map_or_default(length));
+            let mut options = icu_datetime::fieldsets::MD::for_length(map_or_default(length));
             options.alignment = alignment.map(Into::into);
             Ok(Box::new(Self(
                 icu_datetime
@@ -132,7 +132,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::datetime::DateTimeFormatter::try_new, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::MD, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::MD::with_alignment, FnInStruct, compact)]
-        #[diplomat::rust_link(icu::datetime::fieldsets::MD::with_length, FnInStruct, compact)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::MD::for_length, FnInStruct, compact)]
         #[diplomat::rust_link(icu::datetime::fieldsets::MD::short, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::MD::medium, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::MD::long, FnInStruct, hidden)]
@@ -145,7 +145,7 @@ pub mod ffi {
             alignment: Option<DateTimeAlignment>,
         ) -> Result<Box<Self>, DateTimeFormatterLoadError> {
             let prefs = (&locale.0).into();
-            let mut options = icu_datetime::fieldsets::MD::with_length(map_or_default(length));
+            let mut options = icu_datetime::fieldsets::MD::for_length(map_or_default(length));
             options.alignment = alignment.map(Into::into);
             Ok(Box::new(Self(
                 icu_datetime
@@ -164,7 +164,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::datetime::fieldsets::YMD, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMD::with_alignment, FnInStruct, compact)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMD::with_year_style, FnInStruct, compact)]
-        #[diplomat::rust_link(icu::datetime::fieldsets::YMD::with_length, FnInStruct, compact)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::YMD::for_length, FnInStruct, compact)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMD::short, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMD::medium, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMD::long, FnInStruct, hidden)]
@@ -178,7 +178,7 @@ pub mod ffi {
             year_style: Option<YearStyle>,
         ) -> Result<Box<Self>, DateTimeFormatterLoadError> {
             let prefs = (&locale.0).into();
-            let mut options = icu_datetime::fieldsets::YMD::with_length(map_or_default(length));
+            let mut options = icu_datetime::fieldsets::YMD::for_length(map_or_default(length));
             options.alignment = alignment.map(Into::into);
             options.year_style = year_style.map(Into::into);
             Ok(Box::new(Self(
@@ -197,7 +197,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::datetime::fieldsets::YMD, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMD::with_alignment, FnInStruct, compact)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMD::with_year_style, FnInStruct, compact)]
-        #[diplomat::rust_link(icu::datetime::fieldsets::YMD::with_length, FnInStruct, compact)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::YMD::for_length, FnInStruct, compact)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMD::short, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMD::medium, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMD::long, FnInStruct, hidden)]
@@ -211,7 +211,7 @@ pub mod ffi {
             year_style: Option<YearStyle>,
         ) -> Result<Box<Self>, DateTimeFormatterLoadError> {
             let prefs = (&locale.0).into();
-            let mut options = icu_datetime::fieldsets::YMD::with_length(map_or_default(length));
+            let mut options = icu_datetime::fieldsets::YMD::for_length(map_or_default(length));
             options.alignment = alignment.map(Into::into);
             options.year_style = year_style.map(Into::into);
             Ok(Box::new(Self(
@@ -230,7 +230,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::datetime::DateTimeFormatter::try_new, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::DE, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::DE::with_alignment, FnInStruct, compact)]
-        #[diplomat::rust_link(icu::datetime::fieldsets::DE::with_length, FnInStruct, compact)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::DE::for_length, FnInStruct, compact)]
         #[diplomat::rust_link(icu::datetime::fieldsets::DE::short, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::DE::medium, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::DE::long, FnInStruct, hidden)]
@@ -242,7 +242,7 @@ pub mod ffi {
             alignment: Option<DateTimeAlignment>,
         ) -> Result<Box<Self>, DateTimeFormatterLoadError> {
             let prefs = (&locale.0).into();
-            let mut options = icu_datetime::fieldsets::DE::with_length(map_or_default(length));
+            let mut options = icu_datetime::fieldsets::DE::for_length(map_or_default(length));
             options.alignment = alignment.map(Into::into);
             Ok(Box::new(Self(
                 icu_datetime
@@ -259,7 +259,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::datetime::DateTimeFormatter::try_new, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::DE, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::DE::with_alignment, FnInStruct, compact)]
-        #[diplomat::rust_link(icu::datetime::fieldsets::DE::with_length, FnInStruct, compact)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::DE::for_length, FnInStruct, compact)]
         #[diplomat::rust_link(icu::datetime::fieldsets::DE::short, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::DE::medium, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::DE::long, FnInStruct, hidden)]
@@ -272,7 +272,7 @@ pub mod ffi {
             alignment: Option<DateTimeAlignment>,
         ) -> Result<Box<Self>, DateTimeFormatterLoadError> {
             let prefs = (&locale.0).into();
-            let mut options = icu_datetime::fieldsets::DE::with_length(map_or_default(length));
+            let mut options = icu_datetime::fieldsets::DE::for_length(map_or_default(length));
             options.alignment = alignment.map(Into::into);
             Ok(Box::new(Self(
                 icu_datetime
@@ -290,7 +290,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::datetime::DateTimeFormatter::try_new, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::MDE, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::MDE::with_alignment, FnInStruct, compact)]
-        #[diplomat::rust_link(icu::datetime::fieldsets::MDE::with_length, FnInStruct, compact)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::MDE::for_length, FnInStruct, compact)]
         #[diplomat::rust_link(icu::datetime::fieldsets::MDE::short, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::MDE::medium, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::MDE::long, FnInStruct, hidden)]
@@ -302,7 +302,7 @@ pub mod ffi {
             alignment: Option<DateTimeAlignment>,
         ) -> Result<Box<Self>, DateTimeFormatterLoadError> {
             let prefs = (&locale.0).into();
-            let mut options = icu_datetime::fieldsets::MDE::with_length(map_or_default(length));
+            let mut options = icu_datetime::fieldsets::MDE::for_length(map_or_default(length));
             options.alignment = alignment.map(Into::into);
             Ok(Box::new(Self(
                 icu_datetime
@@ -319,7 +319,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::datetime::DateTimeFormatter::try_new, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::MDE, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::MDE::with_alignment, FnInStruct, compact)]
-        #[diplomat::rust_link(icu::datetime::fieldsets::MDE::with_length, FnInStruct, compact)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::MDE::for_length, FnInStruct, compact)]
         #[diplomat::rust_link(icu::datetime::fieldsets::MDE::short, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::MDE::medium, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::MDE::long, FnInStruct, hidden)]
@@ -332,7 +332,7 @@ pub mod ffi {
             alignment: Option<DateTimeAlignment>,
         ) -> Result<Box<Self>, DateTimeFormatterLoadError> {
             let prefs = (&locale.0).into();
-            let mut options = icu_datetime::fieldsets::MDE::with_length(map_or_default(length));
+            let mut options = icu_datetime::fieldsets::MDE::for_length(map_or_default(length));
             options.alignment = alignment.map(Into::into);
             Ok(Box::new(Self(
                 icu_datetime
@@ -351,7 +351,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::datetime::fieldsets::YMDE, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMDE::with_alignment, FnInStruct, compact)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMDE::with_year_style, FnInStruct, compact)]
-        #[diplomat::rust_link(icu::datetime::fieldsets::YMDE::with_length, FnInStruct, compact)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::YMDE::for_length, FnInStruct, compact)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMDE::short, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMDE::medium, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMDE::long, FnInStruct, hidden)]
@@ -364,7 +364,7 @@ pub mod ffi {
             year_style: Option<YearStyle>,
         ) -> Result<Box<Self>, DateTimeFormatterLoadError> {
             let prefs = (&locale.0).into();
-            let mut options = icu_datetime::fieldsets::YMDE::with_length(map_or_default(length));
+            let mut options = icu_datetime::fieldsets::YMDE::for_length(map_or_default(length));
             options.alignment = alignment.map(Into::into);
             options.year_style = year_style.map(Into::into);
             Ok(Box::new(Self(
@@ -383,7 +383,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::datetime::fieldsets::YMDE, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMDE::with_alignment, FnInStruct, compact)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMDE::with_year_style, FnInStruct, compact)]
-        #[diplomat::rust_link(icu::datetime::fieldsets::YMDE::with_length, FnInStruct, compact)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::YMDE::for_length, FnInStruct, compact)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMDE::short, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMDE::medium, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMDE::long, FnInStruct, hidden)]
@@ -397,7 +397,7 @@ pub mod ffi {
             year_style: Option<YearStyle>,
         ) -> Result<Box<Self>, DateTimeFormatterLoadError> {
             let prefs = (&locale.0).into();
-            let mut options = icu_datetime::fieldsets::YMDE::with_length(map_or_default(length));
+            let mut options = icu_datetime::fieldsets::YMDE::for_length(map_or_default(length));
             options.alignment = alignment.map(Into::into);
             options.year_style = year_style.map(Into::into);
             Ok(Box::new(Self(
@@ -415,7 +415,7 @@ pub mod ffi {
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "e")]
         #[diplomat::rust_link(icu::datetime::DateTimeFormatter::try_new, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::E, Struct)]
-        #[diplomat::rust_link(icu::datetime::fieldsets::E::with_length, FnInStruct, compact)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::E::for_length, FnInStruct, compact)]
         #[diplomat::rust_link(icu::datetime::fieldsets::E::short, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::E::medium, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::E::long, FnInStruct, hidden)]
@@ -427,7 +427,7 @@ pub mod ffi {
         ) -> Result<Box<Self>, DateTimeFormatterLoadError> {
             let prefs = (&locale.0).into();
             #[allow(unused_mut)]
-            let mut options = icu_datetime::fieldsets::E::with_length(map_or_default(length));
+            let mut options = icu_datetime::fieldsets::E::for_length(map_or_default(length));
             Ok(Box::new(Self(
                 icu_datetime
                     ::DateTimeFormatter
@@ -442,7 +442,7 @@ pub mod ffi {
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "e_with_provider")]
         #[diplomat::rust_link(icu::datetime::DateTimeFormatter::try_new, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::E, Struct)]
-        #[diplomat::rust_link(icu::datetime::fieldsets::E::with_length, FnInStruct, compact)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::E::for_length, FnInStruct, compact)]
         #[diplomat::rust_link(icu::datetime::fieldsets::E::short, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::E::medium, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::E::long, FnInStruct, hidden)]
@@ -455,7 +455,7 @@ pub mod ffi {
         ) -> Result<Box<Self>, DateTimeFormatterLoadError> {
             let prefs = (&locale.0).into();
             #[allow(unused_mut)]
-            let mut options = icu_datetime::fieldsets::E::with_length(map_or_default(length));
+            let mut options = icu_datetime::fieldsets::E::for_length(map_or_default(length));
             Ok(Box::new(Self(
                 icu_datetime
                     ::DateTimeFormatter
@@ -472,7 +472,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::datetime::DateTimeFormatter::try_new, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::M, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::M::with_alignment, FnInStruct, compact)]
-        #[diplomat::rust_link(icu::datetime::fieldsets::M::with_length, FnInStruct, compact)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::M::for_length, FnInStruct, compact)]
         #[diplomat::rust_link(icu::datetime::fieldsets::M::short, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::M::medium, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::M::long, FnInStruct, hidden)]
@@ -483,7 +483,7 @@ pub mod ffi {
             alignment: Option<DateTimeAlignment>,
         ) -> Result<Box<Self>, DateTimeFormatterLoadError> {
             let prefs = (&locale.0).into();
-            let mut options = icu_datetime::fieldsets::M::with_length(map_or_default(length));
+            let mut options = icu_datetime::fieldsets::M::for_length(map_or_default(length));
             options.alignment = alignment.map(Into::into);
             Ok(Box::new(Self(
                 icu_datetime
@@ -500,7 +500,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::datetime::DateTimeFormatter::try_new, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::M, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::M::with_alignment, FnInStruct, compact)]
-        #[diplomat::rust_link(icu::datetime::fieldsets::M::with_length, FnInStruct, compact)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::M::for_length, FnInStruct, compact)]
         #[diplomat::rust_link(icu::datetime::fieldsets::M::short, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::M::medium, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::M::long, FnInStruct, hidden)]
@@ -512,7 +512,7 @@ pub mod ffi {
             alignment: Option<DateTimeAlignment>,
         ) -> Result<Box<Self>, DateTimeFormatterLoadError> {
             let prefs = (&locale.0).into();
-            let mut options = icu_datetime::fieldsets::M::with_length(map_or_default(length));
+            let mut options = icu_datetime::fieldsets::M::for_length(map_or_default(length));
             options.alignment = alignment.map(Into::into);
             Ok(Box::new(Self(
                 icu_datetime
@@ -531,7 +531,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::datetime::fieldsets::YM, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YM::with_alignment, FnInStruct, compact)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YM::with_year_style, FnInStruct, compact)]
-        #[diplomat::rust_link(icu::datetime::fieldsets::YM::with_length, FnInStruct, compact)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::YM::for_length, FnInStruct, compact)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YM::short, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YM::medium, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YM::long, FnInStruct, hidden)]
@@ -543,7 +543,7 @@ pub mod ffi {
             year_style: Option<YearStyle>,
         ) -> Result<Box<Self>, DateTimeFormatterLoadError> {
             let prefs = (&locale.0).into();
-            let mut options = icu_datetime::fieldsets::YM::with_length(map_or_default(length));
+            let mut options = icu_datetime::fieldsets::YM::for_length(map_or_default(length));
             options.alignment = alignment.map(Into::into);
             options.year_style = year_style.map(Into::into);
             Ok(Box::new(Self(
@@ -562,7 +562,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::datetime::fieldsets::YM, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YM::with_alignment, FnInStruct, compact)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YM::with_year_style, FnInStruct, compact)]
-        #[diplomat::rust_link(icu::datetime::fieldsets::YM::with_length, FnInStruct, compact)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::YM::for_length, FnInStruct, compact)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YM::short, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YM::medium, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YM::long, FnInStruct, hidden)]
@@ -575,7 +575,7 @@ pub mod ffi {
             year_style: Option<YearStyle>,
         ) -> Result<Box<Self>, DateTimeFormatterLoadError> {
             let prefs = (&locale.0).into();
-            let mut options = icu_datetime::fieldsets::YM::with_length(map_or_default(length));
+            let mut options = icu_datetime::fieldsets::YM::for_length(map_or_default(length));
             options.alignment = alignment.map(Into::into);
             options.year_style = year_style.map(Into::into);
             Ok(Box::new(Self(
@@ -595,7 +595,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::datetime::fieldsets::Y, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::Y::with_alignment, FnInStruct, compact)]
         #[diplomat::rust_link(icu::datetime::fieldsets::Y::with_year_style, FnInStruct, compact)]
-        #[diplomat::rust_link(icu::datetime::fieldsets::Y::with_length, FnInStruct, compact)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::Y::for_length, FnInStruct, compact)]
         #[diplomat::rust_link(icu::datetime::fieldsets::Y::short, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::Y::medium, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::Y::long, FnInStruct, hidden)]
@@ -607,7 +607,7 @@ pub mod ffi {
             year_style: Option<YearStyle>,
         ) -> Result<Box<Self>, DateTimeFormatterLoadError> {
             let prefs = (&locale.0).into();
-            let mut options = icu_datetime::fieldsets::Y::with_length(map_or_default(length));
+            let mut options = icu_datetime::fieldsets::Y::for_length(map_or_default(length));
             options.alignment = alignment.map(Into::into);
             options.year_style = year_style.map(Into::into);
             Ok(Box::new(Self(
@@ -626,7 +626,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::datetime::fieldsets::Y, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::Y::with_alignment, FnInStruct, compact)]
         #[diplomat::rust_link(icu::datetime::fieldsets::Y::with_year_style, FnInStruct, compact)]
-        #[diplomat::rust_link(icu::datetime::fieldsets::Y::with_length, FnInStruct, compact)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::Y::for_length, FnInStruct, compact)]
         #[diplomat::rust_link(icu::datetime::fieldsets::Y::short, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::Y::medium, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::Y::long, FnInStruct, hidden)]
@@ -639,7 +639,7 @@ pub mod ffi {
             year_style: Option<YearStyle>,
         ) -> Result<Box<Self>, DateTimeFormatterLoadError> {
             let prefs = (&locale.0).into();
-            let mut options = icu_datetime::fieldsets::Y::with_length(map_or_default(length));
+            let mut options = icu_datetime::fieldsets::Y::for_length(map_or_default(length));
             options.alignment = alignment.map(Into::into);
             options.year_style = year_style.map(Into::into);
             Ok(Box::new(Self(
@@ -697,7 +697,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::datetime::FixedCalendarDateTimeFormatter::try_new, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::D, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::D::with_alignment, FnInStruct, compact)]
-        #[diplomat::rust_link(icu::datetime::fieldsets::D::with_length, FnInStruct, compact)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::D::for_length, FnInStruct, compact)]
         #[diplomat::rust_link(icu::datetime::fieldsets::D::short, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::D::medium, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::D::long, FnInStruct, hidden)]
@@ -709,7 +709,7 @@ pub mod ffi {
             alignment: Option<DateTimeAlignment>,
         ) -> Result<Box<Self>, DateTimeFormatterLoadError> {
             let prefs = (&locale.0).into();
-            let mut options = icu_datetime::fieldsets::D::with_length(map_or_default(length));
+            let mut options = icu_datetime::fieldsets::D::for_length(map_or_default(length));
             options.alignment = alignment.map(Into::into);
             Ok(Box::new(Self(
                 icu_datetime
@@ -726,7 +726,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::datetime::FixedCalendarDateTimeFormatter::try_new, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::D, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::D::with_alignment, FnInStruct, compact)]
-        #[diplomat::rust_link(icu::datetime::fieldsets::D::with_length, FnInStruct, compact)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::D::for_length, FnInStruct, compact)]
         #[diplomat::rust_link(icu::datetime::fieldsets::D::short, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::D::medium, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::D::long, FnInStruct, hidden)]
@@ -739,7 +739,7 @@ pub mod ffi {
             alignment: Option<DateTimeAlignment>,
         ) -> Result<Box<Self>, DateTimeFormatterLoadError> {
             let prefs = (&locale.0).into();
-            let mut options = icu_datetime::fieldsets::D::with_length(map_or_default(length));
+            let mut options = icu_datetime::fieldsets::D::for_length(map_or_default(length));
             options.alignment = alignment.map(Into::into);
             Ok(Box::new(Self(
                 icu_datetime
@@ -757,7 +757,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::datetime::FixedCalendarDateTimeFormatter::try_new, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::MD, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::MD::with_alignment, FnInStruct, compact)]
-        #[diplomat::rust_link(icu::datetime::fieldsets::MD::with_length, FnInStruct, compact)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::MD::for_length, FnInStruct, compact)]
         #[diplomat::rust_link(icu::datetime::fieldsets::MD::short, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::MD::medium, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::MD::long, FnInStruct, hidden)]
@@ -769,7 +769,7 @@ pub mod ffi {
             alignment: Option<DateTimeAlignment>,
         ) -> Result<Box<Self>, DateTimeFormatterLoadError> {
             let prefs = (&locale.0).into();
-            let mut options = icu_datetime::fieldsets::MD::with_length(map_or_default(length));
+            let mut options = icu_datetime::fieldsets::MD::for_length(map_or_default(length));
             options.alignment = alignment.map(Into::into);
             Ok(Box::new(Self(
                 icu_datetime
@@ -786,7 +786,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::datetime::FixedCalendarDateTimeFormatter::try_new, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::MD, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::MD::with_alignment, FnInStruct, compact)]
-        #[diplomat::rust_link(icu::datetime::fieldsets::MD::with_length, FnInStruct, compact)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::MD::for_length, FnInStruct, compact)]
         #[diplomat::rust_link(icu::datetime::fieldsets::MD::short, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::MD::medium, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::MD::long, FnInStruct, hidden)]
@@ -799,7 +799,7 @@ pub mod ffi {
             alignment: Option<DateTimeAlignment>,
         ) -> Result<Box<Self>, DateTimeFormatterLoadError> {
             let prefs = (&locale.0).into();
-            let mut options = icu_datetime::fieldsets::MD::with_length(map_or_default(length));
+            let mut options = icu_datetime::fieldsets::MD::for_length(map_or_default(length));
             options.alignment = alignment.map(Into::into);
             Ok(Box::new(Self(
                 icu_datetime
@@ -818,7 +818,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::datetime::fieldsets::YMD, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMD::with_alignment, FnInStruct, compact)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMD::with_year_style, FnInStruct, compact)]
-        #[diplomat::rust_link(icu::datetime::fieldsets::YMD::with_length, FnInStruct, compact)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::YMD::for_length, FnInStruct, compact)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMD::short, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMD::medium, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMD::long, FnInStruct, hidden)]
@@ -832,7 +832,7 @@ pub mod ffi {
             year_style: Option<YearStyle>,
         ) -> Result<Box<Self>, DateTimeFormatterLoadError> {
             let prefs = (&locale.0).into();
-            let mut options = icu_datetime::fieldsets::YMD::with_length(map_or_default(length));
+            let mut options = icu_datetime::fieldsets::YMD::for_length(map_or_default(length));
             options.alignment = alignment.map(Into::into);
             options.year_style = year_style.map(Into::into);
             Ok(Box::new(Self(
@@ -851,7 +851,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::datetime::fieldsets::YMD, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMD::with_alignment, FnInStruct, compact)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMD::with_year_style, FnInStruct, compact)]
-        #[diplomat::rust_link(icu::datetime::fieldsets::YMD::with_length, FnInStruct, compact)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::YMD::for_length, FnInStruct, compact)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMD::short, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMD::medium, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMD::long, FnInStruct, hidden)]
@@ -865,7 +865,7 @@ pub mod ffi {
             year_style: Option<YearStyle>,
         ) -> Result<Box<Self>, DateTimeFormatterLoadError> {
             let prefs = (&locale.0).into();
-            let mut options = icu_datetime::fieldsets::YMD::with_length(map_or_default(length));
+            let mut options = icu_datetime::fieldsets::YMD::for_length(map_or_default(length));
             options.alignment = alignment.map(Into::into);
             options.year_style = year_style.map(Into::into);
             Ok(Box::new(Self(
@@ -884,7 +884,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::datetime::FixedCalendarDateTimeFormatter::try_new, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::DE, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::DE::with_alignment, FnInStruct, compact)]
-        #[diplomat::rust_link(icu::datetime::fieldsets::DE::with_length, FnInStruct, compact)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::DE::for_length, FnInStruct, compact)]
         #[diplomat::rust_link(icu::datetime::fieldsets::DE::short, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::DE::medium, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::DE::long, FnInStruct, hidden)]
@@ -896,7 +896,7 @@ pub mod ffi {
             alignment: Option<DateTimeAlignment>,
         ) -> Result<Box<Self>, DateTimeFormatterLoadError> {
             let prefs = (&locale.0).into();
-            let mut options = icu_datetime::fieldsets::DE::with_length(map_or_default(length));
+            let mut options = icu_datetime::fieldsets::DE::for_length(map_or_default(length));
             options.alignment = alignment.map(Into::into);
             Ok(Box::new(Self(
                 icu_datetime
@@ -913,7 +913,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::datetime::FixedCalendarDateTimeFormatter::try_new, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::DE, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::DE::with_alignment, FnInStruct, compact)]
-        #[diplomat::rust_link(icu::datetime::fieldsets::DE::with_length, FnInStruct, compact)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::DE::for_length, FnInStruct, compact)]
         #[diplomat::rust_link(icu::datetime::fieldsets::DE::short, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::DE::medium, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::DE::long, FnInStruct, hidden)]
@@ -926,7 +926,7 @@ pub mod ffi {
             alignment: Option<DateTimeAlignment>,
         ) -> Result<Box<Self>, DateTimeFormatterLoadError> {
             let prefs = (&locale.0).into();
-            let mut options = icu_datetime::fieldsets::DE::with_length(map_or_default(length));
+            let mut options = icu_datetime::fieldsets::DE::for_length(map_or_default(length));
             options.alignment = alignment.map(Into::into);
             Ok(Box::new(Self(
                 icu_datetime
@@ -944,7 +944,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::datetime::FixedCalendarDateTimeFormatter::try_new, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::MDE, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::MDE::with_alignment, FnInStruct, compact)]
-        #[diplomat::rust_link(icu::datetime::fieldsets::MDE::with_length, FnInStruct, compact)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::MDE::for_length, FnInStruct, compact)]
         #[diplomat::rust_link(icu::datetime::fieldsets::MDE::short, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::MDE::medium, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::MDE::long, FnInStruct, hidden)]
@@ -956,7 +956,7 @@ pub mod ffi {
             alignment: Option<DateTimeAlignment>,
         ) -> Result<Box<Self>, DateTimeFormatterLoadError> {
             let prefs = (&locale.0).into();
-            let mut options = icu_datetime::fieldsets::MDE::with_length(map_or_default(length));
+            let mut options = icu_datetime::fieldsets::MDE::for_length(map_or_default(length));
             options.alignment = alignment.map(Into::into);
             Ok(Box::new(Self(
                 icu_datetime
@@ -973,7 +973,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::datetime::FixedCalendarDateTimeFormatter::try_new, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::MDE, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::MDE::with_alignment, FnInStruct, compact)]
-        #[diplomat::rust_link(icu::datetime::fieldsets::MDE::with_length, FnInStruct, compact)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::MDE::for_length, FnInStruct, compact)]
         #[diplomat::rust_link(icu::datetime::fieldsets::MDE::short, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::MDE::medium, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::MDE::long, FnInStruct, hidden)]
@@ -986,7 +986,7 @@ pub mod ffi {
             alignment: Option<DateTimeAlignment>,
         ) -> Result<Box<Self>, DateTimeFormatterLoadError> {
             let prefs = (&locale.0).into();
-            let mut options = icu_datetime::fieldsets::MDE::with_length(map_or_default(length));
+            let mut options = icu_datetime::fieldsets::MDE::for_length(map_or_default(length));
             options.alignment = alignment.map(Into::into);
             Ok(Box::new(Self(
                 icu_datetime
@@ -1005,7 +1005,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::datetime::fieldsets::YMDE, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMDE::with_alignment, FnInStruct, compact)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMDE::with_year_style, FnInStruct, compact)]
-        #[diplomat::rust_link(icu::datetime::fieldsets::YMDE::with_length, FnInStruct, compact)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::YMDE::for_length, FnInStruct, compact)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMDE::short, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMDE::medium, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMDE::long, FnInStruct, hidden)]
@@ -1018,7 +1018,7 @@ pub mod ffi {
             year_style: Option<YearStyle>,
         ) -> Result<Box<Self>, DateTimeFormatterLoadError> {
             let prefs = (&locale.0).into();
-            let mut options = icu_datetime::fieldsets::YMDE::with_length(map_or_default(length));
+            let mut options = icu_datetime::fieldsets::YMDE::for_length(map_or_default(length));
             options.alignment = alignment.map(Into::into);
             options.year_style = year_style.map(Into::into);
             Ok(Box::new(Self(
@@ -1037,7 +1037,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::datetime::fieldsets::YMDE, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMDE::with_alignment, FnInStruct, compact)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMDE::with_year_style, FnInStruct, compact)]
-        #[diplomat::rust_link(icu::datetime::fieldsets::YMDE::with_length, FnInStruct, compact)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::YMDE::for_length, FnInStruct, compact)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMDE::short, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMDE::medium, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMDE::long, FnInStruct, hidden)]
@@ -1051,7 +1051,7 @@ pub mod ffi {
             year_style: Option<YearStyle>,
         ) -> Result<Box<Self>, DateTimeFormatterLoadError> {
             let prefs = (&locale.0).into();
-            let mut options = icu_datetime::fieldsets::YMDE::with_length(map_or_default(length));
+            let mut options = icu_datetime::fieldsets::YMDE::for_length(map_or_default(length));
             options.alignment = alignment.map(Into::into);
             options.year_style = year_style.map(Into::into);
             Ok(Box::new(Self(
@@ -1069,7 +1069,7 @@ pub mod ffi {
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "e")]
         #[diplomat::rust_link(icu::datetime::FixedCalendarDateTimeFormatter::try_new, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::E, Struct)]
-        #[diplomat::rust_link(icu::datetime::fieldsets::E::with_length, FnInStruct, compact)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::E::for_length, FnInStruct, compact)]
         #[diplomat::rust_link(icu::datetime::fieldsets::E::short, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::E::medium, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::E::long, FnInStruct, hidden)]
@@ -1081,7 +1081,7 @@ pub mod ffi {
         ) -> Result<Box<Self>, DateTimeFormatterLoadError> {
             let prefs = (&locale.0).into();
             #[allow(unused_mut)]
-            let mut options = icu_datetime::fieldsets::E::with_length(map_or_default(length));
+            let mut options = icu_datetime::fieldsets::E::for_length(map_or_default(length));
             Ok(Box::new(Self(
                 icu_datetime
                     ::FixedCalendarDateTimeFormatter
@@ -1096,7 +1096,7 @@ pub mod ffi {
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "e_with_provider")]
         #[diplomat::rust_link(icu::datetime::FixedCalendarDateTimeFormatter::try_new, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::E, Struct)]
-        #[diplomat::rust_link(icu::datetime::fieldsets::E::with_length, FnInStruct, compact)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::E::for_length, FnInStruct, compact)]
         #[diplomat::rust_link(icu::datetime::fieldsets::E::short, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::E::medium, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::E::long, FnInStruct, hidden)]
@@ -1109,7 +1109,7 @@ pub mod ffi {
         ) -> Result<Box<Self>, DateTimeFormatterLoadError> {
             let prefs = (&locale.0).into();
             #[allow(unused_mut)]
-            let mut options = icu_datetime::fieldsets::E::with_length(map_or_default(length));
+            let mut options = icu_datetime::fieldsets::E::for_length(map_or_default(length));
             Ok(Box::new(Self(
                 icu_datetime
                     ::FixedCalendarDateTimeFormatter
@@ -1126,7 +1126,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::datetime::FixedCalendarDateTimeFormatter::try_new, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::M, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::M::with_alignment, FnInStruct, compact)]
-        #[diplomat::rust_link(icu::datetime::fieldsets::M::with_length, FnInStruct, compact)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::M::for_length, FnInStruct, compact)]
         #[diplomat::rust_link(icu::datetime::fieldsets::M::short, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::M::medium, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::M::long, FnInStruct, hidden)]
@@ -1137,7 +1137,7 @@ pub mod ffi {
             alignment: Option<DateTimeAlignment>,
         ) -> Result<Box<Self>, DateTimeFormatterLoadError> {
             let prefs = (&locale.0).into();
-            let mut options = icu_datetime::fieldsets::M::with_length(map_or_default(length));
+            let mut options = icu_datetime::fieldsets::M::for_length(map_or_default(length));
             options.alignment = alignment.map(Into::into);
             Ok(Box::new(Self(
                 icu_datetime
@@ -1154,7 +1154,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::datetime::FixedCalendarDateTimeFormatter::try_new, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::M, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::M::with_alignment, FnInStruct, compact)]
-        #[diplomat::rust_link(icu::datetime::fieldsets::M::with_length, FnInStruct, compact)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::M::for_length, FnInStruct, compact)]
         #[diplomat::rust_link(icu::datetime::fieldsets::M::short, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::M::medium, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::M::long, FnInStruct, hidden)]
@@ -1166,7 +1166,7 @@ pub mod ffi {
             alignment: Option<DateTimeAlignment>,
         ) -> Result<Box<Self>, DateTimeFormatterLoadError> {
             let prefs = (&locale.0).into();
-            let mut options = icu_datetime::fieldsets::M::with_length(map_or_default(length));
+            let mut options = icu_datetime::fieldsets::M::for_length(map_or_default(length));
             options.alignment = alignment.map(Into::into);
             Ok(Box::new(Self(
                 icu_datetime
@@ -1185,7 +1185,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::datetime::fieldsets::YM, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YM::with_alignment, FnInStruct, compact)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YM::with_year_style, FnInStruct, compact)]
-        #[diplomat::rust_link(icu::datetime::fieldsets::YM::with_length, FnInStruct, compact)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::YM::for_length, FnInStruct, compact)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YM::short, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YM::medium, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YM::long, FnInStruct, hidden)]
@@ -1197,7 +1197,7 @@ pub mod ffi {
             year_style: Option<YearStyle>,
         ) -> Result<Box<Self>, DateTimeFormatterLoadError> {
             let prefs = (&locale.0).into();
-            let mut options = icu_datetime::fieldsets::YM::with_length(map_or_default(length));
+            let mut options = icu_datetime::fieldsets::YM::for_length(map_or_default(length));
             options.alignment = alignment.map(Into::into);
             options.year_style = year_style.map(Into::into);
             Ok(Box::new(Self(
@@ -1216,7 +1216,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::datetime::fieldsets::YM, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YM::with_alignment, FnInStruct, compact)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YM::with_year_style, FnInStruct, compact)]
-        #[diplomat::rust_link(icu::datetime::fieldsets::YM::with_length, FnInStruct, compact)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::YM::for_length, FnInStruct, compact)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YM::short, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YM::medium, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YM::long, FnInStruct, hidden)]
@@ -1229,7 +1229,7 @@ pub mod ffi {
             year_style: Option<YearStyle>,
         ) -> Result<Box<Self>, DateTimeFormatterLoadError> {
             let prefs = (&locale.0).into();
-            let mut options = icu_datetime::fieldsets::YM::with_length(map_or_default(length));
+            let mut options = icu_datetime::fieldsets::YM::for_length(map_or_default(length));
             options.alignment = alignment.map(Into::into);
             options.year_style = year_style.map(Into::into);
             Ok(Box::new(Self(
@@ -1249,7 +1249,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::datetime::fieldsets::Y, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::Y::with_alignment, FnInStruct, compact)]
         #[diplomat::rust_link(icu::datetime::fieldsets::Y::with_year_style, FnInStruct, compact)]
-        #[diplomat::rust_link(icu::datetime::fieldsets::Y::with_length, FnInStruct, compact)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::Y::for_length, FnInStruct, compact)]
         #[diplomat::rust_link(icu::datetime::fieldsets::Y::short, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::Y::medium, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::Y::long, FnInStruct, hidden)]
@@ -1261,7 +1261,7 @@ pub mod ffi {
             year_style: Option<YearStyle>,
         ) -> Result<Box<Self>, DateTimeFormatterLoadError> {
             let prefs = (&locale.0).into();
-            let mut options = icu_datetime::fieldsets::Y::with_length(map_or_default(length));
+            let mut options = icu_datetime::fieldsets::Y::for_length(map_or_default(length));
             options.alignment = alignment.map(Into::into);
             options.year_style = year_style.map(Into::into);
             Ok(Box::new(Self(
@@ -1280,7 +1280,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::datetime::fieldsets::Y, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::Y::with_alignment, FnInStruct, compact)]
         #[diplomat::rust_link(icu::datetime::fieldsets::Y::with_year_style, FnInStruct, compact)]
-        #[diplomat::rust_link(icu::datetime::fieldsets::Y::with_length, FnInStruct, compact)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::Y::for_length, FnInStruct, compact)]
         #[diplomat::rust_link(icu::datetime::fieldsets::Y::short, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::Y::medium, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::Y::long, FnInStruct, hidden)]
@@ -1293,7 +1293,7 @@ pub mod ffi {
             year_style: Option<YearStyle>,
         ) -> Result<Box<Self>, DateTimeFormatterLoadError> {
             let prefs = (&locale.0).into();
-            let mut options = icu_datetime::fieldsets::Y::with_length(map_or_default(length));
+            let mut options = icu_datetime::fieldsets::Y::for_length(map_or_default(length));
             options.alignment = alignment.map(Into::into);
             options.year_style = year_style.map(Into::into);
             Ok(Box::new(Self(
