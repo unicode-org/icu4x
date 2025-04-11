@@ -264,6 +264,45 @@ macro_rules! impl_marker_with_options {
     };
 }
 
+macro_rules! impl_date_to_time_helpers {
+    (
+        $type:ident,
+        $type_time:ident,
+        $(alignment = $alignment_yes:ident,)?
+        $(year_style = $yearstyle_yes:ident,)?
+    ) => {
+        impl $type {
+            /// Associates this field set with a time precision.
+            pub fn time(self, time_precision: TimePrecision) -> $type_time {
+                $type_time {
+                    length: self.length,
+                    time_precision: Some(time_precision),
+                    alignment: ternary!(self.alignment, Default::default(), $($alignment_yes)?),
+                    $(year_style: yes_to!(self.year_style, $yearstyle_yes),)?
+                }
+            }
+            /// Shorthand to associate this field set with [`TimePrecision::Minute`].
+            pub fn time_hm(self) -> $type_time {
+                $type_time {
+                    length: self.length,
+                    time_precision: Some(TimePrecision::Minute),
+                    alignment: ternary!(self.alignment, Default::default(), $($alignment_yes)?),
+                    $(year_style: yes_to!(self.year_style, $yearstyle_yes),)?
+                }
+            }
+            /// Shorthand to associate this field set with [`TimePrecision::Second`].
+            pub fn time_hms(self) -> $type_time {
+                $type_time {
+                    length: self.length,
+                    time_precision: Some(TimePrecision::Second),
+                    alignment: ternary!(self.alignment, Default::default(), $($alignment_yes)?),
+                    $(year_style: yes_to!(self.year_style, $yearstyle_yes),)?
+                }
+            }
+        }
+    };
+}
+
 macro_rules! impl_combo_get_field {
     ($type:ident, $composite:ident, $enum:ident, $variant:path) => {
         impl GetField<CompositeFieldSet> for Combo<$type, $variant> {
@@ -499,6 +538,7 @@ macro_rules! impl_date_marker {
         );
         impl_zone_combo_helpers!($type, DateZone, DateFieldSet);
         impl_composite!($type, Date, DateFieldSet);
+        impl_date_to_time_helpers!($type, $type_time, $(alignment = $option_alignment_yes,)? $(year_style = $year_yes,)?);
         impl_marker_with_options!(
             #[doc = concat!("**“", $sample_time, "**” ⇒ ", $description, " with time")]
             ///
