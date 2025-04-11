@@ -13,72 +13,6 @@ use potential_utf::PotentialUtf8;
 use tinystr::{tinystr, TinyStr4};
 use zerovec::ZeroMap;
 
-icu_provider::data_marker!(
-    /// `BuddhistDateSymbolsV1`
-    BuddhistDateSymbolsV1,
-    DateSymbols<'static>
-);
-icu_provider::data_marker!(
-    /// `ChineseDateSymbolsV1`
-    ChineseDateSymbolsV1,
-    DateSymbols<'static>
-);
-icu_provider::data_marker!(
-    /// `CopticDateSymbolsV1`
-    CopticDateSymbolsV1,
-    DateSymbols<'static>
-);
-icu_provider::data_marker!(
-    /// `DangiDateSymbolsV1`
-    DangiDateSymbolsV1,
-    DateSymbols<'static>
-);
-icu_provider::data_marker!(
-    /// `EthiopianDateSymbolsV1`
-    EthiopianDateSymbolsV1,
-    DateSymbols<'static>
-);
-icu_provider::data_marker!(
-    /// `GregorianDateSymbolsV1`
-    GregorianDateSymbolsV1,
-    DateSymbols<'static>
-);
-icu_provider::data_marker!(
-    /// `HebrewDateSymbolsV1`
-    HebrewDateSymbolsV1,
-    DateSymbols<'static>
-);
-icu_provider::data_marker!(
-    /// `IndianDateSymbolsV1`
-    IndianDateSymbolsV1,
-    DateSymbols<'static>
-);
-icu_provider::data_marker!(
-    /// `HijriDateSymbolsV1`
-    HijriDateSymbolsV1,
-    DateSymbols<'static>
-);
-icu_provider::data_marker!(
-    /// `JapaneseDateSymbolsV1`
-    JapaneseDateSymbolsV1,
-    DateSymbols<'static>
-);
-icu_provider::data_marker!(
-    /// `JapaneseExtendedDateSymbolsV1`
-    JapaneseExtendedDateSymbolsV1,
-    DateSymbols<'static>
-);
-icu_provider::data_marker!(
-    /// `PersianDateSymbolsV1`
-    PersianDateSymbolsV1,
-    DateSymbols<'static>
-);
-icu_provider::data_marker!(
-    /// `RocDateSymbolsV1`
-    RocDateSymbolsV1,
-    DateSymbols<'static>
-);
-
 size_test!(DateSymbols, date_symbols_v1_size, 3792);
 
 /// Symbol data for the months, weekdays, and eras needed to format a date.
@@ -111,12 +45,6 @@ pub struct DateSymbols<'data> {
 icu_provider::data_struct!(
     DateSymbols<'_>,
     #[cfg(feature = "datagen")]
-);
-
-icu_provider::data_marker!(
-    /// `TimeSymbolsV1`
-    TimeSymbolsV1,
-    TimeSymbols<'static>
 );
 
 size_test!(TimeSymbols, time_symbols_v1_size, 768);
