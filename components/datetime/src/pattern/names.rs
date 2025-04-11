@@ -3577,7 +3577,7 @@ impl RawDateTimeNamesBorrowed<'_> {
             .get_with_variables(year_name_length)
             .ok_or(GetNameForEraError::NotLoaded)?;
 
-        match (year_names, era_year.era_ordinal) {
+        match (year_names, era_year.era_index) {
             (YearNames::VariableEras(era_names), None) => {
                 crate::provider::neo::get_year_name_from_map(
                     era_names,

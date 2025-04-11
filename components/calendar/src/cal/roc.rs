@@ -129,14 +129,14 @@ impl Calendar for Roc {
         if extended_year > ROC_ERA_OFFSET {
             types::EraYear {
                 era: tinystr!(16, "minguo"),
-                era_ordinal: Some(1),
+                era_index: Some(1),
                 year: extended_year.saturating_sub(ROC_ERA_OFFSET),
                 ambiguity: types::YearAmbiguity::CenturyRequired,
             }
         } else {
             types::EraYear {
                 era: tinystr!(16, "minguo-qian"),
-                era_ordinal: Some(0),
+                era_index: Some(0),
                 year: (ROC_ERA_OFFSET + 1).saturating_sub(extended_year),
                 ambiguity: types::YearAmbiguity::EraAndCenturyRequired,
             }

@@ -37,7 +37,7 @@ use tinystr::tinystr;
 fn era_year(year: i32) -> EraYear {
     types::EraYear {
         era: tinystr!(16, "ah"),
-        era_ordinal: Some(0),
+        era_index: Some(0),
         year,
         ambiguity: types::YearAmbiguity::CenturyRequired,
     }

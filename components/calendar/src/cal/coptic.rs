@@ -166,14 +166,14 @@ impl Calendar for Coptic {
         if year > 0 {
             types::EraYear {
                 era: tinystr!(16, "am"),
-                era_ordinal: Some(1),
+                era_index: Some(1),
                 year,
                 ambiguity: types::YearAmbiguity::CenturyRequired,
             }
         } else {
             types::EraYear {
                 era: tinystr!(16, "bd"),
-                era_ordinal: Some(0),
+                era_index: Some(0),
                 year: 1 - year,
                 ambiguity: types::YearAmbiguity::EraAndCenturyRequired,
             }

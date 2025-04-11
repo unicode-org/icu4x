@@ -95,8 +95,8 @@ pub struct EraYear {
     ///
     /// In this context, chronological ordering of eras is obtained by ordering by their start date (or in the case of
     /// negative eras, their end date) first, and for eras sharing a date, put the negative one first. For example,
-    /// bce < ce, and mundi < incar for Ethiopian.
-    pub era_ordinal: Option<u8>,
+    /// bce < ce.
+    pub era_index: Option<u8>,
     /// The ambiguity of the era/year combination
     pub ambiguity: YearAmbiguity,
 }

@@ -533,7 +533,7 @@ fn test_calendar_eras() {
                 assert_ne!(not_in_era.year().era().unwrap().era, era_year.era);
             }
 
-            if let Some(i) = era_year.era_ordinal {
+            if let Some(i) = era_year.era_index {
                 assert_eq!(i.to_string(), idx);
             }
 

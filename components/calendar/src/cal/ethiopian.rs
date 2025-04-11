@@ -200,14 +200,14 @@ impl Calendar for Ethiopian {
         if self.0 || year <= INCARNATION_OFFSET {
             types::EraYear {
                 era: tinystr!(16, "aa"),
-                era_ordinal: Some(0),
+                era_index: Some(0),
                 year,
                 ambiguity: types::YearAmbiguity::CenturyRequired,
             }
         } else {
             types::EraYear {
                 era: tinystr!(16, "am"),
-                era_ordinal: Some(1),
+                era_index: Some(1),
                 year: year - INCARNATION_OFFSET,
                 ambiguity: types::YearAmbiguity::CenturyRequired,
             }

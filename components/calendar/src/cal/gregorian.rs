@@ -111,7 +111,7 @@ impl Calendar for Gregorian {
         if extended_year > 0 {
             types::EraYear {
                 era: tinystr!(16, "ce"),
-                era_ordinal: Some(1),
+                era_index: Some(1),
                 year: extended_year,
                 ambiguity: match extended_year {
                     ..=999 => types::YearAmbiguity::EraAndCenturyRequired,
@@ -123,7 +123,7 @@ impl Calendar for Gregorian {
         } else {
             types::EraYear {
                 era: tinystr!(16, "bce"),
-                era_ordinal: Some(0),
+                era_index: Some(0),
                 year: 1_i32.saturating_sub(extended_year),
                 ambiguity: types::YearAmbiguity::EraAndCenturyRequired,
             }

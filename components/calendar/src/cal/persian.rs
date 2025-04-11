@@ -160,7 +160,7 @@ impl Calendar for Persian {
     fn year_info(&self, date: &Self::DateInner) -> Self::Year {
         types::EraYear {
             era: tinystr!(16, "ap"),
-            era_ordinal: Some(0),
+            era_index: Some(0),
             year: self.extended_year(date),
             ambiguity: types::YearAmbiguity::CenturyRequired,
         }

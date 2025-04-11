@@ -160,14 +160,14 @@ impl Calendar for Julian {
         if extended_year > 0 {
             types::EraYear {
                 era: tinystr!(16, "ad"),
-                era_ordinal: Some(1),
+                era_index: Some(1),
                 year: extended_year,
                 ambiguity: types::YearAmbiguity::CenturyRequired,
             }
         } else {
             types::EraYear {
                 era: tinystr!(16, "bc"),
-                era_ordinal: Some(0),
+                era_index: Some(0),
                 year: 1_i32.saturating_sub(extended_year),
                 ambiguity: types::YearAmbiguity::EraAndCenturyRequired,
             }
