@@ -440,3 +440,142 @@ impl_data_provider_adapter!(
     DayPeriodNamesV1,
     dayperiod_symbols_map_project_cloned
 );
+
+#[cfg(test)]
+mod tests {
+    use crate::SourceDataProvider;
+    use super::super::legacy::*;
+    use icu::datetime::provider::neo::*;
+    use icu::locale::langid;
+    use icu_provider::prelude::*;
+
+    #[test]
+    fn test_adapter_months_numeric() {
+        let symbols: DataPayload<GregorianDateSymbolsV1> = SourceDataProvider::new_testing()
+            .load(DataRequest {
+                id: DataIdentifierBorrowed::for_locale(&langid!("en").into()),
+                ..Default::default()
+            })
+            .unwrap()
+            .payload;
+        let neo_month_abbreviated: DataPayload<GregorianMonthNamesV1> = symbols
+            .load(DataRequest {
+                id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                    DataMarkerAttributes::from_str_or_panic("3"),
+                    &"en".parse().unwrap(),
+                ),
+                ..Default::default()
+            })
+            .unwrap()
+            .payload;
+
+        assert_eq!(
+            format!("{neo_month_abbreviated:?}"),
+            "Linear([\"Jan\", \"Feb\", \"Mar\", \"Apr\", \"May\", \"Jun\", \"Jul\", \"Aug\", \"Sep\", \"Oct\", \"Nov\", \"Dec\"])"
+        );
+    }
+
+    #[test]
+    fn test_adapter_months_map() {
+        let symbols: DataPayload<HebrewDateSymbolsV1> = SourceDataProvider::new_testing()
+            .load(DataRequest {
+                id: DataIdentifierBorrowed::for_locale(&langid!("en").into()),
+                ..Default::default()
+            })
+            .unwrap()
+            .payload;
+        let neo_month_abbreviated: DataPayload<HebrewMonthNamesV1> = symbols
+            .load(DataRequest {
+                id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                    DataMarkerAttributes::from_str_or_panic("3"),
+                    &"en".parse().unwrap(),
+                ),
+                ..Default::default()
+            })
+            .unwrap()
+            .payload;
+
+        assert_eq!(
+            format!("{neo_month_abbreviated:?}"),
+            "LeapLinear([\"Tishri\", \"Heshvan\", \"Kislev\", \"Tevet\", \"Shevat\", \"Adar\", \"Nisan\", \"Iyar\", \"Sivan\", \"Tamuz\", \"Av\", \"Elul\", \"\", \"\", \"\", \"\", \"Adar I\", \"Adar II\", \"\", \"\", \"\", \"\", \"\", \"\"])"
+        );
+    }
+
+    #[test]
+    fn test_adapter_weekdays_abbreviated() {
+        let symbols: DataPayload<HebrewDateSymbolsV1> = SourceDataProvider::new_testing()
+            .load(DataRequest {
+                id: DataIdentifierBorrowed::for_locale(&langid!("en").into()),
+                ..Default::default()
+            })
+            .unwrap()
+            .payload;
+        let neo_weekdays_abbreviated: DataPayload<WeekdayNamesV1> = symbols
+            .load(DataRequest {
+                id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                    DataMarkerAttributes::from_str_or_panic("3"),
+                    &"en".parse().unwrap(),
+                ),
+                ..Default::default()
+            })
+            .unwrap()
+            .payload;
+
+        assert_eq!(
+            format!("{neo_weekdays_abbreviated:?}"),
+            "LinearNames { names: [\"Sun\", \"Mon\", \"Tue\", \"Wed\", \"Thu\", \"Fri\", \"Sat\"] }"
+        );
+    }
+
+    #[test]
+    fn test_adapter_weekdays_short() {
+        let symbols: DataPayload<HebrewDateSymbolsV1> = SourceDataProvider::new_testing()
+            .load(DataRequest {
+                id: DataIdentifierBorrowed::for_locale(&langid!("en").into()),
+                ..Default::default()
+            })
+            .unwrap()
+            .payload;
+        let neo_weekdays_short: DataPayload<WeekdayNamesV1> = symbols
+            .load(DataRequest {
+                id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                    DataMarkerAttributes::from_str_or_panic("6s"),
+                    &"en".parse().unwrap(),
+                ),
+                ..Default::default()
+            })
+            .unwrap()
+            .payload;
+
+        assert_eq!(
+            format!("{neo_weekdays_short:?}"),
+            "LinearNames { names: [\"Su\", \"Mo\", \"Tu\", \"We\", \"Th\", \"Fr\", \"Sa\"] }"
+        );
+    }
+
+    #[test]
+    fn test_adapter_dayperiods() {
+        let symbols: DataPayload<TimeSymbolsV1> = SourceDataProvider::new_testing()
+            .load(DataRequest {
+                id: DataIdentifierBorrowed::for_locale(&langid!("en").into()),
+                ..Default::default()
+            })
+            .unwrap()
+            .payload;
+        let neo_dayperiods_abbreviated: DataPayload<DayPeriodNamesV1> = symbols
+            .load(DataRequest {
+                id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                    DataMarkerAttributes::from_str_or_panic("3s"),
+                    &"en".parse().unwrap(),
+                ),
+                ..Default::default()
+            })
+            .unwrap()
+            .payload;
+
+        assert_eq!(
+            format!("{neo_dayperiods_abbreviated:?}"),
+            "LinearNames { names: [\"AM\", \"PM\", \"noon\", \"midnight\"] }"
+        );
+    }
+}
