@@ -283,7 +283,7 @@ symbols_from!(
 #[cfg(test)]
 mod tests {
     use crate::SourceDataProvider;
-    use icu::datetime::provider::calendar::*;
+    use super::super::legacy::*;
     use icu::datetime::provider::neo::*;
     use icu::locale::langid;
     use icu_provider::prelude::*;
