@@ -118,7 +118,6 @@ pub use neo::FixedCalendarDateTimeFormatter;
 pub use neo::FormattedDateTime;
 pub use neo::FormattedDateTimeUnchecked;
 pub use neo::NoCalendarFormatter;
-pub use options::Length;
 
 /// Locale preferences used by this crate
 pub mod preferences {

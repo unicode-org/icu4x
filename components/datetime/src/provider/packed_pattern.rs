@@ -8,7 +8,7 @@ use super::pattern::{
     runtime::{Pattern, PatternBorrowed, PatternMetadata},
     PatternItem,
 };
-use crate::{size_test_macro::size_test, Length};
+use crate::{size_test_macro::size_test, options::Length};
 use alloc::vec::Vec;
 use icu_plurals::{
     provider::{FourBitMetadata, PluralElementsPackedULE},
