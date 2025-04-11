@@ -601,10 +601,10 @@ pub(crate) struct RawDateTimeNames<FSet: DateTimeNamesMarker> {
         <FSet::DayPeriodNames as NamesContainer<DayPeriodNamesV1, DayPeriodNameLength>>::Container,
     zone_essentials: <FSet::ZoneEssentials as NamesContainer<tz::EssentialsV1, ()>>::Container,
     locations_root: <FSet::ZoneLocationsRoot as NamesContainer<tz::LocationsRootV1, ()>>::Container,
-    locations: <FSet::ZoneLocations as NamesContainer<tz::LocationsV1, ()>>::Container,
+    locations: <FSet::ZoneLocations as NamesContainer<tz::LocationsOverrideV1, ()>>::Container,
     exemplars_root:
-        <FSet::ZoneExemplarsRoot as NamesContainer<tz::ExemplarCitiesRootV1, ()>>::Container,
-    exemplars: <FSet::ZoneExemplars as NamesContainer<tz::ExemplarCitiesV1, ()>>::Container,
+        <FSet::ZoneExemplarsRoot as NamesContainer<tz::CitiesRootV1, ()>>::Container,
+    exemplars: <FSet::ZoneExemplars as NamesContainer<tz::CitiesOverrideV1, ()>>::Container,
     mz_generic_long: <FSet::ZoneGenericLong as NamesContainer<tz::MzGenericLongV1, ()>>::Container,
     mz_generic_short:
         <FSet::ZoneGenericShort as NamesContainer<tz::MzGenericShortV1, ()>>::Container,
@@ -1585,10 +1585,10 @@ impl<C, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, FSet> {
         provider: &P,
     ) -> Result<&mut Self, PatternLoadError>
     where
-        P: DataProvider<tz::LocationsV1> + DataProvider<tz::LocationsRootV1> + ?Sized,
+        P: DataProvider<tz::LocationsOverrideV1> + DataProvider<tz::LocationsRootV1> + ?Sized,
     {
         self.inner.load_time_zone_location_names(
-            &tz::LocationsV1::bind(provider),
+            &tz::LocationsOverrideV1::bind(provider),
             &tz::LocationsRootV1::bind(provider),
             self.prefs,
         )?;
@@ -1657,11 +1657,11 @@ impl<C, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, FSet> {
         provider: &P,
     ) -> Result<&mut Self, PatternLoadError>
     where
-        P: DataProvider<tz::ExemplarCitiesV1> + DataProvider<tz::ExemplarCitiesRootV1> + ?Sized,
+        P: DataProvider<tz::CitiesOverrideV1> + DataProvider<tz::CitiesRootV1> + ?Sized,
     {
         self.inner.load_time_zone_exemplar_city_names(
-            &tz::ExemplarCitiesV1::bind(provider),
-            &tz::ExemplarCitiesRootV1::bind(provider),
+            &tz::CitiesOverrideV1::bind(provider),
+            &tz::CitiesRootV1::bind(provider),
             self.prefs,
         )?;
         Ok(self)
@@ -2089,7 +2089,7 @@ impl<C, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, FSet> {
         P: DataProvider<DecimalSymbolsV1>
             + DataProvider<DecimalDigitsV1>
             + DataProvider<tz::EssentialsV1>
-            + DataProvider<tz::LocationsV1>
+            + DataProvider<tz::LocationsOverrideV1>
             + DataProvider<tz::LocationsRootV1>
             + DataProvider<tz::MzGenericShortV1>
             + DataProvider<tz::MzPeriodV1>
@@ -2097,7 +2097,7 @@ impl<C, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, FSet> {
     {
         let error_field = self.inner.load_time_zone_field_v_except_decimals(
             &tz::EssentialsV1::bind(provider),
-            &tz::LocationsV1::bind(provider),
+            &tz::LocationsOverrideV1::bind(provider),
             &tz::LocationsRootV1::bind(provider),
             &tz::MzGenericShortV1::bind(provider),
             &tz::MzPeriodV1::bind(provider),
@@ -2120,7 +2120,7 @@ impl<C, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, FSet> {
     ) -> Result<&mut Self, PatternLoadError> {
         let error_field = self.inner.load_time_zone_field_v_except_decimals(
             &tz::EssentialsV1::bind(&crate::provider::Baked),
-            &tz::LocationsV1::bind(&crate::provider::Baked),
+            &tz::LocationsOverrideV1::bind(&crate::provider::Baked),
             &tz::LocationsRootV1::bind(&crate::provider::Baked),
             &tz::MzGenericShortV1::bind(&crate::provider::Baked),
             &tz::MzPeriodV1::bind(&crate::provider::Baked),
@@ -2143,7 +2143,7 @@ impl<C, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, FSet> {
         P: DataProvider<DecimalSymbolsV1>
             + DataProvider<DecimalDigitsV1>
             + DataProvider<tz::EssentialsV1>
-            + DataProvider<tz::LocationsV1>
+            + DataProvider<tz::LocationsOverrideV1>
             + DataProvider<tz::LocationsRootV1>
             + DataProvider<tz::MzGenericLongV1>
             + DataProvider<tz::MzStandardLongV1>
@@ -2152,7 +2152,7 @@ impl<C, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, FSet> {
     {
         let error_field = self.inner.load_time_zone_field_vvvv_except_decimals(
             &tz::EssentialsV1::bind(provider),
-            &tz::LocationsV1::bind(provider),
+            &tz::LocationsOverrideV1::bind(provider),
             &tz::LocationsRootV1::bind(provider),
             &tz::MzGenericLongV1::bind(provider),
             &tz::MzStandardLongV1::bind(provider),
@@ -2176,7 +2176,7 @@ impl<C, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, FSet> {
     ) -> Result<&mut Self, PatternLoadError> {
         let error_field = self.inner.load_time_zone_field_vvvv_except_decimals(
             &tz::EssentialsV1::bind(&crate::provider::Baked),
-            &tz::LocationsV1::bind(&crate::provider::Baked),
+            &tz::LocationsOverrideV1::bind(&crate::provider::Baked),
             &tz::LocationsRootV1::bind(&crate::provider::Baked),
             &tz::MzGenericLongV1::bind(&crate::provider::Baked),
             &tz::MzStandardLongV1::bind(&crate::provider::Baked),
@@ -2201,7 +2201,7 @@ impl<C, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, FSet> {
         P: DataProvider<DecimalSymbolsV1>
             + DataProvider<DecimalDigitsV1>
             + DataProvider<tz::EssentialsV1>
-            + DataProvider<tz::LocationsV1>
+            + DataProvider<tz::LocationsOverrideV1>
             + DataProvider<tz::LocationsRootV1>
             + DataProvider<tz::MzSpecificShortV1>
             + DataProvider<tz::MzPeriodV1>
@@ -2253,7 +2253,7 @@ impl<C, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, FSet> {
         P: DataProvider<DecimalSymbolsV1>
             + DataProvider<DecimalDigitsV1>
             + DataProvider<tz::EssentialsV1>
-            + DataProvider<tz::LocationsV1>
+            + DataProvider<tz::LocationsOverrideV1>
             + DataProvider<tz::LocationsRootV1>
             + DataProvider<tz::MzSpecificLongV1>
             + DataProvider<tz::MzStandardLongV1>
@@ -2262,7 +2262,7 @@ impl<C, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, FSet> {
     {
         let error_field = self.inner.load_time_zone_field_zzzz_except_decimals(
             &tz::EssentialsV1::bind(provider),
-            &tz::LocationsV1::bind(provider),
+            &tz::LocationsOverrideV1::bind(provider),
             &tz::LocationsRootV1::bind(provider),
             &tz::MzStandardLongV1::bind(provider),
             &tz::MzSpecificLongV1::bind(provider),
@@ -2287,7 +2287,7 @@ impl<C, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, FSet> {
     ) -> Result<&mut Self, PatternLoadError> {
         let error_field = self.inner.load_time_zone_field_zzzz_except_decimals(
             &tz::EssentialsV1::bind(&crate::provider::Baked),
-            &tz::LocationsV1::bind(&crate::provider::Baked),
+            &tz::LocationsOverrideV1::bind(&crate::provider::Baked),
             &tz::LocationsRootV1::bind(&crate::provider::Baked),
             &tz::MzStandardLongV1::bind(&crate::provider::Baked),
             &tz::MzSpecificLongV1::bind(&crate::provider::Baked),
@@ -2426,10 +2426,10 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, F
             + DataProvider<WeekdayNamesV1>
             + DataProvider<DayPeriodNamesV1>
             + DataProvider<tz::EssentialsV1>
-            + DataProvider<tz::LocationsV1>
+            + DataProvider<tz::LocationsOverrideV1>
             + DataProvider<tz::LocationsRootV1>
-            + DataProvider<tz::ExemplarCitiesV1>
-            + DataProvider<tz::ExemplarCitiesRootV1>
+            + DataProvider<tz::CitiesOverrideV1>
+            + DataProvider<tz::CitiesRootV1>
             + DataProvider<tz::MzGenericLongV1>
             + DataProvider<tz::MzGenericShortV1>
             + DataProvider<tz::MzStandardLongV1>
@@ -2449,9 +2449,9 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, F
             // TODO: Consider making time zone name loading optional here (lots of data)
             &tz::EssentialsV1::bind(provider),
             &tz::LocationsRootV1::bind(provider),
-            &tz::LocationsV1::bind(provider),
-            &tz::ExemplarCitiesRootV1::bind(provider),
-            &tz::ExemplarCitiesV1::bind(provider),
+            &tz::LocationsOverrideV1::bind(provider),
+            &tz::CitiesRootV1::bind(provider),
+            &tz::CitiesOverrideV1::bind(provider),
             &tz::MzGenericLongV1::bind(provider),
             &tz::MzGenericShortV1::bind(provider),
             &tz::MzStandardLongV1::bind(provider),
@@ -2523,10 +2523,10 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, F
             &WeekdayNamesV1::bind(&crate::provider::Baked),
             &DayPeriodNamesV1::bind(&crate::provider::Baked),
             &tz::EssentialsV1::bind(&crate::provider::Baked),
-            &tz::LocationsV1::bind(&crate::provider::Baked),
+            &tz::LocationsOverrideV1::bind(&crate::provider::Baked),
             &tz::LocationsRootV1::bind(&crate::provider::Baked),
-            &tz::ExemplarCitiesV1::bind(&crate::provider::Baked),
-            &tz::ExemplarCitiesRootV1::bind(&crate::provider::Baked),
+            &tz::CitiesOverrideV1::bind(&crate::provider::Baked),
+            &tz::CitiesRootV1::bind(&crate::provider::Baked),
             &tz::MzGenericLongV1::bind(&crate::provider::Baked),
             &tz::MzGenericShortV1::bind(&crate::provider::Baked),
             &tz::MzStandardLongV1::bind(&crate::provider::Baked),
@@ -2666,15 +2666,15 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
                 (),
             >>::Container::new_empty(),
             locations: <FSet::ZoneLocations as NamesContainer<
-                tz::LocationsV1,
+                tz::LocationsOverrideV1,
                 (),
             >>::Container::new_empty(),
             exemplars: <FSet::ZoneExemplars as NamesContainer<
-                tz::ExemplarCitiesV1,
+                tz::CitiesOverrideV1,
                 (),
             >>::Container::new_empty(),
             exemplars_root: <FSet::ZoneExemplarsRoot as NamesContainer<
-                tz::ExemplarCitiesRootV1,
+                tz::CitiesRootV1,
                 (),
             >>::Container::new_empty(),
             mz_generic_long: <FSet::ZoneGenericLong as NamesContainer<
@@ -2861,7 +2861,7 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
         prefs: DateTimeFormatterPreferences,
     ) -> Result<ErrorField, PatternLoadError>
     where
-        P: BoundDataProvider<tz::LocationsV1> + ?Sized,
+        P: BoundDataProvider<tz::LocationsOverrideV1> + ?Sized,
         P2: BoundDataProvider<tz::LocationsRootV1> + ?Sized,
     {
         let locale = provider
@@ -2894,8 +2894,8 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
         prefs: DateTimeFormatterPreferences,
     ) -> Result<ErrorField, PatternLoadError>
     where
-        P: BoundDataProvider<tz::ExemplarCitiesV1> + ?Sized,
-        P2: BoundDataProvider<tz::ExemplarCitiesRootV1> + ?Sized,
+        P: BoundDataProvider<tz::CitiesOverrideV1> + ?Sized,
+        P2: BoundDataProvider<tz::CitiesRootV1> + ?Sized,
     {
         let locale = provider
             .bound_marker()
@@ -3113,7 +3113,7 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
     pub(crate) fn load_time_zone_field_zzzz_except_decimals(
         &mut self,
         zone_essentials_provider: &(impl BoundDataProvider<tz::EssentialsV1> + ?Sized),
-        locations_provider: &(impl BoundDataProvider<tz::LocationsV1> + ?Sized),
+        locations_provider: &(impl BoundDataProvider<tz::LocationsOverrideV1> + ?Sized),
         locations_root_provider: &(impl BoundDataProvider<tz::LocationsRootV1> + ?Sized),
         mz_standard_long_provider: &(impl BoundDataProvider<tz::MzStandardLongV1> + ?Sized),
         mz_specific_long_provider: &(impl BoundDataProvider<tz::MzSpecificLongV1> + ?Sized),
@@ -3133,7 +3133,7 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
     pub(crate) fn load_time_zone_field_v_except_decimals(
         &mut self,
         zone_essentials_provider: &(impl BoundDataProvider<tz::EssentialsV1> + ?Sized),
-        locations_provider: &(impl BoundDataProvider<tz::LocationsV1> + ?Sized),
+        locations_provider: &(impl BoundDataProvider<tz::LocationsOverrideV1> + ?Sized),
         locations_root_provider: &(impl BoundDataProvider<tz::LocationsRootV1> + ?Sized),
         mz_generic_short_provider: &(impl BoundDataProvider<tz::MzGenericShortV1> + ?Sized),
         mz_period_provider: &(impl BoundDataProvider<tz::MzPeriodV1> + ?Sized),
@@ -3153,7 +3153,7 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
     pub(crate) fn load_time_zone_field_vvvv_except_decimals(
         &mut self,
         zone_essentials_provider: &(impl BoundDataProvider<tz::EssentialsV1> + ?Sized),
-        locations_provider: &(impl BoundDataProvider<tz::LocationsV1> + ?Sized),
+        locations_provider: &(impl BoundDataProvider<tz::LocationsOverrideV1> + ?Sized),
         locations_root_provider: &(impl BoundDataProvider<tz::LocationsRootV1> + ?Sized),
         mz_generic_long_provider: &(impl BoundDataProvider<tz::MzGenericLongV1> + ?Sized),
         mz_standard_long_provider: &(impl BoundDataProvider<tz::MzStandardLongV1> + ?Sized),
@@ -3183,10 +3183,10 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
     #[allow(non_snake_case)] // this is a private function named after the case-sensitive CLDR field
     pub(crate) fn load_time_zone_field_VVV(
         &mut self,
-        locations_provider: &(impl BoundDataProvider<tz::LocationsV1> + ?Sized),
+        locations_provider: &(impl BoundDataProvider<tz::LocationsOverrideV1> + ?Sized),
         locations_root_provider: &(impl BoundDataProvider<tz::LocationsRootV1> + ?Sized),
-        exemplar_cities_provider: &(impl BoundDataProvider<tz::ExemplarCitiesV1> + ?Sized),
-        exemplar_cities_root_provider: &(impl BoundDataProvider<tz::ExemplarCitiesRootV1> + ?Sized),
+        exemplar_cities_provider: &(impl BoundDataProvider<tz::CitiesOverrideV1> + ?Sized),
+        exemplar_cities_root_provider: &(impl BoundDataProvider<tz::CitiesRootV1> + ?Sized),
         prefs: DateTimeFormatterPreferences,
     ) -> Result<ErrorField, PatternLoadError> {
         self.load_time_zone_location_names(locations_provider, locations_root_provider, prefs)?;
@@ -3201,7 +3201,7 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
     pub(crate) fn load_time_zone_field_VVVV_except_decimals(
         &mut self,
         zone_essentials_provider: &(impl BoundDataProvider<tz::EssentialsV1> + ?Sized),
-        locations_provider: &(impl BoundDataProvider<tz::LocationsV1> + ?Sized),
+        locations_provider: &(impl BoundDataProvider<tz::LocationsOverrideV1> + ?Sized),
         locations_root_provider: &(impl BoundDataProvider<tz::LocationsRootV1> + ?Sized),
         prefs: DateTimeFormatterPreferences,
     ) -> Result<ErrorField, PatternLoadError> {
@@ -3257,10 +3257,10 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
         weekday_provider: &(impl BoundDataProvider<WeekdayNamesV1> + ?Sized),
         dayperiod_provider: &(impl BoundDataProvider<DayPeriodNamesV1> + ?Sized),
         zone_essentials_provider: &(impl BoundDataProvider<tz::EssentialsV1> + ?Sized),
-        locations_provider: &(impl BoundDataProvider<tz::LocationsV1> + ?Sized),
+        locations_provider: &(impl BoundDataProvider<tz::LocationsOverrideV1> + ?Sized),
         locations_root_provider: &(impl BoundDataProvider<tz::LocationsRootV1> + ?Sized),
-        exemplar_cities_provider: &(impl BoundDataProvider<tz::ExemplarCitiesV1> + ?Sized),
-        exemplar_cities_root_provider: &(impl BoundDataProvider<tz::ExemplarCitiesRootV1> + ?Sized),
+        exemplar_cities_provider: &(impl BoundDataProvider<tz::CitiesOverrideV1> + ?Sized),
+        exemplar_cities_root_provider: &(impl BoundDataProvider<tz::CitiesRootV1> + ?Sized),
         mz_generic_long_provider: &(impl BoundDataProvider<tz::MzGenericLongV1> + ?Sized),
         mz_generic_short_provider: &(impl BoundDataProvider<tz::MzGenericShortV1> + ?Sized),
         mz_standard_long_provider: &(impl BoundDataProvider<tz::MzStandardLongV1> + ?Sized),

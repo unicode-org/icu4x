@@ -31,10 +31,10 @@ pub trait DateTimeNamesMarker: UnstableSealed {
     type WeekdayNames: NamesContainer<WeekdayNamesV1, WeekdayNameLength>;
     type DayPeriodNames: NamesContainer<DayPeriodNamesV1, DayPeriodNameLength>;
     type ZoneEssentials: NamesContainer<tz::EssentialsV1, ()>;
-    type ZoneLocations: NamesContainer<tz::LocationsV1, ()>;
+    type ZoneLocations: NamesContainer<tz::LocationsOverrideV1, ()>;
     type ZoneLocationsRoot: NamesContainer<tz::LocationsRootV1, ()>;
-    type ZoneExemplars: NamesContainer<tz::ExemplarCitiesV1, ()>;
-    type ZoneExemplarsRoot: NamesContainer<tz::ExemplarCitiesRootV1, ()>;
+    type ZoneExemplars: NamesContainer<tz::CitiesOverrideV1, ()>;
+    type ZoneExemplarsRoot: NamesContainer<tz::CitiesRootV1, ()>;
     type ZoneGenericLong: NamesContainer<tz::MzGenericLongV1, ()>;
     type ZoneGenericShort: NamesContainer<tz::MzGenericShortV1, ()>;
     type ZoneStandardLong: NamesContainer<tz::MzStandardLongV1, ()>;
@@ -81,10 +81,10 @@ impl_holder_trait!(MonthNamesV1);
 impl_holder_trait!(WeekdayNamesV1);
 impl_holder_trait!(DayPeriodNamesV1);
 impl_holder_trait!(tz::EssentialsV1);
-impl_holder_trait!(tz::LocationsV1);
+impl_holder_trait!(tz::LocationsOverrideV1);
 impl_holder_trait!(tz::LocationsRootV1);
-impl_holder_trait!(tz::ExemplarCitiesV1);
-impl_holder_trait!(tz::ExemplarCitiesRootV1);
+impl_holder_trait!(tz::CitiesOverrideV1);
+impl_holder_trait!(tz::CitiesRootV1);
 impl_holder_trait!(tz::MzGenericLongV1);
 impl_holder_trait!(tz::MzGenericShortV1);
 impl_holder_trait!(tz::MzStandardLongV1);
@@ -389,17 +389,17 @@ pub trait DateTimeNamesFrom<M: DateTimeNamesMarker>: DateTimeNamesMarker {
         other: <M::ZoneEssentials as NamesContainer<tz::EssentialsV1, ()>>::Container,
     ) -> <Self::ZoneEssentials as NamesContainer<tz::EssentialsV1, ()>>::Container;
     fn map_zone_locations(
-        other: <M::ZoneLocations as NamesContainer<tz::LocationsV1, ()>>::Container,
-    ) -> <Self::ZoneLocations as NamesContainer<tz::LocationsV1, ()>>::Container;
+        other: <M::ZoneLocations as NamesContainer<tz::LocationsOverrideV1, ()>>::Container,
+    ) -> <Self::ZoneLocations as NamesContainer<tz::LocationsOverrideV1, ()>>::Container;
     fn map_zone_locations_root(
         other: <M::ZoneLocationsRoot as NamesContainer<tz::LocationsRootV1, ()>>::Container,
     ) -> <Self::ZoneLocationsRoot as NamesContainer<tz::LocationsRootV1, ()>>::Container;
     fn map_zone_exemplars(
-        other: <M::ZoneExemplars as NamesContainer<tz::ExemplarCitiesV1, ()>>::Container,
-    ) -> <Self::ZoneExemplars as NamesContainer<tz::ExemplarCitiesV1, ()>>::Container;
+        other: <M::ZoneExemplars as NamesContainer<tz::CitiesOverrideV1, ()>>::Container,
+    ) -> <Self::ZoneExemplars as NamesContainer<tz::CitiesOverrideV1, ()>>::Container;
     fn map_zone_exemplars_root(
-        other: <M::ZoneExemplarsRoot as NamesContainer<tz::ExemplarCitiesRootV1, ()>>::Container,
-    ) -> <Self::ZoneExemplarsRoot as NamesContainer<tz::ExemplarCitiesRootV1, ()>>::Container;
+        other: <M::ZoneExemplarsRoot as NamesContainer<tz::CitiesRootV1, ()>>::Container,
+    ) -> <Self::ZoneExemplarsRoot as NamesContainer<tz::CitiesRootV1, ()>>::Container;
     fn map_zone_generic_long(
         other: <M::ZoneGenericLong as NamesContainer<tz::MzGenericLongV1, ()>>::Container,
     ) -> <Self::ZoneGenericLong as NamesContainer<tz::MzGenericLongV1, ()>>::Container;
@@ -434,14 +434,14 @@ where
         >,
     <Self::ZoneEssentials as NamesContainer<tz::EssentialsV1, ()>>::Container:
         From<<M::ZoneEssentials as NamesContainer<tz::EssentialsV1, ()>>::Container>,
-    <Self::ZoneLocations as NamesContainer<tz::LocationsV1, ()>>::Container:
-        From<<M::ZoneLocations as NamesContainer<tz::LocationsV1, ()>>::Container>,
+    <Self::ZoneLocations as NamesContainer<tz::LocationsOverrideV1, ()>>::Container:
+        From<<M::ZoneLocations as NamesContainer<tz::LocationsOverrideV1, ()>>::Container>,
     <Self::ZoneLocationsRoot as NamesContainer<tz::LocationsRootV1, ()>>::Container:
         From<<M::ZoneLocationsRoot as NamesContainer<tz::LocationsRootV1, ()>>::Container>,
-    <Self::ZoneExemplars as NamesContainer<tz::ExemplarCitiesV1, ()>>::Container:
-        From<<M::ZoneExemplars as NamesContainer<tz::ExemplarCitiesV1, ()>>::Container>,
-    <Self::ZoneExemplarsRoot as NamesContainer<tz::ExemplarCitiesRootV1, ()>>::Container:
-        From<<M::ZoneExemplarsRoot as NamesContainer<tz::ExemplarCitiesRootV1, ()>>::Container>,
+    <Self::ZoneExemplars as NamesContainer<tz::CitiesOverrideV1, ()>>::Container:
+        From<<M::ZoneExemplars as NamesContainer<tz::CitiesOverrideV1, ()>>::Container>,
+    <Self::ZoneExemplarsRoot as NamesContainer<tz::CitiesRootV1, ()>>::Container:
+        From<<M::ZoneExemplarsRoot as NamesContainer<tz::CitiesRootV1, ()>>::Container>,
     <Self::ZoneGenericLong as NamesContainer<tz::MzGenericLongV1, ()>>::Container:
         From<<M::ZoneGenericLong as NamesContainer<tz::MzGenericLongV1, ()>>::Container>,
     <Self::ZoneGenericShort as NamesContainer<tz::MzGenericShortV1, ()>>::Container:
@@ -488,8 +488,8 @@ where
     }
     #[inline]
     fn map_zone_locations(
-        other: <M::ZoneLocations as NamesContainer<tz::LocationsV1, ()>>::Container,
-    ) -> <Self::ZoneLocations as NamesContainer<tz::LocationsV1, ()>>::Container {
+        other: <M::ZoneLocations as NamesContainer<tz::LocationsOverrideV1, ()>>::Container,
+    ) -> <Self::ZoneLocations as NamesContainer<tz::LocationsOverrideV1, ()>>::Container {
         other.into()
     }
     #[inline]
@@ -500,14 +500,14 @@ where
     }
     #[inline]
     fn map_zone_exemplars(
-        other: <M::ZoneExemplars as NamesContainer<tz::ExemplarCitiesV1, ()>>::Container,
-    ) -> <Self::ZoneExemplars as NamesContainer<tz::ExemplarCitiesV1, ()>>::Container {
+        other: <M::ZoneExemplars as NamesContainer<tz::CitiesOverrideV1, ()>>::Container,
+    ) -> <Self::ZoneExemplars as NamesContainer<tz::CitiesOverrideV1, ()>>::Container {
         other.into()
     }
     #[inline]
     fn map_zone_exemplars_root(
-        other: <M::ZoneExemplarsRoot as NamesContainer<tz::ExemplarCitiesRootV1, ()>>::Container,
-    ) -> <Self::ZoneExemplarsRoot as NamesContainer<tz::ExemplarCitiesRootV1, ()>>::Container {
+        other: <M::ZoneExemplarsRoot as NamesContainer<tz::CitiesRootV1, ()>>::Container,
+    ) -> <Self::ZoneExemplarsRoot as NamesContainer<tz::CitiesRootV1, ()>>::Container {
         other.into()
     }
     #[inline]

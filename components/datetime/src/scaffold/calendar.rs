@@ -57,105 +57,105 @@ impl private::Sealed for Buddhist {}
 impl CldrCalendar for Buddhist {
     type YearNamesV1 = BuddhistYearNamesV1;
     type MonthNamesV1 = BuddhistMonthNamesV1;
-    type SkeletaV1 = BuddhistDateNeoSkeletonPatternsV1;
+    type SkeletaV1 = DatePatternsBuddhistV1;
 }
 
 impl private::Sealed for Chinese {}
 impl CldrCalendar for Chinese {
     type YearNamesV1 = ChineseYearNamesV1;
     type MonthNamesV1 = ChineseMonthNamesV1;
-    type SkeletaV1 = ChineseDateNeoSkeletonPatternsV1;
+    type SkeletaV1 = DatePatternsChineseV1;
 }
 
 impl private::Sealed for Coptic {}
 impl CldrCalendar for Coptic {
     type YearNamesV1 = CopticYearNamesV1;
     type MonthNamesV1 = CopticMonthNamesV1;
-    type SkeletaV1 = CopticDateNeoSkeletonPatternsV1;
+    type SkeletaV1 = DatePatternsCopticV1;
 }
 
 impl private::Sealed for Dangi {}
 impl CldrCalendar for Dangi {
     type YearNamesV1 = DangiYearNamesV1;
     type MonthNamesV1 = DangiMonthNamesV1;
-    type SkeletaV1 = DangiDateNeoSkeletonPatternsV1;
+    type SkeletaV1 = DatePatternsDangiV1;
 }
 
 impl private::Sealed for Ethiopian {}
 impl CldrCalendar for Ethiopian {
     type YearNamesV1 = EthiopianYearNamesV1;
     type MonthNamesV1 = EthiopianMonthNamesV1;
-    type SkeletaV1 = EthiopianDateNeoSkeletonPatternsV1;
+    type SkeletaV1 = DatePatternsEthiopianV1;
 }
 
 impl private::Sealed for Gregorian {}
 impl CldrCalendar for Gregorian {
     type YearNamesV1 = GregorianYearNamesV1;
     type MonthNamesV1 = GregorianMonthNamesV1;
-    type SkeletaV1 = GregorianDateNeoSkeletonPatternsV1;
+    type SkeletaV1 = DatePatternsGregorianV1;
 }
 
 impl private::Sealed for Hebrew {}
 impl CldrCalendar for Hebrew {
     type YearNamesV1 = HebrewYearNamesV1;
     type MonthNamesV1 = HebrewMonthNamesV1;
-    type SkeletaV1 = HebrewDateNeoSkeletonPatternsV1;
+    type SkeletaV1 = DatePatternsHebrewV1;
 }
 
 impl private::Sealed for Indian {}
 impl CldrCalendar for Indian {
     type YearNamesV1 = IndianYearNamesV1;
     type MonthNamesV1 = IndianMonthNamesV1;
-    type SkeletaV1 = IndianDateNeoSkeletonPatternsV1;
+    type SkeletaV1 = DatePatternsIndianV1;
 }
 
 impl private::Sealed for HijriTabular {}
 impl CldrCalendar for HijriTabular {
     type YearNamesV1 = HijriYearNamesV1;
     type MonthNamesV1 = HijriMonthNamesV1;
-    type SkeletaV1 = HijriDateNeoSkeletonPatternsV1;
+    type SkeletaV1 = DatePatternsHijriV1;
 }
 
 impl private::Sealed for HijriSimulated {}
 impl CldrCalendar for HijriSimulated {
     type YearNamesV1 = HijriYearNamesV1;
     type MonthNamesV1 = HijriMonthNamesV1;
-    type SkeletaV1 = HijriDateNeoSkeletonPatternsV1;
+    type SkeletaV1 = DatePatternsHijriV1;
 }
 
 impl private::Sealed for HijriUmmAlQura {}
 impl CldrCalendar for HijriUmmAlQura {
     type YearNamesV1 = HijriYearNamesV1;
     type MonthNamesV1 = HijriMonthNamesV1;
-    type SkeletaV1 = HijriDateNeoSkeletonPatternsV1;
+    type SkeletaV1 = DatePatternsHijriV1;
 }
 
 impl private::Sealed for Japanese {}
 impl CldrCalendar for Japanese {
     type YearNamesV1 = JapaneseYearNamesV1;
     type MonthNamesV1 = JapaneseMonthNamesV1;
-    type SkeletaV1 = JapaneseDateNeoSkeletonPatternsV1;
+    type SkeletaV1 = DatePatternsJapaneseModernV1;
 }
 
 impl private::Sealed for JapaneseExtended {}
 impl CldrCalendar for JapaneseExtended {
     type YearNamesV1 = JapaneseExtendedYearNamesV1;
     type MonthNamesV1 = JapaneseExtendedMonthNamesV1;
-    type SkeletaV1 = JapaneseExtendedDateNeoSkeletonPatternsV1;
+    type SkeletaV1 = DatePatternsJapaneseExtendedV1;
 }
 
 impl private::Sealed for Persian {}
 impl CldrCalendar for Persian {
     type YearNamesV1 = PersianYearNamesV1;
     type MonthNamesV1 = PersianMonthNamesV1;
-    type SkeletaV1 = PersianDateNeoSkeletonPatternsV1;
+    type SkeletaV1 = DatePatternsPersianV1;
 }
 
 impl private::Sealed for Roc {}
 impl CldrCalendar for Roc {
     type YearNamesV1 = RocYearNamesV1;
     type MonthNamesV1 = RocMonthNamesV1;
-    type SkeletaV1 = RocDateNeoSkeletonPatternsV1;
+    type SkeletaV1 = DatePatternsRocV1;
 }
 
 impl UnstableSealed for () {}

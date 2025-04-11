@@ -42,73 +42,73 @@ pub struct PackedPatternsBuilder<'a> {
 size_test!(PackedPatterns, packed_skeleton_data_size, 32);
 
 icu_provider::data_marker!(
-    /// `BuddhistDateNeoSkeletonPatternsV1`
-    BuddhistDateNeoSkeletonPatternsV1,
+    /// `DatePatternsBuddhistV1`
+    DatePatternsBuddhistV1,
     PackedPatterns<'static>
 );
 icu_provider::data_marker!(
-    /// `ChineseDateNeoSkeletonPatternsV1`
-    ChineseDateNeoSkeletonPatternsV1,
+    /// `DatePatternsChineseV1`
+    DatePatternsChineseV1,
     PackedPatterns<'static>
 );
 icu_provider::data_marker!(
-    /// `CopticDateNeoSkeletonPatternsV1`
-    CopticDateNeoSkeletonPatternsV1,
+    /// `DatePatternsCopticV1`
+    DatePatternsCopticV1,
     PackedPatterns<'static>
 );
 icu_provider::data_marker!(
-    /// `DangiDateNeoSkeletonPatternsV1`
-    DangiDateNeoSkeletonPatternsV1,
+    /// `DatePatternsDangiV1`
+    DatePatternsDangiV1,
     PackedPatterns<'static>
 );
 icu_provider::data_marker!(
-    /// `EthiopianDateNeoSkeletonPatternsV1`
-    EthiopianDateNeoSkeletonPatternsV1,
+    /// `DatePatternsEthiopianV1`
+    DatePatternsEthiopianV1,
     PackedPatterns<'static>
 );
 icu_provider::data_marker!(
-    /// `GregorianDateNeoSkeletonPatternsV1`
-    GregorianDateNeoSkeletonPatternsV1,
+    /// `DatePatternsGregorianV1`
+    DatePatternsGregorianV1,
     PackedPatterns<'static>
 );
 icu_provider::data_marker!(
-    /// `HebrewDateNeoSkeletonPatternsV1`
-    HebrewDateNeoSkeletonPatternsV1,
+    /// `DatePatternsHebrewV1`
+    DatePatternsHebrewV1,
     PackedPatterns<'static>
 );
 icu_provider::data_marker!(
-    /// `IndianDateNeoSkeletonPatternsV1`
-    IndianDateNeoSkeletonPatternsV1,
+    /// `DatePatternsIndianV1`
+    DatePatternsIndianV1,
     PackedPatterns<'static>
 );
 icu_provider::data_marker!(
-    /// `HijriDateNeoSkeletonPatternsV1`
-    HijriDateNeoSkeletonPatternsV1,
+    /// `DatePatternsHijriV1`
+    DatePatternsHijriV1,
     PackedPatterns<'static>
 );
 icu_provider::data_marker!(
-    /// `JapaneseDateNeoSkeletonPatternsV1`
-    JapaneseDateNeoSkeletonPatternsV1,
+    /// `DatePatternsJapaneseModernV1`
+    DatePatternsJapaneseModernV1,
     PackedPatterns<'static>
 );
 icu_provider::data_marker!(
-    /// `JapaneseExtendedDateNeoSkeletonPatternsV1`
-    JapaneseExtendedDateNeoSkeletonPatternsV1,
+    /// `DatePatternsJapaneseExtendedV1`
+    DatePatternsJapaneseExtendedV1,
     PackedPatterns<'static>
 );
 icu_provider::data_marker!(
-    /// `PersianDateNeoSkeletonPatternsV1`
-    PersianDateNeoSkeletonPatternsV1,
+    /// `DatePatternsPersianV1`
+    DatePatternsPersianV1,
     PackedPatterns<'static>
 );
 icu_provider::data_marker!(
-    /// `RocDateNeoSkeletonPatternsV1`
-    RocDateNeoSkeletonPatternsV1,
+    /// `DatePatternsRocV1`
+    DatePatternsRocV1,
     PackedPatterns<'static>
 );
 icu_provider::data_marker!(
-    /// `TimeNeoSkeletonPatternsV1`
-    TimeNeoSkeletonPatternsV1,
+    /// `TimePatternsV1`
+    TimePatternsV1,
     PackedPatterns<'static>
 );
 
