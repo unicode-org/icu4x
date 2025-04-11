@@ -294,9 +294,13 @@ where
     })
 }
 
+trait Convert<M: DataMarker> {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError>;
+}
+
 macro_rules! impl_data_provider_adapter {
     ($old_ty:ty, $new_ty:ty, $cnv:ident) => {
-        impl DataProvider<$new_ty> for DataPayload<$old_ty> {
+        impl Convert<$new_ty> for DataPayload<$old_ty> {
             fn load(&self, req: DataRequest) -> Result<DataResponse<$new_ty>, DataError> {
                 $cnv(self, req)
             }
@@ -445,9 +449,8 @@ impl_data_provider_adapter!(
 mod tests {
     use crate::SourceDataProvider;
     use super::super::legacy::*;
-    use icu::datetime::provider::neo::*;
     use icu::locale::langid;
-    use icu_provider::prelude::*;
+    use super::Convert;
 
     #[test]
     fn test_adapter_months_numeric() {
