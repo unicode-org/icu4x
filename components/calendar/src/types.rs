@@ -91,11 +91,13 @@ pub struct EraYear {
     pub year: i32,
     /// The era code as defined by CLDR, expect for cases where CLDR does not define a code.
     pub era: TinyStr16,
-    /// An Era Index, for calendars with a small, fixed set of eras. The eras are indexed chronologically.
+    /// An era index, for calendars with a small set of eras.
     ///
-    /// In this context, chronological ordering of eras is obtained by ordering by their start date (or in the case of
-    /// negative eras, their end date) first, and for eras sharing a date, put the negative one first. For example,
-    /// bce < ce.
+    /// It is obtained by ordering all eras' start/end dates, and for eras sharing a date, put the negative
+    /// one first. For example, bce < ce.
+    ///
+    /// As eras might be added or removed across CLDR releases, this does not have a stable correspondence
+    /// with the era code.
     pub era_index: Option<u8>,
     /// The ambiguity of the era/year combination
     pub ambiguity: YearAmbiguity,
