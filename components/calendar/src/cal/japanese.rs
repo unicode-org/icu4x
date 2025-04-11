@@ -6,7 +6,7 @@
 //!
 //! ```rust
 //! use icu::calendar::cal::Japanese;
-//! use icu::calendar::{types::Era, Date};
+//! use icu::calendar::Date;
 //! use tinystr::tinystr;
 //!
 //! let japanese_calendar = Japanese::new();
@@ -18,10 +18,7 @@
 //! assert_eq!(date_japanese.era_year().year, 45);
 //! assert_eq!(date_japanese.month().ordinal, 1);
 //! assert_eq!(date_japanese.day_of_month().0, 2);
-//! assert_eq!(
-//!     date_japanese.era_year().standard_era.0,
-//!     "showa"
-//! );
+//! assert_eq!(date_japanese.era_year().era, "showa");
 //! ```
 
 use crate::cal::iso::{Iso, IsoDateInner};
@@ -251,8 +248,8 @@ impl Calendar for Japanese {
 
     fn year_info(&self, date: &Self::DateInner) -> Self::Year {
         types::EraYear {
-            formatting_era: types::FormattingEra::Code(date.era.into()),
-            standard_era: date.era.into(),
+            era: date.era,
+            era_index: None,
             year: date.adjusted_year,
             ambiguity: types::YearAmbiguity::CenturyRequired,
         }
@@ -414,7 +411,7 @@ impl Date<Japanese> {
     ///     Date::try_new_japanese_with_calendar(era, 14, 1, 2, japanese_calendar)
     ///         .expect("Constructing a date should succeed");
     ///
-    /// assert_eq!(date.era_year().standard_era.0, era);
+    /// assert_eq!(date.era_year().era, era);
     /// assert_eq!(date.era_year().year, 14);
     /// assert_eq!(date.month().ordinal, 1);
     /// assert_eq!(date.day_of_month().0, 2);
@@ -479,7 +476,7 @@ impl Date<JapaneseExtended> {
     /// )
     /// .expect("Constructing a date should succeed");
     ///
-    /// assert_eq!(date.era_year().standard_era.0, era);
+    /// assert_eq!(date.era_year().era, era);
     /// assert_eq!(date.era_year().year, 7);
     /// assert_eq!(date.month().ordinal, 1);
     /// assert_eq!(date.day_of_month().0, 2);
@@ -754,7 +751,7 @@ mod tests {
         );
 
         // Extra coverage for https://github.com/unicode-org/icu4x/issues/4968
-        assert_eq!(reconstructed.era_year().standard_era.0, era);
+        assert_eq!(reconstructed.era_year().era, era);
         assert_eq!(reconstructed.era_year().year, year);
     }
 

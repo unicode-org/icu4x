@@ -134,12 +134,13 @@ where
         (FieldSymbol::Era, l) => {
             const PART: Part = parts::ERA;
             input!(PART, year = input.year);
-            input!(PART, era = year.era());
-            let era = era.formatting_era;
+            input!(PART, era_year = year.era());
             let era_symbol = datetime_names
-                .get_name_for_era(l, era)
+                .get_name_for_era(l, era_year)
                 .map_err(|e| match e {
-                    GetNameForEraError::InvalidEraCode => DateTimeWriteError::InvalidEra(era),
+                    GetNameForEraError::InvalidEraCode => {
+                        DateTimeWriteError::InvalidEra(era_year.era)
+                    }
                     GetNameForEraError::InvalidFieldLength => {
                         DateTimeWriteError::UnsupportedLength(ErrorField(field))
                     }
@@ -150,7 +151,7 @@ where
             match era_symbol {
                 Err(e) => {
                     w.with_part(PART, |w| {
-                        w.with_part(Part::ERROR, |w| w.write_str(&era.fallback_name()))
+                        w.with_part(Part::ERROR, |w| w.write_str(&era_year.era))
                     })?;
                     Err(e)
                 }

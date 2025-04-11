@@ -4,11 +4,9 @@
 
 use crate::pattern::PatternLoadError;
 use displaydoc::Display;
-use icu_calendar::{
-    types::{FormattingEra, MonthCode},
-    AnyCalendarKind,
-};
+use icu_calendar::{types::MonthCode, AnyCalendarKind};
 use icu_provider::DataError;
+use tinystr::TinyStr16;
 
 #[cfg(doc)]
 use crate::pattern::FixedCalendarDateTimeNames;
@@ -67,13 +65,13 @@ pub enum DateTimeWriteError {
     /// The output will contain the raw [`MonthCode`] as a fallback value.
     #[displaydoc("Invalid month {0:?}")]
     InvalidMonthCode(MonthCode),
-    /// The [`FormattingEra`] of the input is not valid for this calendar.
+    /// The era code of the input is not valid for this calendar.
     ///
     /// This is guaranteed not to happen for `icu::calendar` inputs, but may happen for custom inputs.
     ///
-    /// The output will contain [`FormattingEra::fallback_name`] as the fallback.
+    /// The output will contain the era code as the fallback.
     #[displaydoc("Invalid era {0:?}")]
-    InvalidEra(FormattingEra),
+    InvalidEra(TinyStr16),
     /// The [`CyclicYear::year`] of the input is not valid for this calendar.
     ///
     /// This is guaranteed not to happen for `icu::calendar` inputs, but may happen for custom inputs.

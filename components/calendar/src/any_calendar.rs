@@ -44,7 +44,7 @@ define_preferences!(
 ///
 /// There are many ways of constructing an AnyCalendar'd date:
 /// ```
-/// use icu::calendar::{AnyCalendar, AnyCalendarKind, Date, cal::Japanese, types::{Era, MonthCode}};
+/// use icu::calendar::{AnyCalendar, AnyCalendarKind, Date, cal::Japanese, types::MonthCode};
 /// use icu::locale::locale;
 /// use tinystr::tinystr;
 /// # use std::rc::Rc;

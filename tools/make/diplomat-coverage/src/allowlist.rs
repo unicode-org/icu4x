@@ -147,10 +147,6 @@ lazy_static::lazy_static! {
         // Not planned for 2.0: Calendar structs mostly for internal use but which might expose
         // useful information to clients.
         "icu::calendar::types::MonthInfo",
-        "icu::calendar::types::FormattingEra",
-        "icu::calendar::Date::formattable_year",
-        "icu::calendar::types::FormattableYear",
-        "icu::calendar::types::FormattableYearKind",
         "icu::calendar::types::RataDie",
 
         // Not planned for 2.0: Temporal doesn't yet want this.
@@ -388,7 +384,6 @@ lazy_static::lazy_static! {
         "icu::calendar::types::DayOfMonth",
         "icu::calendar::types::DayOfWeekInMonth",
         "icu::calendar::types::DayOfYear",
-        "icu::calendar::types::Era",
         "icu::calendar::types::Weekday",
         "icu::calendar::types::MonthCode",
         "icu::calendar::types::WeekOfMonth",

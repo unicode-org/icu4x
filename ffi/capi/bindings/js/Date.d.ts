@@ -149,7 +149,7 @@ export class Date {
     /** 
      * Returns the era for this date, or an empty string
      *
-     * See the [Rust documentation for `standard_era`](https://docs.rs/icu/latest/icu/calendar/types/struct.EraYear.html#structfield.standard_era) for more information.
+     * See the [Rust documentation for `era`](https://docs.rs/icu/latest/icu/calendar/types/struct.EraYear.html#structfield.era) for more information.
      *
      * Additional information: [1](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.year)
      */

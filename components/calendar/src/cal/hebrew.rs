@@ -261,8 +261,8 @@ impl Calendar for Hebrew {
 
     fn year_info(&self, date: &Self::DateInner) -> Self::Year {
         types::EraYear {
-            formatting_era: types::FormattingEra::Index(0, tinystr!(16, "AM")),
-            standard_era: tinystr!(16, "am").into(),
+            era_index: Some(0),
+            era: tinystr!(16, "am"),
             year: self.extended_year(date),
             ambiguity: types::YearAmbiguity::CenturyRequired,
         }
@@ -489,13 +489,13 @@ mod tests {
         let greg_date = Date::try_new_gregorian(-5000, 1, 1).unwrap();
         let greg_year = greg_date.era_year();
         assert_eq!(greg_date.inner.0 .0.year, -5000);
-        assert_eq!(greg_year.standard_era.0, "bce");
+        assert_eq!(greg_year.era, "bce");
         // In Gregorian, era year is 1 - extended year
         assert_eq!(greg_year.year, 5001);
         let hebr_date = greg_date.to_calendar(Hebrew);
         let hebr_year = hebr_date.era_year();
         assert_eq!(hebr_date.inner.0.year.value, -1240);
-        assert_eq!(hebr_year.standard_era.0, "am");
+        assert_eq!(hebr_year.era, "am");
         // In Hebrew, there is no inverse era, so negative extended years are negative era years
         assert_eq!(hebr_year.year, -1240);
     }

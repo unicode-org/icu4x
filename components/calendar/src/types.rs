@@ -13,24 +13,6 @@ use tinystr::{TinyStr16, TinyStr4};
 use zerovec::maps::ZeroMapKV;
 use zerovec::ule::AsULE;
 
-/// The era of a particular date
-///
-/// Different calendars use different era codes, see their documentation
-/// for details.
-///
-/// Era codes are shared with Temporal, [see Temporal proposal][era-proposal].
-///
-/// [era-proposal]: https://tc39.es/proposal-intl-era-monthcode/
-#[derive(Copy, Clone, Debug, PartialEq)]
-#[allow(clippy::exhaustive_structs)] // this is a newtype
-pub struct Era(pub TinyStr16);
-
-impl From<TinyStr16> for Era {
-    fn from(o: TinyStr16) -> Self {
-        Self(o)
-    }
-}
-
 /// The type of year: Calendars like Chinese don't have an era and instead format with cyclic years.
 #[derive(Copy, Clone, Debug, PartialEq)]
 #[non_exhaustive]
@@ -101,56 +83,23 @@ pub enum YearAmbiguity {
     EraAndCenturyRequired,
 }
 
-/// Information about the era as usable for formatting
-///
-/// This is optimized for storing datetime formatting data.
-#[derive(Copy, Clone, Debug, PartialEq)]
-#[non_exhaustive]
-pub enum FormattingEra {
-    /// An Era Index, for calendars with a small, fixed set of eras. The eras are indexed chronologically.
-    ///
-    /// In this context, chronological ordering of eras is obtained by ordering by their start date (or in the case of
-    /// negative eras, their end date) first, and for eras sharing a date, put the negative one first. For example,
-    /// bce < ce, and mundi < incar for Ethiopian.
-    ///
-    /// The TInyStr16 is a fallback string for the era when a display name is not available. It need not be an era code, it should
-    /// be something sensible (or empty).
-    Index(u8, TinyStr16),
-    /// An era code, for calendars with a large set of era codes (Japanese)
-    ///
-    /// This code may not be the canonical era code, but will typically be a valid era alias
-    Code(Era),
-}
-
-impl FormattingEra {
-    /// Get a fallback era name suitable for display to the user when the real era name is not availabe
-    pub fn fallback_name(self) -> TinyStr16 {
-        match self {
-            Self::Index(_idx, fallback) => fallback,
-            Self::Code(era) => era.0,
-        }
-    }
-}
-
 /// Year information for a year that is specified with an era
 #[derive(Copy, Clone, Debug, PartialEq)]
 #[non_exhaustive]
 pub struct EraYear {
-    /// The era code as used in formatting. This era code is not necessarily unique for the calendar, and
-    /// is whatever ICU4X datetime datagen uses for this era.
-    ///
-    /// It will typically be a valid era alias.
-    ///
-    /// <https://tc39.es/proposal-intl-era-monthcode/#table-eras>
-    pub formatting_era: FormattingEra,
-    /// The era code as expected by Temporal/CLDR. This era code is unique for the calendar
-    /// and follows a particular scheme.
-    ///
-    /// <https://tc39.es/proposal-intl-era-monthcode/#table-eras>
-    pub standard_era: Era,
     /// The numeric year in that era
     pub year: i32,
-    /// The ambiguity when formatting this year
+    /// The era code as defined by CLDR, expect for cases where CLDR does not define a code.
+    pub era: TinyStr16,
+    /// An era index, for calendars with a small set of eras.
+    ///
+    /// It is obtained by ordering all eras' start/end dates, and for eras sharing a date, put the negative
+    /// one first. For example, bce < ce.
+    ///
+    /// As eras might be added or removed across CLDR releases, this does not have a stable correspondence
+    /// with the era code.
+    pub era_index: Option<u8>,
+    /// The ambiguity of the era/year combination
     pub ambiguity: YearAmbiguity,
 }
 

@@ -199,15 +199,15 @@ impl Calendar for Ethiopian {
         let year = date.0.year;
         if self.0 || year <= INCARNATION_OFFSET {
             types::EraYear {
-                standard_era: tinystr!(16, "aa").into(),
-                formatting_era: types::FormattingEra::Index(0, tinystr!(16, "AA")),
+                era: tinystr!(16, "aa"),
+                era_index: Some(0),
                 year,
                 ambiguity: types::YearAmbiguity::CenturyRequired,
             }
         } else {
             types::EraYear {
-                standard_era: tinystr!(16, "am").into(),
-                formatting_era: types::FormattingEra::Index(1, tinystr!(16, "AM")),
+                era: tinystr!(16, "am"),
+                era_index: Some(1),
                 year: year - INCARNATION_OFFSET,
                 ambiguity: types::YearAmbiguity::CenturyRequired,
             }
