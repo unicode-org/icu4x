@@ -15,4 +15,27 @@
 
 
 icu::datetime::UnsupportedCalendarError#Struct
+icu::datetime::fieldsets::D::time#FnInStruct
+icu::datetime::fieldsets::D::time_hm#FnInStruct
+icu::datetime::fieldsets::D::time_hms#FnInStruct
+icu::datetime::fieldsets::DE::time#FnInStruct
+icu::datetime::fieldsets::DE::time_hm#FnInStruct
+icu::datetime::fieldsets::DE::time_hms#FnInStruct
+icu::datetime::fieldsets::E::time#FnInStruct
+icu::datetime::fieldsets::E::time_hm#FnInStruct
+icu::datetime::fieldsets::E::time_hms#FnInStruct
+icu::datetime::fieldsets::MD::time#FnInStruct
+icu::datetime::fieldsets::MD::time_hm#FnInStruct
+icu::datetime::fieldsets::MD::time_hms#FnInStruct
+icu::datetime::fieldsets::MDE::time#FnInStruct
+icu::datetime::fieldsets::MDE::time_hm#FnInStruct
+icu::datetime::fieldsets::MDE::time_hms#FnInStruct
+icu::datetime::fieldsets::T::hm#FnInStruct
+icu::datetime::fieldsets::T::hms#FnInStruct
+icu::datetime::fieldsets::YMD::time#FnInStruct
+icu::datetime::fieldsets::YMD::time_hm#FnInStruct
+icu::datetime::fieldsets::YMD::time_hms#FnInStruct
+icu::datetime::fieldsets::YMDE::time#FnInStruct
+icu::datetime::fieldsets::YMDE::time_hm#FnInStruct
+icu::datetime::fieldsets::YMDE::time_hms#FnInStruct
 icu::datetime::options::SubsecondError#Enum

@@ -51,7 +51,7 @@ export class TimeFormatter {
      *
      * See the [Rust documentation for `T`](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.T.html) for more information.
      *
-     * Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.T.html#method.with_time_precision), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.T.html#method.with_alignment), [3](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.T.html#method.with_length)
+     * Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.T.html#method.with_time_precision), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.T.html#method.with_alignment), [3](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.T.html#method.for_length)
      */
     #defaultConstructor(locale, length, timePrecision, alignment) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
@@ -76,7 +76,7 @@ export class TimeFormatter {
      *
      * See the [Rust documentation for `T`](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.T.html) for more information.
      *
-     * Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.T.html#method.with_time_precision), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.T.html#method.with_alignment), [3](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.T.html#method.with_length)
+     * Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.T.html#method.with_time_precision), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.T.html#method.with_alignment), [3](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.T.html#method.for_length)
      */
     static createWithProvider(provider, locale, length, timePrecision, alignment) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
