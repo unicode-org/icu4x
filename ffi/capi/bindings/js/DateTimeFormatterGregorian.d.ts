@@ -12,7 +12,7 @@ import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
 /** 
- * See the [Rust documentation for `FixedCalendarDateTimeFormatter`](https://docs.rs/icu/latest/icu/datetime/type.FixedCalendarDateTimeFormatter.html) for more information.
+ * See the [Rust documentation for `FixedCalendarDateTimeFormatter`](https://docs.rs/icu/latest/icu/datetime/struct.FixedCalendarDateTimeFormatter.html) for more information.
  */
 
 
@@ -21,6 +21,8 @@ export class DateTimeFormatterGregorian {
     get ffiValue(): pointer;
 
     /** 
+     * See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/datetime/struct.FixedCalendarDateTimeFormatter.html#method.try_new) for more information.
+     *
      * See the [Rust documentation for `DT`](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.DT.html) for more information.
      *
      * Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.DT.html#method.with_time_precision), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.DT.html#method.with_alignment), [3](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.DT.html#method.with_length)
@@ -28,6 +30,8 @@ export class DateTimeFormatterGregorian {
     static createDt(locale: Locale, length: DateTimeLength | null, timePrecision: TimePrecision | null, alignment: DateTimeAlignment | null): DateTimeFormatterGregorian;
 
     /** 
+     * See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/datetime/struct.FixedCalendarDateTimeFormatter.html#method.try_new) for more information.
+     *
      * See the [Rust documentation for `DT`](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.DT.html) for more information.
      *
      * Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.DT.html#method.with_time_precision), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.DT.html#method.with_alignment), [3](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.DT.html#method.with_length)
@@ -35,6 +39,8 @@ export class DateTimeFormatterGregorian {
     static createDtWithProvider(provider: DataProvider, locale: Locale, length: DateTimeLength | null, timePrecision: TimePrecision | null, alignment: DateTimeAlignment | null): DateTimeFormatterGregorian;
 
     /** 
+     * See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/datetime/struct.FixedCalendarDateTimeFormatter.html#method.try_new) for more information.
+     *
      * See the [Rust documentation for `MDT`](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.MDT.html) for more information.
      *
      * Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.MDT.html#method.with_time_precision), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.MDT.html#method.with_alignment), [3](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.MDT.html#method.with_length)
@@ -42,6 +48,8 @@ export class DateTimeFormatterGregorian {
     static createMdt(locale: Locale, length: DateTimeLength | null, timePrecision: TimePrecision | null, alignment: DateTimeAlignment | null): DateTimeFormatterGregorian;
 
     /** 
+     * See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/datetime/struct.FixedCalendarDateTimeFormatter.html#method.try_new) for more information.
+     *
      * See the [Rust documentation for `MDT`](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.MDT.html) for more information.
      *
      * Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.MDT.html#method.with_time_precision), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.MDT.html#method.with_alignment), [3](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.MDT.html#method.with_length)
@@ -49,6 +57,8 @@ export class DateTimeFormatterGregorian {
     static createMdtWithProvider(provider: DataProvider, locale: Locale, length: DateTimeLength | null, timePrecision: TimePrecision | null, alignment: DateTimeAlignment | null): DateTimeFormatterGregorian;
 
     /** 
+     * See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/datetime/struct.FixedCalendarDateTimeFormatter.html#method.try_new) for more information.
+     *
      * See the [Rust documentation for `YMDT`](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMDT.html) for more information.
      *
      * Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMDT.html#method.with_time_precision), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMDT.html#method.with_alignment), [3](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMDT.html#method.with_year_style), [4](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMDT.html#method.with_length)
@@ -56,6 +66,8 @@ export class DateTimeFormatterGregorian {
     static createYmdt(locale: Locale, length: DateTimeLength | null, timePrecision: TimePrecision | null, alignment: DateTimeAlignment | null, yearStyle: YearStyle | null): DateTimeFormatterGregorian;
 
     /** 
+     * See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/datetime/struct.FixedCalendarDateTimeFormatter.html#method.try_new) for more information.
+     *
      * See the [Rust documentation for `YMDT`](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMDT.html) for more information.
      *
      * Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMDT.html#method.with_time_precision), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMDT.html#method.with_alignment), [3](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMDT.html#method.with_year_style), [4](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMDT.html#method.with_length)
@@ -63,6 +75,8 @@ export class DateTimeFormatterGregorian {
     static createYmdtWithProvider(provider: DataProvider, locale: Locale, length: DateTimeLength | null, timePrecision: TimePrecision | null, alignment: DateTimeAlignment | null, yearStyle: YearStyle | null): DateTimeFormatterGregorian;
 
     /** 
+     * See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/datetime/struct.FixedCalendarDateTimeFormatter.html#method.try_new) for more information.
+     *
      * See the [Rust documentation for `DET`](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.DET.html) for more information.
      *
      * Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.DET.html#method.with_time_precision), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.DET.html#method.with_alignment), [3](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.DET.html#method.with_length)
@@ -70,6 +84,8 @@ export class DateTimeFormatterGregorian {
     static createDet(locale: Locale, length: DateTimeLength | null, timePrecision: TimePrecision | null, alignment: DateTimeAlignment | null): DateTimeFormatterGregorian;
 
     /** 
+     * See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/datetime/struct.FixedCalendarDateTimeFormatter.html#method.try_new) for more information.
+     *
      * See the [Rust documentation for `DET`](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.DET.html) for more information.
      *
      * Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.DET.html#method.with_time_precision), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.DET.html#method.with_alignment), [3](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.DET.html#method.with_length)
@@ -77,6 +93,8 @@ export class DateTimeFormatterGregorian {
     static createDetWithProvider(provider: DataProvider, locale: Locale, length: DateTimeLength | null, timePrecision: TimePrecision | null, alignment: DateTimeAlignment | null): DateTimeFormatterGregorian;
 
     /** 
+     * See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/datetime/struct.FixedCalendarDateTimeFormatter.html#method.try_new) for more information.
+     *
      * See the [Rust documentation for `MDET`](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.MDET.html) for more information.
      *
      * Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.MDET.html#method.with_time_precision), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.MDET.html#method.with_alignment), [3](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.MDET.html#method.with_length)
@@ -84,6 +102,8 @@ export class DateTimeFormatterGregorian {
     static createMdet(locale: Locale, length: DateTimeLength | null, timePrecision: TimePrecision | null, alignment: DateTimeAlignment | null): DateTimeFormatterGregorian;
 
     /** 
+     * See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/datetime/struct.FixedCalendarDateTimeFormatter.html#method.try_new) for more information.
+     *
      * See the [Rust documentation for `MDET`](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.MDET.html) for more information.
      *
      * Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.MDET.html#method.with_time_precision), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.MDET.html#method.with_alignment), [3](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.MDET.html#method.with_length)
@@ -91,6 +111,8 @@ export class DateTimeFormatterGregorian {
     static createMdetWithProvider(provider: DataProvider, locale: Locale, length: DateTimeLength | null, timePrecision: TimePrecision | null, alignment: DateTimeAlignment | null): DateTimeFormatterGregorian;
 
     /** 
+     * See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/datetime/struct.FixedCalendarDateTimeFormatter.html#method.try_new) for more information.
+     *
      * See the [Rust documentation for `YMDET`](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMDET.html) for more information.
      *
      * Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMDET.html#method.with_time_precision), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMDET.html#method.with_alignment), [3](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMDET.html#method.with_year_style), [4](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMDET.html#method.with_length)
@@ -98,6 +120,8 @@ export class DateTimeFormatterGregorian {
     static createYmdet(locale: Locale, length: DateTimeLength | null, timePrecision: TimePrecision | null, alignment: DateTimeAlignment | null, yearStyle: YearStyle | null): DateTimeFormatterGregorian;
 
     /** 
+     * See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/datetime/struct.FixedCalendarDateTimeFormatter.html#method.try_new) for more information.
+     *
      * See the [Rust documentation for `YMDET`](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMDET.html) for more information.
      *
      * Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMDET.html#method.with_time_precision), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMDET.html#method.with_alignment), [3](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMDET.html#method.with_year_style), [4](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMDET.html#method.with_length)
@@ -105,6 +129,8 @@ export class DateTimeFormatterGregorian {
     static createYmdetWithProvider(provider: DataProvider, locale: Locale, length: DateTimeLength | null, timePrecision: TimePrecision | null, alignment: DateTimeAlignment | null, yearStyle: YearStyle | null): DateTimeFormatterGregorian;
 
     /** 
+     * See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/datetime/struct.FixedCalendarDateTimeFormatter.html#method.try_new) for more information.
+     *
      * See the [Rust documentation for `ET`](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.ET.html) for more information.
      *
      * Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.ET.html#method.with_time_precision), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.ET.html#method.with_alignment), [3](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.ET.html#method.with_length)
@@ -112,6 +138,8 @@ export class DateTimeFormatterGregorian {
     static createEt(locale: Locale, length: DateTimeLength | null, timePrecision: TimePrecision | null, alignment: DateTimeAlignment | null): DateTimeFormatterGregorian;
 
     /** 
+     * See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/datetime/struct.FixedCalendarDateTimeFormatter.html#method.try_new) for more information.
+     *
      * See the [Rust documentation for `ET`](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.ET.html) for more information.
      *
      * Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.ET.html#method.with_time_precision), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.ET.html#method.with_alignment), [3](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.ET.html#method.with_length)

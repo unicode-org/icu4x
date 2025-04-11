@@ -43,7 +43,7 @@ pub mod ffi {
     {%- endif %}
 
     #[diplomat::opaque]
-    #[diplomat::rust_link(icu::datetime::{{ formatter_kind.rust_type() }}, Typedef)]
+    #[diplomat::rust_link(icu::datetime::{{ formatter_kind.rustlink() }}, {{ formatter_kind.rustlink_doctype() }})]
     pub struct {{ ffi_type }}(
         pub  icu_datetime::{{ formatter_kind.rust_type() }}<
             {%- if formatter_kind.is_fixed_calendar %}
@@ -84,6 +84,7 @@ pub mod ffi {
         {%- else %}
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "{{ named_constructor }}")]
         {%- endif %}
+        #[diplomat::rust_link(icu::datetime::{{ formatter_kind.rustlink() }}::try_new, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::{{ variant.name_upper() }}, Struct)]
         {%- if flavor.has_time() %}
         #[diplomat::rust_link(icu::datetime::fieldsets::{{ variant.name_upper() }}::with_time_precision, FnInStruct, compact)]
@@ -98,6 +99,9 @@ pub mod ffi {
         #[diplomat::rust_link(icu::datetime::fieldsets::{{ variant.name_upper() }}::short, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::{{ variant.name_upper() }}::medium, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::{{ variant.name_upper() }}::long, FnInStruct, hidden)]
+        {%- if variant.supports_zone() %}
+        #[diplomat::rust_link(icu::datetime::fieldsets::{{ variant.name_upper() }}::zone, FnInStruct, hidden)] // functionality is in the zoned formatter but rustlink is here
+        {%- endif %}
         {%- if variant.is_default_constructor() && !ctor.is_with_provider() %}
         #[diplomat::demo(default_constructor)]
         {%- endif %}

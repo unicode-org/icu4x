@@ -4,7 +4,9 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
 /** 
- * See the [Rust documentation for `TimePrecision`](https://docs.rs/icu/latest/icu/datetime/enum.TimePrecision.html) for more information.
+ * See the [Rust documentation for `TimePrecision`](https://docs.rs/icu/latest/icu/datetime/options/enum.TimePrecision.html) for more information.
+ *
+ * See the [Rust documentation for `SubsecondDigits`](https://docs.rs/icu/latest/icu/datetime/options/enum.SubsecondDigits.html) for more information.
  */
 
 
