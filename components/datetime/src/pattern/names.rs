@@ -907,7 +907,7 @@ where
     ///         locale!("es-MX").into(),
     ///     );
     ///
-    /// let field_set = T::long().with_hm();
+    /// let field_set = T::long().with_time_precision_hm();
     ///
     /// // Cannot convert yet: no names are loaded
     /// let mut names = names.try_into_formatter(field_set).unwrap_err().1;
@@ -1100,7 +1100,7 @@ where
     /// )
     /// .expect("All locale-default calendars are supported");
     ///
-    /// let field_set = T::long().with_hm();
+    /// let field_set = T::long().with_time_precision_hm();
     ///
     /// // Cannot convert yet: no names are loaded
     /// let mut names = names.try_into_formatter(field_set).unwrap_err().1;
