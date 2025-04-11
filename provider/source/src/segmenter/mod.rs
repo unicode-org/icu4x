@@ -9,7 +9,6 @@
 
 use crate::SourceDataProvider;
 use icu::collections::codepointtrie;
-use icu::experimental::unicodeset_parse;
 use icu::properties::{
     props::{
         EastAsianWidth, GeneralCategory, GraphemeClusterBreak, IndicConjunctBreak, LineBreak,
@@ -20,6 +19,7 @@ use icu::properties::{
 use icu::segmenter::options::WordType;
 use icu::segmenter::provider::*;
 use icu_codepointtrie_builder::{CodePointTrieBuilder, CodePointTrieBuilderData};
+use icu_experimental::unicodeset_parse;
 use icu_provider::prelude::*;
 use std::cmp;
 use std::collections::HashSet;
@@ -230,7 +230,9 @@ fn generate_rule_break_data(
                     properties_map[c as usize] = property_index;
                 }
                 continue;
-            } else if p.as_simple_property.is_some() {
+            }
+
+            if p.as_simple_property.is_some() {
                 // defined as simple property. It means that we move the marker to the next property.
                 continue;
             }
