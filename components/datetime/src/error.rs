@@ -65,7 +65,7 @@ pub enum DateTimeWriteError {
     /// The output will contain the raw [`MonthCode`] as a fallback value.
     #[displaydoc("Invalid month {0:?}")]
     InvalidMonthCode(MonthCode),
-    /// The [`FormattingEra`] of the input is not valid for this calendar.
+    /// The era code of the input is not valid for this calendar.
     ///
     /// This is guaranteed not to happen for `icu::calendar` inputs, but may happen for custom inputs.
     ///
