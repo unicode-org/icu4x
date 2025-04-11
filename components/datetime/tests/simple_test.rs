@@ -74,15 +74,16 @@ fn neo_datetime_lengths() {
         time: Time::try_new(21, 22, 53, 0).unwrap(),
     };
     let mut expected_iter = EXPECTED_DATETIME.iter();
+    use icu_datetime::options::TimePrecision::Minute as HM;
     for field_set in [
         DateAndTimeFieldSet::YMDET(fieldsets::YMDET::long()),
-        DateAndTimeFieldSet::YMDET(fieldsets::YMDET::long().with_time_precision_hm()),
+        DateAndTimeFieldSet::YMDET(fieldsets::YMDET::long().with_time_precision(HM)),
         DateAndTimeFieldSet::YMDT(fieldsets::YMDT::long()),
-        DateAndTimeFieldSet::YMDT(fieldsets::YMDT::long().with_time_precision_hm()),
+        DateAndTimeFieldSet::YMDT(fieldsets::YMDT::long().with_time_precision(HM)),
         DateAndTimeFieldSet::YMDT(fieldsets::YMDT::medium()),
-        DateAndTimeFieldSet::YMDT(fieldsets::YMDT::medium().with_time_precision_hm()),
+        DateAndTimeFieldSet::YMDT(fieldsets::YMDT::medium().with_time_precision(HM)),
         DateAndTimeFieldSet::YMDT(fieldsets::YMDT::short()),
-        DateAndTimeFieldSet::YMDT(fieldsets::YMDT::short().with_time_precision_hm()),
+        DateAndTimeFieldSet::YMDT(fieldsets::YMDT::short().with_time_precision(HM)),
     ] {
         for locale in [locale!("en"), locale!("fr"), locale!("zh"), locale!("hi")] {
             let prefs = DateTimeFormatterPreferences::from(&locale);

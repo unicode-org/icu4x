@@ -15,12 +15,4 @@
 
 
 icu::datetime::UnsupportedCalendarError#Struct
-icu::datetime::fieldsets::DET::with_time_precision_hm#FnInStruct
-icu::datetime::fieldsets::DT::with_time_precision_hm#FnInStruct
-icu::datetime::fieldsets::ET::with_time_precision_hm#FnInStruct
-icu::datetime::fieldsets::MDET::with_time_precision_hm#FnInStruct
-icu::datetime::fieldsets::MDT::with_time_precision_hm#FnInStruct
-icu::datetime::fieldsets::T::with_time_precision_hm#FnInStruct
-icu::datetime::fieldsets::YMDET::with_time_precision_hm#FnInStruct
-icu::datetime::fieldsets::YMDT::with_time_precision_hm#FnInStruct
 icu::datetime::options::SubsecondError#Enum

@@ -167,6 +167,23 @@ macro_rules! impl_marker_length_constructors {
     };
 }
 
+macro_rules! impl_time_precision_constructors {
+    (
+        $time_type:ident,
+    ) => {
+        impl $time_type {
+            #[doc = concat!("Creates a ", stringify!($type), " that formats hours and minutes with the default length.")]
+            pub fn hm() -> Self {
+                Self::with_length(Default::default()).with_time_precision(TimePrecision::Minute)
+            }
+            #[doc = concat!("Creates a ", stringify!($type), " that formats hours, minutes, and seconds with the default length.")]
+            pub fn hms() -> Self {
+                Self::with_length(Default::default()).with_time_precision(TimePrecision::Second)
+            }
+        }
+    };
+}
+
 macro_rules! impl_marker_with_options {
     (
         $(#[$attr:meta])*
@@ -252,11 +269,6 @@ macro_rules! impl_marker_with_options {
                 /// Sets the time precision option.
                 pub const fn with_time_precision(mut self, time_precision: TimePrecision) -> Self {
                     self.time_precision = Some(yes_to!(time_precision, $timeprecision_yes));
-                    self
-                }
-                /// Shorthand to set time precision to [`TimePrecision::Minute`]
-                pub fn with_time_precision_hm(mut self) -> Self {
-                    self.time_precision = Some(TimePrecision::Minute);
                     self
                 }
             }
@@ -774,6 +786,9 @@ macro_rules! impl_time_marker {
             alignment: yes,
             time_precision: yes,
         );
+        impl_time_precision_constructors!(
+            $type,
+        );
         impl_zone_combo_helpers!($type, TimeZone, TimeFieldSet);
         impl UnstableSealed for $type {}
         impl DateTimeNamesMarker for $type {
@@ -1098,7 +1113,7 @@ impl_time_marker!(
     ///
     /// let formatter = NoCalendarFormatter::try_new(
     ///     locale!("en-US-u-hc-h12").into(),
-    ///     T::short().with_time_precision_hm(),
+    ///     T::hm(),
     /// )
     /// .unwrap();
     /// assert_writeable_eq!(
@@ -1108,7 +1123,7 @@ impl_time_marker!(
     ///
     /// let formatter = NoCalendarFormatter::try_new(
     ///     locale!("en-US-u-hc-h23").into(),
-    ///     T::short().with_time_precision_hm(),
+    ///     T::hm(),
     /// )
     /// .unwrap();
     /// assert_writeable_eq!(
@@ -1118,7 +1133,7 @@ impl_time_marker!(
     ///
     /// let formatter = NoCalendarFormatter::try_new(
     ///     locale!("fr-FR-u-hc-h12").into(),
-    ///     T::short().with_time_precision_hm(),
+    ///     T::hm(),
     /// )
     /// .unwrap();
     /// assert_writeable_eq!(
@@ -1128,7 +1143,7 @@ impl_time_marker!(
     ///
     /// let formatter = NoCalendarFormatter::try_new(
     ///     locale!("fr-FR-u-hc-h23").into(),
-    ///     T::short().with_time_precision_hm(),
+    ///     T::hm(),
     /// )
     /// .unwrap();
     /// assert_writeable_eq!(
@@ -1148,7 +1163,7 @@ impl_time_marker!(
     ///
     /// let formatter = NoCalendarFormatter::try_new(
     ///     locale!("und-u-hc-h11").into(),
-    ///     T::short().with_time_precision_hm(),
+    ///     T::hm(),
     /// )
     /// .unwrap();
     ///
@@ -1159,7 +1174,7 @@ impl_time_marker!(
     ///
     /// let formatter = NoCalendarFormatter::try_new(
     ///     locale!("und-u-hc-h23").into(),
-    ///     T::short().with_time_precision_hm(),
+    ///     T::hm(),
     /// )
     /// .unwrap();
     ///
