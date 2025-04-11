@@ -943,7 +943,7 @@ impl<C: CldrCalendar, FSet: DateTimeMarkers> FixedCalendarDateTimeFormatter<C, F
     /// // Create a simple YMDT formatter:
     /// let formatter = FixedCalendarDateTimeFormatter::try_new(
     ///     locale!("und").into(),
-    ///     YMD::long().with_time_hm().with_alignment(Alignment::Column)
+    ///     YMD::long().time_hm().with_alignment(Alignment::Column)
     /// )
     /// .unwrap();
     ///

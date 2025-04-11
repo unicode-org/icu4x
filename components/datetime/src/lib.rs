@@ -57,7 +57,7 @@
 //! use writeable::assert_writeable_eq;
 //!
 //! // Field set for year, month, day, hour, and minute with a medium length:
-//! let field_set = fieldsets::YMD::medium().with_time_hm();
+//! let field_set = fieldsets::YMD::medium().time_hm();
 //!
 //! // Create a formatter for Argentinian Spanish:
 //! let locale = locale!("es-AR");
