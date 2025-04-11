@@ -184,9 +184,9 @@ where
     let new_payload = payload.try_map_project_cloned(|payload, _| {
         use key_attr_consts::*;
         let result = match req.id.marker_attributes.as_str() {
-            STADLN_ABBR_STR => payload.months.stand_alone_abbreviated(),
-            STADLN_WIDE_STR => payload.months.stand_alone_wide(),
-            STADLN_NARW_STR => payload.months.stand_alone_narrow(),
+            STADLN_ABBR_STR => payload.months.stand_alone.as_ref().and_then(|x| x.abbreviated.as_ref()),
+            STADLN_WIDE_STR => payload.months.stand_alone.as_ref().and_then(|x| x.wide.as_ref()),
+            STADLN_NARW_STR => payload.months.stand_alone.as_ref().and_then(|x| x.narrow.as_ref()),
             _ => None,
         };
         if let Some(result) = result {
@@ -221,10 +221,10 @@ where
     let new_payload = payload.try_map_project_cloned(|payload, _| {
         use key_attr_consts::*;
         let result = match req.id.marker_attributes.as_str() {
-            STADLN_ABBR_STR => payload.weekdays.stand_alone_abbreviated(),
-            STADLN_WIDE_STR => payload.weekdays.stand_alone_wide(),
-            STADLN_NARW_STR => payload.weekdays.stand_alone_narrow(),
-            STADLN_SHRT_STR => payload.weekdays.stand_alone_short(),
+            STADLN_ABBR_STR => payload.weekdays.stand_alone.as_ref().and_then(|x| x.abbreviated.as_ref()),
+            STADLN_WIDE_STR => payload.weekdays.stand_alone.as_ref().and_then(|x| x.wide.as_ref()),
+            STADLN_NARW_STR => payload.weekdays.stand_alone.as_ref().and_then(|x| x.narrow.as_ref()),
+            STADLN_SHRT_STR => payload.weekdays.stand_alone.as_ref().and_then(|x| x.short.as_ref()),
             _ => None,
         };
         if let Some(result) = result {
@@ -268,9 +268,9 @@ where
     let new_payload = payload.try_map_project_cloned(|payload, _| {
         use key_attr_consts::*;
         let result = match req.id.marker_attributes.as_str() {
-            STADLN_ABBR_STR => payload.day_periods.stand_alone_abbreviated(),
-            STADLN_WIDE_STR => payload.day_periods.stand_alone_wide(),
-            STADLN_NARW_STR => payload.day_periods.stand_alone_narrow(),
+            STADLN_ABBR_STR => payload.day_periods.stand_alone.as_ref().and_then(|x| x.abbreviated.as_ref()),
+            STADLN_WIDE_STR => payload.day_periods.stand_alone.as_ref().and_then(|x| x.wide.as_ref()),
+            STADLN_NARW_STR => payload.day_periods.stand_alone.as_ref().and_then(|x| x.narrow.as_ref()),
             _ => None,
         };
         if let Some(result) = result {
