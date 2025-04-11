@@ -9,9 +9,9 @@ pub mod ffi {
     use alloc::boxed::Box;
     use diplomat_runtime::DiplomatStr;
 
-    use crate::timezone::ffi::TimeZone;
+    use crate::unstable::timezone::ffi::TimeZone;
     #[cfg(feature = "buffer_provider")]
-    use crate::{errors::ffi::DataError, provider::ffi::DataProvider};
+    use crate::unstable::{errors::ffi::DataError, provider::ffi::DataProvider};
 
     /// A mapper between IANA time zone identifiers and BCP-47 time zone identifiers.
     ///

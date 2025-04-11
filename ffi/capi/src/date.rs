@@ -13,8 +13,8 @@ pub mod ffi {
     use core::fmt::Write;
     use icu_calendar::Iso;
 
-    use crate::calendar::ffi::Calendar;
-    use crate::errors::ffi::{CalendarError, CalendarParseError};
+    use crate::unstable::calendar::ffi::Calendar;
+    use crate::unstable::errors::ffi::{CalendarError, CalendarParseError};
 
     use tinystr::TinyAsciiStr;
 

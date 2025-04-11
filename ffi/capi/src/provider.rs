@@ -10,7 +10,7 @@ pub mod ffi {
     use alloc::boxed::Box;
     use icu_provider::buf::BufferProvider;
 
-    use crate::errors::ffi::DataError;
+    use crate::unstable::errors::ffi::DataError;
 
     #[diplomat::opaque]
     /// An ICU4X data provider, capable of loading ICU4X data keys from some source.
@@ -140,7 +140,7 @@ pub mod ffi {
         #[cfg(feature = "locale")]
         pub fn enable_locale_fallback_with(
             &mut self,
-            fallbacker: &crate::fallbacker::ffi::LocaleFallbacker,
+            fallbacker: &crate::unstable::fallbacker::ffi::LocaleFallbacker,
         ) -> Result<(), DataError> {
             *self = match core::mem::take(&mut self.0) {
                 None => Err(icu_provider::DataError::custom(

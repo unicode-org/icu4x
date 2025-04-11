@@ -8,10 +8,10 @@
 pub mod ffi {
     use alloc::boxed::Box;
 
-    use crate::properties_iter::ffi::CodePointRangeIterator;
-    use crate::properties_sets::ffi::CodePointSetData;
+    use crate::unstable::properties_iter::ffi::CodePointRangeIterator;
+    use crate::unstable::properties_sets::ffi::CodePointSetData;
     #[cfg(feature = "buffer_provider")]
-    use crate::{errors::ffi::DataError, provider::ffi::DataProvider};
+    use crate::unstable::{errors::ffi::DataError, provider::ffi::DataProvider};
 
     #[diplomat::opaque]
     /// An ICU4X ScriptWithExtensions map object, capable of holding a map of codepoints to scriptextensions values

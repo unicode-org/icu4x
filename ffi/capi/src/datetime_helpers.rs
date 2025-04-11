@@ -20,11 +20,11 @@ where
 
 pub(super) fn date_formatter_with_zone<Zone>(
     formatter: &DateTimeFormatter<DateFieldSet>,
-    locale: &crate::locale_core::ffi::Locale,
+    locale: &crate::unstable::locale_core::ffi::Locale,
     zone: Zone,
     load: impl FnOnce(
         &mut DateTimeNames<Combo<DateFieldSet, Zone>>,
-    ) -> Result<(), crate::errors::ffi::DateTimeFormatterLoadError>,
+    ) -> Result<(), crate::unstable::errors::ffi::DateTimeFormatterLoadError>,
     to_formatter: impl FnOnce(
         DateTimeNames<Combo<DateFieldSet, Zone>>,
         Combo<DateFieldSet, Zone>,
@@ -36,8 +36,8 @@ pub(super) fn date_formatter_with_zone<Zone>(
         ),
     >,
 ) -> Result<
-    Box<crate::zoned_date_formatter::ffi::ZonedDateFormatter>,
-    crate::errors::ffi::DateTimeFormatterLoadError,
+    Box<crate::unstable::zoned_date_formatter::ffi::ZonedDateFormatter>,
+    crate::unstable::errors::ffi::DateTimeFormatterLoadError,
 >
 where
     Zone: DateTimeMarkers + ZoneMarkers,
@@ -55,11 +55,11 @@ where
         .map_err(|e| match e {
             BuilderError::InvalidDateFields => {
                 // This can fail if the date fields are for a calendar period
-                crate::errors::ffi::DateTimeFormatterLoadError::InvalidDateFields
+                crate::unstable::errors::ffi::DateTimeFormatterLoadError::InvalidDateFields
             }
             _ => {
                 debug_assert!(false, "should be infallible, but got: {e:?}");
-                crate::errors::ffi::DateTimeFormatterLoadError::Unknown
+                crate::unstable::errors::ffi::DateTimeFormatterLoadError::Unknown
             }
         })?
         .zone(zone);
@@ -68,17 +68,17 @@ where
         .map_err(|(e, _)| e)?
         .cast_into_fset();
     Ok(Box::new(
-        crate::zoned_date_formatter::ffi::ZonedDateFormatter(formatter),
+        crate::unstable::zoned_date_formatter::ffi::ZonedDateFormatter(formatter),
     ))
 }
 
 pub(super) fn datetime_formatter_with_zone<Zone>(
     formatter: &DateTimeFormatter<CompositeDateTimeFieldSet>,
-    locale: &crate::locale_core::ffi::Locale,
+    locale: &crate::unstable::locale_core::ffi::Locale,
     zone: Zone,
     load: impl FnOnce(
         &mut DateTimeNames<Combo<DateAndTimeFieldSet, Zone>>,
-    ) -> Result<(), crate::errors::ffi::DateTimeFormatterLoadError>,
+    ) -> Result<(), crate::unstable::errors::ffi::DateTimeFormatterLoadError>,
     to_formatter: impl FnOnce(
         DateTimeNames<Combo<DateAndTimeFieldSet, Zone>>,
         Combo<DateAndTimeFieldSet, Zone>,
@@ -90,8 +90,8 @@ pub(super) fn datetime_formatter_with_zone<Zone>(
         ),
     >,
 ) -> Result<
-    Box<crate::zoned_date_time_formatter::ffi::ZonedDateTimeFormatter>,
-    crate::errors::ffi::DateTimeFormatterLoadError,
+    Box<crate::unstable::zoned_date_time_formatter::ffi::ZonedDateTimeFormatter>,
+    crate::unstable::errors::ffi::DateTimeFormatterLoadError,
 >
 where
     Zone: DateTimeMarkers + ZoneMarkers,
@@ -109,11 +109,11 @@ where
         .map_err(|e| match e {
             BuilderError::InvalidDateFields => {
                 debug_assert!(false, "fields were already validated in DateTimeFormatter");
-                crate::errors::ffi::DateTimeFormatterLoadError::InvalidDateFields
+                crate::unstable::errors::ffi::DateTimeFormatterLoadError::InvalidDateFields
             }
             _ => {
                 debug_assert!(false, "should be infallible, but got: {e:?}");
-                crate::errors::ffi::DateTimeFormatterLoadError::Unknown
+                crate::unstable::errors::ffi::DateTimeFormatterLoadError::Unknown
             }
         })?
         .zone(zone);
@@ -122,17 +122,17 @@ where
         .map_err(|(e, _)| e)?
         .cast_into_fset();
     Ok(Box::new(
-        crate::zoned_date_time_formatter::ffi::ZonedDateTimeFormatter(formatter),
+        crate::unstable::zoned_date_time_formatter::ffi::ZonedDateTimeFormatter(formatter),
     ))
 }
 
 pub(super) fn date_formatter_gregorian_with_zone<Zone>(
     formatter: &FixedCalendarDateTimeFormatter<Gregorian, DateFieldSet>,
-    locale: &crate::locale_core::ffi::Locale,
+    locale: &crate::unstable::locale_core::ffi::Locale,
     zone: Zone,
     load: impl FnOnce(
         &mut FixedCalendarDateTimeNames<Gregorian, Combo<DateFieldSet, Zone>>,
-    ) -> Result<(), crate::errors::ffi::DateTimeFormatterLoadError>,
+    ) -> Result<(), crate::unstable::errors::ffi::DateTimeFormatterLoadError>,
     to_formatter: impl FnOnce(
         FixedCalendarDateTimeNames<Gregorian, Combo<DateFieldSet, Zone>>,
         Combo<DateFieldSet, Zone>,
@@ -144,8 +144,8 @@ pub(super) fn date_formatter_gregorian_with_zone<Zone>(
         ),
     >,
 ) -> Result<
-    Box<crate::zoned_date_formatter::ffi::ZonedDateFormatterGregorian>,
-    crate::errors::ffi::DateTimeFormatterLoadError,
+    Box<crate::unstable::zoned_date_formatter::ffi::ZonedDateFormatterGregorian>,
+    crate::unstable::errors::ffi::DateTimeFormatterLoadError,
 >
 where
     Zone: DateTimeMarkers + ZoneMarkers,
@@ -163,11 +163,11 @@ where
         .map_err(|e| match e {
             BuilderError::InvalidDateFields => {
                 // This can fail if the date fields are for a calendar period
-                crate::errors::ffi::DateTimeFormatterLoadError::InvalidDateFields
+                crate::unstable::errors::ffi::DateTimeFormatterLoadError::InvalidDateFields
             }
             _ => {
                 debug_assert!(false, "should be infallible, but got: {e:?}");
-                crate::errors::ffi::DateTimeFormatterLoadError::Unknown
+                crate::unstable::errors::ffi::DateTimeFormatterLoadError::Unknown
             }
         })?
         .zone(zone);
@@ -176,17 +176,17 @@ where
         .map_err(|(e, _)| e)?
         .cast_into_fset();
     Ok(Box::new(
-        crate::zoned_date_formatter::ffi::ZonedDateFormatterGregorian(formatter),
+        crate::unstable::zoned_date_formatter::ffi::ZonedDateFormatterGregorian(formatter),
     ))
 }
 
 pub(super) fn datetime_formatter_gregorian_with_zone<Zone>(
     formatter: &FixedCalendarDateTimeFormatter<Gregorian, CompositeDateTimeFieldSet>,
-    locale: &crate::locale_core::ffi::Locale,
+    locale: &crate::unstable::locale_core::ffi::Locale,
     zone: Zone,
     load: impl FnOnce(
         &mut FixedCalendarDateTimeNames<Gregorian, Combo<DateAndTimeFieldSet, Zone>>,
-    ) -> Result<(), crate::errors::ffi::DateTimeFormatterLoadError>,
+    ) -> Result<(), crate::unstable::errors::ffi::DateTimeFormatterLoadError>,
     to_formatter: impl FnOnce(
         FixedCalendarDateTimeNames<Gregorian, Combo<DateAndTimeFieldSet, Zone>>,
         Combo<DateAndTimeFieldSet, Zone>,
@@ -198,8 +198,8 @@ pub(super) fn datetime_formatter_gregorian_with_zone<Zone>(
         ),
     >,
 ) -> Result<
-    Box<crate::zoned_date_time_formatter::ffi::ZonedDateTimeFormatterGregorian>,
-    crate::errors::ffi::DateTimeFormatterLoadError,
+    Box<crate::unstable::zoned_date_time_formatter::ffi::ZonedDateTimeFormatterGregorian>,
+    crate::unstable::errors::ffi::DateTimeFormatterLoadError,
 >
 where
     Zone: DateTimeMarkers + ZoneMarkers,
@@ -217,11 +217,11 @@ where
         .map_err(|e| match e {
             BuilderError::InvalidDateFields => {
                 debug_assert!(false, "fields were already validated in DateTimeFormatter");
-                crate::errors::ffi::DateTimeFormatterLoadError::InvalidDateFields
+                crate::unstable::errors::ffi::DateTimeFormatterLoadError::InvalidDateFields
             }
             _ => {
                 debug_assert!(false, "should be infallible, but got: {e:?}");
-                crate::errors::ffi::DateTimeFormatterLoadError::Unknown
+                crate::unstable::errors::ffi::DateTimeFormatterLoadError::Unknown
             }
         })?
         .zone(zone);
@@ -230,6 +230,6 @@ where
         .map_err(|(e, _)| e)?
         .cast_into_fset();
     Ok(Box::new(
-        crate::zoned_date_time_formatter::ffi::ZonedDateTimeFormatterGregorian(formatter),
+        crate::unstable::zoned_date_time_formatter::ffi::ZonedDateTimeFormatterGregorian(formatter),
     ))
 }

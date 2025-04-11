@@ -10,7 +10,7 @@ use ffi::FixedDecimalSignedRoundingMode;
 pub mod ffi {
     use alloc::boxed::Box;
 
-    use crate::errors::ffi::{FixedDecimalLimitError, FixedDecimalParseError};
+    use crate::unstable::errors::ffi::{FixedDecimalLimitError, FixedDecimalParseError};
 
     use writeable::Writeable;
 

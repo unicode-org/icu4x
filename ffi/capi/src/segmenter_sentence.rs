@@ -9,9 +9,9 @@ pub mod ffi {
     use alloc::boxed::Box;
 
     #[cfg(feature = "buffer_provider")]
-    use crate::provider::ffi::DataProvider;
+    use crate::unstable::provider::ffi::DataProvider;
     #[cfg(any(feature = "compiled_data", feature = "buffer_provider"))]
-    use crate::{errors::ffi::DataError, locale_core::ffi::Locale};
+    use crate::unstable::{errors::ffi::DataError, locale_core::ffi::Locale};
 
     #[diplomat::opaque]
     /// An ICU4X sentence-break segmenter, capable of finding sentence breakpoints in strings.
@@ -194,10 +194,10 @@ pub mod ffi {
     }
 }
 
-impl<'a> From<&'a crate::locale_core::ffi::Locale>
+impl<'a> From<&'a crate::unstable::locale_core::ffi::Locale>
     for icu_segmenter::options::SentenceBreakOptions<'a>
 {
-    fn from(other: &'a crate::locale_core::ffi::Locale) -> Self {
+    fn from(other: &'a crate::unstable::locale_core::ffi::Locale) -> Self {
         let mut options = icu_segmenter::options::SentenceBreakOptions::default();
         options.content_locale = Some(&other.0.id);
         options
