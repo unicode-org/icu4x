@@ -28,7 +28,7 @@
 //! Compiled data is exposed through idiomatic Rust constructors like `new` or `try_new`:
 //!
 //! ```
-//! use icu::datetime::{fieldsets::YMD, DateTimeFormatter, Length};
+//! use icu::datetime::{fieldsets::YMD, DateTimeFormatter};
 //! use icu::locale::locale;
 //!
 //! let dtf =
@@ -49,7 +49,7 @@
 //! special constructors:
 //!
 //! ```no_run
-//! use icu::datetime::{fieldsets::YMD, DateTimeFormatter, Length};
+//! use icu::datetime::{fieldsets::YMD, DateTimeFormatter};
 //! use icu::locale::fallback::LocaleFallbacker;
 //! use icu::locale::locale;
 //! use icu_provider_adapters::fallback::LocaleFallbackProvider;

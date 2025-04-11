@@ -209,7 +209,7 @@ We can instead use `FixedCalendarDateTimeFormatter<Gregorian>`, which only suppo
 ```rust,no_run
 use icu::locale::{locale, Locale, fallback::LocaleFallbacker};
 use icu::calendar::{Date, Gregorian};
-use icu::datetime::{FixedCalendarDateTimeFormatter, fieldsets::YMD, Length};
+use icu::datetime::{FixedCalendarDateTimeFormatter, fieldsets::YMD};
 use icu_provider_adapters::fallback::LocaleFallbackProvider;
 use icu_provider_blob::BlobDataProvider;
 
