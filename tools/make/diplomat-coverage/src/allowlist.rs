@@ -154,11 +154,7 @@ lazy_static::lazy_static! {
         "icu::calendar::types::RataDie",
 
         // Not planned for 2.0: Temporal doesn't yet want this.
-        "icu::calendar::types::CyclicYear",
-        "icu::calendar::types::YearInfo::cyclic",
-        "icu::calendar::types::YearInfo::related_iso",
         "icu::calendar::types::YearAmbiguity",
-        "icu::calendar::types::YearInfo::year_ambiguity",
 
         // Not planned for 2.0: Would need to introduce diplomat writeable with parts
         "icu::list::parts",

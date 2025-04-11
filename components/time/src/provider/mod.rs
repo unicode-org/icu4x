@@ -114,7 +114,7 @@ impl serde::Serialize for MinutesSinceEpoch {
             let hour = self.0 / 60 % 24;
             let days = self.0 / 60 / 24;
             let date = Date::from_rata_die(Self::EPOCH + days as i64, Iso);
-            let year = date.year().extended_year;
+            let year = date.extended_year();
             let month = date.month().month_number();
             let day = date.day_of_month().0;
             return serializer.serialize_str(&alloc::format!(

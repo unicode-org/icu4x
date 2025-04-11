@@ -13,7 +13,7 @@ use icu_provider::DataError;
 #[cfg(doc)]
 use crate::pattern::FixedCalendarDateTimeNames;
 #[cfg(doc)]
-use icu_calendar::types::YearInfo;
+use icu_calendar::types::CyclicYear;
 #[cfg(doc)]
 use icu_decimal::DecimalFormatter;
 
@@ -74,11 +74,11 @@ pub enum DateTimeWriteError {
     /// The output will contain [`FormattingEra::fallback_name`] as the fallback.
     #[displaydoc("Invalid era {0:?}")]
     InvalidEra(FormattingEra),
-    /// The [`YearInfo::cyclic`] of the input is not valid for this calendar.
+    /// The [`CyclicYear::year`] of the input is not valid for this calendar.
     ///
     /// This is guaranteed not to happen for `icu::calendar` inputs, but may happen for custom inputs.
     ///
-    /// The output will contain [`YearInfo::extended_year`] as a fallback value.
+    /// The output will contain [`CyclicYear::related_iso`] as a fallback value.
     #[displaydoc("Invalid cyclic year {value} (maximum {max})")]
     InvalidCyclicYear {
         /// Value

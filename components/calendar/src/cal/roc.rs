@@ -11,7 +11,7 @@
 //!     .expect("Failed to initialize ISO Date instance.");
 //! let date_roc = Date::new_from_iso(date_iso, Roc);
 //!
-//! assert_eq!(date_roc.year().era_year_or_related_iso(), 59);
+//! assert_eq!(date_roc.era_year().year, 59);
 //! assert_eq!(date_roc.month().ordinal, 1);
 //! assert_eq!(date_roc.day_of_month().0, 2);
 //! ```
@@ -56,6 +56,7 @@ pub struct RocDateInner(IsoDateInner);
 
 impl Calendar for Roc {
     type DateInner = RocDateInner;
+    type Year = types::EraYear;
 
     fn from_codes(
         &self,
@@ -123,30 +124,29 @@ impl Calendar for Roc {
         "ROC"
     }
 
-    fn year(&self, date: &Self::DateInner) -> crate::types::YearInfo {
-        let year = date.0 .0.year;
-        if year > ROC_ERA_OFFSET {
-            types::YearInfo::new(
-                year,
-                types::EraYear {
-                    standard_era: tinystr!(16, "minguo").into(),
-                    formatting_era: types::FormattingEra::Index(1, tinystr!(16, "min guo")),
-                    era_year: year.saturating_sub(ROC_ERA_OFFSET),
-                    ambiguity: types::YearAmbiguity::CenturyRequired,
-                },
-            )
+    fn year_info(&self, date: &Self::DateInner) -> Self::Year {
+        let extended_year = self.extended_year(date);
+        if extended_year > ROC_ERA_OFFSET {
+            types::EraYear {
+                standard_era: tinystr!(16, "minguo").into(),
+                formatting_era: types::FormattingEra::Index(1, tinystr!(16, "min guo")),
+                year: extended_year.saturating_sub(ROC_ERA_OFFSET),
+                ambiguity: types::YearAmbiguity::CenturyRequired,
+            }
         } else {
-            types::YearInfo::new(
-                year,
-                types::EraYear {
-                    standard_era: tinystr!(16, "minguo-qian").into(),
-                    formatting_era: types::FormattingEra::Index(0, tinystr!(16, "min guo qian")),
-                    era_year: (ROC_ERA_OFFSET + 1).saturating_sub(year),
-                    ambiguity: types::YearAmbiguity::EraAndCenturyRequired,
-                },
-            )
+            types::EraYear {
+                standard_era: tinystr!(16, "minguo-qian").into(),
+                formatting_era: types::FormattingEra::Index(0, tinystr!(16, "min guo qian")),
+                year: (ROC_ERA_OFFSET + 1).saturating_sub(extended_year),
+                ambiguity: types::YearAmbiguity::EraAndCenturyRequired,
+            }
         }
     }
+
+    fn extended_year(&self, date: &Self::DateInner) -> i32 {
+        Iso.extended_year(&date.0)
+    }
+
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
         Iso.is_in_leap_year(&date.0)
     }
@@ -184,15 +184,15 @@ impl Date<Roc> {
     /// let date_roc = Date::try_new_roc(1, 2, 3)
     ///     .expect("Failed to initialize ROC Date instance.");
     ///
-    /// assert_eq!(date_roc.year().standard_era().unwrap().0, tinystr!(16, "minguo"));
-    /// assert_eq!(date_roc.year().era_year_or_related_iso(), 1, "ROC year check failed!");
+    /// assert_eq!(date_roc.era_year().standard_era.0, tinystr!(16, "minguo"));
+    /// assert_eq!(date_roc.era_year().year, 1, "ROC year check failed!");
     /// assert_eq!(date_roc.month().ordinal, 2, "ROC month check failed!");
     /// assert_eq!(date_roc.day_of_month().0, 3, "ROC day of month check failed!");
     ///
     /// // Convert to an equivalent Gregorian date
     /// let date_gregorian = date_roc.to_calendar(Gregorian);
     ///
-    /// assert_eq!(date_gregorian.year().era_year_or_related_iso(), 1912, "Gregorian from ROC year check failed!");
+    /// assert_eq!(date_gregorian.era_year().year, 1912, "Gregorian from ROC year check failed!");
     /// assert_eq!(date_gregorian.month().ordinal, 2, "Gregorian from ROC month check failed!");
     /// assert_eq!(date_gregorian.day_of_month().0, 3, "Gregorian from ROC day of month check failed!");
     pub fn try_new_roc(year: i32, month: u8, day: u8) -> Result<Date<Roc>, RangeError> {
@@ -224,12 +224,12 @@ mod test {
         let iso_from_rd = Date::from_rata_die(case.rd, Iso);
         let roc_from_rd = Date::from_rata_die(case.rd, Roc);
         assert_eq!(
-            roc_from_rd.year().era_year().unwrap(),
+            roc_from_rd.era_year().year,
             case.expected_year,
             "Failed year check from RD: {case:?}\nISO: {iso_from_rd:?}\nROC: {roc_from_rd:?}"
         );
         assert_eq!(
-            roc_from_rd.year().standard_era().unwrap(),
+            roc_from_rd.era_year().standard_era,
             case.expected_era,
             "Failed era check from RD: {case:?}\nISO: {iso_from_rd:?}\nROC: {roc_from_rd:?}"
         );

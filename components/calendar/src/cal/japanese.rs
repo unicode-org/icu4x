@@ -15,12 +15,12 @@
 //!     .expect("Failed to initialize ISO Date instance.");
 //! let date_japanese = Date::new_from_iso(date_iso, japanese_calendar);
 //!
-//! assert_eq!(date_japanese.year().era_year_or_related_iso(), 45);
+//! assert_eq!(date_japanese.era_year().year, 45);
 //! assert_eq!(date_japanese.month().ordinal, 1);
 //! assert_eq!(date_japanese.day_of_month().0, 2);
 //! assert_eq!(
-//!     date_japanese.year().standard_era().unwrap(),
-//!     Era(tinystr!(16, "showa"))
+//!     date_japanese.era_year().standard_era.0,
+//!     "showa"
 //! );
 //! ```
 
@@ -171,6 +171,7 @@ impl JapaneseExtended {
 
 impl Calendar for Japanese {
     type DateInner = JapaneseDateInner;
+    type Year = types::EraYear;
 
     fn from_codes(
         &self,
@@ -248,16 +249,17 @@ impl Calendar for Japanese {
         .cast_unit()
     }
 
-    fn year(&self, date: &Self::DateInner) -> types::YearInfo {
-        types::YearInfo::new(
-            date.inner.0.year,
-            types::EraYear {
-                formatting_era: types::FormattingEra::Code(date.era.into()),
-                standard_era: date.era.into(),
-                era_year: date.adjusted_year,
-                ambiguity: types::YearAmbiguity::CenturyRequired,
-            },
-        )
+    fn year_info(&self, date: &Self::DateInner) -> Self::Year {
+        types::EraYear {
+            formatting_era: types::FormattingEra::Code(date.era.into()),
+            standard_era: date.era.into(),
+            year: date.adjusted_year,
+            ambiguity: types::YearAmbiguity::CenturyRequired,
+        }
+    }
+
+    fn extended_year(&self, date: &Self::DateInner) -> i32 {
+        Iso.extended_year(&date.inner)
     }
 
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
@@ -289,6 +291,7 @@ impl Calendar for Japanese {
 
 impl Calendar for JapaneseExtended {
     type DateInner = JapaneseDateInner;
+    type Year = types::EraYear;
 
     fn from_codes(
         &self,
@@ -351,8 +354,12 @@ impl Calendar for JapaneseExtended {
         .cast_unit()
     }
 
-    fn year(&self, date: &Self::DateInner) -> types::YearInfo {
-        Japanese::year(&self.0, date)
+    fn year_info(&self, date: &Self::DateInner) -> Self::Year {
+        Japanese::year_info(&self.0, date)
+    }
+
+    fn extended_year(&self, date: &Self::DateInner) -> i32 {
+        Japanese::extended_year(&self.0, date)
     }
 
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
@@ -407,8 +414,8 @@ impl Date<Japanese> {
     ///     Date::try_new_japanese_with_calendar(era, 14, 1, 2, japanese_calendar)
     ///         .expect("Constructing a date should succeed");
     ///
-    /// assert_eq!(date.year().standard_era().unwrap().0, era);
-    /// assert_eq!(date.year().era_year_or_related_iso(), 14);
+    /// assert_eq!(date.era_year().standard_era.0, era);
+    /// assert_eq!(date.era_year().year, 14);
     /// assert_eq!(date.month().ordinal, 1);
     /// assert_eq!(date.day_of_month().0, 2);
     ///
@@ -472,8 +479,8 @@ impl Date<JapaneseExtended> {
     /// )
     /// .expect("Constructing a date should succeed");
     ///
-    /// assert_eq!(date.year().standard_era().unwrap().0, era);
-    /// assert_eq!(date.year().era_year_or_related_iso(), 7);
+    /// assert_eq!(date.era_year().standard_era.0, era);
+    /// assert_eq!(date.era_year().year, 7);
     /// assert_eq!(date.month().ordinal, 1);
     /// assert_eq!(date.day_of_month().0, 2);
     /// ```
@@ -747,8 +754,8 @@ mod tests {
         );
 
         // Extra coverage for https://github.com/unicode-org/icu4x/issues/4968
-        assert_eq!(reconstructed.year().standard_era().unwrap().0, era);
-        assert_eq!(reconstructed.year().era_year().unwrap(), year);
+        assert_eq!(reconstructed.era_year().standard_era.0, era);
+        assert_eq!(reconstructed.era_year().year, year);
     }
 
     fn single_test_roundtrip_ext(

@@ -31,21 +31,10 @@ impl From<TinyStr16> for Era {
     }
 }
 
-/// General information about a year
-#[derive(Copy, Clone, Debug, PartialEq)]
-#[non_exhaustive]
-pub struct YearInfo {
-    /// The "extended year", typically anchored with year 1 as the year 1 of either the most modern or
-    /// otherwise some "major" era for the calendar
-    pub extended_year: i32,
-    /// The rest of the details about the year
-    pub kind: YearKind,
-}
-
 /// The type of year: Calendars like Chinese don't have an era and instead format with cyclic years.
 #[derive(Copy, Clone, Debug, PartialEq)]
 #[non_exhaustive]
-pub enum YearKind {
+pub enum YearInfo {
     /// An era and a year in that era
     Era(EraYear),
     /// A cyclic year, and the related ISO year
@@ -55,80 +44,42 @@ pub enum YearKind {
     Cyclic(CyclicYear),
 }
 
+impl From<EraYear> for YearInfo {
+    fn from(value: EraYear) -> Self {
+        Self::Era(value)
+    }
+}
+
+impl From<CyclicYear> for YearInfo {
+    fn from(value: CyclicYear) -> Self {
+        Self::Cyclic(value)
+    }
+}
+
 impl YearInfo {
-    /// Construct a new Year given an era and number
-    pub(crate) fn new(extended_year: i32, era: EraYear) -> Self {
-        Self {
-            extended_year,
-            kind: YearKind::Era(era),
-        }
-    }
-    /// Construct a new cyclic Year given a cycle and a related_iso
-    pub(crate) fn new_cyclic(extended_year: i32, cycle: NonZeroU8, related_iso: i32) -> Self {
-        Self {
-            extended_year,
-            kind: YearKind::Cyclic(CyclicYear {
-                year: cycle,
-                related_iso,
-            }),
-        }
-    }
-    /// Get the year in the era if this is a non-cyclic calendar
-    ///
-    /// Gets the eraYear for era dates, otherwise falls back to Extended Year
-    pub fn era_year(self) -> Option<i32> {
-        match self.kind {
-            YearKind::Era(e) => Some(e.era_year),
-            YearKind::Cyclic(..) => None,
-        }
-    }
-
-    /// Get the year ambiguity.
-    pub fn year_ambiguity(self) -> YearAmbiguity {
-        match self.kind {
-            YearKind::Cyclic(_) => YearAmbiguity::EraRequired,
-            YearKind::Era(e) => e.ambiguity,
-        }
-    }
-
     /// Get *some* year number that can be displayed
     ///
     /// Gets the era year for era calendars, and the related ISO year for cyclic calendars.
     pub fn era_year_or_related_iso(self) -> i32 {
-        match self.kind {
-            YearKind::Era(e) => e.era_year,
-            YearKind::Cyclic(c) => c.related_iso,
+        match self {
+            YearInfo::Era(e) => e.year,
+            YearInfo::Cyclic(c) => c.related_iso,
         }
     }
 
-    /// Get the era, if available
-    pub fn formatting_era(self) -> Option<FormattingEra> {
-        match self.kind {
-            YearKind::Era(e) => Some(e.formatting_era),
-            YearKind::Cyclic(..) => None,
+    /// Get the era year information, if available
+    pub fn era(self) -> Option<EraYear> {
+        match self {
+            Self::Era(e) => Some(e),
+            Self::Cyclic(_) => None,
         }
     }
 
-    /// Get the era, if available
-    pub fn standard_era(self) -> Option<Era> {
-        match self.kind {
-            YearKind::Era(e) => Some(e.standard_era),
-            YearKind::Cyclic(..) => None,
-        }
-    }
-
-    /// Return the cyclic year, if any
-    pub fn cyclic(self) -> Option<NonZeroU8> {
-        match self.kind {
-            YearKind::Era(..) => None,
-            YearKind::Cyclic(cy) => Some(cy.year),
-        }
-    }
-    /// Return the Related ISO year, if any
-    pub fn related_iso(self) -> Option<i32> {
-        match self.kind {
-            YearKind::Era(..) => None,
-            YearKind::Cyclic(cy) => Some(cy.related_iso),
+    /// Get the cyclic year informat, if available
+    pub fn cyclic(self) -> Option<CyclicYear> {
+        match self {
+            Self::Era(_) => None,
+            Self::Cyclic(c) => Some(c),
         }
     }
 }
@@ -198,7 +149,7 @@ pub struct EraYear {
     /// <https://tc39.es/proposal-intl-era-monthcode/#table-eras>
     pub standard_era: Era,
     /// The numeric year in that era
-    pub era_year: i32,
+    pub year: i32,
     /// The ambiguity when formatting this year
     pub ambiguity: YearAmbiguity,
 }
