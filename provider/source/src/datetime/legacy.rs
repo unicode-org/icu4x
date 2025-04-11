@@ -150,19 +150,23 @@ icu_provider::data_marker!(
 
 #[cfg(test)]
 mod tests {
-    use crate::SourceDataProvider;
     use super::super::legacy::*;
-    use icu::locale::langid;
+    use crate::SourceDataProvider;
     use icu::datetime::provider::neo::*;
+    use icu::locale::langid;
     use icu_provider::prelude::*;
 
     mod key_attr_consts {
         use super::*;
 
-        pub const STADLN_ABBR: &DataMarkerAttributes = DataMarkerAttributes::from_str_or_panic("3s");
-        pub const STADLN_WIDE: &DataMarkerAttributes = DataMarkerAttributes::from_str_or_panic("4s");
-        pub const STADLN_NARW: &DataMarkerAttributes = DataMarkerAttributes::from_str_or_panic("5s");
-        pub const STADLN_SHRT: &DataMarkerAttributes = DataMarkerAttributes::from_str_or_panic("6s");
+        pub const STADLN_ABBR: &DataMarkerAttributes =
+            DataMarkerAttributes::from_str_or_panic("3s");
+        pub const STADLN_WIDE: &DataMarkerAttributes =
+            DataMarkerAttributes::from_str_or_panic("4s");
+        pub const STADLN_NARW: &DataMarkerAttributes =
+            DataMarkerAttributes::from_str_or_panic("5s");
+        pub const STADLN_SHRT: &DataMarkerAttributes =
+            DataMarkerAttributes::from_str_or_panic("6s");
         pub const FORMAT_ABBR: &DataMarkerAttributes = DataMarkerAttributes::from_str_or_panic("3");
         pub const FORMAT_WIDE: &DataMarkerAttributes = DataMarkerAttributes::from_str_or_panic("4");
         pub const FORMAT_NARW: &DataMarkerAttributes = DataMarkerAttributes::from_str_or_panic("5");
@@ -190,9 +194,21 @@ mod tests {
         let new_payload = payload.try_map_project_cloned(|payload, _| {
             use key_attr_consts::*;
             let result = match req.id.marker_attributes.as_str() {
-                STADLN_ABBR_STR => payload.months.stand_alone.as_ref().and_then(|x| x.abbreviated.as_ref()),
-                STADLN_WIDE_STR => payload.months.stand_alone.as_ref().and_then(|x| x.wide.as_ref()),
-                STADLN_NARW_STR => payload.months.stand_alone.as_ref().and_then(|x| x.narrow.as_ref()),
+                STADLN_ABBR_STR => payload
+                    .months
+                    .stand_alone
+                    .as_ref()
+                    .and_then(|x| x.abbreviated.as_ref()),
+                STADLN_WIDE_STR => payload
+                    .months
+                    .stand_alone
+                    .as_ref()
+                    .and_then(|x| x.wide.as_ref()),
+                STADLN_NARW_STR => payload
+                    .months
+                    .stand_alone
+                    .as_ref()
+                    .and_then(|x| x.narrow.as_ref()),
                 _ => None,
             };
             if let Some(result) = result {
@@ -227,10 +243,26 @@ mod tests {
         let new_payload = payload.try_map_project_cloned(|payload, _| {
             use key_attr_consts::*;
             let result = match req.id.marker_attributes.as_str() {
-                STADLN_ABBR_STR => payload.weekdays.stand_alone.as_ref().and_then(|x| x.abbreviated.as_ref()),
-                STADLN_WIDE_STR => payload.weekdays.stand_alone.as_ref().and_then(|x| x.wide.as_ref()),
-                STADLN_NARW_STR => payload.weekdays.stand_alone.as_ref().and_then(|x| x.narrow.as_ref()),
-                STADLN_SHRT_STR => payload.weekdays.stand_alone.as_ref().and_then(|x| x.short.as_ref()),
+                STADLN_ABBR_STR => payload
+                    .weekdays
+                    .stand_alone
+                    .as_ref()
+                    .and_then(|x| x.abbreviated.as_ref()),
+                STADLN_WIDE_STR => payload
+                    .weekdays
+                    .stand_alone
+                    .as_ref()
+                    .and_then(|x| x.wide.as_ref()),
+                STADLN_NARW_STR => payload
+                    .weekdays
+                    .stand_alone
+                    .as_ref()
+                    .and_then(|x| x.narrow.as_ref()),
+                STADLN_SHRT_STR => payload
+                    .weekdays
+                    .stand_alone
+                    .as_ref()
+                    .and_then(|x| x.short.as_ref()),
                 _ => None,
             };
             if let Some(result) = result {
@@ -274,9 +306,21 @@ mod tests {
         let new_payload = payload.try_map_project_cloned(|payload, _| {
             use key_attr_consts::*;
             let result = match req.id.marker_attributes.as_str() {
-                STADLN_ABBR_STR => payload.day_periods.stand_alone.as_ref().and_then(|x| x.abbreviated.as_ref()),
-                STADLN_WIDE_STR => payload.day_periods.stand_alone.as_ref().and_then(|x| x.wide.as_ref()),
-                STADLN_NARW_STR => payload.day_periods.stand_alone.as_ref().and_then(|x| x.narrow.as_ref()),
+                STADLN_ABBR_STR => payload
+                    .day_periods
+                    .stand_alone
+                    .as_ref()
+                    .and_then(|x| x.abbreviated.as_ref()),
+                STADLN_WIDE_STR => payload
+                    .day_periods
+                    .stand_alone
+                    .as_ref()
+                    .and_then(|x| x.wide.as_ref()),
+                STADLN_NARW_STR => payload
+                    .day_periods
+                    .stand_alone
+                    .as_ref()
+                    .and_then(|x| x.narrow.as_ref()),
                 _ => None,
             };
             if let Some(result) = result {
