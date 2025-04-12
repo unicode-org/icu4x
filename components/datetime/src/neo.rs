@@ -933,7 +933,7 @@ impl<C: CldrCalendar, FSet: DateTimeMarkers> FixedCalendarDateTimeFormatter<C, F
     ///
     /// ```
     /// use icu::datetime::fieldsets::builder::*;
-    /// use icu::datetime::fieldsets::YMDT;
+    /// use icu::datetime::fieldsets::YMD;
     /// use icu::datetime::input::*;
     /// use icu::datetime::options::*;
     /// use icu::datetime::FixedCalendarDateTimeFormatter;
