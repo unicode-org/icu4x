@@ -248,6 +248,15 @@ macro_rules! impl_marker_with_options {
         }
         $(
             impl $type {
+                /// Sets the length option.
+                pub const fn with_length(mut self, length: Length) -> Self {
+                    self.length = yes_to!(length, $sample_length);
+                    self
+                }
+            }
+        )?
+        $(
+            impl $type {
                 /// Sets the alignment option.
                 pub const fn with_alignment(mut self, alignment: Alignment) -> Self {
                     self.alignment = Some(yes_to!(alignment, $alignment_yes));
