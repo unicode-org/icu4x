@@ -62,8 +62,6 @@ impl SourceDataProvider {
                     DatagenCalendar::JapaneseModern,
                     DatagenCalendar::JapaneseExtended,
                     DatagenCalendar::Coptic,
-                    DatagenCalendar::Dangi,
-                    DatagenCalendar::Chinese,
                     DatagenCalendar::Indian,
                     DatagenCalendar::Hijri,
                     DatagenCalendar::Persian,

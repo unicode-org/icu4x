@@ -4,7 +4,6 @@
 
 use super::DatagenCalendar;
 use crate::cldr_serde::ca;
-use crate::cldr_serde::eras::EraData;
 use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;
 use icu::datetime::provider::pattern;
@@ -124,7 +123,6 @@ impl SourceDataProvider {
             &SourceDataProvider,
             &DataLocale,
             &ca::Dates,
-            &[(usize, EraData)],
             DatagenCalendar,
             Context,
             Length,
@@ -133,7 +131,6 @@ impl SourceDataProvider {
     where
         Self: IterableDataProviderCached<M>,
     {
-        let all_eras = &self.all_eras()?[&calendar];
         self.load_neo_key(req, calendar, |id, data| {
             let Some((context, length)) = marker_attrs::name_marker_attr_info(id.marker_attributes)
             else {
@@ -142,7 +139,7 @@ impl SourceDataProvider {
                     id.marker_attributes.as_str()
                 )
             };
-            conversion(self, id.locale, data, all_eras, calendar, context, length)
+            conversion(self, id.locale, data, calendar, context, length)
         })
     }
 
@@ -190,7 +187,6 @@ fn weekday_convert(
     _datagen: &SourceDataProvider,
     _locale: &DataLocale,
     data: &ca::Dates,
-    _all_eras: &[(usize, EraData)],
     _calendar: DatagenCalendar,
     context: Context,
     length: Length,
@@ -216,7 +212,6 @@ fn dayperiods_convert(
     _datagen: &SourceDataProvider,
     _locale: &DataLocale,
     data: &ca::Dates,
-    _all_eras: &[(usize, EraData)],
     _calendar: DatagenCalendar,
     context: Context,
     length: Length,
@@ -243,13 +238,12 @@ fn dayperiods_convert(
 fn eras_convert(
     datagen: &SourceDataProvider,
     locale: &DataLocale,
-    all_eras: &[(usize, EraData)],
     eras: &ca::Eras,
     calendar: DatagenCalendar,
     length: Length,
 ) -> Result<YearNames<'static>, DataError> {
     let eras = eras.load(length);
-
+    let all_eras = &datagen.all_eras()?[&calendar];
     if matches!(
         calendar,
         DatagenCalendar::JapaneseModern | DatagenCalendar::JapaneseExtended
@@ -322,7 +316,6 @@ fn years_convert(
     datagen: &SourceDataProvider,
     locale: &DataLocale,
     data: &ca::Dates,
-    all_eras: &[(usize, EraData)],
     calendar: DatagenCalendar,
     context: Context,
     length: Length,
@@ -334,7 +327,7 @@ fn years_convert(
     );
 
     if let Some(ref eras) = data.eras {
-        eras_convert(datagen, locale, all_eras, eras, calendar, length)
+        eras_convert(datagen, locale, eras, calendar, length)
     } else if let Some(years) = data
         .cyclic_name_sets
         .as_ref()
@@ -377,7 +370,6 @@ fn months_convert(
     _datagen: &SourceDataProvider,
     locale: &DataLocale,
     data: &ca::Dates,
-    _all_eras: &[(usize, EraData)],
     calendar: DatagenCalendar,
     context: Context,
     length: Length,
