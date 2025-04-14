@@ -35,8 +35,8 @@ use tinystr::tinystr;
 ///
 /// # Era codes
 ///
-/// This calendar uses two era codes: `bd`, and `am`, corresponding to the Before Diocletian and After Diocletian/Anno Martyrum
-/// eras. 1 A.M. is equivalent to 284 C.E.
+/// This calendar uses a single code: `am`, corresponding to the After Diocletian/Anno Martyrum
+/// era. 1 A.M. is equivalent to 284 C.E.
 ///
 /// # Month codes
 ///
@@ -163,20 +163,11 @@ impl Calendar for Coptic {
 
     fn year_info(&self, date: &Self::DateInner) -> Self::Year {
         let year = self.extended_year(date);
-        if year > 0 {
-            types::EraYear {
-                era: tinystr!(16, "am"),
-                era_index: Some(1),
-                year,
-                ambiguity: types::YearAmbiguity::CenturyRequired,
-            }
-        } else {
-            types::EraYear {
-                era: tinystr!(16, "bd"),
-                era_index: Some(0),
-                year: 1 - year,
-                ambiguity: types::YearAmbiguity::EraAndCenturyRequired,
-            }
+        types::EraYear {
+            era: tinystr!(16, "am"),
+            era_index: Some(0),
+            year,
+            ambiguity: types::YearAmbiguity::CenturyRequired,
         }
     }
 

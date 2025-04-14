@@ -4630,60 +4630,60 @@ coptic/month/names/v1, zh/3s, -> yue-Hans/3
 coptic/month/names/v1, zh/5, 145B, 115B, 6ad8ef345977125c
 coptic/month/names/v1, zh/5s, -> zh/5
 coptic/year/names/v1, <lookup>, 295B, 55 identifiers
-coptic/year/names/v1, <total>, 1996B, 1067B, 31 unique payloads
-coptic/year/names/v1, bn/3, 62B, 32B, c1f45ba25e4fb254
+coptic/year/names/v1, <total>, 1489B, 559B, 31 unique payloads
+coptic/year/names/v1, bn/3, 47B, 17B, 5bb615c9ed2669f2
 coptic/year/names/v1, bn/4, -> bn/3
 coptic/year/names/v1, bn/5, -> bn/3
-coptic/year/names/v1, da/3, 54B, 24B, 78ac57049bebf2b5
-coptic/year/names/v1, da/4, 46B, 16B, 765ce21b2cf220ee
-coptic/year/names/v1, da/5, 64B, 34B, e669e1c6484d0168
-coptic/year/names/v1, fa/3, 74B, 44B, 3266c71b6ed17f5b
-coptic/year/names/v1, fa/4, 48B, 18B, e1b829012f129852
-coptic/year/names/v1, fa/5, 94B, 64B, dc5532eea315b5cd
-coptic/year/names/v1, ff-Adlm/3, 52B, 22B, bbb0e1c0191e93b2
+coptic/year/names/v1, da/3, 43B, 13B, 5ca56a7a9d08173
+coptic/year/names/v1, da/4, 39B, 9B, 3e9bbe580d576d75
+coptic/year/names/v1, da/5, 48B, 18B, e751a1c6777a30f7
+coptic/year/names/v1, fa/3, 52B, 22B, 52f871577fc0f07e
+coptic/year/names/v1, fa/4, 40B, 10B, 6a086e94bccd5934
+coptic/year/names/v1, fa/5, 63B, 33B, 2f5ec1b424b380ae
+coptic/year/names/v1, ff-Adlm/3, 42B, 12B, c91339f71b6f86cf
 coptic/year/names/v1, ff-Adlm/4, -> ff-Adlm/3
-coptic/year/names/v1, ff-Adlm/5, 174B, 145B, 709040f61c722216
-coptic/year/names/v1, fr/3, 48B, 18B, 758616ad292a08f9
+coptic/year/names/v1, ff-Adlm/5, 107B, 77B, e348a4c2339dcbd0
+coptic/year/names/v1, fr/3, 40B, 10B, 175dc93020ef9cc0
 coptic/year/names/v1, fr/4, -> fr/3
-coptic/year/names/v1, fr/5, 71B, 41B, c6ac098ae00a31d3
-coptic/year/names/v1, gu/3, 56B, 26B, a7437d07eee0f50
+coptic/year/names/v1, fr/5, 52B, 22B, 9592829879f3b615
+coptic/year/names/v1, gu/3, 44B, 14B, c56b8b164b5f7cbb
 coptic/year/names/v1, gu/4, -> gu/3
 coptic/year/names/v1, gu/5, -> gu/3
-coptic/year/names/v1, he/5, 56B, 26B, 6ca93838b29bec5e
-coptic/year/names/v1, lv/3, 59B, 29B, cfabd7779801a6e6
+coptic/year/names/v1, he/5, 44B, 14B, 2cfa6fa675f899e2
+coptic/year/names/v1, lv/3, 45B, 15B, 636000b630a08cc8
 coptic/year/names/v1, lv/4, -> lv/3
-coptic/year/names/v1, lv/5, 71B, 41B, 6873fc42ef83d952
-coptic/year/names/v1, mk/3, 50B, 20B, 2d4ea3cdf089e5e
+coptic/year/names/v1, lv/5, 51B, 21B, a549f5d946080405
+coptic/year/names/v1, mk/3, 41B, 11B, c8fcb7b0a295c7ed
 coptic/year/names/v1, mk/4, -> mk/3
 coptic/year/names/v1, mk/5, -> mk/3
-coptic/year/names/v1, ml/3, 86B, 56B, 46c99a2a25c73bae
+coptic/year/names/v1, ml/3, 59B, 29B, 923be5c6eef0d638
 coptic/year/names/v1, ml/4, -> ml/3
 coptic/year/names/v1, ml/5, -> ml/3
-coptic/year/names/v1, mr/3, 56B, 26B, 318c03cefbe58b55
+coptic/year/names/v1, mr/3, 44B, 14B, 2664f1d44b6a289a
 coptic/year/names/v1, mr/4, -> mr/3
 coptic/year/names/v1, mr/5, -> mr/3
-coptic/year/names/v1, no/3, 50B, 20B, 223b4b250f4b8f7
-coptic/year/names/v1, no/4, 42B, 12B, b8a59347f1236cb
-coptic/year/names/v1, no/5, 60B, 30B, 4520426342d7e88d
-coptic/year/names/v1, pa/3, 56B, 26B, f19dad4461f56dfe
+coptic/year/names/v1, no/3, 41B, 11B, 77d2fce727b32a15
+coptic/year/names/v1, no/4, 37B, 7B, 252b08b9d4e67d5e
+coptic/year/names/v1, no/5, 46B, 16B, 4612ac8d3057bc9d
+coptic/year/names/v1, pa/3, 44B, 14B, b995954f46491ba3
 coptic/year/names/v1, pa/4, -> pa/3
 coptic/year/names/v1, pa/5, -> pa/3
-coptic/year/names/v1, ro/3, 47B, 17B, 1a697e8f2142944
+coptic/year/names/v1, ro/3, 38B, 8B, ed41fabbfd01d95
 coptic/year/names/v1, ro/4, -> ro/3
-coptic/year/names/v1, ro/5, 80B, 50B, 9a4ea595ef937630
-coptic/year/names/v1, ru/3, 68B, 38B, 70c469ce3706b6
+coptic/year/names/v1, ro/5, 53B, 23B, ea95ab985ab8568b
+coptic/year/names/v1, ru/3, 50B, 20B, c91fbd0a444e3614
 coptic/year/names/v1, ru/4, -> ru/3
-coptic/year/names/v1, ru/5, 90B, 60B, 6f186edb43a90aeb
-coptic/year/names/v1, sc/3, 44B, 14B, 990acc829b9efcc0
+coptic/year/names/v1, ru/5, 61B, 31B, 315fc38b869de8b5
+coptic/year/names/v1, sc/3, 38B, 8B, 5bba71b332cad109
 coptic/year/names/v1, sc/4, -> sc/3
-coptic/year/names/v1, sc/5, 81B, 51B, 5f2a621bbafc1b47
-coptic/year/names/v1, und/3, 44B, 14B, 54de65f502923d62
+coptic/year/names/v1, sc/5, 55B, 25B, 30dec75761b0663d
+coptic/year/names/v1, und/3, 38B, 8B, 204df9479cf5c3be
 coptic/year/names/v1, und/4, -> und/3
 coptic/year/names/v1, und/5, -> und/3
-coptic/year/names/v1, ur/3, 50B, 20B, 403eea531ddafd6d
+coptic/year/names/v1, ur/3, 41B, 11B, 7b45a0f5c20e01bd
 coptic/year/names/v1, ur/4, -> ur/3
 coptic/year/names/v1, ur/5, -> ur/3
-coptic/year/names/v1, zh/3, 63B, 33B, 228576003f13c8e2
+coptic/year/names/v1, zh/3, 46B, 16B, e5f23dfcc56b955e
 coptic/year/names/v1, zh/4, -> zh/3
 coptic/year/names/v1, zh/5, -> zh/3
 dangi/date/neo/skeleton/patterns/v1, <lookup>, 2434B, 429 identifiers
