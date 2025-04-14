@@ -4,7 +4,6 @@
 
 use calendrical_calculations::rata_die::RataDie;
 
-use crate::any_calendar::AnyCalendarKind;
 use crate::cal::iso::IsoDateInner;
 use crate::error::DateError;
 use crate::{types, DateDuration, DateDurationUnit};
@@ -90,9 +89,12 @@ pub trait Calendar {
         smallest_unit: DateDurationUnit,
     ) -> DateDuration<Self>;
 
-    /// The [`AnyCalendarKind`] corresponding to this calendar,
-    /// if one exists. Implementors outside of `icu::calendar` should return `None`
-    fn any_calendar_kind(&self) -> Option<AnyCalendarKind>;
+    /// Returns the [`CalendarAlgorithm`](crate::preferences::CalendarAlgorithm) that is required to match
+    /// when parsing into this calendar.
+    ///
+    /// If left empty, any algorithm will parse successfully.
+    fn calendar_algorithm(&self) -> Option<crate::preferences::CalendarAlgorithm>;
+
     /// Obtain a name for the calendar for debug printing
     fn debug_name(&self) -> &'static str;
 }

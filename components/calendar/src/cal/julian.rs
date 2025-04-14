@@ -16,7 +16,6 @@
 //! assert_eq!(date_julian.day_of_month().0, 20);
 //! ```
 
-use crate::any_calendar::AnyCalendarKind;
 use crate::cal::iso::{Iso, IsoDateInner};
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
 use crate::error::{year_check, DateError};
@@ -200,7 +199,7 @@ impl Calendar for Julian {
         "Julian"
     }
 
-    fn any_calendar_kind(&self) -> Option<AnyCalendarKind> {
+    fn calendar_algorithm(&self) -> Option<crate::preferences::CalendarAlgorithm> {
         None
     }
 }

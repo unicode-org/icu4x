@@ -216,12 +216,6 @@ fn assert_fixture_element<C>(
     let iso_input = DateTime::try_from_str(input, Iso).unwrap();
     let input = DateTime::try_from_str(input, calendar).unwrap();
 
-    assert!(
-        input.date.calendar().any_calendar_kind().is_some(),
-        "{} does not specify its AsCalendarKind",
-        input.date.calendar().debug_name()
-    );
-
     let input = ZonedDateTime {
         date: input.date.clone(),
         time: input.time,

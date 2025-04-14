@@ -16,7 +16,6 @@
 //! assert_eq!(date_buddhist.day_of_month().0, 2);
 //! ```
 
-use crate::any_calendar::AnyCalendarKind;
 use crate::cal::iso::{Iso, IsoDateInner};
 use crate::calendar_arithmetic::ArithmeticDate;
 use crate::error::DateError;
@@ -152,8 +151,8 @@ impl Calendar for Buddhist {
         "Buddhist"
     }
 
-    fn any_calendar_kind(&self) -> Option<AnyCalendarKind> {
-        Some(crate::any_calendar::IntoAnyCalendar::kind(self))
+    fn calendar_algorithm(&self) -> Option<crate::preferences::CalendarAlgorithm> {
+        Some(crate::preferences::CalendarAlgorithm::Buddhist)
     }
 }
 

@@ -178,8 +178,8 @@ impl Calendar for Iso {
         "ISO"
     }
 
-    fn any_calendar_kind(&self) -> Option<crate::AnyCalendarKind> {
-        Some(crate::any_calendar::IntoAnyCalendar::kind(self))
+    fn calendar_algorithm(&self) -> Option<crate::preferences::CalendarAlgorithm> {
+        None
     }
 }
 
