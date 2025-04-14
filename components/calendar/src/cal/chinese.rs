@@ -12,18 +12,15 @@
 //!     .expect("Failed to initialize Chinese Date instance.");
 //!
 //! assert_eq!(chinese_date.cyclic_year().related_iso, 2023);
-//! assert_eq!(chinese_date.cyclic_year().year.get(), 40);
+//! assert_eq!(chinese_date.cyclic_year().year, 40);
 //! assert_eq!(chinese_date.month().ordinal, 6);
 //! assert_eq!(chinese_date.day_of_month().0, 6);
 //! ```
 
-use crate::cal::chinese_based::{
-    chinese_based_ordinal_lunar_month_from_code, ChineseBasedDateInner,
-    ChineseBasedPrecomputedData, ChineseBasedWithDataLoading,
-};
+use crate::cal::chinese_based::{ChineseBasedPrecomputedData, ChineseBasedWithDataLoading};
 use crate::cal::iso::{Iso, IsoDateInner};
-use crate::calendar_arithmetic::CalendarArithmetic;
 use crate::calendar_arithmetic::PrecomputedDataSource;
+use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
 use crate::error::DateError;
 use crate::provider::chinese_based::CalendarChineseV1;
 use crate::AsCalendar;
@@ -31,7 +28,6 @@ use crate::{types, Calendar, Date, DateDuration, DateDurationUnit};
 use calendrical_calculations::chinese_based::{self, ChineseBased};
 use calendrical_calculations::rata_die::RataDie;
 use core::cmp::Ordering;
-use core::num::NonZeroU8;
 use icu_provider::prelude::*;
 
 /// The [Chinese Calendar](https://en.wikipedia.org/wiki/Chinese_calendar)
@@ -84,9 +80,7 @@ pub struct Chinese {
 
 /// The inner date type used for representing [`Date`]s of [`Chinese`]. See [`Date`] and [`Chinese`] for more details.
 #[derive(Debug, Eq, PartialEq, PartialOrd, Ord)]
-pub struct ChineseDateInner(ChineseBasedDateInner<Chinese>);
-
-type Inner = ChineseBasedDateInner<Chinese>;
+pub struct ChineseDateInner(ArithmeticDate<Chinese>);
 
 // we want these impls without the `C: Copy/Clone` bounds
 impl Copy for ChineseDateInner {}
@@ -169,37 +163,44 @@ impl Calendar for Chinese {
         month_code: types::MonthCode,
         day: u8,
     ) -> Result<Self::DateInner, DateError> {
-        let year = self.get_precomputed_data().load_or_compute_info(year);
-
-        let Some(month) = chinese_based_ordinal_lunar_month_from_code(month_code, year) else {
-            return Err(DateError::UnknownMonthCode(month_code));
-        };
-
         match era {
             None => {}
             _ => return Err(DateError::UnknownEra),
         }
 
-        Inner::new_from_ordinals(year, month, day)
-            .map(ChineseBasedDateInner)
-            .map(ChineseDateInner)
+        let year = self.get_precomputed_data().load_or_compute_info(year);
+
+        let Some(month) = year.parse_month_code(month_code) else {
+            return Err(DateError::UnknownMonthCode(month_code));
+        };
+
+        year.validate_md(month, day)?;
+
+        Ok(ChineseDateInner(ArithmeticDate::new_unchecked(
+            year, month, day,
+        )))
     }
 
     fn from_rata_die(&self, rd: RataDie) -> Self::DateInner {
         let iso = Iso.from_rata_die(rd);
-        ChineseDateInner(Inner::chinese_based_date_from_rd(self, rd, iso.0))
+        let y = self
+            .get_precomputed_data()
+            .load_or_compute_info_for_rd(rd, iso.0);
+        let (m, d) = y.md_from_rd(rd);
+        ChineseDateInner(ArithmeticDate::new_unchecked(y, m, d))
     }
 
     fn to_rata_die(&self, date: &Self::DateInner) -> RataDie {
-        Inner::rd_from_chinese_based_date_inner(date.0)
+        date.0.year.rd_from_md(date.0.month, date.0.day)
     }
 
     fn from_iso(&self, iso: IsoDateInner) -> Self::DateInner {
-        ChineseDateInner(Inner::chinese_based_date_from_rd(
-            self,
-            Iso.to_rata_die(&iso),
-            iso.0,
-        ))
+        let rd = Iso.to_rata_die(&iso);
+        let y = self
+            .get_precomputed_data()
+            .load_or_compute_info_for_rd(rd, iso.0);
+        let (m, d) = y.md_from_rd(rd);
+        ChineseDateInner(ArithmeticDate::new_unchecked(y, m, d))
     }
 
     fn to_iso(&self, date: &Self::DateInner) -> IsoDateInner {
@@ -209,16 +210,16 @@ impl Calendar for Chinese {
     // Count the number of months in a given year, specified by providing a date
     // from that year
     fn days_in_year(&self, date: &Self::DateInner) -> u16 {
-        date.0.days_in_year_inner()
+        date.0.days_in_year()
     }
 
     fn days_in_month(&self, date: &Self::DateInner) -> u8 {
-        date.0.days_in_month_inner()
+        date.0.days_in_month()
     }
 
     #[doc(hidden)] // unstable
     fn offset_date(&self, date: &mut Self::DateInner, offset: DateDuration<Self>) {
-        date.0 .0.offset_date(offset, &self.get_precomputed_data());
+        date.0.offset_date(offset, &self.get_precomputed_data());
     }
 
     #[doc(hidden)] // unstable
@@ -235,7 +236,7 @@ impl Calendar for Chinese {
         _largest_unit: DateDurationUnit,
         _smallest_unit: DateDurationUnit,
     ) -> DateDuration<Self> {
-        date1.0 .0.until(date2.0 .0, _largest_unit, _smallest_unit)
+        date1.0.until(date2.0, _largest_unit, _smallest_unit)
     }
 
     /// Obtain a name for the calendar for debug printing
@@ -244,21 +245,19 @@ impl Calendar for Chinese {
     }
 
     fn year_info(&self, date: &Self::DateInner) -> Self::Year {
-        let year = date.0 .0.year;
-        let cyclic = (year.related_iso - 4).rem_euclid(60) as u8;
-        let cyclic = NonZeroU8::new(cyclic + 1).unwrap_or(NonZeroU8::MIN); // 1-indexed
+        let year = date.0.year;
         types::CyclicYear {
-            year: cyclic,
+            year: (year.related_iso - 4).rem_euclid(60) as u8 + 1,
             related_iso: year.related_iso,
         }
     }
 
     fn extended_year(&self, date: &Self::DateInner) -> i32 {
-        chinese_based::Chinese::extended_from_iso(date.0 .0.year.related_iso)
+        chinese_based::Chinese::extended_from_iso(date.0.year.related_iso)
     }
 
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
-        Self::provided_year_is_leap(date.0 .0.year)
+        Self::provided_year_is_leap(date.0.year)
     }
 
     /// The calendar-specific month code represented by `date`;
@@ -266,17 +265,17 @@ impl Calendar for Chinese {
     /// leap months. For example, in a year where an intercalary month is added after the second
     /// month, the month codes for ordinal months 1, 2, 3, 4, 5 would be "M01", "M02", "M02L", "M03", "M04".
     fn month(&self, date: &Self::DateInner) -> types::MonthInfo {
-        date.0.month()
+        date.0.year.month(date.0.month)
     }
 
     /// The calendar-specific day-of-month represented by `date`
     fn day_of_month(&self, date: &Self::DateInner) -> types::DayOfMonth {
-        types::DayOfMonth(date.0 .0.day)
+        date.0.day_of_month()
     }
 
     /// Information of the day of the year
     fn day_of_year(&self, date: &Self::DateInner) -> types::DayOfYear {
-        types::DayOfYear(date.0.day_of_year())
+        types::DayOfYear(date.0.year.day_of_year(date.0.month, date.0.day))
     }
 
     fn any_calendar_kind(&self) -> Option<crate::AnyCalendarKind> {
@@ -284,7 +283,7 @@ impl Calendar for Chinese {
     }
 
     fn months_in_year(&self, date: &Self::DateInner) -> u8 {
-        date.0.months_in_year_inner()
+        date.0.months_in_year()
     }
 }
 
@@ -307,7 +306,7 @@ impl<A: AsCalendar<Calendar = Chinese>> Date<A> {
     ///         .expect("Failed to initialize Chinese Date instance.");
     ///
     /// assert_eq!(date_chinese.cyclic_year().related_iso, 2023);
-    /// assert_eq!(date_chinese.cyclic_year().year.get(), 40);
+    /// assert_eq!(date_chinese.cyclic_year().year, 40);
     /// assert_eq!(date_chinese.month().ordinal, 6);
     /// assert_eq!(date_chinese.day_of_month().0, 11);
     /// ```
@@ -321,9 +320,9 @@ impl<A: AsCalendar<Calendar = Chinese>> Date<A> {
             .as_calendar()
             .get_precomputed_data()
             .load_or_compute_info(related_iso_year);
-        let arithmetic = Inner::new_from_ordinals(year, month, day);
+        year.validate_md(month, day)?;
         Ok(Date::from_raw(
-            ChineseDateInner(ChineseBasedDateInner(arithmetic?)),
+            ChineseDateInner(ArithmeticDate::new_unchecked(year, month, day)),
             calendar,
         ))
     }
@@ -518,9 +517,9 @@ mod test {
                         case.year, case.month, case.day, chinese,
                     )
                     .unwrap();
-                    let rd = Inner::rd_from_chinese_based_date_inner(date.inner.0).to_i64_date();
+                    let rd = date.to_rata_die().to_i64_date();
                     let expected = case.expected;
-                    assert_eq!(rd, expected, "[{calendar_type}] RD from Chinese failed, with expected: {rd} and calculated: {expected}, for test case: {case:?}");
+                    assert_eq!(rd, expected, "[{calendar_type}] RD from Chinese failed, with expected: {expected} and calculated: {rd}, for test case: {case:?}");
                 },
             );
         }
@@ -536,16 +535,14 @@ mod test {
         let chinese_cached = Chinese::new();
         while rd < max_rd && iters < max_iters {
             let rata_die = RataDie::new(rd);
-            let iso = Iso.from_rata_die(rata_die);
 
             do_twice(
                 &chinese_calculating,
                 &chinese_cached,
                 |chinese, calendar_type| {
-                    let chinese = Inner::chinese_based_date_from_rd(&chinese, rata_die, iso.0);
-                    let result = Inner::rd_from_chinese_based_date_inner(chinese);
-                    let result_debug = result.to_i64_date();
-                    assert_eq!(result, rata_die, "[{calendar_type}] Failed roundtrip RD -> Chinese -> RD for RD: {rd}, with calculated: {result_debug} from Chinese date:\n{chinese:?}");
+                    let chinese = Date::from_rata_die(rata_die, chinese);
+                    let result = chinese.to_rata_die();
+                    assert_eq!(result, rata_die, "[{calendar_type}] Failed roundtrip RD -> Chinese -> RD for RD: {rata_die:?}, with calculated: {result:?} from Chinese date:\n{chinese:?}");
                 },
             );
             rd += 7043;
@@ -567,7 +564,7 @@ mod test {
                 assert_eq!(chinese.month().ordinal, 1);
                 assert_eq!(chinese.month().standard_code.0, "M01");
                 assert_eq!(chinese.day_of_month().0, 1);
-                assert_eq!(chinese.cyclic_year().year.get(), 1);
+                assert_eq!(chinese.cyclic_year().year, 1);
                 assert_eq!(chinese.cyclic_year().related_iso, -2636);
             },
         )
@@ -660,7 +657,7 @@ mod test {
                         chinese_date.is_in_leap_year(),
                         "[{calendar_type}] {year} should be a leap year"
                     );
-                    let new_year = chinese_date.inner.0.new_year();
+                    let new_year = chinese_date.inner.0.year.new_year();
                     assert_eq!(
                         expected_month,
                         calendrical_calculations::chinese_based::get_leap_month_from_new_year::<
@@ -849,7 +846,7 @@ mod test {
         ];
         for ordinal_code_pair in codes {
             let code = MonthCode(ordinal_code_pair.1);
-            let ordinal = chinese_based_ordinal_lunar_month_from_code(code, year);
+            let ordinal = year.parse_month_code(code);
             assert_eq!(
                 ordinal,
                 Some(ordinal_code_pair.0),
@@ -880,7 +877,7 @@ mod test {
             >::default()
             .load_or_compute_info(year);
             let code = MonthCode(code);
-            let ordinal = chinese_based_ordinal_lunar_month_from_code(code, year);
+            let ordinal = year.parse_month_code(code);
             assert_eq!(
                 ordinal, None,
                 "Invalid month code failed for year: {}, code: {code}",
@@ -1023,8 +1020,7 @@ mod test {
                         "[{calendar_type}] Related ISO failed for test case: {case:?}"
                     );
                     assert_eq!(
-                        chinese_cyclic.get(),
-                        case.expected_cyclic,
+                        chinese_cyclic, case.expected_cyclic,
                         "[{calendar_type}] Cyclic year failed for test case: {case:?}"
                     );
                     assert_eq!(

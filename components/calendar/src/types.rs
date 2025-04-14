@@ -7,7 +7,6 @@
 #[doc(no_inline)]
 pub use calendrical_calculations::rata_die::RataDie;
 use core::fmt;
-use core::num::NonZeroU8;
 use tinystr::TinyAsciiStr;
 use tinystr::{TinyStr16, TinyStr4};
 use zerovec::maps::ZeroMapKV;
@@ -107,8 +106,8 @@ pub struct EraYear {
 #[derive(Copy, Clone, Debug, PartialEq)]
 #[non_exhaustive]
 pub struct CyclicYear {
-    /// The year in the cycle.
-    pub year: NonZeroU8,
+    /// The year in the cycle, 1-based
+    pub year: u8,
     /// The ISO year corresponding to this year
     pub related_iso: i32,
 }

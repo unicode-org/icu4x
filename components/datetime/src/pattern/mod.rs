@@ -47,7 +47,7 @@ pub(crate) enum GetNameForEraError {
 }
 
 pub(crate) enum GetNameForCyclicYearError {
-    InvalidYearNumber { max: usize },
+    InvalidYearNumber { max: u8 },
     InvalidFieldLength,
     NotLoaded,
 }

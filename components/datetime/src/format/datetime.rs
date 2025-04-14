@@ -190,7 +190,7 @@ where
                     return Ok(Err(match e {
                         GetNameForCyclicYearError::InvalidYearNumber { max } => {
                             DateTimeWriteError::InvalidCyclicYear {
-                                value: cyclic.year.get() as usize,
+                                value: cyclic.year,
                                 max,
                             }
                         }
