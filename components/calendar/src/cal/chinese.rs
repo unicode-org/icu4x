@@ -25,7 +25,7 @@ use crate::error::DateError;
 use crate::provider::chinese_based::CalendarChineseV1;
 use crate::AsCalendar;
 use crate::{types, Calendar, Date, DateDuration, DateDurationUnit};
-use calendrical_calculations::chinese_based::{self, ChineseBased};
+use calendrical_calculations::chinese_based;
 use calendrical_calculations::rata_die::RataDie;
 use core::cmp::Ordering;
 use icu_provider::prelude::*;
@@ -253,7 +253,7 @@ impl Calendar for Chinese {
     }
 
     fn extended_year(&self, date: &Self::DateInner) -> i32 {
-        chinese_based::Chinese::extended_from_iso(date.0.year.related_iso)
+        chinese_based::extended_from_iso::<chinese_based::Chinese>(date.0.year.related_iso)
     }
 
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {

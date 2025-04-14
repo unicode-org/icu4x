@@ -1,4 +1,4 @@
-use crate::astronomy::{self, Astronomical, Location, MEAN_SYNODIC_MONTH, MEAN_TROPICAL_YEAR};
+use crate::astronomy::{self, Astronomical, MEAN_SYNODIC_MONTH, MEAN_TROPICAL_YEAR};
 use crate::helpers::i64_to_i32;
 use crate::iso::{fixed_from_iso, iso_from_fixed};
 use crate::rata_die::{Moment, RataDie};
@@ -17,10 +17,10 @@ const MAX_ITERS_FOR_MONTHS_OF_YEAR: u8 = 14;
 /// - Define `const EPOCH` as a `RataDie` marking the start date of the era of the Calendar for internal use,
 ///   which may not accurately reflect how years or eras are marked traditionally or seen by end-users
 pub trait ChineseBased {
-    /// Given a fixed date, return the location used for observations of the new moon in order to
+    /// Given a fixed date, return the UTC offset used for observations of the new moon in order to
     /// calculate the beginning of months. For multiple Chinese-based lunar calendars, this has
     /// changed over the years, and can cause differences in calendar date.
-    fn location(fixed: RataDie) -> Location;
+    fn utc_offset(fixed: RataDie) -> f64;
 
     /// The RataDie of the beginning of the epoch used for internal computation; this may not
     /// reflect traditional methods of year-tracking or eras, since Chinese-based calendars
@@ -29,15 +29,15 @@ pub trait ChineseBased {
 
     /// The name of the calendar for debugging.
     const DEBUG_NAME: &'static str;
+}
 
-    /// Given an ISO year, return the extended year
-    fn extended_from_iso(iso_year: i32) -> i32 {
-        iso_year - const { crate::iso::iso_year_from_fixed(Self::EPOCH) as i32 - 1 }
-    }
-    /// Given an extended year, return the ISO year
-    fn iso_from_extended(extended_year: i32) -> i32 {
-        extended_year + const { crate::iso::iso_year_from_fixed(Self::EPOCH) as i32 - 1 }
-    }
+/// Given an ISO year, return the extended year
+pub fn extended_from_iso<C: ChineseBased>(iso_year: i32) -> i32 {
+    iso_year - const { crate::iso::iso_year_from_fixed(C::EPOCH) as i32 - 1 }
+}
+/// Given an extended year, return the ISO year
+pub fn iso_from_extended<C: ChineseBased>(extended_year: i32) -> i32 {
+    extended_year + const { crate::iso::iso_year_from_fixed(C::EPOCH) as i32 - 1 }
 }
 
 /// A type implementing [`ChineseBased`] for the Chinese calendar
@@ -51,27 +51,15 @@ pub struct Chinese;
 pub struct Dangi;
 
 impl ChineseBased for Chinese {
-    fn location(fixed: RataDie) -> Location {
-        /// The Chinese calendar relies on knowing the current day at the moment of a new moon;
-        /// however, this can vary depending on location. As such, new moon calculations are based
-        /// on the time in Beijing. Before 1929, local time was used, represented as UTC+(1397/180 h).
-        /// In 1929, China adopted a standard time zone based on 120 degrees of longitude, meaning
-        /// from 1929 onward, all new moon calculations are based on UTC+8h.
-        ///
-        /// Offsets are not given in hours, but in partial days (1 hour = 1 / 24 day)
-        const UTC_OFFSET_PRE_1929: f64 = (1397.0 / 180.0) / 24.0;
-        const FIXED_1929: RataDie = RataDie::new(704188); // Jan 1, 1929
-        const UTC_OFFSET_POST_1929: f64 = 8.0 / 24.0;
-
-        Location {
-            latitude: 39.0,
-            longitude: 116.0,
-            elevation: 43.5,
-            utc_offset: if fixed < FIXED_1929 {
-                UTC_OFFSET_PRE_1929
-            } else {
-                UTC_OFFSET_POST_1929
-            },
+    fn utc_offset(fixed: RataDie) -> f64 {
+        use crate::iso::const_fixed_from_iso as iso;
+        // Before 1929, local time was used, represented as UTC+(1397/180 h).
+        // In 1929, China adopted a standard time zone based on 120 degrees of longitude, meaning
+        // from 1929 onward, all new moon calculations are based on UTC+8h.
+        if fixed < const { iso(1929, 1, 1) } {
+            1397.0 / 180.0 / 24.0
+        } else {
+            8.0 / 24.0
         }
     }
 
@@ -81,39 +69,21 @@ impl ChineseBased for Chinese {
 }
 
 impl ChineseBased for Dangi {
-    fn location(fixed: RataDie) -> Location {
-        // The Korean Dangi calendar relies on knowing the current day at the moment of a new moon;
-        // however, this can vary depending on location. As such, new moon calculations are based on
-        // the time in Seoul. Before 1908, local time was used, represented as UTC+(3809/450 h).
+    fn utc_offset(fixed: RataDie) -> f64 {
+        use crate::iso::const_fixed_from_iso as iso;
+        // Before 1908, local time was used, represented as UTC+(3809/450 h).
         // This changed multiple times as different standard timezones were adopted in Korea.
         // Currently, UTC+9h is used.
-        ///
-        /// Offsets are not given in hours, but in partial days (1 hour = 1 / 24 day).
-        const UTC_OFFSET_ORIGINAL: f64 = (3809.0 / 450.0) / 24.0;
-        const FIXED_1908: RataDie = RataDie::new(696608); // Apr 1, 1908
-        const UTC_OFFSET_1908: f64 = 8.5 / 24.0;
-        const FIXED_1912: RataDie = RataDie::new(697978); // Jan 1, 1912
-        const UTC_OFFSET_1912: f64 = 9.0 / 24.0;
-        const FIXED_1954: RataDie = RataDie::new(713398); // Mar 21, 1954
-        const UTC_OFFSET_1954: f64 = 8.5 / 24.0;
-        const FIXED_1961: RataDie = RataDie::new(716097); // Aug 10, 1961
-        const UTC_OFFSET_1961: f64 = 9.0 / 24.0;
-
-        Location {
-            latitude: 37.0 + (34.0 / 60.0),
-            longitude: 126.0 + (58.0 / 60.0),
-            elevation: 0.0,
-            utc_offset: if fixed < FIXED_1908 {
-                UTC_OFFSET_ORIGINAL
-            } else if fixed < FIXED_1912 {
-                UTC_OFFSET_1908
-            } else if fixed < FIXED_1954 {
-                UTC_OFFSET_1912
-            } else if fixed < FIXED_1961 {
-                UTC_OFFSET_1954
-            } else {
-                UTC_OFFSET_1961
-            },
+        if fixed < const { iso(1908, 4, 1) } {
+            3809.0 / 450.0 / 24.0
+        } else if fixed < const { iso(1912, 1, 1) } {
+            8.5 / 24.0
+        } else if fixed < const { iso(1954, 3, 21) } {
+            9.0 / 24.0
+        } else if fixed < const { iso(1961, 8, 10) } {
+            8.5 / 24.0
+        } else {
+            9.0 / 24.0
         }
     }
 
@@ -173,8 +143,7 @@ impl YearBounds {
 /// Lisp reference code: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L5273-L5281
 pub(crate) fn major_solar_term_from_fixed<C: ChineseBased>(date: RataDie) -> u32 {
     let moment: Moment = date.as_moment();
-    let location = C::location(date);
-    let universal: Moment = Location::universal_from_standard(moment, location);
+    let universal = moment - C::utc_offset(date);
     let solar_longitude =
         i64_to_i32(Astronomical::solar_longitude(Astronomical::julian_centuries(universal)) as i64);
     debug_assert!(
@@ -193,8 +162,8 @@ pub(crate) fn major_solar_term_from_fixed<C: ChineseBased>(date: RataDie) -> u32
 /// Lisp reference code: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L5329-L5338
 pub(crate) fn new_moon_on_or_after<C: ChineseBased>(moment: Moment) -> RataDie {
     let new_moon_moment = Astronomical::new_moon_at_or_after(midnight::<C>(moment));
-    let location = C::location(new_moon_moment.as_rata_die());
-    Location::standard_from_universal(new_moon_moment, location).as_rata_die()
+    let utc_offset = C::utc_offset(new_moon_moment.as_rata_die());
+    (new_moon_moment + utc_offset).as_rata_die()
 }
 
 /// The fixed date in standard time at the observation location of the previous new moon before a given Moment.
@@ -203,8 +172,8 @@ pub(crate) fn new_moon_on_or_after<C: ChineseBased>(moment: Moment) -> RataDie {
 /// Lisp reference code: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L5318-L5327
 pub(crate) fn new_moon_before<C: ChineseBased>(moment: Moment) -> RataDie {
     let new_moon_moment = Astronomical::new_moon_before(midnight::<C>(moment));
-    let location = C::location(new_moon_moment.as_rata_die());
-    Location::standard_from_universal(new_moon_moment, location).as_rata_die()
+    let utc_offset = C::utc_offset(new_moon_moment.as_rata_die());
+    (new_moon_moment + utc_offset).as_rata_die()
 }
 
 /// Universal time of midnight at start of a Moment's day at the observation location
@@ -212,7 +181,7 @@ pub(crate) fn new_moon_before<C: ChineseBased>(moment: Moment) -> RataDie {
 /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.
 /// Lisp reference code: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L5353-L5357
 pub(crate) fn midnight<C: ChineseBased>(moment: Moment) -> Moment {
-    Location::universal_from_standard(moment, C::location(moment.as_rata_die()))
+    moment - C::utc_offset(moment.as_rata_die())
 }
 
 /// Determines the fixed date of the lunar new year given the start of its corresponding solar year (歲), which is
