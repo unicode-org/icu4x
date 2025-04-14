@@ -477,8 +477,15 @@ impl Calendar for HijriSimulated {
         date.0.day_of_year()
     }
 
-    fn any_calendar_kind(&self) -> Option<crate::AnyCalendarKind> {
-        Some(crate::any_calendar::IntoAnyCalendar::kind(self))
+    #[cfg(feature = "ixdtf")]
+    fn calendar_algorithm(&self) -> Option<crate::preferences::CalendarAlgorithm> {
+        Some(match self.location {
+            crate::cal::hijri::HijriSimulatedLocation::Mecca => {
+                crate::preferences::CalendarAlgorithm::Hijri(Some(
+                    crate::preferences::HijriCalendarAlgorithm::Rgsa,
+                ))
+            }
+        })
     }
 }
 
@@ -752,8 +759,12 @@ impl Calendar for HijriUmmAlQura {
         date.0.day_of_year()
     }
 
-    fn any_calendar_kind(&self) -> Option<crate::AnyCalendarKind> {
-        Some(crate::any_calendar::IntoAnyCalendar::kind(self))
+    #[cfg(feature = "ixdtf")]
+    fn calendar_algorithm(&self) -> Option<crate::preferences::CalendarAlgorithm> {
+        let expected_calendar = crate::preferences::CalendarAlgorithm::Hijri(Some(
+            crate::preferences::HijriCalendarAlgorithm::Umalqura,
+        ));
+        Some(expected_calendar)
     }
 }
 
@@ -1276,8 +1287,22 @@ impl Calendar for HijriTabular {
         date.0.day_of_year()
     }
 
-    fn any_calendar_kind(&self) -> Option<crate::AnyCalendarKind> {
-        Some(crate::any_calendar::IntoAnyCalendar::kind(self))
+    #[cfg(feature = "ixdtf")]
+    fn calendar_algorithm(&self) -> Option<crate::preferences::CalendarAlgorithm> {
+        let expected_calendar = match (self.epoch, self.leap_years) {
+            (crate::cal::HijriTabularEpoch::Friday, crate::cal::HijriTabularLeapYears::TypeII) => {
+                crate::preferences::CalendarAlgorithm::Hijri(Some(
+                    crate::preferences::HijriCalendarAlgorithm::Civil,
+                ))
+            }
+            (
+                crate::cal::HijriTabularEpoch::Thursday,
+                crate::cal::HijriTabularLeapYears::TypeII,
+            ) => crate::preferences::CalendarAlgorithm::Hijri(Some(
+                crate::preferences::HijriCalendarAlgorithm::Tbla,
+            )),
+        };
+        Some(expected_calendar)
     }
 }
 

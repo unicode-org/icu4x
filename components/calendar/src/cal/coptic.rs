@@ -204,8 +204,9 @@ impl Calendar for Coptic {
         "Coptic"
     }
 
-    fn any_calendar_kind(&self) -> Option<crate::AnyCalendarKind> {
-        Some(crate::any_calendar::IntoAnyCalendar::kind(self))
+    #[cfg(feature = "ixdtf")]
+    fn calendar_algorithm(&self) -> Option<crate::preferences::CalendarAlgorithm> {
+        Some(crate::preferences::CalendarAlgorithm::Coptic)
     }
 }
 

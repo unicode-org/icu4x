@@ -523,8 +523,28 @@ impl Calendar for AnyCalendar {
         }
     }
 
-    fn any_calendar_kind(&self) -> Option<AnyCalendarKind> {
-        Some(self.kind())
+    #[cfg(feature = "ixdtf")]
+    fn calendar_algorithm(
+        &self,
+    ) -> Option<CalendarAlgorithm> {
+        match self {
+            Self::Buddhist(ref c) => c.calendar_algorithm(),
+            Self::Chinese(ref c) => c.calendar_algorithm(),
+            Self::Coptic(ref c) => c.calendar_algorithm(),
+            Self::Dangi(ref c) => c.calendar_algorithm(),
+            Self::Ethiopian(ref c) => c.calendar_algorithm(),
+            Self::Gregorian(ref c) => c.calendar_algorithm(),
+            Self::Hebrew(ref c) => c.calendar_algorithm(),
+            Self::Indian(ref c) => c.calendar_algorithm(),
+            Self::HijriSimulated(ref c) => c.calendar_algorithm(),
+            Self::HijriTabular(ref c) => c.calendar_algorithm(),
+            Self::HijriUmmAlQura(ref c) => c.calendar_algorithm(),
+            Self::Iso(ref c) => c.calendar_algorithm(),
+            Self::Japanese(ref c) => c.calendar_algorithm(),
+            Self::JapaneseExtended(ref c) => c.calendar_algorithm(),
+            Self::Persian(ref c) => c.calendar_algorithm(),
+            Self::Roc(ref c) => c.calendar_algorithm(),
+        }
     }
 }
 

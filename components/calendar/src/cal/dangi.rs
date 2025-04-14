@@ -263,8 +263,9 @@ impl Calendar for Dangi {
         types::DayOfYear(date.0.year.day_of_year(date.0.month, date.0.day))
     }
 
-    fn any_calendar_kind(&self) -> Option<crate::AnyCalendarKind> {
-        Some(crate::any_calendar::IntoAnyCalendar::kind(self))
+    #[cfg(feature = "ixdtf")]
+    fn calendar_algorithm(&self) -> Option<crate::preferences::CalendarAlgorithm> {
+        Some(crate::preferences::CalendarAlgorithm::Dangi)
     }
 }
 

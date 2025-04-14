@@ -15,7 +15,7 @@ use icu_calendar::cal::{
     HijriUmmAlQura, Indian, Japanese, JapaneseExtended, Persian,
 };
 use icu_calendar::{
-    AnyCalendar, AnyCalendarKind, AsCalendar, Calendar, Date, IntoAnyCalendar, Ref,
+    AnyCalendar, AnyCalendarKind, AsCalendar, Date, IntoAnyCalendar, Ref,
 };
 use icu_provider::marker::NeverMarker;
 use icu_provider::prelude::*;
@@ -712,18 +712,18 @@ pub trait InSameCalendar {
     ) -> Result<(), MismatchedCalendarError>;
 }
 
-impl<C: Calendar, A: AsCalendar<Calendar = C>> InSameCalendar for Date<A> {
+impl<C: IntoAnyCalendar, A: AsCalendar<Calendar = C>> InSameCalendar for Date<A> {
     #[inline]
     fn check_any_calendar_kind(
         &self,
         any_calendar_kind: AnyCalendarKind,
     ) -> Result<(), MismatchedCalendarError> {
-        if self.calendar().any_calendar_kind() == Some(any_calendar_kind) {
+        if self.calendar().kind() == any_calendar_kind {
             Ok(())
         } else {
             Err(MismatchedCalendarError {
                 this_kind: any_calendar_kind,
-                date_kind: self.calendar().any_calendar_kind(),
+                date_kind: Some(self.calendar().kind()),
             })
         }
     }
@@ -736,7 +736,7 @@ impl InSameCalendar for Time {
     }
 }
 
-impl<C: Calendar, A: AsCalendar<Calendar = C>> InSameCalendar for DateTime<A> {
+impl<C: IntoAnyCalendar, A: AsCalendar<Calendar = C>> InSameCalendar for DateTime<A> {
     #[inline]
     fn check_any_calendar_kind(
         &self,
@@ -746,7 +746,7 @@ impl<C: Calendar, A: AsCalendar<Calendar = C>> InSameCalendar for DateTime<A> {
     }
 }
 
-impl<C: Calendar, A: AsCalendar<Calendar = C>, Z> InSameCalendar for ZonedDateTime<A, Z> {
+impl<C: IntoAnyCalendar, A: AsCalendar<Calendar = C>, Z> InSameCalendar for ZonedDateTime<A, Z> {
     #[inline]
     fn check_any_calendar_kind(
         &self,
