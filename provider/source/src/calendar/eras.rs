@@ -124,10 +124,9 @@ impl SourceDataProvider {
                                     1,
                                     icu::calendar::Ref(&calendar),
                                 )
-                                .unwrap()
+                                .ok()?
                                 .year()
-                                .era()
-                                .unwrap()
+                                .era()?
                                 .era_index;
                                 Some((key.parse::<usize>().ok()?, data))
                             })
