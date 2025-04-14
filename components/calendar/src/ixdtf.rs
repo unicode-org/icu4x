@@ -65,7 +65,7 @@ impl<A: AsCalendar> Date<A> {
     /// let date =
     ///     Date::try_from_str("2024-07-17[u-ca=gregory]", Gregorian).unwrap();
     /// let _ =
-    ///     Date::try_from_str("2024-07-17[u-ca=julian]", Gregorian).unwrap_err();
+    ///     Date::try_from_str("2024-07-17[u-ca=hebrew]", Gregorian).unwrap_err();
     ///
     /// assert_eq!(date.era_year().year, 2024);
     /// assert_eq!(
