@@ -848,7 +848,7 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, F
     /// // This assumes that the locale uses Abbreviated names for the given semantic skeleton!
     /// let mut names = FixedCalendarDateTimeNames::from_formatter(prefs, formatter).cast_into_fset::<YMDT>();
     /// names.include_day_period_names(DayPeriodNameLength::Abbreviated).unwrap();
-    /// let formatter = names.try_into_formatter(YMDT::long().with_hm()).unwrap();
+    /// let formatter = names.try_into_formatter(YMD::long().time_hm()).unwrap();
     ///
     /// assert_writeable_eq!(
     ///     formatter.format(&DateTime {
@@ -906,7 +906,7 @@ where
     ///         locale!("es-MX").into(),
     ///     );
     ///
-    /// let field_set = T::long().with_hm();
+    /// let field_set = T::hm();
     ///
     /// // Cannot convert yet: no names are loaded
     /// let mut names = names.try_into_formatter(field_set).unwrap_err().1;
@@ -1036,7 +1036,7 @@ impl<FSet: DateTimeNamesMarker> DateTimeNames<FSet> {
     /// // This assumes that the locale uses Abbreviated names for the given semantic skeleton!
     /// let mut names = DateTimeNames::from_formatter(prefs, formatter).cast_into_fset::<YMDT>();
     /// names.as_mut().include_day_period_names(DayPeriodNameLength::Abbreviated).unwrap();
-    /// let formatter = names.try_into_formatter(YMDT::long().with_hm()).unwrap();
+    /// let formatter = names.try_into_formatter(YMD::long().time_hm()).unwrap();
     ///
     /// assert_writeable_eq!(
     ///     formatter.format(&DateTime {
@@ -1099,7 +1099,7 @@ where
     /// )
     /// .expect("All locale-default calendars are supported");
     ///
-    /// let field_set = T::long().with_hm();
+    /// let field_set = T::hm();
     ///
     /// // Cannot convert yet: no names are loaded
     /// let mut names = names.try_into_formatter(field_set).unwrap_err().1;

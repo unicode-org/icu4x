@@ -114,7 +114,7 @@ pub mod ffi {
             {%- if let Some(consumed_options) = consumed_options %}
             let prefs = (&locale.0).into();
             {%- if flavor.has_time() %}
-            let mut options = icu_datetime::fieldsets::T::with_length(map_or_default(length));
+            let mut options = icu_datetime::fieldsets::T::for_length(map_or_default(length));
             options.time_precision = time_precision.map(Into::into);
             {%- if consumed_options.alignment %}
             options.alignment = alignment.map(Into::into);

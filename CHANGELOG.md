@@ -21,7 +21,9 @@ Some major changes worth highlighting:
     - `icu_collections`
         - Remove some panics from `CodePointTrie`, which should no longer pull in panic machinery even with arithmetic panics enabled for lookup (unicode-org#6204)
     - `icu_datetime`
-        - Rename `.hm()` to `.with_hm()` on fieldsets (unicode-org#6423)
+        - Make `.hm()` a constructor instead of a method (unicode-org#6423, unicode-org#6448)
+        - Add `.time_hm[s]` on date fieldsets (unicode-org#6448)
+        - Rename `.with_length` to `.for_length` (unicode-org#6448)
         - Length no longer has explicit `repr(u8)` discriminants (unicode-org#6423)
 - Data model and providers
     - `icu_experimental`

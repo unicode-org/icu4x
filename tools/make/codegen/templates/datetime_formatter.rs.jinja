@@ -86,6 +86,10 @@ pub mod ffi {
         {%- endif %}
         #[diplomat::rust_link(icu::datetime::{{ formatter_kind.rustlink() }}::try_new, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::{{ variant.name_upper() }}, Struct)]
+        {%- if flavor.is_time_only() %}
+        #[diplomat::rust_link(icu::datetime::fieldsets::{{ variant.name_upper() }}::hm, FnInStruct, compact)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::{{ variant.name_upper() }}::hms, FnInStruct, compact)]
+        {%- endif %}
         {%- if flavor.has_time() %}
         #[diplomat::rust_link(icu::datetime::fieldsets::{{ variant.name_upper() }}::with_time_precision, FnInStruct, compact)]
         {%- endif %}
@@ -95,10 +99,16 @@ pub mod ffi {
         {%- if variant.consumed_options.year_style %}
         #[diplomat::rust_link(icu::datetime::fieldsets::{{ variant.name_upper() }}::with_year_style, FnInStruct, compact)]
         {%- endif %}
+        #[diplomat::rust_link(icu::datetime::fieldsets::{{ variant.name_upper() }}::for_length, FnInStruct, compact)]
         #[diplomat::rust_link(icu::datetime::fieldsets::{{ variant.name_upper() }}::with_length, FnInStruct, compact)]
         #[diplomat::rust_link(icu::datetime::fieldsets::{{ variant.name_upper() }}::short, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::{{ variant.name_upper() }}::medium, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::{{ variant.name_upper() }}::long, FnInStruct, hidden)]
+        {%- if variant.supports_time() %}
+        #[diplomat::rust_link(icu::datetime::fieldsets::{{ variant.name_upper() }}::time, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::{{ variant.name_upper() }}::time_hm, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::{{ variant.name_upper() }}::time_hms, FnInStruct, hidden)]
+        {%- endif %}
         {%- if variant.supports_zone() %}
         #[diplomat::rust_link(icu::datetime::fieldsets::{{ variant.name_upper() }}::zone, FnInStruct, hidden)] // functionality is in the zoned formatter but rustlink is here
         {%- endif %}
@@ -126,7 +136,7 @@ pub mod ffi {
             {%- if !variant.consumed_options.alignment && !variant.consumed_options.year_style %}
             #[allow(unused_mut)]
             {%- endif %}
-            let mut options = icu_datetime::fieldsets::{{ variant.name_upper() }}::with_length(map_or_default(length));
+            let mut options = icu_datetime::fieldsets::{{ variant.name_upper() }}::for_length(map_or_default(length));
             {%- if flavor.has_time() %}
             options.time_precision = time_precision.map(Into::into);
             {%- endif %}

@@ -54,7 +54,7 @@ pub mod ffi {
         ) -> Result<Box<Self>, DateTimeFormatterLoadError> {
             let zone = icu_datetime::fieldsets::zone::SpecificLong;
             let prefs = (&locale.0).into();
-            let mut options = icu_datetime::fieldsets::T::with_length(map_or_default(length));
+            let mut options = icu_datetime::fieldsets::T::for_length(map_or_default(length));
             options.time_precision = time_precision.map(Into::into);
             options.alignment = alignment.map(Into::into);
             let options = options.zone(zone);
@@ -83,7 +83,7 @@ pub mod ffi {
             let provider = provider.get()?;
             let zone = icu_datetime::fieldsets::zone::SpecificLong;
             let prefs = (&locale.0).into();
-            let mut options = icu_datetime::fieldsets::T::with_length(map_or_default(length));
+            let mut options = icu_datetime::fieldsets::T::for_length(map_or_default(length));
             options.time_precision = time_precision.map(Into::into);
             options.alignment = alignment.map(Into::into);
             let options = options.zone(zone);
@@ -111,7 +111,7 @@ pub mod ffi {
         ) -> Result<Box<Self>, DateTimeFormatterLoadError> {
             let zone = icu_datetime::fieldsets::zone::SpecificShort;
             let prefs = (&locale.0).into();
-            let mut options = icu_datetime::fieldsets::T::with_length(map_or_default(length));
+            let mut options = icu_datetime::fieldsets::T::for_length(map_or_default(length));
             options.time_precision = time_precision.map(Into::into);
             options.alignment = alignment.map(Into::into);
             let options = options.zone(zone);
@@ -140,7 +140,7 @@ pub mod ffi {
             let provider = provider.get()?;
             let zone = icu_datetime::fieldsets::zone::SpecificShort;
             let prefs = (&locale.0).into();
-            let mut options = icu_datetime::fieldsets::T::with_length(map_or_default(length));
+            let mut options = icu_datetime::fieldsets::T::for_length(map_or_default(length));
             options.time_precision = time_precision.map(Into::into);
             options.alignment = alignment.map(Into::into);
             let options = options.zone(zone);
@@ -168,7 +168,7 @@ pub mod ffi {
         ) -> Result<Box<Self>, DateTimeFormatterLoadError> {
             let zone = icu_datetime::fieldsets::zone::LocalizedOffsetLong;
             let prefs = (&locale.0).into();
-            let mut options = icu_datetime::fieldsets::T::with_length(map_or_default(length));
+            let mut options = icu_datetime::fieldsets::T::for_length(map_or_default(length));
             options.time_precision = time_precision.map(Into::into);
             options.alignment = alignment.map(Into::into);
             let options = options.zone(zone);
@@ -197,7 +197,7 @@ pub mod ffi {
             let provider = provider.get()?;
             let zone = icu_datetime::fieldsets::zone::LocalizedOffsetLong;
             let prefs = (&locale.0).into();
-            let mut options = icu_datetime::fieldsets::T::with_length(map_or_default(length));
+            let mut options = icu_datetime::fieldsets::T::for_length(map_or_default(length));
             options.time_precision = time_precision.map(Into::into);
             options.alignment = alignment.map(Into::into);
             let options = options.zone(zone);
@@ -225,7 +225,7 @@ pub mod ffi {
         ) -> Result<Box<Self>, DateTimeFormatterLoadError> {
             let zone = icu_datetime::fieldsets::zone::LocalizedOffsetShort;
             let prefs = (&locale.0).into();
-            let mut options = icu_datetime::fieldsets::T::with_length(map_or_default(length));
+            let mut options = icu_datetime::fieldsets::T::for_length(map_or_default(length));
             options.time_precision = time_precision.map(Into::into);
             options.alignment = alignment.map(Into::into);
             let options = options.zone(zone);
@@ -254,7 +254,7 @@ pub mod ffi {
             let provider = provider.get()?;
             let zone = icu_datetime::fieldsets::zone::LocalizedOffsetShort;
             let prefs = (&locale.0).into();
-            let mut options = icu_datetime::fieldsets::T::with_length(map_or_default(length));
+            let mut options = icu_datetime::fieldsets::T::for_length(map_or_default(length));
             options.time_precision = time_precision.map(Into::into);
             options.alignment = alignment.map(Into::into);
             let options = options.zone(zone);
@@ -282,7 +282,7 @@ pub mod ffi {
         ) -> Result<Box<Self>, DateTimeFormatterLoadError> {
             let zone = icu_datetime::fieldsets::zone::GenericLong;
             let prefs = (&locale.0).into();
-            let mut options = icu_datetime::fieldsets::T::with_length(map_or_default(length));
+            let mut options = icu_datetime::fieldsets::T::for_length(map_or_default(length));
             options.time_precision = time_precision.map(Into::into);
             options.alignment = alignment.map(Into::into);
             let options = options.zone(zone);
@@ -311,7 +311,7 @@ pub mod ffi {
             let provider = provider.get()?;
             let zone = icu_datetime::fieldsets::zone::GenericLong;
             let prefs = (&locale.0).into();
-            let mut options = icu_datetime::fieldsets::T::with_length(map_or_default(length));
+            let mut options = icu_datetime::fieldsets::T::for_length(map_or_default(length));
             options.time_precision = time_precision.map(Into::into);
             options.alignment = alignment.map(Into::into);
             let options = options.zone(zone);
@@ -340,7 +340,7 @@ pub mod ffi {
         ) -> Result<Box<Self>, DateTimeFormatterLoadError> {
             let zone = icu_datetime::fieldsets::zone::GenericShort;
             let prefs = (&locale.0).into();
-            let mut options = icu_datetime::fieldsets::T::with_length(map_or_default(length));
+            let mut options = icu_datetime::fieldsets::T::for_length(map_or_default(length));
             options.time_precision = time_precision.map(Into::into);
             options.alignment = alignment.map(Into::into);
             let options = options.zone(zone);
@@ -369,7 +369,7 @@ pub mod ffi {
             let provider = provider.get()?;
             let zone = icu_datetime::fieldsets::zone::GenericShort;
             let prefs = (&locale.0).into();
-            let mut options = icu_datetime::fieldsets::T::with_length(map_or_default(length));
+            let mut options = icu_datetime::fieldsets::T::for_length(map_or_default(length));
             options.time_precision = time_precision.map(Into::into);
             options.alignment = alignment.map(Into::into);
             let options = options.zone(zone);
@@ -397,7 +397,7 @@ pub mod ffi {
         ) -> Result<Box<Self>, DateTimeFormatterLoadError> {
             let zone = icu_datetime::fieldsets::zone::Location;
             let prefs = (&locale.0).into();
-            let mut options = icu_datetime::fieldsets::T::with_length(map_or_default(length));
+            let mut options = icu_datetime::fieldsets::T::for_length(map_or_default(length));
             options.time_precision = time_precision.map(Into::into);
             options.alignment = alignment.map(Into::into);
             let options = options.zone(zone);
@@ -426,7 +426,7 @@ pub mod ffi {
             let provider = provider.get()?;
             let zone = icu_datetime::fieldsets::zone::Location;
             let prefs = (&locale.0).into();
-            let mut options = icu_datetime::fieldsets::T::with_length(map_or_default(length));
+            let mut options = icu_datetime::fieldsets::T::for_length(map_or_default(length));
             options.time_precision = time_precision.map(Into::into);
             options.alignment = alignment.map(Into::into);
             let options = options.zone(zone);
@@ -454,7 +454,7 @@ pub mod ffi {
         ) -> Result<Box<Self>, DateTimeFormatterLoadError> {
             let zone = icu_datetime::fieldsets::zone::ExemplarCity;
             let prefs = (&locale.0).into();
-            let mut options = icu_datetime::fieldsets::T::with_length(map_or_default(length));
+            let mut options = icu_datetime::fieldsets::T::for_length(map_or_default(length));
             options.time_precision = time_precision.map(Into::into);
             options.alignment = alignment.map(Into::into);
             let options = options.zone(zone);
@@ -483,7 +483,7 @@ pub mod ffi {
             let provider = provider.get()?;
             let zone = icu_datetime::fieldsets::zone::ExemplarCity;
             let prefs = (&locale.0).into();
-            let mut options = icu_datetime::fieldsets::T::with_length(map_or_default(length));
+            let mut options = icu_datetime::fieldsets::T::for_length(map_or_default(length));
             options.time_precision = time_precision.map(Into::into);
             options.alignment = alignment.map(Into::into);
             let options = options.zone(zone);

@@ -130,6 +130,9 @@ impl FormatterFlavor {
     pub fn has_time(self) -> bool {
         matches!(self, FormatterFlavor::Time | FormatterFlavor::DateTime)
     }
+    pub fn is_time_only(self) -> bool {
+        matches!(self, FormatterFlavor::Time)
+    }
     pub fn is_zone_only(self) -> bool {
         matches!(self, FormatterFlavor::Zone)
     }
@@ -238,6 +241,15 @@ impl DateTimeFormatterVariant {
             Inner::Date(date_fields) => date_fields,
             Inner::Time => return true,
             Inner::DateTime(date_fields) => date_fields,
+        };
+        !date_fields.is_calendar_period()
+    }
+    pub fn supports_time(&self) -> bool {
+        use DateTimeFormatterVariantInner as Inner;
+        let date_fields = match self.inner {
+            Inner::Date(date_fields) => date_fields,
+            Inner::Time => return true,
+            Inner::DateTime(_) => return false, // it already has a time
         };
         !date_fields.is_calendar_period()
     }
