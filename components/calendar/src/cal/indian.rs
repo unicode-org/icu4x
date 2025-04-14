@@ -184,8 +184,8 @@ impl Calendar for Indian {
 
     fn year_info(&self, date: &Self::DateInner) -> Self::Year {
         types::EraYear {
-            formatting_era: types::FormattingEra::Index(0, tinystr!(16, "Saka")),
-            standard_era: tinystr!(16, "saka").into(),
+            era_index: Some(0),
+            era: tinystr!(16, "saka"),
             year: self.extended_year(date),
             ambiguity: types::YearAmbiguity::CenturyRequired,
         }

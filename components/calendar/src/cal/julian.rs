@@ -159,15 +159,15 @@ impl Calendar for Julian {
         let extended_year = self.extended_year(date);
         if extended_year > 0 {
             types::EraYear {
-                standard_era: tinystr!(16, "ad").into(),
-                formatting_era: types::FormattingEra::Index(1, tinystr!(16, "AD")),
+                era: tinystr!(16, "ad"),
+                era_index: Some(1),
                 year: extended_year,
                 ambiguity: types::YearAmbiguity::CenturyRequired,
             }
         } else {
             types::EraYear {
-                standard_era: tinystr!(16, "bc").into(),
-                formatting_era: types::FormattingEra::Index(0, tinystr!(16, "BC")),
+                era: tinystr!(16, "bc"),
+                era_index: Some(0),
                 year: 1_i32.saturating_sub(extended_year),
                 ambiguity: types::YearAmbiguity::EraAndCenturyRequired,
             }
@@ -237,7 +237,6 @@ impl Date<Julian> {
 #[cfg(test)]
 mod test {
     use super::*;
-    use types::Era;
 
     #[test]
     fn test_day_iso_to_julian() {
@@ -324,7 +323,7 @@ mod test {
             iso_month: u8,
             iso_day: u8,
             expected_year: i32,
-            expected_era: Era,
+            expected_era: &'static str,
             expected_month: u8,
             expected_day: u8,
         }
@@ -336,7 +335,7 @@ mod test {
                 iso_month: 1,
                 iso_day: 1,
                 expected_year: 1,
-                expected_era: Era(tinystr!(16, "ad")),
+                expected_era: "ad",
                 expected_month: 1,
                 expected_day: 3,
             },
@@ -346,7 +345,7 @@ mod test {
                 iso_month: 12,
                 iso_day: 31,
                 expected_year: 1,
-                expected_era: Era(tinystr!(16, "ad")),
+                expected_era: "ad",
                 expected_month: 1,
                 expected_day: 2,
             },
@@ -356,7 +355,7 @@ mod test {
                 iso_month: 12,
                 iso_day: 30,
                 expected_year: 1,
-                expected_era: Era(tinystr!(16, "ad")),
+                expected_era: "ad",
                 expected_month: 1,
                 expected_day: 1,
             },
@@ -366,7 +365,7 @@ mod test {
                 iso_month: 12,
                 iso_day: 29,
                 expected_year: 1,
-                expected_era: Era(tinystr!(16, "bc")),
+                expected_era: "bc",
                 expected_month: 12,
                 expected_day: 31,
             },
@@ -376,7 +375,7 @@ mod test {
                 iso_month: 12,
                 iso_day: 28,
                 expected_year: 1,
-                expected_era: Era(tinystr!(16, "bc")),
+                expected_era: "bc",
                 expected_month: 12,
                 expected_day: 30,
             },
@@ -386,7 +385,7 @@ mod test {
                 iso_month: 12,
                 iso_day: 30,
                 expected_year: 1,
-                expected_era: Era(tinystr!(16, "bc")),
+                expected_era: "bc",
                 expected_month: 1,
                 expected_day: 1,
             },
@@ -396,7 +395,7 @@ mod test {
                 iso_month: 12,
                 iso_day: 29,
                 expected_year: 2,
-                expected_era: Era(tinystr!(16, "bc")),
+                expected_era: "bc",
                 expected_month: 12,
                 expected_day: 31,
             },
@@ -406,7 +405,7 @@ mod test {
                 iso_month: 12,
                 iso_day: 30,
                 expected_year: 4,
-                expected_era: Era(tinystr!(16, "bc")),
+                expected_era: "bc",
                 expected_month: 1,
                 expected_day: 1,
             },
@@ -416,7 +415,7 @@ mod test {
                 iso_month: 12,
                 iso_day: 29,
                 expected_year: 5,
-                expected_era: Era(tinystr!(16, "bc")),
+                expected_era: "bc",
                 expected_month: 12,
                 expected_day: 31,
             },
@@ -427,7 +426,7 @@ mod test {
             let julian_from_rd = Date::from_rata_die(RataDie::new(case.rd), Julian);
             assert_eq!(julian_from_rd.era_year().year, case.expected_year,
                 "Failed year check from RD: {case:?}\nISO: {iso_from_rd:?}\nJulian: {julian_from_rd:?}");
-            assert_eq!(julian_from_rd.era_year().standard_era, case.expected_era,
+            assert_eq!(julian_from_rd.era_year().era, case.expected_era,
                 "Failed era check from RD: {case:?}\nISO: {iso_from_rd:?}\nJulian: {julian_from_rd:?}");
             assert_eq!(julian_from_rd.month().ordinal, case.expected_month,
                 "Failed month check from RD: {case:?}\nISO: {iso_from_rd:?}\nJulian: {julian_from_rd:?}");

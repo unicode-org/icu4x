@@ -165,15 +165,15 @@ impl Calendar for Coptic {
         let year = self.extended_year(date);
         if year > 0 {
             types::EraYear {
-                standard_era: tinystr!(16, "am").into(),
-                formatting_era: types::FormattingEra::Index(1, tinystr!(16, "AM")),
+                era: tinystr!(16, "am"),
+                era_index: Some(1),
                 year,
                 ambiguity: types::YearAmbiguity::CenturyRequired,
             }
         } else {
             types::EraYear {
-                standard_era: tinystr!(16, "bd").into(),
-                formatting_era: types::FormattingEra::Index(0, tinystr!(16, "BD")),
+                era: tinystr!(16, "bd"),
+                era_index: Some(0),
                 year: 1 - year,
                 ambiguity: types::YearAmbiguity::EraAndCenturyRequired,
             }

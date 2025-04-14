@@ -148,6 +148,20 @@ impl FormatterKind {
             false => "DateTimeFormatter",
         }
     }
+    pub fn rustlink(self) -> &'static str {
+        match (self.is_fixed_calendar, self.is_gregorian) {
+            (true, true) => "FixedCalendarDateTimeFormatter",
+            (true, false) => "NoCalendarFormatter",
+            (false, _) => "DateTimeFormatter",
+        }
+    }
+    pub fn rustlink_doctype(self) -> &'static str {
+        match (self.is_fixed_calendar, self.is_gregorian) {
+            (true, true) => "Struct",
+            (true, false) => "Typedef",
+            (false, _) => "Struct",
+        }
+    }
 }
 
 #[derive(Template)]
@@ -217,6 +231,15 @@ impl DateTimeFormatterVariant {
             Inner::DateTime(DateFields::E) => "et",
             _ => unreachable!("unknown variant"),
         }
+    }
+    pub fn supports_zone(&self) -> bool {
+        use DateTimeFormatterVariantInner as Inner;
+        let date_fields = match self.inner {
+            Inner::Date(date_fields) => date_fields,
+            Inner::Time => return true,
+            Inner::DateTime(date_fields) => date_fields,
+        };
+        !date_fields.is_calendar_period()
     }
     pub fn is_default_constructor(&self) -> bool {
         use DateTimeFormatterVariantInner as Inner;

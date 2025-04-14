@@ -34,7 +34,7 @@ pub mod ffi {
     use crate::unstable::provider::ffi::DataProvider;
 
     #[diplomat::opaque]
-    #[diplomat::rust_link(icu::datetime::DateTimeFormatter, Typedef)]
+    #[diplomat::rust_link(icu::datetime::DateTimeFormatter, Struct)]
     pub struct ZonedDateFormatter(
         pub  icu_datetime::DateTimeFormatter<
             icu_datetime::fieldsets::enums::ZonedDateFieldSet
@@ -43,6 +43,8 @@ pub mod ffi {
 
     impl ZonedDateFormatter {
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "specific_long")]
+        #[diplomat::rust_link(icu::datetime::fieldsets::zone::SpecificLong, Struct)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::Combo, Struct, hidden)]
         #[cfg(feature = "compiled_data")]
         pub fn create_specific_long(
             locale: &Locale,
@@ -67,6 +69,8 @@ pub mod ffi {
         }
         
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "specific_long_with_provider")]
+        #[diplomat::rust_link(icu::datetime::fieldsets::zone::SpecificLong, Struct)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::Combo, Struct, hidden)]
         #[cfg(feature = "buffer_provider")]
         pub fn create_specific_long_with_provider(
             provider: &DataProvider,
@@ -97,6 +101,8 @@ pub mod ffi {
         }
         
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "specific_short")]
+        #[diplomat::rust_link(icu::datetime::fieldsets::zone::SpecificShort, Struct)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::Combo, Struct, hidden)]
         #[cfg(feature = "compiled_data")]
         pub fn create_specific_short(
             locale: &Locale,
@@ -121,6 +127,8 @@ pub mod ffi {
         }
         
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "specific_short_with_provider")]
+        #[diplomat::rust_link(icu::datetime::fieldsets::zone::SpecificShort, Struct)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::Combo, Struct, hidden)]
         #[cfg(feature = "buffer_provider")]
         pub fn create_specific_short_with_provider(
             provider: &DataProvider,
@@ -151,6 +159,8 @@ pub mod ffi {
         }
         
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "localized_offset_long")]
+        #[diplomat::rust_link(icu::datetime::fieldsets::zone::LocalizedOffsetLong, Struct)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::Combo, Struct, hidden)]
         #[cfg(feature = "compiled_data")]
         pub fn create_localized_offset_long(
             locale: &Locale,
@@ -175,6 +185,8 @@ pub mod ffi {
         }
         
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "localized_offset_long_with_provider")]
+        #[diplomat::rust_link(icu::datetime::fieldsets::zone::LocalizedOffsetLong, Struct)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::Combo, Struct, hidden)]
         #[cfg(feature = "buffer_provider")]
         pub fn create_localized_offset_long_with_provider(
             provider: &DataProvider,
@@ -205,6 +217,8 @@ pub mod ffi {
         }
         
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "localized_offset_short")]
+        #[diplomat::rust_link(icu::datetime::fieldsets::zone::LocalizedOffsetShort, Struct)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::Combo, Struct, hidden)]
         #[cfg(feature = "compiled_data")]
         pub fn create_localized_offset_short(
             locale: &Locale,
@@ -229,6 +243,8 @@ pub mod ffi {
         }
         
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "localized_offset_short_with_provider")]
+        #[diplomat::rust_link(icu::datetime::fieldsets::zone::LocalizedOffsetShort, Struct)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::Combo, Struct, hidden)]
         #[cfg(feature = "buffer_provider")]
         pub fn create_localized_offset_short_with_provider(
             provider: &DataProvider,
@@ -259,6 +275,8 @@ pub mod ffi {
         }
         
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "generic_long")]
+        #[diplomat::rust_link(icu::datetime::fieldsets::zone::GenericLong, Struct)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::Combo, Struct, hidden)]
         #[cfg(feature = "compiled_data")]
         pub fn create_generic_long(
             locale: &Locale,
@@ -283,6 +301,8 @@ pub mod ffi {
         }
         
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "generic_long_with_provider")]
+        #[diplomat::rust_link(icu::datetime::fieldsets::zone::GenericLong, Struct)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::Combo, Struct, hidden)]
         #[cfg(feature = "buffer_provider")]
         pub fn create_generic_long_with_provider(
             provider: &DataProvider,
@@ -313,6 +333,8 @@ pub mod ffi {
         }
         
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "generic_short")]
+        #[diplomat::rust_link(icu::datetime::fieldsets::zone::GenericShort, Struct)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::Combo, Struct, hidden)]
         #[diplomat::demo(default_constructor)]
         #[cfg(feature = "compiled_data")]
         pub fn create_generic_short(
@@ -338,6 +360,8 @@ pub mod ffi {
         }
         
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "generic_short_with_provider")]
+        #[diplomat::rust_link(icu::datetime::fieldsets::zone::GenericShort, Struct)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::Combo, Struct, hidden)]
         #[cfg(feature = "buffer_provider")]
         pub fn create_generic_short_with_provider(
             provider: &DataProvider,
@@ -368,6 +392,8 @@ pub mod ffi {
         }
         
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "location")]
+        #[diplomat::rust_link(icu::datetime::fieldsets::zone::Location, Struct)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::Combo, Struct, hidden)]
         #[cfg(feature = "compiled_data")]
         pub fn create_location(
             locale: &Locale,
@@ -392,6 +418,8 @@ pub mod ffi {
         }
         
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "location_with_provider")]
+        #[diplomat::rust_link(icu::datetime::fieldsets::zone::Location, Struct)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::Combo, Struct, hidden)]
         #[cfg(feature = "buffer_provider")]
         pub fn create_location_with_provider(
             provider: &DataProvider,
@@ -422,6 +450,8 @@ pub mod ffi {
         }
         
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "exemplar_city")]
+        #[diplomat::rust_link(icu::datetime::fieldsets::zone::ExemplarCity, Struct)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::Combo, Struct, hidden)]
         #[cfg(feature = "compiled_data")]
         pub fn create_exemplar_city(
             locale: &Locale,
@@ -446,6 +476,8 @@ pub mod ffi {
         }
         
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "exemplar_city_with_provider")]
+        #[diplomat::rust_link(icu::datetime::fieldsets::zone::ExemplarCity, Struct)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::Combo, Struct, hidden)]
         #[cfg(feature = "buffer_provider")]
         pub fn create_exemplar_city_with_provider(
             provider: &DataProvider,
@@ -509,7 +541,7 @@ pub mod ffi {
     
 
     #[diplomat::opaque]
-    #[diplomat::rust_link(icu::datetime::FixedCalendarDateTimeFormatter, Typedef)]
+    #[diplomat::rust_link(icu::datetime::FixedCalendarDateTimeFormatter, Struct)]
     pub struct ZonedDateFormatterGregorian(
         pub  icu_datetime::FixedCalendarDateTimeFormatter<
             Gregorian,
@@ -519,6 +551,8 @@ pub mod ffi {
 
     impl ZonedDateFormatterGregorian {
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "specific_long")]
+        #[diplomat::rust_link(icu::datetime::fieldsets::zone::SpecificLong, Struct)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::Combo, Struct, hidden)]
         #[cfg(feature = "compiled_data")]
         pub fn create_specific_long(
             locale: &Locale,
@@ -542,6 +576,8 @@ pub mod ffi {
         }
         
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "specific_long_with_provider")]
+        #[diplomat::rust_link(icu::datetime::fieldsets::zone::SpecificLong, Struct)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::Combo, Struct, hidden)]
         #[cfg(feature = "buffer_provider")]
         pub fn create_specific_long_with_provider(
             provider: &DataProvider,
@@ -571,6 +607,8 @@ pub mod ffi {
         }
         
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "specific_short")]
+        #[diplomat::rust_link(icu::datetime::fieldsets::zone::SpecificShort, Struct)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::Combo, Struct, hidden)]
         #[cfg(feature = "compiled_data")]
         pub fn create_specific_short(
             locale: &Locale,
@@ -594,6 +632,8 @@ pub mod ffi {
         }
         
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "specific_short_with_provider")]
+        #[diplomat::rust_link(icu::datetime::fieldsets::zone::SpecificShort, Struct)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::Combo, Struct, hidden)]
         #[cfg(feature = "buffer_provider")]
         pub fn create_specific_short_with_provider(
             provider: &DataProvider,
@@ -623,6 +663,8 @@ pub mod ffi {
         }
         
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "localized_offset_long")]
+        #[diplomat::rust_link(icu::datetime::fieldsets::zone::LocalizedOffsetLong, Struct)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::Combo, Struct, hidden)]
         #[cfg(feature = "compiled_data")]
         pub fn create_localized_offset_long(
             locale: &Locale,
@@ -646,6 +688,8 @@ pub mod ffi {
         }
         
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "localized_offset_long_with_provider")]
+        #[diplomat::rust_link(icu::datetime::fieldsets::zone::LocalizedOffsetLong, Struct)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::Combo, Struct, hidden)]
         #[cfg(feature = "buffer_provider")]
         pub fn create_localized_offset_long_with_provider(
             provider: &DataProvider,
@@ -675,6 +719,8 @@ pub mod ffi {
         }
         
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "localized_offset_short")]
+        #[diplomat::rust_link(icu::datetime::fieldsets::zone::LocalizedOffsetShort, Struct)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::Combo, Struct, hidden)]
         #[cfg(feature = "compiled_data")]
         pub fn create_localized_offset_short(
             locale: &Locale,
@@ -698,6 +744,8 @@ pub mod ffi {
         }
         
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "localized_offset_short_with_provider")]
+        #[diplomat::rust_link(icu::datetime::fieldsets::zone::LocalizedOffsetShort, Struct)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::Combo, Struct, hidden)]
         #[cfg(feature = "buffer_provider")]
         pub fn create_localized_offset_short_with_provider(
             provider: &DataProvider,
@@ -727,6 +775,8 @@ pub mod ffi {
         }
         
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "generic_long")]
+        #[diplomat::rust_link(icu::datetime::fieldsets::zone::GenericLong, Struct)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::Combo, Struct, hidden)]
         #[cfg(feature = "compiled_data")]
         pub fn create_generic_long(
             locale: &Locale,
@@ -750,6 +800,8 @@ pub mod ffi {
         }
         
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "generic_long_with_provider")]
+        #[diplomat::rust_link(icu::datetime::fieldsets::zone::GenericLong, Struct)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::Combo, Struct, hidden)]
         #[cfg(feature = "buffer_provider")]
         pub fn create_generic_long_with_provider(
             provider: &DataProvider,
@@ -779,6 +831,8 @@ pub mod ffi {
         }
         
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "generic_short")]
+        #[diplomat::rust_link(icu::datetime::fieldsets::zone::GenericShort, Struct)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::Combo, Struct, hidden)]
         #[diplomat::demo(default_constructor)]
         #[cfg(feature = "compiled_data")]
         pub fn create_generic_short(
@@ -803,6 +857,8 @@ pub mod ffi {
         }
         
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "generic_short_with_provider")]
+        #[diplomat::rust_link(icu::datetime::fieldsets::zone::GenericShort, Struct)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::Combo, Struct, hidden)]
         #[cfg(feature = "buffer_provider")]
         pub fn create_generic_short_with_provider(
             provider: &DataProvider,
@@ -832,6 +888,8 @@ pub mod ffi {
         }
         
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "location")]
+        #[diplomat::rust_link(icu::datetime::fieldsets::zone::Location, Struct)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::Combo, Struct, hidden)]
         #[cfg(feature = "compiled_data")]
         pub fn create_location(
             locale: &Locale,
@@ -855,6 +913,8 @@ pub mod ffi {
         }
         
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "location_with_provider")]
+        #[diplomat::rust_link(icu::datetime::fieldsets::zone::Location, Struct)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::Combo, Struct, hidden)]
         #[cfg(feature = "buffer_provider")]
         pub fn create_location_with_provider(
             provider: &DataProvider,
@@ -884,6 +944,8 @@ pub mod ffi {
         }
         
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "exemplar_city")]
+        #[diplomat::rust_link(icu::datetime::fieldsets::zone::ExemplarCity, Struct)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::Combo, Struct, hidden)]
         #[cfg(feature = "compiled_data")]
         pub fn create_exemplar_city(
             locale: &Locale,
@@ -907,6 +969,8 @@ pub mod ffi {
         }
         
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "exemplar_city_with_provider")]
+        #[diplomat::rust_link(icu::datetime::fieldsets::zone::ExemplarCity, Struct)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::Combo, Struct, hidden)]
         #[cfg(feature = "buffer_provider")]
         pub fn create_exemplar_city_with_provider(
             provider: &DataProvider,

@@ -9,12 +9,15 @@ use icu::datetime::provider::calendar::*;
 use icu_provider::prelude::*;
 use std::collections::HashSet;
 
+mod legacy;
 mod neo;
 mod neo_skeleton;
 mod patterns;
 mod skeletons;
 mod symbols;
 pub(crate) mod week_data;
+
+use legacy::*;
 
 /// These are the calendars that datetime needs names for. They are roughly the
 /// CLDR calendars, with the Hijri calendars merged, and the Japanese calendar split.

@@ -118,8 +118,8 @@ impl Calendar for Buddhist {
     /// The calendar-specific year represented by `date`
     fn year_info(&self, date: &Self::DateInner) -> Self::Year {
         types::EraYear {
-            standard_era: tinystr!(16, "be").into(),
-            formatting_era: types::FormattingEra::Index(0, tinystr!(16, "BE")),
+            era: tinystr!(16, "be"),
+            era_index: Some(0),
             year: self.extended_year(date),
             ambiguity: types::YearAmbiguity::CenturyRequired,
         }

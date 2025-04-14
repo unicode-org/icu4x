@@ -110,8 +110,8 @@ impl Calendar for Gregorian {
         let extended_year = self.extended_year(date);
         if extended_year > 0 {
             types::EraYear {
-                standard_era: tinystr!(16, "ce").into(),
-                formatting_era: types::FormattingEra::Index(1, tinystr!(16, "CE")),
+                era: tinystr!(16, "ce"),
+                era_index: Some(1),
                 year: extended_year,
                 ambiguity: match extended_year {
                     ..=999 => types::YearAmbiguity::EraAndCenturyRequired,
@@ -122,8 +122,8 @@ impl Calendar for Gregorian {
             }
         } else {
             types::EraYear {
-                standard_era: tinystr!(16, "bce").into(),
-                formatting_era: types::FormattingEra::Index(0, tinystr!(16, "BCE")),
+                era: tinystr!(16, "bce"),
+                era_index: Some(0),
                 year: 1_i32.saturating_sub(extended_year),
                 ambiguity: types::YearAmbiguity::EraAndCenturyRequired,
             }
@@ -188,7 +188,6 @@ mod test {
     use calendrical_calculations::rata_die::RataDie;
 
     use super::*;
-    use types::Era;
 
     #[derive(Debug)]
     struct TestCase {
@@ -197,7 +196,7 @@ mod test {
         iso_month: u8,
         iso_day: u8,
         expected_year: i32,
-        expected_era: Era,
+        expected_era: &'static str,
         expected_month: u8,
         expected_day: u8,
     }
@@ -208,7 +207,7 @@ mod test {
         assert_eq!(greg_date_from_rd.era_year().year, case.expected_year,
             "Failed year check from RD: {case:?}\nISO: {iso_from_rd:?}\nGreg: {greg_date_from_rd:?}");
         assert_eq!(
-            greg_date_from_rd.era_year().standard_era,
+            greg_date_from_rd.era_year().era,
             case.expected_era,
             "Failed era check from RD: {case:?}\nISO: {iso_from_rd:?}\nGreg: {greg_date_from_rd:?}"
         );
@@ -242,7 +241,7 @@ mod test {
                 iso_month: 1,
                 iso_day: 1,
                 expected_year: 1,
-                expected_era: Era(tinystr!(16, "ce")),
+                expected_era: "ce",
                 expected_month: 1,
                 expected_day: 1,
             },
@@ -252,7 +251,7 @@ mod test {
                 iso_month: 6,
                 iso_day: 30,
                 expected_year: 1,
-                expected_era: Era(tinystr!(16, "ce")),
+                expected_era: "ce",
                 expected_month: 6,
                 expected_day: 30,
             },
@@ -262,7 +261,7 @@ mod test {
                 iso_month: 2,
                 iso_day: 29,
                 expected_year: 4,
-                expected_era: Era(tinystr!(16, "ce")),
+                expected_era: "ce",
                 expected_month: 2,
                 expected_day: 29,
             },
@@ -272,7 +271,7 @@ mod test {
                 iso_month: 9,
                 iso_day: 5,
                 expected_year: 4,
-                expected_era: Era(tinystr!(16, "ce")),
+                expected_era: "ce",
                 expected_month: 9,
                 expected_day: 5,
             },
@@ -282,7 +281,7 @@ mod test {
                 iso_month: 3,
                 iso_day: 1,
                 expected_year: 100,
-                expected_era: Era(tinystr!(16, "ce")),
+                expected_era: "ce",
                 expected_month: 3,
                 expected_day: 1,
             },
@@ -305,7 +304,7 @@ mod test {
                 iso_month: 12,
                 iso_day: 31,
                 expected_year: 1,
-                expected_era: Era(tinystr!(16, "bce")),
+                expected_era: "bce",
                 expected_month: 12,
                 expected_day: 31,
             },
@@ -315,7 +314,7 @@ mod test {
                 iso_month: 1,
                 iso_day: 1,
                 expected_year: 1,
-                expected_era: Era(tinystr!(16, "bce")),
+                expected_era: "bce",
                 expected_month: 1,
                 expected_day: 1,
             },
@@ -325,7 +324,7 @@ mod test {
                 iso_month: 12,
                 iso_day: 31,
                 expected_year: 2,
-                expected_era: Era(tinystr!(16, "bce")),
+                expected_era: "bce",
                 expected_month: 12,
                 expected_day: 31,
             },
@@ -335,7 +334,7 @@ mod test {
                 iso_month: 12,
                 iso_day: 31,
                 expected_year: 5,
-                expected_era: Era(tinystr!(16, "bce")),
+                expected_era: "bce",
                 expected_month: 12,
                 expected_day: 31,
             },
@@ -345,7 +344,7 @@ mod test {
                 iso_month: 1,
                 iso_day: 1,
                 expected_year: 5,
-                expected_era: Era(tinystr!(16, "bce")),
+                expected_era: "bce",
                 expected_month: 1,
                 expected_day: 1,
             },
