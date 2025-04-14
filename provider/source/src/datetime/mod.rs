@@ -5,6 +5,7 @@
 use crate::cldr_serde;
 use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;
+use icu::calendar::AnyCalendarKind;
 use icu::datetime::provider::calendar::*;
 use icu_provider::prelude::*;
 use std::collections::HashSet;
@@ -28,7 +29,6 @@ pub(crate) enum DatagenCalendar {
     Coptic,
     Dangi,
     Ethiopic,
-    EthiopicAmeteAlem,
     Gregorian,
     Hebrew,
     Indian,
@@ -48,7 +48,6 @@ impl DatagenCalendar {
             Coptic => "coptic",
             Dangi => "dangi",
             Ethiopic => "ethiopic",
-            EthiopicAmeteAlem => "ethiopic-amete-alem",
             Gregorian => "gregorian",
             Hebrew => "hebrew",
             Indian => "indian",
@@ -57,6 +56,25 @@ impl DatagenCalendar {
             JapaneseModern => "japanese",
             Persian => "persian",
             Roc => "roc",
+        }
+    }
+
+    pub(crate) fn canonical_any_calendar_kind(self) -> AnyCalendarKind {
+        use DatagenCalendar::*;
+        match self {
+            Buddhist => AnyCalendarKind::Buddhist,
+            Chinese => AnyCalendarKind::Chinese,
+            Coptic => AnyCalendarKind::Coptic,
+            Dangi => AnyCalendarKind::Dangi,
+            Ethiopic => AnyCalendarKind::Ethiopian, // also covers EthiopianAmeteAlem
+            Gregorian => AnyCalendarKind::Gregorian,
+            Hebrew => AnyCalendarKind::Hebrew,
+            Indian => AnyCalendarKind::Indian,
+            Hijri => AnyCalendarKind::HijriUmmAlQura, // also covers HijriTabular*, HijriSimulatedMecca
+            JapaneseExtended => AnyCalendarKind::JapaneseExtended,
+            JapaneseModern => AnyCalendarKind::Japanese,
+            Persian => AnyCalendarKind::Persian,
+            Roc => AnyCalendarKind::Roc,
         }
     }
 }

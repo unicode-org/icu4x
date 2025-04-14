@@ -92,11 +92,7 @@ pub struct EraYear {
     pub era: TinyStr16,
     /// An era index, for calendars with a small set of eras.
     ///
-    /// It is obtained by ordering all eras' start/end dates, and for eras sharing a date, put the negative
-    /// one first. For example, bce < ce.
-    ///
-    /// As eras might be added or removed across CLDR releases, this does not have a stable correspondence
-    /// with the era code.
+    /// The only guarantee we make is that these values are stable, even under CLDR code changes.
     pub era_index: Option<u8>,
     /// The ambiguity of the era/year combination
     pub ambiguity: YearAmbiguity,
@@ -164,8 +160,7 @@ impl MonthCode {
     /// Construct a "normal" month code given a number ("Mxx").
     ///
     /// Returns an error for months greater than 99
-    #[cfg(test)] // Only used in tests for now. Could be made public if people need it.
-    pub(crate) fn new_normal(number: u8) -> Option<Self> {
+    pub fn new_normal(number: u8) -> Option<Self> {
         let tens = number / 10;
         let ones = number % 10;
         if tens > 9 {

@@ -106,9 +106,7 @@ pub(crate) fn get_month_code_map(calendar: DatagenCalendar) -> &'static [TinyStr
         | DatagenCalendar::JapaneseModern
         | DatagenCalendar::Persian
         | DatagenCalendar::Roc => &SOLAR_MONTH_CODES[0..12],
-        DatagenCalendar::Coptic
-        | DatagenCalendar::Ethiopic
-        | DatagenCalendar::EthiopicAmeteAlem => SOLAR_MONTH_CODES,
+        DatagenCalendar::Coptic | DatagenCalendar::Ethiopic => SOLAR_MONTH_CODES,
         DatagenCalendar::Hebrew => HEBREW_MONTH_CODES,
     }
 }
