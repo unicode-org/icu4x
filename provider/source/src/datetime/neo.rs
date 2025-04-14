@@ -361,9 +361,7 @@ fn years_convert(
 fn calendar_months(cal: DatagenCalendar) -> (usize, bool) {
     match cal {
         DatagenCalendar::Hebrew | DatagenCalendar::Chinese | DatagenCalendar::Dangi => (24, true),
-        DatagenCalendar::Coptic
-        | DatagenCalendar::Ethiopic
-        | DatagenCalendar::EthiopicAmeteAlem => (13, false),
+        DatagenCalendar::Coptic | DatagenCalendar::Ethiopic => (13, false),
         DatagenCalendar::Gregorian
         | DatagenCalendar::Buddhist
         | DatagenCalendar::JapaneseModern

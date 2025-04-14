@@ -69,7 +69,6 @@ impl SourceDataProvider {
                     DatagenCalendar::Persian,
                     DatagenCalendar::Hebrew,
                     DatagenCalendar::Ethiopic,
-                    DatagenCalendar::EthiopicAmeteAlem,
                     DatagenCalendar::Roc,
                     DatagenCalendar::Gregorian,
                 ]
@@ -447,12 +446,35 @@ impl crate::IterableDataProviderCached<CalendarJapaneseExtendedV1> for SourceDat
     }
 }
 
+// We use a single data struct for both Ethiopic calendars, make sure their indices agree
 #[test]
 pub fn ethiopic_and_ethioaa_are_compatible() {
-    let provider = SourceDataProvider::new_testing();
-    let ethiopic = &provider.all_eras().unwrap()[&DatagenCalendar::Ethiopic];
-    let ethioaa = &provider.all_eras().unwrap()[&DatagenCalendar::EthiopicAmeteAlem];
-    assert_eq!(ethioaa.iter().zip(ethiopic).find(|(e, a)| e != a), None);
+    use icu::calendar::{
+        cal::{Ethiopian, EthiopianEraStyle},
+        types::MonthCode,
+    };
+    assert_eq!(
+        Date::try_new_from_codes(
+            Some("aa"),
+            1,
+            MonthCode::new_normal(1).unwrap(),
+            1,
+            Ethiopian::new_with_era_style(EthiopianEraStyle::AmeteAlem)
+        )
+        .unwrap()
+        .era_year()
+        .era_index,
+        Date::try_new_from_codes(
+            Some("aa"),
+            1,
+            MonthCode::new_normal(1).unwrap(),
+            1,
+            Ethiopian::new_with_era_style(EthiopianEraStyle::AmeteMihret)
+        )
+        .unwrap()
+        .era_year()
+        .era_index,
+    );
 }
 
 #[test]
