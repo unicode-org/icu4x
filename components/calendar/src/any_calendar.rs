@@ -523,10 +523,7 @@ impl Calendar for AnyCalendar {
         }
     }
 
-    #[cfg(feature = "ixdtf")]
-    fn calendar_algorithm(
-        &self,
-    ) -> Option<CalendarAlgorithm> {
+    fn calendar_algorithm(&self) -> Option<CalendarAlgorithm> {
         match self {
             Self::Buddhist(ref c) => c.calendar_algorithm(),
             Self::Chinese(ref c) => c.calendar_algorithm(),

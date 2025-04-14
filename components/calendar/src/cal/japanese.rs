@@ -281,7 +281,6 @@ impl Calendar for Japanese {
         Self::DEBUG_NAME
     }
 
-    #[cfg(feature = "ixdtf")]
     fn calendar_algorithm(&self) -> Option<crate::preferences::CalendarAlgorithm> {
         Some(crate::preferences::CalendarAlgorithm::Japanese)
     }
@@ -383,7 +382,6 @@ impl Calendar for JapaneseExtended {
         Self::DEBUG_NAME
     }
 
-    #[cfg(feature = "ixdtf")]
     fn calendar_algorithm(&self) -> Option<crate::preferences::CalendarAlgorithm> {
         Some(crate::preferences::CalendarAlgorithm::Japanese)
     }

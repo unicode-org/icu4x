@@ -215,7 +215,6 @@ impl Calendar for Indian {
         "Indian"
     }
 
-    #[cfg(feature = "ixdtf")]
     fn calendar_algorithm(&self) -> Option<crate::preferences::CalendarAlgorithm> {
         Some(crate::preferences::CalendarAlgorithm::Indian)
     }

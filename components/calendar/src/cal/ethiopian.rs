@@ -243,7 +243,6 @@ impl Calendar for Ethiopian {
         "Ethiopian"
     }
 
-    #[cfg(feature = "ixdtf")]
     fn calendar_algorithm(&self) -> Option<crate::preferences::CalendarAlgorithm> {
         Some(crate::preferences::CalendarAlgorithm::Ethiopic)
     }

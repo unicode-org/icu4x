@@ -163,7 +163,6 @@ impl Calendar for Roc {
         Iso.day_of_year(&date.0)
     }
 
-    #[cfg(feature = "ixdtf")]
     fn calendar_algorithm(&self) -> Option<crate::preferences::CalendarAlgorithm> {
         Some(crate::preferences::CalendarAlgorithm::Roc)
     }

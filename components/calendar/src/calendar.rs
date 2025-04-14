@@ -89,7 +89,6 @@ pub trait Calendar {
         smallest_unit: DateDurationUnit,
     ) -> DateDuration<Self>;
 
-    #[cfg(feature = "ixdtf")]
     /// Returns the [`CalendarAlgorithm`](crate::preferences::CalendarAlgorithm) that is required to match
     /// when parsing into this calendar.
     ///

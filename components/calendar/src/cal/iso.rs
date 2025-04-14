@@ -178,10 +178,7 @@ impl Calendar for Iso {
         "ISO"
     }
 
-    #[cfg(feature = "ixdtf")]
-    fn calendar_algorithm(
-        &self,
-    ) -> Option<crate::preferences::CalendarAlgorithm> {
+    fn calendar_algorithm(&self) -> Option<crate::preferences::CalendarAlgorithm> {
         None
     }
 }

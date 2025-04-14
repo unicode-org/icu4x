@@ -477,7 +477,6 @@ impl Calendar for HijriSimulated {
         date.0.day_of_year()
     }
 
-    #[cfg(feature = "ixdtf")]
     fn calendar_algorithm(&self) -> Option<crate::preferences::CalendarAlgorithm> {
         Some(match self.location {
             crate::cal::hijri::HijriSimulatedLocation::Mecca => {
@@ -759,7 +758,6 @@ impl Calendar for HijriUmmAlQura {
         date.0.day_of_year()
     }
 
-    #[cfg(feature = "ixdtf")]
     fn calendar_algorithm(&self) -> Option<crate::preferences::CalendarAlgorithm> {
         let expected_calendar = crate::preferences::CalendarAlgorithm::Hijri(Some(
             crate::preferences::HijriCalendarAlgorithm::Umalqura,
@@ -1287,7 +1285,6 @@ impl Calendar for HijriTabular {
         date.0.day_of_year()
     }
 
-    #[cfg(feature = "ixdtf")]
     fn calendar_algorithm(&self) -> Option<crate::preferences::CalendarAlgorithm> {
         let expected_calendar = match (self.epoch, self.leap_years) {
             (crate::cal::HijriTabularEpoch::Friday, crate::cal::HijriTabularLeapYears::TypeII) => {

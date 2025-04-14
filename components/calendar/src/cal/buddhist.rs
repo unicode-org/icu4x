@@ -151,7 +151,6 @@ impl Calendar for Buddhist {
         "Buddhist"
     }
 
-    #[cfg(feature = "ixdtf")]
     fn calendar_algorithm(&self) -> Option<crate::preferences::CalendarAlgorithm> {
         Some(crate::preferences::CalendarAlgorithm::Buddhist)
     }

@@ -190,7 +190,6 @@ impl Calendar for Persian {
         "Persian"
     }
 
-    #[cfg(feature = "ixdtf")]
     fn calendar_algorithm(&self) -> Option<crate::preferences::CalendarAlgorithm> {
         Some(crate::preferences::CalendarAlgorithm::Persian)
     }

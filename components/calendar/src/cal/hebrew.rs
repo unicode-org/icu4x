@@ -332,7 +332,6 @@ impl Calendar for Hebrew {
         date.0.day_of_year()
     }
 
-    #[cfg(feature = "ixdtf")]
     fn calendar_algorithm(&self) -> Option<crate::preferences::CalendarAlgorithm> {
         Some(crate::preferences::CalendarAlgorithm::Hebrew)
     }

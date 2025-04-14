@@ -157,7 +157,6 @@ impl Calendar for Gregorian {
         "Gregorian"
     }
 
-    #[cfg(feature = "ixdtf")]
     fn calendar_algorithm(&self) -> Option<crate::preferences::CalendarAlgorithm> {
         Some(crate::preferences::CalendarAlgorithm::Gregory)
     }

@@ -14,9 +14,7 @@ use icu_calendar::cal::{
     Buddhist, Coptic, Dangi, Ethiopian, Gregorian, Hebrew, HijriSimulated, HijriTabular,
     HijriUmmAlQura, Indian, Japanese, JapaneseExtended, Persian,
 };
-use icu_calendar::{
-    AnyCalendar, AnyCalendarKind, AsCalendar, Date, IntoAnyCalendar, Ref,
-};
+use icu_calendar::{AnyCalendar, AnyCalendarKind, AsCalendar, Date, IntoAnyCalendar, Ref};
 use icu_provider::marker::NeverMarker;
 use icu_provider::prelude::*;
 use icu_time::{

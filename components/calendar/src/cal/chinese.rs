@@ -278,7 +278,6 @@ impl Calendar for Chinese {
         types::DayOfYear(date.0.year.day_of_year(date.0.month, date.0.day))
     }
 
-    #[cfg(feature = "ixdtf")]
     fn calendar_algorithm(&self) -> Option<crate::preferences::CalendarAlgorithm> {
         Some(crate::preferences::CalendarAlgorithm::Chinese)
     }
