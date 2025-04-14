@@ -92,11 +92,7 @@ pub struct EraYear {
     pub era: TinyStr16,
     /// An era index, for calendars with a small set of eras.
     ///
-    /// It is obtained by ordering all eras' start/end dates, and for eras sharing a date, put the negative
-    /// one first. For example, bce < ce.
-    ///
-    /// As eras might be added or removed across CLDR releases, this does not have a stable correspondence
-    /// with the era code.
+    /// The only guarantee we make is that these values are stable, even under CLDR code changes.
     pub era_index: Option<u8>,
     /// The ambiguity of the era/year combination
     pub ambiguity: YearAmbiguity,

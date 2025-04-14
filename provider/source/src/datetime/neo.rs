@@ -300,10 +300,14 @@ fn eras_convert(
         let cow = VarZeroCow::from_encodeable(&kv);
         Ok(YearNames::VariableEras(cow))
     } else {
-        let mut out_eras: Vec<&str> = Vec::new();
-        for &(cldr, _) in all_eras.iter() {
+        let max_era_index = all_eras.iter().flat_map(|(_, e)| e.icu4x_era_index).max();
+        let mut out_eras: Vec<&str> =
+            vec![""; max_era_index.map(|n| n + 1).unwrap_or_default() as usize];
+        for &(cldr, ref era) in all_eras.iter() {
             if let Some(name) = eras.get(&cldr.to_string()) {
-                out_eras.push(&**name)
+                if let Some(icu4x_hardcoded_index) = era.icu4x_era_index {
+                    out_eras[icu4x_hardcoded_index as usize] = &**name;
+                }
             } else {
                 panic!("Did not find era data for era index {cldr} for {calendar:?} and {locale}");
             }

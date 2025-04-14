@@ -7,7 +7,7 @@ use crate::cldr_serde::eras::EraData;
 use crate::datetime::DatagenCalendar;
 use crate::SourceDataProvider;
 use icu::calendar::provider::*;
-use icu::calendar::Date;
+use icu::calendar::{types::MonthCode, AnyCalendar, Date};
 use icu::locale::locale;
 use icu_provider::prelude::*;
 use std::collections::BTreeMap;
@@ -107,12 +107,28 @@ impl SourceDataProvider {
                             )
                             .collect::<Vec<_>>()
                     } else {
+                        let calendar =
+                            AnyCalendar::try_new_unstable(self, cal.canonical_any_calendar_kind())
+                                .unwrap();
+
                         era_dates_map[cal.cldr_name()]
                             .clone()
                             .eras
                             .into_iter()
-                            .filter_map(|(key, data)| {
-                                data.code.as_ref()?;
+                            .filter_map(|(key, mut data)| {
+                                // Check what ICU4X returns for the date 1-1-1 era
+                                data.icu4x_era_index = Date::try_new_from_codes(
+                                    Some(data.code.as_deref()?),
+                                    1,
+                                    MonthCode::new_normal(1).unwrap(),
+                                    1,
+                                    icu::calendar::Ref(&calendar),
+                                )
+                                .unwrap()
+                                .year()
+                                .era()
+                                .unwrap()
+                                .era_index;
                                 Some((key.parse::<usize>().ok()?, data))
                             })
                             .collect::<Vec<_>>()
@@ -578,10 +594,6 @@ fn test_calendar_eras() {
             // not_in_era date is in a different era
             if idx != "0" || era.end.is_some() {
                 assert_ne!(not_in_era.year().era().unwrap().era, era_year.era);
-            }
-
-            if let Some(i) = era_year.era_index {
-                assert_eq!(i.to_string(), idx);
             }
 
             // Check that the correct era code is returned
