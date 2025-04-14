@@ -134,6 +134,33 @@ impl SourceDataProvider {
 fn process_era_dates_map(
     mut data: BTreeMap<String, cldr_serde::eras::CalendarData>,
 ) -> BTreeMap<String, cldr_serde::eras::CalendarData> {
+    // https://github.com/unicode-org/cldr/pull/4519
+    for cal in data.values_mut() {
+        for era in cal.eras.values_mut() {
+            if let Some(code) = era.code.as_deref() {
+                era.code = match code {
+                    "buddhist" => Some("be"),
+                    "coptic-inverse" => Some("bd"),
+                    "coptic" => Some("am"),
+                    "ethioaa" => Some("aa"),
+                    "ethiopic" => Some("am"),
+                    "gregory-inverse" => Some("bce"),
+                    "gregory" => Some("ce"),
+                    "hebrew" => Some("am"),
+                    "indian" => Some("saka"),
+                    islamic if islamic.starts_with("islamic") => Some("ah"),
+                    "persian" => Some("ap"),
+                    "roc-inverse" => Some("minguo-qian"),
+                    "roc" => Some("minguo"),
+                    "chinese" | "dangi" => None,
+                    "meiji" | "reiwa" | "taisho" | "showa" | "heisei" => Some(code),
+                    c => unreachable!("{c:?}"),
+                }
+                .map(Into::into);
+            }
+        }
+    }
+
     fn replace_julian_by_iso(d: &mut EraStartDate) {
         let date = Date::try_new_julian(d.year, d.month, d.day)
             .unwrap()
@@ -516,7 +543,7 @@ fn test_calendar_eras() {
             //     assert_eq!(
             //         Date::try_new_from_codes(
             //             Some(era),
-            //             in_era.year().era().unwrap().era_year,
+            //             in_era.year().era().unwrap().year,
             //             in_era.month().standard_code,
             //             in_era.day_of_month().0,
             //             cal,
@@ -537,11 +564,10 @@ fn test_calendar_eras() {
                 assert_eq!(i.to_string(), idx);
             }
 
-            // TODO: reenable with CLDR-48
-            // // Check that the correct era code is returned
-            // if let Some(code) = era.code.as_deref() {
-            //     assert_eq!(era_year.era, code);
-            // }
+            // Check that the correct era code is returned
+            if let Some(code) = era.code.as_deref() {
+                assert_eq!(era_year.era, code);
+            }
 
             // Check that the start/end date uses year 1, and minimal/maximal month/day
             assert_eq!(era_year.year, 1);
