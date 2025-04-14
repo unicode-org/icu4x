@@ -199,6 +199,7 @@ impl Calendar for Julian {
         "Julian"
     }
 
+    #[cfg(feature = "ixdtf")]
     fn calendar_algorithm(&self) -> Option<crate::preferences::CalendarAlgorithm> {
         None
     }
