@@ -116,14 +116,18 @@ impl SourceDataProvider {
                             .eras
                             .into_iter()
                             .filter_map(|(key, mut data)| {
+                                let code = data.code.as_deref()?;
                                 // Check what ICU4X returns for the date 1-1-1 era
                                 data.icu4x_era_index = Date::try_new_from_codes(
-                                    Some(data.code.as_deref()?),
+                                    Some(code),
                                     1,
                                     MonthCode::new_normal(1).unwrap(),
                                     1,
                                     icu::calendar::Ref(&calendar),
                                 )
+                                .inspect_err(|e| {
+                                    log::warn!("Era '{code}' unknown by icu::calendar ({e:?})");
+                                })
                                 .ok()?
                                 .year()
                                 .era()?
