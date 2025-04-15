@@ -18,7 +18,7 @@
 
 use crate::cal::iso::{Iso, IsoDateInner};
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
-use crate::error::{year_check, DateError};
+use crate::error::DateError;
 use crate::{types, Calendar, Date, DateDuration, DateDurationUnit, RangeError};
 use calendrical_calculations::helpers::I32CastError;
 use calendrical_calculations::rata_die::RataDie;
@@ -103,7 +103,7 @@ impl Calendar for Coptic {
         day: u8,
     ) -> Result<Self::DateInner, DateError> {
         let year = match era {
-            Some("am") | None => year_check(year, 1..)?,
+            Some("am") | None => year,
             Some(_) => return Err(DateError::UnknownEra),
         };
 
