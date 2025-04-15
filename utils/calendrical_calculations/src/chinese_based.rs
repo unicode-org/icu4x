@@ -64,7 +64,7 @@ impl ChineseBased for Chinese {
     }
 
     /// The equivalent first day in the Chinese calendar (based on inception of the calendar), Feb. 15, -2636
-    const EPOCH: RataDie = RataDie::new(-963099);
+    const EPOCH: RataDie = crate::iso::const_fixed_from_iso(-2636, 2, 15);
     const DEBUG_NAME: &'static str = "chinese";
 }
 
@@ -88,7 +88,7 @@ impl ChineseBased for Dangi {
     }
 
     /// The first day in the Korean Dangi calendar (based on the founding of Gojoseon), lunar new year -2332
-    const EPOCH: RataDie = RataDie::new(-852065);
+    const EPOCH: RataDie = crate::iso::const_fixed_from_iso(-2332, 2, 15);
     const DEBUG_NAME: &'static str = "dangi";
 }
 
