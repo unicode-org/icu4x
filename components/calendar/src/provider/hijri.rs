@@ -75,7 +75,7 @@ impl PackedHijriYearInfo {
         month_lengths: [bool; 12],
         start_day: RataDie,
     ) -> Self {
-        let start_offset = start_day.const_diff(Self::mean_synodic_start_day(extended_year));
+        let start_offset = start_day.until(Self::mean_synodic_start_day(extended_year));
 
         debug_assert!(
             -8 < start_offset && start_offset < 8,
@@ -117,7 +117,7 @@ impl PackedHijriYearInfo {
     const fn mean_synodic_start_day(extended_year: i32) -> RataDie {
         // -1 because the epoch is new year of year 1
         // truncating instead of flooring does not matter, as this is used for positive years only
-        calendrical_calculations::islamic::ISLAMIC_EPOCH_FRIDAY.const_add(
+        calendrical_calculations::islamic::ISLAMIC_EPOCH_FRIDAY.add(
             ((extended_year - 1) as f64 * calendrical_calculations::islamic::MEAN_YEAR_LENGTH)
                 as i64,
         )
