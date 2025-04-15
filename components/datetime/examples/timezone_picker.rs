@@ -59,9 +59,7 @@ fn main() {
                         format!(
                             "/{}",
                             offset_formatter.format(
-                                &tzi.time_zone_id()
-                                    .with_offset(Some(daylight))
-                                    .at_time(reference_date)
+                                &tzi.id().with_offset(Some(daylight)).at_time(reference_date)
                             )
                         )
                     } else {

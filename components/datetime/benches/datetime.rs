@@ -41,7 +41,7 @@ fn datetime_benches(c: &mut Criterion) {
                                             Date::try_new_iso(2024, 1, 1).unwrap(),
                                             Time::start_of_day(),
                                         ))
-                                        .with_zone_variant(TimeZoneVariant::Standard),
+                                        .with_variant(TimeZoneVariant::Standard),
                                 }
                             }
                         })

@@ -566,7 +566,7 @@ fn perform_timezone_fallback(
     Ok(match r {
         Ok(()) => Ok(()),
         Err(e) => {
-            if let Some(offset) = input.offset {
+            if let Some(offset) = input.zone_offset {
                 w.with_part(PART, |w| {
                     w.with_part(Part::ERROR, |w| {
                         Iso8601Format::without_z(field.length).format_infallible(w, offset)

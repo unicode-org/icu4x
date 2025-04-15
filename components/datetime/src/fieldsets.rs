@@ -904,7 +904,7 @@ macro_rules! impl_zone_marker {
         /// let zone = TimeZone(subtag!("uschi"))
         ///     .with_offset("-05".parse().ok())
         ///     .at_time((Date::try_new_iso(2022, 8, 29).unwrap(), Time::start_of_day()))
-        ///     .with_zone_variant(TimeZoneVariant::Daylight);
+        ///     .with_variant(TimeZoneVariant::Daylight);
         ///
         /// assert_writeable_eq!(
         ///     fmt.format(&zone),
@@ -1225,7 +1225,7 @@ pub mod zone {
         /// let zone = TimeZone(subtag!("trist"))
         ///     .with_offset("+02".parse().ok())
         ///     .at_time((Date::try_new_iso(2022, 1, 29).unwrap(), Time::start_of_day()))
-        ///     .with_zone_variant(TimeZoneVariant::Standard);
+        ///     .with_variant(TimeZoneVariant::Standard);
         ///
         /// let fmt = FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new(
         ///     locale!("en").into(),
@@ -1351,7 +1351,7 @@ pub mod zone {
         /// let time = Time::start_of_day();
         /// let time_zone_at_time = time_zone_basic.at_time((date, time));
         ///
-        /// let time_zone_full = time_zone_at_time.with_zone_variant(TimeZoneVariant::Standard);
+        /// let time_zone_full = time_zone_at_time.with_variant(TimeZoneVariant::Standard);
         ///
         /// let formatter = NoCalendarFormatter::try_new(
         ///     locale!("en-US").into(),

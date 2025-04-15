@@ -280,21 +280,21 @@ impl<'a> Intermediate<'a> {
             }
             return Err(ParseError::MismatchedTimeZoneFields);
         };
-        let time_zone_id = iana_parser.parse_from_utf8(iana_identifier);
+        let id = iana_parser.parse_from_utf8(iana_identifier);
         let date = Date::<Iso>::try_new_iso(self.date.year, self.date.month, self.date.day)?;
         let time = Time::try_from_time_record(&self.time)?;
-        let offset = match time_zone_id.as_str() {
+        let offset = match id.as_str() {
             "utc" | "gmt" => Some(UtcOffset::zero()),
             _ => None,
         };
-        Ok(time_zone_id.with_offset(offset).at_time((date, time)))
+        Ok(id.with_offset(offset).at_time((date, time)))
     }
 
     fn lenient(
         self,
         iana_parser: IanaParserBorrowed<'_>,
     ) -> Result<TimeZoneInfo<models::AtTime>, ParseError> {
-        let time_zone_id = match self.iana_identifier {
+        let id = match self.iana_identifier {
             Some(iana_identifier) => {
                 if self.is_z {
                     return Err(ParseError::RequiresCalculation);
@@ -311,7 +311,7 @@ impl<'a> Intermediate<'a> {
                 }
                 Some(UtcOffset::try_from_utc_offset_record(offset)?)
             }
-            None => match time_zone_id.as_str() {
+            None => match id.as_str() {
                 "utc" | "gmt" => Some(UtcOffset::zero()),
                 _ if self.is_z => Some(UtcOffset::zero()),
                 _ => None,
@@ -319,7 +319,7 @@ impl<'a> Intermediate<'a> {
         };
         let date = Date::<Iso>::try_new_iso(self.date.year, self.date.month, self.date.day)?;
         let time = Time::try_from_time_record(&self.time)?;
-        Ok(time_zone_id.with_offset(offset).at_time((date, time)))
+        Ok(id.with_offset(offset).at_time((date, time)))
     }
 
     fn full(
@@ -340,7 +340,7 @@ impl<'a> Intermediate<'a> {
         Ok(time_zone_id
             .with_offset(Some(offset))
             .at_time((date, time))
-            .infer_zone_variant(offset_calculator))
+            .infer_variant(offset_calculator))
     }
 }
 
@@ -474,14 +474,14 @@ impl<A: AsCalendar> ZonedDateTime<A, TimeZoneInfo<models::Full>> {
     /// assert_eq!(zoneddatetime.time.second.number(), 19);
     /// assert_eq!(zoneddatetime.time.subsecond.number(), 0);
     /// assert_eq!(
-    ///     zoneddatetime.zone.time_zone_id(),
+    ///     zoneddatetime.zone.id(),
     ///     TimeZone(subtag!("uschi"))
     /// );
     /// assert_eq!(
     ///     zoneddatetime.zone.offset(),
     ///     Some(UtcOffset::try_from_seconds(-18000).unwrap())
     /// );
-    /// assert_eq!(zoneddatetime.zone.zone_variant(), TimeZoneVariant::Daylight);
+    /// assert_eq!(zoneddatetime.zone.variant(), TimeZoneVariant::Daylight);
     /// let (_, _) = zoneddatetime.zone.local_time();
     /// ```
     ///
@@ -541,7 +541,7 @@ impl<A: AsCalendar> ZonedDateTime<A, TimeZoneInfo<models::Full>> {
     /// );
     ///
     /// assert_eq!(
-    ///     tz_from_iana_annotation.zone.time_zone_id(),
+    ///     tz_from_iana_annotation.zone.id(),
     ///     TimeZone(subtag!("uschi"))
     /// );
     /// assert_eq!(tz_from_iana_annotation.zone.offset(), None);
@@ -564,9 +564,9 @@ impl<A: AsCalendar> ZonedDateTime<A, TimeZoneInfo<models::Full>> {
     /// let consistent_tz_from_both = ZonedDateTime::try_from_str("2024-08-08T12:08:19-05:00[America/Chicago]", Iso, IanaParser::new(), VariantOffsetsCalculator::new()).unwrap();
     ///
     ///
-    /// assert_eq!(consistent_tz_from_both.zone.time_zone_id(), TimeZone(subtag!("uschi")));
+    /// assert_eq!(consistent_tz_from_both.zone.id(), TimeZone(subtag!("uschi")));
     /// assert_eq!(consistent_tz_from_both.zone.offset(), Some(UtcOffset::try_from_seconds(-18000).unwrap()));
-    /// assert_eq!(consistent_tz_from_both.zone.zone_variant(), TimeZoneVariant::Daylight);
+    /// assert_eq!(consistent_tz_from_both.zone.variant(), TimeZoneVariant::Daylight);
     /// let (_, _) = consistent_tz_from_both.zone.local_time();
     ///
     /// // There is no name for America/Los_Angeles at -05:00 (at least in 2024), so either the
@@ -574,7 +574,7 @@ impl<A: AsCalendar> ZonedDateTime<A, TimeZoneInfo<models::Full>> {
     /// // The only valid way to display this zoned datetime is "GMT-5", so we drop the time zone.
     /// assert_eq!(
     ///     ZonedDateTime::try_from_str("2024-08-08T12:08:19-05:00[America/Los_Angeles]", Iso, IanaParser::new(), VariantOffsetsCalculator::new())
-    ///     .unwrap().zone.time_zone_id(),
+    ///     .unwrap().zone.id(),
     ///     TimeZone::unknown()
     /// );
     ///
@@ -806,7 +806,7 @@ mod test {
             IanaParserBorrowed::new(),
         )
         .unwrap();
-        assert_eq!(result.zone.time_zone_id(), TimeZone::unknown());
+        assert_eq!(result.zone.id(), TimeZone::unknown());
         assert_eq!(result.zone.offset(), None);
     }
 

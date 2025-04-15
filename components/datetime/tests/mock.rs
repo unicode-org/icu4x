@@ -45,7 +45,7 @@ pub fn parse_zoned_gregorian_from_str(
                         date: zdt.date,
                         time: zdt.time,
                         // For fixture tests, set the zone variant to standard here
-                        zone: zdt.zone.with_zone_variant(TimeZoneVariant::Standard),
+                        zone: zdt.zone.with_variant(TimeZoneVariant::Standard),
                     }
                 }
                 Err(e) => panic!("could not parse input: {input}: {e:?}"),

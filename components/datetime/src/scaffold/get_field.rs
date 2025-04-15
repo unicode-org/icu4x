@@ -292,7 +292,7 @@ where
 {
     #[inline]
     fn get_field(&self) -> TimeZone {
-        self.time_zone_id()
+        self.id()
     }
 }
 
@@ -312,7 +312,7 @@ where
 {
     #[inline]
     fn get_field(&self) -> TimeZoneVariant {
-        self.zone_variant()
+        self.variant()
     }
 }
 

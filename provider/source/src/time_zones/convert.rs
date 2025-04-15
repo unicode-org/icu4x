@@ -784,7 +784,7 @@ impl DataProvider<MetazoneSpecificNamesLongV1> for SourceDataProvider {
 
         let mut defaults = iter_mz_defaults(time_zone_names_resource, meta_zone_id_data, true)
             .flat_map(move |(mz, zf)| {
-                zone_variant_convert(zf).flat_map(move |(zv, v)| {
+                variant_convert(zf).flat_map(move |(zv, v)| {
                     let tzs = reverse_metazones.get(&(
                         mz,
                         if zv == TimeZoneVariant::Daylight {
@@ -833,7 +833,7 @@ impl DataProvider<MetazoneSpecificNamesLongV1> for SourceDataProvider {
             }
         });
         let overrides = iter_mz_overrides(time_zone_names_resource, bcp47_tzid_data, true)
-            .flat_map(|(tz, zf)| zone_variant_convert(zf).map(move |(zv, v)| ((tz, zv), v)))
+            .flat_map(|(tz, zf)| variant_convert(zf).map(move |(zv, v)| ((tz, zv), v)))
             .collect();
 
         Ok(DataResponse {
@@ -869,10 +869,10 @@ impl DataProvider<MetazoneGenericNamesShortV1> for SourceDataProvider {
         let (meta_zone_id_data, checksum) = self.metazone_to_id_map()?;
 
         let defaults = iter_mz_defaults(time_zone_names_resource, meta_zone_id_data, false)
-            .flat_map(|(mz, zf)| zone_variant_fallback(zf).map(move |v| (mz, v)))
+            .flat_map(|(mz, zf)| variant_fallback(zf).map(move |v| (mz, v)))
             .collect();
         let overrides = iter_mz_overrides(time_zone_names_resource, bcp47_tzid_data, false)
-            .flat_map(|(tz, zf)| zone_variant_fallback(zf).map(move |v| (tz, v)))
+            .flat_map(|(tz, zf)| variant_fallback(zf).map(move |v| (tz, v)))
             .collect();
 
         Ok(DataResponse {
@@ -907,10 +907,10 @@ impl DataProvider<MetazoneSpecificNamesShortV1> for SourceDataProvider {
         let (meta_zone_id_data, checksum) = self.metazone_to_id_map()?;
 
         let defaults = iter_mz_defaults(time_zone_names_resource, meta_zone_id_data, false)
-            .flat_map(|(mz, zf)| zone_variant_convert(zf).map(move |(zv, v)| ((mz, zv), v)))
+            .flat_map(|(mz, zf)| variant_convert(zf).map(move |(zv, v)| ((mz, zv), v)))
             .collect();
         let overrides = iter_mz_overrides(time_zone_names_resource, bcp47_tzid_data, false)
-            .flat_map(|(tz, zf)| zone_variant_convert(zf).map(move |(zv, v)| ((tz, zv), v)))
+            .flat_map(|(tz, zf)| variant_convert(zf).map(move |(zv, v)| ((tz, zv), v)))
             .collect();
 
         Ok(DataResponse {
@@ -987,7 +987,7 @@ fn iter_mz_overrides<'a>(
 ///
 /// Part 2 of type fallback requires access to the IANA TimeZone Database
 /// as well as a specific datetime context, so it is not relevant to DataProvider.
-fn zone_variant_fallback(zone_format: &ZoneFormat) -> Option<&str> {
+fn variant_fallback(zone_format: &ZoneFormat) -> Option<&str> {
     zone_format
         .0
         .get("generic")
@@ -995,7 +995,7 @@ fn zone_variant_fallback(zone_format: &ZoneFormat) -> Option<&str> {
         .map(|s| s.as_str())
 }
 
-fn zone_variant_convert(zone_format: &ZoneFormat) -> impl Iterator<Item = (TimeZoneVariant, &str)> {
+fn variant_convert(zone_format: &ZoneFormat) -> impl Iterator<Item = (TimeZoneVariant, &str)> {
     zone_format
         .0
         .iter()
