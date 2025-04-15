@@ -557,6 +557,12 @@ mod test {
     use crate::rata_die::Moment;
 
     #[test]
+    fn check_epochs() {
+        assert_eq!(YearBounds::compute::<Dangi>(Dangi::EPOCH).new_year, Dangi::EPOCH);
+        assert_eq!(YearBounds::compute::<Chinese>(Chinese::EPOCH).new_year, Chinese::EPOCH);
+    }
+
+    #[test]
     fn test_chinese_new_moon_directionality() {
         for i in (-1000..1000).step_by(31) {
             let moment = Moment::new(i as f64);
