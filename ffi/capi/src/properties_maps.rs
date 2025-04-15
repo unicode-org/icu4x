@@ -390,7 +390,7 @@ pub mod ffi {
 
     impl CodePointMapData16 {
         /// Gets the value for a code point.
-        #[diplomat::rust_link(icu::properties::props::CodePointMapDataBorrowed::get, FnInStruct)]
+        #[diplomat::rust_link(icu::properties::CodePointMapDataBorrowed::get, FnInStruct)]
         #[diplomat::rust_link(icu::properties::CodePointMapDataBorrowed::get32, FnInStruct, hidden)]
         #[diplomat::attr(auto, indexer)]
         pub fn get(&self, cp: DiplomatChar) -> u16 {

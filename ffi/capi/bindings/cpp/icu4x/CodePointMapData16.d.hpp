@@ -47,7 +47,7 @@ public:
   /**
    * Gets the value for a code point.
    *
-   * See the [Rust documentation for `get`](https://docs.rs/icu/latest/icu/properties/props/struct.CodePointMapDataBorrowed.html#method.get) for more information.
+   * See the [Rust documentation for `get`](https://docs.rs/icu/latest/icu/properties/struct.CodePointMapDataBorrowed.html#method.get) for more information.
    */
   inline uint16_t operator[](char32_t cp) const;
 

@@ -7,7 +7,7 @@ part of 'lib.g.dart';
 ///
 /// See the [Rust documentation for `PropertyParser`](https://docs.rs/icu/latest/icu/properties/struct.PropertyParser.html) for more information.
 ///
-/// See the [Rust documentation for `GeneralCategory`](https://docs.rs/icu/latest/icu/properties/props/struct.GeneralCategory.html) for more information.
+/// See the [Rust documentation for `GeneralCategory`](https://docs.rs/icu/latest/icu/properties/props/enum.GeneralCategory.html) for more information.
 final class GeneralCategoryNameToGroupMapper implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _ffi;
 
@@ -51,7 +51,7 @@ final class GeneralCategoryNameToGroupMapper implements ffi.Finalizable {
 
   /// Create a name-to-mask mapper for the `General_Category` property, using compiled data.
   ///
-  /// See the [Rust documentation for `GeneralCategoryGroup`](https://docs.rs/icu_properties/latest/icu_properties/props/struct.GeneralCategoryGroup.html) for more information.
+  /// See the [Rust documentation for `GeneralCategoryGroup`](https://docs.rs/icu/latest/icu/properties/props/struct.GeneralCategoryGroup.html) for more information.
   factory GeneralCategoryNameToGroupMapper() {
     final result = _icu4x_GeneralCategoryNameToGroupMapper_create_mv1();
     return GeneralCategoryNameToGroupMapper._fromFfi(result, []);
@@ -59,7 +59,7 @@ final class GeneralCategoryNameToGroupMapper implements ffi.Finalizable {
 
   /// Create a name-to-mask mapper for the `General_Category` property, using a particular data source.
   ///
-  /// See the [Rust documentation for `GeneralCategoryGroup`](https://docs.rs/icu_properties/latest/icu_properties/props/struct.GeneralCategoryGroup.html) for more information.
+  /// See the [Rust documentation for `GeneralCategoryGroup`](https://docs.rs/icu/latest/icu/properties/props/struct.GeneralCategoryGroup.html) for more information.
   ///
   /// Throws [DataError] on failure.
   factory GeneralCategoryNameToGroupMapper.withProvider(DataProvider provider) {

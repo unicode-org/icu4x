@@ -72,7 +72,7 @@ export class VerticalOrientation {
     static Upright = VerticalOrientation.#objectValues[3];
 
     /** 
-     * See the [Rust documentation for `for_char`](https://docs.rs/icu/latest/icu/properties/props/trait.VerticalOrientation.html#tymethod.for_char) for more information.
+     * See the [Rust documentation for `for_char`](https://docs.rs/icu/latest/icu/properties/props/trait.EnumeratedProperty.html#tymethod.for_char) for more information.
      */
     static forChar(ch) {
         const result = wasm.icu4x_VerticalOrientation_for_char_mv1(ch);

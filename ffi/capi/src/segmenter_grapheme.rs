@@ -19,16 +19,9 @@ pub mod ffi {
     pub struct GraphemeClusterSegmenter(icu_segmenter::GraphemeClusterSegmenter);
 
     #[diplomat::opaque]
-    #[diplomat::rust_link(icu::segmenter::grapheme::GraphemeClusterBreakIterator, Struct)]
     #[diplomat::rust_link(
         icu::segmenter::grapheme::GraphemeClusterBreakIteratorPotentiallyIllFormedUtf8,
-        Typedef,
-        hidden
-    )]
-    #[diplomat::rust_link(
-        icu::segmenter::grapheme::GraphemeClusterBreakIteratorUtf8,
-        Typedef,
-        hidden
+        Typedef
     )]
     pub struct GraphemeClusterBreakIteratorUtf8<'a>(
         icu_segmenter::grapheme::GraphemeClusterBreakIteratorPotentiallyIllFormedUtf8<'a, 'a>,
@@ -142,13 +135,8 @@ pub mod ffi {
         /// Finds the next breakpoint. Returns -1 if at the end of the string or if the index is
         /// out of range of a 32-bit signed integer.
         #[diplomat::rust_link(
-            icu::segmenter::grapheme::GraphemeClusterBreakIterator::next,
-            FnInStruct
-        )]
-        #[diplomat::rust_link(
-            icu::segmenter::grapheme::GraphemeClusterBreakIterator::Item,
-            AssociatedTypeInStruct,
-            hidden
+            icu::segmenter::grapheme::GraphemeClusterBreakIteratorPotentiallyIllFormedUtf8::next,
+            FnInTypedef
         )]
         pub fn next(&mut self) -> i32 {
             self.0
@@ -162,13 +150,8 @@ pub mod ffi {
         /// Finds the next breakpoint. Returns -1 if at the end of the string or if the index is
         /// out of range of a 32-bit signed integer.
         #[diplomat::rust_link(
-            icu::segmenter::grapheme::GraphemeClusterBreakIterator::next,
-            FnInStruct
-        )]
-        #[diplomat::rust_link(
-            icu::segmenter::grapheme::GraphemeClusterBreakIterator::Item,
-            AssociatedTypeInStruct,
-            hidden
+            icu::segmenter::grapheme::GraphemeClusterBreakIteratorUtf16::next,
+            FnInTypedef
         )]
         pub fn next(&mut self) -> i32 {
             self.0
@@ -182,13 +165,8 @@ pub mod ffi {
         /// Finds the next breakpoint. Returns -1 if at the end of the string or if the index is
         /// out of range of a 32-bit signed integer.
         #[diplomat::rust_link(
-            icu::segmenter::grapheme::GraphemeClusterBreakIterator::next,
-            FnInStruct
-        )]
-        #[diplomat::rust_link(
-            icu::segmenter::grapheme::GraphemeClusterBreakIterator::Item,
-            AssociatedTypeInStruct,
-            hidden
+            icu::segmenter::grapheme::GraphemeClusterBreakIteratorLatin1::next,
+            FnInTypedef
         )]
         pub fn next(&mut self) -> i32 {
             self.0

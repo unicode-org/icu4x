@@ -30,7 +30,7 @@ public:
    * Finds the next breakpoint. Returns -1 if at the end of the string or if the index is
    * out of range of a 32-bit signed integer.
    *
-   * See the [Rust documentation for `next`](https://docs.rs/icu/latest/icu/segmenter/line/struct.LineBreakIterator.html#method.next) for more information.
+   * See the [Rust documentation for `next`](https://docs.rs/icu/latest/icu/segmenter/line/type.LineBreakIteratorLatin1.html#method.next) for more information.
    */
   inline int32_t next();
 

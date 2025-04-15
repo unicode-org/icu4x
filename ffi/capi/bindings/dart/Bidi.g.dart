@@ -5,8 +5,6 @@ part of 'lib.g.dart';
 
 /// An ICU4X Bidi object, containing loaded bidi data
 ///
-/// See the [Rust documentation for `BidiClassAdapter`](https://docs.rs/icu/latest/icu/properties/bidi/struct.BidiClassAdapter.html) for more information.
-///
 /// See the [Rust documentation for `BidiClass`](https://docs.rs/icu/latest/icu/properties/props/struct.BidiClass.html) for more information.
 final class Bidi implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _ffi;
@@ -28,16 +26,12 @@ final class Bidi implements ffi.Finalizable {
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_Bidi_destroy_mv1));
 
   /// Creates a new [`Bidi`] from locale data using compiled data.
-  ///
-  /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/properties/bidi/struct.BidiClassAdapter.html#method.new) for more information.
   factory Bidi() {
     final result = _icu4x_Bidi_create_mv1();
     return Bidi._fromFfi(result, []);
   }
 
   /// Creates a new [`Bidi`] from locale data, and a particular data source.
-  ///
-  /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/properties/bidi/struct.BidiClassAdapter.html#method.new) for more information.
   ///
   /// Throws [DataError] on failure.
   factory Bidi.withProvider(DataProvider provider) {

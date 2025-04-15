@@ -8,7 +8,7 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
 /** 
- * See the [Rust documentation for `LocaleDisplayNamesFormatter`](https://docs.rs/icu/latest/icu/displaynames/struct.LocaleDisplayNamesFormatter.html) for more information.
+ * See the [Rust documentation for `LocaleDisplayNamesFormatter`](https://docs.rs/icu/latest/icu/experimental/displaynames/struct.LocaleDisplayNamesFormatter.html) for more information.
  */
 const LocaleDisplayNamesFormatter_box_destroy_registry = new FinalizationRegistry((ptr) => {
     wasm.icu4x_LocaleDisplayNamesFormatter_destroy_mv1(ptr);
@@ -46,7 +46,7 @@ export class LocaleDisplayNamesFormatter {
     /** 
      * Creates a new `LocaleDisplayNamesFormatter` from locale data and an options bag using compiled data.
      *
-     * See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/displaynames/struct.LocaleDisplayNamesFormatter.html#method.try_new) for more information.
+     * See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/experimental/displaynames/struct.LocaleDisplayNamesFormatter.html#method.try_new) for more information.
      */
     #defaultConstructor(locale, options) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
@@ -73,7 +73,7 @@ export class LocaleDisplayNamesFormatter {
     /** 
      * Creates a new `LocaleDisplayNamesFormatter` from locale data and an options bag using a particular data source.
      *
-     * See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/displaynames/struct.LocaleDisplayNamesFormatter.html#method.try_new) for more information.
+     * See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/experimental/displaynames/struct.LocaleDisplayNamesFormatter.html#method.try_new) for more information.
      */
     static createWithProvider(provider, locale, options) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
@@ -100,7 +100,7 @@ export class LocaleDisplayNamesFormatter {
     /** 
      * Returns the locale-specific display name of a locale.
      *
-     * See the [Rust documentation for `of`](https://docs.rs/icu/latest/icu/displaynames/struct.LocaleDisplayNamesFormatter.html#method.of) for more information.
+     * See the [Rust documentation for `of`](https://docs.rs/icu/latest/icu/experimental/displaynames/struct.LocaleDisplayNamesFormatter.html#method.of) for more information.
      */
     of(locale) {
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);

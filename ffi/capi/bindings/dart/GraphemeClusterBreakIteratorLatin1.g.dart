@@ -28,7 +28,7 @@ final class GraphemeClusterBreakIteratorLatin1 implements ffi.Finalizable {
   /// Finds the next breakpoint. Returns -1 if at the end of the string or if the index is
   /// out of range of a 32-bit signed integer.
   ///
-  /// See the [Rust documentation for `next`](https://docs.rs/icu/latest/icu/segmenter/grapheme/struct.GraphemeClusterBreakIterator.html#method.next) for more information.
+  /// See the [Rust documentation for `next`](https://docs.rs/icu/latest/icu/segmenter/grapheme/type.GraphemeClusterBreakIteratorLatin1.html#method.next) for more information.
   int next() {
     final result = _icu4x_GraphemeClusterBreakIteratorLatin1_next_mv1(_ffi);
     return result;
