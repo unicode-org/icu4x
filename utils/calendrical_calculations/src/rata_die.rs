@@ -117,7 +117,10 @@ impl AddAssign<i64> for RataDie {
 impl Sub<i64> for RataDie {
     type Output = Self;
     fn sub(self, rhs: i64) -> Self::Output {
-        self.sub(rhs)
+        let result = Self(self.0 - rhs);
+        #[cfg(debug_assertions)]
+        result.check();
+        result
     }
 }
 
