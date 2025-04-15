@@ -1698,19 +1698,6 @@ mod tests {
                 max: i32::MAX,
             },
         );
-        single_test_error(
-            coptic,
-            Some("bd"),
-            0,
-            "M03",
-            1,
-            DateError::Range {
-                field: "year",
-                value: 0,
-                min: 1,
-                max: i32::MAX,
-            },
-        );
 
         single_test_roundtrip(ethiopian, Some("am"), 100, "M03", 1);
         single_test_roundtrip(ethiopian, None, 2000, "M03", 1);

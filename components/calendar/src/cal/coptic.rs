@@ -104,7 +104,6 @@ impl Calendar for Coptic {
     ) -> Result<Self::DateInner, DateError> {
         let year = match era {
             Some("am") | None => year_check(year, 1..)?,
-            Some("bd") => 1 - year_check(year, 1..)?,
             Some(_) => return Err(DateError::UnknownEra),
         };
 
@@ -202,8 +201,6 @@ impl Calendar for Coptic {
 
 impl Date<Coptic> {
     /// Construct new Coptic Date.
-    ///
-    /// Negative years are in the B.D. era, starting with 0 = 1 B.D.
     ///
     /// ```rust
     /// use icu::calendar::Date;
