@@ -66,7 +66,7 @@ export class TimeZone {
     static createFromBcp47(id) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
-        const idSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, id));
+        const idSlice = diplomatRuntime.DiplomatBuf.str8(wasm, id);
         
         const result = wasm.icu4x_TimeZone_create_from_bcp47_mv1(...idSlice.splat());
     

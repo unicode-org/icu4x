@@ -93,8 +93,10 @@ export class Bidi {
      * See the [Rust documentation for `new_with_data_source`](https://docs.rs/unicode_bidi/latest/unicode_bidi/struct.BidiInfo.html#method.new_with_data_source) for more information.
      */
     forText(text, defaultLevel) {
+        let functionCleanupArena = new diplomatRuntime.CleanupArena();
+        
         let functionGarbageCollectorGrip = new diplomatRuntime.GarbageCollectorGrip();
-        const textSlice = functionGarbageCollectorGrip.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, text));
+        const textSlice = diplomatRuntime.DiplomatBuf.str8(wasm, text);
         
         // This lifetime edge depends on lifetimes 'text
         let textEdges = [textSlice];
@@ -106,6 +108,8 @@ export class Bidi {
         }
         
         finally {
+            functionCleanupArena.free();
+        
             functionGarbageCollectorGrip.releaseToGarbageCollector();
         }
     }
@@ -125,7 +129,7 @@ export class Bidi {
     reorderVisual(levels) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
-        const levelsSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.slice(wasm, levels, "u8"));
+        const levelsSlice = diplomatRuntime.DiplomatBuf.slice(wasm, levels, "u8");
         
         const result = wasm.icu4x_Bidi_reorder_visual_mv1(this.ffiValue, ...levelsSlice.splat());
     

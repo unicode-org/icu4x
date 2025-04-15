@@ -108,7 +108,7 @@ export class RegionDisplayNames {
     of(region) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
-        const regionSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, region));
+        const regionSlice = diplomatRuntime.DiplomatBuf.str8(wasm, region);
         
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         

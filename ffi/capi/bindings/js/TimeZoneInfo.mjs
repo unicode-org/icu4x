@@ -65,13 +65,17 @@ export class TimeZoneInfo {
      * Creates a time zone info from parts.
      */
     #defaultConstructor(timeZoneId, offset, zoneVariant) {
+        let functionCleanupArena = new diplomatRuntime.CleanupArena();
+        
         const result = wasm.icu4x_TimeZoneInfo_from_parts_mv1(timeZoneId.ffiValue, offset.ffiValue ?? 0, ...diplomatRuntime.optionToArgsForCalling(zoneVariant, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]));
     
         try {
             return new TimeZoneInfo(diplomatRuntime.internalConstructor, result, []);
         }
         
-        finally {}
+        finally {
+            functionCleanupArena.free();
+        }
     }
 
     /** 

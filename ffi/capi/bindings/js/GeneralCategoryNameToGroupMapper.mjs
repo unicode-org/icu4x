@@ -56,7 +56,7 @@ export class GeneralCategoryNameToGroupMapper {
     getStrict(name) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
-        const nameSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, name));
+        const nameSlice = diplomatRuntime.DiplomatBuf.str8(wasm, name);
         
         const result = wasm.icu4x_GeneralCategoryNameToGroupMapper_get_strict_mv1(this.ffiValue, ...nameSlice.splat());
     
@@ -79,7 +79,7 @@ export class GeneralCategoryNameToGroupMapper {
     getLoose(name) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
-        const nameSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, name));
+        const nameSlice = diplomatRuntime.DiplomatBuf.str8(wasm, name);
         
         const result = wasm.icu4x_GeneralCategoryNameToGroupMapper_get_loose_mv1(this.ffiValue, ...nameSlice.splat());
     

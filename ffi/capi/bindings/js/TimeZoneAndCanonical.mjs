@@ -52,7 +52,7 @@ export class TimeZoneAndCanonical {
         functionCleanupArena,
         appendArrayMap
     ) {
-        return [this.#timeZone.ffiValue, ...diplomatRuntime.CleanupArena.maybeCreateWith(functionCleanupArena, ...appendArrayMap['aAppendArray']).alloc(diplomatRuntime.DiplomatBuf.str8(wasm, this.#canonical)).splat()]
+        return [this.#timeZone.ffiValue, ...diplomatRuntime.DiplomatBuf.str8(wasm, this.#canonical).splat()]
     }
 
     static _fromSuppliedValue(internalConstructor, obj) {
@@ -96,7 +96,7 @@ export class TimeZoneAndCanonical {
     // assuming that there are no `'other: a`. bounds. In case of such bounds,
     // the caller should take care to also call _fieldsForLifetimeOther
     get _fieldsForLifetimeA() { 
-        return [canonical];
+        return [this.#canonical];
     };
 
     constructor(structObj, internalConstructor) {
