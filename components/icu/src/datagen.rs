@@ -36,15 +36,15 @@ macro_rules! cb {
             use crate as icu;
             let lookup =
                 [
-                    (icu_provider::marker::data_marker_id!(HelloWorldV1).hashed().to_bytes(), Ok(icu_provider::hello_world::HelloWorldV1::INFO)),
+                    (icu_provider::hello_world::HelloWorldV1::INFO.id.hashed().to_bytes(), Ok(icu_provider::hello_world::HelloWorldV1::INFO)),
                     $(
-                        (icu_provider::marker::data_marker_id!($marker).hashed().to_bytes(), Ok(<$marker_ty>::INFO)),
+                        (<$marker_ty>::INFO.id.hashed().to_bytes(), Ok(<$marker_ty>::INFO)),
                     )+
                     $(
                         #[cfg(feature = "experimental")]
-                        (icu_provider::marker::data_marker_id!($emarker).hashed().to_bytes(), Ok(<$emarker_ty>::INFO)),
+                        (<$emarker_ty>::INFO.id.hashed().to_bytes(), Ok(<$emarker_ty>::INFO)),
                         #[cfg(not(feature = "experimental"))]
-                        (icu_provider::marker::data_marker_id!($emarker).hashed().to_bytes(), Err(stringify!($emarker))),
+                        (DataMarkerId::from_name(stringify!($emarker)).unwrap().hashed().to_bytes(), Err(stringify!($emarker))),
                     )+
 
                 ]
@@ -53,10 +53,8 @@ macro_rules! cb {
 
             use memchr::memmem::*;
 
-            const LEADING_TAG: &[u8] = b"tdmh";
-
-            find_iter(bytes, LEADING_TAG)
-                .map(|tag_position| tag_position + LEADING_TAG.len())
+            find_iter(bytes, icu_provider::marker::DataMarkerIdHash::LEADING_TAG)
+                .map(|tag_position| tag_position + icu_provider::marker::DataMarkerIdHash::LEADING_TAG.len())
                 .filter_map(|marker_start| bytes.get(marker_start..marker_start+4))
                 .filter_map(|p| {
                     match lookup.get(p) {
