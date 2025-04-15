@@ -9,13 +9,13 @@ pub mod ffi {
     use alloc::boxed::Box;
     use icu_calendar::Iso;
 
-    use crate::calendar::ffi::Calendar;
-    use crate::date::ffi::{Date, IsoDate};
-    use crate::errors::ffi::CalendarParseError;
-    use crate::iana_parser::ffi::IanaParser;
-    use crate::time::ffi::Time;
-    use crate::timezone::ffi::TimeZoneInfo;
-    use crate::variant_offset::ffi::VariantOffsetsCalculator;
+    use crate::unstable::calendar::ffi::Calendar;
+    use crate::unstable::date::ffi::{Date, IsoDate};
+    use crate::unstable::errors::ffi::CalendarParseError;
+    use crate::unstable::iana_parser::ffi::IanaParser;
+    use crate::unstable::time::ffi::Time;
+    use crate::unstable::timezone::ffi::TimeZoneInfo;
+    use crate::unstable::variant_offset::ffi::VariantOffsetsCalculator;
 
     /// An ICU4X ZonedDateTime object capable of containing a ISO-8601 date, time, and zone.
     #[diplomat::rust_link(icu::time::ZonedDateTime, Struct)]

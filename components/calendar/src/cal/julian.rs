@@ -11,12 +11,11 @@
 //!     .expect("Failed to initialize ISO Date instance.");
 //! let date_julian = Date::new_from_iso(date_iso, Julian);
 //!
-//! assert_eq!(date_julian.year().era_year_or_related_iso(), 1969);
+//! assert_eq!(date_julian.era_year().year, 1969);
 //! assert_eq!(date_julian.month().ordinal, 12);
 //! assert_eq!(date_julian.day_of_month().0, 20);
 //! ```
 
-use crate::any_calendar::AnyCalendarKind;
 use crate::cal::iso::{Iso, IsoDateInner};
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
 use crate::error::{year_check, DateError};
@@ -85,6 +84,8 @@ impl CalendarArithmetic for Julian {
 
 impl Calendar for Julian {
     type DateInner = JulianDateInner;
+    type Year = types::EraYear;
+
     fn from_codes(
         &self,
         era: Option<&str>,
@@ -153,29 +154,27 @@ impl Calendar for Julian {
 
     /// The calendar-specific year represented by `date`
     /// Julian has the same era scheme as Gregorian
-    fn year(&self, date: &Self::DateInner) -> types::YearInfo {
-        let year = date.0.year;
-        if year > 0 {
-            types::YearInfo::new(
-                year,
-                types::EraYear {
-                    standard_era: tinystr!(16, "ad").into(),
-                    formatting_era: types::FormattingEra::Index(1, tinystr!(16, "AD")),
-                    era_year: year,
-                    ambiguity: types::YearAmbiguity::CenturyRequired,
-                },
-            )
+    fn year_info(&self, date: &Self::DateInner) -> Self::Year {
+        let extended_year = self.extended_year(date);
+        if extended_year > 0 {
+            types::EraYear {
+                era: tinystr!(16, "ce"),
+                era_index: Some(1),
+                year: extended_year,
+                ambiguity: types::YearAmbiguity::CenturyRequired,
+            }
         } else {
-            types::YearInfo::new(
-                year,
-                types::EraYear {
-                    standard_era: tinystr!(16, "bc").into(),
-                    formatting_era: types::FormattingEra::Index(0, tinystr!(16, "BC")),
-                    era_year: 1_i32.saturating_sub(year),
-                    ambiguity: types::YearAmbiguity::EraAndCenturyRequired,
-                },
-            )
+            types::EraYear {
+                era: tinystr!(16, "bce"),
+                era_index: Some(0),
+                year: 1_i32.saturating_sub(extended_year),
+                ambiguity: types::YearAmbiguity::EraAndCenturyRequired,
+            }
         }
+    }
+
+    fn extended_year(&self, date: &Self::DateInner) -> i32 {
+        date.0.extended_year()
     }
 
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
@@ -200,7 +199,7 @@ impl Calendar for Julian {
         "Julian"
     }
 
-    fn any_calendar_kind(&self) -> Option<AnyCalendarKind> {
+    fn calendar_algorithm(&self) -> Option<crate::preferences::CalendarAlgorithm> {
         None
     }
 }
@@ -223,7 +222,7 @@ impl Date<Julian> {
     /// let date_julian = Date::try_new_julian(1969, 12, 20)
     ///     .expect("Failed to initialize Julian Date instance.");
     ///
-    /// assert_eq!(date_julian.year().era_year_or_related_iso(), 1969);
+    /// assert_eq!(date_julian.era_year().year, 1969);
     /// assert_eq!(date_julian.month().ordinal, 12);
     /// assert_eq!(date_julian.day_of_month().0, 20);
     /// ```
@@ -237,7 +236,6 @@ impl Date<Julian> {
 #[cfg(test)]
 mod test {
     use super::*;
-    use types::Era;
 
     #[test]
     fn test_day_iso_to_julian() {
@@ -324,7 +322,7 @@ mod test {
             iso_month: u8,
             iso_day: u8,
             expected_year: i32,
-            expected_era: Era,
+            expected_era: &'static str,
             expected_month: u8,
             expected_day: u8,
         }
@@ -336,7 +334,7 @@ mod test {
                 iso_month: 1,
                 iso_day: 1,
                 expected_year: 1,
-                expected_era: Era(tinystr!(16, "ad")),
+                expected_era: "ce",
                 expected_month: 1,
                 expected_day: 3,
             },
@@ -346,7 +344,7 @@ mod test {
                 iso_month: 12,
                 iso_day: 31,
                 expected_year: 1,
-                expected_era: Era(tinystr!(16, "ad")),
+                expected_era: "ce",
                 expected_month: 1,
                 expected_day: 2,
             },
@@ -356,7 +354,7 @@ mod test {
                 iso_month: 12,
                 iso_day: 30,
                 expected_year: 1,
-                expected_era: Era(tinystr!(16, "ad")),
+                expected_era: "ce",
                 expected_month: 1,
                 expected_day: 1,
             },
@@ -366,7 +364,7 @@ mod test {
                 iso_month: 12,
                 iso_day: 29,
                 expected_year: 1,
-                expected_era: Era(tinystr!(16, "bc")),
+                expected_era: "bce",
                 expected_month: 12,
                 expected_day: 31,
             },
@@ -376,7 +374,7 @@ mod test {
                 iso_month: 12,
                 iso_day: 28,
                 expected_year: 1,
-                expected_era: Era(tinystr!(16, "bc")),
+                expected_era: "bce",
                 expected_month: 12,
                 expected_day: 30,
             },
@@ -386,7 +384,7 @@ mod test {
                 iso_month: 12,
                 iso_day: 30,
                 expected_year: 1,
-                expected_era: Era(tinystr!(16, "bc")),
+                expected_era: "bce",
                 expected_month: 1,
                 expected_day: 1,
             },
@@ -396,7 +394,7 @@ mod test {
                 iso_month: 12,
                 iso_day: 29,
                 expected_year: 2,
-                expected_era: Era(tinystr!(16, "bc")),
+                expected_era: "bce",
                 expected_month: 12,
                 expected_day: 31,
             },
@@ -406,7 +404,7 @@ mod test {
                 iso_month: 12,
                 iso_day: 30,
                 expected_year: 4,
-                expected_era: Era(tinystr!(16, "bc")),
+                expected_era: "bce",
                 expected_month: 1,
                 expected_day: 1,
             },
@@ -416,7 +414,7 @@ mod test {
                 iso_month: 12,
                 iso_day: 29,
                 expected_year: 5,
-                expected_era: Era(tinystr!(16, "bc")),
+                expected_era: "bce",
                 expected_month: 12,
                 expected_day: 31,
             },
@@ -425,9 +423,9 @@ mod test {
         for case in cases {
             let iso_from_rd = Date::from_rata_die(RataDie::new(case.rd), crate::Iso);
             let julian_from_rd = Date::from_rata_die(RataDie::new(case.rd), Julian);
-            assert_eq!(julian_from_rd.year().era_year().unwrap(), case.expected_year,
+            assert_eq!(julian_from_rd.era_year().year, case.expected_year,
                 "Failed year check from RD: {case:?}\nISO: {iso_from_rd:?}\nJulian: {julian_from_rd:?}");
-            assert_eq!(julian_from_rd.year().standard_era().unwrap(), case.expected_era,
+            assert_eq!(julian_from_rd.era_year().era, case.expected_era,
                 "Failed era check from RD: {case:?}\nISO: {iso_from_rd:?}\nJulian: {julian_from_rd:?}");
             assert_eq!(julian_from_rd.month().ordinal, case.expected_month,
                 "Failed month check from RD: {case:?}\nISO: {iso_from_rd:?}\nJulian: {julian_from_rd:?}");

@@ -10,7 +10,7 @@ use ffi::TimeZoneInfo;
 pub mod ffi {
     use alloc::boxed::Box;
 
-    use crate::{
+    use crate::unstable::{
         date::ffi::IsoDate,
         datetime::ffi::IsoDateTime,
         time::ffi::Time,
@@ -34,9 +34,6 @@ pub mod ffi {
         ///
         /// Returns the unknown time zone if the string is not a valid BCP-47 subtag.
         #[diplomat::rust_link(icu::time::TimeZone, Struct, compact)]
-        #[diplomat::rust_link(icu::time::TimeZone::from_str, FnInStruct, hidden)]
-        #[diplomat::rust_link(icu::time::TimeZone::deref, FnInStruct, hidden)]
-        #[diplomat::rust_link(icu::time::TimeZone::Target, AssociatedTypeInStruct, hidden)]
         #[diplomat::attr(auto, named_constructor = "from_bcp47")]
         #[diplomat::demo(default_constructor)]
         pub fn create_from_bcp47(id: &DiplomatStr) -> Box<Self> {

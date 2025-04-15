@@ -186,7 +186,11 @@ impl DatePatternSelectionData {
             year_style,
             input
                 .year
-                .map(|y| y.year_ambiguity())
+                .map(|y| {
+                    y.era()
+                        .map(|e| e.ambiguity)
+                        .unwrap_or(YearAmbiguity::EraRequired)
+                })
                 .unwrap_or(YearAmbiguity::EraAndCenturyRequired),
         ) {
             (YearStyle::WithEra, _) | (_, YearAmbiguity::EraAndCenturyRequired) => {

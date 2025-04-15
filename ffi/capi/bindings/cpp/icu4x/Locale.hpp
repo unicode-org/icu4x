@@ -172,6 +172,29 @@ inline int8_t icu4x::Locale::compare_to(const icu4x::Locale& other) const {
     other.AsFFI());
   return result;
 }
+inline bool icu4x::Locale::operator==(const icu4x::Locale& other) const {
+  return this->compare_to(other) == 0;
+}
+
+inline bool icu4x::Locale::operator!=(const icu4x::Locale& other) const {
+  return this->compare_to(other) != 0;
+}
+
+inline bool icu4x::Locale::operator<=(const icu4x::Locale& other) const {
+  return this->compare_to(other) <= 0;
+}
+
+inline bool icu4x::Locale::operator>=(const icu4x::Locale& other) const {
+  return this->compare_to(other) >= 0;
+}
+
+inline bool icu4x::Locale::operator<(const icu4x::Locale& other) const {
+  return this->compare_to(other) < 0;
+}
+
+inline bool icu4x::Locale::operator>(const icu4x::Locale& other) const {
+  return this->compare_to(other) > 0;
+}
 
 inline const icu4x::capi::Locale* icu4x::Locale::AsFFI() const {
   return reinterpret_cast<const icu4x::capi::Locale*>(this);

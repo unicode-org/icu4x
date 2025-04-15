@@ -22,7 +22,7 @@ export class VerticalOrientation {
     static Upright : VerticalOrientation;
 
     /** 
-     * See the [Rust documentation for `for_char`](https://docs.rs/icu/latest/icu/properties/props/trait.VerticalOrientation.html#tymethod.for_char) for more information.
+     * See the [Rust documentation for `for_char`](https://docs.rs/icu/latest/icu/properties/props/trait.EnumeratedProperty.html#tymethod.for_char) for more information.
      */
     static forChar(ch: codepoint): VerticalOrientation;
 

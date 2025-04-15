@@ -15,7 +15,7 @@ namespace capi { struct Decimal; }
 class Decimal;
 namespace capi { struct PluralOperands; }
 class PluralOperands;
-class FixedDecimalParseError;
+class DecimalParseError;
 }
 
 
@@ -37,7 +37,7 @@ public:
    *
    * See the [Rust documentation for `from_str`](https://docs.rs/icu/latest/icu/plurals/struct.PluralOperands.html#method.from_str) for more information.
    */
-  inline static diplomat::result<std::unique_ptr<icu4x::PluralOperands>, icu4x::FixedDecimalParseError> from_string(std::string_view s);
+  inline static diplomat::result<std::unique_ptr<icu4x::PluralOperands>, icu4x::DecimalParseError> from_string(std::string_view s);
 
   /**
    * Construct for a given integer

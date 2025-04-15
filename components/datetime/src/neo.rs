@@ -933,7 +933,7 @@ impl<C: CldrCalendar, FSet: DateTimeMarkers> FixedCalendarDateTimeFormatter<C, F
     ///
     /// ```
     /// use icu::datetime::fieldsets::builder::*;
-    /// use icu::datetime::fieldsets::YMDT;
+    /// use icu::datetime::fieldsets::YMD;
     /// use icu::datetime::input::*;
     /// use icu::datetime::options::*;
     /// use icu::datetime::FixedCalendarDateTimeFormatter;
@@ -943,7 +943,7 @@ impl<C: CldrCalendar, FSet: DateTimeMarkers> FixedCalendarDateTimeFormatter<C, F
     /// // Create a simple YMDT formatter:
     /// let formatter = FixedCalendarDateTimeFormatter::try_new(
     ///     locale!("und").into(),
-    ///     YMDT::long().with_hm().with_alignment(Alignment::Column)
+    ///     YMD::long().time_hm().with_alignment(Alignment::Column)
     /// )
     /// .unwrap();
     ///

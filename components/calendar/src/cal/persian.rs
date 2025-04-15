@@ -10,7 +10,7 @@
 //! let persian_date = Date::try_new_persian(1348, 10, 11)
 //!     .expect("Failed to initialize Persian Date instance.");
 //!
-//! assert_eq!(persian_date.year().era_year_or_related_iso(), 1348);
+//! assert_eq!(persian_date.era_year().year, 1348);
 //! assert_eq!(persian_date.month().ordinal, 10);
 //! assert_eq!(persian_date.day_of_month().0, 11);
 //! ```
@@ -86,6 +86,8 @@ impl CalendarArithmetic for Persian {
 
 impl Calendar for Persian {
     type DateInner = PersianDateInner;
+    type Year = types::EraYear;
+
     fn from_codes(
         &self,
         era: Option<&str>,
@@ -155,18 +157,19 @@ impl Calendar for Persian {
         date1.0.until(date2.0, _largest_unit, _smallest_unit)
     }
 
-    fn year(&self, date: &Self::DateInner) -> types::YearInfo {
-        let year = date.0.year;
-        types::YearInfo::new(
-            year,
-            types::EraYear {
-                standard_era: tinystr!(16, "ap").into(),
-                formatting_era: types::FormattingEra::Index(0, tinystr!(16, "AP")),
-                era_year: year,
-                ambiguity: types::YearAmbiguity::CenturyRequired,
-            },
-        )
+    fn year_info(&self, date: &Self::DateInner) -> Self::Year {
+        types::EraYear {
+            era: tinystr!(16, "ap"),
+            era_index: Some(0),
+            year: self.extended_year(date),
+            ambiguity: types::YearAmbiguity::CenturyRequired,
+        }
     }
+
+    fn extended_year(&self, date: &Self::DateInner) -> i32 {
+        date.0.extended_year()
+    }
+
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
         Self::provided_year_is_leap(date.0.year)
     }
@@ -187,8 +190,8 @@ impl Calendar for Persian {
         "Persian"
     }
 
-    fn any_calendar_kind(&self) -> Option<crate::AnyCalendarKind> {
-        Some(crate::any_calendar::IntoAnyCalendar::kind(self))
+    fn calendar_algorithm(&self) -> Option<crate::preferences::CalendarAlgorithm> {
+        Some(crate::preferences::CalendarAlgorithm::Persian)
     }
 }
 
@@ -210,7 +213,7 @@ impl Date<Persian> {
     /// let date_persian = Date::try_new_persian(1392, 4, 25)
     ///     .expect("Failed to initialize Persian Date instance.");
     ///
-    /// assert_eq!(date_persian.year().era_year_or_related_iso(), 1392);
+    /// assert_eq!(date_persian.era_year().year, 1392);
     /// assert_eq!(date_persian.month().ordinal, 4);
     /// assert_eq!(date_persian.day_of_month().0, 25);
     /// ```
@@ -714,7 +717,7 @@ mod tests {
             assert_eq!(Persian::provided_year_is_leap(*p_year), *leap);
             let persian_date = Date::try_new_persian(*p_year, 1, 1).unwrap();
             let iso_date = persian_date.to_calendar(Iso);
-            assert_eq!(iso_date.year().era_year_or_related_iso(), *iso_year);
+            assert_eq!(iso_date.era_year().year, *iso_year);
             assert_eq!(iso_date.month().ordinal, *iso_month);
             assert_eq!(iso_date.day_of_month().0, *iso_day);
         }

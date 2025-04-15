@@ -57,7 +57,7 @@
 //! use writeable::assert_writeable_eq;
 //!
 //! // Field set for year, month, day, hour, and minute with a medium length:
-//! let field_set = fieldsets::YMDT::medium().with_hm();
+//! let field_set = fieldsets::YMD::medium().time_hm();
 //!
 //! // Create a formatter for Argentinian Spanish:
 //! let locale = locale!("es-AR");
@@ -118,7 +118,6 @@ pub use neo::FixedCalendarDateTimeFormatter;
 pub use neo::FormattedDateTime;
 pub use neo::FormattedDateTimeUnchecked;
 pub use neo::NoCalendarFormatter;
-pub use options::Length;
 
 /// Locale preferences used by this crate
 pub mod preferences {

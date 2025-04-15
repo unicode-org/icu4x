@@ -18,12 +18,13 @@ pub mod ffi {
     use writeable::TryWriteable;
 
     #[allow(unused_imports)]
-    use crate::{
+    use crate::datetime_helpers::{self, map_or_default};
+
+    #[allow(unused_imports)]
+    use crate::unstable::{
         date_formatter::ffi::{DateFormatter, DateFormatterGregorian},
         date_time_formatter::ffi::{DateTimeFormatter, DateTimeFormatterGregorian},
         date::ffi::IsoDate,
-        datetime_helpers,
-        datetime_helpers::map_or_default,
         datetime_options::ffi::{DateTimeAlignment, DateTimeLength, TimePrecision},
         errors::ffi::DateTimeFormatterLoadError,
         errors::ffi::DateTimeWriteError,
@@ -34,7 +35,7 @@ pub mod ffi {
     };
 
     #[cfg(feature = "buffer_provider")]
-    use crate::provider::ffi::DataProvider;
+    use crate::unstable::provider::ffi::DataProvider;
 
     {%- for formatter_kind in flavor.formatter_kinds() %}
     {%- let ffi_type %}
@@ -55,7 +56,7 @@ pub mod ffi {
     {%- endif %}
 
     #[diplomat::opaque]
-    #[diplomat::rust_link(icu::datetime::{{ formatter_kind.rust_type() }}, Typedef)]
+    #[diplomat::rust_link(icu::datetime::{{ formatter_kind.rustlink() }}, {{ formatter_kind.rustlink_doctype() }})]
     pub struct {{ ffi_type }}(
         pub  icu_datetime::{{ formatter_kind.rust_type() }}<
             {%- if formatter_kind.is_fixed_calendar %}
@@ -81,6 +82,8 @@ pub mod ffi {
         {%- for variant in variants %}
         {%- for ctor in ConstructorType::VALUES %}
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "{{ variant.name_lower() }}{{ ctor.suffix_ffi() }}")]
+        #[diplomat::rust_link(icu::datetime::fieldsets::zone::{{ variant.name_camel() }}, Struct)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::Combo, Struct, hidden)]
         {%- if variant.is_default_constructor() && !ctor.is_with_provider() %}
         #[diplomat::demo(default_constructor)]
         {%- endif %}
@@ -111,7 +114,7 @@ pub mod ffi {
             {%- if let Some(consumed_options) = consumed_options %}
             let prefs = (&locale.0).into();
             {%- if flavor.has_time() %}
-            let mut options = icu_datetime::fieldsets::T::with_length(map_or_default(length));
+            let mut options = icu_datetime::fieldsets::T::for_length(map_or_default(length));
             options.time_precision = time_precision.map(Into::into);
             {%- if consumed_options.alignment %}
             options.alignment = alignment.map(Into::into);

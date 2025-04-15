@@ -7,11 +7,11 @@
 #include <stdbool.h>
 #include "diplomat_runtime.h"
 
-#include "FixedDecimalParseError.d.h"
-#include "FixedDecimalRoundingIncrement.d.h"
-#include "FixedDecimalSign.d.h"
-#include "FixedDecimalSignDisplay.d.h"
-#include "FixedDecimalSignedRoundingMode.d.h"
+#include "DecimalParseError.d.h"
+#include "DecimalRoundingIncrement.d.h"
+#include "DecimalSign.d.h"
+#include "DecimalSignDisplay.d.h"
+#include "DecimalSignedRoundingMode.d.h"
 
 #include "Decimal.d.h"
 
@@ -40,7 +40,7 @@ icu4x_Decimal_from_double_with_significant_digits_mv1_result icu4x_Decimal_from_
 typedef struct icu4x_Decimal_from_double_with_round_trip_precision_mv1_result {union {Decimal* ok; }; bool is_ok;} icu4x_Decimal_from_double_with_round_trip_precision_mv1_result;
 icu4x_Decimal_from_double_with_round_trip_precision_mv1_result icu4x_Decimal_from_double_with_round_trip_precision_mv1(double f);
 
-typedef struct icu4x_Decimal_from_string_mv1_result {union {Decimal* ok; FixedDecimalParseError err;}; bool is_ok;} icu4x_Decimal_from_string_mv1_result;
+typedef struct icu4x_Decimal_from_string_mv1_result {union {Decimal* ok; DecimalParseError err;}; bool is_ok;} icu4x_Decimal_from_string_mv1_result;
 icu4x_Decimal_from_string_mv1_result icu4x_Decimal_from_string_mv1(DiplomatStringView v);
 
 uint8_t icu4x_Decimal_digit_at_mv1(const Decimal* self, int16_t magnitude);
@@ -57,11 +57,11 @@ bool icu4x_Decimal_is_zero_mv1(const Decimal* self);
 
 void icu4x_Decimal_multiply_pow10_mv1(Decimal* self, int16_t power);
 
-FixedDecimalSign icu4x_Decimal_sign_mv1(const Decimal* self);
+DecimalSign icu4x_Decimal_sign_mv1(const Decimal* self);
 
-void icu4x_Decimal_set_sign_mv1(Decimal* self, FixedDecimalSign sign);
+void icu4x_Decimal_set_sign_mv1(Decimal* self, DecimalSign sign);
 
-void icu4x_Decimal_apply_sign_display_mv1(Decimal* self, FixedDecimalSignDisplay sign_display);
+void icu4x_Decimal_apply_sign_display_mv1(Decimal* self, DecimalSignDisplay sign_display);
 
 void icu4x_Decimal_trim_start_mv1(Decimal* self);
 
@@ -85,9 +85,9 @@ void icu4x_Decimal_floor_mv1(Decimal* self, int16_t position);
 
 void icu4x_Decimal_trunc_mv1(Decimal* self, int16_t position);
 
-void icu4x_Decimal_round_with_mode_mv1(Decimal* self, int16_t position, FixedDecimalSignedRoundingMode mode);
+void icu4x_Decimal_round_with_mode_mv1(Decimal* self, int16_t position, DecimalSignedRoundingMode mode);
 
-void icu4x_Decimal_round_with_mode_and_increment_mv1(Decimal* self, int16_t position, FixedDecimalSignedRoundingMode mode, FixedDecimalRoundingIncrement increment);
+void icu4x_Decimal_round_with_mode_and_increment_mv1(Decimal* self, int16_t position, DecimalSignedRoundingMode mode, DecimalRoundingIncrement increment);
 
 typedef struct icu4x_Decimal_concatenate_end_mv1_result { bool is_ok;} icu4x_Decimal_concatenate_end_mv1_result;
 icu4x_Decimal_concatenate_end_mv1_result icu4x_Decimal_concatenate_end_mv1(Decimal* self, Decimal* other);

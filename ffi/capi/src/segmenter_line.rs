@@ -10,9 +10,9 @@ pub mod ffi {
     use icu_segmenter::scaffold::{Latin1, PotentiallyIllFormedUtf8, Utf16};
 
     #[cfg(any(feature = "compiled_data", feature = "buffer_provider"))]
-    use crate::locale_core::ffi::Locale;
+    use crate::unstable::locale_core::ffi::Locale;
     #[cfg(feature = "buffer_provider")]
-    use crate::{errors::ffi::DataError, provider::ffi::DataProvider};
+    use crate::unstable::{errors::ffi::DataError, provider::ffi::DataProvider};
     use diplomat_runtime::DiplomatOption;
     #[cfg(any(feature = "compiled_data", feature = "buffer_provider"))]
     use icu_segmenter::options::LineBreakOptions;
@@ -269,11 +269,6 @@ pub mod ffi {
         /// Finds the next breakpoint. Returns -1 if at the end of the string or if the index is
         /// out of range of a 32-bit signed integer.
         #[diplomat::rust_link(icu::segmenter::iterators::LineBreakIterator::next, FnInStruct)]
-        #[diplomat::rust_link(
-            icu::segmenter::iterators::LineBreakIterator::Item,
-            AssociatedTypeInStruct,
-            hidden
-        )]
         pub fn next(&mut self) -> i32 {
             self.0
                 .next()

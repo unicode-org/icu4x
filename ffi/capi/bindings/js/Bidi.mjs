@@ -10,8 +10,6 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 /** 
  * An ICU4X Bidi object, containing loaded bidi data
  *
- * See the [Rust documentation for `BidiClassAdapter`](https://docs.rs/icu/latest/icu/properties/bidi/struct.BidiClassAdapter.html) for more information.
- *
  * See the [Rust documentation for `BidiClass`](https://docs.rs/icu/latest/icu/properties/props/struct.BidiClass.html) for more information.
  */
 const Bidi_box_destroy_registry = new FinalizationRegistry((ptr) => {
@@ -49,8 +47,6 @@ export class Bidi {
 
     /** 
      * Creates a new [`Bidi`] from locale data using compiled data.
-     *
-     * See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/properties/bidi/struct.BidiClassAdapter.html#method.new) for more information.
      */
     #defaultConstructor() {
         const result = wasm.icu4x_Bidi_create_mv1();
@@ -64,8 +60,6 @@ export class Bidi {
 
     /** 
      * Creates a new [`Bidi`] from locale data, and a particular data source.
-     *
-     * See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/properties/bidi/struct.BidiClassAdapter.html#method.new) for more information.
      */
     static createWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
@@ -93,8 +87,10 @@ export class Bidi {
      * See the [Rust documentation for `new_with_data_source`](https://docs.rs/unicode_bidi/latest/unicode_bidi/struct.BidiInfo.html#method.new_with_data_source) for more information.
      */
     forText(text, defaultLevel) {
+        let functionCleanupArena = new diplomatRuntime.CleanupArena();
+        
         let functionGarbageCollectorGrip = new diplomatRuntime.GarbageCollectorGrip();
-        const textSlice = functionGarbageCollectorGrip.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, text));
+        const textSlice = diplomatRuntime.DiplomatBuf.str8(wasm, text);
         
         // This lifetime edge depends on lifetimes 'text
         let textEdges = [textSlice];
@@ -106,6 +102,8 @@ export class Bidi {
         }
         
         finally {
+            functionCleanupArena.free();
+        
             functionGarbageCollectorGrip.releaseToGarbageCollector();
         }
     }
@@ -125,7 +123,7 @@ export class Bidi {
     reorderVisual(levels) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
-        const levelsSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.slice(wasm, levels, "u8"));
+        const levelsSlice = diplomatRuntime.DiplomatBuf.slice(wasm, levels, "u8");
         
         const result = wasm.icu4x_Bidi_reorder_visual_mv1(this.ffiValue, ...levelsSlice.splat());
     

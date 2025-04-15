@@ -12,6 +12,7 @@ use crate::cal::{
     Iso, Japanese, JapaneseExtended, Persian, Roc,
 };
 use crate::error::DateError;
+use crate::types::YearInfo;
 use crate::{types, AsCalendar, Calendar, Date, DateDuration, DateDurationUnit, Ref};
 
 use crate::preferences::{CalendarAlgorithm, HijriCalendarAlgorithm};
@@ -43,7 +44,7 @@ define_preferences!(
 ///
 /// There are many ways of constructing an AnyCalendar'd date:
 /// ```
-/// use icu::calendar::{AnyCalendar, AnyCalendarKind, Date, cal::Japanese, types::{Era, MonthCode}};
+/// use icu::calendar::{AnyCalendar, AnyCalendarKind, Date, cal::Japanese, types::MonthCode};
 /// use icu::locale::locale;
 /// use tinystr::tinystr;
 /// # use std::rc::Rc;
@@ -219,6 +220,8 @@ macro_rules! match_cal {
 
 impl Calendar for AnyCalendar {
     type DateInner = AnyDateInner;
+    type Year = YearInfo;
+
     fn from_codes(
         &self,
         era: Option<&str>,
@@ -465,9 +468,14 @@ impl Calendar for AnyCalendar {
         }
     }
 
-    fn year(&self, date: &Self::DateInner) -> types::YearInfo {
-        match_cal_and_date!(match (self, date): (c, d) => c.year(d))
+    fn year_info(&self, date: &Self::DateInner) -> types::YearInfo {
+        match_cal_and_date!(match (self, date): (c, d) => c.year_info(d).into())
     }
+
+    fn extended_year(&self, date: &Self::DateInner) -> i32 {
+        match_cal_and_date!(match (self, date): (c, d) => c.extended_year(d))
+    }
+
     /// The calendar-specific check if `date` is in a leap year
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
         match_cal_and_date!(match (self, date): (c, d) => c.is_in_leap_year(d))
@@ -515,8 +523,25 @@ impl Calendar for AnyCalendar {
         }
     }
 
-    fn any_calendar_kind(&self) -> Option<AnyCalendarKind> {
-        Some(self.kind())
+    fn calendar_algorithm(&self) -> Option<CalendarAlgorithm> {
+        match self {
+            Self::Buddhist(ref c) => c.calendar_algorithm(),
+            Self::Chinese(ref c) => c.calendar_algorithm(),
+            Self::Coptic(ref c) => c.calendar_algorithm(),
+            Self::Dangi(ref c) => c.calendar_algorithm(),
+            Self::Ethiopian(ref c) => c.calendar_algorithm(),
+            Self::Gregorian(ref c) => c.calendar_algorithm(),
+            Self::Hebrew(ref c) => c.calendar_algorithm(),
+            Self::Indian(ref c) => c.calendar_algorithm(),
+            Self::HijriSimulated(ref c) => c.calendar_algorithm(),
+            Self::HijriTabular(ref c) => c.calendar_algorithm(),
+            Self::HijriUmmAlQura(ref c) => c.calendar_algorithm(),
+            Self::Iso(ref c) => c.calendar_algorithm(),
+            Self::Japanese(ref c) => c.calendar_algorithm(),
+            Self::JapaneseExtended(ref c) => c.calendar_algorithm(),
+            Self::Persian(ref c) => c.calendar_algorithm(),
+            Self::Roc(ref c) => c.calendar_algorithm(),
+        }
     }
 }
 
@@ -1542,6 +1567,7 @@ mod tests {
     use super::*;
     use crate::Ref;
 
+    #[track_caller]
     fn single_test_roundtrip(
         calendar: Ref<AnyCalendar>,
         era: Option<&str>,
@@ -1579,6 +1605,7 @@ mod tests {
         )
     }
 
+    #[track_caller]
     fn single_test_error(
         calendar: Ref<AnyCalendar>,
         era: Option<&str>,
@@ -1649,8 +1676,7 @@ mod tests {
 
         single_test_roundtrip(coptic, Some("am"), 100, "M03", 1);
         single_test_roundtrip(coptic, None, 2000, "M03", 1);
-        // fails ISO roundtrip
-        // single_test_roundtrip(coptic, Some("bd"), 100, "M03", 1);
+        single_test_roundtrip(coptic, Some("am"), -99, "M03", 1);
         single_test_roundtrip(coptic, Some("am"), 100, "M13", 1);
         single_test_error(
             coptic,
@@ -1660,38 +1686,11 @@ mod tests {
             1,
             DateError::UnknownMonthCode(MonthCode(tinystr!(4, "M14"))),
         );
-        single_test_error(
-            coptic,
-            Some("am"),
-            0,
-            "M03",
-            1,
-            DateError::Range {
-                field: "year",
-                value: 0,
-                min: 1,
-                max: i32::MAX,
-            },
-        );
-        single_test_error(
-            coptic,
-            Some("bd"),
-            0,
-            "M03",
-            1,
-            DateError::Range {
-                field: "year",
-                value: 0,
-                min: 1,
-                max: i32::MAX,
-            },
-        );
 
         single_test_roundtrip(ethiopian, Some("am"), 100, "M03", 1);
         single_test_roundtrip(ethiopian, None, 2000, "M03", 1);
         single_test_roundtrip(ethiopian, Some("am"), 2000, "M13", 1);
-        // Fails ISO roundtrip due to https://github.com/unicode-org/icu4x/issues/2254
-        // single_test_roundtrip(ethiopian, Some("aa"), 5400, "M03", 1);
+        single_test_roundtrip(ethiopian, Some("aa"), 5400, "M03", 1);
         single_test_error(
             ethiopian,
             Some("am"),
@@ -1729,8 +1728,7 @@ mod tests {
 
         single_test_roundtrip(ethioaa, Some("aa"), 7000, "M13", 1);
         single_test_roundtrip(ethioaa, None, 7000, "M13", 1);
-        // Fails ISO roundtrip due to https://github.com/unicode-org/icu4x/issues/2254
-        // single_test_roundtrip(ethioaa, Some("aa"), 100, "M03", 1);
+        single_test_roundtrip(ethioaa, Some("aa"), 100, "M03", 1);
         single_test_error(
             ethiopian,
             Some("aa"),

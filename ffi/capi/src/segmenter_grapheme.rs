@@ -10,7 +10,7 @@ pub mod ffi {
     use icu_segmenter::scaffold::{Latin1, PotentiallyIllFormedUtf8, Utf16};
 
     #[cfg(feature = "buffer_provider")]
-    use crate::{errors::ffi::DataError, provider::ffi::DataProvider};
+    use crate::unstable::{errors::ffi::DataError, provider::ffi::DataProvider};
 
     #[diplomat::opaque]
     /// An ICU4X grapheme-cluster-break segmenter, capable of finding grapheme cluster breakpoints

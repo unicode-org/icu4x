@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use diplomat_core::*;
-use rustdoc_types::{Crate, Item, ItemEnum};
+use rustdoc_types::{Crate, Item, ItemEnum, Type};
 use std::collections::{BTreeSet, HashSet};
 use std::fmt;
 use std::fs::{self, File};
@@ -140,6 +140,7 @@ fn collect_public_types(krate: &str) -> impl Iterator<Item = (Vec<String>, ast::
         // The Option<String> is for the trait name of an impl
         Enum(Option<&'a str>),
         Struct(Option<&'a str>),
+        Type(Option<&'a str>),
     }
 
     fn recurse(
@@ -339,7 +340,7 @@ fn collect_public_types(krate: &str) -> impl Iterator<Item = (Vec<String>, ast::
                     }
                     ItemEnum::Function(_) => {
                         let doc_type = match inside {
-                            Some(In::Enum(tr)) | Some(In::Struct(tr))
+                            Some(In::Enum(tr)) | Some(In::Struct(tr)) | Some(In::Type(tr))
                                 if check_ignored_assoc_item(item_name, tr) =>
                             {
                                 return
@@ -347,6 +348,7 @@ fn collect_public_types(krate: &str) -> impl Iterator<Item = (Vec<String>, ast::
                             Some(In::Enum(_)) => ast::DocType::FnInEnum,
                             Some(In::Trait) => ast::DocType::FnInTrait,
                             Some(In::Struct(_)) => ast::DocType::FnInStruct,
+                            Some(In::Type(_)) => ast::DocType::FnInTypedef,
                             _ => ast::DocType::Fn,
                         };
                         insert_ty(types, path, doc_type);
@@ -354,7 +356,35 @@ fn collect_public_types(krate: &str) -> impl Iterator<Item = (Vec<String>, ast::
                     ItemEnum::Macro(_) => {
                         insert_ty(types, path, ast::DocType::Macro);
                     }
-                    ItemEnum::TypeAlias(_) => {
+                    ItemEnum::TypeAlias(t) => {
+                        if let Type::ResolvedPath(p) = &t.type_ {
+                            if let ItemEnum::Struct(rustdoc_types::Struct { impls, .. })
+                            | ItemEnum::Enum(rustdoc_types::Enum { impls, .. }) =
+                                &krate.index[&p.id].inner
+                            {
+                                for id in impls {
+                                    if let ItemEnum::Impl(inner) = &krate.index[id].inner {
+                                        let mut trait_name = None;
+                                        if let Some(path) = &inner.trait_ {
+                                            if IGNORED_TRAITS.contains(path.path.as_str()) {
+                                                continue;
+                                            }
+                                            trait_name = Some(path.path.as_str());
+                                        }
+                                        for id in &inner.items {
+                                            recurse(
+                                                &krate.index[id],
+                                                krate,
+                                                types,
+                                                path.clone(),
+                                                false,
+                                                Some(In::Type(trait_name)),
+                                            );
+                                        }
+                                    }
+                                }
+                            }
+                        }
                         insert_ty(types, path, ast::DocType::Typedef);
                     }
                     ItemEnum::Variant(_) => {

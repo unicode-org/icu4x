@@ -11,10 +11,10 @@ pub mod ffi {
     use alloc::boxed::Box;
 
     #[cfg(any(feature = "compiled_data", feature = "buffer_provider"))]
-    use crate::errors::ffi::DataError;
-    use crate::locale_core::ffi::Locale;
+    use crate::unstable::errors::ffi::DataError;
+    use crate::unstable::locale_core::ffi::Locale;
     #[cfg(feature = "buffer_provider")]
-    use crate::provider::ffi::DataProvider;
+    use crate::unstable::provider::ffi::DataProvider;
     use diplomat_runtime::DiplomatOption;
 
     use writeable::Writeable;
@@ -201,7 +201,7 @@ pub mod ffi {
         pub fn add_case_closure_to(
             &self,
             c: DiplomatChar,
-            builder: &mut crate::collections_sets::ffi::CodePointSetBuilder,
+            builder: &mut crate::unstable::collections_sets::ffi::CodePointSetBuilder,
         ) {
             if let Some(ch) = char::from_u32(c) {
                 self.0.as_borrowed().add_case_closure_to(ch, &mut builder.0)
@@ -302,7 +302,7 @@ pub mod ffi {
         pub fn add_case_closure_to(
             &self,
             c: DiplomatChar,
-            builder: &mut crate::collections_sets::ffi::CodePointSetBuilder,
+            builder: &mut crate::unstable::collections_sets::ffi::CodePointSetBuilder,
         ) {
             if let Some(ch) = char::from_u32(c) {
                 self.0.as_borrowed().add_case_closure_to(ch, &mut builder.0)
@@ -321,7 +321,7 @@ pub mod ffi {
         pub fn add_string_case_closure_to(
             &self,
             s: &DiplomatStr,
-            builder: &mut crate::collections_sets::ffi::CodePointSetBuilder,
+            builder: &mut crate::unstable::collections_sets::ffi::CodePointSetBuilder,
         ) -> bool {
             let s = core::str::from_utf8(s).unwrap_or("");
             self.0

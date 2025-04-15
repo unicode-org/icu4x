@@ -825,7 +825,6 @@ mod date_skeleton_consistency_tests {
             Coptic,
             Dangi,
             Ethiopic,
-            EthiopicAmeteAlem,
             Gregorian,
             Hebrew,
             Indian,

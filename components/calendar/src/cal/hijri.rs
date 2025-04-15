@@ -14,7 +14,7 @@
 //! )
 //! .expect("Failed to initialize Hijri Date instance.");
 //!
-//! assert_eq!(hijri_date.year().era_year_or_related_iso(), 1348);
+//! assert_eq!(hijri_date.era_year().year, 1348);
 //! assert_eq!(hijri_date.month().ordinal, 10);
 //! assert_eq!(hijri_date.day_of_month().0, 11);
 //! ```
@@ -25,6 +25,7 @@ use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
 use crate::error::DateError;
 use crate::provider::hijri::PackedHijriYearInfo;
 use crate::provider::hijri::{CalendarHijriSimulatedMeccaV1, HijriData};
+use crate::types::EraYear;
 use crate::{types, Calendar, Date, DateDuration, DateDurationUnit};
 use crate::{AsCalendar, RangeError};
 use calendrical_calculations::islamic::{ISLAMIC_EPOCH_FRIDAY, ISLAMIC_EPOCH_THURSDAY};
@@ -33,16 +34,13 @@ use icu_provider::marker::ErasedMarker;
 use icu_provider::prelude::*;
 use tinystr::tinystr;
 
-fn year_as_hijri(year: i32) -> types::YearInfo {
-    types::YearInfo::new(
+fn era_year(year: i32) -> EraYear {
+    types::EraYear {
+        era: tinystr!(16, "ah"),
+        era_index: Some(0),
         year,
-        types::EraYear {
-            standard_era: types::Era(tinystr!(16, "ah")),
-            formatting_era: types::FormattingEra::Index(0, tinystr!(16, "AH")),
-            era_year: year,
-            ambiguity: types::YearAmbiguity::CenturyRequired,
-        },
-    )
+        ambiguity: types::YearAmbiguity::CenturyRequired,
+    }
 }
 
 /// The [simulated Hijri Calendar](https://en.wikipedia.org/wiki/Islamic_calendar)
@@ -365,6 +363,7 @@ impl CalendarArithmetic for HijriSimulated {
 
 impl Calendar for HijriSimulated {
     type DateInner = HijriSimulatedDateInner;
+    type Year = types::EraYear;
     fn from_codes(
         &self,
         era: Option<&str>,
@@ -454,8 +453,12 @@ impl Calendar for HijriSimulated {
         Self::DEBUG_NAME
     }
 
-    fn year(&self, date: &Self::DateInner) -> types::YearInfo {
-        year_as_hijri(date.0.year.value)
+    fn year_info(&self, date: &Self::DateInner) -> Self::Year {
+        era_year(self.extended_year(date))
+    }
+
+    fn extended_year(&self, date: &Self::DateInner) -> i32 {
+        date.0.extended_year()
     }
 
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
@@ -474,8 +477,14 @@ impl Calendar for HijriSimulated {
         date.0.day_of_year()
     }
 
-    fn any_calendar_kind(&self) -> Option<crate::AnyCalendarKind> {
-        Some(crate::any_calendar::IntoAnyCalendar::kind(self))
+    fn calendar_algorithm(&self) -> Option<crate::preferences::CalendarAlgorithm> {
+        Some(match self.location {
+            crate::cal::hijri::HijriSimulatedLocation::Mecca => {
+                crate::preferences::CalendarAlgorithm::Hijri(Some(
+                    crate::preferences::HijriCalendarAlgorithm::Rgsa,
+                ))
+            }
+        })
     }
 }
 
@@ -585,7 +594,7 @@ impl<A: AsCalendar<Calendar = HijriSimulated>> Date<A> {
     ///     Date::try_new_simulated_hijri_with_calendar(1392, 4, 25, hijri)
     ///         .expect("Failed to initialize Hijri Date instance.");
     ///
-    /// assert_eq!(date_hijri.year().era_year_or_related_iso(), 1392);
+    /// assert_eq!(date_hijri.era_year().year, 1392);
     /// assert_eq!(date_hijri.month().ordinal, 4);
     /// assert_eq!(date_hijri.day_of_month().0, 25);
     /// ```
@@ -635,6 +644,7 @@ impl CalendarArithmetic for HijriUmmAlQura {
 
 impl Calendar for HijriUmmAlQura {
     type DateInner = HijriUmmAlQuraDateInner;
+    type Year = types::EraYear;
     fn from_codes(
         &self,
         era: Option<&str>,
@@ -724,8 +734,12 @@ impl Calendar for HijriUmmAlQura {
         Self::DEBUG_NAME
     }
 
-    fn year(&self, date: &Self::DateInner) -> types::YearInfo {
-        year_as_hijri(date.0.year.value)
+    fn year_info(&self, date: &Self::DateInner) -> Self::Year {
+        era_year(self.extended_year(date))
+    }
+
+    fn extended_year(&self, date: &Self::DateInner) -> i32 {
+        date.0.extended_year()
     }
 
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
@@ -744,8 +758,11 @@ impl Calendar for HijriUmmAlQura {
         date.0.day_of_year()
     }
 
-    fn any_calendar_kind(&self) -> Option<crate::AnyCalendarKind> {
-        Some(crate::any_calendar::IntoAnyCalendar::kind(self))
+    fn calendar_algorithm(&self) -> Option<crate::preferences::CalendarAlgorithm> {
+        let expected_calendar = crate::preferences::CalendarAlgorithm::Hijri(Some(
+            crate::preferences::HijriCalendarAlgorithm::Umalqura,
+        ));
+        Some(expected_calendar)
     }
 }
 
@@ -1094,7 +1111,7 @@ impl Date<HijriUmmAlQura> {
     ///     Date::try_new_ummalqura(1392, 4, 25)
     ///         .expect("Failed to initialize Hijri Date instance.");
     ///
-    /// assert_eq!(date_hijri.year().era_year_or_related_iso(), 1392);
+    /// assert_eq!(date_hijri.era_year().year, 1392);
     /// assert_eq!(date_hijri.month().ordinal, 4);
     /// assert_eq!(date_hijri.day_of_month().0, 25);
     /// ```
@@ -1156,6 +1173,7 @@ impl CalendarArithmetic for HijriTabular {
 
 impl Calendar for HijriTabular {
     type DateInner = HijriTabularDateInner;
+    type Year = types::EraYear;
 
     fn from_codes(
         &self,
@@ -1243,8 +1261,12 @@ impl Calendar for HijriTabular {
         }
     }
 
-    fn year(&self, date: &Self::DateInner) -> types::YearInfo {
-        year_as_hijri(date.0.year)
+    fn year_info(&self, date: &Self::DateInner) -> Self::Year {
+        era_year(self.extended_year(date))
+    }
+
+    fn extended_year(&self, date: &Self::DateInner) -> i32 {
+        date.0.extended_year()
     }
 
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
@@ -1263,8 +1285,21 @@ impl Calendar for HijriTabular {
         date.0.day_of_year()
     }
 
-    fn any_calendar_kind(&self) -> Option<crate::AnyCalendarKind> {
-        Some(crate::any_calendar::IntoAnyCalendar::kind(self))
+    fn calendar_algorithm(&self) -> Option<crate::preferences::CalendarAlgorithm> {
+        let expected_calendar = match (self.epoch, self.leap_years) {
+            (crate::cal::HijriTabularEpoch::Friday, crate::cal::HijriTabularLeapYears::TypeII) => {
+                crate::preferences::CalendarAlgorithm::Hijri(Some(
+                    crate::preferences::HijriCalendarAlgorithm::Civil,
+                ))
+            }
+            (
+                crate::cal::HijriTabularEpoch::Thursday,
+                crate::cal::HijriTabularLeapYears::TypeII,
+            ) => crate::preferences::CalendarAlgorithm::Hijri(Some(
+                crate::preferences::HijriCalendarAlgorithm::Tbla,
+            )),
+        };
+        Some(expected_calendar)
     }
 }
 
@@ -1281,7 +1316,7 @@ impl<A: AsCalendar<Calendar = HijriTabular>> Date<A> {
     ///     Date::try_new_hijri_tabular_with_calendar(1392, 4, 25, hijri)
     ///         .expect("Failed to initialize Hijri Date instance.");
     ///
-    /// assert_eq!(date_hijri.year().era_year_or_related_iso(), 1392);
+    /// assert_eq!(date_hijri.era_year().year, 1392);
     /// assert_eq!(date_hijri.month().ordinal, 4);
     /// assert_eq!(date_hijri.day_of_month().0, 25);
     /// ```
@@ -2154,7 +2189,7 @@ mod test {
         // Data from https://www.ummulqura.org.sa/Index.aspx
         assert_eq!(hijri.day_of_month().0, 30);
         assert_eq!(hijri.month().ordinal, 4);
-        assert_eq!(hijri.year().era_year_or_related_iso(), 1432);
+        assert_eq!(hijri.era_year().year, 1432);
     }
 
     #[test]
@@ -2218,7 +2253,7 @@ mod test {
             (
                 cached.day_of_month().0,
                 cached.month().ordinal,
-                cached.year().era_year_or_related_iso()
+                cached.era_year().year
             ),
             (27, 8, 1446)
         );

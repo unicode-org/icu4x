@@ -9,9 +9,9 @@ pub mod ffi {
     use alloc::boxed::Box;
     use diplomat_runtime::DiplomatStr;
 
-    use crate::timezone::ffi::TimeZone;
+    use crate::unstable::timezone::ffi::TimeZone;
     #[cfg(feature = "buffer_provider")]
-    use crate::{errors::ffi::DataError, provider::ffi::DataProvider};
+    use crate::unstable::{errors::ffi::DataError, provider::ffi::DataProvider};
 
     /// A mapper between Windows time zone identifiers and BCP-47 time zone identifiers.
     ///
@@ -19,11 +19,6 @@ pub mod ffi {
     /// It also supports normalizing and canonicalizing the Windows strings.
     #[diplomat::opaque]
     #[diplomat::rust_link(icu::time::zone::windows::WindowsParser, Struct)]
-    #[diplomat::rust_link(
-        icu::time::zone::windows::WindowsParser::as_borrowed,
-        FnInStruct,
-        hidden
-    )]
     #[diplomat::rust_link(icu::time::zone::windows::WindowsParserBorrowed, Struct, hidden)]
     #[diplomat::rust_link(
         icu::time::zone::windows::WindowsParserBorrowed::new,

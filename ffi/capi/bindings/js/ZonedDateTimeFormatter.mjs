@@ -12,7 +12,7 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
 /** 
- * See the [Rust documentation for `DateTimeFormatter`](https://docs.rs/icu/latest/icu/datetime/type.DateTimeFormatter.html) for more information.
+ * See the [Rust documentation for `DateTimeFormatter`](https://docs.rs/icu/latest/icu/datetime/struct.DateTimeFormatter.html) for more information.
  */
 const ZonedDateTimeFormatter_box_destroy_registry = new FinalizationRegistry((ptr) => {
     wasm.icu4x_ZonedDateTimeFormatter_destroy_mv1(ptr);
@@ -46,7 +46,11 @@ export class ZonedDateTimeFormatter {
     get ffiValue() {
         return this.#ptr;
     }
-static createSpecificLong(locale, formatter) {
+
+    /** 
+     * See the [Rust documentation for `SpecificLong`](https://docs.rs/icu/latest/icu/datetime/fieldsets/zone/struct.SpecificLong.html) for more information.
+     */
+    static createSpecificLong(locale, formatter) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
         const result = wasm.icu4x_ZonedDateTimeFormatter_create_specific_long_mv1(diplomatReceive.buffer, locale.ffiValue, formatter.ffiValue);
@@ -63,7 +67,11 @@ static createSpecificLong(locale, formatter) {
             diplomatReceive.free();
         }
     }
-static createSpecificLongWithProvider(provider, locale, formatter) {
+
+    /** 
+     * See the [Rust documentation for `SpecificLong`](https://docs.rs/icu/latest/icu/datetime/fieldsets/zone/struct.SpecificLong.html) for more information.
+     */
+    static createSpecificLongWithProvider(provider, locale, formatter) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
         const result = wasm.icu4x_ZonedDateTimeFormatter_create_specific_long_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue, formatter.ffiValue);
@@ -80,7 +88,11 @@ static createSpecificLongWithProvider(provider, locale, formatter) {
             diplomatReceive.free();
         }
     }
-static createSpecificShort(locale, formatter) {
+
+    /** 
+     * See the [Rust documentation for `SpecificShort`](https://docs.rs/icu/latest/icu/datetime/fieldsets/zone/struct.SpecificShort.html) for more information.
+     */
+    static createSpecificShort(locale, formatter) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
         const result = wasm.icu4x_ZonedDateTimeFormatter_create_specific_short_mv1(diplomatReceive.buffer, locale.ffiValue, formatter.ffiValue);
@@ -97,7 +109,11 @@ static createSpecificShort(locale, formatter) {
             diplomatReceive.free();
         }
     }
-static createSpecificShortWithProvider(provider, locale, formatter) {
+
+    /** 
+     * See the [Rust documentation for `SpecificShort`](https://docs.rs/icu/latest/icu/datetime/fieldsets/zone/struct.SpecificShort.html) for more information.
+     */
+    static createSpecificShortWithProvider(provider, locale, formatter) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
         const result = wasm.icu4x_ZonedDateTimeFormatter_create_specific_short_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue, formatter.ffiValue);
@@ -114,7 +130,11 @@ static createSpecificShortWithProvider(provider, locale, formatter) {
             diplomatReceive.free();
         }
     }
-static createLocalizedOffsetLong(locale, formatter) {
+
+    /** 
+     * See the [Rust documentation for `LocalizedOffsetLong`](https://docs.rs/icu/latest/icu/datetime/fieldsets/zone/struct.LocalizedOffsetLong.html) for more information.
+     */
+    static createLocalizedOffsetLong(locale, formatter) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
         const result = wasm.icu4x_ZonedDateTimeFormatter_create_localized_offset_long_mv1(diplomatReceive.buffer, locale.ffiValue, formatter.ffiValue);
@@ -131,7 +151,11 @@ static createLocalizedOffsetLong(locale, formatter) {
             diplomatReceive.free();
         }
     }
-static createLocalizedOffsetLongWithProvider(provider, locale, formatter) {
+
+    /** 
+     * See the [Rust documentation for `LocalizedOffsetLong`](https://docs.rs/icu/latest/icu/datetime/fieldsets/zone/struct.LocalizedOffsetLong.html) for more information.
+     */
+    static createLocalizedOffsetLongWithProvider(provider, locale, formatter) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
         const result = wasm.icu4x_ZonedDateTimeFormatter_create_localized_offset_long_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue, formatter.ffiValue);
@@ -148,7 +172,11 @@ static createLocalizedOffsetLongWithProvider(provider, locale, formatter) {
             diplomatReceive.free();
         }
     }
-static createLocalizedOffsetShort(locale, formatter) {
+
+    /** 
+     * See the [Rust documentation for `LocalizedOffsetShort`](https://docs.rs/icu/latest/icu/datetime/fieldsets/zone/struct.LocalizedOffsetShort.html) for more information.
+     */
+    static createLocalizedOffsetShort(locale, formatter) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
         const result = wasm.icu4x_ZonedDateTimeFormatter_create_localized_offset_short_mv1(diplomatReceive.buffer, locale.ffiValue, formatter.ffiValue);
@@ -165,7 +193,11 @@ static createLocalizedOffsetShort(locale, formatter) {
             diplomatReceive.free();
         }
     }
-static createLocalizedOffsetShortWithProvider(provider, locale, formatter) {
+
+    /** 
+     * See the [Rust documentation for `LocalizedOffsetShort`](https://docs.rs/icu/latest/icu/datetime/fieldsets/zone/struct.LocalizedOffsetShort.html) for more information.
+     */
+    static createLocalizedOffsetShortWithProvider(provider, locale, formatter) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
         const result = wasm.icu4x_ZonedDateTimeFormatter_create_localized_offset_short_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue, formatter.ffiValue);
@@ -182,7 +214,11 @@ static createLocalizedOffsetShortWithProvider(provider, locale, formatter) {
             diplomatReceive.free();
         }
     }
-static createGenericLong(locale, formatter) {
+
+    /** 
+     * See the [Rust documentation for `GenericLong`](https://docs.rs/icu/latest/icu/datetime/fieldsets/zone/struct.GenericLong.html) for more information.
+     */
+    static createGenericLong(locale, formatter) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
         const result = wasm.icu4x_ZonedDateTimeFormatter_create_generic_long_mv1(diplomatReceive.buffer, locale.ffiValue, formatter.ffiValue);
@@ -199,7 +235,11 @@ static createGenericLong(locale, formatter) {
             diplomatReceive.free();
         }
     }
-static createGenericLongWithProvider(provider, locale, formatter) {
+
+    /** 
+     * See the [Rust documentation for `GenericLong`](https://docs.rs/icu/latest/icu/datetime/fieldsets/zone/struct.GenericLong.html) for more information.
+     */
+    static createGenericLongWithProvider(provider, locale, formatter) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
         const result = wasm.icu4x_ZonedDateTimeFormatter_create_generic_long_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue, formatter.ffiValue);
@@ -216,7 +256,11 @@ static createGenericLongWithProvider(provider, locale, formatter) {
             diplomatReceive.free();
         }
     }
-static createGenericShort(locale, formatter) {
+
+    /** 
+     * See the [Rust documentation for `GenericShort`](https://docs.rs/icu/latest/icu/datetime/fieldsets/zone/struct.GenericShort.html) for more information.
+     */
+    static createGenericShort(locale, formatter) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
         const result = wasm.icu4x_ZonedDateTimeFormatter_create_generic_short_mv1(diplomatReceive.buffer, locale.ffiValue, formatter.ffiValue);
@@ -233,7 +277,11 @@ static createGenericShort(locale, formatter) {
             diplomatReceive.free();
         }
     }
-static createGenericShortWithProvider(provider, locale, formatter) {
+
+    /** 
+     * See the [Rust documentation for `GenericShort`](https://docs.rs/icu/latest/icu/datetime/fieldsets/zone/struct.GenericShort.html) for more information.
+     */
+    static createGenericShortWithProvider(provider, locale, formatter) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
         const result = wasm.icu4x_ZonedDateTimeFormatter_create_generic_short_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue, formatter.ffiValue);
@@ -250,7 +298,11 @@ static createGenericShortWithProvider(provider, locale, formatter) {
             diplomatReceive.free();
         }
     }
-static createLocation(locale, formatter) {
+
+    /** 
+     * See the [Rust documentation for `Location`](https://docs.rs/icu/latest/icu/datetime/fieldsets/zone/struct.Location.html) for more information.
+     */
+    static createLocation(locale, formatter) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
         const result = wasm.icu4x_ZonedDateTimeFormatter_create_location_mv1(diplomatReceive.buffer, locale.ffiValue, formatter.ffiValue);
@@ -267,7 +319,11 @@ static createLocation(locale, formatter) {
             diplomatReceive.free();
         }
     }
-static createLocationWithProvider(provider, locale, formatter) {
+
+    /** 
+     * See the [Rust documentation for `Location`](https://docs.rs/icu/latest/icu/datetime/fieldsets/zone/struct.Location.html) for more information.
+     */
+    static createLocationWithProvider(provider, locale, formatter) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
         const result = wasm.icu4x_ZonedDateTimeFormatter_create_location_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue, formatter.ffiValue);
@@ -284,7 +340,11 @@ static createLocationWithProvider(provider, locale, formatter) {
             diplomatReceive.free();
         }
     }
-static createExemplarCity(locale, formatter) {
+
+    /** 
+     * See the [Rust documentation for `ExemplarCity`](https://docs.rs/icu/latest/icu/datetime/fieldsets/zone/struct.ExemplarCity.html) for more information.
+     */
+    static createExemplarCity(locale, formatter) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
         const result = wasm.icu4x_ZonedDateTimeFormatter_create_exemplar_city_mv1(diplomatReceive.buffer, locale.ffiValue, formatter.ffiValue);
@@ -301,7 +361,11 @@ static createExemplarCity(locale, formatter) {
             diplomatReceive.free();
         }
     }
-static createExemplarCityWithProvider(provider, locale, formatter) {
+
+    /** 
+     * See the [Rust documentation for `ExemplarCity`](https://docs.rs/icu/latest/icu/datetime/fieldsets/zone/struct.ExemplarCity.html) for more information.
+     */
+    static createExemplarCityWithProvider(provider, locale, formatter) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
         const result = wasm.icu4x_ZonedDateTimeFormatter_create_exemplar_city_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue, formatter.ffiValue);

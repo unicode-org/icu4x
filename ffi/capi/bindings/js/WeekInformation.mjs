@@ -110,7 +110,7 @@ export class WeekInformation {
     /** 
      * See the [Rust documentation for `weekend`](https://docs.rs/icu/latest/icu/calendar/week/struct.WeekInformation.html#structfield.weekend) for more information.
      *
-     * See the [Rust documentation for `contains`](https://docs.rs/icu/latest/icu/calendar/week/struct.WeekendSet.html#method.contains) for more information.
+     * See the [Rust documentation for `contains`](https://docs.rs/icu/latest/icu/calendar/provider/struct.WeekdaySet.html#method.contains) for more information.
      */
     isWeekend(day) {
         const result = wasm.icu4x_WeekInformation_is_weekend_mv1(this.ffiValue, day.ffiValue);

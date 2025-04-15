@@ -32,7 +32,7 @@ namespace icu4x {
  *
  * See the [Rust documentation for `PropertyParser`](https://docs.rs/icu/latest/icu/properties/struct.PropertyParser.html) for more information.
  *
- * See the [Rust documentation for `GeneralCategory`](https://docs.rs/icu/latest/icu/properties/props/struct.GeneralCategory.html) for more information.
+ * See the [Rust documentation for `GeneralCategory`](https://docs.rs/icu/latest/icu/properties/props/enum.GeneralCategory.html) for more information.
  */
 class GeneralCategoryNameToGroupMapper {
 public:
@@ -58,14 +58,14 @@ public:
   /**
    * Create a name-to-mask mapper for the `General_Category` property, using compiled data.
    *
-   * See the [Rust documentation for `GeneralCategoryGroup`](https://docs.rs/icu_properties/latest/icu_properties/props/struct.GeneralCategoryGroup.html) for more information.
+   * See the [Rust documentation for `GeneralCategoryGroup`](https://docs.rs/icu/latest/icu/properties/props/struct.GeneralCategoryGroup.html) for more information.
    */
   inline static std::unique_ptr<icu4x::GeneralCategoryNameToGroupMapper> create();
 
   /**
    * Create a name-to-mask mapper for the `General_Category` property, using a particular data source.
    *
-   * See the [Rust documentation for `GeneralCategoryGroup`](https://docs.rs/icu_properties/latest/icu_properties/props/struct.GeneralCategoryGroup.html) for more information.
+   * See the [Rust documentation for `GeneralCategoryGroup`](https://docs.rs/icu/latest/icu/properties/props/struct.GeneralCategoryGroup.html) for more information.
    */
   inline static diplomat::result<std::unique_ptr<icu4x::GeneralCategoryNameToGroupMapper>, icu4x::DataError> create_with_provider(const icu4x::DataProvider& provider);
 

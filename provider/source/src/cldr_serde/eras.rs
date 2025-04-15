@@ -42,6 +42,9 @@ pub(crate) struct EraData {
     pub(crate) code: Option<String>,
     #[serde(rename = "_aliases")]
     pub(crate) aliases: Option<String>,
+    /// EraYear::era_index
+    #[serde(skip)]
+    pub(crate) icu4x_era_index: Option<u8>,
 }
 
 fn parse_era_start_date<'de, D: Deserializer<'de>>(

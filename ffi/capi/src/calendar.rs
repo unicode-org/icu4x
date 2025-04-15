@@ -10,10 +10,10 @@ pub mod ffi {
     use alloc::sync::Arc;
 
     #[cfg(feature = "buffer_provider")]
-    use crate::errors::ffi::DataError;
-    use crate::locale_core::ffi::Locale;
+    use crate::unstable::errors::ffi::DataError;
+    use crate::unstable::locale_core::ffi::Locale;
     #[cfg(feature = "buffer_provider")]
-    use crate::provider::ffi::DataProvider;
+    use crate::unstable::provider::ffi::DataProvider;
 
     /// The various calendar types currently supported by [`Calendar`]
     #[diplomat::enum_convert(icu_calendar::AnyCalendarKind, needs_wildcard)]
