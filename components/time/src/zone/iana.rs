@@ -20,7 +20,7 @@ use crate::{
 /// These lists grow very slowly; in a typical year, 2-3 new identifiers are added.
 ///
 /// This means that multiple IANA identifiers map to the same [`TimeZone`]. For example, the
-/// following three IANA identifiers all map to the same [`TimeZone`]:
+/// following four IANA identifiers all map to the same [`TimeZone`]:
 ///
 /// - `America/Fort_Wayne`
 /// - `America/Indiana/Indianapolis`

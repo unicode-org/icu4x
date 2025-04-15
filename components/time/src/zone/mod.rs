@@ -54,6 +54,11 @@
 //!
 //! Note: It is not required to set the zone variant on [`TimeZoneInfo`]. If it is not set, some string
 //! formats may be unsupported.
+//!
+//! # Obtaining time zone information
+//!
+//! This crate does not ship time zone offset information. Other Rust crates such as [`chrono_tz`](https://docs.rs/chrono-tz) or [`jiff`](https://docs.rs/jiff)
+//! are available for this purpose. See our [`example`](https://github.com/unicode-org/icu4x/blob/main/components/icu/examples/chrono_jiff.rs).
 
 pub mod iana;
 mod offset;
@@ -67,9 +72,9 @@ pub use offset::VariantOffsetsCalculator;
 pub use offset::VariantOffsetsCalculatorBorrowed;
 
 #[doc(no_inline)]
-pub use iana::IanaParser;
+pub use iana::{IanaParser, IanaParserBorrowed};
 #[doc(no_inline)]
-pub use windows::WindowsParser;
+pub use windows::{WindowsParser, WindowsParserBorrowed};
 
 use crate::{scaffold::IntoOption, Time};
 use core::fmt;
