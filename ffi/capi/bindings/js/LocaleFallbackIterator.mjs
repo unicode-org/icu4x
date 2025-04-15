@@ -45,7 +45,8 @@ export class LocaleFallbackIterator {
     get ffiValue() {
         return this.#ptr;
     }
-#iteratorNext() {
+
+    #iteratorNext() {
         const result = wasm.icu4x_LocaleFallbackIterator_next_mv1(this.ffiValue);
     
         try {

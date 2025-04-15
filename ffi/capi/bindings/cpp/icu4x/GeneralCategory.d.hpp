@@ -57,7 +57,7 @@ namespace capi {
 
 namespace icu4x {
 /**
- * See the [Rust documentation for `GeneralCategory`](https://docs.rs/icu/latest/icu/properties/props/struct.GeneralCategory.html) for more information.
+ * See the [Rust documentation for `GeneralCategory`](https://docs.rs/icu/latest/icu/properties/props/enum.GeneralCategory.html) for more information.
  */
 class GeneralCategory {
 public:
@@ -123,8 +123,6 @@ public:
 
   /**
    * Convert to an integer value usable with ICU4C and CodePointMapData
-   *
-   * See the [Rust documentation for `to_icu4c_value`](https://docs.rs/icu/latest/icu/properties/props/struct.GeneralCategory.html#method.to_icu4c_value) for more information.
    */
   inline uint8_t to_integer_value() const;
 
@@ -138,8 +136,6 @@ public:
   /**
    * Convert from an integer using the ICU4C integer mappings for `General_Category`
    * Convert from an integer value from ICU4C or CodePointMapData
-   *
-   * See the [Rust documentation for `from_icu4c_value`](https://docs.rs/icu/latest/icu/properties/props/struct.GeneralCategory.html#method.from_icu4c_value) for more information.
    */
   inline static std::optional<icu4x::GeneralCategory> from_integer_value(uint8_t other);
 

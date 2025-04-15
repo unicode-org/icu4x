@@ -112,7 +112,7 @@ export class SentenceSegmenter {
      */
     segment(input) {
         let functionGarbageCollectorGrip = new diplomatRuntime.GarbageCollectorGrip();
-        const inputSlice = functionGarbageCollectorGrip.alloc(diplomatRuntime.DiplomatBuf.str16(wasm, input));
+        const inputSlice = diplomatRuntime.DiplomatBuf.str16(wasm, input);
         
         // This lifetime edge depends on lifetimes 'a
         let aEdges = [this, inputSlice];

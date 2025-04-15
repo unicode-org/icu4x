@@ -30,7 +30,7 @@ final class LineBreakIteratorUtf16 implements ffi.Finalizable {
   /// Finds the next breakpoint. Returns -1 if at the end of the string or if the index is
   /// out of range of a 32-bit signed integer.
   ///
-  /// See the [Rust documentation for `next`](https://docs.rs/icu/latest/icu/segmenter/line/struct.LineBreakIterator.html#method.next) for more information.
+  /// See the [Rust documentation for `next`](https://docs.rs/icu/latest/icu/segmenter/line/type.LineBreakIteratorUtf16.html#method.next) for more information.
   int next() {
     final result = _icu4x_LineBreakIteratorUtf16_next_mv1(_ffi);
     return result;

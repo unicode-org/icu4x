@@ -52,6 +52,8 @@ export class DecimalFormatter {
      * See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/decimal/struct.DecimalFormatter.html#method.try_new) for more information.
      */
     static createWithGroupingStrategy(locale, groupingStrategy) {
+        let functionCleanupArena = new diplomatRuntime.CleanupArena();
+        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
         const result = wasm.icu4x_DecimalFormatter_create_with_grouping_strategy_mv1(diplomatReceive.buffer, locale.ffiValue, ...diplomatRuntime.optionToArgsForCalling(groupingStrategy, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]));
@@ -65,6 +67,8 @@ export class DecimalFormatter {
         }
         
         finally {
+            functionCleanupArena.free();
+        
             diplomatReceive.free();
         }
     }
@@ -75,6 +79,8 @@ export class DecimalFormatter {
      * See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/decimal/struct.DecimalFormatter.html#method.try_new) for more information.
      */
     static createWithGroupingStrategyAndProvider(provider, locale, groupingStrategy) {
+        let functionCleanupArena = new diplomatRuntime.CleanupArena();
+        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
         const result = wasm.icu4x_DecimalFormatter_create_with_grouping_strategy_and_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue, ...diplomatRuntime.optionToArgsForCalling(groupingStrategy, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]));
@@ -88,6 +94,8 @@ export class DecimalFormatter {
         }
         
         finally {
+            functionCleanupArena.free();
+        
             diplomatReceive.free();
         }
     }
@@ -100,19 +108,19 @@ export class DecimalFormatter {
     static createWithManualData(plusSignPrefix, plusSignSuffix, minusSignPrefix, minusSignSuffix, decimalSeparator, groupingSeparator, primaryGroupSize, secondaryGroupSize, minGroupSize, digits, groupingStrategy) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
-        const plusSignPrefixSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, plusSignPrefix));
+        const plusSignPrefixSlice = diplomatRuntime.DiplomatBuf.str8(wasm, plusSignPrefix);
         
-        const plusSignSuffixSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, plusSignSuffix));
+        const plusSignSuffixSlice = diplomatRuntime.DiplomatBuf.str8(wasm, plusSignSuffix);
         
-        const minusSignPrefixSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, minusSignPrefix));
+        const minusSignPrefixSlice = diplomatRuntime.DiplomatBuf.str8(wasm, minusSignPrefix);
         
-        const minusSignSuffixSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, minusSignSuffix));
+        const minusSignSuffixSlice = diplomatRuntime.DiplomatBuf.str8(wasm, minusSignSuffix);
         
-        const decimalSeparatorSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, decimalSeparator));
+        const decimalSeparatorSlice = diplomatRuntime.DiplomatBuf.str8(wasm, decimalSeparator);
         
-        const groupingSeparatorSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, groupingSeparator));
+        const groupingSeparatorSlice = diplomatRuntime.DiplomatBuf.str8(wasm, groupingSeparator);
         
-        const digitsSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.slice(wasm, digits, "u16"));
+        const digitsSlice = diplomatRuntime.DiplomatBuf.slice(wasm, digits, "u16");
         
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         

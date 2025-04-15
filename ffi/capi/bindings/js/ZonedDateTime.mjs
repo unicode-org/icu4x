@@ -127,7 +127,7 @@ export class ZonedDateTime {
     static fromString(v, calendar, ianaParser, offsetCalculator) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
-        const vSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, v));
+        const vSlice = diplomatRuntime.DiplomatBuf.str8(wasm, v);
         
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 13, 4, true);
         
@@ -156,7 +156,7 @@ export class ZonedDateTime {
     static locationOnlyFromString(v, calendar, ianaParser) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
-        const vSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, v));
+        const vSlice = diplomatRuntime.DiplomatBuf.str8(wasm, v);
         
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 13, 4, true);
         
@@ -185,7 +185,7 @@ export class ZonedDateTime {
     static offsetOnlyFromString(v, calendar) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
-        const vSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, v));
+        const vSlice = diplomatRuntime.DiplomatBuf.str8(wasm, v);
         
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 13, 4, true);
         
@@ -214,7 +214,7 @@ export class ZonedDateTime {
     static looseFromString(v, calendar, ianaParser) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
-        const vSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, v));
+        const vSlice = diplomatRuntime.DiplomatBuf.str8(wasm, v);
         
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 13, 4, true);
         

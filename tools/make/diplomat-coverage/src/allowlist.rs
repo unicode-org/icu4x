@@ -147,7 +147,6 @@ lazy_static::lazy_static! {
 
         // Not planned for 2.0: Calendar structs mostly for internal use but which might expose
         // useful information to clients.
-        "icu::calendar::types::MonthInfo",
         "icu::calendar::types::RataDie",
 
         // Not planned for 2.0: Temporal doesn't yet want this.
@@ -331,7 +330,6 @@ lazy_static::lazy_static! {
         // Reexported
         "icu::calendar::any_calendar::AnyCalendar",
         "icu::calendar::any_calendar::AnyCalendarKind",
-        "icu::datetime::options::Length",
         "icu::casemap::titlecase::TitlecaseMapper",
         "icu::casemap::titlecase::TitlecaseMapperBorrowed",
         "icu::time::zone::IanaParser",
@@ -390,6 +388,17 @@ lazy_static::lazy_static! {
         "icu::calendar::cal::Gregorian",
         "icu::calendar::cal::GregorianDateInner",
         "icu::calendar::any_calendar::AnyDateInner",
+
+        // Generic and UTF-8 segmenter types
+        "icu::segmenter::grapheme::GraphemeClusterBreakIterator",
+        "icu::segmenter::grapheme::GraphemeClusterBreakIteratorUtf8",
+        "icu::segmenter::line::LineBreakIterator",
+        "icu::segmenter::line::LineBreakIteratorUtf8",
+        "icu::segmenter::sentence::SentenceBreakIterator",
+        "icu::segmenter::sentence::SentenceBreakIteratorUtf8",
+        "icu::segmenter::word::WordBreakIterator",
+        "icu::segmenter::word::WordBreakIteratorUtf8",
+        "icu::segmenter::word::WordBreakIteratorWithWordType",
 
         // Options bags which are expanded in FFI to regular functions
         // TODO-2.0: investigate flattening on the rust side too

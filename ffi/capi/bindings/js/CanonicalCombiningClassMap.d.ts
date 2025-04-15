@@ -25,7 +25,7 @@ export class CanonicalCombiningClassMap {
     /** 
      * See the [Rust documentation for `get`](https://docs.rs/icu/latest/icu/normalizer/properties/struct.CanonicalCombiningClassMapBorrowed.html#method.get) for more information.
      *
-     * Additional information: [1](https://docs.rs/icu/latest/icu/properties/properties/struct.CanonicalCombiningClassMapBorrowed.html)
+     * Additional information: [1](https://docs.rs/icu/latest/icu/properties/props/struct.CanonicalCombiningClass.html)
      */
     get(ch: codepoint): number;
 

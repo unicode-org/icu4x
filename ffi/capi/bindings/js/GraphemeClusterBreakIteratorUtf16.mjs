@@ -47,7 +47,7 @@ export class GraphemeClusterBreakIteratorUtf16 {
      * Finds the next breakpoint. Returns -1 if at the end of the string or if the index is
      * out of range of a 32-bit signed integer.
      *
-     * See the [Rust documentation for `next`](https://docs.rs/icu/latest/icu/segmenter/grapheme/struct.GraphemeClusterBreakIterator.html#method.next) for more information.
+     * See the [Rust documentation for `next`](https://docs.rs/icu/latest/icu/segmenter/grapheme/type.GraphemeClusterBreakIteratorUtf16.html#method.next) for more information.
      */
     next() {
         const result = wasm.icu4x_GraphemeClusterBreakIteratorUtf16_next_mv1(this.ffiValue);

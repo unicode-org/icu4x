@@ -26,7 +26,7 @@ int main() {
     }
 
     decimal->multiply_pow10(2);
-    decimal->set_sign(FixedDecimalSign::Negative);
+    decimal->set_sign(DecimalSign::Negative);
     out = formatter->format(*decimal.get());
     std::cout << "Value x100 and negated is " << out << std::endl;
     if (out != "-১০,০০,০০,৭০০") {

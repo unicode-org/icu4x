@@ -56,7 +56,7 @@ public:
   /**
    * Creates a new [`IsoDate`] from an IXDTF string.
    *
-   * See the [Rust documentation for `try_iso_from_str`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.try_iso_from_str) for more information.
+   * See the [Rust documentation for `try_from_str`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.try_from_str) for more information.
    */
   inline static diplomat::result<std::unique_ptr<icu4x::IsoDate>, icu4x::CalendarParseError> from_string(std::string_view v);
 

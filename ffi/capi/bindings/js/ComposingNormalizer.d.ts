@@ -65,8 +65,6 @@ export class ComposingNormalizer {
      * Return the index a slice of potentially-invalid UTF-16 is normalized up to
      *
      * See the [Rust documentation for `split_normalized_utf16`](https://docs.rs/icu/latest/icu/normalizer/struct.ComposingNormalizerBorrowed.html#method.split_normalized_utf16) for more information.
-     *
-     * See the [Rust documentation for `is_normalized_utf16_up_to`](https://docs.rs/icu/latest/icu/normalizer/struct.ComposingNormalizerBorrowed.html#method.is_normalized_utf16_up_to) for more information.
      */
     isNormalizedUpTo(s: string): number;
 }

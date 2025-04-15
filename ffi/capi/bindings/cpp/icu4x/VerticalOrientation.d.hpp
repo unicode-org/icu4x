@@ -49,7 +49,7 @@ public:
   explicit operator bool() const = delete;
 
   /**
-   * See the [Rust documentation for `for_char`](https://docs.rs/icu/latest/icu/properties/props/trait.VerticalOrientation.html#tymethod.for_char) for more information.
+   * See the [Rust documentation for `for_char`](https://docs.rs/icu/latest/icu/properties/props/trait.EnumeratedProperty.html#tymethod.for_char) for more information.
    */
   inline static icu4x::VerticalOrientation for_char(char32_t ch);
 

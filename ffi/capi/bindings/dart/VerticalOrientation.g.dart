@@ -17,7 +17,7 @@ enum VerticalOrientation {
   /// See the [Rust documentation for `Upright`](https://docs.rs/icu/latest/icu/properties/props/enum.VerticalOrientaiton.html#variant.Upright) for more information.
   upright;
 
-  /// See the [Rust documentation for `for_char`](https://docs.rs/icu/latest/icu/properties/props/trait.VerticalOrientation.html#tymethod.for_char) for more information.
+  /// See the [Rust documentation for `for_char`](https://docs.rs/icu/latest/icu/properties/props/trait.EnumeratedProperty.html#tymethod.for_char) for more information.
   static VerticalOrientation forChar(Rune ch) {
     final result = _icu4x_VerticalOrientation_for_char_mv1(ch);
     return VerticalOrientation.values[result];

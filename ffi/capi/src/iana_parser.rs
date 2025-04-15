@@ -19,7 +19,6 @@ pub mod ffi {
     /// It also supports normalizing and canonicalizing the IANA strings.
     #[diplomat::opaque]
     #[diplomat::rust_link(icu::time::zone::iana::IanaParser, Struct)]
-    #[diplomat::rust_link(icu::time::zone::iana::IanaParser::as_borrowed, FnInStruct, hidden)]
     #[diplomat::rust_link(icu::time::zone::iana::IanaParserBorrowed, Struct, hidden)]
     #[diplomat::rust_link(icu::time::zone::iana::IanaParserBorrowed::new, FnInStruct, hidden)]
     pub struct IanaParser(pub icu_time::zone::iana::IanaParser);
@@ -79,11 +78,6 @@ pub mod ffi {
     /// It also supports normalizing and canonicalizing the IANA strings.
     #[diplomat::opaque]
     #[diplomat::rust_link(icu::time::zone::iana::IanaParserExtended, Struct)]
-    #[diplomat::rust_link(
-        icu::time::zone::iana::IanaParserExtended::as_borrowed,
-        FnInStruct,
-        hidden
-    )]
     #[diplomat::rust_link(icu::time::zone::iana::IanaParserExtendedBorrowed, Struct, hidden)]
     #[diplomat::rust_link(
         icu::time::zone::iana::IanaParserExtendedBorrowed::new,

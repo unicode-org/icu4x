@@ -3,9 +3,7 @@
 
 part of 'lib.g.dart';
 
-/// See the [Rust documentation for `LineBreakIterator`](https://docs.rs/icu/latest/icu/segmenter/line/struct.LineBreakIterator.html) for more information.
-///
-/// Additional information: [1](https://docs.rs/icu/latest/icu/segmenter/line/type.LineBreakIteratorPotentiallyIllFormedUtf8.html)
+/// See the [Rust documentation for `LineBreakIteratorPotentiallyIllFormedUtf8`](https://docs.rs/icu/latest/icu/segmenter/line/type.LineBreakIteratorPotentiallyIllFormedUtf8.html) for more information.
 final class LineBreakIteratorUtf8 implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _ffi;
 
@@ -30,7 +28,7 @@ final class LineBreakIteratorUtf8 implements ffi.Finalizable {
   /// Finds the next breakpoint. Returns -1 if at the end of the string or if the index is
   /// out of range of a 32-bit signed integer.
   ///
-  /// See the [Rust documentation for `next`](https://docs.rs/icu/latest/icu/segmenter/line/struct.LineBreakIterator.html#method.next) for more information.
+  /// See the [Rust documentation for `next`](https://docs.rs/icu/latest/icu/segmenter/line/type.LineBreakIteratorPotentiallyIllFormedUtf8.html#method.next) for more information.
   int next() {
     final result = _icu4x_LineBreakIteratorUtf8_next_mv1(_ffi);
     return result;

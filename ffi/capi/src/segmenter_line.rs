@@ -47,17 +47,9 @@ pub mod ffi {
     }
 
     #[diplomat::opaque]
-    #[diplomat::rust_link(icu::segmenter::line::LineBreakIterator, Struct)]
     #[diplomat::rust_link(
         icu::segmenter::line::LineBreakIteratorPotentiallyIllFormedUtf8,
-        Typedef,
-        compact
-    )]
-    #[diplomat::rust_link(icu::segmenter::line::LineBreakIteratorUtf8, Typedef, hidden)]
-    #[diplomat::rust_link(
-        icu::segmenter::line::LineBreakTypePotentiallyIllFormedUtf8,
-        Struct,
-        hidden
+        Typedef
     )]
     pub struct LineBreakIteratorUtf8<'a>(
         icu_segmenter::line::LineBreakIteratorPotentiallyIllFormedUtf8<'a, 'a>,
@@ -276,11 +268,9 @@ pub mod ffi {
     impl<'a> LineBreakIteratorUtf8<'a> {
         /// Finds the next breakpoint. Returns -1 if at the end of the string or if the index is
         /// out of range of a 32-bit signed integer.
-        #[diplomat::rust_link(icu::segmenter::line::LineBreakIterator::next, FnInStruct)]
         #[diplomat::rust_link(
-            icu::segmenter::line::LineBreakIterator::Item,
-            AssociatedTypeInStruct,
-            hidden
+            icu::segmenter::line::LineBreakIteratorPotentiallyIllFormedUtf8::next,
+            FnInTypedef
         )]
         pub fn next(&mut self) -> i32 {
             self.0
@@ -293,12 +283,7 @@ pub mod ffi {
     impl<'a> LineBreakIteratorUtf16<'a> {
         /// Finds the next breakpoint. Returns -1 if at the end of the string or if the index is
         /// out of range of a 32-bit signed integer.
-        #[diplomat::rust_link(icu::segmenter::line::LineBreakIterator::next, FnInStruct)]
-        #[diplomat::rust_link(
-            icu::segmenter::line::LineBreakIterator::Item,
-            AssociatedTypeInStruct,
-            hidden
-        )]
+        #[diplomat::rust_link(icu::segmenter::line::LineBreakIteratorUtf16::next, FnInTypedef)]
         pub fn next(&mut self) -> i32 {
             self.0
                 .next()
@@ -310,12 +295,7 @@ pub mod ffi {
     impl<'a> LineBreakIteratorLatin1<'a> {
         /// Finds the next breakpoint. Returns -1 if at the end of the string or if the index is
         /// out of range of a 32-bit signed integer.
-        #[diplomat::rust_link(icu::segmenter::line::LineBreakIterator::next, FnInStruct)]
-        #[diplomat::rust_link(
-            icu::segmenter::line::LineBreakIterator::Item,
-            AssociatedTypeInStruct,
-            hidden
-        )]
+        #[diplomat::rust_link(icu::segmenter::line::LineBreakIteratorLatin1::next, FnInTypedef)]
         pub fn next(&mut self) -> i32 {
             self.0
                 .next()

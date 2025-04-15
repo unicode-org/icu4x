@@ -80,9 +80,9 @@ export class Date {
     static fromCodesInCalendar(eraCode, year, monthCode, day, calendar) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
-        const eraCodeSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, eraCode));
+        const eraCodeSlice = diplomatRuntime.DiplomatBuf.str8(wasm, eraCode);
         
-        const monthCodeSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, monthCode));
+        const monthCodeSlice = diplomatRuntime.DiplomatBuf.str8(wasm, monthCode);
         
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
@@ -134,7 +134,7 @@ export class Date {
     static fromString(v, calendar) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
-        const vSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, v));
+        const vSlice = diplomatRuntime.DiplomatBuf.str8(wasm, v);
         
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         

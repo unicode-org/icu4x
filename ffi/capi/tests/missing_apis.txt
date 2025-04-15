@@ -14,5 +14,18 @@
 # Please check in with @Manishearth, @robertbastian, or @sffc if you have questions
 
 
+fixed_decimal::Decimal::new#FnInTypedef
+icu::datetime::NoCalendarFormatter::cast_into_fset#FnInTypedef
+icu::datetime::NoCalendarFormatter::format#FnInTypedef
+icu::datetime::NoCalendarFormatter::format_unchecked#FnInTypedef
+icu::datetime::NoCalendarFormatter::into_formatter#FnInTypedef
+icu::datetime::NoCalendarFormatter::to_field_set_builder#FnInTypedef
+icu::datetime::NoCalendarFormatter::try_new#FnInTypedef
 icu::datetime::UnsupportedCalendarError#Struct
 icu::datetime::options::SubsecondError#Enum
+icu_provider_adapters::fork::ForkByMarkerProvider::inner#FnInTypedef
+icu_provider_adapters::fork::ForkByMarkerProvider::inner_mut#FnInTypedef
+icu_provider_adapters::fork::ForkByMarkerProvider::into_inner#FnInTypedef
+icu_provider_adapters::fork::ForkByMarkerProvider::new#FnInTypedef
+icu_provider_adapters::fork::ForkByMarkerProvider::new_with_predicate#FnInTypedef
+icu_provider_adapters::fork::ForkByMarkerProvider::supported_markers#FnInTypedef

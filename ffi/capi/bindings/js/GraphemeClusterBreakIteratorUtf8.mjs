@@ -4,7 +4,7 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
 /** 
- * See the [Rust documentation for `GraphemeClusterBreakIterator`](https://docs.rs/icu/latest/icu/segmenter/grapheme/struct.GraphemeClusterBreakIterator.html) for more information.
+ * See the [Rust documentation for `GraphemeClusterBreakIteratorPotentiallyIllFormedUtf8`](https://docs.rs/icu/latest/icu/segmenter/grapheme/type.GraphemeClusterBreakIteratorPotentiallyIllFormedUtf8.html) for more information.
  */
 const GraphemeClusterBreakIteratorUtf8_box_destroy_registry = new FinalizationRegistry((ptr) => {
     wasm.icu4x_GraphemeClusterBreakIteratorUtf8_destroy_mv1(ptr);
@@ -47,7 +47,7 @@ export class GraphemeClusterBreakIteratorUtf8 {
      * Finds the next breakpoint. Returns -1 if at the end of the string or if the index is
      * out of range of a 32-bit signed integer.
      *
-     * See the [Rust documentation for `next`](https://docs.rs/icu/latest/icu/segmenter/grapheme/struct.GraphemeClusterBreakIterator.html#method.next) for more information.
+     * See the [Rust documentation for `next`](https://docs.rs/icu/latest/icu/segmenter/grapheme/type.GraphemeClusterBreakIteratorPotentiallyIllFormedUtf8.html#method.next) for more information.
      */
     next() {
         const result = wasm.icu4x_GraphemeClusterBreakIteratorUtf8_next_mv1(this.ffiValue);

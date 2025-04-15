@@ -29,6 +29,8 @@ public:
    * out of range of a 32-bit signed integer.
    *
    * See the [Rust documentation for `next`](https://docs.rs/icu/latest/icu/segmenter/sentence/struct.SentenceBreakIterator.html#method.next) for more information.
+   *
+   * See the [Rust documentation for `next`](https://docs.rs/icu/latest/icu/segmenter/sentence/type.SentenceBreakIteratorLatin1.html#method.next) for more information.
    */
   inline int32_t next();
 

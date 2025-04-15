@@ -20,13 +20,10 @@ pub mod ffi {
     pub struct SentenceSegmenter(icu_segmenter::SentenceSegmenter);
 
     #[diplomat::opaque]
-    #[diplomat::rust_link(icu::segmenter::sentence::SentenceBreakIterator, Struct)]
     #[diplomat::rust_link(
         icu::segmenter::sentence::SentenceBreakIteratorPotentiallyIllFormedUtf8,
-        Typedef,
-        hidden
+        Typedef
     )]
-    #[diplomat::rust_link(icu::segmenter::sentence::SentenceBreakIteratorUtf8, Typedef, hidden)]
     pub struct SentenceBreakIteratorUtf8<'a>(
         icu_segmenter::sentence::SentenceBreakIteratorPotentiallyIllFormedUtf8<'a, 'a>,
     );
@@ -145,11 +142,9 @@ pub mod ffi {
     impl<'a> SentenceBreakIteratorUtf8<'a> {
         /// Finds the next breakpoint. Returns -1 if at the end of the string or if the index is
         /// out of range of a 32-bit signed integer.
-        #[diplomat::rust_link(icu::segmenter::sentence::SentenceBreakIterator::next, FnInStruct)]
         #[diplomat::rust_link(
-            icu::segmenter::sentence::SentenceBreakIterator::Item,
-            AssociatedTypeInStruct,
-            hidden
+            icu::segmenter::sentence::SentenceBreakIteratorPotentiallyIllFormedUtf8::next,
+            FnInTypedef
         )]
         pub fn next(&mut self) -> i32 {
             self.0
@@ -162,11 +157,9 @@ pub mod ffi {
     impl<'a> SentenceBreakIteratorUtf16<'a> {
         /// Finds the next breakpoint. Returns -1 if at the end of the string or if the index is
         /// out of range of a 32-bit signed integer.
-        #[diplomat::rust_link(icu::segmenter::sentence::SentenceBreakIterator::next, FnInStruct)]
         #[diplomat::rust_link(
-            icu::segmenter::sentence::SentenceBreakIterator::Item,
-            AssociatedTypeInStruct,
-            hidden
+            icu::segmenter::sentence::SentenceBreakIteratorUtf16::next,
+            FnInTypedef
         )]
         pub fn next(&mut self) -> i32 {
             self.0
@@ -181,9 +174,8 @@ pub mod ffi {
         /// out of range of a 32-bit signed integer.
         #[diplomat::rust_link(icu::segmenter::sentence::SentenceBreakIterator::next, FnInStruct)]
         #[diplomat::rust_link(
-            icu::segmenter::sentence::SentenceBreakIterator::Item,
-            AssociatedTypeInStruct,
-            hidden
+            icu::segmenter::sentence::SentenceBreakIteratorLatin1::next,
+            FnInTypedef
         )]
         pub fn next(&mut self) -> i32 {
             self.0
