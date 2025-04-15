@@ -188,6 +188,10 @@ fn process_era_dates_map(
         };
     }
 
+    // https://unicode-org.atlassian.net/browse/CLDR-18465
+    let one = data.get_mut("coptic").unwrap().eras.remove("1").unwrap();
+    data.get_mut("coptic").unwrap().eras.insert("0".into(), one);
+
     data.get_mut("ethiopic")
         .unwrap()
         .eras
