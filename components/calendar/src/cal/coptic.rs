@@ -18,7 +18,7 @@
 
 use crate::cal::iso::{Iso, IsoDateInner};
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
-use crate::error::{year_check, DateError};
+use crate::error::DateError;
 use crate::{types, Calendar, Date, DateDuration, DateDurationUnit, RangeError};
 use calendrical_calculations::helpers::I32CastError;
 use calendrical_calculations::rata_die::RataDie;
@@ -35,8 +35,8 @@ use tinystr::tinystr;
 ///
 /// # Era codes
 ///
-/// This calendar uses two era codes: `bd`, and `am`, corresponding to the Before Diocletian and After Diocletian/Anno Martyrum
-/// eras. 1 A.M. is equivalent to 284 C.E.
+/// This calendar uses a single code: `am`, corresponding to the After Diocletian/Anno Martyrum
+/// era. 1 A.M. is equivalent to 284 C.E.
 ///
 /// # Month codes
 ///
@@ -103,8 +103,7 @@ impl Calendar for Coptic {
         day: u8,
     ) -> Result<Self::DateInner, DateError> {
         let year = match era {
-            Some("am") | None => year_check(year, 1..)?,
-            Some("bd") => 1 - year_check(year, 1..)?,
+            Some("am") | None => year,
             Some(_) => return Err(DateError::UnknownEra),
         };
 
@@ -163,20 +162,11 @@ impl Calendar for Coptic {
 
     fn year_info(&self, date: &Self::DateInner) -> Self::Year {
         let year = self.extended_year(date);
-        if year > 0 {
-            types::EraYear {
-                era: tinystr!(16, "am"),
-                era_index: Some(1),
-                year,
-                ambiguity: types::YearAmbiguity::CenturyRequired,
-            }
-        } else {
-            types::EraYear {
-                era: tinystr!(16, "bd"),
-                era_index: Some(0),
-                year: 1 - year,
-                ambiguity: types::YearAmbiguity::EraAndCenturyRequired,
-            }
+        types::EraYear {
+            era: tinystr!(16, "am"),
+            era_index: Some(0),
+            year,
+            ambiguity: types::YearAmbiguity::CenturyRequired,
         }
     }
 
@@ -211,8 +201,6 @@ impl Calendar for Coptic {
 
 impl Date<Coptic> {
     /// Construct new Coptic Date.
-    ///
-    /// Negative years are in the B.D. era, starting with 0 = 1 B.D.
     ///
     /// ```rust
     /// use icu::calendar::Date;

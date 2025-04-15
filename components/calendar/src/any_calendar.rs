@@ -1567,6 +1567,7 @@ mod tests {
     use super::*;
     use crate::Ref;
 
+    #[track_caller]
     fn single_test_roundtrip(
         calendar: Ref<AnyCalendar>,
         era: Option<&str>,
@@ -1604,6 +1605,7 @@ mod tests {
         )
     }
 
+    #[track_caller]
     fn single_test_error(
         calendar: Ref<AnyCalendar>,
         era: Option<&str>,
@@ -1674,8 +1676,7 @@ mod tests {
 
         single_test_roundtrip(coptic, Some("am"), 100, "M03", 1);
         single_test_roundtrip(coptic, None, 2000, "M03", 1);
-        // fails ISO roundtrip
-        // single_test_roundtrip(coptic, Some("bd"), 100, "M03", 1);
+        single_test_roundtrip(coptic, Some("am"), -99, "M03", 1);
         single_test_roundtrip(coptic, Some("am"), 100, "M13", 1);
         single_test_error(
             coptic,
@@ -1685,38 +1686,11 @@ mod tests {
             1,
             DateError::UnknownMonthCode(MonthCode(tinystr!(4, "M14"))),
         );
-        single_test_error(
-            coptic,
-            Some("am"),
-            0,
-            "M03",
-            1,
-            DateError::Range {
-                field: "year",
-                value: 0,
-                min: 1,
-                max: i32::MAX,
-            },
-        );
-        single_test_error(
-            coptic,
-            Some("bd"),
-            0,
-            "M03",
-            1,
-            DateError::Range {
-                field: "year",
-                value: 0,
-                min: 1,
-                max: i32::MAX,
-            },
-        );
 
         single_test_roundtrip(ethiopian, Some("am"), 100, "M03", 1);
         single_test_roundtrip(ethiopian, None, 2000, "M03", 1);
         single_test_roundtrip(ethiopian, Some("am"), 2000, "M13", 1);
-        // Fails ISO roundtrip due to https://github.com/unicode-org/icu4x/issues/2254
-        // single_test_roundtrip(ethiopian, Some("aa"), 5400, "M03", 1);
+        single_test_roundtrip(ethiopian, Some("aa"), 5400, "M03", 1);
         single_test_error(
             ethiopian,
             Some("am"),
@@ -1754,8 +1728,7 @@ mod tests {
 
         single_test_roundtrip(ethioaa, Some("aa"), 7000, "M13", 1);
         single_test_roundtrip(ethioaa, None, 7000, "M13", 1);
-        // Fails ISO roundtrip due to https://github.com/unicode-org/icu4x/issues/2254
-        // single_test_roundtrip(ethioaa, Some("aa"), 100, "M03", 1);
+        single_test_roundtrip(ethioaa, Some("aa"), 100, "M03", 1);
         single_test_error(
             ethiopian,
             Some("aa"),
