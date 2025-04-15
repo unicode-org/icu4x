@@ -558,8 +558,14 @@ mod test {
 
     #[test]
     fn check_epochs() {
-        assert_eq!(YearBounds::compute::<Dangi>(Dangi::EPOCH).new_year, Dangi::EPOCH);
-        assert_eq!(YearBounds::compute::<Chinese>(Chinese::EPOCH).new_year, Chinese::EPOCH);
+        assert_eq!(
+            YearBounds::compute::<Dangi>(Dangi::EPOCH).new_year,
+            Dangi::EPOCH
+        );
+        assert_eq!(
+            YearBounds::compute::<Chinese>(Chinese::EPOCH).new_year,
+            Chinese::EPOCH
+        );
     }
 
     #[test]
