@@ -52,7 +52,7 @@ impl RataDie {
     }
 
     /// A valid `RataDie` that is intended to be below all dates representable in calendars
-    #[doc(hidden)]
+    #[doc(hidden)] // for testing only
     pub const fn big_negative() -> Self {
         Self::new(i64::MIN / 256 / 256)
     }
@@ -67,14 +67,25 @@ impl RataDie {
         self.0 as f64
     }
 
+    /// Subtracts a number of days from this `RataDie` in a const-friendly way
+    pub const fn sub(self, rhs: i64) -> RataDie {
+        let result = Self(self.0 - rhs);
+        #[cfg(debug_assertions)]
+        result.check();
+        result
+    }
+
     /// Calculate the number of days between two `RataDie` in a const-friendly way
-    pub const fn const_diff(self, rhs: Self) -> i64 {
+    pub const fn diff(self, rhs: Self) -> i64 {
         self.0 - rhs.0
     }
 
     /// Adds a number of days to this `RataDie` in a const-friendly way
-    pub const fn const_add(self, rhs: i64) -> Self {
-        Self(self.0 + rhs)
+    pub const fn add(self, rhs: i64) -> Self {
+        let result = Self(self.0 + rhs);
+        #[cfg(debug_assertions)]
+        result.check();
+        result
     }
 
     /// Convert this to a [`Moment`]
@@ -98,18 +109,13 @@ impl fmt::Debug for RataDie {
 impl Add<i64> for RataDie {
     type Output = Self;
     fn add(self, rhs: i64) -> Self::Output {
-        let result = Self(self.0 + rhs);
-        #[cfg(debug_assertions)]
-        result.check();
-        result
+        self.add(rhs)
     }
 }
 
 impl AddAssign<i64> for RataDie {
     fn add_assign(&mut self, rhs: i64) {
         self.0 += rhs;
-        #[cfg(debug_assertions)]
-        self.check();
     }
 }
 
@@ -117,18 +123,13 @@ impl AddAssign<i64> for RataDie {
 impl Sub<i64> for RataDie {
     type Output = Self;
     fn sub(self, rhs: i64) -> Self::Output {
-        let result = Self(self.0 - rhs);
-        #[cfg(debug_assertions)]
-        result.check();
-        result
+        self.sub(rhs)
     }
 }
 
 impl SubAssign<i64> for RataDie {
     fn sub_assign(&mut self, rhs: i64) {
         self.0 -= rhs;
-        #[cfg(debug_assertions)]
-        self.check();
     }
 }
 
@@ -136,7 +137,7 @@ impl SubAssign<i64> for RataDie {
 impl Sub for RataDie {
     type Output = i64;
     fn sub(self, rhs: Self) -> Self::Output {
-        self.0 - rhs.0
+        self.diff(rhs)
     }
 }
 
