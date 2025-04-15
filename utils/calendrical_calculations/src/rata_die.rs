@@ -69,16 +69,8 @@ impl RataDie {
         self.0 as f64
     }
 
-    /// Subtracts a number of days from this `RataDie` in a const-friendly way
-    pub const fn sub(self, rhs: i64) -> RataDie {
-        let result = Self(self.0 - rhs);
-        #[cfg(debug_assertions)]
-        result.check();
-        result
-    }
-
     /// Calculate the number of days between two `RataDie` in a const-friendly way
-    pub const fn diff(self, rhs: Self) -> i64 {
+    pub const fn until(self, rhs: Self) -> i64 {
         self.0 - rhs.0
     }
 
@@ -139,7 +131,7 @@ impl SubAssign<i64> for RataDie {
 impl Sub for RataDie {
     type Output = i64;
     fn sub(self, rhs: Self) -> Self::Output {
-        self.diff(rhs)
+        self.until(rhs)
     }
 }
 
