@@ -30,9 +30,9 @@ extern crate alloc;
 pub mod provider;
 pub mod scaffold;
 
-#[cfg(feature = "rfc_9557")]
+#[cfg(feature = "ixdtf")]
 mod ixdtf;
-#[cfg(feature = "rfc_9557")]
+#[cfg(feature = "ixdtf")]
 pub use ixdtf::ParseError;
 
 pub mod zone;

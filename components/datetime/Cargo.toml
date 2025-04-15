@@ -48,10 +48,10 @@ litemap = { workspace = true, optional = true }
 [dev-dependencies]
 icu = { path = "../../components/icu", default-features = false }
 icu_benchmark_macros = { path = "../../tools/benchmark/macros" }
-icu_calendar = { path = "../calendar", features = ["rfc_9557"] }
+icu_calendar = { path = "../calendar", features = ["ixdtf"] }
 icu_provider_adapters = { path = "../../provider/adapters" }
 icu_provider_blob = { path = "../../provider/blob", features = ["alloc"] }
-icu_time = { path = "../time", features = ["rfc_9557", "alloc"] }
+icu_time = { path = "../time", features = ["ixdtf", "alloc"] }
 litemap = { path = "../../utils/litemap" }
 
 serde = { workspace = true, features = ["derive"] }
@@ -63,7 +63,7 @@ bincode = { workspace = true }
 criterion = { workspace = true }
 
 [features]
-default = ["compiled_data", "rfc_9557"]
+default = ["compiled_data", "ixdtf"]
 serde = [
     "dep:serde",
     "icu_calendar/serde",
@@ -92,7 +92,7 @@ datagen = [
 logging = ["icu_calendar/logging"]
 experimental = ["dep:litemap"]
 compiled_data = ["dep:icu_datetime_data", "icu_calendar/compiled_data", "icu_decimal/compiled_data", "icu_plurals/compiled_data", "icu_time/compiled_data", "dep:icu_locale", "icu_locale?/compiled_data", "icu_provider/baked"]
-rfc_9557 = ["icu_time/rfc_9557", "icu_calendar/rfc_9557"]
+ixdtf = ["icu_time/ixdtf", "icu_calendar/ixdtf"]
 
 [lib]
 bench = false  # This option is required for Benchmark CI

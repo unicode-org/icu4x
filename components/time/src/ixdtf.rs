@@ -663,7 +663,7 @@ impl<A: AsCalendar> DateTime<A> {
     /// Returns an error if the string has a calendar annotation that does not
     /// match the calendar argument, unless the argument is [`Iso`].
     ///
-    /// ✨ *Enabled with the `rfc_9557` Cargo feature.*
+    /// ✨ *Enabled with the `ixdtf` Cargo feature.*
     ///
     /// # Examples
     ///
@@ -695,7 +695,7 @@ impl<A: AsCalendar> DateTime<A> {
     ///
     /// See [`Self::try_from_str()`].
     ///
-    /// ✨ *Enabled with the `rfc_9557` Cargo feature.*
+    /// ✨ *Enabled with the `ixdtf` Cargo feature.*
     pub fn try_from_utf8(rfc_9557_str: &[u8], calendar: A) -> Result<Self, ParseError> {
         let ixdtf_record = IxdtfParser::from_utf8(rfc_9557_str).parse()?;
         let date = Date::try_from_ixdtf_record(&ixdtf_record, calendar)?;
@@ -709,7 +709,7 @@ impl Time {
     ///
     /// Does not support parsing an RFC 9557 string with a date and time; for that, use [`DateTime`].
     ///
-    /// ✨ *Enabled with the `rfc_9557` Cargo feature.*
+    /// ✨ *Enabled with the `ixdtf` Cargo feature.*
     ///
     /// # Examples
     ///
@@ -729,7 +729,7 @@ impl Time {
 
     /// Creates a [`Time`] in the ISO-8601 calendar from an RFC 9557 string.
     ///
-    /// ✨ *Enabled with the `rfc_9557` Cargo feature.*
+    /// ✨ *Enabled with the `ixdtf` Cargo feature.*
     ///
     /// See [`Self::try_from_str()`].
     pub fn try_from_utf8(rfc_9557_str: &[u8]) -> Result<Self, ParseError> {

@@ -106,7 +106,7 @@ mod calendar;
 mod calendar_arithmetic;
 mod duration;
 mod error;
-#[cfg(feature = "rfc_9557")]
+#[cfg(feature = "ixdtf")]
 mod ixdtf;
 
 // Top-level types
@@ -116,7 +116,7 @@ pub use date::{AsCalendar, Date, Ref};
 #[doc(hidden)] // unstable
 pub use duration::{DateDuration, DateDurationUnit};
 pub use error::{DateError, RangeError};
-#[cfg(feature = "rfc_9557")]
+#[cfg(feature = "ixdtf")]
 pub use ixdtf::ParseError;
 
 // Reexports

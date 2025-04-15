@@ -40,8 +40,8 @@ icu_time_data = { workspace = true, optional = true }
 icu = { path = "../../components/icu", default-features = false }
 
 [features]
-default = ["compiled_data", "rfc_9557"]
-rfc_9557 = ["dep:ixdtf", "icu_calendar/rfc_9557"]
+default = ["compiled_data", "ixdtf"]
+ixdtf = ["dep:ixdtf", "icu_calendar/ixdtf"]
 serde = ["dep:serde", "zerovec/serde", "zerotrie/serde", "tinystr/serde", "icu_provider/serde", "icu_locale_core/serde"]
 datagen = ["serde", "dep:databake", "zerovec/databake", "zerotrie/databake", "tinystr/databake", "icu_provider/export", "icu_locale_core/databake"]
 compiled_data = ["dep:icu_time_data", "icu_calendar/compiled_data", "icu_provider/baked"]
