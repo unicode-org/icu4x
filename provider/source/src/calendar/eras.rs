@@ -150,7 +150,7 @@ impl SourceDataProvider {
 fn process_era_dates_map(
     mut data: BTreeMap<String, cldr_serde::eras::CalendarData>,
 ) -> BTreeMap<String, cldr_serde::eras::CalendarData> {
-    // https://github.com/unicode-org/cldr/pull/4519
+    // https://github.com/unicode-org/cldr/pull/4519 - New era codes
     for cal in data.values_mut() {
         for era in cal.eras.values_mut() {
             if let Some(code) = era.code.as_deref() {
@@ -177,152 +177,161 @@ fn process_era_dates_map(
         }
     }
 
-    fn replace_julian_by_iso(d: &mut EraStartDate) {
-        let date = Date::try_new_julian(d.year, d.month, d.day)
-            .unwrap()
-            .to_iso();
-        *d = EraStartDate {
-            year: date.extended_year(),
-            month: date.month().ordinal,
-            day: date.day_of_month().0,
-        };
-    }
-
-    // https://unicode-org.atlassian.net/browse/CLDR-18465
+    // https://unicode-org.atlassian.net/browse/CLDR-18465 - Remove BD era
     data.get_mut("coptic").unwrap().eras.remove("0");
 
-    data.get_mut("ethiopic")
-        .unwrap()
-        .eras
-        .get_mut("0")
-        .unwrap()
-        .end = None;
+    // https://github.com/unicode-org/cldr/pull/4568 - Fix era start dates
+    {
+        fn replace_julian_by_iso(d: &mut EraStartDate) {
+            let date = Date::try_new_julian(d.year, d.month, d.day)
+                .unwrap()
+                .to_iso();
+            *d = EraStartDate {
+                year: date.extended_year(),
+                month: date.month().ordinal,
+                day: date.day_of_month().0,
+            };
+        }
 
-    data.get_mut("ethiopic")
-        .unwrap()
-        .eras
-        .get_mut("0")
-        .unwrap()
-        .start = Some(EraStartDate {
-        year: -5492,
-        month: 7,
-        day: 17,
-    });
+        data.get_mut("ethiopic-amete-alem")
+            .unwrap()
+            .eras
+            .get_mut("0")
+            .unwrap()
+            .end
+            .as_mut()
+            .into_iter()
+            .for_each(replace_julian_by_iso);
 
-    data.get_mut("ethiopic")
-        .unwrap()
-        .eras
-        .get_mut("1")
-        .unwrap()
-        .start
-        .as_mut()
-        .into_iter()
-        .for_each(replace_julian_by_iso);
+        data.get_mut("ethiopic-amete-alem")
+            .unwrap()
+            .eras
+            .get_mut("0")
+            .unwrap()
+            .start = core::mem::take(
+            &mut data
+                .get_mut("ethiopic-amete-alem")
+                .unwrap()
+                .eras
+                .get_mut("0")
+                .unwrap()
+                .end,
+        );
 
-    let ethiopic_0 = data["ethiopic"].eras["0"].clone();
-    data.get_mut("ethiopic-amete-alem")
-        .unwrap()
-        .eras
-        .insert("0".into(), ethiopic_0);
+        data.get_mut("ethiopic")
+            .unwrap()
+            .eras
+            .get_mut("1")
+            .unwrap()
+            .start
+            .as_mut()
+            .into_iter()
+            .for_each(replace_julian_by_iso);
 
-    data.get_mut("chinese")
-        .unwrap()
-        .eras
-        .get_mut("0")
-        .unwrap()
-        .start = Some(EraStartDate {
-        year: -2636,
-        month: 1,
-        day: 1,
-    });
+        *data.get_mut("ethiopic").unwrap().eras.get_mut("0").unwrap() = data
+            .get_mut("ethiopic-amete-alem")
+            .unwrap()
+            .eras
+            .get_mut("0")
+            .unwrap()
+            .clone();
 
-    data.get_mut("dangi")
-        .unwrap()
-        .eras
-        .get_mut("0")
-        .unwrap()
-        .start = Some(EraStartDate {
-        year: -2331,
-        month: 1,
-        day: 1,
-    });
+        data.get_mut("chinese")
+            .unwrap()
+            .eras
+            .get_mut("0")
+            .unwrap()
+            .start = Some(EraStartDate {
+            year: -2636,
+            month: 2,
+            day: 15,
+        });
 
-    data.get_mut("hebrew")
-        .unwrap()
-        .eras
-        .get_mut("0")
-        .unwrap()
-        .start = Some(EraStartDate {
-        year: -3760,
-        month: 9,
-        day: 7,
-    });
+        data.get_mut("dangi")
+            .unwrap()
+            .eras
+            .get_mut("0")
+            .unwrap()
+            .start = Some(EraStartDate {
+            year: -2332,
+            month: 2,
+            day: 15,
+        });
 
-    data.get_mut("islamic-civil")
-        .unwrap()
-        .eras
-        .get_mut("0")
-        .unwrap()
-        .start
-        .as_mut()
-        .into_iter()
-        .for_each(replace_julian_by_iso);
+        data.get_mut("hebrew")
+            .unwrap()
+            .eras
+            .get_mut("0")
+            .unwrap()
+            .start
+            .as_mut()
+            .into_iter()
+            .for_each(replace_julian_by_iso);
 
-    data.get_mut("islamic-rgsa")
-        .unwrap()
-        .eras
-        .get_mut("0")
-        .unwrap()
-        .start = Some(EraStartDate {
-        year: 622,
-        month: 7,
-        day: 19,
-    });
+        data.get_mut("islamic-civil")
+            .unwrap()
+            .eras
+            .get_mut("0")
+            .unwrap()
+            .start
+            .as_mut()
+            .into_iter()
+            .for_each(replace_julian_by_iso);
 
-    data.get_mut("islamic-tbla")
-        .unwrap()
-        .eras
-        .get_mut("0")
-        .unwrap()
-        .start
-        .as_mut()
-        .into_iter()
-        .for_each(replace_julian_by_iso);
+        data.get_mut("islamic-tbla")
+            .unwrap()
+            .eras
+            .get_mut("0")
+            .unwrap()
+            .start
+            .as_mut()
+            .into_iter()
+            .for_each(replace_julian_by_iso);
 
-    data.get_mut("islamic-umalqura")
-        .unwrap()
-        .eras
-        .get_mut("0")
-        .unwrap()
-        .start = data
-        .get_mut("islamic-civil")
-        .unwrap()
-        .eras
-        .get_mut("0")
-        .unwrap()
-        .start;
+        let islamic_civil = data
+            .get_mut("islamic-civil")
+            .unwrap()
+            .eras
+            .get_mut("0")
+            .unwrap()
+            .clone();
 
-    data.get_mut("persian")
-        .unwrap()
-        .eras
-        .get_mut("0")
-        .unwrap()
-        .start = Some(EraStartDate {
-        year: 622,
-        month: 3,
-        day: 21,
-    });
+        *data
+            .get_mut("islamic-rgsa")
+            .unwrap()
+            .eras
+            .get_mut("0")
+            .unwrap() = islamic_civil.clone();
 
-    data.get_mut("indian")
-        .unwrap()
-        .eras
-        .get_mut("0")
-        .unwrap()
-        .start = Some(EraStartDate {
-        year: 79,
-        month: 3,
-        day: 22,
-    });
+        *data
+            .get_mut("islamic-umalqura")
+            .unwrap()
+            .eras
+            .get_mut("0")
+            .unwrap() = islamic_civil.clone();
+
+        data.get_mut("persian")
+            .unwrap()
+            .eras
+            .get_mut("0")
+            .unwrap()
+            .start = Some(EraStartDate {
+            year: 622,
+            month: 3,
+            day: 21,
+        });
+
+        data.get_mut("indian")
+            .unwrap()
+            .eras
+            .get_mut("0")
+            .unwrap()
+            .start = Some(EraStartDate {
+            year: 79,
+            month: 3,
+            day: 22,
+        });
+    }
 
     data.get_mut("japanese").unwrap().eras =
         core::mem::take(&mut data.get_mut("japanese").unwrap().eras)
@@ -340,6 +349,7 @@ fn process_era_dates_map(
                             28
                         };
                     }
+                    // https://github.com/unicode-org/cldr/pull/4610 - Fix Meiji start date
                     if era.code.as_deref() == Some("meiji") {
                         start.month = 10;
                         start.day = 23;
@@ -544,7 +554,6 @@ fn test_calendar_eras() {
     for (calendar, data) in era_dates_map {
         let kind = match calendar.as_str() {
             "generic" | "islamic" => continue,
-            "chinese" | "dangi" => continue, // no eras
             "ethiopic-amete-alem" => AnyCalendarKind::EthiopianAmeteAlem,
             "gregorian" => AnyCalendarKind::Gregorian,
             "japanese" => AnyCalendarKind::JapaneseExtended,
@@ -553,6 +562,7 @@ fn test_calendar_eras() {
                 .try_into()
                 .expect(&calendar),
         };
+        println!("{calendar:?}");
 
         let cal = AnyCalendar::try_new_unstable(&provider, kind).unwrap();
         let cal = icu::calendar::Ref(&cal);
@@ -594,21 +604,28 @@ fn test_calendar_eras() {
             //     );
             // }
 
-            let era_year = in_era.year().era().unwrap();
+            match in_era.year() {
+                icu::calendar::types::YearInfo::Era(era_year) => {
+                    // Unless this is the first era and it's not an inverse era, check that the
+                    // not_in_era date is in a different era
+                    if idx != 0 || era.end.is_some() {
+                        assert_ne!(not_in_era.year().era().unwrap().era, era_year.era);
+                    }
 
-            // Unless this is the first era and it's not an inverse era, check that the
-            // not_in_era date is in a different era
-            if idx != 0 || era.end.is_some() {
-                assert_ne!(not_in_era.year().era().unwrap().era, era_year.era);
+                    // Check that the correct era code is returned
+                    if let Some(code) = era.code.as_deref() {
+                        assert_eq!(era_year.era, code);
+                    }
+
+                    // Check that the start/end date uses year 1, and minimal/maximal month/day
+                    assert_eq!(era_year.year, 1);
+                }
+                icu::calendar::types::YearInfo::Cyclic(_) => {
+                    assert_eq!(in_era.extended_year(), 1);
+                }
+                _ => unreachable!(),
             }
 
-            // Check that the correct era code is returned
-            if let Some(code) = era.code.as_deref() {
-                assert_eq!(era_year.era, code);
-            }
-
-            // Check that the start/end date uses year 1, and minimal/maximal month/day
-            assert_eq!(era_year.year, 1);
             if calendar == "japanese" {
                 // Japanese is the only calendar that doesn't have its own months
             } else if era.start.is_some() {
