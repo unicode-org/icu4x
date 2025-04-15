@@ -3,7 +3,7 @@
 
 part of 'lib.g.dart';
 
-/// See the [Rust documentation for `GeneralCategory`](https://docs.rs/icu/latest/icu/properties/props/struct.GeneralCategory.html) for more information.
+/// See the [Rust documentation for `GeneralCategory`](https://docs.rs/icu/latest/icu/properties/props/enum.GeneralCategory.html) for more information.
 enum GeneralCategory {
   /// See the [Rust documentation for `Unassigned`](https://docs.rs/icu/latest/icu/properties/props/enum.GeneralCategory.html#variant.Unassigned) for more information.
   unassigned,
@@ -190,8 +190,6 @@ enum GeneralCategory {
   }
 
   /// Convert to an integer value usable with ICU4C and CodePointMapData
-  ///
-  /// See the [Rust documentation for `to_icu4c_value`](https://docs.rs/icu/latest/icu/properties/props/struct.GeneralCategory.html#method.to_icu4c_value) for more information.
   int toIntegerValue() {
     final result = _icu4x_GeneralCategory_to_integer_value_mv1(_ffi);
     return result;
@@ -207,8 +205,6 @@ enum GeneralCategory {
 
   /// Convert from an integer using the ICU4C integer mappings for `General_Category`
   /// Convert from an integer value from ICU4C or CodePointMapData
-  ///
-  /// See the [Rust documentation for `from_icu4c_value`](https://docs.rs/icu/latest/icu/properties/props/struct.GeneralCategory.html#method.from_icu4c_value) for more information.
   static GeneralCategory? fromIntegerValue(int other) {
     final result = _icu4x_GeneralCategory_from_integer_value_mv1(other);
     if (!result.isOk) {

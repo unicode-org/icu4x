@@ -19,11 +19,6 @@ pub mod ffi {
     /// It also supports normalizing and canonicalizing the Windows strings.
     #[diplomat::opaque]
     #[diplomat::rust_link(icu::time::zone::windows::WindowsParser, Struct)]
-    #[diplomat::rust_link(
-        icu::time::zone::windows::WindowsParser::as_borrowed,
-        FnInStruct,
-        hidden
-    )]
     #[diplomat::rust_link(icu::time::zone::windows::WindowsParserBorrowed, Struct, hidden)]
     #[diplomat::rust_link(
         icu::time::zone::windows::WindowsParserBorrowed::new,

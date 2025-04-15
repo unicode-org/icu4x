@@ -22,7 +22,7 @@ pub mod ffi {
     #[diplomat::opaque]
     /// An ICU4X Decimal Format object, capable of formatting a [`Decimal`] as a string.
     #[diplomat::rust_link(icu::decimal::DecimalFormatter, Struct)]
-    #[diplomat::rust_link(icu::datetime::FormattedDecimal, Struct, hidden)]
+    #[diplomat::rust_link(icu::decimal::FormattedDecimal, Struct, hidden)]
     pub struct DecimalFormatter(pub icu_decimal::DecimalFormatter);
 
     #[diplomat::rust_link(icu::decimal::options::GroupingStrategy, Enum)]
@@ -192,7 +192,6 @@ pub mod ffi {
         #[diplomat::rust_link(icu::decimal::DecimalFormatter::format, FnInStruct)]
         #[diplomat::rust_link(icu::decimal::DecimalFormatter::format_to_string, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::decimal::FormattedDecimal, Struct, hidden)]
-        #[diplomat::rust_link(icu::decimal::FormattedDecimal::write_to, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::decimal::FormattedDecimal::to_string, FnInStruct, hidden)]
         pub fn format(&self, value: &Decimal, write: &mut diplomat_runtime::DiplomatWrite) {
             let _infallible = self.0.format(&value.0).write_to(write);

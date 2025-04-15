@@ -52,6 +52,8 @@ export class ZonedTimeFormatter {
      * See the [Rust documentation for `SpecificLong`](https://docs.rs/icu/latest/icu/datetime/fieldsets/zone/struct.SpecificLong.html) for more information.
      */
     static createSpecificLong(locale, length, timePrecision, alignment) {
+        let functionCleanupArena = new diplomatRuntime.CleanupArena();
+        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
         const result = wasm.icu4x_ZonedTimeFormatter_create_specific_long_mv1(diplomatReceive.buffer, locale.ffiValue, ...diplomatRuntime.optionToArgsForCalling(length, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]), ...diplomatRuntime.optionToArgsForCalling(timePrecision, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]), ...diplomatRuntime.optionToArgsForCalling(alignment, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]));
@@ -65,6 +67,8 @@ export class ZonedTimeFormatter {
         }
         
         finally {
+            functionCleanupArena.free();
+        
             diplomatReceive.free();
         }
     }
@@ -73,6 +77,8 @@ export class ZonedTimeFormatter {
      * See the [Rust documentation for `SpecificLong`](https://docs.rs/icu/latest/icu/datetime/fieldsets/zone/struct.SpecificLong.html) for more information.
      */
     static createSpecificLongWithProvider(provider, locale, length, timePrecision, alignment) {
+        let functionCleanupArena = new diplomatRuntime.CleanupArena();
+        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
         const result = wasm.icu4x_ZonedTimeFormatter_create_specific_long_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue, ...diplomatRuntime.optionToArgsForCalling(length, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]), ...diplomatRuntime.optionToArgsForCalling(timePrecision, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]), ...diplomatRuntime.optionToArgsForCalling(alignment, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]));
@@ -86,6 +92,8 @@ export class ZonedTimeFormatter {
         }
         
         finally {
+            functionCleanupArena.free();
+        
             diplomatReceive.free();
         }
     }
@@ -94,6 +102,8 @@ export class ZonedTimeFormatter {
      * See the [Rust documentation for `SpecificShort`](https://docs.rs/icu/latest/icu/datetime/fieldsets/zone/struct.SpecificShort.html) for more information.
      */
     static createSpecificShort(locale, length, timePrecision, alignment) {
+        let functionCleanupArena = new diplomatRuntime.CleanupArena();
+        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
         const result = wasm.icu4x_ZonedTimeFormatter_create_specific_short_mv1(diplomatReceive.buffer, locale.ffiValue, ...diplomatRuntime.optionToArgsForCalling(length, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]), ...diplomatRuntime.optionToArgsForCalling(timePrecision, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]), ...diplomatRuntime.optionToArgsForCalling(alignment, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]));
@@ -107,6 +117,8 @@ export class ZonedTimeFormatter {
         }
         
         finally {
+            functionCleanupArena.free();
+        
             diplomatReceive.free();
         }
     }
@@ -115,6 +127,8 @@ export class ZonedTimeFormatter {
      * See the [Rust documentation for `SpecificShort`](https://docs.rs/icu/latest/icu/datetime/fieldsets/zone/struct.SpecificShort.html) for more information.
      */
     static createSpecificShortWithProvider(provider, locale, length, timePrecision, alignment) {
+        let functionCleanupArena = new diplomatRuntime.CleanupArena();
+        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
         const result = wasm.icu4x_ZonedTimeFormatter_create_specific_short_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue, ...diplomatRuntime.optionToArgsForCalling(length, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]), ...diplomatRuntime.optionToArgsForCalling(timePrecision, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]), ...diplomatRuntime.optionToArgsForCalling(alignment, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]));
@@ -128,6 +142,8 @@ export class ZonedTimeFormatter {
         }
         
         finally {
+            functionCleanupArena.free();
+        
             diplomatReceive.free();
         }
     }
@@ -136,6 +152,8 @@ export class ZonedTimeFormatter {
      * See the [Rust documentation for `LocalizedOffsetLong`](https://docs.rs/icu/latest/icu/datetime/fieldsets/zone/struct.LocalizedOffsetLong.html) for more information.
      */
     static createLocalizedOffsetLong(locale, length, timePrecision, alignment) {
+        let functionCleanupArena = new diplomatRuntime.CleanupArena();
+        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
         const result = wasm.icu4x_ZonedTimeFormatter_create_localized_offset_long_mv1(diplomatReceive.buffer, locale.ffiValue, ...diplomatRuntime.optionToArgsForCalling(length, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]), ...diplomatRuntime.optionToArgsForCalling(timePrecision, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]), ...diplomatRuntime.optionToArgsForCalling(alignment, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]));
@@ -149,6 +167,8 @@ export class ZonedTimeFormatter {
         }
         
         finally {
+            functionCleanupArena.free();
+        
             diplomatReceive.free();
         }
     }
@@ -157,6 +177,8 @@ export class ZonedTimeFormatter {
      * See the [Rust documentation for `LocalizedOffsetLong`](https://docs.rs/icu/latest/icu/datetime/fieldsets/zone/struct.LocalizedOffsetLong.html) for more information.
      */
     static createLocalizedOffsetLongWithProvider(provider, locale, length, timePrecision, alignment) {
+        let functionCleanupArena = new diplomatRuntime.CleanupArena();
+        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
         const result = wasm.icu4x_ZonedTimeFormatter_create_localized_offset_long_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue, ...diplomatRuntime.optionToArgsForCalling(length, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]), ...diplomatRuntime.optionToArgsForCalling(timePrecision, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]), ...diplomatRuntime.optionToArgsForCalling(alignment, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]));
@@ -170,6 +192,8 @@ export class ZonedTimeFormatter {
         }
         
         finally {
+            functionCleanupArena.free();
+        
             diplomatReceive.free();
         }
     }
@@ -178,6 +202,8 @@ export class ZonedTimeFormatter {
      * See the [Rust documentation for `LocalizedOffsetShort`](https://docs.rs/icu/latest/icu/datetime/fieldsets/zone/struct.LocalizedOffsetShort.html) for more information.
      */
     static createLocalizedOffsetShort(locale, length, timePrecision, alignment) {
+        let functionCleanupArena = new diplomatRuntime.CleanupArena();
+        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
         const result = wasm.icu4x_ZonedTimeFormatter_create_localized_offset_short_mv1(diplomatReceive.buffer, locale.ffiValue, ...diplomatRuntime.optionToArgsForCalling(length, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]), ...diplomatRuntime.optionToArgsForCalling(timePrecision, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]), ...diplomatRuntime.optionToArgsForCalling(alignment, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]));
@@ -191,6 +217,8 @@ export class ZonedTimeFormatter {
         }
         
         finally {
+            functionCleanupArena.free();
+        
             diplomatReceive.free();
         }
     }
@@ -199,6 +227,8 @@ export class ZonedTimeFormatter {
      * See the [Rust documentation for `LocalizedOffsetShort`](https://docs.rs/icu/latest/icu/datetime/fieldsets/zone/struct.LocalizedOffsetShort.html) for more information.
      */
     static createLocalizedOffsetShortWithProvider(provider, locale, length, timePrecision, alignment) {
+        let functionCleanupArena = new diplomatRuntime.CleanupArena();
+        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
         const result = wasm.icu4x_ZonedTimeFormatter_create_localized_offset_short_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue, ...diplomatRuntime.optionToArgsForCalling(length, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]), ...diplomatRuntime.optionToArgsForCalling(timePrecision, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]), ...diplomatRuntime.optionToArgsForCalling(alignment, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]));
@@ -212,6 +242,8 @@ export class ZonedTimeFormatter {
         }
         
         finally {
+            functionCleanupArena.free();
+        
             diplomatReceive.free();
         }
     }
@@ -220,6 +252,8 @@ export class ZonedTimeFormatter {
      * See the [Rust documentation for `GenericLong`](https://docs.rs/icu/latest/icu/datetime/fieldsets/zone/struct.GenericLong.html) for more information.
      */
     static createGenericLong(locale, length, timePrecision, alignment) {
+        let functionCleanupArena = new diplomatRuntime.CleanupArena();
+        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
         const result = wasm.icu4x_ZonedTimeFormatter_create_generic_long_mv1(diplomatReceive.buffer, locale.ffiValue, ...diplomatRuntime.optionToArgsForCalling(length, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]), ...diplomatRuntime.optionToArgsForCalling(timePrecision, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]), ...diplomatRuntime.optionToArgsForCalling(alignment, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]));
@@ -233,6 +267,8 @@ export class ZonedTimeFormatter {
         }
         
         finally {
+            functionCleanupArena.free();
+        
             diplomatReceive.free();
         }
     }
@@ -241,6 +277,8 @@ export class ZonedTimeFormatter {
      * See the [Rust documentation for `GenericLong`](https://docs.rs/icu/latest/icu/datetime/fieldsets/zone/struct.GenericLong.html) for more information.
      */
     static createGenericLongWithProvider(provider, locale, length, timePrecision, alignment) {
+        let functionCleanupArena = new diplomatRuntime.CleanupArena();
+        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
         const result = wasm.icu4x_ZonedTimeFormatter_create_generic_long_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue, ...diplomatRuntime.optionToArgsForCalling(length, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]), ...diplomatRuntime.optionToArgsForCalling(timePrecision, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]), ...diplomatRuntime.optionToArgsForCalling(alignment, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]));
@@ -254,6 +292,8 @@ export class ZonedTimeFormatter {
         }
         
         finally {
+            functionCleanupArena.free();
+        
             diplomatReceive.free();
         }
     }
@@ -262,6 +302,8 @@ export class ZonedTimeFormatter {
      * See the [Rust documentation for `GenericShort`](https://docs.rs/icu/latest/icu/datetime/fieldsets/zone/struct.GenericShort.html) for more information.
      */
     static createGenericShort(locale, length, timePrecision, alignment) {
+        let functionCleanupArena = new diplomatRuntime.CleanupArena();
+        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
         const result = wasm.icu4x_ZonedTimeFormatter_create_generic_short_mv1(diplomatReceive.buffer, locale.ffiValue, ...diplomatRuntime.optionToArgsForCalling(length, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]), ...diplomatRuntime.optionToArgsForCalling(timePrecision, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]), ...diplomatRuntime.optionToArgsForCalling(alignment, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]));
@@ -275,6 +317,8 @@ export class ZonedTimeFormatter {
         }
         
         finally {
+            functionCleanupArena.free();
+        
             diplomatReceive.free();
         }
     }
@@ -283,6 +327,8 @@ export class ZonedTimeFormatter {
      * See the [Rust documentation for `GenericShort`](https://docs.rs/icu/latest/icu/datetime/fieldsets/zone/struct.GenericShort.html) for more information.
      */
     static createGenericShortWithProvider(provider, locale, length, timePrecision, alignment) {
+        let functionCleanupArena = new diplomatRuntime.CleanupArena();
+        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
         const result = wasm.icu4x_ZonedTimeFormatter_create_generic_short_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue, ...diplomatRuntime.optionToArgsForCalling(length, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]), ...diplomatRuntime.optionToArgsForCalling(timePrecision, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]), ...diplomatRuntime.optionToArgsForCalling(alignment, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]));
@@ -296,6 +342,8 @@ export class ZonedTimeFormatter {
         }
         
         finally {
+            functionCleanupArena.free();
+        
             diplomatReceive.free();
         }
     }
@@ -304,6 +352,8 @@ export class ZonedTimeFormatter {
      * See the [Rust documentation for `Location`](https://docs.rs/icu/latest/icu/datetime/fieldsets/zone/struct.Location.html) for more information.
      */
     static createLocation(locale, length, timePrecision, alignment) {
+        let functionCleanupArena = new diplomatRuntime.CleanupArena();
+        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
         const result = wasm.icu4x_ZonedTimeFormatter_create_location_mv1(diplomatReceive.buffer, locale.ffiValue, ...diplomatRuntime.optionToArgsForCalling(length, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]), ...diplomatRuntime.optionToArgsForCalling(timePrecision, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]), ...diplomatRuntime.optionToArgsForCalling(alignment, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]));
@@ -317,6 +367,8 @@ export class ZonedTimeFormatter {
         }
         
         finally {
+            functionCleanupArena.free();
+        
             diplomatReceive.free();
         }
     }
@@ -325,6 +377,8 @@ export class ZonedTimeFormatter {
      * See the [Rust documentation for `Location`](https://docs.rs/icu/latest/icu/datetime/fieldsets/zone/struct.Location.html) for more information.
      */
     static createLocationWithProvider(provider, locale, length, timePrecision, alignment) {
+        let functionCleanupArena = new diplomatRuntime.CleanupArena();
+        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
         const result = wasm.icu4x_ZonedTimeFormatter_create_location_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue, ...diplomatRuntime.optionToArgsForCalling(length, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]), ...diplomatRuntime.optionToArgsForCalling(timePrecision, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]), ...diplomatRuntime.optionToArgsForCalling(alignment, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]));
@@ -338,6 +392,8 @@ export class ZonedTimeFormatter {
         }
         
         finally {
+            functionCleanupArena.free();
+        
             diplomatReceive.free();
         }
     }
@@ -346,6 +402,8 @@ export class ZonedTimeFormatter {
      * See the [Rust documentation for `ExemplarCity`](https://docs.rs/icu/latest/icu/datetime/fieldsets/zone/struct.ExemplarCity.html) for more information.
      */
     static createExemplarCity(locale, length, timePrecision, alignment) {
+        let functionCleanupArena = new diplomatRuntime.CleanupArena();
+        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
         const result = wasm.icu4x_ZonedTimeFormatter_create_exemplar_city_mv1(diplomatReceive.buffer, locale.ffiValue, ...diplomatRuntime.optionToArgsForCalling(length, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]), ...diplomatRuntime.optionToArgsForCalling(timePrecision, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]), ...diplomatRuntime.optionToArgsForCalling(alignment, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]));
@@ -359,6 +417,8 @@ export class ZonedTimeFormatter {
         }
         
         finally {
+            functionCleanupArena.free();
+        
             diplomatReceive.free();
         }
     }
@@ -367,6 +427,8 @@ export class ZonedTimeFormatter {
      * See the [Rust documentation for `ExemplarCity`](https://docs.rs/icu/latest/icu/datetime/fieldsets/zone/struct.ExemplarCity.html) for more information.
      */
     static createExemplarCityWithProvider(provider, locale, length, timePrecision, alignment) {
+        let functionCleanupArena = new diplomatRuntime.CleanupArena();
+        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
         const result = wasm.icu4x_ZonedTimeFormatter_create_exemplar_city_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue, ...diplomatRuntime.optionToArgsForCalling(length, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]), ...diplomatRuntime.optionToArgsForCalling(timePrecision, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]), ...diplomatRuntime.optionToArgsForCalling(alignment, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]));
@@ -380,6 +442,8 @@ export class ZonedTimeFormatter {
         }
         
         finally {
+            functionCleanupArena.free();
+        
             diplomatReceive.free();
         }
     }

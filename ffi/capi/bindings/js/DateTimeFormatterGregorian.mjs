@@ -56,6 +56,8 @@ export class DateTimeFormatterGregorian {
      * Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.DT.html#method.with_time_precision), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.DT.html#method.with_alignment), [3](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.DT.html#method.for_length), [4](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.DT.html#method.with_length)
      */
     static createDt(locale, length, timePrecision, alignment) {
+        let functionCleanupArena = new diplomatRuntime.CleanupArena();
+        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
         const result = wasm.icu4x_DateTimeFormatterGregorian_create_dt_mv1(diplomatReceive.buffer, locale.ffiValue, ...diplomatRuntime.optionToArgsForCalling(length, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]), ...diplomatRuntime.optionToArgsForCalling(timePrecision, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]), ...diplomatRuntime.optionToArgsForCalling(alignment, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]));
@@ -69,6 +71,8 @@ export class DateTimeFormatterGregorian {
         }
         
         finally {
+            functionCleanupArena.free();
+        
             diplomatReceive.free();
         }
     }
@@ -81,6 +85,8 @@ export class DateTimeFormatterGregorian {
      * Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.DT.html#method.with_time_precision), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.DT.html#method.with_alignment), [3](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.DT.html#method.for_length), [4](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.DT.html#method.with_length)
      */
     static createDtWithProvider(provider, locale, length, timePrecision, alignment) {
+        let functionCleanupArena = new diplomatRuntime.CleanupArena();
+        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
         const result = wasm.icu4x_DateTimeFormatterGregorian_create_dt_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue, ...diplomatRuntime.optionToArgsForCalling(length, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]), ...diplomatRuntime.optionToArgsForCalling(timePrecision, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]), ...diplomatRuntime.optionToArgsForCalling(alignment, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]));
@@ -94,6 +100,8 @@ export class DateTimeFormatterGregorian {
         }
         
         finally {
+            functionCleanupArena.free();
+        
             diplomatReceive.free();
         }
     }
@@ -106,6 +114,8 @@ export class DateTimeFormatterGregorian {
      * Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.MDT.html#method.with_time_precision), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.MDT.html#method.with_alignment), [3](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.MDT.html#method.for_length), [4](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.MDT.html#method.with_length)
      */
     static createMdt(locale, length, timePrecision, alignment) {
+        let functionCleanupArena = new diplomatRuntime.CleanupArena();
+        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
         const result = wasm.icu4x_DateTimeFormatterGregorian_create_mdt_mv1(diplomatReceive.buffer, locale.ffiValue, ...diplomatRuntime.optionToArgsForCalling(length, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]), ...diplomatRuntime.optionToArgsForCalling(timePrecision, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]), ...diplomatRuntime.optionToArgsForCalling(alignment, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]));
@@ -119,6 +129,8 @@ export class DateTimeFormatterGregorian {
         }
         
         finally {
+            functionCleanupArena.free();
+        
             diplomatReceive.free();
         }
     }
@@ -131,6 +143,8 @@ export class DateTimeFormatterGregorian {
      * Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.MDT.html#method.with_time_precision), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.MDT.html#method.with_alignment), [3](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.MDT.html#method.for_length), [4](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.MDT.html#method.with_length)
      */
     static createMdtWithProvider(provider, locale, length, timePrecision, alignment) {
+        let functionCleanupArena = new diplomatRuntime.CleanupArena();
+        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
         const result = wasm.icu4x_DateTimeFormatterGregorian_create_mdt_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue, ...diplomatRuntime.optionToArgsForCalling(length, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]), ...diplomatRuntime.optionToArgsForCalling(timePrecision, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]), ...diplomatRuntime.optionToArgsForCalling(alignment, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]));
@@ -144,6 +158,8 @@ export class DateTimeFormatterGregorian {
         }
         
         finally {
+            functionCleanupArena.free();
+        
             diplomatReceive.free();
         }
     }
@@ -156,6 +172,8 @@ export class DateTimeFormatterGregorian {
      * Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMDT.html#method.with_time_precision), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMDT.html#method.with_alignment), [3](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMDT.html#method.with_year_style), [4](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMDT.html#method.for_length), [5](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMDT.html#method.with_length)
      */
     static createYmdt(locale, length, timePrecision, alignment, yearStyle) {
+        let functionCleanupArena = new diplomatRuntime.CleanupArena();
+        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
         const result = wasm.icu4x_DateTimeFormatterGregorian_create_ymdt_mv1(diplomatReceive.buffer, locale.ffiValue, ...diplomatRuntime.optionToArgsForCalling(length, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]), ...diplomatRuntime.optionToArgsForCalling(timePrecision, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]), ...diplomatRuntime.optionToArgsForCalling(alignment, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]), ...diplomatRuntime.optionToArgsForCalling(yearStyle, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]));
@@ -169,6 +187,8 @@ export class DateTimeFormatterGregorian {
         }
         
         finally {
+            functionCleanupArena.free();
+        
             diplomatReceive.free();
         }
     }
@@ -181,6 +201,8 @@ export class DateTimeFormatterGregorian {
      * Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMDT.html#method.with_time_precision), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMDT.html#method.with_alignment), [3](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMDT.html#method.with_year_style), [4](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMDT.html#method.for_length), [5](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMDT.html#method.with_length)
      */
     static createYmdtWithProvider(provider, locale, length, timePrecision, alignment, yearStyle) {
+        let functionCleanupArena = new diplomatRuntime.CleanupArena();
+        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
         const result = wasm.icu4x_DateTimeFormatterGregorian_create_ymdt_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue, ...diplomatRuntime.optionToArgsForCalling(length, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]), ...diplomatRuntime.optionToArgsForCalling(timePrecision, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]), ...diplomatRuntime.optionToArgsForCalling(alignment, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]), ...diplomatRuntime.optionToArgsForCalling(yearStyle, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]));
@@ -194,6 +216,8 @@ export class DateTimeFormatterGregorian {
         }
         
         finally {
+            functionCleanupArena.free();
+        
             diplomatReceive.free();
         }
     }
@@ -206,6 +230,8 @@ export class DateTimeFormatterGregorian {
      * Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.DET.html#method.with_time_precision), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.DET.html#method.with_alignment), [3](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.DET.html#method.for_length), [4](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.DET.html#method.with_length)
      */
     static createDet(locale, length, timePrecision, alignment) {
+        let functionCleanupArena = new diplomatRuntime.CleanupArena();
+        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
         const result = wasm.icu4x_DateTimeFormatterGregorian_create_det_mv1(diplomatReceive.buffer, locale.ffiValue, ...diplomatRuntime.optionToArgsForCalling(length, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]), ...diplomatRuntime.optionToArgsForCalling(timePrecision, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]), ...diplomatRuntime.optionToArgsForCalling(alignment, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]));
@@ -219,6 +245,8 @@ export class DateTimeFormatterGregorian {
         }
         
         finally {
+            functionCleanupArena.free();
+        
             diplomatReceive.free();
         }
     }
@@ -231,6 +259,8 @@ export class DateTimeFormatterGregorian {
      * Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.DET.html#method.with_time_precision), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.DET.html#method.with_alignment), [3](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.DET.html#method.for_length), [4](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.DET.html#method.with_length)
      */
     static createDetWithProvider(provider, locale, length, timePrecision, alignment) {
+        let functionCleanupArena = new diplomatRuntime.CleanupArena();
+        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
         const result = wasm.icu4x_DateTimeFormatterGregorian_create_det_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue, ...diplomatRuntime.optionToArgsForCalling(length, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]), ...diplomatRuntime.optionToArgsForCalling(timePrecision, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]), ...diplomatRuntime.optionToArgsForCalling(alignment, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]));
@@ -244,6 +274,8 @@ export class DateTimeFormatterGregorian {
         }
         
         finally {
+            functionCleanupArena.free();
+        
             diplomatReceive.free();
         }
     }
@@ -256,6 +288,8 @@ export class DateTimeFormatterGregorian {
      * Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.MDET.html#method.with_time_precision), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.MDET.html#method.with_alignment), [3](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.MDET.html#method.for_length), [4](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.MDET.html#method.with_length)
      */
     static createMdet(locale, length, timePrecision, alignment) {
+        let functionCleanupArena = new diplomatRuntime.CleanupArena();
+        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
         const result = wasm.icu4x_DateTimeFormatterGregorian_create_mdet_mv1(diplomatReceive.buffer, locale.ffiValue, ...diplomatRuntime.optionToArgsForCalling(length, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]), ...diplomatRuntime.optionToArgsForCalling(timePrecision, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]), ...diplomatRuntime.optionToArgsForCalling(alignment, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]));
@@ -269,6 +303,8 @@ export class DateTimeFormatterGregorian {
         }
         
         finally {
+            functionCleanupArena.free();
+        
             diplomatReceive.free();
         }
     }
@@ -281,6 +317,8 @@ export class DateTimeFormatterGregorian {
      * Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.MDET.html#method.with_time_precision), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.MDET.html#method.with_alignment), [3](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.MDET.html#method.for_length), [4](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.MDET.html#method.with_length)
      */
     static createMdetWithProvider(provider, locale, length, timePrecision, alignment) {
+        let functionCleanupArena = new diplomatRuntime.CleanupArena();
+        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
         const result = wasm.icu4x_DateTimeFormatterGregorian_create_mdet_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue, ...diplomatRuntime.optionToArgsForCalling(length, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]), ...diplomatRuntime.optionToArgsForCalling(timePrecision, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]), ...diplomatRuntime.optionToArgsForCalling(alignment, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]));
@@ -294,6 +332,8 @@ export class DateTimeFormatterGregorian {
         }
         
         finally {
+            functionCleanupArena.free();
+        
             diplomatReceive.free();
         }
     }
@@ -306,6 +346,8 @@ export class DateTimeFormatterGregorian {
      * Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMDET.html#method.with_time_precision), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMDET.html#method.with_alignment), [3](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMDET.html#method.with_year_style), [4](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMDET.html#method.for_length), [5](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMDET.html#method.with_length)
      */
     static createYmdet(locale, length, timePrecision, alignment, yearStyle) {
+        let functionCleanupArena = new diplomatRuntime.CleanupArena();
+        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
         const result = wasm.icu4x_DateTimeFormatterGregorian_create_ymdet_mv1(diplomatReceive.buffer, locale.ffiValue, ...diplomatRuntime.optionToArgsForCalling(length, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]), ...diplomatRuntime.optionToArgsForCalling(timePrecision, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]), ...diplomatRuntime.optionToArgsForCalling(alignment, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]), ...diplomatRuntime.optionToArgsForCalling(yearStyle, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]));
@@ -319,6 +361,8 @@ export class DateTimeFormatterGregorian {
         }
         
         finally {
+            functionCleanupArena.free();
+        
             diplomatReceive.free();
         }
     }
@@ -331,6 +375,8 @@ export class DateTimeFormatterGregorian {
      * Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMDET.html#method.with_time_precision), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMDET.html#method.with_alignment), [3](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMDET.html#method.with_year_style), [4](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMDET.html#method.for_length), [5](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMDET.html#method.with_length)
      */
     static createYmdetWithProvider(provider, locale, length, timePrecision, alignment, yearStyle) {
+        let functionCleanupArena = new diplomatRuntime.CleanupArena();
+        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
         const result = wasm.icu4x_DateTimeFormatterGregorian_create_ymdet_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue, ...diplomatRuntime.optionToArgsForCalling(length, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]), ...diplomatRuntime.optionToArgsForCalling(timePrecision, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]), ...diplomatRuntime.optionToArgsForCalling(alignment, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]), ...diplomatRuntime.optionToArgsForCalling(yearStyle, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]));
@@ -344,6 +390,8 @@ export class DateTimeFormatterGregorian {
         }
         
         finally {
+            functionCleanupArena.free();
+        
             diplomatReceive.free();
         }
     }
@@ -356,6 +404,8 @@ export class DateTimeFormatterGregorian {
      * Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.ET.html#method.with_time_precision), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.ET.html#method.with_alignment), [3](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.ET.html#method.for_length), [4](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.ET.html#method.with_length)
      */
     static createEt(locale, length, timePrecision, alignment) {
+        let functionCleanupArena = new diplomatRuntime.CleanupArena();
+        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
         const result = wasm.icu4x_DateTimeFormatterGregorian_create_et_mv1(diplomatReceive.buffer, locale.ffiValue, ...diplomatRuntime.optionToArgsForCalling(length, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]), ...diplomatRuntime.optionToArgsForCalling(timePrecision, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]), ...diplomatRuntime.optionToArgsForCalling(alignment, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]));
@@ -369,6 +419,8 @@ export class DateTimeFormatterGregorian {
         }
         
         finally {
+            functionCleanupArena.free();
+        
             diplomatReceive.free();
         }
     }
@@ -381,6 +433,8 @@ export class DateTimeFormatterGregorian {
      * Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.ET.html#method.with_time_precision), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.ET.html#method.with_alignment), [3](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.ET.html#method.for_length), [4](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.ET.html#method.with_length)
      */
     static createEtWithProvider(provider, locale, length, timePrecision, alignment) {
+        let functionCleanupArena = new diplomatRuntime.CleanupArena();
+        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
         const result = wasm.icu4x_DateTimeFormatterGregorian_create_et_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue, ...diplomatRuntime.optionToArgsForCalling(length, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]), ...diplomatRuntime.optionToArgsForCalling(timePrecision, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]), ...diplomatRuntime.optionToArgsForCalling(alignment, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]));
@@ -394,6 +448,8 @@ export class DateTimeFormatterGregorian {
         }
         
         finally {
+            functionCleanupArena.free();
+        
             diplomatReceive.free();
         }
     }

@@ -99,7 +99,7 @@ export class TitlecaseMapper {
     titlecaseSegment(s, locale, options) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
-        const sSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, s));
+        const sSlice = diplomatRuntime.DiplomatBuf.str8(wasm, s);
         
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
         wasm.icu4x_TitlecaseMapper_titlecase_segment_v1_mv1(this.ffiValue, ...sSlice.splat(), locale.ffiValue, ...TitlecaseOptions._fromSuppliedValue(diplomatRuntime.internalConstructor, options)._intoFFI(functionCleanupArena, {}), write.buffer);
@@ -125,7 +125,7 @@ export class TitlecaseMapper {
     static titlecaseSegmentWithCompiledData(s, locale, options) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
-        const sSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, s));
+        const sSlice = diplomatRuntime.DiplomatBuf.str8(wasm, s);
         
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
         wasm.icu4x_TitlecaseMapper_titlecase_segment_with_compiled_data_v1_mv1(...sSlice.splat(), locale.ffiValue, ...TitlecaseOptions._fromSuppliedValue(diplomatRuntime.internalConstructor, options)._intoFFI(functionCleanupArena, {}), write.buffer);

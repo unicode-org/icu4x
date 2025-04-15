@@ -68,7 +68,7 @@ export class TimeZoneAndCanonicalAndNormalized {
         functionCleanupArena,
         appendArrayMap
     ) {
-        return [this.#timeZone.ffiValue, ...diplomatRuntime.CleanupArena.maybeCreateWith(functionCleanupArena, ...appendArrayMap['aAppendArray']).alloc(diplomatRuntime.DiplomatBuf.str8(wasm, this.#canonical)).splat(), ...diplomatRuntime.CleanupArena.maybeCreateWith(functionCleanupArena, ...appendArrayMap['aAppendArray']).alloc(diplomatRuntime.DiplomatBuf.str8(wasm, this.#normalized)).splat()]
+        return [this.#timeZone.ffiValue, ...diplomatRuntime.DiplomatBuf.str8(wasm, this.#canonical).splat(), ...diplomatRuntime.DiplomatBuf.str8(wasm, this.#normalized).splat()]
     }
 
     static _fromSuppliedValue(internalConstructor, obj) {
@@ -115,7 +115,7 @@ export class TimeZoneAndCanonicalAndNormalized {
     // assuming that there are no `'other: a`. bounds. In case of such bounds,
     // the caller should take care to also call _fieldsForLifetimeOther
     get _fieldsForLifetimeA() { 
-        return [canonical, normalized];
+        return [this.#canonical, this.#normalized];
     };
 
     constructor(structObj, internalConstructor) {

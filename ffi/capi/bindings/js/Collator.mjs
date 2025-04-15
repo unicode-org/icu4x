@@ -109,9 +109,9 @@ export class Collator {
     compare(left, right) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
-        const leftSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str16(wasm, left));
+        const leftSlice = diplomatRuntime.DiplomatBuf.str16(wasm, left);
         
-        const rightSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str16(wasm, right));
+        const rightSlice = diplomatRuntime.DiplomatBuf.str16(wasm, right);
         
         const result = wasm.icu4x_Collator_compare_utf16_mv1(this.ffiValue, ...leftSlice.splat(), ...rightSlice.splat());
     

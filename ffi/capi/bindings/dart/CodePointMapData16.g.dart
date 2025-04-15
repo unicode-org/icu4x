@@ -33,7 +33,7 @@ final class CodePointMapData16 implements ffi.Finalizable {
 
   /// Gets the value for a code point.
   ///
-  /// See the [Rust documentation for `get`](https://docs.rs/icu/latest/icu/properties/props/struct.CodePointMapDataBorrowed.html#method.get) for more information.
+  /// See the [Rust documentation for `get`](https://docs.rs/icu/latest/icu/properties/struct.CodePointMapDataBorrowed.html#method.get) for more information.
   int operator [](Rune cp) {
     final result = _icu4x_CodePointMapData16_get_mv1(_ffi, cp);
     return result;

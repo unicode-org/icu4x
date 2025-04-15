@@ -57,7 +57,7 @@ pub mod ffi {
         }
 
         #[diplomat::rust_link(icu::calendar::week::WeekInformation::weekend, StructField)]
-        #[diplomat::rust_link(icu::calendar::week::WeekendSet::contains, FnInStruct)]
+        #[diplomat::rust_link(icu::calendar::provider::WeekdaySet::contains, FnInStruct)]
         pub fn is_weekend(&self, day: Weekday) -> bool {
             self.0.weekend.contains(day.into())
         }

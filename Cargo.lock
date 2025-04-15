@@ -433,7 +433,7 @@ version = "4.5.32"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "09176aae279615badda0765c0c0b3f6ed53f4709118af73cf4655d85d1530cd7"
 dependencies = [
- "heck 0.5.0",
+ "heck",
  "proc-macro2",
  "quote",
  "syn 2.0.100",
@@ -473,6 +473,15 @@ checksum = "117725a109d387c937a1533ce01b450cbde6b88abceea8473c4d7a85853cda3c"
 dependencies = [
  "lazy_static",
  "windows-sys 0.59.0",
+]
+
+[[package]]
+name = "colored"
+version = "3.0.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "fde0e0ec90c9dfb3b4b1a0891a7dcd0e2bffde2f7efed5fe7c9bb00e5bfb915e"
+dependencies = [
+ "windows-sys 0.48.0",
 ]
 
 [[package]]
@@ -670,7 +679,7 @@ dependencies = [
 [[package]]
 name = "diplomat"
 version = "0.10.0"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=f67862a22def6cb7954aa51e102630e019c99165#f67862a22def6cb7954aa51e102630e019c99165"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=df05c43c34183af2695131531c721922514dae45#df05c43c34183af2695131531c721922514dae45"
 dependencies = [
  "diplomat_core",
  "proc-macro2",
@@ -700,7 +709,7 @@ dependencies = [
 [[package]]
 name = "diplomat-runtime"
 version = "0.10.0"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=f67862a22def6cb7954aa51e102630e019c99165#f67862a22def6cb7954aa51e102630e019c99165"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=df05c43c34183af2695131531c721922514dae45#df05c43c34183af2695131531c721922514dae45"
 dependencies = [
  "log",
 ]
@@ -708,14 +717,14 @@ dependencies = [
 [[package]]
 name = "diplomat-tool"
 version = "0.10.0"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=f67862a22def6cb7954aa51e102630e019c99165#f67862a22def6cb7954aa51e102630e019c99165"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=df05c43c34183af2695131531c721922514dae45#df05c43c34183af2695131531c721922514dae45"
 dependencies = [
  "askama",
  "clap",
- "colored",
+ "colored 3.0.0",
  "diplomat_core",
  "displaydoc",
- "heck 0.4.1",
+ "heck",
  "indenter",
  "itertools 0.14.0",
  "pulldown-cmark",
@@ -723,13 +732,13 @@ dependencies = [
  "serde",
  "syn 2.0.100",
  "syn-inline-mod",
- "toml 0.5.11",
+ "toml",
 ]
 
 [[package]]
 name = "diplomat_core"
 version = "0.10.0"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=f67862a22def6cb7954aa51e102630e019c99165#f67862a22def6cb7954aa51e102630e019c99165"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=df05c43c34183af2695131531c721922514dae45#df05c43c34183af2695131531c721922514dae45"
 dependencies = [
  "displaydoc",
  "either",
@@ -1008,12 +1017,6 @@ dependencies = [
 
 [[package]]
 name = "heck"
-version = "0.4.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "95505c38b4572b2d910cecb0281560f54b440a19336cbbcb27bf6ce6adc6f5a8"
-
-[[package]]
-name = "heck"
 version = "0.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "2304e00983f87ffb38b55b444b5e3b60a884b5d30c0fca7d82fe33449bbe55ea"
@@ -1270,7 +1273,7 @@ dependencies = [
  "potential_utf",
  "serde",
  "serde_json",
- "toml 0.8.20",
+ "toml",
  "yoke",
  "zerofrom",
  "zerovec",
@@ -1614,7 +1617,7 @@ version = "2.0.0-beta2"
 dependencies = [
  "crlify",
  "databake",
- "heck 0.5.0",
+ "heck",
  "icu_provider",
  "icu_provider_export",
  "icu_provider_registry",
@@ -1729,7 +1732,7 @@ dependencies = [
  "simple_logger",
  "tar",
  "tinystr",
- "toml 0.8.20",
+ "toml",
  "twox-hash",
  "ureq",
  "writeable",
@@ -2406,9 +2409,9 @@ dependencies = [
 
 [[package]]
 name = "pulldown-cmark"
-version = "0.11.3"
+version = "0.13.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "679341d22c78c6c649893cbd6c3278dcbe9fc4faa62fea3a9296ae2b50c14625"
+checksum = "1e8bbe1a966bd2f362681a44f6edce3c2310ac21e4d5067a6e7ec396297a6ea0"
 dependencies = [
  "bitflags",
  "getopts",
@@ -2893,7 +2896,7 @@ version = "5.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e8c5dfa5e08767553704aa0ffd9d9794d527103c736aba9854773851fd7497eb"
 dependencies = [
- "colored",
+ "colored 2.2.0",
  "log",
  "time",
  "windows-sys 0.48.0",
@@ -2966,7 +2969,7 @@ version = "0.27.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c77a8c5abcaf0f9ce05d62342b7d298c346515365c36b673df4ebe3ced01fde8"
 dependencies = [
- "heck 0.5.0",
+ "heck",
  "proc-macro2",
  "quote",
  "rustversion",
@@ -3116,15 +3119,6 @@ name = "tinyvec_macros"
 version = "0.1.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "1f3ccbac311fea05f86f61904b462b55fb3df8837a366dfc601a0161d0532f20"
-
-[[package]]
-name = "toml"
-version = "0.5.11"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f4f7f0dd8d50a853a531c426359045b1998f04219d88799810762cd4ad314234"
-dependencies = [
- "serde",
-]
 
 [[package]]
 name = "toml"

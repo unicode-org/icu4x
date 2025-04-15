@@ -19,16 +19,16 @@ pub mod ffi {
     use writeable::Writeable;
 
     #[diplomat::opaque]
-    #[diplomat::rust_link(icu::displaynames::LocaleDisplayNamesFormatter, Struct)]
+    #[diplomat::rust_link(icu::experimental::displaynames::LocaleDisplayNamesFormatter, Struct)]
     pub struct LocaleDisplayNamesFormatter(
         pub icu_experimental::displaynames::LocaleDisplayNamesFormatter,
     );
 
     #[diplomat::opaque]
-    #[diplomat::rust_link(icu::displaynames::RegionDisplayNames, Struct)]
+    #[diplomat::rust_link(icu::experimental::displaynames::RegionDisplayNames, Struct)]
     pub struct RegionDisplayNames(pub icu_experimental::displaynames::RegionDisplayNames);
 
-    #[diplomat::rust_link(icu::displaynames::options::DisplayNamesOptions, Struct)]
+    #[diplomat::rust_link(icu::experimental::displaynames::options::DisplayNamesOptions, Struct)]
     #[diplomat::attr(supports = non_exhaustive_structs, rename = "DisplayNamesOptions")]
     pub struct DisplayNamesOptionsV1 {
         /// The optional formatting style to use for display name.
@@ -40,7 +40,7 @@ pub mod ffi {
         pub language_display: DiplomatOption<LanguageDisplay>,
     }
 
-    #[diplomat::rust_link(icu::displaynames::options::Style, Enum)]
+    #[diplomat::rust_link(icu::experimental::displaynames::options::Style, Enum)]
     #[diplomat::enum_convert(icu_experimental::displaynames::Style, needs_wildcard)]
     pub enum DisplayNamesStyle {
         Narrow,
@@ -49,14 +49,14 @@ pub mod ffi {
         Menu,
     }
 
-    #[diplomat::rust_link(icu::displaynames::options::Fallback, Enum)]
+    #[diplomat::rust_link(icu::experimental::displaynames::options::Fallback, Enum)]
     #[diplomat::enum_convert(icu_experimental::displaynames::Fallback, needs_wildcard)]
     pub enum DisplayNamesFallback {
         Code,
         None,
     }
 
-    #[diplomat::rust_link(icu::displaynames::options::LanguageDisplay, Enum)]
+    #[diplomat::rust_link(icu::experimental::displaynames::options::LanguageDisplay, Enum)]
     #[diplomat::enum_convert(icu_experimental::displaynames::LanguageDisplay, needs_wildcard)]
     pub enum LanguageDisplay {
         Dialect,
@@ -65,7 +65,10 @@ pub mod ffi {
 
     impl LocaleDisplayNamesFormatter {
         /// Creates a new `LocaleDisplayNamesFormatter` from locale data and an options bag using compiled data.
-        #[diplomat::rust_link(icu::displaynames::LocaleDisplayNamesFormatter::try_new, FnInStruct)]
+        #[diplomat::rust_link(
+            icu::experimental::displaynames::LocaleDisplayNamesFormatter::try_new,
+            FnInStruct
+        )]
         #[diplomat::attr(all(supports = fallible_constructors, supports = non_exhaustive_structs), constructor)]
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors, not(supports = non_exhaustive_structs)), named_constructor = "v1")]
         #[diplomat::attr(supports = non_exhaustive_structs, rename = "create")]
@@ -85,7 +88,10 @@ pub mod ffi {
         }
 
         /// Creates a new `LocaleDisplayNamesFormatter` from locale data and an options bag using a particular data source.
-        #[diplomat::rust_link(icu::displaynames::LocaleDisplayNamesFormatter::try_new, FnInStruct)]
+        #[diplomat::rust_link(
+            icu::experimental::displaynames::LocaleDisplayNamesFormatter::try_new,
+            FnInStruct
+        )]
         #[diplomat::attr(supports = non_exhaustive_structs, rename = "create_with_provider")]
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors, supports = non_exhaustive_structs), named_constructor = "with_provider")]
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors, not(supports = non_exhaustive_structs)), named_constructor = "v1_with_provider")]
@@ -106,7 +112,10 @@ pub mod ffi {
         }
 
         /// Returns the locale-specific display name of a locale.
-        #[diplomat::rust_link(icu::displaynames::LocaleDisplayNamesFormatter::of, FnInStruct)]
+        #[diplomat::rust_link(
+            icu::experimental::displaynames::LocaleDisplayNamesFormatter::of,
+            FnInStruct
+        )]
         // Experimental, do not generate in demo:
         #[diplomat::attr(demo_gen, disable)]
         pub fn of(&self, locale: &Locale, write: &mut DiplomatWrite) {
@@ -116,7 +125,10 @@ pub mod ffi {
 
     impl RegionDisplayNames {
         /// Creates a new `RegionDisplayNames` from locale data and an options bag using compiled data.
-        #[diplomat::rust_link(icu::displaynames::RegionDisplayNames::try_new, FnInStruct)]
+        #[diplomat::rust_link(
+            icu::experimental::displaynames::RegionDisplayNames::try_new,
+            FnInStruct
+        )]
         #[diplomat::attr(all(supports = fallible_constructors, supports = non_exhaustive_structs), constructor)]
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors, not(supports = non_exhaustive_structs)), named_constructor = "v1")]
         #[diplomat::attr(supports = non_exhaustive_structs, rename = "create")]
@@ -133,7 +145,10 @@ pub mod ffi {
         }
 
         /// Creates a new `RegionDisplayNames` from locale data and an options bag using a particular data source.
-        #[diplomat::rust_link(icu::displaynames::RegionDisplayNames::try_new, FnInStruct)]
+        #[diplomat::rust_link(
+            icu::experimental::displaynames::RegionDisplayNames::try_new,
+            FnInStruct
+        )]
         #[diplomat::attr(supports = non_exhaustive_structs, rename = "create_with_provider")]
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors, supports = non_exhaustive_structs), named_constructor = "with_provider")]
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors, not(supports = non_exhaustive_structs)), named_constructor = "v1_with_provider")]
@@ -157,7 +172,7 @@ pub mod ffi {
         /// Returns the locale specific display name of a region.
         /// Note that the function returns an empty string in case the display name for a given
         /// region code is not found.
-        #[diplomat::rust_link(icu::displaynames::RegionDisplayNames::of, FnInStruct)]
+        #[diplomat::rust_link(icu::experimental::displaynames::RegionDisplayNames::of, FnInStruct)]
         // Experimental, do not generate in demo:
         #[diplomat::attr(demo_gen, disable)]
         pub fn of(

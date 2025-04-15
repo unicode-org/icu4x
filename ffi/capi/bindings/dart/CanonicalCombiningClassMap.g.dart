@@ -48,7 +48,7 @@ final class CanonicalCombiningClassMap implements ffi.Finalizable {
 
   /// See the [Rust documentation for `get`](https://docs.rs/icu/latest/icu/normalizer/properties/struct.CanonicalCombiningClassMapBorrowed.html#method.get) for more information.
   ///
-  /// Additional information: [1](https://docs.rs/icu/latest/icu/properties/properties/struct.CanonicalCombiningClassMapBorrowed.html)
+  /// Additional information: [1](https://docs.rs/icu/latest/icu/properties/props/struct.CanonicalCombiningClass.html)
   int operator [](Rune ch) {
     final result = _icu4x_CanonicalCombiningClassMap_get_mv1(_ffi, ch);
     return result;

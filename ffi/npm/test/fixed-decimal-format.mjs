@@ -4,7 +4,7 @@
 
 import test from 'ava';
 
-import { Decimal, Locale, DecimalFormatter, FixedDecimalSign, DecimalGroupingStrategy } from 'icu4x';
+import { Decimal, Locale, DecimalFormatter, DecimalSign, DecimalGroupingStrategy } from 'icu4x';
 
 const locale = Locale.fromString('bn');
 const format = DecimalFormatter.createWithGroupingStrategy(locale, DecimalGroupingStrategy.Auto);
@@ -25,7 +25,7 @@ test('format a long decimal', t => {
 test('format a negated, scaled decimal', t => {
   const decimal = Decimal.fromNumber(1000007);
   decimal.multiplyPow10(2);
-  decimal.sign = FixedDecimalSign.Negative;
+  decimal.sign = DecimalSign.Negative;
 
   t.is(format.format(decimal), '-১০,০০,০০,৭০০');
 });
