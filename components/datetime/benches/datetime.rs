@@ -27,9 +27,9 @@ fn datetime_benches(c: &mut Criterion) {
             .iter()
             .map(|s| {
                 if has_zones {
-                    parse_zoned_gregorian_from_str(&s)
+                    parse_zoned_gregorian_from_str(s)
                 } else {
-                    let DateTime { date, time } = DateTime::try_from_str(&s, Gregorian).unwrap();
+                    let DateTime { date, time } = DateTime::try_from_str(s, Gregorian).unwrap();
                     ZonedDateTime {
                         date,
                         time,
