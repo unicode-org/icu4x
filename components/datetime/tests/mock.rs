@@ -39,7 +39,7 @@ pub fn parse_zoned_gregorian_from_str(
     ) {
         Ok(zdt) => zdt,
         Err(icu_time::ParseError::MismatchedTimeZoneFields) => {
-            match ZonedDateTime::try_loose_from_str(input, Gregorian, IanaParser::new()) {
+            match ZonedDateTime::try_lenient_from_str(input, Gregorian, IanaParser::new()) {
                 Ok(zdt) => {
                     ZonedDateTime {
                         date: zdt.date,

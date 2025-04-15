@@ -76,7 +76,7 @@ struct ZonedDateTime {
   /**
    * Creates a new [`ZonedDateTime`] from an IXDTF string, without requiring the offset or calculating the zone variant.
    *
-   * See the [Rust documentation for `try_loose_from_str`](https://docs.rs/icu/latest/icu/time/struct.ZonedDateTime.html#method.try_loose_from_str) for more information.
+   * See the [Rust documentation for `try_lenient_from_str`](https://docs.rs/icu/latest/icu/time/struct.ZonedDateTime.html#method.try_lenient_from_str) for more information.
    */
   inline static diplomat::result<icu4x::ZonedDateTime, icu4x::CalendarParseError> loose_from_string(std::string_view v, const icu4x::Calendar& calendar, const icu4x::IanaParser& iana_parser);
 

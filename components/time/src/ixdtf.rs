@@ -63,13 +63,13 @@ pub enum ParseError {
     ///
     /// // This timestamp is in UTC, and requires a time zone calculation in order to display a Zurich time.
     /// assert_eq!(
-    ///     ZonedDateTime::try_loose_from_str("2024-08-12T12:32:00Z[Europe/Zurich]", Iso, IanaParser::new()).unwrap_err(),
+    ///     ZonedDateTime::try_lenient_from_str("2024-08-12T12:32:00Z[Europe/Zurich]", Iso, IanaParser::new()).unwrap_err(),
     ///     ParseError::RequiresCalculation,
     /// );
     ///
     /// // These timestamps are in local time
-    /// ZonedDateTime::try_loose_from_str("2024-08-12T14:32:00+02:00[Europe/Zurich]", Iso, IanaParser::new()).unwrap();
-    /// ZonedDateTime::try_loose_from_str("2024-08-12T14:32:00[Europe/Zurich]", Iso, IanaParser::new()).unwrap();
+    /// ZonedDateTime::try_lenient_from_str("2024-08-12T14:32:00+02:00[Europe/Zurich]", Iso, IanaParser::new()).unwrap();
+    /// ZonedDateTime::try_lenient_from_str("2024-08-12T14:32:00[Europe/Zurich]", Iso, IanaParser::new()).unwrap();
     /// ```
     #[displaydoc(
         "A timezone calculation is required to interpret this string, which is not supported"
@@ -290,7 +290,7 @@ impl<'a> Intermediate<'a> {
         Ok(time_zone_id.with_offset(offset).at_time((date, time)))
     }
 
-    fn loose(
+    fn lenient(
         self,
         iana_parser: IanaParserBorrowed<'_>,
     ) -> Result<TimeZoneInfo<models::AtTime>, ParseError> {
@@ -403,23 +403,23 @@ impl<A: AsCalendar> ZonedDateTime<A, TimeZoneInfo<models::AtTime>> {
     /// Returns an error if the string has a calendar annotation that does not
     /// match the calendar argument, unless the argument is [`Iso`].
     ///
-    /// This function is "loose": the string can have an offset, and named time zone, both, or
+    /// This function is "lenient": the string can have an offset, and named time zone, both, or
     /// neither. If the named time zone is missing, it is returned as Etc/Unknown.
     ///
     /// The zone variant is _not_ calculated with this function. If you need it, use
     /// [`Self::try_from_str`].
-    pub fn try_loose_from_str(
+    pub fn try_lenient_from_str(
         rfc_9557_str: &str,
         calendar: A,
         iana_parser: IanaParserBorrowed,
     ) -> Result<Self, ParseError> {
-        Self::try_loose_from_utf8(rfc_9557_str.as_bytes(), calendar, iana_parser)
+        Self::try_lenient_from_utf8(rfc_9557_str.as_bytes(), calendar, iana_parser)
     }
 
     /// Create a [`ZonedDateTime`] in any calendar from RFC 9557 UTF-8 bytes.
     ///
-    /// See [`Self::try_loose_from_str`].
-    pub fn try_loose_from_utf8(
+    /// See [`Self::try_lenient_from_str`].
+    pub fn try_lenient_from_utf8(
         rfc_9557_str: &[u8],
         calendar: A,
         iana_parser: IanaParserBorrowed,
@@ -427,7 +427,7 @@ impl<A: AsCalendar> ZonedDateTime<A, TimeZoneInfo<models::AtTime>> {
         let ixdtf_record = IxdtfParser::from_utf8(rfc_9557_str).parse()?;
         let date = Date::try_from_ixdtf_record(&ixdtf_record, calendar)?;
         let time = Time::try_from_ixdtf_record(&ixdtf_record)?;
-        let zone = Intermediate::try_from_ixdtf_record(&ixdtf_record)?.loose(iana_parser)?;
+        let zone = Intermediate::try_from_ixdtf_record(&ixdtf_record)?.lenient(iana_parser)?;
         Ok(ZonedDateTime { date, time, zone })
     }
 }
@@ -800,7 +800,7 @@ mod test {
 
     #[test]
     fn future_zone() {
-        let result = ZonedDateTime::try_loose_from_str(
+        let result = ZonedDateTime::try_lenient_from_str(
             "2024-08-08T12:08:19[Future/Zone]",
             Iso,
             IanaParserBorrowed::new(),
