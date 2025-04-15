@@ -14,6 +14,8 @@ use core_maths::*;
 
 /// The *Rata Die*, or *R.D.*: number of days since January 1, 1 CE.
 ///
+/// **The primary definition of this type is in the [`calendrical_calculations`](https://docs.rs/calendrical_calculations) crate.**
+///
 /// See: <https://en.wikipedia.org/wiki/Rata_Die>
 ///
 /// Typically, one should obtain RataDies from other calendrical code, rather than constructing them from integers.
