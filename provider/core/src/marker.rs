@@ -385,7 +385,9 @@ impl DataMarkerId {
         Ok(Self {
             #[cfg(any(feature = "export", debug_assertions))]
             debug: name,
-            hash: [magic[0], magic[1], magic[2], magic[3], hash[0], hash[1], hash[2], hash[3]],
+            hash: [
+                magic[0], magic[1], magic[2], magic[3], hash[0], hash[1], hash[2], hash[3],
+            ],
         })
     }
 
@@ -409,7 +411,7 @@ impl DataMarkerId {
     }
 
     /// Returns the marker name.
-    /// 
+    ///
     /// For size reasons, this is only available with the `export` Cargo feature.
     #[cfg(feature = "export")]
     pub const fn name(self) -> &'static str {

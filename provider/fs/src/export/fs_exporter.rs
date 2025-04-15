@@ -125,7 +125,6 @@ impl DataExporter for FilesystemExporter {
     ) -> Result<(), DataError> {
         let mut path_buf = marker_to_path(marker.id, &self.root);
 
-
         #[allow(clippy::unwrap_used)] // has parent by construction
         let parent_dir = path_buf.parent().unwrap();
 
@@ -166,7 +165,6 @@ impl DataExporter for FilesystemExporter {
         metadata: FlushMetadata,
     ) -> Result<(), DataError> {
         let path_buf = marker_to_path(marker.id, &self.root);
-
 
         #[allow(clippy::unwrap_used)] // has parent by construction
         let parent_dir = path_buf.parent().unwrap();

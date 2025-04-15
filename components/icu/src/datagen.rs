@@ -44,7 +44,7 @@ macro_rules! cb {
                         #[cfg(feature = "experimental")]
                         (<$emarker_ty>::INFO.id.hashed().to_bytes(), Ok(<$emarker_ty>::INFO)),
                         #[cfg(not(feature = "experimental"))]
-                        (DataMarkerId::from_name(stringify!($emarker)).unwrap().hashed().to_bytes(), Err(stringify!($emarker))),
+                        (icu_provider::marker::DataMarkerId::from_name(stringify!($emarker)).unwrap().hashed().to_bytes(), Err(stringify!($emarker))),
                     )+
 
                 ]
