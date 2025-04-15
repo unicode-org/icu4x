@@ -189,8 +189,7 @@ fn process_era_dates_map(
     }
 
     // https://unicode-org.atlassian.net/browse/CLDR-18465
-    let one = data.get_mut("coptic").unwrap().eras.remove("1").unwrap();
-    data.get_mut("coptic").unwrap().eras.insert("0".into(), one);
+    data.get_mut("coptic").unwrap().eras.remove("0");
 
     data.get_mut("ethiopic")
         .unwrap()
@@ -558,7 +557,7 @@ fn test_calendar_eras() {
         let cal = AnyCalendar::try_new_unstable(&provider, kind).unwrap();
         let cal = icu::calendar::Ref(&cal);
 
-        for (idx, ref era) in data.eras {
+        for (idx, (_, era)) in data.eras.iter().enumerate() {
             let (in_era_iso, not_in_era_iso) = match (era.start, era.end) {
                 (Some(start), None) => {
                     let start = Date::try_new_iso(start.year, start.month, start.day).unwrap();
@@ -599,7 +598,7 @@ fn test_calendar_eras() {
 
             // Unless this is the first era and it's not an inverse era, check that the
             // not_in_era date is in a different era
-            if idx != "0" || era.end.is_some() {
+            if idx != 0 || era.end.is_some() {
                 assert_ne!(not_in_era.year().era().unwrap().era, era_year.era);
             }
 
