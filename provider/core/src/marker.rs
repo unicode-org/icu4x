@@ -572,12 +572,13 @@ macro_rules! data_marker {
                     struct DebugTest;
                 )?
                 #[allow(unused_mut)]
-                let mut info = $crate::DataMarkerInfo::from_id(
-                    match $crate::marker::DataMarkerId::from_name(stringify!($name)) {
+                // Force evaluation even if marker is unused
+                let mut info = const { $crate::DataMarkerInfo::from_id(
+                     match $crate::marker::DataMarkerId::from_name(stringify!($name)) {
                         Ok(path) => path,
                         #[allow(clippy::panic)] // Const context
                         Err(_) => panic!(concat!("Invalid marker name: ", stringify!($name))),
-                });
+                })};
                 $(
                     $(#[$meta])*
                     {info.$info_field = $info_val;}
