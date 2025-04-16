@@ -125,9 +125,14 @@ pub mod ffi {
             hidden
         )]
         pub fn parse<'a>(&'a self, value: &DiplomatStr) -> TimeZoneAndCanonicalAndNormalized<'a> {
-            let (time_zone_id, canonical, normalized) = self.0.as_borrowed().parse_from_utf8(value);
+            let icu_time::zone::iana::TimeZoneAndCanonicalAndNormalized {
+                time_zone,
+                canonical,
+                normalized,
+                ..
+            } = self.0.as_borrowed().parse_from_utf8(value);
             TimeZoneAndCanonicalAndNormalized {
-                time_zone: Box::new(TimeZone(time_zone_id)),
+                time_zone: Box::new(TimeZone(time_zone)),
                 canonical: canonical.into(),
                 normalized: normalized.into(),
             }
@@ -150,6 +155,7 @@ pub mod ffi {
     }
 
     #[diplomat::out]
+    #[diplomat::rust_link(icu::time::zone::iana::TimeZoneAndCanonical, Struct)]
     pub struct TimeZoneAndCanonical<'a> {
         time_zone: Box<TimeZone>,
         canonical: DiplomatUtf8StrSlice<'a>,
@@ -163,15 +169,20 @@ pub mod ffi {
         #[diplomat::attr(auto, iterator)]
         #[diplomat::rust_link(icu::time::zone::iana::TimeZoneAndCanonicalIter::next, FnInStruct)]
         pub fn next(&mut self) -> Option<TimeZoneAndCanonical<'a>> {
-            let (time_zone_id, canonical) = self.0.next()?;
+            let icu_time::zone::iana::TimeZoneAndCanonical {
+                time_zone,
+                canonical,
+                ..
+            } = self.0.next()?;
             Some(TimeZoneAndCanonical {
-                time_zone: Box::new(TimeZone(time_zone_id)),
+                time_zone: Box::new(TimeZone(time_zone)),
                 canonical: canonical.into(),
             })
         }
     }
 
     #[diplomat::out]
+    #[diplomat::rust_link(icu::time::zone::iana::TimeZoneAndCanonicalAndNormalized, Struct)]
     pub struct TimeZoneAndCanonicalAndNormalized<'a> {
         time_zone: Box<TimeZone>,
         canonical: DiplomatUtf8StrSlice<'a>,
@@ -191,9 +202,14 @@ pub mod ffi {
             FnInStruct
         )]
         pub fn next(&mut self) -> Option<TimeZoneAndCanonicalAndNormalized<'a>> {
-            let (time_zone_id, canonical, normalized) = self.0.next()?;
+            let icu_time::zone::iana::TimeZoneAndCanonicalAndNormalized {
+                time_zone,
+                canonical,
+                normalized,
+                ..
+            } = self.0.next()?;
             Some(TimeZoneAndCanonicalAndNormalized {
-                time_zone: Box::new(TimeZone(time_zone_id)),
+                time_zone: Box::new(TimeZone(time_zone)),
                 canonical: canonical.into(),
                 normalized: normalized.into(),
             })

@@ -18,7 +18,9 @@ use zerovec::ZeroMap2d;
 #[allow(clippy::exhaustive_structs)]
 pub struct InvalidOffsetError;
 
-/// An offset from Coordinated Universal Time (UTC)
+/// An offset from Coordinated Universal Time (UTC).
+///
+/// Supports ±18:00:00.
 ///
 /// **The primary definition of this type is in the [`icu_time`](https://docs.rs/icu_time) crate. Other ICU4X crates re-export it for convenience.**
 #[derive(Copy, Clone, Debug, PartialEq, Eq, Default, PartialOrd, Ord)]
@@ -292,15 +294,15 @@ impl VariantOffsetsCalculatorBorrowed<'_> {
     /// use icu::time::zone::VariantOffsetsCalculator;
     /// use icu::time::Time;
     /// use icu::time::TimeZone;
-    /// use tinystr::tinystr;
+    /// use icu::locale::subtags::subtag;
     ///
     /// let zoc = VariantOffsetsCalculator::new();
     ///
     /// // America/Denver observes DST
     /// let offsets = zoc
     ///     .compute_offsets_from_time_zone(
-    ///         TimeZone(tinystr!(8, "usden")),
-    ///         (Date::try_new_iso(2024, 1, 1).unwrap(), Time::midnight()),
+    ///         TimeZone(subtag!("usden")),
+    ///         (Date::try_new_iso(2024, 1, 1).unwrap(), Time::start_of_day()),
     ///     )
     ///     .unwrap();
     /// assert_eq!(
@@ -315,8 +317,8 @@ impl VariantOffsetsCalculatorBorrowed<'_> {
     /// // America/Phoenix does not
     /// let offsets = zoc
     ///     .compute_offsets_from_time_zone(
-    ///         TimeZone(tinystr!(8, "usphx")),
-    ///         (Date::try_new_iso(2024, 1, 1).unwrap(), Time::midnight()),
+    ///         TimeZone(subtag!("usphx")),
+    ///         (Date::try_new_iso(2024, 1, 1).unwrap(), Time::start_of_day()),
     ///     )
     ///     .unwrap();
     /// assert_eq!(

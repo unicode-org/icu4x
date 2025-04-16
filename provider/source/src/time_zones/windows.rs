@@ -85,9 +85,9 @@ impl crate::IterableDataProviderCached<TimeZoneWindowsV1> for SourceDataProvider
 
 #[cfg(test)]
 mod tests {
+    use icu::locale::subtags::subtag;
     use icu::time::{provider::windows::TimeZoneWindowsV1, TimeZone};
     use icu_provider::{DataProvider, DataRequest, DataResponse};
-    use tinystr::tinystr;
 
     use crate::SourceDataProvider;
 
@@ -100,30 +100,30 @@ mod tests {
 
         let index = windows_zones.map.get("Eastern Standard Time/001").unwrap();
         let result = windows_zones.bcp47_ids.get(index);
-        assert_eq!(result, Some(TimeZone(tinystr!(8, "usnyc"))));
+        assert_eq!(result, Some(TimeZone(subtag!("usnyc"))));
 
         let index = windows_zones.map.get("Central Standard Time/001").unwrap();
         let result = windows_zones.bcp47_ids.get(index);
-        assert_eq!(result, Some(TimeZone(tinystr!(8, "uschi"))));
+        assert_eq!(result, Some(TimeZone(subtag!("uschi"))));
 
         let index = windows_zones.map.get("Hawaiian Standard Time/001").unwrap();
         let result = windows_zones.bcp47_ids.get(index);
-        assert_eq!(result, Some(TimeZone(tinystr!(8, "ushnl"))));
+        assert_eq!(result, Some(TimeZone(subtag!("ushnl"))));
 
         let index = windows_zones
             .map
             .get("Central Europe Standard Time/001")
             .unwrap();
         let result = windows_zones.bcp47_ids.get(index);
-        assert_eq!(result, Some(TimeZone(tinystr!(8, "hubud"))));
+        assert_eq!(result, Some(TimeZone(subtag!("hubud"))));
 
         let index = windows_zones.map.get("GMT Standard Time/001").unwrap();
         let result = windows_zones.bcp47_ids.get(index);
-        assert_eq!(result, Some(TimeZone(tinystr!(8, "gblon"))));
+        assert_eq!(result, Some(TimeZone(subtag!("gblon"))));
 
         let index = windows_zones.map.get("SE Asia Standard Time/001").unwrap();
         let result = windows_zones.bcp47_ids.get(index);
-        assert_eq!(result, Some(TimeZone(tinystr!(8, "thbkk"))));
+        assert_eq!(result, Some(TimeZone(subtag!("thbkk"))));
     }
 
     #[test]
@@ -135,33 +135,33 @@ mod tests {
 
         let index = windows_zones.map.get("Eastern Standard Time/BS").unwrap();
         let result = windows_zones.bcp47_ids.get(index);
-        assert_eq!(result, Some(TimeZone(tinystr!(8, "bsnas"))));
+        assert_eq!(result, Some(TimeZone(subtag!("bsnas"))));
 
         let index = windows_zones.map.get("Central Standard Time/MX").unwrap();
         let result = windows_zones.bcp47_ids.get(index);
-        assert_eq!(result, Some(TimeZone(tinystr!(8, "mxmam"))));
+        assert_eq!(result, Some(TimeZone(subtag!("mxmam"))));
 
         let index = windows_zones
             .map
             .get("Central Europe Standard Time/CZ")
             .unwrap();
         let result = windows_zones.bcp47_ids.get(index);
-        assert_eq!(result, Some(TimeZone(tinystr!(8, "czprg"))));
+        assert_eq!(result, Some(TimeZone(subtag!("czprg"))));
 
         let index = windows_zones.map.get("GMT Standard Time/IE").unwrap();
         let result = windows_zones.bcp47_ids.get(index);
-        assert_eq!(result, Some(TimeZone(tinystr!(8, "iedub"))));
+        assert_eq!(result, Some(TimeZone(subtag!("iedub"))));
 
         let index = windows_zones.map.get("SE Asia Standard Time/AQ").unwrap();
         let result = windows_zones.bcp47_ids.get(index);
-        assert_eq!(result, Some(TimeZone(tinystr!(8, "aqdav"))));
+        assert_eq!(result, Some(TimeZone(subtag!("aqdav"))));
 
         let index = windows_zones.map.get("SE Asia Standard Time/KH").unwrap();
         let result = windows_zones.bcp47_ids.get(index);
-        assert_eq!(result, Some(TimeZone(tinystr!(8, "khpnh"))));
+        assert_eq!(result, Some(TimeZone(subtag!("khpnh"))));
 
         let index = windows_zones.map.get("SE Asia Standard Time/VN").unwrap();
         let result = windows_zones.bcp47_ids.get(index);
-        assert_eq!(result, Some(TimeZone(tinystr!(8, "vnsgn"))));
+        assert_eq!(result, Some(TimeZone(subtag!("vnsgn"))));
     }
 }

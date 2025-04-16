@@ -49,7 +49,7 @@ export class ZonedDateTime {
     /** 
      * Creates a new [`ZonedDateTime`] from an IXDTF string, without requiring the offset or calculating the zone variant.
      *
-     * See the [Rust documentation for `try_loose_from_str`](https://docs.rs/icu/latest/icu/time/struct.ZonedDateTime.html#method.try_loose_from_str) for more information.
+     * See the [Rust documentation for `try_lenient_from_str`](https://docs.rs/icu/latest/icu/time/struct.ZonedDateTime.html#method.try_lenient_from_str) for more information.
      */
     static looseFromString(v: string, calendar: Calendar, ianaParser: IanaParser): ZonedDateTime;
 }

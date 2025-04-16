@@ -519,15 +519,15 @@ pub mod ffi {
             let mut input = icu_datetime::DateTimeInputUnchecked::default();
             let date = date.0.to_calendar(self.0.calendar());
             input.set_date_fields(date);
-            input.set_time_zone_id(zone.time_zone_id);
+            input.set_time_zone_id(zone.id);
             if let Some(offset) = zone.offset {
                 input.set_time_zone_utc_offset(offset);
             }
             if let Some(local_time) = zone.local_time {
                 input.set_time_zone_local_time(local_time);
             }
-            if let Some(zone_variant) = zone.zone_variant {
-                input.set_time_zone_variant(zone_variant);
+            if let Some(variant) = zone.variant {
+                input.set_time_zone_variant(variant);
             }
             let _infallible = self
                 .0
@@ -1011,15 +1011,15 @@ pub mod ffi {
             let mut input = icu_datetime::DateTimeInputUnchecked::default();
             let date = date.0.to_calendar(Gregorian);
             input.set_date_fields(date);
-            input.set_time_zone_id(zone.time_zone_id);
+            input.set_time_zone_id(zone.id);
             if let Some(offset) = zone.offset {
                 input.set_time_zone_utc_offset(offset);
             }
             if let Some(local_time) = zone.local_time {
                 input.set_time_zone_local_time(local_time);
             }
-            if let Some(zone_variant) = zone.zone_variant {
-                input.set_time_zone_variant(zone_variant);
+            if let Some(variant) = zone.variant {
+                input.set_time_zone_variant(variant);
             }
             let _infallible = self
                 .0

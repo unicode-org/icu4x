@@ -1023,7 +1023,7 @@ let termini = Object.assign({
             },
             
             {
-                name: "Zone:TimeZoneId:Id",
+                name: "Zone:Id:Id",
                 type: "string",
                 typeUse: "string"
             },
@@ -1035,7 +1035,7 @@ let termini = Object.assign({
             },
             
             {
-                name: "Zone:ZoneVariant",
+                name: "Zone:Variant",
                 type: "TimeZoneVariant",
                 typeUse: "enumerator"
             }
@@ -1098,7 +1098,7 @@ let termini = Object.assign({
             },
             
             {
-                name: "Zone:TimeZoneId:Id",
+                name: "Zone:Id:Id",
                 type: "string",
                 typeUse: "string"
             },
@@ -1110,7 +1110,7 @@ let termini = Object.assign({
             },
             
             {
-                name: "Zone:ZoneVariant",
+                name: "Zone:Variant",
                 type: "TimeZoneVariant",
                 typeUse: "enumerator"
             }
@@ -1173,7 +1173,7 @@ let termini = Object.assign({
             },
             
             {
-                name: "Zone:TimeZoneId:Id",
+                name: "Zone:Id:Id",
                 type: "string",
                 typeUse: "string"
             },
@@ -1185,7 +1185,7 @@ let termini = Object.assign({
             },
             
             {
-                name: "Zone:ZoneVariant",
+                name: "Zone:Variant",
                 type: "TimeZoneVariant",
                 typeUse: "enumerator"
             }
@@ -1278,7 +1278,7 @@ let termini = Object.assign({
             },
             
             {
-                name: "Zone:TimeZoneId:Id",
+                name: "Zone:Id:Id",
                 type: "string",
                 typeUse: "string"
             },
@@ -1290,7 +1290,7 @@ let termini = Object.assign({
             },
             
             {
-                name: "Zone:ZoneVariant",
+                name: "Zone:Variant",
                 type: "TimeZoneVariant",
                 typeUse: "enumerator"
             }
@@ -1383,7 +1383,7 @@ let termini = Object.assign({
             },
             
             {
-                name: "Zone:TimeZoneId:Id",
+                name: "Zone:Id:Id",
                 type: "string",
                 typeUse: "string"
             },
@@ -1395,7 +1395,7 @@ let termini = Object.assign({
             },
             
             {
-                name: "Zone:ZoneVariant",
+                name: "Zone:Variant",
                 type: "TimeZoneVariant",
                 typeUse: "enumerator"
             }
@@ -1458,7 +1458,7 @@ let termini = Object.assign({
             },
             
             {
-                name: "Zone:TimeZoneId:Id",
+                name: "Zone:Id:Id",
                 type: "string",
                 typeUse: "string"
             },
@@ -1470,7 +1470,7 @@ let termini = Object.assign({
             },
             
             {
-                name: "Zone:ZoneVariant",
+                name: "Zone:Variant",
                 type: "TimeZoneVariant",
                 typeUse: "enumerator"
             }

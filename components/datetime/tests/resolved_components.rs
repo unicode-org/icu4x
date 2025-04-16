@@ -22,7 +22,7 @@ fn assert_resolved_components(
         FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new(locale.into(), skeleton).unwrap();
     let datetime = DateTime {
         date: Date::try_new_gregorian(2024, 1, 1).unwrap(),
-        time: Time::midnight(),
+        time: Time::start_of_day(),
     };
     let resolved_pattern = dtf.format(&datetime).pattern();
     assert_eq!(components::Bag::from(&resolved_pattern), *bag);
