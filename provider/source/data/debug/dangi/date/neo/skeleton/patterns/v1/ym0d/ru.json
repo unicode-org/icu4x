@@ -1,0 +1,16 @@
+{
+  "has_explicit_medium": true,
+  "variant_pattern_indices": [
+    0,
+    0,
+    0,
+    0,
+    3,
+    3
+  ],
+  "elements": [
+    "r(U) MMMM d",
+    "dd.MM.y",
+    "dd MMM U"
+  ]
+}

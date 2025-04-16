@@ -1,0 +1,15 @@
+{
+  "start": {
+    "string": ", ",
+    "index_1": 2
+  },
+  "middle": ", ",
+  "end": {
+    "default": {
+      "string": " ou ",
+      "index_1": 4
+    },
+    "special_case": null
+  },
+  "pair": null
+}

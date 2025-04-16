@@ -1,0 +1,21 @@
+{
+  "start": {
+    "string": "、",
+    "index_1": 3
+  },
+  "middle": "、",
+  "end": {
+    "default": {
+      "string": "、または",
+      "index_1": 12
+    },
+    "special_case": null
+  },
+  "pair": {
+    "default": {
+      "string": "または",
+      "index_1": 9
+    },
+    "special_case": null
+  }
+}

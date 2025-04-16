@@ -1,0 +1,51 @@
+{
+  "patterns": {
+    "3": {
+      "Other": {
+        "exponent": 3,
+        "index": 0,
+        "literal_text": " হা"
+      }
+    },
+    "5": {
+      "Other": {
+        "exponent": 5,
+        "index": 0,
+        "literal_text": " লা"
+      }
+    },
+    "7": {
+      "Other": {
+        "exponent": 7,
+        "index": 0,
+        "literal_text": " কো"
+      }
+    },
+    "10": {
+      "One": {
+        "exponent": 9,
+        "index": 0,
+        "literal_text": " শত কো"
+      },
+      "Other": {
+        "exponent": 9,
+        "index": 0,
+        "literal_text": "শত কো"
+      }
+    },
+    "11": {
+      "Other": {
+        "exponent": 9,
+        "index": 0,
+        "literal_text": "কো"
+      }
+    },
+    "12": {
+      "Other": {
+        "exponent": 12,
+        "index": 0,
+        "literal_text": " লা.কো."
+      }
+    }
+  }
+}
