@@ -309,19 +309,11 @@ fn gen_date_components(
     // Pull the field lengths from the date length patterns, and then use
     // those lengths for classical skeleton datetime pattern generation.
     //
-    // TODO: Should this use dateSkeletons?
-    // "full": "yMMMMEEEEd",
-    // "long": "yMMMMd",
-    // "medium": "yMMMd",
-    // "short": "yMMdd"
-    //
-    // Probably depends on CLDR data being higher quality.
-    // <https://unicode-org.atlassian.net/browse/CLDR-14993>
     // TODO(#308): Utilize the numbering system pattern variations.
     let date_pattern: reference::Pattern = match length {
-        Length::Long => data.date_formats.long.get_pattern().parse().unwrap(),
-        Length::Medium => data.date_formats.medium.get_pattern().parse().unwrap(),
-        Length::Short => data.date_formats.short.get_pattern().parse().unwrap(),
+        Length::Long => data.date_skeletons.long.get_pattern().parse().unwrap(),
+        Length::Medium => data.date_skeletons.medium.get_pattern().parse().unwrap(),
+        Length::Short => data.date_skeletons.short.get_pattern().parse().unwrap(),
         _ => unreachable!(),
     };
     let date_bag = components::Bag::from(&date_pattern);
@@ -756,7 +748,7 @@ mod date_skeleton_consistency_tests {
         num_problems += !check_single_pattern(
             test_case_data,
             TestCaseInfo {
-                pattern: data.date_formats.short.get_pattern(),
+                pattern: data.date_skeletons.short.get_pattern(),
                 skeleton: data.date_skeletons.short.get_pattern(),
                 length: "date-short",
             },
@@ -764,7 +756,7 @@ mod date_skeleton_consistency_tests {
         num_problems += !check_single_pattern(
             test_case_data,
             TestCaseInfo {
-                pattern: data.date_formats.medium.get_pattern(),
+                pattern: data.date_skeletons.medium.get_pattern(),
                 skeleton: data.date_skeletons.medium.get_pattern(),
                 length: "date-medum",
             },
@@ -772,7 +764,7 @@ mod date_skeleton_consistency_tests {
         num_problems += !check_single_pattern(
             test_case_data,
             TestCaseInfo {
-                pattern: data.date_formats.long.get_pattern(),
+                pattern: data.date_skeletons.long.get_pattern(),
                 skeleton: data.date_skeletons.long.get_pattern(),
                 length: "date-long",
             },
@@ -780,7 +772,7 @@ mod date_skeleton_consistency_tests {
         num_problems += !check_single_pattern(
             test_case_data,
             TestCaseInfo {
-                pattern: data.date_formats.full.get_pattern(),
+                pattern: data.date_skeletons.full.get_pattern(),
                 skeleton: data.date_skeletons.full.get_pattern(),
                 length: "date-full",
             },

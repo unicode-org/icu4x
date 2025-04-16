@@ -25,6 +25,7 @@ Some major changes worth highlighting:
         - Add `.time_hm[s]` on date fieldsets (unicode-org#6448)
         - Rename `.with_length` to `.for_length` (unicode-org#6448)
         - Length no longer has explicit `repr(u8)` discriminants (unicode-org#6423)
+        - Fix incorrect datetime skeletons being used in datetime formatting (unicode-org#6428)
 - Data model and providers
     - `icu_experimental`
       - `dimension`

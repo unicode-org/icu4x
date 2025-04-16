@@ -12,6 +12,6 @@
   "elements": [
     "d 'de' MMMM",
     "d 'de' MMM",
-    "d/M"
+    "dd/MM"
   ]
 }

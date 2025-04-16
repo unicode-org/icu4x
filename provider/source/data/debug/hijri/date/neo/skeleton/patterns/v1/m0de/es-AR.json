@@ -12,6 +12,6 @@
   "elements": [
     "EEEE, d 'de' MMMM",
     "E, d 'de' MMM",
-    "E d-M"
+    "E dd-MM"
   ]
 }

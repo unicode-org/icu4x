@@ -341,7 +341,7 @@ mod test {
 
         let cs_dates = DateLengths::from(&data);
 
-        assert_eq!("d. M. y", cs_dates.date.medium.to_string());
+        assert_eq!("yMd", cs_dates.date.medium.to_string());
     }
 
     #[test]
@@ -352,9 +352,9 @@ mod test {
 
         let haw_dates = DateLengths::from(&data);
 
-        assert_eq!("d MMM y", haw_dates.date.medium.to_string());
+        assert_eq!("yMMMd", haw_dates.date.medium.to_string());
         // TODO(#308): Support numbering system variations. We currently throw them away.
-        assert_eq!("d/M/yy", haw_dates.date.short.to_string());
+        assert_eq!("yyMd", haw_dates.date.short.to_string());
     }
 
     #[test]

@@ -9,9 +9,9 @@
     4
   ],
   "elements": [
-    "y/M/d",
+    "y年M月d日",
     "y/MM/dd",
-    "GGGy/M/d",
+    "GGGy年M月d日",
     "GGGy/MM/dd"
   ]
 }
