@@ -144,9 +144,13 @@ pub const EXTRA_BLOB_DEPS: &[&str] = &["cobs", "icu_provider_blob", "postcard"];
 ///
 /// Keep in sync with Cargo.toml crates.io dependencies.
 pub const EXTRA_FS_DEPS: &[&str] = &[
+    "databake-derive",
+    "databake",
+    "erased-serde",
     "icu_provider_fs",
     "icu_provider_registry",
     "serde-json-core",
+    "typeid",
 ];
 
 /// Dependencies needed by datagen provider (not counting `log` and `zip` deps)
