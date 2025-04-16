@@ -8,7 +8,7 @@ segmenter/break/word/override/v1, <lookup>, 40B, 2 identifiers
 segmenter/break/word/override/v1, <total>, 556B, 496B, 1 unique payloads
 segmenter/break/word/override/v1, fi, 556B, 496B, e523305ca615559e
 segmenter/break/word/override/v1, sv, -> fi
-segmenter/break/word/v1, <singleton>, 15060B, 14955B, e2fb3be6bca01a52
+segmenter/break/word/v1, <singleton>, 16414B, 16309B, a448cf3db65f7402
 segmenter/dictionary/auto/v1, <lookup>, 43B, 1 identifiers
 segmenter/dictionary/auto/v1, <total>, 2007134B, 2007113B, 1 unique payloads
 segmenter/dictionary/auto/v1, und/cjdict, 2007134B, 2007113B, f7552d2848b39b0d
