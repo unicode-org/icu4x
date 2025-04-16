@@ -28,7 +28,7 @@ fn test_marker_to_path() {
     use icu_provider::hello_world::HelloWorldV1;
     use icu_provider::prelude::*;
     assert_eq!(
-        marker_to_path(HelloWorldV1::INFO.id, Path::new("")).to_string_lossy(),
-        "hello/world/v1"
+        marker_to_path(HelloWorldV1::INFO.id, Path::new("")),
+        Path::new("hello/world/v1"),
     );
 }
