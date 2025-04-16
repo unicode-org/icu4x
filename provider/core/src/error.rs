@@ -6,6 +6,9 @@ use crate::log;
 use crate::{marker::DataMarkerId, prelude::*};
 use core::fmt;
 use displaydoc::Display;
+// use core::panic::Location;
+use std::panic::Location;
+
 
 /// A list specifying general categories of data provider error.
 ///
@@ -87,6 +90,8 @@ pub struct DataError {
 
     /// Whether this error was created in silent mode to not log.
     pub silent: bool,
+
+    pub location: Option<&'static core::panic::Location<'static>>, // New field
 }
 
 impl fmt::Display for DataError {
@@ -101,9 +106,13 @@ impl fmt::Display for DataError {
         if let Some(str_context) = self.str_context {
             write!(f, ": {str_context}")?;
         }
+        if let Some(location) = self.location {
+            write!(f, " [Location: {}:{}]", location.file(), location.line())?;
+        }
         Ok(())
     }
 }
+
 
 impl DataErrorKind {
     /// Converts this DataErrorKind into a DataError.
@@ -116,6 +125,7 @@ impl DataErrorKind {
             marker: None,
             str_context: None,
             silent: false,
+            location: Some(core::panic::Location::caller()), // Capture caller location
         }
     }
 
@@ -153,6 +163,9 @@ impl DataError {
             marker: None,
             str_context: Some(str_context),
             silent: false,
+            location: Some(core::panic::Location::caller()),
+            
+           
         }
     }
 
@@ -164,6 +177,8 @@ impl DataError {
             marker: Some(marker.id),
             str_context: self.str_context,
             silent: self.silent,
+            location: Some(core::panic::Location::caller()),
+            
         }
     }
 
@@ -175,6 +190,8 @@ impl DataError {
             marker: self.marker,
             str_context: Some(context),
             silent: self.silent,
+            location: Some(core::panic::Location::caller()),
+            
         }
     }
 
@@ -247,6 +264,7 @@ impl DataError {
             marker: None,
             str_context: None,
             silent: false,
+            location: Some(core::panic::Location::caller()),
         }
     }
 }
