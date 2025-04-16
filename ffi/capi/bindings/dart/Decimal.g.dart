@@ -3,7 +3,7 @@
 
 part of 'lib.g.dart';
 
-/// See the [Rust documentation for `FixedDecimal`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html) for more information.
+/// See the [Rust documentation for `Decimal`](https://docs.rs/fixed_decimal/latest/fixed_decimal/type.Decimal.html) for more information.
 final class Decimal implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _ffi;
 
@@ -25,7 +25,7 @@ final class Decimal implements ffi.Finalizable {
 
   /// Construct an [`Decimal`] from an integer.
   ///
-  /// See the [Rust documentation for `FixedDecimal`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html) for more information.
+  /// See the [Rust documentation for `Decimal`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.Decimal.html) for more information.
   factory Decimal.fromInt(int v) {
     final result = _icu4x_Decimal_from_int64_mv1(v);
     return Decimal._fromFfi(result, []);
@@ -33,30 +33,30 @@ final class Decimal implements ffi.Finalizable {
 
   /// Construct an [`Decimal`] from an float, with a given power of 10 for the lower magnitude
   ///
-  /// See the [Rust documentation for `try_from_f64`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.try_from_f64) for more information.
+  /// See the [Rust documentation for `try_from_f64`](https://docs.rs/fixed_decimal/latest/fixed_decimal/type.Decimal.html#method.try_from_f64) for more information.
   ///
   /// See the [Rust documentation for `FloatPrecision`](https://docs.rs/fixed_decimal/latest/fixed_decimal/enum.FloatPrecision.html) for more information.
   ///
-  /// Throws [FixedDecimalLimitError] on failure.
+  /// Throws [DecimalLimitError] on failure.
   factory Decimal.fromDoubleWithLowerMagnitude(double f, int magnitude) {
     final result = _icu4x_Decimal_from_double_with_lower_magnitude_mv1(f, magnitude);
     if (!result.isOk) {
-      throw FixedDecimalLimitError();
+      throw DecimalLimitError();
     }
     return Decimal._fromFfi(result.union.ok, []);
   }
 
   /// Construct an [`Decimal`] from an float, for a given number of significant digits
   ///
-  /// See the [Rust documentation for `try_from_f64`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.try_from_f64) for more information.
+  /// See the [Rust documentation for `try_from_f64`](https://docs.rs/fixed_decimal/latest/fixed_decimal/type.Decimal.html#method.try_from_f64) for more information.
   ///
   /// See the [Rust documentation for `FloatPrecision`](https://docs.rs/fixed_decimal/latest/fixed_decimal/enum.FloatPrecision.html) for more information.
   ///
-  /// Throws [FixedDecimalLimitError] on failure.
+  /// Throws [DecimalLimitError] on failure.
   factory Decimal.fromDoubleWithSignificantDigits(double f, int digits) {
     final result = _icu4x_Decimal_from_double_with_significant_digits_mv1(f, digits);
     if (!result.isOk) {
-      throw FixedDecimalLimitError();
+      throw DecimalLimitError();
     }
     return Decimal._fromFfi(result.union.ok, []);
   }
@@ -64,64 +64,64 @@ final class Decimal implements ffi.Finalizable {
   /// Construct an [`Decimal`] from an float, with enough digits to recover
   /// the original floating point in IEEE 754 without needing trailing zeros
   ///
-  /// See the [Rust documentation for `try_from_f64`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.Decimal.html#method.try_from_f64) for more information.
+  /// See the [Rust documentation for `try_from_f64`](https://docs.rs/fixed_decimal/latest/fixed_decimal/type.Decimal.html#method.try_from_f64) for more information.
   ///
   /// See the [Rust documentation for `FloatPrecision`](https://docs.rs/fixed_decimal/latest/fixed_decimal/enum.FloatPrecision.html) for more information.
   ///
-  /// Throws [FixedDecimalLimitError] on failure.
+  /// Throws [DecimalLimitError] on failure.
   factory Decimal.fromDoubleWithRoundTripPrecision(double f) {
     final result = _icu4x_Decimal_from_double_with_round_trip_precision_mv1(f);
     if (!result.isOk) {
-      throw FixedDecimalLimitError();
+      throw DecimalLimitError();
     }
     return Decimal._fromFfi(result.union.ok, []);
   }
 
   /// Construct an [`Decimal`] from a string.
   ///
-  /// See the [Rust documentation for `try_from_str`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.Decimal.html#method.try_from_str) for more information.
+  /// See the [Rust documentation for `try_from_str`](https://docs.rs/fixed_decimal/latest/fixed_decimal/type.Decimal.html#method.try_from_str) for more information.
   ///
-  /// Throws [FixedDecimalParseError] on failure.
+  /// Throws [DecimalParseError] on failure.
   factory Decimal.fromString(String v) {
     final temp = _FinalizedArena();
     final result = _icu4x_Decimal_from_string_mv1(v._utf8AllocIn(temp.arena));
     if (!result.isOk) {
-      throw FixedDecimalParseError.values[result.union.err];
+      throw DecimalParseError.values[result.union.err];
     }
     return Decimal._fromFfi(result.union.ok, []);
   }
 
-  /// See the [Rust documentation for `digit_at`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.UnsignedDecimal.html#method.digit_at) for more information.
+  /// See the [Rust documentation for `digit_at`](https://docs.rs/fixed_decimal/latest/fixed_decimal/type.Decimal.html#method.digit_at) for more information.
   int digitAt(int magnitude) {
     final result = _icu4x_Decimal_digit_at_mv1(_ffi, magnitude);
     return result;
   }
 
-  /// See the [Rust documentation for `magnitude_range`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.UnsignedDecimal.html#method.magnitude_range) for more information.
+  /// See the [Rust documentation for `magnitude_range`](https://docs.rs/fixed_decimal/latest/fixed_decimal/type.Decimal.html#method.magnitude_range) for more information.
   int get magnitudeStart {
     final result = _icu4x_Decimal_magnitude_start_mv1(_ffi);
     return result;
   }
 
-  /// See the [Rust documentation for `magnitude_range`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.UnsignedDecimal.html#method.magnitude_range) for more information.
+  /// See the [Rust documentation for `magnitude_range`](https://docs.rs/fixed_decimal/latest/fixed_decimal/type.Decimal.html#method.magnitude_range) for more information.
   int get magnitudeEnd {
     final result = _icu4x_Decimal_magnitude_end_mv1(_ffi);
     return result;
   }
 
-  /// See the [Rust documentation for `nonzero_magnitude_start`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.UnsignedDecimal.html#method.nonzero_magnitude_start) for more information.
+  /// See the [Rust documentation for `nonzero_magnitude_start`](https://docs.rs/fixed_decimal/latest/fixed_decimal/type.Decimal.html#method.nonzero_magnitude_start) for more information.
   int get nonzeroMagnitudeStart {
     final result = _icu4x_Decimal_nonzero_magnitude_start_mv1(_ffi);
     return result;
   }
 
-  /// See the [Rust documentation for `nonzero_magnitude_end`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.UnsignedDecimal.html#method.nonzero_magnitude_end) for more information.
+  /// See the [Rust documentation for `nonzero_magnitude_end`](https://docs.rs/fixed_decimal/latest/fixed_decimal/type.Decimal.html#method.nonzero_magnitude_end) for more information.
   int get nonzeroMagnitudeEnd {
     final result = _icu4x_Decimal_nonzero_magnitude_end_mv1(_ffi);
     return result;
   }
 
-  /// See the [Rust documentation for `is_zero`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.UnsignedDecimal.html#method.is_zero) for more information.
+  /// See the [Rust documentation for `is_zero`](https://docs.rs/fixed_decimal/latest/fixed_decimal/type.Decimal.html#method.is_zero) for more information.
   bool get isZero {
     final result = _icu4x_Decimal_is_zero_mv1(_ffi);
     return result;
@@ -129,54 +129,54 @@ final class Decimal implements ffi.Finalizable {
 
   /// Multiply the [`Decimal`] by a given power of ten.
   ///
-  /// See the [Rust documentation for `multiply_pow10`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.Decimal.html#method.multiply_pow10) for more information.
+  /// See the [Rust documentation for `multiply_pow10`](https://docs.rs/fixed_decimal/latest/fixed_decimal/type.Decimal.html#method.multiply_pow10) for more information.
   void multiplyPow10(int power) {
     _icu4x_Decimal_multiply_pow10_mv1(_ffi, power);
   }
 
-  /// See the [Rust documentation for `sign`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.Decimal.html#method.sign) for more information.
-  FixedDecimalSign get sign {
+  /// See the [Rust documentation for `sign`](https://docs.rs/fixed_decimal/latest/fixed_decimal/type.Decimal.html#method.sign) for more information.
+  DecimalSign get sign {
     final result = _icu4x_Decimal_sign_mv1(_ffi);
-    return FixedDecimalSign.values[result];
+    return DecimalSign.values[result];
   }
 
   /// Set the sign of the [`Decimal`].
   ///
-  /// See the [Rust documentation for `set_sign`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.Decimal.html#method.set_sign) for more information.
-  set sign(FixedDecimalSign sign) {
+  /// See the [Rust documentation for `set_sign`](https://docs.rs/fixed_decimal/latest/fixed_decimal/type.Decimal.html#method.set_sign) for more information.
+  set sign(DecimalSign sign) {
     _icu4x_Decimal_set_sign_mv1(_ffi, sign.index);
   }
 
-  /// See the [Rust documentation for `apply_sign_display`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.Decimal.html#method.apply_sign_display) for more information.
-  void applySignDisplay(FixedDecimalSignDisplay signDisplay) {
+  /// See the [Rust documentation for `apply_sign_display`](https://docs.rs/fixed_decimal/latest/fixed_decimal/type.Decimal.html#method.apply_sign_display) for more information.
+  void applySignDisplay(DecimalSignDisplay signDisplay) {
     _icu4x_Decimal_apply_sign_display_mv1(_ffi, signDisplay.index);
   }
 
-  /// See the [Rust documentation for `trim_start`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.trim_start) for more information.
+  /// See the [Rust documentation for `trim_start`](https://docs.rs/fixed_decimal/latest/fixed_decimal/type.Decimal.html#method.trim_start) for more information.
   void trimStart() {
     _icu4x_Decimal_trim_start_mv1(_ffi);
   }
 
-  /// See the [Rust documentation for `trim_end`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.trim_end) for more information.
+  /// See the [Rust documentation for `trim_end`](https://docs.rs/fixed_decimal/latest/fixed_decimal/type.Decimal.html#method.trim_end) for more information.
   void trimEnd() {
     _icu4x_Decimal_trim_end_mv1(_ffi);
   }
 
-  /// See the [Rust documentation for `trim_end_if_integer`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.UnsignedDecimal.html#method.trim_end_if_integer) for more information.
+  /// See the [Rust documentation for `trim_end_if_integer`](https://docs.rs/fixed_decimal/latest/fixed_decimal/type.Decimal.html#method.trim_end_if_integer) for more information.
   void trimEndIfInteger() {
     _icu4x_Decimal_trim_end_if_integer_mv1(_ffi);
   }
 
   /// Zero-pad the [`Decimal`] on the left to a particular position
   ///
-  /// See the [Rust documentation for `pad_start`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.pad_start) for more information.
+  /// See the [Rust documentation for `pad_start`](https://docs.rs/fixed_decimal/latest/fixed_decimal/type.Decimal.html#method.pad_start) for more information.
   void padStart(int position) {
     _icu4x_Decimal_pad_start_mv1(_ffi, position);
   }
 
   /// Zero-pad the [`Decimal`] on the right to a particular position
   ///
-  /// See the [Rust documentation for `pad_end`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.pad_end) for more information.
+  /// See the [Rust documentation for `pad_end`](https://docs.rs/fixed_decimal/latest/fixed_decimal/type.Decimal.html#method.pad_end) for more information.
   void padEnd(int position) {
     _icu4x_Decimal_pad_end_mv1(_ffi, position);
   }
@@ -184,7 +184,7 @@ final class Decimal implements ffi.Finalizable {
   /// Truncate the [`Decimal`] on the left to a particular position, deleting digits if necessary. This is useful for, e.g. abbreviating years
   /// ("2022" -> "22")
   ///
-  /// See the [Rust documentation for `set_max_position`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.set_max_position) for more information.
+  /// See the [Rust documentation for `set_max_position`](https://docs.rs/fixed_decimal/latest/fixed_decimal/type.Decimal.html#method.set_max_position) for more information.
   void setMaxPosition(int position) {
     _icu4x_Decimal_set_max_position_mv1(_ffi, position);
   }
@@ -194,38 +194,38 @@ final class Decimal implements ffi.Finalizable {
   /// This uses half to even rounding, which resolves ties by selecting the nearest
   /// even integer to the original value.
   ///
-  /// See the [Rust documentation for `round`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.Decimal.html#method.round) for more information.
+  /// See the [Rust documentation for `round`](https://docs.rs/fixed_decimal/latest/fixed_decimal/type.Decimal.html#method.round) for more information.
   void round(int position) {
     _icu4x_Decimal_round_mv1(_ffi, position);
   }
 
-  /// See the [Rust documentation for `ceil`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.Decimal.html#method.ceil) for more information.
+  /// See the [Rust documentation for `ceil`](https://docs.rs/fixed_decimal/latest/fixed_decimal/type.Decimal.html#method.ceil) for more information.
   void ceil(int position) {
     _icu4x_Decimal_ceil_mv1(_ffi, position);
   }
 
-  /// See the [Rust documentation for `expand`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.Decimal.html#method.expand) for more information.
+  /// See the [Rust documentation for `expand`](https://docs.rs/fixed_decimal/latest/fixed_decimal/type.Decimal.html#method.expand) for more information.
   void expand(int position) {
     _icu4x_Decimal_expand_mv1(_ffi, position);
   }
 
-  /// See the [Rust documentation for `floor`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.Decimal.html#method.floor) for more information.
+  /// See the [Rust documentation for `floor`](https://docs.rs/fixed_decimal/latest/fixed_decimal/type.Decimal.html#method.floor) for more information.
   void floor(int position) {
     _icu4x_Decimal_floor_mv1(_ffi, position);
   }
 
-  /// See the [Rust documentation for `trunc`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.Decimal.html#method.trunc) for more information.
+  /// See the [Rust documentation for `trunc`](https://docs.rs/fixed_decimal/latest/fixed_decimal/type.Decimal.html#method.trunc) for more information.
   void trunc(int position) {
     _icu4x_Decimal_trunc_mv1(_ffi, position);
   }
 
-  /// See the [Rust documentation for `round_with_mode`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.Decimal.html#method.round_with_mode) for more information.
-  void roundWithMode(int position, FixedDecimalSignedRoundingMode mode) {
+  /// See the [Rust documentation for `round_with_mode`](https://docs.rs/fixed_decimal/latest/fixed_decimal/type.Decimal.html#method.round_with_mode) for more information.
+  void roundWithMode(int position, DecimalSignedRoundingMode mode) {
     _icu4x_Decimal_round_with_mode_mv1(_ffi, position, mode.index);
   }
 
-  /// See the [Rust documentation for `round_with_mode_and_increment`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.round_with_mode_and_increment) for more information.
-  void roundWithModeAndIncrement(int position, FixedDecimalSignedRoundingMode mode, FixedDecimalRoundingIncrement increment) {
+  /// See the [Rust documentation for `round_with_mode_and_increment`](https://docs.rs/fixed_decimal/latest/fixed_decimal/type.Decimal.html#method.round_with_mode_and_increment) for more information.
+  void roundWithModeAndIncrement(int position, DecimalSignedRoundingMode mode, DecimalRoundingIncrement increment) {
     _icu4x_Decimal_round_with_mode_and_increment_mv1(_ffi, position, mode.index, increment.index);
   }
 
@@ -235,7 +235,7 @@ final class Decimal implements ffi.Finalizable {
   ///
   /// If not successful, `other` will be unchanged and an error is returned.
   ///
-  /// See the [Rust documentation for `concatenate_end`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.concatenate_end) for more information.
+  /// See the [Rust documentation for `concatenate_end`](https://docs.rs/fixed_decimal/latest/fixed_decimal/type.Decimal.html#method.concatenate_end) for more information.
   bool concatenateEnd(Decimal other) {
     final result = _icu4x_Decimal_concatenate_end_mv1(_ffi, other._ffi);
     return result.isOk;
@@ -243,7 +243,7 @@ final class Decimal implements ffi.Finalizable {
 
   /// Format the [`Decimal`] as a string.
   ///
-  /// See the [Rust documentation for `write_to`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.write_to) for more information.
+  /// See the [Rust documentation for `write_to`](https://docs.rs/fixed_decimal/latest/fixed_decimal/type.Decimal.html#method.write_to) for more information.
   @override
   String toString() {
     final write = _Write();
@@ -263,19 +263,19 @@ external void _icu4x_Decimal_destroy_mv1(ffi.Pointer<ffi.Void> self);
 external ffi.Pointer<ffi.Opaque> _icu4x_Decimal_from_int64_mv1(int v);
 
 @_DiplomatFfiUse('icu4x_Decimal_from_double_with_lower_magnitude_mv1')
-@ffi.Native<_ResultOpaqueFixedDecimalLimitErrorFfi Function(ffi.Double, ffi.Int16)>(isLeaf: true, symbol: 'icu4x_Decimal_from_double_with_lower_magnitude_mv1')
+@ffi.Native<_ResultOpaqueDecimalLimitErrorFfi Function(ffi.Double, ffi.Int16)>(isLeaf: true, symbol: 'icu4x_Decimal_from_double_with_lower_magnitude_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueFixedDecimalLimitErrorFfi _icu4x_Decimal_from_double_with_lower_magnitude_mv1(double f, int magnitude);
+external _ResultOpaqueDecimalLimitErrorFfi _icu4x_Decimal_from_double_with_lower_magnitude_mv1(double f, int magnitude);
 
 @_DiplomatFfiUse('icu4x_Decimal_from_double_with_significant_digits_mv1')
-@ffi.Native<_ResultOpaqueFixedDecimalLimitErrorFfi Function(ffi.Double, ffi.Uint8)>(isLeaf: true, symbol: 'icu4x_Decimal_from_double_with_significant_digits_mv1')
+@ffi.Native<_ResultOpaqueDecimalLimitErrorFfi Function(ffi.Double, ffi.Uint8)>(isLeaf: true, symbol: 'icu4x_Decimal_from_double_with_significant_digits_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueFixedDecimalLimitErrorFfi _icu4x_Decimal_from_double_with_significant_digits_mv1(double f, int digits);
+external _ResultOpaqueDecimalLimitErrorFfi _icu4x_Decimal_from_double_with_significant_digits_mv1(double f, int digits);
 
 @_DiplomatFfiUse('icu4x_Decimal_from_double_with_round_trip_precision_mv1')
-@ffi.Native<_ResultOpaqueFixedDecimalLimitErrorFfi Function(ffi.Double)>(isLeaf: true, symbol: 'icu4x_Decimal_from_double_with_round_trip_precision_mv1')
+@ffi.Native<_ResultOpaqueDecimalLimitErrorFfi Function(ffi.Double)>(isLeaf: true, symbol: 'icu4x_Decimal_from_double_with_round_trip_precision_mv1')
 // ignore: non_constant_identifier_names
-external _ResultOpaqueFixedDecimalLimitErrorFfi _icu4x_Decimal_from_double_with_round_trip_precision_mv1(double f);
+external _ResultOpaqueDecimalLimitErrorFfi _icu4x_Decimal_from_double_with_round_trip_precision_mv1(double f);
 
 @_DiplomatFfiUse('icu4x_Decimal_from_string_mv1')
 @ffi.Native<_ResultOpaqueInt32 Function(_SliceUtf8)>(isLeaf: true, symbol: 'icu4x_Decimal_from_string_mv1')

@@ -17,72 +17,6 @@ pub use symbols::*;
 
 size_test!(DateLengths, date_lengths_v1_size, 224);
 
-icu_provider::data_marker!(
-    /// `BuddhistDateLengthsV1`
-    BuddhistDateLengthsV1,
-    DateLengths<'static>
-);
-icu_provider::data_marker!(
-    /// `ChineseDateLengthsV1`
-    ChineseDateLengthsV1,
-    DateLengths<'static>
-);
-icu_provider::data_marker!(
-    /// `CopticDateLengthsV1`
-    CopticDateLengthsV1,
-    DateLengths<'static>
-);
-icu_provider::data_marker!(
-    /// `DangiDateLengthsV1`
-    DangiDateLengthsV1,
-    DateLengths<'static>
-);
-icu_provider::data_marker!(
-    /// `EthiopianDateLengthsV1`
-    EthiopianDateLengthsV1,
-    DateLengths<'static>
-);
-icu_provider::data_marker!(
-    /// `GregorianDateLengthsV1`
-    GregorianDateLengthsV1,
-    DateLengths<'static>
-);
-icu_provider::data_marker!(
-    /// `HebrewDateLengthsV1`
-    HebrewDateLengthsV1,
-    DateLengths<'static>
-);
-icu_provider::data_marker!(
-    /// `IndianDateLengthsV1`
-    IndianDateLengthsV1,
-    DateLengths<'static>
-);
-icu_provider::data_marker!(
-    /// `HijriDateLengthsV1`
-    HijriDateLengthsV1,
-    DateLengths<'static>
-);
-icu_provider::data_marker!(
-    /// `JapaneseDateLengthsV1`
-    JapaneseDateLengthsV1,
-    DateLengths<'static>
-);
-icu_provider::data_marker!(
-    /// `JapaneseExtendedDateLengthsV1`
-    JapaneseExtendedDateLengthsV1,
-    DateLengths<'static>
-);
-icu_provider::data_marker!(
-    /// `PersianDateLengthsV1`
-    PersianDateLengthsV1,
-    DateLengths<'static>
-);
-icu_provider::data_marker!(
-    /// `RocDateLengthsV1`
-    RocDateLengthsV1,
-    DateLengths<'static>
-);
-
 /// Pattern data for dates.
 #[doc = date_lengths_v1_size!()]
 ///
@@ -108,12 +42,6 @@ pub struct DateLengths<'data> {
 icu_provider::data_struct!(
     DateLengths<'_>,
     #[cfg(feature = "datagen")]
-);
-
-icu_provider::data_marker!(
-    /// `TimeLengthsV1`
-    TimeLengthsV1,
-    TimeLengths<'static>
 );
 
 size_test!(TimeLengths, time_lengths_v1_size, 264);

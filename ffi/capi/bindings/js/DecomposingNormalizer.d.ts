@@ -76,8 +76,6 @@ export class DecomposingNormalizer {
      *
      * See the [Rust documentation for `split_normalized_utf8`](https://docs.rs/icu/latest/icu/normalizer/struct.DecomposingNormalizerBorrowed.html#method.split_normalized_utf8) for more information.
      *
-     * See the [Rust documentation for `is_normalized_utf8_up_to`](https://docs.rs/icu/latest/icu/normalizer/struct.DecomposingNormalizerBorrowed.html#method.is_normalized_utf8_up_to) for more information.
-     *
      * See the [Rust documentation for `split_normalized`](https://docs.rs/icu/latest/icu/normalizer/struct.DecomposingNormalizerBorrowed.html#method.split_normalized) for more information.
      */
     isNormalizedUpTo(s: string): number;
@@ -86,8 +84,6 @@ export class DecomposingNormalizer {
      * Return the index a slice of potentially-invalid UTF-16 is normalized up to
      *
      * See the [Rust documentation for `split_normalized_utf16`](https://docs.rs/icu/latest/icu/normalizer/struct.DecomposingNormalizerBorrowed.html#method.split_normalized_utf16) for more information.
-     *
-     * See the [Rust documentation for `is_normalized_utf16_up_to`](https://docs.rs/icu/latest/icu/normalizer/struct.DecomposingNormalizerBorrowed.html#method.is_normalized_utf16_up_to) for more information.
      */
     isNormalizedUtf16UpTo(s: string): number;
 }

@@ -9,7 +9,7 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
 /** 
- * See the [Rust documentation for `RegionDisplayNames`](https://docs.rs/icu/latest/icu/displaynames/struct.RegionDisplayNames.html) for more information.
+ * See the [Rust documentation for `RegionDisplayNames`](https://docs.rs/icu/latest/icu/experimental/displaynames/struct.RegionDisplayNames.html) for more information.
  */
 const RegionDisplayNames_box_destroy_registry = new FinalizationRegistry((ptr) => {
     wasm.icu4x_RegionDisplayNames_destroy_mv1(ptr);
@@ -47,7 +47,7 @@ export class RegionDisplayNames {
     /** 
      * Creates a new `RegionDisplayNames` from locale data and an options bag using compiled data.
      *
-     * See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/displaynames/struct.RegionDisplayNames.html#method.try_new) for more information.
+     * See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/experimental/displaynames/struct.RegionDisplayNames.html#method.try_new) for more information.
      */
     #defaultConstructor(locale, options) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
@@ -74,7 +74,7 @@ export class RegionDisplayNames {
     /** 
      * Creates a new `RegionDisplayNames` from locale data and an options bag using a particular data source.
      *
-     * See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/displaynames/struct.RegionDisplayNames.html#method.try_new) for more information.
+     * See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/experimental/displaynames/struct.RegionDisplayNames.html#method.try_new) for more information.
      */
     static createWithProvider(provider, locale, options) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
@@ -103,12 +103,12 @@ export class RegionDisplayNames {
      * Note that the function returns an empty string in case the display name for a given
      * region code is not found.
      *
-     * See the [Rust documentation for `of`](https://docs.rs/icu/latest/icu/displaynames/struct.RegionDisplayNames.html#method.of) for more information.
+     * See the [Rust documentation for `of`](https://docs.rs/icu/latest/icu/experimental/displaynames/struct.RegionDisplayNames.html#method.of) for more information.
      */
     of(region) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
-        const regionSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, region));
+        const regionSlice = diplomatRuntime.DiplomatBuf.str8(wasm, region);
         
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         

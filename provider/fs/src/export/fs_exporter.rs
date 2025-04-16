@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use super::serializers::AbstractSerializer;
-use crate::datapath::get_data_marker_id;
+use crate::datapath::marker_to_path;
 use crate::manifest::Manifest;
 use icu_provider::export::*;
 use icu_provider::prelude::*;
@@ -123,10 +123,7 @@ impl DataExporter for FilesystemExporter {
         id: DataIdentifierBorrowed,
         payload: &DataPayload<ExportMarker>,
     ) -> Result<(), DataError> {
-        let Some((component, marker_name)) = get_data_marker_id(marker.id) else {
-            return Err(DataErrorKind::MarkerNotFound.with_marker(marker));
-        };
-        let mut path_buf = self.root.join(component).join(marker_name);
+        let mut path_buf = marker_to_path(marker.id, &self.root);
         if !id.marker_attributes.is_empty() {
             path_buf.push(id.marker_attributes.as_str());
         }
@@ -148,10 +145,7 @@ impl DataExporter for FilesystemExporter {
     }
 
     fn flush(&self, marker: DataMarkerInfo, metadata: FlushMetadata) -> Result<(), DataError> {
-        let Some((component, marker_name)) = get_data_marker_id(marker.id) else {
-            return Err(DataErrorKind::MarkerNotFound.with_marker(marker));
-        };
-        let path_buf = self.root.join(component).join(marker_name);
+        let path_buf = marker_to_path(marker.id, &self.root);
 
         if !path_buf.exists() {
             fs::create_dir_all(&path_buf)
@@ -173,10 +167,7 @@ impl DataExporter for FilesystemExporter {
         payload: &DataPayload<ExportMarker>,
         metadata: FlushMetadata,
     ) -> Result<(), DataError> {
-        let Some((component, marker_name)) = get_data_marker_id(marker.id) else {
-            return Err(DataErrorKind::MarkerNotFound.with_marker(marker));
-        };
-        let path_buf = self.root.join(component).join(marker_name);
+        let path_buf = marker_to_path(marker.id, &self.root);
 
         #[allow(clippy::unwrap_used)] // has parent by construction
         let parent_dir = path_buf.parent().unwrap();

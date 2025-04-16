@@ -18,10 +18,12 @@ pub mod ffi {
     use writeable::Writeable;
 
     #[allow(unused_imports)]
-    use crate::{
+    use crate::datetime_helpers::map_or_default;
+
+    #[allow(unused_imports)]
+    use crate::unstable::{
         date::ffi::{Date, IsoDate},
         datetime::ffi::DateTime,
-        datetime_helpers::map_or_default,
         datetime_options::ffi::{DateTimeAlignment, DateTimeLength, TimePrecision, YearStyle},
         errors::ffi::DateTimeFormatterLoadError,
         errors::ffi::DateTimeMismatchedCalendarError,
@@ -30,7 +32,7 @@ pub mod ffi {
     };
 
     #[cfg(feature = "buffer_provider")]
-    use crate::provider::ffi::DataProvider;
+    use crate::unstable::provider::ffi::DataProvider;
 
     {%- for formatter_kind in flavor.formatter_kinds() %}
     {%- let ffi_type %}
@@ -41,7 +43,7 @@ pub mod ffi {
     {%- endif %}
 
     #[diplomat::opaque]
-    #[diplomat::rust_link(icu::datetime::{{ formatter_kind.rust_type() }}, Typedef)]
+    #[diplomat::rust_link(icu::datetime::{{ formatter_kind.rustlink() }}, {{ formatter_kind.rustlink_doctype() }})]
     pub struct {{ ffi_type }}(
         pub  icu_datetime::{{ formatter_kind.rust_type() }}<
             {%- if formatter_kind.is_fixed_calendar %}
@@ -82,7 +84,12 @@ pub mod ffi {
         {%- else %}
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "{{ named_constructor }}")]
         {%- endif %}
+        #[diplomat::rust_link(icu::datetime::{{ formatter_kind.rustlink() }}::try_new, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::{{ variant.name_upper() }}, Struct)]
+        {%- if flavor.is_time_only() %}
+        #[diplomat::rust_link(icu::datetime::fieldsets::{{ variant.name_upper() }}::hm, FnInStruct, compact)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::{{ variant.name_upper() }}::hms, FnInStruct, compact)]
+        {%- endif %}
         {%- if flavor.has_time() %}
         #[diplomat::rust_link(icu::datetime::fieldsets::{{ variant.name_upper() }}::with_time_precision, FnInStruct, compact)]
         {%- endif %}
@@ -92,10 +99,19 @@ pub mod ffi {
         {%- if variant.consumed_options.year_style %}
         #[diplomat::rust_link(icu::datetime::fieldsets::{{ variant.name_upper() }}::with_year_style, FnInStruct, compact)]
         {%- endif %}
+        #[diplomat::rust_link(icu::datetime::fieldsets::{{ variant.name_upper() }}::for_length, FnInStruct, compact)]
         #[diplomat::rust_link(icu::datetime::fieldsets::{{ variant.name_upper() }}::with_length, FnInStruct, compact)]
         #[diplomat::rust_link(icu::datetime::fieldsets::{{ variant.name_upper() }}::short, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::{{ variant.name_upper() }}::medium, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::{{ variant.name_upper() }}::long, FnInStruct, hidden)]
+        {%- if variant.supports_time() %}
+        #[diplomat::rust_link(icu::datetime::fieldsets::{{ variant.name_upper() }}::time, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::{{ variant.name_upper() }}::time_hm, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::{{ variant.name_upper() }}::time_hms, FnInStruct, hidden)]
+        {%- endif %}
+        {%- if variant.supports_zone() %}
+        #[diplomat::rust_link(icu::datetime::fieldsets::{{ variant.name_upper() }}::zone, FnInStruct, hidden)] // functionality is in the zoned formatter but rustlink is here
+        {%- endif %}
         {%- if variant.is_default_constructor() && !ctor.is_with_provider() %}
         #[diplomat::demo(default_constructor)]
         {%- endif %}
@@ -120,7 +136,7 @@ pub mod ffi {
             {%- if !variant.consumed_options.alignment && !variant.consumed_options.year_style %}
             #[allow(unused_mut)]
             {%- endif %}
-            let mut options = icu_datetime::fieldsets::{{ variant.name_upper() }}::with_length(map_or_default(length));
+            let mut options = icu_datetime::fieldsets::{{ variant.name_upper() }}::for_length(map_or_default(length));
             {%- if flavor.has_time() %}
             options.time_precision = time_precision.map(Into::into);
             {%- endif %}

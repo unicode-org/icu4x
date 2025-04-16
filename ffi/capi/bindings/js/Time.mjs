@@ -74,7 +74,7 @@ export class Time {
     static fromString(v) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
-        const vSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, v));
+        const vSlice = diplomatRuntime.DiplomatBuf.str8(wasm, v);
         
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
@@ -98,12 +98,12 @@ export class Time {
     /** 
      * Creates a new [`Time`] representing midnight (00:00.000).
      *
-     * See the [Rust documentation for `midnight`](https://docs.rs/icu/latest/icu/time/struct.Time.html#method.midnight) for more information.
+     * See the [Rust documentation for `start_of_day`](https://docs.rs/icu/latest/icu/time/struct.Time.html#method.start_of_day) for more information.
      */
-    static midnight() {
+    static startOfDay() {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_Time_midnight_mv1(diplomatReceive.buffer);
+        const result = wasm.icu4x_Time_start_of_day_mv1(diplomatReceive.buffer);
     
         try {
             if (!diplomatReceive.resultFlag) {

@@ -10,7 +10,7 @@
 //! let hebrew_date = Date::try_new_hebrew(3425, 10, 11)
 //!     .expect("Failed to initialize hebrew Date instance.");
 //!
-//! assert_eq!(hebrew_date.year().era_year_or_extended(), 3425);
+//! assert_eq!(hebrew_date.era_year().year, 3425);
 //! assert_eq!(hebrew_date.month().ordinal, 10);
 //! assert_eq!(hebrew_date.day_of_month().0, 11);
 //! ```
@@ -35,7 +35,7 @@ use calendrical_calculations::rata_die::RataDie;
 ///
 /// # Era codes
 ///
-/// This calendar uses a single era code `hebrew` (alias `am`), Anno Mundi.
+/// This calendar uses a single era code `am`, Anno Mundi. Dates before this era use negative years.
 ///
 /// # Month codes
 ///
@@ -132,6 +132,7 @@ impl PrecomputedDataSource<HebrewYearInfo> for () {
 
 impl Calendar for Hebrew {
     type DateInner = HebrewDateInner;
+    type Year = types::EraYear;
 
     fn from_codes(
         &self,
@@ -141,7 +142,7 @@ impl Calendar for Hebrew {
         day: u8,
     ) -> Result<Self::DateInner, DateError> {
         match era {
-            Some("hebrew" | "am") | None => {}
+            Some("am") | None => {}
             _ => return Err(DateError::UnknownEra),
         }
 
@@ -258,16 +259,17 @@ impl Calendar for Hebrew {
         "Hebrew"
     }
 
-    fn year(&self, date: &Self::DateInner) -> types::YearInfo {
-        types::YearInfo::new(
-            date.0.year.value,
-            types::EraYear {
-                formatting_era: types::FormattingEra::Index(0, tinystr!(16, "AM")),
-                standard_era: tinystr!(16, "hebrew").into(),
-                era_year: date.0.year.value,
-                ambiguity: types::YearAmbiguity::CenturyRequired,
-            },
-        )
+    fn year_info(&self, date: &Self::DateInner) -> Self::Year {
+        types::EraYear {
+            era_index: Some(0),
+            era: tinystr!(16, "am"),
+            year: self.extended_year(date),
+            ambiguity: types::YearAmbiguity::CenturyRequired,
+        }
+    }
+
+    fn extended_year(&self, date: &Self::DateInner) -> i32 {
+        date.0.extended_year()
     }
 
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
@@ -330,8 +332,8 @@ impl Calendar for Hebrew {
         date.0.day_of_year()
     }
 
-    fn any_calendar_kind(&self) -> Option<crate::AnyCalendarKind> {
-        Some(crate::any_calendar::IntoAnyCalendar::kind(self))
+    fn calendar_algorithm(&self) -> Option<crate::preferences::CalendarAlgorithm> {
+        Some(crate::preferences::CalendarAlgorithm::Hebrew)
     }
 }
 
@@ -348,7 +350,7 @@ impl Date<Hebrew> {
     /// let date_hebrew = Date::try_new_hebrew(3425, 4, 25)
     ///     .expect("Failed to initialize Hebrew Date instance.");
     ///
-    /// assert_eq!(date_hebrew.year().era_year_or_extended(), 3425);
+    /// assert_eq!(date_hebrew.era_year().year, 3425);
     /// assert_eq!(date_hebrew.month().ordinal, 4);
     /// assert_eq!(date_hebrew.day_of_month().0, 25);
     /// ```
@@ -485,21 +487,17 @@ mod tests {
     #[test]
     fn test_negative_era_years() {
         let greg_date = Date::try_new_gregorian(-5000, 1, 1).unwrap();
-        // Extended year is accessible via the inner value.
-        // Era year is accessible via the public getter.
-        // TODO(#3962): Make extended year publicly accessible.
+        let greg_year = greg_date.era_year();
         assert_eq!(greg_date.inner.0 .0.year, -5000);
-        assert_eq!(
-            greg_date.year().standard_era().unwrap().0,
-            "gregory-inverse"
-        );
+        assert_eq!(greg_year.era, "bce");
         // In Gregorian, era year is 1 - extended year
-        assert_eq!(greg_date.year().era_year().unwrap(), 5001);
+        assert_eq!(greg_year.year, 5001);
         let hebr_date = greg_date.to_calendar(Hebrew);
+        let hebr_year = hebr_date.era_year();
         assert_eq!(hebr_date.inner.0.year.value, -1240);
-        assert_eq!(hebr_date.year().standard_era().unwrap().0, "hebrew");
+        assert_eq!(hebr_year.era, "am");
         // In Hebrew, there is no inverse era, so negative extended years are negative era years
-        assert_eq!(hebr_date.year().era_year_or_extended(), -1240);
+        assert_eq!(hebr_year.year, -1240);
     }
 
     #[test]

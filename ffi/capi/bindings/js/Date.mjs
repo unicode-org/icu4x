@@ -80,9 +80,9 @@ export class Date {
     static fromCodesInCalendar(eraCode, year, monthCode, day, calendar) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
-        const eraCodeSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, eraCode));
+        const eraCodeSlice = diplomatRuntime.DiplomatBuf.str8(wasm, eraCode);
         
-        const monthCodeSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, monthCode));
+        const monthCodeSlice = diplomatRuntime.DiplomatBuf.str8(wasm, monthCode);
         
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
@@ -134,7 +134,7 @@ export class Date {
     static fromString(v, calendar) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
-        const vSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, v));
+        const vSlice = diplomatRuntime.DiplomatBuf.str8(wasm, v);
         
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
@@ -320,14 +320,14 @@ export class Date {
     /** 
      * Returns the year number in the current era for this date
      *
-     * For calendars without an era, returns the extended year
+     * For calendars without an era, returns the related ISO year.
      *
-     * See the [Rust documentation for `era_year_or_extended`](https://docs.rs/icu/latest/icu/calendar/types/struct.YearInfo.html#method.era_year_or_extended) for more information.
+     * See the [Rust documentation for `era_year_or_related_iso`](https://docs.rs/icu/latest/icu/calendar/types/enum.YearInfo.html#method.era_year_or_related_iso) for more information.
      *
-     * Additional information: [1](https://docs.rs/icu/latest/icu/calendar/types/struct.EraYear.html#structfield.era_year), [2](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.year)
+     * Additional information: [1](https://docs.rs/icu/latest/icu/calendar/types/struct.EraYear.html#structfield.year), [2](https://docs.rs/icu/latest/icu/calendar/types/struct.CyclicYear.html#structfield.related_iso), [3](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.year)
      */
-    get yearInEra() {
-        const result = wasm.icu4x_Date_year_in_era_mv1(this.ffiValue);
+    get eraYearOrRelatedIso() {
+        const result = wasm.icu4x_Date_era_year_or_related_iso_mv1(this.ffiValue);
     
         try {
             return result;
@@ -339,7 +339,7 @@ export class Date {
     /** 
      * Returns the extended year in the Date
      *
-     * See the [Rust documentation for `extended_year`](https://docs.rs/icu/latest/icu/calendar/types/struct.YearInfo.html#structfield.extended_year) for more information.
+     * See the [Rust documentation for `extended_year`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.extended_year) for more information.
      */
     get extendedYear() {
         const result = wasm.icu4x_Date_extended_year_mv1(this.ffiValue);
@@ -354,7 +354,7 @@ export class Date {
     /** 
      * Returns the era for this date, or an empty string
      *
-     * See the [Rust documentation for `standard_era`](https://docs.rs/icu/latest/icu/calendar/types/struct.EraYear.html#structfield.standard_era) for more information.
+     * See the [Rust documentation for `era`](https://docs.rs/icu/latest/icu/calendar/types/struct.EraYear.html#structfield.era) for more information.
      *
      * Additional information: [1](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.year)
      */

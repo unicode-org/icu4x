@@ -433,7 +433,7 @@ version = "4.5.32"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "09176aae279615badda0765c0c0b3f6ed53f4709118af73cf4655d85d1530cd7"
 dependencies = [
- "heck 0.5.0",
+ "heck",
  "proc-macro2",
  "quote",
  "syn 2.0.100",
@@ -473,6 +473,15 @@ checksum = "117725a109d387c937a1533ce01b450cbde6b88abceea8473c4d7a85853cda3c"
 dependencies = [
  "lazy_static",
  "windows-sys 0.59.0",
+]
+
+[[package]]
+name = "colored"
+version = "3.0.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "fde0e0ec90c9dfb3b4b1a0891a7dcd0e2bffde2f7efed5fe7c9bb00e5bfb915e"
+dependencies = [
+ "windows-sys 0.48.0",
 ]
 
 [[package]]
@@ -670,7 +679,7 @@ dependencies = [
 [[package]]
 name = "diplomat"
 version = "0.10.0"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=f67862a22def6cb7954aa51e102630e019c99165#f67862a22def6cb7954aa51e102630e019c99165"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=df05c43c34183af2695131531c721922514dae45#df05c43c34183af2695131531c721922514dae45"
 dependencies = [
  "diplomat_core",
  "proc-macro2",
@@ -700,7 +709,7 @@ dependencies = [
 [[package]]
 name = "diplomat-runtime"
 version = "0.10.0"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=f67862a22def6cb7954aa51e102630e019c99165#f67862a22def6cb7954aa51e102630e019c99165"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=df05c43c34183af2695131531c721922514dae45#df05c43c34183af2695131531c721922514dae45"
 dependencies = [
  "log",
 ]
@@ -708,14 +717,14 @@ dependencies = [
 [[package]]
 name = "diplomat-tool"
 version = "0.10.0"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=f67862a22def6cb7954aa51e102630e019c99165#f67862a22def6cb7954aa51e102630e019c99165"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=df05c43c34183af2695131531c721922514dae45#df05c43c34183af2695131531c721922514dae45"
 dependencies = [
  "askama",
  "clap",
- "colored",
+ "colored 3.0.0",
  "diplomat_core",
  "displaydoc",
- "heck 0.4.1",
+ "heck",
  "indenter",
  "itertools 0.14.0",
  "pulldown-cmark",
@@ -723,13 +732,13 @@ dependencies = [
  "serde",
  "syn 2.0.100",
  "syn-inline-mod",
- "toml 0.5.11",
+ "toml",
 ]
 
 [[package]]
 name = "diplomat_core"
 version = "0.10.0"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=f67862a22def6cb7954aa51e102630e019c99165#f67862a22def6cb7954aa51e102630e019c99165"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=df05c43c34183af2695131531c721922514dae45#df05c43c34183af2695131531c721922514dae45"
 dependencies = [
  "displaydoc",
  "either",
@@ -835,9 +844,11 @@ name = "env_preferences"
 version = "0.1.0"
 dependencies = [
  "core-foundation-sys",
- "icu_locale",
+ "displaydoc",
+ "icu_locale_core",
  "libc",
  "windows",
+ "windows-core",
 ]
 
 [[package]]
@@ -1003,12 +1014,6 @@ dependencies = [
  "equivalent",
  "foldhash",
 ]
-
-[[package]]
-name = "heck"
-version = "0.4.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "95505c38b4572b2d910cecb0281560f54b440a19336cbbcb27bf6ce6adc6f5a8"
 
 [[package]]
 name = "heck"
@@ -1268,7 +1273,7 @@ dependencies = [
  "potential_utf",
  "serde",
  "serde_json",
- "toml 0.8.20",
+ "toml",
  "yoke",
  "zerofrom",
  "zerovec",
@@ -1612,7 +1617,7 @@ version = "2.0.0-beta2"
 dependencies = [
  "crlify",
  "databake",
- "heck 0.5.0",
+ "heck",
  "icu_provider",
  "icu_provider_export",
  "icu_provider_registry",
@@ -1675,7 +1680,6 @@ dependencies = [
  "icu_locale_core",
  "icu_provider",
  "icu_provider_export",
- "icu_provider_registry",
  "log",
  "postcard",
  "serde",
@@ -1727,7 +1731,7 @@ dependencies = [
  "simple_logger",
  "tar",
  "tinystr",
- "toml 0.8.20",
+ "toml",
  "twox-hash",
  "ureq",
  "writeable",
@@ -1772,6 +1776,7 @@ dependencies = [
  "displaydoc",
  "icu",
  "icu_calendar",
+ "icu_locale_core",
  "icu_provider",
  "icu_time_data",
  "ixdtf",
@@ -2403,9 +2408,9 @@ dependencies = [
 
 [[package]]
 name = "pulldown-cmark"
-version = "0.11.3"
+version = "0.13.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "679341d22c78c6c649893cbd6c3278dcbe9fc4faa62fea3a9296ae2b50c14625"
+checksum = "1e8bbe1a966bd2f362681a44f6edce3c2310ac21e4d5067a6e7ec396297a6ea0"
 dependencies = [
  "bitflags",
  "getopts",
@@ -2890,7 +2895,7 @@ version = "5.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e8c5dfa5e08767553704aa0ffd9d9794d527103c736aba9854773851fd7497eb"
 dependencies = [
- "colored",
+ "colored 2.2.0",
  "log",
  "time",
  "windows-sys 0.48.0",
@@ -2963,7 +2968,7 @@ version = "0.27.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c77a8c5abcaf0f9ce05d62342b7d298c346515365c36b673df4ebe3ced01fde8"
 dependencies = [
- "heck 0.5.0",
+ "heck",
  "proc-macro2",
  "quote",
  "rustversion",
@@ -3113,15 +3118,6 @@ name = "tinyvec_macros"
 version = "0.1.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "1f3ccbac311fea05f86f61904b462b55fb3df8837a366dfc601a0161d0532f20"
-
-[[package]]
-name = "toml"
-version = "0.5.11"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f4f7f0dd8d50a853a531c426359045b1998f04219d88799810762cd4ad314234"
-dependencies = [
- "serde",
-]
 
 [[package]]
 name = "toml"
@@ -3516,31 +3512,54 @@ dependencies = [
 
 [[package]]
 name = "windows"
-version = "0.56.0"
+version = "0.60.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1de69df01bdf1ead2f4ac895dc77c9351aefff65b2f3db429a343f9cbf05e132"
+checksum = "ddf874e74c7a99773e62b1c671427abf01a425e77c3d3fb9fb1e4883ea934529"
+dependencies = [
+ "windows-collections",
+ "windows-core",
+ "windows-future",
+ "windows-link",
+ "windows-numerics",
+]
+
+[[package]]
+name = "windows-collections"
+version = "0.1.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "5467f79cc1ba3f52ebb2ed41dbb459b8e7db636cc3429458d9a852e15bc24dec"
 dependencies = [
  "windows-core",
- "windows-targets 0.52.6",
 ]
 
 [[package]]
 name = "windows-core"
-version = "0.56.0"
+version = "0.60.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4698e52ed2d08f8658ab0c39512a7c00ee5fe2688c65f8c0a4f06750d729f2a6"
+checksum = "ca21a92a9cae9bf4ccae5cf8368dce0837100ddf6e6d57936749e85f152f6247"
 dependencies = [
  "windows-implement",
  "windows-interface",
+ "windows-link",
  "windows-result",
- "windows-targets 0.52.6",
+ "windows-strings",
+]
+
+[[package]]
+name = "windows-future"
+version = "0.1.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a787db4595e7eb80239b74ce8babfb1363d8e343ab072f2ffe901400c03349f0"
+dependencies = [
+ "windows-core",
+ "windows-link",
 ]
 
 [[package]]
 name = "windows-implement"
-version = "0.56.0"
+version = "0.59.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f6fc35f58ecd95a9b71c4f2329b911016e6bec66b3f2e6a4aad86bd2e99e2f9b"
+checksum = "83577b051e2f49a058c308f17f273b570a6a758386fc291b5f6a934dd84e48c1"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -3549,9 +3568,9 @@ dependencies = [
 
 [[package]]
 name = "windows-interface"
-version = "0.56.0"
+version = "0.59.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "08990546bf4edef8f431fa6326e032865f27138718c587dc21bc0265bbcb57cc"
+checksum = "cb26fd936d991781ea39e87c3a27285081e3c0da5ca0fcbc02d368cc6f52ff01"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -3559,12 +3578,37 @@ dependencies = [
 ]
 
 [[package]]
-name = "windows-result"
-version = "0.1.2"
+name = "windows-link"
+version = "0.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5e383302e8ec8515204254685643de10811af0ed97ea37210dc26fb0032647f8"
+checksum = "6dccfd733ce2b1753b03b6d3c65edf020262ea35e20ccdf3e288043e6dd620e3"
+
+[[package]]
+name = "windows-numerics"
+version = "0.1.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "005dea54e2f6499f2cee279b8f703b3cf3b5734a2d8d21867c8f44003182eeed"
 dependencies = [
- "windows-targets 0.52.6",
+ "windows-core",
+ "windows-link",
+]
+
+[[package]]
+name = "windows-result"
+version = "0.3.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "06374efe858fab7e4f881500e6e86ec8bc28f9462c47e5a9941a0142ad86b189"
+dependencies = [
+ "windows-link",
+]
+
+[[package]]
+name = "windows-strings"
+version = "0.3.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "87fa48cc5d406560701792be122a10132491cff9d0aeb23583cc2dcafc847319"
+dependencies = [
+ "windows-link",
 ]
 
 [[package]]

@@ -128,7 +128,7 @@ export class ComposingNormalizer {
     normalize(s) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
-        const sSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, s));
+        const sSlice = diplomatRuntime.DiplomatBuf.str8(wasm, s);
         
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
         wasm.icu4x_ComposingNormalizer_normalize_mv1(this.ffiValue, ...sSlice.splat(), write.buffer);
@@ -155,7 +155,7 @@ export class ComposingNormalizer {
     isNormalized(s) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
-        const sSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str16(wasm, s));
+        const sSlice = diplomatRuntime.DiplomatBuf.str16(wasm, s);
         
         const result = wasm.icu4x_ComposingNormalizer_is_normalized_utf16_mv1(this.ffiValue, ...sSlice.splat());
     
@@ -172,13 +172,11 @@ export class ComposingNormalizer {
      * Return the index a slice of potentially-invalid UTF-16 is normalized up to
      *
      * See the [Rust documentation for `split_normalized_utf16`](https://docs.rs/icu/latest/icu/normalizer/struct.ComposingNormalizerBorrowed.html#method.split_normalized_utf16) for more information.
-     *
-     * See the [Rust documentation for `is_normalized_utf16_up_to`](https://docs.rs/icu/latest/icu/normalizer/struct.ComposingNormalizerBorrowed.html#method.is_normalized_utf16_up_to) for more information.
      */
     isNormalizedUpTo(s) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
-        const sSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str16(wasm, s));
+        const sSlice = diplomatRuntime.DiplomatBuf.str16(wasm, s);
         
         const result = wasm.icu4x_ComposingNormalizer_is_normalized_utf16_up_to_mv1(this.ffiValue, ...sSlice.splat());
     

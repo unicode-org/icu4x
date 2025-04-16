@@ -3,7 +3,7 @@
 
 part of 'lib.g.dart';
 
-/// See the [Rust documentation for `FixedCalendarDateTimeFormatter`](https://docs.rs/icu/latest/icu/datetime/type.FixedCalendarDateTimeFormatter.html) for more information.
+/// See the [Rust documentation for `FixedCalendarDateTimeFormatter`](https://docs.rs/icu/latest/icu/datetime/struct.FixedCalendarDateTimeFormatter.html) for more information.
 final class DateFormatterGregorian implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _ffi;
 
@@ -23,9 +23,11 @@ final class DateFormatterGregorian implements ffi.Finalizable {
 
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_DateFormatterGregorian_destroy_mv1));
 
+  /// See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/datetime/struct.FixedCalendarDateTimeFormatter.html#method.try_new) for more information.
+  ///
   /// See the [Rust documentation for `D`](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.D.html) for more information.
   ///
-  /// Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.D.html#method.with_alignment), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.D.html#method.with_length)
+  /// Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.D.html#method.with_alignment), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.D.html#method.for_length), [3](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.D.html#method.with_length)
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   factory DateFormatterGregorian.d(Locale locale, {DateTimeLength? length, DateTimeAlignment? alignment}) {
@@ -36,9 +38,11 @@ final class DateFormatterGregorian implements ffi.Finalizable {
     return DateFormatterGregorian._fromFfi(result.union.ok, []);
   }
 
+  /// See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/datetime/struct.FixedCalendarDateTimeFormatter.html#method.try_new) for more information.
+  ///
   /// See the [Rust documentation for `D`](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.D.html) for more information.
   ///
-  /// Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.D.html#method.with_alignment), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.D.html#method.with_length)
+  /// Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.D.html#method.with_alignment), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.D.html#method.for_length), [3](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.D.html#method.with_length)
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   factory DateFormatterGregorian.dWithProvider(DataProvider provider, Locale locale, {DateTimeLength? length, DateTimeAlignment? alignment}) {
@@ -49,9 +53,11 @@ final class DateFormatterGregorian implements ffi.Finalizable {
     return DateFormatterGregorian._fromFfi(result.union.ok, []);
   }
 
+  /// See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/datetime/struct.FixedCalendarDateTimeFormatter.html#method.try_new) for more information.
+  ///
   /// See the [Rust documentation for `MD`](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.MD.html) for more information.
   ///
-  /// Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.MD.html#method.with_alignment), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.MD.html#method.with_length)
+  /// Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.MD.html#method.with_alignment), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.MD.html#method.for_length), [3](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.MD.html#method.with_length)
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   factory DateFormatterGregorian.md(Locale locale, {DateTimeLength? length, DateTimeAlignment? alignment}) {
@@ -62,9 +68,11 @@ final class DateFormatterGregorian implements ffi.Finalizable {
     return DateFormatterGregorian._fromFfi(result.union.ok, []);
   }
 
+  /// See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/datetime/struct.FixedCalendarDateTimeFormatter.html#method.try_new) for more information.
+  ///
   /// See the [Rust documentation for `MD`](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.MD.html) for more information.
   ///
-  /// Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.MD.html#method.with_alignment), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.MD.html#method.with_length)
+  /// Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.MD.html#method.with_alignment), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.MD.html#method.for_length), [3](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.MD.html#method.with_length)
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   factory DateFormatterGregorian.mdWithProvider(DataProvider provider, Locale locale, {DateTimeLength? length, DateTimeAlignment? alignment}) {
@@ -75,9 +83,11 @@ final class DateFormatterGregorian implements ffi.Finalizable {
     return DateFormatterGregorian._fromFfi(result.union.ok, []);
   }
 
+  /// See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/datetime/struct.FixedCalendarDateTimeFormatter.html#method.try_new) for more information.
+  ///
   /// See the [Rust documentation for `YMD`](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMD.html) for more information.
   ///
-  /// Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMD.html#method.with_alignment), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMD.html#method.with_year_style), [3](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMD.html#method.with_length)
+  /// Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMD.html#method.with_alignment), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMD.html#method.with_year_style), [3](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMD.html#method.for_length), [4](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMD.html#method.with_length)
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   factory DateFormatterGregorian.ymd(Locale locale, {DateTimeLength? length, DateTimeAlignment? alignment, YearStyle? yearStyle}) {
@@ -88,9 +98,11 @@ final class DateFormatterGregorian implements ffi.Finalizable {
     return DateFormatterGregorian._fromFfi(result.union.ok, []);
   }
 
+  /// See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/datetime/struct.FixedCalendarDateTimeFormatter.html#method.try_new) for more information.
+  ///
   /// See the [Rust documentation for `YMD`](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMD.html) for more information.
   ///
-  /// Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMD.html#method.with_alignment), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMD.html#method.with_year_style), [3](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMD.html#method.with_length)
+  /// Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMD.html#method.with_alignment), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMD.html#method.with_year_style), [3](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMD.html#method.for_length), [4](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMD.html#method.with_length)
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   factory DateFormatterGregorian.ymdWithProvider(DataProvider provider, Locale locale, {DateTimeLength? length, DateTimeAlignment? alignment, YearStyle? yearStyle}) {
@@ -101,9 +113,11 @@ final class DateFormatterGregorian implements ffi.Finalizable {
     return DateFormatterGregorian._fromFfi(result.union.ok, []);
   }
 
+  /// See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/datetime/struct.FixedCalendarDateTimeFormatter.html#method.try_new) for more information.
+  ///
   /// See the [Rust documentation for `DE`](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.DE.html) for more information.
   ///
-  /// Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.DE.html#method.with_alignment), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.DE.html#method.with_length)
+  /// Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.DE.html#method.with_alignment), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.DE.html#method.for_length), [3](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.DE.html#method.with_length)
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   factory DateFormatterGregorian.de(Locale locale, {DateTimeLength? length, DateTimeAlignment? alignment}) {
@@ -114,9 +128,11 @@ final class DateFormatterGregorian implements ffi.Finalizable {
     return DateFormatterGregorian._fromFfi(result.union.ok, []);
   }
 
+  /// See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/datetime/struct.FixedCalendarDateTimeFormatter.html#method.try_new) for more information.
+  ///
   /// See the [Rust documentation for `DE`](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.DE.html) for more information.
   ///
-  /// Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.DE.html#method.with_alignment), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.DE.html#method.with_length)
+  /// Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.DE.html#method.with_alignment), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.DE.html#method.for_length), [3](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.DE.html#method.with_length)
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   factory DateFormatterGregorian.deWithProvider(DataProvider provider, Locale locale, {DateTimeLength? length, DateTimeAlignment? alignment}) {
@@ -127,9 +143,11 @@ final class DateFormatterGregorian implements ffi.Finalizable {
     return DateFormatterGregorian._fromFfi(result.union.ok, []);
   }
 
+  /// See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/datetime/struct.FixedCalendarDateTimeFormatter.html#method.try_new) for more information.
+  ///
   /// See the [Rust documentation for `MDE`](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.MDE.html) for more information.
   ///
-  /// Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.MDE.html#method.with_alignment), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.MDE.html#method.with_length)
+  /// Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.MDE.html#method.with_alignment), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.MDE.html#method.for_length), [3](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.MDE.html#method.with_length)
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   factory DateFormatterGregorian.mde(Locale locale, {DateTimeLength? length, DateTimeAlignment? alignment}) {
@@ -140,9 +158,11 @@ final class DateFormatterGregorian implements ffi.Finalizable {
     return DateFormatterGregorian._fromFfi(result.union.ok, []);
   }
 
+  /// See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/datetime/struct.FixedCalendarDateTimeFormatter.html#method.try_new) for more information.
+  ///
   /// See the [Rust documentation for `MDE`](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.MDE.html) for more information.
   ///
-  /// Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.MDE.html#method.with_alignment), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.MDE.html#method.with_length)
+  /// Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.MDE.html#method.with_alignment), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.MDE.html#method.for_length), [3](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.MDE.html#method.with_length)
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   factory DateFormatterGregorian.mdeWithProvider(DataProvider provider, Locale locale, {DateTimeLength? length, DateTimeAlignment? alignment}) {
@@ -153,9 +173,11 @@ final class DateFormatterGregorian implements ffi.Finalizable {
     return DateFormatterGregorian._fromFfi(result.union.ok, []);
   }
 
+  /// See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/datetime/struct.FixedCalendarDateTimeFormatter.html#method.try_new) for more information.
+  ///
   /// See the [Rust documentation for `YMDE`](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMDE.html) for more information.
   ///
-  /// Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMDE.html#method.with_alignment), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMDE.html#method.with_year_style), [3](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMDE.html#method.with_length)
+  /// Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMDE.html#method.with_alignment), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMDE.html#method.with_year_style), [3](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMDE.html#method.for_length), [4](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMDE.html#method.with_length)
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   factory DateFormatterGregorian.ymde(Locale locale, {DateTimeLength? length, DateTimeAlignment? alignment, YearStyle? yearStyle}) {
@@ -166,9 +188,11 @@ final class DateFormatterGregorian implements ffi.Finalizable {
     return DateFormatterGregorian._fromFfi(result.union.ok, []);
   }
 
+  /// See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/datetime/struct.FixedCalendarDateTimeFormatter.html#method.try_new) for more information.
+  ///
   /// See the [Rust documentation for `YMDE`](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMDE.html) for more information.
   ///
-  /// Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMDE.html#method.with_alignment), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMDE.html#method.with_year_style), [3](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMDE.html#method.with_length)
+  /// Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMDE.html#method.with_alignment), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMDE.html#method.with_year_style), [3](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMDE.html#method.for_length), [4](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMDE.html#method.with_length)
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   factory DateFormatterGregorian.ymdeWithProvider(DataProvider provider, Locale locale, {DateTimeLength? length, DateTimeAlignment? alignment, YearStyle? yearStyle}) {
@@ -179,9 +203,11 @@ final class DateFormatterGregorian implements ffi.Finalizable {
     return DateFormatterGregorian._fromFfi(result.union.ok, []);
   }
 
+  /// See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/datetime/struct.FixedCalendarDateTimeFormatter.html#method.try_new) for more information.
+  ///
   /// See the [Rust documentation for `E`](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.E.html) for more information.
   ///
-  /// Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.E.html#method.with_length)
+  /// Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.E.html#method.for_length), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.E.html#method.with_length)
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   factory DateFormatterGregorian.e(Locale locale, [DateTimeLength? length]) {
@@ -192,9 +218,11 @@ final class DateFormatterGregorian implements ffi.Finalizable {
     return DateFormatterGregorian._fromFfi(result.union.ok, []);
   }
 
+  /// See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/datetime/struct.FixedCalendarDateTimeFormatter.html#method.try_new) for more information.
+  ///
   /// See the [Rust documentation for `E`](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.E.html) for more information.
   ///
-  /// Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.E.html#method.with_length)
+  /// Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.E.html#method.for_length), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.E.html#method.with_length)
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   factory DateFormatterGregorian.eWithProvider(DataProvider provider, Locale locale, [DateTimeLength? length]) {
@@ -205,9 +233,11 @@ final class DateFormatterGregorian implements ffi.Finalizable {
     return DateFormatterGregorian._fromFfi(result.union.ok, []);
   }
 
+  /// See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/datetime/struct.FixedCalendarDateTimeFormatter.html#method.try_new) for more information.
+  ///
   /// See the [Rust documentation for `M`](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.M.html) for more information.
   ///
-  /// Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.M.html#method.with_alignment), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.M.html#method.with_length)
+  /// Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.M.html#method.with_alignment), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.M.html#method.for_length), [3](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.M.html#method.with_length)
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   factory DateFormatterGregorian.m(Locale locale, {DateTimeLength? length, DateTimeAlignment? alignment}) {
@@ -218,9 +248,11 @@ final class DateFormatterGregorian implements ffi.Finalizable {
     return DateFormatterGregorian._fromFfi(result.union.ok, []);
   }
 
+  /// See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/datetime/struct.FixedCalendarDateTimeFormatter.html#method.try_new) for more information.
+  ///
   /// See the [Rust documentation for `M`](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.M.html) for more information.
   ///
-  /// Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.M.html#method.with_alignment), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.M.html#method.with_length)
+  /// Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.M.html#method.with_alignment), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.M.html#method.for_length), [3](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.M.html#method.with_length)
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   factory DateFormatterGregorian.mWithProvider(DataProvider provider, Locale locale, {DateTimeLength? length, DateTimeAlignment? alignment}) {
@@ -231,9 +263,11 @@ final class DateFormatterGregorian implements ffi.Finalizable {
     return DateFormatterGregorian._fromFfi(result.union.ok, []);
   }
 
+  /// See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/datetime/struct.FixedCalendarDateTimeFormatter.html#method.try_new) for more information.
+  ///
   /// See the [Rust documentation for `YM`](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YM.html) for more information.
   ///
-  /// Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YM.html#method.with_alignment), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YM.html#method.with_year_style), [3](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YM.html#method.with_length)
+  /// Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YM.html#method.with_alignment), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YM.html#method.with_year_style), [3](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YM.html#method.for_length), [4](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YM.html#method.with_length)
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   factory DateFormatterGregorian.ym(Locale locale, {DateTimeLength? length, DateTimeAlignment? alignment, YearStyle? yearStyle}) {
@@ -244,9 +278,11 @@ final class DateFormatterGregorian implements ffi.Finalizable {
     return DateFormatterGregorian._fromFfi(result.union.ok, []);
   }
 
+  /// See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/datetime/struct.FixedCalendarDateTimeFormatter.html#method.try_new) for more information.
+  ///
   /// See the [Rust documentation for `YM`](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YM.html) for more information.
   ///
-  /// Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YM.html#method.with_alignment), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YM.html#method.with_year_style), [3](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YM.html#method.with_length)
+  /// Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YM.html#method.with_alignment), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YM.html#method.with_year_style), [3](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YM.html#method.for_length), [4](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YM.html#method.with_length)
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   factory DateFormatterGregorian.ymWithProvider(DataProvider provider, Locale locale, {DateTimeLength? length, DateTimeAlignment? alignment, YearStyle? yearStyle}) {
@@ -257,9 +293,11 @@ final class DateFormatterGregorian implements ffi.Finalizable {
     return DateFormatterGregorian._fromFfi(result.union.ok, []);
   }
 
+  /// See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/datetime/struct.FixedCalendarDateTimeFormatter.html#method.try_new) for more information.
+  ///
   /// See the [Rust documentation for `Y`](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.Y.html) for more information.
   ///
-  /// Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.Y.html#method.with_alignment), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.Y.html#method.with_year_style), [3](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.Y.html#method.with_length)
+  /// Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.Y.html#method.with_alignment), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.Y.html#method.with_year_style), [3](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.Y.html#method.for_length), [4](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.Y.html#method.with_length)
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   factory DateFormatterGregorian.y(Locale locale, {DateTimeLength? length, DateTimeAlignment? alignment, YearStyle? yearStyle}) {
@@ -270,9 +308,11 @@ final class DateFormatterGregorian implements ffi.Finalizable {
     return DateFormatterGregorian._fromFfi(result.union.ok, []);
   }
 
+  /// See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/datetime/struct.FixedCalendarDateTimeFormatter.html#method.try_new) for more information.
+  ///
   /// See the [Rust documentation for `Y`](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.Y.html) for more information.
   ///
-  /// Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.Y.html#method.with_alignment), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.Y.html#method.with_year_style), [3](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.Y.html#method.with_length)
+  /// Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.Y.html#method.with_alignment), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.Y.html#method.with_year_style), [3](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.Y.html#method.for_length), [4](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.Y.html#method.with_length)
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   factory DateFormatterGregorian.yWithProvider(DataProvider provider, Locale locale, {DateTimeLength? length, DateTimeAlignment? alignment, YearStyle? yearStyle}) {

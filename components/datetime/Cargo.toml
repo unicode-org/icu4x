@@ -63,7 +63,7 @@ bincode = { workspace = true }
 criterion = { workspace = true }
 
 [features]
-default = ["compiled_data"]
+default = ["compiled_data", "ixdtf"]
 serde = [
     "dep:serde",
     "icu_calendar/serde",

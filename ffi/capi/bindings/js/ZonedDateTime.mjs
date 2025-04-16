@@ -127,7 +127,7 @@ export class ZonedDateTime {
     static fromString(v, calendar, ianaParser, offsetCalculator) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
-        const vSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, v));
+        const vSlice = diplomatRuntime.DiplomatBuf.str8(wasm, v);
         
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 13, 4, true);
         
@@ -156,7 +156,7 @@ export class ZonedDateTime {
     static locationOnlyFromString(v, calendar, ianaParser) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
-        const vSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, v));
+        const vSlice = diplomatRuntime.DiplomatBuf.str8(wasm, v);
         
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 13, 4, true);
         
@@ -185,7 +185,7 @@ export class ZonedDateTime {
     static offsetOnlyFromString(v, calendar) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
-        const vSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, v));
+        const vSlice = diplomatRuntime.DiplomatBuf.str8(wasm, v);
         
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 13, 4, true);
         
@@ -209,12 +209,12 @@ export class ZonedDateTime {
     /** 
      * Creates a new [`ZonedDateTime`] from an IXDTF string, without requiring the offset or calculating the zone variant.
      *
-     * See the [Rust documentation for `try_loose_from_str`](https://docs.rs/icu/latest/icu/time/struct.ZonedDateTime.html#method.try_loose_from_str) for more information.
+     * See the [Rust documentation for `try_lenient_from_str`](https://docs.rs/icu/latest/icu/time/struct.ZonedDateTime.html#method.try_lenient_from_str) for more information.
      */
     static looseFromString(v, calendar, ianaParser) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
-        const vSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, v));
+        const vSlice = diplomatRuntime.DiplomatBuf.str8(wasm, v);
         
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 13, 4, true);
         

@@ -16,11 +16,11 @@ export class TimeZoneVariant {
     static Daylight : TimeZoneVariant;
 
     /** 
-     * Sets the `zone_variant` field to "daylight" time.
+     * Sets the `variant` field to "daylight" time.
      *
      * See the [Rust documentation for `from_rearguard_isdst`](https://docs.rs/icu/latest/icu/time/zone/enum.TimeZoneVariant.html#method.from_rearguard_isdst) for more information.
      *
-     * See the [Rust documentation for `with_zone_variant`](https://docs.rs/icu/latest/icu/time/struct.TimeZoneInfo.html#method.with_zone_variant) for more information.
+     * See the [Rust documentation for `with_variant`](https://docs.rs/icu/latest/icu/time/struct.TimeZoneInfo.html#method.with_variant) for more information.
      *
      * Additional information: [1](https://docs.rs/icu/latest/icu/time/zone/enum.TimeZoneVariant.html)
      */

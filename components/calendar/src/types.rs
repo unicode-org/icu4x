@@ -4,47 +4,18 @@
 
 //! This module contains various types used by `icu_calendar` and `icu::datetime`
 
+#[doc(no_inline)]
 pub use calendrical_calculations::rata_die::RataDie;
 use core::fmt;
-use core::num::NonZeroU8;
 use tinystr::TinyAsciiStr;
 use tinystr::{TinyStr16, TinyStr4};
 use zerovec::maps::ZeroMapKV;
 use zerovec::ule::AsULE;
 
-/// The era of a particular date
-///
-/// Different calendars use different era codes, see their documentation
-/// for details.
-///
-/// Era codes are shared with Temporal, [see Temporal proposal][era-proposal].
-///
-/// [era-proposal]: https://tc39.es/proposal-intl-era-monthcode/
-#[derive(Copy, Clone, Debug, PartialEq)]
-#[allow(clippy::exhaustive_structs)] // this is a newtype
-pub struct Era(pub TinyStr16);
-
-impl From<TinyStr16> for Era {
-    fn from(o: TinyStr16) -> Self {
-        Self(o)
-    }
-}
-
-/// General information about a year
-#[derive(Copy, Clone, Debug, PartialEq)]
-#[non_exhaustive]
-pub struct YearInfo {
-    /// The "extended year", typically anchored with year 1 as the year 1 of either the most modern or
-    /// otherwise some "major" era for the calendar
-    pub extended_year: i32,
-    /// The rest of the details about the year
-    pub kind: YearKind,
-}
-
 /// The type of year: Calendars like Chinese don't have an era and instead format with cyclic years.
 #[derive(Copy, Clone, Debug, PartialEq)]
 #[non_exhaustive]
-pub enum YearKind {
+pub enum YearInfo {
     /// An era and a year in that era
     Era(EraYear),
     /// A cyclic year, and the related ISO year
@@ -54,77 +25,42 @@ pub enum YearKind {
     Cyclic(CyclicYear),
 }
 
+impl From<EraYear> for YearInfo {
+    fn from(value: EraYear) -> Self {
+        Self::Era(value)
+    }
+}
+
+impl From<CyclicYear> for YearInfo {
+    fn from(value: CyclicYear) -> Self {
+        Self::Cyclic(value)
+    }
+}
+
 impl YearInfo {
-    /// Construct a new Year given an era and number
-    pub(crate) fn new(extended_year: i32, era: EraYear) -> Self {
-        Self {
-            extended_year,
-            kind: YearKind::Era(era),
-        }
-    }
-    /// Construct a new cyclic Year given a cycle and a related_iso
-    pub(crate) fn new_cyclic(extended_year: i32, cycle: NonZeroU8, related_iso: i32) -> Self {
-        Self {
-            extended_year,
-            kind: YearKind::Cyclic(CyclicYear {
-                year: cycle,
-                related_iso,
-            }),
-        }
-    }
-    /// Get the year in the era if this is a non-cyclic calendar
-    ///
-    /// Gets the eraYear for era dates, otherwise falls back to Extended Year
-    pub fn era_year(self) -> Option<i32> {
-        match self.kind {
-            YearKind::Era(e) => Some(e.era_year),
-            YearKind::Cyclic(..) => None,
-        }
-    }
-
-    /// Get the year ambiguity.
-    pub fn year_ambiguity(self) -> YearAmbiguity {
-        match self.kind {
-            YearKind::Cyclic(_) => YearAmbiguity::EraRequired,
-            YearKind::Era(e) => e.ambiguity,
-        }
-    }
-
     /// Get *some* year number that can be displayed
     ///
-    /// Gets the eraYear for era dates, otherwise falls back to Extended Year
-    pub fn era_year_or_extended(self) -> i32 {
-        self.era_year().unwrap_or(self.extended_year)
-    }
-
-    /// Get the era, if available
-    pub fn formatting_era(self) -> Option<FormattingEra> {
-        match self.kind {
-            YearKind::Era(e) => Some(e.formatting_era),
-            YearKind::Cyclic(..) => None,
+    /// Gets the era year for era calendars, and the related ISO year for cyclic calendars.
+    pub fn era_year_or_related_iso(self) -> i32 {
+        match self {
+            YearInfo::Era(e) => e.year,
+            YearInfo::Cyclic(c) => c.related_iso,
         }
     }
 
-    /// Get the era, if available
-    pub fn standard_era(self) -> Option<Era> {
-        match self.kind {
-            YearKind::Era(e) => Some(e.standard_era),
-            YearKind::Cyclic(..) => None,
+    /// Get the era year information, if available
+    pub fn era(self) -> Option<EraYear> {
+        match self {
+            Self::Era(e) => Some(e),
+            Self::Cyclic(_) => None,
         }
     }
 
-    /// Return the cyclic year, if any
-    pub fn cyclic(self) -> Option<NonZeroU8> {
-        match self.kind {
-            YearKind::Era(..) => None,
-            YearKind::Cyclic(cy) => Some(cy.year),
-        }
-    }
-    /// Return the Related ISO year, if any
-    pub fn related_iso(self) -> Option<i32> {
-        match self.kind {
-            YearKind::Era(..) => None,
-            YearKind::Cyclic(cy) => Some(cy.related_iso),
+    /// Get the cyclic year informat, if available
+    pub fn cyclic(self) -> Option<CyclicYear> {
+        match self {
+            Self::Era(_) => None,
+            Self::Cyclic(c) => Some(c),
         }
     }
 }
@@ -146,56 +82,19 @@ pub enum YearAmbiguity {
     EraAndCenturyRequired,
 }
 
-/// Information about the era as usable for formatting
-///
-/// This is optimized for storing datetime formatting data.
-#[derive(Copy, Clone, Debug, PartialEq)]
-#[non_exhaustive]
-pub enum FormattingEra {
-    /// An Era Index, for calendars with a small, fixed set of eras. The eras are indexed chronologically.
-    ///
-    /// In this context, chronological ordering of eras is obtained by ordering by their start date (or in the case of
-    /// negative eras, their end date) first, and for eras sharing a date, put the negative one first. For example,
-    /// bce < ce, and mundi < incar for Ethiopian.
-    ///
-    /// The TInyStr16 is a fallback string for the era when a display name is not available. It need not be an era code, it should
-    /// be something sensible (or empty).
-    Index(u8, TinyStr16),
-    /// An era code, for calendars with a large set of era codes (Japanese)
-    ///
-    /// This code may not be the canonical era code, but will typically be a valid era alias
-    Code(Era),
-}
-
-impl FormattingEra {
-    /// Get a fallback era name suitable for display to the user when the real era name is not availabe
-    pub fn fallback_name(self) -> TinyStr16 {
-        match self {
-            Self::Index(_idx, fallback) => fallback,
-            Self::Code(era) => era.0,
-        }
-    }
-}
-
 /// Year information for a year that is specified with an era
 #[derive(Copy, Clone, Debug, PartialEq)]
 #[non_exhaustive]
 pub struct EraYear {
-    /// The era code as used in formatting. This era code is not necessarily unique for the calendar, and
-    /// is whatever ICU4X datetime datagen uses for this era.
-    ///
-    /// It will typically be a valid era alias.
-    ///
-    /// <https://tc39.es/proposal-intl-era-monthcode/#table-eras>
-    pub formatting_era: FormattingEra,
-    /// The era code as expected by Temporal/CLDR. This era code is unique for the calendar
-    /// and follows a particular scheme.
-    ///
-    /// <https://tc39.es/proposal-intl-era-monthcode/#table-eras>
-    pub standard_era: Era,
     /// The numeric year in that era
-    pub era_year: i32,
-    /// The ambiguity when formatting this year
+    pub year: i32,
+    /// The era code as defined by CLDR, expect for cases where CLDR does not define a code.
+    pub era: TinyStr16,
+    /// An era index, for calendars with a small set of eras.
+    ///
+    /// The only guarantee we make is that these values are stable, even under CLDR code changes.
+    pub era_index: Option<u8>,
+    /// The ambiguity of the era/year combination
     pub ambiguity: YearAmbiguity,
 }
 
@@ -203,8 +102,8 @@ pub struct EraYear {
 #[derive(Copy, Clone, Debug, PartialEq)]
 #[non_exhaustive]
 pub struct CyclicYear {
-    /// The year in the cycle.
-    pub year: NonZeroU8,
+    /// The year in the cycle, 1-based
+    pub year: u8,
     /// The ISO year corresponding to this year
     pub related_iso: i32,
 }
@@ -261,8 +160,7 @@ impl MonthCode {
     /// Construct a "normal" month code given a number ("Mxx").
     ///
     /// Returns an error for months greater than 99
-    #[cfg(test)] // Only used in tests for now. Could be made public if people need it.
-    pub(crate) fn new_normal(number: u8) -> Option<Self> {
+    pub fn new_normal(number: u8) -> Option<Self> {
         let tens = number / 10;
         let ones = number % 10;
         if tens > 9 {

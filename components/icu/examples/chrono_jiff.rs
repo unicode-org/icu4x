@@ -71,7 +71,7 @@ fn jiff_to_icu(jiff: &jiff::Zoned) -> ZonedDateTime<Iso, TimeZoneInfo<Full>> {
         .at_time((date, time))
         // And finally, the zone variant is also required for formatting
         // TODO(jiff#258): Jiff does not currently guarantee rearguard semantics
-        .with_zone_variant(TimeZoneVariant::from_rearguard_isdst(jiff.time_zone().to_offset_info(jiff.timestamp()).dst().is_dst()));
+        .with_variant(TimeZoneVariant::from_rearguard_isdst(jiff.time_zone().to_offset_info(jiff.timestamp()).dst().is_dst()));
 
     ZonedDateTime { date, time, zone }
 }
@@ -103,7 +103,7 @@ fn chrono_to_icu(
         .at_time((date, time))
         // And finally, the zone variant is also required for formatting
         // TODO: chrono_tz does not use rearguard semantics
-        .with_zone_variant(TimeZoneVariant::from_rearguard_isdst(!chrono.offset().dst_offset().is_zero()));
+        .with_variant(TimeZoneVariant::from_rearguard_isdst(!chrono.offset().dst_offset().is_zero()));
 
     ZonedDateTime { date, time, zone }
 }

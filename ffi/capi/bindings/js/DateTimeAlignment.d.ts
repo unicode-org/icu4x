@@ -3,7 +3,7 @@ import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
 /** 
- * See the [Rust documentation for `Alignment`](https://docs.rs/icu/latest/icu/datetime/enum.Alignment.html) for more information.
+ * See the [Rust documentation for `Alignment`](https://docs.rs/icu/latest/icu/datetime/options/enum.Alignment.html) for more information.
  */
 
 

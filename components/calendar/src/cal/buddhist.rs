@@ -11,12 +11,11 @@
 //!     .expect("Failed to initialize ISO Date instance.");
 //! let date_buddhist = Date::new_from_iso(date_iso, Buddhist);
 //!
-//! assert_eq!(date_buddhist.year().era_year_or_extended(), 2513);
+//! assert_eq!(date_buddhist.era_year().year, 2513);
 //! assert_eq!(date_buddhist.month().ordinal, 1);
 //! assert_eq!(date_buddhist.day_of_month().0, 2);
 //! ```
 
-use crate::any_calendar::AnyCalendarKind;
 use crate::cal::iso::{Iso, IsoDateInner};
 use crate::calendar_arithmetic::ArithmeticDate;
 use crate::error::DateError;
@@ -42,7 +41,7 @@ const BUDDHIST_ERA_OFFSET: i32 = 543;
 ///
 /// # Era codes
 ///
-/// This calendar uses a single era code, `buddhist` (alias `be`), with 1 B.E. being 543 BCE.
+/// This calendar uses a single era code `be`, with 1 Buddhist Era being 543 BCE. Dates before this era use negative years.
 ///
 /// # Month codes
 ///
@@ -52,6 +51,7 @@ pub struct Buddhist;
 
 impl Calendar for Buddhist {
     type DateInner = IsoDateInner;
+    type Year = types::EraYear;
 
     fn from_codes(
         &self,
@@ -61,7 +61,7 @@ impl Calendar for Buddhist {
         day: u8,
     ) -> Result<Self::DateInner, DateError> {
         match era {
-            Some("buddhist" | "be") | None => {}
+            Some("be") | None => {}
             _ => return Err(DateError::UnknownEra),
         }
         let year = year - BUDDHIST_ERA_OFFSET;
@@ -115,17 +115,17 @@ impl Calendar for Buddhist {
     }
 
     /// The calendar-specific year represented by `date`
-    fn year(&self, date: &Self::DateInner) -> types::YearInfo {
-        let buddhist_year = date.0.year + BUDDHIST_ERA_OFFSET;
-        types::YearInfo::new(
-            buddhist_year,
-            types::EraYear {
-                standard_era: tinystr!(16, "buddhist").into(),
-                formatting_era: types::FormattingEra::Index(0, tinystr!(16, "BE")),
-                era_year: buddhist_year,
-                ambiguity: types::YearAmbiguity::CenturyRequired,
-            },
-        )
+    fn year_info(&self, date: &Self::DateInner) -> Self::Year {
+        types::EraYear {
+            era: tinystr!(16, "be"),
+            era_index: Some(0),
+            year: self.extended_year(date),
+            ambiguity: types::YearAmbiguity::CenturyRequired,
+        }
+    }
+
+    fn extended_year(&self, date: &Self::DateInner) -> i32 {
+        Iso.extended_year(date) + BUDDHIST_ERA_OFFSET
     }
 
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
@@ -151,8 +151,8 @@ impl Calendar for Buddhist {
         "Buddhist"
     }
 
-    fn any_calendar_kind(&self) -> Option<AnyCalendarKind> {
-        Some(crate::any_calendar::IntoAnyCalendar::kind(self))
+    fn calendar_algorithm(&self) -> Option<crate::preferences::CalendarAlgorithm> {
+        Some(crate::preferences::CalendarAlgorithm::Buddhist)
     }
 }
 
@@ -167,7 +167,7 @@ impl Date<Buddhist> {
     /// let date_buddhist = Date::try_new_buddhist(1970, 1, 2)
     ///     .expect("Failed to initialize Buddhist Date instance.");
     ///
-    /// assert_eq!(date_buddhist.year().era_year_or_extended(), 1970);
+    /// assert_eq!(date_buddhist.era_year().year, 1970);
     /// assert_eq!(date_buddhist.month().ordinal, 1);
     /// assert_eq!(date_buddhist.day_of_month().0, 2);
     /// ```
@@ -280,7 +280,7 @@ mod test {
         let iso1 = Date::try_new_iso(iso_year, iso_month, iso_day).unwrap();
         let buddhist1 = iso1.to_calendar(Buddhist);
         assert_eq!(
-            buddhist1.year().era_year_or_extended(),
+            buddhist1.era_year().year,
             buddhist_year,
             "Iso -> Buddhist year check failed for case: {case:?}"
         );
@@ -299,7 +299,7 @@ mod test {
             Date::try_new_buddhist(buddhist_year, buddhist_month, buddhist_day).unwrap();
         let iso2 = buddhist2.to_calendar(Iso);
         assert_eq!(
-            iso2.year().era_year_or_extended(),
+            iso2.era_year().year,
             iso_year,
             "Buddhist -> Iso year check failed for case: {case:?}"
         );

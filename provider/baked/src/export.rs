@@ -795,7 +795,7 @@ macro_rules! cb {
             }
 
             $(
-                if marker.id == icu_provider::marker::data_marker_id!($marker) {
+                if marker.id.name() == stringify!($marker) {
                     return stringify!($marker_ty)
                         .replace("icu :: ", "icu_")
                         .parse()
@@ -804,7 +804,7 @@ macro_rules! cb {
             )+
 
             $(
-                if marker.id == icu_provider::marker::data_marker_id!($emarker) {
+                if marker.id.name() == stringify!($emarker) {
                     return stringify!($emarker_ty)
                         .replace("icu :: ", "icu_")
                         .parse()

@@ -9,7 +9,7 @@ pub mod ffi {
     use alloc::boxed::Box;
 
     #[cfg(feature = "buffer_provider")]
-    use crate::{errors::ffi::DataError, provider::ffi::DataProvider};
+    use crate::unstable::{errors::ffi::DataError, provider::ffi::DataProvider};
 
     /// Lookup of the Canonical_Combining_Class Unicode property
     #[diplomat::opaque]
@@ -79,11 +79,7 @@ pub mod ffi {
             FnInStruct,
             hidden
         )]
-        #[diplomat::rust_link(
-            icu::properties::properties::CanonicalCombiningClassMapBorrowed,
-            Struct,
-            compact
-        )]
+        #[diplomat::rust_link(icu::properties::props::CanonicalCombiningClass, Struct, compact)]
         #[diplomat::attr(auto, indexer)]
         pub fn get(&self, ch: DiplomatChar) -> u8 {
             self.0.as_borrowed().get32_u8(ch)

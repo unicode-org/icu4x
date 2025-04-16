@@ -12,6 +12,7 @@ use crate::cal::{
     Iso, Japanese, JapaneseExtended, Persian, Roc,
 };
 use crate::error::DateError;
+use crate::types::YearInfo;
 use crate::{types, AsCalendar, Calendar, Date, DateDuration, DateDurationUnit, Ref};
 
 use crate::preferences::{CalendarAlgorithm, HijriCalendarAlgorithm};
@@ -43,7 +44,7 @@ define_preferences!(
 ///
 /// There are many ways of constructing an AnyCalendar'd date:
 /// ```
-/// use icu::calendar::{AnyCalendar, AnyCalendarKind, Date, cal::Japanese, types::{Era, MonthCode}};
+/// use icu::calendar::{AnyCalendar, AnyCalendarKind, Date, cal::Japanese, types::MonthCode};
 /// use icu::locale::locale;
 /// use tinystr::tinystr;
 /// # use std::rc::Rc;
@@ -219,6 +220,8 @@ macro_rules! match_cal {
 
 impl Calendar for AnyCalendar {
     type DateInner = AnyDateInner;
+    type Year = YearInfo;
+
     fn from_codes(
         &self,
         era: Option<&str>,
@@ -465,9 +468,14 @@ impl Calendar for AnyCalendar {
         }
     }
 
-    fn year(&self, date: &Self::DateInner) -> types::YearInfo {
-        match_cal_and_date!(match (self, date): (c, d) => c.year(d))
+    fn year_info(&self, date: &Self::DateInner) -> types::YearInfo {
+        match_cal_and_date!(match (self, date): (c, d) => c.year_info(d).into())
     }
+
+    fn extended_year(&self, date: &Self::DateInner) -> i32 {
+        match_cal_and_date!(match (self, date): (c, d) => c.extended_year(d))
+    }
+
     /// The calendar-specific check if `date` is in a leap year
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
         match_cal_and_date!(match (self, date): (c, d) => c.is_in_leap_year(d))
@@ -515,8 +523,25 @@ impl Calendar for AnyCalendar {
         }
     }
 
-    fn any_calendar_kind(&self) -> Option<AnyCalendarKind> {
-        Some(self.kind())
+    fn calendar_algorithm(&self) -> Option<CalendarAlgorithm> {
+        match self {
+            Self::Buddhist(ref c) => c.calendar_algorithm(),
+            Self::Chinese(ref c) => c.calendar_algorithm(),
+            Self::Coptic(ref c) => c.calendar_algorithm(),
+            Self::Dangi(ref c) => c.calendar_algorithm(),
+            Self::Ethiopian(ref c) => c.calendar_algorithm(),
+            Self::Gregorian(ref c) => c.calendar_algorithm(),
+            Self::Hebrew(ref c) => c.calendar_algorithm(),
+            Self::Indian(ref c) => c.calendar_algorithm(),
+            Self::HijriSimulated(ref c) => c.calendar_algorithm(),
+            Self::HijriTabular(ref c) => c.calendar_algorithm(),
+            Self::HijriUmmAlQura(ref c) => c.calendar_algorithm(),
+            Self::Iso(ref c) => c.calendar_algorithm(),
+            Self::Japanese(ref c) => c.calendar_algorithm(),
+            Self::JapaneseExtended(ref c) => c.calendar_algorithm(),
+            Self::Persian(ref c) => c.calendar_algorithm(),
+            Self::Roc(ref c) => c.calendar_algorithm(),
+        }
     }
 }
 
@@ -1542,26 +1567,26 @@ mod tests {
     use super::*;
     use crate::Ref;
 
+    #[track_caller]
     fn single_test_roundtrip(
         calendar: Ref<AnyCalendar>,
-        era: &str,
+        era: Option<&str>,
         year: i32,
         month_code: &str,
         day: u8,
     ) {
         let month = types::MonthCode(month_code.parse().expect("month code must parse"));
 
-        let date =
-            Date::try_new_from_codes(Some(era), year, month, day, calendar).unwrap_or_else(|e| {
-                panic!(
-                    "Failed to construct date for {} with {era:?}, {year}, {month}, {day}: {e:?}",
-                    calendar.debug_name(),
-                )
-            });
+        let date = Date::try_new_from_codes(era, year, month, day, calendar).unwrap_or_else(|e| {
+            panic!(
+                "Failed to construct date for {} with {era:?}, {year}, {month}, {day}: {e:?}",
+                calendar.debug_name(),
+            )
+        });
 
         let roundtrip_year = date.year();
         // FIXME: these APIs should be improved
-        let roundtrip_year = roundtrip_year.era_year_or_extended();
+        let roundtrip_year = roundtrip_year.era_year_or_related_iso();
         let roundtrip_month = date.month().standard_code;
         let roundtrip_day = date.day_of_month().0;
 
@@ -1580,9 +1605,10 @@ mod tests {
         )
     }
 
+    #[track_caller]
     fn single_test_error(
         calendar: Ref<AnyCalendar>,
-        era: &str,
+        era: Option<&str>,
         year: i32,
         month_code: &str,
         day: u8,
@@ -1590,7 +1616,7 @@ mod tests {
     ) {
         let month = types::MonthCode(month_code.parse().expect("month code must parse"));
 
-        let date = Date::try_new_from_codes(Some(era), year, month, day, calendar);
+        let date = Date::try_new_from_codes(era, year, month, day, calendar);
         assert_eq!(
             date,
             Err(error),
@@ -1636,66 +1662,38 @@ mod tests {
         let persian = Ref(&persian);
         let roc = Ref(&roc);
 
-        single_test_roundtrip(buddhist, "be", 100, "M03", 1);
-        single_test_roundtrip(buddhist, "be", 2000, "M03", 1);
-        single_test_roundtrip(buddhist, "be", -100, "M03", 1);
+        single_test_roundtrip(buddhist, Some("be"), 100, "M03", 1);
+        single_test_roundtrip(buddhist, None, 2000, "M03", 1);
+        single_test_roundtrip(buddhist, Some("be"), -100, "M03", 1);
         single_test_error(
             buddhist,
-            "be",
+            Some("be"),
             100,
             "M13",
             1,
             DateError::UnknownMonthCode(MonthCode(tinystr!(4, "M13"))),
         );
 
-        single_test_roundtrip(coptic, "coptic", 100, "M03", 1);
-        single_test_roundtrip(coptic, "coptic", 2000, "M03", 1);
-        // fails ISO roundtrip
-        // single_test_roundtrip(coptic, "bd", 100, "M03", 1);
-        single_test_roundtrip(coptic, "coptic", 100, "M13", 1);
+        single_test_roundtrip(coptic, Some("am"), 100, "M03", 1);
+        single_test_roundtrip(coptic, None, 2000, "M03", 1);
+        single_test_roundtrip(coptic, Some("am"), -99, "M03", 1);
+        single_test_roundtrip(coptic, Some("am"), 100, "M13", 1);
         single_test_error(
             coptic,
-            "coptic",
+            Some("am"),
             100,
             "M14",
             1,
             DateError::UnknownMonthCode(MonthCode(tinystr!(4, "M14"))),
         );
-        single_test_error(
-            coptic,
-            "coptic",
-            0,
-            "M03",
-            1,
-            DateError::Range {
-                field: "year",
-                value: 0,
-                min: 1,
-                max: i32::MAX,
-            },
-        );
-        single_test_error(
-            coptic,
-            "coptic-inverse",
-            0,
-            "M03",
-            1,
-            DateError::Range {
-                field: "year",
-                value: 0,
-                min: 1,
-                max: i32::MAX,
-            },
-        );
 
-        single_test_roundtrip(ethiopian, "incar", 100, "M03", 1);
-        single_test_roundtrip(ethiopian, "incar", 2000, "M03", 1);
-        single_test_roundtrip(ethiopian, "incar", 2000, "M13", 1);
-        // Fails ISO roundtrip due to https://github.com/unicode-org/icu4x/issues/2254
-        // single_test_roundtrip(ethiopian, "mundi", 5400, "M03", 1);
+        single_test_roundtrip(ethiopian, Some("am"), 100, "M03", 1);
+        single_test_roundtrip(ethiopian, None, 2000, "M03", 1);
+        single_test_roundtrip(ethiopian, Some("am"), 2000, "M13", 1);
+        single_test_roundtrip(ethiopian, Some("aa"), 5400, "M03", 1);
         single_test_error(
             ethiopian,
-            "incar",
+            Some("am"),
             0,
             "M03",
             1,
@@ -1708,7 +1706,7 @@ mod tests {
         );
         single_test_error(
             ethiopian,
-            "mundi",
+            Some("aa"),
             5600,
             "M03",
             1,
@@ -1721,32 +1719,31 @@ mod tests {
         );
         single_test_error(
             ethiopian,
-            "incar",
+            Some("am"),
             100,
             "M14",
             1,
             DateError::UnknownMonthCode(MonthCode(tinystr!(4, "M14"))),
         );
 
-        single_test_roundtrip(ethioaa, "mundi", 7000, "M13", 1);
-        single_test_roundtrip(ethioaa, "mundi", 7000, "M13", 1);
-        // Fails ISO roundtrip due to https://github.com/unicode-org/icu4x/issues/2254
-        // single_test_roundtrip(ethioaa, "mundi", 100, "M03", 1);
+        single_test_roundtrip(ethioaa, Some("aa"), 7000, "M13", 1);
+        single_test_roundtrip(ethioaa, None, 7000, "M13", 1);
+        single_test_roundtrip(ethioaa, Some("aa"), 100, "M03", 1);
         single_test_error(
             ethiopian,
-            "mundi",
+            Some("aa"),
             100,
             "M14",
             1,
             DateError::UnknownMonthCode(MonthCode(tinystr!(4, "M14"))),
         );
 
-        single_test_roundtrip(gregorian, "ce", 100, "M03", 1);
-        single_test_roundtrip(gregorian, "ce", 2000, "M03", 1);
-        single_test_roundtrip(gregorian, "bce", 100, "M03", 1);
+        single_test_roundtrip(gregorian, Some("ce"), 100, "M03", 1);
+        single_test_roundtrip(gregorian, None, 2000, "M03", 1);
+        single_test_roundtrip(gregorian, Some("bce"), 100, "M03", 1);
         single_test_error(
             gregorian,
-            "ce",
+            Some("ce"),
             0,
             "M03",
             1,
@@ -1759,7 +1756,7 @@ mod tests {
         );
         single_test_error(
             gregorian,
-            "bce",
+            Some("bce"),
             0,
             "M03",
             1,
@@ -1773,58 +1770,59 @@ mod tests {
 
         single_test_error(
             gregorian,
-            "bce",
+            Some("bce"),
             100,
             "M13",
             1,
             DateError::UnknownMonthCode(MonthCode(tinystr!(4, "M13"))),
         );
 
-        single_test_roundtrip(indian, "saka", 100, "M03", 1);
-        single_test_roundtrip(indian, "saka", 2000, "M12", 1);
-        single_test_roundtrip(indian, "saka", -100, "M03", 1);
-        single_test_roundtrip(indian, "saka", 0, "M03", 1);
+        single_test_roundtrip(indian, Some("saka"), 100, "M03", 1);
+        single_test_roundtrip(indian, None, 2000, "M12", 1);
+        single_test_roundtrip(indian, None, -100, "M03", 1);
+        single_test_roundtrip(indian, Some("saka"), 0, "M03", 1);
         single_test_error(
             indian,
-            "saka",
+            Some("saka"),
             100,
             "M13",
             1,
             DateError::UnknownMonthCode(MonthCode(tinystr!(4, "M13"))),
         );
 
-        single_test_roundtrip(chinese, "chinese", 400, "M02", 5);
-        single_test_roundtrip(chinese, "chinese", 4660, "M07", 29);
-        single_test_roundtrip(chinese, "chinese", -100, "M11", 12);
+        single_test_roundtrip(chinese, None, 400, "M02", 5);
+        single_test_roundtrip(chinese, None, 4660, "M07", 29);
+        single_test_roundtrip(chinese, None, -100, "M11", 12);
         single_test_error(
             chinese,
-            "chinese",
+            None,
             4658,
             "M13",
             1,
             DateError::UnknownMonthCode(MonthCode(tinystr!(4, "M13"))),
         );
 
-        single_test_roundtrip(dangi, "dangi", 400, "M02", 5);
-        single_test_roundtrip(dangi, "dangi", 4660, "M08", 29);
-        single_test_roundtrip(dangi, "dangi", -1300, "M11", 12);
+        single_test_roundtrip(dangi, None, 400, "M02", 5);
+        single_test_roundtrip(dangi, None, 4660, "M08", 29);
+        single_test_roundtrip(dangi, None, -1300, "M11", 12);
         single_test_error(
             dangi,
-            "dangi",
+            None,
             10393,
             "M00L",
             1,
             DateError::UnknownMonthCode(MonthCode(tinystr!(4, "M00L"))),
         );
 
-        single_test_roundtrip(japanese, "reiwa", 3, "M03", 1);
-        single_test_roundtrip(japanese, "heisei", 6, "M12", 1);
-        single_test_roundtrip(japanese, "meiji", 10, "M03", 1);
-        single_test_roundtrip(japanese, "ce", 1000, "M03", 1);
-        single_test_roundtrip(japanese, "bce", 10, "M03", 1);
+        single_test_roundtrip(japanese, Some("reiwa"), 3, "M03", 1);
+        single_test_roundtrip(japanese, Some("heisei"), 6, "M12", 1);
+        single_test_roundtrip(japanese, Some("meiji"), 10, "M03", 1);
+        single_test_roundtrip(japanese, Some("ce"), 1000, "M03", 1);
+        single_test_roundtrip(japanese, None, 1000, "M03", 1);
+        single_test_roundtrip(japanese, Some("bce"), 10, "M03", 1);
         single_test_error(
             japanese,
-            "ce",
+            Some("ce"),
             0,
             "M03",
             1,
@@ -1837,7 +1835,7 @@ mod tests {
         );
         single_test_error(
             japanese,
-            "bce",
+            Some("bce"),
             0,
             "M03",
             1,
@@ -1851,22 +1849,22 @@ mod tests {
 
         single_test_error(
             japanese,
-            "reiwa",
+            Some("reiwa"),
             2,
             "M13",
             1,
             DateError::UnknownMonthCode(MonthCode(tinystr!(4, "M13"))),
         );
 
-        single_test_roundtrip(japanext, "reiwa", 3, "M03", 1);
-        single_test_roundtrip(japanext, "heisei", 6, "M12", 1);
-        single_test_roundtrip(japanext, "meiji", 10, "M03", 1);
-        single_test_roundtrip(japanext, "tenpyokampo-749", 1, "M04", 20);
-        single_test_roundtrip(japanext, "ce", 100, "M03", 1);
-        single_test_roundtrip(japanext, "bce", 10, "M03", 1);
+        single_test_roundtrip(japanext, Some("reiwa"), 3, "M03", 1);
+        single_test_roundtrip(japanext, Some("heisei"), 6, "M12", 1);
+        single_test_roundtrip(japanext, Some("meiji"), 10, "M03", 1);
+        single_test_roundtrip(japanext, Some("tenpyokampo-749"), 1, "M04", 20);
+        single_test_roundtrip(japanext, Some("ce"), 100, "M03", 1);
+        single_test_roundtrip(japanext, Some("bce"), 10, "M03", 1);
         single_test_error(
             japanext,
-            "ce",
+            Some("ce"),
             0,
             "M03",
             1,
@@ -1879,7 +1877,7 @@ mod tests {
         );
         single_test_error(
             japanext,
-            "bce",
+            Some("bce"),
             0,
             "M03",
             1,
@@ -1893,83 +1891,83 @@ mod tests {
 
         single_test_error(
             japanext,
-            "reiwa",
+            Some("reiwa"),
             2,
             "M13",
             1,
             DateError::UnknownMonthCode(MonthCode(tinystr!(4, "M13"))),
         );
 
-        single_test_roundtrip(persian, "ap", 477, "M03", 1);
-        single_test_roundtrip(persian, "ap", 2083, "M07", 21);
-        single_test_roundtrip(persian, "ap", 1600, "M12", 20);
+        single_test_roundtrip(persian, Some("ap"), 477, "M03", 1);
+        single_test_roundtrip(persian, None, 2083, "M07", 21);
+        single_test_roundtrip(persian, Some("ap"), 1600, "M12", 20);
         single_test_error(
             persian,
-            "ap",
+            Some("ap"),
             100,
             "M9",
             1,
             DateError::UnknownMonthCode(MonthCode(tinystr!(4, "M9"))),
         );
 
-        single_test_roundtrip(hebrew, "hebrew", 5773, "M03", 1);
-        single_test_roundtrip(hebrew, "hebrew", 4993, "M07", 21);
-        single_test_roundtrip(hebrew, "hebrew", 5012, "M12", 20);
+        single_test_roundtrip(hebrew, Some("am"), 5773, "M03", 1);
+        single_test_roundtrip(hebrew, None, 4993, "M07", 21);
+        single_test_roundtrip(hebrew, Some("am"), 5012, "M12", 20);
         single_test_error(
             hebrew,
-            "hebrew",
+            Some("am"),
             100,
             "M9",
             1,
             DateError::UnknownMonthCode(MonthCode(tinystr!(4, "M9"))),
         );
 
-        single_test_roundtrip(roc, "roc", 10, "M05", 3);
-        single_test_roundtrip(roc, "roc-inverse", 15, "M01", 10);
-        single_test_roundtrip(roc, "roc", 100, "M10", 30);
+        single_test_roundtrip(roc, Some("minguo"), 10, "M05", 3);
+        single_test_roundtrip(roc, Some("minguo-qian"), 15, "M01", 10);
+        single_test_roundtrip(roc, None, 100, "M10", 30);
 
-        single_test_roundtrip(hijri_simulated, "ah", 477, "M03", 1);
-        single_test_roundtrip(hijri_simulated, "ah", 2083, "M07", 21);
-        single_test_roundtrip(hijri_simulated, "ah", 1600, "M12", 20);
+        single_test_roundtrip(hijri_simulated, Some("ah"), 477, "M03", 1);
+        single_test_roundtrip(hijri_simulated, None, 2083, "M07", 21);
+        single_test_roundtrip(hijri_simulated, Some("ah"), 1600, "M12", 20);
         single_test_error(
             hijri_simulated,
-            "ah",
+            Some("ah"),
             100,
             "M9",
             1,
             DateError::UnknownMonthCode(MonthCode(tinystr!(4, "M9"))),
         );
 
-        single_test_roundtrip(hijri_civil, "ah", 477, "M03", 1);
-        single_test_roundtrip(hijri_civil, "ah", 2083, "M07", 21);
-        single_test_roundtrip(hijri_civil, "ah", 1600, "M12", 20);
+        single_test_roundtrip(hijri_civil, Some("ah"), 477, "M03", 1);
+        single_test_roundtrip(hijri_civil, None, 2083, "M07", 21);
+        single_test_roundtrip(hijri_civil, Some("ah"), 1600, "M12", 20);
         single_test_error(
             hijri_civil,
-            "ah",
+            Some("ah"),
             100,
             "M9",
             1,
             DateError::UnknownMonthCode(MonthCode(tinystr!(4, "M9"))),
         );
 
-        single_test_roundtrip(hijri_umm_al_qura, "ah", 477, "M03", 1);
-        single_test_roundtrip(hijri_umm_al_qura, "ah", 2083, "M07", 21);
-        single_test_roundtrip(hijri_umm_al_qura, "ah", 1600, "M12", 20);
+        single_test_roundtrip(hijri_umm_al_qura, Some("ah"), 477, "M03", 1);
+        single_test_roundtrip(hijri_umm_al_qura, None, 2083, "M07", 21);
+        single_test_roundtrip(hijri_umm_al_qura, Some("ah"), 1600, "M12", 20);
         single_test_error(
             hijri_umm_al_qura,
-            "ah",
+            Some("ah"),
             100,
             "M9",
             1,
             DateError::UnknownMonthCode(MonthCode(tinystr!(4, "M9"))),
         );
 
-        single_test_roundtrip(hijri_astronomical, "ah", 477, "M03", 1);
-        single_test_roundtrip(hijri_astronomical, "ah", 2083, "M07", 21);
-        single_test_roundtrip(hijri_astronomical, "ah", 1600, "M12", 20);
+        single_test_roundtrip(hijri_astronomical, Some("ah"), 477, "M03", 1);
+        single_test_roundtrip(hijri_astronomical, None, 2083, "M07", 21);
+        single_test_roundtrip(hijri_astronomical, Some("ah"), 1600, "M12", 20);
         single_test_error(
             hijri_astronomical,
-            "ah",
+            Some("ah"),
             100,
             "M9",
             1,

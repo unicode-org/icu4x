@@ -7,7 +7,7 @@
 #[diplomat::attr(auto, namespace = "icu4x")]
 pub mod ffi {
     #[diplomat::enum_convert(icu_datetime::options::Length, needs_wildcard)]
-    #[diplomat::rust_link(icu::datetime::Length, Enum)]
+    #[diplomat::rust_link(icu::datetime::options::Length, Enum)]
     pub enum DateTimeLength {
         Long,
         Medium,
@@ -15,21 +15,22 @@ pub mod ffi {
     }
 
     #[diplomat::enum_convert(icu_datetime::options::Alignment, needs_wildcard)]
-    #[diplomat::rust_link(icu::datetime::Alignment, Enum)]
+    #[diplomat::rust_link(icu::datetime::options::Alignment, Enum)]
     pub enum DateTimeAlignment {
         Auto,
         Column,
     }
 
     #[diplomat::enum_convert(icu_datetime::options::YearStyle, needs_wildcard)]
-    #[diplomat::rust_link(icu::datetime::YearStyle, Enum)]
+    #[diplomat::rust_link(icu::datetime::options::YearStyle, Enum)]
     pub enum YearStyle {
         Auto,
         Full,
         WithEra,
     }
 
-    #[diplomat::rust_link(icu::datetime::TimePrecision, Enum)]
+    #[diplomat::rust_link(icu::datetime::options::TimePrecision, Enum)]
+    #[diplomat::rust_link(icu::datetime::options::SubsecondDigits, Enum)]
     pub enum TimePrecision {
         Hour,
         Minute,

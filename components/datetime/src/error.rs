@@ -4,16 +4,14 @@
 
 use crate::pattern::PatternLoadError;
 use displaydoc::Display;
-use icu_calendar::{
-    types::{FormattingEra, MonthCode},
-    AnyCalendarKind,
-};
+use icu_calendar::{types::MonthCode, AnyCalendarKind};
 use icu_provider::DataError;
+use tinystr::TinyStr16;
 
 #[cfg(doc)]
 use crate::pattern::FixedCalendarDateTimeNames;
 #[cfg(doc)]
-use icu_calendar::types::YearInfo;
+use icu_calendar::types::CyclicYear;
 #[cfg(doc)]
 use icu_decimal::DecimalFormatter;
 
@@ -67,24 +65,24 @@ pub enum DateTimeWriteError {
     /// The output will contain the raw [`MonthCode`] as a fallback value.
     #[displaydoc("Invalid month {0:?}")]
     InvalidMonthCode(MonthCode),
-    /// The [`FormattingEra`] of the input is not valid for this calendar.
+    /// The era code of the input is not valid for this calendar.
     ///
     /// This is guaranteed not to happen for `icu::calendar` inputs, but may happen for custom inputs.
     ///
-    /// The output will contain [`FormattingEra::fallback_name`] as the fallback.
+    /// The output will contain the era code as the fallback.
     #[displaydoc("Invalid era {0:?}")]
-    InvalidEra(FormattingEra),
-    /// The [`YearInfo::cyclic`] of the input is not valid for this calendar.
+    InvalidEra(TinyStr16),
+    /// The [`CyclicYear::year`] of the input is not valid for this calendar.
     ///
     /// This is guaranteed not to happen for `icu::calendar` inputs, but may happen for custom inputs.
     ///
-    /// The output will contain [`YearInfo::extended_year`] as a fallback value.
+    /// The output will contain [`CyclicYear::related_iso`] as a fallback value.
     #[displaydoc("Invalid cyclic year {value} (maximum {max})")]
     InvalidCyclicYear {
         /// Value
-        value: usize,
+        value: u8,
         /// Max
-        max: usize,
+        max: u8,
     },
 
     /// The [`DecimalFormatter`] has not been loaded.

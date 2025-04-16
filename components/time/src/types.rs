@@ -118,7 +118,7 @@ dt_unit!(
 
 /// A representation of a time in hours, minutes, seconds, and nanoseconds
 ///
-/// **The primary definition of this type is in the [`icu_time`](docs.rs/icu_time) crate. Other ICU4X crates re-export it for convenience.**
+/// **The primary definition of this type is in the [`icu_time`](https://docs.rs/icu_time) crate. Other ICU4X crates re-export it for convenience.**
 ///
 /// This type supports the range [00:00:00.000000000, 23:59:60.999999999].
 #[derive(Debug, Copy, Clone, Eq, PartialEq, Ord, PartialOrd, Hash)]
@@ -148,8 +148,8 @@ impl Time {
         }
     }
 
-    /// Construct a new [`Time`] representing midnight (00:00.000)
-    pub const fn midnight() -> Self {
+    /// Construct a new [`Time`] representing the start of the day (00:00.000)
+    pub const fn start_of_day() -> Self {
         Self {
             hour: Hour::zero(),
             minute: Minute::zero(),
@@ -171,7 +171,7 @@ impl Time {
 
 /// A date and time for a given calendar.
 ///
-/// **The primary definition of this type is in the [`icu_time`](docs.rs/icu_time) crate. Other ICU4X crates re-export it for convenience.**
+/// **The primary definition of this type is in the [`icu_time`](https://docs.rs/icu_time) crate. Other ICU4X crates re-export it for convenience.**
 #[derive(Debug, PartialEq, Eq)]
 #[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct DateTime<A: AsCalendar> {
@@ -183,7 +183,7 @@ pub struct DateTime<A: AsCalendar> {
 
 /// A date and time for a given calendar, local to a specified time zone.
 ///
-/// **The primary definition of this type is in the [`icu_time`](docs.rs/icu_time) crate. Other ICU4X crates re-export it for convenience.**
+/// **The primary definition of this type is in the [`icu_time`](https://docs.rs/icu_time) crate. Other ICU4X crates re-export it for convenience.**
 #[derive(Debug, PartialEq, Eq)]
 #[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct ZonedDateTime<A: AsCalendar, Z> {

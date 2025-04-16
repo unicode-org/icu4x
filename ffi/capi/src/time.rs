@@ -8,7 +8,7 @@
 pub mod ffi {
     use alloc::boxed::Box;
 
-    use crate::errors::ffi::{CalendarError, CalendarParseError};
+    use crate::unstable::errors::ffi::{CalendarError, CalendarParseError};
 
     #[diplomat::opaque]
     /// An ICU4X Time object representing a time in terms of hour, minute, second, nanosecond
@@ -49,10 +49,10 @@ pub mod ffi {
         }
 
         /// Creates a new [`Time`] representing midnight (00:00.000).
-        #[diplomat::rust_link(icu::time::Time::midnight, FnInStruct)]
+        #[diplomat::rust_link(icu::time::Time::start_of_day, FnInStruct)]
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor)]
-        pub fn midnight() -> Result<Box<Time>, CalendarError> {
-            let time = icu_time::Time::midnight();
+        pub fn start_of_day() -> Result<Box<Time>, CalendarError> {
+            let time = icu_time::Time::start_of_day();
             Ok(Box::new(Time(time)))
         }
 

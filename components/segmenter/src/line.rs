@@ -230,27 +230,6 @@ impl From<LineBreakOptions<'_>> for ResolvedLineBreakOptions {
     }
 }
 
-/// Line break iterator for an `str` (a UTF-8 string).
-///
-/// For examples of use, see [`LineSegmenter`].
-pub type LineBreakIteratorUtf8<'l, 's> = LineBreakIterator<'l, 's, Utf8>;
-
-/// Line break iterator for a potentially invalid UTF-8 string.
-///
-/// For examples of use, see [`LineSegmenter`].
-pub type LineBreakIteratorPotentiallyIllFormedUtf8<'l, 's> =
-    LineBreakIterator<'l, 's, PotentiallyIllFormedUtf8>;
-
-/// Line break iterator for a Latin-1 (8-bit) string.
-///
-/// For examples of use, see [`LineSegmenter`].
-pub type LineBreakIteratorLatin1<'l, 's> = LineBreakIterator<'l, 's, Latin1>;
-
-/// Line break iterator for a UTF-16 string.
-///
-/// For examples of use, see [`LineSegmenter`].
-pub type LineBreakIteratorUtf16<'l, 's> = LineBreakIterator<'l, 's, Utf16>;
-
 /// Supports loading line break data, and creating line break iterators for different string
 /// encodings.
 ///
@@ -560,7 +539,7 @@ impl<'data> LineSegmenterBorrowed<'data> {
     /// Creates a line break iterator for an `str` (a UTF-8 string).
     ///
     /// There are always breakpoints at 0 and the string length, or only at 0 for the empty string.
-    pub fn segment_str<'s>(self, input: &'s str) -> LineBreakIteratorUtf8<'data, 's> {
+    pub fn segment_str<'s>(self, input: &'s str) -> LineBreakIterator<'data, 's, Utf8> {
         LineBreakIterator {
             iter: input.char_indices(),
             len: input.len(),
@@ -579,7 +558,7 @@ impl<'data> LineSegmenterBorrowed<'data> {
     pub fn segment_utf8<'s>(
         self,
         input: &'s [u8],
-    ) -> LineBreakIteratorPotentiallyIllFormedUtf8<'data, 's> {
+    ) -> LineBreakIterator<'data, 's, PotentiallyIllFormedUtf8> {
         LineBreakIterator {
             iter: Utf8CharIndices::new(input),
             len: input.len(),
@@ -593,7 +572,7 @@ impl<'data> LineSegmenterBorrowed<'data> {
     /// Creates a line break iterator for a Latin-1 (8-bit) string.
     ///
     /// There are always breakpoints at 0 and the string length, or only at 0 for the empty string.
-    pub fn segment_latin1<'s>(self, input: &'s [u8]) -> LineBreakIteratorLatin1<'data, 's> {
+    pub fn segment_latin1<'s>(self, input: &'s [u8]) -> LineBreakIterator<'data, 's, Latin1> {
         LineBreakIterator {
             iter: Latin1Indices::new(input),
             len: input.len(),
@@ -608,7 +587,7 @@ impl<'data> LineSegmenterBorrowed<'data> {
     /// Creates a line break iterator for a UTF-16 string.
     ///
     /// There are always breakpoints at 0 and the string length, or only at 0 for the empty string.
-    pub fn segment_utf16<'s>(self, input: &'s [u16]) -> LineBreakIteratorUtf16<'data, 's> {
+    pub fn segment_utf16<'s>(self, input: &'s [u16]) -> LineBreakIterator<'data, 's, Utf16> {
         LineBreakIterator {
             iter: Utf16Indices::new(input),
             len: input.len(),

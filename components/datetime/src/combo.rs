@@ -32,7 +32,7 @@ use crate::{provider::neo::*, scaffold::*};
 /// // Note: Combo type can be elided, but it is shown here for demonstration
 /// let formatter = DateTimeFormatter::<Combo<fieldsets::ET, zone::Location>>::try_new(
 ///     locale!("en-US").into(),
-///     fieldsets::ET::short().with_hm().zone(zone::Location),
+///     fieldsets::E::short().time_hm().zone(zone::Location),
 /// )
 /// .unwrap();
 ///
@@ -64,7 +64,7 @@ use crate::{provider::neo::*, scaffold::*};
 /// let formatter =
 ///     FixedCalendarDateTimeFormatter::<_, Combo<fieldsets::ET, zone::Location>>::try_new(
 ///         locale!("en-US").into(),
-///         fieldsets::ET::short().with_hm().zone(zone::Location),
+///         fieldsets::E::short().time_hm().zone(zone::Location),
 ///     )
 ///     .unwrap();
 ///

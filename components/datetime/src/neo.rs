@@ -197,7 +197,7 @@ size_test!(FixedCalendarDateTimeFormatter<icu_calendar::Gregorian, crate::fields
 ///     .unwrap();
 ///
 /// // error[E0277]: the trait bound `Time: AllInputMarkers<fieldsets::YMD>` is not satisfied
-/// formatter.format(&Time::midnight());
+/// formatter.format(&Time::start_of_day());
 /// ```
 #[doc = typed_neo_year_month_day_formatter_size!()]
 #[derive(Debug, Clone)]
@@ -686,7 +686,7 @@ where
     /// .unwrap();
     ///
     /// // error[E0277]: the trait bound `Time: AllInputMarkers<fieldsets::YMD>` is not satisfied
-    /// formatter.format_same_calendar(&Time::midnight());
+    /// formatter.format_same_calendar(&Time::start_of_day());
     /// ```
     pub fn format_same_calendar<I>(
         &self,
@@ -747,7 +747,7 @@ where
     /// .unwrap();
     ///
     /// // error[E0277]: the trait bound `Time: AllInputMarkers<fieldsets::YMD>` is not satisfied
-    /// formatter.format(&Time::midnight());
+    /// formatter.format(&Time::start_of_day());
     /// ```
     pub fn format<'a, I>(&'a self, datetime: &I) -> FormattedDateTime<'a>
     where
@@ -933,7 +933,7 @@ impl<C: CldrCalendar, FSet: DateTimeMarkers> FixedCalendarDateTimeFormatter<C, F
     ///
     /// ```
     /// use icu::datetime::fieldsets::builder::*;
-    /// use icu::datetime::fieldsets::YMDT;
+    /// use icu::datetime::fieldsets::YMD;
     /// use icu::datetime::input::*;
     /// use icu::datetime::options::*;
     /// use icu::datetime::FixedCalendarDateTimeFormatter;
@@ -943,7 +943,7 @@ impl<C: CldrCalendar, FSet: DateTimeMarkers> FixedCalendarDateTimeFormatter<C, F
     /// // Create a simple YMDT formatter:
     /// let formatter = FixedCalendarDateTimeFormatter::try_new(
     ///     locale!("und").into(),
-    ///     YMDT::long().with_hm().with_alignment(Alignment::Column)
+    ///     YMD::long().time_hm().with_alignment(Alignment::Column)
     /// )
     /// .unwrap();
     ///
@@ -1182,7 +1182,7 @@ impl<FSet: DateTimeMarkers> DateTimeFormatter<FSet> {
 /// use icu::locale::locale;
 ///
 /// let formatter = NoCalendarFormatter::try_new(locale!("bn").into(), T::long()).unwrap();
-/// assert_eq!(formatter.format(&Time::midnight()).to_string(), "১২:০০:০০ AM");
+/// assert_eq!(formatter.format(&Time::start_of_day()).to_string(), "১২:০০:০০ AM");
 /// ```
 ///
 /// A [`NoCalendarFormatter`] cannot be constructed with a fieldset that involves dates:

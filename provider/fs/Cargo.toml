@@ -21,8 +21,7 @@ all-features = true
 
 [dependencies]
 displaydoc = { workspace = true }
-icu_provider = { workspace = true, features = ["serde", "std"] }
-icu_provider_registry = { workspace = true }
+icu_provider = { workspace = true, features = ["serde", "std", "export"] }
 serde = { workspace = true, features = ["derive", "alloc"] }
 serde-json-core = { workspace = true, features = ["std"] }
 

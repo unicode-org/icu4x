@@ -112,27 +112,6 @@ impl<Y: RuleBreakType> Iterator for WordBreakIteratorWithWordType<'_, '_, Y> {
     }
 }
 
-/// Word break iterator for an `str` (a UTF-8 string).
-///
-/// For examples of use, see [`WordSegmenter`].
-pub type WordBreakIteratorUtf8<'data, 's> = WordBreakIterator<'data, 's, Utf8>;
-
-/// Word break iterator for a potentially invalid UTF-8 string.
-///
-/// For examples of use, see [`WordSegmenter`].
-pub type WordBreakIteratorPotentiallyIllFormedUtf8<'data, 's> =
-    WordBreakIterator<'data, 's, PotentiallyIllFormedUtf8>;
-
-/// Word break iterator for a Latin-1 (8-bit) string.
-///
-/// For examples of use, see [`WordSegmenter`].
-pub type WordBreakIteratorLatin1<'data, 's> = WordBreakIterator<'data, 's, Latin1>;
-
-/// Word break iterator for a UTF-16 string.
-///
-/// For examples of use, see [`WordSegmenter`].
-pub type WordBreakIteratorUtf16<'data, 's> = WordBreakIterator<'data, 's, Utf16>;
-
 /// Supports loading word break data, and creating word break iterators for different string
 /// encodings.
 ///
@@ -500,7 +479,7 @@ impl<'data> WordSegmenterBorrowed<'data> {
     /// Creates a word break iterator for an `str` (a UTF-8 string).
     ///
     /// There are always breakpoints at 0 and the string length, or only at 0 for the empty string.
-    pub fn segment_str<'s>(self, input: &'s str) -> WordBreakIteratorUtf8<'data, 's> {
+    pub fn segment_str<'s>(self, input: &'s str) -> WordBreakIterator<'data, 's, Utf8> {
         WordBreakIterator(RuleBreakIterator {
             iter: input.char_indices(),
             len: input.len(),
@@ -522,7 +501,7 @@ impl<'data> WordSegmenterBorrowed<'data> {
     pub fn segment_utf8<'s>(
         self,
         input: &'s [u8],
-    ) -> WordBreakIteratorPotentiallyIllFormedUtf8<'data, 's> {
+    ) -> WordBreakIterator<'data, 's, PotentiallyIllFormedUtf8> {
         WordBreakIterator(RuleBreakIterator {
             iter: Utf8CharIndices::new(input),
             len: input.len(),
@@ -539,7 +518,7 @@ impl<'data> WordSegmenterBorrowed<'data> {
     /// Creates a word break iterator for a Latin-1 (8-bit) string.
     ///
     /// There are always breakpoints at 0 and the string length, or only at 0 for the empty string.
-    pub fn segment_latin1<'s>(self, input: &'s [u8]) -> WordBreakIteratorLatin1<'data, 's> {
+    pub fn segment_latin1<'s>(self, input: &'s [u8]) -> WordBreakIterator<'data, 's, Latin1> {
         WordBreakIterator(RuleBreakIterator {
             iter: Latin1Indices::new(input),
             len: input.len(),
@@ -556,7 +535,7 @@ impl<'data> WordSegmenterBorrowed<'data> {
     /// Creates a word break iterator for a UTF-16 string.
     ///
     /// There are always breakpoints at 0 and the string length, or only at 0 for the empty string.
-    pub fn segment_utf16<'s>(self, input: &'s [u16]) -> WordBreakIteratorUtf16<'data, 's> {
+    pub fn segment_utf16<'s>(self, input: &'s [u16]) -> WordBreakIterator<'data, 's, Utf16> {
         WordBreakIterator(RuleBreakIterator {
             iter: Utf16Indices::new(input),
             len: input.len(),

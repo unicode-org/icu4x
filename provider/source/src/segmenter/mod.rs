@@ -11,8 +11,8 @@ use crate::SourceDataProvider;
 use icu::collections::codepointtrie;
 use icu::properties::{
     props::{
-        CanonicalCombiningClass, EastAsianWidth, GeneralCategory, GraphemeClusterBreak,
-        IndicSyllabicCategory, LineBreak, Script, SentenceBreak, WordBreak,
+        EastAsianWidth, GeneralCategory, GraphemeClusterBreak, IndicConjunctBreak, LineBreak,
+        Script, SentenceBreak, WordBreak,
     },
     CodePointMapData, CodePointMapDataBorrowed, CodePointSetData,
 };
@@ -20,8 +20,10 @@ use icu::segmenter::options::WordType;
 use icu::segmenter::provider::*;
 use icu_codepointtrie_builder::{CodePointTrieBuilder, CodePointTrieBuilderData};
 use icu_provider::prelude::*;
+use std::cmp;
 use std::collections::HashSet;
 use std::fmt::Debug;
+use std::ops::RangeInclusive;
 use std::sync::OnceLock;
 use zerovec::ZeroVec;
 
@@ -85,6 +87,16 @@ struct SegmenterRuleTable {
     rules: Vec<SegmenterState>,
 }
 
+/// Fill `dst` at range `r` with `value`, ignoring any out of bounds ranges
+fn fill_bounded(dst: &mut [u8], r: RangeInclusive<u32>, value: u8) {
+    let start = *r.start() as usize;
+    let end = cmp::min(*r.end() as usize, dst.len() - 1);
+    if start >= dst.len() {
+        return;
+    }
+    dst[start..=end].fill(value);
+}
+
 #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
 fn generate_rule_break_data(
     provider: &SourceDataProvider,
@@ -131,13 +143,9 @@ fn generate_rule_break_data(
         .expect("The data should be valid!");
     let extended_pictographic = data.as_borrowed();
 
-    let data = CodePointMapData::<IndicSyllabicCategory>::try_new_unstable(provider)
+    let data = CodePointMapData::<IndicConjunctBreak>::try_new_unstable(provider)
         .expect("The data should be valid!");
-    let insc = data.as_borrowed();
-
-    let data = CodePointMapData::<CanonicalCombiningClass>::try_new_unstable(provider)
-        .expect("The data should be valid!");
-    let ccc = data.as_borrowed();
+    let incb = data.as_borrowed();
 
     let data = PropertyParser::<GraphemeClusterBreak>::try_new_unstable(provider)
         .expect("The data should be valid!");
@@ -218,33 +226,23 @@ fn generate_rule_break_data(
             match &*segmenter.segmenter_type {
                 "word" => {
                     // Extended_Pictographic isn't a part of word break property
-                    // Extended pictographic property is within 0..U+0x20000
                     if p.name == "Extended_Pictographic" {
-                        for i in 0..0x20000 {
-                            if let Some(c) = char::from_u32(i) {
-                                if extended_pictographic.contains(c) {
-                                    properties_map[c as usize] = property_index
-                                }
-                            }
+                        for range in extended_pictographic.iter_ranges() {
+                            fill_bounded(&mut properties_map, range, property_index);
                         }
                         continue;
                     }
 
                     if p.name == "SA" {
                         // Word break property doesn't define SA, but we will use non-UAX29 rules.
-                        // SA/CJ property is within 0..U+0x40000
-                        for c in 0..0x40000 {
-                            if lb.get32(c) == LineBreak::ComplexContext {
-                                properties_map[c as usize] = property_index
-                            } else if let Some(c) = char::from_u32(c) {
-                                match script.get(c) {
-                                    Script::Han | Script::Hiragana => {
-                                        properties_map[c as usize] = property_index;
-                                    }
-
-                                    _ => {}
-                                }
-                            }
+                        for range in script.iter_ranges_for_value(Script::Han) {
+                            fill_bounded(&mut properties_map, range, property_index);
+                        }
+                        for range in script.iter_ranges_for_value(Script::Hiragana) {
+                            fill_bounded(&mut properties_map, range, property_index);
+                        }
+                        for range in lb.iter_ranges_for_value(LineBreak::ComplexContext) {
+                            fill_bounded(&mut properties_map, range, property_index);
                         }
                         continue;
                     }
@@ -256,92 +254,67 @@ fn generate_rule_break_data(
                     let prop = wb_name_to_enum
                         .get_loose(&p.name)
                         .expect("property name should be valid!");
-                    for c in 0..(CODEPOINT_TABLE_LEN as u32) {
-                        if wb.get32(c) == prop {
+                    for range in wb.iter_ranges_for_value(prop) {
+                        if prop == WordBreak::MidLetter
+                            && (range.contains(&0x003a)
+                                || range.contains(&0xfe55)
+                                || range.contains(&0xff1a))
+                        {
                             // UAX29 defines the colon as MidLetter, but ICU4C's
                             // English data doesn't.
                             // See https://unicode-org.atlassian.net/browse/ICU-22112
                             //
                             // TODO: We have to consider this definition from CLDR instead.
-                            if (c == 0x003a || c == 0xfe55 || c == 0xff1a) && p.name == "MidLetter"
+                            for ch in
+                                range.filter(|ch| *ch != 0x003a && *ch != 0xfe55 && *ch != 0xff1a)
                             {
-                                // Default (en etc) is undefined class.
-                                continue;
+                                properties_map[ch as usize] = property_index;
                             }
-
-                            properties_map[c as usize] = property_index;
+                        } else {
+                            fill_bounded(&mut properties_map, range, property_index);
                         }
                     }
+
                     continue;
                 }
 
                 "grapheme" => {
                     // Extended_Pictographic isn't a part of grapheme break property
-                    // Extended pictographic property is within 0..U+0x20000
                     if p.name == "Extended_Pictographic" {
-                        for i in 0..0x20000 {
-                            if let Some(c) = char::from_u32(i) {
-                                if extended_pictographic.contains(c) {
-                                    properties_map[c as usize] = property_index
-                                }
-                            }
+                        for range in extended_pictographic.iter_ranges() {
+                            fill_bounded(&mut properties_map, range, property_index);
                         }
                         continue;
                     }
 
-                    // The Indic_Conjunct_Break property is separate from the Grapheme_Cluster_Break property.
-                    // See https://unicode.org/reports/tr44/#Indic_Conjunct_Break
-                    if p.name == "InCBConsonant" || p.name == "InCBLinker" || p.name == "InCBExtend"
-                    {
-                        let gcb_extend = gcb_name_to_enum
-                            .get_loose("Extend")
-                            .expect("property name should be valid!");
+                    let relevant_incb = match &*p.name {
+                        "InCBConsonant" => Some(IndicConjunctBreak::Consonant),
+                        "InCBLinker" => Some(IndicConjunctBreak::Linker),
+                        "InCBExtend" => Some(IndicConjunctBreak::Extend),
+                        _ => None,
+                    };
 
-                        for i in 0..(CODEPOINT_TABLE_LEN as u32) {
-                            if let Some(c) = char::from_u32(i) {
-                                let insc_value = insc.get(c);
-                                let sc = script.get(c);
-                                let is_gb9c_script = sc == Script::Bengali
-                                    || sc == Script::Devanagari
-                                    || sc == Script::Gujarati
-                                    || sc == Script::Malayalam
-                                    || sc == Script::Oriya
-                                    || sc == Script::Telugu;
-                                let is_incb_consonant = insc_value
-                                    == IndicSyllabicCategory::Consonant
-                                    && is_gb9c_script;
-                                let is_incb_linker =
-                                    insc_value == IndicSyllabicCategory::Virama && is_gb9c_script;
-                                // InCB = Linker or InCB = Consonant
-                                if (p.name == "InCBConsonant" && is_incb_consonant)
-                                    || (p.name == "InCBLinker" && is_incb_linker)
-                                    // ZWJ is InCB=Extend, but is in a different GCB class anyway so
-                                    // it needs to be special-cased in the tables.
-                                    // NOTE(eggrobin): UAX #44, Version 15.1, instead excludes based
-                                    // on InSC.
-                                    // I believe that to be a defect in that version of Unicode.
-                                    // This has been brought to the attention of the Properties and
-                                    // Algorithms Group.
-                                    || (p.name == "InCBExtend"
-                                        && (gb.get32(i) == gcb_extend
-                                            && ccc.get32(i) != CanonicalCombiningClass::NotReordered
-                                            && !is_incb_consonant
-                                            && !is_incb_linker))
-                                {
-                                    properties_map[c as usize] = property_index;
+                    if let Some(relevant_incb) = relevant_incb {
+                        for range in incb.iter_ranges_for_value(relevant_incb) {
+                            if range.contains(&0x200D) {
+                                // ZWJ is handled as a separate rule
+                                for ch in range.filter(|ch| *ch != 0x200D) {
+                                    properties_map[ch as usize] = property_index;
                                 }
+                            } else {
+                                fill_bounded(&mut properties_map, range, property_index);
                             }
                         }
+
                         continue;
                     }
 
                     let prop = gcb_name_to_enum
                         .get_loose(&p.name)
                         .expect("property name should be valid!");
-                    for c in 0..(CODEPOINT_TABLE_LEN as u32) {
-                        if gb.get32(c) == prop {
-                            properties_map[c as usize] = property_index;
-                        }
+
+                    for range in gb.iter_ranges_for_value(prop) {
+                        fill_bounded(&mut properties_map, range, property_index);
                     }
                     continue;
                 }
@@ -350,10 +323,8 @@ fn generate_rule_break_data(
                     let prop = sb_name_to_enum
                         .get_loose(&p.name)
                         .expect("property name should be valid!");
-                    for c in 0..(CODEPOINT_TABLE_LEN as u32) {
-                        if sb.get32(c) == prop {
-                            properties_map[c as usize] = property_index;
-                        }
+                    for range in sb.iter_ranges_for_value(prop) {
+                        fill_bounded(&mut properties_map, range, property_index);
                     }
                     continue;
                 }
@@ -449,10 +420,8 @@ fn generate_rule_break_data(
                     let prop = lb_name_to_enum
                         .get_loose(&p.name)
                         .expect("property name should be valid!");
-                    for c in 0..(CODEPOINT_TABLE_LEN as u32) {
-                        if lb.get32(c) == prop {
-                            properties_map[c as usize] = property_index;
-                        }
+                    for range in lb.iter_ranges_for_value(prop) {
+                        fill_bounded(&mut properties_map, range, property_index);
                     }
 
                     if p.name == "AL" {
@@ -460,10 +429,8 @@ fn generate_rule_break_data(
                         let prop = lb_name_to_enum
                             .get_loose("SG")
                             .expect("property name should be valid!");
-                        for c in 0..(CODEPOINT_TABLE_LEN as u32) {
-                            if lb.get32(c) == prop {
-                                properties_map[c as usize] = property_index;
-                            }
+                        for range in lb.iter_ranges_for_value(prop) {
+                            fill_bounded(&mut properties_map, range, property_index);
                         }
                     }
                     continue;
@@ -793,10 +760,6 @@ fn hardcoded_segmenter_provider() -> SourceDataProvider {
                 Some(std::sync::Arc::new(SerdeCache::new(AbstractFs::Memory(
                     [
                         (
-                            "uprops/small/ccc.toml",
-                            include_bytes!("../../data/segmenter/uprops/small/ccc.toml").as_slice(),
-                        ),
-                        (
                             "uprops/small/ea.toml",
                             include_bytes!("../../data/segmenter/uprops/small/ea.toml").as_slice(),
                         ),
@@ -814,8 +777,8 @@ fn hardcoded_segmenter_provider() -> SourceDataProvider {
                             include_bytes!("../../data/segmenter/uprops/small/GCB.toml").as_slice(),
                         ),
                         (
-                            "uprops/small/InSC.toml",
-                            include_bytes!("../../data/segmenter/uprops/small/InSC.toml")
+                            "uprops/small/InCB.toml",
+                            include_bytes!("../../data/segmenter/uprops/small/InCB.toml")
                                 .as_slice(),
                         ),
                         (

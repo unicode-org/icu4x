@@ -9,10 +9,10 @@ pub mod ffi {
     use alloc::boxed::Box;
 
     #[cfg(feature = "buffer_provider")]
-    use crate::errors::ffi::DataError;
+    use crate::unstable::errors::ffi::DataError;
     #[cfg(feature = "buffer_provider")]
-    use crate::provider::ffi::DataProvider;
-    use crate::{
+    use crate::unstable::provider::ffi::DataProvider;
+    use crate::unstable::{
         date::ffi::IsoDate, errors::ffi::TimeZoneInvalidOffsetError, time::ffi::Time,
         timezone::ffi::TimeZone,
     };

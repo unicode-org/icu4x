@@ -142,6 +142,12 @@ public:
    * See the [Rust documentation for `total_cmp`](https://docs.rs/icu/latest/icu/locale/struct.Locale.html#method.total_cmp) for more information.
    */
   inline int8_t compare_to(const icu4x::Locale& other) const;
+  inline bool operator==(const icu4x::Locale& other) const;
+  inline bool operator!=(const icu4x::Locale& other) const;
+  inline bool operator<=(const icu4x::Locale& other) const;
+  inline bool operator>=(const icu4x::Locale& other) const;
+  inline bool operator<(const icu4x::Locale& other) const;
+  inline bool operator>(const icu4x::Locale& other) const;
 
   inline const icu4x::capi::Locale* AsFFI() const;
   inline icu4x::capi::Locale* AsFFI();

@@ -88,7 +88,7 @@ export class MeasureUnitParser {
     parse(unitId) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
-        const unitIdSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, unitId));
+        const unitIdSlice = diplomatRuntime.DiplomatBuf.str8(wasm, unitId);
         
         const result = wasm.icu4x_MeasureUnitParser_parse_mv1(this.ffiValue, ...unitIdSlice.splat());
     

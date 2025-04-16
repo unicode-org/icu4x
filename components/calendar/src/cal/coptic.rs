@@ -11,14 +11,14 @@
 //!     .expect("Failed to initialize ISO Date instance.");
 //! let date_coptic = Date::new_from_iso(date_iso, Coptic);
 //!
-//! assert_eq!(date_coptic.year().era_year_or_extended(), 1686);
+//! assert_eq!(date_coptic.era_year().year, 1686);
 //! assert_eq!(date_coptic.month().ordinal, 4);
 //! assert_eq!(date_coptic.day_of_month().0, 24);
 //! ```
 
 use crate::cal::iso::{Iso, IsoDateInner};
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
-use crate::error::{year_check, DateError};
+use crate::error::DateError;
 use crate::{types, Calendar, Date, DateDuration, DateDurationUnit, RangeError};
 use calendrical_calculations::helpers::I32CastError;
 use calendrical_calculations::rata_die::RataDie;
@@ -35,8 +35,8 @@ use tinystr::tinystr;
 ///
 /// # Era codes
 ///
-/// This calendar uses two era codes: `coptic-inverse`, and `coptic`, corresponding to the Before Diocletian and After Diocletian/Anno Martyrum
-/// eras. 1 A.M. is equivalent to 284 C.E.
+/// This calendar uses a single code: `am`, corresponding to the After Diocletian/Anno Martyrum
+/// era. 1 A.M. is equivalent to 284 C.E.
 ///
 /// # Month codes
 ///
@@ -94,6 +94,7 @@ impl CalendarArithmetic for Coptic {
 
 impl Calendar for Coptic {
     type DateInner = CopticDateInner;
+    type Year = types::EraYear;
     fn from_codes(
         &self,
         era: Option<&str>,
@@ -102,8 +103,7 @@ impl Calendar for Coptic {
         day: u8,
     ) -> Result<Self::DateInner, DateError> {
         let year = match era {
-            Some("coptic") | None => year_check(year, 1..)?,
-            Some("coptic-inverse") => 1 - year_check(year, 1..)?,
+            Some("am") | None => year,
             Some(_) => return Err(DateError::UnknownEra),
         };
 
@@ -160,29 +160,18 @@ impl Calendar for Coptic {
         date1.0.until(date2.0, _largest_unit, _smallest_unit)
     }
 
-    fn year(&self, date: &Self::DateInner) -> types::YearInfo {
-        let year = date.0.year;
-        if year > 0 {
-            types::YearInfo::new(
-                year,
-                types::EraYear {
-                    standard_era: tinystr!(16, "coptic").into(),
-                    formatting_era: types::FormattingEra::Index(1, tinystr!(16, "AD")),
-                    era_year: year,
-                    ambiguity: types::YearAmbiguity::CenturyRequired,
-                },
-            )
-        } else {
-            types::YearInfo::new(
-                year,
-                types::EraYear {
-                    standard_era: tinystr!(16, "coptic-inverse").into(),
-                    formatting_era: types::FormattingEra::Index(0, tinystr!(16, "BD")),
-                    era_year: 1 - year,
-                    ambiguity: types::YearAmbiguity::EraAndCenturyRequired,
-                },
-            )
+    fn year_info(&self, date: &Self::DateInner) -> Self::Year {
+        let year = self.extended_year(date);
+        types::EraYear {
+            era: tinystr!(16, "am"),
+            era_index: Some(0),
+            year,
+            ambiguity: types::YearAmbiguity::CenturyRequired,
         }
+    }
+
+    fn extended_year(&self, date: &Self::DateInner) -> i32 {
+        date.0.extended_year()
     }
 
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
@@ -205,15 +194,13 @@ impl Calendar for Coptic {
         "Coptic"
     }
 
-    fn any_calendar_kind(&self) -> Option<crate::AnyCalendarKind> {
-        Some(crate::any_calendar::IntoAnyCalendar::kind(self))
+    fn calendar_algorithm(&self) -> Option<crate::preferences::CalendarAlgorithm> {
+        Some(crate::preferences::CalendarAlgorithm::Coptic)
     }
 }
 
 impl Date<Coptic> {
     /// Construct new Coptic Date.
-    ///
-    /// Negative years are in the B.D. era, starting with 0 = 1 B.D.
     ///
     /// ```rust
     /// use icu::calendar::Date;
@@ -221,7 +208,7 @@ impl Date<Coptic> {
     /// let date_coptic = Date::try_new_coptic(1686, 5, 6)
     ///     .expect("Failed to initialize Coptic Date instance.");
     ///
-    /// assert_eq!(date_coptic.year().era_year_or_extended(), 1686);
+    /// assert_eq!(date_coptic.era_year().year, 1686);
     /// assert_eq!(date_coptic.month().ordinal, 5);
     /// assert_eq!(date_coptic.day_of_month().0, 6);
     /// ```

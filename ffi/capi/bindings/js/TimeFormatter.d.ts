@@ -10,7 +10,7 @@ import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
 /** 
- * See the [Rust documentation for `FixedCalendarDateTimeFormatter`](https://docs.rs/icu/latest/icu/datetime/type.FixedCalendarDateTimeFormatter.html) for more information.
+ * See the [Rust documentation for `NoCalendarFormatter`](https://docs.rs/icu/latest/icu/datetime/type.NoCalendarFormatter.html) for more information.
  */
 
 
@@ -19,9 +19,11 @@ export class TimeFormatter {
     get ffiValue(): pointer;
 
     /** 
+     * See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/datetime/struct.NoCalendarFormatter.html#method.try_new) for more information.
+     *
      * See the [Rust documentation for `T`](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.T.html) for more information.
      *
-     * Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.T.html#method.with_time_precision), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.T.html#method.with_alignment), [3](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.T.html#method.with_length)
+     * Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.T.html#method.hm), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.T.html#method.hms), [3](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.T.html#method.with_time_precision), [4](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.T.html#method.with_alignment), [5](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.T.html#method.for_length), [6](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.T.html#method.with_length)
      */
     static createWithProvider(provider: DataProvider, locale: Locale, length: DateTimeLength | null, timePrecision: TimePrecision | null, alignment: DateTimeAlignment | null): TimeFormatter;
 

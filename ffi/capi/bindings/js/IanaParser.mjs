@@ -92,7 +92,7 @@ export class IanaParser {
     parse(value) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
-        const valueSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, value));
+        const valueSlice = diplomatRuntime.DiplomatBuf.str8(wasm, value);
         
         const result = wasm.icu4x_IanaParser_parse_mv1(this.ffiValue, ...valueSlice.splat());
     

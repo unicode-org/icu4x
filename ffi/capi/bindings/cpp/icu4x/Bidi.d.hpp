@@ -33,8 +33,6 @@ namespace icu4x {
 /**
  * An ICU4X Bidi object, containing loaded bidi data
  *
- * See the [Rust documentation for `BidiClassAdapter`](https://docs.rs/icu/latest/icu/properties/bidi/struct.BidiClassAdapter.html) for more information.
- *
  * See the [Rust documentation for `BidiClass`](https://docs.rs/icu/latest/icu/properties/props/struct.BidiClass.html) for more information.
  */
 class Bidi {
@@ -42,15 +40,11 @@ public:
 
   /**
    * Creates a new [`Bidi`] from locale data using compiled data.
-   *
-   * See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/properties/bidi/struct.BidiClassAdapter.html#method.new) for more information.
    */
   inline static std::unique_ptr<icu4x::Bidi> create();
 
   /**
    * Creates a new [`Bidi`] from locale data, and a particular data source.
-   *
-   * See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/properties/bidi/struct.BidiClassAdapter.html#method.new) for more information.
    */
   inline static diplomat::result<std::unique_ptr<icu4x::Bidi>, icu4x::DataError> create_with_provider(const icu4x::DataProvider& provider);
 

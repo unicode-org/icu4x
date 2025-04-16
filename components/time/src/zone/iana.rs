@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! Tools for parsing IANA timezone IDs.
+//! Tools for parsing IANA time zone IDs.
 
 use icu_provider::prelude::*;
 use zerovec::vecs::{VarZeroSliceIter, ZeroSliceIter};
@@ -14,74 +14,53 @@ use crate::{
     TimeZone,
 };
 
-/// A parser between IANA time zone identifiers and BCP-47 time zone identifiers.
+/// A parser for parsing an IANA time zone ID to a [`TimeZone`] type.
 ///
-/// This parser supports two-way mapping, but it is optimized for the case of IANA to BCP-47.
-/// It also supports normalizing and canonicalizing the IANA strings.
-///
-/// There are approximately 600 IANA identifiers and 450 BCP-47 identifiers.
-///
-/// BCP-47 time zone identifiers are 8 ASCII characters or less and currently
-/// average 5.1 characters long. Current IANA time zone identifiers are less than
-/// 40 ASCII characters and average 14.2 characters long.
-///
+/// There are approximately 600 IANA identifiers and 450 [`TimeZone`] identifiers.
 /// These lists grow very slowly; in a typical year, 2-3 new identifiers are added.
 ///
-/// # Normalization vs Canonicalization
+/// This means that multiple IANA identifiers map to the same [`TimeZone`]. For example, the
+/// following four IANA identifiers all map to the same [`TimeZone`]:
 ///
-/// Multiple IANA time zone identifiers can refer to the same BCP-47 time zone. For example, the
-/// following three IANA identifiers all map to `"usind"`:
+/// - `America/Fort_Wayne`
+/// - `America/Indiana/Indianapolis`
+/// - `America/Indianapolis`
+/// - `US/East-Indiana`
 ///
-/// - "America/Fort_Wayne"
-/// - "America/Indiana/Indianapolis"
-/// - "America/Indianapolis"
-/// - "US/East-Indiana"
-///
-/// There is only one canonical identifier, which is "America/Indiana/Indianapolis". The
-/// *canonicalization* operation returns the canonical identifier. You should canonicalize if
-/// you need to compare time zones for equality. Note that the canonical identifier can change
-/// over time. For example, the identifier "Europe/Kiev" was renamed to the newly-added
-/// identifier "Europe/Kyiv" in 2022.
-///
-/// The *normalization* operation, on the other hand, keeps the input identifier but normalizes
-/// the casing. For example, "AMERICA/FORT_WAYNE" normalizes to "America/Fort_Wayne".
-/// Normalization is a data-driven operation because there are no algorithmic casing rules that
-/// work for all IANA time zone identifiers.
-///
-/// Normalization is a cheap operation, but canonicalization might be expensive, since it might
-/// require searching over all IANA IDs to find the canonicalization. If you need
-/// canonicalization that is reliably fast, use [`IanaParserExtended`].
+/// For each [`TimeZone`], there is one "canonical" IANA time zone ID (for the above example, it is
+/// `America/Indiana/Indianapolis`). Note that the canonical identifier can change over time.
+/// For example, the identifier `Europe/Kiev` was renamed to the newly-added identifier `Europe/Kyiv` in 2022.
 ///
 /// # Examples
 ///
 /// ```
 /// use icu::time::zone::IanaParser;
 /// use icu::time::TimeZone;
-/// use tinystr::tinystr;
+/// use icu::locale::subtags::subtag;
 ///
 /// let parser = IanaParser::new();
 ///
 /// // The IANA zone "Australia/Melbourne" is the BCP-47 zone "aumel":
 /// assert_eq!(
 ///     parser.parse("Australia/Melbourne"),
-///     TimeZone(tinystr!(8, "aumel"))
+///     TimeZone(subtag!("aumel"))
 /// );
 ///
-/// // Lookup is ASCII-case-insensitive:
+/// // Parsing is ASCII-case-insensitive:
 /// assert_eq!(
 ///     parser.parse("australia/melbourne"),
-///     TimeZone(tinystr!(8, "aumel"))
+///     TimeZone(subtag!("aumel"))
 /// );
 ///
 /// // The IANA zone "Australia/Victoria" is an alias:
 /// assert_eq!(
 ///     parser.parse("Australia/Victoria"),
-///     TimeZone(tinystr!(8, "aumel"))
+///     TimeZone(subtag!("aumel"))
 /// );
 ///
 /// // The IANA zone "Australia/Boing_Boing" does not exist
 /// // (maybe not *yet*), so it produces the special unknown
-/// // timezone in order for this operation to be infallible:
+/// // time zone in order for this operation to be infallible:
 /// assert_eq!(parser.parse("Australia/Boing_Boing"), TimeZone::unknown());
 /// ```
 #[derive(Debug, Clone)]
@@ -190,8 +169,7 @@ impl IanaParserBorrowed<'static> {
 }
 
 impl<'a> IanaParserBorrowed<'a> {
-    /// Gets the BCP-47 time zone ID from an IANA time zone ID
-    /// with a case-insensitive lookup.
+    /// Gets the [`TimeZone`] from a case-insensitive IANA time zone ID.
     ///
     /// Returns [`TimeZone::unknown()`] if the IANA ID is not found.
     ///
@@ -205,7 +183,7 @@ impl<'a> IanaParserBorrowed<'a> {
     ///
     /// let result = parser.parse("Asia/CALCUTTA");
     ///
-    /// assert_eq!(*result, "inccu");
+    /// assert_eq!(result.as_str(), "inccu");
     ///
     /// // Unknown IANA time zone ID:
     /// assert_eq!(parser.parse("America/San_Francisco"), TimeZone::unknown());
@@ -245,13 +223,13 @@ impl<'a> IanaParserBorrowed<'a> {
     /// use icu::time::zone::IanaParser;
     /// use icu::time::zone::TimeZone;
     /// use std::collections::BTreeSet;
-    /// use tinystr::tinystr;
+    /// use icu::locale::subtags::subtag;
     ///
     /// let parser = IanaParser::new();
     ///
     /// let ids = parser.iter().collect::<BTreeSet<_>>();
     ///
-    /// assert!(ids.contains(&TimeZone(tinystr!(8, "uaiev"))));
+    /// assert!(ids.contains(&TimeZone(subtag!("uaiev"))));
     /// ```
     pub fn iter(&self) -> TimeZoneIter<'a> {
         TimeZoneIter {
@@ -274,12 +252,9 @@ impl Iterator for TimeZoneIter<'_> {
     }
 }
 
-/// A parser that supplements [`IanaParser`] with about 8 KB of additional data to
-/// improve the performance of canonical IANA ID lookup.
+/// A parser that supplements [`IanaParser`] with about 10kB of additional data to support
+/// returning canonical and case-normalized IANA time zone IDs.
 ///
-/// The data in [`IanaParser`] is optimized for IANA to BCP-47 lookup; the reverse
-/// requires a linear walk over all ~600 IANA identifiers. The data added here allows for
-/// constant-time mapping from BCP-47 to IANA.
 #[derive(Debug, Clone)]
 pub struct IanaParserExtended<I> {
     inner: I,
@@ -431,9 +406,9 @@ impl IanaParserExtendedBorrowed<'static> {
 }
 
 impl<'a> IanaParserExtendedBorrowed<'a> {
-    /// Gets the time zone, the canonical IANA ID, and the normalized IANA ID from an IANA time zone ID.
+    /// Gets the [`TimeZone`], the canonical IANA ID, and the case-normalized IANA ID from a case-insensitive IANA time zone ID.
     ///
-    /// Returns [`(TimeZone::unknown(), "Etc/Unknown", "Etc/Unknown")`] if the IANA ID is not found.
+    /// Returns `TimeZone::unknown()` / `"Etc/Unknown"` if the IANA ID is not found.
     ///
     /// # Examples
     ///
@@ -443,35 +418,35 @@ impl<'a> IanaParserExtendedBorrowed<'a> {
     ///
     /// let parser = IanaParserExtended::new();
     ///
-    /// let (tz, canonical, normalized) = parser.parse("Asia/CALCUTTA");
+    /// let r = parser.parse("Asia/CALCUTTA");
     ///
-    /// assert_eq!(*tz, "inccu");
-    /// assert_eq!(canonical, "Asia/Kolkata");
-    /// assert_eq!(normalized, "Asia/Calcutta");
+    /// assert_eq!(r.time_zone.as_str(), "inccu");
+    /// assert_eq!(r.canonical, "Asia/Kolkata");
+    /// assert_eq!(r.normalized, "Asia/Calcutta");
     ///
     /// // Unknown IANA time zone ID:
-    /// assert_eq!(
-    ///     parser.parse("America/San_Francisco"),
-    ///     (TimeZone::unknown(), "Etc/Unknown", "Etc/Unknown".into())
-    /// );
+    /// let r = parser.parse("America/San_Francisco");
+    ///
+    /// assert_eq!(r.time_zone, TimeZone::unknown());
+    /// assert_eq!(r.canonical, "Etc/Unknown");
+    /// assert_eq!(r.normalized, "Etc/Unknown");
     /// ```
-    pub fn parse(&self, iana_id: &str) -> (TimeZone, &'a str, &'a str) {
+    pub fn parse(&self, iana_id: &str) -> TimeZoneAndCanonicalAndNormalized<'a> {
         self.parse_from_utf8(iana_id.as_bytes())
     }
 
     /// Same as [`Self::parse()`] but works with potentially ill-formed UTF-8.
-    pub fn parse_from_utf8(&self, iana_id: &[u8]) -> (TimeZone, &'a str, &'a str) {
-        const FAILURE: (TimeZone, &str, &str) = (TimeZone::unknown(), "Etc/Unknown", "Etc/Unknown");
+    pub fn parse_from_utf8(&self, iana_id: &[u8]) -> TimeZoneAndCanonicalAndNormalized<'a> {
         let Some(trie_value) = self.inner.trie_value(iana_id) else {
-            return FAILURE;
+            return TimeZoneAndCanonicalAndNormalized::UKNONWN;
         };
-        let Some(bcp47_id) = self.inner.data.bcp47_ids.get(trie_value.index()) else {
+        let Some(time_zone) = self.inner.data.bcp47_ids.get(trie_value.index()) else {
             debug_assert!(false, "index should be in range");
-            return FAILURE;
+            return TimeZoneAndCanonicalAndNormalized::UKNONWN;
         };
         let Some(canonical) = self.data.normalized_iana_ids.get(trie_value.index()) else {
             debug_assert!(false, "index should be in range");
-            return FAILURE;
+            return TimeZoneAndCanonicalAndNormalized::UKNONWN;
         };
         let normalized = if trie_value.is_canonical() {
             canonical
@@ -489,7 +464,7 @@ impl<'a> IanaParserExtendedBorrowed<'a> {
                     false,
                     "binary search should succeed if trie lookup succeeds"
                 );
-                return FAILURE;
+                return TimeZoneAndCanonicalAndNormalized::UKNONWN;
             };
             let Some(normalized) = self
                 .data
@@ -497,11 +472,15 @@ impl<'a> IanaParserExtendedBorrowed<'a> {
                 .get(self.inner.data.bcp47_ids.len() + index)
             else {
                 debug_assert!(false, "binary search returns valid index");
-                return FAILURE;
+                return TimeZoneAndCanonicalAndNormalized::UKNONWN;
             };
             normalized
         };
-        (bcp47_id, canonical, normalized)
+        TimeZoneAndCanonicalAndNormalized {
+            time_zone,
+            canonical,
+            normalized,
+        }
     }
 
     /// Returns an iterator over all time zones and their canonical IANA identifiers.
@@ -514,14 +493,14 @@ impl<'a> IanaParserExtendedBorrowed<'a> {
     /// use icu::time::zone::iana::IanaParserExtended;
     /// use icu::time::zone::TimeZone;
     /// use std::collections::BTreeSet;
-    /// use tinystr::tinystr;
+    /// use icu::locale::subtags::subtag;
     ///
     /// let parser = IanaParserExtended::new();
     ///
-    /// let ids = parser.iter().collect::<BTreeSet<_>>();
+    /// let ids = parser.iter().map(|t| (t.time_zone, t.canonical)).collect::<BTreeSet<_>>();
     ///
-    /// assert!(ids.contains(&(TimeZone(tinystr!(8, "uaiev")), "Europe/Kyiv")));
-    /// assert_eq!(ids.len(), 445);
+    /// assert!(ids.contains(&(TimeZone(subtag!("uaiev")), "Europe/Kyiv")));
+    /// assert!(parser.iter().count() >= 445);
     /// ```
     pub fn iter(&self) -> TimeZoneAndCanonicalIter<'a> {
         TimeZoneAndCanonicalIter(
@@ -548,27 +527,57 @@ impl<'a> IanaParserExtendedBorrowed<'a> {
     /// use icu::time::zone::iana::IanaParserExtended;
     /// use icu::time::zone::TimeZone;
     /// use std::collections::BTreeMap;
-    /// use tinystr::tinystr;
+    /// use icu::locale::subtags::subtag;
     ///
     /// let parser = IanaParserExtended::new();
     ///
-    /// let ids = parser.iter_all().enumerate().map(|(a, b)| (b, a)).collect::<std::collections::BTreeMap<_, _>>();
+    /// let ids = parser.iter_all().enumerate().map(|(a, b)| ((b.time_zone, b.canonical, b.normalized), a)).collect::<std::collections::BTreeMap<_, _>>();
     ///
-    /// let kyiv_idx = ids[&(TimeZone(tinystr!(8, "uaiev")), "Europe/Kyiv", "Europe/Kyiv")];
-    /// let kiev_idx = ids[&(TimeZone(tinystr!(8, "uaiev")), "Europe/Kyiv", "Europe/Kiev")];
-    /// let uzgh_idx = ids[&(TimeZone(tinystr!(8, "uaiev")), "Europe/Kyiv", "Europe/Uzhgorod")];
-    /// let zapo_idx = ids[&(TimeZone(tinystr!(8, "uaiev")), "Europe/Kyiv", "Europe/Zaporozhye")];
+    /// let kyiv_idx = ids[&(TimeZone(subtag!("uaiev")), "Europe/Kyiv", "Europe/Kyiv")];
+    /// let kiev_idx = ids[&(TimeZone(subtag!("uaiev")), "Europe/Kyiv", "Europe/Kiev")];
+    /// let uzgh_idx = ids[&(TimeZone(subtag!("uaiev")), "Europe/Kyiv", "Europe/Uzhgorod")];
+    /// let zapo_idx = ids[&(TimeZone(subtag!("uaiev")), "Europe/Kyiv", "Europe/Zaporozhye")];
     ///
     /// // The order for a particular time zone is guaranteed
     /// assert!(kyiv_idx < kiev_idx && kiev_idx < uzgh_idx && uzgh_idx < zapo_idx);
     /// // It is not guaranteed that the entries for a particular time zone are consecutive
     /// assert!(kyiv_idx + 1 != kiev_idx);
     ///
-    /// assert_eq!(ids.len(), 598);
+    /// assert!(parser.iter_all().count() >= 598);
     /// ```
     pub fn iter_all(&self) -> TimeZoneAndCanonicalAndNormalizedIter<'a> {
         TimeZoneAndCanonicalAndNormalizedIter(0, *self)
     }
+}
+
+/// Return value of [`IanaParserBorrowed::iter`].
+#[derive(Debug, Copy, Clone, PartialEq, Eq)]
+#[non_exhaustive]
+pub struct TimeZoneAndCanonical<'a> {
+    /// The parsed [`TimeZone`]
+    pub time_zone: TimeZone,
+    /// The canonical IANA ID
+    pub canonical: &'a str,
+}
+
+/// Return value of [`IanaParserExtendedBorrowed::parse`], [`IanaParserExtendedBorrowed::iter`].
+#[derive(Debug, Copy, Clone, PartialEq, Eq)]
+#[non_exhaustive]
+pub struct TimeZoneAndCanonicalAndNormalized<'a> {
+    /// The parsed [`TimeZone`]
+    pub time_zone: TimeZone,
+    /// The canonical IANA ID
+    pub canonical: &'a str,
+    /// The normalized IANA ID
+    pub normalized: &'a str,
+}
+
+impl TimeZoneAndCanonicalAndNormalized<'static> {
+    const UKNONWN: Self = TimeZoneAndCanonicalAndNormalized {
+        time_zone: TimeZone::unknown(),
+        canonical: "Etc/Unknown",
+        normalized: "Etc/Unknown",
+    };
 }
 
 /// The iterator returned by [`IanaParserExtendedBorrowed::iter()`]
@@ -578,10 +587,14 @@ pub struct TimeZoneAndCanonicalIter<'a>(
 );
 
 impl<'a> Iterator for TimeZoneAndCanonicalIter<'a> {
-    type Item = (TimeZone, &'a str);
+    type Item = TimeZoneAndCanonical<'a>;
 
     fn next(&mut self) -> Option<Self::Item> {
-        self.0.next()
+        let (time_zone, canonical) = self.0.next()?;
+        Some(TimeZoneAndCanonical {
+            time_zone,
+            canonical,
+        })
     }
 }
 
@@ -590,21 +603,25 @@ impl<'a> Iterator for TimeZoneAndCanonicalIter<'a> {
 pub struct TimeZoneAndCanonicalAndNormalizedIter<'a>(usize, IanaParserExtendedBorrowed<'a>);
 
 impl<'a> Iterator for TimeZoneAndCanonicalAndNormalizedIter<'a> {
-    type Item = (TimeZone, &'a str, &'a str);
+    type Item = TimeZoneAndCanonicalAndNormalized<'a>;
 
     fn next(&mut self) -> Option<Self::Item> {
-        if let (Some(tz), Some(canonical)) = (
+        if let (Some(time_zone), Some(canonical)) = (
             self.1.inner.data.bcp47_ids.get(self.0),
             self.1.data.normalized_iana_ids.get(self.0),
         ) {
             self.0 += 1;
-            Some((tz, canonical, canonical))
+            Some(TimeZoneAndCanonicalAndNormalized {
+                time_zone,
+                canonical,
+                normalized: canonical,
+            })
         } else if let Some(normalized) = self.1.data.normalized_iana_ids.get(self.0) {
             let Some(trie_value) = self.1.inner.trie_value(normalized.as_bytes()) else {
                 debug_assert!(false, "normalized value should be in trie");
                 return None;
             };
-            let (Some(tz), Some(canonical)) = (
+            let (Some(time_zone), Some(canonical)) = (
                 self.1.inner.data.bcp47_ids.get(trie_value.index()),
                 self.1.data.normalized_iana_ids.get(trie_value.index()),
             ) else {
@@ -612,7 +629,11 @@ impl<'a> Iterator for TimeZoneAndCanonicalAndNormalizedIter<'a> {
                 return None;
             };
             self.0 += 1;
-            Some((tz, canonical, normalized))
+            Some(TimeZoneAndCanonicalAndNormalized {
+                time_zone,
+                canonical,
+                normalized,
+            })
         } else {
             None
         }

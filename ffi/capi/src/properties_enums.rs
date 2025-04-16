@@ -1858,7 +1858,7 @@ pub mod ffi {
         }
     }
 
-    #[diplomat::rust_link(icu::properties::props::GeneralCategory, Struct)]
+    #[diplomat::rust_link(icu::properties::props::GeneralCategory, Enum)]
     #[diplomat::enum_convert(icu_properties::props::GeneralCategory)]
     pub enum GeneralCategory {
         #[diplomat::rust_link(icu::properties::props::GeneralCategory::Unassigned, EnumVariant)]
@@ -1996,7 +1996,6 @@ pub mod ffi {
             icu_properties::PropertyNamesShortBorrowed::<props::GeneralCategory>::new()
                 .get(self.into())
         }
-        #[diplomat::rust_link(icu::properties::props::GeneralCategory::to_icu4c_value, FnInStruct)]
         /// Convert to an integer value usable with ICU4C and CodePointMapData
         pub fn to_integer_value(self) -> u8 {
             self as u8
@@ -2011,10 +2010,6 @@ pub mod ffi {
         }
 
         /// Convert from an integer using the ICU4C integer mappings for `General_Category`
-        #[diplomat::rust_link(
-            icu::properties::props::GeneralCategory::from_icu4c_value,
-            FnInStruct
-        )]
         #[diplomat::rust_link(
             icu::properties::props::GeneralCategoryOutOfBoundsError,
             Struct,
@@ -2185,7 +2180,7 @@ pub mod ffi {
     }
 
     impl VerticalOrientation {
-        #[diplomat::rust_link(icu::properties::props::VerticalOrientation::for_char, FnInTrait)]
+        #[diplomat::rust_link(icu::properties::props::EnumeratedProperty::for_char, FnInTrait)]
         #[cfg(feature = "compiled_data")]
         pub fn for_char(ch: DiplomatChar) -> Self {
             icu_properties::CodePointMapData::<props::VerticalOrientation>::new()

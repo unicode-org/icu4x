@@ -3601,7 +3601,7 @@ export class CodePointSetData {
     static createForEcma262(propertyName) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
-        const propertyNameSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, propertyName));
+        const propertyNameSlice = diplomatRuntime.DiplomatBuf.str8(wasm, propertyName);
         
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
@@ -3630,7 +3630,7 @@ export class CodePointSetData {
     static createForEcma262WithProvider(provider, propertyName) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
-        const propertyNameSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, propertyName));
+        const propertyNameSlice = diplomatRuntime.DiplomatBuf.str8(wasm, propertyName);
         
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         

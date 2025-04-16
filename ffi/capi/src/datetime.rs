@@ -9,10 +9,10 @@ pub mod ffi {
     use alloc::boxed::Box;
     use icu_calendar::Iso;
 
-    use crate::calendar::ffi::Calendar;
-    use crate::date::ffi::{Date, IsoDate};
-    use crate::errors::ffi::CalendarParseError;
-    use crate::time::ffi::Time;
+    use crate::unstable::calendar::ffi::Calendar;
+    use crate::unstable::date::ffi::{Date, IsoDate};
+    use crate::unstable::errors::ffi::CalendarParseError;
+    use crate::unstable::time::ffi::Time;
 
     /// An ICU4X DateTime object capable of containing a ISO-8601 date and time.
     #[diplomat::rust_link(icu::time::DateTime, Struct)]

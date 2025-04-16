@@ -221,6 +221,9 @@ pub use __impl_data_provider_never_marker as impl_data_provider_never_marker;
 pub struct DataMarkerIdHash([u8; 4]);
 
 impl DataMarkerIdHash {
+    /// Magic bytes to locate [`DataMarkerIdHash`]es in binaries.
+    pub const LEADING_TAG: &[u8] = b"tdmh";
+
     /// Gets the hash value as a byte array.
     pub const fn to_bytes(self) -> [u8; 4] {
         self.0
@@ -325,8 +328,6 @@ unsafe impl EqULE for DataMarkerIdHash {}
 /// are enabled, this also contains a human-readable string for an improved `Debug` implementation.
 #[derive(Debug, Copy, Clone, Eq)]
 pub struct DataMarkerId {
-    /// The human-readable path string ends with `@` followed by one or more digits (the version
-    /// number). Paths do not contain characters other than ASCII letters and digits, `_`, `/`.
     #[cfg(any(feature = "export", debug_assertions))]
     debug: &'static str,
     hash: [u8; 8],
@@ -365,35 +366,29 @@ impl DataMarkerId {
     // macro use
     // Error is a str of the expected character class and the index where it wasn't encountered
     // The indexing operations in this function have been reviewed in detail and won't panic.
-    #[allow(clippy::indexing_slicing)]
-    pub const fn construct_internal(name: &'static str) -> Result<Self, (&'static str, usize)> {
-        match Self::validate_marker_name(name) {
-            Ok(()) => (),
-            Err(e) => return Err(e),
-        };
+    pub const fn from_name(name: &'static str) -> Result<Self, (&'static str, usize)> {
+        #![allow(clippy::indexing_slicing)]
+        if !name.as_bytes()[name.len() - 1].is_ascii_digit() {
+            return Err(("[0-9]", name.len()));
+        }
+        let mut i = name.len() - 1;
+        while name.as_bytes()[i - 1].is_ascii_digit() {
+            i -= 1;
+        }
+        if name.as_bytes()[i - 1] != b'V' {
+            return Err(("V", i));
+        }
 
+        let magic = DataMarkerIdHash::LEADING_TAG;
         let hash = fxhash_32(name.as_bytes()).to_le_bytes();
 
         Ok(Self {
             #[cfg(any(feature = "export", debug_assertions))]
             debug: name,
-            hash: [b't', b'd', b'm', b'h', hash[0], hash[1], hash[2], hash[3]],
+            hash: [
+                magic[0], magic[1], magic[2], magic[3], hash[0], hash[1], hash[2], hash[3],
+            ],
         })
-    }
-
-    const fn validate_marker_name(path: &'static str) -> Result<(), (&'static str, usize)> {
-        #![allow(clippy::indexing_slicing)]
-        if !path.as_bytes()[path.len() - 1].is_ascii_digit() {
-            return Err(("[0-9]", path.len()));
-        }
-        let mut i = path.len() - 1;
-        while path.as_bytes()[i - 1].is_ascii_digit() {
-            i -= 1;
-        }
-        if path.as_bytes()[i - 1] != b'V' {
-            return Err(("V", i));
-        }
-        Ok(())
     }
 
     /// Gets a platform-independent hash of a [`DataMarkerId`].
@@ -413,6 +408,14 @@ impl DataMarkerId {
     pub const fn hashed(self) -> DataMarkerIdHash {
         let [.., h1, h2, h3, h4] = self.hash;
         DataMarkerIdHash([h1, h2, h3, h4])
+    }
+
+    /// Returns the marker name.
+    ///
+    /// For size reasons, this is only available with the `export` Cargo feature.
+    #[cfg(feature = "export")]
+    pub const fn name(self) -> &'static str {
+        self.debug
     }
 }
 
@@ -524,23 +527,6 @@ impl DataMarkerInfo {
     }
 }
 
-/// See [`DataMarkerInfo`].
-#[doc(hidden)] // macro
-#[macro_export]
-macro_rules! __data_marker_id {
-    ($name:ident) => {
-        const {
-            match $crate::marker::DataMarkerId::construct_internal(stringify!($name)) {
-                Ok(path) => path,
-                #[allow(clippy::panic)] // Const context
-                Err(_) => panic!(concat!("Invalid marker name: ", stringify!($name))),
-            }
-        }
-    };
-}
-#[doc(inline)]
-pub use __data_marker_id as data_marker_id;
-
 /// Creates a data marker.
 ///
 /// # Examples
@@ -586,7 +572,13 @@ macro_rules! data_marker {
                     struct DebugTest;
                 )?
                 #[allow(unused_mut)]
-                let mut info = $crate::DataMarkerInfo::from_id($crate::marker::data_marker_id!($name));
+                // Force evaluation even if marker is unused
+                let mut info = const { $crate::DataMarkerInfo::from_id(
+                     match $crate::marker::DataMarkerId::from_name(stringify!($name)) {
+                        Ok(path) => path,
+                        #[allow(clippy::panic)] // Const context
+                        Err(_) => panic!(concat!("Invalid marker name: ", stringify!($name))),
+                })};
                 $(
                     $(#[$meta])*
                     {info.$info_field = $info_val;}
@@ -616,34 +608,34 @@ impl<DataStruct: for<'a> Yokeable<'a>> DynamicDataMarker for ErasedMarker<DataSt
 #[test]
 fn test_marker_syntax() {
     // Valid markers:
-    DataMarkerId::construct_internal("HelloWorldV1").unwrap();
-    DataMarkerId::construct_internal("HelloWorldFooV1").unwrap();
-    DataMarkerId::construct_internal("HelloWorldV999").unwrap();
-    DataMarkerId::construct_internal("Hello485FooV1").unwrap();
+    DataMarkerId::from_name("HelloWorldV1").unwrap();
+    DataMarkerId::from_name("HelloWorldFooV1").unwrap();
+    DataMarkerId::from_name("HelloWorldV999").unwrap();
+    DataMarkerId::from_name("Hello485FooV1").unwrap();
 
     // No version:
     assert_eq!(
-        DataMarkerId::construct_internal("HelloWorld"),
+        DataMarkerId::from_name("HelloWorld"),
         Err(("[0-9]", "HelloWorld".len()))
     );
 
     assert_eq!(
-        DataMarkerId::construct_internal("HelloWorldV"),
+        DataMarkerId::from_name("HelloWorldV"),
         Err(("[0-9]", "HelloWorldV".len()))
     );
     assert_eq!(
-        DataMarkerId::construct_internal("HelloWorldVFoo"),
+        DataMarkerId::from_name("HelloWorldVFoo"),
         Err(("[0-9]", "HelloWorldVFoo".len()))
     );
     assert_eq!(
-        DataMarkerId::construct_internal("HelloWorldV1Foo"),
+        DataMarkerId::from_name("HelloWorldV1Foo"),
         Err(("[0-9]", "HelloWorldV1Foo".len()))
     );
 }
 
 #[test]
 fn test_id_debug() {
-    assert_eq!(data_marker_id!(BarV1).debug, "BarV1");
+    assert_eq!(DataMarkerId::from_name("BarV1").unwrap().debug, "BarV1");
 }
 
 #[test]
@@ -663,7 +655,7 @@ fn test_hash_word_32() {
 #[test]
 fn test_id_hash() {
     assert_eq!(
-        data_marker_id!(BarV1).hashed(),
+        DataMarkerId::from_name("BarV1").unwrap().hashed(),
         DataMarkerIdHash([212, 77, 158, 241]),
     );
 }

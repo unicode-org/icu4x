@@ -26,10 +26,10 @@ pub mod ffi {
     };
 
     #[cfg(any(feature = "compiled_data", feature = "buffer_provider"))]
-    use crate::errors::ffi::DataError;
-    use crate::properties_iter::ffi::CodePointRangeIterator;
+    use crate::unstable::errors::ffi::DataError;
+    use crate::unstable::properties_iter::ffi::CodePointRangeIterator;
     #[cfg(feature = "buffer_provider")]
-    use crate::provider::ffi::DataProvider;
+    use crate::unstable::provider::ffi::DataProvider;
 
     #[cfg(feature = "compiled_data")]
     use diplomat_runtime::DiplomatChar;
@@ -84,7 +84,7 @@ pub mod ffi {
         #[diplomat::attr(auto, named_constructor = "general_category_group")]
         #[cfg(feature = "compiled_data")]
         pub fn create_general_category_group(
-            group: crate::properties_enums::ffi::GeneralCategoryGroup,
+            group: crate::unstable::properties_enums::ffi::GeneralCategoryGroup,
         ) -> Box<CodePointSetData> {
             let data = icu_properties::CodePointMapData::<GeneralCategory>::new().static_to_owned();
 

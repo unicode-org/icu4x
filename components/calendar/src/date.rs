@@ -5,7 +5,7 @@
 use crate::any_calendar::{AnyCalendar, IntoAnyCalendar};
 use crate::calendar_arithmetic::CalendarArithmetic;
 use crate::error::DateError;
-use crate::types::IsoWeekOfYear;
+use crate::types::{CyclicYear, EraYear, IsoWeekOfYear};
 use crate::week::{RelativeUnit, WeekCalculator, WeekOf};
 use crate::{types, Calendar, DateDuration, DateDurationUnit, Iso};
 #[cfg(feature = "alloc")]
@@ -91,7 +91,7 @@ impl<C> Deref for Ref<'_, C> {
 
 /// A date for a given calendar.
 ///
-/// **The primary definition of this type is in the [`icu_calendar`](docs.rs/icu_calendar) crate. Other ICU4X crates re-export it for convenience.**
+/// **The primary definition of this type is in the [`icu_calendar`](https://docs.rs/icu_calendar) crate. Other ICU4X crates re-export it for convenience.**
 ///
 /// This can work with wrappers around [`Calendar`] types,
 /// e.g. `Rc<C>`, via the [`AsCalendar`] trait.
@@ -107,7 +107,7 @@ impl<C> Deref for Ref<'_, C> {
 /// let date_iso = Date::try_new_iso(1970, 1, 2)
 ///     .expect("Failed to initialize ISO Date instance.");
 ///
-/// assert_eq!(date_iso.year().era_year_or_extended(), 1970);
+/// assert_eq!(date_iso.era_year().year, 1970);
 /// assert_eq!(date_iso.month().ordinal, 1);
 /// assert_eq!(date_iso.day_of_month().0, 2);
 /// ```
@@ -227,10 +227,22 @@ impl<A: AsCalendar> Date<A> {
         )
     }
 
-    /// The calendar-specific year represented by `self`
+    /// The calendar-specific year-info.
+    ///
+    /// This returns an enum, see [`Date::era_year()`] and [`Date::cyclic_year()`] which are available
+    /// for concrete calendar types and return concrete types.
     #[inline]
     pub fn year(&self) -> types::YearInfo {
-        self.calendar.as_calendar().year(&self.inner)
+        self.calendar.as_calendar().year_info(&self.inner).into()
+    }
+
+    /// The "extended year", typically anchored with year 1 as the year 1 of either the most modern or
+    /// otherwise some "major" era for the calendar
+    ///
+    /// See [`Self::year()`] for more information about the year.
+    #[inline]
+    pub fn extended_year(&self) -> i32 {
+        self.calendar.as_calendar().extended_year(&self.inner)
     }
 
     /// Returns whether `self` is in a calendar-specific leap year
@@ -288,6 +300,20 @@ impl<A: AsCalendar> Date<A> {
     #[inline]
     pub fn calendar_wrapper(&self) -> &A {
         &self.calendar
+    }
+}
+
+impl<A: AsCalendar<Calendar = C>, C: Calendar<Year = EraYear>> Date<A> {
+    /// Returns information about the era for calendars using eras.
+    pub fn era_year(&self) -> EraYear {
+        self.calendar.as_calendar().year_info(self.inner())
+    }
+}
+
+impl<A: AsCalendar<Calendar = C>, C: Calendar<Year = CyclicYear>> Date<A> {
+    /// Returns information about the year cycle, for cyclic calendars.
+    pub fn cyclic_year(&self) -> CyclicYear {
+        self.calendar.as_calendar().year_info(self.inner())
     }
 }
 
@@ -415,18 +441,14 @@ impl<A: AsCalendar> fmt::Debug for Date<A> {
         let month = self.month().ordinal;
         let day = self.day_of_month().0;
         let calendar = self.calendar.as_calendar().debug_name();
-        match self.year().kind {
-            types::YearKind::Era(e) => {
-                let era = e.standard_era.0;
-                let era_year = e.era_year;
+        match self.year() {
+            types::YearInfo::Era(EraYear { year, era, .. }) => {
                 write!(
                     f,
-                    "Date({era_year}-{month}-{day}, {era} era, for calendar {calendar})"
+                    "Date({year}-{month}-{day}, {era} era, for calendar {calendar})"
                 )
             }
-            types::YearKind::Cyclic(cy) => {
-                let year = cy.year;
-                let related_iso = cy.related_iso;
+            types::YearInfo::Cyclic(CyclicYear { year, related_iso }) => {
                 write!(
                     f,
                     "Date({year}-{month}-{day}, ISO year {related_iso}, for calendar {calendar})"

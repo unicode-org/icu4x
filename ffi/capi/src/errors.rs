@@ -12,12 +12,12 @@ pub mod ffi {
     use diplomat_runtime::DiplomatOption;
 
     #[cfg(feature = "datetime")]
-    use crate::calendar::ffi::CalendarKind;
+    use crate::unstable::calendar::ffi::CalendarKind;
 
     #[derive(Debug, PartialEq, Eq)]
     #[repr(C)]
-    #[diplomat::rust_link(icu::provider::DataError, Struct, compact)]
-    #[diplomat::rust_link(icu::provider::DataErrorKind, Enum, compact)]
+    #[diplomat::rust_link(icu_provider::DataError, Struct, compact)]
+    #[diplomat::rust_link(icu_provider::DataErrorKind, Enum, compact)]
     pub enum DataError {
         Unknown = 0x00,
         MarkerNotFound = 0x01,
@@ -44,7 +44,7 @@ pub mod ffi {
     #[repr(C)]
     #[diplomat::rust_link(fixed_decimal::ParseError, Enum, compact)]
     #[cfg(any(feature = "decimal", feature = "plurals"))]
-    pub enum FixedDecimalParseError {
+    pub enum DecimalParseError {
         Unknown = 0x00,
         Limit = 0x01,
         Syntax = 0x02,
@@ -53,7 +53,7 @@ pub mod ffi {
     #[derive(Debug, PartialEq, Eq)]
     #[diplomat::rust_link(fixed_decimal::LimitError, Struct, compact)]
     #[cfg(feature = "decimal")]
-    pub struct FixedDecimalLimitError;
+    pub struct DecimalLimitError;
 
     #[derive(Debug, PartialEq, Eq)]
     #[repr(C)]
@@ -89,8 +89,8 @@ pub mod ffi {
     #[repr(C)]
     #[diplomat::rust_link(icu::datetime::DateTimeFormatterLoadError, Enum, compact)]
     #[diplomat::rust_link(icu::datetime::pattern::PatternLoadError, Enum, compact)]
-    #[diplomat::rust_link(icu::provider::DataError, Struct, compact)]
-    #[diplomat::rust_link(icu::provider::DataErrorKind, Enum, compact)]
+    #[diplomat::rust_link(icu_provider::DataError, Struct, compact)]
+    #[diplomat::rust_link(icu_provider::DataErrorKind, Enum, compact)]
     pub enum DateTimeFormatterLoadError {
         Unknown = 0x00,
 
@@ -289,7 +289,7 @@ impl From<icu_datetime::DateTimeWriteError> for DateTimeWriteError {
 }
 
 #[cfg(any(feature = "decimal", feature = "plurals"))]
-impl From<fixed_decimal::ParseError> for FixedDecimalParseError {
+impl From<fixed_decimal::ParseError> for DecimalParseError {
     fn from(e: fixed_decimal::ParseError) -> Self {
         match e {
             fixed_decimal::ParseError::Limit => Self::Limit,
@@ -300,7 +300,7 @@ impl From<fixed_decimal::ParseError> for FixedDecimalParseError {
 }
 
 #[cfg(feature = "decimal")]
-impl From<fixed_decimal::LimitError> for FixedDecimalLimitError {
+impl From<fixed_decimal::LimitError> for DecimalLimitError {
     fn from(_: fixed_decimal::LimitError) -> Self {
         Self
     }

@@ -9,13 +9,13 @@ pub mod ffi {
     use alloc::boxed::Box;
     use icu_calendar::Iso;
 
-    use crate::calendar::ffi::Calendar;
-    use crate::date::ffi::{Date, IsoDate};
-    use crate::errors::ffi::CalendarParseError;
-    use crate::iana_parser::ffi::IanaParser;
-    use crate::time::ffi::Time;
-    use crate::timezone::ffi::TimeZoneInfo;
-    use crate::variant_offset::ffi::VariantOffsetsCalculator;
+    use crate::unstable::calendar::ffi::Calendar;
+    use crate::unstable::date::ffi::{Date, IsoDate};
+    use crate::unstable::errors::ffi::CalendarParseError;
+    use crate::unstable::iana_parser::ffi::IanaParser;
+    use crate::unstable::time::ffi::Time;
+    use crate::unstable::timezone::ffi::TimeZoneInfo;
+    use crate::unstable::variant_offset::ffi::VariantOffsetsCalculator;
 
     /// An ICU4X ZonedDateTime object capable of containing a ISO-8601 date, time, and zone.
     #[diplomat::rust_link(icu::time::ZonedDateTime, Struct)]
@@ -133,8 +133,8 @@ pub mod ffi {
         }
 
         /// Creates a new [`ZonedDateTime`] from an IXDTF string, without requiring the offset or calculating the zone variant.
-        #[diplomat::rust_link(icu::time::ZonedDateTime::try_loose_from_str, FnInStruct)]
-        #[diplomat::rust_link(icu::time::ZonedDateTime::try_loose_from_utf8, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::time::ZonedDateTime::try_lenient_from_str, FnInStruct)]
+        #[diplomat::rust_link(icu::time::ZonedDateTime::try_lenient_from_utf8, FnInStruct, hidden)]
         #[diplomat::attr(all(supports = named_constructors, supports = fallible_constructors), named_constructor = "loose_from_string")]
         pub fn loose_from_string(
             v: &DiplomatStr,
@@ -142,7 +142,7 @@ pub mod ffi {
             iana_parser: &IanaParser,
         ) -> Result<ZonedDateTime, CalendarParseError> {
             let icu_time::ZonedDateTime { date, time, zone } =
-                icu_time::ZonedDateTime::try_loose_from_utf8(
+                icu_time::ZonedDateTime::try_lenient_from_utf8(
                     v,
                     calendar.0.clone(),
                     iana_parser.0.as_borrowed(),

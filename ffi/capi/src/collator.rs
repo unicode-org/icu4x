@@ -11,9 +11,9 @@ pub mod ffi {
     use alloc::boxed::Box;
 
     #[cfg(feature = "buffer_provider")]
-    use crate::provider::ffi::DataProvider;
+    use crate::unstable::provider::ffi::DataProvider;
     #[cfg(any(feature = "compiled_data", feature = "buffer_provider"))]
-    use crate::{errors::ffi::DataError, locale_core::ffi::Locale};
+    use crate::unstable::{errors::ffi::DataError, locale_core::ffi::Locale};
     use diplomat_runtime::DiplomatOption;
 
     #[diplomat::opaque]
@@ -65,7 +65,7 @@ pub mod ffi {
         Shifted = 1,
     }
 
-    #[diplomat::rust_link(icu::collator::options::CaseFirst, Enum)]
+    #[diplomat::rust_link(icu::collator::preferences::CollationCaseFirst, Enum)]
     #[derive(Eq, PartialEq, Debug, PartialOrd, Ord)]
     pub enum CollatorCaseFirst {
         Off = 0,
@@ -91,7 +91,7 @@ pub mod ffi {
         On = 1,
     }
 
-    #[diplomat::rust_link(icu::collator::options::NumericOrdering, Enum)]
+    #[diplomat::rust_link(icu::collator::preferences::CollationNumericOrdering, Enum)]
     #[derive(Eq, PartialEq, Debug, PartialOrd, Ord)]
     pub enum CollatorNumericOrdering {
         Off = 0,

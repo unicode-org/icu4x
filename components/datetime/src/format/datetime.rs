@@ -134,11 +134,13 @@ where
         (FieldSymbol::Era, l) => {
             const PART: Part = parts::ERA;
             input!(PART, year = input.year);
-            input!(PART, era = year.formatting_era());
+            input!(PART, era_year = year.era());
             let era_symbol = datetime_names
-                .get_name_for_era(l, era)
+                .get_name_for_era(l, era_year)
                 .map_err(|e| match e {
-                    GetNameForEraError::InvalidEraCode => DateTimeWriteError::InvalidEra(era),
+                    GetNameForEraError::InvalidEraCode => {
+                        DateTimeWriteError::InvalidEra(era_year.era)
+                    }
                     GetNameForEraError::InvalidFieldLength => {
                         DateTimeWriteError::UnsupportedLength(ErrorField(field))
                     }
@@ -149,7 +151,7 @@ where
             match era_symbol {
                 Err(e) => {
                     w.with_part(PART, |w| {
-                        w.with_part(Part::ERROR, |w| w.write_str(&era.fallback_name()))
+                        w.with_part(Part::ERROR, |w| w.write_str(&era_year.era))
                     })?;
                     Err(e)
                 }
@@ -159,7 +161,7 @@ where
         (FieldSymbol::Year(Year::Calendar), l) => {
             const PART: Part = parts::YEAR;
             input!(PART, year = input.year);
-            let mut year = Decimal::from(year.era_year_or_extended());
+            let mut year = Decimal::from(year.era_year_or_related_iso());
             if matches!(l, FieldLength::Two) {
                 // 'yy' and 'YY' truncate
                 year.set_max_position(2);
@@ -171,7 +173,7 @@ where
             input!(PART, year = input.year);
             input!(PART, cyclic = year.cyclic());
 
-            match datetime_names.get_name_for_cyclic(l, cyclic) {
+            match datetime_names.get_name_for_cyclic(l, cyclic.year) {
                 Ok(name) => Ok(w.with_part(PART, |w| w.write_str(name))?),
                 Err(e) => {
                     w.with_part(PART, |w| {
@@ -179,7 +181,7 @@ where
                             try_write_number_without_part(
                                 w,
                                 decimal_formatter,
-                                year.era_year_or_extended().into(),
+                                cyclic.related_iso.into(),
                                 FieldLength::One,
                             )
                             .map(|_| ())
@@ -188,7 +190,7 @@ where
                     return Ok(Err(match e {
                         GetNameForCyclicYearError::InvalidYearNumber { max } => {
                             DateTimeWriteError::InvalidCyclicYear {
-                                value: cyclic.get() as usize,
+                                value: cyclic.year,
                                 max,
                             }
                         }
@@ -205,11 +207,11 @@ where
         (FieldSymbol::Year(Year::RelatedIso), l) => {
             const PART: Part = parts::RELATED_YEAR;
             input!(PART, year = input.year);
-            input!(PART, related_iso = year.related_iso());
+            input!(PART, cyclic = year.cyclic());
 
             // Always in latin digits according to spec
             w.with_part(PART, |w| {
-                let mut num = Decimal::from(related_iso);
+                let mut num = Decimal::from(cyclic.related_iso);
                 num.pad_start(l.to_len() as i16);
                 num.write_to(w)
             })?;
@@ -564,7 +566,7 @@ fn perform_timezone_fallback(
     Ok(match r {
         Ok(()) => Ok(()),
         Err(e) => {
-            if let Some(offset) = input.offset {
+            if let Some(offset) = input.zone_offset {
                 w.with_part(PART, |w| {
                     w.with_part(Part::ERROR, |w| {
                         Iso8601Format::without_z(field.length).format_infallible(w, offset)

@@ -11,7 +11,7 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
  *
  * See the [Rust documentation for `PropertyParser`](https://docs.rs/icu/latest/icu/properties/struct.PropertyParser.html) for more information.
  *
- * See the [Rust documentation for `GeneralCategory`](https://docs.rs/icu/latest/icu/properties/props/struct.GeneralCategory.html) for more information.
+ * See the [Rust documentation for `GeneralCategory`](https://docs.rs/icu/latest/icu/properties/props/enum.GeneralCategory.html) for more information.
  */
 const GeneralCategoryNameToGroupMapper_box_destroy_registry = new FinalizationRegistry((ptr) => {
     wasm.icu4x_GeneralCategoryNameToGroupMapper_destroy_mv1(ptr);
@@ -56,7 +56,7 @@ export class GeneralCategoryNameToGroupMapper {
     getStrict(name) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
-        const nameSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, name));
+        const nameSlice = diplomatRuntime.DiplomatBuf.str8(wasm, name);
         
         const result = wasm.icu4x_GeneralCategoryNameToGroupMapper_get_strict_mv1(this.ffiValue, ...nameSlice.splat());
     
@@ -79,7 +79,7 @@ export class GeneralCategoryNameToGroupMapper {
     getLoose(name) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
-        const nameSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, name));
+        const nameSlice = diplomatRuntime.DiplomatBuf.str8(wasm, name);
         
         const result = wasm.icu4x_GeneralCategoryNameToGroupMapper_get_loose_mv1(this.ffiValue, ...nameSlice.splat());
     
@@ -95,7 +95,7 @@ export class GeneralCategoryNameToGroupMapper {
     /** 
      * Create a name-to-mask mapper for the `General_Category` property, using compiled data.
      *
-     * See the [Rust documentation for `GeneralCategoryGroup`](https://docs.rs/icu_properties/latest/icu_properties/props/struct.GeneralCategoryGroup.html) for more information.
+     * See the [Rust documentation for `GeneralCategoryGroup`](https://docs.rs/icu/latest/icu/properties/props/struct.GeneralCategoryGroup.html) for more information.
      */
     #defaultConstructor() {
         const result = wasm.icu4x_GeneralCategoryNameToGroupMapper_create_mv1();
@@ -110,7 +110,7 @@ export class GeneralCategoryNameToGroupMapper {
     /** 
      * Create a name-to-mask mapper for the `General_Category` property, using a particular data source.
      *
-     * See the [Rust documentation for `GeneralCategoryGroup`](https://docs.rs/icu_properties/latest/icu_properties/props/struct.GeneralCategoryGroup.html) for more information.
+     * See the [Rust documentation for `GeneralCategoryGroup`](https://docs.rs/icu/latest/icu/properties/props/struct.GeneralCategoryGroup.html) for more information.
      */
     static createWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
