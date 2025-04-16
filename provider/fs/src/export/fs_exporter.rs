@@ -124,6 +124,9 @@ impl DataExporter for FilesystemExporter {
         payload: &DataPayload<ExportMarker>,
     ) -> Result<(), DataError> {
         let mut path_buf = marker_to_path(marker.id, &self.root);
+        if !id.marker_attributes.is_empty() {
+            path_buf.push(id.marker_attributes.as_str());
+        }
 
         #[allow(clippy::unwrap_used)] // has parent by construction
         let parent_dir = path_buf.parent().unwrap();
