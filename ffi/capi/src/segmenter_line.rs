@@ -7,6 +7,7 @@
 #[diplomat::attr(auto, namespace = "icu4x")]
 pub mod ffi {
     use alloc::boxed::Box;
+    use icu_segmenter::scaffold::{Latin1, PotentiallyIllFormedUtf8, Utf16};
 
     #[cfg(any(feature = "compiled_data", feature = "buffer_provider"))]
     use crate::unstable::locale_core::ffi::Locale;
@@ -47,23 +48,22 @@ pub mod ffi {
     }
 
     #[diplomat::opaque]
-    #[diplomat::rust_link(
-        icu::segmenter::line::LineBreakIteratorPotentiallyIllFormedUtf8,
-        Typedef
-    )]
+    #[diplomat::rust_link(icu::segmenter::iterators::LineBreakIterator, Struct)]
     pub struct LineBreakIteratorUtf8<'a>(
-        icu_segmenter::line::LineBreakIteratorPotentiallyIllFormedUtf8<'a, 'a>,
+        icu_segmenter::iterators::LineBreakIterator<'a, 'a, PotentiallyIllFormedUtf8>,
     );
 
     #[diplomat::opaque]
-    #[diplomat::rust_link(icu::segmenter::line::LineBreakIterator, Struct)]
-    #[diplomat::rust_link(icu::segmenter::line::LineBreakIteratorUtf16, Typedef, compact)]
-    pub struct LineBreakIteratorUtf16<'a>(icu_segmenter::line::LineBreakIteratorUtf16<'a, 'a>);
+    #[diplomat::rust_link(icu::segmenter::iterators::LineBreakIterator, Struct)]
+    pub struct LineBreakIteratorUtf16<'a>(
+        icu_segmenter::iterators::LineBreakIterator<'a, 'a, Utf16>,
+    );
 
     #[diplomat::opaque]
-    #[diplomat::rust_link(icu::segmenter::line::LineBreakIterator, Struct)]
-    #[diplomat::rust_link(icu::segmenter::line::LineBreakIteratorLatin1, Typedef, compact)]
-    pub struct LineBreakIteratorLatin1<'a>(icu_segmenter::line::LineBreakIteratorLatin1<'a, 'a>);
+    #[diplomat::rust_link(icu::segmenter::iterators::LineBreakIterator, Struct)]
+    pub struct LineBreakIteratorLatin1<'a>(
+        icu_segmenter::iterators::LineBreakIterator<'a, 'a, Latin1>,
+    );
 
     impl LineSegmenter {
         /// Construct a [`LineSegmenter`] with default options (no locale-based tailoring) using compiled data. It automatically loads the best
@@ -268,10 +268,7 @@ pub mod ffi {
     impl<'a> LineBreakIteratorUtf8<'a> {
         /// Finds the next breakpoint. Returns -1 if at the end of the string or if the index is
         /// out of range of a 32-bit signed integer.
-        #[diplomat::rust_link(
-            icu::segmenter::line::LineBreakIteratorPotentiallyIllFormedUtf8::next,
-            FnInTypedef
-        )]
+        #[diplomat::rust_link(icu::segmenter::iterators::LineBreakIterator::next, FnInStruct)]
         pub fn next(&mut self) -> i32 {
             self.0
                 .next()
@@ -283,7 +280,12 @@ pub mod ffi {
     impl<'a> LineBreakIteratorUtf16<'a> {
         /// Finds the next breakpoint. Returns -1 if at the end of the string or if the index is
         /// out of range of a 32-bit signed integer.
-        #[diplomat::rust_link(icu::segmenter::line::LineBreakIteratorUtf16::next, FnInTypedef)]
+        #[diplomat::rust_link(icu::segmenter::iterators::LineBreakIterator::next, FnInStruct)]
+        #[diplomat::rust_link(
+            icu::segmenter::iterators::LineBreakIterator::Item,
+            AssociatedTypeInStruct,
+            hidden
+        )]
         pub fn next(&mut self) -> i32 {
             self.0
                 .next()
@@ -295,7 +297,12 @@ pub mod ffi {
     impl<'a> LineBreakIteratorLatin1<'a> {
         /// Finds the next breakpoint. Returns -1 if at the end of the string or if the index is
         /// out of range of a 32-bit signed integer.
-        #[diplomat::rust_link(icu::segmenter::line::LineBreakIteratorLatin1::next, FnInTypedef)]
+        #[diplomat::rust_link(icu::segmenter::iterators::LineBreakIterator::next, FnInStruct)]
+        #[diplomat::rust_link(
+            icu::segmenter::iterators::LineBreakIterator::Item,
+            AssociatedTypeInStruct,
+            hidden
+        )]
         pub fn next(&mut self) -> i32 {
             self.0
                 .next()

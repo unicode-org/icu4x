@@ -7,6 +7,7 @@
 #[diplomat::attr(auto, namespace = "icu4x")]
 pub mod ffi {
     use alloc::boxed::Box;
+    use icu_segmenter::scaffold::{Latin1, PotentiallyIllFormedUtf8, Utf16};
 
     #[cfg(feature = "buffer_provider")]
     use crate::unstable::{errors::ffi::DataError, provider::ffi::DataProvider};
@@ -19,34 +20,21 @@ pub mod ffi {
     pub struct GraphemeClusterSegmenter(icu_segmenter::GraphemeClusterSegmenter);
 
     #[diplomat::opaque]
-    #[diplomat::rust_link(
-        icu::segmenter::grapheme::GraphemeClusterBreakIteratorPotentiallyIllFormedUtf8,
-        Typedef
-    )]
+    #[diplomat::rust_link(icu::segmenter::iterators::GraphemeClusterBreakIterator, Struct)]
     pub struct GraphemeClusterBreakIteratorUtf8<'a>(
-        icu_segmenter::grapheme::GraphemeClusterBreakIteratorPotentiallyIllFormedUtf8<'a, 'a>,
+        icu_segmenter::iterators::GraphemeClusterBreakIterator<'a, 'a, PotentiallyIllFormedUtf8>,
     );
 
     #[diplomat::opaque]
-    #[diplomat::rust_link(icu::segmenter::grapheme::GraphemeClusterBreakIterator, Struct)]
-    #[diplomat::rust_link(
-        icu::segmenter::grapheme::GraphemeClusterBreakIteratorUtf16,
-        Typedef,
-        hidden
-    )]
+    #[diplomat::rust_link(icu::segmenter::iterators::GraphemeClusterBreakIterator, Struct)]
     pub struct GraphemeClusterBreakIteratorUtf16<'a>(
-        icu_segmenter::grapheme::GraphemeClusterBreakIteratorUtf16<'a, 'a>,
+        icu_segmenter::iterators::GraphemeClusterBreakIterator<'a, 'a, Utf16>,
     );
 
     #[diplomat::opaque]
-    #[diplomat::rust_link(icu::segmenter::grapheme::GraphemeClusterBreakIterator, Struct)]
-    #[diplomat::rust_link(
-        icu::segmenter::grapheme::GraphemeClusterBreakIteratorLatin1,
-        Typedef,
-        hidden
-    )]
+    #[diplomat::rust_link(icu::segmenter::iterators::GraphemeClusterBreakIterator, Struct)]
     pub struct GraphemeClusterBreakIteratorLatin1<'a>(
-        icu_segmenter::grapheme::GraphemeClusterBreakIteratorLatin1<'a, 'a>,
+        icu_segmenter::iterators::GraphemeClusterBreakIterator<'a, 'a, Latin1>,
     );
 
     impl GraphemeClusterSegmenter {
@@ -135,8 +123,13 @@ pub mod ffi {
         /// Finds the next breakpoint. Returns -1 if at the end of the string or if the index is
         /// out of range of a 32-bit signed integer.
         #[diplomat::rust_link(
-            icu::segmenter::grapheme::GraphemeClusterBreakIteratorPotentiallyIllFormedUtf8::next,
-            FnInTypedef
+            icu::segmenter::iterators::GraphemeClusterBreakIterator::next,
+            FnInStruct
+        )]
+        #[diplomat::rust_link(
+            icu::segmenter::iterators::GraphemeClusterBreakIterator::Item,
+            AssociatedTypeInStruct,
+            hidden
         )]
         pub fn next(&mut self) -> i32 {
             self.0
@@ -150,8 +143,13 @@ pub mod ffi {
         /// Finds the next breakpoint. Returns -1 if at the end of the string or if the index is
         /// out of range of a 32-bit signed integer.
         #[diplomat::rust_link(
-            icu::segmenter::grapheme::GraphemeClusterBreakIteratorUtf16::next,
-            FnInTypedef
+            icu::segmenter::iterators::GraphemeClusterBreakIterator::next,
+            FnInStruct
+        )]
+        #[diplomat::rust_link(
+            icu::segmenter::iterators::GraphemeClusterBreakIterator::Item,
+            AssociatedTypeInStruct,
+            hidden
         )]
         pub fn next(&mut self) -> i32 {
             self.0
@@ -165,8 +163,13 @@ pub mod ffi {
         /// Finds the next breakpoint. Returns -1 if at the end of the string or if the index is
         /// out of range of a 32-bit signed integer.
         #[diplomat::rust_link(
-            icu::segmenter::grapheme::GraphemeClusterBreakIteratorLatin1::next,
-            FnInTypedef
+            icu::segmenter::iterators::GraphemeClusterBreakIterator::next,
+            FnInStruct
+        )]
+        #[diplomat::rust_link(
+            icu::segmenter::iterators::GraphemeClusterBreakIterator::Item,
+            AssociatedTypeInStruct,
+            hidden
         )]
         pub fn next(&mut self) -> i32 {
             self.0

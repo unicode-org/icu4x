@@ -46,27 +46,6 @@ pub struct SentenceBreakIterator<'data, 's, Y: RuleBreakType>(RuleBreakIterator<
 
 derive_usize_iterator_with_type!(SentenceBreakIterator, 'data);
 
-/// Sentence break iterator for an `str` (a UTF-8 string).
-///
-/// For examples of use, see [`SentenceSegmenter`].
-pub type SentenceBreakIteratorUtf8<'data, 's> = SentenceBreakIterator<'data, 's, Utf8>;
-
-/// Sentence break iterator for a potentially invalid UTF-8 string.
-///
-/// For examples of use, see [`SentenceSegmenter`].
-pub type SentenceBreakIteratorPotentiallyIllFormedUtf8<'data, 's> =
-    SentenceBreakIterator<'data, 's, PotentiallyIllFormedUtf8>;
-
-/// Sentence break iterator for a Latin-1 (8-bit) string.
-///
-/// For examples of use, see [`SentenceSegmenter`].
-pub type SentenceBreakIteratorLatin1<'data, 's> = SentenceBreakIterator<'data, 's, Latin1>;
-
-/// Sentence break iterator for a UTF-16 string.
-///
-/// For examples of use, see [`SentenceSegmenter`].
-pub type SentenceBreakIteratorUtf16<'data, 's> = SentenceBreakIterator<'data, 's, Utf16>;
-
 /// Supports loading sentence break data, and creating sentence break iterators for different string
 /// encodings.
 ///
@@ -215,7 +194,7 @@ impl<'data> SentenceSegmenterBorrowed<'data> {
     /// Creates a sentence break iterator for an `str` (a UTF-8 string).
     ///
     /// There are always breakpoints at 0 and the string length, or only at 0 for the empty string.
-    pub fn segment_str<'s>(self, input: &'s str) -> SentenceBreakIteratorUtf8<'data, 's> {
+    pub fn segment_str<'s>(self, input: &'s str) -> SentenceBreakIterator<'data, 's, Utf8> {
         SentenceBreakIterator(RuleBreakIterator {
             iter: input.char_indices(),
             len: input.len(),
@@ -236,7 +215,7 @@ impl<'data> SentenceSegmenterBorrowed<'data> {
     pub fn segment_utf8<'s>(
         self,
         input: &'s [u8],
-    ) -> SentenceBreakIteratorPotentiallyIllFormedUtf8<'data, 's> {
+    ) -> SentenceBreakIterator<'data, 's, PotentiallyIllFormedUtf8> {
         SentenceBreakIterator(RuleBreakIterator {
             iter: Utf8CharIndices::new(input),
             len: input.len(),
@@ -252,7 +231,7 @@ impl<'data> SentenceSegmenterBorrowed<'data> {
     /// Creates a sentence break iterator for a Latin-1 (8-bit) string.
     ///
     /// There are always breakpoints at 0 and the string length, or only at 0 for the empty string.
-    pub fn segment_latin1<'s>(self, input: &'s [u8]) -> SentenceBreakIteratorLatin1<'data, 's> {
+    pub fn segment_latin1<'s>(self, input: &'s [u8]) -> SentenceBreakIterator<'data, 's, Latin1> {
         SentenceBreakIterator(RuleBreakIterator {
             iter: Latin1Indices::new(input),
             len: input.len(),
@@ -269,7 +248,7 @@ impl<'data> SentenceSegmenterBorrowed<'data> {
     /// Creates a sentence break iterator for a UTF-16 string.
     ///
     /// There are always breakpoints at 0 and the string length, or only at 0 for the empty string.
-    pub fn segment_utf16<'s>(self, input: &'s [u16]) -> SentenceBreakIteratorUtf16<'data, 's> {
+    pub fn segment_utf16<'s>(self, input: &'s [u16]) -> SentenceBreakIterator<'data, 's, Utf16> {
         SentenceBreakIterator(RuleBreakIterator {
             iter: Utf16Indices::new(input),
             len: input.len(),

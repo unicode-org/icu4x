@@ -3,7 +3,7 @@
 
 part of 'lib.g.dart';
 
-/// See the [Rust documentation for `GraphemeClusterBreakIteratorPotentiallyIllFormedUtf8`](https://docs.rs/icu/latest/icu/segmenter/grapheme/type.GraphemeClusterBreakIteratorPotentiallyIllFormedUtf8.html) for more information.
+/// See the [Rust documentation for `GraphemeClusterBreakIterator`](https://docs.rs/icu/latest/icu/segmenter/iterators/struct.GraphemeClusterBreakIterator.html) for more information.
 final class GraphemeClusterBreakIteratorUtf8 implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _ffi;
 
@@ -28,7 +28,7 @@ final class GraphemeClusterBreakIteratorUtf8 implements ffi.Finalizable {
   /// Finds the next breakpoint. Returns -1 if at the end of the string or if the index is
   /// out of range of a 32-bit signed integer.
   ///
-  /// See the [Rust documentation for `next`](https://docs.rs/icu/latest/icu/segmenter/grapheme/type.GraphemeClusterBreakIteratorPotentiallyIllFormedUtf8.html#method.next) for more information.
+  /// See the [Rust documentation for `next`](https://docs.rs/icu/latest/icu/segmenter/iterators/struct.GraphemeClusterBreakIterator.html#method.next) for more information.
   int next() {
     final result = _icu4x_GraphemeClusterBreakIteratorUtf8_next_mv1(_ffi);
     return result;
