@@ -139,7 +139,7 @@ pub mod marker {
     //! Additional [`DataMarker`](super::DataMarker) helpers.
 
     #[doc(inline)]
-    pub use super::marker_full::{data_marker_id, impl_data_provider_never_marker};
+    pub use super::marker_full::impl_data_provider_never_marker;
     pub use super::marker_full::{
         DataMarkerExt, DataMarkerId, DataMarkerIdHash, ErasedMarker, NeverMarker,
     };

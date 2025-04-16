@@ -1680,7 +1680,6 @@ dependencies = [
  "icu_locale_core",
  "icu_provider",
  "icu_provider_export",
- "icu_provider_registry",
  "log",
  "postcard",
  "serde",
