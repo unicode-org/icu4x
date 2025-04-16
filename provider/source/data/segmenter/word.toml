@@ -9,83 +9,88 @@ segmenter_type = "word"
 
 [[tables]]
 name = "CR"
-unicodeset = "[:Word_Break=CR:]"
+# unicodeset "[:Word_Break=CR:]"
 
 [[tables]]
 name = "LF"
-unicodeset = "[:Word_Break=LF:]"
+# unicodeset "[:Word_Break=LF:]"
 
 [[tables]]
 name = "Newline"
-unicodeset = "[:Word_Break=Newline:]"
+# unicodeset "[:Word_Break=Newline:]"
 
 [[tables]]
+# Excluding dictionary characters
 name = "Extend"
-unicodeset = "[[:Word_Break=Extend:] - [[:Hani:] [:Line_Break=Complex_Context:]]]"
+# unicodeset "[[:Word_Break=Extend:] - [[:Hani:] [:Line_Break=Complex_Context:]]]"
 
 [[tables]]
 name = "ZWJ"
-unicodeset = "[:Word_Break=ZWJ:]"
+# unicodeset "[:Word_Break=ZWJ:]"
 
 [[tables]]
 name = "Regional_Indicator"
-unicodeset = "[:Word_Break=Regional_Indicator:]"
+# unicodeset "[:Word_Break=Regional_Indicator:]"
 
 [[tables]]
 name = "Format"
-unicodeset = "[:Word_Break=Format:]"
+# unicodeset "[:Word_Break=Format:]"
 
 [[tables]]
 name = "Katakana"
-unicodeset = "[:Word_Break=Katakana:]"
+# unicodeset "[:Word_Break=Katakana:]"
 
 [[tables]]
 name = "Hebrew_Letter"
-unicodeset = "[:Word_Break=Hebrew_Letter:]"
+# unicodeset "[:Word_Break=Hebrew_Letter:]"
 
 [[tables]]
+# Some ALetter is also ExtPic. This property excludes ExtPic.
 name = "ALetter"
-unicodeset = "[[:Word_Break=ALetter:] - [:Extended_Pictographic:]]"
+# unicodeset "[[:Word_Break=ALetter:] - [:Extended_Pictographic:]]"
 
 [[tables]]
 name = "Single_Quote"
-unicodeset = "[:Word_Break=Single_Quote:]"
+# unicodeset "[:Word_Break=Single_Quote:]"
 
 [[tables]]
 name = "Double_Quote"
-unicodeset = "[:Word_Break=Double_Quote:]"
+# unicodeset "[:Word_Break=Double_Quote:]"
 
 [[tables]]
 name = "MidNumLet"
-unicodeset = "[:Word_Break=MidNumLet:]"
+# unicodeset "[:Word_Break=MidNumLet:]"
 
 [[tables]]
+# Default data is en-US. We have to exlude some characters.
 name = "MidLetter"
-unicodeset = "[[:Word_Break=MidLetter:] - [\\u003A \\uFE55 \\uFF1A]]"
+# unicodeset "[[:Word_Break=MidLetter:] - [\\u003A \\uFE55 \\uFF1A]]"
 
 [[tables]]
 name = "MidNum"
-unicodeset = "[:Word_Break=MidNum:]"
+# unicodeset "[:Word_Break=MidNum:]"
 
 [[tables]]
 name = "Numeric"
-unicodeset = "[:Word_Break=Numeric:]"
+# unicodeset "[:Word_Break=Numeric:]"
 
 [[tables]]
 name = "ExtendNumLet"
-unicodeset = "[:Word_Break=ExtendNumLet:]"
+# unicodeset "[:Word_Break=ExtendNumLet:]"
 
 [[tables]]
 name = "WSegSpace"
-unicodeset = "[:Word_Break=WSegSpace:]"
+# unicodeset "[:Word_Break=WSegSpace:]"
 
 [[tables]]
+# Some ALetter is also ExtPic. This property excludes ALetter.
 name = "Extended_Pictographic"
-unicodeset = "[[:Extended_Pictographic:] - [:Word_Break=ALetter:]]"
+# unicodeset "[[:Extended_Pictographic:] - [:Word_Break=ALetter:]]"
 
 [[tables]]
+# Some ALetter is also ExtPic. This property ALetter + ExtPic.
 name = "ALetter_Extended_Pictographic"
-unicodeset = "[[:Word_Break=ALetter:] & [:Extended_Pictographic:]]"
+# unicodeset "[[:Word_Break=ALetter:] & [:Extended_Pictographic:]]"
 
 [[tables]]
 # TODO(#2239):
@@ -95,7 +100,7 @@ unicodeset = "[[:Word_Break=ALetter:] & [:Extended_Pictographic:]]"
 # Also, Unicode 16.0 changes some Complex properties to others such as U+19DA.
 # Excluding Numriec should be removed after line break is 16.0
 name = "SA"
-unicodeset = "[[[:Line_Break=ComplexContext:] - [\\u19da]] [:Script=Han:] [:Script=Hiragana:]]"
+# unicodeset "[[[:Line_Break=ComplexContext:] - [\\u19da]] [:Script=Han:] [:Script=Hiragana:]]"
 
 [[tables]]
 # moving marker only

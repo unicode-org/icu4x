@@ -38,7 +38,6 @@ icu = { workspace = true, features = ["datagen"] }
 calendrical_calculations = { workspace = true }
 icu_codepointtrie_builder = { workspace = true }
 icu_collections = { workspace = true, features = ["serde"] }
-icu_experimental = { workspace = true, default-features = false }
 icu_pattern = { workspace = true, features = ["alloc", "serde"] }
 icu_provider = { workspace = true, features = ["std", "logging", "export"]}
 icu_provider_adapters = { workspace = true }
@@ -51,6 +50,7 @@ zerotrie = { workspace = true, features = ["alloc"] }
 zerovec = { workspace = true, features = ["serde", "yoke", "alloc"] }
 
 # External dependencies
+icu_experimental = { workspace = true, features = ["datagen"], optional = true }
 displaydoc = { workspace = true }
 either = { workspace = true }
 elsa = { workspace = true }
@@ -95,7 +95,6 @@ use_icu4c = ["icu_codepointtrie_builder/icu4c"]
 networking = ["dep:ureq"]
 experimental = [
     "icu/experimental",
-    "icu_experimental/datagen",
     "dep:num-bigint",
     "dep:num-rational",
     "dep:num-traits",

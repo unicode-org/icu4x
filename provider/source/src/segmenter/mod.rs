@@ -12,14 +12,13 @@ use icu::collections::codepointtrie;
 use icu::properties::{
     props::{
         EastAsianWidth, GeneralCategory, GraphemeClusterBreak, IndicConjunctBreak, LineBreak,
-        SentenceBreak,
+        Script, SentenceBreak, WordBreak,
     },
     CodePointMapData, CodePointMapDataBorrowed, CodePointSetData,
 };
 use icu::segmenter::options::WordType;
 use icu::segmenter::provider::*;
 use icu_codepointtrie_builder::{CodePointTrieBuilder, CodePointTrieBuilderData};
-use icu_experimental::unicodeset_parse;
 use icu_provider::prelude::*;
 use std::cmp;
 use std::collections::HashSet;
@@ -34,11 +33,6 @@ mod lstm;
 // state machine name define by builtin name
 // [[tables]]
 // name = "Double_Quote"
-//
-// state machine name define by unicode set
-// [[tables]]
-// name = "Double_Quote"
-// unicodeset = "[:Word_Break=Double_Quote:]"
 //
 // state machine name define by combined state and as simple property
 // This doesn't break between properties even if combined rules are not matched.
@@ -57,9 +51,6 @@ struct SegmenterProperty {
     // If left and right are defined, this define is combined state.
     left: Option<String>,
     right: Option<String>,
-    // If codepoint is defined, this property is defined by UTR#35 syntax.
-    // If not defined, this property is defined by builtin type.
-    unicodeset: Option<String>,
     // This combine state is an intermediate match rule.
     interm_break_state: Option<bool>,
     // Defiened as single property to move marker even if not matched.
@@ -121,6 +112,10 @@ fn generate_rule_break_data(
         .read_and_parse_toml::<SegmenterRuleTable>(rules_file)
         .expect("The data should be valid!");
 
+    let data = CodePointMapData::<WordBreak>::try_new_unstable(provider)
+        .expect("The data should be valid!");
+    let wb = data.as_borrowed();
+
     let data = CodePointMapData::<GraphemeClusterBreak>::try_new_unstable(provider)
         .expect("The data should be valid!");
     let gb = data.as_borrowed();
@@ -141,6 +136,10 @@ fn generate_rule_break_data(
         .expect("The data should be valid!");
     let gc = data.as_borrowed();
 
+    let data =
+        CodePointMapData::<Script>::try_new_unstable(provider).expect("The data should be valid");
+    let script = data.as_borrowed();
+
     let data = CodePointSetData::try_new_unstable::<ExtendedPictographic>(provider)
         .expect("The data should be valid!");
     let extended_pictographic = data.as_borrowed();
@@ -160,6 +159,10 @@ fn generate_rule_break_data(
     let data = PropertyParser::<SentenceBreak>::try_new_unstable(provider)
         .expect("The data should be valid!");
     let sb_name_to_enum = data.as_borrowed();
+
+    let data =
+        PropertyParser::<WordBreak>::try_new_unstable(provider).expect("The data should be valid!");
+    let wb_name_to_enum = data.as_borrowed();
 
     fn set_break_state(
         break_state_table: &mut [Option<BreakState>],
@@ -221,23 +224,99 @@ fn generate_rule_break_data(
             // If any values aren't set, this is builtin type.
             simple_properties_count += 1;
 
-            if p.unicodeset.is_some() {
-                let (set, _) =
-                    unicodeset_parse::parse_unstable(p.unicodeset.as_ref().unwrap(), provider)
-                        .expect("The data should be valid!");
-                let code_points = set.code_points();
-                for c in code_points.iter_chars() {
-                    properties_map[c as usize] = property_index;
-                }
-                continue;
-            }
-
             if p.as_simple_property.is_some() {
                 // defined as simple property. It means that we move the marker to the next property.
                 continue;
             }
 
             match &*segmenter.segmenter_type {
+                "word" => {
+                    if p.name == "Extended_Pictographic" {
+                        // :Word_Break=ALetter: includes Extended_Pictographic. So we want to
+                        // exlude ALetter.
+                        // [[:Extended_Pictographic:] - [:Word_Break=ALetter:]]
+                        for range in extended_pictographic.iter_ranges() {
+                            for ch in range.filter(|ch| wb.get32(*ch) != WordBreak::ALetter) {
+                                properties_map[ch as usize] = property_index;
+                            }
+                        }
+                        continue;
+                    }
+
+                    if p.name == "ALetter_Extended_Pictographic" {
+                        // [[:Extended_Pictographic:] & [:Word_Break=ALetter:]]
+                        for range in wb.iter_ranges_for_value(WordBreak::ALetter) {
+                            for ch in range.filter(|ch| extended_pictographic.contains32(*ch)) {
+                                properties_map[ch as usize] = property_index;
+                            }
+                        }
+                        continue;
+                    }
+
+                    if p.name == "SA" {
+                        // Word break property doesn't define SA, but we will use non-UAX29 rules.
+                        for range in script.iter_ranges_for_value(Script::Han) {
+                            fill_bounded(&mut properties_map, range, property_index);
+                        }
+                        for range in script.iter_ranges_for_value(Script::Hiragana) {
+                            fill_bounded(&mut properties_map, range, property_index);
+                        }
+                        for range in lb.iter_ranges_for_value(LineBreak::ComplexContext) {
+                            // Unicode 16.0 changes some Complex properties to others such as U+19DA.
+                            // Excluding Numriec should be removed after line break is 16.0
+                            for ch in range.filter(|ch| *ch != 0x19da) {
+                                properties_map[ch as usize] = property_index;
+                            }
+                        }
+                        continue;
+                    }
+
+                    // TODO(#2239):
+                    // How to handle Katakana in UAX29? UAX29 defines Katakana rule, but CJ dictionary has another rules.
+                    // Katakana will use UAX#29 rules instead of dictionary.
+
+                    let prop = wb_name_to_enum
+                        .get_loose(&p.name)
+                        .expect("property name should be valid!");
+                    for range in wb.iter_ranges_for_value(prop) {
+                        if prop == WordBreak::MidLetter
+                            && (range.contains(&0x003a)
+                                || range.contains(&0xfe55)
+                                || range.contains(&0xff1a))
+                        {
+                            // UAX29 defines the colon as MidLetter, but ICU4C's
+                            // English data doesn't.
+                            // See https://unicode-org.atlassian.net/browse/ICU-22112
+                            //
+                            // TODO: We have to consider this definition from CLDR instead.
+                            for ch in
+                                range.filter(|ch| *ch != 0x003a && *ch != 0xfe55 && *ch != 0xff1a)
+                            {
+                                properties_map[ch as usize] = property_index;
+                            }
+                        } else if prop == WordBreak::Extend {
+                            // [[:Word_Break=Extend:] - [[:Hani:] [:Line_Break=Complex_Context:]]]
+                            for ch in range.filter(|ch| {
+                                script.get32(*ch) != Script::Han
+                                    && lb.get32(*ch) != LineBreak::ComplexContext
+                            }) {
+                                properties_map[ch as usize] = property_index;
+                            }
+                        } else if prop == WordBreak::ALetter {
+                            // :Word_Break=ALetter: includes Extended_Pictographic. So we want to
+                            // exlude it.
+                            // "[[:Word_Break=ALetter:] - [:Extended_Pictographic:]]"
+                            for ch in range.filter(|ch| !extended_pictographic.contains32(*ch)) {
+                                properties_map[ch as usize] = property_index;
+                            }
+                        } else {
+                            fill_bounded(&mut properties_map, range, property_index);
+                        }
+                    }
+
+                    continue;
+                }
+
                 "grapheme" => {
                     // Extended_Pictographic isn't a part of grapheme break property
                     if p.name == "Extended_Pictographic" {
@@ -722,10 +801,6 @@ fn hardcoded_segmenter_provider() -> SourceDataProvider {
                             include_bytes!("../../data/segmenter/uprops/small/gc.toml").as_slice(),
                         ),
                         (
-                            "uprops/small/gcm.toml",
-                            include_bytes!("../../data/segmenter/uprops/small/gcm.toml").as_slice(),
-                        ),
-                        (
                             "uprops/small/GCB.toml",
                             include_bytes!("../../data/segmenter/uprops/small/GCB.toml").as_slice(),
                         ),
@@ -739,11 +814,6 @@ fn hardcoded_segmenter_provider() -> SourceDataProvider {
                             include_bytes!("../../data/segmenter/uprops/small/lb.toml").as_slice(),
                         ),
                         (
-                            "uprops/small/Pat_WS.toml",
-                            include_bytes!("../../data/segmenter/uprops/small/Pat_WS.toml")
-                                .as_slice(),
-                        ),
-                        (
                             "uprops/small/SB.toml",
                             include_bytes!("../../data/segmenter/uprops/small/SB.toml").as_slice(),
                         ),
@@ -754,16 +824,6 @@ fn hardcoded_segmenter_provider() -> SourceDataProvider {
                         (
                             "uprops/small/WB.toml",
                             include_bytes!("../../data/segmenter/uprops/small/WB.toml").as_slice(),
-                        ),
-                        (
-                            "uprops/small/XIDC.toml",
-                            include_bytes!("../../data/segmenter/uprops/small/XIDC.toml")
-                                .as_slice(),
-                        ),
-                        (
-                            "uprops/small/XIDS.toml",
-                            include_bytes!("../../data/segmenter/uprops/small/XIDS.toml")
-                                .as_slice(),
                         ),
                         (
                             "segmenter/grapheme.toml",
