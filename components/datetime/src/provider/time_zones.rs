@@ -23,18 +23,18 @@ pub(crate) mod tz {
     pub(crate) use super::TimezoneNamesGenericLongV1 as MzGenericLongV1;
     pub(crate) use super::TimezoneNamesGenericShortV1 as MzGenericShortV1;
     pub(crate) use super::MetazonePeriod as MzPeriod;
-    pub(crate) use super::TimezonePeriodsV1 as MzPeriodV1;
+    pub(crate) use super::TimezoneMetazonePeriodsV1 as MzPeriodV1;
     pub(crate) use super::MetazoneSpecificNames as MzSpecific;
     pub(crate) use super::TimezoneNamesSpecificLongV1 as MzSpecificLongV1;
     pub(crate) use super::TimezoneNamesSpecificShortV1 as MzSpecificShortV1;
     pub(crate) use super::TimezoneNamesStandardLongV1 as MzStandardLongV1;
     pub(crate) use super::TimeZoneEssentials as Essentials;
-    pub(crate) use super::TimezoneEssentialsV1 as EssentialsV1;
+    pub(crate) use super::TimezoneNamesEssentialsV1 as EssentialsV1;
 }
 
 icu_provider::data_marker!(
-    /// `TimezoneEssentialsV1`
-    TimezoneEssentialsV1,
+    /// `TimezoneNamesEssentialsV1`
+    TimezoneNamesEssentialsV1,
     TimeZoneEssentials<'static>
 );
 icu_provider::data_marker!(
@@ -61,7 +61,7 @@ icu_provider::data_marker!(
 icu_provider::data_marker!(
     /// `TimezoneNamesGenericLongV1`
     ///
-    /// Checksumed to ensure consistency with [`TimezonePeriodsV1`].
+    /// Checksumed to ensure consistency with [`TimezoneMetazonePeriodsV1`].
     TimezoneNamesGenericLongV1,
     MetazoneGenericNames<'static>,
     has_checksum = true
@@ -69,7 +69,7 @@ icu_provider::data_marker!(
 icu_provider::data_marker!(
     /// `TimezoneNamesGenericShortV1`
     ///
-    /// Checksumed to ensure consistency with [`TimezonePeriodsV1`].
+    /// Checksumed to ensure consistency with [`TimezoneMetazonePeriodsV1`].
     TimezoneNamesGenericShortV1,
     MetazoneGenericNames<'static>,
     has_checksum = true
@@ -77,7 +77,7 @@ icu_provider::data_marker!(
 icu_provider::data_marker!(
     /// `TimezoneNamesStandardLongV1`
     ///
-    /// Checksumed to ensure consistency with [`TimezonePeriodsV1`].
+    /// Checksumed to ensure consistency with [`TimezoneMetazonePeriodsV1`].
     TimezoneNamesStandardLongV1,
     MetazoneGenericNames<'static>,
     has_checksum = true
@@ -85,7 +85,7 @@ icu_provider::data_marker!(
 icu_provider::data_marker!(
     /// `TimezoneNamesSpecificLongV1`
     ///
-    /// Checksumed to ensure consistency with [`TimezonePeriodsV1`].
+    /// Checksumed to ensure consistency with [`TimezoneMetazonePeriodsV1`].
     TimezoneNamesSpecificLongV1,
     MetazoneSpecificNames<'static>,
     has_checksum = true
@@ -93,14 +93,14 @@ icu_provider::data_marker!(
 icu_provider::data_marker!(
     /// `TimezoneNamesSpecificShortV1`
     ///
-    /// Checksumed to ensure consistency with [`TimezonePeriodsV1`].
+    /// Checksumed to ensure consistency with [`TimezoneMetazonePeriodsV1`].
     TimezoneNamesSpecificShortV1,
     MetazoneSpecificNames<'static>,
     has_checksum = true,
 );
 icu_provider::data_marker!(
-    /// `TimezonePeriodsV1`
-    TimezonePeriodsV1,
+    /// `TimezoneMetazonePeriodsV1`
+    TimezoneMetazonePeriodsV1,
     MetazonePeriod<'static>,
     is_singleton = true,
     has_checksum = true

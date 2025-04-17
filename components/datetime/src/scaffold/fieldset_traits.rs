@@ -608,7 +608,7 @@ macro_rules! datetime_marker_helper {
         NeverMarker<LinearNames<'static>>
     };
     (@times, yes) => {
-        TimePatternsV1
+        DatetimePatternsTimeV1
     };
     (@times,) => {
         NeverMarker<ErasedPackedPatterns>
