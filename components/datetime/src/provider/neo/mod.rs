@@ -754,3 +754,9 @@ pub struct MonthNamesV1;
 impl DynamicDataMarker for MonthNamesV1 {
     type DataStruct = MonthNames<'static>;
 }
+
+/// Re-export of weekday names marker for more consistency
+pub use DatetimeNamesWeekdayV1 as WeekdayNamesV1;
+
+/// Re-export of day period names marker for more consistency
+pub use DatetimeNamesDayperiodV1 as DayPeriodNamesV1;

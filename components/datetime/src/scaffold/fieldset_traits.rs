@@ -614,7 +614,7 @@ macro_rules! datetime_marker_helper {
         NeverMarker<ErasedPackedPatterns>
     };
     (@glue, yes) => {
-        GluePatternV1
+        DatetimePatternsGlueV1
     };
     (@glue,) => {
         NeverMarker<GluePattern<'static>>
