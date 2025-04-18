@@ -411,7 +411,7 @@ mod tests {
         assert_eq!("GMT", time_zone_formats.payload.get().offset_zero);
         assert_eq!("GMT+?", time_zone_formats.payload.get().offset_unknown);
 
-        let locations_root: DataResponse<LocationsRootV1> = provider.load(en).unwrap();
+        let locations_root: DataResponse<TimezoneNamesLocationsRootV1> = provider.load(en).unwrap();
         assert_eq!(
             "Pohnpei",
             locations_root
@@ -431,7 +431,7 @@ mod tests {
                 .unwrap()
         );
 
-        let locations: DataResponse<LocationsV1> = provider.load(fr).unwrap();
+        let locations: DataResponse<TimezoneNamesLocationsOverrideV1> = provider.load(fr).unwrap();
         assert_eq!(
             "Italie",
             locations
@@ -457,10 +457,10 @@ mod tests {
                 .unwrap()
         };
 
-        let generic_names_long: DataPayload<MetazoneGenericNamesLongV1> =
+        let generic_names_long: DataPayload<TimezoneNamesGenericLongV1> =
             provider.load(en).unwrap().payload;
 
-        let generic_standard_names_long: DataPayload<MetazoneStandardNamesLongV1> =
+        let generic_standard_names_long: DataPayload<TimezoneNamesStandardLongV1> =
             provider.load(en).unwrap().payload;
 
         assert_eq!(
@@ -488,7 +488,7 @@ mod tests {
                 .unwrap()
         );
 
-        let specific_names_long: DataPayload<MetazoneSpecificNamesLongV1> =
+        let specific_names_long: DataPayload<TimezoneNamesSpecificLongV1> =
             provider.load(en).unwrap().payload;
         assert_eq!(
             "Australian Central Western Standard Time",
@@ -518,7 +518,7 @@ mod tests {
                 .unwrap()
         );
 
-        let generic_names_short: DataResponse<MetazoneGenericNamesShortV1> =
+        let generic_names_short: DataResponse<TimezoneNamesGenericShortV1> =
             provider.load(en).unwrap();
         assert_eq!(
             "PT",
@@ -539,7 +539,7 @@ mod tests {
                 .unwrap()
         );
 
-        let specific_names_short: DataResponse<MetazoneSpecificNamesShortV1> =
+        let specific_names_short: DataResponse<TimezoneNamesSpecificShortV1> =
             provider.load(en).unwrap();
         assert_eq!(
             "PDT",
