@@ -391,14 +391,8 @@ impl_neo_skeleton_datagen!(DatetimePatternsDateBuddhistV1, DatagenCalendar::Budd
 impl_neo_skeleton_datagen!(DatetimePatternsDateChineseV1, DatagenCalendar::Chinese);
 impl_neo_skeleton_datagen!(DatetimePatternsDateCopticV1, DatagenCalendar::Coptic);
 impl_neo_skeleton_datagen!(DatetimePatternsDateDangiV1, DatagenCalendar::Dangi);
-impl_neo_skeleton_datagen!(
-    DatetimePatternsDateEthiopianV1,
-    DatagenCalendar::Ethiopic
-);
-impl_neo_skeleton_datagen!(
-    DatetimePatternsDateGregorianV1,
-    DatagenCalendar::Gregorian
-);
+impl_neo_skeleton_datagen!(DatetimePatternsDateEthiopianV1, DatagenCalendar::Ethiopic);
+impl_neo_skeleton_datagen!(DatetimePatternsDateGregorianV1, DatagenCalendar::Gregorian);
 impl_neo_skeleton_datagen!(DatetimePatternsDateHebrewV1, DatagenCalendar::Hebrew);
 impl_neo_skeleton_datagen!(DatetimePatternsDateIndianV1, DatagenCalendar::Indian);
 impl_neo_skeleton_datagen!(DatetimePatternsDateHijriV1, DatagenCalendar::Hijri);

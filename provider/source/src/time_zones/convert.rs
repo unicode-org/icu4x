@@ -513,7 +513,10 @@ impl SourceDataProvider {
 }
 
 impl DataProvider<TimezoneNamesLocationsOverrideV1> for SourceDataProvider {
-    fn load(&self, req: DataRequest) -> Result<DataResponse<TimezoneNamesLocationsOverrideV1>, DataError> {
+    fn load(
+        &self,
+        req: DataRequest,
+    ) -> Result<DataResponse<TimezoneNamesLocationsOverrideV1>, DataError> {
         self.check_req::<TimezoneNamesLocationsOverrideV1>(req)?;
 
         let time_zone_names = &self
@@ -548,7 +551,10 @@ impl DataProvider<TimezoneNamesLocationsOverrideV1> for SourceDataProvider {
 }
 
 impl DataProvider<TimezoneNamesLocationsRootV1> for SourceDataProvider {
-    fn load(&self, req: DataRequest) -> Result<DataResponse<TimezoneNamesLocationsRootV1>, DataError> {
+    fn load(
+        &self,
+        req: DataRequest,
+    ) -> Result<DataResponse<TimezoneNamesLocationsRootV1>, DataError> {
         self.check_req::<TimezoneNamesLocationsOverrideV1>(req)?;
 
         Ok(DataResponse {
@@ -569,7 +575,10 @@ impl DataProvider<TimezoneNamesLocationsRootV1> for SourceDataProvider {
 }
 
 impl DataProvider<TimezoneNamesCitiesOverrideV1> for SourceDataProvider {
-    fn load(&self, req: DataRequest) -> Result<DataResponse<TimezoneNamesCitiesOverrideV1>, DataError> {
+    fn load(
+        &self,
+        req: DataRequest,
+    ) -> Result<DataResponse<TimezoneNamesCitiesOverrideV1>, DataError> {
         self.check_req::<TimezoneNamesCitiesOverrideV1>(req)?;
 
         let mut exemplars = self.calculate_locations(req.id.locale)?.1;

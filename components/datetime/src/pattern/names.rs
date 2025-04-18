@@ -602,8 +602,7 @@ pub(crate) struct RawDateTimeNames<FSet: DateTimeNamesMarker> {
     zone_essentials: <FSet::ZoneEssentials as NamesContainer<tz::EssentialsV1, ()>>::Container,
     locations_root: <FSet::ZoneLocationsRoot as NamesContainer<tz::LocationsRootV1, ()>>::Container,
     locations: <FSet::ZoneLocations as NamesContainer<tz::LocationsOverrideV1, ()>>::Container,
-    exemplars_root:
-        <FSet::ZoneExemplarsRoot as NamesContainer<tz::CitiesRootV1, ()>>::Container,
+    exemplars_root: <FSet::ZoneExemplarsRoot as NamesContainer<tz::CitiesRootV1, ()>>::Container,
     exemplars: <FSet::ZoneExemplars as NamesContainer<tz::CitiesOverrideV1, ()>>::Container,
     mz_generic_long: <FSet::ZoneGenericLong as NamesContainer<tz::MzGenericLongV1, ()>>::Container,
     mz_generic_short:
