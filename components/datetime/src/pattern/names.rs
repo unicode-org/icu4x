@@ -847,7 +847,7 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, F
     /// // This assumes that the locale uses Abbreviated names for the given semantic skeleton!
     /// let mut names = FixedCalendarDateTimeNames::from_formatter(prefs, formatter).cast_into_fset::<YMDT>();
     /// names.include_day_period_names(DayPeriodNameLength::Abbreviated).unwrap();
-    /// let formatter = names.try_into_formatter(YMD::long().time_hm()).unwrap();
+    /// let formatter = names.try_into_formatter(YMD::long().with_time_hm()).unwrap();
     ///
     /// assert_writeable_eq!(
     ///     formatter.format(&DateTime {
@@ -1035,7 +1035,7 @@ impl<FSet: DateTimeNamesMarker> DateTimeNames<FSet> {
     /// // This assumes that the locale uses Abbreviated names for the given semantic skeleton!
     /// let mut names = DateTimeNames::from_formatter(prefs, formatter).cast_into_fset::<YMDT>();
     /// names.as_mut().include_day_period_names(DayPeriodNameLength::Abbreviated).unwrap();
-    /// let formatter = names.try_into_formatter(YMD::long().time_hm()).unwrap();
+    /// let formatter = names.try_into_formatter(YMD::long().with_time_hm()).unwrap();
     ///
     /// assert_writeable_eq!(
     ///     formatter.format(&DateTime {

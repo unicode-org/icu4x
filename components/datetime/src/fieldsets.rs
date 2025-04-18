@@ -1311,7 +1311,7 @@ pub mod zone {
         ///
         /// let formatter = FixedCalendarDateTimeFormatter::try_new(
         ///     locale!("en-US").into(),
-        ///     T::medium().zone(SpecificShort),
+        ///     T::medium().with_zone(SpecificShort),
         /// )
         /// .unwrap();
         ///

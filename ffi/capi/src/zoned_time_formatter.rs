@@ -57,7 +57,7 @@ pub mod ffi {
             let mut options = icu_datetime::fieldsets::T::for_length(map_or_default(length));
             options.time_precision = time_precision.map(Into::into);
             options.alignment = alignment.map(Into::into);
-            let options = options.zone(zone);
+            let options = options.with_zone(zone);
             Ok(Box::new(Self(
                 icu_datetime
                     ::FixedCalendarDateTimeFormatter
@@ -86,7 +86,7 @@ pub mod ffi {
             let mut options = icu_datetime::fieldsets::T::for_length(map_or_default(length));
             options.time_precision = time_precision.map(Into::into);
             options.alignment = alignment.map(Into::into);
-            let options = options.zone(zone);
+            let options = options.with_zone(zone);
             Ok(Box::new(Self(
                 icu_datetime
                     ::FixedCalendarDateTimeFormatter
@@ -114,7 +114,7 @@ pub mod ffi {
             let mut options = icu_datetime::fieldsets::T::for_length(map_or_default(length));
             options.time_precision = time_precision.map(Into::into);
             options.alignment = alignment.map(Into::into);
-            let options = options.zone(zone);
+            let options = options.with_zone(zone);
             Ok(Box::new(Self(
                 icu_datetime
                     ::FixedCalendarDateTimeFormatter
@@ -143,7 +143,7 @@ pub mod ffi {
             let mut options = icu_datetime::fieldsets::T::for_length(map_or_default(length));
             options.time_precision = time_precision.map(Into::into);
             options.alignment = alignment.map(Into::into);
-            let options = options.zone(zone);
+            let options = options.with_zone(zone);
             Ok(Box::new(Self(
                 icu_datetime
                     ::FixedCalendarDateTimeFormatter
@@ -171,7 +171,7 @@ pub mod ffi {
             let mut options = icu_datetime::fieldsets::T::for_length(map_or_default(length));
             options.time_precision = time_precision.map(Into::into);
             options.alignment = alignment.map(Into::into);
-            let options = options.zone(zone);
+            let options = options.with_zone(zone);
             Ok(Box::new(Self(
                 icu_datetime
                     ::FixedCalendarDateTimeFormatter
@@ -200,7 +200,7 @@ pub mod ffi {
             let mut options = icu_datetime::fieldsets::T::for_length(map_or_default(length));
             options.time_precision = time_precision.map(Into::into);
             options.alignment = alignment.map(Into::into);
-            let options = options.zone(zone);
+            let options = options.with_zone(zone);
             Ok(Box::new(Self(
                 icu_datetime
                     ::FixedCalendarDateTimeFormatter
@@ -228,7 +228,7 @@ pub mod ffi {
             let mut options = icu_datetime::fieldsets::T::for_length(map_or_default(length));
             options.time_precision = time_precision.map(Into::into);
             options.alignment = alignment.map(Into::into);
-            let options = options.zone(zone);
+            let options = options.with_zone(zone);
             Ok(Box::new(Self(
                 icu_datetime
                     ::FixedCalendarDateTimeFormatter
@@ -257,7 +257,7 @@ pub mod ffi {
             let mut options = icu_datetime::fieldsets::T::for_length(map_or_default(length));
             options.time_precision = time_precision.map(Into::into);
             options.alignment = alignment.map(Into::into);
-            let options = options.zone(zone);
+            let options = options.with_zone(zone);
             Ok(Box::new(Self(
                 icu_datetime
                     ::FixedCalendarDateTimeFormatter
@@ -285,7 +285,7 @@ pub mod ffi {
             let mut options = icu_datetime::fieldsets::T::for_length(map_or_default(length));
             options.time_precision = time_precision.map(Into::into);
             options.alignment = alignment.map(Into::into);
-            let options = options.zone(zone);
+            let options = options.with_zone(zone);
             Ok(Box::new(Self(
                 icu_datetime
                     ::FixedCalendarDateTimeFormatter
@@ -314,7 +314,7 @@ pub mod ffi {
             let mut options = icu_datetime::fieldsets::T::for_length(map_or_default(length));
             options.time_precision = time_precision.map(Into::into);
             options.alignment = alignment.map(Into::into);
-            let options = options.zone(zone);
+            let options = options.with_zone(zone);
             Ok(Box::new(Self(
                 icu_datetime
                     ::FixedCalendarDateTimeFormatter
@@ -343,7 +343,7 @@ pub mod ffi {
             let mut options = icu_datetime::fieldsets::T::for_length(map_or_default(length));
             options.time_precision = time_precision.map(Into::into);
             options.alignment = alignment.map(Into::into);
-            let options = options.zone(zone);
+            let options = options.with_zone(zone);
             Ok(Box::new(Self(
                 icu_datetime
                     ::FixedCalendarDateTimeFormatter
@@ -372,7 +372,7 @@ pub mod ffi {
             let mut options = icu_datetime::fieldsets::T::for_length(map_or_default(length));
             options.time_precision = time_precision.map(Into::into);
             options.alignment = alignment.map(Into::into);
-            let options = options.zone(zone);
+            let options = options.with_zone(zone);
             Ok(Box::new(Self(
                 icu_datetime
                     ::FixedCalendarDateTimeFormatter
@@ -400,7 +400,7 @@ pub mod ffi {
             let mut options = icu_datetime::fieldsets::T::for_length(map_or_default(length));
             options.time_precision = time_precision.map(Into::into);
             options.alignment = alignment.map(Into::into);
-            let options = options.zone(zone);
+            let options = options.with_zone(zone);
             Ok(Box::new(Self(
                 icu_datetime
                     ::FixedCalendarDateTimeFormatter
@@ -429,7 +429,7 @@ pub mod ffi {
             let mut options = icu_datetime::fieldsets::T::for_length(map_or_default(length));
             options.time_precision = time_precision.map(Into::into);
             options.alignment = alignment.map(Into::into);
-            let options = options.zone(zone);
+            let options = options.with_zone(zone);
             Ok(Box::new(Self(
                 icu_datetime
                     ::FixedCalendarDateTimeFormatter
@@ -457,7 +457,7 @@ pub mod ffi {
             let mut options = icu_datetime::fieldsets::T::for_length(map_or_default(length));
             options.time_precision = time_precision.map(Into::into);
             options.alignment = alignment.map(Into::into);
-            let options = options.zone(zone);
+            let options = options.with_zone(zone);
             Ok(Box::new(Self(
                 icu_datetime
                     ::FixedCalendarDateTimeFormatter
@@ -486,7 +486,7 @@ pub mod ffi {
             let mut options = icu_datetime::fieldsets::T::for_length(map_or_default(length));
             options.time_precision = time_precision.map(Into::into);
             options.alignment = alignment.map(Into::into);
-            let options = options.zone(zone);
+            let options = options.with_zone(zone);
             Ok(Box::new(Self(
                 icu_datetime
                     ::FixedCalendarDateTimeFormatter

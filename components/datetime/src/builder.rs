@@ -78,7 +78,7 @@
 //! let static_field_set = fieldsets::T::short()
 //!     .with_time_precision(TimePrecision::Subsecond(SubsecondDigits::S3))
 //!     .with_alignment(Alignment::Column)
-//!     .zone(fieldsets::zone::SpecificLong);
+//!     .with_zone(fieldsets::zone::SpecificLong);
 //!
 //! let mut builder = FieldSetBuilder::new();
 //! builder.length = Some(Length::Short);
@@ -604,7 +604,7 @@ impl FieldSetBuilder {
     pub fn build_zoned_date(mut self) -> Result<ZonedDateFieldSet, BuilderError> {
         let zone_field_set = self.build_zone_without_checking_options()?;
         let date_field_set = self.build_date()?;
-        Ok(date_field_set.zone(zone_field_set))
+        Ok(date_field_set.with_zone(zone_field_set))
     }
 
     /// Builds a [`Combo`] for a zoned time.
@@ -613,7 +613,7 @@ impl FieldSetBuilder {
     pub fn build_zoned_time(mut self) -> Result<ZonedTimeFieldSet, BuilderError> {
         let zone_field_set = self.build_zone_without_checking_options()?;
         let time_field_set = self.build_time()?;
-        Ok(time_field_set.zone(zone_field_set))
+        Ok(time_field_set.with_zone(zone_field_set))
     }
 
     /// Builds a [`Combo`] for a zoned date and time.
@@ -622,7 +622,7 @@ impl FieldSetBuilder {
     pub fn build_zoned_date_and_time(mut self) -> Result<ZonedDateAndTimeFieldSet, BuilderError> {
         let zone_field_set = self.build_zone_without_checking_options()?;
         let datetime_field_set = self.build_date_and_time()?;
-        Ok(datetime_field_set.zone(zone_field_set))
+        Ok(datetime_field_set.with_zone(zone_field_set))
     }
 
     /// Builds a [`CompositeFieldSet`].

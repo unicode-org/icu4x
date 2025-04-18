@@ -40,7 +40,7 @@ fn main() {
     {
         let dtf = FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new(
             locale.into(),
-            YMDT::medium().zone(fieldsets::zone::LocalizedOffsetShort),
+            YMDT::medium().with_zone(fieldsets::zone::LocalizedOffsetShort),
         )
         .expect("Failed to create zoned datetime formatter.");
         let date = Date::try_new_gregorian(2020, 10, 10).unwrap();
