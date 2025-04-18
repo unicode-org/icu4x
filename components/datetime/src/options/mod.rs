@@ -326,6 +326,8 @@ impl IntoOption<YearStyle> for YearStyle {
 ///
 /// # Examples
 ///
+/// Comparison of all time precision options:
+///
 /// ```
 /// use icu::datetime::input::Time;
 /// use icu::datetime::fieldsets::T;
