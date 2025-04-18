@@ -26,9 +26,9 @@ use std::collections::BTreeSet;
 use writeable::Writeable;
 use zerovec::ule::NichedOption;
 
-impl DataProvider<TimeZoneEssentialsV1> for SourceDataProvider {
-    fn load(&self, req: DataRequest) -> Result<DataResponse<TimeZoneEssentialsV1>, DataError> {
-        self.check_req::<TimeZoneEssentialsV1>(req)?;
+impl DataProvider<TimezoneNamesEssentialsV1> for SourceDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<TimezoneNamesEssentialsV1>, DataError> {
+        self.check_req::<TimezoneNamesEssentialsV1>(req)?;
 
         let time_zone_names = &self
             .cldr()?
@@ -512,9 +512,12 @@ impl SourceDataProvider {
     }
 }
 
-impl DataProvider<LocationsV1> for SourceDataProvider {
-    fn load(&self, req: DataRequest) -> Result<DataResponse<LocationsV1>, DataError> {
-        self.check_req::<LocationsV1>(req)?;
+impl DataProvider<TimezoneNamesLocationsOverrideV1> for SourceDataProvider {
+    fn load(
+        &self,
+        req: DataRequest,
+    ) -> Result<DataResponse<TimezoneNamesLocationsOverrideV1>, DataError> {
+        self.check_req::<TimezoneNamesLocationsOverrideV1>(req)?;
 
         let time_zone_names = &self
             .cldr()?
@@ -530,7 +533,7 @@ impl DataProvider<LocationsV1> for SourceDataProvider {
 
         let mut locations = self.calculate_locations(req.id.locale)?.0;
 
-        let base = DataProvider::<LocationsRootV1>::load(&self, req)?.payload;
+        let base = DataProvider::<TimezoneNamesLocationsRootV1>::load(&self, req)?.payload;
 
         locations.retain(|k, v| base.get().locations.get(k) != Some(v));
 
@@ -547,9 +550,12 @@ impl DataProvider<LocationsV1> for SourceDataProvider {
     }
 }
 
-impl DataProvider<LocationsRootV1> for SourceDataProvider {
-    fn load(&self, req: DataRequest) -> Result<DataResponse<LocationsRootV1>, DataError> {
-        self.check_req::<LocationsV1>(req)?;
+impl DataProvider<TimezoneNamesLocationsRootV1> for SourceDataProvider {
+    fn load(
+        &self,
+        req: DataRequest,
+    ) -> Result<DataResponse<TimezoneNamesLocationsRootV1>, DataError> {
+        self.check_req::<TimezoneNamesLocationsOverrideV1>(req)?;
 
         Ok(DataResponse {
             metadata: Default::default(),
@@ -568,13 +574,16 @@ impl DataProvider<LocationsRootV1> for SourceDataProvider {
     }
 }
 
-impl DataProvider<ExemplarCitiesV1> for SourceDataProvider {
-    fn load(&self, req: DataRequest) -> Result<DataResponse<ExemplarCitiesV1>, DataError> {
-        self.check_req::<ExemplarCitiesV1>(req)?;
+impl DataProvider<TimezoneNamesCitiesOverrideV1> for SourceDataProvider {
+    fn load(
+        &self,
+        req: DataRequest,
+    ) -> Result<DataResponse<TimezoneNamesCitiesOverrideV1>, DataError> {
+        self.check_req::<TimezoneNamesCitiesOverrideV1>(req)?;
 
         let mut exemplars = self.calculate_locations(req.id.locale)?.1;
 
-        let base = DataProvider::<ExemplarCitiesRootV1>::load(&self, req)?.payload;
+        let base = DataProvider::<TimezoneNamesCitiesRootV1>::load(&self, req)?.payload;
 
         exemplars.retain(|k, v| base.get().exemplars.get(k) != Some(v));
 
@@ -587,9 +596,9 @@ impl DataProvider<ExemplarCitiesV1> for SourceDataProvider {
     }
 }
 
-impl DataProvider<ExemplarCitiesRootV1> for SourceDataProvider {
-    fn load(&self, req: DataRequest) -> Result<DataResponse<ExemplarCitiesRootV1>, DataError> {
-        self.check_req::<ExemplarCitiesV1>(req)?;
+impl DataProvider<TimezoneNamesCitiesRootV1> for SourceDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<TimezoneNamesCitiesRootV1>, DataError> {
+        self.check_req::<TimezoneNamesCitiesRootV1>(req)?;
 
         Ok(DataResponse {
             metadata: Default::default(),
@@ -604,9 +613,9 @@ impl DataProvider<ExemplarCitiesRootV1> for SourceDataProvider {
     }
 }
 
-impl DataProvider<MetazonePeriodV1> for SourceDataProvider {
-    fn load(&self, req: DataRequest) -> Result<DataResponse<MetazonePeriodV1>, DataError> {
-        self.check_req::<MetazonePeriodV1>(req)?;
+impl DataProvider<TimezoneMetazonePeriodsV1> for SourceDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<TimezoneMetazonePeriodsV1>, DataError> {
+        self.check_req::<TimezoneMetazonePeriodsV1>(req)?;
 
         let (_, checksum) = self.metazone_to_id_map()?;
 
@@ -628,12 +637,12 @@ impl DataProvider<TimeZoneOffsetsV1> for SourceDataProvider {
     }
 }
 
-impl DataProvider<MetazoneGenericNamesLongV1> for SourceDataProvider {
+impl DataProvider<TimezoneNamesGenericLongV1> for SourceDataProvider {
     fn load(
         &self,
         req: DataRequest,
-    ) -> Result<DataResponse<MetazoneGenericNamesLongV1>, DataError> {
-        self.check_req::<MetazoneGenericNamesLongV1>(req)?;
+    ) -> Result<DataResponse<TimezoneNamesGenericLongV1>, DataError> {
+        self.check_req::<TimezoneNamesGenericLongV1>(req)?;
 
         let time_zone_names_resource = &self
             .cldr()?
@@ -691,12 +700,12 @@ impl DataProvider<MetazoneGenericNamesLongV1> for SourceDataProvider {
     }
 }
 
-impl DataProvider<MetazoneStandardNamesLongV1> for SourceDataProvider {
+impl DataProvider<TimezoneNamesStandardLongV1> for SourceDataProvider {
     fn load(
         &self,
         req: DataRequest,
-    ) -> Result<DataResponse<MetazoneStandardNamesLongV1>, DataError> {
-        self.check_req::<MetazoneGenericNamesLongV1>(req)?;
+    ) -> Result<DataResponse<TimezoneNamesStandardLongV1>, DataError> {
+        self.check_req::<TimezoneNamesGenericLongV1>(req)?;
 
         let time_zone_names_resource = &self
             .cldr()?
@@ -758,12 +767,12 @@ impl DataProvider<MetazoneStandardNamesLongV1> for SourceDataProvider {
     }
 }
 
-impl DataProvider<MetazoneSpecificNamesLongV1> for SourceDataProvider {
+impl DataProvider<TimezoneNamesSpecificLongV1> for SourceDataProvider {
     fn load(
         &self,
         req: DataRequest,
-    ) -> Result<DataResponse<MetazoneSpecificNamesLongV1>, DataError> {
-        self.check_req::<MetazoneSpecificNamesLongV1>(req)?;
+    ) -> Result<DataResponse<TimezoneNamesSpecificLongV1>, DataError> {
+        self.check_req::<TimezoneNamesSpecificLongV1>(req)?;
 
         let time_zone_names_resource = &self
             .cldr()?
@@ -847,12 +856,12 @@ impl DataProvider<MetazoneSpecificNamesLongV1> for SourceDataProvider {
     }
 }
 
-impl DataProvider<MetazoneGenericNamesShortV1> for SourceDataProvider {
+impl DataProvider<TimezoneNamesGenericShortV1> for SourceDataProvider {
     fn load(
         &self,
         req: DataRequest,
-    ) -> Result<DataResponse<MetazoneGenericNamesShortV1>, DataError> {
-        self.check_req::<MetazoneGenericNamesShortV1>(req)?;
+    ) -> Result<DataResponse<TimezoneNamesGenericShortV1>, DataError> {
+        self.check_req::<TimezoneNamesGenericShortV1>(req)?;
 
         let time_zone_names_resource = &self
             .cldr()?
@@ -884,12 +893,12 @@ impl DataProvider<MetazoneGenericNamesShortV1> for SourceDataProvider {
         })
     }
 }
-impl DataProvider<MetazoneSpecificNamesShortV1> for SourceDataProvider {
+impl DataProvider<TimezoneNamesSpecificShortV1> for SourceDataProvider {
     fn load(
         &self,
         req: DataRequest,
-    ) -> Result<DataResponse<MetazoneSpecificNamesShortV1>, DataError> {
-        self.check_req::<MetazoneSpecificNamesShortV1>(req)?;
+    ) -> Result<DataResponse<TimezoneNamesSpecificShortV1>, DataError> {
+        self.check_req::<TimezoneNamesSpecificShortV1>(req)?;
 
         let time_zone_names_resource = &self
             .cldr()?

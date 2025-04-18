@@ -608,13 +608,13 @@ macro_rules! datetime_marker_helper {
         NeverMarker<LinearNames<'static>>
     };
     (@times, yes) => {
-        TimeNeoSkeletonPatternsV1
+        DatetimePatternsTimeV1
     };
     (@times,) => {
         NeverMarker<ErasedPackedPatterns>
     };
     (@glue, yes) => {
-        GluePatternV1
+        DatetimePatternsGlueV1
     };
     (@glue,) => {
         NeverMarker<GluePattern<'static>>
@@ -692,16 +692,16 @@ macro_rules! datetime_marker_helper {
         tz::EssentialsV1
     };
     (@data/zone/locations, yes) => {
-        tz::LocationsV1
+        tz::LocationsOverrideV1
     };
     (@data/zone/locations_root, yes) => {
         tz::LocationsRootV1
     };
     (@data/zone/exemplars, yes) => {
-        tz::ExemplarCitiesV1
+        tz::CitiesOverrideV1
     };
     (@data/zone/exemplars_root, yes) => {
-        tz::ExemplarCitiesRootV1
+        tz::CitiesRootV1
     };
     (@data/zone/generic_long, yes) => {
         tz::MzGenericLongV1
@@ -770,16 +770,16 @@ macro_rules! datetime_marker_helper {
         tz::EssentialsV1
     };
     (@names/zone/locations, yes) => {
-        tz::LocationsV1
+        tz::LocationsOverrideV1
     };
     (@names/zone/locations_root, yes) => {
         tz::LocationsRootV1
     };
     (@names/zone/exemplars, yes) => {
-        tz::ExemplarCitiesV1
+        tz::CitiesOverrideV1
     };
     (@names/zone/exemplars_root, yes) => {
-        tz::ExemplarCitiesRootV1
+        tz::CitiesRootV1
     };
     (@names/zone/generic_long, yes) => {
         tz::MzGenericLongV1

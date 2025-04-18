@@ -620,79 +620,79 @@ impl_symbols_datagen!(
 
 // Years
 impl_symbols_datagen!(
-    BuddhistYearNamesV1,
+    DatetimeNamesYearBuddhistV1,
     DatagenCalendar::Buddhist,
     YEARS_KEY_LENGTHS,
     years_convert
 );
 impl_symbols_datagen!(
-    ChineseYearNamesV1,
+    DatetimeNamesYearChineseV1,
     DatagenCalendar::Chinese,
     YEARS_KEY_LENGTHS,
     years_convert
 );
 impl_symbols_datagen!(
-    CopticYearNamesV1,
+    DatetimeNamesYearCopticV1,
     DatagenCalendar::Coptic,
     YEARS_KEY_LENGTHS,
     years_convert
 );
 impl_symbols_datagen!(
-    DangiYearNamesV1,
+    DatetimeNamesYearDangiV1,
     DatagenCalendar::Dangi,
     YEARS_KEY_LENGTHS,
     years_convert
 );
 impl_symbols_datagen!(
-    EthiopianYearNamesV1,
+    DatetimeNamesYearEthiopianV1,
     DatagenCalendar::Ethiopic,
     YEARS_KEY_LENGTHS,
     years_convert
 );
 impl_symbols_datagen!(
-    GregorianYearNamesV1,
+    DatetimeNamesYearGregorianV1,
     DatagenCalendar::Gregorian,
     YEARS_KEY_LENGTHS,
     years_convert
 );
 impl_symbols_datagen!(
-    HebrewYearNamesV1,
+    DatetimeNamesYearHebrewV1,
     DatagenCalendar::Hebrew,
     YEARS_KEY_LENGTHS,
     years_convert
 );
 impl_symbols_datagen!(
-    IndianYearNamesV1,
+    DatetimeNamesYearIndianV1,
     DatagenCalendar::Indian,
     YEARS_KEY_LENGTHS,
     years_convert
 );
 impl_symbols_datagen!(
-    HijriYearNamesV1,
+    DatetimeNamesYearHijriV1,
     DatagenCalendar::Hijri,
     YEARS_KEY_LENGTHS,
     years_convert
 );
 impl_symbols_datagen!(
-    JapaneseYearNamesV1,
+    DatetimeNamesYearJapaneseV1,
     DatagenCalendar::JapaneseModern,
     YEARS_KEY_LENGTHS,
     years_convert
 );
 impl_symbols_datagen!(
-    JapaneseExtendedYearNamesV1,
+    DatetimeNamesYearJapanextV1,
     DatagenCalendar::JapaneseExtended,
     YEARS_KEY_LENGTHS,
     years_convert
 );
 impl_symbols_datagen!(
-    PersianYearNamesV1,
+    DatetimeNamesYearPersianV1,
     DatagenCalendar::Persian,
     YEARS_KEY_LENGTHS,
     years_convert
 );
 impl_symbols_datagen!(
-    RocYearNamesV1,
+    DatetimeNamesYearRocV1,
     DatagenCalendar::Roc,
     YEARS_KEY_LENGTHS,
     years_convert
@@ -700,79 +700,79 @@ impl_symbols_datagen!(
 
 // Months
 impl_symbols_datagen!(
-    BuddhistMonthNamesV1,
+    DatetimeNamesMonthBuddhistV1,
     DatagenCalendar::Buddhist,
     NORMAL_KEY_LENGTHS,
     months_convert
 );
 impl_symbols_datagen!(
-    ChineseMonthNamesV1,
+    DatetimeNamesMonthChineseV1,
     DatagenCalendar::Chinese,
     NUMERIC_MONTHS_KEY_LENGTHS, // has leap month patterns
     months_convert
 );
 impl_symbols_datagen!(
-    CopticMonthNamesV1,
+    DatetimeNamesMonthCopticV1,
     DatagenCalendar::Coptic,
     NORMAL_KEY_LENGTHS,
     months_convert
 );
 impl_symbols_datagen!(
-    DangiMonthNamesV1,
+    DatetimeNamesMonthDangiV1,
     DatagenCalendar::Dangi,
     NUMERIC_MONTHS_KEY_LENGTHS, // has leap month patterns
     months_convert
 );
 impl_symbols_datagen!(
-    EthiopianMonthNamesV1,
+    DatetimeNamesMonthEthiopianV1,
     DatagenCalendar::Ethiopic,
     NORMAL_KEY_LENGTHS,
     months_convert
 );
 impl_symbols_datagen!(
-    GregorianMonthNamesV1,
+    DatetimeNamesMonthGregorianV1,
     DatagenCalendar::Gregorian,
     NORMAL_KEY_LENGTHS,
     months_convert
 );
 impl_symbols_datagen!(
-    HebrewMonthNamesV1,
+    DatetimeNamesMonthHebrewV1,
     DatagenCalendar::Hebrew,
     NORMAL_KEY_LENGTHS,
     months_convert
 );
 impl_symbols_datagen!(
-    IndianMonthNamesV1,
+    DatetimeNamesMonthIndianV1,
     DatagenCalendar::Indian,
     NORMAL_KEY_LENGTHS,
     months_convert
 );
 impl_symbols_datagen!(
-    HijriMonthNamesV1,
+    DatetimeNamesMonthHijriV1,
     DatagenCalendar::Hijri,
     NORMAL_KEY_LENGTHS,
     months_convert
 );
 impl_symbols_datagen!(
-    JapaneseMonthNamesV1,
+    DatetimeNamesMonthJapaneseV1,
     DatagenCalendar::JapaneseModern,
     NORMAL_KEY_LENGTHS,
     months_convert
 );
 impl_symbols_datagen!(
-    JapaneseExtendedMonthNamesV1,
+    DatetimeNamesMonthJapanextV1,
     DatagenCalendar::JapaneseExtended,
     NORMAL_KEY_LENGTHS,
     months_convert
 );
 impl_symbols_datagen!(
-    PersianMonthNamesV1,
+    DatetimeNamesMonthPersianV1,
     DatagenCalendar::Persian,
     NORMAL_KEY_LENGTHS,
     months_convert
 );
 impl_symbols_datagen!(
-    RocMonthNamesV1,
+    DatetimeNamesMonthRocV1,
     DatagenCalendar::Roc,
     NORMAL_KEY_LENGTHS,
     months_convert
@@ -783,7 +783,7 @@ impl_symbols_datagen!(
 // systems, but CLDR has some instances where the glue patterns differ, such
 // as in French (Gregorian has a comma but other calendars do not).
 impl_pattern_datagen!(
-    GluePatternV1,
+    DatetimePatternsGlueV1,
     DatagenCalendar::Gregorian,
     GLUE_PATTERN_KEY_LENGTHS,
     datetimepattern_convert

@@ -360,67 +360,67 @@ mod tests {
 
     impl_data_provider_adapter!(
         BuddhistDateSymbolsV1,
-        BuddhistMonthNamesV1,
+        DatetimeNamesMonthBuddhistV1,
         month_symbols_map_project_cloned
     );
     impl_data_provider_adapter!(
         ChineseDateSymbolsV1,
-        ChineseMonthNamesV1,
+        DatetimeNamesMonthChineseV1,
         month_symbols_map_project_cloned
     );
     impl_data_provider_adapter!(
         CopticDateSymbolsV1,
-        CopticMonthNamesV1,
+        DatetimeNamesMonthCopticV1,
         month_symbols_map_project_cloned
     );
     impl_data_provider_adapter!(
         DangiDateSymbolsV1,
-        DangiMonthNamesV1,
+        DatetimeNamesMonthDangiV1,
         month_symbols_map_project_cloned
     );
     impl_data_provider_adapter!(
         EthiopianDateSymbolsV1,
-        EthiopianMonthNamesV1,
+        DatetimeNamesMonthEthiopianV1,
         month_symbols_map_project_cloned
     );
     impl_data_provider_adapter!(
         GregorianDateSymbolsV1,
-        GregorianMonthNamesV1,
+        DatetimeNamesMonthGregorianV1,
         month_symbols_map_project_cloned
     );
     impl_data_provider_adapter!(
         HebrewDateSymbolsV1,
-        HebrewMonthNamesV1,
+        DatetimeNamesMonthHebrewV1,
         month_symbols_map_project_cloned
     );
     impl_data_provider_adapter!(
         IndianDateSymbolsV1,
-        IndianMonthNamesV1,
+        DatetimeNamesMonthIndianV1,
         month_symbols_map_project_cloned
     );
     impl_data_provider_adapter!(
         HijriDateSymbolsV1,
-        HijriMonthNamesV1,
+        DatetimeNamesMonthHijriV1,
         month_symbols_map_project_cloned
     );
     impl_data_provider_adapter!(
         JapaneseDateSymbolsV1,
-        JapaneseMonthNamesV1,
+        DatetimeNamesMonthJapaneseV1,
         month_symbols_map_project_cloned
     );
     impl_data_provider_adapter!(
         JapaneseExtendedDateSymbolsV1,
-        JapaneseExtendedMonthNamesV1,
+        DatetimeNamesMonthJapanextV1,
         month_symbols_map_project_cloned
     );
     impl_data_provider_adapter!(
         PersianDateSymbolsV1,
-        PersianMonthNamesV1,
+        DatetimeNamesMonthPersianV1,
         month_symbols_map_project_cloned
     );
     impl_data_provider_adapter!(
         RocDateSymbolsV1,
-        RocMonthNamesV1,
+        DatetimeNamesMonthRocV1,
         month_symbols_map_project_cloned
     );
 
@@ -504,7 +504,7 @@ mod tests {
             })
             .unwrap()
             .payload;
-        let neo_month_abbreviated: DataPayload<GregorianMonthNamesV1> = symbols
+        let neo_month_abbreviated: DataPayload<DatetimeNamesMonthGregorianV1> = symbols
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                     DataMarkerAttributes::from_str_or_panic("3"),
@@ -530,7 +530,7 @@ mod tests {
             })
             .unwrap()
             .payload;
-        let neo_month_abbreviated: DataPayload<HebrewMonthNamesV1> = symbols
+        let neo_month_abbreviated: DataPayload<DatetimeNamesMonthHebrewV1> = symbols
             .load(DataRequest {
                 id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                     DataMarkerAttributes::from_str_or_panic("3"),
