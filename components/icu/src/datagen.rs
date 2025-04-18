@@ -79,7 +79,7 @@ fn test_markers_for_bin() {
             crate::datetime::provider::neo::GregorianYearNamesV1::INFO,
             crate::datetime::provider::neo::GluePatternV1::INFO,
             crate::datetime::provider::GregorianDateNeoSkeletonPatternsV1::INFO,
-            crate::datetime::provider::TimeNeoSkeletonPatternsV1::INFO,
+            crate::datetime::provider::DatetimePatternsTimeV1::INFO,
             crate::decimal::provider::DecimalSymbolsV1::INFO,
             crate::decimal::provider::DecimalDigitsV1::INFO,
         ]

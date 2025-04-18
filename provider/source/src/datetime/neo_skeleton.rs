@@ -359,13 +359,13 @@ fn gen_date_components(
     filtered_components
 }
 
-impl DataProvider<TimeNeoSkeletonPatternsV1> for SourceDataProvider {
-    fn load(&self, req: DataRequest) -> Result<DataResponse<TimeNeoSkeletonPatternsV1>, DataError> {
+impl DataProvider<DatetimePatternsTimeV1> for SourceDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<DatetimePatternsTimeV1>, DataError> {
         self.load_neo_skeletons_key(req, None, gen_time_components)
     }
 }
 
-impl IterableDataProviderCached<TimeNeoSkeletonPatternsV1> for SourceDataProvider {
+impl IterableDataProviderCached<DatetimePatternsTimeV1> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         self.neo_time_skeleton_supported_locales()
     }
@@ -387,38 +387,38 @@ macro_rules! impl_neo_skeleton_datagen {
     };
 }
 
-impl_neo_skeleton_datagen!(BuddhistDateNeoSkeletonPatternsV1, DatagenCalendar::Buddhist);
-impl_neo_skeleton_datagen!(ChineseDateNeoSkeletonPatternsV1, DatagenCalendar::Chinese);
-impl_neo_skeleton_datagen!(CopticDateNeoSkeletonPatternsV1, DatagenCalendar::Coptic);
-impl_neo_skeleton_datagen!(DangiDateNeoSkeletonPatternsV1, DatagenCalendar::Dangi);
+impl_neo_skeleton_datagen!(DatetimePatternsDateBuddhistV1, DatagenCalendar::Buddhist);
+impl_neo_skeleton_datagen!(DatetimePatternsDateChineseV1, DatagenCalendar::Chinese);
+impl_neo_skeleton_datagen!(DatetimePatternsDateCopticV1, DatagenCalendar::Coptic);
+impl_neo_skeleton_datagen!(DatetimePatternsDateDangiV1, DatagenCalendar::Dangi);
 impl_neo_skeleton_datagen!(
-    EthiopianDateNeoSkeletonPatternsV1,
+    DatetimePatternsDateEthiopianV1,
     DatagenCalendar::Ethiopic
 );
 impl_neo_skeleton_datagen!(
-    GregorianDateNeoSkeletonPatternsV1,
+    DatetimePatternsDateGregorianV1,
     DatagenCalendar::Gregorian
 );
-impl_neo_skeleton_datagen!(HebrewDateNeoSkeletonPatternsV1, DatagenCalendar::Hebrew);
-impl_neo_skeleton_datagen!(IndianDateNeoSkeletonPatternsV1, DatagenCalendar::Indian);
-impl_neo_skeleton_datagen!(HijriDateNeoSkeletonPatternsV1, DatagenCalendar::Hijri);
+impl_neo_skeleton_datagen!(DatetimePatternsDateHebrewV1, DatagenCalendar::Hebrew);
+impl_neo_skeleton_datagen!(DatetimePatternsDateIndianV1, DatagenCalendar::Indian);
+impl_neo_skeleton_datagen!(DatetimePatternsDateHijriV1, DatagenCalendar::Hijri);
 impl_neo_skeleton_datagen!(
-    JapaneseDateNeoSkeletonPatternsV1,
+    DatetimePatternsDateJapaneseModernV1,
     DatagenCalendar::JapaneseModern
 );
 impl_neo_skeleton_datagen!(
-    JapaneseExtendedDateNeoSkeletonPatternsV1,
+    DatetimePatternsDateJapaneseExtendedV1,
     DatagenCalendar::JapaneseExtended
 );
-impl_neo_skeleton_datagen!(PersianDateNeoSkeletonPatternsV1, DatagenCalendar::Persian);
-impl_neo_skeleton_datagen!(RocDateNeoSkeletonPatternsV1, DatagenCalendar::Roc);
+impl_neo_skeleton_datagen!(DatetimePatternsDatePersianV1, DatagenCalendar::Persian);
+impl_neo_skeleton_datagen!(DatetimePatternsDateRocV1, DatagenCalendar::Roc);
 
 #[test]
 fn test_en_year_patterns() {
     use icu::locale::locale;
 
     let provider = SourceDataProvider::new_testing();
-    let payload: DataPayload<GregorianDateNeoSkeletonPatternsV1> = provider
+    let payload: DataPayload<DatetimePatternsDateGregorianV1> = provider
         .load(DataRequest {
             id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                 DataMarkerAttributes::from_str_or_panic("ym0d"),
@@ -462,7 +462,7 @@ fn test_en_hour_patterns() {
     use icu::locale::locale;
 
     let provider = SourceDataProvider::new_testing();
-    let payload: DataPayload<TimeNeoSkeletonPatternsV1> = provider
+    let payload: DataPayload<DatetimePatternsTimeV1> = provider
         .load(DataRequest {
             id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                 DataMarkerAttributes::from_str_or_panic("j"),
@@ -500,7 +500,7 @@ fn test_en_overlap_patterns() {
     use icu::locale::locale;
 
     let provider = SourceDataProvider::new_testing();
-    let payload: DataPayload<GregorianDateNeoSkeletonPatternsV1> = provider
+    let payload: DataPayload<DatetimePatternsDateGregorianV1> = provider
         .load(DataRequest {
             id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                 DataMarkerAttributes::from_str_or_panic("ej"),

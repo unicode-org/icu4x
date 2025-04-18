@@ -358,19 +358,19 @@ macro_rules! impl_iterable_data_provider {
 }
 
 impl_iterable_data_provider!(
-    TimeZoneEssentialsV1,
-    LocationsV1,
-    LocationsRootV1,
-    ExemplarCitiesV1,
-    ExemplarCitiesRootV1,
-    MetazoneGenericNamesLongV1,
-    MetazoneStandardNamesLongV1,
-    MetazoneGenericNamesShortV1,
-    MetazoneSpecificNamesLongV1,
-    MetazoneSpecificNamesShortV1
+    TimezoneNamesEssentialsV1,
+    TimezoneNamesLocationsOverrideV1,
+    TimezoneNamesLocationsRootV1,
+    TimezoneNamesCitiesOverrideV1,
+    TimezoneNamesCitiesRootV1,
+    TimezoneNamesGenericLongV1,
+    TimezoneNamesStandardLongV1,
+    TimezoneNamesGenericShortV1,
+    TimezoneNamesSpecificLongV1,
+    TimezoneNamesSpecificShortV1
 );
 
-impl IterableDataProviderCached<MetazonePeriodV1> for SourceDataProvider {
+impl IterableDataProviderCached<TimezoneMetazonePeriodsV1> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
     }
@@ -407,7 +407,7 @@ mod tests {
             ..Default::default()
         };
 
-        let time_zone_formats: DataResponse<TimeZoneEssentialsV1> = provider.load(en).unwrap();
+        let time_zone_formats: DataResponse<TimezoneNamesEssentialsV1> = provider.load(en).unwrap();
         assert_eq!("GMT", time_zone_formats.payload.get().offset_zero);
         assert_eq!("GMT+?", time_zone_formats.payload.get().offset_unknown);
 
