@@ -105,12 +105,12 @@ pub mod ffi {
         #[diplomat::rust_link(icu::datetime::fieldsets::{{ variant.name_upper() }}::medium, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::{{ variant.name_upper() }}::long, FnInStruct, hidden)]
         {%- if variant.supports_time() %}
-        #[diplomat::rust_link(icu::datetime::fieldsets::{{ variant.name_upper() }}::time, FnInStruct, hidden)]
-        #[diplomat::rust_link(icu::datetime::fieldsets::{{ variant.name_upper() }}::time_hm, FnInStruct, hidden)]
-        #[diplomat::rust_link(icu::datetime::fieldsets::{{ variant.name_upper() }}::time_hms, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::{{ variant.name_upper() }}::with_time, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::{{ variant.name_upper() }}::with_time_hm, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::{{ variant.name_upper() }}::with_time_hms, FnInStruct, hidden)]
         {%- endif %}
         {%- if variant.supports_zone() %}
-        #[diplomat::rust_link(icu::datetime::fieldsets::{{ variant.name_upper() }}::zone, FnInStruct, hidden)] // functionality is in the zoned formatter but rustlink is here
+        #[diplomat::rust_link(icu::datetime::fieldsets::{{ variant.name_upper() }}::with_zone, FnInStruct, hidden)] // functionality is in the zoned formatter but rustlink is here
         {%- endif %}
         {%- if variant.is_default_constructor() && !ctor.is_with_provider() %}
         #[diplomat::demo(default_constructor)]
