@@ -294,7 +294,7 @@ macro_rules! impl_date_to_time_helpers {
     ) => {
         impl $type {
             /// Associates this field set with a time precision.
-            pub fn time(self, time_precision: TimePrecision) -> $type_time {
+            pub fn with_time(self, time_precision: TimePrecision) -> $type_time {
                 $type_time {
                     length: self.length,
                     time_precision: Some(time_precision),
@@ -303,7 +303,7 @@ macro_rules! impl_date_to_time_helpers {
                 }
             }
             /// Shorthand to associate this field set with [`TimePrecision::Minute`].
-            pub fn time_hm(self) -> $type_time {
+            pub fn with_time_hm(self) -> $type_time {
                 $type_time {
                     length: self.length,
                     time_precision: Some(TimePrecision::Minute),
@@ -312,7 +312,7 @@ macro_rules! impl_date_to_time_helpers {
                 }
             }
             /// Shorthand to associate this field set with [`TimePrecision::Second`].
-            pub fn time_hms(self) -> $type_time {
+            pub fn with_time_hms(self) -> $type_time {
                 $type_time {
                     length: self.length,
                     time_precision: Some(TimePrecision::Second),
@@ -353,7 +353,7 @@ macro_rules! impl_zone_combo_helpers {
         impl $type {
             #[inline]
             /// Associates this field set with a time zone field set.
-            pub fn zone<Z: ZoneMarkers>(self, zone: Z) -> Combo<Self, Z> {
+            pub fn with_zone<Z: ZoneMarkers>(self, zone: Z) -> Combo<Self, Z> {
                 Combo::new(self, zone)
             }
         }
