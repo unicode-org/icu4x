@@ -410,7 +410,7 @@ mod tests {
     );
     impl_data_provider_adapter!(
         JapaneseExtendedDateSymbolsV1,
-        DatetimeNamesMonthJapaneseExtendedV1,
+        DatetimeNamesMonthJapanextV1,
         month_symbols_map_project_cloned
     );
     impl_data_provider_adapter!(

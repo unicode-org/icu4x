@@ -403,11 +403,11 @@ impl_neo_skeleton_datagen!(DatetimePatternsDateHebrewV1, DatagenCalendar::Hebrew
 impl_neo_skeleton_datagen!(DatetimePatternsDateIndianV1, DatagenCalendar::Indian);
 impl_neo_skeleton_datagen!(DatetimePatternsDateHijriV1, DatagenCalendar::Hijri);
 impl_neo_skeleton_datagen!(
-    DatetimePatternsDateJapaneseModernV1,
+    DatetimePatternsDateJapaneseV1,
     DatagenCalendar::JapaneseModern
 );
 impl_neo_skeleton_datagen!(
-    DatetimePatternsDateJapaneseExtendedV1,
+    DatetimePatternsDateJapanextV1,
     DatagenCalendar::JapaneseExtended
 );
 impl_neo_skeleton_datagen!(DatetimePatternsDatePersianV1, DatagenCalendar::Persian);

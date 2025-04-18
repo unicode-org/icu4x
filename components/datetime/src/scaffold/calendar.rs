@@ -134,14 +134,14 @@ impl private::Sealed for Japanese {}
 impl CldrCalendar for Japanese {
     type YearNamesV1 = DatetimeNamesYearJapaneseV1;
     type MonthNamesV1 = DatetimeNamesMonthJapaneseV1;
-    type SkeletaV1 = DatetimePatternsDateJapaneseModernV1;
+    type SkeletaV1 = DatetimePatternsDateJapaneseV1;
 }
 
 impl private::Sealed for JapaneseExtended {}
 impl CldrCalendar for JapaneseExtended {
-    type YearNamesV1 = DatetimeNamesYearJapaneseExtendedV1;
-    type MonthNamesV1 = DatetimeNamesMonthJapaneseExtendedV1;
-    type SkeletaV1 = DatetimePatternsDateJapaneseExtendedV1;
+    type YearNamesV1 = DatetimeNamesYearJapanextV1;
+    type MonthNamesV1 = DatetimeNamesMonthJapanextV1;
+    type SkeletaV1 = DatetimePatternsDateJapanextV1;
 }
 
 impl private::Sealed for Persian {}

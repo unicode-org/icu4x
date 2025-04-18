@@ -374,8 +374,8 @@ icu_provider::data_marker!(
     attributes_domain = "datetime_year_length"
 );
 icu_provider::data_marker!(
-    /// `DatetimeNamesYearJapaneseExtendedV1`
-    DatetimeNamesYearJapaneseExtendedV1,
+    /// `DatetimeNamesYearJapanextV1`
+    DatetimeNamesYearJapanextV1,
     YearNames<'static>,
     #[cfg(feature = "datagen")]
     attributes_domain = "datetime_year_length"
@@ -466,8 +466,8 @@ icu_provider::data_marker!(
     attributes_domain = "datetime_month_length"
 );
 icu_provider::data_marker!(
-    /// `DatetimeNamesMonthJapaneseExtendedV1`
-    DatetimeNamesMonthJapaneseExtendedV1,
+    /// `DatetimeNamesMonthJapanextV1`
+    DatetimeNamesMonthJapanextV1,
     MonthNames<'static>,
     #[cfg(feature = "datagen")]
     attributes_domain = "datetime_month_length"

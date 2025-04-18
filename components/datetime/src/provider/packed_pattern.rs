@@ -87,13 +87,13 @@ icu_provider::data_marker!(
     PackedPatterns<'static>
 );
 icu_provider::data_marker!(
-    /// `DatetimePatternsDateJapaneseModernV1`
-    DatetimePatternsDateJapaneseModernV1,
+    /// `DatetimePatternsDateJapaneseV1`
+    DatetimePatternsDateJapaneseV1,
     PackedPatterns<'static>
 );
 icu_provider::data_marker!(
-    /// `DatetimePatternsDateJapaneseExtendedV1`
-    DatetimePatternsDateJapaneseExtendedV1,
+    /// `DatetimePatternsDateJapanextV1`
+    DatetimePatternsDateJapanextV1,
     PackedPatterns<'static>
 );
 icu_provider::data_marker!(

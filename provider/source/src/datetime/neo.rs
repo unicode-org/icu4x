@@ -680,7 +680,7 @@ impl_symbols_datagen!(
     years_convert
 );
 impl_symbols_datagen!(
-    DatetimeNamesYearJapaneseExtendedV1,
+    DatetimeNamesYearJapanextV1,
     DatagenCalendar::JapaneseExtended,
     YEARS_KEY_LENGTHS,
     years_convert
@@ -760,7 +760,7 @@ impl_symbols_datagen!(
     months_convert
 );
 impl_symbols_datagen!(
-    DatetimeNamesMonthJapaneseExtendedV1,
+    DatetimeNamesMonthJapanextV1,
     DatagenCalendar::JapaneseExtended,
     NORMAL_KEY_LENGTHS,
     months_convert
