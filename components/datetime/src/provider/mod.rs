@@ -78,7 +78,7 @@ const _: () = {
     impl_datetime_names_year_indian_v1!(Baked);
     impl_datetime_names_year_hijri_v1!(Baked);
     impl_datetime_names_year_japanese_v1!(Baked);
-    impl_datetime_names_year_japanese_extended_v1!(Baked);
+    impl_datetime_names_year_japanext_v1!(Baked);
     impl_datetime_names_year_persian_v1!(Baked);
     impl_datetime_names_year_roc_v1!(Baked);
 
@@ -92,7 +92,7 @@ const _: () = {
     impl_datetime_names_month_indian_v1!(Baked);
     impl_datetime_names_month_hijri_v1!(Baked);
     impl_datetime_names_month_japanese_v1!(Baked);
-    impl_datetime_names_month_japanese_extended_v1!(Baked);
+    impl_datetime_names_month_japanext_v1!(Baked);
     impl_datetime_names_month_persian_v1!(Baked);
     impl_datetime_names_month_roc_v1!(Baked);
 
@@ -105,8 +105,8 @@ const _: () = {
     impl_datetime_patterns_date_hebrew_v1!(Baked);
     impl_datetime_patterns_date_indian_v1!(Baked);
     impl_datetime_patterns_date_hijri_v1!(Baked);
-    impl_datetime_patterns_date_japanese_modern_v1!(Baked);
-    impl_datetime_patterns_date_japanese_extended_v1!(Baked);
+    impl_datetime_patterns_date_japanese_v1!(Baked);
+    impl_datetime_patterns_date_japanext_v1!(Baked);
     impl_datetime_patterns_date_persian_v1!(Baked);
     impl_datetime_patterns_date_roc_v1!(Baked);
 };
