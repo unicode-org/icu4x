@@ -119,7 +119,7 @@ pub mod ffi {
             {%- if consumed_options.alignment %}
             options.alignment = alignment.map(Into::into);
             {%- endif %}
-            let options = options.zone(zone);
+            let options = options.with_zone(zone);
             {%- else %}
             let options = zone;
             {%- endif %}

@@ -40,7 +40,7 @@ fn main() {
     // A English, Japanese calendar, medium-length, year-month-day-time-specific-zone formatter
     let formatter = DateTimeFormatter::try_new(
         locale!("en-GB-u-ca-japanese").into(),
-        fieldsets::YMDT::medium().zone(fieldsets::zone::SpecificLong),
+        fieldsets::YMDT::medium().with_zone(fieldsets::zone::SpecificLong),
     )
     .expect("data is present");
 

@@ -62,7 +62,7 @@ where
                 crate::unstable::errors::ffi::DateTimeFormatterLoadError::Unknown
             }
         })?
-        .zone(zone);
+        .with_zone(zone);
     let formatter = to_formatter(names, field_set)
         // This can fail if the locale doesn't match and the fields conflict
         .map_err(|(e, _)| e)?
@@ -116,7 +116,7 @@ where
                 crate::unstable::errors::ffi::DateTimeFormatterLoadError::Unknown
             }
         })?
-        .zone(zone);
+        .with_zone(zone);
     let formatter = to_formatter(names, field_set)
         // This can fail if the locale doesn't match and the fields conflict
         .map_err(|(e, _)| e)?
@@ -170,7 +170,7 @@ where
                 crate::unstable::errors::ffi::DateTimeFormatterLoadError::Unknown
             }
         })?
-        .zone(zone);
+        .with_zone(zone);
     let formatter = to_formatter(names, field_set)
         // This can fail if the locale doesn't match and the fields conflict
         .map_err(|(e, _)| e)?
@@ -224,7 +224,7 @@ where
                 crate::unstable::errors::ffi::DateTimeFormatterLoadError::Unknown
             }
         })?
-        .zone(zone);
+        .with_zone(zone);
     let formatter = to_formatter(names, field_set)
         // This can fail if the locale doesn't match and the fields conflict
         .map_err(|(e, _)| e)?
