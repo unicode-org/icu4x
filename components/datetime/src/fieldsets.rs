@@ -180,6 +180,10 @@ macro_rules! impl_time_precision_constructors {
             pub fn hms() -> Self {
                 Self::for_length(Default::default()).with_time_precision(TimePrecision::Second)
             }
+            #[doc = concat!("Creates a ", stringify!($type), " that formats hours, minutes, seconds, and subseconds with the default length.")]
+            pub fn hmss(subsecond_digits: SubsecondDigits) -> Self {
+                Self::for_length(Default::default()).with_time_precision(TimePrecision::Subsecond(subsecond_digits))
+            }
         }
     };
 }
@@ -1189,6 +1193,28 @@ impl_time_marker!(
     /// assert_writeable_eq!(
     ///     formatter.format(&Time::try_new(0, 0, 0, 0).unwrap()),
     ///     "00:00"
+    /// );
+    /// ```
+    ///
+    /// Conveniently construct a time formatter with subseconds:
+    ///
+    /// ```
+    /// use icu::datetime::input::Time;
+    /// use icu::datetime::fieldsets::T;
+    /// use icu::datetime::options::SubsecondDigits;
+    /// use icu::datetime::NoCalendarFormatter;
+    /// use icu::locale::locale;
+    /// use writeable::assert_writeable_eq;
+    ///
+    /// let formatter = NoCalendarFormatter::try_new(
+    ///     locale!("en").into(),
+    ///     T::hmss(SubsecondDigits::S4),
+    /// )
+    /// .unwrap();
+    ///
+    /// assert_writeable_eq!(
+    ///     formatter.format(&Time::try_new(18, 24, 36, 987654321).unwrap()),
+    ///     "6:24:36.9876 PM"
     /// );
     /// ```
     ///
