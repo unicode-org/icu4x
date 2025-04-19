@@ -88,6 +88,22 @@ impl HijriSimulatedLocation {
 #[non_exhaustive]
 pub struct HijriUmmAlQura;
 
+/// The [Qamari Calendar](https://TBD)
+///
+/// This calendar is the official Islamic calendar in Iran.
+///
+/// # Era codes
+///
+/// This calendar uses a single era code `ah`, Anno Hegirae. Dates before this era use negative years.
+///
+/// # Month codes
+///
+/// This calendar is a pure lunar calendar with no leap months. It uses month codes
+/// `"M01" - "M12"`.
+#[derive(Clone, Debug, Default)]
+#[non_exhaustive]
+pub struct HijriQamari;
+
 /// The [tabular Hijri Calendar](https://en.wikipedia.org/wiki/Tabular_Islamic_calendar).
 ///
 /// See [`HijriTabularEpoch`] and [`HijriTabularLeapYears`] for customization.
@@ -166,6 +182,13 @@ impl HijriSimulated {
 
 impl HijriUmmAlQura {
     /// Creates a new [`HijriUmmAlQura`].
+    pub const fn new() -> Self {
+        Self
+    }
+}
+
+impl HijriQamari {
+    /// Creates a new [`HijriQamari`].
     pub const fn new() -> Self {
         Self
     }
@@ -1128,6 +1151,405 @@ impl Date<HijriUmmAlQura> {
     }
 }
 
+#[derive(Copy, Clone, Debug, Hash, Eq, PartialEq, PartialOrd, Ord)]
+/// The inner date type used for representing [`Date`]s of [`Qamari`]. See [`Date`] and [`Qamari`] for more details.
+pub struct HijriQamariDateInner(ArithmeticDate<HijriQamari>);
+
+impl CalendarArithmetic for HijriQamari {
+    type YearInfo = HijriYearInfo;
+
+    fn days_in_provided_month(year: Self::YearInfo, month: u8) -> u8 {
+        year.days_in_month(month)
+    }
+
+    fn months_in_provided_year(_year: HijriYearInfo) -> u8 {
+        12
+    }
+
+    fn days_in_provided_year(year: Self::YearInfo) -> u16 {
+        year.days_in_year()
+    }
+
+    // As an true lunar calendar, it does not have leap years.
+    fn provided_year_is_leap(year: Self::YearInfo) -> bool {
+        year.days_in_year() != SHORT_YEAR_LEN
+    }
+
+    fn last_month_day_in_provided_year(year: HijriYearInfo) -> (u8, u8) {
+        let days = Self::days_in_provided_month(year, 12);
+
+        (12, days)
+    }
+}
+
+impl Calendar for HijriQamari {
+    type DateInner = HijriQamariDateInner;
+    type Year = types::EraYear;
+    fn from_codes(
+        &self,
+        era: Option<&str>,
+        year: i32,
+        month_code: types::MonthCode,
+        day: u8,
+    ) -> Result<Self::DateInner, DateError> {
+        let year = match era {
+            Some("islamic-umalqura" | "ah") | None => year,
+            Some(_) => return Err(DateError::UnknownEra),
+        };
+        let Some((month, false)) = month_code.parsed() else {
+            return Err(DateError::UnknownMonthCode(month_code));
+        };
+        Ok(HijriQamariDateInner(ArithmeticDate::new_from_ordinals(
+            self.load_or_compute_info(year),
+            month,
+            day,
+        )?))
+    }
+
+    fn from_rata_die(&self, rd: RataDie) -> Self::DateInner {
+        // +1 because the epoch is new year of year 1
+        // truncating instead of flooring does not matter, as this is well-defined for
+        // positive years only
+        let extended_year = ((rd - calendrical_calculations::islamic::ISLAMIC_EPOCH_FRIDAY) as f64
+            / calendrical_calculations::islamic::MEAN_YEAR_LENGTH)
+            as i32
+            + 1;
+
+        let year = self.load_or_compute_info(extended_year);
+
+        let y = if rd < year.start_day {
+            self.load_or_compute_info(extended_year - 1)
+        } else {
+            let next_year = self.load_or_compute_info(extended_year + 1);
+            if rd < next_year.start_day {
+                year
+            } else {
+                next_year
+            }
+        };
+        let (m, d) = y.md_from_rd(rd);
+        HijriQamariDateInner(ArithmeticDate::new_unchecked(y, m, d))
+    }
+
+    fn to_rata_die(&self, date: &Self::DateInner) -> RataDie {
+        date.0.year.md_to_rd(date.0.month, date.0.day)
+    }
+
+    fn from_iso(&self, iso: IsoDateInner) -> Self::DateInner {
+        self.from_rata_die(Iso.to_rata_die(&iso))
+    }
+
+    fn to_iso(&self, date: &Self::DateInner) -> IsoDateInner {
+        Iso.from_rata_die(self.to_rata_die(date))
+    }
+
+    fn months_in_year(&self, date: &Self::DateInner) -> u8 {
+        date.0.months_in_year()
+    }
+
+    fn days_in_year(&self, date: &Self::DateInner) -> u16 {
+        date.0.days_in_year()
+    }
+
+    fn days_in_month(&self, date: &Self::DateInner) -> u8 {
+        date.0.days_in_month()
+    }
+
+    fn offset_date(&self, date: &mut Self::DateInner, offset: DateDuration<Self>) {
+        date.0.offset_date(offset, &HijriQamari)
+    }
+
+    fn until(
+        &self,
+        date1: &Self::DateInner,
+        date2: &Self::DateInner,
+        _calendar2: &Self,
+        _largest_unit: DateDurationUnit,
+        _smallest_unit: DateDurationUnit,
+    ) -> DateDuration<Self> {
+        date1.0.until(date2.0, _largest_unit, _smallest_unit)
+    }
+
+    fn debug_name(&self) -> &'static str {
+        Self::DEBUG_NAME
+    }
+
+    fn year_info(&self, date: &Self::DateInner) -> Self::Year {
+        era_year(self.extended_year(date))
+    }
+
+    fn extended_year(&self, date: &Self::DateInner) -> i32 {
+        date.0.extended_year()
+    }
+
+    fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
+        Self::provided_year_is_leap(date.0.year)
+    }
+
+    fn month(&self, date: &Self::DateInner) -> types::MonthInfo {
+        date.0.month()
+    }
+
+    fn day_of_month(&self, date: &Self::DateInner) -> types::DayOfMonth {
+        date.0.day_of_month()
+    }
+
+    fn day_of_year(&self, date: &Self::DateInner) -> types::DayOfYear {
+        date.0.day_of_year()
+    }
+
+    fn calendar_algorithm(&self) -> Option<crate::preferences::CalendarAlgorithm> {
+        let expected_calendar = crate::preferences::CalendarAlgorithm::Hijri(Some(
+            crate::preferences::HijriCalendarAlgorithm::Qamari,
+        ));
+        Some(expected_calendar)
+    }
+}
+
+impl PrecomputedDataSource<HijriYearInfo> for HijriQamari {
+    fn load_or_compute_info(&self, year: i32) -> HijriYearInfo {
+        #[rustfmt::skip]
+        const DATA: [PackedHijriYearInfo; 1446 - 1264] = {
+            use calendrical_calculations::iso::const_fixed_from_iso as iso;
+            let l = true; // long
+            let s = false; // short
+            // This uses the data gathered in https://github.com/roozbehp/qamari
+            [
+                PackedHijriYearInfo::new(1265, [l, s, l, s, l, s, l, s, l, s, l, s], iso(1848, 11, 28)),
+                PackedHijriYearInfo::new(1266, [l, s, l, s, l, l, s, l, s, l, s, l], iso(1849, 11, 17)),
+                PackedHijriYearInfo::new(1267, [s, l, s, l, l, s, s, l, s, l, s, s], iso(1850, 11, 7)),
+                PackedHijriYearInfo::new(1268, [l, s, l, l, l, s, l, s, l, s, l, s], iso(1851, 10, 26)),
+                PackedHijriYearInfo::new(1269, [s, l, s, l, l, s, l, l, s, l, s, l], iso(1852, 10, 15)),
+                PackedHijriYearInfo::new(1270, [s, l, s, s, l, s, l, l, s, l, l, s], iso(1853, 10, 5)),
+                PackedHijriYearInfo::new(1271, [l, s, l, s, s, l, s, l, s, l, l, l], iso(1854, 9, 24)),
+                PackedHijriYearInfo::new(1272, [s, l, s, l, s, s, l, s, l, s, l, l], iso(1855, 9, 14)),
+                PackedHijriYearInfo::new(1273, [s, l, l, s, l, s, l, s, s, s, l, l], iso(1856, 9, 2)),
+                PackedHijriYearInfo::new(1274, [s, l, l, s, l, l, s, l, s, s, s, l], iso(1857, 8, 22)),
+                PackedHijriYearInfo::new(1275, [l, s, l, s, l, l, l, s, l, s, s, l], iso(1858, 8, 11)),
+                PackedHijriYearInfo::new(1276, [s, l, s, l, s, l, l, s, l, s, l, s], iso(1859, 8, 1)),
+                PackedHijriYearInfo::new(1277, [l, s, l, s, s, l, l, s, l, l, s, l], iso(1860, 7, 20)),
+                PackedHijriYearInfo::new(1278, [s, l, s, l, s, s, l, s, l, l, s, l], iso(1861, 7, 10)),
+                PackedHijriYearInfo::new(1279, [l, l, s, s, l, s, s, l, s, l, s, l], iso(1862, 6, 29)),
+                PackedHijriYearInfo::new(1280, [l, l, l, s, s, l, s, s, l, s, l, s], iso(1863, 6, 18)),
+                PackedHijriYearInfo::new(1281, [l, l, l, s, l, s, l, s, s, l, s, l], iso(1864, 6, 6)),
+                PackedHijriYearInfo::new(1282, [s, l, l, s, l, s, l, l, s, l, s, s], iso(1865, 5, 27)),
+                PackedHijriYearInfo::new(1283, [l, s, l, s, l, s, l, l, l, s, l, s], iso(1866, 5, 16)),
+                PackedHijriYearInfo::new(1284, [s, l, s, l, s, s, l, l, l, s, l, l], iso(1867, 5, 6)),
+                PackedHijriYearInfo::new(1285, [s, s, l, s, s, l, s, l, l, s, l, l], iso(1868, 4, 25)),
+                PackedHijriYearInfo::new(1286, [s, l, s, l, s, s, l, s, l, s, l, l], iso(1869, 4, 14)),
+                PackedHijriYearInfo::new(1287, [l, s, l, s, s, l, s, l, s, l, s, l], iso(1870, 4, 3)),
+                PackedHijriYearInfo::new(1288, [l, s, l, s, l, s, l, s, l, s, l, s], iso(1871, 3, 23)),
+                PackedHijriYearInfo::new(1289, [l, s, l, l, s, l, s, l, l, s, s, l], iso(1872, 3, 11)),
+                PackedHijriYearInfo::new(1290, [s, l, s, l, s, l, l, l, s, l, s, s], iso(1873, 3, 1)),
+                PackedHijriYearInfo::new(1291, [l, s, s, l, s, l, l, l, l, s, l, s], iso(1874, 2, 18)),
+                PackedHijriYearInfo::new(1292, [s, l, s, s, l, s, l, l, l, s, l, s], iso(1875, 2, 8)),
+                PackedHijriYearInfo::new(1293, [l, s, l, s, s, l, s, l, l, s, l, s], iso(1876, 1, 28)),
+                PackedHijriYearInfo::new(1294, [l, l, s, l, s, s, l, l, s, l, s, s], iso(1877, 1, 16)),
+                PackedHijriYearInfo::new(1295, [l, l, l, s, l, s, l, l, s, s, s, l], iso(1878, 1, 5)),
+                PackedHijriYearInfo::new(1296, [s, l, l, s, l, l, s, l, l, s, s, s], iso(1878, 12, 26)),
+                PackedHijriYearInfo::new(1297, [l, s, l, s, l, l, l, s, l, l, s, s], iso(1879, 12, 15)),
+                PackedHijriYearInfo::new(1298, [s, l, s, l, s, l, s, l, l, l, s, s], iso(1880, 12, 4)),
+                PackedHijriYearInfo::new(1299, [l, s, l, s, s, l, l, s, l, l, l, s], iso(1881, 11, 23)),
+                PackedHijriYearInfo::new(1300, [s, l, s, l, s, s, l, l, s, l, l, s], iso(1882, 11, 13)),
+                PackedHijriYearInfo::new(1301, [l, s, l, s, l, s, l, s, s, l, l, s], iso(1883, 11, 2)),
+                PackedHijriYearInfo::new(1302, [l, s, l, l, s, l, s, l, s, s, l, s], iso(1884, 10, 21)),
+                PackedHijriYearInfo::new(1303, [l, s, l, l, l, s, l, s, l, s, s, l], iso(1885, 10, 10)),
+                PackedHijriYearInfo::new(1304, [s, s, l, l, l, s, l, l, s, l, s, s], iso(1886, 9, 30)),
+                PackedHijriYearInfo::new(1305, [l, s, s, l, l, l, s, l, l, s, l, s], iso(1887, 9, 19)),
+                PackedHijriYearInfo::new(1306, [s, l, s, l, s, l, s, l, l, s, l, s], iso(1888, 9, 8)),
+                PackedHijriYearInfo::new(1307, [l, s, l, s, l, s, l, s, l, s, l, s], iso(1889, 8, 28)),
+                PackedHijriYearInfo::new(1308, [l, l, s, l, s, l, s, s, l, s, l, s], iso(1890, 8, 17)),
+                PackedHijriYearInfo::new(1309, [l, l, l, s, l, s, l, s, s, l, s, l], iso(1891, 8, 6)),
+                PackedHijriYearInfo::new(1310, [s, l, l, l, s, l, s, l, s, s, l, s], iso(1892, 7, 26)),
+                PackedHijriYearInfo::new(1311, [l, s, l, l, s, l, l, s, l, s, s, l], iso(1893, 7, 15)),
+                PackedHijriYearInfo::new(1312, [s, l, s, l, l, s, l, l, s, l, s, s], iso(1894, 7, 5)),
+                PackedHijriYearInfo::new(1313, [l, s, l, s, l, s, l, s, l, l, s, l], iso(1895, 6, 24)),
+                PackedHijriYearInfo::new(1314, [s, l, l, s, s, l, s, l, s, l, l, s], iso(1896, 6, 13)),
+                PackedHijriYearInfo::new(1315, [l, l, s, l, s, s, l, s, s, l, l, s], iso(1897, 6, 2)),
+                PackedHijriYearInfo::new(1316, [l, l, l, s, l, s, s, l, s, s, l, s], iso(1898, 5, 22)),
+                PackedHijriYearInfo::new(1317, [l, l, l, l, s, l, s, s, l, s, s, l], iso(1899, 5, 11)),
+                PackedHijriYearInfo::new(1318, [s, l, l, l, s, l, s, l, s, l, s, s], iso(1900, 5, 1)),
+                PackedHijriYearInfo::new(1319, [l, s, l, l, s, l, s, l, l, s, l, s], iso(1901, 4, 20)),
+                PackedHijriYearInfo::new(1320, [l, s, s, l, l, s, s, l, l, s, l, l], iso(1902, 4, 10)),
+                PackedHijriYearInfo::new(1321, [s, l, s, s, l, s, s, l, l, s, l, l], iso(1903, 3, 31)),
+                PackedHijriYearInfo::new(1322, [l, s, s, l, s, l, s, s, l, s, l, l], iso(1904, 3, 19)),
+                PackedHijriYearInfo::new(1323, [l, s, l, l, s, s, l, s, s, l, s, l], iso(1905, 3, 8)),
+                PackedHijriYearInfo::new(1324, [l, l, s, l, s, l, s, l, s, s, l, s], iso(1906, 2, 25)),
+                PackedHijriYearInfo::new(1325, [l, l, s, l, s, l, l, s, l, s, l, s], iso(1907, 2, 14)),
+                PackedHijriYearInfo::new(1326, [s, l, s, l, s, l, l, s, l, l, s, l], iso(1908, 2, 4)),
+                PackedHijriYearInfo::new(1327, [s, s, l, s, l, s, l, l, s, l, l, s], iso(1909, 1, 24)),
+                PackedHijriYearInfo::new(1328, [l, s, l, s, s, s, l, l, s, l, l, l], iso(1910, 1, 13)),
+                PackedHijriYearInfo::new(1329, [s, l, s, s, l, s, s, l, l, s, l, l], iso(1911, 1, 3)),
+                PackedHijriYearInfo::new(1330, [s, l, l, s, l, s, s, s, l, l, s, l], iso(1911, 12, 23)),
+                PackedHijriYearInfo::new(1331, [s, l, l, l, s, s, l, s, l, s, l, s], iso(1912, 12, 11)),
+                PackedHijriYearInfo::new(1332, [l, s, l, l, s, l, s, l, s, l, s, l], iso(1913, 11, 30)),
+                PackedHijriYearInfo::new(1333, [s, s, l, l, s, l, s, l, l, l, s, s], iso(1914, 11, 20)),
+                PackedHijriYearInfo::new(1334, [l, s, s, l, s, l, l, s, l, l, l, s], iso(1915, 11, 9)),
+                PackedHijriYearInfo::new(1335, [s, l, s, s, l, s, l, s, l, l, l, l], iso(1916, 10, 29)),
+                PackedHijriYearInfo::new(1336, [s, s, l, s, s, l, s, l, s, l, l, l], iso(1917, 10, 19)),
+                PackedHijriYearInfo::new(1337, [s, s, l, l, s, s, l, s, l, s, l, l], iso(1918, 10, 8)),
+                PackedHijriYearInfo::new(1338, [s, l, s, l, l, s, s, l, s, l, s, l], iso(1919, 9, 27)),
+                PackedHijriYearInfo::new(1339, [s, s, l, l, l, s, l, s, l, s, l, s], iso(1920, 9, 15)),
+                PackedHijriYearInfo::new(1340, [s, l, s, l, l, l, s, l, l, s, s, l], iso(1921, 9, 4)),
+                PackedHijriYearInfo::new(1341, [s, s, l, s, l, l, s, l, l, s, l, s], iso(1922, 8, 25)),
+                PackedHijriYearInfo::new(1342, [l, s, s, l, s, l, s, l, l, l, s, l], iso(1923, 8, 14)),
+                PackedHijriYearInfo::new(1343, [s, s, l, s, l, s, l, s, l, s, l, l], iso(1924, 8, 3)),
+                PackedHijriYearInfo::new(1344, [s, l, s, l, s, l, s, l, s, l, s, l], iso(1925, 7, 23)),
+                PackedHijriYearInfo::new(1345, [s, l, l, s, l, l, s, s, l, s, s, l], iso(1926, 7, 12)),
+                PackedHijriYearInfo::new(1346, [s, l, l, s, l, l, l, s, s, l, s, s], iso(1927, 7, 1)),
+                PackedHijriYearInfo::new(1347, [l, s, l, l, s, l, l, s, l, s, l, s], iso(1928, 6, 19)),
+                PackedHijriYearInfo::new(1348, [s, l, s, l, l, s, l, l, s, l, s, l], iso(1929, 6, 9)),
+                PackedHijriYearInfo::new(1349, [s, s, l, s, l, s, l, l, s, l, l, s], iso(1930, 5, 30)),
+                PackedHijriYearInfo::new(1350, [l, s, s, l, l, s, s, l, s, l, l, s], iso(1931, 5, 19)),
+                PackedHijriYearInfo::new(1351, [l, l, s, l, s, l, s, s, l, s, l, s], iso(1932, 5, 7)),
+                PackedHijriYearInfo::new(1352, [l, l, s, l, l, l, s, s, s, l, s, l], iso(1933, 4, 26)),
+                PackedHijriYearInfo::new(1353, [s, l, l, l, s, l, s, l, s, s, l, s], iso(1934, 4, 16)),
+                PackedHijriYearInfo::new(1354, [s, l, l, l, l, s, l, s, s, l, s, l], iso(1935, 4, 5)),
+                PackedHijriYearInfo::new(1355, [s, s, l, l, s, l, l, s, l, s, l, s], iso(1936, 3, 25)),
+                PackedHijriYearInfo::new(1356, [l, s, s, l, l, s, l, s, l, l, s, l], iso(1937, 3, 14)),
+                PackedHijriYearInfo::new(1357, [s, l, s, l, s, l, s, s, l, l, s, l], iso(1938, 3, 4)),
+                PackedHijriYearInfo::new(1358, [l, s, l, s, l, s, s, l, s, l, s, l], iso(1939, 2, 21)),
+                PackedHijriYearInfo::new(1359, [l, l, s, l, s, l, s, s, l, s, s, l], iso(1940, 2, 10)),
+                PackedHijriYearInfo::new(1360, [l, l, s, l, l, s, l, s, s, l, s, l], iso(1941, 1, 29)),
+                PackedHijriYearInfo::new(1361, [s, l, s, l, l, s, l, l, s, s, l, s], iso(1942, 1, 19)),
+                PackedHijriYearInfo::new(1362, [l, s, l, s, l, l, s, l, s, l, s, l], iso(1943, 1, 8)),
+                PackedHijriYearInfo::new(1363, [s, l, s, l, s, l, s, l, s, l, l, s], iso(1943, 12, 29)),
+                PackedHijriYearInfo::new(1364, [l, s, l, s, s, l, s, l, s, l, l, l], iso(1944, 12, 17)),
+                PackedHijriYearInfo::new(1365, [s, l, s, l, s, s, l, s, l, s, l, l], iso(1945, 12, 7)),
+                PackedHijriYearInfo::new(1366, [s, l, l, s, l, s, s, l, s, l, s, l], iso(1946, 11, 26)),
+                PackedHijriYearInfo::new(1367, [l, s, l, l, s, l, s, s, l, s, l, s], iso(1947, 11, 15)),
+                PackedHijriYearInfo::new(1368, [l, s, l, l, s, l, l, s, s, l, s, l], iso(1948, 11, 3)),
+                PackedHijriYearInfo::new(1369, [s, l, s, l, s, l, l, s, l, s, l, l], iso(1949, 10, 24)),
+                PackedHijriYearInfo::new(1370, [s, s, l, s, l, s, l, s, l, l, s, l], iso(1950, 10, 14)),
+                PackedHijriYearInfo::new(1371, [s, l, s, l, s, l, s, s, l, l, l, s], iso(1951, 10, 3)),
+                PackedHijriYearInfo::new(1372, [l, l, s, s, l, s, s, l, s, l, l, l], iso(1952, 9, 21)),
+                PackedHijriYearInfo::new(1373, [s, l, s, l, s, l, s, s, l, s, l, l], iso(1953, 9, 11)),
+                PackedHijriYearInfo::new(1374, [s, l, l, s, l, s, l, s, s, l, s, l], iso(1954, 8, 31)),
+                PackedHijriYearInfo::new(1375, [s, l, l, s, l, l, s, l, s, s, l, s], iso(1955, 8, 20)),
+                PackedHijriYearInfo::new(1376, [l, s, l, s, l, l, s, l, l, s, s, l], iso(1956, 8, 8)),
+                PackedHijriYearInfo::new(1377, [s, l, s, s, l, l, s, l, l, l, s, l], iso(1957, 7, 29)),
+                PackedHijriYearInfo::new(1378, [s, s, l, s, s, l, s, l, s, l, l, l], iso(1958, 7, 19)),
+                PackedHijriYearInfo::new(1379, [l, s, s, l, s, s, l, s, l, l, s, l], iso(1959, 7, 8)),
+                PackedHijriYearInfo::new(1380, [l, s, l, s, l, s, s, l, s, l, s, l], iso(1960, 6, 26)),
+                PackedHijriYearInfo::new(1381, [l, s, l, l, s, l, s, l, s, s, l, s], iso(1961, 6, 15)),
+                PackedHijriYearInfo::new(1382, [l, s, l, l, s, l, l, s, l, s, s, l], iso(1962, 6, 4)),
+                PackedHijriYearInfo::new(1383, [s, s, l, l, s, l, l, l, s, l, s, s], iso(1963, 5, 25)),
+                PackedHijriYearInfo::new(1384, [l, s, s, l, s, l, l, l, s, l, l, s], iso(1964, 5, 13)),
+                PackedHijriYearInfo::new(1385, [s, l, s, s, l, s, l, l, s, l, l, l], iso(1965, 5, 3)),
+                PackedHijriYearInfo::new(1386, [s, s, l, s, s, l, s, l, s, l, l, l], iso(1966, 4, 23)),
+                PackedHijriYearInfo::new(1387, [s, l, s, l, s, l, s, s, l, s, l, l], iso(1967, 4, 12)),
+                PackedHijriYearInfo::new(1388, [s, l, l, s, l, s, l, s, s, l, s, l], iso(1968, 3, 31)),
+                PackedHijriYearInfo::new(1389, [s, l, l, s, l, l, s, l, s, s, l, s], iso(1969, 3, 20)),
+                PackedHijriYearInfo::new(1390, [l, s, l, s, l, l, l, s, l, s, l, s], iso(1970, 3, 9)),
+                PackedHijriYearInfo::new(1391, [s, l, s, s, l, l, l, s, l, l, s, l], iso(1971, 2, 27)),
+                PackedHijriYearInfo::new(1392, [s, s, l, s, s, l, l, s, l, l, s, l], iso(1972, 2, 17)),
+                PackedHijriYearInfo::new(1393, [l, s, s, l, s, s, l, l, s, l, s, l], iso(1973, 2, 5)),
+                PackedHijriYearInfo::new(1394, [l, l, s, l, s, s, l, s, s, l, s, l], iso(1974, 1, 25)),
+                PackedHijriYearInfo::new(1395, [l, l, s, l, s, l, s, l, s, s, s, l], iso(1975, 1, 14)),
+                PackedHijriYearInfo::new(1396, [l, s, l, l, l, s, l, s, l, s, s, l], iso(1976, 1, 3)),
+                PackedHijriYearInfo::new(1397, [s, l, s, l, l, l, s, l, s, l, s, s], iso(1976, 12, 23)),
+                PackedHijriYearInfo::new(1398, [l, s, l, s, l, s, l, l, s, l, s, l], iso(1977, 12, 12)),
+                PackedHijriYearInfo::new(1399, [s, l, s, l, s, s, l, l, s, l, l, s], iso(1978, 12, 2)),
+                PackedHijriYearInfo::new(1400, [l, s, l, s, l, s, s, l, s, l, l, l], iso(1979, 11, 21)),
+                PackedHijriYearInfo::new(1401, [s, l, l, s, s, l, s, s, l, s, l, s], iso(1980, 11, 10)),
+                PackedHijriYearInfo::new(1402, [l, l, l, s, l, s, l, s, s, l, s, l], iso(1981, 10, 29)),
+                PackedHijriYearInfo::new(1403, [s, l, l, l, s, l, s, l, s, s, l, s], iso(1982, 10, 19)),
+                PackedHijriYearInfo::new(1404, [l, s, l, l, l, s, l, s, l, s, s, l], iso(1983, 10, 8)),
+                PackedHijriYearInfo::new(1405, [s, l, s, l, l, s, l, l, s, l, s, l], iso(1984, 9, 27)),
+                PackedHijriYearInfo::new(1406, [s, s, l, s, l, s, l, l, s, l, s, l], iso(1985, 9, 17)),
+                PackedHijriYearInfo::new(1407, [l, s, l, s, s, l, s, l, s, l, l, s], iso(1986, 9, 6)),
+                PackedHijriYearInfo::new(1408, [l, l, s, l, s, s, l, s, s, l, l, s], iso(1987, 8, 26)),
+                PackedHijriYearInfo::new(1409, [l, l, l, s, s, l, s, l, s, s, l, l], iso(1988, 8, 14)),
+                PackedHijriYearInfo::new(1410, [s, l, l, s, l, s, l, s, l, s, s, l], iso(1989, 8, 4)),
+                PackedHijriYearInfo::new(1411, [l, l, s, l, s, l, s, l, s, l, s, s], iso(1990, 7, 24)),
+                PackedHijriYearInfo::new(1412, [l, l, s, l, s, l, s, l, s, l, l, s], iso(1991, 7, 13)),
+                PackedHijriYearInfo::new(1413, [l, s, l, s, s, l, s, l, s, l, l, l], iso(1992, 7, 2)),
+                PackedHijriYearInfo::new(1414, [s, l, s, s, l, s, l, s, s, l, l, l], iso(1993, 6, 22)),
+                PackedHijriYearInfo::new(1415, [l, l, s, s, s, l, s, s, s, l, l, l], iso(1994, 6, 11)),
+                PackedHijriYearInfo::new(1416, [l, l, s, l, s, s, l, s, s, l, l, s], iso(1995, 5, 31)),
+                PackedHijriYearInfo::new(1417, [l, l, l, s, s, l, s, l, s, l, s, s], iso(1996, 5, 19)),
+                PackedHijriYearInfo::new(1418, [l, l, s, l, l, s, l, s, s, l, l, s], iso(1997, 5, 8)),
+                PackedHijriYearInfo::new(1419, [s, l, s, l, s, l, l, s, s, l, l, l], iso(1998, 4, 28)),
+                PackedHijriYearInfo::new(1420, [s, s, l, s, l, s, l, l, s, l, l, s], iso(1999, 4, 18)),
+                PackedHijriYearInfo::new(1421, [l, s, s, l, s, s, l, l, s, l, l, l], iso(2000, 4, 6)),
+                PackedHijriYearInfo::new(1422, [s, l, s, s, l, s, s, l, s, l, l, l], iso(2001, 3, 27)),
+                PackedHijriYearInfo::new(1423, [s, l, l, s, s, l, s, l, s, l, s, l], iso(2002, 3, 16)),
+                PackedHijriYearInfo::new(1424, [l, s, l, s, l, s, l, s, l, s, l, s], iso(2003, 3, 5)),
+                PackedHijriYearInfo::new(1425, [l, s, l, l, s, l, l, s, s, l, s, l], iso(2004, 2, 22)),
+                PackedHijriYearInfo::new(1426, [s, s, l, s, l, l, l, s, l, l, s, s], iso(2005, 2, 11)),
+                PackedHijriYearInfo::new(1427, [l, s, s, l, s, l, l, l, s, l, s, l], iso(2006, 1, 31)),
+                PackedHijriYearInfo::new(1428, [s, l, s, s, s, l, l, s, l, l, l, s], iso(2007, 1, 21)),
+                PackedHijriYearInfo::new(1429, [l, s, l, s, s, s, l, l, s, l, l, s], iso(2008, 1, 10)),
+                PackedHijriYearInfo::new(1430, [l, l, s, s, l, s, l, s, s, l, l, s], iso(2008, 12, 29)),
+                PackedHijriYearInfo::new(1431, [l, l, s, l, s, l, s, l, s, s, l, s], iso(2009, 12, 18)),
+                PackedHijriYearInfo::new(1432, [l, l, s, l, l, l, s, l, s, s, l, s], iso(2010, 12, 7)),
+                PackedHijriYearInfo::new(1433, [s, l, s, l, l, l, s, l, s, l, s, l], iso(2011, 11, 27)),
+                PackedHijriYearInfo::new(1434, [s, s, l, s, l, l, s, l, l, s, l, s], iso(2012, 11, 16)),
+                PackedHijriYearInfo::new(1435, [s, l, s, l, s, l, s, l, l, l, s, l], iso(2013, 11, 5)),
+                PackedHijriYearInfo::new(1436, [s, l, s, s, l, s, l, s, l, s, l, l], iso(2014, 10, 26)),
+                PackedHijriYearInfo::new(1437, [s, l, l, s, l, s, s, l, s, s, l, l], iso(2015, 10, 15)),
+                PackedHijriYearInfo::new(1438, [s, l, l, l, s, l, s, s, l, s, s, l], iso(2016, 10, 3)),
+                PackedHijriYearInfo::new(1439, [s, l, l, l, l, s, l, s, s, l, s, s], iso(2017, 9, 22)),
+                PackedHijriYearInfo::new(1440, [l, s, l, l, l, s, l, l, s, s, l, s], iso(2018, 9, 11)),
+                PackedHijriYearInfo::new(1441, [s, l, s, l, l, s, l, l, s, l, s, l], iso(2019, 9, 1)),
+                PackedHijriYearInfo::new(1442, [s, s, l, s, l, s, l, l, s, l, l, s], iso(2020, 8, 21)),
+                PackedHijriYearInfo::new(1443, [s, l, l, s, s, l, s, l, l, s, l, s], iso(2021, 8, 10)),
+                PackedHijriYearInfo::new(1444, [l, l, s, l, s, s, l, s, l, s, l, s], iso(2022, 7, 30)),
+                PackedHijriYearInfo::new(1445, [l, l, l, s, l, s, s, l, s, l, s, s], iso(2023, 7, 19)),
+                PackedHijriYearInfo::new(1446, [l, l, l, s, l, l, s, l, s, s, s, l], iso(2024, 7, 7)),
+            ]
+        };
+        if let Some(&packed) = usize::try_from(year - 1300).ok().and_then(|i| DATA.get(i)) {
+            HijriYearInfo::unpack(year, packed)
+        } else {
+            HijriYearInfo {
+                value: year,
+                month_lengths: core::array::from_fn(|i| {
+                    HijriTabular::days_in_provided_month(year, i as u8 + 1) == 30
+                }),
+                start_day: calendrical_calculations::islamic::fixed_from_tabular_islamic(
+                    year,
+                    1,
+                    1,
+                    ISLAMIC_EPOCH_FRIDAY,
+                ),
+            }
+        }
+    }
+}
+
+impl HijriQamari {
+    pub(crate) const DEBUG_NAME: &'static str = "Hijri (Qamari)";
+}
+
+impl Date<HijriQamari> {
+    /// Construct new Hijri Qamari Date.
+    ///
+    /// ```rust
+    /// use icu::calendar::cal::HijriQamari;
+    /// use icu::calendar::Date;
+    ///
+    /// let date_hijri =
+    ///     Date::try_new_qamari(1392, 4, 25)
+    ///         .expect("Failed to initialize Hijri Date instance.");
+    ///
+    /// assert_eq!(date_hijri.era_year().year, 1392);
+    /// assert_eq!(date_hijri.month().ordinal, 4);
+    /// assert_eq!(date_hijri.day_of_month().0, 25);
+    /// ```
+    pub fn try_new_qamari(
+        year: i32,
+        month: u8,
+        day: u8,
+    ) -> Result<Date<HijriQamari>, RangeError> {
+        let y = HijriQamari.load_or_compute_info(year);
+        Ok(Date::from_raw(
+            HijriQamariDateInner(ArithmeticDate::new_from_ordinals(y, month, day)?),
+            HijriQamari,
+        ))
+    }
+}
+
 /// The inner date type used for representing [`Date`]s of [`HijriTabular`]. See [`Date`] and [`HijriTabular`] for more details.
 
 #[derive(Copy, Clone, Debug, Hash, Eq, PartialEq, PartialOrd, Ord)]
@@ -1515,6 +1937,174 @@ mod test {
             year: 1460,
             month: 10,
             day: 13,
+        },
+        DateCase {
+            year: 1518,
+            month: 3,
+            day: 5,
+        },
+    ];
+
+    static QAMARI_CASES: [DateCase; 33] = [
+        DateCase {
+            year: -1245,
+            month: 12,
+            day: 9,
+        },
+        DateCase {
+            year: -813,
+            month: 2,
+            day: 23,
+        },
+        DateCase {
+            year: -568,
+            month: 4,
+            day: 1,
+        },
+        DateCase {
+            year: -501,
+            month: 4,
+            day: 6,
+        },
+        DateCase {
+            year: -157,
+            month: 10,
+            day: 17,
+        },
+        DateCase {
+            year: -47,
+            month: 6,
+            day: 3,
+        },
+        DateCase {
+            year: 75,
+            month: 7,
+            day: 13,
+        },
+        DateCase {
+            year: 403,
+            month: 10,
+            day: 5,
+        },
+        DateCase {
+            year: 489,
+            month: 5,
+            day: 22,
+        },
+        DateCase {
+            year: 586,
+            month: 2,
+            day: 7,
+        },
+        DateCase {
+            year: 637,
+            month: 8,
+            day: 7,
+        },
+        DateCase {
+            year: 687,
+            month: 2,
+            day: 20,
+        },
+        DateCase {
+            year: 697,
+            month: 7,
+            day: 7,
+        },
+        DateCase {
+            year: 793,
+            month: 7,
+            day: 1,
+        },
+        DateCase {
+            year: 839,
+            month: 7,
+            day: 6,
+        },
+        DateCase {
+            year: 897,
+            month: 6,
+            day: 1,
+        },
+        DateCase {
+            year: 960,
+            month: 9,
+            day: 30,
+        },
+        DateCase {
+            year: 967,
+            month: 5,
+            day: 27,
+        },
+        DateCase {
+            year: 1058,
+            month: 5,
+            day: 18,
+        },
+        DateCase {
+            year: 1091,
+            month: 6,
+            day: 2,
+        },
+        DateCase {
+            year: 1128,
+            month: 8,
+            day: 4,
+        },
+        DateCase {
+            year: 1182,
+            month: 2,
+            day: 3,
+        },
+        DateCase {
+            year: 1234,
+            month: 10,
+            day: 10,
+        },
+        DateCase {
+            year: 1255,
+            month: 1,
+            day: 11,
+        },
+        DateCase {
+            year: 1321,
+            month: 1,
+            day: 20,
+        },
+        DateCase {
+            year: 1348,
+            month: 3,
+            day: 19,
+        },
+        DateCase {
+            year: 1360,
+            month: 9,
+            day: 7,
+        },
+        DateCase {
+            year: 1362,
+            month: 4,
+            day: 13,
+        },
+        DateCase {
+            year: 1362,
+            month: 10,
+            day: 7,
+        },
+        DateCase {
+            year: 1412,
+            month: 9,
+            day: 13,
+        },
+        DateCase {
+            year: 1416,
+            month: 10,
+            day: 5,
+        },
+        DateCase {
+            year: 1460,
+            month: 10,
+            day: 12,
         },
         DateCase {
             year: 1518,
@@ -2129,6 +2719,26 @@ mod test {
     fn test_rd_from_saudi_hijri() {
         for (case, f_date) in UMMALQURA_CASES.iter().zip(TEST_RD.iter()) {
             let date = Date::try_new_ummalqura(case.year, case.month, case.day).unwrap();
+            assert_eq!(date.to_rata_die(), RataDie::new(*f_date), "{case:?}");
+        }
+    }
+
+    #[test]
+    fn test_qamari_from_rd() {
+        let calendar = HijriQamari::new();
+        let calendar = Ref(&calendar);
+        for (case, f_date) in QAMARI_CASES.iter().zip(TEST_RD.iter()) {
+            let date = Date::try_new_qamari(case.year, case.month, case.day).unwrap();
+            let date_rd = Date::from_rata_die(RataDie::new(*f_date), calendar);
+
+            assert_eq!(date, date_rd, "{case:?}");
+        }
+    }
+
+    #[test]
+    fn test_rd_from_qamari() {
+        for (case, f_date) in QAMARI_CASES.iter().zip(TEST_RD.iter()) {
+            let date = Date::try_new_qamari(case.year, case.month, case.day).unwrap();
             assert_eq!(date.to_rata_die(), RataDie::new(*f_date), "{case:?}");
         }
     }

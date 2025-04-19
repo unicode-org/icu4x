@@ -20,7 +20,9 @@ enum_keyword!(
         /// Hijri calendar, tabular (intercalary years \[2,5,7,10,13,16,18,21,24,26,29] - civil epoch)
         Civil,
         /// Hijri calendar, Saudi Arabia sighting
-        Rgsa
+        Rgsa,
+        /// Hijri calendar, Iran sighting
+        Qamari
 });
 
 #[cfg(feature = "alloc")]
@@ -56,7 +58,8 @@ enum_keyword!(
              ("umalqura" => Umalqura),
              ("tbla" => Tbla),
              ("civil" => Civil),
-             ("rgsa" => Rgsa)
+             ("rgsa" => Rgsa),
+             ("qamari" => Qamari)
         }),
         /// ISO calendar (Gregorian calendar using the ISO 8601 calendar week rules)
         ("iso8601" => Iso8601),
