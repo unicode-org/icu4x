@@ -32,9 +32,11 @@ use calendrical_calculations::islamic::{ISLAMIC_EPOCH_FRIDAY, ISLAMIC_EPOCH_THUR
 use calendrical_calculations::rata_die::RataDie;
 use icu_provider::marker::ErasedMarker;
 use icu_provider::prelude::*;
+use iran_data::{HIJRI_IRAN_DATA, HIJRI_IRAN_DATA_STARTING_YEAR};
 use tinystr::tinystr;
 use ummalqura_data::{UMMALQURA_DATA, UMMALQURA_DATA_STARTING_YEAR};
 
+mod iran_data;
 mod ummalqura_data;
 
 fn era_year(year: i32) -> EraYear {
@@ -99,6 +101,22 @@ impl HijriSimulatedLocation {
 #[derive(Clone, Debug, Default)]
 #[non_exhaustive]
 pub struct HijriUmmAlQura;
+
+/// The Hijri Calendar in Iran
+///
+/// This calendar is the official Islamic calendar in Iran.
+///
+/// # Era codes
+///
+/// This calendar uses a single era code `ah`, Anno Hegirae. Dates before this era use negative years.
+///
+/// # Month codes
+///
+/// This calendar is a pure lunar calendar with no leap months. It uses month codes
+/// `"M01" - "M12"`.
+#[derive(Clone, Debug, Default)]
+#[non_exhaustive]
+pub struct HijriIran;
 
 /// The [tabular Hijri Calendar](https://en.wikipedia.org/wiki/Tabular_Islamic_calendar).
 ///
@@ -178,6 +196,13 @@ impl HijriSimulated {
 
 impl HijriUmmAlQura {
     /// Creates a new [`HijriUmmAlQura`].
+    pub const fn new() -> Self {
+        Self
+    }
+}
+
+impl HijriIran {
+    /// Creates a new [`HijriIran`].
     pub const fn new() -> Self {
         Self
     }
@@ -838,6 +863,214 @@ impl Date<HijriUmmAlQura> {
     }
 }
 
+#[derive(Copy, Clone, Debug, Hash, Eq, PartialEq, PartialOrd, Ord)]
+/// The inner date type used for representing [`Date`]s of [`HijriIran`]. See [`Date`] and [`HijriIran`] for more details.
+pub struct HijriIranDateInner(ArithmeticDate<HijriIran>);
+
+impl crate::cal::scaffold::UnstableSealed for HijriIran {}
+impl CalendarArithmetic for HijriIran {
+    type YearInfo = HijriYearInfo;
+
+    fn days_in_provided_month(year: Self::YearInfo, month: u8) -> u8 {
+        year.days_in_month(month)
+    }
+
+    fn months_in_provided_year(_year: HijriYearInfo) -> u8 {
+        12
+    }
+
+    fn days_in_provided_year(year: Self::YearInfo) -> u16 {
+        year.days_in_year()
+    }
+
+    // As an true lunar calendar, it does not have leap years.
+    fn provided_year_is_leap(year: Self::YearInfo) -> bool {
+        year.days_in_year() != SHORT_YEAR_LEN
+    }
+
+    fn last_month_day_in_provided_year(year: HijriYearInfo) -> (u8, u8) {
+        let days = Self::days_in_provided_month(year, 12);
+
+        (12, days)
+    }
+}
+
+impl Calendar for HijriIran {
+    type DateInner = HijriIranDateInner;
+    type Year = types::EraYear;
+    fn from_codes(
+        &self,
+        era: Option<&str>,
+        year: i32,
+        month_code: types::MonthCode,
+        day: u8,
+    ) -> Result<Self::DateInner, DateError> {
+        let year = match era {
+            Some("islamic-iran" | "ah") | None => year,
+            Some(_) => return Err(DateError::UnknownEra),
+        };
+        let Some((month, false)) = month_code.parsed() else {
+            return Err(DateError::UnknownMonthCode(month_code));
+        };
+        Ok(HijriIranDateInner(ArithmeticDate::new_from_ordinals(
+            self.load_or_compute_info(year),
+            month,
+            day,
+        )?))
+    }
+
+    fn from_rata_die(&self, rd: RataDie) -> Self::DateInner {
+        // +1 because the epoch is new year of year 1
+        // truncating instead of flooring does not matter, as this is well-defined for
+        // positive years only
+        let extended_year = ((rd - calendrical_calculations::islamic::ISLAMIC_EPOCH_FRIDAY) as f64
+            / calendrical_calculations::islamic::MEAN_YEAR_LENGTH)
+            as i32
+            + 1;
+
+        let year = self.load_or_compute_info(extended_year);
+
+        let y = if rd < year.start_day {
+            self.load_or_compute_info(extended_year - 1)
+        } else {
+            let next_year = self.load_or_compute_info(extended_year + 1);
+            if rd < next_year.start_day {
+                year
+            } else {
+                next_year
+            }
+        };
+        let (m, d) = y.md_from_rd(rd);
+        HijriIranDateInner(ArithmeticDate::new_unchecked(y, m, d))
+    }
+
+    fn to_rata_die(&self, date: &Self::DateInner) -> RataDie {
+        date.0.year.md_to_rd(date.0.month, date.0.day)
+    }
+
+    fn from_iso(&self, iso: IsoDateInner) -> Self::DateInner {
+        self.from_rata_die(Iso.to_rata_die(&iso))
+    }
+
+    fn to_iso(&self, date: &Self::DateInner) -> IsoDateInner {
+        Iso.from_rata_die(self.to_rata_die(date))
+    }
+
+    fn months_in_year(&self, date: &Self::DateInner) -> u8 {
+        date.0.months_in_year()
+    }
+
+    fn days_in_year(&self, date: &Self::DateInner) -> u16 {
+        date.0.days_in_year()
+    }
+
+    fn days_in_month(&self, date: &Self::DateInner) -> u8 {
+        date.0.days_in_month()
+    }
+
+    fn offset_date(&self, date: &mut Self::DateInner, offset: DateDuration<Self>) {
+        date.0.offset_date(offset, &HijriIran)
+    }
+
+    fn until(
+        &self,
+        date1: &Self::DateInner,
+        date2: &Self::DateInner,
+        _calendar2: &Self,
+        _largest_unit: DateDurationUnit,
+        _smallest_unit: DateDurationUnit,
+    ) -> DateDuration<Self> {
+        date1.0.until(date2.0, _largest_unit, _smallest_unit)
+    }
+
+    fn debug_name(&self) -> &'static str {
+        Self::DEBUG_NAME
+    }
+
+    fn year_info(&self, date: &Self::DateInner) -> Self::Year {
+        era_year(self.extended_year(date))
+    }
+
+    fn extended_year(&self, date: &Self::DateInner) -> i32 {
+        date.0.extended_year()
+    }
+
+    fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
+        Self::provided_year_is_leap(date.0.year)
+    }
+
+    fn month(&self, date: &Self::DateInner) -> types::MonthInfo {
+        date.0.month()
+    }
+
+    fn day_of_month(&self, date: &Self::DateInner) -> types::DayOfMonth {
+        date.0.day_of_month()
+    }
+
+    fn day_of_year(&self, date: &Self::DateInner) -> types::DayOfYear {
+        date.0.day_of_year()
+    }
+
+    fn calendar_algorithm(&self) -> Option<crate::preferences::CalendarAlgorithm> {
+        None
+    }
+}
+
+impl PrecomputedDataSource<HijriYearInfo> for HijriIran {
+    fn load_or_compute_info(&self, year: i32) -> HijriYearInfo {
+        if let Some(&packed) = usize::try_from(year - HIJRI_IRAN_DATA_STARTING_YEAR)
+            .ok()
+            .and_then(|i| HIJRI_IRAN_DATA.get(i))
+        {
+            HijriYearInfo::unpack(year, packed)
+        } else {
+            HijriYearInfo {
+                value: year,
+                month_lengths: core::array::from_fn(|i| {
+                    HijriTabular::days_in_provided_month(year, i as u8 + 1) == 30
+                }),
+                start_day: calendrical_calculations::islamic::fixed_from_tabular_islamic(
+                    year,
+                    1,
+                    1,
+                    ISLAMIC_EPOCH_FRIDAY,
+                ),
+            }
+        }
+    }
+}
+
+impl HijriIran {
+    pub(crate) const DEBUG_NAME: &'static str = "Hijri (Iran)";
+}
+
+impl Date<HijriIran> {
+    /// Construct new Hijri Iran Date.
+    ///
+    /// ```rust
+    /// use icu::calendar::Date;
+    ///
+    /// let date_hijri =
+    ///     Date::try_new_hijri_iran(1392, 4, 25)
+    ///         .expect("Failed to initialize Hijri Date instance.");
+    ///
+    /// assert_eq!(date_hijri.era_year().year, 1392);
+    /// assert_eq!(date_hijri.month().ordinal, 4);
+    /// assert_eq!(date_hijri.day_of_month().0, 25);
+    /// ```
+    pub fn try_new_hijri_iran(
+        year: i32,
+        month: u8,
+        day: u8,
+    ) -> Result<Date<HijriIran>, RangeError> {
+        let y = HijriIran.load_or_compute_info(year);
+        Ok(Date::from_raw(
+            HijriIranDateInner(ArithmeticDate::new_from_ordinals(y, month, day)?),
+            HijriIran,
+        ))
+    }
+}
+
 /// The inner date type used for representing [`Date`]s of [`HijriTabular`]. See [`Date`] and [`HijriTabular`] for more details.
 
 #[derive(Copy, Clone, Debug, Hash, Eq, PartialEq, PartialOrd, Ord)]
@@ -1225,6 +1458,174 @@ mod test {
             year: 1460,
             month: 10,
             day: 13,
+        },
+        DateCase {
+            year: 1518,
+            month: 3,
+            day: 5,
+        },
+    ];
+
+    static HIJRI_IRAN_CASES: [DateCase; 33] = [
+        DateCase {
+            year: -1245,
+            month: 12,
+            day: 9,
+        },
+        DateCase {
+            year: -813,
+            month: 2,
+            day: 23,
+        },
+        DateCase {
+            year: -568,
+            month: 4,
+            day: 1,
+        },
+        DateCase {
+            year: -501,
+            month: 4,
+            day: 6,
+        },
+        DateCase {
+            year: -157,
+            month: 10,
+            day: 17,
+        },
+        DateCase {
+            year: -47,
+            month: 6,
+            day: 3,
+        },
+        DateCase {
+            year: 75,
+            month: 7,
+            day: 13,
+        },
+        DateCase {
+            year: 403,
+            month: 10,
+            day: 5,
+        },
+        DateCase {
+            year: 489,
+            month: 5,
+            day: 22,
+        },
+        DateCase {
+            year: 586,
+            month: 2,
+            day: 7,
+        },
+        DateCase {
+            year: 637,
+            month: 8,
+            day: 7,
+        },
+        DateCase {
+            year: 687,
+            month: 2,
+            day: 20,
+        },
+        DateCase {
+            year: 697,
+            month: 7,
+            day: 7,
+        },
+        DateCase {
+            year: 793,
+            month: 7,
+            day: 1,
+        },
+        DateCase {
+            year: 839,
+            month: 7,
+            day: 6,
+        },
+        DateCase {
+            year: 897,
+            month: 6,
+            day: 1,
+        },
+        DateCase {
+            year: 960,
+            month: 9,
+            day: 30,
+        },
+        DateCase {
+            year: 967,
+            month: 5,
+            day: 27,
+        },
+        DateCase {
+            year: 1058,
+            month: 5,
+            day: 18,
+        },
+        DateCase {
+            year: 1091,
+            month: 6,
+            day: 2,
+        },
+        DateCase {
+            year: 1128,
+            month: 8,
+            day: 4,
+        },
+        DateCase {
+            year: 1182,
+            month: 2,
+            day: 3,
+        },
+        DateCase {
+            year: 1234,
+            month: 10,
+            day: 10,
+        },
+        DateCase {
+            year: 1255,
+            month: 1,
+            day: 11,
+        },
+        DateCase {
+            year: 1321,
+            month: 1,
+            day: 20,
+        },
+        DateCase {
+            year: 1348,
+            month: 3,
+            day: 19,
+        },
+        DateCase {
+            year: 1360,
+            month: 9,
+            day: 7,
+        },
+        DateCase {
+            year: 1362,
+            month: 4,
+            day: 13,
+        },
+        DateCase {
+            year: 1362,
+            month: 10,
+            day: 7,
+        },
+        DateCase {
+            year: 1412,
+            month: 9,
+            day: 12,
+        },
+        DateCase {
+            year: 1416,
+            month: 10,
+            day: 6,
+        },
+        DateCase {
+            year: 1460,
+            month: 10,
+            day: 12,
         },
         DateCase {
             year: 1518,
@@ -1839,6 +2240,26 @@ mod test {
     fn test_rd_from_saudi_hijri() {
         for (case, f_date) in UMMALQURA_CASES.iter().zip(TEST_RD.iter()) {
             let date = Date::try_new_ummalqura(case.year, case.month, case.day).unwrap();
+            assert_eq!(date.to_rata_die(), RataDie::new(*f_date), "{case:?}");
+        }
+    }
+
+    #[test]
+    fn test_hijri_iran_from_rd() {
+        let calendar = HijriIran::new();
+        let calendar = Ref(&calendar);
+        for (case, f_date) in HIJRI_IRAN_CASES.iter().zip(TEST_RD.iter()) {
+            let date = Date::try_new_hijri_iran(case.year, case.month, case.day).unwrap();
+            let date_rd = Date::from_rata_die(RataDie::new(*f_date), calendar);
+
+            assert_eq!(date, date_rd, "{case:?}");
+        }
+    }
+
+    #[test]
+    fn test_rd_from_hijri_iran() {
+        for (case, f_date) in HIJRI_IRAN_CASES.iter().zip(TEST_RD.iter()) {
+            let date = Date::try_new_hijri_iran(case.year, case.month, case.day).unwrap();
             assert_eq!(date.to_rata_die(), RataDie::new(*f_date), "{case:?}");
         }
     }
