@@ -25,7 +25,7 @@ export class DateFormatter {
      *
      * See the [Rust documentation for `D`](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.D.html) for more information.
      *
-     * Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.D.html#method.with_alignment), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.D.html#method.for_length), [3](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.D.html#method.with_length)
+     * Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.D.html#method.with_alignment), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.D.html#method.for_length)
      */
     static createD(locale: Locale, length: DateTimeLength | null, alignment: DateTimeAlignment | null): DateFormatter;
 
@@ -34,7 +34,7 @@ export class DateFormatter {
      *
      * See the [Rust documentation for `D`](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.D.html) for more information.
      *
-     * Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.D.html#method.with_alignment), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.D.html#method.for_length), [3](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.D.html#method.with_length)
+     * Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.D.html#method.with_alignment), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.D.html#method.for_length)
      */
     static createDWithProvider(provider: DataProvider, locale: Locale, length: DateTimeLength | null, alignment: DateTimeAlignment | null): DateFormatter;
 
@@ -43,7 +43,7 @@ export class DateFormatter {
      *
      * See the [Rust documentation for `MD`](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.MD.html) for more information.
      *
-     * Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.MD.html#method.with_alignment), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.MD.html#method.for_length), [3](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.MD.html#method.with_length)
+     * Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.MD.html#method.with_alignment), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.MD.html#method.for_length)
      */
     static createMd(locale: Locale, length: DateTimeLength | null, alignment: DateTimeAlignment | null): DateFormatter;
 
@@ -52,7 +52,7 @@ export class DateFormatter {
      *
      * See the [Rust documentation for `MD`](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.MD.html) for more information.
      *
-     * Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.MD.html#method.with_alignment), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.MD.html#method.for_length), [3](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.MD.html#method.with_length)
+     * Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.MD.html#method.with_alignment), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.MD.html#method.for_length)
      */
     static createMdWithProvider(provider: DataProvider, locale: Locale, length: DateTimeLength | null, alignment: DateTimeAlignment | null): DateFormatter;
 
@@ -61,7 +61,7 @@ export class DateFormatter {
      *
      * See the [Rust documentation for `YMD`](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMD.html) for more information.
      *
-     * Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMD.html#method.with_alignment), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMD.html#method.with_year_style), [3](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMD.html#method.for_length), [4](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMD.html#method.with_length)
+     * Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMD.html#method.with_alignment), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMD.html#method.with_year_style), [3](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMD.html#method.for_length)
      */
     static createYmd(locale: Locale, length: DateTimeLength | null, alignment: DateTimeAlignment | null, yearStyle: YearStyle | null): DateFormatter;
 
@@ -70,7 +70,7 @@ export class DateFormatter {
      *
      * See the [Rust documentation for `YMD`](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMD.html) for more information.
      *
-     * Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMD.html#method.with_alignment), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMD.html#method.with_year_style), [3](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMD.html#method.for_length), [4](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMD.html#method.with_length)
+     * Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMD.html#method.with_alignment), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMD.html#method.with_year_style), [3](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMD.html#method.for_length)
      */
     static createYmdWithProvider(provider: DataProvider, locale: Locale, length: DateTimeLength | null, alignment: DateTimeAlignment | null, yearStyle: YearStyle | null): DateFormatter;
 
@@ -79,7 +79,7 @@ export class DateFormatter {
      *
      * See the [Rust documentation for `DE`](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.DE.html) for more information.
      *
-     * Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.DE.html#method.with_alignment), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.DE.html#method.for_length), [3](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.DE.html#method.with_length)
+     * Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.DE.html#method.with_alignment), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.DE.html#method.for_length)
      */
     static createDe(locale: Locale, length: DateTimeLength | null, alignment: DateTimeAlignment | null): DateFormatter;
 
@@ -88,7 +88,7 @@ export class DateFormatter {
      *
      * See the [Rust documentation for `DE`](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.DE.html) for more information.
      *
-     * Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.DE.html#method.with_alignment), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.DE.html#method.for_length), [3](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.DE.html#method.with_length)
+     * Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.DE.html#method.with_alignment), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.DE.html#method.for_length)
      */
     static createDeWithProvider(provider: DataProvider, locale: Locale, length: DateTimeLength | null, alignment: DateTimeAlignment | null): DateFormatter;
 
@@ -97,7 +97,7 @@ export class DateFormatter {
      *
      * See the [Rust documentation for `MDE`](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.MDE.html) for more information.
      *
-     * Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.MDE.html#method.with_alignment), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.MDE.html#method.for_length), [3](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.MDE.html#method.with_length)
+     * Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.MDE.html#method.with_alignment), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.MDE.html#method.for_length)
      */
     static createMde(locale: Locale, length: DateTimeLength | null, alignment: DateTimeAlignment | null): DateFormatter;
 
@@ -106,7 +106,7 @@ export class DateFormatter {
      *
      * See the [Rust documentation for `MDE`](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.MDE.html) for more information.
      *
-     * Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.MDE.html#method.with_alignment), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.MDE.html#method.for_length), [3](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.MDE.html#method.with_length)
+     * Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.MDE.html#method.with_alignment), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.MDE.html#method.for_length)
      */
     static createMdeWithProvider(provider: DataProvider, locale: Locale, length: DateTimeLength | null, alignment: DateTimeAlignment | null): DateFormatter;
 
@@ -115,7 +115,7 @@ export class DateFormatter {
      *
      * See the [Rust documentation for `YMDE`](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMDE.html) for more information.
      *
-     * Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMDE.html#method.with_alignment), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMDE.html#method.with_year_style), [3](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMDE.html#method.for_length), [4](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMDE.html#method.with_length)
+     * Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMDE.html#method.with_alignment), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMDE.html#method.with_year_style), [3](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMDE.html#method.for_length)
      */
     static createYmde(locale: Locale, length: DateTimeLength | null, alignment: DateTimeAlignment | null, yearStyle: YearStyle | null): DateFormatter;
 
@@ -124,7 +124,7 @@ export class DateFormatter {
      *
      * See the [Rust documentation for `YMDE`](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMDE.html) for more information.
      *
-     * Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMDE.html#method.with_alignment), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMDE.html#method.with_year_style), [3](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMDE.html#method.for_length), [4](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMDE.html#method.with_length)
+     * Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMDE.html#method.with_alignment), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMDE.html#method.with_year_style), [3](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMDE.html#method.for_length)
      */
     static createYmdeWithProvider(provider: DataProvider, locale: Locale, length: DateTimeLength | null, alignment: DateTimeAlignment | null, yearStyle: YearStyle | null): DateFormatter;
 
@@ -133,7 +133,7 @@ export class DateFormatter {
      *
      * See the [Rust documentation for `E`](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.E.html) for more information.
      *
-     * Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.E.html#method.for_length), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.E.html#method.with_length)
+     * Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.E.html#method.for_length)
      */
     static createE(locale: Locale, length: DateTimeLength | null): DateFormatter;
 
@@ -142,7 +142,7 @@ export class DateFormatter {
      *
      * See the [Rust documentation for `E`](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.E.html) for more information.
      *
-     * Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.E.html#method.for_length), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.E.html#method.with_length)
+     * Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.E.html#method.for_length)
      */
     static createEWithProvider(provider: DataProvider, locale: Locale, length: DateTimeLength | null): DateFormatter;
 
@@ -151,7 +151,7 @@ export class DateFormatter {
      *
      * See the [Rust documentation for `M`](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.M.html) for more information.
      *
-     * Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.M.html#method.with_alignment), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.M.html#method.for_length), [3](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.M.html#method.with_length)
+     * Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.M.html#method.with_alignment), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.M.html#method.for_length)
      */
     static createM(locale: Locale, length: DateTimeLength | null, alignment: DateTimeAlignment | null): DateFormatter;
 
@@ -160,7 +160,7 @@ export class DateFormatter {
      *
      * See the [Rust documentation for `M`](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.M.html) for more information.
      *
-     * Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.M.html#method.with_alignment), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.M.html#method.for_length), [3](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.M.html#method.with_length)
+     * Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.M.html#method.with_alignment), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.M.html#method.for_length)
      */
     static createMWithProvider(provider: DataProvider, locale: Locale, length: DateTimeLength | null, alignment: DateTimeAlignment | null): DateFormatter;
 
@@ -169,7 +169,7 @@ export class DateFormatter {
      *
      * See the [Rust documentation for `YM`](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YM.html) for more information.
      *
-     * Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YM.html#method.with_alignment), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YM.html#method.with_year_style), [3](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YM.html#method.for_length), [4](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YM.html#method.with_length)
+     * Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YM.html#method.with_alignment), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YM.html#method.with_year_style), [3](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YM.html#method.for_length)
      */
     static createYm(locale: Locale, length: DateTimeLength | null, alignment: DateTimeAlignment | null, yearStyle: YearStyle | null): DateFormatter;
 
@@ -178,7 +178,7 @@ export class DateFormatter {
      *
      * See the [Rust documentation for `YM`](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YM.html) for more information.
      *
-     * Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YM.html#method.with_alignment), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YM.html#method.with_year_style), [3](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YM.html#method.for_length), [4](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YM.html#method.with_length)
+     * Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YM.html#method.with_alignment), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YM.html#method.with_year_style), [3](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YM.html#method.for_length)
      */
     static createYmWithProvider(provider: DataProvider, locale: Locale, length: DateTimeLength | null, alignment: DateTimeAlignment | null, yearStyle: YearStyle | null): DateFormatter;
 
@@ -187,7 +187,7 @@ export class DateFormatter {
      *
      * See the [Rust documentation for `Y`](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.Y.html) for more information.
      *
-     * Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.Y.html#method.with_alignment), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.Y.html#method.with_year_style), [3](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.Y.html#method.for_length), [4](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.Y.html#method.with_length)
+     * Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.Y.html#method.with_alignment), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.Y.html#method.with_year_style), [3](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.Y.html#method.for_length)
      */
     static createY(locale: Locale, length: DateTimeLength | null, alignment: DateTimeAlignment | null, yearStyle: YearStyle | null): DateFormatter;
 
@@ -196,7 +196,7 @@ export class DateFormatter {
      *
      * See the [Rust documentation for `Y`](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.Y.html) for more information.
      *
-     * Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.Y.html#method.with_alignment), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.Y.html#method.with_year_style), [3](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.Y.html#method.for_length), [4](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.Y.html#method.with_length)
+     * Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.Y.html#method.with_alignment), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.Y.html#method.with_year_style), [3](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.Y.html#method.for_length)
      */
     static createYWithProvider(provider: DataProvider, locale: Locale, length: DateTimeLength | null, alignment: DateTimeAlignment | null, yearStyle: YearStyle | null): DateFormatter;
 

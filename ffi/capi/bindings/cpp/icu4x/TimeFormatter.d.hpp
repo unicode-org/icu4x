@@ -44,7 +44,7 @@ public:
    *
    * See the [Rust documentation for `T`](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.T.html) for more information.
    *
-   * Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.T.html#method.hm), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.T.html#method.hms), [3](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.T.html#method.with_time_precision), [4](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.T.html#method.with_alignment), [5](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.T.html#method.for_length), [6](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.T.html#method.with_length)
+   * Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.T.html#method.with_time_precision), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.T.html#method.with_alignment), [3](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.T.html#method.for_length)
    */
   inline static diplomat::result<std::unique_ptr<icu4x::TimeFormatter>, icu4x::DateTimeFormatterLoadError> create(const icu4x::Locale& locale, std::optional<icu4x::DateTimeLength> length, std::optional<icu4x::TimePrecision> time_precision, std::optional<icu4x::DateTimeAlignment> alignment);
 
@@ -53,7 +53,7 @@ public:
    *
    * See the [Rust documentation for `T`](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.T.html) for more information.
    *
-   * Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.T.html#method.hm), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.T.html#method.hms), [3](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.T.html#method.with_time_precision), [4](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.T.html#method.with_alignment), [5](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.T.html#method.for_length), [6](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.T.html#method.with_length)
+   * Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.T.html#method.with_time_precision), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.T.html#method.with_alignment), [3](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.T.html#method.for_length)
    */
   inline static diplomat::result<std::unique_ptr<icu4x::TimeFormatter>, icu4x::DateTimeFormatterLoadError> create_with_provider(const icu4x::DataProvider& provider, const icu4x::Locale& locale, std::optional<icu4x::DateTimeLength> length, std::optional<icu4x::TimePrecision> time_precision, std::optional<icu4x::DateTimeAlignment> alignment);
 
