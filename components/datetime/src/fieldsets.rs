@@ -307,6 +307,17 @@ macro_rules! impl_date_to_time_helpers {
                 }
             }
             /// Shorthand to associate this field set with [`TimePrecision::Minute`].
+            ///
+            /// # Examples
+            ///
+            /// ```
+            #[doc = concat!("use icu::datetime::fieldsets::", stringify!($type), ";")]
+            /// use icu::datetime::options::TimePrecision;
+            ///
+            #[doc = concat!("let fs1 = ", stringify!($type), "::medium().with_time(TimePrecision::Minute);")]
+            #[doc = concat!("let fs2 = ", stringify!($type), "::medium().with_time_hm();")]
+            /// assert_eq!(fs1, fs2);
+            /// ```
             pub fn with_time_hm(self) -> $type_time {
                 $type_time {
                     length: self.length,
@@ -316,10 +327,42 @@ macro_rules! impl_date_to_time_helpers {
                 }
             }
             /// Shorthand to associate this field set with [`TimePrecision::Second`].
+            ///
+            /// # Examples
+            ///
+            /// ```
+            #[doc = concat!("use icu::datetime::fieldsets::", stringify!($type), ";")]
+            /// use icu::datetime::options::TimePrecision;
+            ///
+            #[doc = concat!("let fs1 = ", stringify!($type), "::medium().with_time(TimePrecision::Second);")]
+            #[doc = concat!("let fs2 = ", stringify!($type), "::medium().with_time_hms();")]
+            /// assert_eq!(fs1, fs2);
+            /// ```
             pub fn with_time_hms(self) -> $type_time {
                 $type_time {
                     length: self.length,
                     time_precision: Some(TimePrecision::Second),
+                    alignment: ternary!(self.alignment, Default::default(), $($alignment_yes)?),
+                    $(year_style: yes_to!(self.year_style, $yearstyle_yes),)?
+                }
+            }
+            /// Shorthand to associate this field set with [`TimePrecision::Subsecond`].
+            ///
+            /// # Examples
+            ///
+            /// ```
+            #[doc = concat!("use icu::datetime::fieldsets::", stringify!($type), ";")]
+            /// use icu::datetime::options::TimePrecision;
+            /// use icu::datetime::options::SubsecondDigits::S2;
+            ///
+            #[doc = concat!("let fs1 = ", stringify!($type), "::medium().with_time(TimePrecision::Subsecond(S2));")]
+            #[doc = concat!("let fs2 = ", stringify!($type), "::medium().with_time_hmss(S2);")]
+            /// assert_eq!(fs1, fs2);
+            /// ```
+            pub fn with_time_hmss(self, subsecond_digits: SubsecondDigits) -> $type_time {
+                $type_time {
+                    length: self.length,
+                    time_precision: Some(TimePrecision::Subsecond(subsecond_digits)),
                     alignment: ternary!(self.alignment, Default::default(), $($alignment_yes)?),
                     $(year_style: yes_to!(self.year_style, $yearstyle_yes),)?
                 }
