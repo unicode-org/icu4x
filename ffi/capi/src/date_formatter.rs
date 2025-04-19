@@ -51,6 +51,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::datetime::fieldsets::D::with_time, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::D::with_time_hm, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::D::with_time_hms, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::D::with_time_hmss, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::D::with_zone, FnInStruct, hidden)] // functionality is in the zoned formatter but rustlink is here
         #[cfg(feature = "compiled_data")]
         pub fn create_d(
@@ -84,6 +85,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::datetime::fieldsets::D::with_time, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::D::with_time_hm, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::D::with_time_hms, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::D::with_time_hmss, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::D::with_zone, FnInStruct, hidden)] // functionality is in the zoned formatter but rustlink is here
         #[cfg(feature = "buffer_provider")]
         pub fn create_d_with_provider(
@@ -119,6 +121,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::datetime::fieldsets::MD::with_time, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::MD::with_time_hm, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::MD::with_time_hms, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::MD::with_time_hmss, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::MD::with_zone, FnInStruct, hidden)] // functionality is in the zoned formatter but rustlink is here
         #[cfg(feature = "compiled_data")]
         pub fn create_md(
@@ -152,6 +155,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::datetime::fieldsets::MD::with_time, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::MD::with_time_hm, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::MD::with_time_hms, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::MD::with_time_hmss, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::MD::with_zone, FnInStruct, hidden)] // functionality is in the zoned formatter but rustlink is here
         #[cfg(feature = "buffer_provider")]
         pub fn create_md_with_provider(
@@ -188,6 +192,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::datetime::fieldsets::YMD::with_time, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMD::with_time_hm, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMD::with_time_hms, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::YMD::with_time_hmss, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMD::with_zone, FnInStruct, hidden)] // functionality is in the zoned formatter but rustlink is here
         #[diplomat::demo(default_constructor)]
         #[cfg(feature = "compiled_data")]
@@ -225,6 +230,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::datetime::fieldsets::YMD::with_time, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMD::with_time_hm, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMD::with_time_hms, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::YMD::with_time_hmss, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMD::with_zone, FnInStruct, hidden)] // functionality is in the zoned formatter but rustlink is here
         #[cfg(feature = "buffer_provider")]
         pub fn create_ymd_with_provider(
@@ -262,6 +268,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::datetime::fieldsets::DE::with_time, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::DE::with_time_hm, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::DE::with_time_hms, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::DE::with_time_hmss, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::DE::with_zone, FnInStruct, hidden)] // functionality is in the zoned formatter but rustlink is here
         #[cfg(feature = "compiled_data")]
         pub fn create_de(
@@ -295,6 +302,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::datetime::fieldsets::DE::with_time, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::DE::with_time_hm, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::DE::with_time_hms, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::DE::with_time_hmss, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::DE::with_zone, FnInStruct, hidden)] // functionality is in the zoned formatter but rustlink is here
         #[cfg(feature = "buffer_provider")]
         pub fn create_de_with_provider(
@@ -330,6 +338,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::datetime::fieldsets::MDE::with_time, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::MDE::with_time_hm, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::MDE::with_time_hms, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::MDE::with_time_hmss, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::MDE::with_zone, FnInStruct, hidden)] // functionality is in the zoned formatter but rustlink is here
         #[cfg(feature = "compiled_data")]
         pub fn create_mde(
@@ -363,6 +372,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::datetime::fieldsets::MDE::with_time, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::MDE::with_time_hm, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::MDE::with_time_hms, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::MDE::with_time_hmss, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::MDE::with_zone, FnInStruct, hidden)] // functionality is in the zoned formatter but rustlink is here
         #[cfg(feature = "buffer_provider")]
         pub fn create_mde_with_provider(
@@ -399,6 +409,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::datetime::fieldsets::YMDE::with_time, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMDE::with_time_hm, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMDE::with_time_hms, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::YMDE::with_time_hmss, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMDE::with_zone, FnInStruct, hidden)] // functionality is in the zoned formatter but rustlink is here
         #[cfg(feature = "compiled_data")]
         pub fn create_ymde(
@@ -435,6 +446,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::datetime::fieldsets::YMDE::with_time, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMDE::with_time_hm, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMDE::with_time_hms, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::YMDE::with_time_hmss, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMDE::with_zone, FnInStruct, hidden)] // functionality is in the zoned formatter but rustlink is here
         #[cfg(feature = "buffer_provider")]
         pub fn create_ymde_with_provider(
@@ -471,6 +483,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::datetime::fieldsets::E::with_time, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::E::with_time_hm, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::E::with_time_hms, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::E::with_time_hmss, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::E::with_zone, FnInStruct, hidden)] // functionality is in the zoned formatter but rustlink is here
         #[cfg(feature = "compiled_data")]
         pub fn create_e(
@@ -502,6 +515,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::datetime::fieldsets::E::with_time, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::E::with_time_hm, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::E::with_time_hms, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::E::with_time_hmss, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::E::with_zone, FnInStruct, hidden)] // functionality is in the zoned formatter but rustlink is here
         #[cfg(feature = "buffer_provider")]
         pub fn create_e_with_provider(
@@ -767,6 +781,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::datetime::fieldsets::D::with_time, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::D::with_time_hm, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::D::with_time_hms, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::D::with_time_hmss, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::D::with_zone, FnInStruct, hidden)] // functionality is in the zoned formatter but rustlink is here
         #[cfg(feature = "compiled_data")]
         pub fn create_d(
@@ -800,6 +815,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::datetime::fieldsets::D::with_time, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::D::with_time_hm, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::D::with_time_hms, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::D::with_time_hmss, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::D::with_zone, FnInStruct, hidden)] // functionality is in the zoned formatter but rustlink is here
         #[cfg(feature = "buffer_provider")]
         pub fn create_d_with_provider(
@@ -835,6 +851,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::datetime::fieldsets::MD::with_time, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::MD::with_time_hm, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::MD::with_time_hms, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::MD::with_time_hmss, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::MD::with_zone, FnInStruct, hidden)] // functionality is in the zoned formatter but rustlink is here
         #[cfg(feature = "compiled_data")]
         pub fn create_md(
@@ -868,6 +885,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::datetime::fieldsets::MD::with_time, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::MD::with_time_hm, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::MD::with_time_hms, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::MD::with_time_hmss, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::MD::with_zone, FnInStruct, hidden)] // functionality is in the zoned formatter but rustlink is here
         #[cfg(feature = "buffer_provider")]
         pub fn create_md_with_provider(
@@ -904,6 +922,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::datetime::fieldsets::YMD::with_time, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMD::with_time_hm, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMD::with_time_hms, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::YMD::with_time_hmss, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMD::with_zone, FnInStruct, hidden)] // functionality is in the zoned formatter but rustlink is here
         #[diplomat::demo(default_constructor)]
         #[cfg(feature = "compiled_data")]
@@ -941,6 +960,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::datetime::fieldsets::YMD::with_time, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMD::with_time_hm, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMD::with_time_hms, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::YMD::with_time_hmss, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMD::with_zone, FnInStruct, hidden)] // functionality is in the zoned formatter but rustlink is here
         #[cfg(feature = "buffer_provider")]
         pub fn create_ymd_with_provider(
@@ -978,6 +998,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::datetime::fieldsets::DE::with_time, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::DE::with_time_hm, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::DE::with_time_hms, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::DE::with_time_hmss, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::DE::with_zone, FnInStruct, hidden)] // functionality is in the zoned formatter but rustlink is here
         #[cfg(feature = "compiled_data")]
         pub fn create_de(
@@ -1011,6 +1032,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::datetime::fieldsets::DE::with_time, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::DE::with_time_hm, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::DE::with_time_hms, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::DE::with_time_hmss, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::DE::with_zone, FnInStruct, hidden)] // functionality is in the zoned formatter but rustlink is here
         #[cfg(feature = "buffer_provider")]
         pub fn create_de_with_provider(
@@ -1046,6 +1068,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::datetime::fieldsets::MDE::with_time, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::MDE::with_time_hm, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::MDE::with_time_hms, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::MDE::with_time_hmss, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::MDE::with_zone, FnInStruct, hidden)] // functionality is in the zoned formatter but rustlink is here
         #[cfg(feature = "compiled_data")]
         pub fn create_mde(
@@ -1079,6 +1102,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::datetime::fieldsets::MDE::with_time, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::MDE::with_time_hm, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::MDE::with_time_hms, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::MDE::with_time_hmss, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::MDE::with_zone, FnInStruct, hidden)] // functionality is in the zoned formatter but rustlink is here
         #[cfg(feature = "buffer_provider")]
         pub fn create_mde_with_provider(
@@ -1115,6 +1139,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::datetime::fieldsets::YMDE::with_time, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMDE::with_time_hm, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMDE::with_time_hms, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::YMDE::with_time_hmss, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMDE::with_zone, FnInStruct, hidden)] // functionality is in the zoned formatter but rustlink is here
         #[cfg(feature = "compiled_data")]
         pub fn create_ymde(
@@ -1151,6 +1176,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::datetime::fieldsets::YMDE::with_time, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMDE::with_time_hm, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMDE::with_time_hms, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::YMDE::with_time_hmss, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMDE::with_zone, FnInStruct, hidden)] // functionality is in the zoned formatter but rustlink is here
         #[cfg(feature = "buffer_provider")]
         pub fn create_ymde_with_provider(
@@ -1187,6 +1213,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::datetime::fieldsets::E::with_time, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::E::with_time_hm, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::E::with_time_hms, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::E::with_time_hmss, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::E::with_zone, FnInStruct, hidden)] // functionality is in the zoned formatter but rustlink is here
         #[cfg(feature = "compiled_data")]
         pub fn create_e(
@@ -1218,6 +1245,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::datetime::fieldsets::E::with_time, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::E::with_time_hm, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::E::with_time_hms, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::E::with_time_hmss, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::E::with_zone, FnInStruct, hidden)] // functionality is in the zoned formatter but rustlink is here
         #[cfg(feature = "buffer_provider")]
         pub fn create_e_with_provider(

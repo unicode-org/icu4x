@@ -89,6 +89,7 @@ pub mod ffi {
         {%- if flavor.is_time_only() %}
         #[diplomat::rust_link(icu::datetime::fieldsets::{{ variant.name_upper() }}::hm, FnInStruct, compact)]
         #[diplomat::rust_link(icu::datetime::fieldsets::{{ variant.name_upper() }}::hms, FnInStruct, compact)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::{{ variant.name_upper() }}::hmss, FnInStruct, compact)]
         {%- endif %}
         {%- if flavor.has_time() %}
         #[diplomat::rust_link(icu::datetime::fieldsets::{{ variant.name_upper() }}::with_time_precision, FnInStruct, compact)]
@@ -108,6 +109,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::datetime::fieldsets::{{ variant.name_upper() }}::with_time, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::{{ variant.name_upper() }}::with_time_hm, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::{{ variant.name_upper() }}::with_time_hms, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::{{ variant.name_upper() }}::with_time_hmss, FnInStruct, hidden)]
         {%- endif %}
         {%- if variant.supports_zone() %}
         #[diplomat::rust_link(icu::datetime::fieldsets::{{ variant.name_upper() }}::with_zone, FnInStruct, hidden)] // functionality is in the zoned formatter but rustlink is here
