@@ -180,6 +180,10 @@ macro_rules! impl_time_precision_constructors {
             pub fn hms() -> Self {
                 Self::for_length(Default::default()).with_time_precision(TimePrecision::Second)
             }
+            #[doc = concat!("Creates a ", stringify!($type), " that formats hours, minutes, seconds, and subseconds with the default length.")]
+            pub fn hmss(subsecond_digits: SubsecondDigits) -> Self {
+                Self::for_length(Default::default()).with_time_precision(TimePrecision::Subsecond(subsecond_digits))
+            }
         }
     };
 }
@@ -303,6 +307,17 @@ macro_rules! impl_date_to_time_helpers {
                 }
             }
             /// Shorthand to associate this field set with [`TimePrecision::Minute`].
+            ///
+            /// # Examples
+            ///
+            /// ```
+            #[doc = concat!("use icu::datetime::fieldsets::", stringify!($type), ";")]
+            /// use icu::datetime::options::TimePrecision;
+            ///
+            #[doc = concat!("let fs1 = ", stringify!($type), "::medium().with_time(TimePrecision::Minute);")]
+            #[doc = concat!("let fs2 = ", stringify!($type), "::medium().with_time_hm();")]
+            /// assert_eq!(fs1, fs2);
+            /// ```
             pub fn with_time_hm(self) -> $type_time {
                 $type_time {
                     length: self.length,
@@ -312,10 +327,42 @@ macro_rules! impl_date_to_time_helpers {
                 }
             }
             /// Shorthand to associate this field set with [`TimePrecision::Second`].
+            ///
+            /// # Examples
+            ///
+            /// ```
+            #[doc = concat!("use icu::datetime::fieldsets::", stringify!($type), ";")]
+            /// use icu::datetime::options::TimePrecision;
+            ///
+            #[doc = concat!("let fs1 = ", stringify!($type), "::medium().with_time(TimePrecision::Second);")]
+            #[doc = concat!("let fs2 = ", stringify!($type), "::medium().with_time_hms();")]
+            /// assert_eq!(fs1, fs2);
+            /// ```
             pub fn with_time_hms(self) -> $type_time {
                 $type_time {
                     length: self.length,
                     time_precision: Some(TimePrecision::Second),
+                    alignment: ternary!(self.alignment, Default::default(), $($alignment_yes)?),
+                    $(year_style: yes_to!(self.year_style, $yearstyle_yes),)?
+                }
+            }
+            /// Shorthand to associate this field set with [`TimePrecision::Subsecond`].
+            ///
+            /// # Examples
+            ///
+            /// ```
+            #[doc = concat!("use icu::datetime::fieldsets::", stringify!($type), ";")]
+            /// use icu::datetime::options::TimePrecision;
+            /// use icu::datetime::options::SubsecondDigits::S2;
+            ///
+            #[doc = concat!("let fs1 = ", stringify!($type), "::medium().with_time(TimePrecision::Subsecond(S2));")]
+            #[doc = concat!("let fs2 = ", stringify!($type), "::medium().with_time_hmss(S2);")]
+            /// assert_eq!(fs1, fs2);
+            /// ```
+            pub fn with_time_hmss(self, subsecond_digits: SubsecondDigits) -> $type_time {
+                $type_time {
+                    length: self.length,
+                    time_precision: Some(TimePrecision::Subsecond(subsecond_digits)),
                     alignment: ternary!(self.alignment, Default::default(), $($alignment_yes)?),
                     $(year_style: yes_to!(self.year_style, $yearstyle_yes),)?
                 }
@@ -1189,6 +1236,28 @@ impl_time_marker!(
     /// assert_writeable_eq!(
     ///     formatter.format(&Time::try_new(0, 0, 0, 0).unwrap()),
     ///     "00:00"
+    /// );
+    /// ```
+    ///
+    /// Conveniently construct a time formatter with subseconds:
+    ///
+    /// ```
+    /// use icu::datetime::input::Time;
+    /// use icu::datetime::fieldsets::T;
+    /// use icu::datetime::options::SubsecondDigits;
+    /// use icu::datetime::NoCalendarFormatter;
+    /// use icu::locale::locale;
+    /// use writeable::assert_writeable_eq;
+    ///
+    /// let formatter = NoCalendarFormatter::try_new(
+    ///     locale!("en").into(),
+    ///     T::hmss(SubsecondDigits::S4),
+    /// )
+    /// .unwrap();
+    ///
+    /// assert_writeable_eq!(
+    ///     formatter.format(&Time::try_new(18, 24, 36, 987654321).unwrap()),
+    ///     "6:24:36.9876 PM"
     /// );
     /// ```
     ///
