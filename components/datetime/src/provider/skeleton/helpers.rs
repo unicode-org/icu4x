@@ -19,9 +19,6 @@ use crate::{
     },
 };
 
-#[cfg(feature = "datagen")]
-use crate::provider::pattern::CoarseHourCycle;
-
 // The following scalar values are for testing the suitability of a skeleton's field for the
 // given input. Per UTS 35, the better the fit of a pattern, the "lower the distance". In this
 // implementation each distance type is separated by an order of magnitiude. This magnitude needs
@@ -518,42 +515,4 @@ pub fn get_best_available_format_pattern<'data>(
     }
 
     BestSkeleton::AllFieldsMatch(closest_format_pattern)
-}
-
-impl components::Bag {
-    #[doc(hidden)] // TODO(#4467): Internal
-    #[cfg(feature = "datagen")]
-    pub fn select_pattern<'data>(
-        self,
-        skeletons: &DateSkeletonPatterns<'data>,
-        preferred_hour_cycle: CoarseHourCycle,
-        length_patterns: &GenericLengthPatterns<'data>,
-    ) -> PatternPlurals<'data> {
-        use crate::provider::pattern::runtime::Pattern;
-        use icu_locale_core::preferences::extensions::unicode::keywords::HourCycle;
-
-        let default_hour_cycle = match preferred_hour_cycle {
-            CoarseHourCycle::H11H12 => HourCycle::H12,
-            CoarseHourCycle::H23 => HourCycle::H23,
-        };
-        let fields = self.to_vec_fields(default_hour_cycle);
-        match create_best_pattern_for_fields(skeletons, length_patterns, &fields, &self, false) {
-            BestSkeleton::AllFieldsMatch(p) => p,
-            _ => {
-                // Build a last-resort pattern that contains all of the requested fields.
-                // This is NOT in the CLDR standard! Better would be:
-                // - Use Append Items?
-                // - Fall back to the format from the Gregorian or Generic calendar?
-                // - Bubble up an error of some sort?
-                // See issue: <https://github.com/unicode-org/icu4x/issues/586>
-                let pattern_items = fields
-                    .into_iter()
-                    .flat_map(|field| [PatternItem::Literal(' '), PatternItem::Field(field)])
-                    .skip(1)
-                    .collect::<Vec<_>>();
-                let pattern = Pattern::from(pattern_items);
-                PatternPlurals::SinglePattern(pattern)
-            }
-        }
-    }
 }
