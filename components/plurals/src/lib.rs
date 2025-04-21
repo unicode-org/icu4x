@@ -89,6 +89,7 @@ mod raw_operands;
 pub use raw_operands::RawPluralOperands;
 
 use core::cmp::{Ord, PartialOrd};
+use core::convert::Infallible;
 use icu_locale_core::preferences::define_preferences;
 use icu_provider::marker::ErasedMarker;
 use icu_provider::prelude::*;
@@ -936,19 +937,41 @@ impl<T> PluralElements<T> {
         self.0.explicit_one.as_ref()
     }
 
-    /// Applies a function `f` to map all values to another type.
-    pub fn map<B, F: Fn(T) -> B>(self, f: F) -> PluralElements<B> {
-        let f = &f;
-        PluralElements(PluralElementsInner {
-            other: f(self.0.other),
-            zero: self.0.zero.map(f),
-            one: self.0.one.map(f),
-            two: self.0.two.map(f),
-            few: self.0.few.map(f),
-            many: self.0.many.map(f),
-            explicit_zero: self.0.explicit_zero.map(f),
-            explicit_one: self.0.explicit_one.map(f),
-        })
+    /// Applies a function `f` to convert all values to another type.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu_plurals::PluralElements;
+    ///
+    /// let x = PluralElements::new(11).with_one_value(Some(15));
+    /// let y = x.map(|i| i * 2);
+    ///
+    /// assert_eq!(*y.other(), 22);
+    /// assert_eq!(*y.one(), 30);
+    /// ```
+    pub fn map<B, F: FnMut(T) -> B>(self, mut f: F) -> PluralElements<B> {
+        let Ok(x) = self.try_map(move |x| Ok::<B, Infallible>(f(x)));
+        x
+    }
+
+    /// Applies a function `f` to convert all values to another type,
+    /// propagating a possible error.
+    pub fn try_map<B, E, F: FnMut(T) -> Result<B, E>>(
+        self,
+        mut f: F,
+    ) -> Result<PluralElements<B>, E> {
+        let plural_elements = PluralElements(PluralElementsInner {
+            other: f(self.0.other)?,
+            zero: self.0.zero.map(&mut f).transpose()?,
+            one: self.0.one.map(&mut f).transpose()?,
+            two: self.0.two.map(&mut f).transpose()?,
+            few: self.0.few.map(&mut f).transpose()?,
+            many: self.0.many.map(&mut f).transpose()?,
+            explicit_zero: self.0.explicit_zero.map(&mut f).transpose()?,
+            explicit_one: self.0.explicit_one.map(&mut f).transpose()?,
+        });
+        Ok(plural_elements)
     }
 
     /// Converts from `&PluralElements<T>` to `PluralElements<&T>`.
