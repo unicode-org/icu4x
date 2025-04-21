@@ -19,9 +19,6 @@ use crate::{
     },
 };
 
-#[cfg(feature = "datagen")]
-use crate::provider::pattern::CoarseHourCycle;
-
 // The following scalar values are for testing the suitability of a skeleton's field for the
 // given input. Per UTS 35, the better the fit of a pattern, the "lower the distance". In this
 // implementation each distance type is separated by an order of magnitiude. This magnitude needs
