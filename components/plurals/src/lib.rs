@@ -974,6 +974,67 @@ impl<T> PluralElements<T> {
         Ok(plural_elements)
     }
 
+    /// Immutably applies a function `f` to each value.
+    pub fn for_each<F: FnMut(&T)>(&self, mut f: F) {
+        #[allow(clippy::unit_arg)] // consistency with map and one-liner
+        let Ok(()) = self.try_for_each(move |x| Ok::<(), Infallible>(f(x)));
+    }
+
+    /// Immutably applies a function `f` to each value,
+    /// propagating a possible error.
+    pub fn try_for_each<E, F: FnMut(&T) -> Result<(), E>>(&self, mut f: F) -> Result<(), E> {
+        // Use a structure to create compile errors if another field is added
+        let _ = PluralElements(PluralElementsInner {
+            other: f(&self.0.other)?,
+            zero: self.0.zero.as_ref().map(&mut f).transpose()?,
+            one: self.0.one.as_ref().map(&mut f).transpose()?,
+            two: self.0.two.as_ref().map(&mut f).transpose()?,
+            few: self.0.few.as_ref().map(&mut f).transpose()?,
+            many: self.0.many.as_ref().map(&mut f).transpose()?,
+            explicit_zero: self.0.explicit_zero.as_ref().map(&mut f).transpose()?,
+            explicit_one: self.0.explicit_one.as_ref().map(&mut f).transpose()?,
+        });
+        Ok(())
+    }
+
+    /// Mutably applies a function `f` to each value.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu_plurals::PluralElements;
+    ///
+    /// let mut x = PluralElements::new(11).with_one_value(Some(15));
+    /// x.for_each_mut(|i| *i *= 2);
+    ///
+    /// assert_eq!(*x.other(), 22);
+    /// assert_eq!(*x.one(), 30);
+    /// ```
+    pub fn for_each_mut<F: FnMut(&mut T)>(&mut self, mut f: F) {
+        #[allow(clippy::unit_arg)] // consistency with map and one-liner
+        let Ok(()) = self.try_for_each_mut(move |x| Ok::<(), Infallible>(f(x)));
+    }
+
+    /// Mutably applies a function `f` to each value,
+    /// propagating a possible error.
+    pub fn try_for_each_mut<E, F: FnMut(&mut T) -> Result<(), E>>(
+        &mut self,
+        mut f: F,
+    ) -> Result<(), E> {
+        // Use a structure to create compile errors if another field is added
+        let _ = PluralElements(PluralElementsInner {
+            other: f(&mut self.0.other)?,
+            zero: self.0.zero.as_mut().map(&mut f).transpose()?,
+            one: self.0.one.as_mut().map(&mut f).transpose()?,
+            two: self.0.two.as_mut().map(&mut f).transpose()?,
+            few: self.0.few.as_mut().map(&mut f).transpose()?,
+            many: self.0.many.as_mut().map(&mut f).transpose()?,
+            explicit_zero: self.0.explicit_zero.as_mut().map(&mut f).transpose()?,
+            explicit_one: self.0.explicit_one.as_mut().map(&mut f).transpose()?,
+        });
+        Ok(())
+    }
+
     /// Converts from `&PluralElements<T>` to `PluralElements<&T>`.
     pub fn as_ref(&self) -> PluralElements<&T> {
         PluralElements(PluralElementsInner {
