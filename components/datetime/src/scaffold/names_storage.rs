@@ -43,6 +43,45 @@ pub trait DateTimeNamesMarker: UnstableSealed {
     type MetazoneLookup: NamesContainer<tz::MzPeriodV1, ()>;
 }
 
+/// A trait for `Variables` that can be converted to [`ErrorField`]
+pub trait MaybeAsErrorField: UnstableSealed {
+    fn maybe_as_error_field(&self) -> Option<ErrorField>;
+}
+
+impl MaybeAsErrorField for () {
+    fn maybe_as_error_field(&self) -> Option<ErrorField> {
+        None
+    }
+}
+
+impl UnstableSealed for YearNameLength {}
+impl MaybeAsErrorField for YearNameLength {
+    fn maybe_as_error_field(&self) -> Option<ErrorField> {
+        Some(self.to_approximate_error_field())
+    }
+}
+
+impl UnstableSealed for MonthNameLength {}
+impl MaybeAsErrorField for MonthNameLength {
+    fn maybe_as_error_field(&self) -> Option<ErrorField> {
+        Some(self.to_approximate_error_field())
+    }
+}
+
+impl UnstableSealed for WeekdayNameLength {}
+impl MaybeAsErrorField for WeekdayNameLength {
+    fn maybe_as_error_field(&self) -> Option<ErrorField> {
+        Some(self.to_approximate_error_field())
+    }
+}
+
+impl UnstableSealed for DayPeriodNameLength {}
+impl MaybeAsErrorField for DayPeriodNameLength {
+    fn maybe_as_error_field(&self) -> Option<ErrorField> {
+        Some(self.to_approximate_error_field())
+    }
+}
+
 /// Trait that associates a container for a payload parameterized by the given variables.
 ///
 /// <div class="stab unstable">
@@ -69,7 +108,7 @@ macro_rules! impl_holder_trait {
         impl UnstableSealed for $marker {}
         impl<Variables> NamesContainer<$marker, Variables> for $marker
         where
-            Variables: PartialEq + Copy + fmt::Debug,
+            Variables: PartialEq + Copy + MaybeAsErrorField + fmt::Debug,
         {
             type Container = DataPayloadWithVariables<$marker, Variables>;
         }
@@ -97,10 +136,10 @@ impl_holder_trait!(tz::MzPeriodV1);
 #[derive(Debug, displaydoc::Display)]
 #[non_exhaustive]
 pub enum MaybePayloadError {
-    /// TODO
+    /// The container's field set doesn't support the field
     FormatterTooSpecific,
-    /// TODO
-    ConflictingField,
+    /// The field is already loaded with a different length
+    ConflictingField(ErrorField),
 }
 
 impl core::error::Error for MaybePayloadError {}
@@ -109,7 +148,10 @@ impl MaybePayloadError {
     pub(crate) fn into_load_error(self, error_field: ErrorField) -> PatternLoadError {
         match self {
             Self::FormatterTooSpecific => PatternLoadError::FormatterTooSpecific(error_field),
-            Self::ConflictingField => PatternLoadError::ConflictingField(error_field),
+            Self::ConflictingField(loaded_field) => PatternLoadError::ConflictingField {
+                field: error_field,
+                previous_field: loaded_field,
+            },
         }
     }
 }
@@ -200,7 +242,7 @@ where
 impl<M: DynamicDataMarker, Variables> MaybePayload<M, Variables>
     for DataPayloadWithVariables<M, Variables>
 where
-    Variables: PartialEq + Copy,
+    Variables: PartialEq + Copy + MaybeAsErrorField,
 {
     #[inline]
     fn new_empty() -> Self {
@@ -224,8 +266,19 @@ where
                 // TODO(#6063): probably not correct
                 return Ok(Ok(Default::default()));
             }
-            OptionalNames::SingleLength { .. } => {
-                return Err(MaybePayloadError::ConflictingField);
+            OptionalNames::SingleLength { variables, .. } => {
+                let loaded_field = match variables.maybe_as_error_field() {
+                    Some(x) => x,
+                    None => {
+                        debug_assert!(false, "all non-unit variables implement this trait");
+                        use crate::provider::fields::*;
+                        ErrorField(Field {
+                            symbol: FieldSymbol::Era,
+                            length: FieldLength::Six,
+                        })
+                    }
+                };
+                return Err(MaybePayloadError::ConflictingField(loaded_field));
             }
             OptionalNames::None => (),
         };
