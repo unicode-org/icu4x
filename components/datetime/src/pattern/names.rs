@@ -1247,7 +1247,7 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, F
     /// // But loading a new length fails:
     /// assert!(matches!(
     ///     names.include_year_names(YearNameLength::Abbreviated),
-    ///     Err(PatternLoadError::ConflictingField(_))
+    ///     Err(PatternLoadError::ConflictingField { .. })
     /// ));
     /// ```
     #[cfg(feature = "compiled_data")]
@@ -1309,11 +1309,11 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, F
     /// // But loading a new symbol or length fails:
     /// assert!(matches!(
     ///     names.include_month_names(MonthNameLength::StandaloneWide),
-    ///     Err(PatternLoadError::ConflictingField(_))
+    ///     Err(PatternLoadError::ConflictingField { .. })
     /// ));
     /// assert!(matches!(
     ///     names.include_month_names(MonthNameLength::Abbreviated),
-    ///     Err(PatternLoadError::ConflictingField(_))
+    ///     Err(PatternLoadError::ConflictingField { .. })
     /// ));
     /// ```
     #[cfg(feature = "compiled_data")]
@@ -1382,7 +1382,7 @@ impl<C, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, FSet> {
     /// // But loading a new length fails:
     /// assert!(matches!(
     ///     names.include_day_period_names(DayPeriodNameLength::Abbreviated),
-    ///     Err(PatternLoadError::ConflictingField(_))
+    ///     Err(PatternLoadError::ConflictingField { .. })
     /// ));
     /// ```
     #[cfg(feature = "compiled_data")]
@@ -1445,11 +1445,11 @@ impl<C, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, FSet> {
     /// // But loading a new symbol or length fails:
     /// assert!(matches!(
     ///     names.include_weekday_names(WeekdayNameLength::StandaloneWide),
-    ///     Err(PatternLoadError::ConflictingField(_))
+    ///     Err(PatternLoadError::ConflictingField { .. })
     /// ));
     /// assert!(matches!(
     ///     names.include_weekday_names(WeekdayNameLength::Abbreviated),
-    ///     Err(PatternLoadError::ConflictingField(_))
+    ///     Err(PatternLoadError::ConflictingField { .. })
     /// ));
     /// ```
     #[cfg(feature = "compiled_data")]
