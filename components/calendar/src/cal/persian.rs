@@ -84,6 +84,7 @@ impl CalendarArithmetic for Persian {
     }
 }
 
+impl crate::cal::scaffold::UnstableSealed for Persian {}
 impl Calendar for Persian {
     type DateInner = PersianDateInner;
     type Year = types::EraYear;

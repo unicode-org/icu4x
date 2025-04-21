@@ -44,6 +44,7 @@ pub struct Gregorian;
 /// The inner date type used for representing [`Date`]s of [`Gregorian`]. See [`Date`] and [`Gregorian`] for more details.
 pub struct GregorianDateInner(pub(crate) IsoDateInner);
 
+impl crate::cal::scaffold::UnstableSealed for Gregorian {}
 impl Calendar for Gregorian {
     type DateInner = GregorianDateInner;
     type Year = types::EraYear;

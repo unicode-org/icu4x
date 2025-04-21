@@ -76,6 +76,7 @@ impl CalendarArithmetic for Iso {
     }
 }
 
+impl crate::cal::scaffold::UnstableSealed for Iso {}
 impl Calendar for Iso {
     type DateInner = IsoDateInner;
     type Year = types::EraYear;

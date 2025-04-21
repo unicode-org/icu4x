@@ -149,6 +149,7 @@ impl Dangi {
     pub(crate) const DEBUG_NAME: &'static str = "Dangi";
 }
 
+impl crate::cal::scaffold::UnstableSealed for Dangi {}
 impl Calendar for Dangi {
     type DateInner = DangiDateInner;
     type Year = CyclicYear;

@@ -110,6 +110,7 @@ impl CalendarArithmetic for Ethiopian {
     }
 }
 
+impl crate::cal::scaffold::UnstableSealed for Ethiopian {}
 impl Calendar for Ethiopian {
     type DateInner = EthiopianDateInner;
     type Year = types::EraYear;

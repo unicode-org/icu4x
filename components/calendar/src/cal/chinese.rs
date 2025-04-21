@@ -151,6 +151,7 @@ impl Chinese {
     pub(crate) const DEBUG_NAME: &'static str = "Chinese";
 }
 
+impl crate::cal::scaffold::UnstableSealed for Chinese {}
 impl Calendar for Chinese {
     type DateInner = ChineseDateInner;
     type Year = types::CyclicYear;
