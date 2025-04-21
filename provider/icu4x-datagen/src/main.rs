@@ -380,7 +380,7 @@ fn main() -> eyre::Result<()> {
                 #[cfg(not(feature = "networking"))]
                 (None, _) => {
                     eyre::bail!(
-                        "Downloading data from tags requires the `networking` Cargo feature"
+                        "Please set --cldr-root or enable the `networking` Cargo feature"
                     )
                 }
             };
@@ -396,7 +396,7 @@ fn main() -> eyre::Result<()> {
                 #[cfg(not(feature = "networking"))]
                 (None, _) => {
                     eyre::bail!(
-                        "Downloading data from tags requires the `networking` Cargo feature"
+                        "Please set --icuexport-root or enable the `networking` Cargo feature"
                     )
                 }
             };
@@ -412,7 +412,7 @@ fn main() -> eyre::Result<()> {
                 #[cfg(not(feature = "networking"))]
                 (None, _) => {
                     eyre::bail!(
-                        "Downloading data from tags requires the `networking` Cargo feature"
+                        "Please set --segmenter-lstm-root or enable the `networking` Cargo feature"
                     )
                 }
             };
@@ -428,7 +428,7 @@ fn main() -> eyre::Result<()> {
                 #[cfg(not(feature = "networking"))]
                 (None, _) => {
                     eyre::bail!(
-                        "Downloading data from tags requires the `networking` Cargo feature"
+                        "Please set --tzdb-root or enable the `networking` Cargo feature"
                     )
                 }
             };
