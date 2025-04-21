@@ -218,6 +218,7 @@ macro_rules! match_cal {
     };
 }
 
+impl crate::cal::scaffold::UnstableSealed for AnyCalendar {}
 impl Calendar for AnyCalendar {
     type DateInner = AnyDateInner;
     type Year = YearInfo;

@@ -130,6 +130,7 @@ impl PrecomputedDataSource<HebrewYearInfo> for () {
     }
 }
 
+impl crate::cal::scaffold::UnstableSealed for Hebrew {}
 impl Calendar for Hebrew {
     type DateInner = HebrewDateInner;
     type Year = types::EraYear;

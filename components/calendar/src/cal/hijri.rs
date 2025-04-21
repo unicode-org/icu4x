@@ -361,6 +361,7 @@ impl CalendarArithmetic for HijriSimulated {
     }
 }
 
+impl crate::cal::scaffold::UnstableSealed for HijriSimulated {}
 impl Calendar for HijriSimulated {
     type DateInner = HijriSimulatedDateInner;
     type Year = types::EraYear;
@@ -642,6 +643,7 @@ impl CalendarArithmetic for HijriUmmAlQura {
     }
 }
 
+impl crate::cal::scaffold::UnstableSealed for HijriUmmAlQura {}
 impl Calendar for HijriUmmAlQura {
     type DateInner = HijriUmmAlQuraDateInner;
     type Year = types::EraYear;
@@ -1171,6 +1173,7 @@ impl CalendarArithmetic for HijriTabular {
     }
 }
 
+impl crate::cal::scaffold::UnstableSealed for HijriTabular {}
 impl Calendar for HijriTabular {
     type DateInner = HijriTabularDateInner;
     type Year = types::EraYear;

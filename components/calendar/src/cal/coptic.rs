@@ -92,6 +92,7 @@ impl CalendarArithmetic for Coptic {
     }
 }
 
+impl crate::cal::scaffold::UnstableSealed for Coptic {}
 impl Calendar for Coptic {
     type DateInner = CopticDateInner;
     type Year = types::EraYear;

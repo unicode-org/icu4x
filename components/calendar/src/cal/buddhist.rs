@@ -49,6 +49,7 @@ const BUDDHIST_ERA_OFFSET: i32 = 543;
 #[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct Buddhist;
 
+impl crate::cal::scaffold::UnstableSealed for Buddhist {}
 impl Calendar for Buddhist {
     type DateInner = IsoDateInner;
     type Year = types::EraYear;

@@ -54,6 +54,7 @@ pub struct Roc;
 #[derive(Copy, Clone, Debug, Hash, Eq, PartialEq, PartialOrd, Ord)]
 pub struct RocDateInner(IsoDateInner);
 
+impl crate::cal::scaffold::UnstableSealed for Roc {}
 impl Calendar for Roc {
     type DateInner = RocDateInner;
     type Year = types::EraYear;

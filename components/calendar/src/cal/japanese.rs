@@ -166,6 +166,7 @@ impl JapaneseExtended {
     pub(crate) const DEBUG_NAME: &'static str = "Japanese (historical era data)";
 }
 
+impl crate::cal::scaffold::UnstableSealed for Japanese {}
 impl Calendar for Japanese {
     type DateInner = JapaneseDateInner;
     type Year = types::EraYear;
@@ -286,6 +287,7 @@ impl Calendar for Japanese {
     }
 }
 
+impl crate::cal::scaffold::UnstableSealed for JapaneseExtended {}
 impl Calendar for JapaneseExtended {
     type DateInner = JapaneseDateInner;
     type Year = types::EraYear;

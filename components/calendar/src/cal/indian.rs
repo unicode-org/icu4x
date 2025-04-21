@@ -90,6 +90,7 @@ const DAY_OFFSET: u16 = 80;
 /// The Saka calendar is 78 years behind Gregorian. This number should be added to Gregorian dates
 const YEAR_OFFSET: i32 = 78;
 
+impl crate::cal::scaffold::UnstableSealed for Indian {}
 impl Calendar for Indian {
     type DateInner = IndianDateInner;
     type Year = types::EraYear;

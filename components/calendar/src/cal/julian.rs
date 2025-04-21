@@ -82,6 +82,7 @@ impl CalendarArithmetic for Julian {
     }
 }
 
+impl crate::cal::scaffold::UnstableSealed for Julian {}
 impl Calendar for Julian {
     type DateInner = JulianDateInner;
     type Year = types::EraYear;
