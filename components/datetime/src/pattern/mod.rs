@@ -73,8 +73,13 @@ pub enum PatternLoadError {
     /// Fields conflict if they require the same type of data, for example the
     /// `EEE` and `EEEE` fields (short vs long weekday) conflict, or the `M`
     /// and `L` (format vs standalone month) conflict.
-    #[displaydoc("A field {0:?} conflicts with a previous field.")]
-    ConflictingField(ErrorField),
+    #[displaydoc("A field {field:?} conflicts with a previously loaded field {previous_field:?}.")]
+    ConflictingField {
+        /// The field that was not able to be loaded.
+        field: ErrorField,
+        /// The field that prevented the new field from being loaded.
+        previous_field: ErrorField,
+    },
     /// The field symbol is not supported in that length.
     ///
     /// Some fields, such as `O` are not defined for all lengths (e.g. `OO`).
