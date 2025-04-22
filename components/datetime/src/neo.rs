@@ -427,12 +427,17 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> FixedCalendarDateTimeFormatter<
     /// [`ZonedDateTime`]: crate::input::ZonedDateTime
     /// [`YMD`]: crate::fieldsets::YMD
     /// [`format_unchecked`]: Self::format_unchecked
-    pub fn format_unchecked(&self, datetime: DateTimeInputUnchecked) -> FormattedDateTimeUnchecked {
-        FormattedDateTimeUnchecked {
+    pub fn format_unchecked(&self, datetime: DateTimeInputUnchecked) -> Result<FormattedDateTimeUnchecked, MismatchedCalendarError> {
+        if let Some(kind) = datetime.calendar_kind {
+            if !C::can_format_kind(kind) {
+                todo!()
+            }
+        }
+        Ok(FormattedDateTimeUnchecked {
             pattern: self.selection.select(&datetime),
             input: datetime,
             names: self.names.as_borrowed(),
-        }
+        })
     }
 }
 
@@ -691,7 +696,7 @@ where
     pub fn format_same_calendar<I>(
         &self,
         datetime: &I,
-    ) -> Result<FormattedDateTime, crate::MismatchedCalendarError>
+    ) -> Result<FormattedDateTime, MismatchedCalendarError>
     where
         I: ?Sized + InSameCalendar + AllInputMarkers<FSet>,
     {

@@ -182,6 +182,10 @@ impl Calendar for Iso {
     fn calendar_algorithm(&self) -> Option<crate::preferences::CalendarAlgorithm> {
         None
     }
+
+    fn calendar_kind(&self) -> Option<crate::AnyCalendarKind> {
+        Some(crate::IntoAnyCalendar::kind(self))
+    }
 }
 
 impl Date<Iso> {

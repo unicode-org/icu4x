@@ -203,6 +203,10 @@ impl Calendar for Julian {
     fn calendar_algorithm(&self) -> Option<crate::preferences::CalendarAlgorithm> {
         None
     }
+
+    fn calendar_kind(&self) -> Option<crate::AnyCalendarKind> {
+        None
+    }
 }
 
 impl Julian {

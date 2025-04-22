@@ -247,6 +247,10 @@ impl Calendar for Ethiopian {
     fn calendar_algorithm(&self) -> Option<crate::preferences::CalendarAlgorithm> {
         Some(crate::preferences::CalendarAlgorithm::Ethiopic)
     }
+
+    fn calendar_kind(&self) -> Option<crate::AnyCalendarKind> {
+        Some(crate::IntoAnyCalendar::kind(self))
+    }
 }
 
 impl Ethiopian {

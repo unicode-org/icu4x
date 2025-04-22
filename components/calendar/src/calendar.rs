@@ -100,6 +100,12 @@ pub trait Calendar: crate::cal::scaffold::UnstableSealed {
     /// If left empty, any algorithm will parse successfully.
     fn calendar_algorithm(&self) -> Option<crate::preferences::CalendarAlgorithm>;
 
+    /// Returns the [`AnyCalendarKind`](crate::AnyCalendarKind) associated with this calendar,
+    /// if any.
+    ///
+    /// Can be used for runtime calendar checking.
+    fn calendar_kind(&self) -> Option<crate::AnyCalendarKind>;
+
     /// Obtain a name for the calendar for debug printing
     fn debug_name(&self) -> &'static str;
 }

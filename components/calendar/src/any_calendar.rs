@@ -544,6 +544,10 @@ impl Calendar for AnyCalendar {
             Self::Roc(ref c) => c.calendar_algorithm(),
         }
     }
+
+    fn calendar_kind(&self) -> Option<crate::AnyCalendarKind> {
+        Some(crate::IntoAnyCalendar::kind(self))
+    }
 }
 
 impl AnyCalendar {

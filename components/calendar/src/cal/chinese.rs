@@ -283,6 +283,10 @@ impl Calendar for Chinese {
         Some(crate::preferences::CalendarAlgorithm::Chinese)
     }
 
+    fn calendar_kind(&self) -> Option<crate::AnyCalendarKind> {
+        Some(crate::IntoAnyCalendar::kind(self))
+    }
+
     fn months_in_year(&self, date: &Self::DateInner) -> u8 {
         date.0.months_in_year()
     }

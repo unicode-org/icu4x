@@ -285,6 +285,10 @@ impl Calendar for Japanese {
     fn calendar_algorithm(&self) -> Option<crate::preferences::CalendarAlgorithm> {
         Some(crate::preferences::CalendarAlgorithm::Japanese)
     }
+
+    fn calendar_kind(&self) -> Option<crate::AnyCalendarKind> {
+        Some(crate::IntoAnyCalendar::kind(self))
+    }
 }
 
 impl crate::cal::scaffold::UnstableSealed for JapaneseExtended {}
@@ -386,6 +390,10 @@ impl Calendar for JapaneseExtended {
 
     fn calendar_algorithm(&self) -> Option<crate::preferences::CalendarAlgorithm> {
         Some(crate::preferences::CalendarAlgorithm::Japanese)
+    }
+
+    fn calendar_kind(&self) -> Option<crate::AnyCalendarKind> {
+        Some(crate::IntoAnyCalendar::kind(self))
     }
 }
 

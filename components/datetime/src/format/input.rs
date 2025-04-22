@@ -7,7 +7,7 @@
 
 use crate::scaffold::*;
 use icu_calendar::types::DayOfYear;
-use icu_calendar::{AsCalendar, Calendar, Iso};
+use icu_calendar::{AnyCalendarKind, AsCalendar, Calendar, Iso};
 use icu_time::scaffold::IntoOption;
 use icu_time::{zone::TimeZoneVariant, Hour, Minute, Nanosecond, Second};
 
@@ -27,6 +27,8 @@ use crate::input::*;
 #[derive(Debug, Copy, Clone, Default)]
 #[non_exhaustive]
 pub struct DateTimeInputUnchecked {
+    /// The calendar kind, used for calendar checking only.
+    pub(crate) calendar_kind: Option<AnyCalendarKind>,
     /// The year, required for field sets with years (`Y`).
     pub(crate) year: Option<YearInfo>,
     /// The month, required for field sets with months (`M`)
@@ -62,6 +64,7 @@ pub struct DateTimeInputUnchecked {
 impl DateTimeInputUnchecked {
     /// Sets all fields from a [`Date`] input.
     pub fn set_date_fields<C: Calendar, A: AsCalendar<Calendar = C>>(&mut self, input: Date<A>) {
+        self.calendar_kind = input.calendar().calendar_kind();
         self.year = Some(input.year());
         self.month = Some(input.month());
         self.day_of_month = Some(input.day_of_month());
@@ -119,6 +122,7 @@ impl DateTimeInputUnchecked {
             + GetField<Z::TimeZoneLocalTimeInput>,
     {
         Self {
+            calendar_kind: None,
             year: GetField::<D::YearInput>::get_field(input).into_option(),
             month: GetField::<D::MonthInput>::get_field(input).into_option(),
             day_of_month: GetField::<D::DayOfMonthInput>::get_field(input).into_option(),

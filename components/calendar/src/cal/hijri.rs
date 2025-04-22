@@ -487,6 +487,10 @@ impl Calendar for HijriSimulated {
             }
         })
     }
+
+    fn calendar_kind(&self) -> Option<crate::AnyCalendarKind> {
+        Some(crate::IntoAnyCalendar::kind(self))
+    }
 }
 
 impl HijriSimulatedLocation {
@@ -765,6 +769,10 @@ impl Calendar for HijriUmmAlQura {
             crate::preferences::HijriCalendarAlgorithm::Umalqura,
         ));
         Some(expected_calendar)
+    }
+
+    fn calendar_kind(&self) -> Option<crate::AnyCalendarKind> {
+        Some(crate::IntoAnyCalendar::kind(self))
     }
 }
 
@@ -1303,6 +1311,10 @@ impl Calendar for HijriTabular {
             )),
         };
         Some(expected_calendar)
+    }
+
+    fn calendar_kind(&self) -> Option<crate::AnyCalendarKind> {
+        Some(crate::IntoAnyCalendar::kind(self))
     }
 }
 

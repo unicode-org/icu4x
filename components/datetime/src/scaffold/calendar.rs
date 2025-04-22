@@ -40,102 +40,153 @@ pub trait CldrCalendar: UnstableSealed {
 
     /// The data marker for loading skeleton patterns for this calendar.
     type SkeletaV1: DataMarker<DataStruct = PackedPatterns<'static>>;
+
+    /// Whether the given kind can be formatted with this impl's data
+    fn can_format_kind(kind: AnyCalendarKind) -> bool;
 }
 
 impl CldrCalendar for () {
     type YearNamesV1 = NeverMarker<YearNames<'static>>;
     type MonthNamesV1 = NeverMarker<MonthNames<'static>>;
     type SkeletaV1 = NeverMarker<PackedPatterns<'static>>;
+    fn can_format_kind(_: AnyCalendarKind) -> bool {
+        true
+    }
 }
 
 impl CldrCalendar for Buddhist {
     type YearNamesV1 = DatetimeNamesYearBuddhistV1;
     type MonthNamesV1 = DatetimeNamesMonthBuddhistV1;
     type SkeletaV1 = DatetimePatternsDateBuddhistV1;
+    fn can_format_kind(kind: AnyCalendarKind) -> bool {
+        matches!(kind, AnyCalendarKind::Buddhist)
+    }
 }
 
 impl CldrCalendar for Chinese {
     type YearNamesV1 = DatetimeNamesYearChineseV1;
     type MonthNamesV1 = DatetimeNamesMonthChineseV1;
     type SkeletaV1 = DatetimePatternsDateChineseV1;
+    fn can_format_kind(kind: AnyCalendarKind) -> bool {
+        matches!(kind, AnyCalendarKind::Chinese)
+    }
 }
 
 impl CldrCalendar for Coptic {
     type YearNamesV1 = DatetimeNamesYearCopticV1;
     type MonthNamesV1 = DatetimeNamesMonthCopticV1;
     type SkeletaV1 = DatetimePatternsDateCopticV1;
+    fn can_format_kind(kind: AnyCalendarKind) -> bool {
+        matches!(kind, AnyCalendarKind::Coptic)
+    }
 }
 
 impl CldrCalendar for Dangi {
     type YearNamesV1 = DatetimeNamesYearDangiV1;
     type MonthNamesV1 = DatetimeNamesMonthDangiV1;
     type SkeletaV1 = DatetimePatternsDateDangiV1;
+    fn can_format_kind(kind: AnyCalendarKind) -> bool {
+        matches!(kind, AnyCalendarKind::Dangi)
+    }
 }
 
 impl CldrCalendar for Ethiopian {
     type YearNamesV1 = DatetimeNamesYearEthiopianV1;
     type MonthNamesV1 = DatetimeNamesMonthEthiopianV1;
     type SkeletaV1 = DatetimePatternsDateEthiopianV1;
+    fn can_format_kind(kind: AnyCalendarKind) -> bool {
+        matches!(kind, AnyCalendarKind::Ethiopian | AnyCalendarKind::EthiopianAmeteAlem)
+    }
 }
 
 impl CldrCalendar for Gregorian {
     type YearNamesV1 = DatetimeNamesYearGregorianV1;
     type MonthNamesV1 = DatetimeNamesMonthGregorianV1;
     type SkeletaV1 = DatetimePatternsDateGregorianV1;
+    fn can_format_kind(kind: AnyCalendarKind) -> bool {
+        matches!(kind, AnyCalendarKind::Gregorian)
+    }
 }
 
 impl CldrCalendar for Hebrew {
     type YearNamesV1 = DatetimeNamesYearHebrewV1;
     type MonthNamesV1 = DatetimeNamesMonthHebrewV1;
     type SkeletaV1 = DatetimePatternsDateHebrewV1;
+    fn can_format_kind(kind: AnyCalendarKind) -> bool {
+        matches!(kind, AnyCalendarKind::Hebrew)
+    }
 }
 
 impl CldrCalendar for Indian {
     type YearNamesV1 = DatetimeNamesYearIndianV1;
     type MonthNamesV1 = DatetimeNamesMonthIndianV1;
     type SkeletaV1 = DatetimePatternsDateIndianV1;
+    fn can_format_kind(kind: AnyCalendarKind) -> bool {
+        matches!(kind, AnyCalendarKind::Indian)
+    }
 }
 
 impl CldrCalendar for HijriTabular {
     type YearNamesV1 = DatetimeNamesYearHijriV1;
     type MonthNamesV1 = DatetimeNamesMonthHijriV1;
     type SkeletaV1 = DatetimePatternsDateHijriV1;
+    fn can_format_kind(kind: AnyCalendarKind) -> bool {
+        matches!(kind, AnyCalendarKind::HijriTabularTypeIIThursday | AnyCalendarKind::HijriTabularTypeIIFriday)
+    }
 }
 
 impl CldrCalendar for HijriSimulated {
     type YearNamesV1 = DatetimeNamesYearHijriV1;
     type MonthNamesV1 = DatetimeNamesMonthHijriV1;
     type SkeletaV1 = DatetimePatternsDateHijriV1;
+    fn can_format_kind(kind: AnyCalendarKind) -> bool {
+        matches!(kind, AnyCalendarKind::HijriSimulatedMecca)
+    }
 }
 
 impl CldrCalendar for HijriUmmAlQura {
     type YearNamesV1 = DatetimeNamesYearHijriV1;
     type MonthNamesV1 = DatetimeNamesMonthHijriV1;
     type SkeletaV1 = DatetimePatternsDateHijriV1;
+    fn can_format_kind(kind: AnyCalendarKind) -> bool {
+        matches!(kind, AnyCalendarKind::HijriUmmAlQura)
+    }
 }
 
 impl CldrCalendar for Japanese {
     type YearNamesV1 = DatetimeNamesYearJapaneseV1;
     type MonthNamesV1 = DatetimeNamesMonthJapaneseV1;
     type SkeletaV1 = DatetimePatternsDateJapaneseV1;
+    fn can_format_kind(kind: AnyCalendarKind) -> bool {
+        matches!(kind, AnyCalendarKind::Japanese)
+    }
 }
 
 impl CldrCalendar for JapaneseExtended {
     type YearNamesV1 = DatetimeNamesYearJapanextV1;
     type MonthNamesV1 = DatetimeNamesMonthJapanextV1;
     type SkeletaV1 = DatetimePatternsDateJapanextV1;
+    fn can_format_kind(kind: AnyCalendarKind) -> bool {
+        matches!(kind, AnyCalendarKind::JapaneseExtended)
+    }
 }
 
 impl CldrCalendar for Persian {
     type YearNamesV1 = DatetimeNamesYearPersianV1;
     type MonthNamesV1 = DatetimeNamesMonthPersianV1;
     type SkeletaV1 = DatetimePatternsDatePersianV1;
+    fn can_format_kind(kind: AnyCalendarKind) -> bool {
+        matches!(kind, AnyCalendarKind::Persian)
+    }
 }
 
 impl CldrCalendar for Roc {
     type YearNamesV1 = DatetimeNamesYearRocV1;
     type MonthNamesV1 = DatetimeNamesMonthRocV1;
     type SkeletaV1 = DatetimePatternsDateRocV1;
+    fn can_format_kind(kind: AnyCalendarKind) -> bool {
+        matches!(kind, AnyCalendarKind::Roc)
+    }
 }
 
 impl UnstableSealed for () {}
