@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use std::collections::HashSet;
+use std::u32;
 
 use crate::{cldr_serde, IterableDataProviderCached, SourceDataProvider};
 use calendar::patterns::GenericLengthPatterns;
@@ -19,32 +20,23 @@ use icu_provider::prelude::*;
 
 use super::DatagenCalendar;
 
-enum ExactOrSynthetic<T> {
-    Exact(T),
-    Synthetic(T),
+struct PatternsWithDistance<T> {
+    inner: T,
+    distance: u32,
 }
 
-impl<T> ExactOrSynthetic<T> {
-    pub fn map<V>(self, mut f: impl FnMut(T) -> V) -> ExactOrSynthetic<V> {
-        use ExactOrSynthetic::*;
-        match self {
-            Exact(t) => Exact(f(t)),
-            Synthetic(t) => Synthetic(f(t)),
+impl<T> PatternsWithDistance<T> {
+    pub fn map<V>(self, mut f: impl FnMut(T) -> V) -> PatternsWithDistance<V> {
+        PatternsWithDistance {
+            inner: f(self.inner),
+            distance: self.distance,
         }
     }
     pub fn inner(&self) -> &T {
-        use ExactOrSynthetic::*;
-        match self {
-            Exact(t) => t,
-            Synthetic(t) => t,
-        }
+        &self.inner
     }
     pub fn into_inner(self) -> T {
-        use ExactOrSynthetic::*;
-        match self {
-            Exact(t) => t,
-            Synthetic(t) => t,
-        }
+        self.inner
     }
 }
 
@@ -53,7 +45,7 @@ fn select_pattern<'data>(
     skeletons: &DateSkeletonPatterns<'data>,
     preferred_hour_cycle: CoarseHourCycle,
     length_patterns: &GenericLengthPatterns<'data>,
-) -> ExactOrSynthetic<PatternPlurals<'data>> {
+) -> PatternsWithDistance<PatternPlurals<'data>> {
     use icu::datetime::provider::pattern::{runtime, PatternItem};
     use icu::datetime::provider::skeleton::{create_best_pattern_for_fields, BestSkeleton};
     use icu_locale_core::preferences::extensions::unicode::keywords::HourCycle;
@@ -64,8 +56,10 @@ fn select_pattern<'data>(
     };
     let fields = bag.to_vec_fields(default_hour_cycle);
     match create_best_pattern_for_fields(skeletons, length_patterns, &fields, &bag, false) {
-        BestSkeleton::AllFieldsMatch(p) => ExactOrSynthetic::Exact(p),
-        BestSkeleton::MissingOrExtraFields(p) => ExactOrSynthetic::Synthetic(p),
+        BestSkeleton::AllFieldsMatch(p, distance) => PatternsWithDistance { inner: p, distance },
+        BestSkeleton::MissingOrExtraFields(p, distance) => {
+            PatternsWithDistance { inner: p, distance }
+        }
         BestSkeleton::NoMatch => {
             // Build a last-resort pattern that contains all of the requested fields.
             // This is NOT in the CLDR standard! Better would be:
@@ -79,7 +73,10 @@ fn select_pattern<'data>(
                 .skip(1)
                 .collect::<Vec<_>>();
             let pattern = runtime::Pattern::from(pattern_items);
-            ExactOrSynthetic::Synthetic(PatternPlurals::SinglePattern(pattern))
+            PatternsWithDistance {
+                inner: PatternPlurals::SinglePattern(pattern),
+                distance: u32::MAX,
+            }
         }
     }
 }
@@ -133,8 +130,8 @@ impl SourceDataProvider {
             DateSkeletonPatterns::from(&data.datetime_formats.available_formats);
 
         fn expand_pp_to_pe(
-            value: ExactOrSynthetic<PatternPlurals>,
-        ) -> ExactOrSynthetic<PluralElements<runtime::Pattern>> {
+            value: PatternsWithDistance<PatternPlurals>,
+        ) -> PatternsWithDistance<PluralElements<runtime::Pattern>> {
             value.map(|pp| match pp {
                 PatternPlurals::MultipleVariants(variants) => PluralElements::new(variants.other)
                     .with_zero_value(variants.zero.clone())
