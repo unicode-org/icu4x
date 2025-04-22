@@ -3,7 +3,6 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use std::collections::HashSet;
-use std::u32;
 
 use crate::{cldr_serde, IterableDataProviderCached, SourceDataProvider};
 use calendar::patterns::GenericLengthPatterns;
