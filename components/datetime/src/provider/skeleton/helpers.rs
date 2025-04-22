@@ -2,8 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-extern crate std;
-
 use alloc::vec;
 use alloc::vec::Vec;
 use core::cmp::Ordering;
@@ -428,7 +426,6 @@ pub fn get_best_available_format_pattern<'data>(
     fields: &[Field],
     prefer_matched_pattern: bool,
 ) -> BestSkeleton<PatternPlurals<'data>> {
-    std::println!("gbafp: {:?}", fields);
     let mut closest_format_pattern = None;
     let mut closest_distance: u32 = u32::MAX;
     let mut closest_missing_fields = 0;
@@ -508,7 +505,6 @@ pub fn get_best_available_format_pattern<'data>(
         }
 
         if distance < closest_distance {
-            std::println!("Closer: {}", pattern.clone().expect_pattern(""));
             closest_format_pattern = Some(pattern);
             closest_distance = distance;
             closest_missing_fields = missing_fields;
