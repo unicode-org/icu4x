@@ -11,7 +11,7 @@ use icu::datetime::options::Length;
 use icu::datetime::provider::calendar::{DateSkeletonPatterns, TimeLengths};
 use icu::datetime::provider::fields::components;
 use icu::datetime::provider::pattern::{reference, runtime, CoarseHourCycle};
-use icu::datetime::provider::skeleton::PatternPlurals;
+use icu::datetime::provider::skeleton::{PatternPlurals, SkeletonQuality};
 use icu::datetime::provider::*;
 use icu::plurals::PluralElements;
 use icu_locale_core::preferences::extensions::unicode::keywords::HourCycle;
@@ -21,7 +21,7 @@ use super::DatagenCalendar;
 
 struct PatternsWithDistance<T> {
     inner: T,
-    distance: u32,
+    distance: SkeletonQuality,
 }
 
 impl<T> PatternsWithDistance<T> {
@@ -74,7 +74,7 @@ fn select_pattern<'data>(
             let pattern = runtime::Pattern::from(pattern_items);
             PatternsWithDistance {
                 inner: PatternPlurals::SinglePattern(pattern),
-                distance: u32::MAX,
+                distance: SkeletonQuality::worst(),
             }
         }
     }
