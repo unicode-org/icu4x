@@ -183,7 +183,7 @@ pub fn create_best_pattern_for_fields<'data>(
     ) = match get_best_available_format_pattern(skeletons, &date, prefer_matched_pattern) {
         BestSkeleton::MissingOrExtraFields(fields, d) => (Some(fields), true, d),
         BestSkeleton::AllFieldsMatch(fields, d) => (Some(fields), false, d),
-        BestSkeleton::NoMatch => (None, true, u32::MAX),
+        BestSkeleton::NoMatch => (None, true, REQUESTED_SYMBOL_MISSING),
     };
 
     let (time_patterns, time_missing_or_extra, time_distance): (
@@ -193,7 +193,7 @@ pub fn create_best_pattern_for_fields<'data>(
     ) = match get_best_available_format_pattern(skeletons, &time, prefer_matched_pattern) {
         BestSkeleton::MissingOrExtraFields(fields, d) => (Some(fields), true, d),
         BestSkeleton::AllFieldsMatch(fields, d) => (Some(fields), false, d),
-        BestSkeleton::NoMatch => (None, true, u32::MAX),
+        BestSkeleton::NoMatch => (None, true, REQUESTED_SYMBOL_MISSING),
     };
     let time_pattern: Option<runtime::Pattern<'data>> = time_patterns.map(|pattern_plurals| {
         let mut pattern =
