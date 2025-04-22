@@ -104,8 +104,8 @@ impl CoarseHourCycle {
             // requested fields.
             true,
         ) {
-            skeleton::BestSkeleton::AllFieldsMatch(patterns)
-            | skeleton::BestSkeleton::MissingOrExtraFields(patterns) => {
+            skeleton::BestSkeleton::AllFieldsMatch(patterns, _)
+            | skeleton::BestSkeleton::MissingOrExtraFields(patterns, _) => {
                 Some(reference::Pattern::from(&patterns.expect_pattern(
                     "Only week-of patterns have plural variants",
                 )))
