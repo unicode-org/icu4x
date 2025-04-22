@@ -404,11 +404,15 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> FixedCalendarDateTimeFormatter<
     /// .cast_into_fset::<CompositeFieldSet>();
     ///
     /// // Create a date and convert it to the correct calendar:
-    /// let date = Date::try_new_iso(2025, 3, 7).unwrap().to_calendar(Buddhist);
-    ///
-    /// // Extract the fields and use it with format_unchecked:
     /// let mut input = DateTimeInputUnchecked::default();
-    /// input.set_date_fields(date);
+    /// let date = Date::try_new_iso(2025, 3, 7)
+    ///     .unwrap()
+    ///     .to_calendar(Buddhist);
+    ///
+    /// // Safe because the calendar matches the formatter:
+    /// input.set_date_fields_unchecked(date);
+    ///
+    /// // Safe because YMD needs only date fields, which are in the input:
     /// let result = formatter.format_unchecked(input);
     ///
     /// assert_try_writeable_eq!(result, "7 มีนาคม 2568");
@@ -810,11 +814,15 @@ impl<FSet: DateTimeNamesMarker> DateTimeFormatter<FSet> {
     /// .cast_into_fset::<CompositeFieldSet>();
     ///
     /// // Create a date and convert it to the correct calendar:
-    /// let date = Date::try_new_iso(2025, 3, 7).unwrap().to_calendar(formatter.calendar());
-    ///
-    /// // Extract the fields and use it with format_unchecked:
     /// let mut input = DateTimeInputUnchecked::default();
-    /// input.set_date_fields(date);
+    /// let date = Date::try_new_iso(2025, 3, 7)
+    ///     .unwrap()
+    ///     .to_calendar(formatter.calendar());
+    ///
+    /// // Safe because the calendar matches the formatter:
+    /// input.set_date_fields_unchecked(date);
+    ///
+    /// // Safe because YMD needs only date fields, which are in the input:
     /// let result = formatter.format_unchecked(input);
     ///
     /// assert_try_writeable_eq!(result, "7 มีนาคม 2568");
