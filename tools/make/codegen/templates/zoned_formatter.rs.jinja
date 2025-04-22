@@ -194,7 +194,7 @@ pub mod ffi {
             {%- else %}
             let date = date.0.to_calendar(self.0.calendar());
             {%- endif %}
-            input.set_date_fields(date);
+            input.set_date_fields_unchecked(date); // calendar conversion on previous line
             {%- endif %}
             {%- if flavor.has_time() %}
             input.set_time_fields(time.0);

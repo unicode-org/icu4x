@@ -61,7 +61,13 @@ pub struct DateTimeInputUnchecked {
 
 impl DateTimeInputUnchecked {
     /// Sets all fields from a [`Date`] input.
-    pub fn set_date_fields<C: Calendar, A: AsCalendar<Calendar = C>>(&mut self, input: Date<A>) {
+    ///
+    /// This method does not check the calendar of the date! The caller is
+    /// responsible for making sure the calendar matches the formatter.
+    pub fn set_date_fields_unchecked<C: Calendar, A: AsCalendar<Calendar = C>>(
+        &mut self,
+        input: Date<A>,
+    ) {
         self.year = Some(input.year());
         self.month = Some(input.month());
         self.day_of_month = Some(input.day_of_month());
