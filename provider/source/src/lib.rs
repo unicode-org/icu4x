@@ -34,6 +34,7 @@ mod collator;
 #[cfg(feature = "experimental")]
 mod currency;
 mod datetime;
+mod debug_provider;
 mod decimal;
 #[cfg(feature = "experimental")]
 mod displaynames;
