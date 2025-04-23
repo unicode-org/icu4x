@@ -114,6 +114,10 @@ impl SkeletonQuality {
     pub fn best() -> SkeletonQuality {
         SkeletonQuality(0)
     }
+    /// Returns whether this is an "excellent" match by an arbitrary definition.
+    pub fn is_excellent_match(self) -> bool {
+        self.0 < GLUE_DISTANCE
+    }
 }
 
 /// This function swaps out the time zone name field for the appropriate one. Skeleton matching

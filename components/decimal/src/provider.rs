@@ -296,9 +296,9 @@ impl DecimalSymbols<'_> {
 }
 
 impl DecimalSymbols<'static> {
-    #[cfg(test)]
     /// Create a new en-US format for use in testing
-    pub(crate) fn new_en_for_testing() -> Self {
+    #[cfg(feature = "datagen")]
+    pub fn new_en_for_testing() -> Self {
         let strings = DecimalSymbolStrsBuilder {
             minus_sign_prefix: VarZeroCow::new_borrowed("-"),
             minus_sign_suffix: VarZeroCow::new_borrowed(""),
