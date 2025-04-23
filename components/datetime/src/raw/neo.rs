@@ -734,7 +734,7 @@ impl<'a> DateTimeZonePatternDataBorrowed<'a> {
 
     pub(crate) fn to_pattern(self) -> DateTimePattern {
         let pattern = self.iter_items().collect::<runtime::Pattern>();
-        DateTimePattern::from_runtime_pattern(pattern)
+        DateTimePattern::from(pattern)
     }
 }
 

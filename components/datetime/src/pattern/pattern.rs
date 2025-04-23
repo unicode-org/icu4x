@@ -115,17 +115,34 @@ impl DateTimePattern {
         Ok(Self { pattern })
     }
 
-    #[doc(hidden)] // TODO(#4467): Internal API
-    pub fn from_runtime_pattern(pattern: runtime::Pattern<'static>) -> Self {
-        Self { pattern }
-    }
-
     pub(crate) fn iter_items(&self) -> impl Iterator<Item = PatternItem> + '_ {
         self.pattern.items.iter()
     }
 
     pub(crate) fn as_borrowed(&self) -> DateTimePatternBorrowed {
         DateTimePatternBorrowed(&self.pattern)
+    }
+}
+
+impl<'a> From<runtime::Pattern<'a>> for DateTimePattern {
+    fn from(pattern: runtime::Pattern<'a>) -> Self {
+        Self {
+            pattern: pattern.into_owned(),
+        }
+    }
+}
+
+impl<'a> From<runtime::PatternBorrowed<'a>> for DateTimePattern {
+    fn from(pattern: runtime::PatternBorrowed<'a>) -> Self {
+        Self {
+            pattern: pattern.as_pattern().into_owned(),
+        }
+    }
+}
+
+impl From<DateTimePattern> for runtime::Pattern<'_> {
+    fn from(value: DateTimePattern) -> Self {
+        value.pattern
     }
 }
 

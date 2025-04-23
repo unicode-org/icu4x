@@ -15,7 +15,7 @@ mod names;
 #[allow(clippy::module_inception)] // the file pattern.rs should contain DateTimePattern
 mod pattern;
 
-use crate::error::ErrorField;
+pub use crate::error::ErrorField;
 pub use formatter::DateTimePatternFormatter;
 pub use formatter::FormattedDateTimePattern;
 use icu_pattern::SinglePlaceholderPattern;
