@@ -15,6 +15,6 @@
     "ccc, dd.MM.y г.",
     "EEEE, d MMMM y г. GGG",
     "E, d MMM y г. GGG",
-    "E, dd MMM y г. GGG"
+    "ccc, dd MMM y г. GGG"
   ]
 }
