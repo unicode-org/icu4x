@@ -1777,6 +1777,7 @@ impl<C, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, FSet> {
             &tz::MzStandardLongV1::bind(provider),
             &tz::MzPeriodV1::bind(provider),
             self.prefs,
+            &mut self.metadata,
         )?;
         Ok(self)
     }
@@ -1863,6 +1864,7 @@ impl<C, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, FSet> {
             &tz::MzGenericShortV1::bind(provider),
             &tz::MzPeriodV1::bind(provider),
             self.prefs,
+            &mut self.metadata,
         )?;
         Ok(self)
     }
@@ -1953,6 +1955,7 @@ impl<C, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, FSet> {
             &tz::MzStandardLongV1::bind(provider),
             &tz::MzPeriodV1::bind(provider),
             self.prefs,
+            &mut self.metadata,
         )?;
         Ok(self)
     }
@@ -2039,6 +2042,7 @@ impl<C, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, FSet> {
             &tz::MzSpecificShortV1::bind(provider),
             &tz::MzPeriodV1::bind(provider),
             self.prefs,
+            &mut self.metadata,
         )?;
         Ok(self)
     }
@@ -2140,6 +2144,7 @@ impl<C, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, FSet> {
             &tz::MzGenericShortV1::bind(provider),
             &tz::MzPeriodV1::bind(provider),
             self.prefs,
+            &mut self.metadata,
         )?;
         self.load_decimal_formatter(provider)
             .map_err(|e| PatternLoadError::Data(e, error_field))?;
@@ -2163,6 +2168,7 @@ impl<C, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, FSet> {
             &tz::MzGenericShortV1::bind(&crate::provider::Baked),
             &tz::MzPeriodV1::bind(&crate::provider::Baked),
             self.prefs,
+            &mut self.metadata,
         )?;
         self.include_decimal_formatter()
             .map_err(|e| PatternLoadError::Data(e, error_field))?;
@@ -2196,6 +2202,7 @@ impl<C, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, FSet> {
             &tz::MzStandardLongV1::bind(provider),
             &tz::MzPeriodV1::bind(provider),
             self.prefs,
+            &mut self.metadata,
         )?;
         self.load_decimal_formatter(provider)
             .map_err(|e| PatternLoadError::Data(e, error_field))?;
@@ -2220,6 +2227,7 @@ impl<C, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, FSet> {
             &tz::MzStandardLongV1::bind(&crate::provider::Baked),
             &tz::MzPeriodV1::bind(&crate::provider::Baked),
             self.prefs,
+            &mut self.metadata,
         )?;
         self.include_decimal_formatter()
             .map_err(|e| PatternLoadError::Data(e, error_field))?;
@@ -2250,6 +2258,7 @@ impl<C, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, FSet> {
             &tz::MzSpecificShortV1::bind(provider),
             &tz::MzPeriodV1::bind(provider),
             self.prefs,
+            &mut self.metadata,
         )?;
         self.load_decimal_formatter(provider)
             .map_err(|e| PatternLoadError::Data(e, error_field))?;
@@ -2272,6 +2281,7 @@ impl<C, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, FSet> {
             &tz::MzSpecificShortV1::bind(&crate::provider::Baked),
             &tz::MzPeriodV1::bind(&crate::provider::Baked),
             self.prefs,
+            &mut self.metadata,
         )?;
         self.include_decimal_formatter()
             .map_err(|e| PatternLoadError::Data(e, error_field))?;
@@ -2306,6 +2316,7 @@ impl<C, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, FSet> {
             &tz::MzSpecificLongV1::bind(provider),
             &tz::MzPeriodV1::bind(provider),
             self.prefs,
+            &mut self.metadata,
         )?;
         self.load_decimal_formatter(provider)
             .map_err(|e| PatternLoadError::Data(e, error_field))?;
@@ -2331,6 +2342,7 @@ impl<C, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, FSet> {
             &tz::MzSpecificLongV1::bind(&crate::provider::Baked),
             &tz::MzPeriodV1::bind(&crate::provider::Baked),
             self.prefs,
+            &mut self.metadata,
         )?;
         self.include_decimal_formatter()
             .map_err(|e| PatternLoadError::Data(e, error_field))?;
@@ -2967,6 +2979,7 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
         mz_standard_provider: &(impl BoundDataProvider<tz::MzStandardLongV1> + ?Sized),
         mz_period_provider: &(impl BoundDataProvider<tz::MzPeriodV1> + ?Sized),
         prefs: DateTimeFormatterPreferences,
+        names_metadata: &mut DateTimeNamesMetadata,
     ) -> Result<ErrorField, PatternLoadError> {
         let locale = mz_generic_provider
             .bound_marker()
@@ -3013,6 +3026,7 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
         provider: &(impl BoundDataProvider<tz::MzGenericShortV1> + ?Sized),
         mz_period_provider: &(impl BoundDataProvider<tz::MzPeriodV1> + ?Sized),
         prefs: DateTimeFormatterPreferences,
+        names_metadata: &mut DateTimeNamesMetadata,
     ) -> Result<ErrorField, PatternLoadError> {
         let locale = provider
             .bound_marker()
@@ -3054,6 +3068,7 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
         mz_standard_provider: &(impl BoundDataProvider<tz::MzStandardLongV1> + ?Sized),
         mz_period_provider: &(impl BoundDataProvider<tz::MzPeriodV1> + ?Sized),
         prefs: DateTimeFormatterPreferences,
+        names_metadata: &mut DateTimeNamesMetadata,
     ) -> Result<ErrorField, PatternLoadError> {
         let locale = mz_specific_provider
             .bound_marker()
@@ -3100,6 +3115,7 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
         provider: &(impl BoundDataProvider<tz::MzSpecificShortV1> + ?Sized),
         mz_period_provider: &(impl BoundDataProvider<tz::MzPeriodV1> + ?Sized),
         prefs: DateTimeFormatterPreferences,
+        names_metadata: &mut DateTimeNamesMetadata,
     ) -> Result<ErrorField, PatternLoadError> {
         let locale = provider
             .bound_marker()
@@ -3141,12 +3157,14 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
         mz_specific_short_provider: &(impl BoundDataProvider<tz::MzSpecificShortV1> + ?Sized),
         mz_period_provider: &(impl BoundDataProvider<tz::MzPeriodV1> + ?Sized),
         prefs: DateTimeFormatterPreferences,
+        names_metadata: &mut DateTimeNamesMetadata,
     ) -> Result<ErrorField, PatternLoadError> {
         self.load_time_zone_essentials(zone_essentials_provider, prefs)?;
         self.load_time_zone_specific_short_names(
             mz_specific_short_provider,
             mz_period_provider,
             prefs,
+            names_metadata,
         )
     }
 
@@ -3160,6 +3178,7 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
         mz_specific_long_provider: &(impl BoundDataProvider<tz::MzSpecificLongV1> + ?Sized),
         mz_period_provider: &(impl BoundDataProvider<tz::MzPeriodV1> + ?Sized),
         prefs: DateTimeFormatterPreferences,
+        names_metadata: &mut DateTimeNamesMetadata,
     ) -> Result<ErrorField, PatternLoadError> {
         self.load_time_zone_essentials(zone_essentials_provider, prefs)?;
         self.load_time_zone_location_names(locations_provider, locations_root_provider, prefs)?;
@@ -3168,6 +3187,7 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
             mz_standard_long_provider,
             mz_period_provider,
             prefs,
+            names_metadata,
         )
     }
 
@@ -3179,6 +3199,7 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
         mz_generic_short_provider: &(impl BoundDataProvider<tz::MzGenericShortV1> + ?Sized),
         mz_period_provider: &(impl BoundDataProvider<tz::MzPeriodV1> + ?Sized),
         prefs: DateTimeFormatterPreferences,
+        names_metadata: &mut DateTimeNamesMetadata,
     ) -> Result<ErrorField, PatternLoadError> {
         self.load_time_zone_essentials(zone_essentials_provider, prefs)?;
         // For fallback:
@@ -3187,6 +3208,7 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
             mz_generic_short_provider,
             mz_period_provider,
             prefs,
+            names_metadata,
         )
     }
 
@@ -3200,6 +3222,7 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
         mz_standard_long_provider: &(impl BoundDataProvider<tz::MzStandardLongV1> + ?Sized),
         mz_period_provider: &(impl BoundDataProvider<tz::MzPeriodV1> + ?Sized),
         prefs: DateTimeFormatterPreferences,
+        names_metadata: &mut DateTimeNamesMetadata,
     ) -> Result<ErrorField, PatternLoadError> {
         self.load_time_zone_essentials(zone_essentials_provider, prefs)?;
         // For fallback:
@@ -3209,6 +3232,7 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
             mz_standard_long_provider,
             mz_period_provider,
             prefs,
+            names_metadata,
         )
     }
 
@@ -3402,6 +3426,7 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
                         mz_specific_short_provider,
                         mz_period_provider,
                         prefs,
+                        names_metadata,
                     )?;
                     numeric_field = Some(field);
                 }
@@ -3415,6 +3440,7 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
                         mz_specific_long_provider,
                         mz_period_provider,
                         prefs,
+                        names_metadata,
                     )?;
                     numeric_field = Some(field);
                 }
@@ -3427,6 +3453,7 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
                         mz_generic_short_provider,
                         mz_period_provider,
                         prefs,
+                        names_metadata,
                     )?;
                     numeric_field = Some(field);
                 }
@@ -3440,6 +3467,7 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
                         mz_standard_long_provider,
                         mz_period_provider,
                         prefs,
+                        names_metadata,
                     )?;
                     numeric_field = Some(field);
                 }
