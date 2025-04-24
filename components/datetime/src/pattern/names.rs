@@ -577,7 +577,23 @@ size_test!(
 pub struct FixedCalendarDateTimeNames<C, FSet: DateTimeNamesMarker = CompositeDateTimeFieldSet> {
     prefs: DateTimeFormatterPreferences,
     inner: RawDateTimeNames<FSet>,
+    metadata: DateTimeNamesMetadata,
     _calendar: PhantomData<C>,
+}
+
+/// Extra metadata associated with DateTimeNames but not DateTimeFormatter.
+#[derive(Debug, Clone)]
+pub(crate) struct DateTimeNamesMetadata {
+    zone_checksum: Option<u64>,
+}
+
+impl DateTimeNamesMetadata {
+    /// Not impl Default: emphasize when we create a new empty instance
+    pub(crate) fn new_empty() -> Self {
+        Self {
+            zone_checksum: None,
+        }
+    }
 }
 
 /// A low-level type that formats datetime patterns with localized names.
@@ -724,6 +740,7 @@ impl<C, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, FSet> {
         let mut names = Self {
             prefs,
             inner: RawDateTimeNames::new_without_number_formatting(),
+            metadata: DateTimeNamesMetadata::new_empty(), // OK: this is a constructor
             _calendar: PhantomData,
         };
         names.include_decimal_formatter()?;
@@ -741,6 +758,7 @@ impl<C, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, FSet> {
         let mut names = Self {
             prefs,
             inner: RawDateTimeNames::new_without_number_formatting(),
+            metadata: DateTimeNamesMetadata::new_empty(), // OK: this is a constructor
             _calendar: PhantomData,
         };
         names.load_decimal_formatter(provider)?;
@@ -807,6 +825,7 @@ impl<C, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, FSet> {
         Self {
             prefs,
             inner: RawDateTimeNames::new_without_number_formatting(),
+            metadata: DateTimeNamesMetadata::new_empty(), // OK: this is a constructor
             _calendar: PhantomData,
         }
     }
@@ -864,14 +883,19 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, F
         Self {
             prefs,
             inner: formatter.names,
+            metadata: DateTimeNamesMetadata::new_empty(), // Issue: this could fail (#6063)
             _calendar: PhantomData,
         }
     }
 
-    fn from_parts(prefs: DateTimeFormatterPreferences, inner: RawDateTimeNames<FSet>) -> Self {
+    fn from_parts(
+        prefs: DateTimeFormatterPreferences,
+        parts: (RawDateTimeNames<FSet>, DateTimeNamesMetadata),
+    ) -> Self {
         Self {
             prefs,
-            inner,
+            inner: parts.0,
+            metadata: parts.1,
             _calendar: PhantomData,
         }
     }
@@ -937,6 +961,7 @@ where
             self.prefs,
             field_set.get_field(),
             self.inner,
+            self.metadata,
         )
         .map_err(|e| (e.0, Self::from_parts(self.prefs, e.1)))
     }
@@ -958,6 +983,7 @@ where
             self.prefs,
             field_set.get_field(),
             self.inner,
+            self.metadata,
         )
         .map_err(|e| (e.0, Self::from_parts(self.prefs, e.1)))
     }
@@ -980,6 +1006,7 @@ where
             self.prefs,
             field_set.get_field(),
             self.inner,
+            self.metadata,
         )
         .map_err(|e| (e.0, Self::from_parts(self.prefs, e.1)))
     }
@@ -1049,17 +1076,26 @@ impl<FSet: DateTimeNamesMarker> DateTimeNames<FSet> {
         prefs: DateTimeFormatterPreferences,
         formatter: DateTimeFormatter<FSet>,
     ) -> Self {
-        Self::from_parts(prefs, (formatter.calendar.into_tagged(), formatter.names))
+        let metadata = DateTimeNamesMetadata::new_empty(); // Issue: This could possibly fail
+        Self::from_parts(
+            prefs,
+            (formatter.calendar.into_tagged(), formatter.names, metadata),
+        )
     }
 
     fn from_parts(
         prefs: DateTimeFormatterPreferences,
-        parts: (FormattableAnyCalendar, RawDateTimeNames<FSet>),
+        parts: (
+            FormattableAnyCalendar,
+            RawDateTimeNames<FSet>,
+            DateTimeNamesMetadata,
+        ),
     ) -> Self {
         Self {
             inner: FixedCalendarDateTimeNames {
                 prefs,
                 inner: parts.1,
+                metadata: parts.2,
                 _calendar: PhantomData,
             },
             calendar: parts.0,
@@ -1132,6 +1168,7 @@ where
             field_set.get_field(),
             self.calendar,
             self.inner.inner,
+            self.inner.metadata,
         )
         .map_err(|e| (e.0, Self::from_parts(self.inner.prefs, e.1)))
     }
@@ -1154,6 +1191,7 @@ where
             field_set.get_field(),
             self.calendar,
             self.inner.inner,
+            self.inner.metadata,
         )
         .map_err(|e| (e.0, Self::from_parts(self.inner.prefs, e.1)))
     }
@@ -1177,6 +1215,7 @@ where
             field_set.get_field(),
             self.calendar,
             self.inner.inner,
+            self.inner.metadata,
         )
         .map_err(|e| (e.0, Self::from_parts(self.inner.prefs, e.1)))
     }
@@ -2460,6 +2499,7 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, F
             &ExternalLoaderUnstable(provider),
             locale,
             pattern.iter_items(),
+            &mut self.metadata,
         )?;
         Ok(DateTimePatternFormatter::new(
             pattern.as_borrowed(),
@@ -2535,6 +2575,7 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, F
             &ExternalLoaderCompiledData,
             locale,
             pattern.iter_items(),
+            &mut self.metadata,
         )?;
         Ok(DateTimePatternFormatter::new(
             pattern.as_borrowed(),
@@ -2616,6 +2657,7 @@ impl<C, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, FSet> {
         FixedCalendarDateTimeNames {
             prefs: self.prefs,
             inner: self.inner.cast_into_fset(),
+            metadata: self.metadata,
             _calendar: PhantomData,
         }
     }
@@ -3269,6 +3311,7 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
         decimal_formatter_loader: &impl DecimalFormatterLoader,
         prefs: DateTimeFormatterPreferences,
         pattern_items: impl Iterator<Item = PatternItem>,
+        names_metadata: &mut DateTimeNamesMetadata,
     ) -> Result<(), PatternLoadError> {
         let mut numeric_field = None;
 
