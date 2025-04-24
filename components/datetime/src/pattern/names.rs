@@ -571,7 +571,7 @@ size_test!(
 /// names.include_time_zone_location_names().unwrap();
 ///
 /// // But loading names for a different zone style does not currently work:
-/// names.include_time_zone_specific_short_names().unwrap_err();
+/// names.include_time_zone_generic_long_names().unwrap_err();
 /// ```
 #[derive(Debug, Clone)]
 pub struct FixedCalendarDateTimeNames<C, FSet: DateTimeNamesMarker = CompositeDateTimeFieldSet> {
