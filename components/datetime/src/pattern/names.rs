@@ -545,8 +545,7 @@ size_test!(
 /// );
 /// ```
 ///
-/// When loading data for time zones, currently only one type can be loaded; see:
-/// <https://github.com/unicode-org/icu4x/issues/6063>
+/// Multiple types of time zone data can be loaded:
 ///
 /// ```
 /// use icu::datetime::input::Date;
@@ -2993,25 +2992,34 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
             id: DataIdentifierBorrowed::for_locale(&locale),
             ..Default::default()
         };
+        let mut save_checksum = |cs: &u64| {
+            // get_or_insert saves the value only if the Option is None.
+            names_metadata.zone_checksum.get_or_insert(*cs);
+        };
         let cs1 = self
             .mz_generic_long
             .load_put(mz_generic_provider, req, variables)
             .map_err(|e| MaybePayloadError::into_load_error(e, error_field))?
             .map_err(|e| PatternLoadError::Data(e, error_field))?
-            .checksum;
+            .checksum
+            .inspect(&mut save_checksum);
         let cs2 = self
             .mz_standard_long
             .load_put(mz_standard_provider, req, variables)
             .map_err(|e| MaybePayloadError::into_load_error(e, error_field))?
             .map_err(|e| PatternLoadError::Data(e, error_field))?
-            .checksum;
+            .checksum
+            .inspect(&mut save_checksum);
         let cs3 = self
             .mz_periods
             .load_put(mz_period_provider, Default::default(), ())
             .map_err(|e| MaybePayloadError::into_load_error(e, error_field))?
             .map_err(|e| PatternLoadError::Data(e, error_field))?
-            .checksum;
-        if cs1 != cs2 || cs1 != cs3 {
+            .checksum
+            .inspect(&mut save_checksum);
+        // Error if any two of the checksum Options are Some and not equal.
+        let cs = names_metadata.zone_checksum;
+        if cs1.or(cs) != cs || cs2.or(cs) != cs || cs3.or(cs) != cs {
             return Err(PatternLoadError::Data(
                 DataErrorKind::InconsistentData(tz::MzPeriodV1::INFO)
                     .with_req(tz::MzGenericLongV1::INFO, req),
@@ -3040,22 +3048,30 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
             id: DataIdentifierBorrowed::for_locale(&locale),
             ..Default::default()
         };
+        let mut save_checksum = |cs: &u64| {
+            // get_or_insert saves the value only if the Option is None.
+            names_metadata.zone_checksum.get_or_insert(*cs);
+        };
         let cs1 = self
             .mz_generic_short
             .load_put(provider, req, variables)
             .map_err(|e| MaybePayloadError::into_load_error(e, error_field))?
             .map_err(|e| PatternLoadError::Data(e, error_field))?
-            .checksum;
+            .checksum
+            .inspect(&mut save_checksum);
         let cs2 = self
             .mz_periods
             .load_put(mz_period_provider, Default::default(), ())
             .map_err(|e| MaybePayloadError::into_load_error(e, error_field))?
             .map_err(|e| PatternLoadError::Data(e, error_field))?
-            .checksum;
-        if cs1 != cs2 {
+            .checksum
+            .inspect(&mut save_checksum);
+        // Error if any two of the checksum Options are Some and not equal.
+        let cs = names_metadata.zone_checksum;
+        if cs1.or(cs) != cs || cs2.or(cs) != cs {
             return Err(PatternLoadError::Data(
                 DataErrorKind::InconsistentData(tz::MzPeriodV1::INFO)
-                    .with_req(tz::MzGenericShortV1::INFO, req),
+                    .with_req(tz::MzGenericLongV1::INFO, req),
                 error_field,
             ));
         }
@@ -3082,25 +3098,34 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
             id: DataIdentifierBorrowed::for_locale(&locale),
             ..Default::default()
         };
+        let mut save_checksum = |cs: &u64| {
+            // get_or_insert saves the value only if the Option is None.
+            names_metadata.zone_checksum.get_or_insert(*cs);
+        };
         let cs1 = self
             .mz_specific_long
             .load_put(mz_specific_provider, req, variables)
             .map_err(|e| MaybePayloadError::into_load_error(e, error_field))?
             .map_err(|e| PatternLoadError::Data(e, error_field))?
-            .checksum;
+            .checksum
+            .inspect(&mut save_checksum);
         let cs2 = self
             .mz_standard_long
             .load_put(mz_standard_provider, req, variables)
             .map_err(|e| MaybePayloadError::into_load_error(e, error_field))?
             .map_err(|e| PatternLoadError::Data(e, error_field))?
-            .checksum;
+            .checksum
+            .inspect(&mut save_checksum);
         let cs3 = self
             .mz_periods
             .load_put(mz_period_provider, Default::default(), ())
             .map_err(|e| MaybePayloadError::into_load_error(e, error_field))?
             .map_err(|e| PatternLoadError::Data(e, error_field))?
-            .checksum;
-        if cs1 != cs2 || cs1 != cs3 {
+            .checksum
+            .inspect(&mut save_checksum);
+        // Error if any two of the checksum Options are Some and not equal.
+        let cs = names_metadata.zone_checksum;
+        if cs1.or(cs) != cs || cs2.or(cs) != cs || cs3.or(cs) != cs {
             return Err(PatternLoadError::Data(
                 DataErrorKind::InconsistentData(tz::MzPeriodV1::INFO)
                     .with_req(tz::MzSpecificLongV1::INFO, req),
@@ -3129,19 +3154,27 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
             id: DataIdentifierBorrowed::for_locale(&locale),
             ..Default::default()
         };
+        let mut save_checksum = |cs: &u64| {
+            // get_or_insert saves the value only if the Option is None.
+            names_metadata.zone_checksum.get_or_insert(*cs);
+        };
         let cs1 = self
             .mz_specific_short
             .load_put(provider, req, variables)
             .map_err(|e| MaybePayloadError::into_load_error(e, error_field))?
             .map_err(|e| PatternLoadError::Data(e, error_field))?
-            .checksum;
+            .checksum
+            .inspect(&mut save_checksum);
         let cs2 = self
             .mz_periods
             .load_put(mz_period_provider, Default::default(), ())
             .map_err(|e| MaybePayloadError::into_load_error(e, error_field))?
             .map_err(|e| PatternLoadError::Data(e, error_field))?
-            .checksum;
-        if cs1 != cs2 {
+            .checksum
+            .inspect(&mut save_checksum);
+        // Error if any two of the checksum Options are Some and not equal.
+        let cs = names_metadata.zone_checksum;
+        if cs1.or(cs) != cs || cs2.or(cs) != cs {
             return Err(PatternLoadError::Data(
                 DataErrorKind::InconsistentData(tz::MzPeriodV1::INFO)
                     .with_req(tz::MzSpecificShortV1::INFO, req),
