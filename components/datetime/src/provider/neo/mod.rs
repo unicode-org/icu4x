@@ -716,26 +716,6 @@ icu_provider::data_struct!(
     #[cfg(feature = "datagen")]
 );
 
-#[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
-#[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::neo))]
-#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-#[yoke(prove_covariance_manually)]
-#[allow(missing_docs)] // TODO
-pub struct DateTimeSkeletons<'data> {
-    // will typically be small, there are only a couple special cases like E B h m
-    // TODO: This should support plurals
-    // TODO: The key of this map should be Skeleton
-    #[allow(missing_docs)] // TODO
-    #[cfg_attr(feature = "serde", serde(borrow))]
-    pub map: ZeroMap<'data, str, PatternULE>,
-}
-
-icu_provider::data_struct!(
-    DateTimeSkeletons<'_>,
-    #[cfg(feature = "datagen")]
-);
-
 /// Calendar-agnostic year name data marker
 #[derive(Debug)]
 pub struct YearNamesV1;
