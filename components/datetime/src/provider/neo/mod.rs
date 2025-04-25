@@ -520,11 +520,6 @@ icu_provider::data_marker!(
     DatetimePatternsGlueV1,
     GluePattern<'static>
 );
-icu_provider::data_marker!(
-    /// `DateTimeSkeletonPatternsV1`
-    DateTimeSkeletonPatternsV1,
-    DateTimeSkeletons<'static>,
-);
 
 size_test!(YearNames, year_names_v1_size, 32);
 
