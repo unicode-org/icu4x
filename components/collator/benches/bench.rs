@@ -150,8 +150,16 @@ pub fn collator_with_locale(criterion: &mut Criterion) {
         Strength::Identical,
     ];
     let performance_parameters = [
-        (locale!("en-US"), vec![&content_latin, &content_photos], &all_strength),
-        (locale!("da-DK"), vec![&content_latin, &content_photos], &all_strength),
+        (
+            locale!("en-US"),
+            vec![&content_latin, &content_photos],
+            &all_strength,
+        ),
+        (
+            locale!("da-DK"),
+            vec![&content_latin, &content_photos],
+            &all_strength,
+        ),
         (locale!("fr-CA"), vec![&content_latin], &all_strength),
         (
             locale!("ja-JP"),
