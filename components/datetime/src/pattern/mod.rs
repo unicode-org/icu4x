@@ -20,6 +20,7 @@ pub use formatter::DateTimePatternFormatter;
 pub use formatter::FormattedDateTimePattern;
 use icu_pattern::SinglePlaceholderPattern;
 pub use names::DateTimeNames;
+pub(crate) use names::DateTimeNamesMetadata;
 pub use names::DayPeriodNameLength;
 pub use names::FixedCalendarDateTimeNames;
 pub use names::MonthNameLength;

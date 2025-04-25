@@ -280,8 +280,16 @@ where
         L: DecimalFormatterLoader,
     {
         let names = RawDateTimeNames::new_without_number_formatting();
-        Self::try_new_internal_with_names(provider, provider, loader, prefs, field_set, names)
-            .map_err(|e| e.0)
+        Self::try_new_internal_with_names(
+            provider,
+            provider,
+            loader,
+            prefs,
+            field_set,
+            names,
+            DateTimeNamesMetadata::new_empty(), // OK: this is a constructor
+        )
+        .map_err(|e| e.0)
     }
 
     #[allow(clippy::result_large_err)] // returning ownership of an argument to the caller
@@ -292,7 +300,14 @@ where
         prefs: DateTimeFormatterPreferences,
         field_set: CompositeFieldSet,
         mut names: RawDateTimeNames<FSet>,
-    ) -> Result<Self, (DateTimeFormatterLoadError, RawDateTimeNames<FSet>)>
+        mut names_metadata: DateTimeNamesMetadata,
+    ) -> Result<
+        Self,
+        (
+            DateTimeFormatterLoadError,
+            (RawDateTimeNames<FSet>, DateTimeNamesMetadata),
+        ),
+    >
     where
         P0: ?Sized + AllFixedCalendarPatternDataMarkers<C, FSet>,
         P1: ?Sized + AllFixedCalendarFormattingDataMarkers<C, FSet>,
@@ -307,7 +322,7 @@ where
         );
         let selection = match selection {
             Ok(selection) => selection,
-            Err(e) => return Err((DateTimeFormatterLoadError::Data(e), names)),
+            Err(e) => return Err((DateTimeFormatterLoadError::Data(e), (names, names_metadata))),
         };
         let result = names.load_for_pattern(
             &<FSet::D as TypedDateDataMarkers<C>>::YearNamesV1::bind(provider),
@@ -328,10 +343,16 @@ where
             loader, // fixed decimal formatter
             prefs,
             selection.pattern_items_for_data_loading(),
+            &mut names_metadata,
         );
         match result {
             Ok(()) => (),
-            Err(e) => return Err((DateTimeFormatterLoadError::Names(e), names)),
+            Err(e) => {
+                return Err((
+                    DateTimeFormatterLoadError::Names(e),
+                    (names, names_metadata),
+                ))
+            }
         };
         Ok(Self {
             selection,
@@ -561,12 +582,21 @@ where
         let calendar = FormattableAnyCalendarLoader::load(loader, kind)?;
         let names = RawDateTimeNames::new_without_number_formatting();
         Self::try_new_internal_with_calendar_and_names(
-            provider, provider, loader, prefs, field_set, calendar, names,
+            provider,
+            provider,
+            loader,
+            prefs,
+            field_set,
+            calendar,
+            names,
+            DateTimeNamesMetadata::new_empty(), // OK: this is a constructor
         )
         .map_err(|e| e.0)
     }
 
     #[allow(clippy::result_large_err)] // returning ownership of an argument to the caller
+    #[allow(clippy::too_many_arguments)] // internal function with lots of generics
+    #[allow(clippy::type_complexity)] // return type has all the parts inside
     pub(crate) fn try_new_internal_with_calendar_and_names<P0, P1, L>(
         provider_p: &P0,
         provider: &P1,
@@ -575,11 +605,16 @@ where
         field_set: CompositeFieldSet,
         calendar: FormattableAnyCalendar,
         mut names: RawDateTimeNames<FSet>,
+        mut names_metadata: DateTimeNamesMetadata,
     ) -> Result<
         Self,
         (
             DateTimeFormatterLoadError,
-            (FormattableAnyCalendar, RawDateTimeNames<FSet>),
+            (
+                FormattableAnyCalendar,
+                RawDateTimeNames<FSet>,
+                DateTimeNamesMetadata,
+            ),
         ),
     >
     where
@@ -599,7 +634,12 @@ where
         );
         let selection = match selection {
             Ok(selection) => selection,
-            Err(e) => return Err((DateTimeFormatterLoadError::Data(e), (calendar, names))),
+            Err(e) => {
+                return Err((
+                    DateTimeFormatterLoadError::Data(e),
+                    (calendar, names, names_metadata),
+                ))
+            }
         };
         let result = names.load_for_pattern(
             &FormattableAnyCalendarNamesLoader::<<FSet::D as DateDataMarkers>::Year, _>::new(
@@ -626,10 +666,16 @@ where
             loader, // fixed decimal formatter
             prefs,
             selection.pattern_items_for_data_loading(),
+            &mut names_metadata,
         );
         match result {
             Ok(()) => (),
-            Err(e) => return Err((DateTimeFormatterLoadError::Names(e), (calendar, names))),
+            Err(e) => {
+                return Err((
+                    DateTimeFormatterLoadError::Names(e),
+                    (calendar, names, names_metadata),
+                ))
+            }
         };
         Ok(Self {
             selection,
