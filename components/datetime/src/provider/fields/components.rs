@@ -142,7 +142,7 @@ impl Bag {
                 symbol: FieldSymbol::Year(match year {
                     Year::Numeric | Year::TwoDigit => fields::Year::Calendar,
                     Year::NumericWeekOf | Year::TwoDigitWeekOf => {
-                        unimplemented!("fields::Year::WeekOf")
+                        unimplemented!("#5643 fields::Year::WeekOf")
                     }
                 }),
                 length: match year {
