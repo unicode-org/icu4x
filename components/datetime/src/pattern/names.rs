@@ -3269,6 +3269,7 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
         )
     }
 
+    #[allow(clippy::too_many_arguments)] // internal function with lots of generics
     pub(crate) fn load_time_zone_field_v_except_decimals(
         &mut self,
         zone_essentials_provider: &(impl BoundDataProvider<tz::EssentialsV1> + ?Sized),

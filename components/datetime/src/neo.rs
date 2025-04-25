@@ -595,6 +595,8 @@ where
     }
 
     #[allow(clippy::result_large_err)] // returning ownership of an argument to the caller
+    #[allow(clippy::too_many_arguments)] // internal function with lots of generics
+    #[allow(clippy::type_complexity)] // return type has all the parts inside
     pub(crate) fn try_new_internal_with_calendar_and_names<P0, P1, L>(
         provider_p: &P0,
         provider: &P1,
