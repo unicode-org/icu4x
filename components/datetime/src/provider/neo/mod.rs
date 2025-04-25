@@ -6,13 +6,13 @@
 
 mod adapter;
 
-use crate::provider::pattern::runtime::{self, PatternULE};
+use crate::provider::pattern::runtime;
 use crate::size_test_macro::size_test;
 use alloc::borrow::Cow;
 use icu_pattern::SinglePlaceholderPattern;
 use icu_provider::prelude::*;
 use potential_utf::PotentialUtf8;
-use zerovec::{ule::tuplevar::Tuple2VarULE, VarZeroCow, VarZeroSlice, VarZeroVec, ZeroMap};
+use zerovec::{ule::tuplevar::Tuple2VarULE, VarZeroCow, VarZeroSlice, VarZeroVec};
 
 /// Helpers involving the data marker attributes used for date names.
 ///
