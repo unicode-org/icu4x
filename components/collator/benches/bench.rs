@@ -2,8 +2,10 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use criterion::{black_box, criterion_group, criterion_main, BatchSize, BenchmarkId, Criterion, BenchmarkGroup};
 use criterion::measurement::WallTime;
+use criterion::{
+    black_box, criterion_group, criterion_main, BatchSize, BenchmarkGroup, BenchmarkId, Criterion,
+};
 
 use icu::collator::{options::*, *};
 use icu::locale::locale;
@@ -13,7 +15,11 @@ use icu_locale_core::Locale;
 // collator layout changes from affecting the baseline!
 
 #[inline(never)]
-fn baseline_bench(group: &mut BenchmarkGroup<'_, WallTime>, file_name: &&str, elements: &Vec<&str>) {
+fn baseline_bench(
+    group: &mut BenchmarkGroup<'_, WallTime>,
+    file_name: &&str,
+    elements: &Vec<&str>,
+) {
     // baseline performance, locale-unaware code point sort done by Rust (0 for ordering in the html report)
     group.bench_function(
         BenchmarkId::new(format!("{}/0_rust_sort", file_name), "default"),
@@ -28,12 +34,18 @@ fn baseline_bench(group: &mut BenchmarkGroup<'_, WallTime>, file_name: &&str, el
 }
 
 #[inline(never)]
-fn collator_bench(group: &mut BenchmarkGroup<'_, WallTime>, file_name: &&str, elements: &Vec<&str>, index: usize, strength: Strength, locale_under_bench: &Locale) {
+fn collator_bench(
+    group: &mut BenchmarkGroup<'_, WallTime>,
+    file_name: &&str,
+    elements: &Vec<&str>,
+    index: usize,
+    strength: Strength,
+    locale_under_bench: &Locale,
+) {
     let mut options = CollatorOptions::default();
     options.strength = Some(strength);
     let collator =
-        Collator::try_new(CollatorPreferences::from(locale_under_bench), options)
-            .unwrap();
+        Collator::try_new(CollatorPreferences::from(locale_under_bench), options).unwrap();
     // ICU4X collator performance, sort is locale-aware
     group.bench_function(
         BenchmarkId::new(
@@ -43,9 +55,7 @@ fn collator_bench(group: &mut BenchmarkGroup<'_, WallTime>, file_name: &&str, el
         |bencher| {
             bencher.iter_batched(
                 || black_box(elements.clone()),
-                |mut lines| {
-                    lines.sort_unstable_by(|left, right| collator.compare(left, right))
-                },
+                |mut lines| lines.sort_unstable_by(|left, right| collator.compare(left, right)),
                 BatchSize::SmallInput,
             )
         },
@@ -181,7 +191,14 @@ pub fn collator_with_locale(criterion: &mut Criterion) {
 
             // index to keep order of strength in the html report
             for (index, strength) in benched_strength.iter().enumerate() {
-                collator_bench(&mut group, file_name, &elements, index, *strength, &locale_under_bench);
+                collator_bench(
+                    &mut group,
+                    file_name,
+                    &elements,
+                    index,
+                    *strength,
+                    &locale_under_bench,
+                );
             }
         }
         group.finish();
