@@ -183,14 +183,14 @@ pub fn collator_with_locale(criterion: &mut Criterion) {
 
         for content_under_bench in files_under_bench {
             let (file_name, elements) = black_box(content_under_bench);
-            baseline_bench(&mut group, file_name, &elements);
+            baseline_bench(&mut group, file_name, elements);
 
             // index to keep order of strength in the html report
             for (index, strength) in benched_strength.iter().enumerate() {
                 collator_bench(
                     &mut group,
                     file_name,
-                    &elements,
+                    elements,
                     index,
                     *strength,
                     &locale_under_bench,
