@@ -287,7 +287,7 @@ where
             prefs,
             field_set,
             names,
-            DateTimeNamesMetadata::new_empty(),
+            DateTimeNamesMetadata::new_empty(), // OK: this is a constructor
         )
         .map_err(|e| e.0)
     }
@@ -589,7 +589,7 @@ where
             field_set,
             calendar,
             names,
-            DateTimeNamesMetadata::new_empty(),
+            DateTimeNamesMetadata::new_empty(), // OK: this is a constructor
         )
         .map_err(|e| e.0)
     }

@@ -545,10 +545,9 @@ size_test!(
 /// );
 /// ```
 ///
-/// Multiple types of time zone data can be loaded:
+/// Multiple types of time zone data can be loaded into a [`FixedCalendarDateTimeNames`]:
 ///
 /// ```
-/// use icu::datetime::input::Date;
 /// use icu::datetime::pattern::FixedCalendarDateTimeNames;
 /// use icu::datetime::fieldsets::enums::ZoneFieldSet;
 /// use icu::locale::locale;
@@ -569,8 +568,40 @@ size_test!(
 /// names.include_time_zone_generic_short_names().unwrap();
 /// names.include_time_zone_location_names().unwrap();
 ///
-/// // But loading names for a different zone style does not currently work:
-/// names.include_time_zone_generic_long_names().unwrap_err();
+/// // We can load names for a different zone style:
+/// names.include_time_zone_generic_long_names().unwrap();
+/// ```
+///
+/// However, new time zone names cannot be added into a formatter that already has them. If you
+/// need this functionality, see <https://github.com/unicode-org/icu4x/issues/6063>
+///
+/// ```
+/// use icu_datetime::pattern::PatternLoadError;
+/// use icu_provider::DataError;
+/// use icu_provider::DataErrorKind;
+/// use icu::datetime::fieldsets::enums::ZoneFieldSet;
+/// use icu::datetime::fieldsets::zone;
+/// use icu::datetime::NoCalendarFormatter;
+/// use icu::datetime::pattern::FixedCalendarDateTimeNames;
+/// use icu::locale::locale;
+///
+/// let prefs = locale!("uk").into();
+///
+/// // Create a formatter for generic long time zones:
+/// let formatter = NoCalendarFormatter::try_new(
+///     prefs,
+///     zone::GenericLong,
+/// )
+/// .unwrap();
+///
+/// // Convert it to a FixedCalendarDateTimeNames:
+/// let mut names = FixedCalendarDateTimeNames::from_formatter(prefs, formatter).cast_into_fset::<ZoneFieldSet>();
+///
+/// // Specific names cannot be added:
+/// assert!(matches!(
+///     names.include_time_zone_specific_long_names(),
+///     Err(PatternLoadError::Data(DataError { kind: DataErrorKind::InconsistentData(_), .. }, _))
+/// ));
 /// ```
 #[derive(Debug, Clone)]
 pub struct FixedCalendarDateTimeNames<C, FSet: DateTimeNamesMarker = CompositeDateTimeFieldSet> {
@@ -587,10 +618,23 @@ pub(crate) struct DateTimeNamesMetadata {
 }
 
 impl DateTimeNamesMetadata {
-    /// Not impl Default: emphasize when we create a new empty instance
+    /// No impl Default: emphasize when we create a new empty instance
+    #[inline]
     pub(crate) fn new_empty() -> Self {
         Self {
             zone_checksum: None,
+        }
+    }
+    /// If mz_periods is already populated, we can't load anything else because
+    /// we can't verify the checksum. Set a blank checksum in this case.
+    #[inline]
+    pub(crate) fn new_from_previous<M: DateTimeNamesMarker>(names: &RawDateTimeNames<M>) -> Self {
+        if names.mz_periods.get().inner.get_option().is_some() {
+            Self {
+                zone_checksum: Some(0),
+            }
+        } else {
+            Self::new_empty()
         }
     }
 }
@@ -879,10 +923,11 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, F
         prefs: DateTimeFormatterPreferences,
         formatter: FixedCalendarDateTimeFormatter<C, FSet>,
     ) -> Self {
+        let metadata = DateTimeNamesMetadata::new_from_previous(&formatter.names);
         Self {
             prefs,
             inner: formatter.names,
-            metadata: DateTimeNamesMetadata::new_empty(), // Issue: this could fail (#6063)
+            metadata,
             _calendar: PhantomData,
         }
     }
@@ -1075,7 +1120,7 @@ impl<FSet: DateTimeNamesMarker> DateTimeNames<FSet> {
         prefs: DateTimeFormatterPreferences,
         formatter: DateTimeFormatter<FSet>,
     ) -> Self {
-        let metadata = DateTimeNamesMetadata::new_empty(); // Issue: This could possibly fail
+        let metadata = DateTimeNamesMetadata::new_from_previous(&formatter.names);
         Self::from_parts(
             prefs,
             (formatter.calendar.into_tagged(), formatter.names, metadata),
