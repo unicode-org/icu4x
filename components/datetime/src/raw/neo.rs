@@ -66,7 +66,7 @@ pub(crate) enum DatePatternDataBorrowed<'a> {
 
 /// This enum represents both time patterns and overlap patterns between non-year dates and times.
 //
-// TODO: Consider reducing data size by filtering out explicit overlap patterns when they are
+// TODO(#5387): Consider reducing data size by filtering out explicit overlap patterns when they are
 // the same as their individual patterns with glue.
 #[derive(Debug, Clone)]
 pub(crate) struct TimePatternSelectionData {
@@ -109,8 +109,6 @@ impl ItemsAndOptions<'_> {
         }
     }
 }
-
-// TODO: Use markers instead of an enum for DateTimeFormatter pattern storage.
 
 #[derive(Debug, Clone)]
 pub(crate) struct DateTimeZonePatternSelectionData {
