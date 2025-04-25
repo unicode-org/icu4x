@@ -15,17 +15,13 @@ use icu_locale_core::Locale;
 // collator layout changes from affecting the baseline!
 
 #[inline(never)]
-fn baseline_bench(
-    group: &mut BenchmarkGroup<'_, WallTime>,
-    file_name: &&str,
-    elements: &Vec<&str>,
-) {
+fn baseline_bench(group: &mut BenchmarkGroup<'_, WallTime>, file_name: &&str, elements: &[&str]) {
     // baseline performance, locale-unaware code point sort done by Rust (0 for ordering in the html report)
     group.bench_function(
         BenchmarkId::new(format!("{}/0_rust_sort", file_name), "default"),
         |bencher| {
             bencher.iter_batched(
-                || black_box(elements.clone()),
+                || black_box(elements.to_vec()),
                 |mut lines| lines.sort_unstable(),
                 BatchSize::SmallInput,
             )
@@ -37,7 +33,7 @@ fn baseline_bench(
 fn collator_bench(
     group: &mut BenchmarkGroup<'_, WallTime>,
     file_name: &&str,
-    elements: &Vec<&str>,
+    elements: &[&str],
     index: usize,
     strength: Strength,
     locale_under_bench: &Locale,
@@ -54,7 +50,7 @@ fn collator_bench(
         ),
         |bencher| {
             bencher.iter_batched(
-                || black_box(elements.clone()),
+                || black_box(elements.to_vec()),
                 |mut lines| lines.sort_unstable_by(|left, right| collator.compare(left, right)),
                 BatchSize::SmallInput,
             )
