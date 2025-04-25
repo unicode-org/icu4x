@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use icu_calendar::{
-    types::{DayOfMonth, DayOfYearInfo, MonthInfo, Weekday, YearInfo},
+    types::{DayOfMonth, DayOfYear, MonthInfo, Weekday, YearInfo},
     AsCalendar, Calendar, Date, Iso,
 };
 use icu_time::{
@@ -66,10 +66,10 @@ impl<C: Calendar, A: AsCalendar<Calendar = C>> GetField<Weekday> for Date<A> {
     }
 }
 
-impl<C: Calendar, A: AsCalendar<Calendar = C>> GetField<DayOfYearInfo> for Date<A> {
+impl<C: Calendar, A: AsCalendar<Calendar = C>> GetField<DayOfYear> for Date<A> {
     #[inline]
-    fn get_field(&self) -> DayOfYearInfo {
-        self.day_of_year_info()
+    fn get_field(&self) -> DayOfYear {
+        self.day_of_year()
     }
 }
 
@@ -133,10 +133,10 @@ impl<C: Calendar, A: AsCalendar<Calendar = C>> GetField<Weekday> for DateTime<A>
     }
 }
 
-impl<C: Calendar, A: AsCalendar<Calendar = C>> GetField<DayOfYearInfo> for DateTime<A> {
+impl<C: Calendar, A: AsCalendar<Calendar = C>> GetField<DayOfYear> for DateTime<A> {
     #[inline]
-    fn get_field(&self) -> DayOfYearInfo {
-        self.date.day_of_year_info()
+    fn get_field(&self) -> DayOfYear {
+        self.date.day_of_year()
     }
 }
 
@@ -198,10 +198,10 @@ impl<C: Calendar, A: AsCalendar<Calendar = C>, Z> GetField<Weekday> for ZonedDat
     }
 }
 
-impl<C: Calendar, A: AsCalendar<Calendar = C>, Z> GetField<DayOfYearInfo> for ZonedDateTime<A, Z> {
+impl<C: Calendar, A: AsCalendar<Calendar = C>, Z> GetField<DayOfYear> for ZonedDateTime<A, Z> {
     #[inline]
-    fn get_field(&self) -> DayOfYearInfo {
-        self.date.day_of_year_info()
+    fn get_field(&self) -> DayOfYear {
+        self.date.day_of_year()
     }
 }
 
@@ -292,7 +292,7 @@ where
 {
     #[inline]
     fn get_field(&self) -> TimeZone {
-        self.time_zone_id()
+        self.id()
     }
 }
 
@@ -312,7 +312,7 @@ where
 {
     #[inline]
     fn get_field(&self) -> TimeZoneVariant {
-        self.zone_variant()
+        self.variant()
     }
 }
 

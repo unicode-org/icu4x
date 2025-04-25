@@ -25,6 +25,9 @@ namespace capi {
 } // namespace
 
 namespace icu4x {
+/**
+ * See the [Rust documentation for `Style`](https://docs.rs/icu/latest/icu/experimental/displaynames/options/enum.Style.html) for more information.
+ */
 class DisplayNamesStyle {
 public:
   enum Value {

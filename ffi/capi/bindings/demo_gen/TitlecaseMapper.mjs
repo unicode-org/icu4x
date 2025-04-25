@@ -17,3 +17,17 @@ export function titlecaseSegment(s, localeName, optionsLeadingAdjustment, option
 
     return out;
 }
+export function titlecaseSegmentWithCompiledData(s, localeName, optionsLeadingAdjustment, optionsTrailingCase) {
+    
+    let locale = Locale.fromString(localeName);
+    
+    let options = TitlecaseOptions.fromFields({
+        leadingAdjustment: optionsLeadingAdjustment,
+        trailingCase: optionsTrailingCase
+    });
+    
+    let out = TitlecaseMapper.titlecaseSegmentWithCompiledData(s,locale,options);
+    
+
+    return out;
+}

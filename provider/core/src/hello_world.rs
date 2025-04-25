@@ -41,6 +41,21 @@ impl Default for HelloWorld<'_> {
     }
 }
 
+impl<'a> ZeroFrom<'a, str> for HelloWorld<'a> {
+    fn zero_from(message: &'a str) -> Self {
+        HelloWorld {
+            message: Cow::Borrowed(message),
+        }
+    }
+}
+
+crate::data_struct!(
+    HelloWorld<'data>,
+    varule: str,
+    #[cfg(feature = "export")]
+    encode_as_varule: |v: &HelloWorld<'_>| &*v.message
+);
+
 data_marker!(
     /// Marker type for [`HelloWorld`].
     #[derive(Debug)]
@@ -60,13 +75,12 @@ data_marker!(
 /// use icu_provider::hello_world::*;
 /// use icu_provider::prelude::*;
 ///
-/// let german_hello_world: DataResponse<HelloWorldV1> =
-///     HelloWorldProvider
-///         .load(DataRequest {
-///             id: DataIdentifierBorrowed::for_locale(&langid!("de").into()),
-///             ..Default::default()
-///         })
-///         .expect("Loading should succeed");
+/// let german_hello_world: DataResponse<HelloWorldV1> = HelloWorldProvider
+///     .load(DataRequest {
+///         id: DataIdentifierBorrowed::for_locale(&langid!("de").into()),
+///         ..Default::default()
+///     })
+///     .expect("Loading should succeed");
 ///
 /// assert_eq!("Hallo Welt", german_hello_world.payload.get().message);
 /// ```
@@ -78,16 +92,15 @@ data_marker!(
 /// use icu_provider::hello_world::*;
 /// use icu_provider::prelude::*;
 ///
-/// let reverse_hello_world: DataResponse<HelloWorldV1> =
-///     HelloWorldProvider
-///         .load(DataRequest {
-///             id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
-///                 DataMarkerAttributes::from_str_or_panic("reverse"),
-///                 &langid!("en").into(),
-///             ),
-///             ..Default::default()
-///         })
-///         .expect("Loading should succeed");
+/// let reverse_hello_world: DataResponse<HelloWorldV1> = HelloWorldProvider
+///     .load(DataRequest {
+///         id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+///             DataMarkerAttributes::from_str_or_panic("reverse"),
+///             &langid!("en").into(),
+///         ),
+///         ..Default::default()
+///     })
+///     .expect("Loading should succeed");
 ///
 /// assert_eq!("Olleh Dlrow", reverse_hello_world.payload.get().message);
 /// ```

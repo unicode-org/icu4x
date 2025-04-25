@@ -18,6 +18,14 @@ use zerovec::ZeroVec;
 
 use super::TimeZone;
 
+icu_provider::data_marker!(
+    /// See [`WindowsZonesToBcp47Map`].
+    TimeZoneWindowsV1,
+    "time/zone/windows/v1",
+    WindowsZonesToBcp47Map<'static>,
+    is_singleton = true,
+);
+
 /// A mapping from Windows Timezone names to the corresponding BCP-47 IDs.
 ///
 /// <div class="stab unstable">
@@ -25,12 +33,7 @@ use super::TimeZone;
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[derive(PartialEq, Debug, Clone)]
-#[icu_provider::data_struct(marker(
-    WindowsZonesToBcp47MapV1,
-    "time_zone/windows_zones_to_bcp47@1",
-    singleton
-))]
+#[derive(PartialEq, Debug, Clone, zerofrom::ZeroFrom, yoke::Yokeable)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_time::provider::windows))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
@@ -43,3 +46,8 @@ pub struct WindowsZonesToBcp47Map<'data> {
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub bcp47_ids: ZeroVec<'data, TimeZone>,
 }
+
+icu_provider::data_struct!(
+    WindowsZonesToBcp47Map<'_>,
+    #[cfg(feature = "datagen")]
+);

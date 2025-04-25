@@ -4,9 +4,9 @@
 
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
 
-use icu_segmenter::LineBreakOptions;
-use icu_segmenter::LineBreakStrictness;
-use icu_segmenter::LineBreakWordOption;
+use icu_segmenter::options::LineBreakOptions;
+use icu_segmenter::options::LineBreakStrictness;
+use icu_segmenter::options::LineBreakWordOption;
 use icu_segmenter::LineSegmenter;
 
 // Example is MIT license.

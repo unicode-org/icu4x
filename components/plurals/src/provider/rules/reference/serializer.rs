@@ -34,14 +34,7 @@ use core::ops::RangeInclusive;
 /// assert_eq!(input, result);
 /// ```
 ///
-/// [`AST`]: super::ast
-/// [`resolver`]: super::rules::resolver
-/// [`PluralOperands`]: super::PluralOperands
-/// [`PluralCategory`]: super::PluralCategory
-/// [`Rule`]: super::rules::ast::Rule
-/// [`Samples`]: super::rules::ast::Samples
-/// [`Condition`]:  super::rules::ast::Condition
-/// [`parse_condition`]: parse_condition()
+/// [`AST`]: crate::provider::rules::reference::ast
 pub fn serialize(rule: &ast::Rule, w: &mut impl fmt::Write) -> fmt::Result {
     serialize_condition(&rule.condition, w)?;
     if let Some(samples) = &rule.samples {

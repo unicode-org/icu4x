@@ -79,7 +79,6 @@ impl From<&cldr_serde::ca::AvailableFormats> for DateSkeletonPatterns<'_> {
 mod test {
     use core::convert::TryFrom;
     use core::str::FromStr;
-    use either::Either;
     use icu::datetime::provider::fields::components;
     use icu::datetime::provider::skeleton::reference::Skeleton;
     use icu::datetime::provider::skeleton::*;
@@ -92,13 +91,14 @@ mod test {
     use icu::locale::preferences::extensions::unicode::keywords::HourCycle;
     use litemap::LiteMap;
 
+    use crate::datetime::DatagenCalendar;
     use crate::SourceDataProvider;
 
     fn get_data_payload() -> (DateLengths<'static>, DateSkeletonPatterns<'static>) {
         let locale = locale!("en").into();
 
         let data = SourceDataProvider::new_testing()
-            .get_datetime_resources(&locale, Either::Right("gregorian"))
+            .get_datetime_resources(&locale, Some(DatagenCalendar::Gregorian))
             .unwrap();
         let patterns = DateLengths::from(&data);
         let skeletons = DateSkeletonPatterns::from(&data.datetime_formats.available_formats);
@@ -122,8 +122,8 @@ mod test {
         let (_, skeletons) = get_data_payload();
 
         match get_best_available_format_pattern(&skeletons, &requested_fields, false) {
-            BestSkeleton::AllFieldsMatch(available_format_pattern)
-            | BestSkeleton::MissingOrExtraFields(available_format_pattern) => {
+            BestSkeleton::AllFieldsMatch(available_format_pattern, _)
+            | BestSkeleton::MissingOrExtraFields(available_format_pattern, _) => {
                 assert_eq!(
                     available_format_pattern
                         .expect_pattern("pattern should not have plural variants")
@@ -147,7 +147,7 @@ mod test {
         let (_, skeletons) = get_data_payload();
 
         match get_best_available_format_pattern(&skeletons, &requested_fields, false) {
-            BestSkeleton::MissingOrExtraFields(available_format_pattern) => {
+            BestSkeleton::MissingOrExtraFields(available_format_pattern, _) => {
                 assert_eq!(
                     available_format_pattern
                         .expect_pattern("pattern should not have plural variants")
@@ -182,7 +182,7 @@ mod test {
             &Default::default(),
             false,
         ) {
-            BestSkeleton::AllFieldsMatch(available_format_pattern) => {
+            BestSkeleton::AllFieldsMatch(available_format_pattern, _) => {
                 // TODO - Append items are needed here.
                 assert_eq!(
                     available_format_pattern
@@ -376,7 +376,7 @@ mod test {
         let (_, skeletons) = get_data_payload();
 
         match get_best_available_format_pattern(&skeletons, &requested_fields, false) {
-            BestSkeleton::AllFieldsMatch(available_format_pattern) => {
+            BestSkeleton::AllFieldsMatch(available_format_pattern, _) => {
                 assert_eq!(
                     available_format_pattern
                         .expect_pattern("pattern should not have plural variants")
@@ -399,7 +399,7 @@ mod test {
         let (_, skeletons) = get_data_payload();
 
         match get_best_available_format_pattern(&skeletons, &requested_fields, false) {
-            BestSkeleton::AllFieldsMatch(available_format_pattern) => {
+            BestSkeleton::AllFieldsMatch(available_format_pattern, _) => {
                 assert_eq!(
                     available_format_pattern
                         .expect_pattern("pattern should not have plural variants")
@@ -436,7 +436,6 @@ mod test {
         );
 
         assert_pattern_to_skeleton("K:mm", "hmm", "H11 maps to H12");
-        assert_pattern_to_skeleton("k:mm", "Hmm", "H23 maps to H24");
 
         assert_pattern_to_skeleton("ha mm", "hmm", "Day periods get removed");
         assert_pattern_to_skeleton("h 'at' b mm", "hmm", "Day periods get removed");

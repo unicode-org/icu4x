@@ -96,7 +96,7 @@
       "VVVV": "Тролль",
 
       "O": "GMT",
-      "OOOO": "GMT",
+      "OOOO": "GMT+00:00",
 
       "X": "Z"
     }
@@ -142,6 +142,26 @@
 
       "O": "GMT\u200e+3\u200e",
       "OOOO": "GMT\u200e+03:00\u200e"
+    }
+  },
+  {
+    "locale": "en",
+    "datetime": "2008-02-21T12:00:00.000-04:00[America/Argentina/San_Luis]",
+    "expectations": {
+      "z": "GMT-4",
+      "zzzz": "San Luis Standard Time",
+
+      "v": "San Luis Time",
+      "vvvv": "San Luis Time",
+
+      "VVV": "San Luis",
+      "VVVV": "San Luis Time",
+
+      "O": "GMT-4",
+      "OOOO": "GMT-04:00",
+
+      "xxxx": "-0400",
+      "XXXXX": "-04:00"
     }
   },
   {
@@ -215,10 +235,10 @@
       "vvvv": "Coordinated Universal Time",
 
       "VVV": "Unknown City",
-      "VVVV": "GMT",
+      "VVVV": "GMT+00:00",
 
       "O": "GMT",
-      "OOOO": "GMT",
+      "OOOO": "GMT+00:00",
 
       "xxxx": "+0000",
       "XXXXX": "Z"
@@ -235,10 +255,10 @@
       "vvvv": "Greenwich Mean Time",
 
       "VVV": "Unknown City",
-      "VVVV": "GMT",
+      "VVVV": "GMT+00:00",
 
       "O": "GMT",
-      "OOOO": "GMT",
+      "OOOO": "GMT+00:00",
 
       "xxxx": "+0000",
       "XXXXX": "Z"

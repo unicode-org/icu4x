@@ -19,6 +19,7 @@
 
 use cldr_cache::CldrCache;
 use elsa::sync::FrozenMap;
+use icu::calendar::{Date, Iso};
 use icu_provider::prelude::*;
 use source::{AbstractFs, SerdeCache, TzdbCache};
 use std::collections::{BTreeSet, HashSet};
@@ -33,6 +34,7 @@ mod collator;
 #[cfg(feature = "experimental")]
 mod currency;
 mod datetime;
+mod debug_provider;
 mod decimal;
 #[cfg(feature = "experimental")]
 mod displaynames;
@@ -80,7 +82,8 @@ pub struct SourceDataProvider {
     segmenter_lstm_paths: Option<Arc<SerdeCache>>,
     tzdb_paths: Option<Arc<TzdbCache>>,
     trie_type: TrieType,
-    collation_han_database: CollationHanDatabase,
+    collation_root_han: CollationRootHan,
+    pub(crate) timezone_horizon: Date<Iso>,
     #[allow(clippy::type_complexity)] // not as complex as it appears
     requests_cache: Arc<
         FrozenMap<
@@ -104,37 +107,38 @@ icu_provider_registry::registry!(cb);
 icu_provider::marker::impl_data_provider_never_marker!(SourceDataProvider);
 
 impl SourceDataProvider {
-    /// The latest CLDR JSON tag that has been verified to work with this version of `SourceDataProvider`.
-    pub const LATEST_TESTED_CLDR_TAG: &'static str = "47.0.0-ALPHA1";
+    /// The CLDR JSON tag that has been verified to work with this version of `SourceDataProvider`.
+    pub const TESTED_CLDR_TAG: &'static str = "47.0.0";
 
-    /// The latest ICU export tag that has been verified to work with this version of `SourceDataProvider`.
-    pub const LATEST_TESTED_ICUEXPORT_TAG: &'static str = "icu4x/2024-12-16/76.x";
+    /// The ICU export tag that has been verified to work with this version of `SourceDataProvider`.
+    pub const TESTED_ICUEXPORT_TAG: &'static str = "release-77-1";
 
-    /// The latest segmentation LSTM model tag that has been verified to work with this version of `SourceDataProvider`.
-    pub const LATEST_TESTED_SEGMENTER_LSTM_TAG: &'static str = "v0.1.0";
+    /// The segmentation LSTM model tag that has been verified to work with this version of `SourceDataProvider`.
+    pub const TESTED_SEGMENTER_LSTM_TAG: &'static str = "v0.1.0";
 
-    /// The latest TZDB tag that has been verified to work with this version of `SourceDataProvider`.
-    pub const LATEST_TESTED_TZDB_TAG: &'static str = "2025a";
+    /// The TZDB tag that has been verified to work with this version of `SourceDataProvider`.
+    pub const TESTED_TZDB_TAG: &'static str = "2025a";
 
-    /// A provider using the latest data that has been verified to work with this version of `SourceDataProvider`.
+    /// A provider using the data that has been verified to work with this version of `SourceDataProvider`.
     ///
-    /// See [`LATEST_TESTED_CLDR_TAG`](Self::LATEST_TESTED_CLDR_TAG),
-    /// [`LATEST_TESTED_ICUEXPORT_TAG`](Self::LATEST_TESTED_ICUEXPORT_TAG),
-    /// [`LATEST_TESTED_SEGMENTER_LSTM_TAG`](Self::LATEST_TESTED_SEGMENTER_LSTM_TAG),
-    /// [`LATEST_TESTED_TZDB_TAG`](Self::LATEST_TESTED_TZDB_TAG).
+    /// See [`TESTED_CLDR_TAG`](Self::TESTED_CLDR_TAG),
+    /// [`TESTED_ICUEXPORT_TAG`](Self::TESTED_ICUEXPORT_TAG),
+    /// [`TESTED_SEGMENTER_LSTM_TAG`](Self::TESTED_SEGMENTER_LSTM_TAG),
+    /// [`TESTED_TZDB_TAG`](Self::TESTED_TZDB_TAG).
     ///
     /// ✨ *Enabled with the `networking` Cargo feature.*
     #[cfg(feature = "networking")]
-    pub fn new_latest_tested() -> Self {
+    #[allow(clippy::new_without_default)]
+    pub fn new() -> Self {
         // Singleton so that all instantiations share the same cache.
         static SINGLETON: std::sync::OnceLock<SourceDataProvider> = std::sync::OnceLock::new();
         SINGLETON
             .get_or_init(|| {
                 Self::new_custom()
-                    .with_cldr_for_tag(Self::LATEST_TESTED_CLDR_TAG)
-                    .with_icuexport_for_tag(Self::LATEST_TESTED_ICUEXPORT_TAG)
-                    .with_segmenter_lstm_for_tag(Self::LATEST_TESTED_SEGMENTER_LSTM_TAG)
-                    .with_tzdb_for_tag(Self::LATEST_TESTED_TZDB_TAG)
+                    .with_cldr_for_tag(Self::TESTED_CLDR_TAG)
+                    .with_icuexport_for_tag(Self::TESTED_ICUEXPORT_TAG)
+                    .with_segmenter_lstm_for_tag(Self::TESTED_SEGMENTER_LSTM_TAG)
+                    .with_tzdb_for_tag(Self::TESTED_TZDB_TAG)
             })
             .clone()
     }
@@ -151,7 +155,8 @@ impl SourceDataProvider {
             segmenter_lstm_paths: None,
             tzdb_paths: None,
             trie_type: Default::default(),
-            collation_han_database: Default::default(),
+            timezone_horizon: Date::try_new_iso(2015, 1, 1).unwrap(),
+            collation_root_han: Default::default(),
             requests_cache: Default::default(),
         }
     }
@@ -195,7 +200,6 @@ impl SourceDataProvider {
             tzdb_paths: Some(Arc::new(TzdbCache {
                 root: AbstractFs::new(root)?,
                 transitions: Default::default(),
-                zone_tab: Default::default(),
             })),
             ..self
         })
@@ -204,7 +208,7 @@ impl SourceDataProvider {
     /// Adds CLDR source data to the provider. The data will be downloaded from GitHub
     /// using the given tag (see [GitHub releases](https://github.com/unicode-org/cldr-json/releases)).
     ///
-    /// Also see: [`LATEST_TESTED_CLDR_TAG`](Self::LATEST_TESTED_CLDR_TAG)
+    /// Also see: [`TESTED_CLDR_TAG`](Self::TESTED_CLDR_TAG)
     ///
     /// ✨ *Enabled with the `networking` Cargo feature.*
     #[cfg(feature = "networking")]
@@ -220,7 +224,7 @@ impl SourceDataProvider {
     /// Adds ICU export source data to the provider. The data will be downloaded from GitHub
     /// using the given tag (see [GitHub releases](https://github.com/unicode-org/icu/releases)).
     ///
-    /// Also see: [`LATEST_TESTED_ICUEXPORT_TAG`](Self::LATEST_TESTED_ICUEXPORT_TAG)
+    /// Also see: [`TESTED_ICUEXPORT_TAG`](Self::TESTED_ICUEXPORT_TAG)
     ///
     /// ✨ *Enabled with the `networking` Cargo feature.*
     #[cfg(feature = "networking")]
@@ -240,7 +244,7 @@ impl SourceDataProvider {
     /// Adds segmenter LSTM source data to the provider. The data will be downloaded from GitHub
     /// using the given tag (see [GitHub releases](https://github.com/unicode-org/lstm_word_segmentation/releases)).
     ///
-    /// Also see: [`LATEST_TESTED_SEGMENTER_LSTM_TAG`](Self::LATEST_TESTED_SEGMENTER_LSTM_TAG)
+    /// Also see: [`TESTED_SEGMENTER_LSTM_TAG`](Self::TESTED_SEGMENTER_LSTM_TAG)
     ///
     /// ✨ *Enabled with the `networking` Cargo feature.*
     #[cfg(feature = "networking")]
@@ -256,7 +260,7 @@ impl SourceDataProvider {
     /// Adds timezone database source data to the provider. The data will be downloaded from GitHub
     /// using the given tag (see [GitHub](https://github.com/eggert/tz)).
     ///
-    /// Also see: [`LATEST_TESTED_SEGMENTER_LSTM_TAG`](Self::LATEST_TESTED_SEGMENTER_LSTM_TAG)
+    /// Also see: [`TESTED_SEGMENTER_LSTM_TAG`](Self::TESTED_SEGMENTER_LSTM_TAG)
     ///
     /// ✨ *Enabled with the `networking` Cargo feature.*
     #[cfg(feature = "networking")]
@@ -267,7 +271,6 @@ impl SourceDataProvider {
                     "https://www.iana.org/time-zones/repository/releases/tzdata{tag}.tar.gz",
                 )),
                 transitions: Default::default(),
-                zone_tab: Default::default(),
             })),
             ..self
         }
@@ -338,10 +341,24 @@ impl SourceDataProvider {
         }
     }
 
-    /// Set the [`CollationHanDatabase`] version.
-    pub fn with_collation_han_database(self, collation_han_database: CollationHanDatabase) -> Self {
+    /// Set the [`CollationRootHan`] version.
+    pub fn with_collation_root_han(self, collation_root_han: CollationRootHan) -> Self {
         Self {
-            collation_han_database,
+            collation_root_han,
+            ..self
+        }
+    }
+
+    /// Set the timezone horizon.
+    ///
+    /// Timezone names that have not been in use since before this date are not included,
+    /// formatting will fall back to formats like "Germany Time" or "GMT+1".
+    ///
+    /// Defaults to 2015-01-01, which is a reasonable time frame where people remember
+    /// time zone changes.
+    pub fn with_timezone_horizon(self, timezone_horizon: Date<Iso>) -> Self {
+        Self {
+            timezone_horizon,
             ..self
         }
     }
@@ -350,8 +367,8 @@ impl SourceDataProvider {
         self.trie_type
     }
 
-    fn collation_han_database(&self) -> CollationHanDatabase {
-        self.collation_han_database
+    fn collation_root_han(&self) -> CollationRootHan {
+        self.collation_root_han
     }
 
     /// List the locales for the given CLDR coverage levels
@@ -460,7 +477,7 @@ where
 /// <https://github.com/unicode-org/icu/blob/main/docs/userguide/icu::data/buildtool.md#collation-ucadata>
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Default, serde::Serialize, serde::Deserialize)]
 #[non_exhaustive]
-pub enum CollationHanDatabase {
+pub enum CollationRootHan {
     /// Implicit
     #[serde(rename = "implicit")]
     #[default]
@@ -470,11 +487,11 @@ pub enum CollationHanDatabase {
     Unihan,
 }
 
-impl std::fmt::Display for CollationHanDatabase {
+impl std::fmt::Display for CollationRootHan {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> Result<(), std::fmt::Error> {
         match self {
-            CollationHanDatabase::Implicit => write!(f, "implicithan"),
-            CollationHanDatabase::Unihan => write!(f, "unihan"),
+            CollationRootHan::Implicit => write!(f, "implicithan"),
+            CollationRootHan::Unihan => write!(f, "unihan"),
         }
     }
 }

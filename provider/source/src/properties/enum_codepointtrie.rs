@@ -373,15 +373,15 @@ macro_rules! expand {
 }
 
 // Special handling for GeneralCategoryMask
-impl DataProvider<GeneralCategoryMaskNameToValueV2> for SourceDataProvider {
+impl DataProvider<PropertyNameParseGeneralCategoryMaskV1> for SourceDataProvider {
     fn load(
         &self,
         req: DataRequest,
-    ) -> Result<DataResponse<GeneralCategoryMaskNameToValueV2>, DataError> {
+    ) -> Result<DataResponse<PropertyNameParseGeneralCategoryMaskV1>, DataError> {
         use icu::properties::props::GeneralCategoryGroup;
         use zerovec::ule::AsULE;
 
-        self.check_req::<GeneralCategoryMaskNameToValueV2>(req)?;
+        self.check_req::<PropertyNameParseGeneralCategoryMaskV1>(req)?;
 
         let data = self.get_mask_prop("gcm")?;
         let data_struct = get_prop_values_map(&data.values, |v| {
@@ -402,121 +402,159 @@ impl DataProvider<GeneralCategoryMaskNameToValueV2> for SourceDataProvider {
     }
 }
 
-impl crate::IterableDataProviderCached<GeneralCategoryMaskNameToValueV2> for SourceDataProvider {
+impl crate::IterableDataProviderCached<PropertyNameParseGeneralCategoryMaskV1>
+    for SourceDataProvider
+{
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         self.get_mask_prop("gcm")?;
         Ok(HashSet::from_iter([Default::default()]))
     }
 }
 
+// Special handling for IndicConjunctBreak
+impl DataProvider<PropertyEnumIndicConjunctBreakV1> for SourceDataProvider {
+    fn load(
+        &self,
+        req: DataRequest,
+    ) -> Result<DataResponse<PropertyEnumIndicConjunctBreakV1>, DataError> {
+        self.check_req::<PropertyEnumIndicConjunctBreakV1>(req)?;
+        let source_cpt_data = &self.get_enumerated_prop("InCB")?.code_point_trie;
+
+        let code_point_trie = CodePointTrie::try_from(source_cpt_data).map_err(|e| {
+            DataError::custom("Could not parse CodePointTrie TOML").with_display_context(&e)
+        })?;
+        let data_struct = PropertyCodePointMap::CodePointTrie(code_point_trie);
+        Ok(DataResponse {
+            metadata: Default::default(),
+            payload: DataPayload::from_owned(data_struct),
+        })
+    }
+}
+
+impl crate::IterableDataProviderCached<PropertyEnumIndicConjunctBreakV1> for SourceDataProvider {
+    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
+        self.get_enumerated_prop("InCB")?;
+        Ok(HashSet::from_iter([Default::default()]))
+    }
+}
+
 expand!(
     (
-        CanonicalCombiningClassV1,
-        CanonicalCombiningClassNameToValueV2,
+        PropertyEnumCanonicalCombiningClassV1,
+        PropertyNameParseCanonicalCombiningClassV1,
         (
-            sparse: CanonicalCombiningClassValueToShortNameV1,
-            CanonicalCombiningClassValueToLongNameV1
+            sparse: PropertyNameShortCanonicalCombiningClassV1,
+            PropertyNameLongCanonicalCombiningClassV1
         ),
         "ccc"
     ),
     (
-        GeneralCategoryV1,
-        GeneralCategoryNameToValueV2,
+        PropertyEnumGeneralCategoryV1,
+        PropertyNameParseGeneralCategoryV1,
         (
-            linear: GeneralCategoryValueToShortNameV1,
-            GeneralCategoryValueToLongNameV1
+            linear: PropertyNameShortGeneralCategoryV1,
+            PropertyNameLongGeneralCategoryV1
         ),
         "gc"
     ),
     (
-        BidiClassV1,
-        BidiClassNameToValueV2,
+        PropertyEnumBidiClassV1,
+        PropertyNameParseBidiClassV1,
         (
-            linear: BidiClassValueToShortNameV1,
-            BidiClassValueToLongNameV1
+            linear: PropertyNameShortBidiClassV1,
+            PropertyNameLongBidiClassV1
         ),
         "bc"
     ),
     (
-        ScriptV1,
-        ScriptNameToValueV2,
+        PropertyEnumScriptV1,
+        PropertyNameParseScriptV1,
         (
-            linear4: ScriptValueToShortNameV1,
-            ScriptValueToLongNameV1
+            linear4: PropertyNameShortScriptV1,
+            PropertyNameLongScriptV1
         ),
         "sc"
     ),
     (
-        HangulSyllableTypeV1,
-        HangulSyllableTypeNameToValueV2,
+        PropertyEnumHangulSyllableTypeV1,
+        PropertyNameParseHangulSyllableTypeV1,
         (
-            linear: HangulSyllableTypeValueToShortNameV1,
-            HangulSyllableTypeValueToLongNameV1
+            linear: PropertyNameShortHangulSyllableTypeV1,
+            PropertyNameLongHangulSyllableTypeV1
         ),
         "hst"
     ),
     (
-        EastAsianWidthV1,
-        EastAsianWidthNameToValueV2,
+        PropertyEnumEastAsianWidthV1,
+        PropertyNameParseEastAsianWidthV1,
         (
-            linear: EastAsianWidthValueToShortNameV1,
-            EastAsianWidthValueToLongNameV1
+            linear: PropertyNameShortEastAsianWidthV1,
+            PropertyNameLongEastAsianWidthV1
         ),
         "ea"
     ),
     (
-        IndicSyllabicCategoryV1,
-        IndicSyllabicCategoryNameToValueV2,
+        PropertyEnumIndicSyllabicCategoryV1,
+        PropertyNameParseIndicSyllabicCategoryV1,
         (
-            linear: IndicSyllabicCategoryValueToShortNameV1,
-            IndicSyllabicCategoryValueToLongNameV1
+            linear: PropertyNameShortIndicSyllabicCategoryV1,
+            PropertyNameLongIndicSyllabicCategoryV1
         ),
         "InSC"
     ),
     (
-        LineBreakV1,
-        LineBreakNameToValueV2,
+        PropertyEnumLineBreakV1,
+        PropertyNameParseLineBreakV1,
         (
-            linear: LineBreakValueToShortNameV1,
-            LineBreakValueToLongNameV1
+            linear: PropertyNameShortLineBreakV1,
+            PropertyNameLongLineBreakV1
         ),
         "lb"
     ),
     (
-        GraphemeClusterBreakV1,
-        GraphemeClusterBreakNameToValueV2,
+        PropertyEnumGraphemeClusterBreakV1,
+        PropertyNameParseGraphemeClusterBreakV1,
         (
-            linear: GraphemeClusterBreakValueToShortNameV1,
-            GraphemeClusterBreakValueToLongNameV1
+            linear: PropertyNameShortGraphemeClusterBreakV1,
+            PropertyNameLongGraphemeClusterBreakV1
         ),
         "GCB"
     ),
     (
-        WordBreakV1,
-        WordBreakNameToValueV2,
+        PropertyEnumWordBreakV1,
+        PropertyNameParseWordBreakV1,
         (
-            linear: WordBreakValueToShortNameV1,
-            WordBreakValueToLongNameV1
+            linear: PropertyNameShortWordBreakV1,
+            PropertyNameLongWordBreakV1
         ),
         "WB"
     ),
     (
-        SentenceBreakV1,
-        SentenceBreakNameToValueV2,
+        PropertyEnumSentenceBreakV1,
+        PropertyNameParseSentenceBreakV1,
         (
-            linear: SentenceBreakValueToShortNameV1,
-            SentenceBreakValueToLongNameV1
+            linear: PropertyNameShortSentenceBreakV1,
+            PropertyNameLongSentenceBreakV1
         ),
         "SB"
     ),
     (
-        JoiningTypeV1,
-        JoiningTypeNameToValueV2,
+        PropertyEnumJoiningTypeV1,
+        PropertyNameParseJoiningTypeV1,
         (
-            linear: JoiningTypeValueToShortNameV1,
-            JoiningTypeValueToLongNameV1
+            linear: PropertyNameShortJoiningTypeV1,
+            PropertyNameLongJoiningTypeV1
         ),
         "jt"
+    ),
+    (
+        PropertyEnumVerticalOrientationV1,
+        PropertyNameParseVerticalOrientationV1,
+        (
+            linear: PropertyNameShortVerticalOrientationV1,
+            PropertyNameLongVerticalOrientationV1
+        ),
+        "vo"
     ),
 );
 

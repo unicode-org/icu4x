@@ -18,15 +18,15 @@ namespace capi {
       TimePrecision_Minute = 1,
       TimePrecision_MinuteOptional = 2,
       TimePrecision_Second = 3,
-      TimePrecision_SecondF1 = 4,
-      TimePrecision_SecondF2 = 5,
-      TimePrecision_SecondF3 = 6,
-      TimePrecision_SecondF4 = 7,
-      TimePrecision_SecondF5 = 8,
-      TimePrecision_SecondF6 = 9,
-      TimePrecision_SecondF7 = 10,
-      TimePrecision_SecondF8 = 11,
-      TimePrecision_SecondF9 = 12,
+      TimePrecision_Subsecond1 = 4,
+      TimePrecision_Subsecond2 = 5,
+      TimePrecision_Subsecond3 = 6,
+      TimePrecision_Subsecond4 = 7,
+      TimePrecision_Subsecond5 = 8,
+      TimePrecision_Subsecond6 = 9,
+      TimePrecision_Subsecond7 = 10,
+      TimePrecision_Subsecond8 = 11,
+      TimePrecision_Subsecond9 = 12,
     };
     
     typedef struct TimePrecision_option {union { TimePrecision ok; }; bool is_ok; } TimePrecision_option;
@@ -34,6 +34,11 @@ namespace capi {
 } // namespace
 
 namespace icu4x {
+/**
+ * See the [Rust documentation for `TimePrecision`](https://docs.rs/icu/latest/icu/datetime/options/enum.TimePrecision.html) for more information.
+ *
+ * See the [Rust documentation for `SubsecondDigits`](https://docs.rs/icu/latest/icu/datetime/options/enum.SubsecondDigits.html) for more information.
+ */
 class TimePrecision {
 public:
   enum Value {
@@ -41,15 +46,15 @@ public:
     Minute = 1,
     MinuteOptional = 2,
     Second = 3,
-    SecondF1 = 4,
-    SecondF2 = 5,
-    SecondF3 = 6,
-    SecondF4 = 7,
-    SecondF5 = 8,
-    SecondF6 = 9,
-    SecondF7 = 10,
-    SecondF8 = 11,
-    SecondF9 = 12,
+    Subsecond1 = 4,
+    Subsecond2 = 5,
+    Subsecond3 = 6,
+    Subsecond4 = 7,
+    Subsecond5 = 8,
+    Subsecond6 = 9,
+    Subsecond7 = 10,
+    Subsecond8 = 11,
+    Subsecond9 = 12,
   };
 
   TimePrecision() = default;

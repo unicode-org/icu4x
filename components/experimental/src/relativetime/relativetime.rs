@@ -2,14 +2,14 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use fixed_decimal::{Sign, SignedFixedDecimal};
+use fixed_decimal::{Decimal, Sign};
 use icu_decimal::{
-    options::DecimalFormatterOptions, provider::DecimalDigitsV1, provider::DecimalSymbolsV2,
+    options::DecimalFormatterOptions, provider::DecimalDigitsV1, provider::DecimalSymbolsV1,
     DecimalFormatter, DecimalFormatterPreferences,
 };
 use icu_locale_core::preferences::{define_preferences, prefs_convert};
 use icu_plurals::PluralRulesPreferences;
-use icu_plurals::{provider::CardinalV1, PluralRules};
+use icu_plurals::{provider::PluralsCardinalV1, PluralRules};
 use icu_provider::marker::ErasedMarker;
 use icu_provider::prelude::*;
 
@@ -34,7 +34,7 @@ prefs_convert!(RelativeTimeFormatterPreferences, PluralRulesPreferences);
 /// # Example
 ///
 /// ```
-/// use fixed_decimal::SignedFixedDecimal;
+/// use fixed_decimal::Decimal;
 /// use icu::experimental::relativetime::{
 ///     RelativeTimeFormatter, RelativeTimeFormatterOptions,
 /// };
@@ -48,11 +48,11 @@ prefs_convert!(RelativeTimeFormatterPreferences, PluralRulesPreferences);
 /// .expect("locale should be present");
 ///
 /// assert_writeable_eq!(
-///     relative_time_formatter.format(SignedFixedDecimal::from(5i8)),
+///     relative_time_formatter.format(Decimal::from(5i8)),
 ///     "in 5 seconds"
 /// );
 /// assert_writeable_eq!(
-///     relative_time_formatter.format(SignedFixedDecimal::from(-10i8)),
+///     relative_time_formatter.format(Decimal::from(-10i8)),
 ///     "10 seconds ago"
 /// );
 /// ```
@@ -60,7 +60,7 @@ prefs_convert!(RelativeTimeFormatterPreferences, PluralRulesPreferences);
 /// # Example
 ///
 /// ```
-/// use fixed_decimal::SignedFixedDecimal;
+/// use fixed_decimal::Decimal;
 /// use icu::experimental::relativetime::options::Numeric;
 /// use icu::experimental::relativetime::{
 ///     RelativeTimeFormatter, RelativeTimeFormatterOptions,
@@ -77,26 +77,26 @@ prefs_convert!(RelativeTimeFormatterPreferences, PluralRulesPreferences);
 /// .expect("locale should be present");
 ///
 /// assert_writeable_eq!(
-///     relative_time_formatter.format(SignedFixedDecimal::from(0u8)),
+///     relative_time_formatter.format(Decimal::from(0u8)),
 ///     "hoy"
 /// );
 /// assert_writeable_eq!(
-///     relative_time_formatter.format(SignedFixedDecimal::from(-2i8)),
+///     relative_time_formatter.format(Decimal::from(-2i8)),
 ///     "anteayer"
 /// );
 /// assert_writeable_eq!(
-///     relative_time_formatter.format(SignedFixedDecimal::from(2u8)),
+///     relative_time_formatter.format(Decimal::from(2u8)),
 ///     "pasado mañana"
 /// );
 /// assert_writeable_eq!(
-///     relative_time_formatter.format(SignedFixedDecimal::from(15i8)),
+///     relative_time_formatter.format(Decimal::from(15i8)),
 ///     "dentro de 15 d"
 /// );
 /// ```
 ///
 /// # Example
 /// ```
-/// use fixed_decimal::SignedFixedDecimal;
+/// use fixed_decimal::Decimal;
 /// use icu::experimental::relativetime::{
 ///     RelativeTimeFormatter, RelativeTimeFormatterOptions,
 /// };
@@ -110,11 +110,11 @@ prefs_convert!(RelativeTimeFormatterPreferences, PluralRulesPreferences);
 /// .expect("locale should be present");
 ///
 /// assert_writeable_eq!(
-///     relative_time_formatter.format(SignedFixedDecimal::from(3u8)),
+///     relative_time_formatter.format(Decimal::from(3u8)),
 ///     "৩ বছরে"
 /// );
 /// assert_writeable_eq!(
-///     relative_time_formatter.format(SignedFixedDecimal::from(-15i8)),
+///     relative_time_formatter.format(Decimal::from(-15i8)),
 ///     "১৫ বছর পূর্বে"
 /// );
 /// ```
@@ -177,9 +177,9 @@ macro_rules! constructor {
             options: RelativeTimeFormatterOptions,
         ) -> Result<Self, DataError>
         where
-            D: DataProvider<CardinalV1>
+            D: DataProvider<PluralsCardinalV1>
                 + DataProvider<$marker>
-                + DataProvider<DecimalSymbolsV2> + DataProvider<DecimalDigitsV1>
+                + DataProvider<DecimalSymbolsV1> + DataProvider<DecimalDigitsV1>
                 + ?Sized,
         {
             let locale = <$marker>::make_locale(prefs.locale_preferences);
@@ -354,7 +354,7 @@ impl RelativeTimeFormatter {
 
     /// Format a `value` according to the locale and formatting options of
     /// [`RelativeTimeFormatter`].
-    pub fn format(&self, value: SignedFixedDecimal) -> FormattedRelativeTime<'_> {
+    pub fn format(&self, value: Decimal) -> FormattedRelativeTime<'_> {
         let is_negative = value.sign() == Sign::Negative;
         FormattedRelativeTime {
             options: &self.options,

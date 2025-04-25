@@ -142,7 +142,7 @@ impl<'a> CaseMapExceptionsBuilder<'a> {
         if self.double_slots {
             let hi = self.read_raw()? as u32;
             let lo = self.read_raw()? as u32;
-            Ok(hi << 16 | lo)
+            Ok((hi << 16) | lo)
         } else {
             Ok(self.read_raw()? as u32)
         }

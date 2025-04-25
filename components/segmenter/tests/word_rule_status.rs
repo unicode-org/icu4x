@@ -2,9 +2,9 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use icu_segmenter::WordBreakInvariantOptions;
+use icu_segmenter::options::WordBreakInvariantOptions;
+use icu_segmenter::options::WordType;
 use icu_segmenter::WordSegmenter;
-use icu_segmenter::WordType;
 
 #[test]
 fn rule_status() {

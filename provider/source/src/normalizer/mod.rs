@@ -145,21 +145,21 @@ macro_rules! normalization_non_recursive_decomposition_supplement_provider {
     };
 }
 
-normalization_data_provider!(CanonicalDecompositionDataV2, "nfd");
+normalization_data_provider!(NormalizerNfdDataV1, "nfd");
 
-normalization_data_provider!(CompatibilityDecompositionDataV2, "nfkd");
+normalization_data_provider!(NormalizerNfkdDataV1, "nfkd");
 
-normalization_data_provider!(Uts46DecompositionDataV2, "uts46d");
+normalization_data_provider!(NormalizerUts46DataV1, "uts46d");
 
-normalization_tables_provider!(CanonicalDecompositionTablesV1, "nfdex");
+normalization_tables_provider!(NormalizerNfdTablesV1, "nfdex");
 
-normalization_tables_provider!(CompatibilityDecompositionTablesV1, "nfkdex");
+normalization_tables_provider!(NormalizerNfkdTablesV1, "nfkdex");
 
 // No uts46dex, because that data is also in nfkdex.
 
-normalization_canonical_compositions_provider!(CanonicalCompositionsV1, "compositions");
+normalization_canonical_compositions_provider!(NormalizerNfcV1, "compositions");
 
 normalization_non_recursive_decomposition_supplement_provider!(
-    NonRecursiveDecompositionSupplementV1,
+    NormalizerNfdSupplementV1,
     "decompositionex"
 );

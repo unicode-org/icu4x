@@ -12,23 +12,25 @@
 #include <optional>
 #include "../diplomat_runtime.hpp"
 #include "DataProvider.hpp"
+#include "DateTimeAlignment.hpp"
 #include "DateTimeFormatterLoadError.hpp"
 #include "DateTimeLength.hpp"
 #include "Locale.hpp"
 #include "Time.hpp"
+#include "TimePrecision.hpp"
 
 
 namespace icu4x {
 namespace capi {
     extern "C" {
     
-    typedef struct icu4x_TimeFormatter_create_with_length_mv1_result {union {icu4x::capi::TimeFormatter* ok; icu4x::capi::DateTimeFormatterLoadError err;}; bool is_ok;} icu4x_TimeFormatter_create_with_length_mv1_result;
-    icu4x_TimeFormatter_create_with_length_mv1_result icu4x_TimeFormatter_create_with_length_mv1(const icu4x::capi::Locale* locale, icu4x::capi::DateTimeLength length);
+    typedef struct icu4x_TimeFormatter_create_mv1_result {union {icu4x::capi::TimeFormatter* ok; icu4x::capi::DateTimeFormatterLoadError err;}; bool is_ok;} icu4x_TimeFormatter_create_mv1_result;
+    icu4x_TimeFormatter_create_mv1_result icu4x_TimeFormatter_create_mv1(const icu4x::capi::Locale* locale, icu4x::capi::DateTimeLength_option length, icu4x::capi::TimePrecision_option time_precision, icu4x::capi::DateTimeAlignment_option alignment);
     
-    typedef struct icu4x_TimeFormatter_create_with_length_and_provider_mv1_result {union {icu4x::capi::TimeFormatter* ok; icu4x::capi::DateTimeFormatterLoadError err;}; bool is_ok;} icu4x_TimeFormatter_create_with_length_and_provider_mv1_result;
-    icu4x_TimeFormatter_create_with_length_and_provider_mv1_result icu4x_TimeFormatter_create_with_length_and_provider_mv1(const icu4x::capi::DataProvider* provider, const icu4x::capi::Locale* locale, icu4x::capi::DateTimeLength length);
+    typedef struct icu4x_TimeFormatter_create_with_provider_mv1_result {union {icu4x::capi::TimeFormatter* ok; icu4x::capi::DateTimeFormatterLoadError err;}; bool is_ok;} icu4x_TimeFormatter_create_with_provider_mv1_result;
+    icu4x_TimeFormatter_create_with_provider_mv1_result icu4x_TimeFormatter_create_with_provider_mv1(const icu4x::capi::DataProvider* provider, const icu4x::capi::Locale* locale, icu4x::capi::DateTimeLength_option length, icu4x::capi::TimePrecision_option time_precision, icu4x::capi::DateTimeAlignment_option alignment);
     
-    void icu4x_TimeFormatter_format_mv1(const icu4x::capi::TimeFormatter* self, const icu4x::capi::Time* value, diplomat::capi::DiplomatWrite* write);
+    void icu4x_TimeFormatter_format_mv1(const icu4x::capi::TimeFormatter* self, const icu4x::capi::Time* time, diplomat::capi::DiplomatWrite* write);
     
     
     void icu4x_TimeFormatter_destroy_mv1(TimeFormatter* self);
@@ -37,24 +39,28 @@ namespace capi {
 } // namespace capi
 } // namespace
 
-inline diplomat::result<std::unique_ptr<icu4x::TimeFormatter>, icu4x::DateTimeFormatterLoadError> icu4x::TimeFormatter::create_with_length(const icu4x::Locale& locale, icu4x::DateTimeLength length) {
-  auto result = icu4x::capi::icu4x_TimeFormatter_create_with_length_mv1(locale.AsFFI(),
-    length.AsFFI());
+inline diplomat::result<std::unique_ptr<icu4x::TimeFormatter>, icu4x::DateTimeFormatterLoadError> icu4x::TimeFormatter::create(const icu4x::Locale& locale, std::optional<icu4x::DateTimeLength> length, std::optional<icu4x::TimePrecision> time_precision, std::optional<icu4x::DateTimeAlignment> alignment) {
+  auto result = icu4x::capi::icu4x_TimeFormatter_create_mv1(locale.AsFFI(),
+    length.has_value() ? (icu4x::capi::DateTimeLength_option{ { length.value().AsFFI() }, true }) : (icu4x::capi::DateTimeLength_option{ {}, false }),
+    time_precision.has_value() ? (icu4x::capi::TimePrecision_option{ { time_precision.value().AsFFI() }, true }) : (icu4x::capi::TimePrecision_option{ {}, false }),
+    alignment.has_value() ? (icu4x::capi::DateTimeAlignment_option{ { alignment.value().AsFFI() }, true }) : (icu4x::capi::DateTimeAlignment_option{ {}, false }));
   return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::TimeFormatter>, icu4x::DateTimeFormatterLoadError>(diplomat::Ok<std::unique_ptr<icu4x::TimeFormatter>>(std::unique_ptr<icu4x::TimeFormatter>(icu4x::TimeFormatter::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::TimeFormatter>, icu4x::DateTimeFormatterLoadError>(diplomat::Err<icu4x::DateTimeFormatterLoadError>(icu4x::DateTimeFormatterLoadError::FromFFI(result.err)));
 }
 
-inline diplomat::result<std::unique_ptr<icu4x::TimeFormatter>, icu4x::DateTimeFormatterLoadError> icu4x::TimeFormatter::create_with_length_and_provider(const icu4x::DataProvider& provider, const icu4x::Locale& locale, icu4x::DateTimeLength length) {
-  auto result = icu4x::capi::icu4x_TimeFormatter_create_with_length_and_provider_mv1(provider.AsFFI(),
+inline diplomat::result<std::unique_ptr<icu4x::TimeFormatter>, icu4x::DateTimeFormatterLoadError> icu4x::TimeFormatter::create_with_provider(const icu4x::DataProvider& provider, const icu4x::Locale& locale, std::optional<icu4x::DateTimeLength> length, std::optional<icu4x::TimePrecision> time_precision, std::optional<icu4x::DateTimeAlignment> alignment) {
+  auto result = icu4x::capi::icu4x_TimeFormatter_create_with_provider_mv1(provider.AsFFI(),
     locale.AsFFI(),
-    length.AsFFI());
+    length.has_value() ? (icu4x::capi::DateTimeLength_option{ { length.value().AsFFI() }, true }) : (icu4x::capi::DateTimeLength_option{ {}, false }),
+    time_precision.has_value() ? (icu4x::capi::TimePrecision_option{ { time_precision.value().AsFFI() }, true }) : (icu4x::capi::TimePrecision_option{ {}, false }),
+    alignment.has_value() ? (icu4x::capi::DateTimeAlignment_option{ { alignment.value().AsFFI() }, true }) : (icu4x::capi::DateTimeAlignment_option{ {}, false }));
   return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::TimeFormatter>, icu4x::DateTimeFormatterLoadError>(diplomat::Ok<std::unique_ptr<icu4x::TimeFormatter>>(std::unique_ptr<icu4x::TimeFormatter>(icu4x::TimeFormatter::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::TimeFormatter>, icu4x::DateTimeFormatterLoadError>(diplomat::Err<icu4x::DateTimeFormatterLoadError>(icu4x::DateTimeFormatterLoadError::FromFFI(result.err)));
 }
 
-inline std::string icu4x::TimeFormatter::format(const icu4x::Time& value) const {
+inline std::string icu4x::TimeFormatter::format(const icu4x::Time& time) const {
   std::string output;
   diplomat::capi::DiplomatWrite write = diplomat::WriteFromString(output);
   icu4x::capi::icu4x_TimeFormatter_format_mv1(this->AsFFI(),
-    value.AsFFI(),
+    time.AsFFI(),
     &write);
   return output;
 }

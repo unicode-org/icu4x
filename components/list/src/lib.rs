@@ -12,7 +12,8 @@
 //! ## Formatting *and* lists in Spanish
 //!
 //! ```
-//! # use icu::list::{ListFormatter, ListFormatterOptions, ListLength};
+//! # use icu::list::ListFormatter;
+//! # use icu::list::options::{ListFormatterOptions, ListLength};
 //! # use icu::locale::locale;
 //! # use writeable::*;
 //! #
@@ -37,7 +38,8 @@
 //! ## Formatting *or* lists in Thai
 //!
 //! ```
-//! # use icu::list::{ListFormatter, ListFormatterOptions, ListLength};
+//! # use icu::list::ListFormatter;
+//! # use icu::list::options::{ListFormatterOptions, ListLength};
 //! # use icu::locale::locale;
 //! # use writeable::*;
 //! #
@@ -54,7 +56,8 @@
 //! ## Formatting unit lists in English
 //!
 //! ```
-//! # use icu::list::{ListFormatter, ListFormatterOptions, ListLength};
+//! # use icu::list::ListFormatter;
+//! # use icu::list::options::{ListFormatterOptions, ListLength};
 //! # use icu::locale::locale;
 //! # use writeable::*;
 //! #
@@ -88,14 +91,14 @@
 )]
 #![warn(missing_docs)]
 
+#[cfg(feature = "alloc")]
 extern crate alloc;
 
 mod lazy_automaton;
 mod list_formatter;
-mod options;
+pub mod options;
 mod patterns;
 
 pub mod provider;
 
 pub use list_formatter::*;
-pub use options::*;

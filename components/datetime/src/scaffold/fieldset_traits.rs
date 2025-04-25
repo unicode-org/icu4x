@@ -7,14 +7,11 @@ use crate::{
     scaffold::*,
 };
 use icu_calendar::{
-    provider::{
-        ChineseCacheV1, DangiCacheV1, IslamicObservationalCacheV1, IslamicUmmAlQuraCacheV1,
-        JapaneseErasV1, JapaneseExtendedErasV1,
-    },
-    types::{DayOfMonth, DayOfYearInfo, MonthInfo, Weekday, YearInfo},
+    provider::{CalendarChineseV1, CalendarDangiV1, CalendarJapaneseModernV1},
+    types::{DayOfMonth, DayOfYear, MonthInfo, Weekday, YearInfo},
     Date, Iso,
 };
-use icu_decimal::provider::{DecimalDigitsV1, DecimalSymbolsV2};
+use icu_decimal::provider::{DecimalDigitsV1, DecimalSymbolsV1};
 use icu_provider::{marker::NeverMarker, prelude::*};
 use icu_time::scaffold::IntoOption;
 use icu_time::{
@@ -41,7 +38,7 @@ pub trait DateInputMarkers: UnstableSealed {
     /// Marker for resolving the day-of-month input field.
     type DayOfMonthInput: IntoOption<DayOfMonth>;
     /// Marker for resolving the day-of-year input field.
-    type DayOfYearInput: IntoOption<DayOfYearInfo>;
+    type DayOfYearInput: IntoOption<DayOfYear>;
     /// Marker for resolving the day-of-week input field.
     type DayOfWeekInput: IntoOption<Weekday>;
 }
@@ -142,6 +139,8 @@ pub trait ZoneMarkers: UnstableSealed {
     type GenericLongV1: DataMarker<DataStruct = tz::MzGeneric<'static>>;
     /// Marker for loading generic short time zone names.
     type GenericShortV1: DataMarker<DataStruct = tz::MzGeneric<'static>>;
+    /// Marker for loading standard long time zone names.
+    type StandardLongV1: DataMarker<DataStruct = tz::MzGeneric<'static>>;
     /// Marker for loading specific long time zone names.
     type SpecificLongV1: DataMarker<DataStruct = tz::MzSpecific<'static>>;
     /// Marker for loading generic short time zone names.
@@ -288,6 +287,7 @@ pub trait AllFixedCalendarFormattingDataMarkers<C: CldrCalendar, FSet: DateTimeM
     + DataProvider<<FSet::Z as ZoneMarkers>::ExemplarCitiesRootV1>
     + DataProvider<<FSet::Z as ZoneMarkers>::GenericLongV1>
     + DataProvider<<FSet::Z as ZoneMarkers>::GenericShortV1>
+    + DataProvider<<FSet::Z as ZoneMarkers>::StandardLongV1>
     + DataProvider<<FSet::Z as ZoneMarkers>::SpecificLongV1>
     + DataProvider<<FSet::Z as ZoneMarkers>::SpecificShortV1>
     + DataProvider<<FSet::Z as ZoneMarkers>::MetazonePeriodV1>
@@ -321,6 +321,7 @@ where
         + DataProvider<<FSet::Z as ZoneMarkers>::ExemplarCitiesRootV1>
         + DataProvider<<FSet::Z as ZoneMarkers>::GenericLongV1>
         + DataProvider<<FSet::Z as ZoneMarkers>::GenericShortV1>
+        + DataProvider<<FSet::Z as ZoneMarkers>::StandardLongV1>
         + DataProvider<<FSet::Z as ZoneMarkers>::SpecificLongV1>
         + DataProvider<<FSet::Z as ZoneMarkers>::SpecificShortV1>
         + DataProvider<<FSet::Z as ZoneMarkers>::MetazonePeriodV1>
@@ -342,16 +343,11 @@ pub trait AllAnyCalendarPatternDataMarkers<FSet: DateTimeMarkers>:
     + DataProvider<<<FSet::D as DateDataMarkers>::Skel as CalMarkers<ErasedPackedPatterns>>::Coptic>
     + DataProvider<<<FSet::D as DateDataMarkers>::Skel as CalMarkers<ErasedPackedPatterns>>::Dangi>
     + DataProvider<<<FSet::D as DateDataMarkers>::Skel as CalMarkers<ErasedPackedPatterns>>::Ethiopian>
-    + DataProvider<<<FSet::D as DateDataMarkers>::Skel as CalMarkers<ErasedPackedPatterns>>::EthiopianAmeteAlem>
     + DataProvider<<<FSet::D as DateDataMarkers>::Skel as CalMarkers<ErasedPackedPatterns>>::Gregorian>
     + DataProvider<<<FSet::D as DateDataMarkers>::Skel as CalMarkers<ErasedPackedPatterns>>::Hebrew>
     + DataProvider<<<FSet::D as DateDataMarkers>::Skel as CalMarkers<ErasedPackedPatterns>>::Indian>
-    + DataProvider<<<FSet::D as DateDataMarkers>::Skel as CalMarkers<ErasedPackedPatterns>>::IslamicCivil>
-    + DataProvider<<<FSet::D as DateDataMarkers>::Skel as CalMarkers<ErasedPackedPatterns>>::IslamicObservational>
-    + DataProvider<<<FSet::D as DateDataMarkers>::Skel as CalMarkers<ErasedPackedPatterns>>::IslamicTabular>
-    + DataProvider<<<FSet::D as DateDataMarkers>::Skel as CalMarkers<ErasedPackedPatterns>>::IslamicUmmAlQura>
+    + DataProvider<<<FSet::D as DateDataMarkers>::Skel as CalMarkers<ErasedPackedPatterns>>::Hijri>
     + DataProvider<<<FSet::D as DateDataMarkers>::Skel as CalMarkers<ErasedPackedPatterns>>::Japanese>
-    + DataProvider<<<FSet::D as DateDataMarkers>::Skel as CalMarkers<ErasedPackedPatterns>>::JapaneseExtended>
     + DataProvider<<<FSet::D as DateDataMarkers>::Skel as CalMarkers<ErasedPackedPatterns>>::Persian>
     + DataProvider<<<FSet::D as DateDataMarkers>::Skel as CalMarkers<ErasedPackedPatterns>>::Roc>
     + DataProvider<<FSet::T as TimeMarkers>::TimeSkeletonPatternsV1>
@@ -376,16 +372,11 @@ where
         + DataProvider<<<FSet::D as DateDataMarkers>::Skel as CalMarkers<ErasedPackedPatterns>>::Coptic>
         + DataProvider<<<FSet::D as DateDataMarkers>::Skel as CalMarkers<ErasedPackedPatterns>>::Dangi>
         + DataProvider<<<FSet::D as DateDataMarkers>::Skel as CalMarkers<ErasedPackedPatterns>>::Ethiopian>
-        + DataProvider<<<FSet::D as DateDataMarkers>::Skel as CalMarkers<ErasedPackedPatterns>>::EthiopianAmeteAlem>
         + DataProvider<<<FSet::D as DateDataMarkers>::Skel as CalMarkers<ErasedPackedPatterns>>::Gregorian>
         + DataProvider<<<FSet::D as DateDataMarkers>::Skel as CalMarkers<ErasedPackedPatterns>>::Hebrew>
         + DataProvider<<<FSet::D as DateDataMarkers>::Skel as CalMarkers<ErasedPackedPatterns>>::Indian>
-        + DataProvider<<<FSet::D as DateDataMarkers>::Skel as CalMarkers<ErasedPackedPatterns>>::IslamicCivil>
-        + DataProvider<<<FSet::D as DateDataMarkers>::Skel as CalMarkers<ErasedPackedPatterns>>::IslamicObservational>
-        + DataProvider<<<FSet::D as DateDataMarkers>::Skel as CalMarkers<ErasedPackedPatterns>>::IslamicTabular>
-        + DataProvider<<<FSet::D as DateDataMarkers>::Skel as CalMarkers<ErasedPackedPatterns>>::IslamicUmmAlQura>
+        + DataProvider<<<FSet::D as DateDataMarkers>::Skel as CalMarkers<ErasedPackedPatterns>>::Hijri>
         + DataProvider<<<FSet::D as DateDataMarkers>::Skel as CalMarkers<ErasedPackedPatterns>>::Japanese>
-        + DataProvider<<<FSet::D as DateDataMarkers>::Skel as CalMarkers<ErasedPackedPatterns>>::JapaneseExtended>
         + DataProvider<<<FSet::D as DateDataMarkers>::Skel as CalMarkers<ErasedPackedPatterns>>::Persian>
         + DataProvider<<<FSet::D as DateDataMarkers>::Skel as CalMarkers<ErasedPackedPatterns>>::Roc>
         + DataProvider<<FSet::T as TimeMarkers>::TimeSkeletonPatternsV1>
@@ -406,16 +397,11 @@ pub trait AllAnyCalendarFormattingDataMarkers<FSet: DateTimeMarkers>:
     + DataProvider<<<FSet::D as DateDataMarkers>::Year as CalMarkers<YearNamesV1>>::Coptic>
     + DataProvider<<<FSet::D as DateDataMarkers>::Year as CalMarkers<YearNamesV1>>::Dangi>
     + DataProvider<<<FSet::D as DateDataMarkers>::Year as CalMarkers<YearNamesV1>>::Ethiopian>
-    + DataProvider<<<FSet::D as DateDataMarkers>::Year as CalMarkers<YearNamesV1>>::EthiopianAmeteAlem>
     + DataProvider<<<FSet::D as DateDataMarkers>::Year as CalMarkers<YearNamesV1>>::Gregorian>
     + DataProvider<<<FSet::D as DateDataMarkers>::Year as CalMarkers<YearNamesV1>>::Hebrew>
     + DataProvider<<<FSet::D as DateDataMarkers>::Year as CalMarkers<YearNamesV1>>::Indian>
-    + DataProvider<<<FSet::D as DateDataMarkers>::Year as CalMarkers<YearNamesV1>>::IslamicCivil>
-    + DataProvider<<<FSet::D as DateDataMarkers>::Year as CalMarkers<YearNamesV1>>::IslamicObservational>
-    + DataProvider<<<FSet::D as DateDataMarkers>::Year as CalMarkers<YearNamesV1>>::IslamicTabular>
-    + DataProvider<<<FSet::D as DateDataMarkers>::Year as CalMarkers<YearNamesV1>>::IslamicUmmAlQura>
+    + DataProvider<<<FSet::D as DateDataMarkers>::Year as CalMarkers<YearNamesV1>>::Hijri>
     + DataProvider<<<FSet::D as DateDataMarkers>::Year as CalMarkers<YearNamesV1>>::Japanese>
-    + DataProvider<<<FSet::D as DateDataMarkers>::Year as CalMarkers<YearNamesV1>>::JapaneseExtended>
     + DataProvider<<<FSet::D as DateDataMarkers>::Year as CalMarkers<YearNamesV1>>::Persian>
     + DataProvider<<<FSet::D as DateDataMarkers>::Year as CalMarkers<YearNamesV1>>::Roc>
     + DataProvider<<<FSet::D as DateDataMarkers>::Month as CalMarkers<MonthNamesV1>>::Buddhist>
@@ -423,16 +409,11 @@ pub trait AllAnyCalendarFormattingDataMarkers<FSet: DateTimeMarkers>:
     + DataProvider<<<FSet::D as DateDataMarkers>::Month as CalMarkers<MonthNamesV1>>::Coptic>
     + DataProvider<<<FSet::D as DateDataMarkers>::Month as CalMarkers<MonthNamesV1>>::Dangi>
     + DataProvider<<<FSet::D as DateDataMarkers>::Month as CalMarkers<MonthNamesV1>>::Ethiopian>
-    + DataProvider<<<FSet::D as DateDataMarkers>::Month as CalMarkers<MonthNamesV1>>::EthiopianAmeteAlem>
     + DataProvider<<<FSet::D as DateDataMarkers>::Month as CalMarkers<MonthNamesV1>>::Gregorian>
     + DataProvider<<<FSet::D as DateDataMarkers>::Month as CalMarkers<MonthNamesV1>>::Hebrew>
     + DataProvider<<<FSet::D as DateDataMarkers>::Month as CalMarkers<MonthNamesV1>>::Indian>
-    + DataProvider<<<FSet::D as DateDataMarkers>::Month as CalMarkers<MonthNamesV1>>::IslamicCivil>
-    + DataProvider<<<FSet::D as DateDataMarkers>::Month as CalMarkers<MonthNamesV1>>::IslamicObservational>
-    + DataProvider<<<FSet::D as DateDataMarkers>::Month as CalMarkers<MonthNamesV1>>::IslamicTabular>
-    + DataProvider<<<FSet::D as DateDataMarkers>::Month as CalMarkers<MonthNamesV1>>::IslamicUmmAlQura>
+    + DataProvider<<<FSet::D as DateDataMarkers>::Month as CalMarkers<MonthNamesV1>>::Hijri>
     + DataProvider<<<FSet::D as DateDataMarkers>::Month as CalMarkers<MonthNamesV1>>::Japanese>
-    + DataProvider<<<FSet::D as DateDataMarkers>::Month as CalMarkers<MonthNamesV1>>::JapaneseExtended>
     + DataProvider<<<FSet::D as DateDataMarkers>::Month as CalMarkers<MonthNamesV1>>::Persian>
     + DataProvider<<<FSet::D as DateDataMarkers>::Month as CalMarkers<MonthNamesV1>>::Roc>
     + DataProvider<<FSet::D as DateDataMarkers>::WeekdayNamesV1>
@@ -444,6 +425,7 @@ pub trait AllAnyCalendarFormattingDataMarkers<FSet: DateTimeMarkers>:
     + DataProvider<<FSet::Z as ZoneMarkers>::ExemplarCitiesRootV1>
     + DataProvider<<FSet::Z as ZoneMarkers>::GenericLongV1>
     + DataProvider<<FSet::Z as ZoneMarkers>::GenericShortV1>
+    + DataProvider<<FSet::Z as ZoneMarkers>::StandardLongV1>
     + DataProvider<<FSet::Z as ZoneMarkers>::SpecificLongV1>
     + DataProvider<<FSet::Z as ZoneMarkers>::SpecificShortV1>
     + DataProvider<<FSet::Z as ZoneMarkers>::MetazonePeriodV1>
@@ -468,16 +450,11 @@ where
         + DataProvider<<<FSet::D as DateDataMarkers>::Year as CalMarkers<YearNamesV1>>::Coptic>
         + DataProvider<<<FSet::D as DateDataMarkers>::Year as CalMarkers<YearNamesV1>>::Dangi>
         + DataProvider<<<FSet::D as DateDataMarkers>::Year as CalMarkers<YearNamesV1>>::Ethiopian>
-        + DataProvider<<<FSet::D as DateDataMarkers>::Year as CalMarkers<YearNamesV1>>::EthiopianAmeteAlem>
         + DataProvider<<<FSet::D as DateDataMarkers>::Year as CalMarkers<YearNamesV1>>::Gregorian>
         + DataProvider<<<FSet::D as DateDataMarkers>::Year as CalMarkers<YearNamesV1>>::Hebrew>
         + DataProvider<<<FSet::D as DateDataMarkers>::Year as CalMarkers<YearNamesV1>>::Indian>
-        + DataProvider<<<FSet::D as DateDataMarkers>::Year as CalMarkers<YearNamesV1>>::IslamicCivil>
-        + DataProvider<<<FSet::D as DateDataMarkers>::Year as CalMarkers<YearNamesV1>>::IslamicObservational>
-        + DataProvider<<<FSet::D as DateDataMarkers>::Year as CalMarkers<YearNamesV1>>::IslamicTabular>
-        + DataProvider<<<FSet::D as DateDataMarkers>::Year as CalMarkers<YearNamesV1>>::IslamicUmmAlQura>
+        + DataProvider<<<FSet::D as DateDataMarkers>::Year as CalMarkers<YearNamesV1>>::Hijri>
         + DataProvider<<<FSet::D as DateDataMarkers>::Year as CalMarkers<YearNamesV1>>::Japanese>
-        + DataProvider<<<FSet::D as DateDataMarkers>::Year as CalMarkers<YearNamesV1>>::JapaneseExtended>
         + DataProvider<<<FSet::D as DateDataMarkers>::Year as CalMarkers<YearNamesV1>>::Persian>
         + DataProvider<<<FSet::D as DateDataMarkers>::Year as CalMarkers<YearNamesV1>>::Roc>
         + DataProvider<<<FSet::D as DateDataMarkers>::Month as CalMarkers<MonthNamesV1>>::Buddhist>
@@ -485,16 +462,11 @@ where
         + DataProvider<<<FSet::D as DateDataMarkers>::Month as CalMarkers<MonthNamesV1>>::Coptic>
         + DataProvider<<<FSet::D as DateDataMarkers>::Month as CalMarkers<MonthNamesV1>>::Dangi>
         + DataProvider<<<FSet::D as DateDataMarkers>::Month as CalMarkers<MonthNamesV1>>::Ethiopian>
-        + DataProvider<<<FSet::D as DateDataMarkers>::Month as CalMarkers<MonthNamesV1>>::EthiopianAmeteAlem>
         + DataProvider<<<FSet::D as DateDataMarkers>::Month as CalMarkers<MonthNamesV1>>::Gregorian>
         + DataProvider<<<FSet::D as DateDataMarkers>::Month as CalMarkers<MonthNamesV1>>::Hebrew>
         + DataProvider<<<FSet::D as DateDataMarkers>::Month as CalMarkers<MonthNamesV1>>::Indian>
-        + DataProvider<<<FSet::D as DateDataMarkers>::Month as CalMarkers<MonthNamesV1>>::IslamicCivil>
-        + DataProvider<<<FSet::D as DateDataMarkers>::Month as CalMarkers<MonthNamesV1>>::IslamicObservational>
-        + DataProvider<<<FSet::D as DateDataMarkers>::Month as CalMarkers<MonthNamesV1>>::IslamicTabular>
-        + DataProvider<<<FSet::D as DateDataMarkers>::Month as CalMarkers<MonthNamesV1>>::IslamicUmmAlQura>
+        + DataProvider<<<FSet::D as DateDataMarkers>::Month as CalMarkers<MonthNamesV1>>::Hijri>
         + DataProvider<<<FSet::D as DateDataMarkers>::Month as CalMarkers<MonthNamesV1>>::Japanese>
-        + DataProvider<<<FSet::D as DateDataMarkers>::Month as CalMarkers<MonthNamesV1>>::JapaneseExtended>
         + DataProvider<<<FSet::D as DateDataMarkers>::Month as CalMarkers<MonthNamesV1>>::Persian>
         + DataProvider<<<FSet::D as DateDataMarkers>::Month as CalMarkers<MonthNamesV1>>::Roc>
         + DataProvider<<FSet::D as DateDataMarkers>::WeekdayNamesV1>
@@ -506,6 +478,7 @@ where
         + DataProvider<<FSet::Z as ZoneMarkers>::ExemplarCitiesRootV1>
         + DataProvider<<FSet::Z as ZoneMarkers>::GenericLongV1>
         + DataProvider<<FSet::Z as ZoneMarkers>::GenericShortV1>
+        + DataProvider<<FSet::Z as ZoneMarkers>::StandardLongV1>
         + DataProvider<<FSet::Z as ZoneMarkers>::SpecificLongV1>
         + DataProvider<<FSet::Z as ZoneMarkers>::SpecificShortV1>
         + DataProvider<<FSet::Z as ZoneMarkers>::MetazonePeriodV1>
@@ -517,12 +490,12 @@ where
 /// for datetime formatting with a fixed calendar.
 // This trait is implicitly sealed due to sealed supertraits
 pub trait AllFixedCalendarExternalDataMarkers:
-    DataProvider<DecimalSymbolsV2> + DataProvider<DecimalDigitsV1>
+    DataProvider<DecimalSymbolsV1> + DataProvider<DecimalDigitsV1>
 {
 }
 
 impl<T> AllFixedCalendarExternalDataMarkers for T where
-    T: ?Sized + DataProvider<DecimalSymbolsV2> + DataProvider<DecimalDigitsV1>
+    T: ?Sized + DataProvider<DecimalSymbolsV1> + DataProvider<DecimalDigitsV1>
 {
 }
 
@@ -530,26 +503,20 @@ impl<T> AllFixedCalendarExternalDataMarkers for T where
 /// for datetime formatting with any calendar.
 // This trait is implicitly sealed due to sealed supertraits
 pub trait AllAnyCalendarExternalDataMarkers:
-    DataProvider<ChineseCacheV1>
-    + DataProvider<DangiCacheV1>
-    + DataProvider<IslamicObservationalCacheV1>
-    + DataProvider<IslamicUmmAlQuraCacheV1>
-    + DataProvider<JapaneseErasV1>
-    + DataProvider<JapaneseExtendedErasV1>
-    + DataProvider<DecimalSymbolsV2>
+    DataProvider<CalendarChineseV1>
+    + DataProvider<CalendarDangiV1>
+    + DataProvider<CalendarJapaneseModernV1>
+    + DataProvider<DecimalSymbolsV1>
     + DataProvider<DecimalDigitsV1>
 {
 }
 
 impl<T> AllAnyCalendarExternalDataMarkers for T where
     T: ?Sized
-        + DataProvider<ChineseCacheV1>
-        + DataProvider<DangiCacheV1>
-        + DataProvider<IslamicObservationalCacheV1>
-        + DataProvider<IslamicUmmAlQuraCacheV1>
-        + DataProvider<JapaneseErasV1>
-        + DataProvider<JapaneseExtendedErasV1>
-        + DataProvider<DecimalSymbolsV2>
+        + DataProvider<CalendarChineseV1>
+        + DataProvider<CalendarDangiV1>
+        + DataProvider<CalendarJapaneseModernV1>
+        + DataProvider<DecimalSymbolsV1>
         + DataProvider<DecimalDigitsV1>
 {
 }
@@ -597,6 +564,7 @@ impl ZoneMarkers for () {
     type ExemplarCitiesRootV1 = NeverMarker<tz::ExemplarCities<'static>>;
     type GenericLongV1 = NeverMarker<tz::MzGeneric<'static>>;
     type GenericShortV1 = NeverMarker<tz::MzGeneric<'static>>;
+    type StandardLongV1 = NeverMarker<tz::MzGeneric<'static>>;
     type SpecificLongV1 = NeverMarker<tz::MzSpecific<'static>>;
     type SpecificShortV1 = NeverMarker<tz::MzSpecific<'static>>;
     type MetazonePeriodV1 = NeverMarker<tz::MzPeriod<'static>>;
@@ -640,13 +608,13 @@ macro_rules! datetime_marker_helper {
         NeverMarker<LinearNames<'static>>
     };
     (@times, yes) => {
-        TimeNeoSkeletonPatternsV1
+        DatetimePatternsTimeV1
     };
     (@times,) => {
         NeverMarker<ErasedPackedPatterns>
     };
     (@glue, yes) => {
-        GluePatternV1
+        DatetimePatternsGlueV1
     };
     (@glue,) => {
         NeverMarker<GluePattern<'static>>
@@ -688,7 +656,7 @@ macro_rules! datetime_marker_helper {
         Weekday
     };
     (@input/day_of_year, yes) => {
-        DayOfYearInfo
+        DayOfYear
     };
     (@input/hour, yes) => {
         Hour
@@ -724,22 +692,25 @@ macro_rules! datetime_marker_helper {
         tz::EssentialsV1
     };
     (@data/zone/locations, yes) => {
-        tz::LocationsV1
+        tz::LocationsOverrideV1
     };
     (@data/zone/locations_root, yes) => {
         tz::LocationsRootV1
     };
     (@data/zone/exemplars, yes) => {
-        tz::ExemplarCitiesV1
+        tz::CitiesOverrideV1
     };
     (@data/zone/exemplars_root, yes) => {
-        tz::ExemplarCitiesRootV1
+        tz::CitiesRootV1
     };
     (@data/zone/generic_long, yes) => {
         tz::MzGenericLongV1
     };
     (@data/zone/generic_short, yes) => {
         tz::MzGenericShortV1
+    };
+    (@data/zone/standard_long, yes) => {
+        tz::MzStandardLongV1
     };
     (@data/zone/specific_long, yes) => {
         tz::MzSpecificLongV1
@@ -771,6 +742,9 @@ macro_rules! datetime_marker_helper {
     (@data/zone/generic_short,) => {
         NeverMarker<tz::MzGeneric<'static>>
     };
+    (@data/zone/standard_long,) => {
+        NeverMarker<tz::MzGeneric<'static>>
+    };
     (@data/zone/specific_long,) => {
         NeverMarker<tz::MzSpecific<'static>>
     };
@@ -796,22 +770,25 @@ macro_rules! datetime_marker_helper {
         tz::EssentialsV1
     };
     (@names/zone/locations, yes) => {
-        tz::LocationsV1
+        tz::LocationsOverrideV1
     };
     (@names/zone/locations_root, yes) => {
         tz::LocationsRootV1
     };
     (@names/zone/exemplars, yes) => {
-        tz::ExemplarCitiesV1
+        tz::CitiesOverrideV1
     };
     (@names/zone/exemplars_root, yes) => {
-        tz::ExemplarCitiesRootV1
+        tz::CitiesRootV1
     };
     (@names/zone/generic_long, yes) => {
         tz::MzGenericLongV1
     };
     (@names/zone/generic_short, yes) => {
         tz::MzGenericShortV1
+    };
+    (@names/zone/standard_long, yes) => {
+        tz::MzStandardLongV1
     };
     (@names/zone/specific_long, yes) => {
         tz::MzSpecificLongV1

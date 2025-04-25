@@ -10,10 +10,11 @@ use icu_provider::prelude::*;
 use std::borrow::Cow;
 use std::collections::HashSet;
 use std::convert::TryFrom;
+use zerovec::VarZeroCow;
 
-impl DataProvider<DecimalSymbolsV2> for SourceDataProvider {
-    fn load(&self, req: DataRequest) -> Result<DataResponse<DecimalSymbolsV2>, DataError> {
-        self.check_req::<DecimalSymbolsV2>(req)?;
+impl DataProvider<DecimalSymbolsV1> for SourceDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<DecimalSymbolsV1>, DataError> {
+        self.check_req::<DecimalSymbolsV1>(req)?;
 
         let resource: &cldr_serde::numbers::Resource = self
             .cldr()?
@@ -41,7 +42,7 @@ impl DataProvider<DecimalSymbolsV2> for SourceDataProvider {
     }
 }
 
-impl IterableDataProviderCached<DecimalSymbolsV2> for SourceDataProvider {
+impl IterableDataProviderCached<DecimalSymbolsV1> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         self.iter_ids_for_numbers_with_locales()
     }
@@ -75,18 +76,20 @@ impl TryFrom<NumbersWithNumsys<'_>> for DecimalSymbols<'static> {
 
         let minus_sign_affixes = parsed_pattern.localize_sign(&symbols.minus_sign);
         let plus_sign_affixes = parsed_pattern.localize_sign(&symbols.plus_sign);
-        let numsys = nsname
-            .parse()
-            .map_err(|_| format!("Numbering system {nsname} should not be more than 8 bytes!"))?;
+        if nsname.len() > 8 {
+            return Err(
+                format!("Numbering system {nsname} should not be more than 8 bytes!").into(),
+            );
+        }
 
         let strings = DecimalSymbolStrsBuilder {
-            minus_sign_prefix: minus_sign_affixes.0.into(),
-            minus_sign_suffix: minus_sign_affixes.1.into(),
-            plus_sign_prefix: plus_sign_affixes.0.into(),
-            plus_sign_suffix: plus_sign_affixes.1.into(),
-            decimal_separator: Cow::Owned(symbols.decimal.clone()),
-            grouping_separator: Cow::Owned(symbols.group.clone()),
-            numsys: Cow::Owned(numsys),
+            minus_sign_prefix: VarZeroCow::new_owned(minus_sign_affixes.0.into_boxed_str()),
+            minus_sign_suffix: VarZeroCow::new_owned(minus_sign_affixes.1.into_boxed_str()),
+            plus_sign_prefix: VarZeroCow::new_owned(plus_sign_affixes.0.into_boxed_str()),
+            plus_sign_suffix: VarZeroCow::new_owned(plus_sign_affixes.1.into_boxed_str()),
+            decimal_separator: VarZeroCow::new_owned(symbols.decimal.clone().into_boxed_str()),
+            grouping_separator: VarZeroCow::new_owned(symbols.group.clone().into_boxed_str()),
+            numsys: VarZeroCow::new_owned(nsname.to_owned().into_boxed_str()),
         };
 
         Ok(Self {
@@ -106,7 +109,7 @@ fn test_basic() {
 
     let provider = SourceDataProvider::new_testing();
 
-    let ar_decimal: DataResponse<DecimalSymbolsV2> = provider
+    let ar_decimal: DataResponse<DecimalSymbolsV1> = provider
         .load(DataRequest {
             id: DataIdentifierCow::from_locale(langid!("ar-EG").into()).as_borrowed(),
             ..Default::default()

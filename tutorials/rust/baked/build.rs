@@ -23,9 +23,9 @@ fn main() {
     // These are the markers required by `PluralRules::try_new_cardinal_unstable`. Compilation will
     // discard unused markers and fail if required markers are not generated, but explicitly listing the
     // markers will speed up the datagen.
-    .with_markers([icu::plurals::provider::CardinalV1::INFO])
+    .with_markers([icu::plurals::provider::PluralsCardinalV1::INFO])
     .export(
-        &SourceDataProvider::new_latest_tested(),
+        &SourceDataProvider::new(),
         BakedExporter::new(mod_directory, {
             let mut options = Options::default();
             options.overwrite = true;

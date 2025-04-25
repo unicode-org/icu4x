@@ -25,8 +25,8 @@ macro_rules! cb {
         /// assert_eq!(
         ///     icu::markers_for_bin(&std::fs::read(Path::new("target/release/my-app"))?)?,
         ///     std::collections::BTreeSet::from_iter([
-        ///         icu::list::provider::ListAndV2::INFO,
-        ///         icu::list::provider::ListOrV2::INFO,
+        ///         icu::list::provider::ListAndV1::INFO,
+        ///         icu::list::provider::ListOrV1::INFO,
         ///     ]),
         /// );
         /// # Ok(())
@@ -36,15 +36,15 @@ macro_rules! cb {
             use crate as icu;
             let lookup =
                 [
-                    (icu_provider::marker::data_marker_id!(HelloWorldV1).hashed().to_bytes(), Ok(icu_provider::hello_world::HelloWorldV1::INFO)),
+                    (icu_provider::hello_world::HelloWorldV1::INFO.id.hashed().to_bytes(), Ok(icu_provider::hello_world::HelloWorldV1::INFO)),
                     $(
-                        (icu_provider::marker::data_marker_id!($marker).hashed().to_bytes(), Ok(<$marker_ty>::INFO)),
+                        (<$marker_ty>::INFO.id.hashed().to_bytes(), Ok(<$marker_ty>::INFO)),
                     )+
                     $(
                         #[cfg(feature = "experimental")]
-                        (icu_provider::marker::data_marker_id!($emarker).hashed().to_bytes(), Ok(<$emarker_ty>::INFO)),
+                        (<$emarker_ty>::INFO.id.hashed().to_bytes(), Ok(<$emarker_ty>::INFO)),
                         #[cfg(not(feature = "experimental"))]
-                        (icu_provider::marker::data_marker_id!($emarker).hashed().to_bytes(), Err(stringify!($emarker))),
+                        (icu_provider::marker::DataMarkerId::from_name(stringify!($emarker)).unwrap().hashed().to_bytes(), Err(stringify!($emarker))),
                     )+
 
                 ]
@@ -53,10 +53,8 @@ macro_rules! cb {
 
             use memchr::memmem::*;
 
-            const LEADING_TAG: &[u8] = b"tdmh";
-
-            find_iter(bytes, LEADING_TAG)
-                .map(|tag_position| tag_position + LEADING_TAG.len())
+            find_iter(bytes, icu_provider::marker::DataMarkerIdHash::LEADING_TAG)
+                .map(|tag_position| tag_position + icu_provider::marker::DataMarkerIdHash::LEADING_TAG.len())
                 .filter_map(|marker_start| bytes.get(marker_start..marker_start+4))
                 .filter_map(|p| {
                     match lookup.get(p) {
@@ -77,12 +75,12 @@ fn test_markers_for_bin() {
         markers_for_bin(include_bytes!("../tests/data/tutorial_buffer.wasm")).unwrap(),
         [
             crate::datetime::provider::neo::DayPeriodNamesV1::INFO,
-            crate::datetime::provider::neo::GregorianMonthNamesV1::INFO,
-            crate::datetime::provider::neo::GregorianYearNamesV1::INFO,
-            crate::datetime::provider::neo::GluePatternV1::INFO,
-            crate::datetime::provider::GregorianDateNeoSkeletonPatternsV1::INFO,
-            crate::datetime::provider::TimeNeoSkeletonPatternsV1::INFO,
-            crate::decimal::provider::DecimalSymbolsV2::INFO,
+            crate::datetime::provider::neo::DatetimeNamesMonthGregorianV1::INFO,
+            crate::datetime::provider::neo::DatetimeNamesYearGregorianV1::INFO,
+            crate::datetime::provider::neo::DatetimePatternsGlueV1::INFO,
+            crate::datetime::provider::DatetimePatternsDateGregorianV1::INFO,
+            crate::datetime::provider::DatetimePatternsTimeV1::INFO,
+            crate::decimal::provider::DecimalSymbolsV1::INFO,
             crate::decimal::provider::DecimalDigitsV1::INFO,
         ]
         .into_iter()

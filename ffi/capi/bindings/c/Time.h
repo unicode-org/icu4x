@@ -23,8 +23,8 @@ icu4x_Time_create_mv1_result icu4x_Time_create_mv1(uint8_t hour, uint8_t minute,
 typedef struct icu4x_Time_from_string_mv1_result {union {Time* ok; CalendarParseError err;}; bool is_ok;} icu4x_Time_from_string_mv1_result;
 icu4x_Time_from_string_mv1_result icu4x_Time_from_string_mv1(DiplomatStringView v);
 
-typedef struct icu4x_Time_midnight_mv1_result {union {Time* ok; CalendarError err;}; bool is_ok;} icu4x_Time_midnight_mv1_result;
-icu4x_Time_midnight_mv1_result icu4x_Time_midnight_mv1(void);
+typedef struct icu4x_Time_start_of_day_mv1_result {union {Time* ok; CalendarError err;}; bool is_ok;} icu4x_Time_start_of_day_mv1_result;
+icu4x_Time_start_of_day_mv1_result icu4x_Time_start_of_day_mv1(void);
 
 uint8_t icu4x_Time_hour_mv1(const Time* self);
 

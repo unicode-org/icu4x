@@ -11,14 +11,14 @@ pub mod ffi {
     use icu_properties::props::{
         BidiClass, CanonicalCombiningClass, EastAsianWidth, GeneralCategory, GraphemeClusterBreak,
         HangulSyllableType, IndicSyllabicCategory, JoiningType, LineBreak, Script, SentenceBreak,
-        WordBreak,
+        VerticalOrientation, WordBreak,
     };
 
-    use crate::properties_enums::ffi::GeneralCategoryGroup;
-    use crate::properties_iter::ffi::CodePointRangeIterator;
-    use crate::properties_sets::ffi::CodePointSetData;
+    use crate::unstable::properties_enums::ffi::GeneralCategoryGroup;
+    use crate::unstable::properties_iter::ffi::CodePointRangeIterator;
+    use crate::unstable::properties_sets::ffi::CodePointSetData;
     #[cfg(feature = "buffer_provider")]
-    use crate::{errors::ffi::DataError, provider::ffi::DataProvider};
+    use crate::unstable::{errors::ffi::DataError, provider::ffi::DataProvider};
 
     #[diplomat::opaque]
     /// An ICU4X Unicode Map Property object, capable of querying whether a code point (key) to obtain the Unicode property value, for a specific Unicode property.
@@ -355,6 +355,28 @@ pub mod ffi {
                 &provider.get_unstable()?
             )?))
         }
+        /// Create a map for the `Vertical_Orientation` property, using compiled data.
+        #[diplomat::rust_link(icu::properties::props::VerticalOrientation, Struct)]
+        #[diplomat::attr(auto, named_constructor = "vertical_orientation")]
+        #[cfg(feature = "compiled_data")]
+        pub fn create_vertical_orientation() -> Box<CodePointMapData8> {
+            convert_8(
+                icu_properties::CodePointMapData::<VerticalOrientation>::new().static_to_owned(),
+            )
+        }
+        /// Create a map for the `Vertical_Orientation` property, using a particular data source.
+        #[diplomat::rust_link(icu::properties::props::VerticalOrientation, Struct)]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "vertical_orientation_with_provider")]
+        #[cfg(feature = "buffer_provider")]
+        pub fn create_vertical_orientation_with_provider(
+            provider: &DataProvider,
+        ) -> Result<Box<CodePointMapData8>, DataError> {
+            Ok(convert_8(icu_properties::CodePointMapData::<
+                VerticalOrientation,
+            >::try_new_unstable(
+                &provider.get_unstable()?
+            )?))
+        }
     }
 
     #[diplomat::opaque]
@@ -368,7 +390,7 @@ pub mod ffi {
 
     impl CodePointMapData16 {
         /// Gets the value for a code point.
-        #[diplomat::rust_link(icu::properties::props::CodePointMapDataBorrowed::get, FnInStruct)]
+        #[diplomat::rust_link(icu::properties::CodePointMapDataBorrowed::get, FnInStruct)]
         #[diplomat::rust_link(icu::properties::CodePointMapDataBorrowed::get32, FnInStruct, hidden)]
         #[diplomat::attr(auto, indexer)]
         pub fn get(&self, cp: DiplomatChar) -> u16 {

@@ -4,10 +4,11 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
-/** An object containing bidi information for a given string, produced by `for_text()` on `Bidi`
-*
-*See the [Rust documentation for `BidiInfo`](https://docs.rs/unicode_bidi/latest/unicode_bidi/struct.BidiInfo.html) for more information.
-*/
+/** 
+ * An object containing bidi information for a given string, produced by `for_text()` on `Bidi`
+ *
+ * See the [Rust documentation for `BidiInfo`](https://docs.rs/unicode_bidi/latest/unicode_bidi/struct.BidiInfo.html) for more information.
+ */
 const BidiInfo_box_destroy_registry = new FinalizationRegistry((ptr) => {
     wasm.icu4x_BidiInfo_destroy_mv1(ptr);
 });
@@ -45,6 +46,9 @@ export class BidiInfo {
         return this.#ptr;
     }
 
+    /** 
+     * The number of paragraphs contained here
+     */
     get paragraphCount() {
         const result = wasm.icu4x_BidiInfo_paragraph_count_mv1(this.ffiValue);
     
@@ -55,6 +59,9 @@ export class BidiInfo {
         finally {}
     }
 
+    /** 
+     * Get the nth paragraph, returning `None` if out of bounds
+     */
     paragraphAt(n) {
         // This lifetime edge depends on lifetimes 'text
         let textEdges = [this];
@@ -68,6 +75,9 @@ export class BidiInfo {
         finally {}
     }
 
+    /** 
+     * The number of bytes in this full text
+     */
     get size() {
         const result = wasm.icu4x_BidiInfo_size_mv1(this.ffiValue);
     
@@ -78,6 +88,13 @@ export class BidiInfo {
         finally {}
     }
 
+    /** 
+     * Get the BIDI level at a particular byte index in the full text.
+     * This integer is conceptually a `unicode_bidi::Level`,
+     * and can be further inspected using the static methods on Bidi.
+     *
+     * Returns 0 (equivalent to `Level::ltr()`) on error
+     */
     levelAt(pos) {
         const result = wasm.icu4x_BidiInfo_level_at_mv1(this.ffiValue, pos);
     

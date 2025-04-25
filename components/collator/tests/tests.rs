@@ -6,7 +6,7 @@ use core::cmp::Ordering;
 
 use atoi::FromRadix16;
 use icu_collator::provider::*;
-use icu_collator::{preferences::*, *};
+use icu_collator::{options::*, preferences::*, *};
 use icu_locale_core::{langid, locale, Locale};
 use icu_provider::prelude::*;
 
@@ -17,8 +17,8 @@ const _: () = {
     use icu_collator_data::*;
     pub mod icu {
         pub use crate as collator;
-        pub use icu_collator_data::icu_locale as locale;
         pub use icu_collections as collections;
+        pub use icu_locale as locale;
         pub use icu_normalizer as normalizer;
     }
     make_provider!(TestingProvider);
@@ -30,13 +30,13 @@ const _: () = {
     impl_collation_special_primaries_v1!(TestingProvider);
     impl_collation_reordering_v1!(TestingProvider);
 
-    icu_normalizer_data::impl_canonical_compositions_v1!(TestingProvider);
-    icu_normalizer_data::impl_non_recursive_decomposition_supplement_v1!(TestingProvider);
-    icu_normalizer_data::impl_canonical_decomposition_data_v2!(TestingProvider);
-    icu_normalizer_data::impl_canonical_decomposition_tables_v1!(TestingProvider);
-    icu_normalizer_data::impl_compatibility_decomposition_data_v2!(TestingProvider);
-    icu_normalizer_data::impl_compatibility_decomposition_tables_v1!(TestingProvider);
-    icu_normalizer_data::impl_uts46_decomposition_data_v2!(TestingProvider);
+    icu_normalizer_data::impl_normalizer_nfc_v1!(TestingProvider);
+    icu_normalizer_data::impl_normalizer_nfd_data_v1!(TestingProvider);
+    icu_normalizer_data::impl_normalizer_nfd_supplement_v1!(TestingProvider);
+    icu_normalizer_data::impl_normalizer_nfd_tables_v1!(TestingProvider);
+    icu_normalizer_data::impl_normalizer_nfkd_data_v1!(TestingProvider);
+    icu_normalizer_data::impl_normalizer_nfkd_tables_v1!(TestingProvider);
+    icu_normalizer_data::impl_normalizer_uts46_data_v1!(TestingProvider);
 };
 
 type StackString = arraystring::ArrayString<arraystring::typenum::U32>;
@@ -943,7 +943,6 @@ fn test_zh() {
 
     assert_zhuyin(locale!("zh-u-co-zhuyin").into());
     assert_unihan(locale!("zh-u-co-unihan").into());
-    // See SourceDataProvider test_zh_non_baked for gb2312 and big5han tests
 
     fn assert_root(prefs: CollatorPreferences) {
         let collator = Collator::try_new(prefs, Default::default()).unwrap();
@@ -1606,10 +1605,8 @@ fn test_backward_second_level() {
         }
     }
 
-    options.backward_second_level = Some(BackwardSecondLevel::On);
-
     {
-        let collator = Collator::try_new(Default::default(), options).unwrap();
+        let collator = Collator::try_new(locale!("fr-CA").into(), options).unwrap();
 
         {
             let cases = ["cote", "côte", "coté", "côté"];
@@ -1806,7 +1803,6 @@ fn test_default_resolved_options() {
     assert_eq!(resolved.max_variable, MaxVariable::Punctuation);
     assert_eq!(resolved.case_level, CaseLevel::Off);
     assert_eq!(resolved.numeric, CollationNumericOrdering::False);
-    assert_eq!(resolved.backward_second_level, BackwardSecondLevel::Off);
 
     assert_eq!(collator.compare("𝕒", "A"), core::cmp::Ordering::Less);
     assert_eq!(collator.compare("coté", "côte"), core::cmp::Ordering::Less);
@@ -1823,7 +1819,6 @@ fn test_data_resolved_options_th() {
     assert_eq!(resolved.max_variable, MaxVariable::Punctuation);
     assert_eq!(resolved.case_level, CaseLevel::Off);
     assert_eq!(resolved.numeric, CollationNumericOrdering::False);
-    assert_eq!(resolved.backward_second_level, BackwardSecondLevel::Off);
 
     // There's a separate more comprehensive test for the shifted behavior
     assert_eq!(collator.compare("𝕒", "A"), core::cmp::Ordering::Less);
@@ -1841,7 +1836,6 @@ fn test_data_resolved_options_da() {
     assert_eq!(resolved.max_variable, MaxVariable::Punctuation);
     assert_eq!(resolved.case_level, CaseLevel::Off);
     assert_eq!(resolved.numeric, CollationNumericOrdering::False);
-    assert_eq!(resolved.backward_second_level, BackwardSecondLevel::Off);
 
     assert_eq!(collator.compare("𝕒", "A"), core::cmp::Ordering::Greater);
     assert_eq!(collator.compare("coté", "côte"), core::cmp::Ordering::Less);
@@ -1858,7 +1852,7 @@ fn test_data_resolved_options_fr_ca() {
     assert_eq!(resolved.max_variable, MaxVariable::Punctuation);
     assert_eq!(resolved.case_level, CaseLevel::Off);
     assert_eq!(resolved.numeric, CollationNumericOrdering::False);
-    assert_eq!(resolved.backward_second_level, BackwardSecondLevel::On);
+    // bacward second level is hidden from the API
 
     assert_eq!(collator.compare("𝕒", "A"), core::cmp::Ordering::Less);
     assert_eq!(
@@ -1880,7 +1874,7 @@ fn test_manual_and_data_resolved_options_fr_ca() {
     assert_eq!(resolved.max_variable, MaxVariable::Punctuation);
     assert_eq!(resolved.case_level, CaseLevel::Off);
     assert_eq!(resolved.numeric, CollationNumericOrdering::False);
-    assert_eq!(resolved.backward_second_level, BackwardSecondLevel::On);
+    // backwards second level is hidden from the API
 
     assert_eq!(collator.compare("𝕒", "A"), core::cmp::Ordering::Greater);
     assert_eq!(
@@ -1902,7 +1896,6 @@ fn test_manual_resolved_options_da() {
     assert_eq!(resolved.max_variable, MaxVariable::Punctuation);
     assert_eq!(resolved.case_level, CaseLevel::Off);
     assert_eq!(resolved.numeric, CollationNumericOrdering::False);
-    assert_eq!(resolved.backward_second_level, BackwardSecondLevel::Off);
 
     assert_eq!(collator.compare("𝕒", "A"), core::cmp::Ordering::Less);
     assert_eq!(collator.compare("coté", "côte"), core::cmp::Ordering::Less);

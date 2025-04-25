@@ -22,13 +22,16 @@ use icu_provider::prelude::*;
 /// </div>
 pub use crate::provider::Baked;
 
-/// Currency Extended  data struct.
-#[icu_provider::data_struct(marker(
+icu_provider::data_marker!(
+    /// `CurrencyExtendedDataV1`
     CurrencyExtendedDataV1,
-    "currency/extended@1",
+    CurrencyExtendedData<'static>,
+    #[cfg(feature = "datagen")]
     attributes_domain = "currency",
-))]
-#[derive(Debug, Clone, PartialEq)]
+);
+
+/// Currency Extended  data struct.
+#[derive(Debug, Clone, PartialEq, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize))]
 #[yoke(prove_covariance_manually)]
@@ -44,6 +47,8 @@ pub struct CurrencyExtendedData<'data> {
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub display_names: PluralElementsPackedCow<'data, str>,
 }
+
+icu_provider::data_struct!(CurrencyExtendedData<'_>, #[cfg(feature = "datagen")]);
 
 impl<'data> CurrencyExtendedData<'data> {
     /// Construct an instance directly from a byte slice.

@@ -2,8 +2,9 @@
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
-/** See the [Rust documentation for `WordType`](https://docs.rs/icu/latest/icu/segmenter/enum.WordType.html) for more information.
-*/
+/** 
+ * See the [Rust documentation for `WordType`](https://docs.rs/icu/latest/icu/segmenter/options/enum.WordType.html) for more information.
+ */
 
 
 export class SegmenterWordType {
@@ -19,6 +20,9 @@ export class SegmenterWordType {
     static Number : SegmenterWordType;
     static Letter : SegmenterWordType;
 
+    /** 
+     * See the [Rust documentation for `is_word_like`](https://docs.rs/icu/latest/icu/segmenter/options/enum.WordType.html#method.is_word_like) for more information.
+     */
     get isWordLike(): boolean;
 
     constructor(value: SegmenterWordType | string );

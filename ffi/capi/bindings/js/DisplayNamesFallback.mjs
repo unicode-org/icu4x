@@ -3,8 +3,9 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
-/** See the [Rust documentation for `Fallback`](https://docs.rs/icu/latest/icu/displaynames/options/enum.Fallback.html) for more information.
-*/
+/** 
+ * See the [Rust documentation for `Fallback`](https://docs.rs/icu/latest/icu/experimental/displaynames/options/enum.Fallback.html) for more information.
+ */
 
 
 export class DisplayNamesFallback {

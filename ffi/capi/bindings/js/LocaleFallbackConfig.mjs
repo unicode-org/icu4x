@@ -4,10 +4,11 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
-/** Collection of configurations for the ICU4X fallback algorithm.
-*
-*See the [Rust documentation for `LocaleFallbackConfig`](https://docs.rs/icu/latest/icu/locale/fallback/struct.LocaleFallbackConfig.html) for more information.
-*/
+/** 
+ * Collection of configurations for the ICU4X fallback algorithm.
+ *
+ * See the [Rust documentation for `LocaleFallbackConfig`](https://docs.rs/icu/latest/icu/locale/fallback/struct.LocaleFallbackConfig.html) for more information.
+ */
 
 
 export class LocaleFallbackConfig {
@@ -27,7 +28,7 @@ export class LocaleFallbackConfig {
     static fromFields(structObj) {
         return new LocaleFallbackConfig(structObj);
     }
-    
+
     #internalConstructor(structObj) {
         if (typeof structObj !== "object") {
             throw new Error("LocaleFallbackConfig's constructor takes an object of LocaleFallbackConfig's fields.");

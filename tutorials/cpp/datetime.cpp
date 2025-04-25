@@ -2,16 +2,18 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-#include <icu4x/GregorianDateFormatter.hpp>
+#include <icu4x/DateFormatter.hpp>
+#include <icu4x/DateFormatterGregorian.hpp>
 #include <icu4x/DateTimeFormatter.hpp>
 #include <icu4x/DateTimeFormatterGregorian.hpp>
 #include <icu4x/TimeFormatter.hpp>
+#include <icu4x/ZonedDateFormatter.hpp>
+#include <icu4x/ZonedTimeFormatter.hpp>
+#include <icu4x/ZonedDateTimeFormatter.hpp>
+#include <icu4x/TimeZoneFormatter.hpp>
 #include <icu4x/Logger.hpp>
 #include <icu4x/TimeZoneInfo.hpp>
 #include <icu4x/IanaParser.hpp>
-#include <icu4x/IanaParserExtended.hpp>
-#include <icu4x/GregorianZonedDateTimeFormatter.hpp>
-#include <icu4x/ZonedDateTimeFormatter.hpp>
 
 #include <atomic>
 #include <iostream>
@@ -29,9 +31,109 @@ int main() {
 
     std::unique_ptr<IsoDate> date = IsoDate::create(2022, 07, 11).ok().value();
     std::unique_ptr<Time> time = Time::create(13, 06, 42, 0).ok().value();
+    std::string out;
+
+    std::unique_ptr<DateFormatter> fmt_d = DateFormatter::create_d(*locale.get(), DateTimeLength::Medium, std::nullopt).ok().value();
+    out = fmt_d->format_iso(*date.get());
+    std::cout << "Fieldset D: " << out;
+    if (out != "11") {
+        std::cout << " (unexpected!)";
+        saw_unexpected_output = true;
+    }
+    std::cout << std::endl;
+
+    std::unique_ptr<DateFormatter> fmt_md = DateFormatter::create_md(*locale.get(), DateTimeLength::Medium, std::nullopt).ok().value();
+    out = fmt_md->format_iso(*date.get());
+    std::cout << "Fieldset MD: " << out;
+    if (out != "11 jul") {
+        std::cout << " (unexpected!)";
+        saw_unexpected_output = true;
+    }
+    std::cout << std::endl;
+
+    std::unique_ptr<DateFormatter> fmt_ymd = DateFormatter::create_ymd(*locale.get(), DateTimeLength::Medium, std::nullopt, std::nullopt).ok().value();
+    out = fmt_ymd->format_iso(*date.get());
+    std::cout << "Fieldset YMD: " << out;
+    if (out != "11 jul 2022") {
+        std::cout << " (unexpected!)";
+        saw_unexpected_output = true;
+    }
+    std::cout << std::endl;
+
+    std::unique_ptr<DateFormatter> fmt_de = DateFormatter::create_de(*locale.get(), DateTimeLength::Medium, std::nullopt).ok().value();
+    out = fmt_de->format_iso(*date.get());
+    std::cout << "Fieldset DE: " << out;
+    if (out != "lun 11") {
+        std::cout << " (unexpected!)";
+        saw_unexpected_output = true;
+    }
+    std::cout << std::endl;
+
+    std::unique_ptr<DateFormatter> fmt_mde = DateFormatter::create_mde(*locale.get(), DateTimeLength::Medium, std::nullopt).ok().value();
+    out = fmt_mde->format_iso(*date.get());
+    std::cout << "Fieldset MDE: " << out;
+    if (out != "lun, 11 jul") {
+        std::cout << " (unexpected!)";
+        saw_unexpected_output = true;
+    }
+    std::cout << std::endl;
+
+    std::unique_ptr<DateFormatter> fmt_ymde = DateFormatter::create_ymde(*locale.get(), DateTimeLength::Medium, std::nullopt, std::nullopt).ok().value();
+    out = fmt_ymde->format_iso(*date.get());
+    std::cout << "Fieldset YMDE: " << out;
+    if (out != "lun, 11 jul 2022") {
+        std::cout << " (unexpected!)";
+        saw_unexpected_output = true;
+    }
+    std::cout << std::endl;
+
+    std::unique_ptr<DateFormatter> fmt_e = DateFormatter::create_e(*locale.get(), DateTimeLength::Medium).ok().value();
+    out = fmt_e->format_iso(*date.get());
+    std::cout << "Fieldset E: " << out;
+    if (out != "lun") {
+        std::cout << " (unexpected!)";
+        saw_unexpected_output = true;
+    }
+    std::cout << std::endl;
+
+    std::unique_ptr<DateFormatter> fmt_m = DateFormatter::create_m(*locale.get(), DateTimeLength::Medium, std::nullopt).ok().value();
+    out = fmt_m->format_iso(*date.get());
+    std::cout << "Fieldset M: " << out;
+    if (out != "jul") {
+        std::cout << " (unexpected!)";
+        saw_unexpected_output = true;
+    }
+    std::cout << std::endl;
+
+    std::unique_ptr<DateFormatter> fmt_ym = DateFormatter::create_ym(*locale.get(), DateTimeLength::Medium, std::nullopt, std::nullopt).ok().value();
+    out = fmt_ym->format_iso(*date.get());
+    std::cout << "Fieldset YM: " << out;
+    if (out != "jul 2022") {
+        std::cout << " (unexpected!)";
+        saw_unexpected_output = true;
+    }
+    std::cout << std::endl;
+
+    std::unique_ptr<DateFormatter> fmt_y = DateFormatter::create_y(*locale.get(), DateTimeLength::Medium, std::nullopt, std::nullopt).ok().value();
+    out = fmt_y->format_iso(*date.get());
+    std::cout << "Fieldset Y: " << out;
+    if (out != "2022") {
+        std::cout << " (unexpected!)";
+        saw_unexpected_output = true;
+    }
+    std::cout << std::endl;
+
+    std::unique_ptr<TimeFormatter> fmt_t = TimeFormatter::create(*locale.get(), std::nullopt, TimePrecision::Minute, std::nullopt).ok().value();
+    out = fmt_t->format(*time.get());
+    std::cout << "Fieldset T: " << out;
+    if (out != "13:06") {
+        std::cout << " (unexpected!)";
+        saw_unexpected_output = true;
+    }
+    std::cout << std::endl;
 
     std::unique_ptr<DateTimeFormatter> fmt_dt = DateTimeFormatter::create_dt(*locale.get(), DateTimeLength::Medium, TimePrecision::Minute, std::nullopt).ok().value();
-    std::string out = fmt_dt->format_iso(*date.get(), *time.get());
+    out = fmt_dt->format_iso(*date.get(), *time.get());
     std::cout << "Fieldset DT: " << out;
     if (out != "11, 13:06") {
         std::cout << " (unexpected!)";
@@ -93,91 +195,124 @@ int main() {
     }
     std::cout << std::endl;
 
-    if (saw_unexpected_output) {
-        return 1;
-    }
-
-    std::unique_ptr<TimeFormatter> tf = TimeFormatter::create_with_length(*locale.get(), DateTimeLength::Short).ok().value();
-    out = tf->format(*time.get());
-    std::cout << "Formatted value is " << out << std::endl;
-    if (out != "13:06") {
-        std::cout << "Output does not match expected output" << std::endl;
-        return 1;
-    }
-
-    std::unique_ptr<GregorianDateFormatter> df = GregorianDateFormatter::create_with_length(*locale.get(), DateTimeLength::Long).ok().value();
-    out = df->format_iso(*date.get());
-    std::cout << "Formatted value is " << out << std::endl;
+    std::unique_ptr<DateFormatterGregorian> fmt_ymd_g = DateFormatterGregorian::create_ymd(*locale.get(), DateTimeLength::Long, std::nullopt, std::nullopt).ok().value();
+    out = fmt_ymd_g->format_iso(*date.get());
+    std::cout << "Formatted value is " << out;
     if (out != "11 de julio de 2022") {
-        std::cout << "Output does not match expected output" << std::endl;
-        return 1;
+        std::cout << " (unexpected!)";
+        saw_unexpected_output = true;
     }
+    std::cout << std::endl;
 
-    std::unique_ptr<DateTimeFormatterGregorian> dtf = DateTimeFormatterGregorian::create_ymdt(*locale.get(), DateTimeLength::Medium, TimePrecision::Minute, std::nullopt, std::nullopt).ok().value();
-    out = dtf->format_iso(*date.get(), *time.get());
-    std::cout << "Formatted value is " << out << std::endl;
+    std::unique_ptr<DateTimeFormatterGregorian> fmt_ymdt_g = DateTimeFormatterGregorian::create_ymdt(*locale.get(), DateTimeLength::Medium, TimePrecision::Minute, std::nullopt, std::nullopt).ok().value();
+    out = fmt_ymdt_g->format_iso(*date.get(), *time.get());
+    std::cout << "Formatted value is " << out;
     if (out != "11 jul 2022, 13:06") {
-        std::cout << "Output does not match expected output" << std::endl;
+        std::cout << " (unexpected!)";
+        saw_unexpected_output = true;
+    }
+    std::cout << std::endl;
+
+    std::unique_ptr<IanaParser> parser = IanaParser::create();
+
+    std::unique_ptr<TimeZone> time_zone = parser->parse("america/chicago");
+
+    std::unique_ptr<UtcOffset> utc_offset = UtcOffset::from_string("-05:00").ok().value();
+    if (utc_offset->seconds() != -18000) {
+        std::cout << "UTC offset doesn't parse" << std::endl;
         return 1;
     }
 
-    locale = Locale::from_string("en-u-ca-japanese").ok().value();
-    std::unique_ptr<Calendar> cal = Calendar::create_for_locale(*locale.get()).ok().value();
-    std::unique_ptr<Date> any_date = Date::from_iso_in_calendar(2020, 10, 5, *cal.get()).ok().value();
-    std::unique_ptr<Time> any_time = Time::create(13, 33, 15, 0).ok().value();
+    std::unique_ptr<TimeZoneInfo> time_zone_info = time_zone->with_offset(*utc_offset.get())->at_time(*date.get(), *time.get());
+    
+    time_zone_info->infer_variant(*VariantOffsetsCalculator::create().get());
 
-    std::unique_ptr<IanaParser> mapper = IanaParser::create();
-    std::string normalized_iana_id = mapper->normalize_iana("America/CHICAGO").ok().value().value();
-    if (normalized_iana_id != "America/Chicago") {
-        std::cout << "Time zone ID does not normalize: " << normalized_iana_id << std::endl;
-        return 1;
+    std::unique_ptr<TimeZoneFormatter> fmt_generic_short = TimeZoneFormatter::create_generic_short(*locale.get()).ok().value();
+    out = fmt_generic_short->format(*time_zone_info.get()).ok().value();
+    std::cout << "Fieldset Z Generic Short: " << out;
+    if (out != "hora de Chicago") {
+        // note: this falls back to Generic Location
+        std::cout << " (unexpected!)";
+        saw_unexpected_output = true;
     }
-    std::string canonicalied_iana_id = mapper->canonicalize_iana("Asia/Calcutta").ok().value().value();
-    if (canonicalied_iana_id != "Asia/Kolkata") {
-        std::cout << "Time zone ID does not canonicalize: " << canonicalied_iana_id << std::endl;
-        return 1;
-    }
-    std::string slow_recovered_iana_id = mapper->find_canonical_iana_from_bcp47("uschi").value();
-    if (slow_recovered_iana_id != "America/Chicago") {
-        std::cout << "Time zone ID does not roundtrip (slow): " << slow_recovered_iana_id << std::endl;
-        return 1;
-    }
-    std::unique_ptr<IanaParserExtended> reverse_mapper = IanaParserExtended::create();
-    std::string fast_recovered_iana_id = reverse_mapper->canonical_iana_from_bcp47("uschi").value();
-    if (fast_recovered_iana_id != "America/Chicago") {
-        std::cout << "Time zone ID does not roundtrip (fast): " << fast_recovered_iana_id << std::endl;
-        return 1;
-    }
+    std::cout << std::endl;
 
-    std::unique_ptr<TimeZoneInfo> time_zone = TimeZoneInfo::unknown();
-    time_zone->try_set_offset_str("-05:00").ok().value();
-    int32_t offset = time_zone->offset_seconds().value();
-    if (offset != -18000) {
-        std::cout << "GMT offset doesn't parse" << std::endl;
-        return 1;
+    std::unique_ptr<ZonedDateFormatter> fmt_md_generic_short = ZonedDateFormatter::create_generic_short(*locale.get(), *fmt_md).ok().value();
+    out = fmt_md_generic_short->format_iso(*date.get(), *time_zone_info.get()).ok().value();
+    std::cout << "Fieldset MD Generic Short: " << out;
+    if (out != "11 jul hora de Chicago") {
+        // note: this falls back to Generic Location
+        std::cout << " (unexpected!)";
+        saw_unexpected_output = true;
     }
-    time_zone->set_iana_time_zone_id(*mapper.get(), "america/chicago");
-    std::string time_zone_id_return = time_zone->time_zone_id();
-    if (time_zone_id_return != "uschi") {
-        std::cout << "Time zone ID does not roundtrip: " << time_zone_id_return << std::endl;
-        return 1;
-    }
-    time_zone->set_local_time(*date.get(), *time.get());
-    time_zone->set_daylight_time();
+    std::cout << std::endl;
 
-    std::unique_ptr<GregorianZonedDateTimeFormatter> gzdtf = GregorianZonedDateTimeFormatter::create_with_length(*locale.get(), DateTimeLength::Long).ok().value();
-    out = gzdtf->format_iso(*date.get(), *time.get(), *time_zone.get()).ok().value();
-    std::cout << "Formatted value is " << out << std::endl;
-    if (out != "July 11, 2022, 1:06:42\u202fPM CT") {
-        std::cout << "Output does not match expected output" << std::endl;
-        return 1;
+    std::unique_ptr<ZonedTimeFormatter> fmt_t_specific_short = ZonedTimeFormatter::create_specific_short(*locale.get(), std::nullopt, TimePrecision::Minute, std::nullopt).ok().value();
+    out = fmt_t_specific_short->format(*time.get(), *time_zone_info.get()).ok().value();
+    std::cout << "Fieldset T Specific Short: " << out;
+    if (out != "13:06 GMT-5") {
+        // note: this falls back to Localized Offset
+        std::cout << " (unexpected!)";
+        saw_unexpected_output = true;
     }
+    std::cout << std::endl;
 
-    std::unique_ptr<ZonedDateTimeFormatter> zdtf = ZonedDateTimeFormatter::create_with_length(*locale.get(), DateTimeLength::Long).ok().value();
-    out = zdtf->format(*any_date.get(), *any_time.get(), *time_zone.get()).ok().value();
-    std::cout << "Formatted value is " << out << std::endl;
-    if (out != "October 5, 2 Reiwa, 1:33:15\u202fPM CT") {
-        std::cout << "Output does not match expected output" << std::endl;
+    std::unique_ptr<ZonedDateTimeFormatter> fmt_mdt_generic_short = ZonedDateTimeFormatter::create_generic_short(*locale.get(), *fmt_mdt).ok().value();
+    out = fmt_mdt_generic_short->format_iso(*date.get(), *time.get(), *time_zone_info.get()).ok().value();
+    std::cout << "Fieldset MDT Generic Short: " << out;
+    if (out != "11 jul, 13:06 hora de Chicago") {
+        // note: this falls back to Generic Location
+        std::cout << " (unexpected!)";
+        saw_unexpected_output = true;
+    }
+    std::cout << std::endl;
+
+    std::unique_ptr<ZonedDateTimeFormatter> fmt_mdt_generic_long = ZonedDateTimeFormatter::create_generic_long(*locale.get(), *fmt_mdt).ok().value();
+    out = fmt_mdt_generic_long->format_iso(*date.get(), *time.get(), *time_zone_info.get()).ok().value();
+    std::cout << "Fieldset MDT Generic Long: " << out;
+    if (out != "11 jul, 13:06 hora central") {
+        std::cout << " (unexpected!)";
+        saw_unexpected_output = true;
+    }
+    std::cout << std::endl;
+
+    std::unique_ptr<ZonedDateTimeFormatter> fmt_mdt_specific_short = ZonedDateTimeFormatter::create_specific_short(*locale.get(), *fmt_mdt).ok().value();
+    out = fmt_mdt_specific_short->format_iso(*date.get(), *time.get(), *time_zone_info.get()).ok().value();
+    std::cout << "Fieldset MDT Specific Short: " << out;
+    if (out != "11 jul, 13:06 GMT-5") {
+        std::cout << " (unexpected!)";
+        saw_unexpected_output = true;
+    }
+    std::cout << std::endl;
+
+    std::unique_ptr<ZonedDateTimeFormatter> fmt_mdt_specific_long = ZonedDateTimeFormatter::create_specific_long(*locale.get(), *fmt_mdt).ok().value();
+    out = fmt_mdt_specific_long->format_iso(*date.get(), *time.get(), *time_zone_info.get()).ok().value();
+    std::cout << "Fieldset MDT Specific Long: " << out;
+    if (out != "11 jul, 13:06 hora de verano central") {
+        std::cout << " (unexpected!)";
+        saw_unexpected_output = true;
+    }
+    std::cout << std::endl;
+
+    std::unique_ptr<ZonedDateTimeFormatter> fmt_mdt_localized_offset_short = ZonedDateTimeFormatter::create_localized_offset_short(*locale.get(), *fmt_mdt).ok().value();
+    out = fmt_mdt_localized_offset_short->format_iso(*date.get(), *time.get(), *time_zone_info.get()).ok().value();
+    std::cout << "Fieldset MDT Localized Offset Short: " << out;
+    if (out != "11 jul, 13:06 GMT-5") {
+        std::cout << " (unexpected!)";
+        saw_unexpected_output = true;
+    }
+    std::cout << std::endl;
+
+    std::unique_ptr<ZonedDateTimeFormatter> fmt_mdt_localized_offset_long = ZonedDateTimeFormatter::create_localized_offset_long(*locale.get(), *fmt_mdt).ok().value();
+    out = fmt_mdt_localized_offset_long->format_iso(*date.get(), *time.get(), *time_zone_info.get()).ok().value();
+    std::cout << "Fieldset MDT Localized Offset Long: " << out;
+    if (out != "11 jul, 13:06 GMT-05:00") {
+        std::cout << " (unexpected!)";
+        saw_unexpected_output = true;
+    }
+    std::cout << std::endl;
+
+    if (saw_unexpected_output) {
         return 1;
     }
 

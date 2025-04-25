@@ -2,8 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::options::{ListFormatterOptions, ListLength};
 use crate::provider::*;
-use crate::{ListFormatterOptions, ListLength};
 use core::fmt::{self, Write};
 use icu_locale_core::preferences::define_preferences;
 use icu_provider::marker::ErasedMarker;
@@ -75,21 +75,21 @@ impl ListFormatter {
         try_new_and,
         try_new_and_with_buffer_provider,
         try_new_and_unstable,
-        ListAndV2,
+        ListAndV1,
         "and"
     );
     constructor!(
         try_new_or,
         try_new_or_with_buffer_provider,
         try_new_or_unstable,
-        ListOrV2,
+        ListOrV1,
         "or"
     );
     constructor!(
         try_new_unit,
         try_new_unit_with_buffer_provider,
         try_new_unit_unstable,
-        ListUnitV2,
+        ListUnitV1,
         "unit"
     );
 
@@ -102,7 +102,8 @@ impl ListFormatter {
     /// # Example
     ///
     /// ```
-    /// use icu::list::*;
+    /// use icu::list::options::*;
+    /// use icu::list::{parts, ListFormatter};
     /// # use icu::locale::locale;
     /// # use writeable::*;
     /// let formatteur = ListFormatter::try_new_and(
@@ -138,6 +139,7 @@ impl ListFormatter {
 
     /// Returns a [`String`] composed of the input [`Writeable`]s and the language-dependent
     /// formatting.
+    #[cfg(feature = "alloc")]
     pub fn format_to_string<W: Writeable, I: Iterator<Item = W> + Clone>(
         &self,
         values: I,
@@ -337,7 +339,7 @@ mod tests {
         let formatter = formatter(crate::patterns::test::test_patterns_general());
 
         assert_writeable_parts_eq!(
-            formatter.format(core::iter::repeat(5).take(2)),
+            formatter.format(core::iter::repeat_n(5, 2)),
             "$5;5+",
             [
                 (0, 1, parts::LITERAL),

@@ -15,8 +15,7 @@
 #include "CalendarError.hpp"
 #include "CalendarParseError.hpp"
 #include "Date.hpp"
-#include "WeekCalculator.hpp"
-#include "WeekOf.hpp"
+#include "IsoWeekOfYear.hpp"
 #include "Weekday.hpp"
 
 
@@ -27,6 +26,8 @@ namespace capi {
     typedef struct icu4x_IsoDate_create_mv1_result {union {icu4x::capi::IsoDate* ok; icu4x::capi::CalendarError err;}; bool is_ok;} icu4x_IsoDate_create_mv1_result;
     icu4x_IsoDate_create_mv1_result icu4x_IsoDate_create_mv1(int32_t year, uint8_t month, uint8_t day);
     
+    icu4x::capi::IsoDate* icu4x_IsoDate_from_rata_die_mv1(int64_t rd);
+    
     typedef struct icu4x_IsoDate_from_string_mv1_result {union {icu4x::capi::IsoDate* ok; icu4x::capi::CalendarParseError err;}; bool is_ok;} icu4x_IsoDate_from_string_mv1_result;
     icu4x_IsoDate_from_string_mv1_result icu4x_IsoDate_from_string_mv1(diplomat::capi::DiplomatStringView v);
     
@@ -34,15 +35,15 @@ namespace capi {
     
     icu4x::capi::Date* icu4x_IsoDate_to_any_mv1(const icu4x::capi::IsoDate* self);
     
+    int64_t icu4x_IsoDate_to_rata_die_mv1(const icu4x::capi::IsoDate* self);
+    
     uint16_t icu4x_IsoDate_day_of_year_mv1(const icu4x::capi::IsoDate* self);
     
     uint8_t icu4x_IsoDate_day_of_month_mv1(const icu4x::capi::IsoDate* self);
     
     icu4x::capi::Weekday icu4x_IsoDate_day_of_week_mv1(const icu4x::capi::IsoDate* self);
     
-    uint8_t icu4x_IsoDate_week_of_month_mv1(const icu4x::capi::IsoDate* self, icu4x::capi::Weekday first_weekday);
-    
-    icu4x::capi::WeekOf icu4x_IsoDate_week_of_year_mv1(const icu4x::capi::IsoDate* self, const icu4x::capi::WeekCalculator* calculator);
+    icu4x::capi::IsoWeekOfYear icu4x_IsoDate_week_of_year_mv1(const icu4x::capi::IsoDate* self);
     
     uint8_t icu4x_IsoDate_month_mv1(const icu4x::capi::IsoDate* self);
     
@@ -70,6 +71,11 @@ inline diplomat::result<std::unique_ptr<icu4x::IsoDate>, icu4x::CalendarError> i
   return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::IsoDate>, icu4x::CalendarError>(diplomat::Ok<std::unique_ptr<icu4x::IsoDate>>(std::unique_ptr<icu4x::IsoDate>(icu4x::IsoDate::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::IsoDate>, icu4x::CalendarError>(diplomat::Err<icu4x::CalendarError>(icu4x::CalendarError::FromFFI(result.err)));
 }
 
+inline std::unique_ptr<icu4x::IsoDate> icu4x::IsoDate::from_rata_die(int64_t rd) {
+  auto result = icu4x::capi::icu4x_IsoDate_from_rata_die_mv1(rd);
+  return std::unique_ptr<icu4x::IsoDate>(icu4x::IsoDate::FromFFI(result));
+}
+
 inline diplomat::result<std::unique_ptr<icu4x::IsoDate>, icu4x::CalendarParseError> icu4x::IsoDate::from_string(std::string_view v) {
   auto result = icu4x::capi::icu4x_IsoDate_from_string_mv1({v.data(), v.size()});
   return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::IsoDate>, icu4x::CalendarParseError>(diplomat::Ok<std::unique_ptr<icu4x::IsoDate>>(std::unique_ptr<icu4x::IsoDate>(icu4x::IsoDate::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::IsoDate>, icu4x::CalendarParseError>(diplomat::Err<icu4x::CalendarParseError>(icu4x::CalendarParseError::FromFFI(result.err)));
@@ -84,6 +90,11 @@ inline std::unique_ptr<icu4x::Date> icu4x::IsoDate::to_calendar(const icu4x::Cal
 inline std::unique_ptr<icu4x::Date> icu4x::IsoDate::to_any() const {
   auto result = icu4x::capi::icu4x_IsoDate_to_any_mv1(this->AsFFI());
   return std::unique_ptr<icu4x::Date>(icu4x::Date::FromFFI(result));
+}
+
+inline int64_t icu4x::IsoDate::to_rata_die() const {
+  auto result = icu4x::capi::icu4x_IsoDate_to_rata_die_mv1(this->AsFFI());
+  return result;
 }
 
 inline uint16_t icu4x::IsoDate::day_of_year() const {
@@ -101,16 +112,9 @@ inline icu4x::Weekday icu4x::IsoDate::day_of_week() const {
   return icu4x::Weekday::FromFFI(result);
 }
 
-inline uint8_t icu4x::IsoDate::week_of_month(icu4x::Weekday first_weekday) const {
-  auto result = icu4x::capi::icu4x_IsoDate_week_of_month_mv1(this->AsFFI(),
-    first_weekday.AsFFI());
-  return result;
-}
-
-inline icu4x::WeekOf icu4x::IsoDate::week_of_year(const icu4x::WeekCalculator& calculator) const {
-  auto result = icu4x::capi::icu4x_IsoDate_week_of_year_mv1(this->AsFFI(),
-    calculator.AsFFI());
-  return icu4x::WeekOf::FromFFI(result);
+inline icu4x::IsoWeekOfYear icu4x::IsoDate::week_of_year() const {
+  auto result = icu4x::capi::icu4x_IsoDate_week_of_year_mv1(this->AsFFI());
+  return icu4x::IsoWeekOfYear::FromFFI(result);
 }
 
 inline uint8_t icu4x::IsoDate::month() const {

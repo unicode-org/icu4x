@@ -19,17 +19,14 @@ use yoke::Yokeable;
 /// use std::borrow::Cow;
 /// use writeable::assert_writeable_eq;
 ///
-/// let provider =
-///     FixedProvider::<HelloWorldV1>::from_static(&HelloWorld {
-///         message: Cow::Borrowed("custom hello world"),
-///     });
+/// let provider = FixedProvider::<HelloWorldV1>::from_static(&HelloWorld {
+///     message: Cow::Borrowed("custom hello world"),
+/// });
 ///
 /// // Check that it works:
-/// let formatter = HelloWorldFormatter::try_new_unstable(
-///     &provider,
-///     Default::default(),
-/// )
-/// .expect("marker matches");
+/// let formatter =
+///     HelloWorldFormatter::try_new_unstable(&provider, Default::default())
+///         .expect("marker matches");
 /// assert_writeable_eq!(formatter.format(), "custom hello world");
 /// ```
 #[allow(clippy::exhaustive_structs)] // this type is stable

@@ -2,23 +2,31 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::cldr_serde::eras::EraData;
 use crate::cldr_serde::{self, ca};
 use icu::calendar::types::MonthCode;
 use icu::datetime::provider::calendar::*;
 use std::borrow::Cow;
 use std::collections::BTreeMap;
-use tinystr::{tinystr, TinyStr16, TinyStr4};
+use tinystr::{tinystr, TinyStr4};
 
-pub(crate) fn convert_dates(other: &cldr_serde::ca::Dates, calendar: &str) -> DateSymbols<'static> {
-    let eras = if let Some(ref eras) = other.eras {
-        convert_eras(eras, calendar)
-    } else {
-        Default::default()
-    };
+use super::DatagenCalendar;
+
+pub(crate) fn convert_dates(
+    other: &cldr_serde::ca::Dates,
+    calendar: DatagenCalendar,
+    all_eras: &[(usize, EraData)],
+) -> DateSymbols<'static> {
     DateSymbols {
-        months: other.months.get(&(get_month_code_map(calendar), calendar)),
+        months: other
+            .months
+            .get(&(get_month_code_map(calendar), calendar.cldr_name())),
         weekdays: other.days.get(&()),
-        eras,
+        eras: other
+            .eras
+            .as_ref()
+            .map(|in_eras| convert_eras(in_eras, all_eras))
+            .unwrap_or_default(),
     }
 }
 
@@ -28,25 +36,30 @@ pub(crate) fn convert_times(other: &cldr_serde::ca::Dates) -> TimeSymbols<'stati
     }
 }
 
-fn convert_eras(eras: &cldr_serde::ca::Eras, calendar: &str) -> Eras<'static> {
-    let map = get_era_code_map(calendar);
+fn convert_eras(in_eras: &cldr_serde::ca::Eras, all_eras: &[(usize, EraData)]) -> Eras<'static> {
     let mut out_eras = Eras::default();
 
-    for (cldr, code) in map {
-        if let Some(name) = eras.names.get(cldr) {
-            out_eras.names.insert(code.as_str().into(), name);
+    for (index, era) in all_eras {
+        if let Some(name) = in_eras.names.get(&index.to_string()) {
+            out_eras
+                .names
+                .insert(era.code.as_deref().unwrap().into(), name);
         }
-        if let Some(abbr) = eras.abbr.get(cldr) {
-            out_eras.abbr.insert(code.as_str().into(), abbr);
+        if let Some(abbr) = in_eras.abbr.get(&index.to_string()) {
+            out_eras
+                .abbr
+                .insert(era.code.as_deref().unwrap().into(), abbr);
         }
-        if let Some(narrow) = eras.narrow.get(cldr) {
-            out_eras.narrow.insert(code.as_str().into(), narrow);
+        if let Some(narrow) = in_eras.narrow.get(&index.to_string()) {
+            out_eras
+                .narrow
+                .insert(era.code.as_deref().unwrap().into(), narrow);
         }
     }
     out_eras
 }
 /// Returns a month code map and whether the map has leap months
-pub(crate) fn get_month_code_map(calendar: &str) -> &'static [TinyStr4] {
+pub(crate) fn get_month_code_map(calendar: DatagenCalendar) -> &'static [TinyStr4] {
     // This will need to be more complicated to handle lunar calendars
     // https://github.com/unicode-org/icu4x/issues/2066
     static SOLAR_MONTH_CODES: &[TinyStr4] = &[
@@ -83,62 +96,19 @@ pub(crate) fn get_month_code_map(calendar: &str) -> &'static [TinyStr4] {
         // M06L is handled separately in MonthSymbols code
     ];
     match calendar {
-        "gregory" | "buddhist" | "japanese" | "japanext" | "indian" | "persian" | "roc"
-        | "islamic" | "islamicc" | "umalqura" | "tbla" | "chinese" | "dangi" => {
-            &SOLAR_MONTH_CODES[0..12]
-        }
-        "coptic" | "ethiopic" => SOLAR_MONTH_CODES,
-        "hebrew" => HEBREW_MONTH_CODES,
-        _ => panic!("Month map unknown for {calendar}"),
+        DatagenCalendar::Buddhist
+        | DatagenCalendar::Chinese
+        | DatagenCalendar::Dangi
+        | DatagenCalendar::Gregorian
+        | DatagenCalendar::Indian
+        | DatagenCalendar::Hijri
+        | DatagenCalendar::JapaneseExtended
+        | DatagenCalendar::JapaneseModern
+        | DatagenCalendar::Persian
+        | DatagenCalendar::Roc => &SOLAR_MONTH_CODES[0..12],
+        DatagenCalendar::Coptic | DatagenCalendar::Ethiopic => SOLAR_MONTH_CODES,
+        DatagenCalendar::Hebrew => HEBREW_MONTH_CODES,
     }
-}
-
-/// Produces a map from the CLDR era index, to the era code and the ICU4X era index.
-///
-/// Eras are returned in chronological order; which is what ICU4X uses for indexing eras.
-/// Therefore the first era returned by this function is FormattableEra::Index(0), etc, for
-/// calendars which use FormattableEra.
-///
-/// See FormattableEra for a definition of what chronological order is in this context.
-///
-/// In 2.0 the era codes are only used for formatting Japanese, and this code can be simplified
-pub(crate) fn get_era_code_map(calendar: &str) -> impl Iterator<Item = (&str, TinyStr16)> {
-    use either::Either;
-
-    let array: &[_] = match calendar {
-        "gregory" => &[("0", tinystr!(16, "bce")), ("1", tinystr!(16, "ce"))],
-        "buddhist" => &[("0", tinystr!(16, "be"))],
-        "japanese" | "japanext" => {
-            return Either::Right(
-                crate::calendar::japanese::get_era_code_map()
-                    .iter()
-                    .map(|(k, v)| (&**k, *v)),
-            )
-        }
-        "coptic" => &[
-            // Before Diocletian
-            ("0", tinystr!(16, "bd")),
-            // Anno Diocletian/After Diocletian
-            ("1", tinystr!(16, "ad")),
-        ],
-        "dangi" | "chinese" => &[],
-        "indian" => &[("0", tinystr!(16, "saka"))],
-        "islamic" | "islamicc" | "umalqura" | "tbla" => &[("0", tinystr!(16, "ah"))],
-        "persian" => &[("0", tinystr!(16, "ah"))],
-        "hebrew" => &[("0", tinystr!(16, "hebrew"))],
-        "ethiopic" => &[
-            ("2", tinystr!(16, "mundi")),
-            ("1", tinystr!(16, "pre-incar")),
-            ("0", tinystr!(16, "incar")),
-        ],
-        "roc" => &[
-            ("0", tinystr!(16, "roc-inverse")),
-            ("1", tinystr!(16, "roc")),
-        ],
-        _ => panic!("Era map unknown for {calendar}"),
-    };
-
-    Either::Left(array.iter().copied())
 }
 
 macro_rules! symbols_from {
@@ -307,142 +277,3 @@ symbols_from!(
         midnight,
     },
 );
-
-#[cfg(test)]
-mod tests {
-    use crate::SourceDataProvider;
-    use icu::datetime::provider::calendar::*;
-    use icu::datetime::provider::neo::*;
-    use icu::locale::langid;
-    use icu_provider::prelude::*;
-
-    #[test]
-    fn test_adapter_months_numeric() {
-        let symbols: DataPayload<GregorianDateSymbolsV1> = SourceDataProvider::new_testing()
-            .load(DataRequest {
-                id: DataIdentifierBorrowed::for_locale(&langid!("en").into()),
-                ..Default::default()
-            })
-            .unwrap()
-            .payload;
-        let neo_month_abbreviated: DataPayload<GregorianMonthNamesV1> = symbols
-            .load(DataRequest {
-                id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                    DataMarkerAttributes::from_str_or_panic("3"),
-                    &"en".parse().unwrap(),
-                ),
-                ..Default::default()
-            })
-            .unwrap()
-            .payload;
-
-        assert_eq!(
-            format!("{neo_month_abbreviated:?}"),
-            "Linear([\"Jan\", \"Feb\", \"Mar\", \"Apr\", \"May\", \"Jun\", \"Jul\", \"Aug\", \"Sep\", \"Oct\", \"Nov\", \"Dec\"])"
-        );
-    }
-
-    #[test]
-    fn test_adapter_months_map() {
-        let symbols: DataPayload<HebrewDateSymbolsV1> = SourceDataProvider::new_testing()
-            .load(DataRequest {
-                id: DataIdentifierBorrowed::for_locale(&langid!("en").into()),
-                ..Default::default()
-            })
-            .unwrap()
-            .payload;
-        let neo_month_abbreviated: DataPayload<HebrewMonthNamesV1> = symbols
-            .load(DataRequest {
-                id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                    DataMarkerAttributes::from_str_or_panic("3"),
-                    &"en".parse().unwrap(),
-                ),
-                ..Default::default()
-            })
-            .unwrap()
-            .payload;
-
-        assert_eq!(
-            format!("{neo_month_abbreviated:?}"),
-            "LeapLinear([\"Tishri\", \"Heshvan\", \"Kislev\", \"Tevet\", \"Shevat\", \"Adar\", \"Nisan\", \"Iyar\", \"Sivan\", \"Tamuz\", \"Av\", \"Elul\", \"\", \"\", \"\", \"\", \"Adar I\", \"Adar II\", \"\", \"\", \"\", \"\", \"\", \"\"])"
-        );
-    }
-
-    #[test]
-    fn test_adapter_weekdays_abbreviated() {
-        let symbols: DataPayload<HebrewDateSymbolsV1> = SourceDataProvider::new_testing()
-            .load(DataRequest {
-                id: DataIdentifierBorrowed::for_locale(&langid!("en").into()),
-                ..Default::default()
-            })
-            .unwrap()
-            .payload;
-        let neo_weekdays_abbreviated: DataPayload<WeekdayNamesV1> = symbols
-            .load(DataRequest {
-                id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                    DataMarkerAttributes::from_str_or_panic("3"),
-                    &"en".parse().unwrap(),
-                ),
-                ..Default::default()
-            })
-            .unwrap()
-            .payload;
-
-        assert_eq!(
-            format!("{neo_weekdays_abbreviated:?}"),
-            "LinearNames { names: [\"Sun\", \"Mon\", \"Tue\", \"Wed\", \"Thu\", \"Fri\", \"Sat\"] }"
-        );
-    }
-
-    #[test]
-    fn test_adapter_weekdays_short() {
-        let symbols: DataPayload<HebrewDateSymbolsV1> = SourceDataProvider::new_testing()
-            .load(DataRequest {
-                id: DataIdentifierBorrowed::for_locale(&langid!("en").into()),
-                ..Default::default()
-            })
-            .unwrap()
-            .payload;
-        let neo_weekdays_short: DataPayload<WeekdayNamesV1> = symbols
-            .load(DataRequest {
-                id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                    DataMarkerAttributes::from_str_or_panic("6s"),
-                    &"en".parse().unwrap(),
-                ),
-                ..Default::default()
-            })
-            .unwrap()
-            .payload;
-
-        assert_eq!(
-            format!("{neo_weekdays_short:?}"),
-            "LinearNames { names: [\"Su\", \"Mo\", \"Tu\", \"We\", \"Th\", \"Fr\", \"Sa\"] }"
-        );
-    }
-
-    #[test]
-    fn test_adapter_dayperiods() {
-        let symbols: DataPayload<TimeSymbolsV1> = SourceDataProvider::new_testing()
-            .load(DataRequest {
-                id: DataIdentifierBorrowed::for_locale(&langid!("en").into()),
-                ..Default::default()
-            })
-            .unwrap()
-            .payload;
-        let neo_dayperiods_abbreviated: DataPayload<DayPeriodNamesV1> = symbols
-            .load(DataRequest {
-                id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                    DataMarkerAttributes::from_str_or_panic("3s"),
-                    &"en".parse().unwrap(),
-                ),
-                ..Default::default()
-            })
-            .unwrap()
-            .payload;
-
-        assert_eq!(
-            format!("{neo_dayperiods_abbreviated:?}"),
-            "LinearNames { names: [\"AM\", \"PM\", \"noon\", \"midnight\"] }"
-        );
-    }
-}

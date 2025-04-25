@@ -8,9 +8,7 @@ use crate::{
     assert_syntax,
     parsers::{
         annotations,
-        grammar::{
-            is_annotation_open, is_date_time_separator, is_hyphen, is_sign, is_utc_designator,
-        },
+        grammar::{is_annotation_open, is_date_time_separator, is_hyphen, is_utc_designator},
         records::{DateRecord, TimeRecord},
         time::parse_time_record,
         timezone, Cursor, IxdtfParseRecord,
@@ -18,7 +16,10 @@ use crate::{
     ParseError, ParserResult,
 };
 
-use super::records::{Annotation, UtcOffsetRecordOrZ};
+use super::{
+    grammar::is_ascii_sign,
+    records::{Annotation, UtcOffsetRecordOrZ},
+};
 
 #[derive(Debug, Default, Clone)]
 /// A `DateTime` Parse Node that contains the date, time, and offset info.
@@ -157,8 +158,8 @@ fn parse_date_time(cursor: &mut Cursor) -> ParserResult<DateTimeRecord> {
 
     let time = parse_time_record(cursor)?;
 
-    let time_zone = if cursor.check_or(false, |ch| is_sign(ch) || is_utc_designator(ch)) {
-        Some(timezone::parse_date_time_utc(cursor)?)
+    let time_zone = if cursor.check_or(false, |ch| is_ascii_sign(ch) || is_utc_designator(ch)) {
+        Some(timezone::parse_date_time_utc_offset(cursor)?)
     } else {
         None
     };
@@ -229,8 +230,8 @@ pub(crate) fn parse_month_day(cursor: &mut Cursor) -> ParserResult<DateRecord> {
 
 #[inline]
 fn parse_date_year(cursor: &mut Cursor) -> ParserResult<i32> {
-    if cursor.check_or(false, is_sign) {
-        let sign = if cursor.next_or(ParseError::ImplAssert)? == '+' {
+    if cursor.check_or(false, is_ascii_sign) {
+        let sign = if cursor.next_or(ParseError::ImplAssert)? == b'+' {
             1
         } else {
             -1

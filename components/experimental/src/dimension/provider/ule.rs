@@ -126,8 +126,8 @@ impl AsULE for CurrencyPatternConfig {
             } else {
                 PatternSelection::Standard
             };
-        let short_prefix = (first_byte & 0b111 << INDEX_SHORT_SHIFT) >> INDEX_SHORT_SHIFT;
-        let narrow_prefix = (first_byte & 0b111 << INDEX_NARROW_SHIFT) >> INDEX_NARROW_SHIFT;
+        let short_prefix = (first_byte & (0b111 << INDEX_SHORT_SHIFT)) >> INDEX_SHORT_SHIFT;
+        let narrow_prefix = (first_byte & (0b111 << INDEX_NARROW_SHIFT)) >> INDEX_NARROW_SHIFT;
 
         let short_placeholder_value = ((short_prefix as u16) << 8) | second_byte as u16;
         let narrow_placeholder_value = ((narrow_prefix as u16) << 8) | third_byte as u16;

@@ -83,7 +83,6 @@ jobs:
           --exclude icu_benchmark_macros
           --exclude icu_ffi_coverage
           --exclude md-tests
-          --exclude icu_provider_macros
           --exclude databake-derive
           --exclude yoke-derive
           --exclude zerofrom-derive
@@ -179,7 +178,7 @@ jobs:
         cd ffi/npm
         make lib/index.mjs
         npm install typedoc@0.26.5 --exact
-        node_modules/typedoc/bin/typedoc lib/index.d.ts --out docs --readme ../../tutorials/js.md --basePath lib
+        node_modules/typedoc/bin/typedoc lib/index.d.ts --out docs --readme ../../tutorials/using-from-js.md --basePath lib
         cd ../..
         
     - name: Upload docs to Google Cloud Storage (non-main)
@@ -223,13 +222,11 @@ jobs:
     - name: Install Dart
       uses: dart-lang/setup-dart@0a8a0fc875eb934c15d08629302413c671d3f672 # v1.6.5
       with:
-        sdk: 3.4.0-204.0.dev
+        sdk: 3.7.0
         
     - name: Build docs
       run: |
         cd ffi/dart
-        make lib/src/lib.g.dart
-        # https://github.com/dart-lang/dartdoc/issues/3590
         dart pub get
         dart doc
         cd ../..
@@ -270,8 +267,6 @@ jobs:
       run: |
         npm -C ffi/npm ci
         npm -C tutorials/web-demo ci
-      env: 
-        PINNED_CI_NIGHTLY: nightly-2024-07-23
 
     - name: Run Webpack
       run: npm -C tutorials/web-demo run build

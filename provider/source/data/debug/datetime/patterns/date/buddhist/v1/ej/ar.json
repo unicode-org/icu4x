@@ -1,0 +1,19 @@
+{
+  "has_explicit_medium": true,
+  "variant_pattern_indices": [
+    3,
+    4,
+    4,
+    5,
+    6,
+    6
+  ],
+  "elements": [
+    "EEEE, h a",
+    "EEE, h a",
+    "EEEE h:m a",
+    "E h:mm a",
+    "EEEE h:m:s a",
+    "E h:mm:ss a"
+  ]
+}

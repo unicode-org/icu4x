@@ -8,7 +8,7 @@ use super::validated_options::Unit;
 use core::fmt;
 use core::fmt::Write;
 use either::Either;
-use fixed_decimal::{SignDisplay, SignedFixedDecimal, UnsignedFixedDecimal};
+use fixed_decimal::{Decimal, SignDisplay, UnsignedDecimal};
 use icu_decimal::FormattedDecimal;
 use smallvec::SmallVec;
 use writeable::{adapters::WithPart, PartsWrite, Writeable};
@@ -69,17 +69,17 @@ pub struct FormattedDuration<'l> {
 }
 
 /// Exists to allow creating lists of heterogeneous [`Writeable`]s to pass to [`ListFormatter`].
-/// The (Unit, SignedFixedDecimal) pair is used to crerate [`FormattedUnit`]s.
-type HeterogenousToFormatter = Either<DigitalDuration, (Unit, SignedFixedDecimal)>;
+/// The (Unit, Decimal) pair is used to crerate [`FormattedUnit`]s.
+type HeterogenousToFormatter = Either<DigitalDuration, (Unit, Decimal)>;
 
 /// Describes a formatted duration.
 #[derive(Default)]
 struct DigitalDuration {
-    hours: Option<SignedFixedDecimal>,
+    hours: Option<Decimal>,
     add_hour_minute_separator: bool,
-    minutes: Option<SignedFixedDecimal>,
+    minutes: Option<Decimal>,
     add_minute_second_separator: bool,
-    seconds: Option<SignedFixedDecimal>,
+    seconds: Option<Decimal>,
 }
 
 impl DigitalDuration {
@@ -150,9 +150,9 @@ impl FormattedDuration<'_> {
         // 5. Let numberingSystem be durationFormat.[[NumberingSystem]].
         // 6. Perform ! CreateDataPropertyOrThrow(nfOpts, "numberingSystem", numberingSystem).
 
-        let mut fd = SignedFixedDecimal::from(self.duration.hours);
+        let mut fd = Decimal::from(self.duration.hours);
 
-        // Since we construct the SignedFixedDecimal from an unsigned hours value, we need to set the sign manually.
+        // Since we construct the Decimal from an unsigned hours value, we need to set the sign manually.
         fd.set_sign(self.duration.get_sign());
 
         // 7. If hoursStyle is "2-digit", then
@@ -196,9 +196,9 @@ impl FormattedDuration<'_> {
         // 5. Let nfOpts be OrdinaryObjectCreate(null).
         // 6. Let numberingSystem be durationFormat.[[NumberingSystem]].
         // 7. Perform ! CreateDataPropertyOrThrow(nfOpts, "numberingSystem", numberingSystem).
-        let mut fd = SignedFixedDecimal::from(self.duration.minutes);
+        let mut fd = Decimal::from(self.duration.minutes);
 
-        // Since we construct the SignedFixedDecimal from an unsigned minutes value, we need to set the sign manually.
+        // Since we construct the Decimal from an unsigned minutes value, we need to set the sign manually.
         fd.set_sign(self.duration.get_sign());
 
         // 8. If minutesStyle is "2-digit", then
@@ -228,9 +228,9 @@ impl FormattedDuration<'_> {
     /// then adds the first non-fractional unit and returns it.
     ///
     /// Divergence from standard: adds the first non-fractional unit as well.
-    fn add_fractional_digits(&self) -> SignedFixedDecimal {
+    fn add_fractional_digits(&self) -> Decimal {
         let mut prev_val = self.duration.nanoseconds;
-        let mut prev_formatted = SignedFixedDecimal::from(prev_val % 1000);
+        let mut prev_formatted = Decimal::from(prev_val % 1000);
         for (style, val) in [
             (self.fmt.options.microsecond, self.duration.microseconds),
             (self.fmt.options.millisecond, self.duration.milliseconds),
@@ -238,15 +238,15 @@ impl FormattedDuration<'_> {
         ] {
             if style == FieldStyle::Fractional {
                 let val = val + prev_val / 1000;
-                prev_formatted.absolute = UnsignedFixedDecimal::from(val % 1000)
+                prev_formatted.absolute = UnsignedDecimal::from(val % 1000)
                     .concatenated_end(prev_formatted.absolute.multiplied_pow10(-3))
                     .unwrap();
 
                 prev_val = val;
             } else {
-                return SignedFixedDecimal::new(
+                return Decimal::new(
                     prev_formatted.sign,
-                    UnsignedFixedDecimal::from(val)
+                    UnsignedDecimal::from(val)
                         .concatenated_end(prev_formatted.absolute.multiplied_pow10(-3))
                         .unwrap(),
                 );
@@ -260,7 +260,7 @@ impl FormattedDuration<'_> {
     /// Formats numeric seconds to sink. Requires seconds formatting style to be either Numeric or TwoDigit.
     fn format_numeric_seconds(
         &self,
-        mut second_fd: SignedFixedDecimal,
+        mut second_fd: Decimal,
         formatted_digital_duration: &mut DigitalDuration,
         sign_displayed: &mut bool,
     ) {
@@ -280,7 +280,7 @@ impl FormattedDuration<'_> {
             formatted_digital_duration.add_minute_second_separator = true;
         }
 
-        // Since we construct the SignedFixedDecimal from an unsigned seconds value, we need to set the sign manually.
+        // Since we construct the Decimal from an unsigned seconds value, we need to set the sign manually.
         second_fd.set_sign(self.duration.get_sign());
 
         // 5. Let nfOpts be OrdinaryObjectCreate(null).
@@ -356,7 +356,7 @@ impl FormattedDuration<'_> {
 				// a. Set secondsValue to secondsValue + AddFractionalDigits(durationFormat, duration).
 				self.add_fractional_digits()
 			} else {
-				SignedFixedDecimal::from(self.duration.seconds)
+				Decimal::from(self.duration.seconds)
 			};
 
         // 9. Let secondsDisplay be durationFormat.[[SecondsDisplay]].
@@ -489,7 +489,7 @@ impl FormattedDuration<'_> {
             }
             // f. Else,
             else {
-                let mut formatted_value = SignedFixedDecimal::from(value);
+                let mut formatted_value = Decimal::from(value);
                 formatted_value.set_sign(self.duration.get_sign());
 
                 // i. Let nfOpts be OrdinaryObjectCreate(null).

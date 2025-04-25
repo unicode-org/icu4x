@@ -19,7 +19,7 @@ default_to_workspace = false
 # The toolchain that CI is being run in. Allows tests to change under beta/nightly.
 CI_TOOLCHAIN = { value = "pinned-stable", condition = { env_not_set = ["CI_TOOLCHAIN"]}}
 # The pinned nightly toolchain for jobs that require a nightly compiler.
-PINNED_CI_NIGHTLY = { value = "nightly-2024-07-23", condition = { env_not_set = ["PINNED_CI_NIGHTLY"] } }
+PINNED_CI_NIGHTLY = { value = "nightly-2025-02-17", condition = { env_not_set = ["PINNED_CI_NIGHTLY"] } }
 
 [tasks.quick]
 description = "Run quick version of all lints and builds (useful before pushing to GitHub)"
@@ -61,8 +61,26 @@ category = "ICU4X Development"
 env = { ICU4X_DATA_DIR = "../stubdata" }
 script_runner = "@duckscript"
 script = '''
-exec --fail-on-error rustup install 1.81 --profile minimal
-exec --fail-on-error cargo +1.81 check --all-targets --all-features
+exec --fail-on-error rustup install 1.82 --profile minimal
+exec --fail-on-error cargo +1.82 check --all-targets --all-features
+'''
+
+[tasks.ci-job-msrv-utils]
+description = "Check utils that have different MSRVs"
+category = "ICU4X Development"
+dependencies = [
+    # This list should be kept in sync with the list in rust_versions.md
+    "msrv-zerofrom",
+]
+
+[tasks.msrv-zerofrom]
+description = "Run MSRV tests for the zerofrom MSRV job"
+category = "ICU4X Development"
+env = { ICU4X_DATA_DIR = "../stubdata" }
+script_runner = "@duckscript"
+script = '''
+exec --fail-on-error rustup install 1.71.1 --profile minimal
+exec --fail-on-error cargo +1.71.1 check -p zerofrom --all-targets --all-features
 '''
 
 [tasks.ci-job-test]
@@ -171,8 +189,8 @@ category = "CI"
 env = { ICU4X_DATA_DIR = "../stubdata" }
 script_runner = "@duckscript"
 script = '''
-exec --fail-on-error rustup install 1.81 --profile minimal
-exec --fail-on-error cargo +1.81 make check-all-features-chunked 1
+exec --fail-on-error rustup install 1.82 --profile minimal
+exec --fail-on-error cargo +1.82 make check-all-features-chunked 1
 '''
 
 [tasks.ci-job-msrv-features-2]
@@ -181,8 +199,8 @@ category = "CI"
 env = { ICU4X_DATA_DIR = "../stubdata" }
 script_runner = "@duckscript"
 script = '''
-exec --fail-on-error rustup install 1.81 --profile minimal
-exec --fail-on-error cargo +1.81 make check-all-features-chunked 2
+exec --fail-on-error rustup install 1.82 --profile minimal
+exec --fail-on-error cargo +1.82 make check-all-features-chunked 2
 '''
 
 [tasks.ci-job-msrv-features-3]
@@ -191,8 +209,8 @@ category = "CI"
 env = { ICU4X_DATA_DIR = "../stubdata" }
 script_runner = "@duckscript"
 script = '''
-exec --fail-on-error rustup install 1.81 --profile minimal
-exec --fail-on-error cargo +1.81 make check-all-features-chunked 3
+exec --fail-on-error rustup install 1.82 --profile minimal
+exec --fail-on-error cargo +1.82 make check-all-features-chunked 3
 '''
 
 [tasks.ci-job-msrv-features]
@@ -219,6 +237,7 @@ dependencies = [
     "generated-readme-check",
     "license-file-check",
     "depcheck",
+    "codegen-check",
 ]
 
 [tasks.ci-job-clippy]

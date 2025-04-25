@@ -22,15 +22,16 @@ all-features = true
 [dependencies]
 displaydoc = { workspace = true }
 fixed_decimal = { workspace = true }
-icu_provider = { workspace = true, features = ["alloc", "macros"] }
-icu_locale_core = { path = "../../components/locale_core" }
+icu_provider = { workspace = true }
+icu_locale_core = { workspace = true }
 writeable = { workspace = true }
 zerovec = { workspace = true }
 databake = { workspace = true, features = ["derive"], optional = true}
-serde = { workspace = true, features = ["derive", "alloc"], optional = true }
+serde = { workspace = true, features = ["derive"], optional = true }
+tinystr = { workspace = true }
 
 icu_decimal_data = { workspace = true, optional = true }
-tinystr = { workspace = true }
+icu_locale = { workspace = true, optional = true }
 
 [dev-dependencies]
 icu = { path = "../../components/icu", default-features = false }
@@ -39,7 +40,7 @@ icu_provider_adapters = { path = "../../provider/adapters" }
 rand = { workspace = true }
 rand_pcg = { workspace = true }
 rand_distr = { workspace = true }
-getrandom = { workspace = true, features = ["js"] }
+getrandom = { workspace = true, features = ["wasm_js"] }
 
 [target.'cfg(not(target_arch = "wasm32"))'.dev-dependencies]
 criterion = { workspace = true }
@@ -47,8 +48,10 @@ criterion = { workspace = true }
 [features]
 default = ["compiled_data"]
 serde = ["dep:serde", "icu_provider/serde", "zerovec/serde", "tinystr/serde"]
-datagen = ["serde", "dep:databake", "zerovec/databake", "tinystr/databake"]
-compiled_data = ["dep:icu_decimal_data"]
+datagen = ["serde", "dep:databake", "zerovec/databake", "tinystr/databake", "icu_provider/export", "alloc"]
+compiled_data = ["dep:icu_decimal_data", "dep:icu_locale", "icu_locale?/compiled_data", "icu_provider/baked"]
+ryu = ["fixed_decimal/ryu"]
+alloc = ["serde?/alloc", "zerovec/alloc"]
 
 [lints.rust]
 unexpected_cfgs = { level = "warn", check-cfg = ['cfg(icu4x_run_size_tests)'] }

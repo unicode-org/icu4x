@@ -3,17 +3,16 @@ import { Calendar } from "./Calendar.mjs"
 import { CalendarError } from "./CalendarError.mjs"
 import { CalendarParseError } from "./CalendarParseError.mjs"
 import { IsoDate } from "./IsoDate.mjs"
-import { WeekCalculator } from "./WeekCalculator.mjs"
-import { WeekOf } from "./WeekOf.mjs"
 import { Weekday } from "./Weekday.mjs"
 import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
-/** An ICU4X Date object capable of containing a date and time for any calendar.
-*
-*See the [Rust documentation for `Date`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html) for more information.
-*/
+/** 
+ * An ICU4X Date object capable of containing a date for any calendar.
+ *
+ * See the [Rust documentation for `Date`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html) for more information.
+ */
 const Date_box_destroy_registry = new FinalizationRegistry((ptr) => {
     wasm.icu4x_Date_destroy_mv1(ptr);
 });
@@ -47,6 +46,12 @@ export class Date {
         return this.#ptr;
     }
 
+    /** 
+     * Creates a new [`Date`] representing the ISO date
+     * given but in a given calendar
+     *
+     * See the [Rust documentation for `new_from_iso`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.new_from_iso) for more information.
+     */
     static fromIsoInCalendar(year, month, day, calendar) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
@@ -65,12 +70,19 @@ export class Date {
         }
     }
 
+    /** 
+     * Creates a new [`Date`] from the given codes, which are interpreted in the given calendar system
+     *
+     * An empty era code will treat the year as an extended year
+     *
+     * See the [Rust documentation for `try_new_from_codes`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.try_new_from_codes) for more information.
+     */
     static fromCodesInCalendar(eraCode, year, monthCode, day, calendar) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
-        const eraCodeSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, eraCode));
+        const eraCodeSlice = diplomatRuntime.DiplomatBuf.str8(wasm, eraCode);
         
-        const monthCodeSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, monthCode));
+        const monthCodeSlice = diplomatRuntime.DiplomatBuf.str8(wasm, monthCode);
         
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
@@ -91,10 +103,38 @@ export class Date {
         }
     }
 
+    /** 
+     * Creates a new [`Date`] from the given Rata Die
+     *
+     * See the [Rust documentation for `from_rata_die`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.from_rata_die) for more information.
+     */
+    static fromRataDie(rd, calendar) {
+        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
+        const result = wasm.icu4x_Date_from_rata_die_mv1(diplomatReceive.buffer, rd, calendar.ffiValue);
+    
+        try {
+            if (!diplomatReceive.resultFlag) {
+                const cause = new CalendarError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
+                throw new globalThis.Error('CalendarError: ' + cause.value, { cause });
+            }
+            return new Date(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
+        }
+        
+        finally {
+            diplomatReceive.free();
+        }
+    }
+
+    /** 
+     * Creates a new [`Date`] from an IXDTF string.
+     *
+     * See the [Rust documentation for `try_from_str`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.try_from_str) for more information.
+     */
     static fromString(v, calendar) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
-        const vSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, v));
+        const vSlice = diplomatRuntime.DiplomatBuf.str8(wasm, v);
         
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
@@ -115,6 +155,11 @@ export class Date {
         }
     }
 
+    /** 
+     * Convert this date to one in a different calendar
+     *
+     * See the [Rust documentation for `to_calendar`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.to_calendar) for more information.
+     */
     toCalendar(calendar) {
         const result = wasm.icu4x_Date_to_calendar_mv1(this.ffiValue, calendar.ffiValue);
     
@@ -125,6 +170,11 @@ export class Date {
         finally {}
     }
 
+    /** 
+     * Converts this date to ISO
+     *
+     * See the [Rust documentation for `to_iso`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.to_iso) for more information.
+     */
     toIso() {
         const result = wasm.icu4x_Date_to_iso_mv1(this.ffiValue);
     
@@ -135,6 +185,26 @@ export class Date {
         finally {}
     }
 
+    /** 
+     * Returns this date's Rata Die
+     *
+     * See the [Rust documentation for `to_rata_die`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.to_rata_die) for more information.
+     */
+    get rataDie() {
+        const result = wasm.icu4x_Date_to_rata_die_mv1(this.ffiValue);
+    
+        try {
+            return result;
+        }
+        
+        finally {}
+    }
+
+    /** 
+     * Returns the 1-indexed day in the year for this date
+     *
+     * See the [Rust documentation for `day_of_year`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.day_of_year) for more information.
+     */
     get dayOfYear() {
         const result = wasm.icu4x_Date_day_of_year_mv1(this.ffiValue);
     
@@ -145,6 +215,11 @@ export class Date {
         finally {}
     }
 
+    /** 
+     * Returns the 1-indexed day in the month for this date
+     *
+     * See the [Rust documentation for `day_of_month`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.day_of_month) for more information.
+     */
     get dayOfMonth() {
         const result = wasm.icu4x_Date_day_of_month_mv1(this.ffiValue);
     
@@ -155,6 +230,11 @@ export class Date {
         finally {}
     }
 
+    /** 
+     * Returns the day in the week for this day
+     *
+     * See the [Rust documentation for `day_of_week`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.day_of_week) for more information.
+     */
     get dayOfWeek() {
         const result = wasm.icu4x_Date_day_of_week_mv1(this.ffiValue);
     
@@ -165,30 +245,17 @@ export class Date {
         finally {}
     }
 
-    weekOfMonth(firstWeekday) {
-        const result = wasm.icu4x_Date_week_of_month_mv1(this.ffiValue, firstWeekday.ffiValue);
-    
-        try {
-            return result;
-        }
-        
-        finally {}
-    }
-
-    weekOfYear(calculator) {
-        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 8, 4, false);
-        
-        const result = wasm.icu4x_Date_week_of_year_mv1(diplomatReceive.buffer, this.ffiValue, calculator.ffiValue);
-    
-        try {
-            return WeekOf._fromFFI(diplomatRuntime.internalConstructor, diplomatReceive.buffer);
-        }
-        
-        finally {
-            diplomatReceive.free();
-        }
-    }
-
+    /** 
+     * Returns 1-indexed number of the month of this date in its year
+     *
+     * Note that for lunar calendars this may not lead to the same month
+     * having the same ordinal month across years; use month_code if you care
+     * about month identity.
+     *
+     * See the [Rust documentation for `month`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.month) for more information.
+     *
+     * See the [Rust documentation for `ordinal`](https://docs.rs/icu/latest/icu/calendar/types/struct.MonthInfo.html#structfield.ordinal) for more information.
+     */
     get ordinalMonth() {
         const result = wasm.icu4x_Date_ordinal_month_mv1(this.ffiValue);
     
@@ -199,6 +266,14 @@ export class Date {
         finally {}
     }
 
+    /** 
+     * Returns the month code for this date. Typically something
+     * like "M01", "M02", but can be more complicated for lunar calendars.
+     *
+     * See the [Rust documentation for `standard_code`](https://docs.rs/icu/latest/icu/calendar/types/struct.MonthInfo.html#structfield.standard_code) for more information.
+     *
+     * Additional information: [1](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.month)
+     */
     get monthCode() {
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
         wasm.icu4x_Date_month_code_mv1(this.ffiValue, write.buffer);
@@ -212,6 +287,11 @@ export class Date {
         }
     }
 
+    /** 
+     * Returns the month number of this month.
+     *
+     * See the [Rust documentation for `month_number`](https://docs.rs/icu/latest/icu/calendar/types/struct.MonthInfo.html#method.month_number) for more information.
+     */
     get monthNumber() {
         const result = wasm.icu4x_Date_month_number_mv1(this.ffiValue);
     
@@ -222,6 +302,11 @@ export class Date {
         finally {}
     }
 
+    /** 
+     * Returns whether the month is a leap month.
+     *
+     * See the [Rust documentation for `is_leap`](https://docs.rs/icu/latest/icu/calendar/types/struct.MonthInfo.html#method.is_leap) for more information.
+     */
     get monthIsLeap() {
         const result = wasm.icu4x_Date_month_is_leap_mv1(this.ffiValue);
     
@@ -232,8 +317,17 @@ export class Date {
         finally {}
     }
 
-    get yearInEra() {
-        const result = wasm.icu4x_Date_year_in_era_mv1(this.ffiValue);
+    /** 
+     * Returns the year number in the current era for this date
+     *
+     * For calendars without an era, returns the related ISO year.
+     *
+     * See the [Rust documentation for `era_year_or_related_iso`](https://docs.rs/icu/latest/icu/calendar/types/enum.YearInfo.html#method.era_year_or_related_iso) for more information.
+     *
+     * Additional information: [1](https://docs.rs/icu/latest/icu/calendar/types/struct.EraYear.html#structfield.year), [2](https://docs.rs/icu/latest/icu/calendar/types/struct.CyclicYear.html#structfield.related_iso), [3](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.year)
+     */
+    get eraYearOrRelatedIso() {
+        const result = wasm.icu4x_Date_era_year_or_related_iso_mv1(this.ffiValue);
     
         try {
             return result;
@@ -242,6 +336,11 @@ export class Date {
         finally {}
     }
 
+    /** 
+     * Returns the extended year in the Date
+     *
+     * See the [Rust documentation for `extended_year`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.extended_year) for more information.
+     */
     get extendedYear() {
         const result = wasm.icu4x_Date_extended_year_mv1(this.ffiValue);
     
@@ -252,6 +351,13 @@ export class Date {
         finally {}
     }
 
+    /** 
+     * Returns the era for this date, or an empty string
+     *
+     * See the [Rust documentation for `era`](https://docs.rs/icu/latest/icu/calendar/types/struct.EraYear.html#structfield.era) for more information.
+     *
+     * Additional information: [1](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.year)
+     */
     get era() {
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
         wasm.icu4x_Date_era_mv1(this.ffiValue, write.buffer);
@@ -265,6 +371,11 @@ export class Date {
         }
     }
 
+    /** 
+     * Returns the number of months in the year represented by this date
+     *
+     * See the [Rust documentation for `months_in_year`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.months_in_year) for more information.
+     */
     get monthsInYear() {
         const result = wasm.icu4x_Date_months_in_year_mv1(this.ffiValue);
     
@@ -275,6 +386,11 @@ export class Date {
         finally {}
     }
 
+    /** 
+     * Returns the number of days in the month represented by this date
+     *
+     * See the [Rust documentation for `days_in_month`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.days_in_month) for more information.
+     */
     get daysInMonth() {
         const result = wasm.icu4x_Date_days_in_month_mv1(this.ffiValue);
     
@@ -285,6 +401,11 @@ export class Date {
         finally {}
     }
 
+    /** 
+     * Returns the number of days in the year represented by this date
+     *
+     * See the [Rust documentation for `days_in_year`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.days_in_year) for more information.
+     */
     get daysInYear() {
         const result = wasm.icu4x_Date_days_in_year_mv1(this.ffiValue);
     
@@ -295,6 +416,11 @@ export class Date {
         finally {}
     }
 
+    /** 
+     * Returns the [`Calendar`] object backing this date
+     *
+     * See the [Rust documentation for `calendar`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.calendar) for more information.
+     */
     get calendar() {
         const result = wasm.icu4x_Date_calendar_mv1(this.ffiValue);
     

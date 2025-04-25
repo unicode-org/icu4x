@@ -13,6 +13,9 @@
 #include "../diplomat_runtime.hpp"
 #include "DataError.hpp"
 #include "DataProvider.hpp"
+#include "TimeZoneAndCanonicalAndNormalized.hpp"
+#include "TimeZoneAndCanonicalAndNormalizedIterator.hpp"
+#include "TimeZoneAndCanonicalIterator.hpp"
 
 
 namespace icu4x {
@@ -24,11 +27,11 @@ namespace capi {
     typedef struct icu4x_IanaParserExtended_create_with_provider_mv1_result {union {icu4x::capi::IanaParserExtended* ok; icu4x::capi::DataError err;}; bool is_ok;} icu4x_IanaParserExtended_create_with_provider_mv1_result;
     icu4x_IanaParserExtended_create_with_provider_mv1_result icu4x_IanaParserExtended_create_with_provider_mv1(const icu4x::capi::DataProvider* provider);
     
-    typedef struct icu4x_IanaParserExtended_canonicalize_iana_mv1_result { bool is_ok;} icu4x_IanaParserExtended_canonicalize_iana_mv1_result;
-    icu4x_IanaParserExtended_canonicalize_iana_mv1_result icu4x_IanaParserExtended_canonicalize_iana_mv1(const icu4x::capi::IanaParserExtended* self, diplomat::capi::DiplomatStringView value, diplomat::capi::DiplomatWrite* write);
+    icu4x::capi::TimeZoneAndCanonicalAndNormalized icu4x_IanaParserExtended_parse_mv1(const icu4x::capi::IanaParserExtended* self, diplomat::capi::DiplomatStringView value);
     
-    typedef struct icu4x_IanaParserExtended_canonical_iana_from_bcp47_mv1_result { bool is_ok;} icu4x_IanaParserExtended_canonical_iana_from_bcp47_mv1_result;
-    icu4x_IanaParserExtended_canonical_iana_from_bcp47_mv1_result icu4x_IanaParserExtended_canonical_iana_from_bcp47_mv1(const icu4x::capi::IanaParserExtended* self, diplomat::capi::DiplomatStringView value, diplomat::capi::DiplomatWrite* write);
+    icu4x::capi::TimeZoneAndCanonicalIterator* icu4x_IanaParserExtended_iter_mv1(const icu4x::capi::IanaParserExtended* self);
+    
+    icu4x::capi::TimeZoneAndCanonicalAndNormalizedIterator* icu4x_IanaParserExtended_iter_all_mv1(const icu4x::capi::IanaParserExtended* self);
     
     
     void icu4x_IanaParserExtended_destroy_mv1(IanaParserExtended* self);
@@ -47,25 +50,20 @@ inline diplomat::result<std::unique_ptr<icu4x::IanaParserExtended>, icu4x::DataE
   return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::IanaParserExtended>, icu4x::DataError>(diplomat::Ok<std::unique_ptr<icu4x::IanaParserExtended>>(std::unique_ptr<icu4x::IanaParserExtended>(icu4x::IanaParserExtended::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::IanaParserExtended>, icu4x::DataError>(diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
 }
 
-inline diplomat::result<std::optional<std::string>, diplomat::Utf8Error> icu4x::IanaParserExtended::canonicalize_iana(std::string_view value) const {
-  if (!diplomat::capi::diplomat_is_str(value.data(), value.size())) {
-    return diplomat::Err<diplomat::Utf8Error>();
-  }
-  std::string output;
-  diplomat::capi::DiplomatWrite write = diplomat::WriteFromString(output);
-  auto result = icu4x::capi::icu4x_IanaParserExtended_canonicalize_iana_mv1(this->AsFFI(),
-    {value.data(), value.size()},
-    &write);
-  return diplomat::Ok<std::optional<std::string>>(result.is_ok ? std::optional<std::string>(std::move(output)) : std::nullopt);
+inline icu4x::TimeZoneAndCanonicalAndNormalized icu4x::IanaParserExtended::parse(std::string_view value) const {
+  auto result = icu4x::capi::icu4x_IanaParserExtended_parse_mv1(this->AsFFI(),
+    {value.data(), value.size()});
+  return icu4x::TimeZoneAndCanonicalAndNormalized::FromFFI(result);
 }
 
-inline std::optional<std::string> icu4x::IanaParserExtended::canonical_iana_from_bcp47(std::string_view value) const {
-  std::string output;
-  diplomat::capi::DiplomatWrite write = diplomat::WriteFromString(output);
-  auto result = icu4x::capi::icu4x_IanaParserExtended_canonical_iana_from_bcp47_mv1(this->AsFFI(),
-    {value.data(), value.size()},
-    &write);
-  return result.is_ok ? std::optional<std::string>(std::move(output)) : std::nullopt;
+inline std::unique_ptr<icu4x::TimeZoneAndCanonicalIterator> icu4x::IanaParserExtended::iter() const {
+  auto result = icu4x::capi::icu4x_IanaParserExtended_iter_mv1(this->AsFFI());
+  return std::unique_ptr<icu4x::TimeZoneAndCanonicalIterator>(icu4x::TimeZoneAndCanonicalIterator::FromFFI(result));
+}
+
+inline std::unique_ptr<icu4x::TimeZoneAndCanonicalAndNormalizedIterator> icu4x::IanaParserExtended::iter_all() const {
+  auto result = icu4x::capi::icu4x_IanaParserExtended_iter_all_mv1(this->AsFFI());
+  return std::unique_ptr<icu4x::TimeZoneAndCanonicalAndNormalizedIterator>(icu4x::TimeZoneAndCanonicalAndNormalizedIterator::FromFFI(result));
 }
 
 inline const icu4x::capi::IanaParserExtended* icu4x::IanaParserExtended::AsFFI() const {

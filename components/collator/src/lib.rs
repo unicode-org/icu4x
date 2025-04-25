@@ -41,7 +41,7 @@
 //!
 //! ```
 //! use core::cmp::Ordering;
-//! use icu::collator::*;
+//! use icu::collator::{options::*, *};
 //! use icu::locale::locale;
 //!
 //! let mut options = CollatorOptions::default();
@@ -71,7 +71,7 @@
 //!
 //! ```
 //! use core::cmp::Ordering;
-//! use icu::collator::*;
+//! use icu::collator::{options::*, *};
 //!
 //! // Primary Level
 //!
@@ -129,7 +129,7 @@
 //!
 //! ```
 //! use core::cmp::Ordering;
-//! use icu::collator::*;
+//! use icu::collator::{*, options::*};
 //!
 //! // If alternate handling is set to `NonIgnorable`, then differences among
 //! // these characters are of the same importance as differences among letters.
@@ -179,7 +179,7 @@
 //!
 //! ```
 //! use core::cmp::Ordering;
-//! use icu::collator::*;
+//! use icu::collator::{*, options::*};
 //!
 //! // Primary
 //!
@@ -250,8 +250,8 @@
 //!
 //! ```
 //! use core::cmp::Ordering;
-//! use icu::collator::*;
 //! use icu::collator::preferences::*;
+//! use icu::collator::{options::*, *};
 //!
 //! // Use the locale's default.
 //!
@@ -286,8 +286,8 @@
 //!
 //! ```
 //! use core::cmp::Ordering;
-//! use icu::collator::*;
 //! use icu::collator::preferences::*;
+//! use icu::collator::{options::*, *};
 //!
 //! // Numerical sorting off
 //!
@@ -305,6 +305,8 @@
 //!     Collator::try_new(prefs_num_on, Default::default()).unwrap();
 //! assert_eq!(collator_num_on.compare("a10b", "a2b"), Ordering::Greater);
 //! ```
+//!
+//! [`CollatorOptions`]: options::CollatorOptions
 
 mod comparison;
 #[cfg(doc)]
@@ -316,19 +318,12 @@ pub mod docs;
 // name of that struct without coordination.
 mod elements;
 
-mod options;
+pub mod options;
 pub mod provider;
 
 pub use comparison::Collator;
 pub use comparison::CollatorBorrowed;
 pub use comparison::CollatorPreferences;
-pub use options::AlternateHandling;
-pub use options::BackwardSecondLevel;
-pub use options::CaseLevel;
-pub use options::CollatorOptions;
-pub use options::MaxVariable;
-pub use options::ResolvedCollatorOptions;
-pub use options::Strength;
 
 /// Locale preferences used by this crate
 pub mod preferences {

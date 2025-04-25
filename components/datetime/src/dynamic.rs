@@ -31,14 +31,14 @@
 //! use icu::calendar::Date;
 //! use icu::datetime::fieldsets;
 //! use icu::datetime::fieldsets::enums::CompositeDateTimeFieldSet;
+//! use icu::datetime::input::{DateTime, Time};
 //! use icu::datetime::DateTimeFormatter;
 //! use icu::locale::locale;
-//! use icu::datetime::input::{DateTime, Time};
 //! use writeable::Writeable;
 //!
 //! fn get_field_set(should_display_time: bool) -> CompositeDateTimeFieldSet {
 //!     if should_display_time {
-//!         let field_set = fieldsets::MDT::medium().hm();
+//!         let field_set = fieldsets::MD::medium().with_time_hm();
 //!         CompositeDateTimeFieldSet::DateTime(
 //!             fieldsets::enums::DateAndTimeFieldSet::MDT(field_set),
 //!         )
@@ -50,20 +50,19 @@
 //!     }
 //! }
 //!
-//! let datetime = DateTime { date: Date::try_new_iso(2025, 1, 15).unwrap(), time: Time::try_new(16, 0, 0, 0).unwrap() };
+//! let datetime = DateTime {
+//!     date: Date::try_new_iso(2025, 1, 15).unwrap(),
+//!     time: Time::try_new(16, 0, 0, 0).unwrap(),
+//! };
 //!
-//! let results = [true, false]
-//!     .map(get_field_set)
-//!     .map(|field_set| {
-//!         DateTimeFormatter::try_new(locale!("en-US").into(), field_set)
-//!             .unwrap()
-//!     })
-//!     .map(|formatter| formatter.format(&datetime).to_string());
+//! let with_time = DateTimeFormatter::try_new(locale!("en-US").into(), get_field_set(true)).unwrap();
+//! let without_time = DateTimeFormatter::try_new(locale!("en-US").into(), get_field_set(false)).unwrap();
 //!
-//! assert_eq!(results, ["Jan 15, 4:00 PM", "Jan 15"])
+//! assert_eq!(with_time.format(&datetime).to_string(), "Jan 15, 4:00 PM");
+//! assert_eq!(without_time.format(&datetime).to_string(), "Jan 15");
 //! ```
 
-use crate::fieldsets::Combo;
+use crate::fieldsets::{builder, Combo};
 use crate::raw::neo::RawOptions;
 use crate::scaffold::GetField;
 use crate::{fieldsets, provider};
@@ -255,6 +254,21 @@ impl GetField<CompositeFieldSet> for CompositeDateTimeFieldSet {
     }
 }
 
+/// Type alias representing all possible date + time zone field sets.
+///
+/// This is a dynamic field set. For more information, see [`enums`](crate::fieldsets::enums).
+pub type ZonedDateFieldSet = Combo<DateFieldSet, ZoneFieldSet>;
+
+/// Type alias representing all possible time + time zone field sets.
+///
+/// This is a dynamic field set. For more information, see [`enums`](crate::fieldsets::enums).
+pub type ZonedTimeFieldSet = Combo<TimeFieldSet, ZoneFieldSet>;
+
+/// Type alias representing all possible date + time + time zone field sets.
+///
+/// This is a dynamic field set. For more information, see [`enums`](crate::fieldsets::enums).
+pub type ZonedDateAndTimeFieldSet = Combo<DateAndTimeFieldSet, ZoneFieldSet>;
+
 /// An enum supporting all possible field sets and options.
 ///
 /// This is a dynamic field set. For more information, see [`enums`](crate::fieldsets::enums).
@@ -272,11 +286,11 @@ pub enum CompositeFieldSet {
     /// Field set for a date and a time together.
     DateTime(DateAndTimeFieldSet),
     /// Field set for a date and a time zone together.
-    DateZone(Combo<DateFieldSet, ZoneFieldSet>),
+    DateZone(ZonedDateFieldSet),
     /// Field set for a time and a time zone together.
-    TimeZone(Combo<TimeFieldSet, ZoneFieldSet>),
+    TimeZone(ZonedTimeFieldSet),
     /// Field set for a date, a time, and a time zone together.
-    DateTimeZone(Combo<DateAndTimeFieldSet, ZoneFieldSet>),
+    DateTimeZone(ZonedDateAndTimeFieldSet),
 }
 
 macro_rules! first {
@@ -383,6 +397,13 @@ macro_rules! impl_attrs {
                     )+
                 }
             }
+            pub(crate) fn to_zone_style(self) -> builder::ZoneStyle {
+                match self {
+                    $(
+                        Self::$variant(_) => builder::ZoneStyle::$variant,
+                    )+
+                }
+            }
         }
     };
     (@datetime, $type:path, [$(($d_variant:ident, $variant:ident)),+,]) => {
@@ -455,7 +476,7 @@ impl TimeFieldSet {
         match hour_cycle {
             None => Self::ATTR_T,
             Some(H11 | H12) => Self::ATTR_T12,
-            Some(H23 | H24) => Self::ATTR_T24,
+            Some(H23) => Self::ATTR_T24,
         }
     }
 }

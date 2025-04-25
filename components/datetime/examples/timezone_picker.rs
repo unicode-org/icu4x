@@ -5,28 +5,30 @@
 use std::collections::BTreeMap;
 
 use icu::calendar::Date;
-use icu::datetime::{fieldsets, TimeFormatter};
+use icu::datetime::{fieldsets, NoCalendarFormatter};
 use icu::locale::locale;
 use icu::time::Time;
+use icu_time::TimeZone;
 
 fn main() {
-    let mapper = icu::time::zone::IanaParser::new();
-    let offsets = icu::time::zone::UtcOffsetCalculator::new();
+    let parser = icu::time::zone::IanaParser::new();
+    let offsets = icu::time::zone::VariantOffsetsCalculator::new();
 
     let prefs = locale!("en").into();
 
     let offset_formatter =
-        TimeFormatter::try_new(prefs, fieldsets::zone::LocalizedOffsetLong).unwrap();
+        NoCalendarFormatter::try_new(prefs, fieldsets::zone::LocalizedOffsetLong).unwrap();
     let non_location_formatter =
-        TimeFormatter::try_new(prefs, fieldsets::zone::GenericLong).unwrap();
-    let city_formatter = TimeFormatter::try_new(prefs, fieldsets::zone::ExemplarCity).unwrap();
+        NoCalendarFormatter::try_new(prefs, fieldsets::zone::GenericLong).unwrap();
+    let city_formatter =
+        NoCalendarFormatter::try_new(prefs, fieldsets::zone::ExemplarCity).unwrap();
 
-    let reference_date = (Date::try_new_iso(2025, 1, 1).unwrap(), Time::midnight());
+    let reference_date = (Date::try_new_iso(2025, 1, 1).unwrap(), Time::start_of_day());
 
     let mut grouped_tzs = BTreeMap::<_, Vec<_>>::new();
 
-    for tz in mapper.iter_bcp47() {
-        if tz.0 == "unk" || tz.starts_with("utc") || tz.0 == "gmt" {
+    for tz in parser.iter() {
+        if tz == TimeZone::unknown() || tz.as_str().starts_with("utc") || tz.as_str() == "gmt" {
             continue;
         }
 
@@ -57,9 +59,7 @@ fn main() {
                         format!(
                             "/{}",
                             offset_formatter.format(
-                                &tzi.time_zone_id()
-                                    .with_offset(Some(daylight))
-                                    .at_time(reference_date)
+                                &tzi.id().with_offset(Some(daylight)).at_time(reference_date)
                             )
                         )
                     } else {

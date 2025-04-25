@@ -116,7 +116,6 @@ impl Default for PatternMetadata {
 }
 
 impl Pattern<'_> {
-    #[cfg(feature = "datagen")]
     pub(crate) fn into_owned(self) -> Pattern<'static> {
         Pattern {
             items: self.items.into_owned(),

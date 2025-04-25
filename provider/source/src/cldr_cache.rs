@@ -4,15 +4,17 @@
 
 #![allow(dead_code)] // features
 
+use crate::cldr_serde::eras::EraData;
+use crate::datetime::DatagenCalendar;
 use crate::source::SerdeCache;
 use crate::CoverageLevel;
 use icu::locale::provider::{
-    LikelySubtagsExtendedV1, LikelySubtagsForLanguageV1, LikelySubtagsForScriptRegionV1,
+    LocaleLikelySubtagsExtendedV1, LocaleLikelySubtagsLanguageV1, LocaleLikelySubtagsScriptRegionV1,
 };
 use icu::locale::LocaleExpander;
 use icu_provider::prelude::*;
 use icu_provider::DataError;
-use std::collections::BTreeSet;
+use std::collections::BTreeMap;
 use std::collections::HashSet;
 use std::fmt::Debug;
 use std::str::FromStr;
@@ -24,7 +26,9 @@ pub(crate) struct CldrCache {
     pub(crate) serde_cache: SerdeCache,
     dir_suffix: OnceLock<Result<&'static str, DataError>>,
     extended_locale_expander: OnceLock<Result<LocaleExpander, DataError>>,
-    modern_japanese_eras: OnceLock<Result<BTreeSet<String>, DataError>>,
+    #[allow(clippy::type_complexity)]
+    pub(crate) calendar_eras:
+        OnceLock<Result<BTreeMap<DatagenCalendar, Vec<(usize, EraData)>>, DataError>>,
     #[cfg(feature = "experimental")]
     // used by transforms/mod.rs
     pub(crate) transforms: OnceLock<
@@ -39,7 +43,7 @@ impl CldrCache {
             serde_cache,
             dir_suffix: Default::default(),
             extended_locale_expander: Default::default(),
-            modern_japanese_eras: Default::default(),
+            calendar_eras: Default::default(),
             #[cfg(feature = "experimental")]
             transforms: Default::default(),
             tz_caches: Default::default(),
@@ -129,11 +133,11 @@ impl CldrCache {
                     common: TransformResult,
                     extended: TransformResult,
                 }
-                impl DataProvider<LikelySubtagsForLanguageV1> for Provider {
+                impl DataProvider<LocaleLikelySubtagsLanguageV1> for Provider {
                     fn load(
                         &self,
                         _req: DataRequest,
-                    ) -> Result<DataResponse<LikelySubtagsForLanguageV1>, DataError>
+                    ) -> Result<DataResponse<LocaleLikelySubtagsLanguageV1>, DataError>
                     {
                         Ok(DataResponse {
                             payload: DataPayload::from_owned(self.common.as_langs()),
@@ -141,11 +145,11 @@ impl CldrCache {
                         })
                     }
                 }
-                impl DataProvider<LikelySubtagsForScriptRegionV1> for Provider {
+                impl DataProvider<LocaleLikelySubtagsScriptRegionV1> for Provider {
                     fn load(
                         &self,
                         _req: DataRequest,
-                    ) -> Result<DataResponse<LikelySubtagsForScriptRegionV1>, DataError>
+                    ) -> Result<DataResponse<LocaleLikelySubtagsScriptRegionV1>, DataError>
                     {
                         Ok(DataResponse {
                             payload: DataPayload::from_owned(self.common.as_script_region()),
@@ -153,11 +157,11 @@ impl CldrCache {
                         })
                     }
                 }
-                impl DataProvider<LikelySubtagsExtendedV1> for Provider {
+                impl DataProvider<LocaleLikelySubtagsExtendedV1> for Provider {
                     fn load(
                         &self,
                         _req: DataRequest,
-                    ) -> Result<DataResponse<LikelySubtagsExtendedV1>, DataError>
+                    ) -> Result<DataResponse<LocaleLikelySubtagsExtendedV1>, DataError>
                     {
                         Ok(DataResponse {
                             payload: DataPayload::from_owned(self.extended.as_extended()),
@@ -176,31 +180,6 @@ impl CldrCache {
                             .with_display_context(&e)
                     },
                 )
-            })
-            .as_ref()
-            .map_err(|&e| e)
-    }
-
-    /// Get the list of eras in the japanese calendar considered "modern" (post-Meiji, inclusive)
-    ///
-    /// These will be in CLDR era index form; these are usually numbers
-    pub(crate) fn modern_japanese_eras(&self) -> Result<&BTreeSet<String>, DataError> {
-        self.modern_japanese_eras
-            .get_or_init(|| {
-                let era_dates: &super::cldr_serde::japanese::Resource = self
-                    .core()
-                    .read_and_parse("supplemental/calendarData.json")?;
-                let mut set = BTreeSet::<String>::new();
-                for (era_index, date) in era_dates.supplemental.calendar_data.japanese.eras.iter() {
-                    let Some(start_date) = date.start.as_ref() else {
-                        continue;
-                    };
-
-                    if start_date.year >= 1868 {
-                        set.insert(era_index.into());
-                    }
-                }
-                Ok(set)
             })
             .as_ref()
             .map_err(|&e| e)

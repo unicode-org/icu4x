@@ -8,6 +8,9 @@
 pub mod ffi {
     use icu_properties::props;
 
+    #[cfg(feature = "compiled_data")]
+    use diplomat_runtime::DiplomatChar;
+
     #[diplomat::rust_link(icu::properties::props::BidiClass, Struct)]
     #[diplomat::enum_convert(icu_properties::props::BidiClass, needs_wildcard)]
     pub enum BidiClass {
@@ -72,10 +75,53 @@ pub mod ffi {
     }
 
     impl BidiClass {
-        pub fn to_integer(self) -> u8 {
+        #[diplomat::rust_link(icu::properties::props::EnumeratedProperty::for_char, FnInTrait)]
+        #[cfg(feature = "compiled_data")]
+        pub fn for_char(ch: DiplomatChar) -> Self {
+            icu_properties::CodePointMapData::<props::BidiClass>::new()
+                .get32(ch)
+                .into()
+        }
+
+        #[diplomat::rust_link(icu::properties::PropertyNamesLongBorrowed::get, FnInStruct)]
+        #[diplomat::rust_link(icu::properties::PropertyNamesLong, Struct, hidden)]
+        #[diplomat::rust_link(icu::properties::PropertyNamesLongBorrowed, Struct, hidden)]
+        #[diplomat::rust_link(icu::properties::PropertyNamesLong::new, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::properties::PropertyNamesLongBorrowed::new, FnInStruct, hidden)]
+        #[diplomat::rust_link(
+            icu::properties::props::NamedEnumeratedProperty::long_name,
+            FnInTrait,
+            hidden
+        )]
+        #[cfg(feature = "compiled_data")]
+        /// Get the "long" name of this property value (returns empty if property value is unknown)
+        pub fn long_name(self) -> Option<&'static str> {
+            icu_properties::PropertyNamesLongBorrowed::<props::BidiClass>::new().get(self.into())
+        }
+
+        #[diplomat::rust_link(icu::properties::PropertyNamesShortBorrowed::get, FnInStruct)]
+        #[diplomat::rust_link(icu::properties::PropertyNamesShort, Struct, hidden)]
+        #[diplomat::rust_link(icu::properties::PropertyNamesShortBorrowed, Struct, hidden)]
+        #[diplomat::rust_link(icu::properties::PropertyNamesShort::new, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::properties::PropertyNamesShortBorrowed::new, FnInStruct, hidden)]
+        #[diplomat::rust_link(
+            icu::properties::props::NamedEnumeratedProperty::short_name,
+            FnInTrait,
+            hidden
+        )]
+        #[cfg(feature = "compiled_data")]
+        /// Get the "short" name of this property value (returns empty if property value is unknown)
+        pub fn short_name(self) -> Option<&'static str> {
+            icu_properties::PropertyNamesShortBorrowed::<props::BidiClass>::new().get(self.into())
+        }
+        #[diplomat::rust_link(icu::properties::props::BidiClass::to_icu4c_value, FnInStruct)]
+        /// Convert to an integer value usable with ICU4C and CodePointMapData
+        pub fn to_integer_value(self) -> u8 {
             self as u8
         }
-        pub fn from_integer(other: u8) -> Option<Self> {
+        #[diplomat::rust_link(icu::properties::props::BidiClass::from_icu4c_value, FnInStruct)]
+        /// Convert from an integer value from ICU4C or CodePointMapData
+        pub fn from_integer_value(other: u8) -> Option<Self> {
             Some(match other {
                 0 => Self::LeftToRight,
                 1 => Self::RightToLeft,
@@ -441,10 +487,40 @@ pub mod ffi {
     }
 
     impl Script {
-        pub fn to_integer(self) -> u16 {
+        #[diplomat::rust_link(icu::properties::props::EnumeratedProperty::for_char, FnInTrait)]
+        #[cfg(feature = "compiled_data")]
+        pub fn for_char(ch: DiplomatChar) -> Self {
+            icu_properties::CodePointMapData::<props::Script>::new()
+                .get32(ch)
+                .into()
+        }
+
+        #[diplomat::rust_link(icu::properties::PropertyNamesLongBorrowed::get, FnInStruct)]
+        #[cfg(feature = "compiled_data")]
+        /// Get the "long" name of this property value (returns empty if property value is unknown)
+        pub fn long_name(self) -> Option<&'static str> {
+            icu_properties::PropertyNamesLongBorrowed::<props::Script>::new().get(self.into())
+        }
+
+        #[diplomat::rust_link(icu::properties::PropertyNamesShortBorrowed::get, FnInStruct)]
+        #[diplomat::rust_link(
+            icu::properties::PropertyNamesShortBorrowed::get_locale_script,
+            FnInStruct,
+            hidden
+        )]
+        #[cfg(feature = "compiled_data")]
+        /// Get the "short" name of this property value (returns empty if property value is unknown)
+        pub fn short_name(self) -> Option<&'static str> {
+            icu_properties::PropertyNamesShortBorrowed::<props::Script>::new().get(self.into())
+        }
+        #[diplomat::rust_link(icu::properties::props::Script::to_icu4c_value, FnInStruct)]
+        /// Convert to an integer value usable with ICU4C and CodePointMapData
+        pub fn to_integer_value(self) -> u16 {
             self as u16
         }
-        pub fn from_integer(other: u16) -> Option<Self> {
+        #[diplomat::rust_link(icu::properties::props::Script::from_icu4c_value, FnInStruct)]
+        /// Convert from an integer value from ICU4C or CodePointMapData
+        pub fn from_integer_value(other: u16) -> Option<Self> {
             Some(match other {
                 167 => Self::Adlam,
                 161 => Self::Ahom,
@@ -649,10 +725,27 @@ pub mod ffi {
     }
 
     impl HangulSyllableType {
-        pub fn to_integer(self) -> u8 {
+        #[diplomat::rust_link(icu::properties::props::EnumeratedProperty::for_char, FnInTrait)]
+        #[cfg(feature = "compiled_data")]
+        pub fn for_char(ch: DiplomatChar) -> Self {
+            icu_properties::CodePointMapData::<props::HangulSyllableType>::new()
+                .get32(ch)
+                .into()
+        }
+        #[diplomat::rust_link(
+            icu::properties::props::HangulSyllableType::to_icu4c_value,
+            FnInStruct
+        )]
+        /// Convert to an integer value usable with ICU4C and CodePointMapData
+        pub fn to_integer_value(self) -> u8 {
             self as u8
         }
-        pub fn from_integer(other: u8) -> Option<Self> {
+        #[diplomat::rust_link(
+            icu::properties::props::HangulSyllableType::from_icu4c_value,
+            FnInStruct
+        )]
+        /// Convert from an integer value from ICU4C or CodePointMapData
+        pub fn from_integer_value(other: u8) -> Option<Self> {
             Some(match other {
                 0 => Self::NotApplicable,
                 1 => Self::LeadingJamo,
@@ -683,10 +776,37 @@ pub mod ffi {
     }
 
     impl EastAsianWidth {
-        pub fn to_integer(self) -> u8 {
+        #[diplomat::rust_link(icu::properties::props::EnumeratedProperty::for_char, FnInTrait)]
+        #[cfg(feature = "compiled_data")]
+        pub fn for_char(ch: DiplomatChar) -> Self {
+            icu_properties::CodePointMapData::<props::EastAsianWidth>::new()
+                .get32(ch)
+                .into()
+        }
+
+        #[diplomat::rust_link(icu::properties::PropertyNamesLongBorrowed::get, FnInStruct)]
+        #[cfg(feature = "compiled_data")]
+        /// Get the "long" name of this property value (returns empty if property value is unknown)
+        pub fn long_name(self) -> Option<&'static str> {
+            icu_properties::PropertyNamesLongBorrowed::<props::EastAsianWidth>::new()
+                .get(self.into())
+        }
+
+        #[diplomat::rust_link(icu::properties::PropertyNamesShortBorrowed::get, FnInStruct)]
+        #[cfg(feature = "compiled_data")]
+        /// Get the "short" name of this property value (returns empty if property value is unknown)
+        pub fn short_name(self) -> Option<&'static str> {
+            icu_properties::PropertyNamesShortBorrowed::<props::EastAsianWidth>::new()
+                .get(self.into())
+        }
+        #[diplomat::rust_link(icu::properties::props::EastAsianWidth::to_icu4c_value, FnInStruct)]
+        /// Convert to an integer value usable with ICU4C and CodePointMapData
+        pub fn to_integer_value(self) -> u8 {
             self as u8
         }
-        pub fn from_integer(other: u8) -> Option<Self> {
+        #[diplomat::rust_link(icu::properties::props::EastAsianWidth::from_icu4c_value, FnInStruct)]
+        /// Convert from an integer value from ICU4C or CodePointMapData
+        pub fn from_integer_value(other: u8) -> Option<Self> {
             Some(match other {
                 0 => Self::Neutral,
                 1 => Self::Ambiguous,
@@ -801,10 +921,35 @@ pub mod ffi {
     }
 
     impl LineBreak {
-        pub fn to_integer(self) -> u8 {
+        #[diplomat::rust_link(icu::properties::props::EnumeratedProperty::for_char, FnInTrait)]
+        #[cfg(feature = "compiled_data")]
+        pub fn for_char(ch: DiplomatChar) -> Self {
+            icu_properties::CodePointMapData::<props::LineBreak>::new()
+                .get32(ch)
+                .into()
+        }
+
+        #[diplomat::rust_link(icu::properties::PropertyNamesLongBorrowed::get, FnInStruct)]
+        #[cfg(feature = "compiled_data")]
+        /// Get the "long" name of this property value (returns empty if property value is unknown)
+        pub fn long_name(self) -> Option<&'static str> {
+            icu_properties::PropertyNamesLongBorrowed::<props::LineBreak>::new().get(self.into())
+        }
+
+        #[diplomat::rust_link(icu::properties::PropertyNamesShortBorrowed::get, FnInStruct)]
+        #[cfg(feature = "compiled_data")]
+        /// Get the "short" name of this property value (returns empty if property value is unknown)
+        pub fn short_name(self) -> Option<&'static str> {
+            icu_properties::PropertyNamesShortBorrowed::<props::LineBreak>::new().get(self.into())
+        }
+        #[diplomat::rust_link(icu::properties::props::LineBreak::to_icu4c_value, FnInStruct)]
+        /// Convert to an integer value usable with ICU4C and CodePointMapData
+        pub fn to_integer_value(self) -> u8 {
             self as u8
         }
-        pub fn from_integer(other: u8) -> Option<Self> {
+        #[diplomat::rust_link(icu::properties::props::LineBreak::from_icu4c_value, FnInStruct)]
+        /// Convert from an integer value from ICU4C or CodePointMapData
+        pub fn from_integer_value(other: u8) -> Option<Self> {
             Some(match other {
                 0 => Self::Unknown,
                 1 => Self::Ambiguous,
@@ -901,10 +1046,27 @@ pub mod ffi {
     }
 
     impl GraphemeClusterBreak {
-        pub fn to_integer(self) -> u8 {
+        #[diplomat::rust_link(icu::properties::props::EnumeratedProperty::for_char, FnInTrait)]
+        #[cfg(feature = "compiled_data")]
+        pub fn for_char(ch: DiplomatChar) -> Self {
+            icu_properties::CodePointMapData::<props::GraphemeClusterBreak>::new()
+                .get32(ch)
+                .into()
+        }
+        #[diplomat::rust_link(
+            icu::properties::props::GraphemeClusterBreak::to_icu4c_value,
+            FnInStruct
+        )]
+        /// Convert to an integer value usable with ICU4C and CodePointMapData
+        pub fn to_integer_value(self) -> u8 {
             self as u8
         }
-        pub fn from_integer(other: u8) -> Option<Self> {
+        #[diplomat::rust_link(
+            icu::properties::props::GraphemeClusterBreak::from_icu4c_value,
+            FnInStruct
+        )]
+        /// Convert from an integer value from ICU4C or CodePointMapData
+        pub fn from_integer_value(other: u8) -> Option<Self> {
             Some(match other {
                 0 => Self::Other,
                 1 => Self::Control,
@@ -981,10 +1143,35 @@ pub mod ffi {
     }
 
     impl WordBreak {
-        pub fn to_integer(self) -> u8 {
+        #[diplomat::rust_link(icu::properties::props::EnumeratedProperty::for_char, FnInTrait)]
+        #[cfg(feature = "compiled_data")]
+        pub fn for_char(ch: DiplomatChar) -> Self {
+            icu_properties::CodePointMapData::<props::WordBreak>::new()
+                .get32(ch)
+                .into()
+        }
+
+        #[diplomat::rust_link(icu::properties::PropertyNamesLongBorrowed::get, FnInStruct)]
+        #[cfg(feature = "compiled_data")]
+        /// Get the "long" name of this property value (returns empty if property value is unknown)
+        pub fn long_name(self) -> Option<&'static str> {
+            icu_properties::PropertyNamesLongBorrowed::<props::WordBreak>::new().get(self.into())
+        }
+
+        #[diplomat::rust_link(icu::properties::PropertyNamesShortBorrowed::get, FnInStruct)]
+        #[cfg(feature = "compiled_data")]
+        /// Get the "short" name of this property value (returns empty if property value is unknown)
+        pub fn short_name(self) -> Option<&'static str> {
+            icu_properties::PropertyNamesShortBorrowed::<props::WordBreak>::new().get(self.into())
+        }
+        #[diplomat::rust_link(icu::properties::props::WordBreak::to_icu4c_value, FnInStruct)]
+        /// Convert to an integer value usable with ICU4C and CodePointMapData
+        pub fn to_integer_value(self) -> u8 {
             self as u8
         }
-        pub fn from_integer(other: u8) -> Option<Self> {
+        #[diplomat::rust_link(icu::properties::props::WordBreak::from_icu4c_value, FnInStruct)]
+        /// Convert from an integer value from ICU4C or CodePointMapData
+        pub fn from_integer_value(other: u8) -> Option<Self> {
             Some(match other {
                 0 => Self::Other,
                 1 => Self::ALetter,
@@ -1050,10 +1237,37 @@ pub mod ffi {
     }
 
     impl SentenceBreak {
-        pub fn to_integer(self) -> u8 {
+        #[diplomat::rust_link(icu::properties::props::EnumeratedProperty::for_char, FnInTrait)]
+        #[cfg(feature = "compiled_data")]
+        pub fn for_char(ch: DiplomatChar) -> Self {
+            icu_properties::CodePointMapData::<props::SentenceBreak>::new()
+                .get32(ch)
+                .into()
+        }
+
+        #[diplomat::rust_link(icu::properties::PropertyNamesLongBorrowed::get, FnInStruct)]
+        #[cfg(feature = "compiled_data")]
+        /// Get the "long" name of this property value (returns empty if property value is unknown)
+        pub fn long_name(self) -> Option<&'static str> {
+            icu_properties::PropertyNamesLongBorrowed::<props::SentenceBreak>::new()
+                .get(self.into())
+        }
+
+        #[diplomat::rust_link(icu::properties::PropertyNamesShortBorrowed::get, FnInStruct)]
+        #[cfg(feature = "compiled_data")]
+        /// Get the "short" name of this property value (returns empty if property value is unknown)
+        pub fn short_name(self) -> Option<&'static str> {
+            icu_properties::PropertyNamesShortBorrowed::<props::SentenceBreak>::new()
+                .get(self.into())
+        }
+        #[diplomat::rust_link(icu::properties::props::SentenceBreak::to_icu4c_value, FnInStruct)]
+        /// Convert to an integer value usable with ICU4C and CodePointMapData
+        pub fn to_integer_value(self) -> u8 {
             self as u8
         }
-        pub fn from_integer(other: u8) -> Option<Self> {
+        #[diplomat::rust_link(icu::properties::props::SentenceBreak::from_icu4c_value, FnInStruct)]
+        /// Convert from an integer value from ICU4C or CodePointMapData
+        pub fn from_integer_value(other: u8) -> Option<Self> {
             Some(match other {
                 0 => Self::Other,
                 1 => Self::ATerm,
@@ -1269,10 +1483,27 @@ pub mod ffi {
     }
 
     impl CanonicalCombiningClass {
-        pub fn to_integer(self) -> u8 {
+        #[diplomat::rust_link(icu::properties::props::EnumeratedProperty::for_char, FnInTrait)]
+        #[cfg(feature = "compiled_data")]
+        pub fn for_char(ch: DiplomatChar) -> Self {
+            icu_properties::CodePointMapData::<props::CanonicalCombiningClass>::new()
+                .get32(ch)
+                .into()
+        }
+        #[diplomat::rust_link(
+            icu::properties::props::CanonicalCombiningClass::to_icu4c_value,
+            FnInStruct
+        )]
+        /// Convert to an integer value usable with ICU4C and CodePointMapData
+        pub fn to_integer_value(self) -> u8 {
             self as u8
         }
-        pub fn from_integer(other: u8) -> Option<Self> {
+        #[diplomat::rust_link(
+            icu::properties::props::CanonicalCombiningClass::from_icu4c_value,
+            FnInStruct
+        )]
+        /// Convert from an integer value from ICU4C or CodePointMapData
+        pub fn from_integer_value(other: u8) -> Option<Self> {
             Some(match other {
                 0 => Self::NotReordered,
                 1 => Self::Overlay,
@@ -1504,10 +1735,27 @@ pub mod ffi {
     }
 
     impl IndicSyllabicCategory {
-        pub fn to_integer(self) -> u8 {
+        #[diplomat::rust_link(icu::properties::props::EnumeratedProperty::for_char, FnInTrait)]
+        #[cfg(feature = "compiled_data")]
+        pub fn for_char(ch: DiplomatChar) -> Self {
+            icu_properties::CodePointMapData::<props::IndicSyllabicCategory>::new()
+                .get32(ch)
+                .into()
+        }
+        #[diplomat::rust_link(
+            icu::properties::props::IndicSyllabicCategory::to_icu4c_value,
+            FnInStruct
+        )]
+        /// Convert to an integer value usable with ICU4C and CodePointMapData
+        pub fn to_integer_value(self) -> u8 {
             self as u8
         }
-        pub fn from_integer(other: u8) -> Option<Self> {
+        #[diplomat::rust_link(
+            icu::properties::props::IndicSyllabicCategory::from_icu4c_value,
+            FnInStruct
+        )]
+        /// Convert from an integer value from ICU4C or CodePointMapData
+        pub fn from_integer_value(other: u8) -> Option<Self> {
             Some(match other {
                 0 => Self::Other,
                 1 => Self::Avagraha,
@@ -1569,10 +1817,35 @@ pub mod ffi {
     }
 
     impl JoiningType {
-        pub fn to_integer(self) -> u8 {
+        #[diplomat::rust_link(icu::properties::props::EnumeratedProperty::for_char, FnInTrait)]
+        #[cfg(feature = "compiled_data")]
+        pub fn for_char(ch: DiplomatChar) -> Self {
+            icu_properties::CodePointMapData::<props::JoiningType>::new()
+                .get32(ch)
+                .into()
+        }
+
+        #[diplomat::rust_link(icu::properties::PropertyNamesLongBorrowed::get, FnInStruct)]
+        #[cfg(feature = "compiled_data")]
+        /// Get the "long" name of this property value (returns empty if property value is unknown)
+        pub fn long_name(self) -> Option<&'static str> {
+            icu_properties::PropertyNamesLongBorrowed::<props::JoiningType>::new().get(self.into())
+        }
+
+        #[diplomat::rust_link(icu::properties::PropertyNamesShortBorrowed::get, FnInStruct)]
+        #[cfg(feature = "compiled_data")]
+        /// Get the "short" name of this property value (returns empty if property value is unknown)
+        pub fn short_name(self) -> Option<&'static str> {
+            icu_properties::PropertyNamesShortBorrowed::<props::JoiningType>::new().get(self.into())
+        }
+        #[diplomat::rust_link(icu::properties::props::JoiningType::to_icu4c_value, FnInStruct)]
+        /// Convert to an integer value usable with ICU4C and CodePointMapData
+        pub fn to_integer_value(self) -> u8 {
             self as u8
         }
-        pub fn from_integer(other: u8) -> Option<Self> {
+        #[diplomat::rust_link(icu::properties::props::JoiningType::from_icu4c_value, FnInStruct)]
+        /// Convert from an integer value from ICU4C or CodePointMapData
+        pub fn from_integer_value(other: u8) -> Option<Self> {
             Some(match other {
                 0 => Self::NonJoining,
                 1 => Self::JoinCausing,
@@ -1585,7 +1858,7 @@ pub mod ffi {
         }
     }
 
-    #[diplomat::rust_link(icu::properties::props::GeneralCategory, Struct)]
+    #[diplomat::rust_link(icu::properties::props::GeneralCategory, Enum)]
     #[diplomat::enum_convert(icu_properties::props::GeneralCategory)]
     pub enum GeneralCategory {
         #[diplomat::rust_link(icu::properties::props::GeneralCategory::Unassigned, EnumVariant)]
@@ -1699,8 +1972,32 @@ pub mod ffi {
     }
 
     impl GeneralCategory {
+        #[diplomat::rust_link(icu::properties::props::EnumeratedProperty::for_char, FnInTrait)]
+        #[cfg(feature = "compiled_data")]
+        pub fn for_char(ch: DiplomatChar) -> Self {
+            icu_properties::CodePointMapData::<props::GeneralCategory>::new()
+                .get32(ch)
+                .into()
+        }
         /// Convert to an integer using the ICU4C integer mappings for `General_Category`
-        pub fn to_integer(self) -> u8 {
+
+        #[diplomat::rust_link(icu::properties::PropertyNamesLongBorrowed::get, FnInStruct)]
+        #[cfg(feature = "compiled_data")]
+        /// Get the "long" name of this property value (returns empty if property value is unknown)
+        pub fn long_name(self) -> Option<&'static str> {
+            icu_properties::PropertyNamesLongBorrowed::<props::GeneralCategory>::new()
+                .get(self.into())
+        }
+
+        #[diplomat::rust_link(icu::properties::PropertyNamesShortBorrowed::get, FnInStruct)]
+        #[cfg(feature = "compiled_data")]
+        /// Get the "short" name of this property value (returns empty if property value is unknown)
+        pub fn short_name(self) -> Option<&'static str> {
+            icu_properties::PropertyNamesShortBorrowed::<props::GeneralCategory>::new()
+                .get(self.into())
+        }
+        /// Convert to an integer value usable with ICU4C and CodePointMapData
+        pub fn to_integer_value(self) -> u8 {
             self as u8
         }
 
@@ -1713,8 +2010,13 @@ pub mod ffi {
         }
 
         /// Convert from an integer using the ICU4C integer mappings for `General_Category`
-        #[diplomat::rust_link(icu::properties::props::GeneralCategoryOutOfBoundsError, Struct)]
-        pub fn from_integer(other: u8) -> Option<Self> {
+        #[diplomat::rust_link(
+            icu::properties::props::GeneralCategoryOutOfBoundsError,
+            Struct,
+            hidden
+        )]
+        /// Convert from an integer value from ICU4C or CodePointMapData
+        pub fn from_integer_value(other: u8) -> Option<Self> {
             Some(match other {
                 0 => Self::Unassigned,
                 1 => Self::UppercaseLetter,
@@ -1857,6 +2159,71 @@ pub mod ffi {
             props::GeneralCategoryGroup::Symbol.into()
         }
     }
+
+    #[diplomat::rust_link(icu::properties::props::VerticalOrientation, Struct)]
+    #[diplomat::enum_convert(icu_properties::props::VerticalOrientation, needs_wildcard)]
+    pub enum VerticalOrientation {
+        #[diplomat::rust_link(icu::properties::props::VerticalOrientaiton::Rotated, EnumVariant)]
+        Rotated = 0,
+        #[diplomat::rust_link(
+            icu::properties::props::VerticalOrientaiton::TransformedRotated,
+            EnumVariant
+        )]
+        TransformedRotated = 1,
+        #[diplomat::rust_link(
+            icu::properties::props::VerticalOrientaiton::TransformedUpright,
+            EnumVariant
+        )]
+        TransformedUpright = 2,
+        #[diplomat::rust_link(icu::properties::props::VerticalOrientaiton::Upright, EnumVariant)]
+        Upright = 3,
+    }
+
+    impl VerticalOrientation {
+        #[diplomat::rust_link(icu::properties::props::EnumeratedProperty::for_char, FnInTrait)]
+        #[cfg(feature = "compiled_data")]
+        pub fn for_char(ch: DiplomatChar) -> Self {
+            icu_properties::CodePointMapData::<props::VerticalOrientation>::new()
+                .get32(ch)
+                .into()
+        }
+        #[diplomat::rust_link(icu::properties::PropertyNamesLongBorrowed::get, FnInStruct)]
+        #[cfg(feature = "compiled_data")]
+        /// Get the "long" name of this property value (returns empty if property value is unknown)
+        pub fn long_name(self) -> Option<&'static str> {
+            icu_properties::PropertyNamesLongBorrowed::<props::VerticalOrientation>::new()
+                .get(self.into())
+        }
+        #[diplomat::rust_link(icu::properties::PropertyNamesShortBorrowed::get, FnInStruct)]
+        #[cfg(feature = "compiled_data")]
+        /// Get the "short" name of this property value (returns empty if property value is unknown)
+        pub fn short_name(self) -> Option<&'static str> {
+            icu_properties::PropertyNamesShortBorrowed::<props::VerticalOrientation>::new()
+                .get(self.into())
+        }
+        #[diplomat::rust_link(
+            icu::properties::props::VerticalOrientation::to_icu4c_value,
+            FnInStruct
+        )]
+        /// Convert to an integer value usable with ICU4C and CodePointMapData
+        pub fn to_integer_value(self) -> u8 {
+            self as u8
+        }
+        #[diplomat::rust_link(
+            icu::properties::props::VerticalOrientation::from_icu4c_value,
+            FnInStruct
+        )]
+        /// Convert from an integer value from ICU4C or CodePointMapData
+        pub fn from_integer_value(other: u8) -> Option<Self> {
+            Some(match other {
+                0 => Self::Rotated,
+                1 => Self::TransformedRotated,
+                2 => Self::TransformedUpright,
+                3 => Self::Upright,
+                _ => return None,
+            })
+        }
+    }
 }
 
 impl From<icu_properties::props::GeneralCategoryGroup> for ffi::GeneralCategoryGroup {
@@ -1873,77 +2240,77 @@ mod test {
     #[test]
     fn test_all_cases_covered() {
         for prop in props::BidiClass::ALL_VALUES {
-            let ffi_prop = BidiClass::from_integer(prop.to_icu4c_value())
+            let ffi_prop = BidiClass::from_integer_value(prop.to_icu4c_value())
                 .expect("Found BidiClass value not supported in ffi");
-            assert_eq!(prop.to_icu4c_value(), ffi_prop.to_integer());
+            assert_eq!(prop.to_icu4c_value(), ffi_prop.to_integer_value());
             assert_eq!(*prop, props::BidiClass::from(ffi_prop));
         }
 
         for prop in props::Script::ALL_VALUES {
-            let ffi_prop = Script::from_integer(prop.to_icu4c_value())
+            let ffi_prop = Script::from_integer_value(prop.to_icu4c_value())
                 .expect("Found Script value not supported in ffi");
-            assert_eq!(prop.to_icu4c_value(), ffi_prop.to_integer());
+            assert_eq!(prop.to_icu4c_value(), ffi_prop.to_integer_value());
             assert_eq!(*prop, props::Script::from(ffi_prop));
         }
 
         for prop in props::HangulSyllableType::ALL_VALUES {
-            let ffi_prop = HangulSyllableType::from_integer(prop.to_icu4c_value())
+            let ffi_prop = HangulSyllableType::from_integer_value(prop.to_icu4c_value())
                 .expect("Found HangulSyllableType value not supported in ffi");
-            assert_eq!(prop.to_icu4c_value(), ffi_prop.to_integer());
+            assert_eq!(prop.to_icu4c_value(), ffi_prop.to_integer_value());
             assert_eq!(*prop, props::HangulSyllableType::from(ffi_prop));
         }
         for prop in props::EastAsianWidth::ALL_VALUES {
-            let ffi_prop = EastAsianWidth::from_integer(prop.to_icu4c_value())
+            let ffi_prop = EastAsianWidth::from_integer_value(prop.to_icu4c_value())
                 .expect("Found EastAsianWidth value not supported in ffi");
-            assert_eq!(prop.to_icu4c_value(), ffi_prop.to_integer());
+            assert_eq!(prop.to_icu4c_value(), ffi_prop.to_integer_value());
             assert_eq!(*prop, props::EastAsianWidth::from(ffi_prop));
         }
         for prop in props::LineBreak::ALL_VALUES {
-            let ffi_prop = LineBreak::from_integer(prop.to_icu4c_value())
+            let ffi_prop = LineBreak::from_integer_value(prop.to_icu4c_value())
                 .expect("Found LineBreak value not supported in ffi");
-            assert_eq!(prop.to_icu4c_value(), ffi_prop.to_integer());
+            assert_eq!(prop.to_icu4c_value(), ffi_prop.to_integer_value());
             assert_eq!(*prop, props::LineBreak::from(ffi_prop));
         }
         for prop in props::GraphemeClusterBreak::ALL_VALUES {
-            let ffi_prop = GraphemeClusterBreak::from_integer(prop.to_icu4c_value())
+            let ffi_prop = GraphemeClusterBreak::from_integer_value(prop.to_icu4c_value())
                 .expect("Found GraphemeClusterBreak value not supported in ffi");
-            assert_eq!(prop.to_icu4c_value(), ffi_prop.to_integer());
+            assert_eq!(prop.to_icu4c_value(), ffi_prop.to_integer_value());
             assert_eq!(*prop, props::GraphemeClusterBreak::from(ffi_prop));
         }
         for prop in props::WordBreak::ALL_VALUES {
-            let ffi_prop = WordBreak::from_integer(prop.to_icu4c_value())
+            let ffi_prop = WordBreak::from_integer_value(prop.to_icu4c_value())
                 .expect("Found WordBreak value not supported in ffi");
-            assert_eq!(prop.to_icu4c_value(), ffi_prop.to_integer());
+            assert_eq!(prop.to_icu4c_value(), ffi_prop.to_integer_value());
             assert_eq!(*prop, props::WordBreak::from(ffi_prop));
         }
         for prop in props::SentenceBreak::ALL_VALUES {
-            let ffi_prop = SentenceBreak::from_integer(prop.to_icu4c_value())
+            let ffi_prop = SentenceBreak::from_integer_value(prop.to_icu4c_value())
                 .expect("Found SentenceBreak value not supported in ffi");
-            assert_eq!(prop.to_icu4c_value(), ffi_prop.to_integer());
+            assert_eq!(prop.to_icu4c_value(), ffi_prop.to_integer_value());
             assert_eq!(*prop, props::SentenceBreak::from(ffi_prop));
         }
         for prop in props::CanonicalCombiningClass::ALL_VALUES {
-            let ffi_prop = CanonicalCombiningClass::from_integer(prop.to_icu4c_value())
+            let ffi_prop = CanonicalCombiningClass::from_integer_value(prop.to_icu4c_value())
                 .expect("Found CanonicalCombiningClass value not supported in ffi");
-            assert_eq!(prop.to_icu4c_value(), ffi_prop.to_integer());
+            assert_eq!(prop.to_icu4c_value(), ffi_prop.to_integer_value());
             assert_eq!(*prop, props::CanonicalCombiningClass::from(ffi_prop));
         }
         for prop in props::IndicSyllabicCategory::ALL_VALUES {
-            let ffi_prop = IndicSyllabicCategory::from_integer(prop.to_icu4c_value())
+            let ffi_prop = IndicSyllabicCategory::from_integer_value(prop.to_icu4c_value())
                 .expect("Found IndicSyllabicCategory value not supported in ffi");
-            assert_eq!(prop.to_icu4c_value(), ffi_prop.to_integer());
+            assert_eq!(prop.to_icu4c_value(), ffi_prop.to_integer_value());
             assert_eq!(*prop, props::IndicSyllabicCategory::from(ffi_prop));
         }
         for prop in props::JoiningType::ALL_VALUES {
-            let ffi_prop = JoiningType::from_integer(prop.to_icu4c_value())
+            let ffi_prop = JoiningType::from_integer_value(prop.to_icu4c_value())
                 .expect("Found JoiningType value not supported in ffi");
-            assert_eq!(prop.to_icu4c_value(), ffi_prop.to_integer());
+            assert_eq!(prop.to_icu4c_value(), ffi_prop.to_integer_value());
             assert_eq!(*prop, props::JoiningType::from(ffi_prop));
         }
         for prop in props::GeneralCategory::ALL_VALUES {
-            let ffi_prop = GeneralCategory::from_integer(*prop as u8)
+            let ffi_prop = GeneralCategory::from_integer_value(*prop as u8)
                 .expect("Found GeneralCategory value not supported in ffi");
-            assert_eq!(*prop as u8, ffi_prop.to_integer());
+            assert_eq!(*prop as u8, ffi_prop.to_integer_value());
             assert_eq!(*prop, props::GeneralCategory::from(ffi_prop));
         }
     }

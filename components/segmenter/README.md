@@ -67,9 +67,10 @@ See [`GraphemeClusterSegmenter`] for more examples.
 Find all word boundaries:
 
 ```rust
-use icu::segmenter::{WordSegmenter, WordBreakInvariantOptions};
+use icu::segmenter::{options::WordBreakInvariantOptions, WordSegmenter};
 
-let segmenter = WordSegmenter::new_auto(WordBreakInvariantOptions::default());
+let segmenter =
+    WordSegmenter::new_auto(WordBreakInvariantOptions::default());
 
 let breakpoints: Vec<usize> = segmenter
     .segment_str("Hello World. Xin chào thế giới!")
@@ -87,9 +88,12 @@ See [`WordSegmenter`] for more examples.
 Segment the string into sentences:
 
 ```rust
-use icu::segmenter::{SentenceSegmenter, SentenceBreakInvariantOptions};
+use icu::segmenter::{
+    options::SentenceBreakInvariantOptions, SentenceSegmenter,
+};
 
-let segmenter = SentenceSegmenter::new(SentenceBreakInvariantOptions::default());
+let segmenter =
+    SentenceSegmenter::new(SentenceBreakInvariantOptions::default());
 
 let breakpoints: Vec<usize> = segmenter
     .segment_str("Hello World. Xin chào thế giới!")

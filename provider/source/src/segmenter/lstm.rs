@@ -7,8 +7,8 @@
 use crate::{IterableDataProviderCached, SourceDataProvider};
 use icu::locale::langid;
 use icu::segmenter::provider::{
-    LstmData, LstmDataFloat32, LstmForWordLineAutoV1, LstmMatrix1, LstmMatrix2, LstmMatrix3,
-    ModelType,
+    LstmData, LstmDataFloat32, LstmMatrix1, LstmMatrix2, LstmMatrix3, ModelType,
+    SegmenterLstmAutoV1,
 };
 use icu_provider::prelude::*;
 use ndarray::{Array, Array1, Array2, ArrayBase, Dim, Dimension, OwnedRepr};
@@ -92,13 +92,13 @@ impl RawLstmData {
             return Err(DIMENSION_MISMATCH_ERROR);
         }
         // Unwraps okay: dimensions checked above
-        let mut fw_w = fw_w.into_shape((embedd_dim, 4, hunits)).unwrap();
-        let mut fw_u = fw_u.into_shape((hunits, 4, hunits)).unwrap();
-        let fw_b = fw_b.into_shape((4, hunits)).unwrap();
-        let mut bw_w = bw_w.into_shape((embedd_dim, 4, hunits)).unwrap();
-        let mut bw_u = bw_u.into_shape((hunits, 4, hunits)).unwrap();
-        let bw_b = bw_b.into_shape((4, hunits)).unwrap();
-        let mut time_w = time_w.into_shape((2, hunits, 4)).unwrap();
+        let mut fw_w = fw_w.into_shape_with_order((embedd_dim, 4, hunits)).unwrap();
+        let mut fw_u = fw_u.into_shape_with_order((hunits, 4, hunits)).unwrap();
+        let fw_b = fw_b.into_shape_with_order((4, hunits)).unwrap();
+        let mut bw_w = bw_w.into_shape_with_order((embedd_dim, 4, hunits)).unwrap();
+        let mut bw_u = bw_u.into_shape_with_order((hunits, 4, hunits)).unwrap();
+        let bw_b = bw_b.into_shape_with_order((4, hunits)).unwrap();
+        let mut time_w = time_w.into_shape_with_order((2, hunits, 4)).unwrap();
         fw_w.swap_axes(0, 2);
         fw_w.swap_axes(0, 1);
         fw_u.swap_axes(0, 2);
@@ -185,9 +185,9 @@ convert!(ndarray_to_lstm_matrix1, LstmMatrix1, 1);
 convert!(ndarray_to_lstm_matrix2, LstmMatrix2, 2);
 convert!(ndarray_to_lstm_matrix3, LstmMatrix3, 3);
 
-impl DataProvider<LstmForWordLineAutoV1> for SourceDataProvider {
-    fn load(&self, req: DataRequest) -> Result<DataResponse<LstmForWordLineAutoV1>, DataError> {
-        self.check_req::<LstmForWordLineAutoV1>(req)?;
+impl DataProvider<SegmenterLstmAutoV1> for SourceDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<SegmenterLstmAutoV1>, DataError> {
+        self.check_req::<SegmenterLstmAutoV1>(req)?;
 
         let lstm_data = self
             .segmenter_lstm()?
@@ -206,7 +206,7 @@ impl DataProvider<LstmForWordLineAutoV1> for SourceDataProvider {
     }
 }
 
-impl IterableDataProviderCached<LstmForWordLineAutoV1> for SourceDataProvider {
+impl IterableDataProviderCached<SegmenterLstmAutoV1> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         const SUPPORTED: [&DataMarkerAttributes; 4] = [
             DataMarkerAttributes::from_str_or_panic("Burmese_codepoints_exclusive_model4_heavy"),
@@ -235,9 +235,9 @@ mod tests {
             SourceDataProvider: DataProvider<M>,
         {
             fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
-                if LstmForWordLineAutoV1::INFO == M::INFO {
+                if SegmenterLstmAutoV1::INFO == M::INFO {
                     return Ok(DataResponse {
-                        payload: DataPayload::<LstmForWordLineAutoV1>::from_owned(
+                        payload: DataPayload::<SegmenterLstmAutoV1>::from_owned(
                             self.0
                                 .segmenter_lstm()
                                 .unwrap()
@@ -260,6 +260,7 @@ mod tests {
 
         let segmenter =
             LineSegmenter::try_new_lstm_unstable(&provider, Default::default()).unwrap();
+        let segmenter = segmenter.as_borrowed();
 
         const TEST_STR: &str = "ภาษาไทยภาษาไทย";
         let utf16: Vec<u16> = TEST_STR.encode_utf16().collect();

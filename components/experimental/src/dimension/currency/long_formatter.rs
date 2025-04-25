@@ -4,7 +4,7 @@
 
 //! Experimental.
 
-use fixed_decimal::SignedFixedDecimal;
+use fixed_decimal::Decimal;
 use icu_decimal::{options::DecimalFormatterOptions, DecimalFormatter};
 use icu_plurals::PluralRules;
 use icu_provider::prelude::*;
@@ -45,7 +45,7 @@ impl LongCurrencyFormatter {
         (prefs: CurrencyFormatterPreferences, currency_code: &CurrencyCode) -> error: DataError,
         functions: [
             try_new: skip,
-                        try_new_with_buffer_provider,
+            try_new_with_buffer_provider,
             try_new_unstable,
             Self
         ]
@@ -104,9 +104,9 @@ impl LongCurrencyFormatter {
         D: ?Sized
             + DataProvider<super::super::provider::extended_currency::CurrencyExtendedDataV1>
             + DataProvider<super::super::provider::currency_patterns::CurrencyPatternsDataV1>
-            + DataProvider<icu_decimal::provider::DecimalSymbolsV2>
+            + DataProvider<icu_decimal::provider::DecimalSymbolsV1>
             + DataProvider<icu_decimal::provider::DecimalDigitsV1>
-            + DataProvider<icu_plurals::provider::CardinalV1>,
+            + DataProvider<icu_plurals::provider::PluralsCardinalV1>,
     {
         let locale = CurrencyPatternsDataV1::make_locale(prefs.locale_preferences);
         let decimal_formatter = DecimalFormatter::try_new_unstable(
@@ -143,7 +143,7 @@ impl LongCurrencyFormatter {
         })
     }
 
-    /// Formats in the long format a [`SignedFixedDecimal`] value for the given currency code.
+    /// Formats in the long format a [`Decimal`] value for the given currency code.
     ///
     /// # Examples
     /// ```
@@ -164,7 +164,7 @@ impl LongCurrencyFormatter {
     /// ```
     pub fn format_fixed_decimal<'l>(
         &'l self,
-        value: &'l SignedFixedDecimal,
+        value: &'l Decimal,
         currency_code: CurrencyCode,
     ) -> LongFormattedCurrency<'l> {
         LongFormattedCurrency {

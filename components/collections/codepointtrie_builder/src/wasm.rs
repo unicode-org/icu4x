@@ -7,7 +7,7 @@ use crate::CodePointTrieBuilderData;
 use icu_collections::codepointtrie::CodePointTrie;
 use icu_collections::codepointtrie::CodePointTrieHeader;
 use icu_collections::codepointtrie::TrieValue;
-use wasmi::{Config, Engine, Extern, Func, Instance, Linker, Module, Store, Value};
+use wasmi::{Config, Engine, Extern, Func, Instance, Linker, Module, Store, Val};
 use zerovec::ZeroSlice;
 use zerovec::ZeroVec;
 
@@ -19,14 +19,14 @@ pub(crate) struct WasmWrap {
 }
 
 #[derive(Debug)]
-pub(crate) struct Wasmi32Ptr(Value);
+pub(crate) struct Wasmi32Ptr(Val);
 
 impl Wasmi32Ptr {
     pub(crate) fn as_usize(&self) -> usize {
-        let Value::I32(value) = self.0 else {
+        let Val::I32(val) = self.0 else {
             unreachable!()
         };
-        value.try_into().unwrap()
+        val.try_into().unwrap()
     }
 }
 
@@ -36,7 +36,7 @@ impl WasmWrap {
         let config = Config::default();
         let engine = Engine::new(&config);
         let wasm_bytes = wat::parse_str(UCPTRIE_WRAP_WAT).unwrap();
-        let module = Module::new(&engine, &mut &wasm_bytes[..]).unwrap();
+        let module = Module::new(&engine, &wasm_bytes[..]).unwrap();
         let linker = <Linker<()>>::new(&engine);
         let mut store = Store::new(&engine, ());
 
@@ -65,15 +65,15 @@ impl WasmWrap {
             .unwrap()
     }
 
-    fn call_return_void(&mut self, name: &str, args: &[Value]) {
+    fn call_return_void(&mut self, name: &str, args: &[Val]) {
         let mut result = [];
         self.get_export(name)
             .call(&mut self.store, args, &mut result)
             .unwrap();
     }
 
-    fn call_return_value(&mut self, name: &str, args: &[Value]) -> Value {
-        let mut result = [Value::I32(0)];
+    fn call_return_value(&mut self, name: &str, args: &[Val]) -> Val {
+        let mut result = [Val::I32(0)];
         self.get_export(name)
             .call(&mut self.store, args, &mut result)
             .unwrap();
@@ -81,10 +81,10 @@ impl WasmWrap {
         result
     }
 
-    fn call_return_i32(&mut self, name: &str, args: &[Value]) -> i32 {
+    fn call_return_i32(&mut self, name: &str, args: &[Val]) -> i32 {
         let result = self.call_return_value(name, args);
-        let Value::I32(result) = result else {
-            panic!("Could not unpack Value into i32: {result:?}");
+        let Val::I32(result) = result else {
+            panic!("Could not unpack Val into i32: {result:?}");
         };
         result
     }
@@ -108,8 +108,8 @@ impl WasmWrap {
         let umutablecptrie_ptr = self.call_return_value(
             "umutablecptrie_open",
             &[
-                Value::I32(default_value),
-                Value::I32(error_value),
+                Val::I32(default_value),
+                Val::I32(error_value),
                 error_code_ptr.0.clone(),
             ],
         );
@@ -120,15 +120,15 @@ impl WasmWrap {
         &mut self,
         trie_ptr: &Wasmi32Ptr,
         cp: u32,
-        value: u32,
+        Val: u32,
         error_code_ptr: &Wasmi32Ptr,
     ) {
         self.call_return_void(
             "umutablecptrie_set",
             &[
                 trie_ptr.0.clone(),
-                Value::I32(cp as i32),
-                Value::I32(value as i32),
+                Val::I32(cp as i32),
+                Val::I32(Val as i32),
                 error_code_ptr.0.clone(),
             ],
         );
@@ -145,8 +145,8 @@ impl WasmWrap {
             "umutablecptrie_buildImmutable",
             &[
                 trie_ptr.0.clone(),
-                Value::I32(trie_type as i32),
-                Value::I32(width as i32),
+                Val::I32(trie_type as i32),
+                Val::I32(width as i32),
                 error_code_ptr.0.clone(),
             ],
         );

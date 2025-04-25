@@ -44,6 +44,43 @@ To build all code paths, improve build times in VSCode, and prevent locking the 
 
 Note: the path in `ICU4X_DATA_DIR` is relative to `provider/data/*/src/lib.rs` and it causes VSCode to build ICU4X with only the `und` locale. This reduces build times but also makes some tests fail; to run them normally, run `cargo test --all-features` on the command line.
 
+### Building and Rebuilding Repo Data
+
+In the ICU4X repository, there are a few types of locale data:
+
+1. Test data: used for internal ICU4X development purposes only
+    - Downloaded data sources: `provider/source/tests/data`
+        - Regen: `cargo make download-repo-sources`
+    - Generated JSON data: `provider/source/data/debug`
+        - Regen: `cargo make testdata`
+2. Hard-coded source data: source of truth is this repo; used by icu4x-datagen
+    - Segmenter TOML files: `provider/source/data/segmenter`
+3. Runtime default compiled data: the `icu_*_data` crates
+    - Crate roots: `provider/data`
+        - Regen: `cargo make bakeddata`
+        - Regen a specific component: `cargo make bakeddata <component>`
+
+During development, it is often convenient to generate only a single data marker as JSON. To do this (fully offline), you can run, for example:
+
+```bash
+$ cargo run -p icu4x-datagen \
+    --no-default-features --features provider,fs_exporter \
+    -- --format fs --pretty -o _debug/data \
+	--cldr-root provider/source/tests/data/cldr \
+	--icuexport-root provider/source/tests/data/icuexport \
+	--segmenter-lstm-root provider/source/tests/data/lstm \
+	--tzdb-root provider/source/tests/data/tzdb \
+	--deduplication none \
+	--locales ru th \
+	--markers DatetimePatternsDateGregorianV1 DatetimePatternsDateBuddhistV1
+```
+
+Tips:
+
+- Set your desired locales and data markers on the bottom two lines.
+- To overwrite the directly, add: `-W`
+- To print verbose logs, add: `-v`
+
 ## Contributing a Pull Request
 
 The first step is to fork the repository to your namespace and create a branch off of the `main` branch to work with.
@@ -79,10 +116,12 @@ There are various files that auto-generated across the ICU4X repository.  Here a
 need to run in order to recreate them.  These files may be run in more comprehensive tests such as those included in `cargo make ci-job-test` or `cargo make ci-all`.
 
 - `cargo make testdata` - regenerates all test data in the `provider/source/debug` directory.
-	- `cargo make bakeddata` - regenerates baked data in the `provider/data` directory.
-		- `cargo make bakeddata foo` can be used to generate data in `provider/data/foo` only.
+    - Tip: See [Building and Rebuilding Repo Data](#building-and-rebuilding-repo-data) for additional shortcuts.
+- `cargo make bakeddata` - regenerates baked data in the `provider/data` directory.
+    - `cargo make bakeddata foo` can be used to generate data in `provider/data/foo` only.
 - `cargo make generate-readmes` - generates README files according to Rust docs. Output files must be committed in git for check to pass.
 - `cargo make diplomat-gen` - recreates the Diplomat generated files in the `ffi/capi` directory.
+- `cargo make codegen` - recreates certain Askama generated files in the `ffi/capi/src` directory based on templates in `tools/make/codegen/templates`.
 
 ### Testing
 
@@ -112,7 +151,7 @@ Our wider testsuite is organized as `ci-job-foo` make tasks corresponding to eac
 <br/>
  
  - `ci-job-test-c`: Runs all C/C++ FFI tests; mostly important if you're changing the FFI interface.
-     + Requires `clang-18` and `lld-18` with the `gold` plugin (APT packages `llvm-18` and `lld-18`).
+     + Requires `clang-19` and `lld-19` with the `gold` plugin (APT packages `llvm-19` and `lld-19`).
  - `ci-job-test-js`: Runs all JS/WASM/Node FFI tests; mostly important if you're changing the FFI interface.
      + Requires Node.js version 16.18.0. This may not the one offered by the package manager; get it from the NodeJS website or `nvm`.
  - `ci-job-nostd`: Builds ICU4X for a `#[no_std]` target to verify that it's compatible.

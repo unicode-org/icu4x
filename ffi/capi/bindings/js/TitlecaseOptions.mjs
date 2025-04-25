@@ -5,8 +5,9 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
-/** See the [Rust documentation for `TitlecaseOptions`](https://docs.rs/icu/latest/icu/casemap/titlecase/struct.TitlecaseOptions.html) for more information.
-*/
+/** 
+ * See the [Rust documentation for `TitlecaseOptions`](https://docs.rs/icu/latest/icu/casemap/options/struct.TitlecaseOptions.html) for more information.
+ */
 
 
 export class TitlecaseOptions {
@@ -35,7 +36,7 @@ export class TitlecaseOptions {
     static fromFields(structObj) {
         return new TitlecaseOptions(diplomatRuntime.exposeConstructor, structObj);
     }
-    
+
     #internalConstructor(structObj) {
         if (typeof structObj !== "object") {
             throw new Error("TitlecaseOptions's constructor takes an object of TitlecaseOptions's fields.");
@@ -63,7 +64,7 @@ export class TitlecaseOptions {
         functionCleanupArena,
         appendArrayMap
     ) {
-        return [...diplomatRuntime.optionToArgsForCalling(this.#leadingAdjustment, 4, 4, false, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]), ...diplomatRuntime.optionToArgsForCalling(this.#trailingCase, 4, 4, false, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)])]
+        return [...diplomatRuntime.optionToArgsForCalling(this.#leadingAdjustment, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]), ...diplomatRuntime.optionToArgsForCalling(this.#trailingCase, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)])]
     }
 
     static _fromSuppliedValue(internalConstructor, obj) {
@@ -106,6 +107,9 @@ export class TitlecaseOptions {
         return new TitlecaseOptions(diplomatRuntime.exposeConstructor, structObj);
     }
 
+    /** 
+     * See the [Rust documentation for `default`](https://docs.rs/icu/latest/icu/casemap/options/struct.TitlecaseOptions.html#method.default) for more information.
+     */
     #defaultConstructor() {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 16, 4, false);
         

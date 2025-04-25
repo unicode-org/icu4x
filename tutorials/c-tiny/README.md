@@ -30,9 +30,9 @@ The maximally low-size build documented here involves using LTO with `-Clinker-p
 
 ```bash
 # Pick a toolchain where Rust and Clang use the same underlying LLVM version
-CLANG := clang-17
-LLD := lld-17
-LLVM_COMPATIBLE_NIGHTLY = "nightly-2024-01-01"
+CLANG := clang-19
+LLD := lld-19
+LLVM_COMPATIBLE_NIGHTLY = "nightly-2025-02-17"
 
 # Rust build
 # ============

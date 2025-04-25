@@ -53,10 +53,7 @@ use writeable::{adapters::TryWriteableInfallibleAsWriteable, PartsWrite, TryWrit
 /// )
 /// .unwrap();
 ///
-/// assert_writeable_eq!(
-///     pattern.interpolate(["Alice"]),
-///     "Hello, Alice!"
-/// );
+/// assert_writeable_eq!(pattern.interpolate(["Alice"]), "Hello, Alice!");
 /// ```
 ///
 /// [`SinglePlaceholder`]: crate::SinglePlaceholder

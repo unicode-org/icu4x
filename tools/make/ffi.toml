@@ -56,7 +56,9 @@ category = "ICU4X Development"
 cwd = "ffi/dart"
 script_runner = "@duckscript"
 script = '''
-exec --fail-on-error dart --enable-experiment=native-assets pub get
+exec --fail-on-error dart format --set-exit-if-changed .
+exec --fail-on-error dart pub get
+exec --fail-on-error dart analyze
 exec --fail-on-error dart --enable-experiment=native-assets test
 '''
 
@@ -84,7 +86,7 @@ args = ["rustc", "-p", "noalloctest",
         "--target", "x86_64-unknown-linux-gnu",
         "--",
         "-Clink-arg=-nostartfiles", "-Cpanic=abort",
-        "--cfg", "icu4x_nostdtest"]
+        "--cfg", "icu4x_noalloctest"]
 
 # Diplomat gen
 
@@ -136,7 +138,7 @@ args = ["run", "--manifest-path", "tools/make/diplomat-gen/Cargo.toml", "js"]
 description = "Generate Demo HTML for the FFI with Diplomat"
 category = "ICU4X Development"
 command = "cargo"
-args = ["run", "--manifest-path", "tools/make/diplomat-gen/Cargo.toml", "demo_gen", "ffi/capi/diplomat-demo-config.toml"]
+args = ["run", "--manifest-path", "tools/make/diplomat-gen/Cargo.toml", "demo_gen"]
 
 [tasks.diplomat-gen-dart]
 description = "Generate Dart bindings for the FFI with Diplomat"

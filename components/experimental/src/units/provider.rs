@@ -11,7 +11,6 @@
 
 use icu_provider::prelude::*;
 use num_bigint::BigInt;
-use zerotrie::ZeroTrieSimpleAscii;
 use zerovec::{ule::AsULE, VarZeroVec, ZeroVec};
 
 use crate::measure::provider::single_unit::SingleUnit;
@@ -27,6 +26,8 @@ pub use crate::provider::Baked;
 
 use super::ratio::IcuRatio;
 
+icu_provider::data_marker!(UnitsInfoV1, UnitsInfo<'static>, is_singleton = true);
+
 /// This type encapsulates all the constant data required for unit conversions.
 ///
 /// <div class="stab unstable">
@@ -34,22 +35,18 @@ use super::ratio::IcuRatio;
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[icu_provider::data_struct(marker(UnitsInfoV1, "units/info@1", singleton))]
-#[derive(Clone, PartialEq, Debug)]
+#[derive(Clone, PartialEq, Debug, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_experimental::units::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct UnitsInfo<'data> {
-    // TODO: remove this field once we are using this map from `measure/provider::UnitsTrie`.
-    /// Maps from unit name (e.g. foot) to it is conversion information.
-    #[cfg_attr(feature = "serde", serde(borrow))]
-    pub units_conversion_trie: ZeroTrieSimpleAscii<ZeroVec<'data, u8>>,
-
     /// Contains the conversion information, such as the conversion rate and the base unit.
     /// For example, the conversion information for the unit `foot` is `1 foot = 0.3048 meter`.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub convert_infos: VarZeroVec<'data, ConversionInfoULE>,
+    pub conversion_info: VarZeroVec<'data, ConversionInfoULE>,
 }
+
+icu_provider::data_struct!(UnitsInfo<'_>, #[cfg(feature = "datagen")]);
 
 /// Represents the conversion information for a unit.
 /// Which includes the base unit (the unit which the unit is converted to), the conversion factor, and the offset.

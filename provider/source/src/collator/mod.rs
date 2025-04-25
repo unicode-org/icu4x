@@ -46,7 +46,6 @@ fn id_to_file_name(id: DataIdentifierBorrowed) -> String {
         "trad" => "traditional",
         "phonebk" => "phonebook",
         "dict" => "dictionary",
-        "gb2312" => "gb2312han",
         extension => extension,
     });
     s
@@ -88,7 +87,6 @@ fn file_name_to_id(file_name: &str) -> Vec<DataIdentifierCow<'static>> {
         "traditional" => DataMarkerAttributes::from_str_or_panic("trad").to_owned(),
         "phonebook" => DataMarkerAttributes::from_str_or_panic("phonebk").to_owned(),
         "dictionary" => DataMarkerAttributes::from_str_or_panic("dict").to_owned(),
-        "gb2312han" => DataMarkerAttributes::from_str_or_panic("gb2312").to_owned(),
         v => match DataMarkerAttributes::try_from_str(v) {
             Ok(s) => s.to_owned(),
             _ => return r,
@@ -107,7 +105,7 @@ impl SourceDataProvider {
         self.icuexport()?
             .read_and_parse_toml(&format!(
                 "collation/{}/{}{}.toml",
-                self.collation_han_database(),
+                self.collation_root_han(),
                 id_to_file_name(id),
                 suffix
             ))
@@ -122,7 +120,7 @@ impl SourceDataProvider {
     fn list_ids(&self, suffix: &str) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         Ok(self
             .icuexport()?
-            .list(&format!("collation/{}", self.collation_han_database()))?
+            .list(&format!("collation/{}", self.collation_root_han()))?
             .filter_map(|mut file_name| {
                 file_name.truncate(file_name.len() - ".toml".len());
                 file_name.ends_with(suffix).then(|| {
@@ -277,62 +275,5 @@ impl TryInto<CollationSpecialPrimaries<'static>> for &collator_serde::CollationS
             last_primaries: ZeroVec::alloc_from_slice(&self.last_primaries),
             numeric_primary: self.numeric_primary,
         })
-    }
-}
-
-#[test]
-
-fn test_zh_non_baked() {
-    use core::cmp::Ordering;
-    use icu::collator::Collator;
-    use icu::locale::fallback::LocaleFallbacker;
-    use icu::locale::locale;
-    use icu_provider_adapters::fallback::LocaleFallbackProvider;
-
-    let provider = LocaleFallbackProvider::new(
-        SourceDataProvider::new_testing(),
-        LocaleFallbacker::new_without_data(),
-    );
-
-    // Note: ㄅ is Bopomofo.
-    {
-        let owned = Collator::try_new_unstable(
-            &provider,
-            locale!("zh-u-co-gb2312").into(),
-            Default::default(),
-        )
-        .unwrap();
-        let collator = owned.as_borrowed();
-        assert_eq!(collator.compare("艾", "a"), Ordering::Greater);
-        assert_eq!(collator.compare("佰", "a"), Ordering::Greater);
-        assert_eq!(collator.compare("ㄅ", "a"), Ordering::Greater);
-        assert_eq!(collator.compare("ㄅ", "ж"), Ordering::Greater);
-
-        // TODO(#5136): broken, these should be equal
-        assert_ne!(collator.compare("艾", "佰"), Ordering::Less);
-        // In GB2312 proper, Bopomofo comes before Han, but the
-        // collation leaves Bopomofo unreordered, so it comes after.
-        assert_ne!(collator.compare("艾", "ㄅ"), Ordering::Less);
-        assert_ne!(collator.compare("佰", "ㄅ"), Ordering::Less);
-        assert_ne!(collator.compare("不", "把"), Ordering::Greater);
-    }
-    {
-        let owned = Collator::try_new_unstable(
-            &provider,
-            locale!("zh-u-co-big5han").into(),
-            Default::default(),
-        )
-        .unwrap();
-        let collator = owned.as_borrowed();
-        assert_eq!(collator.compare("艾", "a"), Ordering::Greater);
-        assert_eq!(collator.compare("佰", "a"), Ordering::Greater);
-        assert_eq!(collator.compare("ㄅ", "a"), Ordering::Greater);
-        assert_eq!(collator.compare("不", "把"), Ordering::Less);
-
-        // TODO(#5136): broken, these should be equal
-        assert_ne!(collator.compare("ㄅ", "ж"), Ordering::Less);
-        assert_ne!(collator.compare("艾", "佰"), Ordering::Less);
-        assert_ne!(collator.compare("艾", "ㄅ"), Ordering::Less);
-        assert_ne!(collator.compare("佰", "ㄅ"), Ordering::Less);
     }
 }

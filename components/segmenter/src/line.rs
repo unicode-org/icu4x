@@ -5,11 +5,11 @@
 use crate::complex::*;
 use crate::indices::*;
 use crate::provider::*;
+use crate::rule_segmenter::*;
 use alloc::string::String;
 use alloc::vec;
 use alloc::vec::Vec;
 use core::char;
-use core::str::CharIndices;
 use icu_locale_core::subtags::language;
 use icu_locale_core::LanguageIdentifier;
 use icu_provider::prelude::*;
@@ -208,7 +208,7 @@ pub struct LineBreakOptions<'a> {
     pub content_locale: Option<&'a LanguageIdentifier>,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone, Copy)]
 struct ResolvedLineBreakOptions {
     strictness: LineBreakStrictness,
     word_option: LineBreakWordOption,
@@ -230,29 +230,11 @@ impl From<LineBreakOptions<'_>> for ResolvedLineBreakOptions {
     }
 }
 
-/// Line break iterator for an `str` (a UTF-8 string).
-///
-/// For examples of use, see [`LineSegmenter`].
-pub type LineBreakIteratorUtf8<'l, 's> = LineBreakIterator<'l, 's, LineBreakTypeUtf8>;
-
-/// Line break iterator for a potentially invalid UTF-8 string.
-///
-/// For examples of use, see [`LineSegmenter`].
-pub type LineBreakIteratorPotentiallyIllFormedUtf8<'l, 's> =
-    LineBreakIterator<'l, 's, LineBreakTypePotentiallyIllFormedUtf8>;
-
-/// Line break iterator for a Latin-1 (8-bit) string.
-///
-/// For examples of use, see [`LineSegmenter`].
-pub type LineBreakIteratorLatin1<'l, 's> = LineBreakIterator<'l, 's, LineBreakTypeLatin1>;
-
-/// Line break iterator for a UTF-16 string.
-///
-/// For examples of use, see [`LineSegmenter`].
-pub type LineBreakIteratorUtf16<'l, 's> = LineBreakIterator<'l, 's, LineBreakTypeUtf16>;
-
 /// Supports loading line break data, and creating line break iterators for different string
 /// encodings.
+///
+/// Most segmentation methods live on [`LineSegmenterBorrowed`], which can be obtained via
+/// [`LineSegmenter::new_auto()`] (etc) or [`LineSegmenter::as_borrowed()`].
 ///
 /// The segmenter returns mandatory breaks (as defined by [definition LD7][LD7] of
 /// Unicode Standard Annex #14, _Unicode Line Breaking Algorithm_) as well as
@@ -315,10 +297,10 @@ pub type LineBreakIteratorUtf16<'l, 's> = LineBreakIterator<'l, 's, LineBreakTyp
 /// Segment a string with CSS option overrides:
 ///
 /// ```rust
-/// use icu::segmenter::{
+/// use icu::segmenter::options::{
 ///     LineBreakOptions, LineBreakStrictness, LineBreakWordOption,
-///     LineSegmenter,
 /// };
+/// use icu::segmenter::LineSegmenter;
 ///
 /// let mut options = LineBreakOptions::default();
 /// options.strictness = Some(LineBreakStrictness::Strict);
@@ -373,8 +355,18 @@ pub type LineBreakIteratorUtf16<'l, 's> = LineBreakIterator<'l, 's, LineBreakTyp
 #[derive(Debug)]
 pub struct LineSegmenter {
     options: ResolvedLineBreakOptions,
-    payload: DataPayload<LineBreakDataV2>,
+    payload: DataPayload<SegmenterBreakLineV1>,
     complex: ComplexPayloads,
+}
+
+/// Segments a string into lines (borrowed version).
+///
+/// See [`LineSegmenter`] for examples.
+#[derive(Clone, Debug, Copy)]
+pub struct LineSegmenterBorrowed<'data> {
+    options: ResolvedLineBreakOptions,
+    data: &'data RuleBreakData<'data>,
+    complex: ComplexPayloadsBorrowed<'data>,
 }
 
 impl LineSegmenter {
@@ -390,7 +382,7 @@ impl LineSegmenter {
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "auto")]
     #[cfg(feature = "compiled_data")]
-    pub fn new_auto(options: LineBreakOptions) -> Self {
+    pub fn new_auto(options: LineBreakOptions) -> LineSegmenterBorrowed<'static> {
         Self::new_lstm(options)
     }
 
@@ -412,9 +404,9 @@ impl LineSegmenter {
         options: LineBreakOptions,
     ) -> Result<Self, DataError>
     where
-        D: DataProvider<LineBreakDataV2>
-            + DataProvider<LstmForWordLineAutoV1>
-            + DataProvider<GraphemeClusterBreakDataV2>
+        D: DataProvider<SegmenterBreakLineV1>
+            + DataProvider<SegmenterLstmAutoV1>
+            + DataProvider<SegmenterBreakGraphemeClusterV1>
             + ?Sized,
     {
         Self::try_new_lstm_unstable(provider, options)
@@ -433,13 +425,11 @@ impl LineSegmenter {
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "lstm")]
     #[cfg(feature = "compiled_data")]
-    pub fn new_lstm(options: LineBreakOptions) -> Self {
-        Self {
+    pub fn new_lstm(options: LineBreakOptions) -> LineSegmenterBorrowed<'static> {
+        LineSegmenterBorrowed {
             options: options.into(),
-            payload: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_LINE_BREAK_DATA_V2,
-            ),
-            complex: ComplexPayloads::new_lstm(),
+            data: crate::provider::Baked::SINGLETON_SEGMENTER_BREAK_LINE_V1,
+            complex: ComplexPayloadsBorrowed::new_lstm(),
         }
     }
 
@@ -461,9 +451,9 @@ impl LineSegmenter {
         options: LineBreakOptions,
     ) -> Result<Self, DataError>
     where
-        D: DataProvider<LineBreakDataV2>
-            + DataProvider<LstmForWordLineAutoV1>
-            + DataProvider<GraphemeClusterBreakDataV2>
+        D: DataProvider<SegmenterBreakLineV1>
+            + DataProvider<SegmenterLstmAutoV1>
+            + DataProvider<SegmenterBreakGraphemeClusterV1>
             + ?Sized,
     {
         Ok(Self {
@@ -485,19 +475,17 @@ impl LineSegmenter {
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
-    pub fn new_dictionary(options: LineBreakOptions) -> Self {
-        Self {
+    pub fn new_dictionary(options: LineBreakOptions) -> LineSegmenterBorrowed<'static> {
+        LineSegmenterBorrowed {
             options: options.into(),
-            payload: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_LINE_BREAK_DATA_V2,
-            ),
+            data: crate::provider::Baked::SINGLETON_SEGMENTER_BREAK_LINE_V1,
             // Line segmenter doesn't need to load CJ dictionary because UAX 14 rules handles CJK
             // characters [1]. Southeast Asian languages however require complex context analysis
             // [2].
             //
             // [1]: https://www.unicode.org/reports/tr14/#ID
             // [2]: https://www.unicode.org/reports/tr14/#SA
-            complex: ComplexPayloads::new_southeast_asian(),
+            complex: ComplexPayloadsBorrowed::new_southeast_asian(),
         }
     }
 
@@ -517,9 +505,9 @@ impl LineSegmenter {
         options: LineBreakOptions,
     ) -> Result<Self, DataError>
     where
-        D: DataProvider<LineBreakDataV2>
-            + DataProvider<DictionaryForWordLineExtendedV1>
-            + DataProvider<GraphemeClusterBreakDataV2>
+        D: DataProvider<SegmenterBreakLineV1>
+            + DataProvider<SegmenterDictionaryExtendedV1>
+            + DataProvider<SegmenterBreakGraphemeClusterV1>
             + ?Sized,
     {
         Ok(Self {
@@ -535,18 +523,31 @@ impl LineSegmenter {
         })
     }
 
+    /// Constructs a borrowed version of this type for more efficient querying.
+    ///
+    /// Most useful methods for segmentation are on this type.
+    pub fn as_borrowed(&self) -> LineSegmenterBorrowed<'_> {
+        LineSegmenterBorrowed {
+            options: self.options,
+            data: self.payload.get(),
+            complex: self.complex.as_borrowed(),
+        }
+    }
+}
+
+impl<'data> LineSegmenterBorrowed<'data> {
     /// Creates a line break iterator for an `str` (a UTF-8 string).
     ///
     /// There are always breakpoints at 0 and the string length, or only at 0 for the empty string.
-    pub fn segment_str<'l, 's>(&'l self, input: &'s str) -> LineBreakIteratorUtf8<'l, 's> {
+    pub fn segment_str<'s>(self, input: &'s str) -> LineBreakIterator<'data, 's, Utf8> {
         LineBreakIterator {
             iter: input.char_indices(),
             len: input.len(),
             current_pos_data: None,
             result_cache: Vec::new(),
-            data: self.payload.get(),
-            options: &self.options,
-            complex: &self.complex,
+            data: self.data,
+            options: self.options,
+            complex: self.complex,
         }
     }
     /// Creates a line break iterator for a potentially ill-formed UTF8 string
@@ -554,47 +555,61 @@ impl LineSegmenter {
     /// Invalid characters are treated as REPLACEMENT CHARACTER
     ///
     /// There are always breakpoints at 0 and the string length, or only at 0 for the empty string.
-    pub fn segment_utf8<'l, 's>(
-        &'l self,
+    pub fn segment_utf8<'s>(
+        self,
         input: &'s [u8],
-    ) -> LineBreakIteratorPotentiallyIllFormedUtf8<'l, 's> {
+    ) -> LineBreakIterator<'data, 's, PotentiallyIllFormedUtf8> {
         LineBreakIterator {
             iter: Utf8CharIndices::new(input),
             len: input.len(),
             current_pos_data: None,
             result_cache: Vec::new(),
-            data: self.payload.get(),
-            options: &self.options,
-            complex: &self.complex,
+            data: self.data,
+            options: self.options,
+            complex: self.complex,
         }
     }
     /// Creates a line break iterator for a Latin-1 (8-bit) string.
     ///
     /// There are always breakpoints at 0 and the string length, or only at 0 for the empty string.
-    pub fn segment_latin1<'l, 's>(&'l self, input: &'s [u8]) -> LineBreakIteratorLatin1<'l, 's> {
+    pub fn segment_latin1<'s>(self, input: &'s [u8]) -> LineBreakIterator<'data, 's, Latin1> {
         LineBreakIterator {
             iter: Latin1Indices::new(input),
             len: input.len(),
             current_pos_data: None,
             result_cache: Vec::new(),
-            data: self.payload.get(),
-            options: &self.options,
-            complex: &self.complex,
+            data: self.data,
+            options: self.options,
+            complex: self.complex,
         }
     }
 
     /// Creates a line break iterator for a UTF-16 string.
     ///
     /// There are always breakpoints at 0 and the string length, or only at 0 for the empty string.
-    pub fn segment_utf16<'l, 's>(&'l self, input: &'s [u16]) -> LineBreakIteratorUtf16<'l, 's> {
+    pub fn segment_utf16<'s>(self, input: &'s [u16]) -> LineBreakIterator<'data, 's, Utf16> {
         LineBreakIterator {
             iter: Utf16Indices::new(input),
             len: input.len(),
             current_pos_data: None,
             result_cache: Vec::new(),
-            data: self.payload.get(),
-            options: &self.options,
-            complex: &self.complex,
+            data: self.data,
+            options: self.options,
+            complex: self.complex,
+        }
+    }
+}
+
+impl LineSegmenterBorrowed<'static> {
+    /// Cheaply converts a [`LineSegmenterBorrowed<'static>`] into a [`LineSegmenter`].
+    ///
+    /// Note: Due to branching and indirection, using [`LineSegmenter`] might inhibit some
+    /// compile-time optimizations that are possible with [`LineSegmenterBorrowed`].
+    pub fn static_to_owned(self) -> LineSegmenter {
+        LineSegmenter {
+            payload: DataPayload::from_static_ref(self.data),
+            complex: self.complex.static_to_owned(),
+            options: self.options,
         }
     }
 }
@@ -713,28 +728,19 @@ fn is_break_utf32_by_loose(
 /// 🚫 This trait is sealed; it cannot be implemented by user code. If an API requests an item that implements this
 /// trait, please consider using a type from the implementors listed below.
 /// </div>
-pub trait LineBreakType<'l, 's>: crate::private::Sealed {
-    /// The iterator over characters.
-    type IterAttr: Iterator<Item = (usize, Self::CharType)> + Clone;
-
-    /// The character type.
-    type CharType: Copy + Into<u32>;
-
+pub trait LineBreakType: crate::private::Sealed + Sized + RuleBreakType {
     #[doc(hidden)]
-    fn use_complex_breaking(iterator: &LineBreakIterator<'l, 's, Self>, c: Self::CharType) -> bool;
+    fn use_complex_breaking(iterator: &LineBreakIterator<'_, '_, Self>, c: Self::CharType) -> bool;
 
     #[doc(hidden)]
     fn get_linebreak_property_with_rule(
-        iterator: &LineBreakIterator<'l, 's, Self>,
+        iterator: &LineBreakIterator<'_, '_, Self>,
         c: Self::CharType,
     ) -> u8;
 
     #[doc(hidden)]
-    fn get_current_position_character_len(iterator: &LineBreakIterator<'l, 's, Self>) -> usize;
-
-    #[doc(hidden)]
-    fn handle_complex_language(
-        iterator: &mut LineBreakIterator<'l, 's, Self>,
+    fn line_handle_complex_language(
+        iterator: &mut LineBreakIterator<'_, '_, Self>,
         left_codepoint: Self::CharType,
     ) -> Option<usize>;
 }
@@ -752,17 +758,17 @@ pub trait LineBreakType<'l, 's>: crate::private::Sealed {
 ///
 /// For examples of use, see [`LineSegmenter`].
 #[derive(Debug)]
-pub struct LineBreakIterator<'l, 's, Y: LineBreakType<'l, 's> + ?Sized> {
-    iter: Y::IterAttr,
+pub struct LineBreakIterator<'data, 's, Y: LineBreakType> {
+    iter: Y::IterAttr<'s>,
     len: usize,
     current_pos_data: Option<(usize, Y::CharType)>,
     result_cache: Vec<usize>,
-    data: &'l RuleBreakData<'l>,
-    options: &'l ResolvedLineBreakOptions,
-    complex: &'l ComplexPayloads,
+    data: &'data RuleBreakData<'data>,
+    options: ResolvedLineBreakOptions,
+    complex: ComplexPayloadsBorrowed<'data>,
 }
 
-impl<'l, 's, Y: LineBreakType<'l, 's>> Iterator for LineBreakIterator<'l, 's, Y> {
+impl<Y: LineBreakType> Iterator for LineBreakIterator<'_, '_, Y> {
     type Item = usize;
 
     fn next(&mut self) -> Option<Self::Item> {
@@ -780,7 +786,7 @@ impl<'l, 's, Y: LineBreakType<'l, 's>> Iterator for LineBreakIterator<'l, 's, Y>
                     self.result_cache = self.result_cache.iter().skip(1).map(|r| r - i).collect();
                     return self.get_current_position();
                 }
-                i += Y::get_current_position_character_len(self);
+                i += self.get_current_codepoint().map_or(0, Y::char_len);
                 self.advance_iter();
                 if self.is_eof() {
                     self.result_cache.clear();
@@ -877,7 +883,7 @@ impl<'l, 's, Y: LineBreakType<'l, 's>> Iterator for LineBreakIterator<'l, 's, Y>
                 && Y::use_complex_breaking(self, left_codepoint)
                 && Y::use_complex_breaking(self, right_codepoint)
             {
-                let result = Y::handle_complex_language(self, left_codepoint);
+                let result = Y::line_handle_complex_language(self, left_codepoint);
                 if result.is_some() {
                     return result;
                 }
@@ -1008,7 +1014,7 @@ enum StringBoundaryPosType {
     End,
 }
 
-impl<'l, 's, Y: LineBreakType<'l, 's>> LineBreakIterator<'l, 's, Y> {
+impl<Y: LineBreakType> LineBreakIterator<'_, '_, Y> {
     fn advance_iter(&mut self) {
         self.current_pos_data = self.iter.next();
     }
@@ -1064,15 +1070,7 @@ impl<'l, 's, Y: LineBreakType<'l, 's>> LineBreakIterator<'l, 's, Y> {
     }
 }
 
-#[derive(Debug)]
-pub struct LineBreakTypeUtf8;
-
-impl crate::private::Sealed for LineBreakTypeUtf8 {}
-
-impl<'l, 's> LineBreakType<'l, 's> for LineBreakTypeUtf8 {
-    type IterAttr = CharIndices<'s>;
-    type CharType = char;
-
+impl LineBreakType for Utf8 {
     fn get_linebreak_property_with_rule(iterator: &LineBreakIterator<Self>, c: char) -> u8 {
         iterator.data.get_linebreak_property_utf32_with_rule(
             c as u32,
@@ -1086,27 +1084,15 @@ impl<'l, 's> LineBreakType<'l, 's> for LineBreakTypeUtf8 {
         iterator.data.use_complex_breaking_utf32(c as u32)
     }
 
-    fn get_current_position_character_len(iterator: &LineBreakIterator<Self>) -> usize {
-        iterator.get_current_codepoint().map_or(0, |c| c.len_utf8())
-    }
-
-    fn handle_complex_language(
-        iter: &mut LineBreakIterator<'l, 's, Self>,
+    fn line_handle_complex_language(
+        iter: &mut LineBreakIterator<'_, '_, Self>,
         left_codepoint: char,
     ) -> Option<usize> {
-        handle_complex_language_utf8(iter, left_codepoint)
+        line_handle_complex_language_utf8(iter, left_codepoint)
     }
 }
 
-#[derive(Debug)]
-pub struct LineBreakTypePotentiallyIllFormedUtf8;
-
-impl crate::private::Sealed for LineBreakTypePotentiallyIllFormedUtf8 {}
-
-impl<'l, 's> LineBreakType<'l, 's> for LineBreakTypePotentiallyIllFormedUtf8 {
-    type IterAttr = Utf8CharIndices<'s>;
-    type CharType = char;
-
+impl LineBreakType for PotentiallyIllFormedUtf8 {
     fn get_linebreak_property_with_rule(iterator: &LineBreakIterator<Self>, c: char) -> u8 {
         iterator.data.get_linebreak_property_utf32_with_rule(
             c as u32,
@@ -1120,24 +1106,20 @@ impl<'l, 's> LineBreakType<'l, 's> for LineBreakTypePotentiallyIllFormedUtf8 {
         iterator.data.use_complex_breaking_utf32(c as u32)
     }
 
-    fn get_current_position_character_len(iterator: &LineBreakIterator<Self>) -> usize {
-        iterator.get_current_codepoint().map_or(0, |c| c.len_utf8())
-    }
-
-    fn handle_complex_language(
-        iter: &mut LineBreakIterator<'l, 's, Self>,
+    fn line_handle_complex_language(
+        iter: &mut LineBreakIterator<'_, '_, Self>,
         left_codepoint: char,
     ) -> Option<usize> {
-        handle_complex_language_utf8(iter, left_codepoint)
+        line_handle_complex_language_utf8(iter, left_codepoint)
     }
 }
-/// handle_complex_language impl for UTF8 iterators
-fn handle_complex_language_utf8<'l, 's, T>(
-    iter: &mut LineBreakIterator<'l, 's, T>,
+/// line_handle_complex_language impl for UTF8 iterators
+fn line_handle_complex_language_utf8<T>(
+    iter: &mut LineBreakIterator<'_, '_, T>,
     left_codepoint: char,
 ) -> Option<usize>
 where
-    T: LineBreakType<'l, 's, CharType = char>,
+    T: LineBreakType<CharType = char>,
 {
     // word segmenter doesn't define break rules for some languages such as Thai.
     let start_iter = iter.iter.clone();
@@ -1161,7 +1143,7 @@ where
     // Restore iterator to move to head of complex string
     iter.iter = start_iter;
     iter.current_pos_data = start_point;
-    let breaks = complex_language_segment_str(iter.complex, &s);
+    let breaks = iter.complex.complex_language_segment_str(&s);
     iter.result_cache = breaks;
     let first_pos = *iter.result_cache.first()?;
     let mut i = left_codepoint.len_utf8();
@@ -1176,7 +1158,7 @@ where
             "we should always arrive at first_pos: near index {:?}",
             iter.get_current_position()
         );
-        i += T::get_current_position_character_len(iter);
+        i += iter.get_current_codepoint().map_or(0, T::char_len);
         iter.advance_iter();
         if iter.is_eof() {
             iter.result_cache.clear();
@@ -1185,14 +1167,7 @@ where
     }
 }
 
-#[derive(Debug)]
-pub struct LineBreakTypeLatin1;
-impl crate::private::Sealed for LineBreakTypeLatin1 {}
-
-impl<'s> LineBreakType<'_, 's> for LineBreakTypeLatin1 {
-    type IterAttr = Latin1Indices<'s>;
-    type CharType = u8;
-
+impl LineBreakType for Latin1 {
     fn get_linebreak_property_with_rule(iterator: &LineBreakIterator<Self>, c: u8) -> u8 {
         // No CJ on Latin1
         // Note: Default value is 0 == UNKNOWN
@@ -1204,11 +1179,7 @@ impl<'s> LineBreakType<'_, 's> for LineBreakTypeLatin1 {
         false
     }
 
-    fn get_current_position_character_len(_: &LineBreakIterator<Self>) -> usize {
-        unreachable!()
-    }
-
-    fn handle_complex_language(
+    fn line_handle_complex_language(
         _: &mut LineBreakIterator<Self>,
         _: Self::CharType,
     ) -> Option<usize> {
@@ -1216,14 +1187,7 @@ impl<'s> LineBreakType<'_, 's> for LineBreakTypeLatin1 {
     }
 }
 
-#[derive(Debug)]
-pub struct LineBreakTypeUtf16;
-impl crate::private::Sealed for LineBreakTypeUtf16 {}
-
-impl<'s> LineBreakType<'_, 's> for LineBreakTypeUtf16 {
-    type IterAttr = Utf16Indices<'s>;
-    type CharType = u32;
-
+impl LineBreakType for Utf16 {
     fn get_linebreak_property_with_rule(iterator: &LineBreakIterator<Self>, c: u32) -> u8 {
         iterator.data.get_linebreak_property_utf32_with_rule(
             c,
@@ -1237,15 +1201,7 @@ impl<'s> LineBreakType<'_, 's> for LineBreakTypeUtf16 {
         iterator.data.use_complex_breaking_utf32(c)
     }
 
-    fn get_current_position_character_len(iterator: &LineBreakIterator<Self>) -> usize {
-        match iterator.get_current_codepoint() {
-            None => 0,
-            Some(ch) if ch >= 0x10000 => 2,
-            _ => 1,
-        }
-    }
-
-    fn handle_complex_language(
+    fn line_handle_complex_language(
         iterator: &mut LineBreakIterator<Self>,
         left_codepoint: Self::CharType,
     ) -> Option<usize> {
@@ -1270,7 +1226,7 @@ impl<'s> LineBreakType<'_, 's> for LineBreakTypeUtf16 {
         // Restore iterator to move to head of complex string
         iterator.iter = start_iter;
         iterator.current_pos_data = start_point;
-        let breaks = complex_language_segment_utf16(iterator.complex, &s);
+        let breaks = iterator.complex.complex_language_segment_utf16(&s);
         iterator.result_cache = breaks;
         // result_cache vector is utf-16 index that is in BMP.
         let first_pos = *iterator.result_cache.first()?;
@@ -1310,7 +1266,7 @@ mod tests {
     #[test]
     fn linebreak_property() {
         let payload =
-            DataProvider::<LineBreakDataV2>::load(&crate::provider::Baked, Default::default())
+            DataProvider::<SegmenterBreakLineV1>::load(&crate::provider::Baked, Default::default())
                 .expect("Loading should succeed!")
                 .payload;
 
@@ -1342,7 +1298,7 @@ mod tests {
     #[allow(clippy::bool_assert_comparison)] // clearer when we're testing bools directly
     fn break_rule() {
         let payload =
-            DataProvider::<LineBreakDataV2>::load(&crate::provider::Baked, Default::default())
+            DataProvider::<SegmenterBreakLineV1>::load(&crate::provider::Baked, Default::default())
                 .expect("Loading should succeed!")
                 .payload;
         let lb_data: &RuleBreakData = payload.get();
@@ -1445,6 +1401,7 @@ mod tests {
         let segmenter =
             LineSegmenter::try_new_dictionary_unstable(&crate::provider::Baked, Default::default())
                 .expect("Data exists");
+        let segmenter = segmenter.as_borrowed();
 
         let mut iter = segmenter.segment_str("hello world");
         assert_eq!(Some(0), iter.next());

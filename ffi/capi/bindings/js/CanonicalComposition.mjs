@@ -5,12 +5,13 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
-/** The raw canonical composition operation.
-*
-*Callers should generally use ComposingNormalizer unless they specifically need raw composition operations
-*
-*See the [Rust documentation for `CanonicalComposition`](https://docs.rs/icu/latest/icu/normalizer/properties/struct.CanonicalComposition.html) for more information.
-*/
+/** 
+ * The raw canonical composition operation.
+ *
+ * Callers should generally use ComposingNormalizer unless they specifically need raw composition operations
+ *
+ * See the [Rust documentation for `CanonicalComposition`](https://docs.rs/icu/latest/icu/normalizer/properties/struct.CanonicalComposition.html) for more information.
+ */
 const CanonicalComposition_box_destroy_registry = new FinalizationRegistry((ptr) => {
     wasm.icu4x_CanonicalComposition_destroy_mv1(ptr);
 });
@@ -44,6 +45,11 @@ export class CanonicalComposition {
         return this.#ptr;
     }
 
+    /** 
+     * Construct a new CanonicalComposition instance for NFC using compiled data.
+     *
+     * See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/normalizer/properties/struct.CanonicalComposition.html#method.new) for more information.
+     */
     #defaultConstructor() {
         const result = wasm.icu4x_CanonicalComposition_create_mv1();
     
@@ -54,6 +60,11 @@ export class CanonicalComposition {
         finally {}
     }
 
+    /** 
+     * Construct a new CanonicalComposition instance for NFC using a particular data source.
+     *
+     * See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/normalizer/properties/struct.CanonicalComposition.html#method.new) for more information.
+     */
     static createWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
@@ -72,6 +83,12 @@ export class CanonicalComposition {
         }
     }
 
+    /** 
+     * Performs canonical composition (including Hangul) on a pair of characters
+     * or returns NUL if these characters don’t compose. Composition exclusions are taken into account.
+     *
+     * See the [Rust documentation for `compose`](https://docs.rs/icu/latest/icu/normalizer/properties/struct.CanonicalCompositionBorrowed.html#method.compose) for more information.
+     */
     compose(starter, second) {
         const result = wasm.icu4x_CanonicalComposition_compose_mv1(this.ffiValue, starter, second);
     

@@ -2,8 +2,9 @@
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
-/** See the [Rust documentation for `CaseFirst`](https://docs.rs/icu/latest/icu/collator/enum.CaseFirst.html) for more information.
-*/
+/** 
+ * See the [Rust documentation for `CollationCaseFirst`](https://docs.rs/icu/latest/icu/collator/preferences/enum.CollationCaseFirst.html) for more information.
+ */
 
 
 export class CollatorCaseFirst {

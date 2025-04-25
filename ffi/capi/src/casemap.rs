@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use icu_casemap::titlecase::TitlecaseOptions;
+use icu_casemap::options::TitlecaseOptions;
 
 #[diplomat::bridge]
 #[diplomat::abi_rename = "icu4x_{0}_mv1"]
@@ -11,30 +11,30 @@ pub mod ffi {
     use alloc::boxed::Box;
 
     #[cfg(any(feature = "compiled_data", feature = "buffer_provider"))]
-    use crate::errors::ffi::DataError;
-    use crate::locale_core::ffi::Locale;
+    use crate::unstable::errors::ffi::DataError;
+    use crate::unstable::locale_core::ffi::Locale;
     #[cfg(feature = "buffer_provider")]
-    use crate::provider::ffi::DataProvider;
+    use crate::unstable::provider::ffi::DataProvider;
     use diplomat_runtime::DiplomatOption;
 
     use writeable::Writeable;
 
-    #[diplomat::enum_convert(icu_casemap::titlecase::LeadingAdjustment, needs_wildcard)]
-    #[diplomat::rust_link(icu::casemap::titlecase::LeadingAdjustment, Enum)]
+    #[diplomat::enum_convert(icu_casemap::options::LeadingAdjustment, needs_wildcard)]
+    #[diplomat::rust_link(icu::casemap::options::LeadingAdjustment, Enum)]
     pub enum LeadingAdjustment {
         Auto,
         None,
         ToCased,
     }
 
-    #[diplomat::enum_convert(icu_casemap::titlecase::TrailingCase, needs_wildcard)]
-    #[diplomat::rust_link(icu::casemap::titlecase::TrailingCase, Enum)]
+    #[diplomat::enum_convert(icu_casemap::options::TrailingCase, needs_wildcard)]
+    #[diplomat::rust_link(icu::casemap::options::TrailingCase, Enum)]
     pub enum TrailingCase {
         Lower,
         Unchanged,
     }
 
-    #[diplomat::rust_link(icu::casemap::titlecase::TitlecaseOptions, Struct)]
+    #[diplomat::rust_link(icu::casemap::options::TitlecaseOptions, Struct)]
     #[diplomat::attr(supports = non_exhaustive_structs, rename = "TitlecaseOptions")]
     pub struct TitlecaseOptionsV1 {
         pub leading_adjustment: DiplomatOption<LeadingAdjustment>,
@@ -42,7 +42,7 @@ pub mod ffi {
     }
 
     impl TitlecaseOptionsV1 {
-        #[diplomat::rust_link(icu::casemap::titlecase::TitlecaseOptions::default, FnInStruct)]
+        #[diplomat::rust_link(icu::casemap::options::TitlecaseOptions::default, FnInStruct)]
         #[diplomat::attr(auto, constructor)]
         #[diplomat::attr(any(cpp, js), rename = "default_options")]
         pub fn default() -> TitlecaseOptionsV1 {
@@ -103,6 +103,34 @@ pub mod ffi {
             let _infallible = self
                 .0
                 .as_borrowed()
+                .uppercase(s, &locale.0.id)
+                .write_to(write);
+        }
+
+        /// Returns the full lowercase mapping of the given string, using compiled data (avoids having to allocate a CaseMapper object)
+        #[diplomat::rust_link(icu::casemap::CaseMapperBorrowed::lowercase, FnInStruct)]
+        #[diplomat::rust_link(
+            icu::casemap::CaseMapperBorrowed::lowercase_to_string,
+            FnInStruct,
+            hidden
+        )]
+        #[cfg(feature = "compiled_data")]
+        pub fn lowercase_with_compiled_data(s: &str, locale: &Locale, write: &mut DiplomatWrite) {
+            let _infallible = icu_casemap::CaseMapper::new()
+                .lowercase(s, &locale.0.id)
+                .write_to(write);
+        }
+
+        /// Returns the full uppercase mapping of the given string, using compiled data (avoids having to allocate a CaseMapper object)
+        #[diplomat::rust_link(icu::casemap::CaseMapperBorrowed::uppercase, FnInStruct)]
+        #[diplomat::rust_link(
+            icu::casemap::CaseMapperBorrowed::uppercase_to_string,
+            FnInStruct,
+            hidden
+        )]
+        #[cfg(feature = "compiled_data")]
+        pub fn uppercase_with_compiled_data(s: &str, locale: &Locale, write: &mut DiplomatWrite) {
+            let _infallible = icu_casemap::CaseMapper::new()
                 .uppercase(s, &locale.0.id)
                 .write_to(write);
         }
@@ -173,7 +201,7 @@ pub mod ffi {
         pub fn add_case_closure_to(
             &self,
             c: DiplomatChar,
-            builder: &mut crate::collections_sets::ffi::CodePointSetBuilder,
+            builder: &mut crate::unstable::collections_sets::ffi::CodePointSetBuilder,
         ) {
             if let Some(ch) = char::from_u32(c) {
                 self.0.as_borrowed().add_case_closure_to(ch, &mut builder.0)
@@ -274,7 +302,7 @@ pub mod ffi {
         pub fn add_case_closure_to(
             &self,
             c: DiplomatChar,
-            builder: &mut crate::collections_sets::ffi::CodePointSetBuilder,
+            builder: &mut crate::unstable::collections_sets::ffi::CodePointSetBuilder,
         ) {
             if let Some(ch) = char::from_u32(c) {
                 self.0.as_borrowed().add_case_closure_to(ch, &mut builder.0)
@@ -293,7 +321,7 @@ pub mod ffi {
         pub fn add_string_case_closure_to(
             &self,
             s: &DiplomatStr,
-            builder: &mut crate::collections_sets::ffi::CodePointSetBuilder,
+            builder: &mut crate::unstable::collections_sets::ffi::CodePointSetBuilder,
         ) -> bool {
             let s = core::str::from_utf8(s).unwrap_or("");
             self.0
@@ -351,6 +379,27 @@ pub mod ffi {
             let _infallible = self
                 .0
                 .as_borrowed()
+                .titlecase_segment(s, &locale.0.id, options.into())
+                .write_to(write);
+        }
+        /// Returns the full titlecase mapping of the given string, using compiled data (avoids having to allocate a TitlecaseMapper object)
+        ///
+        /// The `v1` refers to the version of the options struct, which may change as we add more options
+        #[diplomat::rust_link(icu::casemap::TitlecaseMapperBorrowed::titlecase_segment, FnInStruct)]
+        #[diplomat::rust_link(
+            icu::casemap::TitlecaseMapperBorrowed::titlecase_segment_to_string,
+            FnInStruct,
+            hidden
+        )]
+        #[diplomat::attr(supports = non_exhaustive_structs, rename = "titlecase_segment_with_compiled_data")]
+        #[cfg(feature = "compiled_data")]
+        pub fn titlecase_segment_with_compiled_data_v1(
+            s: &str,
+            locale: &Locale,
+            options: TitlecaseOptionsV1,
+            write: &mut DiplomatWrite,
+        ) {
+            let _infallible = icu_casemap::TitlecaseMapper::new()
                 .titlecase_segment(s, &locale.0.id, options.into())
                 .write_to(write);
         }

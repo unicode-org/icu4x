@@ -33,7 +33,7 @@ pub enum Strength {
     /// to ECMA-402 sensitivity "case" with [`CaseLevel::On`].
     ///
     /// ```
-    /// use icu::collator::*;
+    /// use icu::collator::{options::*, *};
     ///
     /// let mut options = CollatorOptions::default();
     /// options.strength = Some(Strength::Primary);
@@ -47,7 +47,7 @@ pub enum Strength {
     /// to the ECMA-402 sensitivity "accent".
     ///
     /// ```
-    /// use icu::collator::*;
+    /// use icu::collator::{options::*, *};
     ///
     /// let mut options = CollatorOptions::default();
     /// options.strength = Some(Strength::Secondary);
@@ -71,7 +71,7 @@ pub enum Strength {
     /// sensitivity "variant".
     ///
     /// ```
-    /// use icu::collator::*;
+    /// use icu::collator::{*, options::*};
     /// use icu::locale::locale;
     ///
     /// let mut options = CollatorOptions::default();
@@ -116,7 +116,7 @@ pub enum Strength {
     /// level.
     ///
     /// ```
-    /// use icu::collator::*;
+    /// use icu::collator::{*, options::*};
     /// use icu::locale::locale;
     ///
     /// let mut options = CollatorOptions::default();
@@ -139,7 +139,7 @@ pub enum Strength {
     /// assert_eq!(collator.compare("דחי", "דחי֭"),
     ///            core::cmp::Ordering::Equal);
     /// ```
-    /// TODO: Thai example.
+    // TODO: Thai example.
     Quaternary = 3,
 
     /// Compare the NFD form by code point order as the quinary
@@ -152,7 +152,7 @@ pub enum Strength {
     /// distinguishing full-width and half-width forms.
     ///
     /// ```
-    /// use icu::collator::*;
+    /// use icu::collator::{*, options::*};
     /// use icu::locale::locale;
     ///
     /// let mut options = CollatorOptions::default();
@@ -225,24 +225,10 @@ pub enum CaseLevel {
     On = 1,
 }
 
-/// Whether second level compares the last accent difference
-/// instead of the first accent difference.
-#[derive(Eq, PartialEq, Debug, Copy, Clone)]
-#[repr(u8)]
-#[non_exhaustive]
-pub enum BackwardSecondLevel {
-    /// Leave off the backward second level option. Diacritics in the second level will be ordered by
-    /// default from beginning to end.
-    Off = 0,
-    /// Turn on backward second level ordering so that the second level compares backwards, starting
-    /// from the last diacritic letter and moving towards the beginning.
-    On = 1,
-}
-
 /// Options settable by the user of the API.
 ///
 /// With the exception of reordering (BCP47 `kr`), options that can by implied by locale are
-/// set via [`CollatorPreferences`][crate::CollatorPreferences].
+/// set via [`CollatorPreferences`].
 ///
 /// See the [spec](https://www.unicode.org/reports/tr35/tr35-collation.html#Setting_Options).
 ///
@@ -283,16 +269,14 @@ pub enum BackwardSecondLevel {
 /// See the [spec](https://www.unicode.org/reports/tr35/tr35-collation.html#Case_Parameters).
 /// This is the BCP47 key `kc`. The default is [`CaseLevel::Off`].
 ///
-/// ## Backward second level
-///
-/// Compare the second level in backward order. This is the BCP47 key `kb`. `kb`
-/// is prohibited by ECMA-402. The default is [`BackwardSecondLevel::Off`], except
-/// for Canadian French.
-///
 /// # Unsupported BCP47 options
 ///
 /// Reordering (BCP47 `kr`) currently cannot be set via the API and is implied
 /// by the locale of the collation. `kr` is prohibited by ECMA-402.
+///
+/// Backward second level (BCP47 `kb`) cannot be set via the API and is implied
+/// by the locale of the collation (in practice only `fr-CA` turns it on and it's
+/// off otherwise). `kb` is prohibited by ECMA-402.
 ///
 /// Normalization is always enabled and cannot be turned off. Therefore, there
 /// is no option corresponding to BCP47 `kk`. `kk` is prohibited by ECMA-402.
@@ -330,8 +314,6 @@ pub struct CollatorOptions {
     pub max_variable: Option<MaxVariable>,
     /// User-specified case level collation option.
     pub case_level: Option<CaseLevel>,
-    /// User-specified backward second level collation option.
-    pub backward_second_level: Option<BackwardSecondLevel>,
 }
 
 impl CollatorOptions {
@@ -342,7 +324,6 @@ impl CollatorOptions {
             alternate_handling: None,
             max_variable: None,
             case_level: None,
-            backward_second_level: None,
         }
     }
 }
@@ -359,7 +340,6 @@ impl From<ResolvedCollatorOptions> for CollatorOptions {
             alternate_handling: Some(options.alternate_handling),
             max_variable: Some(options.max_variable),
             case_level: Some(options.case_level),
-            backward_second_level: Some(options.backward_second_level),
         }
     }
 }
@@ -403,8 +383,6 @@ pub struct ResolvedCollatorOptions {
     pub case_level: CaseLevel,
     /// Resolved numeric collation option.
     pub numeric: CollationNumericOrdering,
-    /// Resolved backward second level collation option.
-    pub backward_second_level: BackwardSecondLevel,
 }
 
 impl From<CollatorOptionsBitField> for ResolvedCollatorOptions {
@@ -424,11 +402,7 @@ impl From<CollatorOptionsBitField> for ResolvedCollatorOptions {
             } else {
                 CollationNumericOrdering::False
             },
-            backward_second_level: if options.backward_second_level() {
-                BackwardSecondLevel::On
-            } else {
-                BackwardSecondLevel::Off
-            },
+            // `options.backward_second_level()` not exposed.
         }
     }
 }
@@ -660,21 +634,6 @@ impl CollatorOptionsBitField {
         }
     }
 
-    pub fn set_backward_second_level_from_enum(
-        &mut self,
-        backward_second_level: Option<BackwardSecondLevel>,
-    ) {
-        match backward_second_level {
-            Some(BackwardSecondLevel::On) => {
-                self.set_backward_second_level(Some(true));
-            }
-            Some(BackwardSecondLevel::Off) => {
-                self.set_backward_second_level(Some(false));
-            }
-            None => self.set_backward_second_level(None),
-        }
-    }
-
     /// Whether sequences of decimal digits are compared according
     /// to their numeric value.
     pub fn numeric(self) -> bool {
@@ -784,7 +743,6 @@ impl From<CollatorOptions> for CollatorOptionsBitField {
         result.set_max_variable(options.max_variable);
         result.set_alternate_handling(options.alternate_handling);
         result.set_case_level_from_enum(options.case_level);
-        result.set_backward_second_level_from_enum(options.backward_second_level);
         result
     }
 }

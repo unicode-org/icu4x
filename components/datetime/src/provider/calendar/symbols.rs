@@ -25,22 +25,7 @@ size_test!(DateSymbols, date_symbols_v1_size, 3792);
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[icu_provider::data_struct(
-    marker(BuddhistDateSymbolsV1, "datetime/buddhist/datesymbols@1"),
-    marker(ChineseDateSymbolsV1, "datetime/chinese/datesymbols@1"),
-    marker(CopticDateSymbolsV1, "datetime/coptic/datesymbols@1"),
-    marker(DangiDateSymbolsV1, "datetime/dangi/datesymbols@1"),
-    marker(EthiopianDateSymbolsV1, "datetime/ethiopic/datesymbols@1"),
-    marker(GregorianDateSymbolsV1, "datetime/gregory/datesymbols@1"),
-    marker(HebrewDateSymbolsV1, "datetime/hebrew/datesymbols@1"),
-    marker(IndianDateSymbolsV1, "datetime/indian/datesymbols@1"),
-    marker(IslamicDateSymbolsV1, "datetime/islamic/datesymbols@1"),
-    marker(JapaneseDateSymbolsV1, "datetime/japanese/datesymbols@1"),
-    marker(JapaneseExtendedDateSymbolsV1, "datetime/japanext/datesymbols@1"),
-    marker(PersianDateSymbolsV1, "datetime/persian/datesymbols@1"),
-    marker(RocDateSymbolsV1, "datetime/roc/datesymbols@1")
-)]
-#[derive(Debug, PartialEq, Clone, Default)]
+#[derive(Debug, PartialEq, Clone, Default, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::calendar))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
@@ -57,6 +42,11 @@ pub struct DateSymbols<'data> {
     pub eras: Eras<'data>,
 }
 
+icu_provider::data_struct!(
+    DateSymbols<'_>,
+    #[cfg(feature = "datagen")]
+);
+
 size_test!(TimeSymbols, time_symbols_v1_size, 768);
 
 /// Symbol data for the day periods needed to format a time.
@@ -69,8 +59,7 @@ size_test!(TimeSymbols, time_symbols_v1_size, 768);
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[icu_provider::data_struct(marker(TimeSymbolsV1, "datetime/timesymbols@1",))]
-#[derive(Debug, PartialEq, Clone, Default)]
+#[derive(Debug, PartialEq, Clone, Default, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::calendar))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
@@ -80,6 +69,11 @@ pub struct TimeSymbols<'data> {
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub day_periods: day_periods::Contexts<'data>,
 }
+
+icu_provider::data_struct!(
+    TimeSymbols<'_>,
+    #[cfg(feature = "datagen")]
+);
 
 /// String data for the name, abbreviation, and narrow form of a date's era.
 ///
@@ -229,26 +223,6 @@ macro_rules! symbols {
                 /// The symbol data for "stand-alone" style symbols.
                 #[cfg_attr(feature = "serde", serde(borrow))]
                 pub stand_alone: Option<StandAloneWidths<'data>>,
-            }
-
-            impl<'data> Contexts<'data> {
-                /// Convenience function to return stand-alone abbreviated as an `Option<&>`.
-                pub(crate) fn stand_alone_abbreviated(&self) -> Option<&Symbols<'data>> {
-                    self.stand_alone.as_ref().and_then(|x| x.abbreviated.as_ref())
-                }
-                /// Convenience function to return stand-alone wide as an `Option<&>`.
-                pub(crate) fn stand_alone_wide(&self) -> Option<&Symbols<'data>> {
-                    self.stand_alone.as_ref().and_then(|x| x.wide.as_ref())
-                }
-                /// Convenience function to return stand-alone narrow as an `Option<&>`.
-                pub(crate) fn stand_alone_narrow(&self) -> Option<&Symbols<'data>> {
-                    self.stand_alone.as_ref().and_then(|x| x.narrow.as_ref())
-                }
-                /// Convenience function to return stand-alone short as an `Option<&>`.
-                #[allow(dead_code)] // not all symbols have a short variant
-                pub(crate) fn stand_alone_short(&self) -> Option<&Symbols<'data>> {
-                    self.stand_alone.as_ref().and_then(|x| x.short.as_ref())
-                }
             }
         }
     };

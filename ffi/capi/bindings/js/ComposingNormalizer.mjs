@@ -5,8 +5,9 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
-/** See the [Rust documentation for `ComposingNormalizer`](https://docs.rs/icu/latest/icu/normalizer/struct.ComposingNormalizer.html) for more information.
-*/
+/** 
+ * See the [Rust documentation for `ComposingNormalizer`](https://docs.rs/icu/latest/icu/normalizer/struct.ComposingNormalizer.html) for more information.
+ */
 const ComposingNormalizer_box_destroy_registry = new FinalizationRegistry((ptr) => {
     wasm.icu4x_ComposingNormalizer_destroy_mv1(ptr);
 });
@@ -40,6 +41,11 @@ export class ComposingNormalizer {
         return this.#ptr;
     }
 
+    /** 
+     * Construct a new ComposingNormalizer instance for NFC using compiled data.
+     *
+     * See the [Rust documentation for `new_nfc`](https://docs.rs/icu/latest/icu/normalizer/struct.ComposingNormalizer.html#method.new_nfc) for more information.
+     */
     static createNfc() {
         const result = wasm.icu4x_ComposingNormalizer_create_nfc_mv1();
     
@@ -50,6 +56,11 @@ export class ComposingNormalizer {
         finally {}
     }
 
+    /** 
+     * Construct a new ComposingNormalizer instance for NFC using a particular data source.
+     *
+     * See the [Rust documentation for `new_nfc`](https://docs.rs/icu/latest/icu/normalizer/struct.ComposingNormalizer.html#method.new_nfc) for more information.
+     */
     static createNfcWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
@@ -68,6 +79,11 @@ export class ComposingNormalizer {
         }
     }
 
+    /** 
+     * Construct a new ComposingNormalizer instance for NFKC using compiled data.
+     *
+     * See the [Rust documentation for `new_nfkc`](https://docs.rs/icu/latest/icu/normalizer/struct.ComposingNormalizer.html#method.new_nfkc) for more information.
+     */
     static createNfkc() {
         const result = wasm.icu4x_ComposingNormalizer_create_nfkc_mv1();
     
@@ -78,6 +94,11 @@ export class ComposingNormalizer {
         finally {}
     }
 
+    /** 
+     * Construct a new ComposingNormalizer instance for NFKC using a particular data source.
+     *
+     * See the [Rust documentation for `new_nfkc`](https://docs.rs/icu/latest/icu/normalizer/struct.ComposingNormalizer.html#method.new_nfkc) for more information.
+     */
     static createNfkcWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
@@ -96,10 +117,18 @@ export class ComposingNormalizer {
         }
     }
 
+    /** 
+     * Normalize a string
+     *
+     * Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
+     * to the WHATWG Encoding Standard.
+     *
+     * See the [Rust documentation for `normalize_utf8`](https://docs.rs/icu/latest/icu/normalizer/struct.ComposingNormalizerBorrowed.html#method.normalize_utf8) for more information.
+     */
     normalize(s) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
-        const sSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, s));
+        const sSlice = diplomatRuntime.DiplomatBuf.str8(wasm, s);
         
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
         wasm.icu4x_ComposingNormalizer_normalize_mv1(this.ffiValue, ...sSlice.splat(), write.buffer);
@@ -115,10 +144,18 @@ export class ComposingNormalizer {
         }
     }
 
+    /** 
+     * Check if a string is normalized
+     *
+     * Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
+     * to the WHATWG Encoding Standard.
+     *
+     * See the [Rust documentation for `is_normalized_utf16`](https://docs.rs/icu/latest/icu/normalizer/struct.ComposingNormalizerBorrowed.html#method.is_normalized_utf16) for more information.
+     */
     isNormalized(s) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
-        const sSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str16(wasm, s));
+        const sSlice = diplomatRuntime.DiplomatBuf.str16(wasm, s);
         
         const result = wasm.icu4x_ComposingNormalizer_is_normalized_utf16_mv1(this.ffiValue, ...sSlice.splat());
     
@@ -131,10 +168,15 @@ export class ComposingNormalizer {
         }
     }
 
+    /** 
+     * Return the index a slice of potentially-invalid UTF-16 is normalized up to
+     *
+     * See the [Rust documentation for `split_normalized_utf16`](https://docs.rs/icu/latest/icu/normalizer/struct.ComposingNormalizerBorrowed.html#method.split_normalized_utf16) for more information.
+     */
     isNormalizedUpTo(s) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
-        const sSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str16(wasm, s));
+        const sSlice = diplomatRuntime.DiplomatBuf.str16(wasm, s);
         
         const result = wasm.icu4x_ComposingNormalizer_is_normalized_utf16_up_to_mv1(this.ffiValue, ...sSlice.splat());
     

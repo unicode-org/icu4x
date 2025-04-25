@@ -16,11 +16,12 @@
 #![allow(clippy::exhaustive_structs, clippy::exhaustive_enums)]
 
 pub mod chinese_based;
-pub mod islamic;
-pub use chinese_based::{ChineseCacheV1, DangiCacheV1};
-pub use islamic::{IslamicObservationalCacheV1, IslamicUmmAlQuraCacheV1};
+pub mod hijri;
+pub use chinese_based::{CalendarChineseV1, CalendarDangiV1};
+pub use hijri::CalendarHijriSimulatedMeccaV1;
 
 use crate::types::Weekday;
+use icu_provider::fallback::{LocaleFallbackConfig, LocaleFallbackPriority};
 use icu_provider::prelude::*;
 use tinystr::TinyStr16;
 use zerovec::ZeroVec;
@@ -42,28 +43,52 @@ const _: () = {
     use icu_calendar_data::*;
     pub mod icu {
         pub use crate as calendar;
-        pub use icu_calendar_data::icu_locale as locale;
+        pub use icu_locale as locale;
     }
     make_provider!(Baked);
-    impl_chinese_cache_v1!(Baked);
-    impl_dangi_cache_v1!(Baked);
-    impl_islamic_observational_cache_v1!(Baked);
-    impl_islamic_umm_al_qura_cache_v1!(Baked);
-    impl_japanese_eras_v1!(Baked);
-    impl_japanese_extended_eras_v1!(Baked);
-    impl_week_data_v2!(Baked);
+    impl_calendar_chinese_v1!(Baked);
+    impl_calendar_dangi_v1!(Baked);
+    impl_calendar_hijri_simulated_mecca_v1!(Baked);
+    impl_calendar_japanese_modern_v1!(Baked);
+    impl_calendar_japanese_extended_v1!(Baked);
+    impl_calendar_week_v1!(Baked);
 };
+
+icu_provider::data_marker!(
+    /// Modern Japanese era names
+    CalendarJapaneseModernV1,
+    "calendar/japanese/modern/v1",
+    JapaneseEras<'static>,
+    is_singleton = true
+);
+icu_provider::data_marker!(
+    /// Full Japanese era names
+    CalendarJapaneseExtendedV1,
+    "calendar/japanese/extended/v1",
+    JapaneseEras<'static>,
+    is_singleton = true
+);
+icu_provider::data_marker!(
+    /// Week information
+    CalendarWeekV1,
+    "calendar/week/v1",
+    WeekData,
+    fallback_config = {
+        let mut config = LocaleFallbackConfig::default();
+        config.priority = LocaleFallbackPriority::Region;
+        config
+    },
+);
 
 #[cfg(feature = "datagen")]
 /// The latest minimum set of markers required by this component.
 pub const MARKERS: &[DataMarkerInfo] = &[
-    ChineseCacheV1::INFO,
-    DangiCacheV1::INFO,
-    IslamicObservationalCacheV1::INFO,
-    IslamicUmmAlQuraCacheV1::INFO,
-    JapaneseErasV1::INFO,
-    JapaneseExtendedErasV1::INFO,
-    WeekDataV2::INFO,
+    CalendarChineseV1::INFO,
+    CalendarDangiV1::INFO,
+    CalendarHijriSimulatedMeccaV1::INFO,
+    CalendarJapaneseModernV1::INFO,
+    CalendarJapaneseExtendedV1::INFO,
+    CalendarWeekV1::INFO,
 ];
 
 /// The date at which an era started
@@ -92,18 +117,14 @@ pub struct EraStartDate {
 }
 
 /// A data structure containing the necessary era data for constructing a
-/// [`Japanese`](crate::japanese::Japanese) calendar object
+/// [`Japanese`](crate::cal::Japanese) calendar object
 ///
 /// <div class="stab unstable">
 /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[icu_provider::data_struct(
-    marker(JapaneseErasV1, "calendar/japanese@1", singleton),
-    marker(JapaneseExtendedErasV1, "calendar/japanext@1", singleton)
-)]
-#[derive(Debug, PartialEq, Clone, Default)]
+#[derive(Debug, PartialEq, Clone, Default, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_calendar::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
@@ -113,6 +134,11 @@ pub struct JapaneseEras<'data> {
     pub dates_to_eras: ZeroVec<'data, (EraStartDate, TinyStr16)>,
 }
 
+icu_provider::data_struct!(
+    JapaneseEras<'_>,
+    #[cfg(feature = "datagen")]
+);
+
 /// An ICU4X mapping to a subset of CLDR weekData.
 /// See CLDR-JSON's weekData.json for more context.
 ///
@@ -121,8 +147,7 @@ pub struct JapaneseEras<'data> {
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[icu_provider::data_struct(marker(WeekDataV2, "datetime/week_data@2", fallback_by = "region"))]
-#[derive(Clone, Copy, Debug, PartialEq)]
+#[derive(Clone, Copy, Debug, PartialEq, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_calendar::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
@@ -130,12 +155,15 @@ pub struct JapaneseEras<'data> {
 pub struct WeekData {
     /// The first day of a week.
     pub first_weekday: Weekday,
-    /// For a given week, the minimum number of that week's days present in a given month or year for the week to be considered part of that month or year.
-    pub min_week_days: u8,
     /// Bitset representing weekdays that are part of the 'weekend', for calendar purposes.
     /// The number of days can be different between locales, and may not be contiguous.
     pub weekend: WeekdaySet,
 }
+
+icu_provider::data_struct!(
+    WeekData,
+    #[cfg(feature = "datagen")]
+);
 
 /// Bitset representing weekdays.
 //
@@ -199,7 +227,7 @@ impl databake::Bake for WeekdaySet {
     fn bake(&self, ctx: &databake::CrateEnv) -> databake::TokenStream {
         ctx.insert("icu_calendar");
         let days =
-            crate::week_of::WeekdaySetIterator::new(Weekday::Monday, *self).map(|d| d.bake(ctx));
+            crate::week::WeekdaySetIterator::new(Weekday::Monday, *self).map(|d| d.bake(ctx));
         databake::quote! {
             icu_calendar::provider::WeekdaySet::new(&[#(#days),*])
         }
@@ -223,7 +251,7 @@ impl serde::Serialize for WeekdaySet {
             use serde::ser::SerializeSeq;
 
             let mut seq = serializer.serialize_seq(None)?;
-            for day in crate::week_of::WeekdaySetIterator::new(Weekday::Monday, *self) {
+            for day in crate::week::WeekdaySetIterator::new(Weekday::Monday, *self) {
                 seq.serialize_element(&day)?;
             }
             seq.end()

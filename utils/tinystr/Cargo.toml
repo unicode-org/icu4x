@@ -5,7 +5,7 @@
 [package]
 name = "tinystr"
 description = "A small ASCII-only bounded length string representation."
-version = "0.8.0"
+version = "0.8.1"
 keywords = ["string", "str", "small", "tiny", "no_std"]
 categories = ["data-structures"]
 
@@ -44,6 +44,8 @@ alloc = ["zerovec?/alloc"]
 zerovec = ["dep:zerovec"]
 databake = ["dep:databake"]
 serde = ["dep:serde"]
+# No longer does anything
+std = []
 
 [lib]
 bench = false  # This option is required for Benchmark CI

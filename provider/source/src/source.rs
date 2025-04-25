@@ -3,7 +3,6 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use elsa::sync::FrozenMap;
-use icu_locale_core::subtags::Region;
 use icu_provider::prelude::*;
 use std::any::Any;
 use std::collections::BTreeMap;
@@ -80,8 +79,11 @@ impl SerdeCache {
         for<'de> S: serde::Deserialize<'de> + 'static + Send + Sync,
     {
         self.read_and_parse(path, |bytes| {
-            toml::from_slice(bytes)
-                .map_err(|e| DataError::custom("TOML deserialize").with_display_context(&e))
+            toml::from_str(
+                std::str::from_utf8(bytes)
+                    .map_err(|e| DataError::custom("TOML UTF8").with_display_context(&e))?,
+            )
+            .map_err(|e| DataError::custom("TOML deserialize").with_display_context(&e))
         })
     }
 
@@ -176,9 +178,9 @@ impl AbstractFs {
                 log::info!("Downloading {resource}");
                 std::fs::create_dir_all(root.parent().unwrap())?;
                 let mut retry = 5;
-                let mut response: Box<dyn Read + Send + Sync + 'static> = loop {
+                let mut response = loop {
                     match ureq::get(resource).call() {
-                        Ok(r) => break r.into_reader(),
+                        Ok(r) => break r.into_body().into_reader(),
                         Err(e) if retry > 0 => {
                             log::warn!("Download error {e:?}, retrying...");
                             std::thread::sleep(std::time::Duration::from_secs(2));
@@ -285,9 +287,11 @@ impl AbstractFs {
                 .entries_with_seek()
                 .and_then(|e| {
                     for e in e {
-                        let e = e?;
+                        let mut e = e?;
                         if e.path()?.as_os_str() == path {
-                            return e.bytes().collect::<Result<Vec<_>, std::io::Error>>();
+                            let mut vec = vec![];
+                            e.read_to_end(&mut vec)?;
+                            return Ok(vec);
                         }
                     }
                     Err(std::io::ErrorKind::NotFound.into())
@@ -387,55 +391,9 @@ impl AbstractFs {
 pub(crate) struct TzdbCache {
     pub(crate) root: AbstractFs,
     pub(crate) transitions: OnceLock<Result<parse_zoneinfo::table::Table, DataError>>,
-    pub(crate) zone_tab: OnceLock<Result<BTreeMap<String, Region>, DataError>>,
-}
-
-fn strip_comments(mut line: String) -> String {
-    if let Some(pos) = line.find('#') {
-        line.truncate(pos);
-    };
-    line
 }
 
 impl TzdbCache {
-    pub(crate) fn zone_tab(&self) -> Result<&BTreeMap<String, Region>, DataError> {
-        self.zone_tab
-            .get_or_init(|| {
-                let mut r = BTreeMap::new();
-
-                for line in self
-                    .root
-                    .read_to_string("zone.tab")?
-                    .lines()
-                    .map(ToOwned::to_owned)
-                    .map(strip_comments)
-                {
-                    let mut fields = line.split('\t');
-
-                    let Some(country_code) = fields.next() else {
-                        continue;
-                    };
-
-                    let Ok(region) = country_code.parse() else {
-                        continue;
-                    };
-
-                    let Some(_coords) = fields.next() else {
-                        continue;
-                    };
-
-                    let Some(iana) = fields.next() else {
-                        continue;
-                    };
-
-                    r.insert(iana.to_owned(), region);
-                }
-                Ok(r)
-            })
-            .as_ref()
-            .map_err(|&e| e)
-    }
-
     pub(crate) fn transitions(&self) -> Result<&parse_zoneinfo::table::Table, DataError> {
         use parse_zoneinfo::line::{Line, LineParser};
         use parse_zoneinfo::table::TableBuilder;

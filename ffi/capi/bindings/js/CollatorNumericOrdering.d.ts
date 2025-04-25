@@ -2,8 +2,9 @@
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
-/** See the [Rust documentation for `NumericOrdering`](https://docs.rs/icu/latest/icu/collator/enum.NumericOrdering.html) for more information.
-*/
+/** 
+ * See the [Rust documentation for `CollationNumericOrdering`](https://docs.rs/icu/latest/icu/collator/preferences/enum.CollationNumericOrdering.html) for more information.
+ */
 
 
 export class CollatorNumericOrdering {

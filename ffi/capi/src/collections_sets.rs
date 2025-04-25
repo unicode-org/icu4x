@@ -8,7 +8,7 @@
 pub mod ffi {
     use alloc::boxed::Box;
 
-    use crate::properties_sets::ffi::CodePointSetData;
+    use crate::unstable::properties_sets::ffi::CodePointSetData;
 
     #[diplomat::opaque]
     #[diplomat::rust_link(

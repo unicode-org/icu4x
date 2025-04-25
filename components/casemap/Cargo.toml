@@ -24,7 +24,7 @@ displaydoc = { workspace = true }
 icu_collections = { workspace = true, features = ["alloc"] }
 icu_locale_core = { workspace = true, features = ["alloc"] }
 icu_properties = { workspace = true }
-icu_provider = { workspace = true, features = ["macros"] }
+icu_provider = { workspace = true }
 potential_utf = { workspace = true, features = ["alloc", "zerovec"] }
 writeable = { workspace = true }
 zerovec = { workspace = true, features = ["alloc", "yoke"] }
@@ -46,8 +46,8 @@ criterion = { workspace = true }
 [features]
 default = ["compiled_data"]
 serde = ["dep:serde", "zerovec/serde", "icu_collections/serde", "icu_provider/serde", "icu_properties/serde", "potential_utf/serde"]
-datagen = ["serde", "dep:databake", "zerovec/databake", "icu_collections/databake"]
-compiled_data = ["dep:icu_casemap_data", "icu_properties/compiled_data"]
+datagen = ["serde", "dep:databake", "zerovec/databake", "icu_collections/databake", "icu_provider/export"]
+compiled_data = ["dep:icu_casemap_data", "icu_properties/compiled_data", "icu_provider/baked"]
 
 [package.metadata.cargo-all-features]
 skip_optional_dependencies = true

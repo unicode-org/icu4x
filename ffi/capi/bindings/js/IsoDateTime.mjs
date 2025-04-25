@@ -6,10 +6,11 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
-/** An ICU4X DateTime object capable of containing a ISO-8601 date and time.
-*
-*See the [Rust documentation for `DateTime`](https://docs.rs/icu/latest/icu/time/struct.DateTime.html) for more information.
-*/
+/** 
+ * An ICU4X DateTime object capable of containing a ISO-8601 date and time.
+ *
+ * See the [Rust documentation for `DateTime`](https://docs.rs/icu/latest/icu/time/struct.DateTime.html) for more information.
+ */
 
 
 export class IsoDateTime {
@@ -99,10 +100,15 @@ export class IsoDateTime {
         return new IsoDateTime(structObj, internalConstructor);
     }
 
+    /** 
+     * Creates a new [`IsoDateTime`] from an IXDTF string.
+     *
+     * See the [Rust documentation for `try_from_str`](https://docs.rs/icu/latest/icu/time/struct.DateTime.html#method.try_from_str) for more information.
+     */
     static fromString(v) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
-        const vSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, v));
+        const vSlice = diplomatRuntime.DiplomatBuf.str8(wasm, v);
         
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 9, 4, true);
         

@@ -7,40 +7,34 @@
 #[diplomat::attr(auto, namespace = "icu4x")]
 pub mod ffi {
     use alloc::boxed::Box;
+    use icu_segmenter::scaffold::{Latin1, PotentiallyIllFormedUtf8, Utf16};
 
     #[cfg(feature = "buffer_provider")]
-    use crate::{errors::ffi::DataError, provider::ffi::DataProvider};
+    use crate::unstable::{errors::ffi::DataError, provider::ffi::DataProvider};
 
     #[diplomat::opaque]
     /// An ICU4X grapheme-cluster-break segmenter, capable of finding grapheme cluster breakpoints
     /// in strings.
     #[diplomat::rust_link(icu::segmenter::GraphemeClusterSegmenter, Struct)]
+    #[diplomat::rust_link(icu::segmenter::GraphemeClusterSegmenterBorrowed, Struct, hidden)]
     pub struct GraphemeClusterSegmenter(icu_segmenter::GraphemeClusterSegmenter);
 
     #[diplomat::opaque]
-    #[diplomat::rust_link(icu::segmenter::GraphemeClusterBreakIterator, Struct)]
-    #[diplomat::rust_link(
-        icu::segmenter::GraphemeClusterBreakIteratorPotentiallyIllFormedUtf8,
-        Typedef,
-        hidden
-    )]
-    #[diplomat::rust_link(icu::segmenter::GraphemeClusterBreakIteratorUtf8, Typedef, hidden)]
+    #[diplomat::rust_link(icu::segmenter::iterators::GraphemeClusterBreakIterator, Struct)]
     pub struct GraphemeClusterBreakIteratorUtf8<'a>(
-        icu_segmenter::GraphemeClusterBreakIteratorPotentiallyIllFormedUtf8<'a, 'a>,
+        icu_segmenter::iterators::GraphemeClusterBreakIterator<'a, 'a, PotentiallyIllFormedUtf8>,
     );
 
     #[diplomat::opaque]
-    #[diplomat::rust_link(icu::segmenter::GraphemeClusterBreakIterator, Struct)]
-    #[diplomat::rust_link(icu::segmenter::GraphemeClusterBreakIteratorUtf16, Typedef, hidden)]
+    #[diplomat::rust_link(icu::segmenter::iterators::GraphemeClusterBreakIterator, Struct)]
     pub struct GraphemeClusterBreakIteratorUtf16<'a>(
-        icu_segmenter::GraphemeClusterBreakIteratorUtf16<'a, 'a>,
+        icu_segmenter::iterators::GraphemeClusterBreakIterator<'a, 'a, Utf16>,
     );
 
     #[diplomat::opaque]
-    #[diplomat::rust_link(icu::segmenter::GraphemeClusterBreakIterator, Struct)]
-    #[diplomat::rust_link(icu::segmenter::GraphemeClusterBreakIteratorLatin1, Typedef, hidden)]
+    #[diplomat::rust_link(icu::segmenter::iterators::GraphemeClusterBreakIterator, Struct)]
     pub struct GraphemeClusterBreakIteratorLatin1<'a>(
-        icu_segmenter::GraphemeClusterBreakIteratorLatin1<'a, 'a>,
+        icu_segmenter::iterators::GraphemeClusterBreakIterator<'a, 'a, Latin1>,
     );
 
     impl GraphemeClusterSegmenter {
@@ -50,7 +44,7 @@ pub mod ffi {
         #[cfg(feature = "compiled_data")]
         pub fn create() -> Box<GraphemeClusterSegmenter> {
             Box::new(GraphemeClusterSegmenter(
-                icu_segmenter::GraphemeClusterSegmenter::new(),
+                icu_segmenter::GraphemeClusterSegmenter::new().static_to_owned(),
             ))
         }
         /// Construct an [`GraphemeClusterSegmenter`].
@@ -71,25 +65,33 @@ pub mod ffi {
         /// Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
         /// to the WHATWG Encoding Standard.
         #[diplomat::rust_link(
-            icu::segmenter::GraphemeClusterSegmenter::segment_str,
+            icu::segmenter::GraphemeClusterSegmenterBorrowed::segment_str,
             FnInStruct,
             hidden
         )]
-        #[diplomat::rust_link(icu::segmenter::GraphemeClusterSegmenter::segment_utf8, FnInStruct)]
+        #[diplomat::rust_link(
+            icu::segmenter::GraphemeClusterSegmenterBorrowed::segment_utf8,
+            FnInStruct
+        )]
         #[diplomat::attr(not(supports = utf8_strings), disable)]
         #[diplomat::attr(*, rename = "segment")]
         pub fn segment_utf8<'a>(
             &'a self,
             input: &'a DiplomatStr,
         ) -> Box<GraphemeClusterBreakIteratorUtf8<'a>> {
-            Box::new(GraphemeClusterBreakIteratorUtf8(self.0.segment_utf8(input)))
+            Box::new(GraphemeClusterBreakIteratorUtf8(
+                self.0.as_borrowed().segment_utf8(input),
+            ))
         }
 
         /// Segments a string.
         ///
         /// Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
         /// to the WHATWG Encoding Standard.
-        #[diplomat::rust_link(icu::segmenter::GraphemeClusterSegmenter::segment_utf16, FnInStruct)]
+        #[diplomat::rust_link(
+            icu::segmenter::GraphemeClusterSegmenterBorrowed::segment_utf16,
+            FnInStruct
+        )]
         #[diplomat::attr(not(supports = utf8_strings), rename = "segment")]
         #[diplomat::attr(supports = utf8_strings, rename = "segment16")]
         pub fn segment_utf16<'a>(
@@ -97,19 +99,22 @@ pub mod ffi {
             input: &'a DiplomatStr16,
         ) -> Box<GraphemeClusterBreakIteratorUtf16<'a>> {
             Box::new(GraphemeClusterBreakIteratorUtf16(
-                self.0.segment_utf16(input),
+                self.0.as_borrowed().segment_utf16(input),
             ))
         }
 
         /// Segments a Latin-1 string.
-        #[diplomat::rust_link(icu::segmenter::GraphemeClusterSegmenter::segment_latin1, FnInStruct)]
+        #[diplomat::rust_link(
+            icu::segmenter::GraphemeClusterSegmenterBorrowed::segment_latin1,
+            FnInStruct
+        )]
         #[diplomat::attr(not(supports = utf8_strings), disable)]
         pub fn segment_latin1<'a>(
             &'a self,
             input: &'a [u8],
         ) -> Box<GraphemeClusterBreakIteratorLatin1<'a>> {
             Box::new(GraphemeClusterBreakIteratorLatin1(
-                self.0.segment_latin1(input),
+                self.0.as_borrowed().segment_latin1(input),
             ))
         }
     }
@@ -117,9 +122,12 @@ pub mod ffi {
     impl<'a> GraphemeClusterBreakIteratorUtf8<'a> {
         /// Finds the next breakpoint. Returns -1 if at the end of the string or if the index is
         /// out of range of a 32-bit signed integer.
-        #[diplomat::rust_link(icu::segmenter::GraphemeClusterBreakIterator::next, FnInStruct)]
         #[diplomat::rust_link(
-            icu::segmenter::GraphemeClusterBreakIterator::Item,
+            icu::segmenter::iterators::GraphemeClusterBreakIterator::next,
+            FnInStruct
+        )]
+        #[diplomat::rust_link(
+            icu::segmenter::iterators::GraphemeClusterBreakIterator::Item,
             AssociatedTypeInStruct,
             hidden
         )]
@@ -134,9 +142,12 @@ pub mod ffi {
     impl<'a> GraphemeClusterBreakIteratorUtf16<'a> {
         /// Finds the next breakpoint. Returns -1 if at the end of the string or if the index is
         /// out of range of a 32-bit signed integer.
-        #[diplomat::rust_link(icu::segmenter::GraphemeClusterBreakIterator::next, FnInStruct)]
         #[diplomat::rust_link(
-            icu::segmenter::GraphemeClusterBreakIterator::Item,
+            icu::segmenter::iterators::GraphemeClusterBreakIterator::next,
+            FnInStruct
+        )]
+        #[diplomat::rust_link(
+            icu::segmenter::iterators::GraphemeClusterBreakIterator::Item,
             AssociatedTypeInStruct,
             hidden
         )]
@@ -151,9 +162,12 @@ pub mod ffi {
     impl<'a> GraphemeClusterBreakIteratorLatin1<'a> {
         /// Finds the next breakpoint. Returns -1 if at the end of the string or if the index is
         /// out of range of a 32-bit signed integer.
-        #[diplomat::rust_link(icu::segmenter::GraphemeClusterBreakIterator::next, FnInStruct)]
         #[diplomat::rust_link(
-            icu::segmenter::GraphemeClusterBreakIterator::Item,
+            icu::segmenter::iterators::GraphemeClusterBreakIterator::next,
+            FnInStruct
+        )]
+        #[diplomat::rust_link(
+            icu::segmenter::iterators::GraphemeClusterBreakIterator::Item,
             AssociatedTypeInStruct,
             hidden
         )]

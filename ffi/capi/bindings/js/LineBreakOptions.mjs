@@ -5,8 +5,9 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
-/** See the [Rust documentation for `LineBreakOptions`](https://docs.rs/icu/latest/icu/segmenter/struct.LineBreakOptions.html) for more information.
-*/
+/** 
+ * See the [Rust documentation for `LineBreakOptions`](https://docs.rs/icu/latest/icu/segmenter/options/struct.LineBreakOptions.html) for more information.
+ */
 
 
 export class LineBreakOptions {
@@ -35,7 +36,7 @@ export class LineBreakOptions {
     static fromFields(structObj) {
         return new LineBreakOptions(structObj);
     }
-    
+
     #internalConstructor(structObj) {
         if (typeof structObj !== "object") {
             throw new Error("LineBreakOptions's constructor takes an object of LineBreakOptions's fields.");
@@ -63,7 +64,7 @@ export class LineBreakOptions {
         functionCleanupArena,
         appendArrayMap
     ) {
-        return [...diplomatRuntime.optionToArgsForCalling(this.#strictness, 4, 4, false, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]), ...diplomatRuntime.optionToArgsForCalling(this.#wordOption, 4, 4, false, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)])]
+        return [...diplomatRuntime.optionToArgsForCalling(this.#strictness, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]), ...diplomatRuntime.optionToArgsForCalling(this.#wordOption, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)])]
     }
 
     static _fromSuppliedValue(internalConstructor, obj) {

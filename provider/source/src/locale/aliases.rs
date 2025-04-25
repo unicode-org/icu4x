@@ -14,9 +14,9 @@ use std::collections::{BTreeMap, HashSet};
 use tinystr::TinyAsciiStr;
 use zerovec::ZeroSlice;
 
-impl DataProvider<AliasesV2> for SourceDataProvider {
-    fn load(&self, req: DataRequest) -> Result<DataResponse<AliasesV2>, DataError> {
-        self.check_req::<AliasesV2>(req)?;
+impl DataProvider<LocaleAliasesV1> for SourceDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<LocaleAliasesV1>, DataError> {
+        self.check_req::<LocaleAliasesV1>(req)?;
         let data: &cldr_serde::aliases::Resource = self
             .cldr()?
             .core()
@@ -28,7 +28,7 @@ impl DataProvider<AliasesV2> for SourceDataProvider {
     }
 }
 
-impl crate::IterableDataProviderCached<AliasesV2> for SourceDataProvider {
+impl crate::IterableDataProviderCached<LocaleAliasesV1> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
     }
@@ -277,7 +277,7 @@ fn test_basic() {
     use icu::locale::subtags::{language, region, script};
 
     let provider = SourceDataProvider::new_testing();
-    let data: DataResponse<AliasesV2> = provider.load(Default::default()).unwrap();
+    let data: DataResponse<LocaleAliasesV1> = provider.load(Default::default()).unwrap();
 
     // We should handle all language rules as special cases, leaving the generic category empty.
     assert!(data.payload.get().language.is_empty());

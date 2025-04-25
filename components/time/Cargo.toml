@@ -23,15 +23,16 @@ all-features = true
 calendrical_calculations = { workspace = true }
 displaydoc = { workspace = true }
 icu_calendar = { workspace = true }
-icu_provider = { workspace = true, features = ["macros"] }
+icu_provider = { workspace = true }
+icu_locale_core = { workspace = true, features = ["zerovec"] }
 ixdtf = { workspace = true, optional = true }
-tinystr = { workspace = true, features = ["alloc", "zerovec"] }
-zerotrie = { workspace = true, features = ["alloc", "yoke", "zerofrom"] }
+tinystr = { workspace = true, features = ["zerovec"] }
+zerotrie = { workspace = true, features = ["yoke", "zerofrom"] }
 zerovec = { workspace = true, features = ["derive", "yoke"] }
 writeable = { workspace = true }
 
 databake = { workspace = true, optional = true, features = ["derive"] }
-serde = { workspace = true, features = ["derive", "alloc"], optional = true }
+serde = { workspace = true, features = ["derive"], optional = true }
 
 icu_time_data = { workspace = true, optional = true }
 
@@ -41,6 +42,7 @@ icu = { path = "../../components/icu", default-features = false }
 [features]
 default = ["compiled_data", "ixdtf"]
 ixdtf = ["dep:ixdtf", "icu_calendar/ixdtf"]
-serde = ["dep:serde", "zerovec/serde", "zerotrie/serde", "tinystr/serde", "icu_provider/serde"]
-datagen = ["serde", "dep:databake", "zerovec/databake", "zerotrie/databake", "tinystr/databake"]
-compiled_data = ["dep:icu_time_data", "icu_calendar/compiled_data"]
+serde = ["dep:serde", "zerovec/serde", "zerotrie/serde", "tinystr/serde", "icu_provider/serde", "icu_locale_core/serde"]
+datagen = ["serde", "dep:databake", "zerovec/databake", "zerotrie/databake", "tinystr/databake", "icu_provider/export", "icu_locale_core/databake"]
+compiled_data = ["dep:icu_time_data", "icu_calendar/compiled_data", "icu_provider/baked"]
+alloc = ["tinystr/alloc", "zerotrie/alloc", "serde?/alloc"]

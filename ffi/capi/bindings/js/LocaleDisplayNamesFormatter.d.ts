@@ -7,16 +7,27 @@ import type { Locale } from "./Locale"
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
-/** See the [Rust documentation for `LocaleDisplayNamesFormatter`](https://docs.rs/icu/latest/icu/displaynames/struct.LocaleDisplayNamesFormatter.html) for more information.
-*/
+/** 
+ * See the [Rust documentation for `LocaleDisplayNamesFormatter`](https://docs.rs/icu/latest/icu/experimental/displaynames/struct.LocaleDisplayNamesFormatter.html) for more information.
+ */
 
 
 export class LocaleDisplayNamesFormatter {
     
     get ffiValue(): pointer;
 
+    /** 
+     * Creates a new `LocaleDisplayNamesFormatter` from locale data and an options bag using a particular data source.
+     *
+     * See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/experimental/displaynames/struct.LocaleDisplayNamesFormatter.html#method.try_new) for more information.
+     */
     static createWithProvider(provider: DataProvider, locale: Locale, options: DisplayNamesOptions_obj): LocaleDisplayNamesFormatter;
 
+    /** 
+     * Returns the locale-specific display name of a locale.
+     *
+     * See the [Rust documentation for `of`](https://docs.rs/icu/latest/icu/experimental/displaynames/struct.LocaleDisplayNamesFormatter.html#method.of) for more information.
+     */
     of(locale: Locale): string;
 
     constructor(locale: Locale, options: DisplayNamesOptions_obj);

@@ -6,8 +6,9 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
-/** See the [Rust documentation for `DisplayNamesOptions`](https://docs.rs/icu/latest/icu/displaynames/options/struct.DisplayNamesOptions.html) for more information.
-*/
+/** 
+ * See the [Rust documentation for `DisplayNamesOptions`](https://docs.rs/icu/latest/icu/experimental/displaynames/options/struct.DisplayNamesOptions.html) for more information.
+ */
 
 
 export class DisplayNamesOptions {
@@ -45,7 +46,7 @@ export class DisplayNamesOptions {
     static fromFields(structObj) {
         return new DisplayNamesOptions(structObj);
     }
-    
+
     #internalConstructor(structObj) {
         if (typeof structObj !== "object") {
             throw new Error("DisplayNamesOptions's constructor takes an object of DisplayNamesOptions's fields.");
@@ -79,7 +80,7 @@ export class DisplayNamesOptions {
         functionCleanupArena,
         appendArrayMap
     ) {
-        return [...diplomatRuntime.optionToArgsForCalling(this.#style, 4, 4, false, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]), ...diplomatRuntime.optionToArgsForCalling(this.#fallback, 4, 4, false, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]), ...diplomatRuntime.optionToArgsForCalling(this.#languageDisplay, 4, 4, false, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)])]
+        return [...diplomatRuntime.optionToArgsForCalling(this.#style, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]), ...diplomatRuntime.optionToArgsForCalling(this.#fallback, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]), ...diplomatRuntime.optionToArgsForCalling(this.#languageDisplay, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)])]
     }
 
     static _fromSuppliedValue(internalConstructor, obj) {

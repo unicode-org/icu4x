@@ -5,6 +5,7 @@
 use crate::asciibyte::AsciiByte;
 use crate::int_ops::{Aligned4, Aligned8};
 use crate::ParseError;
+use core::borrow::Borrow;
 use core::fmt;
 use core::ops::Deref;
 use core::str::{self, FromStr};
@@ -774,6 +775,13 @@ impl<const N: usize> Deref for TinyAsciiStr<N> {
     }
 }
 
+impl<const N: usize> Borrow<str> for TinyAsciiStr<N> {
+    #[inline]
+    fn borrow(&self) -> &str {
+        self.as_str()
+    }
+}
+
 impl<const N: usize> FromStr for TinyAsciiStr<N> {
     type Err = ParseError;
     #[inline]
@@ -811,10 +819,9 @@ impl<const N: usize> PartialEq<TinyAsciiStr<N>> for alloc::string::String {
 #[cfg(test)]
 mod test {
     use super::*;
-    use rand::distributions::Distribution;
-    use rand::distributions::Standard;
+    use rand::distr::Distribution;
+    use rand::distr::StandardUniform;
     use rand::rngs::SmallRng;
-    use rand::seq::SliceRandom;
     use rand::SeedableRng;
 
     const STRINGS: [&str; 26] = [
@@ -847,6 +854,7 @@ mod test {
     ];
 
     fn gen_strings(num_strings: usize, allowed_lengths: &[usize]) -> Vec<String> {
+        use rand::seq::IndexedRandom;
         let mut rng = SmallRng::seed_from_u64(2022);
         // Need to do this in 2 steps since the RNG is needed twice
         let string_lengths = core::iter::repeat_with(|| *allowed_lengths.choose(&mut rng).unwrap())
@@ -855,7 +863,7 @@ mod test {
         string_lengths
             .iter()
             .map(|len| {
-                Standard
+                StandardUniform
                     .sample_iter(&mut rng)
                     .filter(|b: &u8| *b > 0 && *b < 0x80)
                     .take(*len)

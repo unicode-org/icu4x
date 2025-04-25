@@ -16,7 +16,7 @@ The design goals of `ICU4X` are:
 
 ## Documentation
 
-For an introduction to the project, please visit the ["Introduction to ICU4X for Rust"](tutorials/intro.md) tutorial. Further tutorials can be found in the [tutorial index](tutorials/index.md).
+For an introduction to the project, please visit the ["Introduction to ICU4X for Rust"](tutorials/quickstart.md) tutorial. Further tutorials can be found in the [tutorial index](tutorials/index.md).
 
 For technical information on how to use ICU4X, visit our [API docs (latest stable)](https://docs.rs/icu/latest/) or [API docs (tip of main)](https://unicode-org.github.io/icu4x/rustdoc/icu/).
 
@@ -37,7 +37,7 @@ icu = "1.5.0"
 
 ```rust
 use icu::calendar::Date;
-use icu::datetime::{DateTimeFormatter, Length, fieldsets::YMD};
+use icu::datetime::{DateTimeFormatter, fieldsets::YMD};
 use icu::locale::locale;
 
 let dtf = DateTimeFormatter::try_new(

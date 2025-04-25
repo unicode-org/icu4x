@@ -15,41 +15,39 @@
 //! ## Format a number with Bangla digits
 //!
 //! ```
-//! use fixed_decimal::SignedFixedDecimal;
+//! use icu::decimal::input::Decimal;
 //! use icu::decimal::DecimalFormatter;
 //! use icu::locale::locale;
 //! use writeable::assert_writeable_eq;
 //!
-//! let df = DecimalFormatter::try_new(
-//!     locale!("bn").into(),
-//!     Default::default(),
-//! )
-//! .expect("locale should be present");
+//! let formatter =
+//!     DecimalFormatter::try_new(locale!("bn").into(), Default::default())
+//!         .expect("locale should be present");
 //!
-//! let fixed_decimal = SignedFixedDecimal::from(1000007);
+//! let decimal = Decimal::from(1000007);
 //!
-//! assert_writeable_eq!(df.format(&fixed_decimal), "১০,০০,০০৭");
+//! assert_writeable_eq!(formatter.format(&decimal), "১০,০০,০০৭");
 //! ```
 //!
 //! ## Format a number with digits after the decimal separator
 //!
 //! ```
-//! use fixed_decimal::SignedFixedDecimal;
+//! use icu::decimal::input::Decimal;
 //! use icu::decimal::DecimalFormatter;
 //! use icu::locale::Locale;
 //! use writeable::assert_writeable_eq;
 //!
-//! let df =
+//! let formatter =
 //!     DecimalFormatter::try_new(Default::default(), Default::default())
 //!         .expect("locale should be present");
 //!
-//! let fixed_decimal = {
-//!     let mut decimal = SignedFixedDecimal::from(200050);
+//! let decimal = {
+//!     let mut decimal = Decimal::from(200050);
 //!     decimal.multiply_pow10(-2);
 //!     decimal
 //! };
 //!
-//! assert_writeable_eq!(df.format(&fixed_decimal), "2,000.50");
+//! assert_writeable_eq!(formatter.format(&decimal), "2,000.50");
 //! ```
 //!
 //! ## Format a number using an alternative numbering system
@@ -57,20 +55,20 @@
 //! Numbering systems specified in the `-u-nu` subtag will be followed.
 //!
 //! ```
-//! use fixed_decimal::SignedFixedDecimal;
+//! use icu::decimal::input::Decimal;
 //! use icu::decimal::DecimalFormatter;
 //! use icu::locale::locale;
 //! use writeable::assert_writeable_eq;
 //!
-//! let fdf = DecimalFormatter::try_new(
+//! let formatter = DecimalFormatter::try_new(
 //!     locale!("th-u-nu-thai").into(),
 //!     Default::default(),
 //! )
 //! .expect("locale should be present");
 //!
-//! let fixed_decimal = SignedFixedDecimal::from(1000007);
+//! let decimal = Decimal::from(1000007);
 //!
-//! assert_writeable_eq!(fdf.format(&fixed_decimal), "๑,๐๐๐,๐๐๗");
+//! assert_writeable_eq!(formatter.format(&decimal), "๑,๐๐๐,๐๐๗");
 //! ```
 //!
 //! [`DecimalFormatter`]: DecimalFormatter
@@ -92,6 +90,7 @@
 )]
 #![warn(missing_docs)]
 
+#[cfg(feature = "alloc")]
 extern crate alloc;
 
 mod format;
@@ -103,13 +102,11 @@ pub(crate) mod size_test_macro;
 
 pub use format::FormattedDecimal;
 
-use alloc::string::String;
-use fixed_decimal::SignedFixedDecimal;
+use fixed_decimal::Decimal;
 use icu_locale_core::locale;
 use icu_locale_core::preferences::define_preferences;
 use icu_provider::prelude::*;
 use size_test_macro::size_test;
-use writeable::Writeable;
 
 size_test!(DecimalFormatter, decimal_formatter_size, 96);
 
@@ -135,7 +132,17 @@ pub mod preferences {
     pub use icu_locale_core::preferences::extensions::unicode::keywords::NumberingSystem;
 }
 
-/// A formatter for [`SignedFixedDecimal`], rendering decimal digits in an i18n-friendly way.
+/// Types that can be fed to [`DecimalFormatter`] and their utilities
+///
+/// This module contains re-exports from the [`fixed_decimal`] crate.
+pub mod input {
+    pub use fixed_decimal::Decimal;
+    #[cfg(feature = "ryu")]
+    pub use fixed_decimal::FloatPrecision;
+    pub use fixed_decimal::SignDisplay;
+}
+
+/// A formatter for [`Decimal`], rendering decimal digits in an i18n-friendly way.
 ///
 /// [`DecimalFormatter`] supports:
 ///
@@ -147,10 +154,10 @@ pub mod preferences {
 ///
 /// See the crate-level documentation for examples.
 #[doc = decimal_formatter_size!()]
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct DecimalFormatter {
     options: options::DecimalFormatterOptions,
-    symbols: DataPayload<provider::DecimalSymbolsV2>,
+    symbols: DataPayload<provider::DecimalSymbolsV1>,
     digits: DataPayload<provider::DecimalDigitsV1>,
 }
 
@@ -168,13 +175,13 @@ impl DecimalFormatter {
 
     #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
     pub fn try_new_unstable<
-        D: DataProvider<provider::DecimalSymbolsV2> + DataProvider<provider::DecimalDigitsV1> + ?Sized,
+        D: DataProvider<provider::DecimalSymbolsV1> + DataProvider<provider::DecimalDigitsV1> + ?Sized,
     >(
         provider: &D,
         prefs: DecimalFormatterPreferences,
         options: options::DecimalFormatterOptions,
     ) -> Result<Self, DataError> {
-        let locale = provider::DecimalSymbolsV2::make_locale(prefs.locale_preferences);
+        let locale = provider::DecimalSymbolsV1::make_locale(prefs.locale_preferences);
         let provided_nu = prefs.numbering_system.as_ref().map(|s| s.as_str());
 
         // In case the user explicitly specified a numbering system, use digits from that numbering system. In case of explicitly specified numbering systems,
@@ -199,7 +206,7 @@ impl DecimalFormatter {
 
         if let Some(provided_nu) = provided_nu {
             // Load symbols for the locale/numsys pair provided
-            let symbols: DataPayload<provider::DecimalSymbolsV2> = provider
+            let symbols: DataPayload<provider::DecimalSymbolsV1> = provider
                 .load(DataRequest {
                     id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                         DataMarkerAttributes::from_str_or_panic(provided_nu),
@@ -246,7 +253,7 @@ impl DecimalFormatter {
                 digits,
             })
         } else {
-            let symbols: DataPayload<provider::DecimalSymbolsV2> = provider
+            let symbols: DataPayload<provider::DecimalSymbolsV1> = provider
                 .load(DataRequest {
                     id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                         DataMarkerAttributes::empty(),
@@ -275,8 +282,8 @@ impl DecimalFormatter {
         }
     }
 
-    /// Formats a [`SignedFixedDecimal`], returning a [`FormattedDecimal`].
-    pub fn format<'l>(&'l self, value: &'l SignedFixedDecimal) -> FormattedDecimal<'l> {
+    /// Formats a [`Decimal`], returning a [`FormattedDecimal`].
+    pub fn format<'l>(&'l self, value: &'l Decimal) -> FormattedDecimal<'l> {
         FormattedDecimal {
             value,
             options: &self.options,
@@ -285,8 +292,10 @@ impl DecimalFormatter {
         }
     }
 
-    /// Formats a [`SignedFixedDecimal`], returning a [`String`].
-    pub fn format_to_string(&self, value: &SignedFixedDecimal) -> String {
+    /// Formats a [`Decimal`], returning a [`String`].
+    #[cfg(feature = "alloc")]
+    pub fn format_to_string(&self, value: &Decimal) -> alloc::string::String {
+        use writeable::Writeable;
         self.format(value).write_to_string().into_owned()
     }
 }

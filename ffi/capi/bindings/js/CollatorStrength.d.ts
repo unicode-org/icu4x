@@ -2,8 +2,9 @@
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
-/** See the [Rust documentation for `Strength`](https://docs.rs/icu/latest/icu/collator/enum.Strength.html) for more information.
-*/
+/** 
+ * See the [Rust documentation for `Strength`](https://docs.rs/icu/latest/icu/collator/options/enum.Strength.html) for more information.
+ */
 
 
 export class CollatorStrength {

@@ -21,10 +21,11 @@ databake = { workspace = true, features = ["derive"] }
 litemap = { workspace = true }
 tinystr = { workspace = true, features = ["alloc"] }
 writeable = { workspace = true }
+zerovec = { workspace = true }
 
 displaydoc = { workspace = true }
 itertools = { workspace = true }
-lru = "0.8.1"
+lru = "0.13.0"
 serde = { workspace = true, features = ["derive", "alloc", "std"] }
 serde-aux = { workspace = true }
 time = { version = "0.3", features = ["local-offset"] }

@@ -3,8 +3,11 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
-/** See the [Rust documentation for `TimePrecision`](https://docs.rs/icu/latest/icu/datetime/enum.TimePrecision.html) for more information.
-*/
+/** 
+ * See the [Rust documentation for `TimePrecision`](https://docs.rs/icu/latest/icu/datetime/options/enum.TimePrecision.html) for more information.
+ *
+ * See the [Rust documentation for `SubsecondDigits`](https://docs.rs/icu/latest/icu/datetime/options/enum.SubsecondDigits.html) for more information.
+ */
 
 
 export class TimePrecision {
@@ -16,15 +19,15 @@ export class TimePrecision {
         ["Minute", 1],
         ["MinuteOptional", 2],
         ["Second", 3],
-        ["SecondF1", 4],
-        ["SecondF2", 5],
-        ["SecondF3", 6],
-        ["SecondF4", 7],
-        ["SecondF5", 8],
-        ["SecondF6", 9],
-        ["SecondF7", 10],
-        ["SecondF8", 11],
-        ["SecondF9", 12]
+        ["Subsecond1", 4],
+        ["Subsecond2", 5],
+        ["Subsecond3", 6],
+        ["Subsecond4", 7],
+        ["Subsecond5", 8],
+        ["Subsecond6", 9],
+        ["Subsecond7", 10],
+        ["Subsecond8", 11],
+        ["Subsecond9", 12]
     ]);
 
     static getAllEntries() {
@@ -87,15 +90,15 @@ export class TimePrecision {
     static Minute = TimePrecision.#objectValues[1];
     static MinuteOptional = TimePrecision.#objectValues[2];
     static Second = TimePrecision.#objectValues[3];
-    static SecondF1 = TimePrecision.#objectValues[4];
-    static SecondF2 = TimePrecision.#objectValues[5];
-    static SecondF3 = TimePrecision.#objectValues[6];
-    static SecondF4 = TimePrecision.#objectValues[7];
-    static SecondF5 = TimePrecision.#objectValues[8];
-    static SecondF6 = TimePrecision.#objectValues[9];
-    static SecondF7 = TimePrecision.#objectValues[10];
-    static SecondF8 = TimePrecision.#objectValues[11];
-    static SecondF9 = TimePrecision.#objectValues[12];
+    static Subsecond1 = TimePrecision.#objectValues[4];
+    static Subsecond2 = TimePrecision.#objectValues[5];
+    static Subsecond3 = TimePrecision.#objectValues[6];
+    static Subsecond4 = TimePrecision.#objectValues[7];
+    static Subsecond5 = TimePrecision.#objectValues[8];
+    static Subsecond6 = TimePrecision.#objectValues[9];
+    static Subsecond7 = TimePrecision.#objectValues[10];
+    static Subsecond8 = TimePrecision.#objectValues[11];
+    static Subsecond9 = TimePrecision.#objectValues[12];
 
     constructor(value) {
         return this.#internalConstructor(...arguments)

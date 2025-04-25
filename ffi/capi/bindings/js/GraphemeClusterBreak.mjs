@@ -3,8 +3,9 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
-/** See the [Rust documentation for `GraphemeClusterBreak`](https://docs.rs/icu/latest/icu/properties/props/struct.GraphemeClusterBreak.html) for more information.
-*/
+/** 
+ * See the [Rust documentation for `GraphemeClusterBreak`](https://docs.rs/icu/latest/icu/properties/props/struct.GraphemeClusterBreak.html) for more information.
+ */
 
 
 export class GraphemeClusterBreak {
@@ -112,8 +113,26 @@ export class GraphemeClusterBreak {
     static GlueAfterZwj = GraphemeClusterBreak.#objectValues[16];
     static Zwj = GraphemeClusterBreak.#objectValues[17];
 
-    toInteger() {
-        const result = wasm.icu4x_GraphemeClusterBreak_to_integer_mv1(this.ffiValue);
+    /** 
+     * See the [Rust documentation for `for_char`](https://docs.rs/icu/latest/icu/properties/props/trait.EnumeratedProperty.html#tymethod.for_char) for more information.
+     */
+    static forChar(ch) {
+        const result = wasm.icu4x_GraphemeClusterBreak_for_char_mv1(ch);
+    
+        try {
+            return new GraphemeClusterBreak(diplomatRuntime.internalConstructor, result);
+        }
+        
+        finally {}
+    }
+
+    /** 
+     * Convert to an integer value usable with ICU4C and CodePointMapData
+     *
+     * See the [Rust documentation for `to_icu4c_value`](https://docs.rs/icu/latest/icu/properties/props/struct.GraphemeClusterBreak.html#method.to_icu4c_value) for more information.
+     */
+    toIntegerValue() {
+        const result = wasm.icu4x_GraphemeClusterBreak_to_integer_value_mv1(this.ffiValue);
     
         try {
             return result;
@@ -122,10 +141,15 @@ export class GraphemeClusterBreak {
         finally {}
     }
 
-    static fromInteger(other) {
+    /** 
+     * Convert from an integer value from ICU4C or CodePointMapData
+     *
+     * See the [Rust documentation for `from_icu4c_value`](https://docs.rs/icu/latest/icu/properties/props/struct.GraphemeClusterBreak.html#method.from_icu4c_value) for more information.
+     */
+    static fromIntegerValue(other) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_GraphemeClusterBreak_from_integer_mv1(diplomatReceive.buffer, other);
+        const result = wasm.icu4x_GraphemeClusterBreak_from_integer_value_mv1(diplomatReceive.buffer, other);
     
         try {
             if (!diplomatReceive.resultFlag) {

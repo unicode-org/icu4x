@@ -13,9 +13,9 @@ use super::validated_options::Unit;
 use super::{provider, Duration};
 
 pub use super::validated_options::ValidatedDurationFormatterOptions;
-use icu_decimal::provider::{DecimalDigitsV1, DecimalSymbolsV2};
+use icu_decimal::provider::{DecimalDigitsV1, DecimalSymbolsV1};
 use icu_decimal::{DecimalFormatter, DecimalFormatterPreferences};
-use icu_list::{ListFormatter, ListFormatterPreferences, ListLength};
+use icu_list::{options::ListLength, ListFormatter, ListFormatterPreferences};
 use icu_locale_core::preferences::{
     define_preferences, extensions::unicode::keywords::NumberingSystem, prefs_convert,
 };
@@ -136,9 +136,9 @@ impl DurationUnitFormatter {
     fn try_new_unstable<
         D: ?Sized
             + DataProvider<UnitsDisplayNameV1>
-            + DataProvider<icu_decimal::provider::DecimalSymbolsV2>
+            + DataProvider<icu_decimal::provider::DecimalSymbolsV1>
             + DataProvider<icu_decimal::provider::DecimalDigitsV1>
-            + DataProvider<icu_plurals::provider::CardinalV1>,
+            + DataProvider<icu_plurals::provider::PluralsCardinalV1>,
     >(
         provider: &D,
         prefs: DurationFormatterPreferences,
@@ -171,7 +171,7 @@ impl DurationUnitFormatter {
     }
 }
 
-impl From<BaseStyle> for icu_list::ListFormatterOptions {
+impl From<BaseStyle> for icu_list::options::ListFormatterOptions {
     fn from(style: BaseStyle) -> Self {
         // Section 1.1.13
         // 1. Let lfOpts be OrdinaryObjectCreate(null).
@@ -195,7 +195,7 @@ impl DurationFormatter {
         (prefs: DurationFormatterPreferences, options: ValidatedDurationFormatterOptions) -> error: DataError,
         functions: [
             try_new: skip,
-                        try_new_with_buffer_provider,
+            try_new_with_buffer_provider,
             try_new_unstable,
             Self
         ]
@@ -232,10 +232,10 @@ impl DurationFormatter {
     pub fn try_new_unstable<
         D: DataProvider<provider::DigitalDurationDataV1>
             + DataProvider<UnitsDisplayNameV1>
-            + DataProvider<DecimalSymbolsV2>
+            + DataProvider<DecimalSymbolsV1>
             + DataProvider<DecimalDigitsV1>
-            + DataProvider<icu_plurals::provider::CardinalV1>
-            + DataProvider<icu_list::provider::ListUnitV2>
+            + DataProvider<icu_plurals::provider::PluralsCardinalV1>
+            + DataProvider<icu_list::provider::ListUnitV1>
             + ?Sized,
     >(
         provider: &D,

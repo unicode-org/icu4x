@@ -53,12 +53,11 @@ mod algorithms;
 ///
 /// [UTS #35: Locale Inheritance and Matching]: https://www.unicode.org/reports/tr35/#Locale_Inheritance
 /// [the design doc]: https://docs.google.com/document/d/1Mp7EUyl-sFh_HZYgyeVwj88vJGpCBIWxzlCwGgLCDwM/edit
-/// [language identifier]: icu::locale::LanguageIdentifier
 #[doc(hidden)] // canonical location in super
 #[derive(Debug, Clone, PartialEq)]
 pub struct LocaleFallbacker {
-    likely_subtags: DataPayload<LikelySubtagsForLanguageV1>,
-    parents: DataPayload<ParentsV1>,
+    likely_subtags: DataPayload<LocaleLikelySubtagsLanguageV1>,
+    parents: DataPayload<LocaleParentsV1>,
 }
 
 /// Borrowed version of [`LocaleFallbacker`].
@@ -119,7 +118,7 @@ impl LocaleFallbacker {
     icu_provider::gen_buffer_data_constructors!(() -> error: DataError,
         functions: [
             new: skip,
-                        try_new_with_buffer_provider,
+            try_new_with_buffer_provider,
             try_new_unstable,
             Self
     ]);
@@ -127,7 +126,7 @@ impl LocaleFallbacker {
     #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::new)]
     pub fn try_new_unstable<P>(provider: &P) -> Result<Self, DataError>
     where
-        P: DataProvider<LikelySubtagsForLanguageV1> + DataProvider<ParentsV1> + ?Sized,
+        P: DataProvider<LocaleLikelySubtagsLanguageV1> + DataProvider<LocaleParentsV1> + ?Sized,
     {
         let likely_subtags = provider.load(Default::default())?.payload;
         let parents = provider.load(Default::default())?.payload;
@@ -193,8 +192,8 @@ impl LocaleFallbackerBorrowed<'static> {
     #[allow(clippy::new_without_default)]
     pub const fn new() -> Self {
         Self {
-            likely_subtags: crate::provider::Baked::SINGLETON_LIKELY_SUBTAGS_FOR_LANGUAGE_V1,
-            parents: crate::provider::Baked::SINGLETON_PARENTS_V1,
+            likely_subtags: crate::provider::Baked::SINGLETON_LOCALE_LIKELY_SUBTAGS_LANGUAGE_V1,
+            parents: crate::provider::Baked::SINGLETON_LOCALE_PARENTS_V1,
         }
     }
 

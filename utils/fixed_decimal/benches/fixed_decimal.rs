@@ -9,7 +9,7 @@ use rand_pcg::Lcg64Xsh32;
 
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
 
-use fixed_decimal::SignedFixedDecimal;
+use fixed_decimal::Decimal;
 
 // TODO: move to helpers.rs
 fn triangular_nums(range: f64) -> Vec<isize> {
@@ -44,12 +44,12 @@ fn overview_bench(c: &mut Criterion) {
             // * Serialization of FixedDecimal to string
             nums.iter()
                 .map(|v| black_box(*v))
-                .map(SignedFixedDecimal::from)
+                .map(Decimal::from)
                 .count();
             let fds: Vec<_> = values
                 .iter()
                 .map(black_box)
-                .map(|v| SignedFixedDecimal::from_str(v).expect("Failed to parse"))
+                .map(|v| Decimal::from_str(v).expect("Failed to parse"))
                 .collect();
             fds.iter().map(black_box).map(|v| v.to_string()).count();
         });
@@ -75,7 +75,7 @@ fn smaller_isize_benches(c: &mut Criterion) {
             #[allow(clippy::suspicious_map)]
             nums.iter()
                 .map(|v| black_box(*v))
-                .map(SignedFixedDecimal::from)
+                .map(Decimal::from)
                 .count()
         });
     });
@@ -92,7 +92,7 @@ fn larger_isize_benches(c: &mut Criterion) {
             #[allow(clippy::suspicious_map)]
             nums.iter()
                 .map(|v| black_box(*v))
-                .map(SignedFixedDecimal::from)
+                .map(Decimal::from)
                 .count()
         });
     });
@@ -104,11 +104,11 @@ fn to_string_benches(c: &mut Criterion) {
 
     let objects = [
         {
-            let mut fd = SignedFixedDecimal::from(2250);
+            let mut fd = Decimal::from(2250);
             fd.multiply_pow10(-2);
             fd
         },
-        SignedFixedDecimal::from(908070605040302010u128),
+        Decimal::from(908070605040302010u128),
     ];
 
     {
@@ -161,7 +161,7 @@ fn from_string_benches(c: &mut Criterion) {
             group.bench_with_input(
                 BenchmarkId::from_parameter(object.to_string()),
                 object,
-                |b, object| b.iter(|| SignedFixedDecimal::from_str(object).unwrap()),
+                |b, object| b.iter(|| Decimal::from_str(object).unwrap()),
             );
         }
         group.finish();
@@ -198,7 +198,7 @@ fn rounding_benches(c: &mut Criterion) {
     ];
 
     let nums: Vec<_> = triangular_floats(1e7)
-        .map(|f| SignedFixedDecimal::try_from_f64(f, FloatPrecision::RoundTrip).unwrap())
+        .map(|f| Decimal::try_from_f64(f, FloatPrecision::RoundTrip).unwrap())
         .collect();
     let mut group = c.benchmark_group("rounding");
 
@@ -209,11 +209,7 @@ fn rounding_benches(c: &mut Criterion) {
                     nums.iter()
                         .cloned()
                         .map(|num| {
-                            SignedFixedDecimal::rounded_with_mode(
-                                black_box(num),
-                                offset,
-                                rounding_mode,
-                            )
+                            Decimal::rounded_with_mode(black_box(num), offset, rounding_mode)
                         })
                         .for_each(|num| {
                             black_box(num);

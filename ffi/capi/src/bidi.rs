@@ -11,7 +11,7 @@ pub mod ffi {
     use core::fmt::Write;
 
     #[cfg(feature = "buffer_provider")]
-    use crate::{errors::ffi::DataError, provider::ffi::DataProvider};
+    use crate::unstable::{errors::ffi::DataError, provider::ffi::DataProvider};
 
     pub enum BidiDirection {
         Ltr,
@@ -21,13 +21,11 @@ pub mod ffi {
 
     #[diplomat::opaque]
     /// An ICU4X Bidi object, containing loaded bidi data
-    #[diplomat::rust_link(icu::properties::bidi::BidiClassAdapter, Struct)]
     #[diplomat::rust_link(icu::properties::props::BidiClass, Struct)]
     pub struct Bidi(pub icu_properties::CodePointMapData<icu_properties::props::BidiClass>);
 
     impl Bidi {
         /// Creates a new [`Bidi`] from locale data using compiled data.
-        #[diplomat::rust_link(icu::properties::bidi::BidiClassAdapter::new, FnInStruct)]
         #[diplomat::attr(auto, constructor)]
         #[cfg(feature = "compiled_data")]
         pub fn create() -> Box<Bidi> {
@@ -37,7 +35,6 @@ pub mod ffi {
         }
 
         /// Creates a new [`Bidi`] from locale data, and a particular data source.
-        #[diplomat::rust_link(icu::properties::bidi::BidiClassAdapter::new, FnInStruct)]
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "with_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_with_provider(provider: &DataProvider) -> Result<Box<Bidi>, DataError> {

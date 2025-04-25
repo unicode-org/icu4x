@@ -3,8 +3,9 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
-/** See the [Rust documentation for `PluralCategory`](https://docs.rs/icu/latest/icu/plurals/enum.PluralCategory.html) for more information.
-*/
+/** 
+ * See the [Rust documentation for `PluralCategory`](https://docs.rs/icu/latest/icu/plurals/enum.PluralCategory.html) for more information.
+ */
 
 
 export class PluralCategory {
@@ -76,10 +77,18 @@ export class PluralCategory {
     static Many = PluralCategory.#objectValues[4];
     static Other = PluralCategory.#objectValues[5];
 
+    /** 
+     * Construct from a string in the format
+     * [specified in TR35](https://unicode.org/reports/tr35/tr35-numbers.html#Language_Plural_Rules)
+     *
+     * See the [Rust documentation for `get_for_cldr_string`](https://docs.rs/icu/latest/icu/plurals/enum.PluralCategory.html#method.get_for_cldr_string) for more information.
+     *
+     * See the [Rust documentation for `get_for_cldr_bytes`](https://docs.rs/icu/latest/icu/plurals/enum.PluralCategory.html#method.get_for_cldr_bytes) for more information.
+     */
     static getForCldrString(s) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
-        const sSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, s));
+        const sSlice = diplomatRuntime.DiplomatBuf.str8(wasm, s);
         
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         

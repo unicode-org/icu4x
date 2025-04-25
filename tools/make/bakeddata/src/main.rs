@@ -42,7 +42,7 @@ const COMPONENTS: &[(&str, &[DataMarkerInfo], &str)] = &[
     (
         "experimental",
         icu::experimental::provider::MARKERS,
-        r#"version = "0.2.0-dev""#,
+        r#"version = "0.3.0-beta2""#,
     ),
 ];
 
@@ -75,7 +75,7 @@ fn main() {
             .collect()
     };
 
-    let source = SourceDataProvider::new_latest_tested();
+    let source = SourceDataProvider::new();
 
     let driver = ExportDriver::new(
         source
@@ -121,39 +121,12 @@ fn main() {
                 template
                     .replace("_component_", component)
                     .replace("_version_", version)
-                    .replace("_cldr_tag_", SourceDataProvider::LATEST_TESTED_CLDR_TAG)
-                    .replace(
-                        "_icuexport_tag_",
-                        SourceDataProvider::LATEST_TESTED_ICUEXPORT_TAG,
-                    )
+                    .replace("_cldr_tag_", SourceDataProvider::TESTED_CLDR_TAG)
+                    .replace("_icuexport_tag_", SourceDataProvider::TESTED_ICUEXPORT_TAG)
                     .replace(
                         "_segmenter_lstm_tag_",
-                        SourceDataProvider::LATEST_TESTED_SEGMENTER_LSTM_TAG,
+                        SourceDataProvider::TESTED_SEGMENTER_LSTM_TAG,
                     ),
-            )
-            .unwrap();
-        }
-
-        // Crates with non-singleton markers need fallback
-        if markers.iter().any(|m| !m.is_singleton) && component != "locale" {
-            writeln!(
-                &mut crlify::BufWriterWithLineEndingFix::new(
-                    std::fs::OpenOptions::new()
-                        .append(true)
-                        .open(path.join("Cargo.toml"))
-                        .unwrap()
-                ),
-                r#"icu_locale = {{ workspace = true, features = ["compiled_data"] }}"#
-            )
-            .unwrap();
-            writeln!(
-                &mut crlify::BufWriterWithLineEndingFix::new(
-                    std::fs::OpenOptions::new()
-                        .append(true)
-                        .open(path.join("src/lib.rs"))
-                        .unwrap()
-                ),
-                "pub use icu_locale;"
             )
             .unwrap();
         }

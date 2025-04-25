@@ -2,8 +2,9 @@
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
-/** See the [Rust documentation for `LeadingAdjustment`](https://docs.rs/icu/latest/icu/casemap/titlecase/enum.LeadingAdjustment.html) for more information.
-*/
+/** 
+ * See the [Rust documentation for `LeadingAdjustment`](https://docs.rs/icu/latest/icu/casemap/options/enum.LeadingAdjustment.html) for more information.
+ */
 
 
 export class LeadingAdjustment {

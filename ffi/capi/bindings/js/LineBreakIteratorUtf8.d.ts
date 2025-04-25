@@ -2,15 +2,20 @@
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
-/** See the [Rust documentation for `LineBreakIterator`](https://docs.rs/icu/latest/icu/segmenter/struct.LineBreakIterator.html) for more information.
-*
-*Additional information: [1](https://docs.rs/icu/latest/icu/segmenter/type.LineBreakIteratorPotentiallyIllFormedUtf8.html)
-*/
+/** 
+ * See the [Rust documentation for `LineBreakIterator`](https://docs.rs/icu/latest/icu/segmenter/iterators/struct.LineBreakIterator.html) for more information.
+ */
 
 
 export class LineBreakIteratorUtf8 {
     
     get ffiValue(): pointer;
 
+    /** 
+     * Finds the next breakpoint. Returns -1 if at the end of the string or if the index is
+     * out of range of a 32-bit signed integer.
+     *
+     * See the [Rust documentation for `next`](https://docs.rs/icu/latest/icu/segmenter/iterators/struct.LineBreakIterator.html#method.next) for more information.
+     */
     next(): number;
 }

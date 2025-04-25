@@ -9,13 +9,13 @@
 #![no_main] // https://github.com/unicode-org/icu4x/issues/395
 icu_benchmark_macros::instrument!();
 
-use fixed_decimal::SignedFixedDecimal;
+use fixed_decimal::Decimal;
 use writeable::Writeable;
 
 fn main() {
     let monetary_int = 19_9500;
     let fixed_decimal = {
-        let mut fixed_decimal = SignedFixedDecimal::from(monetary_int);
+        let mut fixed_decimal = Decimal::from(monetary_int);
         fixed_decimal.multiply_pow10(-4);
         fixed_decimal
     };

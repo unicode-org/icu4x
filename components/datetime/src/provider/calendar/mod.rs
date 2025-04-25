@@ -25,22 +25,7 @@ size_test!(DateLengths, date_lengths_v1_size, 224);
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[icu_provider::data_struct(
-    marker(BuddhistDateLengthsV1, "datetime/buddhist/datelengths@1"),
-    marker(ChineseDateLengthsV1, "datetime/chinese/datelengths@1"),
-    marker(CopticDateLengthsV1, "datetime/coptic/datelengths@1"),
-    marker(DangiDateLengthsV1, "datetime/dangi/datelengths@1"),
-    marker(EthiopianDateLengthsV1, "datetime/ethiopic/datelengths@1"),
-    marker(GregorianDateLengthsV1, "datetime/gregory/datelengths@1"),
-    marker(HebrewDateLengthsV1, "datetime/hebrew/datelengths@1"),
-    marker(IndianDateLengthsV1, "datetime/indian/datelengths@1"),
-    marker(IslamicDateLengthsV1, "datetime/islamic/datelengths@1"),
-    marker(JapaneseDateLengthsV1, "datetime/japanese/datelengths@1"),
-    marker(JapaneseExtendedDateLengthsV1, "datetime/japanext/datelengths@1"),
-    marker(PersianDateLengthsV1, "datetime/persian/datelengths@1"),
-    marker(RocDateLengthsV1, "datetime/roc/datelengths@1")
-)]
-#[derive(Debug, PartialEq, Clone, Default)]
+#[derive(Debug, PartialEq, Clone, Default, zerofrom::ZeroFrom, yoke::Yokeable)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::calendar))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
@@ -54,6 +39,11 @@ pub struct DateLengths<'data> {
     pub length_combinations: patterns::GenericLengthPatterns<'data>,
 }
 
+icu_provider::data_struct!(
+    DateLengths<'_>,
+    #[cfg(feature = "datagen")]
+);
+
 size_test!(TimeLengths, time_lengths_v1_size, 264);
 
 /// Pattern data for times.
@@ -64,8 +54,7 @@ size_test!(TimeLengths, time_lengths_v1_size, 264);
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[icu_provider::data_struct(marker(TimeLengthsV1, "datetime/timelengths@1",))]
-#[derive(Debug, PartialEq, Clone, Default)]
+#[derive(Debug, PartialEq, Clone, Default, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::calendar))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
@@ -85,6 +74,8 @@ pub struct TimeLengths<'data> {
     /// By default a locale will prefer one hour cycle type over another.
     pub preferred_hour_cycle: pattern::CoarseHourCycle,
 }
+
+icu_provider::data_struct!(TimeLengths<'_>, #[cfg(feature = "datagen")]);
 
 /// Data structs for date / time patterns that store data corresponding to pattern lengths
 /// and/or plural forms.
@@ -157,22 +148,4 @@ pub mod patterns {
         #[cfg_attr(feature = "serde", serde(borrow))]
         pub short: GenericPattern<'data>,
     }
-
-    /// A general purpose pattern representation. Used for date-time glue patterns.
-    ///
-    /// Expresses the formatting positions of other formatted elements (ex: the order
-    /// and formatting of a date and a time within a date-time pattern).
-    ///
-    /// <div class="stab unstable">
-    /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
-    /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
-    /// to be stable, their Rust representation might not be. Use with caution.
-    /// </div>
-    #[icu_provider::data_struct]
-    #[derive(Debug, PartialEq, Clone, Default)]
-    #[cfg_attr(feature = "datagen", derive(serde::Serialize))]
-    #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-    pub struct GenericPatternData<'data>(
-        #[cfg_attr(feature = "serde", serde(borrow))] pub GenericPattern<'data>,
-    );
 }

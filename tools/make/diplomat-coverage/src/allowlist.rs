@@ -123,7 +123,7 @@ lazy_static::lazy_static! {
         // since Diplomat can't do generics. We also support Gregorian *formatter*
         // but we don't need a separate Gregorian Date.
         "icu::calendar::cal",
-        "icu::calendar::any_calendar::IntoAnyCalendar",
+        "icu::calendar::IntoAnyCalendar",
         "icu::calendar::Date::try_new_buddhist",
         "icu::calendar::Date::try_new_chinese_with_calendar",
         "icu::calendar::Date::try_new_coptic",
@@ -134,31 +134,40 @@ lazy_static::lazy_static! {
         "icu::calendar::Date::try_new_hebrew",
         "icu::calendar::Date::try_new_hebrew_with_calendar",
         "icu::calendar::Date::try_new_indian",
-        "icu::calendar::Date::try_new_islamic_civil_with_calendar",
-        "icu::calendar::Date::try_new_islamic_tabular_with_calendar",
+        "icu::calendar::Date::try_new_hijri_civil_with_calendar",
+        "icu::calendar::Date::try_new_hijri_tabular_with_calendar",
         "icu::calendar::Date::try_new_japanese_with_calendar",
         "icu::calendar::Date::try_new_japanese_extended_with_calendar",
         "icu::calendar::Date::try_new_julian",
-        "icu::calendar::Date::try_new_observational_islamic_with_calendar",
+        "icu::calendar::Date::try_new_simulated_hijri_with_calendar",
         "icu::calendar::Date::try_new_persian",
         "icu::calendar::Date::try_new_roc",
-        "icu::calendar::Date::try_new_ummalqura_with_calendar",
+        "icu::calendar::Date::try_new_ummalqura",
+        "icu::datetime::DateTimeFormatter::calendar",
 
         // Not planned for 2.0: Calendar structs mostly for internal use but which might expose
         // useful information to clients.
-        "icu::calendar::types::MonthInfo",
-        "icu::calendar::types::FormattingEra",
-        "icu::calendar::Date::formattable_year",
-        "icu::calendar::types::FormattableYear",
-        "icu::calendar::types::FormattableYearKind",
-        "icu::calendar::types::DayOfYearInfo",
+        "icu::calendar::types::RataDie",
 
         // Not planned for 2.0: Temporal doesn't yet want this.
-        "icu::calendar::types::CyclicYear",
-        "icu::calendar::types::YearInfo::cyclic",
-        "icu::calendar::types::YearInfo::related_iso",
         "icu::calendar::types::YearAmbiguity",
-        "icu::calendar::types::YearInfo::year_ambiguity",
+
+        // Not planned for 2.0: datetime dynamic field sets (and builder) need FFI design work,
+        // and all functionality is available via static field sets
+        // <https://github.com/unicode-org/icu4x/issues/6445>
+        "icu::datetime::fieldsets::builder",
+        "icu::datetime::fieldsets::enums",
+        "icu::datetime::DateTimeFormatter::to_field_set_builder",
+        "icu::datetime::FixedCalendarDateTimeFormatter::to_field_set_builder",
+        "icu::datetime::fieldsets::Combo::into_enums",
+
+        // Not planned for 2.0: Unchecked formatting. FFI always uses the concrete Date, Time,
+        // and TimeZoneInfo types. A composite formatter might need a format_unchecked-type
+        // of function.
+        "icu::datetime::DateTimeInputUnchecked",
+        "icu::datetime::FixedCalendarDateTimeFormatter::format_unchecked",
+        "icu::datetime::DateTimeFormatter::format_unchecked",
+        "icu::datetime::FormattedDateTimeUnchecked",
 
         // Not planned for 2.0: Would need to introduce diplomat writeable with parts
         "icu::list::parts",
@@ -172,8 +181,9 @@ lazy_static::lazy_static! {
         // Not planned for 2.0: FFI uses locales, not preference bags. FFI could in the future gain a preferences bag API as well
         "icu::locale::preferences::extensions::unicode::keywords",
         "icu::locale::preferences::extensions::unicode::errors::PreferencesParseError",
-        "icu::calendar::AnyCalendarPreferences",
-        "icu::calendar::any_calendar::AnyCalendarPreferences",
+        "icu::calendar::CalendarPreferences",
+        "icu::calendar::any_calendar::CalendarPreferences",
+        "icu::calendar::week::WeekPreferences",
         "icu::datetime::DateTimeFormatterPreferences",
         "icu::decimal::DecimalFormatterPreferences",
         "icu::list::ListFormatterPreferences",
@@ -240,13 +250,14 @@ lazy_static::lazy_static! {
         // Not planned for 2.0
         // We will revisit these APIs when Duration Formatter needs them. We may need to rename things
         "fixed_decimal::Signed",
-        "fixed_decimal::UnsignedFixedDecimal",
+        "fixed_decimal::UnsignedDecimal",
         "fixed_decimal::UnsignedRoundingMode",
 
         // Not planned for 2.0
         // DateTimePattern and related low-level APIs
         "icu::datetime::pattern",
         "icu::datetime::FormattedDateTime::pattern",
+        "icu::datetime::FormattedDateTimeUnchecked::pattern",
 
         // Not planned for 2.0
         // DateTimeFormatter conversion functions that involve moving opaques
@@ -292,6 +303,7 @@ lazy_static::lazy_static! {
         // Scaffolding modules
         "icu::datetime::scaffold",
         "icu::time::scaffold",
+        "icu::segmenter::scaffold",
 
         // Provider modules
         // We could potentially expose them later, but it's hard to expose them
@@ -318,18 +330,36 @@ lazy_static::lazy_static! {
         // Reexported
         "icu::calendar::any_calendar::AnyCalendar",
         "icu::calendar::any_calendar::AnyCalendarKind",
-        "icu::datetime::options::Length",
         "icu::casemap::titlecase::TitlecaseMapper",
         "icu::casemap::titlecase::TitlecaseMapperBorrowed",
-        "icu::datetime::input::Date",
-        "icu::datetime::input::DateTime",
-        "icu::datetime::input::Time",
-        "icu::datetime::input::TimeZone",
-        "icu::datetime::input::TimeZoneInfo",
-        "icu::datetime::input::UtcOffset",
-        "icu::datetime::input::ZonedDateTime",
         "icu::time::zone::IanaParser",
+        "icu::time::zone::IanaParserBorrowed",
         "icu::time::zone::WindowsParser",
+        "icu::time::zone::WindowsParserBorrowed",
+        "icu::time::zone::TimeZoneInfo",
+        "icu::time::zone::TimeZone",
+        "icu::segmenter::grapheme::GraphemeClusterSegmenter",
+        "icu::segmenter::grapheme::GraphemeClusterSegmenterBorrowed",
+        "icu::segmenter::line::LineSegmenter",
+        "icu::segmenter::line::LineSegmenterBorrowed",
+        "icu::segmenter::line::LineBreakOptions",
+        "icu::segmenter::line::LineBreakStrictness",
+        "icu::segmenter::line::LineBreakWordOption",
+        "icu::segmenter::sentence::SentenceSegmenter",
+        "icu::segmenter::sentence::SentenceSegmenterBorrowed",
+        "icu::segmenter::sentence::SentenceBreakInvariantOptions",
+        "icu::segmenter::sentence::SentenceBreakOptions",
+        "icu::segmenter::word::WordSegmenter",
+        "icu::segmenter::word::WordSegmenterBorrowed",
+        "icu::segmenter::word::WordBreakInvariantOptions",
+        "icu::segmenter::word::WordBreakOptions",
+        "icu::segmenter::word::WordType",
+        "icu::segmenter::word::WordBreakType",
+        "icu::segmenter::line::LineBreakType",
+
+        // Reexported input modules
+        "icu::datetime::input",
+        "icu::decimal::input",
 
         // "Internal" trait that should never be called directly
         "icu::calendar::Calendar",
@@ -341,9 +371,12 @@ lazy_static::lazy_static! {
         "icu::datetime::DateTimeFormatter::cast_into_fset",
         "icu::datetime::FixedCalendarDateTimeFormatter::cast_into_fset",
         // TODO-2.0: needs investigation
-        "icu::calendar::Date::wrap_calendar_in_rc",
-        "icu::calendar::Date::wrap_calendar_in_arc",
-        "icu::calendar::Date::wrap_calendar_in_ref",
+        "icu::calendar::Date::into_ref_counted",
+        "icu::calendar::Date::into_atomic_ref_counted",
+        "icu::calendar::Date::as_borrowed",
+
+        // Generic type, primarily exists for use by ICU4X data struct internals.
+        "icu::plurals::PluralElements",
 
         // Individual markerlike calendar types and inner types
         // inner types are only public for associated type reasons, and the markerlike
@@ -369,11 +402,11 @@ lazy_static::lazy_static! {
         // (which are hard to do in a zero-cost way over FFI)
         "icu::calendar::types::DayOfMonth",
         "icu::calendar::types::DayOfWeekInMonth",
-        "icu::calendar::types::Era",
+        "icu::calendar::types::DayOfYear",
         "icu::calendar::types::Weekday",
         "icu::calendar::types::MonthCode",
         "icu::calendar::types::WeekOfMonth",
-        "icu::calendar::types::WeekOfYear",
+        "icu::calendar::types::IsoWeekOfYear",
         "icu::time::Hour",
         "icu::time::Minute",
         "icu::time::Second",

@@ -5,10 +5,11 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
-/** Lookup of the Canonical_Combining_Class Unicode property
-*
-*See the [Rust documentation for `CanonicalCombiningClassMap`](https://docs.rs/icu/latest/icu/normalizer/properties/struct.CanonicalCombiningClassMap.html) for more information.
-*/
+/** 
+ * Lookup of the Canonical_Combining_Class Unicode property
+ *
+ * See the [Rust documentation for `CanonicalCombiningClassMap`](https://docs.rs/icu/latest/icu/normalizer/properties/struct.CanonicalCombiningClassMap.html) for more information.
+ */
 const CanonicalCombiningClassMap_box_destroy_registry = new FinalizationRegistry((ptr) => {
     wasm.icu4x_CanonicalCombiningClassMap_destroy_mv1(ptr);
 });
@@ -42,6 +43,11 @@ export class CanonicalCombiningClassMap {
         return this.#ptr;
     }
 
+    /** 
+     * Construct a new CanonicalCombiningClassMap instance for NFC using compiled data.
+     *
+     * See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/normalizer/properties/struct.CanonicalCombiningClassMap.html#method.new) for more information.
+     */
     #defaultConstructor() {
         const result = wasm.icu4x_CanonicalCombiningClassMap_create_mv1();
     
@@ -52,6 +58,11 @@ export class CanonicalCombiningClassMap {
         finally {}
     }
 
+    /** 
+     * Construct a new CanonicalCombiningClassMap instance for NFC using a particular data source.
+     *
+     * See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/normalizer/properties/struct.CanonicalCombiningClassMap.html#method.new) for more information.
+     */
     static createWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
@@ -70,6 +81,11 @@ export class CanonicalCombiningClassMap {
         }
     }
 
+    /** 
+     * See the [Rust documentation for `get`](https://docs.rs/icu/latest/icu/normalizer/properties/struct.CanonicalCombiningClassMapBorrowed.html#method.get) for more information.
+     *
+     * Additional information: [1](https://docs.rs/icu/latest/icu/properties/props/struct.CanonicalCombiningClass.html)
+     */
     get(ch) {
         const result = wasm.icu4x_CanonicalCombiningClassMap_get_mv1(this.ffiValue, ch);
     

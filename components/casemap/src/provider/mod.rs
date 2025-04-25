@@ -54,11 +54,27 @@ const _: () = {
     impl_case_map_unfold_v1!(Baked);
 };
 
+icu_provider::data_marker!(
+    /// Marker for casemapping data.
+    CaseMapV1,
+    "case/map/v1",
+    CaseMap<'static>,
+    is_singleton = true
+);
+
+icu_provider::data_marker!(
+    /// Reverse case mapping data.
+    CaseMapUnfoldV1,
+    "case/map/unfold/v1",
+    CaseMapUnfold<'static>,
+    is_singleton = true
+);
+
 #[cfg(feature = "datagen")]
 /// The latest minimum set of markers required by this component.
 pub const MARKERS: &[DataMarkerInfo] = &[CaseMapUnfoldV1::INFO, CaseMapV1::INFO];
 
-pub use self::unfold::{CaseMapUnfold, CaseMapUnfoldV1};
+pub use self::unfold::CaseMapUnfold;
 
 /// This type contains all of the casemapping data
 ///
@@ -71,8 +87,7 @@ pub use self::unfold::{CaseMapUnfold, CaseMapUnfoldV1};
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[icu_provider::data_struct(marker(CaseMapV1, "props/casemap@1", singleton))]
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_casemap::provider))]
 #[yoke(prove_covariance_manually)]
@@ -84,6 +99,11 @@ pub struct CaseMap<'data> {
     /// Exceptions to the case mapping data
     pub exceptions: CaseMapExceptions<'data>,
 }
+
+icu_provider::data_struct!(
+    CaseMap<'_>,
+    #[cfg(feature = "datagen")]
+);
 
 #[cfg(feature = "serde")]
 impl<'de> serde::Deserialize<'de> for CaseMap<'de> {

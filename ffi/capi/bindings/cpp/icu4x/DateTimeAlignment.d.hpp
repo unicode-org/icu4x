@@ -23,6 +23,9 @@ namespace capi {
 } // namespace
 
 namespace icu4x {
+/**
+ * See the [Rust documentation for `Alignment`](https://docs.rs/icu/latest/icu/datetime/options/enum.Alignment.html) for more information.
+ */
 class DateTimeAlignment {
 public:
   enum Value {

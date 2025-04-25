@@ -52,7 +52,7 @@ mod casemapper;
 mod closer;
 pub mod provider;
 mod set;
-pub mod titlecase;
+pub(crate) mod titlecase;
 
 #[doc(hidden)] // testing
 #[allow(clippy::exhaustive_structs, clippy::exhaustive_enums)]
@@ -63,3 +63,8 @@ pub use casemapper::{CaseMapper, CaseMapperBorrowed};
 pub use closer::{CaseMapCloser, CaseMapCloserBorrowed};
 pub use set::ClosureSink;
 pub use titlecase::{TitlecaseMapper, TitlecaseMapperBorrowed};
+
+/// Options used by types in this crate
+pub mod options {
+    pub use crate::titlecase::{LeadingAdjustment, TitlecaseOptions, TrailingCase};
+}

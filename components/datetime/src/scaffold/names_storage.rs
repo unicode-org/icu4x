@@ -31,15 +31,55 @@ pub trait DateTimeNamesMarker: UnstableSealed {
     type WeekdayNames: NamesContainer<WeekdayNamesV1, WeekdayNameLength>;
     type DayPeriodNames: NamesContainer<DayPeriodNamesV1, DayPeriodNameLength>;
     type ZoneEssentials: NamesContainer<tz::EssentialsV1, ()>;
-    type ZoneLocations: NamesContainer<tz::LocationsV1, ()>;
+    type ZoneLocations: NamesContainer<tz::LocationsOverrideV1, ()>;
     type ZoneLocationsRoot: NamesContainer<tz::LocationsRootV1, ()>;
-    type ZoneExemplars: NamesContainer<tz::ExemplarCitiesV1, ()>;
-    type ZoneExemplarsRoot: NamesContainer<tz::ExemplarCitiesRootV1, ()>;
+    type ZoneExemplars: NamesContainer<tz::CitiesOverrideV1, ()>;
+    type ZoneExemplarsRoot: NamesContainer<tz::CitiesRootV1, ()>;
     type ZoneGenericLong: NamesContainer<tz::MzGenericLongV1, ()>;
     type ZoneGenericShort: NamesContainer<tz::MzGenericShortV1, ()>;
+    type ZoneStandardLong: NamesContainer<tz::MzStandardLongV1, ()>;
     type ZoneSpecificLong: NamesContainer<tz::MzSpecificLongV1, ()>;
     type ZoneSpecificShort: NamesContainer<tz::MzSpecificShortV1, ()>;
     type MetazoneLookup: NamesContainer<tz::MzPeriodV1, ()>;
+}
+
+/// A trait for `Variables` that can be converted to [`ErrorField`]
+pub trait MaybeAsErrorField: UnstableSealed {
+    fn maybe_as_error_field(&self) -> Option<ErrorField>;
+}
+
+impl MaybeAsErrorField for () {
+    fn maybe_as_error_field(&self) -> Option<ErrorField> {
+        None
+    }
+}
+
+impl UnstableSealed for YearNameLength {}
+impl MaybeAsErrorField for YearNameLength {
+    fn maybe_as_error_field(&self) -> Option<ErrorField> {
+        Some(self.to_approximate_error_field())
+    }
+}
+
+impl UnstableSealed for MonthNameLength {}
+impl MaybeAsErrorField for MonthNameLength {
+    fn maybe_as_error_field(&self) -> Option<ErrorField> {
+        Some(self.to_approximate_error_field())
+    }
+}
+
+impl UnstableSealed for WeekdayNameLength {}
+impl MaybeAsErrorField for WeekdayNameLength {
+    fn maybe_as_error_field(&self) -> Option<ErrorField> {
+        Some(self.to_approximate_error_field())
+    }
+}
+
+impl UnstableSealed for DayPeriodNameLength {}
+impl MaybeAsErrorField for DayPeriodNameLength {
+    fn maybe_as_error_field(&self) -> Option<ErrorField> {
+        Some(self.to_approximate_error_field())
+    }
 }
 
 /// Trait that associates a container for a payload parameterized by the given variables.
@@ -53,7 +93,7 @@ pub trait NamesContainer<M: DynamicDataMarker, Variables>: UnstableSealed
 where
     Variables: PartialEq + Copy + fmt::Debug,
 {
-    type Container: MaybePayload<M, Variables> + fmt::Debug;
+    type Container: MaybePayload<M, Variables> + fmt::Debug + Clone;
 }
 
 impl<M: DynamicDataMarker, Variables> NamesContainer<M, Variables> for ()
@@ -68,7 +108,7 @@ macro_rules! impl_holder_trait {
         impl UnstableSealed for $marker {}
         impl<Variables> NamesContainer<$marker, Variables> for $marker
         where
-            Variables: PartialEq + Copy + fmt::Debug,
+            Variables: PartialEq + Copy + MaybeAsErrorField + fmt::Debug,
         {
             type Container = DataPayloadWithVariables<$marker, Variables>;
         }
@@ -80,12 +120,13 @@ impl_holder_trait!(MonthNamesV1);
 impl_holder_trait!(WeekdayNamesV1);
 impl_holder_trait!(DayPeriodNamesV1);
 impl_holder_trait!(tz::EssentialsV1);
-impl_holder_trait!(tz::LocationsV1);
+impl_holder_trait!(tz::LocationsOverrideV1);
 impl_holder_trait!(tz::LocationsRootV1);
-impl_holder_trait!(tz::ExemplarCitiesV1);
-impl_holder_trait!(tz::ExemplarCitiesRootV1);
+impl_holder_trait!(tz::CitiesOverrideV1);
+impl_holder_trait!(tz::CitiesRootV1);
 impl_holder_trait!(tz::MzGenericLongV1);
 impl_holder_trait!(tz::MzGenericShortV1);
+impl_holder_trait!(tz::MzStandardLongV1);
 impl_holder_trait!(tz::MzSpecificLongV1);
 impl_holder_trait!(tz::MzSpecificShortV1);
 impl_holder_trait!(tz::MzPeriodV1);
@@ -95,10 +136,10 @@ impl_holder_trait!(tz::MzPeriodV1);
 #[derive(Debug, displaydoc::Display)]
 #[non_exhaustive]
 pub enum MaybePayloadError {
-    /// TODO
-    TypeTooSpecific,
-    /// TODO
-    ConflictingField,
+    /// The container's field set doesn't support the field
+    FormatterTooSpecific,
+    /// The field is already loaded with a different length
+    ConflictingField(ErrorField),
 }
 
 impl core::error::Error for MaybePayloadError {}
@@ -106,8 +147,11 @@ impl core::error::Error for MaybePayloadError {}
 impl MaybePayloadError {
     pub(crate) fn into_load_error(self, error_field: ErrorField) -> PatternLoadError {
         match self {
-            Self::TypeTooSpecific => PatternLoadError::TypeTooSpecific(error_field),
-            Self::ConflictingField => PatternLoadError::ConflictingField(error_field),
+            Self::FormatterTooSpecific => PatternLoadError::FormatterTooSpecific(error_field),
+            Self::ConflictingField(loaded_field) => PatternLoadError::ConflictingField {
+                field: error_field,
+                previous_field: loaded_field,
+            },
         }
     }
 }
@@ -140,6 +184,18 @@ pub trait MaybePayload<M: DynamicDataMarker, Variables>: UnstableSealed {
 /// parameterized by `Variables`.
 pub struct DataPayloadWithVariables<M: DynamicDataMarker, Variables> {
     inner: OptionalNames<Variables, DataPayload<M>>,
+}
+
+impl<M: DynamicDataMarker, Variables> Clone for DataPayloadWithVariables<M, Variables>
+where
+    Variables: Clone,
+    DataPayload<M>: Clone,
+{
+    fn clone(&self) -> Self {
+        Self {
+            inner: self.inner.clone(),
+        }
+    }
 }
 
 impl<M: DynamicDataMarker, Variables> UnstableSealed for DataPayloadWithVariables<M, Variables> {}
@@ -186,7 +242,7 @@ where
 impl<M: DynamicDataMarker, Variables> MaybePayload<M, Variables>
     for DataPayloadWithVariables<M, Variables>
 where
-    Variables: PartialEq + Copy,
+    Variables: PartialEq + Copy + MaybeAsErrorField,
 {
     #[inline]
     fn new_empty() -> Self {
@@ -210,8 +266,19 @@ where
                 // TODO(#6063): probably not correct
                 return Ok(Ok(Default::default()));
             }
-            OptionalNames::SingleLength { .. } => {
-                return Err(MaybePayloadError::ConflictingField);
+            OptionalNames::SingleLength { variables, .. } => {
+                let loaded_field = match variables.maybe_as_error_field() {
+                    Some(x) => x,
+                    None => {
+                        debug_assert!(false, "all non-unit variables implement this trait");
+                        use crate::provider::fields::*;
+                        ErrorField(Field {
+                            symbol: FieldSymbol::Era,
+                            length: FieldLength::Six,
+                        })
+                    }
+                };
+                return Err(MaybePayloadError::ConflictingField(loaded_field));
             }
             OptionalNames::None => (),
         };
@@ -248,7 +315,7 @@ impl<M: DynamicDataMarker, Variables> MaybePayload<M, Variables> for () {
         P: BoundDataProvider<M> + ?Sized,
         Self: Sized,
     {
-        Err(MaybePayloadError::TypeTooSpecific)
+        Err(MaybePayloadError::FormatterTooSpecific)
     }
     #[allow(clippy::needless_lifetimes)] // Yokeable is involved
     #[inline]
@@ -260,7 +327,7 @@ impl<M: DynamicDataMarker, Variables> MaybePayload<M, Variables> for () {
 }
 
 /// This can be extended in the future to support multiple lengths.
-/// For now, this type wraps a symbols object tagged with a single length. See #4337
+/// For now, this type wraps a symbols object tagged with a single length. See [#4337](https://github.com/unicode-org/icu4x/issues/4337)
 #[derive(Debug, Copy, Clone)]
 pub(crate) enum OptionalNames<Variables, Payload> {
     None,
@@ -329,20 +396,21 @@ where
 /// Example pairs of field sets where the trait is implemented:
 ///
 /// ```
-/// use icu::datetime::fieldsets::T;
-/// use icu::datetime::fieldsets::YMD;
-/// use icu::datetime::fieldsets::enums::DateFieldSet;
-/// use icu::datetime::fieldsets::enums::TimeFieldSet;
 /// use icu::datetime::fieldsets::enums::CompositeDateTimeFieldSet;
 /// use icu::datetime::fieldsets::enums::CompositeFieldSet;
+/// use icu::datetime::fieldsets::enums::DateFieldSet;
+/// use icu::datetime::fieldsets::enums::TimeFieldSet;
+/// use icu::datetime::fieldsets::T;
+/// use icu::datetime::fieldsets::YMD;
 /// use icu::datetime::scaffold::DateTimeNamesFrom;
 /// use icu::datetime::scaffold::DateTimeNamesMarker;
 ///
 /// fn is_trait_implemented<Source, Target>()
 /// where
 ///     Source: DateTimeNamesMarker,
-///     Target: DateTimeNamesFrom<Source>
-/// {}
+///     Target: DateTimeNamesFrom<Source>,
+/// {
+/// }
 ///
 /// is_trait_implemented::<YMD, DateFieldSet>();
 /// is_trait_implemented::<YMD, CompositeDateTimeFieldSet>();
@@ -374,23 +442,26 @@ pub trait DateTimeNamesFrom<M: DateTimeNamesMarker>: DateTimeNamesMarker {
         other: <M::ZoneEssentials as NamesContainer<tz::EssentialsV1, ()>>::Container,
     ) -> <Self::ZoneEssentials as NamesContainer<tz::EssentialsV1, ()>>::Container;
     fn map_zone_locations(
-        other: <M::ZoneLocations as NamesContainer<tz::LocationsV1, ()>>::Container,
-    ) -> <Self::ZoneLocations as NamesContainer<tz::LocationsV1, ()>>::Container;
+        other: <M::ZoneLocations as NamesContainer<tz::LocationsOverrideV1, ()>>::Container,
+    ) -> <Self::ZoneLocations as NamesContainer<tz::LocationsOverrideV1, ()>>::Container;
     fn map_zone_locations_root(
         other: <M::ZoneLocationsRoot as NamesContainer<tz::LocationsRootV1, ()>>::Container,
     ) -> <Self::ZoneLocationsRoot as NamesContainer<tz::LocationsRootV1, ()>>::Container;
     fn map_zone_exemplars(
-        other: <M::ZoneExemplars as NamesContainer<tz::ExemplarCitiesV1, ()>>::Container,
-    ) -> <Self::ZoneExemplars as NamesContainer<tz::ExemplarCitiesV1, ()>>::Container;
+        other: <M::ZoneExemplars as NamesContainer<tz::CitiesOverrideV1, ()>>::Container,
+    ) -> <Self::ZoneExemplars as NamesContainer<tz::CitiesOverrideV1, ()>>::Container;
     fn map_zone_exemplars_root(
-        other: <M::ZoneExemplarsRoot as NamesContainer<tz::ExemplarCitiesRootV1, ()>>::Container,
-    ) -> <Self::ZoneExemplarsRoot as NamesContainer<tz::ExemplarCitiesRootV1, ()>>::Container;
+        other: <M::ZoneExemplarsRoot as NamesContainer<tz::CitiesRootV1, ()>>::Container,
+    ) -> <Self::ZoneExemplarsRoot as NamesContainer<tz::CitiesRootV1, ()>>::Container;
     fn map_zone_generic_long(
         other: <M::ZoneGenericLong as NamesContainer<tz::MzGenericLongV1, ()>>::Container,
     ) -> <Self::ZoneGenericLong as NamesContainer<tz::MzGenericLongV1, ()>>::Container;
     fn map_zone_generic_short(
         other: <M::ZoneGenericShort as NamesContainer<tz::MzGenericShortV1, ()>>::Container,
     ) -> <Self::ZoneGenericShort as NamesContainer<tz::MzGenericShortV1, ()>>::Container;
+    fn map_zone_standard_long(
+        other: <M::ZoneStandardLong as NamesContainer<tz::MzStandardLongV1, ()>>::Container,
+    ) -> <Self::ZoneStandardLong as NamesContainer<tz::MzStandardLongV1, ()>>::Container;
     fn map_zone_specific_long(
         other: <M::ZoneSpecificLong as NamesContainer<tz::MzSpecificLongV1, ()>>::Container,
     ) -> <Self::ZoneSpecificLong as NamesContainer<tz::MzSpecificLongV1, ()>>::Container;
@@ -416,18 +487,20 @@ where
         >,
     <Self::ZoneEssentials as NamesContainer<tz::EssentialsV1, ()>>::Container:
         From<<M::ZoneEssentials as NamesContainer<tz::EssentialsV1, ()>>::Container>,
-    <Self::ZoneLocations as NamesContainer<tz::LocationsV1, ()>>::Container:
-        From<<M::ZoneLocations as NamesContainer<tz::LocationsV1, ()>>::Container>,
+    <Self::ZoneLocations as NamesContainer<tz::LocationsOverrideV1, ()>>::Container:
+        From<<M::ZoneLocations as NamesContainer<tz::LocationsOverrideV1, ()>>::Container>,
     <Self::ZoneLocationsRoot as NamesContainer<tz::LocationsRootV1, ()>>::Container:
         From<<M::ZoneLocationsRoot as NamesContainer<tz::LocationsRootV1, ()>>::Container>,
-    <Self::ZoneExemplars as NamesContainer<tz::ExemplarCitiesV1, ()>>::Container:
-        From<<M::ZoneExemplars as NamesContainer<tz::ExemplarCitiesV1, ()>>::Container>,
-    <Self::ZoneExemplarsRoot as NamesContainer<tz::ExemplarCitiesRootV1, ()>>::Container:
-        From<<M::ZoneExemplarsRoot as NamesContainer<tz::ExemplarCitiesRootV1, ()>>::Container>,
+    <Self::ZoneExemplars as NamesContainer<tz::CitiesOverrideV1, ()>>::Container:
+        From<<M::ZoneExemplars as NamesContainer<tz::CitiesOverrideV1, ()>>::Container>,
+    <Self::ZoneExemplarsRoot as NamesContainer<tz::CitiesRootV1, ()>>::Container:
+        From<<M::ZoneExemplarsRoot as NamesContainer<tz::CitiesRootV1, ()>>::Container>,
     <Self::ZoneGenericLong as NamesContainer<tz::MzGenericLongV1, ()>>::Container:
         From<<M::ZoneGenericLong as NamesContainer<tz::MzGenericLongV1, ()>>::Container>,
     <Self::ZoneGenericShort as NamesContainer<tz::MzGenericShortV1, ()>>::Container:
         From<<M::ZoneGenericShort as NamesContainer<tz::MzGenericShortV1, ()>>::Container>,
+    <Self::ZoneStandardLong as NamesContainer<tz::MzStandardLongV1, ()>>::Container:
+        From<<M::ZoneStandardLong as NamesContainer<tz::MzStandardLongV1, ()>>::Container>,
     <Self::ZoneSpecificLong as NamesContainer<tz::MzSpecificLongV1, ()>>::Container:
         From<<M::ZoneSpecificLong as NamesContainer<tz::MzSpecificLongV1, ()>>::Container>,
     <Self::ZoneSpecificShort as NamesContainer<tz::MzSpecificShortV1, ()>>::Container:
@@ -468,8 +541,8 @@ where
     }
     #[inline]
     fn map_zone_locations(
-        other: <M::ZoneLocations as NamesContainer<tz::LocationsV1, ()>>::Container,
-    ) -> <Self::ZoneLocations as NamesContainer<tz::LocationsV1, ()>>::Container {
+        other: <M::ZoneLocations as NamesContainer<tz::LocationsOverrideV1, ()>>::Container,
+    ) -> <Self::ZoneLocations as NamesContainer<tz::LocationsOverrideV1, ()>>::Container {
         other.into()
     }
     #[inline]
@@ -480,14 +553,14 @@ where
     }
     #[inline]
     fn map_zone_exemplars(
-        other: <M::ZoneExemplars as NamesContainer<tz::ExemplarCitiesV1, ()>>::Container,
-    ) -> <Self::ZoneExemplars as NamesContainer<tz::ExemplarCitiesV1, ()>>::Container {
+        other: <M::ZoneExemplars as NamesContainer<tz::CitiesOverrideV1, ()>>::Container,
+    ) -> <Self::ZoneExemplars as NamesContainer<tz::CitiesOverrideV1, ()>>::Container {
         other.into()
     }
     #[inline]
     fn map_zone_exemplars_root(
-        other: <M::ZoneExemplarsRoot as NamesContainer<tz::ExemplarCitiesRootV1, ()>>::Container,
-    ) -> <Self::ZoneExemplarsRoot as NamesContainer<tz::ExemplarCitiesRootV1, ()>>::Container {
+        other: <M::ZoneExemplarsRoot as NamesContainer<tz::CitiesRootV1, ()>>::Container,
+    ) -> <Self::ZoneExemplarsRoot as NamesContainer<tz::CitiesRootV1, ()>>::Container {
         other.into()
     }
     #[inline]
@@ -500,6 +573,12 @@ where
     fn map_zone_generic_short(
         other: <M::ZoneGenericShort as NamesContainer<tz::MzGenericShortV1, ()>>::Container,
     ) -> <Self::ZoneGenericShort as NamesContainer<tz::MzGenericShortV1, ()>>::Container {
+        other.into()
+    }
+    #[inline]
+    fn map_zone_standard_long(
+        other: <M::ZoneStandardLong as NamesContainer<tz::MzStandardLongV1, ()>>::Container,
+    ) -> <Self::ZoneStandardLong as NamesContainer<tz::MzStandardLongV1, ()>>::Container {
         other.into()
     }
     #[inline]

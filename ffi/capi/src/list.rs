@@ -9,17 +9,17 @@ pub mod ffi {
     use alloc::boxed::Box;
     use diplomat_runtime::{DiplomatStr16Slice, DiplomatStrSlice};
     #[cfg(any(feature = "compiled_data", feature = "buffer_provider"))]
-    use icu_list::{ListFormatterOptions, ListFormatterPreferences};
+    use icu_list::{options::ListFormatterOptions, ListFormatterPreferences};
 
     #[cfg(feature = "buffer_provider")]
-    use crate::provider::ffi::DataProvider;
+    use crate::unstable::provider::ffi::DataProvider;
     #[cfg(any(feature = "compiled_data", feature = "buffer_provider"))]
-    use crate::{errors::ffi::DataError, locale_core::ffi::Locale};
+    use crate::unstable::{errors::ffi::DataError, locale_core::ffi::Locale};
 
     use writeable::Writeable;
 
-    #[diplomat::rust_link(icu::list::ListLength, Enum)]
-    #[diplomat::enum_convert(icu_list::ListLength, needs_wildcard)]
+    #[diplomat::rust_link(icu::list::options::ListLength, Enum)]
+    #[diplomat::enum_convert(icu_list::options::ListLength, needs_wildcard)]
     pub enum ListLength {
         Wide,
         Short,
@@ -32,6 +32,17 @@ pub mod ffi {
     impl ListFormatter {
         /// Construct a new ListFormatter instance for And patterns from compiled data.
         #[diplomat::rust_link(icu::list::ListFormatter::try_new_and, FnInStruct)]
+        #[diplomat::rust_link(icu::list::options::ListFormatterOptions, Struct, hidden)]
+        #[diplomat::rust_link(
+            icu::list::options::ListFormatterOptions::with_length,
+            FnInStruct,
+            hidden
+        )]
+        #[diplomat::rust_link(
+            icu::list::options::ListFormatterOptions::default,
+            FnInStruct,
+            hidden
+        )]
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "and_with_length")]
         #[cfg(feature = "compiled_data")]
         #[diplomat::demo(default_constructor)]
@@ -68,6 +79,7 @@ pub mod ffi {
 
         /// Construct a new ListFormatter instance for And patterns from compiled data.
         #[diplomat::rust_link(icu::list::ListFormatter::try_new_or, FnInStruct)]
+        #[diplomat::rust_link(icu::list::options::ListFormatterOptions, Struct, hidden)]
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "or_with_length")]
         #[cfg(feature = "compiled_data")]
         pub fn create_or_with_length(

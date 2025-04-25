@@ -24,6 +24,9 @@ namespace capi {
 } // namespace
 
 namespace icu4x {
+/**
+ * See the [Rust documentation for `CollationCaseFirst`](https://docs.rs/icu/latest/icu/collator/preferences/enum.CollationCaseFirst.html) for more information.
+ */
 class CollatorCaseFirst {
 public:
   enum Value {

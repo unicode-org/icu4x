@@ -53,10 +53,10 @@ pub fn check(
 
 #[test]
 fn test_grouper() {
+    use crate::input::Decimal;
     use crate::options;
     use crate::provider::*;
     use crate::DecimalFormatter;
-    use fixed_decimal::SignedFixedDecimal;
     use icu_provider::prelude::*;
     use std::cell::RefCell;
     use writeable::assert_writeable_eq;
@@ -154,7 +154,7 @@ fn test_grouper() {
     for cas in &cases {
         for i in 0..4 {
             let dec = {
-                let mut dec = SignedFixedDecimal::from(1);
+                let mut dec = Decimal::from(1);
                 dec.multiply_pow10((i as i16) + 3);
                 dec
             };
@@ -162,15 +162,13 @@ fn test_grouper() {
                 grouping_sizes: cas.sizes,
                 ..DecimalSymbols::new_en_for_testing()
             };
-            let digits = crate::provider::DecimalDigits {
-                digits: ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'],
-            };
-            struct Provider(RefCell<Option<DecimalSymbols<'static>>>, DecimalDigits);
-            impl DataProvider<DecimalSymbolsV2> for Provider {
+            let digits = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+            struct Provider(RefCell<Option<DecimalSymbols<'static>>>, [char; 10]);
+            impl DataProvider<DecimalSymbolsV1> for Provider {
                 fn load(
                     &self,
                     _req: icu_provider::DataRequest,
-                ) -> Result<icu_provider::DataResponse<DecimalSymbolsV2>, icu_provider::DataError>
+                ) -> Result<icu_provider::DataResponse<DecimalSymbolsV1>, icu_provider::DataError>
                 {
                     Ok(DataResponse {
                         metadata: Default::default(),
@@ -201,9 +199,9 @@ fn test_grouper() {
                 grouping_strategy: Some(cas.strategy),
                 ..Default::default()
             };
-            let fdf =
+            let formatter =
                 DecimalFormatter::try_new_unstable(&provider, Default::default(), options).unwrap();
-            let actual = fdf.format(&dec);
+            let actual = formatter.format(&dec);
             assert_writeable_eq!(actual, cas.expected[i], "{:?}", cas);
         }
     }

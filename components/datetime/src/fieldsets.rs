@@ -30,7 +30,7 @@
 //!
 //! # Examples
 //!
-//! Two ways to configure the same field set:
+//! There are two ways to configure the same field set:
 //!
 //! ```
 //! use icu::datetime::fieldsets::YMDT;
@@ -137,7 +137,7 @@ macro_rules! impl_marker_length_constructors {
     ) => {
         impl $type {
             #[doc = concat!("Creates a ", stringify!($type), " skeleton with the given formatting length.")]
-            pub const fn with_length(length: Length) -> Self {
+            pub const fn for_length(length: Length) -> Self {
                 Self {
                     length,
                     $(
@@ -153,15 +153,36 @@ macro_rules! impl_marker_length_constructors {
             }
             #[doc = concat!("Creates a ", stringify!($type), " skeleton with a long length.")]
             pub const fn long() -> Self {
-                Self::with_length(Length::Long)
+                Self::for_length(Length::Long)
             }
             #[doc = concat!("Creates a ", stringify!($type), " skeleton with a medium length.")]
             pub const fn medium() -> Self {
-                Self::with_length(Length::Medium)
+                Self::for_length(Length::Medium)
             }
             #[doc = concat!("Creates a ", stringify!($type), " skeleton with a short length.")]
             pub const fn short() -> Self {
-                Self::with_length(Length::Short)
+                Self::for_length(Length::Short)
+            }
+        }
+    };
+}
+
+macro_rules! impl_time_precision_constructors {
+    (
+        $time_type:ident,
+    ) => {
+        impl $time_type {
+            #[doc = concat!("Creates a ", stringify!($type), " that formats hours and minutes with the default length.")]
+            pub fn hm() -> Self {
+                Self::for_length(Default::default()).with_time_precision(TimePrecision::Minute)
+            }
+            #[doc = concat!("Creates a ", stringify!($type), " that formats hours, minutes, and seconds with the default length.")]
+            pub fn hms() -> Self {
+                Self::for_length(Default::default()).with_time_precision(TimePrecision::Second)
+            }
+            #[doc = concat!("Creates a ", stringify!($type), " that formats hours, minutes, seconds, and subseconds with the default length.")]
+            pub fn hmss(subsecond_digits: SubsecondDigits) -> Self {
+                Self::for_length(Default::default()).with_time_precision(TimePrecision::Subsecond(subsecond_digits))
             }
         }
     };
@@ -172,6 +193,7 @@ macro_rules! impl_marker_with_options {
         $(#[$attr:meta])*
         $type:ident,
         $(sample_length: $sample_length:ident,)?
+        $(date_fields: $date_fields:expr,)?
         $(alignment: $alignment_yes:ident,)?
         $(year_style: $yearstyle_yes:ident,)?
         $(time_precision: $timeprecision_yes:ident,)?
@@ -209,7 +231,8 @@ macro_rules! impl_marker_with_options {
         impl $type {
             pub(crate) fn to_raw_options(self) -> RawOptions {
                 RawOptions {
-                    length: yes_or!(self.length, $(Length::$length_override)?),
+                    length: yes_or!(Some(self.length), $(Some(Length::$length_override))?),
+                    date_fields: yes_or!(None, $($date_fields)?),
                     alignment: ternary!(self.alignment, None, $($alignment_yes)?),
                     year_style: ternary!(self.year_style, None, $($yearstyle_yes)?),
                     time_precision: ternary!(self.time_precision, None, $($timeprecision_yes)?),
@@ -227,6 +250,15 @@ macro_rules! impl_marker_with_options {
                 }
             }
         }
+        $(
+            impl $type {
+                /// Sets the length option.
+                pub const fn with_length(mut self, length: Length) -> Self {
+                    self.length = yes_to!(length, $sample_length);
+                    self
+                }
+            }
+        )?
         $(
             impl $type {
                 /// Sets the alignment option.
@@ -252,13 +284,90 @@ macro_rules! impl_marker_with_options {
                     self.time_precision = Some(yes_to!(time_precision, $timeprecision_yes));
                     self
                 }
-                /// Sets the time precision to [`TimePrecision::Minute`]
-                pub fn hm(mut self) -> Self {
-                    self.time_precision = Some(TimePrecision::Minute);
-                    self
-                }
             }
         )?
+    };
+}
+
+macro_rules! impl_date_to_time_helpers {
+    (
+        $type:ident,
+        $type_time:ident,
+        $(alignment = $alignment_yes:ident,)?
+        $(year_style = $yearstyle_yes:ident,)?
+    ) => {
+        impl $type {
+            /// Associates this field set with a time precision.
+            pub fn with_time(self, time_precision: TimePrecision) -> $type_time {
+                $type_time {
+                    length: self.length,
+                    time_precision: Some(time_precision),
+                    alignment: ternary!(self.alignment, Default::default(), $($alignment_yes)?),
+                    $(year_style: yes_to!(self.year_style, $yearstyle_yes),)?
+                }
+            }
+            /// Shorthand to associate this field set with [`TimePrecision::Minute`].
+            ///
+            /// # Examples
+            ///
+            /// ```
+            #[doc = concat!("use icu::datetime::fieldsets::", stringify!($type), ";")]
+            /// use icu::datetime::options::TimePrecision;
+            ///
+            #[doc = concat!("let fs1 = ", stringify!($type), "::medium().with_time(TimePrecision::Minute);")]
+            #[doc = concat!("let fs2 = ", stringify!($type), "::medium().with_time_hm();")]
+            /// assert_eq!(fs1, fs2);
+            /// ```
+            pub fn with_time_hm(self) -> $type_time {
+                $type_time {
+                    length: self.length,
+                    time_precision: Some(TimePrecision::Minute),
+                    alignment: ternary!(self.alignment, Default::default(), $($alignment_yes)?),
+                    $(year_style: yes_to!(self.year_style, $yearstyle_yes),)?
+                }
+            }
+            /// Shorthand to associate this field set with [`TimePrecision::Second`].
+            ///
+            /// # Examples
+            ///
+            /// ```
+            #[doc = concat!("use icu::datetime::fieldsets::", stringify!($type), ";")]
+            /// use icu::datetime::options::TimePrecision;
+            ///
+            #[doc = concat!("let fs1 = ", stringify!($type), "::medium().with_time(TimePrecision::Second);")]
+            #[doc = concat!("let fs2 = ", stringify!($type), "::medium().with_time_hms();")]
+            /// assert_eq!(fs1, fs2);
+            /// ```
+            pub fn with_time_hms(self) -> $type_time {
+                $type_time {
+                    length: self.length,
+                    time_precision: Some(TimePrecision::Second),
+                    alignment: ternary!(self.alignment, Default::default(), $($alignment_yes)?),
+                    $(year_style: yes_to!(self.year_style, $yearstyle_yes),)?
+                }
+            }
+            /// Shorthand to associate this field set with [`TimePrecision::Subsecond`].
+            ///
+            /// # Examples
+            ///
+            /// ```
+            #[doc = concat!("use icu::datetime::fieldsets::", stringify!($type), ";")]
+            /// use icu::datetime::options::TimePrecision;
+            /// use icu::datetime::options::SubsecondDigits::S2;
+            ///
+            #[doc = concat!("let fs1 = ", stringify!($type), "::medium().with_time(TimePrecision::Subsecond(S2));")]
+            #[doc = concat!("let fs2 = ", stringify!($type), "::medium().with_time_hmss(S2);")]
+            /// assert_eq!(fs1, fs2);
+            /// ```
+            pub fn with_time_hmss(self, subsecond_digits: SubsecondDigits) -> $type_time {
+                $type_time {
+                    length: self.length,
+                    time_precision: Some(TimePrecision::Subsecond(subsecond_digits)),
+                    alignment: ternary!(self.alignment, Default::default(), $($alignment_yes)?),
+                    $(year_style: yes_to!(self.year_style, $yearstyle_yes),)?
+                }
+            }
+        }
     };
 }
 
@@ -291,7 +400,7 @@ macro_rules! impl_zone_combo_helpers {
         impl $type {
             #[inline]
             /// Associates this field set with a time zone field set.
-            pub fn zone<Z: ZoneMarkers>(self, zone: Z) -> Combo<Self, Z> {
+            pub fn with_zone<Z: ZoneMarkers>(self, zone: Z) -> Combo<Self, Z> {
                 Combo::new(self, zone)
             }
         }
@@ -302,6 +411,8 @@ macro_rules! impl_zone_combo_helpers {
         impl_combo_get_field!($type, $composite, $enum, zone::GenericLong);
         impl_combo_get_field!($type, $composite, $enum, zone::GenericShort);
         impl_combo_get_field!($type, $composite, $enum, zone::Location);
+        impl_combo_get_field!($type, $composite, $enum, zone::ExemplarCity);
+        impl_combo_get_field!($type, $composite, $enum, ZoneFieldSet);
     };
 }
 
@@ -349,7 +460,7 @@ macro_rules! impl_date_or_calendar_period_marker {
             /// In [`DateTimeFormatter`](crate::neo::DateTimeFormatter):
             ///
             /// ```
-            /// use icu::calendar::Date;
+            /// use icu::datetime::input::Date;
             /// use icu::datetime::DateTimeFormatter;
             #[doc = concat!("use icu::datetime::fieldsets::", stringify!($type), ";")]
             /// use icu::locale::locale;
@@ -370,7 +481,7 @@ macro_rules! impl_date_or_calendar_period_marker {
             /// In [`FixedCalendarDateTimeFormatter`](crate::neo::FixedCalendarDateTimeFormatter):
             ///
             /// ```
-            /// use icu::calendar::Date;
+            /// use icu::datetime::input::Date;
             /// use icu::calendar::Gregorian;
             /// use icu::datetime::FixedCalendarDateTimeFormatter;
             #[doc = concat!("use icu::datetime::fieldsets::", stringify!($type), ";")]
@@ -392,6 +503,7 @@ macro_rules! impl_date_or_calendar_period_marker {
             $(#[$attr])*
             $type,
             sample_length: $sample_length,
+            date_fields: Some(builder::DateFields::$type),
             $(alignment: $option_alignment_yes,)?
             $(year_style: $year_yes,)?
         );
@@ -413,6 +525,7 @@ macro_rules! impl_date_or_calendar_period_marker {
             type ZoneExemplarsRoot = datetime_marker_helper!(@names/zone/exemplar_root,);
             type ZoneGenericLong = datetime_marker_helper!(@names/zone/generic_long,);
             type ZoneGenericShort = datetime_marker_helper!(@names/zone/generic_short,);
+            type ZoneStandardLong = datetime_marker_helper!(@names/zone/standard_long,);
             type ZoneSpecificLong = datetime_marker_helper!(@names/zone/specific_long,);
             type ZoneSpecificShort = datetime_marker_helper!(@names/zone/specific_short,);
             type MetazoneLookup = datetime_marker_helper!(@names/zone/metazone_periods,);
@@ -493,6 +606,7 @@ macro_rules! impl_date_marker {
         );
         impl_zone_combo_helpers!($type, DateZone, DateFieldSet);
         impl_composite!($type, Date, DateFieldSet);
+        impl_date_to_time_helpers!($type, $type_time, $(alignment = $option_alignment_yes,)? $(year_style = $year_yes,)?);
         impl_marker_with_options!(
             #[doc = concat!("**“", $sample_time, "**” ⇒ ", $description, " with time")]
             ///
@@ -501,7 +615,7 @@ macro_rules! impl_date_marker {
             /// In [`DateTimeFormatter`](crate::neo::DateTimeFormatter):
             ///
             /// ```
-            /// use icu::calendar::Date;
+            /// use icu::datetime::input::Date;
             /// use icu::datetime::DateTimeFormatter;
             #[doc = concat!("use icu::datetime::fieldsets::", stringify!($type_time), ";")]
             /// use icu::locale::locale;
@@ -524,7 +638,7 @@ macro_rules! impl_date_marker {
             /// In [`FixedCalendarDateTimeFormatter`](crate::neo::FixedCalendarDateTimeFormatter):
             ///
             /// ```
-            /// use icu::calendar::Date;
+            /// use icu::datetime::input::Date;
             /// use icu::calendar::Gregorian;
             /// use icu::datetime::FixedCalendarDateTimeFormatter;
             #[doc = concat!("use icu::datetime::fieldsets::", stringify!($type_time), ";")]
@@ -547,6 +661,7 @@ macro_rules! impl_date_marker {
             $(#[$attr])*
             $type_time,
             sample_length: $sample_length,
+            date_fields: Some(builder::DateFields::$type),
             alignment: yes,
             $(year_style: $year_yes,)?
             time_precision: yes,
@@ -571,6 +686,7 @@ macro_rules! impl_date_marker {
             type ZoneExemplarsRoot = datetime_marker_helper!(@names/zone/exemplar_root,);
             type ZoneGenericLong = datetime_marker_helper!(@names/zone/generic_long,);
             type ZoneGenericShort = datetime_marker_helper!(@names/zone/generic_short,);
+            type ZoneStandardLong = datetime_marker_helper!(@names/zone/standard_long,);
             type ZoneSpecificLong = datetime_marker_helper!(@names/zone/specific_long,);
             type ZoneSpecificShort = datetime_marker_helper!(@names/zone/specific_short,);
             type MetazoneLookup = datetime_marker_helper!(@names/zone/metazone_periods,);
@@ -698,12 +814,12 @@ macro_rules! impl_time_marker {
             ///
             /// ```
             /// use icu::datetime::input::Time;
-            /// use icu::datetime::TimeFormatter;
+            /// use icu::datetime::NoCalendarFormatter;
             #[doc = concat!("use icu::datetime::fieldsets::", stringify!($type), ";")]
             /// use icu::locale::locale;
             /// use writeable::assert_writeable_eq;
             ///
-            #[doc = concat!("let fmt = TimeFormatter::try_new(")]
+            #[doc = concat!("let fmt = NoCalendarFormatter::try_new(")]
             ///     locale!("en").into(),
             #[doc = concat!("    ", length_option_helper!($type, $sample_length), ",")]
             /// )
@@ -726,6 +842,9 @@ macro_rules! impl_time_marker {
             alignment: yes,
             time_precision: yes,
         );
+        impl_time_precision_constructors!(
+            $type,
+        );
         impl_zone_combo_helpers!($type, TimeZone, TimeFieldSet);
         impl UnstableSealed for $type {}
         impl DateTimeNamesMarker for $type {
@@ -740,6 +859,7 @@ macro_rules! impl_time_marker {
             type ZoneExemplarsRoot = datetime_marker_helper!(@names/zone/exemplar_root,);
             type ZoneGenericLong = datetime_marker_helper!(@names/zone/generic_long,);
             type ZoneGenericShort = datetime_marker_helper!(@names/zone/generic_short,);
+            type ZoneStandardLong = datetime_marker_helper!(@names/zone/standard_long,);
             type ZoneSpecificLong = datetime_marker_helper!(@names/zone/specific_long,);
             type ZoneSpecificShort = datetime_marker_helper!(@names/zone/specific_short,);
             type MetazoneLookup = datetime_marker_helper!(@names/zone/metazone_periods,);
@@ -785,17 +905,19 @@ macro_rules! impl_zone_marker {
         // The type in ZoneFieldSet for this field set
         // Whether zone-essentials should be loaded.
         $(zone_essentials = $zone_essentials_yes:ident,)?
-        // Whether locations formats can occur.
+        // Whether locations names are needed.
         $(zone_locations = $zone_locations_yes:ident,)?
-        // Whether exemplar city formats can occur.
+        // Whether exemplar city names are needed.
         $(zone_exemplars = $zone_exemplars_yes:ident,)?
-        // Whether generic long formats can occur.
+        // Whether generic long names are needed.
         $(zone_generic_long = $zone_generic_long_yes:ident,)?
-        // Whether generic short formats can occur.
+        // Whether generic short names are needed.
         $(zone_generic_short = $zone_generic_short_yes:ident,)?
-        // Whether specific long formats can occur.
+        // Whether standard long names are needed.
+        $(zone_standard_long = $zone_standard_long_yes:ident,)?
+        // Whether specific long names are needed.
         $(zone_specific_long = $zone_specific_long_yes:ident,)?
-        // Whether specific short formats can occur.
+        // Whether specific short names are needed.
         $(zone_specific_short = $zone_specific_short_yes:ident,)?
         // Whether metazone periods are needed
         $(metazone_periods = $metazone_periods_yes:ident,)?
@@ -811,26 +933,25 @@ macro_rules! impl_zone_marker {
         /// # Examples
         ///
         /// ```
-        /// use icu::calendar::Date;
-        /// use icu::datetime::input::{Time, TimeZone, TimeZoneInfo, UtcOffset};
-        /// use icu::datetime::TimeFormatter;
+        /// use icu::datetime::input::Date;
+        /// use icu::datetime::input::{Time, TimeZone,TimeZoneInfo,  UtcOffset};
+        /// use icu::datetime::NoCalendarFormatter;
         /// use icu::time::zone::TimeZoneVariant;
         #[doc = concat!("use icu::datetime::fieldsets::zone::", stringify!($type), ";")]
-        /// use icu::locale::locale;
-        /// use tinystr::tinystr;
+        /// use icu::locale::{locale, subtags::subtag};
         /// use writeable::assert_writeable_eq;
         ///
-        /// let fmt = TimeFormatter::try_new(
+        /// let fmt = NoCalendarFormatter::try_new(
         ///     locale!("en").into(),
         #[doc = concat!("    ", stringify!($type))]
         /// )
         /// .unwrap();
         ///
         /// // Time zone info for America/Chicago in the summer
-        /// let zone = TimeZone(tinystr!(8, "uschi"))
+        /// let zone = TimeZone(subtag!("uschi"))
         ///     .with_offset("-05".parse().ok())
-        ///     .at_time((Date::try_new_iso(2022, 8, 29).unwrap(), Time::midnight()))
-        ///     .with_zone_variant(TimeZoneVariant::Daylight);
+        ///     .at_time((Date::try_new_iso(2022, 8, 29).unwrap(), Time::start_of_day()))
+        ///     .with_variant(TimeZoneVariant::Daylight);
         ///
         /// assert_writeable_eq!(
         ///     fmt.format(&zone),
@@ -854,6 +975,7 @@ macro_rules! impl_zone_marker {
             type ZoneExemplarsRoot = datetime_marker_helper!(@names/zone/exemplars_root, $($zone_exemplars_yes)?);
             type ZoneGenericLong = datetime_marker_helper!(@names/zone/generic_long, $($zone_generic_long_yes)?);
             type ZoneGenericShort = datetime_marker_helper!(@names/zone/generic_short, $($zone_generic_short_yes)?);
+            type ZoneStandardLong = datetime_marker_helper!(@names/zone/standard_long, $($zone_standard_long_yes)?);
             type ZoneSpecificLong = datetime_marker_helper!(@names/zone/specific_long, $($zone_specific_long_yes)?);
             type ZoneSpecificShort = datetime_marker_helper!(@names/zone/specific_short, $($zone_specific_short_yes)?);
             type MetazoneLookup = datetime_marker_helper!(@names/zone/metazone_periods, $($metazone_periods_yes)?);
@@ -870,6 +992,7 @@ macro_rules! impl_zone_marker {
             type ExemplarCitiesRootV1 = datetime_marker_helper!(@data/zone/exemplars_root, $($zone_exemplars_yes)?);
             type GenericLongV1 = datetime_marker_helper!(@data/zone/generic_long, $($zone_generic_long_yes)?);
             type GenericShortV1 = datetime_marker_helper!(@data/zone/generic_short, $($zone_generic_short_yes)?);
+            type StandardLongV1 = datetime_marker_helper!(@data/zone/standard_long, $($zone_standard_long_yes)?);
             type SpecificLongV1 = datetime_marker_helper!(@data/zone/specific_long, $($zone_specific_long_yes)?);
             type SpecificShortV1 = datetime_marker_helper!(@data/zone/specific_short, $($zone_specific_short_yes)?);
             type MetazonePeriodV1 = datetime_marker_helper!(@data/zone/metazone_periods, $($metazone_periods_yes)?);
@@ -1036,16 +1159,16 @@ impl_time_marker!(
     /// ```
     /// use icu::datetime::input::Time;
     /// use icu::datetime::fieldsets::T;
-    /// use icu::datetime::TimeFormatter;
+    /// use icu::datetime::NoCalendarFormatter;
     /// use icu::locale::locale;
     /// use writeable::assert_writeable_eq;
     ///
     /// // By default, en-US uses 12-hour time and fr-FR uses 24-hour time,
     /// // but we can set overrides.
     ///
-    /// let formatter = TimeFormatter::try_new(
+    /// let formatter = NoCalendarFormatter::try_new(
     ///     locale!("en-US-u-hc-h12").into(),
-    ///     T::short().hm(),
+    ///     T::hm(),
     /// )
     /// .unwrap();
     /// assert_writeable_eq!(
@@ -1053,9 +1176,9 @@ impl_time_marker!(
     ///     "4:12 PM"
     /// );
     ///
-    /// let formatter = TimeFormatter::try_new(
+    /// let formatter = NoCalendarFormatter::try_new(
     ///     locale!("en-US-u-hc-h23").into(),
-    ///     T::short().hm(),
+    ///     T::hm(),
     /// )
     /// .unwrap();
     /// assert_writeable_eq!(
@@ -1063,9 +1186,9 @@ impl_time_marker!(
     ///     "16:12"
     /// );
     ///
-    /// let formatter = TimeFormatter::try_new(
+    /// let formatter = NoCalendarFormatter::try_new(
     ///     locale!("fr-FR-u-hc-h12").into(),
-    ///     T::short().hm(),
+    ///     T::hm(),
     /// )
     /// .unwrap();
     /// assert_writeable_eq!(
@@ -1073,9 +1196,9 @@ impl_time_marker!(
     ///     "4:12 PM"
     /// );
     ///
-    /// let formatter = TimeFormatter::try_new(
+    /// let formatter = NoCalendarFormatter::try_new(
     ///     locale!("fr-FR-u-hc-h23").into(),
-    ///     T::short().hm(),
+    ///     T::hm(),
     /// )
     /// .unwrap();
     /// assert_writeable_eq!(
@@ -1089,13 +1212,13 @@ impl_time_marker!(
     /// ```
     /// use icu::datetime::input::Time;
     /// use icu::datetime::fieldsets::T;
-    /// use icu::datetime::TimeFormatter;
+    /// use icu::datetime::NoCalendarFormatter;
     /// use icu::locale::locale;
     /// use writeable::assert_writeable_eq;
     ///
-    /// let formatter = TimeFormatter::try_new(
+    /// let formatter = NoCalendarFormatter::try_new(
     ///     locale!("und-u-hc-h11").into(),
-    ///     T::short().hm(),
+    ///     T::hm(),
     /// )
     /// .unwrap();
     ///
@@ -1104,15 +1227,37 @@ impl_time_marker!(
     ///     "0:00 AM"
     /// );
     ///
-    /// let formatter = TimeFormatter::try_new(
-    ///     locale!("und-u-hc-h24").into(),
-    ///     T::short().hm(),
+    /// let formatter = NoCalendarFormatter::try_new(
+    ///     locale!("und-u-hc-h23").into(),
+    ///     T::hm(),
     /// )
     /// .unwrap();
     ///
     /// assert_writeable_eq!(
     ///     formatter.format(&Time::try_new(0, 0, 0, 0).unwrap()),
-    ///     "24:00"
+    ///     "00:00"
+    /// );
+    /// ```
+    ///
+    /// Conveniently construct a time formatter with subseconds:
+    ///
+    /// ```
+    /// use icu::datetime::input::Time;
+    /// use icu::datetime::fieldsets::T;
+    /// use icu::datetime::options::SubsecondDigits;
+    /// use icu::datetime::NoCalendarFormatter;
+    /// use icu::locale::locale;
+    /// use writeable::assert_writeable_eq;
+    ///
+    /// let formatter = NoCalendarFormatter::try_new(
+    ///     locale!("en").into(),
+    ///     T::hmss(SubsecondDigits::S4),
+    /// )
+    /// .unwrap();
+    ///
+    /// assert_writeable_eq!(
+    ///     formatter.format(&Time::try_new(18, 24, 36, 987654321).unwrap()),
+    ///     "6:24:36.9876 PM"
     /// );
     /// ```
     ///
@@ -1136,21 +1281,20 @@ pub mod zone {
         /// to the location format for long lengths:
         ///
         /// ```
-        /// use icu::calendar::Date;
+        /// use icu::datetime::input::Date;
         /// use icu::datetime::input::{Time, TimeZone, TimeZoneInfo, UtcOffset};
         /// use icu::calendar::Gregorian;
         /// use icu::datetime::FixedCalendarDateTimeFormatter;
         /// use icu::datetime::fieldsets::zone::{SpecificLong, SpecificShort};
-        /// use icu::locale::locale;
+        /// use icu::locale::{locale, subtags::subtag};
         /// use icu::time::zone::TimeZoneVariant;
-        /// use tinystr::tinystr;
         /// use writeable::assert_writeable_eq;
         ///
         /// // Time zone info for Europe/Istanbul in the winter
-        /// let zone = TimeZone(tinystr!(8, "trist"))
+        /// let zone = TimeZone(subtag!("trist"))
         ///     .with_offset("+02".parse().ok())
-        ///     .at_time((Date::try_new_iso(2022, 1, 29).unwrap(), Time::midnight()))
-        ///     .with_zone_variant(TimeZoneVariant::Standard);
+        ///     .at_time((Date::try_new_iso(2022, 1, 29).unwrap(), Time::start_of_day()))
+        ///     .with_variant(TimeZoneVariant::Standard);
         ///
         /// let fmt = FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new(
         ///     locale!("en").into(),
@@ -1180,17 +1324,16 @@ pub mod zone {
         /// For example, [`TimeZoneInfo<AtTime>`] cannot be formatted.
         ///
         /// ```compile_fail,E0271
-        /// use icu::calendar::{Date, Iso};
+        /// use icu::datetime::input::{Date, Iso};
         /// use icu::datetime::FixedCalendarDateTimeFormatter;
         /// use icu::datetime::fieldsets::zone::SpecificLong;
-        /// use icu::locale::locale;
+        /// use icu::locale::{locale, subtags::subtag};
         /// use icu::datetime::input::{DateTime, Time, TimeZone, UtcOffset};
         /// use icu::time::zone::TimeZoneVariant;
-        /// use tinystr::tinystr;
         /// use writeable::assert_writeable_eq;
         ///
-        /// let datetime = DateTime { date: Date::try_new_gregorian(2024, 10, 18).unwrap(), time: Time::midnight() };
-        /// let time_zone_basic = TimeZone(tinystr!(8, "uschi")).with_offset("-06".parse().ok());
+        /// let datetime = DateTime { date: Date::try_new_gregorian(2024, 10, 18).unwrap(), time: Time::start_of_day() };
+        /// let time_zone_basic = TimeZone(subtag!("uschi")).with_offset("-06".parse().ok());
         /// let time_zone_at_time = time_zone_basic.at_time((datetime.date.to_iso(), datetime.time));
         ///
         /// let formatter = FixedCalendarDateTimeFormatter::try_new(
@@ -1209,6 +1352,7 @@ pub mod zone {
         field = (fields::TimeZone::SpecificNonLocation, fields::FieldLength::Four),
         zone_essentials = yes,
         zone_locations = yes,
+        zone_standard_long = yes,
         zone_specific_long = yes,
         metazone_periods = yes,
         input_tzid = yes,
@@ -1222,22 +1366,21 @@ pub mod zone {
         /// For example, [`TimeZoneInfo<AtTime>`] cannot be formatted.
         ///
         /// ```compile_fail,E0271
-        /// use icu::calendar::{Date, Iso};
+        /// use icu::datetime::input::{Date, Iso};
         /// use icu::datetime::FixedCalendarDateTimeFormatter;
         /// use icu::datetime::fieldsets::{T, zone::SpecificShort};
-        /// use icu::locale::locale;
+        /// use icu::locale::{locale, subtags::subtag};
         /// use icu::datetime::input::{DateTime, Time, TimeZone, UtcOffset};
         /// use icu::time::zone::TimeZoneVariant;
-        /// use tinystr::tinystr;
         /// use writeable::assert_writeable_eq;
         ///
-        /// let datetime = DateTime { Date::try_new_gregorian(2024, 10, 18).unwrap(), time: Time::midnight() };
-        /// let time_zone_basic = TimeZone(tinystr!(8, "uschi")).with_offset("-06".parse().ok());
+        /// let datetime = DateTime { Date::try_new_gregorian(2024, 10, 18).unwrap(), time: Time::start_of_day() };
+        /// let time_zone_basic = TimeZone(subtag!("uschi")).with_offset("-06".parse().ok());
         /// let time_zone_at_time = time_zone_basic.at_time((datetime.date.to_iso(), datetime.time));
         ///
         /// let formatter = FixedCalendarDateTimeFormatter::try_new(
         ///     locale!("en-US").into(),
-        ///     T::medium().zone(SpecificShort),
+        ///     T::medium().with_zone(SpecificShort),
         /// )
         /// .unwrap();
         ///
@@ -1262,25 +1405,24 @@ pub mod zone {
         /// All shapes of time zones can be formatted with this style.
         ///
         /// ```
-        /// use icu::calendar::Date;
-        /// use icu::datetime::TimeFormatter;
+        /// use icu::datetime::input::Date;
+        /// use icu::datetime::NoCalendarFormatter;
         /// use icu::datetime::fieldsets::zone::LocalizedOffsetLong;
         /// use icu::datetime::input::{Time, TimeZone, UtcOffset};
         /// use icu::time::zone::TimeZoneVariant;
-        /// use tinystr::tinystr;
-        /// use icu::locale::locale;
+        /// use icu::locale::{locale, subtags::subtag};
         /// use writeable::assert_writeable_eq;
         ///
         /// let utc_offset = "-06".parse().unwrap();
-        /// let time_zone_basic = TimeZone(tinystr!(8, "uschi")).with_offset(Some(utc_offset));
+        /// let time_zone_basic = TimeZone(subtag!("uschi")).with_offset(Some(utc_offset));
         ///
         /// let date = Date::try_new_iso(2024, 10, 18).unwrap();
-        /// let time = Time::midnight();
+        /// let time = Time::start_of_day();
         /// let time_zone_at_time = time_zone_basic.at_time((date, time));
         ///
-        /// let time_zone_full = time_zone_at_time.with_zone_variant(TimeZoneVariant::Standard);
+        /// let time_zone_full = time_zone_at_time.with_variant(TimeZoneVariant::Standard);
         ///
-        /// let formatter = TimeFormatter::try_new(
+        /// let formatter = NoCalendarFormatter::try_new(
         ///     locale!("en-US").into(),
         ///     LocalizedOffsetLong,
         /// )
@@ -1329,19 +1471,18 @@ pub mod zone {
         /// When a display name is unavailable, falls back to the location format:
         ///
         /// ```
-        /// use icu::calendar::Date;
+        /// use icu::datetime::input::Date;
         /// use icu::datetime::input::{Time, TimeZone};
         /// use icu::calendar::Gregorian;
         /// use icu::datetime::FixedCalendarDateTimeFormatter;
         /// use icu::datetime::fieldsets::zone::GenericShort;
-        /// use icu::locale::locale;
-        /// use tinystr::tinystr;
+        /// use icu::locale::{locale, subtags::subtag};
         /// use writeable::assert_writeable_eq;
         ///
         /// // Time zone info for Europe/Istanbul
-        /// let zone = TimeZone(tinystr!(8, "trist"))
+        /// let zone = TimeZone(subtag!("trist"))
         ///     .without_offset()
-        ///     .at_time((Date::try_new_iso(2022, 1, 29).unwrap(), Time::midnight()));
+        ///     .at_time((Date::try_new_iso(2022, 1, 29).unwrap(), Time::start_of_day()));
         ///
         /// let fmt = FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new(
         ///     locale!("en").into(),
@@ -1358,9 +1499,9 @@ pub mod zone {
         /// Can also fall back to the UTC offset:
         ///
         /// ```
-        /// use icu::calendar::Date;
+        /// use icu::datetime::input::Date;
         /// use icu::datetime::input::Time;
-        /// use icu::datetime::TimeFormatter;
+        /// use icu::datetime::NoCalendarFormatter;
         /// use icu::datetime::fieldsets::zone::GenericShort;
         /// use icu::datetime::DateTimeWriteError;
         /// use icu::locale::locale;
@@ -1369,7 +1510,7 @@ pub mod zone {
         /// use writeable::assert_writeable_eq;
         ///
         /// // Set up the formatter
-        /// let mut tzf = TimeFormatter::try_new(
+        /// let mut tzf = NoCalendarFormatter::try_new(
         ///     locale!("en").into(),
         ///     GenericShort,
         /// )
@@ -1377,9 +1518,9 @@ pub mod zone {
         ///
         /// // "uschi" - has symbol data for short generic non-location
         /// let time_zone = IanaParser::new()
-        ///     .iana_to_bcp47("America/Chicago")
+        ///     .parse("America/Chicago")
         ///     .with_offset("-05".parse().ok())
-        ///     .at_time((Date::try_new_iso(2022, 8, 29).unwrap(), Time::midnight()));
+        ///     .at_time((Date::try_new_iso(2022, 8, 29).unwrap(), Time::start_of_day()));
         /// assert_writeable_eq!(
         ///     tzf.format(&time_zone),
         ///     "CT"
@@ -1387,9 +1528,9 @@ pub mod zone {
         ///
         /// // "ushnl" - has time zone override symbol data for short generic non-location
         /// let time_zone = IanaParser::new()
-        ///     .iana_to_bcp47("Pacific/Honolulu")
+        ///     .parse("Pacific/Honolulu")
         ///     .with_offset("-10".parse().ok())
-        ///     .at_time((Date::try_new_iso(2022, 8, 29).unwrap(), Time::midnight()));
+        ///     .at_time((Date::try_new_iso(2022, 8, 29).unwrap(), Time::start_of_day()));
         /// assert_writeable_eq!(
         ///     tzf.format(&time_zone),
         ///     "HST"
@@ -1397,9 +1538,9 @@ pub mod zone {
         ///
         /// // Mis-spelling of "America/Chicago" results in a fallback to offset format
         /// let time_zone = IanaParser::new()
-        ///     .iana_to_bcp47("America/Chigagou")
+        ///     .parse("America/Chigagou")
         ///     .with_offset("-05".parse().ok())
-        ///     .at_time((Date::try_new_iso(2022, 8, 29).unwrap(), Time::midnight()));
+        ///     .at_time((Date::try_new_iso(2022, 8, 29).unwrap(), Time::start_of_day()));
         /// assert_writeable_eq!(
         ///     tzf.format(&time_zone),
         ///     "GMT-5"
@@ -1410,23 +1551,22 @@ pub mod zone {
         /// this time zone style requires a reference time.
         ///
         /// ```compile_fail,E0271
-        /// use icu::datetime::TimeFormatter;
+        /// use icu::datetime::NoCalendarFormatter;
         /// use icu::datetime::fieldsets::zone::GenericLong;
         /// use icu::datetime::input::TimeZone;
-        /// use tinystr::tinystr;
-        /// use icu::locale::locale;
+        /// use icu::locale::{locale, subtags::subtag};
         /// use writeable::assert_writeable_eq;
         ///
-        /// let time_zone_basic = TimeZone(tinystr!(8, "uschi")).without_offset();
+        /// let time_zone_basic = TimeZone(subtag!("uschi")).without_offset();
         ///
-        /// let formatter = TimeFormatter::try_new(
+        /// let formatter = NoCalendarFormatter::try_new(
         ///     locale!("en-US").into(),
         ///     GenericLong,
         /// )
         /// .unwrap();
         ///
         /// // error[E0271]: type mismatch resolving `<Base as TimeZoneModel>::LocalTime == (Date<Iso>, Time)`
-        /// // note: required by a bound in `TimeFormatter::<C, FSet>::format`
+        /// // note: required by a bound in `NoCalendarFormatter::<C, FSet>::format`
         /// formatter.format(&time_zone_basic);
         /// ```
         GenericLong,
@@ -1437,6 +1577,7 @@ pub mod zone {
         zone_essentials = yes,
         zone_locations = yes,
         zone_generic_long = yes,
+        zone_standard_long = yes,
         metazone_periods = yes,
         input_tzid = yes,
         input_localtime = yes,
@@ -1454,11 +1595,10 @@ pub mod zone {
         /// use icu::datetime::FixedCalendarDateTimeFormatter;
         /// use icu::datetime::fieldsets::zone::GenericShort;
         /// use icu::datetime::input::TimeZone;
-        /// use tinystr::tinystr;
-        /// use icu::locale::locale;
+        /// use icu::locale::{locale, subtags::subtag};
         /// use writeable::assert_writeable_eq;
         ///
-        /// let time_zone_basic = TimeZone(tinystr!(8, "uschi")).with_offset("-06".parse().ok());
+        /// let time_zone_basic = TimeZone(subtag!("uschi")).with_offset("-06".parse().ok());
         ///
         /// let formatter = FixedCalendarDateTimeFormatter::try_new(
         ///     locale!("en-US").into(),
@@ -1488,7 +1628,7 @@ pub mod zone {
         /// For example, a raw [`UtcOffset`] cannot be used here.
         ///
         /// ```compile_fail,E0277
-        /// use icu::calendar::{DateTime, Iso};
+        /// use icu::datetime::input::{DateTime, Iso};
         /// use icu::datetime::FixedCalendarDateTimeFormatter;
         /// use icu::datetime::fieldsets::zone::Location;
         /// use icu::datetime::input::UtcOffset;
@@ -1523,7 +1663,7 @@ pub mod zone {
         /// For example, a raw [`UtcOffset`] cannot be used here.
         ///
         /// ```compile_fail,E0277
-        /// use icu::calendar::{DateTime, Iso};
+        /// use icu::datetime::input::{DateTime, Iso};
         /// use icu::datetime::FixedCalendarDateTimeFormatter;
         /// use icu::datetime::fieldsets::zone::ExemplarCity;
         /// use icu::datetime::input::UtcOffset;

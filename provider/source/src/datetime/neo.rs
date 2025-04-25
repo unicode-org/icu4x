@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use super::supported_cals;
+use super::DatagenCalendar;
 use crate::cldr_serde::ca;
 use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;
@@ -11,12 +11,10 @@ use icu::datetime::provider::pattern;
 use icu::datetime::provider::neo::marker_attrs::GlueType;
 use icu::datetime::provider::neo::marker_attrs::{self, Context, Length, PatternLength};
 use icu::datetime::provider::neo::*;
-use icu::locale::extensions::unicode::{value, Value};
 use icu_provider::prelude::*;
 use potential_utf::PotentialUtf8;
 use std::borrow::Cow;
 use std::collections::{BTreeMap, HashSet};
-use tinystr::TinyAsciiStr;
 use writeable::Writeable;
 use zerovec::VarZeroCow;
 
@@ -79,23 +77,19 @@ impl SourceDataProvider {
     fn load_calendar_dates(
         &self,
         locale: &DataLocale,
-        calendar: &Value,
+        calendar: DatagenCalendar,
     ) -> Result<&ca::Dates, DataError> {
-        let cldr_cal = supported_cals()
-            .get(calendar)
-            .ok_or_else(|| DataErrorKind::IdentifierNotFound.into_error())?;
-
         let resource: &ca::Resource = self
             .cldr()?
-            .dates(cldr_cal)
-            .read_and_parse(locale, &format!("ca-{}.json", cldr_cal))?;
+            .dates(calendar.cldr_name())
+            .read_and_parse(locale, &format!("ca-{}.json", calendar.cldr_name()))?;
 
         let data = resource
             .main
             .value
             .dates
             .calendars
-            .get(*cldr_cal)
+            .get(calendar.cldr_name())
             .expect("CLDR file contains the expected calendar");
         Ok(data)
     }
@@ -103,7 +97,7 @@ impl SourceDataProvider {
     fn load_neo_key<M: DataMarker>(
         &self,
         req: DataRequest,
-        calendar: &Value,
+        calendar: DatagenCalendar,
         conversion: impl FnOnce(DataIdentifierBorrowed, &ca::Dates) -> Result<M::DataStruct, DataError>,
     ) -> Result<DataResponse<M>, DataError>
     where
@@ -124,12 +118,12 @@ impl SourceDataProvider {
     fn load_neo_symbols_marker<M: DataMarker>(
         &self,
         req: DataRequest,
-        calendar: Value,
+        calendar: DatagenCalendar,
         conversion: impl FnOnce(
             &SourceDataProvider,
             &DataLocale,
             &ca::Dates,
-            &Value,
+            DatagenCalendar,
             Context,
             Length,
         ) -> Result<M::DataStruct, DataError>,
@@ -137,7 +131,7 @@ impl SourceDataProvider {
     where
         Self: IterableDataProviderCached<M>,
     {
-        self.load_neo_key(req, &calendar, |id, data| {
+        self.load_neo_key(req, calendar, |id, data| {
             let Some((context, length)) = marker_attrs::name_marker_attr_info(id.marker_attributes)
             else {
                 panic!(
@@ -145,20 +139,20 @@ impl SourceDataProvider {
                     id.marker_attributes.as_str()
                 )
             };
-            conversion(self, id.locale, data, &calendar, context, length)
+            conversion(self, id.locale, data, calendar, context, length)
         })
     }
 
     fn load_neo_patterns_marker<M: DataMarker>(
         &self,
         req: DataRequest,
-        calendar: Value,
+        calendar: DatagenCalendar,
         conversion: impl FnOnce(&ca::Dates, PatternLength, GlueType) -> Result<M::DataStruct, DataError>,
     ) -> Result<DataResponse<M>, DataError>
     where
         Self: IterableDataProviderCached<M>,
     {
-        self.load_neo_key(req, &calendar, |id, data| {
+        self.load_neo_key(req, calendar, |id, data| {
             let Some((length, glue_type)) =
                 marker_attrs::pattern_marker_attr_info_for_glue(id.marker_attributes)
             else {
@@ -173,15 +167,12 @@ impl SourceDataProvider {
 
     fn iter_ids_neo(
         &self,
-        calendar: Value,
+        calendar: DatagenCalendar,
         keylengths: &'static [&DataMarkerAttributes],
     ) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
-        let cldr_cal = supported_cals()
-            .get(&calendar)
-            .ok_or_else(|| DataErrorKind::IdentifierNotFound.into_error())?;
         Ok(self
             .cldr()?
-            .dates(cldr_cal)
+            .dates(calendar.cldr_name())
             .list_locales()?
             .flat_map(|locale| {
                 keylengths
@@ -196,7 +187,7 @@ fn weekday_convert(
     _datagen: &SourceDataProvider,
     _locale: &DataLocale,
     data: &ca::Dates,
-    _calendar: &Value,
+    _calendar: DatagenCalendar,
     context: Context,
     length: Length,
 ) -> Result<LinearNames<'static>, DataError> {
@@ -221,7 +212,7 @@ fn dayperiods_convert(
     _datagen: &SourceDataProvider,
     _locale: &DataLocale,
     data: &ca::Dates,
-    _calendar: &Value,
+    _calendar: DatagenCalendar,
     context: Context,
     length: Length,
 ) -> Result<LinearNames<'static>, DataError> {
@@ -248,91 +239,56 @@ fn eras_convert(
     datagen: &SourceDataProvider,
     locale: &DataLocale,
     eras: &ca::Eras,
-    calendar: &Value,
+    calendar: DatagenCalendar,
     length: Length,
 ) -> Result<YearNames<'static>, DataError> {
     let eras = eras.load(length);
-    // Tostring can be removed when we delete symbols.rs, or we can perhaps refactor it to use Value
-    let calendar_str = calendar.to_string();
-    let map = super::symbols::get_era_code_map(&calendar_str);
-
-    // CLDR treats ethiopian and ethioaa as separate calendars; however we treat them as a single resource key that
-    // supports symbols for both era patterns based on the settings on the date. Load in ethioaa data as well when dealing with
-    // ethiopian.
-    let extra_ethiopic = if *calendar == value!("ethiopic") {
-        let ethioaa: &ca::Resource = datagen
+    let all_eras = &datagen.all_eras()?[&calendar];
+    if matches!(
+        calendar,
+        DatagenCalendar::JapaneseModern | DatagenCalendar::JapaneseExtended
+    ) {
+        let greg_eras = datagen
             .cldr()?
-            .dates("ethiopic")
-            .read_and_parse(locale, "ca-ethiopic-amete-alem.json")?;
-
-        let ethioaa_data = ethioaa
+            .dates(DatagenCalendar::Gregorian.cldr_name())
+            .read_and_parse::<ca::Resource>(locale, "ca-gregorian.json")?
             .main
             .value
             .dates
             .calendars
-            .get("ethiopic-amete-alem")
-            .expect("CLDR ca-ethiopic-amete-alem.json contains the expected calendar");
-
-        Some(
-            ethioaa_data
-                .eras
-                .as_ref()
-                .expect("ethiopic-amete-alem must have eras")
-                .load(length)
-                .get("0")
-                .expect("ethiopic-amete-alem calendar must have 0 era"),
-        )
-    } else {
-        None
-    };
-
-    if *calendar == value!("japanese") || *calendar == value!("japanext") {
-        let greg: &ca::Resource = datagen
-            .cldr()?
-            .dates("gregorian")
-            .read_and_parse(locale, "ca-gregorian.json")?;
-
-        let greg_data = greg
-            .main
-            .value
-            .dates
-            .calendars
-            .get("gregorian")
-            .expect("CLDR gregorian.json contains the expected calendar");
-
-        let greg_eras = greg_data
+            .get(DatagenCalendar::Gregorian.cldr_name())
+            .expect("CLDR gregorian.json contains the expected calendar")
             .eras
             .as_ref()
             .expect("gregorian must have eras")
             .load(length);
-        let ce = greg_eras
-            .get("0")
-            .expect("gregorian calendar must have 0 era");
-        let bce = greg_eras
-            .get("1")
-            .expect("gregorian calendar must have 1 era");
-        let modern_japanese_eras = if *calendar == value!("japanese") {
-            Some(datagen.cldr()?.modern_japanese_eras()?)
-        } else {
-            None
-        };
 
-        let mut out_eras: BTreeMap<TinyAsciiStr<16>, &str> = BTreeMap::new();
+        let mut out_eras = BTreeMap::new();
 
-        for (cldr, code) in map {
-            if let Some(name) = eras.get(cldr) {
-                if let Some(modern_japanese_eras) = modern_japanese_eras {
-                    if !modern_japanese_eras.contains(cldr) {
-                        continue;
-                    }
-                }
-                out_eras.insert(code, &**name);
-            } else if cldr == "-1" {
-                out_eras.insert(code, ce);
-            } else if cldr == "-2" {
-                out_eras.insert(code, bce);
+        for &(cldr, ref data) in all_eras {
+            if cldr == 0 {
+                out_eras.insert(
+                    data.code.as_deref().unwrap(),
+                    greg_eras
+                        .get("0")
+                        .expect("gregorian calendar must have 0 era")
+                        .as_str(),
+                );
+            } else if cldr == 1 {
+                out_eras.insert(
+                    data.code.as_deref().unwrap(),
+                    greg_eras
+                        .get("1")
+                        .expect("gregorian calendar must have 1 era")
+                        .as_str(),
+                );
             } else {
-                panic!("Unknown japanese era number {cldr}");
+                // https://unicode-org.atlassian.net/browse/CLDR-18388 for why we need to do -2
+                if let Some(name) = eras.get(&(cldr - 2).to_string()) {
+                    out_eras.insert(data.code.as_deref().unwrap(), name);
+                } else {
+                    panic!("Unknown japanese era number {cldr}");
+                }
             }
         }
         let keys: Vec<&PotentialUtf8> = out_eras
@@ -344,18 +300,16 @@ fn eras_convert(
         let cow = VarZeroCow::from_encodeable(&kv);
         Ok(YearNames::VariableEras(cow))
     } else {
-        let mut out_eras: Vec<&str> = Vec::new();
-        for (index, (cldr, _code)) in map.enumerate() {
-            if let Some(name) = eras.get(cldr) {
-                out_eras.push(&**name)
-            } else if let Some(extra_ethiopic) = extra_ethiopic {
-                if cldr == "2" {
-                    out_eras.push(extra_ethiopic);
-                } else {
-                    panic!("Unknown ethiopic era number {cldr}");
+        let max_era_index = all_eras.iter().flat_map(|(_, e)| e.icu4x_era_index).max();
+        let mut out_eras: Vec<&str> =
+            vec![""; max_era_index.map(|n| n + 1).unwrap_or_default() as usize];
+        for &(cldr, ref era) in all_eras.iter() {
+            if let Some(name) = eras.get(&cldr.to_string()) {
+                if let Some(icu4x_hardcoded_index) = era.icu4x_era_index {
+                    out_eras[icu4x_hardcoded_index as usize] = &**name;
                 }
             } else {
-                panic!("Did not find era data for era index {index} (CLDR: #{cldr}) for {calendar} and {locale}");
+                panic!("Did not find era data for era index {cldr} for {calendar:?} and {locale}");
             }
         }
 
@@ -366,7 +320,7 @@ fn years_convert(
     datagen: &SourceDataProvider,
     locale: &DataLocale,
     data: &ca::Dates,
-    calendar: &Value,
+    calendar: DatagenCalendar,
     context: Context,
     length: Length,
 ) -> Result<YearNames<'static>, DataError> {
@@ -387,40 +341,32 @@ fn years_convert(
 
         let years: Vec<_> = years.iter().enumerate().map(|(index, (key, value))| {
             if *key as usize != index + 1 {
-                panic!("Calendar {calendar} in locale {locale} missing cyclic year name for index {index}");
+                panic!("Calendar {calendar:?} in locale {locale} missing cyclic year name for index {index}");
             }
             &**value
         }).collect();
         Ok(YearNames::Cyclic((&years).into()))
     } else {
         panic!(
-            "Calendar {calendar} in locale {locale} has neither eras nor cyclicNameSets for years"
+            "Calendar {calendar:?} in locale {locale} has neither eras nor cyclicNameSets for years"
         )
     }
 }
 
 /// Returns the number of regular months in a calendar, as well as whether it is
 /// has leap months
-fn calendar_months(cal: &Value) -> (usize, bool) {
-    if *cal == value!("hebrew") || *cal == value!("chinese") || *cal == value!("dangi") {
-        (24, true)
-    } else if *cal == value!("coptic") || *cal == value!("ethiopic") {
-        (13, false)
-    } else if *cal == value!("gregory")
-        || *cal == value!("buddhist")
-        || *cal == value!("japanese")
-        || *cal == value!("japanext")
-        || *cal == value!("indian")
-        || *cal == value!("persian")
-        || *cal == value!("roc")
-        || *cal == value!("islamic")
-        || *cal == value!("islamicc")
-        || *cal == value!("umalqura")
-        || *cal == value!("tbla")
-    {
-        (12, false)
-    } else {
-        panic!("Month map unknown for {cal}")
+fn calendar_months(cal: DatagenCalendar) -> (usize, bool) {
+    match cal {
+        DatagenCalendar::Hebrew | DatagenCalendar::Chinese | DatagenCalendar::Dangi => (24, true),
+        DatagenCalendar::Coptic | DatagenCalendar::Ethiopic => (13, false),
+        DatagenCalendar::Gregorian
+        | DatagenCalendar::Buddhist
+        | DatagenCalendar::JapaneseModern
+        | DatagenCalendar::JapaneseExtended
+        | DatagenCalendar::Indian
+        | DatagenCalendar::Persian
+        | DatagenCalendar::Hijri
+        | DatagenCalendar::Roc => (12, false),
     }
 }
 
@@ -428,7 +374,7 @@ fn months_convert(
     _datagen: &SourceDataProvider,
     locale: &DataLocale,
     data: &ca::Dates,
-    calendar: &Value,
+    calendar: DatagenCalendar,
     context: Context,
     length: Length,
 ) -> Result<MonthNames<'static>, DataError> {
@@ -439,7 +385,7 @@ fn months_convert(
             "numeric months only found for Context::Format"
         );
         let Some(ref patterns) = data.month_patterns else {
-            panic!("No month_patterns found but numeric months were requested for {calendar} with {locale}");
+            panic!("No month_patterns found but numeric months were requested for {calendar:?} with {locale}");
         };
         let pattern = patterns.get_symbols(context, length);
         return Ok(MonthNames::LeapNumeric(Cow::Owned(
@@ -452,7 +398,7 @@ fn months_convert(
     let (month_count, has_leap) = calendar_months(calendar);
     let mut symbols = vec![Cow::Borrowed(""); month_count];
 
-    if *calendar == value!("hebrew") {
+    if calendar == DatagenCalendar::Hebrew {
         for (k, v) in months.0.iter() {
             // CLDR's numbering for hebrew has Adar I as 6, Adar as 7, and Adar II as 7-yeartype-leap
             //
@@ -508,7 +454,7 @@ fn months_convert(
 
         for (i, val) in symbols.iter().take(nonleap).enumerate() {
             if val.is_empty() {
-                panic!("Calendar {calendar} does not have data for month {i}; found data for {symbols:?}");
+                panic!("Calendar {calendar:?} does not have data for month {i}; found data for {symbols:?}");
             }
         }
 
@@ -516,7 +462,7 @@ fn months_convert(
             // This branch is only for chinese-like calendars with N regular months and N potential leap months
             // rather than hebrew-like where there's one or two special leap months
             debug_assert!(
-                *calendar != value!("hebrew"),
+                calendar != DatagenCalendar::Hebrew,
                 "Hebrew calendar should have been handled in the branch above"
             );
             let patterns = data
@@ -628,13 +574,13 @@ macro_rules! impl_symbols_datagen {
     ($marker:ident, $calendar:expr, $lengths:ident, $convert:expr) => {
         impl DataProvider<$marker> for SourceDataProvider {
             fn load(&self, req: DataRequest) -> Result<DataResponse<$marker>, DataError> {
-                self.load_neo_symbols_marker::<$marker>(req, value!($calendar), $convert)
+                self.load_neo_symbols_marker::<$marker>(req, $calendar, $convert)
             }
         }
 
         impl IterableDataProviderCached<$marker> for SourceDataProvider {
             fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
-                self.iter_ids_neo(value!($calendar), $lengths)
+                self.iter_ids_neo($calendar, $lengths)
             }
         }
     };
@@ -644,181 +590,201 @@ macro_rules! impl_pattern_datagen {
     ($marker:ident, $calendar:expr, $lengths:ident, $convert:expr) => {
         impl DataProvider<$marker> for SourceDataProvider {
             fn load(&self, req: DataRequest) -> Result<DataResponse<$marker>, DataError> {
-                self.load_neo_patterns_marker::<$marker>(req, value!($calendar), $convert)
+                self.load_neo_patterns_marker::<$marker>(req, $calendar, $convert)
             }
         }
 
         impl IterableDataProviderCached<$marker> for SourceDataProvider {
             fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
-                self.iter_ids_neo(value!($calendar), $lengths)
+                self.iter_ids_neo($calendar, $lengths)
             }
         }
     };
 }
 
 // Weekdays
-impl_symbols_datagen!(WeekdayNamesV1, "gregory", FULL_KEY_LENGTHS, weekday_convert);
+impl_symbols_datagen!(
+    WeekdayNamesV1,
+    DatagenCalendar::Gregorian,
+    FULL_KEY_LENGTHS,
+    weekday_convert
+);
 
 // Dayperiods
 impl_symbols_datagen!(
     DayPeriodNamesV1,
-    "gregory",
+    DatagenCalendar::Gregorian,
     NORMAL_KEY_LENGTHS,
     dayperiods_convert
 );
 
 // Years
 impl_symbols_datagen!(
-    BuddhistYearNamesV1,
-    "buddhist",
+    DatetimeNamesYearBuddhistV1,
+    DatagenCalendar::Buddhist,
     YEARS_KEY_LENGTHS,
     years_convert
 );
 impl_symbols_datagen!(
-    ChineseYearNamesV1,
-    "chinese",
+    DatetimeNamesYearChineseV1,
+    DatagenCalendar::Chinese,
     YEARS_KEY_LENGTHS,
     years_convert
 );
 impl_symbols_datagen!(
-    CopticYearNamesV1,
-    "coptic",
-    YEARS_KEY_LENGTHS,
-    years_convert
-);
-impl_symbols_datagen!(DangiYearNamesV1, "dangi", YEARS_KEY_LENGTHS, years_convert);
-impl_symbols_datagen!(
-    EthiopianYearNamesV1,
-    "ethiopic",
+    DatetimeNamesYearCopticV1,
+    DatagenCalendar::Coptic,
     YEARS_KEY_LENGTHS,
     years_convert
 );
 impl_symbols_datagen!(
-    GregorianYearNamesV1,
-    "gregory",
+    DatetimeNamesYearDangiV1,
+    DatagenCalendar::Dangi,
     YEARS_KEY_LENGTHS,
     years_convert
 );
 impl_symbols_datagen!(
-    HebrewYearNamesV1,
-    "hebrew",
+    DatetimeNamesYearEthiopianV1,
+    DatagenCalendar::Ethiopic,
     YEARS_KEY_LENGTHS,
     years_convert
 );
 impl_symbols_datagen!(
-    IndianYearNamesV1,
-    "indian",
+    DatetimeNamesYearGregorianV1,
+    DatagenCalendar::Gregorian,
     YEARS_KEY_LENGTHS,
     years_convert
 );
 impl_symbols_datagen!(
-    IslamicYearNamesV1,
-    "islamic",
+    DatetimeNamesYearHebrewV1,
+    DatagenCalendar::Hebrew,
     YEARS_KEY_LENGTHS,
     years_convert
 );
 impl_symbols_datagen!(
-    JapaneseYearNamesV1,
-    "japanese",
+    DatetimeNamesYearIndianV1,
+    DatagenCalendar::Indian,
     YEARS_KEY_LENGTHS,
     years_convert
 );
 impl_symbols_datagen!(
-    JapaneseExtendedYearNamesV1,
-    "japanext",
+    DatetimeNamesYearHijriV1,
+    DatagenCalendar::Hijri,
     YEARS_KEY_LENGTHS,
     years_convert
 );
 impl_symbols_datagen!(
-    PersianYearNamesV1,
-    "persian",
+    DatetimeNamesYearJapaneseV1,
+    DatagenCalendar::JapaneseModern,
     YEARS_KEY_LENGTHS,
     years_convert
 );
-impl_symbols_datagen!(RocYearNamesV1, "roc", YEARS_KEY_LENGTHS, years_convert);
+impl_symbols_datagen!(
+    DatetimeNamesYearJapanextV1,
+    DatagenCalendar::JapaneseExtended,
+    YEARS_KEY_LENGTHS,
+    years_convert
+);
+impl_symbols_datagen!(
+    DatetimeNamesYearPersianV1,
+    DatagenCalendar::Persian,
+    YEARS_KEY_LENGTHS,
+    years_convert
+);
+impl_symbols_datagen!(
+    DatetimeNamesYearRocV1,
+    DatagenCalendar::Roc,
+    YEARS_KEY_LENGTHS,
+    years_convert
+);
 
 // Months
 impl_symbols_datagen!(
-    BuddhistMonthNamesV1,
-    "buddhist",
+    DatetimeNamesMonthBuddhistV1,
+    DatagenCalendar::Buddhist,
     NORMAL_KEY_LENGTHS,
     months_convert
 );
 impl_symbols_datagen!(
-    ChineseMonthNamesV1,
-    "chinese",
+    DatetimeNamesMonthChineseV1,
+    DatagenCalendar::Chinese,
     NUMERIC_MONTHS_KEY_LENGTHS, // has leap month patterns
     months_convert
 );
 impl_symbols_datagen!(
-    CopticMonthNamesV1,
-    "coptic",
+    DatetimeNamesMonthCopticV1,
+    DatagenCalendar::Coptic,
     NORMAL_KEY_LENGTHS,
     months_convert
 );
 impl_symbols_datagen!(
-    DangiMonthNamesV1,
-    "dangi",
+    DatetimeNamesMonthDangiV1,
+    DatagenCalendar::Dangi,
     NUMERIC_MONTHS_KEY_LENGTHS, // has leap month patterns
     months_convert
 );
 impl_symbols_datagen!(
-    EthiopianMonthNamesV1,
-    "ethiopic",
+    DatetimeNamesMonthEthiopianV1,
+    DatagenCalendar::Ethiopic,
     NORMAL_KEY_LENGTHS,
     months_convert
 );
 impl_symbols_datagen!(
-    GregorianMonthNamesV1,
-    "gregory",
+    DatetimeNamesMonthGregorianV1,
+    DatagenCalendar::Gregorian,
     NORMAL_KEY_LENGTHS,
     months_convert
 );
 impl_symbols_datagen!(
-    HebrewMonthNamesV1,
-    "hebrew",
+    DatetimeNamesMonthHebrewV1,
+    DatagenCalendar::Hebrew,
     NORMAL_KEY_LENGTHS,
     months_convert
 );
 impl_symbols_datagen!(
-    IndianMonthNamesV1,
-    "indian",
+    DatetimeNamesMonthIndianV1,
+    DatagenCalendar::Indian,
     NORMAL_KEY_LENGTHS,
     months_convert
 );
 impl_symbols_datagen!(
-    IslamicMonthNamesV1,
-    "islamic",
+    DatetimeNamesMonthHijriV1,
+    DatagenCalendar::Hijri,
     NORMAL_KEY_LENGTHS,
     months_convert
 );
 impl_symbols_datagen!(
-    JapaneseMonthNamesV1,
-    "japanese",
+    DatetimeNamesMonthJapaneseV1,
+    DatagenCalendar::JapaneseModern,
     NORMAL_KEY_LENGTHS,
     months_convert
 );
 impl_symbols_datagen!(
-    JapaneseExtendedMonthNamesV1,
-    "japanext",
+    DatetimeNamesMonthJapanextV1,
+    DatagenCalendar::JapaneseExtended,
     NORMAL_KEY_LENGTHS,
     months_convert
 );
 impl_symbols_datagen!(
-    PersianMonthNamesV1,
-    "persian",
+    DatetimeNamesMonthPersianV1,
+    DatagenCalendar::Persian,
     NORMAL_KEY_LENGTHS,
     months_convert
 );
-impl_symbols_datagen!(RocMonthNamesV1, "roc", NORMAL_KEY_LENGTHS, months_convert);
+impl_symbols_datagen!(
+    DatetimeNamesMonthRocV1,
+    DatagenCalendar::Roc,
+    NORMAL_KEY_LENGTHS,
+    months_convert
+);
 
 // Datetime patterns
 // TODO: This is modeled with glue patterns that are the same across calendar
 // systems, but CLDR has some instances where the glue patterns differ, such
 // as in French (Gregorian has a comma but other calendars do not).
 impl_pattern_datagen!(
-    GluePatternV1,
-    "gregory",
+    DatetimePatternsGlueV1,
+    DatagenCalendar::Gregorian,
     GLUE_PATTERN_KEY_LENGTHS,
     datetimepattern_convert
 );

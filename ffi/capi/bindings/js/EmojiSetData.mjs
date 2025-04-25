@@ -5,16 +5,17 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
-/** An ICU4X Unicode Set Property object, capable of querying whether a code point is contained in a set based on a Unicode property.
-*
-*See the [Rust documentation for `properties`](https://docs.rs/icu/latest/icu/properties/index.html) for more information.
-*
-*See the [Rust documentation for `EmojiSetData`](https://docs.rs/icu/latest/icu/properties/struct.EmojiSetData.html) for more information.
-*
-*See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/properties/struct.EmojiSetData.html#method.new) for more information.
-*
-*See the [Rust documentation for `EmojiSetDataBorrowed`](https://docs.rs/icu/latest/icu/properties/struct.EmojiSetDataBorrowed.html) for more information.
-*/
+/** 
+ * An ICU4X Unicode Set Property object, capable of querying whether a code point is contained in a set based on a Unicode property.
+ *
+ * See the [Rust documentation for `properties`](https://docs.rs/icu/latest/icu/properties/index.html) for more information.
+ *
+ * See the [Rust documentation for `EmojiSetData`](https://docs.rs/icu/latest/icu/properties/struct.EmojiSetData.html) for more information.
+ *
+ * See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/properties/struct.EmojiSetData.html#method.new) for more information.
+ *
+ * See the [Rust documentation for `EmojiSetDataBorrowed`](https://docs.rs/icu/latest/icu/properties/struct.EmojiSetDataBorrowed.html) for more information.
+ */
 const EmojiSetData_box_destroy_registry = new FinalizationRegistry((ptr) => {
     wasm.icu4x_EmojiSetData_destroy_mv1(ptr);
 });
@@ -48,10 +49,15 @@ export class EmojiSetData {
         return this.#ptr;
     }
 
+    /** 
+     * Checks whether the string is in the set.
+     *
+     * See the [Rust documentation for `contains_str`](https://docs.rs/icu/latest/icu/properties/struct.EmojiSetDataBorrowed.html#method.contains_str) for more information.
+     */
     containsStr(s) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
-        const sSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, s));
+        const sSlice = diplomatRuntime.DiplomatBuf.str8(wasm, s);
         
         const result = wasm.icu4x_EmojiSetData_contains_str_mv1(this.ffiValue, ...sSlice.splat());
     
@@ -64,6 +70,11 @@ export class EmojiSetData {
         }
     }
 
+    /** 
+     * Checks whether the code point is in the set.
+     *
+     * See the [Rust documentation for `contains`](https://docs.rs/icu/latest/icu/properties/struct.EmojiSetDataBorrowed.html#method.contains) for more information.
+     */
     contains(cp) {
         const result = wasm.icu4x_EmojiSetData_contains_mv1(this.ffiValue, cp);
     
@@ -74,6 +85,11 @@ export class EmojiSetData {
         finally {}
     }
 
+    /** 
+     * Create a map for the `Basic_Emoji` property, using compiled data.
+     *
+     * See the [Rust documentation for `BasicEmoji`](https://docs.rs/icu/latest/icu/properties/props/struct.BasicEmoji.html) for more information.
+     */
     static createBasic() {
         const result = wasm.icu4x_EmojiSetData_create_basic_mv1();
     
@@ -84,6 +100,11 @@ export class EmojiSetData {
         finally {}
     }
 
+    /** 
+     * Create a map for the `Basic_Emoji` property, using a particular data source.
+     *
+     * See the [Rust documentation for `BasicEmoji`](https://docs.rs/icu/latest/icu/properties/props/struct.BasicEmoji.html) for more information.
+     */
     static createBasicWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         

@@ -638,15 +638,15 @@ impl Default for NonPrimary {
 /// need the ccc yet, and when lookahead has already done the
 /// trie lookups, we don't need `trie_value`, as it is implied
 /// by ccc.
-///
-/// TODO(#2386): This struct carries redundant information, and
-/// `upcoming` should be split into a buffer of `CharacterAndClass`
-///  and an `Option<CharacterAndTrieValue>`, but that refactoring
-/// isn't 100% necessary, so focusing on data format stability
-/// for 1.0.
-///
-/// (Deliberately non-`Copy`, because `CharacterAndClass` is
-/// non-`Copy`.)
+//
+// TODO(#2386): This struct carries redundant information, and
+// `upcoming` should be split into a buffer of `CharacterAndClass`
+//  and an `Option<CharacterAndTrieValue>`, but that refactoring
+// isn't 100% necessary, so focusing on data format stability
+// for 1.0.
+//
+// (Deliberately non-`Copy`, because `CharacterAndClass` is
+// non-`Copy`.)
 #[derive(Debug, Clone)]
 struct CharacterAndClassAndTrieValue {
     c_and_c: CharacterAndClass,
@@ -1968,7 +1968,7 @@ where
 
                                         // Set the exponent. 4 pairs->132, 5 pairs->133, ..., 127 pairs->255.
                                         let mut len = head.len();
-                                        let num_pairs = (len as u32 + 1) / 2; // as u32 OK, because capped to 254
+                                        let num_pairs = (len as u32).div_ceil(2); // as u32 OK, because capped to 254
                                         let mut primary =
                                             numeric_primary | ((132 - 4 + num_pairs) << 16);
                                         // Find the length without trailing 00 pairs.

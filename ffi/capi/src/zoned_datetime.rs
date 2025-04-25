@@ -9,47 +9,13 @@ pub mod ffi {
     use alloc::boxed::Box;
     use icu_calendar::Iso;
 
-    use crate::calendar::ffi::Calendar;
-    use crate::date::ffi::{Date, IsoDate};
-    use crate::errors::ffi::CalendarParseError;
-    #[cfg(feature = "buffer_provider")]
-    use crate::errors::ffi::DataError;
-    #[cfg(feature = "buffer_provider")]
-    use crate::provider::ffi::DataProvider;
-    use crate::time::ffi::Time;
-    use crate::timezone::ffi::TimeZoneInfo;
-
-    #[diplomat::rust_link(icu::time::ZonedDateTimeParser, Struct)]
-    #[diplomat::opaque]
-    pub struct ZonedDateTimeParser(
-        icu_time::zone::iana::IanaParser,
-        icu_time::zone::UtcOffsetCalculator,
-    );
-
-    impl ZonedDateTimeParser {
-        /// Construct a new [`ZonedDateTimeParser`] instance using compiled data.
-        #[diplomat::rust_link(icu::time::ZonedDateTimeParser::new, FnInStruct)]
-        #[diplomat::attr(auto, constructor)]
-        #[cfg(feature = "compiled_data")]
-        pub fn create() -> Box<ZonedDateTimeParser> {
-            Box::new(ZonedDateTimeParser(
-                icu_time::zone::iana::IanaParser::new().static_to_owned(),
-                icu_time::zone::UtcOffsetCalculator::new(),
-            ))
-        }
-        /// Construct a new [`ZonedDateTimeParser`] instance using a particular data source.
-        #[diplomat::rust_link(icu::time::ZonedDateTimeParser::new, FnInStruct)]
-        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "with_provider")]
-        #[cfg(feature = "buffer_provider")]
-        pub fn create_with_provider(
-            provider: &DataProvider,
-        ) -> Result<Box<ZonedDateTimeParser>, DataError> {
-            Ok(Box::new(ZonedDateTimeParser(
-                icu_time::zone::iana::IanaParser::try_new_with_buffer_provider(provider.get()?)?,
-                icu_time::zone::UtcOffsetCalculator::try_new_with_buffer_provider(provider.get()?)?,
-            )))
-        }
-    }
+    use crate::unstable::calendar::ffi::Calendar;
+    use crate::unstable::date::ffi::{Date, IsoDate};
+    use crate::unstable::errors::ffi::CalendarParseError;
+    use crate::unstable::iana_parser::ffi::IanaParser;
+    use crate::unstable::time::ffi::Time;
+    use crate::unstable::timezone::ffi::TimeZoneInfo;
+    use crate::unstable::variant_offset::ffi::VariantOffsetsCalculator;
 
     /// An ICU4X ZonedDateTime object capable of containing a ISO-8601 date, time, and zone.
     #[diplomat::rust_link(icu::time::ZonedDateTime, Struct)]
@@ -60,16 +26,23 @@ pub mod ffi {
         pub zone: Box<TimeZoneInfo>,
     }
 
-    impl ZonedDateTimeParser {
+    impl ZonedIsoDateTime {
         /// Creates a new [`ZonedIsoDateTime`] from an IXDTF string.
         #[diplomat::rust_link(icu::time::ZonedDateTime::try_from_str, FnInStruct)]
         #[diplomat::rust_link(icu::time::ZonedDateTime::try_from_utf8, FnInStruct, hidden)]
-        pub fn try_iso_from_str(
-            &self,
+        #[diplomat::attr(all(supports = named_constructors, supports = fallible_constructors), named_constructor = "from_string")]
+        pub fn from_string(
             v: &DiplomatStr,
+            iana_parser: &IanaParser,
+            offset_calculator: &VariantOffsetsCalculator,
         ) -> Result<ZonedIsoDateTime, CalendarParseError> {
             let icu_time::ZonedDateTime { date, time, zone } =
-                icu_time::ZonedDateTime::try_from_utf8(v, Iso, self.0.as_borrowed(), &self.1)?;
+                icu_time::ZonedDateTime::try_from_utf8(
+                    v,
+                    Iso,
+                    iana_parser.0.as_borrowed(),
+                    offset_calculator.0.as_borrowed(),
+                )?;
             Ok(ZonedIsoDateTime {
                 date: Box::new(IsoDate(date)),
                 time: Box::new(Time(time)),
@@ -87,22 +60,92 @@ pub mod ffi {
         pub zone: Box<TimeZoneInfo>,
     }
 
-    impl ZonedDateTimeParser {
+    impl ZonedDateTime {
         /// Creates a new [`ZonedDateTime`] from an IXDTF string.
-        #[diplomat::rust_link(icu::time::DateTime::try_from_str, FnInStruct)]
-        #[diplomat::rust_link(icu::time::DateTime::try_from_utf8, FnInStruct, hidden)]
-        #[diplomat::rust_link(icu::time::DateTime::from_str, FnInStruct, hidden)]
-        pub fn try_from_str(
-            &self,
+        #[diplomat::rust_link(icu::time::ZonedDateTime::try_from_str, FnInStruct)]
+        #[diplomat::rust_link(icu::time::ZonedDateTime::try_from_utf8, FnInStruct, hidden)]
+        #[diplomat::attr(all(supports = named_constructors, supports = fallible_constructors), named_constructor = "from_string")]
+        pub fn from_string(
             v: &DiplomatStr,
             calendar: &Calendar,
+            iana_parser: &IanaParser,
+            offset_calculator: &VariantOffsetsCalculator,
         ) -> Result<ZonedDateTime, CalendarParseError> {
             let icu_time::ZonedDateTime { date, time, zone } =
                 icu_time::ZonedDateTime::try_from_utf8(
                     v,
                     calendar.0.clone(),
-                    self.0.as_borrowed(),
-                    &self.1,
+                    iana_parser.0.as_borrowed(),
+                    offset_calculator.0.as_borrowed(),
+                )?;
+            Ok(ZonedDateTime {
+                date: Box::new(Date(date)),
+                time: Box::new(Time(time)),
+                zone: Box::new(TimeZoneInfo::from(zone)),
+            })
+        }
+
+        /// Creates a new [`ZonedDateTime`] from a location-only IXDTF string.
+        #[diplomat::rust_link(icu::time::ZonedDateTime::try_location_only_from_str, FnInStruct)]
+        #[diplomat::rust_link(
+            icu::time::ZonedDateTime::try_location_only_from_utf8,
+            FnInStruct,
+            hidden
+        )]
+        #[diplomat::attr(all(supports = named_constructors, supports = fallible_constructors), named_constructor = "location_only_from_string")]
+        pub fn location_only_from_string(
+            v: &DiplomatStr,
+            calendar: &Calendar,
+            iana_parser: &IanaParser,
+        ) -> Result<ZonedDateTime, CalendarParseError> {
+            let icu_time::ZonedDateTime { date, time, zone } =
+                icu_time::ZonedDateTime::try_location_only_from_utf8(
+                    v,
+                    calendar.0.clone(),
+                    iana_parser.0.as_borrowed(),
+                )?;
+            Ok(ZonedDateTime {
+                date: Box::new(Date(date)),
+                time: Box::new(Time(time)),
+                zone: Box::new(TimeZoneInfo::from(zone)),
+            })
+        }
+
+        /// Creates a new [`ZonedDateTime`] from an offset-only IXDTF string.
+        #[diplomat::rust_link(icu::time::ZonedDateTime::try_offset_only_from_str, FnInStruct)]
+        #[diplomat::rust_link(
+            icu::time::ZonedDateTime::try_offset_only_from_utf8,
+            FnInStruct,
+            hidden
+        )]
+        #[diplomat::attr(all(supports = named_constructors, supports = fallible_constructors), named_constructor = "offset_only_from_string")]
+        pub fn offset_only_from_string(
+            v: &DiplomatStr,
+            calendar: &Calendar,
+        ) -> Result<ZonedDateTime, CalendarParseError> {
+            let icu_time::ZonedDateTime { date, time, zone } =
+                icu_time::ZonedDateTime::try_offset_only_from_utf8(v, calendar.0.clone())?;
+            Ok(ZonedDateTime {
+                date: Box::new(Date(date)),
+                time: Box::new(Time(time)),
+                zone: Box::new(TimeZoneInfo::from(zone)),
+            })
+        }
+
+        /// Creates a new [`ZonedDateTime`] from an IXDTF string, without requiring the offset or calculating the zone variant.
+        #[diplomat::rust_link(icu::time::ZonedDateTime::try_lenient_from_str, FnInStruct)]
+        #[diplomat::rust_link(icu::time::ZonedDateTime::try_lenient_from_utf8, FnInStruct, hidden)]
+        #[diplomat::attr(all(supports = named_constructors, supports = fallible_constructors), named_constructor = "loose_from_string")]
+        pub fn loose_from_string(
+            v: &DiplomatStr,
+            calendar: &Calendar,
+            iana_parser: &IanaParser,
+        ) -> Result<ZonedDateTime, CalendarParseError> {
+            let icu_time::ZonedDateTime { date, time, zone } =
+                icu_time::ZonedDateTime::try_lenient_from_utf8(
+                    v,
+                    calendar.0.clone(),
+                    iana_parser.0.as_borrowed(),
                 )?;
             Ok(ZonedDateTime {
                 date: Box::new(Date(date)),

@@ -5,7 +5,7 @@
 use criterion::{black_box, criterion_group, criterion_main, BatchSize, BenchmarkId, Criterion, BenchmarkGroup};
 use criterion::measurement::WallTime;
 
-use icu::collator::*;
+use icu::collator::{options::*, *};
 use icu::locale::locale;
 use icu_locale_core::Locale;
 

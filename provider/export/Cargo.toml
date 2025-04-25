@@ -42,7 +42,7 @@ writeable = { workspace = true }
 # Exporters
 icu_provider_blob = { workspace = true, features = ["export"], optional = true }
 icu_provider_fs = { workspace = true, features = ["export"], optional = true }
-icu_provider_baked = { workspace = true, features = ["export"], optional = true }
+icu_provider_baked = { workspace = true, optional = true }
 
 [dev-dependencies]
 elsa = { workspace = true }

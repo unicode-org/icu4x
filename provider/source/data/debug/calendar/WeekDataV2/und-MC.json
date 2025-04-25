@@ -1,8 +1,0 @@
-{
-  "first_weekday": "Monday",
-  "min_week_days": 4,
-  "weekend": [
-    "Saturday",
-    "Sunday"
-  ]
-}

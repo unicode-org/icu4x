@@ -57,7 +57,6 @@ pub const BASIC_RUNTIME_DEPS: &[&str] = &[
 /// For other crates, please get approval from @unicode-org/icu4x-owners
 pub const BASIC_BUILD_DEPS: &[&str] = &[
     "displaydoc",
-    "icu_provider_macros",
     "proc-macro2",
     "quote",
     "syn",
@@ -145,9 +144,13 @@ pub const EXTRA_BLOB_DEPS: &[&str] = &["cobs", "icu_provider_blob", "postcard"];
 ///
 /// Keep in sync with Cargo.toml crates.io dependencies.
 pub const EXTRA_FS_DEPS: &[&str] = &[
+    "databake-derive",
+    "databake",
+    "erased-serde",
     "icu_provider_fs",
     "icu_provider_registry",
     "serde-json-core",
+    "typeid",
 ];
 
 /// Dependencies needed by datagen provider (not counting `log` and `zip` deps)
@@ -157,10 +160,13 @@ pub const EXTRA_SOURCE_DEPS: &[&str] = &[
     "databake-derive",
     "elsa",
     "erased-serde",
+    "equivalent",
     "filetime",
+    "hashbrown",
     "icu_codepointtrie_builder",
     "icu_provider_adapters",
     "icu_provider_registry",
+    "indexmap",
     "itertools",
     "itoa",
     "libc",
@@ -174,10 +180,17 @@ pub const EXTRA_SOURCE_DEPS: &[&str] = &[
     "ryu",
     "serde-aux",
     "serde_json",
+    "serde_spanned",
     "static_assertions",
     "tar",
+    "toml_edit",
+    "toml_datetime",
+    "thiserror",
+    "thiserror-impl",
+    "typeid",
     "toml",
     "twox-hash",
+    "winnow",
 ];
 
 /// Dependencies needed by datagen (not counting `log` and `rayon` deps)
@@ -188,6 +201,7 @@ pub const EXTRA_EXPORT_DEPS: &[&str] = &[
     "databake-derive",
     "erased-serde",
     "postcard",
+    "typeid",
 ];
 
 /// Dependencies needed by the `log` crate
@@ -200,11 +214,19 @@ pub const EXTRA_LOGGING_DEPS: &[&str] = &["cfg-if", "log"];
 /// This should rarely change, and if it does consider toggling features until it doesn't
 pub const EXTRA_ZIP_DEPS: &[&str] = &[
     "adler2",
+    "bumpalo",
     "byteorder",
     "crc32fast",
     "flate2",
+    "lockfree-object-pool",
     "miniz_oxide",
+    "once_cell",
+    "ordered-float",
+    "serde-spanned",
+    "serde-value",
+    "simd-adler32",
     "zip",
+    "zopfli",
 ];
 
 /// Dependencies needed by the `rayon` crate

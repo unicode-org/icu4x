@@ -17,10 +17,18 @@ namespace icu4x {
 namespace capi {
     extern "C" {
     
-    uint8_t icu4x_LineBreak_to_integer_mv1(icu4x::capi::LineBreak self);
+    icu4x::capi::LineBreak icu4x_LineBreak_for_char_mv1(char32_t ch);
     
-    typedef struct icu4x_LineBreak_from_integer_mv1_result {union {icu4x::capi::LineBreak ok; }; bool is_ok;} icu4x_LineBreak_from_integer_mv1_result;
-    icu4x_LineBreak_from_integer_mv1_result icu4x_LineBreak_from_integer_mv1(uint8_t other);
+    typedef struct icu4x_LineBreak_long_name_mv1_result {union {diplomat::capi::DiplomatStringView ok; }; bool is_ok;} icu4x_LineBreak_long_name_mv1_result;
+    icu4x_LineBreak_long_name_mv1_result icu4x_LineBreak_long_name_mv1(icu4x::capi::LineBreak self);
+    
+    typedef struct icu4x_LineBreak_short_name_mv1_result {union {diplomat::capi::DiplomatStringView ok; }; bool is_ok;} icu4x_LineBreak_short_name_mv1_result;
+    icu4x_LineBreak_short_name_mv1_result icu4x_LineBreak_short_name_mv1(icu4x::capi::LineBreak self);
+    
+    uint8_t icu4x_LineBreak_to_integer_value_mv1(icu4x::capi::LineBreak self);
+    
+    typedef struct icu4x_LineBreak_from_integer_value_mv1_result {union {icu4x::capi::LineBreak ok; }; bool is_ok;} icu4x_LineBreak_from_integer_value_mv1_result;
+    icu4x_LineBreak_from_integer_value_mv1_result icu4x_LineBreak_from_integer_value_mv1(uint8_t other);
     
     
     } // extern "C"
@@ -87,13 +95,28 @@ inline icu4x::LineBreak icu4x::LineBreak::FromFFI(icu4x::capi::LineBreak c_enum)
   }
 }
 
-inline uint8_t icu4x::LineBreak::to_integer() {
-  auto result = icu4x::capi::icu4x_LineBreak_to_integer_mv1(this->AsFFI());
+inline icu4x::LineBreak icu4x::LineBreak::for_char(char32_t ch) {
+  auto result = icu4x::capi::icu4x_LineBreak_for_char_mv1(ch);
+  return icu4x::LineBreak::FromFFI(result);
+}
+
+inline std::optional<std::string_view> icu4x::LineBreak::long_name() const {
+  auto result = icu4x::capi::icu4x_LineBreak_long_name_mv1(this->AsFFI());
+  return result.is_ok ? std::optional<std::string_view>(std::string_view(result.ok.data, result.ok.len)) : std::nullopt;
+}
+
+inline std::optional<std::string_view> icu4x::LineBreak::short_name() const {
+  auto result = icu4x::capi::icu4x_LineBreak_short_name_mv1(this->AsFFI());
+  return result.is_ok ? std::optional<std::string_view>(std::string_view(result.ok.data, result.ok.len)) : std::nullopt;
+}
+
+inline uint8_t icu4x::LineBreak::to_integer_value() const {
+  auto result = icu4x::capi::icu4x_LineBreak_to_integer_value_mv1(this->AsFFI());
   return result;
 }
 
-inline std::optional<icu4x::LineBreak> icu4x::LineBreak::from_integer(uint8_t other) {
-  auto result = icu4x::capi::icu4x_LineBreak_from_integer_mv1(other);
+inline std::optional<icu4x::LineBreak> icu4x::LineBreak::from_integer_value(uint8_t other) {
+  auto result = icu4x::capi::icu4x_LineBreak_from_integer_value_mv1(other);
   return result.is_ok ? std::optional<icu4x::LineBreak>(icu4x::LineBreak::FromFFI(result.ok)) : std::nullopt;
 }
 #endif // icu4x_LineBreak_HPP

@@ -3,4 +3,6 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 pub(crate) mod datetime;
+mod input;
 pub(crate) mod time_zone;
+pub use input::DateTimeInputUnchecked;

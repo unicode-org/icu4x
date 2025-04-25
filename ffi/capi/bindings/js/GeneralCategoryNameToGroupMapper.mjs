@@ -6,12 +6,13 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
-/** A type capable of looking up General Category Group values from a string name.
-*
-*See the [Rust documentation for `PropertyParser`](https://docs.rs/icu/latest/icu/properties/struct.PropertyParser.html) for more information.
-*
-*See the [Rust documentation for `GeneralCategory`](https://docs.rs/icu/latest/icu/properties/props/struct.GeneralCategory.html) for more information.
-*/
+/** 
+ * A type capable of looking up General Category Group values from a string name.
+ *
+ * See the [Rust documentation for `PropertyParser`](https://docs.rs/icu/latest/icu/properties/struct.PropertyParser.html) for more information.
+ *
+ * See the [Rust documentation for `GeneralCategory`](https://docs.rs/icu/latest/icu/properties/props/enum.GeneralCategory.html) for more information.
+ */
 const GeneralCategoryNameToGroupMapper_box_destroy_registry = new FinalizationRegistry((ptr) => {
     wasm.icu4x_GeneralCategoryNameToGroupMapper_destroy_mv1(ptr);
 });
@@ -45,10 +46,17 @@ export class GeneralCategoryNameToGroupMapper {
         return this.#ptr;
     }
 
+    /** 
+     * Get the mask value matching the given name, using strict matching
+     *
+     * Returns 0 if the name is unknown for this property
+     *
+     * See the [Rust documentation for `get_strict`](https://docs.rs/icu/latest/icu/properties/struct.PropertyParserBorrowed.html#method.get_strict) for more information.
+     */
     getStrict(name) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
-        const nameSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, name));
+        const nameSlice = diplomatRuntime.DiplomatBuf.str8(wasm, name);
         
         const result = wasm.icu4x_GeneralCategoryNameToGroupMapper_get_strict_mv1(this.ffiValue, ...nameSlice.splat());
     
@@ -61,10 +69,17 @@ export class GeneralCategoryNameToGroupMapper {
         }
     }
 
+    /** 
+     * Get the mask value matching the given name, using loose matching
+     *
+     * Returns 0 if the name is unknown for this property
+     *
+     * See the [Rust documentation for `get_loose`](https://docs.rs/icu/latest/icu/properties/struct.PropertyParserBorrowed.html#method.get_loose) for more information.
+     */
     getLoose(name) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
-        const nameSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, name));
+        const nameSlice = diplomatRuntime.DiplomatBuf.str8(wasm, name);
         
         const result = wasm.icu4x_GeneralCategoryNameToGroupMapper_get_loose_mv1(this.ffiValue, ...nameSlice.splat());
     
@@ -77,6 +92,11 @@ export class GeneralCategoryNameToGroupMapper {
         }
     }
 
+    /** 
+     * Create a name-to-mask mapper for the `General_Category` property, using compiled data.
+     *
+     * See the [Rust documentation for `GeneralCategoryGroup`](https://docs.rs/icu/latest/icu/properties/props/struct.GeneralCategoryGroup.html) for more information.
+     */
     #defaultConstructor() {
         const result = wasm.icu4x_GeneralCategoryNameToGroupMapper_create_mv1();
     
@@ -87,6 +107,11 @@ export class GeneralCategoryNameToGroupMapper {
         finally {}
     }
 
+    /** 
+     * Create a name-to-mask mapper for the `General_Category` property, using a particular data source.
+     *
+     * See the [Rust documentation for `GeneralCategoryGroup`](https://docs.rs/icu/latest/icu/properties/props/struct.GeneralCategoryGroup.html) for more information.
+     */
     static createWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         

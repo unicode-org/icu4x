@@ -56,9 +56,9 @@ pub(crate) struct Resource {
     #[serde(rename = "_visibility", default)]
     pub(crate) visibility: Visibility,
     #[serde(rename = "_source")]
-    pub(crate) source: String,
+    pub(crate) source: Option<String>,
     #[serde(rename = "_target")]
-    pub(crate) target: String,
+    pub(crate) target: Option<String>,
     #[serde(rename = "_variant")]
     pub(crate) variant: Option<String>,
     #[serde(rename = "_alias", default)]

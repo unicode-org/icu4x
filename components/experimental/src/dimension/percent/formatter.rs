@@ -4,7 +4,7 @@
 
 //! Experimental.
 
-use fixed_decimal::SignedFixedDecimal;
+use fixed_decimal::Decimal;
 use icu_decimal::options::DecimalFormatterOptions;
 use icu_decimal::{DecimalFormatter, DecimalFormatterPreferences};
 use icu_locale_core::preferences::{define_preferences, prefs_convert};
@@ -53,7 +53,7 @@ impl PercentFormatter<DecimalFormatter> {
         (prefs: PercentFormatterPreferences, options: PercentFormatterOptions) -> error: DataError,
         functions: [
             try_new: skip,
-                        try_new_with_buffer_provider,
+            try_new_with_buffer_provider,
             try_new_unstable,
             Self
         ]
@@ -84,7 +84,7 @@ impl PercentFormatter<DecimalFormatter> {
     where
         D: ?Sized
             + DataProvider<super::super::provider::percent::PercentEssentialsV1>
-            + DataProvider<icu_decimal::provider::DecimalSymbolsV2>
+            + DataProvider<icu_decimal::provider::DecimalSymbolsV1>
             + DataProvider<icu_decimal::provider::DecimalDigitsV1>,
     {
         let decimal_formatter = DecimalFormatter::try_new_unstable(
@@ -101,7 +101,7 @@ impl PercentFormatter<DecimalFormatter> {
         )
     }
 
-    /// Formats a [`SignedFixedDecimal`] value for the given percent code.
+    /// Formats a [`Decimal`] value for the given percent code.
     ///
     /// # Examples
     /// ```
@@ -117,7 +117,7 @@ impl PercentFormatter<DecimalFormatter> {
     /// formatted_percent.write_to(&mut sink).unwrap();
     /// assert_eq!(sink.as_str(), "12,345.67%");
     /// ```
-    pub fn format<'l>(&'l self, value: &'l SignedFixedDecimal) -> FormattedPercent<'l> {
+    pub fn format<'l>(&'l self, value: &'l Decimal) -> FormattedPercent<'l> {
         FormattedPercent {
             value,
             essential: self.essential.get(),

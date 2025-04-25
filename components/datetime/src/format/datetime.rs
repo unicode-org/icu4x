@@ -4,14 +4,14 @@
 
 use super::time_zone::{FormatTimeZone, FormatTimeZoneError, Iso8601Format, TimeZoneFormatterUnit};
 use crate::error::{DateTimeWriteError, ErrorField};
-use crate::input::ExtractedInput;
+use crate::format::DateTimeInputUnchecked;
 use crate::provider::fields::{self, FieldLength, FieldSymbol, Second, Year};
 use crate::provider::pattern::runtime::PatternMetadata;
 use crate::provider::pattern::PatternItem;
 use crate::{parts, pattern::*};
 
 use core::fmt::{self, Write};
-use fixed_decimal::SignedFixedDecimal;
+use fixed_decimal::Decimal;
 use icu_calendar::types::{DayOfWeekInMonth, Weekday};
 use icu_decimal::DecimalFormatter;
 use writeable::{Part, PartsWrite, Writeable};
@@ -21,7 +21,7 @@ fn try_write_number<W>(
     part: Part,
     w: &mut W,
     decimal_formatter: Option<&DecimalFormatter>,
-    mut num: SignedFixedDecimal,
+    mut num: Decimal,
     length: FieldLength,
 ) -> Result<Result<(), DateTimeWriteError>, fmt::Error>
 where
@@ -45,7 +45,7 @@ where
 fn try_write_number_without_part<W>(
     w: &mut W,
     decimal_formatter: Option<&DecimalFormatter>,
-    mut num: SignedFixedDecimal,
+    mut num: Decimal,
     length: FieldLength,
 ) -> Result<Result<(), DateTimeWriteError>, fmt::Error>
 where
@@ -66,7 +66,7 @@ where
 pub(crate) fn try_write_pattern_items<W>(
     pattern_metadata: PatternMetadata,
     pattern_items: impl Iterator<Item = PatternItem>,
-    input: &ExtractedInput,
+    input: &DateTimeInputUnchecked,
     datetime_names: &RawDateTimeNamesBorrowed,
     decimal_formatter: Option<&DecimalFormatter>,
     w: &mut W,
@@ -101,9 +101,9 @@ where
 fn try_write_field<W>(
     field: fields::Field,
     pattern_metadata: PatternMetadata,
-    input: &ExtractedInput,
+    input: &DateTimeInputUnchecked,
     datetime_names: &RawDateTimeNamesBorrowed,
-    fdf: Option<&DecimalFormatter>,
+    decimal_formatter: Option<&DecimalFormatter>,
     w: &mut W,
 ) -> Result<Result<(), DateTimeWriteError>, fmt::Error>
 where
@@ -134,11 +134,13 @@ where
         (FieldSymbol::Era, l) => {
             const PART: Part = parts::ERA;
             input!(PART, year = input.year);
-            input!(PART, era = year.formatting_era());
+            input!(PART, era_year = year.era());
             let era_symbol = datetime_names
-                .get_name_for_era(l, era)
+                .get_name_for_era(l, era_year)
                 .map_err(|e| match e {
-                    GetNameForEraError::InvalidEraCode => DateTimeWriteError::InvalidEra(era),
+                    GetNameForEraError::InvalidEraCode => {
+                        DateTimeWriteError::InvalidEra(era_year.era)
+                    }
                     GetNameForEraError::InvalidFieldLength => {
                         DateTimeWriteError::UnsupportedLength(ErrorField(field))
                     }
@@ -149,7 +151,7 @@ where
             match era_symbol {
                 Err(e) => {
                     w.with_part(PART, |w| {
-                        w.with_part(Part::ERROR, |w| w.write_str(&era.fallback_name()))
+                        w.with_part(Part::ERROR, |w| w.write_str(&era_year.era))
                     })?;
                     Err(e)
                 }
@@ -159,27 +161,27 @@ where
         (FieldSymbol::Year(Year::Calendar), l) => {
             const PART: Part = parts::YEAR;
             input!(PART, year = input.year);
-            let mut year = SignedFixedDecimal::from(year.era_year_or_extended());
+            let mut year = Decimal::from(year.era_year_or_related_iso());
             if matches!(l, FieldLength::Two) {
                 // 'yy' and 'YY' truncate
                 year.set_max_position(2);
             }
-            try_write_number(PART, w, fdf, year, l)?
+            try_write_number(PART, w, decimal_formatter, year, l)?
         }
         (FieldSymbol::Year(Year::Cyclic), l) => {
             const PART: Part = parts::YEAR_NAME;
             input!(PART, year = input.year);
             input!(PART, cyclic = year.cyclic());
 
-            match datetime_names.get_name_for_cyclic(l, cyclic) {
+            match datetime_names.get_name_for_cyclic(l, cyclic.year) {
                 Ok(name) => Ok(w.with_part(PART, |w| w.write_str(name))?),
                 Err(e) => {
                     w.with_part(PART, |w| {
                         w.with_part(Part::ERROR, |w| {
                             try_write_number_without_part(
                                 w,
-                                fdf,
-                                year.era_year_or_extended().into(),
+                                decimal_formatter,
+                                cyclic.related_iso.into(),
                                 FieldLength::One,
                             )
                             .map(|_| ())
@@ -188,7 +190,7 @@ where
                     return Ok(Err(match e {
                         GetNameForCyclicYearError::InvalidYearNumber { max } => {
                             DateTimeWriteError::InvalidCyclicYear {
-                                value: cyclic.get() as usize,
+                                value: cyclic.year,
                                 max,
                             }
                         }
@@ -205,11 +207,11 @@ where
         (FieldSymbol::Year(Year::RelatedIso), l) => {
             const PART: Part = parts::RELATED_YEAR;
             input!(PART, year = input.year);
-            input!(PART, related_iso = year.related_iso());
+            input!(PART, cyclic = year.cyclic());
 
             // Always in latin digits according to spec
             w.with_part(PART, |w| {
-                let mut num = SignedFixedDecimal::from(related_iso);
+                let mut num = Decimal::from(cyclic.related_iso);
                 num.pad_start(l.to_len() as i16);
                 num.write_to(w)
             })?;
@@ -218,7 +220,7 @@ where
         (FieldSymbol::Month(_), l @ (FieldLength::One | FieldLength::Two)) => {
             const PART: Part = parts::MONTH;
             input!(PART, month = input.month);
-            try_write_number(PART, w, fdf, month.ordinal.into(), l)?
+            try_write_number(PART, w, decimal_formatter, month.ordinal.into(), l)?
         }
         (FieldSymbol::Month(symbol), l) => {
             const PART: Part = parts::MONTH;
@@ -230,16 +232,16 @@ where
                 }
                 Ok(MonthPlaceholderValue::Numeric) => {
                     debug_assert!(l == FieldLength::One);
-                    try_write_number(PART, w, fdf, month.ordinal.into(), l)?
+                    try_write_number(PART, w, decimal_formatter, month.ordinal.into(), l)?
                 }
                 Ok(MonthPlaceholderValue::NumericPattern(substitution_pattern)) => {
                     debug_assert!(l == FieldLength::One);
-                    if let Some(fdf) = fdf {
-                        let mut num = SignedFixedDecimal::from(month.ordinal);
+                    if let Some(formatter) = decimal_formatter {
+                        let mut num = Decimal::from(month.ordinal);
                         num.pad_start(l.to_len() as i16);
                         w.with_part(PART, |w| {
                             substitution_pattern
-                                .interpolate([fdf.format(&num)])
+                                .interpolate([formatter.format(&num)])
                                 .write_to(w)
                         })?;
                         Ok(())
@@ -248,7 +250,7 @@ where
                             w.with_part(Part::ERROR, |w| {
                                 substitution_pattern
                                     .interpolate([{
-                                        let mut num = SignedFixedDecimal::from(month.ordinal);
+                                        let mut num = Decimal::from(month.ordinal);
                                         num.pad_start(l.to_len() as i16);
                                         num
                                     }])
@@ -312,15 +314,20 @@ where
         (FieldSymbol::Day(fields::Day::DayOfMonth), l) => {
             const PART: Part = parts::DAY;
             input!(PART, day_of_month = input.day_of_month);
-            try_write_number(PART, w, fdf, day_of_month.0.into(), l)?
+            try_write_number(PART, w, decimal_formatter, day_of_month.0.into(), l)?
         }
         (FieldSymbol::Day(fields::Day::DayOfWeekInMonth), l) => {
             input!(_, day_of_month = input.day_of_month);
-            try_write_number_without_part(w, fdf, DayOfWeekInMonth::from(day_of_month).0.into(), l)?
+            try_write_number_without_part(
+                w,
+                decimal_formatter,
+                DayOfWeekInMonth::from(day_of_month).0.into(),
+                l,
+            )?
         }
         (FieldSymbol::Day(fields::Day::DayOfYear), l) => {
             input!(_, day_of_year = input.day_of_year);
-            try_write_number_without_part(w, fdf, day_of_year.day_of_year.into(), l)?
+            try_write_number_without_part(w, decimal_formatter, day_of_year.0.into(), l)?
         }
         (FieldSymbol::Hour(symbol), l) => {
             const PART: Part = parts::HOUR;
@@ -337,25 +344,18 @@ where
                     }
                 }
                 fields::Hour::H23 => h,
-                fields::Hour::H24 => {
-                    if h == 0 {
-                        24
-                    } else {
-                        h
-                    }
-                }
             };
-            try_write_number(PART, w, fdf, h.into(), l)?
+            try_write_number(PART, w, decimal_formatter, h.into(), l)?
         }
         (FieldSymbol::Minute, l) => {
             const PART: Part = parts::MINUTE;
             input!(PART, minute = input.minute);
-            try_write_number(PART, w, fdf, minute.number().into(), l)?
+            try_write_number(PART, w, decimal_formatter, minute.number().into(), l)?
         }
         (FieldSymbol::Second(Second::Second), l) => {
             const PART: Part = parts::SECOND;
             input!(PART, second = input.second);
-            try_write_number(PART, w, fdf, second.number().into(), l)?
+            try_write_number(PART, w, decimal_formatter, second.number().into(), l)?
         }
         (FieldSymbol::Second(Second::MillisInDay), l) => {
             input!(_, hour = input.hour);
@@ -367,7 +367,7 @@ where
                 + second.number() as u32)
                 * 1000
                 + subsecond.number() / 1_000_000;
-            try_write_number_without_part(w, fdf, milliseconds.into(), l)?
+            try_write_number_without_part(w, decimal_formatter, milliseconds.into(), l)?
         }
         (FieldSymbol::DecimalSecond(decimal_second), l) => {
             const PART: Part = parts::SECOND;
@@ -375,9 +375,9 @@ where
             input!(PART, subsecond = input.subsecond);
 
             // Formatting with fractional seconds
-            let mut s = SignedFixedDecimal::from(second.number());
+            let mut s = Decimal::from(second.number());
             let _infallible = s.concatenate_end(
-                SignedFixedDecimal::from(subsecond.number())
+                Decimal::from(subsecond.number())
                     .absolute
                     .multiplied_pow10(-9),
             );
@@ -385,7 +385,7 @@ where
             let position = -(decimal_second as i16);
             s.trunc(position);
             s.pad_end(position);
-            try_write_number(PART, w, fdf, s, l)?
+            try_write_number(PART, w, decimal_formatter, s, l)?
         }
         (FieldSymbol::DayPeriod(period), l) => {
             const PART: Part = parts::DAY_PERIOD;
@@ -424,7 +424,7 @@ where
                 w,
                 input,
                 datetime_names,
-                fdf,
+                decimal_formatter,
                 field,
                 &[
                     TimeZoneFormatterUnit::SpecificNonLocation(FieldLength::Four),
@@ -438,7 +438,7 @@ where
                 w,
                 input,
                 datetime_names,
-                fdf,
+                decimal_formatter,
                 field,
                 &[
                     TimeZoneFormatterUnit::SpecificNonLocation(l),
@@ -451,7 +451,7 @@ where
                 w,
                 input,
                 datetime_names,
-                fdf,
+                decimal_formatter,
                 field,
                 &[
                     TimeZoneFormatterUnit::GenericNonLocation(l),
@@ -465,7 +465,7 @@ where
                 w,
                 input,
                 datetime_names,
-                fdf,
+                decimal_formatter,
                 field,
                 &[
                     TimeZoneFormatterUnit::GenericLocation,
@@ -478,7 +478,7 @@ where
                 w,
                 input,
                 datetime_names,
-                fdf,
+                decimal_formatter,
                 field,
                 &[TimeZoneFormatterUnit::ExemplarCity],
             )?
@@ -487,7 +487,7 @@ where
             w,
             input,
             datetime_names,
-            fdf,
+            decimal_formatter,
             field,
             &[TimeZoneFormatterUnit::LocalizedOffset(l)],
         )?,
@@ -495,7 +495,7 @@ where
             w,
             input,
             datetime_names,
-            fdf,
+            decimal_formatter,
             field,
             &[TimeZoneFormatterUnit::Bcp47Id],
         )?,
@@ -503,7 +503,7 @@ where
             w,
             input,
             datetime_names,
-            fdf,
+            decimal_formatter,
             field,
             &[TimeZoneFormatterUnit::Iso8601(Iso8601Format::with_z(l))],
         )?,
@@ -511,7 +511,7 @@ where
             w,
             input,
             datetime_names,
-            fdf,
+            decimal_formatter,
             field,
             &[TimeZoneFormatterUnit::Iso8601(Iso8601Format::without_z(l))],
         )?,
@@ -532,7 +532,7 @@ fn write_value_missing(
 
 fn perform_timezone_fallback(
     w: &mut (impl writeable::PartsWrite + ?Sized),
-    input: &ExtractedInput,
+    input: &DateTimeInputUnchecked,
     datetime_names: &RawDateTimeNamesBorrowed,
     fdf: Option<&DecimalFormatter>,
     field: fields::Field,
@@ -566,7 +566,7 @@ fn perform_timezone_fallback(
     Ok(match r {
         Ok(()) => Ok(()),
         Err(e) => {
-            if let Some(offset) = input.offset {
+            if let Some(offset) = input.zone_offset {
                 w.with_part(PART, |w| {
                     w.with_part(Part::ERROR, |w| {
                         Iso8601Format::without_z(field.length).format_infallible(w, offset)
@@ -625,7 +625,7 @@ mod tests {
                 try_write_number_without_part(
                     &mut writeable::adapters::CoreWriteAsPartsWrite(&mut s),
                     Some(&decimal_formatter),
-                    SignedFixedDecimal::from(*value),
+                    Decimal::from(*value),
                     *length,
                 )
                 .unwrap()

@@ -5,7 +5,7 @@
 use super::names::RawDateTimeNamesBorrowed;
 use super::pattern::DateTimePatternBorrowed;
 use crate::format::datetime::try_write_pattern_items;
-use crate::input::ExtractedInput;
+use crate::format::DateTimeInputUnchecked;
 use crate::scaffold::*;
 use crate::scaffold::{
     AllInputMarkers, DateInputMarkers, DateTimeMarkers, InFixedCalendar, TimeMarkers,
@@ -66,15 +66,15 @@ where
     /// Format a date:
     ///
     /// ```
-    /// use icu::calendar::Date;
     /// use icu::calendar::Gregorian;
     /// use icu::datetime::fieldsets::enums::DateFieldSet;
+    /// use icu::datetime::input::Date;
     /// use icu::datetime::pattern::DateTimePattern;
+    /// use icu::datetime::pattern::FixedCalendarDateTimeNames;
     /// use icu::datetime::pattern::MonthNameLength;
     /// use icu::datetime::pattern::YearNameLength;
-    /// use icu::datetime::pattern::FixedCalendarDateTimeNames;
     /// use icu::locale::locale;
-    /// use writeable::assert_try_writeable_eq;
+    /// use writeable::TryWriteable;
     ///
     /// // Create an instance that can format wide month and era names:
     /// let mut names: FixedCalendarDateTimeNames<Gregorian, DateFieldSet> =
@@ -93,12 +93,15 @@ where
     /// // Note: extended year -50 is year 51 BCE
     /// let date_bce = Date::try_new_gregorian(-50, 3, 15).unwrap();
     /// let date_ce = Date::try_new_gregorian(1700, 11, 20).unwrap();
-    /// assert_try_writeable_eq!(
-    ///     names.with_pattern_unchecked(&pattern).format(&date_bce),
+    ///
+    /// let formatter = names.with_pattern_unchecked(&pattern);
+    ///
+    /// assert_eq!(
+    ///     formatter.format(&date_bce).try_write_to_string().unwrap(),
     ///     "The date is: March 15, 51 Before Christ"
     /// );
-    /// assert_try_writeable_eq!(
-    ///     names.with_pattern_unchecked(&pattern).format(&date_ce),
+    /// assert_eq!(
+    ///     formatter.format(&date_ce).try_write_to_string().unwrap(),
     ///     "The date is: November 20, 1700 Anno Domini"
     /// );
     /// ```
@@ -107,18 +110,20 @@ where
     ///
     /// ```
     /// use icu::calendar::Gregorian;
-    /// use icu::datetime::input::Time;
     /// use icu::datetime::fieldsets::enums::TimeFieldSet;
+    /// use icu::datetime::input::Time;
     /// use icu::datetime::pattern::DateTimePattern;
-    /// use icu::datetime::pattern::FixedCalendarDateTimeNames;
     /// use icu::datetime::pattern::DayPeriodNameLength;
+    /// use icu::datetime::pattern::FixedCalendarDateTimeNames;
     /// use icu::locale::locale;
-    /// use writeable::assert_try_writeable_eq;
+    /// use writeable::TryWriteable;
     ///
     /// // Create an instance that can format abbreviated day periods:
     /// let mut names: FixedCalendarDateTimeNames<Gregorian, TimeFieldSet> =
     ///     FixedCalendarDateTimeNames::try_new(locale!("en-US").into()).unwrap();
-    /// names.include_day_period_names(DayPeriodNameLength::Abbreviated).unwrap();
+    /// names
+    ///     .include_day_period_names(DayPeriodNameLength::Abbreviated)
+    ///     .unwrap();
     ///
     /// // Create a pattern from a pattern string:
     /// let pattern_str = "'The time is:' h:mm b";
@@ -129,22 +134,23 @@ where
     /// let time_pm = Time::try_new(13, 41, 28, 0).unwrap();
     /// let time_noon = Time::try_new(12, 0, 0, 0).unwrap();
     /// let time_midnight = Time::try_new(0, 0, 0, 0).unwrap();
-    /// assert_try_writeable_eq!(
-    ///     names.with_pattern_unchecked(&pattern).format(&time_am),
+    ///
+    /// let formatter = names.with_pattern_unchecked(&pattern);
+    ///
+    /// assert_eq!(
+    ///     formatter.format(&time_am).try_write_to_string().unwrap(),
     ///     "The time is: 11:04 AM"
     /// );
-    /// assert_try_writeable_eq!(
-    ///     names.with_pattern_unchecked(&pattern).format(&time_pm),
+    /// assert_eq!(
+    ///     formatter.format(&time_pm).try_write_to_string().unwrap(),
     ///     "The time is: 1:41 PM"
     /// );
-    /// assert_try_writeable_eq!(
-    ///     names.with_pattern_unchecked(&pattern).format(&time_noon),
+    /// assert_eq!(
+    ///     formatter.format(&time_noon).try_write_to_string().unwrap(),
     ///     "The time is: 12:00 noon"
     /// );
-    /// assert_try_writeable_eq!(
-    ///     names
-    ///         .with_pattern_unchecked(&pattern)
-    ///         .format(&time_midnight),
+    /// assert_eq!(
+    ///     formatter.format(&time_midnight).try_write_to_string().unwrap(),
     ///     "The time is: 12:00 midnight"
     /// );
     /// ```
@@ -154,22 +160,33 @@ where
     /// ```
     /// use icu::calendar::Gregorian;
     /// use icu::datetime::fieldsets::enums::ZoneFieldSet;
+    /// use icu::datetime::input::ZonedDateTime;
     /// use icu::datetime::pattern::DateTimePattern;
     /// use icu::datetime::pattern::FixedCalendarDateTimeNames;
     /// use icu::locale::locale;
-    /// use icu::datetime::input::ZonedDateTime;
-    /// use icu::time::zone::{IanaParser, UtcOffsetCalculator};
-    /// use writeable::assert_try_writeable_eq;
+    /// use icu::time::zone::{IanaParser, VariantOffsetsCalculator};
+    /// use writeable::TryWriteable;
     ///
-    /// let mut london_winter = ZonedDateTime::try_from_str("2024-01-01T00:00:00+00:00[Europe/London]", Gregorian, IanaParser::new(), &UtcOffsetCalculator::new())
-    ///     .unwrap();
-    /// let mut london_summer = ZonedDateTime::try_from_str("2024-07-01T00:00:00+01:00[Europe/London]", Gregorian, IanaParser::new(), &UtcOffsetCalculator::new())
-    ///     .unwrap();
-    ///
-    /// let mut names = FixedCalendarDateTimeNames::<Gregorian, ZoneFieldSet>::try_new(
-    ///     locale!("en-GB").into(),
+    /// let mut london_winter = ZonedDateTime::try_from_str(
+    ///     "2024-01-01T00:00:00+00:00[Europe/London]",
+    ///     Gregorian,
+    ///     IanaParser::new(),
+    ///     VariantOffsetsCalculator::new(),
     /// )
     /// .unwrap();
+    /// let mut london_summer = ZonedDateTime::try_from_str(
+    ///     "2024-07-01T00:00:00+01:00[Europe/London]",
+    ///     Gregorian,
+    ///     IanaParser::new(),
+    ///     VariantOffsetsCalculator::new(),
+    /// )
+    /// .unwrap();
+    ///
+    /// let mut names =
+    ///     FixedCalendarDateTimeNames::<Gregorian, ZoneFieldSet>::try_new(
+    ///         locale!("en-GB").into(),
+    ///     )
+    ///     .unwrap();
     ///
     /// names.include_time_zone_essentials().unwrap();
     /// names.include_time_zone_specific_short_names().unwrap();
@@ -178,16 +195,14 @@ where
     /// let pattern_str = "'Your time zone is:' z";
     /// let pattern: DateTimePattern = pattern_str.parse().unwrap();
     ///
-    /// assert_try_writeable_eq!(
-    ///     names
-    ///         .with_pattern_unchecked(&pattern)
-    ///         .format(&london_winter),
+    /// let formatter = names.with_pattern_unchecked(&pattern);
+    ///
+    /// assert_eq!(
+    ///     formatter.format(&london_winter).try_write_to_string().unwrap(),
     ///     "Your time zone is: GMT",
     /// );
-    /// assert_try_writeable_eq!(
-    ///     names
-    ///         .with_pattern_unchecked(&pattern)
-    ///         .format(&london_summer),
+    /// assert_eq!(
+    ///     formatter.format(&london_summer).try_write_to_string().unwrap(),
     ///     "Your time zone is: BST",
     /// );
     /// ```
@@ -197,7 +212,9 @@ where
     {
         FormattedDateTimePattern {
             pattern: self.inner.pattern,
-            input: ExtractedInput::extract_from_neo_input::<FSet::D, FSet::T, FSet::Z, I>(datetime),
+            input: DateTimeInputUnchecked::extract_from_neo_input::<FSet::D, FSet::T, FSet::Z, I>(
+                datetime,
+            ),
             names: self.inner.names,
         }
     }
@@ -207,7 +224,7 @@ where
 #[derive(Debug)]
 pub struct FormattedDateTimePattern<'a> {
     pattern: DateTimePatternBorrowed<'a>,
-    input: ExtractedInput,
+    input: DateTimeInputUnchecked,
     names: RawDateTimeNamesBorrowed<'a>,
 }
 

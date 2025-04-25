@@ -5,13 +5,17 @@
 use crate::cldr_serde;
 use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;
+use core::cmp::Ordering;
 use core::hash::Hash;
 use core::hash::Hasher;
 use icu::datetime::provider::time_zones::*;
+use icu::locale::subtags::region;
 use icu::time::provider::*;
+use icu::time::Time;
 use icu_locale_core::subtags::Region;
 use icu_provider::prelude::*;
 use std::collections::BTreeMap;
+use std::collections::BTreeSet;
 use std::collections::HashSet;
 use std::sync::OnceLock;
 use twox_hash::XxHash64;
@@ -29,22 +33,91 @@ pub(crate) struct Caches {
     metazone_to_short: Cache<(BTreeMap<String, MetazoneId>, u64)>,
     primary_zones: Cache<BTreeMap<TimeZone, Region>>,
     mz_period: Cache<MetazonePeriod<'static>>,
-    offset_period: Cache<ZoneOffsetPeriod<'static>>,
-    reverse_metazones: Cache<BTreeMap<MetazoneId, Vec<TimeZone>>>,
+    offset_period: Cache<<TimeZoneOffsetsV1 as DynamicDataMarker>::DataStruct>,
+    reverse_metazones: Cache<BTreeMap<(MetazoneId, MzMembership), Vec<TimeZone>>>,
+}
+
+#[derive(PartialEq, Eq, Ord, PartialOrd, Clone, Copy, Debug)]
+enum MzMembership {
+    Any,
+    Daylight,
 }
 
 impl SourceDataProvider {
-    fn reverse_metazones(&self) -> Result<&BTreeMap<MetazoneId, Vec<TimeZone>>, DataError> {
+    fn reverse_metazones(
+        &self,
+    ) -> Result<&BTreeMap<(MetazoneId, MzMembership), Vec<TimeZone>>, DataError> {
         self.cldr()?
             .tz_caches
             .reverse_metazones
             .get_or_init(|| {
                 let mz_period = self.metazone_period()?;
-                let mut reverse_metazones = BTreeMap::<MetazoneId, Vec<TimeZone>>::new();
-                for cursor in mz_period.list.iter0() {
-                    let tz = *cursor.key0();
-                    for mz in cursor.iter1_copied().flat_map(|(_, mz)| mz) {
-                        reverse_metazones.entry(mz).or_default().push(tz);
+                let offset_periods = self.offset_period()?;
+
+                let mut reverse_metazones =
+                    BTreeMap::<(MetazoneId, MzMembership), Vec<TimeZone>>::new();
+
+                for c in mz_period.list.iter0() {
+                    let &tz = c.key0();
+
+                    use zerovec::ule::AsULE;
+                    let mut mzs = c
+                        .into_iter1_copied()
+                        .map(|(k, v)| (MinutesSinceEpoch::from_unaligned(*k), v))
+                        .peekable();
+                    let mut offsets = offset_periods
+                        .get0(&tz)
+                        .unwrap()
+                        .into_iter1_copied()
+                        .map(|(k, v)| (MinutesSinceEpoch::from_unaligned(*k), v))
+                        .peekable();
+
+                    let mut curr_offset = offsets.next().unwrap();
+                    let mut curr_mz = mzs.next().unwrap();
+
+                    let horizon =
+                        MinutesSinceEpoch::from((self.timezone_horizon, Time::start_of_day()));
+
+                    while offsets.peek().is_some_and(|&(start, _)| start < horizon) {
+                        curr_offset = offsets.next().unwrap();
+                    }
+
+                    loop {
+                        if let Some(mz) = curr_mz.1 .0 {
+                            reverse_metazones
+                                .entry((mz, MzMembership::Any))
+                                .or_default()
+                                .push(tz);
+                            // The daylight name is only required if a zone usign this metazone actually observes DST
+                            if curr_offset.1 .1 != 0 {
+                                reverse_metazones
+                                    .entry((mz, MzMembership::Daylight))
+                                    .or_default()
+                                    .push(tz);
+                            }
+                        }
+
+                        match (offsets.peek().copied(), mzs.peek().copied()) {
+                            (None, None) => break,
+                            (Some(_), None) => {
+                                curr_offset = offsets.next().unwrap();
+                            }
+                            (None, Some(_)) => {
+                                curr_mz = mzs.next().unwrap();
+                            }
+                            (Some(o), Some(m)) => match o.0.cmp(&m.0) {
+                                Ordering::Less => {
+                                    curr_offset = offsets.next().unwrap();
+                                }
+                                Ordering::Greater => {
+                                    curr_mz = mzs.next().unwrap();
+                                }
+                                Ordering::Equal => {
+                                    curr_offset = offsets.next().unwrap();
+                                    curr_mz = mzs.next().unwrap();
+                                }
+                            },
+                        }
                     }
                 }
                 Ok(reverse_metazones)
@@ -76,7 +149,7 @@ impl SourceDataProvider {
                 for (bcp47_tzid, bcp47_tzid_data) in bcp47_tzids_resource.iter() {
                     if bcp47_tzid.as_str() == "unk" {
                         // ignore the unknown time zone
-                    } else if Some(true) == bcp47_tzid_data.deprecated {
+                    } else if bcp47_tzid_data.deprecated == Some(true) {
                         // skip
                     } else if let Some(alias) =
                         bcp47_tzid_data.alias.as_ref().filter(|s| !s.is_empty())
@@ -120,7 +193,7 @@ impl SourceDataProvider {
                 for (bcp47_tzid, bcp47_tzid_data) in bcp47_tzids_resource.iter() {
                     if bcp47_tzid.as_str() == "unk" {
                         // ignore the unknown time zone
-                    } else if Some(true) == bcp47_tzid_data.deprecated {
+                    } else if bcp47_tzid_data.deprecated == Some(true) {
                         // skip
                     } else if let Some(iana) = &bcp47_tzid_data.iana {
                         canonical_tzids.insert(*bcp47_tzid, iana.to_owned());
@@ -201,28 +274,63 @@ impl SourceDataProvider {
                     .map(|(&region, iana)| (iana, region))
                     .collect::<BTreeMap<_, _>>();
 
-                let bcp47_tzids = self.bcp47_to_canonical_iana_map()?;
+                let bcp47_tzids_resource = &self
+                    .cldr()?
+                    .bcp47()
+                    .read_and_parse::<cldr_serde::time_zones::bcp47_tzid::Resource>(
+                        "timezone.json",
+                    )?
+                    .keyword
+                    .u
+                    .time_zones
+                    .values;
 
-                let zone_tab = self.tzdb()?.zone_tab()?;
-                let mut zones_per_region: BTreeMap<icu::locale::subtags::Region, usize> =
-                    BTreeMap::new();
+                let mut regions_to_zones: BTreeMap<_, BTreeSet<_>> = BTreeMap::new();
 
-                for &region in bcp47_tzids.values().flat_map(|iana| zone_tab.get(iana)) {
-                    *zones_per_region.entry(region).or_default() += 1;
+                for (&bcp47_tzid, bcp47_tzid_data) in bcp47_tzids_resource {
+                    regions_to_zones
+                        .entry(match bcp47_tzid.as_str() {
+                            // backfill since this data is not in 47 yet
+                            "ancur" => region!("CW"),
+                            "fimhq" => region!("AX"),
+                            "gpmsb" => region!("MF"),
+                            "gpsbh" => region!("BL"),
+                            "gazastrp" | "hebron" => region!("PS"),
+                            "jeruslm" => region!("IL"),
+                            _ => {
+                                if bcp47_tzid_data.deprecated == Some(true) {
+                                    continue;
+                                } else if let Some(region) = bcp47_tzid_data.region {
+                                    region
+                                } else if bcp47_tzid.0.len() != 5 {
+                                    // Length-5 ID without override, no region
+                                    continue;
+                                } else {
+                                    bcp47_tzid.as_str()[0..2].parse().unwrap()
+                                }
+                            }
+                        })
+                        .or_default()
+                        .insert(bcp47_tzid);
                 }
 
-                Ok(bcp47_tzids
+                let single_zone_regions = regions_to_zones
+                    .iter()
+                    .filter_map(|(region, zones)| {
+                        (zones.len() == 1).then_some((zones.first().unwrap(), region))
+                    })
+                    .collect::<BTreeMap<_, _>>();
+
+                Ok(self
+                    .bcp47_to_canonical_iana_map()?
                     .iter()
                     .filter_map(|(bcp47, canonical_iana)| {
                         Some((
                             *bcp47,
-                            primary_zones.get(canonical_iana).copied().or_else(|| {
-                                let region = *zone_tab.get(canonical_iana)?;
-                                if zones_per_region.get(&region).copied().unwrap_or_default() > 1 {
-                                    return None;
-                                }
-                                Some(region)
-                            })?,
+                            primary_zones
+                                .get(canonical_iana)
+                                .copied()
+                                .or_else(|| single_zone_regions.get(bcp47).copied().copied())?,
                         ))
                     })
                     .collect())
@@ -250,24 +358,25 @@ macro_rules! impl_iterable_data_provider {
 }
 
 impl_iterable_data_provider!(
-    TimeZoneEssentialsV1,
-    LocationsV1,
-    LocationsRootV1,
-    ExemplarCitiesV1,
-    ExemplarCitiesRootV1,
-    MetazoneGenericNamesLongV1,
-    MetazoneGenericNamesShortV1,
-    MetazoneSpecificNamesLongV1,
-    MetazoneSpecificNamesShortV1
+    TimezoneNamesEssentialsV1,
+    TimezoneNamesLocationsOverrideV1,
+    TimezoneNamesLocationsRootV1,
+    TimezoneNamesCitiesOverrideV1,
+    TimezoneNamesCitiesRootV1,
+    TimezoneNamesGenericLongV1,
+    TimezoneNamesStandardLongV1,
+    TimezoneNamesGenericShortV1,
+    TimezoneNamesSpecificLongV1,
+    TimezoneNamesSpecificShortV1
 );
 
-impl IterableDataProviderCached<MetazonePeriodV1> for SourceDataProvider {
+impl IterableDataProviderCached<TimezoneMetazonePeriodsV1> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
     }
 }
 
-impl IterableDataProviderCached<ZoneOffsetPeriodV1> for SourceDataProvider {
+impl IterableDataProviderCached<TimeZoneOffsetsV1> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
     }
@@ -275,8 +384,8 @@ impl IterableDataProviderCached<ZoneOffsetPeriodV1> for SourceDataProvider {
 
 #[cfg(test)]
 mod tests {
+    use icu::locale::subtags::subtag;
     use icu::time::zone::TimeZoneVariant;
-    use tinystr::tinystr;
 
     use super::*;
 
@@ -298,18 +407,18 @@ mod tests {
             ..Default::default()
         };
 
-        let time_zone_formats: DataResponse<TimeZoneEssentialsV1> = provider.load(en).unwrap();
+        let time_zone_formats: DataResponse<TimezoneNamesEssentialsV1> = provider.load(en).unwrap();
         assert_eq!("GMT", time_zone_formats.payload.get().offset_zero);
         assert_eq!("GMT+?", time_zone_formats.payload.get().offset_unknown);
 
-        let locations_root: DataResponse<LocationsRootV1> = provider.load(en).unwrap();
+        let locations_root: DataResponse<TimezoneNamesLocationsRootV1> = provider.load(en).unwrap();
         assert_eq!(
             "Pohnpei",
             locations_root
                 .payload
                 .get()
                 .locations
-                .get(&TimeZone(tinystr!(8, "fmpni")))
+                .get(&TimeZone(subtag!("fmpni")))
                 .unwrap()
         );
         assert_eq!(
@@ -318,18 +427,18 @@ mod tests {
                 .payload
                 .get()
                 .locations
-                .get(&TimeZone(tinystr!(8, "iedub")))
+                .get(&TimeZone(subtag!("iedub")))
                 .unwrap()
         );
 
-        let locations: DataResponse<LocationsV1> = provider.load(fr).unwrap();
+        let locations: DataResponse<TimezoneNamesLocationsOverrideV1> = provider.load(fr).unwrap();
         assert_eq!(
             "Italie",
             locations
                 .payload
                 .get()
                 .locations
-                .get(&TimeZone(tinystr!(8, "itrom")))
+                .get(&TimeZone(subtag!("itrom")))
                 .unwrap()
         );
 
@@ -348,52 +457,68 @@ mod tests {
                 .unwrap()
         };
 
-        let generic_names_long: DataResponse<MetazoneGenericNamesLongV1> =
-            provider.load(en).unwrap();
+        let generic_names_long: DataPayload<TimezoneNamesGenericLongV1> =
+            provider.load(en).unwrap().payload;
+
+        let generic_standard_names_long: DataPayload<TimezoneNamesStandardLongV1> =
+            provider.load(en).unwrap().payload;
+
         assert_eq!(
             "Australian Central Western Time",
             generic_names_long
-                .payload
                 .get()
                 .defaults
-                .get(&metazone_now(TimeZone(tinystr!(8, "aueuc"))))
+                .get(&metazone_now(TimeZone(subtag!("aueuc"))))
+                .or_else(|| generic_standard_names_long
+                    .get()
+                    .defaults
+                    .get(&metazone_now(TimeZone(subtag!("aueuc")))))
                 .unwrap()
         );
         assert_eq!(
             "Coordinated Universal Time",
             generic_names_long
-                .payload
                 .get()
                 .overrides
-                .get(&TimeZone(tinystr!(8, "utc")))
+                .get(&TimeZone(subtag!("utc")))
+                .or_else(|| generic_standard_names_long
+                    .get()
+                    .overrides
+                    .get(&TimeZone(subtag!("utc"))))
                 .unwrap()
         );
 
-        let specific_names_long: DataResponse<MetazoneSpecificNamesLongV1> =
-            provider.load(en).unwrap();
+        let specific_names_long: DataPayload<TimezoneNamesSpecificLongV1> =
+            provider.load(en).unwrap().payload;
         assert_eq!(
             "Australian Central Western Standard Time",
             specific_names_long
-                .payload
                 .get()
                 .defaults
                 .get(&(
-                    metazone_now(TimeZone(tinystr!(8, "aueuc"))),
+                    metazone_now(TimeZone(subtag!("aueuc"))),
                     TimeZoneVariant::Standard
                 ))
+                .or_else(|| generic_standard_names_long
+                    .get()
+                    .defaults
+                    .get(&metazone_now(TimeZone(subtag!("aueuc")))))
                 .unwrap()
         );
         assert_eq!(
             "Coordinated Universal Time",
             specific_names_long
-                .payload
                 .get()
                 .overrides
-                .get(&(TimeZone(tinystr!(8, "utc")), TimeZoneVariant::Standard))
+                .get(&(TimeZone(subtag!("utc")), TimeZoneVariant::Standard))
+                .or_else(|| generic_standard_names_long
+                    .get()
+                    .overrides
+                    .get(&TimeZone(subtag!("utc"))))
                 .unwrap()
         );
 
-        let generic_names_short: DataResponse<MetazoneGenericNamesShortV1> =
+        let generic_names_short: DataResponse<TimezoneNamesGenericShortV1> =
             provider.load(en).unwrap();
         assert_eq!(
             "PT",
@@ -401,7 +526,7 @@ mod tests {
                 .payload
                 .get()
                 .defaults
-                .get(&metazone_now(TimeZone(tinystr!(8, "uslax"))))
+                .get(&metazone_now(TimeZone(subtag!("uslax"))))
                 .unwrap()
         );
         assert_eq!(
@@ -410,11 +535,11 @@ mod tests {
                 .payload
                 .get()
                 .overrides
-                .get(&TimeZone(tinystr!(8, "utc")))
+                .get(&TimeZone(subtag!("utc")))
                 .unwrap()
         );
 
-        let specific_names_short: DataResponse<MetazoneSpecificNamesShortV1> =
+        let specific_names_short: DataResponse<TimezoneNamesSpecificShortV1> =
             provider.load(en).unwrap();
         assert_eq!(
             "PDT",
@@ -423,7 +548,7 @@ mod tests {
                 .get()
                 .defaults
                 .get(&(
-                    metazone_now(TimeZone(tinystr!(8, "uslax"))),
+                    metazone_now(TimeZone(subtag!("uslax"))),
                     TimeZoneVariant::Daylight
                 ))
                 .unwrap()
@@ -434,7 +559,7 @@ mod tests {
                 .payload
                 .get()
                 .overrides
-                .get(&(TimeZone(tinystr!(8, "utc")), TimeZoneVariant::Standard))
+                .get(&(TimeZone(subtag!("utc")), TimeZoneVariant::Standard))
                 .unwrap()
         );
     }

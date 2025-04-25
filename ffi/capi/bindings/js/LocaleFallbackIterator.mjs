@@ -4,10 +4,11 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
-/** An iterator over the locale under fallback.
-*
-*See the [Rust documentation for `LocaleFallbackIterator`](https://docs.rs/icu/latest/icu/locale/fallback/struct.LocaleFallbackIterator.html) for more information.
-*/
+/** 
+ * An iterator over the locale under fallback.
+ *
+ * See the [Rust documentation for `LocaleFallbackIterator`](https://docs.rs/icu/latest/icu/locale/fallback/struct.LocaleFallbackIterator.html) for more information.
+ */
 const LocaleFallbackIterator_box_destroy_registry = new FinalizationRegistry((ptr) => {
     wasm.icu4x_LocaleFallbackIterator_destroy_mv1(ptr);
 });

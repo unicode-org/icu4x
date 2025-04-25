@@ -2,101 +2,188 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-import 'package:native_assets_cli/native_assets_cli.dart';
 import 'dart:io';
 
+import 'package:args/args.dart';
+import 'package:native_assets_cli/code_assets.dart';
+import 'package:path/path.dart' as path;
+
+const crateName = 'icu_capi';
+
 Future<void> main(List<String> args) async {
-  if (args.isEmpty) {
-    print(
-        'Usage: ${Platform.script.pathSegments.last} <out_dir> <target:${Target.values}> <link mode: ${LinkMode.values}> <cargo features>');
+  const fileKey = 'file';
+  const osKey = 'os';
+  const architectureKey = 'architecture';
+  const simulatorKey = 'simulator';
+  const compileTypeKey = 'compile_type';
+  const cargoFeaturesKey = 'cargo_features';
+  final argParser =
+      ArgParser()
+        ..addOption(fileKey, mandatory: true)
+        ..addOption(
+          compileTypeKey,
+          allowed: ['static', 'dynamic'],
+          mandatory: true,
+        )
+        ..addFlag(simulatorKey, defaultsTo: false)
+        ..addOption(osKey, mandatory: true)
+        ..addOption(architectureKey, mandatory: true)
+        ..addMultiOption(cargoFeaturesKey, defaultsTo: ['default_components']);
+
+  ArgResults parsed;
+  try {
+    parsed = argParser.parse(args);
+  } catch (e) {
+    print('Error parsing $args');
+    print(argParser.usage);
     exit(1);
   }
-  final out = Uri.file(args[0]).toFilePath();
-  final target = Target.values.firstWhere((t) => t.toString() == args[1]);
-  final linkMode = LinkMode.values.firstWhere((l) => l.toString() == args[2]);
-  final cargoFeatures = args.elementAtOrNull(3) ?? 'default_components';
 
-  await buildLib(target, linkMode, cargoFeatures, out);
+  final lib = await buildLib(
+    OS.values.firstWhere((o) => o.name == parsed.option(osKey)!),
+    Architecture.values.firstWhere(
+      (o) => o.name == parsed.option(architectureKey)!,
+    ),
+    parsed.option(compileTypeKey)! == 'static',
+    parsed.flag(simulatorKey),
+    File.fromUri(Platform.script).parent,
+    parsed.multiOption(cargoFeaturesKey),
+  );
+  await lib.copy(
+    Uri.file(parsed.option(fileKey)!).toFilePath(windows: Platform.isWindows),
+  );
 }
 
-Future<void> buildLib(
-    Target target, LinkMode linkMode, String cargoFeatures, String outName) async {
-  var root = Platform.script.toFilePath().split('ffi')[0];
-  root = root.substring(0, root.length - 1); // trim trailing slash
-
-  print('Building $outName');
-
-  final rustTarget = dartToRustTargets[target]!;
-
-  const noStdTargets = [
-    Target.androidRiscv64,
-    Target.linuxRiscv32,
-  ];
-
-  final isNoStd = noStdTargets.contains(target);
-
-  final rustup = await Process.start('rustup', [
-    'target',
-    'add',
-    rustTarget,
-  ]);
-  stdout.addStream(rustup.stdout);
-  stderr.addStream(rustup.stderr);
-
-  if (await rustup.exitCode != 0) {
-    throw (await rustup.exitCode);
+// Copied from Dart's package:intl4x build.dart, see
+// https://github.com/dart-lang/i18n/blob/main/pkgs/intl4x/hook/build.dart
+Future<File> buildLib(
+  OS targetOS,
+  Architecture targetArchitecture,
+  bool buildStatic,
+  bool isSimulator,
+  Directory startingPoint,
+  List<String> cargoFeatures,
+) async {
+  // We assume that the first folder to contain a cargo.toml above the
+  // output directory is the directory containing the ICU4X code.
+  var workingDirectory = startingPoint;
+  while (!File.fromUri(
+    workingDirectory.uri.resolve('Cargo.toml'),
+  ).existsSync()) {
+    workingDirectory = workingDirectory.parent;
   }
 
-  final cargo = await Process.start('cargo', [
-    if (isNoStd) '+nightly',
+  final isNoStd = _isNoStdTarget((targetOS, targetArchitecture));
+  final target = _asRustTarget(targetOS, targetArchitecture, isSimulator);
+  if (!isNoStd) {
+    final rustArguments = ['target', 'add', target];
+    await runProcess(
+      'rustup',
+      rustArguments,
+      workingDirectory: workingDirectory,
+    );
+  }
+
+  await runProcess('cargo', [
+    if (buildStatic || isNoStd) '+nightly',
     'rustc',
-    '--manifest-path=$root/ffi/capi/Cargo.toml',
-    '--crate-type=${linkMode == LinkMode.static ? 'staticlib' : 'cdylib'}',
+    '--manifest-path=ffi/capi/Cargo.toml',
+    '--crate-type=${buildStatic ? 'staticlib' : 'cdylib'}',
     '--release',
     '--config=profile.release.panic="abort"',
     '--config=profile.release.codegen-units=1',
     '--no-default-features',
-    if (!isNoStd)
-      '--features=compiled_data,buffer_provider,logging,simple_logger,$cargoFeatures',
-    if (isNoStd)
-      '--features=compiled_data,buffer_provider,libc-alloc,panic-handler,$cargoFeatures',
+    '--features=${{
+      ...cargoFeatures,
+      ...(isNoStd ? ['libc_alloc', 'panic_handler'] : ['logging', 'simple_logger']),
+    }.join(',')}',
     if (isNoStd) '-Zbuild-std=core,alloc',
-    if (isNoStd) '-Zbuild-std-features=panic_immediate_abort',
-    '--target=$rustTarget',
-  ]);
-  stdout.addStream(cargo.stdout);
-  stderr.addStream(cargo.stderr);
+    if (buildStatic || isNoStd) ...[
+      '-Zbuild-std=std,panic_abort',
+      '-Zbuild-std-features=panic_immediate_abort',
+    ],
+    '--target=$target',
+  ], workingDirectory: workingDirectory);
 
-  if (await cargo.exitCode != 0) {
-    throw (await cargo.exitCode);
+  final file = File(
+    path.join(
+      workingDirectory.path,
+      'target',
+      target,
+      'release',
+      (buildStatic ? targetOS.staticlibFileName : targetOS.dylibFileName)(
+        crateName.replaceAll('-', '_'),
+      ),
+    ),
+  );
+  if (!(await file.exists())) {
+    throw FileSystemException('Building the dylib failed', file.path);
   }
-
-  await File(Uri.file(
-              '$root/target/$rustTarget/release/${linkMode == LinkMode.dynamic ? target.os.dylibFileName('icu_capi') : target.os.staticlibFileName('icu_capi')}')
-          .toFilePath())
-      .copy(outName);
+  return file;
 }
 
-const dartToRustTargets = {
-  Target.androidArm: 'armv7-linux-androideabi',
-  Target.androidArm64: 'aarch64-linux-android',
-  Target.androidIA32: 'i686-linux-android',
-  Target.androidRiscv64: 'riscv64-linux-android',
-  Target.androidX64: 'x86_64-linux-android',
-  Target.fuchsiaArm64: 'aarch64-unknown-fuchsia',
-  Target.fuchsiaX64: 'x86_64-unknown-fuchsia',
-  Target.iOSArm: 'aarch64-apple-ios-sim',
-  Target.iOSArm64: 'aarch64-apple-ios',
-  Target.iOSX64: 'x86_64-apple-ios',
-  Target.linuxArm: 'armv7-unknown-linux-gnueabihf',
-  Target.linuxArm64: 'aarch64-unknown-linux-gnu',
-  Target.linuxIA32: 'i686-unknown-linux-gnu',
-  Target.linuxRiscv32: 'riscv32gc-unknown-linux-gnu',
-  Target.linuxRiscv64: 'riscv64gc-unknown-linux-gnu',
-  Target.linuxX64: 'x86_64-unknown-linux-gnu',
-  Target.macOSArm64: 'aarch64-apple-darwin',
-  Target.macOSX64: 'x86_64-apple-darwin',
-  Target.windowsArm64: 'aarch64-pc-windows-msvc',
-  Target.windowsIA32: 'i686-pc-windows-msvc',
-  Target.windowsX64: 'x86_64-pc-windows-msvc',
-};
+String _asRustTarget(OS os, Architecture? architecture, bool isSimulator) {
+  if (os == OS.iOS && architecture == Architecture.arm64 && isSimulator) {
+    return 'aarch64-apple-ios-sim';
+  }
+  return switch ((os, architecture)) {
+    (OS.android, Architecture.arm) => 'armv7-linux-androideabi',
+    (OS.android, Architecture.arm64) => 'aarch64-linux-android',
+    (OS.android, Architecture.ia32) => 'i686-linux-android',
+    (OS.android, Architecture.riscv64) => 'riscv64-linux-android',
+    (OS.android, Architecture.x64) => 'x86_64-linux-android',
+    (OS.fuchsia, Architecture.arm64) => 'aarch64-unknown-fuchsia',
+    (OS.fuchsia, Architecture.x64) => 'x86_64-unknown-fuchsia',
+    (OS.iOS, Architecture.arm64) => 'aarch64-apple-ios',
+    (OS.iOS, Architecture.x64) => 'x86_64-apple-ios',
+    (OS.linux, Architecture.arm) => 'armv7-unknown-linux-gnueabihf',
+    (OS.linux, Architecture.arm64) => 'aarch64-unknown-linux-gnu',
+    (OS.linux, Architecture.ia32) => 'i686-unknown-linux-gnu',
+    (OS.linux, Architecture.riscv32) => 'riscv32gc-unknown-linux-gnu',
+    (OS.linux, Architecture.riscv64) => 'riscv64gc-unknown-linux-gnu',
+    (OS.linux, Architecture.x64) => 'x86_64-unknown-linux-gnu',
+    (OS.macOS, Architecture.arm64) => 'aarch64-apple-darwin',
+    (OS.macOS, Architecture.x64) => 'x86_64-apple-darwin',
+    (OS.windows, Architecture.arm64) => 'aarch64-pc-windows-msvc',
+    (OS.windows, Architecture.ia32) => 'i686-pc-windows-msvc',
+    (OS.windows, Architecture.x64) => 'x86_64-pc-windows-msvc',
+    (_, _) =>
+      throw UnimplementedError(
+        'Target ${(os, architecture)} not available for rust',
+      ),
+  };
+}
+
+bool _isNoStdTarget((OS os, Architecture? architecture) arg) => [
+  (OS.android, Architecture.riscv64),
+  (OS.linux, Architecture.riscv64),
+].contains(arg);
+
+Future<void> runProcess(
+  String executable,
+  List<String> arguments, {
+  Directory? workingDirectory,
+  bool dryRun = false,
+}) async {
+  print('----------');
+  print('Running `$executable $arguments` in $workingDirectory');
+  if (!dryRun) {
+    final processResult = await Process.run(
+      executable,
+      arguments,
+      workingDirectory: workingDirectory?.path,
+    );
+    print('stdout:');
+    print(processResult.stdout);
+    if ((processResult.stderr as String).isNotEmpty) {
+      print('stderr:');
+      print(processResult.stderr);
+    }
+    if (processResult.exitCode != 0) {
+      throw ProcessException(executable, arguments, '', processResult.exitCode);
+    }
+  } else {
+    print('Not running, as --dry-run is set.');
+  }
+  print('==========');
+}

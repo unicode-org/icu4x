@@ -130,6 +130,7 @@ struct EyepatchHackVector<U> {
     /// This pointer is *always* valid, the reason it is represented as a raw pointer
     /// is that it may logically represent an `&[T::ULE]` or the ptr,len of a `Vec<T::ULE>`
     buf: NonNull<[U]>,
+    #[cfg(feature = "alloc")]
     /// Borrowed if zero. Capacity of buffer above if not
     capacity: usize,
 }
@@ -188,6 +189,7 @@ impl<'a, T: AsULE> Clone for ZeroVec<'a, T> {
         Self {
             vector: EyepatchHackVector {
                 buf: self.vector.buf,
+                #[cfg(feature = "alloc")]
                 capacity: 0,
             },
             marker1: PhantomData,
@@ -348,6 +350,7 @@ impl<'a, T: AsULE> ZeroVec<'a, T> {
         Self {
             vector: EyepatchHackVector {
                 buf: slice,
+                #[cfg(feature = "alloc")]
                 capacity: 0,
             },
             marker1: PhantomData,
@@ -597,7 +600,10 @@ impl<'a, T: AsULE> ZeroVec<'a, T> {
     /// Check if this type is fully owned
     #[inline]
     pub fn is_owned(&self) -> bool {
-        self.vector.capacity != 0
+        #[cfg(feature = "alloc")]
+        return self.vector.capacity != 0;
+        #[cfg(not(feature = "alloc"))]
+        return false;
     }
 
     /// If this is a borrowed [`ZeroVec`], return it as a slice that covers
@@ -642,7 +648,10 @@ impl<'a, T: AsULE> ZeroVec<'a, T> {
     /// ```
     #[inline]
     pub fn owned_capacity(&self) -> Option<NonZeroUsize> {
-        NonZeroUsize::try_from(self.vector.capacity).ok()
+        #[cfg(feature = "alloc")]
+        return NonZeroUsize::try_from(self.vector.capacity).ok();
+        #[cfg(not(feature = "alloc"))]
+        return None;
     }
 }
 
@@ -1079,7 +1088,7 @@ impl<T: AsULE> FromIterator<T> for ZeroVec<'_, T> {
 ///
 /// * `$aligned` - The type of an element in its canonical, aligned form, e.g., `char`.
 /// * `$convert` - A const function that converts an `$aligned` into its unaligned equivalent, e.g.,
-///                 `const fn from_aligned(a: CanonicalType) -> CanonicalType::ULE`.
+///   const fn from_aligned(a: CanonicalType) -> CanonicalType::ULE`.
 /// * `$x` - The elements that the `ZeroSlice` will hold.
 ///
 /// # Examples
@@ -1111,16 +1120,12 @@ impl<T: AsULE> FromIterator<T> for ZeroVec<'_, T> {
 /// ```
 #[macro_export]
 macro_rules! zeroslice {
-    () => (
+    () => {
         $crate::ZeroSlice::new_empty()
-    );
-    ($aligned:ty; $convert:expr; [$($x:expr),+ $(,)?]) => (
-        $crate::ZeroSlice::<$aligned>::from_ule_slice(
-            {const X: &[<$aligned as $crate::ule::AsULE>::ULE] = &[
-                $($convert($x)),*
-            ]; X}
-        )
-    );
+    };
+    ($aligned:ty; $convert:expr; [$($x:expr),+ $(,)?]) => {
+        $crate::ZeroSlice::<$aligned>::from_ule_slice(const { &[$($convert($x)),*] })
+    };
 }
 
 /// Creates a borrowed `ZeroVec`. Convenience wrapper for `zeroslice!(...).as_zerovec()`. The value

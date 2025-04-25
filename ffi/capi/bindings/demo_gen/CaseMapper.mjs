@@ -23,6 +23,24 @@ export function uppercase(s, localeName) {
 
     return out;
 }
+export function lowercaseWithCompiledData(s, localeName) {
+    
+    let locale = Locale.fromString(localeName);
+    
+    let out = CaseMapper.lowercaseWithCompiledData(s,locale);
+    
+
+    return out;
+}
+export function uppercaseWithCompiledData(s, localeName) {
+    
+    let locale = Locale.fromString(localeName);
+    
+    let out = CaseMapper.uppercaseWithCompiledData(s,locale);
+    
+
+    return out;
+}
 export function titlecaseSegmentWithOnlyCaseData(s, localeName, optionsLeadingAdjustment, optionsTrailingCase) {
     
     let caseMapper = new CaseMapper();

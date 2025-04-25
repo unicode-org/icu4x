@@ -6,11 +6,11 @@
 #[diplomat::abi_rename = "icu4x_{0}_mv1"]
 #[diplomat::attr(auto, namespace = "icu4x")]
 pub mod ffi {
-    use crate::properties_enums::ffi::GeneralCategoryGroup;
+    use crate::unstable::properties_enums::ffi::GeneralCategoryGroup;
     use alloc::boxed::Box;
 
     #[cfg(feature = "buffer_provider")]
-    use crate::{errors::ffi::DataError, provider::ffi::DataProvider};
+    use crate::unstable::{errors::ffi::DataError, provider::ffi::DataProvider};
 
     /// A type capable of looking up a property value from a string name.
     #[diplomat::opaque]
@@ -18,6 +18,11 @@ pub mod ffi {
     #[diplomat::rust_link(icu::properties::PropertyParserBorrowed, Struct)]
     #[diplomat::rust_link(icu::properties::PropertyParser::new, FnInStruct)]
     #[diplomat::rust_link(icu::properties::PropertyParserBorrowed::new, FnInStruct, hidden)]
+    #[diplomat::rust_link(
+        icu::properties::props::NamedEnumeratedProperty::try_from_str,
+        FnInTrait,
+        hidden
+    )]
     pub struct PropertyValueNameToEnumMapper(icu_properties::PropertyParser<u16>);
 
     impl PropertyValueNameToEnumMapper {
@@ -60,7 +65,7 @@ pub mod ffi {
         }
 
         /// Create a name-to-enum mapper for the `General_Category` property, using compiled data.
-        #[diplomat::rust_link(icu_properties::props::GeneralCategory, Enum)]
+        #[diplomat::rust_link(icu::properties::props::GeneralCategory, Enum)]
         #[diplomat::attr(auto, named_constructor = "general_category")]
         #[cfg(feature = "compiled_data")]
         pub fn create_general_category() -> Box<PropertyValueNameToEnumMapper> {
@@ -72,7 +77,7 @@ pub mod ffi {
         }
 
         /// Create a name-to-enum mapper for the `General_Category` property, using a particular data source.
-        #[diplomat::rust_link(icu_properties::props::GeneralCategory, Enum)]
+        #[diplomat::rust_link(icu::properties::props::GeneralCategory, Enum)]
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "general_category_with_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_general_category_with_provider(
@@ -86,7 +91,7 @@ pub mod ffi {
             )))
         }
         /// Create a name-to-enum mapper for the `Hangul_Syllable_Type` property, using compiled data.
-        #[diplomat::rust_link(icu_properties::props::HangulSyllableType, Struct)]
+        #[diplomat::rust_link(icu::properties::props::HangulSyllableType, Struct)]
         #[diplomat::attr(auto, named_constructor = "hangul_syllable_type")]
         #[cfg(feature = "compiled_data")]
         pub fn create_hangul_syllable_type() -> Box<PropertyValueNameToEnumMapper> {
@@ -97,7 +102,7 @@ pub mod ffi {
             ))
         }
         /// Create a name-to-enum mapper for the `Hangul_Syllable_Type` property, using a particular data source.
-        #[diplomat::rust_link(icu_properties::props::HangulSyllableType, Struct)]
+        #[diplomat::rust_link(icu::properties::props::HangulSyllableType, Struct)]
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "hangul_syllable_type_with_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_hangul_syllable_type_with_provider(
@@ -111,7 +116,7 @@ pub mod ffi {
             )))
         }
         /// Create a name-to-enum mapper for the `East_Asian_Width` property, using compiled data.
-        #[diplomat::rust_link(icu_properties::props::EastAsianWidth, Struct)]
+        #[diplomat::rust_link(icu::properties::props::EastAsianWidth, Struct)]
         #[diplomat::attr(auto, named_constructor = "east_asian_width")]
         #[cfg(feature = "compiled_data")]
         pub fn create_east_asian_width() -> Box<PropertyValueNameToEnumMapper> {
@@ -122,7 +127,7 @@ pub mod ffi {
             ))
         }
         /// Create a name-to-enum mapper for the `East_Asian_Width` property, using a particular data source.
-        #[diplomat::rust_link(icu_properties::props::EastAsianWidth, Struct)]
+        #[diplomat::rust_link(icu::properties::props::EastAsianWidth, Struct)]
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "east_asian_width_with_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_east_asian_width_with_provider(
@@ -137,7 +142,7 @@ pub mod ffi {
             )))
         }
         /// Create a name-to-enum mapper for the `Bidi_Class` property, using compiled data.
-        #[diplomat::rust_link(icu_properties::props::BidiClass, Struct)]
+        #[diplomat::rust_link(icu::properties::props::BidiClass, Struct)]
         #[diplomat::attr(auto, named_constructor = "bidi_class")]
         #[cfg(feature = "compiled_data")]
         pub fn create_bidi_class() -> Box<PropertyValueNameToEnumMapper> {
@@ -148,7 +153,7 @@ pub mod ffi {
             ))
         }
         /// Create a name-to-enum mapper for the `Bidi_Class` property, using a particular data source.
-        #[diplomat::rust_link(icu_properties::props::BidiClass, Struct)]
+        #[diplomat::rust_link(icu::properties::props::BidiClass, Struct)]
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "bidi_class_with_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_bidi_class_with_provider(
@@ -160,14 +165,14 @@ pub mod ffi {
             )))
         }
         /// Create a name-to-enum mapper for the `Indic_Syllabic_Category` property, using compiled data.
-        #[diplomat::rust_link(icu_properties::props::IndicSyllabicCategory, Struct)]
+        #[diplomat::rust_link(icu::properties::props::IndicSyllabicCategory, Struct)]
         #[diplomat::attr(auto, named_constructor = "indic_syllabic_category")]
         #[cfg(feature = "compiled_data")]
         pub fn create_indic_syllabic_category() -> Box<PropertyValueNameToEnumMapper> {
             Box::new(PropertyValueNameToEnumMapper(icu_properties::PropertyParser::<icu_properties::props::IndicSyllabicCategory>::new().static_to_owned().erase()))
         }
         /// Create a name-to-enum mapper for the `Indic_Syllabic_Category` property, using a particular data source.
-        #[diplomat::rust_link(icu_properties::props::IndicSyllabicCategory, Struct)]
+        #[diplomat::rust_link(icu::properties::props::IndicSyllabicCategory, Struct)]
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "indic_syllabic_category_with_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_indic_syllabic_category_with_provider(
@@ -185,7 +190,7 @@ pub mod ffi {
             )
         }
         /// Create a name-to-enum mapper for the `Line_Break` property, using compiled data.
-        #[diplomat::rust_link(icu_properties::props::LineBreak, Struct)]
+        #[diplomat::rust_link(icu::properties::props::LineBreak, Struct)]
         #[diplomat::attr(auto, named_constructor = "line_break")]
         #[cfg(feature = "compiled_data")]
         pub fn create_line_break() -> Box<PropertyValueNameToEnumMapper> {
@@ -196,7 +201,7 @@ pub mod ffi {
             ))
         }
         /// Create a name-to-enum mapper for the `Line_Break` property, using a particular data source.
-        #[diplomat::rust_link(icu_properties::props::LineBreak, Struct)]
+        #[diplomat::rust_link(icu::properties::props::LineBreak, Struct)]
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "line_break_with_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_line_break_with_provider(
@@ -209,7 +214,7 @@ pub mod ffi {
             )))
         }
         /// Create a name-to-enum mapper for the `Grapheme_Cluster_Break` property, using compiled data.
-        #[diplomat::rust_link(icu_properties::props::GraphemeClusterBreak, Struct)]
+        #[diplomat::rust_link(icu::properties::props::GraphemeClusterBreak, Struct)]
         #[diplomat::attr(auto, named_constructor = "grapheme_cluster_break")]
         #[cfg(feature = "compiled_data")]
         pub fn create_grapheme_cluster_break() -> Box<PropertyValueNameToEnumMapper> {
@@ -221,7 +226,7 @@ pub mod ffi {
             ))
         }
         /// Create a name-to-enum mapper for the `Grapheme_Cluster_Break` property, using a particular data source.
-        #[diplomat::rust_link(icu_properties::props::GraphemeClusterBreak, Struct)]
+        #[diplomat::rust_link(icu::properties::props::GraphemeClusterBreak, Struct)]
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "grapheme_cluster_break_with_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_grapheme_cluster_break_with_provider(
@@ -239,7 +244,7 @@ pub mod ffi {
             )
         }
         /// Create a name-to-enum mapper for the `Word_Break` property, using compiled data.
-        #[diplomat::rust_link(icu_properties::props::WordBreak, Struct)]
+        #[diplomat::rust_link(icu::properties::props::WordBreak, Struct)]
         #[diplomat::attr(auto, named_constructor = "word_break")]
         #[cfg(feature = "compiled_data")]
         pub fn create_word_break() -> Box<PropertyValueNameToEnumMapper> {
@@ -250,7 +255,7 @@ pub mod ffi {
             ))
         }
         /// Create a name-to-enum mapper for the `Word_Break` property, using a particular data source.
-        #[diplomat::rust_link(icu_properties::props::WordBreak, Struct)]
+        #[diplomat::rust_link(icu::properties::props::WordBreak, Struct)]
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "word_break_with_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_word_break_with_provider(
@@ -262,7 +267,7 @@ pub mod ffi {
             )))
         }
         /// Create a name-to-enum mapper for the `Sentence_Break` property, using compiled data.
-        #[diplomat::rust_link(icu_properties::props::SentenceBreak, Struct)]
+        #[diplomat::rust_link(icu::properties::props::SentenceBreak, Struct)]
         #[diplomat::attr(auto, named_constructor = "sentence_break")]
         #[cfg(feature = "compiled_data")]
         pub fn create_sentence_break() -> Box<PropertyValueNameToEnumMapper> {
@@ -273,7 +278,7 @@ pub mod ffi {
             ))
         }
         /// Create a name-to-enum mapper for the `Sentence_Break` property, using a particular data source.
-        #[diplomat::rust_link(icu_properties::props::SentenceBreak, Struct)]
+        #[diplomat::rust_link(icu::properties::props::SentenceBreak, Struct)]
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "sentence_break_with_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_sentence_break_with_provider(
@@ -288,7 +293,7 @@ pub mod ffi {
             )))
         }
         /// Create a name-to-enum mapper for the `Script` property, using compiled data.
-        #[diplomat::rust_link(icu_properties::props::Script, Struct)]
+        #[diplomat::rust_link(icu::properties::props::Script, Struct)]
         #[diplomat::attr(auto, named_constructor = "script")]
         #[cfg(feature = "compiled_data")]
         pub fn create_script() -> Box<PropertyValueNameToEnumMapper> {
@@ -299,7 +304,7 @@ pub mod ffi {
             ))
         }
         /// Create a name-to-enum mapper for the `Script` property, using a particular data source.
-        #[diplomat::rust_link(icu_properties::props::Script, Struct)]
+        #[diplomat::rust_link(icu::properties::props::Script, Struct)]
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "script_with_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_script_with_provider(
@@ -312,12 +317,37 @@ pub mod ffi {
                 .erase(),
             )))
         }
+        /// Create a name-to-enum mapper for the `Vertical_Orientation` property, using compiled data.
+        #[diplomat::rust_link(icu::properties::props::VerticalOrientation, Struct)]
+        #[diplomat::attr(auto, named_constructor = "vertical_orientation")]
+        #[cfg(feature = "compiled_data")]
+        pub fn create_vertical_orientation() -> Box<PropertyValueNameToEnumMapper> {
+            Box::new(PropertyValueNameToEnumMapper(
+                icu_properties::PropertyParser::<icu_properties::props::VerticalOrientation>::new()
+                    .static_to_owned()
+                    .erase(),
+            ))
+        }
+        /// Create a name-to-enum mapper for the `Vertical_Orientation` property, using a particular data source.
+        #[diplomat::rust_link(icu::properties::props::VerticalOrientation, Struct)]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "vertical_orientation_with_provider")]
+        #[cfg(feature = "buffer_provider")]
+        pub fn create_vertical_orientation_with_provider(
+            provider: &DataProvider,
+        ) -> Result<Box<PropertyValueNameToEnumMapper>, DataError> {
+            Ok(Box::new(PropertyValueNameToEnumMapper(
+                icu_properties::PropertyParser::<icu_properties::props::VerticalOrientation>::try_new_unstable(
+                    &provider.get_unstable()?,
+                )?
+                .erase(),
+            )))
+        }
     }
 
     /// A type capable of looking up General Category Group values from a string name.
     #[diplomat::opaque]
     #[diplomat::rust_link(icu::properties::PropertyParser, Struct)]
-    #[diplomat::rust_link(icu::properties::props::GeneralCategory, Struct)]
+    #[diplomat::rust_link(icu::properties::props::GeneralCategory, Enum)]
     pub struct GeneralCategoryNameToGroupMapper(
         icu_properties::PropertyParser<icu_properties::props::GeneralCategoryGroup>,
     );
@@ -361,7 +391,7 @@ pub mod ffi {
             .unwrap_or_default()
         }
         /// Create a name-to-mask mapper for the `General_Category` property, using compiled data.
-        #[diplomat::rust_link(icu_properties::props::GeneralCategoryGroup, Struct)]
+        #[diplomat::rust_link(icu::properties::props::GeneralCategoryGroup, Struct)]
         #[diplomat::attr(auto, constructor)]
         #[cfg(feature = "compiled_data")]
         pub fn create() -> Box<GeneralCategoryNameToGroupMapper> {
@@ -372,7 +402,7 @@ pub mod ffi {
             ))
         }
         /// Create a name-to-mask mapper for the `General_Category` property, using a particular data source.
-        #[diplomat::rust_link(icu_properties::props::GeneralCategoryGroup, Struct)]
+        #[diplomat::rust_link(icu::properties::props::GeneralCategoryGroup, Struct)]
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "with_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_with_provider(
