@@ -159,6 +159,7 @@ lazy_static::lazy_static! {
         "icu::datetime::fieldsets::enums",
         "icu::datetime::DateTimeFormatter::to_field_set_builder",
         "icu::datetime::FixedCalendarDateTimeFormatter::to_field_set_builder",
+        "icu::datetime::NoCalendarFormatter::to_field_set_builder",
         "icu::datetime::fieldsets::Combo::into_enums",
 
         // Not planned for 2.0: Unchecked formatting. FFI always uses the concrete Date, Time,
@@ -263,6 +264,7 @@ lazy_static::lazy_static! {
         // DateTimeFormatter conversion functions that involve moving opaques
         "icu::datetime::DateTimeFormatter::try_into_typed_formatter",
         "icu::datetime::FixedCalendarDateTimeFormatter::into_formatter",
+        "icu::datetime::NoCalendarFormatter::into_formatter",
 
         // Not planned for 2.0
         // Serde-specific
@@ -370,6 +372,7 @@ lazy_static::lazy_static! {
         "icu::datetime::CldrCalendar",
         "icu::datetime::DateTimeFormatter::cast_into_fset",
         "icu::datetime::FixedCalendarDateTimeFormatter::cast_into_fset",
+        "icu::datetime::NoCalendarFormatter::cast_into_fset",
         // TODO-2.0: needs investigation
         "icu::calendar::Date::into_ref_counted",
         "icu::calendar::Date::into_atomic_ref_counted",
