@@ -46,6 +46,16 @@ pub mod ffi {
         Subsecond8,
         Subsecond9,
     }
+
+    impl TimePrecision {
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "subsecond")]
+        #[diplomat::rust_link(icu::datetime::options::SubsecondDigits::try_from_int, FnInEnum)]
+        pub fn create_from_subsecond_digits(digits: u8) -> Option<Self> {
+            icu_datetime::options::SubsecondDigits::try_from_int(digits)
+                .map(icu_datetime::options::TimePrecision::Subsecond)
+                .map(Into::into)
+        }
+    }
 }
 
 impl From<ffi::TimePrecision> for icu_datetime::options::TimePrecision {
@@ -66,6 +76,32 @@ impl From<ffi::TimePrecision> for icu_datetime::options::TimePrecision {
             ffi::TimePrecision::Subsecond7 => TimePrecision::Subsecond(SubsecondDigits::S7),
             ffi::TimePrecision::Subsecond8 => TimePrecision::Subsecond(SubsecondDigits::S8),
             ffi::TimePrecision::Subsecond9 => TimePrecision::Subsecond(SubsecondDigits::S9),
+        }
+    }
+}
+
+impl From<icu_datetime::options::TimePrecision> for ffi::TimePrecision {
+    fn from(time_precision: icu_datetime::options::TimePrecision) -> Self {
+        use icu_datetime::options::SubsecondDigits;
+        use icu_datetime::options::TimePrecision;
+        match time_precision {
+            TimePrecision::Hour => ffi::TimePrecision::Hour,
+            TimePrecision::Minute => ffi::TimePrecision::Minute,
+            TimePrecision::MinuteOptional => ffi::TimePrecision::MinuteOptional,
+            TimePrecision::Second => ffi::TimePrecision::Second,
+            TimePrecision::Subsecond(SubsecondDigits::S1) => ffi::TimePrecision::Subsecond1,
+            TimePrecision::Subsecond(SubsecondDigits::S2) => ffi::TimePrecision::Subsecond2,
+            TimePrecision::Subsecond(SubsecondDigits::S3) => ffi::TimePrecision::Subsecond3,
+            TimePrecision::Subsecond(SubsecondDigits::S4) => ffi::TimePrecision::Subsecond4,
+            TimePrecision::Subsecond(SubsecondDigits::S5) => ffi::TimePrecision::Subsecond5,
+            TimePrecision::Subsecond(SubsecondDigits::S6) => ffi::TimePrecision::Subsecond6,
+            TimePrecision::Subsecond(SubsecondDigits::S7) => ffi::TimePrecision::Subsecond7,
+            TimePrecision::Subsecond(SubsecondDigits::S8) => ffi::TimePrecision::Subsecond8,
+            TimePrecision::Subsecond(SubsecondDigits::S9) => ffi::TimePrecision::Subsecond9,
+            _ => {
+                debug_assert!(false, "cross-crate exhaustive match");
+                ffi::TimePrecision::Second
+            }
         }
     }
 }
