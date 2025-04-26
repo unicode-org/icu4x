@@ -168,6 +168,7 @@ lazy_static::lazy_static! {
         "icu::datetime::DateTimeInputUnchecked",
         "icu::datetime::FixedCalendarDateTimeFormatter::format_unchecked",
         "icu::datetime::DateTimeFormatter::format_unchecked",
+        "icu::datetime::NoCalendarFormatter::format_unchecked",
         "icu::datetime::FormattedDateTimeUnchecked",
 
         // Not planned for 2.0: Would need to introduce diplomat writeable with parts
