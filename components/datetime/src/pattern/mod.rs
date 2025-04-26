@@ -18,6 +18,7 @@ mod pattern;
 pub use crate::error::ErrorField;
 pub use formatter::DateTimePatternFormatter;
 pub use formatter::FormattedDateTimePattern;
+use icu_calendar::AnyCalendarKind;
 use icu_pattern::SinglePlaceholderPattern;
 pub use names::DateTimeNames;
 pub(crate) use names::DateTimeNamesMetadata;
@@ -98,3 +99,14 @@ pub enum PatternLoadError {
 }
 
 impl core::error::Error for PatternLoadError {}
+
+/// Error returned from constructors that map from AnyCalendar to a formatter.
+#[derive(Debug, Clone, Copy, PartialEq, displaydoc::Display)]
+#[displaydoc("The calendar {kind:?} is not supported in DateTimeFormatter")]
+#[non_exhaustive]
+pub struct UnsupportedCalendarError {
+    /// The calendar kind that is not supported.
+    pub kind: AnyCalendarKind,
+}
+
+impl core::error::Error for UnsupportedCalendarError {}

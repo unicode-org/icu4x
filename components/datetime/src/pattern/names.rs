@@ -5,9 +5,9 @@
 use super::{
     DateTimePattern, DateTimePatternFormatter, GetNameForCyclicYearError, GetNameForDayPeriodError,
     GetNameForEraError, GetNameForMonthError, GetNameForWeekdayError, MonthPlaceholderValue,
-    PatternLoadError,
+    PatternLoadError, UnsupportedCalendarError,
 };
-use crate::error::{ErrorField, UnsupportedCalendarError};
+use crate::error::ErrorField;
 use crate::fieldsets::enums::{CompositeDateTimeFieldSet, CompositeFieldSet};
 use crate::provider::fields::{self, FieldLength, FieldSymbol};
 use crate::provider::neo::{marker_attrs, *};
