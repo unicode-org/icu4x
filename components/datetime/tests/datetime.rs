@@ -425,10 +425,6 @@ fn test_time_zone_patterns() {
         let zoned_datetime = mock::parse_zoned_gregorian_from_str(&test.datetime);
 
         for (pattern_input, expect) in &test.expectations {
-            if pattern_input == "VVV" {
-                // TODO(#5658): 'VVV' format not yet supported
-                continue;
-            }
             let parsed_pattern = DateTimePattern::try_from_pattern_str(pattern_input).unwrap();
             let mut pattern_formatter =
                 FixedCalendarDateTimeNames::<Gregorian, ZoneFieldSet>::try_new(prefs).unwrap();

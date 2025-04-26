@@ -4,7 +4,7 @@
 
 [package]
 name = "icu_time"
-description = "API for resolving and manipulating time zone information"
+description = "Processing of dates, times, and time zones with a focus on i18n and interop"
 
 authors.workspace = true
 categories.workspace = true

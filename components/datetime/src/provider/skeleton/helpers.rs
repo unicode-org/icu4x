@@ -142,7 +142,7 @@ fn naively_apply_time_zone_name(
     }
 }
 
-// TODO - This could return a Cow<'a, Pattern>, but it affects every other part of the API to
+// Note: This could return a Cow<'a, Pattern>, but it affects every other part of the API to
 // add a lifetime here. The pattern returned here could be one that we've already constructed in
 // the CLDR as an exotic type, or it could be one that was modified to meet the requirements of
 // the components bag.

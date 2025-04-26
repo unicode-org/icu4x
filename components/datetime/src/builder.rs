@@ -223,7 +223,8 @@ impl ZoneStyle {
 }
 
 /// An error that occurs when creating a [field set](crate::fieldsets) from a builder.
-#[derive(Debug, displaydoc::Display)]
+// Not Copy: one of the variants contains a non-Copy type
+#[derive(Debug, Clone, displaydoc::Display)]
 #[ignore_extra_doc_attributes] // lines after the first won't go into `impl Display`
 #[non_exhaustive]
 pub enum BuilderError {
@@ -247,6 +248,30 @@ pub enum BuilderError {
     /// Superfluous options were specified.
     ///
     /// For example, you cannot set a [`YearStyle`] unless the field set contains years.
+    ///
+    /// The options that were _not_ read are returned back to the user.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::datetime::fieldsets;
+    /// use icu::datetime::fieldsets::builder::*;
+    /// use icu::datetime::options::*;
+    ///
+    /// let mut builder = FieldSetBuilder::new();
+    /// builder.length = Some(Length::Short);
+    /// builder.time_precision = Some(TimePrecision::Minute);
+    /// builder.year_style = Some(YearStyle::WithEra);
+    ///
+    /// let err = builder.build_composite().unwrap_err();
+    ///
+    /// let BuilderError::SuperfluousOptions(superfluous_options) = err else {
+    ///     panic!("error type should be SuperfluousOptions");
+    /// };
+    ///
+    /// assert!(superfluous_options.year_style.is_some());
+    /// assert!(superfluous_options.time_precision.is_none());
+    /// ```
     SuperfluousOptions(FieldSetBuilder),
 }
 

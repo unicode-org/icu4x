@@ -4,7 +4,7 @@
 
 [package]
 name = "icu_datetime"
-description = "API for formatting date and time to user readable textual representation"
+description = "Human-readable formatting of dates, times, and time zones in hundreds of locales"
 
 authors.workspace = true
 categories.workspace = true
