@@ -61,7 +61,7 @@ fn collator_bench(
 pub fn collator_with_locale(criterion: &mut Criterion) {
     // Load file content in reverse order vector.
     let content_photos: (&str, Vec<&str>) = (
-        "TTestFilenames_Photos",
+        "TestFilenames_Photos",
         include_str!("data/TestFilenames_Photos.txt")
             .lines()
             .filter(|&s| !s.starts_with('#'))
