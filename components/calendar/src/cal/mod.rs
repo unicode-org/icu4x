@@ -18,6 +18,7 @@ pub(crate) mod japanese;
 pub(crate) mod julian;
 pub(crate) mod persian;
 pub(crate) mod roc;
+mod hijri_ummalqura_data;
 
 pub use buddhist::Buddhist;
 pub use chinese::Chinese;
