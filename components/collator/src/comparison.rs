@@ -791,6 +791,7 @@ impl CollatorBorrowed<'_> {
         // since there is already a place where to put them.
 
         // This loop is only broken out of as goto forward.
+        #[allow(clippy::never_loop)]
         'prefix: loop {
             if let Some(head_last_c) = head_chars.next_back() {
                 let norm_trie = &self.decompositions.trie;
@@ -823,6 +824,7 @@ impl CollatorBorrowed<'_> {
 
                         // This loop is only broken out of as goto forward. The control flow
                         // is much more readable this way.
+                        #[allow(clippy::never_loop)]
                         loop {
                             // The two highest bits are about NFC, which we don't
                             // care about here. Also mask off the lowest bit to

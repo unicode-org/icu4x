@@ -1098,26 +1098,33 @@ where
 
         let mut unnormalized = core::mem::take(&mut self.upcoming);
         let last_index = unnormalized.len() - 1;
-        debug_assert!(!unnormalized[0].decomposition_starts_with_non_starter());
-
+        // Indexing is for debug assert only.
+        #[allow(clippy::indexing_slicing)]
+        {
+            debug_assert!(!unnormalized[0].decomposition_starts_with_non_starter());
+        }
         let mut start_combining = 0;
         for (i, c) in unnormalized.drain(..).enumerate() {
             if c.decomposition_starts_with_non_starter() {
                 self.push_decomposed_combining(c);
+            } else if i == last_index {
+                // Indices are in range by construction, so indexing is OK.
+                #[allow(clippy::indexing_slicing)]
+                self.upcoming[start_combining..].sort_by_key(|c| c.ccc());
+                self.upcoming.push(c);
+                return;
             } else {
-                if i == last_index {
-                    self.upcoming[start_combining..].sort_by_key(|c| c.ccc());
-                    self.upcoming.push(c);
-                    return;
-                } else {
-                    self.upcoming[start_combining..].sort_by_key(|c| c.ccc());
-                    start_combining = self.push_decomposed_starter(c);
-                }
+                // Indices are in range by construction, so indexing is OK.
+                #[allow(clippy::indexing_slicing)]
+                self.upcoming[start_combining..].sort_by_key(|c| c.ccc());
+                start_combining = self.push_decomposed_starter(c);
             }
         }
         // Make the assertion conditional to make CI happy.
         #[cfg(debug_assertions)]
         debug_assert!(self.iter_exhausted);
+        // Indices are in range by construction, so indexing is OK.
+        #[allow(clippy::indexing_slicing)]
         self.upcoming[start_combining..].sort_by_key(|c| c.ccc());
     }
 
