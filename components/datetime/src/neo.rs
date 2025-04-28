@@ -219,6 +219,10 @@ where
     ///
     /// This ignores the `calendar_kind` preference and instead uses the static calendar type,
     /// and supports calendars that are not expressible as preferences, such as [`JapaneseExtended`](icu_calendar::cal::JapaneseExtended).
+    ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
     pub fn try_new(
         prefs: DateTimeFormatterPreferences,
@@ -471,6 +475,28 @@ size_test!(
 /// a calendar selected at runtime.
 ///
 /// For more details, please read the [crate root docs][crate].
+///
+/// # Examples
+///
+/// Basic usage:
+///
+/// ```
+/// use icu::datetime::fieldsets::YMD;
+/// use icu::datetime::input::Date;
+/// use icu::datetime::DateTimeFormatter;
+/// use icu::locale::locale;
+/// use writeable::assert_writeable_eq;
+///
+/// let formatter = DateTimeFormatter::try_new(
+///     locale!("en-u-ca-hebrew").into(),
+///     YMD::medium(),
+/// )
+/// .unwrap();
+///
+/// let date = Date::try_new_iso(2024, 5, 8).unwrap();
+///
+/// assert_writeable_eq!(formatter.format(&date), "30 Nisan 5784");
+/// ```
 #[doc = neo_year_month_day_formatter_size!()]
 #[derive(Debug, Clone)]
 pub struct DateTimeFormatter<FSet: DateTimeNamesMarker> {
@@ -495,30 +521,6 @@ where
     /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
-    ///
-    /// # Examples
-    ///
-    /// Basic usage:
-    ///
-    /// ```
-    /// use icu::datetime::fieldsets::YMD;
-    /// use icu::datetime::input::Date;
-    /// use icu::datetime::DateTimeFormatter;
-    /// use icu::locale::locale;
-    /// use writeable::assert_writeable_eq;
-    ///
-    /// let formatter = DateTimeFormatter::try_new(
-    ///     locale!("en-u-ca-hebrew").into(),
-    ///     YMD::medium(),
-    /// )
-    /// .unwrap();
-    ///
-    /// let date = Date::try_new_iso(2024, 5, 8).unwrap();
-    ///
-    /// assert_writeable_eq!(formatter.format(&date), "30 Nisan 5784");
-    /// ```
-    ///
-    /// [`AnyCalendarKind`]: icu_calendar::AnyCalendarKind
     #[inline(never)]
     #[cfg(feature = "compiled_data")]
     pub fn try_new(

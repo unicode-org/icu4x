@@ -47,7 +47,7 @@ export class TimeFormatter {
     }
 
     /** 
-     * See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/datetime/struct.NoCalendarFormatter.html#method.try_new) for more information.
+     * See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/datetime/type.NoCalendarFormatter.html#method.try_new) for more information.
      *
      * See the [Rust documentation for `T`](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.T.html) for more information.
      *
@@ -76,7 +76,7 @@ export class TimeFormatter {
     }
 
     /** 
-     * See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/datetime/struct.NoCalendarFormatter.html#method.try_new) for more information.
+     * See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/datetime/type.NoCalendarFormatter.html#method.try_new) for more information.
      *
      * See the [Rust documentation for `T`](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.T.html) for more information.
      *
@@ -105,7 +105,7 @@ export class TimeFormatter {
     }
 
     /** 
-     * See the [Rust documentation for `format`](https://docs.rs/icu/latest/icu/datetime/struct.FixedCalendarDateTimeFormatter.html#method.format) for more information.
+     * See the [Rust documentation for `format`](https://docs.rs/icu/latest/icu/datetime/type.NoCalendarFormatter.html#method.format) for more information.
      */
     format(time) {
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);

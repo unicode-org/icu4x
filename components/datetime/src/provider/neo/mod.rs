@@ -6,13 +6,13 @@
 
 mod adapter;
 
-use crate::provider::pattern::runtime::{self, PatternULE};
+use crate::provider::pattern::runtime;
 use crate::size_test_macro::size_test;
 use alloc::borrow::Cow;
 use icu_pattern::SinglePlaceholderPattern;
 use icu_provider::prelude::*;
 use potential_utf::PotentialUtf8;
-use zerovec::{ule::tuplevar::Tuple2VarULE, VarZeroCow, VarZeroSlice, VarZeroVec, ZeroMap};
+use zerovec::{ule::tuplevar::Tuple2VarULE, VarZeroCow, VarZeroSlice, VarZeroVec};
 
 /// Helpers involving the data marker attributes used for date names.
 ///
@@ -520,11 +520,6 @@ icu_provider::data_marker!(
     DatetimePatternsGlueV1,
     GluePattern<'static>
 );
-icu_provider::data_marker!(
-    /// `DateTimeSkeletonPatternsV1`
-    DateTimeSkeletonPatternsV1,
-    DateTimeSkeletons<'static>,
-);
 
 size_test!(YearNames, year_names_v1_size, 32);
 
@@ -718,26 +713,6 @@ pub struct GluePattern<'data> {
 
 icu_provider::data_struct!(
     GluePattern<'_>,
-    #[cfg(feature = "datagen")]
-);
-
-#[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
-#[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::neo))]
-#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-#[yoke(prove_covariance_manually)]
-#[allow(missing_docs)] // TODO
-pub struct DateTimeSkeletons<'data> {
-    // will typically be small, there are only a couple special cases like E B h m
-    // TODO: This should support plurals
-    // TODO: The key of this map should be Skeleton
-    #[allow(missing_docs)] // TODO
-    #[cfg_attr(feature = "serde", serde(borrow))]
-    pub map: ZeroMap<'data, str, PatternULE>,
-}
-
-icu_provider::data_struct!(
-    DateTimeSkeletons<'_>,
     #[cfg(feature = "datagen")]
 );
 

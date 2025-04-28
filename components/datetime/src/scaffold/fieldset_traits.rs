@@ -19,7 +19,7 @@ use icu_time::{
     Hour, Minute, Nanosecond, Second, Time, TimeZone,
 };
 
-// TODO: Add WeekCalculator and DecimalFormatter optional bindings here
+// TODO(#4340): Add DecimalFormatter optional bindings here
 
 /// A trait associating types for date formatting in any calendar
 /// (input types only).

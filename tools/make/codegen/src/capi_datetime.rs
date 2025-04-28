@@ -165,6 +165,13 @@ impl FormatterKind {
             (false, _) => "Struct",
         }
     }
+    pub fn rustlink_doctype_fn(self) -> &'static str {
+        match (self.is_fixed_calendar, self.is_gregorian) {
+            (true, true) => "FnInStruct",
+            (true, false) => "FnInTypedef",
+            (false, _) => "FnInStruct",
+        }
+    }
 }
 
 #[derive(Template)]
