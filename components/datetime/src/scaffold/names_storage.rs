@@ -133,7 +133,7 @@ impl_holder_trait!(tz::MzPeriodV1);
 
 /// An error returned by [`MaybePayload`].
 #[allow(missing_docs)]
-#[derive(Debug, displaydoc::Display)]
+#[derive(Debug, Copy, Clone, displaydoc::Display)]
 #[non_exhaustive]
 pub enum MaybePayloadError {
     /// The container's field set doesn't support the field
@@ -263,7 +263,7 @@ where
         let arg_variables = variables;
         match &self.inner {
             OptionalNames::SingleLength { variables, .. } if arg_variables == *variables => {
-                // TODO(#6063): probably not correct
+                // NOTE: We don't store the checksum so we can't recover it. See #6063
                 return Ok(Ok(Default::default()));
             }
             OptionalNames::SingleLength { variables, .. } => {

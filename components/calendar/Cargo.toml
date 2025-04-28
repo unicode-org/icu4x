@@ -4,7 +4,7 @@
 
 [package]
 name = "icu_calendar"
-description = "API for supporting various types of calendars"
+description = "Date APIs for Gregorian and non-Gregorian calendars"
 
 authors.workspace = true
 categories.workspace = true

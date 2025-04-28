@@ -711,7 +711,7 @@ macro_rules! impl_date_marker {
             type WeekdayNamesV1 = datetime_marker_helper!(@weekdays, $($weekdays_yes)?);
         }
         impl TimeMarkers for $type_time {
-            // TODO: Consider making dayperiods optional again
+            // TODO(#6497): Consider making dayperiods optional
             type DayPeriodNamesV1 = datetime_marker_helper!(@dayperiods, yes);
             type TimeSkeletonPatternsV1 = datetime_marker_helper!(@times, yes);
             type HourInput = datetime_marker_helper!(@input/hour, yes);
@@ -1464,8 +1464,6 @@ pub mod zone {
         field = (fields::TimeZone::LocalizedOffset, fields::FieldLength::One),
         zone_essentials = yes,
     );
-
-    // TODO: Add short/long UTC offset?
 
     impl_zone_marker!(
         /// When a display name is unavailable, falls back to the location format:

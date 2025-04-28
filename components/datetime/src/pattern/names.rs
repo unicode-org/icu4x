@@ -5,9 +5,9 @@
 use super::{
     DateTimePattern, DateTimePatternFormatter, GetNameForCyclicYearError, GetNameForDayPeriodError,
     GetNameForEraError, GetNameForMonthError, GetNameForWeekdayError, MonthPlaceholderValue,
-    PatternLoadError,
+    PatternLoadError, UnsupportedCalendarError,
 };
-use crate::error::{ErrorField, UnsupportedCalendarError};
+use crate::error::ErrorField;
 use crate::fieldsets::enums::{CompositeDateTimeFieldSet, CompositeFieldSet};
 use crate::provider::fields::{self, FieldLength, FieldSymbol};
 use crate::provider::neo::{marker_attrs, *};
@@ -952,10 +952,14 @@ where
     FSet::Z: ZoneMarkers,
     FSet: GetField<CompositeFieldSet>,
 {
-    /// Loads a pattern for the given field set and returns a [`FixedCalendarDateTimeFormatter`].
+    /// Loads a pattern for the given field set with compiled data and returns a [`FixedCalendarDateTimeFormatter`].
     ///
     /// The names in the current [`FixedCalendarDateTimeNames`] _must_ be sufficient for the field set.
     /// If not, the input object will be returned with an error.
+    ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
     ///
     /// # Examples
     ///
@@ -1154,10 +1158,14 @@ where
     FSet::Z: ZoneMarkers,
     FSet: GetField<CompositeFieldSet>,
 {
-    /// Loads a pattern for the given field set and returns a [`DateTimeFormatter`].
+    /// Loads a pattern for the given field set with compiled data and returns a [`DateTimeFormatter`].
     ///
     /// The names in the current [`DateTimeNames`] _must_ be sufficient for the field set.
     /// If not, the input object will be returned with an error.
+    ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
     ///
     /// # Examples
     ///
@@ -1888,7 +1896,11 @@ impl<C, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, FSet> {
     ///     names
     ///         .with_pattern_unchecked(&pattern)
     ///         .format(&zone_london_summer),
-    ///     "Your time zone is: Greenwich Mean Time", // TODO
+    ///     // Note: The year-round generic name of this zone is Greenwich
+    ///     // Mean Time, which may be confusing since the zone observes
+    ///     // daylight savings time. See:
+    ///     // <https://unicode-org.atlassian.net/issues/CLDR-18378>
+    ///     "Your time zone is: Greenwich Mean Time",
     /// );
     /// ```
     #[cfg(feature = "compiled_data")]
@@ -1975,7 +1987,11 @@ impl<C, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, FSet> {
     ///     names
     ///         .with_pattern_unchecked(&pattern)
     ///         .format(&zone_london_summer),
-    ///     "Your time zone is: GMT", // TODO
+    ///     // Note: The year-round generic name of this zone is Greenwich
+    ///     // Mean Time, which may be confusing since the zone observes
+    ///     // daylight savings time. See:
+    ///     // <https://unicode-org.atlassian.net/issues/CLDR-18378>
+    ///     "Your time zone is: GMT",
     /// );
     /// ```
     #[cfg(feature = "compiled_data")]
@@ -2540,7 +2556,6 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, F
             &C::MonthNamesV1::bind(provider),
             &WeekdayNamesV1::bind(provider),
             &DayPeriodNamesV1::bind(provider),
-            // TODO: Consider making time zone name loading optional here (lots of data)
             &tz::EssentialsV1::bind(provider),
             &tz::LocationsRootV1::bind(provider),
             &tz::LocationsOverrideV1::bind(provider),
@@ -3705,7 +3720,7 @@ impl RawDateTimeNamesBorrowed<'_> {
         weekday_names
             .names
             .get((day as usize) % 7)
-            // TODO: make weekday_names length 7 in the type system
+            // Note: LinearNames does not guarantee a length of 7.
             .ok_or(GetNameForWeekdayError::NotLoaded)
     }
 

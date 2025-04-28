@@ -112,7 +112,7 @@ pub enum CalendarPeriodFieldSet {
     /// A year, as in
     /// “2000”.
     Y(fieldsets::Y),
-    // TODO: Add support for week-of-year
+    // TODO(#5643): Add support for week-of-year
     // /// The year and week of the year, as in
     // /// “52nd week of 1999”.
     // YW(fieldsets::YW),
