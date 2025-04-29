@@ -771,7 +771,10 @@ impl Calendar for HijriUmmAlQura {
 
 impl PrecomputedDataSource<HijriYearInfo> for HijriUmmAlQura {
     fn load_or_compute_info(&self, year: i32) -> HijriYearInfo {
-        if let Some(&packed) = usize::try_from(year - UMMALQURA_DATA_STARTING_YEAR).ok().and_then(|i| UMMALQURA_DATA.get(i)) {
+        if let Some(&packed) = usize::try_from(year - UMMALQURA_DATA_STARTING_YEAR)
+            .ok()
+            .and_then(|i| UMMALQURA_DATA.get(i))
+        {
             HijriYearInfo::unpack(year, packed)
         } else {
             HijriYearInfo {
