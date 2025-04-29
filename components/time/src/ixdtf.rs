@@ -407,7 +407,7 @@ impl<A: AsCalendar> ZonedDateTime<A, TimeZoneInfo<models::AtTime>> {
     /// neither. If the named time zone is missing, it is returned as Etc/Unknown.
     ///
     /// The zone variant is _not_ calculated with this function. If you need it, use
-    /// [`Self::try_from_str`].
+    /// [`Self::try_full_from_str`].
     pub fn try_lenient_from_str(
         rfc_9557_str: &str,
         calendar: A,
