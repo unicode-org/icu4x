@@ -48,9 +48,8 @@ pub mod ffi {
     }
 
     impl TimePrecision {
-        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "subsecond")]
         #[diplomat::rust_link(icu::datetime::options::SubsecondDigits::try_from_int, FnInEnum)]
-        pub fn create_from_subsecond_digits(digits: u8) -> Option<Self> {
+        pub fn from_subsecond_digits(digits: u8) -> Option<Self> {
             icu_datetime::options::SubsecondDigits::try_from_int(digits)
                 .map(icu_datetime::options::TimePrecision::Subsecond)
                 .map(Into::into)

@@ -22,7 +22,6 @@ icu::datetime::NoCalendarFormatter::into_formatter#FnInTypedef
 icu::datetime::NoCalendarFormatter::to_field_set_builder#FnInTypedef
 icu::datetime::NoCalendarFormatter::try_new#FnInTypedef
 icu::datetime::UnsupportedCalendarError#Struct
-icu::datetime::options::SubsecondDigits::try_from_int#FnInEnum
 icu_provider_adapters::fork::ForkByMarkerProvider::inner#FnInTypedef
 icu_provider_adapters::fork::ForkByMarkerProvider::inner_mut#FnInTypedef
 icu_provider_adapters::fork::ForkByMarkerProvider::into_inner#FnInTypedef

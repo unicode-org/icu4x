@@ -32,5 +32,10 @@ export class TimePrecision {
     static Subsecond8 : TimePrecision;
     static Subsecond9 : TimePrecision;
 
+    /** 
+     * See the [Rust documentation for `try_from_int`](https://docs.rs/icu/latest/icu/datetime/options/enum.SubsecondDigits.html#method.try_from_int) for more information.
+     */
+    static fromSubsecondDigits(digits: number): TimePrecision | null;
+
     constructor(value: TimePrecision | string );
 }
