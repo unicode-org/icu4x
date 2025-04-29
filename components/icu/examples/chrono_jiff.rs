@@ -26,7 +26,7 @@ fn main() {
             .with_timezone(&"Asia/Tokyo".parse().unwrap()),
     );
 
-    let from_ixdtf = ZonedDateTime::try_from_str(
+    let from_ixdtf = ZonedDateTime::try_full_from_str(
         "2024-09-11T08:37:20.123456789+09:00[Asia/Tokyo]",
         Iso,
         IanaParser::new(),
