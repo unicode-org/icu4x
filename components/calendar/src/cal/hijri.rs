@@ -19,6 +19,7 @@
 //! assert_eq!(hijri_date.day_of_month().0, 11);
 //! ```
 
+use crate::cal::hijri_ummalqura_data::{UMMALQURA_DATA, UMMALQURA_DATA_STARTING_YEAR};
 use crate::cal::iso::{Iso, IsoDateInner};
 use crate::calendar_arithmetic::PrecomputedDataSource;
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
@@ -33,7 +34,6 @@ use calendrical_calculations::rata_die::RataDie;
 use icu_provider::marker::ErasedMarker;
 use icu_provider::prelude::*;
 use tinystr::tinystr;
-use crate::cal::hijri_ummalqura_data::{UMMALQURA_DATA, UMMALQURA_DATA_STARTING_YEAR};
 
 fn era_year(year: i32) -> EraYear {
     types::EraYear {
