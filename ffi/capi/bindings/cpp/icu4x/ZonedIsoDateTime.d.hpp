@@ -53,9 +53,9 @@ struct ZonedIsoDateTime {
   /**
    * Creates a new [`ZonedIsoDateTime`] from an IXDTF string.
    *
-   * See the [Rust documentation for `try_from_str`](https://docs.rs/icu/latest/icu/time/struct.ZonedDateTime.html#method.try_from_str) for more information.
+   * See the [Rust documentation for `try_full_from_str`](https://docs.rs/icu/latest/icu/time/struct.ZonedDateTime.html#method.try_full_from_str) for more information.
    */
-  inline static diplomat::result<icu4x::ZonedIsoDateTime, icu4x::CalendarParseError> from_string(std::string_view v, const icu4x::IanaParser& iana_parser, const icu4x::VariantOffsetsCalculator& offset_calculator);
+  inline static diplomat::result<icu4x::ZonedIsoDateTime, icu4x::CalendarParseError> full_from_string(std::string_view v, const icu4x::IanaParser& iana_parser, const icu4x::VariantOffsetsCalculator& offset_calculator);
 
   inline icu4x::capi::ZonedIsoDateTime AsFFI() const;
   inline static icu4x::ZonedIsoDateTime FromFFI(icu4x::capi::ZonedIsoDateTime c_struct);
