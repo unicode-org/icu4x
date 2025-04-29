@@ -5,9 +5,9 @@
 use super::{
     DateTimePattern, DateTimePatternFormatter, GetNameForCyclicYearError, GetNameForDayPeriodError,
     GetNameForEraError, GetNameForMonthError, GetNameForWeekdayError, MonthPlaceholderValue,
-    PatternLoadError,
+    PatternLoadError, UnsupportedCalendarError,
 };
-use crate::error::{ErrorField, UnsupportedCalendarError};
+use crate::error::ErrorField;
 use crate::fieldsets::enums::{CompositeDateTimeFieldSet, CompositeFieldSet};
 use crate::provider::fields::{self, FieldLength, FieldSymbol};
 use crate::provider::neo::{marker_attrs, *};
@@ -952,10 +952,14 @@ where
     FSet::Z: ZoneMarkers,
     FSet: GetField<CompositeFieldSet>,
 {
-    /// Loads a pattern for the given field set and returns a [`FixedCalendarDateTimeFormatter`].
+    /// Loads a pattern for the given field set with compiled data and returns a [`FixedCalendarDateTimeFormatter`].
     ///
     /// The names in the current [`FixedCalendarDateTimeNames`] _must_ be sufficient for the field set.
     /// If not, the input object will be returned with an error.
+    ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
     ///
     /// # Examples
     ///
@@ -1154,10 +1158,14 @@ where
     FSet::Z: ZoneMarkers,
     FSet: GetField<CompositeFieldSet>,
 {
-    /// Loads a pattern for the given field set and returns a [`DateTimeFormatter`].
+    /// Loads a pattern for the given field set with compiled data and returns a [`DateTimeFormatter`].
     ///
     /// The names in the current [`DateTimeNames`] _must_ be sufficient for the field set.
     /// If not, the input object will be returned with an error.
+    ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
     ///
     /// # Examples
     ///

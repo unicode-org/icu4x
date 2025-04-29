@@ -40,7 +40,7 @@ pub mod ffi {
 
     impl TimeFormatter {
         #[diplomat::attr(supports = fallible_constructors, constructor)]
-        #[diplomat::rust_link(icu::datetime::NoCalendarFormatter::try_new, FnInStruct)]
+        #[diplomat::rust_link(icu::datetime::NoCalendarFormatter::try_new, FnInTypedef)]
         #[diplomat::rust_link(icu::datetime::fieldsets::T, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::T::hm, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::T::hms, FnInStruct, hidden)]
@@ -81,7 +81,7 @@ pub mod ffi {
         }
         
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "with_provider")]
-        #[diplomat::rust_link(icu::datetime::NoCalendarFormatter::try_new, FnInStruct)]
+        #[diplomat::rust_link(icu::datetime::NoCalendarFormatter::try_new, FnInTypedef)]
         #[diplomat::rust_link(icu::datetime::fieldsets::T, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::T::hm, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::T::hms, FnInStruct, hidden)]
@@ -122,7 +122,7 @@ pub mod ffi {
             )))
         }
         
-        #[diplomat::rust_link(icu::datetime::FixedCalendarDateTimeFormatter::format, FnInStruct)]
+        #[diplomat::rust_link(icu::datetime::NoCalendarFormatter::format, FnInTypedef)]
         #[diplomat::rust_link(icu::datetime::FormattedDateTime, Struct, hidden)]
         #[diplomat::rust_link(icu::datetime::FormattedDateTime::to_string, FnInStruct, hidden)]
         pub fn format(

@@ -84,7 +84,7 @@ pub mod ffi {
         {%- else %}
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "{{ named_constructor }}")]
         {%- endif %}
-        #[diplomat::rust_link(icu::datetime::{{ formatter_kind.rustlink() }}::try_new, FnInStruct)]
+        #[diplomat::rust_link(icu::datetime::{{ formatter_kind.rustlink() }}::try_new, {{ formatter_kind.rustlink_doctype_fn() }})]
         #[diplomat::rust_link(icu::datetime::fieldsets::{{ variant.name_upper() }}, Struct)]
         {%- if flavor.is_time_only() %}
         #[diplomat::rust_link(icu::datetime::fieldsets::{{ variant.name_upper() }}::hm, FnInStruct, hidden)]
@@ -163,7 +163,7 @@ pub mod ffi {
         }
         {% endfor %}
         {%- endfor %}
-        #[diplomat::rust_link(icu::datetime::{{ formatter_kind.rust_type() }}::format, FnInStruct)]
+        #[diplomat::rust_link(icu::datetime::{{ formatter_kind.rustlink() }}::format, {{ formatter_kind.rustlink_doctype_fn() }})]
         #[diplomat::rust_link(icu::datetime::FormattedDateTime, Struct, hidden)]
         #[diplomat::rust_link(icu::datetime::FormattedDateTime::to_string, FnInStruct, hidden)]
         pub fn format{% if flavor.has_date() %}_iso{% endif %}(
@@ -192,7 +192,7 @@ pub mod ffi {
             let _infallible = self.0.format(&value).write_to(write);
         }
         {% if !formatter_kind.is_fixed_calendar %}
-        #[diplomat::rust_link(icu::datetime::{{ formatter_kind.rust_type() }}::format_same_calendar, FnInStruct)]
+        #[diplomat::rust_link(icu::datetime::{{ formatter_kind.rustlink() }}::format_same_calendar, {{ formatter_kind.rustlink_doctype_fn() }})]
         #[diplomat::rust_link(icu::datetime::FormattedDateTime, Struct, hidden)]
         #[diplomat::rust_link(icu::datetime::FormattedDateTime::to_string, FnInStruct, hidden)]
         pub fn format_same_calendar(
