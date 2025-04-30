@@ -116,7 +116,7 @@ impl<'a> LikelySubtagsResources<'a> {
 
     fn common_predicate(&self, min_max: &(&LanguageIdentifier, &LanguageIdentifier)) -> bool {
         let (minimized, maximized) = min_max;
-        self.basic_plus_languages.contains(&maximized.language) || minimized.is_default()
+        self.basic_plus_languages.contains(&maximized.language) || minimized.is_unknown()
     }
 
     pub(crate) fn get_common(
@@ -278,7 +278,7 @@ pub(crate) fn transform<'x>(
             };
         }
 
-        if !entry.0.language.is_default() {
+        if !entry.0.language.is_unknown() {
             let lang = entry.0.language;
             if let Some(script) = entry.0.script {
                 with_diff!((Language::UND, None, Some(region)) => language_script.insert((lang.to_tinystr(), script.to_tinystr()), region));
