@@ -15,6 +15,7 @@
 //!
 //! Read more about data providers: [`icu_provider`]
 
+use crate::zone::ZoneNameTimestamp;
 use crate::Time;
 use calendrical_calculations::rata_die::RataDie;
 use icu_calendar::{Date, Iso};
@@ -65,6 +66,7 @@ pub const MARKERS: &[DataMarkerInfo] = &[
 
 /// Storage type for storing UTC offsets as eights of an hour.
 pub type EighthsOfHourOffset = i8;
+
 /// Storage type for storing `(Date<Iso>, Time)`.
 #[derive(Copy, Clone, PartialEq, PartialOrd, Eq, Ord, Debug)]
 pub struct MinutesSinceEpoch(pub i32);
@@ -159,12 +161,12 @@ impl<'de> serde::Deserialize<'de> for MinutesSinceEpoch {
 
 icu_provider::data_marker!(
     /// The default mapping between period and offsets. The second level key is a wall-clock time encoded as
-    /// [`MinutesSinceEpoch`]. It represents when the offsets started to be used.
+    /// [`ZoneNameTimestamp`]. It represents when the offsets started to be used.
     ///
     /// The values are the standard offset, and the daylight offset *relative to the standard offset*. As such,
     /// if the second value is 0, there is no daylight time.
     TimezoneVariantsOffsetsV1,
     "timezone/variants/offsets/v1",
-    ZeroMap2d<'static, TimeZone, MinutesSinceEpoch, (EighthsOfHourOffset, EighthsOfHourOffset)>,
+    ZeroMap2d<'static, TimeZone, ZoneNameTimestamp, (EighthsOfHourOffset, EighthsOfHourOffset)>,
     is_singleton = true
 );

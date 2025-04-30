@@ -11,7 +11,7 @@ use core::fmt;
 use fixed_decimal::Decimal;
 use icu_calendar::{Date, Iso};
 use icu_decimal::DecimalFormatter;
-use icu_time::provider::MinutesSinceEpoch;
+use icu_time::zone::ZoneNameTimestamp;
 use icu_time::{
     zone::{TimeZoneVariant, UtcOffset},
     Time, TimeZone,
@@ -19,13 +19,12 @@ use icu_time::{
 use writeable::Writeable;
 
 impl crate::provider::time_zones::MetazonePeriod<'_> {
-    fn resolve(&self, time_zone_id: TimeZone, dt: (Date<Iso>, Time)) -> Option<MetazoneId> {
+    fn resolve(&self, time_zone_id: TimeZone, zone_name_timestamp: ZoneNameTimestamp) -> Option<MetazoneId> {
         use zerovec::ule::AsULE;
         let cursor = self.list.get0(&time_zone_id)?;
         let mut metazone_id = None;
-        let minutes_since_epoch_walltime = MinutesSinceEpoch::from(dt);
-        for (minutes, id) in cursor.iter1() {
-            if minutes_since_epoch_walltime >= MinutesSinceEpoch::from_unaligned(*minutes) {
+        for (bytes, id) in cursor.iter1() {
+            if zone_name_timestamp >= ZoneNameTimestamp::from_unaligned(*bytes) {
                 metazone_id = id.get()
             } else {
                 break;
@@ -118,7 +117,7 @@ impl FormatTimeZone for GenericNonLocationFormat {
         let Some(time_zone_id) = input.zone_id else {
             return Ok(Err(FormatTimeZoneError::MissingInputField("time_zone_id")));
         };
-        let Some(local_time) = input.zone_local_time else {
+        let Some(local_time) = input.zone_name_timestamp else {
             return Ok(Err(FormatTimeZoneError::MissingInputField(
                 "time_zone_local_time",
             )));
@@ -181,7 +180,7 @@ impl FormatTimeZone for SpecificNonLocationFormat {
                 "time_zone_variant",
             )));
         };
-        let Some(local_time) = input.zone_local_time else {
+        let Some(local_time) = input.zone_name_timestamp else {
             return Ok(Err(FormatTimeZoneError::MissingInputField(
                 "time_zone_local_time",
             )));
@@ -492,7 +491,7 @@ impl FormatTimeZone for GenericPartialLocationFormat {
         let Some(time_zone_id) = input.zone_id else {
             return Ok(Err(FormatTimeZoneError::MissingInputField("time_zone_id")));
         };
-        let Some(local_time) = input.zone_local_time else {
+        let Some(local_time) = input.zone_name_timestamp else {
             return Ok(Err(FormatTimeZoneError::MissingInputField(
                 "time_zone_local_time",
             )));

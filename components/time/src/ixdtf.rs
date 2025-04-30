@@ -287,7 +287,9 @@ impl<'a> Intermediate<'a> {
             "utc" | "gmt" => Some(UtcOffset::zero()),
             _ => None,
         };
-        Ok(id.with_offset(offset).at_time((date, time)))
+        Ok(id
+            .with_offset(offset)
+            .at_date_time_iso(&DateTime { date, time }))
     }
 
     fn lenient(
@@ -319,7 +321,9 @@ impl<'a> Intermediate<'a> {
         };
         let date = Date::<Iso>::try_new_iso(self.date.year, self.date.month, self.date.day)?;
         let time = Time::try_from_time_record(&self.time)?;
-        Ok(id.with_offset(offset).at_time((date, time)))
+        Ok(id
+            .with_offset(offset)
+            .at_date_time_iso(&DateTime { date, time }))
     }
 
     fn full(
@@ -339,7 +343,7 @@ impl<'a> Intermediate<'a> {
         let offset = UtcOffset::try_from_utc_offset_record(offset)?;
         Ok(time_zone_id
             .with_offset(Some(offset))
-            .at_time((date, time))
+            .at_date_time_iso(&DateTime { date, time })
             .infer_variant(offset_calculator))
     }
 }
@@ -482,7 +486,7 @@ impl<A: AsCalendar> ZonedDateTime<A, TimeZoneInfo<models::Full>> {
     ///     Some(UtcOffset::try_from_seconds(-18000).unwrap())
     /// );
     /// assert_eq!(zoneddatetime.zone.variant(), TimeZoneVariant::Daylight);
-    /// let (_, _) = zoneddatetime.zone.local_time();
+    /// let _ = zoneddatetime.zone.zone_name_timestamp();
     /// ```
     ///
     /// An RFC 9557 string can provide a time zone in two parts: the DateTime UTC Offset or the Time Zone
@@ -567,7 +571,7 @@ impl<A: AsCalendar> ZonedDateTime<A, TimeZoneInfo<models::Full>> {
     /// assert_eq!(consistent_tz_from_both.zone.id(), TimeZone(subtag!("uschi")));
     /// assert_eq!(consistent_tz_from_both.zone.offset(), Some(UtcOffset::try_from_seconds(-18000).unwrap()));
     /// assert_eq!(consistent_tz_from_both.zone.variant(), TimeZoneVariant::Daylight);
-    /// let (_, _) = consistent_tz_from_both.zone.local_time();
+    /// let _ = consistent_tz_from_both.zone.zone_name_timestamp();
     ///
     /// // There is no name for America/Los_Angeles at -05:00 (at least in 2024), so either the
     /// // time zone or the offset are wrong.

@@ -11,7 +11,7 @@ use icu_calendar::{
 };
 use icu_provider::marker::NeverMarker;
 use icu_time::{
-    zone::{TimeZoneVariant, UtcOffset},
+    zone::{TimeZoneVariant, UtcOffset, ZoneNameTimestamp},
     Hour, Minute, Nanosecond, Second, Time, TimeZone,
 };
 
@@ -200,7 +200,7 @@ impl ZoneMarkers for ZoneFieldSet {
     type TimeZoneIdInput = datetime_marker_helper!(@input/timezone/id, yes);
     type TimeZoneOffsetInput = datetime_marker_helper!(@input/timezone/offset, yes);
     type TimeZoneVariantInput = datetime_marker_helper!(@input/timezone/variant, yes);
-    type TimeZoneLocalTimeInput = datetime_marker_helper!(@input/timezone/local_time, yes);
+    type TimeZoneNameTimestampInput = datetime_marker_helper!(@input/timezone/local_time, yes);
     type EssentialsV1 = datetime_marker_helper!(@data/zone/essentials, yes);
     type LocationsV1 = datetime_marker_helper!(@data/zone/locations, yes);
     type LocationsRootV1 = datetime_marker_helper!(@data/zone/locations_root, yes);

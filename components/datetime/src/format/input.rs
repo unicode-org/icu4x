@@ -9,6 +9,7 @@ use crate::scaffold::*;
 use icu_calendar::types::DayOfYear;
 use icu_calendar::{AsCalendar, Calendar, Iso};
 use icu_time::scaffold::IntoOption;
+use icu_time::zone::ZoneNameTimestamp;
 use icu_time::{zone::TimeZoneVariant, Hour, Minute, Nanosecond, Second};
 
 use icu_calendar::Date;
@@ -56,7 +57,7 @@ pub struct DateTimeInputUnchecked {
     pub(crate) zone_variant: Option<TimeZoneVariant>,
     /// The local ISO time, required for field sets with
     /// certain time zone styles.
-    pub(crate) zone_local_time: Option<(Date<Iso>, Time)>,
+    pub(crate) zone_name_timestamp: Option<ZoneNameTimestamp>,
 }
 
 impl DateTimeInputUnchecked {
@@ -94,8 +95,8 @@ impl DateTimeInputUnchecked {
     }
 
     /// Sets the local time for time zone name resolution.
-    pub fn set_time_zone_local_time(&mut self, local_time: (Date<Iso>, Time)) {
-        self.zone_local_time = Some(local_time);
+    pub fn set_time_zone_name_timestamp(&mut self, local_time: ZoneNameTimestamp) {
+        self.zone_name_timestamp = Some(local_time);
     }
 
     /// Sets the time zone variant.
@@ -122,7 +123,7 @@ impl DateTimeInputUnchecked {
             + GetField<Z::TimeZoneIdInput>
             + GetField<Z::TimeZoneOffsetInput>
             + GetField<Z::TimeZoneVariantInput>
-            + GetField<Z::TimeZoneLocalTimeInput>,
+            + GetField<Z::TimeZoneNameTimestampInput>,
     {
         Self {
             year: GetField::<D::YearInput>::get_field(input).into_option(),
@@ -137,7 +138,7 @@ impl DateTimeInputUnchecked {
             zone_id: GetField::<Z::TimeZoneIdInput>::get_field(input).into_option(),
             zone_offset: GetField::<Z::TimeZoneOffsetInput>::get_field(input).into_option(),
             zone_variant: GetField::<Z::TimeZoneVariantInput>::get_field(input).into_option(),
-            zone_local_time: GetField::<Z::TimeZoneLocalTimeInput>::get_field(input).into_option(),
+            zone_name_timestamp: GetField::<Z::TimeZoneNameTimestampInput>::get_field(input).into_option(),
         }
     }
 }

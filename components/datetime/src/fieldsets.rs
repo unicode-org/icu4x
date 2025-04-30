@@ -69,7 +69,7 @@ use icu_calendar::{
 };
 use icu_provider::marker::NeverMarker;
 use icu_time::{
-    zone::{TimeZoneVariant, UtcOffset},
+    zone::{TimeZoneVariant, UtcOffset, ZoneNameTimestamp},
     Hour, Minute, Nanosecond, Second, Time, TimeZone,
 };
 
@@ -984,7 +984,7 @@ macro_rules! impl_zone_marker {
             type TimeZoneIdInput = datetime_marker_helper!(@input/timezone/id, $($tzid_input_yes)?);
             type TimeZoneOffsetInput = datetime_marker_helper!(@input/timezone/offset, yes);
             type TimeZoneVariantInput = datetime_marker_helper!(@input/timezone/variant, $($variant_input_yes)?);
-            type TimeZoneLocalTimeInput = datetime_marker_helper!(@input/timezone/local_time, $($localtime_input_yes)?);
+            type TimeZoneNameTimestampInput = datetime_marker_helper!(@input/timezone/local_time, $($localtime_input_yes)?);
             type EssentialsV1 = datetime_marker_helper!(@data/zone/essentials, $($zone_essentials_yes)?);
             type LocationsV1 = datetime_marker_helper!(@data/zone/locations, $($zone_locations_yes)?);
             type LocationsRootV1 = datetime_marker_helper!(@data/zone/locations_root, $($zone_locations_yes)?);

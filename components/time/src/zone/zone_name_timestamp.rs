@@ -5,7 +5,7 @@
 use core::{cmp, fmt};
 
 use icu_calendar::{types::RataDie, Date, Iso};
-use zerovec::ule::AsULE;
+use zerovec::{maps::ZeroMapKV, ule::AsULE, ZeroSlice, ZeroVec};
 
 /// The epoch for time zone names. This is set to 1970-01-01 since the TZDB often drops data before then.
 const ZONE_NAME_EPOCH: RataDie = calendrical_calculations::iso::const_fixed_from_iso(1970, 1, 1);
@@ -87,7 +87,44 @@ impl ZoneNameTimestampParts {
 /// to a whole different set of rules, the time zone display name, sometimes
 /// called the "metazone", can also change. This type is used for picking the
 /// set of time zone display names.
-#[derive(Copy, Clone)]
+///
+/// # Examples
+///
+/// ```
+/// use icu::time::zone::IanaParser;
+/// use icu::time::zone::ZoneNameTimestamp;
+/// use icu::datetime::NoCalendarFormatter;
+/// use icu::datetime::fieldsets::zone::GenericLong;
+/// use icu::locale::locale;
+/// use writeable::assert_writeable_eq;
+///
+/// let juba = IanaParser::new().parse("America/Chihuahua");
+///
+/// let zone_formatter = NoCalendarFormatter::try_new(
+///     locale!("en-US").into(),
+///     GenericLong,
+/// )
+/// .unwrap();
+///
+/// let time_zone_info_2015 = juba.without_offset().at_date_time_iso(&"2015-01-01T00:00".parse().unwrap());
+/// let time_zone_info_2025 = juba.without_offset().at_date_time_iso(&"2025-01-01T00:00".parse().unwrap());
+///
+/// assert_eq!(
+///     time_zone_info_2015.zone_name_timestamp(),
+///     ZoneNameTimestamp::from_date_time_iso(&"2015-01-01T00:00".parse().unwrap())
+/// );
+/// assert_eq!(
+///     time_zone_info_2025.zone_name_timestamp(),
+///     ZoneNameTimestamp::from_date_time_iso(&"2025-01-01T00:00".parse().unwrap())
+/// );
+///
+/// let name_2015 = zone_formatter.format(&time_zone_info_2015);
+/// let name_2025 = zone_formatter.format(&time_zone_info_2025);
+///
+/// assert_writeable_eq!(name_2015, "South Sudan Time");
+/// assert_writeable_eq!(name_2025, "def");
+/// ```
+#[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]
 pub struct ZoneNameTimestamp(u32);
 
 impl ZoneNameTimestamp {
@@ -183,6 +220,13 @@ impl AsULE for ZoneNameTimestamp {
     fn from_unaligned(unaligned: Self::ULE) -> Self {
         Self(u32::from_unaligned(unaligned))
     }
+}
+
+impl<'a> ZeroMapKV<'a> for ZoneNameTimestamp {
+    type Container = ZeroVec<'a, Self>;
+    type Slice = ZeroSlice<Self>;
+    type GetType = <Self as AsULE>::ULE;
+    type OwnedType = Self;
 }
 
 #[cfg(feature = "serde")]
