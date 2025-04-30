@@ -5,7 +5,9 @@
 use core::{cmp, fmt};
 
 use icu_calendar::{types::RataDie, Date, Iso};
+use zerovec::ule::AsULE;
 
+/// The epoch for time zone names. This is set to 1970-01-01 since the TZDB often drops data before then.
 const ZONE_NAME_EPOCH: RataDie = calendrical_calculations::iso::const_fixed_from_iso(1970, 1, 1);
 const QUARTER_HOURS_IN_DAY_I64: i64 = 24 * 4;
 const QUARTER_HOURS_IN_DAY_U32: u32 = 24 * 4;
@@ -171,6 +173,73 @@ impl fmt::Debug for ZoneNameTimestamp {
     }
 }
 
+impl AsULE for ZoneNameTimestamp {
+    type ULE = <u32 as AsULE>::ULE;
+    #[inline]
+    fn to_unaligned(self) -> Self::ULE {
+        self.0.to_unaligned()
+    }
+    #[inline]
+    fn from_unaligned(unaligned: Self::ULE) -> Self {
+        Self(u32::from_unaligned(unaligned))
+    }
+}
+
+#[cfg(feature = "serde")]
+impl serde::Serialize for ZoneNameTimestamp {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        #[cfg(feature = "alloc")]
+        if serializer.is_human_readable() {
+            let date_time = self.to_date_time_iso();
+            let year = date_time.date.extended_year();
+            let month = date_time.date.month().month_number();
+            let day = date_time.date.day_of_month().0;
+            let hour = date_time.time.hour.number();
+            let minute = date_time.time.minute.number();
+            // don't serialize the metadata for now
+            return serializer.serialize_str(&alloc::format!(
+                "{year:04}-{month:02}-{day:02} {hour:02}:{minute:02}"
+            ));
+        }
+        serializer.serialize_u32(self.0)
+    }
+}
+
+#[cfg(feature = "serde")]
+impl<'de> serde::Deserialize<'de> for ZoneNameTimestamp {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        #[cfg(feature = "alloc")]
+        if deserializer.is_human_readable() {
+            use serde::de::Error;
+            let e0 = D::Error::custom("invalid");
+            let e1 = |_| D::Error::custom("invalid");
+            let e2 = |_| D::Error::custom("invalid");
+            let e3 = |_| D::Error::custom("invalid");
+
+            let parts = alloc::borrow::Cow::<'de, str>::deserialize(deserializer)?;
+            if parts.len() != 16 {
+                return Err(e0);
+            }
+            let year = parts[0..4].parse::<i32>().map_err(e1)?;
+            let month = parts[5..7].parse::<u8>().map_err(e1)?;
+            let day = parts[8..10].parse::<u8>().map_err(e1)?;
+            let hour = parts[11..13].parse::<u8>().map_err(e1)?;
+            let minute = parts[14..16].parse::<u8>().map_err(e1)?;
+            return Ok(Self::from_date_time_iso(&DateTime {
+                date: Date::try_new_iso(year, month, day).map_err(e2)?,
+                time: Time::try_new(hour, minute, 0, 0).map_err(e3)?,
+            }));
+        }
+        u32::deserialize(deserializer).map(Self)
+    }
+}
+
 #[cfg(test)]
 mod test {
     use super::*;
@@ -240,5 +309,18 @@ mod test {
             let actual = znt.to_date_time_iso();
             assert_eq!(test_case.output, actual, "{test_case:?}");
         }
+    }
+
+    #[test]
+    fn test_metadata_noop() {
+        let raw = (0x12345678u32).to_unaligned();
+        let znt = ZoneNameTimestamp::from_unaligned(raw);
+        let roundtrip_znt = ZoneNameTimestamp::from_date_time_iso(&znt.to_date_time_iso());
+        let roundtrip_raw = roundtrip_znt.to_unaligned();
+
+        // [0..3] is the datetime. [3] is the metadata.
+        assert_eq!(raw.0[0..3], roundtrip_raw.0[0..3]);
+        assert_eq!(raw.0[3], 0x12);
+        assert_eq!(roundtrip_raw.0[3], 0);
     }
 }
