@@ -164,7 +164,7 @@ impl LanguageIdentifier {
     }
 
     /// Whether this language identifier equals [`Self::default`].
-    pub const fn is_default(&self) -> bool {
+    pub const fn is_unknown(&self) -> bool {
         self.language.is_unknown()
             && self.script.is_none()
             && self.region.is_none()

@@ -260,7 +260,7 @@ impl DateTimeFormatterVariant {
         };
         !date_fields.is_calendar_period()
     }
-    pub fn is_default_constructor(&self) -> bool {
+    pub fn is_unknown_constructor(&self) -> bool {
         use DateTimeFormatterVariantInner as Inner;
         matches!(
             self.inner,
@@ -325,7 +325,7 @@ impl ZonedFormatterVariant {
             _ => unreachable!("unknown variant"),
         }
     }
-    pub fn is_default_constructor(&self) -> bool {
+    pub fn is_unknown_constructor(&self) -> bool {
         matches!(self.zone_style, ZoneStyle::GenericShort)
     }
 }

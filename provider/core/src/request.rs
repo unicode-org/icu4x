@@ -208,7 +208,7 @@ impl<'a> DataIdentifierCow<'a> {
     }
 
     /// Returns whether this id is equal to the default.
-    pub fn is_default(&self) -> bool {
+    pub fn is_unknown(&self) -> bool {
         self.marker_attributes.is_empty() && self.locale.is_unknown()
     }
 }

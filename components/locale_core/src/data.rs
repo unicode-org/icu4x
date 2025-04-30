@@ -322,7 +322,7 @@ impl DataLocale {
     /// assert!(!"de-u-sd-denw".parse::<DataLocale>().unwrap().is_unknown());
     /// assert!(!"und-ES".parse::<DataLocale>().unwrap().is_unknown());
     /// ```
-    pub fn is_default(&self) -> bool {
+    pub fn is_unknown(&self) -> bool {
         self.language.is_unknown()
             && self.script.is_none()
             && self.region.is_none()
