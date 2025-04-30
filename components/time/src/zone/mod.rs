@@ -63,6 +63,7 @@
 pub mod iana;
 mod offset;
 pub mod windows;
+mod zone_name_timestamp;
 
 #[doc(inline)]
 pub use offset::InvalidOffsetError;
@@ -75,6 +76,8 @@ pub use offset::VariantOffsetsCalculatorBorrowed;
 pub use iana::{IanaParser, IanaParserBorrowed};
 #[doc(no_inline)]
 pub use windows::{WindowsParser, WindowsParserBorrowed};
+
+pub use zone_name_timestamp::ZoneNameTimestamp;
 
 use crate::{scaffold::IntoOption, Time};
 use core::fmt;
