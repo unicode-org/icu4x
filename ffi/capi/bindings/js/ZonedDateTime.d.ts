@@ -28,9 +28,9 @@ export class ZonedDateTime {
     /** 
      * Creates a new [`ZonedDateTime`] from an IXDTF string.
      *
-     * See the [Rust documentation for `try_from_str`](https://docs.rs/icu/latest/icu/time/struct.ZonedDateTime.html#method.try_from_str) for more information.
+     * See the [Rust documentation for `try_full_from_str`](https://docs.rs/icu/latest/icu/time/struct.ZonedDateTime.html#method.try_full_from_str) for more information.
      */
-    static fromString(v: string, calendar: Calendar, ianaParser: IanaParser, offsetCalculator: VariantOffsetsCalculator): ZonedDateTime;
+    static fullFromString(v: string, calendar: Calendar, ianaParser: IanaParser, offsetCalculator: VariantOffsetsCalculator): ZonedDateTime;
 
     /** 
      * Creates a new [`ZonedDateTime`] from a location-only IXDTF string.
@@ -51,5 +51,5 @@ export class ZonedDateTime {
      *
      * See the [Rust documentation for `try_lenient_from_str`](https://docs.rs/icu/latest/icu/time/struct.ZonedDateTime.html#method.try_lenient_from_str) for more information.
      */
-    static looseFromString(v: string, calendar: Calendar, ianaParser: IanaParser): ZonedDateTime;
+    static lenientFromString(v: string, calendar: Calendar, ianaParser: IanaParser): ZonedDateTime;
 }

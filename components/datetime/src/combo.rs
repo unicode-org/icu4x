@@ -129,7 +129,7 @@ use crate::{provider::neo::*, scaffold::*};
 /// )
 /// .unwrap();
 ///
-/// let zdt = ZonedDateTime::try_from_str(
+/// let zdt = ZonedDateTime::try_full_from_str(
 ///     "2024-10-18T15:44-0700[America/Los_Angeles]",
 ///     Gregorian,
 ///     IanaParser::new(),

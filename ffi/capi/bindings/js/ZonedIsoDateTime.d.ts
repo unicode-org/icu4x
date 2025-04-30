@@ -27,7 +27,7 @@ export class ZonedIsoDateTime {
     /** 
      * Creates a new [`ZonedIsoDateTime`] from an IXDTF string.
      *
-     * See the [Rust documentation for `try_from_str`](https://docs.rs/icu/latest/icu/time/struct.ZonedDateTime.html#method.try_from_str) for more information.
+     * See the [Rust documentation for `try_full_from_str`](https://docs.rs/icu/latest/icu/time/struct.ZonedDateTime.html#method.try_full_from_str) for more information.
      */
-    static fromString(v: string, ianaParser: IanaParser, offsetCalculator: VariantOffsetsCalculator): ZonedIsoDateTime;
+    static fullFromString(v: string, ianaParser: IanaParser, offsetCalculator: VariantOffsetsCalculator): ZonedIsoDateTime;
 }
