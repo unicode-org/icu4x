@@ -8,10 +8,9 @@ use icu_calendar::{types::RataDie, Date, Iso};
 
 const ZONE_NAME_EPOCH: RataDie = calendrical_calculations::iso::const_fixed_from_iso(1970, 1, 1);
 const QUARTER_HOURS_IN_DAY_I64: i64 = 24 * 4;
-const QUARTER_HOURS_IN_DAY_I32: i32 = 24 * 4;
-#[allow(overflowing_literals)] // this is intentional
-const MIN_QUARTER_HOURS: i64 = 0xFF000000i32 as i64;
-const MAX_QUARTER_HOURS: i64 = 0x00FFFFFFi32 as i64;
+const QUARTER_HOURS_IN_DAY_U32: u32 = 24 * 4;
+const MIN_QUARTER_HOURS: i64 = 0;
+const MAX_QUARTER_HOURS: i64 = 0xFFFFFF;
 
 use crate::{DateTime, Hour, Minute, Nanosecond, Second, Time};
 
@@ -20,7 +19,7 @@ extern crate std;
 /// Internal intermediate type for interfacing with [`ZoneNameTimestamp`].
 #[derive(Debug, Copy, Clone)]
 struct ZoneNameTimestampParts {
-    quarter_hours_since_local_unix_epoch: i32,
+    quarter_hours_since_local_unix_epoch: u32,
     metadata: u8,
 }
 
@@ -29,7 +28,10 @@ impl ZoneNameTimestampParts {
     fn date_time(self) -> DateTime<Iso> {
         let qh = self.quarter_hours_since_local_unix_epoch;
         // Note: the `as` casts below are trivially save because the rem_euclid is in range
-        let (days, remainder) = (qh.div_euclid(QUARTER_HOURS_IN_DAY_I32) as i64, qh.rem_euclid(QUARTER_HOURS_IN_DAY_I32) as u8);
+        let (days, remainder) = (
+            (qh / QUARTER_HOURS_IN_DAY_U32) as i64,
+            (qh % QUARTER_HOURS_IN_DAY_U32) as u8,
+        );
         let (hours, minutes) = (remainder / 4, (remainder % 4) * 15);
         std::eprintln!("recovered: {days} {hours} {minutes}");
         DateTime {
@@ -59,7 +61,7 @@ impl ZoneNameTimestampParts {
         let qh_total = qh_days + (qh_hours as i64) + (qh_minutes as i64);
         std::eprintln!("qh: {qh_days} {qh_hours} {qh_minutes} {qh_total}");
         let qh_clamped = cmp::max(cmp::min(qh_total, MAX_QUARTER_HOURS), MIN_QUARTER_HOURS);
-        let qh_i32 = match i32::try_from(qh_clamped) {
+        let qh_u32 = match u32::try_from(qh_clamped) {
             Ok(x) => x,
             Err(_) => {
                 debug_assert!(
@@ -71,7 +73,7 @@ impl ZoneNameTimestampParts {
         };
         let metadata = if metadata > 0x7F { 0 } else { metadata };
         ZoneNameTimestampParts {
-            quarter_hours_since_local_unix_epoch: qh_i32,
+            quarter_hours_since_local_unix_epoch: qh_u32,
             metadata,
         }
     }
@@ -143,11 +145,8 @@ impl ZoneNameTimestamp {
     }
 
     fn to_parts(self) -> ZoneNameTimestampParts {
-        let metadata = ((self.0 & 0x7F000000) >> 24) as u8;
-        // TODO(rust 1.87): use cast_signed()
-        let qh_masked_i32 = self.0 as i32;
-        #[allow(overflowing_literals)] // intentional
-        let qh_recovered = ((qh_masked_i32 >> 7) & 0xFF000000) | qh_masked_i32;
+        let metadata = ((self.0 & 0xFF000000) >> 24) as u8;
+        let qh_recovered = self.0 & 0x00FFFFFF;
         ZoneNameTimestampParts {
             quarter_hours_since_local_unix_epoch: qh_recovered,
             metadata,
@@ -156,12 +155,8 @@ impl ZoneNameTimestamp {
 
     fn from_parts(parts: ZoneNameTimestampParts) -> Self {
         let metadata_shifted = (parts.metadata as u32) << 24;
-        // TODO(rust 1.87): use cast_unsigned()
-        let qh_masked = (parts.quarter_hours_since_local_unix_epoch as u32) & 0x80FFFFFF;
-        debug_assert_eq!(
-            metadata_shifted & qh_masked,
-            0
-        );
+        debug_assert!(parts.quarter_hours_since_local_unix_epoch <= 0x00FFFFFF);
+        let qh_masked = parts.quarter_hours_since_local_unix_epoch & 0x00FFFFFF;
         Self(metadata_shifted | qh_masked)
     }
 }
@@ -181,13 +176,14 @@ mod test {
     use super::*;
 
     #[test]
-    fn test_roundtrip() {
+    fn test_packing() {
         #[derive(Debug)]
         struct TestCase {
             input: DateTime<Iso>,
             output: DateTime<Iso>,
         }
         for test_case in [
+            // Behavior at the epoch
             TestCase {
                 input: "1970-01-01T00:00".parse().unwrap(),
                 output: "1970-01-01T00:00".parse().unwrap(),
@@ -204,38 +200,40 @@ mod test {
                 input: "1970-01-01T00:29".parse().unwrap(),
                 output: "1970-01-01T00:15".parse().unwrap(),
             },
+            // Min Value Clamping
             TestCase {
                 input: "1969-12-31T23:59".parse().unwrap(),
-                output: "1969-12-31T23:45".parse().unwrap(),
+                output: "1970-01-01T00:00".parse().unwrap(),
             },
             TestCase {
                 input: "1969-12-31T12:00".parse().unwrap(),
-                output: "1969-12-31T12:00".parse().unwrap(),
+                output: "1970-01-01T00:00".parse().unwrap(),
             },
             TestCase {
                 input: "1900-07-15T12:34".parse().unwrap(),
-                output: "1900-07-15T12:30".parse().unwrap(),
+                output: "1970-01-01T00:00".parse().unwrap(),
+            },
+            // Max Value Clamping
+            TestCase {
+                input: "2448-06-25T15:45".parse().unwrap(),
+                output: "2448-06-25T15:45".parse().unwrap(),
             },
             TestCase {
-                input: "2000-07-15T12:34".parse().unwrap(),
-                output: "2000-07-15T12:30".parse().unwrap(),
+                input: "2448-06-25T16:00".parse().unwrap(),
+                output: "2448-06-25T15:45".parse().unwrap(),
             },
             TestCase {
-                input: "2100-07-15T12:34".parse().unwrap(),
-                output: "2100-07-15T12:30".parse().unwrap(),
+                input: "2448-06-26T00:00".parse().unwrap(),
+                output: "2448-06-25T15:45".parse().unwrap(),
             },
             TestCase {
-                // Min Value
-                input: "1491-07-08T08:00".parse().unwrap(),
-                output: "1491-07-08T08:00".parse().unwrap(),
+                input: "2500-01-01T00:00".parse().unwrap(),
+                output: "2448-06-25T15:45".parse().unwrap(),
             },
+            // Other cases
             TestCase {
-                input: "1491-07-08T07:59".parse().unwrap(),
-                output: "1491-07-08T08:00".parse().unwrap(),
-            },
-            TestCase {
-                input: "1000-01-01T00:00".parse().unwrap(),
-                output: "1491-07-08T08:00".parse().unwrap(),
+                input: "2025-04-30T15:18:25".parse().unwrap(),
+                output: "2025-04-30T15:15".parse().unwrap(),
             },
         ] {
             let znt = ZoneNameTimestamp::from_date_time_iso(&test_case.input);
