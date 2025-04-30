@@ -12,8 +12,11 @@ use std::collections::HashSet;
 use std::hash::Hasher;
 use zerotrie::ZeroAsciiIgnoreCaseTrie;
 
-impl DataProvider<TimeZoneIanaMapV1> for SourceDataProvider {
-    fn load(&self, _: DataRequest) -> Result<DataResponse<TimeZoneIanaMapV1>, DataError> {
+impl DataProvider<TimezoneIdentifiersIanaCoreV1> for SourceDataProvider {
+    fn load(
+        &self,
+        _: DataRequest,
+    ) -> Result<DataResponse<TimezoneIdentifiersIanaCoreV1>, DataError> {
         let iana2bcp = self.iana_to_bcp47_map()?;
         let bcp2iana = self.bcp47_to_canonical_iana_map()?;
 
@@ -66,14 +69,17 @@ impl DataProvider<TimeZoneIanaMapV1> for SourceDataProvider {
     }
 }
 
-impl crate::IterableDataProviderCached<TimeZoneIanaMapV1> for SourceDataProvider {
+impl crate::IterableDataProviderCached<TimezoneIdentifiersIanaCoreV1> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
     }
 }
 
-impl DataProvider<TimeZoneIanaNamesV1> for SourceDataProvider {
-    fn load(&self, _: DataRequest) -> Result<DataResponse<TimeZoneIanaNamesV1>, DataError> {
+impl DataProvider<TimezoneIdentifiersIanaExtendedV1> for SourceDataProvider {
+    fn load(
+        &self,
+        _: DataRequest,
+    ) -> Result<DataResponse<TimezoneIdentifiersIanaExtendedV1>, DataError> {
         let iana2bcp = self.iana_to_bcp47_map()?;
         let bcp2iana = self.bcp47_to_canonical_iana_map()?;
 
@@ -112,7 +118,7 @@ impl DataProvider<TimeZoneIanaNamesV1> for SourceDataProvider {
     }
 }
 
-impl crate::IterableDataProviderCached<TimeZoneIanaNamesV1> for SourceDataProvider {
+impl crate::IterableDataProviderCached<TimezoneIdentifiersIanaExtendedV1> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
     }

@@ -12,6 +12,7 @@ pub(crate) mod ethiopian;
 pub(crate) mod gregorian;
 pub(crate) mod hebrew;
 pub(crate) mod hijri;
+mod hijri_ummalqura_data;
 pub(crate) mod indian;
 pub(crate) mod iso;
 pub(crate) mod japanese;

@@ -122,16 +122,16 @@ export class ZonedDateTime {
     /** 
      * Creates a new [`ZonedDateTime`] from an IXDTF string.
      *
-     * See the [Rust documentation for `try_from_str`](https://docs.rs/icu/latest/icu/time/struct.ZonedDateTime.html#method.try_from_str) for more information.
+     * See the [Rust documentation for `try_full_from_str`](https://docs.rs/icu/latest/icu/time/struct.ZonedDateTime.html#method.try_full_from_str) for more information.
      */
-    static fromString(v, calendar, ianaParser, offsetCalculator) {
+    static fullFromString(v, calendar, ianaParser, offsetCalculator) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
         const vSlice = diplomatRuntime.DiplomatBuf.str8(wasm, v);
         
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 13, 4, true);
         
-        const result = wasm.icu4x_ZonedDateTime_from_string_mv1(diplomatReceive.buffer, ...vSlice.splat(), calendar.ffiValue, ianaParser.ffiValue, offsetCalculator.ffiValue);
+        const result = wasm.icu4x_ZonedDateTime_full_from_string_mv1(diplomatReceive.buffer, ...vSlice.splat(), calendar.ffiValue, ianaParser.ffiValue, offsetCalculator.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {
@@ -211,14 +211,14 @@ export class ZonedDateTime {
      *
      * See the [Rust documentation for `try_lenient_from_str`](https://docs.rs/icu/latest/icu/time/struct.ZonedDateTime.html#method.try_lenient_from_str) for more information.
      */
-    static looseFromString(v, calendar, ianaParser) {
+    static lenientFromString(v, calendar, ianaParser) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
         const vSlice = diplomatRuntime.DiplomatBuf.str8(wasm, v);
         
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 13, 4, true);
         
-        const result = wasm.icu4x_ZonedDateTime_loose_from_string_mv1(diplomatReceive.buffer, ...vSlice.splat(), calendar.ffiValue, ianaParser.ffiValue);
+        const result = wasm.icu4x_ZonedDateTime_lenient_from_string_mv1(diplomatReceive.buffer, ...vSlice.splat(), calendar.ffiValue, ianaParser.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {

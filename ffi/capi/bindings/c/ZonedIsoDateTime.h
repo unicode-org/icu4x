@@ -18,8 +18,8 @@
 
 
 
-typedef struct icu4x_ZonedIsoDateTime_from_string_mv1_result {union {ZonedIsoDateTime ok; CalendarParseError err;}; bool is_ok;} icu4x_ZonedIsoDateTime_from_string_mv1_result;
-icu4x_ZonedIsoDateTime_from_string_mv1_result icu4x_ZonedIsoDateTime_from_string_mv1(DiplomatStringView v, const IanaParser* iana_parser, const VariantOffsetsCalculator* offset_calculator);
+typedef struct icu4x_ZonedIsoDateTime_full_from_string_mv1_result {union {ZonedIsoDateTime ok; CalendarParseError err;}; bool is_ok;} icu4x_ZonedIsoDateTime_full_from_string_mv1_result;
+icu4x_ZonedIsoDateTime_full_from_string_mv1_result icu4x_ZonedIsoDateTime_full_from_string_mv1(DiplomatStringView v, const IanaParser* iana_parser, const VariantOffsetsCalculator* offset_calculator);
 
 
 
