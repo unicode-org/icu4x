@@ -29,7 +29,7 @@ pub mod ffi {
     impl ZonedIsoDateTime {
         /// Creates a new [`ZonedIsoDateTime`] from an IXDTF string.
         #[diplomat::rust_link(icu::time::ZonedDateTime::try_full_from_str, FnInStruct)]
-        #[diplomat::rust_link(icu::time::ZonedDateTime::try_from_utf8, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::time::ZonedDateTime::try_full_from_utf8, FnInStruct, hidden)]
         #[diplomat::attr(all(supports = named_constructors, supports = fallible_constructors), named_constructor = "full_from_string")]
         pub fn full_from_string(
             v: &DiplomatStr,
