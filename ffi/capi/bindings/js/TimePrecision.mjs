@@ -100,6 +100,26 @@ export class TimePrecision {
     static Subsecond8 = TimePrecision.#objectValues[11];
     static Subsecond9 = TimePrecision.#objectValues[12];
 
+    /** 
+     * See the [Rust documentation for `try_from_int`](https://docs.rs/icu/latest/icu/datetime/options/enum.SubsecondDigits.html#method.try_from_int) for more information.
+     */
+    static fromSubsecondDigits(digits) {
+        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
+        const result = wasm.icu4x_TimePrecision_from_subsecond_digits_mv1(diplomatReceive.buffer, digits);
+    
+        try {
+            if (!diplomatReceive.resultFlag) {
+                return null;
+            }
+            return new TimePrecision(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
+        }
+        
+        finally {
+            diplomatReceive.free();
+        }
+    }
+
     constructor(value) {
         return this.#internalConstructor(...arguments)
     }
