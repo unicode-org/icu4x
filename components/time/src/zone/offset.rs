@@ -4,7 +4,7 @@
 
 use core::str::FromStr;
 
-use crate::provider::{EighthsOfHourOffset, MinutesSinceEpoch, TimeZoneOffsetsV1};
+use crate::provider::{EighthsOfHourOffset, MinutesSinceEpoch, TimezoneVariantsOffsetsV1};
 use crate::{Time, TimeZone};
 use icu_calendar::Date;
 use icu_calendar::Iso;
@@ -197,7 +197,7 @@ impl FromStr for UtcOffset {
 /// [data provider]: icu_provider
 #[derive(Debug)]
 pub struct VariantOffsetsCalculator {
-    pub(super) offset_period: DataPayload<TimeZoneOffsetsV1>,
+    pub(super) offset_period: DataPayload<TimezoneVariantsOffsetsV1>,
 }
 
 /// The borrowed version of a  [`VariantOffsetsCalculator`]
@@ -240,7 +240,7 @@ impl VariantOffsetsCalculator {
 
     #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::new)]
     pub fn try_new_unstable(
-        provider: &(impl DataProvider<TimeZoneOffsetsV1> + ?Sized),
+        provider: &(impl DataProvider<TimezoneVariantsOffsetsV1> + ?Sized),
     ) -> Result<Self, DataError> {
         let metazone_period = provider.load(Default::default())?.payload;
         Ok(Self {

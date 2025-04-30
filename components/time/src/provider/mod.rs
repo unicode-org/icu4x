@@ -57,10 +57,10 @@ const _: () = {
 #[cfg(feature = "datagen")]
 /// The latest minimum set of markers required by this component.
 pub const MARKERS: &[DataMarkerInfo] = &[
-    iana::TimeZoneIanaNamesV1::INFO,
-    iana::TimeZoneIanaMapV1::INFO,
-    windows::TimeZoneWindowsV1::INFO,
-    TimeZoneOffsetsV1::INFO,
+    iana::TimezoneIdentifiersIanaExtendedV1::INFO,
+    iana::TimezoneIdentifiersIanaCoreV1::INFO,
+    windows::TimezoneIdentifiersWindowsV1::INFO,
+    TimezoneVariantsOffsetsV1::INFO,
 ];
 
 /// Storage type for storing UTC offsets as eights of an hour.
@@ -163,8 +163,8 @@ icu_provider::data_marker!(
     ///
     /// The values are the standard offset, and the daylight offset *relative to the standard offset*. As such,
     /// if the second value is 0, there is no daylight time.
-    TimeZoneOffsetsV1,
-    "time/zone/offsets/v1",
+    TimezoneVariantsOffsetsV1,
+    "timezone/variants/offsets/v1",
     ZeroMap2d<'static, TimeZone, MinutesSinceEpoch, (EighthsOfHourOffset, EighthsOfHourOffset)>,
     is_singleton = true
 );

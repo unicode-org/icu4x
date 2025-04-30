@@ -33,7 +33,7 @@ pub(crate) struct Caches {
     metazone_to_short: Cache<(BTreeMap<String, MetazoneId>, u64)>,
     primary_zones: Cache<BTreeMap<TimeZone, Region>>,
     mz_period: Cache<MetazonePeriod<'static>>,
-    offset_period: Cache<<TimeZoneOffsetsV1 as DynamicDataMarker>::DataStruct>,
+    offset_period: Cache<<TimezoneVariantsOffsetsV1 as DynamicDataMarker>::DataStruct>,
     reverse_metazones: Cache<BTreeMap<(MetazoneId, MzMembership), Vec<TimeZone>>>,
 }
 
@@ -376,7 +376,7 @@ impl IterableDataProviderCached<TimezoneMetazonePeriodsV1> for SourceDataProvide
     }
 }
 
-impl IterableDataProviderCached<TimeZoneOffsetsV1> for SourceDataProvider {
+impl IterableDataProviderCached<TimezoneVariantsOffsetsV1> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
     }
