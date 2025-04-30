@@ -686,7 +686,7 @@ macro_rules! __impl_timezone_names_specific_short_v1 {
                             metadata.locale = Some(fallback_iterator.take());
                             break payload;
                         }
-                        if fallback_iterator.get().is_default() {
+                        if fallback_iterator.get().is_unknown() {
                             return Err(icu_provider::DataErrorKind::IdentifierNotFound.with_req(<icu::datetime::provider::time_zones::TimezoneNamesSpecificShortV1 as icu_provider::DataMarker>::INFO, req));
                         }
                         fallback_iterator.step();

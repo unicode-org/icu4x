@@ -162,7 +162,7 @@ pub mod ffi {
         )]
         pub fn next(&mut self) -> Option<Box<Locale>> {
             let current = self.0.get();
-            if current.is_default() {
+            if current.is_unknown() {
                 None
             } else {
                 let current = *current;

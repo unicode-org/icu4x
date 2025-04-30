@@ -807,7 +807,7 @@ macro_rules! __impl_locale_exemplar_characters_index_v1 {
                             metadata.locale = Some(fallback_iterator.take());
                             break payload;
                         }
-                        if fallback_iterator.get().is_default() {
+                        if fallback_iterator.get().is_unknown() {
                             return Err(icu_provider::DataErrorKind::IdentifierNotFound.with_req(<icu::locale::provider::LocaleExemplarCharactersIndexV1 as icu_provider::DataMarker>::INFO, req));
                         }
                         fallback_iterator.step();

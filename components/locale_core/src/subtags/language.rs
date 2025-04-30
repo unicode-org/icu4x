@@ -70,7 +70,7 @@ impl Language {
 
     /// Tests if the [`Language`] subtag is the default one (`"und"`).
     #[inline]
-    pub const fn is_default(self) -> bool {
+    pub const fn is_unknown(self) -> bool {
         matches!(self, Self::UND)
     }
 }

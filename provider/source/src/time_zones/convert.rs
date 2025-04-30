@@ -97,7 +97,7 @@ impl SourceDataProvider {
 
                 // Etc zones don't have locations, with the exception of Unknown, which we still want to skip in root
                 if canonical_alias.starts_with("Etc/")
-                    && (canonical_alias != "Etc/Unknown" || locale.is_default())
+                    && (canonical_alias != "Etc/Unknown" || locale.is_unknown())
                 {
                     return None;
                 }
@@ -129,7 +129,7 @@ impl SourceDataProvider {
 
         let primary_zones_values = primary_zones.values().copied().collect::<BTreeSet<_>>();
 
-        let region_display_names = if locale.is_default() {
+        let region_display_names = if locale.is_unknown() {
             BTreeMap::default()
         } else {
             let regions = &self

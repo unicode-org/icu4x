@@ -20,7 +20,7 @@ mod algorithms;
 /// algorithm. See *[the design doc]* for a detailed description and [#2243](
 /// https://github.com/unicode-org/icu4x/issues/2243) to track alignment with *UTS #35*.
 ///
-/// If running fallback in a loop, use [`DataLocale::is_default()`] to break from the loop.
+/// If running fallback in a loop, use [`DataLocale::is_unknown()`] to break from the loop.
 ///
 /// # Examples
 ///

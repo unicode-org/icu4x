@@ -131,7 +131,7 @@ impl<'data, LocaleVecFormat: VarZeroVecFormat> BlobSchemaV1<'data, LocaleVecForm
         marker: DataMarkerInfo,
         req: DataRequest,
     ) -> Result<(&'data [u8], Option<u64>), DataError> {
-        if marker.is_singleton && !req.id.locale.is_default() {
+        if marker.is_singleton && !req.id.locale.is_unknown() {
             return Err(DataErrorKind::InvalidRequest.with_req(marker, req));
         }
         let marker_index = self

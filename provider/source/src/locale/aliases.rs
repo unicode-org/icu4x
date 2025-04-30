@@ -39,7 +39,7 @@ impl crate::IterableDataProviderCached<LocaleAliasesV1> for SourceDataProvider {
 //   - alphabetically by each field
 fn appendix_c_cmp(langid: &LanguageIdentifier) -> impl Ord {
     let mut union_size = langid.variants.len() as i8;
-    if !langid.language.is_default() {
+    if !langid.language.is_unknown() {
         union_size += 1;
     }
     if langid.script.is_some() {
@@ -105,7 +105,7 @@ impl From<&cldr_serde::aliases::Resource> for Aliases<'_> {
                         // these in their own map.
                         (_, None, None, true) => language_variants.push((langid, replacement)),
                         // <language> -> <language identifier>
-                        (lang, None, None, false) if !lang.is_default() => {
+                        (lang, None, None, false) if !lang.is_unknown() => {
                             // Relatively few aliases exist for two character language identifiers,
                             // so we store them separately to not slow down canonicalization of
                             // common identifiers.
@@ -119,7 +119,7 @@ impl From<&cldr_serde::aliases::Resource> for Aliases<'_> {
                         // sgn-<region> -> <language>
                         (language, None, Some(region), false)
                             if language == language!("sgn")
-                                && !replacement.language.is_default()
+                                && !replacement.language.is_unknown()
                                 && replacement.script.is_none()
                                 && replacement.region.is_none()
                                 && replacement.variants.is_empty() =>
