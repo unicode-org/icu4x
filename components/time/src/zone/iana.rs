@@ -152,8 +152,8 @@ impl IanaParserBorrowed<'static> {
     #[cfg(feature = "compiled_data")]
     pub fn new() -> Self {
         Self {
-            data: crate::provider::Baked::SINGLETON_TIME_ZONE_IANA_MAP_V1,
-            checksum: crate::provider::Baked::SINGLETON_TIME_ZONE_IANA_MAP_V1_CHECKSUM,
+            data: crate::provider::Baked::SINGLETON_TIMEZONE_IDENTIFIERS_IANA_CORE_V1,
+            checksum: crate::provider::Baked::SINGLETON_TIMEZONE_IDENTIFIERS_IANA_CORE_V1_CHECKSUM,
         }
     }
 
@@ -312,7 +312,7 @@ where
     #[cfg(feature = "compiled_data")]
     pub fn try_new_with_parser(parser: I) -> Result<Self, DataError> {
         if parser.as_ref().checksum
-            != crate::provider::Baked::SINGLETON_TIME_ZONE_IANA_NAMES_V1_CHECKSUM
+            != crate::provider::Baked::SINGLETON_TIMEZONE_IDENTIFIERS_IANA_EXTENDED_V1_CHECKSUM
         {
             return Err(
                 DataErrorKind::InconsistentData(TimezoneIdentifiersIanaCoreV1::INFO)
@@ -322,7 +322,7 @@ where
         Ok(Self {
             inner: parser,
             data: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_TIME_ZONE_IANA_NAMES_V1,
+                crate::provider::Baked::SINGLETON_TIMEZONE_IDENTIFIERS_IANA_EXTENDED_V1,
             ),
         })
     }
@@ -393,12 +393,12 @@ impl IanaParserExtendedBorrowed<'static> {
     #[cfg(feature = "compiled_data")]
     pub fn new() -> Self {
         const _: () = assert!(
-            crate::provider::Baked::SINGLETON_TIME_ZONE_IANA_MAP_V1_CHECKSUM
-                == crate::provider::Baked::SINGLETON_TIME_ZONE_IANA_NAMES_V1_CHECKSUM,
+            crate::provider::Baked::SINGLETON_TIMEZONE_IDENTIFIERS_IANA_CORE_V1_CHECKSUM
+                == crate::provider::Baked::SINGLETON_TIMEZONE_IDENTIFIERS_IANA_EXTENDED_V1_CHECKSUM,
         );
         Self {
             inner: IanaParserBorrowed::new(),
-            data: crate::provider::Baked::SINGLETON_TIME_ZONE_IANA_NAMES_V1,
+            data: crate::provider::Baked::SINGLETON_TIMEZONE_IDENTIFIERS_IANA_EXTENDED_V1,
         }
     }
 

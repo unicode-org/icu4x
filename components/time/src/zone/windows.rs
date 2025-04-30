@@ -106,7 +106,7 @@ impl WindowsParserBorrowed<'_> {
     #[cfg(feature = "compiled_data")]
     pub fn new() -> Self {
         WindowsParserBorrowed {
-            data: crate::provider::Baked::SINGLETON_TIME_ZONE_WINDOWS_V1,
+            data: crate::provider::Baked::SINGLETON_TIMEZONE_IDENTIFIERS_WINDOWS_V1,
         }
     }
 

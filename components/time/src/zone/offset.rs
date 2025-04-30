@@ -225,7 +225,7 @@ impl VariantOffsetsCalculator {
     #[allow(clippy::new_ret_no_self)]
     pub const fn new() -> VariantOffsetsCalculatorBorrowed<'static> {
         VariantOffsetsCalculatorBorrowed {
-            offset_period: crate::provider::Baked::SINGLETON_TIME_ZONE_OFFSETS_V1,
+            offset_period: crate::provider::Baked::SINGLETON_TIMEZONE_VARIANTS_OFFSETS_V1,
         }
     }
 
@@ -268,7 +268,7 @@ impl VariantOffsetsCalculatorBorrowed<'static> {
     #[inline]
     pub const fn new() -> Self {
         Self {
-            offset_period: crate::provider::Baked::SINGLETON_TIME_ZONE_OFFSETS_V1,
+            offset_period: crate::provider::Baked::SINGLETON_TIMEZONE_VARIANTS_OFFSETS_V1,
         }
     }
 

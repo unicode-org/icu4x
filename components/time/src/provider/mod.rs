@@ -48,10 +48,10 @@ const _: () = {
         pub use crate as time;
     }
     make_provider!(Baked);
-    impl_time_zone_iana_map_v1!(Baked);
-    impl_time_zone_iana_names_v1!(Baked);
-    impl_time_zone_windows_v1!(Baked);
-    impl_time_zone_offsets_v1!(Baked);
+    impl_timezone_identifiers_iana_extended_v1!(Baked);
+    impl_timezone_identifiers_iana_core_v1!(Baked);
+    impl_timezone_identifiers_windows_v1!(Baked);
+    impl_timezone_variants_offsets_v1!(Baked);
 };
 
 #[cfg(feature = "datagen")]
