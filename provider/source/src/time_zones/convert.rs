@@ -312,7 +312,7 @@ impl SourceDataProvider {
 
     pub(crate) fn offset_period(
         &self,
-    ) -> Result<&<TimeZoneOffsetsV1 as DynamicDataMarker>::DataStruct, DataError> {
+    ) -> Result<&<TimezoneVariantsOffsetsV1 as DynamicDataMarker>::DataStruct, DataError> {
         let tzdb = self.tzdb()?.transitions()?;
 
         self.cldr()?
@@ -626,9 +626,9 @@ impl DataProvider<TimezoneMetazonePeriodsV1> for SourceDataProvider {
     }
 }
 
-impl DataProvider<TimeZoneOffsetsV1> for SourceDataProvider {
-    fn load(&self, req: DataRequest) -> Result<DataResponse<TimeZoneOffsetsV1>, DataError> {
-        self.check_req::<TimeZoneOffsetsV1>(req)?;
+impl DataProvider<TimezoneVariantsOffsetsV1> for SourceDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<TimezoneVariantsOffsetsV1>, DataError> {
+        self.check_req::<TimezoneVariantsOffsetsV1>(req)?;
 
         Ok(DataResponse {
             metadata: Default::default(),

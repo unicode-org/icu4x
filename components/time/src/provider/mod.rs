@@ -48,19 +48,19 @@ const _: () = {
         pub use crate as time;
     }
     make_provider!(Baked);
-    impl_time_zone_iana_map_v1!(Baked);
-    impl_time_zone_iana_names_v1!(Baked);
-    impl_time_zone_windows_v1!(Baked);
-    impl_time_zone_offsets_v1!(Baked);
+    impl_timezone_identifiers_iana_extended_v1!(Baked);
+    impl_timezone_identifiers_iana_core_v1!(Baked);
+    impl_timezone_identifiers_windows_v1!(Baked);
+    impl_timezone_variants_offsets_v1!(Baked);
 };
 
 #[cfg(feature = "datagen")]
 /// The latest minimum set of markers required by this component.
 pub const MARKERS: &[DataMarkerInfo] = &[
-    iana::TimeZoneIanaNamesV1::INFO,
-    iana::TimeZoneIanaMapV1::INFO,
-    windows::TimeZoneWindowsV1::INFO,
-    TimeZoneOffsetsV1::INFO,
+    iana::TimezoneIdentifiersIanaExtendedV1::INFO,
+    iana::TimezoneIdentifiersIanaCoreV1::INFO,
+    windows::TimezoneIdentifiersWindowsV1::INFO,
+    TimezoneVariantsOffsetsV1::INFO,
 ];
 
 /// Storage type for storing UTC offsets as eights of an hour.
@@ -163,8 +163,8 @@ icu_provider::data_marker!(
     ///
     /// The values are the standard offset, and the daylight offset *relative to the standard offset*. As such,
     /// if the second value is 0, there is no daylight time.
-    TimeZoneOffsetsV1,
-    "time/zone/offsets/v1",
+    TimezoneVariantsOffsetsV1,
+    "timezone/variants/offsets/v1",
     ZeroMap2d<'static, TimeZone, MinutesSinceEpoch, (EighthsOfHourOffset, EighthsOfHourOffset)>,
     is_singleton = true
 );

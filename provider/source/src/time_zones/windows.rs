@@ -6,15 +6,18 @@ use std::collections::{BTreeMap, BTreeSet, HashSet};
 
 use crate::{cldr_serde, SourceDataProvider};
 use icu::time::{
-    provider::windows::{TimeZoneWindowsV1, WindowsZonesToBcp47Map},
+    provider::windows::{TimezoneIdentifiersWindowsV1, WindowsZonesToBcp47Map},
     TimeZone,
 };
 use icu_provider::prelude::*;
 use zerotrie::ZeroTrieSimpleAscii;
 use zerovec::ZeroVec;
 
-impl DataProvider<TimeZoneWindowsV1> for SourceDataProvider {
-    fn load(&self, _: DataRequest) -> Result<DataResponse<TimeZoneWindowsV1>, DataError> {
+impl DataProvider<TimezoneIdentifiersWindowsV1> for SourceDataProvider {
+    fn load(
+        &self,
+        _: DataRequest,
+    ) -> Result<DataResponse<TimezoneIdentifiersWindowsV1>, DataError> {
         let resource: &cldr_serde::time_zones::windows_zones::WindowsResource = self
             .cldr()?
             .core()
@@ -75,7 +78,7 @@ impl DataProvider<TimeZoneWindowsV1> for SourceDataProvider {
     }
 }
 
-impl crate::IterableDataProviderCached<TimeZoneWindowsV1> for SourceDataProvider {
+impl crate::IterableDataProviderCached<TimezoneIdentifiersWindowsV1> for SourceDataProvider {
     fn iter_ids_cached(
         &self,
     ) -> Result<std::collections::HashSet<DataIdentifierCow<'static>>, DataError> {
@@ -86,7 +89,7 @@ impl crate::IterableDataProviderCached<TimeZoneWindowsV1> for SourceDataProvider
 #[cfg(test)]
 mod tests {
     use icu::locale::subtags::subtag;
-    use icu::time::{provider::windows::TimeZoneWindowsV1, TimeZone};
+    use icu::time::{provider::windows::TimezoneIdentifiersWindowsV1, TimeZone};
     use icu_provider::{DataProvider, DataRequest, DataResponse};
 
     use crate::SourceDataProvider;
@@ -94,7 +97,7 @@ mod tests {
     #[test]
     fn windows_to_iana_basic_test() {
         let provider = SourceDataProvider::new_testing();
-        let provider_response: DataResponse<TimeZoneWindowsV1> =
+        let provider_response: DataResponse<TimezoneIdentifiersWindowsV1> =
             provider.load(DataRequest::default()).unwrap();
         let windows_zones = provider_response.payload.get();
 
@@ -129,7 +132,7 @@ mod tests {
     #[test]
     fn windows_to_iana_with_territories() {
         let provider = SourceDataProvider::new_testing();
-        let provider_response: DataResponse<TimeZoneWindowsV1> =
+        let provider_response: DataResponse<TimezoneIdentifiersWindowsV1> =
             provider.load(DataRequest::default()).unwrap();
         let windows_zones = provider_response.payload.get();
 
