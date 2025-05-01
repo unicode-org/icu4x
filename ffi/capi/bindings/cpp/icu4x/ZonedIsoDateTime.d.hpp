@@ -60,9 +60,9 @@ struct ZonedIsoDateTime {
   inline static diplomat::result<icu4x::ZonedIsoDateTime, icu4x::CalendarParseError> full_from_string(std::string_view v, const icu4x::IanaParser& iana_parser, const icu4x::VariantOffsetsCalculator& offset_calculator);
 
   /**
-   * Creates a new [`ZonedDateTime`] from milliseconds since epoch (timestamp) and a UTC offset.
+   * Creates a new [`ZonedIsoDateTime`] from milliseconds since epoch (timestamp) and a UTC offset.
    *
-   * Note: [`ZonedDateTime`]s created with this constructor can only be formatted using localized offset zone styles.
+   * Note: [`ZonedIsoDateTime`]s created with this constructor can only be formatted using localized offset zone styles.
    *
    * See the [Rust documentation for `from_epoch_milliseconds_and_utc_offset`](https://docs.rs/icu/latest/icu/time/struct.ZonedDateTime.html#method.from_epoch_milliseconds_and_utc_offset) for more information.
    */

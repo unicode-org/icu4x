@@ -149,9 +149,9 @@ export class ZonedIsoDateTime {
     }
 
     /** 
-     * Creates a new [`ZonedDateTime`] from milliseconds since epoch (timestamp) and a UTC offset.
+     * Creates a new [`ZonedIsoDateTime`] from milliseconds since epoch (timestamp) and a UTC offset.
      *
-     * Note: [`ZonedDateTime`]s created with this constructor can only be formatted using localized offset zone styles.
+     * Note: [`ZonedIsoDateTime`]s created with this constructor can only be formatted using localized offset zone styles.
      *
      * See the [Rust documentation for `from_epoch_milliseconds_and_utc_offset`](https://docs.rs/icu/latest/icu/time/struct.ZonedDateTime.html#method.from_epoch_milliseconds_and_utc_offset) for more information.
      */
