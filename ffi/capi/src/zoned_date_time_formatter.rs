@@ -525,8 +525,8 @@ pub mod ffi {
             if let Some(offset) = zone.offset {
                 input.set_time_zone_utc_offset(offset);
             }
-            if let Some(local_time) = zone.local_time {
-                input.set_time_zone_local_time(local_time);
+            if let Some(zone_name_timestamp) = zone.zone_name_timestamp {
+                input.set_time_zone_name_timestamp(zone_name_timestamp);
             }
             if let Some(variant) = zone.variant {
                 input.set_time_zone_variant(variant);
@@ -1019,8 +1019,8 @@ pub mod ffi {
             if let Some(offset) = zone.offset {
                 input.set_time_zone_utc_offset(offset);
             }
-            if let Some(local_time) = zone.local_time {
-                input.set_time_zone_local_time(local_time);
+            if let Some(zone_name_timestamp) = zone.zone_name_timestamp {
+                input.set_time_zone_name_timestamp(zone_name_timestamp);
             }
             if let Some(variant) = zone.variant {
                 input.set_time_zone_variant(variant);

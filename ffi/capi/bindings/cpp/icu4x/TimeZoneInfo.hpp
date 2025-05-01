@@ -30,10 +30,10 @@ namespace capi {
     
     icu4x::capi::TimeZone* icu4x_TimeZoneInfo_id_mv1(const icu4x::capi::TimeZoneInfo* self);
     
-    icu4x::capi::TimeZoneInfo* icu4x_TimeZoneInfo_at_time_mv1(const icu4x::capi::TimeZoneInfo* self, const icu4x::capi::IsoDate* date, const icu4x::capi::Time* time);
+    icu4x::capi::TimeZoneInfo* icu4x_TimeZoneInfo_at_date_time_iso_mv1(const icu4x::capi::TimeZoneInfo* self, const icu4x::capi::IsoDate* date, const icu4x::capi::Time* time);
     
-    typedef struct icu4x_TimeZoneInfo_local_time_mv1_result {union {icu4x::capi::IsoDateTime ok; }; bool is_ok;} icu4x_TimeZoneInfo_local_time_mv1_result;
-    icu4x_TimeZoneInfo_local_time_mv1_result icu4x_TimeZoneInfo_local_time_mv1(const icu4x::capi::TimeZoneInfo* self);
+    typedef struct icu4x_TimeZoneInfo_zone_name_date_time_mv1_result {union {icu4x::capi::IsoDateTime ok; }; bool is_ok;} icu4x_TimeZoneInfo_zone_name_date_time_mv1_result;
+    icu4x_TimeZoneInfo_zone_name_date_time_mv1_result icu4x_TimeZoneInfo_zone_name_date_time_mv1(const icu4x::capi::TimeZoneInfo* self);
     
     icu4x::capi::TimeZoneInfo* icu4x_TimeZoneInfo_with_variant_mv1(const icu4x::capi::TimeZoneInfo* self, icu4x::capi::TimeZoneVariant time_variant);
     
@@ -67,15 +67,15 @@ inline std::unique_ptr<icu4x::TimeZone> icu4x::TimeZoneInfo::id() const {
   return std::unique_ptr<icu4x::TimeZone>(icu4x::TimeZone::FromFFI(result));
 }
 
-inline std::unique_ptr<icu4x::TimeZoneInfo> icu4x::TimeZoneInfo::at_time(const icu4x::IsoDate& date, const icu4x::Time& time) const {
-  auto result = icu4x::capi::icu4x_TimeZoneInfo_at_time_mv1(this->AsFFI(),
+inline std::unique_ptr<icu4x::TimeZoneInfo> icu4x::TimeZoneInfo::at_date_time_iso(const icu4x::IsoDate& date, const icu4x::Time& time) const {
+  auto result = icu4x::capi::icu4x_TimeZoneInfo_at_date_time_iso_mv1(this->AsFFI(),
     date.AsFFI(),
     time.AsFFI());
   return std::unique_ptr<icu4x::TimeZoneInfo>(icu4x::TimeZoneInfo::FromFFI(result));
 }
 
-inline std::optional<icu4x::IsoDateTime> icu4x::TimeZoneInfo::local_time() const {
-  auto result = icu4x::capi::icu4x_TimeZoneInfo_local_time_mv1(this->AsFFI());
+inline std::optional<icu4x::IsoDateTime> icu4x::TimeZoneInfo::zone_name_date_time() const {
+  auto result = icu4x::capi::icu4x_TimeZoneInfo_zone_name_date_time_mv1(this->AsFFI());
   return result.is_ok ? std::optional<icu4x::IsoDateTime>(icu4x::IsoDateTime::FromFFI(result.ok)) : std::nullopt;
 }
 

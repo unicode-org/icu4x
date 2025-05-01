@@ -63,6 +63,7 @@
 pub mod iana;
 mod offset;
 pub mod windows;
+mod zone_name_timestamp;
 
 #[doc(inline)]
 pub use offset::InvalidOffsetError;
@@ -76,10 +77,13 @@ pub use iana::{IanaParser, IanaParserBorrowed};
 #[doc(no_inline)]
 pub use windows::{WindowsParser, WindowsParserBorrowed};
 
-use crate::{scaffold::IntoOption, Time};
+pub use zone_name_timestamp::ZoneNameTimestamp;
+
+use crate::scaffold::IntoOption;
+use crate::DateTime;
 use core::fmt;
 use core::ops::Deref;
-use icu_calendar::{Date, Iso};
+use icu_calendar::Iso;
 use icu_locale_core::subtags::{subtag, Subtag};
 use icu_provider::prelude::yoke;
 use zerovec::ule::{AsULE, ULE};
@@ -102,7 +106,7 @@ pub mod models {
         /// The zone variant, if required for this time zone model.
         type TimeZoneVariant: IntoOption<TimeZoneVariant> + fmt::Debug + Copy;
         /// The local time, if required for this time zone model.
-        type LocalTime: IntoOption<(Date<Iso>, Time)> + fmt::Debug + Copy;
+        type ZoneNameTimestamp: IntoOption<ZoneNameTimestamp> + fmt::Debug + Copy;
     }
 
     /// A time zone containing a time zone ID and optional offset.
@@ -113,7 +117,7 @@ pub mod models {
     impl private::Sealed for Base {}
     impl TimeZoneModel for Base {
         type TimeZoneVariant = ();
-        type LocalTime = ();
+        type ZoneNameTimestamp = ();
     }
 
     /// A time zone containing a time zone ID, optional offset, and local time.
@@ -124,7 +128,7 @@ pub mod models {
     impl private::Sealed for AtTime {}
     impl TimeZoneModel for AtTime {
         type TimeZoneVariant = ();
-        type LocalTime = (Date<Iso>, Time);
+        type ZoneNameTimestamp = ZoneNameTimestamp;
     }
 
     /// A time zone containing a time zone ID, optional offset, local time, and zone variant.
@@ -135,7 +139,7 @@ pub mod models {
     impl private::Sealed for Full {}
     impl TimeZoneModel for Full {
         type TimeZoneVariant = TimeZoneVariant;
-        type LocalTime = (Date<Iso>, Time);
+        type ZoneNameTimestamp = ZoneNameTimestamp;
     }
 }
 
@@ -264,6 +268,7 @@ impl<'a> zerovec::maps::ZeroMapKV<'a> for TimeZone {
 /// use icu::calendar::Date;
 /// use icu::time::zone::IanaParser;
 /// use icu::time::zone::TimeZoneVariant;
+/// use icu::time::DateTime;
 /// use icu::time::Time;
 /// use icu::time::TimeZone;
 /// use icu::locale::subtags::subtag;
@@ -279,7 +284,7 @@ impl<'a> zerovec::maps::ZeroMapKV<'a> for TimeZone {
 ///
 /// // Extend to a TimeZoneInfo<AtTime> by adding a local time
 /// let time_zone_at_time = time_zone
-///     .at_time((Date::try_new_iso(2023, 12, 2).unwrap(), Time::start_of_day()));
+///     .at_date_time_iso(&DateTime { date: Date::try_new_iso(2023, 12, 2).unwrap(), time: Time::start_of_day() });
 ///
 /// // Extend to a TimeZoneInfo<Full> by adding a zone variant
 /// let time_zone_with_variant =
@@ -290,7 +295,7 @@ impl<'a> zerovec::maps::ZeroMapKV<'a> for TimeZone {
 pub struct TimeZoneInfo<Model: models::TimeZoneModel> {
     id: TimeZone,
     offset: Option<UtcOffset>,
-    local_time: Model::LocalTime,
+    zone_name_timestamp: Model::ZoneNameTimestamp,
     variant: Model::TimeZoneVariant,
 }
 
@@ -318,11 +323,11 @@ impl<Model: models::TimeZoneModel> TimeZoneInfo<Model> {
 
 impl<Model> TimeZoneInfo<Model>
 where
-    Model: models::TimeZoneModel<LocalTime = (Date<Iso>, Time)>,
+    Model: models::TimeZoneModel<ZoneNameTimestamp = ZoneNameTimestamp>,
 {
     /// The time at which to interpret the time zone.
-    pub fn local_time(self) -> (Date<Iso>, Time) {
-        self.local_time
+    pub fn zone_name_timestamp(self) -> ZoneNameTimestamp {
+        self.zone_name_timestamp
     }
 }
 
@@ -344,7 +349,7 @@ impl TimeZone {
         TimeZoneInfo {
             offset,
             id: self,
-            local_time: (),
+            zone_name_timestamp: (),
             variant: (),
         }
     }
@@ -354,7 +359,7 @@ impl TimeZone {
         TimeZoneInfo {
             offset: None,
             id: self,
-            local_time: (),
+            zone_name_timestamp: (),
             variant: (),
         }
     }
@@ -371,14 +376,22 @@ impl TimeZoneInfo<models::Base> {
         TimeZone(subtag!("utc")).with_offset(Some(UtcOffset::zero()))
     }
 
-    /// Sets a local time on this time zone.
-    pub const fn at_time(self, local_time: (Date<Iso>, Time)) -> TimeZoneInfo<models::AtTime> {
+    /// Sets the [`ZoneNameTimestamp`] field.
+    pub fn with_zone_name_timestamp(
+        self,
+        zone_name_timestamp: ZoneNameTimestamp,
+    ) -> TimeZoneInfo<models::AtTime> {
         TimeZoneInfo {
             offset: self.offset,
             id: self.id,
-            local_time,
+            zone_name_timestamp,
             variant: (),
         }
+    }
+
+    /// Sets the [`ZoneNameTimestamp`] to the given local datetime.
+    pub fn at_date_time_iso(self, date_time: &DateTime<Iso>) -> TimeZoneInfo<models::AtTime> {
+        Self::with_zone_name_timestamp(self, ZoneNameTimestamp::from_date_time_iso(date_time))
     }
 }
 
@@ -388,7 +401,7 @@ impl TimeZoneInfo<models::AtTime> {
         TimeZoneInfo {
             offset: self.offset,
             id: self.id,
-            local_time: self.local_time,
+            zone_name_timestamp: self.zone_name_timestamp,
             variant,
         }
     }
@@ -403,6 +416,7 @@ impl TimeZoneInfo<models::AtTime> {
     /// # Example
     /// ```
     /// use icu::calendar::Date;
+    /// use icu::time::DateTime;
     /// use icu::time::Time;
     /// use icu::time::TimeZone;
     /// use icu::time::zone::TimeZoneVariant;
@@ -412,7 +426,7 @@ impl TimeZoneInfo<models::AtTime> {
     /// // Chicago at UTC-6
     /// let info = TimeZone(subtag!("uschi"))
     ///     .with_offset("-0600".parse().ok())
-    ///     .at_time((Date::try_new_iso(2023, 12, 2).unwrap(), Time::start_of_day()))
+    ///     .at_date_time_iso(&DateTime { date: Date::try_new_iso(2023, 12, 2).unwrap(), time: Time::start_of_day() })
     ///     .infer_variant(VariantOffsetsCalculator::new());
     ///
     /// assert_eq!(info.variant(), TimeZoneVariant::Standard);
@@ -420,7 +434,7 @@ impl TimeZoneInfo<models::AtTime> {
     /// // Chicago at at UTC-5
     /// let info = TimeZone(subtag!("uschi"))
     ///     .with_offset("-0500".parse().ok())
-    ///     .at_time((Date::try_new_iso(2023, 6, 2).unwrap(), Time::start_of_day()))
+    ///     .at_date_time_iso(&DateTime { date: Date::try_new_iso(2023, 6, 2).unwrap(), time: Time::start_of_day() })
     ///     .infer_variant(VariantOffsetsCalculator::new());
     ///
     /// assert_eq!(info.variant(), TimeZoneVariant::Daylight);
@@ -428,7 +442,7 @@ impl TimeZoneInfo<models::AtTime> {
     /// // Chicago at UTC-7
     /// let info = TimeZone(subtag!("uschi"))
     ///     .with_offset("-0700".parse().ok())
-    ///     .at_time((Date::try_new_iso(2023, 12, 2).unwrap(), Time::start_of_day()))
+    ///     .at_date_time_iso(&DateTime { date: Date::try_new_iso(2023, 12, 2).unwrap(), time: Time::start_of_day() })
     ///     .infer_variant(VariantOffsetsCalculator::new());
     ///
     /// // Whatever it is, it's not Chicago
@@ -442,11 +456,11 @@ impl TimeZoneInfo<models::AtTime> {
         let Some(offset) = self.offset else {
             return TimeZone::unknown()
                 .with_offset(self.offset)
-                .at_time(self.local_time)
+                .with_zone_name_timestamp(self.zone_name_timestamp)
                 .with_variant(TimeZoneVariant::Standard);
         };
         let Some(variant) = calculator
-            .compute_offsets_from_time_zone(self.id, self.local_time)
+            .compute_offsets_from_time_zone(self.id, self.zone_name_timestamp)
             .and_then(|os| {
                 if os.standard == offset {
                     Some(TimeZoneVariant::Standard)
@@ -459,7 +473,7 @@ impl TimeZoneInfo<models::AtTime> {
         else {
             return TimeZone::unknown()
                 .with_offset(self.offset)
-                .at_time(self.local_time)
+                .with_zone_name_timestamp(self.zone_name_timestamp)
                 .with_variant(TimeZoneVariant::Standard);
         };
         self.with_variant(variant)

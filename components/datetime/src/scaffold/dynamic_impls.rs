@@ -5,14 +5,11 @@
 use super::*;
 use crate::fieldsets::enums::*;
 use crate::provider::{neo::*, time_zones::tz, *};
-use icu_calendar::{
-    types::{DayOfMonth, DayOfYear, MonthInfo, Weekday, YearInfo},
-    Date, Iso,
-};
+use icu_calendar::types::{DayOfMonth, DayOfYear, MonthInfo, Weekday, YearInfo};
 use icu_provider::marker::NeverMarker;
 use icu_time::{
-    zone::{TimeZoneVariant, UtcOffset},
-    Hour, Minute, Nanosecond, Second, Time, TimeZone,
+    zone::{TimeZoneVariant, UtcOffset, ZoneNameTimestamp},
+    Hour, Minute, Nanosecond, Second, TimeZone,
 };
 
 impl UnstableSealed for DateFieldSet {}
@@ -200,7 +197,7 @@ impl ZoneMarkers for ZoneFieldSet {
     type TimeZoneIdInput = datetime_marker_helper!(@input/timezone/id, yes);
     type TimeZoneOffsetInput = datetime_marker_helper!(@input/timezone/offset, yes);
     type TimeZoneVariantInput = datetime_marker_helper!(@input/timezone/variant, yes);
-    type TimeZoneLocalTimeInput = datetime_marker_helper!(@input/timezone/local_time, yes);
+    type TimeZoneNameTimestampInput = datetime_marker_helper!(@input/timezone/local_time, yes);
     type EssentialsV1 = datetime_marker_helper!(@data/zone/essentials, yes);
     type LocationsV1 = datetime_marker_helper!(@data/zone/locations, yes);
     type LocationsRootV1 = datetime_marker_helper!(@data/zone/locations_root, yes);
