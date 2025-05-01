@@ -11,12 +11,12 @@ use zerovec::{maps::ZeroMapKV, ule::AsULE, ZeroSlice, ZeroVec};
 const ZONE_NAME_EPOCH: RataDie = calendrical_calculations::iso::const_fixed_from_iso(1970, 1, 1);
 const QUARTER_HOURS_IN_DAY_I64: i64 = 24 * 4;
 const QUARTER_HOURS_IN_DAY_U32: u32 = 24 * 4;
-const MIN_QUARTER_HOURS: i64 = 0;
-const MAX_QUARTER_HOURS: i64 = 0xFFFFFF;
+const MIN_QUARTER_HOURS_I64: i64 = 0;
+const MIN_QUARTER_HOURS_U32: u32 = 0;
+const MAX_QUARTER_HOURS_I64: i64 = 0xFFFFFF;
+const MAX_QUARTER_HOURS_U32: u32 = 0xFFFFFF;
 
 use crate::{DateTime, Hour, Minute, Nanosecond, Second, Time};
-
-extern crate std;
 
 /// Internal intermediate type for interfacing with [`ZoneNameTimestamp`].
 #[derive(Debug, Copy, Clone)]
@@ -35,7 +35,6 @@ impl ZoneNameTimestampParts {
             (qh % QUARTER_HOURS_IN_DAY_U32) as u8,
         );
         let (hours, minutes) = (remainder / 4, (remainder % 4) * 15);
-        std::eprintln!("recovered: {days} {hours} {minutes}");
         DateTime {
             date: Date::from_rata_die(ZONE_NAME_EPOCH + days, Iso),
             time: Time {
@@ -61,8 +60,10 @@ impl ZoneNameTimestampParts {
         let qh_hours = date_time.time.hour.number() * 4;
         let qh_minutes = date_time.time.minute.number() / 15;
         let qh_total = qh_days + (qh_hours as i64) + (qh_minutes as i64);
-        std::eprintln!("qh: {qh_days} {qh_hours} {qh_minutes} {qh_total}");
-        let qh_clamped = cmp::max(cmp::min(qh_total, MAX_QUARTER_HOURS), MIN_QUARTER_HOURS);
+        let qh_clamped = cmp::max(
+            cmp::min(qh_total, MAX_QUARTER_HOURS_I64),
+            MIN_QUARTER_HOURS_I64,
+        );
         let qh_u32 = match u32::try_from(qh_clamped) {
             Ok(x) => x,
             Err(_) => {
@@ -82,13 +83,22 @@ impl ZoneNameTimestampParts {
 }
 
 /// The moment in time for resolving a time zone name.
+/// 
+/// **What is this for?** Most software deals with _time zone transitions_,
+/// computing the UTC offset on a given point in time. In ICU4X, we deal with
+/// _time zone display names_. Whereas time zone transitions occur multiple
+/// times per year in some time zones, the set of display names changes more
+/// rarely. For example, ICU4X needs to know when a region switches from
+/// Eastern Time to Central Time.
 ///
-/// When a location-based time zone, such as "America/Ciudad_Juarez", switches
-/// to a whole different set of rules, the time zone display name, sometimes
-/// called the "metazone", can also change. This type is used for picking the
-/// set of time zone display names.
+/// This type can only represent display name changes after 1970, and only to
+/// a coarse (15-minute) granularity, which is sufficient for CLDR and TZDB
+/// data within that time frame.
 ///
 /// # Examples
+///
+/// The region of Metlakatla (Alaska) switched between Pacific Time and
+/// Alaska Time multiple times between 2010 and 2025.
 ///
 /// ```
 /// use icu::time::zone::IanaParser;
@@ -98,7 +108,7 @@ impl ZoneNameTimestampParts {
 /// use icu::locale::locale;
 /// use writeable::assert_writeable_eq;
 ///
-/// let juba = IanaParser::new().parse("America/Chihuahua");
+/// let metlakatla = IanaParser::new().parse("America/Metlakatla");
 ///
 /// let zone_formatter = NoCalendarFormatter::try_new(
 ///     locale!("en-US").into(),
@@ -106,23 +116,25 @@ impl ZoneNameTimestampParts {
 /// )
 /// .unwrap();
 ///
-/// let time_zone_info_2015 = juba.without_offset().at_date_time_iso(&"2015-01-01T00:00".parse().unwrap());
-/// let time_zone_info_2025 = juba.without_offset().at_date_time_iso(&"2025-01-01T00:00".parse().unwrap());
+/// let time_zone_info_2010 = metlakatla.without_offset().at_date_time_iso(&"2010-01-01T00:00".parse().unwrap());
+/// let time_zone_info_2025 = metlakatla.without_offset().at_date_time_iso(&"2025-01-01T00:00".parse().unwrap());
 ///
+/// // TimeZoneInfo::at_date_time_iso and ZoneNameTimestamp::from_date_time_iso are equivalent:
 /// assert_eq!(
-///     time_zone_info_2015.zone_name_timestamp(),
-///     ZoneNameTimestamp::from_date_time_iso(&"2015-01-01T00:00".parse().unwrap())
+///     time_zone_info_2010.zone_name_timestamp(),
+///     ZoneNameTimestamp::from_date_time_iso(&"2010-01-01T00:00".parse().unwrap())
 /// );
 /// assert_eq!(
 ///     time_zone_info_2025.zone_name_timestamp(),
 ///     ZoneNameTimestamp::from_date_time_iso(&"2025-01-01T00:00".parse().unwrap())
 /// );
 ///
-/// let name_2015 = zone_formatter.format(&time_zone_info_2015);
+/// // Check the display names:
+/// let name_2010 = zone_formatter.format(&time_zone_info_2010);
 /// let name_2025 = zone_formatter.format(&time_zone_info_2025);
 ///
-/// assert_writeable_eq!(name_2015, "South Sudan Time");
-/// assert_writeable_eq!(name_2025, "def");
+/// assert_writeable_eq!(name_2010, "Pacific Time");
+/// assert_writeable_eq!(name_2025, "Alaska Time");
 /// ```
 #[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]
 pub struct ZoneNameTimestamp(u32);
@@ -133,7 +145,6 @@ impl ZoneNameTimestamp {
     /// For more information, see [`Self::from_date_time_iso()`].
     pub fn to_date_time_iso(self) -> DateTime<Iso> {
         let parts = self.to_parts();
-        std::eprintln!("to: {} => {parts:?}", self.0);
         parts.date_time()
     }
 
@@ -179,8 +190,23 @@ impl ZoneNameTimestamp {
         let metadata = 0; // currently unused (reserved)
         let parts =
             ZoneNameTimestampParts::from_saturating_date_time_with_metadata(date_time, metadata);
-        std::eprintln!("from: {parts:?}");
         Self::from_parts(parts)
+    }
+
+    /// Returns a [`ZoneNameTimestamp`] for a time far in the past.
+    pub fn far_in_past() -> Self {
+        Self::from_parts(ZoneNameTimestampParts {
+            quarter_hours_since_local_unix_epoch: MIN_QUARTER_HOURS_U32,
+            metadata: 0, // currently unused (reserved)
+        })
+    }
+
+    /// Returns a [`ZoneNameTimestamp`] for a time far in the future.
+    pub fn far_in_future() -> Self {
+        Self::from_parts(ZoneNameTimestampParts {
+            quarter_hours_since_local_unix_epoch: MAX_QUARTER_HOURS_U32,
+            metadata: 0, // currently unused (reserved)
+        })
     }
 
     fn to_parts(self) -> ZoneNameTimestampParts {

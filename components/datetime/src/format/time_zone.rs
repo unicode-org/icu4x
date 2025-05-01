@@ -19,14 +19,18 @@ use icu_time::{
 use writeable::Writeable;
 
 impl crate::provider::time_zones::MetazonePeriod<'_> {
-    fn resolve(&self, time_zone_id: TimeZone, zone_name_timestamp: ZoneNameTimestamp) -> Option<MetazoneId> {
+    fn resolve(
+        &self,
+        time_zone_id: TimeZone,
+        zone_name_timestamp: ZoneNameTimestamp,
+    ) -> Option<MetazoneId> {
         use zerovec::ule::AsULE;
         let cursor = self.list.get0(&time_zone_id)?;
         let mut metazone_id = None;
-        for (bytes, id) in cursor.iter1() {
-            if zone_name_timestamp >= ZoneNameTimestamp::from_unaligned(*bytes) {
-                metazone_id = id.get()
-            } else {
+        for (bytes, id) in cursor.iter1().rev() {
+            let candidate = ZoneNameTimestamp::from_unaligned(*bytes);
+            if zone_name_timestamp >= candidate {
+                metazone_id = id.get();
                 break;
             }
         }

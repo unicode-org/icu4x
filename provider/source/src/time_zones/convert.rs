@@ -5,6 +5,7 @@
 use super::MzMembership;
 use crate::cldr_serde;
 use crate::SourceDataProvider;
+use calendrical_calculations::rata_die::RataDie;
 use cldr_serde::time_zones::meta_zones::MetaLocationOrSubRegion;
 use cldr_serde::time_zones::meta_zones::ZonePeriod;
 use cldr_serde::time_zones::time_zone_names::*;
@@ -16,7 +17,10 @@ use icu::locale::LanguageIdentifier;
 use icu::time::provider::*;
 use icu::time::zone::TimeZoneVariant;
 use icu::time::zone::UtcOffset;
+use icu::time::zone::ZoneNameTimestamp;
+use icu::time::DateTime;
 use icu::time::Time;
+use icu::time::ZonedDateTime;
 use icu_provider::prelude::*;
 use parse_zoneinfo::line::Year;
 use parse_zoneinfo::table::Saving;
@@ -232,7 +236,7 @@ impl SourceDataProvider {
                             let mut periods = periods
                                 .iter()
                                 .flat_map(move |period| {
-                                    fn parse_mzone_date(from: &str) -> (Date<Iso>, Time) {
+                                    fn parse_mzone_date(from: &str) -> DateTime<Iso> {
                                         // TODO(#2127): Ideally this parsing can move into a library function
                                         let mut parts = from.split(' ');
                                         let date = parts.next().unwrap();
@@ -249,10 +253,10 @@ impl SourceDataProvider {
                                         let minute =
                                             time_parts.next().unwrap().parse::<u8>().unwrap();
 
-                                        (
-                                            Date::try_new_iso(year, month, day).unwrap(),
-                                            Time::try_new(hour, minute, 0, 0).unwrap(),
-                                        )
+                                        DateTime {
+                                            date: Date::try_new_iso(year, month, day).unwrap(),
+                                            time: Time::try_new(hour, minute, 0, 0).unwrap(),
+                                        }
                                     }
 
                                     [
@@ -290,7 +294,7 @@ impl SourceDataProvider {
                                     // The next period starts at the same time
                                     periods.remove(i);
                                 } else if i + 1 < periods.len()
-                                    && periods[i + 1].1 .0 <= self.timezone_horizon
+                                    && periods[i + 1].1.date <= self.timezone_horizon
                                 {
                                     // This next period still starts before the horizon, so we can drop this one
                                     periods.remove(i);
@@ -299,9 +303,9 @@ impl SourceDataProvider {
                                 }
                             }
 
-                            periods
-                                .into_iter()
-                                .map(|(b, dt, mz)| (b, MinutesSinceEpoch::from(dt), mz))
+                            periods.into_iter().map(|(b, dt, mz)| {
+                                (b, ZoneNameTimestamp::from_date_time_iso(&dt), mz)
+                            })
                         })
                         .collect(),
                 })
@@ -324,11 +328,11 @@ impl SourceDataProvider {
                     .iter()
                     .filter_map(|(bcp47, iana)| Some((bcp47, tzdb.get_zoneset(iana)?)))
                     .flat_map(|(bcp47, zoneset)| {
-                        let mut data = Vec::<(i32, (UtcOffset, UtcOffset))>::new();
+                        let mut data = Vec::<(ZoneNameTimestamp, (UtcOffset, UtcOffset))>::new();
 
                         fn store_offsets(
-                            data: &mut Vec<(i32, (UtcOffset, UtcOffset))>,
-                            end_time: i32,
+                            data: &mut Vec<(ZoneNameTimestamp, (UtcOffset, UtcOffset))>,
+                            end_time: ZoneNameTimestamp,
                             utc_offset: i64,
                             dst_offset_relative: i64,
                         ) {
@@ -343,18 +347,33 @@ impl SourceDataProvider {
                         }
 
                         for zone_info in zoneset.iter() {
-                            let local_end_time = zone_info
-                                .end_time
+                            let offset_seconds = zone_info.offset;
+                            let utc_offset = UtcOffset::try_from_seconds(
+                                i32::try_from(offset_seconds).unwrap(),
+                            )
+                            .unwrap();
+
+                            let local_end_time = match zone_info.end_time {
+                                // Skip transitions before the UNIX Epoch
+                                Some(t) if t.to_timestamp() < 0 => continue,
+                                // None means the rules are in effect "until the end of time"
+                                None => ZoneNameTimestamp::far_in_future(),
                                 // WARNING: This produces a *local* timestamp, i.e. seconds since 1970-01-01 00:00:00 *wall time*,
                                 // even though the docs say that this is since the UNIX epoch (i.e. 1970-01-01 00:00:00 UTC).
                                 // This also assumes `t` uses the same offset as 1970-01-01 00:00:00.
                                 // While the local timestamps are what we want, the offset assumption probably needs fixing (TODO).
-                                .map(|t| (t.to_timestamp() / 60) as i32)
-                                .unwrap_or(i32::MAX);
-
-                            if local_end_time <= 0 {
-                                continue;
-                            }
+                                Some(t) => {
+                                    let epoch_seconds = t.to_timestamp();
+                                    let zdt = ZonedDateTime::from_epoch_milliseconds_and_utc_offset(
+                                        epoch_seconds * 1000,
+                                        utc_offset,
+                                    );
+                                    ZoneNameTimestamp::from_date_time_iso(&DateTime {
+                                        date: zdt.date,
+                                        time: zdt.time,
+                                    })
+                                }
+                            };
 
                             match zone_info.saving {
                                 Saving::NoSaving => {
@@ -389,12 +408,15 @@ impl SourceDataProvider {
                                                     Year::Minimum => unreachable!(),
                                                     Year::Maximum => local_end_time,
                                                     Year::Number(y) => {
-                                                        (rule.absolute_datetime(
-                                                            y,
-                                                            zone_info.offset,
-                                                            rule.time_to_add,
-                                                        ) / 60)
-                                                            as i32
+                                                        let epoch_seconds = rule.absolute_datetime(y, zone_info.offset, rule.time_to_add);
+                                                        let zdt = ZonedDateTime::from_epoch_milliseconds_and_utc_offset(
+                                                            epoch_seconds * 1000,
+                                                            utc_offset
+                                                        );
+                                                        ZoneNameTimestamp::from_date_time_iso(&DateTime {
+                                                            date: zdt.date,
+                                                            time: zdt.time
+                                                        })
                                                     }
                                                 },
                                                 rule.time_to_add,
@@ -406,7 +428,7 @@ impl SourceDataProvider {
                                                 > data
                                                     .last()
                                                     .map(|&(prev_end_time, _)| prev_end_time)
-                                                    .unwrap_or(0)
+                                                    .unwrap_or(ZoneNameTimestamp::far_in_past())
                                         })
                                         .collect::<Vec<_>>();
 
@@ -445,7 +467,7 @@ impl SourceDataProvider {
                         }
 
                         // Sort descending
-                        data.sort_by_key(|(end_time, _)| -*end_time);
+                        data.sort_by_key(|(end_time, _)| core::cmp::Reverse(*end_time));
                         // Dedup consecutive offsets, keeping higher end time
                         data.dedup_by_key(|(_, offsets)| *offsets);
 
@@ -455,7 +477,7 @@ impl SourceDataProvider {
                             .copied()
                             .enumerate()
                             .map(|(i, (_, offsets))| {
-                                (data.get(i + 1).map(|d| d.0).unwrap_or(0), offsets)
+                                (data.get(i + 1).map(|d| d.0).unwrap_or(ZoneNameTimestamp::far_in_past()), offsets)
                             })
                             .collect();
 
@@ -463,7 +485,7 @@ impl SourceDataProvider {
                             move |(end_time, (utc_offset, dst_offset_relative))| {
                                 (
                                     bcp47,
-                                    MinutesSinceEpoch(end_time),
+                                    end_time,
                                     (
                                         utc_offset.to_eighths_of_hour(),
                                         dst_offset_relative.to_eighths_of_hour(),

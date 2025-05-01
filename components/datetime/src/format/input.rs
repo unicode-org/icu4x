@@ -138,7 +138,8 @@ impl DateTimeInputUnchecked {
             zone_id: GetField::<Z::TimeZoneIdInput>::get_field(input).into_option(),
             zone_offset: GetField::<Z::TimeZoneOffsetInput>::get_field(input).into_option(),
             zone_variant: GetField::<Z::TimeZoneVariantInput>::get_field(input).into_option(),
-            zone_name_timestamp: GetField::<Z::TimeZoneNameTimestampInput>::get_field(input).into_option(),
+            zone_name_timestamp: GetField::<Z::TimeZoneNameTimestampInput>::get_field(input)
+                .into_option(),
         }
     }
 }
