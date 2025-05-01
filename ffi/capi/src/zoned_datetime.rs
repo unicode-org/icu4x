@@ -52,7 +52,7 @@ pub mod ffi {
 
         /// Creates a new [`ZonedDateTime`] from milliseconds since epoch (timestamp) and a UTC offset.
         ///
-        /// Note: [`ZonedDateTime`]s crated with this constructor can only be formatted using localized offset zone styles.
+        /// Note: [`ZonedDateTime`]s created with this constructor can only be formatted using localized offset zone styles.
         #[diplomat::rust_link(
             icu::time::ZonedDateTime::from_epoch_milliseconds_and_utc_offset,
             FnInStruct
