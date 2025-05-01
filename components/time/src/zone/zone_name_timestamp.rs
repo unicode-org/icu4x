@@ -29,7 +29,7 @@ impl ZoneNameTimestampParts {
     /// Recovers the DateTime from these parts.
     fn date_time(self) -> DateTime<Iso> {
         let qh = self.quarter_hours_since_local_unix_epoch;
-        // Note: the `as` casts below are trivially save because the rem_euclid is in range
+        // Note: the `as` casts below are trivially safe because the remainder is in range
         let (days, remainder) = (
             (qh / QUARTER_HOURS_IN_DAY_U32) as i64,
             (qh % QUARTER_HOURS_IN_DAY_U32) as u8,

@@ -15,7 +15,7 @@ pub mod ffi {
     use crate::unstable::iana_parser::ffi::IanaParser;
     use crate::unstable::time::ffi::Time;
     use crate::unstable::timezone::ffi::TimeZoneInfo;
-    use crate::unstable::variant_offset::ffi::VariantOffsetsCalculator;
+    use crate::unstable::variant_offset::ffi::{UtcOffset, VariantOffsetsCalculator};
 
     /// An ICU4X ZonedDateTime object capable of containing a ISO-8601 date, time, and zone.
     #[diplomat::rust_link(icu::time::ZonedDateTime, Struct)]
@@ -48,6 +48,29 @@ pub mod ffi {
                 time: Box::new(Time(time)),
                 zone: Box::new(TimeZoneInfo::from(zone)),
             })
+        }
+
+        /// Creates a new [`ZonedDateTime`] from milliseconds since epoch (timestamp) and a UTC offset.
+        ///
+        /// Note: [`ZonedDateTime`]s crated with this constructor can only be formatted using localized offset zone styles.
+        #[diplomat::rust_link(
+            icu::time::ZonedDateTime::from_epoch_milliseconds_and_utc_offset,
+            FnInStruct
+        )]
+        #[diplomat::attr(all(supports = named_constructors, supports = fallible_constructors), named_constructor = "from_epoch_milliseconds_and_utc_offset")]
+        pub fn from_epoch_milliseconds_and_utc_offset(
+            epoch_milliseconds: i64,
+            utc_offset: &UtcOffset,
+        ) -> ZonedIsoDateTime {
+            let zdt = icu_time::ZonedDateTime::from_epoch_milliseconds_and_utc_offset(
+                epoch_milliseconds,
+                utc_offset.0,
+            );
+            ZonedIsoDateTime {
+                date: Box::new(IsoDate(zdt.date)),
+                time: Box::new(Time(zdt.time)),
+                zone: Box::new(TimeZoneInfo::from(utc_offset.0)),
+            }
         }
     }
 
