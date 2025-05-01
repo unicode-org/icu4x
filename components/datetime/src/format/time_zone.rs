@@ -12,7 +12,8 @@ use fixed_decimal::Decimal;
 use icu_decimal::DecimalFormatter;
 use icu_time::zone::ZoneNameTimestamp;
 use icu_time::{
-    zone::{TimeZoneVariant, UtcOffset}, TimeZone,
+    zone::{TimeZoneVariant, UtcOffset},
+    TimeZone,
 };
 use writeable::Writeable;
 

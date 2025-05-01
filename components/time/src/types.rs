@@ -257,6 +257,7 @@ impl ZonedDateTime<Iso, UtcOffset> {
         );
         const UNIX_EPOCH: RataDie = calendrical_calculations::iso::const_fixed_from_iso(1970, 1, 1);
         let rata_die = UNIX_EPOCH + epoch_days;
+        #[allow(clippy::unwrap_used)] // these values are derived via modulo operators
         let time = Time::try_new(
             (time_millisecs / 3600000) as u8,
             ((time_millisecs % 3600000) / 60000) as u8,

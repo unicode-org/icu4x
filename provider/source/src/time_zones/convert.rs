@@ -5,7 +5,6 @@
 use super::MzMembership;
 use crate::cldr_serde;
 use crate::SourceDataProvider;
-use calendrical_calculations::rata_die::RataDie;
 use cldr_serde::time_zones::meta_zones::MetaLocationOrSubRegion;
 use cldr_serde::time_zones::meta_zones::ZonePeriod;
 use cldr_serde::time_zones::time_zone_names::*;

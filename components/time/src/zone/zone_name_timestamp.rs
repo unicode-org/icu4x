@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use core::{cmp, fmt};
+use core::fmt;
 
 use icu_calendar::{types::RataDie, Date, Iso};
 use zerovec::{maps::ZeroMapKV, ule::AsULE, ZeroSlice, ZeroVec};
@@ -60,10 +60,7 @@ impl ZoneNameTimestampParts {
         let qh_hours = date_time.time.hour.number() * 4;
         let qh_minutes = date_time.time.minute.number() / 15;
         let qh_total = qh_days + (qh_hours as i64) + (qh_minutes as i64);
-        let qh_clamped = cmp::max(
-            cmp::min(qh_total, MAX_QUARTER_HOURS_I64),
-            MIN_QUARTER_HOURS_I64,
-        );
+        let qh_clamped = qh_total.clamp(MIN_QUARTER_HOURS_I64, MAX_QUARTER_HOURS_I64);
         let qh_u32 = match u32::try_from(qh_clamped) {
             Ok(x) => x,
             Err(_) => {
@@ -83,7 +80,7 @@ impl ZoneNameTimestampParts {
 }
 
 /// The moment in time for resolving a time zone name.
-/// 
+///
 /// **What is this for?** Most software deals with _time zone transitions_,
 /// computing the UTC offset on a given point in time. In ICU4X, we deal with
 /// _time zone display names_. Whereas time zone transitions occur multiple
