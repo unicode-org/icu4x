@@ -92,10 +92,10 @@ export class TimeZoneInfo {
     }
 
     /** 
-     * See the [Rust documentation for `at_time`](https://docs.rs/icu/latest/icu/time/struct.TimeZoneInfo.html#method.at_time) for more information.
+     * See the [Rust documentation for `at_date_time_iso`](https://docs.rs/icu/latest/icu/time/struct.TimeZoneInfo.html#method.at_date_time_iso) for more information.
      */
-    atTime(date, time) {
-        const result = wasm.icu4x_TimeZoneInfo_at_time_mv1(this.ffiValue, date.ffiValue, time.ffiValue);
+    atDateTimeIso(date, time) {
+        const result = wasm.icu4x_TimeZoneInfo_at_date_time_iso_mv1(this.ffiValue, date.ffiValue, time.ffiValue);
     
         try {
             return new TimeZoneInfo(diplomatRuntime.internalConstructor, result, []);
@@ -105,12 +105,12 @@ export class TimeZoneInfo {
     }
 
     /** 
-     * See the [Rust documentation for `local_time`](https://docs.rs/icu/latest/icu/time/struct.TimeZoneInfo.html#method.local_time) for more information.
+     * See the [Rust documentation for `zone_name_timestamp`](https://docs.rs/icu/latest/icu/time/struct.TimeZoneInfo.html#method.zone_name_timestamp) for more information.
      */
-    localTime() {
+    zoneNameDateTime() {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 9, 4, true);
         
-        const result = wasm.icu4x_TimeZoneInfo_local_time_mv1(diplomatReceive.buffer, this.ffiValue);
+        const result = wasm.icu4x_TimeZoneInfo_zone_name_date_time_mv1(diplomatReceive.buffer, this.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {

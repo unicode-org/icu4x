@@ -31,14 +31,14 @@ export class TimeZoneInfo {
     id(): TimeZone;
 
     /** 
-     * See the [Rust documentation for `at_time`](https://docs.rs/icu/latest/icu/time/struct.TimeZoneInfo.html#method.at_time) for more information.
+     * See the [Rust documentation for `at_date_time_iso`](https://docs.rs/icu/latest/icu/time/struct.TimeZoneInfo.html#method.at_date_time_iso) for more information.
      */
-    atTime(date: IsoDate, time: Time): TimeZoneInfo;
+    atDateTimeIso(date: IsoDate, time: Time): TimeZoneInfo;
 
     /** 
-     * See the [Rust documentation for `local_time`](https://docs.rs/icu/latest/icu/time/struct.TimeZoneInfo.html#method.local_time) for more information.
+     * See the [Rust documentation for `zone_name_timestamp`](https://docs.rs/icu/latest/icu/time/struct.TimeZoneInfo.html#method.zone_name_timestamp) for more information.
      */
-    localTime(): IsoDateTime | null;
+    zoneNameDateTime(): IsoDateTime | null;
 
     /** 
      * See the [Rust documentation for `with_variant`](https://docs.rs/icu/latest/icu/time/struct.TimeZoneInfo.html#method.with_variant) for more information.
