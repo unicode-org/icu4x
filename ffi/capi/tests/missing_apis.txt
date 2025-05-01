@@ -15,12 +15,6 @@
 
 
 fixed_decimal::Decimal::new#FnInTypedef
-icu::time::ZonedDateTime::from_epoch_milliseconds_and_utc_offset#FnInStruct
-icu::time::zone::ZoneNameTimestamp#Struct
-icu::time::zone::ZoneNameTimestamp::far_in_future#FnInStruct
-icu::time::zone::ZoneNameTimestamp::far_in_past#FnInStruct
-icu::time::zone::ZoneNameTimestamp::from_date_time_iso#FnInStruct
-icu::time::zone::ZoneNameTimestamp::to_date_time_iso#FnInStruct
 icu_provider_adapters::fork::ForkByMarkerProvider::inner#FnInTypedef
 icu_provider_adapters::fork::ForkByMarkerProvider::inner_mut#FnInTypedef
 icu_provider_adapters::fork::ForkByMarkerProvider::into_inner#FnInTypedef
