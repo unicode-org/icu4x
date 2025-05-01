@@ -7,7 +7,7 @@
 
 use crate::scaffold::*;
 use icu_calendar::types::DayOfYear;
-use icu_calendar::{AsCalendar, Calendar, Iso};
+use icu_calendar::{AsCalendar, Calendar};
 use icu_time::scaffold::IntoOption;
 use icu_time::zone::ZoneNameTimestamp;
 use icu_time::{zone::TimeZoneVariant, Hour, Minute, Nanosecond, Second};

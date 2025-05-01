@@ -63,14 +63,11 @@ use crate::{
     scaffold::*,
 };
 use enums::*;
-use icu_calendar::{
-    types::{DayOfMonth, MonthInfo, Weekday, YearInfo},
-    Date, Iso,
-};
+use icu_calendar::types::{DayOfMonth, MonthInfo, Weekday, YearInfo};
 use icu_provider::marker::NeverMarker;
 use icu_time::{
     zone::{TimeZoneVariant, UtcOffset, ZoneNameTimestamp},
-    Hour, Minute, Nanosecond, Second, Time, TimeZone,
+    Hour, Minute, Nanosecond, Second, TimeZone,
 };
 
 #[cfg(doc)]

@@ -16,14 +16,9 @@
 //! Read more about data providers: [`icu_provider`]
 
 use crate::zone::ZoneNameTimestamp;
-use crate::Time;
-use calendrical_calculations::rata_die::RataDie;
-use icu_calendar::{Date, Iso};
 #[cfg(feature = "datagen")]
 use icu_provider::prelude::*;
-use zerovec::maps::ZeroMapKV;
-use zerovec::ule::AsULE;
-use zerovec::{ZeroMap2d, ZeroSlice, ZeroVec};
+use zerovec::ZeroMap2d;
 
 pub use crate::zone::ule::TimeZoneVariantULE;
 pub use crate::zone::TimeZone;

@@ -9,14 +9,13 @@ use crate::{
 use icu_calendar::{
     provider::{CalendarChineseV1, CalendarDangiV1, CalendarJapaneseModernV1},
     types::{DayOfMonth, DayOfYear, MonthInfo, Weekday, YearInfo},
-    Date, Iso,
 };
 use icu_decimal::provider::{DecimalDigitsV1, DecimalSymbolsV1};
 use icu_provider::{marker::NeverMarker, prelude::*};
 use icu_time::{scaffold::IntoOption, zone::ZoneNameTimestamp};
 use icu_time::{
     zone::{TimeZoneVariant, UtcOffset},
-    Hour, Minute, Nanosecond, Second, Time, TimeZone,
+    Hour, Minute, Nanosecond, Second, TimeZone,
 };
 
 // TODO(#4340): Add DecimalFormatter optional bindings here

@@ -4,7 +4,7 @@
 
 use icu_calendar::{
     types::{DayOfMonth, DayOfYear, MonthInfo, Weekday, YearInfo},
-    AsCalendar, Calendar, Date, Iso,
+    AsCalendar, Calendar, Date,
 };
 use icu_time::{
     zone::{models::TimeZoneModel, TimeZoneVariant, UtcOffset, ZoneNameTimestamp},
