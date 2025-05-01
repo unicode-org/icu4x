@@ -67,26 +67,26 @@ impl DateTimeInputUnchecked {
     /// responsible for making sure the calendar matches the formatter.
     pub fn set_date_fields_unchecked<C: Calendar, A: AsCalendar<Calendar = C>>(
         &mut self,
-        input: Date<A>,
+        date_in_calendar: Date<A>,
     ) {
-        self.year = Some(input.year());
-        self.month = Some(input.month());
-        self.day_of_month = Some(input.day_of_month());
-        self.iso_weekday = Some(input.day_of_week());
-        self.day_of_year = Some(input.day_of_year());
+        self.year = Some(date_in_calendar.year());
+        self.month = Some(date_in_calendar.month());
+        self.day_of_month = Some(date_in_calendar.day_of_month());
+        self.iso_weekday = Some(date_in_calendar.day_of_week());
+        self.day_of_year = Some(date_in_calendar.day_of_year());
     }
 
     /// Sets all fields from a [`Time`] input.
-    pub fn set_time_fields(&mut self, input: Time) {
-        self.hour = Some(input.hour);
-        self.minute = Some(input.minute);
-        self.second = Some(input.second);
-        self.subsecond = Some(input.subsecond);
+    pub fn set_time_fields(&mut self, time: Time) {
+        self.hour = Some(time.hour);
+        self.minute = Some(time.minute);
+        self.second = Some(time.second);
+        self.subsecond = Some(time.subsecond);
     }
 
     /// Sets the time zone UTC offset.
-    pub fn set_time_zone_utc_offset(&mut self, offset: UtcOffset) {
-        self.zone_offset = Some(offset);
+    pub fn set_time_zone_utc_offset(&mut self, utc_offset: UtcOffset) {
+        self.zone_offset = Some(utc_offset);
     }
 
     /// Sets the time zone ID.
