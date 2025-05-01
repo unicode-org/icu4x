@@ -92,7 +92,18 @@ export class TimeZoneInfo {
     }
 
     /** 
+     * Sets the datetime at which to interpret the time zone
+     * for display name lookup.
+     *
+     * Notes:
+     *
+     * - If not set, the formatting datetime is used if possible.
+     * - The constraints are the same as with `ZoneNameTimestamp` in Rust.
+     * - Set to year 1000 or 9999 for a reference far in the past or future.
+     *
      * See the [Rust documentation for `at_date_time_iso`](https://docs.rs/icu/latest/icu/time/struct.TimeZoneInfo.html#method.at_date_time_iso) for more information.
+     *
+     * Additional information: [1](https://docs.rs/icu/latest/icu/time/zone/struct.ZoneNameTimestamp.html)
      */
     atDateTimeIso(date, time) {
         const result = wasm.icu4x_TimeZoneInfo_at_date_time_iso_mv1(this.ffiValue, date.ffiValue, time.ffiValue);

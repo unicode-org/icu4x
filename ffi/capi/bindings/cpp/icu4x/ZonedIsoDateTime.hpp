@@ -16,6 +16,7 @@
 #include "IsoDate.hpp"
 #include "Time.hpp"
 #include "TimeZoneInfo.hpp"
+#include "UtcOffset.hpp"
 #include "VariantOffsetsCalculator.hpp"
 
 
@@ -25,6 +26,8 @@ namespace capi {
     
     typedef struct icu4x_ZonedIsoDateTime_full_from_string_mv1_result {union {icu4x::capi::ZonedIsoDateTime ok; icu4x::capi::CalendarParseError err;}; bool is_ok;} icu4x_ZonedIsoDateTime_full_from_string_mv1_result;
     icu4x_ZonedIsoDateTime_full_from_string_mv1_result icu4x_ZonedIsoDateTime_full_from_string_mv1(diplomat::capi::DiplomatStringView v, const icu4x::capi::IanaParser* iana_parser, const icu4x::capi::VariantOffsetsCalculator* offset_calculator);
+    
+    icu4x::capi::ZonedIsoDateTime icu4x_ZonedIsoDateTime_from_epoch_milliseconds_and_utc_offset_mv1(int64_t epoch_milliseconds, const icu4x::capi::UtcOffset* utc_offset);
     
     
     } // extern "C"
@@ -36,6 +39,12 @@ inline diplomat::result<icu4x::ZonedIsoDateTime, icu4x::CalendarParseError> icu4
     iana_parser.AsFFI(),
     offset_calculator.AsFFI());
   return result.is_ok ? diplomat::result<icu4x::ZonedIsoDateTime, icu4x::CalendarParseError>(diplomat::Ok<icu4x::ZonedIsoDateTime>(icu4x::ZonedIsoDateTime::FromFFI(result.ok))) : diplomat::result<icu4x::ZonedIsoDateTime, icu4x::CalendarParseError>(diplomat::Err<icu4x::CalendarParseError>(icu4x::CalendarParseError::FromFFI(result.err)));
+}
+
+inline icu4x::ZonedIsoDateTime icu4x::ZonedIsoDateTime::from_epoch_milliseconds_and_utc_offset(int64_t epoch_milliseconds, const icu4x::UtcOffset& utc_offset) {
+  auto result = icu4x::capi::icu4x_ZonedIsoDateTime_from_epoch_milliseconds_and_utc_offset_mv1(epoch_milliseconds,
+    utc_offset.AsFFI());
+  return icu4x::ZonedIsoDateTime::FromFFI(result);
 }
 
 

@@ -19,6 +19,8 @@ namespace capi { struct Time; }
 class Time;
 namespace capi { struct TimeZoneInfo; }
 class TimeZoneInfo;
+namespace capi { struct UtcOffset; }
+class UtcOffset;
 namespace capi { struct VariantOffsetsCalculator; }
 class VariantOffsetsCalculator;
 struct ZonedIsoDateTime;
@@ -56,6 +58,15 @@ struct ZonedIsoDateTime {
    * See the [Rust documentation for `try_full_from_str`](https://docs.rs/icu/latest/icu/time/struct.ZonedDateTime.html#method.try_full_from_str) for more information.
    */
   inline static diplomat::result<icu4x::ZonedIsoDateTime, icu4x::CalendarParseError> full_from_string(std::string_view v, const icu4x::IanaParser& iana_parser, const icu4x::VariantOffsetsCalculator& offset_calculator);
+
+  /**
+   * Creates a new [`ZonedDateTime`] from milliseconds since epoch (timestamp) and a UTC offset.
+   *
+   * Note: [`ZonedDateTime`]s created with this constructor can only be formatted using localized offset zone styles.
+   *
+   * See the [Rust documentation for `from_epoch_milliseconds_and_utc_offset`](https://docs.rs/icu/latest/icu/time/struct.ZonedDateTime.html#method.from_epoch_milliseconds_and_utc_offset) for more information.
+   */
+  inline static icu4x::ZonedIsoDateTime from_epoch_milliseconds_and_utc_offset(int64_t epoch_milliseconds, const icu4x::UtcOffset& utc_offset);
 
   inline icu4x::capi::ZonedIsoDateTime AsFFI() const;
   inline static icu4x::ZonedIsoDateTime FromFFI(icu4x::capi::ZonedIsoDateTime c_struct);

@@ -21,7 +21,13 @@ use crate::{DateTime, Hour, Minute, Nanosecond, Second, Time};
 /// Internal intermediate type for interfacing with [`ZoneNameTimestamp`].
 #[derive(Debug, Copy, Clone)]
 struct ZoneNameTimestampParts {
+    /// Invariant: between MIN_QUARTER_HOURS_U32 and MAX_QUARTER_HOURS_U32 (inclusive).
+    /// This range covers almost 500 years.
     quarter_hours_since_local_unix_epoch: u32,
+    /// Currently the metadata is unused. It is reserved for future use, such as:
+    /// - A time zone UTC offset
+    /// - Extra bits for the epoch quarter-hours
+    /// - Bitmask to use the epoch quarter hour bits more efficiently
     metadata: u8,
 }
 
@@ -29,7 +35,7 @@ impl ZoneNameTimestampParts {
     /// Recovers the DateTime from these parts.
     fn date_time(self) -> DateTime<Iso> {
         let qh = self.quarter_hours_since_local_unix_epoch;
-        // Note: the `as` casts below are trivially save because the rem_euclid is in range
+        // Note: the `as` casts below are trivially safe because the remainder is in range
         let (days, remainder) = (
             (qh / QUARTER_HOURS_IN_DAY_U32) as i64,
             (qh % QUARTER_HOURS_IN_DAY_U32) as u8,
@@ -71,7 +77,6 @@ impl ZoneNameTimestampParts {
                 0
             }
         };
-        let metadata = if metadata > 0x7F { 0 } else { metadata };
         ZoneNameTimestampParts {
             quarter_hours_since_local_unix_epoch: qh_u32,
             metadata,

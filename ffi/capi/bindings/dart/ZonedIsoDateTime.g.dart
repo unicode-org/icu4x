@@ -51,6 +51,16 @@ final class ZonedIsoDateTime {
     return ZonedIsoDateTime._fromFfi(result.union.ok);
   }
 
+  /// Creates a new [`ZonedDateTime`] from milliseconds since epoch (timestamp) and a UTC offset.
+  ///
+  /// Note: [`ZonedDateTime`]s created with this constructor can only be formatted using localized offset zone styles.
+  ///
+  /// See the [Rust documentation for `from_epoch_milliseconds_and_utc_offset`](https://docs.rs/icu/latest/icu/time/struct.ZonedDateTime.html#method.from_epoch_milliseconds_and_utc_offset) for more information.
+  factory ZonedIsoDateTime.fromEpochMillisecondsAndUtcOffset(int epochMilliseconds, UtcOffset utcOffset) {
+    final result = _icu4x_ZonedIsoDateTime_from_epoch_milliseconds_and_utc_offset_mv1(epochMilliseconds, utcOffset._ffi);
+    return ZonedIsoDateTime._fromFfi(result);
+  }
+
   @override
   bool operator ==(Object other) =>
       other is ZonedIsoDateTime &&
@@ -70,5 +80,10 @@ final class ZonedIsoDateTime {
 @ffi.Native<_ResultZonedIsoDateTimeFfiInt32 Function(_SliceUtf8, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_ZonedIsoDateTime_full_from_string_mv1')
 // ignore: non_constant_identifier_names
 external _ResultZonedIsoDateTimeFfiInt32 _icu4x_ZonedIsoDateTime_full_from_string_mv1(_SliceUtf8 v, ffi.Pointer<ffi.Opaque> ianaParser, ffi.Pointer<ffi.Opaque> offsetCalculator);
+
+@_DiplomatFfiUse('icu4x_ZonedIsoDateTime_from_epoch_milliseconds_and_utc_offset_mv1')
+@ffi.Native<_ZonedIsoDateTimeFfi Function(ffi.Int64, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_ZonedIsoDateTime_from_epoch_milliseconds_and_utc_offset_mv1')
+// ignore: non_constant_identifier_names
+external _ZonedIsoDateTimeFfi _icu4x_ZonedIsoDateTime_from_epoch_milliseconds_and_utc_offset_mv1(int epochMilliseconds, ffi.Pointer<ffi.Opaque> utcOffset);
 
 // dart format on
