@@ -479,7 +479,7 @@ impl DataExporter for BakedExporter {
                     &self,
                     req: icu_provider::DataRequest,
                 ) -> Result<icu_provider::DataResponse<#marker_bake>, icu_provider::DataError> {
-                    if req.id.locale.is_unknown() {
+                    if req.id.locale.is_und() {
                         Ok(icu_provider::DataResponse {
                             payload: icu_provider::DataPayload::from_static_ref(Self::#singleton_ident),
                             metadata: #metadata_bake,
@@ -494,7 +494,7 @@ impl DataExporter for BakedExporter {
             #maybe_msrv
             impl icu_provider::DryDataProvider<#marker_bake> for $provider {
                 fn dry_load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponseMetadata, icu_provider::DataError> {
-                    if req.id.locale.is_unknown() {
+                    if req.id.locale.is_und() {
                         Ok(#metadata_bake)
                     } else {
                         Err(icu_provider::DataErrorKind::InvalidRequest.with_req(<#marker_bake as icu_provider::DataMarker>::INFO, req))
@@ -562,7 +562,7 @@ impl DataExporter for BakedExporter {
             let needs_fallback = self.use_internal_fallback
                 && deduplicated_values
                     .iter()
-                    .any(|(_, ids)| ids.iter().any(|id| !id.locale.is_unknown()));
+                    .any(|(_, ids)| ids.iter().any(|id| !id.locale.is_und()));
 
             let mut baked_values = deduplicated_values
                 .iter()
@@ -632,7 +632,7 @@ impl DataExporter for BakedExporter {
                                 metadata.locale = Some(fallback_iterator.take());
                                 break payload;
                             }
-                            if fallback_iterator.get().is_unknown() {
+                            if fallback_iterator.get().is_und() {
                                 return Err(icu_provider::DataErrorKind::IdentifierNotFound.with_req(<#marker_bake as icu_provider::DataMarker>::INFO, req));
                             }
                             fallback_iterator.step();

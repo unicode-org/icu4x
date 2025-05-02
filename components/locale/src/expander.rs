@@ -156,7 +156,7 @@ fn update_langid(
 ) -> TransformResult {
     let mut modified = false;
 
-    if langid.language.is_unknown() && !language.is_unknown() {
+    if langid.language.is_und() && !language.is_und() {
         langid.language = language;
         modified = true;
     }
@@ -375,11 +375,11 @@ impl LocaleExpander {
     pub fn maximize(&self, langid: &mut LanguageIdentifier) -> TransformResult {
         let data = self.as_borrowed();
 
-        if !langid.language.is_unknown() && langid.script.is_some() && langid.region.is_some() {
+        if !langid.language.is_und() && langid.script.is_some() && langid.region.is_some() {
             return TransformResult::Unmodified;
         }
 
-        if !langid.language.is_unknown() {
+        if !langid.language.is_und() {
             if let Some(region) = langid.region {
                 if let Some(script) = data.get_lr(langid.language, region) {
                     return update_langid(Language::UND, Some(script), None, langid);
@@ -414,7 +414,7 @@ impl LocaleExpander {
 
         // We failed to find anything in the und-SR, und-S, or und-R tables,
         // to fall back to bare "und"
-        debug_assert!(langid.language.is_unknown());
+        debug_assert!(langid.language.is_und());
         update_langid(
             data.get_und().0,
             Some(data.get_und().1),
@@ -550,7 +550,7 @@ impl LocaleExpander {
         // 3. region
         // we need to check all cases, because e.g. for "en-US" the default script is associated
         // with "en" but not "en-US"
-        if !language.is_unknown() {
+        if !language.is_und() {
             if let Some(region) = region {
                 // 1. we know both language and region
                 if let Some(script) = data.get_lr(language, region) {

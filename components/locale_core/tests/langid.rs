@@ -81,7 +81,7 @@ fn test_langid_subtag_language() {
 
     lang = Default::default();
     assert_eq!(lang, subtags::Language::UND);
-    assert!(lang.is_unknown());
+    assert!(lang.is_und());
 
     assert_writeable_eq!(lang, "und");
 }

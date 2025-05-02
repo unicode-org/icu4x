@@ -27,7 +27,7 @@ macro_rules! __impl_property_binary_basic_emoji_v1 {
         #[clippy::msrv = "1.82"]
         impl icu_provider::DataProvider<icu::properties::provider::PropertyBinaryBasicEmojiV1> for $provider {
             fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu::properties::provider::PropertyBinaryBasicEmojiV1>, icu_provider::DataError> {
-                if req.id.locale.is_unknown() {
+                if req.id.locale.is_und() {
                     Ok(icu_provider::DataResponse { payload: icu_provider::DataPayload::from_static_ref(Self::SINGLETON_PROPERTY_BINARY_BASIC_EMOJI_V1), metadata: icu_provider::DataResponseMetadata::default() })
                 } else {
                     Err(icu_provider::DataErrorKind::InvalidRequest.with_req(<icu::properties::provider::PropertyBinaryBasicEmojiV1 as icu_provider::DataMarker>::INFO, req))
@@ -49,7 +49,7 @@ macro_rules! __impl_property_binary_basic_emoji_v1 {
         #[clippy::msrv = "1.82"]
         impl icu_provider::DryDataProvider<icu::properties::provider::PropertyBinaryBasicEmojiV1> for $provider {
             fn dry_load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponseMetadata, icu_provider::DataError> {
-                if req.id.locale.is_unknown() {
+                if req.id.locale.is_und() {
                     Ok(icu_provider::DataResponseMetadata::default())
                 } else {
                     Err(icu_provider::DataErrorKind::InvalidRequest.with_req(<icu::properties::provider::PropertyBinaryBasicEmojiV1 as icu_provider::DataMarker>::INFO, req))
@@ -62,7 +62,7 @@ macro_rules! __impl_property_binary_basic_emoji_v1 {
         #[clippy::msrv = "1.82"]
         impl icu_provider::DryDataProvider<icu::properties::provider::PropertyBinaryBasicEmojiV1> for $provider {
             fn dry_load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponseMetadata, icu_provider::DataError> {
-                if req.id.locale.is_unknown() {
+                if req.id.locale.is_und() {
                     Ok(icu_provider::DataResponseMetadata::default())
                 } else {
                     Err(icu_provider::DataErrorKind::InvalidRequest.with_req(<icu::properties::provider::PropertyBinaryBasicEmojiV1 as icu_provider::DataMarker>::INFO, req))

@@ -89,7 +89,7 @@ impl ExportDriver {
                 match provider.load_data(marker, req).allow_identifier_not_found() {
                     Ok(Some(data_response)) => {
                         if let Some(iter) = locale_iter.as_ref() {
-                            if iter.get().is_unknown() && !id.locale.is_unknown() {
+                            if iter.get().is_und() && !id.locale.is_und() {
                                 log::debug!("Falling back to und: {marker:?}/{id}");
                             }
                         }
@@ -97,7 +97,7 @@ impl ExportDriver {
                     }
                     Ok(None) => {
                         if let Some(iter) = locale_iter.as_mut() {
-                            if iter.get().is_unknown() {
+                            if iter.get().is_und() {
                                 log::debug!("Could not find data for: {marker:?}/{id}");
                                 return None;
                             }
@@ -127,7 +127,7 @@ impl ExportDriver {
 
             if marker.is_singleton {
                 let supported = provider.iter_ids_for_marker(marker)?;
-                if supported.len() != 1 || !supported.first().unwrap().is_unknown() {
+                if supported.len() != 1 || !supported.first().unwrap().is_und() {
                     return Err(DataError::custom(
                         "Invalid supported locales for singleton marker",
                     )
@@ -324,7 +324,7 @@ fn select_locales_for_marker<'a>(
                 log::trace!("Including {current_locale}: full locale family: {marker:?}");
                 selected_locales.insert(*current_locale);
             }
-            if current_locale.language.is_unknown() && !current_locale.is_unknown() {
+            if current_locale.language.is_und() && !current_locale.is_und() {
                 log::trace!("Including {current_locale}: und variant: {marker:?}");
                 selected_locales.insert(*current_locale);
             }
@@ -360,7 +360,7 @@ fn select_locales_for_marker<'a>(
                 if let Some(parent_ids) = maybe_parent_ids {
                     for morphed_id in parent_ids.iter() {
                         // Special case: don't pull extensions or aux keys up from the root.
-                        if morphed_id.locale.is_unknown() && !morphed_id.is_unknown() {
+                        if morphed_id.locale.is_und() && !morphed_id.is_und() {
                             continue;
                         }
                         let mut morphed_id = morphed_id.clone();
@@ -368,7 +368,7 @@ fn select_locales_for_marker<'a>(
                         expansion.insert(morphed_id);
                     }
                 }
-                if iter.get().is_unknown() {
+                if iter.get().is_und() {
                     break;
                 }
                 iter.step();
@@ -397,7 +397,7 @@ fn deduplicate_responses<'a>(
         .iter()
         .try_for_each(|(id, (response, _duration))| {
             // Always export `und`. This prevents calling `step` on an empty locale.
-            if id.locale.is_unknown() {
+            if id.locale.is_und() {
                 return sink
                     .put_payload(marker, id.as_borrowed(), &response.payload)
                     .map_err(|e| {
@@ -418,7 +418,7 @@ fn deduplicate_responses<'a>(
                     // the next parent is `und`.
                     iter.step();
                 }
-                if iter.get().is_unknown() {
+                if iter.get().is_und() {
                     break;
                 }
                 if maximal {

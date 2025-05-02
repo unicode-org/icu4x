@@ -318,12 +318,12 @@ impl DataLocale {
     /// ```
     /// use icu_provider::DataLocale;
     ///
-    /// assert!("und".parse::<DataLocale>().unwrap().is_unknown());
-    /// assert!(!"de-u-sd-denw".parse::<DataLocale>().unwrap().is_unknown());
-    /// assert!(!"und-ES".parse::<DataLocale>().unwrap().is_unknown());
+    /// assert!("und".parse::<DataLocale>().unwrap().is_und());
+    /// assert!(!"de-u-sd-denw".parse::<DataLocale>().unwrap().is_und());
+    /// assert!(!"und-ES".parse::<DataLocale>().unwrap().is_und());
     /// ```
-    pub fn is_unknown(&self) -> bool {
-        self.language.is_unknown()
+    pub fn is_und(&self) -> bool {
+        self.language.is_und()
             && self.script.is_none()
             && self.region.is_none()
             && self.variant.is_none()

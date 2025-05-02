@@ -42,7 +42,7 @@ pub mod ffi {
         /// Construct a default undefined [`Locale`] "und".
         #[diplomat::rust_link(icu::locale::Locale::default, FnInStruct)]
         #[diplomat::rust_link(icu::locale::DataLocale::default, FnInStruct, hidden)]
-        #[diplomat::rust_link(icu::locale::DataLocale::is_unknown, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::locale::DataLocale::is_und, FnInStruct, hidden)]
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor)]
         pub fn und() -> Box<Locale> {
             Box::new(Locale(icu_locale_core::Locale::default()))

@@ -121,7 +121,7 @@ impl LocaleFallbackIteratorInner<'_> {
             return;
         }
         // 8. Remove language+script
-        debug_assert!(!locale.language.is_unknown() || locale.script.is_some()); // don't call .step() on und
+        debug_assert!(!locale.language.is_und() || locale.script.is_some()); // don't call .step() on und
         locale.script = None;
         locale.language = Language::UND;
     }
@@ -139,7 +139,7 @@ impl LocaleFallbackIteratorInner<'_> {
             return;
         }
         // 5. Remove language+script
-        if !locale.language.is_unknown() || locale.script.is_some() {
+        if !locale.language.is_und() || locale.script.is_some() {
             locale.script = None;
             locale.language = Language::UND;
             // Don't produce und-variant
@@ -190,7 +190,7 @@ impl LocaleFallbackIteratorInner<'_> {
         }
 
         // Remove the script if we have a language
-        if !locale.language.is_unknown() {
+        if !locale.language.is_und() {
             let language_implied_script = self
                 .likely_subtags
                 .language
@@ -498,7 +498,7 @@ mod tests {
                     if i == 19 {
                         eprintln!("20 iterations reached!");
                     }
-                    if it.get().is_unknown() {
+                    if it.get().is_und() {
                         break;
                     }
                     actual_chain.push(it.get().write_to_string().into_owned());

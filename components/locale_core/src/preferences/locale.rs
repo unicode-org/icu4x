@@ -158,7 +158,7 @@ impl LocalePreferences {
 
     /// Extends the preferences with the values from another set of preferences.
     pub fn extend(&mut self, other: LocalePreferences) {
-        if !other.language.is_unknown() {
+        if !other.language.is_und() {
             self.language = other.language;
         }
         if let Some(script) = other.script {

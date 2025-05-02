@@ -386,7 +386,7 @@ impl SourceDataProvider {
         SourceDataProvider: IterableDataProviderCached<M>,
     {
         if <M as DataMarker>::INFO.is_singleton {
-            if !req.id.locale.is_unknown() {
+            if !req.id.locale.is_und() {
                 Err(DataErrorKind::InvalidRequest)
             } else {
                 Ok(())

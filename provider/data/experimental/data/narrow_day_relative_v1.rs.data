@@ -1357,7 +1357,7 @@ macro_rules! __impl_narrow_day_relative_v1 {
                             metadata.locale = Some(fallback_iterator.take());
                             break payload;
                         }
-                        if fallback_iterator.get().is_unknown() {
+                        if fallback_iterator.get().is_und() {
                             return Err(icu_provider::DataErrorKind::IdentifierNotFound.with_req(<icu::experimental::relativetime::provider::NarrowDayRelativeV1 as icu_provider::DataMarker>::INFO, req));
                         }
                         fallback_iterator.step();
