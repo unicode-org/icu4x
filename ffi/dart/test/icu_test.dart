@@ -95,6 +95,16 @@ void main() {
       VariantOffsetsCalculator(),
     );
 
+    final utcOffset = UtcOffset.fromSeconds(-420);
+    final customZDT = ZonedIsoDateTime.fromEpochMillisecondsAndUtcOffset(
+      1746140981731,
+      utcOffset,
+    );
+    final customZone = TimeZoneInfo(
+      TimeZone.fromBcp47('uslax'),
+      offset: utcOffset,
+    );
+
     var locale = Locale.fromString('de-u-ca-islamic-umalqura');
 
     ///// DateFormatter /////
@@ -233,7 +243,7 @@ void main() {
     );
 
     expect(
-      () => ZonedDateTimeFormatter.genericLong(
+      () => ZonedDateTimeFormatter.specificLong(
         locale,
         DateTimeFormatter.ymdet(locale),
       ).formatIso(
@@ -266,6 +276,14 @@ void main() {
         zonedDateTimeIso.zone,
       ),
       '15.07.46 AH, 14:32:12 MEZ',
+    );
+
+    expect(
+      ZonedDateTimeFormatter.genericLong(
+        locale,
+        DateTimeFormatter.mdt(locale),
+      ).formatIso(customZDT.date, customZDT.time, customZone),
+      '03.11., 23:02:41 Nordamerikanische Westküstenzeit',
     );
 
     ///// ZonedDateTimeFormatterGregorian /////
