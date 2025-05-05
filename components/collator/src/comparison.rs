@@ -704,6 +704,72 @@ impl CollatorBorrowed<'_> {
         split_prefix_u16,
     );
 
+    fn tailoring_or_root(&self) -> &CollationData {
+        if let Some(tailoring) = &self.tailoring {
+            tailoring
+        } else {
+            // If the root collation is valid for the locale,
+            // use the root as the tailoring so that reads from the
+            // tailoring always succeed.
+            //
+            // TODO(#2011): Do we instead want to have an untailored
+            // copypaste of the iterator that omits the tailoring
+            // branches for performance at the expense of code size
+            // and having to maintain both a tailoring-capable and
+            // a tailoring-incapable version of the iterator?
+            // Or, in order not to flip the branch prediction around,
+            // should we have a no-op tailoring that contains a
+            // specially-crafted CodePointTrie that always returns
+            // a FALLBACK_CE32 after a single branch?
+            self.root
+        }
+    }
+
+    fn numeric_primary(&self) -> Option<u8> {
+        if self.options.numeric() {
+            Some(self.special_primaries.numeric_primary)
+        } else {
+            None
+        }
+    }
+
+    fn collation_elements<'a, I>(
+        &'a self,
+        chars: I,
+        tailoring: &'a CollationData,
+        numeric_primary: Option<u8>,
+    ) -> CollationElements<'a, I>
+    where
+        I: Iterator<Item = char>,
+    {
+        // Attribute belongs on inner expression, but
+        // https://github.com/rust-lang/rust/issues/15701
+        #[allow(clippy::unwrap_used)]
+        CollationElements::new(
+            chars,
+            self.root,
+            tailoring,
+            // `unwrap` OK, because length already validated
+            <&[<u32 as AsULE>::ULE; JAMO_COUNT]>::try_from(self.jamo.ce32s.as_ule_slice()).unwrap(),
+            &self.diacritics.secondaries,
+            self.decompositions,
+            self.tables,
+            numeric_primary,
+            self.lithuanian_dot_above,
+        )
+    }
+
+    fn variable_top(&self) -> u32 {
+        if self.options.alternate_handling() == AlternateHandling::NonIgnorable {
+            0
+        } else {
+            // +1 so that we can use "<" and primary ignorables test out early.
+            self.special_primaries
+                .last_primary_for_group(self.options.max_variable())
+                + 1
+        }
+    }
+
     /// The implementation of the comparison operation.
     ///
     /// `head_chars` is an iterator over the identical prefix and
@@ -722,25 +788,6 @@ impl CollatorBorrowed<'_> {
         right_chars: I,
         mut head_chars: I,
     ) -> Ordering {
-        let tailoring: &CollationData = if let Some(tailoring) = &self.tailoring {
-            tailoring
-        } else {
-            // If the root collation is valid for the locale,
-            // use the root as the tailoring so that reads from the
-            // tailoring always succeed.
-            //
-            // TODO(#2011): Do we instead want to have an untailored
-            // copypaste of the iterator that omits the tailoring
-            // branches for performance at the expense of code size
-            // and having to maintain both a tailoring-capable and
-            // a tailoring-incapable version of the iterator?
-            // Or, in order not to flip the branch prediction around,
-            // should we have a no-op tailoring that contains a
-            // specially-crafted CodePointTrie that always returns
-            // a FALLBACK_CE32 after a single branch?
-            self.root
-        };
-
         // Sadly, it looks like variable CEs and backward second level
         // require us to store the full 64-bit CEs instead of storing only
         // the NonPrimary part.
@@ -761,55 +808,12 @@ impl CollatorBorrowed<'_> {
         // The algorithm comes from CollationCompare::compareUpToQuaternary in ICU4C.
 
         let mut any_variable = false;
-        // Attribute belongs closer to `unwrap`, but
-        // https://github.com/rust-lang/rust/issues/15701
-        #[allow(clippy::unwrap_used)]
-        let variable_top = if self.options.alternate_handling() == AlternateHandling::NonIgnorable {
-            0
-        } else {
-            // +1 so that we can use "<" and primary ignorables test out early.
-            self.special_primaries
-                .last_primary_for_group(self.options.max_variable())
-                + 1
-        };
+        let variable_top = self.variable_top();
 
-        // Attribute belongs on inner expression, but
-        // https://github.com/rust-lang/rust/issues/15701
-        #[allow(clippy::unwrap_used)]
-        let numeric_primary = if self.options.numeric() {
-            Some(self.special_primaries.numeric_primary)
-        } else {
-            None
-        };
-
-        // Attribute belongs on inner expression, but
-        // https://github.com/rust-lang/rust/issues/15701
-        #[allow(clippy::unwrap_used)]
-        let mut left = CollationElements::new(
-            left_chars,
-            self.root,
-            tailoring,
-            <&[<u32 as AsULE>::ULE; JAMO_COUNT]>::try_from(self.jamo.ce32s.as_ule_slice()).unwrap(), // `unwrap` OK, because length already validated
-            &self.diacritics.secondaries,
-            self.decompositions,
-            self.tables,
-            numeric_primary,
-            self.lithuanian_dot_above,
-        );
-        // Attribute belongs on inner expression, but
-        // https://github.com/rust-lang/rust/issues/15701
-        #[allow(clippy::unwrap_used)]
-        let mut right = CollationElements::new(
-            right_chars,
-            self.root,
-            tailoring,
-            <&[<u32 as AsULE>::ULE; JAMO_COUNT]>::try_from(self.jamo.ce32s.as_ule_slice()).unwrap(), // `unwrap` OK, because length already validated
-            &self.diacritics.secondaries,
-            self.decompositions,
-            self.tables,
-            numeric_primary,
-            self.lithuanian_dot_above,
-        );
+        let tailoring = self.tailoring_or_root();
+        let numeric_primary = self.numeric_primary();
+        let mut left = self.collation_elements(left_chars, tailoring, numeric_primary);
+        let mut right = self.collation_elements(right_chars, tailoring, numeric_primary);
 
         // Start identical prefix
 
