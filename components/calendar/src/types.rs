@@ -92,7 +92,10 @@ pub struct EraYear {
     pub era: TinyStr16,
     /// An era index, for calendars with a small set of eras.
     ///
-    /// The only guarantee we make is that these values are stable, even under CLDR code changes.
+    /// The only guarantee we make is that these values are stable. These do *not*
+    /// match the indices produced by ICU4C or CLDR.
+    ///
+    /// These are used by ICU4X datetime formatting for efficiently storing data.
     pub era_index: Option<u8>,
     /// The ambiguity of the era/year combination
     pub ambiguity: YearAmbiguity,
