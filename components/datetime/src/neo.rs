@@ -5,6 +5,7 @@
 //! High-level entrypoints for Neo DateTime Formatter
 
 use crate::error::DateTimeFormatterLoadError;
+use crate::external_loaders::*;
 use crate::fieldsets::builder::FieldSetBuilder;
 use crate::fieldsets::enums::CompositeFieldSet;
 use crate::format::datetime::try_write_pattern_items;
@@ -19,7 +20,6 @@ use crate::scaffold::{
 };
 use crate::size_test_macro::size_test;
 use crate::MismatchedCalendarError;
-use crate::{external_loaders::*, DateTimeWriteError};
 use core::fmt;
 use core::marker::PhantomData;
 use icu_calendar::{preferences::CalendarPreferences, AnyCalendar, IntoAnyCalendar};

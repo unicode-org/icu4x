@@ -6,12 +6,12 @@ use super::names::RawDateTimeNamesBorrowed;
 use super::pattern::DateTimePatternBorrowed;
 use crate::format::datetime::try_write_pattern_items;
 use crate::format::DateTimeInputUnchecked;
+use crate::pattern::DateTimeWriteError;
 use crate::scaffold::*;
 use crate::scaffold::{
     AllInputMarkers, DateInputMarkers, DateTimeMarkers, InFixedCalendar, TimeMarkers,
     TypedDateDataMarkers, ZoneMarkers,
 };
-use crate::DateTimeWriteError;
 use core::fmt;
 use core::marker::PhantomData;
 use writeable::TryWriteable;

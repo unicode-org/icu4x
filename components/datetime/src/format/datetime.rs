@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use super::time_zone::{FormatTimeZone, FormatTimeZoneError, Iso8601Format, TimeZoneFormatterUnit};
-use crate::error::{DateTimeWriteError, ErrorField};
+use crate::error::ErrorField;
 use crate::format::DateTimeInputUnchecked;
 use crate::provider::fields::{self, FieldLength, FieldSymbol, Second, Year};
 use crate::provider::pattern::runtime::PatternMetadata;
