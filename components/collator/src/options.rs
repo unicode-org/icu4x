@@ -109,7 +109,7 @@ pub enum Strength {
     /// ```
     Tertiary = 2,
 
-    /// Compare also on the quaternary level. For Japanese, Higana
+    /// Compare also on the quaternary level. For Japanese, Hiragana
     /// and Katakana are distinguished at the quaternary level. Also,
     /// if `AlternateHandling::Shifted` is used, the collation
     /// elements whose level gets shifted are shifted to this
