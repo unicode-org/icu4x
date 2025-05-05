@@ -5,7 +5,7 @@ collation/diacritics/v1, und, 182B, 160B, 8ace760351a33687
 collation/diacritics/v1, vi, 182B, 160B, 6b057eec42bee512
 collation/diacritics/v1, vi/trad, -> vi
 collation/jamo/v1, <singleton>, 1048B, 1026B, ccbfc88a6d3a411e
-collation/metadata/v1, <lookup>, 537B, 110 identifiers
+collation/metadata/v1, <lookup>, 541B, 111 identifiers
 collation/metadata/v1, <total>, 36B, 12B, 9 unique payloads
 collation/metadata/v1, af, 4B, 1B, 9aab82d56f3b362e
 collation/metadata/v1, am, 4B, 1B, d1dcef7af54c8272
@@ -15,6 +15,7 @@ collation/metadata/v1, as, -> ar
 collation/metadata/v1, az, -> ar
 collation/metadata/v1, be, -> ar
 collation/metadata/v1, bg, -> am
+collation/metadata/v1, blo, -> af
 collation/metadata/v1, bn, -> ar
 collation/metadata/v1, bn/trad, -> ar
 collation/metadata/v1, br, -> af
@@ -177,16 +178,17 @@ collation/reordering/v1, und-Hani/zhuyin, -> und-Hani/stroke
 collation/reordering/v1, und-Hans, -> und-Hani/pinyin
 collation/reordering/v1, und-Hant, -> und-Hani/stroke
 collation/reordering/v1, ur, -> ar
-collation/root/v1, <singleton>, 129820B, 129703B, 7e63bc9ada35e94
+collation/root/v1, <singleton>, 129848B, 129731B, 36277aa07b87794f
 collation/special/primaries/v1, <singleton>, 40B, 10B, c72898bdaad773b1
-collation/tailoring/v1, <lookup>, 596B, 100 identifiers
-collation/tailoring/v1, <total>, 950740B, 939172B, 91 unique payloads
+collation/tailoring/v1, <lookup>, 601B, 101 identifiers
+collation/tailoring/v1, <total>, 952682B, 940987B, 92 unique payloads
 collation/tailoring/v1, af, 1416B, 1288B, bdc4ac64cc63ff0f
 collation/tailoring/v1, ar, 8392B, 8267B, fb18ec596d8ddece
 collation/tailoring/v1, ar/compat, 2016B, 1888B, cf2700781dc818be
 collation/tailoring/v1, as, 1664B, 1536B, d2d333e53645578d
 collation/tailoring/v1, az, 1948B, 1821B, 2a0fee78b1c4d130
 collation/tailoring/v1, be, 1700B, 1572B, 16d0ce5f5df85a24
+collation/tailoring/v1, blo, 1942B, 1815B, 894e9ce1f76985c5
 collation/tailoring/v1, bn, 1432B, 1304B, fcd093c0cd9a2d34
 collation/tailoring/v1, bn/trad, 11208B, 11083B, 6cd62f2092ae436
 collation/tailoring/v1, br, 1236B, 1108B, c2ab6ef6645c607a
