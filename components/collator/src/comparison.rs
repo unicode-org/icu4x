@@ -2197,3 +2197,109 @@ impl AsMut<SmallVec<[u8; 40]>> for SortKeyLevel {
         &mut self.buf
     }
 }
+
+#[cfg(test)]
+mod test {
+    use super::*;
+    use icu_locale::locale;
+
+    fn write_to_zero_test(a: &[u8], b: Vec<u8>) {
+        let mut v = Vec::new();
+        v.write_to_zero(a);
+        assert_eq!(v, b);
+    }
+
+    #[test]
+    fn write_to_zero() {
+        write_to_zero_test(&[0, 0, 0], vec![0]);
+        write_to_zero_test(&[1, 0, 0], vec![1]);
+        write_to_zero_test(&[0, 1, 0], vec![0, 1]);
+        write_to_zero_test(&[1, 2, 0], vec![1, 2]);
+        write_to_zero_test(&[1, 2, 3], vec![1, 2, 3]);
+    }
+
+    type Key = Vec<u8>;
+
+    fn collator_en(strength: Strength) -> CollatorBorrowed<'static> {
+        let locale = locale!("en").into();
+        let mut options = CollatorOptions::default();
+        options.strength = Some(strength);
+        Collator::try_new(locale, options).unwrap()
+    }
+
+    fn keys(strength: Strength) -> (Key, Key, Key) {
+        let collator = collator_en(strength);
+
+        let mut k0: Key = Vec::new();
+        collator.write_sort_key("aabc", &mut k0);
+        let mut k1: Key = Vec::new();
+        collator.write_sort_key("aAbc", &mut k1);
+        let mut k2: Key = Vec::new();
+        collator.write_sort_key("áAbc", &mut k2);
+
+        (k0, k1, k2)
+    }
+
+    #[test]
+    fn sort_key_primary() {
+        let (k0, k1, k2) = keys(Strength::Primary);
+        assert_eq!(k0, k1);
+        assert_eq!(k1, k2);
+    }
+
+    #[test]
+    fn sort_key_secondary() {
+        let (k0, k1, k2) = keys(Strength::Secondary);
+        assert_eq!(k0, k1);
+        assert!(k1 < k2);
+    }
+
+    #[test]
+    fn sort_key_tertiary() {
+        let (k0, k1, k2) = keys(Strength::Tertiary);
+        assert!(k0 < k1);
+        assert!(k1 < k2);
+    }
+
+    fn collator_ja(strength: Strength) -> CollatorBorrowed<'static> {
+        let locale = locale!("ja").into();
+        let mut options = CollatorOptions::default();
+        options.strength = Some(strength);
+        Collator::try_new(locale, options).unwrap()
+    }
+
+    fn keys_ja_strs(strength: Strength, s0: &str, s1: &str) -> (Key, Key) {
+        let collator = collator_ja(strength);
+
+        let mut k0: Key = Vec::new();
+        collator.write_sort_key(s0, &mut k0);
+        let mut k1: Key = Vec::new();
+        collator.write_sort_key(s1, &mut k1);
+
+        (k0, k1)
+    }
+
+    fn keys_ja(strength: Strength) -> (Key, Key) {
+        keys_ja_strs(strength, "あ", "ア")
+    }
+
+    #[test]
+    fn sort_keys_ja_to_quaternary() {
+        let (k0, k1) = keys_ja(Strength::Primary);
+        assert_eq!(k0, k1);
+        let (k0, k1) = keys_ja(Strength::Secondary);
+        assert_eq!(k0, k1);
+        let (k0, k1) = keys_ja(Strength::Tertiary);
+        assert_eq!(k0, k1);
+        let (k0, k1) = keys_ja(Strength::Quaternary);
+        assert!(k0 < k1);
+    }
+
+    #[test]
+    fn sort_keys_ja_identical() {
+        let (k0, k1) = keys_ja_strs(Strength::Quaternary, "ア", "ｱ");
+        assert_eq!(k0, k1);
+        let (k0, k1) = keys_ja_strs(Strength::Identical, "ア", "ｱ");
+        assert!(k0 < k1);
+    }
+}
