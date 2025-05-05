@@ -89,6 +89,9 @@ pub struct LanguageIdentifier {
 }
 
 impl LanguageIdentifier {
+    /// The unknown language identifier "und".
+    pub const UNKNOWN: Self = crate::langid!("und");
+
     /// A constructor which takes a utf8 slice, parses it and
     /// produces a well-formed [`LanguageIdentifier`].
     ///
@@ -156,7 +159,7 @@ impl LanguageIdentifier {
     /// Const-friendly version of [`Default::default`].
     pub const fn default() -> Self {
         Self {
-            language: subtags::Language::UND,
+            language: subtags::Language::UNKNOWN,
             script: None,
             region: None,
             variants: subtags::Variants::new(),

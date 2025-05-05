@@ -67,7 +67,7 @@ impl DataLocale {
     /// `const` version of `Default::default`
     pub const fn default() -> Self {
         DataLocale {
-            language: Language::UND,
+            language: Language::UNKNOWN,
             script: None,
             region: None,
             variant: None,

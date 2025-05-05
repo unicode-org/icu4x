@@ -49,11 +49,11 @@ impl From<&cldr_serde::parent_locales::Resource> for Parents<'static> {
 
         parents.insert(
             "und-Hant".into(),
-            (Language::UND, Some(script!("Hani")), None),
+            (Language::UNKNOWN, Some(script!("Hani")), None),
         );
         parents.insert(
             "und-Hans".into(),
-            (Language::UND, Some(script!("Hani")), None),
+            (Language::UNKNOWN, Some(script!("Hani")), None),
         );
 
         Parents {
