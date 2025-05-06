@@ -215,7 +215,7 @@ void main() {
         locale,
         DateFormatter.ymd(locale),
       ).formatIso(zonedDateTimeIso.date, TimeZoneInfo.utc()),
-      throwsA(DateTimeWriteError.missingInputField),
+      throwsA(DateTimeWriteError.missingTimeZoneNameTimestamp),
     );
 
     ///// ZonedTimeFormatter /////
@@ -251,7 +251,7 @@ void main() {
         zonedDateTimeIso.time,
         TimeZoneInfo.utc(),
       ),
-      throwsA(DateTimeWriteError.missingInputField),
+      throwsA(DateTimeWriteError.missingTimeZoneNameTimestamp),
     );
 
     expect(

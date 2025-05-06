@@ -275,9 +275,6 @@ impl From<icu_datetime::unchecked::FormattedDateTimeUncheckedError> for DateTime
     fn from(value: icu_datetime::unchecked::FormattedDateTimeUncheckedError) -> Self {
         match value {
             icu_datetime::unchecked::FormattedDateTimeUncheckedError::MissingInputField(
-                icu_datetime::unchecked::MissingInputFieldKind::TimeZoneId,
-            ) => Self::MissingTimeZoneId,
-            icu_datetime::unchecked::FormattedDateTimeUncheckedError::MissingInputField(
                 icu_datetime::unchecked::MissingInputFieldKind::TimeZoneNameTimestamp,
             ) => Self::MissingTimeZoneNameTimestamp,
             icu_datetime::unchecked::FormattedDateTimeUncheckedError::MissingInputField(
