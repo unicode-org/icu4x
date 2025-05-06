@@ -12,10 +12,7 @@ pub mod ffi {
     use crate::unstable::errors::ffi::DataError;
     #[cfg(feature = "buffer_provider")]
     use crate::unstable::provider::ffi::DataProvider;
-    use crate::unstable::{
-        date::ffi::IsoDate, errors::ffi::TimeZoneInvalidOffsetError, time::ffi::Time,
-        timezone::ffi::TimeZone,
-    };
+    use crate::unstable::{errors::ffi::TimeZoneInvalidOffsetError, timezone::ffi::TimeZoneInfo};
 
     #[diplomat::rust_link(icu::time::zone::VariantOffsetsCalculator, Struct)]
     #[diplomat::rust_link(icu::time::zone::VariantOffsetsCalculatorBorrowed, Struct, hidden)]
@@ -166,18 +163,19 @@ pub mod ffi {
         )]
         pub fn compute_offsets_from_time_zone(
             &self,
-            time_zone: &TimeZone,
-            local_date: &IsoDate,
-            local_time: &Time,
+            time_zone: &TimeZoneInfo,
         ) -> Option<VariantOffsets> {
             let icu_time::zone::VariantOffsets {
                 standard, daylight, ..
             } = self.0.as_borrowed().compute_offsets_from_time_zone(
-                time_zone.0,
-                icu_time::zone::ZoneNameTimestamp::from_date_time_iso(icu_time::DateTime {
-                    date: local_date.0,
-                    time: local_time.0,
-                }),
+                time_zone
+                    .id
+                    .with_offset(time_zone.offset)
+                    .with_zone_name_timestamp(
+                        time_zone
+                            .zone_name_timestamp
+                            .unwrap_or(icu_time::zone::ZoneNameTimestamp::far_in_future()),
+                    ),
             )?;
 
             Some(VariantOffsets {

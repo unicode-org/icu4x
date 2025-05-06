@@ -8,7 +8,6 @@ use icu::calendar::Date;
 use icu::datetime::{fieldsets, NoCalendarFormatter};
 use icu::locale::locale;
 use icu::time::{DateTime, Time};
-use icu_time::zone::ZoneNameTimestamp;
 use icu_time::TimeZone;
 
 fn main() {
@@ -38,8 +37,7 @@ fn main() {
 
         let offsets = offsets
             .compute_offsets_from_time_zone(
-                tz,
-                ZoneNameTimestamp::from_date_time_iso(reference_date_time),
+                tz.without_offset().at_date_time_iso(reference_date_time),
             )
             .unwrap();
 

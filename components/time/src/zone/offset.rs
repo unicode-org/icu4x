@@ -11,7 +11,8 @@ use icu_provider::prelude::*;
 use displaydoc::Display;
 use zerovec::ZeroMap2d;
 
-use super::ZoneNameTimestamp;
+use super::models::AtTime;
+use super::{TimeZoneInfo, ZoneNameTimestamp};
 
 /// The time zone offset was invalid. Must be within ±18:00:00.
 #[derive(Display, Debug, Copy, Clone, PartialEq)]
@@ -330,6 +331,13 @@ impl VariantOffsetsCalculatorBorrowed<'_> {
     /// assert_eq!(offsets.daylight, None);
     /// ```
     pub fn compute_offsets_from_time_zone(
+        &self,
+        time_zone: TimeZoneInfo<AtTime>,
+    ) -> Option<VariantOffsets> {
+        self.compute_offsets_from_time_zone_internal(time_zone.id, time_zone.zone_name_timestamp)
+    }
+
+    pub(crate) fn compute_offsets_from_time_zone_internal(
         &self,
         time_zone_id: TimeZone,
         zone_name_timestamp: ZoneNameTimestamp,
