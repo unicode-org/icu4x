@@ -150,13 +150,23 @@ impl Time {
         }
     }
 
-    /// Construct a new [`Time`] representing the start of the day (00:00.000)
+    /// Construct a new [`Time`] representing the start of the day (00:00:00.000)
     pub const fn start_of_day() -> Self {
         Self {
-            hour: Hour::zero(),
-            minute: Minute::zero(),
-            second: Second::zero(),
-            subsecond: Nanosecond::zero(),
+            hour: Hour(0),
+            minute: Minute(0),
+            second: Second(0),
+            subsecond: Nanosecond(0),
+        }
+    }
+
+    /// Construct a new [`Time`] representing noon (12:00:00.000)
+    pub const fn noon() -> Self {
+        Self {
+            hour: Hour(12),
+            minute: Minute(0),
+            second: Second(0),
+            subsecond: Nanosecond(0),
         }
     }
 
