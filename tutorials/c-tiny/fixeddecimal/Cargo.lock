@@ -5,7 +5,7 @@ version = 3
 [[package]]
 name = "diplomat"
 version = "0.10.0"
-source = "git+https://github.com/rust-diplomat/diplomat#5c383d634b982a5f3199c0fee8421839f9582cfc"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=df05c43c34183af2695131531c721922514dae45#df05c43c34183af2695131531c721922514dae45"
 dependencies = [
  "diplomat_core",
  "proc-macro2",
@@ -16,12 +16,12 @@ dependencies = [
 [[package]]
 name = "diplomat-runtime"
 version = "0.10.0"
-source = "git+https://github.com/rust-diplomat/diplomat#5c383d634b982a5f3199c0fee8421839f9582cfc"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=df05c43c34183af2695131531c721922514dae45#df05c43c34183af2695131531c721922514dae45"
 
 [[package]]
 name = "diplomat_core"
 version = "0.10.0"
-source = "git+https://github.com/rust-diplomat/diplomat#5c383d634b982a5f3199c0fee8421839f9582cfc"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=df05c43c34183af2695131531c721922514dae45#df05c43c34183af2695131531c721922514dae45"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -98,12 +98,12 @@ version = "2.0.0-beta2"
 dependencies = [
  "displaydoc",
  "icu_locale_core",
- "icu_provider_macros",
  "stable_deref_trait",
  "tinystr",
  "writeable",
  "yoke",
  "zerofrom",
+ "zerotrie",
  "zerovec",
 ]
 
@@ -115,15 +115,6 @@ dependencies = [
  "icu_provider",
  "tinystr",
  "zerovec",
-]
-
-[[package]]
-name = "icu_provider_macros"
-version = "2.0.0-beta2"
-dependencies = [
- "proc-macro2",
- "quote",
- "syn",
 ]
 
 [[package]]
@@ -283,6 +274,13 @@ dependencies = [
 ]
 
 [[package]]
+name = "zerotrie"
+version = "0.2.1"
+dependencies = [
+ "displaydoc",
+]
+
+[[package]]
 name = "zerovec"
 version = "0.11.1"
 dependencies = [
@@ -318,7 +316,7 @@ version = "0.2.0"
 
 [[patch.unused]]
 name = "deduplicating_array"
-version = "0.1.7"
+version = "0.1.8"
 
 [[patch.unused]]
 name = "fixed_decimal"
@@ -386,11 +384,11 @@ version = "2.0.0-beta2"
 
 [[patch.unused]]
 name = "icu_experimental"
-version = "0.3.0"
+version = "0.3.0-beta2"
 
 [[patch.unused]]
 name = "icu_experimental_data"
-version = "0.3.0"
+version = "0.3.0-beta2"
 
 [[patch.unused]]
 name = "icu_freertos"
@@ -482,12 +480,8 @@ version = "2.0.0-beta2"
 
 [[patch.unused]]
 name = "ixdtf"
-version = "0.4.0"
+version = "0.5.0-dev"
 
 [[patch.unused]]
 name = "tzif"
-version = "0.3.0"
-
-[[patch.unused]]
-name = "zerotrie"
-version = "0.2.1"
+version = "0.4.0"

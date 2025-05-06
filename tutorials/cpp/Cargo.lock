@@ -42,6 +42,25 @@ dependencies = [
 ]
 
 [[package]]
+name = "databake"
+version = "0.2.0"
+dependencies = [
+ "databake-derive",
+ "proc-macro2",
+ "quote",
+]
+
+[[package]]
+name = "databake-derive"
+version = "0.2.0"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn",
+ "synstructure",
+]
+
+[[package]]
 name = "deranged"
 version = "0.3.11"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -53,7 +72,7 @@ dependencies = [
 [[package]]
 name = "diplomat"
 version = "0.10.0"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=f67862a22def6cb7954aa51e102630e019c99165#f67862a22def6cb7954aa51e102630e019c99165"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=df05c43c34183af2695131531c721922514dae45#df05c43c34183af2695131531c721922514dae45"
 dependencies = [
  "diplomat_core",
  "proc-macro2",
@@ -64,7 +83,7 @@ dependencies = [
 [[package]]
 name = "diplomat-runtime"
 version = "0.10.0"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=f67862a22def6cb7954aa51e102630e019c99165#f67862a22def6cb7954aa51e102630e019c99165"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=df05c43c34183af2695131531c721922514dae45#df05c43c34183af2695131531c721922514dae45"
 dependencies = [
  "log",
 ]
@@ -72,7 +91,7 @@ dependencies = [
 [[package]]
 name = "diplomat_core"
 version = "0.10.0"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=f67862a22def6cb7954aa51e102630e019c99165#f67862a22def6cb7954aa51e102630e019c99165"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=df05c43c34183af2695131531c721922514dae45#df05c43c34183af2695131531c721922514dae45"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -98,6 +117,16 @@ name = "either"
 version = "1.14.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b7914353092ddf589ad78f25c5c1c21b7f80b0ff8621e7c814c3485b5306da9d"
+
+[[package]]
+name = "erased-serde"
+version = "0.4.6"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e004d887f51fcb9fef17317a2f3525c887d8aa3f4f50fed920816a688284a5b7"
+dependencies = [
+ "serde",
+ "typeid",
+]
 
 [[package]]
 name = "fixed_decimal"
@@ -430,7 +459,9 @@ version = "2.0.0-beta2"
 name = "icu_provider"
 version = "2.0.0-beta2"
 dependencies = [
+ "databake",
  "displaydoc",
+ "erased-serde",
  "icu_locale_core",
  "log",
  "postcard",
@@ -474,14 +505,9 @@ version = "2.0.0-beta2"
 dependencies = [
  "displaydoc",
  "icu_provider",
- "icu_provider_registry",
  "serde",
  "serde-json-core",
 ]
-
-[[package]]
-name = "icu_provider_registry"
-version = "2.0.0-beta2"
 
 [[package]]
 name = "icu_segmenter"
@@ -511,6 +537,7 @@ dependencies = [
  "calendrical_calculations",
  "displaydoc",
  "icu_calendar",
+ "icu_locale_core",
  "icu_provider",
  "icu_time_data",
  "ixdtf",
@@ -827,6 +854,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "typeid"
+version = "1.0.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "bc7d623258602320d5c55d1bc22793b57daff0ec7efc270ea7d55ce1d5f5471c"
+
+[[package]]
 name = "unicode-bidi"
 version = "0.3.18"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1063,6 +1096,7 @@ dependencies = [
 name = "zerovec"
 version = "0.11.1"
 dependencies = [
+ "databake",
  "serde",
  "yoke",
  "zerofrom",
@@ -1085,14 +1119,6 @@ version = "0.2.3"
 [[patch.unused]]
 name = "crlify"
 version = "1.0.4"
-
-[[patch.unused]]
-name = "databake"
-version = "0.2.0"
-
-[[patch.unused]]
-name = "databake-derive"
-version = "0.2.0"
 
 [[patch.unused]]
 name = "deduplicating_array"
@@ -1132,6 +1158,10 @@ version = "2.0.0-beta2"
 
 [[patch.unused]]
 name = "icu_provider_export"
+version = "2.0.0-beta2"
+
+[[patch.unused]]
+name = "icu_provider_registry"
 version = "2.0.0-beta2"
 
 [[patch.unused]]
