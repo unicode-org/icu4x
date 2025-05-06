@@ -334,6 +334,7 @@ impl VariantOffsetsCalculatorBorrowed<'_> {
         &self,
         time_zone: TimeZoneInfo<AtTime>,
     ) -> Option<VariantOffsets> {
+        // TODO(#6238): Make use of the offset if available
         self.compute_offsets_from_time_zone_internal(time_zone.id, time_zone.zone_name_timestamp)
     }
 
