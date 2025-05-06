@@ -518,15 +518,21 @@ pub mod ffi {
             write: &mut diplomat_runtime::DiplomatWrite,
         ) -> Result<(), DateTimeWriteError> {
             let mut input = icu_datetime::DateTimeInputUnchecked::default();
-            let date = date.0.to_calendar(self.0.calendar());
-            input.set_date_fields_unchecked(date); // calendar conversion on previous line
+            let date_in_calendar = date.0.to_calendar(self.0.calendar());
+            input.set_date_fields_unchecked(date_in_calendar); // calendar conversion on previous line
             input.set_time_fields(time.0);
             input.set_time_zone_id(zone.id);
             if let Some(offset) = zone.offset {
                 input.set_time_zone_utc_offset(offset);
             }
-            if let Some(local_time) = zone.local_time {
-                input.set_time_zone_local_time(local_time);
+            if let Some(zone_name_timestamp) = zone.zone_name_timestamp {
+                input.set_time_zone_name_timestamp(zone_name_timestamp);
+            }
+            else {
+                input.set_time_zone_name_timestamp(icu_time::zone::ZoneNameTimestamp::from_date_time_iso(icu_time::DateTime {
+                    date: date.0,
+                    time: time.0
+                }))
             }
             if let Some(variant) = zone.variant {
                 input.set_time_zone_variant(variant);
@@ -1012,15 +1018,21 @@ pub mod ffi {
             write: &mut diplomat_runtime::DiplomatWrite,
         ) -> Result<(), DateTimeWriteError> {
             let mut input = icu_datetime::DateTimeInputUnchecked::default();
-            let date = date.0.to_calendar(Gregorian);
-            input.set_date_fields_unchecked(date); // calendar conversion on previous line
+            let date_in_calendar = date.0.to_calendar(Gregorian);
+            input.set_date_fields_unchecked(date_in_calendar); // calendar conversion on previous line
             input.set_time_fields(time.0);
             input.set_time_zone_id(zone.id);
             if let Some(offset) = zone.offset {
                 input.set_time_zone_utc_offset(offset);
             }
-            if let Some(local_time) = zone.local_time {
-                input.set_time_zone_local_time(local_time);
+            if let Some(zone_name_timestamp) = zone.zone_name_timestamp {
+                input.set_time_zone_name_timestamp(zone_name_timestamp);
+            }
+            else {
+                input.set_time_zone_name_timestamp(icu_time::zone::ZoneNameTimestamp::from_date_time_iso(icu_time::DateTime {
+                    date: date.0,
+                    time: time.0
+                }))
             }
             if let Some(variant) = zone.variant {
                 input.set_time_zone_variant(variant);

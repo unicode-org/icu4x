@@ -2,7 +2,9 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use icu_calendar::{AsCalendar, Date, RangeError};
+use icu_calendar::{types::RataDie, AsCalendar, Date, Iso, RangeError};
+
+use crate::zone::UtcOffset;
 
 /// This macro defines a struct for 0-based date fields: hours, minutes, seconds
 /// and fractional seconds. Each unit is bounded by a range. The traits implemented
@@ -172,7 +174,7 @@ impl Time {
 /// A date and time for a given calendar.
 ///
 /// **The primary definition of this type is in the [`icu_time`](https://docs.rs/icu_time) crate. Other ICU4X crates re-export it for convenience.**
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, PartialEq, Eq, Clone, Copy)]
 #[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct DateTime<A: AsCalendar> {
     /// The date
@@ -184,7 +186,7 @@ pub struct DateTime<A: AsCalendar> {
 /// A date and time for a given calendar, local to a specified time zone.
 ///
 /// **The primary definition of this type is in the [`icu_time`](https://docs.rs/icu_time) crate. Other ICU4X crates re-export it for convenience.**
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, PartialEq, Eq, Clone, Copy)]
 #[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct ZonedDateTime<A: AsCalendar, Z> {
     /// The date, local to the time zone
@@ -193,4 +195,80 @@ pub struct ZonedDateTime<A: AsCalendar, Z> {
     pub time: Time,
     /// The time zone
     pub zone: Z,
+}
+
+impl ZonedDateTime<Iso, UtcOffset> {
+    /// Creates a [`ZonedDateTime`] from an absolute time, in milliseconds since the UNIX Epoch,
+    /// and a UTC offset.
+    ///
+    /// This constructor returns a [`ZonedDateTime`] that supports only the localized offset
+    /// time zone style.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::calendar::cal::Iso;
+    /// use icu::time::ZonedDateTime;
+    /// use icu::time::zone::UtcOffset;
+    ///
+    /// let iso_str = "2025-04-30T17:45-0700";
+    /// let timestamp = 1746060300000; // milliseconds since UNIX epoch
+    /// let offset: UtcOffset = "-0700".parse().unwrap();
+    ///
+    /// let zdt_from_timestamp = ZonedDateTime::from_epoch_milliseconds_and_utc_offset(
+    ///     timestamp,
+    ///     offset
+    /// );
+    ///
+    /// // Check that it equals the same as the parse result:
+    /// let zdt_from_str = ZonedDateTime::try_offset_only_from_str(iso_str, Iso).unwrap();
+    /// assert_eq!(zdt_from_timestamp, zdt_from_str);
+    /// ```
+    ///
+    /// Negative timestamps are supported:
+    ///
+    /// ```
+    /// use icu::calendar::cal::Iso;
+    /// use icu::time::ZonedDateTime;
+    /// use icu::time::zone::UtcOffset;
+    ///
+    /// let iso_str = "1920-01-02T03:04:05.250+0600";
+    /// let timestamp = -1577847354750; // milliseconds since UNIX epoch
+    /// let offset: UtcOffset = "+0600".parse().unwrap();
+    ///
+    /// let zdt_from_timestamp = ZonedDateTime::from_epoch_milliseconds_and_utc_offset(
+    ///     timestamp,
+    ///     offset
+    /// );
+    ///
+    /// // Check that it equals the same as the parse result:
+    /// let zdt_from_str = ZonedDateTime::try_offset_only_from_str(iso_str, Iso).unwrap();
+    /// assert_eq!(zdt_from_timestamp, zdt_from_str);
+    /// ```
+    pub fn from_epoch_milliseconds_and_utc_offset(
+        epoch_milliseconds: i64,
+        utc_offset: UtcOffset,
+    ) -> Self {
+        // TODO(#6512): Handle overflow
+        let local_epoch_milliseconds = epoch_milliseconds + (1000 * utc_offset.to_seconds()) as i64;
+        let (epoch_days, time_millisecs) = (
+            local_epoch_milliseconds.div_euclid(86400000),
+            local_epoch_milliseconds.rem_euclid(86400000),
+        );
+        const UNIX_EPOCH: RataDie = calendrical_calculations::iso::const_fixed_from_iso(1970, 1, 1);
+        let rata_die = UNIX_EPOCH + epoch_days;
+        #[allow(clippy::unwrap_used)] // these values are derived via modulo operators
+        let time = Time::try_new(
+            (time_millisecs / 3600000) as u8,
+            ((time_millisecs % 3600000) / 60000) as u8,
+            ((time_millisecs % 60000) / 1000) as u8,
+            ((time_millisecs % 1000) as u32) * 1000000,
+        )
+        .unwrap();
+        ZonedDateTime {
+            date: Date::from_rata_die(rata_die, Iso),
+            time,
+            zone: utc_offset,
+        }
+    }
 }

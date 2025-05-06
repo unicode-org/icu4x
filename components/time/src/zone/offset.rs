@@ -4,14 +4,14 @@
 
 use core::str::FromStr;
 
-use crate::provider::{EighthsOfHourOffset, MinutesSinceEpoch, TimeZoneOffsetsV1};
-use crate::{Time, TimeZone};
-use icu_calendar::Date;
-use icu_calendar::Iso;
+use crate::provider::{EighthsOfHourOffset, TimezoneVariantsOffsetsV1};
+use crate::TimeZone;
 use icu_provider::prelude::*;
 
 use displaydoc::Display;
 use zerovec::ZeroMap2d;
+
+use super::ZoneNameTimestamp;
 
 /// The time zone offset was invalid. Must be within ±18:00:00.
 #[derive(Display, Debug, Copy, Clone, PartialEq)]
@@ -197,14 +197,14 @@ impl FromStr for UtcOffset {
 /// [data provider]: icu_provider
 #[derive(Debug)]
 pub struct VariantOffsetsCalculator {
-    pub(super) offset_period: DataPayload<TimeZoneOffsetsV1>,
+    pub(super) offset_period: DataPayload<TimezoneVariantsOffsetsV1>,
 }
 
 /// The borrowed version of a  [`VariantOffsetsCalculator`]
 #[derive(Debug)]
 pub struct VariantOffsetsCalculatorBorrowed<'a> {
     pub(super) offset_period:
-        &'a ZeroMap2d<'a, TimeZone, MinutesSinceEpoch, (EighthsOfHourOffset, EighthsOfHourOffset)>,
+        &'a ZeroMap2d<'a, TimeZone, ZoneNameTimestamp, (EighthsOfHourOffset, EighthsOfHourOffset)>,
 }
 
 #[cfg(feature = "compiled_data")]
@@ -225,7 +225,7 @@ impl VariantOffsetsCalculator {
     #[allow(clippy::new_ret_no_self)]
     pub const fn new() -> VariantOffsetsCalculatorBorrowed<'static> {
         VariantOffsetsCalculatorBorrowed {
-            offset_period: crate::provider::Baked::SINGLETON_TIME_ZONE_OFFSETS_V1,
+            offset_period: crate::provider::Baked::SINGLETON_TIMEZONE_VARIANTS_OFFSETS_V1,
         }
     }
 
@@ -240,7 +240,7 @@ impl VariantOffsetsCalculator {
 
     #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::new)]
     pub fn try_new_unstable(
-        provider: &(impl DataProvider<TimeZoneOffsetsV1> + ?Sized),
+        provider: &(impl DataProvider<TimezoneVariantsOffsetsV1> + ?Sized),
     ) -> Result<Self, DataError> {
         let metazone_period = provider.load(Default::default())?.payload;
         Ok(Self {
@@ -268,7 +268,7 @@ impl VariantOffsetsCalculatorBorrowed<'static> {
     #[inline]
     pub const fn new() -> Self {
         Self {
-            offset_period: crate::provider::Baked::SINGLETON_TIME_ZONE_OFFSETS_V1,
+            offset_period: crate::provider::Baked::SINGLETON_TIMEZONE_VARIANTS_OFFSETS_V1,
         }
     }
 
@@ -292,6 +292,8 @@ impl VariantOffsetsCalculatorBorrowed<'_> {
     /// use icu::calendar::Date;
     /// use icu::time::zone::UtcOffset;
     /// use icu::time::zone::VariantOffsetsCalculator;
+    /// use icu::time::zone::ZoneNameTimestamp;
+    /// use icu::time::DateTime;
     /// use icu::time::Time;
     /// use icu::time::TimeZone;
     /// use icu::locale::subtags::subtag;
@@ -302,7 +304,7 @@ impl VariantOffsetsCalculatorBorrowed<'_> {
     /// let offsets = zoc
     ///     .compute_offsets_from_time_zone(
     ///         TimeZone(subtag!("usden")),
-    ///         (Date::try_new_iso(2024, 1, 1).unwrap(), Time::start_of_day()),
+    ///         ZoneNameTimestamp::from_date_time_iso(DateTime { date: Date::try_new_iso(2024, 1, 1).unwrap(), time: Time::start_of_day() }),
     ///     )
     ///     .unwrap();
     /// assert_eq!(
@@ -318,7 +320,7 @@ impl VariantOffsetsCalculatorBorrowed<'_> {
     /// let offsets = zoc
     ///     .compute_offsets_from_time_zone(
     ///         TimeZone(subtag!("usphx")),
-    ///         (Date::try_new_iso(2024, 1, 1).unwrap(), Time::start_of_day()),
+    ///         ZoneNameTimestamp::from_date_time_iso(DateTime { date: Date::try_new_iso(2024, 1, 1).unwrap(), time: Time::start_of_day() }),
     ///     )
     ///     .unwrap();
     /// assert_eq!(
@@ -330,15 +332,17 @@ impl VariantOffsetsCalculatorBorrowed<'_> {
     pub fn compute_offsets_from_time_zone(
         &self,
         time_zone_id: TimeZone,
-        dt: (Date<Iso>, Time),
+        zone_name_timestamp: ZoneNameTimestamp,
     ) -> Option<VariantOffsets> {
         use zerovec::ule::AsULE;
         match self.offset_period.get0(&time_zone_id) {
             Some(cursor) => {
                 let mut offsets = None;
-                let minutes_since_epoch_walltime = MinutesSinceEpoch::from(dt);
-                for (minutes, id) in cursor.iter1_copied() {
-                    if minutes_since_epoch_walltime >= MinutesSinceEpoch::from_unaligned(*minutes) {
+                for (bytes, id) in cursor.iter1_copied() {
+                    if zone_name_timestamp
+                        .cmp(&ZoneNameTimestamp::from_unaligned(*bytes))
+                        .is_ge()
+                    {
                         offsets = Some(id);
                     } else {
                         break;

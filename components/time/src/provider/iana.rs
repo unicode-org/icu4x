@@ -29,9 +29,9 @@ pub const NON_REGION_CITY_PREFIX: u8 = b'_';
 icu_provider::data_marker!(
     /// See [`IanaToBcp47Map`]
     ///
-    /// This marker uses a checksum to ensure consistency with [`TimeZoneIanaNamesV1`].
-    TimeZoneIanaMapV1,
-    "time/zone/iana/map/v1",
+    /// This marker uses a checksum to ensure consistency with [`TimezoneIdentifiersIanaExtendedV1`].
+    TimezoneIdentifiersIanaCoreV1,
+    "timezone/identifiers/iana/core/v1",
     IanaToBcp47Map<'static>,
     is_singleton = true,
     has_checksum = true,
@@ -40,9 +40,9 @@ icu_provider::data_marker!(
 icu_provider::data_marker!(
     /// See [`Bcp47ToIanaMap`]
     ///
-    /// This marker uses a checksum to ensure consistency with [`TimeZoneIanaMapV1`].
-    TimeZoneIanaNamesV1,
-    "time/zone/iana/names/v1",
+    /// This marker uses a checksum to ensure consistency with [`TimezoneIdentifiersIanaCoreV1`].
+    TimezoneIdentifiersIanaExtendedV1,
+    "timezone/identifiers/iana/extended/v1",
     IanaNames<'static>,
     is_singleton = true,
     has_checksum = true,

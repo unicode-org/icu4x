@@ -31,7 +31,7 @@ impl DataLocaleFamily {
     ///
     /// The `und` locale is treated specially and behaves like `::single("und")`.
     pub fn with_descendants(locale: DataLocale) -> Self {
-        let annotations = if locale.is_default() {
+        let annotations = if locale.is_unknown() {
             DataLocaleFamilyAnnotations::single()
         } else {
             DataLocaleFamilyAnnotations::with_descendants()
@@ -57,7 +57,7 @@ impl DataLocaleFamily {
     ///
     /// The `und` locale is treated specially and behaves like `::single("und")`.
     pub fn without_descendants(locale: DataLocale) -> Self {
-        let annotations = if locale.is_default() {
+        let annotations = if locale.is_unknown() {
             DataLocaleFamilyAnnotations::single()
         } else {
             DataLocaleFamilyAnnotations::without_descendants()
@@ -83,7 +83,7 @@ impl DataLocaleFamily {
     ///
     /// The `und` locale is treated specially and behaves like `::single("und")`.
     pub fn without_ancestors(locale: DataLocale) -> Self {
-        let annotations = if locale.is_default() {
+        let annotations = if locale.is_unknown() {
             DataLocaleFamilyAnnotations::single()
         } else {
             DataLocaleFamilyAnnotations::without_ancestors()

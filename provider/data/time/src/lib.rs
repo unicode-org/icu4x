@@ -4,7 +4,7 @@
 
 //! Data for the `icu_time` crate
 //!
-//! This data was generated with CLDR version 47.0.0, ICU version release-77-1, and
+//! This data was generated with CLDR version 47.0.0, ICU version icu4x/2025-05-01/77.x, and
 //! LSTM segmenter version v0.1.0.
 
 #![no_std]

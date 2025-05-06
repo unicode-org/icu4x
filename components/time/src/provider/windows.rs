@@ -20,8 +20,8 @@ use super::TimeZone;
 
 icu_provider::data_marker!(
     /// See [`WindowsZonesToBcp47Map`].
-    TimeZoneWindowsV1,
-    "time/zone/windows/v1",
+    TimezoneIdentifiersWindowsV1,
+    "timezone/identifiers/windows/v1",
     WindowsZonesToBcp47Map<'static>,
     is_singleton = true,
 );

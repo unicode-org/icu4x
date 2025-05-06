@@ -26,11 +26,11 @@ export class Locale {
     static fromString(name: string): Locale;
 
     /** 
-     * Construct a default undefined [`Locale`] "und".
+     * Construct a unknown [`Locale`] "und".
      *
-     * See the [Rust documentation for `default`](https://docs.rs/icu/latest/icu/locale/struct.Locale.html#method.default) for more information.
+     * See the [Rust documentation for `UNKNOWN`](https://docs.rs/icu/latest/icu/locale/struct.Locale.html#associatedconstant.UNKNOWN) for more information.
      */
-    static und(): Locale;
+    static unknown(): Locale;
 
     /** 
      * Clones the [`Locale`].

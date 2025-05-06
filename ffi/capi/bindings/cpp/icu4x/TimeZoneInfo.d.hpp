@@ -59,14 +59,25 @@ public:
   inline std::unique_ptr<icu4x::TimeZone> id() const;
 
   /**
-   * See the [Rust documentation for `at_time`](https://docs.rs/icu/latest/icu/time/struct.TimeZoneInfo.html#method.at_time) for more information.
+   * Sets the datetime at which to interpret the time zone
+   * for display name lookup.
+   *
+   * Notes:
+   *
+   * - If not set, the formatting datetime is used if possible.
+   * - The constraints are the same as with `ZoneNameTimestamp` in Rust.
+   * - Set to year 1000 or 9999 for a reference far in the past or future.
+   *
+   * See the [Rust documentation for `at_date_time_iso`](https://docs.rs/icu/latest/icu/time/struct.TimeZoneInfo.html#method.at_date_time_iso) for more information.
+   *
+   * Additional information: [1](https://docs.rs/icu/latest/icu/time/zone/struct.ZoneNameTimestamp.html)
    */
-  inline std::unique_ptr<icu4x::TimeZoneInfo> at_time(const icu4x::IsoDate& date, const icu4x::Time& time) const;
+  inline std::unique_ptr<icu4x::TimeZoneInfo> at_date_time_iso(const icu4x::IsoDate& date, const icu4x::Time& time) const;
 
   /**
-   * See the [Rust documentation for `local_time`](https://docs.rs/icu/latest/icu/time/struct.TimeZoneInfo.html#method.local_time) for more information.
+   * See the [Rust documentation for `zone_name_timestamp`](https://docs.rs/icu/latest/icu/time/struct.TimeZoneInfo.html#method.zone_name_timestamp) for more information.
    */
-  inline std::optional<icu4x::IsoDateTime> local_time() const;
+  inline std::optional<icu4x::IsoDateTime> zone_name_date_time() const;
 
   /**
    * See the [Rust documentation for `with_variant`](https://docs.rs/icu/latest/icu/time/struct.TimeZoneInfo.html#method.with_variant) for more information.

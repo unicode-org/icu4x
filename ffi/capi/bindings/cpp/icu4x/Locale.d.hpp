@@ -44,11 +44,11 @@ public:
   inline static diplomat::result<std::unique_ptr<icu4x::Locale>, icu4x::LocaleParseError> from_string(std::string_view name);
 
   /**
-   * Construct a default undefined [`Locale`] "und".
+   * Construct a unknown [`Locale`] "und".
    *
-   * See the [Rust documentation for `default`](https://docs.rs/icu/latest/icu/locale/struct.Locale.html#method.default) for more information.
+   * See the [Rust documentation for `UNKNOWN`](https://docs.rs/icu/latest/icu/locale/struct.Locale.html#associatedconstant.UNKNOWN) for more information.
    */
-  inline static std::unique_ptr<icu4x::Locale> und();
+  inline static std::unique_ptr<icu4x::Locale> unknown();
 
   /**
    * Clones the [`Locale`].

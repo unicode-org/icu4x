@@ -171,7 +171,7 @@ impl<P> LocaleFallbackProvider<P> {
                 }
                 Ok(None) => {
                     // If we just checked und, break out of the loop.
-                    if fallback_iterator.get().is_default() {
+                    if fallback_iterator.get().is_unknown() {
                         break;
                     }
                     fallback_iterator.step();

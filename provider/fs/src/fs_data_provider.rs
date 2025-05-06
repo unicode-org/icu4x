@@ -66,7 +66,7 @@ impl FsDataProvider {
         marker: DataMarkerInfo,
         req: DataRequest,
     ) -> Result<(DataResponseMetadata, PathBuf), DataError> {
-        if marker.is_singleton && !req.id.locale.is_default() {
+        if marker.is_singleton && !req.id.locale.is_unknown() {
             return Err(DataErrorKind::InvalidRequest.with_req(marker, req));
         }
         let mut path = marker_to_path(marker.id, &self.root);

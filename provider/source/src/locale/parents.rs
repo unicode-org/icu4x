@@ -39,8 +39,8 @@ impl From<&cldr_serde::parent_locales::Resource> for Parents<'static> {
         let mut parents = BTreeMap::<_, (Language, Option<Script>, Option<Region>)>::new();
 
         for (source, target) in source_data.supplemental.parent_locales.parent_locale.iter() {
-            assert!(!source.language.is_default());
-            if source.script.is_some() && source.region.is_none() && target.is_default() {
+            assert!(!source.language.is_unknown());
+            if source.script.is_some() && source.region.is_none() && target.is_unknown() {
                 // We always fall back from language-script to und
                 continue;
             }
@@ -49,11 +49,11 @@ impl From<&cldr_serde::parent_locales::Resource> for Parents<'static> {
 
         parents.insert(
             "und-Hant".into(),
-            (Language::UND, Some(script!("Hani")), None),
+            (Language::UNKNOWN, Some(script!("Hani")), None),
         );
         parents.insert(
             "und-Hans".into(),
-            (Language::UND, Some(script!("Hani")), None),
+            (Language::UNKNOWN, Some(script!("Hani")), None),
         );
 
         Parents {

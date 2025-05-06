@@ -17,6 +17,9 @@ namespace icu4x {
 namespace capi {
     extern "C" {
     
+    typedef struct icu4x_TimePrecision_from_subsecond_digits_mv1_result {union {icu4x::capi::TimePrecision ok; }; bool is_ok;} icu4x_TimePrecision_from_subsecond_digits_mv1_result;
+    icu4x_TimePrecision_from_subsecond_digits_mv1_result icu4x_TimePrecision_from_subsecond_digits_mv1(uint8_t digits);
+    
     
     } // extern "C"
 } // namespace capi
@@ -45,5 +48,10 @@ inline icu4x::TimePrecision icu4x::TimePrecision::FromFFI(icu4x::capi::TimePreci
     default:
       abort();
   }
+}
+
+inline std::optional<icu4x::TimePrecision> icu4x::TimePrecision::from_subsecond_digits(uint8_t digits) {
+  auto result = icu4x::capi::icu4x_TimePrecision_from_subsecond_digits_mv1(digits);
+  return result.is_ok ? std::optional<icu4x::TimePrecision>(icu4x::TimePrecision::FromFFI(result.ok)) : std::nullopt;
 }
 #endif // icu4x_TimePrecision_HPP

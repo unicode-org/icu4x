@@ -15,7 +15,6 @@
 
 
 fixed_decimal::Decimal::new#FnInTypedef
-icu::datetime::options::SubsecondError#Enum
 icu_provider_adapters::fork::ForkByMarkerProvider::inner#FnInTypedef
 icu_provider_adapters::fork::ForkByMarkerProvider::inner_mut#FnInTypedef
 icu_provider_adapters::fork::ForkByMarkerProvider::into_inner#FnInTypedef

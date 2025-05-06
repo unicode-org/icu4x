@@ -4,6 +4,7 @@ import { IanaParser } from "./IanaParser.mjs"
 import { IsoDate } from "./IsoDate.mjs"
 import { Time } from "./Time.mjs"
 import { TimeZoneInfo } from "./TimeZoneInfo.mjs"
+import { UtcOffset } from "./UtcOffset.mjs"
 import { VariantOffsetsCalculator } from "./VariantOffsetsCalculator.mjs"
 import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
@@ -121,16 +122,16 @@ export class ZonedIsoDateTime {
     /** 
      * Creates a new [`ZonedIsoDateTime`] from an IXDTF string.
      *
-     * See the [Rust documentation for `try_from_str`](https://docs.rs/icu/latest/icu/time/struct.ZonedDateTime.html#method.try_from_str) for more information.
+     * See the [Rust documentation for `try_full_from_str`](https://docs.rs/icu/latest/icu/time/struct.ZonedDateTime.html#method.try_full_from_str) for more information.
      */
-    static fromString(v, ianaParser, offsetCalculator) {
+    static fullFromString(v, ianaParser, offsetCalculator) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
         const vSlice = diplomatRuntime.DiplomatBuf.str8(wasm, v);
         
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 13, 4, true);
         
-        const result = wasm.icu4x_ZonedIsoDateTime_from_string_mv1(diplomatReceive.buffer, ...vSlice.splat(), ianaParser.ffiValue, offsetCalculator.ffiValue);
+        const result = wasm.icu4x_ZonedIsoDateTime_full_from_string_mv1(diplomatReceive.buffer, ...vSlice.splat(), ianaParser.ffiValue, offsetCalculator.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {
@@ -143,6 +144,27 @@ export class ZonedIsoDateTime {
         finally {
             functionCleanupArena.free();
         
+            diplomatReceive.free();
+        }
+    }
+
+    /** 
+     * Creates a new [`ZonedIsoDateTime`] from milliseconds since epoch (timestamp) and a UTC offset.
+     *
+     * Note: [`ZonedIsoDateTime`]s created with this constructor can only be formatted using localized offset zone styles.
+     *
+     * See the [Rust documentation for `from_epoch_milliseconds_and_utc_offset`](https://docs.rs/icu/latest/icu/time/struct.ZonedDateTime.html#method.from_epoch_milliseconds_and_utc_offset) for more information.
+     */
+    static fromEpochMillisecondsAndUtcOffset(epochMilliseconds, utcOffset) {
+        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 12, 4, false);
+        
+        const result = wasm.icu4x_ZonedIsoDateTime_from_epoch_milliseconds_and_utc_offset_mv1(diplomatReceive.buffer, epochMilliseconds, utcOffset.ffiValue);
+    
+        try {
+            return ZonedIsoDateTime._fromFFI(diplomatRuntime.internalConstructor, diplomatReceive.buffer);
+        }
+        
+        finally {
             diplomatReceive.free();
         }
     }

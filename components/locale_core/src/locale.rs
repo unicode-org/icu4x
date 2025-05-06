@@ -121,6 +121,9 @@ fn test_sizes() {
 }
 
 impl Locale {
+    /// The unknown locale "und".
+    pub const UNKNOWN: Self = crate::locale!("und");
+
     /// A constructor which takes a utf8 slice, parses it and
     /// produces a well-formed [`Locale`].
     ///
@@ -492,7 +495,7 @@ impl_writeable_for_each_subtag_str_no_test!(Locale, selff, selff.extensions.is_e
 #[test]
 fn test_writeable() {
     use writeable::assert_writeable_eq;
-    assert_writeable_eq!(Locale::default(), "und");
+    assert_writeable_eq!(Locale::UNKNOWN, "und");
     assert_writeable_eq!("und-001".parse::<Locale>().unwrap(), "und-001");
     assert_writeable_eq!("und-Mymr".parse::<Locale>().unwrap(), "und-Mymr");
     assert_writeable_eq!("my-Mymr-MM".parse::<Locale>().unwrap(), "my-Mymr-MM");

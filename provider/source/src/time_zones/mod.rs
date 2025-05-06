@@ -11,6 +11,8 @@ use core::hash::Hasher;
 use icu::datetime::provider::time_zones::*;
 use icu::locale::subtags::region;
 use icu::time::provider::*;
+use icu::time::zone::ZoneNameTimestamp;
+use icu::time::DateTime;
 use icu::time::Time;
 use icu_locale_core::subtags::Region;
 use icu_provider::prelude::*;
@@ -33,7 +35,7 @@ pub(crate) struct Caches {
     metazone_to_short: Cache<(BTreeMap<String, MetazoneId>, u64)>,
     primary_zones: Cache<BTreeMap<TimeZone, Region>>,
     mz_period: Cache<MetazonePeriod<'static>>,
-    offset_period: Cache<<TimeZoneOffsetsV1 as DynamicDataMarker>::DataStruct>,
+    offset_period: Cache<<TimezoneVariantsOffsetsV1 as DynamicDataMarker>::DataStruct>,
     reverse_metazones: Cache<BTreeMap<(MetazoneId, MzMembership), Vec<TimeZone>>>,
 }
 
@@ -63,20 +65,22 @@ impl SourceDataProvider {
                     use zerovec::ule::AsULE;
                     let mut mzs = c
                         .into_iter1_copied()
-                        .map(|(k, v)| (MinutesSinceEpoch::from_unaligned(*k), v))
+                        .map(|(k, v)| (ZoneNameTimestamp::from_unaligned(*k), v))
                         .peekable();
                     let mut offsets = offset_periods
                         .get0(&tz)
                         .unwrap()
                         .into_iter1_copied()
-                        .map(|(k, v)| (MinutesSinceEpoch::from_unaligned(*k), v))
+                        .map(|(k, v)| (ZoneNameTimestamp::from_unaligned(*k), v))
                         .peekable();
 
                     let mut curr_offset = offsets.next().unwrap();
                     let mut curr_mz = mzs.next().unwrap();
 
-                    let horizon =
-                        MinutesSinceEpoch::from((self.timezone_horizon, Time::start_of_day()));
+                    let horizon = ZoneNameTimestamp::from_date_time_iso(DateTime {
+                        date: self.timezone_horizon,
+                        time: Time::start_of_day(),
+                    });
 
                     while offsets.peek().is_some_and(|&(start, _)| start < horizon) {
                         curr_offset = offsets.next().unwrap();
@@ -376,7 +380,7 @@ impl IterableDataProviderCached<TimezoneMetazonePeriodsV1> for SourceDataProvide
     }
 }
 
-impl IterableDataProviderCached<TimeZoneOffsetsV1> for SourceDataProvider {
+impl IterableDataProviderCached<TimezoneVariantsOffsetsV1> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
     }

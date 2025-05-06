@@ -21,7 +21,7 @@ namespace capi {
     typedef struct icu4x_Locale_from_string_mv1_result {union {icu4x::capi::Locale* ok; icu4x::capi::LocaleParseError err;}; bool is_ok;} icu4x_Locale_from_string_mv1_result;
     icu4x_Locale_from_string_mv1_result icu4x_Locale_from_string_mv1(diplomat::capi::DiplomatStringView name);
     
-    icu4x::capi::Locale* icu4x_Locale_und_mv1(void);
+    icu4x::capi::Locale* icu4x_Locale_unknown_mv1(void);
     
     icu4x::capi::Locale* icu4x_Locale_clone_mv1(const icu4x::capi::Locale* self);
     
@@ -70,8 +70,8 @@ inline diplomat::result<std::unique_ptr<icu4x::Locale>, icu4x::LocaleParseError>
   return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::Locale>, icu4x::LocaleParseError>(diplomat::Ok<std::unique_ptr<icu4x::Locale>>(std::unique_ptr<icu4x::Locale>(icu4x::Locale::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::Locale>, icu4x::LocaleParseError>(diplomat::Err<icu4x::LocaleParseError>(icu4x::LocaleParseError::FromFFI(result.err)));
 }
 
-inline std::unique_ptr<icu4x::Locale> icu4x::Locale::und() {
-  auto result = icu4x::capi::icu4x_Locale_und_mv1();
+inline std::unique_ptr<icu4x::Locale> icu4x::Locale::unknown() {
+  auto result = icu4x::capi::icu4x_Locale_unknown_mv1();
   return std::unique_ptr<icu4x::Locale>(icu4x::Locale::FromFFI(result));
 }
 

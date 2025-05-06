@@ -48,30 +48,18 @@ impl_tinystr_subtag!(
 );
 
 impl Language {
-    /// The default undefined language "und". Same as [`default()`](Default::default()).
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use icu::locale::subtags::Language;
-    ///
-    /// assert_eq!(Language::default(), Language::UND);
-    /// ```
-    pub const UND: Self = if let Ok(o) = Self::try_from_utf8(b"und") {
-        o
-    } else {
-        panic!("Failed")
-    };
+    /// The unknown language "und".
+    pub const UNKNOWN: Self = language!("und");
 
     /// Const-friendly version of [`Default::default`].
     pub const fn default() -> Self {
-        Self::UND
+        Self::UNKNOWN
     }
 
     /// Tests if the [`Language`] subtag is the default one (`"und"`).
     #[inline]
-    pub const fn is_default(self) -> bool {
-        matches!(self, Self::UND)
+    pub const fn is_unknown(self) -> bool {
+        matches!(self, Self::UNKNOWN)
     }
 }
 
