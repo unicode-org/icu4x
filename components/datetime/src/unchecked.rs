@@ -216,11 +216,15 @@ impl TryWriteable for FormattedDateTimeUnchecked<'_> {
             FormattedDateTimePatternError::InvalidCyclicYear { value, max } => {
                 Self::Error::InvalidCyclicYear { value, max }
             }
-            FormattedDateTimePatternError::DecimalFormatterNotLoaded => Self::Error::DecimalFormatterNotLoaded,
+            FormattedDateTimePatternError::DecimalFormatterNotLoaded => {
+                Self::Error::DecimalFormatterNotLoaded
+            }
             FormattedDateTimePatternError::NamesNotLoaded(error_field) => {
                 Self::Error::NamesNotLoaded(error_field)
             }
-            FormattedDateTimePatternError::MissingInputField(name) => Self::Error::MissingInputField(name),
+            FormattedDateTimePatternError::MissingInputField(name) => {
+                Self::Error::MissingInputField(name)
+            }
             FormattedDateTimePatternError::UnsupportedLength(error_field) => {
                 Self::Error::UnsupportedLength(error_field)
             }

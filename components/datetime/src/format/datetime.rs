@@ -36,7 +36,9 @@ where
         w.with_part(part, |w| {
             w.with_part(writeable::Part::ERROR, |r| num.write_to_parts(r))
         })?;
-        Ok(Err(FormattedDateTimePatternError::DecimalFormatterNotLoaded))
+        Ok(Err(
+            FormattedDateTimePatternError::DecimalFormatterNotLoaded,
+        ))
     }
 }
 
@@ -58,7 +60,9 @@ where
         Ok(Ok(()))
     } else {
         w.with_part(writeable::Part::ERROR, |r| num.write_to(r))?;
-        Ok(Err(FormattedDateTimePatternError::DecimalFormatterNotLoaded))
+        Ok(Err(
+            FormattedDateTimePatternError::DecimalFormatterNotLoaded,
+        ))
     }
 }
 
@@ -114,18 +118,18 @@ where
         (_, $name:ident = $input:expr) => {
             let Some($name) = $input else {
                 write_value_missing(w, field)?;
-                return Ok(Err(FormattedDateTimePatternError::MissingInputField(stringify!(
-                    $name
-                ))));
+                return Ok(Err(FormattedDateTimePatternError::MissingInputField(
+                    stringify!($name),
+                )));
             };
         };
         // Get the input. If not found, write a replacement string and a part.
         ($part:ident, $name:ident = $input:expr) => {
             let Some($name) = $input else {
                 w.with_part($part, |w| write_value_missing(w, field))?;
-                return Ok(Err(FormattedDateTimePatternError::MissingInputField(stringify!(
-                    $name
-                ))));
+                return Ok(Err(FormattedDateTimePatternError::MissingInputField(
+                    stringify!($name),
+                )));
             };
         };
     }
@@ -579,9 +583,9 @@ fn perform_timezone_fallback(
                 FormatTimeZoneError::DecimalFormatterNotLoaded => {
                     Err(FormattedDateTimePatternError::DecimalFormatterNotLoaded)
                 }
-                FormatTimeZoneError::NamesNotLoaded => {
-                    Err(FormattedDateTimePatternError::NamesNotLoaded(ErrorField(field)))
-                }
+                FormatTimeZoneError::NamesNotLoaded => Err(
+                    FormattedDateTimePatternError::NamesNotLoaded(ErrorField(field)),
+                ),
                 FormatTimeZoneError::MissingInputField(f) => {
                     Err(FormattedDateTimePatternError::MissingInputField(f))
                 }
