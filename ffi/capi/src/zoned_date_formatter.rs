@@ -527,10 +527,9 @@ pub mod ffi {
                 input.set_time_zone_name_timestamp(zone_name_timestamp);
             }
             else {
-                #[allow(clippy::unwrap_used)] // TODO(#6530): Use Time::middle_of_day()
-                input.set_time_zone_name_timestamp(icu_time::zone::ZoneNameTimestamp::from_date_time_iso(&icu_time::DateTime {
+                input.set_time_zone_name_timestamp(icu_time::zone::ZoneNameTimestamp::from_date_time_iso(icu_time::DateTime {
                     date: date.0,
-                    time: icu_time::Time::try_new(12, 0, 0, 0).unwrap()
+                    time: icu_time::Time::noon()
                 }))
             }
             if let Some(variant) = zone.variant {
@@ -1026,10 +1025,9 @@ pub mod ffi {
                 input.set_time_zone_name_timestamp(zone_name_timestamp);
             }
             else {
-                #[allow(clippy::unwrap_used)] // TODO(#6530): Use Time::middle_of_day()
-                input.set_time_zone_name_timestamp(icu_time::zone::ZoneNameTimestamp::from_date_time_iso(&icu_time::DateTime {
+                input.set_time_zone_name_timestamp(icu_time::zone::ZoneNameTimestamp::from_date_time_iso(icu_time::DateTime {
                     date: date.0,
-                    time: icu_time::Time::try_new(12, 0, 0, 0).unwrap()
+                    time: icu_time::Time::noon()
                 }))
             }
             if let Some(variant) = zone.variant {
