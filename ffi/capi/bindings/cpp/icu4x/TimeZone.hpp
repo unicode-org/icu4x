@@ -21,6 +21,8 @@ namespace capi {
     
     icu4x::capi::TimeZone* icu4x_TimeZone_unknown_mv1(void);
     
+    bool icu4x_TimeZone_is_unknown_mv1(const icu4x::capi::TimeZone* self);
+    
     icu4x::capi::TimeZone* icu4x_TimeZone_create_from_bcp47_mv1(diplomat::capi::DiplomatStringView id);
     
     icu4x::capi::TimeZoneInfo* icu4x_TimeZone_with_offset_mv1(const icu4x::capi::TimeZone* self, const icu4x::capi::UtcOffset* offset);
@@ -37,6 +39,11 @@ namespace capi {
 inline std::unique_ptr<icu4x::TimeZone> icu4x::TimeZone::unknown() {
   auto result = icu4x::capi::icu4x_TimeZone_unknown_mv1();
   return std::unique_ptr<icu4x::TimeZone>(icu4x::TimeZone::FromFFI(result));
+}
+
+inline bool icu4x::TimeZone::is_unknown() const {
+  auto result = icu4x::capi::icu4x_TimeZone_is_unknown_mv1(this->AsFFI());
+  return result;
 }
 
 inline std::unique_ptr<icu4x::TimeZone> icu4x::TimeZone::create_from_bcp47(std::string_view id) {

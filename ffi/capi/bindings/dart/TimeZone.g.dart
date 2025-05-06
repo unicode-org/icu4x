@@ -31,6 +31,14 @@ final class TimeZone implements ffi.Finalizable {
     return TimeZone._fromFfi(result, []);
   }
 
+  /// Whether the time zone is the unknown zone.
+  ///
+  /// See the [Rust documentation for `is_unknown`](https://docs.rs/icu/latest/icu/time/struct.TimeZone.html#method.is_unknown) for more information.
+  bool isUnknown() {
+    final result = _icu4x_TimeZone_is_unknown_mv1(_ffi);
+    return result;
+  }
+
   /// Creates a time zone from a BCP-47 string.
   ///
   /// Returns the unknown time zone if the string is not a valid BCP-47 subtag.
@@ -64,6 +72,11 @@ external void _icu4x_TimeZone_destroy_mv1(ffi.Pointer<ffi.Void> self);
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_TimeZone_unknown_mv1')
 // ignore: non_constant_identifier_names
 external ffi.Pointer<ffi.Opaque> _icu4x_TimeZone_unknown_mv1();
+
+@_DiplomatFfiUse('icu4x_TimeZone_is_unknown_mv1')
+@ffi.Native<ffi.Bool Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_TimeZone_is_unknown_mv1')
+// ignore: non_constant_identifier_names
+external bool _icu4x_TimeZone_is_unknown_mv1(ffi.Pointer<ffi.Opaque> self);
 
 @_DiplomatFfiUse('icu4x_TimeZone_create_from_bcp47_mv1')
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function(_SliceUtf8)>(isLeaf: true, symbol: 'icu4x_TimeZone_create_from_bcp47_mv1')

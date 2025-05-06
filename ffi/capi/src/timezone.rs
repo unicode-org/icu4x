@@ -30,6 +30,12 @@ pub mod ffi {
             Box::new(TimeZone(icu_time::TimeZone::UNKNOWN))
         }
 
+        /// Whether the time zone is the unknown zone.
+        #[diplomat::rust_link(icu::time::TimeZone::is_unknown, FnInStruct)]
+        pub fn is_unknown(&self) -> bool {
+            self.0.is_unknown()
+        }
+
         /// Creates a time zone from a BCP-47 string.
         ///
         /// Returns the unknown time zone if the string is not a valid BCP-47 subtag.
