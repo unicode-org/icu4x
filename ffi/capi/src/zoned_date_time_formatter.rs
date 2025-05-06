@@ -517,7 +517,7 @@ pub mod ffi {
             zone: &TimeZoneInfo,
             write: &mut diplomat_runtime::DiplomatWrite,
         ) -> Result<(), DateTimeWriteError> {
-            let mut input = icu_datetime::DateTimeInputUnchecked::default();
+            let mut input = icu_datetime::unchecked::DateTimeInputUnchecked::default();
             let date_in_calendar = date.0.to_calendar(self.0.calendar());
             input.set_date_fields_unchecked(date_in_calendar); // calendar conversion on previous line
             input.set_time_fields(time.0);
@@ -1017,7 +1017,7 @@ pub mod ffi {
             zone: &TimeZoneInfo,
             write: &mut diplomat_runtime::DiplomatWrite,
         ) -> Result<(), DateTimeWriteError> {
-            let mut input = icu_datetime::DateTimeInputUnchecked::default();
+            let mut input = icu_datetime::unchecked::DateTimeInputUnchecked::default();
             let date_in_calendar = date.0.to_calendar(Gregorian);
             input.set_date_fields_unchecked(date_in_calendar); // calendar conversion on previous line
             input.set_time_fields(time.0);

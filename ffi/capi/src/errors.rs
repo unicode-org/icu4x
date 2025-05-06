@@ -119,7 +119,11 @@ pub mod ffi {
     #[cfg(feature = "datetime")]
     #[derive(Debug, PartialEq, Eq)]
     #[repr(C)]
-    #[diplomat::rust_link(icu::datetime::DateTimeWriteError, Enum, compact)]
+    #[diplomat::rust_link(
+        icu::datetime::unchecked::FormattedDateTimeUncheckedError,
+        Enum,
+        compact
+    )]
     pub enum DateTimeWriteError {
         Unknown = 0x00,
         InvalidMonthCode = 0x02,
@@ -272,29 +276,31 @@ impl From<icu_datetime::MismatchedCalendarError> for ffi::DateTimeMismatchedCale
 }
 
 #[cfg(feature = "datetime")]
-impl From<icu_datetime::pattern::FormattedDateTimePatternError> for DateTimeWriteError {
-    fn from(value: icu_datetime::pattern::FormattedDateTimePatternError) -> Self {
+impl From<icu_datetime::unchecked::FormattedDateTimeUncheckedError> for DateTimeWriteError {
+    fn from(value: icu_datetime::unchecked::FormattedDateTimeUncheckedError) -> Self {
         match value {
-            icu_datetime::pattern::FormattedDateTimePatternError::InvalidMonthCode(_) => {
+            icu_datetime::unchecked::FormattedDateTimeUncheckedError::InvalidMonthCode(_) => {
                 Self::InvalidMonthCode
             }
-            icu_datetime::pattern::FormattedDateTimePatternError::InvalidEra(_) => Self::InvalidEra,
-            icu_datetime::pattern::FormattedDateTimePatternError::InvalidCyclicYear { .. } => {
-                Self::InvalidCyclicYear
+            icu_datetime::unchecked::FormattedDateTimeUncheckedError::InvalidEra(_) => {
+                Self::InvalidEra
             }
-            icu_datetime::pattern::FormattedDateTimePatternError::DecimalFormatterNotLoaded => {
+            icu_datetime::unchecked::FormattedDateTimeUncheckedError::InvalidCyclicYear {
+                ..
+            } => Self::InvalidCyclicYear,
+            icu_datetime::unchecked::FormattedDateTimeUncheckedError::DecimalFormatterNotLoaded => {
                 Self::DecimalFormatterNotLoaded
             }
-            icu_datetime::pattern::FormattedDateTimePatternError::NamesNotLoaded(_) => {
+            icu_datetime::unchecked::FormattedDateTimeUncheckedError::NamesNotLoaded(_) => {
                 Self::NamesNotLoaded
             }
-            icu_datetime::pattern::FormattedDateTimePatternError::MissingInputField(_) => {
+            icu_datetime::unchecked::FormattedDateTimeUncheckedError::MissingInputField(_) => {
                 Self::MissingInputField
             }
-            icu_datetime::pattern::FormattedDateTimePatternError::UnsupportedLength(_) => {
+            icu_datetime::unchecked::FormattedDateTimeUncheckedError::UnsupportedLength(_) => {
                 Self::UnsupportedLength
             }
-            icu_datetime::pattern::FormattedDateTimePatternError::UnsupportedField(_) => {
+            icu_datetime::unchecked::FormattedDateTimeUncheckedError::UnsupportedField(_) => {
                 Self::UnsupportedField
             }
             _ => Self::Unknown,
