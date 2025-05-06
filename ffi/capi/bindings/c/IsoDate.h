@@ -9,9 +9,9 @@
 
 #include "Calendar.d.h"
 #include "CalendarError.d.h"
-#include "CalendarParseError.d.h"
 #include "Date.d.h"
 #include "IsoWeekOfYear.d.h"
+#include "Rfc9557ParseError.d.h"
 #include "Weekday.d.h"
 
 #include "IsoDate.d.h"
@@ -26,7 +26,7 @@ icu4x_IsoDate_create_mv1_result icu4x_IsoDate_create_mv1(int32_t year, uint8_t m
 
 IsoDate* icu4x_IsoDate_from_rata_die_mv1(int64_t rd);
 
-typedef struct icu4x_IsoDate_from_string_mv1_result {union {IsoDate* ok; CalendarParseError err;}; bool is_ok;} icu4x_IsoDate_from_string_mv1_result;
+typedef struct icu4x_IsoDate_from_string_mv1_result {union {IsoDate* ok; Rfc9557ParseError err;}; bool is_ok;} icu4x_IsoDate_from_string_mv1_result;
 icu4x_IsoDate_from_string_mv1_result icu4x_IsoDate_from_string_mv1(DiplomatStringView v);
 
 Date* icu4x_IsoDate_to_calendar_mv1(const IsoDate* self, const Calendar* calendar);

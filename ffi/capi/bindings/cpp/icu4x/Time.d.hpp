@@ -14,7 +14,7 @@ namespace icu4x {
 namespace capi { struct Time; }
 class Time;
 class CalendarError;
-class CalendarParseError;
+class Rfc9557ParseError;
 }
 
 
@@ -45,7 +45,7 @@ public:
    *
    * See the [Rust documentation for `try_from_str`](https://docs.rs/icu/latest/icu/time/struct.Time.html#method.try_from_str) for more information.
    */
-  inline static diplomat::result<std::unique_ptr<icu4x::Time>, icu4x::CalendarParseError> from_string(std::string_view v);
+  inline static diplomat::result<std::unique_ptr<icu4x::Time>, icu4x::Rfc9557ParseError> from_string(std::string_view v);
 
   /**
    * Creates a new [`Time`] representing the start of the day (00:00:00.000).

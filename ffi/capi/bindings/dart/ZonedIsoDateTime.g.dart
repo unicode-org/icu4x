@@ -41,12 +41,12 @@ final class ZonedIsoDateTime {
   ///
   /// See the [Rust documentation for `try_full_from_str`](https://docs.rs/icu/latest/icu/time/struct.ZonedDateTime.html#method.try_full_from_str) for more information.
   ///
-  /// Throws [CalendarParseError] on failure.
+  /// Throws [Rfc9557ParseError] on failure.
   factory ZonedIsoDateTime.fullFromString(String v, IanaParser ianaParser, VariantOffsetsCalculator offsetCalculator) {
     final temp = _FinalizedArena();
     final result = _icu4x_ZonedIsoDateTime_full_from_string_mv1(v._utf8AllocIn(temp.arena), ianaParser._ffi, offsetCalculator._ffi);
     if (!result.isOk) {
-      throw CalendarParseError.values[result.union.err];
+      throw Rfc9557ParseError.values[result.union.err];
     }
     return ZonedIsoDateTime._fromFfi(result.union.ok);
   }

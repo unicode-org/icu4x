@@ -11,7 +11,7 @@ pub mod ffi {
 
     use crate::unstable::calendar::ffi::Calendar;
     use crate::unstable::date::ffi::{Date, IsoDate};
-    use crate::unstable::errors::ffi::CalendarParseError;
+    use crate::unstable::errors::ffi::Rfc9557ParseError;
     use crate::unstable::time::ffi::Time;
 
     /// An ICU4X DateTime object capable of containing a ISO-8601 date and time.
@@ -28,7 +28,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::time::DateTime::try_from_utf8, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::time::DateTime::from_str, FnInStruct, hidden)]
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor)]
-        pub fn from_string(v: &DiplomatStr) -> Result<IsoDateTime, CalendarParseError> {
+        pub fn from_string(v: &DiplomatStr) -> Result<IsoDateTime, Rfc9557ParseError> {
             let icu_time::DateTime { date, time } = icu_time::DateTime::try_from_utf8(v, Iso)?;
             Ok(IsoDateTime {
                 date: Box::new(IsoDate(date)),
@@ -54,7 +54,7 @@ pub mod ffi {
         pub fn from_string(
             v: &DiplomatStr,
             calendar: &Calendar,
-        ) -> Result<DateTime, CalendarParseError> {
+        ) -> Result<DateTime, Rfc9557ParseError> {
             let icu_time::DateTime { date, time } =
                 icu_time::DateTime::try_from_utf8(v, calendar.0.clone())?;
             Ok(DateTime {

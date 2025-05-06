@@ -13,8 +13,8 @@
 #include "../diplomat_runtime.hpp"
 #include "Calendar.hpp"
 #include "CalendarError.hpp"
-#include "CalendarParseError.hpp"
 #include "IsoDate.hpp"
+#include "Rfc9557ParseError.hpp"
 #include "Weekday.hpp"
 
 
@@ -31,7 +31,7 @@ namespace capi {
     typedef struct icu4x_Date_from_rata_die_mv1_result {union {icu4x::capi::Date* ok; icu4x::capi::CalendarError err;}; bool is_ok;} icu4x_Date_from_rata_die_mv1_result;
     icu4x_Date_from_rata_die_mv1_result icu4x_Date_from_rata_die_mv1(int64_t rd, const icu4x::capi::Calendar* calendar);
     
-    typedef struct icu4x_Date_from_string_mv1_result {union {icu4x::capi::Date* ok; icu4x::capi::CalendarParseError err;}; bool is_ok;} icu4x_Date_from_string_mv1_result;
+    typedef struct icu4x_Date_from_string_mv1_result {union {icu4x::capi::Date* ok; icu4x::capi::Rfc9557ParseError err;}; bool is_ok;} icu4x_Date_from_string_mv1_result;
     icu4x_Date_from_string_mv1_result icu4x_Date_from_string_mv1(diplomat::capi::DiplomatStringView v, const icu4x::capi::Calendar* calendar);
     
     icu4x::capi::Date* icu4x_Date_to_calendar_mv1(const icu4x::capi::Date* self, const icu4x::capi::Calendar* calendar);
@@ -98,10 +98,10 @@ inline diplomat::result<std::unique_ptr<icu4x::Date>, icu4x::CalendarError> icu4
   return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::Date>, icu4x::CalendarError>(diplomat::Ok<std::unique_ptr<icu4x::Date>>(std::unique_ptr<icu4x::Date>(icu4x::Date::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::Date>, icu4x::CalendarError>(diplomat::Err<icu4x::CalendarError>(icu4x::CalendarError::FromFFI(result.err)));
 }
 
-inline diplomat::result<std::unique_ptr<icu4x::Date>, icu4x::CalendarParseError> icu4x::Date::from_string(std::string_view v, const icu4x::Calendar& calendar) {
+inline diplomat::result<std::unique_ptr<icu4x::Date>, icu4x::Rfc9557ParseError> icu4x::Date::from_string(std::string_view v, const icu4x::Calendar& calendar) {
   auto result = icu4x::capi::icu4x_Date_from_string_mv1({v.data(), v.size()},
     calendar.AsFFI());
-  return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::Date>, icu4x::CalendarParseError>(diplomat::Ok<std::unique_ptr<icu4x::Date>>(std::unique_ptr<icu4x::Date>(icu4x::Date::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::Date>, icu4x::CalendarParseError>(diplomat::Err<icu4x::CalendarParseError>(icu4x::CalendarParseError::FromFFI(result.err)));
+  return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::Date>, icu4x::Rfc9557ParseError>(diplomat::Ok<std::unique_ptr<icu4x::Date>>(std::unique_ptr<icu4x::Date>(icu4x::Date::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::Date>, icu4x::Rfc9557ParseError>(diplomat::Err<icu4x::Rfc9557ParseError>(icu4x::Rfc9557ParseError::FromFFI(result.err)));
 }
 
 inline std::unique_ptr<icu4x::Date> icu4x::Date::to_calendar(const icu4x::Calendar& calendar) const {

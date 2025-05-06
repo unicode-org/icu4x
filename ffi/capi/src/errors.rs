@@ -72,7 +72,7 @@ pub mod ffi {
     #[diplomat::rust_link(icu::calendar::ParseError, Enum, compact)]
     #[diplomat::rust_link(icu::time::ParseError, Enum, compact)]
     #[cfg(any(feature = "datetime", feature = "timezone", feature = "calendar"))]
-    pub enum CalendarParseError {
+    pub enum Rfc9557ParseError {
         Unknown = 0x00,
         InvalidSyntax = 0x01,
         OutOfRange = 0x02,
@@ -172,7 +172,7 @@ impl From<icu_calendar::DateError> for CalendarError {
 }
 
 #[cfg(any(feature = "datetime", feature = "timezone", feature = "calendar"))]
-impl From<icu_calendar::ParseError> for CalendarParseError {
+impl From<icu_calendar::ParseError> for Rfc9557ParseError {
     fn from(e: icu_calendar::ParseError) -> Self {
         match e {
             icu_calendar::ParseError::Syntax(_) => Self::InvalidSyntax,
@@ -185,7 +185,7 @@ impl From<icu_calendar::ParseError> for CalendarParseError {
 }
 
 #[cfg(any(feature = "datetime", feature = "timezone", feature = "calendar"))]
-impl From<icu_time::ParseError> for CalendarParseError {
+impl From<icu_time::ParseError> for Rfc9557ParseError {
     fn from(e: icu_time::ParseError) -> Self {
         match e {
             icu_time::ParseError::Syntax(_) => Self::InvalidSyntax,

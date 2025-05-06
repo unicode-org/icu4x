@@ -1,5 +1,5 @@
-#ifndef icu4x_CalendarParseError_D_HPP
-#define icu4x_CalendarParseError_D_HPP
+#ifndef icu4x_Rfc9557ParseError_D_HPP
+#define icu4x_Rfc9557ParseError_D_HPP
 
 #include <stdio.h>
 #include <stdint.h>
@@ -13,15 +13,15 @@
 
 namespace icu4x {
 namespace capi {
-    enum CalendarParseError {
-      CalendarParseError_Unknown = 0,
-      CalendarParseError_InvalidSyntax = 1,
-      CalendarParseError_OutOfRange = 2,
-      CalendarParseError_MissingFields = 3,
-      CalendarParseError_UnknownCalendar = 4,
+    enum Rfc9557ParseError {
+      Rfc9557ParseError_Unknown = 0,
+      Rfc9557ParseError_InvalidSyntax = 1,
+      Rfc9557ParseError_OutOfRange = 2,
+      Rfc9557ParseError_MissingFields = 3,
+      Rfc9557ParseError_UnknownCalendar = 4,
     };
     
-    typedef struct CalendarParseError_option {union { CalendarParseError ok; }; bool is_ok; } CalendarParseError_option;
+    typedef struct Rfc9557ParseError_option {union { Rfc9557ParseError ok; }; bool is_ok; } Rfc9557ParseError_option;
 } // namespace capi
 } // namespace
 
@@ -29,7 +29,7 @@ namespace icu4x {
 /**
  * Additional information: [1](https://docs.rs/icu/latest/icu/calendar/enum.ParseError.html), [2](https://docs.rs/icu/latest/icu/time/enum.ParseError.html)
  */
-class CalendarParseError {
+class Rfc9557ParseError {
 public:
   enum Value {
     Unknown = 0,
@@ -39,18 +39,18 @@ public:
     UnknownCalendar = 4,
   };
 
-  CalendarParseError() = default;
+  Rfc9557ParseError() = default;
   // Implicit conversions between enum and ::Value
-  constexpr CalendarParseError(Value v) : value(v) {}
+  constexpr Rfc9557ParseError(Value v) : value(v) {}
   constexpr operator Value() const { return value; }
   // Prevent usage as boolean value
   explicit operator bool() const = delete;
 
-  inline icu4x::capi::CalendarParseError AsFFI() const;
-  inline static icu4x::CalendarParseError FromFFI(icu4x::capi::CalendarParseError c_enum);
+  inline icu4x::capi::Rfc9557ParseError AsFFI() const;
+  inline static icu4x::Rfc9557ParseError FromFFI(icu4x::capi::Rfc9557ParseError c_enum);
 private:
     Value value;
 };
 
 } // namespace
-#endif // icu4x_CalendarParseError_D_HPP
+#endif // icu4x_Rfc9557ParseError_D_HPP
