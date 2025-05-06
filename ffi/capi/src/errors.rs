@@ -126,14 +126,9 @@ pub mod ffi {
     )]
     pub enum DateTimeWriteError {
         Unknown = 0x00,
-        InvalidMonthCode = 0x02,
-        InvalidEra = 0x03,
-        InvalidCyclicYear = 0x04,
-        DecimalFormatterNotLoaded = 0x05,
-        NamesNotLoaded = 0x06,
-        MissingInputField = 0x07,
-        UnsupportedLength = 0x08,
-        UnsupportedField = 0x09,
+        MissingTimeZoneId = 0x01,
+        MissingTimeZoneNameTimestamp = 0x02,
+        MissingTimeZoneVariant = 0x03,
     }
 }
 
@@ -279,31 +274,19 @@ impl From<icu_datetime::MismatchedCalendarError> for ffi::DateTimeMismatchedCale
 impl From<icu_datetime::unchecked::FormattedDateTimeUncheckedError> for DateTimeWriteError {
     fn from(value: icu_datetime::unchecked::FormattedDateTimeUncheckedError) -> Self {
         match value {
-            icu_datetime::unchecked::FormattedDateTimeUncheckedError::InvalidMonthCode(_) => {
-                Self::InvalidMonthCode
+            icu_datetime::unchecked::FormattedDateTimeUncheckedError::MissingInputField(
+                icu_datetime::pattern::MissingInputFieldKind::TimeZoneId,
+            ) => Self::MissingTimeZoneId,
+            icu_datetime::unchecked::FormattedDateTimeUncheckedError::MissingInputField(
+                icu_datetime::pattern::MissingInputFieldKind::TimeZoneNameTimestamp,
+            ) => Self::MissingTimeZoneNameTimestamp,
+            icu_datetime::unchecked::FormattedDateTimeUncheckedError::MissingInputField(
+                icu_datetime::pattern::MissingInputFieldKind::TimeZoneVariant,
+            ) => Self::MissingTimeZoneVariant,
+            err => {
+                debug_assert!(false, "unexpected datetime formatting error: {err}");
+                Self::Unknown
             }
-            icu_datetime::unchecked::FormattedDateTimeUncheckedError::InvalidEra(_) => {
-                Self::InvalidEra
-            }
-            icu_datetime::unchecked::FormattedDateTimeUncheckedError::InvalidCyclicYear {
-                ..
-            } => Self::InvalidCyclicYear,
-            icu_datetime::unchecked::FormattedDateTimeUncheckedError::DecimalFormatterNotLoaded => {
-                Self::DecimalFormatterNotLoaded
-            }
-            icu_datetime::unchecked::FormattedDateTimeUncheckedError::NamesNotLoaded(_) => {
-                Self::NamesNotLoaded
-            }
-            icu_datetime::unchecked::FormattedDateTimeUncheckedError::MissingInputField(_) => {
-                Self::MissingInputField
-            }
-            icu_datetime::unchecked::FormattedDateTimeUncheckedError::UnsupportedLength(_) => {
-                Self::UnsupportedLength
-            }
-            icu_datetime::unchecked::FormattedDateTimeUncheckedError::UnsupportedField(_) => {
-                Self::UnsupportedField
-            }
-            _ => Self::Unknown,
         }
     }
 }
