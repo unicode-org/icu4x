@@ -89,7 +89,7 @@ impl<'a> ZeroMapKV<'a> for VariantOffsets {
     type OwnedType = Self;
 }
 
-#[cfg(feature = "datagen")]
+#[cfg(all(feature = "alloc", feature = "serde"))]
 impl serde::Serialize for VariantOffsets {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
