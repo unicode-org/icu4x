@@ -499,7 +499,7 @@ size_test!(
 /// use icu::datetime::parts;
 /// use icu::datetime::pattern::FixedCalendarDateTimeNames;
 /// use icu::datetime::pattern::DateTimePattern;
-/// use icu::datetime::pattern::MissingInputFieldKind;
+/// use icu::datetime::unchecked::MissingInputFieldKind;
 /// use icu::datetime::fieldsets::zone::LocalizedOffsetLong;
 /// use icu::locale::locale;
 /// use icu::datetime::input::{DateTime, TimeZoneInfo};

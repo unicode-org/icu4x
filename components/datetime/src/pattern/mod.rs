@@ -16,6 +16,7 @@ mod names;
 mod pattern;
 
 pub use crate::error::ErrorField;
+use crate::unchecked::MissingInputFieldKind;
 pub use formatter::DateTimePatternFormatter;
 pub use formatter::FormattedDateTimePattern;
 use icu_calendar::types::MonthCode;
@@ -119,40 +120,6 @@ pub struct UnsupportedCalendarError {
 }
 
 impl core::error::Error for UnsupportedCalendarError {}
-
-/// The kind of a missing datetime input field.
-#[non_exhaustive]
-#[derive(Debug, PartialEq, Copy, Clone, displaydoc::Display)]
-pub enum MissingInputFieldKind {
-    /// Day of month
-    DayOfMonth,
-    /// Day of year
-    DayOfYear,
-    /// Hour
-    Hour,
-    /// Minute
-    Minute,
-    /// Month
-    Month,
-    /// Second
-    Second,
-    /// Subsecond
-    Subsecond,
-    /// Weekday
-    Weekday,
-    /// Year
-    Year,
-    /// Cyclic year
-    YearCyclic,
-    /// Era year
-    YearEra,
-    /// Time zone identifier
-    TimeZoneId,
-    /// Time zone name timestamp
-    TimeZoneNameTimestamp,
-    /// Time zone variant
-    TimeZoneVariant,
-}
 
 #[non_exhaustive]
 #[derive(Debug, PartialEq, Copy, Clone, displaydoc::Display)]

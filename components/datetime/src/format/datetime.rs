@@ -8,6 +8,7 @@ use crate::format::DateTimeInputUnchecked;
 use crate::provider::fields::{self, FieldLength, FieldSymbol, Second, Year};
 use crate::provider::pattern::runtime::PatternMetadata;
 use crate::provider::pattern::PatternItem;
+use crate::unchecked::MissingInputFieldKind;
 use crate::{parts, pattern::*};
 
 use core::fmt::{self, Write};

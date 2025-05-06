@@ -4,8 +4,9 @@
 
 //! A formatter specifically for the time zone.
 
-use crate::pattern::{MissingInputFieldKind, TimeZoneDataPayloadsBorrowed};
+use crate::pattern::TimeZoneDataPayloadsBorrowed;
 use crate::provider::time_zones::MetazoneId;
+use crate::unchecked::MissingInputFieldKind;
 use crate::{format::DateTimeInputUnchecked, provider::fields::FieldLength};
 use core::fmt;
 use fixed_decimal::Decimal;

@@ -275,13 +275,13 @@ impl From<icu_datetime::unchecked::FormattedDateTimeUncheckedError> for DateTime
     fn from(value: icu_datetime::unchecked::FormattedDateTimeUncheckedError) -> Self {
         match value {
             icu_datetime::unchecked::FormattedDateTimeUncheckedError::MissingInputField(
-                icu_datetime::pattern::MissingInputFieldKind::TimeZoneId,
+                icu_datetime::unchecked::MissingInputFieldKind::TimeZoneId,
             ) => Self::MissingTimeZoneId,
             icu_datetime::unchecked::FormattedDateTimeUncheckedError::MissingInputField(
-                icu_datetime::pattern::MissingInputFieldKind::TimeZoneNameTimestamp,
+                icu_datetime::unchecked::MissingInputFieldKind::TimeZoneNameTimestamp,
             ) => Self::MissingTimeZoneNameTimestamp,
             icu_datetime::unchecked::FormattedDateTimeUncheckedError::MissingInputField(
-                icu_datetime::pattern::MissingInputFieldKind::TimeZoneVariant,
+                icu_datetime::unchecked::MissingInputFieldKind::TimeZoneVariant,
             ) => Self::MissingTimeZoneVariant,
             err => {
                 debug_assert!(false, "unexpected datetime formatting error: {err}");

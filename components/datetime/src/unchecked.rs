@@ -54,9 +54,9 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> FixedCalendarDateTimeFormatter<
     /// use icu::datetime::fieldsets::enums::CompositeFieldSet;
     /// use icu::datetime::input::{Date, Time};
     /// use icu::datetime::FixedCalendarDateTimeFormatter;
-    /// use icu::datetime::pattern::MissingInputFieldKind;
     /// use icu::datetime::unchecked::FormattedDateTimeUncheckedError;
     /// use icu::datetime::unchecked::DateTimeInputUnchecked;
+    /// use icu::datetime::unchecked::MissingInputFieldKind;
     /// use icu::locale::locale;
     /// use writeable::assert_try_writeable_eq;
     ///
@@ -132,9 +132,9 @@ impl<FSet: DateTimeNamesMarker> DateTimeFormatter<FSet> {
     /// use icu::datetime::fieldsets::enums::CompositeFieldSet;
     /// use icu::datetime::input::{Date, Time};
     /// use icu::datetime::DateTimeFormatter;
-    /// use icu::datetime::pattern::MissingInputFieldKind;
     /// use icu::datetime::unchecked::FormattedDateTimeUncheckedError;
     /// use icu::datetime::unchecked::DateTimeInputUnchecked;
+    /// use icu::datetime::unchecked::MissingInputFieldKind;
     /// use icu::locale::locale;
     /// use writeable::assert_try_writeable_eq;
     ///
@@ -251,6 +251,40 @@ impl FormattedDateTimeUnchecked<'_> {
     pub fn pattern(&self) -> DateTimePattern {
         self.pattern.to_pattern()
     }
+}
+
+/// The kind of a missing datetime input field.
+#[non_exhaustive]
+#[derive(Debug, PartialEq, Copy, Clone, displaydoc::Display)]
+pub enum MissingInputFieldKind {
+    /// Day of month
+    DayOfMonth,
+    /// Day of year
+    DayOfYear,
+    /// Hour
+    Hour,
+    /// Minute
+    Minute,
+    /// Month
+    Month,
+    /// Second
+    Second,
+    /// Subsecond
+    Subsecond,
+    /// Weekday
+    Weekday,
+    /// Year
+    Year,
+    /// Cyclic year
+    YearCyclic,
+    /// Era year
+    YearEra,
+    /// Time zone identifier
+    TimeZoneId,
+    /// Time zone name timestamp
+    TimeZoneNameTimestamp,
+    /// Time zone variant
+    TimeZoneVariant,
 }
 
 #[non_exhaustive]
