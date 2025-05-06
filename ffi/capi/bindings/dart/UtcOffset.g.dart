@@ -38,16 +38,6 @@ final class UtcOffset implements ffi.Finalizable {
     return UtcOffset._fromFfi(result.union.ok, []);
   }
 
-  /// Creates an offset from eighths of an hour.
-  ///
-  /// See the [Rust documentation for `from_eighths_of_hour`](https://docs.rs/icu/latest/icu/time/zone/struct.UtcOffset.html#method.from_eighths_of_hour) for more information.
-  ///
-  /// Additional information: [1](https://docs.rs/icu/latest/icu/time/zone/struct.UtcOffset.html)
-  factory UtcOffset.fromEightsOfHour(int eighthsOfHour) {
-    final result = _icu4x_UtcOffset_from_eighths_of_hour_mv1(eighthsOfHour);
-    return UtcOffset._fromFfi(result, []);
-  }
-
   /// Creates an offset from a string.
   ///
   /// See the [Rust documentation for `try_from_str`](https://docs.rs/icu/latest/icu/time/zone/struct.UtcOffset.html#method.try_from_str) for more information.
@@ -62,14 +52,6 @@ final class UtcOffset implements ffi.Finalizable {
       throw TimeZoneInvalidOffsetError();
     }
     return UtcOffset._fromFfi(result.union.ok, []);
-  }
-
-  /// Gets the offset as eighths of an hour.
-  ///
-  /// See the [Rust documentation for `to_eighths_of_hour`](https://docs.rs/icu/latest/icu/time/zone/struct.UtcOffset.html#method.to_eighths_of_hour) for more information.
-  int get eighthsOfHour {
-    final result = _icu4x_UtcOffset_eighths_of_hour_mv1(_ffi);
-    return result;
   }
 
   /// Returns the value as offset seconds.
@@ -145,20 +127,10 @@ external void _icu4x_UtcOffset_destroy_mv1(ffi.Pointer<ffi.Void> self);
 // ignore: non_constant_identifier_names
 external _ResultOpaqueTimeZoneInvalidOffsetErrorFfi _icu4x_UtcOffset_from_seconds_mv1(int seconds);
 
-@_DiplomatFfiUse('icu4x_UtcOffset_from_eighths_of_hour_mv1')
-@ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Int8)>(isLeaf: true, symbol: 'icu4x_UtcOffset_from_eighths_of_hour_mv1')
-// ignore: non_constant_identifier_names
-external ffi.Pointer<ffi.Opaque> _icu4x_UtcOffset_from_eighths_of_hour_mv1(int eighthsOfHour);
-
 @_DiplomatFfiUse('icu4x_UtcOffset_from_string_mv1')
 @ffi.Native<_ResultOpaqueTimeZoneInvalidOffsetErrorFfi Function(_SliceUtf8)>(isLeaf: true, symbol: 'icu4x_UtcOffset_from_string_mv1')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueTimeZoneInvalidOffsetErrorFfi _icu4x_UtcOffset_from_string_mv1(_SliceUtf8 offset);
-
-@_DiplomatFfiUse('icu4x_UtcOffset_eighths_of_hour_mv1')
-@ffi.Native<ffi.Int8 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_UtcOffset_eighths_of_hour_mv1')
-// ignore: non_constant_identifier_names
-external int _icu4x_UtcOffset_eighths_of_hour_mv1(ffi.Pointer<ffi.Opaque> self);
 
 @_DiplomatFfiUse('icu4x_UtcOffset_seconds_mv1')
 @ffi.Native<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_UtcOffset_seconds_mv1')

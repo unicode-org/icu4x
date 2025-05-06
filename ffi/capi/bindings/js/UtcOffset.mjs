@@ -66,23 +66,6 @@ export class UtcOffset {
     }
 
     /** 
-     * Creates an offset from eighths of an hour.
-     *
-     * See the [Rust documentation for `from_eighths_of_hour`](https://docs.rs/icu/latest/icu/time/zone/struct.UtcOffset.html#method.from_eighths_of_hour) for more information.
-     *
-     * Additional information: [1](https://docs.rs/icu/latest/icu/time/zone/struct.UtcOffset.html)
-     */
-    static fromEighthsOfHour(eighthsOfHour) {
-        const result = wasm.icu4x_UtcOffset_from_eighths_of_hour_mv1(eighthsOfHour);
-    
-        try {
-            return new UtcOffset(diplomatRuntime.internalConstructor, result, []);
-        }
-        
-        finally {}
-    }
-
-    /** 
      * Creates an offset from a string.
      *
      * See the [Rust documentation for `try_from_str`](https://docs.rs/icu/latest/icu/time/zone/struct.UtcOffset.html#method.try_from_str) for more information.
@@ -111,21 +94,6 @@ export class UtcOffset {
         
             diplomatReceive.free();
         }
-    }
-
-    /** 
-     * Gets the offset as eighths of an hour.
-     *
-     * See the [Rust documentation for `to_eighths_of_hour`](https://docs.rs/icu/latest/icu/time/zone/struct.UtcOffset.html#method.to_eighths_of_hour) for more information.
-     */
-    get eighthsOfHour() {
-        const result = wasm.icu4x_UtcOffset_eighths_of_hour_mv1(this.ffiValue);
-    
-        try {
-            return result;
-        }
-        
-        finally {}
     }
 
     /** 

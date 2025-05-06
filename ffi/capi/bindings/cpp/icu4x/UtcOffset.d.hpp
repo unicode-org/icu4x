@@ -40,15 +40,6 @@ public:
   inline static diplomat::result<std::unique_ptr<icu4x::UtcOffset>, icu4x::TimeZoneInvalidOffsetError> from_seconds(int32_t seconds);
 
   /**
-   * Creates an offset from eighths of an hour.
-   *
-   * See the [Rust documentation for `from_eighths_of_hour`](https://docs.rs/icu/latest/icu/time/zone/struct.UtcOffset.html#method.from_eighths_of_hour) for more information.
-   *
-   * Additional information: [1](https://docs.rs/icu/latest/icu/time/zone/struct.UtcOffset.html)
-   */
-  inline static std::unique_ptr<icu4x::UtcOffset> from_eighths_of_hour(int8_t eighths_of_hour);
-
-  /**
    * Creates an offset from a string.
    *
    * See the [Rust documentation for `try_from_str`](https://docs.rs/icu/latest/icu/time/zone/struct.UtcOffset.html#method.try_from_str) for more information.
@@ -56,13 +47,6 @@ public:
    * Additional information: [1](https://docs.rs/icu/latest/icu/time/zone/struct.UtcOffset.html)
    */
   inline static diplomat::result<std::unique_ptr<icu4x::UtcOffset>, icu4x::TimeZoneInvalidOffsetError> from_string(std::string_view offset);
-
-  /**
-   * Gets the offset as eighths of an hour.
-   *
-   * See the [Rust documentation for `to_eighths_of_hour`](https://docs.rs/icu/latest/icu/time/zone/struct.UtcOffset.html#method.to_eighths_of_hour) for more information.
-   */
-  inline int8_t eighths_of_hour() const;
 
   /**
    * Returns the value as offset seconds.

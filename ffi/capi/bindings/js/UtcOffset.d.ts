@@ -22,15 +22,6 @@ export class UtcOffset {
     static fromSeconds(seconds: number): UtcOffset;
 
     /** 
-     * Creates an offset from eighths of an hour.
-     *
-     * See the [Rust documentation for `from_eighths_of_hour`](https://docs.rs/icu/latest/icu/time/zone/struct.UtcOffset.html#method.from_eighths_of_hour) for more information.
-     *
-     * Additional information: [1](https://docs.rs/icu/latest/icu/time/zone/struct.UtcOffset.html)
-     */
-    static fromEighthsOfHour(eighthsOfHour: number): UtcOffset;
-
-    /** 
      * Creates an offset from a string.
      *
      * See the [Rust documentation for `try_from_str`](https://docs.rs/icu/latest/icu/time/zone/struct.UtcOffset.html#method.try_from_str) for more information.
@@ -38,13 +29,6 @@ export class UtcOffset {
      * Additional information: [1](https://docs.rs/icu/latest/icu/time/zone/struct.UtcOffset.html)
      */
     static fromString(offset: string): UtcOffset;
-
-    /** 
-     * Gets the offset as eighths of an hour.
-     *
-     * See the [Rust documentation for `to_eighths_of_hour`](https://docs.rs/icu/latest/icu/time/zone/struct.UtcOffset.html#method.to_eighths_of_hour) for more information.
-     */
-    get eighthsOfHour(): number;
 
     /** 
      * Returns the value as offset seconds.

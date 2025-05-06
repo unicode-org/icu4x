@@ -15,10 +15,12 @@
 //!
 //! Read more about data providers: [`icu_provider`]
 
-use crate::zone::ZoneNameTimestamp;
+use crate::zone::{UtcOffset, VariantOffsets, ZoneNameTimestamp};
 #[cfg(feature = "datagen")]
 use icu_provider::prelude::*;
-use zerovec::ZeroMap2d;
+use zerovec::maps::ZeroMapKV;
+use zerovec::ule::AsULE;
+use zerovec::{ZeroMap2d, ZeroSlice, ZeroVec};
 
 pub use crate::zone::ule::TimeZoneVariantULE;
 pub use crate::zone::TimeZone;
@@ -59,8 +61,92 @@ pub const MARKERS: &[DataMarkerInfo] = &[
     TimezoneVariantsOffsetsV1::INFO,
 ];
 
-/// Storage type for storing UTC offsets as eights of an hour.
-pub type EighthsOfHourOffset = i8;
+impl AsULE for VariantOffsets {
+    type ULE = [i8; 2];
+
+    fn from_unaligned([std, dst]: Self::ULE) -> Self {
+        Self {
+            standard: UtcOffset::from_seconds_unchecked(std as i32 * 450),
+            daylight: (dst != 0)
+                .then(|| UtcOffset::from_seconds_unchecked((std + dst) as i32 * 450)),
+        }
+    }
+
+    fn to_unaligned(self) -> Self::ULE {
+        [
+            (self.standard.to_seconds() / 450) as i8,
+            self.daylight
+                .map(|d| (d.to_seconds() - self.standard.to_seconds()) / 450)
+                .unwrap_or_default() as i8,
+        ]
+    }
+}
+
+impl<'a> ZeroMapKV<'a> for VariantOffsets {
+    type Container = ZeroVec<'a, Self>;
+    type Slice = ZeroSlice<Self>;
+    type GetType = <Self as AsULE>::ULE;
+    type OwnedType = Self;
+}
+
+#[cfg(feature = "serde")]
+impl serde::Serialize for VariantOffsets {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        if serializer.is_human_readable() {
+            serializer.serialize_str(&if let Some(dst) = self.daylight {
+                alloc::format!(
+                    "{:+02}:{:02}/{:+02}:{:02}",
+                    self.standard.hours_part(),
+                    self.standard.minutes_part(),
+                    dst.hours_part(),
+                    dst.minutes_part(),
+                )
+            } else {
+                alloc::format!(
+                    "{:+02}:{:02}",
+                    self.standard.hours_part(),
+                    self.standard.minutes_part(),
+                )
+            })
+        } else {
+            self.to_unaligned().serialize(serializer)
+        }
+    }
+}
+
+#[cfg(feature = "serde")]
+impl<'de> serde::Deserialize<'de> for VariantOffsets {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        use serde::de::Error;
+        if deserializer.is_human_readable() {
+            let raw = <&str>::deserialize(deserializer)?;
+            Ok(if let Some((std, dst)) = raw.split_once('/') {
+                Self {
+                    standard: UtcOffset::try_from_str(std)
+                        .map_err(|_| D::Error::custom("invalid offset"))?,
+                    daylight: Some(
+                        UtcOffset::try_from_str(dst)
+                            .map_err(|_| D::Error::custom("invalid offset"))?,
+                    ),
+                }
+            } else {
+                Self {
+                    standard: UtcOffset::try_from_str(raw)
+                        .map_err(|_| D::Error::custom("invalid offset"))?,
+                    daylight: None,
+                }
+            })
+        } else {
+            <_>::deserialize(deserializer).map(Self::from_unaligned)
+        }
+    }
+}
 
 icu_provider::data_marker!(
     /// The default mapping between period and offsets. The second level key is a wall-clock time encoded as
@@ -70,6 +156,6 @@ icu_provider::data_marker!(
     /// if the second value is 0, there is no daylight time.
     TimezoneVariantsOffsetsV1,
     "timezone/variants/offsets/v1",
-    ZeroMap2d<'static, TimeZone, ZoneNameTimestamp, (EighthsOfHourOffset, EighthsOfHourOffset)>,
+    ZeroMap2d<'static, TimeZone, ZoneNameTimestamp, VariantOffsets>,
     is_singleton = true
 );

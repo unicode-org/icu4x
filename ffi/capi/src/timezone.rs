@@ -27,7 +27,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::time::TimeZone::unknown, FnInStruct, hidden)]
         #[diplomat::attr(auto, named_constructor)]
         pub fn unknown() -> Box<TimeZone> {
-            Box::new(TimeZone(icu_time::TimeZone::unknown()))
+            Box::new(TimeZone(icu_time::TimeZone::UNKNOWN))
         }
 
         /// Creates a time zone from a BCP-47 string.
@@ -202,7 +202,7 @@ pub mod ffi {
 impl From<icu_time::zone::UtcOffset> for TimeZoneInfo {
     fn from(other: icu_time::zone::UtcOffset) -> Self {
         Self {
-            id: icu_time::TimeZone::unknown(),
+            id: icu_time::TimeZone::UNKNOWN,
             offset: Some(other),
             variant: None,
             zone_name_timestamp: None,
