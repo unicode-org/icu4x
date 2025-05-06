@@ -38,6 +38,8 @@ use tinystr::TinyStr16;
 use icu_calendar::types::CyclicYear;
 #[cfg(doc)]
 use icu_decimal::DecimalFormatter;
+#[cfg(doc)]
+use writeable::TryWriteable;
 
 pub(crate) enum GetNameForMonthError {
     InvalidMonthCode,
@@ -226,6 +228,8 @@ pub enum FormattedDateTimePatternError {
     /// - **Trait impls:** for example, a custom field set does not require the correct fields
     ///
     /// The output will contain the string `{X}` instead, where `X` is the symbol for which the input is missing.
+    ///
+    /// [`with_pattern_unchecked`]: FixedCalendarDateTimeNames::with_pattern_unchecked
     #[displaydoc("Incomplete input, missing value for {0:?}")]
     MissingInputField(MissingInputFieldKind),
 
@@ -236,13 +240,15 @@ pub enum FormattedDateTimePatternError {
     /// - **Unchecked functions:** for example, the pattern in [`with_pattern_unchecked`] contains an unsupported field
     ///
     /// The output will contain the string `{unsupported:X}`, where `X` is the symbol of the unsupported field.
+    ///
+    /// [`with_pattern_unchecked`]: FixedCalendarDateTimeNames::with_pattern_unchecked
     #[displaydoc("Unsupported field {0:?}")]
     UnsupportedField(ErrorField),
     /// The pattern contains a field that has a valid symbol but invalid length.
     ///
     /// Same error conditions as [`FormattedDateTimePatternError::UnsupportedField`].
     ///
-    /// The output will contain fallback values similar to [`DateTimeWriteError::NamesNotLoaded`].
+    /// The output will contain fallback values similar to [`FormattedDateTimePatternError::NamesNotLoaded`].
     #[displaydoc("Field length for {0:?} is invalid")]
     UnsupportedLength(ErrorField),
 }

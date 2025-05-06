@@ -20,6 +20,10 @@ use writeable::TryWriteable;
 use crate::fieldsets::enums::CompositeFieldSet;
 #[cfg(doc)]
 use crate::FormattedDateTime;
+#[cfg(doc)]
+use icu_calendar::types::CyclicYear;
+#[cfg(doc)]
+use icu_decimal::DecimalFormatter;
 
 impl<C: CldrCalendar, FSet: DateTimeNamesMarker> FixedCalendarDateTimeFormatter<C, FSet> {
     /// Formats a datetime without enforcing either the field set or the calendar.
@@ -274,7 +278,7 @@ pub enum FormattedDateTimeUncheckedError {
     ///
     /// The output will contain the raw [`MonthCode`] as a fallback value.
     ///
-    /// [`set_date_fields_unchecked`]: FormattedDateTimeInput::set_date_fields_unchecked
+    /// [`set_date_fields_unchecked`]: DateTimeInputUnchecked::set_date_fields_unchecked
     #[displaydoc("Invalid month {0:?}")]
     InvalidMonthCode(MonthCode),
     /// The era code of the input is not valid for this calendar.
@@ -341,7 +345,7 @@ pub enum FormattedDateTimeUncheckedError {
     ///
     /// Same error conditions as [`FormattedDateTimeUncheckedError::UnsupportedField`].
     ///
-    /// The output will contain fallback values similar to [`DateTimeWriteError::NamesNotLoaded`].
+    /// The output will contain fallback values similar to [`FormattedDateTimeUncheckedError::NamesNotLoaded`].
     #[displaydoc("Field length for {0:?} is invalid")]
     UnsupportedLength(ErrorField),
 }
