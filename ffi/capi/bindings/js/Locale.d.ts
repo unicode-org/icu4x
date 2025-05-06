@@ -28,7 +28,7 @@ export class Locale {
     /** 
      * Construct a unknown [`Locale`] "und".
      *
-     * See the [Rust documentation for `unknown`](https://docs.rs/icu/latest/icu/locale/struct.Locale.html#associatedconstant.unknown) for more information.
+     * See the [Rust documentation for `UNKNOWN`](https://docs.rs/icu/latest/icu/locale/struct.Locale.html#associatedconstant.UNKNOWN) for more information.
      */
     static unknown(): Locale;
 
