@@ -96,7 +96,7 @@ export class Time {
     }
 
     /** 
-     * Creates a new [`Time`] representing midnight (00:00.000).
+     * Creates a new [`Time`] representing the start of the day (00:00:00.000).
      *
      * See the [Rust documentation for `start_of_day`](https://docs.rs/icu/latest/icu/time/struct.Time.html#method.start_of_day) for more information.
      */
@@ -104,6 +104,29 @@ export class Time {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
         const result = wasm.icu4x_Time_start_of_day_mv1(diplomatReceive.buffer);
+    
+        try {
+            if (!diplomatReceive.resultFlag) {
+                const cause = new CalendarError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
+                throw new globalThis.Error('CalendarError: ' + cause.value, { cause });
+            }
+            return new Time(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
+        }
+        
+        finally {
+            diplomatReceive.free();
+        }
+    }
+
+    /** 
+     * Creates a new [`Time`] representing noon (12:00:00.000).
+     *
+     * See the [Rust documentation for `noon`](https://docs.rs/icu/latest/icu/time/struct.Time.html#method.noon) for more information.
+     */
+    static noon() {
+        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
+        const result = wasm.icu4x_Time_noon_mv1(diplomatReceive.buffer);
     
         try {
             if (!diplomatReceive.resultFlag) {
