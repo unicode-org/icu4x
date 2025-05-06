@@ -60,6 +60,14 @@ fn collator_bench(
 
 pub fn collator_with_locale(criterion: &mut Criterion) {
     // Load file content in reverse order vector.
+    let content_photos: (&str, Vec<&str>) = (
+        "TestFilenames_Photos",
+        include_str!("data/TestFilenames_Photos.txt")
+            .lines()
+            .filter(|&s| !s.starts_with('#'))
+            .rev()
+            .collect::<Vec<&str>>(),
+    );
     let content_latin: (&str, Vec<&str>) = (
         "TestNames_Latin",
         include_str!("data/TestNames_Latin.txt")
@@ -142,8 +150,16 @@ pub fn collator_with_locale(criterion: &mut Criterion) {
         Strength::Identical,
     ];
     let performance_parameters = [
-        (locale!("en-US"), vec![&content_latin], &all_strength),
-        (locale!("da-DK"), vec![&content_latin], &all_strength),
+        (
+            locale!("en-US"),
+            vec![&content_latin, &content_photos],
+            &all_strength,
+        ),
+        (
+            locale!("da-DK"),
+            vec![&content_latin, &content_photos],
+            &all_strength,
+        ),
         (locale!("fr-CA"), vec![&content_latin], &all_strength),
         (
             locale!("ja-JP"),
@@ -197,6 +213,7 @@ pub fn collator_with_locale(criterion: &mut Criterion) {
                 );
             }
         }
+        // TODO: Bench content_photos with numeric mode on.
         group.finish();
     }
 }
