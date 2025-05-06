@@ -14,7 +14,7 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
-    Locale* locale = icu4x_Locale_und_mv1();
+    Locale* locale = icu4x_Locale_unknown_mv1();
     struct DiplomatStringView arg_str = {
         argv[1],
         strlen(argv[1])

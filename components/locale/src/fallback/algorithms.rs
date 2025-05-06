@@ -123,7 +123,7 @@ impl LocaleFallbackIteratorInner<'_> {
         // 8. Remove language+script
         debug_assert!(!locale.language.is_unknown() || locale.script.is_some()); // don't call .step() on und
         locale.script = None;
-        locale.language = Language::UND;
+        locale.language = Language::UNKNOWN;
     }
 
     fn step_region(&mut self, locale: &mut DataLocale) {
@@ -141,7 +141,7 @@ impl LocaleFallbackIteratorInner<'_> {
         // 5. Remove language+script
         if !locale.language.is_unknown() || locale.script.is_some() {
             locale.script = None;
-            locale.language = Language::UND;
+            locale.language = Language::UNKNOWN;
             // Don't produce und-variant
             if locale.region.is_some() {
                 locale.variant = self.backup_variant.take();
@@ -208,7 +208,7 @@ impl LocaleFallbackIteratorInner<'_> {
                 return;
             } else {
                 // 3. Remove the language and apply the maximized script
-                locale.language = Language::UND;
+                locale.language = Language::UNKNOWN;
                 locale.script = self.max_script;
                 // Don't produce und-variant
                 if locale.script.is_some() {

@@ -382,16 +382,16 @@ impl LocaleExpander {
         if !langid.language.is_unknown() {
             if let Some(region) = langid.region {
                 if let Some(script) = data.get_lr(langid.language, region) {
-                    return update_langid(Language::UND, Some(script), None, langid);
+                    return update_langid(Language::UNKNOWN, Some(script), None, langid);
                 }
             }
             if let Some(script) = langid.script {
                 if let Some(region) = data.get_ls(langid.language, script) {
-                    return update_langid(Language::UND, None, Some(region), langid);
+                    return update_langid(Language::UNKNOWN, None, Some(region), langid);
                 }
             }
             if let Some((script, region)) = data.get_l(langid.language) {
-                return update_langid(Language::UND, Some(script), Some(region), langid);
+                return update_langid(Language::UNKNOWN, Some(script), Some(region), langid);
             }
             // Language not found: return unmodified.
             return TransformResult::Unmodified;
