@@ -33,6 +33,7 @@ Some major changes worth highlighting:
         - Remove `prev_year` info (unicode-org#6382)
         - Use regions, not languages, for calendar algorithm defaults (unicode-org#6325)
         - Hide week-of-month, non-iso week-of-year (unicode-org#6319)
+        - Expose `Date` to/from `RataDie` (#6369)
     - `icu_casemap`
         - Add borrowed types (`CaseMapperBorrowed`, etc) to icu_casemap (unicode-org#6353)
     - `icu_collator`
@@ -87,9 +88,8 @@ Some major changes worth highlighting:
         - Update UAX#29 text segmenter data rules to 16.0. (#6367)
     - `icu_time`
         - A lot of things have changed, it is preferable to reacquaint oneself with this crate from the ground up.
-        - Expose `Date` to/from `RataDie` (#6369)
         - Various refactors for comprehensibility (#6460)
-        - Rename `ZonedDateTime::try_from_str` to try_full_from_str (#6506)
+        - Rename `ZonedDateTime::try_from_str` to `try_full_from_str` (#6506)
         - Add type `ZoneNameTimestamp` for time zone display names (#6513)
         - `from_epoch_milliseconds_and_utc_offset` and follow-ups (#6515)
         - Add `Time::noon()` (#6536)
