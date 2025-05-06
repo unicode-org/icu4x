@@ -227,27 +227,39 @@ fn display_benches(c: &mut Criterion) {
         b.iter(|| {
             use std::io::Write;
             let mut buf = Vec::<u8>::with_capacity(500);
-            write!(&mut buf, "{}", DisplayMessage {
-                message: black_box(SHORT_STR),
-            })
+            write!(
+                &mut buf,
+                "{}",
+                DisplayMessage {
+                    message: black_box(SHORT_STR),
+                }
+            )
         });
     });
     c.bench_function("display/fmt/medium", |b| {
         b.iter(|| {
             use std::io::Write;
             let mut buf = Vec::<u8>::with_capacity(500);
-            write!(&mut buf, "{}", DisplayMessage {
-                message: black_box(MEDIUM_STR),
-            })
+            write!(
+                &mut buf,
+                "{}",
+                DisplayMessage {
+                    message: black_box(MEDIUM_STR),
+                }
+            )
         });
     });
     c.bench_function("display/fmt/long", |b| {
         b.iter(|| {
             use std::io::Write;
             let mut buf = Vec::<u8>::with_capacity(500);
-            write!(&mut buf, "{}", DisplayMessage {
-                message: black_box(LONG_STR),
-            })
+            write!(
+                &mut buf,
+                "{}",
+                DisplayMessage {
+                    message: black_box(LONG_STR),
+                }
+            )
         });
     });
 }
@@ -268,9 +280,7 @@ fn complex_benches(c: &mut Criterion) {
         });
     });
     c.bench_function("complex/display_to_string/medium", |b| {
-        b.iter(|| {
-            std::string::ToString::to_string(&black_box(COMPLEX_WRITEABLE_MEDIUM))
-        });
+        b.iter(|| std::string::ToString::to_string(&black_box(COMPLEX_WRITEABLE_MEDIUM)));
     });
     const REFERENCE_STRS: [&str; 6] = [
         "There are 55 apples and 8124 oranges",
