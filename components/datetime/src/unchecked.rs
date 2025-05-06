@@ -4,14 +4,14 @@
 
 //! Datetime formatting without static checking of invariants.
 
-pub use crate::format::DateTimeInputUnchecked;
-use core::fmt;
-use crate::DateTimeFormatter;
-use crate::FixedCalendarDateTimeFormatter;
 use crate::format::datetime::try_write_pattern_items;
+pub use crate::format::DateTimeInputUnchecked;
 use crate::pattern::*;
 use crate::raw::neo::*;
 use crate::scaffold::*;
+use crate::DateTimeFormatter;
+use crate::FixedCalendarDateTimeFormatter;
+use core::fmt;
 use icu_calendar::types::MonthCode;
 use tinystr::TinyStr16;
 use writeable::TryWriteable;
@@ -204,17 +204,29 @@ impl TryWriteable for FormattedDateTimeUnchecked<'_> {
         ) {
             Ok(Ok(())) => return Ok(Ok(())),
             Err(fmt::Error) => return Err(fmt::Error),
-            Ok(Err(err)) => err
+            Ok(Err(err)) => err,
         };
         Ok(Err(match err {
-            DateTimeWriteError::InvalidMonthCode(month_code) => Self::Error::InvalidMonthCode(month_code),
-            DateTimeWriteError::InvalidEra(tiny_ascii_str) => Self::Error::InvalidEra(tiny_ascii_str),
-            DateTimeWriteError::InvalidCyclicYear { value, max } => Self::Error::InvalidCyclicYear { value, max },
+            DateTimeWriteError::InvalidMonthCode(month_code) => {
+                Self::Error::InvalidMonthCode(month_code)
+            }
+            DateTimeWriteError::InvalidEra(tiny_ascii_str) => {
+                Self::Error::InvalidEra(tiny_ascii_str)
+            }
+            DateTimeWriteError::InvalidCyclicYear { value, max } => {
+                Self::Error::InvalidCyclicYear { value, max }
+            }
             DateTimeWriteError::DecimalFormatterNotLoaded => Self::Error::DecimalFormatterNotLoaded,
-            DateTimeWriteError::NamesNotLoaded(error_field) => Self::Error::NamesNotLoaded(error_field),
+            DateTimeWriteError::NamesNotLoaded(error_field) => {
+                Self::Error::NamesNotLoaded(error_field)
+            }
             DateTimeWriteError::MissingInputField(name) => Self::Error::MissingInputField(name),
-            DateTimeWriteError::UnsupportedLength(error_field) => Self::Error::UnsupportedLength(error_field),
-            DateTimeWriteError::UnsupportedField(error_field) => Self::Error::UnsupportedField(error_field),
+            DateTimeWriteError::UnsupportedLength(error_field) => {
+                Self::Error::UnsupportedLength(error_field)
+            }
+            DateTimeWriteError::UnsupportedField(error_field) => {
+                Self::Error::UnsupportedField(error_field)
+            }
         }))
     }
 
@@ -233,25 +245,42 @@ impl FormattedDateTimeUnchecked<'_> {
 
 #[non_exhaustive]
 #[derive(Debug, PartialEq, Copy, Clone, displaydoc::Display)]
-/// Error for `TryWriteable` implementations
+/// Error for the [`TryWriteable`] implementation of [`FormattedDateTimeUnchecked`].
+///
+/// There are 3 general conditions for these errors to occur:
+///
+/// 1. Invariants of **unchecked functions** are not upheld
+/// 2. Invariants of **locale data** are not upheld
+/// 3. Invariants of **trait impls** are not upheld (including [scaffolding traits])
+///
+/// It is not always possible to distinguish the source of the errors. Each variant is documented
+/// with rules of thumb for when they might occur.
+///
+/// [unstable scaffolding traits]: crate::scaffold
 pub enum FormattedDateTimeUncheckedError {
     /// The [`MonthCode`] of the input is not valid for this calendar.
     ///
-    /// This is guaranteed not to happen for `icu::calendar` inputs, but may happen for custom inputs.
+    /// Error conditions:
+    ///
+    /// - **Unchecked functions:** for example, wrong calendar passed to [`set_date_fields_unchecked`]
+    /// - **Locale data:** for example, datetime names don't match the formatter's calendar
+    /// - **Trait impls:** for example, the date returns fields for the wrong calendar
     ///
     /// The output will contain the raw [`MonthCode`] as a fallback value.
+    ///
+    /// [`set_date_fields_unchecked`]: FormattedDateTimeInput::set_date_fields_unchecked
     #[displaydoc("Invalid month {0:?}")]
     InvalidMonthCode(MonthCode),
     /// The era code of the input is not valid for this calendar.
     ///
-    /// This is guaranteed not to happen for `icu::calendar` inputs, but may happen for custom inputs.
+    /// Same error conditions as [`FormattedDateTimeUncheckedError::InvalidMonthCode`].
     ///
     /// The output will contain the era code as the fallback.
     #[displaydoc("Invalid era {0:?}")]
     InvalidEra(TinyStr16),
     /// The [`CyclicYear::year`] of the input is not valid for this calendar.
     ///
-    /// This is guaranteed not to happen for `icu::calendar` inputs, but may happen for custom inputs.
+    /// Same error conditions as [`FormattedDateTimeUncheckedError::InvalidMonthCode`].
     ///
     /// The output will contain [`CyclicYear::related_iso`] as a fallback value.
     #[displaydoc("Invalid cyclic year {value} (maximum {max})")]
@@ -262,49 +291,51 @@ pub enum FormattedDateTimeUncheckedError {
         max: u8,
     },
 
-    /// The [`DecimalFormatter`] has not been loaded.
-    ///
-    /// This *only* happens if the formatter has been created using
-    /// [`FixedCalendarDateTimeNames::with_pattern_unchecked`], the pattern requires decimal
-    /// formatting, and the decimal formatter was not loaded.
-    ///
-    /// The output will contain fallback values using Latin numerals.
-    #[displaydoc("DecimalFormatter not loaded")]
-    DecimalFormatterNotLoaded,
     /// The localized names for a field have not been loaded.
     ///
-    /// This *only* happens if the formatter has been created using
-    /// [`FixedCalendarDateTimeNames::with_pattern_unchecked`], and the pattern requires names
-    /// that were not loaded.
+    /// Error conditions:
+    ///
+    /// - **Locale data:** for example, year style patterns contain inconsistant field lengths
+    /// - **Trait impls:** for example, a custom field set does not include the correct names data
     ///
     /// The output will contain fallback values using field identifiers (such as `tue` for `Weekday::Tuesday`,
     /// `M02` for month 2, etc.).
     #[displaydoc("Names for {0:?} not loaded")]
     NamesNotLoaded(ErrorField),
+    /// The [`DecimalFormatter`] has not been loaded.
+    ///
+    /// Same error conditions as [`FormattedDateTimeUncheckedError::NamesNotLoaded`].
+    ///
+    /// The output will contain fallback values using Latin numerals.
+    #[displaydoc("DecimalFormatter not loaded")]
+    DecimalFormatterNotLoaded,
+
     /// An input field (such as "hour" or "month") is missing.
     ///
-    /// This *only* happens if the formatter has been created using
-    /// [`FixedCalendarDateTimeNames::with_pattern_unchecked`], and the pattern requires fields
-    /// that are not returned by the input type.
+    /// Error conditions:
+    ///
+    /// - **Unchecked functions:** for example, insufficient fields in [`DateTimeInputUnchecked`]
+    /// - **Locale data:** for example, the pattern contains a field not in the fieldset
+    /// - **Trait impls:** for example, a custom field set does not require the correct fields
     ///
     /// The output will contain the string `{X}` instead, where `X` is the symbol for which the input is missing.
     #[displaydoc("Incomplete input, missing value for {0:?}")]
     MissingInputField(&'static str),
-    /// The pattern contains a field that has a valid symbol but invalid length.
+
+    /// The pattern contains a field symbol for which formatting is unsupported.
     ///
-    /// This *only* happens if the formatter has been created using
-    /// [`FixedCalendarDateTimeNames::with_pattern_unchecked`], and the pattern contains
-    /// a field with a length not supported in formatting.
+    /// Error conditions:
     ///
-    /// The output will contain fallback values similar to [`DateTimeWriteError::NamesNotLoaded`].
-    #[displaydoc("Field length for {0:?} is invalid")]
-    UnsupportedLength(ErrorField),
-    /// Unsupported field
-    ///
-    /// This *only* happens if the formatter has been created using
-    /// [`FixedCalendarDateTimeNames::with_pattern_unchecked`], and the pattern contains unsupported fields.
+    /// - **Locale data:** the pattern contains an unsupported field
     ///
     /// The output will contain the string `{unsupported:X}`, where `X` is the symbol of the unsupported field.
     #[displaydoc("Unsupported field {0:?}")]
     UnsupportedField(ErrorField),
+    /// The pattern contains a field that has a valid symbol but invalid length.
+    ///
+    /// Same error conditions as [`FormattedDateTimeUncheckedError::UnsupportedField`].
+    ///
+    /// The output will contain fallback values similar to [`DateTimeWriteError::NamesNotLoaded`].
+    #[displaydoc("Field length for {0:?} is invalid")]
+    UnsupportedLength(ErrorField),
 }
