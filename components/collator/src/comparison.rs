@@ -71,11 +71,20 @@ impl AnyQuaternaryAccumulator {
     }
 }
 
+/// `true` iff `i` is greater or equal to `start` and less or equal
+/// to `end`.
 #[inline(always)]
 fn in_inclusive_range16(i: u16, start: u16, end: u16) -> bool {
     i.wrapping_sub(start) <= (end - start)
 }
 
+/// Finds the identical prefix of `left` and `right` containing
+/// potentially ill-formed UTF-16 avoiding splitting a
+/// well-formed surrogate pair. In case of ill-formed
+/// UTF-16, the prefix is not guaranteed to be maximal.
+///
+/// Returns the identical prefix, the part of `left` after the
+/// prefix, and the part of `right` after the prefix.
 fn split_prefix_u16<'a, 'b>(
     left: &'a [u16],
     right: &'b [u16],
@@ -100,6 +109,13 @@ fn split_prefix_u16<'a, 'b>(
     (&[], left, right)
 }
 
+/// Finds the identical prefix of `left` and `right` containing
+/// potentially ill-formed UTF-8 avoiding splitting a UTF-8
+/// byte sequence. In case of ill-formed UTF-8, the prefix is
+/// not guaranteed to be maximal.
+///
+/// Returns the identical prefix, the part of `left` after the
+/// prefix, and the part of `right` after the prefix.
 fn split_prefix_u8<'a, 'b>(left: &'a [u8], right: &'b [u8]) -> (&'a [u8], &'a [u8], &'b [u8]) {
     let mut i = left
         .iter()
@@ -137,6 +153,11 @@ fn split_prefix_u8<'a, 'b>(left: &'a [u8], right: &'b [u8]) -> (&'a [u8], &'a [u
     (&[], left, right)
 }
 
+/// Finds the identical prefix of `left` and `right` containing
+/// guaranteed well-format UTF-8.
+///
+/// Returns the identical prefix, the part of `left` after the
+/// prefix, and the part of `right` after the prefix.
 fn split_prefix<'a, 'b>(left: &'a str, right: &'b str) -> (&'a str, &'a str, &'b str) {
     let left_bytes = left.as_bytes();
     let right_bytes = right.as_bytes();
@@ -648,7 +669,7 @@ impl CollatorBorrowed<'_> {
     );
 
     compare!(
-        /// Compare potentially well-formed UTF-8 slices. Ill-formed input is compared
+        /// Compare potentially ill-formed UTF-8 slices. Ill-formed input is compared
         /// as if errors had been replaced with REPLACEMENT CHARACTERs according
         /// to the WHATWG Encoding Standard.
         ,
@@ -666,6 +687,18 @@ impl CollatorBorrowed<'_> {
         split_prefix_u16,
     );
 
+    /// The implementation of the comparison operation.
+    ///
+    /// `head_chars` is an iterator over the identical prefix and
+    /// `left_chars` and `right_chars` are iterators over the parts
+    /// after the identical prefix.
+    ///
+    /// Currently, all three have the same concrete type, so the
+    /// trait bound is given as `DoubleEndedIterator`.
+    /// `head_chars` is iterated backwards and `left_chars` and
+    /// `right_chars` forwards. It this was a public API, this
+    /// should have three generic types, one for each argument,
+    /// for maximum flexibility.
     fn compare_impl<I: DoubleEndedIterator<Item = char>>(
         &self,
         left_chars: I,
