@@ -76,12 +76,12 @@ export class Locale {
     }
 
     /** 
-     * Construct a default undefined [`Locale`] "und".
+     * Construct a unknown [`Locale`] "und".
      *
-     * See the [Rust documentation for `default`](https://docs.rs/icu/latest/icu/locale/struct.Locale.html#method.default) for more information.
+     * See the [Rust documentation for `unknown`](https://docs.rs/icu/latest/icu/locale/struct.Locale.html#associatedconstant.unknown) for more information.
      */
-    static und() {
-        const result = wasm.icu4x_Locale_und_mv1();
+    static unknown() {
+        const result = wasm.icu4x_Locale_unknown_mv1();
     
         try {
             return new Locale(diplomatRuntime.internalConstructor, result, []);
