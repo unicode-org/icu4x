@@ -137,7 +137,7 @@ impl LocalePreferences {
     /// Constructs a new [`LocalePreferences`] struct with the defaults.
     pub const fn default() -> Self {
         Self {
-            language: Language::default(),
+            language: Language::UNKNOWN,
             script: None,
             region: None,
             variant: None,
