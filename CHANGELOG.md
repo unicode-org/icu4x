@@ -97,7 +97,7 @@ Some major changes worth highlighting:
 - Data model and providers
     - General
         - Remove explicit icu_locale/icu_provider_baked deps from baked data (unicode-org#6340)
-        - Add non_exhaustive to most marker types (unicode-org#6401)
+        - Add `#[non_exhaustive]` to most marker types (unicode-org#6401)
         - A lot of data markers have been renamed (unicode-org#6229, unicode-org#6508, unicode-org#6449)
     - `icu_provider`
         - Put `MaybeEncodeAsVarULE` behind the `"export"` feature (unicode-org#6221)
