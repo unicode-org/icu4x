@@ -50,6 +50,7 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> FixedCalendarDateTimeFormatter<
     /// use icu::datetime::fieldsets::enums::CompositeFieldSet;
     /// use icu::datetime::input::{Date, Time};
     /// use icu::datetime::FixedCalendarDateTimeFormatter;
+    /// use icu::datetime::pattern::MissingInputFieldKind;
     /// use icu::datetime::unchecked::FormattedDateTimeUncheckedError;
     /// use icu::datetime::unchecked::DateTimeInputUnchecked;
     /// use icu::locale::locale;
@@ -82,7 +83,7 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> FixedCalendarDateTimeFormatter<
     /// assert_try_writeable_eq!(
     ///     result,
     ///     "{d} {M} {G} {y}",
-    ///     Err(FormattedDateTimeUncheckedError::MissingInputField("day_of_month"))
+    ///     Err(FormattedDateTimeUncheckedError::MissingInputField(MissingInputFieldKind::DayOfMonth))
     /// );
     /// ```
     ///
@@ -127,6 +128,7 @@ impl<FSet: DateTimeNamesMarker> DateTimeFormatter<FSet> {
     /// use icu::datetime::fieldsets::enums::CompositeFieldSet;
     /// use icu::datetime::input::{Date, Time};
     /// use icu::datetime::DateTimeFormatter;
+    /// use icu::datetime::pattern::MissingInputFieldKind;
     /// use icu::datetime::unchecked::FormattedDateTimeUncheckedError;
     /// use icu::datetime::unchecked::DateTimeInputUnchecked;
     /// use icu::locale::locale;
@@ -159,7 +161,7 @@ impl<FSet: DateTimeNamesMarker> DateTimeFormatter<FSet> {
     /// assert_try_writeable_eq!(
     ///     result,
     ///     "{d} {M} {G} {y}",
-    ///     Err(FormattedDateTimeUncheckedError::MissingInputField("day_of_month"))
+    ///     Err(FormattedDateTimeUncheckedError::MissingInputField(MissingInputFieldKind::DayOfMonth))
     /// );
     /// ```
     ///
@@ -324,7 +326,7 @@ pub enum FormattedDateTimeUncheckedError {
     ///
     /// The output will contain the string `{X}` instead, where `X` is the symbol for which the input is missing.
     #[displaydoc("Incomplete input, missing value for {0:?}")]
-    MissingInputField(&'static str),
+    MissingInputField(MissingInputFieldKind),
 
     /// The pattern contains a field symbol for which formatting is unsupported.
     ///

@@ -499,6 +499,7 @@ size_test!(
 /// use icu::datetime::parts;
 /// use icu::datetime::pattern::FixedCalendarDateTimeNames;
 /// use icu::datetime::pattern::DateTimePattern;
+/// use icu::datetime::pattern::MissingInputFieldKind;
 /// use icu::datetime::fieldsets::zone::LocalizedOffsetLong;
 /// use icu::locale::locale;
 /// use icu::datetime::input::{DateTime, TimeZoneInfo};
@@ -519,7 +520,7 @@ size_test!(
 /// assert_try_writeable_parts_eq!(
 ///     names.with_pattern_unchecked(&pattern).format(&TimeZoneInfo::unknown()),
 ///     "It is: {E} {M} {d} {y} {G} at {h}:{m}:{s} {a} {z}",
-///     Err(FormattedDateTimePatternError::MissingInputField("iso_weekday")),
+///     Err(FormattedDateTimePatternError::MissingInputField(MissingInputFieldKind::Weekday)),
 ///     [
 ///         (7, 10, Part::ERROR), // {E}
 ///         (7, 10, parts::WEEKDAY), // {E}

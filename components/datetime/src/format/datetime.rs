@@ -115,20 +115,20 @@ where
 {
     macro_rules! input {
         // Get the input. If not found, write a replacement string but do NOT write a part.
-        (_, $name:ident = $input:expr) => {
+        (_, $kind:ident, $name:ident = $input:expr) => {
             let Some($name) = $input else {
                 write_value_missing(w, field)?;
                 return Ok(Err(FormattedDateTimePatternError::MissingInputField(
-                    stringify!($name),
+                    MissingInputFieldKind::$kind,
                 )));
             };
         };
         // Get the input. If not found, write a replacement string and a part.
-        ($part:ident, $name:ident = $input:expr) => {
+        ($part:ident, $kind:ident, $name:ident = $input:expr) => {
             let Some($name) = $input else {
                 w.with_part($part, |w| write_value_missing(w, field))?;
                 return Ok(Err(FormattedDateTimePatternError::MissingInputField(
-                    stringify!($name),
+                    MissingInputFieldKind::$kind,
                 )));
             };
         };
@@ -137,8 +137,8 @@ where
     Ok(match (field.symbol, field.length) {
         (FieldSymbol::Era, l) => {
             const PART: Part = parts::ERA;
-            input!(PART, year = input.year);
-            input!(PART, era_year = year.era());
+            input!(PART, Year, year = input.year);
+            input!(PART, YearEra, era_year = year.era());
             let era_symbol = datetime_names
                 .get_name_for_era(l, era_year)
                 .map_err(|e| match e {
@@ -164,7 +164,7 @@ where
         }
         (FieldSymbol::Year(Year::Calendar), l) => {
             const PART: Part = parts::YEAR;
-            input!(PART, year = input.year);
+            input!(PART, Year, year = input.year);
             let mut year = Decimal::from(year.era_year_or_related_iso());
             if matches!(l, FieldLength::Two) {
                 // 'yy' and 'YY' truncate
@@ -174,8 +174,8 @@ where
         }
         (FieldSymbol::Year(Year::Cyclic), l) => {
             const PART: Part = parts::YEAR_NAME;
-            input!(PART, year = input.year);
-            input!(PART, cyclic = year.cyclic());
+            input!(PART, Year, year = input.year);
+            input!(PART, YearCyclic, cyclic = year.cyclic());
 
             match datetime_names.get_name_for_cyclic(l, cyclic.year) {
                 Ok(name) => Ok(w.with_part(PART, |w| w.write_str(name))?),
@@ -210,8 +210,8 @@ where
         }
         (FieldSymbol::Year(Year::RelatedIso), l) => {
             const PART: Part = parts::RELATED_YEAR;
-            input!(PART, year = input.year);
-            input!(PART, cyclic = year.cyclic());
+            input!(PART, Year, year = input.year);
+            input!(PART, YearCyclic, cyclic = year.cyclic());
 
             // Always in latin digits according to spec
             w.with_part(PART, |w| {
@@ -223,12 +223,12 @@ where
         }
         (FieldSymbol::Month(_), l @ (FieldLength::One | FieldLength::Two)) => {
             const PART: Part = parts::MONTH;
-            input!(PART, month = input.month);
+            input!(PART, Month, month = input.month);
             try_write_number(PART, w, decimal_formatter, month.ordinal.into(), l)?
         }
         (FieldSymbol::Month(symbol), l) => {
             const PART: Part = parts::MONTH;
-            input!(PART, month = input.month);
+            input!(PART, Month, month = input.month);
             match datetime_names.get_name_for_month(symbol, l, month.formatting_code) {
                 Ok(MonthPlaceholderValue::PlainString(symbol)) => {
                     w.with_part(PART, |w| w.write_str(symbol))?;
@@ -285,7 +285,7 @@ where
         (FieldSymbol::Week(w), _) => match w {},
         (FieldSymbol::Weekday(weekday), l) => {
             const PART: Part = parts::WEEKDAY;
-            input!(PART, iso_weekday = input.iso_weekday);
+            input!(PART, Weekday, iso_weekday = input.iso_weekday);
             match datetime_names
                 .get_name_for_weekday(weekday, l, iso_weekday)
                 .map_err(|e| match e {
@@ -317,11 +317,11 @@ where
         }
         (FieldSymbol::Day(fields::Day::DayOfMonth), l) => {
             const PART: Part = parts::DAY;
-            input!(PART, day_of_month = input.day_of_month);
+            input!(PART, DayOfMonth, day_of_month = input.day_of_month);
             try_write_number(PART, w, decimal_formatter, day_of_month.0.into(), l)?
         }
         (FieldSymbol::Day(fields::Day::DayOfWeekInMonth), l) => {
-            input!(_, day_of_month = input.day_of_month);
+            input!(_, DayOfMonth, day_of_month = input.day_of_month);
             try_write_number_without_part(
                 w,
                 decimal_formatter,
@@ -330,12 +330,12 @@ where
             )?
         }
         (FieldSymbol::Day(fields::Day::DayOfYear), l) => {
-            input!(_, day_of_year = input.day_of_year);
+            input!(_, DayOfYear, day_of_year = input.day_of_year);
             try_write_number_without_part(w, decimal_formatter, day_of_year.0.into(), l)?
         }
         (FieldSymbol::Hour(symbol), l) => {
             const PART: Part = parts::HOUR;
-            input!(PART, hour = input.hour);
+            input!(PART, Hour, hour = input.hour);
             let h = hour.number();
             let h = match symbol {
                 fields::Hour::H11 => h % 12,
@@ -353,19 +353,19 @@ where
         }
         (FieldSymbol::Minute, l) => {
             const PART: Part = parts::MINUTE;
-            input!(PART, minute = input.minute);
+            input!(PART, Minute, minute = input.minute);
             try_write_number(PART, w, decimal_formatter, minute.number().into(), l)?
         }
         (FieldSymbol::Second(Second::Second), l) => {
             const PART: Part = parts::SECOND;
-            input!(PART, second = input.second);
+            input!(PART, Second, second = input.second);
             try_write_number(PART, w, decimal_formatter, second.number().into(), l)?
         }
         (FieldSymbol::Second(Second::MillisInDay), l) => {
-            input!(_, hour = input.hour);
-            input!(_, minute = input.minute);
-            input!(_, second = input.second);
-            input!(_, subsecond = input.subsecond);
+            input!(_, Hour, hour = input.hour);
+            input!(_, Minute, minute = input.minute);
+            input!(_, Second, second = input.second);
+            input!(_, Subsecond, subsecond = input.subsecond);
 
             let milliseconds = (((hour.number() as u32 * 60) + minute.number() as u32) * 60
                 + second.number() as u32)
@@ -375,8 +375,8 @@ where
         }
         (FieldSymbol::DecimalSecond(decimal_second), l) => {
             const PART: Part = parts::SECOND;
-            input!(PART, second = input.second);
-            input!(PART, subsecond = input.subsecond);
+            input!(PART, Second, second = input.second);
+            input!(PART, Subsecond, subsecond = input.subsecond);
 
             // Formatting with fractional seconds
             let mut s = Decimal::from(second.number());
@@ -393,7 +393,7 @@ where
         }
         (FieldSymbol::DayPeriod(period), l) => {
             const PART: Part = parts::DAY_PERIOD;
-            input!(PART, hour = input.hour);
+            input!(PART, Hour, hour = input.hour);
 
             match datetime_names.get_name_for_day_period(
                 period,
@@ -586,8 +586,8 @@ fn perform_timezone_fallback(
                 FormatTimeZoneError::NamesNotLoaded => Err(
                     FormattedDateTimePatternError::NamesNotLoaded(ErrorField(field)),
                 ),
-                FormatTimeZoneError::MissingInputField(f) => {
-                    Err(FormattedDateTimePatternError::MissingInputField(f))
+                FormatTimeZoneError::MissingInputField(kind) => {
+                    Err(FormattedDateTimePatternError::MissingInputField(kind))
                 }
                 FormatTimeZoneError::Fallback => {
                     debug_assert!(false, "timezone fallback chain fell through {input:?}");

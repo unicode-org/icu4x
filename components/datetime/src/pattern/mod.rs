@@ -118,6 +118,40 @@ pub struct UnsupportedCalendarError {
 
 impl core::error::Error for UnsupportedCalendarError {}
 
+/// The kind of a missing datetime input field.
+#[non_exhaustive]
+#[derive(Debug, PartialEq, Copy, Clone, displaydoc::Display)]
+pub enum MissingInputFieldKind {
+    /// Day of month
+    DayOfMonth,
+    /// Day of year
+    DayOfYear,
+    /// Hour
+    Hour,
+    /// Minute
+    Minute,
+    /// Month
+    Month,
+    /// Second
+    Second,
+    /// Subsecond
+    Subsecond,
+    /// Weekday
+    Weekday,
+    /// Year
+    Year,
+    /// Cyclic year
+    YearCyclic,
+    /// Era year
+    YearEra,
+    /// Time zone identifier
+    TimeZoneId,
+    /// Time zone name timestamp
+    TimeZoneNameTimestamp,
+    /// Time zone variant
+    TimeZoneVariant,
+}
+
 #[non_exhaustive]
 #[derive(Debug, PartialEq, Copy, Clone, displaydoc::Display)]
 /// Error for the [`TryWriteable`] implementation of [`FormattedDateTimePattern`].
@@ -193,7 +227,7 @@ pub enum FormattedDateTimePatternError {
     ///
     /// The output will contain the string `{X}` instead, where `X` is the symbol for which the input is missing.
     #[displaydoc("Incomplete input, missing value for {0:?}")]
-    MissingInputField(&'static str),
+    MissingInputField(MissingInputFieldKind),
 
     /// The pattern contains a field symbol for which formatting is unsupported.
     ///
