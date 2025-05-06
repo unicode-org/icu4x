@@ -206,7 +206,7 @@ final class TimeZoneFormatter implements ffi.Finalizable {
     final write = _Write();
     final result = _icu4x_TimeZoneFormatter_format_mv1(_ffi, zone._ffi, write._ffi);
     if (!result.isOk) {
-      throw DateTimeWriteError.values.firstWhere((v) => v._ffi == result.union.err);
+      throw DateTimeWriteError.values[result.union.err];
     }
     return write.finalize();
   }
