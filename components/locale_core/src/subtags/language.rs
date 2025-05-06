@@ -25,7 +25,7 @@ impl_tinystr_subtag!(
     /// ```
     /// use icu::locale::subtags::Language;
     ///
-    /// assert_eq!(Language::default().as_str(), "und");
+    /// assert_eq!(Language::UNKNOWN.as_str(), "und");
     /// ```
     ///
     /// `Notice`: ICU4X uses a narrow form of language subtag of 2-3 characters.

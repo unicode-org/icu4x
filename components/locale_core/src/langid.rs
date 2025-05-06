@@ -156,7 +156,7 @@ impl LanguageIdentifier {
         parser::parse_language_identifier(v, parser::ParserMode::Locale)
     }
 
-    /// Whether this language identifier equals [`Self::default`].
+    /// Whether this language identifier equals [`Self::UNKNOWN`].
     pub const fn is_unknown(&self) -> bool {
         self.language.is_unknown()
             && self.script.is_none()
