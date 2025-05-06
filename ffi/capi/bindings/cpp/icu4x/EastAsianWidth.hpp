@@ -10,6 +10,7 @@
 #include <memory>
 #include <functional>
 #include <optional>
+#include <cstdlib>
 #include "../diplomat_runtime.hpp"
 
 
@@ -49,7 +50,7 @@ inline icu4x::EastAsianWidth icu4x::EastAsianWidth::FromFFI(icu4x::capi::EastAsi
     case icu4x::capi::EastAsianWidth_Wide:
       return static_cast<icu4x::EastAsianWidth::Value>(c_enum);
     default:
-      abort();
+      std::abort();
   }
 }
 

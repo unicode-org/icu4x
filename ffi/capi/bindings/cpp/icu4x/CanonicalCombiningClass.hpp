@@ -10,6 +10,7 @@
 #include <memory>
 #include <functional>
 #include <optional>
+#include <cstdlib>
 #include "../diplomat_runtime.hpp"
 
 
@@ -95,7 +96,7 @@ inline icu4x::CanonicalCombiningClass icu4x::CanonicalCombiningClass::FromFFI(ic
     case icu4x::capi::CanonicalCombiningClass_IotaSubscript:
       return static_cast<icu4x::CanonicalCombiningClass::Value>(c_enum);
     default:
-      abort();
+      std::abort();
   }
 }
 

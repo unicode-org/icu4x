@@ -10,6 +10,7 @@
 #include <memory>
 #include <functional>
 #include <optional>
+#include <cstdlib>
 #include "../diplomat_runtime.hpp"
 
 
@@ -91,7 +92,7 @@ inline icu4x::LineBreak icu4x::LineBreak::FromFFI(icu4x::capi::LineBreak c_enum)
     case icu4x::capi::LineBreak_Virama:
       return static_cast<icu4x::LineBreak::Value>(c_enum);
     default:
-      abort();
+      std::abort();
   }
 }
 

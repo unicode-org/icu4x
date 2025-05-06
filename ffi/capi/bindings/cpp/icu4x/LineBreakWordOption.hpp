@@ -10,6 +10,7 @@
 #include <memory>
 #include <functional>
 #include <optional>
+#include <cstdlib>
 #include "../diplomat_runtime.hpp"
 
 
@@ -33,7 +34,7 @@ inline icu4x::LineBreakWordOption icu4x::LineBreakWordOption::FromFFI(icu4x::cap
     case icu4x::capi::LineBreakWordOption_KeepAll:
       return static_cast<icu4x::LineBreakWordOption::Value>(c_enum);
     default:
-      abort();
+      std::abort();
   }
 }
 #endif // icu4x_LineBreakWordOption_HPP

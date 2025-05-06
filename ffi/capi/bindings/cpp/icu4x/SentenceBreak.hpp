@@ -10,6 +10,7 @@
 #include <memory>
 #include <functional>
 #include <optional>
+#include <cstdlib>
 #include "../diplomat_runtime.hpp"
 
 
@@ -58,7 +59,7 @@ inline icu4x::SentenceBreak icu4x::SentenceBreak::FromFFI(icu4x::capi::SentenceB
     case icu4x::capi::SentenceBreak_SContinue:
       return static_cast<icu4x::SentenceBreak::Value>(c_enum);
     default:
-      abort();
+      std::abort();
   }
 }
 

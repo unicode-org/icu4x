@@ -10,6 +10,7 @@
 #include <memory>
 #include <functional>
 #include <optional>
+#include <cstdlib>
 #include "../diplomat_runtime.hpp"
 
 
@@ -74,7 +75,7 @@ inline icu4x::IndicSyllabicCategory icu4x::IndicSyllabicCategory::FromFFI(icu4x:
     case icu4x::capi::IndicSyllabicCategory_ReorderingKiller:
       return static_cast<icu4x::IndicSyllabicCategory::Value>(c_enum);
     default:
-      abort();
+      std::abort();
   }
 }
 

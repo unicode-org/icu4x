@@ -10,6 +10,7 @@
 #include <memory>
 #include <functional>
 #include <optional>
+#include <cstdlib>
 #include "../diplomat_runtime.hpp"
 
 
@@ -66,7 +67,7 @@ inline icu4x::BidiClass icu4x::BidiClass::FromFFI(icu4x::capi::BidiClass c_enum)
     case icu4x::capi::BidiClass_PopDirectionalIsolate:
       return static_cast<icu4x::BidiClass::Value>(c_enum);
     default:
-      abort();
+      std::abort();
   }
 }
 

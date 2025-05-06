@@ -10,6 +10,7 @@
 #include <memory>
 #include <functional>
 #include <optional>
+#include <cstdlib>
 #include "../diplomat_runtime.hpp"
 
 
@@ -33,7 +34,7 @@ inline icu4x::LocaleDirection icu4x::LocaleDirection::FromFFI(icu4x::capi::Local
     case icu4x::capi::LocaleDirection_Unknown:
       return static_cast<icu4x::LocaleDirection::Value>(c_enum);
     default:
-      abort();
+      std::abort();
   }
 }
 #endif // icu4x_LocaleDirection_HPP

@@ -10,6 +10,7 @@
 #include <memory>
 #include <functional>
 #include <optional>
+#include <cstdlib>
 #include "../diplomat_runtime.hpp"
 
 
@@ -32,7 +33,7 @@ inline icu4x::DateTimeWriteError icu4x::DateTimeWriteError::FromFFI(icu4x::capi:
     case icu4x::capi::DateTimeWriteError_MissingTimeZoneVariant:
       return static_cast<icu4x::DateTimeWriteError::Value>(c_enum);
     default:
-      abort();
+      std::abort();
   }
 }
 #endif // icu4x_DateTimeWriteError_HPP

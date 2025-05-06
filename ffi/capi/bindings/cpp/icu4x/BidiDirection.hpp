@@ -10,6 +10,7 @@
 #include <memory>
 #include <functional>
 #include <optional>
+#include <cstdlib>
 #include "../diplomat_runtime.hpp"
 
 
@@ -33,7 +34,7 @@ inline icu4x::BidiDirection icu4x::BidiDirection::FromFFI(icu4x::capi::BidiDirec
     case icu4x::capi::BidiDirection_Mixed:
       return static_cast<icu4x::BidiDirection::Value>(c_enum);
     default:
-      abort();
+      std::abort();
   }
 }
 #endif // icu4x_BidiDirection_HPP

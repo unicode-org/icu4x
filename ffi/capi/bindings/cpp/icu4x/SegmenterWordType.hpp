@@ -10,6 +10,7 @@
 #include <memory>
 #include <functional>
 #include <optional>
+#include <cstdlib>
 #include "../diplomat_runtime.hpp"
 
 
@@ -35,7 +36,7 @@ inline icu4x::SegmenterWordType icu4x::SegmenterWordType::FromFFI(icu4x::capi::S
     case icu4x::capi::SegmenterWordType_Letter:
       return static_cast<icu4x::SegmenterWordType::Value>(c_enum);
     default:
-      abort();
+      std::abort();
   }
 }
 

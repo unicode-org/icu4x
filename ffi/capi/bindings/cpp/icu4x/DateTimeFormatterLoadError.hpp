@@ -10,6 +10,7 @@
 #include <memory>
 #include <functional>
 #include <optional>
+#include <cstdlib>
 #include "../diplomat_runtime.hpp"
 
 
@@ -43,7 +44,7 @@ inline icu4x::DateTimeFormatterLoadError icu4x::DateTimeFormatterLoadError::From
     case icu4x::capi::DateTimeFormatterLoadError_DataIo:
       return static_cast<icu4x::DateTimeFormatterLoadError::Value>(c_enum);
     default:
-      abort();
+      std::abort();
   }
 }
 #endif // icu4x_DateTimeFormatterLoadError_HPP

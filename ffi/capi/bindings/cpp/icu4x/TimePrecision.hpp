@@ -10,6 +10,7 @@
 #include <memory>
 #include <functional>
 #include <optional>
+#include <cstdlib>
 #include "../diplomat_runtime.hpp"
 
 
@@ -46,7 +47,7 @@ inline icu4x::TimePrecision icu4x::TimePrecision::FromFFI(icu4x::capi::TimePreci
     case icu4x::capi::TimePrecision_Subsecond9:
       return static_cast<icu4x::TimePrecision::Value>(c_enum);
     default:
-      abort();
+      std::abort();
   }
 }
 
