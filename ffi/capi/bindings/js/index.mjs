@@ -260,8 +260,6 @@ export { LanguageDisplay } from "./LanguageDisplay.mjs"
 
 export { CalendarError } from "./CalendarError.mjs"
 
-export { CalendarParseError } from "./CalendarParseError.mjs"
-
 export { DataError } from "./DataError.mjs"
 
 export { DateTimeFormatterLoadError } from "./DateTimeFormatterLoadError.mjs"
@@ -271,6 +269,8 @@ export { DateTimeWriteError } from "./DateTimeWriteError.mjs"
 export { DecimalParseError } from "./DecimalParseError.mjs"
 
 export { LocaleParseError } from "./LocaleParseError.mjs"
+
+export { Rfc9557ParseError } from "./Rfc9557ParseError.mjs"
 
 export { LocaleFallbackPriority } from "./LocaleFallbackPriority.mjs"
 

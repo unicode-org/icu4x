@@ -42,12 +42,12 @@ final class Time implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `try_from_str`](https://docs.rs/icu/latest/icu/time/struct.Time.html#method.try_from_str) for more information.
   ///
-  /// Throws [CalendarParseError] on failure.
+  /// Throws [Rfc9557ParseError] on failure.
   factory Time.fromString(String v) {
     final temp = _FinalizedArena();
     final result = _icu4x_Time_from_string_mv1(v._utf8AllocIn(temp.arena));
     if (!result.isOk) {
-      throw CalendarParseError.values[result.union.err];
+      throw Rfc9557ParseError.values[result.union.err];
     }
     return Time._fromFfi(result.union.ok, []);
   }

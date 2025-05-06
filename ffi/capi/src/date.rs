@@ -14,7 +14,7 @@ pub mod ffi {
     use icu_calendar::Iso;
 
     use crate::unstable::calendar::ffi::Calendar;
-    use crate::unstable::errors::ffi::{CalendarError, CalendarParseError};
+    use crate::unstable::errors::ffi::{CalendarError, Rfc9557ParseError};
 
     use tinystr::TinyAsciiStr;
 
@@ -60,7 +60,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::calendar::Date::try_from_utf8, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::calendar::Date::from_str, FnInStruct, hidden)]
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor)]
-        pub fn from_string(v: &DiplomatStr) -> Result<Box<IsoDate>, CalendarParseError> {
+        pub fn from_string(v: &DiplomatStr) -> Result<Box<IsoDate>, Rfc9557ParseError> {
             Ok(Box::new(IsoDate(icu_calendar::Date::try_from_utf8(
                 v, Iso,
             )?)))
@@ -229,7 +229,7 @@ pub mod ffi {
         pub fn from_string(
             v: &DiplomatStr,
             calendar: &Calendar,
-        ) -> Result<Box<Date>, CalendarParseError> {
+        ) -> Result<Box<Date>, Rfc9557ParseError> {
             Ok(Box::new(Date(icu_calendar::Date::try_from_utf8(
                 v,
                 calendar.0.clone(),

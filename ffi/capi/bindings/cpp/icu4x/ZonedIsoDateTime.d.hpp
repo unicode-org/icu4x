@@ -24,7 +24,7 @@ class UtcOffset;
 namespace capi { struct VariantOffsetsCalculator; }
 class VariantOffsetsCalculator;
 struct ZonedIsoDateTime;
-class CalendarParseError;
+class Rfc9557ParseError;
 }
 
 
@@ -57,7 +57,7 @@ struct ZonedIsoDateTime {
    *
    * See the [Rust documentation for `try_full_from_str`](https://docs.rs/icu/latest/icu/time/struct.ZonedDateTime.html#method.try_full_from_str) for more information.
    */
-  inline static diplomat::result<icu4x::ZonedIsoDateTime, icu4x::CalendarParseError> full_from_string(std::string_view v, const icu4x::IanaParser& iana_parser, const icu4x::VariantOffsetsCalculator& offset_calculator);
+  inline static diplomat::result<icu4x::ZonedIsoDateTime, icu4x::Rfc9557ParseError> full_from_string(std::string_view v, const icu4x::IanaParser& iana_parser, const icu4x::VariantOffsetsCalculator& offset_calculator);
 
   /**
    * Creates a new [`ZonedIsoDateTime`] from milliseconds since epoch (timestamp) and a UTC offset.
