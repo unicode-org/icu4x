@@ -285,7 +285,9 @@ impl From<icu_datetime::pattern::FormattedDateTimePatternError> for DateTimeWrit
             icu_datetime::pattern::FormattedDateTimePatternError::DecimalFormatterNotLoaded => {
                 Self::DecimalFormatterNotLoaded
             }
-            icu_datetime::pattern::FormattedDateTimePatternError::NamesNotLoaded(_) => Self::NamesNotLoaded,
+            icu_datetime::pattern::FormattedDateTimePatternError::NamesNotLoaded(_) => {
+                Self::NamesNotLoaded
+            }
             icu_datetime::pattern::FormattedDateTimePatternError::MissingInputField(_) => {
                 Self::MissingInputField
             }
