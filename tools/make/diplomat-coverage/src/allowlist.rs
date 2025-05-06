@@ -165,7 +165,7 @@ lazy_static::lazy_static! {
         // Not planned for 2.0: Unchecked formatting. FFI always uses the concrete Date, Time,
         // and TimeZoneInfo types. A composite formatter might need a format_unchecked-type
         // of function.
-        "icu::datetime::DateTimeInputUnchecked",
+        "icu::datetime::unchecked",
         "icu::datetime::FixedCalendarDateTimeFormatter::format_unchecked",
         "icu::datetime::DateTimeFormatter::format_unchecked",
         "icu::datetime::NoCalendarFormatter::format_unchecked",

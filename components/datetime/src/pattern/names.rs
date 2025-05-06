@@ -425,7 +425,7 @@ size_test!(
 /// ```
 /// use icu::calendar::Gregorian;
 /// use icu::datetime::input::Date;
-/// use icu::datetime::DateTimeWriteError;
+/// use icu::datetime::pattern::FormattedDateTimePatternError;
 /// use icu::datetime::parts;
 /// use icu::datetime::pattern::FixedCalendarDateTimeNames;
 /// use icu::datetime::pattern::{DateTimePattern, PatternLoadError};
@@ -456,7 +456,7 @@ size_test!(
 /// assert_try_writeable_parts_eq!(
 ///     names.with_pattern_unchecked(&pattern).format(&dtz),
 ///     "It is: mon M11 20 2023 ce at 11:35:03.000 AM +0000",
-///     Err(DateTimeWriteError::NamesNotLoaded(Field { symbol: FieldSymbol::Weekday(Weekday::Format), length: FieldLength::One }.into())),
+///     Err(FormattedDateTimePatternError::NamesNotLoaded(Field { symbol: FieldSymbol::Weekday(Weekday::Format), length: FieldLength::One }.into())),
 ///     [
 ///         (7, 10, Part::ERROR), // mon
 ///         (7, 10, parts::WEEKDAY), // mon
@@ -495,10 +495,11 @@ size_test!(
 ///
 /// ```
 /// use icu::calendar::Gregorian;
-/// use icu::datetime::DateTimeWriteError;
+/// use icu::datetime::pattern::FormattedDateTimePatternError;
 /// use icu::datetime::parts;
 /// use icu::datetime::pattern::FixedCalendarDateTimeNames;
 /// use icu::datetime::pattern::DateTimePattern;
+/// use icu::datetime::unchecked::MissingInputFieldKind;
 /// use icu::datetime::fieldsets::zone::LocalizedOffsetLong;
 /// use icu::locale::locale;
 /// use icu::datetime::input::{DateTime, TimeZoneInfo};
@@ -519,7 +520,7 @@ size_test!(
 /// assert_try_writeable_parts_eq!(
 ///     names.with_pattern_unchecked(&pattern).format(&TimeZoneInfo::unknown()),
 ///     "It is: {E} {M} {d} {y} {G} at {h}:{m}:{s} {a} {z}",
-///     Err(DateTimeWriteError::MissingInputField("iso_weekday")),
+///     Err(FormattedDateTimePatternError::MissingInputField(MissingInputFieldKind::Weekday)),
 ///     [
 ///         (7, 10, Part::ERROR), // {E}
 ///         (7, 10, parts::WEEKDAY), // {E}
@@ -828,7 +829,7 @@ impl<C, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, FSet> {
     /// use icu::calendar::Gregorian;
     /// use icu::datetime::input::Date;
     /// use icu::datetime::parts;
-    /// use icu::datetime::DateTimeWriteError;
+    /// use icu::datetime::pattern::FormattedDateTimePatternError;
     /// use icu::datetime::pattern::FixedCalendarDateTimeNames;
     /// use icu::datetime::pattern::DateTimePattern;
     /// use icu::datetime::fieldsets::enums::DateFieldSet;
@@ -853,7 +854,7 @@ impl<C, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, FSet> {
     /// assert_try_writeable_parts_eq!(
     ///     names.with_pattern_unchecked(&pattern).format(&date),
     ///     "It is: 2024-07-01",
-    ///     Err(DateTimeWriteError::DecimalFormatterNotLoaded),
+    ///     Err(FormattedDateTimePatternError::DecimalFormatterNotLoaded),
     ///     [
     ///         (7, 11, Part::ERROR), // 2024
     ///         (7, 11, parts::YEAR), // 2024
