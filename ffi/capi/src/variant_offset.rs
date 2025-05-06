@@ -174,7 +174,7 @@ pub mod ffi {
                 standard, daylight, ..
             } = self.0.as_borrowed().compute_offsets_from_time_zone(
                 time_zone.0,
-                icu_time::zone::ZoneNameTimestamp::from_date_time_iso(&icu_time::DateTime {
+                icu_time::zone::ZoneNameTimestamp::from_date_time_iso(icu_time::DateTime {
                     date: local_date.0,
                     time: local_time.0,
                 }),

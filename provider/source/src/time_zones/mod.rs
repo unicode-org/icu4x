@@ -77,7 +77,7 @@ impl SourceDataProvider {
                     let mut curr_offset = offsets.next().unwrap();
                     let mut curr_mz = mzs.next().unwrap();
 
-                    let horizon = ZoneNameTimestamp::from_date_time_iso(&DateTime {
+                    let horizon = ZoneNameTimestamp::from_date_time_iso(DateTime {
                         date: self.timezone_horizon,
                         time: Time::start_of_day(),
                     });

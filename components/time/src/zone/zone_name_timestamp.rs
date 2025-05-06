@@ -59,7 +59,7 @@ impl ZoneNameTimestampParts {
     }
 
     /// Creates an instance of this type with all invariants upheld.
-    fn from_saturating_date_time_with_metadata(date_time: &DateTime<Iso>, metadata: u8) -> Self {
+    fn from_saturating_date_time_with_metadata(date_time: DateTime<Iso>, metadata: u8) -> Self {
         // Note: RataDie should be in range for this multiplication.
         let qh_days = (date_time.date.to_rata_die() - ZONE_NAME_EPOCH) * QUARTER_HOURS_IN_DAY_I64;
         // Note: Hour is 0 to 23 in a u8 so it should be in range for this multiplication.
@@ -118,17 +118,17 @@ impl ZoneNameTimestampParts {
 /// )
 /// .unwrap();
 ///
-/// let time_zone_info_2010 = metlakatla.without_offset().at_date_time_iso(&"2010-01-01T00:00".parse().unwrap());
-/// let time_zone_info_2025 = metlakatla.without_offset().at_date_time_iso(&"2025-01-01T00:00".parse().unwrap());
+/// let time_zone_info_2010 = metlakatla.without_offset().at_date_time_iso("2010-01-01T00:00".parse().unwrap());
+/// let time_zone_info_2025 = metlakatla.without_offset().at_date_time_iso("2025-01-01T00:00".parse().unwrap());
 ///
 /// // TimeZoneInfo::at_date_time_iso and ZoneNameTimestamp::from_date_time_iso are equivalent:
 /// assert_eq!(
 ///     time_zone_info_2010.zone_name_timestamp(),
-///     ZoneNameTimestamp::from_date_time_iso(&"2010-01-01T00:00".parse().unwrap())
+///     ZoneNameTimestamp::from_date_time_iso("2010-01-01T00:00".parse().unwrap())
 /// );
 /// assert_eq!(
 ///     time_zone_info_2025.zone_name_timestamp(),
-///     ZoneNameTimestamp::from_date_time_iso(&"2025-01-01T00:00".parse().unwrap())
+///     ZoneNameTimestamp::from_date_time_iso("2025-01-01T00:00".parse().unwrap())
 /// );
 ///
 /// // Check the display names:
@@ -174,7 +174,7 @@ impl ZoneNameTimestamp {
     ///     time: Time::try_new(13, 58, 16, 500000000).unwrap(),
     /// };
     ///
-    /// let zone_name_timestamp = ZoneNameTimestamp::from_date_time_iso(&date_time);
+    /// let zone_name_timestamp = ZoneNameTimestamp::from_date_time_iso(date_time);
     ///
     /// let recovered_date_time = zone_name_timestamp.to_date_time_iso();
     ///
@@ -188,7 +188,7 @@ impl ZoneNameTimestamp {
     /// assert_eq!(recovered_date_time.time.second.number(), 0); // always zero
     /// assert_eq!(recovered_date_time.time.subsecond.number(), 0); // always zero
     /// ```
-    pub fn from_date_time_iso(date_time: &DateTime<Iso>) -> Self {
+    pub fn from_date_time_iso(date_time: DateTime<Iso>) -> Self {
         let metadata = 0; // currently unused (reserved)
         let parts =
             ZoneNameTimestampParts::from_saturating_date_time_with_metadata(date_time, metadata);
@@ -303,7 +303,7 @@ impl<'de> serde::Deserialize<'de> for ZoneNameTimestamp {
             let day = parts[8..10].parse::<u8>().map_err(e1)?;
             let hour = parts[11..13].parse::<u8>().map_err(e1)?;
             let minute = parts[14..16].parse::<u8>().map_err(e1)?;
-            return Ok(Self::from_date_time_iso(&DateTime {
+            return Ok(Self::from_date_time_iso(DateTime {
                 date: Date::try_new_iso(year, month, day).map_err(e2)?,
                 time: Time::try_new(hour, minute, 0, 0).map_err(e3)?,
             }));
@@ -377,7 +377,7 @@ mod test {
                 output: "2025-04-30T15:15".parse().unwrap(),
             },
         ] {
-            let znt = ZoneNameTimestamp::from_date_time_iso(&test_case.input);
+            let znt = ZoneNameTimestamp::from_date_time_iso(test_case.input);
             let actual = znt.to_date_time_iso();
             assert_eq!(test_case.output, actual, "{test_case:?}");
         }
@@ -387,7 +387,7 @@ mod test {
     fn test_metadata_noop() {
         let raw = (0x12345678u32).to_unaligned();
         let znt = ZoneNameTimestamp::from_unaligned(raw);
-        let roundtrip_znt = ZoneNameTimestamp::from_date_time_iso(&znt.to_date_time_iso());
+        let roundtrip_znt = ZoneNameTimestamp::from_date_time_iso(znt.to_date_time_iso());
         let roundtrip_raw = roundtrip_znt.to_unaligned();
 
         // [0..3] is the datetime. [3] is the metadata.
