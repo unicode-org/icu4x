@@ -61,25 +61,92 @@ pub const MARKERS: &[DataMarkerInfo] = &[
     TimezoneVariantsOffsetsV1::INFO,
 ];
 
+const SECONDS_TO_EIGHTS_OF_HOURS: i32 = 60 * 60 / 8;
+
 impl AsULE for VariantOffsets {
     type ULE = [i8; 2];
 
     fn from_unaligned([std, dst]: Self::ULE) -> Self {
+        fn decode(encoded: i8) -> i32 {
+            encoded as i32 * SECONDS_TO_EIGHTS_OF_HOURS
+                + match encoded % 8 {
+                    // 7.5, 37.5, representing 10, 40
+                    1 | 5 => 150,
+                    -1 | -5 => -150,
+                    // 22.5, 52.5, representing 20, 50
+                    3 | 7 => -150,
+                    -3 | -7 => 150,
+                    // 0, 15, 30, 45
+                    _ => 0,
+                }
+        }
+
         Self {
-            standard: UtcOffset::from_seconds_unchecked(std as i32 * 450),
-            daylight: (dst != 0)
-                .then(|| UtcOffset::from_seconds_unchecked((std + dst) as i32 * 450)),
+            standard: UtcOffset::from_seconds_unchecked(decode(std)),
+            daylight: (dst != 0).then(|| UtcOffset::from_seconds_unchecked(decode(std + dst))),
         }
     }
 
     fn to_unaligned(self) -> Self::ULE {
+        fn encode(offset: i32) -> i8 {
+            debug_assert_eq!(offset.abs() % 60, 0);
+            let scaled = match offset.abs() / 60 % 60 {
+                0 | 15 | 30 | 45 => offset / SECONDS_TO_EIGHTS_OF_HOURS,
+                10 | 40 => {
+                    // stored as 7.5, 37.5, truncating div
+                    offset / SECONDS_TO_EIGHTS_OF_HOURS
+                }
+                20 | 50 => {
+                    // stored as 22.5, 52.5, need to add one
+                    offset / SECONDS_TO_EIGHTS_OF_HOURS + offset.signum()
+                }
+                _ => {
+                    debug_assert!(false, "{offset:?}");
+                    offset / SECONDS_TO_EIGHTS_OF_HOURS
+                }
+            };
+            debug_assert!(i8::MIN as i32 <= scaled && scaled <= i8::MAX as i32);
+            scaled as i8
+        }
         [
-            (self.standard.to_seconds() / 450) as i8,
+            encode(self.standard.to_seconds()),
             self.daylight
-                .map(|d| (d.to_seconds() - self.standard.to_seconds()) / 450)
-                .unwrap_or_default() as i8,
+                .map(|d| encode(d.to_seconds() - self.standard.to_seconds()))
+                .unwrap_or_default(),
         ]
     }
+}
+
+#[test]
+fn offsets_ule() {
+    #[track_caller]
+    fn assert_round_trip(offset: UtcOffset) {
+        let variants = VariantOffsets::from_standard(offset);
+        assert_eq!(
+            variants,
+            VariantOffsets::from_unaligned(VariantOffsets::to_unaligned(variants))
+        );
+    }
+
+    assert_round_trip(UtcOffset::try_from_str("+01:00").unwrap());
+    assert_round_trip(UtcOffset::try_from_str("+01:15").unwrap());
+    assert_round_trip(UtcOffset::try_from_str("+01:30").unwrap());
+    assert_round_trip(UtcOffset::try_from_str("+01:45").unwrap());
+
+    assert_round_trip(UtcOffset::try_from_str("+01:10").unwrap());
+    assert_round_trip(UtcOffset::try_from_str("+01:20").unwrap());
+    assert_round_trip(UtcOffset::try_from_str("+01:40").unwrap());
+    assert_round_trip(UtcOffset::try_from_str("+01:50").unwrap());
+
+    assert_round_trip(UtcOffset::try_from_str("-01:00").unwrap());
+    assert_round_trip(UtcOffset::try_from_str("-01:15").unwrap());
+    assert_round_trip(UtcOffset::try_from_str("-01:30").unwrap());
+    assert_round_trip(UtcOffset::try_from_str("-01:45").unwrap());
+
+    assert_round_trip(UtcOffset::try_from_str("-01:10").unwrap());
+    assert_round_trip(UtcOffset::try_from_str("-01:20").unwrap());
+    assert_round_trip(UtcOffset::try_from_str("-01:40").unwrap());
+    assert_round_trip(UtcOffset::try_from_str("-01:50").unwrap());
 }
 
 impl<'a> ZeroMapKV<'a> for VariantOffsets {

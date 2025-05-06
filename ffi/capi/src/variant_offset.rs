@@ -28,6 +28,7 @@ pub mod ffi {
 
     #[diplomat::out]
     #[diplomat::rust_link(icu::time::zone::VariantOffsets, Struct)]
+    #[diplomat::rust_link(icu::time::zone::VariantOffsets::from_standard, FnInStruct, hidden)] // out struct
     pub struct VariantOffsets {
         pub standard: Box<UtcOffset>,
         pub daylight: Option<Box<UtcOffset>>,

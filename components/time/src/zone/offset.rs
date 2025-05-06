@@ -338,8 +338,9 @@ pub struct VariantOffsets {
     pub daylight: Option<UtcOffset>,
 }
 
-impl From<UtcOffset> for VariantOffsets {
-    fn from(standard: UtcOffset) -> Self {
+impl VariantOffsets {
+    /// Creates a new [`VariantOffsets`] from a [`UtcOffset`] representing standard time.
+    pub fn from_standard(standard: UtcOffset) -> Self {
         Self {
             standard,
             daylight: None,

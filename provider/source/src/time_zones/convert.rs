@@ -334,13 +334,18 @@ impl SourceDataProvider {
                         fn store_offsets(
                             data: &mut Vec<(ZoneNameTimestamp, VariantOffsets)>,
                             end_time: ZoneNameTimestamp,
-                            utc_offset: i64,
+                            mut utc_offset: i64,
                             dst_offset_relative: i64,
                         ) {
+                            // Africa/Monrovia used -00:44:30 pre-1972. We cannot represent this, so we set it to -00:45
+                            if utc_offset == -2670 {
+                                utc_offset = -2700
+                            }
+
                             data.push((
                                 end_time,
                                 {
-                                    let mut vs = VariantOffsets::from(UtcOffset::from_seconds_unchecked(utc_offset as i32));
+                                    let mut vs = VariantOffsets::from_standard(UtcOffset::from_seconds_unchecked(utc_offset as i32));
                                     if dst_offset_relative != 0 {
                                         vs.daylight = Some(UtcOffset::from_seconds_unchecked(utc_offset as i32 + dst_offset_relative as i32));
                                     }
