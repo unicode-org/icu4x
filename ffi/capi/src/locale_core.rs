@@ -40,7 +40,8 @@ pub mod ffi {
         }
 
         /// Construct a unknown [`Locale`] "und".
-        #[diplomat::rust_link(icu::locale::Locale::unknown, AssociatedConstantInStruct)]
+        #[diplomat::rust_link(icu::locale::Locale::UNKNOWN, AssociatedConstantInStruct)]
+        #[diplomat::rust_link(icu::locale::Locale::default, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::locale::DataLocale::default, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::locale::DataLocale::is_unknown, FnInStruct, hidden)]
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor)]
