@@ -141,7 +141,7 @@ pub mod ffi {
         pub fn at_date_time_iso(&self, date: &IsoDate, time: &Time) -> Box<Self> {
             Box::new(Self {
                 zone_name_timestamp: Some(icu_time::zone::ZoneNameTimestamp::from_date_time_iso(
-                    &icu_time::DateTime {
+                    icu_time::DateTime {
                         date: date.0,
                         time: time.0,
                     },

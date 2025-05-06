@@ -23,11 +23,18 @@ export class Time {
     static fromString(v: string): Time;
 
     /** 
-     * Creates a new [`Time`] representing midnight (00:00.000).
+     * Creates a new [`Time`] representing the start of the day (00:00:00.000).
      *
      * See the [Rust documentation for `start_of_day`](https://docs.rs/icu/latest/icu/time/struct.Time.html#method.start_of_day) for more information.
      */
     static startOfDay(): Time;
+
+    /** 
+     * Creates a new [`Time`] representing noon (12:00:00.000).
+     *
+     * See the [Rust documentation for `noon`](https://docs.rs/icu/latest/icu/time/struct.Time.html#method.noon) for more information.
+     */
+    static noon(): Time;
 
     /** 
      * Returns the hour in this time

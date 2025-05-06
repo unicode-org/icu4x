@@ -20,6 +20,7 @@ use icu::time::zone::ZoneNameTimestamp;
 use icu::time::DateTime;
 use icu::time::Time;
 use icu::time::ZonedDateTime;
+use icu_provider::prelude::icu_locale_core::subtags::Language;
 use icu_provider::prelude::*;
 use parse_zoneinfo::line::Year;
 use parse_zoneinfo::table::Saving;
@@ -303,7 +304,7 @@ impl SourceDataProvider {
                             }
 
                             periods.into_iter().map(|(b, dt, mz)| {
-                                (b, ZoneNameTimestamp::from_date_time_iso(&dt), mz)
+                                (b, ZoneNameTimestamp::from_date_time_iso(dt), mz)
                             })
                         })
                         .collect(),
@@ -367,7 +368,7 @@ impl SourceDataProvider {
                                         epoch_seconds * 1000,
                                         utc_offset,
                                     );
-                                    ZoneNameTimestamp::from_date_time_iso(&DateTime {
+                                    ZoneNameTimestamp::from_date_time_iso(DateTime {
                                         date: zdt.date,
                                         time: zdt.time,
                                     })
@@ -412,7 +413,7 @@ impl SourceDataProvider {
                                                             epoch_seconds * 1000,
                                                             utc_offset
                                                         );
-                                                        ZoneNameTimestamp::from_date_time_iso(&DateTime {
+                                                        ZoneNameTimestamp::from_date_time_iso(DateTime {
                                                             date: zdt.date,
                                                             time: zdt.time
                                                         })
@@ -504,7 +505,7 @@ impl SourceDataProvider {
         self.cldr()?
             .extended_locale_expander()?
             .maximize(&mut group);
-        group.language = Default::default();
+        group.language = Language::UNKNOWN;
         group.region = Default::default();
         self.cldr()?
             .extended_locale_expander()?

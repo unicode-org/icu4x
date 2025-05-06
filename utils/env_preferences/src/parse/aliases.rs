@@ -19,7 +19,7 @@ pub fn find_posix_alias(
     use icu_locale_core::subtags::{language, region, Language};
 
     match alias {
-        "C" | "POSIX" => Some((Language::UND, None)),
+        "C" | "POSIX" => Some((Language::UNKNOWN, None)),
         "bokmal" => Some((language!("nb"), Some(region!("NO")))),
         "catalan" => Some((language!("ca"), Some(region!("ES")))),
         "croatian" => Some((language!("hr"), Some(region!("HR")))),

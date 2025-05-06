@@ -39,13 +39,13 @@ pub mod ffi {
             )?)))
         }
 
-        /// Construct a default undefined [`Locale`] "und".
-        #[diplomat::rust_link(icu::locale::Locale::default, FnInStruct)]
+        /// Construct a unknown [`Locale`] "und".
+        #[diplomat::rust_link(icu::locale::Locale::UNKNOWN, AssociatedConstantInStruct)]
         #[diplomat::rust_link(icu::locale::DataLocale::default, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::locale::DataLocale::is_unknown, FnInStruct, hidden)]
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor)]
-        pub fn und() -> Box<Locale> {
-            Box::new(Locale(icu_locale_core::Locale::default()))
+        pub fn unknown() -> Box<Locale> {
+            Box::new(Locale(icu_locale_core::Locale::UNKNOWN))
         }
 
         /// Clones the [`Locale`].
@@ -90,7 +90,7 @@ pub mod ffi {
         #[diplomat::attr(auto, setter = "language")]
         pub fn set_language(&mut self, s: &DiplomatStr) -> Result<(), LocaleParseError> {
             self.0.id.language = if s.is_empty() {
-                icu_locale_core::subtags::Language::UND
+                icu_locale_core::subtags::Language::UNKNOWN
             } else {
                 icu_locale_core::subtags::Language::try_from_utf8(s)?
             };

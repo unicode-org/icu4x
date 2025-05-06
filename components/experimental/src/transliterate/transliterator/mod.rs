@@ -19,6 +19,7 @@ use icu_casemap::provider::CaseMapV1;
 use icu_casemap::CaseMapper;
 use icu_collections::codepointinvlist::CodePointInversionList;
 use icu_collections::codepointinvliststringlist::CodePointInversionListAndStringList;
+use icu_locale::LanguageIdentifier;
 use icu_locale_core::Locale;
 use icu_normalizer::provider::*;
 use icu_normalizer::{ComposingNormalizer, DecomposingNormalizer};
@@ -79,7 +80,7 @@ impl InternalTransliterator {
             Self::Lower(casemap) => {
                 if let Cow::Owned(buf) = casemap
                     .as_borrowed()
-                    .lowercase_to_string(rep.as_str_modifiable(), &Default::default())
+                    .lowercase_to_string(rep.as_str_modifiable(), &LanguageIdentifier::UNKNOWN)
                 {
                     rep.replace_modifiable_with_str(&buf);
                 }
@@ -87,7 +88,7 @@ impl InternalTransliterator {
             Self::Upper(casemap) => {
                 if let Cow::Owned(buf) = casemap
                     .as_borrowed()
-                    .uppercase_to_string(rep.as_str_modifiable(), &Default::default())
+                    .uppercase_to_string(rep.as_str_modifiable(), &LanguageIdentifier::UNKNOWN)
                 {
                     rep.replace_modifiable_with_str(&buf);
                 }

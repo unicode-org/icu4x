@@ -22,7 +22,7 @@
 use crate::cal::iso::{Iso, IsoDateInner};
 use crate::calendar_arithmetic::PrecomputedDataSource;
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
-use crate::error::DateError;
+use crate::error::{year_check, DateError};
 use crate::provider::hijri::PackedHijriYearInfo;
 use crate::provider::hijri::{CalendarHijriSimulatedMeccaV1, HijriData};
 use crate::types::EraYear;
@@ -38,11 +38,20 @@ use ummalqura_data::{UMMALQURA_DATA, UMMALQURA_DATA_STARTING_YEAR};
 mod ummalqura_data;
 
 fn era_year(year: i32) -> EraYear {
-    types::EraYear {
-        era: tinystr!(16, "ah"),
-        era_index: Some(0),
-        year,
-        ambiguity: types::YearAmbiguity::CenturyRequired,
+    if year > 0 {
+        types::EraYear {
+            era: tinystr!(16, "ah"),
+            era_index: Some(0),
+            year,
+            ambiguity: types::YearAmbiguity::CenturyRequired,
+        }
+    } else {
+        types::EraYear {
+            era: tinystr!(16, "bh"),
+            era_index: Some(1),
+            year: 1 - year,
+            ambiguity: types::YearAmbiguity::CenturyRequired,
+        }
     }
 }
 
@@ -50,7 +59,7 @@ fn era_year(year: i32) -> EraYear {
 ///
 /// # Era codes
 ///
-/// This calendar uses a single era code `ah`, Anno Hegirae. Dates before this era use negative years.
+/// This calendar uses two era codes: `ah`, and `bh`, corresponding to the Anno Hegirae and Before Hijrah eras
 ///
 /// # Month codes
 ///
@@ -81,7 +90,7 @@ impl HijriSimulatedLocation {
 ///
 /// # Era codes
 ///
-/// This calendar uses a single era code `ah`, Anno Hegirae. Dates before this era use negative years.
+/// This calendar uses two era codes: `ah`, and `bh`, corresponding to the Anno Hegirae and Before Hijrah eras
 ///
 /// # Month codes
 ///
@@ -99,7 +108,7 @@ pub struct HijriUmmAlQura;
 ///
 /// # Era codes
 ///
-/// This calendar uses a single era code `ah`, Anno Hegirae. Dates before this era use negative years.
+/// This calendar uses two era codes: `ah`, and `bh`, corresponding to the Anno Hegirae and Before Hijrah eras
 ///
 /// # Month codes
 ///
@@ -376,7 +385,8 @@ impl Calendar for HijriSimulated {
         day: u8,
     ) -> Result<Self::DateInner, DateError> {
         let year = match era {
-            Some("islamic-rgsa" | "ah") | None => year,
+            Some("ah") | None => year_check(year, 1..)?,
+            Some("bh") => 1 - year_check(year, 1..)?,
             Some(_) => return Err(DateError::UnknownEra),
         };
         let Some((month, false)) = month_code.parsed() else {
@@ -658,7 +668,8 @@ impl Calendar for HijriUmmAlQura {
         day: u8,
     ) -> Result<Self::DateInner, DateError> {
         let year = match era {
-            Some("islamic-umalqura" | "ah") | None => year,
+            Some("ah") | None => year_check(year, 1..)?,
+            Some("bh") => 1 - year_check(year, 1..)?,
             Some(_) => return Err(DateError::UnknownEra),
         };
         let Some((month, false)) = month_code.parsed() else {
@@ -883,9 +894,8 @@ impl Calendar for HijriTabular {
         day: u8,
     ) -> Result<Self::DateInner, DateError> {
         let year = match era {
-            Some("ah") | None => year,
-            Some("islamic-civil" | "islamicc") if self.epoch == HijriTabularEpoch::Friday => year,
-            Some("islamic-tbla") if self.epoch == HijriTabularEpoch::Thursday => year,
+            Some("ah") | None => year_check(year, 1..)?,
+            Some("bh") => 1 - year_check(year, 1..)?,
             Some(_) => return Err(DateError::UnknownEra),
         };
 
@@ -1895,11 +1905,9 @@ mod test {
     #[test]
     fn test_regression_4914() {
         // https://github.com/unicode-org/icu4x/issues/4914
-        let cal = HijriUmmAlQura::new();
-        let era = "islamic-umalqura";
-        let year = -6823;
-        let month_code = MonthCode(tinystr!(4, "M01"));
-        let dt = cal.from_codes(Some(era), year, month_code, 1).unwrap();
+        let dt = HijriUmmAlQura::new()
+            .from_codes(Some("bh"), 6824, MonthCode::new_normal(1).unwrap(), 1)
+            .unwrap();
         assert_eq!(dt.0.day, 1);
         assert_eq!(dt.0.month, 1);
         assert_eq!(dt.0.year.value, -6823);

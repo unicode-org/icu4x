@@ -1792,13 +1792,13 @@ mod tests {
             DateError::UnknownMonthCode(MonthCode(tinystr!(4, "M13"))),
         );
 
-        single_test_roundtrip(indian, Some(("saka", Some(0))), 100, "M03", 1);
+        single_test_roundtrip(indian, Some(("shaka", Some(0))), 100, "M03", 1);
         single_test_roundtrip(indian, None, 2000, "M12", 1);
         single_test_roundtrip(indian, None, -100, "M03", 1);
-        single_test_roundtrip(indian, Some(("saka", Some(0))), 0, "M03", 1);
+        single_test_roundtrip(indian, Some(("shaka", Some(0))), 0, "M03", 1);
         single_test_error(
             indian,
-            Some(("saka", Some(0))),
+            Some(("shaka", Some(0))),
             100,
             "M13",
             1,
@@ -1937,8 +1937,8 @@ mod tests {
             DateError::UnknownMonthCode(MonthCode(tinystr!(4, "M9"))),
         );
 
-        single_test_roundtrip(roc, Some(("minguo", Some(1))), 10, "M05", 3);
-        single_test_roundtrip(roc, Some(("minguo-qian", Some(0))), 15, "M01", 10);
+        single_test_roundtrip(roc, Some(("roc", Some(1))), 10, "M05", 3);
+        single_test_roundtrip(roc, Some(("broc", Some(0))), 15, "M01", 10);
         single_test_roundtrip(roc, None, 100, "M10", 30);
 
         single_test_roundtrip(hijri_simulated, Some(("ah", Some(0))), 477, "M03", 1);
