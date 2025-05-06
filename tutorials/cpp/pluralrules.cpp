@@ -15,11 +15,9 @@ int main() {
     Logger::init_simple_logger();
     std::unique_ptr<Locale> locale = Locale::from_string("ar").ok().value();
     std::cout << "Running test for locale " << locale->to_string() << std::endl;
-    std::unique_ptr<DataProvider> dp = DataProvider::from_fs(path).ok().value();
-    std::unique_ptr<PluralRules> pr = PluralRules::create_cardinal(*dp.get(), *locale.get()).ok().value();
+    std::unique_ptr<PluralRules> pr = PluralRules::create_cardinal(*locale.get()).ok().value();
 
-    std::unique_ptr<PluralOperands> op = PluralOperands::from_string("3").ok().value();
-    PluralCategory cat = pr->category_for(*op.get());
+    PluralCategory cat = pr->category_for(*PluralOperands::from(3).get());
 
     std::cout << "Category is " << static_cast<int32_t>(cat)
                                 << " (should be " << static_cast<int32_t>(PluralCategory::Value::Few) << ")"
@@ -28,8 +26,7 @@ int main() {
         return 1;
     }
 
-    op = PluralOperands::from_string("1011.0").ok().value();
-    cat = pr->category_for(*op.get());
+    cat = pr->category_for(*PluralOperands::from_string("1011.0").ok()->get());
     std::cout << "Category is " << static_cast<int32_t>(cat)
                                 << " (should be " << static_cast<int32_t>(PluralCategory::Value::Many) << ")"
                                 << std::endl;

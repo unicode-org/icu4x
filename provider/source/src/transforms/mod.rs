@@ -39,64 +39,20 @@ impl CldrCache {
                         continue;
                     };
 
-                    if transform == "und-Ethi-t-und-latn-m0-beta_metsehaf-geminate" {
-                        // References an unknown transliterator
-                        continue;
-                    }
-
-                    if transform == "byn-Ethi-t-byn-latn-m0-xaleget" {
-                        // Doesn't parse (backreference error)
-                        continue;
-                    }
-
-                    if transform == "Thai-Latin" {
-                        // References an unknown transliterator (Any-BreakInternal)
-                        continue;
-                    }
-
                     let metadata = self
                         .serde_cache
                         .read_and_parse_json::<transforms::Resource>(&format!(
                             "cldr-transforms/transforms/{transform}.json"
                         ))?;
-                    let source = self
-                        .serde_cache
-                        .root
-                        .read_to_string(&format!(
-                            "cldr-transforms/transforms/{}",
-                            metadata.rules_file
-                        ))?
-                        // Declares a sequence of Unicode sets instead of a Unicode set
-                        .replace(
-                            "$initialPunct = [:Ps:][:Pi:];",
-                            "$initialPunct = [[:Ps:][:Pi:]];",
-                        )
-                        // I'm not sure why this errors
-                        .replace("ə̃ {ə̃}+ → ə̃;", "")
-                        // This does not escape the $, so the = is interpreted as a variable name
-                        .replace(r#"$="#, r#"\$="#)
-                        // Any-ASCII does not exist and should probably the Latin-ASCII
-                        .replace("Any-ASCII", "Latin-ASCII")
-                        // Non-canonical property names
-                        .replace("block=", "Block=")
-                        .replace("script=", "Script=")
-                        .replace("case-ignorable:", "Case_Ignorable:")
-                        .replace("cased:", "Cased:")
-                        .replace("ideographic:", "Ideographic:")
-                        // Non-canonical property values
-                        .replace("ccc=above", "ccc=Above")
-                        .replace("ccc=below", "ccc=Below")
-                        .replace("UppercaseLetter:", "Uppercase_Letter:")
-                        .replace("nonspacing mark:", "Nonspacing_Mark:")
-                        .replace("letter:", "Letter:")
-                        .replace("ARABIC:", "Arabic:")
-                        .replace("arabic:", "Arabic:")
-                        .replace("bengali:", "Bengali:")
-                        .replace("greek:", "Greek:")
-                        .replace("han:", "Han:")
-                        .replace("latin:", "Latin:")
-                        .replace("thaana:", "Thaana:")
-                        .replace("thai:", "Thai:");
+                    let source = self.serde_cache.root.read_to_string(&format!(
+                        "cldr-transforms/transforms/{}",
+                        metadata.rules_file
+                    ))?;
+
+                    // Unimplemented built-in transliterators
+                    if source.contains("Any-BreakInternal") || source.contains("Any-Title") {
+                        continue;
+                    }
 
                     if matches!(
                         metadata.direction,
@@ -110,30 +66,53 @@ impl CldrCache {
                                             .with_display_context(bcp47_aliases)
                                     })?
                             } else {
-                                invent_bcp47(&format!("{transform}-rev"))
+                                invent_bcp47(transform)
                             };
 
                         provider.register_source(
                             &bcp47_alias,
                             source.clone(),
-                            [metadata.alias.as_deref().unwrap_or(
-                                match metadata.variant.as_deref() {
-                                    None => format!("{}-{}", metadata.source, metadata.target),
-                                    Some(v) => {
-                                        format!("{}-{}/{v}", metadata.source, metadata.target)
-                                    }
-                                }
-                                .as_str(),
-                            )]
-                            .into_iter()
-                            .chain(
-                                metadata
-                                    .alias_bcp47
-                                    .as_deref()
-                                    .unwrap_or_default()
-                                    .split(' ')
-                                    .skip(1),
-                            ),
+                            metadata
+                                .alias
+                                .as_deref()
+                                .into_iter()
+                                .chain(
+                                    (|| {
+                                        Some(match metadata.variant.as_deref() {
+                                            None => {
+                                                format!(
+                                                    "{}-{}",
+                                                    metadata.source.as_deref()?,
+                                                    metadata.target.as_deref()?
+                                                )
+                                            }
+                                            Some(v) => {
+                                                format!(
+                                                    "{}-{}/{v}",
+                                                    metadata.source.as_deref()?,
+                                                    metadata.target.as_deref()?
+                                                )
+                                            }
+                                        })
+                                    })()
+                                    .as_deref(),
+                                )
+                                .chain(
+                                    metadata
+                                        .alias_bcp47
+                                        .as_deref()
+                                        .unwrap_or_default()
+                                        .split(' ')
+                                        .skip(1),
+                                )
+                                .chain(
+                                    metadata
+                                        .alias
+                                        .as_deref()
+                                        .unwrap_or_default()
+                                        .split(' ')
+                                        .skip(1),
+                                ),
                             false,
                             metadata.visibility == transforms::Visibility::External,
                         );
@@ -156,24 +135,39 @@ impl CldrCache {
                         provider.register_source(
                             &bcp47_alias,
                             source,
-                            [metadata.backward_alias.as_deref().unwrap_or(
-                                match metadata.variant.as_deref() {
-                                    None => format!("{}-{}", metadata.target, metadata.source),
-                                    Some(v) => {
-                                        format!("{}-{}/{v}", metadata.target, metadata.source)
-                                    }
-                                }
-                                .as_str(),
-                            )]
-                            .into_iter()
-                            .chain(
-                                metadata
-                                    .backward_alias_bcp47
-                                    .as_deref()
-                                    .unwrap_or_default()
-                                    .split(' ')
-                                    .skip(1),
-                            ),
+                            metadata
+                                .backward_alias
+                                .as_deref()
+                                .into_iter()
+                                .chain(
+                                    (|| {
+                                        Some(match metadata.variant.as_deref() {
+                                            None => {
+                                                format!(
+                                                    "{}-{}",
+                                                    metadata.target.as_deref()?,
+                                                    metadata.source.as_deref()?
+                                                )
+                                            }
+                                            Some(v) => {
+                                                format!(
+                                                    "{}-{}/{v}",
+                                                    metadata.target.as_deref()?,
+                                                    metadata.source.as_deref()?
+                                                )
+                                            }
+                                        })
+                                    })()
+                                    .as_deref(),
+                                )
+                                .chain(
+                                    metadata
+                                        .backward_alias_bcp47
+                                        .as_deref()
+                                        .unwrap_or_default()
+                                        .split(' ')
+                                        .skip(1),
+                                ),
                             true,
                             metadata.visibility == transforms::Visibility::External,
                         );
@@ -186,29 +180,26 @@ impl CldrCache {
     }
 }
 
-impl DataProvider<TransliteratorRulesV1Marker> for SourceDataProvider {
-    fn load(
-        &self,
-        req: DataRequest,
-    ) -> Result<DataResponse<TransliteratorRulesV1Marker>, DataError> {
-        self.check_req::<TransliteratorRulesV1Marker>(req)?;
+impl DataProvider<TransliteratorRulesV1> for SourceDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<TransliteratorRulesV1>, DataError> {
+        self.check_req::<TransliteratorRulesV1>(req)?;
         self.cldr()?
             .transforms()?
             .lock()
             .expect("poison")
-            .as_provider_unstable(self, self)?
+            .as_provider_unstable(self, self, self)?
             .load(req)
     }
 }
 
-impl crate::IterableDataProviderCached<TransliteratorRulesV1Marker> for SourceDataProvider {
+impl crate::IterableDataProviderCached<TransliteratorRulesV1> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         Ok(self
             .cldr()?
             .transforms()?
             .lock()
             .expect("poison")
-            .as_provider_unstable(self, self)?
+            .as_provider_unstable(self, self, self)?
             .iter_ids()?
             .into_iter()
             .map(|id| id.as_borrowed().into_owned())
@@ -224,7 +215,7 @@ mod tests {
     fn test_de_ascii_forward() {
         let provider = SourceDataProvider::new_testing();
 
-        let _data: DataPayload<TransliteratorRulesV1Marker> = provider
+        let _data: DataPayload<TransliteratorRulesV1> = provider
             .load(DataRequest {
                 id: DataIdentifierCow::from_marker_attributes(
                     DataMarkerAttributes::from_str_or_panic("de-t-de-d0-ascii"),
@@ -240,7 +231,7 @@ mod tests {
     fn test_latin_ascii_backward() {
         let provider = SourceDataProvider::new_testing();
 
-        let _data: DataPayload<TransliteratorRulesV1Marker> = provider
+        let _data: DataPayload<TransliteratorRulesV1> = provider
             .load(DataRequest {
                 id: DataIdentifierCow::from_marker_attributes(
                     DataMarkerAttributes::from_str_or_panic("und-latn-t-s0-ascii"),

@@ -7,15 +7,17 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
-/** A locale expander.
-*
-*See the [Rust documentation for `LocaleExpander`](https://docs.rs/icu/latest/icu/locale/struct.LocaleExpander.html) for more information.
-*/
+/** 
+ * A locale expander.
+ *
+ * See the [Rust documentation for `LocaleExpander`](https://docs.rs/icu/latest/icu/locale/struct.LocaleExpander.html) for more information.
+ */
 const LocaleExpander_box_destroy_registry = new FinalizationRegistry((ptr) => {
     wasm.icu4x_LocaleExpander_destroy_mv1(ptr);
 });
 
 export class LocaleExpander {
+    
     // Internal ptr reference:
     #ptr = null;
 
@@ -23,7 +25,7 @@ export class LocaleExpander {
     // Since JS won't garbage collect until there are no incoming edges.
     #selfEdge = [];
     
-    constructor(symbol, ptr, selfEdge) {
+    #internalConstructor(symbol, ptr, selfEdge) {
         if (symbol !== diplomatRuntime.internalConstructor) {
             console.error("LocaleExpander is an Opaque type. You cannot call its constructor.");
             return;
@@ -36,16 +38,37 @@ export class LocaleExpander {
         if (this.#selfEdge.length === 0) {
             LocaleExpander_box_destroy_registry.register(this, this.#ptr);
         }
+        
+        return this;
     }
-
     get ffiValue() {
         return this.#ptr;
     }
 
-    static create(provider) {
+    /** 
+     * Create a new [`LocaleExpander`] using compiled data.
+     *
+     * See the [Rust documentation for `new_common`](https://docs.rs/icu/latest/icu/locale/struct.LocaleExpander.html#method.new_common) for more information.
+     */
+    #defaultConstructor() {
+        const result = wasm.icu4x_LocaleExpander_create_common_mv1();
+    
+        try {
+            return new LocaleExpander(diplomatRuntime.internalConstructor, result, []);
+        }
+        
+        finally {}
+    }
+
+    /** 
+     * Create a new [`LocaleExpander`] using a new_common data source.
+     *
+     * See the [Rust documentation for `new_common`](https://docs.rs/icu/latest/icu/locale/struct.LocaleExpander.html#method.new_common) for more information.
+     */
+    static createCommonWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_LocaleExpander_create_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_LocaleExpander_create_common_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {
@@ -60,10 +83,30 @@ export class LocaleExpander {
         }
     }
 
-    static createExtended(provider) {
+    /** 
+     * Create a new [`LocaleExpander`] with extended data using compiled data.
+     *
+     * See the [Rust documentation for `new_extended`](https://docs.rs/icu/latest/icu/locale/struct.LocaleExpander.html#method.new_extended) for more information.
+     */
+    static createExtended() {
+        const result = wasm.icu4x_LocaleExpander_create_extended_mv1();
+    
+        try {
+            return new LocaleExpander(diplomatRuntime.internalConstructor, result, []);
+        }
+        
+        finally {}
+    }
+
+    /** 
+     * Create a new [`LocaleExpander`] with extended data using a particular data source.
+     *
+     * See the [Rust documentation for `new_extended`](https://docs.rs/icu/latest/icu/locale/struct.LocaleExpander.html#method.new_extended) for more information.
+     */
+    static createExtendedWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_LocaleExpander_create_extended_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_LocaleExpander_create_extended_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {
@@ -78,6 +121,9 @@ export class LocaleExpander {
         }
     }
 
+    /** 
+     * See the [Rust documentation for `maximize`](https://docs.rs/icu/latest/icu/locale/struct.LocaleExpander.html#method.maximize) for more information.
+     */
     maximize(locale) {
         const result = wasm.icu4x_LocaleExpander_maximize_mv1(this.ffiValue, locale.ffiValue);
     
@@ -88,6 +134,9 @@ export class LocaleExpander {
         finally {}
     }
 
+    /** 
+     * See the [Rust documentation for `minimize`](https://docs.rs/icu/latest/icu/locale/struct.LocaleExpander.html#method.minimize) for more information.
+     */
     minimize(locale) {
         const result = wasm.icu4x_LocaleExpander_minimize_mv1(this.ffiValue, locale.ffiValue);
     
@@ -98,6 +147,9 @@ export class LocaleExpander {
         finally {}
     }
 
+    /** 
+     * See the [Rust documentation for `minimize_favor_script`](https://docs.rs/icu/latest/icu/locale/struct.LocaleExpander.html#method.minimize_favor_script) for more information.
+     */
     minimizeFavorScript(locale) {
         const result = wasm.icu4x_LocaleExpander_minimize_favor_script_mv1(this.ffiValue, locale.ffiValue);
     
@@ -106,5 +158,15 @@ export class LocaleExpander {
         }
         
         finally {}
+    }
+
+    constructor() {
+        if (arguments[0] === diplomatRuntime.exposeConstructor) {
+            return this.#internalConstructor(...Array.prototype.slice.call(arguments, 1));
+        } else if (arguments[0] === diplomatRuntime.internalConstructor) {
+            return this.#internalConstructor(...arguments);
+        } else {
+            return this.#defaultConstructor(...arguments);
+        }
     }
 }

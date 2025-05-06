@@ -3,7 +3,6 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 #include <icu4x/Collator.hpp>
-#include <icu4x/DataProvider.hpp>
 #include <icu4x/Locale.hpp>
 #include <icu4x/Logger.hpp>
 
@@ -14,7 +13,6 @@ using namespace icu4x;
 
 int main() {
   Logger::init_simple_logger();
-  std::unique_ptr<DataProvider> dp = DataProvider::compiled();
 
   // test 01 - basic collation example, default CollatorOptions
 
@@ -24,7 +22,7 @@ int main() {
   std::unique_ptr<Locale> locale = Locale::from_string("en").ok().value();
   CollatorOptionsV1 options = CollatorOptionsV1();
   auto foo = CollatorStrength();
-  std::unique_ptr<Collator> collator = Collator::create_v1(*dp.get(), *locale.get(), options).ok().value();
+  std::unique_ptr<Collator> collator = Collator::create_v1(*locale.get(), options).ok().value();
   auto actual = collator->compare(manna, manana);
 
   if (actual != 1) {
@@ -33,7 +31,7 @@ int main() {
   }
 
   locale = Locale::from_string("es").ok().value();
-  collator = Collator::create_v1(*dp.get(), *locale.get(), options).ok().value();
+  collator = Collator::create_v1(*locale.get(), options).ok().value();
   actual = collator->compare(manna, manana);
 
   if (actual != -1) {
@@ -48,7 +46,7 @@ int main() {
 
   locale = Locale::from_string("en").ok().value();
   options.strength = CollatorStrength::Primary;
-  collator = Collator::create_v1(*dp.get(), *locale.get(), options).ok().value();
+  collator = Collator::create_v1(*locale.get(), options).ok().value();
   actual = collator->compare(as, graveAs);
 
   if (actual != 0) {
@@ -57,7 +55,7 @@ int main() {
   }
 
   options.strength = CollatorStrength::Secondary;
-  collator = Collator::create_v1(*dp.get(), *locale.get(), options).ok().value();
+  collator = Collator::create_v1(*locale.get(), options).ok().value();
   actual = collator->compare(as, graveAs);
 
   if (actual != -1) {

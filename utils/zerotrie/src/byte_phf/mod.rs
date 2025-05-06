@@ -238,8 +238,9 @@ where
     pub fn as_bytes(&self) -> &[u8] {
         self.0.as_ref()
     }
+
     #[cfg(all(feature = "alloc", test))]
-    pub fn check(&self) -> Result<(), (&'static str, u8)> {
+    pub(crate) fn check(&self) -> Result<(), (&'static str, u8)> {
         use alloc::vec;
         let len = self.num_items();
         let mut seen = vec![false; len];
@@ -288,9 +289,11 @@ mod tests {
     fn random_alphanums(seed: u64, len: usize) -> Vec<u8> {
         use rand::seq::SliceRandom;
         use rand::SeedableRng;
-        const BYTES: &[u8] = b"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+        let mut bytes: Vec<u8> =
+            b"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789".into();
         let mut rng = rand_pcg::Lcg64Xsh32::seed_from_u64(seed);
-        BYTES.choose_multiple(&mut rng, len).copied().collect()
+        bytes.partial_shuffle(&mut rng, len).0.into()
     }
 
     #[test]

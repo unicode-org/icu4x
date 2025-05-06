@@ -6,6 +6,7 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include <memory>
+#include <functional>
 #include <optional>
 #include "../diplomat_runtime.hpp"
 #include "LocaleFallbackPriority.d.hpp"
@@ -27,6 +28,11 @@ namespace capi {
 
 
 namespace icu4x {
+/**
+ * Collection of configurations for the ICU4X fallback algorithm.
+ *
+ * See the [Rust documentation for `LocaleFallbackConfig`](https://docs.rs/icu/latest/icu/locale/fallback/struct.LocaleFallbackConfig.html) for more information.
+ */
 struct LocaleFallbackConfig {
   icu4x::LocaleFallbackPriority priority;
 

@@ -4,10 +4,10 @@
 
 use icu_locale_core::langid;
 use icu_properties::PropertyNamesLong;
+use icu_segmenter::options::WordBreakOptions;
 use icu_segmenter::GraphemeClusterSegmenter;
 use icu_segmenter::LineSegmenter;
 use icu_segmenter::SentenceSegmenter;
-use icu_segmenter::WordBreakOptions;
 use icu_segmenter::WordSegmenter;
 use std::char;
 use std::io::BufRead;
@@ -106,7 +106,7 @@ fn line_break_test(file: &'static str) {
             .lines()
             .map(|l| l.unwrap()),
     );
-    let segmenter = LineSegmenter::new_dictionary();
+    let segmenter = LineSegmenter::new_dictionary(Default::default());
     for (i, mut test) in test_iter.enumerate() {
         let s: String = test.utf8_vec.into_iter().collect();
         let iter = segmenter.segment_str(&s);
@@ -206,8 +206,8 @@ fn word_break_test(file: &'static str) {
     let mut options = WordBreakOptions::default();
     let langid = langid!("sv");
     options.content_locale = Some(&langid);
-    let segmenter =
-        WordSegmenter::try_new_dictionary_with_options(options).expect("Loading should succeed!");
+    let segmenter = WordSegmenter::try_new_dictionary(options).expect("Loading should succeed!");
+    let segmenter = segmenter.as_borrowed();
     for (i, test) in test_iter.enumerate() {
         let s: String = test.utf8_vec.into_iter().collect();
         let iter = segmenter.segment_str(&s);
@@ -353,9 +353,14 @@ fn run_grapheme_break_extra_test() {
     grapheme_break_test(include_str!("testdata/GraphemeBreakExtraTest.txt"));
 }
 
+#[test]
+fn run_grapheme_break_random_test() {
+    grapheme_break_test(include_str!("testdata/GraphemeBreakRandomTest.txt"));
+}
+
 fn sentence_break_test(file: &'static str) {
     let test_iter = TestContentIterator::new(file);
-    let segmenter = SentenceSegmenter::new();
+    let segmenter = SentenceSegmenter::new(Default::default());
     for (i, test) in test_iter.enumerate() {
         let s: String = test.utf8_vec.into_iter().collect();
         let iter = segmenter.segment_str(&s);

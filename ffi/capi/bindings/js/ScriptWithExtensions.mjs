@@ -7,15 +7,17 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
-/** An ICU4X ScriptWithExtensions map object, capable of holding a map of codepoints to scriptextensions values
-*
-*See the [Rust documentation for `ScriptWithExtensions`](https://docs.rs/icu/latest/icu/properties/script/struct.ScriptWithExtensions.html) for more information.
-*/
+/** 
+ * An ICU4X ScriptWithExtensions map object, capable of holding a map of codepoints to scriptextensions values
+ *
+ * See the [Rust documentation for `ScriptWithExtensions`](https://docs.rs/icu/latest/icu/properties/script/struct.ScriptWithExtensions.html) for more information.
+ */
 const ScriptWithExtensions_box_destroy_registry = new FinalizationRegistry((ptr) => {
     wasm.icu4x_ScriptWithExtensions_destroy_mv1(ptr);
 });
 
 export class ScriptWithExtensions {
+    
     // Internal ptr reference:
     #ptr = null;
 
@@ -23,7 +25,7 @@ export class ScriptWithExtensions {
     // Since JS won't garbage collect until there are no incoming edges.
     #selfEdge = [];
     
-    constructor(symbol, ptr, selfEdge) {
+    #internalConstructor(symbol, ptr, selfEdge) {
         if (symbol !== diplomatRuntime.internalConstructor) {
             console.error("ScriptWithExtensions is an Opaque type. You cannot call its constructor.");
             return;
@@ -36,16 +38,37 @@ export class ScriptWithExtensions {
         if (this.#selfEdge.length === 0) {
             ScriptWithExtensions_box_destroy_registry.register(this, this.#ptr);
         }
+        
+        return this;
     }
-
     get ffiValue() {
         return this.#ptr;
     }
 
-    static create(provider) {
+    /** 
+     * Create a map for the `Script`/`Script_Extensions` properties, using compiled data.
+     *
+     * See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/properties/script/struct.ScriptWithExtensions.html#method.new) for more information.
+     */
+    #defaultConstructor() {
+        const result = wasm.icu4x_ScriptWithExtensions_create_mv1();
+    
+        try {
+            return new ScriptWithExtensions(diplomatRuntime.internalConstructor, result, []);
+        }
+        
+        finally {}
+    }
+
+    /** 
+     * Create a map for the `Script`/`Script_Extensions` properties, using compiled data.
+     *
+     * See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/properties/script/struct.ScriptWithExtensions.html#method.new) for more information.
+     */
+    static createWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_ScriptWithExtensions_create_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_ScriptWithExtensions_create_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {
@@ -60,6 +83,11 @@ export class ScriptWithExtensions {
         }
     }
 
+    /** 
+     * Get the Script property value for a code point
+     *
+     * See the [Rust documentation for `get_script_val`](https://docs.rs/icu/latest/icu/properties/script/struct.ScriptWithExtensionsBorrowed.html#method.get_script_val) for more information.
+     */
     getScriptVal(ch) {
         const result = wasm.icu4x_ScriptWithExtensions_get_script_val_mv1(this.ffiValue, ch);
     
@@ -70,6 +98,11 @@ export class ScriptWithExtensions {
         finally {}
     }
 
+    /** 
+     * Check if the Script_Extensions property of the given code point covers the given script
+     *
+     * See the [Rust documentation for `has_script`](https://docs.rs/icu/latest/icu/properties/script/struct.ScriptWithExtensionsBorrowed.html#method.has_script) for more information.
+     */
     hasScript(ch, script) {
         const result = wasm.icu4x_ScriptWithExtensions_has_script_mv1(this.ffiValue, ch, script);
     
@@ -80,6 +113,11 @@ export class ScriptWithExtensions {
         finally {}
     }
 
+    /** 
+     * Borrow this object for a slightly faster variant with more operations
+     *
+     * See the [Rust documentation for `as_borrowed`](https://docs.rs/icu/latest/icu/properties/script/struct.ScriptWithExtensions.html#method.as_borrowed) for more information.
+     */
     get asBorrowed() {
         // This lifetime edge depends on lifetimes 'a
         let aEdges = [this];
@@ -93,6 +131,11 @@ export class ScriptWithExtensions {
         finally {}
     }
 
+    /** 
+     * Get a list of ranges of code points that contain this script in their Script_Extensions values
+     *
+     * See the [Rust documentation for `get_script_extensions_ranges`](https://docs.rs/icu/latest/icu/properties/script/struct.ScriptWithExtensionsBorrowed.html#method.get_script_extensions_ranges) for more information.
+     */
     iterRangesForScript(script) {
         // This lifetime edge depends on lifetimes 'a
         let aEdges = [this];
@@ -104,5 +147,15 @@ export class ScriptWithExtensions {
         }
         
         finally {}
+    }
+
+    constructor() {
+        if (arguments[0] === diplomatRuntime.exposeConstructor) {
+            return this.#internalConstructor(...Array.prototype.slice.call(arguments, 1));
+        } else if (arguments[0] === diplomatRuntime.internalConstructor) {
+            return this.#internalConstructor(...arguments);
+        } else {
+            return this.#defaultConstructor(...arguments);
+        }
     }
 }

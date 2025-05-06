@@ -6,6 +6,7 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include <memory>
+#include <functional>
 #include <optional>
 #include "../diplomat_runtime.hpp"
 
@@ -24,6 +25,9 @@ namespace capi {
 } // namespace
 
 namespace icu4x {
+/**
+ * See the [Rust documentation for `LineBreakStrictness`](https://docs.rs/icu/latest/icu/segmenter/options/enum.LineBreakStrictness.html) for more information.
+ */
 class LineBreakStrictness {
 public:
   enum Value {

@@ -30,7 +30,7 @@ icu_pattern = { path = "../components/pattern" }
 icu_plurals = { path = "../components/plurals" }
 icu_properties = { path = "../components/properties" }
 icu_segmenter = { path = "../components/segmenter" }
-icu_timezone = { path = "../components/timezone" }
+icu_time = { path = "../components/time" }
 
 # FFI
 icu_capi = { path = "../ffi/capi" }
@@ -41,7 +41,6 @@ icu_harfbuzz = { path = "../ffi/harfbuzz" }
 # Provider
 icu_provider_export = { path = "../provider/export" }
 icu_provider_source = { path = "../provider/source" }
-icu_provider_macros = { path = "../provider/core/macros" }
 icu_provider_adapters = { path = "../provider/adapters" }
 icu_provider_baked = { path = "../provider/baked" }
 icu_provider_blob = { path = "../provider/blob" }
@@ -62,7 +61,7 @@ icu_normalizer_data = { path = "../provider/data/normalizer" }
 icu_plurals_data = { path = "../provider/data/plurals" }
 icu_properties_data = { path = "../provider/data/properties"}
 icu_segmenter_data = { path = "../provider/data/segmenter" }
-icu_timezone_data = { path = "../provider/data/timezone" }
+icu_time_data = { path = "../provider/data/time" }
 
 bies = { path = "../utils/bies" }
 crlify = { path = "../utils/crlify" }

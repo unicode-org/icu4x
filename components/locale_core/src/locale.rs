@@ -2,14 +2,13 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::parser::{
-    parse_locale, parse_locale_with_single_variant_single_keyword_unicode_keyword_extension,
-    ParseError, ParserMode, SubtagIterator,
-};
+use crate::parser::*;
 use crate::subtags::Subtag;
 use crate::{extensions, subtags, LanguageIdentifier};
+#[cfg(feature = "alloc")]
 use alloc::borrow::Cow;
 use core::cmp::Ordering;
+#[cfg(feature = "alloc")]
 use core::str::FromStr;
 
 /// A core struct representing a [`Unicode Locale Identifier`].
@@ -39,13 +38,13 @@ use core::str::FromStr;
 ///  * *valid* - well-formed and only uses registered language subtags, extensions, keywords, types...
 ///  * *canonical* - valid and no deprecated codes or structure.
 ///
-/// At the moment parsing normalizes a well-formed locale identifier converting
-/// `_` separators to `-` and adjusting casing to conform to the Unicode standard.
-///
 /// Any syntactically invalid subtags will cause the parsing to fail with an error.
 ///
 /// This operation normalizes syntax to be well-formed. No legacy subtag replacements is performed.
 /// For validation and canonicalization, see `LocaleCanonicalizer`.
+///
+/// ICU4X's Locale parsing does not allow for non-BCP-47-compatible locales [allowed by UTS 35 for backwards compatability][tr35-bcp].
+/// Furthermore, it currently does not allow for language tags to have more than three characters.
 ///
 /// # Examples
 ///
@@ -75,7 +74,7 @@ use core::str::FromStr;
 /// ```
 /// use icu::locale::{subtags::*, Locale};
 ///
-/// let loc: Locale = "eN_latn_Us-Valencia_u-hC-H12"
+/// let loc: Locale = "eN-latn-Us-Valencia-u-hC-H12"
 ///     .parse()
 ///     .expect("Failed to parse.");
 ///
@@ -89,7 +88,8 @@ use core::str::FromStr;
 /// ```
 ///
 /// [`Unicode Locale Identifier`]: https://unicode.org/reports/tr35/tr35.html#Unicode_locale_identifier
-#[derive(Default, PartialEq, Eq, Clone, Hash)] // no Ord or PartialOrd: see docs
+/// [tr35-bcp]: https://unicode.org/reports/tr35/#BCP_47_Conformance
+#[derive(PartialEq, Eq, Clone, Hash)] // no Ord or PartialOrd: see docs
 #[allow(clippy::exhaustive_structs)] // This struct is stable (and invoked by a macro)
 pub struct Locale {
     /// The basic language/script/region components in the locale identifier along with any variants.
@@ -121,6 +121,9 @@ fn test_sizes() {
 }
 
 impl Locale {
+    /// The unknown locale "und".
+    pub const UNKNOWN: Self = crate::locale!("und");
+
     /// A constructor which takes a utf8 slice, parses it and
     /// produces a well-formed [`Locale`].
     ///
@@ -132,21 +135,15 @@ impl Locale {
     /// Locale::try_from_str("en-US-u-hc-h12").unwrap();
     /// ```
     #[inline]
+    #[cfg(feature = "alloc")]
     pub fn try_from_str(s: &str) -> Result<Self, ParseError> {
         Self::try_from_utf8(s.as_bytes())
     }
 
     /// See [`Self::try_from_str`]
+    #[cfg(feature = "alloc")]
     pub fn try_from_utf8(code_units: &[u8]) -> Result<Self, ParseError> {
         parse_locale(code_units)
-    }
-
-    /// Const-friendly version of [`Default::default`].
-    pub const fn default() -> Self {
-        Self {
-            id: LanguageIdentifier::default(),
-            extensions: extensions::Extensions::new(),
-        }
     }
 
     /// Normalize the locale (operating on UTF-8 formatted byte slices)
@@ -159,10 +156,11 @@ impl Locale {
     /// use icu::locale::Locale;
     ///
     /// assert_eq!(
-    ///     Locale::normalize_utf8(b"pL_latn_pl-U-HC-H12").as_deref(),
+    ///     Locale::normalize_utf8(b"pL-latn-pl-U-HC-H12").as_deref(),
     ///     Ok("pl-Latn-PL-u-hc-h12")
     /// );
     /// ```
+    #[cfg(feature = "alloc")]
     pub fn normalize_utf8(input: &[u8]) -> Result<Cow<str>, ParseError> {
         let locale = Self::try_from_utf8(input)?;
         Ok(writeable::to_string_or_borrow(&locale, input))
@@ -178,10 +176,11 @@ impl Locale {
     /// use icu::locale::Locale;
     ///
     /// assert_eq!(
-    ///     Locale::normalize("pL_latn_pl-U-HC-H12").as_deref(),
+    ///     Locale::normalize("pL-latn-pl-U-HC-H12").as_deref(),
     ///     Ok("pl-Latn-PL-u-hc-h12")
     /// );
     /// ```
+    #[cfg(feature = "alloc")]
     pub fn normalize(input: &str) -> Result<Cow<str>, ParseError> {
         Self::normalize_utf8(input.as_bytes())
     }
@@ -377,6 +376,7 @@ impl Locale {
     ///     assert!(a.parse::<Locale>().unwrap().normalizing_eq(a));
     /// }
     /// ```
+    #[cfg(feature = "alloc")]
     pub fn normalizing_eq(&self, other: &str) -> bool {
         macro_rules! subtag_matches {
             ($T:ty, $iter:ident, $expected:expr) => {
@@ -451,6 +451,7 @@ impl Locale {
     }
 }
 
+#[cfg(feature = "alloc")]
 impl FromStr for Locale {
     type Err = ParseError;
 
@@ -486,7 +487,7 @@ impl_writeable_for_each_subtag_str_no_test!(Locale, selff, selff.extensions.is_e
 #[test]
 fn test_writeable() {
     use writeable::assert_writeable_eq;
-    assert_writeable_eq!(Locale::default(), "und");
+    assert_writeable_eq!(Locale::UNKNOWN, "und");
     assert_writeable_eq!("und-001".parse::<Locale>().unwrap(), "und-001");
     assert_writeable_eq!("und-Mymr".parse::<Locale>().unwrap(), "und-Mymr");
     assert_writeable_eq!("my-Mymr-MM".parse::<Locale>().unwrap(), "my-Mymr-MM");
@@ -525,7 +526,7 @@ impl From<subtags::Language> for Locale {
     fn from(language: subtags::Language) -> Self {
         Self {
             id: language.into(),
-            ..Default::default()
+            extensions: extensions::Extensions::new(),
         }
     }
 }
@@ -542,7 +543,7 @@ impl From<Option<subtags::Script>> for Locale {
     fn from(script: Option<subtags::Script>) -> Self {
         Self {
             id: script.into(),
-            ..Default::default()
+            extensions: extensions::Extensions::new(),
         }
     }
 }
@@ -559,7 +560,7 @@ impl From<Option<subtags::Region>> for Locale {
     fn from(region: Option<subtags::Region>) -> Self {
         Self {
             id: region.into(),
-            ..Default::default()
+            extensions: extensions::Extensions::new(),
         }
     }
 }
@@ -598,7 +599,7 @@ impl
     ) -> Self {
         Self {
             id: lsr.into(),
-            ..Default::default()
+            extensions: extensions::Extensions::new(),
         }
     }
 }

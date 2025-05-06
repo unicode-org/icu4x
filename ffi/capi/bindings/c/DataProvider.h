@@ -17,15 +17,11 @@
 
 
 
-DataProvider* icu4x_DataProvider_compiled_mv1(void);
-
 typedef struct icu4x_DataProvider_from_fs_mv1_result {union {DataProvider* ok; DataError err;}; bool is_ok;} icu4x_DataProvider_from_fs_mv1_result;
 icu4x_DataProvider_from_fs_mv1_result icu4x_DataProvider_from_fs_mv1(DiplomatStringView path);
 
 typedef struct icu4x_DataProvider_from_byte_slice_mv1_result {union {DataProvider* ok; DataError err;}; bool is_ok;} icu4x_DataProvider_from_byte_slice_mv1_result;
 icu4x_DataProvider_from_byte_slice_mv1_result icu4x_DataProvider_from_byte_slice_mv1(DiplomatU8View blob);
-
-DataProvider* icu4x_DataProvider_empty_mv1(void);
 
 typedef struct icu4x_DataProvider_fork_by_key_mv1_result {union { DataError err;}; bool is_ok;} icu4x_DataProvider_fork_by_key_mv1_result;
 icu4x_DataProvider_fork_by_key_mv1_result icu4x_DataProvider_fork_by_key_mv1(DataProvider* self, DataProvider* other);

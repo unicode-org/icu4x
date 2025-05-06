@@ -2,15 +2,16 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use icu_calendar::{Date, DateTime, Gregorian, Time};
+use icu_calendar::{Date, Gregorian};
 use icu_datetime::{
-    fields::components,
     fieldsets::{self, enums::*},
-    options::{Alignment, FractionalSecondDigits, TimePrecision, YearStyle},
+    options::{Alignment, SubsecondDigits, TimePrecision, YearStyle},
+    provider::fields::components,
     FixedCalendarDateTimeFormatter,
 };
 use icu_locale_core::Locale;
 use icu_locale_core::{locale, preferences::extensions::unicode::keywords::HourCycle};
+use icu_time::{DateTime, Time};
 
 fn assert_resolved_components(
     skeleton: CompositeDateTimeFieldSet,
@@ -21,7 +22,7 @@ fn assert_resolved_components(
         FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new(locale.into(), skeleton).unwrap();
     let datetime = DateTime {
         date: Date::try_new_gregorian(2024, 1, 1).unwrap(),
-        time: Time::midnight(),
+        time: Time::start_of_day(),
     };
     let resolved_pattern = dtf.format(&datetime).pattern();
     assert_eq!(components::Bag::from(&resolved_pattern), *bag);
@@ -66,12 +67,12 @@ fn test_length_time_preferences() {
     components_bag.hour = Some(components::Numeric::TwoDigit);
     components_bag.minute = Some(components::Numeric::TwoDigit);
     components_bag.second = Some(components::Numeric::TwoDigit);
-    components_bag.hour_cycle = Some(HourCycle::H24);
+    components_bag.hour_cycle = Some(HourCycle::H23);
 
     assert_resolved_components(
         skeleton,
         &components_bag,
-        "en-u-hc-h24".parse::<Locale>().unwrap(),
+        "en-u-hc-h23".parse::<Locale>().unwrap(),
     );
 }
 
@@ -79,9 +80,9 @@ fn test_length_time_preferences() {
 fn test_date_and_time() {
     let skeleton = CompositeDateTimeFieldSet::DateTime(DateAndTimeFieldSet::YMDET(
         fieldsets::YMDET::medium()
-            .with_year_style(YearStyle::Always)
+            .with_year_style(YearStyle::WithEra)
             .with_alignment(Alignment::Column)
-            .with_time_precision(TimePrecision::SecondExact(FractionalSecondDigits::F4)),
+            .with_time_precision(TimePrecision::Subsecond(SubsecondDigits::S4)),
     ));
 
     let mut input_bag = components::Bag::default();
@@ -93,7 +94,7 @@ fn test_date_and_time() {
     input_bag.hour = Some(components::Numeric::TwoDigit);
     input_bag.minute = Some(components::Numeric::TwoDigit);
     input_bag.second = Some(components::Numeric::TwoDigit);
-    input_bag.fractional_second = Some(FractionalSecondDigits::F4);
+    input_bag.subsecond = Some(SubsecondDigits::S4);
     input_bag.hour_cycle = None;
     let mut output_bag = input_bag; // make a copy
     output_bag.month = Some(components::Month::Short);

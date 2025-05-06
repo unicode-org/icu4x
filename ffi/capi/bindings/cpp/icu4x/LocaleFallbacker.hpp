@@ -8,6 +8,7 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include <memory>
+#include <functional>
 #include <optional>
 #include "../diplomat_runtime.hpp"
 #include "DataError.hpp"
@@ -20,8 +21,10 @@ namespace icu4x {
 namespace capi {
     extern "C" {
     
-    typedef struct icu4x_LocaleFallbacker_create_mv1_result {union {icu4x::capi::LocaleFallbacker* ok; icu4x::capi::DataError err;}; bool is_ok;} icu4x_LocaleFallbacker_create_mv1_result;
-    icu4x_LocaleFallbacker_create_mv1_result icu4x_LocaleFallbacker_create_mv1(const icu4x::capi::DataProvider* provider);
+    icu4x::capi::LocaleFallbacker* icu4x_LocaleFallbacker_create_mv1(void);
+    
+    typedef struct icu4x_LocaleFallbacker_create_with_provider_mv1_result {union {icu4x::capi::LocaleFallbacker* ok; icu4x::capi::DataError err;}; bool is_ok;} icu4x_LocaleFallbacker_create_with_provider_mv1_result;
+    icu4x_LocaleFallbacker_create_with_provider_mv1_result icu4x_LocaleFallbacker_create_with_provider_mv1(const icu4x::capi::DataProvider* provider);
     
     icu4x::capi::LocaleFallbacker* icu4x_LocaleFallbacker_without_data_mv1(void);
     
@@ -34,8 +37,13 @@ namespace capi {
 } // namespace capi
 } // namespace
 
-inline diplomat::result<std::unique_ptr<icu4x::LocaleFallbacker>, icu4x::DataError> icu4x::LocaleFallbacker::create(const icu4x::DataProvider& provider) {
-  auto result = icu4x::capi::icu4x_LocaleFallbacker_create_mv1(provider.AsFFI());
+inline std::unique_ptr<icu4x::LocaleFallbacker> icu4x::LocaleFallbacker::create() {
+  auto result = icu4x::capi::icu4x_LocaleFallbacker_create_mv1();
+  return std::unique_ptr<icu4x::LocaleFallbacker>(icu4x::LocaleFallbacker::FromFFI(result));
+}
+
+inline diplomat::result<std::unique_ptr<icu4x::LocaleFallbacker>, icu4x::DataError> icu4x::LocaleFallbacker::create_with_provider(const icu4x::DataProvider& provider) {
+  auto result = icu4x::capi::icu4x_LocaleFallbacker_create_with_provider_mv1(provider.AsFFI());
   return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::LocaleFallbacker>, icu4x::DataError>(diplomat::Ok<std::unique_ptr<icu4x::LocaleFallbacker>>(std::unique_ptr<icu4x::LocaleFallbacker>(icu4x::LocaleFallbacker::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::LocaleFallbacker>, icu4x::DataError>(diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
 }
 

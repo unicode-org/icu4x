@@ -53,7 +53,7 @@ macro_rules! expand {
                     Ok(DataResponse {
                         metadata: Default::default(),
                         payload: DataPayload::from_owned(
-                            PropertyUnicodeSetV1::CPInversionListStrList(uniset),
+                            PropertyUnicodeSet::CPInversionListStrList(uniset),
                         ),
                     })
                 }
@@ -70,7 +70,7 @@ macro_rules! expand {
     };
 }
 
-expand!((BasicEmojiV1Marker, "Basic_Emoji"));
+expand!((PropertyBinaryBasicEmojiV1, "Basic_Emoji"));
 
 #[test]
 fn test_basic() {

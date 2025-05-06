@@ -3,31 +3,355 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use super::{
-    DateTimePattern, DateTimePatternFormatter, GetNameForDayPeriodError, GetNameForMonthError,
-    GetNameForWeekdayError, GetSymbolForCyclicYearError, GetSymbolForEraError,
-    MonthPlaceholderValue, PatternLoadError,
+    DateTimePattern, DateTimePatternFormatter, GetNameForCyclicYearError, GetNameForDayPeriodError,
+    GetNameForEraError, GetNameForMonthError, GetNameForWeekdayError, MonthPlaceholderValue,
+    PatternLoadError, UnsupportedCalendarError,
 };
-use crate::fields::{self, FieldLength, FieldSymbol};
-use crate::fieldsets::enums::CompositeDateTimeFieldSet;
-use crate::input;
-use crate::provider::neo::*;
+use crate::error::ErrorField;
+use crate::fieldsets::enums::{CompositeDateTimeFieldSet, CompositeFieldSet};
+use crate::provider::fields::{self, FieldLength, FieldSymbol};
+use crate::provider::neo::{marker_attrs, *};
 use crate::provider::pattern::PatternItem;
 use crate::provider::time_zones::tz;
-use crate::scaffold::*;
 use crate::size_test_macro::size_test;
+use crate::FixedCalendarDateTimeFormatter;
 use crate::{external_loaders::*, DateTimeFormatterPreferences};
+use crate::{scaffold::*, DateTimeFormatter, DateTimeFormatterLoadError};
 use core::fmt;
 use core::marker::PhantomData;
-use core::num::NonZeroU8;
-use icu_calendar::types::FormattingEra;
-use icu_calendar::types::MonthCode;
-use icu_decimal::options::FixedDecimalFormatterOptions;
+use icu_calendar::types::{EraYear, MonthCode};
+use icu_calendar::AnyCalendar;
+use icu_decimal::options::DecimalFormatterOptions;
 use icu_decimal::options::GroupingStrategy;
-use icu_decimal::provider::{DecimalDigitsV1Marker, DecimalSymbolsV2Marker};
-use icu_decimal::FixedDecimalFormatter;
+use icu_decimal::provider::{DecimalDigitsV1, DecimalSymbolsV1};
+use icu_decimal::DecimalFormatter;
 use icu_provider::prelude::*;
 
-pub struct EmptyDataProvider;
+/// Choices for loading year names.
+#[derive(Debug, Copy, Clone, PartialEq, Eq)]
+#[non_exhaustive]
+pub enum YearNameLength {
+    /// An abbreviated calendar-dependent year or era name.
+    ///
+    /// Examples:
+    ///
+    /// - "AD"
+    /// - "甲子"
+    Abbreviated,
+    /// A wide calendar-dependent year or era name.
+    ///
+    /// Examples:
+    ///
+    /// - "Anno Domini"
+    /// - "甲子"
+    Wide,
+    /// A narrow calendar-dependent year or era name. Not necesarily unique.
+    ///
+    /// Examples:
+    ///
+    /// - "A"
+    /// - "甲子"
+    Narrow,
+}
+
+impl YearNameLength {
+    pub(crate) fn to_attributes(self) -> &'static DataMarkerAttributes {
+        use marker_attrs::Length;
+        let length = match self {
+            YearNameLength::Abbreviated => Length::Abbr,
+            YearNameLength::Wide => Length::Wide,
+            YearNameLength::Narrow => Length::Narrow,
+        };
+        marker_attrs::name_attr_for(marker_attrs::Context::Format, length)
+    }
+
+    pub(crate) fn from_field_length(field_length: FieldLength) -> Option<Self> {
+        // UTS 35 says that "G..GGG" and "U..UUU" are all Abbreviated
+        let field_length = field_length.numeric_to_abbr();
+        match field_length {
+            FieldLength::Three => Some(YearNameLength::Abbreviated),
+            FieldLength::Four => Some(YearNameLength::Wide),
+            FieldLength::Five => Some(YearNameLength::Narrow),
+            _ => None,
+        }
+    }
+
+    /// Returns an [`ErrorField`] sufficient for error reporting.
+    pub(crate) fn to_approximate_error_field(self) -> ErrorField {
+        let field_length = match self {
+            YearNameLength::Abbreviated => FieldLength::Three,
+            YearNameLength::Wide => FieldLength::Four,
+            YearNameLength::Narrow => FieldLength::Five,
+        };
+        ErrorField(fields::Field {
+            symbol: FieldSymbol::Era,
+            length: field_length,
+        })
+    }
+}
+
+/// Choices for loading month names.
+#[derive(Debug, Copy, Clone, PartialEq, Eq)]
+#[non_exhaustive]
+pub enum MonthNameLength {
+    /// An abbreviated calendar-dependent month name for formatting with other fields.
+    ///
+    /// Example: "Sep"
+    Abbreviated,
+    /// A wide calendar-dependent month name for formatting with other fields.
+    ///
+    /// Example: "September"
+    Wide,
+    /// A narrow calendar-dependent month name for formatting with other fields. Not necesarily unique.
+    ///
+    /// Example: "S"
+    Narrow,
+    /// An abbreviated calendar-dependent month name for stand-alone display.
+    ///
+    /// Example: "Sep"
+    StandaloneAbbreviated,
+    /// A wide calendar-dependent month name for stand-alone display.
+    ///
+    /// Example: "September"
+    StandaloneWide,
+    /// A narrow calendar-dependent month name for stand-alone display. Not necesarily unique.
+    ///
+    /// Example: "S"
+    StandaloneNarrow,
+}
+
+impl MonthNameLength {
+    pub(crate) fn to_attributes(self) -> &'static DataMarkerAttributes {
+        use marker_attrs::{Context, Length};
+        let (context, length) = match self {
+            MonthNameLength::Abbreviated => (Context::Format, Length::Abbr),
+            MonthNameLength::Wide => (Context::Format, Length::Wide),
+            MonthNameLength::Narrow => (Context::Format, Length::Narrow),
+            MonthNameLength::StandaloneAbbreviated => (Context::Standalone, Length::Abbr),
+            MonthNameLength::StandaloneWide => (Context::Standalone, Length::Wide),
+            MonthNameLength::StandaloneNarrow => (Context::Standalone, Length::Narrow),
+        };
+        marker_attrs::name_attr_for(context, length)
+    }
+
+    pub(crate) fn from_field(
+        field_symbol: fields::Month,
+        field_length: FieldLength,
+    ) -> Option<Self> {
+        use fields::Month;
+        match (field_symbol, field_length) {
+            (Month::Format, FieldLength::Three) => Some(MonthNameLength::Abbreviated),
+            (Month::Format, FieldLength::Four) => Some(MonthNameLength::Wide),
+            (Month::Format, FieldLength::Five) => Some(MonthNameLength::Narrow),
+            (Month::StandAlone, FieldLength::Three) => Some(MonthNameLength::StandaloneAbbreviated),
+            (Month::StandAlone, FieldLength::Four) => Some(MonthNameLength::StandaloneWide),
+            (Month::StandAlone, FieldLength::Five) => Some(MonthNameLength::StandaloneNarrow),
+            _ => None,
+        }
+    }
+
+    /// Returns an [`ErrorField`] sufficient for error reporting.
+    pub(crate) fn to_approximate_error_field(self) -> ErrorField {
+        use fields::Month;
+        let (field_symbol, field_length) = match self {
+            MonthNameLength::Abbreviated => (Month::Format, FieldLength::Three),
+            MonthNameLength::Wide => (Month::Format, FieldLength::Four),
+            MonthNameLength::Narrow => (Month::Format, FieldLength::Five),
+            MonthNameLength::StandaloneAbbreviated => (Month::StandAlone, FieldLength::Three),
+            MonthNameLength::StandaloneWide => (Month::StandAlone, FieldLength::Four),
+            MonthNameLength::StandaloneNarrow => (Month::StandAlone, FieldLength::Five),
+        };
+        ErrorField(fields::Field {
+            symbol: FieldSymbol::Month(field_symbol),
+            length: field_length,
+        })
+    }
+}
+
+/// Choices for loading weekday names.
+#[derive(Debug, Copy, Clone, PartialEq, Eq)]
+#[non_exhaustive]
+pub enum WeekdayNameLength {
+    /// An abbreviated weekday name for formatting with other fields.
+    ///
+    /// Example: "Tue"
+    Abbreviated,
+    /// A wide weekday name for formatting with other fields.
+    ///
+    /// Example: "Tuesday"
+    Wide,
+    /// A narrow weekday name for formatting with other fields. Not necesarily unique.
+    ///
+    /// Example: "T"
+    Narrow,
+    /// A short weekday name for formatting with other fields.
+    ///
+    /// Example: "Tu"
+    Short,
+    /// An abbreviated weekday name for stand-alone display.
+    ///
+    /// Example: "Tue"
+    StandaloneAbbreviated,
+    /// A wide weekday name for stand-alone display.
+    ///
+    /// Example: "Tuesday"
+    StandaloneWide,
+    /// A narrow weekday name for stand-alone display. Not necesarily unique.
+    ///
+    /// Example: "T"
+    StandaloneNarrow,
+    /// A short weekday name for stand-alone display.
+    ///
+    /// Example: "Tu"
+    StandaloneShort,
+}
+
+impl WeekdayNameLength {
+    pub(crate) fn to_attributes(self) -> &'static DataMarkerAttributes {
+        use marker_attrs::{Context, Length};
+        // UTS 35 says that "e" and "E" have the same non-numeric names
+        let (context, length) = match self {
+            WeekdayNameLength::Abbreviated => (Context::Format, Length::Abbr),
+            WeekdayNameLength::Wide => (Context::Format, Length::Wide),
+            WeekdayNameLength::Narrow => (Context::Format, Length::Narrow),
+            WeekdayNameLength::Short => (Context::Format, Length::Short),
+            WeekdayNameLength::StandaloneAbbreviated => (Context::Standalone, Length::Abbr),
+            WeekdayNameLength::StandaloneWide => (Context::Standalone, Length::Wide),
+            WeekdayNameLength::StandaloneNarrow => (Context::Standalone, Length::Narrow),
+            WeekdayNameLength::StandaloneShort => (Context::Standalone, Length::Short),
+        };
+        marker_attrs::name_attr_for(context, length)
+    }
+
+    pub(crate) fn from_field(
+        field_symbol: fields::Weekday,
+        field_length: FieldLength,
+    ) -> Option<Self> {
+        use fields::Weekday;
+        // UTS 35 says that "e" and "E" have the same non-numeric names
+        let field_symbol = field_symbol.to_format_symbol();
+        // UTS 35 says that "E..EEE" are all Abbreviated
+        // However, this doesn't apply to "e" and "c".
+        let field_length = if matches!(field_symbol, fields::Weekday::Format) {
+            field_length.numeric_to_abbr()
+        } else {
+            field_length
+        };
+        match (field_symbol, field_length) {
+            (Weekday::Format, FieldLength::Three) => Some(WeekdayNameLength::Abbreviated),
+            (Weekday::Format, FieldLength::Four) => Some(WeekdayNameLength::Wide),
+            (Weekday::Format, FieldLength::Five) => Some(WeekdayNameLength::Narrow),
+            (Weekday::Format, FieldLength::Six) => Some(WeekdayNameLength::Short),
+            (Weekday::StandAlone, FieldLength::Three) => {
+                Some(WeekdayNameLength::StandaloneAbbreviated)
+            }
+            (Weekday::StandAlone, FieldLength::Four) => Some(WeekdayNameLength::StandaloneWide),
+            (Weekday::StandAlone, FieldLength::Five) => Some(WeekdayNameLength::StandaloneNarrow),
+            (Weekday::StandAlone, FieldLength::Six) => Some(WeekdayNameLength::StandaloneShort),
+            _ => None,
+        }
+    }
+
+    /// Returns an [`ErrorField`] sufficient for error reporting.
+    pub(crate) fn to_approximate_error_field(self) -> ErrorField {
+        use fields::Weekday;
+        let (field_symbol, field_length) = match self {
+            WeekdayNameLength::Abbreviated => (Weekday::Format, FieldLength::Three),
+            WeekdayNameLength::Wide => (Weekday::Format, FieldLength::Four),
+            WeekdayNameLength::Narrow => (Weekday::Format, FieldLength::Five),
+            WeekdayNameLength::Short => (Weekday::Format, FieldLength::Six),
+            WeekdayNameLength::StandaloneAbbreviated => (Weekday::StandAlone, FieldLength::Three),
+            WeekdayNameLength::StandaloneWide => (Weekday::StandAlone, FieldLength::Four),
+            WeekdayNameLength::StandaloneNarrow => (Weekday::StandAlone, FieldLength::Five),
+            WeekdayNameLength::StandaloneShort => (Weekday::StandAlone, FieldLength::Six),
+        };
+        ErrorField(fields::Field {
+            symbol: FieldSymbol::Weekday(field_symbol),
+            length: field_length,
+        })
+    }
+}
+
+/// Choices for loading day period names.
+#[derive(Debug, Copy, Clone, PartialEq, Eq)]
+#[non_exhaustive]
+pub enum DayPeriodNameLength {
+    /// An abbreviated 12-hour day period name, including display names for 0h and 12h.
+    ///
+    /// Examples:
+    ///
+    /// - "AM"
+    /// - "mid."
+    Abbreviated,
+    /// A wide 12-hour day period name, including display names for 0h and 12h.
+    ///
+    /// The wide form may be the same as the abbreviated form if the "real" long form
+    /// (eg "ante meridiem") is not customarily used.
+    ///
+    /// Examples:
+    ///
+    /// - "AM"
+    /// - "mignight"
+    Wide,
+    /// An abbreviated 12-hour day period name, including display names for 0h and 12h.
+    ///
+    /// The narrow form must be unique, unlike some other fields.
+    ///
+    /// Examples:
+    ///
+    /// - "AM"
+    /// - "md"
+    Narrow,
+}
+
+impl DayPeriodNameLength {
+    pub(crate) fn to_attributes(self) -> &'static DataMarkerAttributes {
+        use marker_attrs::Length;
+        let length = match self {
+            DayPeriodNameLength::Abbreviated => Length::Abbr,
+            DayPeriodNameLength::Wide => Length::Wide,
+            DayPeriodNameLength::Narrow => Length::Narrow,
+        };
+        marker_attrs::name_attr_for(marker_attrs::Context::Format, length)
+    }
+
+    pub(crate) fn from_field(
+        field_symbol: fields::DayPeriod,
+        field_length: FieldLength,
+    ) -> Option<Self> {
+        use fields::DayPeriod;
+        // Names for 'a' and 'b' are stored in the same data marker
+        let field_symbol = match field_symbol {
+            DayPeriod::NoonMidnight => DayPeriod::AmPm,
+            other => other,
+        };
+        // UTS 35 says that "a..aaa" and "b..bbb" are all Abbreviated
+        let field_length = field_length.numeric_to_abbr();
+        match (field_symbol, field_length) {
+            (DayPeriod::AmPm, FieldLength::Three) => Some(DayPeriodNameLength::Abbreviated),
+            (DayPeriod::AmPm, FieldLength::Four) => Some(DayPeriodNameLength::Wide),
+            (DayPeriod::AmPm, FieldLength::Five) => Some(DayPeriodNameLength::Narrow),
+            _ => None,
+        }
+    }
+
+    /// Returns an [`ErrorField`] sufficient for error reporting.
+    pub(crate) fn to_approximate_error_field(self) -> ErrorField {
+        // Names for 'a' and 'b' are stored in the same data marker
+        let field_symbol = fields::DayPeriod::AmPm;
+        let field_length = match self {
+            DayPeriodNameLength::Abbreviated => FieldLength::Three,
+            DayPeriodNameLength::Wide => FieldLength::Four,
+            DayPeriodNameLength::Narrow => FieldLength::Five,
+        };
+        ErrorField(fields::Field {
+            symbol: FieldSymbol::DayPeriod(field_symbol),
+            length: field_length,
+        })
+    }
+}
+
+pub(crate) struct EmptyDataProvider;
 
 impl<M> DataProvider<M> for EmptyDataProvider
 where
@@ -39,7 +363,7 @@ where
 }
 
 size_test!(
-    TypedDateTimeNames<icu_calendar::Gregorian>,
+    FixedCalendarDateTimeNames<icu_calendar::Gregorian>,
     typed_date_time_names_size,
     328
 );
@@ -51,11 +375,11 @@ size_test!(
 /// Type parameters:
 ///
 /// 1. The calendar chosen at compile time for additional type safety
-/// 2. A components object type containing the fields that might be formatted
+/// 2. A field set containing the fields that might be formatted
 ///
-/// By default, the components object is set to [`CompositeDateTimeFieldSet`],
+/// By default, the field set is set to [`CompositeDateTimeFieldSet`],
 /// meaning that dates and times, but not time zones, are supported. A smaller
-/// components object results in smaller stack size.
+/// field set results in smaller stack size.
 ///
 /// To support all fields including time zones, use [`CompositeFieldSet`].
 ///
@@ -66,23 +390,25 @@ size_test!(
 ///
 /// ```
 /// use icu::calendar::Gregorian;
-/// use icu::calendar::DateTime;
-/// use icu::datetime::pattern::TypedDateTimeNames;
-/// use icu::datetime::fields::FieldLength;
-/// use icu::datetime::fields;
+/// use icu::datetime::input::Date;
+/// use icu::datetime::pattern::FixedCalendarDateTimeNames;
 /// use icu::datetime::pattern::DateTimePattern;
+/// use icu::datetime::pattern::MonthNameLength;
+/// use icu::datetime::pattern::WeekdayNameLength;
+/// use icu::datetime::pattern::DayPeriodNameLength;
 /// use icu::locale::locale;
+/// use icu::datetime::input::{DateTime, Time};
 /// use writeable::assert_try_writeable_eq;
 ///
 /// // Create an instance that can format abbreviated month, weekday, and day period names:
-/// let mut names: TypedDateTimeNames<Gregorian> =
-///     TypedDateTimeNames::try_new(locale!("uk").into()).unwrap();
+/// let mut names: FixedCalendarDateTimeNames<Gregorian> =
+///     FixedCalendarDateTimeNames::try_new(locale!("uk").into()).unwrap();
 /// names
-///     .include_month_names(fields::Month::Format, FieldLength::Three)
+///     .include_month_names(MonthNameLength::Abbreviated)
 ///     .unwrap()
-///     .include_weekday_names(fields::Weekday::Format, FieldLength::Three)
+///     .include_weekday_names(WeekdayNameLength::Abbreviated)
 ///     .unwrap()
-///     .include_day_period_names(FieldLength::Three)
+///     .include_day_period_names(DayPeriodNameLength::Abbreviated)
 ///     .unwrap();
 ///
 /// // Create a pattern from a pattern string (note: K is the hour with h11 hour cycle):
@@ -90,28 +416,32 @@ size_test!(
 /// let pattern: DateTimePattern = pattern_str.parse().unwrap();
 ///
 /// // Test it:
-/// let datetime = DateTime::try_new_gregorian(2023, 11, 20, 12, 35, 3).unwrap();
+/// let datetime = DateTime { date: Date::try_new_gregorian(2023, 11, 20).unwrap(), time: Time::try_new(12, 35, 3, 0).unwrap() };
 /// assert_try_writeable_eq!(names.with_pattern_unchecked(&pattern).format(&datetime), "пн лист. 20 2023 -- 0:35 пп");
 /// ```
 ///
-/// If the correct data is not loaded, and error will occur:
+/// If the correct data is not loaded, an error will occur:
 ///
 /// ```
 /// use icu::calendar::Gregorian;
-/// use icu::calendar::{Date, Time};
-/// use icu::datetime::DateTimeWriteError;
-/// use icu::datetime::pattern::TypedDateTimeNames;
-/// use icu::datetime::fields::{Field, FieldLength, FieldSymbol, Weekday};
+/// use icu::datetime::input::Date;
+/// use icu::datetime::pattern::FormattedDateTimePatternError;
+/// use icu::datetime::parts;
+/// use icu::datetime::pattern::FixedCalendarDateTimeNames;
 /// use icu::datetime::pattern::{DateTimePattern, PatternLoadError};
 /// use icu::datetime::fieldsets::enums::CompositeFieldSet;
 /// use icu::locale::locale;
-/// use icu::timezone::{TimeZoneInfo, IxdtfParser};
+/// use icu::time::zone::{IanaParser, VariantOffsetsCalculator};
+/// use icu::datetime::input::{Time, TimeZoneInfo, ZonedDateTime};
 /// use icu_provider_adapters::empty::EmptyDataProvider;
 /// use writeable::{Part, assert_try_writeable_parts_eq};
 ///
+/// // Unstable API used only for error construction below
+/// use icu::datetime::provider::fields::{Field, FieldLength, FieldSymbol, Weekday};
+///
 /// // Create an instance that can format all fields (CompositeFieldSet):
-/// let mut names: TypedDateTimeNames<Gregorian, CompositeFieldSet> =
-///     TypedDateTimeNames::try_new(locale!("en").into()).unwrap();
+/// let mut names: FixedCalendarDateTimeNames<Gregorian, CompositeFieldSet> =
+///     FixedCalendarDateTimeNames::try_new(locale!("en").into()).unwrap();
 ///
 /// // Create a pattern from a pattern string:
 /// let pattern_str = "'It is:' E MMM d y G 'at' h:mm:ssSSS a zzzz";
@@ -120,19 +450,36 @@ size_test!(
 /// // The pattern string contains lots of symbols including "E", "MMM", and "a",
 /// // but we did not load any data!
 ///
-/// let mut dtz = IxdtfParser::new().try_from_str("2023-11-20T11:35:03+00:00[Europe/London]").unwrap().to_calendar(Gregorian);
+/// let mut dtz = ZonedDateTime::try_full_from_str("2023-11-20T11:35:03+00:00[Europe/London]", Gregorian, IanaParser::new(), VariantOffsetsCalculator::new()).unwrap();
 ///
 /// // Missing data is filled in on a best-effort basis, and an error is signaled.
 /// assert_try_writeable_parts_eq!(
 ///     names.with_pattern_unchecked(&pattern).format(&dtz),
-///     "It is: mon M11 20 2023 CE at 11:35:03.000 AM +0000",
-///     Err(DateTimeWriteError::NamesNotLoaded(Field { symbol: FieldSymbol::Weekday(Weekday::Format), length: FieldLength::One })),
+///     "It is: mon M11 20 2023 ce at 11:35:03.000 AM +0000",
+///     Err(FormattedDateTimePatternError::NamesNotLoaded(Field { symbol: FieldSymbol::Weekday(Weekday::Format), length: FieldLength::One }.into())),
 ///     [
 ///         (7, 10, Part::ERROR), // mon
+///         (7, 10, parts::WEEKDAY), // mon
 ///         (11, 14, Part::ERROR), // M11
+///         (11, 14, parts::MONTH), // M11
+///         (15, 17, icu::decimal::parts::INTEGER), // 20
+///         (15, 17, parts::DAY), // 20
+///         (18, 22, icu::decimal::parts::INTEGER), // 2023
+///         (18, 22, parts::YEAR), // 2023
 ///         (23, 25, Part::ERROR), // CE
+///         (23, 25, parts::ERA), // CE
+///         (29, 31, icu::decimal::parts::INTEGER), // 11
+///         (29, 31, parts::HOUR), // 11
+///         (32, 34, icu::decimal::parts::INTEGER), // 35
+///         (32, 34, parts::MINUTE), // 35
+///         (35, 41, parts::SECOND), // 03.000
+///         (35, 37, icu::decimal::parts::INTEGER), // 03
+///         (37, 38, icu::decimal::parts::DECIMAL), // .
+///         (38, 41, icu::decimal::parts::FRACTION), // 000
 ///         (42, 44, Part::ERROR), // AM
+///         (42, 44, parts::DAY_PERIOD), // AM
 ///         (45, 50, Part::ERROR), // +0000
+///         (45, 50, parts::TIME_ZONE_NAME), // +0000
 ///     ]
 /// );
 ///
@@ -140,7 +487,7 @@ size_test!(
 /// let empty = EmptyDataProvider::new();
 /// assert!(matches!(
 ///     names.load_for_pattern(&empty, &pattern),
-///     Err(PatternLoadError::Data(_, Field { symbol: FieldSymbol::Weekday(_), .. })),
+///     Err(PatternLoadError::Data(_, _)),
 /// ));
 /// ```
 ///
@@ -148,94 +495,187 @@ size_test!(
 ///
 /// ```
 /// use icu::calendar::Gregorian;
-/// use icu::calendar::DateTime;
-/// use icu::datetime::DateTimeWriteError;
-/// use icu::datetime::pattern::TypedDateTimeNames;
-/// use icu::datetime::fields::{Field, FieldLength, FieldSymbol, Weekday};
+/// use icu::datetime::pattern::FormattedDateTimePatternError;
+/// use icu::datetime::parts;
+/// use icu::datetime::pattern::FixedCalendarDateTimeNames;
 /// use icu::datetime::pattern::DateTimePattern;
-/// use icu::datetime::fieldsets::O;
+/// use icu::datetime::unchecked::MissingInputFieldKind;
+/// use icu::datetime::fieldsets::zone::LocalizedOffsetLong;
 /// use icu::locale::locale;
-/// use icu::timezone::TimeZoneInfo;
+/// use icu::datetime::input::{DateTime, TimeZoneInfo};
 /// use writeable::{Part, assert_try_writeable_parts_eq};
 ///
 /// // Create an instance that can format abbreviated month, weekday, and day period names:
-/// let mut names: TypedDateTimeNames<Gregorian, O> =
-///     TypedDateTimeNames::try_new(locale!("en").into()).unwrap();
+/// let mut names: FixedCalendarDateTimeNames<Gregorian, LocalizedOffsetLong> =
+///     FixedCalendarDateTimeNames::try_new(locale!("en").into()).unwrap();
 ///
 /// // Create a pattern from a pattern string:
 /// let pattern_str = "'It is:' E MMM d y G 'at' h:mm:ssSSS a zzzz";
 /// let pattern: DateTimePattern = pattern_str.parse().unwrap();
 ///
 /// // The pattern string contains lots of symbols including "E", "MMM", and "a",
-/// // but the `TypedDateTimeNames` is configured to format only time zones!
+/// // but the `FixedCalendarDateTimeNames` is configured to format only time zones!
 /// // Further, the time zone we provide doesn't contain any offset into!
 /// // Missing data is filled in on a best-effort basis, and an error is signaled.
 /// assert_try_writeable_parts_eq!(
 ///     names.with_pattern_unchecked(&pattern).format(&TimeZoneInfo::unknown()),
 ///     "It is: {E} {M} {d} {y} {G} at {h}:{m}:{s} {a} {z}",
-///     Err(DateTimeWriteError::MissingInputField("iso_weekday")),
+///     Err(FormattedDateTimePatternError::MissingInputField(MissingInputFieldKind::Weekday)),
 ///     [
 ///         (7, 10, Part::ERROR), // {E}
+///         (7, 10, parts::WEEKDAY), // {E}
 ///         (11, 14, Part::ERROR), // {M}
+///         (11, 14, parts::MONTH), // {M}
 ///         (15, 18, Part::ERROR), // {d}
+///         (15, 18, parts::DAY), // {d}
 ///         (19, 22, Part::ERROR), // {y}
+///         (19, 22, parts::YEAR), // {y}
 ///         (23, 26, Part::ERROR), // {G}
+///         (23, 26, parts::ERA), // {G}
 ///         (30, 33, Part::ERROR), // {h}
+///         (30, 33, parts::HOUR), // {h}
 ///         (34, 37, Part::ERROR), // {m}
+///         (34, 37, parts::MINUTE), // {m}
 ///         (38, 41, Part::ERROR), // {s}
+///         (38, 41, parts::SECOND), // {s}
 ///         (42, 45, Part::ERROR), // {a}
+///         (42, 45, parts::DAY_PERIOD), // {a}
 ///         (46, 49, Part::ERROR), // {z}
+///         (46, 49, parts::TIME_ZONE_NAME), // {z}
 ///     ]
 /// );
 /// ```
-#[derive(Debug)]
-pub struct TypedDateTimeNames<
-    C: CldrCalendar,
-    FSet: DateTimeNamesMarker = CompositeDateTimeFieldSet,
-> {
+///
+/// Multiple types of time zone data can be loaded into a [`FixedCalendarDateTimeNames`]:
+///
+/// ```
+/// use icu::datetime::pattern::FixedCalendarDateTimeNames;
+/// use icu::datetime::fieldsets::enums::ZoneFieldSet;
+/// use icu::locale::locale;
+/// use icu::datetime::input::{DateTime, Time};
+/// use writeable::assert_try_writeable_eq;
+///
+/// // Create an instance that can format abbreviated month, weekday, and day period names:
+/// let mut names: FixedCalendarDateTimeNames<(), ZoneFieldSet> =
+///     FixedCalendarDateTimeNames::try_new(locale!("uk").into()).unwrap();
+///
+/// // Load the names for generic short:
+/// names.include_time_zone_essentials().unwrap();
+/// names.include_time_zone_generic_short_names().unwrap();
+/// names.include_time_zone_location_names().unwrap();
+///
+/// // The same functions can be called a second time (nothing will happen):
+/// names.include_time_zone_essentials().unwrap();
+/// names.include_time_zone_generic_short_names().unwrap();
+/// names.include_time_zone_location_names().unwrap();
+///
+/// // We can load names for a different zone style:
+/// names.include_time_zone_generic_long_names().unwrap();
+/// ```
+///
+/// However, new time zone names cannot be added into a formatter that already has them. If you
+/// need this functionality, see <https://github.com/unicode-org/icu4x/issues/6063>
+///
+/// ```
+/// use icu_datetime::pattern::PatternLoadError;
+/// use icu_provider::DataError;
+/// use icu_provider::DataErrorKind;
+/// use icu::datetime::fieldsets::enums::ZoneFieldSet;
+/// use icu::datetime::fieldsets::zone;
+/// use icu::datetime::NoCalendarFormatter;
+/// use icu::datetime::pattern::FixedCalendarDateTimeNames;
+/// use icu::locale::locale;
+///
+/// let prefs = locale!("uk").into();
+///
+/// // Create a formatter for generic long time zones:
+/// let formatter = NoCalendarFormatter::try_new(
+///     prefs,
+///     zone::GenericLong,
+/// )
+/// .unwrap();
+///
+/// // Convert it to a FixedCalendarDateTimeNames:
+/// let mut names = FixedCalendarDateTimeNames::from_formatter(prefs, formatter).cast_into_fset::<ZoneFieldSet>();
+///
+/// // Specific names cannot be added:
+/// assert!(matches!(
+///     names.include_time_zone_specific_long_names(),
+///     Err(PatternLoadError::Data(DataError { kind: DataErrorKind::InconsistentData(_), .. }, _))
+/// ));
+/// ```
+#[derive(Debug, Clone)]
+pub struct FixedCalendarDateTimeNames<C, FSet: DateTimeNamesMarker = CompositeDateTimeFieldSet> {
     prefs: DateTimeFormatterPreferences,
     inner: RawDateTimeNames<FSet>,
+    metadata: DateTimeNamesMetadata,
     _calendar: PhantomData<C>,
 }
 
+/// Extra metadata associated with DateTimeNames but not DateTimeFormatter.
+#[derive(Debug, Clone)]
+pub(crate) struct DateTimeNamesMetadata {
+    zone_checksum: Option<u64>,
+}
+
+impl DateTimeNamesMetadata {
+    /// No impl Default: emphasize when we create a new empty instance
+    #[inline]
+    pub(crate) fn new_empty() -> Self {
+        Self {
+            zone_checksum: None,
+        }
+    }
+    /// If mz_periods is already populated, we can't load anything else because
+    /// we can't verify the checksum. Set a blank checksum in this case.
+    #[inline]
+    pub(crate) fn new_from_previous<M: DateTimeNamesMarker>(names: &RawDateTimeNames<M>) -> Self {
+        if names.mz_periods.get().inner.get_option().is_some() {
+            Self {
+                zone_checksum: Some(0),
+            }
+        } else {
+            Self::new_empty()
+        }
+    }
+}
+
+/// A low-level type that formats datetime patterns with localized names.
+/// The calendar is chosen in the constructor at runtime.
+///
+/// Currently this only supports loading of non-calendar-specific names, but
+/// additional functions may be added in the future. If you need this, see
+/// <https://github.com/unicode-org/icu4x/issues/6107>
+#[derive(Debug, Clone)]
+pub struct DateTimeNames<FSet: DateTimeNamesMarker> {
+    inner: FixedCalendarDateTimeNames<(), FSet>,
+    calendar: FormattableAnyCalendar,
+}
+
 pub(crate) struct RawDateTimeNames<FSet: DateTimeNamesMarker> {
-    year_names:
-        <FSet::YearNames as DateTimeNamesHolderTrait<YearNamesV1Marker>>::Container<FieldLength>,
-    month_names: <FSet::MonthNames as DateTimeNamesHolderTrait<MonthNamesV1Marker>>::Container<(
-        fields::Month,
-        FieldLength,
-    )>,
+    year_names: <FSet::YearNames as NamesContainer<YearNamesV1, YearNameLength>>::Container,
+    month_names: <FSet::MonthNames as NamesContainer<MonthNamesV1, MonthNameLength>>::Container,
     weekday_names:
-        <FSet::WeekdayNames as DateTimeNamesHolderTrait<WeekdayNamesV1Marker>>::Container<(
-            fields::Weekday,
-            FieldLength,
-        )>,
+        <FSet::WeekdayNames as NamesContainer<WeekdayNamesV1, WeekdayNameLength>>::Container,
     dayperiod_names:
-        <FSet::DayPeriodNames as DateTimeNamesHolderTrait<DayPeriodNamesV1Marker>>::Container<
-            FieldLength,
-        >,
-    zone_essentials:
-        <FSet::ZoneEssentials as DateTimeNamesHolderTrait<tz::EssentialsV1Marker>>::Container<()>,
-    locations_root:
-        <FSet::ZoneLocations as DateTimeNamesHolderTrait<tz::LocationsV1Marker>>::Container<()>,
-    locations:
-        <FSet::ZoneLocations as DateTimeNamesHolderTrait<tz::LocationsV1Marker>>::Container<()>,
-    mz_generic_long: <FSet::ZoneGenericLong as DateTimeNamesHolderTrait<
-        tz::MzGenericLongV1Marker,
-    >>::Container<()>,
-    mz_generic_short: <FSet::ZoneGenericShort as DateTimeNamesHolderTrait<
-        tz::MzGenericShortV1Marker,
-    >>::Container<()>,
-    mz_specific_long: <FSet::ZoneSpecificLong as DateTimeNamesHolderTrait<
-        tz::MzSpecificLongV1Marker,
-    >>::Container<()>,
-    mz_specific_short: <FSet::ZoneSpecificShort as DateTimeNamesHolderTrait<
-        tz::MzSpecificShortV1Marker,
-    >>::Container<()>,
-    mz_periods:
-        <FSet::MetazoneLookup as DateTimeNamesHolderTrait<tz::MzPeriodV1Marker>>::Container<()>,
-    // TODO(#4340): Make the FixedDecimalFormatter optional
-    fixed_decimal_formatter: Option<FixedDecimalFormatter>,
+        <FSet::DayPeriodNames as NamesContainer<DayPeriodNamesV1, DayPeriodNameLength>>::Container,
+    zone_essentials: <FSet::ZoneEssentials as NamesContainer<tz::EssentialsV1, ()>>::Container,
+    locations_root: <FSet::ZoneLocationsRoot as NamesContainer<tz::LocationsRootV1, ()>>::Container,
+    locations: <FSet::ZoneLocations as NamesContainer<tz::LocationsOverrideV1, ()>>::Container,
+    exemplars_root: <FSet::ZoneExemplarsRoot as NamesContainer<tz::CitiesRootV1, ()>>::Container,
+    exemplars: <FSet::ZoneExemplars as NamesContainer<tz::CitiesOverrideV1, ()>>::Container,
+    mz_generic_long: <FSet::ZoneGenericLong as NamesContainer<tz::MzGenericLongV1, ()>>::Container,
+    mz_generic_short:
+        <FSet::ZoneGenericShort as NamesContainer<tz::MzGenericShortV1, ()>>::Container,
+    mz_standard_long:
+        <FSet::ZoneStandardLong as NamesContainer<tz::MzStandardLongV1, ()>>::Container,
+    mz_specific_long:
+        <FSet::ZoneSpecificLong as NamesContainer<tz::MzSpecificLongV1, ()>>::Container,
+    mz_specific_short:
+        <FSet::ZoneSpecificShort as NamesContainer<tz::MzSpecificShortV1, ()>>::Container,
+    mz_periods: <FSet::MetazoneLookup as NamesContainer<tz::MzPeriodV1, ()>>::Container,
+    // TODO(#4340): Make the DecimalFormatter optional
+    decimal_formatter: Option<DecimalFormatter>,
     _marker: PhantomData<FSet>,
 }
 
@@ -248,37 +688,93 @@ impl<FSet: DateTimeNamesMarker> fmt::Debug for RawDateTimeNames<FSet> {
             .field("weekday_names", &self.weekday_names)
             .field("dayperiod_names", &self.dayperiod_names)
             .field("zone_essentials", &self.zone_essentials)
+            .field("locations_root", &self.locations_root)
             .field("locations", &self.locations)
+            .field("exemplars_root", &self.exemplars_root)
+            .field("exemplars", &self.exemplars)
             .field("mz_generic_long", &self.mz_generic_long)
             .field("mz_generic_short", &self.mz_generic_short)
+            .field("mz_standard_long", &self.mz_standard_long)
             .field("mz_specific_long", &self.mz_specific_long)
             .field("mz_specific_short", &self.mz_specific_short)
-            .field("fixed_decimal_formatter", &self.fixed_decimal_formatter)
+            .field("mz_periods", &self.mz_periods)
+            .field("decimal_formatter", &self.decimal_formatter)
             .finish()
+    }
+}
+
+impl<FSet: DateTimeNamesMarker> Clone for RawDateTimeNames<FSet> {
+    fn clone(&self) -> Self {
+        Self {
+            year_names: self.year_names.clone(),
+            month_names: self.month_names.clone(),
+            weekday_names: self.weekday_names.clone(),
+            dayperiod_names: self.dayperiod_names.clone(),
+            zone_essentials: self.zone_essentials.clone(),
+            locations_root: self.locations_root.clone(),
+            locations: self.locations.clone(),
+            exemplars_root: self.exemplars_root.clone(),
+            exemplars: self.exemplars.clone(),
+            mz_generic_long: self.mz_generic_long.clone(),
+            mz_generic_short: self.mz_generic_short.clone(),
+            mz_standard_long: self.mz_standard_long.clone(),
+            mz_specific_long: self.mz_specific_long.clone(),
+            mz_specific_short: self.mz_specific_short.clone(),
+            mz_periods: self.mz_periods.clone(),
+            decimal_formatter: self.decimal_formatter.clone(),
+            _marker: PhantomData,
+        }
+    }
+}
+
+impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
+    pub(crate) fn cast_into_fset<FSet2: DateTimeNamesFrom<FSet>>(self) -> RawDateTimeNames<FSet2> {
+        RawDateTimeNames {
+            year_names: FSet2::map_year_names(self.year_names),
+            month_names: FSet2::map_month_names(self.month_names),
+            weekday_names: FSet2::map_weekday_names(self.weekday_names),
+            dayperiod_names: FSet2::map_day_period_names(self.dayperiod_names),
+            zone_essentials: FSet2::map_zone_essentials(self.zone_essentials),
+            locations_root: FSet2::map_zone_locations_root(self.locations_root),
+            locations: FSet2::map_zone_locations(self.locations),
+            exemplars_root: FSet2::map_zone_exemplars_root(self.exemplars_root),
+            exemplars: FSet2::map_zone_exemplars(self.exemplars),
+            mz_generic_long: FSet2::map_zone_generic_long(self.mz_generic_long),
+            mz_generic_short: FSet2::map_zone_generic_short(self.mz_generic_short),
+            mz_standard_long: FSet2::map_zone_standard_long(self.mz_standard_long),
+            mz_specific_long: FSet2::map_zone_specific_long(self.mz_specific_long),
+            mz_specific_short: FSet2::map_zone_specific_short(self.mz_specific_short),
+            mz_periods: FSet2::map_metazone_lookup(self.mz_periods),
+            decimal_formatter: self.decimal_formatter,
+            _marker: PhantomData,
+        }
     }
 }
 
 #[derive(Debug, Copy, Clone)]
 pub(crate) struct RawDateTimeNamesBorrowed<'l> {
-    year_names: OptionalNames<FieldLength, &'l YearNamesV1<'l>>,
-    month_names: OptionalNames<(fields::Month, FieldLength), &'l MonthNamesV1<'l>>,
-    weekday_names: OptionalNames<(fields::Weekday, FieldLength), &'l LinearNamesV1<'l>>,
-    dayperiod_names: OptionalNames<FieldLength, &'l LinearNamesV1<'l>>,
-    zone_essentials: OptionalNames<(), &'l tz::EssentialsV1<'l>>,
-    locations_root: OptionalNames<(), &'l tz::LocationsV1<'l>>,
-    locations: OptionalNames<(), &'l tz::LocationsV1<'l>>,
-    mz_generic_long: OptionalNames<(), &'l tz::MzGenericV1<'l>>,
-    mz_generic_short: OptionalNames<(), &'l tz::MzGenericV1<'l>>,
-    mz_specific_long: OptionalNames<(), &'l tz::MzSpecificV1<'l>>,
-    mz_specific_short: OptionalNames<(), &'l tz::MzSpecificV1<'l>>,
-    mz_periods: OptionalNames<(), &'l tz::MzPeriodV1<'l>>,
-    pub(crate) fixed_decimal_formatter: Option<&'l FixedDecimalFormatter>,
+    year_names: OptionalNames<YearNameLength, &'l YearNames<'l>>,
+    month_names: OptionalNames<MonthNameLength, &'l MonthNames<'l>>,
+    weekday_names: OptionalNames<WeekdayNameLength, &'l LinearNames<'l>>,
+    dayperiod_names: OptionalNames<DayPeriodNameLength, &'l LinearNames<'l>>,
+    zone_essentials: OptionalNames<(), &'l tz::Essentials<'l>>,
+    locations_root: OptionalNames<(), &'l tz::Locations<'l>>,
+    locations: OptionalNames<(), &'l tz::Locations<'l>>,
+    exemplars_root: OptionalNames<(), &'l tz::ExemplarCities<'l>>,
+    exemplars: OptionalNames<(), &'l tz::ExemplarCities<'l>>,
+    mz_generic_long: OptionalNames<(), &'l tz::MzGeneric<'l>>,
+    mz_standard_long: OptionalNames<(), &'l tz::MzGeneric<'l>>,
+    mz_generic_short: OptionalNames<(), &'l tz::MzGeneric<'l>>,
+    mz_specific_long: OptionalNames<(), &'l tz::MzSpecific<'l>>,
+    mz_specific_short: OptionalNames<(), &'l tz::MzSpecific<'l>>,
+    mz_periods: OptionalNames<(), &'l tz::MzPeriod<'l>>,
+    pub(crate) decimal_formatter: Option<&'l DecimalFormatter>,
 }
 
-impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
+impl<C, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, FSet> {
     /// Constructor that takes a selected locale and creates an empty instance.
     ///
-    /// For an example, see [`TypedDateTimeNames`].
+    /// For an example, see [`FixedCalendarDateTimeNames`].
     ///
     /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
@@ -288,28 +784,40 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
         let mut names = Self {
             prefs,
             inner: RawDateTimeNames::new_without_number_formatting(),
+            metadata: DateTimeNamesMetadata::new_empty(), // OK: this is a constructor
             _calendar: PhantomData,
         };
-        names.include_fixed_decimal_formatter()?;
+        names.include_decimal_formatter()?;
         Ok(names)
     }
 
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
     pub fn try_new_unstable<P>(
         provider: &P,
         prefs: DateTimeFormatterPreferences,
     ) -> Result<Self, DataError>
     where
-        P: DataProvider<DecimalSymbolsV2Marker> + DataProvider<DecimalDigitsV1Marker> + ?Sized,
+        P: DataProvider<DecimalSymbolsV1> + DataProvider<DecimalDigitsV1> + ?Sized,
     {
         let mut names = Self {
             prefs,
             inner: RawDateTimeNames::new_without_number_formatting(),
+            metadata: DateTimeNamesMetadata::new_empty(), // OK: this is a constructor
             _calendar: PhantomData,
         };
-        names.load_fixed_decimal_formatter(provider)?;
+        names.load_decimal_formatter(provider)?;
         Ok(names)
     }
+
+    icu_provider::gen_buffer_data_constructors!(
+        (prefs: DateTimeFormatterPreferences) -> error: DataError,
+        functions: [
+            try_new: skip,
+            try_new_with_buffer_provider,
+            try_new_unstable,
+            Self,
+        ]
+    );
 
     /// Creates a completely empty instance, not even with number formatting.
     ///
@@ -319,18 +827,18 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
     ///
     /// ```
     /// use icu::calendar::Gregorian;
-    /// use icu::calendar::Date;
-    /// use icu::datetime::DateTimeWriteError;
-    /// use icu::datetime::pattern::TypedDateTimeNames;
-    /// use icu::datetime::fields::{Field, FieldLength, FieldSymbol, Weekday};
+    /// use icu::datetime::input::Date;
+    /// use icu::datetime::parts;
+    /// use icu::datetime::pattern::FormattedDateTimePatternError;
+    /// use icu::datetime::pattern::FixedCalendarDateTimeNames;
     /// use icu::datetime::pattern::DateTimePattern;
     /// use icu::datetime::fieldsets::enums::DateFieldSet;
     /// use icu::locale::locale;
     /// use writeable::{Part, assert_try_writeable_parts_eq};
     ///
     /// // Create an instance that can format only date fields:
-    /// let names: TypedDateTimeNames<Gregorian, DateFieldSet> =
-    ///     TypedDateTimeNames::new_without_number_formatting(locale!("en").into());
+    /// let names: FixedCalendarDateTimeNames<Gregorian, DateFieldSet> =
+    ///     FixedCalendarDateTimeNames::new_without_number_formatting(locale!("en").into());
     ///
     /// // Create a pattern from a pattern string:
     /// let pattern_str = "'It is:' y-MM-dd";
@@ -346,11 +854,14 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
     /// assert_try_writeable_parts_eq!(
     ///     names.with_pattern_unchecked(&pattern).format(&date),
     ///     "It is: 2024-07-01",
-    ///     Err(DateTimeWriteError::FixedDecimalFormatterNotLoaded),
+    ///     Err(FormattedDateTimePatternError::DecimalFormatterNotLoaded),
     ///     [
     ///         (7, 11, Part::ERROR), // 2024
+    ///         (7, 11, parts::YEAR), // 2024
     ///         (12, 14, Part::ERROR), // 07
+    ///         (12, 14, parts::MONTH), // 07
     ///         (15, 17, Part::ERROR), // 01
+    ///         (15, 17, parts::DAY), // 01
     ///     ]
     /// );
     /// ```
@@ -358,268 +869,687 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
         Self {
             prefs,
             inner: RawDateTimeNames::new_without_number_formatting(),
+            metadata: DateTimeNamesMetadata::new_empty(), // OK: this is a constructor
+            _calendar: PhantomData,
+        }
+    }
+}
+
+impl<C: CldrCalendar, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, FSet> {
+    /// Creates an instance with the names loaded in a [`FixedCalendarDateTimeFormatter`].
+    ///
+    /// This function requires passing in the [`DateTimeFormatterPreferences`] because it is not
+    /// retained in the formatter. Pass the same value or else unexpected behavior may occur.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::datetime::input::Date;
+    /// use icu::datetime::input::{DateTime, Time};
+    /// use icu::datetime::FixedCalendarDateTimeFormatter;
+    /// use icu::datetime::fieldsets::{YMD, YMDT};
+    /// use icu::datetime::pattern::{FixedCalendarDateTimeNames, DayPeriodNameLength};
+    /// use icu::locale::locale;
+    /// use writeable::assert_writeable_eq;
+    ///
+    /// let prefs = locale!("es-MX").into();
+    ///
+    /// let formatter =
+    ///     FixedCalendarDateTimeFormatter::try_new(
+    ///         prefs,
+    ///         YMD::long(),
+    ///     )
+    ///     .unwrap();
+    ///
+    /// assert_writeable_eq!(
+    ///     formatter.format(&Date::try_new_gregorian(2025, 2, 13).unwrap()),
+    ///     "13 de febrero de 2025"
+    /// );
+    ///
+    /// // Change the YMD formatter to a YMDT formatter, after loading day period names.
+    /// // This assumes that the locale uses Abbreviated names for the given semantic skeleton!
+    /// let mut names = FixedCalendarDateTimeNames::from_formatter(prefs, formatter).cast_into_fset::<YMDT>();
+    /// names.include_day_period_names(DayPeriodNameLength::Abbreviated).unwrap();
+    /// let formatter = names.try_into_formatter(YMD::long().with_time_hm()).unwrap();
+    ///
+    /// assert_writeable_eq!(
+    ///     formatter.format(&DateTime {
+    ///         date: Date::try_new_gregorian(2025, 2, 13).unwrap(),
+    ///         time: Time::start_of_day(),
+    ///     }),
+    ///     "13 de febrero de 2025, 12:00 a.m."
+    /// );
+    /// ```
+    pub fn from_formatter(
+        prefs: DateTimeFormatterPreferences,
+        formatter: FixedCalendarDateTimeFormatter<C, FSet>,
+    ) -> Self {
+        let metadata = DateTimeNamesMetadata::new_from_previous(&formatter.names);
+        Self {
+            prefs,
+            inner: formatter.names,
+            metadata,
             _calendar: PhantomData,
         }
     }
 
+    fn from_parts(
+        prefs: DateTimeFormatterPreferences,
+        parts: (RawDateTimeNames<FSet>, DateTimeNamesMetadata),
+    ) -> Self {
+        Self {
+            prefs,
+            inner: parts.0,
+            metadata: parts.1,
+            _calendar: PhantomData,
+        }
+    }
+}
+
+impl<C: CldrCalendar, FSet: DateTimeMarkers> FixedCalendarDateTimeNames<C, FSet>
+where
+    FSet::D: TypedDateDataMarkers<C>,
+    FSet::T: TimeMarkers,
+    FSet::Z: ZoneMarkers,
+    FSet: GetField<CompositeFieldSet>,
+{
+    /// Loads a pattern for the given field set with compiled data and returns a [`FixedCalendarDateTimeFormatter`].
+    ///
+    /// The names in the current [`FixedCalendarDateTimeNames`] _must_ be sufficient for the field set.
+    /// If not, the input object will be returned with an error.
+    ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::datetime::fieldsets::T;
+    /// use icu::datetime::input::Time;
+    /// use icu::datetime::pattern::{
+    ///     DayPeriodNameLength, FixedCalendarDateTimeNames,
+    /// };
+    /// use icu::locale::locale;
+    /// use writeable::assert_writeable_eq;
+    ///
+    /// let names =
+    ///     FixedCalendarDateTimeNames::<(), _>::new_without_number_formatting(
+    ///         locale!("es-MX").into(),
+    ///     );
+    ///
+    /// let field_set = T::hm();
+    ///
+    /// // Cannot convert yet: no names are loaded
+    /// let mut names = names.try_into_formatter(field_set).unwrap_err().1;
+    ///
+    /// // Load the data we need:
+    /// names
+    ///     .include_day_period_names(DayPeriodNameLength::Abbreviated)
+    ///     .unwrap();
+    /// names.include_decimal_formatter().unwrap();
+    ///
+    /// // Now the conversion is successful:
+    /// let formatter = names.try_into_formatter(field_set).unwrap();
+    ///
+    /// assert_writeable_eq!(formatter.format(&Time::start_of_day()), "12:00 a.m.");
+    /// ```
+    #[allow(clippy::result_large_err)] // returning self as the error
+    #[cfg(feature = "compiled_data")]
+    pub fn try_into_formatter(
+        self,
+        field_set: FSet,
+    ) -> Result<FixedCalendarDateTimeFormatter<C, FSet>, (DateTimeFormatterLoadError, Self)>
+    where
+        crate::provider::Baked: AllFixedCalendarPatternDataMarkers<C, FSet>,
+    {
+        FixedCalendarDateTimeFormatter::try_new_internal_with_names(
+            &crate::provider::Baked,
+            &EmptyDataProvider,
+            &ExternalLoaderUnstable(&EmptyDataProvider), // for decimals only
+            self.prefs,
+            field_set.get_field(),
+            self.inner,
+            self.metadata,
+        )
+        .map_err(|e| (e.0, Self::from_parts(self.prefs, e.1)))
+    }
+
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_into_formatter)]
+    #[allow(clippy::result_large_err)] // returning self as the error
+    pub fn try_into_formatter_unstable<P>(
+        self,
+        provider: &P,
+        field_set: FSet,
+    ) -> Result<FixedCalendarDateTimeFormatter<C, FSet>, (DateTimeFormatterLoadError, Self)>
+    where
+        P: AllFixedCalendarPatternDataMarkers<C, FSet> + ?Sized,
+    {
+        FixedCalendarDateTimeFormatter::try_new_internal_with_names(
+            provider,
+            &EmptyDataProvider,
+            &ExternalLoaderUnstable(&EmptyDataProvider), // for decimals only
+            self.prefs,
+            field_set.get_field(),
+            self.inner,
+            self.metadata,
+        )
+        .map_err(|e| (e.0, Self::from_parts(self.prefs, e.1)))
+    }
+
+    #[doc = icu_provider::gen_buffer_unstable_docs!(BUFFER, Self::try_into_formatter)]
+    #[allow(clippy::result_large_err)] // returning self as the error
+    #[cfg(feature = "serde")]
+    pub fn try_into_formatter_with_buffer_provider<P>(
+        self,
+        provider: &P,
+        field_set: FSet,
+    ) -> Result<FixedCalendarDateTimeFormatter<C, FSet>, (DateTimeFormatterLoadError, Self)>
+    where
+        P: BufferProvider + ?Sized,
+    {
+        FixedCalendarDateTimeFormatter::try_new_internal_with_names(
+            &provider.as_deserializing(),
+            &EmptyDataProvider,
+            &ExternalLoaderUnstable(&EmptyDataProvider), // for decimals only
+            self.prefs,
+            field_set.get_field(),
+            self.inner,
+            self.metadata,
+        )
+        .map_err(|e| (e.0, Self::from_parts(self.prefs, e.1)))
+    }
+}
+
+impl<FSet: DateTimeNamesMarker> DateTimeNames<FSet> {
+    /// Creates a completely empty instance, not even with number formatting,
+    /// with the specified calendar.
+    pub fn try_new_with_calendar_without_number_formatting(
+        prefs: DateTimeFormatterPreferences,
+        calendar: AnyCalendar,
+    ) -> Result<Self, UnsupportedCalendarError> {
+        let kind = calendar.kind();
+        let calendar = FormattableAnyCalendar::try_from_any_calendar(calendar)
+            .ok_or(UnsupportedCalendarError { kind })?;
+        Ok(Self {
+            inner: FixedCalendarDateTimeNames::new_without_number_formatting(prefs),
+            calendar,
+        })
+    }
+
+    /// Creates an instance with the names and calendar loaded in a [`DateTimeFormatter`].
+    ///
+    /// This function requires passing in the [`DateTimeFormatterPreferences`] because it is not
+    /// retained in the formatter. Pass the same value or else unexpected behavior may occur.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::datetime::input::Date;
+    /// use icu::datetime::input::{DateTime, Time};
+    /// use icu::datetime::DateTimeFormatter;
+    /// use icu::datetime::fieldsets::{YMD, YMDT};
+    /// use icu::datetime::pattern::{DateTimeNames, DayPeriodNameLength};
+    /// use icu::locale::locale;
+    /// use writeable::assert_writeable_eq;
+    ///
+    /// let prefs = locale!("es-MX").into();
+    ///
+    /// let formatter =
+    ///     DateTimeFormatter::try_new(
+    ///         prefs,
+    ///         YMD::long(),
+    ///     )
+    ///     .unwrap();
+    ///
+    /// assert_writeable_eq!(
+    ///     formatter.format(&Date::try_new_iso(2025, 2, 13).unwrap()),
+    ///     "13 de febrero de 2025"
+    /// );
+    ///
+    /// // Change the YMD formatter to a YMDT formatter, after loading day period names.
+    /// // This assumes that the locale uses Abbreviated names for the given semantic skeleton!
+    /// let mut names = DateTimeNames::from_formatter(prefs, formatter).cast_into_fset::<YMDT>();
+    /// names.as_mut().include_day_period_names(DayPeriodNameLength::Abbreviated).unwrap();
+    /// let formatter = names.try_into_formatter(YMD::long().with_time_hm()).unwrap();
+    ///
+    /// assert_writeable_eq!(
+    ///     formatter.format(&DateTime {
+    ///         date: Date::try_new_iso(2025, 2, 13).unwrap(),
+    ///         time: Time::start_of_day(),
+    ///     }),
+    ///     "13 de febrero de 2025, 12:00 a.m."
+    /// );
+    /// ```
+    pub fn from_formatter(
+        prefs: DateTimeFormatterPreferences,
+        formatter: DateTimeFormatter<FSet>,
+    ) -> Self {
+        let metadata = DateTimeNamesMetadata::new_from_previous(&formatter.names);
+        Self::from_parts(
+            prefs,
+            (formatter.calendar.into_tagged(), formatter.names, metadata),
+        )
+    }
+
+    fn from_parts(
+        prefs: DateTimeFormatterPreferences,
+        parts: (
+            FormattableAnyCalendar,
+            RawDateTimeNames<FSet>,
+            DateTimeNamesMetadata,
+        ),
+    ) -> Self {
+        Self {
+            inner: FixedCalendarDateTimeNames {
+                prefs,
+                inner: parts.1,
+                metadata: parts.2,
+                _calendar: PhantomData,
+            },
+            calendar: parts.0,
+        }
+    }
+}
+
+impl<FSet: DateTimeMarkers> DateTimeNames<FSet>
+where
+    FSet::D: DateDataMarkers,
+    FSet::T: TimeMarkers,
+    FSet::Z: ZoneMarkers,
+    FSet: GetField<CompositeFieldSet>,
+{
+    /// Loads a pattern for the given field set with compiled data and returns a [`DateTimeFormatter`].
+    ///
+    /// The names in the current [`DateTimeNames`] _must_ be sufficient for the field set.
+    /// If not, the input object will be returned with an error.
+    ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::calendar::{AnyCalendar, AnyCalendarKind};
+    /// use icu::datetime::fieldsets::T;
+    /// use icu::datetime::input::Time;
+    /// use icu::datetime::pattern::{DateTimeNames, DayPeriodNameLength};
+    /// use icu::locale::locale;
+    /// use writeable::assert_writeable_eq;
+    ///
+    /// let kind = AnyCalendarKind::new(locale!("es-MX").into());
+    /// let calendar = AnyCalendar::new(kind);
+    ///
+    /// let names = DateTimeNames::try_new_with_calendar_without_number_formatting(
+    ///     locale!("es-MX").into(),
+    ///     calendar,
+    /// )
+    /// .expect("All locale-default calendars are supported");
+    ///
+    /// let field_set = T::hm();
+    ///
+    /// // Cannot convert yet: no names are loaded
+    /// let mut names = names.try_into_formatter(field_set).unwrap_err().1;
+    ///
+    /// // Load the data we need:
+    /// names
+    ///     .as_mut()
+    ///     .include_day_period_names(DayPeriodNameLength::Abbreviated)
+    ///     .unwrap();
+    /// names.as_mut().include_decimal_formatter().unwrap();
+    ///
+    /// // Now the conversion is successful:
+    /// let formatter = names.try_into_formatter(field_set).unwrap();
+    ///
+    /// assert_writeable_eq!(formatter.format(&Time::start_of_day()), "12:00 a.m.");
+    /// ```
+    #[allow(clippy::result_large_err)] // returning self as the error
+    #[cfg(feature = "compiled_data")]
+    pub fn try_into_formatter(
+        self,
+        field_set: FSet,
+    ) -> Result<DateTimeFormatter<FSet>, (DateTimeFormatterLoadError, Self)>
+    where
+        crate::provider::Baked: AllAnyCalendarPatternDataMarkers<FSet>,
+    {
+        DateTimeFormatter::try_new_internal_with_calendar_and_names(
+            &crate::provider::Baked,
+            &EmptyDataProvider,
+            &ExternalLoaderUnstable(&EmptyDataProvider), // for decimals only
+            self.inner.prefs,
+            field_set.get_field(),
+            self.calendar,
+            self.inner.inner,
+            self.inner.metadata,
+        )
+        .map_err(|e| (e.0, Self::from_parts(self.inner.prefs, e.1)))
+    }
+
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_into_formatter)]
+    #[allow(clippy::result_large_err)] // returning self as the error
+    pub fn try_into_formatter_unstable<P>(
+        self,
+        provider: &P,
+        field_set: FSet,
+    ) -> Result<DateTimeFormatter<FSet>, (DateTimeFormatterLoadError, Self)>
+    where
+        P: AllAnyCalendarPatternDataMarkers<FSet> + ?Sized,
+    {
+        DateTimeFormatter::try_new_internal_with_calendar_and_names(
+            provider,
+            &EmptyDataProvider,
+            &ExternalLoaderUnstable(&EmptyDataProvider), // for decimals only
+            self.inner.prefs,
+            field_set.get_field(),
+            self.calendar,
+            self.inner.inner,
+            self.inner.metadata,
+        )
+        .map_err(|e| (e.0, Self::from_parts(self.inner.prefs, e.1)))
+    }
+
+    #[doc = icu_provider::gen_buffer_unstable_docs!(BUFFER, Self::try_into_formatter)]
+    #[allow(clippy::result_large_err)] // returning self as the error
+    #[cfg(feature = "serde")]
+    pub fn try_into_formatter_with_buffer_provider<P>(
+        self,
+        provider: &P,
+        field_set: FSet,
+    ) -> Result<DateTimeFormatter<FSet>, (DateTimeFormatterLoadError, Self)>
+    where
+        P: BufferProvider + ?Sized,
+    {
+        DateTimeFormatter::try_new_internal_with_calendar_and_names(
+            &provider.as_deserializing(),
+            &EmptyDataProvider,
+            &ExternalLoaderUnstable(&EmptyDataProvider), // for decimals only
+            self.inner.prefs,
+            field_set.get_field(),
+            self.calendar,
+            self.inner.inner,
+            self.inner.metadata,
+        )
+        .map_err(|e| (e.0, Self::from_parts(self.inner.prefs, e.1)))
+    }
+}
+
+impl<FSet: DateTimeNamesMarker> AsRef<FixedCalendarDateTimeNames<(), FSet>>
+    for DateTimeNames<FSet>
+{
+    fn as_ref(&self) -> &FixedCalendarDateTimeNames<(), FSet> {
+        &self.inner
+    }
+}
+
+impl<FSet: DateTimeNamesMarker> AsMut<FixedCalendarDateTimeNames<(), FSet>>
+    for DateTimeNames<FSet>
+{
+    fn as_mut(&mut self) -> &mut FixedCalendarDateTimeNames<(), FSet> {
+        &mut self.inner
+    }
+}
+
+impl<C: CldrCalendar, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, FSet> {
     /// Loads year (era or cycle) names for the specified length.
     ///
-    /// Does not support multiple field symbols or lengths. See #4337
+    /// Does not support multiple field symbols or lengths. See [#4337](https://github.com/unicode-org/icu4x/issues/4337)
     pub fn load_year_names<P>(
         &mut self,
         provider: &P,
-        field_length: FieldLength,
+        length: YearNameLength,
     ) -> Result<&mut Self, PatternLoadError>
     where
-        P: DataProvider<C::YearNamesV1Marker> + ?Sized,
+        P: DataProvider<C::YearNamesV1> + ?Sized,
     {
         self.inner.load_year_names(
-            &C::YearNamesV1Marker::bind(provider),
+            &C::YearNamesV1::bind(provider),
             self.prefs,
-            field_length,
+            length,
+            length.to_approximate_error_field(),
         )?;
         Ok(self)
     }
 
-    /// Includes year (era or cycle) names for the specified length.
+    /// Includes year (era or cycle) names for the specified length with compiled data.
     ///
-    /// Does not support multiple field symbols or lengths. See #4337
+    /// Does not support multiple field symbols or lengths. See [#4337](https://github.com/unicode-org/icu4x/issues/4337)
+    ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
     /// # Examples
     ///
     /// ```
     /// use icu::calendar::Gregorian;
-    /// use icu::datetime::fields::FieldLength;
+    /// use icu::datetime::pattern::FixedCalendarDateTimeNames;
     /// use icu::datetime::pattern::PatternLoadError;
-    /// use icu::datetime::pattern::TypedDateTimeNames;
+    /// use icu::datetime::pattern::YearNameLength;
     /// use icu::locale::locale;
     ///
     /// let mut names =
-    ///     TypedDateTimeNames::<Gregorian>::try_new(locale!("und").into())
+    ///     FixedCalendarDateTimeNames::<Gregorian>::try_new(locale!("und").into())
     ///         .unwrap();
     ///
     /// // First length is successful:
-    /// names.include_year_names(FieldLength::Four).unwrap();
+    /// names.include_year_names(YearNameLength::Wide).unwrap();
     ///
     /// // Attempting to load the first length a second time will succeed:
-    /// names.include_year_names(FieldLength::Four).unwrap();
+    /// names.include_year_names(YearNameLength::Wide).unwrap();
     ///
     /// // But loading a new length fails:
     /// assert!(matches!(
-    ///     names.include_year_names(FieldLength::Three),
-    ///     Err(PatternLoadError::ConflictingField(_))
+    ///     names.include_year_names(YearNameLength::Abbreviated),
+    ///     Err(PatternLoadError::ConflictingField { .. })
     /// ));
     /// ```
     #[cfg(feature = "compiled_data")]
     pub fn include_year_names(
         &mut self,
-        field_length: FieldLength,
+        length: YearNameLength,
     ) -> Result<&mut Self, PatternLoadError>
     where
-        crate::provider::Baked: icu_provider::DataProvider<<C as CldrCalendar>::YearNamesV1Marker>,
+        crate::provider::Baked: icu_provider::DataProvider<<C as CldrCalendar>::YearNamesV1>,
     {
-        self.load_year_names(&crate::provider::Baked, field_length)
+        self.load_year_names(&crate::provider::Baked, length)
     }
 
     /// Loads month names for the specified symbol and length.
     ///
-    /// Does not support multiple field symbols or lengths. See #4337
+    /// Does not support multiple field symbols or lengths. See [#4337](https://github.com/unicode-org/icu4x/issues/4337)
     pub fn load_month_names<P>(
         &mut self,
         provider: &P,
-        field_symbol: fields::Month,
-        field_length: FieldLength,
+        length: MonthNameLength,
     ) -> Result<&mut Self, PatternLoadError>
     where
-        P: DataProvider<C::MonthNamesV1Marker> + ?Sized,
+        P: DataProvider<C::MonthNamesV1> + ?Sized,
     {
         self.inner.load_month_names(
-            &C::MonthNamesV1Marker::bind(provider),
+            &C::MonthNamesV1::bind(provider),
             self.prefs,
-            field_symbol,
-            field_length,
+            length,
+            length.to_approximate_error_field(),
         )?;
         Ok(self)
     }
 
-    /// Includes month names for the specified symbol and length.
+    /// Includes month names for the specified symbol and length with compiled data.
     ///
-    /// Does not support multiple field symbols or lengths. See #4337
+    /// Does not support multiple field symbols or lengths. See [#4337](https://github.com/unicode-org/icu4x/issues/4337)
+    ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
     /// # Examples
     ///
     /// ```
     /// use icu::calendar::Gregorian;
-    /// use icu::datetime::fields::FieldLength;
+    /// use icu::datetime::pattern::FixedCalendarDateTimeNames;
+    /// use icu::datetime::pattern::MonthNameLength;
     /// use icu::datetime::pattern::PatternLoadError;
-    /// use icu::datetime::pattern::TypedDateTimeNames;
     /// use icu::locale::locale;
     ///
     /// let mut names =
-    ///     TypedDateTimeNames::<Gregorian>::try_new(locale!("und").into())
+    ///     FixedCalendarDateTimeNames::<Gregorian>::try_new(locale!("und").into())
     ///         .unwrap();
-    /// let field_symbol = icu::datetime::fields::Month::Format;
-    /// let alt_field_symbol = icu::datetime::fields::Month::StandAlone;
     ///
     /// // First length is successful:
-    /// names
-    ///     .include_month_names(field_symbol, FieldLength::Four)
-    ///     .unwrap();
+    /// names.include_month_names(MonthNameLength::Wide).unwrap();
     ///
     /// // Attempting to load the first length a second time will succeed:
-    /// names
-    ///     .include_month_names(field_symbol, FieldLength::Four)
-    ///     .unwrap();
+    /// names.include_month_names(MonthNameLength::Wide).unwrap();
     ///
     /// // But loading a new symbol or length fails:
     /// assert!(matches!(
-    ///     names.include_month_names(alt_field_symbol, FieldLength::Four),
-    ///     Err(PatternLoadError::ConflictingField(_))
+    ///     names.include_month_names(MonthNameLength::StandaloneWide),
+    ///     Err(PatternLoadError::ConflictingField { .. })
     /// ));
     /// assert!(matches!(
-    ///     names.include_month_names(field_symbol, FieldLength::Three),
-    ///     Err(PatternLoadError::ConflictingField(_))
+    ///     names.include_month_names(MonthNameLength::Abbreviated),
+    ///     Err(PatternLoadError::ConflictingField { .. })
     /// ));
     /// ```
     #[cfg(feature = "compiled_data")]
     pub fn include_month_names(
         &mut self,
-        field_symbol: fields::Month,
-        field_length: FieldLength,
+        length: MonthNameLength,
     ) -> Result<&mut Self, PatternLoadError>
     where
-        crate::provider::Baked: icu_provider::DataProvider<<C as CldrCalendar>::MonthNamesV1Marker>,
+        crate::provider::Baked: icu_provider::DataProvider<<C as CldrCalendar>::MonthNamesV1>,
     {
-        self.load_month_names(&crate::provider::Baked, field_symbol, field_length)
+        self.load_month_names(&crate::provider::Baked, length)
     }
+}
 
+impl<C, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, FSet> {
     /// Loads day period names for the specified length.
     ///
-    /// Does not support multiple field symbols or lengths. See #4337
+    /// Does not support multiple field symbols or lengths. See [#4337](https://github.com/unicode-org/icu4x/issues/4337)
     pub fn load_day_period_names<P>(
         &mut self,
         provider: &P,
-        field_length: FieldLength,
+        length: DayPeriodNameLength,
     ) -> Result<&mut Self, PatternLoadError>
     where
-        P: DataProvider<DayPeriodNamesV1Marker> + ?Sized,
+        P: DataProvider<DayPeriodNamesV1> + ?Sized,
     {
-        let provider = DayPeriodNamesV1Marker::bind(provider);
-        self.inner
-            .load_day_period_names(&provider, self.prefs, field_length)?;
+        let provider = DayPeriodNamesV1::bind(provider);
+        self.inner.load_day_period_names(
+            &provider,
+            self.prefs,
+            length,
+            length.to_approximate_error_field(),
+        )?;
         Ok(self)
     }
 
-    /// Includes day period names for the specified length.
+    /// Includes day period names for the specified length with compiled data.
     ///
-    /// Does not support multiple field symbols or lengths. See #4337
+    /// Does not support multiple field symbols or lengths. See [#4337](https://github.com/unicode-org/icu4x/issues/4337)
+    ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
     /// # Examples
     ///
     /// ```
     /// use icu::calendar::Gregorian;
-    /// use icu::datetime::fields::FieldLength;
+    /// use icu::datetime::pattern::DayPeriodNameLength;
+    /// use icu::datetime::pattern::FixedCalendarDateTimeNames;
     /// use icu::datetime::pattern::PatternLoadError;
-    /// use icu::datetime::pattern::TypedDateTimeNames;
     /// use icu::locale::locale;
     ///
     /// let mut names =
-    ///     TypedDateTimeNames::<Gregorian>::try_new(locale!("und").into())
+    ///     FixedCalendarDateTimeNames::<Gregorian>::try_new(locale!("und").into())
     ///         .unwrap();
     ///
     /// // First length is successful:
-    /// names.include_day_period_names(FieldLength::Four).unwrap();
+    /// names
+    ///     .include_day_period_names(DayPeriodNameLength::Wide)
+    ///     .unwrap();
     ///
     /// // Attempting to load the first length a second time will succeed:
-    /// names.include_day_period_names(FieldLength::Four).unwrap();
+    /// names
+    ///     .include_day_period_names(DayPeriodNameLength::Wide)
+    ///     .unwrap();
     ///
     /// // But loading a new length fails:
     /// assert!(matches!(
-    ///     names.include_day_period_names(FieldLength::Three),
-    ///     Err(PatternLoadError::ConflictingField(_))
+    ///     names.include_day_period_names(DayPeriodNameLength::Abbreviated),
+    ///     Err(PatternLoadError::ConflictingField { .. })
     /// ));
     /// ```
     #[cfg(feature = "compiled_data")]
     pub fn include_day_period_names(
         &mut self,
-        field_length: FieldLength,
-    ) -> Result<&mut Self, PatternLoadError>
-    where
-        crate::provider::Baked: icu_provider::DataProvider<DayPeriodNamesV1Marker>,
-    {
-        self.load_day_period_names(&crate::provider::Baked, field_length)
+        length: DayPeriodNameLength,
+    ) -> Result<&mut Self, PatternLoadError> {
+        self.load_day_period_names(&crate::provider::Baked, length)
     }
 
     /// Loads weekday names for the specified symbol and length.
     ///
-    /// Does not support multiple field symbols or lengths. See #4337
+    /// Does not support multiple field symbols or lengths. See [#4337](https://github.com/unicode-org/icu4x/issues/4337)
     pub fn load_weekday_names<P>(
         &mut self,
         provider: &P,
-        field_symbol: fields::Weekday,
-        field_length: FieldLength,
+        length: WeekdayNameLength,
     ) -> Result<&mut Self, PatternLoadError>
     where
-        P: DataProvider<WeekdayNamesV1Marker> + ?Sized,
+        P: DataProvider<WeekdayNamesV1> + ?Sized,
     {
         self.inner.load_weekday_names(
-            &WeekdayNamesV1Marker::bind(provider),
+            &WeekdayNamesV1::bind(provider),
             self.prefs,
-            field_symbol,
-            field_length,
+            length,
+            length.to_approximate_error_field(),
         )?;
         Ok(self)
     }
 
-    /// Includes weekday names for the specified symbol and length.
+    /// Includes weekday names for the specified symbol and length with compiled data.
     ///
-    /// Does not support multiple field symbols or lengths. See #4337
+    /// Does not support multiple field symbols or lengths. See [#4337](https://github.com/unicode-org/icu4x/issues/4337)
+    ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
     /// # Examples
     ///
     /// ```
     /// use icu::calendar::Gregorian;
-    /// use icu::datetime::fields::FieldLength;
+    /// use icu::datetime::pattern::FixedCalendarDateTimeNames;
     /// use icu::datetime::pattern::PatternLoadError;
-    /// use icu::datetime::pattern::TypedDateTimeNames;
+    /// use icu::datetime::pattern::WeekdayNameLength;
     /// use icu::locale::locale;
     ///
     /// let mut names =
-    ///     TypedDateTimeNames::<Gregorian>::try_new(locale!("und").into())
+    ///     FixedCalendarDateTimeNames::<Gregorian>::try_new(locale!("und").into())
     ///         .unwrap();
-    /// let field_symbol = icu::datetime::fields::Weekday::Format;
-    /// let alt_field_symbol = icu::datetime::fields::Weekday::StandAlone;
     ///
     /// // First length is successful:
     /// names
-    ///     .include_weekday_names(field_symbol, FieldLength::Four)
+    ///     .include_weekday_names(WeekdayNameLength::Wide)
     ///     .unwrap();
     ///
     /// // Attempting to load the first length a second time will succeed:
     /// names
-    ///     .include_weekday_names(field_symbol, FieldLength::Four)
+    ///     .include_weekday_names(WeekdayNameLength::Wide)
     ///     .unwrap();
     ///
     /// // But loading a new symbol or length fails:
     /// assert!(matches!(
-    ///     names.include_weekday_names(alt_field_symbol, FieldLength::Four),
-    ///     Err(PatternLoadError::ConflictingField(_))
+    ///     names.include_weekday_names(WeekdayNameLength::StandaloneWide),
+    ///     Err(PatternLoadError::ConflictingField { .. })
     /// ));
     /// assert!(matches!(
-    ///     names.include_weekday_names(field_symbol, FieldLength::Three),
-    ///     Err(PatternLoadError::ConflictingField(_))
+    ///     names.include_weekday_names(WeekdayNameLength::Abbreviated),
+    ///     Err(PatternLoadError::ConflictingField { .. })
     /// ));
     /// ```
     #[cfg(feature = "compiled_data")]
     pub fn include_weekday_names(
         &mut self,
-        field_symbol: fields::Weekday,
-        field_length: FieldLength,
-    ) -> Result<&mut Self, PatternLoadError>
-    where
-        crate::provider::Baked: icu_provider::DataProvider<WeekdayNamesV1Marker>,
-    {
-        self.load_weekday_names(&crate::provider::Baked, field_symbol, field_length)
+        length: WeekdayNameLength,
+    ) -> Result<&mut Self, PatternLoadError> {
+        self.load_weekday_names(&crate::provider::Baked, length)
     }
 
     /// Loads shared essential patterns for time zone formatting.
@@ -628,42 +1558,54 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
         provider: &P,
     ) -> Result<&mut Self, PatternLoadError>
     where
-        P: DataProvider<tz::EssentialsV1Marker> + ?Sized,
+        P: DataProvider<tz::EssentialsV1> + ?Sized,
     {
         self.inner
-            .load_time_zone_essentials(&tz::EssentialsV1Marker::bind(provider), self.prefs)?;
+            .load_time_zone_essentials(&tz::EssentialsV1::bind(provider), self.prefs)?;
         Ok(self)
     }
 
-    /// Includes shared essential patterns for time zone formatting.
+    /// Includes shared essential patterns for time zone formatting with compiled data.
     ///
     /// This data should always be loaded when performing time zone formatting.
     /// By itself, it allows localized offset formats.
+    ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
     /// # Examples
     ///
     /// ```
     /// use icu::calendar::Gregorian;
     /// use icu::datetime::fieldsets::enums::ZoneFieldSet;
+    /// use icu::datetime::input::ZonedDateTime;
     /// use icu::datetime::pattern::DateTimePattern;
-    /// use icu::datetime::pattern::TypedDateTimeNames;
+    /// use icu::datetime::pattern::FixedCalendarDateTimeNames;
     /// use icu::locale::locale;
-    /// use icu::timezone::IxdtfParser;
+    /// use icu::time::zone::{IanaParser, VariantOffsetsCalculator};
     /// use writeable::assert_try_writeable_eq;
     ///
-    /// let mut zone_london_winter = IxdtfParser::new()
-    ///     .try_from_str("2024-01-01T00:00:00+00:00[Europe/London]")
-    ///     .unwrap()
-    ///     .zone;
-    /// let mut zone_london_summer = IxdtfParser::new()
-    ///     .try_from_str("2024-07-01T00:00:00+01:00[Europe/London]")
-    ///     .unwrap()
-    ///     .zone;
-    ///
-    /// let mut names = TypedDateTimeNames::<Gregorian, ZoneFieldSet>::try_new(
-    ///     locale!("en-GB").into(),
+    /// let mut zone_london_winter = ZonedDateTime::try_full_from_str(
+    ///     "2024-01-01T00:00:00+00:00[Europe/London]",
+    ///     Gregorian,
+    ///     IanaParser::new(),
+    ///     VariantOffsetsCalculator::new(),
     /// )
-    /// .unwrap();
+    /// .unwrap()
+    /// .zone;
+    /// let mut zone_london_summer = ZonedDateTime::try_full_from_str(
+    ///     "2024-07-01T00:00:00+01:00[Europe/London]",
+    ///     Gregorian,
+    ///     IanaParser::new(),
+    ///     VariantOffsetsCalculator::new(),
+    /// )
+    /// .unwrap()
+    /// .zone;
+    ///
+    /// let mut names =
+    ///     FixedCalendarDateTimeNames::<Gregorian, ZoneFieldSet>::try_new(
+    ///         locale!("en-GB").into(),
+    ///     )
+    ///     .unwrap();
     ///
     /// names.include_time_zone_essentials().unwrap();
     ///
@@ -675,7 +1617,7 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
     ///     names
     ///         .with_pattern_unchecked(&pattern)
     ///         .format(&zone_london_winter),
-    ///     "Your time zone is: GMT",
+    ///     "Your time zone is: GMT+00:00",
     /// );
     /// assert_try_writeable_eq!(
     ///     names
@@ -724,10 +1666,7 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
     /// );
     /// ```
     #[cfg(feature = "compiled_data")]
-    pub fn include_time_zone_essentials(&mut self) -> Result<&mut Self, PatternLoadError>
-    where
-        crate::provider::Baked: icu_provider::DataProvider<tz::EssentialsV1Marker>,
-    {
+    pub fn include_time_zone_essentials(&mut self) -> Result<&mut Self, PatternLoadError> {
         self.load_time_zone_essentials(&crate::provider::Baked)
     }
 
@@ -737,41 +1676,52 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
         provider: &P,
     ) -> Result<&mut Self, PatternLoadError>
     where
-        P: DataProvider<tz::LocationsV1Marker> + ?Sized,
+        P: DataProvider<tz::LocationsOverrideV1> + DataProvider<tz::LocationsRootV1> + ?Sized,
     {
-        self.inner
-            .load_time_zone_location_names(&tz::LocationsV1Marker::bind(provider), self.prefs)?;
+        self.inner.load_time_zone_location_names(
+            &tz::LocationsOverrideV1::bind(provider),
+            &tz::LocationsRootV1::bind(provider),
+            self.prefs,
+        )?;
         Ok(self)
     }
 
-    /// Includes location names for time zone formatting.
+    /// Includes location names for time zone formatting with compiled data.
     ///
     /// Important: When performing manual time zone data loading, in addition to the
     /// specific time zone format data, also call either:
     ///
-    /// - [`TypedDateTimeNames::include_time_zone_essentials`]
-    /// - [`TypedDateTimeNames::load_time_zone_essentials`]
+    /// - [`FixedCalendarDateTimeNames::include_time_zone_essentials`]
+    /// - [`FixedCalendarDateTimeNames::load_time_zone_essentials`]
+    ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
     /// # Examples
     ///
     /// ```
     /// use icu::calendar::Gregorian;
     /// use icu::datetime::fieldsets::enums::ZoneFieldSet;
+    /// use icu::datetime::input::ZonedDateTime;
     /// use icu::datetime::pattern::DateTimePattern;
-    /// use icu::datetime::pattern::TypedDateTimeNames;
+    /// use icu::datetime::pattern::FixedCalendarDateTimeNames;
     /// use icu::locale::locale;
-    /// use icu::timezone::IxdtfParser;
+    /// use icu::time::zone::{IanaParser, VariantOffsetsCalculator};
     /// use writeable::assert_try_writeable_eq;
     ///
-    /// let mut zone_london_winter = IxdtfParser::new()
-    ///     .try_from_str("2024-01-01T00:00:00+00:00[Europe/London]")
-    ///     .unwrap()
-    ///     .zone;
-    ///
-    /// let mut names = TypedDateTimeNames::<Gregorian, ZoneFieldSet>::try_new(
-    ///     locale!("en-GB").into(),
+    /// let mut zone_london_winter = ZonedDateTime::try_full_from_str(
+    ///     "2024-01-01T00:00:00+00:00[Europe/London]",
+    ///     Gregorian,
+    ///     IanaParser::new(),
+    ///     VariantOffsetsCalculator::new(),
     /// )
-    /// .unwrap();
+    /// .unwrap()
+    /// .zone;
+    ///
+    /// let mut names =
+    ///     FixedCalendarDateTimeNames::<Gregorian, ZoneFieldSet>::try_new(
+    ///         locale!("en-GB").into(),
+    ///     )
+    ///     .unwrap();
     ///
     /// names.include_time_zone_essentials().unwrap();
     /// names.include_time_zone_location_names().unwrap();
@@ -788,11 +1738,80 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
     /// );
     /// ```
     #[cfg(feature = "compiled_data")]
-    pub fn include_time_zone_location_names(&mut self) -> Result<&mut Self, PatternLoadError>
-    where
-        crate::provider::Baked: icu_provider::DataProvider<tz::MzGenericShortV1Marker>,
-    {
+    pub fn include_time_zone_location_names(&mut self) -> Result<&mut Self, PatternLoadError> {
         self.load_time_zone_location_names(&crate::provider::Baked)
+    }
+
+    /// Loads exemplar city names for time zone formatting.
+    pub fn load_time_zone_exemplar_city_names<P>(
+        &mut self,
+        provider: &P,
+    ) -> Result<&mut Self, PatternLoadError>
+    where
+        P: DataProvider<tz::CitiesOverrideV1> + DataProvider<tz::CitiesRootV1> + ?Sized,
+    {
+        self.inner.load_time_zone_exemplar_city_names(
+            &tz::CitiesOverrideV1::bind(provider),
+            &tz::CitiesRootV1::bind(provider),
+            self.prefs,
+        )?;
+        Ok(self)
+    }
+
+    /// Includes exemplar city names for time zone formatting with compiled data.
+    ///
+    /// Important: The `VVV` format requires location data in addition to exemplar
+    /// city data. Also call either:
+    ///
+    /// - [`FixedCalendarDateTimeNames::include_time_zone_location_names`]
+    /// - [`FixedCalendarDateTimeNames::load_time_zone_location_names`]
+    ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::calendar::Gregorian;
+    /// use icu::datetime::fieldsets::enums::ZoneFieldSet;
+    /// use icu::datetime::input::ZonedDateTime;
+    /// use icu::datetime::pattern::DateTimePattern;
+    /// use icu::datetime::pattern::FixedCalendarDateTimeNames;
+    /// use icu::locale::locale;
+    /// use icu::time::zone::{IanaParser, VariantOffsetsCalculator};
+    /// use writeable::assert_try_writeable_eq;
+    ///
+    /// let mut zone_london_winter = ZonedDateTime::try_full_from_str(
+    ///     "2024-01-01T00:00:00+00:00[Europe/London]",
+    ///     Gregorian,
+    ///     IanaParser::new(),
+    ///     VariantOffsetsCalculator::new(),
+    /// )
+    /// .unwrap()
+    /// .zone;
+    ///
+    /// let mut names =
+    ///     FixedCalendarDateTimeNames::<Gregorian, ZoneFieldSet>::try_new(
+    ///         locale!("en-GB").into(),
+    ///     )
+    ///     .unwrap();
+    ///
+    /// names.include_time_zone_location_names().unwrap();
+    /// names.include_time_zone_exemplar_city_names().unwrap();
+    ///
+    /// // Try `VVVV`:
+    /// let pattern_str = "'Your time zone is:' VVV";
+    /// let pattern: DateTimePattern = pattern_str.parse().unwrap();
+    ///
+    /// assert_try_writeable_eq!(
+    ///     names
+    ///         .with_pattern_unchecked(&pattern)
+    ///         .format(&zone_london_winter),
+    ///     "Your time zone is: London",
+    /// );
+    /// ```
+    #[cfg(feature = "compiled_data")]
+    pub fn include_time_zone_exemplar_city_names(&mut self) -> Result<&mut Self, PatternLoadError> {
+        self.load_time_zone_exemplar_city_names(&crate::provider::Baked)
     }
 
     /// Loads generic non-location long time zone names.
@@ -801,48 +1820,65 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
         provider: &P,
     ) -> Result<&mut Self, PatternLoadError>
     where
-        P: DataProvider<tz::MzGenericLongV1Marker> + DataProvider<tz::MzPeriodV1Marker> + ?Sized,
+        P: DataProvider<tz::MzGenericLongV1>
+            + DataProvider<tz::MzStandardLongV1>
+            + DataProvider<tz::MzPeriodV1>
+            + ?Sized,
     {
         self.inner.load_time_zone_generic_long_names(
-            &tz::MzGenericLongV1Marker::bind(provider),
-            &tz::MzPeriodV1Marker::bind(provider),
+            &tz::MzGenericLongV1::bind(provider),
+            &tz::MzStandardLongV1::bind(provider),
+            &tz::MzPeriodV1::bind(provider),
             self.prefs,
+            &mut self.metadata,
         )?;
         Ok(self)
     }
 
-    /// Includes generic non-location long time zone names.
+    /// Includes generic non-location long time zone names with compiled data.
     ///
     /// Important: When performing manual time zone data loading, in addition to the
     /// specific time zone format data, also call either:
     ///
-    /// - [`TypedDateTimeNames::include_time_zone_essentials`]
-    /// - [`TypedDateTimeNames::load_time_zone_essentials`]
+    /// - [`FixedCalendarDateTimeNames::include_time_zone_essentials`]
+    /// - [`FixedCalendarDateTimeNames::load_time_zone_essentials`]
+    ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
     /// # Examples
     ///
     /// ```
     /// use icu::calendar::Gregorian;
     /// use icu::datetime::fieldsets::enums::ZoneFieldSet;
+    /// use icu::datetime::input::ZonedDateTime;
     /// use icu::datetime::pattern::DateTimePattern;
-    /// use icu::datetime::pattern::TypedDateTimeNames;
+    /// use icu::datetime::pattern::FixedCalendarDateTimeNames;
     /// use icu::locale::locale;
-    /// use icu::timezone::IxdtfParser;
+    /// use icu::time::zone::{IanaParser, VariantOffsetsCalculator};
     /// use writeable::assert_try_writeable_eq;
     ///
-    /// let mut zone_london_winter = IxdtfParser::new()
-    ///     .try_from_str("2024-01-01T00:00:00+00:00[Europe/London]")
-    ///     .unwrap()
-    ///     .zone;
-    /// let mut zone_london_summer = IxdtfParser::new()
-    ///     .try_from_str("2024-07-01T00:00:00+01:00[Europe/London]")
-    ///     .unwrap()
-    ///     .zone;
-    ///
-    /// let mut names = TypedDateTimeNames::<Gregorian, ZoneFieldSet>::try_new(
-    ///     locale!("en-GB").into(),
+    /// let mut zone_london_winter = ZonedDateTime::try_full_from_str(
+    ///     "2024-01-01T00:00:00+00:00[Europe/London]",
+    ///     Gregorian,
+    ///     IanaParser::new(),
+    ///     VariantOffsetsCalculator::new(),
     /// )
-    /// .unwrap();
+    /// .unwrap()
+    /// .zone;
+    /// let mut zone_london_summer = ZonedDateTime::try_full_from_str(
+    ///     "2024-07-01T00:00:00+01:00[Europe/London]",
+    ///     Gregorian,
+    ///     IanaParser::new(),
+    ///     VariantOffsetsCalculator::new(),
+    /// )
+    /// .unwrap()
+    /// .zone;
+    ///
+    /// let mut names =
+    ///     FixedCalendarDateTimeNames::<Gregorian, ZoneFieldSet>::try_new(
+    ///         locale!("en-GB").into(),
+    ///     )
+    ///     .unwrap();
     ///
     /// names.include_time_zone_essentials().unwrap();
     /// names.include_time_zone_generic_long_names().unwrap();
@@ -861,14 +1897,15 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
     ///     names
     ///         .with_pattern_unchecked(&pattern)
     ///         .format(&zone_london_summer),
-    ///     "Your time zone is: Greenwich Mean Time", // TODO
+    ///     // Note: The year-round generic name of this zone is Greenwich
+    ///     // Mean Time, which may be confusing since the zone observes
+    ///     // daylight savings time. See:
+    ///     // <https://unicode-org.atlassian.net/issues/CLDR-18378>
+    ///     "Your time zone is: Greenwich Mean Time",
     /// );
     /// ```
     #[cfg(feature = "compiled_data")]
-    pub fn include_time_zone_generic_long_names(&mut self) -> Result<&mut Self, PatternLoadError>
-    where
-        crate::provider::Baked: icu_provider::DataProvider<tz::MzGenericLongV1Marker>,
-    {
+    pub fn include_time_zone_generic_long_names(&mut self) -> Result<&mut Self, PatternLoadError> {
         self.load_time_zone_generic_long_names(&crate::provider::Baked)
     }
 
@@ -878,48 +1915,61 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
         provider: &P,
     ) -> Result<&mut Self, PatternLoadError>
     where
-        P: DataProvider<tz::MzGenericShortV1Marker> + DataProvider<tz::MzPeriodV1Marker> + ?Sized,
+        P: DataProvider<tz::MzGenericShortV1> + DataProvider<tz::MzPeriodV1> + ?Sized,
     {
         self.inner.load_time_zone_generic_short_names(
-            &tz::MzGenericShortV1Marker::bind(provider),
-            &tz::MzPeriodV1Marker::bind(provider),
+            &tz::MzGenericShortV1::bind(provider),
+            &tz::MzPeriodV1::bind(provider),
             self.prefs,
+            &mut self.metadata,
         )?;
         Ok(self)
     }
 
-    /// Includes generic non-location short time zone names.
+    /// Includes generic non-location short time zone names with compiled data.
     ///
     /// Important: When performing manual time zone data loading, in addition to the
     /// specific time zone format data, also call either:
     ///
-    /// - [`TypedDateTimeNames::include_time_zone_essentials`]
-    /// - [`TypedDateTimeNames::load_time_zone_essentials`]
+    /// - [`FixedCalendarDateTimeNames::include_time_zone_essentials`]
+    /// - [`FixedCalendarDateTimeNames::load_time_zone_essentials`]
+    ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
     /// # Examples
     ///
     /// ```
     /// use icu::calendar::Gregorian;
     /// use icu::datetime::fieldsets::enums::ZoneFieldSet;
+    /// use icu::datetime::input::ZonedDateTime;
     /// use icu::datetime::pattern::DateTimePattern;
-    /// use icu::datetime::pattern::TypedDateTimeNames;
+    /// use icu::datetime::pattern::FixedCalendarDateTimeNames;
     /// use icu::locale::locale;
-    /// use icu::timezone::IxdtfParser;
+    /// use icu::time::zone::{IanaParser, VariantOffsetsCalculator};
     /// use writeable::assert_try_writeable_eq;
     ///
-    /// let mut zone_london_winter = IxdtfParser::new()
-    ///     .try_from_str("2024-01-01T00:00:00+00:00[Europe/London]")
-    ///     .unwrap()
-    ///     .zone;
-    /// let mut zone_london_summer = IxdtfParser::new()
-    ///     .try_from_str("2024-07-01T00:00:00+01:00[Europe/London]")
-    ///     .unwrap()
-    ///     .zone;
-    ///
-    /// let mut names = TypedDateTimeNames::<Gregorian, ZoneFieldSet>::try_new(
-    ///     locale!("en-GB").into(),
+    /// let mut zone_london_winter = ZonedDateTime::try_full_from_str(
+    ///     "2024-01-01T00:00:00+00:00[Europe/London]",
+    ///     Gregorian,
+    ///     IanaParser::new(),
+    ///     VariantOffsetsCalculator::new(),
     /// )
-    /// .unwrap();
+    /// .unwrap()
+    /// .zone;
+    /// let mut zone_london_summer = ZonedDateTime::try_full_from_str(
+    ///     "2024-07-01T00:00:00+01:00[Europe/London]",
+    ///     Gregorian,
+    ///     IanaParser::new(),
+    ///     VariantOffsetsCalculator::new(),
+    /// )
+    /// .unwrap()
+    /// .zone;
+    ///
+    /// let mut names =
+    ///     FixedCalendarDateTimeNames::<Gregorian, ZoneFieldSet>::try_new(
+    ///         locale!("en-GB").into(),
+    ///     )
+    ///     .unwrap();
     ///
     /// names.include_time_zone_essentials().unwrap();
     /// names.include_time_zone_generic_short_names().unwrap();
@@ -938,14 +1988,15 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
     ///     names
     ///         .with_pattern_unchecked(&pattern)
     ///         .format(&zone_london_summer),
-    ///     "Your time zone is: GMT", // TODO
+    ///     // Note: The year-round generic name of this zone is Greenwich
+    ///     // Mean Time, which may be confusing since the zone observes
+    ///     // daylight savings time. See:
+    ///     // <https://unicode-org.atlassian.net/issues/CLDR-18378>
+    ///     "Your time zone is: GMT",
     /// );
     /// ```
     #[cfg(feature = "compiled_data")]
-    pub fn include_time_zone_generic_short_names(&mut self) -> Result<&mut Self, PatternLoadError>
-    where
-        crate::provider::Baked: icu_provider::DataProvider<tz::MzGenericShortV1Marker>,
-    {
+    pub fn include_time_zone_generic_short_names(&mut self) -> Result<&mut Self, PatternLoadError> {
         self.load_time_zone_generic_short_names(&crate::provider::Baked)
     }
 
@@ -955,48 +2006,65 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
         provider: &P,
     ) -> Result<&mut Self, PatternLoadError>
     where
-        P: DataProvider<tz::MzSpecificLongV1Marker> + DataProvider<tz::MzPeriodV1Marker> + ?Sized,
+        P: DataProvider<tz::MzSpecificLongV1>
+            + DataProvider<tz::MzStandardLongV1>
+            + DataProvider<tz::MzPeriodV1>
+            + ?Sized,
     {
         self.inner.load_time_zone_specific_long_names(
-            &tz::MzSpecificLongV1Marker::bind(provider),
-            &tz::MzPeriodV1Marker::bind(provider),
+            &tz::MzSpecificLongV1::bind(provider),
+            &tz::MzStandardLongV1::bind(provider),
+            &tz::MzPeriodV1::bind(provider),
             self.prefs,
+            &mut self.metadata,
         )?;
         Ok(self)
     }
 
-    /// Includes specific non-location long time zone names.
+    /// Includes specific non-location long time zone names with compiled data.
     ///
     /// Important: When performing manual time zone data loading, in addition to the
     /// specific time zone format data, also call either:
     ///
-    /// - [`TypedDateTimeNames::include_time_zone_essentials`]
-    /// - [`TypedDateTimeNames::load_time_zone_essentials`]
+    /// - [`FixedCalendarDateTimeNames::include_time_zone_essentials`]
+    /// - [`FixedCalendarDateTimeNames::load_time_zone_essentials`]
+    ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
     /// # Examples
     ///
     /// ```
     /// use icu::calendar::Gregorian;
     /// use icu::datetime::fieldsets::enums::ZoneFieldSet;
+    /// use icu::datetime::input::ZonedDateTime;
     /// use icu::datetime::pattern::DateTimePattern;
-    /// use icu::datetime::pattern::TypedDateTimeNames;
+    /// use icu::datetime::pattern::FixedCalendarDateTimeNames;
     /// use icu::locale::locale;
-    /// use icu::timezone::IxdtfParser;
+    /// use icu::time::zone::{IanaParser, VariantOffsetsCalculator};
     /// use writeable::assert_try_writeable_eq;
     ///
-    /// let mut zone_london_winter = IxdtfParser::new()
-    ///     .try_from_str("2024-01-01T00:00:00+00:00[Europe/London]")
-    ///     .unwrap()
-    ///     .zone;
-    /// let mut zone_london_summer = IxdtfParser::new()
-    ///     .try_from_str("2024-07-01T00:00:00+01:00[Europe/London]")
-    ///     .unwrap()
-    ///     .zone;
-    ///
-    /// let mut names = TypedDateTimeNames::<Gregorian, ZoneFieldSet>::try_new(
-    ///     locale!("en-GB").into(),
+    /// let mut zone_london_winter = ZonedDateTime::try_full_from_str(
+    ///     "2024-01-01T00:00:00+00:00[Europe/London]",
+    ///     Gregorian,
+    ///     IanaParser::new(),
+    ///     VariantOffsetsCalculator::new(),
     /// )
-    /// .unwrap();
+    /// .unwrap()
+    /// .zone;
+    /// let mut zone_london_summer = ZonedDateTime::try_full_from_str(
+    ///     "2024-07-01T00:00:00+01:00[Europe/London]",
+    ///     Gregorian,
+    ///     IanaParser::new(),
+    ///     VariantOffsetsCalculator::new(),
+    /// )
+    /// .unwrap()
+    /// .zone;
+    ///
+    /// let mut names =
+    ///     FixedCalendarDateTimeNames::<Gregorian, ZoneFieldSet>::try_new(
+    ///         locale!("en-GB").into(),
+    ///     )
+    ///     .unwrap();
     ///
     /// names.include_time_zone_essentials().unwrap();
     /// names.include_time_zone_specific_long_names().unwrap();
@@ -1019,10 +2087,7 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
     /// );
     /// ```
     #[cfg(feature = "compiled_data")]
-    pub fn include_time_zone_specific_long_names(&mut self) -> Result<&mut Self, PatternLoadError>
-    where
-        crate::provider::Baked: icu_provider::DataProvider<tz::MzSpecificLongV1Marker>,
-    {
+    pub fn include_time_zone_specific_long_names(&mut self) -> Result<&mut Self, PatternLoadError> {
         self.load_time_zone_specific_long_names(&crate::provider::Baked)
     }
 
@@ -1032,48 +2097,61 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
         provider: &P,
     ) -> Result<&mut Self, PatternLoadError>
     where
-        P: DataProvider<tz::MzSpecificShortV1Marker> + DataProvider<tz::MzPeriodV1Marker> + ?Sized,
+        P: DataProvider<tz::MzSpecificShortV1> + DataProvider<tz::MzPeriodV1> + ?Sized,
     {
         self.inner.load_time_zone_specific_short_names(
-            &tz::MzSpecificShortV1Marker::bind(provider),
-            &tz::MzPeriodV1Marker::bind(provider),
+            &tz::MzSpecificShortV1::bind(provider),
+            &tz::MzPeriodV1::bind(provider),
             self.prefs,
+            &mut self.metadata,
         )?;
         Ok(self)
     }
 
-    /// Includes specific non-location short time zone names.
+    /// Includes specific non-location short time zone names with compiled data.
     ///
     /// Important: When performing manual time zone data loading, in addition to the
     /// specific time zone format data, also call either:
     ///
-    /// - [`TypedDateTimeNames::include_time_zone_essentials`]
-    /// - [`TypedDateTimeNames::load_time_zone_essentials`]
+    /// - [`FixedCalendarDateTimeNames::include_time_zone_essentials`]
+    /// - [`FixedCalendarDateTimeNames::load_time_zone_essentials`]
+    ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
     /// # Examples
     ///
     /// ```
     /// use icu::calendar::Gregorian;
     /// use icu::datetime::fieldsets::enums::ZoneFieldSet;
+    /// use icu::datetime::input::ZonedDateTime;
     /// use icu::datetime::pattern::DateTimePattern;
-    /// use icu::datetime::pattern::TypedDateTimeNames;
+    /// use icu::datetime::pattern::FixedCalendarDateTimeNames;
     /// use icu::locale::locale;
-    /// use icu::timezone::IxdtfParser;
+    /// use icu::time::zone::{IanaParser, VariantOffsetsCalculator};
     /// use writeable::assert_try_writeable_eq;
     ///
-    /// let mut zone_london_winter = IxdtfParser::new()
-    ///     .try_from_str("2024-01-01T00:00:00+00:00[Europe/London]")
-    ///     .unwrap()
-    ///     .zone;
-    /// let mut zone_london_summer = IxdtfParser::new()
-    ///     .try_from_str("2024-07-01T00:00:00+01:00[Europe/London]")
-    ///     .unwrap()
-    ///     .zone;
-    ///
-    /// let mut names = TypedDateTimeNames::<Gregorian, ZoneFieldSet>::try_new(
-    ///     locale!("en-GB").into(),
+    /// let mut zone_london_winter = ZonedDateTime::try_full_from_str(
+    ///     "2024-01-01T00:00:00+00:00[Europe/London]",
+    ///     Gregorian,
+    ///     IanaParser::new(),
+    ///     VariantOffsetsCalculator::new(),
     /// )
-    /// .unwrap();
+    /// .unwrap()
+    /// .zone;
+    /// let mut zone_london_summer = ZonedDateTime::try_full_from_str(
+    ///     "2024-07-01T00:00:00+01:00[Europe/London]",
+    ///     Gregorian,
+    ///     IanaParser::new(),
+    ///     VariantOffsetsCalculator::new(),
+    /// )
+    /// .unwrap()
+    /// .zone;
+    ///
+    /// let mut names =
+    ///     FixedCalendarDateTimeNames::<Gregorian, ZoneFieldSet>::try_new(
+    ///         locale!("en-GB").into(),
+    ///     )
+    ///     .unwrap();
     ///
     /// names.include_time_zone_essentials().unwrap();
     /// names.include_time_zone_specific_short_names().unwrap();
@@ -1096,40 +2174,320 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
     /// );
     /// ```
     #[cfg(feature = "compiled_data")]
-    pub fn include_time_zone_specific_short_names(&mut self) -> Result<&mut Self, PatternLoadError>
-    where
-        crate::provider::Baked: icu_provider::DataProvider<tz::MzSpecificShortV1Marker>,
-    {
+    pub fn include_time_zone_specific_short_names(
+        &mut self,
+    ) -> Result<&mut Self, PatternLoadError> {
         self.load_time_zone_specific_short_names(&crate::provider::Baked)
     }
 
-    /// Loads a [`FixedDecimalFormatter`] from a data provider.
-    #[inline]
-    pub fn load_fixed_decimal_formatter<P>(&mut self, provider: &P) -> Result<&mut Self, DataError>
+    /// Loads generic non-location short time zone names
+    /// and all data required for its fallback formats.
+    ///
+    /// See [`GenericShort`](crate::fieldsets::zone::GenericShort)
+    pub fn load_time_zone_generic_short_names_with_fallback<P>(
+        &mut self,
+        provider: &P,
+    ) -> Result<&mut Self, PatternLoadError>
     where
-        P: DataProvider<DecimalSymbolsV2Marker> + DataProvider<DecimalDigitsV1Marker> + ?Sized,
+        P: DataProvider<DecimalSymbolsV1>
+            + DataProvider<DecimalDigitsV1>
+            + DataProvider<tz::EssentialsV1>
+            + DataProvider<tz::LocationsOverrideV1>
+            + DataProvider<tz::LocationsRootV1>
+            + DataProvider<tz::MzGenericShortV1>
+            + DataProvider<tz::MzPeriodV1>
+            + ?Sized,
     {
-        self.inner
-            .load_fixed_decimal_formatter(&ExternalLoaderUnstable(provider), self.prefs)?;
+        let error_field = self.inner.load_time_zone_field_v_except_decimals(
+            &tz::EssentialsV1::bind(provider),
+            &tz::LocationsOverrideV1::bind(provider),
+            &tz::LocationsRootV1::bind(provider),
+            &tz::MzGenericShortV1::bind(provider),
+            &tz::MzPeriodV1::bind(provider),
+            self.prefs,
+            &mut self.metadata,
+        )?;
+        self.load_decimal_formatter(provider)
+            .map_err(|e| PatternLoadError::Data(e, error_field))?;
         Ok(self)
     }
 
-    /// Loads a [`FixedDecimalFormatter`] with compiled data.
+    /// Includes generic non-location short time zone names
+    /// and all data required for its fallback formats, with compiled data.
+    ///
+    /// See [`GenericShort`](crate::fieldsets::zone::GenericShort)
+    ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+    #[cfg(feature = "compiled_data")]
+    pub fn include_time_zone_generic_short_names_with_fallback(
+        &mut self,
+    ) -> Result<&mut Self, PatternLoadError> {
+        let error_field = self.inner.load_time_zone_field_v_except_decimals(
+            &tz::EssentialsV1::bind(&crate::provider::Baked),
+            &tz::LocationsOverrideV1::bind(&crate::provider::Baked),
+            &tz::LocationsRootV1::bind(&crate::provider::Baked),
+            &tz::MzGenericShortV1::bind(&crate::provider::Baked),
+            &tz::MzPeriodV1::bind(&crate::provider::Baked),
+            self.prefs,
+            &mut self.metadata,
+        )?;
+        self.include_decimal_formatter()
+            .map_err(|e| PatternLoadError::Data(e, error_field))?;
+        Ok(self)
+    }
+
+    /// Loads generic non-location long time zone names
+    /// and all data required for its fallback formats.
+    ///
+    /// See [`GenericLong`](crate::fieldsets::zone::GenericLong)
+    pub fn load_time_zone_generic_long_names_with_fallback<P>(
+        &mut self,
+        provider: &P,
+    ) -> Result<&mut Self, PatternLoadError>
+    where
+        P: DataProvider<DecimalSymbolsV1>
+            + DataProvider<DecimalDigitsV1>
+            + DataProvider<tz::EssentialsV1>
+            + DataProvider<tz::LocationsOverrideV1>
+            + DataProvider<tz::LocationsRootV1>
+            + DataProvider<tz::MzGenericLongV1>
+            + DataProvider<tz::MzStandardLongV1>
+            + DataProvider<tz::MzPeriodV1>
+            + ?Sized,
+    {
+        let error_field = self.inner.load_time_zone_field_vvvv_except_decimals(
+            &tz::EssentialsV1::bind(provider),
+            &tz::LocationsOverrideV1::bind(provider),
+            &tz::LocationsRootV1::bind(provider),
+            &tz::MzGenericLongV1::bind(provider),
+            &tz::MzStandardLongV1::bind(provider),
+            &tz::MzPeriodV1::bind(provider),
+            self.prefs,
+            &mut self.metadata,
+        )?;
+        self.load_decimal_formatter(provider)
+            .map_err(|e| PatternLoadError::Data(e, error_field))?;
+        Ok(self)
+    }
+
+    /// Includes generic non-location long time zone names
+    /// and all data required for its fallback formats, with compiled data.
+    ///
+    /// See [`GenericLong`](crate::fieldsets::zone::GenericLong)
+    ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+    #[cfg(feature = "compiled_data")]
+    pub fn include_time_zone_generic_long_names_with_fallback(
+        &mut self,
+    ) -> Result<&mut Self, PatternLoadError> {
+        let error_field = self.inner.load_time_zone_field_vvvv_except_decimals(
+            &tz::EssentialsV1::bind(&crate::provider::Baked),
+            &tz::LocationsOverrideV1::bind(&crate::provider::Baked),
+            &tz::LocationsRootV1::bind(&crate::provider::Baked),
+            &tz::MzGenericLongV1::bind(&crate::provider::Baked),
+            &tz::MzStandardLongV1::bind(&crate::provider::Baked),
+            &tz::MzPeriodV1::bind(&crate::provider::Baked),
+            self.prefs,
+            &mut self.metadata,
+        )?;
+        self.include_decimal_formatter()
+            .map_err(|e| PatternLoadError::Data(e, error_field))?;
+        Ok(self)
+    }
+
+    /// Loads specific non-location short time zone names
+    /// and all data required for its fallback formats
+    /// except for decimal formatting.
+    ///
+    /// See [`SpecificShort`](crate::fieldsets::zone::SpecificShort)
+    pub fn load_time_zone_specific_short_names_with_fallback<P>(
+        &mut self,
+        provider: &P,
+    ) -> Result<&mut Self, PatternLoadError>
+    where
+        P: DataProvider<DecimalSymbolsV1>
+            + DataProvider<DecimalDigitsV1>
+            + DataProvider<tz::EssentialsV1>
+            + DataProvider<tz::LocationsOverrideV1>
+            + DataProvider<tz::LocationsRootV1>
+            + DataProvider<tz::MzSpecificShortV1>
+            + DataProvider<tz::MzPeriodV1>
+            + ?Sized,
+    {
+        let error_field = self.inner.load_time_zone_field_z_except_decimals(
+            &tz::EssentialsV1::bind(provider),
+            &tz::MzSpecificShortV1::bind(provider),
+            &tz::MzPeriodV1::bind(provider),
+            self.prefs,
+            &mut self.metadata,
+        )?;
+        self.load_decimal_formatter(provider)
+            .map_err(|e| PatternLoadError::Data(e, error_field))?;
+        Ok(self)
+    }
+
+    /// Includes specific non-location short time zone names
+    /// and all data required for its fallback formats
+    /// except for decimal formatting, with compiled data.
+    ///
+    /// See [`SpecificShort`](crate::fieldsets::zone::SpecificShort)
+    ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+    #[cfg(feature = "compiled_data")]
+    pub fn include_time_zone_specific_short_names_with_fallback(
+        &mut self,
+    ) -> Result<&mut Self, PatternLoadError> {
+        let error_field = self.inner.load_time_zone_field_z_except_decimals(
+            &tz::EssentialsV1::bind(&crate::provider::Baked),
+            &tz::MzSpecificShortV1::bind(&crate::provider::Baked),
+            &tz::MzPeriodV1::bind(&crate::provider::Baked),
+            self.prefs,
+            &mut self.metadata,
+        )?;
+        self.include_decimal_formatter()
+            .map_err(|e| PatternLoadError::Data(e, error_field))?;
+        Ok(self)
+    }
+
+    /// Loads specific non-location long time zone names
+    /// and all data required for its fallback formats
+    /// except for decimal formatting.
+    ///
+    /// See [`SpecificLong`](crate::fieldsets::zone::SpecificLong)
+    pub fn load_time_zone_specific_long_names_with_fallback<P>(
+        &mut self,
+        provider: &P,
+    ) -> Result<&mut Self, PatternLoadError>
+    where
+        P: DataProvider<DecimalSymbolsV1>
+            + DataProvider<DecimalDigitsV1>
+            + DataProvider<tz::EssentialsV1>
+            + DataProvider<tz::LocationsOverrideV1>
+            + DataProvider<tz::LocationsRootV1>
+            + DataProvider<tz::MzSpecificLongV1>
+            + DataProvider<tz::MzStandardLongV1>
+            + DataProvider<tz::MzPeriodV1>
+            + ?Sized,
+    {
+        let error_field = self.inner.load_time_zone_field_zzzz_except_decimals(
+            &tz::EssentialsV1::bind(provider),
+            &tz::LocationsOverrideV1::bind(provider),
+            &tz::LocationsRootV1::bind(provider),
+            &tz::MzStandardLongV1::bind(provider),
+            &tz::MzSpecificLongV1::bind(provider),
+            &tz::MzPeriodV1::bind(provider),
+            self.prefs,
+            &mut self.metadata,
+        )?;
+        self.load_decimal_formatter(provider)
+            .map_err(|e| PatternLoadError::Data(e, error_field))?;
+        Ok(self)
+    }
+
+    /// Includes specific non-location long time zone names
+    /// and all data required for its fallback formats
+    /// except for decimal formatting, with compiled data.
+    ///
+    /// See [`SpecificLong`](crate::fieldsets::zone::SpecificLong)
+    ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+    #[cfg(feature = "compiled_data")]
+    pub fn include_time_zone_specific_long_names_with_fallback(
+        &mut self,
+    ) -> Result<&mut Self, PatternLoadError> {
+        let error_field = self.inner.load_time_zone_field_zzzz_except_decimals(
+            &tz::EssentialsV1::bind(&crate::provider::Baked),
+            &tz::LocationsOverrideV1::bind(&crate::provider::Baked),
+            &tz::LocationsRootV1::bind(&crate::provider::Baked),
+            &tz::MzStandardLongV1::bind(&crate::provider::Baked),
+            &tz::MzSpecificLongV1::bind(&crate::provider::Baked),
+            &tz::MzPeriodV1::bind(&crate::provider::Baked),
+            self.prefs,
+            &mut self.metadata,
+        )?;
+        self.include_decimal_formatter()
+            .map_err(|e| PatternLoadError::Data(e, error_field))?;
+        Ok(self)
+    }
+
+    /// Loads all data for short and long localized offset time zone formatting
+    /// except for decimal formatting.
+    ///
+    /// See:
+    ///
+    /// - [`LocalizedOffsetShort`](crate::fieldsets::zone::LocalizedOffsetShort)
+    /// - [`LocalizedOffsetLong`](crate::fieldsets::zone::LocalizedOffsetLong)
+    pub fn load_time_zone_localized_offset_names_with_fallback<P>(
+        &mut self,
+        provider: &P,
+    ) -> Result<&mut Self, PatternLoadError>
+    where
+        P: DataProvider<DecimalSymbolsV1>
+            + DataProvider<DecimalDigitsV1>
+            + DataProvider<tz::EssentialsV1>
+            + ?Sized,
+    {
+        let error_field = self.inner.load_time_zone_field_O_except_decimals(
+            &tz::EssentialsV1::bind(provider),
+            self.prefs,
+        )?;
+        self.load_decimal_formatter(provider)
+            .map_err(|e| PatternLoadError::Data(e, error_field))?;
+        Ok(self)
+    }
+
+    /// Includes all data for short and long localized offset time zone formatting
+    /// except for decimal formatting, with compiled data.
+    ///
+    /// See:
+    ///
+    /// - [`LocalizedOffsetShort`](crate::fieldsets::zone::LocalizedOffsetShort)
+    /// - [`LocalizedOffsetLong`](crate::fieldsets::zone::LocalizedOffsetLong)
+    ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+    #[cfg(feature = "compiled_data")]
+    pub fn include_time_zone_localized_offset_names_with_fallback(
+        &mut self,
+    ) -> Result<&mut Self, PatternLoadError> {
+        let error_field = self.inner.load_time_zone_field_O_except_decimals(
+            &tz::EssentialsV1::bind(&crate::provider::Baked),
+            self.prefs,
+        )?;
+        self.include_decimal_formatter()
+            .map_err(|e| PatternLoadError::Data(e, error_field))?;
+        Ok(self)
+    }
+
+    /// Loads a [`DecimalFormatter`] from a data provider.
+    #[inline]
+    pub fn load_decimal_formatter<P>(&mut self, provider: &P) -> Result<&mut Self, DataError>
+    where
+        P: DataProvider<DecimalSymbolsV1> + DataProvider<DecimalDigitsV1> + ?Sized,
+    {
+        self.inner
+            .load_decimal_formatter(&ExternalLoaderUnstable(provider), self.prefs)?;
+        Ok(self)
+    }
+
+    /// Loads a [`DecimalFormatter`] with compiled data.
+    ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
     /// # Examples
     ///
     /// ```
-    /// use icu::calendar::Time;
     /// use icu::datetime::fieldsets::enums::TimeFieldSet;
+    /// use icu::datetime::input::Time;
     /// use icu::datetime::pattern::DateTimePattern;
-    /// use icu::datetime::pattern::TypedDateTimeNames;
+    /// use icu::datetime::pattern::FixedCalendarDateTimeNames;
     /// use icu::locale::locale;
     /// use writeable::assert_try_writeable_eq;
     ///
-    /// let mut names =
-    ///     TypedDateTimeNames::<(), TimeFieldSet>::try_new(locale!("bn").into())
-    ///         .unwrap();
-    /// names.include_fixed_decimal_formatter();
+    /// let mut names = FixedCalendarDateTimeNames::<(), TimeFieldSet>::try_new(
+    ///     locale!("bn").into(),
+    /// )
+    /// .unwrap();
+    /// names.include_decimal_formatter();
     ///
     /// // Create a pattern for the time, which is all numbers
     /// let pattern_str = "'The current 24-hour time is:' HH:mm";
@@ -1144,14 +2502,18 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
     /// ```
     #[cfg(feature = "compiled_data")]
     #[inline]
-    pub fn include_fixed_decimal_formatter(&mut self) -> Result<&mut Self, DataError> {
+    pub fn include_decimal_formatter(&mut self) -> Result<&mut Self, DataError> {
         self.inner
-            .load_fixed_decimal_formatter(&ExternalLoaderCompiledData, self.prefs)?;
+            .load_decimal_formatter(&ExternalLoaderCompiledData, self.prefs)?;
         Ok(self)
     }
+}
 
-    /// Associates this [`TypedDateTimeNames`] with a pattern
+impl<C: CldrCalendar, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, FSet> {
+    /// Associates this [`FixedCalendarDateTimeNames`] with a pattern
     /// without checking that all necessary data is loaded.
+    ///
+    /// Use this function if you know at compile time what fields your pattern contains.
     #[inline]
     pub fn with_pattern_unchecked<'l>(
         &'l self,
@@ -1160,48 +2522,56 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
         DateTimePatternFormatter::new(pattern.as_borrowed(), self.inner.as_borrowed())
     }
 
-    /// Associates this [`TypedDateTimeNames`] with a datetime pattern
+    /// Associates this [`FixedCalendarDateTimeNames`] with a datetime pattern
     /// and loads all data required for that pattern.
     ///
-    /// Does not duplicate textual field symbols. See #4337
+    /// Does not duplicate textual field symbols. See [#4337](https://github.com/unicode-org/icu4x/issues/4337)
     pub fn load_for_pattern<'l, P>(
         &'l mut self,
         provider: &P,
         pattern: &'l DateTimePattern,
     ) -> Result<DateTimePatternFormatter<'l, C, FSet>, PatternLoadError>
     where
-        P: DataProvider<C::YearNamesV1Marker>
-            + DataProvider<C::MonthNamesV1Marker>
-            + DataProvider<WeekdayNamesV1Marker>
-            + DataProvider<DayPeriodNamesV1Marker>
-            + DataProvider<tz::EssentialsV1Marker>
-            + DataProvider<tz::LocationsV1Marker>
-            + DataProvider<tz::MzGenericLongV1Marker>
-            + DataProvider<tz::MzGenericShortV1Marker>
-            + DataProvider<tz::MzSpecificLongV1Marker>
-            + DataProvider<tz::MzSpecificShortV1Marker>
-            + DataProvider<tz::MzPeriodV1Marker>
-            + DataProvider<DecimalSymbolsV2Marker>
-            + DataProvider<DecimalDigitsV1Marker>
+        P: DataProvider<C::YearNamesV1>
+            + DataProvider<C::MonthNamesV1>
+            + DataProvider<WeekdayNamesV1>
+            + DataProvider<DayPeriodNamesV1>
+            + DataProvider<tz::EssentialsV1>
+            + DataProvider<tz::LocationsOverrideV1>
+            + DataProvider<tz::LocationsRootV1>
+            + DataProvider<tz::CitiesOverrideV1>
+            + DataProvider<tz::CitiesRootV1>
+            + DataProvider<tz::MzGenericLongV1>
+            + DataProvider<tz::MzGenericShortV1>
+            + DataProvider<tz::MzStandardLongV1>
+            + DataProvider<tz::MzSpecificLongV1>
+            + DataProvider<tz::MzSpecificShortV1>
+            + DataProvider<tz::MzPeriodV1>
+            + DataProvider<DecimalSymbolsV1>
+            + DataProvider<DecimalDigitsV1>
             + ?Sized,
     {
         let locale = self.prefs;
         self.inner.load_for_pattern(
-            &C::YearNamesV1Marker::bind(provider),
-            &C::MonthNamesV1Marker::bind(provider),
-            &WeekdayNamesV1Marker::bind(provider),
-            &DayPeriodNamesV1Marker::bind(provider),
-            // TODO: Consider making time zone name loading optional here (lots of data)
-            &tz::EssentialsV1Marker::bind(provider),
-            &tz::LocationsV1Marker::bind(provider),
-            &tz::MzGenericLongV1Marker::bind(provider),
-            &tz::MzGenericShortV1Marker::bind(provider),
-            &tz::MzSpecificLongV1Marker::bind(provider),
-            &tz::MzSpecificShortV1Marker::bind(provider),
-            &tz::MzPeriodV1Marker::bind(provider),
+            &C::YearNamesV1::bind(provider),
+            &C::MonthNamesV1::bind(provider),
+            &WeekdayNamesV1::bind(provider),
+            &DayPeriodNamesV1::bind(provider),
+            &tz::EssentialsV1::bind(provider),
+            &tz::LocationsRootV1::bind(provider),
+            &tz::LocationsOverrideV1::bind(provider),
+            &tz::CitiesRootV1::bind(provider),
+            &tz::CitiesOverrideV1::bind(provider),
+            &tz::MzGenericLongV1::bind(provider),
+            &tz::MzGenericShortV1::bind(provider),
+            &tz::MzStandardLongV1::bind(provider),
+            &tz::MzSpecificLongV1::bind(provider),
+            &tz::MzSpecificShortV1::bind(provider),
+            &tz::MzPeriodV1::bind(provider),
             &ExternalLoaderUnstable(provider),
             locale,
             pattern.iter_items(),
+            &mut self.metadata,
         )?;
         Ok(DateTimePatternFormatter::new(
             pattern.as_borrowed(),
@@ -1209,31 +2579,37 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
         ))
     }
 
-    /// Associates this [`TypedDateTimeNames`] with a pattern
-    /// and includes all data required for that pattern.
+    /// Associates this [`FixedCalendarDateTimeNames`] with a pattern
+    /// and includes all data required for that pattern, from compiled data.
     ///
-    /// Does not support duplicate textual field symbols. See #4337
+    /// Does not support duplicate textual field symbols. See [#4337](https://github.com/unicode-org/icu4x/issues/4337)
+    ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
     /// # Examples
     ///
     /// ```
-    /// use icu::calendar::DateTime;
     /// use icu::calendar::Gregorian;
+    /// use icu::datetime::input::Date;
+    /// use icu::datetime::input::{DateTime, Time};
     /// use icu::datetime::pattern::DateTimePattern;
-    /// use icu::datetime::pattern::TypedDateTimeNames;
+    /// use icu::datetime::pattern::FixedCalendarDateTimeNames;
     /// use icu::locale::locale;
     /// use writeable::assert_try_writeable_eq;
     ///
     /// let mut names =
-    ///     TypedDateTimeNames::<Gregorian>::try_new(locale!("en").into()).unwrap();
+    ///     FixedCalendarDateTimeNames::<Gregorian>::try_new(locale!("en").into())
+    ///         .unwrap();
     ///
     /// // Create a pattern from a pattern string:
     /// let pattern_str = "MMM d (EEEE) 'of year' y G 'at' h:mm a";
     /// let pattern: DateTimePattern = pattern_str.parse().unwrap();
     ///
     /// // Load data for the pattern and format:
-    /// let datetime =
-    ///     DateTime::try_new_gregorian(2023, 12, 5, 17, 43, 12).unwrap();
+    /// let datetime = DateTime {
+    ///     date: Date::try_new_gregorian(2023, 12, 5).unwrap(),
+    ///     time: Time::try_new(17, 43, 12, 0).unwrap(),
+    /// };
     /// assert_try_writeable_eq!(
     ///     names
     ///         .include_for_pattern(&pattern)
@@ -1248,29 +2624,30 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
         pattern: &'l DateTimePattern,
     ) -> Result<DateTimePatternFormatter<'l, C, FSet>, PatternLoadError>
     where
-        crate::provider::Baked: DataProvider<C::YearNamesV1Marker>
-            + DataProvider<C::MonthNamesV1Marker>
-            + DataProvider<WeekdayNamesV1Marker>
-            + DataProvider<DayPeriodNamesV1Marker>
-            + DataProvider<tz::EssentialsV1Marker>
-            + DataProvider<tz::MzGenericShortV1Marker>,
+        crate::provider::Baked: DataProvider<C::YearNamesV1> + DataProvider<C::MonthNamesV1>,
+        crate::provider::Baked: DataProvider<C::YearNamesV1> + DataProvider<C::MonthNamesV1>,
     {
         let locale = self.prefs;
         self.inner.load_for_pattern(
-            &C::YearNamesV1Marker::bind(&crate::provider::Baked),
-            &C::MonthNamesV1Marker::bind(&crate::provider::Baked),
-            &WeekdayNamesV1Marker::bind(&crate::provider::Baked),
-            &DayPeriodNamesV1Marker::bind(&crate::provider::Baked),
-            &tz::EssentialsV1Marker::bind(&crate::provider::Baked),
-            &tz::LocationsV1Marker::bind(&crate::provider::Baked),
-            &tz::MzGenericLongV1Marker::bind(&crate::provider::Baked),
-            &tz::MzGenericShortV1Marker::bind(&crate::provider::Baked),
-            &tz::MzSpecificLongV1Marker::bind(&crate::provider::Baked),
-            &tz::MzSpecificShortV1Marker::bind(&crate::provider::Baked),
-            &tz::MzPeriodV1Marker::bind(&crate::provider::Baked),
+            &C::YearNamesV1::bind(&crate::provider::Baked),
+            &C::MonthNamesV1::bind(&crate::provider::Baked),
+            &WeekdayNamesV1::bind(&crate::provider::Baked),
+            &DayPeriodNamesV1::bind(&crate::provider::Baked),
+            &tz::EssentialsV1::bind(&crate::provider::Baked),
+            &tz::LocationsOverrideV1::bind(&crate::provider::Baked),
+            &tz::LocationsRootV1::bind(&crate::provider::Baked),
+            &tz::CitiesOverrideV1::bind(&crate::provider::Baked),
+            &tz::CitiesRootV1::bind(&crate::provider::Baked),
+            &tz::MzGenericLongV1::bind(&crate::provider::Baked),
+            &tz::MzGenericShortV1::bind(&crate::provider::Baked),
+            &tz::MzStandardLongV1::bind(&crate::provider::Baked),
+            &tz::MzSpecificLongV1::bind(&crate::provider::Baked),
+            &tz::MzSpecificShortV1::bind(&crate::provider::Baked),
+            &tz::MzPeriodV1::bind(&crate::provider::Baked),
             &ExternalLoaderCompiledData,
             locale,
             pattern.iter_items(),
+            &mut self.metadata,
         )?;
         Ok(DateTimePatternFormatter::new(
             pattern.as_borrowed(),
@@ -1279,22 +2656,165 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> TypedDateTimeNames<C, FSet> {
     }
 }
 
+impl<C, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, FSet> {
+    /// Maps a [`FixedCalendarDateTimeNames`] of a specific `FSet` to a more general `FSet`.
+    ///
+    /// For example, this can transform a formatter for [`DateFieldSet`] to one for
+    /// [`CompositeDateTimeFieldSet`].
+    ///
+    /// [`DateFieldSet`]: crate::fieldsets::enums::DateFieldSet
+    /// [`CompositeDateTimeFieldSet`]: crate::fieldsets::enums::CompositeDateTimeFieldSet
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::calendar::Gregorian;
+    /// use icu::datetime::fieldsets::enums::{
+    ///     CompositeDateTimeFieldSet, DateFieldSet,
+    /// };
+    /// use icu::datetime::input::Date;
+    /// use icu::datetime::input::{DateTime, Time};
+    /// use icu::datetime::pattern::DateTimePattern;
+    /// use icu::datetime::pattern::FixedCalendarDateTimeNames;
+    /// use icu::datetime::pattern::MonthNameLength;
+    /// use icu::locale::locale;
+    /// use writeable::assert_try_writeable_eq;
+    ///
+    /// // Create an instance that can format abbreviated month names:
+    /// let mut names: FixedCalendarDateTimeNames<Gregorian, DateFieldSet> =
+    ///     FixedCalendarDateTimeNames::try_new(locale!("uk").into()).unwrap();
+    /// names
+    ///     .include_month_names(MonthNameLength::Abbreviated)
+    ///     .unwrap();
+    ///
+    /// // Test it with a pattern:
+    /// let pattern_str = "MMM d y";
+    /// let pattern: DateTimePattern = pattern_str.parse().unwrap();
+    /// let datetime = DateTime {
+    ///     date: Date::try_new_gregorian(2023, 11, 20).unwrap(),
+    ///     time: Time::start_of_day(),
+    /// };
+    /// assert_try_writeable_eq!(
+    ///     names.with_pattern_unchecked(&pattern).format(&datetime),
+    ///     "лист. 20 2023"
+    /// );
+    ///
+    /// // Convert the field set to `CompositeDateTimeFieldSet`:
+    /// let composite_names = names.cast_into_fset::<CompositeDateTimeFieldSet>();
+    ///
+    /// // It should still work:
+    /// assert_try_writeable_eq!(
+    ///     composite_names
+    ///         .with_pattern_unchecked(&pattern)
+    ///         .format(&datetime),
+    ///     "лист. 20 2023"
+    /// );
+    /// ```
+    ///
+    /// Converting into a narrower type is not supported:
+    ///
+    /// ```compile_fail,E0277
+    /// use icu::calendar::Gregorian;
+    /// use icu::datetime::pattern::FixedCalendarDateTimeNames;
+    /// use icu::datetime::fieldsets::enums::{DateFieldSet, CompositeDateTimeFieldSet};
+    ///
+    /// let composite_names: FixedCalendarDateTimeNames<Gregorian, CompositeDateTimeFieldSet> = todo!();
+    ///
+    /// // error[E0277]: the trait bound `(): From<DataPayloadWithVariables<DayPeriodNamesV1, FieldLength>>` is not satisfied
+    /// let narrow_names = composite_names.cast_into_fset::<DateFieldSet>();
+    /// ```
+    pub fn cast_into_fset<FSet2: DateTimeNamesFrom<FSet>>(
+        self,
+    ) -> FixedCalendarDateTimeNames<C, FSet2> {
+        FixedCalendarDateTimeNames {
+            prefs: self.prefs,
+            inner: self.inner.cast_into_fset(),
+            metadata: self.metadata,
+            _calendar: PhantomData,
+        }
+    }
+}
+
+impl<FSet: DateTimeNamesMarker> DateTimeNames<FSet> {
+    /// Maps a [`FixedCalendarDateTimeNames`] of a specific `FSet` to a more general `FSet`.
+    ///
+    /// For example, this can transform a formatter for [`DateFieldSet`] to one for
+    /// [`CompositeDateTimeFieldSet`].
+    ///
+    /// [`DateFieldSet`]: crate::fieldsets::enums::DateFieldSet
+    /// [`CompositeDateTimeFieldSet`]: crate::fieldsets::enums::CompositeDateTimeFieldSet
+    pub fn cast_into_fset<FSet2: DateTimeNamesFrom<FSet>>(self) -> DateTimeNames<FSet2> {
+        DateTimeNames {
+            inner: self.inner.cast_into_fset(),
+            calendar: self.calendar,
+        }
+    }
+}
+
 impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
     pub(crate) fn new_without_number_formatting() -> Self {
         Self {
-            year_names: <FSet::YearNames as DateTimeNamesHolderTrait<YearNamesV1Marker>>::Container::<_>::new_empty(),
-            month_names: <FSet::MonthNames as DateTimeNamesHolderTrait<MonthNamesV1Marker>>::Container::<_>::new_empty(),
-            weekday_names: <FSet::WeekdayNames as DateTimeNamesHolderTrait<WeekdayNamesV1Marker>>::Container::<_>::new_empty(),
-            dayperiod_names: <FSet::DayPeriodNames as DateTimeNamesHolderTrait<DayPeriodNamesV1Marker>>::Container::<_>::new_empty(),
-            zone_essentials: <FSet::ZoneEssentials as DateTimeNamesHolderTrait<tz::EssentialsV1Marker>>::Container::<_>::new_empty(),
-            locations_root: <FSet::ZoneLocations as DateTimeNamesHolderTrait<tz::LocationsV1Marker>>::Container::<_>::new_empty(),
-            locations: <FSet::ZoneLocations as DateTimeNamesHolderTrait<tz::LocationsV1Marker>>::Container::<_>::new_empty(),
-            mz_generic_long: <FSet::ZoneGenericLong as DateTimeNamesHolderTrait<tz::MzGenericLongV1Marker>>::Container::<_>::new_empty(),
-            mz_generic_short: <FSet::ZoneGenericShort as DateTimeNamesHolderTrait<tz::MzGenericShortV1Marker>>::Container::<_>::new_empty(),
-            mz_specific_long: <FSet::ZoneSpecificLong as DateTimeNamesHolderTrait<tz::MzSpecificLongV1Marker>>::Container::<_>::new_empty(),
-            mz_specific_short: <FSet::ZoneSpecificShort as DateTimeNamesHolderTrait<tz::MzSpecificShortV1Marker>>::Container::<_>::new_empty(),
-            mz_periods: <FSet::MetazoneLookup as DateTimeNamesHolderTrait<tz::MzPeriodV1Marker>>::Container::<_>::new_empty(),
-            fixed_decimal_formatter: None,
+            year_names: <FSet::YearNames as NamesContainer<
+                YearNamesV1,
+                YearNameLength,
+            >>::Container::new_empty(),
+            month_names: <FSet::MonthNames as NamesContainer<
+                MonthNamesV1,
+                MonthNameLength,
+            >>::Container::new_empty(),
+            weekday_names: <FSet::WeekdayNames as NamesContainer<
+                WeekdayNamesV1,
+                WeekdayNameLength,
+            >>::Container::new_empty(),
+            dayperiod_names: <FSet::DayPeriodNames as NamesContainer<
+                DayPeriodNamesV1,
+                DayPeriodNameLength,
+            >>::Container::new_empty(),
+            zone_essentials: <FSet::ZoneEssentials as NamesContainer<
+                tz::EssentialsV1,
+                (),
+            >>::Container::new_empty(),
+            locations_root: <FSet::ZoneLocationsRoot as NamesContainer<
+                tz::LocationsRootV1,
+                (),
+            >>::Container::new_empty(),
+            locations: <FSet::ZoneLocations as NamesContainer<
+                tz::LocationsOverrideV1,
+                (),
+            >>::Container::new_empty(),
+            exemplars: <FSet::ZoneExemplars as NamesContainer<
+                tz::CitiesOverrideV1,
+                (),
+            >>::Container::new_empty(),
+            exemplars_root: <FSet::ZoneExemplarsRoot as NamesContainer<
+                tz::CitiesRootV1,
+                (),
+            >>::Container::new_empty(),
+            mz_generic_long: <FSet::ZoneGenericLong as NamesContainer<
+                tz::MzGenericLongV1,
+                (),
+            >>::Container::new_empty(),
+            mz_generic_short: <FSet::ZoneGenericShort as NamesContainer<
+                tz::MzGenericShortV1,
+                (),
+            >>::Container::new_empty(),
+            mz_standard_long: <FSet::ZoneStandardLong as NamesContainer<
+                tz::MzStandardLongV1,
+                (),
+            >>::Container::new_empty(),
+            mz_specific_long: <FSet::ZoneSpecificLong as NamesContainer<
+                tz::MzSpecificLongV1,
+                (),
+            >>::Container::new_empty(),
+            mz_specific_short: <FSet::ZoneSpecificShort as NamesContainer<
+                tz::MzSpecificShortV1,
+                (),
+            >>::Container::new_empty(),
+            mz_periods: <FSet::MetazoneLookup as NamesContainer<
+                tz::MzPeriodV1,
+                (),
+            >>::Container::new_empty(),
+            decimal_formatter: None,
             _marker: PhantomData,
         }
     }
@@ -1308,12 +2828,15 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
             zone_essentials: self.zone_essentials.get().inner,
             locations_root: self.locations_root.get().inner,
             locations: self.locations.get().inner,
+            exemplars_root: self.exemplars_root.get().inner,
+            exemplars: self.exemplars.get().inner,
             mz_generic_long: self.mz_generic_long.get().inner,
             mz_generic_short: self.mz_generic_short.get().inner,
+            mz_standard_long: self.mz_standard_long.get().inner,
             mz_specific_long: self.mz_specific_long.get().inner,
             mz_specific_short: self.mz_specific_short.get().inner,
             mz_periods: self.mz_periods.get().inner,
-            fixed_decimal_formatter: self.fixed_decimal_formatter.as_ref(),
+            decimal_formatter: self.decimal_formatter.as_ref(),
         }
     }
 
@@ -1321,38 +2844,24 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
         &mut self,
         provider: &P,
         prefs: DateTimeFormatterPreferences,
-        field_length: FieldLength,
+        length: YearNameLength,
+        error_field: ErrorField,
     ) -> Result<(), PatternLoadError>
     where
-        P: BoundDataProvider<YearNamesV1Marker> + ?Sized,
+        P: BoundDataProvider<YearNamesV1> + ?Sized,
     {
-        let locale = provider.bound_marker().make_locale(prefs.locale_prefs);
-        let field = fields::Field {
-            symbol: FieldSymbol::Era,
-            length: field_length,
-        };
-        // UTS 35 says that "G..GGG" are all Abbreviated
-        let field_length = field_length.numeric_to_abbr();
-        let variables = field_length;
+        let attributes = length.to_attributes();
+        let locale = provider
+            .bound_marker()
+            .make_locale(prefs.locale_preferences);
         let req = DataRequest {
-            id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                marker_attrs::name_attr_for(
-                    marker_attrs::Context::Format,
-                    match field_length {
-                        FieldLength::Three => marker_attrs::Length::Abbr,
-                        FieldLength::Five => marker_attrs::Length::Narrow,
-                        FieldLength::Four => marker_attrs::Length::Wide,
-                        _ => return Err(PatternLoadError::UnsupportedLength(field)),
-                    },
-                ),
-                &locale,
-            ),
+            id: DataIdentifierBorrowed::for_marker_attributes_and_locale(attributes, &locale),
             ..Default::default()
         };
         self.year_names
-            .load_put(provider, req, variables)
-            .map_err(|e| MaybePayloadError::into_load_error(e, field))?
-            .map_err(|e| PatternLoadError::Data(e, field))?;
+            .load_put(provider, req, length)
+            .map_err(|e| MaybePayloadError::into_load_error(e, error_field))?
+            .map_err(|e| PatternLoadError::Data(e, error_field))?;
         Ok(())
     }
 
@@ -1360,40 +2869,24 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
         &mut self,
         provider: &P,
         prefs: DateTimeFormatterPreferences,
-        field_symbol: fields::Month,
-        field_length: FieldLength,
+        length: MonthNameLength,
+        error_field: ErrorField,
     ) -> Result<(), PatternLoadError>
     where
-        P: BoundDataProvider<MonthNamesV1Marker> + ?Sized,
+        P: BoundDataProvider<MonthNamesV1> + ?Sized,
     {
-        let locale = provider.bound_marker().make_locale(prefs.locale_prefs);
-        let field = fields::Field {
-            symbol: FieldSymbol::Month(field_symbol),
-            length: field_length,
-        };
-        let variables = (field_symbol, field_length);
+        let attributes = length.to_attributes();
+        let locale = provider
+            .bound_marker()
+            .make_locale(prefs.locale_preferences);
         let req = DataRequest {
-            id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                marker_attrs::name_attr_for(
-                    match field_symbol {
-                        fields::Month::Format => marker_attrs::Context::Format,
-                        fields::Month::StandAlone => marker_attrs::Context::Standalone,
-                    },
-                    match field_length {
-                        FieldLength::Three => marker_attrs::Length::Abbr,
-                        FieldLength::Five => marker_attrs::Length::Narrow,
-                        FieldLength::Four => marker_attrs::Length::Wide,
-                        _ => return Err(PatternLoadError::UnsupportedLength(field)),
-                    },
-                ),
-                &locale,
-            ),
+            id: DataIdentifierBorrowed::for_marker_attributes_and_locale(attributes, &locale),
             ..Default::default()
         };
         self.month_names
-            .load_put(provider, req, variables)
-            .map_err(|e| MaybePayloadError::into_load_error(e, field))?
-            .map_err(|e| PatternLoadError::Data(e, field))?;
+            .load_put(provider, req, length)
+            .map_err(|e| MaybePayloadError::into_load_error(e, error_field))?
+            .map_err(|e| PatternLoadError::Data(e, error_field))?;
         Ok(())
     }
 
@@ -1401,39 +2894,24 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
         &mut self,
         provider: &P,
         prefs: DateTimeFormatterPreferences,
-        field_length: FieldLength,
+        length: DayPeriodNameLength,
+        error_field: ErrorField,
     ) -> Result<(), PatternLoadError>
     where
-        P: BoundDataProvider<DayPeriodNamesV1Marker> + ?Sized,
+        P: BoundDataProvider<DayPeriodNamesV1> + ?Sized,
     {
-        let locale = provider.bound_marker().make_locale(prefs.locale_prefs);
-        let field = fields::Field {
-            // Names for 'a' and 'b' are stored in the same data marker
-            symbol: FieldSymbol::DayPeriod(fields::DayPeriod::NoonMidnight),
-            length: field_length,
-        };
-        // UTS 35 says that "a..aaa" are all Abbreviated
-        let field_length = field_length.numeric_to_abbr();
-        let variables = field_length;
+        let attributes = length.to_attributes();
+        let locale = provider
+            .bound_marker()
+            .make_locale(prefs.locale_preferences);
         let req = DataRequest {
-            id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                marker_attrs::name_attr_for(
-                    marker_attrs::Context::Format,
-                    match field_length {
-                        FieldLength::Three => marker_attrs::Length::Abbr,
-                        FieldLength::Five => marker_attrs::Length::Narrow,
-                        FieldLength::Four => marker_attrs::Length::Wide,
-                        _ => return Err(PatternLoadError::UnsupportedLength(field)),
-                    },
-                ),
-                &locale,
-            ),
+            id: DataIdentifierBorrowed::for_marker_attributes_and_locale(attributes, &locale),
             ..Default::default()
         };
         self.dayperiod_names
-            .load_put(provider, req, variables)
-            .map_err(|e| MaybePayloadError::into_load_error(e, field))?
-            .map_err(|e| PatternLoadError::Data(e, field))?;
+            .load_put(provider, req, length)
+            .map_err(|e| MaybePayloadError::into_load_error(e, error_field))?
+            .map_err(|e| PatternLoadError::Data(e, error_field))?;
         Ok(())
     }
 
@@ -1441,51 +2919,24 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
         &mut self,
         provider: &P,
         prefs: DateTimeFormatterPreferences,
-        field_symbol: fields::Weekday,
-        field_length: FieldLength,
+        length: WeekdayNameLength,
+        error_field: ErrorField,
     ) -> Result<(), PatternLoadError>
     where
-        P: BoundDataProvider<WeekdayNamesV1Marker> + ?Sized,
+        P: BoundDataProvider<WeekdayNamesV1> + ?Sized,
     {
-        let locale = provider.bound_marker().make_locale(prefs.locale_prefs);
-        let field = fields::Field {
-            symbol: FieldSymbol::Weekday(field_symbol),
-            length: field_length,
-        };
-        // UTS 35 says that "E..EEE" are all Abbreviated
-        // However, this doesn't apply to "e" and "c".
-        let field_length = if matches!(field_symbol, fields::Weekday::Format) {
-            field_length.numeric_to_abbr()
-        } else {
-            field_length
-        };
-        let variables = (field_symbol, field_length);
+        let attributes = length.to_attributes();
+        let locale = provider
+            .bound_marker()
+            .make_locale(prefs.locale_preferences);
         let req = DataRequest {
-            id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
-                marker_attrs::name_attr_for(
-                    match field_symbol {
-                        // UTS 35 says that "e" and "E" have the same non-numeric names
-                        fields::Weekday::Format | fields::Weekday::Local => {
-                            marker_attrs::Context::Format
-                        }
-                        fields::Weekday::StandAlone => marker_attrs::Context::Standalone,
-                    },
-                    match field_length {
-                        FieldLength::Three => marker_attrs::Length::Abbr,
-                        FieldLength::Five => marker_attrs::Length::Narrow,
-                        FieldLength::Four => marker_attrs::Length::Wide,
-                        FieldLength::Six => marker_attrs::Length::Short,
-                        _ => return Err(PatternLoadError::UnsupportedLength(field)),
-                    },
-                ),
-                &locale,
-            ),
+            id: DataIdentifierBorrowed::for_marker_attributes_and_locale(attributes, &locale),
             ..Default::default()
         };
         self.weekday_names
-            .load_put(provider, req, variables)
-            .map_err(|e| MaybePayloadError::into_load_error(e, field))?
-            .map_err(|e| PatternLoadError::Data(e, field))?;
+            .load_put(provider, req, length)
+            .map_err(|e| MaybePayloadError::into_load_error(e, error_field))?
+            .map_err(|e| PatternLoadError::Data(e, error_field))?;
         Ok(())
     }
 
@@ -1493,15 +2944,17 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
         &mut self,
         provider: &P,
         prefs: DateTimeFormatterPreferences,
-    ) -> Result<(), PatternLoadError>
+    ) -> Result<ErrorField, PatternLoadError>
     where
-        P: BoundDataProvider<tz::EssentialsV1Marker> + ?Sized,
+        P: BoundDataProvider<tz::EssentialsV1> + ?Sized,
     {
-        let locale = provider.bound_marker().make_locale(prefs.locale_prefs);
-        let field = fields::Field {
+        let locale = provider
+            .bound_marker()
+            .make_locale(prefs.locale_preferences);
+        let error_field = ErrorField(fields::Field {
             symbol: FieldSymbol::TimeZone(fields::TimeZone::LocalizedOffset),
             length: FieldLength::Four,
-        };
+        });
         let variables = ();
         let req = DataRequest {
             id: DataIdentifierBorrowed::for_locale(&locale),
@@ -1509,163 +2962,442 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
         };
         self.zone_essentials
             .load_put(provider, req, variables)
-            .map_err(|e| MaybePayloadError::into_load_error(e, field))?
-            .map_err(|e| PatternLoadError::Data(e, field))?;
-        Ok(())
+            .map_err(|e| MaybePayloadError::into_load_error(e, error_field))?
+            .map_err(|e| PatternLoadError::Data(e, error_field))?;
+        Ok(error_field)
     }
 
-    pub(crate) fn load_time_zone_location_names<P>(
+    pub(crate) fn load_time_zone_location_names<P, P2>(
         &mut self,
         provider: &P,
+        root_provider: &P2,
         prefs: DateTimeFormatterPreferences,
-    ) -> Result<(), PatternLoadError>
+    ) -> Result<ErrorField, PatternLoadError>
     where
-        P: BoundDataProvider<tz::LocationsV1Marker> + ?Sized,
+        P: BoundDataProvider<tz::LocationsOverrideV1> + ?Sized,
+        P2: BoundDataProvider<tz::LocationsRootV1> + ?Sized,
     {
-        let locale = provider.bound_marker().make_locale(prefs.locale_prefs);
-        let field = fields::Field {
+        let locale = provider
+            .bound_marker()
+            .make_locale(prefs.locale_preferences);
+        let error_field = ErrorField(fields::Field {
             symbol: FieldSymbol::TimeZone(fields::TimeZone::Location),
             length: FieldLength::Four,
-        };
+        });
         let variables = ();
         let req = DataRequest {
             id: DataIdentifierBorrowed::for_locale(&locale),
             ..Default::default()
         };
         self.locations_root
-            .load_put(provider, Default::default(), variables)
-            .map_err(|e| MaybePayloadError::into_load_error(e, field))?
-            .map_err(|e| PatternLoadError::Data(e, field))?;
+            .load_put(root_provider, req, variables)
+            .map_err(|e| MaybePayloadError::into_load_error(e, error_field))?
+            .map_err(|e| PatternLoadError::Data(e, error_field))?;
         self.locations
             .load_put(provider, req, variables)
-            .map_err(|e| MaybePayloadError::into_load_error(e, field))?
-            .map_err(|e| PatternLoadError::Data(e, field))?;
-        Ok(())
+            .map_err(|e| MaybePayloadError::into_load_error(e, error_field))?
+            .map_err(|e| PatternLoadError::Data(e, error_field))?;
+        Ok(error_field)
     }
 
-    fn load_mz_periods<P>(
+    pub(crate) fn load_time_zone_exemplar_city_names<P, P2>(
         &mut self,
         provider: &P,
-        field: fields::Field,
-    ) -> Result<(), PatternLoadError>
+        root_provider: &P2,
+        prefs: DateTimeFormatterPreferences,
+    ) -> Result<ErrorField, PatternLoadError>
     where
-        P: BoundDataProvider<tz::MzPeriodV1Marker> + ?Sized,
+        P: BoundDataProvider<tz::CitiesOverrideV1> + ?Sized,
+        P2: BoundDataProvider<tz::CitiesRootV1> + ?Sized,
     {
+        let locale = provider
+            .bound_marker()
+            .make_locale(prefs.locale_preferences);
+        let error_field = ErrorField(fields::Field {
+            symbol: FieldSymbol::TimeZone(fields::TimeZone::Location),
+            length: FieldLength::Three,
+        });
         let variables = ();
-        self.mz_periods
-            .load_put(provider, Default::default(), variables)
-            .map_err(|e| MaybePayloadError::into_load_error(e, field))?
-            .map_err(|e| PatternLoadError::Data(e, field))?;
-        Ok(())
+        let req = DataRequest {
+            id: DataIdentifierBorrowed::for_locale(&locale),
+            ..Default::default()
+        };
+        self.exemplars_root
+            .load_put(root_provider, req, variables)
+            .map_err(|e| MaybePayloadError::into_load_error(e, error_field))?
+            .map_err(|e| PatternLoadError::Data(e, error_field))?;
+        self.exemplars
+            .load_put(provider, req, variables)
+            .map_err(|e| MaybePayloadError::into_load_error(e, error_field))?
+            .map_err(|e| PatternLoadError::Data(e, error_field))?;
+        Ok(error_field)
     }
 
     pub(crate) fn load_time_zone_generic_long_names(
         &mut self,
-        provider: &(impl BoundDataProvider<tz::MzGenericLongV1Marker> + ?Sized),
-        mz_period_provider: &(impl BoundDataProvider<tz::MzPeriodV1Marker> + ?Sized),
+        mz_generic_provider: &(impl BoundDataProvider<tz::MzGenericLongV1> + ?Sized),
+        mz_standard_provider: &(impl BoundDataProvider<tz::MzStandardLongV1> + ?Sized),
+        mz_period_provider: &(impl BoundDataProvider<tz::MzPeriodV1> + ?Sized),
         prefs: DateTimeFormatterPreferences,
-    ) -> Result<(), PatternLoadError> {
-        let locale = provider.bound_marker().make_locale(prefs.locale_prefs);
-        let field = fields::Field {
+        names_metadata: &mut DateTimeNamesMetadata,
+    ) -> Result<ErrorField, PatternLoadError> {
+        let locale = mz_generic_provider
+            .bound_marker()
+            .make_locale(prefs.locale_preferences);
+        let error_field = ErrorField(fields::Field {
             symbol: FieldSymbol::TimeZone(fields::TimeZone::GenericNonLocation),
             length: FieldLength::Four,
-        };
+        });
         let variables = ();
         let req = DataRequest {
             id: DataIdentifierBorrowed::for_locale(&locale),
             ..Default::default()
         };
-        self.mz_generic_long
-            .load_put(provider, req, variables)
-            .map_err(|e| MaybePayloadError::into_load_error(e, field))?
-            .map_err(|e| PatternLoadError::Data(e, field))?;
-        self.load_mz_periods(mz_period_provider, field)?;
-        Ok(())
+        let mut save_checksum = |cs: &u64| {
+            // get_or_insert saves the value only if the Option is None.
+            names_metadata.zone_checksum.get_or_insert(*cs);
+        };
+        let cs1 = self
+            .mz_generic_long
+            .load_put(mz_generic_provider, req, variables)
+            .map_err(|e| MaybePayloadError::into_load_error(e, error_field))?
+            .map_err(|e| PatternLoadError::Data(e, error_field))?
+            .checksum
+            .inspect(&mut save_checksum);
+        let cs2 = self
+            .mz_standard_long
+            .load_put(mz_standard_provider, req, variables)
+            .map_err(|e| MaybePayloadError::into_load_error(e, error_field))?
+            .map_err(|e| PatternLoadError::Data(e, error_field))?
+            .checksum
+            .inspect(&mut save_checksum);
+        let cs3 = self
+            .mz_periods
+            .load_put(mz_period_provider, Default::default(), ())
+            .map_err(|e| MaybePayloadError::into_load_error(e, error_field))?
+            .map_err(|e| PatternLoadError::Data(e, error_field))?
+            .checksum
+            .inspect(&mut save_checksum);
+        // Error if any two of the checksum Options are Some and not equal.
+        let cs = names_metadata.zone_checksum;
+        if cs1.or(cs) != cs || cs2.or(cs) != cs || cs3.or(cs) != cs {
+            return Err(PatternLoadError::Data(
+                DataErrorKind::InconsistentData(tz::MzPeriodV1::INFO)
+                    .with_req(tz::MzGenericLongV1::INFO, req),
+                error_field,
+            ));
+        }
+        Ok(error_field)
     }
 
     pub(crate) fn load_time_zone_generic_short_names(
         &mut self,
-        provider: &(impl BoundDataProvider<tz::MzGenericShortV1Marker> + ?Sized),
-        mz_period_provider: &(impl BoundDataProvider<tz::MzPeriodV1Marker> + ?Sized),
+        provider: &(impl BoundDataProvider<tz::MzGenericShortV1> + ?Sized),
+        mz_period_provider: &(impl BoundDataProvider<tz::MzPeriodV1> + ?Sized),
         prefs: DateTimeFormatterPreferences,
-    ) -> Result<(), PatternLoadError> {
-        let locale = provider.bound_marker().make_locale(prefs.locale_prefs);
-        let field = fields::Field {
+        names_metadata: &mut DateTimeNamesMetadata,
+    ) -> Result<ErrorField, PatternLoadError> {
+        let locale = provider
+            .bound_marker()
+            .make_locale(prefs.locale_preferences);
+        let error_field = ErrorField(fields::Field {
             symbol: FieldSymbol::TimeZone(fields::TimeZone::GenericNonLocation),
             length: FieldLength::One,
-        };
+        });
         let variables = ();
         let req = DataRequest {
             id: DataIdentifierBorrowed::for_locale(&locale),
             ..Default::default()
         };
-        self.mz_generic_short
+        let mut save_checksum = |cs: &u64| {
+            // get_or_insert saves the value only if the Option is None.
+            names_metadata.zone_checksum.get_or_insert(*cs);
+        };
+        let cs1 = self
+            .mz_generic_short
             .load_put(provider, req, variables)
-            .map_err(|e| MaybePayloadError::into_load_error(e, field))?
-            .map_err(|e| PatternLoadError::Data(e, field))?;
-        self.load_mz_periods(mz_period_provider, field)?;
-        Ok(())
+            .map_err(|e| MaybePayloadError::into_load_error(e, error_field))?
+            .map_err(|e| PatternLoadError::Data(e, error_field))?
+            .checksum
+            .inspect(&mut save_checksum);
+        let cs2 = self
+            .mz_periods
+            .load_put(mz_period_provider, Default::default(), ())
+            .map_err(|e| MaybePayloadError::into_load_error(e, error_field))?
+            .map_err(|e| PatternLoadError::Data(e, error_field))?
+            .checksum
+            .inspect(&mut save_checksum);
+        // Error if any two of the checksum Options are Some and not equal.
+        let cs = names_metadata.zone_checksum;
+        if cs1.or(cs) != cs || cs2.or(cs) != cs {
+            return Err(PatternLoadError::Data(
+                DataErrorKind::InconsistentData(tz::MzPeriodV1::INFO)
+                    .with_req(tz::MzGenericLongV1::INFO, req),
+                error_field,
+            ));
+        }
+        Ok(error_field)
     }
 
     pub(crate) fn load_time_zone_specific_long_names(
         &mut self,
-        provider: &(impl BoundDataProvider<tz::MzSpecificLongV1Marker> + ?Sized),
-        mz_period_provider: &(impl BoundDataProvider<tz::MzPeriodV1Marker> + ?Sized),
+        mz_specific_provider: &(impl BoundDataProvider<tz::MzSpecificLongV1> + ?Sized),
+        mz_standard_provider: &(impl BoundDataProvider<tz::MzStandardLongV1> + ?Sized),
+        mz_period_provider: &(impl BoundDataProvider<tz::MzPeriodV1> + ?Sized),
         prefs: DateTimeFormatterPreferences,
-    ) -> Result<(), PatternLoadError> {
-        let locale = provider.bound_marker().make_locale(prefs.locale_prefs);
-        let field = fields::Field {
+        names_metadata: &mut DateTimeNamesMetadata,
+    ) -> Result<ErrorField, PatternLoadError> {
+        let locale = mz_specific_provider
+            .bound_marker()
+            .make_locale(prefs.locale_preferences);
+        let error_field = ErrorField(fields::Field {
             symbol: FieldSymbol::TimeZone(fields::TimeZone::SpecificNonLocation),
             length: FieldLength::Four,
-        };
+        });
         let variables = ();
         let req = DataRequest {
             id: DataIdentifierBorrowed::for_locale(&locale),
             ..Default::default()
         };
-        self.mz_specific_long
-            .load_put(provider, req, variables)
-            .map_err(|e| MaybePayloadError::into_load_error(e, field))?
-            .map_err(|e| PatternLoadError::Data(e, field))?;
-        self.load_mz_periods(mz_period_provider, field)?;
-        Ok(())
+        let mut save_checksum = |cs: &u64| {
+            // get_or_insert saves the value only if the Option is None.
+            names_metadata.zone_checksum.get_or_insert(*cs);
+        };
+        let cs1 = self
+            .mz_specific_long
+            .load_put(mz_specific_provider, req, variables)
+            .map_err(|e| MaybePayloadError::into_load_error(e, error_field))?
+            .map_err(|e| PatternLoadError::Data(e, error_field))?
+            .checksum
+            .inspect(&mut save_checksum);
+        let cs2 = self
+            .mz_standard_long
+            .load_put(mz_standard_provider, req, variables)
+            .map_err(|e| MaybePayloadError::into_load_error(e, error_field))?
+            .map_err(|e| PatternLoadError::Data(e, error_field))?
+            .checksum
+            .inspect(&mut save_checksum);
+        let cs3 = self
+            .mz_periods
+            .load_put(mz_period_provider, Default::default(), ())
+            .map_err(|e| MaybePayloadError::into_load_error(e, error_field))?
+            .map_err(|e| PatternLoadError::Data(e, error_field))?
+            .checksum
+            .inspect(&mut save_checksum);
+        // Error if any two of the checksum Options are Some and not equal.
+        let cs = names_metadata.zone_checksum;
+        if cs1.or(cs) != cs || cs2.or(cs) != cs || cs3.or(cs) != cs {
+            return Err(PatternLoadError::Data(
+                DataErrorKind::InconsistentData(tz::MzPeriodV1::INFO)
+                    .with_req(tz::MzSpecificLongV1::INFO, req),
+                error_field,
+            ));
+        }
+        Ok(error_field)
     }
 
     pub(crate) fn load_time_zone_specific_short_names(
         &mut self,
-        provider: &(impl BoundDataProvider<tz::MzSpecificShortV1Marker> + ?Sized),
-        mz_period_provider: &(impl BoundDataProvider<tz::MzPeriodV1Marker> + ?Sized),
+        provider: &(impl BoundDataProvider<tz::MzSpecificShortV1> + ?Sized),
+        mz_period_provider: &(impl BoundDataProvider<tz::MzPeriodV1> + ?Sized),
         prefs: DateTimeFormatterPreferences,
-    ) -> Result<(), PatternLoadError> {
-        let locale = provider.bound_marker().make_locale(prefs.locale_prefs);
-        let field = fields::Field {
+        names_metadata: &mut DateTimeNamesMetadata,
+    ) -> Result<ErrorField, PatternLoadError> {
+        let locale = provider
+            .bound_marker()
+            .make_locale(prefs.locale_preferences);
+        let error_field = ErrorField(fields::Field {
             symbol: FieldSymbol::TimeZone(fields::TimeZone::SpecificNonLocation),
             length: FieldLength::One,
-        };
+        });
         let variables = ();
         let req = DataRequest {
             id: DataIdentifierBorrowed::for_locale(&locale),
             ..Default::default()
         };
-        self.mz_specific_short
+        let mut save_checksum = |cs: &u64| {
+            // get_or_insert saves the value only if the Option is None.
+            names_metadata.zone_checksum.get_or_insert(*cs);
+        };
+        let cs1 = self
+            .mz_specific_short
             .load_put(provider, req, variables)
-            .map_err(|e| MaybePayloadError::into_load_error(e, field))?
-            .map_err(|e| PatternLoadError::Data(e, field))?;
-        self.load_mz_periods(mz_period_provider, field)?;
+            .map_err(|e| MaybePayloadError::into_load_error(e, error_field))?
+            .map_err(|e| PatternLoadError::Data(e, error_field))?
+            .checksum
+            .inspect(&mut save_checksum);
+        let cs2 = self
+            .mz_periods
+            .load_put(mz_period_provider, Default::default(), ())
+            .map_err(|e| MaybePayloadError::into_load_error(e, error_field))?
+            .map_err(|e| PatternLoadError::Data(e, error_field))?
+            .checksum
+            .inspect(&mut save_checksum);
+        // Error if any two of the checksum Options are Some and not equal.
+        let cs = names_metadata.zone_checksum;
+        if cs1.or(cs) != cs || cs2.or(cs) != cs {
+            return Err(PatternLoadError::Data(
+                DataErrorKind::InconsistentData(tz::MzPeriodV1::INFO)
+                    .with_req(tz::MzSpecificShortV1::INFO, req),
+                error_field,
+            ));
+        }
+        Ok(error_field)
+    }
+
+    pub(crate) fn load_time_zone_field_z_except_decimals(
+        &mut self,
+        zone_essentials_provider: &(impl BoundDataProvider<tz::EssentialsV1> + ?Sized),
+        mz_specific_short_provider: &(impl BoundDataProvider<tz::MzSpecificShortV1> + ?Sized),
+        mz_period_provider: &(impl BoundDataProvider<tz::MzPeriodV1> + ?Sized),
+        prefs: DateTimeFormatterPreferences,
+        names_metadata: &mut DateTimeNamesMetadata,
+    ) -> Result<ErrorField, PatternLoadError> {
+        self.load_time_zone_essentials(zone_essentials_provider, prefs)?;
+        self.load_time_zone_specific_short_names(
+            mz_specific_short_provider,
+            mz_period_provider,
+            prefs,
+            names_metadata,
+        )
+    }
+
+    #[allow(clippy::too_many_arguments)]
+    pub(crate) fn load_time_zone_field_zzzz_except_decimals(
+        &mut self,
+        zone_essentials_provider: &(impl BoundDataProvider<tz::EssentialsV1> + ?Sized),
+        locations_provider: &(impl BoundDataProvider<tz::LocationsOverrideV1> + ?Sized),
+        locations_root_provider: &(impl BoundDataProvider<tz::LocationsRootV1> + ?Sized),
+        mz_standard_long_provider: &(impl BoundDataProvider<tz::MzStandardLongV1> + ?Sized),
+        mz_specific_long_provider: &(impl BoundDataProvider<tz::MzSpecificLongV1> + ?Sized),
+        mz_period_provider: &(impl BoundDataProvider<tz::MzPeriodV1> + ?Sized),
+        prefs: DateTimeFormatterPreferences,
+        names_metadata: &mut DateTimeNamesMetadata,
+    ) -> Result<ErrorField, PatternLoadError> {
+        self.load_time_zone_essentials(zone_essentials_provider, prefs)?;
+        self.load_time_zone_location_names(locations_provider, locations_root_provider, prefs)?;
+        self.load_time_zone_specific_long_names(
+            mz_specific_long_provider,
+            mz_standard_long_provider,
+            mz_period_provider,
+            prefs,
+            names_metadata,
+        )
+    }
+
+    #[allow(clippy::too_many_arguments)] // internal function with lots of generics
+    pub(crate) fn load_time_zone_field_v_except_decimals(
+        &mut self,
+        zone_essentials_provider: &(impl BoundDataProvider<tz::EssentialsV1> + ?Sized),
+        locations_provider: &(impl BoundDataProvider<tz::LocationsOverrideV1> + ?Sized),
+        locations_root_provider: &(impl BoundDataProvider<tz::LocationsRootV1> + ?Sized),
+        mz_generic_short_provider: &(impl BoundDataProvider<tz::MzGenericShortV1> + ?Sized),
+        mz_period_provider: &(impl BoundDataProvider<tz::MzPeriodV1> + ?Sized),
+        prefs: DateTimeFormatterPreferences,
+        names_metadata: &mut DateTimeNamesMetadata,
+    ) -> Result<ErrorField, PatternLoadError> {
+        self.load_time_zone_essentials(zone_essentials_provider, prefs)?;
+        // For fallback:
+        self.load_time_zone_location_names(locations_provider, locations_root_provider, prefs)?;
+        self.load_time_zone_generic_short_names(
+            mz_generic_short_provider,
+            mz_period_provider,
+            prefs,
+            names_metadata,
+        )
+    }
+
+    #[allow(clippy::too_many_arguments)]
+    pub(crate) fn load_time_zone_field_vvvv_except_decimals(
+        &mut self,
+        zone_essentials_provider: &(impl BoundDataProvider<tz::EssentialsV1> + ?Sized),
+        locations_provider: &(impl BoundDataProvider<tz::LocationsOverrideV1> + ?Sized),
+        locations_root_provider: &(impl BoundDataProvider<tz::LocationsRootV1> + ?Sized),
+        mz_generic_long_provider: &(impl BoundDataProvider<tz::MzGenericLongV1> + ?Sized),
+        mz_standard_long_provider: &(impl BoundDataProvider<tz::MzStandardLongV1> + ?Sized),
+        mz_period_provider: &(impl BoundDataProvider<tz::MzPeriodV1> + ?Sized),
+        prefs: DateTimeFormatterPreferences,
+        names_metadata: &mut DateTimeNamesMetadata,
+    ) -> Result<ErrorField, PatternLoadError> {
+        self.load_time_zone_essentials(zone_essentials_provider, prefs)?;
+        // For fallback:
+        self.load_time_zone_location_names(locations_provider, locations_root_provider, prefs)?;
+        self.load_time_zone_generic_long_names(
+            mz_generic_long_provider,
+            mz_standard_long_provider,
+            mz_period_provider,
+            prefs,
+            names_metadata,
+        )
+    }
+
+    #[allow(non_snake_case)] // this is a private function named after the case-sensitive CLDR field
+    pub(crate) fn load_time_zone_field_V(
+        &mut self,
+        _prefs: DateTimeFormatterPreferences,
+    ) -> Result<(), PatternLoadError> {
+        // no data required
         Ok(())
     }
 
-    pub(crate) fn load_fixed_decimal_formatter(
+    #[allow(non_snake_case)] // this is a private function named after the case-sensitive CLDR field
+    pub(crate) fn load_time_zone_field_VVV(
         &mut self,
-        loader: &impl FixedDecimalFormatterLoader,
+        locations_provider: &(impl BoundDataProvider<tz::LocationsOverrideV1> + ?Sized),
+        locations_root_provider: &(impl BoundDataProvider<tz::LocationsRootV1> + ?Sized),
+        exemplar_cities_provider: &(impl BoundDataProvider<tz::CitiesOverrideV1> + ?Sized),
+        exemplar_cities_root_provider: &(impl BoundDataProvider<tz::CitiesRootV1> + ?Sized),
+        prefs: DateTimeFormatterPreferences,
+    ) -> Result<ErrorField, PatternLoadError> {
+        self.load_time_zone_location_names(locations_provider, locations_root_provider, prefs)?;
+        self.load_time_zone_exemplar_city_names(
+            exemplar_cities_provider,
+            exemplar_cities_root_provider,
+            prefs,
+        )
+    }
+
+    #[allow(non_snake_case)] // this is a private function named after the case-sensitive CLDR field
+    pub(crate) fn load_time_zone_field_VVVV_except_decimals(
+        &mut self,
+        zone_essentials_provider: &(impl BoundDataProvider<tz::EssentialsV1> + ?Sized),
+        locations_provider: &(impl BoundDataProvider<tz::LocationsOverrideV1> + ?Sized),
+        locations_root_provider: &(impl BoundDataProvider<tz::LocationsRootV1> + ?Sized),
+        prefs: DateTimeFormatterPreferences,
+    ) -> Result<ErrorField, PatternLoadError> {
+        self.load_time_zone_essentials(zone_essentials_provider, prefs)?;
+        self.load_time_zone_location_names(locations_provider, locations_root_provider, prefs)
+    }
+
+    #[allow(non_snake_case)] // this is a private function named after the case-sensitive CLDR field
+    pub(crate) fn load_time_zone_field_O_except_decimals(
+        &mut self,
+        zone_essentials_provider: &(impl BoundDataProvider<tz::EssentialsV1> + ?Sized),
+        prefs: DateTimeFormatterPreferences,
+    ) -> Result<ErrorField, PatternLoadError> {
+        self.load_time_zone_essentials(zone_essentials_provider, prefs)
+    }
+
+    #[allow(non_snake_case)] // this is a private function named after the case-sensitive CLDR field
+    pub(crate) fn load_time_zone_field_X(
+        &mut self,
+        _prefs: DateTimeFormatterPreferences,
+    ) -> Result<(), PatternLoadError> {
+        // no data required
+        Ok(())
+    }
+
+    pub(crate) fn load_decimal_formatter(
+        &mut self,
+        loader: &impl DecimalFormatterLoader,
         prefs: DateTimeFormatterPreferences,
     ) -> Result<(), DataError> {
-        if self.fixed_decimal_formatter.is_some() {
+        if self.decimal_formatter.is_some() {
             return Ok(());
         }
-        let mut options = FixedDecimalFormatterOptions::default();
-        options.grouping_strategy = GroupingStrategy::Never;
-        self.fixed_decimal_formatter = Some(FixedDecimalFormatterLoader::load(
+        let mut options = DecimalFormatterOptions::default();
+        options.grouping_strategy = Some(GroupingStrategy::Never);
+        self.decimal_formatter = Some(DecimalFormatterLoader::load(
             loader,
             (&prefs).into(),
             options,
@@ -1680,20 +3412,25 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
     #[allow(clippy::too_many_arguments)]
     pub(crate) fn load_for_pattern(
         &mut self,
-        year_provider: &(impl BoundDataProvider<YearNamesV1Marker> + ?Sized),
-        month_provider: &(impl BoundDataProvider<MonthNamesV1Marker> + ?Sized),
-        weekday_provider: &(impl BoundDataProvider<WeekdayNamesV1Marker> + ?Sized),
-        dayperiod_provider: &(impl BoundDataProvider<DayPeriodNamesV1Marker> + ?Sized),
-        zone_essentials_provider: &(impl BoundDataProvider<tz::EssentialsV1Marker> + ?Sized),
-        locations_provider: &(impl BoundDataProvider<tz::LocationsV1Marker> + ?Sized),
-        mz_generic_long_provider: &(impl BoundDataProvider<tz::MzGenericLongV1Marker> + ?Sized),
-        mz_generic_short_provider: &(impl BoundDataProvider<tz::MzGenericShortV1Marker> + ?Sized),
-        mz_specific_long_provider: &(impl BoundDataProvider<tz::MzSpecificLongV1Marker> + ?Sized),
-        mz_specific_short_provider: &(impl BoundDataProvider<tz::MzSpecificShortV1Marker> + ?Sized),
-        mz_period_provider: &(impl BoundDataProvider<tz::MzPeriodV1Marker> + ?Sized),
-        fixed_decimal_formatter_loader: &impl FixedDecimalFormatterLoader,
+        year_provider: &(impl BoundDataProvider<YearNamesV1> + ?Sized),
+        month_provider: &(impl BoundDataProvider<MonthNamesV1> + ?Sized),
+        weekday_provider: &(impl BoundDataProvider<WeekdayNamesV1> + ?Sized),
+        dayperiod_provider: &(impl BoundDataProvider<DayPeriodNamesV1> + ?Sized),
+        zone_essentials_provider: &(impl BoundDataProvider<tz::EssentialsV1> + ?Sized),
+        locations_provider: &(impl BoundDataProvider<tz::LocationsOverrideV1> + ?Sized),
+        locations_root_provider: &(impl BoundDataProvider<tz::LocationsRootV1> + ?Sized),
+        exemplar_cities_provider: &(impl BoundDataProvider<tz::CitiesOverrideV1> + ?Sized),
+        exemplar_cities_root_provider: &(impl BoundDataProvider<tz::CitiesRootV1> + ?Sized),
+        mz_generic_long_provider: &(impl BoundDataProvider<tz::MzGenericLongV1> + ?Sized),
+        mz_generic_short_provider: &(impl BoundDataProvider<tz::MzGenericShortV1> + ?Sized),
+        mz_standard_long_provider: &(impl BoundDataProvider<tz::MzStandardLongV1> + ?Sized),
+        mz_specific_long_provider: &(impl BoundDataProvider<tz::MzSpecificLongV1> + ?Sized),
+        mz_specific_short_provider: &(impl BoundDataProvider<tz::MzSpecificShortV1> + ?Sized),
+        mz_period_provider: &(impl BoundDataProvider<tz::MzPeriodV1> + ?Sized),
+        decimal_formatter_loader: &impl DecimalFormatterLoader,
         prefs: DateTimeFormatterPreferences,
         pattern_items: impl Iterator<Item = PatternItem>,
+        names_metadata: &mut DateTimeNamesMetadata,
     ) -> Result<(), PatternLoadError> {
         let mut numeric_field = None;
 
@@ -1701,8 +3438,9 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
             let PatternItem::Field(field) = item else {
                 continue;
             };
+            let error_field = ErrorField(field);
 
-            use fields::*;
+            use crate::provider::fields::*;
             use FieldLength::*;
             use FieldSymbol as FS;
 
@@ -1711,116 +3449,159 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
 
                 // G..GGGGG
                 (FS::Era, One | Two | Three | Four | Five) => {
-                    self.load_year_names(year_provider, prefs, field.length)?;
+                    self.load_year_names(
+                        year_provider,
+                        prefs,
+                        YearNameLength::from_field_length(field.length)
+                            .ok_or(PatternLoadError::UnsupportedLength(error_field))?,
+                        error_field,
+                    )?;
                 }
 
                 // U..UUUUU
                 (FS::Year(Year::Cyclic), One | Two | Three | Four | Five) => {
                     numeric_field = Some(field);
-                    self.load_year_names(year_provider, prefs, field.length)?;
+                    self.load_year_names(
+                        year_provider,
+                        prefs,
+                        YearNameLength::from_field_length(field.length)
+                            .ok_or(PatternLoadError::UnsupportedLength(error_field))?,
+                        error_field,
+                    )?;
                 }
 
-                // MMM..MMMMM
-                (FS::Month(Month::Format), Three | Four | Five) => {
-                    self.load_month_names(month_provider, prefs, Month::Format, field.length)?;
+                // MMM..MMMMM, LLL..LLLLL
+                (
+                    FS::Month(field_symbol @ Month::Format | field_symbol @ Month::StandAlone),
+                    Three | Four | Five,
+                ) => {
+                    self.load_month_names(
+                        month_provider,
+                        prefs,
+                        MonthNameLength::from_field(field_symbol, field.length)
+                            .ok_or(PatternLoadError::UnsupportedLength(error_field))?,
+                        error_field,
+                    )?;
                 }
 
-                // LLL..LLLLL
-                (FS::Month(Month::StandAlone), Three | Four | Five) => {
-                    self.load_month_names(month_provider, prefs, Month::StandAlone, field.length)?;
+                // e..ee, c..cc
+                (FS::Weekday(Weekday::Local | Weekday::StandAlone), One | Two) => {
+                    // TODO(#5643): Requires locale-aware day-of-week calculation
+                    return Err(PatternLoadError::UnsupportedLength(ErrorField(field)));
                 }
 
-                // E..EE
-                (FS::Weekday(Weekday::Format), One | Two) => {
+                // E..EEEEEE, eee..eeeeee, ccc..cccccc
+                (FS::Weekday(field_symbol), One | Two | Three | Four | Five | Six) => {
                     self.load_weekday_names(
                         weekday_provider,
                         prefs,
-                        Weekday::Format,
-                        field.length,
+                        WeekdayNameLength::from_field(field_symbol, field.length)
+                            .ok_or(PatternLoadError::UnsupportedLength(error_field))?,
+                        error_field,
                     )?;
-                }
-                // EEE..EEEEEE, eee..eeeeee, ccc..cccccc
-                (FS::Weekday(symbol), Three | Four | Five | Six) => {
-                    self.load_weekday_names(weekday_provider, prefs, symbol, field.length)?;
                 }
 
                 // a..aaaaa, b..bbbbb
-                (FS::DayPeriod(_), One | Two | Three | Four | Five) => {
-                    self.load_day_period_names(dayperiod_provider, prefs, field.length)?;
+                (FS::DayPeriod(field_symbol), One | Two | Three | Four | Five) => {
+                    self.load_day_period_names(
+                        dayperiod_provider,
+                        prefs,
+                        DayPeriodNameLength::from_field(field_symbol, field.length)
+                            .ok_or(PatternLoadError::UnsupportedLength(error_field))?,
+                        error_field,
+                    )?;
                 }
 
                 ///// Time zone symbols /////
 
                 // z..zzz
                 (FS::TimeZone(TimeZone::SpecificNonLocation), One | Two | Three) => {
-                    numeric_field = Some(field);
-                    self.load_time_zone_essentials(zone_essentials_provider, prefs)?;
-                    self.load_time_zone_specific_short_names(
+                    self.load_time_zone_field_z_except_decimals(
+                        zone_essentials_provider,
                         mz_specific_short_provider,
                         mz_period_provider,
                         prefs,
+                        names_metadata,
                     )?;
+                    numeric_field = Some(field);
                 }
                 // zzzz
                 (FS::TimeZone(TimeZone::SpecificNonLocation), Four) => {
-                    numeric_field = Some(field);
-                    self.load_time_zone_essentials(zone_essentials_provider, prefs)?;
-                    self.load_time_zone_specific_long_names(
+                    self.load_time_zone_field_zzzz_except_decimals(
+                        zone_essentials_provider,
+                        locations_provider,
+                        locations_root_provider,
+                        mz_standard_long_provider,
                         mz_specific_long_provider,
                         mz_period_provider,
                         prefs,
+                        names_metadata,
                     )?;
-                    self.load_time_zone_location_names(locations_provider, prefs)?;
+                    numeric_field = Some(field);
                 }
-
                 // v
                 (FS::TimeZone(TimeZone::GenericNonLocation), One) => {
-                    numeric_field = Some(field);
-                    self.load_time_zone_essentials(zone_essentials_provider, prefs)?;
-                    self.load_time_zone_generic_short_names(
+                    self.load_time_zone_field_v_except_decimals(
+                        zone_essentials_provider,
+                        locations_provider,
+                        locations_root_provider,
                         mz_generic_short_provider,
                         mz_period_provider,
                         prefs,
+                        names_metadata,
                     )?;
-                    // For fallback:
-                    self.load_time_zone_location_names(locations_provider, prefs)?;
+                    numeric_field = Some(field);
                 }
                 // vvvv
                 (FS::TimeZone(TimeZone::GenericNonLocation), Four) => {
-                    numeric_field = Some(field);
-                    self.load_time_zone_essentials(zone_essentials_provider, prefs)?;
-                    self.load_time_zone_generic_long_names(
+                    self.load_time_zone_field_vvvv_except_decimals(
+                        zone_essentials_provider,
+                        locations_provider,
+                        locations_root_provider,
                         mz_generic_long_provider,
+                        mz_standard_long_provider,
                         mz_period_provider,
                         prefs,
+                        names_metadata,
                     )?;
-                    // For fallback:
-                    self.load_time_zone_location_names(locations_provider, prefs)?;
+                    numeric_field = Some(field);
                 }
 
                 // V
                 (FS::TimeZone(TimeZone::Location), One) => {
-                    // no data required
+                    self.load_time_zone_field_V(prefs)?;
+                }
+                // VVV
+                (FS::TimeZone(TimeZone::Location), Three) => {
+                    self.load_time_zone_field_VVV(
+                        locations_provider,
+                        locations_root_provider,
+                        exemplar_cities_provider,
+                        exemplar_cities_root_provider,
+                        prefs,
+                    )?;
                 }
                 // VVVV
                 (FS::TimeZone(TimeZone::Location), Four) => {
+                    self.load_time_zone_field_VVVV_except_decimals(
+                        zone_essentials_provider,
+                        locations_provider,
+                        locations_root_provider,
+                        prefs,
+                    )?;
                     numeric_field = Some(field);
-                    self.load_time_zone_essentials(zone_essentials_provider, prefs)?;
-                    self.load_time_zone_location_names(locations_provider, prefs)?;
                 }
-
                 // O, OOOO
                 (FS::TimeZone(TimeZone::LocalizedOffset), One | Four) => {
-                    self.load_time_zone_essentials(zone_essentials_provider, prefs)?;
+                    self.load_time_zone_field_O_except_decimals(zone_essentials_provider, prefs)?;
                     numeric_field = Some(field);
                 }
-
                 // X..XXXXX, x..xxxxx
                 (
                     FS::TimeZone(TimeZone::IsoWithZ | TimeZone::Iso),
                     One | Two | Three | Four | Five,
                 ) => {
-                    // no data required
+                    self.load_time_zone_field_X(prefs)?;
                 }
 
                 ///// Numeric symbols /////
@@ -1834,12 +3615,6 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
 
                 // M..MM, L..LL
                 (FS::Month(_), One | Two) => numeric_field = Some(field),
-
-                // e..ee, c..cc
-                (FS::Weekday(Weekday::Local | Weekday::StandAlone), One | Two) => {
-                    // TODO(#5643): Requires locale-aware day-of-week calculation
-                    return Err(PatternLoadError::UnsupportedLength(field));
-                }
 
                 // d..dd
                 (FS::Day(Day::DayOfMonth), One | Two) => numeric_field = Some(field),
@@ -1865,47 +3640,49 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
 
                 ///// Unsupported symbols /////
                 _ => {
-                    return Err(PatternLoadError::UnsupportedLength(field));
+                    return Err(PatternLoadError::UnsupportedLength(ErrorField(field)));
                 }
             }
         }
 
         if let Some(field) = numeric_field {
-            self.load_fixed_decimal_formatter(fixed_decimal_formatter_loader, prefs)
-                .map_err(|e| PatternLoadError::Data(e, field))?;
+            self.load_decimal_formatter(decimal_formatter_loader, prefs)
+                .map_err(|e| PatternLoadError::Data(e, ErrorField(field)))?;
         }
 
         Ok(())
     }
 }
 
-impl<'data> RawDateTimeNamesBorrowed<'data> {
+impl RawDateTimeNamesBorrowed<'_> {
     pub(crate) fn get_name_for_month(
         &self,
         field_symbol: fields::Month,
         field_length: FieldLength,
         code: MonthCode,
     ) -> Result<MonthPlaceholderValue, GetNameForMonthError> {
+        let month_name_length = MonthNameLength::from_field(field_symbol, field_length)
+            .ok_or(GetNameForMonthError::InvalidFieldLength)?;
         let month_names = self
             .month_names
-            .get_with_variables((field_symbol, field_length))
+            .get_with_variables(month_name_length)
             .ok_or(GetNameForMonthError::NotLoaded)?;
         let Some((month_number, is_leap)) = code.parsed() else {
-            return Err(GetNameForMonthError::Invalid);
+            return Err(GetNameForMonthError::InvalidMonthCode);
         };
         let Some(month_index) = month_number.checked_sub(1) else {
-            return Err(GetNameForMonthError::Invalid);
+            return Err(GetNameForMonthError::InvalidMonthCode);
         };
         let month_index = usize::from(month_index);
         let name = match month_names {
-            MonthNamesV1::Linear(linear) => {
+            MonthNames::Linear(linear) => {
                 if is_leap {
                     None
                 } else {
                     linear.get(month_index)
                 }
             }
-            MonthNamesV1::LeapLinear(leap_linear) => {
+            MonthNames::LeapLinear(leap_linear) => {
                 let num_months = leap_linear.len() / 2;
                 if is_leap {
                     leap_linear.get(month_index + num_months)
@@ -1915,7 +3692,7 @@ impl<'data> RawDateTimeNamesBorrowed<'data> {
                     None
                 }
             }
-            MonthNamesV1::LeapNumeric(leap_numeric) => {
+            MonthNames::LeapNumeric(leap_numeric) => {
                 if is_leap {
                     return Ok(MonthPlaceholderValue::NumericPattern(leap_numeric));
                 } else {
@@ -1926,32 +3703,25 @@ impl<'data> RawDateTimeNamesBorrowed<'data> {
         // Note: Always return `false` for the second argument since neo MonthNames
         // knows how to handle leap months and we don't need the fallback logic
         name.map(MonthPlaceholderValue::PlainString)
-            .ok_or(GetNameForMonthError::Invalid)
+            .ok_or(GetNameForMonthError::InvalidMonthCode)
     }
 
     pub(crate) fn get_name_for_weekday(
         &self,
         field_symbol: fields::Weekday,
         field_length: FieldLength,
-        day: input::IsoWeekday,
+        day: icu_calendar::types::Weekday,
     ) -> Result<&str, GetNameForWeekdayError> {
-        // UTS 35 says that "e" and "E" have the same non-numeric names
-        let field_symbol = field_symbol.to_format_symbol();
-        // UTS 35 says that "E..EEE" are all Abbreviated
-        // However, this doesn't apply to "e" and "c".
-        let field_length = if matches!(field_symbol, fields::Weekday::Format) {
-            field_length.numeric_to_abbr()
-        } else {
-            field_length
-        };
+        let weekday_name_length = WeekdayNameLength::from_field(field_symbol, field_length)
+            .ok_or(GetNameForWeekdayError::InvalidFieldLength)?;
         let weekday_names = self
             .weekday_names
-            .get_with_variables((field_symbol, field_length))
+            .get_with_variables(weekday_name_length)
             .ok_or(GetNameForWeekdayError::NotLoaded)?;
         weekday_names
             .names
             .get((day as usize) % 7)
-            // TODO: make weekday_names length 7 in the type system
+            // Note: LinearNames does not guarantee a length of 7.
             .ok_or(GetNameForWeekdayError::NotLoaded)
     }
 
@@ -1962,48 +3732,50 @@ impl<'data> RawDateTimeNamesBorrowed<'data> {
     pub(crate) fn get_name_for_era(
         &self,
         field_length: FieldLength,
-        era: FormattingEra,
-    ) -> Result<&str, GetSymbolForEraError> {
-        // UTS 35 says that "G..GGG" are all Abbreviated
-        let field_length = field_length.numeric_to_abbr();
+        era_year: EraYear,
+    ) -> Result<&str, GetNameForEraError> {
+        let year_name_length = YearNameLength::from_field_length(field_length)
+            .ok_or(GetNameForEraError::InvalidFieldLength)?;
         let year_names = self
             .year_names
-            .get_with_variables(field_length)
-            .ok_or(GetSymbolForEraError::NotLoaded)?;
+            .get_with_variables(year_name_length)
+            .ok_or(GetNameForEraError::NotLoaded)?;
 
-        match (year_names, era) {
-            (YearNamesV1::VariableEras(era_names), FormattingEra::Code(era_code)) => era_names
-                .get(era_code.0.as_str().into())
-                .ok_or(GetSymbolForEraError::Invalid),
-            (YearNamesV1::FixedEras(era_names), FormattingEra::Index(index, _fallback)) => {
-                era_names
-                    .get(index.into())
-                    .ok_or(GetSymbolForEraError::Invalid)
+        match (year_names, era_year.era_index) {
+            (YearNames::VariableEras(era_names), None) => {
+                crate::provider::neo::get_year_name_from_map(
+                    era_names,
+                    era_year.era.as_str().into(),
+                )
+                .ok_or(GetNameForEraError::InvalidEraCode)
             }
-            _ => Err(GetSymbolForEraError::Invalid),
+            (YearNames::FixedEras(era_names), Some(index)) => era_names
+                .get(index as usize)
+                .ok_or(GetNameForEraError::InvalidEraCode),
+            _ => Err(GetNameForEraError::InvalidEraCode),
         }
     }
 
     pub(crate) fn get_name_for_cyclic(
         &self,
         field_length: FieldLength,
-        cyclic: NonZeroU8,
-    ) -> Result<&str, GetSymbolForCyclicYearError> {
-        // UTS 35 says that "U..UUU" are all Abbreviated
-        let field_length = field_length.numeric_to_abbr();
+        cyclic: u8,
+    ) -> Result<&str, GetNameForCyclicYearError> {
+        let year_name_length = YearNameLength::from_field_length(field_length)
+            .ok_or(GetNameForCyclicYearError::InvalidFieldLength)?;
         let year_names = self
             .year_names
-            .get_with_variables(field_length)
-            .ok_or(GetSymbolForCyclicYearError::NotLoaded)?;
+            .get_with_variables(year_name_length)
+            .ok_or(GetNameForCyclicYearError::NotLoaded)?;
 
-        let YearNamesV1::Cyclic(cyclics) = year_names else {
-            return Err(GetSymbolForCyclicYearError::Invalid { max: 0 });
+        let YearNames::Cyclic(cyclics) = year_names else {
+            return Err(GetNameForCyclicYearError::InvalidYearNumber { max: 0 });
         };
 
         cyclics
-            .get((cyclic.get() as usize) - 1)
-            .ok_or(GetSymbolForCyclicYearError::Invalid {
-                max: cyclics.len() + 1,
+            .get(cyclic as usize - 1)
+            .ok_or(GetNameForCyclicYearError::InvalidYearNumber {
+                max: cyclics.len() as u8 + 1,
             })
     }
 
@@ -2011,15 +3783,15 @@ impl<'data> RawDateTimeNamesBorrowed<'data> {
         &self,
         field_symbol: fields::DayPeriod,
         field_length: FieldLength,
-        hour: input::IsoHour,
+        hour: icu_time::Hour,
         is_top_of_hour: bool,
     ) -> Result<&str, GetNameForDayPeriodError> {
         use fields::DayPeriod::NoonMidnight;
-        // UTS 35 says that "a..aaa" are all Abbreviated
-        let field_length = field_length.numeric_to_abbr();
+        let day_period_name_length = DayPeriodNameLength::from_field(field_symbol, field_length)
+            .ok_or(GetNameForDayPeriodError::InvalidFieldLength)?;
         let dayperiod_names = self
             .dayperiod_names
-            .get_with_variables(field_length)
+            .get_with_variables(day_period_name_length)
             .ok_or(GetNameForDayPeriodError::NotLoaded)?;
         let option_value: Option<&str> = match (field_symbol, u8::from(hour), is_top_of_hour) {
             (NoonMidnight, 00, true) => dayperiod_names.midnight().or_else(|| dayperiod_names.am()),
@@ -2035,21 +3807,27 @@ impl<'data> RawDateTimeNamesBorrowed<'data> {
 #[derive(Debug, Copy, Clone, Default)]
 pub(crate) struct TimeZoneDataPayloadsBorrowed<'a> {
     /// The data that contains meta information about how to display content.
-    pub(crate) essentials: Option<&'a tz::EssentialsV1<'a>>,
-    /// The root location names, e.g. Toronto
-    pub(crate) locations_root: Option<&'a tz::LocationsV1<'a>>,
-    /// The language specific location names, e.g. Italy
-    pub(crate) locations: Option<&'a tz::LocationsV1<'a>>,
+    pub(crate) essentials: Option<&'a tz::Essentials<'a>>,
+    /// The root location names, e.g. Italy
+    pub(crate) locations_root: Option<&'a tz::Locations<'a>>,
+    /// The language specific location names, e.g. Italia
+    pub(crate) locations: Option<&'a tz::Locations<'a>>,
+    /// The root exemplar city names, e.g. Rome
+    pub(crate) exemplars_root: Option<&'a tz::ExemplarCities<'a>>,
+    /// The language specific exemplar names, e.g. Roma
+    pub(crate) exemplars: Option<&'a tz::ExemplarCities<'a>>,
     /// The generic long metazone names, e.g. Pacific Time
-    pub(crate) mz_generic_long: Option<&'a tz::MzGenericV1<'a>>,
+    pub(crate) mz_generic_long: Option<&'a tz::MzGeneric<'a>>,
+    /// The long metazone names shared between generic and standard, e.g. Gulf Standard Time
+    pub(crate) mz_standard_long: Option<&'a tz::MzGeneric<'a>>,
     /// The generic short metazone names, e.g. PT
-    pub(crate) mz_generic_short: Option<&'a tz::MzGenericV1<'a>>,
+    pub(crate) mz_generic_short: Option<&'a tz::MzGeneric<'a>>,
     /// The specific long metazone names, e.g. Pacific Daylight Time
-    pub(crate) mz_specific_long: Option<&'a tz::MzSpecificV1<'a>>,
+    pub(crate) mz_specific_long: Option<&'a tz::MzSpecific<'a>>,
     /// The specific short metazone names, e.g. Pacific Daylight Time
-    pub(crate) mz_specific_short: Option<&'a tz::MzSpecificV1<'a>>,
+    pub(crate) mz_specific_short: Option<&'a tz::MzSpecific<'a>>,
     /// The metazone lookup
-    pub(crate) mz_periods: Option<&'a tz::MzPeriodV1<'a>>,
+    pub(crate) mz_periods: Option<&'a tz::MzPeriod<'a>>,
 }
 
 impl<'data> RawDateTimeNamesBorrowed<'data> {
@@ -2058,7 +3836,10 @@ impl<'data> RawDateTimeNamesBorrowed<'data> {
             essentials: self.zone_essentials.get_option(),
             locations_root: self.locations_root.get_option(),
             locations: self.locations.get_option(),
+            exemplars: self.exemplars.get_option(),
+            exemplars_root: self.exemplars_root.get_option(),
             mz_generic_long: self.mz_generic_long.get_option(),
+            mz_standard_long: self.mz_standard_long.get_option(),
             mz_generic_short: self.mz_generic_short.get_option(),
             mz_specific_long: self.mz_specific_long.get_option(),
             mz_specific_short: self.mz_specific_short.get_option(),

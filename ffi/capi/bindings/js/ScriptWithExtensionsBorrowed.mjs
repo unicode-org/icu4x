@@ -5,15 +5,17 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
-/** A slightly faster ScriptWithExtensions object
-*
-*See the [Rust documentation for `ScriptWithExtensionsBorrowed`](https://docs.rs/icu/latest/icu/properties/script/struct.ScriptWithExtensionsBorrowed.html) for more information.
-*/
+/** 
+ * A slightly faster ScriptWithExtensions object
+ *
+ * See the [Rust documentation for `ScriptWithExtensionsBorrowed`](https://docs.rs/icu/latest/icu/properties/script/struct.ScriptWithExtensionsBorrowed.html) for more information.
+ */
 const ScriptWithExtensionsBorrowed_box_destroy_registry = new FinalizationRegistry((ptr) => {
     wasm.icu4x_ScriptWithExtensionsBorrowed_destroy_mv1(ptr);
 });
 
 export class ScriptWithExtensionsBorrowed {
+    
     // Internal ptr reference:
     #ptr = null;
 
@@ -22,7 +24,7 @@ export class ScriptWithExtensionsBorrowed {
     #selfEdge = [];
     #aEdge = [];
     
-    constructor(symbol, ptr, selfEdge, aEdge) {
+    #internalConstructor(symbol, ptr, selfEdge, aEdge) {
         if (symbol !== diplomatRuntime.internalConstructor) {
             console.error("ScriptWithExtensionsBorrowed is an Opaque type. You cannot call its constructor.");
             return;
@@ -38,12 +40,19 @@ export class ScriptWithExtensionsBorrowed {
         if (this.#selfEdge.length === 0) {
             ScriptWithExtensionsBorrowed_box_destroy_registry.register(this, this.#ptr);
         }
+        
+        return this;
     }
-
     get ffiValue() {
         return this.#ptr;
     }
 
+    /** 
+     * Get the Script property value for a code point
+     * Get the Script property value for a code point
+     *
+     * See the [Rust documentation for `get_script_val`](https://docs.rs/icu/latest/icu/properties/script/struct.ScriptWithExtensionsBorrowed.html#method.get_script_val) for more information.
+     */
     getScriptVal(ch) {
         const result = wasm.icu4x_ScriptWithExtensionsBorrowed_get_script_val_mv1(this.ffiValue, ch);
     
@@ -54,6 +63,11 @@ export class ScriptWithExtensionsBorrowed {
         finally {}
     }
 
+    /** 
+     * Get the Script property value for a code point
+     *
+     * See the [Rust documentation for `get_script_extensions_val`](https://docs.rs/icu/latest/icu/properties/script/struct.ScriptWithExtensionsBorrowed.html#method.get_script_extensions_val) for more information.
+     */
     getScriptExtensionsVal(ch) {
         // This lifetime edge depends on lifetimes 'a
         let aEdges = [this];
@@ -67,6 +81,11 @@ export class ScriptWithExtensionsBorrowed {
         finally {}
     }
 
+    /** 
+     * Check if the Script_Extensions property of the given code point covers the given script
+     *
+     * See the [Rust documentation for `has_script`](https://docs.rs/icu/latest/icu/properties/script/struct.ScriptWithExtensionsBorrowed.html#method.has_script) for more information.
+     */
     hasScript(ch, script) {
         const result = wasm.icu4x_ScriptWithExtensionsBorrowed_has_script_mv1(this.ffiValue, ch, script);
     
@@ -77,6 +96,12 @@ export class ScriptWithExtensionsBorrowed {
         finally {}
     }
 
+    /** 
+     * Build the CodePointSetData corresponding to a codepoints matching a particular script
+     * in their Script_Extensions
+     *
+     * See the [Rust documentation for `get_script_extensions_set`](https://docs.rs/icu/latest/icu/properties/script/struct.ScriptWithExtensionsBorrowed.html#method.get_script_extensions_set) for more information.
+     */
     getScriptExtensionsSet(script) {
         const result = wasm.icu4x_ScriptWithExtensionsBorrowed_get_script_extensions_set_mv1(this.ffiValue, script);
     
@@ -85,5 +110,9 @@ export class ScriptWithExtensionsBorrowed {
         }
         
         finally {}
+    }
+
+    constructor(symbol, ptr, selfEdge, aEdge) {
+        return this.#internalConstructor(...arguments)
     }
 }

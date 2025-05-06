@@ -4,14 +4,16 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
-/** An iterator over code point ranges, produced by `CodePointSetData` or
-*one of the `CodePointMapData` types
-*/
+/** 
+ * An iterator over code point ranges, produced by `CodePointSetData` or
+ * one of the `CodePointMapData` types
+ */
 const CodePointRangeIterator_box_destroy_registry = new FinalizationRegistry((ptr) => {
     wasm.icu4x_CodePointRangeIterator_destroy_mv1(ptr);
 });
 
 export class CodePointRangeIterator {
+    
     // Internal ptr reference:
     #ptr = null;
 
@@ -20,7 +22,7 @@ export class CodePointRangeIterator {
     #selfEdge = [];
     #aEdge = [];
     
-    constructor(symbol, ptr, selfEdge, aEdge) {
+    #internalConstructor(symbol, ptr, selfEdge, aEdge) {
         if (symbol !== diplomatRuntime.internalConstructor) {
             console.error("CodePointRangeIterator is an Opaque type. You cannot call its constructor.");
             return;
@@ -36,12 +38,18 @@ export class CodePointRangeIterator {
         if (this.#selfEdge.length === 0) {
             CodePointRangeIterator_box_destroy_registry.register(this, this.#ptr);
         }
+        
+        return this;
     }
-
     get ffiValue() {
         return this.#ptr;
     }
 
+    /** 
+     * Advance the iterator by one and return the next range.
+     *
+     * If the iterator is out of items, `done` will be true
+     */
     next() {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 12, 4, false);
         
@@ -54,5 +62,9 @@ export class CodePointRangeIterator {
         finally {
             diplomatReceive.free();
         }
+    }
+
+    constructor(symbol, ptr, selfEdge, aEdge) {
+        return this.#internalConstructor(...arguments)
     }
 }

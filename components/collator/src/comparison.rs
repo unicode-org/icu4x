@@ -9,30 +9,40 @@
 //! This module holds the `Collator` struct whose `compare_impl()` contains
 //! the comparison of collation element sequences.
 
+use crate::elements::CharacterAndClassAndTrieValue;
+use crate::elements::CollationElement32;
+use crate::elements::Tag;
+use crate::elements::BACKWARD_COMBINING_MARKER;
+use crate::elements::CE_BUFFER_SIZE;
+use crate::elements::FALLBACK_CE32;
+use crate::elements::NON_ROUND_TRIP_MARKER;
 use crate::elements::{
     CollationElement, CollationElements, NonPrimary, JAMO_COUNT, NO_CE, NO_CE_PRIMARY,
     NO_CE_SECONDARY, NO_CE_TERTIARY, OPTIMIZED_DIACRITICS_MAX_COUNT, QUATERNARY_MASK,
 };
 use crate::options::CollatorOptionsBitField;
-use crate::provider::CollationDataV1;
+use crate::options::{
+    AlternateHandling, CollatorOptions, MaxVariable, ResolvedCollatorOptions, Strength,
+};
+use crate::preferences::{CollationCaseFirst, CollationNumericOrdering, CollationType};
+use crate::provider::CollationData;
+use crate::provider::CollationDiacritics;
 use crate::provider::CollationDiacriticsV1;
-use crate::provider::CollationDiacriticsV1Marker;
+use crate::provider::CollationJamo;
 use crate::provider::CollationJamoV1;
-use crate::provider::CollationJamoV1Marker;
-use crate::provider::CollationMetadataV1Marker;
+use crate::provider::CollationMetadataV1;
+use crate::provider::CollationReordering;
 use crate::provider::CollationReorderingV1;
-use crate::provider::CollationReorderingV1Marker;
-use crate::provider::CollationRootV1Marker;
+use crate::provider::CollationRootV1;
+use crate::provider::CollationSpecialPrimaries;
 use crate::provider::CollationSpecialPrimariesV1;
-use crate::provider::CollationSpecialPrimariesV1Marker;
-use crate::provider::CollationTailoringV1Marker;
-use crate::{AlternateHandling, CollatorOptions, MaxVariable, ResolvedCollatorOptions, Strength};
+use crate::provider::CollationTailoringV1;
 use core::cmp::Ordering;
 use core::convert::TryFrom;
-use icu_normalizer::provider::CanonicalDecompositionDataV1Marker;
-use icu_normalizer::provider::CanonicalDecompositionTablesV1Marker;
-use icu_normalizer::provider::DecompositionDataV1;
-use icu_normalizer::provider::DecompositionTablesV1;
+use icu_normalizer::provider::DecompositionData;
+use icu_normalizer::provider::DecompositionTables;
+use icu_normalizer::provider::NormalizerNfdDataV1;
+use icu_normalizer::provider::NormalizerNfdTablesV1;
 use icu_normalizer::Decomposition;
 use icu_provider::prelude::*;
 use smallvec::SmallVec;
@@ -41,6 +51,8 @@ use utf8_iter::Utf8CharsEx;
 use zerovec::ule::AsULE;
 
 const MERGE_SEPARATOR_PRIMARY: u32 = 0x02000000; // for U+FFFE
+
+const HANGUL_SYLLABLE_TRIE_VAL: u32 = 1;
 
 struct AnyQuaternaryAccumulator(u32);
 
@@ -59,24 +71,181 @@ impl AnyQuaternaryAccumulator {
     }
 }
 
+/// `true` iff `i` is greater or equal to `start` and less or equal
+/// to `end`.
+#[inline(always)]
+fn in_inclusive_range16(i: u16, start: u16, end: u16) -> bool {
+    i.wrapping_sub(start) <= (end - start)
+}
+
+/// Finds the identical prefix of `left` and `right` containing
+/// potentially ill-formed UTF-16 avoiding splitting a
+/// well-formed surrogate pair. In case of ill-formed
+/// UTF-16, the prefix is not guaranteed to be maximal.
+///
+/// Returns the identical prefix, the part of `left` after the
+/// prefix, and the part of `right` after the prefix.
+fn split_prefix_u16<'a, 'b>(
+    left: &'a [u16],
+    right: &'b [u16],
+) -> (&'a [u16], &'a [u16], &'b [u16]) {
+    let mut i = left
+        .iter()
+        .zip(right.iter())
+        .take_while(|(l, r)| l == r)
+        .count();
+    if i != 0 {
+        if let Some(&last) = left.get(i.wrapping_sub(1)) {
+            if in_inclusive_range16(last, 0xD800, 0xDBFF) {
+                i -= 1;
+            }
+            if let Some((head, left_tail)) = left.split_at_checked(i) {
+                if let Some(right_tail) = right.get(i..) {
+                    return (head, left_tail, right_tail);
+                }
+            }
+        }
+    }
+    (&[], left, right)
+}
+
+/// Finds the identical prefix of `left` and `right` containing
+/// potentially ill-formed UTF-8 avoiding splitting a UTF-8
+/// byte sequence. In case of ill-formed UTF-8, the prefix is
+/// not guaranteed to be maximal.
+///
+/// Returns the identical prefix, the part of `left` after the
+/// prefix, and the part of `right` after the prefix.
+fn split_prefix_u8<'a, 'b>(left: &'a [u8], right: &'b [u8]) -> (&'a [u8], &'a [u8], &'b [u8]) {
+    let mut i = left
+        .iter()
+        .zip(right.iter())
+        .take_while(|(l, r)| l == r)
+        .count();
+    if i != 0 {
+        // Tails must not start with a UTF-8 continuation
+        // byte unless it's the first byte of the original
+        // slice.
+
+        // First, left and right differ, but since they
+        // are the same afterwards, one of them needs checking
+        // only once.
+        if let Some(right_first) = right.get(i) {
+            if (right_first & 0b1100_0000) == 0b1000_0000 {
+                i -= 1;
+            }
+        }
+        while i != 0 {
+            if let Some(left_first) = left.get(i) {
+                if (left_first & 0b1100_0000) == 0b1000_0000 {
+                    i -= 1;
+                    continue;
+                }
+            }
+            break;
+        }
+        if let Some((head, left_tail)) = left.split_at_checked(i) {
+            if let Some(right_tail) = right.get(i..) {
+                return (head, left_tail, right_tail);
+            }
+        }
+    }
+    (&[], left, right)
+}
+
+/// Finds the identical prefix of `left` and `right` containing
+/// guaranteed well-format UTF-8.
+///
+/// Returns the identical prefix, the part of `left` after the
+/// prefix, and the part of `right` after the prefix.
+fn split_prefix<'a, 'b>(left: &'a str, right: &'b str) -> (&'a str, &'a str, &'b str) {
+    let left_bytes = left.as_bytes();
+    let right_bytes = right.as_bytes();
+    let mut i = left_bytes
+        .iter()
+        .zip(right_bytes.iter())
+        .take_while(|(l, r)| l == r)
+        .count();
+    if i != 0 {
+        // Tails must not start with a UTF-8 continuation
+        // byte.
+
+        // Since the inputs are valid UTF-8, the first byte
+        // of either input slice cannot be a contination slice,
+        // so we may rely on finding a lead byte when walking
+        // backwards.
+
+        // Since the inputs are valid UTF-8, if a tail starts
+        // with a continuation, both tails must start with a
+        // continuation, since the most recent lead byte must
+        // be equal, so the difference is within valid UTF-8
+        // sequences of equal length.
+
+        // Therefore, it's sufficient to examine only one of
+        // the sides.
+        loop {
+            if let Some(left_first) = left_bytes.get(i) {
+                if (left_first & 0b1100_0000) == 0b1000_0000 {
+                    i -= 1;
+                    continue;
+                }
+            }
+            break;
+        }
+        // The methods below perform useless UTF-8 boundary checks,
+        // since we just checked. However, avoiding `unsafe` to
+        // make this code easier to audit.
+        if let Some((head, left_tail)) = left.split_at_checked(i) {
+            if let Some(right_tail) = right.get(i..) {
+                return (head, left_tail, right_tail);
+            }
+        }
+    }
+    ("", left, right)
+}
+
 /// Holder struct for payloads that are locale-dependent. (For code
 /// reuse between owned and borrowed cases.)
 #[derive(Debug)]
 struct LocaleSpecificDataHolder {
-    tailoring: Option<DataPayload<CollationTailoringV1Marker>>,
-    diacritics: DataPayload<CollationDiacriticsV1Marker>,
-    reordering: Option<DataPayload<CollationReorderingV1Marker>>,
+    tailoring: Option<DataPayload<CollationTailoringV1>>,
+    diacritics: DataPayload<CollationDiacriticsV1>,
+    reordering: Option<DataPayload<CollationReorderingV1>>,
     merged_options: CollatorOptionsBitField,
     lithuanian_dot_above: bool,
 }
 
 icu_locale_core::preferences::define_preferences!(
     /// The preferences for collation.
+    ///
+    /// # Preferences
+    ///
+    /// Examples for using the different preferences below can be found in the [crate-level docs](crate).
+    ///
+    /// ## Case First
+    ///
+    /// See the [spec](https://www.unicode.org/reports/tr35/tr35-collation.html#Case_Parameters).
+    /// This is the BCP47 key `kf`. Three possibilities: [`CollationCaseFirst::False`] (default,
+    /// except for Danish and Maltese), [`CollationCaseFirst::Lower`], and [`CollationCaseFirst::Upper`]
+    /// (default for Danish and Maltese).
+    ///
+    /// ## Numeric
+    ///
+    /// This is the BCP47 key `kn`. When set to [`CollationNumericOrdering::True`], any sequence of decimal
+    /// digits (General_Category = Nd) is sorted at the primary level according to the
+    /// numeric value. The default is [`CollationNumericOrdering::False`].
     [Copy]
     CollatorPreferences,
     {
         /// The collation type. This corresponds to the `-u-co` BCP-47 tag.
-        collation_type: icu_locale_core::preferences::extensions::unicode::keywords::CollationType
+        collation_type: CollationType,
+        /// Treatment of case. (Large and small kana differences are treated as case differences.)
+        /// This corresponds to the `-u-kf` BCP-47 tag.
+        case_first: CollationCaseFirst,
+        /// When set to `True`, any sequence of decimal digits is sorted at a primary level according
+        /// to the numeric value.
+        /// This corresponds to the `-u-kn` BPC-47 tag.
+        numeric_ordering: CollationNumericOrdering
     }
 );
 
@@ -88,10 +257,10 @@ impl LocaleSpecificDataHolder {
         options: CollatorOptions,
     ) -> Result<Self, DataError>
     where
-        D: DataProvider<CollationTailoringV1Marker>
-            + DataProvider<CollationDiacriticsV1Marker>
-            + DataProvider<CollationMetadataV1Marker>
-            + DataProvider<CollationReorderingV1Marker>
+        D: DataProvider<CollationTailoringV1>
+            + DataProvider<CollationDiacriticsV1>
+            + DataProvider<CollationMetadataV1>
+            + DataProvider<CollationReorderingV1>
             + ?Sized,
     {
         let marker_attributes = prefs
@@ -101,12 +270,12 @@ impl LocaleSpecificDataHolder {
             .map(|c| DataMarkerAttributes::from_str_or_panic(c.as_str()))
             .unwrap_or_default();
 
-        let data_locale =
-            DataLocale::from_preferences_locale::<CollationTailoringV1Marker>(prefs.locale_prefs);
-        let id = DataIdentifierCow::from_borrowed_and_owned(marker_attributes, data_locale.clone());
-
+        let data_locale = CollationTailoringV1::make_locale(prefs.locale_preferences);
         let req = DataRequest {
-            id: id.as_borrowed(),
+            id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                marker_attributes,
+                &data_locale,
+            ),
             metadata: {
                 let mut metadata = DataRequestMetadata::default();
                 metadata.silent = true;
@@ -114,22 +283,22 @@ impl LocaleSpecificDataHolder {
             },
         };
 
-        let fallback_id =
-            DataIdentifierCow::from_borrowed_and_owned(Default::default(), data_locale);
-
         let fallback_req = DataRequest {
-            id: fallback_id.as_borrowed(),
+            id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                Default::default(),
+                &data_locale,
+            ),
             ..Default::default()
         };
 
-        let metadata_payload: DataPayload<crate::provider::CollationMetadataV1Marker> = provider
+        let metadata_payload: DataPayload<crate::provider::CollationMetadataV1> = provider
             .load(req)
             .or_else(|_| provider.load(fallback_req))?
             .payload;
 
         let metadata = metadata_payload.get();
 
-        let tailoring: Option<DataPayload<crate::provider::CollationTailoringV1Marker>> =
+        let tailoring: Option<DataPayload<crate::provider::CollationTailoringV1>> =
             if metadata.tailored() {
                 Some(
                     provider
@@ -141,7 +310,7 @@ impl LocaleSpecificDataHolder {
                 None
             };
 
-        let reordering: Option<DataPayload<crate::provider::CollationReorderingV1Marker>> =
+        let reordering: Option<DataPayload<crate::provider::CollationReorderingV1>> =
             if metadata.reordering() {
                 Some(
                     provider
@@ -155,14 +324,12 @@ impl LocaleSpecificDataHolder {
 
         if let Some(reordering) = &reordering {
             if reordering.get().reorder_table.len() != 256 {
-                return Err(
-                    DataError::custom("invalid").with_marker(CollationReorderingV1Marker::INFO)
-                );
+                return Err(DataError::custom("invalid").with_marker(CollationReorderingV1::INFO));
             }
         }
 
         let tailored_diacritics = metadata.tailored_diacritics();
-        let diacritics: DataPayload<CollationDiacriticsV1Marker> = provider
+        let diacritics: DataPayload<CollationDiacriticsV1> = provider
             .load(if tailored_diacritics {
                 req
             } else {
@@ -177,12 +344,10 @@ impl LocaleSpecificDataHolder {
             // Vietnamese and Ewe load a full-length alternative table and the rest use
             // the default one.
             if diacritics.get().secondaries.len() > OPTIMIZED_DIACRITICS_MAX_COUNT {
-                return Err(
-                    DataError::custom("invalid").with_marker(CollationDiacriticsV1Marker::INFO)
-                );
+                return Err(DataError::custom("invalid").with_marker(CollationDiacriticsV1::INFO));
             }
         } else if diacritics.get().secondaries.len() != OPTIMIZED_DIACRITICS_MAX_COUNT {
-            return Err(DataError::custom("invalid").with_marker(CollationDiacriticsV1Marker::INFO));
+            return Err(DataError::custom("invalid").with_marker(CollationDiacriticsV1::INFO));
         }
 
         let mut altered_defaults = CollatorOptionsBitField::default();
@@ -198,6 +363,8 @@ impl LocaleSpecificDataHolder {
         altered_defaults.set_max_variable(Some(metadata.max_variable()));
 
         let mut merged_options = CollatorOptionsBitField::from(options);
+        merged_options.set_case_first(prefs.case_first);
+        merged_options.set_numeric_from_enum(prefs.numeric_ordering);
         merged_options.set_defaults(altered_defaults);
 
         Ok(LocaleSpecificDataHolder {
@@ -213,15 +380,15 @@ impl LocaleSpecificDataHolder {
 /// Compares strings according to culturally-relevant ordering.
 #[derive(Debug)]
 pub struct Collator {
-    special_primaries: Option<DataPayload<CollationSpecialPrimariesV1Marker>>,
-    root: DataPayload<CollationRootV1Marker>,
-    tailoring: Option<DataPayload<CollationTailoringV1Marker>>,
-    jamo: DataPayload<CollationJamoV1Marker>,
-    diacritics: DataPayload<CollationDiacriticsV1Marker>,
+    special_primaries: Option<DataPayload<CollationSpecialPrimariesV1>>,
+    root: DataPayload<CollationRootV1>,
+    tailoring: Option<DataPayload<CollationTailoringV1>>,
+    jamo: DataPayload<CollationJamoV1>,
+    diacritics: DataPayload<CollationDiacriticsV1>,
     options: CollatorOptionsBitField,
-    reordering: Option<DataPayload<CollationReorderingV1Marker>>,
-    decompositions: DataPayload<CanonicalDecompositionDataV1Marker>,
-    tables: DataPayload<CanonicalDecompositionTablesV1Marker>,
+    reordering: Option<DataPayload<CollationReorderingV1>>,
+    decompositions: DataPayload<NormalizerNfdDataV1>,
+    tables: DataPayload<NormalizerNfdTablesV1>,
     lithuanian_dot_above: bool,
 }
 
@@ -251,33 +418,32 @@ impl Collator {
         CollatorBorrowed::try_new(prefs, options)
     }
 
-    icu_provider::gen_any_buffer_data_constructors!(
+    icu_provider::gen_buffer_data_constructors!(
         (prefs: CollatorPreferences, options: CollatorOptions) -> error: DataError,
         functions: [
             try_new: skip,
-            try_new_with_any_provider,
             try_new_with_buffer_provider,
             try_new_unstable,
             Self
         ]
     );
 
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
     pub fn try_new_unstable<D>(
         provider: &D,
         prefs: CollatorPreferences,
         options: CollatorOptions,
     ) -> Result<Self, DataError>
     where
-        D: DataProvider<CollationSpecialPrimariesV1Marker>
-            + DataProvider<CollationRootV1Marker>
-            + DataProvider<CollationTailoringV1Marker>
-            + DataProvider<CollationDiacriticsV1Marker>
-            + DataProvider<CollationJamoV1Marker>
-            + DataProvider<CollationMetadataV1Marker>
-            + DataProvider<CollationReorderingV1Marker>
-            + DataProvider<CanonicalDecompositionDataV1Marker>
-            + DataProvider<CanonicalDecompositionTablesV1Marker>
+        D: DataProvider<CollationSpecialPrimariesV1>
+            + DataProvider<CollationRootV1>
+            + DataProvider<CollationTailoringV1>
+            + DataProvider<CollationDiacriticsV1>
+            + DataProvider<CollationJamoV1>
+            + DataProvider<CollationMetadataV1>
+            + DataProvider<CollationReorderingV1>
+            + DataProvider<NormalizerNfdDataV1>
+            + DataProvider<NormalizerNfdTablesV1>
             + ?Sized,
     {
         Self::try_new_unstable_internal(
@@ -295,23 +461,20 @@ impl Collator {
     #[allow(clippy::too_many_arguments)]
     fn try_new_unstable_internal<D>(
         provider: &D,
-        root: DataPayload<CollationRootV1Marker>,
-        decompositions: DataPayload<CanonicalDecompositionDataV1Marker>,
-        tables: DataPayload<CanonicalDecompositionTablesV1Marker>,
-        jamo: DataPayload<CollationJamoV1Marker>,
-        special_primaries: impl FnOnce() -> Result<
-            DataPayload<CollationSpecialPrimariesV1Marker>,
-            DataError,
-        >,
+        root: DataPayload<CollationRootV1>,
+        decompositions: DataPayload<NormalizerNfdDataV1>,
+        tables: DataPayload<NormalizerNfdTablesV1>,
+        jamo: DataPayload<CollationJamoV1>,
+        special_primaries: impl FnOnce() -> Result<DataPayload<CollationSpecialPrimariesV1>, DataError>,
         prefs: CollatorPreferences,
         options: CollatorOptions,
     ) -> Result<Self, DataError>
     where
-        D: DataProvider<CollationRootV1Marker>
-            + DataProvider<CollationTailoringV1Marker>
-            + DataProvider<CollationDiacriticsV1Marker>
-            + DataProvider<CollationMetadataV1Marker>
-            + DataProvider<CollationReorderingV1Marker>
+        D: DataProvider<CollationRootV1>
+            + DataProvider<CollationTailoringV1>
+            + DataProvider<CollationDiacriticsV1>
+            + DataProvider<CollationMetadataV1>
+            + DataProvider<CollationReorderingV1>
             + ?Sized,
     {
         let locale_dependent =
@@ -319,7 +482,7 @@ impl Collator {
 
         // TODO: redesign Korean search collation handling
         if jamo.get().ce32s.len() != JAMO_COUNT {
-            return Err(DataError::custom("invalid").with_marker(CollationJamoV1Marker::INFO));
+            return Err(DataError::custom("invalid").with_marker(CollationJamoV1::INFO));
         }
 
         let special_primaries = if locale_dependent.merged_options.alternate_handling()
@@ -330,8 +493,9 @@ impl Collator {
             // `variant_count` isn't stable yet:
             // https://github.com/rust-lang/rust/issues/73662
             if special_primaries.get().last_primaries.len() <= (MaxVariable::Currency as usize) {
-                return Err(DataError::custom("invalid")
-                    .with_marker(CollationSpecialPrimariesV1Marker::INFO));
+                return Err(
+                    DataError::custom("invalid").with_marker(CollationSpecialPrimariesV1::INFO)
+                );
             }
             Some(special_primaries)
         } else {
@@ -353,19 +517,42 @@ impl Collator {
     }
 }
 
+macro_rules! compare {
+    ($(#[$meta:meta])*,
+     $compare:ident,
+     $slice:ty,
+     $split_prefix:ident,
+    ) => {
+        $(#[$meta])*
+        pub fn $compare(&self, left: &$slice, right: &$slice) -> Ordering {
+            let (head, left_tail, right_tail) = $split_prefix(left, right);
+            if left_tail.is_empty() && right_tail.is_empty() {
+                return Ordering::Equal;
+            }
+            let ret = self.compare_impl(left_tail.chars(), right_tail.chars(), head.chars());
+            if self.options.strength() == Strength::Identical && ret == Ordering::Equal {
+                return Decomposition::new(left_tail.chars(), self.decompositions, self.tables).cmp(
+                    Decomposition::new(right_tail.chars(), self.decompositions, self.tables),
+                );
+            }
+            ret
+        }
+    }
+}
+
 /// Compares strings according to culturally-relevant ordering,
 /// borrowed version.
 #[derive(Debug)]
 pub struct CollatorBorrowed<'a> {
-    special_primaries: Option<&'a CollationSpecialPrimariesV1<'a>>,
-    root: &'a CollationDataV1<'a>,
-    tailoring: Option<&'a CollationDataV1<'a>>,
-    jamo: &'a CollationJamoV1<'a>,
-    diacritics: &'a CollationDiacriticsV1<'a>,
+    special_primaries: Option<&'a CollationSpecialPrimaries<'a>>,
+    root: &'a CollationData<'a>,
+    tailoring: Option<&'a CollationData<'a>>,
+    jamo: &'a CollationJamo<'a>,
+    diacritics: &'a CollationDiacritics<'a>,
     options: CollatorOptionsBitField,
-    reordering: Option<&'a CollationReorderingV1<'a>>,
-    decompositions: &'a DecompositionDataV1<'a>,
-    tables: &'a DecompositionTablesV1<'a>,
+    reordering: Option<&'a CollationReordering<'a>>,
+    decompositions: &'a DecompositionData<'a>,
+    tables: &'a DecompositionTables<'a>,
     lithuanian_dot_above: bool,
 }
 
@@ -380,19 +567,17 @@ impl CollatorBorrowed<'static> {
         // copypaste-compatible with `Collator::try_new_unstable_internal`.
 
         let provider = &crate::provider::Baked;
-        let decompositions =
-            icu_normalizer::provider::Baked::SINGLETON_CANONICAL_DECOMPOSITION_DATA_V1_MARKER;
-        let tables =
-            icu_normalizer::provider::Baked::SINGLETON_CANONICAL_DECOMPOSITION_TABLES_V1_MARKER;
-        let root = crate::provider::Baked::SINGLETON_COLLATION_ROOT_V1_MARKER;
-        let jamo = crate::provider::Baked::SINGLETON_COLLATION_JAMO_V1_MARKER;
+        let decompositions = icu_normalizer::provider::Baked::SINGLETON_NORMALIZER_NFD_DATA_V1;
+        let tables = icu_normalizer::provider::Baked::SINGLETON_NORMALIZER_NFD_TABLES_V1;
+        let root = crate::provider::Baked::SINGLETON_COLLATION_ROOT_V1;
+        let jamo = crate::provider::Baked::SINGLETON_COLLATION_JAMO_V1;
 
         let locale_dependent =
             LocaleSpecificDataHolder::try_new_unstable_internal(provider, prefs, options)?;
 
         // TODO: redesign Korean search collation handling
         if jamo.ce32s.len() != JAMO_COUNT {
-            return Err(DataError::custom("invalid").with_marker(CollationJamoV1Marker::INFO));
+            return Err(DataError::custom("invalid").with_marker(CollationJamoV1::INFO));
         }
 
         let special_primaries = if locale_dependent.merged_options.alternate_handling()
@@ -400,12 +585,13 @@ impl CollatorBorrowed<'static> {
             || locale_dependent.merged_options.numeric()
         {
             let special_primaries =
-                crate::provider::Baked::SINGLETON_COLLATION_SPECIAL_PRIMARIES_V1_MARKER;
+                crate::provider::Baked::SINGLETON_COLLATION_SPECIAL_PRIMARIES_V1;
             // `variant_count` isn't stable yet:
             // https://github.com/rust-lang/rust/issues/73662
             if special_primaries.last_primaries.len() <= (MaxVariable::Currency as usize) {
-                return Err(DataError::custom("invalid")
-                    .with_marker(CollationSpecialPrimariesV1Marker::INFO));
+                return Err(
+                    DataError::custom("invalid").with_marker(CollationSpecialPrimariesV1::INFO)
+                );
             }
             Some(special_primaries)
         } else {
@@ -474,47 +660,52 @@ impl CollatorBorrowed<'_> {
         self.options.into()
     }
 
-    /// Compare potentially ill-formed UTF-16 slices. Unpaired surrogates
-    /// are compared as if each one was a REPLACEMENT CHARACTER.
-    pub fn compare_utf16(&self, left: &[u16], right: &[u16]) -> Ordering {
-        // TODO(#2010): Identical prefix skipping not implemented.
-        let ret = self.compare_impl(left.chars(), right.chars());
-        if self.options.strength() == Strength::Identical && ret == Ordering::Equal {
-            return Decomposition::new(left.chars(), self.decompositions, self.tables).cmp(
-                Decomposition::new(right.chars(), self.decompositions, self.tables),
-            );
-        }
-        ret
-    }
+    compare!(
+        /// Compare guaranteed well-formed UTF-8 slices.
+        ,
+        compare,
+        str,
+        split_prefix,
+    );
 
-    /// Compare guaranteed well-formed UTF-8 slices.
-    pub fn compare(&self, left: &str, right: &str) -> Ordering {
-        // TODO(#2010): Identical prefix skipping not implemented.
-        let ret = self.compare_impl(left.chars(), right.chars());
-        if self.options.strength() == Strength::Identical && ret == Ordering::Equal {
-            return Decomposition::new(left.chars(), self.decompositions, self.tables).cmp(
-                Decomposition::new(right.chars(), self.decompositions, self.tables),
-            );
-        }
-        ret
-    }
+    compare!(
+        /// Compare potentially ill-formed UTF-8 slices. Ill-formed input is compared
+        /// as if errors had been replaced with REPLACEMENT CHARACTERs according
+        /// to the WHATWG Encoding Standard.
+        ,
+        compare_utf8,
+        [u8],
+        split_prefix_u8,
+    );
 
-    /// Compare potentially well-formed UTF-8 slices. Ill-formed input is compared
-    /// as if errors had been replaced with REPLACEMENT CHARACTERs according
-    /// to the WHATWG Encoding Standard.
-    pub fn compare_utf8(&self, left: &[u8], right: &[u8]) -> Ordering {
-        // TODO(#2010): Identical prefix skipping not implemented.
-        let ret = self.compare_impl(left.chars(), right.chars());
-        if self.options.strength() == Strength::Identical && ret == Ordering::Equal {
-            return Decomposition::new(left.chars(), self.decompositions, self.tables).cmp(
-                Decomposition::new(right.chars(), self.decompositions, self.tables),
-            );
-        }
-        ret
-    }
+    compare!(
+        /// Compare potentially ill-formed UTF-16 slices. Unpaired surrogates
+        /// are compared as if each one was a REPLACEMENT CHARACTER.
+        ,
+        compare_utf16,
+        [u16],
+        split_prefix_u16,
+    );
 
-    fn compare_impl<I: Iterator<Item = char>>(&self, left_chars: I, right_chars: I) -> Ordering {
-        let tailoring: &CollationDataV1 = if let Some(tailoring) = &self.tailoring {
+    /// The implementation of the comparison operation.
+    ///
+    /// `head_chars` is an iterator over the identical prefix and
+    /// `left_chars` and `right_chars` are iterators over the parts
+    /// after the identical prefix.
+    ///
+    /// Currently, all three have the same concrete type, so the
+    /// trait bound is given as `DoubleEndedIterator`.
+    /// `head_chars` is iterated backwards and `left_chars` and
+    /// `right_chars` forwards. It this was a public API, this
+    /// should have three generic types, one for each argument,
+    /// for maximum flexibility.
+    fn compare_impl<I: DoubleEndedIterator<Item = char>>(
+        &self,
+        left_chars: I,
+        right_chars: I,
+        mut head_chars: I,
+    ) -> Ordering {
+        let tailoring: &CollationData = if let Some(tailoring) = &self.tailoring {
             tailoring
         } else {
             // If the root collation is valid for the locale,
@@ -543,9 +734,12 @@ impl CollatorBorrowed<'_> {
         // and only stores `NonPrimary` in `left_ces` and `right_ces`
         // with double the number of stack allocated elements.
 
-        // TODO(#2007): figure out a proper stack buffer length for these
-        let mut left_ces: SmallVec<[CollationElement; 8]> = SmallVec::new();
-        let mut right_ces: SmallVec<[CollationElement; 8]> = SmallVec::new();
+        // Note: These are used only after the identical prefix skipping,
+        // but initializing these up here improves performance at the time
+        // of writing. Presumably the source order affects the stack frame
+        // layout.
+        let mut left_ces: SmallVec<[CollationElement; CE_BUFFER_SIZE]> = SmallVec::new();
+        let mut right_ces: SmallVec<[CollationElement; CE_BUFFER_SIZE]> = SmallVec::new();
 
         // The algorithm comes from CollationCompare::compareUpToQuaternary in ICU4C.
 
@@ -609,6 +803,217 @@ impl CollatorBorrowed<'_> {
             numeric_primary,
             self.lithuanian_dot_above,
         );
+
+        // Start identical prefix
+
+        // The logic here to check whether the boundary found by skipping
+        // the identical prefix is safe is complicated compared to the ICU4C
+        // approach of having a set of characters that are unsafe as the character
+        // immediately after. However, this avoids extra data and working on the
+        // main data avoids the bug possibility data structures not being mutually
+        // consistent.
+
+        // This code intentionally does not keep around the `CollationElement32`s
+        // that have been read from the collation data tries, because keeping
+        // them around turned out to be a pessimization: There would be added
+        // branches on the hot path of the algorithm that maps characters to
+        // collation elements, and the element size of the upcoming buffer
+        // would grow.
+        //
+        // However, the values read from the normalization trie _are_ kept around,
+        // since there is already a place where to put them.
+
+        // This loop is only broken out of as goto forward.
+        #[allow(clippy::never_loop)]
+        'prefix: loop {
+            if let Some(head_last_c) = head_chars.next_back() {
+                let norm_trie = &self.decompositions.trie;
+                let mut head_last = CharacterAndClassAndTrieValue::new_with_trie_val(
+                    head_last_c,
+                    norm_trie.get(head_last_c),
+                );
+                let mut head_last_ce32 = CollationElement32::default();
+                if let Some(left_different) = left.iter_next_before_init() {
+                    left.prepend_upcoming_before_init(left_different.clone());
+                    if let Some(right_different) = right.iter_next_before_init() {
+                        // Note: left_different and right_different may both be U+FFFD.
+                        right.prepend_upcoming_before_init(right_different.clone());
+
+                        // A boundary is safe iff the character after the
+                        // boundary is a starter that decomposes to self and
+                        // its ce32 is not a prefix ce32 (or the character
+                        // after the boundary is a Hangul syllable) AND the
+                        // character before the boundary decomposes to self
+                        // and its ce32 is not a contraction ce32 that has
+                        // the `CONTRACT_HAS_STARTER` flag set (or the
+                        // character before the boundary is a Hangul syllable).
+                        // Notably, a boundary between a Hangul syllable
+                        // and a conjoining jamo is safe, due to conjoining
+                        // jamo not being able to have prefix or contraction
+                        // ce32.
+                        // Additionally, if the numeric mode is on, and we
+                        // have a numeric ce32 before and after the boundary,
+                        // the boundary is not safe.
+
+                        // This loop is only broken out of as goto forward. The control flow
+                        // is much more readable this way.
+                        #[allow(clippy::never_loop)]
+                        loop {
+                            // The two highest bits are about NFC, which we don't
+                            // care about here. Also mask off the lowest bit to
+                            // combine the check for Hangul syllable.
+                            if (head_last.trie_val
+                                & !(BACKWARD_COMBINING_MARKER | NON_ROUND_TRIP_MARKER | 1))
+                                != 0
+                            {
+                                break;
+                            }
+
+                            if (left_different.trie_val
+                                & !(BACKWARD_COMBINING_MARKER | NON_ROUND_TRIP_MARKER | 1))
+                                != 0
+                            {
+                                break;
+                            }
+                            if (right_different.trie_val
+                                & !(BACKWARD_COMBINING_MARKER | NON_ROUND_TRIP_MARKER | 1))
+                                != 0
+                            {
+                                break;
+                            }
+                            // The last character of the prefix is OK on the normalization
+                            // level. Now let's check its ce32 unless it's a Hangul syllable.
+                            if head_last.trie_val != HANGUL_SYLLABLE_TRIE_VAL {
+                                head_last_ce32 = tailoring.ce32_for_char(head_last_c);
+                                if head_last_ce32 == FALLBACK_CE32 {
+                                    head_last_ce32 = self.root.ce32_for_char(head_last_c);
+                                }
+                                if head_last_ce32.tag_checked() == Some(Tag::Contraction)
+                                    && head_last_ce32.at_least_one_suffix_contains_starter()
+                                {
+                                    break;
+                                }
+                            }
+                            // The first character of each suffix is OK on the normalization
+                            // level. Now let's check their ce32s unless they are Hangul syllables.
+                            let mut left_ce32 = CollationElement32::default();
+                            let mut right_ce32 = CollationElement32::default();
+                            if left_different.trie_val != HANGUL_SYLLABLE_TRIE_VAL {
+                                let left_c = left_different.character();
+                                left_ce32 = tailoring.ce32_for_char(left_c);
+                                if left_ce32 == FALLBACK_CE32 {
+                                    left_ce32 = self.root.ce32_for_char(left_c);
+                                }
+                                if left_ce32.tag_checked() == Some(Tag::Prefix) {
+                                    break;
+                                }
+                            }
+                            if right_different.trie_val != HANGUL_SYLLABLE_TRIE_VAL {
+                                let right_c = right_different.character();
+                                right_ce32 = tailoring.ce32_for_char(right_c);
+                                if right_ce32 == FALLBACK_CE32 {
+                                    right_ce32 = self.root.ce32_for_char(right_c);
+                                }
+                                if right_ce32.tag_checked() == Some(Tag::Prefix) {
+                                    break;
+                                }
+                            }
+                            if self.options.numeric()
+                                && head_last_ce32.tag_checked() == Some(Tag::Digit)
+                                && (left_ce32.tag_checked() == Some(Tag::Digit)
+                                    || right_ce32.tag_checked() == Some(Tag::Digit))
+                            {
+                                break;
+                            }
+                            // We are at a good boundary!
+                            break 'prefix;
+                        }
+                    }
+                }
+                let mut tail_first;
+                let mut tail_first_ce32;
+                loop {
+                    // Take a step back.
+                    left.prepend_upcoming_before_init(head_last.clone());
+                    right.prepend_upcoming_before_init(head_last.clone());
+
+                    tail_first = head_last;
+                    tail_first_ce32 = head_last_ce32;
+
+                    let head_last_c = if let Some(head_last_c) = head_chars.next_back() {
+                        head_last_c
+                    } else {
+                        // We need to step back beyond the start of the prefix.
+                        // Treat as good boundary.
+                        break 'prefix;
+                    };
+                    head_last = CharacterAndClassAndTrieValue::new_with_trie_val(
+                        head_last_c,
+                        norm_trie.get(head_last_c),
+                    );
+                    head_last_ce32 = CollationElement32::default();
+
+                    if (head_last.trie_val
+                        & !(BACKWARD_COMBINING_MARKER | NON_ROUND_TRIP_MARKER | 1))
+                        != 0
+                    {
+                        continue;
+                    }
+                    if (tail_first.trie_val
+                        & !(BACKWARD_COMBINING_MARKER | NON_ROUND_TRIP_MARKER | 1))
+                        != 0
+                    {
+                        continue;
+                    }
+                    // The last character of the prefix is OK on the normalization
+                    // level. Now let's check its ce32 unless it's a Hangul syllable.
+                    if head_last.trie_val != HANGUL_SYLLABLE_TRIE_VAL {
+                        head_last_ce32 = tailoring.ce32_for_char(head_last_c);
+                        if head_last_ce32 == FALLBACK_CE32 {
+                            head_last_ce32 = self.root.ce32_for_char(head_last_c);
+                        }
+                        if head_last_ce32.tag_checked() == Some(Tag::Contraction)
+                            && head_last_ce32.at_least_one_suffix_contains_starter()
+                        {
+                            continue;
+                        }
+                    }
+                    // Check this _after_ `head_last_ce32` to make sure
+                    // `head_last_ce32` is initialized for the next loop round
+                    // trip if applicable.
+                    if tail_first.trie_val != HANGUL_SYLLABLE_TRIE_VAL {
+                        if tail_first_ce32 == CollationElement32::default() {
+                            let tail_first_c = tail_first.character();
+                            tail_first_ce32 = tailoring.ce32_for_char(tail_first_c);
+                            if tail_first_ce32 == FALLBACK_CE32 {
+                                tail_first_ce32 = self.root.ce32_for_char(tail_first_c);
+                            }
+                        } // else we already have a trie value from the previous loop iteration
+                        if tail_first_ce32.tag_checked() == Some(Tag::Prefix) {
+                            continue;
+                        }
+                        if self.options.numeric()
+                            && head_last_ce32.tag_checked() == Some(Tag::Digit)
+                            && tail_first_ce32.tag_checked() == Some(Tag::Digit)
+                        {
+                            continue;
+                        }
+                    }
+                    // We are at a good boundary!
+                    break 'prefix;
+                }
+            } else {
+                // The prefix is empty
+                break 'prefix;
+            }
+            // Unreachable line
+        }
+
+        // End identical prefix
+
+        left.init();
+        right.init();
+
         loop {
             let mut left_primary;
             'left_primary_loop: loop {

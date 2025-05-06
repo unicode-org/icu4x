@@ -49,8 +49,6 @@
 //! assert_eq!(&employees_vzv.get(1).unwrap().variable, "John Doe");
 //! ```
 
-use alloc::borrow::ToOwned;
-use alloc::boxed::Box;
 use core::mem::{size_of, transmute_copy};
 use zerofrom::ZeroFrom;
 
@@ -111,22 +109,16 @@ where
     V: VarULE + ?Sized,
 {
     fn validate_bytes(bytes: &[u8]) -> Result<(), UleError> {
-        // TODO: use split_first_chunk_mut in 1.77
-        if bytes.len() < size_of::<A::ULE>() {
-            return Err(UleError::length::<Self>(bytes.len()));
-        }
-        let (sized_chunk, variable_chunk) = bytes.split_at(size_of::<A::ULE>());
+        let (sized_chunk, variable_chunk) = bytes
+            .split_at_checked(size_of::<A::ULE>())
+            .ok_or(UleError::length::<Self>(bytes.len()))?;
         A::ULE::validate_bytes(sized_chunk)?;
         V::validate_bytes(variable_chunk)?;
         Ok(())
     }
 
     unsafe fn from_bytes_unchecked(bytes: &[u8]) -> &Self {
-        #[allow(clippy::panic)] // panic is documented in function contract
-        if bytes.len() < size_of::<A::ULE>() {
-            panic!("from_bytes_unchecked called with short slice")
-        }
-        let (_sized_chunk, variable_chunk) = bytes.split_at(size_of::<A::ULE>());
+        let (_sized_chunk, variable_chunk) = bytes.split_at_unchecked(size_of::<A::ULE>());
         // Safety: variable_chunk is a valid V because of this function's precondition: bytes is a valid Self,
         // and a valid Self contains a valid V after the space needed for A::ULE.
         let variable_ref = V::from_bytes_unchecked(variable_chunk);
@@ -184,12 +176,13 @@ where
     }
 }
 
-impl<A, V> ToOwned for VarTupleULE<A, V>
+#[cfg(feature = "alloc")]
+impl<A, V> alloc::borrow::ToOwned for VarTupleULE<A, V>
 where
     A: AsULE + 'static,
     V: VarULE + ?Sized,
 {
-    type Owned = Box<Self>;
+    type Owned = alloc::boxed::Box<Self>;
     fn to_owned(&self) -> Self::Owned {
         crate::ule::encode_varule_to_box(self)
     }
@@ -256,19 +249,19 @@ where
 }
 
 #[cfg(feature = "serde")]
-impl<'de, A, V> serde::Deserialize<'de> for Box<VarTupleULE<A, V>>
+impl<'de, A, V> serde::Deserialize<'de> for alloc::boxed::Box<VarTupleULE<A, V>>
 where
     A: AsULE + 'static,
     V: VarULE + ?Sized,
     A: serde::Deserialize<'de>,
-    Box<V>: serde::Deserialize<'de>,
+    alloc::boxed::Box<V>: serde::Deserialize<'de>,
 {
     fn deserialize<Des>(deserializer: Des) -> Result<Self, Des::Error>
     where
         Des: serde::Deserializer<'de>,
     {
         if deserializer.is_human_readable() {
-            let this = VarTuple::<A, Box<V>>::deserialize(deserializer)?;
+            let this = VarTuple::<A, alloc::boxed::Box<V>>::deserialize(deserializer)?;
             Ok(crate::ule::encode_varule_to_box(&this))
         } else {
             // This branch should usually not be hit, since Cow-like use cases will hit the Deserialize impl for &'a TupleNVarULE instead.

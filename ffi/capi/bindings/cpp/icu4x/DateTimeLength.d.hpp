@@ -6,6 +6,7 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include <memory>
+#include <functional>
 #include <optional>
 #include "../diplomat_runtime.hpp"
 
@@ -23,6 +24,9 @@ namespace capi {
 } // namespace
 
 namespace icu4x {
+/**
+ * See the [Rust documentation for `Length`](https://docs.rs/icu/latest/icu/datetime/options/enum.Length.html) for more information.
+ */
 class DateTimeLength {
 public:
   enum Value {

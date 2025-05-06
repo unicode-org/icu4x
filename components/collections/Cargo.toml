@@ -44,17 +44,12 @@ toml = { workspace = true }
 criterion = { workspace = true }
 
 [features]
-std = []
-serde = ["dep:serde", "zerovec/serde", "potential_utf/serde"]
+serde = ["dep:serde", "zerovec/serde", "potential_utf/serde", "alloc"]
 databake = ["dep:databake", "zerovec/databake"]
-bench = []
+alloc = ["zerovec/alloc"]
 
 [lib]
 bench = false  # This option is required for Benchmark CI
-
-[package.metadata.cargo-all-features]
-# Bench feature gets tested separately and is only relevant for CI
-denylist = ["bench"]
 
 [[bench]]
 name = "codepointtrie"
@@ -64,7 +59,6 @@ path = "benches/codepointtrie.rs"
 [[bench]]
 name = "iai_cpt"
 harness = false
-required-features = ["bench"]
 path = "benches/iai_cpt.rs"
 
 [[bench]]

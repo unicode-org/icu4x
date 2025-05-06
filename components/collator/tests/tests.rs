@@ -6,8 +6,8 @@ use core::cmp::Ordering;
 
 use atoi::FromRadix16;
 use icu_collator::provider::*;
-use icu_collator::*;
-use icu_locale_core::{langid, locale};
+use icu_collator::{options::*, preferences::*, *};
+use icu_locale_core::{langid, locale, Locale};
 use icu_provider::prelude::*;
 
 struct TestingProvider;
@@ -17,26 +17,26 @@ const _: () = {
     use icu_collator_data::*;
     pub mod icu {
         pub use crate as collator;
-        pub use icu_collator_data::icu_locale as locale;
         pub use icu_collections as collections;
+        pub use icu_locale as locale;
         pub use icu_normalizer as normalizer;
     }
     make_provider!(TestingProvider);
-    impl_collation_root_v1_marker!(TestingProvider);
-    impl_collation_tailoring_v1_marker!(TestingProvider);
-    impl_collation_diacritics_v1_marker!(TestingProvider);
-    impl_collation_jamo_v1_marker!(TestingProvider);
-    impl_collation_metadata_v1_marker!(TestingProvider);
-    impl_collation_special_primaries_v1_marker!(TestingProvider);
-    impl_collation_reordering_v1_marker!(TestingProvider);
+    impl_collation_root_v1!(TestingProvider);
+    impl_collation_tailoring_v1!(TestingProvider);
+    impl_collation_diacritics_v1!(TestingProvider);
+    impl_collation_jamo_v1!(TestingProvider);
+    impl_collation_metadata_v1!(TestingProvider);
+    impl_collation_special_primaries_v1!(TestingProvider);
+    impl_collation_reordering_v1!(TestingProvider);
 
-    icu_normalizer_data::impl_canonical_compositions_v1_marker!(TestingProvider);
-    icu_normalizer_data::impl_non_recursive_decomposition_supplement_v1_marker!(TestingProvider);
-    icu_normalizer_data::impl_canonical_decomposition_data_v1_marker!(TestingProvider);
-    icu_normalizer_data::impl_canonical_decomposition_tables_v1_marker!(TestingProvider);
-    icu_normalizer_data::impl_compatibility_decomposition_supplement_v1_marker!(TestingProvider);
-    icu_normalizer_data::impl_compatibility_decomposition_tables_v1_marker!(TestingProvider);
-    icu_normalizer_data::impl_uts46_decomposition_supplement_v1_marker!(TestingProvider);
+    icu_normalizer_data::impl_normalizer_nfc_v1!(TestingProvider);
+    icu_normalizer_data::impl_normalizer_nfd_data_v1!(TestingProvider);
+    icu_normalizer_data::impl_normalizer_nfd_supplement_v1!(TestingProvider);
+    icu_normalizer_data::impl_normalizer_nfd_tables_v1!(TestingProvider);
+    icu_normalizer_data::impl_normalizer_nfkd_data_v1!(TestingProvider);
+    icu_normalizer_data::impl_normalizer_nfkd_tables_v1!(TestingProvider);
+    icu_normalizer_data::impl_normalizer_uts46_data_v1!(TestingProvider);
 };
 
 type StackString = arraystring::ArrayString<arraystring::typenum::U32>;
@@ -943,7 +943,6 @@ fn test_zh() {
 
     assert_zhuyin(locale!("zh-u-co-zhuyin").into());
     assert_unihan(locale!("zh-u-co-unihan").into());
-    // See SourceDataProvider test_zh_non_baked for gb2312 and big5han tests
 
     fn assert_root(prefs: CollatorPreferences) {
         let collator = Collator::try_new(prefs, Default::default()).unwrap();
@@ -1446,12 +1445,12 @@ fn test_nb_nn_no() {
     strs.sort_by(|a, b| collator.compare(a, b));
     assert_eq!(strs, expected);
     assert_eq!(
-        DataProvider::<CollationTailoringV1Marker>::load(
+        DataProvider::<CollationTailoringV1>::load(
             &icu_collator::provider::Baked,
             DataRequest {
-                id: DataIdentifierCow::from_locale(DataLocale::from_preferences_locale::<
-                    CollationTailoringV1Marker,
-                >(prefs.locale_prefs))
+                id: DataIdentifierCow::from_locale(CollationTailoringV1::make_locale(
+                    prefs.locale_preferences
+                ))
                 .as_borrowed(),
                 ..Default::default()
             }
@@ -1469,12 +1468,12 @@ fn test_nb_nn_no() {
     strs.sort_by(|a, b| collator.compare(a, b));
     assert_eq!(strs, expected);
     assert_eq!(
-        DataProvider::<CollationTailoringV1Marker>::load(
+        DataProvider::<CollationTailoringV1>::load(
             &icu_collator::provider::Baked,
             DataRequest {
-                id: DataIdentifierCow::from_locale(DataLocale::from_preferences_locale::<
-                    CollationTailoringV1Marker,
-                >(prefs.locale_prefs))
+                id: DataIdentifierCow::from_locale(CollationTailoringV1::make_locale(
+                    prefs.locale_preferences
+                ))
                 .as_borrowed(),
                 ..Default::default()
             }
@@ -1492,12 +1491,12 @@ fn test_nb_nn_no() {
     strs.sort_by(|a, b| collator.compare(a, b));
     assert_eq!(strs, expected);
     assert_eq!(
-        DataProvider::<CollationTailoringV1Marker>::load(
+        DataProvider::<CollationTailoringV1>::load(
             &icu_collator::provider::Baked,
             DataRequest {
-                id: DataIdentifierCow::from_locale(DataLocale::from_preferences_locale::<
-                    CollationTailoringV1Marker,
-                >(prefs.locale_prefs))
+                id: DataIdentifierCow::from_locale(CollationTailoringV1::make_locale(
+                    prefs.locale_preferences
+                ))
                 .as_borrowed(),
                 ..Default::default()
             }
@@ -1534,10 +1533,10 @@ fn test_basics() {
 
 #[test]
 fn test_numeric_long() {
-    let mut options = CollatorOptions::default();
-    options.numeric = Some(Numeric::On);
+    let mut prefs = CollatorPreferences::default();
+    prefs.numeric_ordering = Some(CollationNumericOrdering::True);
 
-    let collator = Collator::try_new(Default::default(), options).unwrap();
+    let collator = Collator::try_new(prefs, CollatorOptions::default()).unwrap();
     let mut left = String::new();
     let mut right = String::new();
     // We'll make left larger than right numerically. However, first, let's use
@@ -1569,10 +1568,10 @@ fn test_numeric_long() {
 
 #[test]
 fn test_numeric_after() {
-    let mut options = CollatorOptions::default();
-    options.numeric = Some(Numeric::On);
+    let mut prefs = CollatorPreferences::default();
+    prefs.numeric_ordering = Some(CollationNumericOrdering::True);
 
-    let collator = Collator::try_new(Default::default(), options).unwrap();
+    let collator = Collator::try_new(prefs, CollatorOptions::default()).unwrap();
     assert_eq!(collator.compare("0001000b", "1000a"), Ordering::Greater);
 }
 
@@ -1606,10 +1605,8 @@ fn test_backward_second_level() {
         }
     }
 
-    options.backward_second_level = Some(BackwardSecondLevel::On);
-
     {
-        let collator = Collator::try_new(Default::default(), options).unwrap();
+        let collator = Collator::try_new(locale!("fr-CA").into(), options).unwrap();
 
         {
             let cases = ["cote", "côte", "coté", "côté"];
@@ -1802,11 +1799,10 @@ fn test_default_resolved_options() {
     let resolved = collator.resolved_options();
     assert_eq!(resolved.strength, Strength::Tertiary);
     assert_eq!(resolved.alternate_handling, AlternateHandling::NonIgnorable);
-    assert_eq!(resolved.case_first, CaseFirst::Off);
+    assert_eq!(resolved.case_first, CollationCaseFirst::False);
     assert_eq!(resolved.max_variable, MaxVariable::Punctuation);
     assert_eq!(resolved.case_level, CaseLevel::Off);
-    assert_eq!(resolved.numeric, Numeric::Off);
-    assert_eq!(resolved.backward_second_level, BackwardSecondLevel::Off);
+    assert_eq!(resolved.numeric, CollationNumericOrdering::False);
 
     assert_eq!(collator.compare("𝕒", "A"), core::cmp::Ordering::Less);
     assert_eq!(collator.compare("coté", "côte"), core::cmp::Ordering::Less);
@@ -1819,11 +1815,10 @@ fn test_data_resolved_options_th() {
     let resolved = collator.resolved_options();
     assert_eq!(resolved.strength, Strength::Tertiary);
     assert_eq!(resolved.alternate_handling, AlternateHandling::Shifted);
-    assert_eq!(resolved.case_first, CaseFirst::Off);
+    assert_eq!(resolved.case_first, CollationCaseFirst::False);
     assert_eq!(resolved.max_variable, MaxVariable::Punctuation);
     assert_eq!(resolved.case_level, CaseLevel::Off);
-    assert_eq!(resolved.numeric, Numeric::Off);
-    assert_eq!(resolved.backward_second_level, BackwardSecondLevel::Off);
+    assert_eq!(resolved.numeric, CollationNumericOrdering::False);
 
     // There's a separate more comprehensive test for the shifted behavior
     assert_eq!(collator.compare("𝕒", "A"), core::cmp::Ordering::Less);
@@ -1837,11 +1832,10 @@ fn test_data_resolved_options_da() {
     let resolved = collator.resolved_options();
     assert_eq!(resolved.strength, Strength::Tertiary);
     assert_eq!(resolved.alternate_handling, AlternateHandling::NonIgnorable);
-    assert_eq!(resolved.case_first, CaseFirst::UpperFirst);
+    assert_eq!(resolved.case_first, CollationCaseFirst::Upper);
     assert_eq!(resolved.max_variable, MaxVariable::Punctuation);
     assert_eq!(resolved.case_level, CaseLevel::Off);
-    assert_eq!(resolved.numeric, Numeric::Off);
-    assert_eq!(resolved.backward_second_level, BackwardSecondLevel::Off);
+    assert_eq!(resolved.numeric, CollationNumericOrdering::False);
 
     assert_eq!(collator.compare("𝕒", "A"), core::cmp::Ordering::Greater);
     assert_eq!(collator.compare("coté", "côte"), core::cmp::Ordering::Less);
@@ -1854,11 +1848,11 @@ fn test_data_resolved_options_fr_ca() {
     let resolved = collator.resolved_options();
     assert_eq!(resolved.strength, Strength::Tertiary);
     assert_eq!(resolved.alternate_handling, AlternateHandling::NonIgnorable);
-    assert_eq!(resolved.case_first, CaseFirst::Off);
+    assert_eq!(resolved.case_first, CollationCaseFirst::False);
     assert_eq!(resolved.max_variable, MaxVariable::Punctuation);
     assert_eq!(resolved.case_level, CaseLevel::Off);
-    assert_eq!(resolved.numeric, Numeric::Off);
-    assert_eq!(resolved.backward_second_level, BackwardSecondLevel::On);
+    assert_eq!(resolved.numeric, CollationNumericOrdering::False);
+    // bacward second level is hidden from the API
 
     assert_eq!(collator.compare("𝕒", "A"), core::cmp::Ordering::Less);
     assert_eq!(
@@ -1869,20 +1863,18 @@ fn test_data_resolved_options_fr_ca() {
 
 #[test]
 fn test_manual_and_data_resolved_options_fr_ca() {
-    let prefs = locale!("fr-CA").into();
+    let mut prefs: CollatorPreferences = locale!("fr-CA").into();
+    prefs.case_first = Some(CollationCaseFirst::Upper);
 
-    let mut options = CollatorOptions::default();
-    options.case_first = Some(CaseFirst::UpperFirst);
-
-    let collator = Collator::try_new(prefs, options).unwrap();
+    let collator = Collator::try_new(prefs, CollatorOptions::default()).unwrap();
     let resolved = collator.resolved_options();
     assert_eq!(resolved.strength, Strength::Tertiary);
     assert_eq!(resolved.alternate_handling, AlternateHandling::NonIgnorable);
-    assert_eq!(resolved.case_first, CaseFirst::UpperFirst);
+    assert_eq!(resolved.case_first, CollationCaseFirst::Upper);
     assert_eq!(resolved.max_variable, MaxVariable::Punctuation);
     assert_eq!(resolved.case_level, CaseLevel::Off);
-    assert_eq!(resolved.numeric, Numeric::Off);
-    assert_eq!(resolved.backward_second_level, BackwardSecondLevel::On);
+    assert_eq!(resolved.numeric, CollationNumericOrdering::False);
+    // backwards second level is hidden from the API
 
     assert_eq!(collator.compare("𝕒", "A"), core::cmp::Ordering::Greater);
     assert_eq!(
@@ -1893,20 +1885,17 @@ fn test_manual_and_data_resolved_options_fr_ca() {
 
 #[test]
 fn test_manual_resolved_options_da() {
-    let prefs = locale!("da").into();
+    let mut prefs: CollatorPreferences = locale!("da").into();
+    prefs.case_first = Some(CollationCaseFirst::False);
 
-    let mut options = CollatorOptions::default();
-    options.case_first = Some(CaseFirst::Off);
-
-    let collator = Collator::try_new(prefs, options).unwrap();
+    let collator = Collator::try_new(prefs, CollatorOptions::default()).unwrap();
     let resolved = collator.resolved_options();
     assert_eq!(resolved.strength, Strength::Tertiary);
     assert_eq!(resolved.alternate_handling, AlternateHandling::NonIgnorable);
-    assert_eq!(resolved.case_first, CaseFirst::Off);
+    assert_eq!(resolved.case_first, CollationCaseFirst::False);
     assert_eq!(resolved.max_variable, MaxVariable::Punctuation);
     assert_eq!(resolved.case_level, CaseLevel::Off);
-    assert_eq!(resolved.numeric, Numeric::Off);
-    assert_eq!(resolved.backward_second_level, BackwardSecondLevel::Off);
+    assert_eq!(resolved.numeric, CollationNumericOrdering::False);
 
     assert_eq!(collator.compare("𝕒", "A"), core::cmp::Ordering::Less);
     assert_eq!(collator.compare("coté", "côte"), core::cmp::Ordering::Less);
@@ -1947,6 +1936,82 @@ fn test_ecma_sensitivity() {
         assert_ne!(collator.compare("a", "á"), core::cmp::Ordering::Equal);
         assert_ne!(collator.compare("a", "A"), core::cmp::Ordering::Equal);
     }
+}
+
+#[test]
+fn test_prefs_overrides() {
+    let locale_prefs = "da-u-kn-kf-upper".parse::<Locale>().unwrap().into();
+
+    // preferences from locale are applied
+    {
+        let prefs = locale_prefs;
+        let collator = Collator::try_new(prefs, CollatorOptions::default()).unwrap();
+        let resolved = collator.resolved_options();
+        assert_eq!(resolved.case_first, CollationCaseFirst::Upper);
+        assert_eq!(resolved.numeric, CollationNumericOrdering::True);
+
+        assert_eq!(collator.compare("𝕒", "A"), core::cmp::Ordering::Greater);
+        assert_eq!(collator.compare("10", "2"), core::cmp::Ordering::Greater);
+    }
+
+    // preferences from locale can be overridden by explicit preferences
+    {
+        let mut prefs = locale_prefs;
+        let mut explicit_prefs = CollatorPreferences::default();
+        explicit_prefs.case_first = Some(CollationCaseFirst::False);
+        explicit_prefs.numeric_ordering = Some(CollationNumericOrdering::False);
+        prefs.extend(explicit_prefs);
+
+        let collator = Collator::try_new(prefs, CollatorOptions::default()).unwrap();
+        let resolved = collator.resolved_options();
+        assert_eq!(resolved.case_first, CollationCaseFirst::False);
+        assert_eq!(resolved.numeric, CollationNumericOrdering::False);
+
+        assert_eq!(collator.compare("𝕒", "A"), core::cmp::Ordering::Less);
+        assert_eq!(collator.compare("10", "2"), core::cmp::Ordering::Less);
+    }
+}
+
+// This test fails if the root data isn't ICU4X identical prefix-aware.
+#[test]
+fn test_identical_prefix_root_builder_0cc2() {
+    let mut options = CollatorOptions::default();
+    options.strength = Some(Strength::Tertiary);
+    let collator = Collator::try_new(Default::default(), options).unwrap();
+    assert_eq!(
+        collator.compare_utf16(
+            &[0x0CC8, 0x0CC6, 0x0CC2, 0x0CD6],
+            &[0x0CC8, 0x0CC6, 0x0CC2, 0x0CD5]
+        ),
+        core::cmp::Ordering::Less
+    );
+}
+
+// This test fails if the root data isn't ICU4X identical prefix-aware.
+#[test]
+fn test_identical_prefix_root_builder_0dcf() {
+    let mut options = CollatorOptions::default();
+    options.strength = Some(Strength::Tertiary);
+    let collator = Collator::try_new(Default::default(), options).unwrap();
+    assert_eq!(
+        collator.compare_utf16(
+            &[0x0DC6, 0x0DD9, 0x0DCF, 0xAAF2],
+            &[0x0DC6, 0x0DD9, 0x0DCF, 0x0DCA]
+        ),
+        core::cmp::Ordering::Less
+    );
+}
+
+// Not really for testing the outcome but seeing the internals in a debugger.
+#[test]
+fn test_middle_contraction_markers() {
+    let mut options = CollatorOptions::default();
+    options.strength = Some(Strength::Tertiary);
+    let collator = Collator::try_new(Default::default(), options).unwrap();
+    assert_eq!(
+        collator.compare_utf16(&[0x0CC2, 0xDC00], &[0x0DCF, 0xDC00]),
+        core::cmp::Ordering::Less
+    );
 }
 
 // TODO: Test languages that map to the root.

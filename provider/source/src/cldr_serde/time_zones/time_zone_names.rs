@@ -52,7 +52,9 @@ pub(crate) struct Location {
     #[serde(rename = "exemplarCity")]
     pub(crate) exemplar_city: Option<String>,
     #[serde(rename = "exemplarCity-alt-secondary")]
-    pub(crate) exemplar_city_alt_secondary: Option<String>,
+    pub(crate) _exemplar_city_alt_secondary: Option<String>,
+    #[serde(rename = "_type")]
+    pub(crate) _ty: Option<String>,
 }
 
 impl Location {

@@ -6,6 +6,7 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include <memory>
+#include <functional>
 #include <optional>
 #include "../diplomat_runtime.hpp"
 
@@ -18,6 +19,9 @@ namespace capi {
 
 
 namespace icu4x {
+/**
+ * Additional information: [1](https://docs.rs/icu/latest/icu/time/zone/struct.InvalidOffsetError.html)
+ */
 struct TimeZoneInvalidOffsetError {
 
 };

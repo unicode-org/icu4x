@@ -15,6 +15,8 @@
 #[non_exhaustive]
 pub struct PluralRulesOptions {
     /// Plural rule type to use.
+    ///
+    /// Default is [`PluralRuleType::Cardinal`]
     pub rule_type: Option<PluralRuleType>,
 }
 

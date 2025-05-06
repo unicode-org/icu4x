@@ -5,26 +5,39 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
-/** See the [Rust documentation for `TitlecaseOptions`](https://docs.rs/icu/latest/icu/casemap/titlecase/struct.TitlecaseOptions.html) for more information.
-*/
-export class TitlecaseOptions {
+/** 
+ * See the [Rust documentation for `TitlecaseOptions`](https://docs.rs/icu/latest/icu/casemap/options/struct.TitlecaseOptions.html) for more information.
+ */
 
+
+export class TitlecaseOptions {
+    
     #leadingAdjustment;
+    
     get leadingAdjustment()  {
         return this.#leadingAdjustment;
-    }
+    } 
     set leadingAdjustment(value) {
         this.#leadingAdjustment = value;
     }
-
+    
     #trailingCase;
+    
     get trailingCase()  {
         return this.#trailingCase;
-    }
+    } 
     set trailingCase(value) {
         this.#trailingCase = value;
     }
-    constructor(structObj) {
+    
+    /** Create `TitlecaseOptions` from an object that contains all of `TitlecaseOptions`s fields.
+    * Optional fields do not need to be included in the provided object.
+    */
+    static fromFields(structObj) {
+        return new TitlecaseOptions(diplomatRuntime.exposeConstructor, structObj);
+    }
+
+    #internalConstructor(structObj) {
         if (typeof structObj !== "object") {
             throw new Error("TitlecaseOptions's constructor takes an object of TitlecaseOptions's fields.");
         }
@@ -41,6 +54,7 @@ export class TitlecaseOptions {
             this.#trailingCase = null;
         }
 
+        return this;
     }
 
     // Return this struct in FFI function friendly format.
@@ -50,7 +64,19 @@ export class TitlecaseOptions {
         functionCleanupArena,
         appendArrayMap
     ) {
-        return [...diplomatRuntime.optionToArgsForCalling(this.#leadingAdjustment, 4, 4, false, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]), ...diplomatRuntime.optionToArgsForCalling(this.#trailingCase, 4, 4, false, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)])]
+        return [...diplomatRuntime.optionToArgsForCalling(this.#leadingAdjustment, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]), ...diplomatRuntime.optionToArgsForCalling(this.#trailingCase, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)])]
+    }
+
+    static _fromSuppliedValue(internalConstructor, obj) {
+        if (internalConstructor !== diplomatRuntime.internalConstructor) {
+            throw new Error("_fromSuppliedValue cannot be called externally.");
+        }
+
+        if (obj instanceof TitlecaseOptions) {
+            return obj;
+        }
+
+        return TitlecaseOptions.fromFields(obj);
     }
 
     _writeToArrayBuffer(
@@ -72,16 +98,19 @@ export class TitlecaseOptions {
         if (internalConstructor !== diplomatRuntime.internalConstructor) {
             throw new Error("TitlecaseOptions._fromFFI is not meant to be called externally. Please use the default constructor.");
         }
-        var structObj = {};
+        let structObj = {};
         const leadingAdjustmentDeref = ptr;
         structObj.leadingAdjustment = diplomatRuntime.readOption(wasm, leadingAdjustmentDeref, 4, (wasm, offset) => { const deref = diplomatRuntime.enumDiscriminant(wasm, offset); return new LeadingAdjustment(diplomatRuntime.internalConstructor, deref) });
         const trailingCaseDeref = ptr + 8;
         structObj.trailingCase = diplomatRuntime.readOption(wasm, trailingCaseDeref, 4, (wasm, offset) => { const deref = diplomatRuntime.enumDiscriminant(wasm, offset); return new TrailingCase(diplomatRuntime.internalConstructor, deref) });
 
-        return new TitlecaseOptions(structObj, internalConstructor);
+        return new TitlecaseOptions(diplomatRuntime.exposeConstructor, structObj);
     }
 
-    static defaultOptions() {
+    /** 
+     * See the [Rust documentation for `default`](https://docs.rs/icu/latest/icu/casemap/options/struct.TitlecaseOptions.html#method.default) for more information.
+     */
+    #defaultConstructor() {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 16, 4, false);
         
         const result = wasm.icu4x_TitlecaseOptionsV1_default_mv1(diplomatReceive.buffer);
@@ -92,6 +121,16 @@ export class TitlecaseOptions {
         
         finally {
             diplomatReceive.free();
+        }
+    }
+
+    constructor() {
+        if (arguments[0] === diplomatRuntime.exposeConstructor) {
+            return this.#internalConstructor(...Array.prototype.slice.call(arguments, 1));
+        } else if (arguments[0] === diplomatRuntime.internalConstructor) {
+            return this.#internalConstructor(...arguments);
+        } else {
+            return this.#defaultConstructor(...arguments);
         }
     }
 }

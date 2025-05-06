@@ -2,29 +2,33 @@
 import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
-// Base enumerator definition
-/** See the [Rust documentation for `CaseFirst`](https://docs.rs/icu/latest/icu/collator/enum.CaseFirst.html) for more information.
-*/
+
+/** 
+ * See the [Rust documentation for `CollationCaseFirst`](https://docs.rs/icu/latest/icu/collator/preferences/enum.CollationCaseFirst.html) for more information.
+ */
+
+
 export class CollatorCaseFirst {
+    
     #value = undefined;
 
     static #values = new Map([
         ["Off", 0],
-        ["LowerFirst", 1],
-        ["UpperFirst", 2]
+        ["Lower", 1],
+        ["Upper", 2]
     ]);
 
     static getAllEntries() {
         return CollatorCaseFirst.#values.entries();
     }
-
-    constructor(value) {
+    
+    #internalConstructor(value) {
         if (arguments.length > 1 && arguments[0] === diplomatRuntime.internalConstructor) {
             // We pass in two internalConstructor arguments to create *new*
             // instances of this type, otherwise the enums are treated as singletons.
             if (arguments[1] === diplomatRuntime.internalConstructor ) {
                 this.#value = arguments[2];
-                return;
+                return this;
             }
             return CollatorCaseFirst.#objectValues[arguments[1]];
         }
@@ -36,11 +40,15 @@ export class CollatorCaseFirst {
         let intVal = CollatorCaseFirst.#values.get(value);
 
         // Nullish check, checks for null or undefined
-        if (intVal == null) {
+        if (intVal != null) {
             return CollatorCaseFirst.#objectValues[intVal];
         }
 
         throw TypeError(value + " is not a CollatorCaseFirst and does not correspond to any of its enumerator values.");
+    }
+
+    static fromValue(value) {
+        return new CollatorCaseFirst(value);
     }
 
     get value() {
@@ -57,6 +65,10 @@ export class CollatorCaseFirst {
     ];
 
     static Off = CollatorCaseFirst.#objectValues[0];
-    static LowerFirst = CollatorCaseFirst.#objectValues[1];
-    static UpperFirst = CollatorCaseFirst.#objectValues[2];
+    static Lower = CollatorCaseFirst.#objectValues[1];
+    static Upper = CollatorCaseFirst.#objectValues[2];
+
+    constructor(value) {
+        return this.#internalConstructor(...arguments)
+    }
 }

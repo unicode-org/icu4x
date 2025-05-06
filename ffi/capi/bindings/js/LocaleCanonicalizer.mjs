@@ -7,15 +7,17 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
-/** A locale canonicalizer.
-*
-*See the [Rust documentation for `LocaleCanonicalizer`](https://docs.rs/icu/latest/icu/locale/struct.LocaleCanonicalizer.html) for more information.
-*/
+/** 
+ * A locale canonicalizer.
+ *
+ * See the [Rust documentation for `LocaleCanonicalizer`](https://docs.rs/icu/latest/icu/locale/struct.LocaleCanonicalizer.html) for more information.
+ */
 const LocaleCanonicalizer_box_destroy_registry = new FinalizationRegistry((ptr) => {
     wasm.icu4x_LocaleCanonicalizer_destroy_mv1(ptr);
 });
 
 export class LocaleCanonicalizer {
+    
     // Internal ptr reference:
     #ptr = null;
 
@@ -23,7 +25,7 @@ export class LocaleCanonicalizer {
     // Since JS won't garbage collect until there are no incoming edges.
     #selfEdge = [];
     
-    constructor(symbol, ptr, selfEdge) {
+    #internalConstructor(symbol, ptr, selfEdge) {
         if (symbol !== diplomatRuntime.internalConstructor) {
             console.error("LocaleCanonicalizer is an Opaque type. You cannot call its constructor.");
             return;
@@ -36,16 +38,37 @@ export class LocaleCanonicalizer {
         if (this.#selfEdge.length === 0) {
             LocaleCanonicalizer_box_destroy_registry.register(this, this.#ptr);
         }
+        
+        return this;
     }
-
     get ffiValue() {
         return this.#ptr;
     }
 
-    static create(provider) {
+    /** 
+     * Create a new [`LocaleCanonicalizer`] using compiled data.
+     *
+     * See the [Rust documentation for `new_common`](https://docs.rs/icu/latest/icu/locale/struct.LocaleCanonicalizer.html#method.new_common) for more information.
+     */
+    #defaultConstructor() {
+        const result = wasm.icu4x_LocaleCanonicalizer_create_common_mv1();
+    
+        try {
+            return new LocaleCanonicalizer(diplomatRuntime.internalConstructor, result, []);
+        }
+        
+        finally {}
+    }
+
+    /** 
+     * Create a new [`LocaleCanonicalizer`].
+     *
+     * See the [Rust documentation for `new_common`](https://docs.rs/icu/latest/icu/locale/struct.LocaleCanonicalizer.html#method.new_common) for more information.
+     */
+    static createCommonWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_LocaleCanonicalizer_create_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_LocaleCanonicalizer_create_common_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {
@@ -60,10 +83,30 @@ export class LocaleCanonicalizer {
         }
     }
 
-    static createExtended(provider) {
+    /** 
+     * Create a new [`LocaleCanonicalizer`] with extended data using compiled data.
+     *
+     * See the [Rust documentation for `new_extended`](https://docs.rs/icu/latest/icu/locale/struct.LocaleCanonicalizer.html#method.new_extended) for more information.
+     */
+    static createExtended() {
+        const result = wasm.icu4x_LocaleCanonicalizer_create_extended_mv1();
+    
+        try {
+            return new LocaleCanonicalizer(diplomatRuntime.internalConstructor, result, []);
+        }
+        
+        finally {}
+    }
+
+    /** 
+     * Create a new [`LocaleCanonicalizer`] with extended data.
+     *
+     * See the [Rust documentation for `new_extended`](https://docs.rs/icu/latest/icu/locale/struct.LocaleCanonicalizer.html#method.new_extended) for more information.
+     */
+    static createExtendedWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_LocaleCanonicalizer_create_extended_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_LocaleCanonicalizer_create_extended_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {
@@ -78,6 +121,9 @@ export class LocaleCanonicalizer {
         }
     }
 
+    /** 
+     * See the [Rust documentation for `canonicalize`](https://docs.rs/icu/latest/icu/locale/struct.LocaleCanonicalizer.html#method.canonicalize) for more information.
+     */
     canonicalize(locale) {
         const result = wasm.icu4x_LocaleCanonicalizer_canonicalize_mv1(this.ffiValue, locale.ffiValue);
     
@@ -86,5 +132,15 @@ export class LocaleCanonicalizer {
         }
         
         finally {}
+    }
+
+    constructor() {
+        if (arguments[0] === diplomatRuntime.exposeConstructor) {
+            return this.#internalConstructor(...Array.prototype.slice.call(arguments, 1));
+        } else if (arguments[0] === diplomatRuntime.internalConstructor) {
+            return this.#internalConstructor(...arguments);
+        } else {
+            return this.#defaultConstructor(...arguments);
+        }
     }
 }

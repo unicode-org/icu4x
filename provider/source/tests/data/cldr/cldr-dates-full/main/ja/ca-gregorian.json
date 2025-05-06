@@ -316,8 +316,8 @@
               "short": "y/MM/dd"
             },
             "dateSkeletons": {
-              "full": "yMEEEEd",
-              "long": "yMd",
+              "full": "yMMMEEEEd",
+              "long": "yMMMd",
               "medium": "yMMdd",
               "short": "yMMdd"
             },

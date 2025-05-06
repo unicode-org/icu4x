@@ -2,17 +2,22 @@
 import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
-// Base enumerator definition
-/** Additional information: [1](https://docs.rs/icu/latest/icu/datetime/pattern/enum.PatternLoadError.html), [2](https://docs.rs/icu/latest/icu/provider/struct.DataError.html), [3](https://docs.rs/icu/latest/icu/provider/enum.DataErrorKind.html)
-*/
+
+/** 
+ * Additional information: [1](https://docs.rs/icu/latest/icu/datetime/enum.DateTimeFormatterLoadError.html), [2](https://docs.rs/icu/latest/icu/datetime/pattern/enum.PatternLoadError.html), [3](https://docs.rs/icu_provider/latest/icu_provider/struct.DataError.html), [4](https://docs.rs/icu_provider/latest/icu_provider/enum.DataErrorKind.html)
+ */
+
+
 export class DateTimeFormatterLoadError {
+    
     #value = undefined;
 
     static #values = new Map([
         ["Unknown", 0],
+        ["InvalidDateFields", 2049],
         ["UnsupportedLength", 2051],
-        ["DuplicateField", 2057],
-        ["TypeTooSpecific", 2058],
+        ["ConflictingField", 2057],
+        ["FormatterTooSpecific", 2058],
         ["DataMarkerNotFound", 1],
         ["DataIdentifierNotFound", 2],
         ["DataInvalidRequest", 3],
@@ -26,14 +31,14 @@ export class DateTimeFormatterLoadError {
     static getAllEntries() {
         return DateTimeFormatterLoadError.#values.entries();
     }
-
-    constructor(value) {
+    
+    #internalConstructor(value) {
         if (arguments.length > 1 && arguments[0] === diplomatRuntime.internalConstructor) {
             // We pass in two internalConstructor arguments to create *new*
             // instances of this type, otherwise the enums are treated as singletons.
             if (arguments[1] === diplomatRuntime.internalConstructor ) {
                 this.#value = arguments[2];
-                return;
+                return this;
             }
             return DateTimeFormatterLoadError.#objectValues[arguments[1]];
         }
@@ -45,11 +50,15 @@ export class DateTimeFormatterLoadError {
         let intVal = DateTimeFormatterLoadError.#values.get(value);
 
         // Nullish check, checks for null or undefined
-        if (intVal == null) {
+        if (intVal != null) {
             return DateTimeFormatterLoadError.#objectValues[intVal];
         }
 
         throw TypeError(value + " is not a DateTimeFormatterLoadError and does not correspond to any of its enumerator values.");
+    }
+
+    static fromValue(value) {
+        return new DateTimeFormatterLoadError(value);
     }
 
     get value() {
@@ -65,6 +74,7 @@ export class DateTimeFormatterLoadError {
     }
     static #objectValues = {
         [0]: new DateTimeFormatterLoadError(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 0),
+        [2049]: new DateTimeFormatterLoadError(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 2049),
         [2051]: new DateTimeFormatterLoadError(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 2051),
         [2057]: new DateTimeFormatterLoadError(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 2057),
         [2058]: new DateTimeFormatterLoadError(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 2058),
@@ -79,9 +89,10 @@ export class DateTimeFormatterLoadError {
     };
 
     static Unknown = DateTimeFormatterLoadError.#objectValues[0];
+    static InvalidDateFields = DateTimeFormatterLoadError.#objectValues[2049];
     static UnsupportedLength = DateTimeFormatterLoadError.#objectValues[2051];
-    static DuplicateField = DateTimeFormatterLoadError.#objectValues[2057];
-    static TypeTooSpecific = DateTimeFormatterLoadError.#objectValues[2058];
+    static ConflictingField = DateTimeFormatterLoadError.#objectValues[2057];
+    static FormatterTooSpecific = DateTimeFormatterLoadError.#objectValues[2058];
     static DataMarkerNotFound = DateTimeFormatterLoadError.#objectValues[1];
     static DataIdentifierNotFound = DateTimeFormatterLoadError.#objectValues[2];
     static DataInvalidRequest = DateTimeFormatterLoadError.#objectValues[3];
@@ -90,4 +101,8 @@ export class DateTimeFormatterLoadError {
     static DataDeserialize = DateTimeFormatterLoadError.#objectValues[6];
     static DataCustom = DateTimeFormatterLoadError.#objectValues[7];
     static DataIo = DateTimeFormatterLoadError.#objectValues[8];
+
+    constructor(value) {
+        return this.#internalConstructor(...arguments)
+    }
 }

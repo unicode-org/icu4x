@@ -5,7 +5,7 @@
 [package]
 name = "icu_pattern"
 description = "ICU pattern utilities"
-version = "0.3.0"
+version = "0.4.0"
 
 authors.workspace = true
 edition.workspace = true
@@ -39,8 +39,7 @@ postcard = { workspace = true, features = ["use-std"] }
 
 [features]
 default = []
-alloc = []
-std = ["alloc"]
+alloc = ["zerovec?/alloc"]
 databake = ["dep:databake"]
 litemap = ["dep:litemap"]
 serde = ["alloc", "dep:serde"]

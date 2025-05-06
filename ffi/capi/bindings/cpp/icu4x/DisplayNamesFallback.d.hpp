@@ -6,6 +6,7 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include <memory>
+#include <functional>
 #include <optional>
 #include "../diplomat_runtime.hpp"
 
@@ -22,6 +23,9 @@ namespace capi {
 } // namespace
 
 namespace icu4x {
+/**
+ * See the [Rust documentation for `Fallback`](https://docs.rs/icu/latest/icu/experimental/displaynames/options/enum.Fallback.html) for more information.
+ */
 class DisplayNamesFallback {
 public:
   enum Value {

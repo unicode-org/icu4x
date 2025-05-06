@@ -10,7 +10,7 @@ pub(crate) mod internal {
     use core::str::FromStr;
     use ecma402_traits::pluralrules::options::Type;
     use ecma402_traits::pluralrules::Options;
-    use fixed_decimal::SignedFixedDecimal;
+    use fixed_decimal::Decimal;
     use icu::plurals::{PluralCategory, PluralOperands, PluralRuleType};
     use std::cmp::{max, min};
 
@@ -81,10 +81,9 @@ pub(crate) mod internal {
         // Integer fragment.
         let leading_zeros = clamp_diff(display_integer_digits, int_part.len());
         let trailing_zeros_in_int_part = clamp_diff(int_part.len(), total_significant_digits);
-        let i = std::iter::repeat('0')
-            .take(leading_zeros)
+        let i = std::iter::repeat_n('0', leading_zeros)
             .chain(int_part.chars().take(total_significant_digits))
-            .chain(std::iter::repeat('0').take(trailing_zeros_in_int_part));
+            .chain(std::iter::repeat_n('0', trailing_zeros_in_int_part));
 
         // Decimal dot is printed only if decimals will follow.
         let dd = match display_fraction_digits == 0 {
@@ -113,7 +112,7 @@ pub(crate) mod internal {
         dbg!("n={}", n);
         let nstr = fixed_format(n, &opts);
         #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
-        let ret = PluralOperands::from(&SignedFixedDecimal::from_str(&nstr).unwrap());
+        let ret = PluralOperands::from(&Decimal::from_str(&nstr).unwrap());
         dbg!("ret={:?}\n---\n", &ret);
         ret
     }
@@ -134,7 +133,7 @@ pub(crate) mod internal {
     mod testing {
         use super::*;
         use ecma402_traits::pluralrules::options::Type;
-        use icu::plurals::rules::RawPluralOperands;
+        use icu::plurals::RawPluralOperands;
 
         fn opt(
             minimum_integer_digits: u8,

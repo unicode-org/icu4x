@@ -116,7 +116,6 @@ impl Default for PatternMetadata {
 }
 
 impl Pattern<'_> {
-    #[cfg(feature = "datagen")]
     pub(crate) fn into_owned(self) -> Pattern<'static> {
         Pattern {
             items: self.items.into_owned(),
@@ -143,7 +142,7 @@ impl<'data> PatternBorrowed<'data> {
         metadata: PatternMetadata::DEFAULT,
     };
 
-    pub(crate) fn as_pattern(&self) -> Pattern<'data> {
+    pub(crate) fn as_pattern(self) -> Pattern<'data> {
         Pattern {
             items: self.items.as_zerovec(),
             metadata: self.metadata,

@@ -27,11 +27,11 @@ impl ecma402_traits::listformat::Format for ListFormat {
         let prefs = icu::list::ListFormatterPreferences::from(&locale);
 
         let length = match opts.style {
-            Style::Long => icu::list::ListLength::Wide,
-            Style::Narrow => icu::list::ListLength::Narrow,
-            Style::Short => icu::list::ListLength::Short,
+            Style::Long => icu::list::options::ListLength::Wide,
+            Style::Narrow => icu::list::options::ListLength::Narrow,
+            Style::Short => icu::list::options::ListLength::Short,
         };
-        let options = icu::list::ListFormatterOptions::default().with_length(length);
+        let options = icu::list::options::ListFormatterOptions::default().with_length(length);
 
         Ok(Self(match opts.in_type {
             Type::Conjunction => icu::list::ListFormatter::try_new_and(prefs, options),

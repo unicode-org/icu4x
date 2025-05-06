@@ -6,6 +6,7 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include <memory>
+#include <functional>
 #include <optional>
 #include "../diplomat_runtime.hpp"
 #include "LineBreakStrictness.d.hpp"
@@ -30,6 +31,9 @@ namespace capi {
 
 
 namespace icu4x {
+/**
+ * See the [Rust documentation for `LineBreakOptions`](https://docs.rs/icu/latest/icu/segmenter/options/struct.LineBreakOptions.html) for more information.
+ */
 struct LineBreakOptionsV2 {
   std::optional<icu4x::LineBreakStrictness> strictness;
   std::optional<icu4x::LineBreakWordOption> word_option;

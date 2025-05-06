@@ -4,13 +4,15 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
-/** Bidi information for a single processed paragraph
-*/
+/** 
+ * Bidi information for a single processed paragraph
+ */
 const BidiParagraph_box_destroy_registry = new FinalizationRegistry((ptr) => {
     wasm.icu4x_BidiParagraph_destroy_mv1(ptr);
 });
 
 export class BidiParagraph {
+    
     // Internal ptr reference:
     #ptr = null;
 
@@ -19,7 +21,7 @@ export class BidiParagraph {
     #selfEdge = [];
     #infoEdge = [];
     
-    constructor(symbol, ptr, selfEdge, infoEdge) {
+    #internalConstructor(symbol, ptr, selfEdge, infoEdge) {
         if (symbol !== diplomatRuntime.internalConstructor) {
             console.error("BidiParagraph is an Opaque type. You cannot call its constructor.");
             return;
@@ -35,12 +37,20 @@ export class BidiParagraph {
         if (this.#selfEdge.length === 0) {
             BidiParagraph_box_destroy_registry.register(this, this.#ptr);
         }
+        
+        return this;
     }
-
     get ffiValue() {
         return this.#ptr;
     }
 
+    /** 
+     * Given a paragraph index `n` within the surrounding text, this sets this
+     * object to the paragraph at that index. Returns nothing when out of bounds.
+     *
+     * This is equivalent to calling `paragraph_at()` on `BidiInfo` but doesn't
+     * create a new object
+     */
     setParagraphInText(n) {
         const result = wasm.icu4x_BidiParagraph_set_paragraph_in_text_mv1(this.ffiValue, n);
     
@@ -51,6 +61,11 @@ export class BidiParagraph {
         finally {}
     }
 
+    /** 
+     * The primary direction of this paragraph
+     *
+     * See the [Rust documentation for `level_at`](https://docs.rs/unicode_bidi/latest/unicode_bidi/struct.Paragraph.html#method.level_at) for more information.
+     */
     get direction() {
         const result = wasm.icu4x_BidiParagraph_direction_mv1(this.ffiValue);
     
@@ -61,6 +76,11 @@ export class BidiParagraph {
         finally {}
     }
 
+    /** 
+     * The number of bytes in this paragraph
+     *
+     * See the [Rust documentation for `len`](https://docs.rs/unicode_bidi/latest/unicode_bidi/struct.ParagraphInfo.html#method.len) for more information.
+     */
     get size() {
         const result = wasm.icu4x_BidiParagraph_size_mv1(this.ffiValue);
     
@@ -71,6 +91,9 @@ export class BidiParagraph {
         finally {}
     }
 
+    /** 
+     * The start index of this paragraph within the source text
+     */
     get rangeStart() {
         const result = wasm.icu4x_BidiParagraph_range_start_mv1(this.ffiValue);
     
@@ -81,6 +104,9 @@ export class BidiParagraph {
         finally {}
     }
 
+    /** 
+     * The end index of this paragraph within the source text
+     */
     get rangeEnd() {
         const result = wasm.icu4x_BidiParagraph_range_end_mv1(this.ffiValue);
     
@@ -91,6 +117,12 @@ export class BidiParagraph {
         finally {}
     }
 
+    /** 
+     * Reorder a line based on display order. The ranges are specified relative to the source text and must be contained
+     * within this paragraph's range.
+     *
+     * See the [Rust documentation for `level_at`](https://docs.rs/unicode_bidi/latest/unicode_bidi/struct.Paragraph.html#method.level_at) for more information.
+     */
     reorderLine(rangeStart, rangeEnd) {
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
         
@@ -105,6 +137,15 @@ export class BidiParagraph {
         }
     }
 
+    /** 
+     * Get the BIDI level at a particular byte index in this paragraph.
+     * This integer is conceptually a `unicode_bidi::Level`,
+     * and can be further inspected using the static methods on Bidi.
+     *
+     * Returns 0 (equivalent to `Level::ltr()`) on error
+     *
+     * See the [Rust documentation for `level_at`](https://docs.rs/unicode_bidi/latest/unicode_bidi/struct.Paragraph.html#method.level_at) for more information.
+     */
     levelAt(pos) {
         const result = wasm.icu4x_BidiParagraph_level_at_mv1(this.ffiValue, pos);
     
@@ -113,5 +154,9 @@ export class BidiParagraph {
         }
         
         finally {}
+    }
+
+    constructor(symbol, ptr, selfEdge, infoEdge) {
+        return this.#internalConstructor(...arguments)
     }
 }

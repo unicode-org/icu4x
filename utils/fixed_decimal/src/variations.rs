@@ -2,8 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-/// This module defines variations of numeric types, including signed values,
-/// values with infinity, and values with NaN.
+//! This module defines variations of numeric types, including signed values,
+//! values with infinity, and values with NaN.
 
 // TODO: move to sign.rs
 /// A specification of the sign used when formatting a number.
@@ -21,6 +21,8 @@ pub enum Sign {
 }
 
 /// Configuration for when to render the minus sign or plus sign.
+///
+/// **The primary definition of this type is in the [`fixed_decimal`](https://docs.rs/fixed_decimal) crate. Other ICU4X crates re-export it for convenience.**
 #[non_exhaustive]
 #[derive(Debug, Eq, PartialEq, Clone, Copy)]
 pub enum SignDisplay {

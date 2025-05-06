@@ -83,7 +83,6 @@ jobs:
           --exclude icu_benchmark_macros
           --exclude icu_ffi_coverage
           --exclude md-tests
-          --exclude icu_provider_macros
           --exclude databake-derive
           --exclude yoke-derive
           --exclude zerofrom-derive
@@ -179,7 +178,7 @@ jobs:
         cd ffi/npm
         make lib/index.mjs
         npm install typedoc@0.26.5 --exact
-        node_modules/typedoc/bin/typedoc lib/index.d.ts --out docs --readme ../../tutorials/js.md --basePath lib
+        node_modules/typedoc/bin/typedoc lib/index.d.ts --out docs --readme ../../tutorials/using-from-js.md --basePath lib
         cd ../..
         
     - name: Upload docs to Google Cloud Storage (non-main)
@@ -223,13 +222,11 @@ jobs:
     - name: Install Dart
       uses: dart-lang/setup-dart@0a8a0fc875eb934c15d08629302413c671d3f672 # v1.6.5
       with:
-        sdk: 3.4.0-204.0.dev
+        sdk: 3.7.0
         
     - name: Build docs
       run: |
         cd ffi/dart
-        make lib/src/lib.g.dart
-        # https://github.com/dart-lang/dartdoc/issues/3590
         dart pub get
         dart doc
         cd ../..
@@ -270,8 +267,6 @@ jobs:
       run: |
         npm -C ffi/npm ci
         npm -C tutorials/web-demo ci
-      env: 
-        PINNED_CI_NIGHTLY: nightly-2024-07-23
 
     - name: Run Webpack
       run: npm -C tutorials/web-demo run build
@@ -344,7 +339,7 @@ jobs:
     - name: Run benchmark
       shell: /usr/bin/bash -o pipefail -e {0}
       run: |
-        cargo bench --features bench --manifest-path ${{ matrix.component }}/Cargo.toml -- --output-format bencher | tee benchmarks/perf/${{ matrix.component }}/output.txt;
+        cargo bench --manifest-path ${{ matrix.component }}/Cargo.toml --all-features -- --output-format bencher | tee benchmarks/perf/${{ matrix.component }}/output.txt;
 
     - name:  Download previous benchmark data
       run: |
@@ -588,9 +583,10 @@ jobs:
           mkdir website
           gsutil -m cp -rn gs://${{ env.GCP_MAIN_BUCKET_ID }}/gha/* website || true
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@a753861a5debcf57bf8b404356158c8e1e33150c # v2.0.0
+        uses: actions/upload-pages-artifact@56afc609e74202658d3ffba0e8f6dda462b719fa # v3.0.1
         with:
           path: 'website'
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@f27bcc15848fdcdcc02f01754eb838e44bcf389b # v1.2.9
+        uses: actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e # v4.0.5
+

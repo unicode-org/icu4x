@@ -6,6 +6,7 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include <memory>
+#include <functional>
 #include <optional>
 #include "../diplomat_runtime.hpp"
 #include "DisplayNamesFallback.d.hpp"
@@ -33,6 +34,9 @@ namespace capi {
 
 
 namespace icu4x {
+/**
+ * See the [Rust documentation for `DisplayNamesOptions`](https://docs.rs/icu/latest/icu/experimental/displaynames/options/struct.DisplayNamesOptions.html) for more information.
+ */
 struct DisplayNamesOptionsV1 {
   std::optional<icu4x::DisplayNamesStyle> style;
   std::optional<icu4x::DisplayNamesFallback> fallback;

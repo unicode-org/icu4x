@@ -7,17 +7,19 @@ mod hardcoded;
 mod replaceable;
 
 use crate::transliterate::provider::{FunctionCall, Rule, RuleULE, SimpleId, VarTable};
-use crate::transliterate::provider::{
-    RuleBasedTransliterator, Segment, TransliteratorRulesV1Marker,
-};
+use crate::transliterate::provider::{RuleBasedTransliterator, Segment, TransliteratorRulesV1};
 use crate::transliterate::transliterator::hardcoded::Case;
+use alloc::borrow::Cow;
 use alloc::boxed::Box;
 use alloc::string::{String, ToString};
 use alloc::vec::Vec;
 use core::fmt::Debug;
 use core::ops::Range;
+use icu_casemap::provider::CaseMapV1;
+use icu_casemap::CaseMapper;
 use icu_collections::codepointinvlist::CodePointInversionList;
 use icu_collections::codepointinvliststringlist::CodePointInversionListAndStringList;
+use icu_locale::LanguageIdentifier;
 use icu_locale_core::Locale;
 use icu_normalizer::provider::*;
 use icu_normalizer::{ComposingNormalizer, DecomposingNormalizer};
@@ -46,87 +48,13 @@ pub trait CustomTransliterator: Debug {
 }
 
 #[derive(Debug)]
-struct ComposingTransliterator(ComposingNormalizer);
-
-impl ComposingTransliterator {
-    fn try_nfc<P>(provider: &P) -> Result<Self, DataError>
-    where
-        P: DataProvider<CanonicalDecompositionDataV1Marker>
-            + DataProvider<CanonicalDecompositionTablesV1Marker>
-            + DataProvider<CanonicalCompositionsV1Marker>
-            + ?Sized,
-    {
-        let inner = ComposingNormalizer::try_new_nfc_unstable(provider)
-            .map_err(|e| DataError::custom("failed to load NFC").with_debug_context(&e))?;
-        Ok(Self(inner))
-    }
-
-    fn try_nfkc<P>(provider: &P) -> Result<Self, DataError>
-    where
-        P: DataProvider<CanonicalDecompositionDataV1Marker>
-            + DataProvider<CompatibilityDecompositionSupplementV1Marker>
-            + DataProvider<CanonicalDecompositionTablesV1Marker>
-            + DataProvider<CompatibilityDecompositionTablesV1Marker>
-            + DataProvider<CanonicalCompositionsV1Marker>
-            + ?Sized,
-    {
-        let inner = ComposingNormalizer::try_new_nfkc_unstable(provider)
-            .map_err(|e| DataError::custom("failed to load NFKC").with_debug_context(&e))?;
-        Ok(Self(inner))
-    }
-
-    fn transliterate(&self, mut rep: Replaceable, _env: &Env) {
-        // would be cool to use `normalize_to` and pass Insertable, but we need to know the
-        // input string, which gets replaced by the normalized string.
-
-        let buf = self.0.as_borrowed().normalize(rep.as_str_modifiable());
-        rep.replace_modifiable_with_str(&buf);
-    }
-}
-
-#[derive(Debug)]
-struct DecomposingTransliterator(DecomposingNormalizer);
-
-impl DecomposingTransliterator {
-    fn try_nfd<P>(provider: &P) -> Result<Self, DataError>
-    where
-        P: DataProvider<CanonicalDecompositionDataV1Marker>
-            + DataProvider<CanonicalDecompositionTablesV1Marker>
-            + ?Sized,
-    {
-        let inner = DecomposingNormalizer::try_new_nfd_unstable(provider)
-            .map_err(|e| DataError::custom("failed to load NFD").with_debug_context(&e))?;
-        Ok(Self(inner))
-    }
-
-    fn try_nfkd<P>(provider: &P) -> Result<Self, DataError>
-    where
-        P: DataProvider<CanonicalDecompositionDataV1Marker>
-            + DataProvider<CompatibilityDecompositionSupplementV1Marker>
-            + DataProvider<CanonicalDecompositionTablesV1Marker>
-            + DataProvider<CompatibilityDecompositionTablesV1Marker>
-            + ?Sized,
-    {
-        let inner = DecomposingNormalizer::try_new_nfkd_unstable(provider)
-            .map_err(|e| DataError::custom("failed to load NFKD").with_debug_context(&e))?;
-        Ok(Self(inner))
-    }
-
-    fn transliterate(&self, mut rep: Replaceable, _env: &Env) {
-        // would be cool to use `normalize_to` and pass Insertable, but we need to know the
-        // input string, which gets replaced by the normalized string.
-
-        let buf = self.0.as_borrowed().normalize(rep.as_str_modifiable());
-        rep.replace_modifiable_with_str(&buf);
-    }
-}
-
-#[derive(Debug)]
 enum InternalTransliterator {
-    RuleBased(DataPayload<TransliteratorRulesV1Marker>),
-    Composing(ComposingTransliterator),
-    Decomposing(DecomposingTransliterator),
+    RuleBased(DataPayload<TransliteratorRulesV1>),
+    Composing(ComposingNormalizer),
+    Decomposing(DecomposingNormalizer),
     Hex(hardcoded::HexTransliterator),
+    Lower(CaseMapper),
+    Upper(CaseMapper),
     Null,
     Remove,
     Dyn(Box<dyn CustomTransliterator>),
@@ -137,8 +65,34 @@ impl InternalTransliterator {
         match self {
             Self::RuleBased(rbt) => rbt.get().transliterate(rep, env),
             // TODO(#3910): internal hardcoded transliterators
-            Self::Composing(t) => t.transliterate(rep, env),
-            Self::Decomposing(t) => t.transliterate(rep, env),
+            Self::Composing(normalizer) => {
+                if let Cow::Owned(buf) = normalizer.as_borrowed().normalize(rep.as_str_modifiable())
+                {
+                    rep.replace_modifiable_with_str(&buf);
+                }
+            }
+            Self::Decomposing(normalizer) => {
+                if let Cow::Owned(buf) = normalizer.as_borrowed().normalize(rep.as_str_modifiable())
+                {
+                    rep.replace_modifiable_with_str(&buf);
+                }
+            }
+            Self::Lower(casemap) => {
+                if let Cow::Owned(buf) = casemap
+                    .as_borrowed()
+                    .lowercase_to_string(rep.as_str_modifiable(), &LanguageIdentifier::UNKNOWN)
+                {
+                    rep.replace_modifiable_with_str(&buf);
+                }
+            }
+            Self::Upper(casemap) => {
+                if let Cow::Owned(buf) = casemap
+                    .as_borrowed()
+                    .uppercase_to_string(rep.as_str_modifiable(), &LanguageIdentifier::UNKNOWN)
+                {
+                    rep.replace_modifiable_with_str(&buf);
+                }
+            }
             Self::Hex(t) => t.transliterate(rep),
             Self::Null => (),
             Self::Remove => rep.replace_modifiable_with_str(""),
@@ -193,7 +147,7 @@ type Env = LiteMap<String, InternalTransliterator>;
 /// #[derive(Debug)]
 /// struct AsciiUpperTransliterator;
 /// impl CustomTransliterator for AsciiUpperTransliterator {
-///     fn transliterate(&self, input: &str, range: std::ops::Range<usize>) -> String {
+///     fn transliterate(&self, input: &str, range: core::ops::Range<usize>) -> String {
 ///         input.to_ascii_uppercase()
 ///     }
 /// }
@@ -205,6 +159,7 @@ type Env = LiteMap<String, InternalTransliterator>;
 /// // Create a transliterator from the main entrypoint:
 /// let provider = collection.as_provider();
 /// let t = Transliterator::try_new_with_override_unstable(
+///     &provider,
 ///     &provider,
 ///     &provider,
 ///     &"und-t-und-x0-custom".parse().unwrap(),
@@ -221,7 +176,7 @@ type Env = LiteMap<String, InternalTransliterator>;
 /// ```
 #[derive(Debug)]
 pub struct Transliterator {
-    transliterator: DataPayload<TransliteratorRulesV1Marker>,
+    transliterator: DataPayload<TransliteratorRulesV1>,
     env: Env,
 }
 
@@ -243,23 +198,13 @@ impl Transliterator {
         Self::try_new_unstable(
             &crate::provider::Baked,
             &icu_normalizer::provider::Baked,
+            &icu_casemap::provider::Baked,
             locale,
         )
     }
 
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(ANY, Self::try_new)]
-    pub fn try_new_with_any_provider(
-        provider: &(impl AnyProvider + ?Sized),
-        locale: &Locale,
-    ) -> Result<Self, DataError> {
-        Self::try_new_unstable(
-            &provider.as_downcasting(),
-            &provider.as_downcasting(),
-            locale,
-        )
-    }
     #[cfg(feature = "serde")]
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(BUFFER, Self::try_new)]
+    #[doc = icu_provider::gen_buffer_unstable_docs!(BUFFER, Self::try_new)]
     pub fn try_new_with_buffer_provider(
         provider: &(impl BufferProvider + ?Sized),
         locale: &Locale,
@@ -267,23 +212,26 @@ impl Transliterator {
         Self::try_new_unstable(
             &provider.as_deserializing(),
             &provider.as_deserializing(),
+            &provider.as_deserializing(),
             locale,
         )
     }
 
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
-    pub fn try_new_unstable<PT, PN>(
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
+    pub fn try_new_unstable<PT, PN, PC>(
         transliterator_provider: &PT,
         normalizer_provider: &PN,
+        casemap_provider: &PC,
         locale: &Locale,
     ) -> Result<Self, DataError>
     where
-        PT: DataProvider<TransliteratorRulesV1Marker> + ?Sized,
-        PN: DataProvider<CanonicalDecompositionDataV1Marker>
-            + DataProvider<CompatibilityDecompositionSupplementV1Marker>
-            + DataProvider<CanonicalDecompositionTablesV1Marker>
-            + DataProvider<CompatibilityDecompositionTablesV1Marker>
-            + DataProvider<CanonicalCompositionsV1Marker>
+        PT: DataProvider<TransliteratorRulesV1> + ?Sized,
+        PC: DataProvider<CaseMapV1> + ?Sized,
+        PN: DataProvider<NormalizerNfdDataV1>
+            + DataProvider<NormalizerNfkdDataV1>
+            + DataProvider<NormalizerNfdTablesV1>
+            + DataProvider<NormalizerNfkdTablesV1>
+            + DataProvider<NormalizerNfcV1>
             + ?Sized,
     {
         Self::internal_try_new_with_override_unstable(
@@ -291,6 +239,7 @@ impl Transliterator {
             None::<&fn(&Locale) -> Option<Result<Box<dyn CustomTransliterator>, DataError>>>,
             transliterator_provider,
             normalizer_provider,
+            casemap_provider,
         )
     }
 
@@ -343,29 +292,14 @@ impl Transliterator {
         Self::try_new_with_override_unstable(
             &crate::provider::Baked,
             &icu_normalizer::provider::Baked,
+            &icu_casemap::provider::Baked,
             locale,
             lookup,
         )
     }
 
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(ANY, Self::try_new_with_override)]
-    pub fn try_new_with_override_with_any_provider<F>(
-        provider: &(impl AnyProvider + ?Sized),
-        locale: &Locale,
-        lookup: F,
-    ) -> Result<Self, DataError>
-    where
-        F: Fn(&Locale) -> Option<Result<Box<dyn CustomTransliterator>, DataError>>,
-    {
-        Self::try_new_with_override_unstable(
-            &provider.as_downcasting(),
-            &provider.as_downcasting(),
-            locale,
-            lookup,
-        )
-    }
     #[cfg(feature = "serde")]
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(BUFFER, Self::try_new_with_override)]
+    #[doc = icu_provider::gen_buffer_unstable_docs!(BUFFER, Self::try_new_with_override)]
     pub fn try_new_with_override_with_buffer_provider<F>(
         provider: &(impl BufferProvider + ?Sized),
         locale: &Locale,
@@ -377,25 +311,28 @@ impl Transliterator {
         Self::try_new_with_override_unstable(
             &provider.as_deserializing(),
             &provider.as_deserializing(),
+            &provider.as_deserializing(),
             locale,
             lookup,
         )
     }
 
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new_with_override)]
-    pub fn try_new_with_override_unstable<PT, PN, F>(
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new_with_override)]
+    pub fn try_new_with_override_unstable<PT, PN, PC, F>(
         transliterator_provider: &PT,
         normalizer_provider: &PN,
+        casemap_provider: &PC,
         locale: &Locale,
         lookup: F,
     ) -> Result<Transliterator, DataError>
     where
-        PT: DataProvider<TransliteratorRulesV1Marker> + ?Sized,
-        PN: DataProvider<CanonicalDecompositionDataV1Marker>
-            + DataProvider<CompatibilityDecompositionSupplementV1Marker>
-            + DataProvider<CanonicalDecompositionTablesV1Marker>
-            + DataProvider<CompatibilityDecompositionTablesV1Marker>
-            + DataProvider<CanonicalCompositionsV1Marker>
+        PT: DataProvider<TransliteratorRulesV1> + ?Sized,
+        PC: DataProvider<CaseMapV1> + ?Sized,
+        PN: DataProvider<NormalizerNfdDataV1>
+            + DataProvider<NormalizerNfkdDataV1>
+            + DataProvider<NormalizerNfdTablesV1>
+            + DataProvider<NormalizerNfkdTablesV1>
+            + DataProvider<NormalizerNfcV1>
             + ?Sized,
         F: Fn(&Locale) -> Option<Result<Box<dyn CustomTransliterator>, DataError>>,
     {
@@ -404,22 +341,25 @@ impl Transliterator {
             Some(&lookup),
             transliterator_provider,
             normalizer_provider,
+            casemap_provider,
         )
     }
 
-    fn internal_try_new_with_override_unstable<PN, PT, F>(
+    fn internal_try_new_with_override_unstable<PN, PT, PC, F>(
         locale: &Locale,
         lookup: Option<&F>,
         transliterator_provider: &PT,
         normalizer_provider: &PN,
+        casemap_provider: &PC,
     ) -> Result<Transliterator, DataError>
     where
-        PT: DataProvider<TransliteratorRulesV1Marker> + ?Sized,
-        PN: DataProvider<CanonicalDecompositionDataV1Marker>
-            + DataProvider<CompatibilityDecompositionSupplementV1Marker>
-            + DataProvider<CanonicalDecompositionTablesV1Marker>
-            + DataProvider<CompatibilityDecompositionTablesV1Marker>
-            + DataProvider<CanonicalCompositionsV1Marker>
+        PT: DataProvider<TransliteratorRulesV1> + ?Sized,
+        PC: DataProvider<CaseMapV1> + ?Sized,
+        PN: DataProvider<NormalizerNfdDataV1>
+            + DataProvider<NormalizerNfkdDataV1>
+            + DataProvider<NormalizerNfdTablesV1>
+            + DataProvider<NormalizerNfkdTablesV1>
+            + DataProvider<NormalizerNfcV1>
             + ?Sized,
         F: Fn(&Locale) -> Option<Result<Box<dyn CustomTransliterator>, DataError>>,
     {
@@ -431,6 +371,7 @@ impl Transliterator {
             lookup,
             transliterator_provider,
             normalizer_provider,
+            casemap_provider,
             false,
             &mut env,
         )?;
@@ -441,21 +382,23 @@ impl Transliterator {
         })
     }
 
-    fn load_rbt<PT, PN, F>(
+    fn load_rbt<PT, PN, PC, F>(
         marker_attributes: &DataMarkerAttributes,
         lookup: Option<&F>,
         transliterator_provider: &PT,
         normalizer_provider: &PN,
+        casemap_provider: &PC,
         allow_internal: bool,
         env: &mut LiteMap<String, InternalTransliterator>,
-    ) -> Result<DataPayload<TransliteratorRulesV1Marker>, DataError>
+    ) -> Result<DataPayload<TransliteratorRulesV1>, DataError>
     where
-        PT: DataProvider<TransliteratorRulesV1Marker> + ?Sized,
-        PN: DataProvider<CanonicalDecompositionDataV1Marker>
-            + DataProvider<CompatibilityDecompositionSupplementV1Marker>
-            + DataProvider<CanonicalDecompositionTablesV1Marker>
-            + DataProvider<CompatibilityDecompositionTablesV1Marker>
-            + DataProvider<CanonicalCompositionsV1Marker>
+        PT: DataProvider<TransliteratorRulesV1> + ?Sized,
+        PC: DataProvider<CaseMapV1> + ?Sized,
+        PN: DataProvider<NormalizerNfdDataV1>
+            + DataProvider<NormalizerNfkdDataV1>
+            + DataProvider<NormalizerNfdTablesV1>
+            + DataProvider<NormalizerNfkdTablesV1>
+            + DataProvider<NormalizerNfcV1>
             + ?Sized,
         F: Fn(&Locale) -> Option<Result<Box<dyn CustomTransliterator>, DataError>>,
     {
@@ -474,7 +417,7 @@ impl Transliterator {
                 // Load the transliterator, by checking
                 let internal_t =
                     // a) hardcoded specials
-                    Transliterator::load_special(&dep, normalizer_provider)
+                    Transliterator::load_special(&dep, normalizer_provider, casemap_provider)
                     // b) the user-provided override
                     .or_else(|| Some(lookup?(&dep.parse().ok()?)?.map(InternalTransliterator::Dyn)))
                     // c) the data
@@ -485,6 +428,7 @@ impl Transliterator {
                             lookup,
                             transliterator_provider,
                             normalizer_provider,
+                            casemap_provider,
                             true,
                             env,
                         ).map(InternalTransliterator::RuleBased)
@@ -495,41 +439,48 @@ impl Transliterator {
         Ok(transliterator)
     }
 
-    fn load_special<P>(
+    fn load_special<PN, PD>(
         special: &str,
-        normalizer_provider: &P,
+        normalizer_provider: &PN,
+        casemapper_provider: &PD,
     ) -> Option<Result<InternalTransliterator, DataError>>
     where
-        P: DataProvider<CanonicalDecompositionDataV1Marker>
-            + DataProvider<CompatibilityDecompositionSupplementV1Marker>
-            + DataProvider<CanonicalDecompositionTablesV1Marker>
-            + DataProvider<CompatibilityDecompositionTablesV1Marker>
-            + DataProvider<CanonicalCompositionsV1Marker>
-            + ?Sized,
+        PN: ?Sized
+            + DataProvider<NormalizerNfdDataV1>
+            + DataProvider<NormalizerNfkdDataV1>
+            + DataProvider<NormalizerNfdTablesV1>
+            + DataProvider<NormalizerNfkdTablesV1>
+            + DataProvider<NormalizerNfcV1>,
+        PD: ?Sized + DataProvider<CaseMapV1>,
     {
         // TODO(#3909, #3910): add more
         match special {
             "any-nfc" => Some(
-                ComposingTransliterator::try_nfc(normalizer_provider)
+                ComposingNormalizer::try_new_nfc_unstable(normalizer_provider)
                     .map(InternalTransliterator::Composing),
             ),
             "any-nfkc" => Some(
-                ComposingTransliterator::try_nfkc(normalizer_provider)
+                ComposingNormalizer::try_new_nfkc_unstable(normalizer_provider)
                     .map(InternalTransliterator::Composing),
             ),
             "any-nfd" => Some(
-                DecomposingTransliterator::try_nfd(normalizer_provider)
+                DecomposingNormalizer::try_new_nfd_unstable(normalizer_provider)
                     .map(InternalTransliterator::Decomposing),
             ),
             "any-nfkd" => Some(
-                DecomposingTransliterator::try_nfkd(normalizer_provider)
+                DecomposingNormalizer::try_new_nfkd_unstable(normalizer_provider)
                     .map(InternalTransliterator::Decomposing),
+            ),
+            "any-lower" => Some(
+                CaseMapper::try_new_unstable(casemapper_provider)
+                    .map(InternalTransliterator::Lower),
+            ),
+            "any-upper" => Some(
+                CaseMapper::try_new_unstable(casemapper_provider)
+                    .map(InternalTransliterator::Upper),
             ),
             "any-null" => Some(Ok(InternalTransliterator::Null)),
             "any-remove" => Some(Ok(InternalTransliterator::Remove)),
-            "any-lower" => Some(Err(DataError::custom("any-lower not implemented"))),
-            "any-upper" => Some(Err(DataError::custom("any-upper not implemented"))),
-            "any-title" => Some(Err(DataError::custom("any-title not implemented"))),
             "any-hex/unicode" => Some(Ok(InternalTransliterator::Hex(
                 hardcoded::HexTransliterator::new("U+", "", 4, Case::Upper),
             ))),
@@ -565,9 +516,9 @@ impl Transliterator {
 
 impl RuleBasedTransliterator<'_> {
     /// Transliteration using rules works as follows:
-    ///  1. Split the input modifiable range of the Replaceable according into runs according to self.filter
-    ///  2. Transliterate each run in sequence
-    ///      i. Transliterate the first id_group, then the first rule_group, then the second id_group, etc.
+    /// 1. Split the input modifiable range of the Replaceable according into runs according to self.filter
+    /// 2. Transliterate each run in sequence
+    ///     1. Transliterate the first id_group, then the first rule_group, then the second id_group, etc.
     fn transliterate(&self, mut rep: Replaceable, env: &Env) {
         // assumes the cursor is at the right position.
 
@@ -1410,6 +1361,7 @@ mod tests {
         let t = Transliterator::try_new_unstable(
             &collection.as_provider(),
             &icu_normalizer::provider::Baked,
+            &icu_casemap::provider::Baked,
             &"und-x-test".parse().unwrap(),
         )
         .unwrap();
@@ -1440,6 +1392,7 @@ mod tests {
         let t = Transliterator::try_new_unstable(
             &collection.as_provider(),
             &icu_normalizer::provider::Baked,
+            &icu_casemap::provider::Baked,
             &"und-x-root".parse().unwrap(),
         )
         .unwrap();
@@ -1462,6 +1415,7 @@ mod tests {
         let t = Transliterator::try_new_unstable(
             &collection.as_provider(),
             &icu_normalizer::provider::Baked,
+            &icu_casemap::provider::Baked,
             &"und-x-test".parse().unwrap(),
         )
         .unwrap();
@@ -1484,6 +1438,7 @@ mod tests {
         let t = Transliterator::try_new_unstable(
             &collection.as_provider(),
             &icu_normalizer::provider::Baked,
+            &icu_casemap::provider::Baked,
             &"und-x-test".parse().unwrap(),
         )
         .unwrap();
@@ -1549,6 +1504,7 @@ mod tests {
         let t = Transliterator::try_new_unstable(
             &collection.as_provider(),
             &icu_normalizer::provider::Baked,
+            &icu_casemap::provider::Baked,
             &"und-x-test".parse().unwrap(),
         )
         .unwrap();
@@ -1570,6 +1526,7 @@ mod tests {
         let t = Transliterator::try_new_unstable(
             &collection.as_provider(),
             &icu_normalizer::provider::Baked,
+            &icu_casemap::provider::Baked,
             &"und-x-test".parse().unwrap(),
         )
         .unwrap();

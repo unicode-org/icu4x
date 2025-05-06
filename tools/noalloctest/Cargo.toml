@@ -1,0 +1,38 @@
+# This file is part of ICU4X. For terms of use, please see the file
+# called LICENSE at the top level of the ICU4X source tree
+# (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
+
+[package]
+name = "noalloctest"
+version.workspace = true
+rust-version.workspace = true
+authors.workspace = true
+edition.workspace = true
+repository.workspace = true
+homepage.workspace = true
+license.workspace = true
+categories.workspace = true
+include.workspace = true
+publish = false
+
+# Testing: Build this crate with
+# cargo +nightly rustc -Zbuild-std=core,panic_abort -- -C link-arg=-nostartfiles  -Cpanic=abort --cfg icu4x_noalloctest
+
+[dependencies]
+# Dependencies that should be no-alloc should go here
+icu_calendar = { workspace = true }
+icu_collections = { workspace = true }
+icu_locale_core = { workspace = true }
+icu_properties = { workspace = true }
+icu_provider = { workspace = true, features = ["baked"] }
+icu_time = { workspace = true }
+litemap = { workspace = true }
+potential_utf = { workspace = true }
+tinystr = { workspace = true }
+yoke = { workspace = true }
+zerofrom = { workspace = true }
+zerotrie = { workspace = true }
+zerovec = { workspace = true }
+
+[lints.rust]
+unexpected_cfgs = { level = "warn", check-cfg = ['cfg(icu4x_noalloctest)'] }

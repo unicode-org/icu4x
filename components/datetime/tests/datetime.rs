@@ -7,28 +7,27 @@ mod patterns;
 
 use fixtures::TestOutputItem;
 use icu_calendar::cal::{
-    Buddhist, Chinese, Coptic, Dangi, Gregorian, Hebrew, Indian, IslamicCivil,
-    IslamicObservational, IslamicTabular, IslamicUmmAlQura, Iso, Persian, Roc,
-    {Ethiopian, EthiopianEraStyle}, {Japanese, JapaneseExtended},
+    Buddhist, Chinese, Coptic, Dangi, Ethiopian, EthiopianEraStyle, Gregorian, Hebrew,
+    HijriSimulated, HijriTabular, HijriTabularEpoch, HijriTabularLeapYears, HijriUmmAlQura, Indian,
+    Iso, Japanese, JapaneseExtended, Persian, Roc,
 };
-use icu_calendar::{
-    any_calendar::{AnyCalendarKind, IntoAnyCalendar},
-    AsCalendar, Calendar, DateTime,
-};
+use icu_calendar::AnyCalendarKind;
+use icu_datetime::fieldsets::enums::*;
 use icu_datetime::scaffold::CldrCalendar;
-use icu_datetime::{fieldsets::enums::*, DateTimeFormatterPreferences};
 use icu_datetime::{
-    pattern::DateTimePattern, pattern::TypedDateTimeNames, DateTimeFormatter,
+    pattern::DateTimePattern, pattern::FixedCalendarDateTimeNames, DateTimeFormatter,
     FixedCalendarDateTimeFormatter,
 };
-use icu_locale_core::{
-    extensions::unicode::{key, value, Value},
-    locale,
-    preferences::extensions::unicode::keywords::HourCycle,
-    Locale,
+use icu_datetime::{
+    preferences::{CalendarAlgorithm, HijriCalendarAlgorithm},
+    DateTimeFormatterPreferences,
 };
+use icu_locale_core::{locale, Locale};
 use icu_provider::prelude::*;
-use icu_timezone::{CustomZonedDateTime, TimeZoneIdMapper, TimeZoneInfo, UtcOffset};
+use icu_time::{
+    zone::{IanaParser, UtcOffset},
+    DateTime, TimeZoneInfo, ZonedDateTime,
+};
 use patterns::{
     dayperiods::{DayPeriodExpectation, DayPeriodTests},
     time_zones::TimeZoneTests,
@@ -37,296 +36,238 @@ use writeable::{assert_try_writeable_eq, assert_writeable_eq};
 
 mod mock;
 
-fn apply_preference_bag_to_locale(hour_cycle: HourCycle, locale: &mut Locale) {
-    const H11: Value = value!("h11");
-    const H12: Value = value!("h12");
-    const H23: Value = value!("h23");
-    const H24: Value = value!("h24");
-    let value = match hour_cycle {
-        HourCycle::H11 => H11,
-        HourCycle::H12 => H12,
-        HourCycle::H23 => H23,
-        HourCycle::H24 => H24,
-        _ => unreachable!(),
-    };
-    locale.extensions.unicode.keywords.set(key!("hc"), value);
-}
-
 fn test_fixture(fixture_name: &str, file: &str) {
     for fx in serde_json::from_str::<fixtures::Fixture>(file)
         .expect("Unable to get fixture.")
         .0
     {
-        let japanese = Japanese::new();
-        let japanext = JapaneseExtended::new();
-        let skeleton = match fx.input.options.semantic {
-            Some(semantic) => {
-                let semantic = CompositeFieldSet::try_from(semantic).unwrap();
-                match CompositeDateTimeFieldSet::try_from_composite_field_set(semantic) {
-                    Some(v) => v,
-                    None => {
-                        panic!("Cannot handle field sets with time zones in this fn: {semantic:?}");
-                    }
-                }
-            }
+        let field_set = match fx.input.options.semantic {
+            Some(semantic) => semantic.build_composite_datetime().unwrap(),
             None => {
                 eprintln!("Warning: Skipping test with no semantic skeleton: {fx:?}");
                 continue;
             }
         };
-        let input_value = mock::parse_gregorian_from_str(&fx.input.value);
-        let input_buddhist = input_value.to_calendar(Buddhist);
-        let input_chinese = input_value.to_calendar(Chinese::new());
-        let input_coptic = input_value.to_calendar(Coptic);
-        let input_dangi = input_value.to_calendar(Dangi::new());
-        let input_ethiopian = input_value.to_calendar(Ethiopian::new());
-        let input_ethioaa =
-            input_value.to_calendar(Ethiopian::new_with_era_style(EthiopianEraStyle::AmeteAlem));
-        let input_hebrew = input_value.to_calendar(Hebrew);
-        let input_indian = input_value.to_calendar(Indian);
-        let input_islamic_civil = input_value.to_calendar(IslamicCivil);
-        let input_islamic_observational =
-            input_value.to_calendar(IslamicObservational::new_always_calculating());
-        let input_islamic_tabular = input_value.to_calendar(IslamicTabular);
-        let input_islamic_umm_al_qura =
-            input_value.to_calendar(IslamicUmmAlQura::new_always_calculating());
-        let input_iso = input_value.to_calendar(Iso);
-        let input_japanese = input_value.to_calendar(japanese);
-        let input_japanext = input_value.to_calendar(japanext);
-        let input_persian = input_value.to_calendar(Persian);
-        let input_roc = input_value.to_calendar(Roc);
+        let input = &fx.input.value;
 
-        let description = match fx.description {
-            Some(description) => {
-                format!("\n  test: {description:?}\n  file: {fixture_name}.json\n")
-            }
-            None => format!("\n  file: {fixture_name}.json\n"),
-        };
-        for (locale, output_value) in fx.output.values {
-            let mut locale =
+        let description = fx
+            .description
+            .map(|d| format!("\n  test: {d:?}\n  file: {fixture_name}.json\n"))
+            .unwrap_or_else(|| format!("\n  file: {fixture_name}.json\n"));
+
+        for (locale, expected) in fx.output.values {
+            let locale =
                 Locale::try_from_str(&locale).expect("Expected parseable locale in fixture");
-            if let Some(hour_cycle) = fx.input.options.hour_cycle {
-                apply_preference_bag_to_locale(hour_cycle.into(), &mut locale);
-            }
-            if let Some(kind) = AnyCalendarKind::get_for_locale(&locale) {
-                match kind {
-                    AnyCalendarKind::Buddhist => assert_fixture_element(
-                        &locale,
-                        &input_buddhist,
-                        &input_iso,
-                        &output_value,
-                        skeleton,
-                        &description,
-                    ),
-                    AnyCalendarKind::Chinese => assert_fixture_element(
-                        &locale,
-                        &input_chinese,
-                        &input_iso,
-                        &output_value,
-                        skeleton,
-                        &description,
-                    ),
-                    AnyCalendarKind::Coptic => assert_fixture_element(
-                        &locale,
-                        &input_coptic,
-                        &input_iso,
-                        &output_value,
-                        skeleton,
-                        &description,
-                    ),
-                    AnyCalendarKind::Dangi => assert_fixture_element(
-                        &locale,
-                        &input_dangi,
-                        &input_iso,
-                        &output_value,
-                        skeleton,
-                        &description,
-                    ),
-                    AnyCalendarKind::Ethiopian => assert_fixture_element(
-                        &locale,
-                        &input_ethiopian,
-                        &input_iso,
-                        &output_value,
-                        skeleton,
-                        &description,
-                    ),
-                    AnyCalendarKind::EthiopianAmeteAlem => assert_fixture_element(
-                        &locale,
-                        &input_ethioaa,
-                        &input_iso,
-                        &output_value,
-                        skeleton,
-                        &description,
-                    ),
-                    AnyCalendarKind::Hebrew => assert_fixture_element(
-                        &locale,
-                        &input_hebrew,
-                        &input_iso,
-                        &output_value,
-                        skeleton,
-                        &description,
-                    ),
-                    AnyCalendarKind::Indian => assert_fixture_element(
-                        &locale,
-                        &input_indian,
-                        &input_iso,
-                        &output_value,
-                        skeleton,
-                        &description,
-                    ),
-                    AnyCalendarKind::IslamicCivil => assert_fixture_element(
-                        &locale,
-                        &input_islamic_civil,
-                        &input_iso,
-                        &output_value,
-                        skeleton,
-                        &description,
-                    ),
-                    AnyCalendarKind::IslamicObservational => assert_fixture_element(
-                        &locale,
-                        &input_islamic_observational,
-                        &input_iso,
-                        &output_value,
-                        skeleton,
-                        &description,
-                    ),
-                    AnyCalendarKind::IslamicTabular => assert_fixture_element(
-                        &locale,
-                        &input_islamic_tabular,
-                        &input_iso,
-                        &output_value,
-                        skeleton,
-                        &description,
-                    ),
-                    AnyCalendarKind::IslamicUmmAlQura => assert_fixture_element(
-                        &locale,
-                        &input_islamic_umm_al_qura,
-                        &input_iso,
-                        &output_value,
-                        skeleton,
-                        &description,
-                    ),
-                    AnyCalendarKind::Japanese => assert_fixture_element(
-                        &locale,
-                        &input_japanese,
-                        &input_iso,
-                        &output_value,
-                        skeleton,
-                        &description,
-                    ),
-                    AnyCalendarKind::JapaneseExtended => assert_fixture_element(
-                        &locale,
-                        &input_japanext,
-                        &input_iso,
-                        &output_value,
-                        skeleton,
-                        &description,
-                    ),
-                    AnyCalendarKind::Persian => assert_fixture_element(
-                        &locale,
-                        &input_persian,
-                        &input_iso,
-                        &output_value,
-                        skeleton,
-                        &description,
-                    ),
-                    AnyCalendarKind::Roc => assert_fixture_element(
-                        &locale,
-                        &input_roc,
-                        &input_iso,
-                        &output_value,
-                        skeleton,
-                        &description,
-                    ),
-                    _ => panic!("datetime test does not support locale {locale:?}"),
-                }
-            } else {
-                assert_fixture_element(
-                    &locale,
-                    &input_value,
-                    &input_iso,
-                    &output_value,
-                    skeleton,
+            let prefs = DateTimeFormatterPreferences::from(&locale);
+
+            match prefs
+                .calendar_algorithm
+                .unwrap_or(CalendarAlgorithm::Gregory)
+            {
+                CalendarAlgorithm::Buddhist => assert_fixture_element(
+                    prefs,
+                    Buddhist,
+                    input,
+                    &expected,
+                    field_set,
                     &description,
-                )
+                ),
+                CalendarAlgorithm::Chinese => assert_fixture_element(
+                    prefs,
+                    Chinese::new(),
+                    input,
+                    &expected,
+                    field_set,
+                    &description,
+                ),
+                CalendarAlgorithm::Coptic => {
+                    assert_fixture_element(prefs, Coptic, input, &expected, field_set, &description)
+                }
+                CalendarAlgorithm::Dangi => assert_fixture_element(
+                    prefs,
+                    Dangi::new(),
+                    input,
+                    &expected,
+                    field_set,
+                    &description,
+                ),
+                CalendarAlgorithm::Ethiopic => assert_fixture_element(
+                    prefs,
+                    Ethiopian::new(),
+                    input,
+                    &expected,
+                    field_set,
+                    &description,
+                ),
+                CalendarAlgorithm::Ethioaa => assert_fixture_element(
+                    prefs,
+                    Ethiopian::new_with_era_style(EthiopianEraStyle::AmeteAlem),
+                    input,
+                    &expected,
+                    field_set,
+                    &description,
+                ),
+                CalendarAlgorithm::Gregory => assert_fixture_element(
+                    prefs,
+                    Gregorian,
+                    input,
+                    &expected,
+                    field_set,
+                    &description,
+                ),
+                CalendarAlgorithm::Hebrew => {
+                    assert_fixture_element(prefs, Hebrew, input, &expected, field_set, &description)
+                }
+                CalendarAlgorithm::Indian => {
+                    assert_fixture_element(prefs, Indian, input, &expected, field_set, &description)
+                }
+                CalendarAlgorithm::Hijri(Some(HijriCalendarAlgorithm::Civil)) => {
+                    assert_fixture_element(
+                        prefs,
+                        HijriTabular::new(HijriTabularLeapYears::TypeII, HijriTabularEpoch::Friday),
+                        input,
+                        &expected,
+                        field_set,
+                        &description,
+                    )
+                }
+                CalendarAlgorithm::Hijri(Some(HijriCalendarAlgorithm::Rgsa)) => {
+                    assert_fixture_element(
+                        prefs,
+                        HijriSimulated::new_mecca_always_calculating(),
+                        input,
+                        &expected,
+                        field_set,
+                        &description,
+                    )
+                }
+                CalendarAlgorithm::Hijri(Some(HijriCalendarAlgorithm::Tbla)) => {
+                    assert_fixture_element(
+                        prefs,
+                        HijriTabular::new(
+                            HijriTabularLeapYears::TypeII,
+                            HijriTabularEpoch::Thursday,
+                        ),
+                        input,
+                        &expected,
+                        field_set,
+                        &description,
+                    )
+                }
+                CalendarAlgorithm::Hijri(Some(HijriCalendarAlgorithm::Umalqura)) => {
+                    assert_fixture_element(
+                        prefs,
+                        HijriUmmAlQura::new(),
+                        input,
+                        &expected,
+                        field_set,
+                        &description,
+                    )
+                }
+                CalendarAlgorithm::Japanese if locale.extensions.private.is_empty() => {
+                    assert_fixture_element(
+                        prefs,
+                        Japanese::new(),
+                        input,
+                        &expected,
+                        field_set,
+                        &description,
+                    )
+                }
+                // -u-ca-japanese-x-extended
+                CalendarAlgorithm::Japanese => assert_fixture_element(
+                    prefs,
+                    JapaneseExtended::new(),
+                    input,
+                    &expected,
+                    field_set,
+                    &description,
+                ),
+                CalendarAlgorithm::Persian => assert_fixture_element(
+                    prefs,
+                    Persian,
+                    input,
+                    &expected,
+                    field_set,
+                    &description,
+                ),
+                CalendarAlgorithm::Roc => {
+                    assert_fixture_element(prefs, Roc, input, &expected, field_set, &description)
+                }
+                _ => panic!("datetime test does not support locale {prefs:?}"),
             }
         }
     }
 }
 
-fn assert_fixture_element<A>(
-    locale: &Locale,
-    input_value: &DateTime<A>,
-    input_iso: &DateTime<Iso>,
-    output_value: &TestOutputItem,
-    skeleton: CompositeDateTimeFieldSet,
+fn assert_fixture_element<C>(
+    prefs: DateTimeFormatterPreferences,
+    calendar: C,
+    input: &str,
+    expected: &TestOutputItem,
+    field_set: CompositeDateTimeFieldSet,
     description: &str,
 ) where
-    A: AsCalendar + Clone,
-    A::Calendar: CldrCalendar,
-    A::Calendar: IntoAnyCalendar,
-    icu_datetime::provider::Baked: DataProvider<<A::Calendar as CldrCalendar>::YearNamesV1Marker>,
-    icu_datetime::provider::Baked: DataProvider<<A::Calendar as CldrCalendar>::MonthNamesV1Marker>,
-    icu_datetime::provider::Baked: DataProvider<<A::Calendar as CldrCalendar>::SkeletaV1Marker>,
+    C: icu_calendar::Calendar + CldrCalendar + icu_calendar::IntoAnyCalendar + Clone,
+    icu_datetime::provider::Baked: DataProvider<<C as CldrCalendar>::YearNamesV1>,
+    icu_datetime::provider::Baked: DataProvider<<C as CldrCalendar>::MonthNamesV1>,
+    icu_datetime::provider::Baked: DataProvider<<C as CldrCalendar>::SkeletaV1>,
 {
-    assert!(
-        input_value.date.calendar().any_calendar_kind().is_some(),
-        "{} does not specify its AsCalendarKind",
-        input_value.date.calendar().debug_name()
-    );
+    let iso_input = DateTime::try_from_str(input, Iso).unwrap();
+    let input = DateTime::try_from_str(input, calendar).unwrap();
 
-    let input_value = CustomZonedDateTime {
-        date: input_value.date.clone(),
-        time: input_value.time,
+    let input = ZonedDateTime {
+        date: input.date.clone(),
+        time: input.time,
         zone: TimeZoneInfo::utc(),
     };
-    let input_iso = CustomZonedDateTime {
-        date: input_iso.date,
-        time: input_iso.time,
+    let any_input = ZonedDateTime {
+        date: input.date.clone().to_any(),
+        time: input.time,
         zone: TimeZoneInfo::utc(),
     };
-
-    let any_input = CustomZonedDateTime {
-        date: input_value.date.to_any(),
-        time: input_value.time,
-        zone: TimeZoneInfo::utc(),
-    };
-    let iso_any_input = CustomZonedDateTime {
-        date: input_iso.date.to_any(),
-        time: input_iso.time,
+    let iso_any_input = ZonedDateTime {
+        date: iso_input.date.to_any(),
+        time: iso_input.time,
         zone: TimeZoneInfo::utc(),
     };
 
-    let dtf = FixedCalendarDateTimeFormatter::try_new(locale.into(), skeleton).expect(description);
+    let dtf = FixedCalendarDateTimeFormatter::try_new(prefs, field_set).expect(description);
+    let any_dtf = DateTimeFormatter::try_new(prefs, field_set).expect(description);
 
-    let any_dtf = DateTimeFormatter::try_new(locale.into(), skeleton).expect(description);
+    let output = dtf.format(&input);
+    assert_writeable_eq!(output, expected.expectation(), "{}", description);
+    let pattern = output.pattern();
 
-    let actual1 = dtf.format(&input_value);
-    assert_writeable_eq!(actual1, output_value.expectation(), "{}", description);
+    if let Some(expected_pattern) = expected.pattern() {
+        assert_writeable_eq!(pattern, expected_pattern);
+    }
 
-    let actual2 = any_dtf.format_same_calendar(&any_input).unwrap();
+    if matches!(
+        input.date.calendar().kind(),
+        AnyCalendarKind::JapaneseExtended | AnyCalendarKind::HijriSimulatedMecca
+    ) {
+        // Not supported with FormattableAnyCalendar
+        return;
+    }
+
+    let any_output = any_dtf.format_same_calendar(&any_input).unwrap();
     assert_writeable_eq!(
-        actual2,
-        output_value.expectation(),
+        any_output,
+        expected.expectation(),
         "(DateTimeFormatter) {}",
         description
     );
+    assert_eq!(pattern, any_output.pattern());
 
-    let actual3 = any_dtf.format_any_calendar(&iso_any_input);
+    let iso_any_output = any_dtf.format(&iso_any_input);
     assert_writeable_eq!(
-        actual3,
-        output_value.expectation(),
+        iso_any_output,
+        expected.expectation(),
         "(DateTimeFormatter iso conversion) {}",
         description
     );
-
-    let pattern = actual1.pattern();
-    assert_eq!(pattern, actual2.pattern());
-    assert_eq!(pattern, actual3.pattern());
-
-    if let Some(expected_pattern) = output_value.pattern() {
-        assert_writeable_eq!(pattern, expected_pattern);
-    }
+    assert_eq!(pattern, iso_any_output.pattern());
 }
 
 fn test_fixture_with_time_zones(fixture_name: &str, file: &str) {
@@ -334,8 +275,8 @@ fn test_fixture_with_time_zones(fixture_name: &str, file: &str) {
         .expect("Unable to get fixture.")
         .0
     {
-        let skeleton = match fx.input.options.semantic {
-            Some(semantic) => CompositeFieldSet::try_from(semantic).unwrap(),
+        let fset = match fx.input.options.semantic {
+            Some(semantic) => semantic.build_composite().unwrap(),
             None => {
                 eprintln!("Warning: Skipping test with no semantic skeleton: {fx:?}");
                 continue;
@@ -351,19 +292,16 @@ fn test_fixture_with_time_zones(fixture_name: &str, file: &str) {
             None => format!("\n  file: {fixture_name}.json\n"),
         };
         for (locale, output_value) in fx.output.values {
-            let mut locale: Locale = locale.parse().unwrap();
-            if let Some(hour_cycle) = fx.input.options.hour_cycle {
-                apply_preference_bag_to_locale(hour_cycle.into(), &mut locale);
-            }
+            let locale: Locale = locale.parse().unwrap();
             let dtf = {
-                FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new(locale.into(), skeleton)
+                FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new(locale.into(), fset)
                     .unwrap()
             };
             assert_writeable_eq!(
                 dtf.format(&zoned_datetime),
                 output_value.expectation(),
                 "{}",
-                description
+                description,
             );
         }
     }
@@ -379,16 +317,18 @@ fn test_dayperiod_patterns() {
         let locale: Locale = test.locale.parse().unwrap();
         for test_case in &test.test_cases {
             for dt_input in &test_case.datetimes {
-                let datetime = mock::parse_gregorian_from_str(dt_input);
+                let datetime = DateTime::try_from_str(dt_input, Gregorian).unwrap();
                 for DayPeriodExpectation { patterns, expected } in &test_case.expectations {
                     for pattern_input in patterns {
                         let parsed_pattern =
                             DateTimePattern::try_from_pattern_str(pattern_input).unwrap();
-                        let mut pattern_formatter =
-                            TypedDateTimeNames::<Gregorian, CompositeDateTimeFieldSet>::try_new(
-                                (&locale).into(),
-                            )
-                            .unwrap();
+                        let mut pattern_formatter = FixedCalendarDateTimeNames::<
+                            Gregorian,
+                            CompositeDateTimeFieldSet,
+                        >::try_new(
+                            (&locale).into()
+                        )
+                        .unwrap();
                         let formatted_datetime = pattern_formatter
                             .include_for_pattern(&parsed_pattern)
                             .unwrap()
@@ -446,26 +386,28 @@ fn test_time_zone_format_configs() {
 
 #[test]
 fn test_time_zone_format_offset_seconds() {
-    use icu_datetime::fieldsets::O;
+    use icu_datetime::fieldsets::zone::LocalizedOffsetLong;
 
-    let tzf = FixedCalendarDateTimeFormatter::<(), _>::try_new(locale!("en").into(), O::medium())
-        .unwrap();
+    let tzf =
+        FixedCalendarDateTimeFormatter::<(), _>::try_new(locale!("en").into(), LocalizedOffsetLong)
+            .unwrap();
     assert_writeable_eq!(
         tzf.format(&UtcOffset::try_from_seconds(12).unwrap()),
-        "GMT+0:00:12",
+        "GMT+00:00:12",
     );
 }
 
 #[test]
 fn test_time_zone_format_offset_fallback() {
-    use icu_datetime::fieldsets::O;
+    use icu_datetime::fieldsets::zone::LocalizedOffsetLong;
 
-    let tzf = FixedCalendarDateTimeFormatter::<(), _>::try_new(locale!("en").into(), O::medium())
-        .unwrap();
+    let tzf =
+        FixedCalendarDateTimeFormatter::<(), _>::try_new(locale!("en").into(), LocalizedOffsetLong)
+            .unwrap();
     assert_writeable_eq!(
         tzf.format(
-            &TimeZoneIdMapper::new()
-                .iana_to_bcp47("America/Los_Angeles")
+            &IanaParser::new()
+                .parse("America/Los_Angeles")
                 .with_offset(None)
         ),
         "GMT+?",
@@ -483,13 +425,9 @@ fn test_time_zone_patterns() {
         let zoned_datetime = mock::parse_zoned_gregorian_from_str(&test.datetime);
 
         for (pattern_input, expect) in &test.expectations {
-            if pattern_input == "VVV" {
-                // TODO(#5658): 'VVV' format not yet supported
-                continue;
-            }
             let parsed_pattern = DateTimePattern::try_from_pattern_str(pattern_input).unwrap();
             let mut pattern_formatter =
-                TypedDateTimeNames::<Gregorian, ZoneFieldSet>::try_new(prefs).unwrap();
+                FixedCalendarDateTimeNames::<Gregorian, ZoneFieldSet>::try_new(prefs).unwrap();
             let formatted_datetime = pattern_formatter
                 .include_for_pattern(&parsed_pattern)
                 .unwrap()

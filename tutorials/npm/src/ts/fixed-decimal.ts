@@ -1,21 +1,19 @@
-import { DataProvider, SignedFixedDecimal, FixedDecimalFormatter, FixedDecimalGroupingStrategy, Locale } from "icu4x";
+import { Decimal, DecimalFormatter, DecimalGroupingStrategy, Locale } from "icu4x";
 import { Result, Ok, result, unwrap } from './index';
 
-export class FixedDecimalDemo {
+export class DecimalDemo {
     #displayFn: (formatted: string) => void;
-    #dataProvider: DataProvider;
 
     #locale: Result<Locale>;
-    #groupingStrategy: FixedDecimalGroupingStrategy;
-    #formatter: Result<FixedDecimalFormatter>;
-    #fixedDecimal: Result<SignedFixedDecimal> | null;
+    #groupingStrategy: DecimalGroupingStrategy;
+    #formatter: Result<DecimalFormatter>;
+    #fixedDecimal: Result<Decimal> | null;
 
-    constructor(displayFn: (formatted: string) => void, dataProvider: DataProvider) {
+    constructor(displayFn: (formatted: string) => void) {
         this.#displayFn = displayFn;
-        this.#dataProvider = dataProvider;
 
         this.#locale = Ok(Locale.fromString("en"));
-        this.#groupingStrategy = FixedDecimalGroupingStrategy.Auto;
+        this.#groupingStrategy = DecimalGroupingStrategy.Auto;
         this.#fixedDecimal = null;
         this.#updateFormatter()
     }
@@ -26,18 +24,17 @@ export class FixedDecimalDemo {
     }
 
     setGroupingStrategy(strategy: string): void {
-        this.#groupingStrategy = FixedDecimalGroupingStrategy[strategy];
+        this.#groupingStrategy = DecimalGroupingStrategy[strategy];
         this.#updateFormatter()
     }
 
     setFixedDecimal(digits: string): void {
-        this.#fixedDecimal = digits === "" ? null : result(() => SignedFixedDecimal.fromString(digits));
+        this.#fixedDecimal = digits === "" ? null : result(() => Decimal.fromString(digits));
         this.#render();
     }
 
     #updateFormatter(): void {
-        this.#formatter = result(() => FixedDecimalFormatter.createWithGroupingStrategy(
-            this.#dataProvider,
+        this.#formatter = result(() => DecimalFormatter.createWithGroupingStrategy(
             unwrap(this.#locale),
             this.#groupingStrategy,
         ));
@@ -63,33 +60,33 @@ export class FixedDecimalDemo {
     }
 }
 
-export function setup(dataProvider: DataProvider): void {
+export function setup(): void {
     const formattedDecimal = document.getElementById('fdf-formatted') as HTMLParagraphElement;
-    const fixedDecimalDemo = new FixedDecimalDemo((formatted) => {
+    const decimalDemo = new DecimalDemo((formatted) => {
         formattedDecimal.innerText = formatted;
-    }, dataProvider);
+    });
 
     const otherLocaleBtn = document.getElementById('fdf-locale-other') as HTMLInputElement | null;
-    otherLocaleBtn?.addEventListener('click', () => fixedDecimalDemo.setLocale(otherLocaleInput.value));
+    otherLocaleBtn?.addEventListener('click', () => decimalDemo.setLocale(otherLocaleInput.value));
 
     const otherLocaleInput = document.getElementById('fdf-locale-other-input') as HTMLInputElement | null;
     otherLocaleInput?.addEventListener('input', () => {
         if (otherLocaleBtn != null) {
             otherLocaleBtn.checked = true;
-            fixedDecimalDemo.setLocale(otherLocaleInput.value);
+            decimalDemo.setLocale(otherLocaleInput.value);
         }
     });
 
     for (let btn of document.querySelectorAll<HTMLInputElement | null>('input[name="fdf-locale"]')) {
         if (btn?.value !== 'other') {
-            btn.addEventListener('click', () => fixedDecimalDemo.setLocale(btn.value));
+            btn.addEventListener('click', () => decimalDemo.setLocale(btn.value));
         }
     }
 
     for (let btn of document.querySelectorAll<HTMLInputElement | null>('input[name="fdf-grouping"]')) {
-        btn?.addEventListener('click', () => fixedDecimalDemo.setGroupingStrategy(btn.value));
+        btn?.addEventListener('click', () => decimalDemo.setGroupingStrategy(btn.value));
     }
 
     const inputDecimal = document.getElementById('fdf-input') as HTMLTextAreaElement | null;
-    inputDecimal?.addEventListener('input', () => fixedDecimalDemo.setFixedDecimal(inputDecimal.value));
+    inputDecimal?.addEventListener('input', () => decimalDemo.setFixedDecimal(inputDecimal.value));
 }

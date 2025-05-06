@@ -579,6 +579,11 @@ pub(super) struct Reverse;
 /// The direction a match can be applied. Used in [`Utf8Matcher`].
 ///
 /// See [`Forward`] and [`Reverse`] for implementors.
+///
+/// <div class="stab unstable">
+/// 🚫 This trait is sealed; it cannot be implemented by user code. If an API requests an item that implements this
+/// trait, please consider using a type from the implementors listed below.
+/// </div>
 pub(super) trait MatchDirection: sealed::Sealed {}
 impl MatchDirection for Forward {}
 impl MatchDirection for Reverse {}
@@ -706,7 +711,7 @@ impl<'a, 'b> Insertable<'a, 'b> {
         if free_bytes < size {
             self._rep.content.splice(
                 self.end()..self.end(),
-                core::iter::repeat(0).take(size - free_bytes),
+                core::iter::repeat_n(0, size - free_bytes),
             );
         }
     }

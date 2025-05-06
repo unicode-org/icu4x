@@ -8,6 +8,7 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include <memory>
+#include <functional>
 #include <optional>
 #include "../diplomat_runtime.hpp"
 
@@ -38,7 +39,7 @@ inline icu4x::SegmenterWordType icu4x::SegmenterWordType::FromFFI(icu4x::capi::S
   }
 }
 
-inline bool icu4x::SegmenterWordType::is_word_like() {
+inline bool icu4x::SegmenterWordType::is_word_like() const {
   auto result = icu4x::capi::icu4x_SegmenterWordType_is_word_like_mv1(this->AsFFI());
   return result;
 }

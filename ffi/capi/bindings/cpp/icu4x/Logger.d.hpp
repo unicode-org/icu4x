@@ -6,6 +6,7 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include <memory>
+#include <functional>
 #include <optional>
 #include "../diplomat_runtime.hpp"
 
@@ -17,9 +18,19 @@ namespace capi {
 } // namespace
 
 namespace icu4x {
+/**
+ * An object allowing control over the logging used
+ */
 class Logger {
 public:
 
+  /**
+   * Initialize the logger using `simple_logger`
+   *
+   * Requires the `simple_logger` Cargo feature.
+   *
+   * Returns `false` if there was already a logger set.
+   */
   inline static bool init_simple_logger();
 
   inline const icu4x::capi::Logger* AsFFI() const;

@@ -5,17 +5,19 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
-/** An object that runs the ICU4X locale fallback algorithm with specific configurations.
-*
-*See the [Rust documentation for `LocaleFallbacker`](https://docs.rs/icu/latest/icu/locale/fallback/struct.LocaleFallbacker.html) for more information.
-*
-*See the [Rust documentation for `LocaleFallbackerWithConfig`](https://docs.rs/icu/latest/icu/locale/fallback/struct.LocaleFallbackerWithConfig.html) for more information.
-*/
+/** 
+ * An object that runs the ICU4X locale fallback algorithm with specific configurations.
+ *
+ * See the [Rust documentation for `LocaleFallbacker`](https://docs.rs/icu/latest/icu/locale/fallback/struct.LocaleFallbacker.html) for more information.
+ *
+ * See the [Rust documentation for `LocaleFallbackerWithConfig`](https://docs.rs/icu/latest/icu/locale/fallback/struct.LocaleFallbackerWithConfig.html) for more information.
+ */
 const LocaleFallbackerWithConfig_box_destroy_registry = new FinalizationRegistry((ptr) => {
     wasm.icu4x_LocaleFallbackerWithConfig_destroy_mv1(ptr);
 });
 
 export class LocaleFallbackerWithConfig {
+    
     // Internal ptr reference:
     #ptr = null;
 
@@ -24,7 +26,7 @@ export class LocaleFallbackerWithConfig {
     #selfEdge = [];
     #aEdge = [];
     
-    constructor(symbol, ptr, selfEdge, aEdge) {
+    #internalConstructor(symbol, ptr, selfEdge, aEdge) {
         if (symbol !== diplomatRuntime.internalConstructor) {
             console.error("LocaleFallbackerWithConfig is an Opaque type. You cannot call its constructor.");
             return;
@@ -40,12 +42,18 @@ export class LocaleFallbackerWithConfig {
         if (this.#selfEdge.length === 0) {
             LocaleFallbackerWithConfig_box_destroy_registry.register(this, this.#ptr);
         }
+        
+        return this;
     }
-
     get ffiValue() {
         return this.#ptr;
     }
 
+    /** 
+     * Creates an iterator from a locale with each step of fallback.
+     *
+     * See the [Rust documentation for `fallback_for`](https://docs.rs/icu/latest/icu/locale/fallback/struct.LocaleFallbacker.html#method.fallback_for) for more information.
+     */
     fallbackForLocale(locale) {
         // This lifetime edge depends on lifetimes 'a, 'b
         let aEdges = [this];
@@ -57,5 +65,9 @@ export class LocaleFallbackerWithConfig {
         }
         
         finally {}
+    }
+
+    constructor(symbol, ptr, selfEdge, aEdge) {
+        return this.#internalConstructor(...arguments)
     }
 }

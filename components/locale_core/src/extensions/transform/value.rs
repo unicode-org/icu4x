@@ -2,10 +2,13 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::parser::{ParseError, SubtagIterator};
+use crate::parser::ParseError;
+#[cfg(feature = "alloc")]
+use crate::parser::SubtagIterator;
 use crate::shortvec::ShortBoxSlice;
 use crate::subtags::{subtag, Subtag};
 use core::ops::RangeInclusive;
+#[cfg(feature = "alloc")]
 use core::str::FromStr;
 
 /// A value used in a list of [`Fields`](super::Fields).
@@ -29,6 +32,7 @@ use core::str::FromStr;
 #[derive(Debug, PartialEq, Eq, Clone, Hash, PartialOrd, Ord, Default)]
 pub struct Value(ShortBoxSlice<Subtag>);
 
+#[allow(dead_code)]
 const TYPE_LENGTH: RangeInclusive<usize> = 3..=8;
 const TRUE_TVALUE: Subtag = subtag!("true");
 
@@ -44,11 +48,13 @@ impl Value {
     /// let value = Value::try_from_str("hybrid").expect("Parsing failed.");
     /// ```
     #[inline]
+    #[cfg(feature = "alloc")]
     pub fn try_from_str(s: &str) -> Result<Self, ParseError> {
         Self::try_from_utf8(s.as_bytes())
     }
 
     /// See [`Self::try_from_str`]
+    #[cfg(feature = "alloc")]
     pub fn try_from_utf8(code_units: &[u8]) -> Result<Self, ParseError> {
         let mut v = ShortBoxSlice::default();
         let mut has_value = false;
@@ -70,14 +76,17 @@ impl Value {
         Ok(Self(v))
     }
 
+    #[allow(dead_code)]
     pub(crate) fn from_short_slice_unchecked(input: ShortBoxSlice<Subtag>) -> Self {
         Self(input)
     }
 
+    #[allow(dead_code)]
     pub(crate) fn is_type_subtag(t: &[u8]) -> bool {
         TYPE_LENGTH.contains(&t.len()) && t.iter().all(u8::is_ascii_alphanumeric)
     }
 
+    #[allow(dead_code)]
     pub(crate) fn parse_subtag(t: &[u8]) -> Result<Option<Subtag>, ParseError> {
         if !TYPE_LENGTH.contains(&t.len()) {
             return Err(ParseError::InvalidExtension);
@@ -106,6 +115,7 @@ impl Value {
     }
 }
 
+#[cfg(feature = "alloc")]
 impl FromStr for Value {
     type Err = ParseError;
 

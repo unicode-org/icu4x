@@ -1,0 +1,20 @@
+{
+  "has_explicit_medium": true,
+  "has_explicit_short": true,
+  "variant_pattern_indices": [
+    0,
+    0,
+    4,
+    5,
+    6,
+    6
+  ],
+  "elements": [
+    "MMMM y.",
+    "MM.y.",
+    "M. yy.",
+    "M. y.",
+    "MMMM y. GGG",
+    "MMM y. GGG"
+  ]
+}

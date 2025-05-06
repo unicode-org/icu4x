@@ -3,7 +3,6 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use super::*;
-use alloc::boxed::Box;
 use core::cmp::Ordering;
 use core::ops::Range;
 
@@ -88,10 +87,11 @@ where
 
     /// Construct a `Box<ZeroSlice<T>>` from a boxed slice of ULEs
     #[inline]
-    pub fn from_boxed_slice(slice: Box<[T::ULE]>) -> Box<Self> {
+    #[cfg(feature = "alloc")]
+    pub fn from_boxed_slice(slice: alloc::boxed::Box<[T::ULE]>) -> alloc::boxed::Box<Self> {
         // This is safe because ZeroSlice is transparent over [T::ULE]
         // so Box<ZeroSlice<T>> can be safely cast from Box<[T::ULE]>
-        unsafe { Box::from_raw(Box::into_raw(slice) as *mut Self) }
+        unsafe { alloc::boxed::Box::from_raw(alloc::boxed::Box::into_raw(slice) as *mut Self) }
     }
 
     /// Returns this slice as its underlying `&[u8]` byte buffer representation.
@@ -363,8 +363,8 @@ where
     /// assert_eq!(it.next(), None);
     /// ```
     #[inline]
-    pub fn iter(&self) -> impl DoubleEndedIterator<Item = T> + ExactSizeIterator<Item = T> + '_ {
-        self.as_ule_slice().iter().copied().map(T::from_unaligned)
+    pub fn iter<'a>(&'a self) -> ZeroSliceIter<'a, T> {
+        ZeroSliceIter(self.as_ule_slice().iter())
     }
 
     /// Returns a tuple with the first element and a subslice of the remaining elements.
@@ -398,6 +398,29 @@ where
             ));
         }
         None
+    }
+}
+
+/// An iterator over elements in a VarZeroVec
+#[derive(Debug)]
+pub struct ZeroSliceIter<'a, T: AsULE>(core::slice::Iter<'a, T::ULE>);
+
+impl<'a, T: AsULE> Iterator for ZeroSliceIter<'a, T> {
+    type Item = T;
+    fn next(&mut self) -> Option<T> {
+        self.0.next().copied().map(T::from_unaligned)
+    }
+}
+
+impl<'a, T: AsULE> ExactSizeIterator for ZeroSliceIter<'a, T> {
+    fn len(&self) -> usize {
+        self.0.len()
+    }
+}
+
+impl<'a, T: AsULE> DoubleEndedIterator for ZeroSliceIter<'a, T> {
+    fn next_back(&mut self) -> Option<T> {
+        self.0.next_back().copied().map(T::from_unaligned)
     }
 }
 
@@ -544,7 +567,8 @@ impl<T: AsULE + Ord> Ord for ZeroSlice<T> {
     }
 }
 
-impl<T: AsULE> AsRef<ZeroSlice<T>> for Vec<T::ULE> {
+#[cfg(feature = "alloc")]
+impl<T: AsULE> AsRef<ZeroSlice<T>> for alloc::vec::Vec<T::ULE> {
     fn as_ref(&self) -> &ZeroSlice<T> {
         ZeroSlice::<T>::from_ule_slice(self)
     }

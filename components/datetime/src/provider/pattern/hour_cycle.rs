@@ -5,14 +5,14 @@
 #[cfg(feature = "datagen")]
 use super::runtime;
 use super::{reference, PatternItem};
-use crate::fields;
+use crate::provider::fields;
 #[cfg(feature = "datagen")]
 use crate::provider::{self, skeleton};
 #[cfg(feature = "datagen")]
 use icu_locale_core::preferences::extensions::unicode::keywords::HourCycle;
 use icu_provider::prelude::*;
 
-/// Used to represent either H11/H12, or H23/H24. Skeletons only store these
+/// Used to represent either H11/H12, or H23. Skeletons only store these
 /// hour cycles as H12 or H23.
 #[derive(Debug, PartialEq, Clone, Copy, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
@@ -22,15 +22,15 @@ use icu_provider::prelude::*;
 pub enum CoarseHourCycle {
     /// Can either be fields::Hour::H11 or fields::Hour::H12
     H11H12,
-    /// Can either be fields::Hour::H23 or fields::Hour::H24
-    H23H24,
+    /// fields::Hour::H23
+    H23,
 }
 
-/// Default is required for serialization. H23H24 is the more locale-agnostic choice, as it's
+/// Default is required for serialization. H23 is the more locale-agnostic choice, as it's
 /// less likely to have a day period in it.
 impl Default for CoarseHourCycle {
     fn default() -> Self {
-        CoarseHourCycle::H23H24
+        CoarseHourCycle::H23
     }
 }
 
@@ -46,7 +46,7 @@ impl CoarseHourCycle {
             {
                 return Some(match pattern_hour {
                     fields::Hour::H11 | fields::Hour::H12 => CoarseHourCycle::H11H12,
-                    fields::Hour::H23 | fields::Hour::H24 => CoarseHourCycle::H23H24,
+                    fields::Hour::H23 => CoarseHourCycle::H23,
                 });
             }
         }
@@ -60,8 +60,8 @@ impl CoarseHourCycle {
     #[cfg(feature = "datagen")]
     pub fn apply_on_pattern<'data>(
         &self,
-        date_time: &provider::calendar::patterns::GenericLengthPatternsV1<'data>,
-        skeletons: &provider::calendar::DateSkeletonPatternsV1<'data>,
+        date_time: &provider::calendar::patterns::GenericLengthPatterns<'data>,
+        skeletons: &provider::calendar::DateSkeletonPatterns<'data>,
         pattern_str: &str,
         mut pattern: reference::Pattern,
     ) -> Option<reference::Pattern> {
@@ -71,11 +71,11 @@ impl CoarseHourCycle {
                     if match self {
                         CoarseHourCycle::H11H12 => match pattern_hour {
                             fields::Hour::H11 | fields::Hour::H12 => true,
-                            fields::Hour::H23 | fields::Hour::H24 => false,
+                            fields::Hour::H23 => false,
                         },
-                        CoarseHourCycle::H23H24 => match pattern_hour {
+                        CoarseHourCycle::H23 => match pattern_hour {
                             fields::Hour::H11 | fields::Hour::H12 => false,
-                            fields::Hour::H23 | fields::Hour::H24 => true,
+                            fields::Hour::H23 => true,
                         },
                     } {
                         // The preference hour cycle matches the pattern, bail out early and
@@ -85,7 +85,7 @@ impl CoarseHourCycle {
                         // Mutate the pattern with the new symbol, so that it can be matched against.
                         *symbol = fields::FieldSymbol::Hour(match self {
                             CoarseHourCycle::H11H12 => fields::Hour::H12,
-                            CoarseHourCycle::H23H24 => fields::Hour::H23,
+                            CoarseHourCycle::H23 => fields::Hour::H23,
                         });
                         break;
                     }
@@ -104,8 +104,8 @@ impl CoarseHourCycle {
             // requested fields.
             true,
         ) {
-            skeleton::BestSkeleton::AllFieldsMatch(patterns)
-            | skeleton::BestSkeleton::MissingOrExtraFields(patterns) => {
+            skeleton::BestSkeleton::AllFieldsMatch(patterns, _)
+            | skeleton::BestSkeleton::MissingOrExtraFields(patterns, _) => {
                 Some(reference::Pattern::from(&patterns.expect_pattern(
                     "Only week-of patterns have plural variants",
                 )))
@@ -117,8 +117,8 @@ impl CoarseHourCycle {
     /// Get the other coarse hour cycle (map h11/h12 to h23/h24, and vice versa)
     pub fn invert(self) -> Self {
         match self {
-            CoarseHourCycle::H11H12 => CoarseHourCycle::H23H24,
-            CoarseHourCycle::H23H24 => CoarseHourCycle::H11H12,
+            CoarseHourCycle::H11H12 => CoarseHourCycle::H23,
+            CoarseHourCycle::H23 => CoarseHourCycle::H11H12,
         }
     }
 }

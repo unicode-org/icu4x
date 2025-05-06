@@ -378,63 +378,38 @@ where
 
 /// A series of bytes constituting an array of
 /// NUL-terminated (0x00) time zone designation strings. The total
-/// number of bytes is specified by the "charcnt" field in the header.
-fn raw_time_zone_designations<Input>(charcnt: usize) -> impl Parser<Input, Output = String>
-where
-    Input: Stream<Token = u8>,
-    Input::Error: ParseError<Input::Token, Input::Range, Input::Position>,
-{
-    count_min_max(charcnt, charcnt, any())
-        .map(|bytes: Vec<u8>| String::from_utf8_lossy(&bytes).into_owned())
-}
-
-/// A series of bytes constituting an array of
-/// NUL-terminated (0x00) time zone designation strings. The total
 /// number of bytes is specified by the "charcnt" field in the
 /// header.
 ///
-/// Splits each designation into a vector of [`String`] where each string
-/// starts at an index defined by a local time type record and ends at a
-/// NUL-terminator (0x00)
+/// Splits the list of bytes by the NULL-terminator (0x00) character
+/// and puts each designation into a [`String`].
 ///
 /// > e.g.
 /// > ```text
 /// > "LMT\u{0}HMT\u{0}MMT\u{0}IST\u{0}+0630\u{0}"
 /// > ```
 ///
-/// Note that two designations MAY overlap if one is a suffix
-/// of the other. The character encoding of time zone designation
-/// strings is not specified.
+/// Note that a local time record index might point in the middle of a
+/// designation. In that case the record's designation is the specified
+/// suffix. The [DataBlock::time_zone_designation] method can be used to
+/// access the correct designation string given an index.
 ///
+/// The character encoding of time zone designation strings is not specified.
 /// However, time zone designations SHOULD consist of at least three (3) and no
 /// more than six (6) ASCII characters from the set of alphanumerics,
 /// '-', and '+'. This is for compatibility with POSIX requirements
 /// for time zone abbreviations, so this parser enforces a UTF-8 ASCII encoding,
 /// to ensure compatability with Rust strings.
-fn time_zone_designations<Input>(
-    charcnt: usize,
-    local_time_type_records: Vec<LocalTimeTypeRecord>,
-) -> impl Parser<Input, Output = Vec<String>>
+fn time_zone_designations<Input>(charcnt: usize) -> impl Parser<Input, Output = Vec<String>>
 where
     Input: Stream<Token = u8>,
     Input::Error: ParseError<Input::Token, Input::Range, Input::Position>,
 {
-    raw_time_zone_designations(charcnt).map(move |raw_time_zone_designations| {
-        let mut time_zone_designations = Vec::with_capacity(local_time_type_records.len());
-        for record in &local_time_type_records {
-            for end_idx in record.idx..charcnt {
-                if raw_time_zone_designations.as_bytes()[end_idx] == b'\0' {
-                    time_zone_designations.push(
-                        String::from_utf8_lossy(
-                            raw_time_zone_designations[record.idx..end_idx].as_bytes(),
-                        )
-                        .into_owned(),
-                    );
-                    break;
-                }
-            }
-        }
-        time_zone_designations
+    count_min_max(charcnt, charcnt, any()).map(|bytes: Vec<u8>| {
+        bytes
+            .split_inclusive(|&b| b == b'\0')
+            .map(|s| String::from_utf8_lossy(&s[0..s.len() - 1]).into_owned())
+            .collect()
     })
 }
 
@@ -530,7 +505,7 @@ where
                 |records| {
                     records
                         .first()
-                        .map_or(true, |first| first.occurrence >= Seconds(0))
+                        .is_none_or(|first| first.occurrence >= Seconds(0))
                 },
                 "The first leap-second occurrence, if present, must be non-negative",
             )
@@ -541,7 +516,7 @@ where
                 |records| {
                     records
                         .first()
-                        .map_or(true, |first| first.correction == 1 || first.correction == -1)
+                        .is_none_or(|first| first.correction == 1 || first.correction == -1)
                 },
                 "The first leap-second correction, if present, must be 1 or -1",
             )
@@ -678,45 +653,17 @@ where
     Input: Stream<Token = u8>,
     Input::Error: ParseError<Input::Token, Input::Range, Input::Position>,
 {
-    (
-        historic_transition_times::<V, _>(header.timecnt),
-        transition_types(header.timecnt, header.typecnt),
-        local_time_type_records(header.typecnt, header.charcnt),
-    )
-        .then(
-            move |(transition_times, transition_types, local_time_type_records)| {
-                (
-                    value(transition_times),
-                    value(transition_types),
-                    value(local_time_type_records.clone()),
-                    time_zone_designations(header.charcnt, local_time_type_records),
-                    leap_second_records::<V, _>(header.leapcnt),
-                    standard_wall_indicators(header.isstdcnt),
-                )
-            },
-        )
-        .then(
-            move |(
-                transition_times,
-                transition_types,
-                local_time_type_records,
-                time_zone_designations,
-                leap_second_records,
-                standard_wall_indicators,
-            )| {
-                combine::struct_parser! {
-                    DataBlock {
-                        transition_times: value(transition_times),
-                        transition_types: value(transition_types),
-                        local_time_type_records: value(local_time_type_records),
-                        time_zone_designations: value(time_zone_designations),
-                        leap_second_records: value(leap_second_records),
-                        standard_wall_indicators: value(standard_wall_indicators),
-                        ut_local_indicators: ut_local_indicators(header.isutcnt),
-                    }
-                }
-            },
-        )
+    combine::struct_parser! {
+        DataBlock {
+            transition_times: historic_transition_times::<V, _>(header.timecnt),
+            transition_types: transition_types(header.timecnt, header.typecnt),
+            local_time_type_records: local_time_type_records(header.typecnt, header.charcnt),
+            time_zone_designations: time_zone_designations(header.charcnt),
+            leap_second_records: leap_second_records::<V, _>(header.leapcnt),
+            standard_wall_indicators: standard_wall_indicators(header.isstdcnt),
+            ut_local_indicators: ut_local_indicators(header.isutcnt),
+        }
+    }
 }
 
 /// Parses a `TZif` footer.
@@ -827,7 +774,9 @@ where
 #[cfg(test)]
 mod test {
     use super::*;
-    use crate::data::posix::{DstTransitionInfo, TransitionDate, TransitionDay, ZoneVariantInfo};
+    use crate::data::posix::{
+        DstTransitionInfo, TimeZoneVariantInfo, TransitionDate, TransitionDay,
+    };
     use crate::data::time::Hours;
     use crate::{assert_parse_eq, assert_parse_err, assert_parse_ok};
     use combine::EasyParser;
@@ -1196,29 +1145,49 @@ mod test {
     #[test]
     fn parse_time_zone_designations() {
         assert_parse_eq!(
-            time_zone_designations(
-                14,
-                vec![
-                    LocalTimeTypeRecord {
-                        utoff: Seconds(35356),
-                        is_dst: false,
-                        idx: 0,
-                    },
-                    LocalTimeTypeRecord {
-                        utoff: Seconds(39600),
-                        is_dst: true,
-                        idx: 4,
-                    },
-                    LocalTimeTypeRecord {
-                        utoff: Seconds(36000),
-                        is_dst: false,
-                        idx: 9,
-                    },
-                ]
-            ),
+            time_zone_designations(14),
             "LMT\0AEDT\0AEST\0",
             vec!["LMT".to_owned(), "AEDT".to_owned(), "AEST".to_owned()],
         );
+    }
+
+    #[test]
+    fn time_zone_designation_indexing() {
+        let block: &[u8] = &[
+            0x00, 0x00, 0x00, 0x10, 0x01, 0x00, // local time record 0
+            0x00, 0x00, 0x00, 0x10, 0x01, 0x03, // local time record 1
+            0x00, 0x00, 0x00, 0x10, 0x01, 0x04, // local time record 2
+            0x00, 0x00, 0x00, 0x10, 0x01, 0x05, // local time record 3
+            b'L', b'M', b'T', 0x00, b'A', b'E', b'D', b'T', 0x00, // timezone designations
+        ];
+        let header = TzifHeader {
+            version: 0,
+            isutcnt: 0,
+            isstdcnt: 0,
+            leapcnt: 0,
+            timecnt: 0,
+            typecnt: 4,
+            charcnt: 9,
+        };
+        let (block, _) = data_block::<1, _>(header).parse(block).unwrap();
+        assert_eq!(
+            block.time_zone_designation(block.local_time_type_records[0].idx),
+            Some("LMT")
+        );
+        assert_eq!(
+            block.time_zone_designation(block.local_time_type_records[1].idx),
+            Some("")
+        );
+        assert_eq!(
+            block.time_zone_designation(block.local_time_type_records[2].idx),
+            Some("AEDT")
+        );
+        assert_eq!(
+            block.time_zone_designation(block.local_time_type_records[3].idx),
+            Some("EDT")
+        );
+        assert_eq!(block.time_zone_designation(8), Some(""));
+        assert_eq!(block.time_zone_designation(9), None);
     }
 
     #[test]
@@ -1484,12 +1453,12 @@ mod test {
             footer(),
             "\nEST+5EDT,M3.2.0/2,M11.1.0/2\n",
             PosixTzString {
-                std_info: ZoneVariantInfo {
+                std_info: TimeZoneVariantInfo {
                     name: "EST".to_owned(),
                     offset: Hours(5).as_seconds(),
                 },
                 dst_info: Some(DstTransitionInfo {
-                    variant_info: ZoneVariantInfo {
+                    variant_info: TimeZoneVariantInfo {
                         name: "EDT".to_owned(),
                         offset: Hours(4).as_seconds()
                     },

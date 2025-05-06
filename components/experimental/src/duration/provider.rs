@@ -10,17 +10,21 @@
 use alloc::borrow::Cow;
 use icu_provider::prelude::*;
 
-#[icu_provider::data_struct(DigitalDurationDataV1Marker = "duration/digital@1")]
-#[derive(Debug, Clone, PartialEq)]
+icu_provider::data_marker!(
+    /// `DigitalDurationDataV1`
+    DigitalDurationDataV1,
+    DigitalDurationData<'static>,
+);
+
+#[derive(Debug, Clone, PartialEq, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_experimental::duration::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-
 /// A struct containing digital duration data (durationUnit-type-* patterns).
-pub struct DigitalDurationDataV1<'data> {
+pub struct DigitalDurationData<'data> {
     /// The separator between the hour, minute, and second fields.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub separator: Cow<str, 'data>,
+    pub separator: Cow<'data, str>,
 
     /// The number of digits to pad hours when hour, minutes and seconds must be displayed.
     /// Calculated from the hms pattern.
@@ -34,6 +38,8 @@ pub struct DigitalDurationDataV1<'data> {
     /// Calculated from the ms pattern.
     pub ms_padding: MsPadding,
 }
+
+icu_provider::data_struct!(DigitalDurationData<'_>, #[cfg(feature = "datagen")]);
 
 #[derive(Debug, Clone, Copy, PartialEq)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]

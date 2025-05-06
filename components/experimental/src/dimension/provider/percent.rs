@@ -26,8 +26,13 @@ use icu_pattern::{DoublePlaceholder, SinglePlaceholder};
 /// </div>
 pub use crate::provider::Baked;
 
-#[icu_provider::data_struct(PercentEssentialsV1Marker = "percent/essentials@1")]
-#[derive(Clone, PartialEq, Debug)]
+icu_provider::data_marker!(
+   /// `PercentEssentialsV1`
+   PercentEssentialsV1,
+   PercentEssentials<'static>
+);
+
+#[derive(Clone, PartialEq, Debug, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_experimental::dimension::provider::percent))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
@@ -36,7 +41,7 @@ pub use crate::provider::Baked;
 /// If an `approximate` or `explicit plus` are required, use the negative pattern as explained below:
 /// <https://www.unicode.org/reports/tr35/tr35-numbers.html#approximate-number-formatting>
 /// <https://www.unicode.org/reports/tr35/tr35-numbers.html#explicit-plus-signs>
-pub struct PercentEssentialsV1<'data> {
+pub struct PercentEssentials<'data> {
     #[cfg_attr(
         feature = "serde",
         serde(
@@ -69,3 +74,5 @@ pub struct PercentEssentialsV1<'data> {
     /// The localize plus sign.
     pub plus_sign: Cow<'data, str>,
 }
+
+icu_provider::data_struct!(PercentEssentials<'_>, #[cfg(feature = "datagen")]);

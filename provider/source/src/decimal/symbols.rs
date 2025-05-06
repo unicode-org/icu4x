@@ -10,10 +10,11 @@ use icu_provider::prelude::*;
 use std::borrow::Cow;
 use std::collections::HashSet;
 use std::convert::TryFrom;
+use zerovec::VarZeroCow;
 
-impl DataProvider<DecimalSymbolsV2Marker> for SourceDataProvider {
-    fn load(&self, req: DataRequest) -> Result<DataResponse<DecimalSymbolsV2Marker>, DataError> {
-        self.check_req::<DecimalSymbolsV2Marker>(req)?;
+impl DataProvider<DecimalSymbolsV1> for SourceDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<DecimalSymbolsV1>, DataError> {
+        self.check_req::<DecimalSymbolsV1>(req)?;
 
         let resource: &cldr_serde::numbers::Resource = self
             .cldr()?
@@ -28,12 +29,11 @@ impl DataProvider<DecimalSymbolsV2Marker> for SourceDataProvider {
             &numbers.default_numbering_system
         };
 
-        let result =
-            DecimalSymbolsV2::try_from(NumbersWithNumsys(numbers, nsname)).map_err(|s| {
-                DataError::custom("Could not create decimal symbols")
-                    .with_display_context(&s)
-                    .with_display_context(nsname)
-            })?;
+        let result = DecimalSymbols::try_from(NumbersWithNumsys(numbers, nsname)).map_err(|s| {
+            DataError::custom("Could not create decimal symbols")
+                .with_display_context(&s)
+                .with_display_context(nsname)
+        })?;
 
         Ok(DataResponse {
             metadata: Default::default(),
@@ -42,7 +42,7 @@ impl DataProvider<DecimalSymbolsV2Marker> for SourceDataProvider {
     }
 }
 
-impl IterableDataProviderCached<DecimalSymbolsV2Marker> for SourceDataProvider {
+impl IterableDataProviderCached<DecimalSymbolsV1> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         self.iter_ids_for_numbers_with_locales()
     }
@@ -54,7 +54,7 @@ struct NumbersWithNumsys<'a>(
     pub(crate) &'a str,
 );
 
-impl TryFrom<NumbersWithNumsys<'_>> for DecimalSymbolsV2<'static> {
+impl TryFrom<NumbersWithNumsys<'_>> for DecimalSymbols<'static> {
     type Error = Cow<'static, str>;
 
     fn try_from(other: NumbersWithNumsys<'_>) -> Result<Self, Self::Error> {
@@ -76,23 +76,25 @@ impl TryFrom<NumbersWithNumsys<'_>> for DecimalSymbolsV2<'static> {
 
         let minus_sign_affixes = parsed_pattern.localize_sign(&symbols.minus_sign);
         let plus_sign_affixes = parsed_pattern.localize_sign(&symbols.plus_sign);
-        let numsys = nsname
-            .parse()
-            .map_err(|_| format!("Numbering system {nsname} should not be more than 8 bytes!"))?;
+        if nsname.len() > 8 {
+            return Err(
+                format!("Numbering system {nsname} should not be more than 8 bytes!").into(),
+            );
+        }
 
         let strings = DecimalSymbolStrsBuilder {
-            minus_sign_prefix: minus_sign_affixes.0.into(),
-            minus_sign_suffix: minus_sign_affixes.1.into(),
-            plus_sign_prefix: plus_sign_affixes.0.into(),
-            plus_sign_suffix: plus_sign_affixes.1.into(),
-            decimal_separator: Cow::Owned(symbols.decimal.clone()),
-            grouping_separator: Cow::Owned(symbols.group.clone()),
-            numsys: Cow::Owned(numsys),
+            minus_sign_prefix: VarZeroCow::new_owned(minus_sign_affixes.0.into_boxed_str()),
+            minus_sign_suffix: VarZeroCow::new_owned(minus_sign_affixes.1.into_boxed_str()),
+            plus_sign_prefix: VarZeroCow::new_owned(plus_sign_affixes.0.into_boxed_str()),
+            plus_sign_suffix: VarZeroCow::new_owned(plus_sign_affixes.1.into_boxed_str()),
+            decimal_separator: VarZeroCow::new_owned(symbols.decimal.clone().into_boxed_str()),
+            grouping_separator: VarZeroCow::new_owned(symbols.group.clone().into_boxed_str()),
+            numsys: VarZeroCow::new_owned(nsname.to_owned().into_boxed_str()),
         };
 
         Ok(Self {
             strings: strings.build(),
-            grouping_sizes: GroupingSizesV1 {
+            grouping_sizes: GroupingSizes {
                 primary: parsed_pattern.positive.primary_grouping,
                 secondary: parsed_pattern.positive.secondary_grouping,
                 min_grouping: numbers.minimum_grouping_digits,
@@ -107,7 +109,7 @@ fn test_basic() {
 
     let provider = SourceDataProvider::new_testing();
 
-    let ar_decimal: DataResponse<DecimalSymbolsV2Marker> = provider
+    let ar_decimal: DataResponse<DecimalSymbolsV1> = provider
         .load(DataRequest {
             id: DataIdentifierCow::from_locale(langid!("ar-EG").into()).as_borrowed(),
             ..Default::default()

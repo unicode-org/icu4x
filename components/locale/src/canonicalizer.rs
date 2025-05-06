@@ -28,7 +28,7 @@ use tinystr::TinyAsciiStr;
 /// use icu::locale::Locale;
 /// use icu::locale::{LocaleCanonicalizer, TransformResult};
 ///
-/// let lc = LocaleCanonicalizer::new();
+/// let lc = LocaleCanonicalizer::new_extended();
 ///
 /// let mut locale: Locale = "ja-Latn-fonipa-hepburn-heploc".parse().unwrap();
 /// assert_eq!(lc.canonicalize(&mut locale), TransformResult::Modified);
@@ -39,7 +39,7 @@ use tinystr::TinyAsciiStr;
 #[derive(Debug)]
 pub struct LocaleCanonicalizer<Expander = LocaleExpander> {
     /// Data to support canonicalization.
-    aliases: DataPayload<AliasesV2Marker>,
+    aliases: DataPayload<LocaleAliasesV1>,
     /// Likely subtags implementation for delegation.
     expander: Expander,
 }
@@ -54,7 +54,7 @@ fn uts35_rule_matches<'a, I>(
 where
     I: Iterator<Item = &'a str>,
 {
-    (language.is_default() || language == source.language)
+    (language.is_unknown() || language == source.language)
         && (script.is_none() || script == source.script)
         && (region.is_none() || region == source.region)
         && {
@@ -95,7 +95,7 @@ fn uts35_replacement<'a, I>(
 ) where
     I: Iterator<Item = &'a str>,
 {
-    if ruletype_has_language || (source.language.is_default() && !replacement.language.is_default())
+    if ruletype_has_language || (source.language.is_unknown() && !replacement.language.is_unknown())
     {
         source.language = replacement.language;
     }
@@ -163,9 +163,9 @@ fn uts35_replacement<'a, I>(
 #[inline]
 fn uts35_check_language_rules(
     langid: &mut LanguageIdentifier,
-    alias_data: &DataPayload<AliasesV2Marker>,
+    alias_data: &DataPayload<LocaleAliasesV1>,
 ) -> TransformResult {
-    if !langid.language.is_default() {
+    if !langid.language.is_unknown() {
         let lang: TinyAsciiStr<3> = langid.language.into();
         let replacement = if lang.len() == 2 {
             alias_data
@@ -194,43 +194,69 @@ fn uts35_check_language_rules(
     TransformResult::Unmodified
 }
 
-#[cfg(feature = "compiled_data")]
-impl Default for LocaleCanonicalizer<LocaleExpander> {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-
 impl LocaleCanonicalizer<LocaleExpander> {
-    /// A constructor which creates a [`LocaleCanonicalizer`] from compiled data.
+    /// A constructor which creates a [`LocaleCanonicalizer`] from compiled data,
+    /// using a [`LocaleExpander`] for common locales.
     ///
     /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
-    pub const fn new() -> Self {
-        Self::new_with_expander(LocaleExpander::new_extended())
+    pub const fn new_common() -> Self {
+        Self::new_with_expander(LocaleExpander::new_common())
     }
 
-    icu_provider::gen_any_buffer_data_constructors!(() -> error: DataError,
+    icu_provider::gen_buffer_data_constructors!(() -> error: DataError,
         functions: [
-            new: skip,
-            try_new_with_any_provider,
-            try_new_with_buffer_provider,
-            try_new_unstable,
+            new_common: skip,
+            try_new_common_with_buffer_provider,
+            try_new_common_unstable,
             Self,
         ]
     );
 
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new)]
-    pub fn try_new_unstable<P>(provider: &P) -> Result<Self, DataError>
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::new_common)]
+    pub fn try_new_common_unstable<P>(provider: &P) -> Result<Self, DataError>
     where
-        P: DataProvider<AliasesV2Marker>
-            + DataProvider<LikelySubtagsForLanguageV1Marker>
-            + DataProvider<LikelySubtagsForScriptRegionV1Marker>
+        P: DataProvider<LocaleAliasesV1>
+            + DataProvider<LocaleLikelySubtagsLanguageV1>
+            + DataProvider<LocaleLikelySubtagsScriptRegionV1>
             + ?Sized,
     {
-        let expander = LocaleExpander::try_new_unstable(provider)?;
+        let expander = LocaleExpander::try_new_common_unstable(provider)?;
+        Self::try_new_with_expander_unstable(provider, expander)
+    }
+
+    /// A constructor which creates a [`LocaleCanonicalizer`] from compiled data,
+    /// using a [`LocaleExpander`] for all locales.
+    ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    #[cfg(feature = "compiled_data")]
+    pub const fn new_extended() -> Self {
+        Self::new_with_expander(LocaleExpander::new_extended())
+    }
+
+    icu_provider::gen_buffer_data_constructors!(() -> error: DataError,
+        functions: [
+            new_extended: skip,
+            try_new_extended_with_buffer_provider,
+            try_new_extended_unstable,
+            Self,
+        ]
+    );
+
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::new_extended)]
+    pub fn try_new_extended_unstable<P>(provider: &P) -> Result<Self, DataError>
+    where
+        P: DataProvider<LocaleAliasesV1>
+            + DataProvider<LocaleLikelySubtagsLanguageV1>
+            + DataProvider<LocaleLikelySubtagsScriptRegionV1>
+            + DataProvider<LocaleLikelySubtagsExtendedV1>
+            + ?Sized,
+    {
+        let expander = LocaleExpander::try_new_extended_unstable(provider)?;
         Self::try_new_with_expander_unstable(provider, expander)
     }
 }
@@ -245,29 +271,28 @@ impl<Expander: AsRef<LocaleExpander>> LocaleCanonicalizer<Expander> {
     pub const fn new_with_expander(expander: Expander) -> Self {
         Self {
             aliases: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_ALIASES_V2_MARKER,
+                crate::provider::Baked::SINGLETON_LOCALE_ALIASES_V1,
             ),
             expander,
         }
     }
 
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new_with_expander)]
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::new_with_expander)]
     pub fn try_new_with_expander_unstable<P>(
         provider: &P,
         expander: Expander,
     ) -> Result<Self, DataError>
     where
-        P: DataProvider<AliasesV2Marker> + ?Sized,
+        P: DataProvider<LocaleAliasesV1> + ?Sized,
     {
-        let aliases: DataPayload<AliasesV2Marker> = provider.load(Default::default())?.payload;
+        let aliases: DataPayload<LocaleAliasesV1> = provider.load(Default::default())?.payload;
 
         Ok(Self { aliases, expander })
     }
 
-    icu_provider::gen_any_buffer_data_constructors!((options: Expander) -> error: DataError,
+    icu_provider::gen_buffer_data_constructors!((options: Expander) -> error: DataError,
         functions: [
             new_with_expander: skip,
-            try_new_with_expander_with_any_provider,
             try_new_with_expander_with_buffer_provider,
             try_new_with_expander_unstable,
             Self,
@@ -289,7 +314,7 @@ impl<Expander: AsRef<LocaleExpander>> LocaleCanonicalizer<Expander> {
     /// ```
     /// use icu::locale::{Locale, LocaleCanonicalizer, TransformResult};
     ///
-    /// let lc = LocaleCanonicalizer::new();
+    /// let lc = LocaleCanonicalizer::new_extended();
     ///
     /// let mut locale: Locale = "ja-Latn-fonipa-hepburn-heploc".parse().unwrap();
     /// assert_eq!(lc.canonicalize(&mut locale), TransformResult::Modified);
@@ -316,7 +341,7 @@ impl<Expander: AsRef<LocaleExpander>> LocaleCanonicalizer<Expander> {
                 continue;
             }
 
-            if !locale.id.language.is_default() {
+            if !locale.id.language.is_unknown() {
                 // If the region is specified, check sgn-region rules first
                 if let Some(region) = locale.id.region {
                     if locale.id.language == language!("sgn") {
@@ -494,7 +519,7 @@ impl<Expander: AsRef<LocaleExpander>> LocaleCanonicalizer<Expander> {
                 if let Ok(to) = raw_to.parse() {
                     uts35_replacement(
                         lid,
-                        !lang.is_default(),
+                        !lang.is_unknown(),
                         false,
                         false,
                         Some(raw_variants),
@@ -526,7 +551,7 @@ impl<Expander: AsRef<LocaleExpander>> LocaleCanonicalizer<Expander> {
                     if let Ok(to) = raw_to.parse() {
                         uts35_replacement(
                             lid,
-                            !from.language.is_default(),
+                            !from.language.is_unknown(),
                             from.script.is_some(),
                             from.region.is_some(),
                             Some(from.variants.iter().map(Variant::as_str)),
@@ -588,7 +613,7 @@ mod test {
             let result = result.parse::<Locale>().unwrap();
             uts35_replacement(
                 &mut locale.id,
-                !rule_0.language.is_default(),
+                !rule_0.language.is_unknown(),
                 rule_0.script.is_some(),
                 rule_0.region.is_some(),
                 Some(rule_0.variants.iter().map(Variant::as_str)),

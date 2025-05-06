@@ -10,4 +10,4 @@ $UE = [Ü {U \u0308}];
 $AE → AE;
 $OE → OE;
 $UE → UE;
-::Any-ASCII;
+::Latin-ASCII;

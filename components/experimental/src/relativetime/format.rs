@@ -4,7 +4,7 @@
 
 use alloc::fmt::Write;
 
-use fixed_decimal::SignedFixedDecimal;
+use fixed_decimal::Decimal;
 use writeable::Writeable;
 
 use crate::relativetime::{
@@ -28,7 +28,7 @@ pub mod parts {
 pub struct FormattedRelativeTime<'a> {
     pub(crate) formatter: &'a RelativeTimeFormatter,
     pub(crate) options: &'a RelativeTimeFormatterOptions,
-    pub(crate) value: SignedFixedDecimal,
+    pub(crate) value: Decimal,
     pub(crate) is_negative: bool,
 }
 
@@ -56,7 +56,7 @@ impl Writeable for FormattedRelativeTime<'_> {
             &self.formatter.rt.get().future
         }
         .get((&self.value).into(), &self.formatter.plural_rules)
-        .interpolate((self.formatter.fixed_decimal_format.format(&self.value),))
+        .interpolate((self.formatter.decimal_formatter.format(&self.value),))
         .write_to(sink)
     }
 }

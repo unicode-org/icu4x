@@ -6,6 +6,7 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include <memory>
+#include <functional>
 #include <optional>
 #include "../diplomat_runtime.hpp"
 
@@ -21,9 +22,18 @@ namespace capi {
 } // namespace
 
 namespace icu4x {
+/**
+ * An iterator over code point ranges, produced by `CodePointSetData` or
+ * one of the `CodePointMapData` types
+ */
 class CodePointRangeIterator {
 public:
 
+  /**
+   * Advance the iterator by one and return the next range.
+   *
+   * If the iterator is out of items, `done` will be true
+   */
   inline icu4x::CodePointRangeIteratorResult next();
 
   inline const icu4x::capi::CodePointRangeIterator* AsFFI() const;

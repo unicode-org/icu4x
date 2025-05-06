@@ -5,13 +5,15 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
-/** See the [Rust documentation for `DecomposingNormalizer`](https://docs.rs/icu/latest/icu/normalizer/struct.DecomposingNormalizer.html) for more information.
-*/
+/** 
+ * See the [Rust documentation for `DecomposingNormalizer`](https://docs.rs/icu/latest/icu/normalizer/struct.DecomposingNormalizer.html) for more information.
+ */
 const DecomposingNormalizer_box_destroy_registry = new FinalizationRegistry((ptr) => {
     wasm.icu4x_DecomposingNormalizer_destroy_mv1(ptr);
 });
 
 export class DecomposingNormalizer {
+    
     // Internal ptr reference:
     #ptr = null;
 
@@ -19,7 +21,7 @@ export class DecomposingNormalizer {
     // Since JS won't garbage collect until there are no incoming edges.
     #selfEdge = [];
     
-    constructor(symbol, ptr, selfEdge) {
+    #internalConstructor(symbol, ptr, selfEdge) {
         if (symbol !== diplomatRuntime.internalConstructor) {
             console.error("DecomposingNormalizer is an Opaque type. You cannot call its constructor.");
             return;
@@ -32,16 +34,37 @@ export class DecomposingNormalizer {
         if (this.#selfEdge.length === 0) {
             DecomposingNormalizer_box_destroy_registry.register(this, this.#ptr);
         }
+        
+        return this;
     }
-
     get ffiValue() {
         return this.#ptr;
     }
 
-    static createNfd(provider) {
+    /** 
+     * Construct a new DecomposingNormalizer instance for NFD using compiled data.
+     *
+     * See the [Rust documentation for `new_nfd`](https://docs.rs/icu/latest/icu/normalizer/struct.DecomposingNormalizer.html#method.new_nfd) for more information.
+     */
+    static createNfd() {
+        const result = wasm.icu4x_DecomposingNormalizer_create_nfd_mv1();
+    
+        try {
+            return new DecomposingNormalizer(diplomatRuntime.internalConstructor, result, []);
+        }
+        
+        finally {}
+    }
+
+    /** 
+     * Construct a new DecomposingNormalizer instance for NFD using a particular data source.
+     *
+     * See the [Rust documentation for `new_nfd`](https://docs.rs/icu/latest/icu/normalizer/struct.DecomposingNormalizer.html#method.new_nfd) for more information.
+     */
+    static createNfdWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_DecomposingNormalizer_create_nfd_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_DecomposingNormalizer_create_nfd_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {
@@ -56,10 +79,30 @@ export class DecomposingNormalizer {
         }
     }
 
-    static createNfkd(provider) {
+    /** 
+     * Construct a new DecomposingNormalizer instance for NFKD using compiled data.
+     *
+     * See the [Rust documentation for `new_nfkd`](https://docs.rs/icu/latest/icu/normalizer/struct.DecomposingNormalizer.html#method.new_nfkd) for more information.
+     */
+    static createNfkd() {
+        const result = wasm.icu4x_DecomposingNormalizer_create_nfkd_mv1();
+    
+        try {
+            return new DecomposingNormalizer(diplomatRuntime.internalConstructor, result, []);
+        }
+        
+        finally {}
+    }
+
+    /** 
+     * Construct a new DecomposingNormalizer instance for NFKD using a particular data source.
+     *
+     * See the [Rust documentation for `new_nfkd`](https://docs.rs/icu/latest/icu/normalizer/struct.DecomposingNormalizer.html#method.new_nfkd) for more information.
+     */
+    static createNfkdWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_DecomposingNormalizer_create_nfkd_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_DecomposingNormalizer_create_nfkd_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {
@@ -74,10 +117,18 @@ export class DecomposingNormalizer {
         }
     }
 
+    /** 
+     * Normalize a string
+     *
+     * Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
+     * to the WHATWG Encoding Standard.
+     *
+     * See the [Rust documentation for `normalize_utf8`](https://docs.rs/icu/latest/icu/normalizer/struct.DecomposingNormalizerBorrowed.html#method.normalize_utf8) for more information.
+     */
     normalize(s) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
-        const sSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, s));
+        const sSlice = diplomatRuntime.DiplomatBuf.str8(wasm, s);
         
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
         wasm.icu4x_DecomposingNormalizer_normalize_mv1(this.ffiValue, ...sSlice.splat(), write.buffer);
@@ -93,10 +144,18 @@ export class DecomposingNormalizer {
         }
     }
 
+    /** 
+     * Check if a string is normalized
+     *
+     * Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
+     * to the WHATWG Encoding Standard.
+     *
+     * See the [Rust documentation for `is_normalized_utf8`](https://docs.rs/icu/latest/icu/normalizer/struct.DecomposingNormalizerBorrowed.html#method.is_normalized_utf8) for more information.
+     */
     isNormalized(s) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
-        const sSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, s));
+        const sSlice = diplomatRuntime.DiplomatBuf.str8(wasm, s);
         
         const result = wasm.icu4x_DecomposingNormalizer_is_normalized_mv1(this.ffiValue, ...sSlice.splat());
     
@@ -109,10 +168,18 @@ export class DecomposingNormalizer {
         }
     }
 
+    /** 
+     * Check if a string is normalized
+     *
+     * Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
+     * to the WHATWG Encoding Standard.
+     *
+     * See the [Rust documentation for `is_normalized_utf16`](https://docs.rs/icu/latest/icu/normalizer/struct.DecomposingNormalizerBorrowed.html#method.is_normalized_utf16) for more information.
+     */
     isNormalizedUtf16(s) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
-        const sSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str16(wasm, s));
+        const sSlice = diplomatRuntime.DiplomatBuf.str16(wasm, s);
         
         const result = wasm.icu4x_DecomposingNormalizer_is_normalized_utf16_mv1(this.ffiValue, ...sSlice.splat());
     
@@ -125,10 +192,17 @@ export class DecomposingNormalizer {
         }
     }
 
+    /** 
+     * Return the index a slice of potentially-invalid UTF-8 is normalized up to
+     *
+     * See the [Rust documentation for `split_normalized_utf8`](https://docs.rs/icu/latest/icu/normalizer/struct.DecomposingNormalizerBorrowed.html#method.split_normalized_utf8) for more information.
+     *
+     * See the [Rust documentation for `split_normalized`](https://docs.rs/icu/latest/icu/normalizer/struct.DecomposingNormalizerBorrowed.html#method.split_normalized) for more information.
+     */
     isNormalizedUpTo(s) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
-        const sSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, s));
+        const sSlice = diplomatRuntime.DiplomatBuf.str8(wasm, s);
         
         const result = wasm.icu4x_DecomposingNormalizer_is_normalized_up_to_mv1(this.ffiValue, ...sSlice.splat());
     
@@ -141,10 +215,15 @@ export class DecomposingNormalizer {
         }
     }
 
+    /** 
+     * Return the index a slice of potentially-invalid UTF-16 is normalized up to
+     *
+     * See the [Rust documentation for `split_normalized_utf16`](https://docs.rs/icu/latest/icu/normalizer/struct.DecomposingNormalizerBorrowed.html#method.split_normalized_utf16) for more information.
+     */
     isNormalizedUtf16UpTo(s) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
-        const sSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str16(wasm, s));
+        const sSlice = diplomatRuntime.DiplomatBuf.str16(wasm, s);
         
         const result = wasm.icu4x_DecomposingNormalizer_is_normalized_utf16_up_to_mv1(this.ffiValue, ...sSlice.splat());
     
@@ -155,5 +234,9 @@ export class DecomposingNormalizer {
         finally {
             functionCleanupArena.free();
         }
+    }
+
+    constructor(symbol, ptr, selfEdge) {
+        return this.#internalConstructor(...arguments)
     }
 }

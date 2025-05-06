@@ -5,7 +5,7 @@
 use std::collections::HashSet;
 
 use crate::SourceDataProvider;
-use icu::properties::provider::BidiMirroringGlyphV1Marker;
+use icu::properties::provider::PropertyEnumBidiMirroringGlyphV1;
 use icu_provider::prelude::*;
 
 #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
@@ -28,12 +28,12 @@ impl SourceDataProvider {
 
 // implement data provider 2 different ways, based on whether or not
 // features exist that enable the use of CPT Builder (ex: `use_wasm` or `use_icu4c`)
-impl DataProvider<BidiMirroringGlyphV1Marker> for SourceDataProvider {
+impl DataProvider<PropertyEnumBidiMirroringGlyphV1> for SourceDataProvider {
     #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
     fn load(
         &self,
         req: DataRequest,
-    ) -> Result<DataResponse<BidiMirroringGlyphV1Marker>, DataError> {
+    ) -> Result<DataResponse<PropertyEnumBidiMirroringGlyphV1>, DataError> {
         use icu::collections::codepointinvlist::CodePointInversionListBuilder;
         use icu::collections::codepointtrie::CodePointTrie;
         use icu::collections::codepointtrie::TrieType;
@@ -42,7 +42,7 @@ impl DataProvider<BidiMirroringGlyphV1Marker> for SourceDataProvider {
         use icu_codepointtrie_builder::{CodePointTrieBuilder, CodePointTrieBuilderData};
         use icu_collections::codepointtrie::TrieValue;
 
-        self.check_req::<BidiMirroringGlyphV1Marker>(req)?;
+        self.check_req::<PropertyEnumBidiMirroringGlyphV1>(req)?;
 
         // Bidi_M / Bidi_Mirrored
         let bidi_m_data = self.get_binary_prop_for_code_point_set("Bidi_M")?;
@@ -88,7 +88,7 @@ impl DataProvider<BidiMirroringGlyphV1Marker> for SourceDataProvider {
         Ok(DataResponse {
             metadata: Default::default(),
             payload: DataPayload::from_owned(
-                icu::properties::provider::PropertyCodePointMapV1::CodePointTrie(
+                icu::properties::provider::PropertyCodePointMap::CodePointTrie(
                     CodePointTrieBuilder {
                         data: CodePointTrieBuilderData::ValuesByCodePoint(
                             &trie_vals.collect::<Vec<_>>(),
@@ -107,15 +107,15 @@ impl DataProvider<BidiMirroringGlyphV1Marker> for SourceDataProvider {
     fn load(
         &self,
         req: DataRequest,
-    ) -> Result<DataResponse<BidiMirroringGlyphV1Marker>, DataError> {
-        self.check_req::<BidiMirroringGlyphV1Marker>(req)?;
+    ) -> Result<DataResponse<PropertyEnumBidiMirroringGlyphV1>, DataError> {
+        self.check_req::<PropertyEnumBidiMirroringGlyphV1>(req)?;
         return Err(DataError::custom(
             "icu_provider_source must be built with use_icu4c or use_wasm to build Bidi auxiliary properties data",
         ));
     }
 }
 
-impl crate::IterableDataProviderCached<BidiMirroringGlyphV1Marker> for SourceDataProvider {
+impl crate::IterableDataProviderCached<PropertyEnumBidiMirroringGlyphV1> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
     }

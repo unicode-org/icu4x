@@ -100,7 +100,7 @@ int main() {
     return 1;
   }
 
-  locale = Locale::und();
+  locale = Locale::unknown();
   if (!test_locale(*locale.get(), "und", "Created an undefined locale")) {
     return 1;
   }

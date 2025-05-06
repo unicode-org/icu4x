@@ -2,10 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use icu_datetime::{
-    fieldsets::{self, enums::ZoneFieldSet},
-    options::Length,
-};
+use icu_datetime::fieldsets::{self, enums::ZoneFieldSet};
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
@@ -21,13 +18,18 @@ pub struct TimeZoneTest {
 
 pub fn pattern_to_semantic_skeleton(p: &str) -> Option<ZoneFieldSet> {
     Some(match p {
-        "vvvv" => ZoneFieldSet::V(fieldsets::V::with_length(Length::Long)),
-        "v" => ZoneFieldSet::V(fieldsets::V::with_length(Length::Short)),
-        "VVVV" => ZoneFieldSet::L(fieldsets::L::with_length(Length::Long)),
-        "zzzz" => ZoneFieldSet::Z(fieldsets::Z::with_length(Length::Long)),
-        "z" => ZoneFieldSet::Z(fieldsets::Z::with_length(Length::Short)),
-        "OOOO" => ZoneFieldSet::O(fieldsets::O::with_length(Length::Long)),
-        "O" => ZoneFieldSet::O(fieldsets::O::with_length(Length::Short)),
-        _ => return None,
+        "vvvv" => ZoneFieldSet::GenericLong(fieldsets::zone::GenericLong),
+        "v" => ZoneFieldSet::GenericShort(fieldsets::zone::GenericShort),
+        "VVVV" => ZoneFieldSet::Location(fieldsets::zone::Location),
+        "zzzz" => ZoneFieldSet::SpecificLong(fieldsets::zone::SpecificLong),
+        "z" => ZoneFieldSet::SpecificShort(fieldsets::zone::SpecificShort),
+        "OOOO" => ZoneFieldSet::LocalizedOffsetLong(fieldsets::zone::LocalizedOffsetLong),
+        "O" => ZoneFieldSet::LocalizedOffsetShort(fieldsets::zone::LocalizedOffsetShort),
+        "VVV" => ZoneFieldSet::ExemplarCity(fieldsets::zone::ExemplarCity),
+        // ISO currently untested
+        "x" | "xx" | "xxx" | "xxxx" | "xxxxx" | "X" | "XX" | "XXX" | "XXXX" | "XXXXX" => {
+            return None
+        }
+        _ => panic!("unhandled test {p}"),
     })
 }

@@ -6,17 +6,25 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include <memory>
+#include <functional>
 #include <optional>
 #include "../diplomat_runtime.hpp"
 
 namespace icu4x {
-namespace capi { struct IsoDateTime; }
-class IsoDateTime;
-namespace capi { struct TimeZoneIdMapper; }
-class TimeZoneIdMapper;
+namespace capi { struct IsoDate; }
+class IsoDate;
+namespace capi { struct Time; }
+class Time;
+namespace capi { struct TimeZone; }
+class TimeZone;
 namespace capi { struct TimeZoneInfo; }
 class TimeZoneInfo;
-struct TimeZoneInvalidOffsetError;
+namespace capi { struct UtcOffset; }
+class UtcOffset;
+namespace capi { struct VariantOffsetsCalculator; }
+class VariantOffsetsCalculator;
+struct IsoDateTime;
+class TimeZoneVariant;
 }
 
 
@@ -27,58 +35,70 @@ namespace capi {
 } // namespace
 
 namespace icu4x {
+/**
+ * See the [Rust documentation for `TimeZoneInfo`](https://docs.rs/icu/latest/icu/time/struct.TimeZoneInfo.html) for more information.
+ */
 class TimeZoneInfo {
 public:
 
-  inline static std::unique_ptr<icu4x::TimeZoneInfo> unknown();
-
+  /**
+   * Creates a time zone for UTC (Coordinated Universal Time).
+   *
+   * See the [Rust documentation for `utc`](https://docs.rs/icu/latest/icu/time/struct.TimeZoneInfo.html#method.utc) for more information.
+   */
   inline static std::unique_ptr<icu4x::TimeZoneInfo> utc();
 
-  inline static std::unique_ptr<icu4x::TimeZoneInfo> from_parts(std::string_view bcp47_id, int32_t offset_seconds, bool dst);
+  /**
+   * Creates a time zone info from parts.
+   */
+  inline static std::unique_ptr<icu4x::TimeZoneInfo> from_parts(const icu4x::TimeZone& id, const icu4x::UtcOffset* offset, std::optional<icu4x::TimeZoneVariant> variant);
 
-  inline diplomat::result<std::monostate, icu4x::TimeZoneInvalidOffsetError> try_set_offset_seconds(int32_t offset_seconds);
+  /**
+   * See the [Rust documentation for `id`](https://docs.rs/icu/latest/icu/time/struct.TimeZoneInfo.html#method.id) for more information.
+   */
+  inline std::unique_ptr<icu4x::TimeZone> id() const;
 
-  inline void set_offset_eighths_of_hour(int8_t offset_eighths_of_hour);
+  /**
+   * Sets the datetime at which to interpret the time zone
+   * for display name lookup.
+   *
+   * Notes:
+   *
+   * - If not set, the formatting datetime is used if possible.
+   * - The constraints are the same as with `ZoneNameTimestamp` in Rust.
+   * - Set to year 1000 or 9999 for a reference far in the past or future.
+   *
+   * See the [Rust documentation for `at_date_time_iso`](https://docs.rs/icu/latest/icu/time/struct.TimeZoneInfo.html#method.at_date_time_iso) for more information.
+   *
+   * Additional information: [1](https://docs.rs/icu/latest/icu/time/zone/struct.ZoneNameTimestamp.html)
+   */
+  inline std::unique_ptr<icu4x::TimeZoneInfo> at_date_time_iso(const icu4x::IsoDate& date, const icu4x::Time& time) const;
 
-  inline diplomat::result<std::monostate, icu4x::TimeZoneInvalidOffsetError> try_set_offset_str(std::string_view offset);
+  /**
+   * See the [Rust documentation for `zone_name_timestamp`](https://docs.rs/icu/latest/icu/time/struct.TimeZoneInfo.html#method.zone_name_timestamp) for more information.
+   */
+  inline std::optional<icu4x::IsoDateTime> zone_name_date_time() const;
 
-  inline std::optional<int8_t> offset_eighths_of_hour() const;
+  /**
+   * See the [Rust documentation for `with_variant`](https://docs.rs/icu/latest/icu/time/struct.TimeZoneInfo.html#method.with_variant) for more information.
+   */
+  inline std::unique_ptr<icu4x::TimeZoneInfo> with_variant(icu4x::TimeZoneVariant time_variant) const;
 
-  inline void clear_offset();
+  /**
+   * Infers the zone variant.
+   *
+   * Requires the offset and local time to be set.
+   *
+   * See the [Rust documentation for `infer_variant`](https://docs.rs/icu/latest/icu/time/struct.TimeZoneInfo.html#method.infer_variant) for more information.
+   *
+   * Additional information: [1](https://docs.rs/icu/latest/icu/time/zone/enum.TimeZoneVariant.html)
+   */
+  inline std::optional<std::monostate> infer_variant(const icu4x::VariantOffsetsCalculator& offset_calculator);
 
-  inline std::optional<int32_t> offset_seconds() const;
-
-  inline std::optional<bool> is_offset_non_negative() const;
-
-  inline std::optional<bool> is_offset_zero() const;
-
-  inline std::optional<int32_t> offset_hours_part() const;
-
-  inline std::optional<uint32_t> offset_minutes_part() const;
-
-  inline std::optional<uint32_t> offset_seconds_part() const;
-
-  inline void set_time_zone_id(std::string_view id);
-
-  inline void set_iana_time_zone_id(const icu4x::TimeZoneIdMapper& mapper, std::string_view id);
-
-  inline std::string time_zone_id() const;
-
-  inline void clear_zone_variant();
-
-  inline void set_standard_time();
-
-  inline void set_daylight_time();
-
-  inline std::optional<bool> is_standard_time() const;
-
-  inline std::optional<bool> is_daylight_time() const;
-
-  inline void set_local_time(const icu4x::IsoDateTime& datetime);
-
-  inline void clear_local_time();
-
-  inline std::unique_ptr<icu4x::IsoDateTime> get_local_time() const;
+  /**
+   * See the [Rust documentation for `variant`](https://docs.rs/icu/latest/icu/time/struct.TimeZoneInfo.html#method.variant) for more information.
+   */
+  inline std::optional<icu4x::TimeZoneVariant> variant() const;
 
   inline const icu4x::capi::TimeZoneInfo* AsFFI() const;
   inline icu4x::capi::TimeZoneInfo* AsFFI();

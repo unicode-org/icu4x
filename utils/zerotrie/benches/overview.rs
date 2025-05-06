@@ -4,14 +4,11 @@
 
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
 use litemap::LiteMap;
-#[cfg(feature = "bench")]
 use std::collections::HashMap;
 use zerotrie::ZeroTrieExtendedCapacity;
 use zerotrie::ZeroTriePerfectHash;
 use zerotrie::ZeroTrieSimpleAscii;
-#[cfg(feature = "bench")]
 use zerovec::ZeroHashMap;
-#[cfg(feature = "bench")]
 use zerovec::ZeroMap;
 
 mod testdata {
@@ -55,7 +52,6 @@ fn get_basic_bench(c: &mut Criterion) {
         });
     });
 
-    #[cfg(feature = "bench")]
     g.bench_function("ZeroMap/u32", |b| {
         let zm: ZeroMap<[u8], u32> = data.iter().map(|(a, b)| (*a, *b as u32)).collect();
         b.iter(|| {
@@ -66,7 +62,6 @@ fn get_basic_bench(c: &mut Criterion) {
         });
     });
 
-    #[cfg(feature = "bench")]
     g.bench_function("ZeroMap/u8", |b| {
         let zm: ZeroMap<[u8], u8> = data.iter().map(|(k, v)| (*k, *v as u8)).collect();
         b.iter(|| {
@@ -77,7 +72,6 @@ fn get_basic_bench(c: &mut Criterion) {
         });
     });
 
-    #[cfg(feature = "bench")]
     g.bench_function("HashMap", |b| {
         let hm: HashMap<&[u8], usize> = data.iter().copied().collect();
         b.iter(|| {
@@ -88,7 +82,6 @@ fn get_basic_bench(c: &mut Criterion) {
         });
     });
 
-    #[cfg(feature = "bench")]
     g.bench_function("ZeroHashMap/u8", |b| {
         let zhm: ZeroHashMap<[u8], u8> = data.iter().map(|(k, v)| (*k, *v as u8)).collect();
         b.iter(|| {
@@ -153,7 +146,6 @@ fn get_subtags_bench_helper<M: criterion::measurement::Measurement>(
         });
     });
 
-    #[cfg(feature = "bench")]
     g.bench_function("ZeroMap/u32", |b| {
         let zm: ZeroMap<[u8], u32> = litemap.iter().map(|(a, b)| (*a, *b as u32)).collect();
         b.iter(|| {
@@ -164,7 +156,6 @@ fn get_subtags_bench_helper<M: criterion::measurement::Measurement>(
         });
     });
 
-    #[cfg(feature = "bench")]
     g.bench_function("ZeroMap/u8", |b| {
         let zm: ZeroMap<[u8], u8> = litemap.iter().map(|(k, v)| (*k, *v as u8)).collect();
         b.iter(|| {
@@ -175,7 +166,6 @@ fn get_subtags_bench_helper<M: criterion::measurement::Measurement>(
         });
     });
 
-    #[cfg(feature = "bench")]
     g.bench_function("HashMap", |b| {
         let hm: HashMap<&[u8], u32> = litemap.iter().map(|(a, b)| (*a, *b as u32)).collect();
         b.iter(|| {
@@ -186,7 +176,6 @@ fn get_subtags_bench_helper<M: criterion::measurement::Measurement>(
         });
     });
 
-    #[cfg(feature = "bench")]
     g.bench_function("ZeroHashMap/u8", |b| {
         let zhm: ZeroHashMap<[u8], u8> = litemap.iter().map(|(k, v)| (*k, *v as u8)).collect();
         b.iter(|| {

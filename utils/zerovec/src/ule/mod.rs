@@ -27,15 +27,14 @@ pub mod tuple;
 pub mod tuplevar;
 pub mod vartuple;
 pub use chars::CharULE;
-pub use encode::{encode_varule_to_box, EncodeAsVarULE};
+#[cfg(feature = "alloc")]
+pub use encode::encode_varule_to_box;
+pub use encode::EncodeAsVarULE;
 pub use multi::MultiFieldsULE;
 pub use niche::{NicheBytes, NichedOption, NichedOptionULE};
 pub use option::{OptionULE, OptionVarULE};
 pub use plain::RawBytesULE;
 
-use alloc::alloc::Layout;
-use alloc::borrow::ToOwned;
-use alloc::boxed::Box;
 use core::{any, fmt, mem, slice};
 
 /// Fixed-width, byte-aligned data that can be cast to and from a little-endian byte slice.
@@ -52,7 +51,7 @@ use core::{any, fmt, mem, slice};
 /// Safety checklist for `ULE`:
 ///
 /// 1. The type *must not* include any uninitialized or padding bytes.
-/// 2. The type must have an alignment of 1 byte.
+/// 2. The type must have an alignment of 1 byte, or it is a ZST that is safe to construct.
 /// 3. The impl of [`ULE::validate_bytes()`] *must* return an error if the given byte slice
 ///    would not represent a valid slice of this type.
 /// 4. The impl of [`ULE::validate_bytes()`] *must* return an error if the given byte slice
@@ -358,7 +357,11 @@ pub unsafe trait VarULE: 'static {
 
     /// Allocate on the heap as a `Box<T>`
     #[inline]
-    fn to_boxed(&self) -> Box<Self> {
+    #[cfg(feature = "alloc")]
+    fn to_boxed(&self) -> alloc::boxed::Box<Self> {
+        use alloc::borrow::ToOwned;
+        use alloc::boxed::Box;
+        use core::alloc::Layout;
         let bytesvec = self.as_bytes().to_owned().into_boxed_slice();
         let bytesvec = mem::ManuallyDrop::new(bytesvec);
         unsafe {
@@ -445,5 +448,4 @@ impl UleError {
     }
 }
 
-#[cfg(feature = "std")]
-impl ::std::error::Error for UleError {}
+impl core::error::Error for UleError {}

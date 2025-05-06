@@ -5,15 +5,22 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
-/** An ICU4X data provider, capable of loading ICU4X data keys from some source.
-*
-*See the [Rust documentation for `icu_provider`](https://docs.rs/icu_provider/latest/icu_provider/index.html) for more information.
-*/
+/** 
+ * An ICU4X data provider, capable of loading ICU4X data keys from some source.
+ *
+ * Currently the only source supported is loading from "blob" formatted data from a bytes buffer or the file system.
+ *
+ * If you wish to use ICU4X's builtin "compiled data", use the version of the constructors that do not have `_with_provider`
+ * in their names.
+ *
+ * See the [Rust documentation for `icu_provider`](https://docs.rs/icu_provider/latest/icu_provider/index.html) for more information.
+ */
 const DataProvider_box_destroy_registry = new FinalizationRegistry((ptr) => {
     wasm.icu4x_DataProvider_destroy_mv1(ptr);
 });
 
 export class DataProvider {
+    
     // Internal ptr reference:
     #ptr = null;
 
@@ -21,7 +28,7 @@ export class DataProvider {
     // Since JS won't garbage collect until there are no incoming edges.
     #selfEdge = [];
     
-    constructor(symbol, ptr, selfEdge) {
+    #internalConstructor(symbol, ptr, selfEdge) {
         if (symbol !== diplomatRuntime.internalConstructor) {
             console.error("DataProvider is an Opaque type. You cannot call its constructor.");
             return;
@@ -34,32 +41,21 @@ export class DataProvider {
         if (this.#selfEdge.length === 0) {
             DataProvider_box_destroy_registry.register(this, this.#ptr);
         }
+        
+        return this;
     }
-
     get ffiValue() {
         return this.#ptr;
     }
 
-    static compiled() {
-        const result = wasm.icu4x_DataProvider_compiled_mv1();
-    
-        try {
-            return new DataProvider(diplomatRuntime.internalConstructor, result, []);
-        }
-        
-        finally {}
-    }
-
-    static empty() {
-        const result = wasm.icu4x_DataProvider_empty_mv1();
-    
-        try {
-            return new DataProvider(diplomatRuntime.internalConstructor, result, []);
-        }
-        
-        finally {}
-    }
-
+    /** 
+     * Creates a provider that tries the current provider and then, if the current provider
+     * doesn't support the data key, another provider `other`.
+     *
+     * This takes ownership of the `other` provider, leaving an empty provider in its place.
+     *
+     * See the [Rust documentation for `ForkByMarkerProvider`](https://docs.rs/icu_provider_adapters/latest/icu_provider_adapters/fork/type.ForkByMarkerProvider.html) for more information.
+     */
     forkByKey(other) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
@@ -78,6 +74,11 @@ export class DataProvider {
         }
     }
 
+    /** 
+     * Same as `fork_by_key` but forks by locale instead of key.
+     *
+     * See the [Rust documentation for `IdentifierNotFoundPredicate`](https://docs.rs/icu_provider_adapters/latest/icu_provider_adapters/fork/predicates/struct.IdentifierNotFoundPredicate.html) for more information.
+     */
     forkByLocale(other) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
@@ -96,6 +97,11 @@ export class DataProvider {
         }
     }
 
+    /** 
+     * See the [Rust documentation for `new`](https://docs.rs/icu_provider_adapters/latest/icu_provider_adapters/fallback/struct.LocaleFallbackProvider.html#method.new) for more information.
+     *
+     * Additional information: [1](https://docs.rs/icu_provider_adapters/latest/icu_provider_adapters/fallback/struct.LocaleFallbackProvider.html)
+     */
     enableLocaleFallbackWith(fallbacker) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
@@ -112,5 +118,9 @@ export class DataProvider {
         finally {
             diplomatReceive.free();
         }
+    }
+
+    constructor(symbol, ptr, selfEdge) {
+        return this.#internalConstructor(...arguments)
     }
 }

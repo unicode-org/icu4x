@@ -11,15 +11,18 @@ mod serde;
 mod slice;
 
 pub use slice::ZeroSlice;
+pub use slice::ZeroSliceIter;
 
 use crate::ule::*;
+#[cfg(feature = "alloc")]
 use alloc::borrow::Cow;
+#[cfg(feature = "alloc")]
 use alloc::vec::Vec;
 use core::cmp::{Ord, Ordering, PartialOrd};
 use core::fmt;
+#[cfg(feature = "alloc")]
 use core::iter::FromIterator;
 use core::marker::PhantomData;
-use core::mem;
 use core::num::NonZeroUsize;
 use core::ops::Deref;
 use core::ptr::NonNull;
@@ -94,8 +97,8 @@ where
 
     /// Marker type, signalling variance and dropck behavior
     /// by containing all potential types this type represents
-    #[allow(clippy::type_complexity)] // needed to get correct marker type behavior
-    marker: PhantomData<(Vec<T::ULE>, &'a [T::ULE])>,
+    marker1: PhantomData<T::ULE>,
+    marker2: PhantomData<&'a T::ULE>,
 }
 
 // Send inherits as long as all fields are Send, but also references are Send only
@@ -127,6 +130,7 @@ struct EyepatchHackVector<U> {
     /// This pointer is *always* valid, the reason it is represented as a raw pointer
     /// is that it may logically represent an `&[T::ULE]` or the ptr,len of a `Vec<T::ULE>`
     buf: NonNull<[U]>,
+    #[cfg(feature = "alloc")]
     /// Borrowed if zero. Capacity of buffer above if not
     capacity: usize,
 }
@@ -152,6 +156,7 @@ impl<U> EyepatchHackVector<U> {
     /// data, make sure that `self` is cleaned up after this
     ///
     /// (this does not simply take `self` since then it wouldn't be usable from the Drop impl)
+    #[cfg(feature = "alloc")]
     unsafe fn get_vec(&self) -> Vec<U> {
         debug_assert!(self.capacity != 0);
         let slice: &[U] = self.as_slice();
@@ -162,6 +167,7 @@ impl<U> EyepatchHackVector<U> {
     }
 }
 
+#[cfg(feature = "alloc")]
 impl<U> Drop for EyepatchHackVector<U> {
     #[inline]
     fn drop(&mut self) {
@@ -176,16 +182,18 @@ impl<U> Drop for EyepatchHackVector<U> {
 
 impl<'a, T: AsULE> Clone for ZeroVec<'a, T> {
     fn clone(&self) -> Self {
+        #[cfg(feature = "alloc")]
         if self.is_owned() {
-            ZeroVec::new_owned(self.as_ule_slice().into())
-        } else {
-            Self {
-                vector: EyepatchHackVector {
-                    buf: self.vector.buf,
-                    capacity: 0,
-                },
-                marker: PhantomData,
-            }
+            return ZeroVec::new_owned(self.as_ule_slice().into());
+        }
+        Self {
+            vector: EyepatchHackVector {
+                buf: self.vector.buf,
+                #[cfg(feature = "alloc")]
+                capacity: 0,
+            },
+            marker1: PhantomData,
+            marker2: PhantomData,
         }
     }
 }
@@ -201,7 +209,16 @@ where
     T: AsULE + fmt::Debug,
 {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "ZeroVec({:?})", self.to_vec())
+        write!(f, "ZeroVec([")?;
+        let mut first = true;
+        for el in self.iter() {
+            if !first {
+                write!(f, ", ")?;
+            }
+            write!(f, "{el:?}")?;
+            first = false;
+        }
+        write!(f, "])")
     }
 }
 
@@ -269,6 +286,7 @@ impl<'a, T: AsULE> From<&'a [T::ULE]> for ZeroVec<'a, T> {
     }
 }
 
+#[cfg(feature = "alloc")]
 impl<'a, T: AsULE> From<Vec<T::ULE>> for ZeroVec<'a, T> {
     fn from(other: Vec<T::ULE>) -> Self {
         ZeroVec::new_owned(other)
@@ -302,13 +320,14 @@ impl<'a, T: AsULE> ZeroVec<'a, T> {
     /// If you have a slice of `&[T]`s, prefer using
     /// [`Self::alloc_from_slice()`].
     #[inline]
+    #[cfg(feature = "alloc")]
     pub fn new_owned(vec: Vec<T::ULE>) -> Self {
         // Deconstruct the vector into parts
         // This is the only part of the code that goes from Vec
         // to ZeroVec, all other such operations should use this function
         let capacity = vec.capacity();
         let len = vec.len();
-        let ptr = mem::ManuallyDrop::new(vec).as_mut_ptr();
+        let ptr = core::mem::ManuallyDrop::new(vec).as_mut_ptr();
         // Safety: `ptr` comes from Vec::as_mut_ptr, which says:
         // "Returns an unsafe mutable pointer to the vector’s buffer,
         // or a dangling raw pointer valid for zero sized reads"
@@ -316,7 +335,8 @@ impl<'a, T: AsULE> ZeroVec<'a, T> {
         let buf = NonNull::slice_from_raw_parts(ptr, len);
         Self {
             vector: EyepatchHackVector { buf, capacity },
-            marker: PhantomData,
+            marker1: PhantomData,
+            marker2: PhantomData,
         }
     }
 
@@ -330,13 +350,16 @@ impl<'a, T: AsULE> ZeroVec<'a, T> {
         Self {
             vector: EyepatchHackVector {
                 buf: slice,
+                #[cfg(feature = "alloc")]
                 capacity: 0,
             },
-            marker: PhantomData,
+            marker1: PhantomData,
+            marker2: PhantomData,
         }
     }
 
     /// Creates a new, owned, empty `ZeroVec<T>`, with a certain capacity pre-allocated.
+    #[cfg(feature = "alloc")]
     pub fn with_capacity(capacity: usize) -> Self {
         Self::new_owned(Vec::with_capacity(capacity))
     }
@@ -415,7 +438,9 @@ impl<'a, T: AsULE> ZeroVec<'a, T> {
     /// assert!(zv_bytes.is_owned());
     /// assert_eq!(zv_bytes.get(0), Some(0xD3));
     /// ```
+    #[cfg(feature = "alloc")]
     pub fn into_bytes(self) -> ZeroVec<'a, u8> {
+        use alloc::borrow::Cow;
         match self.into_cow() {
             Cow::Borrowed(slice) => {
                 let bytes: &'a [u8] = T::ULE::slice_as_bytes(slice);
@@ -459,6 +484,7 @@ impl<'a, T: AsULE> ZeroVec<'a, T> {
     /// let zerovec_i16: ZeroVec<i16> = zerovec_u16.cast();
     /// assert_eq!(zerovec_i16.get(3), Some(-32563));
     /// ```
+    #[cfg(feature = "alloc")]
     pub fn cast<P>(self) -> ZeroVec<'a, P>
     where
         P: AsULE<ULE = T::ULE>,
@@ -517,7 +543,7 @@ impl<'a, T: AsULE> ZeroVec<'a, T> {
     /// let zv_char: ZeroVec<char> =
     ///     ZeroVec::parse_bytes(bytes).expect("valid code points");
     ///
-    /// // Panics! mem::size_of::<char::ULE> != mem::size_of::<u16::ULE>
+    /// // Panics! core::mem::size_of::<char::ULE> != core::mem::size_of::<u16::ULE>
     /// zv_char.try_into_converted::<u16>();
     /// ```
     ///
@@ -535,6 +561,7 @@ impl<'a, T: AsULE> ZeroVec<'a, T> {
     /// assert!(!zv_u16.is_owned());
     /// assert_eq!(zv_u16.get(0), Some(0xF37F));
     /// ```
+    #[cfg(feature = "alloc")]
     pub fn try_into_converted<P: AsULE>(self) -> Result<ZeroVec<'a, P>, UleError> {
         assert_eq!(
             core::mem::size_of::<<T as AsULE>::ULE>(),
@@ -552,7 +579,7 @@ impl<'a, T: AsULE> ZeroVec<'a, T> {
                 // Feature "vec_into_raw_parts" is not yet stable (#65816). Polyfill:
                 let (ptr, len, cap) = {
                     // Take ownership of the pointer
-                    let mut v = mem::ManuallyDrop::new(old_vec);
+                    let mut v = core::mem::ManuallyDrop::new(old_vec);
                     // Fetch the pointer, length, and capacity
                     (v.as_mut_ptr(), v.len(), v.capacity())
                 };
@@ -573,7 +600,10 @@ impl<'a, T: AsULE> ZeroVec<'a, T> {
     /// Check if this type is fully owned
     #[inline]
     pub fn is_owned(&self) -> bool {
-        self.vector.capacity != 0
+        #[cfg(feature = "alloc")]
+        return self.vector.capacity != 0;
+        #[cfg(not(feature = "alloc"))]
+        return false;
     }
 
     /// If this is a borrowed [`ZeroVec`], return it as a slice that covers
@@ -618,7 +648,10 @@ impl<'a, T: AsULE> ZeroVec<'a, T> {
     /// ```
     #[inline]
     pub fn owned_capacity(&self) -> Option<NonZeroUsize> {
-        NonZeroUsize::try_from(self.vector.capacity).ok()
+        #[cfg(feature = "alloc")]
+        return NonZeroUsize::try_from(self.vector.capacity).ok();
+        #[cfg(not(feature = "alloc"))]
+        return None;
     }
 }
 
@@ -654,6 +687,7 @@ impl<'a> ZeroVec<'a, u8> {
     /// assert!(zerovec.is_owned());
     /// assert_eq!(zerovec.get(0), Some(211));
     /// ```
+    #[cfg(feature = "alloc")]
     pub fn try_into_parsed<T: AsULE>(self) -> Result<ZeroVec<'a, T>, UleError> {
         match self.into_cow() {
             Cow::Borrowed(bytes) => {
@@ -691,6 +725,7 @@ where
     /// assert_eq!(bytes, zerovec.as_bytes());
     /// ```
     #[inline]
+    #[cfg(feature = "alloc")]
     pub fn alloc_from_slice(other: &[T]) -> Self {
         Self::new_owned(other.iter().copied().map(T::to_unaligned).collect())
     }
@@ -708,6 +743,7 @@ where
     /// assert_eq!(nums, vec.as_slice());
     /// ```
     #[inline]
+    #[cfg(feature = "alloc")]
     pub fn to_vec(&self) -> Vec<T> {
         self.iter().collect()
     }
@@ -761,6 +797,7 @@ where
     /// assert_eq!(bytes, zerovec.as_bytes());
     /// ```
     #[inline]
+    #[cfg(feature = "alloc")]
     pub fn from_slice_or_alloc(slice: &'a [T]) -> Self {
         Self::try_from_slice(slice).unwrap_or_else(|| Self::alloc_from_slice(slice))
     }
@@ -791,6 +828,7 @@ where
     /// assert!(zerovec.is_owned());
     /// ```
     #[inline]
+    #[cfg(feature = "alloc")]
     pub fn for_each_mut(&mut self, mut f: impl FnMut(&mut T)) {
         self.to_mut_slice().iter_mut().for_each(|item| {
             let mut aligned = T::from_unaligned(*item);
@@ -820,6 +858,7 @@ where
     /// # Ok::<(), ()>(())
     /// ```
     #[inline]
+    #[cfg(feature = "alloc")]
     pub fn try_for_each_mut<E>(
         &mut self,
         mut f: impl FnMut(&mut T) -> Result<(), E>,
@@ -847,13 +886,12 @@ where
     /// let owned = zerovec.into_owned();
     /// assert!(owned.is_owned());
     /// ```
+    #[cfg(feature = "alloc")]
     pub fn into_owned(self) -> ZeroVec<'static, T> {
+        use alloc::borrow::Cow;
         match self.into_cow() {
             Cow::Owned(vec) => ZeroVec::new_owned(vec),
-            Cow::Borrowed(b) => {
-                let vec: Vec<T::ULE> = b.into();
-                ZeroVec::new_owned(vec)
-            }
+            Cow::Borrowed(b) => ZeroVec::new_owned(b.into()),
         }
     }
 
@@ -875,10 +913,12 @@ where
     /// zerovec.with_mut(|v| v.push(12_u16.to_unaligned()));
     /// assert!(zerovec.is_owned());
     /// ```
-    pub fn with_mut<R>(&mut self, f: impl FnOnce(&mut Vec<T::ULE>) -> R) -> R {
+    #[cfg(feature = "alloc")]
+    pub fn with_mut<R>(&mut self, f: impl FnOnce(&mut alloc::vec::Vec<T::ULE>) -> R) -> R {
+        use alloc::borrow::Cow;
         // We're in danger if f() panics whilst we've moved a vector out of self;
         // replace it with an empty dummy vector for now
-        let this = mem::take(self);
+        let this = core::mem::take(self);
         let mut vec = match this.into_cow() {
             Cow::Owned(v) => v,
             Cow::Borrowed(s) => s.into(),
@@ -906,6 +946,7 @@ where
     /// zerovec.to_mut_slice()[1] = 5u16.to_unaligned();
     /// assert!(zerovec.is_owned());
     /// ```
+    #[cfg(feature = "alloc")]
     pub fn to_mut_slice(&mut self) -> &mut [T::ULE] {
         if !self.is_owned() {
             // `buf` is either a valid vector or slice of `T::ULE`s, either
@@ -944,6 +985,7 @@ where
     /// assert_eq!(first, 0x0119);
     /// assert!(zerovec.is_owned());
     /// ```
+    #[cfg(feature = "alloc")]
     pub fn take_first(&mut self) -> Option<T> {
         match core::mem::take(self).into_cow() {
             Cow::Owned(mut vec) => {
@@ -988,6 +1030,7 @@ where
     /// assert_eq!(last, 0x01A5);
     /// assert!(zerovec.is_owned());
     /// ```
+    #[cfg(feature = "alloc")]
     pub fn take_last(&mut self) -> Option<T> {
         match core::mem::take(self).into_cow() {
             Cow::Owned(mut vec) => {
@@ -1008,8 +1051,9 @@ where
     /// Converts the type into a `Cow<'a, [T::ULE]>`, which is
     /// the logical equivalent of this type's internal representation
     #[inline]
+    #[cfg(feature = "alloc")]
     pub fn into_cow(self) -> Cow<'a, [T::ULE]> {
-        let this = mem::ManuallyDrop::new(self);
+        let this = core::mem::ManuallyDrop::new(self);
         if this.is_owned() {
             let vec = unsafe {
                 // safe to call: we know it's owned,
@@ -1026,6 +1070,7 @@ where
     }
 }
 
+#[cfg(feature = "alloc")]
 impl<T: AsULE> FromIterator<T> for ZeroVec<'_, T> {
     /// Creates an owned [`ZeroVec`] from an iterator of values.
     fn from_iter<I>(iter: I) -> Self
@@ -1043,7 +1088,7 @@ impl<T: AsULE> FromIterator<T> for ZeroVec<'_, T> {
 ///
 /// * `$aligned` - The type of an element in its canonical, aligned form, e.g., `char`.
 /// * `$convert` - A const function that converts an `$aligned` into its unaligned equivalent, e.g.,
-///                 `const fn from_aligned(a: CanonicalType) -> CanonicalType::ULE`.
+///   const fn from_aligned(a: CanonicalType) -> CanonicalType::ULE`.
 /// * `$x` - The elements that the `ZeroSlice` will hold.
 ///
 /// # Examples
@@ -1075,16 +1120,12 @@ impl<T: AsULE> FromIterator<T> for ZeroVec<'_, T> {
 /// ```
 #[macro_export]
 macro_rules! zeroslice {
-    () => (
+    () => {
         $crate::ZeroSlice::new_empty()
-    );
-    ($aligned:ty; $convert:expr; [$($x:expr),+ $(,)?]) => (
-        $crate::ZeroSlice::<$aligned>::from_ule_slice(
-            {const X: &[<$aligned as $crate::ule::AsULE>::ULE] = &[
-                $($convert($x)),*
-            ]; X}
-        )
-    );
+    };
+    ($aligned:ty; $convert:expr; [$($x:expr),+ $(,)?]) => {
+        $crate::ZeroSlice::<$aligned>::from_ule_slice(const { &[$($convert($x)),*] })
+    };
 }
 
 /// Creates a borrowed `ZeroVec`. Convenience wrapper for `zeroslice!(...).as_zerovec()`. The value

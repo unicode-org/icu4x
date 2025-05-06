@@ -5,9 +5,7 @@
 use crate::SourceDataProvider;
 use icu::collections::codepointtrie::CodePointTrie;
 use icu::properties::props::Script;
-use icu::properties::provider::{
-    ScriptWithExtensionsPropertyV1, ScriptWithExtensionsPropertyV1Marker,
-};
+use icu::properties::provider::{PropertyScriptWithExtensionsV1, ScriptWithExtensionsProperty};
 use icu::properties::script::ScriptWithExt;
 use icu_provider::prelude::*;
 use std::collections::HashSet;
@@ -15,12 +13,12 @@ use std::convert::TryFrom;
 use zerovec::{VarZeroVec, ZeroSlice, ZeroVec};
 
 // implement data provider
-impl DataProvider<ScriptWithExtensionsPropertyV1Marker> for SourceDataProvider {
+impl DataProvider<PropertyScriptWithExtensionsV1> for SourceDataProvider {
     fn load(
         &self,
         req: DataRequest,
-    ) -> Result<DataResponse<ScriptWithExtensionsPropertyV1Marker>, DataError> {
-        self.check_req::<ScriptWithExtensionsPropertyV1Marker>(req)?;
+    ) -> Result<DataResponse<PropertyScriptWithExtensionsV1>, DataError> {
+        self.check_req::<PropertyScriptWithExtensionsV1>(req)?;
         let scx_data = self
             .icuexport()?
             .read_and_parse_toml::<super::uprops_serde::script_extensions::Main>(&format!(
@@ -43,12 +41,17 @@ impl DataProvider<ScriptWithExtensionsPropertyV1Marker> for SourceDataProvider {
         // type of VZV<ZeroSlice<Script>>
         let ule_scx_array_data: Vec<ZeroVec<Script>> = scx_array_data
             .iter()
-            .map(|v| v.iter().map(|i| Script(*i)).collect::<ZeroVec<Script>>())
+            .map(|v| {
+                v.iter()
+                    .copied()
+                    .map(Script::from_icu4c_value)
+                    .collect::<ZeroVec<Script>>()
+            })
             .collect::<Vec<ZeroVec<Script>>>();
         let scx_vzv: VarZeroVec<ZeroSlice<Script>> =
             VarZeroVec::from(ule_scx_array_data.as_slice());
 
-        let data_struct = ScriptWithExtensionsPropertyV1 {
+        let data_struct = ScriptWithExtensionsProperty {
             trie,
             extensions: scx_vzv,
         };
@@ -60,9 +63,7 @@ impl DataProvider<ScriptWithExtensionsPropertyV1Marker> for SourceDataProvider {
     }
 }
 
-impl crate::IterableDataProviderCached<ScriptWithExtensionsPropertyV1Marker>
-    for SourceDataProvider
-{
+impl crate::IterableDataProviderCached<PropertyScriptWithExtensionsV1> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
     }
@@ -229,7 +230,7 @@ mod tests {
 
         // The ICU4J comment for this test says:
         // An unguarded implementation might go into an infinite loop.
-        assert!(!swe.has_script32(0x0640, Script(0xAFFE)));
+        assert!(!swe.has_script32(0x0640, Script::from_icu4c_value(0xAFFE)));
     }
 
     #[test]

@@ -2,10 +2,14 @@
 import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
-// Base enumerator definition
-/** See the [Rust documentation for `IndicSyllabicCategory`](https://docs.rs/icu/latest/icu/properties/props/struct.IndicSyllabicCategory.html) for more information.
-*/
+
+/** 
+ * See the [Rust documentation for `IndicSyllabicCategory`](https://docs.rs/icu/latest/icu/properties/props/struct.IndicSyllabicCategory.html) for more information.
+ */
+
+
 export class IndicSyllabicCategory {
+    
     #value = undefined;
 
     static #values = new Map([
@@ -51,14 +55,14 @@ export class IndicSyllabicCategory {
     static getAllEntries() {
         return IndicSyllabicCategory.#values.entries();
     }
-
-    constructor(value) {
+    
+    #internalConstructor(value) {
         if (arguments.length > 1 && arguments[0] === diplomatRuntime.internalConstructor) {
             // We pass in two internalConstructor arguments to create *new*
             // instances of this type, otherwise the enums are treated as singletons.
             if (arguments[1] === diplomatRuntime.internalConstructor ) {
                 this.#value = arguments[2];
-                return;
+                return this;
             }
             return IndicSyllabicCategory.#objectValues[arguments[1]];
         }
@@ -70,11 +74,15 @@ export class IndicSyllabicCategory {
         let intVal = IndicSyllabicCategory.#values.get(value);
 
         // Nullish check, checks for null or undefined
-        if (intVal == null) {
+        if (intVal != null) {
             return IndicSyllabicCategory.#objectValues[intVal];
         }
 
         throw TypeError(value + " is not a IndicSyllabicCategory and does not correspond to any of its enumerator values.");
+    }
+
+    static fromValue(value) {
+        return new IndicSyllabicCategory(value);
     }
 
     get value() {
@@ -162,8 +170,26 @@ export class IndicSyllabicCategory {
     static VowelIndependent = IndicSyllabicCategory.#objectValues[35];
     static ReorderingKiller = IndicSyllabicCategory.#objectValues[36];
 
-    toInteger() {
-        const result = wasm.icu4x_IndicSyllabicCategory_to_integer_mv1(this.ffiValue);
+    /** 
+     * See the [Rust documentation for `for_char`](https://docs.rs/icu/latest/icu/properties/props/trait.EnumeratedProperty.html#tymethod.for_char) for more information.
+     */
+    static forChar(ch) {
+        const result = wasm.icu4x_IndicSyllabicCategory_for_char_mv1(ch);
+    
+        try {
+            return new IndicSyllabicCategory(diplomatRuntime.internalConstructor, result);
+        }
+        
+        finally {}
+    }
+
+    /** 
+     * Convert to an integer value usable with ICU4C and CodePointMapData
+     *
+     * See the [Rust documentation for `to_icu4c_value`](https://docs.rs/icu/latest/icu/properties/props/struct.IndicSyllabicCategory.html#method.to_icu4c_value) for more information.
+     */
+    toIntegerValue() {
+        const result = wasm.icu4x_IndicSyllabicCategory_to_integer_value_mv1(this.ffiValue);
     
         try {
             return result;
@@ -172,10 +198,15 @@ export class IndicSyllabicCategory {
         finally {}
     }
 
-    static fromInteger(other) {
+    /** 
+     * Convert from an integer value from ICU4C or CodePointMapData
+     *
+     * See the [Rust documentation for `from_icu4c_value`](https://docs.rs/icu/latest/icu/properties/props/struct.IndicSyllabicCategory.html#method.from_icu4c_value) for more information.
+     */
+    static fromIntegerValue(other) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_IndicSyllabicCategory_from_integer_mv1(diplomatReceive.buffer, other);
+        const result = wasm.icu4x_IndicSyllabicCategory_from_integer_value_mv1(diplomatReceive.buffer, other);
     
         try {
             if (!diplomatReceive.resultFlag) {
@@ -187,5 +218,9 @@ export class IndicSyllabicCategory {
         finally {
             diplomatReceive.free();
         }
+    }
+
+    constructor(value) {
+        return this.#internalConstructor(...arguments)
     }
 }

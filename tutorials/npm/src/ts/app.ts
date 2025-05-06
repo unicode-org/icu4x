@@ -1,5 +1,4 @@
-import { DataProvider } from 'icu4x';
-import * as fdf from './fixed-decimal';
+import * as fd from './fixed-decimal';
 import * as dtf from './date-time';
 import * as seg from './segmenter';
 
@@ -8,9 +7,8 @@ import 'bootstrap/js/dist/dropdown';
 import 'bootstrap/js/dist/collapse';
 
 (async function init() {
-    const dataProvider = DataProvider.compiled();
-    fdf.setup(dataProvider);
-    dtf.setup(dataProvider);
-    seg.setup(dataProvider);
+    fd.setup();
+    dtf.setup();
+    seg.setup();
     (document.querySelector("#bigspinner") as HTMLElement).style.display = "none";
 })()

@@ -138,6 +138,7 @@ enum EnumeratedProperty {
     GeneralCategory = 0x1005,
     GraphemeClusterBreak = 0x1012,
     HangulSyllableType = 0x100B,
+    IndicConjunctBreak = 0x101A,
     IndicPositionalCategory = 0x1016,
     IndicSyllabicCategory = 0x1017,
     JoiningGroup = 0x1006,
@@ -227,16 +228,16 @@ impl CodePointSetData {
     ///
     /// - `Script` and `General_Category`: handle these directly using property values parsed via
     ///   [`PropertyParser<GeneralCategory>`] and [`PropertyParser<Script>`]
-    ///    if necessary.
+    ///   if necessary.
     /// - `Script_Extensions`: handle this directly using APIs from [`crate::script::ScriptWithExtensions`]
     /// - `General_Category` mask values: Handle this alongside `General_Category` using [`GeneralCategoryGroup`],
-    ///    using property values parsed via [`PropertyParser<GeneralCategory>`] if necessary
+    ///   using property values parsed via [`PropertyParser<GeneralCategory>`] if necessary
     /// - `Assigned`, `All`, and `ASCII` pseudoproperties: Handle these using their equivalent sets:
     ///    - `Any` can be expressed as the range `[\u{0}-\u{10FFFF}]`
     ///    - `Assigned` can be expressed as the inverse of the set `gc=Cn` (i.e., `\P{gc=Cn}`).
     ///    - `ASCII` can be expressed as the range `[\u{0}-\u{7F}]`
     /// - `General_Category` property values can themselves be treated like properties using a shorthand in ECMA262,
-    ///    simply create the corresponding `GeneralCategory` set.
+    ///   simply create the corresponding `GeneralCategory` set.
     ///
     /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
@@ -357,74 +358,73 @@ impl CodePointSetData {
         })
     }
 
-    icu_provider::gen_any_buffer_data_constructors!(
+    icu_provider::gen_buffer_data_constructors!(
         (prop: &[u8]) -> result: Option<Result<Self, DataError>>,
         functions: [
             new_for_ecma262: skip,
             try_new_for_ecma262_with_buffer_provider,
-            try_new_for_ecma262_with_any_provider,
             try_new_for_ecma262_unstable,
             Self,
         ]
     );
 
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new_for_ecma262)]
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::new_for_ecma262)]
     pub fn try_new_for_ecma262_unstable<P>(
         provider: &P,
         prop: &[u8],
     ) -> Option<Result<Self, DataError>>
     where
         P: ?Sized
-            + DataProvider<AsciiHexDigitV1Marker>
-            + DataProvider<AlphabeticV1Marker>
-            + DataProvider<BidiControlV1Marker>
-            + DataProvider<BidiMirroredV1Marker>
-            + DataProvider<CaseIgnorableV1Marker>
-            + DataProvider<CasedV1Marker>
-            + DataProvider<ChangesWhenCasefoldedV1Marker>
-            + DataProvider<ChangesWhenCasemappedV1Marker>
-            + DataProvider<ChangesWhenLowercasedV1Marker>
-            + DataProvider<ChangesWhenNfkcCasefoldedV1Marker>
-            + DataProvider<ChangesWhenTitlecasedV1Marker>
-            + DataProvider<ChangesWhenUppercasedV1Marker>
-            + DataProvider<DashV1Marker>
-            + DataProvider<DefaultIgnorableCodePointV1Marker>
-            + DataProvider<DeprecatedV1Marker>
-            + DataProvider<DiacriticV1Marker>
-            + DataProvider<EmojiV1Marker>
-            + DataProvider<EmojiComponentV1Marker>
-            + DataProvider<EmojiModifierV1Marker>
-            + DataProvider<EmojiModifierBaseV1Marker>
-            + DataProvider<EmojiPresentationV1Marker>
-            + DataProvider<ExtendedPictographicV1Marker>
-            + DataProvider<ExtenderV1Marker>
-            + DataProvider<GraphemeBaseV1Marker>
-            + DataProvider<GraphemeExtendV1Marker>
-            + DataProvider<HexDigitV1Marker>
-            + DataProvider<IdsBinaryOperatorV1Marker>
-            + DataProvider<IdsTrinaryOperatorV1Marker>
-            + DataProvider<IdContinueV1Marker>
-            + DataProvider<IdStartV1Marker>
-            + DataProvider<IdeographicV1Marker>
-            + DataProvider<JoinControlV1Marker>
-            + DataProvider<LogicalOrderExceptionV1Marker>
-            + DataProvider<LowercaseV1Marker>
-            + DataProvider<MathV1Marker>
-            + DataProvider<NoncharacterCodePointV1Marker>
-            + DataProvider<PatternSyntaxV1Marker>
-            + DataProvider<PatternWhiteSpaceV1Marker>
-            + DataProvider<QuotationMarkV1Marker>
-            + DataProvider<RadicalV1Marker>
-            + DataProvider<RegionalIndicatorV1Marker>
-            + DataProvider<SentenceTerminalV1Marker>
-            + DataProvider<SoftDottedV1Marker>
-            + DataProvider<TerminalPunctuationV1Marker>
-            + DataProvider<UnifiedIdeographV1Marker>
-            + DataProvider<UppercaseV1Marker>
-            + DataProvider<VariationSelectorV1Marker>
-            + DataProvider<WhiteSpaceV1Marker>
-            + DataProvider<XidContinueV1Marker>
-            + DataProvider<XidStartV1Marker>,
+            + DataProvider<PropertyBinaryAsciiHexDigitV1>
+            + DataProvider<PropertyBinaryAlphabeticV1>
+            + DataProvider<PropertyBinaryBidiControlV1>
+            + DataProvider<PropertyBinaryBidiMirroredV1>
+            + DataProvider<PropertyBinaryCaseIgnorableV1>
+            + DataProvider<PropertyBinaryCasedV1>
+            + DataProvider<PropertyBinaryChangesWhenCasefoldedV1>
+            + DataProvider<PropertyBinaryChangesWhenCasemappedV1>
+            + DataProvider<PropertyBinaryChangesWhenLowercasedV1>
+            + DataProvider<PropertyBinaryChangesWhenNfkcCasefoldedV1>
+            + DataProvider<PropertyBinaryChangesWhenTitlecasedV1>
+            + DataProvider<PropertyBinaryChangesWhenUppercasedV1>
+            + DataProvider<PropertyBinaryDashV1>
+            + DataProvider<PropertyBinaryDefaultIgnorableCodePointV1>
+            + DataProvider<PropertyBinaryDeprecatedV1>
+            + DataProvider<PropertyBinaryDiacriticV1>
+            + DataProvider<PropertyBinaryEmojiV1>
+            + DataProvider<PropertyBinaryEmojiComponentV1>
+            + DataProvider<PropertyBinaryEmojiModifierV1>
+            + DataProvider<PropertyBinaryEmojiModifierBaseV1>
+            + DataProvider<PropertyBinaryEmojiPresentationV1>
+            + DataProvider<PropertyBinaryExtendedPictographicV1>
+            + DataProvider<PropertyBinaryExtenderV1>
+            + DataProvider<PropertyBinaryGraphemeBaseV1>
+            + DataProvider<PropertyBinaryGraphemeExtendV1>
+            + DataProvider<PropertyBinaryHexDigitV1>
+            + DataProvider<PropertyBinaryIdsBinaryOperatorV1>
+            + DataProvider<PropertyBinaryIdsTrinaryOperatorV1>
+            + DataProvider<PropertyBinaryIdContinueV1>
+            + DataProvider<PropertyBinaryIdStartV1>
+            + DataProvider<PropertyBinaryIdeographicV1>
+            + DataProvider<PropertyBinaryJoinControlV1>
+            + DataProvider<PropertyBinaryLogicalOrderExceptionV1>
+            + DataProvider<PropertyBinaryLowercaseV1>
+            + DataProvider<PropertyBinaryMathV1>
+            + DataProvider<PropertyBinaryNoncharacterCodePointV1>
+            + DataProvider<PropertyBinaryPatternSyntaxV1>
+            + DataProvider<PropertyBinaryPatternWhiteSpaceV1>
+            + DataProvider<PropertyBinaryQuotationMarkV1>
+            + DataProvider<PropertyBinaryRadicalV1>
+            + DataProvider<PropertyBinaryRegionalIndicatorV1>
+            + DataProvider<PropertyBinarySentenceTerminalV1>
+            + DataProvider<PropertyBinarySoftDottedV1>
+            + DataProvider<PropertyBinaryTerminalPunctuationV1>
+            + DataProvider<PropertyBinaryUnifiedIdeographV1>
+            + DataProvider<PropertyBinaryUppercaseV1>
+            + DataProvider<PropertyBinaryVariationSelectorV1>
+            + DataProvider<PropertyBinaryWhiteSpaceV1>
+            + DataProvider<PropertyBinaryXidContinueV1>
+            + DataProvider<PropertyBinaryXidStartV1>,
     {
         use crate::props::*;
         Some(match prop {

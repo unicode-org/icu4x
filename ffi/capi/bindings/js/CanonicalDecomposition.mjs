@@ -6,17 +6,19 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
-/** The raw (non-recursive) canonical decomposition operation.
-*
-*Callers should generally use DecomposingNormalizer unless they specifically need raw composition operations
-*
-*See the [Rust documentation for `CanonicalDecomposition`](https://docs.rs/icu/latest/icu/normalizer/properties/struct.CanonicalDecomposition.html) for more information.
-*/
+/** 
+ * The raw (non-recursive) canonical decomposition operation.
+ *
+ * Callers should generally use DecomposingNormalizer unless they specifically need raw composition operations
+ *
+ * See the [Rust documentation for `CanonicalDecomposition`](https://docs.rs/icu/latest/icu/normalizer/properties/struct.CanonicalDecomposition.html) for more information.
+ */
 const CanonicalDecomposition_box_destroy_registry = new FinalizationRegistry((ptr) => {
     wasm.icu4x_CanonicalDecomposition_destroy_mv1(ptr);
 });
 
 export class CanonicalDecomposition {
+    
     // Internal ptr reference:
     #ptr = null;
 
@@ -24,7 +26,7 @@ export class CanonicalDecomposition {
     // Since JS won't garbage collect until there are no incoming edges.
     #selfEdge = [];
     
-    constructor(symbol, ptr, selfEdge) {
+    #internalConstructor(symbol, ptr, selfEdge) {
         if (symbol !== diplomatRuntime.internalConstructor) {
             console.error("CanonicalDecomposition is an Opaque type. You cannot call its constructor.");
             return;
@@ -37,16 +39,37 @@ export class CanonicalDecomposition {
         if (this.#selfEdge.length === 0) {
             CanonicalDecomposition_box_destroy_registry.register(this, this.#ptr);
         }
+        
+        return this;
     }
-
     get ffiValue() {
         return this.#ptr;
     }
 
-    static create(provider) {
+    /** 
+     * Construct a new CanonicalDecomposition instance for NFC using compiled data.
+     *
+     * See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/normalizer/properties/struct.CanonicalDecomposition.html#method.new) for more information.
+     */
+    #defaultConstructor() {
+        const result = wasm.icu4x_CanonicalDecomposition_create_mv1();
+    
+        try {
+            return new CanonicalDecomposition(diplomatRuntime.internalConstructor, result, []);
+        }
+        
+        finally {}
+    }
+
+    /** 
+     * Construct a new CanonicalDecomposition instance for NFC using a particular data source.
+     *
+     * See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/normalizer/properties/struct.CanonicalDecomposition.html#method.new) for more information.
+     */
+    static createWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_CanonicalDecomposition_create_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_CanonicalDecomposition_create_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {
@@ -61,6 +84,11 @@ export class CanonicalDecomposition {
         }
     }
 
+    /** 
+     * Performs non-recursive canonical decomposition (including for Hangul).
+     *
+     * See the [Rust documentation for `decompose`](https://docs.rs/icu/latest/icu/normalizer/properties/struct.CanonicalDecompositionBorrowed.html#method.decompose) for more information.
+     */
     decompose(c) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 8, 4, false);
         
@@ -72,6 +100,16 @@ export class CanonicalDecomposition {
         
         finally {
             diplomatReceive.free();
+        }
+    }
+
+    constructor() {
+        if (arguments[0] === diplomatRuntime.exposeConstructor) {
+            return this.#internalConstructor(...Array.prototype.slice.call(arguments, 1));
+        } else if (arguments[0] === diplomatRuntime.internalConstructor) {
+            return this.#internalConstructor(...arguments);
+        } else {
+            return this.#defaultConstructor(...arguments);
         }
     }
 }

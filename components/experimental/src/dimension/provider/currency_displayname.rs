@@ -22,19 +22,24 @@ use icu_provider::prelude::*;
 /// </div>
 pub use crate::provider::Baked;
 
-/// Currency Extended V1 data struct.
-#[icu_provider::data_struct(marker(
-    CurrencyDisplaynameV1Marker,
-    "currency/displayname@1",
+icu_provider::data_marker!(
+    /// `CurrencyDisplaynameV1`
+    CurrencyDisplaynameV1,
+    CurrencyDisplayname<'static>,
+    #[cfg(feature = "datagen")]
     attributes_domain = "currency",
-))]
-#[derive(Debug, Clone, Default, PartialEq)]
+);
+
+/// Currency Extended  data struct.
+#[derive(Debug, Clone, Default, PartialEq, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_experimental::dimension::provider::currency_displayname))]
 #[yoke(prove_covariance_manually)]
-pub struct CurrencyDisplaynameV1<'data> {
+pub struct CurrencyDisplayname<'data> {
     /// The display name for the currency.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub display_name: Cow<'data, str>,
 }
+
+icu_provider::data_struct!(CurrencyDisplayname<'_>, #[cfg(feature = "datagen")]);

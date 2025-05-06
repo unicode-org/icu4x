@@ -1,5 +1,11 @@
-/** For internal Diplomat use when constructing opaques or structs. */
+/** For internal Diplomat use when constructing opaques or out structs.
+ * This is for when we're handling items that we don't want the user to touch, like an structure that's only meant to be output, or de-referencing a pointer we're handed from WASM.
+ */
 export const internalConstructor = Symbol("constructor");
+/** For internal Diplomat use when accessing a from-fields/from-value constructor that's been overridden by a default constructor.
+ * If we want to pass in arguments without also passing in internalConstructor to avoid triggering some logic we don't want, we use exposeConstructor.
+ */
+export const exposeConstructor = Symbol("exposeConstructor");
 
 export function readString8(wasm, ptr, len) {
     const buf = new Uint8Array(wasm.memory.buffer, ptr, len);
@@ -104,11 +110,11 @@ export function writeOptionToArrayBuffer(arrayBuffer, offset, jsValue, size, ali
 * Calls writeToArrayBufferCallback(arrayBuffer, offset, jsValue) for non-null jsValues
 * 
 * This array will have size<T>/align<T> elements for the actual T, then one element
-* for the is_ok bool, and then align<T> - 1 elements for padding if `needsPaddingFields`` is set.
+* for the is_ok bool, and then align<T> - 1 elements for padding.
 * 
 * See wasm_abi_quirks.md's section on Unions for understanding this ABI.
 */
-export function optionToArgsForCalling(jsValue, size, align, needsPaddingFields, writeToArrayBufferCallback) {
+export function optionToArgsForCalling(jsValue, size, align, writeToArrayBufferCallback) {
     let args;
     // perform a nullish check, not a null check,
     // we want identical behavior for undefined
@@ -134,8 +140,35 @@ export function optionToArgsForCalling(jsValue, size, align, needsPaddingFields,
         args.push(0);
     }
 
-    args = args.concat(maybePaddingFields(needsPaddingFields, size / align));
+    // Unconditionally add padding
+    args = args.concat(Array(align - 1).fill(0));
     return args;
+}
+
+export function optionToBufferForCalling(wasm, jsValue, size, align, allocator, writeToArrayBufferCallback) {
+    let buf = DiplomatBuf.struct(wasm, size, align);
+
+    
+    let buffer;
+    // Add 1 to the size since we're also accounting for the 0 or 1 is_ok field:
+    if (align == 8) {
+        buffer = new BigUint64Array(wasm.memory.buffer, buf, size / align + 1);
+    } else if (align == 4) {
+        buffer = new Uint32Array(wasm.memory.buffer, buf, size / align + 1);
+    } else if (align == 2) {
+        buffer = new Uint16Array(wasm.memory.buffer, buf, size / align + 1);
+    } else {
+        buffer = new Uint8Array(wasm.memory.buffer, buf, size / align + 1);
+    }
+
+    buffer.fill(0);
+    
+    if (jsValue != null) {
+        writeToArrayBufferCallback(buffer.buffer, 0, jsValue);
+        buffer[buffer.length - 1] = 1;
+    }
+    
+    allocator.alloc(buf);
 }
 
 
@@ -199,6 +232,18 @@ export class DiplomatBuf {
     return new DiplomatBuf(ptr, string.length, () => wasm.diplomat_free(ptr, byteLength, 2));
     }
 
+    static sliceWrapper = (wasm, buf) => {
+        const ptr = wasm.diplomat_alloc(8, 4);
+        let dst = new Uint32Array(wasm.memory.buffer, ptr, 2);
+
+        dst[0] = buf.ptr;
+        dst[1] = buf.size;
+        return new DiplomatBuf(ptr, 8, () => {
+            wasm.diplomat_free(ptr, 8, 4);
+            buf.free();
+        });
+    }
+
     static slice = (wasm, list, rustType) => {
     const elementSize = rustType === "u8" || rustType === "i8" || rustType === "boolean" ? 1 :
         rustType === "u16" || rustType === "i16" ? 2 :
@@ -251,6 +296,14 @@ export class DiplomatBuf {
             for (let i = 0; i < stringsAlloc.length; i++) {
                 stringsAlloc[i].free();
             }
+        });
+    }
+
+    static struct = (wasm, size, align) => {
+        const ptr = wasm.diplomat_alloc(size, align);
+
+        return new DiplomatBuf(ptr, size, () => {
+            wasm.diplomat_free(ptr, size, align);
         });
     }
 
@@ -544,9 +597,9 @@ export class CleanupArena {
      * @param {Array} edgeArrays
      * @returns {CleanupArena}
      */
-    createWith(...edgeArrays) {
+    static createWith(...edgeArrays) {
         let self = new CleanupArena();
-        for (edgeArray of edgeArrays) {
+        for (let edgeArray of edgeArrays) {
             if (edgeArray != null) {
                 edgeArray.push(self);
             }
@@ -562,7 +615,7 @@ export class CleanupArena {
      * @param {Array} edgeArrays
      * @returns {DiplomatBuf}
      */
-    maybeCreateWith(functionCleanupArena, ...edgeArrays) {
+    static maybeCreateWith(functionCleanupArena, ...edgeArrays) {
         if (edgeArrays.length > 0) {
             return CleanupArena.createWith(...edgeArrays);
         } else {

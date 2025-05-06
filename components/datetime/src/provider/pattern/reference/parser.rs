@@ -8,7 +8,7 @@ use super::{
 };
 #[cfg(test)]
 use super::{GenericPattern, Pattern};
-use crate::fields::{self, Field, FieldLength, FieldSymbol, TimeZone};
+use crate::provider::fields::{self, Field, FieldLength, FieldSymbol, TimeZone};
 use alloc::string::String;
 use alloc::vec;
 use alloc::vec::Vec;
@@ -393,7 +393,7 @@ impl<'p> Parser<'p> {
 mod tests {
     use super::super::super::reference::Pattern;
     use super::*;
-    use crate::fields::{self, FieldLength};
+    use crate::provider::fields::{self, FieldLength};
 
     #[test]
     fn pattern_parse_simple() {
@@ -436,7 +436,7 @@ mod tests {
                     ':'.into(),
                     (FieldSymbol::Minute, FieldLength::Two).into(),
                     ':'.into(),
-                    (fields::DecimalSecond::SecondF2.into(), FieldLength::Two).into(),
+                    (fields::DecimalSecond::Subsecond2.into(), FieldLength::Two).into(),
                 ],
             ),
         ];
@@ -641,11 +641,11 @@ mod tests {
             ),
             (
                 "s.SS",
-                vec![(fields::DecimalSecond::SecondF2.into(), FieldLength::One).into()],
+                vec![(fields::DecimalSecond::Subsecond2.into(), FieldLength::One).into()],
             ),
             (
                 "sSS",
-                vec![(fields::DecimalSecond::SecondF2.into(), FieldLength::One).into()],
+                vec![(fields::DecimalSecond::Subsecond2.into(), FieldLength::One).into()],
             ),
             (
                 "s.. z",
@@ -664,7 +664,7 @@ mod tests {
             (
                 "s.SSz",
                 vec![
-                    (fields::DecimalSecond::SecondF2.into(), FieldLength::One).into(),
+                    (fields::DecimalSecond::Subsecond2.into(), FieldLength::One).into(),
                     (
                         fields::TimeZone::SpecificNonLocation.into(),
                         FieldLength::One,
@@ -675,7 +675,7 @@ mod tests {
             (
                 "sSSz",
                 vec![
-                    (fields::DecimalSecond::SecondF2.into(), FieldLength::One).into(),
+                    (fields::DecimalSecond::Subsecond2.into(), FieldLength::One).into(),
                     (
                         fields::TimeZone::SpecificNonLocation.into(),
                         FieldLength::One,
@@ -686,14 +686,14 @@ mod tests {
             (
                 "s.SSss",
                 vec![
-                    (fields::DecimalSecond::SecondF2.into(), FieldLength::One).into(),
+                    (fields::DecimalSecond::Subsecond2.into(), FieldLength::One).into(),
                     (fields::Second::Second.into(), FieldLength::Two).into(),
                 ],
             ),
             (
                 "sSSss",
                 vec![
-                    (fields::DecimalSecond::SecondF2.into(), FieldLength::One).into(),
+                    (fields::DecimalSecond::Subsecond2.into(), FieldLength::One).into(),
                     (fields::Second::Second.into(), FieldLength::Two).into(),
                 ],
             ),

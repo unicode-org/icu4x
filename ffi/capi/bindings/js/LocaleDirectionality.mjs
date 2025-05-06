@@ -3,18 +3,19 @@ import { DataError } from "./DataError.mjs"
 import { DataProvider } from "./DataProvider.mjs"
 import { Locale } from "./Locale.mjs"
 import { LocaleDirection } from "./LocaleDirection.mjs"
-import { LocaleExpander } from "./LocaleExpander.mjs"
 import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
-/** See the [Rust documentation for `LocaleDirectionality`](https://docs.rs/icu/latest/icu/locale/struct.LocaleDirectionality.html) for more information.
-*/
+/** 
+ * See the [Rust documentation for `LocaleDirectionality`](https://docs.rs/icu/latest/icu/locale/struct.LocaleDirectionality.html) for more information.
+ */
 const LocaleDirectionality_box_destroy_registry = new FinalizationRegistry((ptr) => {
     wasm.icu4x_LocaleDirectionality_destroy_mv1(ptr);
 });
 
 export class LocaleDirectionality {
+    
     // Internal ptr reference:
     #ptr = null;
 
@@ -22,7 +23,7 @@ export class LocaleDirectionality {
     // Since JS won't garbage collect until there are no incoming edges.
     #selfEdge = [];
     
-    constructor(symbol, ptr, selfEdge) {
+    #internalConstructor(symbol, ptr, selfEdge) {
         if (symbol !== diplomatRuntime.internalConstructor) {
             console.error("LocaleDirectionality is an Opaque type. You cannot call its constructor.");
             return;
@@ -35,16 +36,37 @@ export class LocaleDirectionality {
         if (this.#selfEdge.length === 0) {
             LocaleDirectionality_box_destroy_registry.register(this, this.#ptr);
         }
+        
+        return this;
     }
-
     get ffiValue() {
         return this.#ptr;
     }
 
-    static create(provider) {
+    /** 
+     * Construct a new LocaleDirectionality instance using compiled data.
+     *
+     * See the [Rust documentation for `new_common`](https://docs.rs/icu/latest/icu/locale/struct.LocaleDirectionality.html#method.new_common) for more information.
+     */
+    #defaultConstructor() {
+        const result = wasm.icu4x_LocaleDirectionality_create_common_mv1();
+    
+        try {
+            return new LocaleDirectionality(diplomatRuntime.internalConstructor, result, []);
+        }
+        
+        finally {}
+    }
+
+    /** 
+     * Construct a new LocaleDirectionality instance using a particular data source.
+     *
+     * See the [Rust documentation for `new_common`](https://docs.rs/icu/latest/icu/locale/struct.LocaleDirectionality.html#method.new_common) for more information.
+     */
+    static createCommonWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_LocaleDirectionality_create_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_LocaleDirectionality_create_common_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {
@@ -59,10 +81,30 @@ export class LocaleDirectionality {
         }
     }
 
-    static createWithExpander(provider, expander) {
+    /** 
+     * Construct a new LocaleDirectionality instance using compiled data.
+     *
+     * See the [Rust documentation for `new_extended`](https://docs.rs/icu/latest/icu/locale/struct.LocaleDirectionality.html#method.new_extended) for more information.
+     */
+    static createExtended() {
+        const result = wasm.icu4x_LocaleDirectionality_create_extended_mv1();
+    
+        try {
+            return new LocaleDirectionality(diplomatRuntime.internalConstructor, result, []);
+        }
+        
+        finally {}
+    }
+
+    /** 
+     * Construct a new LocaleDirectionality instance using a particular data source.
+     *
+     * See the [Rust documentation for `new_extended`](https://docs.rs/icu/latest/icu/locale/struct.LocaleDirectionality.html#method.new_extended) for more information.
+     */
+    static createExtendedWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_LocaleDirectionality_create_with_expander_mv1(diplomatReceive.buffer, provider.ffiValue, expander.ffiValue);
+        const result = wasm.icu4x_LocaleDirectionality_create_extended_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {
@@ -77,6 +119,9 @@ export class LocaleDirectionality {
         }
     }
 
+    /** 
+     * See the [Rust documentation for `get`](https://docs.rs/icu/latest/icu/locale/struct.LocaleDirectionality.html#method.get) for more information.
+     */
     get(locale) {
         const result = wasm.icu4x_LocaleDirectionality_get_mv1(this.ffiValue, locale.ffiValue);
     
@@ -87,6 +132,9 @@ export class LocaleDirectionality {
         finally {}
     }
 
+    /** 
+     * See the [Rust documentation for `is_left_to_right`](https://docs.rs/icu/latest/icu/locale/struct.LocaleDirectionality.html#method.is_left_to_right) for more information.
+     */
     isLeftToRight(locale) {
         const result = wasm.icu4x_LocaleDirectionality_is_left_to_right_mv1(this.ffiValue, locale.ffiValue);
     
@@ -97,6 +145,9 @@ export class LocaleDirectionality {
         finally {}
     }
 
+    /** 
+     * See the [Rust documentation for `is_right_to_left`](https://docs.rs/icu/latest/icu/locale/struct.LocaleDirectionality.html#method.is_right_to_left) for more information.
+     */
     isRightToLeft(locale) {
         const result = wasm.icu4x_LocaleDirectionality_is_right_to_left_mv1(this.ffiValue, locale.ffiValue);
     
@@ -105,5 +156,15 @@ export class LocaleDirectionality {
         }
         
         finally {}
+    }
+
+    constructor() {
+        if (arguments[0] === diplomatRuntime.exposeConstructor) {
+            return this.#internalConstructor(...Array.prototype.slice.call(arguments, 1));
+        } else if (arguments[0] === diplomatRuntime.internalConstructor) {
+            return this.#internalConstructor(...arguments);
+        } else {
+            return this.#defaultConstructor(...arguments);
+        }
     }
 }

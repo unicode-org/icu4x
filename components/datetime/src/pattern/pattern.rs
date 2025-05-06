@@ -24,7 +24,7 @@ size_test!(DateTimePattern, date_time_pattern_size, 32);
 ///
 /// Things you can do with one of these:
 ///
-/// 1. Use it to directly format a datetime via [`TypedDateTimeNames`]
+/// 1. Use it to directly format a datetime via [`FixedCalendarDateTimeNames`]
 /// 2. Convert it to a string pattern via [`Writeable`]
 /// 3. Get the resolved components
 #[doc = date_time_pattern_size!()]
@@ -35,11 +35,11 @@ size_test!(DateTimePattern, date_time_pattern_size, 32);
 /// then check the resolved components:
 ///
 /// ```
-/// use icu::calendar::Date;
 /// use icu::calendar::Gregorian;
-/// use icu::datetime::fields::components;
 /// use icu::datetime::fieldsets::YMD;
+/// use icu::datetime::input::Date;
 /// use icu::datetime::pattern::DateTimePattern;
+/// use icu::datetime::provider::fields::components;
 /// use icu::datetime::FixedCalendarDateTimeFormatter;
 /// use icu::locale::locale;
 /// use writeable::assert_writeable_eq;
@@ -57,11 +57,7 @@ size_test!(DateTimePattern, date_time_pattern_size, 32);
 /// )
 /// .unwrap()
 /// // The pattern can depend on the datetime being formatted.
-/// .format(
-///     &Date::try_new_iso(2024, 1, 1)
-///         .unwrap()
-///         .to_calendar(Gregorian),
-/// )
+/// .format(&Date::try_new_gregorian(2024, 1, 1).unwrap())
 /// .pattern();
 /// assert_writeable_eq!(data_pattern, pattern_str);
 /// assert_eq!(custom_pattern, data_pattern);
@@ -75,9 +71,35 @@ size_test!(DateTimePattern, date_time_pattern_size, 32);
 /// assert_eq!(actual_components_bag, expected_components_bag);
 /// ```
 ///
+/// Check the hour cycle of a resolved pattern:
+///
+/// ```
+/// use icu::datetime::fieldsets::T;
+/// use icu::datetime::input::Time;
+/// use icu::datetime::pattern::DateTimePattern;
+/// use icu::datetime::provider::fields::components;
+/// use icu::datetime::NoCalendarFormatter;
+/// use icu::locale::locale;
+/// use icu::locale::preferences::extensions::unicode::keywords::HourCycle;
+/// use writeable::assert_writeable_eq;
+///
+/// let pattern =
+///     NoCalendarFormatter::try_new(locale!("es-MX").into(), T::medium())
+///         .unwrap()
+///         // The pattern can depend on the datetime being formatted.
+///         .format(&Time::try_new(12, 0, 0, 0).unwrap())
+///         .pattern();
+///
+/// assert_writeable_eq!(pattern, "hh:mm:ss a");
+///
+/// // Get the hour cycle from the resolved components:
+/// let components = components::Bag::from(&pattern);
+/// assert_eq!(components.hour_cycle, Some(HourCycle::H12));
+/// ```
+///
 /// [`DateTimeFormatter`]: crate::DateTimeFormatter
 /// [`FormattedDateTime::pattern`]: crate::FormattedDateTime::pattern
-/// [`TypedDateTimeNames`]: crate::pattern::TypedDateTimeNames
+/// [`FixedCalendarDateTimeNames`]: crate::pattern::FixedCalendarDateTimeNames
 #[derive(Debug)]
 pub struct DateTimePattern {
     pattern: runtime::Pattern<'static>,
@@ -93,17 +115,34 @@ impl DateTimePattern {
         Ok(Self { pattern })
     }
 
-    #[doc(hidden)] // TODO(#4467): Internal API
-    pub fn from_runtime_pattern(pattern: runtime::Pattern<'static>) -> Self {
-        Self { pattern }
-    }
-
     pub(crate) fn iter_items(&self) -> impl Iterator<Item = PatternItem> + '_ {
         self.pattern.items.iter()
     }
 
     pub(crate) fn as_borrowed(&self) -> DateTimePatternBorrowed {
         DateTimePatternBorrowed(&self.pattern)
+    }
+}
+
+impl<'a> From<runtime::Pattern<'a>> for DateTimePattern {
+    fn from(pattern: runtime::Pattern<'a>) -> Self {
+        Self {
+            pattern: pattern.into_owned(),
+        }
+    }
+}
+
+impl<'a> From<runtime::PatternBorrowed<'a>> for DateTimePattern {
+    fn from(pattern: runtime::PatternBorrowed<'a>) -> Self {
+        Self {
+            pattern: pattern.as_pattern().into_owned(),
+        }
+    }
+}
+
+impl From<DateTimePattern> for runtime::Pattern<'_> {
+    fn from(value: DateTimePattern) -> Self {
+        value.pattern
     }
 }
 

@@ -20,16 +20,15 @@
 
       "xx": "-0700",
       "XX": "-0700",
-      "Z":  "-0700",
 
       "xxx": "-07:00",
       "XXX": "-07:00",
+
       "xxxx": "-0700",
       "XXXX": "-0700",
 
-      "XXXXX": "-07:00",
       "xxxxx": "-07:00",
-      "ZZZZZ": "-07:00"
+      "XXXXX": "-07:00"
     }
   },
   {
@@ -97,7 +96,7 @@
       "VVVV": "Тролль",
 
       "O": "GMT",
-      "OOOO": "GMT",
+      "OOOO": "GMT+00:00",
 
       "X": "Z"
     }
@@ -125,7 +124,7 @@
     "expectations": {
       "O": "GMT +৫:৪৫",
       "OOOO": "GMT +০৫:৪৫",
-      "Z": "+0545"
+      "xxxx": "+0545"
     }
   },
   {
@@ -138,11 +137,31 @@
       "v": "שעון ישראל",
       "vvvv": "שעון ישראל",
 
-      "VVV": "יְרוּשָׁלַיִם",
+      "VVV": "ירושלים",
       "VVVV": "שעון ישראל",
 
       "O": "GMT\u200e+3\u200e",
       "OOOO": "GMT\u200e+03:00\u200e"
+    }
+  },
+  {
+    "locale": "en",
+    "datetime": "2008-02-21T12:00:00.000-04:00[America/Argentina/San_Luis]",
+    "expectations": {
+      "z": "GMT-4",
+      "zzzz": "San Luis Standard Time",
+
+      "v": "San Luis Time",
+      "vvvv": "San Luis Time",
+
+      "VVV": "San Luis",
+      "VVVV": "San Luis Time",
+
+      "O": "GMT-4",
+      "OOOO": "GMT-04:00",
+
+      "xxxx": "-0400",
+      "XXXXX": "-04:00"
     }
   },
   {
@@ -161,8 +180,8 @@
       "O": "GMT-7",
       "OOOO": "GMT-07:00",
 
-      "Z": "-0700",
-      "ZZZZZ": "-07:00"
+      "xxxx": "-0700",
+      "XXXXX": "-07:00"
     }
   },
   {
@@ -181,8 +200,8 @@
       "O": "GMT-7",
       "OOOO": "GMT-07:00",
 
-      "Z": "-0700",
-      "ZZZZZ": "-07:00"
+      "xxxx": "-0700",
+      "XXXXX": "-07:00"
     }
   },
   {
@@ -201,8 +220,8 @@
       "O": "GMT+?",
       "OOOO": "GMT+?",
 
-      "Z": "+?",
-      "ZZZZZ": "+?"
+      "xxxx": "+?",
+      "XXXXX": "+?"
     }
   },
   {
@@ -216,13 +235,13 @@
       "vvvv": "Coordinated Universal Time",
 
       "VVV": "Unknown City",
-      "VVVV": "GMT",
+      "VVVV": "GMT+00:00",
 
       "O": "GMT",
-      "OOOO": "GMT",
+      "OOOO": "GMT+00:00",
 
-      "Z": "+0000",
-      "ZZZZZ": "Z"
+      "xxxx": "+0000",
+      "XXXXX": "Z"
     }
   },
   {
@@ -236,13 +255,13 @@
       "vvvv": "Greenwich Mean Time",
 
       "VVV": "Unknown City",
-      "VVVV": "GMT",
+      "VVVV": "GMT+00:00",
 
       "O": "GMT",
-      "OOOO": "GMT",
+      "OOOO": "GMT+00:00",
 
-      "Z": "+0000",
-      "ZZZZZ": "Z"
+      "xxxx": "+0000",
+      "XXXXX": "Z"
     }
   }
 ]

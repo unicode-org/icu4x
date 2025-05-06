@@ -40,9 +40,9 @@ pub enum ParseError {
     TimeRequired,
     #[displaydoc("Invalid character while parsing hour value.")]
     TimeHour,
-    #[displaydoc("Invalid character while parsing minute value.")]
-    TimeMinute,
-    #[displaydoc("Invalid character while parsing second value.")]
+    #[displaydoc("Invalid character while parsing minute/second value in (0, 59] range.")]
+    TimeMinuteSecond,
+    #[displaydoc("Invalid character while parsing second value in (0, 60] range.")]
     TimeSecond,
     #[displaydoc("Invalid character while parsing fraction part value.")]
     FractionPart,
@@ -105,6 +105,8 @@ pub enum ParseError {
     #[displaydoc("Invalid time duration designator.")]
     TimeDurationDesignator,
 }
+
+impl core::error::Error for ParseError {}
 
 impl ParseError {
     pub(crate) fn abrupt_end(location: &'static str) -> Self {

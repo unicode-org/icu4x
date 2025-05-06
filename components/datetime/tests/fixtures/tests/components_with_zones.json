@@ -15,16 +15,16 @@
                     "time_zone_name": "long-generic"
                 },
                 "semantic": {
-                    "fieldSet": ["year", "month", "day", "weekday", "time", "zoneGeneric"],
+                    "dateFields": "YMDE",
                     "length": "long",
-                    "timePrecision": "secondPlus"
-                },
-                "hourCycle": "h23"
+                    "zoneStyle": "GenericShort",
+                    "timePrecision": "second"
+                }
             }
         },
         "output": {
             "values": {
-                "en": "Tuesday, January 21, 2020, 08:25:07 GMT+5"
+                "en-u-hc-h23": "Tuesday, January 21, 2020, 08:25:07 GMT+5"
             }
         }
     },
@@ -44,16 +44,16 @@
                     "time_zone_name": "short-generic"
                 },
                 "semantic": {
-                    "fieldSet": ["year", "month", "day", "weekday", "time", "zoneGeneric"],
+                    "dateFields": "YMDE",
                     "length": "long",
-                    "timePrecision": "secondPlus"
-                },
-                "hourCycle": "h23"
+                    "zoneStyle": "GenericShort",
+                    "timePrecision": "second"
+                }
             }
         },
         "output": {
             "values": {
-                "en": "Tuesday, January 21, 2020, 08:25:07 GMT+5"
+                "en-u-hc-h23": "Tuesday, January 21, 2020, 08:25:07 GMT+5"
             }
         }
     },
@@ -73,16 +73,16 @@
                     "time_zone_name": "short-specific"
                 },
                 "semantic": {
-                    "fieldSet": ["year", "month", "day", "weekday", "time", "zoneSpecific"],
+                    "dateFields": "YMDE",
                     "length": "long",
-                    "timePrecision": "secondPlus"
-                },
-                "hourCycle": "h23"
+                    "zoneStyle": "GenericShort",
+                    "timePrecision": "second"
+                }
             }
         },
         "output": {
             "values": {
-                "en": "Tuesday, January 21, 2020, 08:25:07 GMT+5"
+                "en-u-hc-h23": "Tuesday, January 21, 2020, 08:25:07 GMT+5"
             }
         }
     },
@@ -102,16 +102,16 @@
                     "time_zone_name": "long-specific"
                 },
                 "semantic": {
-                    "fieldSet": ["year", "month", "day", "weekday", "time", "zoneSpecific"],
+                    "dateFields": "YMDE",
                     "length": "long",
-                    "timePrecision": "secondPlus"
-                },
-                "hourCycle": "h23"
+                    "zoneStyle": "GenericShort",
+                    "timePrecision": "second"
+                }
             }
         },
         "output": {
             "values": {
-                "en": "Tuesday, January 21, 2020, 08:25:07 GMT+5"
+                "en-u-hc-h23": "Tuesday, January 21, 2020, 08:25:07 GMT+5"
             }
         }
     },
@@ -131,16 +131,16 @@
                     "time_zone_name": "long-offset"
                 },
                 "semantic": {
-                    "fieldSet": ["year", "month", "day", "weekday", "time", "zoneOffset"],
+                    "dateFields": "YMDE",
                     "length": "long",
-                    "timePrecision": "secondPlus"
-                },
-                "hourCycle": "h23"
+                    "zoneStyle": "LocalizedOffsetShort",
+                    "timePrecision": "second"
+                }
             }
         },
         "output": {
             "values": {
-                "en": "Tuesday, January 21, 2020, 08:25:07 GMT+5"
+                "en-u-hc-h23": "Tuesday, January 21, 2020, 08:25:07 GMT+5"
             }
         }
     },

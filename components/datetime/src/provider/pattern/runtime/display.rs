@@ -8,7 +8,7 @@ use super::{
     super::{GenericPatternItem, PatternItem},
     GenericPattern, Pattern,
 };
-use crate::fields::FieldSymbol;
+use crate::provider::fields::FieldSymbol;
 use alloc::string::String;
 use core::fmt::{self, Write};
 use writeable::{impl_display_with_writeable, Writeable};
@@ -77,10 +77,7 @@ impl Writeable for Pattern<'_> {
                 PatternItem::Field(field) => {
                     dump_buffer_into_formatter(&buffer, formatter)?;
                     buffer.clear();
-                    let ch: char = field.symbol.into();
-                    for _ in 0..field.length.to_len() {
-                        formatter.write_char(ch)?;
-                    }
+                    field.write_to(formatter)?;
                     if let FieldSymbol::DecimalSecond(decimal_second) = field.symbol {
                         formatter.write_char('.')?;
                         for _ in 0..(decimal_second as u8) {

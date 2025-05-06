@@ -2,10 +2,14 @@
 import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
-// Base enumerator definition
-/** See the [Rust documentation for `Length`](https://docs.rs/icu/latest/icu/datetime/options/enum.Length.html) for more information.
-*/
+
+/** 
+ * See the [Rust documentation for `Length`](https://docs.rs/icu/latest/icu/datetime/options/enum.Length.html) for more information.
+ */
+
+
 export class DateTimeLength {
+    
     #value = undefined;
 
     static #values = new Map([
@@ -17,14 +21,14 @@ export class DateTimeLength {
     static getAllEntries() {
         return DateTimeLength.#values.entries();
     }
-
-    constructor(value) {
+    
+    #internalConstructor(value) {
         if (arguments.length > 1 && arguments[0] === diplomatRuntime.internalConstructor) {
             // We pass in two internalConstructor arguments to create *new*
             // instances of this type, otherwise the enums are treated as singletons.
             if (arguments[1] === diplomatRuntime.internalConstructor ) {
                 this.#value = arguments[2];
-                return;
+                return this;
             }
             return DateTimeLength.#objectValues[arguments[1]];
         }
@@ -36,11 +40,15 @@ export class DateTimeLength {
         let intVal = DateTimeLength.#values.get(value);
 
         // Nullish check, checks for null or undefined
-        if (intVal == null) {
+        if (intVal != null) {
             return DateTimeLength.#objectValues[intVal];
         }
 
         throw TypeError(value + " is not a DateTimeLength and does not correspond to any of its enumerator values.");
+    }
+
+    static fromValue(value) {
+        return new DateTimeLength(value);
     }
 
     get value() {
@@ -59,4 +67,8 @@ export class DateTimeLength {
     static Long = DateTimeLength.#objectValues[0];
     static Medium = DateTimeLength.#objectValues[1];
     static Short = DateTimeLength.#objectValues[2];
+
+    constructor(value) {
+        return this.#internalConstructor(...arguments)
+    }
 }

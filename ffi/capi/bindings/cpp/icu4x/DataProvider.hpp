@@ -8,6 +8,7 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include <memory>
+#include <functional>
 #include <optional>
 #include "../diplomat_runtime.hpp"
 #include "DataError.hpp"
@@ -18,15 +19,11 @@ namespace icu4x {
 namespace capi {
     extern "C" {
     
-    icu4x::capi::DataProvider* icu4x_DataProvider_compiled_mv1(void);
-    
     typedef struct icu4x_DataProvider_from_fs_mv1_result {union {icu4x::capi::DataProvider* ok; icu4x::capi::DataError err;}; bool is_ok;} icu4x_DataProvider_from_fs_mv1_result;
     icu4x_DataProvider_from_fs_mv1_result icu4x_DataProvider_from_fs_mv1(diplomat::capi::DiplomatStringView path);
     
     typedef struct icu4x_DataProvider_from_byte_slice_mv1_result {union {icu4x::capi::DataProvider* ok; icu4x::capi::DataError err;}; bool is_ok;} icu4x_DataProvider_from_byte_slice_mv1_result;
     icu4x_DataProvider_from_byte_slice_mv1_result icu4x_DataProvider_from_byte_slice_mv1(diplomat::capi::DiplomatU8View blob);
-    
-    icu4x::capi::DataProvider* icu4x_DataProvider_empty_mv1(void);
     
     typedef struct icu4x_DataProvider_fork_by_key_mv1_result {union { icu4x::capi::DataError err;}; bool is_ok;} icu4x_DataProvider_fork_by_key_mv1_result;
     icu4x_DataProvider_fork_by_key_mv1_result icu4x_DataProvider_fork_by_key_mv1(icu4x::capi::DataProvider* self, icu4x::capi::DataProvider* other);
@@ -44,11 +41,6 @@ namespace capi {
 } // namespace capi
 } // namespace
 
-inline std::unique_ptr<icu4x::DataProvider> icu4x::DataProvider::compiled() {
-  auto result = icu4x::capi::icu4x_DataProvider_compiled_mv1();
-  return std::unique_ptr<icu4x::DataProvider>(icu4x::DataProvider::FromFFI(result));
-}
-
 inline diplomat::result<std::unique_ptr<icu4x::DataProvider>, icu4x::DataError> icu4x::DataProvider::from_fs(std::string_view path) {
   auto result = icu4x::capi::icu4x_DataProvider_from_fs_mv1({path.data(), path.size()});
   return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::DataProvider>, icu4x::DataError>(diplomat::Ok<std::unique_ptr<icu4x::DataProvider>>(std::unique_ptr<icu4x::DataProvider>(icu4x::DataProvider::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::DataProvider>, icu4x::DataError>(diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
@@ -57,11 +49,6 @@ inline diplomat::result<std::unique_ptr<icu4x::DataProvider>, icu4x::DataError> 
 inline diplomat::result<std::unique_ptr<icu4x::DataProvider>, icu4x::DataError> icu4x::DataProvider::from_byte_slice(diplomat::span<const uint8_t> blob) {
   auto result = icu4x::capi::icu4x_DataProvider_from_byte_slice_mv1({blob.data(), blob.size()});
   return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::DataProvider>, icu4x::DataError>(diplomat::Ok<std::unique_ptr<icu4x::DataProvider>>(std::unique_ptr<icu4x::DataProvider>(icu4x::DataProvider::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::DataProvider>, icu4x::DataError>(diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
-}
-
-inline std::unique_ptr<icu4x::DataProvider> icu4x::DataProvider::empty() {
-  auto result = icu4x::capi::icu4x_DataProvider_empty_mv1();
-  return std::unique_ptr<icu4x::DataProvider>(icu4x::DataProvider::FromFFI(result));
 }
 
 inline diplomat::result<std::monostate, icu4x::DataError> icu4x::DataProvider::fork_by_key(icu4x::DataProvider& other) {

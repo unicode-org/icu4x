@@ -38,11 +38,11 @@
 //! assert_eq!(date.day, 2);
 //! assert_eq!(time.hour, 8);
 //! assert_eq!(time.minute, 48);
-//! assert_eq!(offset.sign, Sign::Negative);
-//! assert_eq!(offset.hour, 5);
-//! assert_eq!(offset.minute, 0);
-//! assert_eq!(offset.second, 0);
-//! assert_eq!(offset.nanosecond, 0);
+//! assert_eq!(offset.sign(), Sign::Negative);
+//! assert_eq!(offset.hour(), 5);
+//! assert_eq!(offset.minute(), 0);
+//! assert_eq!(offset.second(), None);
+//! assert_eq!(offset.fraction(), None);
 //! assert!(!tz_annotation.critical);
 //! assert_eq!(
 //!     tz_annotation.tz,
@@ -92,11 +92,11 @@
 //! assert_eq!(date.day, 2);
 //! assert_eq!(time.hour, 8);
 //! assert_eq!(time.minute, 48);
-//! assert_eq!(offset.sign, Sign::Negative);
-//! assert_eq!(offset.hour, 0);
-//! assert_eq!(offset.minute, 0);
-//! assert_eq!(offset.second, 0);
-//! assert_eq!(offset.nanosecond, 0);
+//! assert_eq!(offset.sign(), Sign::Negative);
+//! assert_eq!(offset.hour(), 0);
+//! assert_eq!(offset.minute(), 0);
+//! assert_eq!(offset.second(), None);
+//! assert_eq!(offset.fraction(), None);
 //! assert!(!tz_annotation.critical);
 //! assert_eq!(
 //!     tz_annotation.tz,
@@ -148,11 +148,11 @@
 //!
 //! // The offset is `Z`/`-00:00`, so the application can use the rules of
 //! // "America/New_York" to calculate the time for IXDTF string.
-//! assert_eq!(offset.sign, Sign::Negative);
-//! assert_eq!(offset.hour, 0);
-//! assert_eq!(offset.minute, 0);
-//! assert_eq!(offset.second, 0);
-//! assert_eq!(offset.nanosecond, 0);
+//! assert_eq!(offset.sign(), Sign::Negative);
+//! assert_eq!(offset.hour(), 0);
+//! assert_eq!(offset.minute(), 0);
+//! assert_eq!(offset.second(), None);
+//! assert_eq!(offset.fraction(), None);
 //! assert!(tz_annotation.critical);
 //! assert_eq!(
 //!     tz_annotation.tz,
@@ -302,7 +302,7 @@
 //! // resolved by the user.
 //! assert!(tz_annotation.critical);
 //! assert_eq!(tz_annotation.tz, TimeZoneRecord::Name("America/New_York".as_bytes()));
-//! assert_eq!(offset.hour, 1);
+//! assert_eq!(offset.hour(), 1);
 //! ```
 //!
 //! #### Implementing Annotation Handlers
@@ -383,6 +383,7 @@
         clippy::panic,
         clippy::exhaustive_structs,
         clippy::exhaustive_enums,
+        clippy::trivially_copy_pass_by_ref,
         missing_debug_implementations,
     )
 )]

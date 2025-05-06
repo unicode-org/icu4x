@@ -3,13 +3,14 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use icu_calendar::cal::Hebrew;
-use icu_calendar::{Date, DateTime, Time};
+use icu_calendar::Date;
 use icu_datetime::fieldsets::enums::{
     CompositeDateTimeFieldSet, DateAndTimeFieldSet, DateFieldSet,
 };
 use icu_datetime::fieldsets::{self, YMD};
 use icu_datetime::{DateTimeFormatterPreferences, FixedCalendarDateTimeFormatter};
 use icu_locale_core::{locale, Locale};
+use icu_time::{DateTime, Time};
 use writeable::assert_writeable_eq;
 
 const EXPECTED_DATETIME: &[&str] = &[
@@ -23,19 +24,19 @@ const EXPECTED_DATETIME: &[&str] = &[
     "शुक्रवार, 22 दिसंबर 2023, 9:22 pm",
     "December 22, 2023, 9:22:53 PM",
     "22 décembre 2023, 21:22:53",
-    "2023/12/22 21:22:53", // TODO(#5806) "2023年12月22日 21:22:53",
+    "2023年12月22日 21:22:53",
     "22 दिसंबर 2023, 9:22:53 pm",
     "December 22, 2023, 9:22 PM",
     "22 décembre 2023, 21:22",
-    "2023/12/22 21:22", // TODO(#5806) "2023年12月22日 21:22",
+    "2023年12月22日 21:22",
     "22 दिसंबर 2023, 9:22 pm",
     "Dec 22, 2023, 9:22:53 PM",
     "22 déc. 2023, 21:22:53",
-    "2023/12/22 21:22:53", // TODO(#5806) "2023年12月22日 21:22:53",
+    "2023年12月22日 21:22:53",
     "22 दिस॰ 2023, 9:22:53 pm",
     "Dec 22, 2023, 9:22 PM",
     "22 déc. 2023, 21:22",
-    "2023/12/22 21:22", // TODO(#5806) "2023年12月22日 21:22",
+    "2023年12月22日 21:22",
     "22 दिस॰ 2023, 9:22 pm",
     "12/22/23, 9:22:53 PM",
     "22/12/2023 21:22:53",
@@ -54,11 +55,11 @@ const EXPECTED_DATE: &[&str] = &[
     "शुक्रवार, 22 दिसंबर 2023",
     "December 22, 2023",
     "22 décembre 2023",
-    "2023/12/22", // TODO(#5806) "2023年12月22日",
+    "2023年12月22日",
     "22 दिसंबर 2023",
     "Dec 22, 2023",
     "22 déc. 2023",
-    "2023/12/22", // TODO(#5806) "2023年12月22日",
+    "2023年12月22日",
     "22 दिस॰ 2023",
     "12/22/23",
     "22/12/2023",
@@ -68,17 +69,21 @@ const EXPECTED_DATE: &[&str] = &[
 
 #[test]
 fn neo_datetime_lengths() {
-    let datetime = DateTime::try_new_gregorian(2023, 12, 22, 21, 22, 53).unwrap();
+    let datetime = DateTime {
+        date: Date::try_new_gregorian(2023, 12, 22).unwrap(),
+        time: Time::try_new(21, 22, 53, 0).unwrap(),
+    };
     let mut expected_iter = EXPECTED_DATETIME.iter();
+    use icu_datetime::options::TimePrecision::Minute as HM;
     for field_set in [
         DateAndTimeFieldSet::YMDET(fieldsets::YMDET::long()),
-        DateAndTimeFieldSet::YMDET(fieldsets::YMDET::long().hm()),
+        DateAndTimeFieldSet::YMDET(fieldsets::YMDET::long().with_time_precision(HM)),
         DateAndTimeFieldSet::YMDT(fieldsets::YMDT::long()),
-        DateAndTimeFieldSet::YMDT(fieldsets::YMDT::long().hm()),
+        DateAndTimeFieldSet::YMDT(fieldsets::YMDT::long().with_time_precision(HM)),
         DateAndTimeFieldSet::YMDT(fieldsets::YMDT::medium()),
-        DateAndTimeFieldSet::YMDT(fieldsets::YMDT::medium().hm()),
+        DateAndTimeFieldSet::YMDT(fieldsets::YMDT::medium().with_time_precision(HM)),
         DateAndTimeFieldSet::YMDT(fieldsets::YMDT::short()),
-        DateAndTimeFieldSet::YMDT(fieldsets::YMDT::short().hm()),
+        DateAndTimeFieldSet::YMDT(fieldsets::YMDT::short().with_time_precision(HM)),
     ] {
         for locale in [locale!("en"), locale!("fr"), locale!("zh"), locale!("hi")] {
             let prefs = DateTimeFormatterPreferences::from(&locale);
@@ -93,7 +98,10 @@ fn neo_datetime_lengths() {
 
 #[test]
 fn neo_date_lengths() {
-    let datetime = DateTime::try_new_gregorian(2023, 12, 22, 21, 22, 53).unwrap();
+    let datetime = DateTime {
+        date: Date::try_new_gregorian(2023, 12, 22).unwrap(),
+        time: Time::try_new(21, 22, 53, 0).unwrap(),
+    };
     let mut expected_iter = EXPECTED_DATE.iter();
     for field_set in [
         DateFieldSet::YMDE(fieldsets::YMDE::long()),
@@ -169,8 +177,10 @@ fn overlap_patterns() {
 
 #[test]
 fn hebrew_months() {
-    let datetime = DateTime::try_new_iso(2011, 4, 3, 14, 15, 7).unwrap();
-    let datetime = datetime.to_calendar(Hebrew);
+    let datetime = DateTime {
+        date: Date::try_new_iso(2011, 4, 3).unwrap().to_calendar(Hebrew),
+        time: Time::try_new(14, 15, 7, 0).unwrap(),
+    };
     let formatter =
         FixedCalendarDateTimeFormatter::try_new(locale!("en").into(), YMD::medium()).unwrap();
 
@@ -181,7 +191,10 @@ fn hebrew_months() {
 
 #[test]
 fn test_5387() {
-    let datetime = DateTime::try_new_gregorian(2024, 8, 16, 14, 15, 16).unwrap();
+    let datetime = DateTime {
+        date: Date::try_new_gregorian(2024, 8, 16).unwrap(),
+        time: Time::try_new(14, 15, 16, 0).unwrap(),
+    };
     let formatter_auto = FixedCalendarDateTimeFormatter::try_new(
         locale!("en").into(),
         CompositeDateTimeFieldSet::DateTime(DateAndTimeFieldSet::ET(fieldsets::ET::medium())),

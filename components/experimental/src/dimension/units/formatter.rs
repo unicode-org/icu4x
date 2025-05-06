@@ -4,18 +4,16 @@
 
 //! Experimental.
 
-use fixed_decimal::SignedFixedDecimal;
-use icu_decimal::options::FixedDecimalFormatterOptions;
-use icu_decimal::{FixedDecimalFormatter, FixedDecimalFormatterPreferences};
-use icu_locale_core::preferences::{
-    define_preferences, extensions::unicode::keywords::NumberingSystem, prefs_convert,
-};
+use fixed_decimal::Decimal;
+use icu_decimal::options::DecimalFormatterOptions;
+use icu_decimal::{DecimalFormatter, DecimalFormatterPreferences};
+use icu_locale_core::preferences::{define_preferences, prefs_convert};
 use icu_plurals::{PluralRules, PluralRulesPreferences};
 use icu_provider::DataPayload;
 
 use super::format::FormattedUnit;
 use super::options::{UnitsFormatterOptions, Width};
-use crate::dimension::provider::units::UnitsDisplayNameV1Marker;
+use crate::dimension::provider::units::UnitsDisplayNameV1;
 use icu_provider::prelude::*;
 use smallvec::SmallVec;
 
@@ -26,14 +24,15 @@ define_preferences!(
     [Copy]
     UnitsFormatterPreferences,
     {
-        numbering_system: NumberingSystem
+        /// The user's preferred numbering system.
+        ///
+        /// Corresponds to the `-u-nu` in Unicode Locale Identifier.
+        numbering_system: super::super::preferences::NumberingSystem
     }
 );
-prefs_convert!(
-    UnitsFormatterPreferences,
-    FixedDecimalFormatterPreferences,
-    { numbering_system }
-);
+prefs_convert!(UnitsFormatterPreferences, DecimalFormatterPreferences, {
+    numbering_system
+});
 prefs_convert!(UnitsFormatterPreferences, PluralRulesPreferences);
 
 /// A formatter for measurement unit values.
@@ -49,23 +48,22 @@ pub struct UnitsFormatter {
     _options: UnitsFormatterOptions,
 
     // /// Essential data for the units formatter.
-    // essential: DataPayload<UnitsEssentialsV1Marker>,
+    // essential: DataPayload<UnitsEssentialsV1>,
     /// Display name for the units.
-    display_name: DataPayload<UnitsDisplayNameV1Marker>,
+    display_name: DataPayload<UnitsDisplayNameV1>,
 
-    /// A [`FixedDecimalFormatter`] to format the unit value.
-    fixed_decimal_formatter: FixedDecimalFormatter,
+    /// A [`DecimalFormatter`] to format the unit value.
+    decimal_formatter: DecimalFormatter,
 
     /// A [`PluralRules`] to determine the plural category of the unit.
     plural_rules: PluralRules,
 }
 
 impl UnitsFormatter {
-    icu_provider::gen_any_buffer_data_constructors!(
+    icu_provider::gen_buffer_data_constructors!(
         (prefs: UnitsFormatterPreferences, unit: &str, options: super::options::UnitsFormatterOptions) -> error: DataError,
         functions: [
             try_new: skip,
-            try_new_with_any_provider,
             try_new_with_buffer_provider,
             try_new_unstable,
             Self
@@ -97,12 +95,9 @@ impl UnitsFormatter {
         unit: &str,
         options: super::options::UnitsFormatterOptions,
     ) -> Result<Self, DataError> {
-        let locale =
-            DataLocale::from_preferences_locale::<UnitsDisplayNameV1Marker>(prefs.locale_prefs);
-        let fixed_decimal_formatter = FixedDecimalFormatter::try_new(
-            (&prefs).into(),
-            FixedDecimalFormatterOptions::default(),
-        )?;
+        let locale = UnitsDisplayNameV1::make_locale(prefs.locale_preferences);
+        let decimal_formatter =
+            DecimalFormatter::try_new((&prefs).into(), DecimalFormatterOptions::default())?;
 
         let plural_rules = PluralRules::try_new_cardinal((&prefs).into())?;
 
@@ -124,12 +119,12 @@ impl UnitsFormatter {
         Ok(Self {
             _options: options,
             display_name,
-            fixed_decimal_formatter,
+            decimal_formatter,
             plural_rules,
         })
     }
 
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
     pub fn try_new_unstable<D>(
         provider: &D,
         prefs: UnitsFormatterPreferences,
@@ -138,17 +133,16 @@ impl UnitsFormatter {
     ) -> Result<Self, DataError>
     where
         D: ?Sized
-            + DataProvider<super::super::provider::units::UnitsDisplayNameV1Marker>
-            + DataProvider<icu_decimal::provider::DecimalSymbolsV2Marker>
-            + DataProvider<icu_decimal::provider::DecimalDigitsV1Marker>
-            + DataProvider<icu_plurals::provider::CardinalV1Marker>,
+            + DataProvider<super::super::provider::units::UnitsDisplayNameV1>
+            + DataProvider<icu_decimal::provider::DecimalSymbolsV1>
+            + DataProvider<icu_decimal::provider::DecimalDigitsV1>
+            + DataProvider<icu_plurals::provider::PluralsCardinalV1>,
     {
-        let locale =
-            DataLocale::from_preferences_locale::<UnitsDisplayNameV1Marker>(prefs.locale_prefs);
-        let fixed_decimal_formatter = FixedDecimalFormatter::try_new_unstable(
+        let locale = UnitsDisplayNameV1::make_locale(prefs.locale_preferences);
+        let decimal_formatter = DecimalFormatter::try_new_unstable(
             provider,
             (&prefs).into(),
-            FixedDecimalFormatterOptions::default(),
+            DecimalFormatterOptions::default(),
         )?;
 
         let plural_rules = PluralRules::try_new_cardinal_unstable(provider, (&prefs).into())?;
@@ -171,17 +165,17 @@ impl UnitsFormatter {
         Ok(Self {
             _options: options,
             display_name,
-            fixed_decimal_formatter,
+            decimal_formatter,
             plural_rules,
         })
     }
 
-    /// Formats a [`SignedFixedDecimal`] value for the given unit.
-    pub fn format_fixed_decimal<'l>(&'l self, value: &'l SignedFixedDecimal) -> FormattedUnit<'l> {
+    /// Formats a [`Decimal`] value for the given unit.
+    pub fn format_fixed_decimal<'l>(&'l self, value: &'l Decimal) -> FormattedUnit<'l> {
         FormattedUnit {
             value,
             display_name: self.display_name.get(),
-            fixed_decimal_formatter: &self.fixed_decimal_formatter,
+            decimal_formatter: &self.decimal_formatter,
             plural_rules: &self.plural_rules,
         }
     }

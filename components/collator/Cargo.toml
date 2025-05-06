@@ -22,18 +22,19 @@ all-features = true
 displaydoc = { workspace = true }
 icu_collections = { workspace = true }
 icu_normalizer = { workspace = true }
-icu_locale_core = { workspace = true }
+icu_locale_core = { workspace = true, features = ["alloc"] }
 icu_properties = { workspace = true }
-icu_provider = { workspace = true, features = ["macros"] }
+icu_provider = { workspace = true }
 utf8_iter = { workspace = true }
 utf16_iter = { workspace = true }
-smallvec = { workspace = true, features = ["union", "const_generics", "const_new"] }
+smallvec = { workspace = true, features = ["union", "const_generics", "const_new"] } # alloc
 zerovec = { workspace = true }
 
 databake = { workspace = true, optional = true, features = ["derive"] }
 serde = { workspace = true, features = ["derive", "alloc"], optional = true }
 
 icu_collator_data = { workspace = true, optional = true }
+icu_locale = { workspace = true, optional = true }
 
 [dev-dependencies]
 arraystring = { workspace = true }
@@ -48,10 +49,9 @@ criterion = { workspace = true }
 
 [features]
 default = ["compiled_data"]
-std = ["icu_collections/std", "icu_locale_core/std", "icu_normalizer/std", "icu_properties/std", "icu_provider/std"]
 serde = ["dep:serde", "zerovec/serde", "icu_properties/serde", "icu_normalizer/serde", "icu_collections/serde", "icu_provider/serde"]
-datagen = ["serde", "dep:databake", "zerovec/databake", "icu_properties/datagen", "icu_normalizer/datagen", "icu_collections/databake"]
-compiled_data = ["dep:icu_collator_data", "icu_normalizer/compiled_data"]
+datagen = ["serde", "dep:databake", "zerovec/databake", "icu_properties/datagen", "icu_normalizer/datagen", "icu_collections/databake", "icu_provider/export"]
+compiled_data = ["dep:icu_collator_data", "icu_normalizer/compiled_data", "dep:icu_locale", "icu_locale?/compiled_data", "icu_provider/baked"]
 
 [[bench]]
 name = "bench"

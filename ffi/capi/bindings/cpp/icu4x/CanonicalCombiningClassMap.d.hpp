@@ -6,6 +6,7 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include <memory>
+#include <functional>
 #include <optional>
 #include "../diplomat_runtime.hpp"
 
@@ -25,12 +26,34 @@ namespace capi {
 } // namespace
 
 namespace icu4x {
+/**
+ * Lookup of the Canonical_Combining_Class Unicode property
+ *
+ * See the [Rust documentation for `CanonicalCombiningClassMap`](https://docs.rs/icu/latest/icu/normalizer/properties/struct.CanonicalCombiningClassMap.html) for more information.
+ */
 class CanonicalCombiningClassMap {
 public:
 
-  inline static diplomat::result<std::unique_ptr<icu4x::CanonicalCombiningClassMap>, icu4x::DataError> create(const icu4x::DataProvider& provider);
+  /**
+   * Construct a new CanonicalCombiningClassMap instance for NFC using compiled data.
+   *
+   * See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/normalizer/properties/struct.CanonicalCombiningClassMap.html#method.new) for more information.
+   */
+  inline static std::unique_ptr<icu4x::CanonicalCombiningClassMap> create();
 
-  inline uint8_t get(char32_t ch) const;
+  /**
+   * Construct a new CanonicalCombiningClassMap instance for NFC using a particular data source.
+   *
+   * See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/normalizer/properties/struct.CanonicalCombiningClassMap.html#method.new) for more information.
+   */
+  inline static diplomat::result<std::unique_ptr<icu4x::CanonicalCombiningClassMap>, icu4x::DataError> create_with_provider(const icu4x::DataProvider& provider);
+
+  /**
+   * See the [Rust documentation for `get`](https://docs.rs/icu/latest/icu/normalizer/properties/struct.CanonicalCombiningClassMapBorrowed.html#method.get) for more information.
+   *
+   * Additional information: [1](https://docs.rs/icu/latest/icu/properties/props/struct.CanonicalCombiningClass.html)
+   */
+  inline uint8_t operator[](char32_t ch) const;
 
   inline const icu4x::capi::CanonicalCombiningClassMap* AsFFI() const;
   inline icu4x::capi::CanonicalCombiningClassMap* AsFFI();

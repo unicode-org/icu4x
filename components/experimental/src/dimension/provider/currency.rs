@@ -28,6 +28,12 @@ use icu_pattern::DoublePlaceholderPattern;
 /// </div>
 pub use crate::provider::Baked;
 
+icu_provider::data_marker!(
+    /// `CurrencyEssentialsV1`
+    CurrencyEssentialsV1,
+    CurrencyEssentials<'static>
+);
+
 /// This type contains all of the essential data for currency formatting.
 ///
 /// <div class="stab unstable">
@@ -35,13 +41,12 @@ pub use crate::provider::Baked;
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[icu_provider::data_struct(CurrencyEssentialsV1Marker = "currency/essentials@1")]
-#[derive(Clone, PartialEq, Debug)]
+#[derive(Clone, PartialEq, Debug, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_experimental::dimension::provider::currency))]
 #[yoke(prove_covariance_manually)]
-pub struct CurrencyEssentialsV1<'data> {
+pub struct CurrencyEssentials<'data> {
     /// A mapping from each currency's ISO code to its associated formatting patterns.
     /// This includes information on which specific pattern to apply as well as the index
     /// of placeholders within the `placeholders` vector.
@@ -82,6 +87,8 @@ pub struct CurrencyEssentialsV1<'data> {
     /// when a specific currency's pattern is not found in the currency patterns map.
     pub default_pattern_config: CurrencyPatternConfig,
 }
+
+icu_provider::data_struct!(CurrencyEssentials<'_>, #[cfg(feature = "datagen")]);
 
 #[zerovec::make_ule(PatternSelectionULE)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]

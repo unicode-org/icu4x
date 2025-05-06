@@ -76,6 +76,26 @@ jobs:
     - name: Check
       run: cargo make ci-job-msrv-${{ matrix.behavior }}
 
+  msrv-utils:
+    runs-on: ubuntu-latest
+    # Set CARGO_HTTP_MULTIPLEXING=false to work around crates.io curl bug:
+    # <https://rust-lang.zulipchat.com/#narrow/stream/246057-t-cargo/topic/timeout.20investigation>
+    env:
+      CARGO_HTTP_MULTIPLEXING: false
+    steps:
+    - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+
+    # Cargo-make boilerplate
+    - name: Install cargo-make
+      uses: taiki-e/install-action@64e4e2f995104968c78bd697b253d55bf557af66 # v2.41.11
+      with:
+        tool: cargo-make@0.37.13
+
+    # No toolchain boilerplate as this runs on MSRV
+
+    # Actual job
+    - name: Check
+      run: cargo make ci-job-msrv-utils
 
   # ci-job-test
   test:
@@ -260,6 +280,11 @@ jobs:
     - name: Show the selected Rust toolchain
       run: rustup show
 
+    # Job-specific dependencies
+    # TODO: Remove on 2025-05-05, when clang-19 is in ubuntu-latest (https://github.com/actions/runner-images/issues/11895)
+    - name: Install LLD and Clang
+      run: sudo apt-get install lld-19 clang-19
+
     # Actual job
     - name: Run `cargo make ci-job-test-c`
       run: cargo make ci-job-test-c
@@ -290,6 +315,11 @@ jobs:
     - name: Show the selected Rust toolchain
       run: rustup show
 
+    # Job-specific dependencies
+    # TODO: Remove on 2025-05-05, when clang-19 is in ubuntu-latest (https://github.com/actions/runner-images/issues/11895)
+    - name: Install LLD
+      run: sudo apt-get install lld-19
+
     # Actual job
     - name: Run `cargo make ci-job-test-js`
       run: cargo make ci-job-test-js
@@ -301,11 +331,6 @@ jobs:
 
     steps:
     - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
-
-    # Software setup/installation for the container
-    - name: Install Rust toolchains
-      run: |
-        rustup toolchain install stable
 
     # Cargo-make boilerplate
     - name: Install cargo-make
@@ -322,7 +347,8 @@ jobs:
     # Job-specific dependencies
     - uses: dart-lang/setup-dart@0a8a0fc875eb934c15d08629302413c671d3f672 # v1.6.5
       with:
-        sdk: 3.4.0-204.0.dev
+        # test latest stable toolchain on nightly cronjob
+        sdk: ${{ github.event_name != 'schedule' && '3.7.0' || 'stable'}}
 
     # Actual job
     - name: Run `cargo make ci-job-test-dart`
@@ -396,7 +422,7 @@ jobs:
 
     # Job-specific dependencies
     - name: Attempt to load cached GN Third-Party Tools
-      uses: actions/cache@0c45773b623bea8c8e75f6c82b208c3cf94ea4f9 # v4.0.2
+      uses: actions/cache@1bd1e32a3bdc45362d1e726936510720a7c30a57 # v4.2.0
       id: gn-third-party-tools-cache
       with:
         path: |

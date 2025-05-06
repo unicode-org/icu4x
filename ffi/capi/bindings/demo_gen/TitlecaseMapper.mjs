@@ -1,39 +1,33 @@
-import { DataProvider } from "icu4x"
 import { Locale } from "icu4x"
 import { TitlecaseMapper } from "icu4x"
 import { TitlecaseOptions } from "icu4x"
-export function titlecaseSegment(s, name, leading_adjustment, trailing_case) {
-    return (function (...args) { return args[0].titlecaseSegment(...args.slice(1)) }).apply(
-        null,
-        [
-            TitlecaseMapper.create.apply(
-                null,
-                [
-                    DataProvider.compiled.apply(
-                        null,
-                        [
-                        ]
-                    )
-                ]
-            ),
-            s,
-            Locale.fromString.apply(
-                null,
-                [
-                    name
-                ]
-            ),
-            (function (...args) {
-                return new TitlecaseOptions({
-                    leadingAdjustment: args[0],
-                    trailingCase: args[1]});
-            }).apply(
-                null,
-                [
-                    leading_adjustment,
-                    trailing_case
-                ]
-            )
-        ]
-    );
+export function titlecaseSegment(s, localeName, optionsLeadingAdjustment, optionsTrailingCase) {
+    
+    let titlecaseMapper = new TitlecaseMapper();
+    
+    let locale = Locale.fromString(localeName);
+    
+    let options = TitlecaseOptions.fromFields({
+        leadingAdjustment: optionsLeadingAdjustment,
+        trailingCase: optionsTrailingCase
+    });
+    
+    let out = titlecaseMapper.titlecaseSegment(s,locale,options);
+    
+
+    return out;
+}
+export function titlecaseSegmentWithCompiledData(s, localeName, optionsLeadingAdjustment, optionsTrailingCase) {
+    
+    let locale = Locale.fromString(localeName);
+    
+    let options = TitlecaseOptions.fromFields({
+        leadingAdjustment: optionsLeadingAdjustment,
+        trailingCase: optionsTrailingCase
+    });
+    
+    let out = TitlecaseMapper.titlecaseSegmentWithCompiledData(s,locale,options);
+    
+
+    return out;
 }

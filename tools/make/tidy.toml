@@ -265,3 +265,35 @@ description = "Run the dependency checker"
 category = "ICU4X Development"
 command = "cargo"
 args = ["run", "--manifest-path", "tools/make/depcheck/Cargo.toml"]
+
+[tasks.codegen]
+description = "Run the codegen tool"
+category = "ICU4X Development"
+command = "cargo"
+args = ["run", "--manifest-path", "tools/make/codegen/Cargo.toml"]
+
+[tasks.codegen-check]
+description = "Check that the codegen is in sync with the output."
+category = "ICU4X Development"
+dependencies = [
+    "codegen"
+]
+script_runner = "@duckscript"
+script = '''
+exit_on_error true
+
+output = exec git status --porcelain=v1
+output_length = length ${output.stdout}
+if greater_than ${output_length} 0
+    msg = array "" ""
+    array_push ${msg} "A generated code file is out-of-sync with its template"
+    array_push ${msg} ""
+    array_push ${msg} "If you modified a template file, please run `cargo make codegen`. If you edited an"
+    array_push ${msg} "output file directly, please update the corresponding template file."
+    array_push ${msg} ""
+    array_push ${msg} "The modified files were:"
+    array_push ${msg} "${output.stdout}"
+    msg = array_join ${msg} "\n"
+    trigger_error ${msg}
+end
+'''

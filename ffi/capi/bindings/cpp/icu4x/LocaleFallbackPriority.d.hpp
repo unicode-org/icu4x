@@ -6,6 +6,7 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include <memory>
+#include <functional>
 #include <optional>
 #include "../diplomat_runtime.hpp"
 
@@ -22,6 +23,11 @@ namespace capi {
 } // namespace
 
 namespace icu4x {
+/**
+ * Priority mode for the ICU4X fallback algorithm.
+ *
+ * See the [Rust documentation for `LocaleFallbackPriority`](https://docs.rs/icu/latest/icu/locale/fallback/enum.LocaleFallbackPriority.html) for more information.
+ */
 class LocaleFallbackPriority {
 public:
   enum Value {

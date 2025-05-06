@@ -8,8 +8,7 @@ use crate::{ParseError, ParserResult};
 
 #[cfg(feature = "duration")]
 use records::DurationParseRecord;
-use records::IxdtfParseRecord;
-use utf8_iter::Utf8CharIndices;
+use records::{IxdtfParseRecord, UtcOffsetRecord};
 
 use self::records::Annotation;
 
@@ -62,9 +61,11 @@ macro_rules! assert_syntax {
 /// assert_eq!(date.day, 2);
 /// assert_eq!(time.hour, 8);
 /// assert_eq!(time.minute, 48);
-/// assert_eq!(offset.sign, Sign::Negative);
-/// assert_eq!(offset.hour, 5);
-/// assert_eq!(offset.minute, 0);
+/// assert_eq!(offset.sign(), Sign::Negative);
+/// assert_eq!(offset.hour(), 5);
+/// assert_eq!(offset.minute(), 0);
+/// assert_eq!(offset.second(), None);
+/// assert_eq!(offset.fraction(), None);
 /// assert!(!tz_annotation.critical);
 /// assert_eq!(
 ///     tz_annotation.tz,
@@ -203,9 +204,9 @@ impl<'a> IxdtfParser<'a> {
     /// assert_eq!(time.hour, 12);
     /// assert_eq!(time.minute, 1);
     /// assert_eq!(time.second, 4);
-    /// assert_eq!(offset.sign, Sign::Negative);
-    /// assert_eq!(offset.hour, 5);
-    /// assert_eq!(offset.minute, 0);
+    /// assert_eq!(offset.sign(), Sign::Negative);
+    /// assert_eq!(offset.hour(), 5);
+    /// assert_eq!(offset.minute(), 0);
     /// assert!(!tz_annotation.critical);
     /// assert_eq!(
     ///     tz_annotation.tz,
@@ -229,6 +230,95 @@ impl<'a> IxdtfParser<'a> {
     }
 }
 
+/// A parser for time zone offset and IANA identifier strings.
+///
+/// ✨ *Enabled with the `timezone` Cargo feature.*
+///
+#[derive(Debug)]
+pub struct TimeZoneParser<'a> {
+    cursor: Cursor<'a>,
+}
+
+impl<'a> TimeZoneParser<'a> {
+    /// Creates a new `TimeZoneParser` from a slice of utf-8 bytes.
+    #[inline]
+    #[must_use]
+    pub fn from_utf8(source: &'a [u8]) -> Self {
+        Self {
+            cursor: Cursor::new(source),
+        }
+    }
+
+    /// Creates a new `TimeZoneParser` from a source `&str`.
+    #[inline]
+    #[must_use]
+    #[allow(clippy::should_implement_trait)]
+    pub fn from_str(source: &'a str) -> Self {
+        Self::from_utf8(source.as_bytes())
+    }
+
+    /// Parse a UTC offset from the provided source.
+    ///
+    /// This method can parse both a minute precision and full
+    /// precision offset.
+    ///
+    /// ## Minute precision offset example
+    ///
+    /// ```rust
+    /// use ixdtf::parsers::{TimeZoneParser, records::Sign};
+    ///
+    /// let offset_src = "-05:00";
+    /// let parse_result = TimeZoneParser::from_str(offset_src).parse_offset().unwrap();
+    /// assert_eq!(parse_result.sign(), Sign::Negative);
+    /// assert_eq!(parse_result.hour(), 5);
+    /// assert_eq!(parse_result.minute(), 0);
+    /// assert_eq!(parse_result.second(), None);
+    /// assert_eq!(parse_result.fraction(), None);
+    /// ```
+    ///
+    /// ## Full precision offset example
+    ///
+    /// ```rust
+    /// use ixdtf::parsers::{TimeZoneParser, records::Sign};
+    ///
+    /// let offset_src = "-05:00:30.123456789";
+    /// let parse_result = TimeZoneParser::from_str(offset_src).parse_offset().unwrap();
+    /// assert_eq!(parse_result.sign(), Sign::Negative);
+    /// assert_eq!(parse_result.hour(), 5);
+    /// assert_eq!(parse_result.minute(), 0);
+    /// assert_eq!(parse_result.second(), Some(30));
+    /// let fraction = parse_result.fraction().unwrap();
+    /// assert_eq!(fraction.to_nanoseconds(), Some(123456789));
+    /// ```
+    #[inline]
+    pub fn parse_offset(&mut self) -> ParserResult<UtcOffsetRecord> {
+        let result = timezone::parse_utc_offset(&mut self.cursor)?;
+        self.cursor.close()?;
+        Ok(result)
+    }
+
+    /// Parse an IANA identifier name.
+    ///
+    ///
+    /// ```rust
+    /// use ixdtf::parsers::{TimeZoneParser, records::Sign};
+    ///
+    /// let iana_identifier = "America/Chicago";
+    /// let parse_result = TimeZoneParser::from_str(iana_identifier).parse_iana_identifier().unwrap();
+    /// assert_eq!(parse_result, iana_identifier.as_bytes());
+    ///
+    /// let iana_identifier = "Europe/Berlin";
+    /// let parse_result = TimeZoneParser::from_str(iana_identifier).parse_iana_identifier().unwrap();
+    /// assert_eq!(parse_result, iana_identifier.as_bytes());
+    /// ```
+    #[inline]
+    pub fn parse_iana_identifier(&mut self) -> ParserResult<&'a [u8]> {
+        let result = timezone::parse_tz_iana_name(&mut self.cursor)?;
+        self.cursor.close()?;
+        Ok(result)
+    }
+}
+
 /// A parser for ISO8601 Duration strings.
 ///
 /// ✨ *Enabled with the `duration` Cargo feature.*
@@ -245,13 +335,13 @@ impl<'a> IxdtfParser<'a> {
 /// let date_duration = result.date.unwrap();
 ///
 /// let (hours, minutes, seconds, fraction) = match result.time {
-///     // Hours variant is defined as { hours: u32, fraction: u64 }
+///     // Hours variant is defined as { hours: u32, fraction: Option<Fraction> }
 ///     Some(TimeDurationRecord::Hours{ hours, fraction }) => (hours, 0, 0, fraction),
-///     // Minutes variant is defined as { hours: u32, minutes: u32, fraction: u64 }
+///     // Minutes variant is defined as { hours: u32, minutes: u32, fraction: Option<Fraction> }
 ///     Some(TimeDurationRecord::Minutes{ hours, minutes, fraction }) => (hours, minutes, 0, fraction),
-///     // Seconds variant is defined as { hours: u32, minutes: u32, seconds: u32, fraction: u32 }
-///     Some(TimeDurationRecord::Seconds{ hours, minutes, seconds, fraction }) => (hours, minutes, seconds, fraction as u64),
-///     None => (0,0,0,0),
+///     // Seconds variant is defined as { hours: u32, minutes: u32, seconds: u32, fraction: Option<Fraction> }
+///     Some(TimeDurationRecord::Seconds{ hours, minutes, seconds, fraction }) => (hours, minutes, seconds, fraction),
+///     None => (0,0,0, None),
 /// };
 ///
 /// assert_eq!(result.sign, Sign::Positive);
@@ -262,7 +352,7 @@ impl<'a> IxdtfParser<'a> {
 /// assert_eq!(hours, 2);
 /// assert_eq!(minutes, 10);
 /// assert_eq!(seconds, 30);
-/// assert_eq!(fraction, 0);
+/// assert_eq!(fraction, None);
 /// ```
 #[cfg(feature = "duration")]
 #[derive(Debug)]
@@ -319,19 +409,19 @@ impl<'a> IsoDurationParser<'a> {
     /// let result = IsoDurationParser::from_str(time_duration).parse().unwrap();
     ///
     /// let (hours, minutes, seconds, fraction) = match result.time {
-    ///     // Hours variant is defined as { hours: u32, fraction: u64 }
+    ///     // Hours variant is defined as { hours: u32, fraction: Option<Fraction> }
     ///     Some(TimeDurationRecord::Hours{ hours, fraction }) => (hours, 0, 0, fraction),
-    ///     // Minutes variant is defined as { hours: u32, minutes: u32, fraction: u64 }
+    ///     // Minutes variant is defined as { hours: u32, minutes: u32, fraction: Option<Fraction> }
     ///     Some(TimeDurationRecord::Minutes{ hours, minutes, fraction }) => (hours, minutes, 0, fraction),
-    ///     // Seconds variant is defined as { hours: u32, minutes: u32, seconds: u32, fraction: u32 }
-    ///     Some(TimeDurationRecord::Seconds{ hours, minutes, seconds, fraction }) => (hours, minutes, seconds, fraction as u64),
-    ///     None => (0,0,0,0),
+    ///     // Seconds variant is defined as { hours: u32, minutes: u32, seconds: u32, fraction: Option<Fraction> }
+    ///     Some(TimeDurationRecord::Seconds{ hours, minutes, seconds, fraction }) => (hours, minutes, seconds, fraction),
+    ///     None => (0,0,0, None),
     /// };
     /// assert!(result.date.is_none());
     /// assert_eq!(hours, 2);
     /// assert_eq!(minutes, 10);
     /// assert_eq!(seconds, 30);
-    /// assert_eq!(fraction, 0);
+    /// assert_eq!(fraction, None);
     /// ```
     pub fn parse(&mut self) -> ParserResult<DurationParseRecord> {
         duration::parse_duration(&mut self.cursor)
@@ -365,38 +455,24 @@ impl<'a> Cursor<'a> {
     }
 
     /// Peek the value at next position (current + 1).
-    fn peek(&self) -> Option<char> {
+    fn peek(&self) -> Option<u8> {
         self.peek_n(1)
     }
 
     /// Returns current position in source as `char`.
-    fn current(&self) -> Option<char> {
+    fn current(&self) -> Option<u8> {
         self.peek_n(0)
     }
 
     /// Peeks the value at `n` as a `char`.
-    fn peek_n(&self, n: usize) -> Option<char> {
-        let (_, char) = self.peek_with_info(n)?;
-        Some(char)
-    }
-
-    /// Peeks the value at `n` and returns the char with its byte length.
-    fn peek_with_info(&self, n: usize) -> Option<(usize, char)> {
-        let mut chars =
-            Utf8CharIndices::new(self.source.get(self.pos..self.source.len()).unwrap_or(&[]));
-        for _ in 0..n {
-            let _ = chars.next();
-        }
-        let (_, peek) = chars.next()?;
-        let offset = chars.offset();
-
-        Some((offset, peek))
+    fn peek_n(&self, n: usize) -> Option<u8> {
+        self.source.get(self.pos + n).copied()
     }
 
     /// Runs the provided check on the current position.
     fn check<F>(&self, f: F) -> Option<bool>
     where
-        F: FnOnce(char) -> bool,
+        F: FnOnce(u8) -> bool,
     {
         self.current().map(f)
     }
@@ -404,34 +480,33 @@ impl<'a> Cursor<'a> {
     /// Runs the provided check on current position returns the default value if None.
     fn check_or<F>(&self, default: bool, f: F) -> bool
     where
-        F: FnOnce(char) -> bool,
+        F: FnOnce(u8) -> bool,
     {
         self.current().map_or(default, f)
     }
 
     /// Returns `Cursor`'s current char and advances to the next position.
-    fn next(&mut self) -> Option<char> {
-        self.peek_with_info(0).map(|(offset, result)| {
-            self.advance_n(offset);
-            result
-        })
+    fn next(&mut self) -> Option<u8> {
+        let result = self.current();
+        self.advance_n(1);
+        result
     }
 
-    /// Returns the next value as a digit.
+    /// Returns the next value as a digit
     ///
     /// # Errors
-    ///   - Returns a SyntaxError if value is not an ascii digit
     ///   - Returns an AbruptEnd error if cursor ends.
     fn next_digit(&mut self) -> ParserResult<Option<u8>> {
-        // Note: Char digit with a radix of ten must be in the range of a u8
-        Ok(self
-            .next_or(ParseError::InvalidEnd)?
-            .to_digit(10)
-            .map(|d| d as u8))
+        let ascii_char = self.next_or(ParseError::AbruptEnd { location: "digit" })?;
+        if ascii_char.is_ascii_digit() {
+            Ok(Some(ascii_char - 48))
+        } else {
+            Ok(None)
+        }
     }
 
     /// A utility next method that returns an `AbruptEnd` error if invalid.
-    fn next_or(&mut self, err: ParseError) -> ParserResult<char> {
+    fn next_or(&mut self, err: ParseError) -> ParserResult<u8> {
         self.next().ok_or(err)
     }
 

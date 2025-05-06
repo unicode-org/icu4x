@@ -8,10 +8,16 @@ use ffi::*;
 #[diplomat::abi_rename = "icu4x_{0}_mv1"]
 #[diplomat::attr(auto, namespace = "icu4x")]
 pub mod ffi {
+    #[cfg(feature = "datetime")]
+    use diplomat_runtime::DiplomatOption;
+
+    #[cfg(feature = "datetime")]
+    use crate::unstable::calendar::ffi::CalendarKind;
+
     #[derive(Debug, PartialEq, Eq)]
     #[repr(C)]
-    #[diplomat::rust_link(icu::provider::DataError, Struct, compact)]
-    #[diplomat::rust_link(icu::provider::DataErrorKind, Enum, compact)]
+    #[diplomat::rust_link(icu_provider::DataError, Struct, compact)]
+    #[diplomat::rust_link(icu_provider::DataErrorKind, Enum, compact)]
     pub enum DataError {
         Unknown = 0x00,
         MarkerNotFound = 0x01,
@@ -38,7 +44,7 @@ pub mod ffi {
     #[repr(C)]
     #[diplomat::rust_link(fixed_decimal::ParseError, Enum, compact)]
     #[cfg(any(feature = "decimal", feature = "plurals"))]
-    pub enum FixedDecimalParseError {
+    pub enum DecimalParseError {
         Unknown = 0x00,
         Limit = 0x01,
         Syntax = 0x02,
@@ -47,7 +53,7 @@ pub mod ffi {
     #[derive(Debug, PartialEq, Eq)]
     #[diplomat::rust_link(fixed_decimal::LimitError, Struct, compact)]
     #[cfg(feature = "decimal")]
-    pub struct FixedDecimalLimitError;
+    pub struct DecimalLimitError;
 
     #[derive(Debug, PartialEq, Eq)]
     #[repr(C)]
@@ -64,8 +70,9 @@ pub mod ffi {
     #[derive(Debug, PartialEq, Eq)]
     #[repr(C)]
     #[diplomat::rust_link(icu::calendar::ParseError, Enum, compact)]
+    #[diplomat::rust_link(icu::time::ParseError, Enum, compact)]
     #[cfg(any(feature = "datetime", feature = "timezone", feature = "calendar"))]
-    pub enum CalendarParseError {
+    pub enum Rfc9557ParseError {
         Unknown = 0x00,
         InvalidSyntax = 0x01,
         OutOfRange = 0x02,
@@ -74,21 +81,23 @@ pub mod ffi {
     }
 
     #[derive(Debug, PartialEq, Eq)]
-    #[diplomat::rust_link(icu::timezone::InvalidOffsetError, Struct, compact)]
+    #[diplomat::rust_link(icu::time::zone::InvalidOffsetError, Struct, compact)]
     #[cfg(any(feature = "datetime", feature = "timezone"))]
     pub struct TimeZoneInvalidOffsetError;
 
     #[derive(Debug, PartialEq, Eq)]
     #[repr(C)]
+    #[diplomat::rust_link(icu::datetime::DateTimeFormatterLoadError, Enum, compact)]
     #[diplomat::rust_link(icu::datetime::pattern::PatternLoadError, Enum, compact)]
-    #[diplomat::rust_link(icu::provider::DataError, Struct, compact)]
-    #[diplomat::rust_link(icu::provider::DataErrorKind, Enum, compact)]
+    #[diplomat::rust_link(icu_provider::DataError, Struct, compact)]
+    #[diplomat::rust_link(icu_provider::DataErrorKind, Enum, compact)]
     pub enum DateTimeFormatterLoadError {
         Unknown = 0x00,
 
+        InvalidDateFields = 0x8_01,
         UnsupportedLength = 0x8_03,
-        DuplicateField = 0x8_09,
-        TypeTooSpecific = 0x8_0A,
+        ConflictingField = 0x8_09,
+        FormatterTooSpecific = 0x8_0A,
 
         DataMarkerNotFound = 0x01,
         DataIdentifierNotFound = 0x02,
@@ -100,20 +109,26 @@ pub mod ffi {
         DataIo = 0x08,
     }
 
-    // TODO: This type is currently never constructed, as all formatters perform lossy formatting.
+    #[cfg(feature = "datetime")]
+    #[diplomat::rust_link(icu::datetime::MismatchedCalendarError, Struct)]
+    pub struct DateTimeMismatchedCalendarError {
+        pub this_kind: CalendarKind,
+        pub date_kind: DiplomatOption<CalendarKind>,
+    }
+
+    #[cfg(feature = "datetime")]
     #[derive(Debug, PartialEq, Eq)]
     #[repr(C)]
-    #[diplomat::rust_link(icu::datetime::DateTimeWriteError, Enum, compact)]
-    pub enum DateTimeFormatError {
+    #[diplomat::rust_link(
+        icu::datetime::unchecked::FormattedDateTimeUncheckedError,
+        Enum,
+        compact
+    )]
+    pub enum DateTimeWriteError {
         Unknown = 0x00,
-        MissingInputField = 0x01,
-        ZoneInfoMissingFields = 0x02, // FFI-only error
-        InvalidEra = 0x03,
-        InvalidMonthCode = 0x04,
-        InvalidCyclicYear = 0x05,
-        NamesNotLoaded = 0x10,
-        FixedDecimalFormatterNotLoaded = 0x11,
-        UnsupportedField = 0x12,
+        MissingTimeZoneId = 0x01,
+        MissingTimeZoneNameTimestamp = 0x02,
+        MissingTimeZoneVariant = 0x03,
     }
 }
 
@@ -149,7 +164,7 @@ impl From<icu_calendar::DateError> for CalendarError {
     fn from(e: icu_calendar::DateError) -> Self {
         match e {
             icu_calendar::DateError::Range { .. } => Self::OutOfRange,
-            icu_calendar::DateError::UnknownEra(..) => Self::UnknownEra,
+            icu_calendar::DateError::UnknownEra => Self::UnknownEra,
             icu_calendar::DateError::UnknownMonthCode(..) => Self::UnknownMonthCode,
             _ => Self::Unknown,
         }
@@ -157,7 +172,7 @@ impl From<icu_calendar::DateError> for CalendarError {
 }
 
 #[cfg(any(feature = "datetime", feature = "timezone", feature = "calendar"))]
-impl From<icu_calendar::ParseError> for CalendarParseError {
+impl From<icu_calendar::ParseError> for Rfc9557ParseError {
     fn from(e: icu_calendar::ParseError) -> Self {
         match e {
             icu_calendar::ParseError::Syntax(_) => Self::InvalidSyntax,
@@ -169,19 +184,33 @@ impl From<icu_calendar::ParseError> for CalendarParseError {
     }
 }
 
+#[cfg(any(feature = "datetime", feature = "timezone", feature = "calendar"))]
+impl From<icu_time::ParseError> for Rfc9557ParseError {
+    fn from(e: icu_time::ParseError) -> Self {
+        match e {
+            icu_time::ParseError::Syntax(_) => Self::InvalidSyntax,
+            icu_time::ParseError::MissingFields => Self::MissingFields,
+            icu_time::ParseError::Range(_) => Self::OutOfRange,
+            icu_time::ParseError::UnknownCalendar => Self::UnknownCalendar,
+            // TODO
+            _ => Self::Unknown,
+        }
+    }
+}
+
 #[cfg(feature = "datetime")]
 impl From<icu_datetime::DateTimeFormatterLoadError> for DateTimeFormatterLoadError {
     fn from(e: icu_datetime::DateTimeFormatterLoadError) -> Self {
         match e {
             icu_datetime::DateTimeFormatterLoadError::Names(
-                icu_datetime::pattern::PatternLoadError::ConflictingField(_),
-            ) => Self::DuplicateField,
+                icu_datetime::pattern::PatternLoadError::ConflictingField { .. },
+            ) => Self::ConflictingField,
             icu_datetime::DateTimeFormatterLoadError::Names(
                 icu_datetime::pattern::PatternLoadError::UnsupportedLength(_),
             ) => Self::UnsupportedLength,
             icu_datetime::DateTimeFormatterLoadError::Names(
-                icu_datetime::pattern::PatternLoadError::TypeTooSpecific(_),
-            ) => Self::TypeTooSpecific,
+                icu_datetime::pattern::PatternLoadError::FormatterTooSpecific(_),
+            ) => Self::FormatterTooSpecific,
             icu_datetime::DateTimeFormatterLoadError::Names(
                 icu_datetime::pattern::PatternLoadError::Data(data_error, _),
             ) => data_error.into(),
@@ -213,25 +242,54 @@ impl From<icu_provider::DataError> for DateTimeFormatterLoadError {
 }
 
 #[cfg(feature = "datetime")]
-impl From<icu_datetime::DateTimeWriteError> for DateTimeFormatError {
-    fn from(value: icu_datetime::DateTimeWriteError) -> Self {
+impl From<icu_datetime::pattern::PatternLoadError> for ffi::DateTimeFormatterLoadError {
+    fn from(value: icu_datetime::pattern::PatternLoadError) -> Self {
         match value {
-            icu_datetime::DateTimeWriteError::MissingInputField(..) => Self::MissingInputField,
-            icu_datetime::DateTimeWriteError::InvalidEra(..) => Self::InvalidEra,
-            icu_datetime::DateTimeWriteError::InvalidMonthCode(..) => Self::InvalidMonthCode,
-            icu_datetime::DateTimeWriteError::InvalidCyclicYear { .. } => Self::InvalidCyclicYear,
-            icu_datetime::DateTimeWriteError::NamesNotLoaded(..) => Self::NamesNotLoaded,
-            icu_datetime::DateTimeWriteError::FixedDecimalFormatterNotLoaded => {
-                Self::FixedDecimalFormatterNotLoaded
+            icu_datetime::pattern::PatternLoadError::ConflictingField { .. } => {
+                Self::ConflictingField
             }
-            icu_datetime::DateTimeWriteError::UnsupportedField(..) => Self::UnsupportedField,
+            icu_datetime::pattern::PatternLoadError::UnsupportedLength(_) => {
+                Self::UnsupportedLength
+            }
+            icu_datetime::pattern::PatternLoadError::FormatterTooSpecific(_) => {
+                Self::FormatterTooSpecific
+            }
+            icu_datetime::pattern::PatternLoadError::Data(data_error, _) => data_error.into(),
             _ => Self::Unknown,
         }
     }
 }
 
+#[cfg(feature = "datetime")]
+impl From<icu_datetime::MismatchedCalendarError> for ffi::DateTimeMismatchedCalendarError {
+    fn from(value: icu_datetime::MismatchedCalendarError) -> Self {
+        Self {
+            this_kind: value.this_kind.into(),
+            date_kind: value.date_kind.map(Into::into).into(),
+        }
+    }
+}
+
+#[cfg(feature = "datetime")]
+impl From<icu_datetime::unchecked::FormattedDateTimeUncheckedError> for DateTimeWriteError {
+    fn from(value: icu_datetime::unchecked::FormattedDateTimeUncheckedError) -> Self {
+        match value {
+            icu_datetime::unchecked::FormattedDateTimeUncheckedError::MissingInputField(
+                icu_datetime::unchecked::MissingInputFieldKind::TimeZoneNameTimestamp,
+            ) => Self::MissingTimeZoneNameTimestamp,
+            icu_datetime::unchecked::FormattedDateTimeUncheckedError::MissingInputField(
+                icu_datetime::unchecked::MissingInputFieldKind::TimeZoneVariant,
+            ) => Self::MissingTimeZoneVariant,
+            err => {
+                debug_assert!(false, "unexpected datetime formatting error: {err}");
+                Self::Unknown
+            }
+        }
+    }
+}
+
 #[cfg(any(feature = "decimal", feature = "plurals"))]
-impl From<fixed_decimal::ParseError> for FixedDecimalParseError {
+impl From<fixed_decimal::ParseError> for DecimalParseError {
     fn from(e: fixed_decimal::ParseError) -> Self {
         match e {
             fixed_decimal::ParseError::Limit => Self::Limit,
@@ -242,7 +300,7 @@ impl From<fixed_decimal::ParseError> for FixedDecimalParseError {
 }
 
 #[cfg(feature = "decimal")]
-impl From<fixed_decimal::LimitError> for FixedDecimalLimitError {
+impl From<fixed_decimal::LimitError> for DecimalLimitError {
     fn from(_: fixed_decimal::LimitError) -> Self {
         Self
     }
@@ -261,8 +319,8 @@ impl From<icu_locale_core::ParseError> for LocaleParseError {
 }
 
 #[cfg(any(feature = "timezone", feature = "datetime"))]
-impl From<icu_timezone::InvalidOffsetError> for TimeZoneInvalidOffsetError {
-    fn from(_: icu_timezone::InvalidOffsetError) -> Self {
+impl From<icu_time::zone::InvalidOffsetError> for TimeZoneInvalidOffsetError {
+    fn from(_: icu_time::zone::InvalidOffsetError) -> Self {
         Self
     }
 }

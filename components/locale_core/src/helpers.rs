@@ -158,6 +158,7 @@ macro_rules! impl_tinystr_subtag {
                 writeable::LengthHint::exact(self.0.len())
             }
             #[inline]
+            #[cfg(feature = "alloc")]
             fn write_to_string(&self) -> alloc::borrow::Cow<str> {
                 alloc::borrow::Cow::Borrowed(self.0.as_str())
             }
@@ -186,15 +187,13 @@ macro_rules! impl_tinystr_subtag {
         #[macro_export]
         #[doc(hidden)] // macro
         macro_rules! $internal_macro_name {
-            ($string:literal) => {{
+            ($string:literal) => { const {
                 use $crate::$($path ::)+ $name;
-                const R: $name =
-                    match $name::try_from_utf8($string.as_bytes()) {
-                        Ok(r) => r,
-                        #[allow(clippy::panic)] // const context
-                        _ => panic!(concat!("Invalid ", $(stringify!($path), "::",)+ stringify!($name), ": ", $string)),
-                    };
-                R
+                match $name::try_from_utf8($string.as_bytes()) {
+                    Ok(r) => r,
+                    #[allow(clippy::panic)] // const context
+                    _ => panic!(concat!("Invalid ", $(stringify!($path), "::",)+ stringify!($name), ": ", $string)),
+                }
             }};
         }
         #[doc(inline)]
@@ -362,6 +361,7 @@ macro_rules! impl_writeable_for_each_subtag_str_no_test {
             }
 
             $(
+                #[cfg(feature = "alloc")]
                 fn write_to_string(&self) -> alloc::borrow::Cow<str> {
                     #[allow(clippy::unwrap_used)] // impl_writeable_for_subtag_list's $borrow uses unwrap
                     let $self = self;

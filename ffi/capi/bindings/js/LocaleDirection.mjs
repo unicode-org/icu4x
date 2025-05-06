@@ -2,10 +2,14 @@
 import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
-// Base enumerator definition
-/** See the [Rust documentation for `Direction`](https://docs.rs/icu/latest/icu/locale/enum.Direction.html) for more information.
-*/
+
+/** 
+ * See the [Rust documentation for `Direction`](https://docs.rs/icu/latest/icu/locale/enum.Direction.html) for more information.
+ */
+
+
 export class LocaleDirection {
+    
     #value = undefined;
 
     static #values = new Map([
@@ -17,14 +21,14 @@ export class LocaleDirection {
     static getAllEntries() {
         return LocaleDirection.#values.entries();
     }
-
-    constructor(value) {
+    
+    #internalConstructor(value) {
         if (arguments.length > 1 && arguments[0] === diplomatRuntime.internalConstructor) {
             // We pass in two internalConstructor arguments to create *new*
             // instances of this type, otherwise the enums are treated as singletons.
             if (arguments[1] === diplomatRuntime.internalConstructor ) {
                 this.#value = arguments[2];
-                return;
+                return this;
             }
             return LocaleDirection.#objectValues[arguments[1]];
         }
@@ -36,11 +40,15 @@ export class LocaleDirection {
         let intVal = LocaleDirection.#values.get(value);
 
         // Nullish check, checks for null or undefined
-        if (intVal == null) {
+        if (intVal != null) {
             return LocaleDirection.#objectValues[intVal];
         }
 
         throw TypeError(value + " is not a LocaleDirection and does not correspond to any of its enumerator values.");
+    }
+
+    static fromValue(value) {
+        return new LocaleDirection(value);
     }
 
     get value() {
@@ -59,4 +67,8 @@ export class LocaleDirection {
     static LeftToRight = LocaleDirection.#objectValues[0];
     static RightToLeft = LocaleDirection.#objectValues[1];
     static Unknown = LocaleDirection.#objectValues[2];
+
+    constructor(value) {
+        return this.#internalConstructor(...arguments)
+    }
 }

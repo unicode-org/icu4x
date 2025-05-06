@@ -5,48 +5,44 @@
 use std::collections::HashSet;
 
 use crate::SourceDataProvider;
-use calendrical_calculations::chinese_based::{Chinese, ChineseBased, Dangi};
+use calendrical_calculations::chinese_based::{Chinese, Dangi};
 use icu::calendar::provider::chinese_based::*;
 use icu_provider::prelude::*;
 
 const YEARS: i32 = 250;
 const ISO_START: i32 = 1900;
 
-fn load<CB: ChineseBased>() -> ChineseBasedCacheV1<'static> {
-    let extended_start = CB::extended_from_iso(ISO_START);
-    let extended_end = extended_start + YEARS;
-    ChineseBasedCacheV1::compute_for::<CB>(extended_start..extended_end)
-}
-
-impl DataProvider<ChineseCacheV1Marker> for SourceDataProvider {
-    fn load(&self, req: DataRequest) -> Result<DataResponse<ChineseCacheV1Marker>, DataError> {
-        self.check_req::<ChineseCacheV1Marker>(req)?;
-        let cache = load::<Chinese>();
+impl DataProvider<CalendarChineseV1> for SourceDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<CalendarChineseV1>, DataError> {
+        self.check_req::<CalendarChineseV1>(req)?;
         Ok(DataResponse {
             metadata: Default::default(),
-            payload: DataPayload::from_owned(cache),
+            payload: DataPayload::from_owned(ChineseBasedCache::compute_for::<Chinese>(
+                ISO_START..(ISO_START + YEARS),
+            )),
         })
     }
 }
 
-impl DataProvider<DangiCacheV1Marker> for SourceDataProvider {
-    fn load(&self, req: DataRequest) -> Result<DataResponse<DangiCacheV1Marker>, DataError> {
-        self.check_req::<DangiCacheV1Marker>(req)?;
-        let cache = load::<Dangi>();
+impl DataProvider<CalendarDangiV1> for SourceDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<CalendarDangiV1>, DataError> {
+        self.check_req::<CalendarDangiV1>(req)?;
         Ok(DataResponse {
             metadata: Default::default(),
-            payload: DataPayload::from_owned(cache),
+            payload: DataPayload::from_owned(ChineseBasedCache::compute_for::<Dangi>(
+                ISO_START..(ISO_START + YEARS),
+            )),
         })
     }
 }
 
-impl crate::IterableDataProviderCached<ChineseCacheV1Marker> for SourceDataProvider {
+impl crate::IterableDataProviderCached<CalendarChineseV1> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
     }
 }
 
-impl crate::IterableDataProviderCached<DangiCacheV1Marker> for SourceDataProvider {
+impl crate::IterableDataProviderCached<CalendarDangiV1> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
     }

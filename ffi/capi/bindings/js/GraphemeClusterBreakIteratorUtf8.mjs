@@ -3,13 +3,15 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
-/** See the [Rust documentation for `GraphemeClusterBreakIterator`](https://docs.rs/icu/latest/icu/segmenter/struct.GraphemeClusterBreakIterator.html) for more information.
-*/
+/** 
+ * See the [Rust documentation for `GraphemeClusterBreakIterator`](https://docs.rs/icu/latest/icu/segmenter/iterators/struct.GraphemeClusterBreakIterator.html) for more information.
+ */
 const GraphemeClusterBreakIteratorUtf8_box_destroy_registry = new FinalizationRegistry((ptr) => {
     wasm.icu4x_GraphemeClusterBreakIteratorUtf8_destroy_mv1(ptr);
 });
 
 export class GraphemeClusterBreakIteratorUtf8 {
+    
     // Internal ptr reference:
     #ptr = null;
 
@@ -18,7 +20,7 @@ export class GraphemeClusterBreakIteratorUtf8 {
     #selfEdge = [];
     #aEdge = [];
     
-    constructor(symbol, ptr, selfEdge, aEdge) {
+    #internalConstructor(symbol, ptr, selfEdge, aEdge) {
         if (symbol !== diplomatRuntime.internalConstructor) {
             console.error("GraphemeClusterBreakIteratorUtf8 is an Opaque type. You cannot call its constructor.");
             return;
@@ -34,12 +36,19 @@ export class GraphemeClusterBreakIteratorUtf8 {
         if (this.#selfEdge.length === 0) {
             GraphemeClusterBreakIteratorUtf8_box_destroy_registry.register(this, this.#ptr);
         }
+        
+        return this;
     }
-
     get ffiValue() {
         return this.#ptr;
     }
 
+    /** 
+     * Finds the next breakpoint. Returns -1 if at the end of the string or if the index is
+     * out of range of a 32-bit signed integer.
+     *
+     * See the [Rust documentation for `next`](https://docs.rs/icu/latest/icu/segmenter/iterators/struct.GraphemeClusterBreakIterator.html#method.next) for more information.
+     */
     next() {
         const result = wasm.icu4x_GraphemeClusterBreakIteratorUtf8_next_mv1(this.ffiValue);
     
@@ -48,5 +57,9 @@ export class GraphemeClusterBreakIteratorUtf8 {
         }
         
         finally {}
+    }
+
+    constructor(symbol, ptr, selfEdge, aEdge) {
+        return this.#internalConstructor(...arguments)
     }
 }

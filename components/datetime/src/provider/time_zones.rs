@@ -7,29 +7,104 @@
 use alloc::borrow::Cow;
 use icu_pattern::{DoublePlaceholderPattern, SinglePlaceholderPattern};
 use icu_provider::prelude::*;
-use tinystr::TinyAsciiStr;
-use zerovec::{
-    ule::{AsULE, ULE},
-    ZeroMap, ZeroMap2d, ZeroSlice, ZeroVec,
-};
+use zerovec::{ule::NichedOption, ZeroMap, ZeroMap2d, ZeroVec};
 
-use icu_timezone::{provider::IsoMinutesSinceEpoch, TimeZoneBcp47Id, ZoneVariant};
+use icu_time::{zone::TimeZoneVariant, zone::ZoneNameTimestamp, TimeZone};
 
 /// Time zone type aliases for cleaner code
 pub(crate) mod tz {
-    pub(crate) use super::LocationsV1;
-    pub(crate) use super::LocationsV1Marker;
-    pub(crate) use super::MetazoneGenericNamesLongV1Marker as MzGenericLongV1Marker;
-    pub(crate) use super::MetazoneGenericNamesShortV1Marker as MzGenericShortV1Marker;
-    pub(crate) use super::MetazoneGenericNamesV1 as MzGenericV1;
-    pub(crate) use super::MetazonePeriodV1 as MzPeriodV1;
-    pub(crate) use super::MetazonePeriodV1Marker as MzPeriodV1Marker;
-    pub(crate) use super::MetazoneSpecificNamesLongV1Marker as MzSpecificLongV1Marker;
-    pub(crate) use super::MetazoneSpecificNamesShortV1Marker as MzSpecificShortV1Marker;
-    pub(crate) use super::MetazoneSpecificNamesV1 as MzSpecificV1;
-    pub(crate) use super::TimeZoneEssentialsV1 as EssentialsV1;
-    pub(crate) use super::TimeZoneEssentialsV1Marker as EssentialsV1Marker;
+    pub(crate) use super::ExemplarCities;
+    pub(crate) use super::Locations;
+    pub(crate) use super::MetazoneGenericNames as MzGeneric;
+    pub(crate) use super::MetazonePeriod as MzPeriod;
+    pub(crate) use super::MetazoneSpecificNames as MzSpecific;
+    pub(crate) use super::TimeZoneEssentials as Essentials;
+    pub(crate) use super::TimezoneMetazonePeriodsV1 as MzPeriodV1;
+    pub(crate) use super::TimezoneNamesCitiesOverrideV1 as CitiesOverrideV1;
+    pub(crate) use super::TimezoneNamesCitiesRootV1 as CitiesRootV1;
+    pub(crate) use super::TimezoneNamesEssentialsV1 as EssentialsV1;
+    pub(crate) use super::TimezoneNamesGenericLongV1 as MzGenericLongV1;
+    pub(crate) use super::TimezoneNamesGenericShortV1 as MzGenericShortV1;
+    pub(crate) use super::TimezoneNamesLocationsOverrideV1 as LocationsOverrideV1;
+    pub(crate) use super::TimezoneNamesLocationsRootV1 as LocationsRootV1;
+    pub(crate) use super::TimezoneNamesSpecificLongV1 as MzSpecificLongV1;
+    pub(crate) use super::TimezoneNamesSpecificShortV1 as MzSpecificShortV1;
+    pub(crate) use super::TimezoneNamesStandardLongV1 as MzStandardLongV1;
 }
+
+icu_provider::data_marker!(
+    /// `TimezoneNamesEssentialsV1`
+    TimezoneNamesEssentialsV1,
+    TimeZoneEssentials<'static>
+);
+icu_provider::data_marker!(
+    /// `TimezoneNamesLocationsOverrideV1`
+    TimezoneNamesLocationsOverrideV1,
+    Locations<'static>
+);
+icu_provider::data_marker!(
+    /// `TimezoneNamesLocationsRootV1`
+    TimezoneNamesLocationsRootV1,
+    Locations<'static>
+);
+icu_provider::data_marker!(
+    /// `TimezoneNamesCitiesOverrideV1`
+    TimezoneNamesCitiesOverrideV1,
+    ExemplarCities<'static>
+);
+icu_provider::data_marker!(
+    /// `TimezoneNamesCitiesRootV1`
+    TimezoneNamesCitiesRootV1,
+    ExemplarCities<'static>
+);
+
+icu_provider::data_marker!(
+    /// `TimezoneNamesGenericLongV1`
+    ///
+    /// Checksumed to ensure consistency with [`TimezoneMetazonePeriodsV1`].
+    TimezoneNamesGenericLongV1,
+    MetazoneGenericNames<'static>,
+    has_checksum = true
+);
+icu_provider::data_marker!(
+    /// `TimezoneNamesGenericShortV1`
+    ///
+    /// Checksumed to ensure consistency with [`TimezoneMetazonePeriodsV1`].
+    TimezoneNamesGenericShortV1,
+    MetazoneGenericNames<'static>,
+    has_checksum = true
+);
+icu_provider::data_marker!(
+    /// `TimezoneNamesStandardLongV1`
+    ///
+    /// Checksumed to ensure consistency with [`TimezoneMetazonePeriodsV1`].
+    TimezoneNamesStandardLongV1,
+    MetazoneGenericNames<'static>,
+    has_checksum = true
+);
+icu_provider::data_marker!(
+    /// `TimezoneNamesSpecificLongV1`
+    ///
+    /// Checksumed to ensure consistency with [`TimezoneMetazonePeriodsV1`].
+    TimezoneNamesSpecificLongV1,
+    MetazoneSpecificNames<'static>,
+    has_checksum = true
+);
+icu_provider::data_marker!(
+    /// `TimezoneNamesSpecificShortV1`
+    ///
+    /// Checksumed to ensure consistency with [`TimezoneMetazonePeriodsV1`].
+    TimezoneNamesSpecificShortV1,
+    MetazoneSpecificNames<'static>,
+    has_checksum = true,
+);
+icu_provider::data_marker!(
+    /// `TimezoneMetazonePeriodsV1`
+    TimezoneMetazonePeriodsV1,
+    MetazonePeriod<'static>,
+    is_singleton = true,
+    has_checksum = true
+);
 
 /// An ICU4X mapping to the CLDR timeZoneNames format strings.
 /// See CLDR-JSON timeZoneNames.json and <https://cldr.unicode.org/translation/time-zones-and-city-names>
@@ -40,13 +115,12 @@ pub(crate) mod tz {
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[icu_provider::data_struct(TimeZoneEssentialsV1Marker = "time_zone/essentials@1")]
-#[derive(PartialEq, Debug, Clone, Default)]
+#[derive(PartialEq, Debug, Clone, Default, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::time_zones))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
-pub struct TimeZoneEssentialsV1<'data> {
+pub struct TimeZoneEssentials<'data> {
     /// The separator sign
     #[cfg_attr(feature = "serde", serde(borrow,))]
     pub offset_separator: Cow<'data, str>,
@@ -67,6 +141,11 @@ pub struct TimeZoneEssentialsV1<'data> {
     pub offset_unknown: Cow<'data, str>,
 }
 
+icu_provider::data_struct!(
+    TimeZoneEssentials<'_>,
+    #[cfg(feature = "datagen")]
+);
+
 /// An ICU4X mapping to the CLDR timeZoneNames exemplar cities.
 /// See CLDR-JSON timeZoneNames.json for more context.
 ///
@@ -75,16 +154,15 @@ pub struct TimeZoneEssentialsV1<'data> {
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[icu_provider::data_struct(LocationsV1Marker = "time_zone/locations@1")]
-#[derive(PartialEq, Debug, Clone, Default)]
+#[derive(PartialEq, Debug, Clone, Default, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::time_zones))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
-pub struct LocationsV1<'data> {
+pub struct Locations<'data> {
     /// Per-zone location display name
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub locations: ZeroMap<'data, TimeZoneBcp47Id, str>,
+    pub locations: ZeroMap<'data, TimeZone, str>,
     /// The format string for a region's generic time.
     #[cfg_attr(
         feature = "serde",
@@ -123,6 +201,36 @@ pub struct LocationsV1<'data> {
     pub pattern_partial_location: Cow<'data, DoublePlaceholderPattern>,
 }
 
+icu_provider::data_struct!(
+    Locations<'_>,
+    #[cfg(feature = "datagen")]
+);
+
+/// An ICU4X mapping to the CLDR timeZoneNames exemplar cities.
+/// See CLDR-JSON timeZoneNames.json for more context.
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+/// to be stable, their Rust representation might not be. Use with caution.
+/// </div>
+#[derive(PartialEq, Debug, Clone, Default, yoke::Yokeable, zerofrom::ZeroFrom)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::time_zones))]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[yoke(prove_covariance_manually)]
+pub struct ExemplarCities<'data> {
+    /// Per-zone exemplar city name. This is deduplicated against `Locations.locations`, so it
+    /// only contains time zones that don't use the exemplar city in the location format.
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub exemplars: ZeroMap<'data, TimeZone, str>,
+}
+
+icu_provider::data_struct!(
+    ExemplarCities<'_>,
+    #[cfg(feature = "datagen")]
+);
+
 /// An ICU4X mapping to generic metazone names.
 /// See CLDR-JSON timeZoneNames.json for more context.
 ///
@@ -131,50 +239,57 @@ pub struct LocationsV1<'data> {
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[icu_provider::data_struct(
-    marker(MetazoneGenericNamesLongV1Marker, "time_zone/generic_long@1"),
-    marker(MetazoneGenericNamesShortV1Marker, "time_zone/generic_short@1")
-)]
-#[derive(PartialEq, Debug, Clone, Default)]
+#[derive(PartialEq, Debug, Clone, Default, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::time_zones))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
-pub struct MetazoneGenericNamesV1<'data> {
+pub struct MetazoneGenericNames<'data> {
     /// The default mapping between metazone id and localized metazone name.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub defaults: ZeroMap<'data, MetazoneId, str>,
     /// The override mapping between timezone id and localized metazone name.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub overrides: ZeroMap<'data, TimeZoneBcp47Id, str>,
+    pub overrides: ZeroMap<'data, TimeZone, str>,
 }
+
+icu_provider::data_struct!(
+    MetazoneGenericNames<'_>,
+    #[cfg(feature = "datagen")]
+);
 
 /// An ICU4X mapping to specific metazone names.
 /// Specific names include time variants such as "daylight."
 /// See CLDR-JSON timeZoneNames.json for more context.
+///
+/// These markers use a checksum to ensure consistency with [`MetazonePeriod`].
 ///
 /// <div class="stab unstable">
 /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[icu_provider::data_struct(
-    marker(MetazoneSpecificNamesLongV1Marker, "time_zone/specific_long@1"),
-    marker(MetazoneSpecificNamesShortV1Marker, "time_zone/specific_short@1")
-)]
-#[derive(PartialEq, Debug, Clone, Default)]
+#[derive(PartialEq, Debug, Clone, Default, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::time_zones))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
-pub struct MetazoneSpecificNamesV1<'data> {
+pub struct MetazoneSpecificNames<'data> {
     /// The default mapping between metazone id and localized metazone name.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub defaults: ZeroMap<'data, (MetazoneId, ZoneVariant), str>,
+    pub defaults: ZeroMap<'data, (MetazoneId, TimeZoneVariant), str>,
     /// The override mapping between timezone id and localized metazone name.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub overrides: ZeroMap<'data, (TimeZoneBcp47Id, ZoneVariant), str>,
+    pub overrides: ZeroMap<'data, (TimeZone, TimeZoneVariant), str>,
+    /// The metazones for which the standard name is in `MetazoneGenericStandardNames*V1`
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub use_standard: ZeroVec<'data, MetazoneId>,
 }
+
+icu_provider::data_struct!(
+    MetazoneSpecificNames<'_>,
+    #[cfg(feature = "datagen")]
+);
 
 /// Metazone ID in a compact format
 ///
@@ -183,33 +298,7 @@ pub struct MetazoneSpecificNamesV1<'data> {
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[repr(transparent)]
-#[derive(Debug, Clone, Copy, Eq, Ord, PartialEq, PartialOrd, yoke::Yokeable, ULE, Hash)]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
-#[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::time_zones))]
-#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-pub struct MetazoneId(pub TinyAsciiStr<4>);
-
-impl AsULE for MetazoneId {
-    type ULE = Self;
-
-    #[inline]
-    fn to_unaligned(self) -> Self::ULE {
-        self
-    }
-
-    #[inline]
-    fn from_unaligned(unaligned: Self::ULE) -> Self {
-        unaligned
-    }
-}
-
-impl<'a> zerovec::maps::ZeroMapKV<'a> for MetazoneId {
-    type Container = ZeroVec<'a, MetazoneId>;
-    type Slice = ZeroSlice<MetazoneId>;
-    type GetType = MetazoneId;
-    type OwnedType = MetazoneId;
-}
+pub type MetazoneId = core::num::NonZeroU8;
 
 /// An ICU4X mapping to the metazones at a given period.
 /// See CLDR-JSON metaZones.json for more context.
@@ -219,19 +308,19 @@ impl<'a> zerovec::maps::ZeroMapKV<'a> for MetazoneId {
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[icu_provider::data_struct(marker(
-    MetazonePeriodV1Marker,
-    "time_zone/metazone_period@1",
-    singleton
-))]
-#[derive(PartialEq, Debug, Clone, Default)]
+#[derive(PartialEq, Debug, Clone, Default, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::time_zones))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
-pub struct MetazonePeriodV1<'data>(
-    /// The default mapping between period and metazone id. The second level key is a wall-clock time represented as
-    /// the number of minutes since the local [`EPOCH`](icu_timezone::provider::EPOCH). It represents when the metazone started to be used.
+pub struct MetazonePeriod<'data> {
+    /// The default mapping between period and offsets. The second level key is a wall-clock time encoded as
+    /// [`ZoneNameTimestamp`]. It represents when the metazone started to be used.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub ZeroMap2d<'data, TimeZoneBcp47Id, IsoMinutesSinceEpoch, Option<MetazoneId>>,
+    pub list: ZeroMap2d<'data, TimeZone, ZoneNameTimestamp, NichedOption<MetazoneId, 1>>,
+}
+
+icu_provider::data_struct!(
+    MetazonePeriod<'_>,
+    #[cfg(feature = "datagen")]
 );

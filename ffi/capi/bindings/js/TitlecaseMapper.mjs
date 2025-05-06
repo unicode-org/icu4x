@@ -7,13 +7,15 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
-/** See the [Rust documentation for `TitlecaseMapper`](https://docs.rs/icu/latest/icu/casemap/struct.TitlecaseMapper.html) for more information.
-*/
+/** 
+ * See the [Rust documentation for `TitlecaseMapper`](https://docs.rs/icu/latest/icu/casemap/struct.TitlecaseMapper.html) for more information.
+ */
 const TitlecaseMapper_box_destroy_registry = new FinalizationRegistry((ptr) => {
     wasm.icu4x_TitlecaseMapper_destroy_mv1(ptr);
 });
 
 export class TitlecaseMapper {
+    
     // Internal ptr reference:
     #ptr = null;
 
@@ -21,7 +23,7 @@ export class TitlecaseMapper {
     // Since JS won't garbage collect until there are no incoming edges.
     #selfEdge = [];
     
-    constructor(symbol, ptr, selfEdge) {
+    #internalConstructor(symbol, ptr, selfEdge) {
         if (symbol !== diplomatRuntime.internalConstructor) {
             console.error("TitlecaseMapper is an Opaque type. You cannot call its constructor.");
             return;
@@ -34,16 +36,22 @@ export class TitlecaseMapper {
         if (this.#selfEdge.length === 0) {
             TitlecaseMapper_box_destroy_registry.register(this, this.#ptr);
         }
+        
+        return this;
     }
-
     get ffiValue() {
         return this.#ptr;
     }
 
-    static create(provider) {
+    /** 
+     * Construct a new `TitlecaseMapper` instance using compiled data.
+     *
+     * See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/casemap/struct.TitlecaseMapper.html#method.new) for more information.
+     */
+    #defaultConstructor() {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_TitlecaseMapper_create_mv1(diplomatReceive.buffer, provider.ffiValue);
+        const result = wasm.icu4x_TitlecaseMapper_create_mv1(diplomatReceive.buffer);
     
         try {
             if (!diplomatReceive.resultFlag) {
@@ -58,13 +66,43 @@ export class TitlecaseMapper {
         }
     }
 
+    /** 
+     * Construct a new `TitlecaseMapper` instance using a particular data source.
+     *
+     * See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/casemap/struct.TitlecaseMapper.html#method.new) for more information.
+     */
+    static createWithProvider(provider) {
+        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+        
+        const result = wasm.icu4x_TitlecaseMapper_create_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
+    
+        try {
+            if (!diplomatReceive.resultFlag) {
+                const cause = new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
+                throw new globalThis.Error('DataError: ' + cause.value, { cause });
+            }
+            return new TitlecaseMapper(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
+        }
+        
+        finally {
+            diplomatReceive.free();
+        }
+    }
+
+    /** 
+     * Returns the full titlecase mapping of the given string
+     *
+     * The `v1` refers to the version of the options struct, which may change as we add more options
+     *
+     * See the [Rust documentation for `titlecase_segment`](https://docs.rs/icu/latest/icu/casemap/struct.TitlecaseMapperBorrowed.html#method.titlecase_segment) for more information.
+     */
     titlecaseSegment(s, locale, options) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
-        const sSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, s));
+        const sSlice = diplomatRuntime.DiplomatBuf.str8(wasm, s);
         
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
-        wasm.icu4x_TitlecaseMapper_titlecase_segment_v1_mv1(this.ffiValue, ...sSlice.splat(), locale.ffiValue, ...options._intoFFI(functionCleanupArena, {}), write.buffer);
+        wasm.icu4x_TitlecaseMapper_titlecase_segment_v1_mv1(this.ffiValue, ...sSlice.splat(), locale.ffiValue, ...TitlecaseOptions._fromSuppliedValue(diplomatRuntime.internalConstructor, options)._intoFFI(functionCleanupArena, {}), write.buffer);
     
         try {
             return write.readString8();
@@ -74,6 +112,42 @@ export class TitlecaseMapper {
             functionCleanupArena.free();
         
             write.free();
+        }
+    }
+
+    /** 
+     * Returns the full titlecase mapping of the given string, using compiled data (avoids having to allocate a TitlecaseMapper object)
+     *
+     * The `v1` refers to the version of the options struct, which may change as we add more options
+     *
+     * See the [Rust documentation for `titlecase_segment`](https://docs.rs/icu/latest/icu/casemap/struct.TitlecaseMapperBorrowed.html#method.titlecase_segment) for more information.
+     */
+    static titlecaseSegmentWithCompiledData(s, locale, options) {
+        let functionCleanupArena = new diplomatRuntime.CleanupArena();
+        
+        const sSlice = diplomatRuntime.DiplomatBuf.str8(wasm, s);
+        
+        const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
+        wasm.icu4x_TitlecaseMapper_titlecase_segment_with_compiled_data_v1_mv1(...sSlice.splat(), locale.ffiValue, ...TitlecaseOptions._fromSuppliedValue(diplomatRuntime.internalConstructor, options)._intoFFI(functionCleanupArena, {}), write.buffer);
+    
+        try {
+            return write.readString8();
+        }
+        
+        finally {
+            functionCleanupArena.free();
+        
+            write.free();
+        }
+    }
+
+    constructor() {
+        if (arguments[0] === diplomatRuntime.exposeConstructor) {
+            return this.#internalConstructor(...Array.prototype.slice.call(arguments, 1));
+        } else if (arguments[0] === diplomatRuntime.internalConstructor) {
+            return this.#internalConstructor(...arguments);
+        } else {
+            return this.#defaultConstructor(...arguments);
         }
     }
 }

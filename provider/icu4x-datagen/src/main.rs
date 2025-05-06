@@ -29,7 +29,7 @@
 use clap::{Parser, ValueEnum};
 use eyre::WrapErr;
 use icu_provider::export::ExportableProvider;
-use icu_provider::hello_world::HelloWorldV1Marker;
+use icu_provider::hello_world::HelloWorldV1;
 use icu_provider_export::prelude::*;
 #[cfg(feature = "provider")]
 use icu_provider_source::SourceDataProvider;
@@ -121,7 +121,7 @@ struct Cli {
 
     #[arg(long, value_name = "TAG", default_value = "latest")]
     #[arg(
-        help = "Download tzdb from this GitHub tag (https://github.com/eggert/tzdb)\n\
+        help = "Download tzdb from this IANA tag (https://data.iana.org/time-zones/releases/)\n\
                   Use 'latest' for the latest version verified to work with this version of the binary.\n\
                   Ignored if '--tzdb-root' is present. Requires binary to be built with `networking` Cargo feature (enabled by default)."
     )]
@@ -130,7 +130,9 @@ struct Cli {
     tzdb_tag: String,
 
     #[arg(long, value_name = "PATH")]
-    #[arg(help = "Path to a local tzdb directory (see https://github.com/eggert/tzdb).")]
+    #[arg(help = "Path to a local tzdb directory \
+                (see any zip file from https://data.iana.org/time-zones/releases/, \
+                directory structure matching https://data.iana.org/time-zones/tzdb-2025a/).")]
     #[cfg(feature = "provider")]
     tzdb_root: Option<PathBuf>,
 
@@ -143,10 +145,10 @@ struct Cli {
     #[cfg(feature = "provider")]
     trie_type: TrieType,
 
-    #[arg(long, value_enum, default_value_t = CollationHanDatabase::Implicit)]
+    #[arg(long, value_enum, default_value_t = CollationRootHan::Implicit)]
     #[arg(help = "Which collation han database to use.")]
     #[cfg(feature = "provider")]
-    collation_han_database: CollationHanDatabase,
+    collation_root_han: CollationRootHan,
 
     #[arg(long, value_enum, num_args = 1..)]
     #[arg(
@@ -235,16 +237,14 @@ enum TrieType {
 }
 
 #[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, ValueEnum, Debug)]
-// Mirrors crate::CollationHanDatabase
-enum CollationHanDatabase {
+// Mirrors icu_provider_export::CollationRootHan
+enum CollationRootHan {
     Unihan,
     Implicit,
 }
 
 #[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, ValueEnum, Debug)]
 enum CollationTable {
-    Gb2312,
-    Big5han,
     Search,
     Searchji,
     #[value(alias = "search*")] // for backwards compatability
@@ -254,8 +254,6 @@ enum CollationTable {
 impl CollationTable {
     fn to_datagen_value(self) -> &'static str {
         match self {
-            Self::Gb2312 => "gb2312",
-            Self::Big5han => "big5han",
             Self::Search => "search",
             Self::Searchji => "searchji",
             Self::SearchAll => "search*",
@@ -263,17 +261,7 @@ impl CollationTable {
     }
 }
 
-// Mirrors crate::FallbackMode
-#[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, ValueEnum, Debug)]
-enum Fallback {
-    Auto,
-    Hybrid,
-    Runtime,
-    RuntimeManual,
-    Preresolved,
-}
-
-// Mirrors crate::DeduplicationStrategy
+// Mirrors icu_provider_export::DeduplicationStrategy
 #[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, ValueEnum, Debug)]
 enum Deduplication {
     Maximal,
@@ -321,7 +309,9 @@ fn main() -> eyre::Result<()> {
                 .collect::<Result<_, _>>()?,
         }
     } else if let Some(bin_path) = &cli.markers_for_bin {
-        icu::markers_for_bin(bin_path)?.into_iter().collect()
+        icu::markers_for_bin(&std::fs::read(bin_path)?)?
+            .into_iter()
+            .collect()
     } else {
         eyre::bail!("--markers or --markers-for-bin are required.")
     };
@@ -346,13 +336,13 @@ fn main() -> eyre::Result<()> {
     };
 
     let (provider, fallbacker): (Box<dyn ExportableProvider>, _) = match () {
-        () if markers == [HelloWorldV1Marker::INFO] => {
+        () if markers == [HelloWorldV1::INFO] => {
             // Just do naive fallback instead of pulling in compiled data or something. We only use this code path to debug
             // providers, so we don't need 100% correct fallback.
             (Box::new(icu_provider::hello_world::HelloWorldProvider), LocaleFallbacker::new_without_data())
         }
-        () if markers.contains(&HelloWorldV1Marker::INFO) => {
-            eyre::bail!("HelloWorldV1Marker is only allowed as the only marker")
+        () if markers.contains(&HelloWorldV1::INFO) => {
+            eyre::bail!("HelloWorldV1 is only allowed as the only marker")
         }
         #[cfg(feature = "blob_input")]
         () if cli.input_blob.is_some() => {
@@ -370,10 +360,10 @@ fn main() -> eyre::Result<()> {
         () => {
             let mut p = SourceDataProvider::new_custom();
 
-            p = p.with_collation_han_database(match cli.collation_han_database {
-                CollationHanDatabase::Unihan => icu_provider_source::CollationHanDatabase::Unihan,
-                CollationHanDatabase::Implicit => {
-                    icu_provider_source::CollationHanDatabase::Implicit
+            p = p.with_collation_root_han(match cli.collation_root_han {
+                CollationRootHan::Unihan => icu_provider_source::CollationRootHan::Unihan,
+                CollationRootHan::Implicit => {
+                    icu_provider_source::CollationRootHan::Implicit
                 }
             });
 
@@ -384,13 +374,13 @@ fn main() -> eyre::Result<()> {
             p = match (cli.cldr_root, cli.cldr_tag.as_str()) {
                 (Some(path), _) => p.with_cldr(&path)?,
                 #[cfg(feature = "networking")]
-                (_, "latest") => p.with_cldr_for_tag(SourceDataProvider::LATEST_TESTED_CLDR_TAG),
+                (_, "latest") => p.with_cldr_for_tag(SourceDataProvider::TESTED_CLDR_TAG),
                 #[cfg(feature = "networking")]
                 (_, tag) => p.with_cldr_for_tag(tag),
                 #[cfg(not(feature = "networking"))]
                 (None, _) => {
                     eyre::bail!(
-                        "Downloading data from tags requires the `networking` Cargo feature"
+                        "Please set --cldr-root or enable the `networking` Cargo feature"
                     )
                 }
             };
@@ -399,14 +389,14 @@ fn main() -> eyre::Result<()> {
                 (Some(path), _) => p.with_icuexport(&path)?,
                 #[cfg(feature = "networking")]
                 (_, "latest") => {
-                    p.with_icuexport_for_tag(SourceDataProvider::LATEST_TESTED_ICUEXPORT_TAG)
+                    p.with_icuexport_for_tag(SourceDataProvider::TESTED_ICUEXPORT_TAG)
                 }
                 #[cfg(feature = "networking")]
                 (_, tag) => p.with_icuexport_for_tag(tag),
                 #[cfg(not(feature = "networking"))]
                 (None, _) => {
                     eyre::bail!(
-                        "Downloading data from tags requires the `networking` Cargo feature"
+                        "Please set --icuexport-root or enable the `networking` Cargo feature"
                     )
                 }
             };
@@ -415,14 +405,14 @@ fn main() -> eyre::Result<()> {
                 (Some(path), _) => p.with_segmenter_lstm(&path)?,
                 #[cfg(feature = "networking")]
                 (_, "latest") => {
-                    p.with_segmenter_lstm_for_tag(SourceDataProvider::LATEST_TESTED_SEGMENTER_LSTM_TAG)
+                    p.with_segmenter_lstm_for_tag(SourceDataProvider::TESTED_SEGMENTER_LSTM_TAG)
                 }
                 #[cfg(feature = "networking")]
                 (_, tag) => p.with_segmenter_lstm_for_tag(tag),
                 #[cfg(not(feature = "networking"))]
                 (None, _) => {
                     eyre::bail!(
-                        "Downloading data from tags requires the `networking` Cargo feature"
+                        "Please set --segmenter-lstm-root or enable the `networking` Cargo feature"
                     )
                 }
             };
@@ -431,14 +421,14 @@ fn main() -> eyre::Result<()> {
                 (Some(path), _) => p.with_tzdb(&path)?,
                 #[cfg(feature = "networking")]
                 (_, "latest") => {
-                    p.with_tzdb_for_tag(SourceDataProvider::LATEST_TESTED_TZDB_TAG)
+                    p.with_tzdb_for_tag(SourceDataProvider::TESTED_TZDB_TAG)
                 }
                 #[cfg(feature = "networking")]
                 (_, tag) => p.with_tzdb_for_tag(tag),
                 #[cfg(not(feature = "networking"))]
                 (None, _) => {
                     eyre::bail!(
-                        "Downloading data from tags requires the `networking` Cargo feature"
+                        "Please set --tzdb-root or enable the `networking` Cargo feature"
                     )
                 }
             };
@@ -476,7 +466,7 @@ fn main() -> eyre::Result<()> {
         }
 
         #[cfg(not(any(feature = "provider", feature = "blob_input")))]
-        () => eyre::bail!("Only the `HelloWorldV1 marker is supported without Cargo features `blob_input` or `provider`"),
+        () => eyre::bail!("Only the `HelloWorld marker is supported without Cargo features `blob_input` or `provider`"),
     };
 
     let locale_families = match preprocessed_locales {
@@ -604,39 +594,39 @@ fn main() -> eyre::Result<()> {
 }
 
 macro_rules! cb {
-    ($($marker:path = $path:literal,)+ #[experimental] $($emarker:path = $epath:literal,)+) => {
+    ($($marker_ty:ty:$marker:ident,)+ #[experimental] $($emarker_ty:ty:$emarker:ident,)+) => {
         fn all_markers() -> Vec<DataMarkerInfo> {
             vec![
                 $(
-                    <$marker>::INFO,
+                    <$marker_ty>::INFO,
                 )+
                 $(
                     #[cfg(feature = "experimental")]
-                    <$emarker>::INFO,
+                    <$emarker_ty>::INFO,
                 )+
             ]
         }
 
-        fn marker_lookup() -> &'static HashMap<&'static str, Option<DataMarkerInfo>> {
+        fn marker_lookup() -> &'static HashMap<String, Option<DataMarkerInfo>> {
             use std::sync::OnceLock;
-            static LOOKUP: OnceLock<HashMap<&'static str, Option<DataMarkerInfo>>> = OnceLock::new();
+            static LOOKUP: OnceLock<HashMap<String, Option<DataMarkerInfo>>> = OnceLock::new();
             LOOKUP.get_or_init(|| {
                 [
-                    ("core/helloworld@1", Some(icu_provider::hello_world::HelloWorldV1Marker::INFO)),
-                    (stringify!(icu_provider::hello_world::HelloWorldV1Marker).split("::").last().unwrap().trim(), Some(icu_provider::hello_world::HelloWorldV1Marker::INFO)),
+                    (stringify!(icu_provider::hello_world::HelloWorldV1).replace(' ', ""), Some(icu_provider::hello_world::HelloWorldV1::INFO)),
+                    (stringify!(HelloWorldV1).into(), Some(icu_provider::hello_world::HelloWorldV1::INFO)),
                     $(
-                        ($path, Some(<$marker>::INFO)),
-                        (stringify!($marker).split("::").last().unwrap().trim(), Some(<$marker>::INFO)),
+                        (stringify!($marker_ty).replace(' ', ""), Some(<$marker_ty>::INFO)),
+                        (stringify!($marker).into(), Some(<$marker_ty>::INFO)),
                     )+
                     $(
                         #[cfg(feature = "experimental")]
-                        ($epath, Some(<$emarker>::INFO)),
+                        (stringify!($emarker_ty).replace(' ', ""), Some(<$emarker_ty>::INFO)),
                         #[cfg(feature = "experimental")]
-                        (stringify!($emarker).split("::").last().unwrap().trim(), Some(<$emarker>::INFO)),
+                        (stringify!($emarker).into(), Some(<$emarker_ty>::INFO)),
                         #[cfg(not(feature = "experimental"))]
-                        ($epath, None),
+                        (stringify!($emarker_ty).replace(' ', ""), None),
                         #[cfg(not(feature = "experimental"))]
-                        (stringify!($emarker).split("::").last().unwrap().trim(), None),
+                        (stringify!($emarker).into(), None),
                     )+
 
                 ]
@@ -647,8 +637,8 @@ macro_rules! cb {
 
         #[test]
         fn test_lookup() {
-            assert_eq!(marker_lookup().get("AndListV2Marker"), Some(&Some(icu::list::provider::AndListV2Marker::INFO)));
-            assert_eq!(marker_lookup().get("list/and@2"), Some(&Some(icu::list::provider::AndListV2Marker::INFO)));
+            assert_eq!(marker_lookup().get("ListAndV1"), Some(&Some(icu::list::provider::ListAndV1::INFO)));
+            assert_eq!(marker_lookup().get("icu::list::provider::ListAndV1"), Some(&Some(icu::list::provider::ListAndV1::INFO)));
             assert_eq!(marker_lookup().get("foo"), None);
         }
 
@@ -657,18 +647,20 @@ macro_rules! cb {
         icu_provider::export::make_exportable_provider!(
             ReexportableBlobDataProvider,
             [
-                icu_provider::hello_world::HelloWorldV1Marker,
+                icu_provider::hello_world::HelloWorldV1,
                 $(
-                    $marker,
+                    $marker_ty,
                 )+
                 $(
                     #[cfg(feature = "experimental")]
-                    $emarker,
+                    $emarker_ty,
                 )+
             ]
         );
     }
 }
+
+extern crate alloc;
 icu_provider_registry::registry!(cb);
 
 #[cfg(feature = "blob_input")]

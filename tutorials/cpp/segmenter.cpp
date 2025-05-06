@@ -2,7 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-#include <icu4x/DataProvider.hpp>
 #include <icu4x/GraphemeClusterSegmenter.hpp>
 #include <icu4x/LineSegmenter.hpp>
 #include <icu4x/SentenceSegmenter.hpp>
@@ -73,13 +72,12 @@ void iterate_word_breakpoints(Iterator& iterator) {
 }
 
 void test_line(const std::string_view& str) {
-    const auto provider = DataProvider::compiled();
     const auto segmenter_auto =
-        LineSegmenter::create_auto(*provider.get()).ok().value();
+        LineSegmenter::create_auto();
     const auto segmenter_lstm =
-        LineSegmenter::create_lstm(*provider.get()).ok().value();
+        LineSegmenter::create_lstm();
     const auto segmenter_dictionary =
-        LineSegmenter::create_dictionary(*provider.get()).ok().value();
+        LineSegmenter::create_dictionary();
 
     const LineSegmenter* segmenters[] = {segmenter_auto.get(), segmenter_lstm.get(),
                                               segmenter_dictionary.get()};
@@ -94,8 +92,7 @@ void test_line(const std::string_view& str) {
 }
 
 void test_grapheme(const std::string_view& str) {
-    const auto provider = DataProvider::compiled();
-    const auto segmenter = GraphemeClusterSegmenter::create(*provider.get()).ok().value();
+    const auto segmenter = GraphemeClusterSegmenter::create();
     cout << "Finding grapheme cluster breakpoints in string:" << endl
          << str << endl;
     print_ruler(str.size());
@@ -106,13 +103,12 @@ void test_grapheme(const std::string_view& str) {
 }
 
 void test_word(const std::string_view& str) {
-    const auto provider = DataProvider::compiled();
     const auto segmenter_auto =
-        WordSegmenter::create_auto(*provider.get()).ok().value();
+        WordSegmenter::create_auto();
     const auto segmenter_lstm =
-        WordSegmenter::create_lstm(*provider.get()).ok().value();
+        WordSegmenter::create_lstm();
     const auto segmenter_dictionary =
-        WordSegmenter::create_dictionary(*provider.get()).ok().value();
+        WordSegmenter::create_dictionary();
 
     const WordSegmenter* segmenters[] = {segmenter_auto.get(), segmenter_lstm.get(),
                                               segmenter_dictionary.get()};
@@ -127,14 +123,13 @@ void test_word(const std::string_view& str) {
 }
 
 void test_word_with_options(const std::string_view& str) {
-    const auto provider = DataProvider::compiled();
     std::unique_ptr<Locale> locale = Locale::from_string("sv").ok().value();
     const auto segmenter_auto =
-        WordSegmenter::create_auto_with_content_locale(*provider.get(), *locale.get()).ok().value();
+        WordSegmenter::create_auto_with_content_locale(*locale.get()).ok().value();
     const auto segmenter_lstm =
-        WordSegmenter::create_lstm_with_content_locale(*provider.get(), *locale.get()).ok().value();
+        WordSegmenter::create_lstm_with_content_locale(*locale.get()).ok().value();
     const auto segmenter_dictionary =
-        WordSegmenter::create_dictionary_with_content_locale(*provider.get(), *locale.get()).ok().value();
+        WordSegmenter::create_dictionary_with_content_locale(*locale.get()).ok().value();
 
     const WordSegmenter* segmenters[] = {segmenter_auto.get(), segmenter_lstm.get(),
                                               segmenter_dictionary.get()};
@@ -149,8 +144,7 @@ void test_word_with_options(const std::string_view& str) {
 }
 
 void test_sentence(const std::string_view& str) {
-    const auto provider = DataProvider::compiled();
-    const auto segmenter = SentenceSegmenter::create(*provider.get()).ok().value();
+    const auto segmenter = SentenceSegmenter::create();
     cout << "Finding sentence breakpoints in string:" << endl
          << str << endl;
     print_ruler(str.size());
@@ -161,10 +155,9 @@ void test_sentence(const std::string_view& str) {
 }
 
 void test_sentence_with_options(const std::string_view& str) {
-    const auto provider = DataProvider::compiled();
     std::unique_ptr<Locale> locale = Locale::from_string("el").ok().value();
     const auto segmenter =
-        SentenceSegmenter::create_with_content_locale(*provider.get(), *locale.get()).ok().value();
+        SentenceSegmenter::create_with_content_locale(*locale.get()).ok().value();
     cout << "Finding sentence breakpoints for el in string:" << endl
          << str << endl;
     print_ruler(str.size());

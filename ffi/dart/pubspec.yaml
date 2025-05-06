@@ -1,16 +1,18 @@
 name: icu
-version: 0.0.0
 repository: https://github.com/unicode-org/icu4x
 
+publish_to: none
+
 environment:
-  sdk: ^3.4.0-204.0.dev
+  sdk: '>=3.7.0 <4.0.0'
 
 dependencies:
   ffi: ^2.0.0
-  native_assets_cli: ^0.4.2
-  meta: ^1.12.0
+  native_assets_cli: ^0.11.0
+  meta: ^1.16.0
 
 dev_dependencies:
-  lints: ^3.0.0
+  args: ^2.6.0
+  lints: ^5.1.1
   test: ^1.21.0
   path: ^1.0.0

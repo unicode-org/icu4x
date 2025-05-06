@@ -1,9 +1,9 @@
-import { Calendar } from "icu4x"
-import { DataProvider } from "icu4x"
-import { DateTime } from "icu4x"
-import { IsoDateTime } from "icu4x"
+import { DateTimeFormatter } from "icu4x"
+import { IsoDate } from "icu4x"
 import { Locale } from "icu4x"
+import { Time } from "icu4x"
+import { TimeZone } from "icu4x"
 import { TimeZoneInfo } from "icu4x"
+import { UtcOffset } from "icu4x"
 import { ZonedDateTimeFormatter } from "icu4x"
-export function formatDatetimeWithCustomTimeZone(name: string, length: DateTimeLength, year: number, month: number, day: number, hour: number, minute: number, second: number, nanosecond: number, name_1: string, bcp47Id: string, offsetSeconds: number, dst: boolean);
-export function formatIsoDatetimeWithCustomTimeZone(name: string, length: DateTimeLength, year: number, month: number, day: number, hour: number, minute: number, second: number, nanosecond: number, bcp47Id: string, offsetSeconds: number, dst: boolean);
+export function formatIso(zonedDateTimeFormatterLocaleName: string, zonedDateTimeFormatterFormatterLocaleName: string, zonedDateTimeFormatterFormatterLength: DateTimeLength, zonedDateTimeFormatterFormatterTimePrecision: TimePrecision, zonedDateTimeFormatterFormatterAlignment: DateTimeAlignment, zonedDateTimeFormatterFormatterYearStyle: YearStyle, dateYear: number, dateMonth: number, dateDay: number, timeHour: number, timeMinute: number, timeSecond: number, timeSubsecond: number, zoneIdId: string, zoneOffsetOffset: string, zoneVariant: TimeZoneVariant);

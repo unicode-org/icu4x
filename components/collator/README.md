@@ -20,7 +20,7 @@ As its most basic purpose, `Collator` offers locale-aware ordering:
 
 ```rust
 use core::cmp::Ordering;
-use icu::collator::*;
+use icu::collator::{options::*, *};
 use icu::locale::locale;
 
 let mut options = CollatorOptions::default();
@@ -50,7 +50,7 @@ The degree of sensitivity in how to determine that strings are distinct.
 
 ```rust
 use core::cmp::Ordering;
-use icu::collator::*;
+use icu::collator::{options::*, *};
 
 // Primary Level
 
@@ -108,7 +108,7 @@ for Thai, whose default is `AlternateHandling::Shifted`.
 
 ```rust
 use core::cmp::Ordering;
-use icu::collator::*;
+use icu::collator::{*, options::*};
 
 // If alternate handling is set to `NonIgnorable`, then differences among
 // these characters are of the same importance as differences among letters.
@@ -158,7 +158,7 @@ without having to use tertiary level just to enable case level differences.
 
 ```rust
 use core::cmp::Ordering;
-use icu::collator::*;
+use icu::collator::{*, options::*};
 
 // Primary
 
@@ -210,14 +210,52 @@ assert_eq!(tertiary.compare("dejavu", "dejAvu"), Ordering::Less);
 assert_eq!(tertiary.compare("dejavu", "déjavu"), Ordering::Less);
 ```
 
-### Case First
-
-Whether to swap the ordering of uppercase and lowercase.
 
 ### Backward second level
 
 Compare the second level in backward order. The default is `false` (off), except for Canadian
 French.
+
+### Examples of `CollatorPreferences`
+
+The [`CollatorPreferences`] struct configures specific custom behavior for the `Collator`, like
+[`CollatorOptions`]. However, unlike `CollatorOptions`, this set of preferences can also be set
+implicitly by the locale. See docs for [`CollatorPreferences`] for more details.
+Some basic descriptions and examples are below.
+
+### Case First
+
+Whether to swap the ordering of uppercase and lowercase.
+
+```rust
+use core::cmp::Ordering;
+use icu::collator::preferences::*;
+use icu::collator::{options::*, *};
+
+// Use the locale's default.
+
+let mut prefs_no_case = CollatorPreferences::default();
+prefs_no_case.case_first = Some(CollationCaseFirst::False);
+let collator_no_case =
+    Collator::try_new(prefs_no_case, Default::default()).unwrap();
+assert_eq!(collator_no_case.compare("ab", "AB"), Ordering::Less);
+
+// Lowercase is less
+
+let mut prefs_lower_less = CollatorPreferences::default();
+prefs_lower_less.case_first = Some(CollationCaseFirst::Lower);
+let collator_lower_less =
+    Collator::try_new(prefs_lower_less, Default::default()).unwrap();
+assert_eq!(collator_lower_less.compare("ab", "AB"), Ordering::Less);
+
+// Uppercase is less
+
+let mut prefs_upper_greater = CollatorPreferences::default();
+prefs_upper_greater.case_first = Some(CollationCaseFirst::Upper);
+let collator_upper_greater =
+    Collator::try_new(prefs_upper_greater, Default::default()).unwrap();
+assert_eq!(collator_upper_greater.compare("AB", "ab"), Ordering::Less);
+```
 
 ### Numeric
 
@@ -227,24 +265,27 @@ numeric value.
 
 ```rust
 use core::cmp::Ordering;
-use icu::collator::*;
+use icu::collator::preferences::*;
+use icu::collator::{options::*, *};
 
 // Numerical sorting off
 
-let mut options_num_off = CollatorOptions::default();
-options_num_off.numeric = Some(Numeric::Off);
+let mut prefs_num_off = CollatorPreferences::default();
+prefs_num_off.numeric_ordering = Some(CollationNumericOrdering::False);
 let collator_num_off =
-    Collator::try_new(Default::default(), options_num_off).unwrap();
+    Collator::try_new(prefs_num_off, Default::default()).unwrap();
 assert_eq!(collator_num_off.compare("a10b", "a2b"), Ordering::Less);
 
 // Numerical sorting on
 
-let mut options_num_on = CollatorOptions::default();
-options_num_on.numeric = Some(Numeric::On);
+let mut prefs_num_on = CollatorPreferences::default();
+prefs_num_on.numeric_ordering = Some(CollationNumericOrdering::True);
 let collator_num_on =
-    Collator::try_new(Default::default(), options_num_on).unwrap();
+    Collator::try_new(prefs_num_on, Default::default()).unwrap();
 assert_eq!(collator_num_on.compare("a10b", "a2b"), Ordering::Greater);
 ```
+
+[`CollatorOptions`]: options::CollatorOptions
 
 <!-- cargo-rdme end -->
 

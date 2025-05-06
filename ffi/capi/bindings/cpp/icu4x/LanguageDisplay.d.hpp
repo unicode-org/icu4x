@@ -6,6 +6,7 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include <memory>
+#include <functional>
 #include <optional>
 #include "../diplomat_runtime.hpp"
 
@@ -22,6 +23,9 @@ namespace capi {
 } // namespace
 
 namespace icu4x {
+/**
+ * See the [Rust documentation for `LanguageDisplay`](https://docs.rs/icu/latest/icu/experimental/displaynames/options/enum.LanguageDisplay.html) for more information.
+ */
 class LanguageDisplay {
 public:
   enum Value {

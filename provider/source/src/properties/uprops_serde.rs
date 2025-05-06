@@ -119,7 +119,7 @@ pub(crate) mod script_extensions {
     use super::CodePointTrieToml;
 
     #[derive(serde::Deserialize)]
-    pub(crate) struct ScriptWithExtensionsPropertyV1Property {
+    pub(crate) struct ScriptWithExtensionsPropertyProperty {
         #[serde(rename = "long_name")]
         pub(crate) _long_name: String,
         #[serde(rename = "short_name")]
@@ -131,6 +131,6 @@ pub(crate) mod script_extensions {
     #[derive(serde::Deserialize)]
     pub(crate) struct Main {
         #[serde(default)]
-        pub(crate) script_extensions: Vec<ScriptWithExtensionsPropertyV1Property>,
+        pub(crate) script_extensions: Vec<ScriptWithExtensionsPropertyProperty>,
     }
 }

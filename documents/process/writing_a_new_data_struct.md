@@ -29,7 +29,7 @@ With a mental model of the lifecycle of data in ICU4X, we can discuss where to f
 
 The data struct definitions should live in the crate that uses them. By convention, the top-level module `provider` should contain the struct definitions. For example:
 
-- `icu::decimal::provider::DecimalSymbolsV2`
+- `icu::decimal::provider::DecimalSymbolsV1`
 - `icu::locale_canonicalizer::provider::LikelySubtagsV1`
 - `icu::uniset::provider::PropertyCodePointSetV1`
 
@@ -83,7 +83,7 @@ After you are done, add your data marker to the component's `provider::KEYS` lis
 
 ## Example
 
-The following example shows all the pieces that make up the data pipeline for `DecimalSymbolsV2`.
+The following example shows all the pieces that make up the data pipeline for `DecimalSymbolsV1`.
 
 ### Data Struct
 
@@ -92,15 +92,20 @@ The following example shows all the pieces that make up the data pipeline for `D
 ```rust
 use std::borrow::Cow;
 use icu_provider::prelude::*;
-use icu::decimal::provider::GroupingSizesV1;
+use icu::decimal::provider::GroupingSizes;
 
-/// Symbols and metadata required for formatting a [`FixedDecimal`](crate::FixedDecimal).
-#[icu_provider::data_struct(DecimalSymbolsV2Marker = "decimal/symbols@2")]
-#[derive(Debug, PartialEq, Clone)]
+icu_provider::data_marker!(
+    /// Data marker for decimal symbols
+    DecimalSymbolsV1,
+    "decimal/symbols/v1",
+    DecimalSymbols<'static>,
+);
+
+#[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_decimal::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-pub struct DecimalSymbolsV2<'data> {
+pub struct DecimalSymbols<'data> {
     /// Character used to separate the integer and fraction parts of the number.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub decimal_separator: Cow<'data, str>,
@@ -110,7 +115,7 @@ pub struct DecimalSymbolsV2<'data> {
     pub grouping_separator: Cow<'data, str>,
 
     /// Settings used to determine where to place groups in the integer part of the number.
-    pub grouping_sizes: GroupingSizesV1,
+    pub grouping_sizes: GroupingSizes,
 
     /// Digit characters for the current numbering system. In most systems, these digits are
     /// contiguous, but in some systems, such as *hanidec*, they are not contiguous.
@@ -118,7 +123,7 @@ pub struct DecimalSymbolsV2<'data> {
 }
 ```
 
-The above example is an abridged definition for `DecimalSymbolsV2`. Note how the lifetime parameter `'data` is passed down into all fields that may need to borrow data.
+The above example is an abridged definition for `DecimalSymbolsV1`. Note how the lifetime parameter `'data` is passed down into all fields that may need to borrow data.
 
 ### CLDR JSON Deserialize
 
@@ -163,11 +168,11 @@ The above example is an abridged definition of the Serde structure corresponding
 [*provider/core/src/data_provider.rs*](https://github.com/unicode-org/icu4x/blob/main/provider/core/src/data_provider.rs)
 
 ```rust,compile_fail
-impl DataProvider<FooV1Marker> for SourceDataProvider {
+impl DataProvider<FooV1> for SourceDataProvider {
     fn load(
         &self,
         req: DataRequest,
-    ) -> Result<DataResponse<FooV1Marker>, DataError> {
+    ) -> Result<DataResponse<FooV1>, DataError> {
         // Use the data inside self and emit it as an ICU4X data struct.
         // This is the core transform operation. This step could take a lot of
         // work, such as pre-parsing patterns, re-organizing the data, etc.
@@ -175,7 +180,7 @@ impl DataProvider<FooV1Marker> for SourceDataProvider {
     }
 }
 
-impl IterableDataProviderCached<FooV1Marker> for SourceDataProvider {
+impl IterableDataProviderCached<FooV1> for SourceDataProvider {
     fn iter_locales_cached(
         &self,
     ) -> Result<HashSet<DataLocale>, DataError> {
@@ -189,7 +194,7 @@ impl IterableDataProviderCached<FooV1Marker> for SourceDataProvider {
 ```rust,compile_fail
 registry!(
     // ...
-    icu::foo::provider::FooV1Marker = "foo/bar@1",
+    icu::foo::provider::FooV1 = "foo/bar@1",
     // ...
 )
 ```

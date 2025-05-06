@@ -34,14 +34,39 @@ type UnvalidatedVariant = UnvalidatedTinyAsciiStr<8>;
 /// </div>
 pub use crate::provider::Baked;
 
-#[icu_provider::data_struct(RegionDisplayNamesV1Marker = "displaynames/regions@1")]
-#[derive(Debug, PartialEq, Clone, Default)]
+icu_provider::data_marker!(
+    /// `LocaleDisplayNamesV1`
+    LocaleDisplayNamesV1,
+    LocaleDisplayNames<'static>
+);
+icu_provider::data_marker!(
+    /// `VariantDisplayNamesV1`
+    VariantDisplayNamesV1,
+    VariantDisplayNames<'static>
+);
+icu_provider::data_marker!(
+    /// `ScriptDisplayNamesV1`
+    ScriptDisplayNamesV1,
+    ScriptDisplayNames<'static>
+);
+icu_provider::data_marker!(
+    /// `LanguageDisplayNamesV1`
+    LanguageDisplayNamesV1,
+    LanguageDisplayNames<'static>
+);
+icu_provider::data_marker!(
+    /// `RegionDisplayNamesV1`
+    RegionDisplayNamesV1,
+    RegionDisplayNames<'static>
+);
+
+#[derive(Debug, PartialEq, Clone, Default, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_experimental::displaynames::provider))]
 #[yoke(prove_covariance_manually)]
 /// RegionDisplayNames provides mapping between a region code and locale display name.
-pub struct RegionDisplayNamesV1<'data> {
+pub struct RegionDisplayNames<'data> {
     /// Mapping for region to locale display name.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub names: ZeroMap<'data, UnvalidatedRegion, str>,
@@ -50,14 +75,15 @@ pub struct RegionDisplayNamesV1<'data> {
     pub short_names: ZeroMap<'data, UnvalidatedRegion, str>,
 }
 
-#[icu_provider::data_struct(LanguageDisplayNamesV1Marker = "displaynames/languages@1")]
-#[derive(Debug, PartialEq, Clone, Default)]
+icu_provider::data_struct!(RegionDisplayNames<'_>, #[cfg(feature = "datagen")]);
+
+#[derive(Debug, PartialEq, Clone, Default, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_experimental::displaynames::provider))]
 #[yoke(prove_covariance_manually)]
 /// LanguageDisplayNames provides mapping between languages and display names.
-pub struct LanguageDisplayNamesV1<'data> {
+pub struct LanguageDisplayNames<'data> {
     /// Mapping for language to display name.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub names: ZeroMap<'data, UnvalidatedLanguage, str>,
@@ -72,14 +98,15 @@ pub struct LanguageDisplayNamesV1<'data> {
     pub menu_names: ZeroMap<'data, UnvalidatedLanguage, str>,
 }
 
-#[icu_provider::data_struct(ScriptDisplayNamesV1Marker = "displaynames/scripts@1")]
-#[derive(Debug, PartialEq, Clone, Default)]
+icu_provider::data_struct!(LanguageDisplayNames<'_>, #[cfg(feature = "datagen")]);
+
+#[derive(Debug, PartialEq, Clone, Default, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_experimental::displaynames::provider))]
 #[yoke(prove_covariance_manually)]
 /// ScriptDisplayNames provides mapping between a script code and it's display name.
-pub struct ScriptDisplayNamesV1<'data> {
+pub struct ScriptDisplayNames<'data> {
     /// Mapping for script to locale display name.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub names: ZeroMap<'data, UnvalidatedScript, str>,
@@ -88,14 +115,15 @@ pub struct ScriptDisplayNamesV1<'data> {
     pub short_names: ZeroMap<'data, UnvalidatedScript, str>,
 }
 
-#[icu_provider::data_struct(LocaleDisplayNamesV1Marker = "displaynames/locales@1")]
-#[derive(Debug, PartialEq, Clone, Default)]
+icu_provider::data_struct!(ScriptDisplayNames<'_>, #[cfg(feature = "datagen")]);
+
+#[derive(Debug, PartialEq, Clone, Default, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_experimental::displaynames::provider))]
 #[yoke(prove_covariance_manually)]
 /// LocaleDisplayNames provides mapping between locales and display names.
-pub struct LocaleDisplayNamesV1<'data> {
+pub struct LocaleDisplayNames<'data> {
     /// Mapping for locale to display name.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub names: ZeroMap<'data, UnvalidatedLocale, str>,
@@ -110,15 +138,18 @@ pub struct LocaleDisplayNamesV1<'data> {
     pub menu_names: ZeroMap<'data, UnvalidatedLocale, str>,
 }
 
-#[icu_provider::data_struct(VariantDisplayNamesV1Marker = "displaynames/variants@1")]
-#[derive(Debug, PartialEq, Clone, Default)]
+icu_provider::data_struct!(LocaleDisplayNames<'_>, #[cfg(feature = "datagen")]);
+
+#[derive(Debug, PartialEq, Clone, Default, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_experimental::displaynames::provider))]
 #[yoke(prove_covariance_manually)]
 /// VariantDisplayNames provides the user-translated names for the variant-code values.
-pub struct VariantDisplayNamesV1<'data> {
+pub struct VariantDisplayNames<'data> {
     /// Mapping for Variant to locale display name.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub names: ZeroMap<'data, UnvalidatedVariant, str>,
 }
+
+icu_provider::data_struct!(VariantDisplayNames<'_>, #[cfg(feature = "datagen")]);

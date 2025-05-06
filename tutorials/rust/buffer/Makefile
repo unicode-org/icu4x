@@ -4,7 +4,7 @@
 
 export CARGO_TARGET_DIR ?= target
 
-PINNED_CI_NIGHTLY = "nightly-2024-07-23"
+PINNED_CI_NIGHTLY = "nightly-2025-02-17"
 
 all: buffer_data.postcard bin/tutorial_buffer.wasm
 

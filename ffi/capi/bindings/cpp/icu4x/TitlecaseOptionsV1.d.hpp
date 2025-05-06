@@ -6,6 +6,7 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include <memory>
+#include <functional>
 #include <optional>
 #include "../diplomat_runtime.hpp"
 #include "LeadingAdjustment.d.hpp"
@@ -31,10 +32,16 @@ namespace capi {
 
 
 namespace icu4x {
+/**
+ * See the [Rust documentation for `TitlecaseOptions`](https://docs.rs/icu/latest/icu/casemap/options/struct.TitlecaseOptions.html) for more information.
+ */
 struct TitlecaseOptionsV1 {
   std::optional<icu4x::LeadingAdjustment> leading_adjustment;
   std::optional<icu4x::TrailingCase> trailing_case;
 
+  /**
+   * See the [Rust documentation for `default`](https://docs.rs/icu/latest/icu/casemap/options/struct.TitlecaseOptions.html#method.default) for more information.
+   */
   inline static icu4x::TitlecaseOptionsV1 default_options();
 
   inline icu4x::capi::TitlecaseOptionsV1 AsFFI() const;

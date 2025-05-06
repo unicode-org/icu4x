@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::{props::EnumeratedProperty, provider::BidiMirroringGlyphV1Marker};
+use crate::{props::EnumeratedProperty, provider::PropertyEnumBidiMirroringGlyphV1};
 use icu_collections::codepointtrie::TrieValue;
 use zerovec::ule::{AsULE, RawBytesULE};
 
@@ -23,10 +23,10 @@ pub struct BidiMirroringGlyph {
 }
 
 impl EnumeratedProperty for BidiMirroringGlyph {
-    type DataMarker = BidiMirroringGlyphV1Marker;
+    type DataMarker = PropertyEnumBidiMirroringGlyphV1;
     #[cfg(feature = "compiled_data")]
-    const SINGLETON: &'static crate::provider::PropertyCodePointMapV1<'static, Self> =
-        crate::provider::Baked::SINGLETON_BIDI_MIRRORING_GLYPH_V1_MARKER;
+    const SINGLETON: &'static crate::provider::PropertyCodePointMap<'static, Self> =
+        crate::provider::Baked::SINGLETON_PROPERTY_ENUM_BIDI_MIRRORING_GLYPH_V1;
     const NAME: &'static [u8] = b"Bidi_Mirroring_Glyph";
     const SHORT_NAME: &'static [u8] = b"Bidi_Mirroring_Glyph";
 }

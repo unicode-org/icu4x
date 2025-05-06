@@ -14,7 +14,7 @@ First you choose a _field set_, then you configure the formatting _options_ to y
 2. Options: [`icu::datetime::options`](options)
 
 ICU4X supports formatting in over one dozen _calendar systems_, including Gregorian, Buddhist,
-Islamic, and more. The calendar system is usually derived from the locale, but it can also be
+Hijri, and more. The calendar system is usually derived from the locale, but it can also be
 specified explicitly.
 
 The main formatter in this crate is [`DateTimeFormatter`], which supports all field sets,
@@ -22,14 +22,14 @@ options, and calendar systems. Additional formatter types are available to devel
 resource-constrained environments.
 
 The formatters accept input types from the [`calendar`](icu_calendar) and
-[`timezone`](icu_timezone) crates:
+[`timezone`](icu_time) crates (Also reexported from the [`input`] module of this crate):
 
 1. [`Date`](icu_calendar::Date)
-2. [`DateTime`](icu_calendar::DateTime)
-3. [`Time`](icu_calendar::Time)
-4. [`UtcOffset`](icu_timezone::UtcOffset)
-5. [`TimeZoneInfo`](icu_timezone::TimeZoneInfo)
-6. [`CustomZonedDateTime`](icu_timezone::CustomZonedDateTime)
+2. [`DateTime`](icu_time::DateTime)
+3. [`Time`](icu_time::Time)
+4. [`UtcOffset`](icu_time::zone::UtcOffset)
+5. [`TimeZoneInfo`](icu_time::TimeZoneInfo)
+6. [`ZonedDateTime`](icu_time::ZonedDateTime)
 
 Not all inputs are valid for all field sets.
 
@@ -44,27 +44,31 @@ and calendar systems:
 | Field Sets | Specific [`fieldsets`] types | Enumerations from [`fieldsets::enums`] |
 | Calendar Systems | [`FixedCalendarDateTimeFormatter`] | [`DateTimeFormatter`] |
 
-If formatting times and time zones without dates, consider using [`TimeFormatter`].
+If formatting times and time zones without dates, consider using [`NoCalendarFormatter`].
 
 ## Examples
 
 ```rust
-use icu::calendar::DateTime;
 use icu::datetime::fieldsets;
+use icu::datetime::input::Date;
+use icu::datetime::input::{DateTime, Time};
 use icu::datetime::DateTimeFormatter;
 use icu::locale::{locale, Locale};
 use writeable::assert_writeable_eq;
 
 // Field set for year, month, day, hour, and minute with a medium length:
-let field_set = fieldsets::YMDT::medium().hm();
+let field_set = fieldsets::YMD::medium().with_time_hm();
 
 // Create a formatter for Argentinian Spanish:
 let locale = locale!("es-AR");
 let dtf = DateTimeFormatter::try_new(locale.into(), field_set).unwrap();
 
 // Format something:
-let datetime = DateTime::try_new_iso(2025, 1, 15, 16, 9, 35).unwrap();
-let formatted_date = dtf.format_any_calendar(&datetime);
+let datetime = DateTime {
+    date: Date::try_new_iso(2025, 1, 15).unwrap(),
+    time: Time::try_new(16, 9, 35, 0).unwrap(),
+};
+let formatted_date = dtf.format(&datetime);
 
 assert_writeable_eq!(formatted_date, "15 de ene de 2025, 4:09 p. m.");
 ```

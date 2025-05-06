@@ -28,16 +28,17 @@
 //! Format with the time display depending on a runtime boolean:
 //!
 //! ```
-//! use icu::calendar::DateTime;
+//! use icu::calendar::Date;
 //! use icu::datetime::fieldsets;
 //! use icu::datetime::fieldsets::enums::CompositeDateTimeFieldSet;
+//! use icu::datetime::input::{DateTime, Time};
 //! use icu::datetime::DateTimeFormatter;
 //! use icu::locale::locale;
 //! use writeable::Writeable;
 //!
 //! fn get_field_set(should_display_time: bool) -> CompositeDateTimeFieldSet {
 //!     if should_display_time {
-//!         let field_set = fieldsets::MDT::medium().hm();
+//!         let field_set = fieldsets::MD::medium().with_time_hm();
 //!         CompositeDateTimeFieldSet::DateTime(
 //!             fieldsets::enums::DateAndTimeFieldSet::MDT(field_set),
 //!         )
@@ -49,22 +50,22 @@
 //!     }
 //! }
 //!
-//! let datetime = DateTime::try_new_iso(2025, 1, 15, 16, 0, 0).unwrap();
+//! let datetime = DateTime {
+//!     date: Date::try_new_iso(2025, 1, 15).unwrap(),
+//!     time: Time::try_new(16, 0, 0, 0).unwrap(),
+//! };
 //!
-//! let results = [true, false]
-//!     .map(get_field_set)
-//!     .map(|field_set| {
-//!         DateTimeFormatter::try_new(locale!("en-US").into(), field_set)
-//!             .unwrap()
-//!     })
-//!     .map(|formatter| formatter.format_any_calendar(&datetime).to_string());
+//! let with_time = DateTimeFormatter::try_new(locale!("en-US").into(), get_field_set(true)).unwrap();
+//! let without_time = DateTimeFormatter::try_new(locale!("en-US").into(), get_field_set(false)).unwrap();
 //!
-//! assert_eq!(results, ["Jan 15, 4:00 PM", "Jan 15"])
+//! assert_eq!(with_time.format(&datetime).to_string(), "Jan 15, 4:00 PM");
+//! assert_eq!(without_time.format(&datetime).to_string(), "Jan 15");
 //! ```
 
+use crate::fieldsets::{builder, Combo};
 use crate::raw::neo::RawOptions;
 use crate::scaffold::GetField;
-use crate::{fields, fieldsets, Length};
+use crate::{fieldsets, provider};
 use icu_provider::prelude::*;
 
 /// An enumeration over all possible date field sets.
@@ -111,7 +112,7 @@ pub enum CalendarPeriodFieldSet {
     /// A year, as in
     /// “2000”.
     Y(fieldsets::Y),
-    // TODO: Add support for week-of-year
+    // TODO(#5643): Add support for week-of-year
     // /// The year and week of the year, as in
     // /// “52nd week of 1999”.
     // YW(fieldsets::YW),
@@ -132,52 +133,40 @@ pub enum TimeFieldSet {
 ///
 /// This is a dynamic field set. For more information, see [`enums`](crate::fieldsets::enums).
 ///
-/// Note: [`fieldsets::Zs`] and [`fieldsets::Vs`] are not included in this enum
-/// because they are data size optimizations only.
-///
 /// # Time Zone Data Size
 ///
 /// Time zone names contribute a lot of data size. For resource-constrained
 /// environments, the following formats require the least amount of data:
 ///
-/// - [`fieldsets::Zs`]
-/// - [`fieldsets::O`]
+/// - [`fieldsets::zone::SpecificShort`]
+/// - [`fieldsets::zone::LocalizedOffsetLong`]
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 #[non_exhaustive]
 pub enum ZoneFieldSet {
-    /// The specific non-location format, as in
+    /// The long specific non-location format, as in
     /// “Pacific Daylight Time”.
-    Z(fieldsets::Z),
-    /// The offset format, as in
+    SpecificLong(fieldsets::zone::SpecificLong),
+    /// The short specific non-location format, as in
+    /// “PDT”.
+    SpecificShort(fieldsets::zone::SpecificShort),
+    /// The long offset format, as in
+    /// “GMT−8:00”.
+    LocalizedOffsetLong(fieldsets::zone::LocalizedOffsetLong),
+    /// The short offset format, as in
     /// “GMT−8”.
-    O(fieldsets::O),
-    /// The generic non-location format, as in
+    LocalizedOffsetShort(fieldsets::zone::LocalizedOffsetShort),
+    /// The long generic non-location format, as in
     /// “Pacific Time”.
-    V(fieldsets::V),
+    GenericLong(fieldsets::zone::GenericLong),
+    /// The short generic non-location format, as in
+    /// “PT”.
+    GenericShort(fieldsets::zone::GenericShort),
     /// The location format, as in
-    /// “Los Angeles time”.
-    L(fieldsets::L),
-}
-
-/// An enumeration over all possible zone styles.
-///
-/// This is similar to [`ZoneFieldSet`], except the fields are not
-/// self-contained semantic skeletons: they do not contain the length.
-#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
-#[non_exhaustive]
-pub enum ZoneStyle {
-    /// The specific non-location format, as in
-    /// “Pacific Daylight Time”.
-    Z,
-    /// The offset format, as in
-    /// “GMT−8”.
-    O,
-    /// The generic non-location format, as in
-    /// “Pacific Time”.
-    V,
-    /// The location format, as in
-    /// “Los Angeles time”.
-    L,
+    /// “Los Angeles Time”.
+    Location(fieldsets::zone::Location),
+    /// The exemplar city format, as in
+    /// “Los Angeles.
+    ExemplarCity(fieldsets::zone::ExemplarCity),
 }
 
 /// An enumeration over all possible date+time composite field sets.
@@ -241,9 +230,9 @@ impl CompositeDateTimeFieldSet {
             CompositeFieldSet::Time(v) => Some(Self::Time(v)),
             CompositeFieldSet::Zone(_) => None,
             CompositeFieldSet::DateTime(v) => Some(Self::DateTime(v)),
-            CompositeFieldSet::DateZone(_, _) => None,
-            CompositeFieldSet::TimeZone(_, _) => None,
-            CompositeFieldSet::DateTimeZone(_, _) => None,
+            CompositeFieldSet::DateZone(_) => None,
+            CompositeFieldSet::TimeZone(_) => None,
+            CompositeFieldSet::DateTimeZone(_) => None,
         }
     }
 
@@ -265,6 +254,21 @@ impl GetField<CompositeFieldSet> for CompositeDateTimeFieldSet {
     }
 }
 
+/// Type alias representing all possible date + time zone field sets.
+///
+/// This is a dynamic field set. For more information, see [`enums`](crate::fieldsets::enums).
+pub type ZonedDateFieldSet = Combo<DateFieldSet, ZoneFieldSet>;
+
+/// Type alias representing all possible time + time zone field sets.
+///
+/// This is a dynamic field set. For more information, see [`enums`](crate::fieldsets::enums).
+pub type ZonedTimeFieldSet = Combo<TimeFieldSet, ZoneFieldSet>;
+
+/// Type alias representing all possible date + time + time zone field sets.
+///
+/// This is a dynamic field set. For more information, see [`enums`](crate::fieldsets::enums).
+pub type ZonedDateAndTimeFieldSet = Combo<DateAndTimeFieldSet, ZoneFieldSet>;
+
 /// An enum supporting all possible field sets and options.
 ///
 /// This is a dynamic field set. For more information, see [`enums`](crate::fieldsets::enums).
@@ -282,11 +286,11 @@ pub enum CompositeFieldSet {
     /// Field set for a date and a time together.
     DateTime(DateAndTimeFieldSet),
     /// Field set for a date and a time zone together.
-    DateZone(DateFieldSet, ZoneStyle),
+    DateZone(ZonedDateFieldSet),
     /// Field set for a time and a time zone together.
-    TimeZone(TimeFieldSet, ZoneStyle),
+    TimeZone(ZonedTimeFieldSet),
     /// Field set for a date, a time, and a time zone together.
-    DateTimeZone(DateAndTimeFieldSet, ZoneStyle),
+    DateTimeZone(ZonedDateAndTimeFieldSet),
 }
 
 macro_rules! first {
@@ -386,10 +390,17 @@ macro_rules! impl_attrs {
     (@zone, $type:path, [$($variant:ident),+,]) => {
         impl_attrs! { @composite, $type, Zone }
         impl $type {
-            pub(crate) fn to_field(self) -> (fields::TimeZone, fields::FieldLength) {
+            pub(crate) fn to_field(self) -> (provider::fields::TimeZone, provider::fields::FieldLength) {
                 match self {
                     $(
                         Self::$variant(variant) => variant.to_field(),
+                    )+
+                }
+            }
+            pub(crate) fn to_zone_style(self) -> builder::ZoneStyle {
+                match self {
+                    $(
+                        Self::$variant(_) => builder::ZoneStyle::$variant,
                     )+
                 }
             }
@@ -417,14 +428,6 @@ macro_rules! impl_attrs {
                     time_precision,
                     alignment,
                 })
-            }
-            #[cfg(all(feature = "serde", feature = "experimental"))]
-            pub(crate) fn from_date_field_set_with_raw_options(date_field_set: DateFieldSet, options: RawOptions) -> Self {
-                match date_field_set {
-                    $(
-                        DateFieldSet::$d_variant(_) => Self::$variant(fieldsets::$variant::from_raw_options(options)),
-                    )+
-                }
             }
         }
     };
@@ -467,13 +470,13 @@ impl_attrs! {
 impl TimeFieldSet {
     pub(crate) const fn id_str_for_hour_cycle(
         self,
-        hour_cycle: Option<fields::Hour>,
+        hour_cycle: Option<provider::fields::Hour>,
     ) -> &'static DataMarkerAttributes {
-        use fields::Hour::*;
+        use provider::fields::Hour::*;
         match hour_cycle {
             None => Self::ATTR_T,
             Some(H11 | H12) => Self::ATTR_T12,
-            Some(H23 | H24) => Self::ATTR_T24,
+            Some(H23) => Self::ATTR_T24,
         }
     }
 }
@@ -482,22 +485,15 @@ impl_attrs! {
     @zone,
     ZoneFieldSet,
     [
-        Z,
-        O,
-        V,
-        L,
+        SpecificLong,
+        SpecificShort,
+        LocalizedOffsetLong,
+        LocalizedOffsetShort,
+        GenericLong,
+        GenericShort,
+        Location,
+        ExemplarCity,
     ]
-}
-
-impl ZoneFieldSet {
-    pub(crate) fn from_time_zone_style_and_length(style: ZoneStyle, length: Length) -> Self {
-        match style {
-            ZoneStyle::Z => Self::Z(fieldsets::Z::with_length(length)),
-            ZoneStyle::O => Self::O(fieldsets::O::with_length(length)),
-            ZoneStyle::V => Self::V(fieldsets::V::with_length(length)),
-            ZoneStyle::L => Self::L(fieldsets::L::with_length(length)),
-        }
-    }
 }
 
 impl_attrs! {

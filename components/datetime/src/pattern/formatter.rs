@@ -5,13 +5,13 @@
 use super::names::RawDateTimeNamesBorrowed;
 use super::pattern::DateTimePatternBorrowed;
 use crate::format::datetime::try_write_pattern_items;
-use crate::input::ExtractedInput;
+use crate::format::DateTimeInputUnchecked;
+use crate::pattern::FormattedDateTimePatternError;
 use crate::scaffold::*;
 use crate::scaffold::{
     AllInputMarkers, DateInputMarkers, DateTimeMarkers, InFixedCalendar, TimeMarkers,
     TypedDateDataMarkers, ZoneMarkers,
 };
-use crate::DateTimeWriteError;
 use core::fmt;
 use core::marker::PhantomData;
 use writeable::TryWriteable;
@@ -22,10 +22,10 @@ use writeable::TryWriteable;
 /// It assumes that the pattern is already localized for the customer's locale. Most clients
 /// should use [`DateTimeFormatter`] instead of directly formatting with patterns.
 ///
-/// Create one of these via factory methods on [`TypedDateTimeNames`].
+/// Create one of these via factory methods on [`FixedCalendarDateTimeNames`].
 ///
 /// [`DateTimePattern`]: super::DateTimePattern
-/// [`TypedDateTimeNames`]: super::TypedDateTimeNames
+/// [`FixedCalendarDateTimeNames`]: super::FixedCalendarDateTimeNames
 /// [`DateTimeFormatter`]: crate::DateTimeFormatter
 #[derive(Debug, Copy, Clone)]
 pub struct DateTimePatternFormatter<'a, C: CldrCalendar, FSet> {
@@ -66,23 +66,23 @@ where
     /// Format a date:
     ///
     /// ```
-    /// use icu::calendar::Date;
     /// use icu::calendar::Gregorian;
-    /// use icu::datetime::fields;
-    /// use icu::datetime::fields::FieldLength;
     /// use icu::datetime::fieldsets::enums::DateFieldSet;
+    /// use icu::datetime::input::Date;
     /// use icu::datetime::pattern::DateTimePattern;
-    /// use icu::datetime::pattern::TypedDateTimeNames;
+    /// use icu::datetime::pattern::FixedCalendarDateTimeNames;
+    /// use icu::datetime::pattern::MonthNameLength;
+    /// use icu::datetime::pattern::YearNameLength;
     /// use icu::locale::locale;
-    /// use writeable::assert_try_writeable_eq;
+    /// use writeable::TryWriteable;
     ///
     /// // Create an instance that can format wide month and era names:
-    /// let mut names: TypedDateTimeNames<Gregorian, DateFieldSet> =
-    ///     TypedDateTimeNames::try_new(locale!("en-GB").into()).unwrap();
+    /// let mut names: FixedCalendarDateTimeNames<Gregorian, DateFieldSet> =
+    ///     FixedCalendarDateTimeNames::try_new(locale!("en-GB").into()).unwrap();
     /// names
-    ///     .include_month_names(fields::Month::Format, FieldLength::Four)
+    ///     .include_month_names(MonthNameLength::Wide)
     ///     .unwrap()
-    ///     .include_year_names(FieldLength::Four)
+    ///     .include_year_names(YearNameLength::Wide)
     ///     .unwrap();
     ///
     /// // Create a pattern from a pattern string:
@@ -93,12 +93,15 @@ where
     /// // Note: extended year -50 is year 51 BCE
     /// let date_bce = Date::try_new_gregorian(-50, 3, 15).unwrap();
     /// let date_ce = Date::try_new_gregorian(1700, 11, 20).unwrap();
-    /// assert_try_writeable_eq!(
-    ///     names.with_pattern_unchecked(&pattern).format(&date_bce),
+    ///
+    /// let formatter = names.with_pattern_unchecked(&pattern);
+    ///
+    /// assert_eq!(
+    ///     formatter.format(&date_bce).try_write_to_string().unwrap(),
     ///     "The date is: March 15, 51 Before Christ"
     /// );
-    /// assert_try_writeable_eq!(
-    ///     names.with_pattern_unchecked(&pattern).format(&date_ce),
+    /// assert_eq!(
+    ///     formatter.format(&date_ce).try_write_to_string().unwrap(),
     ///     "The date is: November 20, 1700 Anno Domini"
     /// );
     /// ```
@@ -107,18 +110,20 @@ where
     ///
     /// ```
     /// use icu::calendar::Gregorian;
-    /// use icu::calendar::Time;
-    /// use icu::datetime::fields::FieldLength;
     /// use icu::datetime::fieldsets::enums::TimeFieldSet;
+    /// use icu::datetime::input::Time;
     /// use icu::datetime::pattern::DateTimePattern;
-    /// use icu::datetime::pattern::TypedDateTimeNames;
+    /// use icu::datetime::pattern::DayPeriodNameLength;
+    /// use icu::datetime::pattern::FixedCalendarDateTimeNames;
     /// use icu::locale::locale;
-    /// use writeable::assert_try_writeable_eq;
+    /// use writeable::TryWriteable;
     ///
     /// // Create an instance that can format abbreviated day periods:
-    /// let mut names: TypedDateTimeNames<Gregorian, TimeFieldSet> =
-    ///     TypedDateTimeNames::try_new(locale!("en-US").into()).unwrap();
-    /// names.include_day_period_names(FieldLength::Three).unwrap();
+    /// let mut names: FixedCalendarDateTimeNames<Gregorian, TimeFieldSet> =
+    ///     FixedCalendarDateTimeNames::try_new(locale!("en-US").into()).unwrap();
+    /// names
+    ///     .include_day_period_names(DayPeriodNameLength::Abbreviated)
+    ///     .unwrap();
     ///
     /// // Create a pattern from a pattern string:
     /// let pattern_str = "'The time is:' h:mm b";
@@ -129,22 +134,23 @@ where
     /// let time_pm = Time::try_new(13, 41, 28, 0).unwrap();
     /// let time_noon = Time::try_new(12, 0, 0, 0).unwrap();
     /// let time_midnight = Time::try_new(0, 0, 0, 0).unwrap();
-    /// assert_try_writeable_eq!(
-    ///     names.with_pattern_unchecked(&pattern).format(&time_am),
+    ///
+    /// let formatter = names.with_pattern_unchecked(&pattern);
+    ///
+    /// assert_eq!(
+    ///     formatter.format(&time_am).try_write_to_string().unwrap(),
     ///     "The time is: 11:04 AM"
     /// );
-    /// assert_try_writeable_eq!(
-    ///     names.with_pattern_unchecked(&pattern).format(&time_pm),
+    /// assert_eq!(
+    ///     formatter.format(&time_pm).try_write_to_string().unwrap(),
     ///     "The time is: 1:41 PM"
     /// );
-    /// assert_try_writeable_eq!(
-    ///     names.with_pattern_unchecked(&pattern).format(&time_noon),
+    /// assert_eq!(
+    ///     formatter.format(&time_noon).try_write_to_string().unwrap(),
     ///     "The time is: 12:00 noon"
     /// );
-    /// assert_try_writeable_eq!(
-    ///     names
-    ///         .with_pattern_unchecked(&pattern)
-    ///         .format(&time_midnight),
+    /// assert_eq!(
+    ///     formatter.format(&time_midnight).try_write_to_string().unwrap(),
     ///     "The time is: 12:00 midnight"
     /// );
     /// ```
@@ -154,25 +160,33 @@ where
     /// ```
     /// use icu::calendar::Gregorian;
     /// use icu::datetime::fieldsets::enums::ZoneFieldSet;
+    /// use icu::datetime::input::ZonedDateTime;
     /// use icu::datetime::pattern::DateTimePattern;
-    /// use icu::datetime::pattern::TypedDateTimeNames;
+    /// use icu::datetime::pattern::FixedCalendarDateTimeNames;
     /// use icu::locale::locale;
-    /// use icu::timezone::IxdtfParser;
-    /// use writeable::assert_try_writeable_eq;
+    /// use icu::time::zone::{IanaParser, VariantOffsetsCalculator};
+    /// use writeable::TryWriteable;
     ///
-    /// let mut london_winter = IxdtfParser::new()
-    ///     .try_from_str("2024-01-01T00:00:00+00:00[Europe/London]")
-    ///     .unwrap()
-    ///     .to_calendar(Gregorian);
-    /// let mut london_summer = IxdtfParser::new()
-    ///     .try_from_str("2024-07-01T00:00:00+01:00[Europe/London]")
-    ///     .unwrap()
-    ///     .to_calendar(Gregorian);
-    ///
-    /// let mut names = TypedDateTimeNames::<Gregorian, ZoneFieldSet>::try_new(
-    ///     locale!("en-GB").into(),
+    /// let mut london_winter = ZonedDateTime::try_full_from_str(
+    ///     "2024-01-01T00:00:00+00:00[Europe/London]",
+    ///     Gregorian,
+    ///     IanaParser::new(),
+    ///     VariantOffsetsCalculator::new(),
     /// )
     /// .unwrap();
+    /// let mut london_summer = ZonedDateTime::try_full_from_str(
+    ///     "2024-07-01T00:00:00+01:00[Europe/London]",
+    ///     Gregorian,
+    ///     IanaParser::new(),
+    ///     VariantOffsetsCalculator::new(),
+    /// )
+    /// .unwrap();
+    ///
+    /// let mut names =
+    ///     FixedCalendarDateTimeNames::<Gregorian, ZoneFieldSet>::try_new(
+    ///         locale!("en-GB").into(),
+    ///     )
+    ///     .unwrap();
     ///
     /// names.include_time_zone_essentials().unwrap();
     /// names.include_time_zone_specific_short_names().unwrap();
@@ -181,16 +195,14 @@ where
     /// let pattern_str = "'Your time zone is:' z";
     /// let pattern: DateTimePattern = pattern_str.parse().unwrap();
     ///
-    /// assert_try_writeable_eq!(
-    ///     names
-    ///         .with_pattern_unchecked(&pattern)
-    ///         .format(&london_winter),
+    /// let formatter = names.with_pattern_unchecked(&pattern);
+    ///
+    /// assert_eq!(
+    ///     formatter.format(&london_winter).try_write_to_string().unwrap(),
     ///     "Your time zone is: GMT",
     /// );
-    /// assert_try_writeable_eq!(
-    ///     names
-    ///         .with_pattern_unchecked(&pattern)
-    ///         .format(&london_summer),
+    /// assert_eq!(
+    ///     formatter.format(&london_summer).try_write_to_string().unwrap(),
     ///     "Your time zone is: BST",
     /// );
     /// ```
@@ -200,7 +212,9 @@ where
     {
         FormattedDateTimePattern {
             pattern: self.inner.pattern,
-            input: ExtractedInput::extract_from_neo_input::<FSet::D, FSet::T, FSet::Z, I>(datetime),
+            input: DateTimeInputUnchecked::extract_from_neo_input::<FSet::D, FSet::T, FSet::Z, I>(
+                datetime,
+            ),
             names: self.inner.names,
         }
     }
@@ -210,12 +224,12 @@ where
 #[derive(Debug)]
 pub struct FormattedDateTimePattern<'a> {
     pattern: DateTimePatternBorrowed<'a>,
-    input: ExtractedInput,
+    input: DateTimeInputUnchecked,
     names: RawDateTimeNamesBorrowed<'a>,
 }
 
 impl TryWriteable for FormattedDateTimePattern<'_> {
-    type Error = DateTimeWriteError;
+    type Error = FormattedDateTimePatternError;
     fn try_write_to_parts<S: writeable::PartsWrite + ?Sized>(
         &self,
         sink: &mut S,
@@ -225,7 +239,7 @@ impl TryWriteable for FormattedDateTimePattern<'_> {
             self.pattern.0.as_borrowed().items.iter(),
             &self.input,
             &self.names,
-            self.names.fixed_decimal_formatter,
+            self.names.decimal_formatter,
             sink,
         )
     }
@@ -237,36 +251,32 @@ impl TryWriteable for FormattedDateTimePattern<'_> {
 #[cfg(feature = "compiled_data")]
 mod tests {
     use super::super::*;
-    use crate::fields::{self, FieldLength};
-    use icu_calendar::{DateTime, Gregorian};
+    use icu_calendar::{Date, Gregorian};
     use icu_locale_core::locale;
+    use icu_time::{DateTime, Time};
     use writeable::assert_try_writeable_eq;
 
     #[test]
     fn test_basic_pattern_formatting() {
         let locale = locale!("en").into();
-        let mut names: TypedDateTimeNames<Gregorian> = TypedDateTimeNames::try_new(locale).unwrap();
+        let mut names: FixedCalendarDateTimeNames<Gregorian> =
+            FixedCalendarDateTimeNames::try_new(locale).unwrap();
         names
-            .load_month_names(
-                &crate::provider::Baked,
-                fields::Month::Format,
-                fields::FieldLength::Four,
-            )
+            .load_month_names(&crate::provider::Baked, MonthNameLength::Wide)
             .unwrap()
-            .load_weekday_names(
-                &crate::provider::Baked,
-                fields::Weekday::Format,
-                fields::FieldLength::Three,
-            )
+            .load_weekday_names(&crate::provider::Baked, WeekdayNameLength::Abbreviated)
             .unwrap()
-            .load_year_names(&crate::provider::Baked, FieldLength::Five)
+            .load_year_names(&crate::provider::Baked, YearNameLength::Narrow)
             .unwrap()
-            .load_day_period_names(&crate::provider::Baked, FieldLength::Three)
+            .load_day_period_names(&crate::provider::Baked, DayPeriodNameLength::Abbreviated)
             .unwrap();
         let pattern: DateTimePattern = "'It is' E, MMMM d, y GGGGG 'at' hh:mm a'!'"
             .parse()
             .unwrap();
-        let datetime = DateTime::try_new_gregorian(2023, 10, 25, 15, 0, 55).unwrap();
+        let datetime = DateTime {
+            date: Date::try_new_gregorian(2023, 10, 25).unwrap(),
+            time: Time::try_new(15, 0, 55, 0).unwrap(),
+        };
         let formatted_pattern = names.with_pattern_unchecked(&pattern).format(&datetime);
 
         assert_try_writeable_eq!(
@@ -282,49 +292,52 @@ mod tests {
         #[derive(Debug)]
         struct TestCase {
             pattern: &'static str,
-            field_length: FieldLength,
+            length: YearNameLength,
             expected: &'static str,
         }
         let cases = [
             TestCase {
                 pattern: "<G>",
-                field_length: FieldLength::Three,
+                length: YearNameLength::Abbreviated,
                 expected: "<н. е.>",
             },
             TestCase {
                 pattern: "<GG>",
-                field_length: FieldLength::Three,
+                length: YearNameLength::Abbreviated,
                 expected: "<н. е.>",
             },
             TestCase {
                 pattern: "<GGG>",
-                field_length: FieldLength::Three,
+                length: YearNameLength::Abbreviated,
                 expected: "<н. е.>",
             },
             TestCase {
                 pattern: "<GGGG>",
-                field_length: FieldLength::Four,
+                length: YearNameLength::Wide,
                 expected: "<нашої ери>",
             },
             TestCase {
                 pattern: "<GGGGG>",
-                field_length: FieldLength::Five,
+                length: YearNameLength::Narrow,
                 expected: "<н.е.>",
             },
         ];
         for cas in cases {
             let TestCase {
                 pattern,
-                field_length,
+                length,
                 expected,
             } = cas;
-            let mut names: TypedDateTimeNames<Gregorian> =
-                TypedDateTimeNames::try_new(locale).unwrap();
+            let mut names: FixedCalendarDateTimeNames<Gregorian> =
+                FixedCalendarDateTimeNames::try_new(locale).unwrap();
             names
-                .load_year_names(&crate::provider::Baked, field_length)
+                .load_year_names(&crate::provider::Baked, length)
                 .unwrap();
             let pattern: DateTimePattern = pattern.parse().unwrap();
-            let datetime = DateTime::try_new_gregorian(2023, 11, 17, 13, 41, 28).unwrap();
+            let datetime = DateTime {
+                date: Date::try_new_gregorian(2023, 11, 17).unwrap(),
+                time: Time::try_new(13, 41, 28, 0).unwrap(),
+            };
             let formatted_pattern = names.with_pattern_unchecked(&pattern).format(&datetime);
 
             assert_try_writeable_eq!(formatted_pattern, expected, Ok(()), "{cas:?}");
@@ -338,64 +351,59 @@ mod tests {
         #[derive(Debug)]
         struct TestCase {
             pattern: &'static str,
-            field_symbol: fields::Month,
-            field_length: FieldLength,
+            length: MonthNameLength,
             expected: &'static str,
         }
         let cases = [
             // 'M' and 'MM' are numeric
             TestCase {
                 pattern: "<MMM>",
-                field_symbol: fields::Month::Format,
-                field_length: FieldLength::Three,
+                length: MonthNameLength::Abbreviated,
                 expected: "<лист.>",
             },
             TestCase {
                 pattern: "<MMMM>",
-                field_symbol: fields::Month::Format,
-                field_length: FieldLength::Four,
+                length: MonthNameLength::Wide,
                 expected: "<листопада>",
             },
             TestCase {
                 pattern: "<MMMMM>",
-                field_symbol: fields::Month::Format,
-                field_length: FieldLength::Five,
+                length: MonthNameLength::Narrow,
                 expected: "<л>",
             },
             // 'L' and 'LL' are numeric
             TestCase {
                 pattern: "<LLL>",
-                field_symbol: fields::Month::StandAlone,
-                field_length: FieldLength::Three,
+                length: MonthNameLength::StandaloneAbbreviated,
                 expected: "<лист.>",
             },
             TestCase {
                 pattern: "<LLLL>",
-                field_symbol: fields::Month::StandAlone,
-                field_length: FieldLength::Four,
+                length: MonthNameLength::StandaloneWide,
                 expected: "<листопад>",
             },
             TestCase {
                 pattern: "<LLLLL>",
-                field_symbol: fields::Month::StandAlone,
-                field_length: FieldLength::Five,
+                length: MonthNameLength::StandaloneNarrow,
                 expected: "<Л>",
             },
         ];
         for cas in cases {
             let TestCase {
                 pattern,
-                field_symbol,
-                field_length,
+                length,
                 expected,
             } = cas;
-            let mut names: TypedDateTimeNames<Gregorian> =
-                TypedDateTimeNames::try_new(locale).unwrap();
+            let mut names: FixedCalendarDateTimeNames<Gregorian> =
+                FixedCalendarDateTimeNames::try_new(locale).unwrap();
             names
-                .load_month_names(&crate::provider::Baked, field_symbol, field_length)
+                .load_month_names(&crate::provider::Baked, length)
                 .unwrap();
             let pattern: DateTimePattern = pattern.parse().unwrap();
-            let datetime = DateTime::try_new_gregorian(2023, 11, 17, 13, 41, 28).unwrap();
+            let datetime = DateTime {
+                date: Date::try_new_gregorian(2023, 11, 17).unwrap(),
+                time: Time::try_new(13, 41, 28, 0).unwrap(),
+            };
             let formatted_pattern = names.with_pattern_unchecked(&pattern).format(&datetime);
 
             assert_try_writeable_eq!(formatted_pattern, expected, Ok(()), "{cas:?}");
@@ -408,112 +416,99 @@ mod tests {
         #[derive(Debug)]
         struct TestCase {
             pattern: &'static str,
-            field_symbol: fields::Weekday,
-            field_length: FieldLength,
+            length: WeekdayNameLength,
             expected: &'static str,
         }
         let cases = [
             TestCase {
                 pattern: "<E>",
-                field_symbol: fields::Weekday::Format,
-                field_length: FieldLength::Three,
+                length: WeekdayNameLength::Abbreviated,
                 expected: "<пт>",
             },
             TestCase {
                 pattern: "<EE>",
-                field_symbol: fields::Weekday::Format,
-                field_length: FieldLength::Three,
+                length: WeekdayNameLength::Abbreviated,
                 expected: "<пт>",
             },
             TestCase {
                 pattern: "<EEE>",
-                field_symbol: fields::Weekday::Format,
-                field_length: FieldLength::Three,
+                length: WeekdayNameLength::Abbreviated,
                 expected: "<пт>",
             },
             TestCase {
                 pattern: "<EEEE>",
-                field_symbol: fields::Weekday::Format,
-                field_length: FieldLength::Four,
+                length: WeekdayNameLength::Wide,
                 expected: "<пʼятниця>",
             },
             TestCase {
                 pattern: "<EEEEE>",
-                field_symbol: fields::Weekday::Format,
-                field_length: FieldLength::Five,
+                length: WeekdayNameLength::Narrow,
                 expected: "<П>",
             },
             TestCase {
                 pattern: "<EEEEEE>",
-                field_symbol: fields::Weekday::Format,
-                field_length: FieldLength::Six,
+                length: WeekdayNameLength::Short,
                 expected: "<пт>",
             },
             // 'e' and 'ee' are numeric
             TestCase {
                 pattern: "<eee>",
-                field_symbol: fields::Weekday::Format,
-                field_length: FieldLength::Three,
+                length: WeekdayNameLength::Abbreviated,
                 expected: "<пт>",
             },
             TestCase {
                 pattern: "<eeee>",
-                field_symbol: fields::Weekday::Format,
-                field_length: FieldLength::Four,
+                length: WeekdayNameLength::Wide,
                 expected: "<пʼятниця>",
             },
             TestCase {
                 pattern: "<eeeee>",
-                field_symbol: fields::Weekday::Format,
-                field_length: FieldLength::Five,
+                length: WeekdayNameLength::Narrow,
                 expected: "<П>",
             },
             TestCase {
                 pattern: "<eeeeee>",
-                field_symbol: fields::Weekday::Format,
-                field_length: FieldLength::Six,
+                length: WeekdayNameLength::Short,
                 expected: "<пт>",
             },
             // 'c' and 'cc' are numeric
             TestCase {
                 pattern: "<ccc>",
-                field_symbol: fields::Weekday::StandAlone,
-                field_length: FieldLength::Three,
+                length: WeekdayNameLength::StandaloneAbbreviated,
                 expected: "<пт>",
             },
             TestCase {
                 pattern: "<cccc>",
-                field_symbol: fields::Weekday::StandAlone,
-                field_length: FieldLength::Four,
+                length: WeekdayNameLength::StandaloneWide,
                 expected: "<пʼятниця>",
             },
             TestCase {
                 pattern: "<ccccc>",
-                field_symbol: fields::Weekday::StandAlone,
-                field_length: FieldLength::Five,
+                length: WeekdayNameLength::StandaloneNarrow,
                 expected: "<П>",
             },
             TestCase {
                 pattern: "<cccccc>",
-                field_symbol: fields::Weekday::StandAlone,
-                field_length: FieldLength::Six,
+                length: WeekdayNameLength::StandaloneShort,
                 expected: "<пт>",
             },
         ];
         for cas in cases {
             let TestCase {
                 pattern,
-                field_symbol,
-                field_length,
+                length,
                 expected,
             } = cas;
-            let mut names: TypedDateTimeNames<Gregorian> =
-                TypedDateTimeNames::try_new(locale).unwrap();
+            let mut names: FixedCalendarDateTimeNames<Gregorian> =
+                FixedCalendarDateTimeNames::try_new(locale).unwrap();
             names
-                .load_weekday_names(&crate::provider::Baked, field_symbol, field_length)
+                .load_weekday_names(&crate::provider::Baked, length)
                 .unwrap();
             let pattern: DateTimePattern = pattern.parse().unwrap();
-            let datetime = DateTime::try_new_gregorian(2023, 11, 17, 13, 41, 28).unwrap();
+            let datetime = DateTime {
+                date: Date::try_new_gregorian(2023, 11, 17).unwrap(),
+                time: Time::try_new(13, 41, 28, 0).unwrap(),
+            };
             let formatted_pattern = names.with_pattern_unchecked(&pattern).format(&datetime);
 
             assert_try_writeable_eq!(formatted_pattern, expected, Ok(()), "{cas:?}");
@@ -528,74 +523,77 @@ mod tests {
         #[derive(Debug)]
         struct TestCase {
             pattern: &'static str,
-            field_length: FieldLength,
+            length: DayPeriodNameLength,
             expected: &'static str,
         }
         let cases = [
             TestCase {
                 pattern: "<a>",
-                field_length: FieldLength::Three,
+                length: DayPeriodNameLength::Abbreviated,
                 expected: "<PM>",
             },
             TestCase {
                 pattern: "<aa>",
-                field_length: FieldLength::Three,
+                length: DayPeriodNameLength::Abbreviated,
                 expected: "<PM>",
             },
             TestCase {
                 pattern: "<aaa>",
-                field_length: FieldLength::Three,
+                length: DayPeriodNameLength::Abbreviated,
                 expected: "<PM>",
             },
             TestCase {
                 pattern: "<aaaa>",
-                field_length: FieldLength::Four,
+                length: DayPeriodNameLength::Wide,
                 expected: "<หลังเที่ยง>",
             },
             TestCase {
                 pattern: "<aaaaa>",
-                field_length: FieldLength::Five,
+                length: DayPeriodNameLength::Narrow,
                 expected: "<p>",
             },
             TestCase {
                 pattern: "<b>",
-                field_length: FieldLength::Three,
+                length: DayPeriodNameLength::Abbreviated,
                 expected: "<PM>",
             },
             TestCase {
                 pattern: "<bb>",
-                field_length: FieldLength::Three,
+                length: DayPeriodNameLength::Abbreviated,
                 expected: "<PM>",
             },
             TestCase {
                 pattern: "<bbb>",
-                field_length: FieldLength::Three,
+                length: DayPeriodNameLength::Abbreviated,
                 expected: "<PM>",
             },
             TestCase {
                 pattern: "<bbbb>",
-                field_length: FieldLength::Four,
+                length: DayPeriodNameLength::Wide,
                 expected: "<หลังเที่ยง>",
             },
             TestCase {
                 pattern: "<bbbbb>",
-                field_length: FieldLength::Five,
+                length: DayPeriodNameLength::Narrow,
                 expected: "<p>",
             },
         ];
         for cas in cases {
             let TestCase {
                 pattern,
-                field_length,
+                length,
                 expected,
             } = cas;
-            let mut names: TypedDateTimeNames<Gregorian> =
-                TypedDateTimeNames::try_new(locale).unwrap();
+            let mut names: FixedCalendarDateTimeNames<Gregorian> =
+                FixedCalendarDateTimeNames::try_new(locale).unwrap();
             names
-                .load_day_period_names(&crate::provider::Baked, field_length)
+                .load_day_period_names(&crate::provider::Baked, length)
                 .unwrap();
             let pattern: DateTimePattern = pattern.parse().unwrap();
-            let datetime = DateTime::try_new_gregorian(2023, 11, 17, 13, 41, 28).unwrap();
+            let datetime = DateTime {
+                date: Date::try_new_gregorian(2023, 11, 17).unwrap(),
+                time: Time::try_new(13, 41, 28, 0).unwrap(),
+            };
             let formatted_pattern = names.with_pattern_unchecked(&pattern).format(&datetime);
 
             assert_try_writeable_eq!(formatted_pattern, expected, Ok(()), "{cas:?}");

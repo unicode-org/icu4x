@@ -8,12 +8,13 @@
 pub mod ffi {
     use alloc::boxed::Box;
 
-    use crate::errors::ffi::DataError;
-    use crate::locale_core::ffi::Locale;
-    use crate::provider::ffi::DataProvider;
+    #[cfg(feature = "buffer_provider")]
+    use crate::unstable::provider::ffi::DataProvider;
+    #[cfg(any(feature = "compiled_data", feature = "buffer_provider"))]
+    use crate::unstable::{errors::ffi::DataError, locale_core::ffi::Locale};
 
     #[diplomat::opaque]
-    /// An ICU4X Unicode Set Property object, capable of querying whether a code point is contained in a set based on a Unicode property.
+    /// A set of "exemplar characters" for a given locale.
     #[diplomat::rust_link(icu::locale, Mod)]
     #[diplomat::rust_link(icu::locale::exemplar_chars::ExemplarCharacters, Struct)]
     #[diplomat::rust_link(icu::locale::exemplar_chars::ExemplarCharactersBorrowed, Struct)]
@@ -46,94 +47,202 @@ pub mod ffi {
             self.0.as_borrowed().contains32(cp)
         }
 
+        /// Create an [`ExemplarCharacters`] for the "main" set of exemplar characters for a given locale, using compiled data.
         #[diplomat::rust_link(
             icu::locale::exemplar_chars::ExemplarCharacters::try_new_main,
             FnInStruct
         )]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "main")]
-        pub fn try_new_main(
+        #[diplomat::rust_link(
+            icu::locale::exemplar_chars::ExemplarCharactersBorrowed::try_new_main,
+            FnInStruct,
+            hidden
+        )]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "main")]
+        #[cfg(feature = "compiled_data")]
+        pub fn create_main(locale: &Locale) -> Result<Box<ExemplarCharacters>, DataError> {
+            let locale = locale.to_datalocale();
+            Ok(Box::new(ExemplarCharacters(
+                icu_locale::exemplar_chars::ExemplarCharacters::try_new_main(&locale)?
+                    .static_to_owned(),
+            )))
+        }
+
+        /// Create an [`ExemplarCharacters`] for the "main" set of exemplar characters for a given locale, using a particular data source
+        #[diplomat::rust_link(
+            icu::locale::exemplar_chars::ExemplarCharacters::try_new_main,
+            FnInStruct
+        )]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "main_with_provider")]
+        #[cfg(feature = "buffer_provider")]
+        pub fn create_main_with_provider(
             provider: &DataProvider,
             locale: &Locale,
         ) -> Result<Box<ExemplarCharacters>, DataError> {
             let locale = locale.to_datalocale();
-            Ok(Box::new(ExemplarCharacters(call_constructor_unstable!(
-                icu_locale::exemplar_chars::ExemplarCharacters::try_new_main [r => r.map(|r| r.static_to_owned())],
-                icu_locale::exemplar_chars::ExemplarCharacters::try_new_main_unstable,
-                provider,
-                &locale
-            )?)))
+            Ok(Box::new(ExemplarCharacters(
+                icu_locale::exemplar_chars::ExemplarCharacters::try_new_main_unstable(
+                    &provider.get_unstable()?,
+                    &locale,
+                )?,
+            )))
         }
 
+        /// Create an [`ExemplarCharacters`] for the "auxiliary" set of exemplar characters for a given locale, using compiled data.
         #[diplomat::rust_link(
             icu::locale::exemplar_chars::ExemplarCharacters::try_new_auxiliary,
             FnInStruct
         )]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "auxiliary")]
-        pub fn try_new_auxiliary(
+        #[diplomat::rust_link(
+            icu::locale::exemplar_chars::ExemplarCharactersBorrowed::try_new_auxiliary,
+            FnInStruct,
+            hidden
+        )]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "auxiliary")]
+        #[cfg(feature = "compiled_data")]
+        pub fn create_auxiliary(locale: &Locale) -> Result<Box<ExemplarCharacters>, DataError> {
+            let locale = locale.to_datalocale();
+            Ok(Box::new(ExemplarCharacters(
+                icu_locale::exemplar_chars::ExemplarCharacters::try_new_auxiliary(&locale)?
+                    .static_to_owned(),
+            )))
+        }
+        /// Create an [`ExemplarCharacters`] for the "auxiliary" set of exemplar characters for a given locale, using compiled data.
+        #[diplomat::rust_link(
+            icu::locale::exemplar_chars::ExemplarCharacters::try_new_auxiliary,
+            FnInStruct
+        )]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "auxiliary_with_provider")]
+        #[cfg(feature = "buffer_provider")]
+        pub fn create_auxiliary_with_provider(
             provider: &DataProvider,
             locale: &Locale,
         ) -> Result<Box<ExemplarCharacters>, DataError> {
             let locale = locale.to_datalocale();
-            Ok(Box::new(ExemplarCharacters(call_constructor_unstable!(
-                icu_locale::exemplar_chars::ExemplarCharacters::try_new_auxiliary [r => r.map(|r| r.static_to_owned())],
-                icu_locale::exemplar_chars::ExemplarCharacters::try_new_auxiliary_unstable,
-                provider,
-                &locale
-            )?)))
+            Ok(Box::new(ExemplarCharacters(
+                icu_locale::exemplar_chars::ExemplarCharacters::try_new_auxiliary_unstable(
+                    &provider.get_unstable()?,
+                    &locale,
+                )?,
+            )))
         }
 
+        /// Create an [`ExemplarCharacters`] for the "punctuation" set of exemplar characters for a given locale, using compiled data.
         #[diplomat::rust_link(
             icu::locale::exemplar_chars::ExemplarCharacters::try_new_punctuation,
             FnInStruct
         )]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "punctuation")]
-        pub fn try_new_punctuation(
+        #[diplomat::rust_link(
+            icu::locale::exemplar_chars::ExemplarCharactersBorrowed::try_new_punctuation,
+            FnInStruct,
+            hidden
+        )]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "punctuation")]
+        #[cfg(feature = "compiled_data")]
+        pub fn create_punctuation(locale: &Locale) -> Result<Box<ExemplarCharacters>, DataError> {
+            let locale = locale.to_datalocale();
+            Ok(Box::new(ExemplarCharacters(
+                icu_locale::exemplar_chars::ExemplarCharacters::try_new_punctuation(&locale)?
+                    .static_to_owned(),
+            )))
+        }
+        /// Create an [`ExemplarCharacters`] for the "punctuation" set of exemplar characters for a given locale, using compiled data.
+        #[diplomat::rust_link(
+            icu::locale::exemplar_chars::ExemplarCharacters::try_new_punctuation,
+            FnInStruct
+        )]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "punctuation_with_provider")]
+        #[cfg(feature = "buffer_provider")]
+        pub fn create_punctuation_with_provider(
             provider: &DataProvider,
             locale: &Locale,
         ) -> Result<Box<ExemplarCharacters>, DataError> {
             let locale = locale.to_datalocale();
-            Ok(Box::new(ExemplarCharacters(call_constructor_unstable!(
-                icu_locale::exemplar_chars::ExemplarCharacters::try_new_punctuation [r => r.map(|r| r.static_to_owned())],
-                icu_locale::exemplar_chars::ExemplarCharacters::try_new_punctuation_unstable,
-                provider,
-                &locale
-            )?)))
+            Ok(Box::new(ExemplarCharacters(
+                icu_locale::exemplar_chars::ExemplarCharacters::try_new_punctuation_unstable(
+                    &provider.get_unstable()?,
+                    &locale,
+                )?,
+            )))
         }
 
+        /// Create an [`ExemplarCharacters`] for the "numbers" set of exemplar characters for a given locale, using compiled data.
         #[diplomat::rust_link(
             icu::locale::exemplar_chars::ExemplarCharacters::try_new_numbers,
             FnInStruct
         )]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "numbers")]
-        pub fn try_new_numbers(
+        #[diplomat::rust_link(
+            icu::locale::exemplar_chars::ExemplarCharactersBorrowed::try_new_numbers,
+            FnInStruct,
+            hidden
+        )]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "numbers")]
+        #[cfg(feature = "compiled_data")]
+        pub fn create_numbers(locale: &Locale) -> Result<Box<ExemplarCharacters>, DataError> {
+            let locale = locale.to_datalocale();
+            Ok(Box::new(ExemplarCharacters(
+                icu_locale::exemplar_chars::ExemplarCharacters::try_new_numbers(&locale)?
+                    .static_to_owned(),
+            )))
+        }
+
+        /// Create an [`ExemplarCharacters`] for the "numbers" set of exemplar characters for a given locale, using compiled data.
+        #[diplomat::rust_link(
+            icu::locale::exemplar_chars::ExemplarCharacters::try_new_numbers,
+            FnInStruct
+        )]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "numbers_with_provider")]
+        #[cfg(feature = "buffer_provider")]
+        pub fn create_numbers_with_provider(
             provider: &DataProvider,
             locale: &Locale,
         ) -> Result<Box<ExemplarCharacters>, DataError> {
             let locale = locale.to_datalocale();
-            Ok(Box::new(ExemplarCharacters(call_constructor_unstable!(
-                icu_locale::exemplar_chars::ExemplarCharacters::try_new_numbers [r => r.map(|r| r.static_to_owned())],
-                icu_locale::exemplar_chars::ExemplarCharacters::try_new_numbers_unstable,
-                provider,
-                &locale
-            )?)))
+            Ok(Box::new(ExemplarCharacters(
+                icu_locale::exemplar_chars::ExemplarCharacters::try_new_numbers_unstable(
+                    &provider.get_unstable()?,
+                    &locale,
+                )?,
+            )))
         }
 
+        /// Create an [`ExemplarCharacters`] for the "index" set of exemplar characters for a given locale, using compiled data.
         #[diplomat::rust_link(
             icu::locale::exemplar_chars::ExemplarCharacters::try_new_index,
             FnInStruct
         )]
-        #[diplomat::attr(supports = fallible_constructors, named_constructor = "index")]
-        pub fn try_new_index(
+        #[diplomat::rust_link(
+            icu::locale::exemplar_chars::ExemplarCharactersBorrowed::try_new_index,
+            FnInStruct,
+            hidden
+        )]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "index")]
+        #[cfg(feature = "compiled_data")]
+        pub fn create_index(locale: &Locale) -> Result<Box<ExemplarCharacters>, DataError> {
+            let locale = locale.to_datalocale();
+            Ok(Box::new(ExemplarCharacters(
+                icu_locale::exemplar_chars::ExemplarCharacters::try_new_index(&locale)?
+                    .static_to_owned(),
+            )))
+        }
+
+        /// Create an [`ExemplarCharacters`] for the "index" set of exemplar characters for a given locale, using compiled data.
+        #[diplomat::rust_link(
+            icu::locale::exemplar_chars::ExemplarCharacters::try_new_index,
+            FnInStruct
+        )]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "index_with_provider")]
+        #[cfg(feature = "buffer_provider")]
+        pub fn create_index_with_provider(
             provider: &DataProvider,
             locale: &Locale,
         ) -> Result<Box<ExemplarCharacters>, DataError> {
             let locale = locale.to_datalocale();
-            Ok(Box::new(ExemplarCharacters(call_constructor_unstable!(
-                icu_locale::exemplar_chars::ExemplarCharacters::try_new_index [r => r.map(|r| r.static_to_owned())],
-                icu_locale::exemplar_chars::ExemplarCharacters::try_new_index_unstable,
-                provider,
-                &locale
-            )?)))
+            Ok(Box::new(ExemplarCharacters(
+                icu_locale::exemplar_chars::ExemplarCharacters::try_new_index_unstable(
+                    &provider.get_unstable()?,
+                    &locale,
+                )?,
+            )))
         }
     }
 }

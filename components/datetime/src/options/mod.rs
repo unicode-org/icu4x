@@ -4,10 +4,7 @@
 
 //! Options types for date/time formatting.
 
-use icu_timezone::scaffold::IntoOption;
-
-#[cfg(all(feature = "serde", feature = "experimental"))]
-use crate::neo_serde::TimePrecisionSerde;
+use icu_time::scaffold::IntoOption;
 
 /// The length of a formatted date/time string.
 ///
@@ -18,9 +15,9 @@ use crate::neo_serde::TimePrecisionSerde;
 /// # Examples
 ///
 /// ```
-/// use icu::calendar::Date;
 /// use icu::calendar::Gregorian;
 /// use icu::datetime::fieldsets::YMD;
+/// use icu::datetime::input::Date;
 /// use icu::datetime::FixedCalendarDateTimeFormatter;
 /// use icu::locale::locale;
 /// use writeable::assert_writeable_eq;
@@ -58,7 +55,7 @@ use crate::neo_serde::TimePrecisionSerde;
 ///     "January 1, 2000"
 /// );
 /// ```
-#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash, Default)]
 #[cfg_attr(
     all(feature = "serde", feature = "experimental"),
     derive(serde::Serialize, serde::Deserialize)
@@ -67,15 +64,17 @@ use crate::neo_serde::TimePrecisionSerde;
     all(feature = "serde", feature = "experimental"),
     serde(rename_all = "lowercase")
 )]
-#[repr(u8)] // discriminants come from symbol count in UTS 35
 #[non_exhaustive]
 pub enum Length {
     /// A long date; typically spelled-out, as in “January 1, 2000”.
-    Long = 4,
+    Long,
     /// A medium-sized date; typically abbreviated, as in “Jan. 1, 2000”.
-    Medium = 3,
+    ///
+    /// This is the default.
+    #[default]
+    Medium,
     /// A short date; typically numeric, as in “1/1/2000”.
-    Short = 1,
+    Short,
 }
 
 impl IntoOption<Length> for Length {
@@ -94,9 +93,9 @@ impl IntoOption<Length> for Length {
 /// # Examples
 ///
 /// ```
-/// use icu::calendar::Date;
 /// use icu::calendar::Gregorian;
 /// use icu::datetime::fieldsets::YMD;
+/// use icu::datetime::input::Date;
 /// use icu::datetime::options::Alignment;
 /// use icu::datetime::FixedCalendarDateTimeFormatter;
 /// use icu::locale::locale;
@@ -128,7 +127,7 @@ impl IntoOption<Length> for Length {
 ///     "01/01/25"
 /// );
 /// ```
-#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash, Default)]
 #[cfg_attr(
     all(feature = "serde", feature = "experimental"),
     derive(serde::Serialize, serde::Deserialize)
@@ -142,6 +141,7 @@ pub enum Alignment {
     /// Align fields as the locale specifies them to be aligned.
     ///
     /// This is the default option.
+    #[default]
     Auto,
     /// Align fields as appropriate for a column layout. For example:
     ///
@@ -165,12 +165,15 @@ impl IntoOption<Alignment> for Alignment {
 
 /// A specification of how to render the year and the era.
 ///
+/// The choices may grow over time; to follow along and offer feedback, see
+/// <https://github.com/unicode-org/icu4x/issues/6010>.
+///
 /// # Examples
 ///
 /// ```
-/// use icu::calendar::Date;
 /// use icu::calendar::Gregorian;
 /// use icu::datetime::fieldsets::YMD;
+/// use icu::datetime::input::Date;
 /// use icu::datetime::options::YearStyle;
 /// use icu::datetime::FixedCalendarDateTimeFormatter;
 /// use icu::locale::locale;
@@ -231,7 +234,7 @@ impl IntoOption<Alignment> for Alignment {
 ///
 /// let formatter = FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new(
 ///     locale!("en-US").into(),
-///     YMD::short().with_year_style(YearStyle::Always),
+///     YMD::short().with_year_style(YearStyle::WithEra),
 /// )
 /// .unwrap();
 ///
@@ -254,14 +257,14 @@ impl IntoOption<Alignment> for Alignment {
 ///     "1/1/2025 AD"
 /// );
 /// ```
-#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash, Default)]
 #[cfg_attr(
     all(feature = "serde", feature = "experimental"),
     derive(serde::Serialize, serde::Deserialize)
 )]
 #[cfg_attr(
     all(feature = "serde", feature = "experimental"),
-    serde(rename_all = "lowercase")
+    serde(rename_all = "camelCase")
 )]
 #[non_exhaustive]
 pub enum YearStyle {
@@ -275,7 +278,8 @@ pub enum YearStyle {
     /// - `1000 BC`
     /// - `77 AD`
     /// - `1900`
-    /// - `'24`
+    /// - `24`
+    #[default]
     Auto,
     /// Always display the century, and display the era when needed to
     /// disambiguate the year, based on locale preferences.
@@ -295,8 +299,7 @@ pub enum YearStyle {
     /// - `77 AD`
     /// - `1900 AD`
     /// - `2024 AD`
-    Always,
-    // TODO(#4478): add Hide and Never options once there is data to back them
+    WithEra,
 }
 
 impl IntoOption<YearStyle> for YearStyle {
@@ -317,24 +320,29 @@ impl IntoOption<YearStyle> for YearStyle {
 /// 2. 16:20 (4:20 pm) with 24-hour time
 /// 3. 7:15:01.85 with 24-hour time
 ///
+/// Fractional second digits can be displayed with a fixed precision. If you would like
+/// additional options for fractional second digit display, please leave a comment in
+/// <https://github.com/unicode-org/icu4x/issues/6008>.
+///
 /// # Examples
 ///
+/// Comparison of all time precision options:
+///
 /// ```
-/// use icu::calendar::Time;
+/// use icu::datetime::input::Time;
 /// use icu::datetime::fieldsets::T;
-/// use icu::datetime::options::FractionalSecondDigits;
+/// use icu::datetime::options::SubsecondDigits;
 /// use icu::datetime::options::TimePrecision;
 /// use icu::datetime::FixedCalendarDateTimeFormatter;
 /// use icu::locale::locale;
 /// use writeable::assert_writeable_eq;
 ///
 /// let formatters = [
-///     TimePrecision::HourPlus,
-///     TimePrecision::HourExact,
-///     TimePrecision::MinutePlus,
-///     TimePrecision::MinuteExact,
-///     TimePrecision::SecondPlus,
-///     TimePrecision::SecondExact(FractionalSecondDigits::F0),
+///     TimePrecision::Hour,
+///     TimePrecision::Minute,
+///     TimePrecision::Second,
+///     TimePrecision::Subsecond(SubsecondDigits::S2),
+///     TimePrecision::MinuteOptional,
 /// ]
 /// .map(|time_precision| {
 ///     FixedCalendarDateTimeFormatter::<(), _>::try_new(
@@ -347,18 +355,16 @@ impl IntoOption<YearStyle> for YearStyle {
 /// let times = [
 ///     Time::try_new(7, 0, 0, 0).unwrap(),
 ///     Time::try_new(7, 0, 10, 0).unwrap(),
-///     Time::try_new(7, 12, 20, 5).unwrap(),
+///     Time::try_new(7, 12, 20, 543_200_000).unwrap(),
 /// ];
 ///
-/// // TODO(#5782): the Plus variants should render fractional digits
 /// let expected_value_table = [
 ///     // 7:00:00, 7:00:10, 7:12:20.5432
-///     ["7 AM", "7:00:10 AM", "7:12:20 AM"], // HourPlus
-///     ["7 AM", "7 AM", "7 AM"],             // HourExact
-///     ["7:00 AM", "7:00:10 AM", "7:12:20 AM"], // MinutePlus
-///     ["7:00 AM", "7:00 AM", "7:12 AM"],    // MinuteExact
-///     ["7:00:00 AM", "7:00:10 AM", "7:12:20 AM"], // SecondPlus
-///     ["7:00:00 AM", "7:00:10 AM", "7:12:20 AM"], // SecondExact
+///     ["7 AM", "7 AM", "7 AM"],                            // Hour
+///     ["7:00 AM", "7:00 AM", "7:12 AM"],                   // Minute
+///     ["7:00:00 AM", "7:00:10 AM", "7:12:20 AM"],          // Second
+///     ["7:00:00.00 AM", "7:00:10.00 AM", "7:12:20.54 AM"], // Subsecond(F2)
+///     ["7 AM", "7 AM", "7:12 AM"],                         // MinuteOptional
 /// ];
 ///
 /// for (expected_value_row, formatter) in
@@ -375,7 +381,7 @@ impl IntoOption<YearStyle> for YearStyle {
 ///     }
 /// }
 /// ```
-#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash, Default)]
 #[cfg_attr(
     all(feature = "serde", feature = "experimental"),
     derive(serde::Serialize, serde::Deserialize)
@@ -386,57 +392,50 @@ impl IntoOption<YearStyle> for YearStyle {
 )]
 #[non_exhaustive]
 pub enum TimePrecision {
-    /// Always display the hour. Display smaller fields if they are nonzero.
-    ///
-    /// Examples:
-    ///
-    /// 1. `11 am`
-    /// 2. `16:20`
-    /// 3. `07:15:01.85`
-    HourPlus,
-    /// Always display the hour. Hide all other time fields.
+    /// Display the hour. Hide all other time fields.
     ///
     /// Examples:
     ///
     /// 1. `11 am`
     /// 2. `16h`
     /// 3. `07h`
-    HourExact,
-    /// Always display the hour and minute. Display the second if nonzero.
-    ///
-    /// Examples:
-    ///
-    /// 1. `11:00 am`
-    /// 2. `16:20`
-    /// 3. `07:15:01.85`
-    MinutePlus,
-    /// Always display the hour and minute. Hide the second.
+    Hour,
+    /// Display the hour and minute. Hide the second.
     ///
     /// Examples:
     ///
     /// 1. `11:00 am`
     /// 2. `16:20`
     /// 3. `07:15`
-    MinuteExact,
-    /// Display the hour, minute, and second. Display fractional seconds if nonzero.
+    Minute,
+    /// Display the hour, minute, and second. Hide fractional seconds.
     ///
-    /// This is the default.
+    /// This is currently the default, but the default is subject to change.
     ///
     /// Examples:
     ///
     /// 1. `11:00:00 am`
     /// 2. `16:20:00`
-    /// 3. `07:15:01.85`
-    SecondPlus,
+    /// 3. `07:15:01`
+    #[default]
+    Second,
     /// Display the hour, minute, and second with the given number of
     /// fractional second digits.
     ///
-    /// Examples with [`FractionalSecondDigits::F1`]:
+    /// Examples with [`SubsecondDigits::S1`]:
     ///
     /// 1. `11:00:00.0 am`
     /// 2. `16:20:00.0`
     /// 3. `07:15:01.8`
-    SecondExact(FractionalSecondDigits),
+    Subsecond(SubsecondDigits),
+    /// Display the hour; display the minute if nonzero. Hide the second.
+    ///
+    /// Examples:
+    ///
+    /// 1. `11 am`
+    /// 2. `16:20`
+    /// 3. `07:15`
+    MinuteOptional,
 }
 
 impl IntoOption<TimePrecision> for TimePrecision {
@@ -446,10 +445,71 @@ impl IntoOption<TimePrecision> for TimePrecision {
     }
 }
 
+#[cfg(all(feature = "serde", feature = "experimental"))]
+#[derive(Copy, Clone, serde::Serialize, serde::Deserialize)]
+#[serde(rename_all = "camelCase")]
+enum TimePrecisionSerde {
+    Hour,
+    Minute,
+    Second,
+    Subsecond1,
+    Subsecond2,
+    Subsecond3,
+    Subsecond4,
+    Subsecond5,
+    Subsecond6,
+    Subsecond7,
+    Subsecond8,
+    Subsecond9,
+    MinuteOptional,
+}
+
+#[cfg(all(feature = "serde", feature = "experimental"))]
+impl From<TimePrecision> for TimePrecisionSerde {
+    fn from(value: TimePrecision) -> Self {
+        match value {
+            TimePrecision::Hour => TimePrecisionSerde::Hour,
+            TimePrecision::Minute => TimePrecisionSerde::Minute,
+            TimePrecision::Second => TimePrecisionSerde::Second,
+            TimePrecision::Subsecond(SubsecondDigits::S1) => TimePrecisionSerde::Subsecond1,
+            TimePrecision::Subsecond(SubsecondDigits::S2) => TimePrecisionSerde::Subsecond2,
+            TimePrecision::Subsecond(SubsecondDigits::S3) => TimePrecisionSerde::Subsecond3,
+            TimePrecision::Subsecond(SubsecondDigits::S4) => TimePrecisionSerde::Subsecond4,
+            TimePrecision::Subsecond(SubsecondDigits::S5) => TimePrecisionSerde::Subsecond5,
+            TimePrecision::Subsecond(SubsecondDigits::S6) => TimePrecisionSerde::Subsecond6,
+            TimePrecision::Subsecond(SubsecondDigits::S7) => TimePrecisionSerde::Subsecond7,
+            TimePrecision::Subsecond(SubsecondDigits::S8) => TimePrecisionSerde::Subsecond8,
+            TimePrecision::Subsecond(SubsecondDigits::S9) => TimePrecisionSerde::Subsecond9,
+            TimePrecision::MinuteOptional => TimePrecisionSerde::MinuteOptional,
+        }
+    }
+}
+
+#[cfg(all(feature = "serde", feature = "experimental"))]
+impl From<TimePrecisionSerde> for TimePrecision {
+    fn from(value: TimePrecisionSerde) -> Self {
+        match value {
+            TimePrecisionSerde::Hour => TimePrecision::Hour,
+            TimePrecisionSerde::Minute => TimePrecision::Minute,
+            TimePrecisionSerde::Second => TimePrecision::Second,
+            TimePrecisionSerde::Subsecond1 => TimePrecision::Subsecond(SubsecondDigits::S1),
+            TimePrecisionSerde::Subsecond2 => TimePrecision::Subsecond(SubsecondDigits::S2),
+            TimePrecisionSerde::Subsecond3 => TimePrecision::Subsecond(SubsecondDigits::S3),
+            TimePrecisionSerde::Subsecond4 => TimePrecision::Subsecond(SubsecondDigits::S4),
+            TimePrecisionSerde::Subsecond5 => TimePrecision::Subsecond(SubsecondDigits::S5),
+            TimePrecisionSerde::Subsecond6 => TimePrecision::Subsecond(SubsecondDigits::S6),
+            TimePrecisionSerde::Subsecond7 => TimePrecision::Subsecond(SubsecondDigits::S7),
+            TimePrecisionSerde::Subsecond8 => TimePrecision::Subsecond(SubsecondDigits::S8),
+            TimePrecisionSerde::Subsecond9 => TimePrecision::Subsecond(SubsecondDigits::S9),
+            TimePrecisionSerde::MinuteOptional => TimePrecision::MinuteOptional,
+        }
+    }
+}
+
 /// A specification for how many fractional second digits to display.
 ///
 /// For example, to display the time with millisecond precision, use
-/// [`FractionalSecondDigits::F3`].
+/// [`SubsecondDigits::S3`].
 ///
 /// Lower-precision digits will be truncated.
 ///
@@ -459,9 +519,9 @@ impl IntoOption<TimePrecision> for TimePrecision {
 ///
 /// ```
 /// use icu::calendar::Gregorian;
-/// use icu::calendar::Time;
 /// use icu::datetime::fieldsets::T;
-/// use icu::datetime::options::FractionalSecondDigits;
+/// use icu::datetime::input::Time;
+/// use icu::datetime::options::SubsecondDigits;
 /// use icu::datetime::options::TimePrecision;
 /// use icu::datetime::FixedCalendarDateTimeFormatter;
 /// use icu::locale::locale;
@@ -469,9 +529,8 @@ impl IntoOption<TimePrecision> for TimePrecision {
 ///
 /// let formatter = FixedCalendarDateTimeFormatter::<(), _>::try_new(
 ///     locale!("en-US").into(),
-///     T::short().with_time_precision(TimePrecision::SecondExact(
-///         FractionalSecondDigits::F2,
-///     )),
+///     T::short()
+///         .with_time_precision(TimePrecision::Subsecond(SubsecondDigits::S2)),
 /// )
 /// .unwrap();
 ///
@@ -481,80 +540,60 @@ impl IntoOption<TimePrecision> for TimePrecision {
 /// );
 /// ```
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
-#[cfg_attr(
-    all(feature = "serde", feature = "experimental"),
-    derive(serde::Serialize, serde::Deserialize)
-)]
-#[cfg_attr(
-    all(feature = "serde", feature = "experimental"),
-    serde(try_from = "u8", into = "u8")
-)]
 #[non_exhaustive]
-pub enum FractionalSecondDigits {
-    /// Zero fractional digits. This is the default.
-    F0,
+pub enum SubsecondDigits {
     /// One fractional digit (tenths of a second).
-    F1,
+    S1 = 1,
     /// Two fractional digits (hundredths of a second).
-    F2,
-    /// Three fractional digits (thousandths of a second).
-    F3,
+    S2 = 2,
+    /// Three fractional digits (milliseconds).
+    S3 = 3,
     /// Four fractional digits.
-    F4,
+    S4 = 4,
     /// Five fractional digits.
-    F5,
-    /// Six fractional digits.
-    F6,
+    S5 = 5,
+    /// Six fractional digits (microseconds).
+    S6 = 6,
     /// Seven fractional digits.
-    F7,
+    S7 = 7,
     /// Eight fractional digits.
-    F8,
-    /// Nine fractional digits.
-    F9,
+    S8 = 8,
+    /// Nine fractional digits (nanoseconds)
+    S9 = 9,
 }
 
-/// An error from constructing [`FractionalSecondDigits`].
-#[derive(Debug, Copy, Clone, PartialEq, Eq, displaydoc::Display)]
-#[non_exhaustive]
-pub enum FractionalSecondError {
-    /// The provided value is out of range (0-9).
-    OutOfRange,
-}
-
-impl From<FractionalSecondDigits> for u8 {
-    fn from(value: FractionalSecondDigits) -> u8 {
-        use FractionalSecondDigits::*;
+impl SubsecondDigits {
+    /// Constructs a [`SubsecondDigits`] from an integer number of digits.
+    pub fn try_from_int(value: u8) -> Option<Self> {
+        use SubsecondDigits::*;
         match value {
-            F0 => 0,
-            F1 => 1,
-            F2 => 2,
-            F3 => 3,
-            F4 => 4,
-            F5 => 5,
-            F6 => 6,
-            F7 => 7,
-            F8 => 8,
-            F9 => 9,
+            1 => Some(S1),
+            2 => Some(S2),
+            3 => Some(S3),
+            4 => Some(S4),
+            5 => Some(S5),
+            6 => Some(S6),
+            7 => Some(S7),
+            8 => Some(S8),
+            9 => Some(S9),
+            _ => None,
         }
     }
 }
 
-impl TryFrom<u8> for FractionalSecondDigits {
-    type Error = FractionalSecondError;
-    fn try_from(value: u8) -> Result<Self, Self::Error> {
-        use FractionalSecondDigits::*;
+impl From<SubsecondDigits> for u8 {
+    fn from(value: SubsecondDigits) -> u8 {
+        use SubsecondDigits::*;
         match value {
-            0 => Ok(F0),
-            1 => Ok(F1),
-            2 => Ok(F2),
-            3 => Ok(F3),
-            4 => Ok(F4),
-            5 => Ok(F5),
-            6 => Ok(F6),
-            7 => Ok(F7),
-            8 => Ok(F8),
-            9 => Ok(F9),
-            _ => Err(FractionalSecondError::OutOfRange),
+            S1 => 1,
+            S2 => 2,
+            S3 => 3,
+            S4 => 4,
+            S5 => 5,
+            S6 => 6,
+            S7 => 7,
+            S8 => 8,
+            S9 => 9,
         }
     }
 }

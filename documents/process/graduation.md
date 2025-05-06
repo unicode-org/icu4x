@@ -29,6 +29,9 @@ This document contains a checklist for the requirements to migrate a component f
   - [ ] Compiled data constructors should say "with compiled data" in the first sentence and should have a Cargo feature alert following the above syntax.
 - [ ] The APIs should follow ICU4X style
   - [ ] All options bags should be `Copy` (and contain references if they need to). Exceptions can be made by discussion.
+  - [ ] All options bags and their relevant options must be in an `options` module ([#5991](https://github.com/unicode-org/icu4x/issues/5991))
+  - [ ] If there is a Borrowed type, then compiled data constructors like `Foo::new()` must return `FooBorrowed` ([#5440](https://github.com/unicode-org/icu4x/issues/5440))
+  - [ ] Options bag enum fields should consistently be wrapped in an `Option`, ideally with a better-named default/"auto" variant ([#5488](https://github.com/unicode-org/icu4x/issues/5488))
 - [ ] The data structs should fully follow ZeroVec style
   - [ ] Deserialization should not have a "zero-copy violation" in the [make-testdata](https://github.com/unicode-org/icu4x/blob/main/provider/source/src/tests/make_testdata.rs) test
   - [ ] Constructors should avoid allocating memory in the common case

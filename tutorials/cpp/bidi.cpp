@@ -2,7 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-#include <icu4x/DataProvider.hpp>
 #include <icu4x/Bidi.hpp>
 #include <icu4x/Logger.hpp>
 
@@ -11,8 +10,7 @@
 using namespace icu4x;
 
 int main() {
-    std::unique_ptr<DataProvider> dp = DataProvider::compiled();
-    std::unique_ptr<Bidi> bidi = Bidi::create(*dp.get()).ok().value();
+    std::unique_ptr<Bidi> bidi = Bidi::create();
 
     // Written char-by-char to avoid messing up certain text editors.
     std::string_view str = 

@@ -14,21 +14,21 @@ use std::collections::{BTreeMap, HashSet};
 use tinystr::TinyAsciiStr;
 use zerovec::ZeroSlice;
 
-impl DataProvider<AliasesV2Marker> for SourceDataProvider {
-    fn load(&self, req: DataRequest) -> Result<DataResponse<AliasesV2Marker>, DataError> {
-        self.check_req::<AliasesV2Marker>(req)?;
+impl DataProvider<LocaleAliasesV1> for SourceDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<LocaleAliasesV1>, DataError> {
+        self.check_req::<LocaleAliasesV1>(req)?;
         let data: &cldr_serde::aliases::Resource = self
             .cldr()?
             .core()
             .read_and_parse("supplemental/aliases.json")?;
         Ok(DataResponse {
             metadata: Default::default(),
-            payload: DataPayload::from_owned(AliasesV2::from(data)),
+            payload: DataPayload::from_owned(Aliases::from(data)),
         })
     }
 }
 
-impl crate::IterableDataProviderCached<AliasesV2Marker> for SourceDataProvider {
+impl crate::IterableDataProviderCached<LocaleAliasesV1> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
     }
@@ -39,7 +39,7 @@ impl crate::IterableDataProviderCached<AliasesV2Marker> for SourceDataProvider {
 //   - alphabetically by each field
 fn appendix_c_cmp(langid: &LanguageIdentifier) -> impl Ord {
     let mut union_size = langid.variants.len() as i8;
-    if !langid.language.is_default() {
+    if !langid.language.is_unknown() {
         union_size += 1;
     }
     if langid.script.is_some() {
@@ -57,7 +57,7 @@ fn appendix_c_cmp(langid: &LanguageIdentifier) -> impl Ord {
     )
 }
 
-impl From<&cldr_serde::aliases::Resource> for AliasesV2<'_> {
+impl From<&cldr_serde::aliases::Resource> for Aliases<'_> {
     // Step 1. Load the rules from aliases.json
     fn from(other: &cldr_serde::aliases::Resource) -> Self {
         // These all correspond to language aliases in the CLDR data. By storing known
@@ -105,7 +105,7 @@ impl From<&cldr_serde::aliases::Resource> for AliasesV2<'_> {
                         // these in their own map.
                         (_, None, None, true) => language_variants.push((langid, replacement)),
                         // <language> -> <language identifier>
-                        (lang, None, None, false) if !lang.is_default() => {
+                        (lang, None, None, false) if !lang.is_unknown() => {
                             // Relatively few aliases exist for two character language identifiers,
                             // so we store them separately to not slow down canonicalization of
                             // common identifiers.
@@ -119,7 +119,7 @@ impl From<&cldr_serde::aliases::Resource> for AliasesV2<'_> {
                         // sgn-<region> -> <language>
                         (language, None, Some(region), false)
                             if language == language!("sgn")
-                                && !replacement.language.is_default()
+                                && !replacement.language.is_unknown()
                                 && replacement.script.is_none()
                                 && replacement.region.is_none()
                                 && replacement.variants.is_empty() =>
@@ -277,7 +277,7 @@ fn test_basic() {
     use icu::locale::subtags::{language, region, script};
 
     let provider = SourceDataProvider::new_testing();
-    let data: DataResponse<AliasesV2Marker> = provider.load(Default::default()).unwrap();
+    let data: DataResponse<LocaleAliasesV1> = provider.load(Default::default()).unwrap();
 
     // We should handle all language rules as special cases, leaving the generic category empty.
     assert!(data.payload.get().language.is_empty());

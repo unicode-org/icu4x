@@ -52,7 +52,7 @@ impl ElementKind {
         }
     }
 
-    pub(crate) fn debug_str(&self) -> &'static str {
+    pub(crate) fn debug_str(self) -> &'static str {
         match self {
             ElementKind::Literal => "literal",
             ElementKind::VariableReference => "variable reference",
@@ -262,69 +262,71 @@ pub(crate) struct Parser<'a, P: ?Sized> {
 impl<'a, P> Parser<'a, P>
 where
     P: ?Sized
-        + DataProvider<AsciiHexDigitV1Marker>
-        + DataProvider<AlphabeticV1Marker>
-        + DataProvider<BidiControlV1Marker>
-        + DataProvider<BidiMirroredV1Marker>
-        + DataProvider<CanonicalCombiningClassV1Marker>
-        + DataProvider<CanonicalCombiningClassNameToValueV2Marker>
-        + DataProvider<CaseIgnorableV1Marker>
-        + DataProvider<CasedV1Marker>
-        + DataProvider<ChangesWhenCasefoldedV1Marker>
-        + DataProvider<ChangesWhenCasemappedV1Marker>
-        + DataProvider<ChangesWhenLowercasedV1Marker>
-        + DataProvider<ChangesWhenNfkcCasefoldedV1Marker>
-        + DataProvider<ChangesWhenTitlecasedV1Marker>
-        + DataProvider<ChangesWhenUppercasedV1Marker>
-        + DataProvider<DashV1Marker>
-        + DataProvider<DefaultIgnorableCodePointV1Marker>
-        + DataProvider<DeprecatedV1Marker>
-        + DataProvider<DiacriticV1Marker>
-        + DataProvider<EmojiV1Marker>
-        + DataProvider<EmojiComponentV1Marker>
-        + DataProvider<EmojiModifierV1Marker>
-        + DataProvider<EmojiModifierBaseV1Marker>
-        + DataProvider<EmojiPresentationV1Marker>
-        + DataProvider<ExtendedPictographicV1Marker>
-        + DataProvider<ExtenderV1Marker>
-        + DataProvider<GraphemeBaseV1Marker>
-        + DataProvider<GraphemeClusterBreakV1Marker>
-        + DataProvider<GraphemeClusterBreakNameToValueV2Marker>
-        + DataProvider<GraphemeExtendV1Marker>
-        + DataProvider<HexDigitV1Marker>
-        + DataProvider<IdsBinaryOperatorV1Marker>
-        + DataProvider<IdsTrinaryOperatorV1Marker>
-        + DataProvider<IdContinueV1Marker>
-        + DataProvider<IdStartV1Marker>
-        + DataProvider<IdeographicV1Marker>
-        + DataProvider<JoinControlV1Marker>
-        + DataProvider<LogicalOrderExceptionV1Marker>
-        + DataProvider<LowercaseV1Marker>
-        + DataProvider<MathV1Marker>
-        + DataProvider<NoncharacterCodePointV1Marker>
-        + DataProvider<PatternSyntaxV1Marker>
-        + DataProvider<PatternWhiteSpaceV1Marker>
-        + DataProvider<QuotationMarkV1Marker>
-        + DataProvider<RadicalV1Marker>
-        + DataProvider<RegionalIndicatorV1Marker>
-        + DataProvider<SentenceBreakV1Marker>
-        + DataProvider<SentenceBreakNameToValueV2Marker>
-        + DataProvider<SentenceTerminalV1Marker>
-        + DataProvider<SoftDottedV1Marker>
-        + DataProvider<TerminalPunctuationV1Marker>
-        + DataProvider<UnifiedIdeographV1Marker>
-        + DataProvider<UppercaseV1Marker>
-        + DataProvider<VariationSelectorV1Marker>
-        + DataProvider<WhiteSpaceV1Marker>
-        + DataProvider<WordBreakV1Marker>
-        + DataProvider<WordBreakNameToValueV2Marker>
-        + DataProvider<XidContinueV1Marker>
-        + DataProvider<GeneralCategoryMaskNameToValueV2Marker>
-        + DataProvider<GeneralCategoryV1Marker>
-        + DataProvider<ScriptNameToValueV2Marker>
-        + DataProvider<ScriptV1Marker>
-        + DataProvider<ScriptWithExtensionsPropertyV1Marker>
-        + DataProvider<XidStartV1Marker>,
+        + DataProvider<PropertyBinaryAlphabeticV1>
+        + DataProvider<PropertyBinaryAsciiHexDigitV1>
+        + DataProvider<PropertyBinaryBidiControlV1>
+        + DataProvider<PropertyBinaryBidiMirroredV1>
+        + DataProvider<PropertyBinaryCasedV1>
+        + DataProvider<PropertyBinaryCaseIgnorableV1>
+        + DataProvider<PropertyBinaryChangesWhenCasefoldedV1>
+        + DataProvider<PropertyBinaryChangesWhenCasemappedV1>
+        + DataProvider<PropertyBinaryChangesWhenLowercasedV1>
+        + DataProvider<PropertyBinaryChangesWhenNfkcCasefoldedV1>
+        + DataProvider<PropertyBinaryChangesWhenTitlecasedV1>
+        + DataProvider<PropertyBinaryChangesWhenUppercasedV1>
+        + DataProvider<PropertyBinaryDashV1>
+        + DataProvider<PropertyBinaryDefaultIgnorableCodePointV1>
+        + DataProvider<PropertyBinaryDeprecatedV1>
+        + DataProvider<PropertyBinaryDiacriticV1>
+        + DataProvider<PropertyBinaryEmojiComponentV1>
+        + DataProvider<PropertyBinaryEmojiModifierBaseV1>
+        + DataProvider<PropertyBinaryEmojiModifierV1>
+        + DataProvider<PropertyBinaryEmojiPresentationV1>
+        + DataProvider<PropertyBinaryEmojiV1>
+        + DataProvider<PropertyBinaryExtendedPictographicV1>
+        + DataProvider<PropertyBinaryExtenderV1>
+        + DataProvider<PropertyBinaryGraphemeBaseV1>
+        + DataProvider<PropertyBinaryGraphemeExtendV1>
+        + DataProvider<PropertyBinaryHexDigitV1>
+        + DataProvider<PropertyBinaryIdContinueV1>
+        + DataProvider<PropertyBinaryIdeographicV1>
+        + DataProvider<PropertyBinaryIdsBinaryOperatorV1>
+        + DataProvider<PropertyBinaryIdStartV1>
+        + DataProvider<PropertyBinaryIdsTrinaryOperatorV1>
+        + DataProvider<PropertyBinaryJoinControlV1>
+        + DataProvider<PropertyBinaryLogicalOrderExceptionV1>
+        + DataProvider<PropertyBinaryLowercaseV1>
+        + DataProvider<PropertyBinaryMathV1>
+        + DataProvider<PropertyBinaryNoncharacterCodePointV1>
+        + DataProvider<PropertyBinaryPatternSyntaxV1>
+        + DataProvider<PropertyBinaryPatternWhiteSpaceV1>
+        + DataProvider<PropertyBinaryQuotationMarkV1>
+        + DataProvider<PropertyBinaryRadicalV1>
+        + DataProvider<PropertyBinaryRegionalIndicatorV1>
+        + DataProvider<PropertyBinarySentenceTerminalV1>
+        + DataProvider<PropertyBinarySoftDottedV1>
+        + DataProvider<PropertyBinaryTerminalPunctuationV1>
+        + DataProvider<PropertyBinaryUnifiedIdeographV1>
+        + DataProvider<PropertyBinaryUppercaseV1>
+        + DataProvider<PropertyBinaryVariationSelectorV1>
+        + DataProvider<PropertyBinaryWhiteSpaceV1>
+        + DataProvider<PropertyBinaryXidContinueV1>
+        + DataProvider<PropertyBinaryXidStartV1>
+        + DataProvider<PropertyEnumCanonicalCombiningClassV1>
+        + DataProvider<PropertyEnumGeneralCategoryV1>
+        + DataProvider<PropertyEnumGraphemeClusterBreakV1>
+        + DataProvider<PropertyEnumLineBreakV1>
+        + DataProvider<PropertyEnumScriptV1>
+        + DataProvider<PropertyEnumSentenceBreakV1>
+        + DataProvider<PropertyEnumWordBreakV1>
+        + DataProvider<PropertyNameParseCanonicalCombiningClassV1>
+        + DataProvider<PropertyNameParseGeneralCategoryMaskV1>
+        + DataProvider<PropertyNameParseGraphemeClusterBreakV1>
+        + DataProvider<PropertyNameParseLineBreakV1>
+        + DataProvider<PropertyNameParseScriptV1>
+        + DataProvider<PropertyNameParseSentenceBreakV1>
+        + DataProvider<PropertyNameParseWordBreakV1>
+        + DataProvider<PropertyScriptWithExtensionsV1>,
 {
     // initiates a line comment
     const COMMENT: char = '#';
@@ -888,7 +890,6 @@ where
     fn parse_literal(&mut self) -> Result<String> {
         let mut buf = String::new();
         loop {
-            self.skip_whitespace();
             let c = self.must_peek_char()?;
             if c == Self::ESCAPE {
                 self.parse_escaped_char_into_buf(&mut buf)?;

@@ -6,8 +6,10 @@
 
 /// Error returned by parsers of unicode extensions as preferences.
 #[non_exhaustive]
-#[derive(Debug)]
+#[derive(Debug, displaydoc::Display)]
 pub enum PreferencesParseError {
     /// The given keyword value is not a valid preference variant.
     InvalidKeywordValue,
 }
+
+impl core::error::Error for PreferencesParseError {}

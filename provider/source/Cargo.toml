@@ -47,12 +47,13 @@ tinystr = { workspace = true, features = ["alloc", "serde", "zerovec"] }
 potential_utf = { workspace = true }
 writeable = { workspace = true }
 zerotrie = { workspace = true, features = ["alloc"] }
-zerovec = { workspace = true, features = ["serde", "yoke"] }
+zerovec = { workspace = true, features = ["serde", "yoke", "alloc"] }
 
 # External dependencies
 displaydoc = { workspace = true }
 either = { workspace = true }
 elsa = { workspace = true }
+flate2 = { workspace = true }
 itertools = { workspace = true }
 log = { workspace = true }
 ndarray = { workspace = true }
@@ -61,6 +62,7 @@ serde = { workspace = true, features = ["derive", "alloc"] }
 serde_json = { workspace = true }
 serde-aux = { workspace = true }
 toml = { workspace = true }
+tar = { workspace = true }
 twox-hash = { workspace = true }
 zip = { workspace = true, features = ["deflate"] }
 

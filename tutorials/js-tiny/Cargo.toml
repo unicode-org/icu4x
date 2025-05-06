@@ -6,11 +6,11 @@
 name = "unused"
 version = "0.0.0"
 # To ensure it stays on older lockfiles. Update when our pinned nightly supports lockfile v4
-rust-version = "1.71.1"
+rust-version = "1.81"
 
 
 [lib]
 path = "unused"
 
 [dependencies]
-icu_capi = "2.0.0-beta1"
+icu_capi = "2.0.0-beta2"

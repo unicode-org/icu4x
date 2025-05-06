@@ -108,7 +108,7 @@ There are several aspects of a data file that could undergo version updates:
 All ICU4X functions that take a data provider should expose three signatures:
 
 - `*_unstable` works only with an _exactly matching_ data version.
-- `*_with_any_provider` and `*_with_buffer_provider` are _compatibility constructors_ supporting the current data version and all data versions from the current major release.
+- `*_with_buffer_provider` is a _compatibility constructor_ supporting the current data version and all data versions from the current major release.
 
 Note that the compatibility constructors may require additional code in order to map from older to newer data structs, as described in the previous section.
 

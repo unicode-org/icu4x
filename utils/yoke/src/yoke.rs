@@ -7,7 +7,6 @@ use crate::either::EitherCart;
 #[cfg(feature = "alloc")]
 use crate::erased::{ErasedArcCart, ErasedBoxCart, ErasedRcCart};
 use crate::kinda_sorta_dangling::KindaSortaDangling;
-use crate::trait_hack::YokeTraitHack;
 use crate::Yokeable;
 use core::marker::PhantomData;
 use core::ops::Deref;
@@ -704,17 +703,16 @@ unsafe impl CloneableCart for () {}
 /// (e.g., from `.with_mut()`), that data will need to be cloned.
 impl<Y: for<'a> Yokeable<'a>, C: CloneableCart> Clone for Yoke<Y, C>
 where
-    for<'a> YokeTraitHack<<Y as Yokeable<'a>>::Output>: Clone,
+    for<'a> <Y as Yokeable<'a>>::Output: Clone,
 {
     fn clone(&self) -> Self {
-        let this: &Y::Output = self.get();
-        // We have an &T not a T, and we can clone YokeTraitHack<T>
-        let this_hack = YokeTraitHack(this).into_ref();
+        // We have an &T not a T, and we can clone T
+        let this = self.get().clone();
         Yoke {
             yokeable: KindaSortaDangling::new(
                 // Safety: C being a CloneableCart guarantees that the data referenced by the
                 // `yokeable` is kept alive by the clone of the cart.
-                unsafe { Y::make(this_hack.clone().0) },
+                unsafe { Y::make(this) },
             ),
             cart: self.cart.clone(),
         }

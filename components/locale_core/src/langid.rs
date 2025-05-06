@@ -3,13 +3,13 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use core::cmp::Ordering;
+#[cfg(feature = "alloc")]
 use core::str::FromStr;
 
-use crate::parser::{
-    parse_language_identifier, parse_language_identifier_with_single_variant, ParseError,
-    ParserMode, SubtagIterator,
-};
+use crate::parser;
 use crate::subtags;
+use crate::ParseError;
+#[cfg(feature = "alloc")]
 use alloc::borrow::Cow;
 
 /// A core struct representing a [`Unicode BCP47 Language Identifier`].
@@ -66,7 +66,7 @@ use alloc::borrow::Cow;
 ///     subtags::{language, region, script, variant},
 /// };
 ///
-/// let li = langid!("eN_latn_Us-Valencia");
+/// let li = langid!("eN-latn-Us-Valencia");
 ///
 /// assert_eq!(li.language, language!("en"));
 /// assert_eq!(li.script, Some(script!("Latn")));
@@ -75,7 +75,7 @@ use alloc::borrow::Cow;
 /// ```
 ///
 /// [`Unicode BCP47 Language Identifier`]: https://unicode.org/reports/tr35/tr35.html#Unicode_language_identifier
-#[derive(Default, PartialEq, Eq, Clone, Hash)] // no Ord or PartialOrd: see docs
+#[derive(PartialEq, Eq, Clone, Hash)] // no Ord or PartialOrd: see docs
 #[allow(clippy::exhaustive_structs)] // This struct is stable (and invoked by a macro)
 pub struct LanguageIdentifier {
     /// Language subtag of the language identifier.
@@ -89,6 +89,9 @@ pub struct LanguageIdentifier {
 }
 
 impl LanguageIdentifier {
+    /// The unknown language identifier "und".
+    pub const UNKNOWN: Self = crate::langid!("und");
+
     /// A constructor which takes a utf8 slice, parses it and
     /// produces a well-formed [`LanguageIdentifier`].
     ///
@@ -100,13 +103,15 @@ impl LanguageIdentifier {
     /// LanguageIdentifier::try_from_str("en-US").expect("Parsing failed");
     /// ```
     #[inline]
+    #[cfg(feature = "alloc")]
     pub fn try_from_str(s: &str) -> Result<Self, ParseError> {
         Self::try_from_utf8(s.as_bytes())
     }
 
     /// See [`Self::try_from_str`]
+    #[cfg(feature = "alloc")]
     pub fn try_from_utf8(code_units: &[u8]) -> Result<Self, ParseError> {
-        parse_language_identifier(code_units, ParserMode::LanguageIdentifier)
+        crate::parser::parse_language_identifier(code_units, parser::ParserMode::LanguageIdentifier)
     }
 
     #[doc(hidden)] // macro use
@@ -124,7 +129,10 @@ impl LanguageIdentifier {
         ),
         ParseError,
     > {
-        parse_language_identifier_with_single_variant(code_units, ParserMode::LanguageIdentifier)
+        crate::parser::parse_language_identifier_with_single_variant(
+            code_units,
+            parser::ParserMode::LanguageIdentifier,
+        )
     }
 
     /// A constructor which takes a utf8 slice which may contain extension keys,
@@ -143,23 +151,14 @@ impl LanguageIdentifier {
     ///
     /// This method should be used for input that may be a locale identifier.
     /// All extensions will be lost.
+    #[cfg(feature = "alloc")]
     pub fn try_from_locale_bytes(v: &[u8]) -> Result<Self, ParseError> {
-        parse_language_identifier(v, ParserMode::Locale)
+        parser::parse_language_identifier(v, parser::ParserMode::Locale)
     }
 
-    /// Const-friendly version of [`Default::default`].
-    pub const fn default() -> Self {
-        Self {
-            language: subtags::Language::UND,
-            script: None,
-            region: None,
-            variants: subtags::Variants::new(),
-        }
-    }
-
-    /// Whether this language identifier equals [`Self::default`].
-    pub const fn is_default(&self) -> bool {
-        self.language.is_default()
+    /// Whether this language identifier equals [`Self::UNKNOWN`].
+    pub const fn is_unknown(&self) -> bool {
+        self.language.is_unknown()
             && self.script.is_none()
             && self.region.is_none()
             && self.variants.is_empty()
@@ -175,10 +174,11 @@ impl LanguageIdentifier {
     /// use icu::locale::LanguageIdentifier;
     ///
     /// assert_eq!(
-    ///     LanguageIdentifier::normalize("pL_latn_pl").as_deref(),
+    ///     LanguageIdentifier::normalize("pL-latn-pl").as_deref(),
     ///     Ok("pl-Latn-PL")
     /// );
     /// ```
+    #[cfg(feature = "alloc")]
     pub fn normalize_utf8(input: &[u8]) -> Result<Cow<str>, ParseError> {
         let lang_id = Self::try_from_utf8(input)?;
         Ok(writeable::to_string_or_borrow(&lang_id, input))
@@ -194,10 +194,11 @@ impl LanguageIdentifier {
     /// use icu::locale::LanguageIdentifier;
     ///
     /// assert_eq!(
-    ///     LanguageIdentifier::normalize("pL_latn_pl").as_deref(),
+    ///     LanguageIdentifier::normalize("pL-latn-pl").as_deref(),
     ///     Ok("pl-Latn-PL")
     /// );
     /// ```
+    #[cfg(feature = "alloc")]
     pub fn normalize(input: &str) -> Result<Cow<str>, ParseError> {
         Self::normalize_utf8(input.as_bytes())
     }
@@ -380,7 +381,7 @@ impl LanguageIdentifier {
             };
         }
 
-        let mut iter = SubtagIterator::new(other.as_bytes());
+        let mut iter = parser::SubtagIterator::new(other.as_bytes());
         if !subtag_matches!(subtags::Language, iter, self.language) {
             return false;
         }
@@ -494,6 +495,7 @@ impl core::fmt::Debug for LanguageIdentifier {
     }
 }
 
+#[cfg(feature = "alloc")]
 impl FromStr for LanguageIdentifier {
     type Err = ParseError;
 
@@ -508,7 +510,7 @@ impl_writeable_for_each_subtag_str_no_test!(LanguageIdentifier, selff, selff.scr
 #[test]
 fn test_writeable() {
     use writeable::assert_writeable_eq;
-    assert_writeable_eq!(LanguageIdentifier::default(), "und");
+    assert_writeable_eq!(LanguageIdentifier::UNKNOWN, "und");
     assert_writeable_eq!("und-001".parse::<LanguageIdentifier>().unwrap(), "und-001");
     assert_writeable_eq!(
         "und-Mymr".parse::<LanguageIdentifier>().unwrap(),
@@ -539,7 +541,9 @@ impl From<subtags::Language> for LanguageIdentifier {
     fn from(language: subtags::Language) -> Self {
         Self {
             language,
-            ..Default::default()
+            script: None,
+            region: None,
+            variants: subtags::Variants::new(),
         }
     }
 }
@@ -557,8 +561,10 @@ impl From<subtags::Language> for LanguageIdentifier {
 impl From<Option<subtags::Script>> for LanguageIdentifier {
     fn from(script: Option<subtags::Script>) -> Self {
         Self {
+            language: subtags::Language::UNKNOWN,
             script,
-            ..Default::default()
+            region: None,
+            variants: subtags::Variants::new(),
         }
     }
 }
@@ -576,8 +582,10 @@ impl From<Option<subtags::Script>> for LanguageIdentifier {
 impl From<Option<subtags::Region>> for LanguageIdentifier {
     fn from(region: Option<subtags::Region>) -> Self {
         Self {
+            language: subtags::Language::UNKNOWN,
+            script: None,
             region,
-            ..Default::default()
+            variants: subtags::Variants::new(),
         }
     }
 }
@@ -619,7 +627,7 @@ impl
             language: lsr.0,
             script: lsr.1,
             region: lsr.2,
-            ..Default::default()
+            variants: subtags::Variants::new(),
         }
     }
 }

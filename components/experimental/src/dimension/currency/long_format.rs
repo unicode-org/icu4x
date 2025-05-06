@@ -2,24 +2,24 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use fixed_decimal::SignedFixedDecimal;
+use fixed_decimal::Decimal;
 
-use icu_decimal::FixedDecimalFormatter;
+use icu_decimal::DecimalFormatter;
 use icu_plurals::PluralRules;
 use writeable::Writeable;
 
-use crate::dimension::provider::currency_patterns::CurrencyPatternsDataV1;
-use crate::dimension::provider::extended_currency::CurrencyExtendedDataV1;
+use crate::dimension::provider::currency_patterns::CurrencyPatternsData;
+use crate::dimension::provider::extended_currency::CurrencyExtendedData;
 
 use super::CurrencyCode;
 
 pub struct LongFormattedCurrency<'l> {
-    pub(crate) value: &'l SignedFixedDecimal,
+    pub(crate) value: &'l Decimal,
     // TODO: use this if the display name is not exist and make the extended data optional.
     pub(crate) _currency_code: CurrencyCode,
-    pub(crate) extended: &'l CurrencyExtendedDataV1<'l>,
-    pub(crate) patterns: &'l CurrencyPatternsDataV1<'l>,
-    pub(crate) fixed_decimal_formatter: &'l FixedDecimalFormatter,
+    pub(crate) extended: &'l CurrencyExtendedData<'l>,
+    pub(crate) patterns: &'l CurrencyPatternsData<'l>,
+    pub(crate) decimal_formatter: &'l DecimalFormatter,
     pub(crate) plural_rules: &'l PluralRules,
 }
 
@@ -33,7 +33,7 @@ impl Writeable for LongFormattedCurrency<'_> {
         let operands = self.value.into();
         let display_name = self.extended.display_names.get(operands, self.plural_rules);
         let pattern = self.patterns.patterns.get(operands, self.plural_rules);
-        let formatted_value = self.fixed_decimal_formatter.format(self.value);
+        let formatted_value = self.decimal_formatter.format(self.value);
         let interpolated = pattern.interpolate((formatted_value, display_name));
         interpolated.write_to(sink)
     }

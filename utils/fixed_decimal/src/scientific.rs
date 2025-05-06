@@ -5,23 +5,23 @@
 use core::fmt;
 use core::str::FromStr;
 
+use crate::Decimal;
 use crate::FixedInteger;
 use crate::ParseError;
-use crate::SignedFixedDecimal;
 
-/// A struct containing a [`SignedFixedDecimal`] significand together with an exponent, representing a
+/// A struct containing a [`Decimal`] significand together with an exponent, representing a
 /// number written in scientific notation, such as 1.729×10³.
 ///
 /// This structure represents any 0s shown in the significand and exponent,
 /// and an optional sign for both the significand and the exponent.
 #[derive(Debug, Clone, PartialEq)]
 pub struct ScientificDecimal {
-    significand: SignedFixedDecimal,
+    significand: Decimal,
     exponent: FixedInteger,
 }
 
 impl ScientificDecimal {
-    pub fn from(significand: SignedFixedDecimal, exponent: FixedInteger) -> Self {
+    pub fn from(significand: Decimal, exponent: FixedInteger) -> Self {
         ScientificDecimal {
             significand,
             exponent,
@@ -35,7 +35,7 @@ impl ScientificDecimal {
 /// # Examples
 ///
 /// ```
-/// # use fixed_decimal::SignedFixedDecimal;
+/// # use fixed_decimal::Decimal;
 /// # use fixed_decimal::FixedInteger;
 /// # use fixed_decimal::ScientificDecimal;
 /// # use std::str::FromStr;
@@ -44,17 +44,17 @@ impl ScientificDecimal {
 /// assert_writeable_eq!(
 ///     ScientificDecimal::from(
 ///         {
-///         let mut dec = SignedFixedDecimal::from(1729u32);
-///         dec.multiply_pow10(-3);
-///         dec
-///     },
+///             let mut dec = Decimal::from(1729u32);
+///             dec.multiply_pow10(-3);
+///             dec
+///         },
 ///         FixedInteger::from(3)
 ///     ),
 ///     "1.729e3"
 /// );
 /// assert_writeable_eq!(
 ///     ScientificDecimal::from(
-///         SignedFixedDecimal::from_str("+1.729").unwrap(),
+///         Decimal::from_str("+1.729").unwrap(),
 ///         FixedInteger::from_str("+03").unwrap()
 ///     ),
 ///     "+1.729e+03"
@@ -94,7 +94,7 @@ impl ScientificDecimal {
             return Err(ParseError::Syntax);
         }
         Ok(ScientificDecimal::from(
-            SignedFixedDecimal::try_from_utf8(significand)?,
+            Decimal::try_from_utf8(significand)?,
             FixedInteger::try_from_utf8(exponent)?,
         ))
     }
