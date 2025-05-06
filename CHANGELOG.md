@@ -73,7 +73,6 @@ Some major changes worth highlighting:
         - Remove `HourCycle::H24` (unicode-org#6426)
         - Remove `Language`/`LanguageIdentifier`/`Locale` `Default` impls (unicode-org#6529)
         - Remove BCP-47 APIs from `AnyCalendarKind`, use `CalendarAlgorithm` instead (unicode-org#6228)
-        - Rename `Islamic` calendars to `Hijri` (unicode-org#6225)
     - `icu_pattern`
         - No update, still at `0.4.0`
     - `icu_plurals`
