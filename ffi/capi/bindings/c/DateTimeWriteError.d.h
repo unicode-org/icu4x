@@ -13,9 +13,7 @@
 
 typedef enum DateTimeWriteError {
   DateTimeWriteError_Unknown = 0,
-  DateTimeWriteError_MissingTimeZoneId = 1,
-  DateTimeWriteError_MissingTimeZoneNameTimestamp = 2,
-  DateTimeWriteError_MissingTimeZoneVariant = 3,
+  DateTimeWriteError_MissingTimeZoneVariant = 1,
 } DateTimeWriteError;
 
 typedef struct DateTimeWriteError_option {union { DateTimeWriteError ok; }; bool is_ok; } DateTimeWriteError_option;

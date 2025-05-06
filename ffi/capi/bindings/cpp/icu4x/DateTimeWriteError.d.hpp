@@ -15,9 +15,7 @@ namespace icu4x {
 namespace capi {
     enum DateTimeWriteError {
       DateTimeWriteError_Unknown = 0,
-      DateTimeWriteError_MissingTimeZoneId = 1,
-      DateTimeWriteError_MissingTimeZoneNameTimestamp = 2,
-      DateTimeWriteError_MissingTimeZoneVariant = 3,
+      DateTimeWriteError_MissingTimeZoneVariant = 1,
     };
     
     typedef struct DateTimeWriteError_option {union { DateTimeWriteError ok; }; bool is_ok; } DateTimeWriteError_option;
@@ -26,15 +24,18 @@ namespace capi {
 
 namespace icu4x {
 /**
+ * An error when formatting a datetime.
+ *
+ * Currently the only reachable error here is a missing time zone variant. If you encounter
+ * that error, you need to call `with_variant` or `infer_variant` on your `TimeZoneInfo`.
+ *
  * Additional information: [1](https://docs.rs/icu/latest/icu/datetime/unchecked/enum.FormattedDateTimeUncheckedError.html)
  */
 class DateTimeWriteError {
 public:
   enum Value {
     Unknown = 0,
-    MissingTimeZoneId = 1,
-    MissingTimeZoneNameTimestamp = 2,
-    MissingTimeZoneVariant = 3,
+    MissingTimeZoneVariant = 1,
   };
 
   DateTimeWriteError() = default;

@@ -116,6 +116,10 @@ pub mod ffi {
         pub date_kind: DiplomatOption<CalendarKind>,
     }
 
+    /// An error when formatting a datetime.
+    ///
+    /// Currently the only reachable error here is a missing time zone variant. If you encounter
+    /// that error, you need to call `with_variant` or `infer_variant` on your `TimeZoneInfo`.
     #[cfg(feature = "datetime")]
     #[derive(Debug, PartialEq, Eq)]
     #[repr(C)]
@@ -126,9 +130,7 @@ pub mod ffi {
     )]
     pub enum DateTimeWriteError {
         Unknown = 0x00,
-        MissingTimeZoneId = 0x01,
-        MissingTimeZoneNameTimestamp = 0x02,
-        MissingTimeZoneVariant = 0x03,
+        MissingTimeZoneVariant = 0x01,
     }
 }
 
@@ -274,9 +276,6 @@ impl From<icu_datetime::MismatchedCalendarError> for ffi::DateTimeMismatchedCale
 impl From<icu_datetime::unchecked::FormattedDateTimeUncheckedError> for DateTimeWriteError {
     fn from(value: icu_datetime::unchecked::FormattedDateTimeUncheckedError) -> Self {
         match value {
-            icu_datetime::unchecked::FormattedDateTimeUncheckedError::MissingInputField(
-                icu_datetime::unchecked::MissingInputFieldKind::TimeZoneNameTimestamp,
-            ) => Self::MissingTimeZoneNameTimestamp,
             icu_datetime::unchecked::FormattedDateTimeUncheckedError::MissingInputField(
                 icu_datetime::unchecked::MissingInputFieldKind::TimeZoneVariant,
             ) => Self::MissingTimeZoneVariant,

@@ -4,6 +4,11 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
 /** 
+ * An error when formatting a datetime.
+ *
+ * Currently the only reachable error here is a missing time zone variant. If you encounter
+ * that error, you need to call `with_variant` or `infer_variant` on your `TimeZoneInfo`.
+ *
  * Additional information: [1](https://docs.rs/icu/latest/icu/datetime/unchecked/enum.FormattedDateTimeUncheckedError.html)
  */
 
@@ -14,9 +19,7 @@ export class DateTimeWriteError {
 
     static #values = new Map([
         ["Unknown", 0],
-        ["MissingTimeZoneId", 1],
-        ["MissingTimeZoneNameTimestamp", 2],
-        ["MissingTimeZoneVariant", 3]
+        ["MissingTimeZoneVariant", 1]
     ]);
 
     static getAllEntries() {
@@ -62,14 +65,10 @@ export class DateTimeWriteError {
     static #objectValues = [
         new DateTimeWriteError(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 0),
         new DateTimeWriteError(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 1),
-        new DateTimeWriteError(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 2),
-        new DateTimeWriteError(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 3),
     ];
 
     static Unknown = DateTimeWriteError.#objectValues[0];
-    static MissingTimeZoneId = DateTimeWriteError.#objectValues[1];
-    static MissingTimeZoneNameTimestamp = DateTimeWriteError.#objectValues[2];
-    static MissingTimeZoneVariant = DateTimeWriteError.#objectValues[3];
+    static MissingTimeZoneVariant = DateTimeWriteError.#objectValues[1];
 
     constructor(value) {
         return this.#internalConstructor(...arguments)

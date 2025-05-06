@@ -3,6 +3,11 @@ import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
 /** 
+ * An error when formatting a datetime.
+ *
+ * Currently the only reachable error here is a missing time zone variant. If you encounter
+ * that error, you need to call `with_variant` or `infer_variant` on your `TimeZoneInfo`.
+ *
  * Additional information: [1](https://docs.rs/icu/latest/icu/datetime/unchecked/enum.FormattedDateTimeUncheckedError.html)
  */
 
@@ -17,8 +22,6 @@ export class DateTimeWriteError {
     get ffiValue() : number;
 
     static Unknown : DateTimeWriteError;
-    static MissingTimeZoneId : DateTimeWriteError;
-    static MissingTimeZoneNameTimestamp : DateTimeWriteError;
     static MissingTimeZoneVariant : DateTimeWriteError;
 
     constructor(value: DateTimeWriteError | string );
