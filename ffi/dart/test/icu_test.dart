@@ -251,7 +251,7 @@ void main() {
         zonedDateTimeIso.time,
         TimeZoneInfo.utc(),
       ),
-      throwsA(DateTimeWriteError.missingTimeZoneNameTimestamp),
+      throwsA(DateTimeWriteError.missingTimeZoneVariant),
     );
 
     expect(
