@@ -25,9 +25,9 @@ export class VariantOffsetsCalculator {
     static createWithProvider(provider: DataProvider): VariantOffsetsCalculator;
 
     /** 
-     * See the [Rust documentation for `compute_offsets_from_time_zone`](https://docs.rs/icu/latest/icu/time/zone/struct.VariantOffsetsCalculatorBorrowed.html#method.compute_offsets_from_time_zone) for more information.
+     * See the [Rust documentation for `compute_offsets_from_time_zone_and_name_timestamp`](https://docs.rs/icu/latest/icu/time/zone/struct.VariantOffsetsCalculatorBorrowed.html#method.compute_offsets_from_time_zone_and_name_timestamp) for more information.
      */
-    computeOffsetsFromTimeZone(timeZone: TimeZone, localDate: IsoDate, localTime: Time): VariantOffsets | null;
+    computeOffsetsFromTimeZoneAndDateTime(timeZone: TimeZone, localDate: IsoDate, localTime: Time): VariantOffsets | null;
 
     constructor();
 }

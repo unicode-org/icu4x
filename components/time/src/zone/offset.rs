@@ -302,7 +302,7 @@ impl VariantOffsetsCalculatorBorrowed<'_> {
     ///
     /// // America/Denver observes DST
     /// let offsets = zoc
-    ///     .compute_offsets_from_time_zone(
+    ///     .compute_offsets_from_time_zone_and_name_timestamp(
     ///         TimeZone(subtag!("usden")),
     ///         ZoneNameTimestamp::from_date_time_iso(DateTime { date: Date::try_new_iso(2024, 1, 1).unwrap(), time: Time::start_of_day() }),
     ///     )
@@ -318,7 +318,7 @@ impl VariantOffsetsCalculatorBorrowed<'_> {
     ///
     /// // America/Phoenix does not
     /// let offsets = zoc
-    ///     .compute_offsets_from_time_zone(
+    ///     .compute_offsets_from_time_zone_and_name_timestamp(
     ///         TimeZone(subtag!("usphx")),
     ///         ZoneNameTimestamp::from_date_time_iso(DateTime { date: Date::try_new_iso(2024, 1, 1).unwrap(), time: Time::start_of_day() }),
     ///     )
@@ -329,7 +329,7 @@ impl VariantOffsetsCalculatorBorrowed<'_> {
     /// );
     /// assert_eq!(offsets.daylight, None);
     /// ```
-    pub fn compute_offsets_from_time_zone(
+    pub fn compute_offsets_from_time_zone_and_name_timestamp(
         &self,
         time_zone_id: TimeZone,
         zone_name_timestamp: ZoneNameTimestamp,

@@ -54,9 +54,9 @@ public:
   inline static diplomat::result<std::unique_ptr<icu4x::VariantOffsetsCalculator>, icu4x::DataError> create_with_provider(const icu4x::DataProvider& provider);
 
   /**
-   * See the [Rust documentation for `compute_offsets_from_time_zone`](https://docs.rs/icu/latest/icu/time/zone/struct.VariantOffsetsCalculatorBorrowed.html#method.compute_offsets_from_time_zone) for more information.
+   * See the [Rust documentation for `compute_offsets_from_time_zone_and_name_timestamp`](https://docs.rs/icu/latest/icu/time/zone/struct.VariantOffsetsCalculatorBorrowed.html#method.compute_offsets_from_time_zone_and_name_timestamp) for more information.
    */
-  inline std::optional<icu4x::VariantOffsets> compute_offsets_from_time_zone(const icu4x::TimeZone& time_zone, const icu4x::IsoDate& local_date, const icu4x::Time& local_time) const;
+  inline std::optional<icu4x::VariantOffsets> compute_offsets_from_time_zone_and_date_time(const icu4x::TimeZone& time_zone, const icu4x::IsoDate& local_date, const icu4x::Time& local_time) const;
 
   inline const icu4x::capi::VariantOffsetsCalculator* AsFFI() const;
   inline icu4x::capi::VariantOffsetsCalculator* AsFFI();

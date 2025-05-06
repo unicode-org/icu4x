@@ -161,10 +161,10 @@ pub mod ffi {
         }
 
         #[diplomat::rust_link(
-            icu::time::zone::VariantOffsetsCalculatorBorrowed::compute_offsets_from_time_zone,
+            icu::time::zone::VariantOffsetsCalculatorBorrowed::compute_offsets_from_time_zone_and_name_timestamp,
             FnInStruct
         )]
-        pub fn compute_offsets_from_time_zone(
+        pub fn compute_offsets_from_time_zone_and_date_time(
             &self,
             time_zone: &TimeZone,
             local_date: &IsoDate,
@@ -172,13 +172,16 @@ pub mod ffi {
         ) -> Option<VariantOffsets> {
             let icu_time::zone::VariantOffsets {
                 standard, daylight, ..
-            } = self.0.as_borrowed().compute_offsets_from_time_zone(
-                time_zone.0,
-                icu_time::zone::ZoneNameTimestamp::from_date_time_iso(icu_time::DateTime {
-                    date: local_date.0,
-                    time: local_time.0,
-                }),
-            )?;
+            } = self
+                .0
+                .as_borrowed()
+                .compute_offsets_from_time_zone_and_name_timestamp(
+                    time_zone.0,
+                    icu_time::zone::ZoneNameTimestamp::from_date_time_iso(icu_time::DateTime {
+                        date: local_date.0,
+                        time: local_time.0,
+                    }),
+                )?;
 
             Some(VariantOffsets {
                 standard: Box::new(UtcOffset(standard)),

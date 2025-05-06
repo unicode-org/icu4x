@@ -37,7 +37,7 @@ fn main() {
         }
 
         let offsets = offsets
-            .compute_offsets_from_time_zone(
+            .compute_offsets_from_time_zone_and_name_timestamp(
                 tz,
                 ZoneNameTimestamp::from_date_time_iso(reference_date_time),
             )
