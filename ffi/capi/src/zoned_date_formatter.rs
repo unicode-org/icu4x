@@ -526,6 +526,13 @@ pub mod ffi {
             if let Some(zone_name_timestamp) = zone.zone_name_timestamp {
                 input.set_time_zone_name_timestamp(zone_name_timestamp);
             }
+            else {
+                #[allow(clippy::unwrap_used)] // TODO(#6530): Use Time::middle_of_day()
+                input.set_time_zone_name_timestamp(icu_time::zone::ZoneNameTimestamp::from_date_time_iso(&icu_time::DateTime {
+                    date: date.0,
+                    time: icu_time::Time::try_new(12, 0, 0, 0).unwrap()
+                }))
+            }
             if let Some(variant) = zone.variant {
                 input.set_time_zone_variant(variant);
             }
@@ -1017,6 +1024,13 @@ pub mod ffi {
             }
             if let Some(zone_name_timestamp) = zone.zone_name_timestamp {
                 input.set_time_zone_name_timestamp(zone_name_timestamp);
+            }
+            else {
+                #[allow(clippy::unwrap_used)] // TODO(#6530): Use Time::middle_of_day()
+                input.set_time_zone_name_timestamp(icu_time::zone::ZoneNameTimestamp::from_date_time_iso(&icu_time::DateTime {
+                    date: date.0,
+                    time: icu_time::Time::try_new(12, 0, 0, 0).unwrap()
+                }))
             }
             if let Some(variant) = zone.variant {
                 input.set_time_zone_variant(variant);
