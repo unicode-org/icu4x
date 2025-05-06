@@ -23,7 +23,7 @@ fn try_write_number<W>(
     decimal_formatter: Option<&DecimalFormatter>,
     mut num: Decimal,
     length: FieldLength,
-) -> Result<Result<(), DateTimeWriteError>, fmt::Error>
+) -> Result<Result<(), FormattedDateTimePatternError>, fmt::Error>
 where
     W: writeable::PartsWrite + ?Sized,
 {
@@ -36,7 +36,7 @@ where
         w.with_part(part, |w| {
             w.with_part(writeable::Part::ERROR, |r| num.write_to_parts(r))
         })?;
-        Ok(Err(DateTimeWriteError::DecimalFormatterNotLoaded))
+        Ok(Err(FormattedDateTimePatternError::DecimalFormatterNotLoaded))
     }
 }
 
@@ -47,7 +47,7 @@ fn try_write_number_without_part<W>(
     decimal_formatter: Option<&DecimalFormatter>,
     mut num: Decimal,
     length: FieldLength,
-) -> Result<Result<(), DateTimeWriteError>, fmt::Error>
+) -> Result<Result<(), FormattedDateTimePatternError>, fmt::Error>
 where
     W: writeable::PartsWrite + ?Sized,
 {
@@ -58,7 +58,7 @@ where
         Ok(Ok(()))
     } else {
         w.with_part(writeable::Part::ERROR, |r| num.write_to(r))?;
-        Ok(Err(DateTimeWriteError::DecimalFormatterNotLoaded))
+        Ok(Err(FormattedDateTimePatternError::DecimalFormatterNotLoaded))
     }
 }
 
@@ -70,7 +70,7 @@ pub(crate) fn try_write_pattern_items<W>(
     datetime_names: &RawDateTimeNamesBorrowed,
     decimal_formatter: Option<&DecimalFormatter>,
     w: &mut W,
-) -> Result<Result<(), DateTimeWriteError>, fmt::Error>
+) -> Result<Result<(), FormattedDateTimePatternError>, fmt::Error>
 where
     W: writeable::PartsWrite + ?Sized,
 {
@@ -105,7 +105,7 @@ fn try_write_field<W>(
     datetime_names: &RawDateTimeNamesBorrowed,
     decimal_formatter: Option<&DecimalFormatter>,
     w: &mut W,
-) -> Result<Result<(), DateTimeWriteError>, fmt::Error>
+) -> Result<Result<(), FormattedDateTimePatternError>, fmt::Error>
 where
     W: writeable::PartsWrite + ?Sized,
 {
@@ -114,7 +114,7 @@ where
         (_, $name:ident = $input:expr) => {
             let Some($name) = $input else {
                 write_value_missing(w, field)?;
-                return Ok(Err(DateTimeWriteError::MissingInputField(stringify!(
+                return Ok(Err(FormattedDateTimePatternError::MissingInputField(stringify!(
                     $name
                 ))));
             };
@@ -123,7 +123,7 @@ where
         ($part:ident, $name:ident = $input:expr) => {
             let Some($name) = $input else {
                 w.with_part($part, |w| write_value_missing(w, field))?;
-                return Ok(Err(DateTimeWriteError::MissingInputField(stringify!(
+                return Ok(Err(FormattedDateTimePatternError::MissingInputField(stringify!(
                     $name
                 ))));
             };
@@ -139,13 +139,13 @@ where
                 .get_name_for_era(l, era_year)
                 .map_err(|e| match e {
                     GetNameForEraError::InvalidEraCode => {
-                        DateTimeWriteError::InvalidEra(era_year.era)
+                        FormattedDateTimePatternError::InvalidEra(era_year.era)
                     }
                     GetNameForEraError::InvalidFieldLength => {
-                        DateTimeWriteError::UnsupportedLength(ErrorField(field))
+                        FormattedDateTimePatternError::UnsupportedLength(ErrorField(field))
                     }
                     GetNameForEraError::NotLoaded => {
-                        DateTimeWriteError::NamesNotLoaded(ErrorField(field))
+                        FormattedDateTimePatternError::NamesNotLoaded(ErrorField(field))
                     }
                 });
             match era_symbol {
@@ -189,16 +189,16 @@ where
                     })?;
                     return Ok(Err(match e {
                         GetNameForCyclicYearError::InvalidYearNumber { max } => {
-                            DateTimeWriteError::InvalidCyclicYear {
+                            FormattedDateTimePatternError::InvalidCyclicYear {
                                 value: cyclic.year,
                                 max,
                             }
                         }
                         GetNameForCyclicYearError::InvalidFieldLength => {
-                            DateTimeWriteError::UnsupportedLength(ErrorField(field))
+                            FormattedDateTimePatternError::UnsupportedLength(ErrorField(field))
                         }
                         GetNameForCyclicYearError::NotLoaded => {
-                            DateTimeWriteError::NamesNotLoaded(ErrorField(field))
+                            FormattedDateTimePatternError::NamesNotLoaded(ErrorField(field))
                         }
                     }));
                 }
@@ -257,7 +257,7 @@ where
                                     .write_to(w)
                             })
                         })?;
-                        Err(DateTimeWriteError::DecimalFormatterNotLoaded)
+                        Err(FormattedDateTimePatternError::DecimalFormatterNotLoaded)
                     }
                 }
                 Err(e) => {
@@ -266,13 +266,13 @@ where
                     })?;
                     Err(match e {
                         GetNameForMonthError::InvalidMonthCode => {
-                            DateTimeWriteError::InvalidMonthCode(month.formatting_code)
+                            FormattedDateTimePatternError::InvalidMonthCode(month.formatting_code)
                         }
                         GetNameForMonthError::InvalidFieldLength => {
-                            DateTimeWriteError::UnsupportedLength(ErrorField(field))
+                            FormattedDateTimePatternError::UnsupportedLength(ErrorField(field))
                         }
                         GetNameForMonthError::NotLoaded => {
-                            DateTimeWriteError::NamesNotLoaded(ErrorField(field))
+                            FormattedDateTimePatternError::NamesNotLoaded(ErrorField(field))
                         }
                     })
                 }
@@ -286,10 +286,10 @@ where
                 .get_name_for_weekday(weekday, l, iso_weekday)
                 .map_err(|e| match e {
                     GetNameForWeekdayError::InvalidFieldLength => {
-                        DateTimeWriteError::UnsupportedLength(ErrorField(field))
+                        FormattedDateTimePatternError::UnsupportedLength(ErrorField(field))
                     }
                     GetNameForWeekdayError::NotLoaded => {
-                        DateTimeWriteError::NamesNotLoaded(ErrorField(field))
+                        FormattedDateTimePatternError::NamesNotLoaded(ErrorField(field))
                     }
                 }) {
                 Err(e) => {
@@ -409,10 +409,10 @@ where
                     })?;
                     Err(match e {
                         GetNameForDayPeriodError::InvalidFieldLength => {
-                            DateTimeWriteError::UnsupportedLength(ErrorField(field))
+                            FormattedDateTimePatternError::UnsupportedLength(ErrorField(field))
                         }
                         GetNameForDayPeriodError::NotLoaded => {
-                            DateTimeWriteError::NamesNotLoaded(ErrorField(field))
+                            FormattedDateTimePatternError::NamesNotLoaded(ErrorField(field))
                         }
                     })
                 }
@@ -537,7 +537,7 @@ fn perform_timezone_fallback(
     fdf: Option<&DecimalFormatter>,
     field: fields::Field,
     units: &[TimeZoneFormatterUnit],
-) -> Result<Result<(), DateTimeWriteError>, core::fmt::Error> {
+) -> Result<Result<(), FormattedDateTimePatternError>, core::fmt::Error> {
     const PART: Part = parts::TIME_ZONE_NAME;
     let payloads = datetime_names.get_payloads();
     let mut r = Err(FormatTimeZoneError::Fallback);
@@ -577,13 +577,13 @@ fn perform_timezone_fallback(
             }
             match e {
                 FormatTimeZoneError::DecimalFormatterNotLoaded => {
-                    Err(DateTimeWriteError::DecimalFormatterNotLoaded)
+                    Err(FormattedDateTimePatternError::DecimalFormatterNotLoaded)
                 }
                 FormatTimeZoneError::NamesNotLoaded => {
-                    Err(DateTimeWriteError::NamesNotLoaded(ErrorField(field)))
+                    Err(FormattedDateTimePatternError::NamesNotLoaded(ErrorField(field)))
                 }
                 FormatTimeZoneError::MissingInputField(f) => {
-                    Err(DateTimeWriteError::MissingInputField(f))
+                    Err(FormattedDateTimePatternError::MissingInputField(f))
                 }
                 FormatTimeZoneError::Fallback => {
                     debug_assert!(false, "timezone fallback chain fell through {input:?}");

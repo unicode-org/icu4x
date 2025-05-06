@@ -272,27 +272,27 @@ impl From<icu_datetime::MismatchedCalendarError> for ffi::DateTimeMismatchedCale
 }
 
 #[cfg(feature = "datetime")]
-impl From<icu_datetime::pattern::DateTimeWriteError> for DateTimeWriteError {
-    fn from(value: icu_datetime::pattern::DateTimeWriteError) -> Self {
+impl From<icu_datetime::pattern::FormattedDateTimePatternError> for DateTimeWriteError {
+    fn from(value: icu_datetime::pattern::FormattedDateTimePatternError) -> Self {
         match value {
-            icu_datetime::pattern::DateTimeWriteError::InvalidMonthCode(_) => {
+            icu_datetime::pattern::FormattedDateTimePatternError::InvalidMonthCode(_) => {
                 Self::InvalidMonthCode
             }
-            icu_datetime::pattern::DateTimeWriteError::InvalidEra(_) => Self::InvalidEra,
-            icu_datetime::pattern::DateTimeWriteError::InvalidCyclicYear { .. } => {
+            icu_datetime::pattern::FormattedDateTimePatternError::InvalidEra(_) => Self::InvalidEra,
+            icu_datetime::pattern::FormattedDateTimePatternError::InvalidCyclicYear { .. } => {
                 Self::InvalidCyclicYear
             }
-            icu_datetime::pattern::DateTimeWriteError::DecimalFormatterNotLoaded => {
+            icu_datetime::pattern::FormattedDateTimePatternError::DecimalFormatterNotLoaded => {
                 Self::DecimalFormatterNotLoaded
             }
-            icu_datetime::pattern::DateTimeWriteError::NamesNotLoaded(_) => Self::NamesNotLoaded,
-            icu_datetime::pattern::DateTimeWriteError::MissingInputField(_) => {
+            icu_datetime::pattern::FormattedDateTimePatternError::NamesNotLoaded(_) => Self::NamesNotLoaded,
+            icu_datetime::pattern::FormattedDateTimePatternError::MissingInputField(_) => {
                 Self::MissingInputField
             }
-            icu_datetime::pattern::DateTimeWriteError::UnsupportedLength(_) => {
+            icu_datetime::pattern::FormattedDateTimePatternError::UnsupportedLength(_) => {
                 Self::UnsupportedLength
             }
-            icu_datetime::pattern::DateTimeWriteError::UnsupportedField(_) => {
+            icu_datetime::pattern::FormattedDateTimePatternError::UnsupportedField(_) => {
                 Self::UnsupportedField
             }
             _ => Self::Unknown,

@@ -121,7 +121,7 @@ impl core::error::Error for UnsupportedCalendarError {}
 #[non_exhaustive]
 #[derive(Debug, PartialEq, Copy, Clone, displaydoc::Display)]
 /// Error for `TryWriteable` implementations
-pub enum DateTimeWriteError {
+pub enum FormattedDateTimePatternError {
     /// The [`MonthCode`] of the input is not valid for this calendar.
     ///
     /// This is guaranteed not to happen for `icu::calendar` inputs, but may happen for custom inputs.

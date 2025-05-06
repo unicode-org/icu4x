@@ -6,7 +6,7 @@ use super::names::RawDateTimeNamesBorrowed;
 use super::pattern::DateTimePatternBorrowed;
 use crate::format::datetime::try_write_pattern_items;
 use crate::format::DateTimeInputUnchecked;
-use crate::pattern::DateTimeWriteError;
+use crate::pattern::FormattedDateTimePatternError;
 use crate::scaffold::*;
 use crate::scaffold::{
     AllInputMarkers, DateInputMarkers, DateTimeMarkers, InFixedCalendar, TimeMarkers,
@@ -229,7 +229,7 @@ pub struct FormattedDateTimePattern<'a> {
 }
 
 impl TryWriteable for FormattedDateTimePattern<'_> {
-    type Error = DateTimeWriteError;
+    type Error = FormattedDateTimePatternError;
     fn try_write_to_parts<S: writeable::PartsWrite + ?Sized>(
         &self,
         sink: &mut S,
