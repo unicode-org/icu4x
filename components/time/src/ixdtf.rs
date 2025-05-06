@@ -289,7 +289,7 @@ impl<'a> Intermediate<'a> {
         };
         Ok(id
             .with_offset(offset)
-            .at_date_time_iso(&DateTime { date, time }))
+            .at_date_time_iso(DateTime { date, time }))
     }
 
     fn lenient(
@@ -323,7 +323,7 @@ impl<'a> Intermediate<'a> {
         let time = Time::try_from_time_record(&self.time)?;
         Ok(id
             .with_offset(offset)
-            .at_date_time_iso(&DateTime { date, time }))
+            .at_date_time_iso(DateTime { date, time }))
     }
 
     fn full(
@@ -343,7 +343,7 @@ impl<'a> Intermediate<'a> {
         let offset = UtcOffset::try_from_utc_offset_record(offset)?;
         Ok(time_zone_id
             .with_offset(Some(offset))
-            .at_date_time_iso(&DateTime { date, time })
+            .at_date_time_iso(DateTime { date, time })
             .infer_variant(offset_calculator))
     }
 }

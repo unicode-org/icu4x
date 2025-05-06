@@ -174,7 +174,7 @@ impl Time {
 /// A date and time for a given calendar.
 ///
 /// **The primary definition of this type is in the [`icu_time`](https://docs.rs/icu_time) crate. Other ICU4X crates re-export it for convenience.**
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, PartialEq, Eq, Clone, Copy)]
 #[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct DateTime<A: AsCalendar> {
     /// The date
@@ -186,7 +186,7 @@ pub struct DateTime<A: AsCalendar> {
 /// A date and time for a given calendar, local to a specified time zone.
 ///
 /// **The primary definition of this type is in the [`icu_time`](https://docs.rs/icu_time) crate. Other ICU4X crates re-export it for convenience.**
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, PartialEq, Eq, Clone, Copy)]
 #[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct ZonedDateTime<A: AsCalendar, Z> {
     /// The date, local to the time zone

@@ -303,7 +303,7 @@ impl SourceDataProvider {
                             }
 
                             periods.into_iter().map(|(b, dt, mz)| {
-                                (b, ZoneNameTimestamp::from_date_time_iso(&dt), mz)
+                                (b, ZoneNameTimestamp::from_date_time_iso(dt), mz)
                             })
                         })
                         .collect(),
@@ -367,7 +367,7 @@ impl SourceDataProvider {
                                         epoch_seconds * 1000,
                                         utc_offset,
                                     );
-                                    ZoneNameTimestamp::from_date_time_iso(&DateTime {
+                                    ZoneNameTimestamp::from_date_time_iso(DateTime {
                                         date: zdt.date,
                                         time: zdt.time,
                                     })
@@ -412,7 +412,7 @@ impl SourceDataProvider {
                                                             epoch_seconds * 1000,
                                                             utc_offset
                                                         );
-                                                        ZoneNameTimestamp::from_date_time_iso(&DateTime {
+                                                        ZoneNameTimestamp::from_date_time_iso(DateTime {
                                                             date: zdt.date,
                                                             time: zdt.time
                                                         })

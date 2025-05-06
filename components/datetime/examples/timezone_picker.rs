@@ -39,13 +39,13 @@ fn main() {
         let offsets = offsets
             .compute_offsets_from_time_zone(
                 tz,
-                ZoneNameTimestamp::from_date_time_iso(&reference_date_time),
+                ZoneNameTimestamp::from_date_time_iso(reference_date_time),
             )
             .unwrap();
 
         let tzi = tz
             .with_offset(Some(offsets.standard))
-            .at_date_time_iso(&reference_date_time);
+            .at_date_time_iso(reference_date_time);
 
         grouped_tzs
             .entry(non_location_formatter.format(&tzi).to_string())
@@ -68,7 +68,7 @@ fn main() {
                             offset_formatter.format(
                                 &tzi.id()
                                     .with_offset(Some(daylight))
-                                    .at_date_time_iso(&reference_date_time)
+                                    .at_date_time_iso(reference_date_time)
                             )
                         )
                     } else {

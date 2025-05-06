@@ -70,7 +70,7 @@ fn jiff_to_icu(jiff: &jiff::Zoned) -> ZonedDateTime<Iso, TimeZoneInfo<Full>> {
         .with_offset(UtcOffset::try_from_seconds(jiff.offset().seconds()).ok())
         // Display names might change over time for a given zone (e.g. it might change from Eastern Time to
         // Central Time), so the ICU timezone needs a reference date and time.
-        .at_date_time_iso(&date_time)
+        .at_date_time_iso(date_time)
         // And finally, the zone variant is also required for formatting
         // TODO(jiff#258): Jiff does not currently guarantee rearguard semantics
         .with_variant(TimeZoneVariant::from_rearguard_isdst(jiff.time_zone().to_offset_info(jiff.timestamp()).dst().is_dst()));
@@ -104,7 +104,7 @@ fn chrono_to_icu(
         .with_offset(UtcOffset::try_from_seconds((chrono.offset().base_utc_offset() + chrono.offset().dst_offset()).num_seconds() as i32).ok())
         // Display names might change over time for a given zone (e.g. it might change from Eastern Time to
         // Central Time), so the ICU timezone needs a reference date and time.
-        .at_date_time_iso(&date_time)
+        .at_date_time_iso(date_time)
         // And finally, the zone variant is also required for formatting
         // TODO: chrono_tz does not use rearguard semantics
         .with_variant(TimeZoneVariant::from_rearguard_isdst(!chrono.offset().dst_offset().is_zero()));
