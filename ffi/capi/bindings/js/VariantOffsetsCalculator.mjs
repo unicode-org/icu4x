@@ -84,12 +84,12 @@ export class VariantOffsetsCalculator {
     }
 
     /** 
-     * See the [Rust documentation for `compute_offsets_from_time_zone`](https://docs.rs/icu/latest/icu/time/zone/struct.VariantOffsetsCalculatorBorrowed.html#method.compute_offsets_from_time_zone) for more information.
+     * See the [Rust documentation for `compute_offsets_from_time_zone_and_name_timestamp`](https://docs.rs/icu/latest/icu/time/zone/struct.VariantOffsetsCalculatorBorrowed.html#method.compute_offsets_from_time_zone_and_name_timestamp) for more information.
      */
-    computeOffsetsFromTimeZone(timeZone, localDate, localTime) {
+    computeOffsetsFromTimeZoneAndDateTime(timeZone, localDate, localTime) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 9, 4, true);
         
-        const result = wasm.icu4x_VariantOffsetsCalculator_compute_offsets_from_time_zone_mv1(diplomatReceive.buffer, this.ffiValue, timeZone.ffiValue, localDate.ffiValue, localTime.ffiValue);
+        const result = wasm.icu4x_VariantOffsetsCalculator_compute_offsets_from_time_zone_and_date_time_mv1(diplomatReceive.buffer, this.ffiValue, timeZone.ffiValue, localDate.ffiValue, localTime.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {
