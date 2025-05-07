@@ -757,7 +757,7 @@ version = "2.0.0"
 
 [[patch.unused]]
 name = "icu_codepointtrie_builder"
-version = "0.4.0"
+version = "0.5.0"
 
 [[patch.unused]]
 name = "icu_freertos"
