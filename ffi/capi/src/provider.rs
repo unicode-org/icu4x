@@ -89,8 +89,16 @@ pub mod ffi {
         ///
         /// This takes ownership of the `other` provider, leaving an empty provider in its place.
         #[diplomat::rust_link(icu_provider_adapters::fork::ForkByMarkerProvider, Typedef)]
-        #[diplomat::rust_link(icu_provider_adapters::fork::ForkByMarkerProvider::new, FnInTypedef, hidden)]
-        #[diplomat::rust_link(icu_provider_adapters::fork::ForkByMarkerProvider::new_with_predicate, FnInTypedef, hidden)]
+        #[diplomat::rust_link(
+            icu_provider_adapters::fork::ForkByMarkerProvider::new,
+            FnInTypedef,
+            hidden
+        )]
+        #[diplomat::rust_link(
+            icu_provider_adapters::fork::ForkByMarkerProvider::new_with_predicate,
+            FnInTypedef,
+            hidden
+        )]
         #[diplomat::rust_link(
             icu_provider_adapters::fork::predicates::MarkerNotFoundPredicate,
             Struct,
