@@ -97,19 +97,26 @@ pub(crate) const BACKWARD_COMBINING_MARKER: u32 = 1 << 31;
 /// range.
 ///
 /// See components/normalizer/trie-value-format.md
-const HIGH_ZEROS_MASK: u32 = 0x3FFF0000;
+pub(crate) const HIGH_ZEROS_MASK: u32 = 0x3FFF0000;
 
 /// Mask for the bits have to be zero for this to be a complex
 /// decomposition.
 ///
 /// See components/normalizer/trie-value-format.md
-const LOW_ZEROS_MASK: u32 = 0xFFE0;
+pub(crate) const LOW_ZEROS_MASK: u32 = 0xFFE0;
 
-/// Marker value for U+FDFA in NFKD. (Unified with Hangul syllable marker,
-/// but they differ by `NON_ROUND_TRIP_MARKER`.)
+/// Marker value for U+FDFA in NFKD. (Unified with
+/// `HANGUL_SYLLABLE_MARKER`, but they differ by
+/// `NON_ROUND_TRIP_MARKER`.)
 ///
 /// See components/normalizer/trie-value-format.md
 const FDFA_MARKER: u16 = 1;
+
+/// Marker value for Hangul syllables. (Unified with `FDFA_MARKER``,
+/// but they differ by `NON_ROUND_TRIP_MARKER`.)
+///
+/// See components/normalizer/trie-value-format.md
+pub(crate) const HANGUL_SYLLABLE_MARKER: u32 = 1;
 
 /// Checks if a trie value carries a (non-zero) canonical
 /// combining class.
@@ -235,7 +242,7 @@ pub(crate) fn unwrap_or_gigo<T>(opt: Option<T>, default: T) -> T {
 
 /// Convert a `u32` _obtained from data provider data_ to `char`.
 #[inline(always)]
-fn char_from_u32(u: u32) -> char {
+pub(crate) fn char_from_u32(u: u32) -> char {
     unwrap_or_gigo(core::char::from_u32(u), REPLACEMENT_CHARACTER)
 }
 
@@ -1089,10 +1096,11 @@ where
 
         // It would be better to attempt to normalize in place, but let's do at
         // least this.
-        if without_trailing_starter
-            .iter()
-            .all(|c| (c.trie_val & !(BACKWARD_COMBINING_MARKER | NON_ROUND_TRIP_MARKER | 1)) == 0)
-        {
+        if without_trailing_starter.iter().all(|c| {
+            (c.trie_val
+                & !(BACKWARD_COMBINING_MARKER | NON_ROUND_TRIP_MARKER | HANGUL_SYLLABLE_MARKER))
+                == 0
+        }) {
             return;
         }
 
@@ -1233,7 +1241,9 @@ where
 
         // See components/normalizer/trie-value-format.md
         let decomposition = c.trie_val;
-        if (decomposition & !(BACKWARD_COMBINING_MARKER | NON_ROUND_TRIP_MARKER)) <= 1 {
+        if (decomposition & !(BACKWARD_COMBINING_MARKER | NON_ROUND_TRIP_MARKER))
+            <= HANGUL_SYLLABLE_MARKER
+        {
             // The character is its own decomposition (or Hangul syllable)
             // Set the Canonical Combining Class to zero
             self.upcoming.push(

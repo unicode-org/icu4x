@@ -17,7 +17,8 @@ use crate::elements::CE_BUFFER_SIZE;
 use crate::elements::FALLBACK_CE32;
 use crate::elements::NON_ROUND_TRIP_MARKER;
 use crate::elements::{
-    CollationElement, CollationElements, NonPrimary, JAMO_COUNT, NO_CE, NO_CE_PRIMARY,
+    char_from_u32, CollationElement, CollationElements, NonPrimary, FFFD_CE32,
+    HANGUL_SYLLABLE_MARKER, HIGH_ZEROS_MASK, JAMO_COUNT, LOW_ZEROS_MASK, NO_CE, NO_CE_PRIMARY,
     NO_CE_SECONDARY, NO_CE_TERTIARY, OPTIMIZED_DIACRITICS_MAX_COUNT, QUATERNARY_MASK,
 };
 use crate::options::CollatorOptionsBitField;
@@ -51,8 +52,6 @@ use utf8_iter::Utf8CharsEx;
 use zerovec::ule::AsULE;
 
 const MERGE_SEPARATOR_PRIMARY: u32 = 0x02000000; // for U+FFFE
-
-const HANGUL_SYLLABLE_TRIE_VAL: u32 = 1;
 
 struct AnyQuaternaryAccumulator(u32);
 
@@ -826,64 +825,149 @@ impl CollatorBorrowed<'_> {
         // This loop is only broken out of as goto forward.
         #[allow(clippy::never_loop)]
         'prefix: loop {
-            if let Some(head_last_c) = head_chars.next_back() {
+            if let Some(mut head_last_c) = head_chars.next_back() {
                 let norm_trie = &self.decompositions.trie;
                 let mut head_last = CharacterAndClassAndTrieValue::new_with_trie_val(
                     head_last_c,
                     norm_trie.get(head_last_c),
                 );
                 let mut head_last_ce32 = CollationElement32::default();
+                let mut head_last_ok = false;
                 if let Some(left_different) = left.iter_next_before_init() {
                     left.prepend_upcoming_before_init(left_different.clone());
                     if let Some(right_different) = right.iter_next_before_init() {
                         // Note: left_different and right_different may both be U+FFFD.
                         right.prepend_upcoming_before_init(right_different.clone());
 
-                        // A boundary is safe iff the character after the
-                        // boundary is a starter that decomposes to self and
-                        // its ce32 is not a prefix ce32 (or the character
-                        // after the boundary is a Hangul syllable) AND the
-                        // character before the boundary decomposes to self
-                        // and its ce32 is not a contraction ce32 that has
-                        // the `CONTRACT_HAS_STARTER` flag set (or the
-                        // character before the boundary is a Hangul syllable).
-                        // Notably, a boundary between a Hangul syllable
-                        // and a conjoining jamo is safe, due to conjoining
-                        // jamo not being able to have prefix or contraction
-                        // ce32.
-                        // Additionally, if the numeric mode is on, and we
-                        // have a numeric ce32 before and after the boundary,
-                        // the boundary is not safe.
+                        // The base logic is that a boundary between two starters
+                        // that decompose to selves is safe iff the starter
+                        // before the boundary can't contract a starter, the
+                        // starter after the boundary doesn't have a prefix
+                        // condition, and, with the numeric mode enabled,
+                        // they aren't both numeric.
+                        //
+                        // This base logic is then extended with Hangul
+                        // syllables and characters that decompose to a
+                        // BMP starter followed by a BMP non-starter.
+                        // The logic could be extended further, in
+                        // particular to cover singleton decompositions
+                        // to a BMP starter, but such characters can be
+                        // expected to be rare enough in real-world input
+                        // that it's not worthwhile to make this code more
+                        // branchy.
+                        //
+                        // A Hangul syllable is safe on either side of the
+                        // boundary, because Hangul syllables can't participate
+                        // in contraction or have prefix conditions. They are
+                        // also known not to be numeric.
+                        //
+                        // Hangul jamo is safe to look up from the main trie
+                        // instead of the jamo table, because they aren't
+                        // allowed to participate in contractions or prefix
+                        // conditions, either, and are known not to be numeric.
+                        //
+                        // After a boundary, a decomposition to a BMP starter
+                        // and a BMP non-starter can obviously be analyzed by
+                        // considering the starter as if it was a starter
+                        // that decomposes to self.
+                        //
+                        // Before a boundary the contraction condition considers
+                        // whether the contraction can contract a starter.
+                        // For the case of contracting a non-starter, it's
+                        // fine for the BMP starter of the decomposition to
+                        // contract the non-starter from the same decomposition:
+                        // Since that would happen as part of the prefix that
+                        // is identical, it wouldn't affect anything after.
+                        //
+                        // The case of contracting a non-starter other than
+                        // the one that came from the decomposition itself
+                        // is irrelevant, because we don't allow a non-starter
+                        // right after the boundary regardless of the contraction
+                        // status of what's before the boundary.
+                        //
+                        // Finally, decompositions to starter and non-starter
+                        // are known not to be numeric.
+
+                        // The checks below are repetitive, but an attempt to factor
+                        // repetitive code into an inlined function regressed,
+                        // performance, so it seems that having the control flow
+                        // right here without an intermediate enum from a
+                        // function return to branch on is important.
 
                         // This loop is only broken out of as goto forward. The control flow
                         // is much more readable this way.
                         #[allow(clippy::never_loop)]
                         loop {
                             // The two highest bits are about NFC, which we don't
-                            // care about here. Also mask off the lowest bit to
-                            // combine the check for Hangul syllable.
-                            if (head_last.trie_val
-                                & !(BACKWARD_COMBINING_MARKER | NON_ROUND_TRIP_MARKER | 1))
-                                != 0
+                            // care about here.
+                            let decomposition = head_last.trie_val;
+                            if (decomposition
+                                & !(BACKWARD_COMBINING_MARKER | NON_ROUND_TRIP_MARKER))
+                                == 0
                             {
+                                // Intentionally empty block to keep
+                                // the same structure as in the cases
+                                // where something happens here.
+                            } else if ((decomposition & HIGH_ZEROS_MASK) != 0)
+                                && ((decomposition & LOW_ZEROS_MASK) != 0)
+                            {
+                                // Decomposition into two BMP characters: starter and non-starter
+                                // Let's take the starter
+                                head_last_c = char_from_u32(decomposition & 0x7FFF);
+                            } else if decomposition == HANGUL_SYLLABLE_MARKER {
+                                head_last_ce32 = FFFD_CE32;
+                            } else {
+                                break;
+                            }
+                            head_last_ok = true;
+
+                            let mut left_ce32 = CollationElement32::default();
+                            let mut right_ce32 = CollationElement32::default();
+                            let left_c;
+                            let right_c;
+
+                            let decomposition = left_different.trie_val;
+                            if (decomposition
+                                & !(BACKWARD_COMBINING_MARKER | NON_ROUND_TRIP_MARKER))
+                                == 0
+                            {
+                                left_c = left_different.character();
+                            } else if ((decomposition & HIGH_ZEROS_MASK) != 0)
+                                && ((decomposition & LOW_ZEROS_MASK) != 0)
+                            {
+                                // Decomposition into two BMP characters: starter and non-starter
+                                // Let's take the starter
+                                left_c = char_from_u32(decomposition & 0x7FFF);
+                            } else if decomposition == HANGUL_SYLLABLE_MARKER {
+                                left_c = '\u{0}';
+                                left_ce32 = FFFD_CE32;
+                            } else {
                                 break;
                             }
 
-                            if (left_different.trie_val
-                                & !(BACKWARD_COMBINING_MARKER | NON_ROUND_TRIP_MARKER | 1))
-                                != 0
+                            let decomposition = right_different.trie_val;
+                            if (decomposition
+                                & !(BACKWARD_COMBINING_MARKER | NON_ROUND_TRIP_MARKER))
+                                == 0
                             {
+                                right_c = right_different.character();
+                            } else if ((decomposition & HIGH_ZEROS_MASK) != 0)
+                                && ((decomposition & LOW_ZEROS_MASK) != 0)
+                            {
+                                // Decomposition into two BMP characters: starter and non-starter
+                                // Let's take the starter
+                                right_c = char_from_u32(decomposition & 0x7FFF);
+                            } else if decomposition == HANGUL_SYLLABLE_MARKER {
+                                right_c = '\u{0}';
+                                right_ce32 = FFFD_CE32;
+                            } else {
                                 break;
                             }
-                            if (right_different.trie_val
-                                & !(BACKWARD_COMBINING_MARKER | NON_ROUND_TRIP_MARKER | 1))
-                                != 0
-                            {
-                                break;
-                            }
+
                             // The last character of the prefix is OK on the normalization
-                            // level. Now let's check its ce32 unless it's a Hangul syllable.
-                            if head_last.trie_val != HANGUL_SYLLABLE_TRIE_VAL {
+                            // level. Now let's check its ce32 unless it's a Hangul syllable,
+                            // in which case `head_last_ce32` already is a non-default placeholder.
+                            if head_last_ce32 == CollationElement32::default() {
                                 head_last_ce32 = tailoring.ce32_for_char(head_last_c);
                                 if head_last_ce32 == FALLBACK_CE32 {
                                     head_last_ce32 = self.root.ce32_for_char(head_last_c);
@@ -896,10 +980,7 @@ impl CollatorBorrowed<'_> {
                             }
                             // The first character of each suffix is OK on the normalization
                             // level. Now let's check their ce32s unless they are Hangul syllables.
-                            let mut left_ce32 = CollationElement32::default();
-                            let mut right_ce32 = CollationElement32::default();
-                            if left_different.trie_val != HANGUL_SYLLABLE_TRIE_VAL {
-                                let left_c = left_different.character();
+                            if left_ce32 == CollationElement32::default() {
                                 left_ce32 = tailoring.ce32_for_char(left_c);
                                 if left_ce32 == FALLBACK_CE32 {
                                     left_ce32 = self.root.ce32_for_char(left_c);
@@ -908,8 +989,7 @@ impl CollatorBorrowed<'_> {
                                     break;
                                 }
                             }
-                            if right_different.trie_val != HANGUL_SYLLABLE_TRIE_VAL {
-                                let right_c = right_different.character();
+                            if right_ce32 == CollationElement32::default() {
                                 right_ce32 = tailoring.ce32_for_char(right_c);
                                 if right_ce32 == FALLBACK_CE32 {
                                     right_ce32 = self.root.ce32_for_char(right_c);
@@ -930,44 +1010,55 @@ impl CollatorBorrowed<'_> {
                         }
                     }
                 }
-                let mut tail_first;
+                let mut tail_first_c;
                 let mut tail_first_ce32;
+                let mut tail_first_ok;
                 loop {
                     // Take a step back.
                     left.prepend_upcoming_before_init(head_last.clone());
                     right.prepend_upcoming_before_init(head_last.clone());
 
-                    tail_first = head_last;
+                    tail_first_c = head_last_c;
                     tail_first_ce32 = head_last_ce32;
+                    tail_first_ok = head_last_ok;
 
-                    let head_last_c = if let Some(head_last_c) = head_chars.next_back() {
+                    head_last_c = if let Some(head_last_c) = head_chars.next_back() {
                         head_last_c
                     } else {
                         // We need to step back beyond the start of the prefix.
                         // Treat as good boundary.
                         break 'prefix;
                     };
+                    let decomposition = norm_trie.get(head_last_c);
                     head_last = CharacterAndClassAndTrieValue::new_with_trie_val(
                         head_last_c,
-                        norm_trie.get(head_last_c),
+                        decomposition,
                     );
                     head_last_ce32 = CollationElement32::default();
+                    head_last_ok = false;
 
-                    if (head_last.trie_val
-                        & !(BACKWARD_COMBINING_MARKER | NON_ROUND_TRIP_MARKER | 1))
-                        != 0
+                    if (decomposition & !(BACKWARD_COMBINING_MARKER | NON_ROUND_TRIP_MARKER)) == 0 {
+                        // Intentionally empty block to keep
+                        // the same structure as in the cases
+                        // where something happens here.
+                    } else if ((decomposition & HIGH_ZEROS_MASK) != 0)
+                        && ((decomposition & LOW_ZEROS_MASK) != 0)
                     {
+                        // Decomposition into two BMP characters: starter and non-starter
+                        // Let's take the starter
+                        head_last_c = char_from_u32(decomposition & 0x7FFF);
+                    } else if decomposition == HANGUL_SYLLABLE_MARKER {
+                        head_last_ce32 = FFFD_CE32;
+                    } else {
                         continue;
                     }
-                    if (tail_first.trie_val
-                        & !(BACKWARD_COMBINING_MARKER | NON_ROUND_TRIP_MARKER | 1))
-                        != 0
-                    {
+                    head_last_ok = true;
+                    if !tail_first_ok {
                         continue;
                     }
                     // The last character of the prefix is OK on the normalization
                     // level. Now let's check its ce32 unless it's a Hangul syllable.
-                    if head_last.trie_val != HANGUL_SYLLABLE_TRIE_VAL {
+                    if head_last_ce32 == CollationElement32::default() {
                         head_last_ce32 = tailoring.ce32_for_char(head_last_c);
                         if head_last_ce32 == FALLBACK_CE32 {
                             head_last_ce32 = self.root.ce32_for_char(head_last_c);
@@ -981,23 +1072,20 @@ impl CollatorBorrowed<'_> {
                     // Check this _after_ `head_last_ce32` to make sure
                     // `head_last_ce32` is initialized for the next loop round
                     // trip if applicable.
-                    if tail_first.trie_val != HANGUL_SYLLABLE_TRIE_VAL {
-                        if tail_first_ce32 == CollationElement32::default() {
-                            let tail_first_c = tail_first.character();
-                            tail_first_ce32 = tailoring.ce32_for_char(tail_first_c);
-                            if tail_first_ce32 == FALLBACK_CE32 {
-                                tail_first_ce32 = self.root.ce32_for_char(tail_first_c);
-                            }
-                        } // else we already have a trie value from the previous loop iteration
-                        if tail_first_ce32.tag_checked() == Some(Tag::Prefix) {
-                            continue;
+                    if tail_first_ce32 == CollationElement32::default() {
+                        tail_first_ce32 = tailoring.ce32_for_char(tail_first_c);
+                        if tail_first_ce32 == FALLBACK_CE32 {
+                            tail_first_ce32 = self.root.ce32_for_char(tail_first_c);
                         }
-                        if self.options.numeric()
-                            && head_last_ce32.tag_checked() == Some(Tag::Digit)
-                            && tail_first_ce32.tag_checked() == Some(Tag::Digit)
-                        {
-                            continue;
-                        }
+                    } // else we already have a trie value from the previous loop iteration or we have Hangul syllable
+                    if tail_first_ce32.tag_checked() == Some(Tag::Prefix) {
+                        continue;
+                    }
+                    if self.options.numeric()
+                        && head_last_ce32.tag_checked() == Some(Tag::Digit)
+                        && tail_first_ce32.tag_checked() == Some(Tag::Digit)
+                    {
+                        continue;
                     }
                     // We are at a good boundary!
                     break 'prefix;
