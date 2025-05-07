@@ -382,6 +382,7 @@ dependencies = [
  "calendrical_calculations",
  "displaydoc",
  "icu_calendar",
+ "icu_locale_core",
  "icu_provider",
  "icu_time_data",
  "ixdtf",
