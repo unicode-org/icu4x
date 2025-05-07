@@ -10,7 +10,7 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
-/** 
+/**
  * See the [Rust documentation for `NoCalendarFormatter`](https://docs.rs/icu/latest/icu/datetime/type.NoCalendarFormatter.html) for more information.
  */
 const TimeFormatter_box_destroy_registry = new FinalizationRegistry((ptr) => {
@@ -18,35 +18,34 @@ const TimeFormatter_box_destroy_registry = new FinalizationRegistry((ptr) => {
 });
 
 export class TimeFormatter {
-    
     // Internal ptr reference:
     #ptr = null;
 
     // Lifetimes are only to keep dependencies alive.
     // Since JS won't garbage collect until there are no incoming edges.
     #selfEdge = [];
-    
+
     #internalConstructor(symbol, ptr, selfEdge) {
         if (symbol !== diplomatRuntime.internalConstructor) {
             console.error("TimeFormatter is an Opaque type. You cannot call its constructor.");
             return;
         }
-        
         this.#ptr = ptr;
         this.#selfEdge = selfEdge;
-        
+
         // Are we being borrowed? If not, we can register.
         if (this.#selfEdge.length === 0) {
             TimeFormatter_box_destroy_registry.register(this, this.#ptr);
         }
-        
+
         return this;
     }
     get ffiValue() {
         return this.#ptr;
     }
 
-    /** 
+
+    /**
      * See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/datetime/type.NoCalendarFormatter.html#method.try_new) for more information.
      *
      * See the [Rust documentation for `T`](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.T.html) for more information.
@@ -55,11 +54,12 @@ export class TimeFormatter {
      */
     #defaultConstructor(locale, length, timePrecision, alignment) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
-        
+
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
-        
+
+
         const result = wasm.icu4x_TimeFormatter_create_mv1(diplomatReceive.buffer, locale.ffiValue, ...diplomatRuntime.optionToArgsForCalling(length, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]), ...diplomatRuntime.optionToArgsForCalling(timePrecision, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]), ...diplomatRuntime.optionToArgsForCalling(alignment, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]));
-    
+
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DateTimeFormatterLoadError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
@@ -67,15 +67,15 @@ export class TimeFormatter {
             }
             return new TimeFormatter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
-        
+
         finally {
             functionCleanupArena.free();
-        
+
             diplomatReceive.free();
         }
     }
 
-    /** 
+    /**
      * See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/datetime/type.NoCalendarFormatter.html#method.try_new) for more information.
      *
      * See the [Rust documentation for `T`](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.T.html) for more information.
@@ -84,11 +84,12 @@ export class TimeFormatter {
      */
     static createWithProvider(provider, locale, length, timePrecision, alignment) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
-        
+
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
-        
+
+
         const result = wasm.icu4x_TimeFormatter_create_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue, ...diplomatRuntime.optionToArgsForCalling(length, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]), ...diplomatRuntime.optionToArgsForCalling(timePrecision, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]), ...diplomatRuntime.optionToArgsForCalling(alignment, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]));
-    
+
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DateTimeFormatterLoadError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
@@ -96,25 +97,26 @@ export class TimeFormatter {
             }
             return new TimeFormatter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
-        
+
         finally {
             functionCleanupArena.free();
-        
+
             diplomatReceive.free();
         }
     }
 
-    /** 
+    /**
      * See the [Rust documentation for `format`](https://docs.rs/icu/latest/icu/datetime/type.NoCalendarFormatter.html#method.format) for more information.
      */
     format(time) {
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
-        wasm.icu4x_TimeFormatter_format_mv1(this.ffiValue, time.ffiValue, write.buffer);
-    
+
+    wasm.icu4x_TimeFormatter_format_mv1(this.ffiValue, time.ffiValue, write.buffer);
+
         try {
             return write.readString8();
         }
-        
+
         finally {
             write.free();
         }

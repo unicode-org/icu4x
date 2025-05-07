@@ -8,30 +8,30 @@ import type { DecimalSignedRoundingMode } from "./DecimalSignedRoundingMode"
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
-/** 
+/**
  * See the [Rust documentation for `Decimal`](https://docs.rs/fixed_decimal/latest/fixed_decimal/type.Decimal.html) for more information.
  */
 
 
 export class Decimal {
-    
     get ffiValue(): pointer;
 
-    /** 
+
+    /**
      * Construct an [`Decimal`] from an integer.
      *
      * See the [Rust documentation for `Decimal`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.Decimal.html) for more information.
      */
     static fromNumber(v: number): Decimal;
 
-    /** 
+    /**
      * Construct an [`Decimal`] from an integer.
      *
      * See the [Rust documentation for `Decimal`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.Decimal.html) for more information.
      */
     static fromBigInt(v: bigint): Decimal;
 
-    /** 
+    /**
      * Construct an [`Decimal`] from an float, with a given power of 10 for the lower magnitude
      *
      * See the [Rust documentation for `try_from_f64`](https://docs.rs/fixed_decimal/latest/fixed_decimal/type.Decimal.html#method.try_from_f64) for more information.
@@ -40,7 +40,7 @@ export class Decimal {
      */
     static fromNumberWithLowerMagnitude(f: number, magnitude: number): Decimal;
 
-    /** 
+    /**
      * Construct an [`Decimal`] from an float, for a given number of significant digits
      *
      * See the [Rust documentation for `try_from_f64`](https://docs.rs/fixed_decimal/latest/fixed_decimal/type.Decimal.html#method.try_from_f64) for more information.
@@ -49,7 +49,7 @@ export class Decimal {
      */
     static fromNumberWithSignificantDigits(f: number, digits: number): Decimal;
 
-    /** 
+    /**
      * Construct an [`Decimal`] from an float, with enough digits to recover
      * the original floating point in IEEE 754 without needing trailing zeros
      *
@@ -59,97 +59,97 @@ export class Decimal {
      */
     static fromNumberWithRoundTripPrecision(f: number): Decimal;
 
-    /** 
+    /**
      * Construct an [`Decimal`] from a string.
      *
      * See the [Rust documentation for `try_from_str`](https://docs.rs/fixed_decimal/latest/fixed_decimal/type.Decimal.html#method.try_from_str) for more information.
      */
     static fromString(v: string): Decimal;
 
-    /** 
+    /**
      * See the [Rust documentation for `digit_at`](https://docs.rs/fixed_decimal/latest/fixed_decimal/type.Decimal.html#method.digit_at) for more information.
      */
     digitAt(magnitude: number): number;
 
-    /** 
+    /**
      * See the [Rust documentation for `magnitude_range`](https://docs.rs/fixed_decimal/latest/fixed_decimal/type.Decimal.html#method.magnitude_range) for more information.
      */
     get magnitudeStart(): number;
 
-    /** 
+    /**
      * See the [Rust documentation for `magnitude_range`](https://docs.rs/fixed_decimal/latest/fixed_decimal/type.Decimal.html#method.magnitude_range) for more information.
      */
     get magnitudeEnd(): number;
 
-    /** 
+    /**
      * See the [Rust documentation for `nonzero_magnitude_start`](https://docs.rs/fixed_decimal/latest/fixed_decimal/type.Decimal.html#method.nonzero_magnitude_start) for more information.
      */
     get nonzeroMagnitudeStart(): number;
 
-    /** 
+    /**
      * See the [Rust documentation for `nonzero_magnitude_end`](https://docs.rs/fixed_decimal/latest/fixed_decimal/type.Decimal.html#method.nonzero_magnitude_end) for more information.
      */
     get nonzeroMagnitudeEnd(): number;
 
-    /** 
+    /**
      * See the [Rust documentation for `is_zero`](https://docs.rs/fixed_decimal/latest/fixed_decimal/type.Decimal.html#method.is_zero) for more information.
      */
     get isZero(): boolean;
 
-    /** 
+    /**
      * Multiply the [`Decimal`] by a given power of ten.
      *
      * See the [Rust documentation for `multiply_pow10`](https://docs.rs/fixed_decimal/latest/fixed_decimal/type.Decimal.html#method.multiply_pow10) for more information.
      */
     multiplyPow10(power: number): void;
 
-    /** 
+    /**
      * See the [Rust documentation for `sign`](https://docs.rs/fixed_decimal/latest/fixed_decimal/type.Decimal.html#method.sign) for more information.
      */
     get sign(): DecimalSign;
 
-    /** 
+    /**
      * Set the sign of the [`Decimal`].
      *
      * See the [Rust documentation for `set_sign`](https://docs.rs/fixed_decimal/latest/fixed_decimal/type.Decimal.html#method.set_sign) for more information.
      */
     set sign(sign: DecimalSign);
 
-    /** 
+    /**
      * See the [Rust documentation for `apply_sign_display`](https://docs.rs/fixed_decimal/latest/fixed_decimal/type.Decimal.html#method.apply_sign_display) for more information.
      */
     applySignDisplay(signDisplay: DecimalSignDisplay): void;
 
-    /** 
+    /**
      * See the [Rust documentation for `trim_start`](https://docs.rs/fixed_decimal/latest/fixed_decimal/type.Decimal.html#method.trim_start) for more information.
      */
     trimStart(): void;
 
-    /** 
+    /**
      * See the [Rust documentation for `trim_end`](https://docs.rs/fixed_decimal/latest/fixed_decimal/type.Decimal.html#method.trim_end) for more information.
      */
     trimEnd(): void;
 
-    /** 
+    /**
      * See the [Rust documentation for `trim_end_if_integer`](https://docs.rs/fixed_decimal/latest/fixed_decimal/type.Decimal.html#method.trim_end_if_integer) for more information.
      */
     trimEndIfInteger(): void;
 
-    /** 
+    /**
      * Zero-pad the [`Decimal`] on the left to a particular position
      *
      * See the [Rust documentation for `pad_start`](https://docs.rs/fixed_decimal/latest/fixed_decimal/type.Decimal.html#method.pad_start) for more information.
      */
     padStart(position: number): void;
 
-    /** 
+    /**
      * Zero-pad the [`Decimal`] on the right to a particular position
      *
      * See the [Rust documentation for `pad_end`](https://docs.rs/fixed_decimal/latest/fixed_decimal/type.Decimal.html#method.pad_end) for more information.
      */
     padEnd(position: number): void;
 
-    /** 
+    /**
      * Truncate the [`Decimal`] on the left to a particular position, deleting digits if necessary. This is useful for, e.g. abbreviating years
      * ("2022" -> "22")
      *
@@ -157,7 +157,7 @@ export class Decimal {
      */
     setMaxPosition(position: number): void;
 
-    /** 
+    /**
      * Round the number at a particular digit position.
      *
      * This uses half to even rounding, which resolves ties by selecting the nearest
@@ -167,37 +167,37 @@ export class Decimal {
      */
     round(position: number): void;
 
-    /** 
+    /**
      * See the [Rust documentation for `ceil`](https://docs.rs/fixed_decimal/latest/fixed_decimal/type.Decimal.html#method.ceil) for more information.
      */
     ceil(position: number): void;
 
-    /** 
+    /**
      * See the [Rust documentation for `expand`](https://docs.rs/fixed_decimal/latest/fixed_decimal/type.Decimal.html#method.expand) for more information.
      */
     expand(position: number): void;
 
-    /** 
+    /**
      * See the [Rust documentation for `floor`](https://docs.rs/fixed_decimal/latest/fixed_decimal/type.Decimal.html#method.floor) for more information.
      */
     floor(position: number): void;
 
-    /** 
+    /**
      * See the [Rust documentation for `trunc`](https://docs.rs/fixed_decimal/latest/fixed_decimal/type.Decimal.html#method.trunc) for more information.
      */
     trunc(position: number): void;
 
-    /** 
+    /**
      * See the [Rust documentation for `round_with_mode`](https://docs.rs/fixed_decimal/latest/fixed_decimal/type.Decimal.html#method.round_with_mode) for more information.
      */
     roundWithMode(position: number, mode: DecimalSignedRoundingMode): void;
 
-    /** 
+    /**
      * See the [Rust documentation for `round_with_mode_and_increment`](https://docs.rs/fixed_decimal/latest/fixed_decimal/type.Decimal.html#method.round_with_mode_and_increment) for more information.
      */
     roundWithModeAndIncrement(position: number, mode: DecimalSignedRoundingMode, increment: DecimalRoundingIncrement): void;
 
-    /** 
+    /**
      * Concatenates `other` to the end of `self`.
      *
      * If successful, `other` will be set to 0 and a successful status is returned.
@@ -208,7 +208,7 @@ export class Decimal {
      */
     concatenateEnd(other: Decimal): boolean;
 
-    /** 
+    /**
      * Format the [`Decimal`] as a string.
      *
      * See the [Rust documentation for `write_to`](https://docs.rs/fixed_decimal/latest/fixed_decimal/type.Decimal.html#method.write_to) for more information.

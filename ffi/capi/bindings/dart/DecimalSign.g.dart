@@ -9,12 +9,11 @@ part of 'lib.g.dart';
 enum DecimalSign {
   /// No sign (implicitly positive, e.g., 1729).
   none,
-
   /// A negative sign, e.g., -1729.
   negative,
-
   /// An explicit positive sign, e.g., +1729.
   positive;
+
 }
 
 // dart format on

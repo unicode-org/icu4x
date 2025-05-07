@@ -19,7 +19,6 @@
 typedef struct icu4x_TimeZoneAndCanonicalAndNormalizedIterator_next_mv1_result {union {TimeZoneAndCanonicalAndNormalized ok; }; bool is_ok;} icu4x_TimeZoneAndCanonicalAndNormalizedIterator_next_mv1_result;
 icu4x_TimeZoneAndCanonicalAndNormalizedIterator_next_mv1_result icu4x_TimeZoneAndCanonicalAndNormalizedIterator_next_mv1(TimeZoneAndCanonicalAndNormalizedIterator* self);
 
-
 void icu4x_TimeZoneAndCanonicalAndNormalizedIterator_destroy_mv1(TimeZoneAndCanonicalAndNormalizedIterator* self);
 
 

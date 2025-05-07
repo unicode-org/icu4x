@@ -19,7 +19,7 @@ namespace capi {
       DecimalSign_Negative = 1,
       DecimalSign_Positive = 2,
     };
-    
+
     typedef struct DecimalSign_option {union { DecimalSign ok; }; bool is_ok; } DecimalSign_option;
 } // namespace capi
 } // namespace

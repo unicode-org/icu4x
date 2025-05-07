@@ -1997,6 +1997,7 @@ final class CodePointSetData implements ffi.Finalizable {
     }
     return CodePointSetData._fromFfi(result.union.ok, []);
   }
+
 }
 
 @_DiplomatFfiUse('icu4x_CodePointSetData_destroy_mv1')

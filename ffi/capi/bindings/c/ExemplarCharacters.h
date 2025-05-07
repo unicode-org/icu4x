@@ -52,7 +52,6 @@ icu4x_ExemplarCharacters_create_index_mv1_result icu4x_ExemplarCharacters_create
 typedef struct icu4x_ExemplarCharacters_create_index_with_provider_mv1_result {union {ExemplarCharacters* ok; DataError err;}; bool is_ok;} icu4x_ExemplarCharacters_create_index_with_provider_mv1_result;
 icu4x_ExemplarCharacters_create_index_with_provider_mv1_result icu4x_ExemplarCharacters_create_index_with_provider_mv1(const DataProvider* provider, const Locale* locale);
 
-
 void icu4x_ExemplarCharacters_destroy_mv1(ExemplarCharacters* self);
 
 

@@ -59,6 +59,7 @@ final class LocaleDisplayNamesFormatter implements ffi.Finalizable {
     _icu4x_LocaleDisplayNamesFormatter_of_mv1(_ffi, locale._ffi, write._ffi);
     return write.finalize();
   }
+
 }
 
 @_DiplomatFfiUse('icu4x_LocaleDisplayNamesFormatter_destroy_mv1')

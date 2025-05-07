@@ -5,9 +5,11 @@ part of 'lib.g.dart';
 
 /// See the [Rust documentation for `CollationNumericOrdering`](https://docs.rs/icu/latest/icu/collator/preferences/enum.CollationNumericOrdering.html) for more information.
 enum CollatorNumericOrdering {
+
   off,
 
   on;
+
 }
 
 // dart format on

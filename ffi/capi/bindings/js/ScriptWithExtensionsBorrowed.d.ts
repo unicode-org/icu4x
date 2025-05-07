@@ -4,7 +4,7 @@ import type { ScriptExtensionsSet } from "./ScriptExtensionsSet"
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
-/** 
+/**
  * A slightly faster ScriptWithExtensions object
  *
  * See the [Rust documentation for `ScriptWithExtensionsBorrowed`](https://docs.rs/icu/latest/icu/properties/script/struct.ScriptWithExtensionsBorrowed.html) for more information.
@@ -12,10 +12,10 @@ import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
 export class ScriptWithExtensionsBorrowed {
-    
     get ffiValue(): pointer;
 
-    /** 
+
+    /**
      * Get the Script property value for a code point
      * Get the Script property value for a code point
      *
@@ -23,21 +23,21 @@ export class ScriptWithExtensionsBorrowed {
      */
     getScriptVal(ch: codepoint): number;
 
-    /** 
+    /**
      * Get the Script property value for a code point
      *
      * See the [Rust documentation for `get_script_extensions_val`](https://docs.rs/icu/latest/icu/properties/script/struct.ScriptWithExtensionsBorrowed.html#method.get_script_extensions_val) for more information.
      */
     getScriptExtensionsVal(ch: codepoint): ScriptExtensionsSet;
 
-    /** 
+    /**
      * Check if the Script_Extensions property of the given code point covers the given script
      *
      * See the [Rust documentation for `has_script`](https://docs.rs/icu/latest/icu/properties/script/struct.ScriptWithExtensionsBorrowed.html#method.has_script) for more information.
      */
     hasScript(ch: codepoint, script: number): boolean;
 
-    /** 
+    /**
      * Build the CodePointSetData corresponding to a codepoints matching a particular script
      * in their Script_Extensions
      *

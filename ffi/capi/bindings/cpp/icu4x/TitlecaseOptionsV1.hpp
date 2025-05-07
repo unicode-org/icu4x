@@ -19,10 +19,9 @@
 namespace icu4x {
 namespace capi {
     extern "C" {
-    
+
     icu4x::capi::TitlecaseOptionsV1 icu4x_TitlecaseOptionsV1_default_mv1(void);
-    
-    
+
     } // extern "C"
 } // namespace capi
 } // namespace

@@ -115,6 +115,7 @@ final class UtcOffset implements ffi.Finalizable {
     final result = _icu4x_UtcOffset_seconds_part_mv1(_ffi);
     return result;
   }
+
 }
 
 @_DiplomatFfiUse('icu4x_UtcOffset_destroy_mv1')

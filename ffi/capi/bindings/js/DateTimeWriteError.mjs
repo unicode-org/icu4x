@@ -3,7 +3,7 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
-/** 
+/**
  * An error when formatting a datetime.
  *
  * Currently the only reachable error here is a missing time zone variant. If you encounter
@@ -14,7 +14,6 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
 export class DateTimeWriteError {
-    
     #value = undefined;
 
     static #values = new Map([
@@ -25,7 +24,7 @@ export class DateTimeWriteError {
     static getAllEntries() {
         return DateTimeWriteError.#values.entries();
     }
-    
+
     #internalConstructor(value) {
         if (arguments.length > 1 && arguments[0] === diplomatRuntime.internalConstructor) {
             // We pass in two internalConstructor arguments to create *new*
@@ -55,11 +54,11 @@ export class DateTimeWriteError {
         return new DateTimeWriteError(value);
     }
 
-    get value() {
+    get value(){
         return [...DateTimeWriteError.#values.keys()][this.#value];
     }
 
-    get ffiValue() {
+    get ffiValue(){
         return this.#value;
     }
     static #objectValues = [
@@ -69,6 +68,7 @@ export class DateTimeWriteError {
 
     static Unknown = DateTimeWriteError.#objectValues[0];
     static MissingTimeZoneVariant = DateTimeWriteError.#objectValues[1];
+
 
     constructor(value) {
         return this.#internalConstructor(...arguments)

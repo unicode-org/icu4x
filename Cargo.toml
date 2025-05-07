@@ -217,7 +217,7 @@ icu_benchmark_macros = { path = "tools/benchmark/macros" }
 diplomat = { version = "0.11.0", default-features = false }
 diplomat-runtime = { version = "0.11.0", default-features = false }
 diplomat_core = { version = "0.11.0", default-features = false }
-diplomat-tool = { version = "0.11.0", default-features = false }
+diplomat-tool = { version = "0.11.1", default-features = false }
 
 # EXTERNAL DEPENDENCIES
 #

@@ -29,7 +29,7 @@ namespace capi {
       icu4x::capi::Date* date;
       icu4x::capi::Time* time;
     };
-    
+
     typedef struct DateTime_option {union { DateTime ok; }; bool is_ok; } DateTime_option;
 } // namespace capi
 } // namespace

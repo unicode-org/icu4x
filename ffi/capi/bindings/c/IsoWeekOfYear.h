@@ -19,5 +19,4 @@
 
 
 
-
 #endif // IsoWeekOfYear_H

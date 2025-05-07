@@ -9,55 +9,38 @@ part of 'lib.g.dart';
 enum CalendarKind {
   /// The kind of an Iso calendar
   iso,
-
   /// The kind of a Gregorian calendar
   gregorian,
-
   /// The kind of a Buddhist calendar
   buddhist,
-
   /// The kind of a Japanese calendar with modern eras
   japanese,
-
   /// The kind of a Japanese calendar with modern and historic eras
   japaneseExtended,
-
   /// The kind of an Ethiopian calendar, with Amete Mihret era
   ethiopian,
-
   /// The kind of an Ethiopian calendar, with Amete Alem era
   ethiopianAmeteAlem,
-
   /// The kind of a Indian calendar
   indian,
-
   /// The kind of a Coptic calendar
   coptic,
-
   /// The kind of a Dangi calendar
   dangi,
-
   /// The kind of a Chinese calendar
   chinese,
-
   /// The kind of a Hebrew calendar
   hebrew,
-
   /// The kind of a Hijri tabular, type II leap years, Friday epoch, calendar
   hijriTabularTypeIiFriday,
-
   /// The kind of a Hijri simulated, Mecca calendar
   hijriSimulatedMecca,
-
   /// The kind of a Hijri tabular, type II leap years, Thursday epoch, calendar
   hijriTabularTypeIiThursday,
-
   /// The kind of a Hijri Umm al-Qura calendar
   hijriUmmAlQura,
-
   /// The kind of a Persian calendar
   persian,
-
   /// The kind of a Roc calendar
   roc;
 
@@ -109,6 +92,7 @@ enum CalendarKind {
     final result = _icu4x_CalendarKind_create_mv1(locale._ffi);
     return CalendarKind.values.firstWhere((v) => v._ffi == result);
   }
+
 }
 
 @_DiplomatFfiUse('icu4x_CalendarKind_create_mv1')

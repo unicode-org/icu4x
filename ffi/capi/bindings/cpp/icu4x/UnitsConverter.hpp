@@ -17,14 +17,13 @@
 namespace icu4x {
 namespace capi {
     extern "C" {
-    
+
     double icu4x_UnitsConverter_convert_double_mv1(const icu4x::capi::UnitsConverter* self, double value);
-    
+
     icu4x::capi::UnitsConverter* icu4x_UnitsConverter_clone_mv1(const icu4x::capi::UnitsConverter* self);
-    
-    
+
     void icu4x_UnitsConverter_destroy_mv1(UnitsConverter* self);
-    
+
     } // extern "C"
 } // namespace capi
 } // namespace

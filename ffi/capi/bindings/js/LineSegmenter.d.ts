@@ -8,7 +8,7 @@ import type { Locale } from "./Locale"
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
-/** 
+/**
  * An ICU4X line-break segmenter, capable of finding breakpoints in strings.
  *
  * See the [Rust documentation for `LineSegmenter`](https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html) for more information.
@@ -16,10 +16,10 @@ import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
 export class LineSegmenter {
-    
     get ffiValue(): pointer;
 
-    /** 
+
+    /**
      * Construct a [`LineSegmenter`] with default options (no locale-based tailoring) using compiled data. It automatically loads the best
      * available payload data for Burmese, Khmer, Lao, and Thai.
      *
@@ -27,7 +27,7 @@ export class LineSegmenter {
      */
     static createAuto(): LineSegmenter;
 
-    /** 
+    /**
      * Construct a [`LineSegmenter`] with default options (no locale-based tailoring) and LSTM payload data for
      * Burmese, Khmer, Lao, and Thai, using compiled data.
      *
@@ -35,7 +35,7 @@ export class LineSegmenter {
      */
     static createLstm(): LineSegmenter;
 
-    /** 
+    /**
      * Construct a [`LineSegmenter`] with default options (no locale-based tailoring) and dictionary payload data for
      * Burmese, Khmer, Lao, and Thai, using compiled data
      *
@@ -43,7 +43,7 @@ export class LineSegmenter {
      */
     static createDictionary(): LineSegmenter;
 
-    /** 
+    /**
      * Construct a [`LineSegmenter`] with custom options using compiled data. It automatically loads the best
      * available payload data for Burmese, Khmer, Lao, and Thai.
      *
@@ -51,7 +51,7 @@ export class LineSegmenter {
      */
     static autoWithOptions(contentLocale: Locale | null, options: LineBreakOptions_obj): LineSegmenter;
 
-    /** 
+    /**
      * Construct a [`LineSegmenter`] with custom options. It automatically loads the best
      * available payload data for Burmese, Khmer, Lao, and Thai, using a particular data source.
      *
@@ -59,7 +59,7 @@ export class LineSegmenter {
      */
     static autoWithOptionsAndProvider(provider: DataProvider, contentLocale: Locale | null, options: LineBreakOptions_obj): LineSegmenter;
 
-    /** 
+    /**
      * Construct a [`LineSegmenter`] with custom options and LSTM payload data for
      * Burmese, Khmer, Lao, and Thai, using compiled data.
      *
@@ -67,7 +67,7 @@ export class LineSegmenter {
      */
     static lstmWithOptions(contentLocale: Locale | null, options: LineBreakOptions_obj): LineSegmenter;
 
-    /** 
+    /**
      * Construct a [`LineSegmenter`] with custom options and LSTM payload data for
      * Burmese, Khmer, Lao, and Thai, using a particular data source.
      *
@@ -75,7 +75,7 @@ export class LineSegmenter {
      */
     static lstmWithOptionsAndProvider(provider: DataProvider, contentLocale: Locale | null, options: LineBreakOptions_obj): LineSegmenter;
 
-    /** 
+    /**
      * Construct a [`LineSegmenter`] with custom options and dictionary payload data for
      * Burmese, Khmer, Lao, and Thai, using compiled data.
      *
@@ -83,7 +83,7 @@ export class LineSegmenter {
      */
     static dictionaryWithOptions(contentLocale: Locale | null, options: LineBreakOptions_obj): LineSegmenter;
 
-    /** 
+    /**
      * Construct a [`LineSegmenter`] with custom options and dictionary payload data for
      * Burmese, Khmer, Lao, and Thai, using a particular data source.
      *
@@ -91,7 +91,7 @@ export class LineSegmenter {
      */
     static dictionaryWithOptionsAndProvider(provider: DataProvider, contentLocale: Locale | null, options: LineBreakOptions_obj): LineSegmenter;
 
-    /** 
+    /**
      * Segments a string.
      *
      * Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according

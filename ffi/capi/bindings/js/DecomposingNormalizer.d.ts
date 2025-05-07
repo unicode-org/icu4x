@@ -4,44 +4,44 @@ import type { DataProvider } from "./DataProvider"
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
-/** 
+/**
  * See the [Rust documentation for `DecomposingNormalizer`](https://docs.rs/icu/latest/icu/normalizer/struct.DecomposingNormalizer.html) for more information.
  */
 
 
 export class DecomposingNormalizer {
-    
     get ffiValue(): pointer;
 
-    /** 
+
+    /**
      * Construct a new DecomposingNormalizer instance for NFD using compiled data.
      *
      * See the [Rust documentation for `new_nfd`](https://docs.rs/icu/latest/icu/normalizer/struct.DecomposingNormalizer.html#method.new_nfd) for more information.
      */
     static createNfd(): DecomposingNormalizer;
 
-    /** 
+    /**
      * Construct a new DecomposingNormalizer instance for NFD using a particular data source.
      *
      * See the [Rust documentation for `new_nfd`](https://docs.rs/icu/latest/icu/normalizer/struct.DecomposingNormalizer.html#method.new_nfd) for more information.
      */
     static createNfdWithProvider(provider: DataProvider): DecomposingNormalizer;
 
-    /** 
+    /**
      * Construct a new DecomposingNormalizer instance for NFKD using compiled data.
      *
      * See the [Rust documentation for `new_nfkd`](https://docs.rs/icu/latest/icu/normalizer/struct.DecomposingNormalizer.html#method.new_nfkd) for more information.
      */
     static createNfkd(): DecomposingNormalizer;
 
-    /** 
+    /**
      * Construct a new DecomposingNormalizer instance for NFKD using a particular data source.
      *
      * See the [Rust documentation for `new_nfkd`](https://docs.rs/icu/latest/icu/normalizer/struct.DecomposingNormalizer.html#method.new_nfkd) for more information.
      */
     static createNfkdWithProvider(provider: DataProvider): DecomposingNormalizer;
 
-    /** 
+    /**
      * Normalize a string
      *
      * Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
@@ -51,7 +51,7 @@ export class DecomposingNormalizer {
      */
     normalize(s: string): string;
 
-    /** 
+    /**
      * Check if a string is normalized
      *
      * Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
@@ -61,7 +61,7 @@ export class DecomposingNormalizer {
      */
     isNormalized(s: string): boolean;
 
-    /** 
+    /**
      * Check if a string is normalized
      *
      * Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
@@ -71,7 +71,7 @@ export class DecomposingNormalizer {
      */
     isNormalizedUtf16(s: string): boolean;
 
-    /** 
+    /**
      * Return the index a slice of potentially-invalid UTF-8 is normalized up to
      *
      * See the [Rust documentation for `split_normalized_utf8`](https://docs.rs/icu/latest/icu/normalizer/struct.DecomposingNormalizerBorrowed.html#method.split_normalized_utf8) for more information.
@@ -80,7 +80,7 @@ export class DecomposingNormalizer {
      */
     isNormalizedUpTo(s: string): number;
 
-    /** 
+    /**
      * Return the index a slice of potentially-invalid UTF-16 is normalized up to
      *
      * See the [Rust documentation for `split_normalized_utf16`](https://docs.rs/icu/latest/icu/normalizer/struct.DecomposingNormalizerBorrowed.html#method.split_normalized_utf16) for more information.

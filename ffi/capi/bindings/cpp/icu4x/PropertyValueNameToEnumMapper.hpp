@@ -19,69 +19,68 @@
 namespace icu4x {
 namespace capi {
     extern "C" {
-    
+
     int16_t icu4x_PropertyValueNameToEnumMapper_get_strict_mv1(const icu4x::capi::PropertyValueNameToEnumMapper* self, diplomat::capi::DiplomatStringView name);
-    
+
     int16_t icu4x_PropertyValueNameToEnumMapper_get_loose_mv1(const icu4x::capi::PropertyValueNameToEnumMapper* self, diplomat::capi::DiplomatStringView name);
-    
+
     icu4x::capi::PropertyValueNameToEnumMapper* icu4x_PropertyValueNameToEnumMapper_create_general_category_mv1(void);
-    
+
     typedef struct icu4x_PropertyValueNameToEnumMapper_create_general_category_with_provider_mv1_result {union {icu4x::capi::PropertyValueNameToEnumMapper* ok; icu4x::capi::DataError err;}; bool is_ok;} icu4x_PropertyValueNameToEnumMapper_create_general_category_with_provider_mv1_result;
     icu4x_PropertyValueNameToEnumMapper_create_general_category_with_provider_mv1_result icu4x_PropertyValueNameToEnumMapper_create_general_category_with_provider_mv1(const icu4x::capi::DataProvider* provider);
-    
+
     icu4x::capi::PropertyValueNameToEnumMapper* icu4x_PropertyValueNameToEnumMapper_create_hangul_syllable_type_mv1(void);
-    
+
     typedef struct icu4x_PropertyValueNameToEnumMapper_create_hangul_syllable_type_with_provider_mv1_result {union {icu4x::capi::PropertyValueNameToEnumMapper* ok; icu4x::capi::DataError err;}; bool is_ok;} icu4x_PropertyValueNameToEnumMapper_create_hangul_syllable_type_with_provider_mv1_result;
     icu4x_PropertyValueNameToEnumMapper_create_hangul_syllable_type_with_provider_mv1_result icu4x_PropertyValueNameToEnumMapper_create_hangul_syllable_type_with_provider_mv1(const icu4x::capi::DataProvider* provider);
-    
+
     icu4x::capi::PropertyValueNameToEnumMapper* icu4x_PropertyValueNameToEnumMapper_create_east_asian_width_mv1(void);
-    
+
     typedef struct icu4x_PropertyValueNameToEnumMapper_create_east_asian_width_with_provider_mv1_result {union {icu4x::capi::PropertyValueNameToEnumMapper* ok; icu4x::capi::DataError err;}; bool is_ok;} icu4x_PropertyValueNameToEnumMapper_create_east_asian_width_with_provider_mv1_result;
     icu4x_PropertyValueNameToEnumMapper_create_east_asian_width_with_provider_mv1_result icu4x_PropertyValueNameToEnumMapper_create_east_asian_width_with_provider_mv1(const icu4x::capi::DataProvider* provider);
-    
+
     icu4x::capi::PropertyValueNameToEnumMapper* icu4x_PropertyValueNameToEnumMapper_create_bidi_class_mv1(void);
-    
+
     typedef struct icu4x_PropertyValueNameToEnumMapper_create_bidi_class_with_provider_mv1_result {union {icu4x::capi::PropertyValueNameToEnumMapper* ok; icu4x::capi::DataError err;}; bool is_ok;} icu4x_PropertyValueNameToEnumMapper_create_bidi_class_with_provider_mv1_result;
     icu4x_PropertyValueNameToEnumMapper_create_bidi_class_with_provider_mv1_result icu4x_PropertyValueNameToEnumMapper_create_bidi_class_with_provider_mv1(const icu4x::capi::DataProvider* provider);
-    
+
     icu4x::capi::PropertyValueNameToEnumMapper* icu4x_PropertyValueNameToEnumMapper_create_indic_syllabic_category_mv1(void);
-    
+
     typedef struct icu4x_PropertyValueNameToEnumMapper_create_indic_syllabic_category_with_provider_mv1_result {union {icu4x::capi::PropertyValueNameToEnumMapper* ok; icu4x::capi::DataError err;}; bool is_ok;} icu4x_PropertyValueNameToEnumMapper_create_indic_syllabic_category_with_provider_mv1_result;
     icu4x_PropertyValueNameToEnumMapper_create_indic_syllabic_category_with_provider_mv1_result icu4x_PropertyValueNameToEnumMapper_create_indic_syllabic_category_with_provider_mv1(const icu4x::capi::DataProvider* provider);
-    
+
     icu4x::capi::PropertyValueNameToEnumMapper* icu4x_PropertyValueNameToEnumMapper_create_line_break_mv1(void);
-    
+
     typedef struct icu4x_PropertyValueNameToEnumMapper_create_line_break_with_provider_mv1_result {union {icu4x::capi::PropertyValueNameToEnumMapper* ok; icu4x::capi::DataError err;}; bool is_ok;} icu4x_PropertyValueNameToEnumMapper_create_line_break_with_provider_mv1_result;
     icu4x_PropertyValueNameToEnumMapper_create_line_break_with_provider_mv1_result icu4x_PropertyValueNameToEnumMapper_create_line_break_with_provider_mv1(const icu4x::capi::DataProvider* provider);
-    
+
     icu4x::capi::PropertyValueNameToEnumMapper* icu4x_PropertyValueNameToEnumMapper_create_grapheme_cluster_break_mv1(void);
-    
+
     typedef struct icu4x_PropertyValueNameToEnumMapper_create_grapheme_cluster_break_with_provider_mv1_result {union {icu4x::capi::PropertyValueNameToEnumMapper* ok; icu4x::capi::DataError err;}; bool is_ok;} icu4x_PropertyValueNameToEnumMapper_create_grapheme_cluster_break_with_provider_mv1_result;
     icu4x_PropertyValueNameToEnumMapper_create_grapheme_cluster_break_with_provider_mv1_result icu4x_PropertyValueNameToEnumMapper_create_grapheme_cluster_break_with_provider_mv1(const icu4x::capi::DataProvider* provider);
-    
+
     icu4x::capi::PropertyValueNameToEnumMapper* icu4x_PropertyValueNameToEnumMapper_create_word_break_mv1(void);
-    
+
     typedef struct icu4x_PropertyValueNameToEnumMapper_create_word_break_with_provider_mv1_result {union {icu4x::capi::PropertyValueNameToEnumMapper* ok; icu4x::capi::DataError err;}; bool is_ok;} icu4x_PropertyValueNameToEnumMapper_create_word_break_with_provider_mv1_result;
     icu4x_PropertyValueNameToEnumMapper_create_word_break_with_provider_mv1_result icu4x_PropertyValueNameToEnumMapper_create_word_break_with_provider_mv1(const icu4x::capi::DataProvider* provider);
-    
+
     icu4x::capi::PropertyValueNameToEnumMapper* icu4x_PropertyValueNameToEnumMapper_create_sentence_break_mv1(void);
-    
+
     typedef struct icu4x_PropertyValueNameToEnumMapper_create_sentence_break_with_provider_mv1_result {union {icu4x::capi::PropertyValueNameToEnumMapper* ok; icu4x::capi::DataError err;}; bool is_ok;} icu4x_PropertyValueNameToEnumMapper_create_sentence_break_with_provider_mv1_result;
     icu4x_PropertyValueNameToEnumMapper_create_sentence_break_with_provider_mv1_result icu4x_PropertyValueNameToEnumMapper_create_sentence_break_with_provider_mv1(const icu4x::capi::DataProvider* provider);
-    
+
     icu4x::capi::PropertyValueNameToEnumMapper* icu4x_PropertyValueNameToEnumMapper_create_script_mv1(void);
-    
+
     typedef struct icu4x_PropertyValueNameToEnumMapper_create_script_with_provider_mv1_result {union {icu4x::capi::PropertyValueNameToEnumMapper* ok; icu4x::capi::DataError err;}; bool is_ok;} icu4x_PropertyValueNameToEnumMapper_create_script_with_provider_mv1_result;
     icu4x_PropertyValueNameToEnumMapper_create_script_with_provider_mv1_result icu4x_PropertyValueNameToEnumMapper_create_script_with_provider_mv1(const icu4x::capi::DataProvider* provider);
-    
+
     icu4x::capi::PropertyValueNameToEnumMapper* icu4x_PropertyValueNameToEnumMapper_create_vertical_orientation_mv1(void);
-    
+
     typedef struct icu4x_PropertyValueNameToEnumMapper_create_vertical_orientation_with_provider_mv1_result {union {icu4x::capi::PropertyValueNameToEnumMapper* ok; icu4x::capi::DataError err;}; bool is_ok;} icu4x_PropertyValueNameToEnumMapper_create_vertical_orientation_with_provider_mv1_result;
     icu4x_PropertyValueNameToEnumMapper_create_vertical_orientation_with_provider_mv1_result icu4x_PropertyValueNameToEnumMapper_create_vertical_orientation_with_provider_mv1(const icu4x::capi::DataProvider* provider);
-    
-    
+
     void icu4x_PropertyValueNameToEnumMapper_destroy_mv1(PropertyValueNameToEnumMapper* self);
-    
+
     } // extern "C"
 } // namespace capi
 } // namespace

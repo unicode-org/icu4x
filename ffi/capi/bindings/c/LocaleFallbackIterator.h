@@ -18,7 +18,6 @@
 
 Locale* icu4x_LocaleFallbackIterator_next_mv1(LocaleFallbackIterator* self);
 
-
 void icu4x_LocaleFallbackIterator_destroy_mv1(LocaleFallbackIterator* self);
 
 

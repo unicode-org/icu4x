@@ -5,7 +5,7 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
-/** 
+/**
  * An ICU4X Unicode Set Property object, capable of querying whether a code point is contained in a set based on a Unicode property.
  *
  * See the [Rust documentation for `properties`](https://docs.rs/icu/latest/icu/properties/index.html) for more information.
@@ -21,95 +21,100 @@ const EmojiSetData_box_destroy_registry = new FinalizationRegistry((ptr) => {
 });
 
 export class EmojiSetData {
-    
     // Internal ptr reference:
     #ptr = null;
 
     // Lifetimes are only to keep dependencies alive.
     // Since JS won't garbage collect until there are no incoming edges.
     #selfEdge = [];
-    
+
     #internalConstructor(symbol, ptr, selfEdge) {
         if (symbol !== diplomatRuntime.internalConstructor) {
             console.error("EmojiSetData is an Opaque type. You cannot call its constructor.");
             return;
         }
-        
         this.#ptr = ptr;
         this.#selfEdge = selfEdge;
-        
+
         // Are we being borrowed? If not, we can register.
         if (this.#selfEdge.length === 0) {
             EmojiSetData_box_destroy_registry.register(this, this.#ptr);
         }
-        
+
         return this;
     }
     get ffiValue() {
         return this.#ptr;
     }
 
-    /** 
+
+    /**
      * Checks whether the string is in the set.
      *
      * See the [Rust documentation for `contains_str`](https://docs.rs/icu/latest/icu/properties/struct.EmojiSetDataBorrowed.html#method.contains_str) for more information.
      */
     containsStr(s) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
-        
+
         const sSlice = diplomatRuntime.DiplomatBuf.str8(wasm, s);
-        
+
         const result = wasm.icu4x_EmojiSetData_contains_str_mv1(this.ffiValue, ...sSlice.splat());
-    
+
         try {
             return result;
         }
-        
+
         finally {
             functionCleanupArena.free();
+
         }
     }
 
-    /** 
+    /**
      * Checks whether the code point is in the set.
      *
      * See the [Rust documentation for `contains`](https://docs.rs/icu/latest/icu/properties/struct.EmojiSetDataBorrowed.html#method.contains) for more information.
      */
     contains(cp) {
+
         const result = wasm.icu4x_EmojiSetData_contains_mv1(this.ffiValue, cp);
-    
+
         try {
             return result;
         }
-        
-        finally {}
+
+        finally {
+        }
     }
 
-    /** 
+    /**
      * Create a map for the `Basic_Emoji` property, using compiled data.
      *
      * See the [Rust documentation for `BasicEmoji`](https://docs.rs/icu/latest/icu/properties/props/struct.BasicEmoji.html) for more information.
      */
     static createBasic() {
+
         const result = wasm.icu4x_EmojiSetData_create_basic_mv1();
-    
+
         try {
             return new EmojiSetData(diplomatRuntime.internalConstructor, result, []);
         }
-        
-        finally {}
+
+        finally {
+        }
     }
 
-    /** 
+    /**
      * Create a map for the `Basic_Emoji` property, using a particular data source.
      *
      * See the [Rust documentation for `BasicEmoji`](https://docs.rs/icu/latest/icu/properties/props/struct.BasicEmoji.html) for more information.
      */
     static createBasicWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
-        
+
+
         const result = wasm.icu4x_EmojiSetData_create_basic_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
-    
+
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
@@ -117,7 +122,7 @@ export class EmojiSetData {
             }
             return new EmojiSetData(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
-        
+
         finally {
             diplomatReceive.free();
         }

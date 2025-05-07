@@ -4,18 +4,18 @@ import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
 export class TimeZoneVariant {
-    
 
-    static fromValue(value : TimeZoneVariant | string) : TimeZoneVariant; 
+    static fromValue(value: TimeZoneVariant | string): TimeZoneVariant;
 
-    get value() : string;
+    get value(): string;
 
-    get ffiValue() : number;
+    get ffiValue(): number;
 
     static Standard : TimeZoneVariant;
     static Daylight : TimeZoneVariant;
 
-    /** 
+
+    /**
      * Sets the `variant` field to "daylight" time.
      *
      * See the [Rust documentation for `from_rearguard_isdst`](https://docs.rs/icu/latest/icu/time/zone/enum.TimeZoneVariant.html#method.from_rearguard_isdst) for more information.

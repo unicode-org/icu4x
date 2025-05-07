@@ -8,51 +8,51 @@ import type { TitlecaseOptions_obj } from "./TitlecaseOptions"
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
-/** 
+/**
  * See the [Rust documentation for `CaseMapper`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html) for more information.
  */
 
 
 export class CaseMapper {
-    
     get ffiValue(): pointer;
 
-    /** 
+
+    /**
      * Construct a new CaseMapper instance using a particular data source.
      *
      * See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.new) for more information.
      */
     static createWithProvider(provider: DataProvider): CaseMapper;
 
-    /** 
+    /**
      * Returns the full lowercase mapping of the given string
      *
      * See the [Rust documentation for `lowercase`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapperBorrowed.html#method.lowercase) for more information.
      */
     lowercase(s: string, locale: Locale): string;
 
-    /** 
+    /**
      * Returns the full uppercase mapping of the given string
      *
      * See the [Rust documentation for `uppercase`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapperBorrowed.html#method.uppercase) for more information.
      */
     uppercase(s: string, locale: Locale): string;
 
-    /** 
+    /**
      * Returns the full lowercase mapping of the given string, using compiled data (avoids having to allocate a CaseMapper object)
      *
      * See the [Rust documentation for `lowercase`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapperBorrowed.html#method.lowercase) for more information.
      */
     static lowercaseWithCompiledData(s: string, locale: Locale): string;
 
-    /** 
+    /**
      * Returns the full uppercase mapping of the given string, using compiled data (avoids having to allocate a CaseMapper object)
      *
      * See the [Rust documentation for `uppercase`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapperBorrowed.html#method.uppercase) for more information.
      */
     static uppercaseWithCompiledData(s: string, locale: Locale): string;
 
-    /** 
+    /**
      * Returns the full titlecase mapping of the given string, performing head adjustment without
      * loading additional data.
      * (if head adjustment is enabled in the options)
@@ -63,14 +63,14 @@ export class CaseMapper {
      */
     titlecaseSegmentWithOnlyCaseData(s: string, locale: Locale, options: TitlecaseOptions_obj): string;
 
-    /** 
+    /**
      * Case-folds the characters in the given string
      *
      * See the [Rust documentation for `fold`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapperBorrowed.html#method.fold) for more information.
      */
     fold(s: string): string;
 
-    /** 
+    /**
      * Case-folds the characters in the given string
      * using Turkic (T) mappings for dotted/dotless I.
      *
@@ -78,7 +78,7 @@ export class CaseMapper {
      */
     foldTurkic(s: string): string;
 
-    /** 
+    /**
      * Adds all simple case mappings and the full case folding for `c` to `builder`.
      * Also adds special case closure mappings.
      *
@@ -95,7 +95,7 @@ export class CaseMapper {
      */
     addCaseClosureTo(c: codepoint, builder: CodePointSetBuilder): void;
 
-    /** 
+    /**
      * Returns the simple lowercase mapping of the given character.
      *
      * This function only implements simple and common mappings.
@@ -106,7 +106,7 @@ export class CaseMapper {
      */
     simpleLowercase(ch: codepoint): codepoint;
 
-    /** 
+    /**
      * Returns the simple uppercase mapping of the given character.
      *
      * This function only implements simple and common mappings.
@@ -117,7 +117,7 @@ export class CaseMapper {
      */
     simpleUppercase(ch: codepoint): codepoint;
 
-    /** 
+    /**
      * Returns the simple titlecase mapping of the given character.
      *
      * This function only implements simple and common mappings.
@@ -128,7 +128,7 @@ export class CaseMapper {
      */
     simpleTitlecase(ch: codepoint): codepoint;
 
-    /** 
+    /**
      * Returns the simple casefolding of the given character.
      *
      * This function only implements simple folding.
@@ -138,7 +138,7 @@ export class CaseMapper {
      */
     simpleFold(ch: codepoint): codepoint;
 
-    /** 
+    /**
      * Returns the simple casefolding of the given character in the Turkic locale
      *
      * This function only implements simple folding.

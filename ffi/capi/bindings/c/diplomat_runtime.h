@@ -8,8 +8,8 @@
 
 // These come from `uchar.h`, which is not available on all platforms.
 // Redefining them in C is no problem, however in >C++11 they are fundamental
-// types, which don't like being redefined. 
-#if !(__cplusplus >= 201100) 
+// types, which don't like being redefined.
+#if !(__cplusplus >= 201100)
 // https://en.cppreference.com/w/c/string/multibyte/char16_t
 typedef uint_least16_t char16_t;
 // https://en.cppreference.com/w/c/string/multibyte/char32_t

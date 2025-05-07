@@ -106,6 +106,7 @@ final class Bidi implements ffi.Finalizable {
     final result = _icu4x_Bidi_level_ltr_mv1();
     return result;
   }
+
 }
 
 @_DiplomatFfiUse('icu4x_Bidi_destroy_mv1')

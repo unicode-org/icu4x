@@ -50,6 +50,7 @@ final class PluralOperands implements ffi.Finalizable {
     final result = _icu4x_PluralOperands_from_fixed_decimal_mv1(x._ffi);
     return PluralOperands._fromFfi(result, []);
   }
+
 }
 
 @_DiplomatFfiUse('icu4x_PluralOperands_destroy_mv1')

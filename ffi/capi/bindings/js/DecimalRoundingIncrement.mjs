@@ -3,7 +3,7 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
-/** 
+/**
  * Increment used in a rounding operation.
  *
  * See the [Rust documentation for `RoundingIncrement`](https://docs.rs/fixed_decimal/latest/fixed_decimal/enum.RoundingIncrement.html) for more information.
@@ -11,7 +11,6 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
 export class DecimalRoundingIncrement {
-    
     #value = undefined;
 
     static #values = new Map([
@@ -24,7 +23,7 @@ export class DecimalRoundingIncrement {
     static getAllEntries() {
         return DecimalRoundingIncrement.#values.entries();
     }
-    
+
     #internalConstructor(value) {
         if (arguments.length > 1 && arguments[0] === diplomatRuntime.internalConstructor) {
             // We pass in two internalConstructor arguments to create *new*
@@ -54,11 +53,11 @@ export class DecimalRoundingIncrement {
         return new DecimalRoundingIncrement(value);
     }
 
-    get value() {
+    get value(){
         return [...DecimalRoundingIncrement.#values.keys()][this.#value];
     }
 
-    get ffiValue() {
+    get ffiValue(){
         return this.#value;
     }
     static #objectValues = [
@@ -72,6 +71,7 @@ export class DecimalRoundingIncrement {
     static MultiplesOf2 = DecimalRoundingIncrement.#objectValues[1];
     static MultiplesOf5 = DecimalRoundingIncrement.#objectValues[2];
     static MultiplesOf25 = DecimalRoundingIncrement.#objectValues[3];
+
 
     constructor(value) {
         return this.#internalConstructor(...arguments)

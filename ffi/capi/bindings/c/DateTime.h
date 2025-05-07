@@ -24,5 +24,4 @@ icu4x_DateTime_from_string_mv1_result icu4x_DateTime_from_string_mv1(DiplomatStr
 
 
 
-
 #endif // DateTime_H

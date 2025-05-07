@@ -19,18 +19,17 @@
 namespace icu4x {
 namespace capi {
     extern "C" {
-    
+
     uint16_t icu4x_ScriptWithExtensionsBorrowed_get_script_val_mv1(const icu4x::capi::ScriptWithExtensionsBorrowed* self, char32_t ch);
-    
+
     icu4x::capi::ScriptExtensionsSet* icu4x_ScriptWithExtensionsBorrowed_get_script_extensions_val_mv1(const icu4x::capi::ScriptWithExtensionsBorrowed* self, char32_t ch);
-    
+
     bool icu4x_ScriptWithExtensionsBorrowed_has_script_mv1(const icu4x::capi::ScriptWithExtensionsBorrowed* self, char32_t ch, uint16_t script);
-    
+
     icu4x::capi::CodePointSetData* icu4x_ScriptWithExtensionsBorrowed_get_script_extensions_set_mv1(const icu4x::capi::ScriptWithExtensionsBorrowed* self, uint16_t script);
-    
-    
+
     void icu4x_ScriptWithExtensionsBorrowed_destroy_mv1(ScriptWithExtensionsBorrowed* self);
-    
+
     } // extern "C"
 } // namespace capi
 } // namespace

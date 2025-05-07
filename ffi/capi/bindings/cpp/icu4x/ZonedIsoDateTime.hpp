@@ -24,13 +24,12 @@
 namespace icu4x {
 namespace capi {
     extern "C" {
-    
+
     typedef struct icu4x_ZonedIsoDateTime_full_from_string_mv1_result {union {icu4x::capi::ZonedIsoDateTime ok; icu4x::capi::Rfc9557ParseError err;}; bool is_ok;} icu4x_ZonedIsoDateTime_full_from_string_mv1_result;
     icu4x_ZonedIsoDateTime_full_from_string_mv1_result icu4x_ZonedIsoDateTime_full_from_string_mv1(diplomat::capi::DiplomatStringView v, const icu4x::capi::IanaParser* iana_parser, const icu4x::capi::VariantOffsetsCalculator* offset_calculator);
-    
+
     icu4x::capi::ZonedIsoDateTime icu4x_ZonedIsoDateTime_from_epoch_milliseconds_and_utc_offset_mv1(int64_t epoch_milliseconds, const icu4x::capi::UtcOffset* utc_offset);
-    
-    
+
     } // extern "C"
 } // namespace capi
 } // namespace

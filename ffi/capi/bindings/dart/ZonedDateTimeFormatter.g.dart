@@ -210,6 +210,7 @@ final class ZonedDateTimeFormatter implements ffi.Finalizable {
     }
     return write.finalize();
   }
+
 }
 
 @_DiplomatFfiUse('icu4x_ZonedDateTimeFormatter_destroy_mv1')

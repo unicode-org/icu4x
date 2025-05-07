@@ -55,6 +55,7 @@ final class CanonicalDecomposition implements ffi.Finalizable {
     final result = _icu4x_CanonicalDecomposition_decompose_mv1(_ffi, c);
     return Decomposed._fromFfi(result);
   }
+
 }
 
 @_DiplomatFfiUse('icu4x_CanonicalDecomposition_destroy_mv1')

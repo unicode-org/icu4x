@@ -23,7 +23,7 @@ namespace capi {
       icu4x::capi::CalendarKind this_kind;
       icu4x::capi::CalendarKind_option date_kind;
     };
-    
+
     typedef struct DateTimeMismatchedCalendarError_option {union { DateTimeMismatchedCalendarError ok; }; bool is_ok; } DateTimeMismatchedCalendarError_option;
 } // namespace capi
 } // namespace

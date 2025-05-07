@@ -2,19 +2,18 @@
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
-/** 
+/**
  * See the [Rust documentation for `CanonicalCombiningClass`](https://docs.rs/icu/latest/icu/properties/props/struct.CanonicalCombiningClass.html) for more information.
  */
 
 
 export class CanonicalCombiningClass {
-    
 
-    static fromValue(value : CanonicalCombiningClass | string) : CanonicalCombiningClass; 
+    static fromValue(value: CanonicalCombiningClass | string): CanonicalCombiningClass;
 
-    get value() : string;
+    get value(): string;
 
-    get ffiValue() : number;
+    get ffiValue(): number;
 
     static NotReordered : CanonicalCombiningClass;
     static Overlay : CanonicalCombiningClass;
@@ -75,19 +74,20 @@ export class CanonicalCombiningClass {
     static DoubleAbove : CanonicalCombiningClass;
     static IotaSubscript : CanonicalCombiningClass;
 
-    /** 
+
+    /**
      * See the [Rust documentation for `for_char`](https://docs.rs/icu/latest/icu/properties/props/trait.EnumeratedProperty.html#tymethod.for_char) for more information.
      */
     static forChar(ch: codepoint): CanonicalCombiningClass;
 
-    /** 
+    /**
      * Convert to an integer value usable with ICU4C and CodePointMapData
      *
      * See the [Rust documentation for `to_icu4c_value`](https://docs.rs/icu/latest/icu/properties/props/struct.CanonicalCombiningClass.html#method.to_icu4c_value) for more information.
      */
     toIntegerValue(): number;
 
-    /** 
+    /**
      * Convert from an integer value from ICU4C or CodePointMapData
      *
      * See the [Rust documentation for `from_icu4c_value`](https://docs.rs/icu/latest/icu/properties/props/struct.CanonicalCombiningClass.html#method.from_icu4c_value) for more information.

@@ -22,7 +22,6 @@ SegmenterWordType icu4x_WordBreakIteratorUtf8_word_type_mv1(const WordBreakItera
 
 bool icu4x_WordBreakIteratorUtf8_is_word_like_mv1(const WordBreakIteratorUtf8* self);
 
-
 void icu4x_WordBreakIteratorUtf8_destroy_mv1(WordBreakIteratorUtf8* self);
 
 

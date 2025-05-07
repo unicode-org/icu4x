@@ -41,6 +41,7 @@ final class TimeZoneIterator implements ffi.Finalizable, core.Iterator<TimeZone>
     final result = _icu4x_TimeZoneIterator_next_mv1(_ffi);
     return result.address == 0 ? null : TimeZone._fromFfi(result, []);
   }
+
 }
 
 @_DiplomatFfiUse('icu4x_TimeZoneIterator_destroy_mv1')

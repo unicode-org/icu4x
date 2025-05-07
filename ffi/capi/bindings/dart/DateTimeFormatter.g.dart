@@ -251,6 +251,7 @@ final class DateTimeFormatter implements ffi.Finalizable {
     }
     return write.finalize();
   }
+
 }
 
 @_DiplomatFfiUse('icu4x_DateTimeFormatter_destroy_mv1')

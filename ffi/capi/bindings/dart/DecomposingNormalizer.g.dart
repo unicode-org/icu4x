@@ -121,6 +121,7 @@ final class DecomposingNormalizer implements ffi.Finalizable {
     final result = _icu4x_DecomposingNormalizer_is_normalized_utf16_up_to_mv1(_ffi, s._utf16AllocIn(temp.arena));
     return result;
   }
+
 }
 
 @_DiplomatFfiUse('icu4x_DecomposingNormalizer_destroy_mv1')

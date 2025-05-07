@@ -8,6 +8,7 @@ final class TimeZoneInvalidOffsetError {
 
   TimeZoneInvalidOffsetError();
 
+
   @override
   bool operator ==(Object other) =>
       other is TimeZoneInvalidOffsetError;

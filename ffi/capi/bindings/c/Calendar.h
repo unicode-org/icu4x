@@ -25,7 +25,6 @@ icu4x_Calendar_create_with_provider_mv1_result icu4x_Calendar_create_with_provid
 
 CalendarKind icu4x_Calendar_kind_mv1(const Calendar* self);
 
-
 void icu4x_Calendar_destroy_mv1(Calendar* self);
 
 

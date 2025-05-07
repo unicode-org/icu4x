@@ -47,6 +47,7 @@ final class IsoDateTime {
     return IsoDateTime._fromFfi(result.union.ok);
   }
 
+
   @override
   bool operator ==(Object other) =>
       other is IsoDateTime &&

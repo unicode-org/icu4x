@@ -210,6 +210,7 @@ final class TimeZoneFormatter implements ffi.Finalizable {
     }
     return write.finalize();
   }
+
 }
 
 @_DiplomatFfiUse('icu4x_TimeZoneFormatter_destroy_mv1')

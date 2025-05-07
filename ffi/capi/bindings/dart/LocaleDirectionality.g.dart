@@ -82,6 +82,7 @@ final class LocaleDirectionality implements ffi.Finalizable {
     final result = _icu4x_LocaleDirectionality_is_right_to_left_mv1(_ffi, locale._ffi);
     return result;
   }
+
 }
 
 @_DiplomatFfiUse('icu4x_LocaleDirectionality_destroy_mv1')

@@ -31,7 +31,6 @@ GraphemeClusterBreakIteratorUtf16* icu4x_GraphemeClusterSegmenter_segment_utf16_
 
 GraphemeClusterBreakIteratorLatin1* icu4x_GraphemeClusterSegmenter_segment_latin1_mv1(const GraphemeClusterSegmenter* self, DiplomatU8View input);
 
-
 void icu4x_GraphemeClusterSegmenter_destroy_mv1(GraphemeClusterSegmenter* self);
 
 

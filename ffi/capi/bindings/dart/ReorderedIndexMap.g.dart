@@ -54,6 +54,7 @@ final class ReorderedIndexMap implements ffi.Finalizable {
     final result = _icu4x_ReorderedIndexMap_get_mv1(_ffi, index);
     return result;
   }
+
 }
 
 @_DiplomatFfiUse('icu4x_ReorderedIndexMap_destroy_mv1')

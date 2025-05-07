@@ -2,7 +2,7 @@
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
-/** 
+/**
  * An error when formatting a datetime.
  *
  * Currently the only reachable error here is a missing time zone variant. If you encounter
@@ -13,16 +13,16 @@ import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
 export class DateTimeWriteError {
-    
 
-    static fromValue(value : DateTimeWriteError | string) : DateTimeWriteError; 
+    static fromValue(value: DateTimeWriteError | string): DateTimeWriteError;
 
-    get value() : string;
+    get value(): string;
 
-    get ffiValue() : number;
+    get ffiValue(): number;
 
     static Unknown : DateTimeWriteError;
     static MissingTimeZoneVariant : DateTimeWriteError;
+
 
     constructor(value: DateTimeWriteError | string );
 }

@@ -224,7 +224,7 @@ class span {
 public:
   constexpr span(T *data = nullptr, size_t size = Extent)
     : data_(data), size_(size) {}
- 
+
   constexpr span(const span<T> &o)
     : data_(o.data_), size_(o.size_) {}
   template <size_t N>
@@ -323,7 +323,7 @@ template<typename T> struct inner { using type = T; };
 template<typename T> struct inner<std::unique_ptr<T>> { using type = T; };
 template<typename T> struct inner<std::optional<T>>{ using type = T; };
 
-template<typename T, typename U = typename inner<T>::type> 
+template<typename T, typename U = typename inner<T>::type>
 inline const U get_inner_if_present(T v) {
   if constexpr(std::is_same_v<T,U>) {
     return std::move(v);
@@ -350,7 +350,7 @@ struct next_to_iter_helper {
   using iterator_category = std::input_iterator_tag;
 
   next_to_iter_helper(std::unique_ptr<T>&& ptr) : _ptr(std::move(ptr)), _curr(_ptr->next()) {}
-  
+
   // https://en.cppreference.com/w/cpp/named_req/InputIterator requires that the type be copyable
   next_to_iter_helper(const next_to_iter_helper& o) : _ptr(o._ptr), _curr(o._curr) {}
 

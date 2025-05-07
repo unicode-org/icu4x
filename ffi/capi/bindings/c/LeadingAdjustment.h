@@ -19,5 +19,4 @@
 
 
 
-
 #endif // LeadingAdjustment_H

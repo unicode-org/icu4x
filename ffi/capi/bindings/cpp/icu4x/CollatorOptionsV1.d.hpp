@@ -31,7 +31,7 @@ namespace capi {
       icu4x::capi::CollatorMaxVariable_option max_variable;
       icu4x::capi::CollatorCaseLevel_option case_level;
     };
-    
+
     typedef struct CollatorOptionsV1_option {union { CollatorOptionsV1 ok; }; bool is_ok; } CollatorOptionsV1_option;
 } // namespace capi
 } // namespace

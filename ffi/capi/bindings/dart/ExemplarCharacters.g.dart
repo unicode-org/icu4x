@@ -175,6 +175,7 @@ final class ExemplarCharacters implements ffi.Finalizable {
     }
     return ExemplarCharacters._fromFfi(result.union.ok, []);
   }
+
 }
 
 @_DiplomatFfiUse('icu4x_ExemplarCharacters_destroy_mv1')

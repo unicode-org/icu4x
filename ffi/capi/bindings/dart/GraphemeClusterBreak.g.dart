@@ -7,55 +7,38 @@ part of 'lib.g.dart';
 enum GraphemeClusterBreak {
   /// See the [Rust documentation for `Other`](https://docs.rs/icu/latest/icu/properties/props/enum.LineBreak.html#variant.Other) for more information.
   other,
-
   /// See the [Rust documentation for `Control`](https://docs.rs/icu/latest/icu/properties/props/enum.LineBreak.html#variant.Control) for more information.
   control,
-
   /// See the [Rust documentation for `CR`](https://docs.rs/icu/latest/icu/properties/props/enum.LineBreak.html#variant.CR) for more information.
   cr,
-
   /// See the [Rust documentation for `Extend`](https://docs.rs/icu/latest/icu/properties/props/enum.LineBreak.html#variant.Extend) for more information.
   extend,
-
   /// See the [Rust documentation for `L`](https://docs.rs/icu/latest/icu/properties/props/enum.LineBreak.html#variant.L) for more information.
   l,
-
   /// See the [Rust documentation for `LF`](https://docs.rs/icu/latest/icu/properties/props/enum.LineBreak.html#variant.LF) for more information.
   lf,
-
   /// See the [Rust documentation for `LV`](https://docs.rs/icu/latest/icu/properties/props/enum.LineBreak.html#variant.LV) for more information.
   lv,
-
   /// See the [Rust documentation for `LVT`](https://docs.rs/icu/latest/icu/properties/props/enum.LineBreak.html#variant.LVT) for more information.
   lvt,
-
   /// See the [Rust documentation for `T`](https://docs.rs/icu/latest/icu/properties/props/enum.LineBreak.html#variant.T) for more information.
   t,
-
   /// See the [Rust documentation for `V`](https://docs.rs/icu/latest/icu/properties/props/enum.LineBreak.html#variant.V) for more information.
   v,
-
   /// See the [Rust documentation for `SpacingMark`](https://docs.rs/icu/latest/icu/properties/props/enum.LineBreak.html#variant.SpacingMark) for more information.
   spacingMark,
-
   /// See the [Rust documentation for `Prepend`](https://docs.rs/icu/latest/icu/properties/props/enum.LineBreak.html#variant.Prepend) for more information.
   prepend,
-
   /// See the [Rust documentation for `RegionalIndicator`](https://docs.rs/icu/latest/icu/properties/props/enum.LineBreak.html#variant.RegionalIndicator) for more information.
   regionalIndicator,
-
   /// See the [Rust documentation for `EBase`](https://docs.rs/icu/latest/icu/properties/props/enum.LineBreak.html#variant.EBase) for more information.
   eBase,
-
   /// See the [Rust documentation for `EBaseGAZ`](https://docs.rs/icu/latest/icu/properties/props/enum.LineBreak.html#variant.EBaseGAZ) for more information.
   eBaseGaz,
-
   /// See the [Rust documentation for `EModifier`](https://docs.rs/icu/latest/icu/properties/props/enum.LineBreak.html#variant.EModifier) for more information.
   eModifier,
-
   /// See the [Rust documentation for `GlueAfterZwj`](https://docs.rs/icu/latest/icu/properties/props/enum.LineBreak.html#variant.GlueAfterZwj) for more information.
   glueAfterZwj,
-
   /// See the [Rust documentation for `ZWJ`](https://docs.rs/icu/latest/icu/properties/props/enum.LineBreak.html#variant.ZWJ) for more information.
   zwj;
 
@@ -83,6 +66,7 @@ enum GraphemeClusterBreak {
     }
     return GraphemeClusterBreak.values[result.union.ok];
   }
+
 }
 
 @_DiplomatFfiUse('icu4x_GraphemeClusterBreak_for_char_mv1')

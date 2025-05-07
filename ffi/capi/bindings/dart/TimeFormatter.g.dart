@@ -59,6 +59,7 @@ final class TimeFormatter implements ffi.Finalizable {
     _icu4x_TimeFormatter_format_mv1(_ffi, time._ffi, write._ffi);
     return write.finalize();
   }
+
 }
 
 @_DiplomatFfiUse('icu4x_TimeFormatter_destroy_mv1')

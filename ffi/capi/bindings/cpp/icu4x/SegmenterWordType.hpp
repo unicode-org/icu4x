@@ -17,10 +17,9 @@
 namespace icu4x {
 namespace capi {
     extern "C" {
-    
+
     bool icu4x_SegmenterWordType_is_word_like_mv1(icu4x::capi::SegmenterWordType self);
-    
-    
+
     } // extern "C"
 } // namespace capi
 } // namespace

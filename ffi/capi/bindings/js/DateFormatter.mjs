@@ -12,7 +12,7 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
-/** 
+/**
  * See the [Rust documentation for `DateTimeFormatter`](https://docs.rs/icu/latest/icu/datetime/struct.DateTimeFormatter.html) for more information.
  */
 const DateFormatter_box_destroy_registry = new FinalizationRegistry((ptr) => {
@@ -20,35 +20,34 @@ const DateFormatter_box_destroy_registry = new FinalizationRegistry((ptr) => {
 });
 
 export class DateFormatter {
-    
     // Internal ptr reference:
     #ptr = null;
 
     // Lifetimes are only to keep dependencies alive.
     // Since JS won't garbage collect until there are no incoming edges.
     #selfEdge = [];
-    
+
     #internalConstructor(symbol, ptr, selfEdge) {
         if (symbol !== diplomatRuntime.internalConstructor) {
             console.error("DateFormatter is an Opaque type. You cannot call its constructor.");
             return;
         }
-        
         this.#ptr = ptr;
         this.#selfEdge = selfEdge;
-        
+
         // Are we being borrowed? If not, we can register.
         if (this.#selfEdge.length === 0) {
             DateFormatter_box_destroy_registry.register(this, this.#ptr);
         }
-        
+
         return this;
     }
     get ffiValue() {
         return this.#ptr;
     }
 
-    /** 
+
+    /**
      * See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/datetime/struct.DateTimeFormatter.html#method.try_new) for more information.
      *
      * See the [Rust documentation for `D`](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.D.html) for more information.
@@ -57,11 +56,12 @@ export class DateFormatter {
      */
     static createD(locale, length, alignment) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
-        
+
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
-        
+
+
         const result = wasm.icu4x_DateFormatter_create_d_mv1(diplomatReceive.buffer, locale.ffiValue, ...diplomatRuntime.optionToArgsForCalling(length, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]), ...diplomatRuntime.optionToArgsForCalling(alignment, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]));
-    
+
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DateTimeFormatterLoadError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
@@ -69,15 +69,15 @@ export class DateFormatter {
             }
             return new DateFormatter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
-        
+
         finally {
             functionCleanupArena.free();
-        
+
             diplomatReceive.free();
         }
     }
 
-    /** 
+    /**
      * See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/datetime/struct.DateTimeFormatter.html#method.try_new) for more information.
      *
      * See the [Rust documentation for `D`](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.D.html) for more information.
@@ -86,11 +86,12 @@ export class DateFormatter {
      */
     static createDWithProvider(provider, locale, length, alignment) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
-        
+
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
-        
+
+
         const result = wasm.icu4x_DateFormatter_create_d_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue, ...diplomatRuntime.optionToArgsForCalling(length, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]), ...diplomatRuntime.optionToArgsForCalling(alignment, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]));
-    
+
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DateTimeFormatterLoadError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
@@ -98,15 +99,15 @@ export class DateFormatter {
             }
             return new DateFormatter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
-        
+
         finally {
             functionCleanupArena.free();
-        
+
             diplomatReceive.free();
         }
     }
 
-    /** 
+    /**
      * See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/datetime/struct.DateTimeFormatter.html#method.try_new) for more information.
      *
      * See the [Rust documentation for `MD`](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.MD.html) for more information.
@@ -115,11 +116,12 @@ export class DateFormatter {
      */
     static createMd(locale, length, alignment) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
-        
+
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
-        
+
+
         const result = wasm.icu4x_DateFormatter_create_md_mv1(diplomatReceive.buffer, locale.ffiValue, ...diplomatRuntime.optionToArgsForCalling(length, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]), ...diplomatRuntime.optionToArgsForCalling(alignment, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]));
-    
+
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DateTimeFormatterLoadError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
@@ -127,15 +129,15 @@ export class DateFormatter {
             }
             return new DateFormatter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
-        
+
         finally {
             functionCleanupArena.free();
-        
+
             diplomatReceive.free();
         }
     }
 
-    /** 
+    /**
      * See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/datetime/struct.DateTimeFormatter.html#method.try_new) for more information.
      *
      * See the [Rust documentation for `MD`](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.MD.html) for more information.
@@ -144,11 +146,12 @@ export class DateFormatter {
      */
     static createMdWithProvider(provider, locale, length, alignment) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
-        
+
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
-        
+
+
         const result = wasm.icu4x_DateFormatter_create_md_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue, ...diplomatRuntime.optionToArgsForCalling(length, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]), ...diplomatRuntime.optionToArgsForCalling(alignment, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]));
-    
+
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DateTimeFormatterLoadError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
@@ -156,15 +159,15 @@ export class DateFormatter {
             }
             return new DateFormatter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
-        
+
         finally {
             functionCleanupArena.free();
-        
+
             diplomatReceive.free();
         }
     }
 
-    /** 
+    /**
      * See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/datetime/struct.DateTimeFormatter.html#method.try_new) for more information.
      *
      * See the [Rust documentation for `YMD`](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMD.html) for more information.
@@ -173,11 +176,12 @@ export class DateFormatter {
      */
     static createYmd(locale, length, alignment, yearStyle) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
-        
+
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
-        
+
+
         const result = wasm.icu4x_DateFormatter_create_ymd_mv1(diplomatReceive.buffer, locale.ffiValue, ...diplomatRuntime.optionToArgsForCalling(length, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]), ...diplomatRuntime.optionToArgsForCalling(alignment, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]), ...diplomatRuntime.optionToArgsForCalling(yearStyle, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]));
-    
+
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DateTimeFormatterLoadError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
@@ -185,15 +189,15 @@ export class DateFormatter {
             }
             return new DateFormatter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
-        
+
         finally {
             functionCleanupArena.free();
-        
+
             diplomatReceive.free();
         }
     }
 
-    /** 
+    /**
      * See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/datetime/struct.DateTimeFormatter.html#method.try_new) for more information.
      *
      * See the [Rust documentation for `YMD`](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMD.html) for more information.
@@ -202,11 +206,12 @@ export class DateFormatter {
      */
     static createYmdWithProvider(provider, locale, length, alignment, yearStyle) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
-        
+
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
-        
+
+
         const result = wasm.icu4x_DateFormatter_create_ymd_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue, ...diplomatRuntime.optionToArgsForCalling(length, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]), ...diplomatRuntime.optionToArgsForCalling(alignment, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]), ...diplomatRuntime.optionToArgsForCalling(yearStyle, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]));
-    
+
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DateTimeFormatterLoadError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
@@ -214,15 +219,15 @@ export class DateFormatter {
             }
             return new DateFormatter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
-        
+
         finally {
             functionCleanupArena.free();
-        
+
             diplomatReceive.free();
         }
     }
 
-    /** 
+    /**
      * See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/datetime/struct.DateTimeFormatter.html#method.try_new) for more information.
      *
      * See the [Rust documentation for `DE`](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.DE.html) for more information.
@@ -231,11 +236,12 @@ export class DateFormatter {
      */
     static createDe(locale, length, alignment) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
-        
+
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
-        
+
+
         const result = wasm.icu4x_DateFormatter_create_de_mv1(diplomatReceive.buffer, locale.ffiValue, ...diplomatRuntime.optionToArgsForCalling(length, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]), ...diplomatRuntime.optionToArgsForCalling(alignment, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]));
-    
+
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DateTimeFormatterLoadError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
@@ -243,15 +249,15 @@ export class DateFormatter {
             }
             return new DateFormatter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
-        
+
         finally {
             functionCleanupArena.free();
-        
+
             diplomatReceive.free();
         }
     }
 
-    /** 
+    /**
      * See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/datetime/struct.DateTimeFormatter.html#method.try_new) for more information.
      *
      * See the [Rust documentation for `DE`](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.DE.html) for more information.
@@ -260,11 +266,12 @@ export class DateFormatter {
      */
     static createDeWithProvider(provider, locale, length, alignment) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
-        
+
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
-        
+
+
         const result = wasm.icu4x_DateFormatter_create_de_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue, ...diplomatRuntime.optionToArgsForCalling(length, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]), ...diplomatRuntime.optionToArgsForCalling(alignment, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]));
-    
+
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DateTimeFormatterLoadError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
@@ -272,15 +279,15 @@ export class DateFormatter {
             }
             return new DateFormatter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
-        
+
         finally {
             functionCleanupArena.free();
-        
+
             diplomatReceive.free();
         }
     }
 
-    /** 
+    /**
      * See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/datetime/struct.DateTimeFormatter.html#method.try_new) for more information.
      *
      * See the [Rust documentation for `MDE`](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.MDE.html) for more information.
@@ -289,11 +296,12 @@ export class DateFormatter {
      */
     static createMde(locale, length, alignment) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
-        
+
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
-        
+
+
         const result = wasm.icu4x_DateFormatter_create_mde_mv1(diplomatReceive.buffer, locale.ffiValue, ...diplomatRuntime.optionToArgsForCalling(length, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]), ...diplomatRuntime.optionToArgsForCalling(alignment, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]));
-    
+
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DateTimeFormatterLoadError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
@@ -301,15 +309,15 @@ export class DateFormatter {
             }
             return new DateFormatter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
-        
+
         finally {
             functionCleanupArena.free();
-        
+
             diplomatReceive.free();
         }
     }
 
-    /** 
+    /**
      * See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/datetime/struct.DateTimeFormatter.html#method.try_new) for more information.
      *
      * See the [Rust documentation for `MDE`](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.MDE.html) for more information.
@@ -318,11 +326,12 @@ export class DateFormatter {
      */
     static createMdeWithProvider(provider, locale, length, alignment) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
-        
+
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
-        
+
+
         const result = wasm.icu4x_DateFormatter_create_mde_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue, ...diplomatRuntime.optionToArgsForCalling(length, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]), ...diplomatRuntime.optionToArgsForCalling(alignment, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]));
-    
+
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DateTimeFormatterLoadError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
@@ -330,15 +339,15 @@ export class DateFormatter {
             }
             return new DateFormatter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
-        
+
         finally {
             functionCleanupArena.free();
-        
+
             diplomatReceive.free();
         }
     }
 
-    /** 
+    /**
      * See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/datetime/struct.DateTimeFormatter.html#method.try_new) for more information.
      *
      * See the [Rust documentation for `YMDE`](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMDE.html) for more information.
@@ -347,11 +356,12 @@ export class DateFormatter {
      */
     static createYmde(locale, length, alignment, yearStyle) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
-        
+
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
-        
+
+
         const result = wasm.icu4x_DateFormatter_create_ymde_mv1(diplomatReceive.buffer, locale.ffiValue, ...diplomatRuntime.optionToArgsForCalling(length, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]), ...diplomatRuntime.optionToArgsForCalling(alignment, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]), ...diplomatRuntime.optionToArgsForCalling(yearStyle, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]));
-    
+
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DateTimeFormatterLoadError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
@@ -359,15 +369,15 @@ export class DateFormatter {
             }
             return new DateFormatter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
-        
+
         finally {
             functionCleanupArena.free();
-        
+
             diplomatReceive.free();
         }
     }
 
-    /** 
+    /**
      * See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/datetime/struct.DateTimeFormatter.html#method.try_new) for more information.
      *
      * See the [Rust documentation for `YMDE`](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMDE.html) for more information.
@@ -376,11 +386,12 @@ export class DateFormatter {
      */
     static createYmdeWithProvider(provider, locale, length, alignment, yearStyle) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
-        
+
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
-        
+
+
         const result = wasm.icu4x_DateFormatter_create_ymde_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue, ...diplomatRuntime.optionToArgsForCalling(length, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]), ...diplomatRuntime.optionToArgsForCalling(alignment, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]), ...diplomatRuntime.optionToArgsForCalling(yearStyle, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]));
-    
+
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DateTimeFormatterLoadError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
@@ -388,15 +399,15 @@ export class DateFormatter {
             }
             return new DateFormatter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
-        
+
         finally {
             functionCleanupArena.free();
-        
+
             diplomatReceive.free();
         }
     }
 
-    /** 
+    /**
      * See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/datetime/struct.DateTimeFormatter.html#method.try_new) for more information.
      *
      * See the [Rust documentation for `E`](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.E.html) for more information.
@@ -405,11 +416,12 @@ export class DateFormatter {
      */
     static createE(locale, length) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
-        
+
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
-        
+
+
         const result = wasm.icu4x_DateFormatter_create_e_mv1(diplomatReceive.buffer, locale.ffiValue, ...diplomatRuntime.optionToArgsForCalling(length, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]));
-    
+
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DateTimeFormatterLoadError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
@@ -417,15 +429,15 @@ export class DateFormatter {
             }
             return new DateFormatter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
-        
+
         finally {
             functionCleanupArena.free();
-        
+
             diplomatReceive.free();
         }
     }
 
-    /** 
+    /**
      * See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/datetime/struct.DateTimeFormatter.html#method.try_new) for more information.
      *
      * See the [Rust documentation for `E`](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.E.html) for more information.
@@ -434,11 +446,12 @@ export class DateFormatter {
      */
     static createEWithProvider(provider, locale, length) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
-        
+
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
-        
+
+
         const result = wasm.icu4x_DateFormatter_create_e_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue, ...diplomatRuntime.optionToArgsForCalling(length, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]));
-    
+
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DateTimeFormatterLoadError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
@@ -446,15 +459,15 @@ export class DateFormatter {
             }
             return new DateFormatter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
-        
+
         finally {
             functionCleanupArena.free();
-        
+
             diplomatReceive.free();
         }
     }
 
-    /** 
+    /**
      * See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/datetime/struct.DateTimeFormatter.html#method.try_new) for more information.
      *
      * See the [Rust documentation for `M`](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.M.html) for more information.
@@ -463,11 +476,12 @@ export class DateFormatter {
      */
     static createM(locale, length, alignment) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
-        
+
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
-        
+
+
         const result = wasm.icu4x_DateFormatter_create_m_mv1(diplomatReceive.buffer, locale.ffiValue, ...diplomatRuntime.optionToArgsForCalling(length, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]), ...diplomatRuntime.optionToArgsForCalling(alignment, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]));
-    
+
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DateTimeFormatterLoadError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
@@ -475,15 +489,15 @@ export class DateFormatter {
             }
             return new DateFormatter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
-        
+
         finally {
             functionCleanupArena.free();
-        
+
             diplomatReceive.free();
         }
     }
 
-    /** 
+    /**
      * See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/datetime/struct.DateTimeFormatter.html#method.try_new) for more information.
      *
      * See the [Rust documentation for `M`](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.M.html) for more information.
@@ -492,11 +506,12 @@ export class DateFormatter {
      */
     static createMWithProvider(provider, locale, length, alignment) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
-        
+
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
-        
+
+
         const result = wasm.icu4x_DateFormatter_create_m_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue, ...diplomatRuntime.optionToArgsForCalling(length, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]), ...diplomatRuntime.optionToArgsForCalling(alignment, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]));
-    
+
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DateTimeFormatterLoadError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
@@ -504,15 +519,15 @@ export class DateFormatter {
             }
             return new DateFormatter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
-        
+
         finally {
             functionCleanupArena.free();
-        
+
             diplomatReceive.free();
         }
     }
 
-    /** 
+    /**
      * See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/datetime/struct.DateTimeFormatter.html#method.try_new) for more information.
      *
      * See the [Rust documentation for `YM`](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YM.html) for more information.
@@ -521,11 +536,12 @@ export class DateFormatter {
      */
     static createYm(locale, length, alignment, yearStyle) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
-        
+
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
-        
+
+
         const result = wasm.icu4x_DateFormatter_create_ym_mv1(diplomatReceive.buffer, locale.ffiValue, ...diplomatRuntime.optionToArgsForCalling(length, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]), ...diplomatRuntime.optionToArgsForCalling(alignment, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]), ...diplomatRuntime.optionToArgsForCalling(yearStyle, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]));
-    
+
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DateTimeFormatterLoadError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
@@ -533,15 +549,15 @@ export class DateFormatter {
             }
             return new DateFormatter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
-        
+
         finally {
             functionCleanupArena.free();
-        
+
             diplomatReceive.free();
         }
     }
 
-    /** 
+    /**
      * See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/datetime/struct.DateTimeFormatter.html#method.try_new) for more information.
      *
      * See the [Rust documentation for `YM`](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YM.html) for more information.
@@ -550,11 +566,12 @@ export class DateFormatter {
      */
     static createYmWithProvider(provider, locale, length, alignment, yearStyle) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
-        
+
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
-        
+
+
         const result = wasm.icu4x_DateFormatter_create_ym_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue, ...diplomatRuntime.optionToArgsForCalling(length, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]), ...diplomatRuntime.optionToArgsForCalling(alignment, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]), ...diplomatRuntime.optionToArgsForCalling(yearStyle, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]));
-    
+
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DateTimeFormatterLoadError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
@@ -562,15 +579,15 @@ export class DateFormatter {
             }
             return new DateFormatter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
-        
+
         finally {
             functionCleanupArena.free();
-        
+
             diplomatReceive.free();
         }
     }
 
-    /** 
+    /**
      * See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/datetime/struct.DateTimeFormatter.html#method.try_new) for more information.
      *
      * See the [Rust documentation for `Y`](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.Y.html) for more information.
@@ -579,11 +596,12 @@ export class DateFormatter {
      */
     static createY(locale, length, alignment, yearStyle) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
-        
+
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
-        
+
+
         const result = wasm.icu4x_DateFormatter_create_y_mv1(diplomatReceive.buffer, locale.ffiValue, ...diplomatRuntime.optionToArgsForCalling(length, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]), ...diplomatRuntime.optionToArgsForCalling(alignment, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]), ...diplomatRuntime.optionToArgsForCalling(yearStyle, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]));
-    
+
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DateTimeFormatterLoadError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
@@ -591,15 +609,15 @@ export class DateFormatter {
             }
             return new DateFormatter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
-        
+
         finally {
             functionCleanupArena.free();
-        
+
             diplomatReceive.free();
         }
     }
 
-    /** 
+    /**
      * See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/datetime/struct.DateTimeFormatter.html#method.try_new) for more information.
      *
      * See the [Rust documentation for `Y`](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.Y.html) for more information.
@@ -608,11 +626,12 @@ export class DateFormatter {
      */
     static createYWithProvider(provider, locale, length, alignment, yearStyle) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
-        
+
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
-        
+
+
         const result = wasm.icu4x_DateFormatter_create_y_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue, ...diplomatRuntime.optionToArgsForCalling(length, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]), ...diplomatRuntime.optionToArgsForCalling(alignment, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]), ...diplomatRuntime.optionToArgsForCalling(yearStyle, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]));
-    
+
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DateTimeFormatterLoadError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
@@ -620,40 +639,42 @@ export class DateFormatter {
             }
             return new DateFormatter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
-        
+
         finally {
             functionCleanupArena.free();
-        
+
             diplomatReceive.free();
         }
     }
 
-    /** 
+    /**
      * See the [Rust documentation for `format`](https://docs.rs/icu/latest/icu/datetime/struct.DateTimeFormatter.html#method.format) for more information.
      */
     formatIso(date) {
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
-        wasm.icu4x_DateFormatter_format_iso_mv1(this.ffiValue, date.ffiValue, write.buffer);
-    
+
+    wasm.icu4x_DateFormatter_format_iso_mv1(this.ffiValue, date.ffiValue, write.buffer);
+
         try {
             return write.readString8();
         }
-        
+
         finally {
             write.free();
         }
     }
 
-    /** 
+    /**
      * See the [Rust documentation for `format_same_calendar`](https://docs.rs/icu/latest/icu/datetime/struct.DateTimeFormatter.html#method.format_same_calendar) for more information.
      */
     formatSameCalendar(date) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 13, 4, true);
-        
+
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
-        
+
+
         const result = wasm.icu4x_DateFormatter_format_same_calendar_mv1(diplomatReceive.buffer, this.ffiValue, date.ffiValue, write.buffer);
-    
+
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = DateTimeMismatchedCalendarError._fromFFI(diplomatRuntime.internalConstructor, diplomatReceive.buffer);
@@ -661,10 +682,9 @@ export class DateFormatter {
             }
             return write.readString8();
         }
-        
+
         finally {
             diplomatReceive.free();
-        
             write.free();
         }
     }

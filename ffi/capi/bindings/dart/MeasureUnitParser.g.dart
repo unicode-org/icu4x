@@ -52,6 +52,7 @@ final class MeasureUnitParser implements ffi.Finalizable {
     final result = _icu4x_MeasureUnitParser_parse_mv1(_ffi, unitId._utf8AllocIn(temp.arena));
     return result.address == 0 ? null : MeasureUnit._fromFfi(result, []);
   }
+
 }
 
 @_DiplomatFfiUse('icu4x_MeasureUnitParser_destroy_mv1')

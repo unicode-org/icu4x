@@ -33,6 +33,7 @@ final class SentenceBreakIteratorUtf16 implements ffi.Finalizable {
     final result = _icu4x_SentenceBreakIteratorUtf16_next_mv1(_ffi);
     return result;
   }
+
 }
 
 @_DiplomatFfiUse('icu4x_SentenceBreakIteratorUtf16_destroy_mv1')

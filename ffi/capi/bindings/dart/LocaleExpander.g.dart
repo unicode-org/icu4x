@@ -84,6 +84,7 @@ final class LocaleExpander implements ffi.Finalizable {
     final result = _icu4x_LocaleExpander_minimize_favor_script_mv1(_ffi, locale._ffi);
     return TransformResult.values[result];
   }
+
 }
 
 @_DiplomatFfiUse('icu4x_LocaleExpander_destroy_mv1')

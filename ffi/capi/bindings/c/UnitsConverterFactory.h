@@ -26,7 +26,6 @@ icu4x_UnitsConverterFactory_create_with_provider_mv1_result icu4x_UnitsConverter
 
 UnitsConverter* icu4x_UnitsConverterFactory_converter_mv1(const UnitsConverterFactory* self, const MeasureUnit* from, const MeasureUnit* to);
 
-
 void icu4x_UnitsConverterFactory_destroy_mv1(UnitsConverterFactory* self);
 
 

@@ -31,7 +31,6 @@ icu4x_BidiParagraph_reorder_line_mv1_result icu4x_BidiParagraph_reorder_line_mv1
 
 uint8_t icu4x_BidiParagraph_level_at_mv1(const BidiParagraph* self, size_t pos);
 
-
 void icu4x_BidiParagraph_destroy_mv1(BidiParagraph* self);
 
 

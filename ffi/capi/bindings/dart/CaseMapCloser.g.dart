@@ -68,6 +68,7 @@ final class CaseMapCloser implements ffi.Finalizable {
     final result = _icu4x_CaseMapCloser_add_string_case_closure_to_mv1(_ffi, s._utf8AllocIn(temp.arena), builder._ffi);
     return result;
   }
+
 }
 
 @_DiplomatFfiUse('icu4x_CaseMapCloser_destroy_mv1')

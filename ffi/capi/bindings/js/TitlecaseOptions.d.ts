@@ -4,7 +4,7 @@ import type { TrailingCase } from "./TrailingCase"
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
-/** 
+/**
  * See the [Rust documentation for `TitlecaseOptions`](https://docs.rs/icu/latest/icu/casemap/options/struct.TitlecaseOptions.html) for more information.
  */
 type TitlecaseOptions_obj = {
@@ -15,17 +15,15 @@ type TitlecaseOptions_obj = {
 
 
 export class TitlecaseOptions {
-    
-    get leadingAdjustment() : LeadingAdjustment | null; 
-    set leadingAdjustment(value: LeadingAdjustment | null); 
-    
-    get trailingCase() : TrailingCase | null; 
-    set trailingCase(value: TrailingCase | null); 
-    
+    get leadingAdjustment(): LeadingAdjustment | null;
+    set leadingAdjustment(value: LeadingAdjustment | null);
+    get trailingCase(): TrailingCase | null;
+    set trailingCase(value: TrailingCase | null);
     /** Create `TitlecaseOptions` from an object that contains all of `TitlecaseOptions`s fields.
     * Optional fields do not need to be included in the provided object.
     */
     static fromFields(structObj : TitlecaseOptions_obj) : TitlecaseOptions;
+
 
 
     constructor();

@@ -36,7 +36,6 @@ uint8_t icu4x_Bidi_level_rtl_mv1(void);
 
 uint8_t icu4x_Bidi_level_ltr_mv1(void);
 
-
 void icu4x_Bidi_destroy_mv1(Bidi* self);
 
 

@@ -41,7 +41,6 @@ void icu4x_ListFormatter_format_utf8_mv1(const ListFormatter* self, DiplomatStri
 
 void icu4x_ListFormatter_format_utf16_mv1(const ListFormatter* self, DiplomatStrings16View list, DiplomatWrite* write);
 
-
 void icu4x_ListFormatter_destroy_mv1(ListFormatter* self);
 
 

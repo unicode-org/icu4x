@@ -109,6 +109,7 @@ final class Time implements ffi.Finalizable {
     final result = _icu4x_Time_subsecond_mv1(_ffi);
     return result;
   }
+
 }
 
 @_DiplomatFfiUse('icu4x_Time_destroy_mv1')

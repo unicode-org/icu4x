@@ -37,7 +37,6 @@ size_t icu4x_DecomposingNormalizer_is_normalized_up_to_mv1(const DecomposingNorm
 
 size_t icu4x_DecomposingNormalizer_is_normalized_utf16_up_to_mv1(const DecomposingNormalizer* self, DiplomatString16View s);
 
-
 void icu4x_DecomposingNormalizer_destroy_mv1(DecomposingNormalizer* self);
 
 

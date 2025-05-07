@@ -57,7 +57,7 @@ namespace capi {
       IndicSyllabicCategory_VowelIndependent = 35,
       IndicSyllabicCategory_ReorderingKiller = 36,
     };
-    
+
     typedef struct IndicSyllabicCategory_option {union { IndicSyllabicCategory ok; }; bool is_ok; } IndicSyllabicCategory_option;
 } // namespace capi
 } // namespace

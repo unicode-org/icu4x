@@ -61,6 +61,7 @@ final class TimeZone implements ffi.Finalizable {
     final result = _icu4x_TimeZone_without_offset_mv1(_ffi);
     return TimeZoneInfo._fromFfi(result, []);
   }
+
 }
 
 @_DiplomatFfiUse('icu4x_TimeZone_destroy_mv1')

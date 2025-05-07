@@ -74,7 +74,6 @@ icu4x_ZonedDateTimeFormatterGregorian_create_exemplar_city_with_provider_mv1_res
 typedef struct icu4x_ZonedDateTimeFormatterGregorian_format_iso_mv1_result {union { DateTimeWriteError err;}; bool is_ok;} icu4x_ZonedDateTimeFormatterGregorian_format_iso_mv1_result;
 icu4x_ZonedDateTimeFormatterGregorian_format_iso_mv1_result icu4x_ZonedDateTimeFormatterGregorian_format_iso_mv1(const ZonedDateTimeFormatterGregorian* self, const IsoDate* date, const Time* time, const TimeZoneInfo* zone, DiplomatWrite* write);
 
-
 void icu4x_ZonedDateTimeFormatterGregorian_destroy_mv1(ZonedDateTimeFormatterGregorian* self);
 
 

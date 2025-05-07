@@ -48,7 +48,6 @@ void icu4x_CodePointSetBuilder_complement_inclusive_range_mv1(CodePointSetBuilde
 
 void icu4x_CodePointSetBuilder_complement_set_mv1(CodePointSetBuilder* self, const CodePointSetData* data);
 
-
 void icu4x_CodePointSetBuilder_destroy_mv1(CodePointSetBuilder* self);
 
 

@@ -3,13 +3,12 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
-/** 
+/**
  * See the [Rust documentation for `HangulSyllableType`](https://docs.rs/icu/latest/icu/properties/props/struct.HangulSyllableType.html) for more information.
  */
 
 
 export class HangulSyllableType {
-    
     #value = undefined;
 
     static #values = new Map([
@@ -24,7 +23,7 @@ export class HangulSyllableType {
     static getAllEntries() {
         return HangulSyllableType.#values.entries();
     }
-    
+
     #internalConstructor(value) {
         if (arguments.length > 1 && arguments[0] === diplomatRuntime.internalConstructor) {
             // We pass in two internalConstructor arguments to create *new*
@@ -54,11 +53,11 @@ export class HangulSyllableType {
         return new HangulSyllableType(value);
     }
 
-    get value() {
+    get value(){
         return [...HangulSyllableType.#values.keys()][this.#value];
     }
 
-    get ffiValue() {
+    get ffiValue(){
         return this.#value;
     }
     static #objectValues = [
@@ -77,51 +76,57 @@ export class HangulSyllableType {
     static LeadingVowelSyllable = HangulSyllableType.#objectValues[4];
     static LeadingVowelTrailingSyllable = HangulSyllableType.#objectValues[5];
 
-    /** 
+
+    /**
      * See the [Rust documentation for `for_char`](https://docs.rs/icu/latest/icu/properties/props/trait.EnumeratedProperty.html#tymethod.for_char) for more information.
      */
     static forChar(ch) {
+
         const result = wasm.icu4x_HangulSyllableType_for_char_mv1(ch);
-    
+
         try {
             return new HangulSyllableType(diplomatRuntime.internalConstructor, result);
         }
-        
-        finally {}
+
+        finally {
+        }
     }
 
-    /** 
+    /**
      * Convert to an integer value usable with ICU4C and CodePointMapData
      *
      * See the [Rust documentation for `to_icu4c_value`](https://docs.rs/icu/latest/icu/properties/props/struct.HangulSyllableType.html#method.to_icu4c_value) for more information.
      */
     toIntegerValue() {
+
         const result = wasm.icu4x_HangulSyllableType_to_integer_value_mv1(this.ffiValue);
-    
+
         try {
             return result;
         }
-        
-        finally {}
+
+        finally {
+        }
     }
 
-    /** 
+    /**
      * Convert from an integer value from ICU4C or CodePointMapData
      *
      * See the [Rust documentation for `from_icu4c_value`](https://docs.rs/icu/latest/icu/properties/props/struct.HangulSyllableType.html#method.from_icu4c_value) for more information.
      */
     static fromIntegerValue(other) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
-        
+
+
         const result = wasm.icu4x_HangulSyllableType_from_integer_value_mv1(diplomatReceive.buffer, other);
-    
+
         try {
             if (!diplomatReceive.resultFlag) {
                 return null;
             }
             return new HangulSyllableType(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
         }
-        
+
         finally {
             diplomatReceive.free();
         }

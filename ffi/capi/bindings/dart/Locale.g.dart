@@ -102,7 +102,6 @@ final class Locale implements ffi.Finalizable, core.Comparable<Locale> {
     if (!result.isOk) {
       throw LocaleParseError.values[result.union.err];
     }
-    
   }
 
   /// Returns a string representation of [`Locale`] region.
@@ -128,7 +127,6 @@ final class Locale implements ffi.Finalizable, core.Comparable<Locale> {
     if (!result.isOk) {
       throw LocaleParseError.values[result.union.err];
     }
-    
   }
 
   /// Returns a string representation of [`Locale`] script.
@@ -154,7 +152,6 @@ final class Locale implements ffi.Finalizable, core.Comparable<Locale> {
     if (!result.isOk) {
       throw LocaleParseError.values[result.union.err];
     }
-    
   }
 
   /// Normalizes a locale string.
@@ -202,6 +199,7 @@ final class Locale implements ffi.Finalizable, core.Comparable<Locale> {
     final result = _icu4x_Locale_compare_to_mv1(_ffi, other._ffi);
     return result;
   }
+
 
   @override
   bool operator ==(Object other) => other is Locale && compareTo(other) == 0;

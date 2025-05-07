@@ -64,6 +64,7 @@ final class LocaleFallbacker implements ffi.Finalizable {
     final result = _icu4x_LocaleFallbacker_for_config_mv1(_ffi, config._toFfi(temp.arena));
     return LocaleFallbackerWithConfig._fromFfi(result, [], aEdges);
   }
+
 }
 
 @_DiplomatFfiUse('icu4x_LocaleFallbacker_destroy_mv1')

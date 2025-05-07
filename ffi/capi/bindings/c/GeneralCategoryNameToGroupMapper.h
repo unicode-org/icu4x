@@ -27,7 +27,6 @@ GeneralCategoryNameToGroupMapper* icu4x_GeneralCategoryNameToGroupMapper_create_
 typedef struct icu4x_GeneralCategoryNameToGroupMapper_create_with_provider_mv1_result {union {GeneralCategoryNameToGroupMapper* ok; DataError err;}; bool is_ok;} icu4x_GeneralCategoryNameToGroupMapper_create_with_provider_mv1_result;
 icu4x_GeneralCategoryNameToGroupMapper_create_with_provider_mv1_result icu4x_GeneralCategoryNameToGroupMapper_create_with_provider_mv1(const DataProvider* provider);
 
-
 void icu4x_GeneralCategoryNameToGroupMapper_destroy_mv1(GeneralCategoryNameToGroupMapper* self);
 
 

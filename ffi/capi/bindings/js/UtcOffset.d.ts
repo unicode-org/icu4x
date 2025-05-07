@@ -3,16 +3,16 @@ import type { TimeZoneInvalidOffsetError } from "./TimeZoneInvalidOffsetError"
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
-/** 
+/**
  * See the [Rust documentation for `UtcOffset`](https://docs.rs/icu/latest/icu/time/zone/struct.UtcOffset.html) for more information.
  */
 
 
 export class UtcOffset {
-    
     get ffiValue(): pointer;
 
-    /** 
+
+    /**
      * Creates an offset from seconds.
      *
      * Errors if the offset seconds are out of range.
@@ -21,7 +21,7 @@ export class UtcOffset {
      */
     static fromSeconds(seconds: number): UtcOffset;
 
-    /** 
+    /**
      * Creates an offset from a string.
      *
      * See the [Rust documentation for `try_from_str`](https://docs.rs/icu/latest/icu/time/zone/struct.UtcOffset.html#method.try_from_str) for more information.
@@ -30,7 +30,7 @@ export class UtcOffset {
      */
     static fromString(offset: string): UtcOffset;
 
-    /** 
+    /**
      * Returns the value as offset seconds.
      *
      * See the [Rust documentation for `offset`](https://docs.rs/icu/latest/icu/time/struct.TimeZoneInfo.html#method.offset) for more information.
@@ -41,7 +41,7 @@ export class UtcOffset {
      */
     get seconds(): number;
 
-    /** 
+    /**
      * Returns whether the offset is positive.
      *
      * See the [Rust documentation for `is_non_negative`](https://docs.rs/icu/latest/icu/time/zone/struct.UtcOffset.html#method.is_non_negative) for more information.
@@ -50,7 +50,7 @@ export class UtcOffset {
      */
     get isNonNegative(): boolean;
 
-    /** 
+    /**
      * Returns whether the offset is zero.
      *
      * See the [Rust documentation for `is_zero`](https://docs.rs/icu/latest/icu/time/zone/struct.UtcOffset.html#method.is_zero) for more information.
@@ -59,7 +59,7 @@ export class UtcOffset {
      */
     get isZero(): boolean;
 
-    /** 
+    /**
      * Returns the hours part of the offset.
      *
      * See the [Rust documentation for `hours_part`](https://docs.rs/icu/latest/icu/time/zone/struct.UtcOffset.html#method.hours_part) for more information.
@@ -68,7 +68,7 @@ export class UtcOffset {
      */
     get hoursPart(): number;
 
-    /** 
+    /**
      * Returns the minutes part of the offset.
      *
      * See the [Rust documentation for `minutes_part`](https://docs.rs/icu/latest/icu/time/zone/struct.UtcOffset.html#method.minutes_part) for more information.
@@ -77,7 +77,7 @@ export class UtcOffset {
      */
     get minutesPart(): number;
 
-    /** 
+    /**
      * Returns the seconds part of the offset.
      *
      * See the [Rust documentation for `seconds_part`](https://docs.rs/icu/latest/icu/time/zone/struct.UtcOffset.html#method.seconds_part) for more information.

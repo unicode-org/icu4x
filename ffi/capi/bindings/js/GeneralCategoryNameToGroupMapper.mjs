@@ -6,7 +6,7 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
-/** 
+/**
  * A type capable of looking up General Category Group values from a string name.
  *
  * See the [Rust documentation for `PropertyParser`](https://docs.rs/icu/latest/icu/properties/struct.PropertyParser.html) for more information.
@@ -18,35 +18,34 @@ const GeneralCategoryNameToGroupMapper_box_destroy_registry = new FinalizationRe
 });
 
 export class GeneralCategoryNameToGroupMapper {
-    
     // Internal ptr reference:
     #ptr = null;
 
     // Lifetimes are only to keep dependencies alive.
     // Since JS won't garbage collect until there are no incoming edges.
     #selfEdge = [];
-    
+
     #internalConstructor(symbol, ptr, selfEdge) {
         if (symbol !== diplomatRuntime.internalConstructor) {
             console.error("GeneralCategoryNameToGroupMapper is an Opaque type. You cannot call its constructor.");
             return;
         }
-        
         this.#ptr = ptr;
         this.#selfEdge = selfEdge;
-        
+
         // Are we being borrowed? If not, we can register.
         if (this.#selfEdge.length === 0) {
             GeneralCategoryNameToGroupMapper_box_destroy_registry.register(this, this.#ptr);
         }
-        
+
         return this;
     }
     get ffiValue() {
         return this.#ptr;
     }
 
-    /** 
+
+    /**
      * Get the mask value matching the given name, using strict matching
      *
      * Returns 0 if the name is unknown for this property
@@ -55,21 +54,22 @@ export class GeneralCategoryNameToGroupMapper {
      */
     getStrict(name) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
-        
+
         const nameSlice = diplomatRuntime.DiplomatBuf.str8(wasm, name);
-        
+
         const result = wasm.icu4x_GeneralCategoryNameToGroupMapper_get_strict_mv1(this.ffiValue, ...nameSlice.splat());
-    
+
         try {
             return GeneralCategoryGroup._fromFFI(diplomatRuntime.internalConstructor, result);
         }
-        
+
         finally {
             functionCleanupArena.free();
+
         }
     }
 
-    /** 
+    /**
      * Get the mask value matching the given name, using loose matching
      *
      * Returns 0 if the name is unknown for this property
@@ -78,45 +78,49 @@ export class GeneralCategoryNameToGroupMapper {
      */
     getLoose(name) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
-        
+
         const nameSlice = diplomatRuntime.DiplomatBuf.str8(wasm, name);
-        
+
         const result = wasm.icu4x_GeneralCategoryNameToGroupMapper_get_loose_mv1(this.ffiValue, ...nameSlice.splat());
-    
+
         try {
             return GeneralCategoryGroup._fromFFI(diplomatRuntime.internalConstructor, result);
         }
-        
+
         finally {
             functionCleanupArena.free();
+
         }
     }
 
-    /** 
+    /**
      * Create a name-to-mask mapper for the `General_Category` property, using compiled data.
      *
      * See the [Rust documentation for `GeneralCategoryGroup`](https://docs.rs/icu/latest/icu/properties/props/struct.GeneralCategoryGroup.html) for more information.
      */
     #defaultConstructor() {
+
         const result = wasm.icu4x_GeneralCategoryNameToGroupMapper_create_mv1();
-    
+
         try {
             return new GeneralCategoryNameToGroupMapper(diplomatRuntime.internalConstructor, result, []);
         }
-        
-        finally {}
+
+        finally {
+        }
     }
 
-    /** 
+    /**
      * Create a name-to-mask mapper for the `General_Category` property, using a particular data source.
      *
      * See the [Rust documentation for `GeneralCategoryGroup`](https://docs.rs/icu/latest/icu/properties/props/struct.GeneralCategoryGroup.html) for more information.
      */
     static createWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
-        
+
+
         const result = wasm.icu4x_GeneralCategoryNameToGroupMapper_create_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
-    
+
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
@@ -124,7 +128,7 @@ export class GeneralCategoryNameToGroupMapper {
             }
             return new GeneralCategoryNameToGroupMapper(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
-        
+
         finally {
             diplomatReceive.free();
         }

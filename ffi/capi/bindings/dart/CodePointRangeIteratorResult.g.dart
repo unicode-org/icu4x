@@ -44,6 +44,7 @@ final class CodePointRangeIteratorResult {
     return struct;
   }
 
+
   @override
   bool operator ==(Object other) =>
       other is CodePointRangeIteratorResult &&

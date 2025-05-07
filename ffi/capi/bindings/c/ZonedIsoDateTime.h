@@ -28,5 +28,4 @@ ZonedIsoDateTime icu4x_ZonedIsoDateTime_from_epoch_milliseconds_and_utc_offset_m
 
 
 
-
 #endif // ZonedIsoDateTime_H

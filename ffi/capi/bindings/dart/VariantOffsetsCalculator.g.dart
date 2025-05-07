@@ -52,6 +52,7 @@ final class VariantOffsetsCalculator implements ffi.Finalizable {
     }
     return VariantOffsets._fromFfi(result.union.ok);
   }
+
 }
 
 @_DiplomatFfiUse('icu4x_VariantOffsetsCalculator_destroy_mv1')

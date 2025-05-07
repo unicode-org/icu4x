@@ -53,6 +53,7 @@ final class ScriptExtensionsSet implements ffi.Finalizable {
     }
     return result.union.ok;
   }
+
 }
 
 @_DiplomatFfiUse('icu4x_ScriptExtensionsSet_destroy_mv1')

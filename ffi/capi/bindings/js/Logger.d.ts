@@ -2,16 +2,16 @@
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
-/** 
+/**
  * An object allowing control over the logging used
  */
 
 
 export class Logger {
-    
     get ffiValue(): pointer;
 
-    /** 
+
+    /**
      * Initialize the logger using `simple_logger`
      *
      * Requires the `simple_logger` Cargo feature.

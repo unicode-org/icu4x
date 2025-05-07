@@ -26,5 +26,4 @@ icu4x_CanonicalCombiningClass_from_integer_value_mv1_result icu4x_CanonicalCombi
 
 
 
-
 #endif // CanonicalCombiningClass_H

@@ -21,23 +21,22 @@
 namespace icu4x {
 namespace capi {
     extern "C" {
-    
+
     icu4x::capi::ScriptWithExtensions* icu4x_ScriptWithExtensions_create_mv1(void);
-    
+
     typedef struct icu4x_ScriptWithExtensions_create_with_provider_mv1_result {union {icu4x::capi::ScriptWithExtensions* ok; icu4x::capi::DataError err;}; bool is_ok;} icu4x_ScriptWithExtensions_create_with_provider_mv1_result;
     icu4x_ScriptWithExtensions_create_with_provider_mv1_result icu4x_ScriptWithExtensions_create_with_provider_mv1(const icu4x::capi::DataProvider* provider);
-    
+
     uint16_t icu4x_ScriptWithExtensions_get_script_val_mv1(const icu4x::capi::ScriptWithExtensions* self, char32_t ch);
-    
+
     bool icu4x_ScriptWithExtensions_has_script_mv1(const icu4x::capi::ScriptWithExtensions* self, char32_t ch, uint16_t script);
-    
+
     icu4x::capi::ScriptWithExtensionsBorrowed* icu4x_ScriptWithExtensions_as_borrowed_mv1(const icu4x::capi::ScriptWithExtensions* self);
-    
+
     icu4x::capi::CodePointRangeIterator* icu4x_ScriptWithExtensions_iter_ranges_for_script_mv1(const icu4x::capi::ScriptWithExtensions* self, uint16_t script);
-    
-    
+
     void icu4x_ScriptWithExtensions_destroy_mv1(ScriptWithExtensions* self);
-    
+
     } // extern "C"
 } // namespace capi
 } // namespace

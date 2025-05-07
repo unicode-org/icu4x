@@ -19,7 +19,7 @@ namespace capi {
       DecimalParseError_Limit = 1,
       DecimalParseError_Syntax = 2,
     };
-    
+
     typedef struct DecimalParseError_option {union { DecimalParseError ok; }; bool is_ok; } DecimalParseError_option;
 } // namespace capi
 } // namespace

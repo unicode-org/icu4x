@@ -8,23 +8,23 @@ import type { Locale } from "./Locale"
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
-/** 
+/**
  * See the [Rust documentation for `Collator`](https://docs.rs/icu/latest/icu/collator/struct.Collator.html) for more information.
  */
 
 
 export class Collator {
-    
     get ffiValue(): pointer;
 
-    /** 
+
+    /**
      * Construct a new Collator instance using compiled data.
      *
      * See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/collator/struct.Collator.html#method.try_new) for more information.
      */
     static create(locale: Locale, options: CollatorOptions_obj): Collator;
 
-    /** 
+    /**
      * Compare two strings.
      *
      * Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
@@ -34,7 +34,7 @@ export class Collator {
      */
     compare(left: string, right: string): number;
 
-    /** 
+    /**
      * The resolved options showing how the default options, the requested options,
      * and the options from locale data were combined. None of the struct fields
      * will have `Auto` as the value.

@@ -35,7 +35,7 @@ namespace capi {
       SentenceBreak_LF = 13,
       SentenceBreak_SContinue = 14,
     };
-    
+
     typedef struct SentenceBreak_option {union { SentenceBreak ok; }; bool is_ok; } SentenceBreak_option;
 } // namespace capi
 } // namespace

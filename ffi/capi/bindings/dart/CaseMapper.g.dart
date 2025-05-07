@@ -193,6 +193,7 @@ final class CaseMapper implements ffi.Finalizable {
     final result = _icu4x_CaseMapper_simple_fold_turkic_mv1(_ffi, ch);
     return result;
   }
+
 }
 
 @_DiplomatFfiUse('icu4x_CaseMapper_destroy_mv1')

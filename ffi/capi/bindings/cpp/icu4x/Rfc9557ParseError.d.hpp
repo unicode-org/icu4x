@@ -21,7 +21,7 @@ namespace capi {
       Rfc9557ParseError_MissingFields = 3,
       Rfc9557ParseError_UnknownCalendar = 4,
     };
-    
+
     typedef struct Rfc9557ParseError_option {union { Rfc9557ParseError ok; }; bool is_ok; } Rfc9557ParseError_option;
 } // namespace capi
 } // namespace

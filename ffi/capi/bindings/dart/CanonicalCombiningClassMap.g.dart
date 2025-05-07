@@ -53,6 +53,7 @@ final class CanonicalCombiningClassMap implements ffi.Finalizable {
     final result = _icu4x_CanonicalCombiningClassMap_get_mv1(_ffi, ch);
     return result;
   }
+
 }
 
 @_DiplomatFfiUse('icu4x_CanonicalCombiningClassMap_destroy_mv1')

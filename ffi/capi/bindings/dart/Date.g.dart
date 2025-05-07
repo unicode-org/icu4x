@@ -234,6 +234,7 @@ final class Date implements ffi.Finalizable {
     final result = _icu4x_Date_calendar_mv1(_ffi);
     return Calendar._fromFfi(result, []);
   }
+
 }
 
 @_DiplomatFfiUse('icu4x_Date_destroy_mv1')

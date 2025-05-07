@@ -23,24 +23,23 @@
 namespace icu4x {
 namespace capi {
     extern "C" {
-    
+
     icu4x::capi::SentenceSegmenter* icu4x_SentenceSegmenter_create_mv1(void);
-    
+
     typedef struct icu4x_SentenceSegmenter_create_with_content_locale_mv1_result {union {icu4x::capi::SentenceSegmenter* ok; icu4x::capi::DataError err;}; bool is_ok;} icu4x_SentenceSegmenter_create_with_content_locale_mv1_result;
     icu4x_SentenceSegmenter_create_with_content_locale_mv1_result icu4x_SentenceSegmenter_create_with_content_locale_mv1(const icu4x::capi::Locale* locale);
-    
+
     typedef struct icu4x_SentenceSegmenter_create_with_content_locale_and_provider_mv1_result {union {icu4x::capi::SentenceSegmenter* ok; icu4x::capi::DataError err;}; bool is_ok;} icu4x_SentenceSegmenter_create_with_content_locale_and_provider_mv1_result;
     icu4x_SentenceSegmenter_create_with_content_locale_and_provider_mv1_result icu4x_SentenceSegmenter_create_with_content_locale_and_provider_mv1(const icu4x::capi::DataProvider* provider, const icu4x::capi::Locale* locale);
-    
+
     icu4x::capi::SentenceBreakIteratorUtf8* icu4x_SentenceSegmenter_segment_utf8_mv1(const icu4x::capi::SentenceSegmenter* self, diplomat::capi::DiplomatStringView input);
-    
+
     icu4x::capi::SentenceBreakIteratorUtf16* icu4x_SentenceSegmenter_segment_utf16_mv1(const icu4x::capi::SentenceSegmenter* self, diplomat::capi::DiplomatString16View input);
-    
+
     icu4x::capi::SentenceBreakIteratorLatin1* icu4x_SentenceSegmenter_segment_latin1_mv1(const icu4x::capi::SentenceSegmenter* self, diplomat::capi::DiplomatU8View input);
-    
-    
+
     void icu4x_SentenceSegmenter_destroy_mv1(SentenceSegmenter* self);
-    
+
     } // extern "C"
 } // namespace capi
 } // namespace

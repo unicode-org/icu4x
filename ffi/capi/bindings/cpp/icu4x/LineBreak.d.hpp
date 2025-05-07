@@ -68,7 +68,7 @@ namespace capi {
       LineBreak_ViramaFinal = 46,
       LineBreak_Virama = 47,
     };
-    
+
     typedef struct LineBreak_option {union { LineBreak ok; }; bool is_ok; } LineBreak_option;
 } // namespace capi
 } // namespace

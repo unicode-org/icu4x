@@ -90,6 +90,7 @@ final class PluralRules implements ffi.Finalizable {
     final result = _icu4x_PluralRules_categories_mv1(_ffi);
     return PluralCategories._fromFfi(result);
   }
+
 }
 
 @_DiplomatFfiUse('icu4x_PluralRules_destroy_mv1')

@@ -17,11 +17,10 @@
 namespace icu4x {
 namespace capi {
     extern "C" {
-    
+
     typedef struct icu4x_TimePrecision_from_subsecond_digits_mv1_result {union {icu4x::capi::TimePrecision ok; }; bool is_ok;} icu4x_TimePrecision_from_subsecond_digits_mv1_result;
     icu4x_TimePrecision_from_subsecond_digits_mv1_result icu4x_TimePrecision_from_subsecond_digits_mv1(uint8_t digits);
-    
-    
+
     } // extern "C"
 } // namespace capi
 } // namespace

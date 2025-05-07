@@ -5,7 +5,7 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
-/** 
+/**
  * See the [Rust documentation for `TimeZone`](https://docs.rs/icu/latest/icu/time/struct.TimeZone.html) for more information.
  */
 const TimeZone_box_destroy_registry = new FinalizationRegistry((ptr) => {
@@ -13,65 +13,68 @@ const TimeZone_box_destroy_registry = new FinalizationRegistry((ptr) => {
 });
 
 export class TimeZone {
-    
     // Internal ptr reference:
     #ptr = null;
 
     // Lifetimes are only to keep dependencies alive.
     // Since JS won't garbage collect until there are no incoming edges.
     #selfEdge = [];
-    
+
     #internalConstructor(symbol, ptr, selfEdge) {
         if (symbol !== diplomatRuntime.internalConstructor) {
             console.error("TimeZone is an Opaque type. You cannot call its constructor.");
             return;
         }
-        
         this.#ptr = ptr;
         this.#selfEdge = selfEdge;
-        
+
         // Are we being borrowed? If not, we can register.
         if (this.#selfEdge.length === 0) {
             TimeZone_box_destroy_registry.register(this, this.#ptr);
         }
-        
+
         return this;
     }
     get ffiValue() {
         return this.#ptr;
     }
 
-    /** 
+
+    /**
      * The unknown time zone.
      *
      * See the [Rust documentation for `unknown`](https://docs.rs/icu/latest/icu/time/struct.TimeZoneInfo.html#method.unknown) for more information.
      */
     static unknown() {
+
         const result = wasm.icu4x_TimeZone_unknown_mv1();
-    
+
         try {
             return new TimeZone(diplomatRuntime.internalConstructor, result, []);
         }
-        
-        finally {}
+
+        finally {
+        }
     }
 
-    /** 
+    /**
      * Whether the time zone is the unknown zone.
      *
      * See the [Rust documentation for `is_unknown`](https://docs.rs/icu/latest/icu/time/struct.TimeZone.html#method.is_unknown) for more information.
      */
     isUnknown() {
+
         const result = wasm.icu4x_TimeZone_is_unknown_mv1(this.ffiValue);
-    
+
         try {
             return result;
         }
-        
-        finally {}
+
+        finally {
+        }
     }
 
-    /** 
+    /**
      * Creates a time zone from a BCP-47 string.
      *
      * Returns the unknown time zone if the string is not a valid BCP-47 subtag.
@@ -80,44 +83,49 @@ export class TimeZone {
      */
     static createFromBcp47(id) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
-        
+
         const idSlice = diplomatRuntime.DiplomatBuf.str8(wasm, id);
-        
+
         const result = wasm.icu4x_TimeZone_create_from_bcp47_mv1(...idSlice.splat());
-    
+
         try {
             return new TimeZone(diplomatRuntime.internalConstructor, result, []);
         }
-        
+
         finally {
             functionCleanupArena.free();
+
         }
     }
 
-    /** 
+    /**
      * See the [Rust documentation for `with_offset`](https://docs.rs/icu/latest/icu/time/struct.TimeZone.html#method.with_offset) for more information.
      */
     withOffset(offset) {
+
         const result = wasm.icu4x_TimeZone_with_offset_mv1(this.ffiValue, offset.ffiValue);
-    
+
         try {
             return new TimeZoneInfo(diplomatRuntime.internalConstructor, result, []);
         }
-        
-        finally {}
+
+        finally {
+        }
     }
 
-    /** 
+    /**
      * See the [Rust documentation for `without_offset`](https://docs.rs/icu/latest/icu/time/struct.TimeZone.html#method.without_offset) for more information.
      */
     withoutOffset() {
+
         const result = wasm.icu4x_TimeZone_without_offset_mv1(this.ffiValue);
-    
+
         try {
             return new TimeZoneInfo(diplomatRuntime.internalConstructor, result, []);
         }
-        
-        finally {}
+
+        finally {
+        }
     }
 
     constructor(symbol, ptr, selfEdge) {

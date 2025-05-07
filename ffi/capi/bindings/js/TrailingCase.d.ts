@@ -2,22 +2,22 @@
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
-/** 
+/**
  * See the [Rust documentation for `TrailingCase`](https://docs.rs/icu/latest/icu/casemap/options/enum.TrailingCase.html) for more information.
  */
 
 
 export class TrailingCase {
-    
 
-    static fromValue(value : TrailingCase | string) : TrailingCase; 
+    static fromValue(value: TrailingCase | string): TrailingCase;
 
-    get value() : string;
+    get value(): string;
 
-    get ffiValue() : number;
+    get ffiValue(): number;
 
     static Lower : TrailingCase;
     static Unchanged : TrailingCase;
+
 
     constructor(value: TrailingCase | string );
 }

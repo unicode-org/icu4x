@@ -25,7 +25,6 @@ icu4x_WindowsParser_create_with_provider_mv1_result icu4x_WindowsParser_create_w
 
 TimeZone* icu4x_WindowsParser_parse_mv1(const WindowsParser* self, DiplomatStringView value, DiplomatStringView region);
 
-
 void icu4x_WindowsParser_destroy_mv1(WindowsParser* self);
 
 

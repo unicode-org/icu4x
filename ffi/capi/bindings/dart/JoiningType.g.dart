@@ -7,19 +7,14 @@ part of 'lib.g.dart';
 enum JoiningType {
   /// See the [Rust documentation for `NonJoining`](https://docs.rs/icu/latest/icu/properties/props/enum.JoiningType.html#variant.NonJoining) for more information.
   nonJoining,
-
   /// See the [Rust documentation for `JoinCausing`](https://docs.rs/icu/latest/icu/properties/props/enum.JoiningType.html#variant.JoinCausing) for more information.
   joinCausing,
-
   /// See the [Rust documentation for `DualJoining`](https://docs.rs/icu/latest/icu/properties/props/enum.JoiningType.html#variant.DualJoining) for more information.
   dualJoining,
-
   /// See the [Rust documentation for `LeftJoining`](https://docs.rs/icu/latest/icu/properties/props/enum.JoiningType.html#variant.LeftJoining) for more information.
   leftJoining,
-
   /// See the [Rust documentation for `RightJoining`](https://docs.rs/icu/latest/icu/properties/props/enum.JoiningType.html#variant.RightJoining) for more information.
   rightJoining,
-
   /// See the [Rust documentation for `Transparent`](https://docs.rs/icu/latest/icu/properties/props/enum.JoiningType.html#variant.Transparent) for more information.
   transparent;
 
@@ -69,6 +64,7 @@ enum JoiningType {
     }
     return JoiningType.values[result.union.ok];
   }
+
 }
 
 @_DiplomatFfiUse('icu4x_JoiningType_for_char_mv1')

@@ -147,6 +147,7 @@ final class CodePointSetBuilder implements ffi.Finalizable {
   void complementSet(CodePointSetData data) {
     _icu4x_CodePointSetBuilder_complement_set_mv1(_ffi, data._ffi);
   }
+
 }
 
 @_DiplomatFfiUse('icu4x_CodePointSetBuilder_destroy_mv1')

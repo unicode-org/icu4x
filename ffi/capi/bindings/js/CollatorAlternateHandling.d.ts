@@ -2,22 +2,22 @@
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
-/** 
+/**
  * See the [Rust documentation for `AlternateHandling`](https://docs.rs/icu/latest/icu/collator/options/enum.AlternateHandling.html) for more information.
  */
 
 
 export class CollatorAlternateHandling {
-    
 
-    static fromValue(value : CollatorAlternateHandling | string) : CollatorAlternateHandling; 
+    static fromValue(value: CollatorAlternateHandling | string): CollatorAlternateHandling;
 
-    get value() : string;
+    get value(): string;
 
-    get ffiValue() : number;
+    get ffiValue(): number;
 
     static NonIgnorable : CollatorAlternateHandling;
     static Shifted : CollatorAlternateHandling;
+
 
     constructor(value: CollatorAlternateHandling | string );
 }

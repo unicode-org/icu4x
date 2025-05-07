@@ -21,22 +21,21 @@
 namespace icu4x {
 namespace capi {
     extern "C" {
-    
+
     icu4x::capi::LocaleCanonicalizer* icu4x_LocaleCanonicalizer_create_common_mv1(void);
-    
+
     typedef struct icu4x_LocaleCanonicalizer_create_common_with_provider_mv1_result {union {icu4x::capi::LocaleCanonicalizer* ok; icu4x::capi::DataError err;}; bool is_ok;} icu4x_LocaleCanonicalizer_create_common_with_provider_mv1_result;
     icu4x_LocaleCanonicalizer_create_common_with_provider_mv1_result icu4x_LocaleCanonicalizer_create_common_with_provider_mv1(const icu4x::capi::DataProvider* provider);
-    
+
     icu4x::capi::LocaleCanonicalizer* icu4x_LocaleCanonicalizer_create_extended_mv1(void);
-    
+
     typedef struct icu4x_LocaleCanonicalizer_create_extended_with_provider_mv1_result {union {icu4x::capi::LocaleCanonicalizer* ok; icu4x::capi::DataError err;}; bool is_ok;} icu4x_LocaleCanonicalizer_create_extended_with_provider_mv1_result;
     icu4x_LocaleCanonicalizer_create_extended_with_provider_mv1_result icu4x_LocaleCanonicalizer_create_extended_with_provider_mv1(const icu4x::capi::DataProvider* provider);
-    
+
     icu4x::capi::TransformResult icu4x_LocaleCanonicalizer_canonicalize_mv1(const icu4x::capi::LocaleCanonicalizer* self, icu4x::capi::Locale* locale);
-    
-    
+
     void icu4x_LocaleCanonicalizer_destroy_mv1(LocaleCanonicalizer* self);
-    
+
     } // extern "C"
 } // namespace capi
 } // namespace

@@ -32,7 +32,6 @@ int8_t icu4x_Collator_compare_utf16_mv1(const Collator* self, DiplomatString16Vi
 
 CollatorResolvedOptionsV1 icu4x_Collator_resolved_options_v1_mv1(const Collator* self);
 
-
 void icu4x_Collator_destroy_mv1(Collator* self);
 
 

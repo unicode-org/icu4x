@@ -51,7 +51,7 @@ namespace capi {
       GeneralCategory_ModifierSymbol = 26,
       GeneralCategory_OtherSymbol = 27,
     };
-    
+
     typedef struct GeneralCategory_option {union { GeneralCategory ok; }; bool is_ok; } GeneralCategory_option;
 } // namespace capi
 } // namespace
