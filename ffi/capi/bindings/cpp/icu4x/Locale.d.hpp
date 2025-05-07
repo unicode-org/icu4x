@@ -44,11 +44,11 @@ public:
   inline static diplomat::result<std::unique_ptr<icu4x::Locale>, icu4x::LocaleParseError> from_string(std::string_view name);
 
   /**
-   * Construct a default undefined [`Locale`] "und".
+   * Construct a unknown [`Locale`] "und".
    *
-   * See the [Rust documentation for `default`](https://docs.rs/icu/latest/icu/locale/struct.Locale.html#method.default) for more information.
+   * See the [Rust documentation for `UNKNOWN`](https://docs.rs/icu/latest/icu/locale/struct.Locale.html#associatedconstant.UNKNOWN) for more information.
    */
-  inline static std::unique_ptr<icu4x::Locale> und();
+  inline static std::unique_ptr<icu4x::Locale> unknown();
 
   /**
    * Clones the [`Locale`].
@@ -142,6 +142,12 @@ public:
    * See the [Rust documentation for `total_cmp`](https://docs.rs/icu/latest/icu/locale/struct.Locale.html#method.total_cmp) for more information.
    */
   inline int8_t compare_to(const icu4x::Locale& other) const;
+  inline bool operator==(const icu4x::Locale& other) const;
+  inline bool operator!=(const icu4x::Locale& other) const;
+  inline bool operator<=(const icu4x::Locale& other) const;
+  inline bool operator>=(const icu4x::Locale& other) const;
+  inline bool operator<(const icu4x::Locale& other) const;
+  inline bool operator>(const icu4x::Locale& other) const;
 
   inline const icu4x::capi::Locale* AsFFI() const;
   inline icu4x::capi::Locale* AsFFI();

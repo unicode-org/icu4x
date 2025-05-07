@@ -5,14 +5,11 @@
 //! Tools for parsing Windows timezone IDs.
 
 use core::fmt::Write;
-
-use icu_provider::{
-    prelude::icu_locale_core::subtags::{region, Region},
-    DataError, DataPayload, DataProvider,
-};
+use icu_locale_core::subtags::{region, Region};
+use icu_provider::{DataError, DataPayload, DataProvider};
 
 use crate::{
-    provider::windows::{TimeZoneWindowsV1, WindowsZonesToBcp47Map},
+    provider::windows::{TimezoneIdentifiersWindowsV1, WindowsZonesToBcp47Map},
     TimeZone,
 };
 
@@ -38,7 +35,7 @@ use crate::{
 /// then the territory will default to the M.49 World Code, `001`.
 #[derive(Debug)]
 pub struct WindowsParser {
-    data: DataPayload<TimeZoneWindowsV1>,
+    data: DataPayload<TimezoneIdentifiersWindowsV1>,
 }
 
 impl WindowsParser {
@@ -61,7 +58,7 @@ impl WindowsParser {
     #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::new)]
     pub fn try_new_unstable<P>(provider: &P) -> Result<Self, DataError>
     where
-        P: DataProvider<TimeZoneWindowsV1> + ?Sized,
+        P: DataProvider<TimezoneIdentifiersWindowsV1> + ?Sized,
     {
         let data = provider.load(Default::default())?.payload;
         Ok(Self { data })
@@ -109,7 +106,7 @@ impl WindowsParserBorrowed<'_> {
     #[cfg(feature = "compiled_data")]
     pub fn new() -> Self {
         WindowsParserBorrowed {
-            data: crate::provider::Baked::SINGLETON_TIME_ZONE_WINDOWS_V1,
+            data: crate::provider::Baked::SINGLETON_TIMEZONE_IDENTIFIERS_WINDOWS_V1,
         }
     }
 
@@ -119,22 +116,21 @@ impl WindowsParserBorrowed<'_> {
     /// then the territory will default to the M.49 World Code, `001`.
     ///
     /// ```rust
-    /// use icu::locale::subtags::region;
+    /// use icu::locale::subtags::{region, subtag};
     /// use icu::time::{zone::WindowsParser, TimeZone};
-    /// use tinystr::tinystr;
     ///
     /// let win_tz_mapper = WindowsParser::new();
     ///
     /// let bcp47_id = win_tz_mapper.parse("Central Standard Time", None);
-    /// assert_eq!(bcp47_id, Some(TimeZone(tinystr!(8, "uschi"))));
+    /// assert_eq!(bcp47_id, Some(TimeZone(subtag!("uschi"))));
     ///
     /// let bcp47_id =
     ///     win_tz_mapper.parse("Central Standard Time", Some(region!("US")));
-    /// assert_eq!(bcp47_id, Some(TimeZone(tinystr!(8, "uschi"))));
+    /// assert_eq!(bcp47_id, Some(TimeZone(subtag!("uschi"))));
     ///
     /// let bcp47_id =
     ///     win_tz_mapper.parse("Central Standard Time", Some(region!("CA")));
-    /// assert_eq!(bcp47_id, Some(TimeZone(tinystr!(8, "cawnp"))));
+    /// assert_eq!(bcp47_id, Some(TimeZone(subtag!("cawnp"))));
     /// ```
     pub fn parse(self, windows_tz: &str, region: Option<Region>) -> Option<TimeZone> {
         self.parse_from_utf8(windows_tz.as_bytes(), region)
@@ -159,22 +155,22 @@ impl WindowsParserBorrowed<'_> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use tinystr::tinystr;
+    use icu::locale::subtags::subtag;
 
     #[test]
     fn basic_windows_tz_lookup() {
         let win_map = WindowsParser::new();
 
         let result = win_map.parse("Central Standard Time", None);
-        assert_eq!(result, Some(TimeZone(tinystr!(8, "uschi"))));
+        assert_eq!(result, Some(TimeZone(subtag!("uschi"))));
 
         let result = win_map.parse("Eastern Standard Time", None);
-        assert_eq!(result, Some(TimeZone(tinystr!(8, "usnyc"))));
+        assert_eq!(result, Some(TimeZone(subtag!("usnyc"))));
 
         let result = win_map.parse("Eastern Standard Time", Some(region!("CA")));
-        assert_eq!(result, Some(TimeZone(tinystr!(8, "cator"))));
+        assert_eq!(result, Some(TimeZone(subtag!("cator"))));
 
         let result = win_map.parse("GMT Standard Time", None);
-        assert_eq!(result, Some(TimeZone(tinystr!(8, "gblon"))));
+        assert_eq!(result, Some(TimeZone(subtag!("gblon"))));
     }
 }

@@ -18,7 +18,7 @@ class Date;
 namespace capi { struct IsoDate; }
 class IsoDate;
 class CalendarError;
-class CalendarParseError;
+class Rfc9557ParseError;
 class Weekday;
 }
 
@@ -67,7 +67,7 @@ public:
    *
    * See the [Rust documentation for `try_from_str`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.try_from_str) for more information.
    */
-  inline static diplomat::result<std::unique_ptr<icu4x::Date>, icu4x::CalendarParseError> from_string(std::string_view v, const icu4x::Calendar& calendar);
+  inline static diplomat::result<std::unique_ptr<icu4x::Date>, icu4x::Rfc9557ParseError> from_string(std::string_view v, const icu4x::Calendar& calendar);
 
   /**
    * Convert this date to one in a different calendar
@@ -153,23 +153,23 @@ public:
    *
    * For calendars without an era, returns the related ISO year.
    *
-   * See the [Rust documentation for `era_year_or_related_iso`](https://docs.rs/icu/latest/icu/calendar/types/struct.YearInfo.html#method.era_year_or_related_iso) for more information.
+   * See the [Rust documentation for `era_year_or_related_iso`](https://docs.rs/icu/latest/icu/calendar/types/enum.YearInfo.html#method.era_year_or_related_iso) for more information.
    *
-   * Additional information: [1](https://docs.rs/icu/latest/icu/calendar/types/struct.EraYear.html#structfield.era_year), [2](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.year)
+   * Additional information: [1](https://docs.rs/icu/latest/icu/calendar/types/struct.EraYear.html#structfield.year), [2](https://docs.rs/icu/latest/icu/calendar/types/struct.CyclicYear.html#structfield.related_iso), [3](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.year)
    */
   inline int32_t era_year_or_related_iso() const;
 
   /**
    * Returns the extended year in the Date
    *
-   * See the [Rust documentation for `extended_year`](https://docs.rs/icu/latest/icu/calendar/types/struct.YearInfo.html#structfield.extended_year) for more information.
+   * See the [Rust documentation for `extended_year`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.extended_year) for more information.
    */
   inline int32_t extended_year() const;
 
   /**
    * Returns the era for this date, or an empty string
    *
-   * See the [Rust documentation for `standard_era`](https://docs.rs/icu/latest/icu/calendar/types/struct.EraYear.html#structfield.standard_era) for more information.
+   * See the [Rust documentation for `era`](https://docs.rs/icu/latest/icu/calendar/types/struct.EraYear.html#structfield.era) for more information.
    *
    * Additional information: [1](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.year)
    */

@@ -79,11 +79,7 @@ pub mod ffi {
             FnInStruct,
             hidden
         )]
-        #[diplomat::rust_link(
-            icu::properties::properties::CanonicalCombiningClassMapBorrowed,
-            Struct,
-            compact
-        )]
+        #[diplomat::rust_link(icu::properties::props::CanonicalCombiningClass, Struct, compact)]
         #[diplomat::attr(auto, indexer)]
         pub fn get(&self, ch: DiplomatChar) -> u8 {
             self.0.as_borrowed().get32_u8(ch)

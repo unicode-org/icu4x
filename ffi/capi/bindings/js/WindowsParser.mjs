@@ -91,9 +91,9 @@ export class WindowsParser {
     parse(value, region) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
-        const valueSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, value));
+        const valueSlice = diplomatRuntime.DiplomatBuf.str8(wasm, value);
         
-        const regionSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, region));
+        const regionSlice = diplomatRuntime.DiplomatBuf.str8(wasm, region);
         
         const result = wasm.icu4x_WindowsParser_parse_mv1(this.ffiValue, ...valueSlice.splat(), ...regionSlice.splat());
     

@@ -96,7 +96,7 @@ We can include the generate code with the `include!` macro. The `impl_data_provi
 extern crate alloc; // required as my-data is written for #[no_std]
 use icu::locale::{locale, Locale};
 use icu::calendar::Date;
-use icu::datetime::{DateTimeFormatter, Length};
+use icu::datetime::{DateTimeFormatter, fieldsets::YMD};
 
 const LOCALE: Locale = locale!("ja");
 
@@ -107,8 +107,12 @@ impl_data_provider!(MyDataProvider);
 fn main() {
     let baked_provider = MyDataProvider;
 
-    let dtf = DateTimeFormatter::try_new_unstable(&baked_provider, &LOCALE.into(), Length::Medium.into())
-        .expect("ja data should be available");
+    let dtf = DateTimeFormatter::try_new_unstable(
+        &baked_provider,
+        LOCALE.into(),
+        YMD::medium()
+    )
+    .expect("ja data should be available");
 
     let date = Date::try_new_iso(2020, 10, 14)
         .expect("date should be valid");
@@ -152,7 +156,7 @@ We can then use the provider in our code:
 ```rust,no_run
 use icu::locale::{locale, Locale, fallback::LocaleFallbacker};
 use icu::calendar::Date;
-use icu::datetime::{DateTimeFormatter, Length, fieldsets::YMD};
+use icu::datetime::{DateTimeFormatter, fieldsets::YMD};
 use icu_provider_adapters::fallback::LocaleFallbackProvider;
 use icu_provider_blob::BlobDataProvider;
 
@@ -205,7 +209,7 @@ We can instead use `FixedCalendarDateTimeFormatter<Gregorian>`, which only suppo
 ```rust,no_run
 use icu::locale::{locale, Locale, fallback::LocaleFallbacker};
 use icu::calendar::{Date, Gregorian};
-use icu::datetime::{FixedCalendarDateTimeFormatter, fieldsets::YMD, Length};
+use icu::datetime::{FixedCalendarDateTimeFormatter, fieldsets::YMD};
 use icu_provider_adapters::fallback::LocaleFallbackProvider;
 use icu_provider_blob::BlobDataProvider;
 

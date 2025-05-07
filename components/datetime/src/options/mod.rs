@@ -326,6 +326,8 @@ impl IntoOption<YearStyle> for YearStyle {
 ///
 /// # Examples
 ///
+/// Comparison of all time precision options:
+///
 /// ```
 /// use icu::datetime::input::Time;
 /// use icu::datetime::fieldsets::T;
@@ -560,15 +562,24 @@ pub enum SubsecondDigits {
     S9 = 9,
 }
 
-/// An error from constructing [`SubsecondDigits`].
-#[derive(Debug, Copy, Clone, PartialEq, Eq, displaydoc::Display)]
-#[non_exhaustive]
-pub enum SubsecondError {
-    /// The provided value is out of range (1-9).
-    OutOfRange,
+impl SubsecondDigits {
+    /// Constructs a [`SubsecondDigits`] from an integer number of digits.
+    pub fn try_from_int(value: u8) -> Option<Self> {
+        use SubsecondDigits::*;
+        match value {
+            1 => Some(S1),
+            2 => Some(S2),
+            3 => Some(S3),
+            4 => Some(S4),
+            5 => Some(S5),
+            6 => Some(S6),
+            7 => Some(S7),
+            8 => Some(S8),
+            9 => Some(S9),
+            _ => None,
+        }
+    }
 }
-
-impl core::error::Error for SubsecondError {}
 
 impl From<SubsecondDigits> for u8 {
     fn from(value: SubsecondDigits) -> u8 {
@@ -583,25 +594,6 @@ impl From<SubsecondDigits> for u8 {
             S7 => 7,
             S8 => 8,
             S9 => 9,
-        }
-    }
-}
-
-impl TryFrom<u8> for SubsecondDigits {
-    type Error = SubsecondError;
-    fn try_from(value: u8) -> Result<Self, Self::Error> {
-        use SubsecondDigits::*;
-        match value {
-            1 => Ok(S1),
-            2 => Ok(S2),
-            3 => Ok(S3),
-            4 => Ok(S4),
-            5 => Ok(S5),
-            6 => Ok(S6),
-            7 => Ok(S7),
-            8 => Ok(S8),
-            9 => Ok(S9),
-            _ => Err(SubsecondError::OutOfRange),
         }
     }
 }

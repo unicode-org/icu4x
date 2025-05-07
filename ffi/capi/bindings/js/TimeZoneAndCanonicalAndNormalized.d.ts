@@ -3,6 +3,10 @@ import type { TimeZone } from "./TimeZone"
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
+/** 
+ * See the [Rust documentation for `TimeZoneAndCanonicalAndNormalized`](https://docs.rs/icu/latest/icu/time/zone/iana/struct.TimeZoneAndCanonicalAndNormalized.html) for more information.
+ */
+
 
 export class TimeZoneAndCanonicalAndNormalized {
     

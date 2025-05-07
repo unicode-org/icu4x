@@ -4,7 +4,6 @@
 
 use calendrical_calculations::rata_die::RataDie;
 
-use crate::any_calendar::AnyCalendarKind;
 use crate::cal::iso::IsoDateInner;
 use crate::error::DateError;
 use crate::{types, DateDuration, DateDurationUnit};
@@ -18,11 +17,19 @@ use core::fmt;
 /// Individual [`Calendar`] implementations may have inherent utility methods
 /// allowing for direct construction, etc.
 ///
-/// For ICU4X 1.0, implementing this trait or calling methods directly is considered
-/// unstable and prone to change, especially for `offset_date()` and `until()`.
-pub trait Calendar {
+/// <div class="stab unstable">
+/// 🚫 This trait is sealed; it should not be implemented by user code. If an API requests an item that implements this
+/// trait, please consider using a type from the implementors listed below.
+///
+/// It is still possible to implement this trait in userland (since `UnstableSealed` is public),
+/// do not do so unless you are prepared for things to occasionally break.
+/// </div>
+pub trait Calendar: crate::cal::scaffold::UnstableSealed {
     /// The internal type used to represent dates
     type DateInner: Eq + Copy + fmt::Debug;
+    /// The type of YearInfo returned by the date
+    type Year: fmt::Debug + Into<types::YearInfo>;
+
     /// Construct a date from era/month codes and fields
     ///
     /// The year is extended_year if no era is provided
@@ -60,7 +67,9 @@ pub trait Calendar {
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool;
 
     /// Information about the year
-    fn year(&self, date: &Self::DateInner) -> types::YearInfo;
+    fn year_info(&self, date: &Self::DateInner) -> Self::Year;
+    /// The extended year value
+    fn extended_year(&self, date: &Self::DateInner) -> i32;
     /// The calendar-specific month represented by `date`
     fn month(&self, date: &Self::DateInner) -> types::MonthInfo;
     /// The calendar-specific day-of-month represented by `date`
@@ -85,9 +94,12 @@ pub trait Calendar {
         smallest_unit: DateDurationUnit,
     ) -> DateDuration<Self>;
 
-    /// The [`AnyCalendarKind`] corresponding to this calendar,
-    /// if one exists. Implementors outside of `icu::calendar` should return `None`
-    fn any_calendar_kind(&self) -> Option<AnyCalendarKind>;
+    /// Returns the [`CalendarAlgorithm`](crate::preferences::CalendarAlgorithm) that is required to match
+    /// when parsing into this calendar.
+    ///
+    /// If left empty, any algorithm will parse successfully.
+    fn calendar_algorithm(&self) -> Option<crate::preferences::CalendarAlgorithm>;
+
     /// Obtain a name for the calendar for debug printing
     fn debug_name(&self) -> &'static str;
 }

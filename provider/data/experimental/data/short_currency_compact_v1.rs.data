@@ -715,7 +715,7 @@ macro_rules! __impl_short_currency_compact_v1 {
                             metadata.locale = Some(fallback_iterator.take());
                             break payload;
                         }
-                        if fallback_iterator.get().is_default() {
+                        if fallback_iterator.get().is_unknown() {
                             return Err(icu_provider::DataErrorKind::IdentifierNotFound.with_req(<icu::experimental::dimension::provider::currency_compact::ShortCurrencyCompactV1 as icu_provider::DataMarker>::INFO, req));
                         }
                         fallback_iterator.step();

@@ -10,7 +10,7 @@ pub mod ffi {
 
     #[cfg(any(feature = "compiled_data", feature = "buffer_provider"))]
     use crate::unstable::errors::ffi::DataError;
-    use crate::unstable::errors::ffi::FixedDecimalParseError;
+    use crate::unstable::errors::ffi::DecimalParseError;
     #[cfg(any(feature = "compiled_data", feature = "buffer_provider"))]
     use crate::unstable::locale_core::ffi::Locale;
     #[cfg(feature = "buffer_provider")]
@@ -127,7 +127,7 @@ pub mod ffi {
         /// Construct for a given string representing a number
         #[diplomat::rust_link(icu::plurals::PluralOperands::from_str, FnInStruct)]
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor)]
-        pub fn from_string(s: &DiplomatStr) -> Result<Box<PluralOperands>, FixedDecimalParseError> {
+        pub fn from_string(s: &DiplomatStr) -> Result<Box<PluralOperands>, DecimalParseError> {
             Ok(Box::new(PluralOperands(icu_plurals::PluralOperands::from(
                 &fixed_decimal::Decimal::try_from_utf8(s)?,
             ))))

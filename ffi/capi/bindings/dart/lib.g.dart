@@ -21,7 +21,6 @@ part 'BidiParagraph.g.dart';
 part 'Calendar.g.dart';
 part 'CalendarError.g.dart';
 part 'CalendarKind.g.dart';
-part 'CalendarParseError.g.dart';
 part 'CanonicalCombiningClass.g.dart';
 part 'CanonicalCombiningClassMap.g.dart';
 part 'CanonicalComposition.g.dart';
@@ -60,6 +59,12 @@ part 'DateTimeWriteError.g.dart';
 part 'Decimal.g.dart';
 part 'DecimalFormatter.g.dart';
 part 'DecimalGroupingStrategy.g.dart';
+part 'DecimalLimitError.g.dart';
+part 'DecimalParseError.g.dart';
+part 'DecimalRoundingIncrement.g.dart';
+part 'DecimalSign.g.dart';
+part 'DecimalSignDisplay.g.dart';
+part 'DecimalSignedRoundingMode.g.dart';
 part 'Decomposed.g.dart';
 part 'DecomposingNormalizer.g.dart';
 part 'DisplayNamesFallback.g.dart';
@@ -68,12 +73,6 @@ part 'DisplayNamesStyle.g.dart';
 part 'EastAsianWidth.g.dart';
 part 'EmojiSetData.g.dart';
 part 'ExemplarCharacters.g.dart';
-part 'FixedDecimalLimitError.g.dart';
-part 'FixedDecimalParseError.g.dart';
-part 'FixedDecimalRoundingIncrement.g.dart';
-part 'FixedDecimalSign.g.dart';
-part 'FixedDecimalSignDisplay.g.dart';
-part 'FixedDecimalSignedRoundingMode.g.dart';
 part 'GeneralCategory.g.dart';
 part 'GeneralCategoryGroup.g.dart';
 part 'GeneralCategoryNameToGroupMapper.g.dart';
@@ -124,6 +123,7 @@ part 'PluralRules.g.dart';
 part 'PropertyValueNameToEnumMapper.g.dart';
 part 'RegionDisplayNames.g.dart';
 part 'ReorderedIndexMap.g.dart';
+part 'Rfc9557ParseError.g.dart';
 part 'Script.g.dart';
 part 'ScriptExtensionsSet.g.dart';
 part 'ScriptWithExtensions.g.dart';
@@ -359,27 +359,27 @@ final class _ResultIsoDateTimeFfiVoid extends ffi.Struct {
   }
 }
 
-final class _ResultOpaqueFixedDecimalLimitErrorFfiUnion extends ffi.Union {
+final class _ResultOpaqueDecimalLimitErrorFfiUnion extends ffi.Union {
   external ffi.Pointer<ffi.Opaque> ok;
 
 }
 
-final class _ResultOpaqueFixedDecimalLimitErrorFfi extends ffi.Struct {
-  external _ResultOpaqueFixedDecimalLimitErrorFfiUnion union;
+final class _ResultOpaqueDecimalLimitErrorFfi extends ffi.Struct {
+  external _ResultOpaqueDecimalLimitErrorFfiUnion union;
 
   @ffi.Bool()
   external bool isOk;
 
   // ignore: unused_element
-  factory _ResultOpaqueFixedDecimalLimitErrorFfi.ok(ffi.Pointer<ffi.Opaque> val) {
-    final struct = ffi.Struct.create<_ResultOpaqueFixedDecimalLimitErrorFfi>();
+  factory _ResultOpaqueDecimalLimitErrorFfi.ok(ffi.Pointer<ffi.Opaque> val) {
+    final struct = ffi.Struct.create<_ResultOpaqueDecimalLimitErrorFfi>();
     struct.isOk = true;
     struct.union.ok = val;
     return struct;
   }
   // ignore: unused_element
-  factory _ResultOpaqueFixedDecimalLimitErrorFfi.err() {
-    final struct = ffi.Struct.create<_ResultOpaqueFixedDecimalLimitErrorFfi>();
+  factory _ResultOpaqueDecimalLimitErrorFfi.err() {
+    final struct = ffi.Struct.create<_ResultOpaqueDecimalLimitErrorFfi>();
     struct.isOk = false;
     return struct;
   }

@@ -223,9 +223,9 @@ int main() {
         return 1;
     }
 
-    std::unique_ptr<TimeZoneInfo> time_zone_info = time_zone->with_offset(*utc_offset.get())->at_time(*date.get(), *time.get());
+    std::unique_ptr<TimeZoneInfo> time_zone_info = time_zone->with_offset(*utc_offset.get())->at_date_time_iso(*date.get(), *time.get());
     
-    time_zone_info->infer_zone_variant(*VariantOffsetsCalculator::create().get());
+    time_zone_info->infer_variant(*VariantOffsetsCalculator::create().get());
 
     std::unique_ptr<TimeZoneFormatter> fmt_generic_short = TimeZoneFormatter::create_generic_short(*locale.get()).ok().value();
     out = fmt_generic_short->format(*time_zone_info.get()).ok().value();

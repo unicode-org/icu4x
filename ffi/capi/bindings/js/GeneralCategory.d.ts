@@ -4,7 +4,7 @@ import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
 /** 
- * See the [Rust documentation for `GeneralCategory`](https://docs.rs/icu/latest/icu/properties/props/struct.GeneralCategory.html) for more information.
+ * See the [Rust documentation for `GeneralCategory`](https://docs.rs/icu/latest/icu/properties/props/enum.GeneralCategory.html) for more information.
  */
 
 
@@ -70,8 +70,6 @@ export class GeneralCategory {
 
     /** 
      * Convert to an integer value usable with ICU4C and CodePointMapData
-     *
-     * See the [Rust documentation for `to_icu4c_value`](https://docs.rs/icu/latest/icu/properties/props/struct.GeneralCategory.html#method.to_icu4c_value) for more information.
      */
     toIntegerValue(): number;
 
@@ -85,8 +83,6 @@ export class GeneralCategory {
     /** 
      * Convert from an integer using the ICU4C integer mappings for `General_Category`
      * Convert from an integer value from ICU4C or CodePointMapData
-     *
-     * See the [Rust documentation for `from_icu4c_value`](https://docs.rs/icu/latest/icu/properties/props/struct.GeneralCategory.html#method.from_icu4c_value) for more information.
      */
     static fromIntegerValue(other: number): GeneralCategory | null;
 

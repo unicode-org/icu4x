@@ -6,7 +6,7 @@
 //!
 //! # Fields
 //!
-//! In ICU4X, a [formattable time zone] consists of up to four different fields:
+//! In ICU4X, a [`TimeZoneInfo`] consists of up to four different fields:
 //!
 //! 1. The time zone ID
 //! 2. The offset from UTC
@@ -37,8 +37,8 @@
 //! ## Timestamp
 //!
 //! Some time zones change names over time, such as when changing "metazone". For example, Portugal changed from
-//! "Western European Time" to "Central European Time" and back in the 1990s, without changing time zone id
-//! (`Europe/Lisbon`/`ptlis`). Therefore, a timestamp is needed to resolve such generic time zone names.
+//! "Western European Time" to "Central European Time" and back in the 1990s, without changing time zone ID
+//! (`Europe/Lisbon`, `ptlis`). Therefore, a timestamp is needed to resolve such generic time zone names.
 //!
 //! It is not required to set the timestamp on [`TimeZoneInfo`]. If it is not set, some string
 //! formats may be unsupported.
@@ -55,37 +55,15 @@
 //! Note: It is not required to set the zone variant on [`TimeZoneInfo`]. If it is not set, some string
 //! formats may be unsupported.
 //!
-//! # Examples
+//! # Obtaining time zone information
 //!
-//! ```
-//! use icu::calendar::Date;
-//! use icu::time::zone::IanaParser;
-//! use icu::time::zone::TimeZoneVariant;
-//! use icu::time::Time;
-//! use icu::time::TimeZone;
-//! use tinystr::tinystr;
-//!
-//! // Parse the IANA ID
-//! let id = IanaParser::new().parse("America/Chicago");
-//!
-//! // Alternatively, use the BCP47 ID directly
-//! let id = TimeZone(tinystr!(8, "uschi"));
-//!
-//! // Create a TimeZoneInfo<Base> by associating the ID with an offset
-//! let time_zone = id.with_offset("-0600".parse().ok());
-//!
-//! // Extend to a TimeZoneInfo<AtTime> by adding a local time
-//! let time_zone_at_time = time_zone
-//!     .at_time((Date::try_new_iso(2023, 12, 2).unwrap(), Time::midnight()));
-//!
-//! // Extend to a TimeZoneInfo<Full> by adding a zone variant
-//! let time_zone_with_variant =
-//!     time_zone_at_time.with_zone_variant(TimeZoneVariant::Standard);
-//! ```
+//! This crate does not ship time zone offset information. Other Rust crates such as [`chrono_tz`](https://docs.rs/chrono-tz) or [`jiff`](https://docs.rs/jiff)
+//! are available for this purpose. See our [`example`](https://github.com/unicode-org/icu4x/blob/main/components/icu/examples/chrono_jiff.rs).
 
 pub mod iana;
 mod offset;
 pub mod windows;
+mod zone_name_timestamp;
 
 #[doc(inline)]
 pub use offset::InvalidOffsetError;
@@ -95,16 +73,19 @@ pub use offset::VariantOffsetsCalculator;
 pub use offset::VariantOffsetsCalculatorBorrowed;
 
 #[doc(no_inline)]
-pub use iana::IanaParser;
+pub use iana::{IanaParser, IanaParserBorrowed};
 #[doc(no_inline)]
-pub use windows::WindowsParser;
+pub use windows::{WindowsParser, WindowsParserBorrowed};
 
-use crate::{scaffold::IntoOption, Time};
+pub use zone_name_timestamp::ZoneNameTimestamp;
+
+use crate::scaffold::IntoOption;
+use crate::DateTime;
 use core::fmt;
 use core::ops::Deref;
-use icu_calendar::{Date, Iso};
+use icu_calendar::Iso;
+use icu_locale_core::subtags::{subtag, Subtag};
 use icu_provider::prelude::yoke;
-use tinystr::TinyAsciiStr;
 use zerovec::ule::{AsULE, ULE};
 use zerovec::{ZeroSlice, ZeroVec};
 
@@ -125,7 +106,7 @@ pub mod models {
         /// The zone variant, if required for this time zone model.
         type TimeZoneVariant: IntoOption<TimeZoneVariant> + fmt::Debug + Copy;
         /// The local time, if required for this time zone model.
-        type LocalTime: IntoOption<(Date<Iso>, Time)> + fmt::Debug + Copy;
+        type ZoneNameTimestamp: IntoOption<ZoneNameTimestamp> + fmt::Debug + Copy;
     }
 
     /// A time zone containing a time zone ID and optional offset.
@@ -136,7 +117,7 @@ pub mod models {
     impl private::Sealed for Base {}
     impl TimeZoneModel for Base {
         type TimeZoneVariant = ();
-        type LocalTime = ();
+        type ZoneNameTimestamp = ();
     }
 
     /// A time zone containing a time zone ID, optional offset, and local time.
@@ -147,7 +128,7 @@ pub mod models {
     impl private::Sealed for AtTime {}
     impl TimeZoneModel for AtTime {
         type TimeZoneVariant = ();
-        type LocalTime = (Date<Iso>, Time);
+        type ZoneNameTimestamp = ZoneNameTimestamp;
     }
 
     /// A time zone containing a time zone ID, optional offset, local time, and zone variant.
@@ -158,7 +139,7 @@ pub mod models {
     impl private::Sealed for Full {}
     impl TimeZoneModel for Full {
         type TimeZoneVariant = TimeZoneVariant;
-        type LocalTime = (Date<Iso>, Time);
+        type ZoneNameTimestamp = ZoneNameTimestamp;
     }
 }
 
@@ -174,32 +155,34 @@ pub mod models {
 /// "Germany Time". On the other hand `Europe/Belfast` and `Europe/London` are the same
 /// CLDR identity ("UK Time").
 ///
+/// See the docs on [`zone`](crate::zone) for more information.
+///
 /// ```
 /// use icu::time::zone::{IanaParser, TimeZone};
-/// use tinystr::tinystr;
+/// use icu::locale::subtags::subtag;
 ///
 /// let parser = IanaParser::new();
-/// assert_eq!(parser.parse("Europe/Oslo"), TimeZone(tinystr!(8, "noosl")));
+/// assert_eq!(parser.parse("Europe/Oslo"), TimeZone(subtag!("noosl")));
 /// assert_eq!(
 ///     parser.parse("Europe/Berlin"),
-///     TimeZone(tinystr!(8, "deber"))
+///     TimeZone(subtag!("deber"))
 /// );
 /// assert_eq!(
 ///     parser.parse("Europe/Belfast"),
-///     TimeZone(tinystr!(8, "gblon"))
+///     TimeZone(subtag!("gblon"))
 /// );
 /// assert_eq!(
 ///     parser.parse("Europe/London"),
-///     TimeZone(tinystr!(8, "gblon"))
+///     TimeZone(subtag!("gblon"))
 /// );
 /// ```
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, Eq, Ord, PartialEq, PartialOrd, yoke::Yokeable, ULE, Hash)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
-#[cfg_attr(feature = "datagen", databake(path = icu_time))]
+#[cfg_attr(feature = "datagen", databake(path = icu_time::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[allow(clippy::exhaustive_structs)] // This is a stable newtype
-pub struct TimeZone(pub TinyAsciiStr<8>);
+pub struct TimeZone(pub Subtag);
 
 impl TimeZone {
     /// The synthetic `Etc/Unknown` time zone.
@@ -207,7 +190,7 @@ impl TimeZone {
     /// This is the result of parsing unknown zones. It's important that such parsing does not
     /// fail, as new zones are added all the time, and ICU4X might not be up to date.
     pub const fn unknown() -> Self {
-        Self(tinystr::tinystr!(8, "unk"))
+        Self(subtag!("unk"))
     }
 }
 
@@ -217,7 +200,7 @@ pub(crate) mod ule {
     ///
     /// This should not generally be constructed by client code. Instead, use
     /// * [`TimeZoneVariant::from_rearguard_isdst`]
-    /// * [`TimeZoneInfo::infer_zone_variant`](crate::TimeZoneInfo::infer_zone_variant)
+    /// * [`TimeZoneInfo::infer_variant`](crate::TimeZoneInfo::infer_variant)
     #[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd, Hash)]
     #[zerovec::make_ule(TimeZoneVariantULE)]
     #[repr(u8)]
@@ -245,7 +228,7 @@ pub(crate) mod ule {
 pub use ule::TimeZoneVariant;
 
 impl Deref for TimeZone {
-    type Target = TinyAsciiStr<8>;
+    type Target = Subtag;
 
     fn deref(&self) -> &Self::Target {
         &self.0
@@ -276,13 +259,44 @@ impl<'a> zerovec::maps::ZeroMapKV<'a> for TimeZone {
 /// A utility type that can hold time zone information.
 ///
 /// **The primary definition of this type is in the [`icu_time`](https://docs.rs/icu_time) crate. Other ICU4X crates re-export it for convenience.**
+///
+/// See the docs on [`zone`](self) for more information.
+///
+/// # Examples
+///
+/// ```
+/// use icu::calendar::Date;
+/// use icu::time::zone::IanaParser;
+/// use icu::time::zone::TimeZoneVariant;
+/// use icu::time::DateTime;
+/// use icu::time::Time;
+/// use icu::time::TimeZone;
+/// use icu::locale::subtags::subtag;
+///
+/// // Parse the IANA ID
+/// let id = IanaParser::new().parse("America/Chicago");
+///
+/// // Alternatively, use the BCP47 ID directly
+/// let id = TimeZone(subtag!("uschi"));
+///
+/// // Create a TimeZoneInfo<Base> by associating the ID with an offset
+/// let time_zone = id.with_offset("-0600".parse().ok());
+///
+/// // Extend to a TimeZoneInfo<AtTime> by adding a local time
+/// let time_zone_at_time = time_zone
+///     .at_date_time_iso(DateTime { date: Date::try_new_iso(2023, 12, 2).unwrap(), time: Time::start_of_day() });
+///
+/// // Extend to a TimeZoneInfo<Full> by adding a zone variant
+/// let time_zone_with_variant =
+///     time_zone_at_time.with_variant(TimeZoneVariant::Standard);
+/// ```
 #[derive(Debug, PartialEq, Eq)]
 #[allow(clippy::exhaustive_structs)] // these four fields fully cover the needs of UTS 35
 pub struct TimeZoneInfo<Model: models::TimeZoneModel> {
-    time_zone_id: TimeZone,
+    id: TimeZone,
     offset: Option<UtcOffset>,
-    local_time: Model::LocalTime,
-    zone_variant: Model::TimeZoneVariant,
+    zone_name_timestamp: Model::ZoneNameTimestamp,
+    variant: Model::TimeZoneVariant,
 }
 
 impl<Model: models::TimeZoneModel> Clone for TimeZoneInfo<Model> {
@@ -295,8 +309,8 @@ impl<Model: models::TimeZoneModel> Copy for TimeZoneInfo<Model> {}
 
 impl<Model: models::TimeZoneModel> TimeZoneInfo<Model> {
     /// The BCP47 time-zone identifier.
-    pub fn time_zone_id(self) -> TimeZone {
-        self.time_zone_id
+    pub fn id(self) -> TimeZone {
+        self.id
     }
 
     /// The UTC offset, if known.
@@ -309,11 +323,11 @@ impl<Model: models::TimeZoneModel> TimeZoneInfo<Model> {
 
 impl<Model> TimeZoneInfo<Model>
 where
-    Model: models::TimeZoneModel<LocalTime = (Date<Iso>, Time)>,
+    Model: models::TimeZoneModel<ZoneNameTimestamp = ZoneNameTimestamp>,
 {
     /// The time at which to interpret the time zone.
-    pub fn local_time(self) -> (Date<Iso>, Time) {
-        self.local_time
+    pub fn zone_name_timestamp(self) -> ZoneNameTimestamp {
+        self.zone_name_timestamp
     }
 }
 
@@ -324,8 +338,8 @@ where
     /// The time variant e.g. daylight or standard, if known.
     ///
     /// This field is not enforced to be consistent with the time zone id and offset.
-    pub fn zone_variant(self) -> TimeZoneVariant {
-        self.zone_variant
+    pub fn variant(self) -> TimeZoneVariant {
+        self.variant
     }
 }
 
@@ -334,9 +348,9 @@ impl TimeZone {
     pub const fn with_offset(self, offset: Option<UtcOffset>) -> TimeZoneInfo<models::Base> {
         TimeZoneInfo {
             offset,
-            time_zone_id: self,
-            local_time: (),
-            zone_variant: (),
+            id: self,
+            zone_name_timestamp: (),
+            variant: (),
         }
     }
 
@@ -344,9 +358,9 @@ impl TimeZone {
     pub const fn without_offset(self) -> TimeZoneInfo<models::Base> {
         TimeZoneInfo {
             offset: None,
-            time_zone_id: self,
-            local_time: (),
-            zone_variant: (),
+            id: self,
+            zone_name_timestamp: (),
+            variant: (),
         }
     }
 }
@@ -359,31 +373,36 @@ impl TimeZoneInfo<models::Base> {
 
     /// Creates a new [`TimeZoneInfo`] for the UTC time zone.
     pub const fn utc() -> Self {
-        TimeZone(tinystr::tinystr!(8, "utc")).with_offset(Some(UtcOffset::zero()))
+        TimeZone(subtag!("utc")).with_offset(Some(UtcOffset::zero()))
     }
 
-    /// Sets a local time on this time zone.
-    pub const fn at_time(self, local_time: (Date<Iso>, Time)) -> TimeZoneInfo<models::AtTime> {
+    /// Sets the [`ZoneNameTimestamp`] field.
+    pub fn with_zone_name_timestamp(
+        self,
+        zone_name_timestamp: ZoneNameTimestamp,
+    ) -> TimeZoneInfo<models::AtTime> {
         TimeZoneInfo {
             offset: self.offset,
-            time_zone_id: self.time_zone_id,
-            local_time,
-            zone_variant: (),
+            id: self.id,
+            zone_name_timestamp,
+            variant: (),
         }
+    }
+
+    /// Sets the [`ZoneNameTimestamp`] to the given local datetime.
+    pub fn at_date_time_iso(self, date_time: DateTime<Iso>) -> TimeZoneInfo<models::AtTime> {
+        Self::with_zone_name_timestamp(self, ZoneNameTimestamp::from_date_time_iso(date_time))
     }
 }
 
 impl TimeZoneInfo<models::AtTime> {
-    /// Sets a zone variant on this time zone.
-    pub const fn with_zone_variant(
-        self,
-        zone_variant: TimeZoneVariant,
-    ) -> TimeZoneInfo<models::Full> {
+    /// Sets a [`TimeZoneVariant`] on this time zone.
+    pub const fn with_variant(self, variant: TimeZoneVariant) -> TimeZoneInfo<models::Full> {
         TimeZoneInfo {
             offset: self.offset,
-            time_zone_id: self.time_zone_id,
-            local_time: self.local_time,
-            zone_variant,
+            id: self.id,
+            zone_name_timestamp: self.zone_name_timestamp,
+            variant,
         }
     }
 
@@ -393,18 +412,55 @@ impl TimeZoneInfo<models::AtTime> {
     /// timezone's standard or daylight offset around `local_time()`,
     /// the variant will be set to [`TimeZoneVariant::Standard`] and the time zone
     /// to [`TimeZone::unknown()`].
-    pub fn infer_zone_variant(
+    ///
+    /// # Example
+    /// ```
+    /// use icu::calendar::Date;
+    /// use icu::time::DateTime;
+    /// use icu::time::Time;
+    /// use icu::time::TimeZone;
+    /// use icu::time::zone::TimeZoneVariant;
+    /// use icu::time::zone::VariantOffsetsCalculator;
+    /// use icu::locale::subtags::subtag;
+    ///
+    /// // Chicago at UTC-6
+    /// let info = TimeZone(subtag!("uschi"))
+    ///     .with_offset("-0600".parse().ok())
+    ///     .at_date_time_iso(DateTime { date: Date::try_new_iso(2023, 12, 2).unwrap(), time: Time::start_of_day() })
+    ///     .infer_variant(VariantOffsetsCalculator::new());
+    ///
+    /// assert_eq!(info.variant(), TimeZoneVariant::Standard);
+    ///
+    /// // Chicago at at UTC-5
+    /// let info = TimeZone(subtag!("uschi"))
+    ///     .with_offset("-0500".parse().ok())
+    ///     .at_date_time_iso(DateTime { date: Date::try_new_iso(2023, 6, 2).unwrap(), time: Time::start_of_day() })
+    ///     .infer_variant(VariantOffsetsCalculator::new());
+    ///
+    /// assert_eq!(info.variant(), TimeZoneVariant::Daylight);
+    ///
+    /// // Chicago at UTC-7
+    /// let info = TimeZone(subtag!("uschi"))
+    ///     .with_offset("-0700".parse().ok())
+    ///     .at_date_time_iso(DateTime { date: Date::try_new_iso(2023, 12, 2).unwrap(), time: Time::start_of_day() })
+    ///     .infer_variant(VariantOffsetsCalculator::new());
+    ///
+    /// // Whatever it is, it's not Chicago
+    /// assert_eq!(info.id(), TimeZone::unknown());
+    /// assert_eq!(info.variant(), TimeZoneVariant::Standard);
+    /// ```
+    pub fn infer_variant(
         self,
         calculator: VariantOffsetsCalculatorBorrowed,
     ) -> TimeZoneInfo<models::Full> {
         let Some(offset) = self.offset else {
             return TimeZone::unknown()
                 .with_offset(self.offset)
-                .at_time(self.local_time)
-                .with_zone_variant(TimeZoneVariant::Standard);
+                .with_zone_name_timestamp(self.zone_name_timestamp)
+                .with_variant(TimeZoneVariant::Standard);
         };
-        let Some(zone_variant) = calculator
-            .compute_offsets_from_time_zone(self.time_zone_id, self.local_time)
+        let Some(variant) = calculator
+            .compute_offsets_from_time_zone(self.id, self.zone_name_timestamp)
             .and_then(|os| {
                 if os.standard == offset {
                     Some(TimeZoneVariant::Standard)
@@ -417,10 +473,10 @@ impl TimeZoneInfo<models::AtTime> {
         else {
             return TimeZone::unknown()
                 .with_offset(self.offset)
-                .at_time(self.local_time)
-                .with_zone_variant(TimeZoneVariant::Standard);
+                .with_zone_name_timestamp(self.zone_name_timestamp)
+                .with_variant(TimeZoneVariant::Standard);
         };
-        self.with_zone_variant(zone_variant)
+        self.with_variant(variant)
     }
 }
 
@@ -435,7 +491,7 @@ impl TimeZoneVariant {
     /// * `Africa/Windhoek` between 1994-03-20 and 2017-10-24
     /// * `Africa/Casablanca` and `Africa/El_Aaiun` since 2018-10-28
     ///
-    /// If the TZDB build mode is unknown or variable, use [`TimeZoneInfo::infer_zone_variant`].
+    /// If the TZDB build mode is unknown or variable, use [`TimeZoneInfo::infer_variant`].
     pub const fn from_rearguard_isdst(isdst: bool) -> Self {
         if isdst {
             TimeZoneVariant::Daylight

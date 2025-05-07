@@ -9,17 +9,16 @@ use crate::{
 use icu_calendar::{
     provider::{CalendarChineseV1, CalendarDangiV1, CalendarJapaneseModernV1},
     types::{DayOfMonth, DayOfYear, MonthInfo, Weekday, YearInfo},
-    Date, Iso,
 };
 use icu_decimal::provider::{DecimalDigitsV1, DecimalSymbolsV1};
 use icu_provider::{marker::NeverMarker, prelude::*};
-use icu_time::scaffold::IntoOption;
+use icu_time::{scaffold::IntoOption, zone::ZoneNameTimestamp};
 use icu_time::{
     zone::{TimeZoneVariant, UtcOffset},
-    Hour, Minute, Nanosecond, Second, Time, TimeZone,
+    Hour, Minute, Nanosecond, Second, TimeZone,
 };
 
-// TODO: Add WeekCalculator and DecimalFormatter optional bindings here
+// TODO(#4340): Add DecimalFormatter optional bindings here
 
 /// A trait associating types for date formatting in any calendar
 /// (input types only).
@@ -124,7 +123,7 @@ pub trait ZoneMarkers: UnstableSealed {
     /// Marker for resolving the time zone variant input field.
     type TimeZoneVariantInput: IntoOption<TimeZoneVariant>;
     /// Marker for resolving the time zone non-location display names, which depend on the datetime.
-    type TimeZoneLocalTimeInput: IntoOption<(Date<Iso>, Time)>;
+    type TimeZoneNameTimestampInput: IntoOption<ZoneNameTimestamp>;
     /// Marker for loading core time zone data.
     type EssentialsV1: DataMarker<DataStruct = tz::Essentials<'static>>;
     /// Marker for loading location names for time zone formatting
@@ -191,6 +190,7 @@ pub trait DateTimeMarkers: UnstableSealed + DateTimeNamesMarker {
 /// - [`TimeZoneInfo`](icu_time::TimeZoneInfo)
 ///
 /// [`fieldsets::YMD`]: crate::fieldsets::YMD
+/// [`Time`]: icu_time::Time
 // This trait is implicitly sealed due to sealed supertraits
 pub trait AllInputMarkers<R: DateTimeMarkers>:
     GetField<<R::D as DateInputMarkers>::YearInput>
@@ -205,7 +205,7 @@ pub trait AllInputMarkers<R: DateTimeMarkers>:
     + GetField<<R::Z as ZoneMarkers>::TimeZoneIdInput>
     + GetField<<R::Z as ZoneMarkers>::TimeZoneOffsetInput>
     + GetField<<R::Z as ZoneMarkers>::TimeZoneVariantInput>
-    + GetField<<R::Z as ZoneMarkers>::TimeZoneLocalTimeInput>
+    + GetField<<R::Z as ZoneMarkers>::TimeZoneNameTimestampInput>
 where
     R::D: DateInputMarkers,
     R::T: TimeMarkers,
@@ -231,7 +231,7 @@ where
         + GetField<<R::Z as ZoneMarkers>::TimeZoneIdInput>
         + GetField<<R::Z as ZoneMarkers>::TimeZoneOffsetInput>
         + GetField<<R::Z as ZoneMarkers>::TimeZoneVariantInput>
-        + GetField<<R::Z as ZoneMarkers>::TimeZoneLocalTimeInput>,
+        + GetField<<R::Z as ZoneMarkers>::TimeZoneNameTimestampInput>,
 {
 }
 
@@ -556,7 +556,7 @@ impl ZoneMarkers for () {
     type TimeZoneIdInput = ();
     type TimeZoneOffsetInput = ();
     type TimeZoneVariantInput = ();
-    type TimeZoneLocalTimeInput = ();
+    type TimeZoneNameTimestampInput = ();
     type EssentialsV1 = NeverMarker<tz::Essentials<'static>>;
     type LocationsV1 = NeverMarker<tz::Locations<'static>>;
     type LocationsRootV1 = NeverMarker<tz::Locations<'static>>;
@@ -608,13 +608,13 @@ macro_rules! datetime_marker_helper {
         NeverMarker<LinearNames<'static>>
     };
     (@times, yes) => {
-        TimeNeoSkeletonPatternsV1
+        DatetimePatternsTimeV1
     };
     (@times,) => {
         NeverMarker<ErasedPackedPatterns>
     };
     (@glue, yes) => {
-        GluePatternV1
+        DatetimePatternsGlueV1
     };
     (@glue,) => {
         NeverMarker<GluePattern<'static>>
@@ -680,7 +680,7 @@ macro_rules! datetime_marker_helper {
         TimeZoneVariant
     };
     (@input/timezone/local_time, yes) => {
-        (Date<Iso>, Time)
+        ZoneNameTimestamp
     };
     (@input/timezone/$any:ident,) => {
         ()
@@ -692,16 +692,16 @@ macro_rules! datetime_marker_helper {
         tz::EssentialsV1
     };
     (@data/zone/locations, yes) => {
-        tz::LocationsV1
+        tz::LocationsOverrideV1
     };
     (@data/zone/locations_root, yes) => {
         tz::LocationsRootV1
     };
     (@data/zone/exemplars, yes) => {
-        tz::ExemplarCitiesV1
+        tz::CitiesOverrideV1
     };
     (@data/zone/exemplars_root, yes) => {
-        tz::ExemplarCitiesRootV1
+        tz::CitiesRootV1
     };
     (@data/zone/generic_long, yes) => {
         tz::MzGenericLongV1
@@ -770,16 +770,16 @@ macro_rules! datetime_marker_helper {
         tz::EssentialsV1
     };
     (@names/zone/locations, yes) => {
-        tz::LocationsV1
+        tz::LocationsOverrideV1
     };
     (@names/zone/locations_root, yes) => {
         tz::LocationsRootV1
     };
     (@names/zone/exemplars, yes) => {
-        tz::ExemplarCitiesV1
+        tz::CitiesOverrideV1
     };
     (@names/zone/exemplars_root, yes) => {
-        tz::ExemplarCitiesRootV1
+        tz::CitiesRootV1
     };
     (@names/zone/generic_long, yes) => {
         tz::MzGenericLongV1

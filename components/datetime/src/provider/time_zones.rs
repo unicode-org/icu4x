@@ -9,98 +9,98 @@ use icu_pattern::{DoublePlaceholderPattern, SinglePlaceholderPattern};
 use icu_provider::prelude::*;
 use zerovec::{ule::NichedOption, ZeroMap, ZeroMap2d, ZeroVec};
 
-use icu_time::{provider::MinutesSinceEpoch, zone::TimeZoneVariant, TimeZone};
+use icu_time::{zone::TimeZoneVariant, zone::ZoneNameTimestamp, TimeZone};
 
 /// Time zone type aliases for cleaner code
 pub(crate) mod tz {
     pub(crate) use super::ExemplarCities;
-    pub(crate) use super::ExemplarCitiesRootV1;
-    pub(crate) use super::ExemplarCitiesV1;
     pub(crate) use super::Locations;
-    pub(crate) use super::LocationsRootV1;
-    pub(crate) use super::LocationsV1;
     pub(crate) use super::MetazoneGenericNames as MzGeneric;
-    pub(crate) use super::MetazoneGenericNamesLongV1 as MzGenericLongV1;
-    pub(crate) use super::MetazoneGenericNamesShortV1 as MzGenericShortV1;
     pub(crate) use super::MetazonePeriod as MzPeriod;
-    pub(crate) use super::MetazonePeriodV1 as MzPeriodV1;
     pub(crate) use super::MetazoneSpecificNames as MzSpecific;
-    pub(crate) use super::MetazoneSpecificNamesLongV1 as MzSpecificLongV1;
-    pub(crate) use super::MetazoneSpecificNamesShortV1 as MzSpecificShortV1;
-    pub(crate) use super::MetazoneStandardNamesLongV1 as MzStandardLongV1;
     pub(crate) use super::TimeZoneEssentials as Essentials;
-    pub(crate) use super::TimeZoneEssentialsV1 as EssentialsV1;
+    pub(crate) use super::TimezoneMetazonePeriodsV1 as MzPeriodV1;
+    pub(crate) use super::TimezoneNamesCitiesOverrideV1 as CitiesOverrideV1;
+    pub(crate) use super::TimezoneNamesCitiesRootV1 as CitiesRootV1;
+    pub(crate) use super::TimezoneNamesEssentialsV1 as EssentialsV1;
+    pub(crate) use super::TimezoneNamesGenericLongV1 as MzGenericLongV1;
+    pub(crate) use super::TimezoneNamesGenericShortV1 as MzGenericShortV1;
+    pub(crate) use super::TimezoneNamesLocationsOverrideV1 as LocationsOverrideV1;
+    pub(crate) use super::TimezoneNamesLocationsRootV1 as LocationsRootV1;
+    pub(crate) use super::TimezoneNamesSpecificLongV1 as MzSpecificLongV1;
+    pub(crate) use super::TimezoneNamesSpecificShortV1 as MzSpecificShortV1;
+    pub(crate) use super::TimezoneNamesStandardLongV1 as MzStandardLongV1;
 }
 
 icu_provider::data_marker!(
-    /// `TimeZoneEssentialsV1`
-    TimeZoneEssentialsV1,
+    /// `TimezoneNamesEssentialsV1`
+    TimezoneNamesEssentialsV1,
     TimeZoneEssentials<'static>
 );
 icu_provider::data_marker!(
-    /// `LocationsV1`
-    LocationsV1,
+    /// `TimezoneNamesLocationsOverrideV1`
+    TimezoneNamesLocationsOverrideV1,
     Locations<'static>
 );
 icu_provider::data_marker!(
-    /// `LocationsRootV1`
-    LocationsRootV1,
+    /// `TimezoneNamesLocationsRootV1`
+    TimezoneNamesLocationsRootV1,
     Locations<'static>
 );
 icu_provider::data_marker!(
-    /// `ExemplarCitiesV1`
-    ExemplarCitiesV1,
+    /// `TimezoneNamesCitiesOverrideV1`
+    TimezoneNamesCitiesOverrideV1,
     ExemplarCities<'static>
 );
 icu_provider::data_marker!(
-    /// `ExemplarCitiesRootV1`
-    ExemplarCitiesRootV1,
+    /// `TimezoneNamesCitiesRootV1`
+    TimezoneNamesCitiesRootV1,
     ExemplarCities<'static>
 );
 
 icu_provider::data_marker!(
-    /// `MetazoneGenericNamesLongV1`
+    /// `TimezoneNamesGenericLongV1`
     ///
-    /// Checksumed to ensure consistency with [`MetazonePeriodV1`].
-    MetazoneGenericNamesLongV1,
+    /// Checksumed to ensure consistency with [`TimezoneMetazonePeriodsV1`].
+    TimezoneNamesGenericLongV1,
     MetazoneGenericNames<'static>,
     has_checksum = true
 );
 icu_provider::data_marker!(
-    /// `MetazoneGenericNamesShortV1`
+    /// `TimezoneNamesGenericShortV1`
     ///
-    /// Checksumed to ensure consistency with [`MetazonePeriodV1`].
-    MetazoneGenericNamesShortV1,
+    /// Checksumed to ensure consistency with [`TimezoneMetazonePeriodsV1`].
+    TimezoneNamesGenericShortV1,
     MetazoneGenericNames<'static>,
     has_checksum = true
 );
 icu_provider::data_marker!(
-    /// `MetazoneStandardNamesLongV1`
+    /// `TimezoneNamesStandardLongV1`
     ///
-    /// Checksumed to ensure consistency with [`MetazonePeriodV1`].
-    MetazoneStandardNamesLongV1,
+    /// Checksumed to ensure consistency with [`TimezoneMetazonePeriodsV1`].
+    TimezoneNamesStandardLongV1,
     MetazoneGenericNames<'static>,
     has_checksum = true
 );
 icu_provider::data_marker!(
-    /// `MetazoneSpecificNamesLongV1`
+    /// `TimezoneNamesSpecificLongV1`
     ///
-    /// Checksumed to ensure consistency with [`MetazonePeriodV1`].
-    MetazoneSpecificNamesLongV1,
+    /// Checksumed to ensure consistency with [`TimezoneMetazonePeriodsV1`].
+    TimezoneNamesSpecificLongV1,
     MetazoneSpecificNames<'static>,
     has_checksum = true
 );
 icu_provider::data_marker!(
-    /// `MetazoneSpecificNamesShortV1`
+    /// `TimezoneNamesSpecificShortV1`
     ///
-    /// Checksumed to ensure consistency with [`MetazonePeriodV1`].
-    MetazoneSpecificNamesShortV1,
+    /// Checksumed to ensure consistency with [`TimezoneMetazonePeriodsV1`].
+    TimezoneNamesSpecificShortV1,
     MetazoneSpecificNames<'static>,
     has_checksum = true,
 );
 icu_provider::data_marker!(
-    /// `MetazonePeriodV1`
-    MetazonePeriodV1,
+    /// `TimezoneMetazonePeriodsV1`
+    TimezoneMetazonePeriodsV1,
     MetazonePeriod<'static>,
     is_singleton = true,
     has_checksum = true
@@ -315,9 +315,9 @@ pub type MetazoneId = core::num::NonZeroU8;
 #[yoke(prove_covariance_manually)]
 pub struct MetazonePeriod<'data> {
     /// The default mapping between period and offsets. The second level key is a wall-clock time encoded as
-    /// [`MinutesSinceEpoch`]. It represents when the metazone started to be used.
+    /// [`ZoneNameTimestamp`]. It represents when the metazone started to be used.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub list: ZeroMap2d<'data, TimeZone, MinutesSinceEpoch, NichedOption<MetazoneId, 1>>,
+    pub list: ZeroMap2d<'data, TimeZone, ZoneNameTimestamp, NichedOption<MetazoneId, 1>>,
 }
 
 icu_provider::data_struct!(

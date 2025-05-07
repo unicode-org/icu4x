@@ -12,8 +12,11 @@ use std::collections::HashSet;
 use std::hash::Hasher;
 use zerotrie::ZeroAsciiIgnoreCaseTrie;
 
-impl DataProvider<TimeZoneIanaMapV1> for SourceDataProvider {
-    fn load(&self, _: DataRequest) -> Result<DataResponse<TimeZoneIanaMapV1>, DataError> {
+impl DataProvider<TimezoneIdentifiersIanaCoreV1> for SourceDataProvider {
+    fn load(
+        &self,
+        _: DataRequest,
+    ) -> Result<DataResponse<TimezoneIdentifiersIanaCoreV1>, DataError> {
         let iana2bcp = self.iana_to_bcp47_map()?;
         let bcp2iana = self.bcp47_to_canonical_iana_map()?;
 
@@ -66,14 +69,17 @@ impl DataProvider<TimeZoneIanaMapV1> for SourceDataProvider {
     }
 }
 
-impl crate::IterableDataProviderCached<TimeZoneIanaMapV1> for SourceDataProvider {
+impl crate::IterableDataProviderCached<TimezoneIdentifiersIanaCoreV1> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
     }
 }
 
-impl DataProvider<TimeZoneIanaNamesV1> for SourceDataProvider {
-    fn load(&self, _: DataRequest) -> Result<DataResponse<TimeZoneIanaNamesV1>, DataError> {
+impl DataProvider<TimezoneIdentifiersIanaExtendedV1> for SourceDataProvider {
+    fn load(
+        &self,
+        _: DataRequest,
+    ) -> Result<DataResponse<TimezoneIdentifiersIanaExtendedV1>, DataError> {
         let iana2bcp = self.iana_to_bcp47_map()?;
         let bcp2iana = self.bcp47_to_canonical_iana_map()?;
 
@@ -112,7 +118,7 @@ impl DataProvider<TimeZoneIanaNamesV1> for SourceDataProvider {
     }
 }
 
-impl crate::IterableDataProviderCached<TimeZoneIanaNamesV1> for SourceDataProvider {
+impl crate::IterableDataProviderCached<TimezoneIdentifiersIanaExtendedV1> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
     }
@@ -130,10 +136,12 @@ fn compute_bcp47_ids_hash(bcp47_ids: &Vec<TimeZone>) -> u64 {
 
 #[test]
 fn test_compute_bcp47_ids_hash() {
+    use icu::locale::subtags::subtag;
+
     let bcp47_ids = vec![
-        TimeZone(tinystr::tinystr!(8, "aedxb")),
-        TimeZone(tinystr::tinystr!(8, "brfor")),
-        TimeZone(tinystr::tinystr!(8, "usinvev")),
+        TimeZone(subtag!("aedxb")),
+        TimeZone(subtag!("brfor")),
+        TimeZone(subtag!("usinvev")),
     ];
 
     // Checksum 1: the default output of the hashing function
@@ -143,9 +151,9 @@ fn test_compute_bcp47_ids_hash() {
     // Checksum 3: hashing of a ZeroVec in a different order
     // (should not equal 1)
     let bcp47_ids_rev = vec![
-        TimeZone(tinystr::tinystr!(8, "usinvev")),
-        TimeZone(tinystr::tinystr!(8, "aedxb")),
-        TimeZone(tinystr::tinystr!(8, "brfor")),
+        TimeZone(subtag!("usinvev")),
+        TimeZone(subtag!("aedxb")),
+        TimeZone(subtag!("brfor")),
     ];
     let checksum3 = compute_bcp47_ids_hash(&bcp47_ids_rev);
     assert_ne!(checksum1, checksum3);
@@ -153,42 +161,15 @@ fn test_compute_bcp47_ids_hash() {
     // Checksum 4: moving letters between the elements should change the hash
     // (should not equal 1)
     let bcp47_ids_roll = vec![
-        TimeZone(tinystr::tinystr!(8, "aedx")),
-        TimeZone(tinystr::tinystr!(8, "bbrfor")),
-        TimeZone(tinystr::tinystr!(8, "usinvev")),
+        TimeZone(subtag!("aedx")),
+        TimeZone(subtag!("bbrfor")),
+        TimeZone(subtag!("usinvev")),
     ];
     let checksum4 = compute_bcp47_ids_hash(&bcp47_ids_roll);
     assert_ne!(checksum1, checksum4);
 
-    // Checksum 5: empty strings at the end should change the hash
-    // (should not equal 1)
-    let bcp47_ids_empty_end = vec![
-        TimeZone(tinystr::tinystr!(8, "aedxb")),
-        TimeZone(tinystr::tinystr!(8, "brfor")),
-        TimeZone(tinystr::tinystr!(8, "usinvev")),
-        TimeZone(tinystr::tinystr!(8, "")),
-    ];
-    let checksum5 = compute_bcp47_ids_hash(&bcp47_ids_empty_end);
-    assert_ne!(checksum1, checksum5);
-
-    // Checksum 6: empty strings in the middle should change the hash
-    // (should not equal 1 or 5)
-    let bcp47_ids_empty_middle = vec![
-        TimeZone(tinystr::tinystr!(8, "aedxb")),
-        TimeZone(tinystr::tinystr!(8, "")),
-        TimeZone(tinystr::tinystr!(8, "brfor")),
-        TimeZone(tinystr::tinystr!(8, "usinvev")),
-    ];
-    let checksum6 = compute_bcp47_ids_hash(&bcp47_ids_empty_middle);
-    assert_ne!(checksum1, checksum6);
-    assert_ne!(checksum5, checksum6);
-
     // Additional coverage
     assert_ne!(checksum3, checksum4);
-    assert_ne!(checksum3, checksum5);
-    assert_ne!(checksum3, checksum6);
-    assert_ne!(checksum4, checksum5);
-    assert_ne!(checksum4, checksum6);
 }
 
 /// Tests that all IANA time zone IDs normalize and canonicalize to their correct form.
@@ -204,9 +185,9 @@ fn test_normalize_canonicalize_iana_coverage() {
 
     for (iana_id, bcp47) in iana2bcp {
         let unnormalized = iana_id.to_ascii_uppercase();
-        let (tz, canonicalized, normalized) = parser.parse(&unnormalized);
-        assert_eq!(tz, *bcp47);
-        assert_eq!(&canonicalized, bcp2iana.get(bcp47).unwrap());
-        assert_eq!(&normalized, iana_id);
+        let r = parser.parse(&unnormalized);
+        assert_eq!(r.time_zone, *bcp47);
+        assert_eq!(r.canonical, bcp2iana.get(bcp47).unwrap());
+        assert_eq!(r.normalized, iana_id);
     }
 }

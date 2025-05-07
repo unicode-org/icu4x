@@ -30,30 +30,6 @@ pub struct GraphemeClusterBreakIterator<'data, 's, Y: RuleBreakType>(
 
 derive_usize_iterator_with_type!(GraphemeClusterBreakIterator, 'data);
 
-/// Grapheme cluster break iterator for an `str` (a UTF-8 string).
-///
-/// For examples of use, see [`GraphemeClusterSegmenter`].
-pub type GraphemeClusterBreakIteratorUtf8<'data, 's> =
-    GraphemeClusterBreakIterator<'data, 's, Utf8>;
-
-/// Grapheme cluster break iterator for a potentially invalid UTF-8 string.
-///
-/// For examples of use, see [`GraphemeClusterSegmenter`].
-pub type GraphemeClusterBreakIteratorPotentiallyIllFormedUtf8<'data, 's> =
-    GraphemeClusterBreakIterator<'data, 's, PotentiallyIllFormedUtf8>;
-
-/// Grapheme cluster break iterator for a Latin-1 (8-bit) string.
-///
-/// For examples of use, see [`GraphemeClusterSegmenter`].
-pub type GraphemeClusterBreakIteratorLatin1<'data, 's> =
-    GraphemeClusterBreakIterator<'data, 's, Latin1>;
-
-/// Grapheme cluster break iterator for a UTF-16 string.
-///
-/// For examples of use, see [`GraphemeClusterSegmenter`].
-pub type GraphemeClusterBreakIteratorUtf16<'data, 's> =
-    GraphemeClusterBreakIterator<'data, 's, Utf16>;
-
 /// Segments a string into grapheme clusters.
 ///
 /// Supports loading grapheme cluster break data, and creating grapheme cluster break iterators for
@@ -185,7 +161,7 @@ impl GraphemeClusterSegmenter {
 
 impl<'data> GraphemeClusterSegmenterBorrowed<'data> {
     /// Creates a grapheme cluster break iterator for an `str` (a UTF-8 string).
-    pub fn segment_str<'s>(self, input: &'s str) -> GraphemeClusterBreakIteratorUtf8<'data, 's> {
+    pub fn segment_str<'s>(self, input: &'s str) -> GraphemeClusterBreakIterator<'data, 's, Utf8> {
         GraphemeClusterBreakIterator(RuleBreakIterator {
             iter: input.char_indices(),
             len: input.len(),
@@ -206,7 +182,7 @@ impl<'data> GraphemeClusterSegmenterBorrowed<'data> {
     pub fn segment_utf8<'s>(
         self,
         input: &'s [u8],
-    ) -> GraphemeClusterBreakIteratorPotentiallyIllFormedUtf8<'data, 's> {
+    ) -> GraphemeClusterBreakIterator<'data, 's, PotentiallyIllFormedUtf8> {
         GraphemeClusterBreakIterator(RuleBreakIterator {
             iter: Utf8CharIndices::new(input),
             len: input.len(),
@@ -225,7 +201,7 @@ impl<'data> GraphemeClusterSegmenterBorrowed<'data> {
     pub fn segment_latin1<'s>(
         self,
         input: &'s [u8],
-    ) -> GraphemeClusterBreakIteratorLatin1<'data, 's> {
+    ) -> GraphemeClusterBreakIterator<'data, 's, Latin1> {
         GraphemeClusterBreakIterator(RuleBreakIterator {
             iter: Latin1Indices::new(input),
             len: input.len(),
@@ -245,7 +221,7 @@ impl<'data> GraphemeClusterSegmenterBorrowed<'data> {
     pub fn segment_utf16<'s>(
         self,
         input: &'s [u16],
-    ) -> GraphemeClusterBreakIteratorUtf16<'data, 's> {
+    ) -> GraphemeClusterBreakIterator<'data, 's, Utf16> {
         GraphemeClusterBreakIterator(RuleBreakIterator {
             iter: Utf16Indices::new(input),
             len: input.len(),

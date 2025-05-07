@@ -283,6 +283,10 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
         DayOfYear(day_of_year + (self.day as u16))
     }
 
+    pub fn extended_year(&self) -> i32 {
+        self.year.into()
+    }
+
     /// The [`types::MonthInfo`] for the current month (with month code) for a solar calendar
     /// Lunar calendars should not use this method and instead manually implement a month code
     /// resolver.

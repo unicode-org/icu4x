@@ -4,9 +4,7 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
 /** 
- * See the [Rust documentation for `LineBreakIterator`](https://docs.rs/icu/latest/icu/segmenter/line/struct.LineBreakIterator.html) for more information.
- *
- * Additional information: [1](https://docs.rs/icu/latest/icu/segmenter/line/type.LineBreakIteratorPotentiallyIllFormedUtf8.html)
+ * See the [Rust documentation for `LineBreakIterator`](https://docs.rs/icu/latest/icu/segmenter/iterators/struct.LineBreakIterator.html) for more information.
  */
 const LineBreakIteratorUtf8_box_destroy_registry = new FinalizationRegistry((ptr) => {
     wasm.icu4x_LineBreakIteratorUtf8_destroy_mv1(ptr);
@@ -49,7 +47,7 @@ export class LineBreakIteratorUtf8 {
      * Finds the next breakpoint. Returns -1 if at the end of the string or if the index is
      * out of range of a 32-bit signed integer.
      *
-     * See the [Rust documentation for `next`](https://docs.rs/icu/latest/icu/segmenter/line/struct.LineBreakIterator.html#method.next) for more information.
+     * See the [Rust documentation for `next`](https://docs.rs/icu/latest/icu/segmenter/iterators/struct.LineBreakIterator.html#method.next) for more information.
      */
     next() {
         const result = wasm.icu4x_LineBreakIteratorUtf8_next_mv1(this.ffiValue);

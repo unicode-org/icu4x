@@ -54,7 +54,7 @@ export class Locale {
     static fromString(name) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
-        const nameSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, name));
+        const nameSlice = diplomatRuntime.DiplomatBuf.str8(wasm, name);
         
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
@@ -76,12 +76,12 @@ export class Locale {
     }
 
     /** 
-     * Construct a default undefined [`Locale`] "und".
+     * Construct a unknown [`Locale`] "und".
      *
-     * See the [Rust documentation for `default`](https://docs.rs/icu/latest/icu/locale/struct.Locale.html#method.default) for more information.
+     * See the [Rust documentation for `UNKNOWN`](https://docs.rs/icu/latest/icu/locale/struct.Locale.html#associatedconstant.UNKNOWN) for more information.
      */
-    static und() {
-        const result = wasm.icu4x_Locale_und_mv1();
+    static unknown() {
+        const result = wasm.icu4x_Locale_unknown_mv1();
     
         try {
             return new Locale(diplomatRuntime.internalConstructor, result, []);
@@ -132,7 +132,7 @@ export class Locale {
     getUnicodeExtension(s) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
-        const sSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, s));
+        const sSlice = diplomatRuntime.DiplomatBuf.str8(wasm, s);
         
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
         
@@ -175,7 +175,7 @@ export class Locale {
     set language(s) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
-        const sSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, s));
+        const sSlice = diplomatRuntime.DiplomatBuf.str8(wasm, s);
         
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
@@ -223,7 +223,7 @@ export class Locale {
     set region(s) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
-        const sSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, s));
+        const sSlice = diplomatRuntime.DiplomatBuf.str8(wasm, s);
         
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
@@ -271,7 +271,7 @@ export class Locale {
     set script(s) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
-        const sSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, s));
+        const sSlice = diplomatRuntime.DiplomatBuf.str8(wasm, s);
         
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
@@ -300,7 +300,7 @@ export class Locale {
     static normalize(s) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
-        const sSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, s));
+        const sSlice = diplomatRuntime.DiplomatBuf.str8(wasm, s);
         
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
@@ -349,7 +349,7 @@ export class Locale {
     normalizingEq(other) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
-        const otherSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, other));
+        const otherSlice = diplomatRuntime.DiplomatBuf.str8(wasm, other);
         
         const result = wasm.icu4x_Locale_normalizing_eq_mv1(this.ffiValue, ...otherSlice.splat());
     
@@ -368,7 +368,7 @@ export class Locale {
     compareToString(other) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
-        const otherSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, other));
+        const otherSlice = diplomatRuntime.DiplomatBuf.str8(wasm, other);
         
         const result = wasm.icu4x_Locale_compare_to_string_mv1(this.ffiValue, ...otherSlice.splat());
     

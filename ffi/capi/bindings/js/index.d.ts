@@ -12,7 +12,7 @@ export { DisplayNamesOptions } from "./DisplayNamesOptions"
 
 export { DateTimeMismatchedCalendarError } from "./DateTimeMismatchedCalendarError"
 
-export { FixedDecimalLimitError } from "./FixedDecimalLimitError"
+export { DecimalLimitError } from "./DecimalLimitError"
 
 export { TimeZoneInvalidOffsetError } from "./TimeZoneInvalidOffsetError"
 
@@ -262,27 +262,27 @@ export { LanguageDisplay } from "./LanguageDisplay"
 
 export { CalendarError } from "./CalendarError"
 
-export { CalendarParseError } from "./CalendarParseError"
-
 export { DataError } from "./DataError"
 
 export { DateTimeFormatterLoadError } from "./DateTimeFormatterLoadError"
 
 export { DateTimeWriteError } from "./DateTimeWriteError"
 
-export { FixedDecimalParseError } from "./FixedDecimalParseError"
+export { DecimalParseError } from "./DecimalParseError"
 
 export { LocaleParseError } from "./LocaleParseError"
 
+export { Rfc9557ParseError } from "./Rfc9557ParseError"
+
 export { LocaleFallbackPriority } from "./LocaleFallbackPriority"
 
-export { FixedDecimalRoundingIncrement } from "./FixedDecimalRoundingIncrement"
+export { DecimalRoundingIncrement } from "./DecimalRoundingIncrement"
 
-export { FixedDecimalSign } from "./FixedDecimalSign"
+export { DecimalSign } from "./DecimalSign"
 
-export { FixedDecimalSignDisplay } from "./FixedDecimalSignDisplay"
+export { DecimalSignDisplay } from "./DecimalSignDisplay"
 
-export { FixedDecimalSignedRoundingMode } from "./FixedDecimalSignedRoundingMode"
+export { DecimalSignedRoundingMode } from "./DecimalSignedRoundingMode"
 
 export { ListLength } from "./ListLength"
 

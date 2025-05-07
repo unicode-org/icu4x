@@ -57,7 +57,7 @@
 //! use writeable::assert_writeable_eq;
 //!
 //! // Field set for year, month, day, hour, and minute with a medium length:
-//! let field_set = fieldsets::YMDT::medium().with_hm();
+//! let field_set = fieldsets::YMD::medium().with_time_hm();
 //!
 //! // Create a formatter for Argentinian Spanish:
 //! let locale = locale!("es-AR");
@@ -105,20 +105,15 @@ pub mod provider;
 pub(crate) mod raw;
 pub mod scaffold;
 pub(crate) mod size_test_macro;
+pub mod unchecked;
 
-pub use error::{
-    DateTimeFormatterLoadError, DateTimeWriteError, MismatchedCalendarError,
-    UnsupportedCalendarError,
-};
+pub use error::{DateTimeFormatterLoadError, MismatchedCalendarError};
 
-pub use format::DateTimeInputUnchecked;
 pub use neo::DateTimeFormatter;
 pub use neo::DateTimeFormatterPreferences;
 pub use neo::FixedCalendarDateTimeFormatter;
 pub use neo::FormattedDateTime;
-pub use neo::FormattedDateTimeUnchecked;
 pub use neo::NoCalendarFormatter;
-pub use options::Length;
 
 /// Locale preferences used by this crate
 pub mod preferences {

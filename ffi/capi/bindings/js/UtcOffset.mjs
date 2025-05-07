@@ -92,7 +92,7 @@ export class UtcOffset {
     static fromString(offset) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
         
-        const offsetSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.str8(wasm, offset));
+        const offsetSlice = diplomatRuntime.DiplomatBuf.str8(wasm, offset);
         
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         

@@ -22,11 +22,11 @@
 //!
 //! let dtf = DateTimeFormatter::try_new(
 //!     locale!("en-u-ca-buddhist").into(),
-//!     fieldsets::YMDT::medium().with_time_precision(TimePrecision::Subsecond(SubsecondDigits::S2)).zone(fieldsets::zone::SpecificShort),
+//!     fieldsets::YMDT::medium().with_time_precision(TimePrecision::Subsecond(SubsecondDigits::S2)).with_zone(fieldsets::zone::SpecificShort),
 //! )
 //! .unwrap();
 //!
-//! let dtz = ZonedDateTime::try_from_str("2023-11-20T11:35:03.5+00:00[Europe/London]", dtf.calendar(), IanaParser::new(), VariantOffsetsCalculator::new()).unwrap();
+//! let dtz = ZonedDateTime::try_full_from_str("2023-11-20T11:35:03.5+00:00[Europe/London]", dtf.calendar(), IanaParser::new(), VariantOffsetsCalculator::new()).unwrap();
 //!
 //! // Missing data is filled in on a best-effort basis, and an error is signaled.
 //! assert_writeable_parts_eq!(

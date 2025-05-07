@@ -10,6 +10,10 @@
 #include <optional>
 #include "../diplomat_runtime.hpp"
 
+namespace icu4x {
+class TimePrecision;
+}
+
 
 namespace icu4x {
 namespace capi {
@@ -35,7 +39,9 @@ namespace capi {
 
 namespace icu4x {
 /**
- * See the [Rust documentation for `TimePrecision`](https://docs.rs/icu/latest/icu/datetime/enum.TimePrecision.html) for more information.
+ * See the [Rust documentation for `TimePrecision`](https://docs.rs/icu/latest/icu/datetime/options/enum.TimePrecision.html) for more information.
+ *
+ * See the [Rust documentation for `SubsecondDigits`](https://docs.rs/icu/latest/icu/datetime/options/enum.SubsecondDigits.html) for more information.
  */
 class TimePrecision {
 public:
@@ -61,6 +67,11 @@ public:
   constexpr operator Value() const { return value; }
   // Prevent usage as boolean value
   explicit operator bool() const = delete;
+
+  /**
+   * See the [Rust documentation for `try_from_int`](https://docs.rs/icu/latest/icu/datetime/options/enum.SubsecondDigits.html#method.try_from_int) for more information.
+   */
+  inline static std::optional<icu4x::TimePrecision> from_subsecond_digits(uint8_t digits);
 
   inline icu4x::capi::TimePrecision AsFFI() const;
   inline static icu4x::TimePrecision FromFFI(icu4x::capi::TimePrecision c_enum);

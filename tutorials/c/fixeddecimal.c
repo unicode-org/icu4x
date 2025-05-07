@@ -53,7 +53,7 @@ int main() {
 
     icu4x_Decimal_multiply_pow10_mv1(decimal, 2);
 
-    icu4x_Decimal_set_sign_mv1(decimal, FixedDecimalSign_Negative);
+    icu4x_Decimal_set_sign_mv1(decimal, DecimalSign_Negative);
 
     write = diplomat_simple_write(output, 40);
 
@@ -72,12 +72,12 @@ int main() {
 
     icu4x_Decimal_destroy_mv1(decimal);
 
-    struct DiplomatStringView fixed_decimal_str = {
+    struct DiplomatStringView decimal_str = {
         "1000007.070",
         11
     };
 
-    icu4x_Decimal_from_string_mv1_result fd_result = icu4x_Decimal_from_string_mv1(fixed_decimal_str);
+    icu4x_Decimal_from_string_mv1_result fd_result = icu4x_Decimal_from_string_mv1(decimal_str);
     if (!fd_result.is_ok) {
         printf("Failed to create FixedDecimal from string.\n");
         return 1;

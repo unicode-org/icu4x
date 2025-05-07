@@ -122,8 +122,8 @@ mod test {
         let (_, skeletons) = get_data_payload();
 
         match get_best_available_format_pattern(&skeletons, &requested_fields, false) {
-            BestSkeleton::AllFieldsMatch(available_format_pattern)
-            | BestSkeleton::MissingOrExtraFields(available_format_pattern) => {
+            BestSkeleton::AllFieldsMatch(available_format_pattern, _)
+            | BestSkeleton::MissingOrExtraFields(available_format_pattern, _) => {
                 assert_eq!(
                     available_format_pattern
                         .expect_pattern("pattern should not have plural variants")
@@ -147,7 +147,7 @@ mod test {
         let (_, skeletons) = get_data_payload();
 
         match get_best_available_format_pattern(&skeletons, &requested_fields, false) {
-            BestSkeleton::MissingOrExtraFields(available_format_pattern) => {
+            BestSkeleton::MissingOrExtraFields(available_format_pattern, _) => {
                 assert_eq!(
                     available_format_pattern
                         .expect_pattern("pattern should not have plural variants")
@@ -182,7 +182,7 @@ mod test {
             &Default::default(),
             false,
         ) {
-            BestSkeleton::AllFieldsMatch(available_format_pattern) => {
+            BestSkeleton::AllFieldsMatch(available_format_pattern, _) => {
                 // TODO - Append items are needed here.
                 assert_eq!(
                     available_format_pattern
@@ -376,7 +376,7 @@ mod test {
         let (_, skeletons) = get_data_payload();
 
         match get_best_available_format_pattern(&skeletons, &requested_fields, false) {
-            BestSkeleton::AllFieldsMatch(available_format_pattern) => {
+            BestSkeleton::AllFieldsMatch(available_format_pattern, _) => {
                 assert_eq!(
                     available_format_pattern
                         .expect_pattern("pattern should not have plural variants")
@@ -399,7 +399,7 @@ mod test {
         let (_, skeletons) = get_data_payload();
 
         match get_best_available_format_pattern(&skeletons, &requested_fields, false) {
-            BestSkeleton::AllFieldsMatch(available_format_pattern) => {
+            BestSkeleton::AllFieldsMatch(available_format_pattern, _) => {
                 assert_eq!(
                     available_format_pattern
                         .expect_pattern("pattern should not have plural variants")

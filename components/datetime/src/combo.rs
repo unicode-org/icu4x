@@ -16,7 +16,7 @@ use crate::{provider::neo::*, scaffold::*};
 /// ```
 /// use icu::datetime::fieldsets::{zone::Location, Combo, E};
 ///
-/// let field_set = E::long().zone(Location);
+/// let field_set = E::long().with_zone(Location);
 /// ```
 ///
 /// Format the weekday, hour, and location-based zone:
@@ -32,7 +32,7 @@ use crate::{provider::neo::*, scaffold::*};
 /// // Note: Combo type can be elided, but it is shown here for demonstration
 /// let formatter = DateTimeFormatter::<Combo<fieldsets::ET, zone::Location>>::try_new(
 ///     locale!("en-US").into(),
-///     fieldsets::ET::short().with_hm().zone(zone::Location),
+///     fieldsets::E::short().with_time_hm().with_zone(zone::Location),
 /// )
 /// .unwrap();
 ///
@@ -64,7 +64,7 @@ use crate::{provider::neo::*, scaffold::*};
 /// let formatter =
 ///     FixedCalendarDateTimeFormatter::<_, Combo<fieldsets::ET, zone::Location>>::try_new(
 ///         locale!("en-US").into(),
-///         fieldsets::ET::short().with_hm().zone(zone::Location),
+///         fieldsets::E::short().with_time_hm().with_zone(zone::Location),
 ///     )
 ///     .unwrap();
 ///
@@ -98,7 +98,7 @@ use crate::{provider::neo::*, scaffold::*};
 /// let formatter =
 ///     DateTimeFormatter::<Combo<DateFieldSet, GenericShort>>::try_new(
 ///         locale!("en-US").into(),
-///         DateFieldSet::YMD(YMD::long()).zone(GenericShort),
+///         DateFieldSet::YMD(YMD::long()).with_zone(GenericShort),
 ///     )
 ///     .unwrap();
 ///
@@ -125,11 +125,11 @@ use crate::{provider::neo::*, scaffold::*};
 ///
 /// let formatter = FixedCalendarDateTimeFormatter::try_new(
 ///     locale!("en-US").into(),
-///     T::medium().zone(SpecificLong),
+///     T::medium().with_zone(SpecificLong),
 /// )
 /// .unwrap();
 ///
-/// let zdt = ZonedDateTime::try_from_str(
+/// let zdt = ZonedDateTime::try_full_from_str(
 ///     "2024-10-18T15:44-0700[America/Los_Angeles]",
 ///     Gregorian,
 ///     IanaParser::new(),

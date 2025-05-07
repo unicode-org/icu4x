@@ -216,12 +216,6 @@ fn assert_fixture_element<C>(
     let iso_input = DateTime::try_from_str(input, Iso).unwrap();
     let input = DateTime::try_from_str(input, calendar).unwrap();
 
-    assert!(
-        input.date.calendar().any_calendar_kind().is_some(),
-        "{} does not specify its AsCalendarKind",
-        input.date.calendar().debug_name()
-    );
-
     let input = ZonedDateTime {
         date: input.date.clone(),
         time: input.time,
@@ -431,10 +425,6 @@ fn test_time_zone_patterns() {
         let zoned_datetime = mock::parse_zoned_gregorian_from_str(&test.datetime);
 
         for (pattern_input, expect) in &test.expectations {
-            if pattern_input == "VVV" {
-                // TODO(#5658): 'VVV' format not yet supported
-                continue;
-            }
             let parsed_pattern = DateTimePattern::try_from_pattern_str(pattern_input).unwrap();
             let mut pattern_formatter =
                 FixedCalendarDateTimeNames::<Gregorian, ZoneFieldSet>::try_new(prefs).unwrap();

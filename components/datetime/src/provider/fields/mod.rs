@@ -12,6 +12,7 @@ pub(crate) mod symbols;
 use displaydoc::Display;
 pub use length::{FieldLength, FieldNumericOverrides, LengthError};
 pub use symbols::*;
+use writeable::Writeable;
 
 #[cfg(any(feature = "experimental", feature = "datagen"))]
 pub mod components;
@@ -76,6 +77,21 @@ impl Field {
         }
     }
 }
+
+impl Writeable for Field {
+    fn write_to<W: core::fmt::Write + ?Sized>(&self, sink: &mut W) -> core::fmt::Result {
+        let ch: char = self.symbol.into();
+        for _ in 0..self.length.to_len() {
+            sink.write_char(ch)?;
+        }
+        Ok(())
+    }
+    fn writeable_length_hint(&self) -> writeable::LengthHint {
+        writeable::LengthHint::exact(self.length.to_len())
+    }
+}
+
+writeable::impl_display_with_writeable!(Field);
 
 impl FieldULE {
     #[inline]

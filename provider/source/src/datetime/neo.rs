@@ -4,7 +4,6 @@
 
 use super::DatagenCalendar;
 use crate::cldr_serde::ca;
-use crate::cldr_serde::eras::EraData;
 use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;
 use icu::datetime::provider::pattern;
@@ -124,7 +123,6 @@ impl SourceDataProvider {
             &SourceDataProvider,
             &DataLocale,
             &ca::Dates,
-            &[(usize, EraData)],
             DatagenCalendar,
             Context,
             Length,
@@ -133,7 +131,6 @@ impl SourceDataProvider {
     where
         Self: IterableDataProviderCached<M>,
     {
-        let all_eras = &self.all_eras()?[&calendar];
         self.load_neo_key(req, calendar, |id, data| {
             let Some((context, length)) = marker_attrs::name_marker_attr_info(id.marker_attributes)
             else {
@@ -142,7 +139,7 @@ impl SourceDataProvider {
                     id.marker_attributes.as_str()
                 )
             };
-            conversion(self, id.locale, data, all_eras, calendar, context, length)
+            conversion(self, id.locale, data, calendar, context, length)
         })
     }
 
@@ -190,7 +187,6 @@ fn weekday_convert(
     _datagen: &SourceDataProvider,
     _locale: &DataLocale,
     data: &ca::Dates,
-    _all_eras: &[(usize, EraData)],
     _calendar: DatagenCalendar,
     context: Context,
     length: Length,
@@ -216,7 +212,6 @@ fn dayperiods_convert(
     _datagen: &SourceDataProvider,
     _locale: &DataLocale,
     data: &ca::Dates,
-    _all_eras: &[(usize, EraData)],
     _calendar: DatagenCalendar,
     context: Context,
     length: Length,
@@ -243,13 +238,12 @@ fn dayperiods_convert(
 fn eras_convert(
     datagen: &SourceDataProvider,
     locale: &DataLocale,
-    all_eras: &[(usize, EraData)],
     eras: &ca::Eras,
     calendar: DatagenCalendar,
     length: Length,
 ) -> Result<YearNames<'static>, DataError> {
     let eras = eras.load(length);
-
+    let all_eras = &datagen.all_eras()?[&calendar];
     if matches!(
         calendar,
         DatagenCalendar::JapaneseModern | DatagenCalendar::JapaneseExtended
@@ -306,10 +300,14 @@ fn eras_convert(
         let cow = VarZeroCow::from_encodeable(&kv);
         Ok(YearNames::VariableEras(cow))
     } else {
-        let mut out_eras: Vec<&str> = Vec::new();
-        for &(cldr, _) in all_eras.iter() {
+        let max_era_index = all_eras.iter().flat_map(|(_, e)| e.icu4x_era_index).max();
+        let mut out_eras: Vec<&str> =
+            vec![""; max_era_index.map(|n| n + 1).unwrap_or_default() as usize];
+        for &(cldr, ref era) in all_eras.iter() {
             if let Some(name) = eras.get(&cldr.to_string()) {
-                out_eras.push(&**name)
+                if let Some(icu4x_hardcoded_index) = era.icu4x_era_index {
+                    out_eras[icu4x_hardcoded_index as usize] = &**name;
+                }
             } else {
                 panic!("Did not find era data for era index {cldr} for {calendar:?} and {locale}");
             }
@@ -322,7 +320,6 @@ fn years_convert(
     datagen: &SourceDataProvider,
     locale: &DataLocale,
     data: &ca::Dates,
-    all_eras: &[(usize, EraData)],
     calendar: DatagenCalendar,
     context: Context,
     length: Length,
@@ -334,7 +331,7 @@ fn years_convert(
     );
 
     if let Some(ref eras) = data.eras {
-        eras_convert(datagen, locale, all_eras, eras, calendar, length)
+        eras_convert(datagen, locale, eras, calendar, length)
     } else if let Some(years) = data
         .cyclic_name_sets
         .as_ref()
@@ -361,9 +358,7 @@ fn years_convert(
 fn calendar_months(cal: DatagenCalendar) -> (usize, bool) {
     match cal {
         DatagenCalendar::Hebrew | DatagenCalendar::Chinese | DatagenCalendar::Dangi => (24, true),
-        DatagenCalendar::Coptic
-        | DatagenCalendar::Ethiopic
-        | DatagenCalendar::EthiopicAmeteAlem => (13, false),
+        DatagenCalendar::Coptic | DatagenCalendar::Ethiopic => (13, false),
         DatagenCalendar::Gregorian
         | DatagenCalendar::Buddhist
         | DatagenCalendar::JapaneseModern
@@ -379,7 +374,6 @@ fn months_convert(
     _datagen: &SourceDataProvider,
     locale: &DataLocale,
     data: &ca::Dates,
-    _all_eras: &[(usize, EraData)],
     calendar: DatagenCalendar,
     context: Context,
     length: Length,
@@ -626,79 +620,79 @@ impl_symbols_datagen!(
 
 // Years
 impl_symbols_datagen!(
-    BuddhistYearNamesV1,
+    DatetimeNamesYearBuddhistV1,
     DatagenCalendar::Buddhist,
     YEARS_KEY_LENGTHS,
     years_convert
 );
 impl_symbols_datagen!(
-    ChineseYearNamesV1,
+    DatetimeNamesYearChineseV1,
     DatagenCalendar::Chinese,
     YEARS_KEY_LENGTHS,
     years_convert
 );
 impl_symbols_datagen!(
-    CopticYearNamesV1,
+    DatetimeNamesYearCopticV1,
     DatagenCalendar::Coptic,
     YEARS_KEY_LENGTHS,
     years_convert
 );
 impl_symbols_datagen!(
-    DangiYearNamesV1,
+    DatetimeNamesYearDangiV1,
     DatagenCalendar::Dangi,
     YEARS_KEY_LENGTHS,
     years_convert
 );
 impl_symbols_datagen!(
-    EthiopianYearNamesV1,
+    DatetimeNamesYearEthiopianV1,
     DatagenCalendar::Ethiopic,
     YEARS_KEY_LENGTHS,
     years_convert
 );
 impl_symbols_datagen!(
-    GregorianYearNamesV1,
+    DatetimeNamesYearGregorianV1,
     DatagenCalendar::Gregorian,
     YEARS_KEY_LENGTHS,
     years_convert
 );
 impl_symbols_datagen!(
-    HebrewYearNamesV1,
+    DatetimeNamesYearHebrewV1,
     DatagenCalendar::Hebrew,
     YEARS_KEY_LENGTHS,
     years_convert
 );
 impl_symbols_datagen!(
-    IndianYearNamesV1,
+    DatetimeNamesYearIndianV1,
     DatagenCalendar::Indian,
     YEARS_KEY_LENGTHS,
     years_convert
 );
 impl_symbols_datagen!(
-    HijriYearNamesV1,
+    DatetimeNamesYearHijriV1,
     DatagenCalendar::Hijri,
     YEARS_KEY_LENGTHS,
     years_convert
 );
 impl_symbols_datagen!(
-    JapaneseYearNamesV1,
+    DatetimeNamesYearJapaneseV1,
     DatagenCalendar::JapaneseModern,
     YEARS_KEY_LENGTHS,
     years_convert
 );
 impl_symbols_datagen!(
-    JapaneseExtendedYearNamesV1,
+    DatetimeNamesYearJapanextV1,
     DatagenCalendar::JapaneseExtended,
     YEARS_KEY_LENGTHS,
     years_convert
 );
 impl_symbols_datagen!(
-    PersianYearNamesV1,
+    DatetimeNamesYearPersianV1,
     DatagenCalendar::Persian,
     YEARS_KEY_LENGTHS,
     years_convert
 );
 impl_symbols_datagen!(
-    RocYearNamesV1,
+    DatetimeNamesYearRocV1,
     DatagenCalendar::Roc,
     YEARS_KEY_LENGTHS,
     years_convert
@@ -706,79 +700,79 @@ impl_symbols_datagen!(
 
 // Months
 impl_symbols_datagen!(
-    BuddhistMonthNamesV1,
+    DatetimeNamesMonthBuddhistV1,
     DatagenCalendar::Buddhist,
     NORMAL_KEY_LENGTHS,
     months_convert
 );
 impl_symbols_datagen!(
-    ChineseMonthNamesV1,
+    DatetimeNamesMonthChineseV1,
     DatagenCalendar::Chinese,
     NUMERIC_MONTHS_KEY_LENGTHS, // has leap month patterns
     months_convert
 );
 impl_symbols_datagen!(
-    CopticMonthNamesV1,
+    DatetimeNamesMonthCopticV1,
     DatagenCalendar::Coptic,
     NORMAL_KEY_LENGTHS,
     months_convert
 );
 impl_symbols_datagen!(
-    DangiMonthNamesV1,
+    DatetimeNamesMonthDangiV1,
     DatagenCalendar::Dangi,
     NUMERIC_MONTHS_KEY_LENGTHS, // has leap month patterns
     months_convert
 );
 impl_symbols_datagen!(
-    EthiopianMonthNamesV1,
+    DatetimeNamesMonthEthiopianV1,
     DatagenCalendar::Ethiopic,
     NORMAL_KEY_LENGTHS,
     months_convert
 );
 impl_symbols_datagen!(
-    GregorianMonthNamesV1,
+    DatetimeNamesMonthGregorianV1,
     DatagenCalendar::Gregorian,
     NORMAL_KEY_LENGTHS,
     months_convert
 );
 impl_symbols_datagen!(
-    HebrewMonthNamesV1,
+    DatetimeNamesMonthHebrewV1,
     DatagenCalendar::Hebrew,
     NORMAL_KEY_LENGTHS,
     months_convert
 );
 impl_symbols_datagen!(
-    IndianMonthNamesV1,
+    DatetimeNamesMonthIndianV1,
     DatagenCalendar::Indian,
     NORMAL_KEY_LENGTHS,
     months_convert
 );
 impl_symbols_datagen!(
-    HijriMonthNamesV1,
+    DatetimeNamesMonthHijriV1,
     DatagenCalendar::Hijri,
     NORMAL_KEY_LENGTHS,
     months_convert
 );
 impl_symbols_datagen!(
-    JapaneseMonthNamesV1,
+    DatetimeNamesMonthJapaneseV1,
     DatagenCalendar::JapaneseModern,
     NORMAL_KEY_LENGTHS,
     months_convert
 );
 impl_symbols_datagen!(
-    JapaneseExtendedMonthNamesV1,
+    DatetimeNamesMonthJapanextV1,
     DatagenCalendar::JapaneseExtended,
     NORMAL_KEY_LENGTHS,
     months_convert
 );
 impl_symbols_datagen!(
-    PersianMonthNamesV1,
+    DatetimeNamesMonthPersianV1,
     DatagenCalendar::Persian,
     NORMAL_KEY_LENGTHS,
     months_convert
 );
 impl_symbols_datagen!(
-    RocMonthNamesV1,
+    DatetimeNamesMonthRocV1,
     DatagenCalendar::Roc,
     NORMAL_KEY_LENGTHS,
     months_convert
@@ -789,7 +783,7 @@ impl_symbols_datagen!(
 // systems, but CLDR has some instances where the glue patterns differ, such
 // as in French (Gregorian has a comma but other calendars do not).
 impl_pattern_datagen!(
-    GluePatternV1,
+    DatetimePatternsGlueV1,
     DatagenCalendar::Gregorian,
     GLUE_PATTERN_KEY_LENGTHS,
     datetimepattern_convert

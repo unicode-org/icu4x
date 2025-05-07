@@ -72,12 +72,12 @@ final class Date implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `try_from_str`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.try_from_str) for more information.
   ///
-  /// Throws [CalendarParseError] on failure.
+  /// Throws [Rfc9557ParseError] on failure.
   factory Date.fromString(String v, Calendar calendar) {
     final temp = _FinalizedArena();
     final result = _icu4x_Date_from_string_mv1(v._utf8AllocIn(temp.arena), calendar._ffi);
     if (!result.isOk) {
-      throw CalendarParseError.values[result.union.err];
+      throw Rfc9557ParseError.values[result.union.err];
     }
     return Date._fromFfi(result.union.ok, []);
   }
@@ -176,9 +176,9 @@ final class Date implements ffi.Finalizable {
   ///
   /// For calendars without an era, returns the related ISO year.
   ///
-  /// See the [Rust documentation for `era_year_or_related_iso`](https://docs.rs/icu/latest/icu/calendar/types/struct.YearInfo.html#method.era_year_or_related_iso) for more information.
+  /// See the [Rust documentation for `era_year_or_related_iso`](https://docs.rs/icu/latest/icu/calendar/types/enum.YearInfo.html#method.era_year_or_related_iso) for more information.
   ///
-  /// Additional information: [1](https://docs.rs/icu/latest/icu/calendar/types/struct.EraYear.html#structfield.era_year), [2](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.year)
+  /// Additional information: [1](https://docs.rs/icu/latest/icu/calendar/types/struct.EraYear.html#structfield.year), [2](https://docs.rs/icu/latest/icu/calendar/types/struct.CyclicYear.html#structfield.related_iso), [3](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.year)
   int get eraYearOrRelatedIso {
     final result = _icu4x_Date_era_year_or_related_iso_mv1(_ffi);
     return result;
@@ -186,7 +186,7 @@ final class Date implements ffi.Finalizable {
 
   /// Returns the extended year in the Date
   ///
-  /// See the [Rust documentation for `extended_year`](https://docs.rs/icu/latest/icu/calendar/types/struct.YearInfo.html#structfield.extended_year) for more information.
+  /// See the [Rust documentation for `extended_year`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.extended_year) for more information.
   int get extendedYear {
     final result = _icu4x_Date_extended_year_mv1(_ffi);
     return result;
@@ -194,7 +194,7 @@ final class Date implements ffi.Finalizable {
 
   /// Returns the era for this date, or an empty string
   ///
-  /// See the [Rust documentation for `standard_era`](https://docs.rs/icu/latest/icu/calendar/types/struct.EraYear.html#structfield.standard_era) for more information.
+  /// See the [Rust documentation for `era`](https://docs.rs/icu/latest/icu/calendar/types/struct.EraYear.html#structfield.era) for more information.
   ///
   /// Additional information: [1](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.year)
   String get era {

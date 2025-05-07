@@ -143,22 +143,33 @@ lazy_static::lazy_static! {
         "icu::calendar::Date::try_new_persian",
         "icu::calendar::Date::try_new_roc",
         "icu::calendar::Date::try_new_ummalqura",
+        "icu::datetime::DateTimeFormatter::calendar",
 
         // Not planned for 2.0: Calendar structs mostly for internal use but which might expose
         // useful information to clients.
-        "icu::calendar::types::MonthInfo",
-        "icu::calendar::types::FormattingEra",
-        "icu::calendar::Date::formattable_year",
-        "icu::calendar::types::FormattableYear",
-        "icu::calendar::types::FormattableYearKind",
         "icu::calendar::types::RataDie",
 
         // Not planned for 2.0: Temporal doesn't yet want this.
-        "icu::calendar::types::CyclicYear",
-        "icu::calendar::types::YearInfo::cyclic",
-        "icu::calendar::types::YearInfo::related_iso",
         "icu::calendar::types::YearAmbiguity",
-        "icu::calendar::types::YearInfo::year_ambiguity",
+
+        // Not planned for 2.0: datetime dynamic field sets (and builder) need FFI design work,
+        // and all functionality is available via static field sets
+        // <https://github.com/unicode-org/icu4x/issues/6445>
+        "icu::datetime::fieldsets::builder",
+        "icu::datetime::fieldsets::enums",
+        "icu::datetime::DateTimeFormatter::to_field_set_builder",
+        "icu::datetime::FixedCalendarDateTimeFormatter::to_field_set_builder",
+        "icu::datetime::NoCalendarFormatter::to_field_set_builder",
+        "icu::datetime::fieldsets::Combo::into_enums",
+
+        // Not planned for 2.0: Unchecked formatting. FFI always uses the concrete Date, Time,
+        // and TimeZoneInfo types. A composite formatter might need a format_unchecked-type
+        // of function.
+        "icu::datetime::unchecked",
+        "icu::datetime::FixedCalendarDateTimeFormatter::format_unchecked",
+        "icu::datetime::DateTimeFormatter::format_unchecked",
+        "icu::datetime::NoCalendarFormatter::format_unchecked",
+        "icu::datetime::FormattedDateTimeUnchecked",
 
         // Not planned for 2.0: Would need to introduce diplomat writeable with parts
         "icu::list::parts",
@@ -248,11 +259,13 @@ lazy_static::lazy_static! {
         // DateTimePattern and related low-level APIs
         "icu::datetime::pattern",
         "icu::datetime::FormattedDateTime::pattern",
+        "icu::datetime::FormattedDateTimeUnchecked::pattern",
 
         // Not planned for 2.0
         // DateTimeFormatter conversion functions that involve moving opaques
         "icu::datetime::DateTimeFormatter::try_into_typed_formatter",
         "icu::datetime::FixedCalendarDateTimeFormatter::into_formatter",
+        "icu::datetime::NoCalendarFormatter::into_formatter",
 
         // Not planned for 2.0
         // Serde-specific
@@ -320,11 +333,12 @@ lazy_static::lazy_static! {
         // Reexported
         "icu::calendar::any_calendar::AnyCalendar",
         "icu::calendar::any_calendar::AnyCalendarKind",
-        "icu::datetime::options::Length",
         "icu::casemap::titlecase::TitlecaseMapper",
         "icu::casemap::titlecase::TitlecaseMapperBorrowed",
         "icu::time::zone::IanaParser",
+        "icu::time::zone::IanaParserBorrowed",
         "icu::time::zone::WindowsParser",
+        "icu::time::zone::WindowsParserBorrowed",
         "icu::time::zone::TimeZoneInfo",
         "icu::time::zone::TimeZone",
         "icu::segmenter::grapheme::GraphemeClusterSegmenter",
@@ -359,6 +373,7 @@ lazy_static::lazy_static! {
         "icu::datetime::CldrCalendar",
         "icu::datetime::DateTimeFormatter::cast_into_fset",
         "icu::datetime::FixedCalendarDateTimeFormatter::cast_into_fset",
+        "icu::datetime::NoCalendarFormatter::cast_into_fset",
         // TODO-2.0: needs investigation
         "icu::calendar::Date::into_ref_counted",
         "icu::calendar::Date::into_atomic_ref_counted",
@@ -392,7 +407,6 @@ lazy_static::lazy_static! {
         "icu::calendar::types::DayOfMonth",
         "icu::calendar::types::DayOfWeekInMonth",
         "icu::calendar::types::DayOfYear",
-        "icu::calendar::types::Era",
         "icu::calendar::types::Weekday",
         "icu::calendar::types::MonthCode",
         "icu::calendar::types::WeekOfMonth",

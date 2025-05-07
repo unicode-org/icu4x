@@ -38,7 +38,7 @@
 //!
 //! fn get_field_set(should_display_time: bool) -> CompositeDateTimeFieldSet {
 //!     if should_display_time {
-//!         let field_set = fieldsets::MDT::medium().with_hm();
+//!         let field_set = fieldsets::MD::medium().with_time_hm();
 //!         CompositeDateTimeFieldSet::DateTime(
 //!             fieldsets::enums::DateAndTimeFieldSet::MDT(field_set),
 //!         )
@@ -112,7 +112,7 @@ pub enum CalendarPeriodFieldSet {
     /// A year, as in
     /// “2000”.
     Y(fieldsets::Y),
-    // TODO: Add support for week-of-year
+    // TODO(#5643): Add support for week-of-year
     // /// The year and week of the year, as in
     // /// “52nd week of 1999”.
     // YW(fieldsets::YW),

@@ -14,7 +14,7 @@ namespace icu4x {
 namespace capi { struct Time; }
 class Time;
 class CalendarError;
-class CalendarParseError;
+class Rfc9557ParseError;
 }
 
 
@@ -45,14 +45,21 @@ public:
    *
    * See the [Rust documentation for `try_from_str`](https://docs.rs/icu/latest/icu/time/struct.Time.html#method.try_from_str) for more information.
    */
-  inline static diplomat::result<std::unique_ptr<icu4x::Time>, icu4x::CalendarParseError> from_string(std::string_view v);
+  inline static diplomat::result<std::unique_ptr<icu4x::Time>, icu4x::Rfc9557ParseError> from_string(std::string_view v);
 
   /**
-   * Creates a new [`Time`] representing midnight (00:00.000).
+   * Creates a new [`Time`] representing the start of the day (00:00:00.000).
    *
-   * See the [Rust documentation for `midnight`](https://docs.rs/icu/latest/icu/time/struct.Time.html#method.midnight) for more information.
+   * See the [Rust documentation for `start_of_day`](https://docs.rs/icu/latest/icu/time/struct.Time.html#method.start_of_day) for more information.
    */
-  inline static diplomat::result<std::unique_ptr<icu4x::Time>, icu4x::CalendarError> midnight();
+  inline static diplomat::result<std::unique_ptr<icu4x::Time>, icu4x::CalendarError> start_of_day();
+
+  /**
+   * Creates a new [`Time`] representing noon (12:00:00.000).
+   *
+   * See the [Rust documentation for `noon`](https://docs.rs/icu/latest/icu/time/struct.Time.html#method.noon) for more information.
+   */
+  inline static diplomat::result<std::unique_ptr<icu4x::Time>, icu4x::CalendarError> noon();
 
   /**
    * Returns the hour in this time

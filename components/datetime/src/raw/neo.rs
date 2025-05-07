@@ -66,7 +66,7 @@ pub(crate) enum DatePatternDataBorrowed<'a> {
 
 /// This enum represents both time patterns and overlap patterns between non-year dates and times.
 //
-// TODO: Consider reducing data size by filtering out explicit overlap patterns when they are
+// TODO(#5387): Consider reducing data size by filtering out explicit overlap patterns when they are
 // the same as their individual patterns with glue.
 #[derive(Debug, Clone)]
 pub(crate) struct TimePatternSelectionData {
@@ -110,8 +110,6 @@ impl ItemsAndOptions<'_> {
     }
 }
 
-// TODO: Use markers instead of an enum for DateTimeFormatter pattern storage.
-
 #[derive(Debug, Clone)]
 pub(crate) struct DateTimeZonePatternSelectionData {
     options: RawOptions,
@@ -122,7 +120,7 @@ pub(crate) struct DateTimeZonePatternSelectionData {
     // assumption might need to be revisited.
     time: TimePatternSelectionData,
     zone: Option<ZonePatternSelectionData>,
-    glue: Option<DataPayload<GluePatternV1>>,
+    glue: Option<DataPayload<DatetimePatternsGlueV1>>,
 }
 
 #[derive(Debug, Copy, Clone)]
@@ -186,7 +184,11 @@ impl DatePatternSelectionData {
             year_style,
             input
                 .year
-                .map(|y| y.year_ambiguity())
+                .map(|y| {
+                    y.era()
+                        .map(|e| e.ambiguity)
+                        .unwrap_or(YearAmbiguity::EraRequired)
+                })
                 .unwrap_or(YearAmbiguity::EraAndCenturyRequired),
         ) {
             (YearStyle::WithEra, _) | (_, YearAmbiguity::EraAndCenturyRequired) => {
@@ -402,7 +404,7 @@ impl DateTimeZonePatternSelectionData {
     pub(crate) fn try_new_with_skeleton(
         date_provider: &(impl BoundDataProvider<ErasedPackedPatterns> + ?Sized),
         time_provider: &(impl BoundDataProvider<ErasedPackedPatterns> + ?Sized),
-        glue_provider: &(impl BoundDataProvider<GluePatternV1> + ?Sized),
+        glue_provider: &(impl BoundDataProvider<DatetimePatternsGlueV1> + ?Sized),
         prefs: DateTimeFormatterPreferences,
         skeleton: CompositeFieldSet,
     ) -> Result<Self, DataError> {
@@ -585,11 +587,11 @@ impl DateTimeZonePatternSelectionData {
     }
 
     fn load_glue(
-        provider: &(impl BoundDataProvider<GluePatternV1> + ?Sized),
+        provider: &(impl BoundDataProvider<DatetimePatternsGlueV1> + ?Sized),
         prefs: DateTimeFormatterPreferences,
         options: RawOptions,
         glue_type: GlueType,
-    ) -> Result<DataPayload<GluePatternV1>, DataError> {
+    ) -> Result<DataPayload<DatetimePatternsGlueV1>, DataError> {
         let locale = provider
             .bound_marker()
             .make_locale(prefs.locale_preferences);
@@ -730,7 +732,7 @@ impl<'a> DateTimeZonePatternDataBorrowed<'a> {
 
     pub(crate) fn to_pattern(self) -> DateTimePattern {
         let pattern = self.iter_items().collect::<runtime::Pattern>();
-        DateTimePattern::from_runtime_pattern(pattern)
+        DateTimePattern::from(pattern)
     }
 }
 

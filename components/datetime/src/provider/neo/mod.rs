@@ -6,13 +6,13 @@
 
 mod adapter;
 
-use crate::provider::pattern::runtime::{self, PatternULE};
+use crate::provider::pattern::runtime;
 use crate::size_test_macro::size_test;
 use alloc::borrow::Cow;
 use icu_pattern::SinglePlaceholderPattern;
 use icu_provider::prelude::*;
 use potential_utf::PotentialUtf8;
-use zerovec::{ule::tuplevar::Tuple2VarULE, VarZeroCow, VarZeroSlice, VarZeroVec, ZeroMap};
+use zerovec::{ule::tuplevar::Tuple2VarULE, VarZeroCow, VarZeroSlice, VarZeroVec};
 
 /// Helpers involving the data marker attributes used for date names.
 ///
@@ -304,226 +304,221 @@ pub mod marker_attrs {
 }
 
 icu_provider::data_marker!(
-    /// `BuddhistYearNamesV1`
-    BuddhistYearNamesV1,
+    /// `DatetimeNamesYearBuddhistV1`
+    DatetimeNamesYearBuddhistV1,
     YearNames<'static>,
     #[cfg(feature = "datagen")]
     attributes_domain = "datetime_year_length"
 );
 icu_provider::data_marker!(
-    /// `ChineseYearNamesV1`
-    ChineseYearNamesV1,
+    /// `DatetimeNamesYearChineseV1`
+    DatetimeNamesYearChineseV1,
     YearNames<'static>,
     #[cfg(feature = "datagen")]
     attributes_domain = "datetime_year_length"
 );
 icu_provider::data_marker!(
-    /// `CopticYearNamesV1`
-    CopticYearNamesV1,
+    /// `DatetimeNamesYearCopticV1`
+    DatetimeNamesYearCopticV1,
     YearNames<'static>,
     #[cfg(feature = "datagen")]
     attributes_domain = "datetime_year_length"
 );
 icu_provider::data_marker!(
-    /// `DangiYearNamesV1`
-    DangiYearNamesV1,
+    /// `DatetimeNamesYearDangiV1`
+    DatetimeNamesYearDangiV1,
     YearNames<'static>,
     #[cfg(feature = "datagen")]
     attributes_domain = "datetime_year_length"
 );
 icu_provider::data_marker!(
-    /// `EthiopianYearNamesV1`
-    EthiopianYearNamesV1,
+    /// `DatetimeNamesYearEthiopianV1`
+    DatetimeNamesYearEthiopianV1,
     YearNames<'static>,
     #[cfg(feature = "datagen")]
     attributes_domain = "datetime_year_length"
 );
 icu_provider::data_marker!(
-    /// `GregorianYearNamesV1`
-    GregorianYearNamesV1,
+    /// `DatetimeNamesYearGregorianV1`
+    DatetimeNamesYearGregorianV1,
     YearNames<'static>,
     #[cfg(feature = "datagen")]
     attributes_domain = "datetime_year_length"
 );
 icu_provider::data_marker!(
-    /// `HebrewYearNamesV1`
-    HebrewYearNamesV1,
+    /// `DatetimeNamesYearHebrewV1`
+    DatetimeNamesYearHebrewV1,
     YearNames<'static>,
     #[cfg(feature = "datagen")]
     attributes_domain = "datetime_year_length"
 );
 icu_provider::data_marker!(
-    /// `IndianYearNamesV1`
-    IndianYearNamesV1,
+    /// `DatetimeNamesYearIndianV1`
+    DatetimeNamesYearIndianV1,
     YearNames<'static>,
     #[cfg(feature = "datagen")]
     attributes_domain = "datetime_year_length"
 );
 icu_provider::data_marker!(
-    /// `HijriYearNamesV1`
-    HijriYearNamesV1,
+    /// `DatetimeNamesYearHijriV1`
+    DatetimeNamesYearHijriV1,
     YearNames<'static>,
     #[cfg(feature = "datagen")]
     attributes_domain = "datetime_year_length"
 );
 icu_provider::data_marker!(
-    /// `JapaneseYearNamesV1`
-    JapaneseYearNamesV1,
+    /// `DatetimeNamesYearJapaneseV1`
+    DatetimeNamesYearJapaneseV1,
     YearNames<'static>,
     #[cfg(feature = "datagen")]
     attributes_domain = "datetime_year_length"
 );
 icu_provider::data_marker!(
-    /// `JapaneseExtendedYearNamesV1`
-    JapaneseExtendedYearNamesV1,
+    /// `DatetimeNamesYearJapanextV1`
+    DatetimeNamesYearJapanextV1,
     YearNames<'static>,
     #[cfg(feature = "datagen")]
     attributes_domain = "datetime_year_length"
 );
 icu_provider::data_marker!(
-    /// `PersianYearNamesV1`
-    PersianYearNamesV1,
+    /// `DatetimeNamesYearPersianV1`
+    DatetimeNamesYearPersianV1,
     YearNames<'static>,
     #[cfg(feature = "datagen")]
     attributes_domain = "datetime_year_length"
 );
 icu_provider::data_marker!(
-    /// `RocYearNamesV1`
-    RocYearNamesV1,
+    /// `DatetimeNamesYearRocV1`
+    DatetimeNamesYearRocV1,
     YearNames<'static>,
     #[cfg(feature = "datagen")]
     attributes_domain = "datetime_year_length"
 );
 
 icu_provider::data_marker!(
-    /// `BuddhistMonthNamesV1`
-    BuddhistMonthNamesV1,
+    /// `DatetimeNamesMonthBuddhistV1`
+    DatetimeNamesMonthBuddhistV1,
     MonthNames<'static>,
     #[cfg(feature = "datagen")]
     attributes_domain = "datetime_month_length"
 );
 icu_provider::data_marker!(
-    /// `ChineseMonthNamesV1`
-    ChineseMonthNamesV1,
+    /// `DatetimeNamesMonthChineseV1`
+    DatetimeNamesMonthChineseV1,
     MonthNames<'static>,
     #[cfg(feature = "datagen")]
     attributes_domain = "datetime_month_length"
 );
 icu_provider::data_marker!(
-    /// `CopticMonthNamesV1`
-    CopticMonthNamesV1,
+    /// `DatetimeNamesMonthCopticV1`
+    DatetimeNamesMonthCopticV1,
     MonthNames<'static>,
     #[cfg(feature = "datagen")]
     attributes_domain = "datetime_month_length"
 );
 icu_provider::data_marker!(
-    /// `DangiMonthNamesV1`
-    DangiMonthNamesV1,
+    /// `DatetimeNamesMonthDangiV1`
+    DatetimeNamesMonthDangiV1,
     MonthNames<'static>,
     #[cfg(feature = "datagen")]
     attributes_domain = "datetime_month_length"
 );
 icu_provider::data_marker!(
-    /// `EthiopianMonthNamesV1`
-    EthiopianMonthNamesV1,
+    /// `DatetimeNamesMonthEthiopianV1`
+    DatetimeNamesMonthEthiopianV1,
     MonthNames<'static>,
     #[cfg(feature = "datagen")]
     attributes_domain = "datetime_month_length"
 );
 icu_provider::data_marker!(
-    /// `GregorianMonthNamesV1`
-    GregorianMonthNamesV1,
+    /// `DatetimeNamesMonthGregorianV1`
+    DatetimeNamesMonthGregorianV1,
     MonthNames<'static>,
     #[cfg(feature = "datagen")]
     attributes_domain = "datetime_month_length"
 );
 icu_provider::data_marker!(
-    /// `HebrewMonthNamesV1`
-    HebrewMonthNamesV1,
+    /// `DatetimeNamesMonthHebrewV1`
+    DatetimeNamesMonthHebrewV1,
     MonthNames<'static>,
     #[cfg(feature = "datagen")]
     attributes_domain = "datetime_month_length"
 );
 icu_provider::data_marker!(
-    /// `IndianMonthNamesV1`
-    IndianMonthNamesV1,
+    /// `DatetimeNamesMonthIndianV1`
+    DatetimeNamesMonthIndianV1,
     MonthNames<'static>,
     #[cfg(feature = "datagen")]
     attributes_domain = "datetime_month_length"
 );
 icu_provider::data_marker!(
-    /// `HijriMonthNamesV1`
-    HijriMonthNamesV1,
+    /// `DatetimeNamesMonthHijriV1`
+    DatetimeNamesMonthHijriV1,
     MonthNames<'static>,
     #[cfg(feature = "datagen")]
     attributes_domain = "datetime_month_length"
 );
 icu_provider::data_marker!(
-    /// `JapaneseMonthNamesV1`
-    JapaneseMonthNamesV1,
+    /// `DatetimeNamesMonthJapaneseV1`
+    DatetimeNamesMonthJapaneseV1,
     MonthNames<'static>,
     #[cfg(feature = "datagen")]
     attributes_domain = "datetime_month_length"
 );
 icu_provider::data_marker!(
-    /// `JapaneseExtendedMonthNamesV1`
-    JapaneseExtendedMonthNamesV1,
+    /// `DatetimeNamesMonthJapanextV1`
+    DatetimeNamesMonthJapanextV1,
     MonthNames<'static>,
     #[cfg(feature = "datagen")]
     attributes_domain = "datetime_month_length"
 );
 icu_provider::data_marker!(
-    /// `PersianMonthNamesV1`
-    PersianMonthNamesV1,
+    /// `DatetimeNamesMonthPersianV1`
+    DatetimeNamesMonthPersianV1,
     MonthNames<'static>,
     #[cfg(feature = "datagen")]
     attributes_domain = "datetime_month_length"
 );
 icu_provider::data_marker!(
-    /// `RocMonthNamesV1`
-    RocMonthNamesV1,
+    /// `DatetimeNamesMonthRocV1`
+    DatetimeNamesMonthRocV1,
     MonthNames<'static>,
     #[cfg(feature = "datagen")]
     attributes_domain = "datetime_month_length"
 );
 
 icu_provider::data_marker!(
-    /// `WeekdayNamesV1`
-    WeekdayNamesV1,
+    /// `DatetimeNamesWeekdayV1`
+    DatetimeNamesWeekdayV1,
     LinearNames<'static>,
 );
 icu_provider::data_marker!(
-    /// `DayPeriodNamesV1`
-    DayPeriodNamesV1,
+    /// `DatetimeNamesDayperiodV1`
+    DatetimeNamesDayperiodV1,
     LinearNames<'static>,
 );
 // We're not producing or using day names yet, but this is where they would go
 icu_provider::data_marker!(
-    /// `ChineseDayNamesV1`
-    ChineseDayNamesV1,
+    /// `DatetimeNamesDayChineseV1`
+    DatetimeNamesDayChineseV1,
     LinearNames<'static>,
 );
 icu_provider::data_marker!(
-    /// `DangiDayNamesV1`
-    DangiDayNamesV1,
+    /// `DatetimeNamesDayDangiV1`
+    DatetimeNamesDayDangiV1,
     LinearNames<'static>,
 );
 // for calendars that don't use day names
 icu_provider::data_marker!(
-    /// `PlaceholderDayNamesV1`
-    PlaceholderDayNamesV1,
+    /// `DatetimeNamesDayPlaceholderV1`
+    DatetimeNamesDayPlaceholderV1,
     LinearNames<'static>,
 );
 
 icu_provider::data_marker!(
-    /// `GluePatternV1`
-    GluePatternV1,
+    /// `DatetimePatternsGlueV1`
+    DatetimePatternsGlueV1,
     GluePattern<'static>
-);
-icu_provider::data_marker!(
-    /// `DateTimeSkeletonPatternsV1`
-    DateTimeSkeletonPatternsV1,
-    DateTimeSkeletons<'static>,
 );
 
 size_test!(YearNames, year_names_v1_size, 32);
@@ -721,26 +716,6 @@ icu_provider::data_struct!(
     #[cfg(feature = "datagen")]
 );
 
-#[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
-#[cfg_attr(feature = "datagen", databake(path = icu_datetime::provider::neo))]
-#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-#[yoke(prove_covariance_manually)]
-#[allow(missing_docs)] // TODO
-pub struct DateTimeSkeletons<'data> {
-    // will typically be small, there are only a couple special cases like E B h m
-    // TODO: This should support plurals
-    // TODO: The key of this map should be Skeleton
-    #[allow(missing_docs)] // TODO
-    #[cfg_attr(feature = "serde", serde(borrow))]
-    pub map: ZeroMap<'data, str, PatternULE>,
-}
-
-icu_provider::data_struct!(
-    DateTimeSkeletons<'_>,
-    #[cfg(feature = "datagen")]
-);
-
 /// Calendar-agnostic year name data marker
 #[derive(Debug)]
 pub struct YearNamesV1;
@@ -754,3 +729,9 @@ pub struct MonthNamesV1;
 impl DynamicDataMarker for MonthNamesV1 {
     type DataStruct = MonthNames<'static>;
 }
+
+/// Re-export of weekday names marker for more consistency
+pub use DatetimeNamesWeekdayV1 as WeekdayNamesV1;
+
+/// Re-export of day period names marker for more consistency
+pub use DatetimeNamesDayperiodV1 as DayPeriodNamesV1;

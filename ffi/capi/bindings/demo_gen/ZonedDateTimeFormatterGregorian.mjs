@@ -6,7 +6,7 @@ import { TimeZone } from "icu4x"
 import { TimeZoneInfo } from "icu4x"
 import { UtcOffset } from "icu4x"
 import { ZonedDateTimeFormatterGregorian } from "icu4x"
-export function formatIso(zonedDateTimeFormatterGregorianLocaleName, zonedDateTimeFormatterGregorianFormatterLocaleName, zonedDateTimeFormatterGregorianFormatterLength, zonedDateTimeFormatterGregorianFormatterTimePrecision, zonedDateTimeFormatterGregorianFormatterAlignment, zonedDateTimeFormatterGregorianFormatterYearStyle, dateYear, dateMonth, dateDay, timeHour, timeMinute, timeSecond, timeSubsecond, zoneTimeZoneIdId, zoneOffsetOffset, zoneZoneVariant) {
+export function formatIso(zonedDateTimeFormatterGregorianLocaleName, zonedDateTimeFormatterGregorianFormatterLocaleName, zonedDateTimeFormatterGregorianFormatterLength, zonedDateTimeFormatterGregorianFormatterTimePrecision, zonedDateTimeFormatterGregorianFormatterAlignment, zonedDateTimeFormatterGregorianFormatterYearStyle, dateYear, dateMonth, dateDay, timeHour, timeMinute, timeSecond, timeSubsecond, zoneIdId, zoneOffsetOffset, zoneVariant) {
     
     let zonedDateTimeFormatterGregorianLocale = Locale.fromString(zonedDateTimeFormatterGregorianLocaleName);
     
@@ -20,11 +20,11 @@ export function formatIso(zonedDateTimeFormatterGregorianLocaleName, zonedDateTi
     
     let time = new Time(timeHour,timeMinute,timeSecond,timeSubsecond);
     
-    let zoneTimeZoneId = TimeZone.createFromBcp47(zoneTimeZoneIdId);
+    let zoneId = TimeZone.createFromBcp47(zoneIdId);
     
     let zoneOffset = UtcOffset.fromString(zoneOffsetOffset);
     
-    let zone = new TimeZoneInfo(zoneTimeZoneId,zoneOffset,zoneZoneVariant);
+    let zone = new TimeZoneInfo(zoneId,zoneOffset,zoneVariant);
     
     let out = zonedDateTimeFormatterGregorian.formatIso(date,time,zone);
     

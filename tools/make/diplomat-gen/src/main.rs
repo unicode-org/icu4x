@@ -16,7 +16,7 @@ fn main() -> std::io::Result<()> {
     let config_path = capi.join("config.toml");
 
     let mut library_config = Config::default();
-    library_config.read_file(&config_path)?;
+    library_config.read_file(&config_path).unwrap();
 
     diplomat_tool::gen(
         &capi.join("src/lib.rs"),

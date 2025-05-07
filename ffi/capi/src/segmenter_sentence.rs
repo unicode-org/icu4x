@@ -7,6 +7,7 @@
 #[diplomat::attr(auto, namespace = "icu4x")]
 pub mod ffi {
     use alloc::boxed::Box;
+    use icu_segmenter::scaffold::{Latin1, PotentiallyIllFormedUtf8, Utf16};
 
     #[cfg(feature = "buffer_provider")]
     use crate::unstable::provider::ffi::DataProvider;
@@ -20,29 +21,21 @@ pub mod ffi {
     pub struct SentenceSegmenter(icu_segmenter::SentenceSegmenter);
 
     #[diplomat::opaque]
-    #[diplomat::rust_link(icu::segmenter::sentence::SentenceBreakIterator, Struct)]
-    #[diplomat::rust_link(
-        icu::segmenter::sentence::SentenceBreakIteratorPotentiallyIllFormedUtf8,
-        Typedef,
-        hidden
-    )]
-    #[diplomat::rust_link(icu::segmenter::sentence::SentenceBreakIteratorUtf8, Typedef, hidden)]
+    #[diplomat::rust_link(icu::segmenter::iterators::SentenceBreakIterator, Struct)]
     pub struct SentenceBreakIteratorUtf8<'a>(
-        icu_segmenter::sentence::SentenceBreakIteratorPotentiallyIllFormedUtf8<'a, 'a>,
+        icu_segmenter::iterators::SentenceBreakIterator<'a, 'a, PotentiallyIllFormedUtf8>,
     );
 
     #[diplomat::opaque]
-    #[diplomat::rust_link(icu::segmenter::sentence::SentenceBreakIterator, Struct)]
-    #[diplomat::rust_link(icu::segmenter::sentence::SentenceBreakIteratorUtf16, Typedef, hidden)]
+    #[diplomat::rust_link(icu::segmenter::iterators::SentenceBreakIterator, Struct)]
     pub struct SentenceBreakIteratorUtf16<'a>(
-        icu_segmenter::sentence::SentenceBreakIteratorUtf16<'a, 'a>,
+        icu_segmenter::iterators::SentenceBreakIterator<'a, 'a, Utf16>,
     );
 
     #[diplomat::opaque]
-    #[diplomat::rust_link(icu::segmenter::sentence::SentenceBreakIterator, Struct)]
-    #[diplomat::rust_link(icu::segmenter::sentence::SentenceBreakIteratorLatin1, Typedef, hidden)]
+    #[diplomat::rust_link(icu::segmenter::iterators::SentenceBreakIterator, Struct)]
     pub struct SentenceBreakIteratorLatin1<'a>(
-        icu_segmenter::sentence::SentenceBreakIteratorLatin1<'a, 'a>,
+        icu_segmenter::iterators::SentenceBreakIterator<'a, 'a, Latin1>,
     );
 
     impl SentenceSegmenter {
@@ -145,12 +138,7 @@ pub mod ffi {
     impl<'a> SentenceBreakIteratorUtf8<'a> {
         /// Finds the next breakpoint. Returns -1 if at the end of the string or if the index is
         /// out of range of a 32-bit signed integer.
-        #[diplomat::rust_link(icu::segmenter::sentence::SentenceBreakIterator::next, FnInStruct)]
-        #[diplomat::rust_link(
-            icu::segmenter::sentence::SentenceBreakIterator::Item,
-            AssociatedTypeInStruct,
-            hidden
-        )]
+        #[diplomat::rust_link(icu::segmenter::iterators::SentenceBreakIterator::next, FnInStruct)]
         pub fn next(&mut self) -> i32 {
             self.0
                 .next()
@@ -162,12 +150,7 @@ pub mod ffi {
     impl<'a> SentenceBreakIteratorUtf16<'a> {
         /// Finds the next breakpoint. Returns -1 if at the end of the string or if the index is
         /// out of range of a 32-bit signed integer.
-        #[diplomat::rust_link(icu::segmenter::sentence::SentenceBreakIterator::next, FnInStruct)]
-        #[diplomat::rust_link(
-            icu::segmenter::sentence::SentenceBreakIterator::Item,
-            AssociatedTypeInStruct,
-            hidden
-        )]
+        #[diplomat::rust_link(icu::segmenter::iterators::SentenceBreakIterator::next, FnInStruct)]
         pub fn next(&mut self) -> i32 {
             self.0
                 .next()
@@ -179,9 +162,9 @@ pub mod ffi {
     impl<'a> SentenceBreakIteratorLatin1<'a> {
         /// Finds the next breakpoint. Returns -1 if at the end of the string or if the index is
         /// out of range of a 32-bit signed integer.
-        #[diplomat::rust_link(icu::segmenter::sentence::SentenceBreakIterator::next, FnInStruct)]
+        #[diplomat::rust_link(icu::segmenter::iterators::SentenceBreakIterator::next, FnInStruct)]
         #[diplomat::rust_link(
-            icu::segmenter::sentence::SentenceBreakIterator::Item,
+            icu::segmenter::iterators::SentenceBreakIterator::Item,
             AssociatedTypeInStruct,
             hidden
         )]

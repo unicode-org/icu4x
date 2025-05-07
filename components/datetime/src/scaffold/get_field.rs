@@ -4,10 +4,10 @@
 
 use icu_calendar::{
     types::{DayOfMonth, DayOfYear, MonthInfo, Weekday, YearInfo},
-    AsCalendar, Calendar, Date, Iso,
+    AsCalendar, Calendar, Date,
 };
 use icu_time::{
-    zone::{models::TimeZoneModel, TimeZoneVariant, UtcOffset},
+    zone::{models::TimeZoneModel, TimeZoneVariant, UtcOffset, ZoneNameTimestamp},
     DateTime, Hour, Minute, Nanosecond, Second, Time, TimeZone, TimeZoneInfo, ZonedDateTime,
 };
 
@@ -264,13 +264,13 @@ where
     }
 }
 
-impl<C: Calendar, A: AsCalendar<Calendar = C>, Z> GetField<(Date<Iso>, Time)>
+impl<C: Calendar, A: AsCalendar<Calendar = C>, Z> GetField<ZoneNameTimestamp>
     for ZonedDateTime<A, Z>
 where
-    Z: GetField<(Date<Iso>, Time)>,
+    Z: GetField<ZoneNameTimestamp>,
 {
     #[inline]
-    fn get_field(&self) -> (Date<Iso>, Time) {
+    fn get_field(&self) -> ZoneNameTimestamp {
         self.zone.get_field()
     }
 }
@@ -292,7 +292,7 @@ where
 {
     #[inline]
     fn get_field(&self) -> TimeZone {
-        self.time_zone_id()
+        self.id()
     }
 }
 
@@ -312,17 +312,17 @@ where
 {
     #[inline]
     fn get_field(&self) -> TimeZoneVariant {
-        self.zone_variant()
+        self.variant()
     }
 }
 
-impl<O> GetField<(Date<Iso>, Time)> for TimeZoneInfo<O>
+impl<O> GetField<ZoneNameTimestamp> for TimeZoneInfo<O>
 where
-    O: TimeZoneModel<LocalTime = (Date<Iso>, Time)>,
+    O: TimeZoneModel<ZoneNameTimestamp = ZoneNameTimestamp>,
 {
     #[inline]
-    fn get_field(&self) -> (Date<Iso>, Time) {
-        self.local_time()
+    fn get_field(&self) -> ZoneNameTimestamp {
+        self.zone_name_timestamp()
     }
 }
 

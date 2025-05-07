@@ -26,40 +26,51 @@ export class TimeZoneInfo {
     static utc(): TimeZoneInfo;
 
     /** 
-     * See the [Rust documentation for `time_zone_id`](https://docs.rs/icu/latest/icu/time/struct.TimeZoneInfo.html#method.time_zone_id) for more information.
+     * See the [Rust documentation for `id`](https://docs.rs/icu/latest/icu/time/struct.TimeZoneInfo.html#method.id) for more information.
      */
-    timeZoneId(): TimeZone;
+    id(): TimeZone;
 
     /** 
-     * See the [Rust documentation for `at_time`](https://docs.rs/icu/latest/icu/time/struct.TimeZoneInfo.html#method.at_time) for more information.
+     * Sets the datetime at which to interpret the time zone
+     * for display name lookup.
+     *
+     * Notes:
+     *
+     * - If not set, the formatting datetime is used if possible.
+     * - The constraints are the same as with `ZoneNameTimestamp` in Rust.
+     * - Set to year 1000 or 9999 for a reference far in the past or future.
+     *
+     * See the [Rust documentation for `at_date_time_iso`](https://docs.rs/icu/latest/icu/time/struct.TimeZoneInfo.html#method.at_date_time_iso) for more information.
+     *
+     * Additional information: [1](https://docs.rs/icu/latest/icu/time/zone/struct.ZoneNameTimestamp.html)
      */
-    atTime(date: IsoDate, time: Time): TimeZoneInfo;
+    atDateTimeIso(date: IsoDate, time: Time): TimeZoneInfo;
 
     /** 
-     * See the [Rust documentation for `local_time`](https://docs.rs/icu/latest/icu/time/struct.TimeZoneInfo.html#method.local_time) for more information.
+     * See the [Rust documentation for `zone_name_timestamp`](https://docs.rs/icu/latest/icu/time/struct.TimeZoneInfo.html#method.zone_name_timestamp) for more information.
      */
-    localTime(): IsoDateTime | null;
+    zoneNameDateTime(): IsoDateTime | null;
 
     /** 
-     * See the [Rust documentation for `with_zone_variant`](https://docs.rs/icu/latest/icu/time/struct.TimeZoneInfo.html#method.with_zone_variant) for more information.
+     * See the [Rust documentation for `with_variant`](https://docs.rs/icu/latest/icu/time/struct.TimeZoneInfo.html#method.with_variant) for more information.
      */
-    withZoneVariant(timeZoneVariant: TimeZoneVariant): TimeZoneInfo;
+    withVariant(timeVariant: TimeZoneVariant): TimeZoneInfo;
 
     /** 
      * Infers the zone variant.
      *
      * Requires the offset and local time to be set.
      *
-     * See the [Rust documentation for `infer_zone_variant`](https://docs.rs/icu/latest/icu/time/struct.TimeZoneInfo.html#method.infer_zone_variant) for more information.
+     * See the [Rust documentation for `infer_variant`](https://docs.rs/icu/latest/icu/time/struct.TimeZoneInfo.html#method.infer_variant) for more information.
      *
      * Additional information: [1](https://docs.rs/icu/latest/icu/time/zone/enum.TimeZoneVariant.html)
      */
-    inferZoneVariant(offsetCalculator: VariantOffsetsCalculator): boolean;
+    inferVariant(offsetCalculator: VariantOffsetsCalculator): boolean;
 
     /** 
-     * See the [Rust documentation for `zone_variant`](https://docs.rs/icu/latest/icu/time/struct.TimeZoneInfo.html#method.zone_variant) for more information.
+     * See the [Rust documentation for `variant`](https://docs.rs/icu/latest/icu/time/struct.TimeZoneInfo.html#method.variant) for more information.
      */
-    zoneVariant(): TimeZoneVariant | null;
+    variant(): TimeZoneVariant | null;
 
-    constructor(timeZoneId: TimeZone, offset: UtcOffset | null, zoneVariant: TimeZoneVariant | null);
+    constructor(id: TimeZone, offset: UtcOffset | null, variant: TimeZoneVariant | null);
 }

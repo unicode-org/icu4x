@@ -113,7 +113,7 @@ impl From<&cldr_serde::plurals::LocalePluralRules> for PluralRulesData<'static> 
 impl DataProvider<PluralsRangesV1> for SourceDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<PluralsRangesV1>, DataError> {
         self.check_req::<PluralsRangesV1>(req)?;
-        if req.id.locale.is_default() {
+        if req.id.locale.is_unknown() {
             Ok(DataResponse {
                 metadata: Default::default(),
                 payload: DataPayload::from_owned(PluralRanges {

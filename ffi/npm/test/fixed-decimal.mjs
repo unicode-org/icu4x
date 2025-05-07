@@ -4,7 +4,7 @@
 
 import test from 'ava';
 
-import { Decimal, FixedDecimalSign } from 'icu4x';
+import { Decimal, DecimalSign } from 'icu4x';
 
 test('convert a simple decimal to a string', t => {
   const decimal = Decimal.fromBigInt(1234n);
@@ -21,7 +21,7 @@ test('multiply a decimal by a power of 10', t => {
 
 test('negate a decimal', t => {
   const decimal = Decimal.fromNumber(1234);
-  decimal.sign = FixedDecimalSign.Negative;
+  decimal.sign = DecimalSign.Negative;
 
   t.is(decimal.toString(), '-1234');
 });

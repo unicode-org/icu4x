@@ -78,7 +78,7 @@
 //! let static_field_set = fieldsets::T::short()
 //!     .with_time_precision(TimePrecision::Subsecond(SubsecondDigits::S3))
 //!     .with_alignment(Alignment::Column)
-//!     .zone(fieldsets::zone::SpecificLong);
+//!     .with_zone(fieldsets::zone::SpecificLong);
 //!
 //! let mut builder = FieldSetBuilder::new();
 //! builder.length = Some(Length::Short);
@@ -154,6 +154,22 @@ impl DateFields {
         Self::YM,
         Self::Y,
     ];
+
+    /// Returns whether this [`DateFields`] variant represents a [`CalendarPeriodFieldSet`].
+    pub fn is_calendar_period(self) -> bool {
+        match self {
+            DateFields::D => false,
+            DateFields::MD => false,
+            DateFields::YMD => false,
+            DateFields::DE => false,
+            DateFields::MDE => false,
+            DateFields::YMDE => false,
+            DateFields::E => false,
+            DateFields::M => true,
+            DateFields::YM => true,
+            DateFields::Y => true,
+        }
+    }
 }
 
 /// An enumeration over all possible time zone styles.
@@ -207,7 +223,8 @@ impl ZoneStyle {
 }
 
 /// An error that occurs when creating a [field set](crate::fieldsets) from a builder.
-#[derive(Debug, displaydoc::Display)]
+// Not Copy: one of the variants contains a non-Copy type
+#[derive(Debug, Clone, displaydoc::Display)]
 #[ignore_extra_doc_attributes] // lines after the first won't go into `impl Display`
 #[non_exhaustive]
 pub enum BuilderError {
@@ -231,6 +248,30 @@ pub enum BuilderError {
     /// Superfluous options were specified.
     ///
     /// For example, you cannot set a [`YearStyle`] unless the field set contains years.
+    ///
+    /// The options that were _not_ read are returned back to the user.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::datetime::fieldsets;
+    /// use icu::datetime::fieldsets::builder::*;
+    /// use icu::datetime::options::*;
+    ///
+    /// let mut builder = FieldSetBuilder::new();
+    /// builder.length = Some(Length::Short);
+    /// builder.time_precision = Some(TimePrecision::Minute);
+    /// builder.year_style = Some(YearStyle::WithEra);
+    ///
+    /// let err = builder.build_composite().unwrap_err();
+    ///
+    /// let BuilderError::SuperfluousOptions(superfluous_options) = err else {
+    ///     panic!("error type should be SuperfluousOptions");
+    /// };
+    ///
+    /// assert!(superfluous_options.year_style.is_some());
+    /// assert!(superfluous_options.time_precision.is_none());
+    /// ```
     SuperfluousOptions(FieldSetBuilder),
 }
 
@@ -588,7 +629,7 @@ impl FieldSetBuilder {
     pub fn build_zoned_date(mut self) -> Result<ZonedDateFieldSet, BuilderError> {
         let zone_field_set = self.build_zone_without_checking_options()?;
         let date_field_set = self.build_date()?;
-        Ok(date_field_set.zone(zone_field_set))
+        Ok(date_field_set.with_zone(zone_field_set))
     }
 
     /// Builds a [`Combo`] for a zoned time.
@@ -597,7 +638,7 @@ impl FieldSetBuilder {
     pub fn build_zoned_time(mut self) -> Result<ZonedTimeFieldSet, BuilderError> {
         let zone_field_set = self.build_zone_without_checking_options()?;
         let time_field_set = self.build_time()?;
-        Ok(time_field_set.zone(zone_field_set))
+        Ok(time_field_set.with_zone(zone_field_set))
     }
 
     /// Builds a [`Combo`] for a zoned date and time.
@@ -606,7 +647,7 @@ impl FieldSetBuilder {
     pub fn build_zoned_date_and_time(mut self) -> Result<ZonedDateAndTimeFieldSet, BuilderError> {
         let zone_field_set = self.build_zone_without_checking_options()?;
         let datetime_field_set = self.build_date_and_time()?;
-        Ok(datetime_field_set.zone(zone_field_set))
+        Ok(datetime_field_set.with_zone(zone_field_set))
     }
 
     /// Builds a [`CompositeFieldSet`].

@@ -6,6 +6,7 @@ use icu_casemap::greek_to_me::{
     self, GreekDiacritics, GreekPrecomposedLetterData, GreekVowel, PackedGreekPrecomposedLetterData,
 };
 use icu_casemap::CaseMapper;
+use icu_locale_core::LanguageIdentifier;
 use icu_normalizer::DecomposingNormalizerBorrowed;
 use icu_properties::{
     props::{GeneralCategory, GeneralCategoryGroup, Script},
@@ -81,7 +82,7 @@ fn main() {
                             let uppercased = cm
                                 .uppercase_to_string(
                                     letter.encode_utf8(&mut [0; 4]),
-                                    &Default::default(),
+                                    &LanguageIdentifier::UNKNOWN,
                                 )
                                 .into_owned();
                             let mut iter = uppercased.chars();

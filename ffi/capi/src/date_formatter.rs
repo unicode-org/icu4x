@@ -31,7 +31,7 @@ pub mod ffi {
     use crate::unstable::provider::ffi::DataProvider;
 
     #[diplomat::opaque]
-    #[diplomat::rust_link(icu::datetime::DateTimeFormatter, Typedef)]
+    #[diplomat::rust_link(icu::datetime::DateTimeFormatter, Struct)]
     pub struct DateFormatter(
         pub  icu_datetime::DateTimeFormatter<
             icu_datetime::fieldsets::enums::DateFieldSet,
@@ -40,12 +40,19 @@ pub mod ffi {
 
     impl DateFormatter {
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "d")]
+        #[diplomat::rust_link(icu::datetime::DateTimeFormatter::try_new, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::D, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::D::with_alignment, FnInStruct, compact)]
-        #[diplomat::rust_link(icu::datetime::fieldsets::D::with_length, FnInStruct, compact)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::D::for_length, FnInStruct, compact)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::D::with_length, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::D::short, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::D::medium, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::D::long, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::D::with_time, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::D::with_time_hm, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::D::with_time_hms, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::D::with_time_hmss, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::D::with_zone, FnInStruct, hidden)] // functionality is in the zoned formatter but rustlink is here
         #[cfg(feature = "compiled_data")]
         pub fn create_d(
             locale: &Locale,
@@ -53,7 +60,7 @@ pub mod ffi {
             alignment: Option<DateTimeAlignment>,
         ) -> Result<Box<Self>, DateTimeFormatterLoadError> {
             let prefs = (&locale.0).into();
-            let mut options = icu_datetime::fieldsets::D::with_length(map_or_default(length));
+            let mut options = icu_datetime::fieldsets::D::for_length(map_or_default(length));
             options.alignment = alignment.map(Into::into);
             Ok(Box::new(Self(
                 icu_datetime
@@ -67,12 +74,19 @@ pub mod ffi {
         }
         
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "d_with_provider")]
+        #[diplomat::rust_link(icu::datetime::DateTimeFormatter::try_new, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::D, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::D::with_alignment, FnInStruct, compact)]
-        #[diplomat::rust_link(icu::datetime::fieldsets::D::with_length, FnInStruct, compact)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::D::for_length, FnInStruct, compact)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::D::with_length, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::D::short, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::D::medium, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::D::long, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::D::with_time, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::D::with_time_hm, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::D::with_time_hms, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::D::with_time_hmss, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::D::with_zone, FnInStruct, hidden)] // functionality is in the zoned formatter but rustlink is here
         #[cfg(feature = "buffer_provider")]
         pub fn create_d_with_provider(
             provider: &DataProvider,
@@ -81,7 +95,7 @@ pub mod ffi {
             alignment: Option<DateTimeAlignment>,
         ) -> Result<Box<Self>, DateTimeFormatterLoadError> {
             let prefs = (&locale.0).into();
-            let mut options = icu_datetime::fieldsets::D::with_length(map_or_default(length));
+            let mut options = icu_datetime::fieldsets::D::for_length(map_or_default(length));
             options.alignment = alignment.map(Into::into);
             Ok(Box::new(Self(
                 icu_datetime
@@ -96,12 +110,19 @@ pub mod ffi {
         }
         
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "md")]
+        #[diplomat::rust_link(icu::datetime::DateTimeFormatter::try_new, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::MD, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::MD::with_alignment, FnInStruct, compact)]
-        #[diplomat::rust_link(icu::datetime::fieldsets::MD::with_length, FnInStruct, compact)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::MD::for_length, FnInStruct, compact)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::MD::with_length, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::MD::short, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::MD::medium, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::MD::long, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::MD::with_time, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::MD::with_time_hm, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::MD::with_time_hms, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::MD::with_time_hmss, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::MD::with_zone, FnInStruct, hidden)] // functionality is in the zoned formatter but rustlink is here
         #[cfg(feature = "compiled_data")]
         pub fn create_md(
             locale: &Locale,
@@ -109,7 +130,7 @@ pub mod ffi {
             alignment: Option<DateTimeAlignment>,
         ) -> Result<Box<Self>, DateTimeFormatterLoadError> {
             let prefs = (&locale.0).into();
-            let mut options = icu_datetime::fieldsets::MD::with_length(map_or_default(length));
+            let mut options = icu_datetime::fieldsets::MD::for_length(map_or_default(length));
             options.alignment = alignment.map(Into::into);
             Ok(Box::new(Self(
                 icu_datetime
@@ -123,12 +144,19 @@ pub mod ffi {
         }
         
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "md_with_provider")]
+        #[diplomat::rust_link(icu::datetime::DateTimeFormatter::try_new, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::MD, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::MD::with_alignment, FnInStruct, compact)]
-        #[diplomat::rust_link(icu::datetime::fieldsets::MD::with_length, FnInStruct, compact)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::MD::for_length, FnInStruct, compact)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::MD::with_length, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::MD::short, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::MD::medium, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::MD::long, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::MD::with_time, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::MD::with_time_hm, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::MD::with_time_hms, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::MD::with_time_hmss, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::MD::with_zone, FnInStruct, hidden)] // functionality is in the zoned formatter but rustlink is here
         #[cfg(feature = "buffer_provider")]
         pub fn create_md_with_provider(
             provider: &DataProvider,
@@ -137,7 +165,7 @@ pub mod ffi {
             alignment: Option<DateTimeAlignment>,
         ) -> Result<Box<Self>, DateTimeFormatterLoadError> {
             let prefs = (&locale.0).into();
-            let mut options = icu_datetime::fieldsets::MD::with_length(map_or_default(length));
+            let mut options = icu_datetime::fieldsets::MD::for_length(map_or_default(length));
             options.alignment = alignment.map(Into::into);
             Ok(Box::new(Self(
                 icu_datetime
@@ -152,13 +180,20 @@ pub mod ffi {
         }
         
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "ymd")]
+        #[diplomat::rust_link(icu::datetime::DateTimeFormatter::try_new, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMD, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMD::with_alignment, FnInStruct, compact)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMD::with_year_style, FnInStruct, compact)]
-        #[diplomat::rust_link(icu::datetime::fieldsets::YMD::with_length, FnInStruct, compact)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::YMD::for_length, FnInStruct, compact)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::YMD::with_length, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMD::short, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMD::medium, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMD::long, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::YMD::with_time, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::YMD::with_time_hm, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::YMD::with_time_hms, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::YMD::with_time_hmss, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::YMD::with_zone, FnInStruct, hidden)] // functionality is in the zoned formatter but rustlink is here
         #[diplomat::demo(default_constructor)]
         #[cfg(feature = "compiled_data")]
         pub fn create_ymd(
@@ -168,7 +203,7 @@ pub mod ffi {
             year_style: Option<YearStyle>,
         ) -> Result<Box<Self>, DateTimeFormatterLoadError> {
             let prefs = (&locale.0).into();
-            let mut options = icu_datetime::fieldsets::YMD::with_length(map_or_default(length));
+            let mut options = icu_datetime::fieldsets::YMD::for_length(map_or_default(length));
             options.alignment = alignment.map(Into::into);
             options.year_style = year_style.map(Into::into);
             Ok(Box::new(Self(
@@ -183,13 +218,20 @@ pub mod ffi {
         }
         
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "ymd_with_provider")]
+        #[diplomat::rust_link(icu::datetime::DateTimeFormatter::try_new, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMD, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMD::with_alignment, FnInStruct, compact)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMD::with_year_style, FnInStruct, compact)]
-        #[diplomat::rust_link(icu::datetime::fieldsets::YMD::with_length, FnInStruct, compact)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::YMD::for_length, FnInStruct, compact)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::YMD::with_length, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMD::short, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMD::medium, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMD::long, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::YMD::with_time, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::YMD::with_time_hm, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::YMD::with_time_hms, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::YMD::with_time_hmss, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::YMD::with_zone, FnInStruct, hidden)] // functionality is in the zoned formatter but rustlink is here
         #[cfg(feature = "buffer_provider")]
         pub fn create_ymd_with_provider(
             provider: &DataProvider,
@@ -199,7 +241,7 @@ pub mod ffi {
             year_style: Option<YearStyle>,
         ) -> Result<Box<Self>, DateTimeFormatterLoadError> {
             let prefs = (&locale.0).into();
-            let mut options = icu_datetime::fieldsets::YMD::with_length(map_or_default(length));
+            let mut options = icu_datetime::fieldsets::YMD::for_length(map_or_default(length));
             options.alignment = alignment.map(Into::into);
             options.year_style = year_style.map(Into::into);
             Ok(Box::new(Self(
@@ -215,12 +257,19 @@ pub mod ffi {
         }
         
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "de")]
+        #[diplomat::rust_link(icu::datetime::DateTimeFormatter::try_new, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::DE, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::DE::with_alignment, FnInStruct, compact)]
-        #[diplomat::rust_link(icu::datetime::fieldsets::DE::with_length, FnInStruct, compact)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::DE::for_length, FnInStruct, compact)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::DE::with_length, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::DE::short, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::DE::medium, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::DE::long, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::DE::with_time, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::DE::with_time_hm, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::DE::with_time_hms, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::DE::with_time_hmss, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::DE::with_zone, FnInStruct, hidden)] // functionality is in the zoned formatter but rustlink is here
         #[cfg(feature = "compiled_data")]
         pub fn create_de(
             locale: &Locale,
@@ -228,7 +277,7 @@ pub mod ffi {
             alignment: Option<DateTimeAlignment>,
         ) -> Result<Box<Self>, DateTimeFormatterLoadError> {
             let prefs = (&locale.0).into();
-            let mut options = icu_datetime::fieldsets::DE::with_length(map_or_default(length));
+            let mut options = icu_datetime::fieldsets::DE::for_length(map_or_default(length));
             options.alignment = alignment.map(Into::into);
             Ok(Box::new(Self(
                 icu_datetime
@@ -242,12 +291,19 @@ pub mod ffi {
         }
         
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "de_with_provider")]
+        #[diplomat::rust_link(icu::datetime::DateTimeFormatter::try_new, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::DE, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::DE::with_alignment, FnInStruct, compact)]
-        #[diplomat::rust_link(icu::datetime::fieldsets::DE::with_length, FnInStruct, compact)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::DE::for_length, FnInStruct, compact)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::DE::with_length, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::DE::short, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::DE::medium, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::DE::long, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::DE::with_time, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::DE::with_time_hm, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::DE::with_time_hms, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::DE::with_time_hmss, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::DE::with_zone, FnInStruct, hidden)] // functionality is in the zoned formatter but rustlink is here
         #[cfg(feature = "buffer_provider")]
         pub fn create_de_with_provider(
             provider: &DataProvider,
@@ -256,7 +312,7 @@ pub mod ffi {
             alignment: Option<DateTimeAlignment>,
         ) -> Result<Box<Self>, DateTimeFormatterLoadError> {
             let prefs = (&locale.0).into();
-            let mut options = icu_datetime::fieldsets::DE::with_length(map_or_default(length));
+            let mut options = icu_datetime::fieldsets::DE::for_length(map_or_default(length));
             options.alignment = alignment.map(Into::into);
             Ok(Box::new(Self(
                 icu_datetime
@@ -271,12 +327,19 @@ pub mod ffi {
         }
         
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "mde")]
+        #[diplomat::rust_link(icu::datetime::DateTimeFormatter::try_new, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::MDE, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::MDE::with_alignment, FnInStruct, compact)]
-        #[diplomat::rust_link(icu::datetime::fieldsets::MDE::with_length, FnInStruct, compact)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::MDE::for_length, FnInStruct, compact)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::MDE::with_length, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::MDE::short, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::MDE::medium, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::MDE::long, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::MDE::with_time, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::MDE::with_time_hm, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::MDE::with_time_hms, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::MDE::with_time_hmss, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::MDE::with_zone, FnInStruct, hidden)] // functionality is in the zoned formatter but rustlink is here
         #[cfg(feature = "compiled_data")]
         pub fn create_mde(
             locale: &Locale,
@@ -284,7 +347,7 @@ pub mod ffi {
             alignment: Option<DateTimeAlignment>,
         ) -> Result<Box<Self>, DateTimeFormatterLoadError> {
             let prefs = (&locale.0).into();
-            let mut options = icu_datetime::fieldsets::MDE::with_length(map_or_default(length));
+            let mut options = icu_datetime::fieldsets::MDE::for_length(map_or_default(length));
             options.alignment = alignment.map(Into::into);
             Ok(Box::new(Self(
                 icu_datetime
@@ -298,12 +361,19 @@ pub mod ffi {
         }
         
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "mde_with_provider")]
+        #[diplomat::rust_link(icu::datetime::DateTimeFormatter::try_new, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::MDE, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::MDE::with_alignment, FnInStruct, compact)]
-        #[diplomat::rust_link(icu::datetime::fieldsets::MDE::with_length, FnInStruct, compact)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::MDE::for_length, FnInStruct, compact)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::MDE::with_length, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::MDE::short, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::MDE::medium, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::MDE::long, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::MDE::with_time, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::MDE::with_time_hm, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::MDE::with_time_hms, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::MDE::with_time_hmss, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::MDE::with_zone, FnInStruct, hidden)] // functionality is in the zoned formatter but rustlink is here
         #[cfg(feature = "buffer_provider")]
         pub fn create_mde_with_provider(
             provider: &DataProvider,
@@ -312,7 +382,7 @@ pub mod ffi {
             alignment: Option<DateTimeAlignment>,
         ) -> Result<Box<Self>, DateTimeFormatterLoadError> {
             let prefs = (&locale.0).into();
-            let mut options = icu_datetime::fieldsets::MDE::with_length(map_or_default(length));
+            let mut options = icu_datetime::fieldsets::MDE::for_length(map_or_default(length));
             options.alignment = alignment.map(Into::into);
             Ok(Box::new(Self(
                 icu_datetime
@@ -327,13 +397,20 @@ pub mod ffi {
         }
         
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "ymde")]
+        #[diplomat::rust_link(icu::datetime::DateTimeFormatter::try_new, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMDE, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMDE::with_alignment, FnInStruct, compact)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMDE::with_year_style, FnInStruct, compact)]
-        #[diplomat::rust_link(icu::datetime::fieldsets::YMDE::with_length, FnInStruct, compact)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::YMDE::for_length, FnInStruct, compact)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::YMDE::with_length, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMDE::short, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMDE::medium, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMDE::long, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::YMDE::with_time, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::YMDE::with_time_hm, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::YMDE::with_time_hms, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::YMDE::with_time_hmss, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::YMDE::with_zone, FnInStruct, hidden)] // functionality is in the zoned formatter but rustlink is here
         #[cfg(feature = "compiled_data")]
         pub fn create_ymde(
             locale: &Locale,
@@ -342,7 +419,7 @@ pub mod ffi {
             year_style: Option<YearStyle>,
         ) -> Result<Box<Self>, DateTimeFormatterLoadError> {
             let prefs = (&locale.0).into();
-            let mut options = icu_datetime::fieldsets::YMDE::with_length(map_or_default(length));
+            let mut options = icu_datetime::fieldsets::YMDE::for_length(map_or_default(length));
             options.alignment = alignment.map(Into::into);
             options.year_style = year_style.map(Into::into);
             Ok(Box::new(Self(
@@ -357,13 +434,20 @@ pub mod ffi {
         }
         
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "ymde_with_provider")]
+        #[diplomat::rust_link(icu::datetime::DateTimeFormatter::try_new, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMDE, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMDE::with_alignment, FnInStruct, compact)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMDE::with_year_style, FnInStruct, compact)]
-        #[diplomat::rust_link(icu::datetime::fieldsets::YMDE::with_length, FnInStruct, compact)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::YMDE::for_length, FnInStruct, compact)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::YMDE::with_length, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMDE::short, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMDE::medium, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMDE::long, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::YMDE::with_time, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::YMDE::with_time_hm, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::YMDE::with_time_hms, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::YMDE::with_time_hmss, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::YMDE::with_zone, FnInStruct, hidden)] // functionality is in the zoned formatter but rustlink is here
         #[cfg(feature = "buffer_provider")]
         pub fn create_ymde_with_provider(
             provider: &DataProvider,
@@ -373,7 +457,7 @@ pub mod ffi {
             year_style: Option<YearStyle>,
         ) -> Result<Box<Self>, DateTimeFormatterLoadError> {
             let prefs = (&locale.0).into();
-            let mut options = icu_datetime::fieldsets::YMDE::with_length(map_or_default(length));
+            let mut options = icu_datetime::fieldsets::YMDE::for_length(map_or_default(length));
             options.alignment = alignment.map(Into::into);
             options.year_style = year_style.map(Into::into);
             Ok(Box::new(Self(
@@ -389,11 +473,18 @@ pub mod ffi {
         }
         
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "e")]
+        #[diplomat::rust_link(icu::datetime::DateTimeFormatter::try_new, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::E, Struct)]
-        #[diplomat::rust_link(icu::datetime::fieldsets::E::with_length, FnInStruct, compact)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::E::for_length, FnInStruct, compact)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::E::with_length, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::E::short, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::E::medium, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::E::long, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::E::with_time, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::E::with_time_hm, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::E::with_time_hms, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::E::with_time_hmss, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::E::with_zone, FnInStruct, hidden)] // functionality is in the zoned formatter but rustlink is here
         #[cfg(feature = "compiled_data")]
         pub fn create_e(
             locale: &Locale,
@@ -401,7 +492,7 @@ pub mod ffi {
         ) -> Result<Box<Self>, DateTimeFormatterLoadError> {
             let prefs = (&locale.0).into();
             #[allow(unused_mut)]
-            let mut options = icu_datetime::fieldsets::E::with_length(map_or_default(length));
+            let mut options = icu_datetime::fieldsets::E::for_length(map_or_default(length));
             Ok(Box::new(Self(
                 icu_datetime
                     ::DateTimeFormatter
@@ -414,11 +505,18 @@ pub mod ffi {
         }
         
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "e_with_provider")]
+        #[diplomat::rust_link(icu::datetime::DateTimeFormatter::try_new, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::E, Struct)]
-        #[diplomat::rust_link(icu::datetime::fieldsets::E::with_length, FnInStruct, compact)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::E::for_length, FnInStruct, compact)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::E::with_length, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::E::short, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::E::medium, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::E::long, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::E::with_time, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::E::with_time_hm, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::E::with_time_hms, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::E::with_time_hmss, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::E::with_zone, FnInStruct, hidden)] // functionality is in the zoned formatter but rustlink is here
         #[cfg(feature = "buffer_provider")]
         pub fn create_e_with_provider(
             provider: &DataProvider,
@@ -427,7 +525,7 @@ pub mod ffi {
         ) -> Result<Box<Self>, DateTimeFormatterLoadError> {
             let prefs = (&locale.0).into();
             #[allow(unused_mut)]
-            let mut options = icu_datetime::fieldsets::E::with_length(map_or_default(length));
+            let mut options = icu_datetime::fieldsets::E::for_length(map_or_default(length));
             Ok(Box::new(Self(
                 icu_datetime
                     ::DateTimeFormatter
@@ -441,9 +539,11 @@ pub mod ffi {
         }
         
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "m")]
+        #[diplomat::rust_link(icu::datetime::DateTimeFormatter::try_new, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::M, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::M::with_alignment, FnInStruct, compact)]
-        #[diplomat::rust_link(icu::datetime::fieldsets::M::with_length, FnInStruct, compact)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::M::for_length, FnInStruct, compact)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::M::with_length, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::M::short, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::M::medium, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::M::long, FnInStruct, hidden)]
@@ -454,7 +554,7 @@ pub mod ffi {
             alignment: Option<DateTimeAlignment>,
         ) -> Result<Box<Self>, DateTimeFormatterLoadError> {
             let prefs = (&locale.0).into();
-            let mut options = icu_datetime::fieldsets::M::with_length(map_or_default(length));
+            let mut options = icu_datetime::fieldsets::M::for_length(map_or_default(length));
             options.alignment = alignment.map(Into::into);
             Ok(Box::new(Self(
                 icu_datetime
@@ -468,9 +568,11 @@ pub mod ffi {
         }
         
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "m_with_provider")]
+        #[diplomat::rust_link(icu::datetime::DateTimeFormatter::try_new, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::M, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::M::with_alignment, FnInStruct, compact)]
-        #[diplomat::rust_link(icu::datetime::fieldsets::M::with_length, FnInStruct, compact)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::M::for_length, FnInStruct, compact)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::M::with_length, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::M::short, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::M::medium, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::M::long, FnInStruct, hidden)]
@@ -482,7 +584,7 @@ pub mod ffi {
             alignment: Option<DateTimeAlignment>,
         ) -> Result<Box<Self>, DateTimeFormatterLoadError> {
             let prefs = (&locale.0).into();
-            let mut options = icu_datetime::fieldsets::M::with_length(map_or_default(length));
+            let mut options = icu_datetime::fieldsets::M::for_length(map_or_default(length));
             options.alignment = alignment.map(Into::into);
             Ok(Box::new(Self(
                 icu_datetime
@@ -497,10 +599,12 @@ pub mod ffi {
         }
         
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "ym")]
+        #[diplomat::rust_link(icu::datetime::DateTimeFormatter::try_new, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YM, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YM::with_alignment, FnInStruct, compact)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YM::with_year_style, FnInStruct, compact)]
-        #[diplomat::rust_link(icu::datetime::fieldsets::YM::with_length, FnInStruct, compact)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::YM::for_length, FnInStruct, compact)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::YM::with_length, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YM::short, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YM::medium, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YM::long, FnInStruct, hidden)]
@@ -512,7 +616,7 @@ pub mod ffi {
             year_style: Option<YearStyle>,
         ) -> Result<Box<Self>, DateTimeFormatterLoadError> {
             let prefs = (&locale.0).into();
-            let mut options = icu_datetime::fieldsets::YM::with_length(map_or_default(length));
+            let mut options = icu_datetime::fieldsets::YM::for_length(map_or_default(length));
             options.alignment = alignment.map(Into::into);
             options.year_style = year_style.map(Into::into);
             Ok(Box::new(Self(
@@ -527,10 +631,12 @@ pub mod ffi {
         }
         
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "ym_with_provider")]
+        #[diplomat::rust_link(icu::datetime::DateTimeFormatter::try_new, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YM, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YM::with_alignment, FnInStruct, compact)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YM::with_year_style, FnInStruct, compact)]
-        #[diplomat::rust_link(icu::datetime::fieldsets::YM::with_length, FnInStruct, compact)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::YM::for_length, FnInStruct, compact)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::YM::with_length, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YM::short, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YM::medium, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YM::long, FnInStruct, hidden)]
@@ -543,7 +649,7 @@ pub mod ffi {
             year_style: Option<YearStyle>,
         ) -> Result<Box<Self>, DateTimeFormatterLoadError> {
             let prefs = (&locale.0).into();
-            let mut options = icu_datetime::fieldsets::YM::with_length(map_or_default(length));
+            let mut options = icu_datetime::fieldsets::YM::for_length(map_or_default(length));
             options.alignment = alignment.map(Into::into);
             options.year_style = year_style.map(Into::into);
             Ok(Box::new(Self(
@@ -559,10 +665,12 @@ pub mod ffi {
         }
         
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "y")]
+        #[diplomat::rust_link(icu::datetime::DateTimeFormatter::try_new, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::Y, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::Y::with_alignment, FnInStruct, compact)]
         #[diplomat::rust_link(icu::datetime::fieldsets::Y::with_year_style, FnInStruct, compact)]
-        #[diplomat::rust_link(icu::datetime::fieldsets::Y::with_length, FnInStruct, compact)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::Y::for_length, FnInStruct, compact)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::Y::with_length, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::Y::short, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::Y::medium, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::Y::long, FnInStruct, hidden)]
@@ -574,7 +682,7 @@ pub mod ffi {
             year_style: Option<YearStyle>,
         ) -> Result<Box<Self>, DateTimeFormatterLoadError> {
             let prefs = (&locale.0).into();
-            let mut options = icu_datetime::fieldsets::Y::with_length(map_or_default(length));
+            let mut options = icu_datetime::fieldsets::Y::for_length(map_or_default(length));
             options.alignment = alignment.map(Into::into);
             options.year_style = year_style.map(Into::into);
             Ok(Box::new(Self(
@@ -589,10 +697,12 @@ pub mod ffi {
         }
         
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "y_with_provider")]
+        #[diplomat::rust_link(icu::datetime::DateTimeFormatter::try_new, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::Y, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::Y::with_alignment, FnInStruct, compact)]
         #[diplomat::rust_link(icu::datetime::fieldsets::Y::with_year_style, FnInStruct, compact)]
-        #[diplomat::rust_link(icu::datetime::fieldsets::Y::with_length, FnInStruct, compact)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::Y::for_length, FnInStruct, compact)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::Y::with_length, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::Y::short, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::Y::medium, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::Y::long, FnInStruct, hidden)]
@@ -605,7 +715,7 @@ pub mod ffi {
             year_style: Option<YearStyle>,
         ) -> Result<Box<Self>, DateTimeFormatterLoadError> {
             let prefs = (&locale.0).into();
-            let mut options = icu_datetime::fieldsets::Y::with_length(map_or_default(length));
+            let mut options = icu_datetime::fieldsets::Y::for_length(map_or_default(length));
             options.alignment = alignment.map(Into::into);
             options.year_style = year_style.map(Into::into);
             Ok(Box::new(Self(
@@ -650,7 +760,7 @@ pub mod ffi {
     
 
     #[diplomat::opaque]
-    #[diplomat::rust_link(icu::datetime::FixedCalendarDateTimeFormatter, Typedef)]
+    #[diplomat::rust_link(icu::datetime::FixedCalendarDateTimeFormatter, Struct)]
     pub struct DateFormatterGregorian(
         pub  icu_datetime::FixedCalendarDateTimeFormatter<
             Gregorian,
@@ -660,12 +770,19 @@ pub mod ffi {
 
     impl DateFormatterGregorian {
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "d")]
+        #[diplomat::rust_link(icu::datetime::FixedCalendarDateTimeFormatter::try_new, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::D, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::D::with_alignment, FnInStruct, compact)]
-        #[diplomat::rust_link(icu::datetime::fieldsets::D::with_length, FnInStruct, compact)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::D::for_length, FnInStruct, compact)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::D::with_length, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::D::short, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::D::medium, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::D::long, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::D::with_time, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::D::with_time_hm, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::D::with_time_hms, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::D::with_time_hmss, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::D::with_zone, FnInStruct, hidden)] // functionality is in the zoned formatter but rustlink is here
         #[cfg(feature = "compiled_data")]
         pub fn create_d(
             locale: &Locale,
@@ -673,7 +790,7 @@ pub mod ffi {
             alignment: Option<DateTimeAlignment>,
         ) -> Result<Box<Self>, DateTimeFormatterLoadError> {
             let prefs = (&locale.0).into();
-            let mut options = icu_datetime::fieldsets::D::with_length(map_or_default(length));
+            let mut options = icu_datetime::fieldsets::D::for_length(map_or_default(length));
             options.alignment = alignment.map(Into::into);
             Ok(Box::new(Self(
                 icu_datetime
@@ -687,12 +804,19 @@ pub mod ffi {
         }
         
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "d_with_provider")]
+        #[diplomat::rust_link(icu::datetime::FixedCalendarDateTimeFormatter::try_new, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::D, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::D::with_alignment, FnInStruct, compact)]
-        #[diplomat::rust_link(icu::datetime::fieldsets::D::with_length, FnInStruct, compact)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::D::for_length, FnInStruct, compact)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::D::with_length, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::D::short, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::D::medium, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::D::long, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::D::with_time, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::D::with_time_hm, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::D::with_time_hms, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::D::with_time_hmss, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::D::with_zone, FnInStruct, hidden)] // functionality is in the zoned formatter but rustlink is here
         #[cfg(feature = "buffer_provider")]
         pub fn create_d_with_provider(
             provider: &DataProvider,
@@ -701,7 +825,7 @@ pub mod ffi {
             alignment: Option<DateTimeAlignment>,
         ) -> Result<Box<Self>, DateTimeFormatterLoadError> {
             let prefs = (&locale.0).into();
-            let mut options = icu_datetime::fieldsets::D::with_length(map_or_default(length));
+            let mut options = icu_datetime::fieldsets::D::for_length(map_or_default(length));
             options.alignment = alignment.map(Into::into);
             Ok(Box::new(Self(
                 icu_datetime
@@ -716,12 +840,19 @@ pub mod ffi {
         }
         
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "md")]
+        #[diplomat::rust_link(icu::datetime::FixedCalendarDateTimeFormatter::try_new, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::MD, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::MD::with_alignment, FnInStruct, compact)]
-        #[diplomat::rust_link(icu::datetime::fieldsets::MD::with_length, FnInStruct, compact)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::MD::for_length, FnInStruct, compact)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::MD::with_length, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::MD::short, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::MD::medium, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::MD::long, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::MD::with_time, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::MD::with_time_hm, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::MD::with_time_hms, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::MD::with_time_hmss, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::MD::with_zone, FnInStruct, hidden)] // functionality is in the zoned formatter but rustlink is here
         #[cfg(feature = "compiled_data")]
         pub fn create_md(
             locale: &Locale,
@@ -729,7 +860,7 @@ pub mod ffi {
             alignment: Option<DateTimeAlignment>,
         ) -> Result<Box<Self>, DateTimeFormatterLoadError> {
             let prefs = (&locale.0).into();
-            let mut options = icu_datetime::fieldsets::MD::with_length(map_or_default(length));
+            let mut options = icu_datetime::fieldsets::MD::for_length(map_or_default(length));
             options.alignment = alignment.map(Into::into);
             Ok(Box::new(Self(
                 icu_datetime
@@ -743,12 +874,19 @@ pub mod ffi {
         }
         
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "md_with_provider")]
+        #[diplomat::rust_link(icu::datetime::FixedCalendarDateTimeFormatter::try_new, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::MD, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::MD::with_alignment, FnInStruct, compact)]
-        #[diplomat::rust_link(icu::datetime::fieldsets::MD::with_length, FnInStruct, compact)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::MD::for_length, FnInStruct, compact)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::MD::with_length, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::MD::short, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::MD::medium, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::MD::long, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::MD::with_time, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::MD::with_time_hm, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::MD::with_time_hms, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::MD::with_time_hmss, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::MD::with_zone, FnInStruct, hidden)] // functionality is in the zoned formatter but rustlink is here
         #[cfg(feature = "buffer_provider")]
         pub fn create_md_with_provider(
             provider: &DataProvider,
@@ -757,7 +895,7 @@ pub mod ffi {
             alignment: Option<DateTimeAlignment>,
         ) -> Result<Box<Self>, DateTimeFormatterLoadError> {
             let prefs = (&locale.0).into();
-            let mut options = icu_datetime::fieldsets::MD::with_length(map_or_default(length));
+            let mut options = icu_datetime::fieldsets::MD::for_length(map_or_default(length));
             options.alignment = alignment.map(Into::into);
             Ok(Box::new(Self(
                 icu_datetime
@@ -772,13 +910,20 @@ pub mod ffi {
         }
         
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "ymd")]
+        #[diplomat::rust_link(icu::datetime::FixedCalendarDateTimeFormatter::try_new, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMD, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMD::with_alignment, FnInStruct, compact)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMD::with_year_style, FnInStruct, compact)]
-        #[diplomat::rust_link(icu::datetime::fieldsets::YMD::with_length, FnInStruct, compact)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::YMD::for_length, FnInStruct, compact)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::YMD::with_length, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMD::short, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMD::medium, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMD::long, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::YMD::with_time, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::YMD::with_time_hm, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::YMD::with_time_hms, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::YMD::with_time_hmss, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::YMD::with_zone, FnInStruct, hidden)] // functionality is in the zoned formatter but rustlink is here
         #[diplomat::demo(default_constructor)]
         #[cfg(feature = "compiled_data")]
         pub fn create_ymd(
@@ -788,7 +933,7 @@ pub mod ffi {
             year_style: Option<YearStyle>,
         ) -> Result<Box<Self>, DateTimeFormatterLoadError> {
             let prefs = (&locale.0).into();
-            let mut options = icu_datetime::fieldsets::YMD::with_length(map_or_default(length));
+            let mut options = icu_datetime::fieldsets::YMD::for_length(map_or_default(length));
             options.alignment = alignment.map(Into::into);
             options.year_style = year_style.map(Into::into);
             Ok(Box::new(Self(
@@ -803,13 +948,20 @@ pub mod ffi {
         }
         
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "ymd_with_provider")]
+        #[diplomat::rust_link(icu::datetime::FixedCalendarDateTimeFormatter::try_new, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMD, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMD::with_alignment, FnInStruct, compact)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMD::with_year_style, FnInStruct, compact)]
-        #[diplomat::rust_link(icu::datetime::fieldsets::YMD::with_length, FnInStruct, compact)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::YMD::for_length, FnInStruct, compact)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::YMD::with_length, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMD::short, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMD::medium, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMD::long, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::YMD::with_time, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::YMD::with_time_hm, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::YMD::with_time_hms, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::YMD::with_time_hmss, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::YMD::with_zone, FnInStruct, hidden)] // functionality is in the zoned formatter but rustlink is here
         #[cfg(feature = "buffer_provider")]
         pub fn create_ymd_with_provider(
             provider: &DataProvider,
@@ -819,7 +971,7 @@ pub mod ffi {
             year_style: Option<YearStyle>,
         ) -> Result<Box<Self>, DateTimeFormatterLoadError> {
             let prefs = (&locale.0).into();
-            let mut options = icu_datetime::fieldsets::YMD::with_length(map_or_default(length));
+            let mut options = icu_datetime::fieldsets::YMD::for_length(map_or_default(length));
             options.alignment = alignment.map(Into::into);
             options.year_style = year_style.map(Into::into);
             Ok(Box::new(Self(
@@ -835,12 +987,19 @@ pub mod ffi {
         }
         
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "de")]
+        #[diplomat::rust_link(icu::datetime::FixedCalendarDateTimeFormatter::try_new, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::DE, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::DE::with_alignment, FnInStruct, compact)]
-        #[diplomat::rust_link(icu::datetime::fieldsets::DE::with_length, FnInStruct, compact)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::DE::for_length, FnInStruct, compact)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::DE::with_length, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::DE::short, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::DE::medium, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::DE::long, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::DE::with_time, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::DE::with_time_hm, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::DE::with_time_hms, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::DE::with_time_hmss, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::DE::with_zone, FnInStruct, hidden)] // functionality is in the zoned formatter but rustlink is here
         #[cfg(feature = "compiled_data")]
         pub fn create_de(
             locale: &Locale,
@@ -848,7 +1007,7 @@ pub mod ffi {
             alignment: Option<DateTimeAlignment>,
         ) -> Result<Box<Self>, DateTimeFormatterLoadError> {
             let prefs = (&locale.0).into();
-            let mut options = icu_datetime::fieldsets::DE::with_length(map_or_default(length));
+            let mut options = icu_datetime::fieldsets::DE::for_length(map_or_default(length));
             options.alignment = alignment.map(Into::into);
             Ok(Box::new(Self(
                 icu_datetime
@@ -862,12 +1021,19 @@ pub mod ffi {
         }
         
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "de_with_provider")]
+        #[diplomat::rust_link(icu::datetime::FixedCalendarDateTimeFormatter::try_new, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::DE, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::DE::with_alignment, FnInStruct, compact)]
-        #[diplomat::rust_link(icu::datetime::fieldsets::DE::with_length, FnInStruct, compact)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::DE::for_length, FnInStruct, compact)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::DE::with_length, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::DE::short, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::DE::medium, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::DE::long, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::DE::with_time, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::DE::with_time_hm, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::DE::with_time_hms, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::DE::with_time_hmss, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::DE::with_zone, FnInStruct, hidden)] // functionality is in the zoned formatter but rustlink is here
         #[cfg(feature = "buffer_provider")]
         pub fn create_de_with_provider(
             provider: &DataProvider,
@@ -876,7 +1042,7 @@ pub mod ffi {
             alignment: Option<DateTimeAlignment>,
         ) -> Result<Box<Self>, DateTimeFormatterLoadError> {
             let prefs = (&locale.0).into();
-            let mut options = icu_datetime::fieldsets::DE::with_length(map_or_default(length));
+            let mut options = icu_datetime::fieldsets::DE::for_length(map_or_default(length));
             options.alignment = alignment.map(Into::into);
             Ok(Box::new(Self(
                 icu_datetime
@@ -891,12 +1057,19 @@ pub mod ffi {
         }
         
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "mde")]
+        #[diplomat::rust_link(icu::datetime::FixedCalendarDateTimeFormatter::try_new, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::MDE, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::MDE::with_alignment, FnInStruct, compact)]
-        #[diplomat::rust_link(icu::datetime::fieldsets::MDE::with_length, FnInStruct, compact)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::MDE::for_length, FnInStruct, compact)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::MDE::with_length, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::MDE::short, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::MDE::medium, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::MDE::long, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::MDE::with_time, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::MDE::with_time_hm, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::MDE::with_time_hms, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::MDE::with_time_hmss, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::MDE::with_zone, FnInStruct, hidden)] // functionality is in the zoned formatter but rustlink is here
         #[cfg(feature = "compiled_data")]
         pub fn create_mde(
             locale: &Locale,
@@ -904,7 +1077,7 @@ pub mod ffi {
             alignment: Option<DateTimeAlignment>,
         ) -> Result<Box<Self>, DateTimeFormatterLoadError> {
             let prefs = (&locale.0).into();
-            let mut options = icu_datetime::fieldsets::MDE::with_length(map_or_default(length));
+            let mut options = icu_datetime::fieldsets::MDE::for_length(map_or_default(length));
             options.alignment = alignment.map(Into::into);
             Ok(Box::new(Self(
                 icu_datetime
@@ -918,12 +1091,19 @@ pub mod ffi {
         }
         
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "mde_with_provider")]
+        #[diplomat::rust_link(icu::datetime::FixedCalendarDateTimeFormatter::try_new, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::MDE, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::MDE::with_alignment, FnInStruct, compact)]
-        #[diplomat::rust_link(icu::datetime::fieldsets::MDE::with_length, FnInStruct, compact)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::MDE::for_length, FnInStruct, compact)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::MDE::with_length, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::MDE::short, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::MDE::medium, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::MDE::long, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::MDE::with_time, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::MDE::with_time_hm, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::MDE::with_time_hms, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::MDE::with_time_hmss, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::MDE::with_zone, FnInStruct, hidden)] // functionality is in the zoned formatter but rustlink is here
         #[cfg(feature = "buffer_provider")]
         pub fn create_mde_with_provider(
             provider: &DataProvider,
@@ -932,7 +1112,7 @@ pub mod ffi {
             alignment: Option<DateTimeAlignment>,
         ) -> Result<Box<Self>, DateTimeFormatterLoadError> {
             let prefs = (&locale.0).into();
-            let mut options = icu_datetime::fieldsets::MDE::with_length(map_or_default(length));
+            let mut options = icu_datetime::fieldsets::MDE::for_length(map_or_default(length));
             options.alignment = alignment.map(Into::into);
             Ok(Box::new(Self(
                 icu_datetime
@@ -947,13 +1127,20 @@ pub mod ffi {
         }
         
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "ymde")]
+        #[diplomat::rust_link(icu::datetime::FixedCalendarDateTimeFormatter::try_new, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMDE, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMDE::with_alignment, FnInStruct, compact)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMDE::with_year_style, FnInStruct, compact)]
-        #[diplomat::rust_link(icu::datetime::fieldsets::YMDE::with_length, FnInStruct, compact)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::YMDE::for_length, FnInStruct, compact)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::YMDE::with_length, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMDE::short, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMDE::medium, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMDE::long, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::YMDE::with_time, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::YMDE::with_time_hm, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::YMDE::with_time_hms, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::YMDE::with_time_hmss, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::YMDE::with_zone, FnInStruct, hidden)] // functionality is in the zoned formatter but rustlink is here
         #[cfg(feature = "compiled_data")]
         pub fn create_ymde(
             locale: &Locale,
@@ -962,7 +1149,7 @@ pub mod ffi {
             year_style: Option<YearStyle>,
         ) -> Result<Box<Self>, DateTimeFormatterLoadError> {
             let prefs = (&locale.0).into();
-            let mut options = icu_datetime::fieldsets::YMDE::with_length(map_or_default(length));
+            let mut options = icu_datetime::fieldsets::YMDE::for_length(map_or_default(length));
             options.alignment = alignment.map(Into::into);
             options.year_style = year_style.map(Into::into);
             Ok(Box::new(Self(
@@ -977,13 +1164,20 @@ pub mod ffi {
         }
         
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "ymde_with_provider")]
+        #[diplomat::rust_link(icu::datetime::FixedCalendarDateTimeFormatter::try_new, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMDE, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMDE::with_alignment, FnInStruct, compact)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMDE::with_year_style, FnInStruct, compact)]
-        #[diplomat::rust_link(icu::datetime::fieldsets::YMDE::with_length, FnInStruct, compact)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::YMDE::for_length, FnInStruct, compact)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::YMDE::with_length, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMDE::short, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMDE::medium, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YMDE::long, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::YMDE::with_time, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::YMDE::with_time_hm, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::YMDE::with_time_hms, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::YMDE::with_time_hmss, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::YMDE::with_zone, FnInStruct, hidden)] // functionality is in the zoned formatter but rustlink is here
         #[cfg(feature = "buffer_provider")]
         pub fn create_ymde_with_provider(
             provider: &DataProvider,
@@ -993,7 +1187,7 @@ pub mod ffi {
             year_style: Option<YearStyle>,
         ) -> Result<Box<Self>, DateTimeFormatterLoadError> {
             let prefs = (&locale.0).into();
-            let mut options = icu_datetime::fieldsets::YMDE::with_length(map_or_default(length));
+            let mut options = icu_datetime::fieldsets::YMDE::for_length(map_or_default(length));
             options.alignment = alignment.map(Into::into);
             options.year_style = year_style.map(Into::into);
             Ok(Box::new(Self(
@@ -1009,11 +1203,18 @@ pub mod ffi {
         }
         
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "e")]
+        #[diplomat::rust_link(icu::datetime::FixedCalendarDateTimeFormatter::try_new, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::E, Struct)]
-        #[diplomat::rust_link(icu::datetime::fieldsets::E::with_length, FnInStruct, compact)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::E::for_length, FnInStruct, compact)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::E::with_length, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::E::short, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::E::medium, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::E::long, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::E::with_time, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::E::with_time_hm, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::E::with_time_hms, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::E::with_time_hmss, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::E::with_zone, FnInStruct, hidden)] // functionality is in the zoned formatter but rustlink is here
         #[cfg(feature = "compiled_data")]
         pub fn create_e(
             locale: &Locale,
@@ -1021,7 +1222,7 @@ pub mod ffi {
         ) -> Result<Box<Self>, DateTimeFormatterLoadError> {
             let prefs = (&locale.0).into();
             #[allow(unused_mut)]
-            let mut options = icu_datetime::fieldsets::E::with_length(map_or_default(length));
+            let mut options = icu_datetime::fieldsets::E::for_length(map_or_default(length));
             Ok(Box::new(Self(
                 icu_datetime
                     ::FixedCalendarDateTimeFormatter
@@ -1034,11 +1235,18 @@ pub mod ffi {
         }
         
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "e_with_provider")]
+        #[diplomat::rust_link(icu::datetime::FixedCalendarDateTimeFormatter::try_new, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::E, Struct)]
-        #[diplomat::rust_link(icu::datetime::fieldsets::E::with_length, FnInStruct, compact)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::E::for_length, FnInStruct, compact)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::E::with_length, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::E::short, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::E::medium, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::E::long, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::E::with_time, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::E::with_time_hm, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::E::with_time_hms, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::E::with_time_hmss, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::E::with_zone, FnInStruct, hidden)] // functionality is in the zoned formatter but rustlink is here
         #[cfg(feature = "buffer_provider")]
         pub fn create_e_with_provider(
             provider: &DataProvider,
@@ -1047,7 +1255,7 @@ pub mod ffi {
         ) -> Result<Box<Self>, DateTimeFormatterLoadError> {
             let prefs = (&locale.0).into();
             #[allow(unused_mut)]
-            let mut options = icu_datetime::fieldsets::E::with_length(map_or_default(length));
+            let mut options = icu_datetime::fieldsets::E::for_length(map_or_default(length));
             Ok(Box::new(Self(
                 icu_datetime
                     ::FixedCalendarDateTimeFormatter
@@ -1061,9 +1269,11 @@ pub mod ffi {
         }
         
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "m")]
+        #[diplomat::rust_link(icu::datetime::FixedCalendarDateTimeFormatter::try_new, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::M, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::M::with_alignment, FnInStruct, compact)]
-        #[diplomat::rust_link(icu::datetime::fieldsets::M::with_length, FnInStruct, compact)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::M::for_length, FnInStruct, compact)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::M::with_length, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::M::short, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::M::medium, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::M::long, FnInStruct, hidden)]
@@ -1074,7 +1284,7 @@ pub mod ffi {
             alignment: Option<DateTimeAlignment>,
         ) -> Result<Box<Self>, DateTimeFormatterLoadError> {
             let prefs = (&locale.0).into();
-            let mut options = icu_datetime::fieldsets::M::with_length(map_or_default(length));
+            let mut options = icu_datetime::fieldsets::M::for_length(map_or_default(length));
             options.alignment = alignment.map(Into::into);
             Ok(Box::new(Self(
                 icu_datetime
@@ -1088,9 +1298,11 @@ pub mod ffi {
         }
         
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "m_with_provider")]
+        #[diplomat::rust_link(icu::datetime::FixedCalendarDateTimeFormatter::try_new, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::M, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::M::with_alignment, FnInStruct, compact)]
-        #[diplomat::rust_link(icu::datetime::fieldsets::M::with_length, FnInStruct, compact)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::M::for_length, FnInStruct, compact)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::M::with_length, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::M::short, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::M::medium, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::M::long, FnInStruct, hidden)]
@@ -1102,7 +1314,7 @@ pub mod ffi {
             alignment: Option<DateTimeAlignment>,
         ) -> Result<Box<Self>, DateTimeFormatterLoadError> {
             let prefs = (&locale.0).into();
-            let mut options = icu_datetime::fieldsets::M::with_length(map_or_default(length));
+            let mut options = icu_datetime::fieldsets::M::for_length(map_or_default(length));
             options.alignment = alignment.map(Into::into);
             Ok(Box::new(Self(
                 icu_datetime
@@ -1117,10 +1329,12 @@ pub mod ffi {
         }
         
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "ym")]
+        #[diplomat::rust_link(icu::datetime::FixedCalendarDateTimeFormatter::try_new, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YM, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YM::with_alignment, FnInStruct, compact)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YM::with_year_style, FnInStruct, compact)]
-        #[diplomat::rust_link(icu::datetime::fieldsets::YM::with_length, FnInStruct, compact)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::YM::for_length, FnInStruct, compact)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::YM::with_length, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YM::short, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YM::medium, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YM::long, FnInStruct, hidden)]
@@ -1132,7 +1346,7 @@ pub mod ffi {
             year_style: Option<YearStyle>,
         ) -> Result<Box<Self>, DateTimeFormatterLoadError> {
             let prefs = (&locale.0).into();
-            let mut options = icu_datetime::fieldsets::YM::with_length(map_or_default(length));
+            let mut options = icu_datetime::fieldsets::YM::for_length(map_or_default(length));
             options.alignment = alignment.map(Into::into);
             options.year_style = year_style.map(Into::into);
             Ok(Box::new(Self(
@@ -1147,10 +1361,12 @@ pub mod ffi {
         }
         
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "ym_with_provider")]
+        #[diplomat::rust_link(icu::datetime::FixedCalendarDateTimeFormatter::try_new, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YM, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YM::with_alignment, FnInStruct, compact)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YM::with_year_style, FnInStruct, compact)]
-        #[diplomat::rust_link(icu::datetime::fieldsets::YM::with_length, FnInStruct, compact)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::YM::for_length, FnInStruct, compact)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::YM::with_length, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YM::short, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YM::medium, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::YM::long, FnInStruct, hidden)]
@@ -1163,7 +1379,7 @@ pub mod ffi {
             year_style: Option<YearStyle>,
         ) -> Result<Box<Self>, DateTimeFormatterLoadError> {
             let prefs = (&locale.0).into();
-            let mut options = icu_datetime::fieldsets::YM::with_length(map_or_default(length));
+            let mut options = icu_datetime::fieldsets::YM::for_length(map_or_default(length));
             options.alignment = alignment.map(Into::into);
             options.year_style = year_style.map(Into::into);
             Ok(Box::new(Self(
@@ -1179,10 +1395,12 @@ pub mod ffi {
         }
         
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "y")]
+        #[diplomat::rust_link(icu::datetime::FixedCalendarDateTimeFormatter::try_new, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::Y, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::Y::with_alignment, FnInStruct, compact)]
         #[diplomat::rust_link(icu::datetime::fieldsets::Y::with_year_style, FnInStruct, compact)]
-        #[diplomat::rust_link(icu::datetime::fieldsets::Y::with_length, FnInStruct, compact)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::Y::for_length, FnInStruct, compact)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::Y::with_length, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::Y::short, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::Y::medium, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::Y::long, FnInStruct, hidden)]
@@ -1194,7 +1412,7 @@ pub mod ffi {
             year_style: Option<YearStyle>,
         ) -> Result<Box<Self>, DateTimeFormatterLoadError> {
             let prefs = (&locale.0).into();
-            let mut options = icu_datetime::fieldsets::Y::with_length(map_or_default(length));
+            let mut options = icu_datetime::fieldsets::Y::for_length(map_or_default(length));
             options.alignment = alignment.map(Into::into);
             options.year_style = year_style.map(Into::into);
             Ok(Box::new(Self(
@@ -1209,10 +1427,12 @@ pub mod ffi {
         }
         
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "y_with_provider")]
+        #[diplomat::rust_link(icu::datetime::FixedCalendarDateTimeFormatter::try_new, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::Y, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::Y::with_alignment, FnInStruct, compact)]
         #[diplomat::rust_link(icu::datetime::fieldsets::Y::with_year_style, FnInStruct, compact)]
-        #[diplomat::rust_link(icu::datetime::fieldsets::Y::with_length, FnInStruct, compact)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::Y::for_length, FnInStruct, compact)]
+        #[diplomat::rust_link(icu::datetime::fieldsets::Y::with_length, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::Y::short, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::Y::medium, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::fieldsets::Y::long, FnInStruct, hidden)]
@@ -1225,7 +1445,7 @@ pub mod ffi {
             year_style: Option<YearStyle>,
         ) -> Result<Box<Self>, DateTimeFormatterLoadError> {
             let prefs = (&locale.0).into();
-            let mut options = icu_datetime::fieldsets::Y::with_length(map_or_default(length));
+            let mut options = icu_datetime::fieldsets::Y::for_length(map_or_default(length));
             options.alignment = alignment.map(Into::into);
             options.year_style = year_style.map(Into::into);
             Ok(Box::new(Self(
