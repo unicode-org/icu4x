@@ -10,6 +10,7 @@
 #include <memory>
 #include <functional>
 #include <optional>
+#include <cstdlib>
 #include "../diplomat_runtime.hpp"
 
 
@@ -55,7 +56,7 @@ inline icu4x::GraphemeClusterBreak icu4x::GraphemeClusterBreak::FromFFI(icu4x::c
     case icu4x::capi::GraphemeClusterBreak_ZWJ:
       return static_cast<icu4x::GraphemeClusterBreak::Value>(c_enum);
     default:
-      abort();
+      std::abort();
   }
 }
 

@@ -10,6 +10,7 @@
 #include <memory>
 #include <functional>
 #include <optional>
+#include <cstdlib>
 #include "../diplomat_runtime.hpp"
 #include "Locale.hpp"
 
@@ -51,7 +52,7 @@ inline icu4x::CalendarKind icu4x::CalendarKind::FromFFI(icu4x::capi::CalendarKin
     case icu4x::capi::CalendarKind_Roc:
       return static_cast<icu4x::CalendarKind::Value>(c_enum);
     default:
-      abort();
+      std::abort();
   }
 }
 

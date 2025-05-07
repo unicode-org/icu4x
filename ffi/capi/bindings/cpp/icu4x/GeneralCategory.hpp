@@ -10,6 +10,7 @@
 #include <memory>
 #include <functional>
 #include <optional>
+#include <cstdlib>
 #include "../diplomat_runtime.hpp"
 #include "GeneralCategoryGroup.hpp"
 
@@ -76,7 +77,7 @@ inline icu4x::GeneralCategory icu4x::GeneralCategory::FromFFI(icu4x::capi::Gener
     case icu4x::capi::GeneralCategory_OtherSymbol:
       return static_cast<icu4x::GeneralCategory::Value>(c_enum);
     default:
-      abort();
+      std::abort();
   }
 }
 

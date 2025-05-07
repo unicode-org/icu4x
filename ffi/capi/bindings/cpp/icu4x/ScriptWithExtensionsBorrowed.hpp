@@ -10,6 +10,7 @@
 #include <memory>
 #include <functional>
 #include <optional>
+#include <cstdlib>
 #include "../diplomat_runtime.hpp"
 #include "CodePointSetData.hpp"
 #include "ScriptExtensionsSet.hpp"

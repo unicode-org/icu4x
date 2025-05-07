@@ -10,6 +10,7 @@
 #include <memory>
 #include <functional>
 #include <optional>
+#include <cstdlib>
 #include "../diplomat_runtime.hpp"
 
 
@@ -47,7 +48,7 @@ inline icu4x::VerticalOrientation icu4x::VerticalOrientation::FromFFI(icu4x::cap
     case icu4x::capi::VerticalOrientation_Upright:
       return static_cast<icu4x::VerticalOrientation::Value>(c_enum);
     default:
-      abort();
+      std::abort();
   }
 }
 

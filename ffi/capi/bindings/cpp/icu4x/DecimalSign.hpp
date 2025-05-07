@@ -10,6 +10,7 @@
 #include <memory>
 #include <functional>
 #include <optional>
+#include <cstdlib>
 #include "../diplomat_runtime.hpp"
 
 
@@ -33,7 +34,7 @@ inline icu4x::DecimalSign icu4x::DecimalSign::FromFFI(icu4x::capi::DecimalSign c
     case icu4x::capi::DecimalSign_Positive:
       return static_cast<icu4x::DecimalSign::Value>(c_enum);
     default:
-      abort();
+      std::abort();
   }
 }
 #endif // icu4x_DecimalSign_HPP

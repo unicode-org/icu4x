@@ -10,6 +10,7 @@
 #include <memory>
 #include <functional>
 #include <optional>
+#include <cstdlib>
 #include "../diplomat_runtime.hpp"
 
 
@@ -33,7 +34,7 @@ inline icu4x::ListLength icu4x::ListLength::FromFFI(icu4x::capi::ListLength c_en
     case icu4x::capi::ListLength_Narrow:
       return static_cast<icu4x::ListLength::Value>(c_enum);
     default:
-      abort();
+      std::abort();
   }
 }
 #endif // icu4x_ListLength_HPP

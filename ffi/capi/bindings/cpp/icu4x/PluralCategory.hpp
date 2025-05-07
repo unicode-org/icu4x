@@ -10,6 +10,7 @@
 #include <memory>
 #include <functional>
 #include <optional>
+#include <cstdlib>
 #include "../diplomat_runtime.hpp"
 
 
@@ -39,7 +40,7 @@ inline icu4x::PluralCategory icu4x::PluralCategory::FromFFI(icu4x::capi::PluralC
     case icu4x::capi::PluralCategory_Other:
       return static_cast<icu4x::PluralCategory::Value>(c_enum);
     default:
-      abort();
+      std::abort();
   }
 }
 

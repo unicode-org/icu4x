@@ -10,6 +10,7 @@
 #include <memory>
 #include <functional>
 #include <optional>
+#include <cstdlib>
 #include "../diplomat_runtime.hpp"
 
 
@@ -35,7 +36,7 @@ inline icu4x::Rfc9557ParseError icu4x::Rfc9557ParseError::FromFFI(icu4x::capi::R
     case icu4x::capi::Rfc9557ParseError_UnknownCalendar:
       return static_cast<icu4x::Rfc9557ParseError::Value>(c_enum);
     default:
-      abort();
+      std::abort();
   }
 }
 #endif // icu4x_Rfc9557ParseError_HPP

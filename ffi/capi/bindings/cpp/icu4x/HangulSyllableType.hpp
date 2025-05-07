@@ -10,6 +10,7 @@
 #include <memory>
 #include <functional>
 #include <optional>
+#include <cstdlib>
 #include "../diplomat_runtime.hpp"
 
 
@@ -43,7 +44,7 @@ inline icu4x::HangulSyllableType icu4x::HangulSyllableType::FromFFI(icu4x::capi:
     case icu4x::capi::HangulSyllableType_LeadingVowelTrailingSyllable:
       return static_cast<icu4x::HangulSyllableType::Value>(c_enum);
     default:
-      abort();
+      std::abort();
   }
 }
 

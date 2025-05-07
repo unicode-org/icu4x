@@ -10,6 +10,7 @@
 #include <memory>
 #include <functional>
 #include <optional>
+#include <cstdlib>
 #include "../diplomat_runtime.hpp"
 
 
@@ -32,7 +33,7 @@ inline icu4x::CollatorAlternateHandling icu4x::CollatorAlternateHandling::FromFF
     case icu4x::capi::CollatorAlternateHandling_Shifted:
       return static_cast<icu4x::CollatorAlternateHandling::Value>(c_enum);
     default:
-      abort();
+      std::abort();
   }
 }
 #endif // icu4x_CollatorAlternateHandling_HPP

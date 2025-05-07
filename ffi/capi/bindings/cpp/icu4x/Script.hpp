@@ -10,6 +10,7 @@
 #include <memory>
 #include <functional>
 #include <optional>
+#include <cstdlib>
 #include "../diplomat_runtime.hpp"
 
 
@@ -208,7 +209,7 @@ inline icu4x::Script icu4x::Script::FromFFI(icu4x::capi::Script c_enum) {
     case icu4x::capi::Script_ZanabazarSquare:
       return static_cast<icu4x::Script::Value>(c_enum);
     default:
-      abort();
+      std::abort();
   }
 }
 

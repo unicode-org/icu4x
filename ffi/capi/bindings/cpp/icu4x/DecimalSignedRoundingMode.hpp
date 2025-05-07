@@ -10,6 +10,7 @@
 #include <memory>
 #include <functional>
 #include <optional>
+#include <cstdlib>
 #include "../diplomat_runtime.hpp"
 
 
@@ -39,7 +40,7 @@ inline icu4x::DecimalSignedRoundingMode icu4x::DecimalSignedRoundingMode::FromFF
     case icu4x::capi::DecimalSignedRoundingMode_HalfFloor:
       return static_cast<icu4x::DecimalSignedRoundingMode::Value>(c_enum);
     default:
-      abort();
+      std::abort();
   }
 }
 #endif // icu4x_DecimalSignedRoundingMode_HPP

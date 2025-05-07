@@ -10,6 +10,7 @@
 #include <memory>
 #include <functional>
 #include <optional>
+#include <cstdlib>
 #include "../diplomat_runtime.hpp"
 
 
@@ -33,7 +34,7 @@ inline icu4x::DecimalParseError icu4x::DecimalParseError::FromFFI(icu4x::capi::D
     case icu4x::capi::DecimalParseError_Syntax:
       return static_cast<icu4x::DecimalParseError::Value>(c_enum);
     default:
-      abort();
+      std::abort();
   }
 }
 #endif // icu4x_DecimalParseError_HPP

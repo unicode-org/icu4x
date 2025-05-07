@@ -10,6 +10,7 @@
 #include <memory>
 #include <functional>
 #include <optional>
+#include <cstdlib>
 #include "../diplomat_runtime.hpp"
 
 
@@ -66,7 +67,7 @@ inline icu4x::WordBreak icu4x::WordBreak::FromFFI(icu4x::capi::WordBreak c_enum)
     case icu4x::capi::WordBreak_WSegSpace:
       return static_cast<icu4x::WordBreak::Value>(c_enum);
     default:
-      abort();
+      std::abort();
   }
 }
 
