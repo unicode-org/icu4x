@@ -42,6 +42,10 @@ pub mod ffi {
     );
 
     impl ZonedDateTimeFormatter {
+        /// Creates a zoned formatter based on a non-zoned formatter.
+        ///
+        /// Caution: The locale provided here must match the locale used to construct the non-zoned formatter,
+        /// or else unexpected behavior may occur!
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "specific_long")]
         #[diplomat::rust_link(icu::datetime::fieldsets::zone::SpecificLong, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::Combo, Struct, hidden)]
@@ -68,6 +72,10 @@ pub mod ffi {
             )
         }
         
+        /// Creates a zoned formatter based on a non-zoned formatter.
+        ///
+        /// Caution: The locale provided here must match the locale used to construct the non-zoned formatter,
+        /// or else unexpected behavior may occur!
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "specific_long_with_provider")]
         #[diplomat::rust_link(icu::datetime::fieldsets::zone::SpecificLong, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::Combo, Struct, hidden)]
@@ -100,6 +108,10 @@ pub mod ffi {
             )
         }
         
+        /// Creates a zoned formatter based on a non-zoned formatter.
+        ///
+        /// Caution: The locale provided here must match the locale used to construct the non-zoned formatter,
+        /// or else unexpected behavior may occur!
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "specific_short")]
         #[diplomat::rust_link(icu::datetime::fieldsets::zone::SpecificShort, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::Combo, Struct, hidden)]
@@ -126,6 +138,10 @@ pub mod ffi {
             )
         }
         
+        /// Creates a zoned formatter based on a non-zoned formatter.
+        ///
+        /// Caution: The locale provided here must match the locale used to construct the non-zoned formatter,
+        /// or else unexpected behavior may occur!
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "specific_short_with_provider")]
         #[diplomat::rust_link(icu::datetime::fieldsets::zone::SpecificShort, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::Combo, Struct, hidden)]
@@ -158,6 +174,10 @@ pub mod ffi {
             )
         }
         
+        /// Creates a zoned formatter based on a non-zoned formatter.
+        ///
+        /// Caution: The locale provided here must match the locale used to construct the non-zoned formatter,
+        /// or else unexpected behavior may occur!
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "localized_offset_long")]
         #[diplomat::rust_link(icu::datetime::fieldsets::zone::LocalizedOffsetLong, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::Combo, Struct, hidden)]
@@ -184,6 +204,10 @@ pub mod ffi {
             )
         }
         
+        /// Creates a zoned formatter based on a non-zoned formatter.
+        ///
+        /// Caution: The locale provided here must match the locale used to construct the non-zoned formatter,
+        /// or else unexpected behavior may occur!
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "localized_offset_long_with_provider")]
         #[diplomat::rust_link(icu::datetime::fieldsets::zone::LocalizedOffsetLong, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::Combo, Struct, hidden)]
@@ -216,6 +240,10 @@ pub mod ffi {
             )
         }
         
+        /// Creates a zoned formatter based on a non-zoned formatter.
+        ///
+        /// Caution: The locale provided here must match the locale used to construct the non-zoned formatter,
+        /// or else unexpected behavior may occur!
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "localized_offset_short")]
         #[diplomat::rust_link(icu::datetime::fieldsets::zone::LocalizedOffsetShort, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::Combo, Struct, hidden)]
@@ -242,6 +270,10 @@ pub mod ffi {
             )
         }
         
+        /// Creates a zoned formatter based on a non-zoned formatter.
+        ///
+        /// Caution: The locale provided here must match the locale used to construct the non-zoned formatter,
+        /// or else unexpected behavior may occur!
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "localized_offset_short_with_provider")]
         #[diplomat::rust_link(icu::datetime::fieldsets::zone::LocalizedOffsetShort, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::Combo, Struct, hidden)]
@@ -274,6 +306,10 @@ pub mod ffi {
             )
         }
         
+        /// Creates a zoned formatter based on a non-zoned formatter.
+        ///
+        /// Caution: The locale provided here must match the locale used to construct the non-zoned formatter,
+        /// or else unexpected behavior may occur!
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "generic_long")]
         #[diplomat::rust_link(icu::datetime::fieldsets::zone::GenericLong, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::Combo, Struct, hidden)]
@@ -300,6 +336,10 @@ pub mod ffi {
             )
         }
         
+        /// Creates a zoned formatter based on a non-zoned formatter.
+        ///
+        /// Caution: The locale provided here must match the locale used to construct the non-zoned formatter,
+        /// or else unexpected behavior may occur!
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "generic_long_with_provider")]
         #[diplomat::rust_link(icu::datetime::fieldsets::zone::GenericLong, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::Combo, Struct, hidden)]
@@ -332,6 +372,10 @@ pub mod ffi {
             )
         }
         
+        /// Creates a zoned formatter based on a non-zoned formatter.
+        ///
+        /// Caution: The locale provided here must match the locale used to construct the non-zoned formatter,
+        /// or else unexpected behavior may occur!
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "generic_short")]
         #[diplomat::rust_link(icu::datetime::fieldsets::zone::GenericShort, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::Combo, Struct, hidden)]
@@ -359,6 +403,10 @@ pub mod ffi {
             )
         }
         
+        /// Creates a zoned formatter based on a non-zoned formatter.
+        ///
+        /// Caution: The locale provided here must match the locale used to construct the non-zoned formatter,
+        /// or else unexpected behavior may occur!
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "generic_short_with_provider")]
         #[diplomat::rust_link(icu::datetime::fieldsets::zone::GenericShort, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::Combo, Struct, hidden)]
@@ -391,6 +439,10 @@ pub mod ffi {
             )
         }
         
+        /// Creates a zoned formatter based on a non-zoned formatter.
+        ///
+        /// Caution: The locale provided here must match the locale used to construct the non-zoned formatter,
+        /// or else unexpected behavior may occur!
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "location")]
         #[diplomat::rust_link(icu::datetime::fieldsets::zone::Location, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::Combo, Struct, hidden)]
@@ -417,6 +469,10 @@ pub mod ffi {
             )
         }
         
+        /// Creates a zoned formatter based on a non-zoned formatter.
+        ///
+        /// Caution: The locale provided here must match the locale used to construct the non-zoned formatter,
+        /// or else unexpected behavior may occur!
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "location_with_provider")]
         #[diplomat::rust_link(icu::datetime::fieldsets::zone::Location, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::Combo, Struct, hidden)]
@@ -449,6 +505,10 @@ pub mod ffi {
             )
         }
         
+        /// Creates a zoned formatter based on a non-zoned formatter.
+        ///
+        /// Caution: The locale provided here must match the locale used to construct the non-zoned formatter,
+        /// or else unexpected behavior may occur!
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "exemplar_city")]
         #[diplomat::rust_link(icu::datetime::fieldsets::zone::ExemplarCity, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::Combo, Struct, hidden)]
@@ -475,6 +535,10 @@ pub mod ffi {
             )
         }
         
+        /// Creates a zoned formatter based on a non-zoned formatter.
+        ///
+        /// Caution: The locale provided here must match the locale used to construct the non-zoned formatter,
+        /// or else unexpected behavior may occur!
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "exemplar_city_with_provider")]
         #[diplomat::rust_link(icu::datetime::fieldsets::zone::ExemplarCity, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::Combo, Struct, hidden)]
@@ -558,6 +622,10 @@ pub mod ffi {
     );
 
     impl ZonedDateTimeFormatterGregorian {
+        /// Creates a zoned formatter based on a non-zoned formatter.
+        ///
+        /// Caution: The locale provided here must match the locale used to construct the non-zoned formatter,
+        /// or else unexpected behavior may occur!
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "specific_long")]
         #[diplomat::rust_link(icu::datetime::fieldsets::zone::SpecificLong, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::Combo, Struct, hidden)]
@@ -583,6 +651,10 @@ pub mod ffi {
             )
         }
         
+        /// Creates a zoned formatter based on a non-zoned formatter.
+        ///
+        /// Caution: The locale provided here must match the locale used to construct the non-zoned formatter,
+        /// or else unexpected behavior may occur!
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "specific_long_with_provider")]
         #[diplomat::rust_link(icu::datetime::fieldsets::zone::SpecificLong, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::Combo, Struct, hidden)]
@@ -614,6 +686,10 @@ pub mod ffi {
             )
         }
         
+        /// Creates a zoned formatter based on a non-zoned formatter.
+        ///
+        /// Caution: The locale provided here must match the locale used to construct the non-zoned formatter,
+        /// or else unexpected behavior may occur!
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "specific_short")]
         #[diplomat::rust_link(icu::datetime::fieldsets::zone::SpecificShort, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::Combo, Struct, hidden)]
@@ -639,6 +715,10 @@ pub mod ffi {
             )
         }
         
+        /// Creates a zoned formatter based on a non-zoned formatter.
+        ///
+        /// Caution: The locale provided here must match the locale used to construct the non-zoned formatter,
+        /// or else unexpected behavior may occur!
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "specific_short_with_provider")]
         #[diplomat::rust_link(icu::datetime::fieldsets::zone::SpecificShort, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::Combo, Struct, hidden)]
@@ -670,6 +750,10 @@ pub mod ffi {
             )
         }
         
+        /// Creates a zoned formatter based on a non-zoned formatter.
+        ///
+        /// Caution: The locale provided here must match the locale used to construct the non-zoned formatter,
+        /// or else unexpected behavior may occur!
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "localized_offset_long")]
         #[diplomat::rust_link(icu::datetime::fieldsets::zone::LocalizedOffsetLong, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::Combo, Struct, hidden)]
@@ -695,6 +779,10 @@ pub mod ffi {
             )
         }
         
+        /// Creates a zoned formatter based on a non-zoned formatter.
+        ///
+        /// Caution: The locale provided here must match the locale used to construct the non-zoned formatter,
+        /// or else unexpected behavior may occur!
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "localized_offset_long_with_provider")]
         #[diplomat::rust_link(icu::datetime::fieldsets::zone::LocalizedOffsetLong, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::Combo, Struct, hidden)]
@@ -726,6 +814,10 @@ pub mod ffi {
             )
         }
         
+        /// Creates a zoned formatter based on a non-zoned formatter.
+        ///
+        /// Caution: The locale provided here must match the locale used to construct the non-zoned formatter,
+        /// or else unexpected behavior may occur!
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "localized_offset_short")]
         #[diplomat::rust_link(icu::datetime::fieldsets::zone::LocalizedOffsetShort, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::Combo, Struct, hidden)]
@@ -751,6 +843,10 @@ pub mod ffi {
             )
         }
         
+        /// Creates a zoned formatter based on a non-zoned formatter.
+        ///
+        /// Caution: The locale provided here must match the locale used to construct the non-zoned formatter,
+        /// or else unexpected behavior may occur!
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "localized_offset_short_with_provider")]
         #[diplomat::rust_link(icu::datetime::fieldsets::zone::LocalizedOffsetShort, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::Combo, Struct, hidden)]
@@ -782,6 +878,10 @@ pub mod ffi {
             )
         }
         
+        /// Creates a zoned formatter based on a non-zoned formatter.
+        ///
+        /// Caution: The locale provided here must match the locale used to construct the non-zoned formatter,
+        /// or else unexpected behavior may occur!
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "generic_long")]
         #[diplomat::rust_link(icu::datetime::fieldsets::zone::GenericLong, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::Combo, Struct, hidden)]
@@ -807,6 +907,10 @@ pub mod ffi {
             )
         }
         
+        /// Creates a zoned formatter based on a non-zoned formatter.
+        ///
+        /// Caution: The locale provided here must match the locale used to construct the non-zoned formatter,
+        /// or else unexpected behavior may occur!
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "generic_long_with_provider")]
         #[diplomat::rust_link(icu::datetime::fieldsets::zone::GenericLong, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::Combo, Struct, hidden)]
@@ -838,6 +942,10 @@ pub mod ffi {
             )
         }
         
+        /// Creates a zoned formatter based on a non-zoned formatter.
+        ///
+        /// Caution: The locale provided here must match the locale used to construct the non-zoned formatter,
+        /// or else unexpected behavior may occur!
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "generic_short")]
         #[diplomat::rust_link(icu::datetime::fieldsets::zone::GenericShort, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::Combo, Struct, hidden)]
@@ -864,6 +972,10 @@ pub mod ffi {
             )
         }
         
+        /// Creates a zoned formatter based on a non-zoned formatter.
+        ///
+        /// Caution: The locale provided here must match the locale used to construct the non-zoned formatter,
+        /// or else unexpected behavior may occur!
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "generic_short_with_provider")]
         #[diplomat::rust_link(icu::datetime::fieldsets::zone::GenericShort, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::Combo, Struct, hidden)]
@@ -895,6 +1007,10 @@ pub mod ffi {
             )
         }
         
+        /// Creates a zoned formatter based on a non-zoned formatter.
+        ///
+        /// Caution: The locale provided here must match the locale used to construct the non-zoned formatter,
+        /// or else unexpected behavior may occur!
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "location")]
         #[diplomat::rust_link(icu::datetime::fieldsets::zone::Location, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::Combo, Struct, hidden)]
@@ -920,6 +1036,10 @@ pub mod ffi {
             )
         }
         
+        /// Creates a zoned formatter based on a non-zoned formatter.
+        ///
+        /// Caution: The locale provided here must match the locale used to construct the non-zoned formatter,
+        /// or else unexpected behavior may occur!
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "location_with_provider")]
         #[diplomat::rust_link(icu::datetime::fieldsets::zone::Location, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::Combo, Struct, hidden)]
@@ -951,6 +1071,10 @@ pub mod ffi {
             )
         }
         
+        /// Creates a zoned formatter based on a non-zoned formatter.
+        ///
+        /// Caution: The locale provided here must match the locale used to construct the non-zoned formatter,
+        /// or else unexpected behavior may occur!
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "exemplar_city")]
         #[diplomat::rust_link(icu::datetime::fieldsets::zone::ExemplarCity, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::Combo, Struct, hidden)]
@@ -976,6 +1100,10 @@ pub mod ffi {
             )
         }
         
+        /// Creates a zoned formatter based on a non-zoned formatter.
+        ///
+        /// Caution: The locale provided here must match the locale used to construct the non-zoned formatter,
+        /// or else unexpected behavior may occur!
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "exemplar_city_with_provider")]
         #[diplomat::rust_link(icu::datetime::fieldsets::zone::ExemplarCity, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::Combo, Struct, hidden)]

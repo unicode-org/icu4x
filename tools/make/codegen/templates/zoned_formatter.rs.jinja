@@ -81,6 +81,10 @@ pub mod ffi {
     impl {{ ffi_type }} {
         {%- for variant in variants %}
         {%- for ctor in ConstructorType::VALUES %}
+        /// Creates a zoned formatter based on a non-zoned formatter.
+        ///
+        /// Caution: The locale provided here must match the locale used to construct the non-zoned formatter,
+        /// or else unexpected behavior may occur!
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "{{ variant.name_lower() }}{{ ctor.suffix_ffi() }}")]
         #[diplomat::rust_link(icu::datetime::fieldsets::zone::{{ variant.name_camel() }}, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::Combo, Struct, hidden)]
