@@ -79,7 +79,7 @@ fn in_inclusive_range16(i: u16, start: u16, end: u16) -> bool {
 }
 
 /// Finds the identical prefix of `left` and `right` containing
-/// potentially ill-formed UTF-16 avoiding splitting a
+/// potentially ill-formed UTF-16, while avoiding splitting a
 /// well-formed surrogate pair. In case of ill-formed
 /// UTF-16, the prefix is not guaranteed to be maximal.
 ///
@@ -110,7 +110,7 @@ fn split_prefix_u16<'a, 'b>(
 }
 
 /// Finds the identical prefix of `left` and `right` containing
-/// potentially ill-formed UTF-8 avoiding splitting a UTF-8
+/// potentially ill-formed UTF-8, while avoiding splitting a UTF-8
 /// byte sequence. In case of ill-formed UTF-8, the prefix is
 /// not guaranteed to be maximal.
 ///
@@ -696,7 +696,7 @@ impl CollatorBorrowed<'_> {
     /// Currently, all three have the same concrete type, so the
     /// trait bound is given as `DoubleEndedIterator`.
     /// `head_chars` is iterated backwards and `left_chars` and
-    /// `right_chars` forwards. It this was a public API, this
+    /// `right_chars` forward. If this were a public API, this
     /// should have three generic types, one for each argument,
     /// for maximum flexibility.
     fn compare_impl<I: DoubleEndedIterator<Item = char>>(
@@ -809,9 +809,9 @@ impl CollatorBorrowed<'_> {
         // The logic here to check whether the boundary found by skipping
         // the identical prefix is safe is complicated compared to the ICU4C
         // approach of having a set of characters that are unsafe as the character
-        // immediately after. However, this avoids extra data and working on the
-        // main data avoids the bug possibility data structures not being mutually
-        // consistent.
+        // immediately following the identical prefix. However, the approach here
+        // avoids extra data, and working on the main data avoids the bug
+        // possibility of data structures not being mutually consistent.
 
         // This code intentionally does not keep around the `CollationElement32`s
         // that have been read from the collation data tries, because keeping

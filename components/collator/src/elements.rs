@@ -53,7 +53,7 @@ use crate::provider::CollationData;
 /// This should probably either be halved to 4 on the logic
 /// that especially in the presence of the identical prefix
 /// optimization, most comparisons return after a couple of
-/// primary compasions or increased to 32 on the logic that
+/// primary comparisons or increased to 32 on the logic that
 /// such a buffer could better hold a file or human name that
 /// differs on secordary or higher level.
 pub(crate) const CE_BUFFER_SIZE: usize = 8;
@@ -167,7 +167,7 @@ pub(crate) const QUATERNARY_MASK: u16 = 0xC0;
 
 // A CE32 is special if its low byte is this or greater.
 // Impossible case bits 11 mark special CE32s.
-// This value itself is used to indicate a fallback to the base collator.
+// This value itself is used to indicate a fallback to the root collation.
 const SPECIAL_CE32_LOW_BYTE: u8 = 0xC0;
 pub(crate) const FALLBACK_CE32: CollationElement32 =
     CollationElement32(SPECIAL_CE32_LOW_BYTE as u32);
@@ -827,7 +827,7 @@ impl CharacterAndClass {
 /// It is _extremely_ important for performance that `SmallVec`s not be
 /// moved. To facilitate move-avoidance, this struct has the following
 /// life cycle where `new` returns the struct in a state that is not
-/// yet valid for a `next` call:
+/// yet valid for a `next` call until `init` is called:
 ///
 /// 1. `new`.
 /// 2. Some number of calls to `iter_next_before_init` and
