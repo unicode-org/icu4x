@@ -189,7 +189,9 @@ pub const EXTRA_SOURCE_DEPS: &[&str] = &[
     "thiserror-impl",
     "typeid",
     "toml",
+    "toml_write",
     "twox-hash",
+    "typed-arena",
     "winnow",
 ];
 
