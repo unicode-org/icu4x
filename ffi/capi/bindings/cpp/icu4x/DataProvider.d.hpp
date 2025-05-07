@@ -64,7 +64,7 @@ public:
    *
    * See the [Rust documentation for `ForkByMarkerProvider`](https://docs.rs/icu_provider_adapters/latest/icu_provider_adapters/fork/type.ForkByMarkerProvider.html) for more information.
    */
-  inline diplomat::result<std::monostate, icu4x::DataError> fork_by_key(icu4x::DataProvider& other);
+  inline diplomat::result<std::monostate, icu4x::DataError> fork_by_marker(icu4x::DataProvider& other);
 
   /**
    * Same as `fork_by_key` but forks by locale instead of key.

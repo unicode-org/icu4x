@@ -89,12 +89,14 @@ pub mod ffi {
         ///
         /// This takes ownership of the `other` provider, leaving an empty provider in its place.
         #[diplomat::rust_link(icu_provider_adapters::fork::ForkByMarkerProvider, Typedef)]
+        #[diplomat::rust_link(icu_provider_adapters::fork::ForkByMarkerProvider::new, FnInTypedef, hidden)]
+        #[diplomat::rust_link(icu_provider_adapters::fork::ForkByMarkerProvider::new_with_predicate, FnInTypedef, hidden)]
         #[diplomat::rust_link(
             icu_provider_adapters::fork::predicates::MarkerNotFoundPredicate,
             Struct,
             hidden
         )]
-        pub fn fork_by_key(&mut self, other: &mut DataProvider) -> Result<(), DataError> {
+        pub fn fork_by_marker(&mut self, other: &mut DataProvider) -> Result<(), DataError> {
             *self = match (core::mem::take(&mut self.0), core::mem::take(&mut other.0)) {
                 (None, _) | (_, None) => Err(icu_provider::DataError::custom(
                     "This provider has been destroyed",

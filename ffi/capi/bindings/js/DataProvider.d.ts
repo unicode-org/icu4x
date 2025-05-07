@@ -28,7 +28,7 @@ export class DataProvider {
      *
      * See the [Rust documentation for `ForkByMarkerProvider`](https://docs.rs/icu_provider_adapters/latest/icu_provider_adapters/fork/type.ForkByMarkerProvider.html) for more information.
      */
-    forkByKey(other: DataProvider): void;
+    forkByMarker(other: DataProvider): void;
 
     /** 
      * Same as `fork_by_key` but forks by locale instead of key.

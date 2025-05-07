@@ -15,9 +15,3 @@
 
 
 fixed_decimal::Decimal::new#FnInTypedef
-icu_provider_adapters::fork::ForkByMarkerProvider::inner#FnInTypedef
-icu_provider_adapters::fork::ForkByMarkerProvider::inner_mut#FnInTypedef
-icu_provider_adapters::fork::ForkByMarkerProvider::into_inner#FnInTypedef
-icu_provider_adapters::fork::ForkByMarkerProvider::new#FnInTypedef
-icu_provider_adapters::fork::ForkByMarkerProvider::new_with_predicate#FnInTypedef
-icu_provider_adapters::fork::ForkByMarkerProvider::supported_markers#FnInTypedef
