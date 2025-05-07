@@ -839,7 +839,7 @@ impl CollatorBorrowed<'_> {
                         // Note: left_different and right_different may both be U+FFFD.
                         right.prepend_upcoming_before_init(right_different.clone());
 
-                        // The base logic is that a boundary between two starter
+                        // The base logic is that a boundary between two starters
                         // that decompose to selves is safe iff the starter
                         // before the boundary can't contract a starter, the
                         // starter after the boundary doesn't have a prefix
@@ -867,9 +867,9 @@ impl CollatorBorrowed<'_> {
                         // conditions, either, and are known not to be numeric.
                         //
                         // After a boundary, a decomposition to a BMP starter
-                        // and a BMP non-starter can obviously analyzed by
+                        // and a BMP non-starter can obviously be analyzed by
                         // considering the starter as if it was a starter
-                        // the decomposes to self.
+                        // that decomposes to self.
                         //
                         // Before a boundary the contraction condition considers
                         // whether the contraction can contract a starter.
