@@ -189,9 +189,7 @@ pub const EXTRA_SOURCE_DEPS: &[&str] = &[
     "thiserror-impl",
     "typeid",
     "toml",
-    "toml_write",
     "twox-hash",
-    "typed-arena",
     "winnow",
 ];
 
@@ -227,6 +225,7 @@ pub const EXTRA_ZIP_DEPS: &[&str] = &[
     "serde-spanned",
     "serde-value",
     "simd-adler32",
+    "typed-arena",
     "zip",
     "zopfli",
 ];
