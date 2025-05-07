@@ -44,6 +44,7 @@ final class UnitsConverter implements ffi.Finalizable {
     final result = _icu4x_UnitsConverter_clone_mv1(_ffi);
     return UnitsConverter._fromFfi(result, []);
   }
+
 }
 
 @_DiplomatFfiUse('icu4x_UnitsConverter_destroy_mv1')

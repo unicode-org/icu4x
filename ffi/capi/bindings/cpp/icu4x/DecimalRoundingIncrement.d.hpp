@@ -20,7 +20,7 @@ namespace capi {
       DecimalRoundingIncrement_MultiplesOf5 = 2,
       DecimalRoundingIncrement_MultiplesOf25 = 3,
     };
-    
+
     typedef struct DecimalRoundingIncrement_option {union { DecimalRoundingIncrement ok; }; bool is_ok; } DecimalRoundingIncrement_option;
 } // namespace capi
 } // namespace

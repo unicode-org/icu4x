@@ -7,6 +7,7 @@ part of 'lib.g.dart';
 ///
 /// See the [Rust documentation for `SignDisplay`](https://docs.rs/fixed_decimal/latest/fixed_decimal/enum.SignDisplay.html) for more information.
 enum DecimalSignDisplay {
+
   auto,
 
   never,
@@ -16,6 +17,7 @@ enum DecimalSignDisplay {
   exceptZero,
 
   negative;
+
 }
 
 // dart format on

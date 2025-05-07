@@ -5,9 +5,11 @@ part of 'lib.g.dart';
 
 /// See the [Rust documentation for `Alignment`](https://docs.rs/icu/latest/icu/datetime/options/enum.Alignment.html) for more information.
 enum DateTimeAlignment {
+
   auto,
 
   column;
+
 }
 
 // dart format on

@@ -35,7 +35,6 @@ bool icu4x_LocaleDirectionality_is_left_to_right_mv1(const LocaleDirectionality*
 
 bool icu4x_LocaleDirectionality_is_right_to_left_mv1(const LocaleDirectionality* self, const Locale* locale);
 
-
 void icu4x_LocaleDirectionality_destroy_mv1(LocaleDirectionality* self);
 
 

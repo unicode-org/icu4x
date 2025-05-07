@@ -49,6 +49,7 @@ final class WordBreakIteratorUtf16 implements ffi.Finalizable {
     final result = _icu4x_WordBreakIteratorUtf16_is_word_like_mv1(_ffi);
     return result;
   }
+
 }
 
 @_DiplomatFfiUse('icu4x_WordBreakIteratorUtf16_destroy_mv1')

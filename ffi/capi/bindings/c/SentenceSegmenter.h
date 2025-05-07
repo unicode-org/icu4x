@@ -35,7 +35,6 @@ SentenceBreakIteratorUtf16* icu4x_SentenceSegmenter_segment_utf16_mv1(const Sent
 
 SentenceBreakIteratorLatin1* icu4x_SentenceSegmenter_segment_latin1_mv1(const SentenceSegmenter* self, DiplomatU8View input);
 
-
 void icu4x_SentenceSegmenter_destroy_mv1(SentenceSegmenter* self);
 
 

@@ -5,7 +5,7 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
-/** 
+/**
  * A type capable of looking up a property value from a string name.
  *
  * See the [Rust documentation for `PropertyParser`](https://docs.rs/icu/latest/icu/properties/struct.PropertyParser.html) for more information.
@@ -19,35 +19,34 @@ const PropertyValueNameToEnumMapper_box_destroy_registry = new FinalizationRegis
 });
 
 export class PropertyValueNameToEnumMapper {
-    
     // Internal ptr reference:
     #ptr = null;
 
     // Lifetimes are only to keep dependencies alive.
     // Since JS won't garbage collect until there are no incoming edges.
     #selfEdge = [];
-    
+
     #internalConstructor(symbol, ptr, selfEdge) {
         if (symbol !== diplomatRuntime.internalConstructor) {
             console.error("PropertyValueNameToEnumMapper is an Opaque type. You cannot call its constructor.");
             return;
         }
-        
         this.#ptr = ptr;
         this.#selfEdge = selfEdge;
-        
+
         // Are we being borrowed? If not, we can register.
         if (this.#selfEdge.length === 0) {
             PropertyValueNameToEnumMapper_box_destroy_registry.register(this, this.#ptr);
         }
-        
+
         return this;
     }
     get ffiValue() {
         return this.#ptr;
     }
 
-    /** 
+
+    /**
      * Get the property value matching the given name, using strict matching
      *
      * Returns -1 if the name is unknown for this property
@@ -56,21 +55,22 @@ export class PropertyValueNameToEnumMapper {
      */
     getStrict(name) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
-        
+
         const nameSlice = diplomatRuntime.DiplomatBuf.str8(wasm, name);
-        
+
         const result = wasm.icu4x_PropertyValueNameToEnumMapper_get_strict_mv1(this.ffiValue, ...nameSlice.splat());
-    
+
         try {
             return result;
         }
-        
+
         finally {
             functionCleanupArena.free();
+
         }
     }
 
-    /** 
+    /**
      * Get the property value matching the given name, using loose matching
      *
      * Returns -1 if the name is unknown for this property
@@ -79,45 +79,49 @@ export class PropertyValueNameToEnumMapper {
      */
     getLoose(name) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
-        
+
         const nameSlice = diplomatRuntime.DiplomatBuf.str8(wasm, name);
-        
+
         const result = wasm.icu4x_PropertyValueNameToEnumMapper_get_loose_mv1(this.ffiValue, ...nameSlice.splat());
-    
+
         try {
             return result;
         }
-        
+
         finally {
             functionCleanupArena.free();
+
         }
     }
 
-    /** 
+    /**
      * Create a name-to-enum mapper for the `General_Category` property, using compiled data.
      *
      * See the [Rust documentation for `GeneralCategory`](https://docs.rs/icu/latest/icu/properties/props/enum.GeneralCategory.html) for more information.
      */
     static createGeneralCategory() {
+
         const result = wasm.icu4x_PropertyValueNameToEnumMapper_create_general_category_mv1();
-    
+
         try {
             return new PropertyValueNameToEnumMapper(diplomatRuntime.internalConstructor, result, []);
         }
-        
-        finally {}
+
+        finally {
+        }
     }
 
-    /** 
+    /**
      * Create a name-to-enum mapper for the `General_Category` property, using a particular data source.
      *
      * See the [Rust documentation for `GeneralCategory`](https://docs.rs/icu/latest/icu/properties/props/enum.GeneralCategory.html) for more information.
      */
     static createGeneralCategoryWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
-        
+
+
         const result = wasm.icu4x_PropertyValueNameToEnumMapper_create_general_category_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
-    
+
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
@@ -125,37 +129,40 @@ export class PropertyValueNameToEnumMapper {
             }
             return new PropertyValueNameToEnumMapper(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
-        
+
         finally {
             diplomatReceive.free();
         }
     }
 
-    /** 
+    /**
      * Create a name-to-enum mapper for the `Hangul_Syllable_Type` property, using compiled data.
      *
      * See the [Rust documentation for `HangulSyllableType`](https://docs.rs/icu/latest/icu/properties/props/struct.HangulSyllableType.html) for more information.
      */
     static createHangulSyllableType() {
+
         const result = wasm.icu4x_PropertyValueNameToEnumMapper_create_hangul_syllable_type_mv1();
-    
+
         try {
             return new PropertyValueNameToEnumMapper(diplomatRuntime.internalConstructor, result, []);
         }
-        
-        finally {}
+
+        finally {
+        }
     }
 
-    /** 
+    /**
      * Create a name-to-enum mapper for the `Hangul_Syllable_Type` property, using a particular data source.
      *
      * See the [Rust documentation for `HangulSyllableType`](https://docs.rs/icu/latest/icu/properties/props/struct.HangulSyllableType.html) for more information.
      */
     static createHangulSyllableTypeWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
-        
+
+
         const result = wasm.icu4x_PropertyValueNameToEnumMapper_create_hangul_syllable_type_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
-    
+
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
@@ -163,37 +170,40 @@ export class PropertyValueNameToEnumMapper {
             }
             return new PropertyValueNameToEnumMapper(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
-        
+
         finally {
             diplomatReceive.free();
         }
     }
 
-    /** 
+    /**
      * Create a name-to-enum mapper for the `East_Asian_Width` property, using compiled data.
      *
      * See the [Rust documentation for `EastAsianWidth`](https://docs.rs/icu/latest/icu/properties/props/struct.EastAsianWidth.html) for more information.
      */
     static createEastAsianWidth() {
+
         const result = wasm.icu4x_PropertyValueNameToEnumMapper_create_east_asian_width_mv1();
-    
+
         try {
             return new PropertyValueNameToEnumMapper(diplomatRuntime.internalConstructor, result, []);
         }
-        
-        finally {}
+
+        finally {
+        }
     }
 
-    /** 
+    /**
      * Create a name-to-enum mapper for the `East_Asian_Width` property, using a particular data source.
      *
      * See the [Rust documentation for `EastAsianWidth`](https://docs.rs/icu/latest/icu/properties/props/struct.EastAsianWidth.html) for more information.
      */
     static createEastAsianWidthWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
-        
+
+
         const result = wasm.icu4x_PropertyValueNameToEnumMapper_create_east_asian_width_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
-    
+
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
@@ -201,37 +211,40 @@ export class PropertyValueNameToEnumMapper {
             }
             return new PropertyValueNameToEnumMapper(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
-        
+
         finally {
             diplomatReceive.free();
         }
     }
 
-    /** 
+    /**
      * Create a name-to-enum mapper for the `Bidi_Class` property, using compiled data.
      *
      * See the [Rust documentation for `BidiClass`](https://docs.rs/icu/latest/icu/properties/props/struct.BidiClass.html) for more information.
      */
     static createBidiClass() {
+
         const result = wasm.icu4x_PropertyValueNameToEnumMapper_create_bidi_class_mv1();
-    
+
         try {
             return new PropertyValueNameToEnumMapper(diplomatRuntime.internalConstructor, result, []);
         }
-        
-        finally {}
+
+        finally {
+        }
     }
 
-    /** 
+    /**
      * Create a name-to-enum mapper for the `Bidi_Class` property, using a particular data source.
      *
      * See the [Rust documentation for `BidiClass`](https://docs.rs/icu/latest/icu/properties/props/struct.BidiClass.html) for more information.
      */
     static createBidiClassWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
-        
+
+
         const result = wasm.icu4x_PropertyValueNameToEnumMapper_create_bidi_class_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
-    
+
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
@@ -239,37 +252,40 @@ export class PropertyValueNameToEnumMapper {
             }
             return new PropertyValueNameToEnumMapper(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
-        
+
         finally {
             diplomatReceive.free();
         }
     }
 
-    /** 
+    /**
      * Create a name-to-enum mapper for the `Indic_Syllabic_Category` property, using compiled data.
      *
      * See the [Rust documentation for `IndicSyllabicCategory`](https://docs.rs/icu/latest/icu/properties/props/struct.IndicSyllabicCategory.html) for more information.
      */
     static createIndicSyllabicCategory() {
+
         const result = wasm.icu4x_PropertyValueNameToEnumMapper_create_indic_syllabic_category_mv1();
-    
+
         try {
             return new PropertyValueNameToEnumMapper(diplomatRuntime.internalConstructor, result, []);
         }
-        
-        finally {}
+
+        finally {
+        }
     }
 
-    /** 
+    /**
      * Create a name-to-enum mapper for the `Indic_Syllabic_Category` property, using a particular data source.
      *
      * See the [Rust documentation for `IndicSyllabicCategory`](https://docs.rs/icu/latest/icu/properties/props/struct.IndicSyllabicCategory.html) for more information.
      */
     static createIndicSyllabicCategoryWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
-        
+
+
         const result = wasm.icu4x_PropertyValueNameToEnumMapper_create_indic_syllabic_category_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
-    
+
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
@@ -277,37 +293,40 @@ export class PropertyValueNameToEnumMapper {
             }
             return new PropertyValueNameToEnumMapper(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
-        
+
         finally {
             diplomatReceive.free();
         }
     }
 
-    /** 
+    /**
      * Create a name-to-enum mapper for the `Line_Break` property, using compiled data.
      *
      * See the [Rust documentation for `LineBreak`](https://docs.rs/icu/latest/icu/properties/props/struct.LineBreak.html) for more information.
      */
     static createLineBreak() {
+
         const result = wasm.icu4x_PropertyValueNameToEnumMapper_create_line_break_mv1();
-    
+
         try {
             return new PropertyValueNameToEnumMapper(diplomatRuntime.internalConstructor, result, []);
         }
-        
-        finally {}
+
+        finally {
+        }
     }
 
-    /** 
+    /**
      * Create a name-to-enum mapper for the `Line_Break` property, using a particular data source.
      *
      * See the [Rust documentation for `LineBreak`](https://docs.rs/icu/latest/icu/properties/props/struct.LineBreak.html) for more information.
      */
     static createLineBreakWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
-        
+
+
         const result = wasm.icu4x_PropertyValueNameToEnumMapper_create_line_break_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
-    
+
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
@@ -315,37 +334,40 @@ export class PropertyValueNameToEnumMapper {
             }
             return new PropertyValueNameToEnumMapper(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
-        
+
         finally {
             diplomatReceive.free();
         }
     }
 
-    /** 
+    /**
      * Create a name-to-enum mapper for the `Grapheme_Cluster_Break` property, using compiled data.
      *
      * See the [Rust documentation for `GraphemeClusterBreak`](https://docs.rs/icu/latest/icu/properties/props/struct.GraphemeClusterBreak.html) for more information.
      */
     static createGraphemeClusterBreak() {
+
         const result = wasm.icu4x_PropertyValueNameToEnumMapper_create_grapheme_cluster_break_mv1();
-    
+
         try {
             return new PropertyValueNameToEnumMapper(diplomatRuntime.internalConstructor, result, []);
         }
-        
-        finally {}
+
+        finally {
+        }
     }
 
-    /** 
+    /**
      * Create a name-to-enum mapper for the `Grapheme_Cluster_Break` property, using a particular data source.
      *
      * See the [Rust documentation for `GraphemeClusterBreak`](https://docs.rs/icu/latest/icu/properties/props/struct.GraphemeClusterBreak.html) for more information.
      */
     static createGraphemeClusterBreakWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
-        
+
+
         const result = wasm.icu4x_PropertyValueNameToEnumMapper_create_grapheme_cluster_break_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
-    
+
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
@@ -353,37 +375,40 @@ export class PropertyValueNameToEnumMapper {
             }
             return new PropertyValueNameToEnumMapper(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
-        
+
         finally {
             diplomatReceive.free();
         }
     }
 
-    /** 
+    /**
      * Create a name-to-enum mapper for the `Word_Break` property, using compiled data.
      *
      * See the [Rust documentation for `WordBreak`](https://docs.rs/icu/latest/icu/properties/props/struct.WordBreak.html) for more information.
      */
     static createWordBreak() {
+
         const result = wasm.icu4x_PropertyValueNameToEnumMapper_create_word_break_mv1();
-    
+
         try {
             return new PropertyValueNameToEnumMapper(diplomatRuntime.internalConstructor, result, []);
         }
-        
-        finally {}
+
+        finally {
+        }
     }
 
-    /** 
+    /**
      * Create a name-to-enum mapper for the `Word_Break` property, using a particular data source.
      *
      * See the [Rust documentation for `WordBreak`](https://docs.rs/icu/latest/icu/properties/props/struct.WordBreak.html) for more information.
      */
     static createWordBreakWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
-        
+
+
         const result = wasm.icu4x_PropertyValueNameToEnumMapper_create_word_break_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
-    
+
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
@@ -391,37 +416,40 @@ export class PropertyValueNameToEnumMapper {
             }
             return new PropertyValueNameToEnumMapper(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
-        
+
         finally {
             diplomatReceive.free();
         }
     }
 
-    /** 
+    /**
      * Create a name-to-enum mapper for the `Sentence_Break` property, using compiled data.
      *
      * See the [Rust documentation for `SentenceBreak`](https://docs.rs/icu/latest/icu/properties/props/struct.SentenceBreak.html) for more information.
      */
     static createSentenceBreak() {
+
         const result = wasm.icu4x_PropertyValueNameToEnumMapper_create_sentence_break_mv1();
-    
+
         try {
             return new PropertyValueNameToEnumMapper(diplomatRuntime.internalConstructor, result, []);
         }
-        
-        finally {}
+
+        finally {
+        }
     }
 
-    /** 
+    /**
      * Create a name-to-enum mapper for the `Sentence_Break` property, using a particular data source.
      *
      * See the [Rust documentation for `SentenceBreak`](https://docs.rs/icu/latest/icu/properties/props/struct.SentenceBreak.html) for more information.
      */
     static createSentenceBreakWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
-        
+
+
         const result = wasm.icu4x_PropertyValueNameToEnumMapper_create_sentence_break_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
-    
+
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
@@ -429,37 +457,40 @@ export class PropertyValueNameToEnumMapper {
             }
             return new PropertyValueNameToEnumMapper(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
-        
+
         finally {
             diplomatReceive.free();
         }
     }
 
-    /** 
+    /**
      * Create a name-to-enum mapper for the `Script` property, using compiled data.
      *
      * See the [Rust documentation for `Script`](https://docs.rs/icu/latest/icu/properties/props/struct.Script.html) for more information.
      */
     static createScript() {
+
         const result = wasm.icu4x_PropertyValueNameToEnumMapper_create_script_mv1();
-    
+
         try {
             return new PropertyValueNameToEnumMapper(diplomatRuntime.internalConstructor, result, []);
         }
-        
-        finally {}
+
+        finally {
+        }
     }
 
-    /** 
+    /**
      * Create a name-to-enum mapper for the `Script` property, using a particular data source.
      *
      * See the [Rust documentation for `Script`](https://docs.rs/icu/latest/icu/properties/props/struct.Script.html) for more information.
      */
     static createScriptWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
-        
+
+
         const result = wasm.icu4x_PropertyValueNameToEnumMapper_create_script_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
-    
+
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
@@ -467,37 +498,40 @@ export class PropertyValueNameToEnumMapper {
             }
             return new PropertyValueNameToEnumMapper(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
-        
+
         finally {
             diplomatReceive.free();
         }
     }
 
-    /** 
+    /**
      * Create a name-to-enum mapper for the `Vertical_Orientation` property, using compiled data.
      *
      * See the [Rust documentation for `VerticalOrientation`](https://docs.rs/icu/latest/icu/properties/props/struct.VerticalOrientation.html) for more information.
      */
     static createVerticalOrientation() {
+
         const result = wasm.icu4x_PropertyValueNameToEnumMapper_create_vertical_orientation_mv1();
-    
+
         try {
             return new PropertyValueNameToEnumMapper(diplomatRuntime.internalConstructor, result, []);
         }
-        
-        finally {}
+
+        finally {
+        }
     }
 
-    /** 
+    /**
      * Create a name-to-enum mapper for the `Vertical_Orientation` property, using a particular data source.
      *
      * See the [Rust documentation for `VerticalOrientation`](https://docs.rs/icu/latest/icu/properties/props/struct.VerticalOrientation.html) for more information.
      */
     static createVerticalOrientationWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
-        
+
+
         const result = wasm.icu4x_PropertyValueNameToEnumMapper_create_vertical_orientation_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
-    
+
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
@@ -505,7 +539,7 @@ export class PropertyValueNameToEnumMapper {
             }
             return new PropertyValueNameToEnumMapper(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
-        
+
         finally {
             diplomatReceive.free();
         }

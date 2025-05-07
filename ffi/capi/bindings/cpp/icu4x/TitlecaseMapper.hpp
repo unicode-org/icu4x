@@ -21,20 +21,19 @@
 namespace icu4x {
 namespace capi {
     extern "C" {
-    
+
     typedef struct icu4x_TitlecaseMapper_create_mv1_result {union {icu4x::capi::TitlecaseMapper* ok; icu4x::capi::DataError err;}; bool is_ok;} icu4x_TitlecaseMapper_create_mv1_result;
     icu4x_TitlecaseMapper_create_mv1_result icu4x_TitlecaseMapper_create_mv1(void);
-    
+
     typedef struct icu4x_TitlecaseMapper_create_with_provider_mv1_result {union {icu4x::capi::TitlecaseMapper* ok; icu4x::capi::DataError err;}; bool is_ok;} icu4x_TitlecaseMapper_create_with_provider_mv1_result;
     icu4x_TitlecaseMapper_create_with_provider_mv1_result icu4x_TitlecaseMapper_create_with_provider_mv1(const icu4x::capi::DataProvider* provider);
-    
+
     void icu4x_TitlecaseMapper_titlecase_segment_v1_mv1(const icu4x::capi::TitlecaseMapper* self, diplomat::capi::DiplomatStringView s, const icu4x::capi::Locale* locale, icu4x::capi::TitlecaseOptionsV1 options, diplomat::capi::DiplomatWrite* write);
-    
+
     void icu4x_TitlecaseMapper_titlecase_segment_with_compiled_data_v1_mv1(diplomat::capi::DiplomatStringView s, const icu4x::capi::Locale* locale, icu4x::capi::TitlecaseOptionsV1 options, diplomat::capi::DiplomatWrite* write);
-    
-    
+
     void icu4x_TitlecaseMapper_destroy_mv1(TitlecaseMapper* self);
-    
+
     } // extern "C"
 } // namespace capi
 } // namespace

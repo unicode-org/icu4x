@@ -63,6 +63,7 @@ final class IanaParser implements ffi.Finalizable {
     final result = _icu4x_IanaParser_iter_mv1(_ffi);
     return TimeZoneIterator._fromFfi(result, [], aEdges);
   }
+
 }
 
 @_DiplomatFfiUse('icu4x_IanaParser_destroy_mv1')

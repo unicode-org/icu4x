@@ -19,5 +19,4 @@
 
 
 
-
 #endif // DecimalGroupingStrategy_H

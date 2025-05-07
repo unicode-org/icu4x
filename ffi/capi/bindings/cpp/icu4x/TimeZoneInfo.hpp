@@ -24,29 +24,28 @@
 namespace icu4x {
 namespace capi {
     extern "C" {
-    
+
     icu4x::capi::TimeZoneInfo* icu4x_TimeZoneInfo_utc_mv1(void);
-    
+
     icu4x::capi::TimeZoneInfo* icu4x_TimeZoneInfo_from_parts_mv1(const icu4x::capi::TimeZone* id, const icu4x::capi::UtcOffset* offset, icu4x::capi::TimeZoneVariant_option variant);
-    
+
     icu4x::capi::TimeZone* icu4x_TimeZoneInfo_id_mv1(const icu4x::capi::TimeZoneInfo* self);
-    
+
     icu4x::capi::TimeZoneInfo* icu4x_TimeZoneInfo_at_date_time_iso_mv1(const icu4x::capi::TimeZoneInfo* self, const icu4x::capi::IsoDate* date, const icu4x::capi::Time* time);
-    
+
     typedef struct icu4x_TimeZoneInfo_zone_name_date_time_mv1_result {union {icu4x::capi::IsoDateTime ok; }; bool is_ok;} icu4x_TimeZoneInfo_zone_name_date_time_mv1_result;
     icu4x_TimeZoneInfo_zone_name_date_time_mv1_result icu4x_TimeZoneInfo_zone_name_date_time_mv1(const icu4x::capi::TimeZoneInfo* self);
-    
+
     icu4x::capi::TimeZoneInfo* icu4x_TimeZoneInfo_with_variant_mv1(const icu4x::capi::TimeZoneInfo* self, icu4x::capi::TimeZoneVariant time_variant);
-    
+
     typedef struct icu4x_TimeZoneInfo_infer_variant_mv1_result { bool is_ok;} icu4x_TimeZoneInfo_infer_variant_mv1_result;
     icu4x_TimeZoneInfo_infer_variant_mv1_result icu4x_TimeZoneInfo_infer_variant_mv1(icu4x::capi::TimeZoneInfo* self, const icu4x::capi::VariantOffsetsCalculator* offset_calculator);
-    
+
     typedef struct icu4x_TimeZoneInfo_variant_mv1_result {union {icu4x::capi::TimeZoneVariant ok; }; bool is_ok;} icu4x_TimeZoneInfo_variant_mv1_result;
     icu4x_TimeZoneInfo_variant_mv1_result icu4x_TimeZoneInfo_variant_mv1(const icu4x::capi::TimeZoneInfo* self);
-    
-    
+
     void icu4x_TimeZoneInfo_destroy_mv1(TimeZoneInfo* self);
-    
+
     } // extern "C"
 } // namespace capi
 } // namespace

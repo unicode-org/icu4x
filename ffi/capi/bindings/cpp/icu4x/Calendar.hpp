@@ -20,17 +20,16 @@
 namespace icu4x {
 namespace capi {
     extern "C" {
-    
+
     icu4x::capi::Calendar* icu4x_Calendar_create_mv1(icu4x::capi::CalendarKind kind);
-    
+
     typedef struct icu4x_Calendar_create_with_provider_mv1_result {union {icu4x::capi::Calendar* ok; icu4x::capi::DataError err;}; bool is_ok;} icu4x_Calendar_create_with_provider_mv1_result;
     icu4x_Calendar_create_with_provider_mv1_result icu4x_Calendar_create_with_provider_mv1(const icu4x::capi::DataProvider* provider, icu4x::capi::CalendarKind kind);
-    
+
     icu4x::capi::CalendarKind icu4x_Calendar_kind_mv1(const icu4x::capi::Calendar* self);
-    
-    
+
     void icu4x_Calendar_destroy_mv1(Calendar* self);
-    
+
     } // extern "C"
 } // namespace capi
 } // namespace

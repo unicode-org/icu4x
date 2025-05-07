@@ -26,75 +26,74 @@
 namespace icu4x {
 namespace capi {
     extern "C" {
-    
+
     typedef struct icu4x_DateFormatter_create_d_mv1_result {union {icu4x::capi::DateFormatter* ok; icu4x::capi::DateTimeFormatterLoadError err;}; bool is_ok;} icu4x_DateFormatter_create_d_mv1_result;
     icu4x_DateFormatter_create_d_mv1_result icu4x_DateFormatter_create_d_mv1(const icu4x::capi::Locale* locale, icu4x::capi::DateTimeLength_option length, icu4x::capi::DateTimeAlignment_option alignment);
-    
+
     typedef struct icu4x_DateFormatter_create_d_with_provider_mv1_result {union {icu4x::capi::DateFormatter* ok; icu4x::capi::DateTimeFormatterLoadError err;}; bool is_ok;} icu4x_DateFormatter_create_d_with_provider_mv1_result;
     icu4x_DateFormatter_create_d_with_provider_mv1_result icu4x_DateFormatter_create_d_with_provider_mv1(const icu4x::capi::DataProvider* provider, const icu4x::capi::Locale* locale, icu4x::capi::DateTimeLength_option length, icu4x::capi::DateTimeAlignment_option alignment);
-    
+
     typedef struct icu4x_DateFormatter_create_md_mv1_result {union {icu4x::capi::DateFormatter* ok; icu4x::capi::DateTimeFormatterLoadError err;}; bool is_ok;} icu4x_DateFormatter_create_md_mv1_result;
     icu4x_DateFormatter_create_md_mv1_result icu4x_DateFormatter_create_md_mv1(const icu4x::capi::Locale* locale, icu4x::capi::DateTimeLength_option length, icu4x::capi::DateTimeAlignment_option alignment);
-    
+
     typedef struct icu4x_DateFormatter_create_md_with_provider_mv1_result {union {icu4x::capi::DateFormatter* ok; icu4x::capi::DateTimeFormatterLoadError err;}; bool is_ok;} icu4x_DateFormatter_create_md_with_provider_mv1_result;
     icu4x_DateFormatter_create_md_with_provider_mv1_result icu4x_DateFormatter_create_md_with_provider_mv1(const icu4x::capi::DataProvider* provider, const icu4x::capi::Locale* locale, icu4x::capi::DateTimeLength_option length, icu4x::capi::DateTimeAlignment_option alignment);
-    
+
     typedef struct icu4x_DateFormatter_create_ymd_mv1_result {union {icu4x::capi::DateFormatter* ok; icu4x::capi::DateTimeFormatterLoadError err;}; bool is_ok;} icu4x_DateFormatter_create_ymd_mv1_result;
     icu4x_DateFormatter_create_ymd_mv1_result icu4x_DateFormatter_create_ymd_mv1(const icu4x::capi::Locale* locale, icu4x::capi::DateTimeLength_option length, icu4x::capi::DateTimeAlignment_option alignment, icu4x::capi::YearStyle_option year_style);
-    
+
     typedef struct icu4x_DateFormatter_create_ymd_with_provider_mv1_result {union {icu4x::capi::DateFormatter* ok; icu4x::capi::DateTimeFormatterLoadError err;}; bool is_ok;} icu4x_DateFormatter_create_ymd_with_provider_mv1_result;
     icu4x_DateFormatter_create_ymd_with_provider_mv1_result icu4x_DateFormatter_create_ymd_with_provider_mv1(const icu4x::capi::DataProvider* provider, const icu4x::capi::Locale* locale, icu4x::capi::DateTimeLength_option length, icu4x::capi::DateTimeAlignment_option alignment, icu4x::capi::YearStyle_option year_style);
-    
+
     typedef struct icu4x_DateFormatter_create_de_mv1_result {union {icu4x::capi::DateFormatter* ok; icu4x::capi::DateTimeFormatterLoadError err;}; bool is_ok;} icu4x_DateFormatter_create_de_mv1_result;
     icu4x_DateFormatter_create_de_mv1_result icu4x_DateFormatter_create_de_mv1(const icu4x::capi::Locale* locale, icu4x::capi::DateTimeLength_option length, icu4x::capi::DateTimeAlignment_option alignment);
-    
+
     typedef struct icu4x_DateFormatter_create_de_with_provider_mv1_result {union {icu4x::capi::DateFormatter* ok; icu4x::capi::DateTimeFormatterLoadError err;}; bool is_ok;} icu4x_DateFormatter_create_de_with_provider_mv1_result;
     icu4x_DateFormatter_create_de_with_provider_mv1_result icu4x_DateFormatter_create_de_with_provider_mv1(const icu4x::capi::DataProvider* provider, const icu4x::capi::Locale* locale, icu4x::capi::DateTimeLength_option length, icu4x::capi::DateTimeAlignment_option alignment);
-    
+
     typedef struct icu4x_DateFormatter_create_mde_mv1_result {union {icu4x::capi::DateFormatter* ok; icu4x::capi::DateTimeFormatterLoadError err;}; bool is_ok;} icu4x_DateFormatter_create_mde_mv1_result;
     icu4x_DateFormatter_create_mde_mv1_result icu4x_DateFormatter_create_mde_mv1(const icu4x::capi::Locale* locale, icu4x::capi::DateTimeLength_option length, icu4x::capi::DateTimeAlignment_option alignment);
-    
+
     typedef struct icu4x_DateFormatter_create_mde_with_provider_mv1_result {union {icu4x::capi::DateFormatter* ok; icu4x::capi::DateTimeFormatterLoadError err;}; bool is_ok;} icu4x_DateFormatter_create_mde_with_provider_mv1_result;
     icu4x_DateFormatter_create_mde_with_provider_mv1_result icu4x_DateFormatter_create_mde_with_provider_mv1(const icu4x::capi::DataProvider* provider, const icu4x::capi::Locale* locale, icu4x::capi::DateTimeLength_option length, icu4x::capi::DateTimeAlignment_option alignment);
-    
+
     typedef struct icu4x_DateFormatter_create_ymde_mv1_result {union {icu4x::capi::DateFormatter* ok; icu4x::capi::DateTimeFormatterLoadError err;}; bool is_ok;} icu4x_DateFormatter_create_ymde_mv1_result;
     icu4x_DateFormatter_create_ymde_mv1_result icu4x_DateFormatter_create_ymde_mv1(const icu4x::capi::Locale* locale, icu4x::capi::DateTimeLength_option length, icu4x::capi::DateTimeAlignment_option alignment, icu4x::capi::YearStyle_option year_style);
-    
+
     typedef struct icu4x_DateFormatter_create_ymde_with_provider_mv1_result {union {icu4x::capi::DateFormatter* ok; icu4x::capi::DateTimeFormatterLoadError err;}; bool is_ok;} icu4x_DateFormatter_create_ymde_with_provider_mv1_result;
     icu4x_DateFormatter_create_ymde_with_provider_mv1_result icu4x_DateFormatter_create_ymde_with_provider_mv1(const icu4x::capi::DataProvider* provider, const icu4x::capi::Locale* locale, icu4x::capi::DateTimeLength_option length, icu4x::capi::DateTimeAlignment_option alignment, icu4x::capi::YearStyle_option year_style);
-    
+
     typedef struct icu4x_DateFormatter_create_e_mv1_result {union {icu4x::capi::DateFormatter* ok; icu4x::capi::DateTimeFormatterLoadError err;}; bool is_ok;} icu4x_DateFormatter_create_e_mv1_result;
     icu4x_DateFormatter_create_e_mv1_result icu4x_DateFormatter_create_e_mv1(const icu4x::capi::Locale* locale, icu4x::capi::DateTimeLength_option length);
-    
+
     typedef struct icu4x_DateFormatter_create_e_with_provider_mv1_result {union {icu4x::capi::DateFormatter* ok; icu4x::capi::DateTimeFormatterLoadError err;}; bool is_ok;} icu4x_DateFormatter_create_e_with_provider_mv1_result;
     icu4x_DateFormatter_create_e_with_provider_mv1_result icu4x_DateFormatter_create_e_with_provider_mv1(const icu4x::capi::DataProvider* provider, const icu4x::capi::Locale* locale, icu4x::capi::DateTimeLength_option length);
-    
+
     typedef struct icu4x_DateFormatter_create_m_mv1_result {union {icu4x::capi::DateFormatter* ok; icu4x::capi::DateTimeFormatterLoadError err;}; bool is_ok;} icu4x_DateFormatter_create_m_mv1_result;
     icu4x_DateFormatter_create_m_mv1_result icu4x_DateFormatter_create_m_mv1(const icu4x::capi::Locale* locale, icu4x::capi::DateTimeLength_option length, icu4x::capi::DateTimeAlignment_option alignment);
-    
+
     typedef struct icu4x_DateFormatter_create_m_with_provider_mv1_result {union {icu4x::capi::DateFormatter* ok; icu4x::capi::DateTimeFormatterLoadError err;}; bool is_ok;} icu4x_DateFormatter_create_m_with_provider_mv1_result;
     icu4x_DateFormatter_create_m_with_provider_mv1_result icu4x_DateFormatter_create_m_with_provider_mv1(const icu4x::capi::DataProvider* provider, const icu4x::capi::Locale* locale, icu4x::capi::DateTimeLength_option length, icu4x::capi::DateTimeAlignment_option alignment);
-    
+
     typedef struct icu4x_DateFormatter_create_ym_mv1_result {union {icu4x::capi::DateFormatter* ok; icu4x::capi::DateTimeFormatterLoadError err;}; bool is_ok;} icu4x_DateFormatter_create_ym_mv1_result;
     icu4x_DateFormatter_create_ym_mv1_result icu4x_DateFormatter_create_ym_mv1(const icu4x::capi::Locale* locale, icu4x::capi::DateTimeLength_option length, icu4x::capi::DateTimeAlignment_option alignment, icu4x::capi::YearStyle_option year_style);
-    
+
     typedef struct icu4x_DateFormatter_create_ym_with_provider_mv1_result {union {icu4x::capi::DateFormatter* ok; icu4x::capi::DateTimeFormatterLoadError err;}; bool is_ok;} icu4x_DateFormatter_create_ym_with_provider_mv1_result;
     icu4x_DateFormatter_create_ym_with_provider_mv1_result icu4x_DateFormatter_create_ym_with_provider_mv1(const icu4x::capi::DataProvider* provider, const icu4x::capi::Locale* locale, icu4x::capi::DateTimeLength_option length, icu4x::capi::DateTimeAlignment_option alignment, icu4x::capi::YearStyle_option year_style);
-    
+
     typedef struct icu4x_DateFormatter_create_y_mv1_result {union {icu4x::capi::DateFormatter* ok; icu4x::capi::DateTimeFormatterLoadError err;}; bool is_ok;} icu4x_DateFormatter_create_y_mv1_result;
     icu4x_DateFormatter_create_y_mv1_result icu4x_DateFormatter_create_y_mv1(const icu4x::capi::Locale* locale, icu4x::capi::DateTimeLength_option length, icu4x::capi::DateTimeAlignment_option alignment, icu4x::capi::YearStyle_option year_style);
-    
+
     typedef struct icu4x_DateFormatter_create_y_with_provider_mv1_result {union {icu4x::capi::DateFormatter* ok; icu4x::capi::DateTimeFormatterLoadError err;}; bool is_ok;} icu4x_DateFormatter_create_y_with_provider_mv1_result;
     icu4x_DateFormatter_create_y_with_provider_mv1_result icu4x_DateFormatter_create_y_with_provider_mv1(const icu4x::capi::DataProvider* provider, const icu4x::capi::Locale* locale, icu4x::capi::DateTimeLength_option length, icu4x::capi::DateTimeAlignment_option alignment, icu4x::capi::YearStyle_option year_style);
-    
+
     void icu4x_DateFormatter_format_iso_mv1(const icu4x::capi::DateFormatter* self, const icu4x::capi::IsoDate* date, diplomat::capi::DiplomatWrite* write);
-    
+
     typedef struct icu4x_DateFormatter_format_same_calendar_mv1_result {union { icu4x::capi::DateTimeMismatchedCalendarError err;}; bool is_ok;} icu4x_DateFormatter_format_same_calendar_mv1_result;
     icu4x_DateFormatter_format_same_calendar_mv1_result icu4x_DateFormatter_format_same_calendar_mv1(const icu4x::capi::DateFormatter* self, const icu4x::capi::Date* date, diplomat::capi::DiplomatWrite* write);
-    
-    
+
     void icu4x_DateFormatter_destroy_mv1(DateFormatter* self);
-    
+
     } // extern "C"
 } // namespace capi
 } // namespace

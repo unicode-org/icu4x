@@ -31,7 +31,6 @@ TimeZoneAndCanonicalIterator* icu4x_IanaParserExtended_iter_mv1(const IanaParser
 
 TimeZoneAndCanonicalAndNormalizedIterator* icu4x_IanaParserExtended_iter_all_mv1(const IanaParserExtended* self);
 
-
 void icu4x_IanaParserExtended_destroy_mv1(IanaParserExtended* self);
 
 

@@ -49,7 +49,6 @@ LineBreakIteratorUtf16* icu4x_LineSegmenter_segment_utf16_mv1(const LineSegmente
 
 LineBreakIteratorLatin1* icu4x_LineSegmenter_segment_latin1_mv1(const LineSegmenter* self, DiplomatU8View input);
 
-
 void icu4x_LineSegmenter_destroy_mv1(LineSegmenter* self);
 
 

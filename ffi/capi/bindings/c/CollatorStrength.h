@@ -19,5 +19,4 @@
 
 
 
-
 #endif // CollatorStrength_H

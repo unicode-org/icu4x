@@ -2,19 +2,18 @@
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
-/** 
+/**
  * Additional information: [1](https://docs.rs/icu_provider/latest/icu_provider/struct.DataError.html), [2](https://docs.rs/icu_provider/latest/icu_provider/enum.DataErrorKind.html)
  */
 
 
 export class DataError {
-    
 
-    static fromValue(value : DataError | string) : DataError; 
+    static fromValue(value: DataError | string): DataError;
 
-    get value() : string;
+    get value(): string;
 
-    get ffiValue() : number;
+    get ffiValue(): number;
 
     static Unknown : DataError;
     static MarkerNotFound : DataError;
@@ -25,6 +24,7 @@ export class DataError {
     static Deserialize : DataError;
     static Custom : DataError;
     static Io : DataError;
+
 
     constructor(value: DataError | string );
 }

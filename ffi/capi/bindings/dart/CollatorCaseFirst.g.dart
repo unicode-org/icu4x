@@ -5,11 +5,13 @@ part of 'lib.g.dart';
 
 /// See the [Rust documentation for `CollationCaseFirst`](https://docs.rs/icu/latest/icu/collator/preferences/enum.CollationCaseFirst.html) for more information.
 enum CollatorCaseFirst {
+
   off,
 
   lower,
 
   upper;
+
 }
 
 // dart format on

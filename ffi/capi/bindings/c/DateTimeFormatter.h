@@ -73,7 +73,6 @@ void icu4x_DateTimeFormatter_format_iso_mv1(const DateTimeFormatter* self, const
 typedef struct icu4x_DateTimeFormatter_format_same_calendar_mv1_result {union { DateTimeMismatchedCalendarError err;}; bool is_ok;} icu4x_DateTimeFormatter_format_same_calendar_mv1_result;
 icu4x_DateTimeFormatter_format_same_calendar_mv1_result icu4x_DateTimeFormatter_format_same_calendar_mv1(const DateTimeFormatter* self, const Date* date, const Time* time, DiplomatWrite* write);
 
-
 void icu4x_DateTimeFormatter_destroy_mv1(DateTimeFormatter* self);
 
 

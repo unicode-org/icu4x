@@ -23,5 +23,4 @@ icu4x_IsoDateTime_from_string_mv1_result icu4x_IsoDateTime_from_string_mv1(Diplo
 
 
 
-
 #endif // IsoDateTime_H

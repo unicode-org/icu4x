@@ -33,7 +33,7 @@ namespace capi {
       TimePrecision_Subsecond8 = 11,
       TimePrecision_Subsecond9 = 12,
     };
-    
+
     typedef struct TimePrecision_option {union { TimePrecision ok; }; bool is_ok; } TimePrecision_option;
 } // namespace capi
 } // namespace

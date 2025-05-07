@@ -5,7 +5,7 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
-/** 
+/**
  * Lookup of the Canonical_Combining_Class Unicode property
  *
  * See the [Rust documentation for `CanonicalCombiningClassMap`](https://docs.rs/icu/latest/icu/normalizer/properties/struct.CanonicalCombiningClassMap.html) for more information.
@@ -15,59 +15,61 @@ const CanonicalCombiningClassMap_box_destroy_registry = new FinalizationRegistry
 });
 
 export class CanonicalCombiningClassMap {
-    
     // Internal ptr reference:
     #ptr = null;
 
     // Lifetimes are only to keep dependencies alive.
     // Since JS won't garbage collect until there are no incoming edges.
     #selfEdge = [];
-    
+
     #internalConstructor(symbol, ptr, selfEdge) {
         if (symbol !== diplomatRuntime.internalConstructor) {
             console.error("CanonicalCombiningClassMap is an Opaque type. You cannot call its constructor.");
             return;
         }
-        
         this.#ptr = ptr;
         this.#selfEdge = selfEdge;
-        
+
         // Are we being borrowed? If not, we can register.
         if (this.#selfEdge.length === 0) {
             CanonicalCombiningClassMap_box_destroy_registry.register(this, this.#ptr);
         }
-        
+
         return this;
     }
     get ffiValue() {
         return this.#ptr;
     }
 
-    /** 
+
+    /**
      * Construct a new CanonicalCombiningClassMap instance for NFC using compiled data.
      *
      * See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/normalizer/properties/struct.CanonicalCombiningClassMap.html#method.new) for more information.
      */
     #defaultConstructor() {
+
         const result = wasm.icu4x_CanonicalCombiningClassMap_create_mv1();
-    
+
         try {
             return new CanonicalCombiningClassMap(diplomatRuntime.internalConstructor, result, []);
         }
-        
-        finally {}
+
+        finally {
+        }
     }
 
-    /** 
+    /**
      * Construct a new CanonicalCombiningClassMap instance for NFC using a particular data source.
      *
      * See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/normalizer/properties/struct.CanonicalCombiningClassMap.html#method.new) for more information.
      */
     static createWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
-        
+
+
         const result = wasm.icu4x_CanonicalCombiningClassMap_create_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
-    
+
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
@@ -75,25 +77,27 @@ export class CanonicalCombiningClassMap {
             }
             return new CanonicalCombiningClassMap(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
-        
+
         finally {
             diplomatReceive.free();
         }
     }
 
-    /** 
+    /**
      * See the [Rust documentation for `get`](https://docs.rs/icu/latest/icu/normalizer/properties/struct.CanonicalCombiningClassMapBorrowed.html#method.get) for more information.
      *
      * Additional information: [1](https://docs.rs/icu/latest/icu/properties/props/struct.CanonicalCombiningClass.html)
      */
     get(ch) {
+
         const result = wasm.icu4x_CanonicalCombiningClassMap_get_mv1(this.ffiValue, ch);
-    
+
         try {
             return result;
         }
-        
-        finally {}
+
+        finally {
+        }
     }
 
     constructor() {

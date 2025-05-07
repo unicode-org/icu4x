@@ -4,17 +4,17 @@ import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
 export class BidiDirection {
-    
 
-    static fromValue(value : BidiDirection | string) : BidiDirection; 
+    static fromValue(value: BidiDirection | string): BidiDirection;
 
-    get value() : string;
+    get value(): string;
 
-    get ffiValue() : number;
+    get ffiValue(): number;
 
     static Ltr : BidiDirection;
     static Rtl : BidiDirection;
     static Mixed : BidiDirection;
+
 
     constructor(value: BidiDirection | string );
 }

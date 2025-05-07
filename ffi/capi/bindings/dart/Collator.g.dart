@@ -72,6 +72,7 @@ final class Collator implements ffi.Finalizable {
     final result = _icu4x_Collator_resolved_options_v1_mv1(_ffi);
     return CollatorResolvedOptions._fromFfi(result);
   }
+
 }
 
 @_DiplomatFfiUse('icu4x_Collator_destroy_mv1')

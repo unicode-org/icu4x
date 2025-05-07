@@ -95,6 +95,7 @@ final class TimeZoneInfo implements ffi.Finalizable {
     }
     return TimeZoneVariant.values[result.union.ok];
   }
+
 }
 
 @_DiplomatFfiUse('icu4x_TimeZoneInfo_destroy_mv1')

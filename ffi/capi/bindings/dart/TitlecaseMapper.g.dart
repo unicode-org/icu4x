@@ -72,6 +72,7 @@ final class TitlecaseMapper implements ffi.Finalizable {
     _icu4x_TitlecaseMapper_titlecase_segment_with_compiled_data_v1_mv1(s._utf8AllocIn(temp.arena), locale._ffi, options._toFfi(temp.arena), write._ffi);
     return write.finalize();
   }
+
 }
 
 @_DiplomatFfiUse('icu4x_TitlecaseMapper_destroy_mv1')

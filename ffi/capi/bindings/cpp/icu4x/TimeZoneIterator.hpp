@@ -18,12 +18,11 @@
 namespace icu4x {
 namespace capi {
     extern "C" {
-    
+
     icu4x::capi::TimeZone* icu4x_TimeZoneIterator_next_mv1(icu4x::capi::TimeZoneIterator* self);
-    
-    
+
     void icu4x_TimeZoneIterator_destroy_mv1(TimeZoneIterator* self);
-    
+
     } // extern "C"
 } // namespace capi
 } // namespace

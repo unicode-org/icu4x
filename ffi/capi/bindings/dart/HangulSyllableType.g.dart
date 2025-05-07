@@ -7,19 +7,14 @@ part of 'lib.g.dart';
 enum HangulSyllableType {
   /// See the [Rust documentation for `NotApplicable`](https://docs.rs/icu/latest/icu/properties/props/enum.HangulSyllableType.html#variant.NotApplicable) for more information.
   notApplicable,
-
   /// See the [Rust documentation for `LeadingJamo`](https://docs.rs/icu/latest/icu/properties/props/enum.HangulSyllableType.html#variant.LeadingJamo) for more information.
   leadingJamo,
-
   /// See the [Rust documentation for `VowelJamo`](https://docs.rs/icu/latest/icu/properties/props/enum.HangulSyllableType.html#variant.VowelJamo) for more information.
   vowelJamo,
-
   /// See the [Rust documentation for `TrailingJamo`](https://docs.rs/icu/latest/icu/properties/props/enum.HangulSyllableType.html#variant.TrailingJamo) for more information.
   trailingJamo,
-
   /// See the [Rust documentation for `LeadingVowelSyllable`](https://docs.rs/icu/latest/icu/properties/props/enum.HangulSyllableType.html#variant.LeadingVowelSyllable) for more information.
   leadingVowelSyllable,
-
   /// See the [Rust documentation for `LeadingVowelTrailingSyllable`](https://docs.rs/icu/latest/icu/properties/props/enum.HangulSyllableType.html#variant.LeadingVowelTrailingSyllable) for more information.
   leadingVowelTrailingSyllable;
 
@@ -47,6 +42,7 @@ enum HangulSyllableType {
     }
     return HangulSyllableType.values[result.union.ok];
   }
+
 }
 
 @_DiplomatFfiUse('icu4x_HangulSyllableType_for_char_mv1')

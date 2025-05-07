@@ -32,7 +32,6 @@ ScriptWithExtensionsBorrowed* icu4x_ScriptWithExtensions_as_borrowed_mv1(const S
 
 CodePointRangeIterator* icu4x_ScriptWithExtensions_iter_ranges_for_script_mv1(const ScriptWithExtensions* self, uint16_t script);
 
-
 void icu4x_ScriptWithExtensions_destroy_mv1(ScriptWithExtensions* self);
 
 

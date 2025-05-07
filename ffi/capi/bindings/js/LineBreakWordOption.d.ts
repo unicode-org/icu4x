@@ -2,23 +2,23 @@
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
-/** 
+/**
  * See the [Rust documentation for `LineBreakWordOption`](https://docs.rs/icu/latest/icu/segmenter/options/enum.LineBreakWordOption.html) for more information.
  */
 
 
 export class LineBreakWordOption {
-    
 
-    static fromValue(value : LineBreakWordOption | string) : LineBreakWordOption; 
+    static fromValue(value: LineBreakWordOption | string): LineBreakWordOption;
 
-    get value() : string;
+    get value(): string;
 
-    get ffiValue() : number;
+    get ffiValue(): number;
 
     static Normal : LineBreakWordOption;
     static BreakAll : LineBreakWordOption;
     static KeepAll : LineBreakWordOption;
+
 
     constructor(value: LineBreakWordOption | string );
 }

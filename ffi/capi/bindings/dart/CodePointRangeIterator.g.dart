@@ -33,6 +33,7 @@ final class CodePointRangeIterator implements ffi.Finalizable {
     final result = _icu4x_CodePointRangeIterator_next_mv1(_ffi);
     return CodePointRangeIteratorResult._fromFfi(result);
   }
+
 }
 
 @_DiplomatFfiUse('icu4x_CodePointRangeIterator_destroy_mv1')

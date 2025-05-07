@@ -26,5 +26,4 @@ icu4x_HangulSyllableType_from_integer_value_mv1_result icu4x_HangulSyllableType_
 
 
 
-
 #endif // HangulSyllableType_H

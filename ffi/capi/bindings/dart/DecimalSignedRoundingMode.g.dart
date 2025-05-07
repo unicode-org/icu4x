@@ -7,6 +7,7 @@ part of 'lib.g.dart';
 ///
 /// See the [Rust documentation for `SignedRoundingMode`](https://docs.rs/fixed_decimal/latest/fixed_decimal/enum.SignedRoundingMode.html) for more information.
 enum DecimalSignedRoundingMode {
+
   expand,
 
   trunc,
@@ -24,6 +25,7 @@ enum DecimalSignedRoundingMode {
   halfCeil,
 
   halfFloor;
+
 }
 
 // dart format on

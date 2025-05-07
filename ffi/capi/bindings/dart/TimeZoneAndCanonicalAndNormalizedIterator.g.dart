@@ -46,6 +46,7 @@ final class TimeZoneAndCanonicalAndNormalizedIterator implements ffi.Finalizable
     }
     return TimeZoneAndCanonicalAndNormalized._fromFfi(result.union.ok, aEdges);
   }
+
 }
 
 @_DiplomatFfiUse('icu4x_TimeZoneAndCanonicalAndNormalizedIterator_destroy_mv1')

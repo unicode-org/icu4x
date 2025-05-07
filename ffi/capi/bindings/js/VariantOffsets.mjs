@@ -4,25 +4,20 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
-/** 
+/**
  * See the [Rust documentation for `VariantOffsets`](https://docs.rs/icu/latest/icu/time/zone/struct.VariantOffsets.html) for more information.
  */
 
 
 export class VariantOffsets {
-    
     #standard;
-    
-    get standard()  {
+    get standard() {
         return this.#standard;
     }
-    
     #daylight;
-    
-    get daylight()  {
+    get daylight() {
         return this.#daylight;
     }
-    
     #internalConstructor(structObj, internalConstructor) {
         if (typeof structObj !== "object") {
             throw new Error("VariantOffsets's constructor takes an object of VariantOffsets's fields.");
@@ -48,7 +43,6 @@ export class VariantOffsets {
 
     // Return this struct in FFI function friendly format.
     // Returns an array that can be expanded with spread syntax (...)
-    
     _intoFFI(
         functionCleanupArena,
         appendArrayMap
@@ -95,6 +89,7 @@ export class VariantOffsets {
 
         return new VariantOffsets(structObj, internalConstructor);
     }
+
 
     constructor(structObj, internalConstructor) {
         return this.#internalConstructor(...arguments)

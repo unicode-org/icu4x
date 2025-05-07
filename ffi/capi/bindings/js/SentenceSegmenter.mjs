@@ -7,7 +7,7 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
-/** 
+/**
  * An ICU4X sentence-break segmenter, capable of finding sentence breakpoints in strings.
  *
  * See the [Rust documentation for `SentenceSegmenter`](https://docs.rs/icu/latest/icu/segmenter/struct.SentenceSegmenter.html) for more information.
@@ -17,57 +17,59 @@ const SentenceSegmenter_box_destroy_registry = new FinalizationRegistry((ptr) =>
 });
 
 export class SentenceSegmenter {
-    
     // Internal ptr reference:
     #ptr = null;
 
     // Lifetimes are only to keep dependencies alive.
     // Since JS won't garbage collect until there are no incoming edges.
     #selfEdge = [];
-    
+
     #internalConstructor(symbol, ptr, selfEdge) {
         if (symbol !== diplomatRuntime.internalConstructor) {
             console.error("SentenceSegmenter is an Opaque type. You cannot call its constructor.");
             return;
         }
-        
         this.#ptr = ptr;
         this.#selfEdge = selfEdge;
-        
+
         // Are we being borrowed? If not, we can register.
         if (this.#selfEdge.length === 0) {
             SentenceSegmenter_box_destroy_registry.register(this, this.#ptr);
         }
-        
+
         return this;
     }
     get ffiValue() {
         return this.#ptr;
     }
 
-    /** 
+
+    /**
      * Construct a [`SentenceSegmenter`] using compiled data. This does not assume any content locale.
      *
      * See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/segmenter/struct.SentenceSegmenter.html#method.new) for more information.
      */
     #defaultConstructor() {
+
         const result = wasm.icu4x_SentenceSegmenter_create_mv1();
-    
+
         try {
             return new SentenceSegmenter(diplomatRuntime.internalConstructor, result, []);
         }
-        
-        finally {}
+
+        finally {
+        }
     }
 
-    /** 
+    /**
      * Construct a [`SentenceSegmenter`] for content known to be of a given locale, using compiled data.
      */
     static createWithContentLocale(locale) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
-        
+
+
         const result = wasm.icu4x_SentenceSegmenter_create_with_content_locale_mv1(diplomatReceive.buffer, locale.ffiValue);
-    
+
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
@@ -75,20 +77,21 @@ export class SentenceSegmenter {
             }
             return new SentenceSegmenter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
-        
+
         finally {
             diplomatReceive.free();
         }
     }
 
-    /** 
+    /**
      * Construct a [`SentenceSegmenter`]  for content known to be of a given locale, using a particular data source.
      */
     static createWithContentLocaleAndProvider(provider, locale) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
-        
+
+
         const result = wasm.icu4x_SentenceSegmenter_create_with_content_locale_and_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue);
-    
+
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
@@ -96,13 +99,13 @@ export class SentenceSegmenter {
             }
             return new SentenceSegmenter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
-        
+
         finally {
             diplomatReceive.free();
         }
     }
 
-    /** 
+    /**
      * Segments a string.
      *
      * Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
@@ -113,18 +116,19 @@ export class SentenceSegmenter {
     segment(input) {
         let functionGarbageCollectorGrip = new diplomatRuntime.GarbageCollectorGrip();
         const inputSlice = diplomatRuntime.DiplomatBuf.str16(wasm, input);
-        
         // This lifetime edge depends on lifetimes 'a
         let aEdges = [this, inputSlice];
-        
+
+
         const result = wasm.icu4x_SentenceSegmenter_segment_utf16_mv1(this.ffiValue, ...inputSlice.splat());
-    
+
         try {
             return new SentenceBreakIteratorUtf16(diplomatRuntime.internalConstructor, result, [], aEdges);
         }
-        
+
         finally {
             functionGarbageCollectorGrip.releaseToGarbageCollector();
+
         }
     }
 

@@ -26,5 +26,4 @@ icu4x_GraphemeClusterBreak_from_integer_value_mv1_result icu4x_GraphemeClusterBr
 
 
 
-
 #endif // GraphemeClusterBreak_H

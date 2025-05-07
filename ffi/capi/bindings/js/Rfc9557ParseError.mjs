@@ -3,13 +3,12 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
-/** 
+/**
  * Additional information: [1](https://docs.rs/icu/latest/icu/calendar/enum.ParseError.html), [2](https://docs.rs/icu/latest/icu/time/enum.ParseError.html)
  */
 
 
 export class Rfc9557ParseError {
-    
     #value = undefined;
 
     static #values = new Map([
@@ -23,7 +22,7 @@ export class Rfc9557ParseError {
     static getAllEntries() {
         return Rfc9557ParseError.#values.entries();
     }
-    
+
     #internalConstructor(value) {
         if (arguments.length > 1 && arguments[0] === diplomatRuntime.internalConstructor) {
             // We pass in two internalConstructor arguments to create *new*
@@ -53,11 +52,11 @@ export class Rfc9557ParseError {
         return new Rfc9557ParseError(value);
     }
 
-    get value() {
+    get value(){
         return [...Rfc9557ParseError.#values.keys()][this.#value];
     }
 
-    get ffiValue() {
+    get ffiValue(){
         return this.#value;
     }
     static #objectValues = [
@@ -73,6 +72,7 @@ export class Rfc9557ParseError {
     static OutOfRange = Rfc9557ParseError.#objectValues[2];
     static MissingFields = Rfc9557ParseError.#objectValues[3];
     static UnknownCalendar = Rfc9557ParseError.#objectValues[4];
+
 
     constructor(value) {
         return this.#internalConstructor(...arguments)

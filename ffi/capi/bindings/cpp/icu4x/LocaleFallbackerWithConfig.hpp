@@ -19,12 +19,11 @@
 namespace icu4x {
 namespace capi {
     extern "C" {
-    
+
     icu4x::capi::LocaleFallbackIterator* icu4x_LocaleFallbackerWithConfig_fallback_for_locale_mv1(const icu4x::capi::LocaleFallbackerWithConfig* self, const icu4x::capi::Locale* locale);
-    
-    
+
     void icu4x_LocaleFallbackerWithConfig_destroy_mv1(LocaleFallbackerWithConfig* self);
-    
+
     } // extern "C"
 } // namespace capi
 } // namespace

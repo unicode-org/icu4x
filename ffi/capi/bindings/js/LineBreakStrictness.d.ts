@@ -2,24 +2,24 @@
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
-/** 
+/**
  * See the [Rust documentation for `LineBreakStrictness`](https://docs.rs/icu/latest/icu/segmenter/options/enum.LineBreakStrictness.html) for more information.
  */
 
 
 export class LineBreakStrictness {
-    
 
-    static fromValue(value : LineBreakStrictness | string) : LineBreakStrictness; 
+    static fromValue(value: LineBreakStrictness | string): LineBreakStrictness;
 
-    get value() : string;
+    get value(): string;
 
-    get ffiValue() : number;
+    get ffiValue(): number;
 
     static Loose : LineBreakStrictness;
     static Normal : LineBreakStrictness;
     static Strict : LineBreakStrictness;
     static Anywhere : LineBreakStrictness;
+
 
     constructor(value: LineBreakStrictness | string );
 }

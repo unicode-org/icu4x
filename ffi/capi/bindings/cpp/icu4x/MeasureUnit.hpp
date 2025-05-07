@@ -17,10 +17,9 @@
 namespace icu4x {
 namespace capi {
     extern "C" {
-    
-    
+
     void icu4x_MeasureUnit_destroy_mv1(MeasureUnit* self);
-    
+
     } // extern "C"
 } // namespace capi
 } // namespace

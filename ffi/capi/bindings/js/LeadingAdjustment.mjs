@@ -3,13 +3,12 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
-/** 
+/**
  * See the [Rust documentation for `LeadingAdjustment`](https://docs.rs/icu/latest/icu/casemap/options/enum.LeadingAdjustment.html) for more information.
  */
 
 
 export class LeadingAdjustment {
-    
     #value = undefined;
 
     static #values = new Map([
@@ -21,7 +20,7 @@ export class LeadingAdjustment {
     static getAllEntries() {
         return LeadingAdjustment.#values.entries();
     }
-    
+
     #internalConstructor(value) {
         if (arguments.length > 1 && arguments[0] === diplomatRuntime.internalConstructor) {
             // We pass in two internalConstructor arguments to create *new*
@@ -51,11 +50,11 @@ export class LeadingAdjustment {
         return new LeadingAdjustment(value);
     }
 
-    get value() {
+    get value(){
         return [...LeadingAdjustment.#values.keys()][this.#value];
     }
 
-    get ffiValue() {
+    get ffiValue(){
         return this.#value;
     }
     static #objectValues = [
@@ -67,6 +66,7 @@ export class LeadingAdjustment {
     static Auto = LeadingAdjustment.#objectValues[0];
     static None = LeadingAdjustment.#objectValues[1];
     static ToCased = LeadingAdjustment.#objectValues[2];
+
 
     constructor(value) {
         return this.#internalConstructor(...arguments)

@@ -20,17 +20,16 @@
 namespace icu4x {
 namespace capi {
     extern "C" {
-    
+
     icu4x::capi::MeasureUnitParser* icu4x_MeasureUnitParser_create_mv1(void);
-    
+
     typedef struct icu4x_MeasureUnitParser_create_with_provider_mv1_result {union {icu4x::capi::MeasureUnitParser* ok; icu4x::capi::DataError err;}; bool is_ok;} icu4x_MeasureUnitParser_create_with_provider_mv1_result;
     icu4x_MeasureUnitParser_create_with_provider_mv1_result icu4x_MeasureUnitParser_create_with_provider_mv1(const icu4x::capi::DataProvider* provider);
-    
+
     icu4x::capi::MeasureUnit* icu4x_MeasureUnitParser_parse_mv1(const icu4x::capi::MeasureUnitParser* self, diplomat::capi::DiplomatStringView unit_id);
-    
-    
+
     void icu4x_MeasureUnitParser_destroy_mv1(MeasureUnitParser* self);
-    
+
     } // extern "C"
 } // namespace capi
 } // namespace

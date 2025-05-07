@@ -31,7 +31,6 @@ icu4x_LocaleCanonicalizer_create_extended_with_provider_mv1_result icu4x_LocaleC
 
 TransformResult icu4x_LocaleCanonicalizer_canonicalize_mv1(const LocaleCanonicalizer* self, Locale* locale);
 
-
 void icu4x_LocaleCanonicalizer_destroy_mv1(LocaleCanonicalizer* self);
 
 

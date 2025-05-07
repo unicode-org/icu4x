@@ -120,6 +120,7 @@ final class GeneralCategoryGroup {
     return GeneralCategoryGroup._fromFfi(result);
   }
 
+
   @override
   bool operator ==(Object other) =>
       other is GeneralCategoryGroup &&

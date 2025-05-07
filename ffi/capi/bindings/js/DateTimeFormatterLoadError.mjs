@@ -3,13 +3,12 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
-/** 
+/**
  * Additional information: [1](https://docs.rs/icu/latest/icu/datetime/enum.DateTimeFormatterLoadError.html), [2](https://docs.rs/icu/latest/icu/datetime/pattern/enum.PatternLoadError.html), [3](https://docs.rs/icu_provider/latest/icu_provider/struct.DataError.html), [4](https://docs.rs/icu_provider/latest/icu_provider/enum.DataErrorKind.html)
  */
 
 
 export class DateTimeFormatterLoadError {
-    
     #value = undefined;
 
     static #values = new Map([
@@ -31,7 +30,7 @@ export class DateTimeFormatterLoadError {
     static getAllEntries() {
         return DateTimeFormatterLoadError.#values.entries();
     }
-    
+
     #internalConstructor(value) {
         if (arguments.length > 1 && arguments[0] === diplomatRuntime.internalConstructor) {
             // We pass in two internalConstructor arguments to create *new*
@@ -61,7 +60,7 @@ export class DateTimeFormatterLoadError {
         return new DateTimeFormatterLoadError(value);
     }
 
-    get value() {
+    get value(){
         for (let entry of DateTimeFormatterLoadError.#values) {
             if (entry[1] == this.#value) {
                 return entry[0];
@@ -69,7 +68,7 @@ export class DateTimeFormatterLoadError {
         }
     }
 
-    get ffiValue() {
+    get ffiValue(){
         return this.#value;
     }
     static #objectValues = {
@@ -101,6 +100,7 @@ export class DateTimeFormatterLoadError {
     static DataDeserialize = DateTimeFormatterLoadError.#objectValues[6];
     static DataCustom = DateTimeFormatterLoadError.#objectValues[7];
     static DataIo = DateTimeFormatterLoadError.#objectValues[8];
+
 
     constructor(value) {
         return this.#internalConstructor(...arguments)

@@ -26,5 +26,4 @@ icu4x_IndicSyllabicCategory_from_integer_value_mv1_result icu4x_IndicSyllabicCat
 
 
 
-
 #endif // IndicSyllabicCategory_H

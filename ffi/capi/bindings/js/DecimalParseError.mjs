@@ -3,13 +3,12 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
-/** 
+/**
  * Additional information: [1](https://docs.rs/fixed_decimal/latest/fixed_decimal/enum.ParseError.html)
  */
 
 
 export class DecimalParseError {
-    
     #value = undefined;
 
     static #values = new Map([
@@ -21,7 +20,7 @@ export class DecimalParseError {
     static getAllEntries() {
         return DecimalParseError.#values.entries();
     }
-    
+
     #internalConstructor(value) {
         if (arguments.length > 1 && arguments[0] === diplomatRuntime.internalConstructor) {
             // We pass in two internalConstructor arguments to create *new*
@@ -51,11 +50,11 @@ export class DecimalParseError {
         return new DecimalParseError(value);
     }
 
-    get value() {
+    get value(){
         return [...DecimalParseError.#values.keys()][this.#value];
     }
 
-    get ffiValue() {
+    get ffiValue(){
         return this.#value;
     }
     static #objectValues = [
@@ -67,6 +66,7 @@ export class DecimalParseError {
     static Unknown = DecimalParseError.#objectValues[0];
     static Limit = DecimalParseError.#objectValues[1];
     static Syntax = DecimalParseError.#objectValues[2];
+
 
     constructor(value) {
         return this.#internalConstructor(...arguments)

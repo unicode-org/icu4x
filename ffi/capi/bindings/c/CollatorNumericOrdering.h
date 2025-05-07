@@ -19,5 +19,4 @@
 
 
 
-
 #endif // CollatorNumericOrdering_H

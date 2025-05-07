@@ -19,5 +19,4 @@
 
 
 
-
 #endif // TransformResult_H

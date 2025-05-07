@@ -5,6 +5,7 @@ part of 'lib.g.dart';
 
 /// Additional information: [1](https://docs.rs/icu_provider/latest/icu_provider/struct.DataError.html), [2](https://docs.rs/icu_provider/latest/icu_provider/enum.DataErrorKind.html)
 enum DataError {
+
   unknown,
 
   markerNotFound,
@@ -22,6 +23,7 @@ enum DataError {
   custom,
 
   io;
+
 }
 
 // dart format on

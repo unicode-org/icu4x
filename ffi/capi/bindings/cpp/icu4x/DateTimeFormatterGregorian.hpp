@@ -26,54 +26,53 @@
 namespace icu4x {
 namespace capi {
     extern "C" {
-    
+
     typedef struct icu4x_DateTimeFormatterGregorian_create_dt_mv1_result {union {icu4x::capi::DateTimeFormatterGregorian* ok; icu4x::capi::DateTimeFormatterLoadError err;}; bool is_ok;} icu4x_DateTimeFormatterGregorian_create_dt_mv1_result;
     icu4x_DateTimeFormatterGregorian_create_dt_mv1_result icu4x_DateTimeFormatterGregorian_create_dt_mv1(const icu4x::capi::Locale* locale, icu4x::capi::DateTimeLength_option length, icu4x::capi::TimePrecision_option time_precision, icu4x::capi::DateTimeAlignment_option alignment);
-    
+
     typedef struct icu4x_DateTimeFormatterGregorian_create_dt_with_provider_mv1_result {union {icu4x::capi::DateTimeFormatterGregorian* ok; icu4x::capi::DateTimeFormatterLoadError err;}; bool is_ok;} icu4x_DateTimeFormatterGregorian_create_dt_with_provider_mv1_result;
     icu4x_DateTimeFormatterGregorian_create_dt_with_provider_mv1_result icu4x_DateTimeFormatterGregorian_create_dt_with_provider_mv1(const icu4x::capi::DataProvider* provider, const icu4x::capi::Locale* locale, icu4x::capi::DateTimeLength_option length, icu4x::capi::TimePrecision_option time_precision, icu4x::capi::DateTimeAlignment_option alignment);
-    
+
     typedef struct icu4x_DateTimeFormatterGregorian_create_mdt_mv1_result {union {icu4x::capi::DateTimeFormatterGregorian* ok; icu4x::capi::DateTimeFormatterLoadError err;}; bool is_ok;} icu4x_DateTimeFormatterGregorian_create_mdt_mv1_result;
     icu4x_DateTimeFormatterGregorian_create_mdt_mv1_result icu4x_DateTimeFormatterGregorian_create_mdt_mv1(const icu4x::capi::Locale* locale, icu4x::capi::DateTimeLength_option length, icu4x::capi::TimePrecision_option time_precision, icu4x::capi::DateTimeAlignment_option alignment);
-    
+
     typedef struct icu4x_DateTimeFormatterGregorian_create_mdt_with_provider_mv1_result {union {icu4x::capi::DateTimeFormatterGregorian* ok; icu4x::capi::DateTimeFormatterLoadError err;}; bool is_ok;} icu4x_DateTimeFormatterGregorian_create_mdt_with_provider_mv1_result;
     icu4x_DateTimeFormatterGregorian_create_mdt_with_provider_mv1_result icu4x_DateTimeFormatterGregorian_create_mdt_with_provider_mv1(const icu4x::capi::DataProvider* provider, const icu4x::capi::Locale* locale, icu4x::capi::DateTimeLength_option length, icu4x::capi::TimePrecision_option time_precision, icu4x::capi::DateTimeAlignment_option alignment);
-    
+
     typedef struct icu4x_DateTimeFormatterGregorian_create_ymdt_mv1_result {union {icu4x::capi::DateTimeFormatterGregorian* ok; icu4x::capi::DateTimeFormatterLoadError err;}; bool is_ok;} icu4x_DateTimeFormatterGregorian_create_ymdt_mv1_result;
     icu4x_DateTimeFormatterGregorian_create_ymdt_mv1_result icu4x_DateTimeFormatterGregorian_create_ymdt_mv1(const icu4x::capi::Locale* locale, icu4x::capi::DateTimeLength_option length, icu4x::capi::TimePrecision_option time_precision, icu4x::capi::DateTimeAlignment_option alignment, icu4x::capi::YearStyle_option year_style);
-    
+
     typedef struct icu4x_DateTimeFormatterGregorian_create_ymdt_with_provider_mv1_result {union {icu4x::capi::DateTimeFormatterGregorian* ok; icu4x::capi::DateTimeFormatterLoadError err;}; bool is_ok;} icu4x_DateTimeFormatterGregorian_create_ymdt_with_provider_mv1_result;
     icu4x_DateTimeFormatterGregorian_create_ymdt_with_provider_mv1_result icu4x_DateTimeFormatterGregorian_create_ymdt_with_provider_mv1(const icu4x::capi::DataProvider* provider, const icu4x::capi::Locale* locale, icu4x::capi::DateTimeLength_option length, icu4x::capi::TimePrecision_option time_precision, icu4x::capi::DateTimeAlignment_option alignment, icu4x::capi::YearStyle_option year_style);
-    
+
     typedef struct icu4x_DateTimeFormatterGregorian_create_det_mv1_result {union {icu4x::capi::DateTimeFormatterGregorian* ok; icu4x::capi::DateTimeFormatterLoadError err;}; bool is_ok;} icu4x_DateTimeFormatterGregorian_create_det_mv1_result;
     icu4x_DateTimeFormatterGregorian_create_det_mv1_result icu4x_DateTimeFormatterGregorian_create_det_mv1(const icu4x::capi::Locale* locale, icu4x::capi::DateTimeLength_option length, icu4x::capi::TimePrecision_option time_precision, icu4x::capi::DateTimeAlignment_option alignment);
-    
+
     typedef struct icu4x_DateTimeFormatterGregorian_create_det_with_provider_mv1_result {union {icu4x::capi::DateTimeFormatterGregorian* ok; icu4x::capi::DateTimeFormatterLoadError err;}; bool is_ok;} icu4x_DateTimeFormatterGregorian_create_det_with_provider_mv1_result;
     icu4x_DateTimeFormatterGregorian_create_det_with_provider_mv1_result icu4x_DateTimeFormatterGregorian_create_det_with_provider_mv1(const icu4x::capi::DataProvider* provider, const icu4x::capi::Locale* locale, icu4x::capi::DateTimeLength_option length, icu4x::capi::TimePrecision_option time_precision, icu4x::capi::DateTimeAlignment_option alignment);
-    
+
     typedef struct icu4x_DateTimeFormatterGregorian_create_mdet_mv1_result {union {icu4x::capi::DateTimeFormatterGregorian* ok; icu4x::capi::DateTimeFormatterLoadError err;}; bool is_ok;} icu4x_DateTimeFormatterGregorian_create_mdet_mv1_result;
     icu4x_DateTimeFormatterGregorian_create_mdet_mv1_result icu4x_DateTimeFormatterGregorian_create_mdet_mv1(const icu4x::capi::Locale* locale, icu4x::capi::DateTimeLength_option length, icu4x::capi::TimePrecision_option time_precision, icu4x::capi::DateTimeAlignment_option alignment);
-    
+
     typedef struct icu4x_DateTimeFormatterGregorian_create_mdet_with_provider_mv1_result {union {icu4x::capi::DateTimeFormatterGregorian* ok; icu4x::capi::DateTimeFormatterLoadError err;}; bool is_ok;} icu4x_DateTimeFormatterGregorian_create_mdet_with_provider_mv1_result;
     icu4x_DateTimeFormatterGregorian_create_mdet_with_provider_mv1_result icu4x_DateTimeFormatterGregorian_create_mdet_with_provider_mv1(const icu4x::capi::DataProvider* provider, const icu4x::capi::Locale* locale, icu4x::capi::DateTimeLength_option length, icu4x::capi::TimePrecision_option time_precision, icu4x::capi::DateTimeAlignment_option alignment);
-    
+
     typedef struct icu4x_DateTimeFormatterGregorian_create_ymdet_mv1_result {union {icu4x::capi::DateTimeFormatterGregorian* ok; icu4x::capi::DateTimeFormatterLoadError err;}; bool is_ok;} icu4x_DateTimeFormatterGregorian_create_ymdet_mv1_result;
     icu4x_DateTimeFormatterGregorian_create_ymdet_mv1_result icu4x_DateTimeFormatterGregorian_create_ymdet_mv1(const icu4x::capi::Locale* locale, icu4x::capi::DateTimeLength_option length, icu4x::capi::TimePrecision_option time_precision, icu4x::capi::DateTimeAlignment_option alignment, icu4x::capi::YearStyle_option year_style);
-    
+
     typedef struct icu4x_DateTimeFormatterGregorian_create_ymdet_with_provider_mv1_result {union {icu4x::capi::DateTimeFormatterGregorian* ok; icu4x::capi::DateTimeFormatterLoadError err;}; bool is_ok;} icu4x_DateTimeFormatterGregorian_create_ymdet_with_provider_mv1_result;
     icu4x_DateTimeFormatterGregorian_create_ymdet_with_provider_mv1_result icu4x_DateTimeFormatterGregorian_create_ymdet_with_provider_mv1(const icu4x::capi::DataProvider* provider, const icu4x::capi::Locale* locale, icu4x::capi::DateTimeLength_option length, icu4x::capi::TimePrecision_option time_precision, icu4x::capi::DateTimeAlignment_option alignment, icu4x::capi::YearStyle_option year_style);
-    
+
     typedef struct icu4x_DateTimeFormatterGregorian_create_et_mv1_result {union {icu4x::capi::DateTimeFormatterGregorian* ok; icu4x::capi::DateTimeFormatterLoadError err;}; bool is_ok;} icu4x_DateTimeFormatterGregorian_create_et_mv1_result;
     icu4x_DateTimeFormatterGregorian_create_et_mv1_result icu4x_DateTimeFormatterGregorian_create_et_mv1(const icu4x::capi::Locale* locale, icu4x::capi::DateTimeLength_option length, icu4x::capi::TimePrecision_option time_precision, icu4x::capi::DateTimeAlignment_option alignment);
-    
+
     typedef struct icu4x_DateTimeFormatterGregorian_create_et_with_provider_mv1_result {union {icu4x::capi::DateTimeFormatterGregorian* ok; icu4x::capi::DateTimeFormatterLoadError err;}; bool is_ok;} icu4x_DateTimeFormatterGregorian_create_et_with_provider_mv1_result;
     icu4x_DateTimeFormatterGregorian_create_et_with_provider_mv1_result icu4x_DateTimeFormatterGregorian_create_et_with_provider_mv1(const icu4x::capi::DataProvider* provider, const icu4x::capi::Locale* locale, icu4x::capi::DateTimeLength_option length, icu4x::capi::TimePrecision_option time_precision, icu4x::capi::DateTimeAlignment_option alignment);
-    
+
     void icu4x_DateTimeFormatterGregorian_format_iso_mv1(const icu4x::capi::DateTimeFormatterGregorian* self, const icu4x::capi::IsoDate* date, const icu4x::capi::Time* time, diplomat::capi::DiplomatWrite* write);
-    
-    
+
     void icu4x_DateTimeFormatterGregorian_destroy_mv1(DateTimeFormatterGregorian* self);
-    
+
     } // extern "C"
 } // namespace capi
 } // namespace

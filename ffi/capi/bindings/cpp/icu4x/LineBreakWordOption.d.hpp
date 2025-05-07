@@ -19,7 +19,7 @@ namespace capi {
       LineBreakWordOption_BreakAll = 1,
       LineBreakWordOption_KeepAll = 2,
     };
-    
+
     typedef struct LineBreakWordOption_option {union { LineBreakWordOption ok; }; bool is_ok; } LineBreakWordOption_option;
 } // namespace capi
 } // namespace

@@ -6,7 +6,7 @@ import type { ReorderedIndexMap } from "./ReorderedIndexMap"
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
-/** 
+/**
  * An ICU4X Bidi object, containing loaded bidi data
  *
  * See the [Rust documentation for `BidiClass`](https://docs.rs/icu/latest/icu/properties/props/struct.BidiClass.html) for more information.
@@ -14,15 +14,15 @@ import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
 export class Bidi {
-    
     get ffiValue(): pointer;
 
-    /** 
+
+    /**
      * Creates a new [`Bidi`] from locale data, and a particular data source.
      */
     static createWithProvider(provider: DataProvider): Bidi;
 
-    /** 
+    /**
      * Use the data loaded in this object to process a string and calculate bidi information
      *
      * Takes in a Level for the default level, if it is an invalid value it will default to LTR
@@ -31,7 +31,7 @@ export class Bidi {
      */
     forText(text: string, defaultLevel: number | null): BidiInfo;
 
-    /** 
+    /**
      * Utility function for producing reorderings given a list of levels
      *
      * Produces a map saying which visual index maps to which source index.
@@ -45,7 +45,7 @@ export class Bidi {
      */
     reorderVisual(levels: Array<number>): ReorderedIndexMap;
 
-    /** 
+    /**
      * Check if a Level returned by level_at is an RTL level.
      *
      * Invalid levels (numbers greater than 125) will be assumed LTR
@@ -54,7 +54,7 @@ export class Bidi {
      */
     static levelIsRtl(level: number): boolean;
 
-    /** 
+    /**
      * Check if a Level returned by level_at is an LTR level.
      *
      * Invalid levels (numbers greater than 125) will be assumed LTR
@@ -63,14 +63,14 @@ export class Bidi {
      */
     static levelIsLtr(level: number): boolean;
 
-    /** 
+    /**
      * Get a basic RTL Level value
      *
      * See the [Rust documentation for `rtl`](https://docs.rs/unicode_bidi/latest/unicode_bidi/struct.Level.html#method.rtl) for more information.
      */
     static levelRtl(): number;
 
-    /** 
+    /**
      * Get a simple LTR Level value
      *
      * See the [Rust documentation for `ltr`](https://docs.rs/unicode_bidi/latest/unicode_bidi/struct.Level.html#method.ltr) for more information.

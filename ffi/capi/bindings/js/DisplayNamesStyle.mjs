@@ -3,13 +3,12 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
-/** 
+/**
  * See the [Rust documentation for `Style`](https://docs.rs/icu/latest/icu/experimental/displaynames/options/enum.Style.html) for more information.
  */
 
 
 export class DisplayNamesStyle {
-    
     #value = undefined;
 
     static #values = new Map([
@@ -22,7 +21,7 @@ export class DisplayNamesStyle {
     static getAllEntries() {
         return DisplayNamesStyle.#values.entries();
     }
-    
+
     #internalConstructor(value) {
         if (arguments.length > 1 && arguments[0] === diplomatRuntime.internalConstructor) {
             // We pass in two internalConstructor arguments to create *new*
@@ -52,11 +51,11 @@ export class DisplayNamesStyle {
         return new DisplayNamesStyle(value);
     }
 
-    get value() {
+    get value(){
         return [...DisplayNamesStyle.#values.keys()][this.#value];
     }
 
-    get ffiValue() {
+    get ffiValue(){
         return this.#value;
     }
     static #objectValues = [
@@ -70,6 +69,7 @@ export class DisplayNamesStyle {
     static Short = DisplayNamesStyle.#objectValues[1];
     static Long = DisplayNamesStyle.#objectValues[2];
     static Menu = DisplayNamesStyle.#objectValues[3];
+
 
     constructor(value) {
         return this.#internalConstructor(...arguments)

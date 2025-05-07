@@ -72,6 +72,7 @@ final class LocaleCanonicalizer implements ffi.Finalizable {
     final result = _icu4x_LocaleCanonicalizer_canonicalize_mv1(_ffi, locale._ffi);
     return TransformResult.values[result];
   }
+
 }
 
 @_DiplomatFfiUse('icu4x_LocaleCanonicalizer_destroy_mv1')

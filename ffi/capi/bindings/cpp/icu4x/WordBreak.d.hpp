@@ -43,7 +43,7 @@ namespace capi {
       WordBreak_ZWJ = 21,
       WordBreak_WSegSpace = 22,
     };
-    
+
     typedef struct WordBreak_option {union { WordBreak ok; }; bool is_ok; } WordBreak_option;
 } // namespace capi
 } // namespace

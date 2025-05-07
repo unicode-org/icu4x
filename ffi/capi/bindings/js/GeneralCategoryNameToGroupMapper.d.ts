@@ -5,7 +5,7 @@ import type { GeneralCategoryGroup } from "./GeneralCategoryGroup"
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
-/** 
+/**
  * A type capable of looking up General Category Group values from a string name.
  *
  * See the [Rust documentation for `PropertyParser`](https://docs.rs/icu/latest/icu/properties/struct.PropertyParser.html) for more information.
@@ -15,10 +15,10 @@ import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
 export class GeneralCategoryNameToGroupMapper {
-    
     get ffiValue(): pointer;
 
-    /** 
+
+    /**
      * Get the mask value matching the given name, using strict matching
      *
      * Returns 0 if the name is unknown for this property
@@ -27,7 +27,7 @@ export class GeneralCategoryNameToGroupMapper {
      */
     getStrict(name: string): GeneralCategoryGroup;
 
-    /** 
+    /**
      * Get the mask value matching the given name, using loose matching
      *
      * Returns 0 if the name is unknown for this property
@@ -36,7 +36,7 @@ export class GeneralCategoryNameToGroupMapper {
      */
     getLoose(name: string): GeneralCategoryGroup;
 
-    /** 
+    /**
      * Create a name-to-mask mapper for the `General_Category` property, using a particular data source.
      *
      * See the [Rust documentation for `GeneralCategoryGroup`](https://docs.rs/icu/latest/icu/properties/props/struct.GeneralCategoryGroup.html) for more information.

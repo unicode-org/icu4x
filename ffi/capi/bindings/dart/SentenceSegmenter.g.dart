@@ -68,6 +68,7 @@ final class SentenceSegmenter implements ffi.Finalizable {
     final result = _icu4x_SentenceSegmenter_segment_utf16_mv1(_ffi, input._utf16AllocIn(inputArena.arena));
     return SentenceBreakIteratorUtf16._fromFfi(result, [], aEdges);
   }
+
 }
 
 @_DiplomatFfiUse('icu4x_SentenceSegmenter_destroy_mv1')

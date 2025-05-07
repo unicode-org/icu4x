@@ -61,6 +61,7 @@ final class ZonedIsoDateTime {
     return ZonedIsoDateTime._fromFfi(result);
   }
 
+
   @override
   bool operator ==(Object other) =>
       other is ZonedIsoDateTime &&

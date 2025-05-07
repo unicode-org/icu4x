@@ -2,22 +2,22 @@
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
-/** 
+/**
  * See the [Rust documentation for `Alignment`](https://docs.rs/icu/latest/icu/datetime/options/enum.Alignment.html) for more information.
  */
 
 
 export class DateTimeAlignment {
-    
 
-    static fromValue(value : DateTimeAlignment | string) : DateTimeAlignment; 
+    static fromValue(value: DateTimeAlignment | string): DateTimeAlignment;
 
-    get value() : string;
+    get value(): string;
 
-    get ffiValue() : number;
+    get ffiValue(): number;
 
     static Auto : DateTimeAlignment;
     static Column : DateTimeAlignment;
+
 
     constructor(value: DateTimeAlignment | string );
 }

@@ -8,6 +8,7 @@ final class DecimalLimitError {
 
   DecimalLimitError();
 
+
   @override
   bool operator ==(Object other) =>
       other is DecimalLimitError;

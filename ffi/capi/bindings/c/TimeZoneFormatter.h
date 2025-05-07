@@ -71,7 +71,6 @@ icu4x_TimeZoneFormatter_create_exemplar_city_with_provider_mv1_result icu4x_Time
 typedef struct icu4x_TimeZoneFormatter_format_mv1_result {union { DateTimeWriteError err;}; bool is_ok;} icu4x_TimeZoneFormatter_format_mv1_result;
 icu4x_TimeZoneFormatter_format_mv1_result icu4x_TimeZoneFormatter_format_mv1(const TimeZoneFormatter* self, const TimeZoneInfo* zone, DiplomatWrite* write);
 
-
 void icu4x_TimeZoneFormatter_destroy_mv1(TimeZoneFormatter* self);
 
 

@@ -46,6 +46,7 @@ final class BidiMirroringGlyph {
     return BidiMirroringGlyph._fromFfi(result);
   }
 
+
   @override
   bool operator ==(Object other) =>
       other is BidiMirroringGlyph &&

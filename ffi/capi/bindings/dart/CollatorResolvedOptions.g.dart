@@ -53,6 +53,7 @@ final class CollatorResolvedOptions {
     return struct;
   }
 
+
   @override
   bool operator ==(Object other) =>
       other is CollatorResolvedOptions &&

@@ -56,6 +56,7 @@ final class CanonicalComposition implements ffi.Finalizable {
     final result = _icu4x_CanonicalComposition_compose_mv1(_ffi, starter, second);
     return result;
   }
+
 }
 
 @_DiplomatFfiUse('icu4x_CanonicalComposition_destroy_mv1')

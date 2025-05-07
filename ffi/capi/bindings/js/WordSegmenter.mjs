@@ -7,7 +7,7 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
-/** 
+/**
  * An ICU4X word-break segmenter, capable of finding word breakpoints in strings.
  *
  * See the [Rust documentation for `WordSegmenter`](https://docs.rs/icu/latest/icu/segmenter/struct.WordSegmenter.html) for more information.
@@ -17,35 +17,34 @@ const WordSegmenter_box_destroy_registry = new FinalizationRegistry((ptr) => {
 });
 
 export class WordSegmenter {
-    
     // Internal ptr reference:
     #ptr = null;
 
     // Lifetimes are only to keep dependencies alive.
     // Since JS won't garbage collect until there are no incoming edges.
     #selfEdge = [];
-    
+
     #internalConstructor(symbol, ptr, selfEdge) {
         if (symbol !== diplomatRuntime.internalConstructor) {
             console.error("WordSegmenter is an Opaque type. You cannot call its constructor.");
             return;
         }
-        
         this.#ptr = ptr;
         this.#selfEdge = selfEdge;
-        
+
         // Are we being borrowed? If not, we can register.
         if (this.#selfEdge.length === 0) {
             WordSegmenter_box_destroy_registry.register(this, this.#ptr);
         }
-        
+
         return this;
     }
     get ffiValue() {
         return this.#ptr;
     }
 
-    /** 
+
+    /**
      * Construct an [`WordSegmenter`] with automatically selecting the best available LSTM
      * or dictionary payload data, using compiled data. This does not assume any content locale.
      *
@@ -55,16 +54,18 @@ export class WordSegmenter {
      * See the [Rust documentation for `new_auto`](https://docs.rs/icu/latest/icu/segmenter/struct.WordSegmenter.html#method.new_auto) for more information.
      */
     static createAuto() {
+
         const result = wasm.icu4x_WordSegmenter_create_auto_mv1();
-    
+
         try {
             return new WordSegmenter(diplomatRuntime.internalConstructor, result, []);
         }
-        
-        finally {}
+
+        finally {
+        }
     }
 
-    /** 
+    /**
      * Construct an [`WordSegmenter`] with automatically selecting the best available LSTM
      * or dictionary payload data, using compiled data.
      *
@@ -75,9 +76,10 @@ export class WordSegmenter {
      */
     static createAutoWithContentLocale(locale) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
-        
+
+
         const result = wasm.icu4x_WordSegmenter_create_auto_with_content_locale_mv1(diplomatReceive.buffer, locale.ffiValue);
-    
+
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
@@ -85,13 +87,13 @@ export class WordSegmenter {
             }
             return new WordSegmenter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
-        
+
         finally {
             diplomatReceive.free();
         }
     }
 
-    /** 
+    /**
      * Construct an [`WordSegmenter`] with automatically selecting the best available LSTM
      * or dictionary payload data, using a particular data source.
      *
@@ -102,9 +104,10 @@ export class WordSegmenter {
      */
     static createAutoWithContentLocaleAndProvider(provider, locale) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
-        
+
+
         const result = wasm.icu4x_WordSegmenter_create_auto_with_content_locale_and_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue);
-    
+
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
@@ -112,13 +115,13 @@ export class WordSegmenter {
             }
             return new WordSegmenter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
-        
+
         finally {
             diplomatReceive.free();
         }
     }
 
-    /** 
+    /**
      * Construct an [`WordSegmenter`] with LSTM payload data for Burmese, Khmer, Lao, and
      * Thai, using compiled data.  This does not assume any content locale.
      *
@@ -128,16 +131,18 @@ export class WordSegmenter {
      * See the [Rust documentation for `new_lstm`](https://docs.rs/icu/latest/icu/segmenter/struct.WordSegmenter.html#method.new_lstm) for more information.
      */
     static createLstm() {
+
         const result = wasm.icu4x_WordSegmenter_create_lstm_mv1();
-    
+
         try {
             return new WordSegmenter(diplomatRuntime.internalConstructor, result, []);
         }
-        
-        finally {}
+
+        finally {
+        }
     }
 
-    /** 
+    /**
      * Construct an [`WordSegmenter`] with LSTM payload data for Burmese, Khmer, Lao, and
      * Thai, using compiled data.
      *
@@ -148,9 +153,10 @@ export class WordSegmenter {
      */
     static createLstmWithContentLocale(locale) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
-        
+
+
         const result = wasm.icu4x_WordSegmenter_create_lstm_with_content_locale_mv1(diplomatReceive.buffer, locale.ffiValue);
-    
+
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
@@ -158,13 +164,13 @@ export class WordSegmenter {
             }
             return new WordSegmenter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
-        
+
         finally {
             diplomatReceive.free();
         }
     }
 
-    /** 
+    /**
      * Construct an [`WordSegmenter`] with LSTM payload data for Burmese, Khmer, Lao, and
      * Thai, using a particular data source.
      *
@@ -175,9 +181,10 @@ export class WordSegmenter {
      */
     static createLstmWithContentLocaleAndProvider(provider, locale) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
-        
+
+
         const result = wasm.icu4x_WordSegmenter_create_lstm_with_content_locale_and_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue);
-    
+
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
@@ -185,13 +192,13 @@ export class WordSegmenter {
             }
             return new WordSegmenter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
-        
+
         finally {
             diplomatReceive.free();
         }
     }
 
-    /** 
+    /**
      * Construct an [`WordSegmenter`] with with dictionary payload data for Chinese, Japanese,
      * Burmese, Khmer, Lao, and Thai, using compiled data.  This does not assume any content locale.
      *
@@ -201,16 +208,18 @@ export class WordSegmenter {
      * See the [Rust documentation for `new_dictionary`](https://docs.rs/icu/latest/icu/segmenter/struct.WordSegmenter.html#method.new_dictionary) for more information.
      */
     static createDictionary() {
+
         const result = wasm.icu4x_WordSegmenter_create_dictionary_mv1();
-    
+
         try {
             return new WordSegmenter(diplomatRuntime.internalConstructor, result, []);
         }
-        
-        finally {}
+
+        finally {
+        }
     }
 
-    /** 
+    /**
      * Construct an [`WordSegmenter`] with dictionary payload data for Chinese, Japanese,
      * Burmese, Khmer, Lao, and Thai, using compiled data.
      *
@@ -221,9 +230,10 @@ export class WordSegmenter {
      */
     static createDictionaryWithContentLocale(locale) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
-        
+
+
         const result = wasm.icu4x_WordSegmenter_create_dictionary_with_content_locale_mv1(diplomatReceive.buffer, locale.ffiValue);
-    
+
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
@@ -231,13 +241,13 @@ export class WordSegmenter {
             }
             return new WordSegmenter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
-        
+
         finally {
             diplomatReceive.free();
         }
     }
 
-    /** 
+    /**
      * Construct an [`WordSegmenter`] with dictionary payload data for Chinese, Japanese,
      * Burmese, Khmer, Lao, and Thai, using a particular data source.
      *
@@ -248,9 +258,10 @@ export class WordSegmenter {
      */
     static createDictionaryWithContentLocaleAndProvider(provider, locale) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
-        
+
+
         const result = wasm.icu4x_WordSegmenter_create_dictionary_with_content_locale_and_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue);
-    
+
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
@@ -258,13 +269,13 @@ export class WordSegmenter {
             }
             return new WordSegmenter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
-        
+
         finally {
             diplomatReceive.free();
         }
     }
 
-    /** 
+    /**
      * Segments a string.
      *
      * Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
@@ -275,18 +286,19 @@ export class WordSegmenter {
     segment(input) {
         let functionGarbageCollectorGrip = new diplomatRuntime.GarbageCollectorGrip();
         const inputSlice = diplomatRuntime.DiplomatBuf.str16(wasm, input);
-        
         // This lifetime edge depends on lifetimes 'a
         let aEdges = [this, inputSlice];
-        
+
+
         const result = wasm.icu4x_WordSegmenter_segment_utf16_mv1(this.ffiValue, ...inputSlice.splat());
-    
+
         try {
             return new WordBreakIteratorUtf16(diplomatRuntime.internalConstructor, result, [], aEdges);
         }
-        
+
         finally {
             functionGarbageCollectorGrip.releaseToGarbageCollector();
+
         }
     }
 

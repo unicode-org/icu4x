@@ -19,5 +19,4 @@
 
 
 
-
 #endif // LineBreakWordOption_H

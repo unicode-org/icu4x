@@ -49,6 +49,7 @@ final class WordBreakIteratorLatin1 implements ffi.Finalizable {
     final result = _icu4x_WordBreakIteratorLatin1_is_word_like_mv1(_ffi);
     return result;
   }
+
 }
 
 @_DiplomatFfiUse('icu4x_WordBreakIteratorLatin1_destroy_mv1')

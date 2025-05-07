@@ -7,12 +7,11 @@ part of 'lib.g.dart';
 enum BidiPairedBracketType {
   /// Represents Bidi_Paired_Bracket_Type=Open.
   open,
-
   /// Represents Bidi_Paired_Bracket_Type=Close.
   close,
-
   /// Represents Bidi_Paired_Bracket_Type=None.
   none;
+
 }
 
 // dart format on

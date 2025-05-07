@@ -68,7 +68,6 @@ icu4x_DateTimeFormatterGregorian_create_et_with_provider_mv1_result icu4x_DateTi
 
 void icu4x_DateTimeFormatterGregorian_format_iso_mv1(const DateTimeFormatterGregorian* self, const IsoDate* date, const Time* time, DiplomatWrite* write);
 
-
 void icu4x_DateTimeFormatterGregorian_destroy_mv1(DateTimeFormatterGregorian* self);
 
 

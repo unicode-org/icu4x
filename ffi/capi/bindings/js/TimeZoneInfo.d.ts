@@ -9,28 +9,28 @@ import type { VariantOffsetsCalculator } from "./VariantOffsetsCalculator"
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
-/** 
+/**
  * See the [Rust documentation for `TimeZoneInfo`](https://docs.rs/icu/latest/icu/time/struct.TimeZoneInfo.html) for more information.
  */
 
 
 export class TimeZoneInfo {
-    
     get ffiValue(): pointer;
 
-    /** 
+
+    /**
      * Creates a time zone for UTC (Coordinated Universal Time).
      *
      * See the [Rust documentation for `utc`](https://docs.rs/icu/latest/icu/time/struct.TimeZoneInfo.html#method.utc) for more information.
      */
     static utc(): TimeZoneInfo;
 
-    /** 
+    /**
      * See the [Rust documentation for `id`](https://docs.rs/icu/latest/icu/time/struct.TimeZoneInfo.html#method.id) for more information.
      */
     id(): TimeZone;
 
-    /** 
+    /**
      * Sets the datetime at which to interpret the time zone
      * for display name lookup.
      *
@@ -46,17 +46,17 @@ export class TimeZoneInfo {
      */
     atDateTimeIso(date: IsoDate, time: Time): TimeZoneInfo;
 
-    /** 
+    /**
      * See the [Rust documentation for `zone_name_timestamp`](https://docs.rs/icu/latest/icu/time/struct.TimeZoneInfo.html#method.zone_name_timestamp) for more information.
      */
     zoneNameDateTime(): IsoDateTime | null;
 
-    /** 
+    /**
      * See the [Rust documentation for `with_variant`](https://docs.rs/icu/latest/icu/time/struct.TimeZoneInfo.html#method.with_variant) for more information.
      */
     withVariant(timeVariant: TimeZoneVariant): TimeZoneInfo;
 
-    /** 
+    /**
      * Infers the zone variant.
      *
      * Requires the offset and local time to be set.
@@ -67,7 +67,7 @@ export class TimeZoneInfo {
      */
     inferVariant(offsetCalculator: VariantOffsetsCalculator): boolean;
 
-    /** 
+    /**
      * See the [Rust documentation for `variant`](https://docs.rs/icu/latest/icu/time/struct.TimeZoneInfo.html#method.variant) for more information.
      */
     variant(): TimeZoneVariant | null;

@@ -62,6 +62,7 @@ final class ScriptWithExtensionsBorrowed implements ffi.Finalizable {
     final result = _icu4x_ScriptWithExtensionsBorrowed_get_script_extensions_set_mv1(_ffi, script);
     return CodePointSetData._fromFfi(result, []);
   }
+
 }
 
 @_DiplomatFfiUse('icu4x_ScriptWithExtensionsBorrowed_destroy_mv1')

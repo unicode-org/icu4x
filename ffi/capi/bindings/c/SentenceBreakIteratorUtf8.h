@@ -17,7 +17,6 @@
 
 int32_t icu4x_SentenceBreakIteratorUtf8_next_mv1(SentenceBreakIteratorUtf8* self);
 
-
 void icu4x_SentenceBreakIteratorUtf8_destroy_mv1(SentenceBreakIteratorUtf8* self);
 
 

@@ -329,6 +329,7 @@ final class DateFormatterGregorian implements ffi.Finalizable {
     _icu4x_DateFormatterGregorian_format_iso_mv1(_ffi, date._ffi, write._ffi);
     return write.finalize();
   }
+
 }
 
 @_DiplomatFfiUse('icu4x_DateFormatterGregorian_destroy_mv1')

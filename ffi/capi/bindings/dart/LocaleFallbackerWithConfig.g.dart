@@ -38,6 +38,7 @@ final class LocaleFallbackerWithConfig implements ffi.Finalizable {
     final result = _icu4x_LocaleFallbackerWithConfig_fallback_for_locale_mv1(_ffi, locale._ffi);
     return LocaleFallbackIterator._fromFfi(result, [], aEdges);
   }
+
 }
 
 @_DiplomatFfiUse('icu4x_LocaleFallbackerWithConfig_destroy_mv1')

@@ -18,7 +18,7 @@ namespace capi {
       DateTimeWriteError_Unknown = 0,
       DateTimeWriteError_MissingTimeZoneVariant = 1,
     };
-    
+
     typedef struct DateTimeWriteError_option {union { DateTimeWriteError ok; }; bool is_ok; } DateTimeWriteError_option;
 } // namespace capi
 } // namespace

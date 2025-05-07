@@ -24,20 +24,19 @@
 namespace icu4x {
 namespace capi {
     extern "C" {
-    
+
     typedef struct icu4x_ZonedDateTime_full_from_string_mv1_result {union {icu4x::capi::ZonedDateTime ok; icu4x::capi::Rfc9557ParseError err;}; bool is_ok;} icu4x_ZonedDateTime_full_from_string_mv1_result;
     icu4x_ZonedDateTime_full_from_string_mv1_result icu4x_ZonedDateTime_full_from_string_mv1(diplomat::capi::DiplomatStringView v, const icu4x::capi::Calendar* calendar, const icu4x::capi::IanaParser* iana_parser, const icu4x::capi::VariantOffsetsCalculator* offset_calculator);
-    
+
     typedef struct icu4x_ZonedDateTime_location_only_from_string_mv1_result {union {icu4x::capi::ZonedDateTime ok; icu4x::capi::Rfc9557ParseError err;}; bool is_ok;} icu4x_ZonedDateTime_location_only_from_string_mv1_result;
     icu4x_ZonedDateTime_location_only_from_string_mv1_result icu4x_ZonedDateTime_location_only_from_string_mv1(diplomat::capi::DiplomatStringView v, const icu4x::capi::Calendar* calendar, const icu4x::capi::IanaParser* iana_parser);
-    
+
     typedef struct icu4x_ZonedDateTime_offset_only_from_string_mv1_result {union {icu4x::capi::ZonedDateTime ok; icu4x::capi::Rfc9557ParseError err;}; bool is_ok;} icu4x_ZonedDateTime_offset_only_from_string_mv1_result;
     icu4x_ZonedDateTime_offset_only_from_string_mv1_result icu4x_ZonedDateTime_offset_only_from_string_mv1(diplomat::capi::DiplomatStringView v, const icu4x::capi::Calendar* calendar);
-    
+
     typedef struct icu4x_ZonedDateTime_lenient_from_string_mv1_result {union {icu4x::capi::ZonedDateTime ok; icu4x::capi::Rfc9557ParseError err;}; bool is_ok;} icu4x_ZonedDateTime_lenient_from_string_mv1_result;
     icu4x_ZonedDateTime_lenient_from_string_mv1_result icu4x_ZonedDateTime_lenient_from_string_mv1(diplomat::capi::DiplomatStringView v, const icu4x::capi::Calendar* calendar, const icu4x::capi::IanaParser* iana_parser);
-    
-    
+
     } // extern "C"
 } // namespace capi
 } // namespace

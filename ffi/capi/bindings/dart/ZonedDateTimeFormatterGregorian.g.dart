@@ -210,6 +210,7 @@ final class ZonedDateTimeFormatterGregorian implements ffi.Finalizable {
     }
     return write.finalize();
   }
+
 }
 
 @_DiplomatFfiUse('icu4x_ZonedDateTimeFormatterGregorian_destroy_mv1')
