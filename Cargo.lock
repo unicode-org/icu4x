@@ -1062,7 +1062,7 @@ checksum = "71a816c97c42258aa5834d07590b718b4c9a598944cd39a52dc25b351185d678"
 
 [[package]]
 name = "icu"
-version = "2.0.0-beta2"
+version = "2.0.0"
 dependencies = [
  "chrono",
  "chrono-tz",
@@ -1092,7 +1092,7 @@ dependencies = [
 
 [[package]]
 name = "icu4x-datagen"
-version = "2.0.0-beta2"
+version = "2.0.0"
 dependencies = [
  "clap",
  "eyre",
@@ -1140,7 +1140,7 @@ dependencies = [
 
 [[package]]
 name = "icu_calendar"
-version = "2.0.0-beta2"
+version = "2.0.0"
 dependencies = [
  "calendrical_calculations",
  "criterion",
@@ -1163,11 +1163,11 @@ dependencies = [
 
 [[package]]
 name = "icu_calendar_data"
-version = "2.0.0-beta2"
+version = "2.0.0"
 
 [[package]]
 name = "icu_capi"
-version = "2.0.0-beta2"
+version = "2.0.0"
 dependencies = [
  "diplomat",
  "diplomat-runtime",
@@ -1204,7 +1204,7 @@ dependencies = [
 
 [[package]]
 name = "icu_casemap"
-version = "2.0.0-beta2"
+version = "2.0.0"
 dependencies = [
  "criterion",
  "databake",
@@ -1225,7 +1225,7 @@ dependencies = [
 
 [[package]]
 name = "icu_casemap_data"
-version = "2.0.0-beta2"
+version = "2.0.0"
 
 [[package]]
 name = "icu_codepointtrie_builder"
@@ -1240,7 +1240,7 @@ dependencies = [
 
 [[package]]
 name = "icu_collator"
-version = "2.0.0-beta2"
+version = "2.0.0"
 dependencies = [
  "arraystring",
  "atoi",
@@ -1266,11 +1266,11 @@ dependencies = [
 
 [[package]]
 name = "icu_collator_data"
-version = "2.0.0-beta2"
+version = "2.0.0"
 
 [[package]]
 name = "icu_collections"
-version = "2.0.0-beta2"
+version = "2.0.0"
 dependencies = [
  "criterion",
  "databake",
@@ -1291,7 +1291,7 @@ dependencies = [
 
 [[package]]
 name = "icu_datetime"
-version = "2.0.0-beta2"
+version = "2.0.0"
 dependencies = [
  "bincode",
  "criterion",
@@ -1324,11 +1324,11 @@ dependencies = [
 
 [[package]]
 name = "icu_datetime_data"
-version = "2.0.0-beta2"
+version = "2.0.0"
 
 [[package]]
 name = "icu_decimal"
-version = "2.0.0-beta2"
+version = "2.0.0"
 dependencies = [
  "criterion",
  "databake",
@@ -1353,11 +1353,11 @@ dependencies = [
 
 [[package]]
 name = "icu_decimal_data"
-version = "2.0.0-beta2"
+version = "2.0.0"
 
 [[package]]
 name = "icu_experimental"
-version = "0.3.0-beta2"
+version = "0.3.0"
 dependencies = [
  "criterion",
  "databake",
@@ -1397,11 +1397,11 @@ dependencies = [
 
 [[package]]
 name = "icu_experimental_data"
-version = "0.3.0-beta2"
+version = "0.3.0"
 
 [[package]]
 name = "icu_freertos"
-version = "2.0.0-beta2"
+version = "2.0.0"
 dependencies = [
  "cortex-m",
  "freertos-rust",
@@ -1422,7 +1422,7 @@ dependencies = [
 
 [[package]]
 name = "icu_list"
-version = "2.0.0-beta2"
+version = "2.0.0"
 dependencies = [
  "databake",
  "displaydoc",
@@ -1442,11 +1442,11 @@ dependencies = [
 
 [[package]]
 name = "icu_list_data"
-version = "2.0.0-beta2"
+version = "2.0.0"
 
 [[package]]
 name = "icu_locale"
-version = "2.0.0-beta2"
+version = "2.0.0"
 dependencies = [
  "criterion",
  "databake",
@@ -1466,7 +1466,7 @@ dependencies = [
 
 [[package]]
 name = "icu_locale_core"
-version = "2.0.0-beta2"
+version = "2.0.0"
 dependencies = [
  "criterion",
  "databake",
@@ -1487,11 +1487,11 @@ dependencies = [
 
 [[package]]
 name = "icu_locale_data"
-version = "2.0.0-beta2"
+version = "2.0.0"
 
 [[package]]
 name = "icu_normalizer"
-version = "2.0.0-beta2"
+version = "2.0.0"
 dependencies = [
  "arraystring",
  "arrayvec",
@@ -1515,7 +1515,7 @@ dependencies = [
 
 [[package]]
 name = "icu_normalizer_data"
-version = "2.0.0-beta2"
+version = "2.0.0"
 
 [[package]]
 name = "icu_pattern"
@@ -1537,7 +1537,7 @@ dependencies = [
 
 [[package]]
 name = "icu_plurals"
-version = "2.0.0-beta2"
+version = "2.0.0"
 dependencies = [
  "criterion",
  "databake",
@@ -1558,11 +1558,11 @@ dependencies = [
 
 [[package]]
 name = "icu_plurals_data"
-version = "2.0.0-beta2"
+version = "2.0.0"
 
 [[package]]
 name = "icu_properties"
-version = "2.0.0-beta2"
+version = "2.0.0"
 dependencies = [
  "databake",
  "displaydoc",
@@ -1580,11 +1580,11 @@ dependencies = [
 
 [[package]]
 name = "icu_properties_data"
-version = "2.0.0-beta2"
+version = "2.0.0"
 
 [[package]]
 name = "icu_provider"
-version = "2.0.0-beta2"
+version = "2.0.0"
 dependencies = [
  "bincode",
  "criterion",
@@ -1610,7 +1610,7 @@ dependencies = [
 
 [[package]]
 name = "icu_provider_adapters"
-version = "2.0.0-beta2"
+version = "2.0.0"
 dependencies = [
  "databake",
  "icu_locale",
@@ -1623,7 +1623,7 @@ dependencies = [
 
 [[package]]
 name = "icu_provider_baked"
-version = "2.0.0-beta2"
+version = "2.0.0"
 dependencies = [
  "crlify",
  "databake",
@@ -1640,7 +1640,7 @@ dependencies = [
 
 [[package]]
 name = "icu_provider_blob"
-version = "2.0.0-beta2"
+version = "2.0.0"
 dependencies = [
  "criterion",
  "databake",
@@ -1660,7 +1660,7 @@ dependencies = [
 
 [[package]]
 name = "icu_provider_export"
-version = "2.0.0-beta2"
+version = "2.0.0"
 dependencies = [
  "displaydoc",
  "elsa",
@@ -1680,7 +1680,7 @@ dependencies = [
 
 [[package]]
 name = "icu_provider_fs"
-version = "2.0.0-beta2"
+version = "2.0.0"
 dependencies = [
  "bincode",
  "criterion",
@@ -1700,7 +1700,7 @@ dependencies = [
 
 [[package]]
 name = "icu_provider_registry"
-version = "2.0.0-beta2"
+version = "2.0.0"
 dependencies = [
  "icu",
  "icu_provider",
@@ -1708,7 +1708,7 @@ dependencies = [
 
 [[package]]
 name = "icu_provider_source"
-version = "2.0.0-beta2"
+version = "2.0.0"
 dependencies = [
  "calendrical_calculations",
  "displaydoc",
@@ -1752,7 +1752,7 @@ dependencies = [
 
 [[package]]
 name = "icu_segmenter"
-version = "2.0.0-beta2"
+version = "2.0.0"
 dependencies = [
  "core_maths",
  "criterion",
@@ -1775,11 +1775,11 @@ dependencies = [
 
 [[package]]
 name = "icu_segmenter_data"
-version = "2.0.0-beta2"
+version = "2.0.0"
 
 [[package]]
 name = "icu_time"
-version = "2.0.0-beta2"
+version = "2.0.0"
 dependencies = [
  "calendrical_calculations",
  "databake",
@@ -1800,7 +1800,7 @@ dependencies = [
 
 [[package]]
 name = "icu_time_data"
-version = "2.0.0-beta2"
+version = "2.0.0"
 
 [[package]]
 name = "indenter"
@@ -2091,7 +2091,7 @@ dependencies = [
 
 [[package]]
 name = "noalloctest"
-version = "2.0.0-beta2"
+version = "2.0.0"
 dependencies = [
  "icu_calendar",
  "icu_collections",

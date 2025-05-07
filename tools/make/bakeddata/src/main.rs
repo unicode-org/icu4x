@@ -42,7 +42,7 @@ const COMPONENTS: &[(&str, &[DataMarkerInfo], &str)] = &[
     (
         "experimental",
         icu::experimental::provider::MARKERS,
-        r#"version = "0.3.0-beta2""#,
+        r#"version = "0.3.0""#,
     ),
 ];
 

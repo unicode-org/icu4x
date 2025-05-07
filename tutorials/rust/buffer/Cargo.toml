@@ -12,5 +12,5 @@ edition = "2021"
 publish = false
 
 [dependencies]
-icu = { version = "2.0.0-beta2", features = ["serde"] }
-icu_provider_blob = {version = "2.0.0-beta2", features = ["alloc"] }
+icu = { version = "2.0.0", features = ["serde"] }
+icu_provider_blob = {version = "2.0.0", features = ["alloc"] }
