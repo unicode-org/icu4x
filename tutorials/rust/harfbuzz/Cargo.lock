@@ -10,9 +10,9 @@ checksum = "bef38d45163c2f1dde094a7dfd33ccf595c92905c8f8f4fdc18d06fb1037718a"
 
 [[package]]
 name = "cc"
-version = "1.2.18"
+version = "1.2.21"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "525046617d8376e3db1deffb079e91cef90a89fc3ca5c185bbf8c9ecdd15cd5c"
+checksum = "8691782945451c1c383942c4874dbe63814f61cb57ef773cda2972682b7bb3c0"
 dependencies = [
  "shlex",
 ]
@@ -234,13 +234,13 @@ dependencies = [
 
 [[package]]
 name = "libc"
-version = "0.2.171"
+version = "0.2.172"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c19937216e9d3aa9956d9bb8dfc0b0c8beb6058fc4f7a4dc4d850edf86a237d6"
+checksum = "d750af042f7ef4f724306de029d18836c26c1765a54a6a3f094cbd23a7267ffa"
 
 [[package]]
 name = "litemap"
-version = "0.7.5"
+version = "0.8.0"
 
 [[package]]
 name = "pkg-config"
@@ -257,9 +257,9 @@ dependencies = [
 
 [[package]]
 name = "proc-macro2"
-version = "1.0.94"
+version = "1.0.95"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a31971752e70b8b2686d7e46ec17fb38dad4051d94024c88df49b667caea9c84"
+checksum = "02b3e5e68a3a1a02aad3ec490a98007cbc13c37cbe84a3cd7b8e406d76e7f778"
 dependencies = [
  "unicode-ident",
 ]
@@ -313,9 +313,9 @@ checksum = "a8f112729512f8e442d81f95a8a7ddf2b7c6b8a1a6f509a95864142b30cab2d3"
 
 [[package]]
 name = "syn"
-version = "2.0.100"
+version = "2.0.101"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b09a44accad81e1ba1cd74a32461ba89dee89095ba17b32f5d03683b1b1fc2a0"
+checksum = "8ce2b7fc941b3a24138a0a7cf8e858bfc6a992e7978a068a5c760deb0ed43caf"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -324,9 +324,9 @@ dependencies = [
 
 [[package]]
 name = "synstructure"
-version = "0.13.1"
+version = "0.13.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c8af7666ab7b6390ab78131fb5b0fce11d6b7a6951602017c35fa82800708971"
+checksum = "728a70f3dbaf5bab7f0c4b1ac8d7ae5ea60a4b5549c8a5914361c99147a709d2"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -420,7 +420,7 @@ dependencies = [
 
 [[package]]
 name = "zerotrie"
-version = "0.2.1"
+version = "0.2.2"
 dependencies = [
  "displaydoc",
  "yoke",
@@ -429,7 +429,7 @@ dependencies = [
 
 [[package]]
 name = "zerovec"
-version = "0.11.1"
+version = "0.11.2"
 dependencies = [
  "yoke",
  "zerofrom",
@@ -447,7 +447,7 @@ dependencies = [
 
 [[patch.unused]]
 name = "bies"
-version = "0.2.3"
+version = "0.2.4"
 
 [[patch.unused]]
 name = "crlify"
@@ -479,7 +479,7 @@ version = "2.0.0-beta2"
 
 [[patch.unused]]
 name = "icu4x_ecma402"
-version = "0.9.0-dev"
+version = "0.9.0"
 
 [[patch.unused]]
 name = "icu_benchmark_macros"
@@ -619,7 +619,7 @@ version = "2.0.0-beta2"
 
 [[patch.unused]]
 name = "ixdtf"
-version = "0.5.0-dev"
+version = "0.5.0"
 
 [[patch.unused]]
 name = "tzif"
