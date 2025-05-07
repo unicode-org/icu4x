@@ -1,7 +1,7 @@
 import { Decimal } from "icu4x"
-export function toString(decimalF, decimalMagnitude) {
+export function toString(decimalF) {
     
-    let decimal = Decimal.fromNumberWithLowerMagnitude(decimalF,decimalMagnitude);
+    let decimal = Decimal.fromNumberWithRoundTripPrecision(decimalF);
     
     let out = decimal.toString();
     
