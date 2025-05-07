@@ -234,7 +234,7 @@ dependencies = [
 
 [[package]]
 name = "bies"
-version = "0.2.3"
+version = "0.2.4"
 dependencies = [
  "itertools 0.14.0",
  "partial-min-max",
@@ -320,7 +320,7 @@ checksum = "d71b6127be86fdcfddb610f7182ac57211d4b18a3e9c82eb2d17662f2227ad6a"
 
 [[package]]
 name = "calendrical_calculations"
-version = "0.2.0-dev"
+version = "0.2.0"
 dependencies = [
  "core_maths",
  "displaydoc",
@@ -1102,7 +1102,7 @@ dependencies = [
 
 [[package]]
 name = "icu4x_ecma402"
-version = "0.9.0-dev"
+version = "0.9.0"
 dependencies = [
  "ecma402_traits",
  "fixed_decimal",
@@ -1855,7 +1855,7 @@ checksum = "4a5f13b858c8d314ee3e8f639011f7ccefe71f97f96e50151fb991f267928e2c"
 
 [[package]]
 name = "ixdtf"
-version = "0.5.0-dev"
+version = "0.5.0"
 dependencies = [
  "criterion",
  "displaydoc",
@@ -1946,7 +1946,7 @@ dependencies = [
 
 [[package]]
 name = "litemap"
-version = "0.7.5"
+version = "0.8.0"
 dependencies = [
  "bincode",
  "criterion",
@@ -3881,7 +3881,7 @@ checksum = "ced3678a2879b30306d323f4542626697a464a97c0a07c9aebf7ebca65cd4dde"
 
 [[package]]
 name = "zerotrie"
-version = "0.2.1"
+version = "0.2.2"
 dependencies = [
  "bincode",
  "criterion",
@@ -3904,7 +3904,7 @@ dependencies = [
 
 [[package]]
 name = "zerovec"
-version = "0.11.1"
+version = "0.11.2"
 dependencies = [
  "bincode",
  "criterion",
