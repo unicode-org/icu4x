@@ -253,6 +253,7 @@ lazy_static::lazy_static! {
         // Not planned for 2.0
         // We will revisit these APIs when Duration Formatter needs them. We may need to rename things
         "fixed_decimal::Signed",
+        "fixed_decimal::Decimal::new",
         "fixed_decimal::UnsignedDecimal",
         "fixed_decimal::UnsignedRoundingMode",
 

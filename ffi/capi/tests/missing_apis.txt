@@ -14,4 +14,3 @@
 # Please check in with @Manishearth, @robertbastian, or @sffc if you have questions
 
 
-fixed_decimal::Decimal::new#FnInTypedef
