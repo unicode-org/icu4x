@@ -12,10 +12,7 @@
 //! # use env_preferences::LocaleError;
 //! # fn main() -> Result<(), LocaleError> {
 //! let posix_locale = PosixLocale::try_from_str("en_US")?;
-//! assert_eq!(
-//!     posix_locale.try_convert_lossy()?,
-//!     locale!("en-US-posix")
-//! );
+//! assert_eq!(posix_locale.try_convert_lossy()?, locale!("en-US-posix"));
 //! # Ok(())
 //! # }
 //! ```

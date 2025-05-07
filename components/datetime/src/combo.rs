@@ -30,11 +30,14 @@ use crate::{provider::neo::*, scaffold::*};
 /// use writeable::assert_writeable_eq;
 ///
 /// // Note: Combo type can be elided, but it is shown here for demonstration
-/// let formatter = DateTimeFormatter::<Combo<fieldsets::ET, zone::Location>>::try_new(
-///     locale!("en-US").into(),
-///     fieldsets::E::short().with_time_hm().with_zone(zone::Location),
-/// )
-/// .unwrap();
+/// let formatter =
+///     DateTimeFormatter::<Combo<fieldsets::ET, zone::Location>>::try_new(
+///         locale!("en-US").into(),
+///         fieldsets::E::short()
+///             .with_time_hm()
+///             .with_zone(zone::Location),
+///     )
+///     .unwrap();
 ///
 /// let zdt = ZonedDateTime::try_location_only_from_str(
 ///     "2024-10-18T15:44[America/Los_Angeles]",
@@ -61,12 +64,16 @@ use crate::{provider::neo::*, scaffold::*};
 /// use writeable::assert_writeable_eq;
 ///
 /// // Note: Combo type can be elided, but it is shown here for demonstration
-/// let formatter =
-///     FixedCalendarDateTimeFormatter::<_, Combo<fieldsets::ET, zone::Location>>::try_new(
-///         locale!("en-US").into(),
-///         fieldsets::E::short().with_time_hm().with_zone(zone::Location),
-///     )
-///     .unwrap();
+/// let formatter = FixedCalendarDateTimeFormatter::<
+///     _,
+///     Combo<fieldsets::ET, zone::Location>,
+/// >::try_new(
+///     locale!("en-US").into(),
+///     fieldsets::E::short()
+///         .with_time_hm()
+///         .with_zone(zone::Location),
+/// )
+/// .unwrap();
 ///
 /// let zdt = ZonedDateTime::try_location_only_from_str(
 ///     "2024-10-18T15:44[America/Los_Angeles]",

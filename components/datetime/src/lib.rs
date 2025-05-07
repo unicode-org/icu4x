@@ -61,7 +61,8 @@
 //!
 //! // Create a formatter for Argentinian Spanish:
 //! let locale = locale!("es-AR");
-//! let dtf = DateTimeFormatter::try_new(locale.into(), field_set_with_options).unwrap();
+//! let dtf = DateTimeFormatter::try_new(locale.into(), field_set_with_options)
+//!     .unwrap();
 //!
 //! // Format something:
 //! let datetime = DateTime {

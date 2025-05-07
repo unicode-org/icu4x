@@ -233,7 +233,6 @@ impl<'a> IxdtfParser<'a> {
 /// A parser for time zone offset and IANA identifier strings.
 ///
 /// ✨ *Enabled with the `timezone` Cargo feature.*
-///
 #[derive(Debug)]
 pub struct TimeZoneParser<'a> {
     cursor: Cursor<'a>,
@@ -265,10 +264,11 @@ impl<'a> TimeZoneParser<'a> {
     /// ## Minute precision offset example
     ///
     /// ```rust
-    /// use ixdtf::parsers::{TimeZoneParser, records::Sign};
+    /// use ixdtf::parsers::{records::Sign, TimeZoneParser};
     ///
     /// let offset_src = "-05:00";
-    /// let parse_result = TimeZoneParser::from_str(offset_src).parse_offset().unwrap();
+    /// let parse_result =
+    ///     TimeZoneParser::from_str(offset_src).parse_offset().unwrap();
     /// assert_eq!(parse_result.sign(), Sign::Negative);
     /// assert_eq!(parse_result.hour(), 5);
     /// assert_eq!(parse_result.minute(), 0);
@@ -279,10 +279,11 @@ impl<'a> TimeZoneParser<'a> {
     /// ## Full precision offset example
     ///
     /// ```rust
-    /// use ixdtf::parsers::{TimeZoneParser, records::Sign};
+    /// use ixdtf::parsers::{records::Sign, TimeZoneParser};
     ///
     /// let offset_src = "-05:00:30.123456789";
-    /// let parse_result = TimeZoneParser::from_str(offset_src).parse_offset().unwrap();
+    /// let parse_result =
+    ///     TimeZoneParser::from_str(offset_src).parse_offset().unwrap();
     /// assert_eq!(parse_result.sign(), Sign::Negative);
     /// assert_eq!(parse_result.hour(), 5);
     /// assert_eq!(parse_result.minute(), 0);
@@ -301,14 +302,18 @@ impl<'a> TimeZoneParser<'a> {
     ///
     ///
     /// ```rust
-    /// use ixdtf::parsers::{TimeZoneParser, records::Sign};
+    /// use ixdtf::parsers::{records::Sign, TimeZoneParser};
     ///
     /// let iana_identifier = "America/Chicago";
-    /// let parse_result = TimeZoneParser::from_str(iana_identifier).parse_iana_identifier().unwrap();
+    /// let parse_result = TimeZoneParser::from_str(iana_identifier)
+    ///     .parse_iana_identifier()
+    ///     .unwrap();
     /// assert_eq!(parse_result, iana_identifier.as_bytes());
     ///
     /// let iana_identifier = "Europe/Berlin";
-    /// let parse_result = TimeZoneParser::from_str(iana_identifier).parse_iana_identifier().unwrap();
+    /// let parse_result = TimeZoneParser::from_str(iana_identifier)
+    ///     .parse_iana_identifier()
+    ///     .unwrap();
     /// assert_eq!(parse_result, iana_identifier.as_bytes());
     /// ```
     #[inline]

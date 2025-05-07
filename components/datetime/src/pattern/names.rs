@@ -577,31 +577,36 @@ size_test!(
 /// need this functionality, see <https://github.com/unicode-org/icu4x/issues/6063>
 ///
 /// ```
+/// use icu::datetime::fieldsets::enums::ZoneFieldSet;
+/// use icu::datetime::fieldsets::zone;
+/// use icu::datetime::pattern::FixedCalendarDateTimeNames;
+/// use icu::datetime::NoCalendarFormatter;
+/// use icu::locale::locale;
 /// use icu_datetime::pattern::PatternLoadError;
 /// use icu_provider::DataError;
 /// use icu_provider::DataErrorKind;
-/// use icu::datetime::fieldsets::enums::ZoneFieldSet;
-/// use icu::datetime::fieldsets::zone;
-/// use icu::datetime::NoCalendarFormatter;
-/// use icu::datetime::pattern::FixedCalendarDateTimeNames;
-/// use icu::locale::locale;
 ///
 /// let prefs = locale!("uk").into();
 ///
 /// // Create a formatter for generic long time zones:
-/// let formatter = NoCalendarFormatter::try_new(
-///     prefs,
-///     zone::GenericLong,
-/// )
-/// .unwrap();
+/// let formatter =
+///     NoCalendarFormatter::try_new(prefs, zone::GenericLong).unwrap();
 ///
 /// // Convert it to a FixedCalendarDateTimeNames:
-/// let mut names = FixedCalendarDateTimeNames::from_formatter(prefs, formatter).cast_into_fset::<ZoneFieldSet>();
+/// let mut names =
+///     FixedCalendarDateTimeNames::from_formatter(prefs, formatter)
+///         .cast_into_fset::<ZoneFieldSet>();
 ///
 /// // Specific names cannot be added:
 /// assert!(matches!(
 ///     names.include_time_zone_specific_long_names(),
-///     Err(PatternLoadError::Data(DataError { kind: DataErrorKind::InconsistentData(_), .. }, _))
+///     Err(PatternLoadError::Data(
+///         DataError {
+///             kind: DataErrorKind::InconsistentData(_),
+///             ..
+///         },
+///         _
+///     ))
 /// ));
 /// ```
 #[derive(Debug, Clone)]

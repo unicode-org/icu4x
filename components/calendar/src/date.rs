@@ -323,8 +323,8 @@ impl Date<Iso> {
     /// # Examples
     ///
     /// ```
-    /// use icu::calendar::Date;
     /// use icu::calendar::types::IsoWeekOfYear;
+    /// use icu::calendar::Date;
     ///
     /// let date = Date::try_new_iso(2022, 8, 26).unwrap();
     ///

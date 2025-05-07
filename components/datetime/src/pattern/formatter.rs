@@ -150,7 +150,10 @@ where
     ///     "The time is: 12:00 noon"
     /// );
     /// assert_eq!(
-    ///     formatter.format(&time_midnight).try_write_to_string().unwrap(),
+    ///     formatter
+    ///         .format(&time_midnight)
+    ///         .try_write_to_string()
+    ///         .unwrap(),
     ///     "The time is: 12:00 midnight"
     /// );
     /// ```
@@ -198,11 +201,17 @@ where
     /// let formatter = names.with_pattern_unchecked(&pattern);
     ///
     /// assert_eq!(
-    ///     formatter.format(&london_winter).try_write_to_string().unwrap(),
+    ///     formatter
+    ///         .format(&london_winter)
+    ///         .try_write_to_string()
+    ///         .unwrap(),
     ///     "Your time zone is: GMT",
     /// );
     /// assert_eq!(
-    ///     formatter.format(&london_summer).try_write_to_string().unwrap(),
+    ///     formatter
+    ///         .format(&london_summer)
+    ///         .try_write_to_string()
+    ///         .unwrap(),
     ///     "Your time zone is: BST",
     /// );
     /// ```

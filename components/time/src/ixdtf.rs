@@ -452,11 +452,13 @@ impl<A: AsCalendar> ZonedDateTime<A, TimeZoneInfo<models::Full>> {
     ///
     /// ```
     /// use icu::calendar::cal::Hebrew;
+    /// use icu::locale::subtags::subtag;
     /// use icu::time::{
-    ///     zone::{IanaParser, TimeZoneVariant, UtcOffset, VariantOffsetsCalculator},
+    ///     zone::{
+    ///         IanaParser, TimeZoneVariant, UtcOffset, VariantOffsetsCalculator,
+    ///     },
     ///     TimeZone, TimeZoneInfo, ZonedDateTime,
     /// };
-    /// use icu::locale::subtags::subtag;
     ///
     /// let zoneddatetime = ZonedDateTime::try_full_from_str(
     ///     "2024-08-08T12:08:19-05:00[America/Chicago][u-ca=hebrew]",
@@ -477,10 +479,7 @@ impl<A: AsCalendar> ZonedDateTime<A, TimeZoneInfo<models::Full>> {
     /// assert_eq!(zoneddatetime.time.minute.number(), 8);
     /// assert_eq!(zoneddatetime.time.second.number(), 19);
     /// assert_eq!(zoneddatetime.time.subsecond.number(), 0);
-    /// assert_eq!(
-    ///     zoneddatetime.zone.id(),
-    ///     TimeZone(subtag!("uschi"))
-    /// );
+    /// assert_eq!(zoneddatetime.zone.id(), TimeZone(subtag!("uschi")));
     /// assert_eq!(
     ///     zoneddatetime.zone.offset(),
     ///     Some(UtcOffset::try_from_seconds(-18000).unwrap())
@@ -521,11 +520,11 @@ impl<A: AsCalendar> ZonedDateTime<A, TimeZoneInfo<models::Full>> {
     ///
     /// ```
     /// use icu::calendar::Iso;
+    /// use icu::locale::subtags::subtag;
     /// use icu::time::{
     ///     zone::{IanaParser, TimeZoneVariant, UtcOffset},
     ///     TimeZone, TimeZoneInfo, ZonedDateTime,
     /// };
-    /// use icu::locale::subtags::subtag;
     ///
     /// let tz_from_offset_annotation = ZonedDateTime::try_offset_only_from_str(
     ///     "2024-08-08T12:08:19[-05:00]",
