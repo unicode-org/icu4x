@@ -8,6 +8,7 @@
 #include <memory>
 #include <functional>
 #include <optional>
+#include <cstdlib>
 #include "../diplomat_runtime.hpp"
 
 namespace icu4x {
@@ -37,7 +38,7 @@ namespace capi {
       GraphemeClusterBreak_GlueAfterZwj = 16,
       GraphemeClusterBreak_ZWJ = 17,
     };
-    
+
     typedef struct GraphemeClusterBreak_option {union { GraphemeClusterBreak ok; }; bool is_ok; } GraphemeClusterBreak_option;
 } // namespace capi
 } // namespace

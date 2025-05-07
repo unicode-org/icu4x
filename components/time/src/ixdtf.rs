@@ -304,7 +304,7 @@ impl<'a> Intermediate<'a> {
                 iana_parser.parse_from_utf8(iana_identifier)
             }
             None if self.is_z => TimeZone(subtag!("utc")),
-            None => TimeZone::unknown(),
+            None => TimeZone::UNKNOWN,
         };
         let offset = match self.offset {
             Some(offset) => {
@@ -452,11 +452,13 @@ impl<A: AsCalendar> ZonedDateTime<A, TimeZoneInfo<models::Full>> {
     ///
     /// ```
     /// use icu::calendar::cal::Hebrew;
+    /// use icu::locale::subtags::subtag;
     /// use icu::time::{
-    ///     zone::{IanaParser, TimeZoneVariant, UtcOffset, VariantOffsetsCalculator},
+    ///     zone::{
+    ///         IanaParser, TimeZoneVariant, UtcOffset, VariantOffsetsCalculator,
+    ///     },
     ///     TimeZone, TimeZoneInfo, ZonedDateTime,
     /// };
-    /// use icu::locale::subtags::subtag;
     ///
     /// let zoneddatetime = ZonedDateTime::try_full_from_str(
     ///     "2024-08-08T12:08:19-05:00[America/Chicago][u-ca=hebrew]",
@@ -477,10 +479,7 @@ impl<A: AsCalendar> ZonedDateTime<A, TimeZoneInfo<models::Full>> {
     /// assert_eq!(zoneddatetime.time.minute.number(), 8);
     /// assert_eq!(zoneddatetime.time.second.number(), 19);
     /// assert_eq!(zoneddatetime.time.subsecond.number(), 0);
-    /// assert_eq!(
-    ///     zoneddatetime.zone.id(),
-    ///     TimeZone(subtag!("uschi"))
-    /// );
+    /// assert_eq!(zoneddatetime.zone.id(), TimeZone(subtag!("uschi")));
     /// assert_eq!(
     ///     zoneddatetime.zone.offset(),
     ///     Some(UtcOffset::try_from_seconds(-18000).unwrap())
@@ -521,11 +520,11 @@ impl<A: AsCalendar> ZonedDateTime<A, TimeZoneInfo<models::Full>> {
     ///
     /// ```
     /// use icu::calendar::Iso;
+    /// use icu::locale::subtags::subtag;
     /// use icu::time::{
     ///     zone::{IanaParser, TimeZoneVariant, UtcOffset},
     ///     TimeZone, TimeZoneInfo, ZonedDateTime,
     /// };
-    /// use icu::locale::subtags::subtag;
     ///
     /// let tz_from_offset_annotation = ZonedDateTime::try_offset_only_from_str(
     ///     "2024-08-08T12:08:19[-05:00]",
@@ -579,7 +578,7 @@ impl<A: AsCalendar> ZonedDateTime<A, TimeZoneInfo<models::Full>> {
     /// assert_eq!(
     ///     ZonedDateTime::try_full_from_str("2024-08-08T12:08:19-05:00[America/Los_Angeles]", Iso, IanaParser::new(), VariantOffsetsCalculator::new())
     ///     .unwrap().zone.id(),
-    ///     TimeZone::unknown()
+    ///     TimeZone::UNKNOWN
     /// );
     ///
     /// // We don't know that America/Los_Angeles didn't use standard time (-08:00) in August, but we have a
@@ -810,7 +809,7 @@ mod test {
             IanaParserBorrowed::new(),
         )
         .unwrap();
-        assert_eq!(result.zone.id(), TimeZone::unknown());
+        assert_eq!(result.zone.id(), TimeZone::UNKNOWN);
         assert_eq!(result.zone.offset(), None);
     }
 

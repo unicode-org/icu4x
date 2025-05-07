@@ -73,7 +73,6 @@ icu4x_ZonedDateFormatter_create_exemplar_city_with_provider_mv1_result icu4x_Zon
 typedef struct icu4x_ZonedDateFormatter_format_iso_mv1_result {union { DateTimeWriteError err;}; bool is_ok;} icu4x_ZonedDateFormatter_format_iso_mv1_result;
 icu4x_ZonedDateFormatter_format_iso_mv1_result icu4x_ZonedDateFormatter_format_iso_mv1(const ZonedDateFormatter* self, const IsoDate* date, const TimeZoneInfo* zone, DiplomatWrite* write);
 
-
 void icu4x_ZonedDateFormatter_destroy_mv1(ZonedDateFormatter* self);
 
 

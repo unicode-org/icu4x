@@ -51,6 +51,7 @@ final class Calendar implements ffi.Finalizable {
     final result = _icu4x_Calendar_kind_mv1(_ffi);
     return CalendarKind.values.firstWhere((v) => v._ffi == result);
   }
+
 }
 
 @_DiplomatFfiUse('icu4x_Calendar_destroy_mv1')

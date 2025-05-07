@@ -11,7 +11,7 @@ pub mod ffi {
 
     use crate::unstable::calendar::ffi::Calendar;
     use crate::unstable::date::ffi::{Date, IsoDate};
-    use crate::unstable::errors::ffi::CalendarParseError;
+    use crate::unstable::errors::ffi::Rfc9557ParseError;
     use crate::unstable::iana_parser::ffi::IanaParser;
     use crate::unstable::time::ffi::Time;
     use crate::unstable::timezone::ffi::TimeZoneInfo;
@@ -35,7 +35,7 @@ pub mod ffi {
             v: &DiplomatStr,
             iana_parser: &IanaParser,
             offset_calculator: &VariantOffsetsCalculator,
-        ) -> Result<ZonedIsoDateTime, CalendarParseError> {
+        ) -> Result<ZonedIsoDateTime, Rfc9557ParseError> {
             let icu_time::ZonedDateTime { date, time, zone } =
                 icu_time::ZonedDateTime::try_full_from_utf8(
                     v,
@@ -93,7 +93,7 @@ pub mod ffi {
             calendar: &Calendar,
             iana_parser: &IanaParser,
             offset_calculator: &VariantOffsetsCalculator,
-        ) -> Result<ZonedDateTime, CalendarParseError> {
+        ) -> Result<ZonedDateTime, Rfc9557ParseError> {
             let icu_time::ZonedDateTime { date, time, zone } =
                 icu_time::ZonedDateTime::try_full_from_utf8(
                     v,
@@ -120,7 +120,7 @@ pub mod ffi {
             v: &DiplomatStr,
             calendar: &Calendar,
             iana_parser: &IanaParser,
-        ) -> Result<ZonedDateTime, CalendarParseError> {
+        ) -> Result<ZonedDateTime, Rfc9557ParseError> {
             let icu_time::ZonedDateTime { date, time, zone } =
                 icu_time::ZonedDateTime::try_location_only_from_utf8(
                     v,
@@ -145,7 +145,7 @@ pub mod ffi {
         pub fn offset_only_from_string(
             v: &DiplomatStr,
             calendar: &Calendar,
-        ) -> Result<ZonedDateTime, CalendarParseError> {
+        ) -> Result<ZonedDateTime, Rfc9557ParseError> {
             let icu_time::ZonedDateTime { date, time, zone } =
                 icu_time::ZonedDateTime::try_offset_only_from_utf8(v, calendar.0.clone())?;
             Ok(ZonedDateTime {
@@ -163,7 +163,7 @@ pub mod ffi {
             v: &DiplomatStr,
             calendar: &Calendar,
             iana_parser: &IanaParser,
-        ) -> Result<ZonedDateTime, CalendarParseError> {
+        ) -> Result<ZonedDateTime, Rfc9557ParseError> {
             let icu_time::ZonedDateTime { date, time, zone } =
                 icu_time::ZonedDateTime::try_lenient_from_utf8(
                     v,

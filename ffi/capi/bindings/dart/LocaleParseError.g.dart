@@ -5,6 +5,7 @@ part of 'lib.g.dart';
 
 /// Additional information: [1](https://docs.rs/icu/latest/icu/locale/enum.ParseError.html)
 enum LocaleParseError {
+
   unknown,
 
   language,
@@ -12,6 +13,7 @@ enum LocaleParseError {
   subtag,
 
   extension;
+
 }
 
 // dart format on

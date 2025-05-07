@@ -8,6 +8,7 @@
 #include <memory>
 #include <functional>
 #include <optional>
+#include <cstdlib>
 #include "../diplomat_runtime.hpp"
 
 namespace icu4x {
@@ -19,7 +20,7 @@ namespace capi { struct IsoDate; }
 class IsoDate;
 struct IsoWeekOfYear;
 class CalendarError;
-class CalendarParseError;
+class Rfc9557ParseError;
 class Weekday;
 }
 
@@ -58,7 +59,7 @@ public:
    *
    * See the [Rust documentation for `try_from_str`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.try_from_str) for more information.
    */
-  inline static diplomat::result<std::unique_ptr<icu4x::IsoDate>, icu4x::CalendarParseError> from_string(std::string_view v);
+  inline static diplomat::result<std::unique_ptr<icu4x::IsoDate>, icu4x::Rfc9557ParseError> from_string(std::string_view v);
 
   /**
    * Convert this date to one in a different calendar

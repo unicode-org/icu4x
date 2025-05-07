@@ -58,6 +58,7 @@ final class UnitsConverterFactory implements ffi.Finalizable {
     final result = _icu4x_UnitsConverterFactory_converter_mv1(_ffi, from._ffi, to._ffi);
     return result.address == 0 ? null : UnitsConverter._fromFfi(result, []);
   }
+
 }
 
 @_DiplomatFfiUse('icu4x_UnitsConverterFactory_destroy_mv1')

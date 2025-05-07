@@ -8,6 +8,7 @@
 #include <memory>
 #include <functional>
 #include <optional>
+#include <cstdlib>
 #include "../diplomat_runtime.hpp"
 
 
@@ -18,7 +19,7 @@ namespace capi {
       YearStyle_Full = 1,
       YearStyle_WithEra = 2,
     };
-    
+
     typedef struct YearStyle_option {union { YearStyle ok; }; bool is_ok; } YearStyle_option;
 } // namespace capi
 } // namespace

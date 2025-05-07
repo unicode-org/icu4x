@@ -87,6 +87,7 @@ final class BidiParagraph implements ffi.Finalizable {
     final result = _icu4x_BidiParagraph_level_at_mv1(_ffi, pos);
     return result;
   }
+
 }
 
 @_DiplomatFfiUse('icu4x_BidiParagraph_destroy_mv1')

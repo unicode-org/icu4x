@@ -75,7 +75,7 @@ use alloc::borrow::Cow;
 /// ```
 ///
 /// [`Unicode BCP47 Language Identifier`]: https://unicode.org/reports/tr35/tr35.html#Unicode_language_identifier
-#[derive(Default, PartialEq, Eq, Clone, Hash)] // no Ord or PartialOrd: see docs
+#[derive(PartialEq, Eq, Clone, Hash)] // no Ord or PartialOrd: see docs
 #[allow(clippy::exhaustive_structs)] // This struct is stable (and invoked by a macro)
 pub struct LanguageIdentifier {
     /// Language subtag of the language identifier.
@@ -156,17 +156,7 @@ impl LanguageIdentifier {
         parser::parse_language_identifier(v, parser::ParserMode::Locale)
     }
 
-    /// Const-friendly version of [`Default::default`].
-    pub const fn default() -> Self {
-        Self {
-            language: subtags::Language::UNKNOWN,
-            script: None,
-            region: None,
-            variants: subtags::Variants::new(),
-        }
-    }
-
-    /// Whether this language identifier equals [`Self::default`].
+    /// Whether this [`LanguageIdentifier`] equals [`LanguageIdentifier::UNKNOWN`].
     pub const fn is_unknown(&self) -> bool {
         self.language.is_unknown()
             && self.script.is_none()
@@ -520,7 +510,7 @@ impl_writeable_for_each_subtag_str_no_test!(LanguageIdentifier, selff, selff.scr
 #[test]
 fn test_writeable() {
     use writeable::assert_writeable_eq;
-    assert_writeable_eq!(LanguageIdentifier::default(), "und");
+    assert_writeable_eq!(LanguageIdentifier::UNKNOWN, "und");
     assert_writeable_eq!("und-001".parse::<LanguageIdentifier>().unwrap(), "und-001");
     assert_writeable_eq!(
         "und-Mymr".parse::<LanguageIdentifier>().unwrap(),
@@ -551,7 +541,9 @@ impl From<subtags::Language> for LanguageIdentifier {
     fn from(language: subtags::Language) -> Self {
         Self {
             language,
-            ..Default::default()
+            script: None,
+            region: None,
+            variants: subtags::Variants::new(),
         }
     }
 }
@@ -569,8 +561,10 @@ impl From<subtags::Language> for LanguageIdentifier {
 impl From<Option<subtags::Script>> for LanguageIdentifier {
     fn from(script: Option<subtags::Script>) -> Self {
         Self {
+            language: subtags::Language::UNKNOWN,
             script,
-            ..Default::default()
+            region: None,
+            variants: subtags::Variants::new(),
         }
     }
 }
@@ -588,8 +582,10 @@ impl From<Option<subtags::Script>> for LanguageIdentifier {
 impl From<Option<subtags::Region>> for LanguageIdentifier {
     fn from(region: Option<subtags::Region>) -> Self {
         Self {
+            language: subtags::Language::UNKNOWN,
+            script: None,
             region,
-            ..Default::default()
+            variants: subtags::Variants::new(),
         }
     }
 }
@@ -631,7 +627,7 @@ impl
             language: lsr.0,
             script: lsr.1,
             region: lsr.2,
-            ..Default::default()
+            variants: subtags::Variants::new(),
         }
     }
 }

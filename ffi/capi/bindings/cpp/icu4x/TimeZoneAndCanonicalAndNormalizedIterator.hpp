@@ -10,6 +10,7 @@
 #include <memory>
 #include <functional>
 #include <optional>
+#include <cstdlib>
 #include "../diplomat_runtime.hpp"
 #include "TimeZoneAndCanonicalAndNormalized.hpp"
 
@@ -17,13 +18,12 @@
 namespace icu4x {
 namespace capi {
     extern "C" {
-    
+
     typedef struct icu4x_TimeZoneAndCanonicalAndNormalizedIterator_next_mv1_result {union {icu4x::capi::TimeZoneAndCanonicalAndNormalized ok; }; bool is_ok;} icu4x_TimeZoneAndCanonicalAndNormalizedIterator_next_mv1_result;
     icu4x_TimeZoneAndCanonicalAndNormalizedIterator_next_mv1_result icu4x_TimeZoneAndCanonicalAndNormalizedIterator_next_mv1(icu4x::capi::TimeZoneAndCanonicalAndNormalizedIterator* self);
-    
-    
+
     void icu4x_TimeZoneAndCanonicalAndNormalizedIterator_destroy_mv1(TimeZoneAndCanonicalAndNormalizedIterator* self);
-    
+
     } // extern "C"
 } // namespace capi
 } // namespace

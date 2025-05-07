@@ -8,6 +8,7 @@
 #include <memory>
 #include <functional>
 #include <optional>
+#include <cstdlib>
 #include "../diplomat_runtime.hpp"
 
 namespace icu4x {
@@ -25,7 +26,7 @@ namespace capi {
       JoiningType_RightJoining = 4,
       JoiningType_Transparent = 5,
     };
-    
+
     typedef struct JoiningType_option {union { JoiningType ok; }; bool is_ok; } JoiningType_option;
 } // namespace capi
 } // namespace

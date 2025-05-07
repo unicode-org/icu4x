@@ -56,6 +56,7 @@ final class BidiInfo implements ffi.Finalizable {
     final result = _icu4x_BidiInfo_level_at_mv1(_ffi, pos);
     return result;
   }
+
 }
 
 @_DiplomatFfiUse('icu4x_BidiInfo_destroy_mv1')

@@ -51,7 +51,6 @@ char32_t icu4x_CaseMapper_simple_fold_mv1(const CaseMapper* self, char32_t ch);
 
 char32_t icu4x_CaseMapper_simple_fold_turkic_mv1(const CaseMapper* self, char32_t ch);
 
-
 void icu4x_CaseMapper_destroy_mv1(CaseMapper* self);
 
 

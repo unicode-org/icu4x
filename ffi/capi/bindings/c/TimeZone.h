@@ -19,12 +19,13 @@
 
 TimeZone* icu4x_TimeZone_unknown_mv1(void);
 
+bool icu4x_TimeZone_is_unknown_mv1(const TimeZone* self);
+
 TimeZone* icu4x_TimeZone_create_from_bcp47_mv1(DiplomatStringView id);
 
 TimeZoneInfo* icu4x_TimeZone_with_offset_mv1(const TimeZone* self, const UtcOffset* offset);
 
 TimeZoneInfo* icu4x_TimeZone_without_offset_mv1(const TimeZone* self);
-
 
 void icu4x_TimeZone_destroy_mv1(TimeZone* self);
 

@@ -81,6 +81,7 @@ final class ScriptWithExtensions implements ffi.Finalizable {
     final result = _icu4x_ScriptWithExtensions_iter_ranges_for_script_mv1(_ffi, script);
     return CodePointRangeIterator._fromFfi(result, [], aEdges);
   }
+
 }
 
 @_DiplomatFfiUse('icu4x_ScriptWithExtensions_destroy_mv1')

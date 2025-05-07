@@ -8,6 +8,7 @@
 #include <memory>
 #include <functional>
 #include <optional>
+#include <cstdlib>
 #include "../diplomat_runtime.hpp"
 
 namespace icu4x {
@@ -25,7 +26,7 @@ namespace capi {
       EastAsianWidth_Narrow = 4,
       EastAsianWidth_Wide = 5,
     };
-    
+
     typedef struct EastAsianWidth_option {union { EastAsianWidth ok; }; bool is_ok; } EastAsianWidth_option;
 } // namespace capi
 } // namespace

@@ -19,6 +19,7 @@ use icu_casemap::provider::CaseMapV1;
 use icu_casemap::CaseMapper;
 use icu_collections::codepointinvlist::CodePointInversionList;
 use icu_collections::codepointinvliststringlist::CodePointInversionListAndStringList;
+use icu_locale::LanguageIdentifier;
 use icu_locale_core::Locale;
 use icu_normalizer::provider::*;
 use icu_normalizer::{ComposingNormalizer, DecomposingNormalizer};
@@ -79,7 +80,7 @@ impl InternalTransliterator {
             Self::Lower(casemap) => {
                 if let Cow::Owned(buf) = casemap
                     .as_borrowed()
-                    .lowercase_to_string(rep.as_str_modifiable(), &Default::default())
+                    .lowercase_to_string(rep.as_str_modifiable(), &LanguageIdentifier::UNKNOWN)
                 {
                     rep.replace_modifiable_with_str(&buf);
                 }
@@ -87,7 +88,7 @@ impl InternalTransliterator {
             Self::Upper(casemap) => {
                 if let Cow::Owned(buf) = casemap
                     .as_borrowed()
-                    .uppercase_to_string(rep.as_str_modifiable(), &Default::default())
+                    .uppercase_to_string(rep.as_str_modifiable(), &LanguageIdentifier::UNKNOWN)
                 {
                     rep.replace_modifiable_with_str(&buf);
                 }
@@ -1531,6 +1532,14 @@ mod tests {
         .unwrap();
         let input = "\0äa\u{10FFFF}❤!";
         let output = "U+0000U+00E4U+0061U+10FFFFU+2764U+0021";
+        assert_eq!(t.transliterate(input.to_string()), output);
+    }
+
+    #[test]
+    fn test_katakana_hiragana() {
+        let t = Transliterator::try_new(&"und-Hira-t-und-kana".parse().unwrap()).unwrap();
+        let input = "ウィキペディアへようこそ";
+        let output = "うぃきぺでぃあへようこそ";
         assert_eq!(t.transliterate(input.to_string()), output);
     }
 }

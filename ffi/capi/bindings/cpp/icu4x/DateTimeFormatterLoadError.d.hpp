@@ -8,6 +8,7 @@
 #include <memory>
 #include <functional>
 #include <optional>
+#include <cstdlib>
 #include "../diplomat_runtime.hpp"
 
 
@@ -28,7 +29,7 @@ namespace capi {
       DateTimeFormatterLoadError_DataCustom = 7,
       DateTimeFormatterLoadError_DataIo = 8,
     };
-    
+
     typedef struct DateTimeFormatterLoadError_option {union { DateTimeFormatterLoadError ok; }; bool is_ok; } DateTimeFormatterLoadError_option;
 } // namespace capi
 } // namespace

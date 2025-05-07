@@ -73,6 +73,7 @@ final class DecimalFormatter implements ffi.Finalizable {
     _icu4x_DecimalFormatter_format_mv1(_ffi, value._ffi, write._ffi);
     return write.finalize();
   }
+
 }
 
 @_DiplomatFfiUse('icu4x_DecimalFormatter_destroy_mv1')

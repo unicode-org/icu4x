@@ -5,6 +5,7 @@ part of 'lib.g.dart';
 
 /// See the [Rust documentation for `WordType`](https://docs.rs/icu/latest/icu/segmenter/options/enum.WordType.html) for more information.
 enum SegmenterWordType {
+
   none,
 
   number,
@@ -16,6 +17,7 @@ enum SegmenterWordType {
     final result = _icu4x_SegmenterWordType_is_word_like_mv1(index);
     return result;
   }
+
 }
 
 @_DiplomatFfiUse('icu4x_SegmenterWordType_is_word_like_mv1')

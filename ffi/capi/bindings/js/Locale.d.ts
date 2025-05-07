@@ -3,7 +3,7 @@ import type { LocaleParseError } from "./LocaleParseError"
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
-/** 
+/**
  * An ICU4X Locale, capable of representing strings like `"en-US"`.
  *
  * See the [Rust documentation for `Locale`](https://docs.rs/icu/latest/icu/locale/struct.Locale.html) for more information.
@@ -11,10 +11,10 @@ import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
 export class Locale {
-    
     get ffiValue(): pointer;
 
-    /** 
+
+    /**
      * Construct an [`Locale`] from an locale identifier.
      *
      * This will run the complete locale parsing algorithm. If code size and
@@ -25,21 +25,21 @@ export class Locale {
      */
     static fromString(name: string): Locale;
 
-    /** 
+    /**
      * Construct a unknown [`Locale`] "und".
      *
      * See the [Rust documentation for `UNKNOWN`](https://docs.rs/icu/latest/icu/locale/struct.Locale.html#associatedconstant.UNKNOWN) for more information.
      */
     static unknown(): Locale;
 
-    /** 
+    /**
      * Clones the [`Locale`].
      *
      * See the [Rust documentation for `Locale`](https://docs.rs/icu/latest/icu/locale/struct.Locale.html) for more information.
      */
     clone(): Locale;
 
-    /** 
+    /**
      * Returns a string representation of the `LanguageIdentifier` part of
      * [`Locale`].
      *
@@ -47,80 +47,80 @@ export class Locale {
      */
     get basename(): string;
 
-    /** 
+    /**
      * Returns a string representation of the unicode extension.
      *
      * See the [Rust documentation for `extensions`](https://docs.rs/icu/latest/icu/locale/struct.Locale.html#structfield.extensions) for more information.
      */
     getUnicodeExtension(s: string): string | null;
 
-    /** 
+    /**
      * Returns a string representation of [`Locale`] language.
      *
      * See the [Rust documentation for `id`](https://docs.rs/icu/latest/icu/locale/struct.Locale.html#structfield.id) for more information.
      */
     get language(): string;
 
-    /** 
+    /**
      * Set the language part of the [`Locale`].
      *
      * See the [Rust documentation for `try_from_str`](https://docs.rs/icu/latest/icu/locale/struct.Locale.html#method.try_from_str) for more information.
      */
     set language(s: string);
 
-    /** 
+    /**
      * Returns a string representation of [`Locale`] region.
      *
      * See the [Rust documentation for `id`](https://docs.rs/icu/latest/icu/locale/struct.Locale.html#structfield.id) for more information.
      */
     get region(): string | null;
 
-    /** 
+    /**
      * Set the region part of the [`Locale`].
      *
      * See the [Rust documentation for `try_from_str`](https://docs.rs/icu/latest/icu/locale/struct.Locale.html#method.try_from_str) for more information.
      */
     set region(s: string);
 
-    /** 
+    /**
      * Returns a string representation of [`Locale`] script.
      *
      * See the [Rust documentation for `id`](https://docs.rs/icu/latest/icu/locale/struct.Locale.html#structfield.id) for more information.
      */
     get script(): string | null;
 
-    /** 
+    /**
      * Set the script part of the [`Locale`]. Pass an empty string to remove the script.
      *
      * See the [Rust documentation for `try_from_str`](https://docs.rs/icu/latest/icu/locale/struct.Locale.html#method.try_from_str) for more information.
      */
     set script(s: string);
 
-    /** 
+    /**
      * Normalizes a locale string.
      *
      * See the [Rust documentation for `normalize`](https://docs.rs/icu/latest/icu/locale/struct.Locale.html#method.normalize) for more information.
      */
     static normalize(s: string): string;
 
-    /** 
+    /**
      * Returns a string representation of [`Locale`].
      *
      * See the [Rust documentation for `write_to`](https://docs.rs/icu/latest/icu/locale/struct.Locale.html#method.write_to) for more information.
      */
     toString(): string;
 
-    /** 
+    /**
      * See the [Rust documentation for `normalizing_eq`](https://docs.rs/icu/latest/icu/locale/struct.Locale.html#method.normalizing_eq) for more information.
      */
     normalizingEq(other: string): boolean;
 
-    /** 
+    /**
      * See the [Rust documentation for `strict_cmp`](https://docs.rs/icu/latest/icu/locale/struct.Locale.html#method.strict_cmp) for more information.
      */
     compareToString(other: string): number;
 
-    /** 
+    /**
      * See the [Rust documentation for `total_cmp`](https://docs.rs/icu/latest/icu/locale/struct.Locale.html#method.total_cmp) for more information.
      */
     compareTo(other: Locale): number;

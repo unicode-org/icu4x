@@ -10,14 +10,14 @@
 #include <memory>
 #include <functional>
 #include <optional>
+#include <cstdlib>
 #include "../diplomat_runtime.hpp"
 
 
 namespace icu4x {
 namespace capi {
     extern "C" {
-    
-    
+
     } // extern "C"
 } // namespace capi
 } // namespace
@@ -34,7 +34,7 @@ inline icu4x::DecimalGroupingStrategy icu4x::DecimalGroupingStrategy::FromFFI(ic
     case icu4x::capi::DecimalGroupingStrategy_Min2:
       return static_cast<icu4x::DecimalGroupingStrategy::Value>(c_enum);
     default:
-      abort();
+      std::abort();
   }
 }
 #endif // icu4x_DecimalGroupingStrategy_HPP

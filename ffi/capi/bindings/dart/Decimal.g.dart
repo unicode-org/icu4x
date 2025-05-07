@@ -250,6 +250,7 @@ final class Decimal implements ffi.Finalizable {
     _icu4x_Decimal_to_string_mv1(_ffi, write._ffi);
     return write.finalize();
   }
+
 }
 
 @_DiplomatFfiUse('icu4x_Decimal_destroy_mv1')

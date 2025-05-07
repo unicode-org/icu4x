@@ -3,48 +3,18 @@
 
 part of 'lib.g.dart';
 
-/// Additional information: [1](https://docs.rs/icu/latest/icu/datetime/enum.DateTimeWriteError.html)
+/// An error when formatting a datetime.
+///
+/// Currently the only reachable error here is a missing time zone variant. If you encounter
+/// that error, you need to call `with_variant` or `infer_variant` on your `TimeZoneInfo`.
+///
+/// Additional information: [1](https://docs.rs/icu/latest/icu/datetime/unchecked/enum.FormattedDateTimeUncheckedError.html)
 enum DateTimeWriteError {
+
   unknown,
 
-  invalidMonthCode,
+  missingTimeZoneVariant;
 
-  invalidEra,
-
-  invalidCyclicYear,
-
-  decimalFormatterNotLoaded,
-
-  namesNotLoaded,
-
-  missingInputField,
-
-  unsupportedLength,
-
-  unsupportedField;
-
-  int get _ffi {
-    switch (this) {
-      case unknown:
-        return 0;
-      case invalidMonthCode:
-        return 2;
-      case invalidEra:
-        return 3;
-      case invalidCyclicYear:
-        return 4;
-      case decimalFormatterNotLoaded:
-        return 5;
-      case namesNotLoaded:
-        return 6;
-      case missingInputField:
-        return 7;
-      case unsupportedLength:
-        return 8;
-      case unsupportedField:
-        return 9;
-    }
-  }
 }
 
 // dart format on

@@ -8,6 +8,7 @@
 #include <memory>
 #include <functional>
 #include <optional>
+#include <cstdlib>
 #include "../diplomat_runtime.hpp"
 
 namespace icu4x {
@@ -23,7 +24,7 @@ namespace capi {
       VerticalOrientation_TransformedUpright = 2,
       VerticalOrientation_Upright = 3,
     };
-    
+
     typedef struct VerticalOrientation_option {union { VerticalOrientation ok; }; bool is_ok; } VerticalOrientation_option;
 } // namespace capi
 } // namespace

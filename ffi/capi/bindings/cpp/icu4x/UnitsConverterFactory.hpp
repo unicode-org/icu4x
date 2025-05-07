@@ -10,6 +10,7 @@
 #include <memory>
 #include <functional>
 #include <optional>
+#include <cstdlib>
 #include "../diplomat_runtime.hpp"
 #include "DataError.hpp"
 #include "DataProvider.hpp"
@@ -20,17 +21,16 @@
 namespace icu4x {
 namespace capi {
     extern "C" {
-    
+
     icu4x::capi::UnitsConverterFactory* icu4x_UnitsConverterFactory_create_mv1(void);
-    
+
     typedef struct icu4x_UnitsConverterFactory_create_with_provider_mv1_result {union {icu4x::capi::UnitsConverterFactory* ok; icu4x::capi::DataError err;}; bool is_ok;} icu4x_UnitsConverterFactory_create_with_provider_mv1_result;
     icu4x_UnitsConverterFactory_create_with_provider_mv1_result icu4x_UnitsConverterFactory_create_with_provider_mv1(const icu4x::capi::DataProvider* provider);
-    
+
     icu4x::capi::UnitsConverter* icu4x_UnitsConverterFactory_converter_mv1(const icu4x::capi::UnitsConverterFactory* self, const icu4x::capi::MeasureUnit* from, const icu4x::capi::MeasureUnit* to);
-    
-    
+
     void icu4x_UnitsConverterFactory_destroy_mv1(UnitsConverterFactory* self);
-    
+
     } // extern "C"
 } // namespace capi
 } // namespace

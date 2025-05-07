@@ -4,7 +4,7 @@ import type { LocaleFallbacker } from "./LocaleFallbacker"
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
-/** 
+/**
  * An ICU4X data provider, capable of loading ICU4X data keys from some source.
  *
  * Currently the only source supported is loading from "blob" formatted data from a bytes buffer or the file system.
@@ -17,10 +17,10 @@ import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
 export class DataProvider {
-    
     get ffiValue(): pointer;
 
-    /** 
+
+    /**
      * Creates a provider that tries the current provider and then, if the current provider
      * doesn't support the data key, another provider `other`.
      *
@@ -28,16 +28,16 @@ export class DataProvider {
      *
      * See the [Rust documentation for `ForkByMarkerProvider`](https://docs.rs/icu_provider_adapters/latest/icu_provider_adapters/fork/type.ForkByMarkerProvider.html) for more information.
      */
-    forkByKey(other: DataProvider): void;
+    forkByMarker(other: DataProvider): void;
 
-    /** 
+    /**
      * Same as `fork_by_key` but forks by locale instead of key.
      *
      * See the [Rust documentation for `IdentifierNotFoundPredicate`](https://docs.rs/icu_provider_adapters/latest/icu_provider_adapters/fork/predicates/struct.IdentifierNotFoundPredicate.html) for more information.
      */
     forkByLocale(other: DataProvider): void;
 
-    /** 
+    /**
      * See the [Rust documentation for `new`](https://docs.rs/icu_provider_adapters/latest/icu_provider_adapters/fallback/struct.LocaleFallbackProvider.html#method.new) for more information.
      *
      * Additional information: [1](https://docs.rs/icu_provider_adapters/latest/icu_provider_adapters/fallback/struct.LocaleFallbackProvider.html)

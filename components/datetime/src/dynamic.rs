@@ -36,16 +36,20 @@
 //! use icu::locale::locale;
 //! use writeable::Writeable;
 //!
-//! fn get_field_set(should_display_time: bool) -> CompositeDateTimeFieldSet {
+//! fn composite_field_set(
+//!     should_display_time: bool,
+//! ) -> CompositeDateTimeFieldSet {
 //!     if should_display_time {
-//!         let field_set = fieldsets::MD::medium().with_time_hm();
+//!         let field_set_with_options = fieldsets::MD::medium().with_time_hm();
 //!         CompositeDateTimeFieldSet::DateTime(
-//!             fieldsets::enums::DateAndTimeFieldSet::MDT(field_set),
+//!             fieldsets::enums::DateAndTimeFieldSet::MDT(
+//!                 field_set_with_options,
+//!             ),
 //!         )
 //!     } else {
-//!         let field_set = fieldsets::MD::medium();
+//!         let field_set_with_options = fieldsets::MD::medium();
 //!         CompositeDateTimeFieldSet::Date(fieldsets::enums::DateFieldSet::MD(
-//!             field_set,
+//!             field_set_with_options,
 //!         ))
 //!     }
 //! }
@@ -55,8 +59,16 @@
 //!     time: Time::try_new(16, 0, 0, 0).unwrap(),
 //! };
 //!
-//! let with_time = DateTimeFormatter::try_new(locale!("en-US").into(), get_field_set(true)).unwrap();
-//! let without_time = DateTimeFormatter::try_new(locale!("en-US").into(), get_field_set(false)).unwrap();
+//! let with_time = DateTimeFormatter::try_new(
+//!     locale!("en-US").into(),
+//!     composite_field_set(true),
+//! )
+//! .unwrap();
+//! let without_time = DateTimeFormatter::try_new(
+//!     locale!("en-US").into(),
+//!     composite_field_set(false),
+//! )
+//! .unwrap();
 //!
 //! assert_eq!(with_time.format(&datetime).to_string(), "Jan 15, 4:00 PM");
 //! assert_eq!(without_time.format(&datetime).to_string(), "Jan 15");

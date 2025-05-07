@@ -8,6 +8,7 @@
 #include <memory>
 #include <functional>
 #include <optional>
+#include <cstdlib>
 #include "../diplomat_runtime.hpp"
 
 
@@ -20,7 +21,7 @@ namespace capi {
       CollatorStrength_Quaternary = 3,
       CollatorStrength_Identical = 4,
     };
-    
+
     typedef struct CollatorStrength_option {union { CollatorStrength ok; }; bool is_ok; } CollatorStrength_option;
 } // namespace capi
 } // namespace

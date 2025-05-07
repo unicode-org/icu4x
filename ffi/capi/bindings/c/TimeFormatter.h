@@ -30,7 +30,6 @@ icu4x_TimeFormatter_create_with_provider_mv1_result icu4x_TimeFormatter_create_w
 
 void icu4x_TimeFormatter_format_mv1(const TimeFormatter* self, const Time* time, DiplomatWrite* write);
 
-
 void icu4x_TimeFormatter_destroy_mv1(TimeFormatter* self);
 
 

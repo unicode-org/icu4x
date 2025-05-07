@@ -5,23 +5,23 @@ import type { DataProvider } from "./DataProvider"
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
-/** 
+/**
  * See the [Rust documentation for `CaseMapCloser`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapCloser.html) for more information.
  */
 
 
 export class CaseMapCloser {
-    
     get ffiValue(): pointer;
 
-    /** 
+
+    /**
      * Construct a new CaseMapCloser instance using a particular data source.
      *
      * See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapCloser.html#method.new) for more information.
      */
     static createWithProvider(provider: DataProvider): CaseMapCloser;
 
-    /** 
+    /**
      * Adds all simple case mappings and the full case folding for `c` to `builder`.
      * Also adds special case closure mappings.
      *
@@ -29,7 +29,7 @@ export class CaseMapCloser {
      */
     addCaseClosureTo(c: codepoint, builder: CodePointSetBuilder): void;
 
-    /** 
+    /**
      * Finds all characters and strings which may casemap to `s` as their full case folding string
      * and adds them to the set.
      *

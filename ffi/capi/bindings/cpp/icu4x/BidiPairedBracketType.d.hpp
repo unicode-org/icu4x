@@ -8,6 +8,7 @@
 #include <memory>
 #include <functional>
 #include <optional>
+#include <cstdlib>
 #include "../diplomat_runtime.hpp"
 
 
@@ -18,7 +19,7 @@ namespace capi {
       BidiPairedBracketType_Close = 1,
       BidiPairedBracketType_None = 2,
     };
-    
+
     typedef struct BidiPairedBracketType_option {union { BidiPairedBracketType ok; }; bool is_ok; } BidiPairedBracketType_option;
 } // namespace capi
 } // namespace

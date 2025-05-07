@@ -10,18 +10,18 @@
 #include <memory>
 #include <functional>
 #include <optional>
+#include <cstdlib>
 #include "../diplomat_runtime.hpp"
 
 
 namespace icu4x {
 namespace capi {
     extern "C" {
-    
+
     int32_t icu4x_LineBreakIteratorLatin1_next_mv1(icu4x::capi::LineBreakIteratorLatin1* self);
-    
-    
+
     void icu4x_LineBreakIteratorLatin1_destroy_mv1(LineBreakIteratorLatin1* self);
-    
+
     } // extern "C"
 } // namespace capi
 } // namespace

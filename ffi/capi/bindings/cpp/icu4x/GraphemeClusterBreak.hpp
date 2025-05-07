@@ -10,21 +10,21 @@
 #include <memory>
 #include <functional>
 #include <optional>
+#include <cstdlib>
 #include "../diplomat_runtime.hpp"
 
 
 namespace icu4x {
 namespace capi {
     extern "C" {
-    
+
     icu4x::capi::GraphemeClusterBreak icu4x_GraphemeClusterBreak_for_char_mv1(char32_t ch);
-    
+
     uint8_t icu4x_GraphemeClusterBreak_to_integer_value_mv1(icu4x::capi::GraphemeClusterBreak self);
-    
+
     typedef struct icu4x_GraphemeClusterBreak_from_integer_value_mv1_result {union {icu4x::capi::GraphemeClusterBreak ok; }; bool is_ok;} icu4x_GraphemeClusterBreak_from_integer_value_mv1_result;
     icu4x_GraphemeClusterBreak_from_integer_value_mv1_result icu4x_GraphemeClusterBreak_from_integer_value_mv1(uint8_t other);
-    
-    
+
     } // extern "C"
 } // namespace capi
 } // namespace
@@ -55,7 +55,7 @@ inline icu4x::GraphemeClusterBreak icu4x::GraphemeClusterBreak::FromFFI(icu4x::c
     case icu4x::capi::GraphemeClusterBreak_ZWJ:
       return static_cast<icu4x::GraphemeClusterBreak::Value>(c_enum);
     default:
-      abort();
+      std::abort();
   }
 }
 

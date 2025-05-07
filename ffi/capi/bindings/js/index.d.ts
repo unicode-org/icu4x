@@ -262,8 +262,6 @@ export { LanguageDisplay } from "./LanguageDisplay"
 
 export { CalendarError } from "./CalendarError"
 
-export { CalendarParseError } from "./CalendarParseError"
-
 export { DataError } from "./DataError"
 
 export { DateTimeFormatterLoadError } from "./DateTimeFormatterLoadError"
@@ -273,6 +271,8 @@ export { DateTimeWriteError } from "./DateTimeWriteError"
 export { DecimalParseError } from "./DecimalParseError"
 
 export { LocaleParseError } from "./LocaleParseError"
+
+export { Rfc9557ParseError } from "./Rfc9557ParseError"
 
 export { LocaleFallbackPriority } from "./LocaleFallbackPriority"
 

@@ -10,17 +10,17 @@
 #include <memory>
 #include <functional>
 #include <optional>
+#include <cstdlib>
 #include "../diplomat_runtime.hpp"
 
 
 namespace icu4x {
 namespace capi {
     extern "C" {
-    
+
     typedef struct icu4x_TimePrecision_from_subsecond_digits_mv1_result {union {icu4x::capi::TimePrecision ok; }; bool is_ok;} icu4x_TimePrecision_from_subsecond_digits_mv1_result;
     icu4x_TimePrecision_from_subsecond_digits_mv1_result icu4x_TimePrecision_from_subsecond_digits_mv1(uint8_t digits);
-    
-    
+
     } // extern "C"
 } // namespace capi
 } // namespace
@@ -46,7 +46,7 @@ inline icu4x::TimePrecision icu4x::TimePrecision::FromFFI(icu4x::capi::TimePreci
     case icu4x::capi::TimePrecision_Subsecond9:
       return static_cast<icu4x::TimePrecision::Value>(c_enum);
     default:
-      abort();
+      std::abort();
   }
 }
 

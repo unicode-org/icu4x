@@ -8,6 +8,7 @@
 #include <memory>
 #include <functional>
 #include <optional>
+#include <cstdlib>
 #include "../diplomat_runtime.hpp"
 
 
@@ -18,7 +19,7 @@ namespace capi {
       DateTimeLength_Medium = 1,
       DateTimeLength_Short = 2,
     };
-    
+
     typedef struct DateTimeLength_option {union { DateTimeLength ok; }; bool is_ok; } DateTimeLength_option;
 } // namespace capi
 } // namespace

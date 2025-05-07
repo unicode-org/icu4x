@@ -7,23 +7,23 @@ import type { TitlecaseOptions_obj } from "./TitlecaseOptions"
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
-/** 
+/**
  * See the [Rust documentation for `TitlecaseMapper`](https://docs.rs/icu/latest/icu/casemap/struct.TitlecaseMapper.html) for more information.
  */
 
 
 export class TitlecaseMapper {
-    
     get ffiValue(): pointer;
 
-    /** 
+
+    /**
      * Construct a new `TitlecaseMapper` instance using a particular data source.
      *
      * See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/casemap/struct.TitlecaseMapper.html#method.new) for more information.
      */
     static createWithProvider(provider: DataProvider): TitlecaseMapper;
 
-    /** 
+    /**
      * Returns the full titlecase mapping of the given string
      *
      * The `v1` refers to the version of the options struct, which may change as we add more options
@@ -32,7 +32,7 @@ export class TitlecaseMapper {
      */
     titlecaseSegment(s: string, locale: Locale, options: TitlecaseOptions_obj): string;
 
-    /** 
+    /**
      * Returns the full titlecase mapping of the given string, using compiled data (avoids having to allocate a TitlecaseMapper object)
      *
      * The `v1` refers to the version of the options struct, which may change as we add more options

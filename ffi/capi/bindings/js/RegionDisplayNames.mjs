@@ -8,7 +8,7 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
-/** 
+/**
  * See the [Rust documentation for `RegionDisplayNames`](https://docs.rs/icu/latest/icu/experimental/displaynames/struct.RegionDisplayNames.html) for more information.
  */
 const RegionDisplayNames_box_destroy_registry = new FinalizationRegistry((ptr) => {
@@ -16,46 +16,46 @@ const RegionDisplayNames_box_destroy_registry = new FinalizationRegistry((ptr) =
 });
 
 export class RegionDisplayNames {
-    
     // Internal ptr reference:
     #ptr = null;
 
     // Lifetimes are only to keep dependencies alive.
     // Since JS won't garbage collect until there are no incoming edges.
     #selfEdge = [];
-    
+
     #internalConstructor(symbol, ptr, selfEdge) {
         if (symbol !== diplomatRuntime.internalConstructor) {
             console.error("RegionDisplayNames is an Opaque type. You cannot call its constructor.");
             return;
         }
-        
         this.#ptr = ptr;
         this.#selfEdge = selfEdge;
-        
+
         // Are we being borrowed? If not, we can register.
         if (this.#selfEdge.length === 0) {
             RegionDisplayNames_box_destroy_registry.register(this, this.#ptr);
         }
-        
+
         return this;
     }
     get ffiValue() {
         return this.#ptr;
     }
 
-    /** 
+
+    /**
      * Creates a new `RegionDisplayNames` from locale data and an options bag using compiled data.
      *
      * See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/experimental/displaynames/struct.RegionDisplayNames.html#method.try_new) for more information.
      */
     #defaultConstructor(locale, options) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
-        
+
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
-        
+
+
         const result = wasm.icu4x_RegionDisplayNames_create_v1_mv1(diplomatReceive.buffer, locale.ffiValue, ...DisplayNamesOptions._fromSuppliedValue(diplomatRuntime.internalConstructor, options)._intoFFI(functionCleanupArena, {}));
-    
+
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
@@ -63,26 +63,27 @@ export class RegionDisplayNames {
             }
             return new RegionDisplayNames(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
-        
+
         finally {
             functionCleanupArena.free();
-        
+
             diplomatReceive.free();
         }
     }
 
-    /** 
+    /**
      * Creates a new `RegionDisplayNames` from locale data and an options bag using a particular data source.
      *
      * See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/experimental/displaynames/struct.RegionDisplayNames.html#method.try_new) for more information.
      */
     static createWithProvider(provider, locale, options) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
-        
+
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
-        
+
+
         const result = wasm.icu4x_RegionDisplayNames_create_v1_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue, ...DisplayNamesOptions._fromSuppliedValue(diplomatRuntime.internalConstructor, options)._intoFFI(functionCleanupArena, {}));
-    
+
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
@@ -90,15 +91,15 @@ export class RegionDisplayNames {
             }
             return new RegionDisplayNames(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
-        
+
         finally {
             functionCleanupArena.free();
-        
+
             diplomatReceive.free();
         }
     }
 
-    /** 
+    /**
      * Returns the locale specific display name of a region.
      * Note that the function returns an empty string in case the display name for a given
      * region code is not found.
@@ -107,15 +108,15 @@ export class RegionDisplayNames {
      */
     of(region) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
-        
+
         const regionSlice = diplomatRuntime.DiplomatBuf.str8(wasm, region);
-        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
-        
+
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
-        
+
+
         const result = wasm.icu4x_RegionDisplayNames_of_mv1(diplomatReceive.buffer, this.ffiValue, ...regionSlice.splat(), write.buffer);
-    
+
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new LocaleParseError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
@@ -123,12 +124,11 @@ export class RegionDisplayNames {
             }
             return write.readString8();
         }
-        
+
         finally {
             functionCleanupArena.free();
-        
+
             diplomatReceive.free();
-        
             write.free();
         }
     }

@@ -508,7 +508,7 @@ pub mod ffi {
             zone: &TimeZoneInfo,
             write: &mut diplomat_runtime::DiplomatWrite,
         ) -> Result<(), DateTimeWriteError> {
-            let mut input = icu_datetime::DateTimeInputUnchecked::default();
+            let mut input = icu_datetime::unchecked::DateTimeInputUnchecked::default();
             input.set_time_fields(time.0);
             input.set_time_zone_id(zone.id);
             if let Some(offset) = zone.offset {
@@ -516,6 +516,9 @@ pub mod ffi {
             }
             if let Some(zone_name_timestamp) = zone.zone_name_timestamp {
                 input.set_time_zone_name_timestamp(zone_name_timestamp);
+            }
+            else {
+                input.set_time_zone_name_timestamp(icu_time::zone::ZoneNameTimestamp::far_in_future())
             }
             if let Some(variant) = zone.variant {
                 input.set_time_zone_variant(variant);

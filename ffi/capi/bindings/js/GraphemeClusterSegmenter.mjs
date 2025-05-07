@@ -6,7 +6,7 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
-/** 
+/**
  * An ICU4X grapheme-cluster-break segmenter, capable of finding grapheme cluster breakpoints
  * in strings.
  *
@@ -17,59 +17,61 @@ const GraphemeClusterSegmenter_box_destroy_registry = new FinalizationRegistry((
 });
 
 export class GraphemeClusterSegmenter {
-    
     // Internal ptr reference:
     #ptr = null;
 
     // Lifetimes are only to keep dependencies alive.
     // Since JS won't garbage collect until there are no incoming edges.
     #selfEdge = [];
-    
+
     #internalConstructor(symbol, ptr, selfEdge) {
         if (symbol !== diplomatRuntime.internalConstructor) {
             console.error("GraphemeClusterSegmenter is an Opaque type. You cannot call its constructor.");
             return;
         }
-        
         this.#ptr = ptr;
         this.#selfEdge = selfEdge;
-        
+
         // Are we being borrowed? If not, we can register.
         if (this.#selfEdge.length === 0) {
             GraphemeClusterSegmenter_box_destroy_registry.register(this, this.#ptr);
         }
-        
+
         return this;
     }
     get ffiValue() {
         return this.#ptr;
     }
 
-    /** 
+
+    /**
      * Construct an [`GraphemeClusterSegmenter`] using compiled data.
      *
      * See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/segmenter/struct.GraphemeClusterSegmenter.html#method.new) for more information.
      */
     #defaultConstructor() {
+
         const result = wasm.icu4x_GraphemeClusterSegmenter_create_mv1();
-    
+
         try {
             return new GraphemeClusterSegmenter(diplomatRuntime.internalConstructor, result, []);
         }
-        
-        finally {}
+
+        finally {
+        }
     }
 
-    /** 
+    /**
      * Construct an [`GraphemeClusterSegmenter`].
      *
      * See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/segmenter/struct.GraphemeClusterSegmenter.html#method.new) for more information.
      */
     static createWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
-        
+
+
         const result = wasm.icu4x_GraphemeClusterSegmenter_create_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue);
-    
+
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
@@ -77,13 +79,13 @@ export class GraphemeClusterSegmenter {
             }
             return new GraphemeClusterSegmenter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
-        
+
         finally {
             diplomatReceive.free();
         }
     }
 
-    /** 
+    /**
      * Segments a string.
      *
      * Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
@@ -94,18 +96,19 @@ export class GraphemeClusterSegmenter {
     segment(input) {
         let functionGarbageCollectorGrip = new diplomatRuntime.GarbageCollectorGrip();
         const inputSlice = diplomatRuntime.DiplomatBuf.str16(wasm, input);
-        
         // This lifetime edge depends on lifetimes 'a
         let aEdges = [this, inputSlice];
-        
+
+
         const result = wasm.icu4x_GraphemeClusterSegmenter_segment_utf16_mv1(this.ffiValue, ...inputSlice.splat());
-    
+
         try {
             return new GraphemeClusterBreakIteratorUtf16(diplomatRuntime.internalConstructor, result, [], aEdges);
         }
-        
+
         finally {
             functionGarbageCollectorGrip.releaseToGarbageCollector();
+
         }
     }
 

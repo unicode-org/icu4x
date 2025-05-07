@@ -19,5 +19,4 @@
 
 
 
-
 #endif // LineBreakStrictness_H

@@ -72,6 +72,7 @@ final class WeekInformation implements ffi.Finalizable {
     final result = _icu4x_WeekInformation_weekend_mv1(_ffi);
     return WeekdaySetIterator._fromFfi(result, []);
   }
+
 }
 
 @_DiplomatFfiUse('icu4x_WeekInformation_destroy_mv1')

@@ -8,6 +8,7 @@
 #include <memory>
 #include <functional>
 #include <optional>
+#include <cstdlib>
 #include "../diplomat_runtime.hpp"
 
 
@@ -24,7 +25,7 @@ namespace capi {
       DataError_Custom = 7,
       DataError_Io = 8,
     };
-    
+
     typedef struct DataError_option {union { DataError ok; }; bool is_ok; } DataError_option;
 } // namespace capi
 } // namespace

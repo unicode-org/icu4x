@@ -3,13 +3,12 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
-/** 
+/**
  * See the [Rust documentation for `BidiPairedBracketType`](https://docs.rs/icu/latest/icu/properties/props/enum.BidiPairedBracketType.html) for more information.
  */
 
 
 export class BidiPairedBracketType {
-    
     #value = undefined;
 
     static #values = new Map([
@@ -21,7 +20,7 @@ export class BidiPairedBracketType {
     static getAllEntries() {
         return BidiPairedBracketType.#values.entries();
     }
-    
+
     #internalConstructor(value) {
         if (arguments.length > 1 && arguments[0] === diplomatRuntime.internalConstructor) {
             // We pass in two internalConstructor arguments to create *new*
@@ -51,11 +50,11 @@ export class BidiPairedBracketType {
         return new BidiPairedBracketType(value);
     }
 
-    get value() {
+    get value(){
         return [...BidiPairedBracketType.#values.keys()][this.#value];
     }
 
-    get ffiValue() {
+    get ffiValue(){
         return this.#value;
     }
     static #objectValues = [
@@ -67,6 +66,7 @@ export class BidiPairedBracketType {
     static Open = BidiPairedBracketType.#objectValues[0];
     static Close = BidiPairedBracketType.#objectValues[1];
     static None = BidiPairedBracketType.#objectValues[2];
+
 
     constructor(value) {
         return this.#internalConstructor(...arguments)

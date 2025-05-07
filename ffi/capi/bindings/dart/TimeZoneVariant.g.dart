@@ -4,6 +4,7 @@
 part of 'lib.g.dart';
 
 enum TimeZoneVariant {
+
   standard,
 
   daylight;
@@ -19,6 +20,7 @@ enum TimeZoneVariant {
     final result = _icu4x_TimeZoneVariant_from_rearguard_isdst_mv1(index, isdst);
     return TimeZoneVariant.values[result];
   }
+
 }
 
 @_DiplomatFfiUse('icu4x_TimeZoneVariant_from_rearguard_isdst_mv1')

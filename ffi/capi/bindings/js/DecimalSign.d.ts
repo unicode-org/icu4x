@@ -2,7 +2,7 @@
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
-/** 
+/**
  * The sign of a Decimal, as shown in formatting.
  *
  * See the [Rust documentation for `Sign`](https://docs.rs/fixed_decimal/latest/fixed_decimal/enum.Sign.html) for more information.
@@ -10,17 +10,17 @@ import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
 export class DecimalSign {
-    
 
-    static fromValue(value : DecimalSign | string) : DecimalSign; 
+    static fromValue(value: DecimalSign | string): DecimalSign;
 
-    get value() : string;
+    get value(): string;
 
-    get ffiValue() : number;
+    get ffiValue(): number;
 
     static None : DecimalSign;
     static Negative : DecimalSign;
     static Positive : DecimalSign;
+
 
     constructor(value: DecimalSign | string );
 }

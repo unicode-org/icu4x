@@ -5,6 +5,7 @@ part of 'lib.g.dart';
 
 /// See the [Rust documentation for `PluralCategory`](https://docs.rs/icu/latest/icu/plurals/enum.PluralCategory.html) for more information.
 enum PluralCategory {
+
   zero,
 
   one,
@@ -31,6 +32,7 @@ enum PluralCategory {
     }
     return PluralCategory.values[result.union.ok];
   }
+
 }
 
 @_DiplomatFfiUse('icu4x_PluralCategory_get_for_cldr_string_mv1')

@@ -8,6 +8,7 @@
 #include <memory>
 #include <functional>
 #include <optional>
+#include <cstdlib>
 #include "../diplomat_runtime.hpp"
 
 
@@ -17,7 +18,7 @@ namespace capi {
       LocaleFallbackPriority_Language = 0,
       LocaleFallbackPriority_Region = 1,
     };
-    
+
     typedef struct LocaleFallbackPriority_option {union { LocaleFallbackPriority ok; }; bool is_ok; } LocaleFallbackPriority_option;
 } // namespace capi
 } // namespace

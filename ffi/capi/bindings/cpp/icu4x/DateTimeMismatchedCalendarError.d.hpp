@@ -8,6 +8,7 @@
 #include <memory>
 #include <functional>
 #include <optional>
+#include <cstdlib>
 #include "../diplomat_runtime.hpp"
 #include "CalendarKind.d.hpp"
 
@@ -22,7 +23,7 @@ namespace capi {
       icu4x::capi::CalendarKind this_kind;
       icu4x::capi::CalendarKind_option date_kind;
     };
-    
+
     typedef struct DateTimeMismatchedCalendarError_option {union { DateTimeMismatchedCalendarError ok; }; bool is_ok; } DateTimeMismatchedCalendarError_option;
 } // namespace capi
 } // namespace

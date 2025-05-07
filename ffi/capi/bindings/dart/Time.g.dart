@@ -42,23 +42,36 @@ final class Time implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `try_from_str`](https://docs.rs/icu/latest/icu/time/struct.Time.html#method.try_from_str) for more information.
   ///
-  /// Throws [CalendarParseError] on failure.
+  /// Throws [Rfc9557ParseError] on failure.
   factory Time.fromString(String v) {
     final temp = _FinalizedArena();
     final result = _icu4x_Time_from_string_mv1(v._utf8AllocIn(temp.arena));
     if (!result.isOk) {
-      throw CalendarParseError.values[result.union.err];
+      throw Rfc9557ParseError.values[result.union.err];
     }
     return Time._fromFfi(result.union.ok, []);
   }
 
-  /// Creates a new [`Time`] representing midnight (00:00.000).
+  /// Creates a new [`Time`] representing the start of the day (00:00:00.000).
   ///
   /// See the [Rust documentation for `start_of_day`](https://docs.rs/icu/latest/icu/time/struct.Time.html#method.start_of_day) for more information.
   ///
   /// Throws [CalendarError] on failure.
   factory Time.startOfDay() {
     final result = _icu4x_Time_start_of_day_mv1();
+    if (!result.isOk) {
+      throw CalendarError.values[result.union.err];
+    }
+    return Time._fromFfi(result.union.ok, []);
+  }
+
+  /// Creates a new [`Time`] representing noon (12:00:00.000).
+  ///
+  /// See the [Rust documentation for `noon`](https://docs.rs/icu/latest/icu/time/struct.Time.html#method.noon) for more information.
+  ///
+  /// Throws [CalendarError] on failure.
+  factory Time.noon() {
+    final result = _icu4x_Time_noon_mv1();
     if (!result.isOk) {
       throw CalendarError.values[result.union.err];
     }
@@ -96,6 +109,7 @@ final class Time implements ffi.Finalizable {
     final result = _icu4x_Time_subsecond_mv1(_ffi);
     return result;
   }
+
 }
 
 @_DiplomatFfiUse('icu4x_Time_destroy_mv1')
@@ -117,6 +131,11 @@ external _ResultOpaqueInt32 _icu4x_Time_from_string_mv1(_SliceUtf8 v);
 @ffi.Native<_ResultOpaqueInt32 Function()>(isLeaf: true, symbol: 'icu4x_Time_start_of_day_mv1')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_Time_start_of_day_mv1();
+
+@_DiplomatFfiUse('icu4x_Time_noon_mv1')
+@ffi.Native<_ResultOpaqueInt32 Function()>(isLeaf: true, symbol: 'icu4x_Time_noon_mv1')
+// ignore: non_constant_identifier_names
+external _ResultOpaqueInt32 _icu4x_Time_noon_mv1();
 
 @_DiplomatFfiUse('icu4x_Time_hour_mv1')
 @ffi.Native<ffi.Uint8 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_Time_hour_mv1')

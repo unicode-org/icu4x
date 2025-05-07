@@ -4,6 +4,7 @@
 part of 'lib.g.dart';
 
 enum Weekday {
+
   monday,
 
   tuesday,
@@ -36,6 +37,7 @@ enum Weekday {
         return 7;
     }
   }
+
 }
 
 // dart format on

@@ -25,7 +25,6 @@ icu4x_CanonicalDecomposition_create_with_provider_mv1_result icu4x_CanonicalDeco
 
 Decomposed icu4x_CanonicalDecomposition_decompose_mv1(const CanonicalDecomposition* self, char32_t c);
 
-
 void icu4x_CanonicalDecomposition_destroy_mv1(CanonicalDecomposition* self);
 
 

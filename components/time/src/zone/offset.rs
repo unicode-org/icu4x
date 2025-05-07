@@ -4,7 +4,7 @@
 
 use core::str::FromStr;
 
-use crate::provider::{EighthsOfHourOffset, TimezoneVariantsOffsetsV1};
+use crate::provider::TimezoneVariantsOffsetsV1;
 use crate::TimeZone;
 use icu_provider::prelude::*;
 
@@ -36,25 +36,6 @@ impl UtcOffset {
         } else {
             Ok(Self(seconds))
         }
-    }
-
-    /// Creates a [`UtcOffset`] from eighths of an hour.
-    ///
-    /// This is chosen because eighths of an hour cover all current time zones
-    /// and all values of i8 are within range of this type.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use icu::time::zone::UtcOffset;
-    ///
-    /// assert_eq!(
-    ///     UtcOffset::try_from_str("-0600").unwrap(),
-    ///     UtcOffset::from_eighths_of_hour(-6 * 8),
-    /// );
-    /// ```
-    pub const fn from_eighths_of_hour(eighths_of_hour: i8) -> Self {
-        Self(eighths_of_hour as i32 * 450)
     }
 
     /// Creates a [`UtcOffset`] of zero.
@@ -152,11 +133,6 @@ impl UtcOffset {
         self.0
     }
 
-    /// Returns the raw offset value in eights of an hour (7.5 minute units).
-    pub fn to_eighths_of_hour(self) -> i8 {
-        (self.0 / 450) as i8
-    }
-
     /// Whether the [`UtcOffset`] is non-negative.
     pub fn is_non_negative(self) -> bool {
         self.0 >= 0
@@ -203,8 +179,7 @@ pub struct VariantOffsetsCalculator {
 /// The borrowed version of a  [`VariantOffsetsCalculator`]
 #[derive(Debug)]
 pub struct VariantOffsetsCalculatorBorrowed<'a> {
-    pub(super) offset_period:
-        &'a ZeroMap2d<'a, TimeZone, ZoneNameTimestamp, (EighthsOfHourOffset, EighthsOfHourOffset)>,
+    pub(super) offset_period: &'a ZeroMap2d<'a, TimeZone, ZoneNameTimestamp, VariantOffsets>,
 }
 
 #[cfg(feature = "compiled_data")]
@@ -242,10 +217,8 @@ impl VariantOffsetsCalculator {
     pub fn try_new_unstable(
         provider: &(impl DataProvider<TimezoneVariantsOffsetsV1> + ?Sized),
     ) -> Result<Self, DataError> {
-        let metazone_period = provider.load(Default::default())?.payload;
-        Ok(Self {
-            offset_period: metazone_period,
-        })
+        let offset_period = provider.load(Default::default())?.payload;
+        Ok(Self { offset_period })
     }
 
     /// Returns a borrowed version of the calculator that can be queried.
@@ -290,21 +263,24 @@ impl VariantOffsetsCalculatorBorrowed<'_> {
     ///
     /// ```
     /// use icu::calendar::Date;
+    /// use icu::locale::subtags::subtag;
     /// use icu::time::zone::UtcOffset;
     /// use icu::time::zone::VariantOffsetsCalculator;
     /// use icu::time::zone::ZoneNameTimestamp;
     /// use icu::time::DateTime;
     /// use icu::time::Time;
     /// use icu::time::TimeZone;
-    /// use icu::locale::subtags::subtag;
     ///
     /// let zoc = VariantOffsetsCalculator::new();
     ///
     /// // America/Denver observes DST
     /// let offsets = zoc
-    ///     .compute_offsets_from_time_zone(
+    ///     .compute_offsets_from_time_zone_and_name_timestamp(
     ///         TimeZone(subtag!("usden")),
-    ///         ZoneNameTimestamp::from_date_time_iso(DateTime { date: Date::try_new_iso(2024, 1, 1).unwrap(), time: Time::start_of_day() }),
+    ///         ZoneNameTimestamp::from_date_time_iso(DateTime {
+    ///             date: Date::try_new_iso(2024, 1, 1).unwrap(),
+    ///             time: Time::start_of_day(),
+    ///         }),
     ///     )
     ///     .unwrap();
     /// assert_eq!(
@@ -318,9 +294,12 @@ impl VariantOffsetsCalculatorBorrowed<'_> {
     ///
     /// // America/Phoenix does not
     /// let offsets = zoc
-    ///     .compute_offsets_from_time_zone(
+    ///     .compute_offsets_from_time_zone_and_name_timestamp(
     ///         TimeZone(subtag!("usphx")),
-    ///         ZoneNameTimestamp::from_date_time_iso(DateTime { date: Date::try_new_iso(2024, 1, 1).unwrap(), time: Time::start_of_day() }),
+    ///         ZoneNameTimestamp::from_date_time_iso(DateTime {
+    ///             date: Date::try_new_iso(2024, 1, 1).unwrap(),
+    ///             time: Time::start_of_day(),
+    ///         }),
     ///     )
     ///     .unwrap();
     /// assert_eq!(
@@ -329,7 +308,7 @@ impl VariantOffsetsCalculatorBorrowed<'_> {
     /// );
     /// assert_eq!(offsets.daylight, None);
     /// ```
-    pub fn compute_offsets_from_time_zone(
+    pub fn compute_offsets_from_time_zone_and_name_timestamp(
         &self,
         time_zone_id: TimeZone,
         zone_name_timestamp: ZoneNameTimestamp,
@@ -348,12 +327,7 @@ impl VariantOffsetsCalculatorBorrowed<'_> {
                         break;
                     }
                 }
-                let offsets = offsets?;
-                Some(VariantOffsets {
-                    standard: UtcOffset::from_eighths_of_hour(offsets.0),
-                    daylight: (offsets.1 != 0)
-                        .then_some(UtcOffset::from_eighths_of_hour(offsets.0 + offsets.1)),
-                })
+                Some(offsets?)
             }
             None => None,
         }
@@ -368,4 +342,14 @@ pub struct VariantOffsets {
     pub standard: UtcOffset,
     /// The daylight-saving offset, if used.
     pub daylight: Option<UtcOffset>,
+}
+
+impl VariantOffsets {
+    /// Creates a new [`VariantOffsets`] from a [`UtcOffset`] representing standard time.
+    pub fn from_standard(standard: UtcOffset) -> Self {
+        Self {
+            standard,
+            daylight: None,
+        }
+    }
 }

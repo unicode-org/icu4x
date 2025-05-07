@@ -2,7 +2,7 @@
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
-/** 
+/**
  * Thin wrapper around a vector that maps visual indices to source indices
  *
  * `map[visualIndex] = sourceIndex`
@@ -12,25 +12,25 @@ import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
 export class ReorderedIndexMap {
-    
     get ffiValue(): pointer;
 
-    /** 
+
+    /**
      * Get this as a slice/array of indices
      */
     get asSlice(): Array<number>;
 
-    /** 
+    /**
      * The length of this map
      */
     get length(): number;
 
-    /** 
+    /**
      * Whether this map is empty
      */
     get isEmpty(): boolean;
 
-    /** 
+    /**
      * Get element at `index`. Returns 0 when out of bounds
      * (note that 0 is also a valid in-bounds value, please use `len()`
      * to avoid out-of-bounds)

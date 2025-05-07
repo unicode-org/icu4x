@@ -10,27 +10,27 @@
 #include <memory>
 #include <functional>
 #include <optional>
+#include <cstdlib>
 #include "../diplomat_runtime.hpp"
 
 
 namespace icu4x {
 namespace capi {
     extern "C" {
-    
+
     icu4x::capi::JoiningType icu4x_JoiningType_for_char_mv1(char32_t ch);
-    
+
     typedef struct icu4x_JoiningType_long_name_mv1_result {union {diplomat::capi::DiplomatStringView ok; }; bool is_ok;} icu4x_JoiningType_long_name_mv1_result;
     icu4x_JoiningType_long_name_mv1_result icu4x_JoiningType_long_name_mv1(icu4x::capi::JoiningType self);
-    
+
     typedef struct icu4x_JoiningType_short_name_mv1_result {union {diplomat::capi::DiplomatStringView ok; }; bool is_ok;} icu4x_JoiningType_short_name_mv1_result;
     icu4x_JoiningType_short_name_mv1_result icu4x_JoiningType_short_name_mv1(icu4x::capi::JoiningType self);
-    
+
     uint8_t icu4x_JoiningType_to_integer_value_mv1(icu4x::capi::JoiningType self);
-    
+
     typedef struct icu4x_JoiningType_from_integer_value_mv1_result {union {icu4x::capi::JoiningType ok; }; bool is_ok;} icu4x_JoiningType_from_integer_value_mv1_result;
     icu4x_JoiningType_from_integer_value_mv1_result icu4x_JoiningType_from_integer_value_mv1(uint8_t other);
-    
-    
+
     } // extern "C"
 } // namespace capi
 } // namespace
@@ -49,7 +49,7 @@ inline icu4x::JoiningType icu4x::JoiningType::FromFFI(icu4x::capi::JoiningType c
     case icu4x::capi::JoiningType_Transparent:
       return static_cast<icu4x::JoiningType::Value>(c_enum);
     default:
-      abort();
+      std::abort();
   }
 }
 

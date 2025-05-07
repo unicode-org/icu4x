@@ -8,6 +8,7 @@
 #include <memory>
 #include <functional>
 #include <optional>
+#include <cstdlib>
 #include "../diplomat_runtime.hpp"
 
 
@@ -17,7 +18,7 @@ namespace capi {
       TransformResult_Modified = 0,
       TransformResult_Unmodified = 1,
     };
-    
+
     typedef struct TransformResult_option {union { TransformResult ok; }; bool is_ok; } TransformResult_option;
 } // namespace capi
 } // namespace

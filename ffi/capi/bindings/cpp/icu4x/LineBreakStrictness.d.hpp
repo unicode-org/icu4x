@@ -8,6 +8,7 @@
 #include <memory>
 #include <functional>
 #include <optional>
+#include <cstdlib>
 #include "../diplomat_runtime.hpp"
 
 
@@ -19,7 +20,7 @@ namespace capi {
       LineBreakStrictness_Strict = 2,
       LineBreakStrictness_Anywhere = 3,
     };
-    
+
     typedef struct LineBreakStrictness_option {union { LineBreakStrictness ok; }; bool is_ok; } LineBreakStrictness_option;
 } // namespace capi
 } // namespace

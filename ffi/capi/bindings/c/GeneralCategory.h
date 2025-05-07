@@ -35,5 +35,4 @@ icu4x_GeneralCategory_from_integer_value_mv1_result icu4x_GeneralCategory_from_i
 
 
 
-
 #endif // GeneralCategory_H

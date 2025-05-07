@@ -225,6 +225,7 @@ pub const EXTRA_ZIP_DEPS: &[&str] = &[
     "serde-spanned",
     "serde-value",
     "simd-adler32",
+    "typed-arena",
     "zip",
     "zopfli",
 ];

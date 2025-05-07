@@ -158,23 +158,14 @@ pub mod models {
 /// See the docs on [`zone`](crate::zone) for more information.
 ///
 /// ```
-/// use icu::time::zone::{IanaParser, TimeZone};
 /// use icu::locale::subtags::subtag;
+/// use icu::time::zone::{IanaParser, TimeZone};
 ///
 /// let parser = IanaParser::new();
 /// assert_eq!(parser.parse("Europe/Oslo"), TimeZone(subtag!("noosl")));
-/// assert_eq!(
-///     parser.parse("Europe/Berlin"),
-///     TimeZone(subtag!("deber"))
-/// );
-/// assert_eq!(
-///     parser.parse("Europe/Belfast"),
-///     TimeZone(subtag!("gblon"))
-/// );
-/// assert_eq!(
-///     parser.parse("Europe/London"),
-///     TimeZone(subtag!("gblon"))
-/// );
+/// assert_eq!(parser.parse("Europe/Berlin"), TimeZone(subtag!("deber")));
+/// assert_eq!(parser.parse("Europe/Belfast"), TimeZone(subtag!("gblon")));
+/// assert_eq!(parser.parse("Europe/London"), TimeZone(subtag!("gblon")));
 /// ```
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, Eq, Ord, PartialEq, PartialOrd, yoke::Yokeable, ULE, Hash)]
@@ -189,8 +180,11 @@ impl TimeZone {
     ///
     /// This is the result of parsing unknown zones. It's important that such parsing does not
     /// fail, as new zones are added all the time, and ICU4X might not be up to date.
-    pub const fn unknown() -> Self {
-        Self(subtag!("unk"))
+    pub const UNKNOWN: Self = Self(subtag!("unk"));
+
+    /// Whether this [`TimeZone`] equals [`TimeZone::UNKNOWN`].
+    pub const fn is_unknown(self) -> bool {
+        matches!(self, Self::UNKNOWN)
     }
 }
 
@@ -266,12 +260,12 @@ impl<'a> zerovec::maps::ZeroMapKV<'a> for TimeZone {
 ///
 /// ```
 /// use icu::calendar::Date;
+/// use icu::locale::subtags::subtag;
 /// use icu::time::zone::IanaParser;
 /// use icu::time::zone::TimeZoneVariant;
 /// use icu::time::DateTime;
 /// use icu::time::Time;
 /// use icu::time::TimeZone;
-/// use icu::locale::subtags::subtag;
 ///
 /// // Parse the IANA ID
 /// let id = IanaParser::new().parse("America/Chicago");
@@ -283,8 +277,10 @@ impl<'a> zerovec::maps::ZeroMapKV<'a> for TimeZone {
 /// let time_zone = id.with_offset("-0600".parse().ok());
 ///
 /// // Extend to a TimeZoneInfo<AtTime> by adding a local time
-/// let time_zone_at_time = time_zone
-///     .at_date_time_iso(DateTime { date: Date::try_new_iso(2023, 12, 2).unwrap(), time: Time::start_of_day() });
+/// let time_zone_at_time = time_zone.at_date_time_iso(DateTime {
+///     date: Date::try_new_iso(2023, 12, 2).unwrap(),
+///     time: Time::start_of_day(),
+/// });
 ///
 /// // Extend to a TimeZoneInfo<Full> by adding a zone variant
 /// let time_zone_with_variant =
@@ -368,7 +364,7 @@ impl TimeZone {
 impl TimeZoneInfo<models::Base> {
     /// Creates a time zone info with no information.
     pub const fn unknown() -> Self {
-        TimeZone::unknown().with_offset(None)
+        TimeZone::UNKNOWN.with_offset(None)
     }
 
     /// Creates a new [`TimeZoneInfo`] for the UTC time zone.
@@ -411,22 +407,25 @@ impl TimeZoneInfo<models::AtTime> {
     /// If `offset()` is `None`, or if it doesn't match either of the
     /// timezone's standard or daylight offset around `local_time()`,
     /// the variant will be set to [`TimeZoneVariant::Standard`] and the time zone
-    /// to [`TimeZone::unknown()`].
+    /// to [`TimeZone::UNKNOWN`].
     ///
     /// # Example
     /// ```
     /// use icu::calendar::Date;
+    /// use icu::locale::subtags::subtag;
+    /// use icu::time::zone::TimeZoneVariant;
+    /// use icu::time::zone::VariantOffsetsCalculator;
     /// use icu::time::DateTime;
     /// use icu::time::Time;
     /// use icu::time::TimeZone;
-    /// use icu::time::zone::TimeZoneVariant;
-    /// use icu::time::zone::VariantOffsetsCalculator;
-    /// use icu::locale::subtags::subtag;
     ///
     /// // Chicago at UTC-6
     /// let info = TimeZone(subtag!("uschi"))
     ///     .with_offset("-0600".parse().ok())
-    ///     .at_date_time_iso(DateTime { date: Date::try_new_iso(2023, 12, 2).unwrap(), time: Time::start_of_day() })
+    ///     .at_date_time_iso(DateTime {
+    ///         date: Date::try_new_iso(2023, 12, 2).unwrap(),
+    ///         time: Time::start_of_day(),
+    ///     })
     ///     .infer_variant(VariantOffsetsCalculator::new());
     ///
     /// assert_eq!(info.variant(), TimeZoneVariant::Standard);
@@ -434,7 +433,10 @@ impl TimeZoneInfo<models::AtTime> {
     /// // Chicago at at UTC-5
     /// let info = TimeZone(subtag!("uschi"))
     ///     .with_offset("-0500".parse().ok())
-    ///     .at_date_time_iso(DateTime { date: Date::try_new_iso(2023, 6, 2).unwrap(), time: Time::start_of_day() })
+    ///     .at_date_time_iso(DateTime {
+    ///         date: Date::try_new_iso(2023, 6, 2).unwrap(),
+    ///         time: Time::start_of_day(),
+    ///     })
     ///     .infer_variant(VariantOffsetsCalculator::new());
     ///
     /// assert_eq!(info.variant(), TimeZoneVariant::Daylight);
@@ -442,11 +444,14 @@ impl TimeZoneInfo<models::AtTime> {
     /// // Chicago at UTC-7
     /// let info = TimeZone(subtag!("uschi"))
     ///     .with_offset("-0700".parse().ok())
-    ///     .at_date_time_iso(DateTime { date: Date::try_new_iso(2023, 12, 2).unwrap(), time: Time::start_of_day() })
+    ///     .at_date_time_iso(DateTime {
+    ///         date: Date::try_new_iso(2023, 12, 2).unwrap(),
+    ///         time: Time::start_of_day(),
+    ///     })
     ///     .infer_variant(VariantOffsetsCalculator::new());
     ///
     /// // Whatever it is, it's not Chicago
-    /// assert_eq!(info.id(), TimeZone::unknown());
+    /// assert_eq!(info.id(), TimeZone::UNKNOWN);
     /// assert_eq!(info.variant(), TimeZoneVariant::Standard);
     /// ```
     pub fn infer_variant(
@@ -454,13 +459,13 @@ impl TimeZoneInfo<models::AtTime> {
         calculator: VariantOffsetsCalculatorBorrowed,
     ) -> TimeZoneInfo<models::Full> {
         let Some(offset) = self.offset else {
-            return TimeZone::unknown()
+            return TimeZone::UNKNOWN
                 .with_offset(self.offset)
                 .with_zone_name_timestamp(self.zone_name_timestamp)
                 .with_variant(TimeZoneVariant::Standard);
         };
         let Some(variant) = calculator
-            .compute_offsets_from_time_zone(self.id, self.zone_name_timestamp)
+            .compute_offsets_from_time_zone_and_name_timestamp(self.id, self.zone_name_timestamp)
             .and_then(|os| {
                 if os.standard == offset {
                     Some(TimeZoneVariant::Standard)
@@ -471,7 +476,7 @@ impl TimeZoneInfo<models::AtTime> {
                 }
             })
         else {
-            return TimeZone::unknown()
+            return TimeZone::UNKNOWN
                 .with_offset(self.offset)
                 .with_zone_name_timestamp(self.zone_name_timestamp)
                 .with_variant(TimeZoneVariant::Standard);

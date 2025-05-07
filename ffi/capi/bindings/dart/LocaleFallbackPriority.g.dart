@@ -7,9 +7,11 @@ part of 'lib.g.dart';
 ///
 /// See the [Rust documentation for `LocaleFallbackPriority`](https://docs.rs/icu/latest/icu/locale/fallback/enum.LocaleFallbackPriority.html) for more information.
 enum LocaleFallbackPriority {
+
   language,
 
   region;
+
 }
 
 // dart format on

@@ -7,13 +7,10 @@ part of 'lib.g.dart';
 enum VerticalOrientation {
   /// See the [Rust documentation for `Rotated`](https://docs.rs/icu/latest/icu/properties/props/enum.VerticalOrientaiton.html#variant.Rotated) for more information.
   rotated,
-
   /// See the [Rust documentation for `TransformedRotated`](https://docs.rs/icu/latest/icu/properties/props/enum.VerticalOrientaiton.html#variant.TransformedRotated) for more information.
   transformedRotated,
-
   /// See the [Rust documentation for `TransformedUpright`](https://docs.rs/icu/latest/icu/properties/props/enum.VerticalOrientaiton.html#variant.TransformedUpright) for more information.
   transformedUpright,
-
   /// See the [Rust documentation for `Upright`](https://docs.rs/icu/latest/icu/properties/props/enum.VerticalOrientaiton.html#variant.Upright) for more information.
   upright;
 
@@ -63,6 +60,7 @@ enum VerticalOrientation {
     }
     return VerticalOrientation.values[result.union.ok];
   }
+
 }
 
 @_DiplomatFfiUse('icu4x_VerticalOrientation_for_char_mv1')

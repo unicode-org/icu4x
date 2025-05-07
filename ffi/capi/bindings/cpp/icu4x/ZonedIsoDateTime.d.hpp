@@ -8,6 +8,7 @@
 #include <memory>
 #include <functional>
 #include <optional>
+#include <cstdlib>
 #include "../diplomat_runtime.hpp"
 
 namespace icu4x {
@@ -24,7 +25,7 @@ class UtcOffset;
 namespace capi { struct VariantOffsetsCalculator; }
 class VariantOffsetsCalculator;
 struct ZonedIsoDateTime;
-class CalendarParseError;
+class Rfc9557ParseError;
 }
 
 
@@ -35,7 +36,7 @@ namespace capi {
       icu4x::capi::Time* time;
       icu4x::capi::TimeZoneInfo* zone;
     };
-    
+
     typedef struct ZonedIsoDateTime_option {union { ZonedIsoDateTime ok; }; bool is_ok; } ZonedIsoDateTime_option;
 } // namespace capi
 } // namespace
@@ -57,7 +58,7 @@ struct ZonedIsoDateTime {
    *
    * See the [Rust documentation for `try_full_from_str`](https://docs.rs/icu/latest/icu/time/struct.ZonedDateTime.html#method.try_full_from_str) for more information.
    */
-  inline static diplomat::result<icu4x::ZonedIsoDateTime, icu4x::CalendarParseError> full_from_string(std::string_view v, const icu4x::IanaParser& iana_parser, const icu4x::VariantOffsetsCalculator& offset_calculator);
+  inline static diplomat::result<icu4x::ZonedIsoDateTime, icu4x::Rfc9557ParseError> full_from_string(std::string_view v, const icu4x::IanaParser& iana_parser, const icu4x::VariantOffsetsCalculator& offset_calculator);
 
   /**
    * Creates a new [`ZonedIsoDateTime`] from milliseconds since epoch (timestamp) and a UTC offset.

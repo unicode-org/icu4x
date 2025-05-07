@@ -187,7 +187,7 @@ pub mod ffi {
             zone: &TimeZoneInfo,
             write: &mut diplomat_runtime::DiplomatWrite,
         ) -> Result<(), DateTimeWriteError> {
-            let mut input = icu_datetime::DateTimeInputUnchecked::default();
+            let mut input = icu_datetime::unchecked::DateTimeInputUnchecked::default();
             {%- if flavor.has_date() %}
             {%- if formatter_kind.is_fixed_calendar %}
             let date_in_calendar = date.0.to_calendar(Gregorian);
@@ -212,6 +212,17 @@ pub mod ffi {
                     date: date.0,
                     time: time.0
                 }))
+            }
+            {%- else if flavor.has_date() %}
+            else {
+                input.set_time_zone_name_timestamp(icu_time::zone::ZoneNameTimestamp::from_date_time_iso(icu_time::DateTime {
+                    date: date.0,
+                    time: icu_time::Time::noon()
+                }))
+            }
+            {%- else %}
+            else {
+                input.set_time_zone_name_timestamp(icu_time::zone::ZoneNameTimestamp::far_in_future())
             }
             {%- endif %}
             if let Some(variant) = zone.variant {

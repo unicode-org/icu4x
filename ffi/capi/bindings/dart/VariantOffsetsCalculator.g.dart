@@ -44,14 +44,15 @@ final class VariantOffsetsCalculator implements ffi.Finalizable {
     return VariantOffsetsCalculator._fromFfi(result.union.ok, []);
   }
 
-  /// See the [Rust documentation for `compute_offsets_from_time_zone`](https://docs.rs/icu/latest/icu/time/zone/struct.VariantOffsetsCalculatorBorrowed.html#method.compute_offsets_from_time_zone) for more information.
-  VariantOffsets? computeOffsetsFromTimeZone(TimeZone timeZone, IsoDate localDate, Time localTime) {
-    final result = _icu4x_VariantOffsetsCalculator_compute_offsets_from_time_zone_mv1(_ffi, timeZone._ffi, localDate._ffi, localTime._ffi);
+  /// See the [Rust documentation for `compute_offsets_from_time_zone_and_name_timestamp`](https://docs.rs/icu/latest/icu/time/zone/struct.VariantOffsetsCalculatorBorrowed.html#method.compute_offsets_from_time_zone_and_name_timestamp) for more information.
+  VariantOffsets? computeOffsetsFromTimeZoneAndDateTime(TimeZone timeZone, IsoDate localDate, Time localTime) {
+    final result = _icu4x_VariantOffsetsCalculator_compute_offsets_from_time_zone_and_date_time_mv1(_ffi, timeZone._ffi, localDate._ffi, localTime._ffi);
     if (!result.isOk) {
       return null;
     }
     return VariantOffsets._fromFfi(result.union.ok);
   }
+
 }
 
 @_DiplomatFfiUse('icu4x_VariantOffsetsCalculator_destroy_mv1')
@@ -69,9 +70,9 @@ external ffi.Pointer<ffi.Opaque> _icu4x_VariantOffsetsCalculator_create_mv1();
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_VariantOffsetsCalculator_create_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider);
 
-@_DiplomatFfiUse('icu4x_VariantOffsetsCalculator_compute_offsets_from_time_zone_mv1')
-@ffi.Native<_ResultVariantOffsetsFfiVoid Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_VariantOffsetsCalculator_compute_offsets_from_time_zone_mv1')
+@_DiplomatFfiUse('icu4x_VariantOffsetsCalculator_compute_offsets_from_time_zone_and_date_time_mv1')
+@ffi.Native<_ResultVariantOffsetsFfiVoid Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_VariantOffsetsCalculator_compute_offsets_from_time_zone_and_date_time_mv1')
 // ignore: non_constant_identifier_names
-external _ResultVariantOffsetsFfiVoid _icu4x_VariantOffsetsCalculator_compute_offsets_from_time_zone_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> timeZone, ffi.Pointer<ffi.Opaque> localDate, ffi.Pointer<ffi.Opaque> localTime);
+external _ResultVariantOffsetsFfiVoid _icu4x_VariantOffsetsCalculator_compute_offsets_from_time_zone_and_date_time_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> timeZone, ffi.Pointer<ffi.Opaque> localDate, ffi.Pointer<ffi.Opaque> localTime);
 
 // dart format on

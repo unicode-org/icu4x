@@ -8,6 +8,7 @@
 #include <memory>
 #include <functional>
 #include <optional>
+#include <cstdlib>
 #include "../diplomat_runtime.hpp"
 
 
@@ -20,7 +21,7 @@ namespace capi {
       DecimalSignDisplay_ExceptZero = 3,
       DecimalSignDisplay_Negative = 4,
     };
-    
+
     typedef struct DecimalSignDisplay_option {union { DecimalSignDisplay ok; }; bool is_ok; } DecimalSignDisplay_option;
 } // namespace capi
 } // namespace

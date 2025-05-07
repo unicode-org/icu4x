@@ -8,6 +8,7 @@
 #include <memory>
 #include <functional>
 #include <optional>
+#include <cstdlib>
 #include "../diplomat_runtime.hpp"
 
 namespace icu4x {
@@ -18,7 +19,7 @@ class Date;
 namespace capi { struct Time; }
 class Time;
 struct DateTime;
-class CalendarParseError;
+class Rfc9557ParseError;
 }
 
 
@@ -28,7 +29,7 @@ namespace capi {
       icu4x::capi::Date* date;
       icu4x::capi::Time* time;
     };
-    
+
     typedef struct DateTime_option {union { DateTime ok; }; bool is_ok; } DateTime_option;
 } // namespace capi
 } // namespace
@@ -49,7 +50,7 @@ struct DateTime {
    *
    * See the [Rust documentation for `try_from_str`](https://docs.rs/icu/latest/icu/time/struct.DateTime.html#method.try_from_str) for more information.
    */
-  inline static diplomat::result<icu4x::DateTime, icu4x::CalendarParseError> from_string(std::string_view v, const icu4x::Calendar& calendar);
+  inline static diplomat::result<icu4x::DateTime, icu4x::Rfc9557ParseError> from_string(std::string_view v, const icu4x::Calendar& calendar);
 
   inline icu4x::capi::DateTime AsFFI() const;
   inline static icu4x::DateTime FromFFI(icu4x::capi::DateTime c_struct);

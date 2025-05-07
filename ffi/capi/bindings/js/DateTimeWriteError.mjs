@@ -3,31 +3,28 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
-/** 
- * Additional information: [1](https://docs.rs/icu/latest/icu/datetime/enum.DateTimeWriteError.html)
+/**
+ * An error when formatting a datetime.
+ *
+ * Currently the only reachable error here is a missing time zone variant. If you encounter
+ * that error, you need to call `with_variant` or `infer_variant` on your `TimeZoneInfo`.
+ *
+ * Additional information: [1](https://docs.rs/icu/latest/icu/datetime/unchecked/enum.FormattedDateTimeUncheckedError.html)
  */
 
 
 export class DateTimeWriteError {
-    
     #value = undefined;
 
     static #values = new Map([
         ["Unknown", 0],
-        ["InvalidMonthCode", 2],
-        ["InvalidEra", 3],
-        ["InvalidCyclicYear", 4],
-        ["DecimalFormatterNotLoaded", 5],
-        ["NamesNotLoaded", 6],
-        ["MissingInputField", 7],
-        ["UnsupportedLength", 8],
-        ["UnsupportedField", 9]
+        ["MissingTimeZoneVariant", 1]
     ]);
 
     static getAllEntries() {
         return DateTimeWriteError.#values.entries();
     }
-    
+
     #internalConstructor(value) {
         if (arguments.length > 1 && arguments[0] === diplomatRuntime.internalConstructor) {
             // We pass in two internalConstructor arguments to create *new*
@@ -57,38 +54,21 @@ export class DateTimeWriteError {
         return new DateTimeWriteError(value);
     }
 
-    get value() {
-        for (let entry of DateTimeWriteError.#values) {
-            if (entry[1] == this.#value) {
-                return entry[0];
-            }
-        }
+    get value(){
+        return [...DateTimeWriteError.#values.keys()][this.#value];
     }
 
-    get ffiValue() {
+    get ffiValue(){
         return this.#value;
     }
-    static #objectValues = {
-        [0]: new DateTimeWriteError(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 0),
-        [2]: new DateTimeWriteError(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 2),
-        [3]: new DateTimeWriteError(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 3),
-        [4]: new DateTimeWriteError(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 4),
-        [5]: new DateTimeWriteError(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 5),
-        [6]: new DateTimeWriteError(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 6),
-        [7]: new DateTimeWriteError(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 7),
-        [8]: new DateTimeWriteError(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 8),
-        [9]: new DateTimeWriteError(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 9),
-    };
+    static #objectValues = [
+        new DateTimeWriteError(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 0),
+        new DateTimeWriteError(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 1),
+    ];
 
     static Unknown = DateTimeWriteError.#objectValues[0];
-    static InvalidMonthCode = DateTimeWriteError.#objectValues[2];
-    static InvalidEra = DateTimeWriteError.#objectValues[3];
-    static InvalidCyclicYear = DateTimeWriteError.#objectValues[4];
-    static DecimalFormatterNotLoaded = DateTimeWriteError.#objectValues[5];
-    static NamesNotLoaded = DateTimeWriteError.#objectValues[6];
-    static MissingInputField = DateTimeWriteError.#objectValues[7];
-    static UnsupportedLength = DateTimeWriteError.#objectValues[8];
-    static UnsupportedField = DateTimeWriteError.#objectValues[9];
+    static MissingTimeZoneVariant = DateTimeWriteError.#objectValues[1];
+
 
     constructor(value) {
         return this.#internalConstructor(...arguments)

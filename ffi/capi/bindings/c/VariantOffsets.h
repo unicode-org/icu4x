@@ -19,5 +19,4 @@
 
 
 
-
 #endif // VariantOffsets_H

@@ -32,5 +32,4 @@ icu4x_WordBreak_from_integer_value_mv1_result icu4x_WordBreak_from_integer_value
 
 
 
-
 #endif // WordBreak_H

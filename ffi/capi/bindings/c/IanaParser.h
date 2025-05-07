@@ -28,7 +28,6 @@ TimeZone* icu4x_IanaParser_parse_mv1(const IanaParser* self, DiplomatStringView 
 
 TimeZoneIterator* icu4x_IanaParser_iter_mv1(const IanaParser* self);
 
-
 void icu4x_IanaParser_destroy_mv1(IanaParser* self);
 
 

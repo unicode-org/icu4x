@@ -19,5 +19,4 @@
 
 
 
-
 #endif // BidiPairedBracketType_H

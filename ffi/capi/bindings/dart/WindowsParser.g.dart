@@ -55,6 +55,7 @@ final class WindowsParser implements ffi.Finalizable {
     final result = _icu4x_WindowsParser_parse_mv1(_ffi, value._utf8AllocIn(temp.arena), region._utf8AllocIn(temp.arena));
     return result.address == 0 ? null : TimeZone._fromFfi(result, []);
   }
+
 }
 
 @_DiplomatFfiUse('icu4x_WindowsParser_destroy_mv1')

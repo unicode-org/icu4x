@@ -8,6 +8,7 @@
 #include <memory>
 #include <functional>
 #include <optional>
+#include <cstdlib>
 #include "../diplomat_runtime.hpp"
 
 namespace icu4x {
@@ -22,7 +23,7 @@ namespace capi {
       icu4x::capi::UtcOffset* standard;
       icu4x::capi::UtcOffset* daylight;
     };
-    
+
     typedef struct VariantOffsets_option {union { VariantOffsets ok; }; bool is_ok; } VariantOffsets_option;
 } // namespace capi
 } // namespace

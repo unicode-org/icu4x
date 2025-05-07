@@ -10,14 +10,14 @@
 #include <memory>
 #include <functional>
 #include <optional>
+#include <cstdlib>
 #include "../diplomat_runtime.hpp"
 
 
 namespace icu4x {
 namespace capi {
     extern "C" {
-    
-    
+
     } // extern "C"
 } // namespace capi
 } // namespace
@@ -34,7 +34,7 @@ inline icu4x::CalendarError icu4x::CalendarError::FromFFI(icu4x::capi::CalendarE
     case icu4x::capi::CalendarError_UnknownMonthCode:
       return static_cast<icu4x::CalendarError::Value>(c_enum);
     default:
-      abort();
+      std::abort();
   }
 }
 #endif // icu4x_CalendarError_HPP

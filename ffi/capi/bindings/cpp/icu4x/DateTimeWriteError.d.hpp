@@ -8,6 +8,7 @@
 #include <memory>
 #include <functional>
 #include <optional>
+#include <cstdlib>
 #include "../diplomat_runtime.hpp"
 
 
@@ -15,36 +16,27 @@ namespace icu4x {
 namespace capi {
     enum DateTimeWriteError {
       DateTimeWriteError_Unknown = 0,
-      DateTimeWriteError_InvalidMonthCode = 2,
-      DateTimeWriteError_InvalidEra = 3,
-      DateTimeWriteError_InvalidCyclicYear = 4,
-      DateTimeWriteError_DecimalFormatterNotLoaded = 5,
-      DateTimeWriteError_NamesNotLoaded = 6,
-      DateTimeWriteError_MissingInputField = 7,
-      DateTimeWriteError_UnsupportedLength = 8,
-      DateTimeWriteError_UnsupportedField = 9,
+      DateTimeWriteError_MissingTimeZoneVariant = 1,
     };
-    
+
     typedef struct DateTimeWriteError_option {union { DateTimeWriteError ok; }; bool is_ok; } DateTimeWriteError_option;
 } // namespace capi
 } // namespace
 
 namespace icu4x {
 /**
- * Additional information: [1](https://docs.rs/icu/latest/icu/datetime/enum.DateTimeWriteError.html)
+ * An error when formatting a datetime.
+ *
+ * Currently the only reachable error here is a missing time zone variant. If you encounter
+ * that error, you need to call `with_variant` or `infer_variant` on your `TimeZoneInfo`.
+ *
+ * Additional information: [1](https://docs.rs/icu/latest/icu/datetime/unchecked/enum.FormattedDateTimeUncheckedError.html)
  */
 class DateTimeWriteError {
 public:
   enum Value {
     Unknown = 0,
-    InvalidMonthCode = 2,
-    InvalidEra = 3,
-    InvalidCyclicYear = 4,
-    DecimalFormatterNotLoaded = 5,
-    NamesNotLoaded = 6,
-    MissingInputField = 7,
-    UnsupportedLength = 8,
-    UnsupportedField = 9,
+    MissingTimeZoneVariant = 1,
   };
 
   DateTimeWriteError() = default;

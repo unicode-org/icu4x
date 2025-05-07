@@ -8,6 +8,7 @@
 #include <memory>
 #include <functional>
 #include <optional>
+#include <cstdlib>
 #include "../diplomat_runtime.hpp"
 
 namespace icu4x {
@@ -21,7 +22,7 @@ namespace capi {
       TimeZoneVariant_Standard = 0,
       TimeZoneVariant_Daylight = 1,
     };
-    
+
     typedef struct TimeZoneVariant_option {union { TimeZoneVariant ok; }; bool is_ok; } TimeZoneVariant_option;
 } // namespace capi
 } // namespace

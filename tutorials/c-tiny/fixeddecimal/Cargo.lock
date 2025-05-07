@@ -4,8 +4,9 @@ version = 3
 
 [[package]]
 name = "diplomat"
-version = "0.10.0"
-source = "git+https://github.com/rust-diplomat/diplomat#5c383d634b982a5f3199c0fee8421839f9582cfc"
+version = "0.11.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ea1fa372cd3d71ab28ee5d1176be9e93eaed0eba94a3498d12b8113109c4d313"
 dependencies = [
  "diplomat_core",
  "proc-macro2",
@@ -15,13 +16,15 @@ dependencies = [
 
 [[package]]
 name = "diplomat-runtime"
-version = "0.10.0"
-source = "git+https://github.com/rust-diplomat/diplomat#5c383d634b982a5f3199c0fee8421839f9582cfc"
+version = "0.11.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "5ebd68bdec9f1f4e625f207e3179c0687e7c73bad578ec37df48a23a414da8d4"
 
 [[package]]
 name = "diplomat_core"
-version = "0.10.0"
-source = "git+https://github.com/rust-diplomat/diplomat#5c383d634b982a5f3199c0fee8421839f9582cfc"
+version = "0.11.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f8372a0961d18867e19c8cc0a2afb3ad46d5c5bd5e30b2c71d4edc788c93bbb8"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -98,12 +101,12 @@ version = "2.0.0-beta2"
 dependencies = [
  "displaydoc",
  "icu_locale_core",
- "icu_provider_macros",
  "stable_deref_trait",
  "tinystr",
  "writeable",
  "yoke",
  "zerofrom",
+ "zerotrie",
  "zerovec",
 ]
 
@@ -118,17 +121,8 @@ dependencies = [
 ]
 
 [[package]]
-name = "icu_provider_macros"
-version = "2.0.0-beta2"
-dependencies = [
- "proc-macro2",
- "quote",
- "syn",
-]
-
-[[package]]
 name = "litemap"
-version = "0.7.5"
+version = "0.8.0"
 
 [[package]]
 name = "potential_utf"
@@ -141,36 +135,36 @@ dependencies = [
 
 [[package]]
 name = "proc-macro2"
-version = "1.0.93"
+version = "1.0.95"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "60946a68e5f9d28b0dc1c21bb8a97ee7d018a8b322fa57838ba31cc878e22d99"
+checksum = "02b3e5e68a3a1a02aad3ec490a98007cbc13c37cbe84a3cd7b8e406d76e7f778"
 dependencies = [
  "unicode-ident",
 ]
 
 [[package]]
 name = "quote"
-version = "1.0.38"
+version = "1.0.40"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0e4dccaaaf89514f546c693ddc140f729f958c247918a13380cccc6078391acc"
+checksum = "1885c039570dc00dcb4ff087a89e185fd56bae234ddc7f056a945bf36467248d"
 dependencies = [
  "proc-macro2",
 ]
 
 [[package]]
 name = "serde"
-version = "1.0.218"
+version = "1.0.219"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e8dfc9d19bdbf6d17e22319da49161d5d0108e4188e8b680aef6299eed22df60"
+checksum = "5f0e2c6ed6606019b4e29e69dbaba95b11854410e5347d525002456dbbb786b6"
 dependencies = [
  "serde_derive",
 ]
 
 [[package]]
 name = "serde_derive"
-version = "1.0.218"
+version = "1.0.219"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f09503e191f4e797cb8aac08e9a4a4695c5edf6a2e70e376d961ddd5c969f82b"
+checksum = "5b0276cf7f2c73365f7157c8123c21cd9a50fbbd844757af28ca1f5925fc2a00"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -179,9 +173,9 @@ dependencies = [
 
 [[package]]
 name = "smallvec"
-version = "1.14.0"
+version = "1.15.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7fcf8323ef1faaee30a44a340193b1ac6814fd9b7b4e88e9d4519a3e4abe1cfd"
+checksum = "8917285742e9f3e1683f0a9c4e6b57960b7314d0b08d30d1ecd426713ee2eee9"
 
 [[package]]
 name = "stable_deref_trait"
@@ -200,9 +194,9 @@ dependencies = [
 
 [[package]]
 name = "syn"
-version = "2.0.98"
+version = "2.0.101"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "36147f1a48ae0ec2b5b3bc5b537d267457555a10dc06f3dbc8cb11ba3006d3b1"
+checksum = "8ce2b7fc941b3a24138a0a7cf8e858bfc6a992e7978a068a5c760deb0ed43caf"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -211,9 +205,9 @@ dependencies = [
 
 [[package]]
 name = "synstructure"
-version = "0.13.1"
+version = "0.13.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c8af7666ab7b6390ab78131fb5b0fce11d6b7a6951602017c35fa82800708971"
+checksum = "728a70f3dbaf5bab7f0c4b1ac8d7ae5ea60a4b5549c8a5914361c99147a709d2"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -230,9 +224,9 @@ dependencies = [
 
 [[package]]
 name = "unicode-ident"
-version = "1.0.17"
+version = "1.0.18"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "00e2473a93778eb0bad35909dff6a10d28e63f792f16ed15e404fca9d5eeedbe"
+checksum = "5a5f39404a5da50712a4c1eecf25e90dd62b613502b7e925fd4e4d19b5c96512"
 
 [[package]]
 name = "unused"
@@ -283,8 +277,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "zerotrie"
+version = "0.2.2"
+dependencies = [
+ "displaydoc",
+]
+
+[[package]]
 name = "zerovec"
-version = "0.11.1"
+version = "0.11.2"
 dependencies = [
  "yoke",
  "zerofrom",
@@ -302,7 +303,7 @@ dependencies = [
 
 [[patch.unused]]
 name = "bies"
-version = "0.2.3"
+version = "0.2.4"
 
 [[patch.unused]]
 name = "crlify"
@@ -318,7 +319,7 @@ version = "0.2.0"
 
 [[patch.unused]]
 name = "deduplicating_array"
-version = "0.1.7"
+version = "0.1.8"
 
 [[patch.unused]]
 name = "fixed_decimal"
@@ -334,7 +335,7 @@ version = "2.0.0-beta2"
 
 [[patch.unused]]
 name = "icu4x_ecma402"
-version = "0.9.0-dev"
+version = "0.9.0"
 
 [[patch.unused]]
 name = "icu_benchmark_macros"
@@ -386,11 +387,11 @@ version = "2.0.0-beta2"
 
 [[patch.unused]]
 name = "icu_experimental"
-version = "0.3.0"
+version = "0.3.0-beta2"
 
 [[patch.unused]]
 name = "icu_experimental_data"
-version = "0.3.0"
+version = "0.3.0-beta2"
 
 [[patch.unused]]
 name = "icu_freertos"
@@ -482,12 +483,8 @@ version = "2.0.0-beta2"
 
 [[patch.unused]]
 name = "ixdtf"
-version = "0.4.0"
+version = "0.5.0"
 
 [[patch.unused]]
 name = "tzif"
-version = "0.3.0"
-
-[[patch.unused]]
-name = "zerotrie"
-version = "0.2.1"
+version = "0.4.0"

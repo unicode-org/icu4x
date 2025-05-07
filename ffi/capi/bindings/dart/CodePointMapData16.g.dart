@@ -87,6 +87,7 @@ final class CodePointMapData16 implements ffi.Finalizable {
     }
     return CodePointMapData16._fromFfi(result.union.ok, []);
   }
+
 }
 
 @_DiplomatFfiUse('icu4x_CodePointMapData16_destroy_mv1')

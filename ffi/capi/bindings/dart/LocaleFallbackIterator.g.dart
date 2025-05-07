@@ -42,6 +42,7 @@ final class LocaleFallbackIterator implements ffi.Finalizable, core.Iterator<Loc
     final result = _icu4x_LocaleFallbackIterator_next_mv1(_ffi);
     return result.address == 0 ? null : Locale._fromFfi(result, []);
   }
+
 }
 
 @_DiplomatFfiUse('icu4x_LocaleFallbackIterator_destroy_mv1')

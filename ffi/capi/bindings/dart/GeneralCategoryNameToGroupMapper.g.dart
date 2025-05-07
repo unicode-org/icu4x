@@ -69,6 +69,7 @@ final class GeneralCategoryNameToGroupMapper implements ffi.Finalizable {
     }
     return GeneralCategoryNameToGroupMapper._fromFfi(result.union.ok, []);
   }
+
 }
 
 @_DiplomatFfiUse('icu4x_GeneralCategoryNameToGroupMapper_destroy_mv1')

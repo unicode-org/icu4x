@@ -67,6 +67,7 @@ final class RegionDisplayNames implements ffi.Finalizable {
     }
     return write.finalize();
   }
+
 }
 
 @_DiplomatFfiUse('icu4x_RegionDisplayNames_destroy_mv1')

@@ -48,5 +48,4 @@ GeneralCategoryGroup icu4x_GeneralCategoryGroup_symbol_mv1(void);
 
 
 
-
 #endif // GeneralCategoryGroup_H

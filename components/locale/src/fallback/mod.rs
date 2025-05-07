@@ -146,7 +146,7 @@ impl LocaleFallbacker {
                 language_script: Default::default(),
                 // Unused
                 und: (
-                    Default::default(),
+                    Language::UNKNOWN,
                     crate::subtags::script!("Zzzz"),
                     crate::subtags::region!("ZZ"),
                 ),

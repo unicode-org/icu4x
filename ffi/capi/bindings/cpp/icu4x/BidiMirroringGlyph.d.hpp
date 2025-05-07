@@ -8,6 +8,7 @@
 #include <memory>
 #include <functional>
 #include <optional>
+#include <cstdlib>
 #include "../diplomat_runtime.hpp"
 #include "BidiPairedBracketType.d.hpp"
 
@@ -24,7 +25,7 @@ namespace capi {
       bool mirrored;
       icu4x::capi::BidiPairedBracketType paired_bracket_type;
     };
-    
+
     typedef struct BidiMirroringGlyph_option {union { BidiMirroringGlyph ok; }; bool is_ok; } BidiMirroringGlyph_option;
 } // namespace capi
 } // namespace

@@ -21,5 +21,4 @@ BidiMirroringGlyph icu4x_BidiMirroringGlyph_for_char_mv1(char32_t ch);
 
 
 
-
 #endif // BidiMirroringGlyph_H

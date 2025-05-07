@@ -108,6 +108,7 @@ final class ListFormatter implements ffi.Finalizable {
     _icu4x_ListFormatter_format_utf16_mv1(_ffi, list._utf16SliceAllocIn(temp.arena), write._ffi);
     return write.finalize();
   }
+
 }
 
 @_DiplomatFfiUse('icu4x_ListFormatter_destroy_mv1')

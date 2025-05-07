@@ -10,27 +10,27 @@
 #include <memory>
 #include <functional>
 #include <optional>
+#include <cstdlib>
 #include "../diplomat_runtime.hpp"
-#include "CalendarParseError.hpp"
 #include "IsoDate.hpp"
+#include "Rfc9557ParseError.hpp"
 #include "Time.hpp"
 
 
 namespace icu4x {
 namespace capi {
     extern "C" {
-    
-    typedef struct icu4x_IsoDateTime_from_string_mv1_result {union {icu4x::capi::IsoDateTime ok; icu4x::capi::CalendarParseError err;}; bool is_ok;} icu4x_IsoDateTime_from_string_mv1_result;
+
+    typedef struct icu4x_IsoDateTime_from_string_mv1_result {union {icu4x::capi::IsoDateTime ok; icu4x::capi::Rfc9557ParseError err;}; bool is_ok;} icu4x_IsoDateTime_from_string_mv1_result;
     icu4x_IsoDateTime_from_string_mv1_result icu4x_IsoDateTime_from_string_mv1(diplomat::capi::DiplomatStringView v);
-    
-    
+
     } // extern "C"
 } // namespace capi
 } // namespace
 
-inline diplomat::result<icu4x::IsoDateTime, icu4x::CalendarParseError> icu4x::IsoDateTime::from_string(std::string_view v) {
+inline diplomat::result<icu4x::IsoDateTime, icu4x::Rfc9557ParseError> icu4x::IsoDateTime::from_string(std::string_view v) {
   auto result = icu4x::capi::icu4x_IsoDateTime_from_string_mv1({v.data(), v.size()});
-  return result.is_ok ? diplomat::result<icu4x::IsoDateTime, icu4x::CalendarParseError>(diplomat::Ok<icu4x::IsoDateTime>(icu4x::IsoDateTime::FromFFI(result.ok))) : diplomat::result<icu4x::IsoDateTime, icu4x::CalendarParseError>(diplomat::Err<icu4x::CalendarParseError>(icu4x::CalendarParseError::FromFFI(result.err)));
+  return result.is_ok ? diplomat::result<icu4x::IsoDateTime, icu4x::Rfc9557ParseError>(diplomat::Ok<icu4x::IsoDateTime>(icu4x::IsoDateTime::FromFFI(result.ok))) : diplomat::result<icu4x::IsoDateTime, icu4x::Rfc9557ParseError>(diplomat::Err<icu4x::Rfc9557ParseError>(icu4x::Rfc9557ParseError::FromFFI(result.err)));
 }
 
 

@@ -32,5 +32,4 @@ icu4x_BidiClass_from_integer_value_mv1_result icu4x_BidiClass_from_integer_value
 
 
 
-
 #endif // BidiClass_H

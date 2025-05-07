@@ -10,14 +10,14 @@
 #include <memory>
 #include <functional>
 #include <optional>
+#include <cstdlib>
 #include "../diplomat_runtime.hpp"
 
 
 namespace icu4x {
 namespace capi {
     extern "C" {
-    
-    
+
     } // extern "C"
 } // namespace capi
 } // namespace
@@ -32,7 +32,7 @@ inline icu4x::DateTimeAlignment icu4x::DateTimeAlignment::FromFFI(icu4x::capi::D
     case icu4x::capi::DateTimeAlignment_Column:
       return static_cast<icu4x::DateTimeAlignment::Value>(c_enum);
     default:
-      abort();
+      std::abort();
   }
 }
 #endif // icu4x_DateTimeAlignment_HPP

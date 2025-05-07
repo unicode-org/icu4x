@@ -5,7 +5,6 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
 export class Weekday {
-    
     #value = undefined;
 
     static #values = new Map([
@@ -21,7 +20,7 @@ export class Weekday {
     static getAllEntries() {
         return Weekday.#values.entries();
     }
-    
+
     #internalConstructor(value) {
         if (arguments.length > 1 && arguments[0] === diplomatRuntime.internalConstructor) {
             // We pass in two internalConstructor arguments to create *new*
@@ -51,7 +50,7 @@ export class Weekday {
         return new Weekday(value);
     }
 
-    get value() {
+    get value(){
         for (let entry of Weekday.#values) {
             if (entry[1] == this.#value) {
                 return entry[0];
@@ -59,7 +58,7 @@ export class Weekday {
         }
     }
 
-    get ffiValue() {
+    get ffiValue(){
         return this.#value;
     }
     static #objectValues = {
@@ -79,6 +78,7 @@ export class Weekday {
     static Friday = Weekday.#objectValues[5];
     static Saturday = Weekday.#objectValues[6];
     static Sunday = Weekday.#objectValues[7];
+
 
     constructor(value) {
         return this.#internalConstructor(...arguments)

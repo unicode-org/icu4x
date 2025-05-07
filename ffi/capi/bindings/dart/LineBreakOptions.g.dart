@@ -35,6 +35,7 @@ final class LineBreakOptions {
     return struct;
   }
 
+
   @override
   bool operator ==(Object other) =>
       other is LineBreakOptions &&

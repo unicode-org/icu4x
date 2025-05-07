@@ -8,6 +8,7 @@
 #include <memory>
 #include <functional>
 #include <optional>
+#include <cstdlib>
 #include "../diplomat_runtime.hpp"
 
 
@@ -17,7 +18,7 @@ namespace capi {
       char32_t first;
       char32_t second;
     };
-    
+
     typedef struct Decomposed_option {union { Decomposed ok; }; bool is_ok; } Decomposed_option;
 } // namespace capi
 } // namespace

@@ -46,6 +46,7 @@ final class TitlecaseOptions {
     return dart;
   }
 
+
   @override
   bool operator ==(Object other) =>
       other is TitlecaseOptions &&

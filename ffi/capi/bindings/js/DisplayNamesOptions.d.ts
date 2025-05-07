@@ -5,7 +5,7 @@ import type { LanguageDisplay } from "./LanguageDisplay"
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
-/** 
+/**
  * See the [Rust documentation for `DisplayNamesOptions`](https://docs.rs/icu/latest/icu/experimental/displaynames/options/struct.DisplayNamesOptions.html) for more information.
  */
 type DisplayNamesOptions_obj = {
@@ -17,21 +17,18 @@ type DisplayNamesOptions_obj = {
 
 
 export class DisplayNamesOptions {
-    
-    get style() : DisplayNamesStyle | null; 
-    set style(value: DisplayNamesStyle | null); 
-    
-    get fallback() : DisplayNamesFallback | null; 
-    set fallback(value: DisplayNamesFallback | null); 
-    
-    get languageDisplay() : LanguageDisplay | null; 
-    set languageDisplay(value: LanguageDisplay | null); 
-    
+    get style(): DisplayNamesStyle | null;
+    set style(value: DisplayNamesStyle | null);
+    get fallback(): DisplayNamesFallback | null;
+    set fallback(value: DisplayNamesFallback | null);
+    get languageDisplay(): LanguageDisplay | null;
+    set languageDisplay(value: LanguageDisplay | null);
     /** Create `DisplayNamesOptions` from an object that contains all of `DisplayNamesOptions`s fields.
     * Optional fields do not need to be included in the provided object.
     */
     static fromFields(structObj : DisplayNamesOptions_obj) : DisplayNamesOptions;
 
 
-    constructor(structObj : DisplayNamesOptions_obj);
+
+    constructor(structObj: DisplayNamesOptions_obj);
 }

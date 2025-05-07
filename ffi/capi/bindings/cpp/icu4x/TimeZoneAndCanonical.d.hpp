@@ -8,6 +8,7 @@
 #include <memory>
 #include <functional>
 #include <optional>
+#include <cstdlib>
 #include "../diplomat_runtime.hpp"
 
 namespace icu4x {
@@ -22,7 +23,7 @@ namespace capi {
       icu4x::capi::TimeZone* time_zone;
       diplomat::capi::DiplomatStringView canonical;
     };
-    
+
     typedef struct TimeZoneAndCanonical_option {union { TimeZoneAndCanonical ok; }; bool is_ok; } TimeZoneAndCanonical_option;
 } // namespace capi
 } // namespace

@@ -37,7 +37,6 @@ PluralCategory icu4x_PluralRules_category_for_mv1(const PluralRules* self, const
 
 PluralCategories icu4x_PluralRules_categories_mv1(const PluralRules* self);
 
-
 void icu4x_PluralRules_destroy_mv1(PluralRules* self);
 
 

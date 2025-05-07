@@ -2,23 +2,23 @@
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
-/** 
+/**
  * Additional information: [1](https://docs.rs/fixed_decimal/latest/fixed_decimal/enum.ParseError.html)
  */
 
 
 export class DecimalParseError {
-    
 
-    static fromValue(value : DecimalParseError | string) : DecimalParseError; 
+    static fromValue(value: DecimalParseError | string): DecimalParseError;
 
-    get value() : string;
+    get value(): string;
 
-    get ffiValue() : number;
+    get ffiValue(): number;
 
     static Unknown : DecimalParseError;
     static Limit : DecimalParseError;
     static Syntax : DecimalParseError;
+
 
     constructor(value: DecimalParseError | string );
 }

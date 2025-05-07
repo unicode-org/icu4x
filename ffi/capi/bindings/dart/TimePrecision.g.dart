@@ -7,6 +7,7 @@ part of 'lib.g.dart';
 ///
 /// See the [Rust documentation for `SubsecondDigits`](https://docs.rs/icu/latest/icu/datetime/options/enum.SubsecondDigits.html) for more information.
 enum TimePrecision {
+
   hour,
 
   minute,
@@ -41,6 +42,7 @@ enum TimePrecision {
     }
     return TimePrecision.values[result.union.ok];
   }
+
 }
 
 @_DiplomatFfiUse('icu4x_TimePrecision_from_subsecond_digits_mv1')

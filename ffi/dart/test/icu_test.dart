@@ -211,11 +211,12 @@ void main() {
     );
 
     expect(
-      () => ZonedDateFormatter.genericLong(
+      ZonedDateFormatter.genericLong(
         locale,
         DateFormatter.ymd(locale),
       ).formatIso(zonedDateTimeIso.date, TimeZoneInfo.utc()),
-      throwsA(DateTimeWriteError.missingInputField),
+      // Note: this fills in noon for the ZoneNameTimestamp
+      '15.07.1446 AH Koordinierte Weltzeit',
     );
 
     ///// ZonedTimeFormatter /////
@@ -243,16 +244,15 @@ void main() {
     );
 
     expect(
-      () =>
-          ZonedDateTimeFormatter.specificLong(
-            locale,
-            DateTimeFormatter.ymdet(locale),
-          ).formatIso(
-            zonedDateTimeIso.date,
-            zonedDateTimeIso.time,
-            TimeZoneInfo.utc(),
-          ),
-      throwsA(DateTimeWriteError.missingInputField),
+      () => ZonedDateTimeFormatter.specificLong(
+        locale,
+        DateTimeFormatter.ymdet(locale),
+      ).formatIso(
+        zonedDateTimeIso.date,
+        zonedDateTimeIso.time,
+        TimeZoneInfo.utc(),
+      ),
+      throwsA(DateTimeWriteError.missingTimeZoneVariant),
     );
 
     expect(

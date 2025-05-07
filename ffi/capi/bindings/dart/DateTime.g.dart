@@ -37,15 +37,16 @@ final class DateTime {
   ///
   /// See the [Rust documentation for `try_from_str`](https://docs.rs/icu/latest/icu/time/struct.DateTime.html#method.try_from_str) for more information.
   ///
-  /// Throws [CalendarParseError] on failure.
+  /// Throws [Rfc9557ParseError] on failure.
   factory DateTime.fromString(String v, Calendar calendar) {
     final temp = _FinalizedArena();
     final result = _icu4x_DateTime_from_string_mv1(v._utf8AllocIn(temp.arena), calendar._ffi);
     if (!result.isOk) {
-      throw CalendarParseError.values[result.union.err];
+      throw Rfc9557ParseError.values[result.union.err];
     }
     return DateTime._fromFfi(result.union.ok);
   }
+
 
   @override
   bool operator ==(Object other) =>

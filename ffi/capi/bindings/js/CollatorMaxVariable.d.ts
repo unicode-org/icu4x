@@ -2,24 +2,24 @@
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
-/** 
+/**
  * See the [Rust documentation for `MaxVariable`](https://docs.rs/icu/latest/icu/collator/options/enum.MaxVariable.html) for more information.
  */
 
 
 export class CollatorMaxVariable {
-    
 
-    static fromValue(value : CollatorMaxVariable | string) : CollatorMaxVariable; 
+    static fromValue(value: CollatorMaxVariable | string): CollatorMaxVariable;
 
-    get value() : string;
+    get value(): string;
 
-    get ffiValue() : number;
+    get ffiValue(): number;
 
     static Space : CollatorMaxVariable;
     static Punctuation : CollatorMaxVariable;
     static Symbol : CollatorMaxVariable;
     static Currency : CollatorMaxVariable;
+
 
     constructor(value: CollatorMaxVariable | string );
 }

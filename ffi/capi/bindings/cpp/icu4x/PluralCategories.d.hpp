@@ -8,6 +8,7 @@
 #include <memory>
 #include <functional>
 #include <optional>
+#include <cstdlib>
 #include "../diplomat_runtime.hpp"
 
 
@@ -21,7 +22,7 @@ namespace capi {
       bool many;
       bool other;
     };
-    
+
     typedef struct PluralCategories_option {union { PluralCategories ok; }; bool is_ok; } PluralCategories_option;
 } // namespace capi
 } // namespace

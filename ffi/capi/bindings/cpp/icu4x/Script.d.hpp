@@ -8,6 +8,7 @@
 #include <memory>
 #include <functional>
 #include <optional>
+#include <cstdlib>
 #include "../diplomat_runtime.hpp"
 
 namespace icu4x {
@@ -184,7 +185,7 @@ namespace capi {
       Script_Yi = 41,
       Script_ZanabazarSquare = 177,
     };
-    
+
     typedef struct Script_option {union { Script ok; }; bool is_ok; } Script_option;
 } // namespace capi
 } // namespace

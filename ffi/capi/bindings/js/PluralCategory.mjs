@@ -3,13 +3,12 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
-/** 
+/**
  * See the [Rust documentation for `PluralCategory`](https://docs.rs/icu/latest/icu/plurals/enum.PluralCategory.html) for more information.
  */
 
 
 export class PluralCategory {
-    
     #value = undefined;
 
     static #values = new Map([
@@ -24,7 +23,7 @@ export class PluralCategory {
     static getAllEntries() {
         return PluralCategory.#values.entries();
     }
-    
+
     #internalConstructor(value) {
         if (arguments.length > 1 && arguments[0] === diplomatRuntime.internalConstructor) {
             // We pass in two internalConstructor arguments to create *new*
@@ -54,11 +53,11 @@ export class PluralCategory {
         return new PluralCategory(value);
     }
 
-    get value() {
+    get value(){
         return [...PluralCategory.#values.keys()][this.#value];
     }
 
-    get ffiValue() {
+    get ffiValue(){
         return this.#value;
     }
     static #objectValues = [
@@ -77,7 +76,8 @@ export class PluralCategory {
     static Many = PluralCategory.#objectValues[4];
     static Other = PluralCategory.#objectValues[5];
 
-    /** 
+
+    /**
      * Construct from a string in the format
      * [specified in TR35](https://unicode.org/reports/tr35/tr35-numbers.html#Language_Plural_Rules)
      *
@@ -87,23 +87,23 @@ export class PluralCategory {
      */
     static getForCldrString(s) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
-        
+
         const sSlice = diplomatRuntime.DiplomatBuf.str8(wasm, s);
-        
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
-        
+
+
         const result = wasm.icu4x_PluralCategory_get_for_cldr_string_mv1(diplomatReceive.buffer, ...sSlice.splat());
-    
+
         try {
             if (!diplomatReceive.resultFlag) {
                 return null;
             }
             return new PluralCategory(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
         }
-        
+
         finally {
             functionCleanupArena.free();
-        
+
             diplomatReceive.free();
         }
     }

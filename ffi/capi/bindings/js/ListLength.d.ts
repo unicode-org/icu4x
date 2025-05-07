@@ -2,23 +2,23 @@
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
-/** 
+/**
  * See the [Rust documentation for `ListLength`](https://docs.rs/icu/latest/icu/list/options/enum.ListLength.html) for more information.
  */
 
 
 export class ListLength {
-    
 
-    static fromValue(value : ListLength | string) : ListLength; 
+    static fromValue(value: ListLength | string): ListLength;
 
-    get value() : string;
+    get value(): string;
 
-    get ffiValue() : number;
+    get ffiValue(): number;
 
     static Wide : ListLength;
     static Short : ListLength;
     static Narrow : ListLength;
+
 
     constructor(value: ListLength | string );
 }

@@ -10,6 +10,7 @@
 #include <memory>
 #include <functional>
 #include <optional>
+#include <cstdlib>
 #include "../diplomat_runtime.hpp"
 #include "CodePointRangeIteratorResult.hpp"
 
@@ -17,12 +18,11 @@
 namespace icu4x {
 namespace capi {
     extern "C" {
-    
+
     icu4x::capi::CodePointRangeIteratorResult icu4x_CodePointRangeIterator_next_mv1(icu4x::capi::CodePointRangeIterator* self);
-    
-    
+
     void icu4x_CodePointRangeIterator_destroy_mv1(CodePointRangeIterator* self);
-    
+
     } // extern "C"
 } // namespace capi
 } // namespace

@@ -8,6 +8,7 @@
 #include <memory>
 #include <functional>
 #include <optional>
+#include <cstdlib>
 #include "../diplomat_runtime.hpp"
 
 namespace icu4x {
@@ -25,7 +26,7 @@ namespace capi {
       HangulSyllableType_LeadingVowelSyllable = 4,
       HangulSyllableType_LeadingVowelTrailingSyllable = 5,
     };
-    
+
     typedef struct HangulSyllableType_option {union { HangulSyllableType ok; }; bool is_ok; } HangulSyllableType_option;
 } // namespace capi
 } // namespace

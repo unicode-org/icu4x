@@ -19,5 +19,4 @@
 
 
 
-
 #endif // DecimalSign_H

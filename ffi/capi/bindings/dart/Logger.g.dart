@@ -32,6 +32,7 @@ final class Logger implements ffi.Finalizable {
     final result = _icu4x_Logger_init_simple_logger_mv1();
     return result;
   }
+
 }
 
 @_DiplomatFfiUse('icu4x_Logger_destroy_mv1')

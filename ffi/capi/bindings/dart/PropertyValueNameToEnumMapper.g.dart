@@ -281,6 +281,7 @@ final class PropertyValueNameToEnumMapper implements ffi.Finalizable {
     }
     return PropertyValueNameToEnumMapper._fromFfi(result.union.ok, []);
   }
+
 }
 
 @_DiplomatFfiUse('icu4x_PropertyValueNameToEnumMapper_destroy_mv1')

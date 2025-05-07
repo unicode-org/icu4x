@@ -22,7 +22,6 @@ size_t icu4x_ScriptExtensionsSet_count_mv1(const ScriptExtensionsSet* self);
 typedef struct icu4x_ScriptExtensionsSet_script_at_mv1_result {union {uint16_t ok; }; bool is_ok;} icu4x_ScriptExtensionsSet_script_at_mv1_result;
 icu4x_ScriptExtensionsSet_script_at_mv1_result icu4x_ScriptExtensionsSet_script_at_mv1(const ScriptExtensionsSet* self, size_t index);
 
-
 void icu4x_ScriptExtensionsSet_destroy_mv1(ScriptExtensionsSet* self);
 
 

@@ -44,6 +44,7 @@ final class WeekdaySetIterator implements ffi.Finalizable, core.Iterator<Weekday
     }
     return Weekday.values.firstWhere((v) => v._ffi == result.union.ok);
   }
+
 }
 
 @_DiplomatFfiUse('icu4x_WeekdaySetIterator_destroy_mv1')

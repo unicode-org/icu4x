@@ -10,7 +10,7 @@ checksum = "ace50bade8e6234aa140d9a2f552bbee1db4d353f69b8217bc503490fc1a9f26"
 
 [[package]]
 name = "calendrical_calculations"
-version = "0.2.0-dev"
+version = "0.2.0"
 dependencies = [
  "core_maths",
  "displaydoc",
@@ -445,20 +445,20 @@ version = "2.0.0-beta2"
 
 [[package]]
 name = "ixdtf"
-version = "0.5.0-dev"
+version = "0.5.0"
 dependencies = [
  "displaydoc",
 ]
 
 [[package]]
 name = "libm"
-version = "0.2.11"
+version = "0.2.15"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8355be11b20d696c8f18f6cc018c4e372165b1fa8126cef092399c9951984ffa"
+checksum = "f9fbbcab51052fe104eb5e5d351cf728d30a5be1fe14d9be8a3b097481fb97de"
 
 [[package]]
 name = "litemap"
-version = "0.7.5"
+version = "0.8.0"
 dependencies = [
  "serde",
 ]
@@ -524,9 +524,9 @@ dependencies = [
 
 [[package]]
 name = "proc-macro2"
-version = "1.0.94"
+version = "1.0.95"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a31971752e70b8b2686d7e46ec17fb38dad4051d94024c88df49b667caea9c84"
+checksum = "02b3e5e68a3a1a02aad3ec490a98007cbc13c37cbe84a3cd7b8e406d76e7f778"
 dependencies = [
  "unicode-ident",
 ]
@@ -583,9 +583,9 @@ checksum = "a8f112729512f8e442d81f95a8a7ddf2b7c6b8a1a6f509a95864142b30cab2d3"
 
 [[package]]
 name = "syn"
-version = "2.0.100"
+version = "2.0.101"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b09a44accad81e1ba1cd74a32461ba89dee89095ba17b32f5d03683b1b1fc2a0"
+checksum = "8ce2b7fc941b3a24138a0a7cf8e858bfc6a992e7978a068a5c760deb0ed43caf"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -594,9 +594,9 @@ dependencies = [
 
 [[package]]
 name = "synstructure"
-version = "0.13.1"
+version = "0.13.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c8af7666ab7b6390ab78131fb5b0fce11d6b7a6951602017c35fa82800708971"
+checksum = "728a70f3dbaf5bab7f0c4b1ac8d7ae5ea60a4b5549c8a5914361c99147a709d2"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -690,7 +690,7 @@ dependencies = [
 
 [[package]]
 name = "zerotrie"
-version = "0.2.1"
+version = "0.2.2"
 dependencies = [
  "displaydoc",
  "litemap",
@@ -702,7 +702,7 @@ dependencies = [
 
 [[package]]
 name = "zerovec"
-version = "0.11.1"
+version = "0.11.2"
 dependencies = [
  "serde",
  "yoke",
@@ -721,7 +721,7 @@ dependencies = [
 
 [[patch.unused]]
 name = "bies"
-version = "0.2.3"
+version = "0.2.4"
 
 [[patch.unused]]
 name = "crlify"
@@ -745,7 +745,7 @@ version = "2.0.0-beta2"
 
 [[patch.unused]]
 name = "icu4x_ecma402"
-version = "0.9.0-dev"
+version = "0.9.0"
 
 [[patch.unused]]
 name = "icu_benchmark_macros"

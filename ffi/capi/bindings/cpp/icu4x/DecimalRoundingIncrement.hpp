@@ -10,14 +10,14 @@
 #include <memory>
 #include <functional>
 #include <optional>
+#include <cstdlib>
 #include "../diplomat_runtime.hpp"
 
 
 namespace icu4x {
 namespace capi {
     extern "C" {
-    
-    
+
     } // extern "C"
 } // namespace capi
 } // namespace
@@ -34,7 +34,7 @@ inline icu4x::DecimalRoundingIncrement icu4x::DecimalRoundingIncrement::FromFFI(
     case icu4x::capi::DecimalRoundingIncrement_MultiplesOf25:
       return static_cast<icu4x::DecimalRoundingIncrement::Value>(c_enum);
     default:
-      abort();
+      std::abort();
   }
 }
 #endif // icu4x_DecimalRoundingIncrement_HPP

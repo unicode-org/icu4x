@@ -8,6 +8,7 @@
 #include <memory>
 #include <functional>
 #include <optional>
+#include <cstdlib>
 #include "../diplomat_runtime.hpp"
 
 namespace icu4x {
@@ -39,6 +40,13 @@ public:
    * See the [Rust documentation for `unknown`](https://docs.rs/icu/latest/icu/time/struct.TimeZoneInfo.html#method.unknown) for more information.
    */
   inline static std::unique_ptr<icu4x::TimeZone> unknown();
+
+  /**
+   * Whether the time zone is the unknown zone.
+   *
+   * See the [Rust documentation for `is_unknown`](https://docs.rs/icu/latest/icu/time/struct.TimeZone.html#method.is_unknown) for more information.
+   */
+  inline bool is_unknown() const;
 
   /**
    * Creates a time zone from a BCP-47 string.

@@ -60,6 +60,7 @@ final class GraphemeClusterSegmenter implements ffi.Finalizable {
     final result = _icu4x_GraphemeClusterSegmenter_segment_utf16_mv1(_ffi, input._utf16AllocIn(inputArena.arena));
     return GraphemeClusterBreakIteratorUtf16._fromFfi(result, [], aEdges);
   }
+
 }
 
 @_DiplomatFfiUse('icu4x_GraphemeClusterSegmenter_destroy_mv1')

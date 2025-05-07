@@ -19,5 +19,4 @@
 
 
 
-
 #endif // DecimalSignedRoundingMode_H

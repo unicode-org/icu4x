@@ -31,16 +31,66 @@ use zerovec::{zeroslice, ZeroSlice};
 
 use crate::provider::CollationData;
 
+// Start `SmallVec` size constants.
+//
+// These are the on-stack buffer sizes. If the buffers need
+// to grow larger, they are spilled to the heap.
+//
+// TODO(#2005): Figure out good sizes for these.
+
+/// The number of full 64-bit collation units that get buffered
+/// in the primary comparison loop so that they can be examined
+/// by the subsequent comparison stregths.
+///
+/// Note 1: If a primary difference is found, the comparison
+/// returns early, so these buffers end up holding all the
+/// collation elements only if there is no primary difference.
+///
+/// Note 2: Unfortunately for now, a sentinel value signaling
+/// the end of input gets written into the buffer in addition
+/// to the real collation elements.
+///
+/// This should probably either be halved to 4 on the logic
+/// that especially in the presence of the identical prefix
+/// optimization, most comparisons return after a couple of
+/// primary compasions or increased to 32 on the logic that
+/// such a buffer could better hold a file or human name that
+/// differs on secordary or higher level.
+pub(crate) const CE_BUFFER_SIZE: usize = 8;
+
+/// The number of extra full 64-bit collation units that have
+/// already been computed as part of an operation that yields
+/// multiple collation units at a time.
+const PENDING_CE_BUFFER_SIZE: usize = 6;
+
+/// Either the identical prefix or the lookahead plus the next
+/// upcoming character.
+///
+/// The longest contraction suffix in CLDR 40 is 7 characters long.
+const UPCOMING_CHARACTER_BUFFER_SIZE: usize = 10;
+
+/// The contiguous sequence of combining characters.
+const COMBINING_CHARACTER_BUFFER_SIZE: usize = 7;
+
+/// The sequence of digits in the numeric mode.
+const DIGIT_BUFFER_SIZE: usize = 8;
+
+/// The number of combining characters that a contraction has
+/// matched.
+const PENDING_REMOVALS_SIZE: usize = 1;
+
+// End `SmallVec` constants
+
 /// Marker that the decomposition does not round trip via NFC.
 ///
 /// See components/normalizer/trie-value-format.md
-const NON_ROUND_TRIP_MARKER: u32 = 1 << 30;
+pub(crate) const NON_ROUND_TRIP_MARKER: u32 = 1 << 30;
 
 /// Marker that the first character of the decomposition
 /// can combine backwards.
 ///
 /// See components/normalizer/trie-value-format.md
-const BACKWARD_COMBINING_MARKER: u32 = 1 << 31;
+pub(crate) const BACKWARD_COMBINING_MARKER: u32 = 1 << 31;
 
 /// Mask for the bits have to be zero for this to be a BMP
 /// singleton decomposition, or value baked into the surrogate
@@ -119,7 +169,8 @@ pub(crate) const QUATERNARY_MASK: u16 = 0xC0;
 // Impossible case bits 11 mark special CE32s.
 // This value itself is used to indicate a fallback to the base collator.
 const SPECIAL_CE32_LOW_BYTE: u8 = 0xC0;
-const FALLBACK_CE32: CollationElement32 = CollationElement32(SPECIAL_CE32_LOW_BYTE as u32);
+pub(crate) const FALLBACK_CE32: CollationElement32 =
+    CollationElement32(SPECIAL_CE32_LOW_BYTE as u32);
 const LONG_PRIMARY_CE32_LOW_BYTE: u8 = 0xC1; // SPECIAL_CE32_LOW_BYTE | LONG_PRIMARY_TAG
 const COMMON_SECONDARY_CE: u64 = 0x05000000;
 const COMMON_TERTIARY_CE: u64 = 0x0500;
@@ -340,7 +391,7 @@ impl CollationElement32 {
     }
 
     #[inline(always)]
-    fn tag_checked(self) -> Option<Tag> {
+    pub(crate) fn tag_checked(self) -> Option<Tag> {
         let t = self.low_byte();
         if t < SPECIAL_CE32_LOW_BYTE {
             None
@@ -648,9 +699,9 @@ impl Default for NonPrimary {
 // (Deliberately non-`Copy`, because `CharacterAndClass` is
 // non-`Copy`.)
 #[derive(Debug, Clone)]
-struct CharacterAndClassAndTrieValue {
+pub(crate) struct CharacterAndClassAndTrieValue {
     c_and_c: CharacterAndClass,
-    trie_val: u32,
+    pub trie_val: u32,
 }
 
 impl CharacterAndClassAndTrieValue {
@@ -688,11 +739,12 @@ impl CharacterAndClassAndTrieValue {
             }
         }
     }
+
     pub fn decomposition_starts_with_non_starter(&self) -> bool {
         decomposition_starts_with_non_starter(self.trie_val)
     }
 
-    fn character(&self) -> char {
+    pub fn character(&self) -> char {
         self.c_and_c.character()
     }
 
@@ -771,13 +823,24 @@ impl CharacterAndClass {
 /// over `CollationElement` with a tailoring.
 /// Not a real Rust iterator: Instead of `None` uses `NO_CE` to indicate
 /// end of iteration to optimize comparison.
+///
+/// It is _extremely_ important for performance that `SmallVec`s not be
+/// moved. To facilitate move-avoidance, this struct has the following
+/// life cycle where `new` returns the struct in a state that is not
+/// yet valid for a `next` call:
+///
+/// 1. `new`.
+/// 2. Some number of calls to `iter_next_before_init` and
+///    `prepend_upcoming_before_init`.
+/// 3. `init`.
+/// 4. Some number of calls to `next`.
 pub(crate) struct CollationElements<'data, I>
 where
     I: Iterator<Item = char>,
 {
     iter: I,
     /// Already computed but not yet returned `CollationElement`s.
-    pending: SmallVec<[CollationElement; 6]>, // TODO(#2005): Figure out good length
+    pending: SmallVec<[CollationElement; PENDING_CE_BUFFER_SIZE]>, // TODO(#2005): Figure out good length
     /// The index of the next item to be returned from `pending`. The purpose
     /// of this index is to avoid moving the rest of the items.
     pending_pos: usize,
@@ -804,7 +867,10 @@ where
     /// if `upcoming` isn't empty (with `iter` having been exhausted), the
     /// first `char` in `upcoming` must have its decomposition start with a
     /// starter.
-    upcoming: SmallVec<[CharacterAndClassAndTrieValue; 10]>, /* TODO(#2005): Figure out good length; longest contraction suffix in CLDR 40 is 7 characters long */
+    ///
+    /// TODO: Reverse the order, since now `insert(0, x)` and `remove(0)`
+    /// are used more often than `push()` and `pop()`.
+    upcoming: SmallVec<[CharacterAndClassAndTrieValue; UPCOMING_CHARACTER_BUFFER_SIZE]>,
     /// The root collation data.
     root: &'data CollationData<'data>,
     /// Tailoring if applicable.
@@ -828,9 +894,14 @@ where
     numeric_primary: Option<u8>,
     /// Whether the Lithuanian combining dot above handling is enabled.
     lithuanian_dot_above: bool,
+    /// Whether `upcoming` (except the last item) has been normalized already
+    upcoming_normalized: bool,
     #[cfg(debug_assertions)]
     /// Whether `iter` has been exhausted
     iter_exhausted: bool,
+    #[cfg(debug_assertions)]
+    /// Whether `init` has been called
+    initialized: bool,
 }
 
 impl<'data, I> CollationElements<'data, I>
@@ -849,14 +920,12 @@ where
         numeric_primary: Option<u8>,
         lithuanian_dot_above: bool,
     ) -> Self {
-        let mut u = SmallVec::new();
-        u.push(CharacterAndClassAndTrieValue::new_with_non_decomposing_starter('\u{FFFF}')); // Make sure the process always begins with a starter
-        let mut ret = CollationElements::<I> {
+        CollationElements::<I> {
             iter: delegate,
             pending: SmallVec::new(),
             pending_pos: 0,
             prefix: ['\u{FFFF}'; 2],
-            upcoming: u,
+            upcoming: SmallVec::new(),
             root,
             tailoring,
             jamo,
@@ -866,11 +935,69 @@ where
             scalars32: &tables.scalars24,
             numeric_primary,
             lithuanian_dot_above,
+            upcoming_normalized: false,
             #[cfg(debug_assertions)]
             iter_exhausted: false,
-        };
-        let _ = ret.next(); // Remove the placeholder starter
-        ret
+            #[cfg(debug_assertions)]
+            initialized: false,
+        }
+    }
+
+    pub fn iter_next_before_init(&mut self) -> Option<CharacterAndClassAndTrieValue> {
+        #[cfg(debug_assertions)]
+        debug_assert!(!self.initialized);
+        self.iter_next()
+    }
+
+    pub fn prepend_upcoming_before_init(&mut self, c: CharacterAndClassAndTrieValue) {
+        #[cfg(debug_assertions)]
+        debug_assert!(!self.initialized);
+        self.upcoming.insert(0, c);
+    }
+
+    pub fn init(&mut self) {
+        #[cfg(debug_assertions)]
+        {
+            debug_assert!(!self.initialized);
+            self.initialized = true;
+        }
+
+        // Ensure the last item is a starter (unless)
+        // iter exhausted.
+        if let Some(last) = self.upcoming.last() {
+            if last.decomposition_starts_with_non_starter() {
+                // Not using `while let` to be able to set `iter_exhausted`
+                loop {
+                    if let Some(ch) = self.iter_next() {
+                        let starter = !ch.decomposition_starts_with_non_starter();
+                        self.upcoming.push(ch);
+                        if starter {
+                            break;
+                        }
+                    } else {
+                        #[cfg(debug_assertions)]
+                        {
+                            self.iter_exhausted = true;
+                        }
+                        break;
+                    }
+                }
+            }
+        }
+
+        let mut starts_with_starter = false;
+        if let Some(first) = self.upcoming.first() {
+            if !first.decomposition_starts_with_non_starter() {
+                starts_with_starter = true;
+            }
+        }
+        if !starts_with_starter {
+            self.upcoming.insert(
+                0,
+                CharacterAndClassAndTrieValue::new_with_non_decomposing_starter('\u{FFFF}'),
+            ); // Make sure the process always begins with a starter
+            let _ = self.next(); // Remove the placeholder starter
+        }
     }
 
     fn iter_next(&mut self) -> Option<CharacterAndClassAndTrieValue> {
@@ -912,12 +1039,12 @@ where
         // We now have a single character that decomposes to start with
         // a non-starter. Decompose it and assign the real canonical combining class.
         let first = self.upcoming.remove(0);
-        let _ = self.push_decomposed_combining(first);
+        self.push_decomposed_combining(first);
         // Not using `while let` to be able to set `iter_exhausted`
         loop {
             if let Some(ch) = self.iter_next() {
                 if ch.decomposition_starts_with_non_starter() {
-                    let _ = self.push_decomposed_combining(ch);
+                    self.push_decomposed_combining(ch);
                 } else {
                     // Got a new starter
                     self.upcoming.push(ch);
@@ -933,11 +1060,79 @@ where
         }
     }
 
-    fn push_decomposed_combining(&mut self, c: CharacterAndClassAndTrieValue) -> usize {
+    /// Ensures that `upcoming` is normalized to NFD, except:
+    /// 1. When the last item is a starter, it isn't necessarily normalized.
+    /// 2. Hangul syllable are unnormalized.
+    fn ensure_upcoming_normalized(&mut self) {
+        if self.upcoming_normalized {
+            return;
+        }
+        self.upcoming_normalized = true;
+        let without_trailing_starter = if let Some((last, head)) = self.upcoming.split_last() {
+            if !last.decomposition_starts_with_non_starter() {
+                if head.is_empty() {
+                    // There is a single starter, which isn't required
+                    // to be normalized.
+                    return;
+                } else {
+                    head
+                }
+            } else {
+                &self.upcoming[..]
+            }
+        } else {
+            // Make the assertion conditional to make CI happy.
+            #[cfg(debug_assertions)]
+            debug_assert!(self.iter_exhausted);
+            return;
+        };
+
+        // It would be better to attempt to normalize in place, but let's do at
+        // least this.
+        if without_trailing_starter
+            .iter()
+            .all(|c| (c.trie_val & !(BACKWARD_COMBINING_MARKER | NON_ROUND_TRIP_MARKER | 1)) == 0)
+        {
+            return;
+        }
+
+        let mut unnormalized = core::mem::take(&mut self.upcoming);
+        let last_index = unnormalized.len() - 1;
+        // Indexing is for debug assert only.
+        #[allow(clippy::indexing_slicing)]
+        {
+            debug_assert!(!unnormalized[0].decomposition_starts_with_non_starter());
+        }
+        let mut start_combining = 0;
+        for (i, c) in unnormalized.drain(..).enumerate() {
+            if c.decomposition_starts_with_non_starter() {
+                self.push_decomposed_combining(c);
+            } else if i == last_index {
+                // Indices are in range by construction, so indexing is OK.
+                #[allow(clippy::indexing_slicing)]
+                self.upcoming[start_combining..].sort_by_key(|c| c.ccc());
+                self.upcoming.push(c);
+                return;
+            } else {
+                // Indices are in range by construction, so indexing is OK.
+                #[allow(clippy::indexing_slicing)]
+                self.upcoming[start_combining..].sort_by_key(|c| c.ccc());
+                start_combining = self.push_decomposed_starter(c);
+            }
+        }
+        // Make the assertion conditional to make CI happy.
+        #[cfg(debug_assertions)]
+        debug_assert!(self.iter_exhausted);
+        // Indices are in range by construction, so indexing is OK.
+        #[allow(clippy::indexing_slicing)]
+        self.upcoming[start_combining..].sort_by_key(|c| c.ccc());
+    }
+
+    fn push_decomposed_combining(&mut self, c: CharacterAndClassAndTrieValue) {
         if !trie_value_indicates_special_non_starter_decomposition(c.trie_val) {
             debug_assert!(trie_value_has_ccc(c.trie_val));
             self.upcoming.push(c);
-            return 1;
+            return;
         }
 
         // The Tibetan special cases are starters that decompose into non-starters.
@@ -949,7 +1144,6 @@ where
                         '\u{0300}',
                         CanonicalCombiningClass::Above,
                     ));
-                1
             }
             '\u{0341}' => {
                 // COMBINING ACUTE TONE MARK
@@ -958,7 +1152,6 @@ where
                         '\u{0301}',
                         CanonicalCombiningClass::Above,
                     ));
-                1
             }
             '\u{0343}' => {
                 // COMBINING GREEK KORONIS
@@ -967,7 +1160,6 @@ where
                         '\u{0313}',
                         CanonicalCombiningClass::Above,
                     ));
-                1
             }
             '\u{0344}' => {
                 // COMBINING GREEK DIALYTIKA TONOS
@@ -981,7 +1173,6 @@ where
                         '\u{0301}',
                         CanonicalCombiningClass::Above,
                     ));
-                2
             }
             '\u{0F73}' => {
                 // TIBETAN VOWEL SIGN II
@@ -995,7 +1186,6 @@ where
                         '\u{0F72}',
                         CanonicalCombiningClass::CCC130,
                     ));
-                2
             }
             '\u{0F75}' => {
                 // TIBETAN VOWEL SIGN UU
@@ -1009,7 +1199,6 @@ where
                         '\u{0F74}',
                         CanonicalCombiningClass::CCC132,
                     ));
-                2
             }
             '\u{0F81}' => {
                 // TIBETAN VOWEL SIGN REVERSED II
@@ -1023,23 +1212,15 @@ where
                         '\u{0F80}',
                         CanonicalCombiningClass::CCC130,
                     ));
-                2
             }
             _ => {
                 // GIGO case
                 debug_assert!(false);
-                0
             }
         }
     }
 
-    // Decomposes `c`, pushes it to `self.upcoming` (unless the character is
-    // a Hangul syllable; Hangul isn't allowed to participate in contractions),
-    // gathers the following combining characters from `self.iter` and the following starter.
-    // Sorts the combining characters and leaves the starter at the end
-    // unnormalized. The trailing unnormalized starter doesn't get appended if
-    // `self.iter` is exhausted.
-    fn push_decomposed_and_gather_combining(&mut self, c: CharacterAndClassAndTrieValue) {
+    fn push_decomposed_starter(&mut self, c: CharacterAndClassAndTrieValue) -> usize {
         let mut search_start_combining = false;
         let old_len = self.upcoming.len();
         // Not inserting early returns below to keep the same structure
@@ -1132,7 +1313,7 @@ where
                 search_start_combining = !only_non_starters_in_trail;
             }
         }
-        let start_combining = if search_start_combining {
+        if search_start_combining {
             // The decomposition contains starters. As of Unicode 14,
             // There are two possible patterns:
             // BMP: starter, starter, non-starter
@@ -1157,32 +1338,41 @@ where
             i + 1
         } else {
             old_len + 1
-        };
-        let mut end_combining = start_combining;
+        }
+    }
+
+    // Decomposes `c`, pushes it to `self.upcoming` (unless the character is
+    // a Hangul syllable; Hangul isn't allowed to participate in contractions),
+    // gathers the following combining characters from `self.iter` and the following starter.
+    // Sorts the combining characters and leaves the starter at the end
+    // unnormalized. The trailing unnormalized starter doesn't get appended if
+    // `self.iter` is exhausted.
+    fn push_decomposed_and_gather_combining(&mut self, c: CharacterAndClassAndTrieValue) {
+        let start_combining = self.push_decomposed_starter(c);
         // Not using `while let` to be able to set `iter_exhausted`
         loop {
             if let Some(ch) = self.iter_next() {
                 if ch.decomposition_starts_with_non_starter() {
-                    end_combining += self.push_decomposed_combining(ch);
+                    self.push_decomposed_combining(ch);
                 } else {
                     // Got a new starter
+                    // Indices are in range by construction, so indexing is OK.
+                    #[allow(clippy::indexing_slicing)]
+                    self.upcoming[start_combining..].sort_by_key(|c| c.ccc());
                     self.upcoming.push(ch);
-                    break;
+                    return;
                 }
             } else {
                 #[cfg(debug_assertions)]
                 {
                     self.iter_exhausted = true;
                 }
-                break;
+                // Indices are in range by construction, so indexing is OK.
+                #[allow(clippy::indexing_slicing)]
+                self.upcoming[start_combining..].sort_by_key(|c| c.ccc());
+                return;
             }
         }
-        // Perhaps there is a better borrow checker idiom than a function
-        // call for indicating that `upcoming` and `ccc` are disjoint and don't
-        // overlap. However, this works.
-        // Indices are in range by construction, so indexing is OK.
-        #[allow(clippy::indexing_slicing)]
-        self.upcoming[start_combining..end_combining].sort_by_key(|c| c.ccc());
     }
 
     // Assumption: `pos` starts from zero and increases one by one.
@@ -1190,6 +1380,7 @@ where
     // increases one by one by construction.
     #[allow(clippy::indexing_slicing)]
     fn look_ahead(&mut self, pos: usize) -> Option<CharacterAndClassAndTrieValue> {
+        debug_assert!(self.upcoming_normalized);
         if pos + 1 == self.upcoming.len() {
             let c = self.upcoming.remove(pos);
             self.push_decomposed_and_gather_combining(c);
@@ -1263,6 +1454,8 @@ where
     }
 
     pub fn next(&mut self) -> CollationElement {
+        #[cfg(debug_assertions)]
+        debug_assert!(self.initialized);
         debug_assert!(self.is_next_decomposition_starts_with_starter());
         if let Some(&ret) = self.pending.get(self.pending_pos) {
             self.pending_pos += 1;
@@ -1277,7 +1470,9 @@ where
             let mut c = c_c_tv.character();
             let mut ce32;
             let mut data: &CollationData = self.tailoring;
-            let mut combining_characters: SmallVec<[CharacterAndClass; 7]> = SmallVec::new(); // TODO(#2005): Figure out good length
+            let mut combining_characters: SmallVec<
+                [CharacterAndClass; COMBINING_CHARACTER_BUFFER_SIZE],
+            > = SmallVec::new(); // TODO(#2005): Figure out good length
 
             // Betting that fusing the NFD algorithm into this one at the
             // expense of the repetitiveness below, the common cases become
@@ -1685,7 +1880,8 @@ where
                                     CanonicalCombiningClass::NotReordered;
                                 // TODO(#2001): Pending removals will in practice be small numbers.
                                 // What if we made the item smaller than usize?
-                                let mut pending_removals: SmallVec<[usize; 1]> = SmallVec::new();
+                                let mut pending_removals: SmallVec<[usize; PENDING_REMOVALS_SIZE]> =
+                                    SmallVec::new();
                                 while let Some((character, ccc)) =
                                     combining_characters.get(i).map(|c| c.character_and_ccc())
                                 {
@@ -1733,6 +1929,7 @@ where
                                 // `CodePointInversionList` check in the common case.
                                 may_have_contracted_starter = true;
                                 debug_assert!(pending_removals.is_empty());
+                                self.ensure_upcoming_normalized();
                                 loop {
                                     let ahead = self.look_ahead(looked_ahead);
                                     looked_ahead += 1;
@@ -1758,6 +1955,7 @@ where
                                                 let mut attempt = 0;
                                                 let mut i = 0;
                                                 most_recent_skipped_ccc = ch.ccc();
+                                                self.ensure_upcoming_normalized();
                                                 loop {
                                                     let ahead = self.look_ahead(looked_ahead + i);
                                                     if let Some(ch) = ahead {
@@ -1852,7 +2050,8 @@ where
                             }
                             Tag::Digit => {
                                 if let Some(high_bits) = self.numeric_primary {
-                                    let mut digits: SmallVec<[u8; 8]> = SmallVec::new(); // TODO(#2005): Figure out good length
+                                    let mut digits: SmallVec<[u8; DIGIT_BUFFER_SIZE]> =
+                                        SmallVec::new(); // TODO(#2005): Figure out good length
                                     digits.push(ce32.digit());
                                     let numeric_primary = u32::from(high_bits) << 24;
                                     if combining_characters.is_empty() {
@@ -1864,6 +2063,7 @@ where
                                         // Performing the usual fallback pattern anyway just in
                                         // case.
                                         may_have_contracted_starter = true;
+                                        self.ensure_upcoming_normalized();
                                         while let Some(upcoming) = self.look_ahead(looked_ahead) {
                                             looked_ahead += 1;
                                             ce32 =
@@ -2160,7 +2360,10 @@ where
     }
 
     #[inline(always)]
-    fn collect_combining(&mut self, combining_characters: &mut SmallVec<[CharacterAndClass; 7]>) {
+    fn collect_combining(
+        &mut self,
+        combining_characters: &mut SmallVec<[CharacterAndClass; COMBINING_CHARACTER_BUFFER_SIZE]>,
+    ) {
         while !self.is_next_decomposition_starts_with_starter() {
             // `unwrap` is OK, because `!self.is_next_decomposition_starts_with_starter()`
             // means the `unwrap()` must succeed.

@@ -33,6 +33,7 @@ final class GraphemeClusterBreakIteratorUtf8 implements ffi.Finalizable {
     final result = _icu4x_GraphemeClusterBreakIteratorUtf8_next_mv1(_ffi);
     return result;
   }
+
 }
 
 @_DiplomatFfiUse('icu4x_GraphemeClusterBreakIteratorUtf8_destroy_mv1')

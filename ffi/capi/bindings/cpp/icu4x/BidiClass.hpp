@@ -10,27 +10,27 @@
 #include <memory>
 #include <functional>
 #include <optional>
+#include <cstdlib>
 #include "../diplomat_runtime.hpp"
 
 
 namespace icu4x {
 namespace capi {
     extern "C" {
-    
+
     icu4x::capi::BidiClass icu4x_BidiClass_for_char_mv1(char32_t ch);
-    
+
     typedef struct icu4x_BidiClass_long_name_mv1_result {union {diplomat::capi::DiplomatStringView ok; }; bool is_ok;} icu4x_BidiClass_long_name_mv1_result;
     icu4x_BidiClass_long_name_mv1_result icu4x_BidiClass_long_name_mv1(icu4x::capi::BidiClass self);
-    
+
     typedef struct icu4x_BidiClass_short_name_mv1_result {union {diplomat::capi::DiplomatStringView ok; }; bool is_ok;} icu4x_BidiClass_short_name_mv1_result;
     icu4x_BidiClass_short_name_mv1_result icu4x_BidiClass_short_name_mv1(icu4x::capi::BidiClass self);
-    
+
     uint8_t icu4x_BidiClass_to_integer_value_mv1(icu4x::capi::BidiClass self);
-    
+
     typedef struct icu4x_BidiClass_from_integer_value_mv1_result {union {icu4x::capi::BidiClass ok; }; bool is_ok;} icu4x_BidiClass_from_integer_value_mv1_result;
     icu4x_BidiClass_from_integer_value_mv1_result icu4x_BidiClass_from_integer_value_mv1(uint8_t other);
-    
-    
+
     } // extern "C"
 } // namespace capi
 } // namespace
@@ -66,7 +66,7 @@ inline icu4x::BidiClass icu4x::BidiClass::FromFFI(icu4x::capi::BidiClass c_enum)
     case icu4x::capi::BidiClass_PopDirectionalIsolate:
       return static_cast<icu4x::BidiClass::Value>(c_enum);
     default:
-      abort();
+      std::abort();
   }
 }
 

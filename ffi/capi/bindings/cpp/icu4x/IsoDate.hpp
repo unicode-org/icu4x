@@ -10,56 +10,56 @@
 #include <memory>
 #include <functional>
 #include <optional>
+#include <cstdlib>
 #include "../diplomat_runtime.hpp"
 #include "Calendar.hpp"
 #include "CalendarError.hpp"
-#include "CalendarParseError.hpp"
 #include "Date.hpp"
 #include "IsoWeekOfYear.hpp"
+#include "Rfc9557ParseError.hpp"
 #include "Weekday.hpp"
 
 
 namespace icu4x {
 namespace capi {
     extern "C" {
-    
+
     typedef struct icu4x_IsoDate_create_mv1_result {union {icu4x::capi::IsoDate* ok; icu4x::capi::CalendarError err;}; bool is_ok;} icu4x_IsoDate_create_mv1_result;
     icu4x_IsoDate_create_mv1_result icu4x_IsoDate_create_mv1(int32_t year, uint8_t month, uint8_t day);
-    
+
     icu4x::capi::IsoDate* icu4x_IsoDate_from_rata_die_mv1(int64_t rd);
-    
-    typedef struct icu4x_IsoDate_from_string_mv1_result {union {icu4x::capi::IsoDate* ok; icu4x::capi::CalendarParseError err;}; bool is_ok;} icu4x_IsoDate_from_string_mv1_result;
+
+    typedef struct icu4x_IsoDate_from_string_mv1_result {union {icu4x::capi::IsoDate* ok; icu4x::capi::Rfc9557ParseError err;}; bool is_ok;} icu4x_IsoDate_from_string_mv1_result;
     icu4x_IsoDate_from_string_mv1_result icu4x_IsoDate_from_string_mv1(diplomat::capi::DiplomatStringView v);
-    
+
     icu4x::capi::Date* icu4x_IsoDate_to_calendar_mv1(const icu4x::capi::IsoDate* self, const icu4x::capi::Calendar* calendar);
-    
+
     icu4x::capi::Date* icu4x_IsoDate_to_any_mv1(const icu4x::capi::IsoDate* self);
-    
+
     int64_t icu4x_IsoDate_to_rata_die_mv1(const icu4x::capi::IsoDate* self);
-    
+
     uint16_t icu4x_IsoDate_day_of_year_mv1(const icu4x::capi::IsoDate* self);
-    
+
     uint8_t icu4x_IsoDate_day_of_month_mv1(const icu4x::capi::IsoDate* self);
-    
+
     icu4x::capi::Weekday icu4x_IsoDate_day_of_week_mv1(const icu4x::capi::IsoDate* self);
-    
+
     icu4x::capi::IsoWeekOfYear icu4x_IsoDate_week_of_year_mv1(const icu4x::capi::IsoDate* self);
-    
+
     uint8_t icu4x_IsoDate_month_mv1(const icu4x::capi::IsoDate* self);
-    
+
     int32_t icu4x_IsoDate_year_mv1(const icu4x::capi::IsoDate* self);
-    
+
     bool icu4x_IsoDate_is_in_leap_year_mv1(const icu4x::capi::IsoDate* self);
-    
+
     uint8_t icu4x_IsoDate_months_in_year_mv1(const icu4x::capi::IsoDate* self);
-    
+
     uint8_t icu4x_IsoDate_days_in_month_mv1(const icu4x::capi::IsoDate* self);
-    
+
     uint16_t icu4x_IsoDate_days_in_year_mv1(const icu4x::capi::IsoDate* self);
-    
-    
+
     void icu4x_IsoDate_destroy_mv1(IsoDate* self);
-    
+
     } // extern "C"
 } // namespace capi
 } // namespace
@@ -76,9 +76,9 @@ inline std::unique_ptr<icu4x::IsoDate> icu4x::IsoDate::from_rata_die(int64_t rd)
   return std::unique_ptr<icu4x::IsoDate>(icu4x::IsoDate::FromFFI(result));
 }
 
-inline diplomat::result<std::unique_ptr<icu4x::IsoDate>, icu4x::CalendarParseError> icu4x::IsoDate::from_string(std::string_view v) {
+inline diplomat::result<std::unique_ptr<icu4x::IsoDate>, icu4x::Rfc9557ParseError> icu4x::IsoDate::from_string(std::string_view v) {
   auto result = icu4x::capi::icu4x_IsoDate_from_string_mv1({v.data(), v.size()});
-  return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::IsoDate>, icu4x::CalendarParseError>(diplomat::Ok<std::unique_ptr<icu4x::IsoDate>>(std::unique_ptr<icu4x::IsoDate>(icu4x::IsoDate::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::IsoDate>, icu4x::CalendarParseError>(diplomat::Err<icu4x::CalendarParseError>(icu4x::CalendarParseError::FromFFI(result.err)));
+  return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::IsoDate>, icu4x::Rfc9557ParseError>(diplomat::Ok<std::unique_ptr<icu4x::IsoDate>>(std::unique_ptr<icu4x::IsoDate>(icu4x::IsoDate::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::IsoDate>, icu4x::Rfc9557ParseError>(diplomat::Err<icu4x::Rfc9557ParseError>(icu4x::Rfc9557ParseError::FromFFI(result.err)));
 }
 
 inline std::unique_ptr<icu4x::Date> icu4x::IsoDate::to_calendar(const icu4x::Calendar& calendar) const {

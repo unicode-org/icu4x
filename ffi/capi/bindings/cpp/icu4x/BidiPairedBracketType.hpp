@@ -10,14 +10,14 @@
 #include <memory>
 #include <functional>
 #include <optional>
+#include <cstdlib>
 #include "../diplomat_runtime.hpp"
 
 
 namespace icu4x {
 namespace capi {
     extern "C" {
-    
-    
+
     } // extern "C"
 } // namespace capi
 } // namespace
@@ -33,7 +33,7 @@ inline icu4x::BidiPairedBracketType icu4x::BidiPairedBracketType::FromFFI(icu4x:
     case icu4x::capi::BidiPairedBracketType_None:
       return static_cast<icu4x::BidiPairedBracketType::Value>(c_enum);
     default:
-      abort();
+      std::abort();
   }
 }
 #endif // icu4x_BidiPairedBracketType_HPP

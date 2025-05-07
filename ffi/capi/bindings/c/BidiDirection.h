@@ -19,5 +19,4 @@
 
 
 
-
 #endif // BidiDirection_H

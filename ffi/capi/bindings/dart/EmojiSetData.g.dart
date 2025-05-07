@@ -68,6 +68,7 @@ final class EmojiSetData implements ffi.Finalizable {
     }
     return EmojiSetData._fromFfi(result.union.ok, []);
   }
+
 }
 
 @_DiplomatFfiUse('icu4x_EmojiSetData_destroy_mv1')
