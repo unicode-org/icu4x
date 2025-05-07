@@ -753,12 +753,6 @@ let termini = Object.assign({
                 name: "Value:F",
                 type: "number",
                 typeUse: "number"
-            },
-            
-            {
-                name: "Value:Magnitude",
-                type: "number",
-                typeUse: "number"
             }
             
         ]
@@ -772,12 +766,6 @@ let termini = Object.assign({
             
             {
                 name: "Decimal:F",
-                type: "number",
-                typeUse: "number"
-            },
-            
-            {
-                name: "Decimal:Magnitude",
                 type: "number",
                 typeUse: "number"
             }
