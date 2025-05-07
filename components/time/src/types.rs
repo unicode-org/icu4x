@@ -218,20 +218,21 @@ impl ZonedDateTime<Iso, UtcOffset> {
     ///
     /// ```
     /// use icu::calendar::cal::Iso;
-    /// use icu::time::ZonedDateTime;
     /// use icu::time::zone::UtcOffset;
+    /// use icu::time::ZonedDateTime;
     ///
     /// let iso_str = "2025-04-30T17:45-0700";
     /// let timestamp = 1746060300000; // milliseconds since UNIX epoch
     /// let offset: UtcOffset = "-0700".parse().unwrap();
     ///
-    /// let zdt_from_timestamp = ZonedDateTime::from_epoch_milliseconds_and_utc_offset(
-    ///     timestamp,
-    ///     offset
-    /// );
+    /// let zdt_from_timestamp =
+    ///     ZonedDateTime::from_epoch_milliseconds_and_utc_offset(
+    ///         timestamp, offset,
+    ///     );
     ///
     /// // Check that it equals the same as the parse result:
-    /// let zdt_from_str = ZonedDateTime::try_offset_only_from_str(iso_str, Iso).unwrap();
+    /// let zdt_from_str =
+    ///     ZonedDateTime::try_offset_only_from_str(iso_str, Iso).unwrap();
     /// assert_eq!(zdt_from_timestamp, zdt_from_str);
     /// ```
     ///
@@ -239,20 +240,21 @@ impl ZonedDateTime<Iso, UtcOffset> {
     ///
     /// ```
     /// use icu::calendar::cal::Iso;
-    /// use icu::time::ZonedDateTime;
     /// use icu::time::zone::UtcOffset;
+    /// use icu::time::ZonedDateTime;
     ///
     /// let iso_str = "1920-01-02T03:04:05.250+0600";
     /// let timestamp = -1577847354750; // milliseconds since UNIX epoch
     /// let offset: UtcOffset = "+0600".parse().unwrap();
     ///
-    /// let zdt_from_timestamp = ZonedDateTime::from_epoch_milliseconds_and_utc_offset(
-    ///     timestamp,
-    ///     offset
-    /// );
+    /// let zdt_from_timestamp =
+    ///     ZonedDateTime::from_epoch_milliseconds_and_utc_offset(
+    ///         timestamp, offset,
+    ///     );
     ///
     /// // Check that it equals the same as the parse result:
-    /// let zdt_from_str = ZonedDateTime::try_offset_only_from_str(iso_str, Iso).unwrap();
+    /// let zdt_from_str =
+    ///     ZonedDateTime::try_offset_only_from_str(iso_str, Iso).unwrap();
     /// assert_eq!(zdt_from_timestamp, zdt_from_str);
     /// ```
     pub fn from_epoch_milliseconds_and_utc_offset(

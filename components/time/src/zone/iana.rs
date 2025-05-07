@@ -35,9 +35,9 @@ use crate::{
 /// # Examples
 ///
 /// ```
+/// use icu::locale::subtags::subtag;
 /// use icu::time::zone::IanaParser;
 /// use icu::time::TimeZone;
-/// use icu::locale::subtags::subtag;
 ///
 /// let parser = IanaParser::new();
 ///
@@ -221,10 +221,10 @@ impl<'a> IanaParserBorrowed<'a> {
     /// # Examples
     ///
     /// ```
+    /// use icu::locale::subtags::subtag;
     /// use icu::time::zone::IanaParser;
     /// use icu::time::zone::TimeZone;
     /// use std::collections::BTreeSet;
-    /// use icu::locale::subtags::subtag;
     ///
     /// let parser = IanaParser::new();
     ///
@@ -255,7 +255,6 @@ impl Iterator for TimeZoneIter<'_> {
 
 /// A parser that supplements [`IanaParser`] with about 10kB of additional data to support
 /// returning canonical and case-normalized IANA time zone IDs.
-///
 #[derive(Debug, Clone)]
 pub struct IanaParserExtended<I> {
     inner: I,
@@ -499,14 +498,17 @@ impl<'a> IanaParserExtendedBorrowed<'a> {
     /// # Examples
     ///
     /// ```
+    /// use icu::locale::subtags::subtag;
     /// use icu::time::zone::iana::IanaParserExtended;
     /// use icu::time::zone::TimeZone;
     /// use std::collections::BTreeSet;
-    /// use icu::locale::subtags::subtag;
     ///
     /// let parser = IanaParserExtended::new();
     ///
-    /// let ids = parser.iter().map(|t| (t.time_zone, t.canonical)).collect::<BTreeSet<_>>();
+    /// let ids = parser
+    ///     .iter()
+    ///     .map(|t| (t.time_zone, t.canonical))
+    ///     .collect::<BTreeSet<_>>();
     ///
     /// assert!(ids.contains(&(TimeZone(subtag!("uaiev")), "Europe/Kyiv")));
     /// assert!(parser.iter().count() >= 445);

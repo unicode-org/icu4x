@@ -50,13 +50,13 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> FixedCalendarDateTimeFormatter<
     ///
     /// ```
     /// use icu::calendar::cal::Buddhist;
-    /// use icu::datetime::fieldsets::{T, YMD};
     /// use icu::datetime::fieldsets::enums::CompositeFieldSet;
+    /// use icu::datetime::fieldsets::{T, YMD};
     /// use icu::datetime::input::{Date, Time};
-    /// use icu::datetime::FixedCalendarDateTimeFormatter;
-    /// use icu::datetime::unchecked::FormattedDateTimeUncheckedError;
     /// use icu::datetime::unchecked::DateTimeInputUnchecked;
+    /// use icu::datetime::unchecked::FormattedDateTimeUncheckedError;
     /// use icu::datetime::unchecked::MissingInputFieldKind;
+    /// use icu::datetime::FixedCalendarDateTimeFormatter;
     /// use icu::locale::locale;
     /// use writeable::assert_try_writeable_eq;
     ///
@@ -69,9 +69,7 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> FixedCalendarDateTimeFormatter<
     ///
     /// // Create a date and convert it to the correct calendar:
     /// let mut input = DateTimeInputUnchecked::default();
-    /// let date = Date::try_new_iso(2025, 3, 7)
-    ///     .unwrap()
-    ///     .to_calendar(Buddhist);
+    /// let date = Date::try_new_iso(2025, 3, 7).unwrap().to_calendar(Buddhist);
     ///
     /// // Safe because the calendar matches the formatter:
     /// input.set_date_fields_unchecked(date);
@@ -87,7 +85,9 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> FixedCalendarDateTimeFormatter<
     /// assert_try_writeable_eq!(
     ///     result,
     ///     "{d} {M} {G} {y}",
-    ///     Err(FormattedDateTimeUncheckedError::MissingInputField(MissingInputFieldKind::DayOfMonth))
+    ///     Err(FormattedDateTimeUncheckedError::MissingInputField(
+    ///         MissingInputFieldKind::DayOfMonth
+    ///     ))
     /// );
     /// ```
     ///
@@ -128,22 +128,20 @@ impl<FSet: DateTimeNamesMarker> DateTimeFormatter<FSet> {
     /// successfully pass it into [`format_unchecked`].
     ///
     /// ```
-    /// use icu::datetime::fieldsets::{T, YMD};
     /// use icu::datetime::fieldsets::enums::CompositeFieldSet;
+    /// use icu::datetime::fieldsets::{T, YMD};
     /// use icu::datetime::input::{Date, Time};
-    /// use icu::datetime::DateTimeFormatter;
-    /// use icu::datetime::unchecked::FormattedDateTimeUncheckedError;
     /// use icu::datetime::unchecked::DateTimeInputUnchecked;
+    /// use icu::datetime::unchecked::FormattedDateTimeUncheckedError;
     /// use icu::datetime::unchecked::MissingInputFieldKind;
+    /// use icu::datetime::DateTimeFormatter;
     /// use icu::locale::locale;
     /// use writeable::assert_try_writeable_eq;
     ///
-    /// let formatter = DateTimeFormatter::try_new(
-    ///     locale!("th-TH").into(),
-    ///     YMD::long(),
-    /// )
-    /// .unwrap()
-    /// .cast_into_fset::<CompositeFieldSet>();
+    /// let formatter =
+    ///     DateTimeFormatter::try_new(locale!("th-TH").into(), YMD::long())
+    ///         .unwrap()
+    ///         .cast_into_fset::<CompositeFieldSet>();
     ///
     /// // Create a date and convert it to the correct calendar:
     /// let mut input = DateTimeInputUnchecked::default();
@@ -165,7 +163,9 @@ impl<FSet: DateTimeNamesMarker> DateTimeFormatter<FSet> {
     /// assert_try_writeable_eq!(
     ///     result,
     ///     "{d} {M} {G} {y}",
-    ///     Err(FormattedDateTimeUncheckedError::MissingInputField(MissingInputFieldKind::DayOfMonth))
+    ///     Err(FormattedDateTimeUncheckedError::MissingInputField(
+    ///         MissingInputFieldKind::DayOfMonth
+    ///     ))
     /// );
     /// ```
     ///

@@ -12,10 +12,7 @@
 //! # use env_preferences::LocaleError;
 //! # fn main() -> Result<(), LocaleError> {
 //! let windows_locale = WindowsLocale::try_from_str("en-US")?;
-//! assert_eq!(
-//!     windows_locale.try_convert_lossy()?,
-//!     locale!("en-US")
-//! );
+//! assert_eq!(windows_locale.try_convert_lossy()?, locale!("en-US"));
 //! # Ok(())
 //! # }
 //! ```

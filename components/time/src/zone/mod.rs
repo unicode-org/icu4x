@@ -158,23 +158,14 @@ pub mod models {
 /// See the docs on [`zone`](crate::zone) for more information.
 ///
 /// ```
-/// use icu::time::zone::{IanaParser, TimeZone};
 /// use icu::locale::subtags::subtag;
+/// use icu::time::zone::{IanaParser, TimeZone};
 ///
 /// let parser = IanaParser::new();
 /// assert_eq!(parser.parse("Europe/Oslo"), TimeZone(subtag!("noosl")));
-/// assert_eq!(
-///     parser.parse("Europe/Berlin"),
-///     TimeZone(subtag!("deber"))
-/// );
-/// assert_eq!(
-///     parser.parse("Europe/Belfast"),
-///     TimeZone(subtag!("gblon"))
-/// );
-/// assert_eq!(
-///     parser.parse("Europe/London"),
-///     TimeZone(subtag!("gblon"))
-/// );
+/// assert_eq!(parser.parse("Europe/Berlin"), TimeZone(subtag!("deber")));
+/// assert_eq!(parser.parse("Europe/Belfast"), TimeZone(subtag!("gblon")));
+/// assert_eq!(parser.parse("Europe/London"), TimeZone(subtag!("gblon")));
 /// ```
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, Eq, Ord, PartialEq, PartialOrd, yoke::Yokeable, ULE, Hash)]
@@ -269,12 +260,12 @@ impl<'a> zerovec::maps::ZeroMapKV<'a> for TimeZone {
 ///
 /// ```
 /// use icu::calendar::Date;
+/// use icu::locale::subtags::subtag;
 /// use icu::time::zone::IanaParser;
 /// use icu::time::zone::TimeZoneVariant;
 /// use icu::time::DateTime;
 /// use icu::time::Time;
 /// use icu::time::TimeZone;
-/// use icu::locale::subtags::subtag;
 ///
 /// // Parse the IANA ID
 /// let id = IanaParser::new().parse("America/Chicago");
@@ -286,8 +277,10 @@ impl<'a> zerovec::maps::ZeroMapKV<'a> for TimeZone {
 /// let time_zone = id.with_offset("-0600".parse().ok());
 ///
 /// // Extend to a TimeZoneInfo<AtTime> by adding a local time
-/// let time_zone_at_time = time_zone
-///     .at_date_time_iso(DateTime { date: Date::try_new_iso(2023, 12, 2).unwrap(), time: Time::start_of_day() });
+/// let time_zone_at_time = time_zone.at_date_time_iso(DateTime {
+///     date: Date::try_new_iso(2023, 12, 2).unwrap(),
+///     time: Time::start_of_day(),
+/// });
 ///
 /// // Extend to a TimeZoneInfo<Full> by adding a zone variant
 /// let time_zone_with_variant =
@@ -419,17 +412,20 @@ impl TimeZoneInfo<models::AtTime> {
     /// # Example
     /// ```
     /// use icu::calendar::Date;
+    /// use icu::locale::subtags::subtag;
+    /// use icu::time::zone::TimeZoneVariant;
+    /// use icu::time::zone::VariantOffsetsCalculator;
     /// use icu::time::DateTime;
     /// use icu::time::Time;
     /// use icu::time::TimeZone;
-    /// use icu::time::zone::TimeZoneVariant;
-    /// use icu::time::zone::VariantOffsetsCalculator;
-    /// use icu::locale::subtags::subtag;
     ///
     /// // Chicago at UTC-6
     /// let info = TimeZone(subtag!("uschi"))
     ///     .with_offset("-0600".parse().ok())
-    ///     .at_date_time_iso(DateTime { date: Date::try_new_iso(2023, 12, 2).unwrap(), time: Time::start_of_day() })
+    ///     .at_date_time_iso(DateTime {
+    ///         date: Date::try_new_iso(2023, 12, 2).unwrap(),
+    ///         time: Time::start_of_day(),
+    ///     })
     ///     .infer_variant(VariantOffsetsCalculator::new());
     ///
     /// assert_eq!(info.variant(), TimeZoneVariant::Standard);
@@ -437,7 +433,10 @@ impl TimeZoneInfo<models::AtTime> {
     /// // Chicago at at UTC-5
     /// let info = TimeZone(subtag!("uschi"))
     ///     .with_offset("-0500".parse().ok())
-    ///     .at_date_time_iso(DateTime { date: Date::try_new_iso(2023, 6, 2).unwrap(), time: Time::start_of_day() })
+    ///     .at_date_time_iso(DateTime {
+    ///         date: Date::try_new_iso(2023, 6, 2).unwrap(),
+    ///         time: Time::start_of_day(),
+    ///     })
     ///     .infer_variant(VariantOffsetsCalculator::new());
     ///
     /// assert_eq!(info.variant(), TimeZoneVariant::Daylight);
@@ -445,7 +444,10 @@ impl TimeZoneInfo<models::AtTime> {
     /// // Chicago at UTC-7
     /// let info = TimeZone(subtag!("uschi"))
     ///     .with_offset("-0700".parse().ok())
-    ///     .at_date_time_iso(DateTime { date: Date::try_new_iso(2023, 12, 2).unwrap(), time: Time::start_of_day() })
+    ///     .at_date_time_iso(DateTime {
+    ///         date: Date::try_new_iso(2023, 12, 2).unwrap(),
+    ///         time: Time::start_of_day(),
+    ///     })
     ///     .infer_variant(VariantOffsetsCalculator::new());
     ///
     /// // Whatever it is, it's not Chicago

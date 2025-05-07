@@ -263,13 +263,13 @@ impl VariantOffsetsCalculatorBorrowed<'_> {
     ///
     /// ```
     /// use icu::calendar::Date;
+    /// use icu::locale::subtags::subtag;
     /// use icu::time::zone::UtcOffset;
     /// use icu::time::zone::VariantOffsetsCalculator;
     /// use icu::time::zone::ZoneNameTimestamp;
     /// use icu::time::DateTime;
     /// use icu::time::Time;
     /// use icu::time::TimeZone;
-    /// use icu::locale::subtags::subtag;
     ///
     /// let zoc = VariantOffsetsCalculator::new();
     ///
@@ -277,7 +277,10 @@ impl VariantOffsetsCalculatorBorrowed<'_> {
     /// let offsets = zoc
     ///     .compute_offsets_from_time_zone_and_name_timestamp(
     ///         TimeZone(subtag!("usden")),
-    ///         ZoneNameTimestamp::from_date_time_iso(DateTime { date: Date::try_new_iso(2024, 1, 1).unwrap(), time: Time::start_of_day() }),
+    ///         ZoneNameTimestamp::from_date_time_iso(DateTime {
+    ///             date: Date::try_new_iso(2024, 1, 1).unwrap(),
+    ///             time: Time::start_of_day(),
+    ///         }),
     ///     )
     ///     .unwrap();
     /// assert_eq!(
@@ -293,7 +296,10 @@ impl VariantOffsetsCalculatorBorrowed<'_> {
     /// let offsets = zoc
     ///     .compute_offsets_from_time_zone_and_name_timestamp(
     ///         TimeZone(subtag!("usphx")),
-    ///         ZoneNameTimestamp::from_date_time_iso(DateTime { date: Date::try_new_iso(2024, 1, 1).unwrap(), time: Time::start_of_day() }),
+    ///         ZoneNameTimestamp::from_date_time_iso(DateTime {
+    ///             date: Date::try_new_iso(2024, 1, 1).unwrap(),
+    ///             time: Time::start_of_day(),
+    ///         }),
     ///     )
     ///     .unwrap();
     /// assert_eq!(

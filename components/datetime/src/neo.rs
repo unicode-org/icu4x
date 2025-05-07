@@ -844,7 +844,7 @@ impl<C: CldrCalendar, FSet: DateTimeMarkers> FixedCalendarDateTimeFormatter<C, F
     /// // Create a simple YMDT formatter:
     /// let formatter = FixedCalendarDateTimeFormatter::try_new(
     ///     locale!("und").into(),
-    ///     YMD::long().with_time_hm().with_alignment(Alignment::Column)
+    ///     YMD::long().with_time_hm().with_alignment(Alignment::Column),
     /// )
     /// .unwrap();
     ///
@@ -858,10 +858,7 @@ impl<C: CldrCalendar, FSet: DateTimeMarkers> FixedCalendarDateTimeFormatter<C, F
     /// equivalent_builder.time_precision = Some(TimePrecision::Minute);
     /// equivalent_builder.alignment = Some(Alignment::Column);
     /// equivalent_builder.year_style = None;
-    /// assert_eq!(
-    ///     builder,
-    ///     equivalent_builder,
-    /// );
+    /// assert_eq!(builder, equivalent_builder,);
     ///
     /// // Check that it creates a formatter with equivalent behavior:
     /// let built_formatter = FixedCalendarDateTimeFormatter::try_new(
@@ -1001,7 +998,8 @@ impl<FSet: DateTimeMarkers> DateTimeFormatter<FSet> {
     /// use writeable::assert_writeable_eq;
     ///
     /// let formatter =
-    ///     DateTimeFormatter::try_new(locale!("th-TH").into(), YMD::long()).unwrap();
+    ///     DateTimeFormatter::try_new(locale!("th-TH").into(), YMD::long())
+    ///         .unwrap();
     ///
     /// assert_writeable_eq!(
     ///     formatter.format(&Date::try_new_iso(2024, 12, 16).unwrap()),
@@ -1078,12 +1076,16 @@ impl<FSet: DateTimeMarkers> DateTimeFormatter<FSet> {
 ///
 /// ```
 /// use icu::datetime::fieldsets::T;
-/// use icu::datetime::NoCalendarFormatter;
 /// use icu::datetime::input::Time;
+/// use icu::datetime::NoCalendarFormatter;
 /// use icu::locale::locale;
 ///
-/// let formatter = NoCalendarFormatter::try_new(locale!("bn").into(), T::long()).unwrap();
-/// assert_eq!(formatter.format(&Time::start_of_day()).to_string(), "১২:০০:০০ AM");
+/// let formatter =
+///     NoCalendarFormatter::try_new(locale!("bn").into(), T::long()).unwrap();
+/// assert_eq!(
+///     formatter.format(&Time::start_of_day()).to_string(),
+///     "১২:০০:০০ AM"
+/// );
 /// ```
 ///
 /// A [`NoCalendarFormatter`] cannot be constructed with a fieldset that involves dates:
