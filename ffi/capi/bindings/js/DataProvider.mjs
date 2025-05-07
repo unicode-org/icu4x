@@ -56,10 +56,10 @@ export class DataProvider {
      *
      * See the [Rust documentation for `ForkByMarkerProvider`](https://docs.rs/icu_provider_adapters/latest/icu_provider_adapters/fork/type.ForkByMarkerProvider.html) for more information.
      */
-    forkByKey(other) {
+    forkByMarker(other) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
         
-        const result = wasm.icu4x_DataProvider_fork_by_key_mv1(diplomatReceive.buffer, this.ffiValue, other.ffiValue);
+        const result = wasm.icu4x_DataProvider_fork_by_marker_mv1(diplomatReceive.buffer, this.ffiValue, other.ffiValue);
     
         try {
             if (!diplomatReceive.resultFlag) {

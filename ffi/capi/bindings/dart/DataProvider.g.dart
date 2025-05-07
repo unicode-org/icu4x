@@ -38,8 +38,8 @@ final class DataProvider implements ffi.Finalizable {
   /// See the [Rust documentation for `ForkByMarkerProvider`](https://docs.rs/icu_provider_adapters/latest/icu_provider_adapters/fork/type.ForkByMarkerProvider.html) for more information.
   ///
   /// Throws [DataError] on failure.
-  void forkByKey(DataProvider other) {
-    final result = _icu4x_DataProvider_fork_by_key_mv1(_ffi, other._ffi);
+  void forkByMarker(DataProvider other) {
+    final result = _icu4x_DataProvider_fork_by_marker_mv1(_ffi, other._ffi);
     if (!result.isOk) {
       throw DataError.values[result.union.err];
     }
@@ -78,10 +78,10 @@ final class DataProvider implements ffi.Finalizable {
 // ignore: non_constant_identifier_names
 external void _icu4x_DataProvider_destroy_mv1(ffi.Pointer<ffi.Void> self);
 
-@_DiplomatFfiUse('icu4x_DataProvider_fork_by_key_mv1')
-@ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_DataProvider_fork_by_key_mv1')
+@_DiplomatFfiUse('icu4x_DataProvider_fork_by_marker_mv1')
+@ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_DataProvider_fork_by_marker_mv1')
 // ignore: non_constant_identifier_names
-external _ResultVoidInt32 _icu4x_DataProvider_fork_by_key_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> other);
+external _ResultVoidInt32 _icu4x_DataProvider_fork_by_marker_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> other);
 
 @_DiplomatFfiUse('icu4x_DataProvider_fork_by_locale_mv1')
 @ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_DataProvider_fork_by_locale_mv1')

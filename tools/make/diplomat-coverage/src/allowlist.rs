@@ -81,6 +81,7 @@ lazy_static::lazy_static! {
         // We might expose these if someone asks for it
         "DryDataProvider",
         "DynamicDryDataProvider",
+        "ExportableProvider",
 
         // internal trait, all methods replicated on Date
         "Calendar",
@@ -252,6 +253,7 @@ lazy_static::lazy_static! {
         // Not planned for 2.0
         // We will revisit these APIs when Duration Formatter needs them. We may need to rename things
         "fixed_decimal::Signed",
+        "fixed_decimal::Decimal::new",
         "fixed_decimal::UnsignedDecimal",
         "fixed_decimal::UnsignedRoundingMode",
 
@@ -427,6 +429,9 @@ lazy_static::lazy_static! {
         "icu_provider_adapters::fallback::LocaleFallbackProvider::inner",
         "icu_provider_adapters::fallback::LocaleFallbackProvider::into_inner",
         "icu_provider_adapters::fallback::LocaleFallbackProvider::inner_mut",
+        "icu_provider_adapters::fork::ForkByMarkerProvider::inner",
+        "icu_provider_adapters::fork::ForkByMarkerProvider::inner_mut",
+        "icu_provider_adapters::fork::ForkByMarkerProvider::into_inner",
 
         // The polymorphic ICU4XDataProvider type makes the MultiFork providers less relevant.
         "icu_provider_adapters::fork::MultiForkByErrorProvider",
