@@ -11,7 +11,7 @@ Over the last month before the release target date, we'll discuss the checklist 
 
 This is a checklist of things that should be done in the weeks leading to the release.
 
-* [ ] Verify that the milestone and checklist are complete
+* [ ] Verify that the milestone is complete
 * [ ] Verify with component owners that they're ready for release
 * [ ] Take a bird-eye view at:
   * [ ] READMEs
@@ -30,7 +30,6 @@ This is a checklist of things that should be done in the weeks leading to the re
 * [ ] Verify that `ffi/capi` depends on a released (not Git) version of Diplomat. Get it published (ask manishearth or sffc) otherwise.
 * [ ] Get all contributors to complete the changelog (see below)
 * [ ] Draft the text for the GitHub release. This text will be sent to GitHub subscribers and can also be used for the mailing list email and blog post.
-* [ ] Prepare a PR to update tutorials using the upcoming release. The PR should pass `cargo make test-tutorials-local`, but can fail `cargo make test-tutorials-cratesio` prior to release
 
 ## Release steps
 
@@ -47,10 +46,10 @@ Once the release checklist is complete, the assigned release driver will perform
   * Use `cargo workspaces publish --from-git` to automatically publish the crates in the correct order if you would like
   * Add `icu4x-release` group as owners to each new component you're publishing
     * `cargo owner -a github:unicode-org:icu4x-release`
-* Merge the tutorials PR. `cargo make test-tuturials-cratesio` should now pass
-  * If there are any errors, please fix them before advertising the release
 * [Tag the Release](https://github.com/unicode-org/icu4x/releases) with the text drafted above
 * Create a branch named `release/x.y` on the release tag and push it to the upstream
+
+## After a few days
 * Announce the release to public
   * (All releases) Send an email to [icu4x-announce](https://groups.google.com/u/0/a/unicode.org/g/icu4x-announce)
   * (All releases) Blog post on Unicode blog
