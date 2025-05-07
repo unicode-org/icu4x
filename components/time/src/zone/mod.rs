@@ -189,8 +189,11 @@ impl TimeZone {
     ///
     /// This is the result of parsing unknown zones. It's important that such parsing does not
     /// fail, as new zones are added all the time, and ICU4X might not be up to date.
-    pub const fn unknown() -> Self {
-        Self(subtag!("unk"))
+    pub const UNKNOWN: Self = Self(subtag!("unk"));
+
+    /// Whether this [`TimeZone`] equals [`TimeZone::UNKNOWN`].
+    pub const fn is_unknown(self) -> bool {
+        matches!(self, Self::UNKNOWN)
     }
 }
 
@@ -368,7 +371,7 @@ impl TimeZone {
 impl TimeZoneInfo<models::Base> {
     /// Creates a time zone info with no information.
     pub const fn unknown() -> Self {
-        TimeZone::unknown().with_offset(None)
+        TimeZone::UNKNOWN.with_offset(None)
     }
 
     /// Creates a new [`TimeZoneInfo`] for the UTC time zone.
@@ -411,7 +414,7 @@ impl TimeZoneInfo<models::AtTime> {
     /// If `offset()` is `None`, or if it doesn't match either of the
     /// timezone's standard or daylight offset around `local_time()`,
     /// the variant will be set to [`TimeZoneVariant::Standard`] and the time zone
-    /// to [`TimeZone::unknown()`].
+    /// to [`TimeZone::UNKNOWN`].
     ///
     /// # Example
     /// ```
@@ -446,7 +449,7 @@ impl TimeZoneInfo<models::AtTime> {
     ///     .infer_variant(VariantOffsetsCalculator::new());
     ///
     /// // Whatever it is, it's not Chicago
-    /// assert_eq!(info.id(), TimeZone::unknown());
+    /// assert_eq!(info.id(), TimeZone::UNKNOWN);
     /// assert_eq!(info.variant(), TimeZoneVariant::Standard);
     /// ```
     pub fn infer_variant(
@@ -454,7 +457,7 @@ impl TimeZoneInfo<models::AtTime> {
         calculator: VariantOffsetsCalculatorBorrowed,
     ) -> TimeZoneInfo<models::Full> {
         let Some(offset) = self.offset else {
-            return TimeZone::unknown()
+            return TimeZone::UNKNOWN
                 .with_offset(self.offset)
                 .with_zone_name_timestamp(self.zone_name_timestamp)
                 .with_variant(TimeZoneVariant::Standard);
@@ -471,7 +474,7 @@ impl TimeZoneInfo<models::AtTime> {
                 }
             })
         else {
-            return TimeZone::unknown()
+            return TimeZone::UNKNOWN
                 .with_offset(self.offset)
                 .with_zone_name_timestamp(self.zone_name_timestamp)
                 .with_variant(TimeZoneVariant::Standard);

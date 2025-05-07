@@ -57,6 +57,21 @@ export class TimeZone {
     }
 
     /** 
+     * Whether the time zone is the unknown zone.
+     *
+     * See the [Rust documentation for `is_unknown`](https://docs.rs/icu/latest/icu/time/struct.TimeZone.html#method.is_unknown) for more information.
+     */
+    isUnknown() {
+        const result = wasm.icu4x_TimeZone_is_unknown_mv1(this.ffiValue);
+    
+        try {
+            return result;
+        }
+        
+        finally {}
+    }
+
+    /** 
      * Creates a time zone from a BCP-47 string.
      *
      * Returns the unknown time zone if the string is not a valid BCP-47 subtag.

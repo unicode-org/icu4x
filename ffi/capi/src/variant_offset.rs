@@ -28,6 +28,7 @@ pub mod ffi {
 
     #[diplomat::out]
     #[diplomat::rust_link(icu::time::zone::VariantOffsets, Struct)]
+    #[diplomat::rust_link(icu::time::zone::VariantOffsets::from_standard, FnInStruct, hidden)] // out struct
     pub struct VariantOffsets {
         pub standard: Box<UtcOffset>,
         pub daylight: Option<Box<UtcOffset>>,
@@ -50,16 +51,6 @@ pub mod ffi {
             )?)))
         }
 
-        /// Creates an offset from eighths of an hour.
-        #[diplomat::rust_link(icu::time::zone::UtcOffset, Struct, compact)]
-        #[diplomat::rust_link(icu::time::zone::UtcOffset::from_eighths_of_hour, FnInStruct)]
-        #[diplomat::attr(auto, named_constructor = "from_eights_of_hour")]
-        pub fn from_eighths_of_hour(eighths_of_hour: i8) -> Box<Self> {
-            Box::new(Self(icu_time::zone::UtcOffset::from_eighths_of_hour(
-                eighths_of_hour,
-            )))
-        }
-
         /// Creates an offset from a string.
         #[diplomat::rust_link(icu::time::zone::UtcOffset, Struct, compact)]
         #[diplomat::rust_link(icu::time::zone::UtcOffset::try_from_str, FnInStruct)]
@@ -72,13 +63,6 @@ pub mod ffi {
                 .map_err(|_| TimeZoneInvalidOffsetError)
                 .map(Self)
                 .map(Box::new)
-        }
-
-        /// Gets the offset as eighths of an hour.
-        #[diplomat::rust_link(icu::time::zone::UtcOffset::to_eighths_of_hour, FnInStruct)]
-        #[diplomat::attr(auto, getter)]
-        pub fn eighths_of_hour(&self) -> i8 {
-            self.0.to_eighths_of_hour()
         }
 
         /// Returns the value as offset seconds.

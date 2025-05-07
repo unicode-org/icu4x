@@ -22,12 +22,8 @@ namespace capi {
     typedef struct icu4x_UtcOffset_from_seconds_mv1_result {union {icu4x::capi::UtcOffset* ok; }; bool is_ok;} icu4x_UtcOffset_from_seconds_mv1_result;
     icu4x_UtcOffset_from_seconds_mv1_result icu4x_UtcOffset_from_seconds_mv1(int32_t seconds);
     
-    icu4x::capi::UtcOffset* icu4x_UtcOffset_from_eighths_of_hour_mv1(int8_t eighths_of_hour);
-    
     typedef struct icu4x_UtcOffset_from_string_mv1_result {union {icu4x::capi::UtcOffset* ok; }; bool is_ok;} icu4x_UtcOffset_from_string_mv1_result;
     icu4x_UtcOffset_from_string_mv1_result icu4x_UtcOffset_from_string_mv1(diplomat::capi::DiplomatStringView offset);
-    
-    int8_t icu4x_UtcOffset_eighths_of_hour_mv1(const icu4x::capi::UtcOffset* self);
     
     int32_t icu4x_UtcOffset_seconds_mv1(const icu4x::capi::UtcOffset* self);
     
@@ -53,19 +49,9 @@ inline diplomat::result<std::unique_ptr<icu4x::UtcOffset>, icu4x::TimeZoneInvali
   return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::UtcOffset>, icu4x::TimeZoneInvalidOffsetError>(diplomat::Ok<std::unique_ptr<icu4x::UtcOffset>>(std::unique_ptr<icu4x::UtcOffset>(icu4x::UtcOffset::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::UtcOffset>, icu4x::TimeZoneInvalidOffsetError>(diplomat::Err<icu4x::TimeZoneInvalidOffsetError>(icu4x::TimeZoneInvalidOffsetError {}));
 }
 
-inline std::unique_ptr<icu4x::UtcOffset> icu4x::UtcOffset::from_eighths_of_hour(int8_t eighths_of_hour) {
-  auto result = icu4x::capi::icu4x_UtcOffset_from_eighths_of_hour_mv1(eighths_of_hour);
-  return std::unique_ptr<icu4x::UtcOffset>(icu4x::UtcOffset::FromFFI(result));
-}
-
 inline diplomat::result<std::unique_ptr<icu4x::UtcOffset>, icu4x::TimeZoneInvalidOffsetError> icu4x::UtcOffset::from_string(std::string_view offset) {
   auto result = icu4x::capi::icu4x_UtcOffset_from_string_mv1({offset.data(), offset.size()});
   return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::UtcOffset>, icu4x::TimeZoneInvalidOffsetError>(diplomat::Ok<std::unique_ptr<icu4x::UtcOffset>>(std::unique_ptr<icu4x::UtcOffset>(icu4x::UtcOffset::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::UtcOffset>, icu4x::TimeZoneInvalidOffsetError>(diplomat::Err<icu4x::TimeZoneInvalidOffsetError>(icu4x::TimeZoneInvalidOffsetError {}));
-}
-
-inline int8_t icu4x::UtcOffset::eighths_of_hour() const {
-  auto result = icu4x::capi::icu4x_UtcOffset_eighths_of_hour_mv1(this->AsFFI());
-  return result;
 }
 
 inline int32_t icu4x::UtcOffset::seconds() const {

@@ -93,7 +93,7 @@ impl SourceDataProvider {
                                 .or_default()
                                 .push(tz);
                             // The daylight name is only required if a zone usign this metazone actually observes DST
-                            if curr_offset.1 .1 != 0 {
+                            if curr_offset.1.daylight.is_some() {
                                 reverse_metazones
                                     .entry((mz, MzMembership::Daylight))
                                     .or_default()

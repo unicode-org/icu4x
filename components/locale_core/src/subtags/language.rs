@@ -51,7 +51,7 @@ impl Language {
     /// The unknown language "und".
     pub const UNKNOWN: Self = language!("und");
 
-    /// Tests if the [`Language`] subtag is the default one (`"und"`).
+    /// Whether this [`Language`] equals [`Language::UNKNOWN`].
     #[inline]
     pub const fn is_unknown(self) -> bool {
         matches!(self, Self::UNKNOWN)

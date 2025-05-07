@@ -477,8 +477,8 @@ impl FormatTimeZone for ExemplarCityFormat {
             .or_else(|| exemplars_root.exemplars.get(&time_zone_id))
             .or_else(|| locations.locations.get(&time_zone_id))
             .or_else(|| locations_root.locations.get(&time_zone_id))
-            .or_else(|| exemplars.exemplars.get(&TimeZone::unknown()))
-            .or_else(|| exemplars_root.exemplars.get(&TimeZone::unknown()))
+            .or_else(|| exemplars.exemplars.get(&TimeZone::UNKNOWN))
+            .or_else(|| exemplars_root.exemplars.get(&TimeZone::UNKNOWN))
         else {
             return Ok(Err(FormatTimeZoneError::Fallback));
         };
@@ -741,7 +741,7 @@ impl FormatTimeZone for Bcp47IdFormat {
         _data_payloads: TimeZoneDataPayloadsBorrowed,
         _fdf: Option<&DecimalFormatter>,
     ) -> Result<Result<(), FormatTimeZoneError>, fmt::Error> {
-        let time_zone_id = input.zone_id.unwrap_or(TimeZone::unknown());
+        let time_zone_id = input.zone_id.unwrap_or(TimeZone::UNKNOWN);
 
         sink.write_str(time_zone_id.as_str())?;
 

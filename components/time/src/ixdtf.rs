@@ -304,7 +304,7 @@ impl<'a> Intermediate<'a> {
                 iana_parser.parse_from_utf8(iana_identifier)
             }
             None if self.is_z => TimeZone(subtag!("utc")),
-            None => TimeZone::unknown(),
+            None => TimeZone::UNKNOWN,
         };
         let offset = match self.offset {
             Some(offset) => {
@@ -579,7 +579,7 @@ impl<A: AsCalendar> ZonedDateTime<A, TimeZoneInfo<models::Full>> {
     /// assert_eq!(
     ///     ZonedDateTime::try_full_from_str("2024-08-08T12:08:19-05:00[America/Los_Angeles]", Iso, IanaParser::new(), VariantOffsetsCalculator::new())
     ///     .unwrap().zone.id(),
-    ///     TimeZone::unknown()
+    ///     TimeZone::UNKNOWN
     /// );
     ///
     /// // We don't know that America/Los_Angeles didn't use standard time (-08:00) in August, but we have a
@@ -810,7 +810,7 @@ mod test {
             IanaParserBorrowed::new(),
         )
         .unwrap();
-        assert_eq!(result.zone.id(), TimeZone::unknown());
+        assert_eq!(result.zone.id(), TimeZone::UNKNOWN);
         assert_eq!(result.zone.offset(), None);
     }
 
