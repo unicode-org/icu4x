@@ -94,7 +94,7 @@ macro_rules! gen_buffer_constructors_with_external_loader {
         pub fn $buffer_fn<P>(
             provider: &P,
             prefs: DateTimeFormatterPreferences,
-            field_set: $fset,
+            field_set_with_options: $fset,
         ) -> Result<Self, DateTimeFormatterLoadError>
         where
             P: BufferProvider + ?Sized,
@@ -103,7 +103,7 @@ macro_rules! gen_buffer_constructors_with_external_loader {
                 &provider.as_deserializing(),
                 &ExternalLoaderBuffer(provider),
                 prefs,
-                field_set.get_field(),
+                field_set_with_options.get_field(),
             )
         }
     };
@@ -113,7 +113,7 @@ macro_rules! gen_buffer_constructors_with_external_loader {
         pub fn $buffer_fn<P>(
             provider: &P,
             prefs: DateTimeFormatterPreferences,
-            field_set: $fset,
+            field_set_with_options: $fset,
         ) -> Result<Self, DateTimeFormatterLoadError>
         where
             P: BufferProvider + ?Sized,
@@ -122,7 +122,7 @@ macro_rules! gen_buffer_constructors_with_external_loader {
                 &provider.as_deserializing(),
                 &ExternalLoaderBuffer(provider),
                 prefs,
-                field_set.get_field(),
+                field_set_with_options.get_field(),
             )
         }
     };
@@ -226,7 +226,7 @@ where
     #[cfg(feature = "compiled_data")]
     pub fn try_new(
         prefs: DateTimeFormatterPreferences,
-        field_set: FSet,
+        field_set_with_options: FSet,
     ) -> Result<Self, DateTimeFormatterLoadError>
     where
         crate::provider::Baked: AllFixedCalendarFormattingDataMarkers<C, FSet>,
@@ -235,7 +235,7 @@ where
             &crate::provider::Baked,
             &ExternalLoaderCompiledData,
             prefs,
-            field_set.get_field(),
+            field_set_with_options.get_field(),
         )
     }
 
@@ -251,7 +251,7 @@ where
     pub fn try_new_unstable<P>(
         provider: &P,
         prefs: DateTimeFormatterPreferences,
-        field_set: FSet,
+        field_set_with_options: FSet,
     ) -> Result<Self, DateTimeFormatterLoadError>
     where
         P: ?Sized
@@ -262,7 +262,7 @@ where
             provider,
             &ExternalLoaderUnstable(provider),
             prefs,
-            field_set.get_field(),
+            field_set_with_options.get_field(),
         )
     }
 }
@@ -277,7 +277,7 @@ where
         provider: &P,
         loader: &L,
         prefs: DateTimeFormatterPreferences,
-        field_set: CompositeFieldSet,
+        field_set_with_options: CompositeFieldSet,
     ) -> Result<Self, DateTimeFormatterLoadError>
     where
         P: ?Sized + AllFixedCalendarFormattingDataMarkers<C, FSet>,
@@ -289,7 +289,7 @@ where
             provider,
             loader,
             prefs,
-            field_set,
+            field_set_with_options,
             names,
             DateTimeNamesMetadata::new_empty(), // OK: this is a constructor
         )
@@ -302,7 +302,7 @@ where
         provider: &P1,
         loader: &L,
         prefs: DateTimeFormatterPreferences,
-        field_set: CompositeFieldSet,
+        field_set_with_options: CompositeFieldSet,
         mut names: RawDateTimeNames<FSet>,
         mut names_metadata: DateTimeNamesMetadata,
     ) -> Result<
@@ -322,7 +322,7 @@ where
             &<FSet::T as TimeMarkers>::TimeSkeletonPatternsV1::bind(provider_p),
             &FSet::GluePatternV1::bind(provider_p),
             prefs,
-            field_set,
+            field_set_with_options,
         );
         let selection = match selection {
             Ok(selection) => selection,
@@ -447,7 +447,7 @@ where
     #[cfg(feature = "compiled_data")]
     pub fn try_new(
         prefs: DateTimeFormatterPreferences,
-        field_set: FSet,
+        field_set_with_options: FSet,
     ) -> Result<Self, DateTimeFormatterLoadError>
     where
         crate::provider::Baked: AllAnyCalendarFormattingDataMarkers<FSet>,
@@ -456,7 +456,7 @@ where
             &crate::provider::Baked,
             &ExternalLoaderCompiledData,
             prefs,
-            field_set.get_field(),
+            field_set_with_options.get_field(),
         )
     }
 
@@ -472,7 +472,7 @@ where
     pub fn try_new_unstable<P>(
         provider: &P,
         prefs: DateTimeFormatterPreferences,
-        field_set: FSet,
+        field_set_with_options: FSet,
     ) -> Result<Self, DateTimeFormatterLoadError>
     where
         P: ?Sized + AllAnyCalendarFormattingDataMarkers<FSet> + AllAnyCalendarExternalDataMarkers,
@@ -481,7 +481,7 @@ where
             provider,
             &ExternalLoaderUnstable(provider),
             prefs,
-            field_set.get_field(),
+            field_set_with_options.get_field(),
         )
     }
 }
@@ -496,7 +496,7 @@ where
         provider: &P,
         loader: &L,
         prefs: DateTimeFormatterPreferences,
-        field_set: CompositeFieldSet,
+        field_set_with_options: CompositeFieldSet,
     ) -> Result<Self, DateTimeFormatterLoadError>
     where
         P: ?Sized + AllAnyCalendarFormattingDataMarkers<FSet>,
@@ -510,7 +510,7 @@ where
             provider,
             loader,
             prefs,
-            field_set,
+            field_set_with_options,
             calendar,
             names,
             DateTimeNamesMetadata::new_empty(), // OK: this is a constructor
@@ -526,7 +526,7 @@ where
         provider: &P1,
         loader: &L,
         prefs: DateTimeFormatterPreferences,
-        field_set: CompositeFieldSet,
+        field_set_with_options: CompositeFieldSet,
         calendar: FormattableAnyCalendar,
         mut names: RawDateTimeNames<FSet>,
         mut names_metadata: DateTimeNamesMetadata,
@@ -554,7 +554,7 @@ where
             &<FSet::T as TimeMarkers>::TimeSkeletonPatternsV1::bind(provider_p),
             &FSet::GluePatternV1::bind(provider_p),
             prefs,
-            field_set,
+            field_set_with_options,
         );
         let selection = match selection {
             Ok(selection) => selection,
