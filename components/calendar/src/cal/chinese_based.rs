@@ -252,7 +252,7 @@ impl ChineseBasedYearInfo {
     }
 
     pub(crate) fn rd_from_md(self, month: u8, day: u8) -> RataDie {
-        self.new_year() + self.day_of_year(month, day) as i64
+        self.new_year() + self.day_of_year(month, day) as i64 - 1
     }
 
     /// Calculate the number of days in the year so far for a ChineseBasedDate;
