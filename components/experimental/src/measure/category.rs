@@ -25,49 +25,61 @@ pub enum Categories {
     // TODO: add more categories in the next PRs.
 }
 
-impl MeasureUnitCategory for Categories::Length {
+/// A [`MeasureUnit`] that is related to the length category.
+pub struct LengthMeasureUnit;
+
+/// A [`MeasureUnit`] that is related to the area category.
+pub struct AreaMeasureUnit;
+
+/// A [`MeasureUnit`] that is related to the volume category.
+pub struct VolumeMeasureUnit;
+
+/// A [`MeasureUnit`] that is related to the mass category.
+pub struct MassMeasureUnit;
+
+impl MeasureUnitCategory for LengthMeasureUnit {
     fn category() -> Categories {
         Categories::Length
     }
 }
 
-impl Categories::Length {
+impl LengthMeasureUnit {
     pub fn meter() -> &'static MeasureUnit {
         todo!()
     }
 }
 
-impl MeasureUnitCategory for Categories::Area {
+impl MeasureUnitCategory for AreaMeasureUnit {
     fn category() -> Categories {
         Categories::Area
     }
 }
 
-impl Categories::Area {
+impl AreaMeasureUnit {
     pub fn square_meter() -> &'static MeasureUnit {
         todo!()
     }
 }
 
-impl MeasureUnitCategory for Categories::Volume {
+impl MeasureUnitCategory for VolumeMeasureUnit {
     fn category() -> Categories {
         Categories::Volume
     }
 }
 
-impl Categories::Volume {
+impl VolumeMeasureUnit {
     pub fn cubic_meter() -> &'static MeasureUnit {
         todo!()
     }
 }
 
-impl MeasureUnitCategory for Categories::Mass {
+impl MeasureUnitCategory for MassMeasureUnit {
     fn category() -> Categories {
         Categories::Mass
     }
 }
 
-impl Categories::Mass {
+impl MassMeasureUnit {
     pub fn kilogram() -> &'static MeasureUnit {
         todo!()
     }
@@ -79,21 +91,21 @@ mod tests {
 
     #[test]
     fn test_length_category() {
-        let meter = Categories::Length::meter();
+        let meter = LengthMeasureUnit::meter();
     }
 
     #[test]
     fn test_area_category() {
-        let square_meter = Categories::Area::square_meter();
+        let square_meter = AreaMeasureUnit::square_meter();
     }
 
     #[test]
     fn test_volume_category() {
-        let cubic_meter = Categories::Volume::cubic_meter();
+        let cubic_meter = VolumeMeasureUnit::cubic_meter();
     }
 
     #[test]
     fn test_mass_category() {
-        let kilogram = Categories::Mass::kilogram();
+        let kilogram = MassMeasureUnit::kilogram();
     }
 }
