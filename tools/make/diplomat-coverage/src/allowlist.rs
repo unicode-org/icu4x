@@ -207,6 +207,9 @@ lazy_static::lazy_static! {
         "icu::normalizer::uts46::Uts46Mapper",
         "icu::normalizer::uts46::Uts46MapperBorrowed",
 
+        // For internal use only by icu::collator::CollatorBorrowed::write_sort_key
+        "icu::normalizer::DecomposingNormalizerBorrowed::new_with_data",
+
         // Not planned for 2.0: we need DiplomatWriteable16
         "icu::normalizer::ComposingNormalizerBorrowed::normalize_utf16",
         "icu::normalizer::ComposingNormalizerBorrowed::normalize_utf16_to",
