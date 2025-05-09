@@ -9,6 +9,9 @@
 //! This module holds the `Collator` struct whose `compare_impl()` contains
 //! the comparison of collation element sequences.
 
+extern crate alloc;
+use alloc::vec::Vec;
+
 use crate::elements::CharacterAndClassAndTrieValue;
 use crate::elements::CollationElement32;
 use crate::elements::Tag;
@@ -19,7 +22,8 @@ use crate::elements::NON_ROUND_TRIP_MARKER;
 use crate::elements::{
     char_from_u32, CollationElement, CollationElements, NonPrimary, FFFD_CE32,
     HANGUL_SYLLABLE_MARKER, HIGH_ZEROS_MASK, JAMO_COUNT, LOW_ZEROS_MASK, NO_CE, NO_CE_PRIMARY,
-    NO_CE_SECONDARY, NO_CE_TERTIARY, OPTIMIZED_DIACRITICS_MAX_COUNT, QUATERNARY_MASK,
+    NO_CE_QUATERNARY, NO_CE_SECONDARY, NO_CE_TERTIARY, OPTIMIZED_DIACRITICS_MAX_COUNT,
+    QUATERNARY_MASK,
 };
 use crate::options::CollatorOptionsBitField;
 use crate::options::{
@@ -45,6 +49,7 @@ use icu_normalizer::provider::DecompositionData;
 use icu_normalizer::provider::DecompositionTables;
 use icu_normalizer::provider::NormalizerNfdDataV1;
 use icu_normalizer::provider::NormalizerNfdTablesV1;
+use icu_normalizer::DecomposingNormalizerBorrowed;
 use icu_normalizer::Decomposition;
 use icu_provider::marker::ErasedMarker;
 use icu_provider::prelude::*;
@@ -53,7 +58,93 @@ use utf16_iter::Utf16CharsEx;
 use utf8_iter::Utf8CharsEx;
 use zerovec::ule::AsULE;
 
+// Special sort key bytes for all levels.
+const TERMINATOR_BYTE: u8 = 0;
+const LEVEL_SEPARATOR_BYTE: u8 = 1;
+
+/// Merge-sort-key separator.
+///
+/// Same as the unique primary and identical-level weights of U+FFFE.  Must not
+/// be used as primary compression low terminator.  Otherwise usable.
+const MERGE_SEPARATOR_BYTE: u8 = 2;
 const MERGE_SEPARATOR_PRIMARY: u32 = 0x02000000; // for U+FFFE
+
+/// Primary compression low terminator, must be greater than MERGE_SEPARATOR_BYTE.
+///
+/// Reserved value in primary second byte if the lead byte is compressible.
+/// Otherwise usable in all CE weight bytes.
+const PRIMARY_COMPRESSION_LOW_BYTE: u8 = 3;
+
+/// Primary compression high terminator.
+///
+/// Reserved value in primary second byte if the lead byte is compressible.
+/// Otherwise usable in all CE weight bytes.
+const PRIMARY_COMPRESSION_HIGH_BYTE: u8 = 0xff;
+
+/// Default secondary/tertiary weight lead byte.
+const COMMON_BYTE: u8 = 5;
+const COMMON_WEIGHT16: u16 = 0x0500;
+
+// Internal flags for sort key generation
+const PRIMARY_LEVEL_FLAG: u8 = 0x01;
+const SECONDARY_LEVEL_FLAG: u8 = 0x02;
+const CASE_LEVEL_FLAG: u8 = 0x04;
+const TERTIARY_LEVEL_FLAG: u8 = 0x08;
+const QUATERNARY_LEVEL_FLAG: u8 = 0x10;
+
+const LEVEL_MASKS: [u8; Strength::Identical as usize + 1] = [
+    PRIMARY_LEVEL_FLAG,
+    PRIMARY_LEVEL_FLAG | SECONDARY_LEVEL_FLAG,
+    PRIMARY_LEVEL_FLAG | SECONDARY_LEVEL_FLAG | TERTIARY_LEVEL_FLAG,
+    PRIMARY_LEVEL_FLAG | SECONDARY_LEVEL_FLAG | TERTIARY_LEVEL_FLAG | QUATERNARY_LEVEL_FLAG,
+    0,
+    0,
+    0,
+    PRIMARY_LEVEL_FLAG | SECONDARY_LEVEL_FLAG | TERTIARY_LEVEL_FLAG | QUATERNARY_LEVEL_FLAG,
+];
+
+// Internal constants for indexing into the below compression configurations
+const WEIGHT_LOW: usize = 0;
+const WEIGHT_MIDDLE: usize = 1;
+const WEIGHT_HIGH: usize = 2;
+const WEIGHT_MAX_COUNT: usize = 3;
+
+// Secondary level: Compress up to 33 common weights as 05..25 or 25..45.
+const SEC_COMMON: [u8; 4] = [COMMON_BYTE, COMMON_BYTE + 0x20, COMMON_BYTE + 0x40, 0x21];
+
+// Case level, lowerFirst: Compress up to 7 common weights as 1..7 or 7..13.
+const CASE_LOWER_FIRST_COMMON: [u8; 4] = [1, 7, 13, 7];
+
+// Case level, upperFirst: Compress up to 13 common weights as 3..15.
+const CASE_UPPER_FIRST_COMMON: [u8; 4] = [3, 0 /* unused */, 15, 13];
+
+// Tertiary level only (no case): Compress up to 97 common weights as 05..65 or 65..C5.
+const TER_ONLY_COMMON: [u8; 4] = [COMMON_BYTE, COMMON_BYTE + 0x60, COMMON_BYTE + 0xc0, 0x61];
+
+// Tertiary with case, lowerFirst: Compress up to 33 common weights as 05..25 or 25..45.
+const TER_LOWER_FIRST_COMMON: [u8; 4] = [COMMON_BYTE, COMMON_BYTE + 0x20, COMMON_BYTE + 0x40, 0x21];
+
+// Tertiary with case, upperFirst: Compress up to 33 common weights as 85..A5 or A5..C5.
+const TER_UPPER_FIRST_COMMON: [u8; 4] = [
+    COMMON_BYTE + 0x80,
+    COMMON_BYTE + 0x80 + 0x20,
+    COMMON_BYTE + 0x80 + 0x40,
+    0x21,
+];
+
+const QUAT_COMMON: [u8; 4] = [0x1c, 0x1c + 0x70, 0x1c + 0xe0, 0x71];
+const QUAT_SHIFTED_LIMIT_BYTE: u8 = QUAT_COMMON[WEIGHT_LOW] - 1; // 0x1b
+
+/// Comparison levels for filtering sort key output in `write_sort_key_up_to_quaternary`.
+#[derive(Debug, PartialEq, Eq)]
+pub enum Level {
+    Primary,
+    Secondary,
+    Case,
+    Tertiary,
+    Quaternary,
+    Identical,
+}
 
 struct AnyQuaternaryAccumulator(u32);
 
@@ -1554,5 +1645,555 @@ impl CollatorBorrowed<'_> {
         }
 
         Ordering::Equal
+    }
+
+    fn sort_key_levels(&self) -> u8 {
+        #[allow(clippy::indexing_slicing)]
+        let mut levels = LEVEL_MASKS[self.options.strength() as usize];
+        if self.options.case_level() {
+            levels |= CASE_LEVEL_FLAG;
+        }
+        levels
+    }
+
+    /// Write the sort key bytes up to the collator's strength.
+    ///
+    /// For identical strength, the UTF-8 NFD normalization is appended for breaking ties.
+    /// The key ends with a `TERMINATOR_BYTE`.
+    pub fn write_sort_key<S>(&self, s: &str, sink: &mut S)
+    where
+        S: Write,
+    {
+        self.write_sort_key_up_to_quaternary(s.chars(), sink, |_| true);
+
+        if self.options.strength() == Strength::Identical {
+            let nfd =
+                DecomposingNormalizerBorrowed::new_with_data(self.decompositions, self.tables);
+            let s = nfd.normalize(s);
+            sink.write_byte(LEVEL_SEPARATOR_BYTE);
+            sink.write(s.as_bytes());
+        }
+
+        sink.write(&[TERMINATOR_BYTE]);
+    }
+
+    /// Write the sort key bytes up to the collator's strength.
+    ///
+    /// Optionally write the case level.  Stop writing levels when `need_to_write` returns
+    /// `false`.  Separate levels with the `LEVEL_SEPARATOR_BYTE`, but do not write a
+    /// `TERMINATOR_BYTE`.
+    pub fn write_sort_key_up_to_quaternary<I, S, W>(&self, iter: I, sink: &mut S, need_to_write: W)
+    where
+        I: Iterator<Item = char>,
+        S: Write,
+        W: Fn(Level) -> bool,
+    {
+        // The following code started as a port from ICU4C which carried the
+        // following notice:
+        //
+        // // © 2016 and later: Unicode, Inc. and others.
+        // // License & terms of use: http://www.unicode.org/copyright.html
+        // /*
+        // *******************************************************************************
+        // * Copyright (C) 2012-2015, International Business Machines
+        // * Corporation and others.  All Rights Reserved.
+        // *******************************************************************************
+        // * collationkeys.cpp
+
+        let levels = self.sort_key_levels();
+
+        let mut iter =
+            self.collation_elements(iter, self.tailoring_or_root(), self.numeric_primary());
+        iter.init();
+        let variable_top = self.variable_top();
+
+        let tertiary_mask = self.options.tertiary_mask().unwrap_or_default();
+
+        let mut cases = SortKeyLevel::default();
+        let mut secondaries = SortKeyLevel::default();
+        let mut tertiaries = SortKeyLevel::default();
+        let mut quaternaries = SortKeyLevel::default();
+
+        let mut prev_reordered_primary = 0;
+        let mut common_cases = 0;
+        let mut common_secondaries = 0;
+        let mut common_tertiaries = 0;
+        let mut common_quaternaries = 0;
+        let mut prev_secondary = 0;
+        let mut sec_segment_start = 0;
+
+        loop {
+            let mut ce = iter.next();
+            let mut p = ce.primary();
+            if p < variable_top && p > MERGE_SEPARATOR_PRIMARY {
+                // Variable CE, shift it to quaternary level.  Ignore all following primary
+                // ignorables, and shift further variable CEs.
+                if common_quaternaries != 0 {
+                    common_quaternaries -= 1;
+                    while common_quaternaries >= QUAT_COMMON[WEIGHT_MAX_COUNT] {
+                        quaternaries.append_byte(QUAT_COMMON[WEIGHT_MIDDLE]);
+                        common_quaternaries -= QUAT_COMMON[WEIGHT_MAX_COUNT];
+                    }
+                    // Shifted primary weights are lower than the common weight.
+                    quaternaries.append_byte(QUAT_COMMON[WEIGHT_LOW] + common_quaternaries);
+                    common_quaternaries = 0;
+                }
+
+                loop {
+                    if levels & QUATERNARY_LEVEL_FLAG != 0 {
+                        if let Some(reordering) = &self.reordering {
+                            p = reordering.reorder(p);
+                        }
+                        if (p >> 24) as u8 >= QUAT_SHIFTED_LIMIT_BYTE {
+                            // Prevent shifted primary lead bytes from overlapping with the
+                            // common compression range.
+                            quaternaries.append_byte(QUAT_SHIFTED_LIMIT_BYTE);
+                        }
+                        quaternaries.append_weight_32(p);
+                    }
+                    loop {
+                        ce = iter.next();
+                        p = ce.primary();
+                        if p != 0 {
+                            break;
+                        }
+                    }
+                    if !(p < variable_top && p > MERGE_SEPARATOR_PRIMARY) {
+                        break;
+                    }
+                }
+            }
+
+            // ce could be primary ignorable, or NO_CE, or the merge separator, or a regular
+            // primary CE, but it is not variable.  If ce == NO_CE, then write nothing for the
+            // primary level but terminate compression on all levels and then exit the loop.
+            if p > NO_CE_PRIMARY && levels & PRIMARY_LEVEL_FLAG != 0 {
+                // Test the un-reordered primary for compressibility.
+                let is_compressible = false; // TODO?
+                if let Some(reordering) = &self.reordering {
+                    p = reordering.reorder(p);
+                }
+                let p1 = (p >> 24) as u8;
+                if !is_compressible || p1 != (prev_reordered_primary >> 24) as u8 {
+                    if prev_reordered_primary != 0 {
+                        if p < prev_reordered_primary {
+                            // No primary compression terminator at the end of the level or
+                            // merged segment.
+                            if p1 > MERGE_SEPARATOR_BYTE {
+                                sink.write(&[PRIMARY_COMPRESSION_LOW_BYTE]);
+                            }
+                        } else {
+                            sink.write(&[PRIMARY_COMPRESSION_HIGH_BYTE]);
+                        }
+                    }
+                    sink.write_byte(p1);
+                    prev_reordered_primary = if is_compressible { p } else { 0 };
+                }
+
+                let p2 = (p >> 16) as u16;
+                if p2 != 0 {
+                    let buf = [p2 as _, (p >> 8) as _, p as _];
+                    sink.write_to_zero(&buf);
+                }
+            }
+
+            let non_primary = ce.non_primary();
+            if non_primary.ignorable() {
+                continue; // completely ignorable, no secondary/case/tertiary/quaternary
+            }
+
+            macro_rules! handle_common {
+                ($key:ident, $w:ident, $common:ident, $weights:ident, $lim:expr) => {
+                    if $common != 0 {
+                        $common -= 1;
+                        while $common >= $weights[WEIGHT_MAX_COUNT] {
+                            $key.append_byte($weights[WEIGHT_MIDDLE]);
+                            $common -= $weights[WEIGHT_MAX_COUNT];
+                        }
+                        let b = if $w < $lim {
+                            $weights[WEIGHT_LOW] + $common
+                        } else {
+                            $weights[WEIGHT_HIGH] - $common
+                        };
+                        $key.append_byte(b);
+                        $common = 0;
+                    }
+                };
+                ($key:ident, $w:ident, $common:ident, $weights:ident) => {
+                    handle_common!($key, $w, $common, $weights, COMMON_WEIGHT16);
+                };
+            }
+
+            if levels & SECONDARY_LEVEL_FLAG != 0 {
+                let s = non_primary.secondary();
+                if s == 0 {
+                    // secondary ignorable
+                } else if s == COMMON_WEIGHT16
+                    && (!self.options.backward_second_level() || p != MERGE_SEPARATOR_PRIMARY)
+                {
+                    // s is a common secondary weight, and backwards-secondary is off or the ce
+                    // is not the merge separator.
+                    common_secondaries += 1;
+                } else if !self.options.backward_second_level() {
+                    handle_common!(secondaries, s, common_secondaries, SEC_COMMON);
+                    secondaries.append_weight_16(s);
+                } else {
+                    if common_secondaries != 0 {
+                        common_secondaries -= 1;
+                        // Append reverse weights.  The level will be re-reversed later.
+                        let remainder = common_secondaries % SEC_COMMON[WEIGHT_MAX_COUNT];
+                        let b = if prev_secondary < COMMON_WEIGHT16 {
+                            SEC_COMMON[WEIGHT_LOW] + remainder
+                        } else {
+                            SEC_COMMON[WEIGHT_HIGH] - remainder
+                        };
+                        secondaries.append_byte(b);
+                        common_secondaries -= remainder;
+                        // common_secondaries is now a multiple of SEC_COMMON[WEIGHT_MAX_COUNT]
+                        while common_secondaries > 0 {
+                            // same as >= SEC_COMMON[WEIGHT_MAX_COUNT]
+                            secondaries.append_byte(SEC_COMMON[WEIGHT_MIDDLE]);
+                            common_secondaries -= SEC_COMMON[WEIGHT_MAX_COUNT];
+                        }
+                        // commonSecondaries == 0
+                    }
+                    if 0 < p && p <= MERGE_SEPARATOR_PRIMARY {
+                        // The backwards secondary level compares secondary weights backwards
+                        // within segments separated by the merge separator (U+FFFE).
+                        let secs = secondaries.as_mut();
+                        let last = secs.len() - 1;
+                        if sec_segment_start < last {
+                            let mut q = sec_segment_start;
+                            let mut r = last;
+
+                            // these indices start at valid values and we stop when they cross
+                            #[allow(clippy::indexing_slicing)]
+                            while q < r {
+                                let b = secs[q];
+                                secs[q] = secs[r];
+                                q += 1;
+                                secs[r] = b;
+                                r -= 1;
+                            }
+                        }
+                        let b = if p == NO_CE_PRIMARY {
+                            LEVEL_SEPARATOR_BYTE
+                        } else {
+                            MERGE_SEPARATOR_BYTE
+                        };
+                        secondaries.append_byte(b);
+                        prev_secondary = 0;
+                        sec_segment_start = secondaries.len();
+                    } else {
+                        secondaries.append_reverse_weight_16(s);
+                        prev_secondary = s;
+                    }
+                }
+            }
+
+            if levels & CASE_LEVEL_FLAG != 0 {
+                if self.options.strength() == Strength::Primary && p == 0
+                    || non_primary.bits() <= 0xffff
+                {
+                    // Primary+caseLevel: Ignore case level weights of primary ignorables.
+                    // Otherwise: Ignore case level weights of secondary ignorables.  For
+                    // details see the comments in the CollationCompare class.
+                } else {
+                    // case bits & tertiary lead byte
+                    let mut c = ((non_primary.bits() >> 8) & 0xff) as u8;
+                    assert_ne!(c & 0xc0, 0xc0);
+                    if c & 0xc0 == 0 && c > LEVEL_SEPARATOR_BYTE {
+                        common_cases += 1;
+                    } else {
+                        if !self.options.upper_first() {
+                            // lower first:  Compress common weights to nibbles 1..7..13,
+                            // mixed=14, upper=15.  If there are only common (=lowest) weights
+                            // in the whole level, then we need not write anything.  Level
+                            // length differences are handled already on the next-higher level.
+                            if common_cases != 0 && (c > LEVEL_SEPARATOR_BYTE || cases.is_empty()) {
+                                common_cases -= 1;
+                                while common_cases >= CASE_LOWER_FIRST_COMMON[WEIGHT_MAX_COUNT] {
+                                    cases.append_byte(CASE_LOWER_FIRST_COMMON[WEIGHT_MIDDLE] << 4);
+                                    common_cases -= CASE_LOWER_FIRST_COMMON[WEIGHT_MAX_COUNT];
+                                }
+                                let b = if c <= LEVEL_SEPARATOR_BYTE {
+                                    CASE_LOWER_FIRST_COMMON[WEIGHT_LOW] + common_cases
+                                } else {
+                                    CASE_LOWER_FIRST_COMMON[WEIGHT_HIGH] - common_cases
+                                };
+                                cases.append_byte(b << 4);
+                                common_cases = 0;
+                            }
+                            if c > LEVEL_SEPARATOR_BYTE {
+                                // 14 or 15
+                                c = (CASE_LOWER_FIRST_COMMON[WEIGHT_HIGH] + (c >> 6)) << 4;
+                            }
+                        } else {
+                            // upper first:  Compress common weights to nibbles 3..15, mixed=2,
+                            // upper=1.  The compressed common case weights only go up from the
+                            // "low" value because with upperFirst the common weight is the
+                            // highest one.
+                            if common_cases != 0 {
+                                common_cases -= 1;
+                                while common_cases >= CASE_UPPER_FIRST_COMMON[WEIGHT_MAX_COUNT] {
+                                    cases.append_byte(CASE_UPPER_FIRST_COMMON[WEIGHT_LOW] << 4);
+                                    common_cases -= CASE_UPPER_FIRST_COMMON[WEIGHT_MAX_COUNT];
+                                }
+                                cases.append_byte(
+                                    (CASE_UPPER_FIRST_COMMON[WEIGHT_LOW] + common_cases) << 4,
+                                );
+                                common_cases = 0;
+                            }
+                            if c > LEVEL_SEPARATOR_BYTE {
+                                // 2 or 1
+                                c = (CASE_UPPER_FIRST_COMMON[WEIGHT_LOW] - (c >> 6)) << 4;
+                            }
+                        }
+                        // c is a separator byte 01 or a left-shifted nibble 0x10, 0x20, ...
+                        // 0xf0.
+                        cases.append_byte(c);
+                    }
+                }
+            }
+
+            if levels & TERTIARY_LEVEL_FLAG != 0 {
+                let mut t = non_primary.tertiary_case_quarternary(tertiary_mask);
+                assert_ne!(non_primary.bits() & 0xc000, 0xc000);
+                if t == COMMON_WEIGHT16 {
+                    common_tertiaries += 1;
+                } else if tertiary_mask & 0x8000 == 0 {
+                    // Tertiary weights without case bits.  Move lead bytes 06..3F to C6..FF
+                    // for a large common-weight range.
+                    handle_common!(tertiaries, t, common_tertiaries, TER_ONLY_COMMON);
+                    if t > COMMON_WEIGHT16 {
+                        t += 0xc000;
+                    }
+                    tertiaries.append_weight_16(t);
+                } else if !self.options.upper_first() {
+                    // Tertiary weights with caseFirst=lowerFirst.  Move lead bytes 06..BF to
+                    // 46..FF for the common-weight range.
+                    handle_common!(tertiaries, t, common_tertiaries, TER_LOWER_FIRST_COMMON);
+                    if t > COMMON_WEIGHT16 {
+                        t += 0x4000;
+                    }
+                    tertiaries.append_weight_16(t);
+                } else {
+                    // Tertiary weights with caseFirst=upperFirst.  Do not change the
+                    // artificial uppercase weight of a tertiary CE (0.0.ut), to keep tertiary
+                    // CEs well-formed.  Their case+tertiary weights must be greater than those
+                    // of primary and secondary CEs.
+                    //
+                    // Separator         01 -> 01      (unchanged)
+                    // Lowercase     02..04 -> 82..84  (includes uncased)
+                    // Common weight     05 -> 85..C5  (common-weight compression range)
+                    // Lowercase     06..3F -> C6..FF
+                    // Mixed case    42..7F -> 42..7F
+                    // Uppercase     82..BF -> 02..3F
+                    // Tertiary CE   86..BF -> C6..FF
+                    if t <= NO_CE_TERTIARY {
+                        // Keep separators unchanged.
+                    } else if non_primary.bits() > 0xffff {
+                        // Invert case bits of primary & secondary CEs.
+                        t ^= 0xc000;
+                        if t < (TER_UPPER_FIRST_COMMON[WEIGHT_HIGH] as u16) << 8 {
+                            t -= 0x4000;
+                        }
+                    } else {
+                        // Keep uppercase bits of tertiary CEs.
+                        assert!((0x8600..=0xbfff).contains(&t));
+                        t += 0x4000;
+                    }
+                    handle_common!(
+                        tertiaries,
+                        t,
+                        common_tertiaries,
+                        TER_UPPER_FIRST_COMMON,
+                        (TER_UPPER_FIRST_COMMON[WEIGHT_LOW] as u16) << 8
+                    );
+                    tertiaries.append_weight_16(t);
+                }
+            }
+
+            if levels & QUATERNARY_LEVEL_FLAG != 0 {
+                let q = (non_primary.bits() & 0xffff) as u16;
+                if q & 0xc0 == 0 && q > NO_CE_QUATERNARY {
+                    common_quaternaries += 1;
+                } else if q == NO_CE_QUATERNARY
+                    && self.options.alternate_handling() == AlternateHandling::NonIgnorable
+                    && quaternaries.is_empty()
+                {
+                    // If alternate=non-ignorable and there are only common quaternary weights,
+                    // then we need not write anything.  The only weights greater than the
+                    // merge separator and less than the common weight are shifted primary
+                    // weights, which are not generated for alternate=non-ignorable.  There are
+                    // also exactly as many quaternary weights as tertiary weights, so level
+                    // length differences are handled already on tertiary level.  Any
+                    // above-common quaternary weight will compare greater regardless.
+                    quaternaries.append_byte(LEVEL_SEPARATOR_BYTE);
+                } else {
+                    let q = if q == NO_CE_QUATERNARY {
+                        LEVEL_SEPARATOR_BYTE
+                    } else {
+                        (0xfc + ((q >> 6) & 3)) as u8
+                    };
+                    handle_common!(
+                        quaternaries,
+                        q,
+                        common_quaternaries,
+                        QUAT_COMMON,
+                        QUAT_COMMON[WEIGHT_LOW]
+                    );
+                    quaternaries.append_byte(q);
+                }
+            }
+
+            if (non_primary.bits() >> 24) as u8 == LEVEL_SEPARATOR_BYTE {
+                break; // ce == NO_CE
+            }
+        }
+
+        macro_rules! write_level {
+            ($key:ident, $level:expr, $flag:ident) => {
+                if levels & $flag != 0 {
+                    if !need_to_write($level) {
+                        return;
+                    }
+                    sink.write(&[LEVEL_SEPARATOR_BYTE]);
+                    sink.write($key.as_ref());
+                }
+            };
+        }
+
+        write_level!(secondaries, Level::Secondary, SECONDARY_LEVEL_FLAG);
+
+        if levels & CASE_LEVEL_FLAG != 0 {
+            if !need_to_write(Level::Case) {
+                return;
+            }
+            sink.write(&[LEVEL_SEPARATOR_BYTE]);
+
+            // Write pairs of nibbles as bytes, except separator bytes as themselves.
+            let mut b = 0;
+            for c in cases.as_ref() {
+                assert_eq!(*c & 0xf, 0);
+                assert_ne!(*c, 0);
+                if b == 0 {
+                    b = *c;
+                } else {
+                    sink.write_byte(b | (*c >> 4));
+                    b = 0;
+                }
+            }
+            if b != 0 {
+                sink.write_byte(b);
+            }
+        }
+
+        write_level!(tertiaries, Level::Tertiary, TERTIARY_LEVEL_FLAG);
+        write_level!(quaternaries, Level::Quaternary, QUATERNARY_LEVEL_FLAG);
+    }
+}
+
+/// A [`std::io::Write`]-like trait for writing to a buffer-like object.
+///
+/// (This crate does not have access to [`std`].)
+pub trait Write {
+    /// Writes a buffer into the writer.
+    fn write(&mut self, buf: &[u8]);
+
+    /// Write a single byte into the writer.
+    fn write_byte(&mut self, b: u8) {
+        self.write(&[b]);
+    }
+
+    /// Write leading bytes up to a zero byte, but always write at least one byte.
+    fn write_to_zero(&mut self, buf: &[u8]) {
+        for (i, b) in buf.iter().enumerate() {
+            if i > 0 && *b == 0 {
+                break;
+            }
+            self.write_byte(*b)
+        }
+    }
+}
+
+impl Write for Vec<u8> {
+    fn write(&mut self, buf: &[u8]) {
+        self.extend_from_slice(buf);
+    }
+}
+
+impl<const N: usize> Write for SmallVec<[u8; N]> {
+    fn write(&mut self, buf: &[u8]) {
+        self.extend_from_slice(buf);
+    }
+}
+
+#[derive(Default)]
+struct SortKeyLevel {
+    buf: SmallVec<[u8; 40]>,
+}
+
+impl SortKeyLevel {
+    fn len(&self) -> usize {
+        self.buf.len()
+    }
+
+    fn is_empty(&self) -> bool {
+        self.buf.is_empty()
+    }
+
+    fn append_byte(&mut self, x: u8) {
+        self.buf.push(x);
+    }
+
+    fn append_weight_16(&mut self, w: u16) {
+        assert_ne!(w, 0);
+        let b0 = (w >> 8) as u8;
+        let b1 = w as u8;
+        self.append_byte(b0);
+        if b1 != 0 {
+            self.append_byte(b1);
+        }
+    }
+
+    fn append_reverse_weight_16(&mut self, w: u16) {
+        assert_ne!(w, 0);
+        let b0 = (w >> 8) as u8;
+        let b1 = w as u8;
+        if b1 != 0 {
+            self.append_byte(b1);
+        }
+        self.append_byte(b0);
+    }
+
+    fn append_weight_32(&mut self, w: u32) {
+        assert_ne!(w, 0);
+        let b0 = (w >> 24) as u8;
+        let b1 = (w >> 16) as u8;
+        let b2 = (w >> 8) as u8;
+        let b3 = w as u8;
+        self.append_byte(b0);
+        if b1 != 0 {
+            self.append_byte(b1);
+            if b2 != 0 {
+                self.append_byte(b2);
+                if b3 != 0 {
+                    self.append_byte(b3);
+                }
+            }
+        }
+    }
+}
+
+impl AsRef<SmallVec<[u8; 40]>> for SortKeyLevel {
+    fn as_ref(&self) -> &SmallVec<[u8; 40]> {
+        &self.buf
+    }
+}
+
+impl AsMut<SmallVec<[u8; 40]>> for SortKeyLevel {
+    fn as_mut(&mut self) -> &mut SmallVec<[u8; 40]> {
+        &mut self.buf
     }
 }
