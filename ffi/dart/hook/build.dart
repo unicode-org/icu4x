@@ -4,7 +4,8 @@
 
 import 'dart:io';
 
-import 'package:native_assets_cli/code_assets.dart';
+import 'package:code_assets/code_assets.dart';
+import 'package:hooks/hooks.dart' show build;
 
 import '../tool/build_libs.dart' show buildLib;
 
@@ -43,8 +44,6 @@ void main(List<String> args) async {
         package: input.packageName,
         name: 'src/lib.g.dart',
         linkMode: DynamicLoadingBundled(),
-        os: input.config.code.targetOS,
-        architecture: input.config.code.targetArchitecture,
         file: lib.uri,
       ),
     );
