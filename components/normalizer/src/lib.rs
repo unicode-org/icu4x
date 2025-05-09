@@ -1755,6 +1755,24 @@ impl DecomposingNormalizerBorrowed<'static> {
 }
 
 impl<'data> DecomposingNormalizerBorrowed<'data> {
+    /// NFD constructor using already-loaded data.
+    ///
+    /// This constructor is intended for use by collations.
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    pub fn new_with_data(
+        decompositions: &'data DecompositionData<'data>,
+        tables: &'data DecompositionTables<'data>,
+    ) -> Self {
+        Self {
+            decompositions,
+            tables,
+            supplementary_tables: None,
+            decomposition_passthrough_bound: 0xC0,
+            composition_passthrough_bound: 0x0300,
+        }
+    }
+
     /// Wraps a delegate iterator into a decomposing iterator
     /// adapter by using the data already held by this normalizer.
     pub fn normalize_iter<I: Iterator<Item = char>>(&self, iter: I) -> Decomposition<'data, I> {
