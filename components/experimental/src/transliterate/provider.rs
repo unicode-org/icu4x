@@ -23,6 +23,7 @@ use icu_collections::{
     codepointinvlist::{CodePointInversionList, CodePointInversionListULE},
     codepointinvliststringlist::CodePointInversionListAndStringListULE,
 };
+use icu_locale::fallback::{LocaleFallbackConfig, LocaleFallbackPriority};
 use icu_provider::prelude::*;
 use vecs::Index32;
 use zerovec::*;
@@ -32,7 +33,12 @@ use zerovec::*;
 icu_provider::data_marker!(
     /// `TransliteratorRulesV1`
     TransliteratorRulesV1,
-    RuleBasedTransliterator<'static>
+    RuleBasedTransliterator<'static>,
+    fallback_config = {
+        let mut config = LocaleFallbackConfig::default();
+        config.priority = LocaleFallbackPriority::Script;
+        config
+    },
 );
 
 /// The data struct representing [UTS #35 transform rules](https://unicode.org/reports/tr35/tr35-general.html#Transforms).

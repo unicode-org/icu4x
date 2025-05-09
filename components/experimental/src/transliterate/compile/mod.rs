@@ -10,6 +10,7 @@ use alloc::string::{String, ToString};
 use alloc::vec::Vec;
 use core::cell::RefCell;
 use icu_casemap::provider::CaseMapV1;
+use icu_locale::provider::{LocaleLikelySubtagsLanguageV1, LocaleParentsV1};
 use icu_locale_core::Locale;
 use icu_normalizer::provider::*;
 use icu_properties::{
@@ -156,12 +157,14 @@ impl RuleCollection {
         icu_properties::provider::Baked,
         icu_normalizer::provider::Baked,
         icu_casemap::provider::Baked,
+        icu_locale::provider::Baked,
     > {
         RuleCollectionProvider {
             collection: self,
             properties_provider: &icu_properties::provider::Baked,
             normalizer_provider: &icu_normalizer::provider::Baked,
             casemap_provider: &icu_casemap::provider::Baked,
+            locale_provider: &icu_locale::provider::Baked,
             xid_start: CodePointSetData::new::<XidStart>().static_to_owned(),
             xid_continue: CodePointSetData::new::<XidContinue>().static_to_owned(),
             pat_ws: CodePointSetData::new::<PatternWhiteSpace>().static_to_owned(),
@@ -169,12 +172,13 @@ impl RuleCollection {
     }
 
     #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::as_provider)]
-    pub fn as_provider_unstable<'a, PP, NP, NC>(
+    pub fn as_provider_unstable<'a, PP, NP, NC, LP>(
         &'a self,
         properties_provider: &'a PP,
         normalizer_provider: &'a NP,
         casemap_provider: &'a NC,
-    ) -> Result<RuleCollectionProvider<'a, PP, NP, NC>, DataError>
+        locale_provider: &'a LP,
+    ) -> Result<RuleCollectionProvider<'a, PP, NP, NC, LP>, DataError>
     where
         PP: ?Sized
             + DataProvider<PropertyBinaryAlphabeticV1>
@@ -255,6 +259,7 @@ impl RuleCollection {
             properties_provider,
             normalizer_provider,
             casemap_provider,
+            locale_provider,
             xid_start: CodePointSetData::try_new_unstable::<XidStart>(properties_provider)?,
             xid_continue: CodePointSetData::try_new_unstable::<XidContinue>(properties_provider)?,
             pat_ws: CodePointSetData::try_new_unstable::<PatternWhiteSpace>(properties_provider)?,
@@ -264,17 +269,19 @@ impl RuleCollection {
 
 /// A provider that is usable by [`Transliterator::try_new_unstable`](crate::transliterate::Transliterator::try_new_unstable).
 #[derive(Debug)]
-pub struct RuleCollectionProvider<'a, PP: ?Sized, NP: ?Sized, NC: ?Sized> {
+pub struct RuleCollectionProvider<'a, PP: ?Sized, NP: ?Sized, NC: ?Sized, LP: ?Sized> {
     collection: &'a RuleCollection,
     properties_provider: &'a PP,
     normalizer_provider: &'a NP,
     casemap_provider: &'a NC,
+    locale_provider: &'a LP,
     xid_start: CodePointSetData,
     xid_continue: CodePointSetData,
     pat_ws: CodePointSetData,
 }
 
-impl<PP, NP, NC> DataProvider<TransliteratorRulesV1> for RuleCollectionProvider<'_, PP, NP, NC>
+impl<PP, NP, NC, LP> DataProvider<TransliteratorRulesV1>
+    for RuleCollectionProvider<'_, PP, NP, NC, LP>
 where
     PP: ?Sized
         + DataProvider<PropertyBinaryAlphabeticV1>
@@ -419,7 +426,7 @@ where
 macro_rules! redirect {
     ($($marker:ty),*) => {
         $(
-            impl<PP: ?Sized, NP: ?Sized + DataProvider<$marker>, NC: ?Sized> DataProvider<$marker> for RuleCollectionProvider<'_, PP, NP, NC> {
+            impl<PP: ?Sized, NP: ?Sized + DataProvider<$marker>, NC: ?Sized, NL: ?Sized> DataProvider<$marker> for RuleCollectionProvider<'_, PP, NP, NC, NL> {
                 fn load(&self, req: DataRequest) -> Result<DataResponse<$marker>, DataError> {
                     self.normalizer_provider.load(req)
                 }
@@ -436,17 +443,31 @@ redirect!(
     NormalizerNfcV1
 );
 
-impl<PP: ?Sized, NP: ?Sized, NC: ?Sized + DataProvider<CaseMapV1>> DataProvider<CaseMapV1>
-    for RuleCollectionProvider<'_, PP, NP, NC>
+impl<PP: ?Sized, NP: ?Sized, NC: ?Sized + DataProvider<CaseMapV1>, NL: ?Sized>
+    DataProvider<CaseMapV1> for RuleCollectionProvider<'_, PP, NP, NC, NL>
 {
     fn load(&self, req: DataRequest) -> Result<DataResponse<CaseMapV1>, DataError> {
         self.casemap_provider.load(req)
     }
 }
 
+macro_rules! redirect {
+    ($($marker:ty),*) => {
+        $(
+            impl<PP: ?Sized, NP: ?Sized, NC: ?Sized, NL: ?Sized + DataProvider<$marker>> DataProvider<$marker> for RuleCollectionProvider<'_, PP, NP, NC, NL> {
+                fn load(&self, req: DataRequest) -> Result<DataResponse<$marker>, DataError> {
+                    self.locale_provider.load(req)
+                }
+            }
+        )*
+    }
+}
+
+redirect!(LocaleParentsV1, LocaleLikelySubtagsLanguageV1);
+
 #[cfg(feature = "datagen")]
-impl<PP, NP, NC> IterableDataProvider<TransliteratorRulesV1>
-    for RuleCollectionProvider<'_, PP, NP, NC>
+impl<PP, NP, NC, NL> IterableDataProvider<TransliteratorRulesV1>
+    for RuleCollectionProvider<'_, PP, NP, NC, NL>
 where
     PP: ?Sized
         + DataProvider<PropertyBinaryAlphabeticV1>
