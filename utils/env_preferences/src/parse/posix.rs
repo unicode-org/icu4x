@@ -12,7 +12,7 @@
 //! # use env_preferences::LocaleError;
 //! # fn main() -> Result<(), LocaleError> {
 //! let posix_locale = PosixLocale::try_from_str("en_US")?;
-//! assert_eq!(posix_locale.try_convert_lossy()?, locale!("en-US-posix"));
+//! assert_eq!(posix_locale.try_convert_lossy()?, locale!("en-US"));
 //! # Ok(())
 //! # }
 //! ```
@@ -208,17 +208,17 @@ impl<'src> PosixLocale<'src> {
     /// // Locales will always include the `posix` variant
     /// assert_eq!(
     ///     PosixLocale::try_from_str("en_US")?.try_convert_lossy()?,
-    ///     locale!("en-US-posix")
+    ///     locale!("en-US")
     /// );
     /// // The codeset field will be ignored
     /// assert_eq!(
     ///     PosixLocale::try_from_str("en_US.iso88591")?.try_convert_lossy()?,
-    ///     locale!("en-US-posix")
+    ///     locale!("en-US")
     /// );
     /// // Any unknown modifiers will be ignored
     /// assert_eq!(
     ///     PosixLocale::try_from_str("en_US@unknown")?.try_convert_lossy()?,
-    ///     locale!("en-US-posix")
+    ///     locale!("en-US")
     /// );
     /// # Ok(())
     /// # }
@@ -243,36 +243,45 @@ impl<'src> PosixLocale<'src> {
     /// // Known language aliases will be converted to the matching BCP-47 identifier
     /// assert_eq!(
     ///     PosixLocale::try_from_str("french")?.try_convert_lossy()?,
-    ///     locale!("fr-FR-posix")
+    ///     locale!("fr-FR")
     /// );
     ///
     /// // Known script modifiers will be converted to the matching CLDR keys
     /// assert_eq!(
     ///     PosixLocale::try_from_str("uz_UZ@cyrillic")?.try_convert_lossy()?,
-    ///     locale!("uz-Cyrl-UZ-posix")
+    ///     locale!("uz-Cyrl-UZ")
     /// );
     /// assert_eq!(
     ///     PosixLocale::try_from_str("ks_IN@devanagari")?.try_convert_lossy()?,
-    ///     locale!("ks-Deva-IN-posix")
+    ///     locale!("ks-Deva-IN")
     /// );
     /// assert_eq!(
     ///     PosixLocale::try_from_str("be_BY@latin")?.try_convert_lossy()?,
-    ///     locale!("be-Latn-BY-posix")
+    ///     locale!("be-Latn-BY")
     /// );
     ///
     /// // Other known modifiers are handled accordingly
     /// assert_eq!(
     ///     PosixLocale::try_from_str("en_US@euro")?.try_convert_lossy()?,
-    ///     locale!("en-US-posix-u-cu-eur")
+    ///     locale!("en-US-u-cu-eur")
     /// );
     /// assert_eq!(
     ///     PosixLocale::try_from_str("aa_ER@saaho")?.try_convert_lossy()?,
-    ///     locale!("ssy-ER-posix")
+    ///     locale!("ssy-ER")
     /// );
     /// # Ok(())
     /// # }
     /// ```
     pub fn try_convert_lossy(&self) -> Result<Locale, ParseError> {
+        let mut extensions = Extensions::new();
+        let mut script = None;
+        let mut variants = Vec::new();
+
+        // The default "C"/"POSIX" locale should map to "en-US-posix"
+        if self.language == "C" || self.language == "POSIX" {
+            variants.push(variant!("posix"))
+        }
+
         // Check if the language matches a known alias (e.g. "nynorsk"->("nn", "NO"))
         let (mut language, region) = match find_posix_locale_name_alias(self.language) {
             Some((language, region)) => (language, Some(region)),
@@ -283,10 +292,6 @@ impl<'src> PosixLocale<'src> {
                 (language, region)
             }
         };
-
-        let mut extensions = Extensions::new();
-        let mut script = None;
-        let mut variants = vec![variant!("posix")];
 
         if let Some(modifier) = self.modifier {
             match modifier.to_ascii_lowercase().as_str() {
