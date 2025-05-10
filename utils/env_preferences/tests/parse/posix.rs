@@ -15,8 +15,8 @@ fn expect_success(src: &str, expected: &str) {
 
 #[test]
 fn default_locale() {
-    expect_success("C", "und-posix");
-    expect_success("POSIX", "und-posix");
+    expect_success("C", "en-US-posix");
+    expect_success("POSIX", "en-US-posix");
 }
 
 #[test]

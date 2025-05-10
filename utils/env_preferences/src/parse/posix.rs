@@ -25,7 +25,7 @@ use icu_locale_core::{LanguageIdentifier, Locale};
 
 use crate::ParseError;
 
-use super::aliases::find_posix_alias;
+use super::aliases::find_posix_locale_name_alias;
 
 #[derive(Display, Debug, PartialEq)]
 /// An error while parsing a POSIX locale identifier
@@ -233,11 +233,11 @@ impl<'src> PosixLocale<'src> {
     /// // The default "C"/"POSIX" locale will be converted to "und"
     /// assert_eq!(
     ///     PosixLocale::try_from_str("C")?.try_convert_lossy()?,
-    ///     locale!("und-posix")
+    ///     locale!("en-US-posix")
     /// );
     /// assert_eq!(
     ///     PosixLocale::try_from_str("POSIX")?.try_convert_lossy()?,
-    ///     locale!("und-posix")
+    ///     locale!("en-US-posix")
     /// );
     ///
     /// // Known language aliases will be converted to the matching BCP-47 identifier
@@ -274,8 +274,8 @@ impl<'src> PosixLocale<'src> {
     /// ```
     pub fn try_convert_lossy(&self) -> Result<Locale, ParseError> {
         // Check if the language matches a known alias (e.g. "nynorsk"->("nn", "NO"))
-        let (mut language, region) = match find_posix_alias(self.language) {
-            Some((language, region)) => (language, region),
+        let (mut language, region) = match find_posix_locale_name_alias(self.language) {
+            Some((language, region)) => (language, Some(region)),
             None => {
                 let language = Language::try_from_str(self.language)?;
                 let region = self.territory.map(Region::try_from_str).transpose()?;
