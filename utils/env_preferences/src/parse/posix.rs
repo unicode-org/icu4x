@@ -277,7 +277,9 @@ impl<'src> PosixLocale<'src> {
         let mut script = None;
         let mut variants = Vec::new();
 
-        // The default "C"/"POSIX" locale should map to "en-US-posix"
+        // The default "C"/"POSIX" locale should map to "en-US-posix",
+        // which is the default behaviour in ICU4C:
+        // https://github.com/unicode-org/icu/blob/795d7ac82c4b29cf721d0ad62c0b178347d453bf/icu4c/source/common/putil.cpp#L1738
         if self.language == "C" || self.language == "POSIX" {
             variants.push(variant!("posix"))
         }
