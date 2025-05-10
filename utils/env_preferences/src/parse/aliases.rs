@@ -4,59 +4,59 @@
 
 //! Platform-specific conversion from locale strings to BCP-47 identifiers.
 
-/// Find a BCP-47 language/region from a list of POSIX locale aliases.
+/// Find a BCP-47 language/region from a list of POSIX 'locale name' aliases.
 ///
-/// Some of these conversions are approximate and not exact (e.g. "C"->"und").
 /// This is based on GNU libc's `intl/locale.alias` file, with some manual processing
-/// to remove duplicates. The original file is available at:
+/// to remove duplicates. The notable exception is that the default `C`/`POSIX` locales
+/// map to `en-US`. The original file is available at:
 /// <https://sourceware.org/git/?p=glibc.git;a=blob;f=intl/locale.alias;hb=HEAD>
-pub fn find_posix_alias(
-    alias: &str,
+pub fn find_posix_locale_name_alias(
+    posix_locale: &str,
 ) -> Option<(
     icu_locale_core::subtags::Language,
-    Option<icu_locale_core::subtags::Region>,
+    icu_locale_core::subtags::Region,
 )> {
-    use icu_locale_core::subtags::{language, region, Language};
+    use icu_locale_core::subtags::{language, region};
 
-    match alias {
-        "C" | "POSIX" => Some((Language::UNKNOWN, None)),
-        "bokmal" => Some((language!("nb"), Some(region!("NO")))),
-        "catalan" => Some((language!("ca"), Some(region!("ES")))),
-        "croatian" => Some((language!("hr"), Some(region!("HR")))),
-        "czech" => Some((language!("cs"), Some(region!("CZ")))),
-        "danish" => Some((language!("da"), Some(region!("DK")))),
-        "dansk" => Some((language!("da"), Some(region!("DK")))),
-        "deutsch" => Some((language!("de"), Some(region!("DE")))),
-        "dutch" => Some((language!("nl"), Some(region!("NL")))),
-        "eesti" => Some((language!("et"), Some(region!("EE")))),
-        "estonian" => Some((language!("et"), Some(region!("EE")))),
-        "finnish" => Some((language!("fi"), Some(region!("FI")))),
-        "french" => Some((language!("fr"), Some(region!("FR")))),
-        "galego" => Some((language!("gl"), Some(region!("ES")))),
-        "galician" => Some((language!("gl"), Some(region!("ES")))),
-        "german" => Some((language!("de"), Some(region!("DE")))),
-        "greek" => Some((language!("el"), Some(region!("GR")))),
-        "hebrew" => Some((language!("he"), Some(region!("IL")))),
-        "hrvatski" => Some((language!("hr"), Some(region!("HR")))),
-        "hungarian" => Some((language!("hu"), Some(region!("HU")))),
-        "icelandic" => Some((language!("is"), Some(region!("IS")))),
-        "italian" => Some((language!("it"), Some(region!("IT")))),
-        "japanese" => Some((language!("ja"), Some(region!("JP")))),
-        "korean" => Some((language!("ko"), Some(region!("KR")))),
-        "lithuanian" => Some((language!("lt"), Some(region!("LT")))),
-        "norwegian" => Some((language!("nb"), Some(region!("NO")))),
-        "nynorsk" => Some((language!("nn"), Some(region!("NO")))),
-        "polish" => Some((language!("pl"), Some(region!("PL")))),
-        "portuguese" => Some((language!("pt"), Some(region!("PT")))),
-        "romanian" => Some((language!("ro"), Some(region!("RO")))),
-        "russian" => Some((language!("ru"), Some(region!("RU")))),
-        "slovak" => Some((language!("sk"), Some(region!("SK")))),
-        "slovene" => Some((language!("sl"), Some(region!("SI")))),
-        "slovenian" => Some((language!("sl"), Some(region!("SI")))),
-        "spanish" => Some((language!("es"), Some(region!("ES")))),
-        "swedish" => Some((language!("sv"), Some(region!("SE")))),
-        "thai" => Some((language!("th"), Some(region!("TH")))),
-        "turkish" => Some((language!("tr"), Some(region!("TR")))),
+    match posix_locale {
+        "C" | "POSIX" => Some((language!("en"), region!("US"))),
+        "bokmal" => Some((language!("nb"), region!("NO"))),
+        "catalan" => Some((language!("ca"), region!("ES"))),
+        "croatian" => Some((language!("hr"), region!("HR"))),
+        "czech" => Some((language!("cs"), region!("CZ"))),
+        "danish" => Some((language!("da"), region!("DK"))),
+        "dansk" => Some((language!("da"), region!("DK"))),
+        "deutsch" => Some((language!("de"), region!("DE"))),
+        "dutch" => Some((language!("nl"), region!("NL"))),
+        "eesti" => Some((language!("et"), region!("EE"))),
+        "estonian" => Some((language!("et"), region!("EE"))),
+        "finnish" => Some((language!("fi"), region!("FI"))),
+        "french" => Some((language!("fr"), region!("FR"))),
+        "galego" => Some((language!("gl"), region!("ES"))),
+        "galician" => Some((language!("gl"), region!("ES"))),
+        "german" => Some((language!("de"), region!("DE"))),
+        "greek" => Some((language!("el"), region!("GR"))),
+        "hebrew" => Some((language!("he"), region!("IL"))),
+        "hrvatski" => Some((language!("hr"), region!("HR"))),
+        "hungarian" => Some((language!("hu"), region!("HU"))),
+        "icelandic" => Some((language!("is"), region!("IS"))),
+        "italian" => Some((language!("it"), region!("IT"))),
+        "japanese" => Some((language!("ja"), region!("JP"))),
+        "korean" => Some((language!("ko"), region!("KR"))),
+        "lithuanian" => Some((language!("lt"), region!("LT"))),
+        "norwegian" => Some((language!("nb"), region!("NO"))),
+        "nynorsk" => Some((language!("nn"), region!("NO"))),
+        "polish" => Some((language!("pl"), region!("PL"))),
+        "portuguese" => Some((language!("pt"), region!("PT"))),
+        "romanian" => Some((language!("ro"), region!("RO"))),
+        "russian" => Some((language!("ru"), region!("RU"))),
+        "slovak" => Some((language!("sk"), region!("SK"))),
+        "slovene" => Some((language!("sl"), region!("SI"))),
+        "slovenian" => Some((language!("sl"), region!("SI"))),
+        "spanish" => Some((language!("es"), region!("ES"))),
+        "swedish" => Some((language!("sv"), region!("SE"))),
+        "thai" => Some((language!("th"), region!("TH"))),
+        "turkish" => Some((language!("tr"), region!("TR"))),
         _ => None,
     }
 }
