@@ -13,12 +13,10 @@ use core::str::FromStr;
 use icu_calendar::{AnyCalendarKind, AsCalendar, Date, DateError, Iso, RangeError};
 use icu_locale_core::subtags::subtag;
 use ixdtf::{
-    parsers::{
-        records::{
-            DateRecord, IxdtfParseRecord, TimeRecord, TimeZoneAnnotation, TimeZoneRecord,
-            UtcOffsetRecord, UtcOffsetRecordOrZ,
-        },
-        IxdtfParser,
+    parsers::IxdtfParser,
+    records::{
+        DateRecord, IxdtfParseRecord, TimeRecord, TimeZoneAnnotation, TimeZoneRecord,
+        UtcOffsetRecord, UtcOffsetRecordOrZ,
     },
     ParseError as Rfc9557ParseError, Slice,
 };

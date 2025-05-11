@@ -10,14 +10,17 @@ use super::{
         is_annotation_key_value_separator, is_annotation_open, is_ascii_sign, is_critical_flag,
         is_time_separator, is_tz_char, is_tz_leading_char, is_tz_name_separator, is_utc_designator,
     },
+    time::{parse_fraction, parse_hour, parse_minute_second},
+    Cursor,
+};
+use crate::{
+    assert_syntax,
     records::{
         FullPrecisionOffset, MinutePrecisionOffset, Sign, TimeZoneAnnotation, TimeZoneRecord,
         UtcOffsetRecord, UtcOffsetRecordOrZ,
     },
-    time::{parse_fraction, parse_hour, parse_minute_second},
-    Cursor,
+    ParseError, ParserResult, Slice,
 };
-use crate::{assert_syntax, ParseError, ParserResult, Slice};
 
 // NOTE: critical field on time zones is captured but not handled.
 

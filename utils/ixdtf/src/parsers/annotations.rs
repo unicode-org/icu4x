@@ -12,9 +12,9 @@ use crate::{
             is_annotation_key_value_separator, is_annotation_open, is_annotation_value_component,
             is_critical_flag, is_hyphen,
         },
-        records::{Annotation, TimeZoneAnnotation},
         timezone, Cursor,
     },
+    records::{Annotation, TimeZoneAnnotation},
     ParseError, ParserResult, Slice,
 };
 

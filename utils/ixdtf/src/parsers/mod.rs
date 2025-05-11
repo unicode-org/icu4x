@@ -7,12 +7,10 @@
 use crate::{core::Cursor, ParserResult, Slice};
 
 #[cfg(feature = "duration")]
-use records::DurationParseRecord;
-use records::{IxdtfParseRecord, UtcOffsetRecord};
+use crate::records::DurationParseRecord;
+use crate::records::{IxdtfParseRecord, UtcOffsetRecord};
 
-use self::records::Annotation;
-
-pub mod records;
+use crate::records::Annotation;
 
 mod annotations;
 pub(crate) mod datetime;
@@ -42,9 +40,10 @@ macro_rules! assert_syntax {
 /// laid out in [RFC9557][rfc9557] along with other variations laid out in the [`Temporal`][temporal-proposal].
 ///
 /// ```rust
-/// use ixdtf::{parsers::{
+/// use ixdtf::{
+///     parsers::IxdtfParser,
 ///     records::{Sign, TimeZoneRecord, UtcOffsetRecord},
-///     IxdtfParser}, Slice
+///     Slice
 /// };
 ///
 /// let ixdtf_str = "2024-03-02T08:48:00-05:00[America/New_York]";
@@ -201,7 +200,7 @@ impl<'a> IxdtfParser<'a> {
     /// # Example
     ///
     /// ```rust
-    /// # use ixdtf::{parsers::{IxdtfParser, records::{Sign, TimeZoneRecord}}, Slice};
+    /// # use ixdtf::{parsers::IxdtfParser, records::{Sign, TimeZoneRecord}, Slice};
     /// let extended_time = "12:01:04-05:00[America/New_York][u-ca=iso8601]";
     ///
     /// let result = IxdtfParser::from_str(extended_time).parse_time().unwrap();
@@ -282,7 +281,7 @@ impl<'a> TimeZoneParser<'a> {
     /// ## Minute precision offset example
     ///
     /// ```rust
-    /// use ixdtf::parsers::{records::Sign, TimeZoneParser};
+    /// use ixdtf::{records::Sign, parsers::TimeZoneParser};
     ///
     /// let offset_src = "-05:00";
     /// let parse_result =
@@ -297,7 +296,7 @@ impl<'a> TimeZoneParser<'a> {
     /// ## Full precision offset example
     ///
     /// ```rust
-    /// use ixdtf::parsers::{records::Sign, TimeZoneParser};
+    /// use ixdtf::{records::Sign, parsers::TimeZoneParser};
     ///
     /// let offset_src = "-05:00:30.123456789";
     /// let parse_result =
@@ -320,7 +319,7 @@ impl<'a> TimeZoneParser<'a> {
     ///
     ///
     /// ```rust
-    /// use ixdtf::{parsers::{records::Sign, TimeZoneParser}, Slice};
+    /// use ixdtf::{records::Sign, parsers::TimeZoneParser, Slice};
     ///
     /// let iana_identifier = "America/Chicago";
     /// let parse_result = TimeZoneParser::from_str(iana_identifier)
@@ -349,7 +348,7 @@ impl<'a> TimeZoneParser<'a> {
 /// # Example
 ///
 /// ```rust
-/// use ixdtf::parsers::{IsoDurationParser, records::{Sign, DurationParseRecord, TimeDurationRecord}};
+/// use ixdtf::{parsers::IsoDurationParser, records::{Sign, DurationParseRecord, TimeDurationRecord}};
 ///
 /// let duration_str = "P1Y2M1DT2H10M30S";
 ///
@@ -418,7 +417,7 @@ impl<'a> IsoDurationParser<'a> {
     /// ## Parsing a date duration
     ///
     /// ```
-    /// # use ixdtf::parsers::{IsoDurationParser, records::DurationParseRecord };
+    /// # use ixdtf::{parsers::IsoDurationParser, records::DurationParseRecord };
     /// let date_duration = "P1Y2M3W1D";
     ///
     /// let result = IsoDurationParser::from_str(date_duration).parse().unwrap();
@@ -435,7 +434,7 @@ impl<'a> IsoDurationParser<'a> {
     /// ## Parsing a time duration
     ///
     /// ```rust
-    /// # use ixdtf::parsers::{IsoDurationParser, records::{DurationParseRecord, TimeDurationRecord }};
+    /// # use ixdtf::{parsers::IsoDurationParser, records::{DurationParseRecord, TimeDurationRecord }};
     /// let time_duration = "PT2H10M30S";
     ///
     /// let result = IsoDurationParser::from_str(time_duration).parse().unwrap();

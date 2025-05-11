@@ -20,10 +20,9 @@
 //!
 //! ```
 //! use ixdtf::{
-//!     parsers::{
-//!         records::{Sign, TimeZoneRecord},
-//!         IxdtfParser
-//!     }, Slice
+//!     records::{Sign, TimeZoneRecord},
+//!     parsers::IxdtfParser,
+//!     Slice
 //! };
 //!
 //! let ixdtf_str = "2024-03-02T08:48:00-05:00[America/New_York]";
@@ -75,9 +74,10 @@
 //! RFC 9557 updates the interpretation of `Z` to align with `-00:00`.
 //!
 //! ```rust
-//! use ixdtf::{parsers::{
+//! use ixdtf::{
+//!     parsers::IxdtfParser,
 //!     records::{Sign, TimeZoneRecord},
-//!     IxdtfParser}, Slice
+//!     Slice
 //! };
 //!
 //! let ixdtf_str = "2024-03-02T08:48:00Z[America/New_York]";
@@ -136,9 +136,10 @@
 //! zone annotation if it is provided.
 //!
 //! ```rust
-//! use ixdtf::{parsers::{
+//! use ixdtf::{
+//!     parsers::IxdtfParser,
 //!     records::{Sign, TimeZoneRecord},
-//!     IxdtfParser}, Slice
+//!     Slice
 //! };
 //!
 //! let zulu_offset = "2024-03-02T08:48:00Z[!America/New_York]";
@@ -291,7 +292,7 @@
 //! between the offset and annotation.
 //!
 //! ```rust
-//! use ixdtf::{parsers::{IxdtfParser, records::TimeZoneRecord}, Slice};
+//! use ixdtf::{parsers::IxdtfParser, records::TimeZoneRecord, Slice};
 //!
 //! let example_two = "2024-03-02T08:48:00+01:00[!America/New_York]";
 //!
@@ -393,6 +394,7 @@
 pub(crate) mod core;
 mod error;
 pub mod parsers;
+pub mod records;
 
 extern crate alloc;
 

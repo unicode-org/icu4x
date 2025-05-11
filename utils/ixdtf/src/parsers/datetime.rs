@@ -9,17 +9,14 @@ use crate::{
     parsers::{
         annotations,
         grammar::{is_annotation_open, is_date_time_separator, is_hyphen, is_utc_designator},
-        records::{DateRecord, TimeRecord},
         time::parse_time_record,
         timezone, Cursor, IxdtfParseRecord,
     },
+    records::{Annotation, DateRecord, TimeRecord, UtcOffsetRecordOrZ},
     ParseError, ParserResult,
 };
 
-use super::{
-    grammar::is_ascii_sign,
-    records::{Annotation, UtcOffsetRecordOrZ},
-};
+use super::grammar::is_ascii_sign;
 
 #[derive(Debug, Default, Clone)]
 /// A `DateTime` Parse Node that contains the date, time, and offset info.

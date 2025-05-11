@@ -13,18 +13,13 @@ use crate::{
             is_annotation_open, is_decimal_separator, is_time_designator, is_time_separator,
             is_utc_designator,
         },
-        records::{Annotation, TimeRecord},
         Cursor,
     },
+    records::{Annotation, Fraction, IxdtfParseRecord, TimeRecord},
     ParseError, ParserResult,
 };
 
-use super::{
-    annotations,
-    grammar::is_ascii_sign,
-    records::{Fraction, IxdtfParseRecord},
-    timezone,
-};
+use super::{annotations, grammar::is_ascii_sign, timezone};
 
 /// Parse annotated time record is silently fallible returning None in the case that the
 /// value does not align

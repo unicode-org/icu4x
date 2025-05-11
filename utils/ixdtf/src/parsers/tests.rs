@@ -8,12 +8,10 @@ use core::num::NonZeroU8;
 use alloc::vec::Vec;
 
 use crate::{
-    parsers::{
-        records::{
-            Annotation, DateRecord, Fraction, IxdtfParseRecord, TimeRecord, TimeZoneAnnotation,
-            TimeZoneRecord, UtcOffsetRecordOrZ,
-        },
-        IxdtfParser,
+    parsers::IxdtfParser,
+    records::{
+        Annotation, DateRecord, Fraction, IxdtfParseRecord, TimeRecord, TimeZoneAnnotation,
+        TimeZoneRecord, UtcOffsetRecordOrZ,
     },
     ParseError, Slice,
 };
@@ -545,9 +543,9 @@ fn temporal_valid_instant_strings() {
 #[test]
 #[cfg(feature = "duration")]
 fn temporal_duration_parsing() {
-    use crate::parsers::{
+    use crate::{
+        parsers::IsoDurationParser,
         records::{DateDurationRecord, DurationParseRecord, Sign, TimeDurationRecord},
-        IsoDurationParser,
     };
 
     let durations = [
@@ -649,9 +647,9 @@ fn maximum_duration_fraction() {
 #[test]
 #[cfg(feature = "duration")]
 fn duration_fraction_extended() {
-    use crate::parsers::{
+    use crate::{
+        parsers::IsoDurationParser,
         records::{DurationParseRecord, Sign, TimeDurationRecord},
-        IsoDurationParser,
     };
     let test = "PT1H1.123456789123M";
     let result = IsoDurationParser::from_str(test).parse();
@@ -1016,7 +1014,7 @@ fn test_zulu_offset() {
                 second: 0,
                 fraction: None,
             }),
-            offset: Some(crate::parsers::records::UtcOffsetRecordOrZ::Z),
+            offset: Some(crate::records::UtcOffsetRecordOrZ::Z),
             tz: Some(TimeZoneAnnotation {
                 critical: false,
                 tz: TimeZoneRecord::Name(Slice::Utf8("America/Chicago".as_bytes()))

@@ -12,10 +12,10 @@ use crate::{
             is_minute_designator, is_month_designator, is_second_designator, is_time_designator,
             is_week_designator, is_year_designator,
         },
-        records::{DateDurationRecord, DurationParseRecord, Fraction, TimeDurationRecord},
         time::parse_fraction,
         Cursor,
     },
+    records::{DateDurationRecord, DurationParseRecord, Fraction, TimeDurationRecord},
     ParseError, ParserResult,
 };
 

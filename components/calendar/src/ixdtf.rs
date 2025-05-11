@@ -6,8 +6,8 @@ use core::str::FromStr;
 
 use crate::{AsCalendar, Calendar, Date, Iso, RangeError};
 use icu_locale_core::preferences::extensions::unicode::keywords::CalendarAlgorithm;
-use ixdtf::parsers::records::IxdtfParseRecord;
 use ixdtf::parsers::IxdtfParser;
+use ixdtf::records::IxdtfParseRecord;
 use ixdtf::ParseError as Rfc9557Error;
 
 /// An error returned from parsing an RFC 9557 string to an `icu_calendar` type.
