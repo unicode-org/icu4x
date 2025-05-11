@@ -129,7 +129,7 @@ fn bake_derive_impl(input: &DeriveInput) -> TokenStream2 {
         if is_custom_bake_unsafe {
             quote! {
                 x => {
-                    let baked = databake::CustomBakeUnsafe::to_custom_bake(x).bake(env);
+                    let baked = databake::CustomBake::to_custom_bake(x).bake(env);
                     databake::quote! {
                         // Safety: the bake is generated from `CustomBakeUnsafe::to_custom_bake`
                         unsafe { #path::#type_ident::from_custom_bake(##baked_ident) }

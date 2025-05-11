@@ -110,8 +110,7 @@ pub struct CustomBakeUnsafeExample<'a> {
     y: alloc::borrow::Cow<'a, str>,
 }
 
-
-unsafe impl CustomBakeUnsafe for CustomBakeUnsafeExample<'_> {
+impl CustomBake for CustomBakeUnsafeExample<'_> {
     type BakedType<'a>
         = (usize, &'a str)
     where
@@ -121,8 +120,12 @@ unsafe impl CustomBakeUnsafe for CustomBakeUnsafeExample<'_> {
     }
 }
 
+// Safety: The type has a `from_custom_bake` fn of the required signature.
+unsafe impl CustomBakeUnsafe for CustomBakeExample<'_> {}
+
 impl<'a> CustomBakeUnsafeExample<'a> {
-    pub const unsafe fn from_custom_bake(baked: <Self as CustomBakeUnsafe>::BakedType<'a>) -> Self {
+    /// Safety: the argument MUST have been returned from [`Self::to_custom_bake`].
+    pub const unsafe fn from_custom_bake(baked: <Self as CustomBake>::BakedType<'a>) -> Self {
         Self {
             x: baked.0,
             y: alloc::borrow::Cow::Borrowed(baked.1),

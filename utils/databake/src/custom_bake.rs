@@ -35,11 +35,4 @@ pub trait CustomBake {
 /// /// Safety: the argument MUST have been returned from [`Self::to_custom_bake`].
 /// pub unsafe fn from_custom_bake(baked: CustomBakeUnsafe::BakedType) -> Self
 /// ```
-pub unsafe trait CustomBakeUnsafe {
-    /// The type of the custom bake.
-    type BakedType<'a>: Bake
-    where
-        Self: 'a;
-    /// Returns `self` as the custom bake type.
-    fn to_custom_bake(&self) -> Self::BakedType<'_>;
-}
+pub unsafe trait CustomBakeUnsafe: CustomBake {}
