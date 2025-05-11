@@ -5,6 +5,7 @@
 extern crate alloc;
 use core::num::NonZeroU8;
 
+use alloc::string::String;
 use alloc::vec::Vec;
 
 use crate::{
@@ -1404,28 +1405,24 @@ fn utf16_basic_test() {
         .map(u16::from)
         .collect();
     let result = IxdtfParser::from_utf16(&utf16).parse();
-    assert_eq!(
-        result,
+    let id = match result {
         Ok(IxdtfParseRecord {
-            date: Some(DateRecord {
-                year: 2020,
-                month: 4,
-                day: 8
-            }),
+            date:
+                Some(DateRecord {
+                    year: 2020,
+                    month: 4,
+                    day: 8,
+                }),
             time: None,
             offset: None,
-            tz: Some(TimeZoneAnnotation {
-                critical: false,
-                tz: TimeZoneRecord::Name(Slice::Utf16(
-                    &"America/Chicago"
-                        .as_bytes()
-                        .iter()
-                        .copied()
-                        .map(u16::from)
-                        .collect::<Vec<_>>()
-                ))
-            }),
-            calendar: None
-        })
-    );
+            tz:
+                Some(TimeZoneAnnotation {
+                    critical: false,
+                    tz: TimeZoneRecord::Name(Slice::Utf16(id)),
+                }),
+            calendar: None,
+        }) => id,
+        _ => unreachable!(),
+    };
+    assert_eq!(String::from_utf16_lossy(id), "America/Chicago");
 }
