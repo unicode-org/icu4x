@@ -113,15 +113,11 @@ fn bake_derive_impl(input: &DeriveInput) -> TokenStream2 {
         .next()
         .expect("missing databake(path = ...) attribute");
 
-    let is_custom_bake = attrs
-        .iter()
-        .find(|a| matches!(a, DatabakeAttr::CustomBake))
-        .is_some();
+    let is_custom_bake = attrs.iter().any(|a| matches!(a, DatabakeAttr::CustomBake));
 
     let is_custom_bake_unsafe = attrs
         .iter()
-        .find(|a| matches!(a, DatabakeAttr::CustomBakeUnsafe))
-        .is_some();
+        .any(|a| matches!(a, DatabakeAttr::CustomBakeUnsafe));
 
     let bake_body = if is_custom_bake || is_custom_bake_unsafe {
         let type_ident = &structure.ast().ident;

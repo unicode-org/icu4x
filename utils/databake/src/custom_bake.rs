@@ -32,7 +32,8 @@ pub trait CustomBake {
 /// with the following signature:
 ///
 /// ```ignore
-/// /// Safety: the argument MUST have been returned from [`Self::to_custom_bake`].
+/// /// # Safety
+/// /// The argument MUST have been returned from [`Self::to_custom_bake`].
 /// pub unsafe fn from_custom_bake(baked: CustomBakeUnsafe::BakedType) -> Self
 /// ```
 pub unsafe trait CustomBakeUnsafe: CustomBake {}

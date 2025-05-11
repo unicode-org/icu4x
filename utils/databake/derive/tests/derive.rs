@@ -124,7 +124,8 @@ impl CustomBake for CustomBakeUnsafeExample<'_> {
 unsafe impl CustomBakeUnsafe for CustomBakeExample<'_> {}
 
 impl<'a> CustomBakeUnsafeExample<'a> {
-    /// Safety: the argument MUST have been returned from [`Self::to_custom_bake`].
+    /// # Safety
+    /// The argument MUST have been returned from [`Self::to_custom_bake`].
     pub const unsafe fn from_custom_bake(baked: <Self as CustomBake>::BakedType<'a>) -> Self {
         Self {
             x: baked.0,
