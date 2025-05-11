@@ -99,7 +99,7 @@ impl<A: AsCalendar> Date<A> {
         let date_record = ixdtf_record.date.ok_or(ParseError::MissingFields)?;
         let iso = Date::try_new_iso(date_record.year, date_record.month, date_record.day)?;
 
-        if let Some(ixdtf_calendar) = ixdtf_record.calendar {
+        if let Some(ixdtf::Slice::Utf8(ixdtf_calendar)) = ixdtf_record.calendar {
             if let Some(expected_calendar) = calendar.as_calendar().calendar_algorithm() {
                 if let Some(parsed_calendar) =
                     icu_locale_core::extensions::unicode::Value::try_from_utf8(ixdtf_calendar)

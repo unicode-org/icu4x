@@ -20,7 +20,7 @@ use ixdtf::{
         },
         IxdtfParser,
     },
-    ParseError as Rfc9557ParseError,
+    ParseError as Rfc9557ParseError, Slice,
 };
 
 /// The error type for parsing RFC 9557 strings.
@@ -187,7 +187,7 @@ impl<'a> Intermediate<'a> {
                 offset: Some(UtcOffsetRecordOrZ::Offset(offset)),
                 tz:
                     Some(TimeZoneAnnotation {
-                        tz: TimeZoneRecord::Name(iana_identifier),
+                        tz: TimeZoneRecord::Name(Slice::Utf8(iana_identifier)),
                         ..
                     }),
                 ..
@@ -207,7 +207,7 @@ impl<'a> Intermediate<'a> {
                 offset: Some(UtcOffsetRecordOrZ::Z),
                 tz:
                     Some(TimeZoneAnnotation {
-                        tz: TimeZoneRecord::Name(iana_identifier),
+                        tz: TimeZoneRecord::Name(Slice::Utf8(iana_identifier)),
                         ..
                     }),
                 ..
@@ -217,7 +217,7 @@ impl<'a> Intermediate<'a> {
                 offset: None,
                 tz:
                     Some(TimeZoneAnnotation {
-                        tz: TimeZoneRecord::Name(iana_identifier),
+                        tz: TimeZoneRecord::Name(Slice::Utf8(iana_identifier)),
                         ..
                     }),
                 ..
