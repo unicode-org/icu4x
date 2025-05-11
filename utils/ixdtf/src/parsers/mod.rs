@@ -4,7 +4,7 @@
 
 //! The parser module contains the implementation details for `IxdtfParser` and `IsoDurationParser`
 
-use crate::{ParseError, ParserResult};
+use crate::{core::Cursor, ParserResult, Slice};
 
 #[cfg(feature = "duration")]
 use records::DurationParseRecord;
@@ -42,9 +42,9 @@ macro_rules! assert_syntax {
 /// laid out in [RFC9557][rfc9557] along with other variations laid out in the [`Temporal`][temporal-proposal].
 ///
 /// ```rust
-/// use ixdtf::parsers::{
+/// use ixdtf::{parsers::{
 ///     records::{Sign, TimeZoneRecord, UtcOffsetRecord},
-///     IxdtfParser,
+///     IxdtfParser}, Slice
 /// };
 ///
 /// let ixdtf_str = "2024-03-02T08:48:00-05:00[America/New_York]";
@@ -69,7 +69,7 @@ macro_rules! assert_syntax {
 /// assert!(!tz_annotation.critical);
 /// assert_eq!(
 ///     tz_annotation.tz,
-///     TimeZoneRecord::Name("America/New_York".as_bytes())
+///     TimeZoneRecord::Name(Slice::Utf8("America/New_York".as_bytes()))
 /// );
 /// ```
 ///
@@ -87,6 +87,15 @@ impl<'a> IxdtfParser<'a> {
     pub fn from_utf8(source: &'a [u8]) -> Self {
         Self {
             cursor: Cursor::new(source),
+        }
+    }
+
+    /// Creates a new `IxdtfParser` from a slice of utf-16 bytes.
+    #[inline]
+    #[must_use]
+    pub fn from_utf16(source: &'a [u16]) -> Self {
+        Self {
+            cursor: Cursor::from_utf16(source),
         }
     }
 
@@ -192,7 +201,7 @@ impl<'a> IxdtfParser<'a> {
     /// # Example
     ///
     /// ```rust
-    /// # use ixdtf::parsers::{IxdtfParser, records::{Sign, TimeZoneRecord}};
+    /// # use ixdtf::{parsers::{IxdtfParser, records::{Sign, TimeZoneRecord}}, Slice};
     /// let extended_time = "12:01:04-05:00[America/New_York][u-ca=iso8601]";
     ///
     /// let result = IxdtfParser::from_str(extended_time).parse_time().unwrap();
@@ -210,7 +219,7 @@ impl<'a> IxdtfParser<'a> {
     /// assert!(!tz_annotation.critical);
     /// assert_eq!(
     ///     tz_annotation.tz,
-    ///     TimeZoneRecord::Name("America/New_York".as_bytes())
+    ///     TimeZoneRecord::Name(Slice::Utf8("America/New_York".as_bytes()))
     /// );
     /// ```
     ///
@@ -245,6 +254,15 @@ impl<'a> TimeZoneParser<'a> {
     pub fn from_utf8(source: &'a [u8]) -> Self {
         Self {
             cursor: Cursor::new(source),
+        }
+    }
+
+    /// Creates a new `TimeZoneParser` from a slice of utf-16 bytes.
+    #[inline]
+    #[must_use]
+    pub fn from_utf16(source: &'a [u16]) -> Self {
+        Self {
+            cursor: Cursor::from_utf16(source),
         }
     }
 
@@ -302,22 +320,22 @@ impl<'a> TimeZoneParser<'a> {
     ///
     ///
     /// ```rust
-    /// use ixdtf::parsers::{records::Sign, TimeZoneParser};
+    /// use ixdtf::{parsers::{records::Sign, TimeZoneParser}, Slice};
     ///
     /// let iana_identifier = "America/Chicago";
     /// let parse_result = TimeZoneParser::from_str(iana_identifier)
     ///     .parse_iana_identifier()
     ///     .unwrap();
-    /// assert_eq!(parse_result, iana_identifier.as_bytes());
+    /// assert_eq!(parse_result, Slice::Utf8(iana_identifier.as_bytes()));
     ///
     /// let iana_identifier = "Europe/Berlin";
     /// let parse_result = TimeZoneParser::from_str(iana_identifier)
     ///     .parse_iana_identifier()
     ///     .unwrap();
-    /// assert_eq!(parse_result, iana_identifier.as_bytes());
+    /// assert_eq!(parse_result, Slice::Utf8(iana_identifier.as_bytes()));
     /// ```
     #[inline]
-    pub fn parse_iana_identifier(&mut self) -> ParserResult<&'a [u8]> {
+    pub fn parse_iana_identifier(&mut self) -> ParserResult<Slice<'a>> {
         let result = timezone::parse_tz_iana_name(&mut self.cursor)?;
         self.cursor.close()?;
         Ok(result)
@@ -376,6 +394,15 @@ impl<'a> IsoDurationParser<'a> {
         }
     }
 
+    /// Creates a new `IsoDurationParser` from a slice of utf-16 bytes.
+    #[inline]
+    #[must_use]
+    pub fn from_utf16(source: &'a [u16]) -> Self {
+        Self {
+            cursor: Cursor::from_utf16(source),
+        }
+    }
+
     /// Creates a new `IsoDurationParser` from a source `&str`.
     #[inline]
     #[must_use]
@@ -430,113 +457,5 @@ impl<'a> IsoDurationParser<'a> {
     /// ```
     pub fn parse(&mut self) -> ParserResult<DurationParseRecord> {
         duration::parse_duration(&mut self.cursor)
-    }
-}
-
-// ==== Mini cursor implementation for Iso8601 targets ====
-
-/// `Cursor` is a small cursor implementation for parsing Iso8601 grammar.
-#[derive(Debug)]
-pub(crate) struct Cursor<'a> {
-    pos: usize,
-    source: &'a [u8],
-}
-
-impl<'a> Cursor<'a> {
-    /// Create a new cursor from a source `String` value.
-    #[must_use]
-    pub fn new(source: &'a [u8]) -> Self {
-        Self { pos: 0, source }
-    }
-
-    /// Returns a string value from a slice of the cursor.
-    fn slice(&self, start: usize, end: usize) -> Option<&'a [u8]> {
-        self.source.get(start..end)
-    }
-
-    /// Get current position
-    const fn pos(&self) -> usize {
-        self.pos
-    }
-
-    /// Peek the value at next position (current + 1).
-    fn peek(&self) -> Option<u8> {
-        self.peek_n(1)
-    }
-
-    /// Returns current position in source as `char`.
-    fn current(&self) -> Option<u8> {
-        self.peek_n(0)
-    }
-
-    /// Peeks the value at `n` as a `char`.
-    fn peek_n(&self, n: usize) -> Option<u8> {
-        self.source.get(self.pos + n).copied()
-    }
-
-    /// Runs the provided check on the current position.
-    fn check<F>(&self, f: F) -> Option<bool>
-    where
-        F: FnOnce(u8) -> bool,
-    {
-        self.current().map(f)
-    }
-
-    /// Runs the provided check on current position returns the default value if None.
-    fn check_or<F>(&self, default: bool, f: F) -> bool
-    where
-        F: FnOnce(u8) -> bool,
-    {
-        self.current().map_or(default, f)
-    }
-
-    /// Returns `Cursor`'s current char and advances to the next position.
-    fn next(&mut self) -> Option<u8> {
-        let result = self.current();
-        self.advance_n(1);
-        result
-    }
-
-    /// Returns the next value as a digit
-    ///
-    /// # Errors
-    ///   - Returns an AbruptEnd error if cursor ends.
-    fn next_digit(&mut self) -> ParserResult<Option<u8>> {
-        let ascii_char = self.next_or(ParseError::AbruptEnd { location: "digit" })?;
-        if ascii_char.is_ascii_digit() {
-            Ok(Some(ascii_char - 48))
-        } else {
-            Ok(None)
-        }
-    }
-
-    /// A utility next method that returns an `AbruptEnd` error if invalid.
-    fn next_or(&mut self, err: ParseError) -> ParserResult<u8> {
-        self.next().ok_or(err)
-    }
-
-    /// Advances the cursor's position by n bytes.
-    fn advance_n(&mut self, n: usize) {
-        self.pos += n;
-    }
-
-    // Advances the cursor by 1 byte.
-    fn advance(&mut self) {
-        self.advance_n(1)
-    }
-
-    /// Utility function to advance when a condition is true
-    fn advance_if(&mut self, condition: bool) {
-        if condition {
-            self.advance();
-        }
-    }
-
-    /// Closes the current cursor by checking if all contents have been consumed. If not, returns an error for invalid syntax.
-    fn close(&mut self) -> ParserResult<()> {
-        if self.pos < self.source.len() {
-            return Err(ParseError::InvalidEnd);
-        }
-        Ok(())
     }
 }

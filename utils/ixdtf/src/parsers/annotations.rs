@@ -15,13 +15,13 @@ use crate::{
         records::{Annotation, TimeZoneAnnotation},
         timezone, Cursor,
     },
-    ParseError, ParserResult,
+    ParseError, ParserResult, Slice,
 };
 
 /// Strictly a parsing intermediary for the checking the common annotation backing.
 pub(crate) struct AnnotationSet<'a> {
     pub(crate) tz: Option<TimeZoneAnnotation<'a>>,
-    pub(crate) calendar: Option<&'a [u8]>,
+    pub(crate) calendar: Option<Slice<'a>>,
 }
 
 /// Parse a `TimeZoneAnnotation` `Annotations` set
@@ -33,7 +33,7 @@ pub(crate) fn parse_annotation_set<'a>(
     let tz_annotation = timezone::parse_ambiguous_tz_annotation(cursor)?;
 
     // Parse any `Annotations`
-    let annotations = cursor.check_or(false, is_annotation_open);
+    let annotations = cursor.check_or(false, is_annotation_open)?;
 
     if annotations {
         let calendar = parse_annotations(cursor, handler)?;
@@ -53,15 +53,15 @@ pub(crate) fn parse_annotation_set<'a>(
 pub(crate) fn parse_annotations<'a>(
     cursor: &mut Cursor<'a>,
     mut handler: impl FnMut(Annotation<'a>) -> Option<Annotation<'a>>,
-) -> ParserResult<Option<&'a [u8]>> {
+) -> ParserResult<Option<Slice<'a>>> {
     let mut calendar: Option<Annotation<'a>> = None;
 
-    while cursor.check_or(false, is_annotation_open) {
+    while cursor.check_or(false, is_annotation_open)? {
         let annotation = handler(parse_kv_annotation(cursor)?);
 
         match annotation {
             // Check if the key is the registered key "u-ca".
-            Some(kv) if kv.key == "u-ca".as_bytes() => {
+            Some(kv) if calendar_key_check(&kv.key) => {
                 // Check the calendar
                 match calendar {
                     Some(calendar)
@@ -90,6 +90,12 @@ pub(crate) fn parse_annotations<'a>(
     Ok(calendar.map(|a| a.value))
 }
 
+const U_CA_UTF16: &[u16] = &[0x75, 0x2d, 0x63, 0x61];
+
+fn calendar_key_check(slice: &Slice<'_>) -> bool {
+    slice == &Slice::Utf8("u-ca".as_bytes()) || slice == &Slice::Utf16(U_CA_UTF16)
+}
+
 /// Parse an annotation with an `AnnotationKey`=`AnnotationValue` pair.
 fn parse_kv_annotation<'a>(cursor: &mut Cursor<'a>) -> ParserResult<Annotation<'a>> {
     assert_syntax!(
@@ -97,7 +103,7 @@ fn parse_kv_annotation<'a>(cursor: &mut Cursor<'a>) -> ParserResult<Annotation<'
         AnnotationOpen
     );
 
-    let critical = cursor.check_or(false, is_critical_flag);
+    let critical = cursor.check_or(false, is_critical_flag)?;
     cursor.advance_if(critical);
 
     // Parse AnnotationKey.
@@ -122,16 +128,16 @@ fn parse_kv_annotation<'a>(cursor: &mut Cursor<'a>) -> ParserResult<Annotation<'
 }
 
 /// Parse an `AnnotationKey`.
-fn parse_annotation_key<'a>(cursor: &mut Cursor<'a>) -> ParserResult<&'a [u8]> {
+fn parse_annotation_key<'a>(cursor: &mut Cursor<'a>) -> ParserResult<Slice<'a>> {
     let key_start = cursor.pos();
     assert_syntax!(
         is_a_key_leading_char(cursor.next_or(ParseError::AnnotationKeyLeadingChar)?),
         AnnotationKeyLeadingChar,
     );
 
-    while let Some(potential_key_char) = cursor.next() {
+    while let Some(potential_key_char) = cursor.next()? {
         // End of key.
-        if cursor.check_or(false, is_annotation_key_value_separator) {
+        if cursor.check_or(false, is_annotation_key_value_separator)? {
             // Return found key
             return cursor
                 .slice(key_start, cursor.pos())
@@ -145,11 +151,11 @@ fn parse_annotation_key<'a>(cursor: &mut Cursor<'a>) -> ParserResult<&'a [u8]> {
 }
 
 /// Parse an `AnnotationValue`.
-fn parse_annotation_value<'a>(cursor: &mut Cursor<'a>) -> ParserResult<&'a [u8]> {
+fn parse_annotation_value<'a>(cursor: &mut Cursor<'a>) -> ParserResult<Slice<'a>> {
     let value_start = cursor.pos();
     cursor.advance();
-    while let Some(potential_value_char) = cursor.next() {
-        if cursor.check_or(false, is_annotation_close) {
+    while let Some(potential_value_char) = cursor.next()? {
+        if cursor.check_or(false, is_annotation_close)? {
             // Return the determined AnnotationValue.
             return cursor
                 .slice(value_start, cursor.pos())
@@ -158,7 +164,7 @@ fn parse_annotation_value<'a>(cursor: &mut Cursor<'a>) -> ParserResult<&'a [u8]>
 
         if is_hyphen(potential_value_char) {
             assert_syntax!(
-                cursor.peek().is_some_and(is_annotation_value_component),
+                cursor.peek()?.is_some_and(is_annotation_value_component),
                 AnnotationValueCharPostHyphen,
             );
             cursor.advance();
