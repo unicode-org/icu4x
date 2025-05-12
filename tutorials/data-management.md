@@ -198,15 +198,15 @@ As you can see in the second `expect` message, it's not possible to statically t
 
 ## 7. Data slicing
 
-You might have noticed that the blob we generated is a hefty 13MB. This is no surprise, as we used `--markers all`. However, our binary only uses date formatting data in Japanese. There's room for optimization:
+You might have noticed that the blob we generated is a hefty 5MB. This is no surprise, as we used `--markers all`. However, our binary only uses date formatting data in Japanese. There's room for optimization:
 
 ```console
-icu4x-datagen --markers-for-bin target/debug/myapp --locales ja --format blob --out my_data_blob.postcard --overwrite
+cargo build --release && icu4x-datagen --markers-for-bin target/release/myapp --locales ja --format blob --out my_data_blob.postcard --overwrite
 ```
 
-The `--markers-for-bin` argument tells `icu4x-datagen` to analyze the binary and only include markers that are used by its code. This significantly reduces the blob's file size, to 54KB, and our program still works. Quite the improvement!
+The `--markers-for-bin` argument tells `icu4x-datagen` to analyze the binary and only include markers that are used by its code. This significantly reduces the blob's file size, to 19KB, and our program still works. Quite the improvement!
 
-But there is more to optimize. You might have noticed this in the output of the `icu4x-datagen` invocation, which lists 24 markers, including clearly irrelevant ones like `DatetimeNamesMonthPersianV1`. Turns out, as `DateTimeFormatter` contains logic for many different calendars, datagen includes data for all of these as well.
+But there is more to optimize. You might have noticed this in the output of the `icu4x-datagen` invocation, which lists 43 markers, including clearly irrelevant ones like `DatetimeNamesMonthPersianV1`. Turns out, as `DateTimeFormatter` contains logic for many different calendars, datagen includes data for all of these as well.
 
 We can instead use `FixedCalendarDateTimeFormatter<Gregorian>`, which only supports formatting `Date<Gregorian>`s:
 
@@ -250,9 +250,11 @@ This has two advantages: it reduces our code size, as `DateTimeFormatter` might 
 
 This is a common pattern in `ICU4X`, and most of our APIs are designed with data slicing in mind.
 
-Rebuilding the application and rerunning datagen rewards us with a 3KB data blob, which only contains 7 data markers!
+Rebuilding the application and rerunning datagen rewards us with an 8KB data blob, which only contains 7 data markers! [^2]
 
 These API-level optimizations also apply to compiled data (there's no need to use `--markers-for-bin`, as the compiler will remove unused markers).
+
+[^2]: 5KB of this is locale fallback data, which is not specific to datetime formatting.
 
 ## 8. Summary
 
