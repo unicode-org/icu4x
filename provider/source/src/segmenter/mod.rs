@@ -34,26 +34,27 @@ mod lstm;
 // [[tables]]
 // name = "Double_Quote"
 //
+// state machine name define by combined state and as simple property
+// This doesn't break between properties even if combined rules are not matched.
+// [[tables]]
+// name = "ALetter_ZWJ"
+// as_simple_property = true
+//
 // state machine define for combined state
 // [[tables]]
 // name = "Double_Quote_ALetter"
 // left = "Double_Quote"
 // right = "ALetter"
-//
-// state machine define using code point
-// [[tables]]
-// name = "ABC"
-// codepoint = [32, 33, ...]
 #[derive(serde::Deserialize, Debug)]
 struct SegmenterProperty {
     name: String,
-    // If codepoint is defined, this is custom define, not builtin define.
-    codepoint: Option<Vec<u32>>,
     // If left and right are defined, this define is combined state.
     left: Option<String>,
     right: Option<String>,
     // This combine state is an intermediate match rule.
     interm_break_state: Option<bool>,
+    // Defiened as single property to move marker even if not matched.
+    as_simple_property: Option<bool>,
 }
 
 // state machine break result define
@@ -219,16 +220,35 @@ fn generate_rule_break_data(
             continue;
         };
 
-        if p.left.is_none() && p.right.is_none() && p.codepoint.is_none() {
+        if p.left.is_none() && p.right.is_none() {
             // If any values aren't set, this is builtin type.
             simple_properties_count += 1;
 
+            if p.as_simple_property.is_some() {
+                // defined as simple property. It means that we move the marker to the next property.
+                continue;
+            }
+
             match &*segmenter.segmenter_type {
                 "word" => {
-                    // Extended_Pictographic isn't a part of word break property
                     if p.name == "Extended_Pictographic" {
+                        // :Word_Break=ALetter: includes Extended_Pictographic. So we want to
+                        // exlude ALetter.
+                        // [[:Extended_Pictographic:] - [:Word_Break=ALetter:]]
                         for range in extended_pictographic.iter_ranges() {
-                            fill_bounded(&mut properties_map, range, property_index);
+                            for ch in range.filter(|ch| wb.get32(*ch) != WordBreak::ALetter) {
+                                properties_map[ch as usize] = property_index;
+                            }
+                        }
+                        continue;
+                    }
+
+                    if p.name == "ALetter_Extended_Pictographic" {
+                        // [[:Extended_Pictographic:] & [:Word_Break=ALetter:]]
+                        for range in wb.iter_ranges_for_value(WordBreak::ALetter) {
+                            for ch in range.filter(|ch| extended_pictographic.contains32(*ch)) {
+                                properties_map[ch as usize] = property_index;
+                            }
                         }
                         continue;
                     }
@@ -242,7 +262,11 @@ fn generate_rule_break_data(
                             fill_bounded(&mut properties_map, range, property_index);
                         }
                         for range in lb.iter_ranges_for_value(LineBreak::ComplexContext) {
-                            fill_bounded(&mut properties_map, range, property_index);
+                            // Unicode 16.0 changes some Complex properties to others such as U+19DA.
+                            // Excluding Numriec should be removed after line break is 16.0
+                            for ch in range.filter(|ch| *ch != 0x19da) {
+                                properties_map[ch as usize] = property_index;
+                            }
                         }
                         continue;
                     }
@@ -268,6 +292,21 @@ fn generate_rule_break_data(
                             for ch in
                                 range.filter(|ch| *ch != 0x003a && *ch != 0xfe55 && *ch != 0xff1a)
                             {
+                                properties_map[ch as usize] = property_index;
+                            }
+                        } else if prop == WordBreak::Extend {
+                            // [[:Word_Break=Extend:] - [[:Hani:] [:Line_Break=Complex_Context:]]]
+                            for ch in range.filter(|ch| {
+                                script.get32(*ch) != Script::Han
+                                    && lb.get32(*ch) != LineBreak::ComplexContext
+                            }) {
+                                properties_map[ch as usize] = property_index;
+                            }
+                        } else if prop == WordBreak::ALetter {
+                            // :Word_Break=ALetter: includes Extended_Pictographic. So we want to
+                            // exlude it.
+                            // "[[:Word_Break=ALetter:] - [:Extended_Pictographic:]]"
+                            for ch in range.filter(|ch| !extended_pictographic.contains32(*ch)) {
                                 properties_map[ch as usize] = property_index;
                             }
                         } else {
@@ -439,17 +478,6 @@ fn generate_rule_break_data(
                 _ => {
                     panic!("unknown built-in segmenter type");
                 }
-            }
-        }
-
-        if let Some(codepoint) = &p.codepoint {
-            simple_properties_count += 1;
-            for c in codepoint {
-                let c = *c as usize;
-                if c > CODEPOINT_TABLE_LEN {
-                    continue;
-                }
-                properties_map[c] = property_index;
             }
         }
     }
@@ -630,7 +658,7 @@ fn generate_rule_break_data_override(
             continue;
         };
 
-        if p.left.is_none() && p.right.is_none() && p.codepoint.is_none() {
+        if p.left.is_none() && p.right.is_none() {
             // If any values aren't set, this is builtin type.
             match &*segmenter.segmenter_type {
                 "word" => {

@@ -88,6 +88,11 @@ jobs:
           --exclude zerofrom-derive
           --exclude zerovec-derive
 
+    - uses: actions/upload-artifact@v4
+      with:
+        name: rustdoc
+        path: target/doc
+
     - name: Upload docs to Google Cloud Storage (non-main)
       run: |
         gsutil -m cp -r target/doc gs://${{ env.GCP_PR_BUCKET_ID }}/gha/${{ github.sha }}/rustdoc
@@ -134,6 +139,11 @@ jobs:
       uses: mattnotmitt/doxygen-action@411df0c62acb5b96b8a93d93a7bf4b753c47ea05 # v1.9.5
       with:
           doxyfile-path: 'tools/config.doxy'
+
+    - uses: actions/upload-artifact@v4
+      with:
+        name: cppdoc
+        path: html
         
     - name: Upload docs to Google Cloud Storage (non-main)
       run: |
@@ -180,6 +190,11 @@ jobs:
         npm install typedoc@0.26.5 --exact
         node_modules/typedoc/bin/typedoc lib/index.d.ts --out docs --readme ../../tutorials/using-from-js.md --basePath lib
         cd ../..
+
+    - uses: actions/upload-artifact@v4
+      with:
+        name: tsdoc
+        path: ffi/npm/docs
         
     - name: Upload docs to Google Cloud Storage (non-main)
       run: |
@@ -231,6 +246,11 @@ jobs:
         dart doc
         cd ../..
 
+    - uses: actions/upload-artifact@v4
+      with:
+        name: dartdoc
+        path: ffi/dart/doc/api
+
     - name: Upload docs to Google Cloud Storage (non-main)
       run: |
         gsutil -m cp -r ffi/dart/doc/api gs://${{ env.GCP_PR_BUCKET_ID }}/gha/${{ github.sha }}/dartdoc
@@ -270,6 +290,11 @@ jobs:
 
     - name: Run Webpack
       run: npm -C tutorials/web-demo run build
+
+    - uses: actions/upload-artifact@v4
+      with:
+        name: wasmdemo
+        path: tutorials/web-demo/public
 
     - name: Upload wasm-demo bundle to Google Cloud Storage
       run: |
