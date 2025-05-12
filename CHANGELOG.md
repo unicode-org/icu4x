@@ -1,5 +1,12 @@
 # Changelog
 
+## icu4x 2.0.1
+
+Several crates have had patch releases in the 2.0 stream:
+
+- `icu_calendar`
+  - Fix chinese day-of-year (unicode-org##6567)
+
 ## icu4x 2.0
 
 ICU4X 2.0 is ICU4X's new major release. Many things have changed, we recommend going through the full changelog for 2.0, 2.0-beta1, and 2.0-beta2 to understand the changes fully.
