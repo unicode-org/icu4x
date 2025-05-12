@@ -56,7 +56,7 @@ macro_rules! create_const_array {
         #[cfg(feature = "datagen")]
         impl databake::Bake for $enum_ty {
             fn bake(&self, env: &databake::CrateEnv) -> databake::TokenStream {
-                env.insert("icu_provider");
+                env.insert("icu_properties");
                 match *self {
                     $(
                         Self::$i => databake::quote!(icu_properties::props::$enum_ty::$i),
