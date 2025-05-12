@@ -10,9 +10,8 @@ use zerovec::ule::{AsULE, RawBytesULE};
 /// `Bidi_Mirrored`, and `Bidi_Paired_Bracket_Type` properties.
 #[derive(Debug, Eq, PartialEq, Clone, Copy, Default)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
-#[cfg_attr(feature = "datagen", databake(path = icu_properties::bidi))]
+#[cfg_attr(feature = "datagen", databake(path = icu_properties::props))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-#[non_exhaustive]
 pub struct BidiMirroringGlyph {
     /// The mirroring glyph
     pub mirroring_glyph: Option<char>,
@@ -55,7 +54,7 @@ impl AsULE for BidiMirroringGlyph {
 /// property, and need to optimize data size, please file an issue.
 #[derive(Debug, Eq, PartialEq, Copy, Clone, Default)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
-#[cfg_attr(feature = "datagen", databake(path = icu_properties::bidi))]
+#[cfg_attr(feature = "datagen", databake(path = icu_properties::props))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[non_exhaustive]
 pub enum BidiPairedBracketType {
