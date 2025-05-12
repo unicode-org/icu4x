@@ -170,8 +170,7 @@ let date_formatter = DateTimeFormatter::try_new(
 .expect("should have data for specified locale");
 println!(
     "Date: {}",
-    date_formatter
-        .format(&iso_date.to_any()).to_string()
+    date_formatter.format(&iso_date)
 );
 ```
 
