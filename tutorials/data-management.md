@@ -15,7 +15,7 @@ Data generation is done using the `icu4x-datagen` tool, which pulls in data from
 First we will need to install the binary:
 
 ```console
-$ cargo install icu4x-datagen
+cargo install icu4x-datagen
 ```
 
 Get a coffee, this might take a while ☕.
@@ -23,7 +23,7 @@ Get a coffee, this might take a while ☕.
 Once installed, run:
 
 ```console
-$ icu4x-datagen --markers all --locales ja --format baked --out my_data
+icu4x-datagen --markers all --locales ja --format baked --out my_data
 ```
 
 This will generate a `my_data` directory containing the data for all components in the `ja` locale.
@@ -50,7 +50,7 @@ If you check in the generated data, it is recommended that you configure a job i
 
 Once we have generated the data, we need to instruct `ICU4X` to use it. To do this, set the `ICU4X_DATA_DIR` during the compilation of your app:
 
-```command
+```console
 ICU4X_DATA_DIR=$(pwd)/my_data cargo run
 ```
 
@@ -62,7 +62,7 @@ Replacing `ICU4X`'s bundled data by your own can be useful if you don't require 
 
 ```rust,ignore
 trait DataProvider<M: DataMarker> {
-    fn load(&self, req: DataRequest) -> Result<DataResponse, DataError>;
+    fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError>;
 }
 ```
 
@@ -84,10 +84,11 @@ The data we generated in section 2 is actually just Rust code defining `DataProv
 So far we've used it through the default `try_new` constructor by using the environment variable to replace the built-in data. However, we can also directly access the `DataProvider` implementations if we want, for example to combine it with other providers. For this, we first need to add some dependencies (`icu4x-datagen` did tell you which ones you need):
 
 ```console
-$ cargo add icu_locale_core
-$ cargo add icu_provider --feature baked
-$ cargo add zerotrie
-$ cargo add zerovec
+cargo add icu_locale_core
+cargo add icu_pattern
+cargo add icu_provider --features baked
+cargo add zerotrie
+cargo add zerovec
 ```
 
 We can include the generate code with the `include!` macro. The `impl_data_provider!` macro adds the generated implementations to any type.
@@ -101,7 +102,7 @@ use icu::datetime::{DateTimeFormatter, fieldsets::YMD};
 const LOCALE: Locale = locale!("ja");
 
 struct MyDataProvider;
-include!("../my-data/mod.rs");
+include!("../my_data/mod.rs");
 impl_data_provider!(MyDataProvider);
 
 fn main() {
@@ -110,15 +111,14 @@ fn main() {
     let dtf = DateTimeFormatter::try_new_unstable(
         &baked_provider,
         LOCALE.into(),
-        YMD::medium()
+        YMD::long()
     )
     .expect("ja data should be available");
 
     let date = Date::try_new_iso(2020, 10, 14)
         .expect("date should be valid");
-    let date = date.to_any();
 
-    let formatted_date = dtf.format(&date).to_string();
+    let formatted_date = dtf.format(&date);
 
     println!("📅: {}", formatted_date);
 }
@@ -133,14 +133,15 @@ To use `BufferProvider`s, the Cargo feature `"serde"` needs to be enabled on `ic
 Let's update our `Cargo.toml`:
 
 ```console
-$ cargo add icu --features serde
-$ cargo add icu_provider_blob
+cargo add icu --features serde
+cargo add icu_provider_blob --features alloc
+cargo add icu_provider_adapters
 ```
 
 We can generate data for it using the `--format blob` flag:
 
 ```console
-$ icu4x-datagen --markers all --locales ja --format blob --out my_data_blob.postcard
+icu4x-datagen --markers all --locales ja --format blob --out my_data_blob.postcard
 ```
 
 This will generate a `my_data_blob.postcard` file containing the serialized data for all components. The file is several megabytes large; we will optimize it later!
@@ -176,15 +177,14 @@ fn main() {
     let dtf = DateTimeFormatter::try_new_with_buffer_provider(
         &buffer_provider,
         LOCALE.into(),
-        YMD::medium()
+        YMD::long()
     )
     .expect("blob should contain required markers and `ja` data");
 
     let date = Date::try_new_iso(2020, 10, 14)
         .expect("date should be valid");
-    let date = date.to_any();
 
-    let formatted_date = dtf.format(&date).to_string();
+    let formatted_date = dtf.format(&date);
 
     println!("📅: {}", formatted_date);
 }
@@ -197,14 +197,14 @@ As you can see in the second `expect` message, it's not possible to statically t
 You might have noticed that the blob we generated is a hefty 13MB. This is no surprise, as we used `--markers all`. However, our binary only uses date formatting data in Japanese. There's room for optimization:
 
 ```console
-$ icu4x-datagen --markers-for-bin target/debug/myapp --locales ja --format blob --out my_data_blob.postcard --overwrite
+icu4x-datagen --markers-for-bin target/debug/myapp --locales ja --format blob --out my_data_blob.postcard --overwrite
 ```
 
 The `--markers-for-bin` argument tells `icu4x-datagen` to analyze the binary and only include markers that are used by its code. This significantly reduces the blob's file size, to 54KB, and our program still works. Quite the improvement!
 
-But there is more to optimize. You might have noticed this in the output of the `icu4x-datagen` invocation, which lists 24 markers, including clearly irrelevant ones like `datetime/ethopic/datesymbols@1`. Remember how we had to convert our `DateTime<Gregorian>` into a `DateTime<AnyCalendar>` in order to use the `DateTimeFormatter`? Turns out, as `DateTimeFormatter` contains logic for many different calendars, datagen includes data for all of these as well.
+But there is more to optimize. You might have noticed this in the output of the `icu4x-datagen` invocation, which lists 24 markers, including clearly irrelevant ones like `DatetimeNamesMonthPersianV1`. Turns out, as `DateTimeFormatter` contains logic for many different calendars, datagen includes data for all of these as well.
 
-We can instead use `FixedCalendarDateTimeFormatter<Gregorian>`, which only supports formatting `DateTime<Gregorian>`s:
+We can instead use `FixedCalendarDateTimeFormatter<Gregorian>`, which only supports formatting `Date<Gregorian>`s:
 
 ```rust,no_run
 use icu::locale::{locale, Locale, fallback::LocaleFallbacker};
@@ -216,7 +216,7 @@ use icu_provider_blob::BlobDataProvider;
 const LOCALE: Locale = locale!("ja");
 
 fn main() {
-    let blob = std::fs::read("my-data-blob").expect("Failed to read file");
+    let blob = std::fs::read("my_data_blob.postcard").expect("Failed to read file");
     let buffer_provider = 
         BlobDataProvider::try_new_from_blob(blob.into_boxed_slice())
             .expect("blob should be valid");
@@ -229,20 +229,20 @@ fn main() {
     let dtf = FixedCalendarDateTimeFormatter::<Gregorian, _>::try_new_with_buffer_provider(
         &buffer_provider,
         LOCALE.into(),
-        YMD::medium(),
+        YMD::long(),
     )
     .expect("blob should contain required data");
 
     let date = Date::try_new_gregorian(2020, 10, 14)
         .expect("date should be valid");
 
-    let formatted_date = dtf.format(&date).to_string();
+    let formatted_date = dtf.format(&date);
 
     println!("📅: {}", formatted_date);
 }
 ```
 
-This has two advantages: it reduces our code size, as `DateTimeFormatter` includes much more functionality than `FixedCalendarDateTimeFormatter<Gregorian>`, and it reduces our data size, as `--markers-for-bin` can now determine that we need even fewer markers. The data size improvement could have also been achieved by manually listing the data markers we think we'll need (using the `--markers` flag), but we risk a runtime error if we're wrong.
+This has two advantages: it reduces our code size, as `DateTimeFormatter` might include code for calendar conversions (such as from ISO to Gregorian in this case), and it reduces our data size, as `--markers-for-bin` can now determine that we need even fewer markers. The data size improvement could have also been achieved by manually listing the data markers we think we'll need (using the `--markers` flag), but we risk a runtime error if we're wrong.
 
 This is a common pattern in `ICU4X`, and most of our APIs are designed with data slicing in mind.
 
