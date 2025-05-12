@@ -5,6 +5,7 @@
 [package]
 name = "icu_calendar"
 description = "Date APIs for Gregorian and non-Gregorian calendars"
+version = "2.0.1"
 
 authors.workspace = true
 categories.workspace = true
@@ -14,7 +15,6 @@ include.workspace = true
 license.workspace = true
 repository.workspace = true
 rust-version.workspace = true
-version.workspace = true
 
 [package.metadata.docs.rs]
 all-features = true
