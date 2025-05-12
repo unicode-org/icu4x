@@ -72,7 +72,7 @@ As you can see, the `DataProvider` trait is fairly simple. It's generic in a `Da
 
 Static markers that determine the type of data is great for data that is compiled into the binary, as it allows the compiler to eliminate unused data, but for runtime data loading it is too restrictive. For this reason `ICU4X` defines one more trait: `BufferProvider` abstracts over data providers that provide opaque byte buffers which can be deserialized.
 
-Because of these three data provider types, every `ICU4X` API has four constructors:
+Because of these two data provider types, every `ICU4X` API has three constructors:
 * `try_new`: This uses the built-in data provider
 * `try_new_with_buffer_provider`: This loads data from a provided `&impl BufferProvider`, deserializing it
 * `try_new_unstable`: This loads data from a provided `&impl DataProvider<X + Y + ...>`. It is *semver unstable*, because the bounds on the provider might change in case more data is required in the future.
