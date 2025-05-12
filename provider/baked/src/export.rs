@@ -166,7 +166,8 @@ pub struct BakedExporter {
         >,
     >,
     /// file names, required crates, and statistics to be consumed by `close`.
-    impl_data: Mutex<BTreeMap<DataMarkerInfo, (SyncTokenStream, BTreeSet<&'static str>, Statistics)>>,
+    impl_data:
+        Mutex<BTreeMap<DataMarkerInfo, (SyncTokenStream, BTreeSet<&'static str>, Statistics)>>,
 }
 
 #[derive(Default)]
