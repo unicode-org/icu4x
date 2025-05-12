@@ -6,13 +6,19 @@
 
 use crate::{ParseError, ParserResult};
 
+/// A slice that can be either UTF8 or UTF16
 #[derive(Debug, Clone, PartialEq)]
 #[non_exhaustive]
 pub enum Slice<'a> {
+    /// A UTF8 slice
     Utf8(&'a [u8]),
+    /// A UTF16 slice
     Utf16(&'a [u16]),
 }
 
+/// An internal way to represent the source text to be parsed.
+///
+/// Currently, only UTF8 and UTF16 are supported.
 #[derive(Debug)]
 #[non_exhaustive]
 pub(crate) enum Source<'a> {
@@ -21,6 +27,7 @@ pub(crate) enum Source<'a> {
 }
 
 impl<'a> Source<'a> {
+    /// Get a slice from the underlying source using for start..end
     fn slice(&self, start: usize, end: usize) -> Option<Slice<'a>> {
         match self {
             Self::Utf8(s) => s.get(start..end).map(Slice::Utf8),
@@ -28,6 +35,8 @@ impl<'a> Source<'a> {
         }
     }
 
+    /// Retrieve the provided index and return the value constrained to a
+    /// representable ASCII range if required.
     fn get(&self, index: usize) -> ParserResult<Option<u8>> {
         match self {
             Self::Utf8(s) => Ok(s.get(index).copied()),
@@ -40,6 +49,7 @@ impl<'a> Source<'a> {
         }
     }
 
+    /// Get the length of the source text.
     fn len(&self) -> usize {
         match self {
             Self::Utf8(s) => s.len(),
