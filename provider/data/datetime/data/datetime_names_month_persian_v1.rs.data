@@ -12,6 +12,7 @@
 /// This macro requires the following crates:
 /// * `icu`
 /// * `icu_provider`
+/// * `icu_provider/baked`
 /// * `zerovec`
 #[doc(hidden)]
 #[macro_export]

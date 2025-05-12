@@ -14,6 +14,7 @@
 /// * `icu`
 /// * `icu_pattern`
 /// * `icu_provider`
+/// * `icu_provider/baked`
 /// * `zerovec`
 #[doc(hidden)]
 #[macro_export]

@@ -73,6 +73,7 @@ pub use __make_provider as make_provider;
 /// * `icu`
 /// * `icu_pattern`
 /// * `icu_provider`
+/// * `icu_provider/baked`
 /// * `zerotrie`
 /// * `zerovec`
 #[allow(unused_macros)]
