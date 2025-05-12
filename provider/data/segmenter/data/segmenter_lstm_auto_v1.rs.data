@@ -8,6 +8,11 @@
 /// * 310517B[^1] for the actual data (4 unique structs)
 ///
 /// [^1]: these numbers can be smaller in practice due to linker deduplication
+///
+/// This macro requires the following crates:
+/// * `icu`
+/// * `icu_provider`
+/// * `zerovec`
 #[doc(hidden)]
 #[macro_export]
 macro_rules! __impl_segmenter_lstm_auto_v1 {

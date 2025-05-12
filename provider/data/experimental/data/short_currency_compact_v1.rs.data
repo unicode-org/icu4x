@@ -8,6 +8,11 @@
 /// * 32735B[^1] for the actual data (113 unique structs)
 ///
 /// [^1]: these numbers can be smaller in practice due to linker deduplication
+///
+/// This macro requires the following crates:
+/// * `icu`
+/// * `icu_provider`
+/// * `zerovec`
 #[doc(hidden)]
 #[macro_export]
 macro_rules! __impl_short_currency_compact_v1 {

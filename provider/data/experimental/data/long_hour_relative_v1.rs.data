@@ -8,6 +8,12 @@
 /// * 24486B[^1] for the actual data (136 unique structs)
 ///
 /// [^1]: these numbers can be smaller in practice due to linker deduplication
+///
+/// This macro requires the following crates:
+/// * `alloc`
+/// * `icu`
+/// * `icu_provider`
+/// * `zerovec`
 #[doc(hidden)]
 #[macro_export]
 macro_rules! __impl_long_hour_relative_v1 {

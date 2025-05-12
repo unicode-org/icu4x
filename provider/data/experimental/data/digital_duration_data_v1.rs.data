@@ -8,6 +8,11 @@
 /// * 198B[^1] for the actual data (6 unique structs)
 ///
 /// [^1]: these numbers can be smaller in practice due to linker deduplication
+///
+/// This macro requires the following crates:
+/// * `alloc`
+/// * `icu`
+/// * `icu_provider`
 #[doc(hidden)]
 #[macro_export]
 macro_rules! __impl_digital_duration_data_v1 {

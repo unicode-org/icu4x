@@ -8,6 +8,13 @@
 /// * 18695B[^1] for the actual data (65 unique structs)
 ///
 /// [^1]: these numbers can be smaller in practice due to linker deduplication
+///
+/// This macro requires the following crates:
+/// * `alloc`
+/// * `icu`
+/// * `icu_pattern`
+/// * `icu_provider`
+/// * `zerovec`
 #[doc(hidden)]
 #[macro_export]
 macro_rules! __impl_datetime_names_month_dangi_v1 {

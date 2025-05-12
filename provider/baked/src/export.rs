@@ -165,10 +165,8 @@ pub struct BakedExporter {
             HashMap<DataPayload<ExportMarker>, BTreeSet<DataIdentifierCow<'static>>>,
         >,
     >,
-    /// file names and statistics to be consumed by `close`.
-    impl_data: Mutex<BTreeMap<DataMarkerInfo, (SyncTokenStream, Statistics)>>,
-    // List of dependencies used by baking.
-    dependencies: CrateEnv,
+    /// file names, required crates, and statistics to be consumed by `close`.
+    impl_data: Mutex<BTreeMap<DataMarkerInfo, (SyncTokenStream, BTreeSet<&'static str>, Statistics)>>,
 }
 
 #[derive(Default)]
@@ -216,7 +214,6 @@ impl BakedExporter {
             use_separate_crates,
             data: Default::default(),
             impl_data: Default::default(),
-            dependencies: Default::default(),
         })
     }
 
@@ -290,12 +287,24 @@ impl BakedExporter {
     fn write_impl_macros(
         &self,
         marker: DataMarkerInfo,
+        dependencies: CrateEnv,
         stats: Statistics,
         body: TokenStream,
         dry_body: Option<TokenStream>,
         iterable_body: TokenStream,
     ) -> Result<(), DataError> {
         let marker_unqualified = bake_marker(marker).into_iter().last().unwrap().to_string();
+
+        let mut required_crates = dependencies.into_iter().collect::<BTreeSet<_>>();
+        if !self.use_separate_crates {
+            required_crates.retain(|&krate| {
+                !krate.starts_with("icu_")
+                    || krate.starts_with("icu_provider")
+                    || krate == "icu_locale_core"
+                    || krate == "icu_pattern"
+            });
+            required_crates.insert("icu");
+        }
 
         let &Statistics {
             structs_total_size,
@@ -326,6 +335,11 @@ impl BakedExporter {
                 &mut doc,
                 "\n [^1]: these numbers can be smaller in practice due to linker deduplication"
             );
+        }
+
+        let _infallible = writeln!(&mut doc, "\n\n This macro requires the following crates:");
+        for required_crate in &required_crates {
+            let _infallible = writeln!(&mut doc, " * `{required_crate}`");
         }
 
         let ident = marker_unqualified.to_snake_case();
@@ -387,7 +401,7 @@ impl BakedExporter {
         self.impl_data
             .lock()
             .expect("poison")
-            .insert(marker, (ident, stats));
+            .insert(marker, (ident, required_crates, stats));
         Ok(())
     }
 }
@@ -455,7 +469,10 @@ impl DataExporter for BakedExporter {
             )
         };
 
-        let bake = payload.tokenize(&self.dependencies);
+        let dependencies = CrateEnv::default();
+        dependencies.insert("icu_provider");
+
+        let bake = payload.tokenize(&dependencies);
 
         let stats = Statistics {
             structs_total_size: payload.baked_size(),
@@ -464,7 +481,7 @@ impl DataExporter for BakedExporter {
             lookup_struct_size: 0,
         };
 
-        self.write_impl_macros(marker, stats, quote! {
+        self.write_impl_macros(marker, dependencies, stats, quote! {
             #maybe_msrv
             impl $provider {
                 // Exposing singleton structs as consts allows us to get rid of fallibility
@@ -524,9 +541,13 @@ impl DataExporter for BakedExporter {
             .remove(&marker)
             .unwrap_or_default();
 
+        let dependencies = CrateEnv::default();
+        dependencies.insert("icu_provider");
+
         if deduplicated_values.is_empty() {
             self.write_impl_macros(
                 marker,
+                dependencies,
                 Default::default(),
                 quote! {
                     #maybe_msrv
@@ -574,7 +595,7 @@ impl DataExporter for BakedExporter {
             baked_values.sort_by(|a, b| a.1.first().cmp(&b.1.first()));
 
             let (data, lookup_struct_size) =
-                crate::zerotrie::bake(&marker_bake, &baked_values, &self.dependencies);
+                crate::zerotrie::bake(&marker_bake, &baked_values, &dependencies);
 
             stats.lookup_struct_size = lookup_struct_size;
 
@@ -601,7 +622,7 @@ impl DataExporter for BakedExporter {
             .parse::<TokenStream>()
             .unwrap();
 
-            self.dependencies.insert("icu_provider/baked");
+            dependencies.insert("icu_provider/baked");
 
             let search = if !self.use_internal_fallback {
                 quote! {
@@ -624,7 +645,7 @@ impl DataExporter for BakedExporter {
                     };
                 }
             } else {
-                self.dependencies.insert("icu_locale/compiled_data");
+                dependencies.insert("icu_locale/compiled_data");
                 quote! {
                     let mut metadata = #metadata_bake;
 
@@ -651,6 +672,7 @@ impl DataExporter for BakedExporter {
 
             self.write_impl_macros(
                 marker,
+                dependencies,
                 stats,
                 quote! {
                     #maybe_msrv
@@ -706,11 +728,18 @@ impl DataExporter for BakedExporter {
 
         let maybe_msrv = maybe_msrv();
 
-        let file_paths = data.values().map(|(i, _)| format!("{i}.rs.data"));
+        let file_paths = data.values().map(|(i, _, _)| format!("{i}.rs.data"));
 
         let macro_idents = data
             .values()
-            .map(|(i, _)| format!("impl_{i}").parse::<TokenStream>().unwrap());
+            .map(|(i, _, _)| format!("impl_{i}").parse::<TokenStream>().unwrap());
+
+        let required_crates = data
+            .values()
+            .flat_map(|(_, deps, _)| deps.iter().copied())
+            .collect::<BTreeSet<_>>();
+
+        let required_crates_list = required_crates.iter().map(|c| format!(" * `{c}`"));
 
         // mod.rs is the interface for built-in data. It exposes one macro per marker.
         self.write_to_file(
@@ -747,6 +776,10 @@ impl DataExporter for BakedExporter {
                 pub use __make_provider as make_provider;
 
                 // Not public as it will only work locally due to needing access to the other macros.
+                /// This macro requires the following crates:
+                #(
+                    #[doc = #required_crates_list]
+                )*
                 #[allow(unused_macros)]
                 macro_rules! impl_data_provider {
                     ($provider:ty) => {
@@ -761,22 +794,8 @@ impl DataExporter for BakedExporter {
 
         let statistics = data
             .into_iter()
-            .map(|(marker, (_, stats))| (marker, stats))
+            .map(|(marker, (_, _, stats))| (marker, stats))
             .collect();
-
-        let mut required_crates = core::mem::take(&mut self.dependencies)
-            .into_iter()
-            .collect::<BTreeSet<_>>();
-        if !self.use_separate_crates {
-            required_crates.retain(|&krate| {
-                !krate.starts_with("icu_")
-                    || krate == "icu_provider"
-                    || krate == "icu_locale_core"
-                    || krate == "icu_pattern"
-            });
-            required_crates.insert("icu");
-        }
-        required_crates.insert("icu_provider");
 
         Ok(ExporterCloseMetadata(Some(Box::new(
             BakedExporterCloseMetadata {
