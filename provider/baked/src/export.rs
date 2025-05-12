@@ -559,11 +559,6 @@ impl DataExporter for BakedExporter {
         } else {
             let mut stats = Statistics::default();
 
-            let needs_fallback = self.use_internal_fallback
-                && deduplicated_values
-                    .iter()
-                    .any(|(_, ids)| ids.iter().any(|id| !id.locale.is_unknown()));
-
             let mut baked_values = deduplicated_values
                 .iter()
                 .map(|(payload, ids)| {
@@ -608,8 +603,21 @@ impl DataExporter for BakedExporter {
 
             self.dependencies.insert("icu_provider/baked");
 
-            let search = if !needs_fallback {
+            let search = if !self.use_internal_fallback {
                 quote! {
+                    let metadata = #metadata_bake;
+                    let Some(payload) = icu_provider::baked::DataStore::get(&Self::#data_ident, req.id, req.metadata.attributes_prefix_match) else {
+                        return Err(icu_provider::DataErrorKind::IdentifierNotFound.with_req(<#marker_bake as icu_provider::DataMarker>::INFO, req))
+                    };
+                }
+            } else if deduplicated_values
+                .iter()
+                .all(|(_, ids)| ids.iter().all(|id| id.locale.is_unknown()))
+            {
+                quote! {
+                    // we need to use fallback, but all values are for root locale, so we just go there directly
+                    let mut req = req;
+                    req.id.locale = Default::default();
                     let metadata = #metadata_bake;
                     let Some(payload) = icu_provider::baked::DataStore::get(&Self::#data_ident, req.id, req.metadata.attributes_prefix_match) else {
                         return Err(icu_provider::DataErrorKind::IdentifierNotFound.with_req(<#marker_bake as icu_provider::DataMarker>::INFO, req))
