@@ -81,17 +81,9 @@ Because of these two data provider types, every `ICU4X` API has three constructo
 
 The data we generated in section 2 is actually just Rust code defining `DataProvider` implementations for all markers using hardcoded data (go take a look!).
 
-So far we've used it through the default `try_new` constructor by using the environment variable to replace the built-in data. However, we can also directly access the `DataProvider` implementations if we want, for example to combine it with other providers. For this, we first need to add some dependencies (`icu4x-datagen` did tell you which ones you need):
+So far we've used it through the default `try_new` constructor by using the environment variable to replace the built-in data. However, we can also directly access the `DataProvider` implementations if we want, for example to combine it with other providers.
 
-```console
-cargo add icu_locale_core
-cargo add icu_pattern
-cargo add icu_provider --features baked
-cargo add zerotrie
-cargo add zerovec
-```
-
-We can include the generate code with the `include!` macro. The `impl_data_provider!` macro adds the generated implementations to any type.
+We include the generated code with the `include!` macro. The `impl_data_provider!` macro adds the generated implementations to any type.
 
 ```rust,compile_fail
 extern crate alloc; // required as my-data is written for #[no_std]
@@ -122,6 +114,18 @@ fn main() {
 
     println!("📅: {}", formatted_date);
 }
+```
+
+The `impl_data_provider!` code will require additional crates, see its documentation for a list.
+
+```console
+cargo add icu_locale_core
+cargo add icu_pattern
+cargo add icu_provider --features baked
+cargo add zerotrie
+cargo add zerovec
+
+cargo run
 ```
 
 ## 6. `BlobDataProvider`
