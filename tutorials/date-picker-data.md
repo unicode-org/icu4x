@@ -11,8 +11,8 @@ Data generation is done using the `icu4x-datagen` tool, which pulls data from [U
 Verify that Rust is installed. If it's not, you can install it in a few seconds from [https://rustup.rs/](https://rustup.rs/).
 
 ```console
-$ cargo --version
-cargo 1.81.0 (2dbb1af80 2024-08-20)
+cargo --version
+# cargo 1.86.0 (adf9b6ad1 2025-02-28)
 ```
 
 Now you can run
@@ -26,7 +26,7 @@ cargo install icu4x-datagen
 We're ready to generate the data. We will use the blob format, and create a blob that will contain just Chakma data. At runtime we can then load it as needed.
 
 ```console
-$ icu4x-datagen --markers all --locales ccp --format blob --out ccp.blob
+icu4x-datagen --markers all --locales ccp --format blob --out ccp.blob
 ```
 
 This will generate a `ccp.blob` file containing data for Chakma.
@@ -134,7 +134,7 @@ Note: the following steps are currently only possible in Rust. 🤷
 When we ran `icu4x-datagen`, we passed `--markers all`, which make it generate *all* data for the Chakma locale, even though we only need date formatting. We can make `icu4x-datagen` analyze our binary to figure out which markers are needed:
 
 ```console
-$ icu4x-datagen --markers-for-bin target/debug/tutorial --locales ccp --format blob --out ccp_smaller.blob
+icu4x-datagen --markers-for-bin target/debug/tutorial --locales ccp --format blob --out ccp_smaller.blob
 ```
 
 Note: you usually want to build with the `--release` flag, and analyze that binary, but we don't have all day.
@@ -144,9 +144,9 @@ This should generate a lot fewer markers!
 Let's look at the sizes:
 
 ```console
-$ wc -c *.blob
-656767 ccp.blob
- 45471 ccp_smaller.blob
+wc -c *.blob
+# 656767 ccp.blob
+#  45471 ccp_smaller.blob
 ```
 
 This is much better! Rerun your app with `ccp_smaller.blob` to make sure it still works!
@@ -174,8 +174,8 @@ println!(
 Now we can run datagen with `--markers-for-bin` again:
 
 ```console
-$ cargo build
-$ icu4x-datagen --markers-for-bin target/debug/tutorial --locales ccp --format blob --out ccp_smallest.blob
+cargo build --release
+icu4x-datagen --markers-for-bin target/release/tutorial --locales ccp --format blob --out ccp_smallest.blob
 ```
 
 The output will be much shorter:
@@ -191,10 +191,10 @@ INFO  [icu_provider_export::export_impl] Generating marker plurals/ordinal@1
 And the blob will also be much smaller at the sizes:
 
 ```console
-$ wc -c *.blob
-656767 ccp.blob
- 45471 ccp_smaller.blob
-  4639 ccp_smallest.blob
+wc -c *.blob
+# 656767 ccp.blob
+#  45471 ccp_smaller.blob
+#   4639 ccp_smallest.blob
 ```
 
 Rerun your app with `ccp_smallest.blob` to make sure it still works!
