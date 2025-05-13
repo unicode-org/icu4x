@@ -166,10 +166,8 @@ let date_formatter = TypedDateFormatter::<Gregorian>::try_new_with_length(
 
 println!(
     "Date: {}",
-    date_formatter
-         // We need to convert to the explicit calendar system via `.to_calendar()`
-         // instead of `.to_any()`. We also no longer need to call `.expect()`.
-        .format(&iso_date.to_calendar(Gregorian))
+    // We need to convert to the explicit calendar via `.to_calendar()`. 
+    date_formatter.format(&iso_date.to_calendar(Gregorian)),
 );
 ```
 

@@ -11,9 +11,9 @@ The most basic Cargo.toml to get you off the ground is the following:
 icu = "2.0.0"
 ```
 
-In your main.rs, you can use all stable ICU4X components for the recommended set of locales, which get compiled into the library.
+In your `main.rs`, you can use all stable ICU4X components for the recommended set of locales, which get compiled into the library.
 
-[« Fully Working Example »](./crates/default)
+[« Fully Working Example »](./rust/default)
 
 ## Cargo.toml with custom compiled data
 
@@ -25,20 +25,20 @@ icu4x-datagen --format baked --markers all --locales ru --out baked_data
 ICU4X_DATA_DIR=$(pwd)/baked_data cargo build --release
 ```
 
-[« Fully Working Example »](./crates/custom_compiled)
+[« Fully Working Example »](./rust/custom_compiled)
 
 ## Cargo.toml with experimental modules
 
-Experimental modules are published in a separate `icu_experimental` crate:
+Experimental modules are hidden behind a Cargo feature:
 
 ```toml
 [dependencies]
 icu = { version = "2.0.0", features = ["experimental"] }
 ```
 
-In your main.rs, you can now use e.g. the `icu_experimental::displaynames` module.
+In your `main.rs`, you can now use e.g. the `icu::experimental::displaynames` module.
 
-[« Fully Working Example »](./crates/experimental)
+[« Fully Working Example »](./rust/experimental)
 
 ## Cargo.toml with Buffer Provider
 
@@ -52,7 +52,7 @@ icu_provider_blob = {version = "2.0.0", features = ["alloc"] }
 
 To learn about building ICU4X data, including whether to check in the data blob file to your repository, see [data-management.md](./data-management.md).
 
-[« Fully Working Example »](./crates/buffer)
+[« Fully Working Example »](./rust/buffer)
 
 ## Cargo.toml with `Sync`
 
@@ -65,7 +65,7 @@ icu = { version = "2.0.0", features = ["sync"] }
 
 You can now use most ICU4X types when `Send + Sync` are required, such as when sharing across threads.
 
-[« Fully Working Example »](./crates/sync)
+[« Fully Working Example »](./rust/sync)
 
 ## Cargo.toml with `build.rs` data generation
 
@@ -75,7 +75,6 @@ If you wish to use data generation in a `build.rs` script, you need to manually 
 [dependencies]
 icu = { version = "2.0.0", default-features = false } # turn off compiled_data
 icu_provider = "2.0.0" # for databake
-icu_provider_baked = "2.0.0" # for databake
 zerovec = "0.9" # for databake
 
 # for build.rs:
@@ -93,4 +92,4 @@ The build.rs approach has several downsides and should only be used if Cargo is 
 * Using the data requires ICU4X's [`_unstable`](https://docs.rs/icu_provider/latest/icu_provider/constructors/index.html) APIs with a custom data provider, and that `icu_provider_source` is the same *minor* version as the `icu` crate.
 * `build.rs` output is not written to the console so it will appear that the build is hanging
 
-[« Fully Working Example »](./crates/baked)
+[« Fully Working Example »](./rust/baked)
