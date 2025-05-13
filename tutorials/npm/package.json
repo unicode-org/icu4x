@@ -1,7 +1,5 @@
 {
-	"name": "icu4x-demo",
-	"version": "1.0.0",
-	"description": "A demo web application using ICU4X bindings.",
+	"private": true,
 	"type": "module",
 	"scripts": {
 	  "clean": "rm dist/*",
