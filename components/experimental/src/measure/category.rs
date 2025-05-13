@@ -17,7 +17,7 @@ pub struct CategorizedMeasureUnit<T: MeasureUnitCategory> {
 }
 
 /// The categories of [`MeasureUnit`]s.
-pub mod categories {
+pub mod category {
     /// A [`super::MeasureUnit`] that is related to the length category.
     pub struct Length;
 
@@ -31,25 +31,25 @@ pub mod categories {
     pub struct Mass;
 }
 
-impl categories::Length {
+impl category::Length {
     pub fn meter() -> &'static MeasureUnit {
         todo!()
     }
 }
 
-impl categories::Area {
+impl category::Area {
     pub fn square_meter() -> &'static MeasureUnit {
         todo!()
     }
 }
 
-impl categories::Volume {
+impl category::Volume {
     pub fn cubic_meter() -> &'static MeasureUnit {
         todo!()
     }
 }
 
-impl categories::Mass {
+impl category::Mass {
     pub fn kilogram() -> &'static MeasureUnit {
         todo!()
     }
@@ -61,21 +61,21 @@ mod tests {
 
     #[test]
     fn test_length_category() {
-        let meter = categories::Length::meter();
+        let _meter = category::Length::meter();
     }
 
     #[test]
     fn test_area_category() {
-        let square_meter = categories::Area::square_meter();
+        let _square_meter = category::Area::square_meter();
     }
 
     #[test]
     fn test_volume_category() {
-        let cubic_meter = categories::Volume::cubic_meter();
+        let _cubic_meter = category::Volume::cubic_meter();
     }
 
     #[test]
     fn test_mass_category() {
-        let kilogram = categories::Mass::kilogram();
+        let _kilogram = category::Mass::kilogram();
     }
 }
