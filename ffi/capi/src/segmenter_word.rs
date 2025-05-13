@@ -26,7 +26,7 @@ pub mod ffi {
     /// An ICU4X word-break segmenter, capable of finding word breakpoints in strings.
     #[diplomat::rust_link(icu::segmenter::WordSegmenter, Struct)]
     #[diplomat::rust_link(icu::segmenter::WordSegmenterBorrowed, Struct, hidden)]
-    #[diplomat::demo(custom_func = "../../npm/demo_gen_custom/WordSegmenter.mjs")]
+    #[diplomat::demo(custom_func = "../../../tutorials/web-demo/custom/WordSegmenter.mjs")]
     pub struct WordSegmenter(icu_segmenter::WordSegmenter);
 
     #[diplomat::opaque]

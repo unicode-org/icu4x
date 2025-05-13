@@ -1,5 +1,5 @@
-import { RenderInfo, lib } from "icu4x/demo";
-import { TerminusRender } from "icu4x/demo/rendering";
+import { RenderInfo, lib } from "../../gen/index.mjs";
+import { TerminusRender } from "../../gen/rendering/rendering.mjs";
 
 let params = new URLSearchParams(window.location.search);
 

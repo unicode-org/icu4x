@@ -1,4 +1,4 @@
-import { RenderInfo } from "icu4x/demo";
+import { RenderInfo } from "../../gen/index.mjs";
 
 Object.values(RenderInfo.termini).forEach((t) => {
 	let a = document.createElement("a");

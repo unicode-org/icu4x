@@ -7,22 +7,26 @@ use std::path::Path;
 use diplomat_tool::config::Config;
 
 fn main() -> std::io::Result<()> {
-    let capi = Path::new(concat!(env!("CARGO_MANIFEST_DIR"), "/../../../ffi/capi"));
+    let root = Path::new(concat!(env!("CARGO_MANIFEST_DIR"), "/../../../"));
 
     let Some(lang) = std::env::args().nth(1) else {
         panic!("Missing argument <language>");
     };
 
-    let config_path = capi.join("config.toml");
+    let config_path = root.join("ffi/capi/config.toml");
 
     let mut library_config = Config::default();
     library_config.read_file(&config_path).unwrap();
 
     diplomat_tool::gen(
-        &capi.join("src/lib.rs"),
+        &root.join("ffi/capi/src/lib.rs"),
         lang.as_str(),
         &{
-            let include = capi.join("bindings").join(&lang);
+            let include = if lang != "demo_gen" { 
+                root.join("ffi/capi/bindings").join(&lang)
+            } else {
+                root.join("tutorials/web-demo/gen")
+            };
             std::fs::remove_dir_all(&include)?;
             std::fs::create_dir(&include)?;
             include

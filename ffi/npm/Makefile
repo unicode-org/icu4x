@@ -15,10 +15,6 @@ lib/index.mjs: FORCE
 	rm -rf lib
 	cp -r ../capi/bindings/js lib
 
-demo/index.mjs: FORCE
-	rm -rf demo
-	cp -r ../capi/bindings/demo_gen demo
-
 ../../target/wasm32-unknown-unknown/release/icu_capi.wasm: FORCE
 	rustup toolchain install ${PINNED_CI_NIGHTLY}
 	rustup component add rust-src --toolchain ${PINNED_CI_NIGHTLY}
@@ -34,4 +30,4 @@ demo/index.mjs: FORCE
 icu_capi.wasm: ../../target/wasm32-unknown-unknown/release/icu_capi.wasm
 	cp ../../target/wasm32-unknown-unknown/release/icu_capi.wasm icu_capi.wasm
 
-build: lib/index.mjs demo/index.mjs icu_capi.wasm
+build: lib/index.mjs icu_capi.wasm
