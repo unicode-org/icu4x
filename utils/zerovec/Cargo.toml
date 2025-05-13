@@ -47,7 +47,7 @@ serde = { workspace = true, features = ["derive"] }
 serde_json = { workspace = true }
 potential_utf = { path = "../../utils/potential_utf", features = ["zerovec"] }
 yoke = { workspace = true, features = ["derive"] }
-zerofrom = { path = "../../utils/zerofrom", features = ["derive"] }
+zerofrom = { workspace = true, features = ["derive"] }
 
 [target.'cfg(not(target_arch = "wasm32"))'.dev-dependencies]
 criterion = { workspace = true }
