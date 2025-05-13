@@ -2,84 +2,54 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use core::marker::PhantomData;
+
 use crate::measure::measureunit::MeasureUnit;
 
-pub trait MeasureUnitCategory {
-    fn category() -> Categories;
-}
+pub trait MeasureUnitCategory {}
 
 /// A [`MeasureUnit`] that is related to a specific category.
 ///
 /// This is useful for type inference and for ensuring that the correct units are used.
 pub struct CategorizedMeasureUnit<T: MeasureUnitCategory> {
-    pub category: T,
+    _category: PhantomData<T>,
     pub unit: MeasureUnit,
 }
 
 /// The categories of [`MeasureUnit`]s.
-pub enum Categories {
-    Length,
-    Area,
-    Volume,
-    Mass,
-    // TODO: add more categories in the next PRs.
+pub mod categories {
+    /// A [`super::MeasureUnit`] that is related to the length category.
+    pub struct Length;
+
+    /// A [`super::MeasureUnit`] that is related to the area category.
+    pub struct Area;
+
+    /// A [`super::MeasureUnit`] that is related to the volume category.
+    pub struct Volume;
+
+    /// A [`super::MeasureUnit`] that is related to the mass category.
+    pub struct Mass;
 }
 
-/// A [`MeasureUnit`] that is related to the length category.
-pub struct LengthMeasureUnit;
-
-/// A [`MeasureUnit`] that is related to the area category.
-pub struct AreaMeasureUnit;
-
-/// A [`MeasureUnit`] that is related to the volume category.
-pub struct VolumeMeasureUnit;
-
-/// A [`MeasureUnit`] that is related to the mass category.
-pub struct MassMeasureUnit;
-
-impl MeasureUnitCategory for LengthMeasureUnit {
-    fn category() -> Categories {
-        Categories::Length
-    }
-}
-
-impl LengthMeasureUnit {
+impl categories::Length {
     pub fn meter() -> &'static MeasureUnit {
         todo!()
     }
 }
 
-impl MeasureUnitCategory for AreaMeasureUnit {
-    fn category() -> Categories {
-        Categories::Area
-    }
-}
-
-impl AreaMeasureUnit {
+impl categories::Area {
     pub fn square_meter() -> &'static MeasureUnit {
         todo!()
     }
 }
 
-impl MeasureUnitCategory for VolumeMeasureUnit {
-    fn category() -> Categories {
-        Categories::Volume
-    }
-}
-
-impl VolumeMeasureUnit {
+impl categories::Volume {
     pub fn cubic_meter() -> &'static MeasureUnit {
         todo!()
     }
 }
 
-impl MeasureUnitCategory for MassMeasureUnit {
-    fn category() -> Categories {
-        Categories::Mass
-    }
-}
-
-impl MassMeasureUnit {
+impl categories::Mass {
     pub fn kilogram() -> &'static MeasureUnit {
         todo!()
     }
@@ -91,21 +61,21 @@ mod tests {
 
     #[test]
     fn test_length_category() {
-        let meter = LengthMeasureUnit::meter();
+        let meter = categories::Length::meter();
     }
 
     #[test]
     fn test_area_category() {
-        let square_meter = AreaMeasureUnit::square_meter();
+        let square_meter = categories::Area::square_meter();
     }
 
     #[test]
     fn test_volume_category() {
-        let cubic_meter = VolumeMeasureUnit::cubic_meter();
+        let cubic_meter = categories::Volume::cubic_meter();
     }
 
     #[test]
     fn test_mass_category() {
-        let kilogram = MassMeasureUnit::kilogram();
+        let kilogram = categories::Mass::kilogram();
     }
 }
