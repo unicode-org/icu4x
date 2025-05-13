@@ -24,8 +24,8 @@ use quote::quote;
 /// #[derive(Bake)]
 /// #[databake(path = my_crate)]
 /// struct Data {
-///     number: usize,
-///     string: AsStaticStr<String>, // can be written as StringAsStaticStr
+///     pub number: usize,
+///     pub string: AsStaticStr<String>, // can be written as StringAsStaticStr
 /// }
 ///
 /// let data = Data {
@@ -139,7 +139,7 @@ pub type StringAsStaticStr = AsStaticStr<String>;
 /// #[derive(Bake, Default)]
 /// #[databake(path = my_crate)]
 /// struct Data {
-///     numbers: IteratorAsRefSlice<Vec<usize>, usize>, // can be written as `VecAsRefSlice<usize>`
+///     pub numbers: IteratorAsRefSlice<Vec<usize>, usize>, // can be written as `VecAsRefSlice<usize>`
 /// }
 ///
 /// let mut data = Data::default();
