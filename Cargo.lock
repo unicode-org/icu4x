@@ -1623,7 +1623,7 @@ dependencies = [
 
 [[package]]
 name = "icu_provider_baked"
-version = "2.0.0"
+version = "2.0.1"
 dependencies = [
  "crlify",
  "databake",
