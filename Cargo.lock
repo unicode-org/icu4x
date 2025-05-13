@@ -1562,7 +1562,7 @@ version = "2.0.0"
 
 [[package]]
 name = "icu_properties"
-version = "2.0.0"
+version = "2.0.1"
 dependencies = [
  "databake",
  "displaydoc",
@@ -1580,7 +1580,7 @@ dependencies = [
 
 [[package]]
 name = "icu_properties_data"
-version = "2.0.0"
+version = "2.0.1"
 
 [[package]]
 name = "icu_provider"
