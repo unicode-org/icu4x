@@ -22,7 +22,7 @@ fn main() -> std::io::Result<()> {
         &root.join("ffi/capi/src/lib.rs"),
         lang.as_str(),
         &{
-            let include = if lang != "demo_gen" { 
+            let include = if lang != "demo_gen" {
                 root.join("ffi/capi/bindings").join(&lang)
             } else {
                 root.join("tutorials/web-demo/gen")
