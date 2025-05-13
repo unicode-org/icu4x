@@ -8,7 +8,7 @@ use icu::calendar::Date;
 use icu::datetime::{fieldsets, NoCalendarFormatter};
 use icu::locale::locale;
 use icu::time::{DateTime, Time};
-use icu_time::zone::ZoneNameTimestamp;
+use icu::time::zone::ZoneNameTimestamp;
 
 fn main() {
     let parser = icu::time::zone::IanaParser::new();
