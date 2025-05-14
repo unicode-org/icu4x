@@ -1883,7 +1883,7 @@ impl CollatorBorrowed<'_> {
                 } else {
                     // case bits & tertiary lead byte
                     let mut c = ((non_primary.bits() >> 8) & 0xff) as u8;
-                    assert_ne!(c & 0xc0, 0xc0);
+                    debug_assert_ne!(c & 0xc0, 0xc0);
                     if c & 0xc0 == 0 && c > LEVEL_SEPARATOR_BYTE {
                         common_cases += 1;
                     } else {
@@ -1940,7 +1940,7 @@ impl CollatorBorrowed<'_> {
 
             if levels & TERTIARY_LEVEL_FLAG != 0 {
                 let mut t = non_primary.tertiary_case_quarternary(tertiary_mask);
-                assert_ne!(non_primary.bits() & 0xc000, 0xc000);
+                debug_assert_ne!(non_primary.bits() & 0xc000, 0xc000);
                 if t == COMMON_WEIGHT16 {
                     common_tertiaries += 1;
                 } else if tertiary_mask & 0x8000 == 0 {
@@ -1982,7 +1982,7 @@ impl CollatorBorrowed<'_> {
                         }
                     } else {
                         // Keep uppercase bits of tertiary CEs.
-                        assert!((0x8600..=0xbfff).contains(&t));
+                        debug_assert!((0x8600..=0xbfff).contains(&t));
                         t += 0x4000;
                     }
                     handle_common!(
@@ -2051,8 +2051,8 @@ impl CollatorBorrowed<'_> {
             // Write pairs of nibbles as bytes, except separator bytes as themselves.
             let mut b = 0;
             for c in cases.as_ref() {
-                assert_eq!(*c & 0xf, 0);
-                assert_ne!(*c, 0);
+                debug_assert_eq!(*c & 0xf, 0);
+                debug_assert_ne!(*c, 0);
                 if b == 0 {
                     b = *c;
                 } else {
@@ -2124,7 +2124,7 @@ impl SortKeyLevel {
     }
 
     fn append_weight_16(&mut self, w: u16) {
-        assert_ne!(w, 0);
+        debug_assert_ne!(w, 0);
         let b0 = (w >> 8) as u8;
         let b1 = w as u8;
         self.append_byte(b0);
@@ -2134,7 +2134,7 @@ impl SortKeyLevel {
     }
 
     fn append_reverse_weight_16(&mut self, w: u16) {
-        assert_ne!(w, 0);
+        debug_assert_ne!(w, 0);
         let b0 = (w >> 8) as u8;
         let b1 = w as u8;
         if b1 != 0 {
@@ -2144,7 +2144,7 @@ impl SortKeyLevel {
     }
 
     fn append_weight_32(&mut self, w: u32) {
-        assert_ne!(w, 0);
+        debug_assert_ne!(w, 0);
         let b0 = (w >> 24) as u8;
         let b1 = (w >> 16) as u8;
         let b2 = (w >> 8) as u8;
