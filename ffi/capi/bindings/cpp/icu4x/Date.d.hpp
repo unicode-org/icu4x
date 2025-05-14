@@ -45,7 +45,7 @@ public:
    *
    * See the [Rust documentation for `new_from_iso`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.new_from_iso) for more information.
    */
-  inline static diplomat::result<std::unique_ptr<icu4x::Date>, icu4x::CalendarError> from_iso_in_calendar(int32_t year, uint8_t month, uint8_t day, const icu4x::Calendar& calendar);
+  inline static diplomat::result<std::unique_ptr<icu4x::Date>, icu4x::CalendarError> from_iso_in_calendar(int32_t iso_year, uint8_t iso_month, uint8_t iso_day, const icu4x::Calendar& calendar);
 
   /**
    * Creates a new [`Date`] from the given codes, which are interpreted in the given calendar system

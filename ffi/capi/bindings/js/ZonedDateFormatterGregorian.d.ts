@@ -181,5 +181,5 @@ export class ZonedDateFormatterGregorian {
     /**
      * See the [Rust documentation for `format`](https://docs.rs/icu/latest/icu/datetime/struct.FixedCalendarDateTimeFormatter.html#method.format) for more information.
      */
-    formatIso(date: IsoDate, zone: TimeZoneInfo): string;
+    formatIso(isoDate: IsoDate, zone: TimeZoneInfo): string;
 }

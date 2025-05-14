@@ -282,9 +282,9 @@ final class ZonedDateFormatter implements ffi.Finalizable {
   /// See the [Rust documentation for `format`](https://docs.rs/icu/latest/icu/datetime/struct.DateTimeFormatter.html#method.format) for more information.
   ///
   /// Throws [DateTimeWriteError] on failure.
-  String formatIso(IsoDate date, TimeZoneInfo zone) {
+  String formatIso(IsoDate isoDate, TimeZoneInfo zone) {
     final write = _Write();
-    final result = _icu4x_ZonedDateFormatter_format_iso_mv1(_ffi, date._ffi, zone._ffi, write._ffi);
+    final result = _icu4x_ZonedDateFormatter_format_iso_mv1(_ffi, isoDate._ffi, zone._ffi, write._ffi);
     if (!result.isOk) {
       throw DateTimeWriteError.values[result.union.err];
     }
@@ -381,6 +381,6 @@ external _ResultOpaqueInt32 _icu4x_ZonedDateFormatter_create_exemplar_city_with_
 @_DiplomatFfiUse('icu4x_ZonedDateFormatter_format_iso_mv1')
 @ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_ZonedDateFormatter_format_iso_mv1')
 // ignore: non_constant_identifier_names
-external _ResultVoidInt32 _icu4x_ZonedDateFormatter_format_iso_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> date, ffi.Pointer<ffi.Opaque> zone, ffi.Pointer<ffi.Opaque> write);
+external _ResultVoidInt32 _icu4x_ZonedDateFormatter_format_iso_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> isoDate, ffi.Pointer<ffi.Opaque> zone, ffi.Pointer<ffi.Opaque> write);
 
 // dart format on

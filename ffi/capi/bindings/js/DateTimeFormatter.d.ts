@@ -151,7 +151,7 @@ export class DateTimeFormatter {
     /**
      * See the [Rust documentation for `format`](https://docs.rs/icu/latest/icu/datetime/struct.DateTimeFormatter.html#method.format) for more information.
      */
-    formatIso(date: IsoDate, time: Time): string;
+    formatIso(isoDate: IsoDate, time: Time): string;
 
     /**
      * See the [Rust documentation for `format_same_calendar`](https://docs.rs/icu/latest/icu/datetime/struct.DateTimeFormatter.html#method.format_same_calendar) for more information.

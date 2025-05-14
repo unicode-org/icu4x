@@ -89,7 +89,7 @@ public:
    *
    * See the [Rust documentation for `is_normalized_utf16`](https://docs.rs/icu/latest/icu/normalizer/struct.DecomposingNormalizerBorrowed.html#method.is_normalized_utf16) for more information.
    */
-  inline bool is_normalized_utf16(std::u16string_view s) const;
+  inline bool is_normalized16(std::u16string_view s) const;
 
   /**
    * Return the index a slice of potentially-invalid UTF-8 is normalized up to
@@ -105,7 +105,7 @@ public:
    *
    * See the [Rust documentation for `split_normalized_utf16`](https://docs.rs/icu/latest/icu/normalizer/struct.DecomposingNormalizerBorrowed.html#method.split_normalized_utf16) for more information.
    */
-  inline size_t is_normalized_utf16_up_to(std::u16string_view s) const;
+  inline size_t is_normalized16_up_to(std::u16string_view s) const;
 
   inline const icu4x::capi::DecomposingNormalizer* AsFFI() const;
   inline icu4x::capi::DecomposingNormalizer* AsFFI();

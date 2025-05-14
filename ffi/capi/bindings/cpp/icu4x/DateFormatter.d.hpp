@@ -226,7 +226,7 @@ public:
   /**
    * See the [Rust documentation for `format`](https://docs.rs/icu/latest/icu/datetime/struct.DateTimeFormatter.html#method.format) for more information.
    */
-  inline std::string format_iso(const icu4x::IsoDate& date) const;
+  inline std::string format_iso(const icu4x::IsoDate& iso_date) const;
 
   /**
    * See the [Rust documentation for `format_same_calendar`](https://docs.rs/icu/latest/icu/datetime/struct.DateTimeFormatter.html#method.format_same_calendar) for more information.

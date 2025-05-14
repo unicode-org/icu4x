@@ -223,7 +223,7 @@ public:
   /**
    * See the [Rust documentation for `format`](https://docs.rs/icu/latest/icu/datetime/struct.FixedCalendarDateTimeFormatter.html#method.format) for more information.
    */
-  inline std::string format_iso(const icu4x::IsoDate& date) const;
+  inline std::string format_iso(const icu4x::IsoDate& iso_date) const;
 
   inline const icu4x::capi::DateFormatterGregorian* AsFFI() const;
   inline icu4x::capi::DateFormatterGregorian* AsFFI();

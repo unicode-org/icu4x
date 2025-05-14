@@ -472,10 +472,10 @@ export class DateTimeFormatter {
     /**
      * See the [Rust documentation for `format`](https://docs.rs/icu/latest/icu/datetime/struct.DateTimeFormatter.html#method.format) for more information.
      */
-    formatIso(date, time) {
+    formatIso(isoDate, time) {
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
 
-    wasm.icu4x_DateTimeFormatter_format_iso_mv1(this.ffiValue, date.ffiValue, time.ffiValue, write.buffer);
+    wasm.icu4x_DateTimeFormatter_format_iso_mv1(this.ffiValue, isoDate.ffiValue, time.ffiValue, write.buffer);
 
         try {
             return write.readString8();

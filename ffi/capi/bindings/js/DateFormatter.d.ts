@@ -203,7 +203,7 @@ export class DateFormatter {
     /**
      * See the [Rust documentation for `format`](https://docs.rs/icu/latest/icu/datetime/struct.DateTimeFormatter.html#method.format) for more information.
      */
-    formatIso(date: IsoDate): string;
+    formatIso(isoDate: IsoDate): string;
 
     /**
      * See the [Rust documentation for `format_same_calendar`](https://docs.rs/icu/latest/icu/datetime/struct.DateTimeFormatter.html#method.format_same_calendar) for more information.

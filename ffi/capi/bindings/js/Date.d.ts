@@ -24,7 +24,7 @@ export class Date {
      *
      * See the [Rust documentation for `new_from_iso`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.new_from_iso) for more information.
      */
-    static fromIsoInCalendar(year: number, month: number, day: number, calendar: Calendar): Date;
+    static fromIsoInCalendar(isoYear: number, isoMonth: number, isoDay: number, calendar: Calendar): Date;
 
     /**
      * Creates a new [`Date`] from the given codes, which are interpreted in the given calendar system

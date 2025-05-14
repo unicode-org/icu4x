@@ -480,13 +480,13 @@ export class ZonedDateFormatter {
     /**
      * See the [Rust documentation for `format`](https://docs.rs/icu/latest/icu/datetime/struct.DateTimeFormatter.html#method.format) for more information.
      */
-    formatIso(date, zone) {
+    formatIso(isoDate, zone) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
 
 
-        const result = wasm.icu4x_ZonedDateFormatter_format_iso_mv1(diplomatReceive.buffer, this.ffiValue, date.ffiValue, zone.ffiValue, write.buffer);
+        const result = wasm.icu4x_ZonedDateFormatter_format_iso_mv1(diplomatReceive.buffer, this.ffiValue, isoDate.ffiValue, zone.ffiValue, write.buffer);
 
         try {
             if (!diplomatReceive.resultFlag) {
