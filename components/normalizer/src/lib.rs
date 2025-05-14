@@ -1760,6 +1760,7 @@ impl<'data> DecomposingNormalizerBorrowed<'data> {
     /// This constructor is intended for use by collations.
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
+    #[doc(hidden)]
     pub fn new_with_data(
         decompositions: &'data DecompositionData<'data>,
         tables: &'data DecompositionTables<'data>,
