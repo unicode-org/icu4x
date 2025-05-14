@@ -59,7 +59,6 @@ use utf8_iter::Utf8CharsEx;
 use zerovec::ule::AsULE;
 
 // Special sort key bytes for all levels.
-const TERMINATOR_BYTE: u8 = 0;
 const LEVEL_SEPARATOR_BYTE: u8 = 1;
 
 /// Merge-sort-key separator.
@@ -1658,7 +1657,6 @@ impl CollatorBorrowed<'_> {
     /// Write the sort key bytes up to the collator's strength.
     ///
     /// For identical strength, the UTF-8 NFD normalization is appended for breaking ties.
-    /// The key ends with a `TERMINATOR_BYTE`.
     pub fn write_sort_key<S>(&self, s: &str, sink: &mut S)
     where
         S: Write,
@@ -1672,15 +1670,10 @@ impl CollatorBorrowed<'_> {
             sink.write_byte(LEVEL_SEPARATOR_BYTE);
             sink.write(s.as_bytes());
         }
-
-        sink.write(&[TERMINATOR_BYTE]);
     }
 
     /// Write the sort key bytes up to the collator's strength.
     ///
-    /// Optionally write the case level.  Stop writing levels when `need_to_write` returns
-    /// `false`.  Separate levels with the `LEVEL_SEPARATOR_BYTE`, but do not write a
-    /// `TERMINATOR_BYTE`.
     pub fn write_sort_key_up_to_quaternary<I, S, W>(&self, iter: I, sink: &mut S, need_to_write: W)
     where
         I: Iterator<Item = char>,
