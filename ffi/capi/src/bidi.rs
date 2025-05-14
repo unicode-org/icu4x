@@ -22,6 +22,7 @@ pub mod ffi {
     #[diplomat::opaque]
     /// An ICU4X Bidi object, containing loaded bidi data
     #[diplomat::rust_link(icu::properties::props::BidiClass, Struct)]
+    #[diplomat::attr(demo_gen, disable)]
     pub struct Bidi(pub icu_properties::CodePointMapData<icu_properties::props::BidiClass>);
 
     impl Bidi {
@@ -150,6 +151,7 @@ pub mod ffi {
     ///
     /// Produced by `reorder_visual()` on [`Bidi`].
     #[diplomat::opaque]
+    #[diplomat::attr(demo_gen, disable)]
     pub struct ReorderedIndexMap(pub Vec<usize>);
 
     impl ReorderedIndexMap {
@@ -183,6 +185,7 @@ pub mod ffi {
     /// An object containing bidi information for a given string, produced by `for_text()` on `Bidi`
     #[diplomat::rust_link(unicode_bidi::BidiInfo, Struct)]
     #[diplomat::opaque]
+    #[diplomat::attr(demo_gen, disable)]
     pub struct BidiInfo<'text>(pub unicode_bidi::BidiInfo<'text>);
 
     impl<'text> BidiInfo<'text> {
@@ -222,6 +225,7 @@ pub mod ffi {
 
     /// Bidi information for a single processed paragraph
     #[diplomat::opaque]
+    #[diplomat::attr(demo_gen, disable)]
     pub struct BidiParagraph<'info>(pub unicode_bidi::Paragraph<'info, 'info>);
 
     impl<'info> BidiParagraph<'info> {

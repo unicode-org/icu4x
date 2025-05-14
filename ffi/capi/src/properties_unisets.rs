@@ -47,6 +47,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::props::BasicEmoji, Struct)]
         #[diplomat::attr(auto, named_constructor = "basic")]
         #[cfg(feature = "compiled_data")]
+        #[diplomat::demo(default_constructor)]
         pub fn create_basic() -> Box<EmojiSetData> {
             Box::new(EmojiSetData(
                 icu_properties::EmojiSetData::new::<BasicEmoji>().static_to_owned(),

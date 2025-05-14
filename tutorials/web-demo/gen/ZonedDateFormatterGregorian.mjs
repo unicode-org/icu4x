@@ -5,17 +5,17 @@ import { TimeZone } from "icu4x"
 import { TimeZoneInfo } from "icu4x"
 import { UtcOffset } from "icu4x"
 import { ZonedDateFormatterGregorian } from "icu4x"
-export function formatIso(zonedDateFormatterGregorianLocaleName, zonedDateFormatterGregorianFormatterLocaleName, zonedDateFormatterGregorianFormatterLength, zonedDateFormatterGregorianFormatterAlignment, zonedDateFormatterGregorianFormatterYearStyle, dateYear, dateMonth, dateDay, zoneIdId, zoneOffsetOffset, zoneVariant) {
+export function formatIso(selfLocaleName, selfFormatterLocaleName, selfFormatterLength, selfFormatterAlignment, selfFormatterYearStyle, isoDateYear, isoDateMonth, isoDateDay, zoneIdId, zoneOffsetOffset, zoneVariant) {
     
-    let zonedDateFormatterGregorianLocale = Locale.fromString(zonedDateFormatterGregorianLocaleName);
+    let selfLocale = Locale.fromString(selfLocaleName);
     
-    let zonedDateFormatterGregorianFormatterLocale = Locale.fromString(zonedDateFormatterGregorianFormatterLocaleName);
+    let selfFormatterLocale = Locale.fromString(selfFormatterLocaleName);
     
-    let zonedDateFormatterGregorianFormatter = DateFormatterGregorian.createYmd(zonedDateFormatterGregorianFormatterLocale,zonedDateFormatterGregorianFormatterLength,zonedDateFormatterGregorianFormatterAlignment,zonedDateFormatterGregorianFormatterYearStyle);
+    let selfFormatter = DateFormatterGregorian.createYmd(selfFormatterLocale,selfFormatterLength,selfFormatterAlignment,selfFormatterYearStyle);
     
-    let zonedDateFormatterGregorian = ZonedDateFormatterGregorian.createGenericShort(zonedDateFormatterGregorianLocale,zonedDateFormatterGregorianFormatter);
+    let self = ZonedDateFormatterGregorian.createGenericShort(selfLocale,selfFormatter);
     
-    let date = new IsoDate(dateYear,dateMonth,dateDay);
+    let isoDate = new IsoDate(isoDateYear,isoDateMonth,isoDateDay);
     
     let zoneId = TimeZone.createFromBcp47(zoneIdId);
     
@@ -23,7 +23,7 @@ export function formatIso(zonedDateFormatterGregorianLocaleName, zonedDateFormat
     
     let zone = new TimeZoneInfo(zoneId,zoneOffset,zoneVariant);
     
-    let out = zonedDateFormatterGregorian.formatIso(date,zone);
+    let out = self.formatIso(isoDate,zone);
     
 
     return out;

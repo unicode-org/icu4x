@@ -22,6 +22,7 @@ pub mod ffi {
     /// A locale canonicalizer.
     #[diplomat::rust_link(icu::locale::LocaleCanonicalizer, Struct)]
     #[diplomat::opaque]
+    #[diplomat::demo(custom_func = "../../../tutorials/web-demo/custom/LocaleCanonicalizer.mjs")]
     pub struct LocaleCanonicalizer(icu_locale::LocaleCanonicalizer);
 
     impl LocaleCanonicalizer {

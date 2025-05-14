@@ -15,6 +15,7 @@ pub mod ffi {
         icu::collections::codepointinvlist::CodePointInversionListBuilder,
         Struct
     )]
+    #[diplomat::attr(demo_gen, disable)] // mutable
     pub struct CodePointSetBuilder(
         pub icu_collections::codepointinvlist::CodePointInversionListBuilder,
     );

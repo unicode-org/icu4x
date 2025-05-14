@@ -576,12 +576,12 @@ pub mod ffi {
         #[diplomat::rust_link(icu::datetime::FormattedDateTime::to_string, FnInStruct, hidden)]
         pub fn format_iso(
             &self,
-            date: &IsoDate,
+            iso_date: &IsoDate,
             zone: &TimeZoneInfo,
             write: &mut diplomat_runtime::DiplomatWrite,
         ) -> Result<(), DateTimeWriteError> {
             let mut input = icu_datetime::unchecked::DateTimeInputUnchecked::default();
-            let date_in_calendar = date.0.to_calendar(self.0.calendar());
+            let date_in_calendar = iso_date.0.to_calendar(self.0.calendar());
             input.set_date_fields_unchecked(date_in_calendar); // calendar conversion on previous line
             input.set_time_zone_id(zone.id);
             if let Some(offset) = zone.offset {
@@ -1138,12 +1138,12 @@ pub mod ffi {
         #[diplomat::rust_link(icu::datetime::FormattedDateTime::to_string, FnInStruct, hidden)]
         pub fn format_iso(
             &self,
-            date: &IsoDate,
+            iso_date: &IsoDate,
             zone: &TimeZoneInfo,
             write: &mut diplomat_runtime::DiplomatWrite,
         ) -> Result<(), DateTimeWriteError> {
             let mut input = icu_datetime::unchecked::DateTimeInputUnchecked::default();
-            let date_in_calendar = date.0.to_calendar(Gregorian);
+            let date_in_calendar = iso_date.0.to_calendar(Gregorian);
             input.set_date_fields_unchecked(date_in_calendar); // calendar conversion on previous line
             input.set_time_zone_id(zone.id);
             if let Some(offset) = zone.offset {

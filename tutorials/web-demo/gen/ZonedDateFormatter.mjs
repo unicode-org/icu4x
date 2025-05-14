@@ -5,17 +5,17 @@ import { TimeZone } from "icu4x"
 import { TimeZoneInfo } from "icu4x"
 import { UtcOffset } from "icu4x"
 import { ZonedDateFormatter } from "icu4x"
-export function formatIso(zonedDateFormatterLocaleName, zonedDateFormatterFormatterLocaleName, zonedDateFormatterFormatterLength, zonedDateFormatterFormatterAlignment, zonedDateFormatterFormatterYearStyle, dateYear, dateMonth, dateDay, zoneIdId, zoneOffsetOffset, zoneVariant) {
+export function formatIso(selfLocaleName, selfFormatterLocaleName, selfFormatterLength, selfFormatterAlignment, selfFormatterYearStyle, isoDateYear, isoDateMonth, isoDateDay, zoneIdId, zoneOffsetOffset, zoneVariant) {
     
-    let zonedDateFormatterLocale = Locale.fromString(zonedDateFormatterLocaleName);
+    let selfLocale = Locale.fromString(selfLocaleName);
     
-    let zonedDateFormatterFormatterLocale = Locale.fromString(zonedDateFormatterFormatterLocaleName);
+    let selfFormatterLocale = Locale.fromString(selfFormatterLocaleName);
     
-    let zonedDateFormatterFormatter = DateFormatter.createYmd(zonedDateFormatterFormatterLocale,zonedDateFormatterFormatterLength,zonedDateFormatterFormatterAlignment,zonedDateFormatterFormatterYearStyle);
+    let selfFormatter = DateFormatter.createYmd(selfFormatterLocale,selfFormatterLength,selfFormatterAlignment,selfFormatterYearStyle);
     
-    let zonedDateFormatter = ZonedDateFormatter.createGenericShort(zonedDateFormatterLocale,zonedDateFormatterFormatter);
+    let self = ZonedDateFormatter.createGenericShort(selfLocale,selfFormatter);
     
-    let date = new IsoDate(dateYear,dateMonth,dateDay);
+    let isoDate = new IsoDate(isoDateYear,isoDateMonth,isoDateDay);
     
     let zoneId = TimeZone.createFromBcp47(zoneIdId);
     
@@ -23,7 +23,7 @@ export function formatIso(zonedDateFormatterLocaleName, zonedDateFormatterFormat
     
     let zone = new TimeZoneInfo(zoneId,zoneOffset,zoneVariant);
     
-    let out = zonedDateFormatter.formatIso(date,zone);
+    let out = self.formatIso(isoDate,zone);
     
 
     return out;

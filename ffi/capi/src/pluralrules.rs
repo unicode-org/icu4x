@@ -51,6 +51,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::plurals::PluralRulesOptions::with_type, FnInStruct, hidden)]
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "cardinal")]
         #[cfg(feature = "compiled_data")]
+        #[diplomat::demo(default_constructor)]
         pub fn create_cardinal(locale: &Locale) -> Result<Box<PluralRules>, DataError> {
             let prefs = icu_plurals::PluralRulesPreferences::from(&locale.0);
             Ok(Box::new(PluralRules(
@@ -147,6 +148,7 @@ pub mod ffi {
         /// Retains at most 18 digits each from the integer and fraction parts.
         #[cfg(feature = "decimal")]
         #[diplomat::attr(auto, named_constructor)]
+        #[diplomat::demo(default_constructor)]
         pub fn from_fixed_decimal(x: &crate::unstable::fixed_decimal::ffi::Decimal) -> Box<Self> {
             Box::new(Self((&x.0).into()))
         }

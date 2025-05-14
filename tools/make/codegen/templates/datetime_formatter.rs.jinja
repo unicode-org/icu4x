@@ -169,7 +169,7 @@ pub mod ffi {
         pub fn format{% if flavor.has_date() %}_iso{% endif %}(
             &self,
             {%- if flavor.has_date() %}
-            date: &IsoDate,
+            iso_date: &IsoDate,
             {%- endif %}
             {%- if flavor.has_time() %}
             time: &Time,
@@ -177,7 +177,7 @@ pub mod ffi {
             write: &mut diplomat_runtime::DiplomatWrite,
         ) {
             {%- if flavor.has_date() %}
-            let date = date.0{% if formatter_kind.is_gregorian %}.to_calendar(Gregorian){% endif %};
+            let date = iso_date.0{% if formatter_kind.is_gregorian %}.to_calendar(Gregorian){% endif %};
             {%- if flavor.has_time() %}
             let value = icu_time::DateTime {
                 date,
@@ -195,6 +195,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::datetime::{{ formatter_kind.rustlink() }}::format_same_calendar, {{ formatter_kind.rustlink_doctype_fn() }})]
         #[diplomat::rust_link(icu::datetime::FormattedDateTime, Struct, hidden)]
         #[diplomat::rust_link(icu::datetime::FormattedDateTime::to_string, FnInStruct, hidden)]
+        #[diplomat::attr(demo_gen, disable)] // confusing
         pub fn format_same_calendar(
             &self,
             {%- if flavor.has_date() %}

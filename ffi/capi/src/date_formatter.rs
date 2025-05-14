@@ -735,10 +735,10 @@ pub mod ffi {
         #[diplomat::rust_link(icu::datetime::FormattedDateTime::to_string, FnInStruct, hidden)]
         pub fn format_iso(
             &self,
-            date: &IsoDate,
+            iso_date: &IsoDate,
             write: &mut diplomat_runtime::DiplomatWrite,
         ) {
-            let date = date.0;
+            let date = iso_date.0;
             let value = date;
             let _infallible = self.0.format(&value).write_to(write);
         }
@@ -746,6 +746,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::datetime::DateTimeFormatter::format_same_calendar, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::FormattedDateTime, Struct, hidden)]
         #[diplomat::rust_link(icu::datetime::FormattedDateTime::to_string, FnInStruct, hidden)]
+        #[diplomat::attr(demo_gen, disable)] // confusing
         pub fn format_same_calendar(
             &self,
             date: &Date,
@@ -1465,10 +1466,10 @@ pub mod ffi {
         #[diplomat::rust_link(icu::datetime::FormattedDateTime::to_string, FnInStruct, hidden)]
         pub fn format_iso(
             &self,
-            date: &IsoDate,
+            iso_date: &IsoDate,
             write: &mut diplomat_runtime::DiplomatWrite,
         ) {
-            let date = date.0.to_calendar(Gregorian);
+            let date = iso_date.0.to_calendar(Gregorian);
             let value = date;
             let _infallible = self.0.format(&value).write_to(write);
         }

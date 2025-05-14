@@ -1,37 +1,18 @@
-import { Calendar } from "icu4x"
-import { Date } from "icu4x"
 import { DateTimeFormatter } from "icu4x"
 import { IsoDate } from "icu4x"
 import { Locale } from "icu4x"
 import { Time } from "icu4x"
-export function formatIso(dateTimeFormatterLocaleName, dateTimeFormatterLength, dateTimeFormatterTimePrecision, dateTimeFormatterAlignment, dateTimeFormatterYearStyle, dateYear, dateMonth, dateDay, timeHour, timeMinute, timeSecond, timeSubsecond) {
+export function formatIso(selfLocaleName, selfLength, selfTimePrecision, selfAlignment, selfYearStyle, isoDateYear, isoDateMonth, isoDateDay, timeHour, timeMinute, timeSecond, timeSubsecond) {
     
-    let dateTimeFormatterLocale = Locale.fromString(dateTimeFormatterLocaleName);
+    let selfLocale = Locale.fromString(selfLocaleName);
     
-    let dateTimeFormatter = DateTimeFormatter.createYmdt(dateTimeFormatterLocale,dateTimeFormatterLength,dateTimeFormatterTimePrecision,dateTimeFormatterAlignment,dateTimeFormatterYearStyle);
+    let self = DateTimeFormatter.createYmdt(selfLocale,selfLength,selfTimePrecision,selfAlignment,selfYearStyle);
     
-    let date = new IsoDate(dateYear,dateMonth,dateDay);
-    
-    let time = new Time(timeHour,timeMinute,timeSecond,timeSubsecond);
-    
-    let out = dateTimeFormatter.formatIso(date,time);
-    
-
-    return out;
-}
-export function formatSameCalendar(dateTimeFormatterLocaleName, dateTimeFormatterLength, dateTimeFormatterTimePrecision, dateTimeFormatterAlignment, dateTimeFormatterYearStyle, dateYear, dateMonth, dateDay, dateCalendarKind, timeHour, timeMinute, timeSecond, timeSubsecond) {
-    
-    let dateTimeFormatterLocale = Locale.fromString(dateTimeFormatterLocaleName);
-    
-    let dateTimeFormatter = DateTimeFormatter.createYmdt(dateTimeFormatterLocale,dateTimeFormatterLength,dateTimeFormatterTimePrecision,dateTimeFormatterAlignment,dateTimeFormatterYearStyle);
-    
-    let dateCalendar = new Calendar(dateCalendarKind);
-    
-    let date = Date.fromIsoInCalendar(dateYear,dateMonth,dateDay,dateCalendar);
+    let isoDate = new IsoDate(isoDateYear,isoDateMonth,isoDateDay);
     
     let time = new Time(timeHour,timeMinute,timeSecond,timeSubsecond);
     
-    let out = dateTimeFormatter.formatSameCalendar(date,time);
+    let out = self.formatIso(isoDate,time);
     
 
     return out;

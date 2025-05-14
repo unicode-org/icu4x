@@ -101,6 +101,7 @@ pub mod ffi {
         /// Returns the kind of this calendar
         #[diplomat::rust_link(icu::calendar::AnyCalendar::kind, FnInEnum)]
         #[diplomat::attr(auto, getter)]
+        #[diplomat::attr(demo_gen, disable)] // trivial
         pub fn kind(&self) -> CalendarKind {
             self.0.kind().into()
         }

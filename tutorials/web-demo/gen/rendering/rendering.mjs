@@ -101,6 +101,28 @@ class StringTemplate extends ParameterTemplate {
 
 customElements.define("terminus-param-string", StringTemplate);
 
+class CodepointTemplate extends ParameterTemplate {
+    static template;
+    constructor(options) {
+        super(options, CodepointTemplate, "template#string", "");
+    }
+
+    getEventValue(event) {
+        let value = event.target.value;
+        if (value.startsWith("U+")) {
+            return parseInt(value.substring(2), 16);
+        } else {
+            return value.codePointAt(0);
+        }
+    }
+
+    setValue(v) {
+        this.inputElement.value = String.fromCodePoint(v);
+    }
+}
+
+customElements.define("terminus-param-codepoint", CodepointTemplate);
+
 class StringArrayTemplate extends ParameterTemplate {
     static template;
     constructor(options) {
@@ -174,23 +196,21 @@ class TerminusParams extends HTMLElement {
             switch (param.typeUse) {
                 case "string":
                     newChild = new StringTemplate(param);
-                    this.#params[i] = "";
                     break;
                 case "boolean":
                     newChild = new BooleanTemplate(param);
-                    this.#params[i] = false;
                     break;
                 case "number":
                     newChild = new NumberTemplate(param);
-                    this.#params[i] = 0;
                     break;
                 case "Array<string>":
                     newChild = new StringArrayTemplate(param);
-                    this.#params[i] = [];
                     break;
                 case "enumerator":
                     newChild = new EnumTemplate(param, library[param.type]);
-                    this.#params[i] = newChild.default
+                    break;
+                case "codepoint":
+                    newChild = new CodepointTemplate(param);
                     break;
                 case "external":
                     let updateParamEvent = (value) => {

@@ -6,17 +6,17 @@ import { TimeZone } from "icu4x"
 import { TimeZoneInfo } from "icu4x"
 import { UtcOffset } from "icu4x"
 import { ZonedDateTimeFormatterGregorian } from "icu4x"
-export function formatIso(zonedDateTimeFormatterGregorianLocaleName, zonedDateTimeFormatterGregorianFormatterLocaleName, zonedDateTimeFormatterGregorianFormatterLength, zonedDateTimeFormatterGregorianFormatterTimePrecision, zonedDateTimeFormatterGregorianFormatterAlignment, zonedDateTimeFormatterGregorianFormatterYearStyle, dateYear, dateMonth, dateDay, timeHour, timeMinute, timeSecond, timeSubsecond, zoneIdId, zoneOffsetOffset, zoneVariant) {
+export function formatIso(selfLocaleName, selfFormatterLocaleName, selfFormatterLength, selfFormatterTimePrecision, selfFormatterAlignment, selfFormatterYearStyle, isoDateYear, isoDateMonth, isoDateDay, timeHour, timeMinute, timeSecond, timeSubsecond, zoneIdId, zoneOffsetOffset, zoneVariant) {
     
-    let zonedDateTimeFormatterGregorianLocale = Locale.fromString(zonedDateTimeFormatterGregorianLocaleName);
+    let selfLocale = Locale.fromString(selfLocaleName);
     
-    let zonedDateTimeFormatterGregorianFormatterLocale = Locale.fromString(zonedDateTimeFormatterGregorianFormatterLocaleName);
+    let selfFormatterLocale = Locale.fromString(selfFormatterLocaleName);
     
-    let zonedDateTimeFormatterGregorianFormatter = DateTimeFormatterGregorian.createYmdt(zonedDateTimeFormatterGregorianFormatterLocale,zonedDateTimeFormatterGregorianFormatterLength,zonedDateTimeFormatterGregorianFormatterTimePrecision,zonedDateTimeFormatterGregorianFormatterAlignment,zonedDateTimeFormatterGregorianFormatterYearStyle);
+    let selfFormatter = DateTimeFormatterGregorian.createYmdt(selfFormatterLocale,selfFormatterLength,selfFormatterTimePrecision,selfFormatterAlignment,selfFormatterYearStyle);
     
-    let zonedDateTimeFormatterGregorian = ZonedDateTimeFormatterGregorian.createGenericShort(zonedDateTimeFormatterGregorianLocale,zonedDateTimeFormatterGregorianFormatter);
+    let self = ZonedDateTimeFormatterGregorian.createGenericShort(selfLocale,selfFormatter);
     
-    let date = new IsoDate(dateYear,dateMonth,dateDay);
+    let isoDate = new IsoDate(isoDateYear,isoDateMonth,isoDateDay);
     
     let time = new Time(timeHour,timeMinute,timeSecond,timeSubsecond);
     
@@ -26,7 +26,7 @@ export function formatIso(zonedDateTimeFormatterGregorianLocaleName, zonedDateTi
     
     let zone = new TimeZoneInfo(zoneId,zoneOffset,zoneVariant);
     
-    let out = zonedDateTimeFormatterGregorian.formatIso(date,time,zone);
+    let out = self.formatIso(isoDate,time,zone);
     
 
     return out;

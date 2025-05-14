@@ -4,11 +4,11 @@ import { TimeZone } from "icu4x"
 import { TimeZoneInfo } from "icu4x"
 import { UtcOffset } from "icu4x"
 import { ZonedTimeFormatter } from "icu4x"
-export function format(zonedTimeFormatterLocaleName, zonedTimeFormatterLength, zonedTimeFormatterTimePrecision, zonedTimeFormatterAlignment, timeHour, timeMinute, timeSecond, timeSubsecond, zoneIdId, zoneOffsetOffset, zoneVariant) {
+export function format(selfLocaleName, selfLength, selfTimePrecision, selfAlignment, timeHour, timeMinute, timeSecond, timeSubsecond, zoneIdId, zoneOffsetOffset, zoneVariant) {
     
-    let zonedTimeFormatterLocale = Locale.fromString(zonedTimeFormatterLocaleName);
+    let selfLocale = Locale.fromString(selfLocaleName);
     
-    let zonedTimeFormatter = ZonedTimeFormatter.createGenericShort(zonedTimeFormatterLocale,zonedTimeFormatterLength,zonedTimeFormatterTimePrecision,zonedTimeFormatterAlignment);
+    let self = ZonedTimeFormatter.createGenericShort(selfLocale,selfLength,selfTimePrecision,selfAlignment);
     
     let time = new Time(timeHour,timeMinute,timeSecond,timeSubsecond);
     
@@ -18,7 +18,7 @@ export function format(zonedTimeFormatterLocaleName, zonedTimeFormatterLength, z
     
     let zone = new TimeZoneInfo(zoneId,zoneOffset,zoneVariant);
     
-    let out = zonedTimeFormatter.format(time,zone);
+    let out = self.format(time,zone);
     
 
     return out;

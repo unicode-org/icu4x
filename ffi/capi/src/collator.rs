@@ -107,6 +107,7 @@ pub mod ffi {
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "with_provider")]
         #[diplomat::attr(supports = non_exhaustive_structs, rename = "create")]
         #[cfg(feature = "compiled_data")]
+        #[diplomat::demo(default_constructor)]
         pub fn create_v1(
             locale: &Locale,
             options: CollatorOptionsV1,

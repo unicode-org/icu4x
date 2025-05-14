@@ -31,17 +31,20 @@ pub mod ffi {
 
     #[diplomat::opaque]
     #[diplomat::rust_link(icu::segmenter::iterators::WordBreakIterator, Struct)]
+    #[diplomat::attr(demo_gen, disable)]
     pub struct WordBreakIteratorUtf8<'a>(
         icu_segmenter::iterators::WordBreakIterator<'a, 'a, PotentiallyIllFormedUtf8>,
     );
 
     #[diplomat::opaque]
     #[diplomat::rust_link(icu::segmenter::iterators::WordBreakIterator, Struct)]
+    #[diplomat::attr(demo_gen, disable)]
     pub struct WordBreakIteratorUtf16<'a>(
         icu_segmenter::iterators::WordBreakIterator<'a, 'a, Utf16>,
     );
     #[diplomat::opaque]
     #[diplomat::rust_link(icu::segmenter::iterators::WordBreakIterator, Struct)]
+    #[diplomat::attr(demo_gen, disable)]
     pub struct WordBreakIteratorLatin1<'a>(
         icu_segmenter::iterators::WordBreakIterator<'a, 'a, Latin1>,
     );

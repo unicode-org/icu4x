@@ -21,18 +21,21 @@ pub mod ffi {
 
     #[diplomat::opaque]
     #[diplomat::rust_link(icu::segmenter::iterators::GraphemeClusterBreakIterator, Struct)]
+    #[diplomat::attr(demo_gen, disable)]
     pub struct GraphemeClusterBreakIteratorUtf8<'a>(
         icu_segmenter::iterators::GraphemeClusterBreakIterator<'a, 'a, PotentiallyIllFormedUtf8>,
     );
 
     #[diplomat::opaque]
     #[diplomat::rust_link(icu::segmenter::iterators::GraphemeClusterBreakIterator, Struct)]
+    #[diplomat::attr(demo_gen, disable)]
     pub struct GraphemeClusterBreakIteratorUtf16<'a>(
         icu_segmenter::iterators::GraphemeClusterBreakIterator<'a, 'a, Utf16>,
     );
 
     #[diplomat::opaque]
     #[diplomat::rust_link(icu::segmenter::iterators::GraphemeClusterBreakIterator, Struct)]
+    #[diplomat::attr(demo_gen, disable)]
     pub struct GraphemeClusterBreakIteratorLatin1<'a>(
         icu_segmenter::iterators::GraphemeClusterBreakIterator<'a, 'a, Latin1>,
     );

@@ -1,12 +1,12 @@
 import { ListFormatter } from "icu4x"
 import { Locale } from "icu4x"
-export function format(listFormatterLocaleName, listFormatterLength, list) {
+export function format(selfLocaleName, selfLength, list) {
     
-    let listFormatterLocale = Locale.fromString(listFormatterLocaleName);
+    let selfLocale = Locale.fromString(selfLocaleName);
     
-    let listFormatter = ListFormatter.createAndWithLength(listFormatterLocale,listFormatterLength);
+    let self = ListFormatter.createAndWithLength(selfLocale,selfLength);
     
-    let out = listFormatter.format(list);
+    let out = self.format(list);
     
 
     return out;
