@@ -761,6 +761,28 @@ impl CollatorBorrowed<'static> {
     }
 }
 
+macro_rules! collation_elements {
+    ($self:expr, $chars:expr, $tailoring:expr, $numeric_primary:expr) => {{
+        let jamo = <&[<u32 as AsULE>::ULE; JAMO_COUNT]>::try_from($self.jamo.ce32s.as_ule_slice());
+
+        // `unwrap` OK, because length already validated
+        #[allow(clippy::unwrap_used)]
+        let jamo = jamo.unwrap();
+
+        CollationElements::new(
+            $chars,
+            $self.root,
+            $tailoring,
+            jamo,
+            &$self.diacritics.secondaries,
+            $self.decompositions,
+            $self.tables,
+            $numeric_primary,
+            $self.lithuanian_dot_above,
+        )
+    }};
+}
+
 impl CollatorBorrowed<'_> {
     /// The resolved options showing how the default options, the requested options,
     /// and the options from locale data were combined.
@@ -795,6 +817,7 @@ impl CollatorBorrowed<'_> {
         split_prefix_u16,
     );
 
+    #[inline(always)]
     fn tailoring_or_root(&self) -> &CollationData {
         if let Some(tailoring) = &self.tailoring {
             tailoring
@@ -816,6 +839,7 @@ impl CollatorBorrowed<'_> {
         }
     }
 
+    #[inline(always)]
     fn numeric_primary(&self) -> Option<u8> {
         if self.options.numeric() {
             Some(self.special_primaries.numeric_primary)
@@ -824,32 +848,7 @@ impl CollatorBorrowed<'_> {
         }
     }
 
-    fn collation_elements<'a, I>(
-        &'a self,
-        chars: I,
-        tailoring: &'a CollationData,
-        numeric_primary: Option<u8>,
-    ) -> CollationElements<'a, I>
-    where
-        I: Iterator<Item = char>,
-    {
-        // Attribute belongs on inner expression, but
-        // https://github.com/rust-lang/rust/issues/15701
-        #[allow(clippy::unwrap_used)]
-        CollationElements::new(
-            chars,
-            self.root,
-            tailoring,
-            // `unwrap` OK, because length already validated
-            <&[<u32 as AsULE>::ULE; JAMO_COUNT]>::try_from(self.jamo.ce32s.as_ule_slice()).unwrap(),
-            &self.diacritics.secondaries,
-            self.decompositions,
-            self.tables,
-            numeric_primary,
-            self.lithuanian_dot_above,
-        )
-    }
-
+    #[inline(always)]
     fn variable_top(&self) -> u32 {
         if self.options.alternate_handling() == AlternateHandling::NonIgnorable {
             0
@@ -903,8 +902,8 @@ impl CollatorBorrowed<'_> {
 
         let tailoring = self.tailoring_or_root();
         let numeric_primary = self.numeric_primary();
-        let mut left = self.collation_elements(left_chars, tailoring, numeric_primary);
-        let mut right = self.collation_elements(right_chars, tailoring, numeric_primary);
+        let mut left = collation_elements!(self, left_chars, tailoring, numeric_primary);
+        let mut right = collation_elements!(self, right_chars, tailoring, numeric_primary);
 
         // Start identical prefix
 
@@ -1703,7 +1702,7 @@ impl CollatorBorrowed<'_> {
         let levels = self.sort_key_levels();
 
         let mut iter =
-            self.collation_elements(iter, self.tailoring_or_root(), self.numeric_primary());
+            collation_elements!(self, iter, self.tailoring_or_root(), self.numeric_primary());
         iter.init();
         let variable_top = self.variable_top();
 
