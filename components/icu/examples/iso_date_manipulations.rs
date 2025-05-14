@@ -9,7 +9,7 @@
 icu_benchmark_macros::instrument!();
 use icu_benchmark_macros::println;
 
-use icu_calendar::Date;
+use icu::calendar::Date;
 
 const DATES_ISO: &[(i32, u8, u8)] = &[
     (1970, 1, 1),

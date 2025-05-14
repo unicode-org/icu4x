@@ -16,7 +16,7 @@
 icu_benchmark_macros::instrument!();
 use icu_benchmark_macros::println;
 
-use icu_collections::codepointinvlist::{CodePointInversionList, CodePointInversionListBuilder};
+use icu::collections::codepointinvlist::{CodePointInversionList, CodePointInversionListBuilder};
 use std::ops::RangeInclusive;
 
 #[derive(Copy, Clone, Debug)]

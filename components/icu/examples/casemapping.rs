@@ -7,7 +7,7 @@ icu_benchmark_macros::instrument!();
 use icu_benchmark_macros::println;
 
 use icu::casemap::CaseMapper;
-use icu_locale_core::langid;
+use icu::locale::langid;
 
 fn main() {
     let cm = CaseMapper::new();
