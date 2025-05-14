@@ -1066,6 +1066,7 @@ version = "2.0.0"
 dependencies = [
  "chrono",
  "chrono-tz",
+ "icu_benchmark_macros",
  "icu_calendar",
  "icu_casemap",
  "icu_collator",
@@ -1147,7 +1148,6 @@ dependencies = [
  "databake",
  "displaydoc",
  "icu",
- "icu_benchmark_macros",
  "icu_calendar_data",
  "icu_locale",
  "icu_locale_core",
@@ -1210,7 +1210,6 @@ dependencies = [
  "databake",
  "displaydoc",
  "icu",
- "icu_benchmark_macros",
  "icu_casemap_data",
  "icu_collections",
  "icu_locale_core",
@@ -1277,7 +1276,6 @@ dependencies = [
  "displaydoc",
  "iai",
  "icu",
- "icu_benchmark_macros",
  "icu_properties",
  "postcard",
  "potential_utf",
@@ -1300,7 +1298,6 @@ dependencies = [
  "either",
  "fixed_decimal",
  "icu",
- "icu_benchmark_macros",
  "icu_calendar",
  "icu_datetime_data",
  "icu_decimal",
@@ -1336,7 +1333,6 @@ dependencies = [
  "fixed_decimal",
  "getrandom 0.3.2",
  "icu",
- "icu_benchmark_macros",
  "icu_decimal_data",
  "icu_locale",
  "icu_locale_core",
@@ -1427,7 +1423,6 @@ dependencies = [
  "databake",
  "displaydoc",
  "icu",
- "icu_benchmark_macros",
  "icu_list_data",
  "icu_locale",
  "icu_provider",
@@ -1473,7 +1468,6 @@ dependencies = [
  "displaydoc",
  "iai",
  "icu",
- "icu_benchmark_macros",
  "icu_provider",
  "litemap",
  "postcard",
@@ -1544,7 +1538,6 @@ dependencies = [
  "displaydoc",
  "fixed_decimal",
  "icu",
- "icu_benchmark_macros",
  "icu_locale",
  "icu_locale_core",
  "icu_normalizer_data",
@@ -1623,7 +1616,7 @@ dependencies = [
 
 [[package]]
 name = "icu_provider_baked"
-version = "2.0.0"
+version = "2.0.1"
 dependencies = [
  "crlify",
  "databake",
@@ -1686,7 +1679,6 @@ dependencies = [
  "criterion",
  "crlify",
  "displaydoc",
- "icu_benchmark_macros",
  "icu_locale_core",
  "icu_provider",
  "icu_provider_export",

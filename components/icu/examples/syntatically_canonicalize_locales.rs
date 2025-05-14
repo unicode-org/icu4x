@@ -11,7 +11,7 @@ use icu_benchmark_macros::println;
 
 use std::env;
 
-use icu_locale_core::Locale;
+use icu::locale::Locale;
 
 const DEFAULT_INPUT: &str = "sr-cyrL-rS, es-mx, und-arab-u-ca-Buddhist";
 

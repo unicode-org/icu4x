@@ -8,6 +8,8 @@ Several crates have had patch releases in the 2.0 stream:
   - Fix chinese day-of-year (unicode-org#6567)
 - `icu_properties`, `icu_properties_data`
   - Fix a visibility bug in compiled data (unicode-org#6580)
+- `icu_provider_baked`
+  - Fix an issue where a single-locale data generation would skip fallback (unicode-org#6582) 
 
 ## icu4x 2.0
 

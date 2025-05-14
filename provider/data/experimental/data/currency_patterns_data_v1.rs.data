@@ -8,6 +8,12 @@
 /// * 219B[^1] for the actual data (7 unique structs)
 ///
 /// [^1]: these numbers can be smaller in practice due to linker deduplication
+///
+/// This macro requires the following crates:
+/// * `alloc`
+/// * `icu`
+/// * `icu_provider`
+/// * `icu_provider/baked`
 #[doc(hidden)]
 #[macro_export]
 macro_rules! __impl_currency_patterns_data_v1 {

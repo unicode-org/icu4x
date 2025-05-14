@@ -9,8 +9,8 @@
 icu_benchmark_macros::instrument!();
 use icu_benchmark_macros::println;
 
-use icu_decimal::DecimalFormatter;
-use icu_locale_core::locale;
+use icu::decimal::DecimalFormatter;
+use icu::locale::locale;
 
 const LINES_REMOVED_ADDED: [(i64, i64); 5] = [
     (-50, 72),

@@ -35,7 +35,6 @@ icu_locale = { workspace = true, optional = true }
 
 [dev-dependencies]
 icu = { path = "../../components/icu", default-features = false }
-icu_benchmark_macros = { path = "../../tools/benchmark/macros" }
 icu_provider_adapters = { path = "../../provider/adapters" }
 rand = { workspace = true }
 rand_pcg = { workspace = true }
@@ -59,7 +58,3 @@ unexpected_cfgs = { level = "warn", check-cfg = ['cfg(icu4x_run_size_tests)'] }
 [[bench]]
 name = "fixed_decimal_format"
 harness = false
-
-[[example]]
-name = "code_line_diff"
-required-features = ["serde"]
