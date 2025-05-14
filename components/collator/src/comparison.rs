@@ -134,17 +134,6 @@ const TER_UPPER_FIRST_COMMON: [u8; 4] = [
 const QUAT_COMMON: [u8; 4] = [0x1c, 0x1c + 0x70, 0x1c + 0xe0, 0x71];
 const QUAT_SHIFTED_LIMIT_BYTE: u8 = QUAT_COMMON[WEIGHT_LOW] - 1; // 0x1b
 
-/// Comparison levels for filtering sort key output in `write_sort_key_up_to_quaternary`.
-#[derive(Debug, PartialEq, Eq)]
-pub enum Level {
-    Primary,
-    Secondary,
-    Case,
-    Tertiary,
-    Quaternary,
-    Identical,
-}
-
 struct AnyQuaternaryAccumulator(u32);
 
 impl AnyQuaternaryAccumulator {
@@ -1661,7 +1650,7 @@ impl CollatorBorrowed<'_> {
     where
         S: Write,
     {
-        self.write_sort_key_up_to_quaternary(s.chars(), sink, |_| true);
+        self.write_sort_key_up_to_quaternary(s.chars(), sink);
 
         if self.options.strength() == Strength::Identical {
             let nfd =
@@ -1674,11 +1663,12 @@ impl CollatorBorrowed<'_> {
 
     /// Write the sort key bytes up to the collator's strength.
     ///
-    pub fn write_sort_key_up_to_quaternary<I, S, W>(&self, iter: I, sink: &mut S, need_to_write: W)
+    /// Optionally write the case level.  Separate levels with the `LEVEL_SEPARATOR_BYTE`, but
+    /// do not write a terminating zero as with a C string.
+    pub fn write_sort_key_up_to_quaternary<I, S>(&self, iter: I, sink: &mut S)
     where
         I: Iterator<Item = char>,
         S: Write,
-        W: Fn(Level) -> bool,
     {
         // The following code started as a port from ICU4C which carried the
         // following notice:
@@ -2047,9 +2037,6 @@ impl CollatorBorrowed<'_> {
         macro_rules! write_level {
             ($key:ident, $level:expr, $flag:ident) => {
                 if levels & $flag != 0 {
-                    if !need_to_write($level) {
-                        return;
-                    }
                     sink.write(&[LEVEL_SEPARATOR_BYTE]);
                     sink.write($key.as_ref());
                 }
@@ -2059,9 +2046,6 @@ impl CollatorBorrowed<'_> {
         write_level!(secondaries, Level::Secondary, SECONDARY_LEVEL_FLAG);
 
         if levels & CASE_LEVEL_FLAG != 0 {
-            if !need_to_write(Level::Case) {
-                return;
-            }
             sink.write(&[LEVEL_SEPARATOR_BYTE]);
 
             // Write pairs of nibbles as bytes, except separator bytes as themselves.
