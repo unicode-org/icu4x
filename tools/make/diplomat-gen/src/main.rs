@@ -25,7 +25,7 @@ fn main() -> std::io::Result<()> {
             let include = if lang != "demo_gen" {
                 root.join("ffi/capi/bindings").join(&lang)
             } else {
-                root.join("tutorials/web-demo/gen")
+                root.join("tools/web-demo/gen")
             };
             std::fs::remove_dir_all(&include)?;
             std::fs::create_dir(&include)?;
