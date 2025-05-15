@@ -49,21 +49,21 @@ pub mod ffi {
 
     #[diplomat::opaque]
     #[diplomat::rust_link(icu::segmenter::iterators::LineBreakIterator, Struct)]
-    #[diplomat::attr(demo_gen, disable)]
+    #[diplomat::attr(demo_gen, disable)] // iterator type
     pub struct LineBreakIteratorUtf8<'a>(
         icu_segmenter::iterators::LineBreakIterator<'a, 'a, PotentiallyIllFormedUtf8>,
     );
 
     #[diplomat::opaque]
     #[diplomat::rust_link(icu::segmenter::iterators::LineBreakIterator, Struct)]
-    #[diplomat::attr(demo_gen, disable)]
+    #[diplomat::attr(demo_gen, disable)] // iterator type
     pub struct LineBreakIteratorUtf16<'a>(
         icu_segmenter::iterators::LineBreakIterator<'a, 'a, Utf16>,
     );
 
     #[diplomat::opaque]
     #[diplomat::rust_link(icu::segmenter::iterators::LineBreakIterator, Struct)]
-    #[diplomat::attr(demo_gen, disable)]
+    #[diplomat::attr(demo_gen, disable)] // iterator type
     pub struct LineBreakIteratorLatin1<'a>(
         icu_segmenter::iterators::LineBreakIterator<'a, 'a, Latin1>,
     );

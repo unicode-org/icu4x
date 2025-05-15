@@ -115,13 +115,13 @@ pub mod ffi {
             icu_properties::PropertyNamesShortBorrowed::<props::BidiClass>::new().get(self.into())
         }
         #[diplomat::rust_link(icu::properties::props::BidiClass::to_icu4c_value, FnInStruct)]
-        #[diplomat::attr(demo_gen, disable)]
+        #[diplomat::attr(demo_gen, disable)] // semi-internal, also too many of these
         /// Convert to an integer value usable with ICU4C and CodePointMapData
         pub fn to_integer_value(self) -> u8 {
             self as u8
         }
         #[diplomat::rust_link(icu::properties::props::BidiClass::from_icu4c_value, FnInStruct)]
-        #[diplomat::attr(demo_gen, disable)]
+        #[diplomat::attr(demo_gen, disable)] // semi-internal, also too many of these
         /// Convert from an integer value from ICU4C or CodePointMapData
         pub fn from_integer_value(other: u8) -> Option<Self> {
             Some(match other {
@@ -516,13 +516,13 @@ pub mod ffi {
             icu_properties::PropertyNamesShortBorrowed::<props::Script>::new().get(self.into())
         }
         #[diplomat::rust_link(icu::properties::props::Script::to_icu4c_value, FnInStruct)]
-        #[diplomat::attr(demo_gen, disable)]
+        #[diplomat::attr(demo_gen, disable)] // semi-internal, also too many of these
         /// Convert to an integer value usable with ICU4C and CodePointMapData
         pub fn to_integer_value(self) -> u16 {
             self as u16
         }
         #[diplomat::rust_link(icu::properties::props::Script::from_icu4c_value, FnInStruct)]
-        #[diplomat::attr(demo_gen, disable)]
+        #[diplomat::attr(demo_gen, disable)] // semi-internal, also too many of these
         /// Convert from an integer value from ICU4C or CodePointMapData
         pub fn from_integer_value(other: u16) -> Option<Self> {
             Some(match other {
@@ -740,7 +740,7 @@ pub mod ffi {
             icu::properties::props::HangulSyllableType::to_icu4c_value,
             FnInStruct
         )]
-        #[diplomat::attr(demo_gen, disable)]
+        #[diplomat::attr(demo_gen, disable)] // semi-internal, also too many of these
         /// Convert to an integer value usable with ICU4C and CodePointMapData
         pub fn to_integer_value(self) -> u8 {
             self as u8
@@ -749,7 +749,7 @@ pub mod ffi {
             icu::properties::props::HangulSyllableType::from_icu4c_value,
             FnInStruct
         )]
-        #[diplomat::attr(demo_gen, disable)]
+        #[diplomat::attr(demo_gen, disable)] // semi-internal, also too many of these
         /// Convert from an integer value from ICU4C or CodePointMapData
         pub fn from_integer_value(other: u8) -> Option<Self> {
             Some(match other {
@@ -806,13 +806,13 @@ pub mod ffi {
                 .get(self.into())
         }
         #[diplomat::rust_link(icu::properties::props::EastAsianWidth::to_icu4c_value, FnInStruct)]
-        #[diplomat::attr(demo_gen, disable)]
+        #[diplomat::attr(demo_gen, disable)] // semi-internal, also too many of these
         /// Convert to an integer value usable with ICU4C and CodePointMapData
         pub fn to_integer_value(self) -> u8 {
             self as u8
         }
         #[diplomat::rust_link(icu::properties::props::EastAsianWidth::from_icu4c_value, FnInStruct)]
-        #[diplomat::attr(demo_gen, disable)]
+        #[diplomat::attr(demo_gen, disable)] // semi-internal, also too many of these
         /// Convert from an integer value from ICU4C or CodePointMapData
         pub fn from_integer_value(other: u8) -> Option<Self> {
             Some(match other {
@@ -951,13 +951,13 @@ pub mod ffi {
             icu_properties::PropertyNamesShortBorrowed::<props::LineBreak>::new().get(self.into())
         }
         #[diplomat::rust_link(icu::properties::props::LineBreak::to_icu4c_value, FnInStruct)]
-        #[diplomat::attr(demo_gen, disable)]
+        #[diplomat::attr(demo_gen, disable)] // semi-internal, also too many of these
         /// Convert to an integer value usable with ICU4C and CodePointMapData
         pub fn to_integer_value(self) -> u8 {
             self as u8
         }
         #[diplomat::rust_link(icu::properties::props::LineBreak::from_icu4c_value, FnInStruct)]
-        #[diplomat::attr(demo_gen, disable)]
+        #[diplomat::attr(demo_gen, disable)] // semi-internal, also too many of these
         /// Convert from an integer value from ICU4C or CodePointMapData
         pub fn from_integer_value(other: u8) -> Option<Self> {
             Some(match other {
@@ -1067,7 +1067,7 @@ pub mod ffi {
             icu::properties::props::GraphemeClusterBreak::to_icu4c_value,
             FnInStruct
         )]
-        #[diplomat::attr(demo_gen, disable)]
+        #[diplomat::attr(demo_gen, disable)] // semi-internal, also too many of these
         /// Convert to an integer value usable with ICU4C and CodePointMapData
         pub fn to_integer_value(self) -> u8 {
             self as u8
@@ -1076,7 +1076,7 @@ pub mod ffi {
             icu::properties::props::GraphemeClusterBreak::from_icu4c_value,
             FnInStruct
         )]
-        #[diplomat::attr(demo_gen, disable)]
+        #[diplomat::attr(demo_gen, disable)] // semi-internal, also too many of these
         /// Convert from an integer value from ICU4C or CodePointMapData
         pub fn from_integer_value(other: u8) -> Option<Self> {
             Some(match other {
@@ -1177,13 +1177,13 @@ pub mod ffi {
             icu_properties::PropertyNamesShortBorrowed::<props::WordBreak>::new().get(self.into())
         }
         #[diplomat::rust_link(icu::properties::props::WordBreak::to_icu4c_value, FnInStruct)]
-        #[diplomat::attr(demo_gen, disable)]
+        #[diplomat::attr(demo_gen, disable)] // semi-internal, also too many of these
         /// Convert to an integer value usable with ICU4C and CodePointMapData
         pub fn to_integer_value(self) -> u8 {
             self as u8
         }
         #[diplomat::rust_link(icu::properties::props::WordBreak::from_icu4c_value, FnInStruct)]
-        #[diplomat::attr(demo_gen, disable)]
+        #[diplomat::attr(demo_gen, disable)] // semi-internal, also too many of these
         /// Convert from an integer value from ICU4C or CodePointMapData
         pub fn from_integer_value(other: u8) -> Option<Self> {
             Some(match other {
@@ -1275,13 +1275,13 @@ pub mod ffi {
                 .get(self.into())
         }
         #[diplomat::rust_link(icu::properties::props::SentenceBreak::to_icu4c_value, FnInStruct)]
-        #[diplomat::attr(demo_gen, disable)]
+        #[diplomat::attr(demo_gen, disable)] // semi-internal, also too many of these
         /// Convert to an integer value usable with ICU4C and CodePointMapData
         pub fn to_integer_value(self) -> u8 {
             self as u8
         }
         #[diplomat::rust_link(icu::properties::props::SentenceBreak::from_icu4c_value, FnInStruct)]
-        #[diplomat::attr(demo_gen, disable)]
+        #[diplomat::attr(demo_gen, disable)] // semi-internal, also too many of these
         /// Convert from an integer value from ICU4C or CodePointMapData
         pub fn from_integer_value(other: u8) -> Option<Self> {
             Some(match other {
@@ -1510,7 +1510,7 @@ pub mod ffi {
             icu::properties::props::CanonicalCombiningClass::to_icu4c_value,
             FnInStruct
         )]
-        #[diplomat::attr(demo_gen, disable)]
+        #[diplomat::attr(demo_gen, disable)] // semi-internal, also too many of these
         /// Convert to an integer value usable with ICU4C and CodePointMapData
         pub fn to_integer_value(self) -> u8 {
             self as u8
@@ -1519,7 +1519,7 @@ pub mod ffi {
             icu::properties::props::CanonicalCombiningClass::from_icu4c_value,
             FnInStruct
         )]
-        #[diplomat::attr(demo_gen, disable)]
+        #[diplomat::attr(demo_gen, disable)] // semi-internal, also too many of these
         /// Convert from an integer value from ICU4C or CodePointMapData
         pub fn from_integer_value(other: u8) -> Option<Self> {
             Some(match other {
@@ -1764,7 +1764,7 @@ pub mod ffi {
             icu::properties::props::IndicSyllabicCategory::to_icu4c_value,
             FnInStruct
         )]
-        #[diplomat::attr(demo_gen, disable)]
+        #[diplomat::attr(demo_gen, disable)] // semi-internal, also too many of these
         /// Convert to an integer value usable with ICU4C and CodePointMapData
         pub fn to_integer_value(self) -> u8 {
             self as u8
@@ -1773,7 +1773,7 @@ pub mod ffi {
             icu::properties::props::IndicSyllabicCategory::from_icu4c_value,
             FnInStruct
         )]
-        #[diplomat::attr(demo_gen, disable)]
+        #[diplomat::attr(demo_gen, disable)] // semi-internal, also too many of these
         /// Convert from an integer value from ICU4C or CodePointMapData
         pub fn from_integer_value(other: u8) -> Option<Self> {
             Some(match other {
@@ -1859,13 +1859,13 @@ pub mod ffi {
             icu_properties::PropertyNamesShortBorrowed::<props::JoiningType>::new().get(self.into())
         }
         #[diplomat::rust_link(icu::properties::props::JoiningType::to_icu4c_value, FnInStruct)]
-        #[diplomat::attr(demo_gen, disable)]
+        #[diplomat::attr(demo_gen, disable)] // semi-internal, also too many of these
         /// Convert to an integer value usable with ICU4C and CodePointMapData
         pub fn to_integer_value(self) -> u8 {
             self as u8
         }
         #[diplomat::rust_link(icu::properties::props::JoiningType::from_icu4c_value, FnInStruct)]
-        #[diplomat::attr(demo_gen, disable)]
+        #[diplomat::attr(demo_gen, disable)] // semi-internal, also too many of these
         /// Convert from an integer value from ICU4C or CodePointMapData
         pub fn from_integer_value(other: u8) -> Option<Self> {
             Some(match other {
@@ -2018,7 +2018,7 @@ pub mod ffi {
             icu_properties::PropertyNamesShortBorrowed::<props::GeneralCategory>::new()
                 .get(self.into())
         }
-        #[diplomat::attr(demo_gen, disable)]
+        #[diplomat::attr(demo_gen, disable)] // semi-internal, also too many of these
         /// Convert to an integer value usable with ICU4C and CodePointMapData
         pub fn to_integer_value(self) -> u8 {
             self as u8
@@ -2038,7 +2038,7 @@ pub mod ffi {
             Struct,
             hidden
         )]
-        #[diplomat::attr(demo_gen, disable)]
+        #[diplomat::attr(demo_gen, disable)] // semi-internal, also too many of these
         /// Convert from an integer value from ICU4C or CodePointMapData
         pub fn from_integer_value(other: u8) -> Option<Self> {
             Some(match other {
@@ -2229,7 +2229,7 @@ pub mod ffi {
             icu::properties::props::VerticalOrientation::to_icu4c_value,
             FnInStruct
         )]
-        #[diplomat::attr(demo_gen, disable)]
+        #[diplomat::attr(demo_gen, disable)] // semi-internal, also too many of these
         /// Convert to an integer value usable with ICU4C and CodePointMapData
         pub fn to_integer_value(self) -> u8 {
             self as u8
@@ -2238,7 +2238,7 @@ pub mod ffi {
             icu::properties::props::VerticalOrientation::from_icu4c_value,
             FnInStruct
         )]
-        #[diplomat::attr(demo_gen, disable)]
+        #[diplomat::attr(demo_gen, disable)] // semi-internal, also too many of these
         /// Convert from an integer value from ICU4C or CodePointMapData
         pub fn from_integer_value(other: u8) -> Option<Self> {
             Some(match other {

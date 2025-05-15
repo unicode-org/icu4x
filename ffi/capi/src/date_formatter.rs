@@ -746,7 +746,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::datetime::DateTimeFormatter::format_same_calendar, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::FormattedDateTime, Struct, hidden)]
         #[diplomat::rust_link(icu::datetime::FormattedDateTime::to_string, FnInStruct, hidden)]
-        #[diplomat::attr(demo_gen, disable)] // confusing
+        #[diplomat::attr(demo_gen, disable)] // confusing, as Date is constructed from ISO
         pub fn format_same_calendar(
             &self,
             date: &Date,

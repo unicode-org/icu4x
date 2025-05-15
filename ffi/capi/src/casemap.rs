@@ -115,7 +115,7 @@ pub mod ffi {
             hidden
         )]
         #[cfg(feature = "compiled_data")]
-        #[diplomat::attr(demo_gen, disable)]
+        #[diplomat::attr(demo_gen, disable)] // available through Self::create()
         pub fn lowercase_with_compiled_data(s: &str, locale: &Locale, write: &mut DiplomatWrite) {
             let _infallible = icu_casemap::CaseMapper::new()
                 .lowercase(s, &locale.0.id)
@@ -130,7 +130,7 @@ pub mod ffi {
             hidden
         )]
         #[cfg(feature = "compiled_data")]
-        #[diplomat::attr(demo_gen, disable)]
+        #[diplomat::attr(demo_gen, disable)] // available through Self::create()
         pub fn uppercase_with_compiled_data(s: &str, locale: &Locale, write: &mut DiplomatWrite) {
             let _infallible = icu_casemap::CaseMapper::new()
                 .uppercase(s, &locale.0.id)
@@ -395,7 +395,7 @@ pub mod ffi {
         )]
         #[diplomat::attr(supports = non_exhaustive_structs, rename = "titlecase_segment_with_compiled_data")]
         #[cfg(feature = "compiled_data")]
-        #[diplomat::attr(demo_gen, disable)]
+        #[diplomat::attr(demo_gen, disable)] // available through Self::create()
         pub fn titlecase_segment_with_compiled_data_v1(
             s: &str,
             locale: &Locale,

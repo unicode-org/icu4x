@@ -41,7 +41,7 @@ pub mod ffi {
     #[diplomat::rust_link(icu::properties::CodePointSetData::new, FnInStruct, hidden)]
     #[diplomat::rust_link(icu::properties::CodePointSetDataBorrowed::new, FnInStruct, hidden)]
     #[diplomat::rust_link(icu::properties::CodePointSetDataBorrowed, Struct)]
-    #[diplomat::attr(demo_gen, disable)]
+    #[diplomat::attr(demo_gen, disable)] // TODO needs custom page
     pub struct CodePointSetData(pub icu_properties::CodePointSetData);
 
     impl CodePointSetData {

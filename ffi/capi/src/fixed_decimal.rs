@@ -354,7 +354,7 @@ pub mod ffi {
         #[diplomat::rust_link(fixed_decimal::Decimal::write_to, FnInTypedef)]
         #[diplomat::rust_link(fixed_decimal::Decimal::to_string, FnInTypedef, hidden)]
         #[diplomat::attr(auto, stringifier)]
-        #[diplomat::attr(demo_gen, disable)] // trivial
+        #[diplomat::attr(demo_gen, disable)] // this just returns the single constructor argument
         pub fn to_string(&self, to: &mut diplomat_runtime::DiplomatWrite) {
             let _ = self.0.write_to(to);
         }
