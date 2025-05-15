@@ -7,6 +7,7 @@ use std::collections::{BTreeMap, HashSet};
 use crate::cldr_serde;
 use crate::cldr_serde::units::info::ConvertUnit;
 use crate::SourceDataProvider;
+use icu::experimental::measure::provider::ids::RESERVED_UNIT_IDS;
 use icu::experimental::measure::provider::trie::{UnitsTrie, UnitsTrieV1};
 use icu_provider::prelude::*;
 use zerotrie::ZeroTrieSimpleAscii;
@@ -30,7 +31,22 @@ impl DataProvider<UnitsTrieV1> for SourceDataProvider {
         // Pre-process the conversion information to convert the factor and offset to scientific notation.
         // This used to get the id for each unit which is used to get the conversion information from the `UnitsInfo`.
         let mut convert_units_vec = Vec::<&ConvertUnit>::new();
+
+        // First add the reserved unit ids to the trie with their corresponding index in the `convert_units_vec`.
+        for cldr_id in RESERVED_UNIT_IDS {
+            let convert_unit_index = convert_units_vec.len();
+            let convert_unit = convert_units.get(*cldr_id).ok_or_else(|| {
+                DataError::custom("Could not get convert unit from units.json data, the convert unit id in the reserved unit ids must be found in the convert units")
+            })?;
+            convert_units_vec.push(convert_unit);
+            trie_map.insert(cldr_id.as_bytes().to_vec(), convert_unit_index);
+        }
+
+        // Then add the rest of the units to the trie with their corresponding index in the `convert_units_vec`.
         for (unit_name, convert_unit) in convert_units {
+            if RESERVED_UNIT_IDS.contains(&unit_name.as_str()) {
+                continue;
+            }
             let convert_unit_index = convert_units_vec.len();
             convert_units_vec.push(convert_unit);
             trie_map.insert(unit_name.as_bytes().to_vec(), convert_unit_index);
