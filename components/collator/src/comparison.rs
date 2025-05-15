@@ -1701,7 +1701,7 @@ impl CollatorBorrowed<'_> {
     ///
     /// Optionally write the case level.  Separate levels with the `LEVEL_SEPARATOR_BYTE`, but
     /// do not write a terminating zero as with a C string.
-    pub fn write_sort_key_up_to_quaternary<I, S>(&self, iter: I, sink: &mut S)
+    fn write_sort_key_up_to_quaternary<I, S>(&self, iter: I, sink: &mut S)
     where
         I: Iterator<Item = char>,
         S: Write,
