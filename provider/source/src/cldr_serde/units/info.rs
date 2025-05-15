@@ -84,11 +84,16 @@ pub(crate) struct Resource {
 
 impl Resource {
     pub fn get_unit_id(&self, unit_name: &str) -> Result<u16, DataError> {
-        self.get_unit_ids_map()
-            .get(unit_name)
+        self.supplemental
+            .convert_units
+            .convert_units
+            .iter()
+            .enumerate()
+            .find(|(_, (name, _))| name.as_str() == unit_name)
+            .map(|(index, _)| index)
             .ok_or_else(|| DataError::custom("Unit not found"))
-            .and_then(|&id| {
-                u16::try_from(id).map_err(|_| DataError::custom("Index out of range for u16"))
+            .and_then(|index| {
+                u16::try_from(index).map_err(|_| DataError::custom("Index out of range for u16"))
             })
     }
 
