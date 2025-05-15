@@ -149,5 +149,5 @@ export class DateTimeFormatterGregorian {
     /**
      * See the [Rust documentation for `format`](https://docs.rs/icu/latest/icu/datetime/struct.FixedCalendarDateTimeFormatter.html#method.format) for more information.
      */
-    formatIso(date: IsoDate, time: Time): string;
+    formatIso(isoDate: IsoDate, time: Time): string;
 }

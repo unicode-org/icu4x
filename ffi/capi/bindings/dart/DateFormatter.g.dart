@@ -324,9 +324,9 @@ final class DateFormatter implements ffi.Finalizable {
   }
 
   /// See the [Rust documentation for `format`](https://docs.rs/icu/latest/icu/datetime/struct.DateTimeFormatter.html#method.format) for more information.
-  String formatIso(IsoDate date) {
+  String formatIso(IsoDate isoDate) {
     final write = _Write();
-    _icu4x_DateFormatter_format_iso_mv1(_ffi, date._ffi, write._ffi);
+    _icu4x_DateFormatter_format_iso_mv1(_ffi, isoDate._ffi, write._ffi);
     return write.finalize();
   }
 
@@ -452,7 +452,7 @@ external _ResultOpaqueInt32 _icu4x_DateFormatter_create_y_with_provider_mv1(ffi.
 @_DiplomatFfiUse('icu4x_DateFormatter_format_iso_mv1')
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_DateFormatter_format_iso_mv1')
 // ignore: non_constant_identifier_names
-external void _icu4x_DateFormatter_format_iso_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> date, ffi.Pointer<ffi.Opaque> write);
+external void _icu4x_DateFormatter_format_iso_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> isoDate, ffi.Pointer<ffi.Opaque> write);
 
 @_DiplomatFfiUse('icu4x_DateFormatter_format_same_calendar_mv1')
 @ffi.Native<_ResultVoidDateTimeMismatchedCalendarErrorFfi Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_DateFormatter_format_same_calendar_mv1')

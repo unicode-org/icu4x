@@ -155,34 +155,9 @@ export class DecomposingNormalizer {
      * Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
      * to the WHATWG Encoding Standard.
      *
-     * See the [Rust documentation for `is_normalized_utf8`](https://docs.rs/icu/latest/icu/normalizer/struct.DecomposingNormalizerBorrowed.html#method.is_normalized_utf8) for more information.
-     */
-    isNormalized(s) {
-        let functionCleanupArena = new diplomatRuntime.CleanupArena();
-
-        const sSlice = diplomatRuntime.DiplomatBuf.str8(wasm, s);
-
-        const result = wasm.icu4x_DecomposingNormalizer_is_normalized_mv1(this.ffiValue, ...sSlice.splat());
-
-        try {
-            return result;
-        }
-
-        finally {
-            functionCleanupArena.free();
-
-        }
-    }
-
-    /**
-     * Check if a string is normalized
-     *
-     * Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
-     * to the WHATWG Encoding Standard.
-     *
      * See the [Rust documentation for `is_normalized_utf16`](https://docs.rs/icu/latest/icu/normalizer/struct.DecomposingNormalizerBorrowed.html#method.is_normalized_utf16) for more information.
      */
-    isNormalizedUtf16(s) {
+    isNormalized(s) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
 
         const sSlice = diplomatRuntime.DiplomatBuf.str16(wasm, s);
@@ -200,35 +175,11 @@ export class DecomposingNormalizer {
     }
 
     /**
-     * Return the index a slice of potentially-invalid UTF-8 is normalized up to
-     *
-     * See the [Rust documentation for `split_normalized_utf8`](https://docs.rs/icu/latest/icu/normalizer/struct.DecomposingNormalizerBorrowed.html#method.split_normalized_utf8) for more information.
-     *
-     * See the [Rust documentation for `split_normalized`](https://docs.rs/icu/latest/icu/normalizer/struct.DecomposingNormalizerBorrowed.html#method.split_normalized) for more information.
-     */
-    isNormalizedUpTo(s) {
-        let functionCleanupArena = new diplomatRuntime.CleanupArena();
-
-        const sSlice = diplomatRuntime.DiplomatBuf.str8(wasm, s);
-
-        const result = wasm.icu4x_DecomposingNormalizer_is_normalized_up_to_mv1(this.ffiValue, ...sSlice.splat());
-
-        try {
-            return result;
-        }
-
-        finally {
-            functionCleanupArena.free();
-
-        }
-    }
-
-    /**
      * Return the index a slice of potentially-invalid UTF-16 is normalized up to
      *
      * See the [Rust documentation for `split_normalized_utf16`](https://docs.rs/icu/latest/icu/normalizer/struct.DecomposingNormalizerBorrowed.html#method.split_normalized_utf16) for more information.
      */
-    isNormalizedUtf16UpTo(s) {
+    isNormalizedUpTo(s) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
 
         const sSlice = diplomatRuntime.DiplomatBuf.str16(wasm, s);

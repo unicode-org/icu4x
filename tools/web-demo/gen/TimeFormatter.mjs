@@ -1,15 +1,15 @@
 import { Locale } from "icu4x"
 import { Time } from "icu4x"
 import { TimeFormatter } from "icu4x"
-export function format(timeFormatterLocaleName, timeFormatterLength, timeFormatterTimePrecision, timeFormatterAlignment, timeHour, timeMinute, timeSecond, timeSubsecond) {
+export function format(selfLocaleName, selfLength, selfTimePrecision, selfAlignment, timeHour, timeMinute, timeSecond, timeSubsecond) {
     
-    let timeFormatterLocale = Locale.fromString(timeFormatterLocaleName);
+    let selfLocale = Locale.fromString(selfLocaleName);
     
-    let timeFormatter = new TimeFormatter(timeFormatterLocale,timeFormatterLength,timeFormatterTimePrecision,timeFormatterAlignment);
+    let self = new TimeFormatter(selfLocale,selfLength,selfTimePrecision,selfAlignment);
     
     let time = new Time(timeHour,timeMinute,timeSecond,timeSubsecond);
     
-    let out = timeFormatter.format(time);
+    let out = self.format(time);
     
 
     return out;

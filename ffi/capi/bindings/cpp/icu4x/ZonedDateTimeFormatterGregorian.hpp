@@ -75,7 +75,7 @@ namespace capi {
     icu4x_ZonedDateTimeFormatterGregorian_create_exemplar_city_with_provider_mv1_result icu4x_ZonedDateTimeFormatterGregorian_create_exemplar_city_with_provider_mv1(const icu4x::capi::DataProvider* provider, const icu4x::capi::Locale* locale, const icu4x::capi::DateTimeFormatterGregorian* formatter);
 
     typedef struct icu4x_ZonedDateTimeFormatterGregorian_format_iso_mv1_result {union { icu4x::capi::DateTimeWriteError err;}; bool is_ok;} icu4x_ZonedDateTimeFormatterGregorian_format_iso_mv1_result;
-    icu4x_ZonedDateTimeFormatterGregorian_format_iso_mv1_result icu4x_ZonedDateTimeFormatterGregorian_format_iso_mv1(const icu4x::capi::ZonedDateTimeFormatterGregorian* self, const icu4x::capi::IsoDate* date, const icu4x::capi::Time* time, const icu4x::capi::TimeZoneInfo* zone, diplomat::capi::DiplomatWrite* write);
+    icu4x_ZonedDateTimeFormatterGregorian_format_iso_mv1_result icu4x_ZonedDateTimeFormatterGregorian_format_iso_mv1(const icu4x::capi::ZonedDateTimeFormatterGregorian* self, const icu4x::capi::IsoDate* iso_date, const icu4x::capi::Time* time, const icu4x::capi::TimeZoneInfo* zone, diplomat::capi::DiplomatWrite* write);
 
     void icu4x_ZonedDateTimeFormatterGregorian_destroy_mv1(ZonedDateTimeFormatterGregorian* self);
 
@@ -187,11 +187,11 @@ inline diplomat::result<std::unique_ptr<icu4x::ZonedDateTimeFormatterGregorian>,
   return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::ZonedDateTimeFormatterGregorian>, icu4x::DateTimeFormatterLoadError>(diplomat::Ok<std::unique_ptr<icu4x::ZonedDateTimeFormatterGregorian>>(std::unique_ptr<icu4x::ZonedDateTimeFormatterGregorian>(icu4x::ZonedDateTimeFormatterGregorian::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::ZonedDateTimeFormatterGregorian>, icu4x::DateTimeFormatterLoadError>(diplomat::Err<icu4x::DateTimeFormatterLoadError>(icu4x::DateTimeFormatterLoadError::FromFFI(result.err)));
 }
 
-inline diplomat::result<std::string, icu4x::DateTimeWriteError> icu4x::ZonedDateTimeFormatterGregorian::format_iso(const icu4x::IsoDate& date, const icu4x::Time& time, const icu4x::TimeZoneInfo& zone) const {
+inline diplomat::result<std::string, icu4x::DateTimeWriteError> icu4x::ZonedDateTimeFormatterGregorian::format_iso(const icu4x::IsoDate& iso_date, const icu4x::Time& time, const icu4x::TimeZoneInfo& zone) const {
   std::string output;
   diplomat::capi::DiplomatWrite write = diplomat::WriteFromString(output);
   auto result = icu4x::capi::icu4x_ZonedDateTimeFormatterGregorian_format_iso_mv1(this->AsFFI(),
-    date.AsFFI(),
+    iso_date.AsFFI(),
     time.AsFFI(),
     zone.AsFFI(),
     &write);

@@ -284,6 +284,8 @@ pub mod ffi {
             FnInStruct,
             hidden
         )]
+        #[diplomat::attr(not(supports = utf8_strings), disable)]
+        #[diplomat::attr(*, rename = "is_normalized")]
         pub fn is_normalized(&self, s: &DiplomatStr) -> bool {
             self.0.as_borrowed().is_normalized_utf8(s)
         }
@@ -296,6 +298,8 @@ pub mod ffi {
             icu::normalizer::DecomposingNormalizerBorrowed::is_normalized_utf16,
             FnInStruct
         )]
+        #[diplomat::attr(not(supports = utf8_strings), rename = "is_normalized")]
+        #[diplomat::attr(supports = utf8_strings, rename = "is_normalized16")]
         pub fn is_normalized_utf16(&self, s: &DiplomatStr16) -> bool {
             self.0.as_borrowed().is_normalized_utf16(s)
         }
@@ -309,6 +313,8 @@ pub mod ffi {
             icu::normalizer::DecomposingNormalizerBorrowed::split_normalized,
             FnInStruct
         )]
+        #[diplomat::attr(not(supports = utf8_strings), disable)]
+        #[diplomat::attr(*, rename = "is_normalized_up_to")]
         pub fn is_normalized_up_to(&self, s: &DiplomatStr) -> usize {
             self.0.as_borrowed().split_normalized_utf8(s).0.len()
         }
@@ -318,6 +324,8 @@ pub mod ffi {
             icu::normalizer::DecomposingNormalizerBorrowed::split_normalized_utf16,
             FnInStruct
         )]
+        #[diplomat::attr(not(supports = utf8_strings), rename = "is_normalized_up_to")]
+        #[diplomat::attr(supports = utf8_strings, rename = "is_normalized16_up_to")]
         pub fn is_normalized_utf16_up_to(&self, s: &DiplomatStr16) -> usize {
             self.0.as_borrowed().split_normalized_utf16(s).0.len()
         }

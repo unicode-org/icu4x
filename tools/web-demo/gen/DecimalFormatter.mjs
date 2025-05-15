@@ -1,15 +1,15 @@
 import { Decimal } from "icu4x"
 import { DecimalFormatter } from "icu4x"
 import { Locale } from "icu4x"
-export function format(decimalFormatterLocaleName, decimalFormatterGroupingStrategy, valueF) {
+export function format(selfLocaleName, selfGroupingStrategy, valueF) {
     
-    let decimalFormatterLocale = Locale.fromString(decimalFormatterLocaleName);
+    let selfLocale = Locale.fromString(selfLocaleName);
     
-    let decimalFormatter = DecimalFormatter.createWithGroupingStrategy(decimalFormatterLocale,decimalFormatterGroupingStrategy);
+    let self = DecimalFormatter.createWithGroupingStrategy(selfLocale,selfGroupingStrategy);
     
     let value = Decimal.fromNumberWithRoundTripPrecision(valueF);
     
-    let out = decimalFormatter.format(value);
+    let out = self.format(value);
     
 
     return out;

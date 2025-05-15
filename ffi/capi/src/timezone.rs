@@ -114,6 +114,7 @@ pub mod ffi {
         }
 
         #[diplomat::rust_link(icu::time::TimeZoneInfo::id, FnInStruct)]
+        #[diplomat::attr(demo_gen, disable)] // this just returns a constructor argument
         pub fn id(&self) -> Box<TimeZone> {
             Box::new(TimeZone(self.id))
         }
@@ -199,6 +200,7 @@ pub mod ffi {
         }
 
         #[diplomat::rust_link(icu::time::TimeZoneInfo::variant, FnInStruct)]
+        #[diplomat::attr(demo_gen, disable)] // this just returns a constructor argument
         pub fn variant(&self) -> Option<TimeZoneVariant> {
             self.variant.map(Into::into)
         }

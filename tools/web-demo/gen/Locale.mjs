@@ -1,45 +1,45 @@
 import { Locale } from "icu4x"
-export function basename(localeName) {
+export function basename(selfName) {
     
-    let locale = Locale.fromString(localeName);
+    let self = Locale.fromString(selfName);
     
-    let out = locale.basename;
-    
-
-    return out;
-}
-export function getUnicodeExtension(localeName, s) {
-    
-    let locale = Locale.fromString(localeName);
-    
-    let out = locale.getUnicodeExtension(s);
+    let out = self.basename;
     
 
     return out;
 }
-export function language(localeName) {
+export function getUnicodeExtension(selfName, s) {
     
-    let locale = Locale.fromString(localeName);
+    let self = Locale.fromString(selfName);
     
-    let out = locale.language;
-    
-
-    return out;
-}
-export function region(localeName) {
-    
-    let locale = Locale.fromString(localeName);
-    
-    let out = locale.region;
+    let out = self.getUnicodeExtension(s);
     
 
     return out;
 }
-export function script(localeName) {
+export function language(selfName) {
     
-    let locale = Locale.fromString(localeName);
+    let self = Locale.fromString(selfName);
     
-    let out = locale.script;
+    let out = self.language;
+    
+
+    return out;
+}
+export function region(selfName) {
+    
+    let self = Locale.fromString(selfName);
+    
+    let out = self.region;
+    
+
+    return out;
+}
+export function script(selfName) {
+    
+    let self = Locale.fromString(selfName);
+    
+    let out = self.script;
     
 
     return out;
@@ -51,11 +51,46 @@ export function normalize(s) {
 
     return out;
 }
-export function toString(localeName) {
+export function toString(selfName) {
     
-    let locale = Locale.fromString(localeName);
+    let self = Locale.fromString(selfName);
     
-    let out = locale.toString();
+    let out = self.toString();
+    
+
+    return out;
+}
+export function normalizingEq(selfName, other) {
+    
+    let self = Locale.fromString(selfName);
+    
+    let out = self.normalizingEq(other);
+    
+    out = out ? 'true' : 'false';;
+    
+
+    return out;
+}
+export function compareToString(selfName, other) {
+    
+    let self = Locale.fromString(selfName);
+    
+    let out = self.compareToString(other);
+    
+    out = out == 0 ? '==' : out == 1 ? '>' : '<';;
+    
+
+    return out;
+}
+export function compareTo(selfName, otherName) {
+    
+    let self = Locale.fromString(selfName);
+    
+    let other = Locale.fromString(otherName);
+    
+    let out = self.compareTo(other);
+    
+    out = out == 0 ? '==' : out == 1 ? '>' : '<';;
     
 
     return out;

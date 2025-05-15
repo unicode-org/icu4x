@@ -2,17 +2,17 @@ import { DateTimeFormatterGregorian } from "icu4x"
 import { IsoDate } from "icu4x"
 import { Locale } from "icu4x"
 import { Time } from "icu4x"
-export function formatIso(dateTimeFormatterGregorianLocaleName, dateTimeFormatterGregorianLength, dateTimeFormatterGregorianTimePrecision, dateTimeFormatterGregorianAlignment, dateTimeFormatterGregorianYearStyle, dateYear, dateMonth, dateDay, timeHour, timeMinute, timeSecond, timeSubsecond) {
+export function formatIso(selfLocaleName, selfLength, selfTimePrecision, selfAlignment, selfYearStyle, isoDateYear, isoDateMonth, isoDateDay, timeHour, timeMinute, timeSecond, timeSubsecond) {
     
-    let dateTimeFormatterGregorianLocale = Locale.fromString(dateTimeFormatterGregorianLocaleName);
+    let selfLocale = Locale.fromString(selfLocaleName);
     
-    let dateTimeFormatterGregorian = DateTimeFormatterGregorian.createYmdt(dateTimeFormatterGregorianLocale,dateTimeFormatterGregorianLength,dateTimeFormatterGregorianTimePrecision,dateTimeFormatterGregorianAlignment,dateTimeFormatterGregorianYearStyle);
+    let self = DateTimeFormatterGregorian.createYmdt(selfLocale,selfLength,selfTimePrecision,selfAlignment,selfYearStyle);
     
-    let date = new IsoDate(dateYear,dateMonth,dateDay);
+    let isoDate = new IsoDate(isoDateYear,isoDateMonth,isoDateDay);
     
     let time = new Time(timeHour,timeMinute,timeSecond,timeSubsecond);
     
-    let out = dateTimeFormatterGregorian.formatIso(date,time);
+    let out = self.formatIso(isoDate,time);
     
 
     return out;

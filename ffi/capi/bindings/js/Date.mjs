@@ -51,11 +51,11 @@ export class Date {
      *
      * See the [Rust documentation for `new_from_iso`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.new_from_iso) for more information.
      */
-    static fromIsoInCalendar(year, month, day, calendar) {
+    static fromIsoInCalendar(isoYear, isoMonth, isoDay, calendar) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_Date_from_iso_in_calendar_mv1(diplomatReceive.buffer, year, month, day, calendar.ffiValue);
+        const result = wasm.icu4x_Date_from_iso_in_calendar_mv1(diplomatReceive.buffer, isoYear, isoMonth, isoDay, calendar.ffiValue);
 
         try {
             if (!diplomatReceive.resultFlag) {

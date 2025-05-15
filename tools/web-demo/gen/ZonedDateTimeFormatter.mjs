@@ -6,17 +6,17 @@ import { TimeZone } from "icu4x"
 import { TimeZoneInfo } from "icu4x"
 import { UtcOffset } from "icu4x"
 import { ZonedDateTimeFormatter } from "icu4x"
-export function formatIso(zonedDateTimeFormatterLocaleName, zonedDateTimeFormatterFormatterLocaleName, zonedDateTimeFormatterFormatterLength, zonedDateTimeFormatterFormatterTimePrecision, zonedDateTimeFormatterFormatterAlignment, zonedDateTimeFormatterFormatterYearStyle, dateYear, dateMonth, dateDay, timeHour, timeMinute, timeSecond, timeSubsecond, zoneIdId, zoneOffsetOffset, zoneVariant) {
+export function formatIso(selfLocaleName, selfFormatterLocaleName, selfFormatterLength, selfFormatterTimePrecision, selfFormatterAlignment, selfFormatterYearStyle, isoDateYear, isoDateMonth, isoDateDay, timeHour, timeMinute, timeSecond, timeSubsecond, zoneIdId, zoneOffsetOffset, zoneVariant) {
     
-    let zonedDateTimeFormatterLocale = Locale.fromString(zonedDateTimeFormatterLocaleName);
+    let selfLocale = Locale.fromString(selfLocaleName);
     
-    let zonedDateTimeFormatterFormatterLocale = Locale.fromString(zonedDateTimeFormatterFormatterLocaleName);
+    let selfFormatterLocale = Locale.fromString(selfFormatterLocaleName);
     
-    let zonedDateTimeFormatterFormatter = DateTimeFormatter.createYmdt(zonedDateTimeFormatterFormatterLocale,zonedDateTimeFormatterFormatterLength,zonedDateTimeFormatterFormatterTimePrecision,zonedDateTimeFormatterFormatterAlignment,zonedDateTimeFormatterFormatterYearStyle);
+    let selfFormatter = DateTimeFormatter.createYmdt(selfFormatterLocale,selfFormatterLength,selfFormatterTimePrecision,selfFormatterAlignment,selfFormatterYearStyle);
     
-    let zonedDateTimeFormatter = ZonedDateTimeFormatter.createGenericShort(zonedDateTimeFormatterLocale,zonedDateTimeFormatterFormatter);
+    let self = ZonedDateTimeFormatter.createGenericShort(selfLocale,selfFormatter);
     
-    let date = new IsoDate(dateYear,dateMonth,dateDay);
+    let isoDate = new IsoDate(isoDateYear,isoDateMonth,isoDateDay);
     
     let time = new Time(timeHour,timeMinute,timeSecond,timeSubsecond);
     
@@ -26,7 +26,7 @@ export function formatIso(zonedDateTimeFormatterLocaleName, zonedDateTimeFormatt
     
     let zone = new TimeZoneInfo(zoneId,zoneOffset,zoneVariant);
     
-    let out = zonedDateTimeFormatter.formatIso(date,time,zone);
+    let out = self.formatIso(isoDate,time,zone);
     
 
     return out;

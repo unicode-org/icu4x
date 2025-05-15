@@ -1,15 +1,15 @@
 import { DateFormatterGregorian } from "icu4x"
 import { IsoDate } from "icu4x"
 import { Locale } from "icu4x"
-export function formatIso(dateFormatterGregorianLocaleName, dateFormatterGregorianLength, dateFormatterGregorianAlignment, dateFormatterGregorianYearStyle, dateYear, dateMonth, dateDay) {
+export function formatIso(selfLocaleName, selfLength, selfAlignment, selfYearStyle, isoDateYear, isoDateMonth, isoDateDay) {
     
-    let dateFormatterGregorianLocale = Locale.fromString(dateFormatterGregorianLocaleName);
+    let selfLocale = Locale.fromString(selfLocaleName);
     
-    let dateFormatterGregorian = DateFormatterGregorian.createYmd(dateFormatterGregorianLocale,dateFormatterGregorianLength,dateFormatterGregorianAlignment,dateFormatterGregorianYearStyle);
+    let self = DateFormatterGregorian.createYmd(selfLocale,selfLength,selfAlignment,selfYearStyle);
     
-    let date = new IsoDate(dateYear,dateMonth,dateDay);
+    let isoDate = new IsoDate(isoDateYear,isoDateMonth,isoDateDay);
     
-    let out = dateFormatterGregorian.formatIso(date);
+    let out = self.formatIso(isoDate);
     
 
     return out;

@@ -6,4 +6,4 @@ import { TimeZone } from "icu4x"
 import { TimeZoneInfo } from "icu4x"
 import { UtcOffset } from "icu4x"
 import { ZonedDateTimeFormatter } from "icu4x"
-export function formatIso(zonedDateTimeFormatterLocaleName: string, zonedDateTimeFormatterFormatterLocaleName: string, zonedDateTimeFormatterFormatterLength: DateTimeLength, zonedDateTimeFormatterFormatterTimePrecision: TimePrecision, zonedDateTimeFormatterFormatterAlignment: DateTimeAlignment, zonedDateTimeFormatterFormatterYearStyle: YearStyle, dateYear: number, dateMonth: number, dateDay: number, timeHour: number, timeMinute: number, timeSecond: number, timeSubsecond: number, zoneIdId: string, zoneOffsetOffset: string, zoneVariant: TimeZoneVariant);
+export function formatIso(selfLocaleName: string, selfFormatterLocaleName: string, selfFormatterLength: DateTimeLength, selfFormatterTimePrecision: TimePrecision, selfFormatterAlignment: DateTimeAlignment, selfFormatterYearStyle: YearStyle, isoDateYear: number, isoDateMonth: number, isoDateDay: number, timeHour: number, timeMinute: number, timeSecond: number, timeSubsecond: number, zoneIdId: string, zoneOffsetOffset: string, zoneVariant: TimeZoneVariant);

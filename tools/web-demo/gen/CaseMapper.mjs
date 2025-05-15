@@ -3,47 +3,29 @@ import { Locale } from "icu4x"
 import { TitlecaseOptions } from "icu4x"
 export function lowercase(s, localeName) {
     
-    let caseMapper = new CaseMapper();
+    let self = new CaseMapper();
     
     let locale = Locale.fromString(localeName);
     
-    let out = caseMapper.lowercase(s,locale);
+    let out = self.lowercase(s,locale);
     
 
     return out;
 }
 export function uppercase(s, localeName) {
     
-    let caseMapper = new CaseMapper();
+    let self = new CaseMapper();
     
     let locale = Locale.fromString(localeName);
     
-    let out = caseMapper.uppercase(s,locale);
-    
-
-    return out;
-}
-export function lowercaseWithCompiledData(s, localeName) {
-    
-    let locale = Locale.fromString(localeName);
-    
-    let out = CaseMapper.lowercaseWithCompiledData(s,locale);
-    
-
-    return out;
-}
-export function uppercaseWithCompiledData(s, localeName) {
-    
-    let locale = Locale.fromString(localeName);
-    
-    let out = CaseMapper.uppercaseWithCompiledData(s,locale);
+    let out = self.uppercase(s,locale);
     
 
     return out;
 }
 export function titlecaseSegmentWithOnlyCaseData(s, localeName, optionsLeadingAdjustment, optionsTrailingCase) {
     
-    let caseMapper = new CaseMapper();
+    let self = new CaseMapper();
     
     let locale = Locale.fromString(localeName);
     
@@ -52,25 +34,80 @@ export function titlecaseSegmentWithOnlyCaseData(s, localeName, optionsLeadingAd
         trailingCase: optionsTrailingCase
     });
     
-    let out = caseMapper.titlecaseSegmentWithOnlyCaseData(s,locale,options);
+    let out = self.titlecaseSegmentWithOnlyCaseData(s,locale,options);
     
 
     return out;
 }
 export function fold(s) {
     
-    let caseMapper = new CaseMapper();
+    let self = new CaseMapper();
     
-    let out = caseMapper.fold(s);
+    let out = self.fold(s);
     
 
     return out;
 }
 export function foldTurkic(s) {
     
-    let caseMapper = new CaseMapper();
+    let self = new CaseMapper();
     
-    let out = caseMapper.foldTurkic(s);
+    let out = self.foldTurkic(s);
+    
+
+    return out;
+}
+export function simpleLowercase(ch) {
+    
+    let self = new CaseMapper();
+    
+    let out = self.simpleLowercase(ch);
+    
+    out = String.fromCharCode(out);;
+    
+
+    return out;
+}
+export function simpleUppercase(ch) {
+    
+    let self = new CaseMapper();
+    
+    let out = self.simpleUppercase(ch);
+    
+    out = String.fromCharCode(out);;
+    
+
+    return out;
+}
+export function simpleTitlecase(ch) {
+    
+    let self = new CaseMapper();
+    
+    let out = self.simpleTitlecase(ch);
+    
+    out = String.fromCharCode(out);;
+    
+
+    return out;
+}
+export function simpleFold(ch) {
+    
+    let self = new CaseMapper();
+    
+    let out = self.simpleFold(ch);
+    
+    out = String.fromCharCode(out);;
+    
+
+    return out;
+}
+export function simpleFoldTurkic(ch) {
+    
+    let self = new CaseMapper();
+    
+    let out = self.simpleFoldTurkic(ch);
+    
+    out = String.fromCharCode(out);;
     
 
     return out;

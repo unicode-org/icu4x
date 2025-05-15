@@ -207,7 +207,7 @@ public:
   /**
    * See the [Rust documentation for `format`](https://docs.rs/icu/latest/icu/datetime/struct.DateTimeFormatter.html#method.format) for more information.
    */
-  inline diplomat::result<std::string, icu4x::DateTimeWriteError> format_iso(const icu4x::IsoDate& date, const icu4x::Time& time, const icu4x::TimeZoneInfo& zone) const;
+  inline diplomat::result<std::string, icu4x::DateTimeWriteError> format_iso(const icu4x::IsoDate& iso_date, const icu4x::Time& time, const icu4x::TimeZoneInfo& zone) const;
 
   inline const icu4x::capi::ZonedDateTimeFormatter* AsFFI() const;
   inline icu4x::capi::ZonedDateTimeFormatter* AsFFI();

@@ -648,10 +648,10 @@ export class DateFormatterGregorian {
     /**
      * See the [Rust documentation for `format`](https://docs.rs/icu/latest/icu/datetime/struct.FixedCalendarDateTimeFormatter.html#method.format) for more information.
      */
-    formatIso(date) {
+    formatIso(isoDate) {
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
 
-    wasm.icu4x_DateFormatterGregorian_format_iso_mv1(this.ffiValue, date.ffiValue, write.buffer);
+    wasm.icu4x_DateFormatterGregorian_format_iso_mv1(this.ffiValue, isoDate.ffiValue, write.buffer);
 
         try {
             return write.readString8();
