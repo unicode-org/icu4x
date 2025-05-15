@@ -23,11 +23,7 @@ use zerovec::ZeroVec;
 /// </div>
 pub use crate::provider::Baked;
 
-icu_provider::data_marker!(
-    UnitsTrieV1,
-    UnitsTrie<'static>,
-    is_singleton = true,
-);
+icu_provider::data_marker!(UnitsTrieV1, UnitsTrie<'static>, is_singleton = true,);
 
 /// This type encapsulates all the constant data required for unit conversions.
 ///
