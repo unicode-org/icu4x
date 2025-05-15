@@ -10,7 +10,7 @@
 //! the comparison of collation element sequences.
 
 extern crate alloc;
-use alloc::vec::Vec;
+use alloc::{vec, vec::Vec};
 
 use crate::elements::CharacterAndClassAndTrieValue;
 use crate::elements::CollationElement32;
@@ -1661,6 +1661,42 @@ impl CollatorBorrowed<'_> {
         }
     }
 
+    /// Given potentially invalid UTF-8, write the sort key bytes up to the collator's strength.
+    ///
+    /// For further details, see [`Self::write_sort_key`].
+    pub fn write_sort_key_utf8<S>(&self, s: &[u8], sink: &mut S)
+    where
+        S: Write,
+    {
+        let nfd = DecomposingNormalizerBorrowed::new_with_data(self.decompositions, self.tables);
+        let iter = nfd.normalize_iter(s.chars());
+        self.write_sort_key_up_to_quaternary(iter, sink);
+
+        if self.options.strength() == Strength::Identical {
+            sink.write_byte(LEVEL_SEPARATOR_BYTE);
+            let mut adapter = SinkAdapter::new(sink);
+            let _ = nfd.normalize_utf8_to(s, &mut adapter);
+        }
+    }
+
+    /// Given potentially invalid UTF-16, write the sort key bytes up to the collator's strength.
+    ///
+    /// For further details, see [`Self::write_sort_key`].
+    pub fn write_sort_key_utf16<S>(&self, s: &[u16], sink: &mut S)
+    where
+        S: Write,
+    {
+        let nfd = DecomposingNormalizerBorrowed::new_with_data(self.decompositions, self.tables);
+        let iter = nfd.normalize_iter(s.chars());
+        self.write_sort_key_up_to_quaternary(iter, sink);
+
+        if self.options.strength() == Strength::Identical {
+            sink.write_byte(LEVEL_SEPARATOR_BYTE);
+            let mut adapter = SinkAdapter::new(sink);
+            let _ = nfd.normalize_utf16_to(s, &mut adapter);
+        }
+    }
+
     /// Write the sort key bytes up to the collator's strength.
     ///
     /// Optionally write the case level.  Separate levels with the `LEVEL_SEPARATOR_BYTE`, but
@@ -2207,6 +2243,24 @@ where
     }
 }
 
+impl<'a, W> write16::Write16 for SinkAdapter<'a, W>
+where
+    W: Write,
+{
+    fn write_slice(&mut self, s: &[u16]) -> core::fmt::Result {
+        // For the identical level, if the input is UTF-16, transcode to UTF-8.
+        let iter = char::decode_utf16(s.iter().cloned());
+        for c in iter {
+            let c = c.unwrap_or(char::REPLACEMENT_CHARACTER); // shouldn't happen
+            let len = c.len_utf8();
+            let mut bytes = vec![0u8; len];
+            c.encode_utf8(&mut bytes);
+            self.inner.write(&bytes);
+        }
+        Ok(())
+    }
+}
+
 #[cfg(test)]
 mod test {
     use super::*;
@@ -2310,5 +2364,32 @@ mod test {
         assert_eq!(k0, k1);
         let (k0, k1) = keys_ja_strs(Strength::Identical, "ア", "ｱ");
         assert!(k0 < k1);
+    }
+
+    #[test]
+    fn sort_keys_utf16() {
+        let collator = collator_en(Strength::Identical);
+
+        const STR8: &[u8] = b"hello world!";
+        let mut k8: Key = Vec::new();
+        collator.write_sort_key_utf8(STR8, &mut k8);
+
+        const STR16: &[u16] = &[
+            0x68, 0x65, 0x6c, 0x6c, 0x6f, 0x20, 0x77, 0x6f, 0x72, 0x6c, 0x64, 0x21,
+        ];
+        let mut k16: Key = Vec::new();
+        collator.write_sort_key_utf16(STR16, &mut k16);
+        assert_eq!(k8, k16);
+    }
+
+    #[test]
+    fn sort_keys_invalid() {
+        let collator = collator_en(Strength::Identical);
+
+        // some invalid strings
+        let mut k: Key = Vec::new();
+        collator.write_sort_key_utf8(b"\xf0\x90", &mut k);
+        let mut k: Key = Vec::new();
+        collator.write_sort_key_utf16(&[0xdd1e], &mut k);
     }
 }
