@@ -226,7 +226,8 @@ lazy_static::lazy_static! {
 
         // Trait required
         "icu::collator::CollatorBorrowed::write_sort_key",
-        "icu::collator::CollatorBorrowed::write_sort_key_up_to_quaternary",
+        "icu::collator::CollatorBorrowed::write_sort_key_utf8",
+        "icu::collator::CollatorBorrowed::write_sort_key_utf16",
 
         // Not planned for 2.0
         // We aren't exposing these collections directly, we instead expose them in a domain specific
