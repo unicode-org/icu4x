@@ -74,7 +74,10 @@ pub mod ffi {
         }
 
         /// Constructs a `BlobDataProvider` and returns it as an [`DataProvider`].
-        #[diplomat::rust_link(icu_provider_blob::BlobDataProvider::try_new_from_static_blob, FnInStruct)]
+        #[diplomat::rust_link(
+            icu_provider_blob::BlobDataProvider::try_new_from_static_blob,
+            FnInStruct
+        )]
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor)]
         #[diplomat::attr(not(supports = static_slices), disable)]
         pub fn from_byte_slice(
