@@ -195,7 +195,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::datetime::{{ formatter_kind.rustlink() }}::format_same_calendar, {{ formatter_kind.rustlink_doctype_fn() }})]
         #[diplomat::rust_link(icu::datetime::FormattedDateTime, Struct, hidden)]
         #[diplomat::rust_link(icu::datetime::FormattedDateTime::to_string, FnInStruct, hidden)]
-        #[diplomat::attr(demo_gen, disable)] // confusing
+        #[diplomat::attr(demo_gen, disable)] // confusing, as Date is constructed from ISO
         pub fn format_same_calendar(
             &self,
             {%- if flavor.has_date() %}
