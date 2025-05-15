@@ -1772,7 +1772,7 @@ impl CollatorBorrowed<'_> {
                     prev_reordered_primary = if is_compressible { p } else { 0 };
                 }
 
-                let p2 = (p >> 16) as u16;
+                let p2 = (p >> 16) as u8;
                 if p2 != 0 {
                     let buf = [p2 as _, (p >> 8) as _, p as _];
                     sink.write_to_zero(&buf);
