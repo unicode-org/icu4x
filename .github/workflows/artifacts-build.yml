@@ -188,7 +188,7 @@ jobs:
         cd ffi/npm
         make lib/index.mjs
         npm install typedoc@0.26.5 --exact
-        node_modules/typedoc/bin/typedoc lib/index.d.ts --out docs --readme ../../tutorials/using-from-js.md --basePath lib
+        node_modules/typedoc/bin/typedoc lib/index.d.ts --out docs --basePath lib
         cd ../..
 
     - uses: actions/upload-artifact@v4
@@ -286,19 +286,19 @@ jobs:
     - name: Init packages
       run: |
         npm -C ffi/npm ci
-        npm -C tutorials/web-demo ci
+        npm -C tools/web-demo ci
 
     - name: Run Webpack
-      run: npm -C tutorials/web-demo run build
+      run: npm -C tools/web-demo run build
 
     - uses: actions/upload-artifact@v4
       with:
         name: wasmdemo
-        path: tutorials/web-demo/public
+        path: tools/web-demo/public
 
     - name: Upload wasm-demo bundle to Google Cloud Storage
       run: |
-        gsutil -m cp -r tutorials/web-demo/public/* gs://${{ env.GCP_MAIN_BUCKET_ID }}/gha/wasm-demo
+        gsutil -m cp -r tools/web-demo/public/* gs://${{ env.GCP_MAIN_BUCKET_ID }}/gha/wasm-demo
 
     - name: "⭐⭐⭐ Links to Uploaded Artifacts ⭐⭐⭐"
       run: |
