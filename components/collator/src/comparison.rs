@@ -1686,7 +1686,7 @@ impl CollatorBorrowed<'_> {
     /// ```
     pub fn write_sort_key<S>(&self, s: &str, sink: &mut S)
     where
-        S: Write,
+        S: CollationKeySink,
     {
         self.write_sort_key_up_to_quaternary(s.chars(), sink);
 
@@ -1704,7 +1704,7 @@ impl CollatorBorrowed<'_> {
     /// For further details, see [`Self::write_sort_key`].
     pub fn write_sort_key_utf8<S>(&self, s: &[u8], sink: &mut S)
     where
-        S: Write,
+        S: CollationKeySink,
     {
         let nfd = DecomposingNormalizerBorrowed::new_with_data(self.decompositions, self.tables);
         let iter = nfd.normalize_iter(s.chars());
@@ -1722,7 +1722,7 @@ impl CollatorBorrowed<'_> {
     /// For further details, see [`Self::write_sort_key`].
     pub fn write_sort_key_utf16<S>(&self, s: &[u16], sink: &mut S)
     where
-        S: Write,
+        S: CollationKeySink,
     {
         let nfd = DecomposingNormalizerBorrowed::new_with_data(self.decompositions, self.tables);
         let iter = nfd.normalize_iter(s.chars());
@@ -1742,7 +1742,7 @@ impl CollatorBorrowed<'_> {
     fn write_sort_key_up_to_quaternary<I, S>(&self, iter: I, sink: &mut S)
     where
         I: Iterator<Item = char>,
-        S: Write,
+        S: CollationKeySink,
     {
         // This algorithm comes from `CollationKeys::writeSortKeyUpToQuaternary` in ICU4C.
         let levels = self.sort_key_levels();
@@ -2137,24 +2137,24 @@ impl CollatorBorrowed<'_> {
 /// A [`std::io::Write`]-like trait for writing to a buffer-like object.
 ///
 /// (This crate does not have access to [`std`].)
-pub trait Write {
+pub trait CollationKeySink {
     /// Writes a buffer into the writer.
     fn write(&mut self, buf: &[u8]);
 }
 
-impl Write for Vec<u8> {
+impl CollationKeySink for Vec<u8> {
     fn write(&mut self, buf: &[u8]) {
         self.extend_from_slice(buf);
     }
 }
 
-impl<const N: usize> Write for SmallVec<[u8; N]> {
+impl<const N: usize> CollationKeySink for SmallVec<[u8; N]> {
     fn write(&mut self, buf: &[u8]) {
         self.extend_from_slice(buf);
     }
 }
 
-trait WriteExt {
+trait CollationKeySinkExt {
     /// Write a single byte into the writer.
     fn write_byte(&mut self, b: u8);
 
@@ -2162,9 +2162,9 @@ trait WriteExt {
     fn write_to_zero(&mut self, buf: &[u8]);
 }
 
-impl<T> WriteExt for T
+impl<T> CollationKeySinkExt for T
 where
-    T: Write,
+    T: CollationKeySink,
 {
     fn write_byte(&mut self, b: u8) {
         self.write(&[b]);
@@ -2262,7 +2262,7 @@ impl<'a, W> SinkAdapter<'a, W> {
 
 impl<'a, W> core::fmt::Write for SinkAdapter<'a, W>
 where
-    W: Write,
+    W: CollationKeySink,
 {
     fn write_str(&mut self, s: &str) -> core::fmt::Result {
         self.inner.write(s.as_bytes());
@@ -2272,7 +2272,7 @@ where
 
 impl<'a, W> write16::Write16 for SinkAdapter<'a, W>
 where
-    W: Write,
+    W: CollationKeySink,
 {
     fn write_slice(&mut self, s: &[u16]) -> core::fmt::Result {
         // For the identical level, if the input is UTF-16, transcode to UTF-8.
