@@ -62,8 +62,7 @@ impl crate::IterableDataProviderCached<UnitsIdsV1> for SourceDataProvider {
             .convert_units
             .convert_units
             .keys()
-            .enumerate()
-            .map(|(_index, unit_name)| {
+            .map(|unit_name| {
                 DataIdentifierCow::from_marker_attributes_owned(
                     DataMarkerAttributes::try_from_string(unit_name.clone()).unwrap(),
                 )
