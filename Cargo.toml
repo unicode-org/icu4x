@@ -217,7 +217,7 @@ icu_benchmark_macros = { path = "tools/benchmark/macros" }
 diplomat = { git = "https://github.com/rust-diplomat/diplomat", rev = "fc376f9d277572236263722fafb73831ed30ab97", default-features = false }
 diplomat-runtime = { git = "https://github.com/rust-diplomat/diplomat", rev = "fc376f9d277572236263722fafb73831ed30ab97", default-features = false }
 diplomat_core = { git = "https://github.com/rust-diplomat/diplomat", rev = "fc376f9d277572236263722fafb73831ed30ab97", default-features = false }
-diplomat-tool = { git = "https://github.com/rust-diplomat/diplomat", rev = "fc376f9d277572236263722fafb73831ed30ab97", default-features = false }
+diplomat-tool = { path = "../diplomat/tool", default-features = false }
 
 # EXTERNAL DEPENDENCIES
 #

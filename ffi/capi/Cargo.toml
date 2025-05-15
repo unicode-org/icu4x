@@ -145,7 +145,7 @@ icu_time = { workspace = true, features = ["alloc", "ixdtf"], optional = true }
 icu_experimental = { workspace = true, optional = true }
 
 # Optional ICU4X features (not components)
-icu_provider_blob = { workspace = true, optional = true }
+icu_provider_blob = { workspace = true, features = ["alloc"], optional = true }
 serde = { workspace = true, optional = true }
 unicode-bidi = { workspace = true, optional = true }
 log = { workspace = true, optional = true }
