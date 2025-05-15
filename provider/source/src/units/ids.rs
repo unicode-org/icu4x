@@ -27,24 +27,8 @@ impl DataProvider<UnitsIdsV1> for SourceDataProvider {
 
         let unit = req.id.marker_attributes.as_str();
 
-        let indices_map: BTreeMap<String, usize> = units_data
-            .supplemental
-            .convert_units
-            .convert_units
-            .keys()
-            .enumerate()
-            .map(|(index, unit_name)| (unit_name.clone(), index))
-            .collect();
-
-        let index = indices_map
-            .get(unit)
-            .ok_or_else(|| DataError::custom("Failed to load units"))
-            .and_then(|&idx| {
-                u16::try_from(idx).map_err(|_| DataError::custom("Index out of range for u16"))
-            })?;
-
         Ok(DataResponse {
-            payload: DataPayload::from_owned(Index(index)),
+            payload: DataPayload::from_owned(Index(units_data.get_unit_id(unit)?)),
             metadata: Default::default(),
         })
     }
@@ -58,9 +42,7 @@ impl crate::IterableDataProviderCached<UnitsIdsV1> for SourceDataProvider {
             .read_and_parse("supplemental/units.json")?;
 
         let ids_set = units_data
-            .supplemental
-            .convert_units
-            .convert_units
+            .get_unit_ids_map()
             .keys()
             .map(|unit_name| {
                 DataIdentifierCow::from_marker_attributes_owned(
