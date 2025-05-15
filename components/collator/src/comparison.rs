@@ -2185,6 +2185,8 @@ where
         Ok(())
     }
 
+    // guaranteed to get at least one byte and the rest are checked incrementally
+    #[allow(clippy::indexing_slicing)]
     fn write_to_zero(&mut self, buf: &[u8]) -> Result<(), core::fmt::Error> {
         self.write_byte(buf[0])?;
         if buf.len() > 1 && buf[1] != 0 {
@@ -2276,7 +2278,7 @@ impl<'a, W> SinkAdapter<'a, W> {
     }
 }
 
-impl<'a, W> core::fmt::Write for SinkAdapter<'a, W>
+impl<W> core::fmt::Write for SinkAdapter<'_, W>
 where
     W: CollationKeySink,
 {
@@ -2286,7 +2288,7 @@ where
     }
 }
 
-impl<'a, W> write16::Write16 for SinkAdapter<'a, W>
+impl<W> write16::Write16 for SinkAdapter<'_, W>
 where
     W: CollationKeySink,
 {
