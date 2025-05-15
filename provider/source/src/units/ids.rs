@@ -4,7 +4,6 @@
 
 use std::collections::HashSet;
 
-use icu::experimental::measure::provider::ids::Index;
 use icu::experimental::measure::provider::ids::UnitsIdsV1;
 use icu_provider::prelude::*;
 use icu_provider::DataError;
@@ -27,7 +26,7 @@ impl DataProvider<UnitsIdsV1> for SourceDataProvider {
         let unit = req.id.marker_attributes.as_str();
 
         Ok(DataResponse {
-            payload: DataPayload::from_owned(Index(units_data.get_unit_id(unit)?)),
+            payload: DataPayload::from_owned(units_data.get_unit_id(unit)?),
             metadata: Default::default(),
         })
     }
