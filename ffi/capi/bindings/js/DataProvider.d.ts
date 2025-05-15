@@ -21,6 +21,11 @@ export class DataProvider {
 
 
     /**
+     * See the [Rust documentation for `try_new_from_blob`](https://docs.rs/icu_provider_blob/latest/icu_provider_blob/struct.BlobDataProvider.html#method.try_new_from_blob) for more information.
+     */
+    static fromByteSlice(blob: Uint8Array): DataProvider;
+
+    /**
      * Creates a provider that tries the current provider and then, if the current provider
      * doesn't support the data key, another provider `other`.
      *

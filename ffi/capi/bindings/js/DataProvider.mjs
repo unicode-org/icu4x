@@ -48,6 +48,33 @@ export class DataProvider {
 
 
     /**
+     * See the [Rust documentation for `try_new_from_blob`](https://docs.rs/icu_provider_blob/latest/icu_provider_blob/struct.BlobDataProvider.html#method.try_new_from_blob) for more information.
+     */
+    static fromByteSlice(blob) {
+        let functionCleanupArena = new diplomatRuntime.CleanupArena();
+
+        const blobSlice = diplomatRuntime.DiplomatBuf.slice(wasm, blob, "u8");
+        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+
+
+        const result = wasm.icu4x_DataProvider_from_owned_byte_slice_mv1(diplomatReceive.buffer, ...blobSlice.splat());
+
+        try {
+            if (!diplomatReceive.resultFlag) {
+                const cause = new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
+                throw new globalThis.Error('DataError: ' + cause.value, { cause });
+            }
+            return new DataProvider(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
+        }
+
+        finally {
+            functionCleanupArena.free();
+
+            diplomatReceive.free();
+        }
+    }
+
+    /**
      * Creates a provider that tries the current provider and then, if the current provider
      * doesn't support the data key, another provider `other`.
      *
