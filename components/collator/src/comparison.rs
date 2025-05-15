@@ -1655,9 +1655,9 @@ impl CollatorBorrowed<'_> {
         if self.options.strength() == Strength::Identical {
             let nfd =
                 DecomposingNormalizerBorrowed::new_with_data(self.decompositions, self.tables);
-            let s = nfd.normalize(s);
             sink.write_byte(LEVEL_SEPARATOR_BYTE);
-            sink.write(s.as_bytes());
+            let mut adapter = SinkAdapter::new(sink);
+            let _ = nfd.normalize_to(s, &mut adapter);
         }
     }
 
@@ -2184,6 +2184,26 @@ impl AsRef<SmallVec<[u8; 40]>> for SortKeyLevel {
 impl AsMut<SmallVec<[u8; 40]>> for SortKeyLevel {
     fn as_mut(&mut self) -> &mut SmallVec<[u8; 40]> {
         &mut self.buf
+    }
+}
+
+struct SinkAdapter<'a, W> {
+    inner: &'a mut W,
+}
+
+impl<'a, W> SinkAdapter<'a, W> {
+    fn new(inner: &'a mut W) -> Self {
+        Self { inner }
+    }
+}
+
+impl<'a, W> core::fmt::Write for SinkAdapter<'a, W>
+where
+    W: Write,
+{
+    fn write_str(&mut self, s: &str) -> core::fmt::Result {
+        self.inner.write(s.as_bytes());
+        Ok(())
     }
 }
 
