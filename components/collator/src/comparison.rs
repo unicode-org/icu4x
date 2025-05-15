@@ -1892,7 +1892,8 @@ impl CollatorBorrowed<'_> {
                             // mixed=14, upper=15.  If there are only common (=lowest) weights
                             // in the whole level, then we need not write anything.  Level
                             // length differences are handled already on the next-higher level.
-                            if common_cases != 0 && (c > LEVEL_SEPARATOR_BYTE || cases.is_empty()) {
+                            if common_cases != 0 && (c > LEVEL_SEPARATOR_BYTE || !cases.is_empty())
+                            {
                                 common_cases -= 1;
                                 while common_cases >= CASE_LOWER_FIRST_COMMON[WEIGHT_MAX_COUNT] {
                                     cases.append_byte(CASE_LOWER_FIRST_COMMON[WEIGHT_MIDDLE] << 4);
