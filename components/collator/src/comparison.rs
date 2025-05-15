@@ -2077,21 +2077,6 @@ impl CollatorBorrowed<'_> {
 pub trait Write {
     /// Writes a buffer into the writer.
     fn write(&mut self, buf: &[u8]);
-
-    /// Write a single byte into the writer.
-    fn write_byte(&mut self, b: u8) {
-        self.write(&[b]);
-    }
-
-    /// Write leading bytes up to a zero byte, but always write at least one byte.
-    fn write_to_zero(&mut self, buf: &[u8]) {
-        for (i, b) in buf.iter().enumerate() {
-            if i > 0 && *b == 0 {
-                break;
-            }
-            self.write_byte(*b)
-        }
-    }
 }
 
 impl Write for Vec<u8> {
@@ -2103,6 +2088,33 @@ impl Write for Vec<u8> {
 impl<const N: usize> Write for SmallVec<[u8; N]> {
     fn write(&mut self, buf: &[u8]) {
         self.extend_from_slice(buf);
+    }
+}
+
+trait WriteExt {
+    /// Write a single byte into the writer.
+    fn write_byte(&mut self, b: u8);
+
+    /// Write leading bytes up to a zero byte, but always write at least one byte.
+    fn write_to_zero(&mut self, buf: &[u8]);
+}
+
+impl<T> WriteExt for T
+where
+    T: Write,
+{
+    fn write_byte(&mut self, b: u8) {
+        self.write(&[b]);
+    }
+
+    fn write_to_zero(&mut self, buf: &[u8]) {
+        self.write_byte(buf[0]);
+        if buf.len() > 1 && buf[1] != 0 {
+            self.write_byte(buf[1]);
+            if buf.len() > 2 && buf[2] != 0 {
+                self.write_byte(buf[2]);
+            }
+        }
     }
 }
 
