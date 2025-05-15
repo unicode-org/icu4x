@@ -1643,9 +1643,47 @@ impl CollatorBorrowed<'_> {
         levels
     }
 
-    /// Write the sort key bytes up to the collator's strength.
+    /// Given valid UTF-8, write the sort key bytes up to the collator's strength.
+    ///
+    /// If two sort keys generated at the same strength are compared bytewise, the result is
+    /// the same as a collation comparison of the original strings at that strength.
     ///
     /// For identical strength, the UTF-8 NFD normalization is appended for breaking ties.
+    ///
+    /// No terminating zero byte is written to the output, so the output is not a valid C
+    /// string, but the caller may append a zero afterward if a C string is desired.
+    ///
+    /// ⚠️ Generating a sort key is expensive relative to comparison because to compare, the
+    /// collator skips identical prefixes before doing more complex comparison.  Only use sort
+    /// keys if you expect to compare them many times so as to amortize the cost of generating
+    /// them.  Measurement of this performance trade-off would be a good idea.
+    ///
+    /// ⚠️ Sort keys, if stored durably, should be presumed to be invalidated by a CLDR update, a
+    /// new version of Unicode, or an update to the ICU4X code.  Applications using sort keys
+    /// *must* be prepared to recompute them if required and should take the performance of
+    /// such an operation into account when deciding to use sort keys.
+    ///
+    /// ⚠️ If you should store sort keys in a database that is or becomes so large that
+    /// regenerating sort keys becomes impractical, you should not expect ICU4X to support your
+    /// using an older, frozen copy of the sort key generation algorithm with a later version
+    /// of the library.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu_locale::locale;
+    /// use icu_collator::{Collator, options::{CollatorOptions, Strength}};
+    /// let locale = locale!("utf").into();
+    /// let mut options = CollatorOptions::default();
+    /// options.strength = Some(Strength::Primary);
+    /// let collator = Collator::try_new(locale, options).unwrap();
+    ///
+    /// let mut k1: Vec<u8> = Vec::new();
+    /// collator.write_sort_key("hello", &mut k1);
+    /// let mut k2: Vec<u8> = Vec::new();
+    /// collator.write_sort_key("Héłłö", &mut k2);
+    /// assert_eq!(k1, k2);
+    /// ```
     pub fn write_sort_key<S>(&self, s: &str, sink: &mut S)
     where
         S: Write,
