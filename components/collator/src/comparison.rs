@@ -1744,18 +1744,7 @@ impl CollatorBorrowed<'_> {
         I: Iterator<Item = char>,
         S: Write,
     {
-        // The following code started as a port from ICU4C which carried the
-        // following notice:
-        //
-        // // © 2016 and later: Unicode, Inc. and others.
-        // // License & terms of use: http://www.unicode.org/copyright.html
-        // /*
-        // *******************************************************************************
-        // * Copyright (C) 2012-2015, International Business Machines
-        // * Corporation and others.  All Rights Reserved.
-        // *******************************************************************************
-        // * collationkeys.cpp
-
+        // This algorithm comes from `CollationKeys::writeSortKeyUpToQuaternary` in ICU4C.
         let levels = self.sort_key_levels();
 
         let mut iter =
