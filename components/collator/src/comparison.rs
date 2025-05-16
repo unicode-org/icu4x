@@ -1841,8 +1841,14 @@ impl CollatorBorrowed<'_> {
 
                 let p2 = (p >> 16) as u8;
                 if p2 != 0 {
-                    let buf = [p2 as _, (p >> 8) as _, p as _];
-                    sink.write_to_zero(&buf)?;
+                    let (b0, b1, b2) = (p2, (p >> 8) as _, p as _);
+                    sink.write_byte(b0)?;
+                    if b1 != 0 {
+                        sink.write_byte(b1)?;
+                        if b2 != 0 {
+                            sink.write_byte(b2)?;
+                        }
+                    }
                 }
             }
 
@@ -2165,9 +2171,6 @@ impl<const N: usize> CollationKeySink for SmallVec<[u8; N]> {
 trait CollationKeySinkExt {
     /// Write a single byte into the writer.
     fn write_byte(&mut self, b: u8) -> Result<(), core::fmt::Error>;
-
-    /// Write leading bytes up to a zero byte, but always write at least one byte.
-    fn write_to_zero(&mut self, buf: &[u8]) -> Result<(), core::fmt::Error>;
 }
 
 impl<T> CollationKeySinkExt for T
@@ -2176,19 +2179,6 @@ where
 {
     fn write_byte(&mut self, b: u8) -> Result<(), core::fmt::Error> {
         self.write(&[b])?;
-        Ok(())
-    }
-
-    // guaranteed to get at least one byte and the rest are checked incrementally
-    #[allow(clippy::indexing_slicing)]
-    fn write_to_zero(&mut self, buf: &[u8]) -> Result<(), core::fmt::Error> {
-        self.write_byte(buf[0])?;
-        if buf.len() > 1 && buf[1] != 0 {
-            self.write_byte(buf[1])?;
-            if buf.len() > 2 && buf[2] != 0 {
-                self.write_byte(buf[2])?;
-            }
-        }
         Ok(())
     }
 }
@@ -2304,21 +2294,6 @@ where
 mod test {
     use super::*;
     use icu_locale::locale;
-
-    fn write_to_zero_test(a: &[u8], b: Vec<u8>) {
-        let mut v = Vec::new();
-        v.write_to_zero(a).unwrap();
-        assert_eq!(v, b);
-    }
-
-    #[test]
-    fn write_to_zero() {
-        write_to_zero_test(&[0, 0, 0], vec![0]);
-        write_to_zero_test(&[1, 0, 0], vec![1]);
-        write_to_zero_test(&[0, 1, 0], vec![0, 1]);
-        write_to_zero_test(&[1, 2, 0], vec![1, 2]);
-        write_to_zero_test(&[1, 2, 3], vec![1, 2, 3]);
-    }
 
     type Key = Vec<u8>;
 
