@@ -3,17 +3,18 @@ import type { GeneralCategoryGroup } from "./GeneralCategoryGroup"
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
+
 /**
  * See the [Rust documentation for `GeneralCategory`](https://docs.rs/icu/latest/icu/properties/props/enum.GeneralCategory.html) for more information.
  */
-
-
 export class GeneralCategory {
 
+    /** @internal */
     static fromValue(value: GeneralCategory | string): GeneralCategory;
 
     get value(): string;
 
+    /** @internal */
     get ffiValue(): number;
 
     static Unassigned : GeneralCategory;

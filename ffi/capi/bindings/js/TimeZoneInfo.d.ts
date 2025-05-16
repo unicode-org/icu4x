@@ -9,12 +9,12 @@ import type { VariantOffsetsCalculator } from "./VariantOffsetsCalculator"
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
+
 /**
  * See the [Rust documentation for `TimeZoneInfo`](https://docs.rs/icu/latest/icu/time/struct.TimeZoneInfo.html) for more information.
  */
-
-
 export class TimeZoneInfo {
+    /** @internal */
     get ffiValue(): pointer;
 
 
@@ -72,5 +72,8 @@ export class TimeZoneInfo {
      */
     variant(): TimeZoneVariant | null;
 
+    /**
+     * Creates a time zone info from parts.
+     */
     constructor(id: TimeZone, offset: UtcOffset | null, variant: TimeZoneVariant | null);
 }

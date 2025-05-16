@@ -3,11 +3,10 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
+
 /**
  * See the [Rust documentation for `PluralCategory`](https://docs.rs/icu/latest/icu/plurals/enum.PluralCategory.html) for more information.
  */
-
-
 export class PluralCategory {
     #value = undefined;
 
@@ -49,6 +48,7 @@ export class PluralCategory {
         throw TypeError(value + " is not a PluralCategory and does not correspond to any of its enumerator values.");
     }
 
+    /** @internal */
     static fromValue(value) {
         return new PluralCategory(value);
     }
@@ -57,6 +57,7 @@ export class PluralCategory {
         return [...PluralCategory.#values.keys()][this.#value];
     }
 
+    /** @internal */
     get ffiValue(){
         return this.#value;
     }

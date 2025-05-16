@@ -2,17 +2,18 @@
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
+
 /**
  * See the [Rust documentation for `WordType`](https://docs.rs/icu/latest/icu/segmenter/options/enum.WordType.html) for more information.
  */
-
-
 export class SegmenterWordType {
 
+    /** @internal */
     static fromValue(value: SegmenterWordType | string): SegmenterWordType;
 
     get value(): string;
 
+    /** @internal */
     get ffiValue(): number;
 
     static None : SegmenterWordType;

@@ -6,12 +6,12 @@ import type { LocaleDirection } from "./LocaleDirection"
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
+
 /**
  * See the [Rust documentation for `LocaleDirectionality`](https://docs.rs/icu/latest/icu/locale/struct.LocaleDirectionality.html) for more information.
  */
-
-
 export class LocaleDirectionality {
+    /** @internal */
     get ffiValue(): pointer;
 
 
@@ -51,5 +51,10 @@ export class LocaleDirectionality {
      */
     isRightToLeft(locale: Locale): boolean;
 
+    /**
+     * Construct a new LocaleDirectionality instance using compiled data.
+     *
+     * See the [Rust documentation for `new_common`](https://docs.rs/icu/latest/icu/locale/struct.LocaleDirectionality.html#method.new_common) for more information.
+     */
     constructor();
 }

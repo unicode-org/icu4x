@@ -4,6 +4,7 @@ import type { LocaleFallbacker } from "./LocaleFallbacker"
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
+
 /**
  * An ICU4X data provider, capable of loading ICU4X data keys from some source.
  *
@@ -14,10 +15,11 @@ import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
  *
  * See the [Rust documentation for `icu_provider`](https://docs.rs/icu_provider/latest/icu_provider/index.html) for more information.
  */
-
-
 export class DataProvider {
+    /** @internal */
     get ffiValue(): pointer;
+    /** @internal */
+    constructor();
 
 
     /**

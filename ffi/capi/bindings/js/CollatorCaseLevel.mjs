@@ -3,11 +3,10 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
+
 /**
  * See the [Rust documentation for `CaseLevel`](https://docs.rs/icu/latest/icu/collator/options/enum.CaseLevel.html) for more information.
  */
-
-
 export class CollatorCaseLevel {
     #value = undefined;
 
@@ -45,6 +44,7 @@ export class CollatorCaseLevel {
         throw TypeError(value + " is not a CollatorCaseLevel and does not correspond to any of its enumerator values.");
     }
 
+    /** @internal */
     static fromValue(value) {
         return new CollatorCaseLevel(value);
     }
@@ -53,6 +53,7 @@ export class CollatorCaseLevel {
         return [...CollatorCaseLevel.#values.keys()][this.#value];
     }
 
+    /** @internal */
     get ffiValue(){
         return this.#value;
     }

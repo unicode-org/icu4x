@@ -3,6 +3,7 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
+
 /**
  * An error when formatting a datetime.
  *
@@ -11,8 +12,6 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
  *
  * Additional information: [1](https://docs.rs/icu/latest/icu/datetime/unchecked/enum.FormattedDateTimeUncheckedError.html)
  */
-
-
 export class DateTimeWriteError {
     #value = undefined;
 
@@ -50,6 +49,7 @@ export class DateTimeWriteError {
         throw TypeError(value + " is not a DateTimeWriteError and does not correspond to any of its enumerator values.");
     }
 
+    /** @internal */
     static fromValue(value) {
         return new DateTimeWriteError(value);
     }
@@ -58,6 +58,7 @@ export class DateTimeWriteError {
         return [...DateTimeWriteError.#values.keys()][this.#value];
     }
 
+    /** @internal */
     get ffiValue(){
         return this.#value;
     }

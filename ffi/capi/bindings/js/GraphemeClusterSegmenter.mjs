@@ -5,6 +5,9 @@ import { GraphemeClusterBreakIteratorUtf16 } from "./GraphemeClusterBreakIterato
 import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
+const GraphemeClusterSegmenter_box_destroy_registry = new FinalizationRegistry((ptr) => {
+    wasm.icu4x_GraphemeClusterSegmenter_destroy_mv1(ptr);
+});
 
 /**
  * An ICU4X grapheme-cluster-break segmenter, capable of finding grapheme cluster breakpoints
@@ -12,10 +15,6 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
  *
  * See the [Rust documentation for `GraphemeClusterSegmenter`](https://docs.rs/icu/latest/icu/segmenter/struct.GraphemeClusterSegmenter.html) for more information.
  */
-const GraphemeClusterSegmenter_box_destroy_registry = new FinalizationRegistry((ptr) => {
-    wasm.icu4x_GraphemeClusterSegmenter_destroy_mv1(ptr);
-});
-
 export class GraphemeClusterSegmenter {
     // Internal ptr reference:
     #ptr = null;
@@ -39,6 +38,7 @@ export class GraphemeClusterSegmenter {
 
         return this;
     }
+    /** @internal */
     get ffiValue() {
         return this.#ptr;
     }
@@ -75,7 +75,7 @@ export class GraphemeClusterSegmenter {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
-                throw new globalThis.Error('DataError: ' + cause.value, { cause });
+                throw new globalThis.Error('DataError.' + cause.value, { cause });
             }
             return new GraphemeClusterSegmenter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -112,6 +112,11 @@ export class GraphemeClusterSegmenter {
         }
     }
 
+    /**
+     * Construct an [`GraphemeClusterSegmenter`] using compiled data.
+     *
+     * See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/segmenter/struct.GraphemeClusterSegmenter.html#method.new) for more information.
+     */
     constructor() {
         if (arguments[0] === diplomatRuntime.exposeConstructor) {
             return this.#internalConstructor(...Array.prototype.slice.call(arguments, 1));

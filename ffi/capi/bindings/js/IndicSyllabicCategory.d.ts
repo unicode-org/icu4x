@@ -2,17 +2,18 @@
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
+
 /**
  * See the [Rust documentation for `IndicSyllabicCategory`](https://docs.rs/icu/latest/icu/properties/props/struct.IndicSyllabicCategory.html) for more information.
  */
-
-
 export class IndicSyllabicCategory {
 
+    /** @internal */
     static fromValue(value: IndicSyllabicCategory | string): IndicSyllabicCategory;
 
     get value(): string;
 
+    /** @internal */
     get ffiValue(): number;
 
     static Other : IndicSyllabicCategory;

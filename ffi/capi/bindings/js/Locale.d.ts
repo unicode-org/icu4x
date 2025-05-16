@@ -3,15 +3,17 @@ import type { LocaleParseError } from "./LocaleParseError"
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
+
 /**
  * An ICU4X Locale, capable of representing strings like `"en-US"`.
  *
  * See the [Rust documentation for `Locale`](https://docs.rs/icu/latest/icu/locale/struct.Locale.html) for more information.
  */
-
-
 export class Locale {
+    /** @internal */
     get ffiValue(): pointer;
+    /** @internal */
+    constructor();
 
 
     /**

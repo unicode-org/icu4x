@@ -8,12 +8,12 @@ import type { Locale } from "./Locale"
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
+
 /**
  * See the [Rust documentation for `Collator`](https://docs.rs/icu/latest/icu/collator/struct.Collator.html) for more information.
  */
-
-
 export class Collator {
+    /** @internal */
     get ffiValue(): pointer;
 
 
@@ -43,5 +43,10 @@ export class Collator {
      */
     get resolvedOptions(): CollatorResolvedOptions;
 
+    /**
+     * Construct a new Collator instance using a particular data source.
+     *
+     * See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/collator/struct.Collator.html#method.try_new) for more information.
+     */
     constructor(provider: DataProvider, locale: Locale, options: CollatorOptions_obj);
 }

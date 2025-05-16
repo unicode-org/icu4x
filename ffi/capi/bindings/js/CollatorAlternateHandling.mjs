@@ -3,11 +3,10 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
+
 /**
  * See the [Rust documentation for `AlternateHandling`](https://docs.rs/icu/latest/icu/collator/options/enum.AlternateHandling.html) for more information.
  */
-
-
 export class CollatorAlternateHandling {
     #value = undefined;
 
@@ -45,6 +44,7 @@ export class CollatorAlternateHandling {
         throw TypeError(value + " is not a CollatorAlternateHandling and does not correspond to any of its enumerator values.");
     }
 
+    /** @internal */
     static fromValue(value) {
         return new CollatorAlternateHandling(value);
     }
@@ -53,6 +53,7 @@ export class CollatorAlternateHandling {
         return [...CollatorAlternateHandling.#values.keys()][this.#value];
     }
 
+    /** @internal */
     get ffiValue(){
         return this.#value;
     }

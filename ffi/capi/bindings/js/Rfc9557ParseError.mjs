@@ -3,11 +3,10 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
+
 /**
  * Additional information: [1](https://docs.rs/icu/latest/icu/calendar/enum.ParseError.html), [2](https://docs.rs/icu/latest/icu/time/enum.ParseError.html)
  */
-
-
 export class Rfc9557ParseError {
     #value = undefined;
 
@@ -48,6 +47,7 @@ export class Rfc9557ParseError {
         throw TypeError(value + " is not a Rfc9557ParseError and does not correspond to any of its enumerator values.");
     }
 
+    /** @internal */
     static fromValue(value) {
         return new Rfc9557ParseError(value);
     }
@@ -56,6 +56,7 @@ export class Rfc9557ParseError {
         return [...Rfc9557ParseError.#values.keys()][this.#value];
     }
 
+    /** @internal */
     get ffiValue(){
         return this.#value;
     }

@@ -3,7 +3,7 @@ export function fromSubsecondDigits(digits) {
     
     let out = TimePrecision.fromSubsecondDigits(digits);
     
-    out = out.value;;
+    out = out?.value || 'None';;
     
 
     return out;

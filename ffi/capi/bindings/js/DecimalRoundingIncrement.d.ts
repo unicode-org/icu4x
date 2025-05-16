@@ -2,19 +2,20 @@
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
+
 /**
  * Increment used in a rounding operation.
  *
  * See the [Rust documentation for `RoundingIncrement`](https://docs.rs/fixed_decimal/latest/fixed_decimal/enum.RoundingIncrement.html) for more information.
  */
-
-
 export class DecimalRoundingIncrement {
 
+    /** @internal */
     static fromValue(value: DecimalRoundingIncrement | string): DecimalRoundingIncrement;
 
     get value(): string;
 
+    /** @internal */
     get ffiValue(): number;
 
     static MultiplesOf1 : DecimalRoundingIncrement;

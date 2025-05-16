@@ -2,17 +2,18 @@
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
+
 /**
  * See the [Rust documentation for `LineBreak`](https://docs.rs/icu/latest/icu/properties/props/struct.LineBreak.html) for more information.
  */
-
-
 export class LineBreak {
 
+    /** @internal */
     static fromValue(value: LineBreak | string): LineBreak;
 
     get value(): string;
 
+    /** @internal */
     get ffiValue(): number;
 
     static Unknown : LineBreak;

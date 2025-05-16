@@ -4,11 +4,10 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
+
 /**
  * See the [Rust documentation for `BidiMirroringGlyph`](https://docs.rs/icu/latest/icu/properties/props/struct.BidiMirroringGlyph.html) for more information.
  */
-
-
 export class BidiMirroringGlyph {
     #mirroringGlyph;
     get mirroringGlyph() {
@@ -31,9 +30,7 @@ export class BidiMirroringGlyph {
     set pairedBracketType(value){
         this.#pairedBracketType = value;
     }
-    /** Create `BidiMirroringGlyph` from an object that contains all of `BidiMirroringGlyph`s fields.
-    * Optional fields do not need to be included in the provided object.
-    */
+    /** @internal */
     static fromFields(structObj) {
         return new BidiMirroringGlyph(structObj);
     }

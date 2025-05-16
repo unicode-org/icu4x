@@ -3,11 +3,10 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
+
 /**
  * See the [Rust documentation for `LanguageDisplay`](https://docs.rs/icu/latest/icu/experimental/displaynames/options/enum.LanguageDisplay.html) for more information.
  */
-
-
 export class LanguageDisplay {
     #value = undefined;
 
@@ -45,6 +44,7 @@ export class LanguageDisplay {
         throw TypeError(value + " is not a LanguageDisplay and does not correspond to any of its enumerator values.");
     }
 
+    /** @internal */
     static fromValue(value) {
         return new LanguageDisplay(value);
     }
@@ -53,6 +53,7 @@ export class LanguageDisplay {
         return [...LanguageDisplay.#values.keys()][this.#value];
     }
 
+    /** @internal */
     get ffiValue(){
         return this.#value;
     }

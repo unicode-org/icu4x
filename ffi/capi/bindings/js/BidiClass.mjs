@@ -3,11 +3,10 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
+
 /**
  * See the [Rust documentation for `BidiClass`](https://docs.rs/icu/latest/icu/properties/props/struct.BidiClass.html) for more information.
  */
-
-
 export class BidiClass {
     #value = undefined;
 
@@ -66,6 +65,7 @@ export class BidiClass {
         throw TypeError(value + " is not a BidiClass and does not correspond to any of its enumerator values.");
     }
 
+    /** @internal */
     static fromValue(value) {
         return new BidiClass(value);
     }
@@ -74,6 +74,7 @@ export class BidiClass {
         return [...BidiClass.#values.keys()][this.#value];
     }
 
+    /** @internal */
     get ffiValue(){
         return this.#value;
     }

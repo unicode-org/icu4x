@@ -7,14 +7,13 @@ import { TimeZoneInfo } from "./TimeZoneInfo.mjs"
 import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
-
-/**
- * See the [Rust documentation for `NoCalendarFormatter`](https://docs.rs/icu/latest/icu/datetime/type.NoCalendarFormatter.html) for more information.
- */
 const TimeZoneFormatter_box_destroy_registry = new FinalizationRegistry((ptr) => {
     wasm.icu4x_TimeZoneFormatter_destroy_mv1(ptr);
 });
 
+/**
+ * See the [Rust documentation for `NoCalendarFormatter`](https://docs.rs/icu/latest/icu/datetime/type.NoCalendarFormatter.html) for more information.
+ */
 export class TimeZoneFormatter {
     // Internal ptr reference:
     #ptr = null;
@@ -38,6 +37,7 @@ export class TimeZoneFormatter {
 
         return this;
     }
+    /** @internal */
     get ffiValue() {
         return this.#ptr;
     }
@@ -60,7 +60,7 @@ export class TimeZoneFormatter {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DateTimeFormatterLoadError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
-                throw new globalThis.Error('DateTimeFormatterLoadError: ' + cause.value, { cause });
+                throw new globalThis.Error('DateTimeFormatterLoadError.' + cause.value, { cause });
             }
             return new TimeZoneFormatter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -87,7 +87,7 @@ export class TimeZoneFormatter {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DateTimeFormatterLoadError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
-                throw new globalThis.Error('DateTimeFormatterLoadError: ' + cause.value, { cause });
+                throw new globalThis.Error('DateTimeFormatterLoadError.' + cause.value, { cause });
             }
             return new TimeZoneFormatter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -114,7 +114,7 @@ export class TimeZoneFormatter {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DateTimeFormatterLoadError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
-                throw new globalThis.Error('DateTimeFormatterLoadError: ' + cause.value, { cause });
+                throw new globalThis.Error('DateTimeFormatterLoadError.' + cause.value, { cause });
             }
             return new TimeZoneFormatter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -141,7 +141,7 @@ export class TimeZoneFormatter {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DateTimeFormatterLoadError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
-                throw new globalThis.Error('DateTimeFormatterLoadError: ' + cause.value, { cause });
+                throw new globalThis.Error('DateTimeFormatterLoadError.' + cause.value, { cause });
             }
             return new TimeZoneFormatter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -168,7 +168,7 @@ export class TimeZoneFormatter {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DateTimeFormatterLoadError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
-                throw new globalThis.Error('DateTimeFormatterLoadError: ' + cause.value, { cause });
+                throw new globalThis.Error('DateTimeFormatterLoadError.' + cause.value, { cause });
             }
             return new TimeZoneFormatter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -195,7 +195,7 @@ export class TimeZoneFormatter {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DateTimeFormatterLoadError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
-                throw new globalThis.Error('DateTimeFormatterLoadError: ' + cause.value, { cause });
+                throw new globalThis.Error('DateTimeFormatterLoadError.' + cause.value, { cause });
             }
             return new TimeZoneFormatter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -222,7 +222,7 @@ export class TimeZoneFormatter {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DateTimeFormatterLoadError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
-                throw new globalThis.Error('DateTimeFormatterLoadError: ' + cause.value, { cause });
+                throw new globalThis.Error('DateTimeFormatterLoadError.' + cause.value, { cause });
             }
             return new TimeZoneFormatter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -249,7 +249,7 @@ export class TimeZoneFormatter {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DateTimeFormatterLoadError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
-                throw new globalThis.Error('DateTimeFormatterLoadError: ' + cause.value, { cause });
+                throw new globalThis.Error('DateTimeFormatterLoadError.' + cause.value, { cause });
             }
             return new TimeZoneFormatter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -276,7 +276,7 @@ export class TimeZoneFormatter {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DateTimeFormatterLoadError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
-                throw new globalThis.Error('DateTimeFormatterLoadError: ' + cause.value, { cause });
+                throw new globalThis.Error('DateTimeFormatterLoadError.' + cause.value, { cause });
             }
             return new TimeZoneFormatter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -303,7 +303,7 @@ export class TimeZoneFormatter {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DateTimeFormatterLoadError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
-                throw new globalThis.Error('DateTimeFormatterLoadError: ' + cause.value, { cause });
+                throw new globalThis.Error('DateTimeFormatterLoadError.' + cause.value, { cause });
             }
             return new TimeZoneFormatter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -330,7 +330,7 @@ export class TimeZoneFormatter {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DateTimeFormatterLoadError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
-                throw new globalThis.Error('DateTimeFormatterLoadError: ' + cause.value, { cause });
+                throw new globalThis.Error('DateTimeFormatterLoadError.' + cause.value, { cause });
             }
             return new TimeZoneFormatter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -357,7 +357,7 @@ export class TimeZoneFormatter {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DateTimeFormatterLoadError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
-                throw new globalThis.Error('DateTimeFormatterLoadError: ' + cause.value, { cause });
+                throw new globalThis.Error('DateTimeFormatterLoadError.' + cause.value, { cause });
             }
             return new TimeZoneFormatter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -384,7 +384,7 @@ export class TimeZoneFormatter {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DateTimeFormatterLoadError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
-                throw new globalThis.Error('DateTimeFormatterLoadError: ' + cause.value, { cause });
+                throw new globalThis.Error('DateTimeFormatterLoadError.' + cause.value, { cause });
             }
             return new TimeZoneFormatter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -411,7 +411,7 @@ export class TimeZoneFormatter {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DateTimeFormatterLoadError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
-                throw new globalThis.Error('DateTimeFormatterLoadError: ' + cause.value, { cause });
+                throw new globalThis.Error('DateTimeFormatterLoadError.' + cause.value, { cause });
             }
             return new TimeZoneFormatter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -438,7 +438,7 @@ export class TimeZoneFormatter {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DateTimeFormatterLoadError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
-                throw new globalThis.Error('DateTimeFormatterLoadError: ' + cause.value, { cause });
+                throw new globalThis.Error('DateTimeFormatterLoadError.' + cause.value, { cause });
             }
             return new TimeZoneFormatter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -465,7 +465,7 @@ export class TimeZoneFormatter {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DateTimeFormatterLoadError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
-                throw new globalThis.Error('DateTimeFormatterLoadError: ' + cause.value, { cause });
+                throw new globalThis.Error('DateTimeFormatterLoadError.' + cause.value, { cause });
             }
             return new TimeZoneFormatter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -489,7 +489,7 @@ export class TimeZoneFormatter {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DateTimeWriteError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
-                throw new globalThis.Error('DateTimeWriteError: ' + cause.value, { cause });
+                throw new globalThis.Error('DateTimeWriteError.' + cause.value, { cause });
             }
             return write.readString8();
         }

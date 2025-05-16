@@ -6,14 +6,14 @@ import type { ReorderedIndexMap } from "./ReorderedIndexMap"
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
+
 /**
  * An ICU4X Bidi object, containing loaded bidi data
  *
  * See the [Rust documentation for `BidiClass`](https://docs.rs/icu/latest/icu/properties/props/struct.BidiClass.html) for more information.
  */
-
-
 export class Bidi {
+    /** @internal */
     get ffiValue(): pointer;
 
 
@@ -77,5 +77,8 @@ export class Bidi {
      */
     static levelLtr(): number;
 
+    /**
+     * Creates a new [`Bidi`] from locale data using compiled data.
+     */
     constructor();
 }

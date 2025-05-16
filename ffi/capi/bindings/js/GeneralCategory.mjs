@@ -4,11 +4,10 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
+
 /**
  * See the [Rust documentation for `GeneralCategory`](https://docs.rs/icu/latest/icu/properties/props/enum.GeneralCategory.html) for more information.
  */
-
-
 export class GeneralCategory {
     #value = undefined;
 
@@ -74,6 +73,7 @@ export class GeneralCategory {
         throw TypeError(value + " is not a GeneralCategory and does not correspond to any of its enumerator values.");
     }
 
+    /** @internal */
     static fromValue(value) {
         return new GeneralCategory(value);
     }
@@ -86,6 +86,7 @@ export class GeneralCategory {
         }
     }
 
+    /** @internal */
     get ffiValue(){
         return this.#value;
     }

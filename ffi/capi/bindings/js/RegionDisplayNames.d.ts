@@ -8,12 +8,12 @@ import type { LocaleParseError } from "./LocaleParseError"
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
+
 /**
  * See the [Rust documentation for `RegionDisplayNames`](https://docs.rs/icu/latest/icu/experimental/displaynames/struct.RegionDisplayNames.html) for more information.
  */
-
-
 export class RegionDisplayNames {
+    /** @internal */
     get ffiValue(): pointer;
 
 
@@ -33,5 +33,10 @@ export class RegionDisplayNames {
      */
     of(region: string): string;
 
+    /**
+     * Creates a new `RegionDisplayNames` from locale data and an options bag using compiled data.
+     *
+     * See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/experimental/displaynames/struct.RegionDisplayNames.html#method.try_new) for more information.
+     */
     constructor(locale: Locale, options: DisplayNamesOptions_obj);
 }

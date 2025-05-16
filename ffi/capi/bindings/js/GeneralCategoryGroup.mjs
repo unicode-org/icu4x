@@ -4,13 +4,12 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
+
 /**
  * A mask that is capable of representing groups of `General_Category` values.
  *
  * See the [Rust documentation for `GeneralCategoryGroup`](https://docs.rs/icu/latest/icu/properties/props/struct.GeneralCategoryGroup.html) for more information.
  */
-
-
 export class GeneralCategoryGroup {
     #mask;
     get mask() {
@@ -19,9 +18,7 @@ export class GeneralCategoryGroup {
     set mask(value){
         this.#mask = value;
     }
-    /** Create `GeneralCategoryGroup` from an object that contains all of `GeneralCategoryGroup`s fields.
-    * Optional fields do not need to be included in the provided object.
-    */
+    /** @internal */
     static fromFields(structObj) {
         return new GeneralCategoryGroup(structObj);
     }

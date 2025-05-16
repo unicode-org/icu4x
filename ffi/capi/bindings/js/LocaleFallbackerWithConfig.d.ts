@@ -4,6 +4,7 @@ import type { LocaleFallbackIterator } from "./LocaleFallbackIterator"
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
+
 /**
  * An object that runs the ICU4X locale fallback algorithm with specific configurations.
  *
@@ -11,10 +12,11 @@ import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
  *
  * See the [Rust documentation for `LocaleFallbackerWithConfig`](https://docs.rs/icu/latest/icu/locale/fallback/struct.LocaleFallbackerWithConfig.html) for more information.
  */
-
-
 export class LocaleFallbackerWithConfig {
+    /** @internal */
     get ffiValue(): pointer;
+    /** @internal */
+    constructor();
 
 
     /**

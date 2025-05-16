@@ -3,15 +3,14 @@ import { CodePointRangeIteratorResult } from "./CodePointRangeIteratorResult.mjs
 import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
+const CodePointRangeIterator_box_destroy_registry = new FinalizationRegistry((ptr) => {
+    wasm.icu4x_CodePointRangeIterator_destroy_mv1(ptr);
+});
 
 /**
  * An iterator over code point ranges, produced by `CodePointSetData` or
  * one of the `CodePointMapData` types
  */
-const CodePointRangeIterator_box_destroy_registry = new FinalizationRegistry((ptr) => {
-    wasm.icu4x_CodePointRangeIterator_destroy_mv1(ptr);
-});
-
 export class CodePointRangeIterator {
     // Internal ptr reference:
     #ptr = null;
@@ -37,6 +36,7 @@ export class CodePointRangeIterator {
 
         return this;
     }
+    /** @internal */
     get ffiValue() {
         return this.#ptr;
     }

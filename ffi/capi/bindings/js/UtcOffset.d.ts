@@ -3,13 +3,15 @@ import type { TimeZoneInvalidOffsetError } from "./TimeZoneInvalidOffsetError"
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
+
 /**
  * See the [Rust documentation for `UtcOffset`](https://docs.rs/icu/latest/icu/time/zone/struct.UtcOffset.html) for more information.
  */
-
-
 export class UtcOffset {
+    /** @internal */
     get ffiValue(): pointer;
+    /** @internal */
+    constructor();
 
 
     /**

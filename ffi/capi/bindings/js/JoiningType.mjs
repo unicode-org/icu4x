@@ -3,11 +3,10 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
+
 /**
  * See the [Rust documentation for `JoiningType`](https://docs.rs/icu/latest/icu/properties/props/struct.JoiningType.html) for more information.
  */
-
-
 export class JoiningType {
     #value = undefined;
 
@@ -49,6 +48,7 @@ export class JoiningType {
         throw TypeError(value + " is not a JoiningType and does not correspond to any of its enumerator values.");
     }
 
+    /** @internal */
     static fromValue(value) {
         return new JoiningType(value);
     }
@@ -57,6 +57,7 @@ export class JoiningType {
         return [...JoiningType.#values.keys()][this.#value];
     }
 
+    /** @internal */
     get ffiValue(){
         return this.#value;
     }

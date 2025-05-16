@@ -14,7 +14,7 @@ export function categoryFor(selfLocaleName, opXF) {
     
     let out = self.categoryFor(op);
     
-    out = out.value;;
+    out = out?.value || 'None';;
     
 
     return out;

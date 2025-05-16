@@ -5,10 +5,12 @@ import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 export class TimeZoneVariant {
 
+    /** @internal */
     static fromValue(value: TimeZoneVariant | string): TimeZoneVariant;
 
     get value(): string;
 
+    /** @internal */
     get ffiValue(): number;
 
     static Standard : TimeZoneVariant;

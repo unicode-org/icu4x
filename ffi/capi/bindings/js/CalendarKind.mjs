@@ -4,13 +4,12 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
+
 /**
  * The various calendar types currently supported by [`Calendar`]
  *
  * See the [Rust documentation for `AnyCalendarKind`](https://docs.rs/icu/latest/icu/calendar/enum.AnyCalendarKind.html) for more information.
  */
-
-
 export class CalendarKind {
     #value = undefined;
 
@@ -64,6 +63,7 @@ export class CalendarKind {
         throw TypeError(value + " is not a CalendarKind and does not correspond to any of its enumerator values.");
     }
 
+    /** @internal */
     static fromValue(value) {
         return new CalendarKind(value);
     }
@@ -76,6 +76,7 @@ export class CalendarKind {
         }
     }
 
+    /** @internal */
     get ffiValue(){
         return this.#value;
     }

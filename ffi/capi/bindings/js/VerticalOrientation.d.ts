@@ -2,17 +2,18 @@
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
+
 /**
  * See the [Rust documentation for `VerticalOrientation`](https://docs.rs/icu/latest/icu/properties/props/struct.VerticalOrientation.html) for more information.
  */
-
-
 export class VerticalOrientation {
 
+    /** @internal */
     static fromValue(value: VerticalOrientation | string): VerticalOrientation;
 
     get value(): string;
 
+    /** @internal */
     get ffiValue(): number;
 
     static Rotated : VerticalOrientation;

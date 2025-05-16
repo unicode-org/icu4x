@@ -3,16 +3,15 @@ import { Weekday } from "./Weekday.mjs"
 import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
+const WeekdaySetIterator_box_destroy_registry = new FinalizationRegistry((ptr) => {
+    wasm.icu4x_WeekdaySetIterator_destroy_mv1(ptr);
+});
 
 /**
  * Documents which days of the week are considered to be a part of the weekend
  *
  * See the [Rust documentation for `WeekdaySetIterator`](https://docs.rs/icu/latest/icu/calendar/week/struct.WeekdaySetIterator.html) for more information.
  */
-const WeekdaySetIterator_box_destroy_registry = new FinalizationRegistry((ptr) => {
-    wasm.icu4x_WeekdaySetIterator_destroy_mv1(ptr);
-});
-
 export class WeekdaySetIterator {
     // Internal ptr reference:
     #ptr = null;
@@ -36,6 +35,7 @@ export class WeekdaySetIterator {
 
         return this;
     }
+    /** @internal */
     get ffiValue() {
         return this.#ptr;
     }

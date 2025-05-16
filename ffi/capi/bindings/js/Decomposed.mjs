@@ -3,6 +3,7 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
+
 /**
  * The outcome of non-recursive canonical decomposition of a character.
  * `second` will be NUL when the decomposition expands to a single character
@@ -10,8 +11,6 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
  *
  * See the [Rust documentation for `Decomposed`](https://docs.rs/icu/latest/icu/normalizer/properties/enum.Decomposed.html) for more information.
  */
-
-
 export class Decomposed {
     #first;
     get first() {

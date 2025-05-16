@@ -7,14 +7,14 @@ import type { LocaleFallbackerWithConfig } from "./LocaleFallbackerWithConfig"
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
+
 /**
  * An object that runs the ICU4X locale fallback algorithm.
  *
  * See the [Rust documentation for `LocaleFallbacker`](https://docs.rs/icu/latest/icu/locale/fallback/struct.LocaleFallbacker.html) for more information.
  */
-
-
 export class LocaleFallbacker {
+    /** @internal */
     get ffiValue(): pointer;
 
 
@@ -39,5 +39,10 @@ export class LocaleFallbacker {
      */
     forConfig(config: LocaleFallbackConfig_obj): LocaleFallbackerWithConfig;
 
+    /**
+     * Creates a new `LocaleFallbacker` from compiled data.
+     *
+     * See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/locale/fallback/struct.LocaleFallbacker.html#method.new) for more information.
+     */
     constructor();
 }

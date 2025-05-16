@@ -3,6 +3,7 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
+
 /**
  * Result of a single iteration of [`CodePointRangeIterator`].
  * Logically can be considered to be an `Option<RangeInclusive<DiplomatChar>>`,
@@ -12,8 +13,6 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
  * iteration will NOT produce a range done=true, in other words `start` and `end` are useful
  * values if and only if `done=false`.
  */
-
-
 export class CodePointRangeIteratorResult {
     #start;
     get start() {

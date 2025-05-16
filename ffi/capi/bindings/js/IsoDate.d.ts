@@ -8,14 +8,14 @@ import type { Weekday } from "./Weekday"
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
+
 /**
  * An ICU4X Date object capable of containing a ISO-8601 date
  *
  * See the [Rust documentation for `Date`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html) for more information.
  */
-
-
 export class IsoDate {
+    /** @internal */
     get ffiValue(): pointer;
 
 
@@ -126,5 +126,10 @@ export class IsoDate {
      */
     get daysInYear(): number;
 
+    /**
+     * Creates a new [`IsoDate`] from the specified date.
+     *
+     * See the [Rust documentation for `try_new_iso`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.try_new_iso) for more information.
+     */
     constructor(year: number, month: number, day: number);
 }

@@ -25,8 +25,8 @@ class ParameterTemplate extends HTMLElement {
             this.inputElement.addEventListener("input", this.input.bind(this));
         }
 
-        clone.slot = "parameter";
-        baseClone.appendChild(clone);
+        clone.firstElementChild.slot = "parameter";
+        this.appendChild(clone);
 
         const shadowRoot = this.attachShadow({ mode: "open" });
         shadowRoot.appendChild(baseClone);
@@ -281,8 +281,10 @@ export class TerminusRender extends HTMLElement {
     submit() {
         try {
             this.#output.innerText = this.#func(...this.#parameters.paramArray);
+            this.#output.classList = "";
         } catch(e) {
-            this.#output.innerText = e;
+            this.#output.innerText = e.message;
+            this.#output.classList = "error";
             throw e;
         }
     }

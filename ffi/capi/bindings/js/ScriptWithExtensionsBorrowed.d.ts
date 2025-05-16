@@ -4,15 +4,17 @@ import type { ScriptExtensionsSet } from "./ScriptExtensionsSet"
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
+
 /**
  * A slightly faster ScriptWithExtensions object
  *
  * See the [Rust documentation for `ScriptWithExtensionsBorrowed`](https://docs.rs/icu/latest/icu/properties/script/struct.ScriptWithExtensionsBorrowed.html) for more information.
  */
-
-
 export class ScriptWithExtensionsBorrowed {
+    /** @internal */
     get ffiValue(): pointer;
+    /** @internal */
+    constructor();
 
 
     /**

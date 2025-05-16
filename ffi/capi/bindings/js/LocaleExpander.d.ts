@@ -6,14 +6,14 @@ import type { TransformResult } from "./TransformResult"
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
+
 /**
  * A locale expander.
  *
  * See the [Rust documentation for `LocaleExpander`](https://docs.rs/icu/latest/icu/locale/struct.LocaleExpander.html) for more information.
  */
-
-
 export class LocaleExpander {
+    /** @internal */
     get ffiValue(): pointer;
 
 
@@ -53,5 +53,10 @@ export class LocaleExpander {
      */
     minimizeFavorScript(locale: Locale): TransformResult;
 
+    /**
+     * Create a new [`LocaleExpander`] using compiled data.
+     *
+     * See the [Rust documentation for `new_common`](https://docs.rs/icu/latest/icu/locale/struct.LocaleExpander.html#method.new_common) for more information.
+     */
     constructor();
 }

@@ -7,14 +7,13 @@ import { LocaleParseError } from "./LocaleParseError.mjs"
 import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
-
-/**
- * See the [Rust documentation for `RegionDisplayNames`](https://docs.rs/icu/latest/icu/experimental/displaynames/struct.RegionDisplayNames.html) for more information.
- */
 const RegionDisplayNames_box_destroy_registry = new FinalizationRegistry((ptr) => {
     wasm.icu4x_RegionDisplayNames_destroy_mv1(ptr);
 });
 
+/**
+ * See the [Rust documentation for `RegionDisplayNames`](https://docs.rs/icu/latest/icu/experimental/displaynames/struct.RegionDisplayNames.html) for more information.
+ */
 export class RegionDisplayNames {
     // Internal ptr reference:
     #ptr = null;
@@ -38,6 +37,7 @@ export class RegionDisplayNames {
 
         return this;
     }
+    /** @internal */
     get ffiValue() {
         return this.#ptr;
     }
@@ -59,7 +59,7 @@ export class RegionDisplayNames {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
-                throw new globalThis.Error('DataError: ' + cause.value, { cause });
+                throw new globalThis.Error('DataError.' + cause.value, { cause });
             }
             return new RegionDisplayNames(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -87,7 +87,7 @@ export class RegionDisplayNames {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
-                throw new globalThis.Error('DataError: ' + cause.value, { cause });
+                throw new globalThis.Error('DataError.' + cause.value, { cause });
             }
             return new RegionDisplayNames(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -120,7 +120,7 @@ export class RegionDisplayNames {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new LocaleParseError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
-                throw new globalThis.Error('LocaleParseError: ' + cause.value, { cause });
+                throw new globalThis.Error('LocaleParseError.' + cause.value, { cause });
             }
             return write.readString8();
         }
@@ -133,6 +133,11 @@ export class RegionDisplayNames {
         }
     }
 
+    /**
+     * Creates a new `RegionDisplayNames` from locale data and an options bag using compiled data.
+     *
+     * See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/experimental/displaynames/struct.RegionDisplayNames.html#method.try_new) for more information.
+     */
     constructor(locale, options) {
         if (arguments[0] === diplomatRuntime.exposeConstructor) {
             return this.#internalConstructor(...Array.prototype.slice.call(arguments, 1));

@@ -6,13 +6,12 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
+
 /**
  * An ICU4X DateTime object capable of containing a ISO-8601 date and time.
  *
  * See the [Rust documentation for `DateTime`](https://docs.rs/icu/latest/icu/time/struct.DateTime.html) for more information.
  */
-
-
 export class IsoDateTime {
     #date;
     get date() {
@@ -112,7 +111,7 @@ export class IsoDateTime {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new Rfc9557ParseError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
-                throw new globalThis.Error('Rfc9557ParseError: ' + cause.value, { cause });
+                throw new globalThis.Error('Rfc9557ParseError.' + cause.value, { cause });
             }
             return IsoDateTime._fromFFI(diplomatRuntime.internalConstructor, diplomatReceive.buffer);
         }

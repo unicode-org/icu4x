@@ -2,17 +2,18 @@
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
+
 /**
  * See the [Rust documentation for `JoiningType`](https://docs.rs/icu/latest/icu/properties/props/struct.JoiningType.html) for more information.
  */
-
-
 export class JoiningType {
 
+    /** @internal */
     static fromValue(value: JoiningType | string): JoiningType;
 
     get value(): string;
 
+    /** @internal */
     get ffiValue(): number;
 
     static NonJoining : JoiningType;

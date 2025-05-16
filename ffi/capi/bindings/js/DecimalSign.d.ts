@@ -2,19 +2,20 @@
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
+
 /**
  * The sign of a Decimal, as shown in formatting.
  *
  * See the [Rust documentation for `Sign`](https://docs.rs/fixed_decimal/latest/fixed_decimal/enum.Sign.html) for more information.
  */
-
-
 export class DecimalSign {
 
+    /** @internal */
     static fromValue(value: DecimalSign | string): DecimalSign;
 
     get value(): string;
 
+    /** @internal */
     get ffiValue(): number;
 
     static None : DecimalSign;

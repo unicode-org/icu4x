@@ -3,14 +3,13 @@ import { BidiDirection } from "./BidiDirection.mjs"
 import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
-
-/**
- * Bidi information for a single processed paragraph
- */
 const BidiParagraph_box_destroy_registry = new FinalizationRegistry((ptr) => {
     wasm.icu4x_BidiParagraph_destroy_mv1(ptr);
 });
 
+/**
+ * Bidi information for a single processed paragraph
+ */
 export class BidiParagraph {
     // Internal ptr reference:
     #ptr = null;
@@ -36,6 +35,7 @@ export class BidiParagraph {
 
         return this;
     }
+    /** @internal */
     get ffiValue() {
         return this.#ptr;
     }

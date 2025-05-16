@@ -6,14 +6,14 @@ import type { SentenceBreakIteratorUtf16 } from "./SentenceBreakIteratorUtf16"
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
+
 /**
  * An ICU4X sentence-break segmenter, capable of finding sentence breakpoints in strings.
  *
  * See the [Rust documentation for `SentenceSegmenter`](https://docs.rs/icu/latest/icu/segmenter/struct.SentenceSegmenter.html) for more information.
  */
-
-
 export class SentenceSegmenter {
+    /** @internal */
     get ffiValue(): pointer;
 
 
@@ -37,5 +37,10 @@ export class SentenceSegmenter {
      */
     segment(input: string): SentenceBreakIteratorUtf16;
 
+    /**
+     * Construct a [`SentenceSegmenter`] using compiled data. This does not assume any content locale.
+     *
+     * See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/segmenter/struct.SentenceSegmenter.html#method.new) for more information.
+     */
     constructor();
 }

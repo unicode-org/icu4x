@@ -41,7 +41,7 @@ export function dayOfWeek(selfIsoYear, selfIsoMonth, selfIsoDay, selfCalendarKin
     
     let out = self.dayOfWeek;
     
-    out = out.value;;
+    out = out?.value || 'None';;
     
 
     return out;

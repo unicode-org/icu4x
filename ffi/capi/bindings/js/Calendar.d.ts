@@ -5,12 +5,12 @@ import type { DataProvider } from "./DataProvider"
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
+
 /**
  * See the [Rust documentation for `AnyCalendar`](https://docs.rs/icu/latest/icu/calendar/enum.AnyCalendar.html) for more information.
  */
-
-
 export class Calendar {
+    /** @internal */
     get ffiValue(): pointer;
 
 
@@ -28,5 +28,10 @@ export class Calendar {
      */
     get kind(): CalendarKind;
 
+    /**
+     * Creates a new [`Calendar`] for the specified kind, using compiled data.
+     *
+     * See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/calendar/enum.AnyCalendar.html#method.new) for more information.
+     */
     constructor(kind: CalendarKind);
 }

@@ -4,6 +4,7 @@ import type { DataProvider } from "./DataProvider"
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
+
 /**
  * The raw canonical composition operation.
  *
@@ -11,9 +12,8 @@ import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
  *
  * See the [Rust documentation for `CanonicalComposition`](https://docs.rs/icu/latest/icu/normalizer/properties/struct.CanonicalComposition.html) for more information.
  */
-
-
 export class CanonicalComposition {
+    /** @internal */
     get ffiValue(): pointer;
 
 
@@ -32,5 +32,10 @@ export class CanonicalComposition {
      */
     compose(starter: codepoint, second: codepoint): codepoint;
 
+    /**
+     * Construct a new CanonicalComposition instance for NFC using compiled data.
+     *
+     * See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/normalizer/properties/struct.CanonicalComposition.html#method.new) for more information.
+     */
     constructor();
 }

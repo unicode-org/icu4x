@@ -3,11 +3,10 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
+
 /**
  * See the [Rust documentation for `EastAsianWidth`](https://docs.rs/icu/latest/icu/properties/props/struct.EastAsianWidth.html) for more information.
  */
-
-
 export class EastAsianWidth {
     #value = undefined;
 
@@ -49,6 +48,7 @@ export class EastAsianWidth {
         throw TypeError(value + " is not a EastAsianWidth and does not correspond to any of its enumerator values.");
     }
 
+    /** @internal */
     static fromValue(value) {
         return new EastAsianWidth(value);
     }
@@ -57,6 +57,7 @@ export class EastAsianWidth {
         return [...EastAsianWidth.#values.keys()][this.#value];
     }
 
+    /** @internal */
     get ffiValue(){
         return this.#value;
     }

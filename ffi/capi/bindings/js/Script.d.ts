@@ -2,17 +2,18 @@
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
+
 /**
  * See the [Rust documentation for `Script`](https://docs.rs/icu/latest/icu/properties/props/struct.Script.html) for more information.
  */
-
-
 export class Script {
 
+    /** @internal */
     static fromValue(value: Script | string): Script;
 
     get value(): string;
 
+    /** @internal */
     get ffiValue(): number;
 
     static Adlam : Script;

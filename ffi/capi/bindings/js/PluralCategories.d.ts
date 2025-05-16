@@ -10,5 +10,7 @@ export class PluralCategories {
     get few(): boolean;
     get many(): boolean;
     get other(): boolean;
+    /** @internal */
+    constructor();
 
 }

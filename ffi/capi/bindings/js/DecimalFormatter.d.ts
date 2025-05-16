@@ -7,15 +7,17 @@ import type { Locale } from "./Locale"
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
+
 /**
  * An ICU4X Decimal Format object, capable of formatting a [`Decimal`] as a string.
  *
  * See the [Rust documentation for `DecimalFormatter`](https://docs.rs/icu/latest/icu/decimal/struct.DecimalFormatter.html) for more information.
  */
-
-
 export class DecimalFormatter {
+    /** @internal */
     get ffiValue(): pointer;
+    /** @internal */
+    constructor();
 
 
     /**

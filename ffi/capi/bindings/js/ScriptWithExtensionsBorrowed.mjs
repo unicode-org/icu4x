@@ -4,16 +4,15 @@ import { ScriptExtensionsSet } from "./ScriptExtensionsSet.mjs"
 import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
+const ScriptWithExtensionsBorrowed_box_destroy_registry = new FinalizationRegistry((ptr) => {
+    wasm.icu4x_ScriptWithExtensionsBorrowed_destroy_mv1(ptr);
+});
 
 /**
  * A slightly faster ScriptWithExtensions object
  *
  * See the [Rust documentation for `ScriptWithExtensionsBorrowed`](https://docs.rs/icu/latest/icu/properties/script/struct.ScriptWithExtensionsBorrowed.html) for more information.
  */
-const ScriptWithExtensionsBorrowed_box_destroy_registry = new FinalizationRegistry((ptr) => {
-    wasm.icu4x_ScriptWithExtensionsBorrowed_destroy_mv1(ptr);
-});
-
 export class ScriptWithExtensionsBorrowed {
     // Internal ptr reference:
     #ptr = null;
@@ -39,6 +38,7 @@ export class ScriptWithExtensionsBorrowed {
 
         return this;
     }
+    /** @internal */
     get ffiValue() {
         return this.#ptr;
     }

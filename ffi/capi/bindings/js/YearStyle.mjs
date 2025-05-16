@@ -3,11 +3,10 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
+
 /**
  * See the [Rust documentation for `YearStyle`](https://docs.rs/icu/latest/icu/datetime/options/enum.YearStyle.html) for more information.
  */
-
-
 export class YearStyle {
     #value = undefined;
 
@@ -46,6 +45,7 @@ export class YearStyle {
         throw TypeError(value + " is not a YearStyle and does not correspond to any of its enumerator values.");
     }
 
+    /** @internal */
     static fromValue(value) {
         return new YearStyle(value);
     }
@@ -54,6 +54,7 @@ export class YearStyle {
         return [...YearStyle.#values.keys()][this.#value];
     }
 
+    /** @internal */
     get ffiValue(){
         return this.#value;
     }

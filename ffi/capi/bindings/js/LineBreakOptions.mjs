@@ -5,11 +5,10 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
+
 /**
  * See the [Rust documentation for `LineBreakOptions`](https://docs.rs/icu/latest/icu/segmenter/options/struct.LineBreakOptions.html) for more information.
  */
-
-
 export class LineBreakOptions {
     #strictness;
     get strictness() {
@@ -25,9 +24,7 @@ export class LineBreakOptions {
     set wordOption(value){
         this.#wordOption = value;
     }
-    /** Create `LineBreakOptions` from an object that contains all of `LineBreakOptions`s fields.
-    * Optional fields do not need to be included in the provided object.
-    */
+    /** @internal */
     static fromFields(structObj) {
         return new LineBreakOptions(structObj);
     }

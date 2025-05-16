@@ -6,7 +6,7 @@ export function create(localeName) {
     
     let out = CalendarKind.create(locale);
     
-    out = out.value;;
+    out = out?.value || 'None';;
     
 
     return out;

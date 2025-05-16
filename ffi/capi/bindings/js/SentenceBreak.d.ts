@@ -2,17 +2,18 @@
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
+
 /**
  * See the [Rust documentation for `SentenceBreak`](https://docs.rs/icu/latest/icu/properties/props/struct.SentenceBreak.html) for more information.
  */
-
-
 export class SentenceBreak {
 
+    /** @internal */
     static fromValue(value: SentenceBreak | string): SentenceBreak;
 
     get value(): string;
 
+    /** @internal */
     get ffiValue(): number;
 
     static Other : SentenceBreak;

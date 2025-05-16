@@ -3,13 +3,15 @@ import type { TimeZone } from "./TimeZone"
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
+
 /**
  * See the [Rust documentation for `TimeZoneIter`](https://docs.rs/icu/latest/icu/time/zone/iana/struct.TimeZoneIter.html) for more information.
  */
-
-
 export class TimeZoneIterator {
+    /** @internal */
     get ffiValue(): pointer;
+    /** @internal */
+    constructor();
 
 
     next(): IteratorResult<TimeZone>;

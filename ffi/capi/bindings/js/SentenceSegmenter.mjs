@@ -6,16 +6,15 @@ import { SentenceBreakIteratorUtf16 } from "./SentenceBreakIteratorUtf16.mjs"
 import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
+const SentenceSegmenter_box_destroy_registry = new FinalizationRegistry((ptr) => {
+    wasm.icu4x_SentenceSegmenter_destroy_mv1(ptr);
+});
 
 /**
  * An ICU4X sentence-break segmenter, capable of finding sentence breakpoints in strings.
  *
  * See the [Rust documentation for `SentenceSegmenter`](https://docs.rs/icu/latest/icu/segmenter/struct.SentenceSegmenter.html) for more information.
  */
-const SentenceSegmenter_box_destroy_registry = new FinalizationRegistry((ptr) => {
-    wasm.icu4x_SentenceSegmenter_destroy_mv1(ptr);
-});
-
 export class SentenceSegmenter {
     // Internal ptr reference:
     #ptr = null;
@@ -39,6 +38,7 @@ export class SentenceSegmenter {
 
         return this;
     }
+    /** @internal */
     get ffiValue() {
         return this.#ptr;
     }
@@ -73,7 +73,7 @@ export class SentenceSegmenter {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
-                throw new globalThis.Error('DataError: ' + cause.value, { cause });
+                throw new globalThis.Error('DataError.' + cause.value, { cause });
             }
             return new SentenceSegmenter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -95,7 +95,7 @@ export class SentenceSegmenter {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
-                throw new globalThis.Error('DataError: ' + cause.value, { cause });
+                throw new globalThis.Error('DataError.' + cause.value, { cause });
             }
             return new SentenceSegmenter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -132,6 +132,11 @@ export class SentenceSegmenter {
         }
     }
 
+    /**
+     * Construct a [`SentenceSegmenter`] using compiled data. This does not assume any content locale.
+     *
+     * See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/segmenter/struct.SentenceSegmenter.html#method.new) for more information.
+     */
     constructor() {
         if (arguments[0] === diplomatRuntime.exposeConstructor) {
             return this.#internalConstructor(...Array.prototype.slice.call(arguments, 1));

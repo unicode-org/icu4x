@@ -2,13 +2,15 @@
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
+
 /**
  * See the [Rust documentation for `GraphemeClusterBreakIterator`](https://docs.rs/icu/latest/icu/segmenter/iterators/struct.GraphemeClusterBreakIterator.html) for more information.
  */
-
-
 export class GraphemeClusterBreakIteratorUtf16 {
+    /** @internal */
     get ffiValue(): pointer;
+    /** @internal */
+    constructor();
 
 
     /**

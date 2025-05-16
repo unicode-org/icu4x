@@ -2,17 +2,18 @@
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
+
 /**
  * See the [Rust documentation for `PluralCategory`](https://docs.rs/icu/latest/icu/plurals/enum.PluralCategory.html) for more information.
  */
-
-
 export class PluralCategory {
 
+    /** @internal */
     static fromValue(value: PluralCategory | string): PluralCategory;
 
     get value(): string;
 
+    /** @internal */
     get ffiValue(): number;
 
     static Zero : PluralCategory;

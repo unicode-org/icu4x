@@ -3,11 +3,10 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
+
 /**
  * See the [Rust documentation for `IndicSyllabicCategory`](https://docs.rs/icu/latest/icu/properties/props/struct.IndicSyllabicCategory.html) for more information.
  */
-
-
 export class IndicSyllabicCategory {
     #value = undefined;
 
@@ -80,6 +79,7 @@ export class IndicSyllabicCategory {
         throw TypeError(value + " is not a IndicSyllabicCategory and does not correspond to any of its enumerator values.");
     }
 
+    /** @internal */
     static fromValue(value) {
         return new IndicSyllabicCategory(value);
     }
@@ -88,6 +88,7 @@ export class IndicSyllabicCategory {
         return [...IndicSyllabicCategory.#values.keys()][this.#value];
     }
 
+    /** @internal */
     get ffiValue(){
         return this.#value;
     }

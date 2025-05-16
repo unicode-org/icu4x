@@ -7,6 +7,9 @@ import { TimeZoneAndCanonicalIterator } from "./TimeZoneAndCanonicalIterator.mjs
 import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
+const IanaParserExtended_box_destroy_registry = new FinalizationRegistry((ptr) => {
+    wasm.icu4x_IanaParserExtended_destroy_mv1(ptr);
+});
 
 /**
  * A mapper between IANA time zone identifiers and BCP-47 time zone identifiers.
@@ -16,10 +19,6 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
  *
  * See the [Rust documentation for `IanaParserExtended`](https://docs.rs/icu/latest/icu/time/zone/iana/struct.IanaParserExtended.html) for more information.
  */
-const IanaParserExtended_box_destroy_registry = new FinalizationRegistry((ptr) => {
-    wasm.icu4x_IanaParserExtended_destroy_mv1(ptr);
-});
-
 export class IanaParserExtended {
     // Internal ptr reference:
     #ptr = null;
@@ -43,6 +42,7 @@ export class IanaParserExtended {
 
         return this;
     }
+    /** @internal */
     get ffiValue() {
         return this.#ptr;
     }
@@ -79,7 +79,7 @@ export class IanaParserExtended {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
-                throw new globalThis.Error('DataError: ' + cause.value, { cause });
+                throw new globalThis.Error('DataError.' + cause.value, { cause });
             }
             return new IanaParserExtended(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -151,6 +151,11 @@ export class IanaParserExtended {
         }
     }
 
+    /**
+     * Create a new [`IanaParserExtended`] using compiled data
+     *
+     * See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/time/zone/iana/struct.IanaParserExtended.html#method.new) for more information.
+     */
     constructor() {
         if (arguments[0] === diplomatRuntime.exposeConstructor) {
             return this.#internalConstructor(...Array.prototype.slice.call(arguments, 1));

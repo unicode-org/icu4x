@@ -41,6 +41,7 @@ export class TimeZoneVariant {
         throw TypeError(value + " is not a TimeZoneVariant and does not correspond to any of its enumerator values.");
     }
 
+    /** @internal */
     static fromValue(value) {
         return new TimeZoneVariant(value);
     }
@@ -49,6 +50,7 @@ export class TimeZoneVariant {
         return [...TimeZoneVariant.#values.keys()][this.#value];
     }
 
+    /** @internal */
     get ffiValue(){
         return this.#value;
     }
