@@ -19,9 +19,10 @@
 //! ## Example Usage
 //!
 //! ```
-//! use ixdtf::parsers::{
+//! use ixdtf::{
 //!     records::{Sign, TimeZoneRecord},
-//!     IxdtfParser,
+//!     parsers::IxdtfParser,
+//!     Slice
 //! };
 //!
 //! let ixdtf_str = "2024-03-02T08:48:00-05:00[America/New_York]";
@@ -46,7 +47,7 @@
 //! assert!(!tz_annotation.critical);
 //! assert_eq!(
 //!     tz_annotation.tz,
-//!     TimeZoneRecord::Name("America/New_York".as_bytes())
+//!     TimeZoneRecord::Name(Slice::Utf8("America/New_York".as_bytes()))
 //! );
 //! ```
 //!
@@ -73,9 +74,10 @@
 //! RFC 9557 updates the interpretation of `Z` to align with `-00:00`.
 //!
 //! ```rust
-//! use ixdtf::parsers::{
+//! use ixdtf::{
+//!     parsers::IxdtfParser,
 //!     records::{Sign, TimeZoneRecord},
-//!     IxdtfParser,
+//!     Slice
 //! };
 //!
 //! let ixdtf_str = "2024-03-02T08:48:00Z[America/New_York]";
@@ -100,7 +102,7 @@
 //! assert!(!tz_annotation.critical);
 //! assert_eq!(
 //!     tz_annotation.tz,
-//!     TimeZoneRecord::Name("America/New_York".as_bytes())
+//!     TimeZoneRecord::Name(Slice::Utf8("America/New_York".as_bytes()))
 //! );
 //! ```
 //!
@@ -134,9 +136,10 @@
 //! zone annotation if it is provided.
 //!
 //! ```rust
-//! use ixdtf::parsers::{
+//! use ixdtf::{
+//!     parsers::IxdtfParser,
 //!     records::{Sign, TimeZoneRecord},
-//!     IxdtfParser,
+//!     Slice
 //! };
 //!
 //! let zulu_offset = "2024-03-02T08:48:00Z[!America/New_York]";
@@ -156,7 +159,7 @@
 //! assert!(tz_annotation.critical);
 //! assert_eq!(
 //!     tz_annotation.tz,
-//!     TimeZoneRecord::Name("America/New_York".as_bytes())
+//!     TimeZoneRecord::Name(Slice::Utf8("America/New_York".as_bytes()))
 //! );
 //! ```
 //!
@@ -223,7 +226,7 @@
 //! will attempt to parse the Time Zone annotation as a key-value annotation.
 //!
 //! ```rust
-//! use ixdtf::{parsers::IxdtfParser, ParseError};
+//! use ixdtf::{parsers::IxdtfParser, ParseError, Slice};
 //!
 //! let example_one =
 //!     "2024-03-02T08:48:00-05:00[u-ca=iso8601][America/New_York]";
@@ -240,7 +243,7 @@
 //! the ixdtf string must be treated as erroneous
 //!
 //! ```rust
-//! use ixdtf::{parsers::IxdtfParser, ParseError};
+//! use ixdtf::{parsers::IxdtfParser, ParseError, Slice};
 //!
 //! let example_two = "2024-03-02T08:48:00-05:00[u-ca=iso8601][!u-ca=japanese]";
 //!
@@ -255,7 +258,7 @@
 //! error on an unknown flag being flagged as critical.
 //!
 //! ```rust
-//! use ixdtf::{parsers::IxdtfParser, ParseError};
+//! use ixdtf::{parsers::IxdtfParser, ParseError, Slice};
 //!
 //! let example_three =
 //!     "2024-03-02T08:48:00-05:00[u-ca=iso8601][!answer-to-universe=fortytwo]";
@@ -289,7 +292,7 @@
 //! between the offset and annotation.
 //!
 //! ```rust
-//! use ixdtf::parsers::{IxdtfParser, records::TimeZoneRecord};
+//! use ixdtf::{parsers::IxdtfParser, records::TimeZoneRecord, Slice};
 //!
 //! let example_two = "2024-03-02T08:48:00+01:00[!America/New_York]";
 //!
@@ -301,7 +304,7 @@
 //! // The time zone annotation and offset conflict with each other, and must therefore be
 //! // resolved by the user.
 //! assert!(tz_annotation.critical);
-//! assert_eq!(tz_annotation.tz, TimeZoneRecord::Name("America/New_York".as_bytes()));
+//! assert_eq!(tz_annotation.tz, TimeZoneRecord::Name(Slice::Utf8("America/New_York".as_bytes())));
 //! assert_eq!(offset.hour(), 1);
 //! ```
 //!
@@ -330,14 +333,14 @@
 //! with custom handler.
 //!
 //! ```rust
-//! use ixdtf::parsers::IxdtfParser;
+//! use ixdtf::{parsers::IxdtfParser, Slice};
 //!
 //! let example_with_custom_key = "2024-03-02T08:48:00-05:00[u-ca=iso8601][!answer-to-universe=fortytwo]";
 //!
 //! let mut answer = None;
 //!
 //! let _ = IxdtfParser::from_str(example_with_custom_key).parse_with_annotation_handler(|annotation| {
-//!     if annotation.key == "answer-to-universe".as_bytes() {
+//!     if annotation.key == Slice::Utf8("answer-to-universe".as_bytes()) {
 //!         answer.get_or_insert(annotation);
 //!         // Found our value! We don't need `ixdtf` to handle this annotation.
 //!         return None
@@ -350,7 +353,7 @@
 //! let answer = answer.unwrap();
 //!
 //! assert!(answer.critical);
-//! assert_eq!(answer.value, "fortytwo".as_bytes());
+//! assert_eq!(answer.value, Slice::Utf8("fortytwo".as_bytes()));
 //! ```
 //!
 //! It is worth noting that in the above example the annotation above found is a critically flagged
@@ -388,12 +391,16 @@
     )
 )]
 
+pub(crate) mod core;
 mod error;
 pub mod parsers;
+pub mod records;
 
 extern crate alloc;
 
 pub use error::ParseError;
+
+pub use core::Slice;
 
 /// The `ixdtf` crate's Result type.
 pub type ParserResult<T> = Result<T, ParseError>;

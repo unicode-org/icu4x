@@ -6,6 +6,8 @@
 
 use core::num::NonZeroU8;
 
+use crate::Slice;
+
 /// An `IxdtfParseRecord` is an intermediary record returned by `IxdtfParser`.
 #[non_exhaustive]
 #[derive(Default, Debug, PartialEq)]
@@ -19,7 +21,7 @@ pub struct IxdtfParseRecord<'a> {
     /// Parsed `TimeZone` annotation with critical flag and data (UTCOffset | IANA name)
     pub tz: Option<TimeZoneAnnotation<'a>>,
     /// The parsed calendar value.
-    pub calendar: Option<&'a [u8]>,
+    pub calendar: Option<Slice<'a>>,
 }
 
 #[non_exhaustive]
@@ -29,9 +31,9 @@ pub struct Annotation<'a> {
     /// Whether this annotation is flagged as critical
     pub critical: bool,
     /// The parsed key value of the annotation
-    pub key: &'a [u8],
+    pub key: Slice<'a>,
     /// The parsed value of the annotation
-    pub value: &'a [u8],
+    pub value: Slice<'a>,
 }
 
 #[allow(clippy::exhaustive_structs)] // DateRecord only allows for a year, month, and day value.
@@ -75,7 +77,7 @@ pub struct TimeZoneAnnotation<'a> {
 #[derive(Debug, Clone, PartialEq)]
 pub enum TimeZoneRecord<'a> {
     /// TimeZoneIANAName
-    Name(&'a [u8]),
+    Name(Slice<'a>),
     /// TimeZoneOffset
     Offset(MinutePrecisionOffset),
 }
