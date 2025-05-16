@@ -10,7 +10,7 @@
 //! the comparison of collation element sequences.
 
 extern crate alloc;
-use alloc::{vec, vec::Vec};
+use alloc::vec::Vec;
 
 use crate::elements::CharacterAndClassAndTrieValue;
 use crate::elements::CollationElement32;
@@ -2281,12 +2281,16 @@ where
         let iter = char::decode_utf16(s.iter().cloned());
         for c in iter {
             let c = c.unwrap_or(char::REPLACEMENT_CHARACTER); // shouldn't happen
-            let len = c.len_utf8();
-            let mut bytes = vec![0u8; len];
+            let mut bytes = [0u8; 4];
             c.encode_utf8(&mut bytes);
-            self.inner.write(&bytes)?;
+            self.inner.write(c.encode_utf8(&mut bytes).as_bytes())?;
         }
         Ok(())
+    }
+
+    fn write_char(&mut self, c: char) -> core::fmt::Result {
+        let mut buf = [0u8; 4];
+        self.inner.write(c.encode_utf8(&mut buf).as_bytes())
     }
 }
 
