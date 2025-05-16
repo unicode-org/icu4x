@@ -48,7 +48,7 @@ export class Collator {
      *
      * See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/collator/struct.Collator.html#method.try_new) for more information.
      */
-    static create(locale, options) {
+    #defaultConstructor(locale, options) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
 
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
@@ -76,7 +76,7 @@ export class Collator {
      *
      * See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/collator/struct.Collator.html#method.try_new) for more information.
      */
-    #defaultConstructor(provider, locale, options) {
+    static createWithProvider(provider, locale, options) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
 
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
@@ -148,11 +148,11 @@ export class Collator {
     }
 
     /**
-     * Construct a new Collator instance using a particular data source.
+     * Construct a new Collator instance using compiled data.
      *
      * See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/collator/struct.Collator.html#method.try_new) for more information.
      */
-    constructor(provider, locale, options) {
+    constructor(locale, options) {
         if (arguments[0] === diplomatRuntime.exposeConstructor) {
             return this.#internalConstructor(...Array.prototype.slice.call(arguments, 1));
         } else if (arguments[0] === diplomatRuntime.internalConstructor) {

@@ -18,11 +18,11 @@ export class Collator {
 
 
     /**
-     * Construct a new Collator instance using compiled data.
+     * Construct a new Collator instance using a particular data source.
      *
      * See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/collator/struct.Collator.html#method.try_new) for more information.
      */
-    static create(locale: Locale, options: CollatorOptions_obj): Collator;
+    static createWithProvider(provider: DataProvider, locale: Locale, options: CollatorOptions_obj): Collator;
 
     /**
      * Compare two strings.
@@ -44,9 +44,9 @@ export class Collator {
     get resolvedOptions(): CollatorResolvedOptions;
 
     /**
-     * Construct a new Collator instance using a particular data source.
+     * Construct a new Collator instance using compiled data.
      *
      * See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/collator/struct.Collator.html#method.try_new) for more information.
      */
-    constructor(provider: DataProvider, locale: Locale, options: CollatorOptions_obj);
+    constructor(locale: Locale, options: CollatorOptions_obj);
 }
