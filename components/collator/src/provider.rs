@@ -25,6 +25,7 @@ use zerovec::ule::AsULE;
 use zerovec::ZeroVec;
 use zerovec::{zeroslice, ZeroSlice};
 
+use crate::comparison::CompressibleBytes;
 use crate::elements::CollationElement;
 use crate::elements::CollationElement32;
 use crate::elements::Tag;
@@ -64,7 +65,7 @@ const _: () = {
     impl_collation_diacritics_v1!(Baked);
     impl_collation_jamo_v1!(Baked);
     impl_collation_metadata_v1!(Baked);
-    impl_collation_special_primaries_v1!(Baked);
+    impl_collation_special_primaries_v2!(Baked);
     impl_collation_reordering_v1!(Baked);
 };
 
@@ -126,8 +127,8 @@ icu_provider::data_marker!(
 );
 icu_provider::data_marker!(
     /// Data marker for collcation special primaries data.
-    CollationSpecialPrimariesV1,
-    "collation/special/primaries/v1",
+    CollationSpecialPrimariesV2,
+    "collation/special/primaries/v2",
     CollationSpecialPrimaries<'static>,
     is_singleton = true,
 );
@@ -141,7 +142,7 @@ pub const MARKERS: &[DataMarkerInfo] = &[
     CollationJamoV1::INFO,
     CollationMetadataV1::INFO,
     CollationReorderingV1::INFO,
-    CollationSpecialPrimariesV1::INFO,
+    CollationSpecialPrimariesV2::INFO,
 ];
 
 const SINGLE_U32: &ZeroSlice<u32> =
@@ -521,7 +522,26 @@ impl CollationMetadata {
     }
 }
 
-/// Special primaries associated with the root collation
+/// Root-associated additional data that doesn't change in tailorings
+///
+/// These are the fields that logically belong to the root data but
+/// don't belong to the tailoring data and that are on this separate
+/// struct, since we have the same struct for a tailoring and the
+/// bulk of the root.
+///
+/// As a practical matter, this struct happens to only carry
+/// information about what concrete numeric values for primary
+/// weights are special in particular ways. In principle, when the
+/// root data is built, the root builder is allowed to assign the
+/// numeric values as it sees fit, which is why these aren't
+/// hard-coded.
+///
+/// Note: In 2.0.0 and prior, this struct was loaded only if
+/// it was known at collator construction time (based on options)
+/// that the data here was going to be needed. With the introduction
+/// of collation keys and the decision not to introduce a collator
+/// key generator object separate from the collator, this struct
+/// is now always loaded.
 ///
 /// <div class="stab unstable">
 /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
@@ -539,6 +559,15 @@ pub struct CollationSpecialPrimaries<'data> {
     /// variants in `MaxVariable`, currently 4.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub last_primaries: ZeroVec<'data, u16>,
+    /// 256 bits to classify every possible byte
+    /// into compressible or non-compressible.
+    /// The 256 bits are distributed across 32
+    /// `u8`s, since we don't have a native `u256`
+    /// and have to do manual shifts and masks,
+    /// so we might as well do them with the narrow
+    /// type that is its own `ULE`.
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub compressible_bytes: ZeroVec<'data, u8>,
     /// The high 8 bits of the numeric primary
     pub numeric_primary: u8,
 }
@@ -556,5 +585,13 @@ impl CollationSpecialPrimaries<'_> {
         // Minus one to generate the right lower 16 bits from the high 16 bits.
         // See parse.cpp in genrb and getLastPrimaryForGroup in ICU4C.
         (u32::from(self.last_primaries.get(max_variable as usize).unwrap()) << 16) - 1
+    }
+
+    #[allow(dead_code)]
+    pub(crate) fn get_compressible_bytes(&self) -> CompressibleBytes<'_> {
+        // The length has already been validated when constructing the collator.
+        debug_assert_eq!(self.compressible_bytes.len(), 32);
+        #[allow(clippy::unwrap_used)]
+        CompressibleBytes::new(<&[u8; 32]>::try_from(self.compressible_bytes.as_bytes()).unwrap())
     }
 }

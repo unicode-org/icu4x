@@ -1,10 +1,10 @@
 // @generated
+include!("collation_special_primaries_v2.rs.data");
 include!("collation_reordering_v1.rs.data");
 include!("collation_diacritics_v1.rs.data");
 include!("collation_jamo_v1.rs.data");
 include!("collation_metadata_v1.rs.data");
 include!("collation_tailoring_v1.rs.data");
-include!("collation_special_primaries_v1.rs.data");
 include!("collation_root_v1.rs.data");
 /// Marks a type as a data provider. You can then use macros like
 /// `impl_core_helloworld_v1` to add implementations.
@@ -40,12 +40,12 @@ pub use __make_provider as make_provider;
 macro_rules! impl_data_provider {
     ($ provider : ty) => {
         make_provider!($provider);
+        impl_collation_special_primaries_v2!($provider);
         impl_collation_reordering_v1!($provider);
         impl_collation_diacritics_v1!($provider);
         impl_collation_jamo_v1!($provider);
         impl_collation_metadata_v1!($provider);
         impl_collation_tailoring_v1!($provider);
-        impl_collation_special_primaries_v1!($provider);
         impl_collation_root_v1!($provider);
     };
 }

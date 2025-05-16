@@ -35,7 +35,7 @@ macro_rules! registry(
             icu::collator::provider::CollationJamoV1: CollationJamoV1,
             icu::collator::provider::CollationMetadataV1: CollationMetadataV1,
             icu::collator::provider::CollationReorderingV1: CollationReorderingV1,
-            icu::collator::provider::CollationSpecialPrimariesV1: CollationSpecialPrimariesV1,
+            icu::collator::provider::CollationSpecialPrimariesV2: CollationSpecialPrimariesV2,
             icu::datetime::provider::time_zones::TimezoneNamesLocationsOverrideV1: TimezoneNamesLocationsOverrideV1,
             icu::datetime::provider::time_zones::TimezoneNamesLocationsRootV1: TimezoneNamesLocationsRootV1,
             icu::datetime::provider::time_zones::TimezoneNamesCitiesOverrideV1: TimezoneNamesCitiesOverrideV1,

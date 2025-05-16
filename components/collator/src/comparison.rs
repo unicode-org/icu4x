@@ -36,7 +36,7 @@ use crate::provider::CollationReordering;
 use crate::provider::CollationReorderingV1;
 use crate::provider::CollationRootV1;
 use crate::provider::CollationSpecialPrimaries;
-use crate::provider::CollationSpecialPrimariesV1;
+use crate::provider::CollationSpecialPrimariesV2;
 use crate::provider::CollationTailoringV1;
 use core::cmp::Ordering;
 use core::convert::TryFrom;
@@ -379,7 +379,7 @@ impl LocaleSpecificDataHolder {
 /// Compares strings according to culturally-relevant ordering.
 #[derive(Debug)]
 pub struct Collator {
-    special_primaries: Option<DataPayload<CollationSpecialPrimariesV1>>,
+    special_primaries: DataPayload<CollationSpecialPrimariesV2>,
     root: DataPayload<CollationRootV1>,
     tailoring: Option<DataPayload<CollationTailoringV1>>,
     jamo: DataPayload<CollationJamoV1>,
@@ -395,7 +395,7 @@ impl Collator {
     /// Constructs a borrowed version of this type for more efficient querying.
     pub fn as_borrowed(&self) -> CollatorBorrowed {
         CollatorBorrowed {
-            special_primaries: self.special_primaries.as_ref().map(|s| s.get()),
+            special_primaries: self.special_primaries.get(),
             root: self.root.get(),
             tailoring: self.tailoring.as_ref().map(|s| s.get()),
             jamo: self.jamo.get(),
@@ -434,7 +434,7 @@ impl Collator {
         options: CollatorOptions,
     ) -> Result<Self, DataError>
     where
-        D: DataProvider<CollationSpecialPrimariesV1>
+        D: DataProvider<CollationSpecialPrimariesV2>
             + DataProvider<CollationRootV1>
             + DataProvider<CollationTailoringV1>
             + DataProvider<CollationDiacriticsV1>
@@ -451,7 +451,7 @@ impl Collator {
             provider.load(Default::default())?.payload,
             provider.load(Default::default())?.payload,
             provider.load(Default::default())?.payload,
-            || provider.load(Default::default()).map(|r| r.payload),
+            provider.load(Default::default())?.payload,
             prefs,
             options,
         )
@@ -464,7 +464,7 @@ impl Collator {
         decompositions: DataPayload<NormalizerNfdDataV1>,
         tables: DataPayload<NormalizerNfdTablesV1>,
         jamo: DataPayload<CollationJamoV1>,
-        special_primaries: impl FnOnce() -> Result<DataPayload<CollationSpecialPrimariesV1>, DataError>,
+        special_primaries: DataPayload<CollationSpecialPrimariesV2>,
         prefs: CollatorPreferences,
         options: CollatorOptions,
     ) -> Result<Self, DataError>
@@ -484,22 +484,14 @@ impl Collator {
             return Err(DataError::custom("invalid").with_marker(CollationJamoV1::INFO));
         }
 
-        let special_primaries = if locale_dependent.merged_options.alternate_handling()
-            == AlternateHandling::Shifted
-            || locale_dependent.merged_options.numeric()
-        {
-            let special_primaries = special_primaries()?;
-            // `variant_count` isn't stable yet:
-            // https://github.com/rust-lang/rust/issues/73662
-            if special_primaries.get().last_primaries.len() <= (MaxVariable::Currency as usize) {
-                return Err(
-                    DataError::custom("invalid").with_marker(CollationSpecialPrimariesV1::INFO)
-                );
-            }
-            Some(special_primaries)
-        } else {
-            None
-        };
+        // `variant_count` isn't stable yet:
+        // https://github.com/rust-lang/rust/issues/73662
+        if special_primaries.get().last_primaries.len() <= (MaxVariable::Currency as usize) {
+            return Err(DataError::custom("invalid").with_marker(CollationSpecialPrimariesV2::INFO));
+        }
+        if special_primaries.get().compressible_bytes.len() != 32 {
+            return Err(DataError::custom("invalid").with_marker(CollationSpecialPrimariesV2::INFO));
+        }
 
         Ok(Collator {
             special_primaries,
@@ -543,7 +535,7 @@ macro_rules! compare {
 /// borrowed version.
 #[derive(Debug)]
 pub struct CollatorBorrowed<'a> {
-    special_primaries: Option<&'a CollationSpecialPrimaries<'a>>,
+    special_primaries: &'a CollationSpecialPrimaries<'a>,
     root: &'a CollationData<'a>,
     tailoring: Option<&'a CollationData<'a>>,
     jamo: &'a CollationJamo<'a>,
@@ -579,23 +571,15 @@ impl CollatorBorrowed<'static> {
             return Err(DataError::custom("invalid").with_marker(CollationJamoV1::INFO));
         }
 
-        let special_primaries = if locale_dependent.merged_options.alternate_handling()
-            == AlternateHandling::Shifted
-            || locale_dependent.merged_options.numeric()
-        {
-            let special_primaries =
-                crate::provider::Baked::SINGLETON_COLLATION_SPECIAL_PRIMARIES_V1;
-            // `variant_count` isn't stable yet:
-            // https://github.com/rust-lang/rust/issues/73662
-            if special_primaries.last_primaries.len() <= (MaxVariable::Currency as usize) {
-                return Err(
-                    DataError::custom("invalid").with_marker(CollationSpecialPrimariesV1::INFO)
-                );
-            }
-            Some(special_primaries)
-        } else {
-            None
-        };
+        let special_primaries = crate::provider::Baked::SINGLETON_COLLATION_SPECIAL_PRIMARIES_V2;
+        // `variant_count` isn't stable yet:
+        // https://github.com/rust-lang/rust/issues/73662
+        if special_primaries.last_primaries.len() <= (MaxVariable::Currency as usize) {
+            return Err(DataError::custom("invalid").with_marker(CollationSpecialPrimariesV2::INFO));
+        }
+        if special_primaries.compressible_bytes.len() != 32 {
+            return Err(DataError::custom("invalid").with_marker(CollationSpecialPrimariesV2::INFO));
+        }
 
         // Attribute belongs closer to `unwrap`, but
         // https://github.com/rust-lang/rust/issues/15701
@@ -623,12 +607,7 @@ impl CollatorBorrowed<'static> {
     /// compile-time optimizations that are possible with [`CollatorBorrowed`].
     pub const fn static_to_owned(self) -> Collator {
         Collator {
-            special_primaries: if let Some(s) = self.special_primaries {
-                // `map` not available in const context
-                Some(DataPayload::from_static_ref(s))
-            } else {
-                None
-            },
+            special_primaries: DataPayload::from_static_ref(self.special_primaries),
             root: DataPayload::from_static_ref(self.root),
             tailoring: if let Some(s) = self.tailoring {
                 // `map` not available in const context
@@ -751,10 +730,6 @@ impl CollatorBorrowed<'_> {
         } else {
             // +1 so that we can use "<" and primary ignorables test out early.
             self.special_primaries
-                .as_ref()
-                // `unwrap()` is OK, because we've ensured in the constructor that value
-                // is `Some` if we have alternate handling.
-                .unwrap()
                 .last_primary_for_group(self.options.max_variable())
                 + 1
         };
@@ -763,13 +738,7 @@ impl CollatorBorrowed<'_> {
         // https://github.com/rust-lang/rust/issues/15701
         #[allow(clippy::unwrap_used)]
         let numeric_primary = if self.options.numeric() {
-            Some(
-                self.special_primaries
-                    .as_ref()
-                    // `unwrap` is OK, because we've ensured `Some` in the constructor
-                    .unwrap()
-                    .numeric_primary,
-            )
+            Some(self.special_primaries.numeric_primary)
         } else {
             None
         };
@@ -1542,5 +1511,27 @@ impl CollatorBorrowed<'_> {
         }
 
         Ordering::Equal
+    }
+}
+
+/// Helper for checking if a byte is compressible
+pub(crate) struct CompressibleBytes<'a> {
+    arr: &'a [u8; 32],
+}
+
+impl<'a> CompressibleBytes<'a> {
+    pub(crate) fn new(arr: &'a [u8; 32]) -> Self {
+        Self { arr }
+    }
+
+    #[allow(dead_code)]
+    pub(crate) fn is_compressible(&self, b: u8) -> bool {
+        // Indexing OK by construction and pasting this
+        // into Compiler Explorer shows that the panic
+        // is optimized away.
+        #[allow(clippy::indexing_slicing)]
+        let field = self.arr[usize::from(b >> 3)];
+        let mask = 1 << (b & 0b111);
+        (field & mask) != 0
     }
 }
