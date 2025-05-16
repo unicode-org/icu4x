@@ -1688,17 +1688,7 @@ impl CollatorBorrowed<'_> {
     where
         S: CollationKeySink,
     {
-        self.write_sort_key_up_to_quaternary(s.chars(), sink)?;
-
-        if self.options.strength() == Strength::Identical {
-            let nfd =
-                DecomposingNormalizerBorrowed::new_with_data(self.decompositions, self.tables);
-            sink.write_byte(LEVEL_SEPARATOR_BYTE)?;
-            let mut adapter = SinkAdapter::new(sink);
-            nfd.normalize_to(s, &mut adapter)?;
-        }
-
-        Ok(())
+        self.write_sort_key_impl(s.chars(), sink, |nfd, sink| nfd.normalize_to(s, sink))
     }
 
     /// Given potentially invalid UTF-8, write the sort key bytes up to the collator's strength.
@@ -1708,17 +1698,7 @@ impl CollatorBorrowed<'_> {
     where
         S: CollationKeySink,
     {
-        let nfd = DecomposingNormalizerBorrowed::new_with_data(self.decompositions, self.tables);
-        let iter = nfd.normalize_iter(s.chars());
-        self.write_sort_key_up_to_quaternary(iter, sink)?;
-
-        if self.options.strength() == Strength::Identical {
-            sink.write_byte(LEVEL_SEPARATOR_BYTE)?;
-            let mut adapter = SinkAdapter::new(sink);
-            nfd.normalize_utf8_to(s, &mut adapter)?;
-        }
-
-        Ok(())
+        self.write_sort_key_impl(s.chars(), sink, |nfd, sink| nfd.normalize_utf8_to(s, sink))
     }
 
     /// Given potentially invalid UTF-16, write the sort key bytes up to the collator's strength.
@@ -1728,14 +1708,28 @@ impl CollatorBorrowed<'_> {
     where
         S: CollationKeySink,
     {
-        let nfd = DecomposingNormalizerBorrowed::new_with_data(self.decompositions, self.tables);
-        let iter = nfd.normalize_iter(s.chars());
+        self.write_sort_key_impl(s.chars(), sink, |nfd, sink| nfd.normalize_utf16_to(s, sink))
+    }
+
+    fn write_sort_key_impl<I, S, N>(
+        &self,
+        iter: I,
+        sink: &mut S,
+        normalize: N,
+    ) -> Result<(), core::fmt::Error>
+    where
+        I: Iterator<Item = char>,
+        S: CollationKeySink,
+        N: Fn(DecomposingNormalizerBorrowed, &mut SinkAdapter<'_, S>) -> core::fmt::Result,
+    {
         self.write_sort_key_up_to_quaternary(iter, sink)?;
 
         if self.options.strength() == Strength::Identical {
+            let nfd =
+                DecomposingNormalizerBorrowed::new_with_data(self.decompositions, self.tables);
             sink.write_byte(LEVEL_SEPARATOR_BYTE)?;
             let mut adapter = SinkAdapter::new(sink);
-            nfd.normalize_utf16_to(s, &mut adapter)?;
+            normalize(nfd, &mut adapter)?;
         }
 
         Ok(())
