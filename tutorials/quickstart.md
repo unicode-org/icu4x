@@ -159,7 +159,7 @@ This concludes this introduction tutorial. With the help of `Locale` and `DateTi
 
 Internationalization is a broad domain and there are many more components in `ICU4X`.
 
-Next, learn how to [generate optimized data for your binary](data-management.md), [configure your Cargo.toml file](cargo.md), or continue exploring by reading [the docs](https://docs.rs/icu/latest/).
+Next, learn how to [generate optimized data for your binary](data-management.md), [configure your Cargo.toml file](../examples/cargo), or continue exploring by reading [the docs](https://docs.rs/icu/latest/).
 
 
 
