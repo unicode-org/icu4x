@@ -39,28 +39,28 @@ class LocaleExpander {
 public:
 
   /**
-   * Create a new [`LocaleExpander`] using compiled data.
+   * Create a new {@link LocaleExpander} using compiled data.
    *
    * See the [Rust documentation for `new_common`](https://docs.rs/icu/2.0.0/icu/locale/struct.LocaleExpander.html#method.new_common) for more information.
    */
   inline static std::unique_ptr<icu4x::LocaleExpander> create_common();
 
   /**
-   * Create a new [`LocaleExpander`] using a new_common data source.
+   * Create a new {@link LocaleExpander} using a new_common data source.
    *
    * See the [Rust documentation for `new_common`](https://docs.rs/icu/2.0.0/icu/locale/struct.LocaleExpander.html#method.new_common) for more information.
    */
   inline static diplomat::result<std::unique_ptr<icu4x::LocaleExpander>, icu4x::DataError> create_common_with_provider(const icu4x::DataProvider& provider);
 
   /**
-   * Create a new [`LocaleExpander`] with extended data using compiled data.
+   * Create a new {@link LocaleExpander} with extended data using compiled data.
    *
    * See the [Rust documentation for `new_extended`](https://docs.rs/icu/2.0.0/icu/locale/struct.LocaleExpander.html#method.new_extended) for more information.
    */
   inline static std::unique_ptr<icu4x::LocaleExpander> create_extended();
 
   /**
-   * Create a new [`LocaleExpander`] with extended data using a particular data source.
+   * Create a new {@link LocaleExpander} with extended data using a particular data source.
    *
    * See the [Rust documentation for `new_extended`](https://docs.rs/icu/2.0.0/icu/locale/struct.LocaleExpander.html#method.new_extended) for more information.
    */

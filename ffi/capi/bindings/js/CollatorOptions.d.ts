@@ -5,7 +5,7 @@ import type { CollatorMaxVariable } from "./CollatorMaxVariable"
 import type { CollatorStrength } from "./CollatorStrength"
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
-type CollatorOptions_obj = {
+export type CollatorOptions_obj = {
     strength?: CollatorStrength | null;
     alternateHandling?: CollatorAlternateHandling | null;
     maxVariable?: CollatorMaxVariable | null;

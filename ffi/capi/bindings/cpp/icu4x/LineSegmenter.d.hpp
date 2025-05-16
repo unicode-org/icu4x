@@ -45,7 +45,7 @@ class LineSegmenter {
 public:
 
   /**
-   * Construct a [`LineSegmenter`] with default options (no locale-based tailoring) using compiled data. It automatically loads the best
+   * Construct a {@link LineSegmenter} with default options (no locale-based tailoring) using compiled data. It automatically loads the best
    * available payload data for Burmese, Khmer, Lao, and Thai.
    *
    * See the [Rust documentation for `new_auto`](https://docs.rs/icu/2.0.0/icu/segmenter/struct.LineSegmenter.html#method.new_auto) for more information.
@@ -53,7 +53,7 @@ public:
   inline static std::unique_ptr<icu4x::LineSegmenter> create_auto();
 
   /**
-   * Construct a [`LineSegmenter`] with default options (no locale-based tailoring) and LSTM payload data for
+   * Construct a {@link LineSegmenter} with default options (no locale-based tailoring) and LSTM payload data for
    * Burmese, Khmer, Lao, and Thai, using compiled data.
    *
    * See the [Rust documentation for `new_lstm`](https://docs.rs/icu/2.0.0/icu/segmenter/struct.LineSegmenter.html#method.new_lstm) for more information.
@@ -61,7 +61,7 @@ public:
   inline static std::unique_ptr<icu4x::LineSegmenter> create_lstm();
 
   /**
-   * Construct a [`LineSegmenter`] with default options (no locale-based tailoring) and dictionary payload data for
+   * Construct a {@link LineSegmenter} with default options (no locale-based tailoring) and dictionary payload data for
    * Burmese, Khmer, Lao, and Thai, using compiled data
    *
    * See the [Rust documentation for `new_dictionary`](https://docs.rs/icu/2.0.0/icu/segmenter/struct.LineSegmenter.html#method.new_dictionary) for more information.
@@ -69,7 +69,7 @@ public:
   inline static std::unique_ptr<icu4x::LineSegmenter> create_dictionary();
 
   /**
-   * Construct a [`LineSegmenter`] with custom options using compiled data. It automatically loads the best
+   * Construct a {@link LineSegmenter} with custom options using compiled data. It automatically loads the best
    * available payload data for Burmese, Khmer, Lao, and Thai.
    *
    * See the [Rust documentation for `new_auto`](https://docs.rs/icu/2.0.0/icu/segmenter/struct.LineSegmenter.html#method.new_auto) for more information.
@@ -77,7 +77,7 @@ public:
   inline static std::unique_ptr<icu4x::LineSegmenter> create_auto_with_options_v2(const icu4x::Locale* content_locale, icu4x::LineBreakOptionsV2 options);
 
   /**
-   * Construct a [`LineSegmenter`] with custom options. It automatically loads the best
+   * Construct a {@link LineSegmenter} with custom options. It automatically loads the best
    * available payload data for Burmese, Khmer, Lao, and Thai, using a particular data source.
    *
    * See the [Rust documentation for `new_auto`](https://docs.rs/icu/2.0.0/icu/segmenter/struct.LineSegmenter.html#method.new_auto) for more information.
@@ -85,7 +85,7 @@ public:
   inline static diplomat::result<std::unique_ptr<icu4x::LineSegmenter>, icu4x::DataError> create_auto_with_options_v2_and_provider(const icu4x::DataProvider& provider, const icu4x::Locale* content_locale, icu4x::LineBreakOptionsV2 options);
 
   /**
-   * Construct a [`LineSegmenter`] with custom options and LSTM payload data for
+   * Construct a {@link LineSegmenter} with custom options and LSTM payload data for
    * Burmese, Khmer, Lao, and Thai, using compiled data.
    *
    * See the [Rust documentation for `new_lstm`](https://docs.rs/icu/2.0.0/icu/segmenter/struct.LineSegmenter.html#method.new_lstm) for more information.
@@ -93,7 +93,7 @@ public:
   inline static std::unique_ptr<icu4x::LineSegmenter> create_lstm_with_options_v2(const icu4x::Locale* content_locale, icu4x::LineBreakOptionsV2 options);
 
   /**
-   * Construct a [`LineSegmenter`] with custom options and LSTM payload data for
+   * Construct a {@link LineSegmenter} with custom options and LSTM payload data for
    * Burmese, Khmer, Lao, and Thai, using a particular data source.
    *
    * See the [Rust documentation for `new_lstm`](https://docs.rs/icu/2.0.0/icu/segmenter/struct.LineSegmenter.html#method.new_lstm) for more information.
@@ -101,7 +101,7 @@ public:
   inline static diplomat::result<std::unique_ptr<icu4x::LineSegmenter>, icu4x::DataError> create_lstm_with_options_v2_and_provider(const icu4x::DataProvider& provider, const icu4x::Locale* content_locale, icu4x::LineBreakOptionsV2 options);
 
   /**
-   * Construct a [`LineSegmenter`] with custom options and dictionary payload data for
+   * Construct a {@link LineSegmenter} with custom options and dictionary payload data for
    * Burmese, Khmer, Lao, and Thai, using compiled data.
    *
    * See the [Rust documentation for `new_dictionary`](https://docs.rs/icu/2.0.0/icu/segmenter/struct.LineSegmenter.html#method.new_dictionary) for more information.
@@ -109,7 +109,7 @@ public:
   inline static std::unique_ptr<icu4x::LineSegmenter> create_dictionary_with_options_v2(const icu4x::Locale* content_locale, icu4x::LineBreakOptionsV2 options);
 
   /**
-   * Construct a [`LineSegmenter`] with custom options and dictionary payload data for
+   * Construct a {@link LineSegmenter} with custom options and dictionary payload data for
    * Burmese, Khmer, Lao, and Thai, using a particular data source.
    *
    * See the [Rust documentation for `new_dictionary`](https://docs.rs/icu/2.0.0/icu/segmenter/struct.LineSegmenter.html#method.new_dictionary) for more information.

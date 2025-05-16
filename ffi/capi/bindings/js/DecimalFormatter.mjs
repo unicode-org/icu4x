@@ -12,7 +12,7 @@ const DecimalFormatter_box_destroy_registry = new FinalizationRegistry((ptr) => 
 });
 
 /**
- * An ICU4X Decimal Format object, capable of formatting a [`Decimal`] as a string.
+ * An ICU4X Decimal Format object, capable of formatting a {@link Decimal} as a string.
  *
  * See the [Rust documentation for `DecimalFormatter`](https://docs.rs/icu/2.0.0/icu/decimal/struct.DecimalFormatter.html) for more information.
  */
@@ -46,7 +46,7 @@ export class DecimalFormatter {
 
 
     /**
-     * Creates a new [`DecimalFormatter`], using compiled data
+     * Creates a new {@link DecimalFormatter}, using compiled data
      *
      * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.0.0/icu/decimal/struct.DecimalFormatter.html#method.try_new) for more information.
      */
@@ -74,7 +74,7 @@ export class DecimalFormatter {
     }
 
     /**
-     * Creates a new [`DecimalFormatter`], using a particular data source.
+     * Creates a new {@link DecimalFormatter}, using a particular data source.
      *
      * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.0.0/icu/decimal/struct.DecimalFormatter.html#method.try_new) for more information.
      */
@@ -102,7 +102,7 @@ export class DecimalFormatter {
     }
 
     /**
-     * Creates a new [`DecimalFormatter`] from preconstructed locale data.
+     * Creates a new {@link DecimalFormatter} from preconstructed locale data.
      *
      * See the [Rust documentation for `DecimalSymbolsV1`](https://docs.rs/icu/2.0.0/icu/decimal/provider/struct.DecimalSymbolsV1.html) for more information.
      */
@@ -137,7 +137,7 @@ export class DecimalFormatter {
     }
 
     /**
-     * Formats a [`Decimal`] to a string.
+     * Formats a {@link Decimal} to a string.
      *
      * See the [Rust documentation for `format`](https://docs.rs/icu/2.0.0/icu/decimal/struct.DecimalFormatter.html#method.format) for more information.
      */

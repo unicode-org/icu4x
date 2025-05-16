@@ -47,7 +47,7 @@ export class WindowsParser {
 
 
     /**
-     * Create a new [`WindowsParser`] using compiled data
+     * Create a new {@link WindowsParser} using compiled data
      *
      * See the [Rust documentation for `new`](https://docs.rs/icu/2.0.0/icu/time/zone/windows/struct.WindowsParser.html#method.new) for more information.
      */
@@ -64,7 +64,7 @@ export class WindowsParser {
     }
 
     /**
-     * Create a new [`WindowsParser`] using a particular data source
+     * Create a new {@link WindowsParser} using a particular data source
      *
      * See the [Rust documentation for `new`](https://docs.rs/icu/2.0.0/icu/time/zone/windows/struct.WindowsParser.html#method.new) for more information.
      */
@@ -109,7 +109,7 @@ export class WindowsParser {
     }
 
     /**
-     * Create a new [`WindowsParser`] using compiled data
+     * Create a new {@link WindowsParser} using compiled data
      *
      * See the [Rust documentation for `new`](https://docs.rs/icu/2.0.0/icu/time/zone/windows/struct.WindowsParser.html#method.new) for more information.
      */

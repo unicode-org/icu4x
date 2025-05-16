@@ -11,7 +11,7 @@ const ReorderedIndexMap_box_destroy_registry = new FinalizationRegistry((ptr) =>
  *
  * `map[visualIndex] = sourceIndex`
  *
- * Produced by `reorder_visual()` on [`Bidi`].
+ * Produced by `reorder_visual()` on {@link Bidi}.
  */
 export class ReorderedIndexMap {
     // Internal ptr reference:

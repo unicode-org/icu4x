@@ -8,10 +8,10 @@ import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
 /**
- * An ICU4X Units Converter Factory object, capable of creating converters a [`UnitsConverter`]
- * for converting between two [`MeasureUnit`]s.
+ * An ICU4X Units Converter Factory object, capable of creating converters a {@link UnitsConverter}
+ * for converting between two {@link MeasureUnit}s.
  *
- * Also, it can parse the CLDR unit identifier (e.g. `meter-per-square-second`) and get the [`MeasureUnit`].
+ * Also, it can parse the CLDR unit identifier (e.g. `meter-per-square-second`) and get the {@link MeasureUnit}.
  *
  * See the [Rust documentation for `ConverterFactory`](https://docs.rs/icu/2.0.0/icu/experimental/units/converter_factory/struct.ConverterFactory.html) for more information.
  */
@@ -21,14 +21,14 @@ export class UnitsConverterFactory {
 
 
     /**
-     * Construct a new [`UnitsConverterFactory`] instance using a particular data source.
+     * Construct a new {@link UnitsConverterFactory} instance using a particular data source.
      *
      * See the [Rust documentation for `new`](https://docs.rs/icu/2.0.0/icu/experimental/units/converter_factory/struct.ConverterFactory.html#method.new) for more information.
      */
     static createWithProvider(provider: DataProvider): UnitsConverterFactory;
 
     /**
-     * Creates a new [`UnitsConverter`] from the input and output [`MeasureUnit`]s.
+     * Creates a new {@link UnitsConverter} from the input and output {@link MeasureUnit}s.
      * Returns nothing if the conversion between the two units is not possible.
      * For example, conversion between `meter` and `second` is not possible.
      *
@@ -37,7 +37,7 @@ export class UnitsConverterFactory {
     converter(from: MeasureUnit, to: MeasureUnit): UnitsConverter | null;
 
     /**
-     * Construct a new [`UnitsConverterFactory`] instance using compiled data.
+     * Construct a new {@link UnitsConverterFactory} instance using compiled data.
      *
      * See the [Rust documentation for `new`](https://docs.rs/icu/2.0.0/icu/experimental/units/converter_factory/struct.ConverterFactory.html#method.new) for more information.
      */

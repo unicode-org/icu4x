@@ -45,7 +45,7 @@ export class Bidi {
 
 
     /**
-     * Creates a new [`Bidi`] from locale data using compiled data.
+     * Creates a new {@link Bidi} from locale data using compiled data.
      */
     #defaultConstructor() {
 
@@ -60,7 +60,7 @@ export class Bidi {
     }
 
     /**
-     * Creates a new [`Bidi`] from locale data, and a particular data source.
+     * Creates a new {@link Bidi} from locale data, and a particular data source.
      */
     static createWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
@@ -213,7 +213,7 @@ export class Bidi {
     }
 
     /**
-     * Creates a new [`Bidi`] from locale data using compiled data.
+     * Creates a new {@link Bidi} from locale data using compiled data.
      */
     constructor() {
         if (arguments[0] === diplomatRuntime.exposeConstructor) {

@@ -45,7 +45,7 @@ export class PluralRules {
 
 
     /**
-     * Construct an [`PluralRules`] for the given locale, for cardinal numbers, using compiled data.
+     * Construct an {@link PluralRules} for the given locale, for cardinal numbers, using compiled data.
      *
      * See the [Rust documentation for `try_new_cardinal`](https://docs.rs/icu/2.0.0/icu/plurals/struct.PluralRules.html#method.try_new_cardinal) for more information.
      */
@@ -69,7 +69,7 @@ export class PluralRules {
     }
 
     /**
-     * Construct an [`PluralRules`] for the given locale, for cardinal numbers, using a particular data source.
+     * Construct an {@link PluralRules} for the given locale, for cardinal numbers, using a particular data source.
      *
      * See the [Rust documentation for `try_new_cardinal`](https://docs.rs/icu/2.0.0/icu/plurals/struct.PluralRules.html#method.try_new_cardinal) for more information.
      */
@@ -93,7 +93,7 @@ export class PluralRules {
     }
 
     /**
-     * Construct an [`PluralRules`] for the given locale, for ordinal numbers, using compiled data.
+     * Construct an {@link PluralRules} for the given locale, for ordinal numbers, using compiled data.
      *
      * See the [Rust documentation for `try_new_ordinal`](https://docs.rs/icu/2.0.0/icu/plurals/struct.PluralRules.html#method.try_new_ordinal) for more information.
      */
@@ -117,7 +117,7 @@ export class PluralRules {
     }
 
     /**
-     * Construct an [`PluralRules`] for the given locale, for ordinal numbers, using a particular data source.
+     * Construct an {@link PluralRules} for the given locale, for ordinal numbers, using a particular data source.
      *
      * See the [Rust documentation for `try_new_ordinal`](https://docs.rs/icu/2.0.0/icu/plurals/struct.PluralRules.html#method.try_new_ordinal) for more information.
      */

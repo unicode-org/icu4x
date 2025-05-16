@@ -22,7 +22,7 @@ export class LineSegmenter {
 
 
     /**
-     * Construct a [`LineSegmenter`] with default options (no locale-based tailoring) using compiled data. It automatically loads the best
+     * Construct a {@link LineSegmenter} with default options (no locale-based tailoring) using compiled data. It automatically loads the best
      * available payload data for Burmese, Khmer, Lao, and Thai.
      *
      * See the [Rust documentation for `new_auto`](https://docs.rs/icu/2.0.0/icu/segmenter/struct.LineSegmenter.html#method.new_auto) for more information.
@@ -30,7 +30,7 @@ export class LineSegmenter {
     static createAuto(): LineSegmenter;
 
     /**
-     * Construct a [`LineSegmenter`] with default options (no locale-based tailoring) and LSTM payload data for
+     * Construct a {@link LineSegmenter} with default options (no locale-based tailoring) and LSTM payload data for
      * Burmese, Khmer, Lao, and Thai, using compiled data.
      *
      * See the [Rust documentation for `new_lstm`](https://docs.rs/icu/2.0.0/icu/segmenter/struct.LineSegmenter.html#method.new_lstm) for more information.
@@ -38,7 +38,7 @@ export class LineSegmenter {
     static createLstm(): LineSegmenter;
 
     /**
-     * Construct a [`LineSegmenter`] with default options (no locale-based tailoring) and dictionary payload data for
+     * Construct a {@link LineSegmenter} with default options (no locale-based tailoring) and dictionary payload data for
      * Burmese, Khmer, Lao, and Thai, using compiled data
      *
      * See the [Rust documentation for `new_dictionary`](https://docs.rs/icu/2.0.0/icu/segmenter/struct.LineSegmenter.html#method.new_dictionary) for more information.
@@ -46,7 +46,7 @@ export class LineSegmenter {
     static createDictionary(): LineSegmenter;
 
     /**
-     * Construct a [`LineSegmenter`] with custom options using compiled data. It automatically loads the best
+     * Construct a {@link LineSegmenter} with custom options using compiled data. It automatically loads the best
      * available payload data for Burmese, Khmer, Lao, and Thai.
      *
      * See the [Rust documentation for `new_auto`](https://docs.rs/icu/2.0.0/icu/segmenter/struct.LineSegmenter.html#method.new_auto) for more information.
@@ -54,7 +54,7 @@ export class LineSegmenter {
     static autoWithOptions(contentLocale: Locale | null, options: LineBreakOptions_obj): LineSegmenter;
 
     /**
-     * Construct a [`LineSegmenter`] with custom options. It automatically loads the best
+     * Construct a {@link LineSegmenter} with custom options. It automatically loads the best
      * available payload data for Burmese, Khmer, Lao, and Thai, using a particular data source.
      *
      * See the [Rust documentation for `new_auto`](https://docs.rs/icu/2.0.0/icu/segmenter/struct.LineSegmenter.html#method.new_auto) for more information.
@@ -62,7 +62,7 @@ export class LineSegmenter {
     static autoWithOptionsAndProvider(provider: DataProvider, contentLocale: Locale | null, options: LineBreakOptions_obj): LineSegmenter;
 
     /**
-     * Construct a [`LineSegmenter`] with custom options and LSTM payload data for
+     * Construct a {@link LineSegmenter} with custom options and LSTM payload data for
      * Burmese, Khmer, Lao, and Thai, using compiled data.
      *
      * See the [Rust documentation for `new_lstm`](https://docs.rs/icu/2.0.0/icu/segmenter/struct.LineSegmenter.html#method.new_lstm) for more information.
@@ -70,7 +70,7 @@ export class LineSegmenter {
     static lstmWithOptions(contentLocale: Locale | null, options: LineBreakOptions_obj): LineSegmenter;
 
     /**
-     * Construct a [`LineSegmenter`] with custom options and LSTM payload data for
+     * Construct a {@link LineSegmenter} with custom options and LSTM payload data for
      * Burmese, Khmer, Lao, and Thai, using a particular data source.
      *
      * See the [Rust documentation for `new_lstm`](https://docs.rs/icu/2.0.0/icu/segmenter/struct.LineSegmenter.html#method.new_lstm) for more information.
@@ -78,7 +78,7 @@ export class LineSegmenter {
     static lstmWithOptionsAndProvider(provider: DataProvider, contentLocale: Locale | null, options: LineBreakOptions_obj): LineSegmenter;
 
     /**
-     * Construct a [`LineSegmenter`] with custom options and dictionary payload data for
+     * Construct a {@link LineSegmenter} with custom options and dictionary payload data for
      * Burmese, Khmer, Lao, and Thai, using compiled data.
      *
      * See the [Rust documentation for `new_dictionary`](https://docs.rs/icu/2.0.0/icu/segmenter/struct.LineSegmenter.html#method.new_dictionary) for more information.
@@ -86,7 +86,7 @@ export class LineSegmenter {
     static dictionaryWithOptions(contentLocale: Locale | null, options: LineBreakOptions_obj): LineSegmenter;
 
     /**
-     * Construct a [`LineSegmenter`] with custom options and dictionary payload data for
+     * Construct a {@link LineSegmenter} with custom options and dictionary payload data for
      * Burmese, Khmer, Lao, and Thai, using a particular data source.
      *
      * See the [Rust documentation for `new_dictionary`](https://docs.rs/icu/2.0.0/icu/segmenter/struct.LineSegmenter.html#method.new_dictionary) for more information.

@@ -20,7 +20,7 @@ export class WordSegmenter {
 
 
     /**
-     * Construct an [`WordSegmenter`] with automatically selecting the best available LSTM
+     * Construct an {@link WordSegmenter} with automatically selecting the best available LSTM
      * or dictionary payload data, using compiled data. This does not assume any content locale.
      *
      * Note: currently, it uses dictionary for Chinese and Japanese, and LSTM for Burmese,
@@ -31,7 +31,7 @@ export class WordSegmenter {
     static createAuto(): WordSegmenter;
 
     /**
-     * Construct an [`WordSegmenter`] with automatically selecting the best available LSTM
+     * Construct an {@link WordSegmenter} with automatically selecting the best available LSTM
      * or dictionary payload data, using compiled data.
      *
      * Note: currently, it uses dictionary for Chinese and Japanese, and LSTM for Burmese,
@@ -42,7 +42,7 @@ export class WordSegmenter {
     static createAutoWithContentLocale(locale: Locale): WordSegmenter;
 
     /**
-     * Construct an [`WordSegmenter`] with automatically selecting the best available LSTM
+     * Construct an {@link WordSegmenter} with automatically selecting the best available LSTM
      * or dictionary payload data, using a particular data source.
      *
      * Note: currently, it uses dictionary for Chinese and Japanese, and LSTM for Burmese,
@@ -53,7 +53,7 @@ export class WordSegmenter {
     static createAutoWithContentLocaleAndProvider(provider: DataProvider, locale: Locale): WordSegmenter;
 
     /**
-     * Construct an [`WordSegmenter`] with LSTM payload data for Burmese, Khmer, Lao, and
+     * Construct an {@link WordSegmenter} with LSTM payload data for Burmese, Khmer, Lao, and
      * Thai, using compiled data.  This does not assume any content locale.
      *
      * Note: currently, it uses dictionary for Chinese and Japanese, and LSTM for Burmese,
@@ -64,7 +64,7 @@ export class WordSegmenter {
     static createLstm(): WordSegmenter;
 
     /**
-     * Construct an [`WordSegmenter`] with LSTM payload data for Burmese, Khmer, Lao, and
+     * Construct an {@link WordSegmenter} with LSTM payload data for Burmese, Khmer, Lao, and
      * Thai, using compiled data.
      *
      * Note: currently, it uses dictionary for Chinese and Japanese, and LSTM for Burmese,
@@ -75,7 +75,7 @@ export class WordSegmenter {
     static createLstmWithContentLocale(locale: Locale): WordSegmenter;
 
     /**
-     * Construct an [`WordSegmenter`] with LSTM payload data for Burmese, Khmer, Lao, and
+     * Construct an {@link WordSegmenter} with LSTM payload data for Burmese, Khmer, Lao, and
      * Thai, using a particular data source.
      *
      * Note: currently, it uses dictionary for Chinese and Japanese, and LSTM for Burmese,
@@ -86,7 +86,7 @@ export class WordSegmenter {
     static createLstmWithContentLocaleAndProvider(provider: DataProvider, locale: Locale): WordSegmenter;
 
     /**
-     * Construct an [`WordSegmenter`] with with dictionary payload data for Chinese, Japanese,
+     * Construct an {@link WordSegmenter} with with dictionary payload data for Chinese, Japanese,
      * Burmese, Khmer, Lao, and Thai, using compiled data.  This does not assume any content locale.
      *
      * Note: currently, it uses dictionary for Chinese and Japanese, and dictionary for Burmese,
@@ -97,7 +97,7 @@ export class WordSegmenter {
     static createDictionary(): WordSegmenter;
 
     /**
-     * Construct an [`WordSegmenter`] with dictionary payload data for Chinese, Japanese,
+     * Construct an {@link WordSegmenter} with dictionary payload data for Chinese, Japanese,
      * Burmese, Khmer, Lao, and Thai, using compiled data.
      *
      * Note: currently, it uses dictionary for Chinese and Japanese, and dictionary for Burmese,
@@ -108,7 +108,7 @@ export class WordSegmenter {
     static createDictionaryWithContentLocale(locale: Locale): WordSegmenter;
 
     /**
-     * Construct an [`WordSegmenter`] with dictionary payload data for Chinese, Japanese,
+     * Construct an {@link WordSegmenter} with dictionary payload data for Chinese, Japanese,
      * Burmese, Khmer, Lao, and Thai, using a particular data source.
      *
      * Note: currently, it uses dictionary for Chinese and Japanese, and dictionary for Burmese,

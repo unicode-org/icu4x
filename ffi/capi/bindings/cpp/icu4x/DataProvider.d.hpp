@@ -41,7 +41,7 @@ class DataProvider {
 public:
 
   /**
-   * Constructs an `FsDataProvider` and returns it as an [`DataProvider`].
+   * Constructs an `FsDataProvider` and returns it as an {@link DataProvider}.
    * Requires the `provider_fs` Cargo feature.
    * Not supported in WASM.
    *
@@ -50,7 +50,7 @@ public:
   inline static diplomat::result<std::unique_ptr<icu4x::DataProvider>, icu4x::DataError> from_fs(std::string_view path);
 
   /**
-   * Constructs a `BlobDataProvider` and returns it as an [`DataProvider`].
+   * Constructs a `BlobDataProvider` and returns it as an {@link DataProvider}.
    *
    * See the [Rust documentation for `try_new_from_static_blob`](https://docs.rs/icu_provider_blob/2.0.0/icu_provider_blob/struct.BlobDataProvider.html#method.try_new_from_static_blob) for more information.
    */

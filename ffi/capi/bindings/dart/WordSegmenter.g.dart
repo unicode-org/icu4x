@@ -25,7 +25,7 @@ final class WordSegmenter implements ffi.Finalizable {
 
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_WordSegmenter_destroy_mv1));
 
-  /// Construct an [`WordSegmenter`] with automatically selecting the best available LSTM
+  /// Construct an [WordSegmenter] with automatically selecting the best available LSTM
   /// or dictionary payload data, using compiled data. This does not assume any content locale.
   ///
   /// Note: currently, it uses dictionary for Chinese and Japanese, and LSTM for Burmese,
@@ -37,7 +37,7 @@ final class WordSegmenter implements ffi.Finalizable {
     return WordSegmenter._fromFfi(result, []);
   }
 
-  /// Construct an [`WordSegmenter`] with automatically selecting the best available LSTM
+  /// Construct an [WordSegmenter] with automatically selecting the best available LSTM
   /// or dictionary payload data, using compiled data.
   ///
   /// Note: currently, it uses dictionary for Chinese and Japanese, and LSTM for Burmese,
@@ -54,7 +54,7 @@ final class WordSegmenter implements ffi.Finalizable {
     return WordSegmenter._fromFfi(result.union.ok, []);
   }
 
-  /// Construct an [`WordSegmenter`] with automatically selecting the best available LSTM
+  /// Construct an [WordSegmenter] with automatically selecting the best available LSTM
   /// or dictionary payload data, using a particular data source.
   ///
   /// Note: currently, it uses dictionary for Chinese and Japanese, and LSTM for Burmese,
@@ -71,7 +71,7 @@ final class WordSegmenter implements ffi.Finalizable {
     return WordSegmenter._fromFfi(result.union.ok, []);
   }
 
-  /// Construct an [`WordSegmenter`] with LSTM payload data for Burmese, Khmer, Lao, and
+  /// Construct an [WordSegmenter] with LSTM payload data for Burmese, Khmer, Lao, and
   /// Thai, using compiled data.  This does not assume any content locale.
   ///
   /// Note: currently, it uses dictionary for Chinese and Japanese, and LSTM for Burmese,
@@ -83,7 +83,7 @@ final class WordSegmenter implements ffi.Finalizable {
     return WordSegmenter._fromFfi(result, []);
   }
 
-  /// Construct an [`WordSegmenter`] with LSTM payload data for Burmese, Khmer, Lao, and
+  /// Construct an [WordSegmenter] with LSTM payload data for Burmese, Khmer, Lao, and
   /// Thai, using compiled data.
   ///
   /// Note: currently, it uses dictionary for Chinese and Japanese, and LSTM for Burmese,
@@ -100,7 +100,7 @@ final class WordSegmenter implements ffi.Finalizable {
     return WordSegmenter._fromFfi(result.union.ok, []);
   }
 
-  /// Construct an [`WordSegmenter`] with LSTM payload data for Burmese, Khmer, Lao, and
+  /// Construct an [WordSegmenter] with LSTM payload data for Burmese, Khmer, Lao, and
   /// Thai, using a particular data source.
   ///
   /// Note: currently, it uses dictionary for Chinese and Japanese, and LSTM for Burmese,
@@ -117,7 +117,7 @@ final class WordSegmenter implements ffi.Finalizable {
     return WordSegmenter._fromFfi(result.union.ok, []);
   }
 
-  /// Construct an [`WordSegmenter`] with with dictionary payload data for Chinese, Japanese,
+  /// Construct an [WordSegmenter] with with dictionary payload data for Chinese, Japanese,
   /// Burmese, Khmer, Lao, and Thai, using compiled data.  This does not assume any content locale.
   ///
   /// Note: currently, it uses dictionary for Chinese and Japanese, and dictionary for Burmese,
@@ -129,7 +129,7 @@ final class WordSegmenter implements ffi.Finalizable {
     return WordSegmenter._fromFfi(result, []);
   }
 
-  /// Construct an [`WordSegmenter`] with dictionary payload data for Chinese, Japanese,
+  /// Construct an [WordSegmenter] with dictionary payload data for Chinese, Japanese,
   /// Burmese, Khmer, Lao, and Thai, using compiled data.
   ///
   /// Note: currently, it uses dictionary for Chinese and Japanese, and dictionary for Burmese,
@@ -146,7 +146,7 @@ final class WordSegmenter implements ffi.Finalizable {
     return WordSegmenter._fromFfi(result.union.ok, []);
   }
 
-  /// Construct an [`WordSegmenter`] with dictionary payload data for Chinese, Japanese,
+  /// Construct an [WordSegmenter] with dictionary payload data for Chinese, Japanese,
   /// Burmese, Khmer, Lao, and Thai, using a particular data source.
   ///
   /// Note: currently, it uses dictionary for Chinese and Japanese, and dictionary for Burmese,

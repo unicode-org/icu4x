@@ -2,7 +2,7 @@
 import type { CalendarKind } from "./CalendarKind"
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
-type DateTimeMismatchedCalendarError_obj = {
+export type DateTimeMismatchedCalendarError_obj = {
     thisKind: CalendarKind;
     dateKind?: CalendarKind | null;
 };

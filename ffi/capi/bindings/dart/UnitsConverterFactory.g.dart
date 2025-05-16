@@ -3,10 +3,10 @@
 
 part of 'lib.g.dart';
 
-/// An ICU4X Units Converter Factory object, capable of creating converters a [`UnitsConverter`]
-/// for converting between two [`MeasureUnit`]s.
+/// An ICU4X Units Converter Factory object, capable of creating converters a [UnitsConverter]
+/// for converting between two [MeasureUnit]s.
 ///
-/// Also, it can parse the CLDR unit identifier (e.g. `meter-per-square-second`) and get the [`MeasureUnit`].
+/// Also, it can parse the CLDR unit identifier (e.g. `meter-per-square-second`) and get the [MeasureUnit].
 ///
 /// See the [Rust documentation for `ConverterFactory`](https://docs.rs/icu/2.0.0/icu/experimental/units/converter_factory/struct.ConverterFactory.html) for more information.
 final class UnitsConverterFactory implements ffi.Finalizable {
@@ -28,7 +28,7 @@ final class UnitsConverterFactory implements ffi.Finalizable {
 
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_UnitsConverterFactory_destroy_mv1));
 
-  /// Construct a new [`UnitsConverterFactory`] instance using compiled data.
+  /// Construct a new [UnitsConverterFactory] instance using compiled data.
   ///
   /// See the [Rust documentation for `new`](https://docs.rs/icu/2.0.0/icu/experimental/units/converter_factory/struct.ConverterFactory.html#method.new) for more information.
   factory UnitsConverterFactory() {
@@ -36,7 +36,7 @@ final class UnitsConverterFactory implements ffi.Finalizable {
     return UnitsConverterFactory._fromFfi(result, []);
   }
 
-  /// Construct a new [`UnitsConverterFactory`] instance using a particular data source.
+  /// Construct a new [UnitsConverterFactory] instance using a particular data source.
   ///
   /// See the [Rust documentation for `new`](https://docs.rs/icu/2.0.0/icu/experimental/units/converter_factory/struct.ConverterFactory.html#method.new) for more information.
   ///
@@ -49,7 +49,7 @@ final class UnitsConverterFactory implements ffi.Finalizable {
     return UnitsConverterFactory._fromFfi(result.union.ok, []);
   }
 
-  /// Creates a new [`UnitsConverter`] from the input and output [`MeasureUnit`]s.
+  /// Creates a new [UnitsConverter] from the input and output [MeasureUnit]s.
   /// Returns nothing if the conversion between the two units is not possible.
   /// For example, conversion between `meter` and `second` is not possible.
   ///

@@ -44,19 +44,19 @@ class SentenceSegmenter {
 public:
 
   /**
-   * Construct a [`SentenceSegmenter`] using compiled data. This does not assume any content locale.
+   * Construct a {@link SentenceSegmenter} using compiled data. This does not assume any content locale.
    *
    * See the [Rust documentation for `new`](https://docs.rs/icu/2.0.0/icu/segmenter/struct.SentenceSegmenter.html#method.new) for more information.
    */
   inline static std::unique_ptr<icu4x::SentenceSegmenter> create();
 
   /**
-   * Construct a [`SentenceSegmenter`] for content known to be of a given locale, using compiled data.
+   * Construct a {@link SentenceSegmenter} for content known to be of a given locale, using compiled data.
    */
   inline static diplomat::result<std::unique_ptr<icu4x::SentenceSegmenter>, icu4x::DataError> create_with_content_locale(const icu4x::Locale& locale);
 
   /**
-   * Construct a [`SentenceSegmenter`]  for content known to be of a given locale, using a particular data source.
+   * Construct a {@link SentenceSegmenter}  for content known to be of a given locale, using a particular data source.
    */
   inline static diplomat::result<std::unique_ptr<icu4x::SentenceSegmenter>, icu4x::DataError> create_with_content_locale_and_provider(const icu4x::DataProvider& provider, const icu4x::Locale& locale);
 
