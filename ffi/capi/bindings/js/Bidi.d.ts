@@ -50,7 +50,7 @@ export class Bidi {
      *
      * Invalid levels (numbers greater than 125) will be assumed LTR
      *
-     * See the [Rust documentation for `is_rtl`](https://docs.rs/unicode_bidi/0.3.11/unicode_bidi/struct.Level.html#method.is_rtl) for more information.
+     * See the [Rust documentation for `is_rtl`](https://docs.rs/unicode_bidi/0.3.11/unicode_bidi/level/struct.Level.html#method.is_rtl) for more information.
      */
     static levelIsRtl(level: number): boolean;
 
@@ -59,21 +59,21 @@ export class Bidi {
      *
      * Invalid levels (numbers greater than 125) will be assumed LTR
      *
-     * See the [Rust documentation for `is_ltr`](https://docs.rs/unicode_bidi/0.3.11/unicode_bidi/struct.Level.html#method.is_ltr) for more information.
+     * See the [Rust documentation for `is_ltr`](https://docs.rs/unicode_bidi/0.3.11/unicode_bidi/level/struct.Level.html#method.is_ltr) for more information.
      */
     static levelIsLtr(level: number): boolean;
 
     /**
      * Get a basic RTL Level value
      *
-     * See the [Rust documentation for `rtl`](https://docs.rs/unicode_bidi/0.3.11/unicode_bidi/struct.Level.html#method.rtl) for more information.
+     * See the [Rust documentation for `rtl`](https://docs.rs/unicode_bidi/0.3.11/unicode_bidi/level/struct.Level.html#method.rtl) for more information.
      */
     static levelRtl(): number;
 
     /**
      * Get a simple LTR Level value
      *
-     * See the [Rust documentation for `ltr`](https://docs.rs/unicode_bidi/0.3.11/unicode_bidi/struct.Level.html#method.ltr) for more information.
+     * See the [Rust documentation for `ltr`](https://docs.rs/unicode_bidi/0.3.11/unicode_bidi/level/struct.Level.html#method.ltr) for more information.
      */
     static levelLtr(): number;
 

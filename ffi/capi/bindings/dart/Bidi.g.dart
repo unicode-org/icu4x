@@ -75,7 +75,7 @@ final class Bidi implements ffi.Finalizable {
   ///
   /// Invalid levels (numbers greater than 125) will be assumed LTR
   ///
-  /// See the [Rust documentation for `is_rtl`](https://docs.rs/unicode_bidi/0.3.11/unicode_bidi/struct.Level.html#method.is_rtl) for more information.
+  /// See the [Rust documentation for `is_rtl`](https://docs.rs/unicode_bidi/0.3.11/unicode_bidi/level/struct.Level.html#method.is_rtl) for more information.
   static bool levelIsRtl(int level) {
     final result = _icu4x_Bidi_level_is_rtl_mv1(level);
     return result;
@@ -85,7 +85,7 @@ final class Bidi implements ffi.Finalizable {
   ///
   /// Invalid levels (numbers greater than 125) will be assumed LTR
   ///
-  /// See the [Rust documentation for `is_ltr`](https://docs.rs/unicode_bidi/0.3.11/unicode_bidi/struct.Level.html#method.is_ltr) for more information.
+  /// See the [Rust documentation for `is_ltr`](https://docs.rs/unicode_bidi/0.3.11/unicode_bidi/level/struct.Level.html#method.is_ltr) for more information.
   static bool levelIsLtr(int level) {
     final result = _icu4x_Bidi_level_is_ltr_mv1(level);
     return result;
@@ -93,7 +93,7 @@ final class Bidi implements ffi.Finalizable {
 
   /// Get a basic RTL Level value
   ///
-  /// See the [Rust documentation for `rtl`](https://docs.rs/unicode_bidi/0.3.11/unicode_bidi/struct.Level.html#method.rtl) for more information.
+  /// See the [Rust documentation for `rtl`](https://docs.rs/unicode_bidi/0.3.11/unicode_bidi/level/struct.Level.html#method.rtl) for more information.
   static int levelRtl() {
     final result = _icu4x_Bidi_level_rtl_mv1();
     return result;
@@ -101,7 +101,7 @@ final class Bidi implements ffi.Finalizable {
 
   /// Get a simple LTR Level value
   ///
-  /// See the [Rust documentation for `ltr`](https://docs.rs/unicode_bidi/0.3.11/unicode_bidi/struct.Level.html#method.ltr) for more information.
+  /// See the [Rust documentation for `ltr`](https://docs.rs/unicode_bidi/0.3.11/unicode_bidi/level/struct.Level.html#method.ltr) for more information.
   static int levelLtr() {
     final result = _icu4x_Bidi_level_ltr_mv1();
     return result;

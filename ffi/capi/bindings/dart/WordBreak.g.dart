@@ -5,51 +5,51 @@ part of 'lib.g.dart';
 
 /// See the [Rust documentation for `WordBreak`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.WordBreak.html) for more information.
 enum WordBreak {
-  /// See the [Rust documentation for `Other`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.WordBreak.html#variant.Other) for more information.
+  /// See the [Rust documentation for `Other`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.WordBreak.html#associatedconstant.Other) for more information.
   other,
-  /// See the [Rust documentation for `ALetter`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.WordBreak.html#variant.ALetter) for more information.
+  /// See the [Rust documentation for `ALetter`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.WordBreak.html#associatedconstant.ALetter) for more information.
   aLetter,
-  /// See the [Rust documentation for `Format`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.WordBreak.html#variant.Format) for more information.
+  /// See the [Rust documentation for `Format`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.WordBreak.html#associatedconstant.Format) for more information.
   format,
-  /// See the [Rust documentation for `Katakana`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.WordBreak.html#variant.Katakana) for more information.
+  /// See the [Rust documentation for `Katakana`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.WordBreak.html#associatedconstant.Katakana) for more information.
   katakana,
-  /// See the [Rust documentation for `MidLetter`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.WordBreak.html#variant.MidLetter) for more information.
+  /// See the [Rust documentation for `MidLetter`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.WordBreak.html#associatedconstant.MidLetter) for more information.
   midLetter,
-  /// See the [Rust documentation for `MidNum`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.WordBreak.html#variant.MidNum) for more information.
+  /// See the [Rust documentation for `MidNum`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.WordBreak.html#associatedconstant.MidNum) for more information.
   midNum,
-  /// See the [Rust documentation for `Numeric`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.WordBreak.html#variant.Numeric) for more information.
+  /// See the [Rust documentation for `Numeric`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.WordBreak.html#associatedconstant.Numeric) for more information.
   numeric,
-  /// See the [Rust documentation for `ExtendNumLet`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.WordBreak.html#variant.ExtendNumLet) for more information.
+  /// See the [Rust documentation for `ExtendNumLet`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.WordBreak.html#associatedconstant.ExtendNumLet) for more information.
   extendNumLet,
-  /// See the [Rust documentation for `CR`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.WordBreak.html#variant.CR) for more information.
+  /// See the [Rust documentation for `CR`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.WordBreak.html#associatedconstant.CR) for more information.
   cr,
-  /// See the [Rust documentation for `Extend`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.WordBreak.html#variant.Extend) for more information.
+  /// See the [Rust documentation for `Extend`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.WordBreak.html#associatedconstant.Extend) for more information.
   extend,
-  /// See the [Rust documentation for `LF`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.WordBreak.html#variant.LF) for more information.
+  /// See the [Rust documentation for `LF`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.WordBreak.html#associatedconstant.LF) for more information.
   lf,
-  /// See the [Rust documentation for `MidNumLet`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.WordBreak.html#variant.MidNumLet) for more information.
+  /// See the [Rust documentation for `MidNumLet`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.WordBreak.html#associatedconstant.MidNumLet) for more information.
   midNumLet,
-  /// See the [Rust documentation for `Newline`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.WordBreak.html#variant.Newline) for more information.
+  /// See the [Rust documentation for `Newline`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.WordBreak.html#associatedconstant.Newline) for more information.
   newline,
-  /// See the [Rust documentation for `RegionalIndicator`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.WordBreak.html#variant.RegionalIndicator) for more information.
+  /// See the [Rust documentation for `RegionalIndicator`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.WordBreak.html#associatedconstant.RegionalIndicator) for more information.
   regionalIndicator,
-  /// See the [Rust documentation for `HebrewLetter`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.WordBreak.html#variant.HebrewLetter) for more information.
+  /// See the [Rust documentation for `HebrewLetter`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.WordBreak.html#associatedconstant.HebrewLetter) for more information.
   hebrewLetter,
-  /// See the [Rust documentation for `SingleQuote`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.WordBreak.html#variant.SingleQuote) for more information.
+  /// See the [Rust documentation for `SingleQuote`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.WordBreak.html#associatedconstant.SingleQuote) for more information.
   singleQuote,
-  /// See the [Rust documentation for `DoubleQuote`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.WordBreak.html#variant.DoubleQuote) for more information.
+  /// See the [Rust documentation for `DoubleQuote`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.WordBreak.html#associatedconstant.DoubleQuote) for more information.
   doubleQuote,
-  /// See the [Rust documentation for `EBase`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.WordBreak.html#variant.EBase) for more information.
+  /// See the [Rust documentation for `EBase`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.WordBreak.html#associatedconstant.EBase) for more information.
   eBase,
-  /// See the [Rust documentation for `EBaseGAZ`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.WordBreak.html#variant.EBaseGAZ) for more information.
+  /// See the [Rust documentation for `EBaseGAZ`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.WordBreak.html#associatedconstant.EBaseGAZ) for more information.
   eBaseGaz,
-  /// See the [Rust documentation for `EModifier`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.WordBreak.html#variant.EModifier) for more information.
+  /// See the [Rust documentation for `EModifier`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.WordBreak.html#associatedconstant.EModifier) for more information.
   eModifier,
-  /// See the [Rust documentation for `GlueAfterZwj`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.WordBreak.html#variant.GlueAfterZwj) for more information.
+  /// See the [Rust documentation for `GlueAfterZwj`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.WordBreak.html#associatedconstant.GlueAfterZwj) for more information.
   glueAfterZwj,
-  /// See the [Rust documentation for `ZWJ`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.WordBreak.html#variant.ZWJ) for more information.
+  /// See the [Rust documentation for `ZWJ`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.WordBreak.html#associatedconstant.ZWJ) for more information.
   zwj,
-  /// See the [Rust documentation for `WSegSpace`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.WordBreak.html#variant.WSegSpace) for more information.
+  /// See the [Rust documentation for `WSegSpace`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.WordBreak.html#associatedconstant.WSegSpace) for more information.
   wSegSpace;
 
   /// See the [Rust documentation for `for_char`](https://docs.rs/icu/2.0.0/icu/properties/props/trait.EnumeratedProperty.html#tymethod.for_char) for more information.

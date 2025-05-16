@@ -47,7 +47,7 @@ export class Decimal {
     /**
      * Construct an [`Decimal`] from an integer.
      *
-     * See the [Rust documentation for `Decimal`](https://docs.rs/fixed_decimal/0.7.0/fixed_decimal/struct.Decimal.html) for more information.
+     * See the [Rust documentation for `Decimal`](https://docs.rs/fixed_decimal/0.7.0/fixed_decimal/type.Decimal.html) for more information.
      */
     static fromNumber(v) {
 
@@ -64,7 +64,7 @@ export class Decimal {
     /**
      * Construct an [`Decimal`] from an integer.
      *
-     * See the [Rust documentation for `Decimal`](https://docs.rs/fixed_decimal/0.7.0/fixed_decimal/struct.Decimal.html) for more information.
+     * See the [Rust documentation for `Decimal`](https://docs.rs/fixed_decimal/0.7.0/fixed_decimal/type.Decimal.html) for more information.
      */
     static fromBigInt(v) {
 

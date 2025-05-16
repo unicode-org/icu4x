@@ -5,13 +5,13 @@ part of 'lib.g.dart';
 
 /// See the [Rust documentation for `VerticalOrientation`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.VerticalOrientation.html) for more information.
 enum VerticalOrientation {
-  /// See the [Rust documentation for `Rotated`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.VerticalOrientaiton.html#variant.Rotated) for more information.
+  /// See the [Rust documentation for `Rotated`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.VerticalOrientation.html#associatedconstant.Rotated) for more information.
   rotated,
-  /// See the [Rust documentation for `TransformedRotated`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.VerticalOrientaiton.html#variant.TransformedRotated) for more information.
+  /// See the [Rust documentation for `TransformedRotated`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.VerticalOrientation.html#associatedconstant.TransformedRotated) for more information.
   transformedRotated,
-  /// See the [Rust documentation for `TransformedUpright`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.VerticalOrientaiton.html#variant.TransformedUpright) for more information.
+  /// See the [Rust documentation for `TransformedUpright`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.VerticalOrientation.html#associatedconstant.TransformedUpright) for more information.
   transformedUpright,
-  /// See the [Rust documentation for `Upright`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.VerticalOrientaiton.html#variant.Upright) for more information.
+  /// See the [Rust documentation for `Upright`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.VerticalOrientation.html#associatedconstant.Upright) for more information.
   upright;
 
   /// See the [Rust documentation for `for_char`](https://docs.rs/icu/2.0.0/icu/properties/props/trait.EnumeratedProperty.html#tymethod.for_char) for more information.

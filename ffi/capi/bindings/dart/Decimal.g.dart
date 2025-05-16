@@ -25,7 +25,7 @@ final class Decimal implements ffi.Finalizable {
 
   /// Construct an [`Decimal`] from an integer.
   ///
-  /// See the [Rust documentation for `Decimal`](https://docs.rs/fixed_decimal/0.7.0/fixed_decimal/struct.Decimal.html) for more information.
+  /// See the [Rust documentation for `Decimal`](https://docs.rs/fixed_decimal/0.7.0/fixed_decimal/type.Decimal.html) for more information.
   factory Decimal.fromInt(int v) {
     final result = _icu4x_Decimal_from_int64_mv1(v);
     return Decimal._fromFfi(result, []);

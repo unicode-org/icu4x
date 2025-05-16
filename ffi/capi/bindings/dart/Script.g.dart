@@ -5,335 +5,335 @@ part of 'lib.g.dart';
 
 /// See the [Rust documentation for `Script`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html) for more information.
 enum Script {
-  /// See the [Rust documentation for `Adlam`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.Adlam) for more information.
+  /// See the [Rust documentation for `Adlam`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.Adlam) for more information.
   adlam,
-  /// See the [Rust documentation for `Ahom`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.Ahom) for more information.
+  /// See the [Rust documentation for `Ahom`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.Ahom) for more information.
   ahom,
-  /// See the [Rust documentation for `AnatolianHieroglyphs`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.AnatolianHieroglyphs) for more information.
+  /// See the [Rust documentation for `AnatolianHieroglyphs`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.AnatolianHieroglyphs) for more information.
   anatolianHieroglyphs,
-  /// See the [Rust documentation for `Arabic`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.Arabic) for more information.
+  /// See the [Rust documentation for `Arabic`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.Arabic) for more information.
   arabic,
-  /// See the [Rust documentation for `Armenian`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.Armenian) for more information.
+  /// See the [Rust documentation for `Armenian`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.Armenian) for more information.
   armenian,
-  /// See the [Rust documentation for `Avestan`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.Avestan) for more information.
+  /// See the [Rust documentation for `Avestan`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.Avestan) for more information.
   avestan,
-  /// See the [Rust documentation for `Balinese`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.Balinese) for more information.
+  /// See the [Rust documentation for `Balinese`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.Balinese) for more information.
   balinese,
-  /// See the [Rust documentation for `Bamum`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.Bamum) for more information.
+  /// See the [Rust documentation for `Bamum`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.Bamum) for more information.
   bamum,
-  /// See the [Rust documentation for `BassaVah`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.BassaVah) for more information.
+  /// See the [Rust documentation for `BassaVah`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.BassaVah) for more information.
   bassaVah,
-  /// See the [Rust documentation for `Batak`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.Batak) for more information.
+  /// See the [Rust documentation for `Batak`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.Batak) for more information.
   batak,
-  /// See the [Rust documentation for `Bengali`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.Bengali) for more information.
+  /// See the [Rust documentation for `Bengali`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.Bengali) for more information.
   bengali,
-  /// See the [Rust documentation for `Bhaiksuki`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.Bhaiksuki) for more information.
+  /// See the [Rust documentation for `Bhaiksuki`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.Bhaiksuki) for more information.
   bhaiksuki,
-  /// See the [Rust documentation for `Bopomofo`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.Bopomofo) for more information.
+  /// See the [Rust documentation for `Bopomofo`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.Bopomofo) for more information.
   bopomofo,
-  /// See the [Rust documentation for `Brahmi`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.Brahmi) for more information.
+  /// See the [Rust documentation for `Brahmi`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.Brahmi) for more information.
   brahmi,
-  /// See the [Rust documentation for `Braille`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.Braille) for more information.
+  /// See the [Rust documentation for `Braille`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.Braille) for more information.
   braille,
-  /// See the [Rust documentation for `Buginese`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.Buginese) for more information.
+  /// See the [Rust documentation for `Buginese`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.Buginese) for more information.
   buginese,
-  /// See the [Rust documentation for `Buhid`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.Buhid) for more information.
+  /// See the [Rust documentation for `Buhid`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.Buhid) for more information.
   buhid,
-  /// See the [Rust documentation for `CanadianAboriginal`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.CanadianAboriginal) for more information.
+  /// See the [Rust documentation for `CanadianAboriginal`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.CanadianAboriginal) for more information.
   canadianAboriginal,
-  /// See the [Rust documentation for `Carian`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.Carian) for more information.
+  /// See the [Rust documentation for `Carian`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.Carian) for more information.
   carian,
-  /// See the [Rust documentation for `CaucasianAlbanian`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.CaucasianAlbanian) for more information.
+  /// See the [Rust documentation for `CaucasianAlbanian`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.CaucasianAlbanian) for more information.
   caucasianAlbanian,
-  /// See the [Rust documentation for `Chakma`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.Chakma) for more information.
+  /// See the [Rust documentation for `Chakma`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.Chakma) for more information.
   chakma,
-  /// See the [Rust documentation for `Cham`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.Cham) for more information.
+  /// See the [Rust documentation for `Cham`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.Cham) for more information.
   cham,
-  /// See the [Rust documentation for `Cherokee`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.Cherokee) for more information.
+  /// See the [Rust documentation for `Cherokee`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.Cherokee) for more information.
   cherokee,
-  /// See the [Rust documentation for `Chorasmian`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.Chorasmian) for more information.
+  /// See the [Rust documentation for `Chorasmian`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.Chorasmian) for more information.
   chorasmian,
-  /// See the [Rust documentation for `Common`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.Common) for more information.
+  /// See the [Rust documentation for `Common`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.Common) for more information.
   common,
-  /// See the [Rust documentation for `Coptic`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.Coptic) for more information.
+  /// See the [Rust documentation for `Coptic`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.Coptic) for more information.
   coptic,
-  /// See the [Rust documentation for `Cuneiform`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.Cuneiform) for more information.
+  /// See the [Rust documentation for `Cuneiform`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.Cuneiform) for more information.
   cuneiform,
-  /// See the [Rust documentation for `Cypriot`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.Cypriot) for more information.
+  /// See the [Rust documentation for `Cypriot`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.Cypriot) for more information.
   cypriot,
-  /// See the [Rust documentation for `CyproMinoan`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.CyproMinoan) for more information.
+  /// See the [Rust documentation for `CyproMinoan`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.CyproMinoan) for more information.
   cyproMinoan,
-  /// See the [Rust documentation for `Cyrillic`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.Cyrillic) for more information.
+  /// See the [Rust documentation for `Cyrillic`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.Cyrillic) for more information.
   cyrillic,
-  /// See the [Rust documentation for `Deseret`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.Deseret) for more information.
+  /// See the [Rust documentation for `Deseret`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.Deseret) for more information.
   deseret,
-  /// See the [Rust documentation for `Devanagari`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.Devanagari) for more information.
+  /// See the [Rust documentation for `Devanagari`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.Devanagari) for more information.
   devanagari,
-  /// See the [Rust documentation for `DivesAkuru`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.DivesAkuru) for more information.
+  /// See the [Rust documentation for `DivesAkuru`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.DivesAkuru) for more information.
   divesAkuru,
-  /// See the [Rust documentation for `Dogra`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.Dogra) for more information.
+  /// See the [Rust documentation for `Dogra`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.Dogra) for more information.
   dogra,
-  /// See the [Rust documentation for `Duployan`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.Duployan) for more information.
+  /// See the [Rust documentation for `Duployan`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.Duployan) for more information.
   duployan,
-  /// See the [Rust documentation for `EgyptianHieroglyphs`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.EgyptianHieroglyphs) for more information.
+  /// See the [Rust documentation for `EgyptianHieroglyphs`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.EgyptianHieroglyphs) for more information.
   egyptianHieroglyphs,
-  /// See the [Rust documentation for `Elbasan`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.Elbasan) for more information.
+  /// See the [Rust documentation for `Elbasan`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.Elbasan) for more information.
   elbasan,
-  /// See the [Rust documentation for `Elymaic`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.Elymaic) for more information.
+  /// See the [Rust documentation for `Elymaic`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.Elymaic) for more information.
   elymaic,
-  /// See the [Rust documentation for `Ethiopian`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.Ethiopian) for more information.
+  /// See the [Rust documentation for `Ethiopian`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.Ethiopian) for more information.
   ethiopian,
-  /// See the [Rust documentation for `Georgian`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.Georgian) for more information.
+  /// See the [Rust documentation for `Georgian`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.Georgian) for more information.
   georgian,
-  /// See the [Rust documentation for `Glagolitic`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.Glagolitic) for more information.
+  /// See the [Rust documentation for `Glagolitic`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.Glagolitic) for more information.
   glagolitic,
-  /// See the [Rust documentation for `Gothic`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.Gothic) for more information.
+  /// See the [Rust documentation for `Gothic`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.Gothic) for more information.
   gothic,
-  /// See the [Rust documentation for `Grantha`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.Grantha) for more information.
+  /// See the [Rust documentation for `Grantha`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.Grantha) for more information.
   grantha,
-  /// See the [Rust documentation for `Greek`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.Greek) for more information.
+  /// See the [Rust documentation for `Greek`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.Greek) for more information.
   greek,
-  /// See the [Rust documentation for `Gujarati`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.Gujarati) for more information.
+  /// See the [Rust documentation for `Gujarati`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.Gujarati) for more information.
   gujarati,
-  /// See the [Rust documentation for `GunjalaGondi`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.GunjalaGondi) for more information.
+  /// See the [Rust documentation for `GunjalaGondi`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.GunjalaGondi) for more information.
   gunjalaGondi,
-  /// See the [Rust documentation for `Gurmukhi`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.Gurmukhi) for more information.
+  /// See the [Rust documentation for `Gurmukhi`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.Gurmukhi) for more information.
   gurmukhi,
-  /// See the [Rust documentation for `Han`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.Han) for more information.
+  /// See the [Rust documentation for `Han`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.Han) for more information.
   han,
-  /// See the [Rust documentation for `Hangul`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.Hangul) for more information.
+  /// See the [Rust documentation for `Hangul`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.Hangul) for more information.
   hangul,
-  /// See the [Rust documentation for `HanifiRohingya`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.HanifiRohingya) for more information.
+  /// See the [Rust documentation for `HanifiRohingya`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.HanifiRohingya) for more information.
   hanifiRohingya,
-  /// See the [Rust documentation for `Hanunoo`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.Hanunoo) for more information.
+  /// See the [Rust documentation for `Hanunoo`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.Hanunoo) for more information.
   hanunoo,
-  /// See the [Rust documentation for `Hatran`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.Hatran) for more information.
+  /// See the [Rust documentation for `Hatran`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.Hatran) for more information.
   hatran,
-  /// See the [Rust documentation for `Hebrew`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.Hebrew) for more information.
+  /// See the [Rust documentation for `Hebrew`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.Hebrew) for more information.
   hebrew,
-  /// See the [Rust documentation for `Hiragana`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.Hiragana) for more information.
+  /// See the [Rust documentation for `Hiragana`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.Hiragana) for more information.
   hiragana,
-  /// See the [Rust documentation for `ImperialAramaic`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.ImperialAramaic) for more information.
+  /// See the [Rust documentation for `ImperialAramaic`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.ImperialAramaic) for more information.
   imperialAramaic,
-  /// See the [Rust documentation for `Inherited`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.Inherited) for more information.
+  /// See the [Rust documentation for `Inherited`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.Inherited) for more information.
   inherited,
-  /// See the [Rust documentation for `InscriptionalPahlavi`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.InscriptionalPahlavi) for more information.
+  /// See the [Rust documentation for `InscriptionalPahlavi`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.InscriptionalPahlavi) for more information.
   inscriptionalPahlavi,
-  /// See the [Rust documentation for `InscriptionalParthian`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.InscriptionalParthian) for more information.
+  /// See the [Rust documentation for `InscriptionalParthian`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.InscriptionalParthian) for more information.
   inscriptionalParthian,
-  /// See the [Rust documentation for `Javanese`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.Javanese) for more information.
+  /// See the [Rust documentation for `Javanese`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.Javanese) for more information.
   javanese,
-  /// See the [Rust documentation for `Kaithi`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.Kaithi) for more information.
+  /// See the [Rust documentation for `Kaithi`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.Kaithi) for more information.
   kaithi,
-  /// See the [Rust documentation for `Kannada`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.Kannada) for more information.
+  /// See the [Rust documentation for `Kannada`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.Kannada) for more information.
   kannada,
-  /// See the [Rust documentation for `Katakana`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.Katakana) for more information.
+  /// See the [Rust documentation for `Katakana`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.Katakana) for more information.
   katakana,
-  /// See the [Rust documentation for `Kawi`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.Kawi) for more information.
+  /// See the [Rust documentation for `Kawi`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.Kawi) for more information.
   kawi,
-  /// See the [Rust documentation for `KayahLi`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.KayahLi) for more information.
+  /// See the [Rust documentation for `KayahLi`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.KayahLi) for more information.
   kayahLi,
-  /// See the [Rust documentation for `Kharoshthi`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.Kharoshthi) for more information.
+  /// See the [Rust documentation for `Kharoshthi`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.Kharoshthi) for more information.
   kharoshthi,
-  /// See the [Rust documentation for `KhitanSmallScript`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.KhitanSmallScript) for more information.
+  /// See the [Rust documentation for `KhitanSmallScript`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.KhitanSmallScript) for more information.
   khitanSmallScript,
-  /// See the [Rust documentation for `Khmer`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.Khmer) for more information.
+  /// See the [Rust documentation for `Khmer`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.Khmer) for more information.
   khmer,
-  /// See the [Rust documentation for `Khojki`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.Khojki) for more information.
+  /// See the [Rust documentation for `Khojki`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.Khojki) for more information.
   khojki,
-  /// See the [Rust documentation for `Khudawadi`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.Khudawadi) for more information.
+  /// See the [Rust documentation for `Khudawadi`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.Khudawadi) for more information.
   khudawadi,
-  /// See the [Rust documentation for `Lao`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.Lao) for more information.
+  /// See the [Rust documentation for `Lao`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.Lao) for more information.
   lao,
-  /// See the [Rust documentation for `Latin`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.Latin) for more information.
+  /// See the [Rust documentation for `Latin`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.Latin) for more information.
   latin,
-  /// See the [Rust documentation for `Lepcha`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.Lepcha) for more information.
+  /// See the [Rust documentation for `Lepcha`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.Lepcha) for more information.
   lepcha,
-  /// See the [Rust documentation for `Limbu`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.Limbu) for more information.
+  /// See the [Rust documentation for `Limbu`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.Limbu) for more information.
   limbu,
-  /// See the [Rust documentation for `LinearA`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.LinearA) for more information.
+  /// See the [Rust documentation for `LinearA`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.LinearA) for more information.
   linearA,
-  /// See the [Rust documentation for `LinearB`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.LinearB) for more information.
+  /// See the [Rust documentation for `LinearB`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.LinearB) for more information.
   linearB,
-  /// See the [Rust documentation for `Lisu`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.Lisu) for more information.
+  /// See the [Rust documentation for `Lisu`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.Lisu) for more information.
   lisu,
-  /// See the [Rust documentation for `Lycian`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.Lycian) for more information.
+  /// See the [Rust documentation for `Lycian`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.Lycian) for more information.
   lycian,
-  /// See the [Rust documentation for `Lydian`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.Lydian) for more information.
+  /// See the [Rust documentation for `Lydian`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.Lydian) for more information.
   lydian,
-  /// See the [Rust documentation for `Mahajani`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.Mahajani) for more information.
+  /// See the [Rust documentation for `Mahajani`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.Mahajani) for more information.
   mahajani,
-  /// See the [Rust documentation for `Makasar`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.Makasar) for more information.
+  /// See the [Rust documentation for `Makasar`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.Makasar) for more information.
   makasar,
-  /// See the [Rust documentation for `Malayalam`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.Malayalam) for more information.
+  /// See the [Rust documentation for `Malayalam`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.Malayalam) for more information.
   malayalam,
-  /// See the [Rust documentation for `Mandaic`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.Mandaic) for more information.
+  /// See the [Rust documentation for `Mandaic`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.Mandaic) for more information.
   mandaic,
-  /// See the [Rust documentation for `Manichaean`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.Manichaean) for more information.
+  /// See the [Rust documentation for `Manichaean`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.Manichaean) for more information.
   manichaean,
-  /// See the [Rust documentation for `Marchen`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.Marchen) for more information.
+  /// See the [Rust documentation for `Marchen`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.Marchen) for more information.
   marchen,
-  /// See the [Rust documentation for `MasaramGondi`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.MasaramGondi) for more information.
+  /// See the [Rust documentation for `MasaramGondi`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.MasaramGondi) for more information.
   masaramGondi,
-  /// See the [Rust documentation for `Medefaidrin`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.Medefaidrin) for more information.
+  /// See the [Rust documentation for `Medefaidrin`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.Medefaidrin) for more information.
   medefaidrin,
-  /// See the [Rust documentation for `MeeteiMayek`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.MeeteiMayek) for more information.
+  /// See the [Rust documentation for `MeeteiMayek`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.MeeteiMayek) for more information.
   meeteiMayek,
-  /// See the [Rust documentation for `MendeKikakui`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.MendeKikakui) for more information.
+  /// See the [Rust documentation for `MendeKikakui`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.MendeKikakui) for more information.
   mendeKikakui,
-  /// See the [Rust documentation for `MeroiticCursive`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.MeroiticCursive) for more information.
+  /// See the [Rust documentation for `MeroiticCursive`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.MeroiticCursive) for more information.
   meroiticCursive,
-  /// See the [Rust documentation for `MeroiticHieroglyphs`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.MeroiticHieroglyphs) for more information.
+  /// See the [Rust documentation for `MeroiticHieroglyphs`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.MeroiticHieroglyphs) for more information.
   meroiticHieroglyphs,
-  /// See the [Rust documentation for `Miao`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.Miao) for more information.
+  /// See the [Rust documentation for `Miao`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.Miao) for more information.
   miao,
-  /// See the [Rust documentation for `Modi`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.Modi) for more information.
+  /// See the [Rust documentation for `Modi`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.Modi) for more information.
   modi,
-  /// See the [Rust documentation for `Mongolian`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.Mongolian) for more information.
+  /// See the [Rust documentation for `Mongolian`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.Mongolian) for more information.
   mongolian,
-  /// See the [Rust documentation for `Mro`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.Mro) for more information.
+  /// See the [Rust documentation for `Mro`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.Mro) for more information.
   mro,
-  /// See the [Rust documentation for `Multani`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.Multani) for more information.
+  /// See the [Rust documentation for `Multani`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.Multani) for more information.
   multani,
-  /// See the [Rust documentation for `Myanmar`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.Myanmar) for more information.
+  /// See the [Rust documentation for `Myanmar`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.Myanmar) for more information.
   myanmar,
-  /// See the [Rust documentation for `Nabataean`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.Nabataean) for more information.
+  /// See the [Rust documentation for `Nabataean`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.Nabataean) for more information.
   nabataean,
-  /// See the [Rust documentation for `NagMundari`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.NagMundari) for more information.
+  /// See the [Rust documentation for `NagMundari`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.NagMundari) for more information.
   nagMundari,
-  /// See the [Rust documentation for `Nandinagari`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.Nandinagari) for more information.
+  /// See the [Rust documentation for `Nandinagari`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.Nandinagari) for more information.
   nandinagari,
-  /// See the [Rust documentation for `Nastaliq`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.Nastaliq) for more information.
+  /// See the [Rust documentation for `Nastaliq`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.Nastaliq) for more information.
   nastaliq,
-  /// See the [Rust documentation for `NewTaiLue`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.NewTaiLue) for more information.
+  /// See the [Rust documentation for `NewTaiLue`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.NewTaiLue) for more information.
   newTaiLue,
-  /// See the [Rust documentation for `Newa`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.Newa) for more information.
+  /// See the [Rust documentation for `Newa`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.Newa) for more information.
   newa,
-  /// See the [Rust documentation for `Nko`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.Nko) for more information.
+  /// See the [Rust documentation for `Nko`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.Nko) for more information.
   nko,
-  /// See the [Rust documentation for `Nushu`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.Nushu) for more information.
+  /// See the [Rust documentation for `Nushu`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.Nushu) for more information.
   nushu,
-  /// See the [Rust documentation for `NyiakengPuachueHmong`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.NyiakengPuachueHmong) for more information.
+  /// See the [Rust documentation for `NyiakengPuachueHmong`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.NyiakengPuachueHmong) for more information.
   nyiakengPuachueHmong,
-  /// See the [Rust documentation for `Ogham`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.Ogham) for more information.
+  /// See the [Rust documentation for `Ogham`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.Ogham) for more information.
   ogham,
-  /// See the [Rust documentation for `OlChiki`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.OlChiki) for more information.
+  /// See the [Rust documentation for `OlChiki`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.OlChiki) for more information.
   olChiki,
-  /// See the [Rust documentation for `OldHungarian`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.OldHungarian) for more information.
+  /// See the [Rust documentation for `OldHungarian`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.OldHungarian) for more information.
   oldHungarian,
-  /// See the [Rust documentation for `OldItalic`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.OldItalic) for more information.
+  /// See the [Rust documentation for `OldItalic`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.OldItalic) for more information.
   oldItalic,
-  /// See the [Rust documentation for `OldNorthArabian`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.OldNorthArabian) for more information.
+  /// See the [Rust documentation for `OldNorthArabian`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.OldNorthArabian) for more information.
   oldNorthArabian,
-  /// See the [Rust documentation for `OldPermic`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.OldPermic) for more information.
+  /// See the [Rust documentation for `OldPermic`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.OldPermic) for more information.
   oldPermic,
-  /// See the [Rust documentation for `OldPersian`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.OldPersian) for more information.
+  /// See the [Rust documentation for `OldPersian`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.OldPersian) for more information.
   oldPersian,
-  /// See the [Rust documentation for `OldSogdian`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.OldSogdian) for more information.
+  /// See the [Rust documentation for `OldSogdian`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.OldSogdian) for more information.
   oldSogdian,
-  /// See the [Rust documentation for `OldSouthArabian`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.OldSouthArabian) for more information.
+  /// See the [Rust documentation for `OldSouthArabian`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.OldSouthArabian) for more information.
   oldSouthArabian,
-  /// See the [Rust documentation for `OldTurkic`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.OldTurkic) for more information.
+  /// See the [Rust documentation for `OldTurkic`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.OldTurkic) for more information.
   oldTurkic,
-  /// See the [Rust documentation for `OldUyghur`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.OldUyghur) for more information.
+  /// See the [Rust documentation for `OldUyghur`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.OldUyghur) for more information.
   oldUyghur,
-  /// See the [Rust documentation for `Oriya`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.Oriya) for more information.
+  /// See the [Rust documentation for `Oriya`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.Oriya) for more information.
   oriya,
-  /// See the [Rust documentation for `Osage`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.Osage) for more information.
+  /// See the [Rust documentation for `Osage`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.Osage) for more information.
   osage,
-  /// See the [Rust documentation for `Osmanya`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.Osmanya) for more information.
+  /// See the [Rust documentation for `Osmanya`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.Osmanya) for more information.
   osmanya,
-  /// See the [Rust documentation for `PahawhHmong`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.PahawhHmong) for more information.
+  /// See the [Rust documentation for `PahawhHmong`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.PahawhHmong) for more information.
   pahawhHmong,
-  /// See the [Rust documentation for `Palmyrene`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.Palmyrene) for more information.
+  /// See the [Rust documentation for `Palmyrene`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.Palmyrene) for more information.
   palmyrene,
-  /// See the [Rust documentation for `PauCinHau`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.PauCinHau) for more information.
+  /// See the [Rust documentation for `PauCinHau`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.PauCinHau) for more information.
   pauCinHau,
-  /// See the [Rust documentation for `PhagsPa`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.PhagsPa) for more information.
+  /// See the [Rust documentation for `PhagsPa`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.PhagsPa) for more information.
   phagsPa,
-  /// See the [Rust documentation for `Phoenician`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.Phoenician) for more information.
+  /// See the [Rust documentation for `Phoenician`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.Phoenician) for more information.
   phoenician,
-  /// See the [Rust documentation for `PsalterPahlavi`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.PsalterPahlavi) for more information.
+  /// See the [Rust documentation for `PsalterPahlavi`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.PsalterPahlavi) for more information.
   psalterPahlavi,
-  /// See the [Rust documentation for `Rejang`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.Rejang) for more information.
+  /// See the [Rust documentation for `Rejang`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.Rejang) for more information.
   rejang,
-  /// See the [Rust documentation for `Runic`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.Runic) for more information.
+  /// See the [Rust documentation for `Runic`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.Runic) for more information.
   runic,
-  /// See the [Rust documentation for `Samaritan`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.Samaritan) for more information.
+  /// See the [Rust documentation for `Samaritan`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.Samaritan) for more information.
   samaritan,
-  /// See the [Rust documentation for `Saurashtra`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.Saurashtra) for more information.
+  /// See the [Rust documentation for `Saurashtra`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.Saurashtra) for more information.
   saurashtra,
-  /// See the [Rust documentation for `Sharada`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.Sharada) for more information.
+  /// See the [Rust documentation for `Sharada`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.Sharada) for more information.
   sharada,
-  /// See the [Rust documentation for `Shavian`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.Shavian) for more information.
+  /// See the [Rust documentation for `Shavian`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.Shavian) for more information.
   shavian,
-  /// See the [Rust documentation for `Siddham`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.Siddham) for more information.
+  /// See the [Rust documentation for `Siddham`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.Siddham) for more information.
   siddham,
-  /// See the [Rust documentation for `SignWriting`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.SignWriting) for more information.
+  /// See the [Rust documentation for `SignWriting`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.SignWriting) for more information.
   signWriting,
-  /// See the [Rust documentation for `Sinhala`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.Sinhala) for more information.
+  /// See the [Rust documentation for `Sinhala`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.Sinhala) for more information.
   sinhala,
-  /// See the [Rust documentation for `Sogdian`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.Sogdian) for more information.
+  /// See the [Rust documentation for `Sogdian`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.Sogdian) for more information.
   sogdian,
-  /// See the [Rust documentation for `SoraSompeng`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.SoraSompeng) for more information.
+  /// See the [Rust documentation for `SoraSompeng`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.SoraSompeng) for more information.
   soraSompeng,
-  /// See the [Rust documentation for `Soyombo`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.Soyombo) for more information.
+  /// See the [Rust documentation for `Soyombo`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.Soyombo) for more information.
   soyombo,
-  /// See the [Rust documentation for `Sundanese`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.Sundanese) for more information.
+  /// See the [Rust documentation for `Sundanese`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.Sundanese) for more information.
   sundanese,
-  /// See the [Rust documentation for `SylotiNagri`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.SylotiNagri) for more information.
+  /// See the [Rust documentation for `SylotiNagri`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.SylotiNagri) for more information.
   sylotiNagri,
-  /// See the [Rust documentation for `Syriac`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.Syriac) for more information.
+  /// See the [Rust documentation for `Syriac`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.Syriac) for more information.
   syriac,
-  /// See the [Rust documentation for `Tagalog`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.Tagalog) for more information.
+  /// See the [Rust documentation for `Tagalog`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.Tagalog) for more information.
   tagalog,
-  /// See the [Rust documentation for `Tagbanwa`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.Tagbanwa) for more information.
+  /// See the [Rust documentation for `Tagbanwa`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.Tagbanwa) for more information.
   tagbanwa,
-  /// See the [Rust documentation for `TaiLe`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.TaiLe) for more information.
+  /// See the [Rust documentation for `TaiLe`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.TaiLe) for more information.
   taiLe,
-  /// See the [Rust documentation for `TaiTham`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.TaiTham) for more information.
+  /// See the [Rust documentation for `TaiTham`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.TaiTham) for more information.
   taiTham,
-  /// See the [Rust documentation for `TaiViet`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.TaiViet) for more information.
+  /// See the [Rust documentation for `TaiViet`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.TaiViet) for more information.
   taiViet,
-  /// See the [Rust documentation for `Takri`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.Takri) for more information.
+  /// See the [Rust documentation for `Takri`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.Takri) for more information.
   takri,
-  /// See the [Rust documentation for `Tamil`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.Tamil) for more information.
+  /// See the [Rust documentation for `Tamil`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.Tamil) for more information.
   tamil,
-  /// See the [Rust documentation for `Tangsa`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.Tangsa) for more information.
+  /// See the [Rust documentation for `Tangsa`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.Tangsa) for more information.
   tangsa,
-  /// See the [Rust documentation for `Tangut`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.Tangut) for more information.
+  /// See the [Rust documentation for `Tangut`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.Tangut) for more information.
   tangut,
-  /// See the [Rust documentation for `Telugu`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.Telugu) for more information.
+  /// See the [Rust documentation for `Telugu`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.Telugu) for more information.
   telugu,
-  /// See the [Rust documentation for `Thaana`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.Thaana) for more information.
+  /// See the [Rust documentation for `Thaana`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.Thaana) for more information.
   thaana,
-  /// See the [Rust documentation for `Thai`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.Thai) for more information.
+  /// See the [Rust documentation for `Thai`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.Thai) for more information.
   thai,
-  /// See the [Rust documentation for `Tibetan`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.Tibetan) for more information.
+  /// See the [Rust documentation for `Tibetan`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.Tibetan) for more information.
   tibetan,
-  /// See the [Rust documentation for `Tifinagh`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.Tifinagh) for more information.
+  /// See the [Rust documentation for `Tifinagh`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.Tifinagh) for more information.
   tifinagh,
-  /// See the [Rust documentation for `Tirhuta`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.Tirhuta) for more information.
+  /// See the [Rust documentation for `Tirhuta`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.Tirhuta) for more information.
   tirhuta,
-  /// See the [Rust documentation for `Toto`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.Toto) for more information.
+  /// See the [Rust documentation for `Toto`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.Toto) for more information.
   toto,
-  /// See the [Rust documentation for `Ugaritic`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.Ugaritic) for more information.
+  /// See the [Rust documentation for `Ugaritic`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.Ugaritic) for more information.
   ugaritic,
-  /// See the [Rust documentation for `Unknown`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.Unknown) for more information.
+  /// See the [Rust documentation for `Unknown`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.Unknown) for more information.
   unknown,
-  /// See the [Rust documentation for `Vai`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.Vai) for more information.
+  /// See the [Rust documentation for `Vai`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.Vai) for more information.
   vai,
-  /// See the [Rust documentation for `Vithkuqi`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.Vithkuqi) for more information.
+  /// See the [Rust documentation for `Vithkuqi`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.Vithkuqi) for more information.
   vithkuqi,
-  /// See the [Rust documentation for `Wancho`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.Wancho) for more information.
+  /// See the [Rust documentation for `Wancho`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.Wancho) for more information.
   wancho,
-  /// See the [Rust documentation for `WarangCiti`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.WarangCiti) for more information.
+  /// See the [Rust documentation for `WarangCiti`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.WarangCiti) for more information.
   warangCiti,
-  /// See the [Rust documentation for `Yezidi`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.Yezidi) for more information.
+  /// See the [Rust documentation for `Yezidi`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.Yezidi) for more information.
   yezidi,
-  /// See the [Rust documentation for `Yi`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.Yi) for more information.
+  /// See the [Rust documentation for `Yi`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.Yi) for more information.
   yi,
-  /// See the [Rust documentation for `ZanabazarSquare`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.Script.html#variant.ZanabazarSquare) for more information.
+  /// See the [Rust documentation for `ZanabazarSquare`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.ZanabazarSquare) for more information.
   zanabazarSquare;
 
   int get _ffi {

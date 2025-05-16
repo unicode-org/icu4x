@@ -5,17 +5,17 @@ part of 'lib.g.dart';
 
 /// See the [Rust documentation for `HangulSyllableType`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.HangulSyllableType.html) for more information.
 enum HangulSyllableType {
-  /// See the [Rust documentation for `NotApplicable`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.HangulSyllableType.html#variant.NotApplicable) for more information.
+  /// See the [Rust documentation for `NotApplicable`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.HangulSyllableType.html#associatedconstant.NotApplicable) for more information.
   notApplicable,
-  /// See the [Rust documentation for `LeadingJamo`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.HangulSyllableType.html#variant.LeadingJamo) for more information.
+  /// See the [Rust documentation for `LeadingJamo`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.HangulSyllableType.html#associatedconstant.LeadingJamo) for more information.
   leadingJamo,
-  /// See the [Rust documentation for `VowelJamo`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.HangulSyllableType.html#variant.VowelJamo) for more information.
+  /// See the [Rust documentation for `VowelJamo`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.HangulSyllableType.html#associatedconstant.VowelJamo) for more information.
   vowelJamo,
-  /// See the [Rust documentation for `TrailingJamo`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.HangulSyllableType.html#variant.TrailingJamo) for more information.
+  /// See the [Rust documentation for `TrailingJamo`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.HangulSyllableType.html#associatedconstant.TrailingJamo) for more information.
   trailingJamo,
-  /// See the [Rust documentation for `LeadingVowelSyllable`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.HangulSyllableType.html#variant.LeadingVowelSyllable) for more information.
+  /// See the [Rust documentation for `LeadingVowelSyllable`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.HangulSyllableType.html#associatedconstant.LeadingVowelSyllable) for more information.
   leadingVowelSyllable,
-  /// See the [Rust documentation for `LeadingVowelTrailingSyllable`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.HangulSyllableType.html#variant.LeadingVowelTrailingSyllable) for more information.
+  /// See the [Rust documentation for `LeadingVowelTrailingSyllable`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.HangulSyllableType.html#associatedconstant.LeadingVowelTrailingSyllable) for more information.
   leadingVowelTrailingSyllable;
 
   /// See the [Rust documentation for `for_char`](https://docs.rs/icu/2.0.0/icu/properties/props/trait.EnumeratedProperty.html#tymethod.for_char) for more information.

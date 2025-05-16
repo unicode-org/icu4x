@@ -5,17 +5,17 @@ part of 'lib.g.dart';
 
 /// See the [Rust documentation for `JoiningType`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.JoiningType.html) for more information.
 enum JoiningType {
-  /// See the [Rust documentation for `NonJoining`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.JoiningType.html#variant.NonJoining) for more information.
+  /// See the [Rust documentation for `NonJoining`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.JoiningType.html#associatedconstant.NonJoining) for more information.
   nonJoining,
-  /// See the [Rust documentation for `JoinCausing`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.JoiningType.html#variant.JoinCausing) for more information.
+  /// See the [Rust documentation for `JoinCausing`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.JoiningType.html#associatedconstant.JoinCausing) for more information.
   joinCausing,
-  /// See the [Rust documentation for `DualJoining`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.JoiningType.html#variant.DualJoining) for more information.
+  /// See the [Rust documentation for `DualJoining`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.JoiningType.html#associatedconstant.DualJoining) for more information.
   dualJoining,
-  /// See the [Rust documentation for `LeftJoining`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.JoiningType.html#variant.LeftJoining) for more information.
+  /// See the [Rust documentation for `LeftJoining`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.JoiningType.html#associatedconstant.LeftJoining) for more information.
   leftJoining,
-  /// See the [Rust documentation for `RightJoining`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.JoiningType.html#variant.RightJoining) for more information.
+  /// See the [Rust documentation for `RightJoining`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.JoiningType.html#associatedconstant.RightJoining) for more information.
   rightJoining,
-  /// See the [Rust documentation for `Transparent`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.JoiningType.html#variant.Transparent) for more information.
+  /// See the [Rust documentation for `Transparent`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.JoiningType.html#associatedconstant.Transparent) for more information.
   transparent;
 
   /// See the [Rust documentation for `for_char`](https://docs.rs/icu/2.0.0/icu/properties/props/trait.EnumeratedProperty.html#tymethod.for_char) for more information.

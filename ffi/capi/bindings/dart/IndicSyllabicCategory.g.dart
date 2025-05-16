@@ -5,79 +5,79 @@ part of 'lib.g.dart';
 
 /// See the [Rust documentation for `IndicSyllabicCategory`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.IndicSyllabicCategory.html) for more information.
 enum IndicSyllabicCategory {
-  /// See the [Rust documentation for `Other`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.IndicSyllabicCategory.html#variant.Other) for more information.
+  /// See the [Rust documentation for `Other`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.IndicSyllabicCategory.html#associatedconstant.Other) for more information.
   other,
-  /// See the [Rust documentation for `Avagraha`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.IndicSyllabicCategory.html#variant.Avagraha) for more information.
+  /// See the [Rust documentation for `Avagraha`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.IndicSyllabicCategory.html#associatedconstant.Avagraha) for more information.
   avagraha,
-  /// See the [Rust documentation for `Bindu`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.IndicSyllabicCategory.html#variant.Bindu) for more information.
+  /// See the [Rust documentation for `Bindu`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.IndicSyllabicCategory.html#associatedconstant.Bindu) for more information.
   bindu,
-  /// See the [Rust documentation for `BrahmiJoiningNumber`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.IndicSyllabicCategory.html#variant.BrahmiJoiningNumber) for more information.
+  /// See the [Rust documentation for `BrahmiJoiningNumber`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.IndicSyllabicCategory.html#associatedconstant.BrahmiJoiningNumber) for more information.
   brahmiJoiningNumber,
-  /// See the [Rust documentation for `CantillationMark`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.IndicSyllabicCategory.html#variant.CantillationMark) for more information.
+  /// See the [Rust documentation for `CantillationMark`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.IndicSyllabicCategory.html#associatedconstant.CantillationMark) for more information.
   cantillationMark,
-  /// See the [Rust documentation for `Consonant`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.IndicSyllabicCategory.html#variant.Consonant) for more information.
+  /// See the [Rust documentation for `Consonant`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.IndicSyllabicCategory.html#associatedconstant.Consonant) for more information.
   consonant,
-  /// See the [Rust documentation for `ConsonantDead`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.IndicSyllabicCategory.html#variant.ConsonantDead) for more information.
+  /// See the [Rust documentation for `ConsonantDead`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.IndicSyllabicCategory.html#associatedconstant.ConsonantDead) for more information.
   consonantDead,
-  /// See the [Rust documentation for `ConsonantFinal`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.IndicSyllabicCategory.html#variant.ConsonantFinal) for more information.
+  /// See the [Rust documentation for `ConsonantFinal`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.IndicSyllabicCategory.html#associatedconstant.ConsonantFinal) for more information.
   consonantFinal,
-  /// See the [Rust documentation for `ConsonantHeadLetter`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.IndicSyllabicCategory.html#variant.ConsonantHeadLetter) for more information.
+  /// See the [Rust documentation for `ConsonantHeadLetter`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.IndicSyllabicCategory.html#associatedconstant.ConsonantHeadLetter) for more information.
   consonantHeadLetter,
-  /// See the [Rust documentation for `ConsonantInitialPostfixed`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.IndicSyllabicCategory.html#variant.ConsonantInitialPostfixed) for more information.
+  /// See the [Rust documentation for `ConsonantInitialPostfixed`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.IndicSyllabicCategory.html#associatedconstant.ConsonantInitialPostfixed) for more information.
   consonantInitialPostfixed,
-  /// See the [Rust documentation for `ConsonantKiller`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.IndicSyllabicCategory.html#variant.ConsonantKiller) for more information.
+  /// See the [Rust documentation for `ConsonantKiller`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.IndicSyllabicCategory.html#associatedconstant.ConsonantKiller) for more information.
   consonantKiller,
-  /// See the [Rust documentation for `ConsonantMedial`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.IndicSyllabicCategory.html#variant.ConsonantMedial) for more information.
+  /// See the [Rust documentation for `ConsonantMedial`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.IndicSyllabicCategory.html#associatedconstant.ConsonantMedial) for more information.
   consonantMedial,
-  /// See the [Rust documentation for `ConsonantPlaceholder`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.IndicSyllabicCategory.html#variant.ConsonantPlaceholder) for more information.
+  /// See the [Rust documentation for `ConsonantPlaceholder`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.IndicSyllabicCategory.html#associatedconstant.ConsonantPlaceholder) for more information.
   consonantPlaceholder,
-  /// See the [Rust documentation for `ConsonantPrecedingRepha`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.IndicSyllabicCategory.html#variant.ConsonantPrecedingRepha) for more information.
+  /// See the [Rust documentation for `ConsonantPrecedingRepha`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.IndicSyllabicCategory.html#associatedconstant.ConsonantPrecedingRepha) for more information.
   consonantPrecedingRepha,
-  /// See the [Rust documentation for `ConsonantPrefixed`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.IndicSyllabicCategory.html#variant.ConsonantPrefixed) for more information.
+  /// See the [Rust documentation for `ConsonantPrefixed`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.IndicSyllabicCategory.html#associatedconstant.ConsonantPrefixed) for more information.
   consonantPrefixed,
-  /// See the [Rust documentation for `ConsonantSucceedingRepha`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.IndicSyllabicCategory.html#variant.ConsonantSucceedingRepha) for more information.
+  /// See the [Rust documentation for `ConsonantSucceedingRepha`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.IndicSyllabicCategory.html#associatedconstant.ConsonantSucceedingRepha) for more information.
   consonantSucceedingRepha,
-  /// See the [Rust documentation for `ConsonantSubjoined`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.IndicSyllabicCategory.html#variant.ConsonantSubjoined) for more information.
+  /// See the [Rust documentation for `ConsonantSubjoined`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.IndicSyllabicCategory.html#associatedconstant.ConsonantSubjoined) for more information.
   consonantSubjoined,
-  /// See the [Rust documentation for `ConsonantWithStacker`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.IndicSyllabicCategory.html#variant.ConsonantWithStacker) for more information.
+  /// See the [Rust documentation for `ConsonantWithStacker`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.IndicSyllabicCategory.html#associatedconstant.ConsonantWithStacker) for more information.
   consonantWithStacker,
-  /// See the [Rust documentation for `GeminationMark`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.IndicSyllabicCategory.html#variant.GeminationMark) for more information.
+  /// See the [Rust documentation for `GeminationMark`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.IndicSyllabicCategory.html#associatedconstant.GeminationMark) for more information.
   geminationMark,
-  /// See the [Rust documentation for `InvisibleStacker`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.IndicSyllabicCategory.html#variant.InvisibleStacker) for more information.
+  /// See the [Rust documentation for `InvisibleStacker`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.IndicSyllabicCategory.html#associatedconstant.InvisibleStacker) for more information.
   invisibleStacker,
-  /// See the [Rust documentation for `Joiner`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.IndicSyllabicCategory.html#variant.Joiner) for more information.
+  /// See the [Rust documentation for `Joiner`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.IndicSyllabicCategory.html#associatedconstant.Joiner) for more information.
   joiner,
-  /// See the [Rust documentation for `ModifyingLetter`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.IndicSyllabicCategory.html#variant.ModifyingLetter) for more information.
+  /// See the [Rust documentation for `ModifyingLetter`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.IndicSyllabicCategory.html#associatedconstant.ModifyingLetter) for more information.
   modifyingLetter,
-  /// See the [Rust documentation for `NonJoiner`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.IndicSyllabicCategory.html#variant.NonJoiner) for more information.
+  /// See the [Rust documentation for `NonJoiner`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.IndicSyllabicCategory.html#associatedconstant.NonJoiner) for more information.
   nonJoiner,
-  /// See the [Rust documentation for `Nukta`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.IndicSyllabicCategory.html#variant.Nukta) for more information.
+  /// See the [Rust documentation for `Nukta`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.IndicSyllabicCategory.html#associatedconstant.Nukta) for more information.
   nukta,
-  /// See the [Rust documentation for `Number`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.IndicSyllabicCategory.html#variant.Number) for more information.
+  /// See the [Rust documentation for `Number`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.IndicSyllabicCategory.html#associatedconstant.Number) for more information.
   number,
-  /// See the [Rust documentation for `NumberJoiner`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.IndicSyllabicCategory.html#variant.NumberJoiner) for more information.
+  /// See the [Rust documentation for `NumberJoiner`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.IndicSyllabicCategory.html#associatedconstant.NumberJoiner) for more information.
   numberJoiner,
-  /// See the [Rust documentation for `PureKiller`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.IndicSyllabicCategory.html#variant.PureKiller) for more information.
+  /// See the [Rust documentation for `PureKiller`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.IndicSyllabicCategory.html#associatedconstant.PureKiller) for more information.
   pureKiller,
-  /// See the [Rust documentation for `RegisterShifter`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.IndicSyllabicCategory.html#variant.RegisterShifter) for more information.
+  /// See the [Rust documentation for `RegisterShifter`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.IndicSyllabicCategory.html#associatedconstant.RegisterShifter) for more information.
   registerShifter,
-  /// See the [Rust documentation for `SyllableModifier`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.IndicSyllabicCategory.html#variant.SyllableModifier) for more information.
+  /// See the [Rust documentation for `SyllableModifier`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.IndicSyllabicCategory.html#associatedconstant.SyllableModifier) for more information.
   syllableModifier,
-  /// See the [Rust documentation for `ToneLetter`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.IndicSyllabicCategory.html#variant.ToneLetter) for more information.
+  /// See the [Rust documentation for `ToneLetter`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.IndicSyllabicCategory.html#associatedconstant.ToneLetter) for more information.
   toneLetter,
-  /// See the [Rust documentation for `ToneMark`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.IndicSyllabicCategory.html#variant.ToneMark) for more information.
+  /// See the [Rust documentation for `ToneMark`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.IndicSyllabicCategory.html#associatedconstant.ToneMark) for more information.
   toneMark,
-  /// See the [Rust documentation for `Virama`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.IndicSyllabicCategory.html#variant.Virama) for more information.
+  /// See the [Rust documentation for `Virama`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.IndicSyllabicCategory.html#associatedconstant.Virama) for more information.
   virama,
-  /// See the [Rust documentation for `Visarga`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.IndicSyllabicCategory.html#variant.Visarga) for more information.
+  /// See the [Rust documentation for `Visarga`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.IndicSyllabicCategory.html#associatedconstant.Visarga) for more information.
   visarga,
-  /// See the [Rust documentation for `Vowel`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.IndicSyllabicCategory.html#variant.Vowel) for more information.
+  /// See the [Rust documentation for `Vowel`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.IndicSyllabicCategory.html#associatedconstant.Vowel) for more information.
   vowel,
-  /// See the [Rust documentation for `VowelDependent`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.IndicSyllabicCategory.html#variant.VowelDependent) for more information.
+  /// See the [Rust documentation for `VowelDependent`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.IndicSyllabicCategory.html#associatedconstant.VowelDependent) for more information.
   vowelDependent,
-  /// See the [Rust documentation for `VowelIndependent`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.IndicSyllabicCategory.html#variant.VowelIndependent) for more information.
+  /// See the [Rust documentation for `VowelIndependent`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.IndicSyllabicCategory.html#associatedconstant.VowelIndependent) for more information.
   vowelIndependent,
-  /// See the [Rust documentation for `ReorderingKiller`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.IndicSyllabicCategory.html#variant.ReorderingKiller) for more information.
+  /// See the [Rust documentation for `ReorderingKiller`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.IndicSyllabicCategory.html#associatedconstant.ReorderingKiller) for more information.
   reorderingKiller;
 
   /// See the [Rust documentation for `for_char`](https://docs.rs/icu/2.0.0/icu/properties/props/trait.EnumeratedProperty.html#tymethod.for_char) for more information.
