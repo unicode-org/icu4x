@@ -3,18 +3,18 @@
 
 part of 'lib.g.dart';
 
-/// See the [Rust documentation for `VerticalOrientation`](https://docs.rs/icu/latest/icu/properties/props/struct.VerticalOrientation.html) for more information.
+/// See the [Rust documentation for `VerticalOrientation`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.VerticalOrientation.html) for more information.
 enum VerticalOrientation {
-  /// See the [Rust documentation for `Rotated`](https://docs.rs/icu/latest/icu/properties/props/enum.VerticalOrientaiton.html#variant.Rotated) for more information.
+  /// See the [Rust documentation for `Rotated`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.VerticalOrientaiton.html#variant.Rotated) for more information.
   rotated,
-  /// See the [Rust documentation for `TransformedRotated`](https://docs.rs/icu/latest/icu/properties/props/enum.VerticalOrientaiton.html#variant.TransformedRotated) for more information.
+  /// See the [Rust documentation for `TransformedRotated`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.VerticalOrientaiton.html#variant.TransformedRotated) for more information.
   transformedRotated,
-  /// See the [Rust documentation for `TransformedUpright`](https://docs.rs/icu/latest/icu/properties/props/enum.VerticalOrientaiton.html#variant.TransformedUpright) for more information.
+  /// See the [Rust documentation for `TransformedUpright`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.VerticalOrientaiton.html#variant.TransformedUpright) for more information.
   transformedUpright,
-  /// See the [Rust documentation for `Upright`](https://docs.rs/icu/latest/icu/properties/props/enum.VerticalOrientaiton.html#variant.Upright) for more information.
+  /// See the [Rust documentation for `Upright`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.VerticalOrientaiton.html#variant.Upright) for more information.
   upright;
 
-  /// See the [Rust documentation for `for_char`](https://docs.rs/icu/latest/icu/properties/props/trait.EnumeratedProperty.html#tymethod.for_char) for more information.
+  /// See the [Rust documentation for `for_char`](https://docs.rs/icu/2.0.0/icu/properties/props/trait.EnumeratedProperty.html#tymethod.for_char) for more information.
   static VerticalOrientation forChar(Rune ch) {
     final result = _icu4x_VerticalOrientation_for_char_mv1(ch);
     return VerticalOrientation.values[result];
@@ -22,7 +22,7 @@ enum VerticalOrientation {
 
   /// Get the "long" name of this property value (returns empty if property value is unknown)
   ///
-  /// See the [Rust documentation for `get`](https://docs.rs/icu/latest/icu/properties/struct.PropertyNamesLongBorrowed.html#method.get) for more information.
+  /// See the [Rust documentation for `get`](https://docs.rs/icu/2.0.0/icu/properties/struct.PropertyNamesLongBorrowed.html#method.get) for more information.
   String? longName() {
     final result = _icu4x_VerticalOrientation_long_name_mv1(index);
     if (!result.isOk) {
@@ -33,7 +33,7 @@ enum VerticalOrientation {
 
   /// Get the "short" name of this property value (returns empty if property value is unknown)
   ///
-  /// See the [Rust documentation for `get`](https://docs.rs/icu/latest/icu/properties/struct.PropertyNamesShortBorrowed.html#method.get) for more information.
+  /// See the [Rust documentation for `get`](https://docs.rs/icu/2.0.0/icu/properties/struct.PropertyNamesShortBorrowed.html#method.get) for more information.
   String? shortName() {
     final result = _icu4x_VerticalOrientation_short_name_mv1(index);
     if (!result.isOk) {
@@ -44,7 +44,7 @@ enum VerticalOrientation {
 
   /// Convert to an integer value usable with ICU4C and CodePointMapData
   ///
-  /// See the [Rust documentation for `to_icu4c_value`](https://docs.rs/icu/latest/icu/properties/props/struct.VerticalOrientation.html#method.to_icu4c_value) for more information.
+  /// See the [Rust documentation for `to_icu4c_value`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.VerticalOrientation.html#method.to_icu4c_value) for more information.
   int toIntegerValue() {
     final result = _icu4x_VerticalOrientation_to_integer_value_mv1(index);
     return result;
@@ -52,7 +52,7 @@ enum VerticalOrientation {
 
   /// Convert from an integer value from ICU4C or CodePointMapData
   ///
-  /// See the [Rust documentation for `from_icu4c_value`](https://docs.rs/icu/latest/icu/properties/props/struct.VerticalOrientation.html#method.from_icu4c_value) for more information.
+  /// See the [Rust documentation for `from_icu4c_value`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.VerticalOrientation.html#method.from_icu4c_value) for more information.
   static VerticalOrientation? fromIntegerValue(int other) {
     final result = _icu4x_VerticalOrientation_from_integer_value_mv1(other);
     if (!result.isOk) {

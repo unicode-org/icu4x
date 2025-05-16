@@ -11,7 +11,7 @@ final class _ZonedDateTimeFfi extends ffi.Struct {
 
 /// An ICU4X DateTime object capable of containing a date, time, and zone for any calendar.
 ///
-/// See the [Rust documentation for `ZonedDateTime`](https://docs.rs/icu/latest/icu/time/struct.ZonedDateTime.html) for more information.
+/// See the [Rust documentation for `ZonedDateTime`](https://docs.rs/icu/2.0.0/icu/time/struct.ZonedDateTime.html) for more information.
 final class ZonedDateTime {
   final Date date;
   final Time time;
@@ -39,7 +39,7 @@ final class ZonedDateTime {
 
   /// Creates a new [`ZonedDateTime`] from an IXDTF string.
   ///
-  /// See the [Rust documentation for `try_full_from_str`](https://docs.rs/icu/latest/icu/time/struct.ZonedDateTime.html#method.try_full_from_str) for more information.
+  /// See the [Rust documentation for `try_full_from_str`](https://docs.rs/icu/2.0.0/icu/time/struct.ZonedDateTime.html#method.try_full_from_str) for more information.
   ///
   /// Throws [Rfc9557ParseError] on failure.
   factory ZonedDateTime.fullFromString(String v, Calendar calendar, IanaParser ianaParser, VariantOffsetsCalculator offsetCalculator) {
@@ -53,7 +53,7 @@ final class ZonedDateTime {
 
   /// Creates a new [`ZonedDateTime`] from a location-only IXDTF string.
   ///
-  /// See the [Rust documentation for `try_location_only_from_str`](https://docs.rs/icu/latest/icu/time/struct.ZonedDateTime.html#method.try_location_only_from_str) for more information.
+  /// See the [Rust documentation for `try_location_only_from_str`](https://docs.rs/icu/2.0.0/icu/time/struct.ZonedDateTime.html#method.try_location_only_from_str) for more information.
   ///
   /// Throws [Rfc9557ParseError] on failure.
   factory ZonedDateTime.locationOnlyFromString(String v, Calendar calendar, IanaParser ianaParser) {
@@ -67,7 +67,7 @@ final class ZonedDateTime {
 
   /// Creates a new [`ZonedDateTime`] from an offset-only IXDTF string.
   ///
-  /// See the [Rust documentation for `try_offset_only_from_str`](https://docs.rs/icu/latest/icu/time/struct.ZonedDateTime.html#method.try_offset_only_from_str) for more information.
+  /// See the [Rust documentation for `try_offset_only_from_str`](https://docs.rs/icu/2.0.0/icu/time/struct.ZonedDateTime.html#method.try_offset_only_from_str) for more information.
   ///
   /// Throws [Rfc9557ParseError] on failure.
   factory ZonedDateTime.offsetOnlyFromString(String v, Calendar calendar) {
@@ -81,7 +81,7 @@ final class ZonedDateTime {
 
   /// Creates a new [`ZonedDateTime`] from an IXDTF string, without requiring the offset or calculating the zone variant.
   ///
-  /// See the [Rust documentation for `try_lenient_from_str`](https://docs.rs/icu/latest/icu/time/struct.ZonedDateTime.html#method.try_lenient_from_str) for more information.
+  /// See the [Rust documentation for `try_lenient_from_str`](https://docs.rs/icu/2.0.0/icu/time/struct.ZonedDateTime.html#method.try_lenient_from_str) for more information.
   ///
   /// Throws [Rfc9557ParseError] on failure.
   factory ZonedDateTime.lenientFromString(String v, Calendar calendar, IanaParser ianaParser) {

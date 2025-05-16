@@ -8,7 +8,7 @@ part of 'lib.g.dart';
 ///
 /// Also, it can parse the CLDR unit identifier (e.g. `meter-per-square-second`) and get the [`MeasureUnit`].
 ///
-/// See the [Rust documentation for `ConverterFactory`](https://docs.rs/icu/latest/icu/experimental/units/converter_factory/struct.ConverterFactory.html) for more information.
+/// See the [Rust documentation for `ConverterFactory`](https://docs.rs/icu/2.0.0/icu/experimental/units/converter_factory/struct.ConverterFactory.html) for more information.
 final class UnitsConverterFactory implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _ffi;
 
@@ -30,7 +30,7 @@ final class UnitsConverterFactory implements ffi.Finalizable {
 
   /// Construct a new [`UnitsConverterFactory`] instance using compiled data.
   ///
-  /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/experimental/units/converter_factory/struct.ConverterFactory.html#method.new) for more information.
+  /// See the [Rust documentation for `new`](https://docs.rs/icu/2.0.0/icu/experimental/units/converter_factory/struct.ConverterFactory.html#method.new) for more information.
   factory UnitsConverterFactory() {
     final result = _icu4x_UnitsConverterFactory_create_mv1();
     return UnitsConverterFactory._fromFfi(result, []);
@@ -38,7 +38,7 @@ final class UnitsConverterFactory implements ffi.Finalizable {
 
   /// Construct a new [`UnitsConverterFactory`] instance using a particular data source.
   ///
-  /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/experimental/units/converter_factory/struct.ConverterFactory.html#method.new) for more information.
+  /// See the [Rust documentation for `new`](https://docs.rs/icu/2.0.0/icu/experimental/units/converter_factory/struct.ConverterFactory.html#method.new) for more information.
   ///
   /// Throws [DataError] on failure.
   factory UnitsConverterFactory.withProvider(DataProvider provider) {
@@ -53,7 +53,7 @@ final class UnitsConverterFactory implements ffi.Finalizable {
   /// Returns nothing if the conversion between the two units is not possible.
   /// For example, conversion between `meter` and `second` is not possible.
   ///
-  /// See the [Rust documentation for `converter`](https://docs.rs/icu/latest/icu/experimental/units/converter_factory/struct.ConverterFactory.html#method.converter) for more information.
+  /// See the [Rust documentation for `converter`](https://docs.rs/icu/2.0.0/icu/experimental/units/converter_factory/struct.ConverterFactory.html#method.converter) for more information.
   UnitsConverter? converter(MeasureUnit from, MeasureUnit to) {
     final result = _icu4x_UnitsConverterFactory_converter_mv1(_ffi, from._ffi, to._ffi);
     return result.address == 0 ? null : UnitsConverter._fromFfi(result, []);

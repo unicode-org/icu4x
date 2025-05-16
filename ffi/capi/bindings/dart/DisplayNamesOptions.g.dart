@@ -9,7 +9,7 @@ final class _DisplayNamesOptionsFfi extends ffi.Struct {
   external _ResultInt32Void languageDisplay;
 }
 
-/// See the [Rust documentation for `DisplayNamesOptions`](https://docs.rs/icu/latest/icu/experimental/displaynames/options/struct.DisplayNamesOptions.html) for more information.
+/// See the [Rust documentation for `DisplayNamesOptions`](https://docs.rs/icu/2.0.0/icu/experimental/displaynames/options/struct.DisplayNamesOptions.html) for more information.
 final class DisplayNamesOptions {
   DisplayNamesStyle? style;
   DisplayNamesFallback? fallback;

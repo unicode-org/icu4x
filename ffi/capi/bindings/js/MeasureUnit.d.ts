@@ -9,7 +9,7 @@ import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
  *
  * You can create an instance of this object using [`MeasureUnitParser`] by calling the `parse` method.
  *
- * See the [Rust documentation for `MeasureUnit`](https://docs.rs/icu/latest/icu/experimental/measure/measureunit/struct.MeasureUnit.html) for more information.
+ * See the [Rust documentation for `MeasureUnit`](https://docs.rs/icu/2.0.0/icu/experimental/measure/measureunit/struct.MeasureUnit.html) for more information.
  */
 export class MeasureUnit {
     /** @internal */

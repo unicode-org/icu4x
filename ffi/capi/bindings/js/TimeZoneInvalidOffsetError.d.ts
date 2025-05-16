@@ -7,7 +7,7 @@ type TimeZoneInvalidOffsetError_obj = {
 
 
 /**
- * Additional information: [1](https://docs.rs/icu/latest/icu/time/zone/struct.InvalidOffsetError.html)
+ * Additional information: [1](https://docs.rs/icu/2.0.0/icu/time/zone/struct.InvalidOffsetError.html)
  */
 export class TimeZoneInvalidOffsetError {
     /** @internal */

@@ -12,7 +12,7 @@ const RegionDisplayNames_box_destroy_registry = new FinalizationRegistry((ptr) =
 });
 
 /**
- * See the [Rust documentation for `RegionDisplayNames`](https://docs.rs/icu/latest/icu/experimental/displaynames/struct.RegionDisplayNames.html) for more information.
+ * See the [Rust documentation for `RegionDisplayNames`](https://docs.rs/icu/2.0.0/icu/experimental/displaynames/struct.RegionDisplayNames.html) for more information.
  */
 export class RegionDisplayNames {
     // Internal ptr reference:
@@ -46,7 +46,7 @@ export class RegionDisplayNames {
     /**
      * Creates a new `RegionDisplayNames` from locale data and an options bag using compiled data.
      *
-     * See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/experimental/displaynames/struct.RegionDisplayNames.html#method.try_new) for more information.
+     * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.0.0/icu/experimental/displaynames/struct.RegionDisplayNames.html#method.try_new) for more information.
      */
     #defaultConstructor(locale, options) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
@@ -74,7 +74,7 @@ export class RegionDisplayNames {
     /**
      * Creates a new `RegionDisplayNames` from locale data and an options bag using a particular data source.
      *
-     * See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/experimental/displaynames/struct.RegionDisplayNames.html#method.try_new) for more information.
+     * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.0.0/icu/experimental/displaynames/struct.RegionDisplayNames.html#method.try_new) for more information.
      */
     static createWithProvider(provider, locale, options) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
@@ -104,7 +104,7 @@ export class RegionDisplayNames {
      * Note that the function returns an empty string in case the display name for a given
      * region code is not found.
      *
-     * See the [Rust documentation for `of`](https://docs.rs/icu/latest/icu/experimental/displaynames/struct.RegionDisplayNames.html#method.of) for more information.
+     * See the [Rust documentation for `of`](https://docs.rs/icu/2.0.0/icu/experimental/displaynames/struct.RegionDisplayNames.html#method.of) for more information.
      */
     of(region) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
@@ -136,7 +136,7 @@ export class RegionDisplayNames {
     /**
      * Creates a new `RegionDisplayNames` from locale data and an options bag using compiled data.
      *
-     * See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/experimental/displaynames/struct.RegionDisplayNames.html#method.try_new) for more information.
+     * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.0.0/icu/experimental/displaynames/struct.RegionDisplayNames.html#method.try_new) for more information.
      */
     constructor(locale, options) {
         if (arguments[0] === diplomatRuntime.exposeConstructor) {

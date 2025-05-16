@@ -14,7 +14,7 @@ const Date_box_destroy_registry = new FinalizationRegistry((ptr) => {
 /**
  * An ICU4X Date object capable of containing a date for any calendar.
  *
- * See the [Rust documentation for `Date`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html) for more information.
+ * See the [Rust documentation for `Date`](https://docs.rs/icu/2.0.0/icu/calendar/struct.Date.html) for more information.
  */
 export class Date {
     // Internal ptr reference:
@@ -49,7 +49,7 @@ export class Date {
      * Creates a new [`Date`] representing the ISO date
      * given but in a given calendar
      *
-     * See the [Rust documentation for `new_from_iso`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.new_from_iso) for more information.
+     * See the [Rust documentation for `new_from_iso`](https://docs.rs/icu/2.0.0/icu/calendar/struct.Date.html#method.new_from_iso) for more information.
      */
     static fromIsoInCalendar(isoYear, isoMonth, isoDay, calendar) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
@@ -75,7 +75,7 @@ export class Date {
      *
      * An empty era code will treat the year as an extended year
      *
-     * See the [Rust documentation for `try_new_from_codes`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.try_new_from_codes) for more information.
+     * See the [Rust documentation for `try_new_from_codes`](https://docs.rs/icu/2.0.0/icu/calendar/struct.Date.html#method.try_new_from_codes) for more information.
      */
     static fromCodesInCalendar(eraCode, year, monthCode, day, calendar) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
@@ -105,7 +105,7 @@ export class Date {
     /**
      * Creates a new [`Date`] from the given Rata Die
      *
-     * See the [Rust documentation for `from_rata_die`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.from_rata_die) for more information.
+     * See the [Rust documentation for `from_rata_die`](https://docs.rs/icu/2.0.0/icu/calendar/struct.Date.html#method.from_rata_die) for more information.
      */
     static fromRataDie(rd, calendar) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
@@ -129,7 +129,7 @@ export class Date {
     /**
      * Creates a new [`Date`] from an IXDTF string.
      *
-     * See the [Rust documentation for `try_from_str`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.try_from_str) for more information.
+     * See the [Rust documentation for `try_from_str`](https://docs.rs/icu/2.0.0/icu/calendar/struct.Date.html#method.try_from_str) for more information.
      */
     static fromString(v, calendar) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
@@ -158,7 +158,7 @@ export class Date {
     /**
      * Convert this date to one in a different calendar
      *
-     * See the [Rust documentation for `to_calendar`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.to_calendar) for more information.
+     * See the [Rust documentation for `to_calendar`](https://docs.rs/icu/2.0.0/icu/calendar/struct.Date.html#method.to_calendar) for more information.
      */
     toCalendar(calendar) {
 
@@ -175,7 +175,7 @@ export class Date {
     /**
      * Converts this date to ISO
      *
-     * See the [Rust documentation for `to_iso`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.to_iso) for more information.
+     * See the [Rust documentation for `to_iso`](https://docs.rs/icu/2.0.0/icu/calendar/struct.Date.html#method.to_iso) for more information.
      */
     toIso() {
 
@@ -192,7 +192,7 @@ export class Date {
     /**
      * Returns this date's Rata Die
      *
-     * See the [Rust documentation for `to_rata_die`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.to_rata_die) for more information.
+     * See the [Rust documentation for `to_rata_die`](https://docs.rs/icu/2.0.0/icu/calendar/struct.Date.html#method.to_rata_die) for more information.
      */
     get rataDie() {
 
@@ -209,7 +209,7 @@ export class Date {
     /**
      * Returns the 1-indexed day in the year for this date
      *
-     * See the [Rust documentation for `day_of_year`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.day_of_year) for more information.
+     * See the [Rust documentation for `day_of_year`](https://docs.rs/icu/2.0.0/icu/calendar/struct.Date.html#method.day_of_year) for more information.
      */
     get dayOfYear() {
 
@@ -226,7 +226,7 @@ export class Date {
     /**
      * Returns the 1-indexed day in the month for this date
      *
-     * See the [Rust documentation for `day_of_month`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.day_of_month) for more information.
+     * See the [Rust documentation for `day_of_month`](https://docs.rs/icu/2.0.0/icu/calendar/struct.Date.html#method.day_of_month) for more information.
      */
     get dayOfMonth() {
 
@@ -243,7 +243,7 @@ export class Date {
     /**
      * Returns the day in the week for this day
      *
-     * See the [Rust documentation for `day_of_week`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.day_of_week) for more information.
+     * See the [Rust documentation for `day_of_week`](https://docs.rs/icu/2.0.0/icu/calendar/struct.Date.html#method.day_of_week) for more information.
      */
     get dayOfWeek() {
 
@@ -264,9 +264,9 @@ export class Date {
      * having the same ordinal month across years; use month_code if you care
      * about month identity.
      *
-     * See the [Rust documentation for `month`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.month) for more information.
+     * See the [Rust documentation for `month`](https://docs.rs/icu/2.0.0/icu/calendar/struct.Date.html#method.month) for more information.
      *
-     * See the [Rust documentation for `ordinal`](https://docs.rs/icu/latest/icu/calendar/types/struct.MonthInfo.html#structfield.ordinal) for more information.
+     * See the [Rust documentation for `ordinal`](https://docs.rs/icu/2.0.0/icu/calendar/types/struct.MonthInfo.html#structfield.ordinal) for more information.
      */
     get ordinalMonth() {
 
@@ -284,9 +284,9 @@ export class Date {
      * Returns the month code for this date. Typically something
      * like "M01", "M02", but can be more complicated for lunar calendars.
      *
-     * See the [Rust documentation for `standard_code`](https://docs.rs/icu/latest/icu/calendar/types/struct.MonthInfo.html#structfield.standard_code) for more information.
+     * See the [Rust documentation for `standard_code`](https://docs.rs/icu/2.0.0/icu/calendar/types/struct.MonthInfo.html#structfield.standard_code) for more information.
      *
-     * Additional information: [1](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.month)
+     * Additional information: [1](https://docs.rs/icu/2.0.0/icu/calendar/struct.Date.html#method.month)
      */
     get monthCode() {
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
@@ -305,7 +305,7 @@ export class Date {
     /**
      * Returns the month number of this month.
      *
-     * See the [Rust documentation for `month_number`](https://docs.rs/icu/latest/icu/calendar/types/struct.MonthInfo.html#method.month_number) for more information.
+     * See the [Rust documentation for `month_number`](https://docs.rs/icu/2.0.0/icu/calendar/types/struct.MonthInfo.html#method.month_number) for more information.
      */
     get monthNumber() {
 
@@ -322,7 +322,7 @@ export class Date {
     /**
      * Returns whether the month is a leap month.
      *
-     * See the [Rust documentation for `is_leap`](https://docs.rs/icu/latest/icu/calendar/types/struct.MonthInfo.html#method.is_leap) for more information.
+     * See the [Rust documentation for `is_leap`](https://docs.rs/icu/2.0.0/icu/calendar/types/struct.MonthInfo.html#method.is_leap) for more information.
      */
     get monthIsLeap() {
 
@@ -341,9 +341,9 @@ export class Date {
      *
      * For calendars without an era, returns the related ISO year.
      *
-     * See the [Rust documentation for `era_year_or_related_iso`](https://docs.rs/icu/latest/icu/calendar/types/enum.YearInfo.html#method.era_year_or_related_iso) for more information.
+     * See the [Rust documentation for `era_year_or_related_iso`](https://docs.rs/icu/2.0.0/icu/calendar/types/enum.YearInfo.html#method.era_year_or_related_iso) for more information.
      *
-     * Additional information: [1](https://docs.rs/icu/latest/icu/calendar/types/struct.EraYear.html#structfield.year), [2](https://docs.rs/icu/latest/icu/calendar/types/struct.CyclicYear.html#structfield.related_iso), [3](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.year)
+     * Additional information: [1](https://docs.rs/icu/2.0.0/icu/calendar/types/struct.EraYear.html#structfield.year), [2](https://docs.rs/icu/2.0.0/icu/calendar/types/struct.CyclicYear.html#structfield.related_iso), [3](https://docs.rs/icu/2.0.0/icu/calendar/struct.Date.html#method.year)
      */
     get eraYearOrRelatedIso() {
 
@@ -360,7 +360,7 @@ export class Date {
     /**
      * Returns the extended year in the Date
      *
-     * See the [Rust documentation for `extended_year`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.extended_year) for more information.
+     * See the [Rust documentation for `extended_year`](https://docs.rs/icu/2.0.0/icu/calendar/struct.Date.html#method.extended_year) for more information.
      */
     get extendedYear() {
 
@@ -377,9 +377,9 @@ export class Date {
     /**
      * Returns the era for this date, or an empty string
      *
-     * See the [Rust documentation for `era`](https://docs.rs/icu/latest/icu/calendar/types/struct.EraYear.html#structfield.era) for more information.
+     * See the [Rust documentation for `era`](https://docs.rs/icu/2.0.0/icu/calendar/types/struct.EraYear.html#structfield.era) for more information.
      *
-     * Additional information: [1](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.year)
+     * Additional information: [1](https://docs.rs/icu/2.0.0/icu/calendar/struct.Date.html#method.year)
      */
     get era() {
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
@@ -398,7 +398,7 @@ export class Date {
     /**
      * Returns the number of months in the year represented by this date
      *
-     * See the [Rust documentation for `months_in_year`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.months_in_year) for more information.
+     * See the [Rust documentation for `months_in_year`](https://docs.rs/icu/2.0.0/icu/calendar/struct.Date.html#method.months_in_year) for more information.
      */
     get monthsInYear() {
 
@@ -415,7 +415,7 @@ export class Date {
     /**
      * Returns the number of days in the month represented by this date
      *
-     * See the [Rust documentation for `days_in_month`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.days_in_month) for more information.
+     * See the [Rust documentation for `days_in_month`](https://docs.rs/icu/2.0.0/icu/calendar/struct.Date.html#method.days_in_month) for more information.
      */
     get daysInMonth() {
 
@@ -432,7 +432,7 @@ export class Date {
     /**
      * Returns the number of days in the year represented by this date
      *
-     * See the [Rust documentation for `days_in_year`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.days_in_year) for more information.
+     * See the [Rust documentation for `days_in_year`](https://docs.rs/icu/2.0.0/icu/calendar/struct.Date.html#method.days_in_year) for more information.
      */
     get daysInYear() {
 
@@ -449,7 +449,7 @@ export class Date {
     /**
      * Returns the [`Calendar`] object backing this date
      *
-     * See the [Rust documentation for `calendar`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.calendar) for more information.
+     * See the [Rust documentation for `calendar`](https://docs.rs/icu/2.0.0/icu/calendar/struct.Date.html#method.calendar) for more information.
      */
     get calendar() {
 

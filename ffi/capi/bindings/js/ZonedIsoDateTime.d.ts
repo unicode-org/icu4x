@@ -13,7 +13,7 @@ import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 /**
  * An ICU4X ZonedDateTime object capable of containing a ISO-8601 date, time, and zone.
  *
- * See the [Rust documentation for `ZonedDateTime`](https://docs.rs/icu/latest/icu/time/struct.ZonedDateTime.html) for more information.
+ * See the [Rust documentation for `ZonedDateTime`](https://docs.rs/icu/2.0.0/icu/time/struct.ZonedDateTime.html) for more information.
  */
 export class ZonedIsoDateTime {
     get date(): IsoDate;
@@ -26,7 +26,7 @@ export class ZonedIsoDateTime {
     /**
      * Creates a new [`ZonedIsoDateTime`] from an IXDTF string.
      *
-     * See the [Rust documentation for `try_full_from_str`](https://docs.rs/icu/latest/icu/time/struct.ZonedDateTime.html#method.try_full_from_str) for more information.
+     * See the [Rust documentation for `try_full_from_str`](https://docs.rs/icu/2.0.0/icu/time/struct.ZonedDateTime.html#method.try_full_from_str) for more information.
      */
     static fullFromString(v: string, ianaParser: IanaParser, offsetCalculator: VariantOffsetsCalculator): ZonedIsoDateTime;
 
@@ -35,7 +35,7 @@ export class ZonedIsoDateTime {
      *
      * Note: [`ZonedIsoDateTime`]s created with this constructor can only be formatted using localized offset zone styles.
      *
-     * See the [Rust documentation for `from_epoch_milliseconds_and_utc_offset`](https://docs.rs/icu/latest/icu/time/struct.ZonedDateTime.html#method.from_epoch_milliseconds_and_utc_offset) for more information.
+     * See the [Rust documentation for `from_epoch_milliseconds_and_utc_offset`](https://docs.rs/icu/2.0.0/icu/time/struct.ZonedDateTime.html#method.from_epoch_milliseconds_and_utc_offset) for more information.
      */
     static fromEpochMillisecondsAndUtcOffset(epochMilliseconds: bigint, utcOffset: UtcOffset): ZonedIsoDateTime;
 }

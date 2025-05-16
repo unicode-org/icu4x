@@ -11,7 +11,7 @@ const UnitsConverter_box_destroy_registry = new FinalizationRegistry((ptr) => {
  *
  * You can create an instance of this object using [`UnitsConverterFactory`] by calling the `converter` method.
  *
- * See the [Rust documentation for `UnitsConverter`](https://docs.rs/icu/latest/icu/experimental/units/converter/struct.UnitsConverter.html) for more information.
+ * See the [Rust documentation for `UnitsConverter`](https://docs.rs/icu/2.0.0/icu/experimental/units/converter/struct.UnitsConverter.html) for more information.
  */
 export class UnitsConverter {
     // Internal ptr reference:
@@ -47,7 +47,7 @@ export class UnitsConverter {
      * NOTE:
      * The conversion using floating-point operations is not as accurate as the conversion using ratios.
      *
-     * See the [Rust documentation for `convert`](https://docs.rs/icu/latest/icu/experimental/units/converter/struct.UnitsConverter.html#method.convert) for more information.
+     * See the [Rust documentation for `convert`](https://docs.rs/icu/2.0.0/icu/experimental/units/converter/struct.UnitsConverter.html#method.convert) for more information.
      */
     convertNumber(value) {
 
@@ -64,7 +64,7 @@ export class UnitsConverter {
     /**
      * Clones the current [`UnitsConverter`] object.
      *
-     * See the [Rust documentation for `clone`](https://docs.rs/icu/latest/icu/experimental/units/converter/struct.UnitsConverter.html#method.clone) for more information.
+     * See the [Rust documentation for `clone`](https://docs.rs/icu/2.0.0/icu/experimental/units/converter/struct.UnitsConverter.html#method.clone) for more information.
      */
     clone() {
 

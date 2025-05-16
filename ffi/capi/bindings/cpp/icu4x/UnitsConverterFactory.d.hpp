@@ -37,7 +37,7 @@ namespace icu4x {
  *
  * Also, it can parse the CLDR unit identifier (e.g. `meter-per-square-second`) and get the [`MeasureUnit`].
  *
- * See the [Rust documentation for `ConverterFactory`](https://docs.rs/icu/latest/icu/experimental/units/converter_factory/struct.ConverterFactory.html) for more information.
+ * See the [Rust documentation for `ConverterFactory`](https://docs.rs/icu/2.0.0/icu/experimental/units/converter_factory/struct.ConverterFactory.html) for more information.
  */
 class UnitsConverterFactory {
 public:
@@ -45,14 +45,14 @@ public:
   /**
    * Construct a new [`UnitsConverterFactory`] instance using compiled data.
    *
-   * See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/experimental/units/converter_factory/struct.ConverterFactory.html#method.new) for more information.
+   * See the [Rust documentation for `new`](https://docs.rs/icu/2.0.0/icu/experimental/units/converter_factory/struct.ConverterFactory.html#method.new) for more information.
    */
   inline static std::unique_ptr<icu4x::UnitsConverterFactory> create();
 
   /**
    * Construct a new [`UnitsConverterFactory`] instance using a particular data source.
    *
-   * See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/experimental/units/converter_factory/struct.ConverterFactory.html#method.new) for more information.
+   * See the [Rust documentation for `new`](https://docs.rs/icu/2.0.0/icu/experimental/units/converter_factory/struct.ConverterFactory.html#method.new) for more information.
    */
   inline static diplomat::result<std::unique_ptr<icu4x::UnitsConverterFactory>, icu4x::DataError> create_with_provider(const icu4x::DataProvider& provider);
 
@@ -61,7 +61,7 @@ public:
    * Returns nothing if the conversion between the two units is not possible.
    * For example, conversion between `meter` and `second` is not possible.
    *
-   * See the [Rust documentation for `converter`](https://docs.rs/icu/latest/icu/experimental/units/converter_factory/struct.ConverterFactory.html#method.converter) for more information.
+   * See the [Rust documentation for `converter`](https://docs.rs/icu/2.0.0/icu/experimental/units/converter_factory/struct.ConverterFactory.html#method.converter) for more information.
    */
   inline std::unique_ptr<icu4x::UnitsConverter> converter(const icu4x::MeasureUnit& from, const icu4x::MeasureUnit& to) const;
 
