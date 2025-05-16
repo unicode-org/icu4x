@@ -2,17 +2,18 @@
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
+
 /**
  * See the [Rust documentation for `WordBreak`](https://docs.rs/icu/latest/icu/properties/props/struct.WordBreak.html) for more information.
  */
-
-
 export class WordBreak {
 
+    /** @internal */
     static fromValue(value: WordBreak | string): WordBreak;
 
     get value(): string;
 
+    /** @internal */
     get ffiValue(): number;
 
     static Other : WordBreak;

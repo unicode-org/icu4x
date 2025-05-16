@@ -2,19 +2,20 @@
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
+
 /**
  * Mode used in a rounding operation for signed numbers.
  *
  * See the [Rust documentation for `SignedRoundingMode`](https://docs.rs/fixed_decimal/latest/fixed_decimal/enum.SignedRoundingMode.html) for more information.
  */
-
-
 export class DecimalSignedRoundingMode {
 
+    /** @internal */
     static fromValue(value: DecimalSignedRoundingMode | string): DecimalSignedRoundingMode;
 
     get value(): string;
 
+    /** @internal */
     get ffiValue(): number;
 
     static Expand : DecimalSignedRoundingMode;

@@ -2,17 +2,18 @@
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
+
 /**
  * See the [Rust documentation for `EastAsianWidth`](https://docs.rs/icu/latest/icu/properties/props/struct.EastAsianWidth.html) for more information.
  */
-
-
 export class EastAsianWidth {
 
+    /** @internal */
     static fromValue(value: EastAsianWidth | string): EastAsianWidth;
 
     get value(): string;
 
+    /** @internal */
     get ffiValue(): number;
 
     static Neutral : EastAsianWidth;

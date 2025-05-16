@@ -3,11 +3,10 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
+
 /**
  * See the [Rust documentation for `HangulSyllableType`](https://docs.rs/icu/latest/icu/properties/props/struct.HangulSyllableType.html) for more information.
  */
-
-
 export class HangulSyllableType {
     #value = undefined;
 
@@ -49,6 +48,7 @@ export class HangulSyllableType {
         throw TypeError(value + " is not a HangulSyllableType and does not correspond to any of its enumerator values.");
     }
 
+    /** @internal */
     static fromValue(value) {
         return new HangulSyllableType(value);
     }
@@ -57,6 +57,7 @@ export class HangulSyllableType {
         return [...HangulSyllableType.#values.keys()][this.#value];
     }
 
+    /** @internal */
     get ffiValue(){
         return this.#value;
     }

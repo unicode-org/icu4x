@@ -3,11 +3,10 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
+
 /**
  * See the [Rust documentation for `Strength`](https://docs.rs/icu/latest/icu/collator/options/enum.Strength.html) for more information.
  */
-
-
 export class CollatorStrength {
     #value = undefined;
 
@@ -48,6 +47,7 @@ export class CollatorStrength {
         throw TypeError(value + " is not a CollatorStrength and does not correspond to any of its enumerator values.");
     }
 
+    /** @internal */
     static fromValue(value) {
         return new CollatorStrength(value);
     }
@@ -56,6 +56,7 @@ export class CollatorStrength {
         return [...CollatorStrength.#values.keys()][this.#value];
     }
 
+    /** @internal */
     get ffiValue(){
         return this.#value;
     }

@@ -8,13 +8,15 @@ import type { PluralOperands } from "./PluralOperands"
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
+
 /**
  * See the [Rust documentation for `PluralRules`](https://docs.rs/icu/latest/icu/plurals/struct.PluralRules.html) for more information.
  */
-
-
 export class PluralRules {
+    /** @internal */
     get ffiValue(): pointer;
+    /** @internal */
+    constructor();
 
 
     /**

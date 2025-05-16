@@ -8,12 +8,12 @@ import type { VariantOffsets } from "./VariantOffsets"
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
+
 /**
  * See the [Rust documentation for `VariantOffsetsCalculator`](https://docs.rs/icu/latest/icu/time/zone/struct.VariantOffsetsCalculator.html) for more information.
  */
-
-
 export class VariantOffsetsCalculator {
+    /** @internal */
     get ffiValue(): pointer;
 
 
@@ -29,5 +29,10 @@ export class VariantOffsetsCalculator {
      */
     computeOffsetsFromTimeZoneAndDateTime(timeZone: TimeZone, localDate: IsoDate, localTime: Time): VariantOffsets | null;
 
+    /**
+     * Construct a new [`VariantOffsetsCalculator`] instance using compiled data.
+     *
+     * See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/time/zone/struct.VariantOffsetsCalculator.html#method.new) for more information.
+     */
     constructor();
 }

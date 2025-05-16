@@ -3,11 +3,10 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
+
 /**
  * See the [Rust documentation for `LeadingAdjustment`](https://docs.rs/icu/latest/icu/casemap/options/enum.LeadingAdjustment.html) for more information.
  */
-
-
 export class LeadingAdjustment {
     #value = undefined;
 
@@ -46,6 +45,7 @@ export class LeadingAdjustment {
         throw TypeError(value + " is not a LeadingAdjustment and does not correspond to any of its enumerator values.");
     }
 
+    /** @internal */
     static fromValue(value) {
         return new LeadingAdjustment(value);
     }
@@ -54,6 +54,7 @@ export class LeadingAdjustment {
         return [...LeadingAdjustment.#values.keys()][this.#value];
     }
 
+    /** @internal */
     get ffiValue(){
         return this.#value;
     }

@@ -9,14 +9,13 @@ import { TimePrecision } from "./TimePrecision.mjs"
 import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
-
-/**
- * See the [Rust documentation for `NoCalendarFormatter`](https://docs.rs/icu/latest/icu/datetime/type.NoCalendarFormatter.html) for more information.
- */
 const TimeFormatter_box_destroy_registry = new FinalizationRegistry((ptr) => {
     wasm.icu4x_TimeFormatter_destroy_mv1(ptr);
 });
 
+/**
+ * See the [Rust documentation for `NoCalendarFormatter`](https://docs.rs/icu/latest/icu/datetime/type.NoCalendarFormatter.html) for more information.
+ */
 export class TimeFormatter {
     // Internal ptr reference:
     #ptr = null;
@@ -40,6 +39,7 @@ export class TimeFormatter {
 
         return this;
     }
+    /** @internal */
     get ffiValue() {
         return this.#ptr;
     }
@@ -63,7 +63,7 @@ export class TimeFormatter {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DateTimeFormatterLoadError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
-                throw new globalThis.Error('DateTimeFormatterLoadError: ' + cause.value, { cause });
+                throw new globalThis.Error('DateTimeFormatterLoadError.' + cause.value, { cause });
             }
             return new TimeFormatter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -93,7 +93,7 @@ export class TimeFormatter {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DateTimeFormatterLoadError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
-                throw new globalThis.Error('DateTimeFormatterLoadError: ' + cause.value, { cause });
+                throw new globalThis.Error('DateTimeFormatterLoadError.' + cause.value, { cause });
             }
             return new TimeFormatter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -122,6 +122,13 @@ export class TimeFormatter {
         }
     }
 
+    /**
+     * See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/datetime/type.NoCalendarFormatter.html#method.try_new) for more information.
+     *
+     * See the [Rust documentation for `T`](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.T.html) for more information.
+     *
+     * Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.T.html#method.with_time_precision), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.T.html#method.with_alignment), [3](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.T.html#method.for_length)
+     */
     constructor(locale, length, timePrecision, alignment) {
         if (arguments[0] === diplomatRuntime.exposeConstructor) {
             return this.#internalConstructor(...Array.prototype.slice.call(arguments, 1));

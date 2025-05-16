@@ -8,14 +8,13 @@ import { DecimalSignedRoundingMode } from "./DecimalSignedRoundingMode.mjs"
 import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
-
-/**
- * See the [Rust documentation for `Decimal`](https://docs.rs/fixed_decimal/latest/fixed_decimal/type.Decimal.html) for more information.
- */
 const Decimal_box_destroy_registry = new FinalizationRegistry((ptr) => {
     wasm.icu4x_Decimal_destroy_mv1(ptr);
 });
 
+/**
+ * See the [Rust documentation for `Decimal`](https://docs.rs/fixed_decimal/latest/fixed_decimal/type.Decimal.html) for more information.
+ */
 export class Decimal {
     // Internal ptr reference:
     #ptr = null;
@@ -39,6 +38,7 @@ export class Decimal {
 
         return this;
     }
+    /** @internal */
     get ffiValue() {
         return this.#ptr;
     }
@@ -174,7 +174,7 @@ export class Decimal {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DecimalParseError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
-                throw new globalThis.Error('DecimalParseError: ' + cause.value, { cause });
+                throw new globalThis.Error('DecimalParseError.' + cause.value, { cause });
             }
             return new Decimal(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }

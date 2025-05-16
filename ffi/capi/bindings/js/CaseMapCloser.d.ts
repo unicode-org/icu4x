@@ -5,12 +5,12 @@ import type { DataProvider } from "./DataProvider"
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
+
 /**
  * See the [Rust documentation for `CaseMapCloser`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapCloser.html) for more information.
  */
-
-
 export class CaseMapCloser {
+    /** @internal */
     get ffiValue(): pointer;
 
 
@@ -39,5 +39,10 @@ export class CaseMapCloser {
      */
     addStringCaseClosureTo(s: string, builder: CodePointSetBuilder): boolean;
 
+    /**
+     * Construct a new CaseMapCloser instance using compiled data.
+     *
+     * See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapCloser.html#method.new) for more information.
+     */
     constructor();
 }

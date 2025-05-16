@@ -2,14 +2,13 @@
 import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
-
-/**
- * See the [Rust documentation for `GraphemeClusterBreakIterator`](https://docs.rs/icu/latest/icu/segmenter/iterators/struct.GraphemeClusterBreakIterator.html) for more information.
- */
 const GraphemeClusterBreakIteratorUtf16_box_destroy_registry = new FinalizationRegistry((ptr) => {
     wasm.icu4x_GraphemeClusterBreakIteratorUtf16_destroy_mv1(ptr);
 });
 
+/**
+ * See the [Rust documentation for `GraphemeClusterBreakIterator`](https://docs.rs/icu/latest/icu/segmenter/iterators/struct.GraphemeClusterBreakIterator.html) for more information.
+ */
 export class GraphemeClusterBreakIteratorUtf16 {
     // Internal ptr reference:
     #ptr = null;
@@ -35,6 +34,7 @@ export class GraphemeClusterBreakIteratorUtf16 {
 
         return this;
     }
+    /** @internal */
     get ffiValue() {
         return this.#ptr;
     }

@@ -8,7 +8,7 @@ export function get(localeName) {
     
     let out = self.get(locale);
     
-    out = out.value;;
+    out = out?.value || 'None';;
     
 
     return out;

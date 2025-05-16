@@ -2,6 +2,7 @@
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
+
 /**
  * Result of a single iteration of [`CodePointRangeIterator`].
  * Logically can be considered to be an `Option<RangeInclusive<DiplomatChar>>`,
@@ -11,11 +12,11 @@ import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
  * iteration will NOT produce a range done=true, in other words `start` and `end` are useful
  * values if and only if `done=false`.
  */
-
-
 export class CodePointRangeIteratorResult {
     get start(): codepoint;
     get end(): codepoint;
     get done(): boolean;
+    /** @internal */
+    constructor();
 
 }

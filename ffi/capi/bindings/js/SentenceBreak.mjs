@@ -3,11 +3,10 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
+
 /**
  * See the [Rust documentation for `SentenceBreak`](https://docs.rs/icu/latest/icu/properties/props/struct.SentenceBreak.html) for more information.
  */
-
-
 export class SentenceBreak {
     #value = undefined;
 
@@ -58,6 +57,7 @@ export class SentenceBreak {
         throw TypeError(value + " is not a SentenceBreak and does not correspond to any of its enumerator values.");
     }
 
+    /** @internal */
     static fromValue(value) {
         return new SentenceBreak(value);
     }
@@ -66,6 +66,7 @@ export class SentenceBreak {
         return [...SentenceBreak.#values.keys()][this.#value];
     }
 
+    /** @internal */
     get ffiValue(){
         return this.#value;
     }

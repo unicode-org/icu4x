@@ -4,13 +4,15 @@ import type { UtcOffset } from "./UtcOffset"
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
+
 /**
  * See the [Rust documentation for `TimeZone`](https://docs.rs/icu/latest/icu/time/struct.TimeZone.html) for more information.
  */
-
-
 export class TimeZone {
+    /** @internal */
     get ffiValue(): pointer;
+    /** @internal */
+    constructor();
 
 
     /**

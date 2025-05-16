@@ -2,26 +2,28 @@
 import type { GeneralCategory } from "./GeneralCategory"
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
-
-/**
- * A mask that is capable of representing groups of `General_Category` values.
- *
- * See the [Rust documentation for `GeneralCategoryGroup`](https://docs.rs/icu/latest/icu/properties/props/struct.GeneralCategoryGroup.html) for more information.
- */
 type GeneralCategoryGroup_obj = {
     mask: number;
 };
 
 
 
+/**
+ * A mask that is capable of representing groups of `General_Category` values.
+ *
+ * See the [Rust documentation for `GeneralCategoryGroup`](https://docs.rs/icu/latest/icu/properties/props/struct.GeneralCategoryGroup.html) for more information.
+ */
 export class GeneralCategoryGroup {
     get mask(): number;
     set mask(value: number);
-    /** Create `GeneralCategoryGroup` from an object that contains all of `GeneralCategoryGroup`s fields.
-    * Optional fields do not need to be included in the provided object.
-    */
+    /** @internal */
     static fromFields(structObj : GeneralCategoryGroup_obj) : GeneralCategoryGroup;
 
+    /**
+    * Create `GeneralCategoryGroup` from an object that contains all of `GeneralCategoryGroup`s fields.
+    * Optional fields do not need to be included in the provided object.
+    */
+    constructor(structObj: GeneralCategoryGroup_obj);
 
 
     /**
@@ -93,6 +95,4 @@ export class GeneralCategoryGroup {
      * See the [Rust documentation for `Symbol`](https://docs.rs/icu/latest/icu/properties/props/struct.GeneralCategoryGroup.html#associatedconstant.Symbol) for more information.
      */
     static symbol(): GeneralCategoryGroup;
-
-    constructor(structObj: GeneralCategoryGroup_obj);
 }

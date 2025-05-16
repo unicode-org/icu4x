@@ -3,13 +3,15 @@ import type { BidiDirection } from "./BidiDirection"
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
+
 /**
  * Bidi information for a single processed paragraph
  */
-
-
 export class BidiParagraph {
+    /** @internal */
     get ffiValue(): pointer;
+    /** @internal */
+    constructor();
 
 
     /**

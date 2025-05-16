@@ -7,14 +7,13 @@ import { TitlecaseOptions } from "./TitlecaseOptions.mjs"
 import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
-
-/**
- * See the [Rust documentation for `CaseMapper`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html) for more information.
- */
 const CaseMapper_box_destroy_registry = new FinalizationRegistry((ptr) => {
     wasm.icu4x_CaseMapper_destroy_mv1(ptr);
 });
 
+/**
+ * See the [Rust documentation for `CaseMapper`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html) for more information.
+ */
 export class CaseMapper {
     // Internal ptr reference:
     #ptr = null;
@@ -38,6 +37,7 @@ export class CaseMapper {
 
         return this;
     }
+    /** @internal */
     get ffiValue() {
         return this.#ptr;
     }
@@ -74,7 +74,7 @@ export class CaseMapper {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
-                throw new globalThis.Error('DataError: ' + cause.value, { cause });
+                throw new globalThis.Error('DataError.' + cause.value, { cause });
             }
             return new CaseMapper(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -384,6 +384,11 @@ export class CaseMapper {
         }
     }
 
+    /**
+     * Construct a new CaseMapper instance using compiled data.
+     *
+     * See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.new) for more information.
+     */
     constructor() {
         if (arguments[0] === diplomatRuntime.exposeConstructor) {
             return this.#internalConstructor(...Array.prototype.slice.call(arguments, 1));

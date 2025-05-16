@@ -3,14 +3,13 @@ import { CodePointSetData } from "./CodePointSetData.mjs"
 import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
-
-/**
- * See the [Rust documentation for `CodePointInversionListBuilder`](https://docs.rs/icu/latest/icu/collections/codepointinvlist/struct.CodePointInversionListBuilder.html) for more information.
- */
 const CodePointSetBuilder_box_destroy_registry = new FinalizationRegistry((ptr) => {
     wasm.icu4x_CodePointSetBuilder_destroy_mv1(ptr);
 });
 
+/**
+ * See the [Rust documentation for `CodePointInversionListBuilder`](https://docs.rs/icu/latest/icu/collections/codepointinvlist/struct.CodePointInversionListBuilder.html) for more information.
+ */
 export class CodePointSetBuilder {
     // Internal ptr reference:
     #ptr = null;
@@ -34,6 +33,7 @@ export class CodePointSetBuilder {
 
         return this;
     }
+    /** @internal */
     get ffiValue() {
         return this.#ptr;
     }
@@ -282,6 +282,11 @@ export class CodePointSetBuilder {
         }
     }
 
+    /**
+     * Make a new set builder containing nothing
+     *
+     * See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/collections/codepointinvlist/struct.CodePointInversionListBuilder.html#method.new) for more information.
+     */
     constructor() {
         if (arguments[0] === diplomatRuntime.exposeConstructor) {
             return this.#internalConstructor(...Array.prototype.slice.call(arguments, 1));

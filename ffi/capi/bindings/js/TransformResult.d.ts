@@ -2,17 +2,18 @@
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
+
 /**
  * See the [Rust documentation for `TransformResult`](https://docs.rs/icu/latest/icu/locale/enum.TransformResult.html) for more information.
  */
-
-
 export class TransformResult {
 
+    /** @internal */
     static fromValue(value: TransformResult | string): TransformResult;
 
     get value(): string;
 
+    /** @internal */
     get ffiValue(): number;
 
     static Modified : TransformResult;

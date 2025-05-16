@@ -6,6 +6,7 @@ import type { TimeZoneIterator } from "./TimeZoneIterator"
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
+
 /**
  * A mapper between IANA time zone identifiers and BCP-47 time zone identifiers.
  *
@@ -14,9 +15,8 @@ import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
  *
  * See the [Rust documentation for `IanaParser`](https://docs.rs/icu/latest/icu/time/zone/iana/struct.IanaParser.html) for more information.
  */
-
-
 export class IanaParser {
+    /** @internal */
     get ffiValue(): pointer;
 
 
@@ -37,5 +37,10 @@ export class IanaParser {
      */
     iter(): TimeZoneIterator;
 
+    /**
+     * Create a new [`IanaParser`] using compiled data
+     *
+     * See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/time/zone/iana/struct.IanaParser.html#method.new) for more information.
+     */
     constructor();
 }

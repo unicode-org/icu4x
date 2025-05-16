@@ -5,6 +5,9 @@ import { GeneralCategoryGroup } from "./GeneralCategoryGroup.mjs"
 import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
+const GeneralCategoryNameToGroupMapper_box_destroy_registry = new FinalizationRegistry((ptr) => {
+    wasm.icu4x_GeneralCategoryNameToGroupMapper_destroy_mv1(ptr);
+});
 
 /**
  * A type capable of looking up General Category Group values from a string name.
@@ -13,10 +16,6 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
  *
  * See the [Rust documentation for `GeneralCategory`](https://docs.rs/icu/latest/icu/properties/props/enum.GeneralCategory.html) for more information.
  */
-const GeneralCategoryNameToGroupMapper_box_destroy_registry = new FinalizationRegistry((ptr) => {
-    wasm.icu4x_GeneralCategoryNameToGroupMapper_destroy_mv1(ptr);
-});
-
 export class GeneralCategoryNameToGroupMapper {
     // Internal ptr reference:
     #ptr = null;
@@ -40,6 +39,7 @@ export class GeneralCategoryNameToGroupMapper {
 
         return this;
     }
+    /** @internal */
     get ffiValue() {
         return this.#ptr;
     }
@@ -124,7 +124,7 @@ export class GeneralCategoryNameToGroupMapper {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
-                throw new globalThis.Error('DataError: ' + cause.value, { cause });
+                throw new globalThis.Error('DataError.' + cause.value, { cause });
             }
             return new GeneralCategoryNameToGroupMapper(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -134,6 +134,11 @@ export class GeneralCategoryNameToGroupMapper {
         }
     }
 
+    /**
+     * Create a name-to-mask mapper for the `General_Category` property, using compiled data.
+     *
+     * See the [Rust documentation for `GeneralCategoryGroup`](https://docs.rs/icu/latest/icu/properties/props/struct.GeneralCategoryGroup.html) for more information.
+     */
     constructor() {
         if (arguments[0] === diplomatRuntime.exposeConstructor) {
             return this.#internalConstructor(...Array.prototype.slice.call(arguments, 1));

@@ -7,15 +7,17 @@ import type { Weekday } from "./Weekday"
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
+
 /**
  * An ICU4X Date object capable of containing a date for any calendar.
  *
  * See the [Rust documentation for `Date`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html) for more information.
  */
-
-
 export class Date {
+    /** @internal */
     get ffiValue(): pointer;
+    /** @internal */
+    constructor();
 
 
     /**

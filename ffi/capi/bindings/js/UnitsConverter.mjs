@@ -2,6 +2,9 @@
 import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
+const UnitsConverter_box_destroy_registry = new FinalizationRegistry((ptr) => {
+    wasm.icu4x_UnitsConverter_destroy_mv1(ptr);
+});
 
 /**
  * An ICU4X Units Converter object, capable of converting between two [`MeasureUnit`]s.
@@ -10,10 +13,6 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
  *
  * See the [Rust documentation for `UnitsConverter`](https://docs.rs/icu/latest/icu/experimental/units/converter/struct.UnitsConverter.html) for more information.
  */
-const UnitsConverter_box_destroy_registry = new FinalizationRegistry((ptr) => {
-    wasm.icu4x_UnitsConverter_destroy_mv1(ptr);
-});
-
 export class UnitsConverter {
     // Internal ptr reference:
     #ptr = null;
@@ -37,6 +36,7 @@ export class UnitsConverter {
 
         return this;
     }
+    /** @internal */
     get ffiValue() {
         return this.#ptr;
     }

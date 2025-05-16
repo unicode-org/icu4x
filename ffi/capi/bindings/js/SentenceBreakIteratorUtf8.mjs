@@ -2,14 +2,13 @@
 import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
-
-/**
- * See the [Rust documentation for `SentenceBreakIterator`](https://docs.rs/icu/latest/icu/segmenter/iterators/struct.SentenceBreakIterator.html) for more information.
- */
 const SentenceBreakIteratorUtf8_box_destroy_registry = new FinalizationRegistry((ptr) => {
     wasm.icu4x_SentenceBreakIteratorUtf8_destroy_mv1(ptr);
 });
 
+/**
+ * See the [Rust documentation for `SentenceBreakIterator`](https://docs.rs/icu/latest/icu/segmenter/iterators/struct.SentenceBreakIterator.html) for more information.
+ */
 export class SentenceBreakIteratorUtf8 {
     // Internal ptr reference:
     #ptr = null;
@@ -35,6 +34,7 @@ export class SentenceBreakIteratorUtf8 {
 
         return this;
     }
+    /** @internal */
     get ffiValue() {
         return this.#ptr;
     }

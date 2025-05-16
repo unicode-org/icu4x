@@ -3,11 +3,10 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
+
 /**
  * See the [Rust documentation for `CollationNumericOrdering`](https://docs.rs/icu/latest/icu/collator/preferences/enum.CollationNumericOrdering.html) for more information.
  */
-
-
 export class CollatorNumericOrdering {
     #value = undefined;
 
@@ -45,6 +44,7 @@ export class CollatorNumericOrdering {
         throw TypeError(value + " is not a CollatorNumericOrdering and does not correspond to any of its enumerator values.");
     }
 
+    /** @internal */
     static fromValue(value) {
         return new CollatorNumericOrdering(value);
     }
@@ -53,6 +53,7 @@ export class CollatorNumericOrdering {
         return [...CollatorNumericOrdering.#values.keys()][this.#value];
     }
 
+    /** @internal */
     get ffiValue(){
         return this.#value;
     }

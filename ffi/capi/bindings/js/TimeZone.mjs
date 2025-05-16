@@ -4,14 +4,13 @@ import { UtcOffset } from "./UtcOffset.mjs"
 import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
-
-/**
- * See the [Rust documentation for `TimeZone`](https://docs.rs/icu/latest/icu/time/struct.TimeZone.html) for more information.
- */
 const TimeZone_box_destroy_registry = new FinalizationRegistry((ptr) => {
     wasm.icu4x_TimeZone_destroy_mv1(ptr);
 });
 
+/**
+ * See the [Rust documentation for `TimeZone`](https://docs.rs/icu/latest/icu/time/struct.TimeZone.html) for more information.
+ */
 export class TimeZone {
     // Internal ptr reference:
     #ptr = null;
@@ -35,6 +34,7 @@ export class TimeZone {
 
         return this;
     }
+    /** @internal */
     get ffiValue() {
         return this.#ptr;
     }

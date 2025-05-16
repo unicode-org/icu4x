@@ -7,14 +7,14 @@ import type { WeekdaySetIterator } from "./WeekdaySetIterator"
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
+
 /**
  * A Week calculator, useful to be passed in to `week_of_year()` on Date and DateTime types
  *
  * See the [Rust documentation for `WeekInformation`](https://docs.rs/icu/latest/icu/calendar/week/struct.WeekInformation.html) for more information.
  */
-
-
 export class WeekInformation {
+    /** @internal */
     get ffiValue(): pointer;
 
 
@@ -44,5 +44,10 @@ export class WeekInformation {
      */
     get weekend(): WeekdaySetIterator;
 
+    /**
+     * Creates a new [`WeekInformation`] from locale data using compiled data.
+     *
+     * See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/calendar/week/struct.WeekInformation.html#method.try_new) for more information.
+     */
     constructor(locale: Locale);
 }

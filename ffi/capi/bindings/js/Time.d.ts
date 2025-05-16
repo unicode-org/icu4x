@@ -4,14 +4,14 @@ import type { Rfc9557ParseError } from "./Rfc9557ParseError"
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
+
 /**
  * An ICU4X Time object representing a time in terms of hour, minute, second, nanosecond
  *
  * See the [Rust documentation for `Time`](https://docs.rs/icu/latest/icu/time/struct.Time.html) for more information.
  */
-
-
 export class Time {
+    /** @internal */
     get ffiValue(): pointer;
 
 
@@ -64,5 +64,10 @@ export class Time {
      */
     get subsecond(): number;
 
+    /**
+     * Creates a new [`Time`] given field values
+     *
+     * See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/time/struct.Time.html#method.try_new) for more information.
+     */
     constructor(hour: number, minute: number, second: number, subsecond: number);
 }

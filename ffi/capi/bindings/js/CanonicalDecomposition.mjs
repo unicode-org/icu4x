@@ -5,6 +5,9 @@ import { Decomposed } from "./Decomposed.mjs"
 import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
+const CanonicalDecomposition_box_destroy_registry = new FinalizationRegistry((ptr) => {
+    wasm.icu4x_CanonicalDecomposition_destroy_mv1(ptr);
+});
 
 /**
  * The raw (non-recursive) canonical decomposition operation.
@@ -13,10 +16,6 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
  *
  * See the [Rust documentation for `CanonicalDecomposition`](https://docs.rs/icu/latest/icu/normalizer/properties/struct.CanonicalDecomposition.html) for more information.
  */
-const CanonicalDecomposition_box_destroy_registry = new FinalizationRegistry((ptr) => {
-    wasm.icu4x_CanonicalDecomposition_destroy_mv1(ptr);
-});
-
 export class CanonicalDecomposition {
     // Internal ptr reference:
     #ptr = null;
@@ -40,6 +39,7 @@ export class CanonicalDecomposition {
 
         return this;
     }
+    /** @internal */
     get ffiValue() {
         return this.#ptr;
     }
@@ -76,7 +76,7 @@ export class CanonicalDecomposition {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
-                throw new globalThis.Error('DataError: ' + cause.value, { cause });
+                throw new globalThis.Error('DataError.' + cause.value, { cause });
             }
             return new CanonicalDecomposition(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -106,6 +106,11 @@ export class CanonicalDecomposition {
         }
     }
 
+    /**
+     * Construct a new CanonicalDecomposition instance for NFC using compiled data.
+     *
+     * See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/normalizer/properties/struct.CanonicalDecomposition.html#method.new) for more information.
+     */
     constructor() {
         if (arguments[0] === diplomatRuntime.exposeConstructor) {
             return this.#internalConstructor(...Array.prototype.slice.call(arguments, 1));

@@ -2,6 +2,7 @@
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
+
 /**
  * An ICU4X Units Converter object, capable of converting between two [`MeasureUnit`]s.
  *
@@ -9,10 +10,11 @@ import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
  *
  * See the [Rust documentation for `UnitsConverter`](https://docs.rs/icu/latest/icu/experimental/units/converter/struct.UnitsConverter.html) for more information.
  */
-
-
 export class UnitsConverter {
+    /** @internal */
     get ffiValue(): pointer;
+    /** @internal */
+    constructor();
 
 
     /**

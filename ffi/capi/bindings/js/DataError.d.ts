@@ -2,17 +2,18 @@
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
+
 /**
  * Additional information: [1](https://docs.rs/icu_provider/latest/icu_provider/struct.DataError.html), [2](https://docs.rs/icu_provider/latest/icu_provider/enum.DataErrorKind.html)
  */
-
-
 export class DataError {
 
+    /** @internal */
     static fromValue(value: DataError | string): DataError;
 
     get value(): string;
 
+    /** @internal */
     get ffiValue(): number;
 
     static Unknown : DataError;

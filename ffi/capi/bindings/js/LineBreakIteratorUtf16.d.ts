@@ -2,13 +2,15 @@
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
+
 /**
  * See the [Rust documentation for `LineBreakIterator`](https://docs.rs/icu/latest/icu/segmenter/iterators/struct.LineBreakIterator.html) for more information.
  */
-
-
 export class LineBreakIteratorUtf16 {
+    /** @internal */
     get ffiValue(): pointer;
+    /** @internal */
+    constructor();
 
 
     /**

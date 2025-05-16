@@ -6,6 +6,9 @@ import { DataProvider } from "./DataProvider.mjs"
 import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
+const CodePointMapData16_box_destroy_registry = new FinalizationRegistry((ptr) => {
+    wasm.icu4x_CodePointMapData16_destroy_mv1(ptr);
+});
 
 /**
  * An ICU4X Unicode Map Property object, capable of querying whether a code point (key) to obtain the Unicode property value, for a specific Unicode property.
@@ -18,10 +21,6 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
  *
  * See the [Rust documentation for `CodePointMapDataBorrowed`](https://docs.rs/icu/latest/icu/properties/struct.CodePointMapDataBorrowed.html) for more information.
  */
-const CodePointMapData16_box_destroy_registry = new FinalizationRegistry((ptr) => {
-    wasm.icu4x_CodePointMapData16_destroy_mv1(ptr);
-});
-
 export class CodePointMapData16 {
     // Internal ptr reference:
     #ptr = null;
@@ -45,6 +44,7 @@ export class CodePointMapData16 {
 
         return this;
     }
+    /** @internal */
     get ffiValue() {
         return this.#ptr;
     }
@@ -155,7 +155,7 @@ export class CodePointMapData16 {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
-                throw new globalThis.Error('DataError: ' + cause.value, { cause });
+                throw new globalThis.Error('DataError.' + cause.value, { cause });
             }
             return new CodePointMapData16(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }

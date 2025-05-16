@@ -8,7 +8,7 @@ export function firstWeekday(selfLocaleName) {
     
     let out = self.firstWeekday;
     
-    out = out.value;;
+    out = out?.value || 'None';;
     
 
     return out;

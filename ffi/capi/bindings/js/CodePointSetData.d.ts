@@ -7,6 +7,7 @@ import type { GeneralCategoryGroup_obj } from "./GeneralCategoryGroup"
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
+
 /**
  * An ICU4X Unicode Set Property object, capable of querying whether a code point is contained in a set based on a Unicode property.
  *
@@ -16,10 +17,11 @@ import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
  *
  * See the [Rust documentation for `CodePointSetDataBorrowed`](https://docs.rs/icu/latest/icu/properties/struct.CodePointSetDataBorrowed.html) for more information.
  */
-
-
 export class CodePointSetData {
+    /** @internal */
     get ffiValue(): pointer;
+    /** @internal */
+    constructor();
 
 
     /**

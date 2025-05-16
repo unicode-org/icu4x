@@ -19,9 +19,7 @@ export class IsoWeekOfYear {
     set isoYear(value){
         this.#isoYear = value;
     }
-    /** Create `IsoWeekOfYear` from an object that contains all of `IsoWeekOfYear`s fields.
-    * Optional fields do not need to be included in the provided object.
-    */
+    /** @internal */
     static fromFields(structObj) {
         return new IsoWeekOfYear(structObj);
     }

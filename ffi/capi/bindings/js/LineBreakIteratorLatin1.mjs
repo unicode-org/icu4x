@@ -2,14 +2,13 @@
 import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
-
-/**
- * See the [Rust documentation for `LineBreakIterator`](https://docs.rs/icu/latest/icu/segmenter/iterators/struct.LineBreakIterator.html) for more information.
- */
 const LineBreakIteratorLatin1_box_destroy_registry = new FinalizationRegistry((ptr) => {
     wasm.icu4x_LineBreakIteratorLatin1_destroy_mv1(ptr);
 });
 
+/**
+ * See the [Rust documentation for `LineBreakIterator`](https://docs.rs/icu/latest/icu/segmenter/iterators/struct.LineBreakIterator.html) for more information.
+ */
 export class LineBreakIteratorLatin1 {
     // Internal ptr reference:
     #ptr = null;
@@ -35,6 +34,7 @@ export class LineBreakIteratorLatin1 {
 
         return this;
     }
+    /** @internal */
     get ffiValue() {
         return this.#ptr;
     }

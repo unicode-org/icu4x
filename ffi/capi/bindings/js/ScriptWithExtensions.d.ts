@@ -6,14 +6,14 @@ import type { ScriptWithExtensionsBorrowed } from "./ScriptWithExtensionsBorrowe
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
+
 /**
  * An ICU4X ScriptWithExtensions map object, capable of holding a map of codepoints to scriptextensions values
  *
  * See the [Rust documentation for `ScriptWithExtensions`](https://docs.rs/icu/latest/icu/properties/script/struct.ScriptWithExtensions.html) for more information.
  */
-
-
 export class ScriptWithExtensions {
+    /** @internal */
     get ffiValue(): pointer;
 
 
@@ -52,5 +52,10 @@ export class ScriptWithExtensions {
      */
     iterRangesForScript(script: number): CodePointRangeIterator;
 
+    /**
+     * Create a map for the `Script`/`Script_Extensions` properties, using compiled data.
+     *
+     * See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/properties/script/struct.ScriptWithExtensions.html#method.new) for more information.
+     */
     constructor();
 }

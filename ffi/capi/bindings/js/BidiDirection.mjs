@@ -42,6 +42,7 @@ export class BidiDirection {
         throw TypeError(value + " is not a BidiDirection and does not correspond to any of its enumerator values.");
     }
 
+    /** @internal */
     static fromValue(value) {
         return new BidiDirection(value);
     }
@@ -50,6 +51,7 @@ export class BidiDirection {
         return [...BidiDirection.#values.keys()][this.#value];
     }
 
+    /** @internal */
     get ffiValue(){
         return this.#value;
     }

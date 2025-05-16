@@ -3,11 +3,10 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
+
 /**
  * See the [Rust documentation for `CanonicalCombiningClass`](https://docs.rs/icu/latest/icu/properties/props/struct.CanonicalCombiningClass.html) for more information.
  */
-
-
 export class CanonicalCombiningClass {
     #value = undefined;
 
@@ -101,6 +100,7 @@ export class CanonicalCombiningClass {
         throw TypeError(value + " is not a CanonicalCombiningClass and does not correspond to any of its enumerator values.");
     }
 
+    /** @internal */
     static fromValue(value) {
         return new CanonicalCombiningClass(value);
     }
@@ -113,6 +113,7 @@ export class CanonicalCombiningClass {
         }
     }
 
+    /** @internal */
     get ffiValue(){
         return this.#value;
     }

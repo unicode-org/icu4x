@@ -6,6 +6,9 @@ import { UnitsConverter } from "./UnitsConverter.mjs"
 import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
+const UnitsConverterFactory_box_destroy_registry = new FinalizationRegistry((ptr) => {
+    wasm.icu4x_UnitsConverterFactory_destroy_mv1(ptr);
+});
 
 /**
  * An ICU4X Units Converter Factory object, capable of creating converters a [`UnitsConverter`]
@@ -15,10 +18,6 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
  *
  * See the [Rust documentation for `ConverterFactory`](https://docs.rs/icu/latest/icu/experimental/units/converter_factory/struct.ConverterFactory.html) for more information.
  */
-const UnitsConverterFactory_box_destroy_registry = new FinalizationRegistry((ptr) => {
-    wasm.icu4x_UnitsConverterFactory_destroy_mv1(ptr);
-});
-
 export class UnitsConverterFactory {
     // Internal ptr reference:
     #ptr = null;
@@ -42,6 +41,7 @@ export class UnitsConverterFactory {
 
         return this;
     }
+    /** @internal */
     get ffiValue() {
         return this.#ptr;
     }
@@ -78,7 +78,7 @@ export class UnitsConverterFactory {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
-                throw new globalThis.Error('DataError: ' + cause.value, { cause });
+                throw new globalThis.Error('DataError.' + cause.value, { cause });
             }
             return new UnitsConverterFactory(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -107,6 +107,11 @@ export class UnitsConverterFactory {
         }
     }
 
+    /**
+     * Construct a new [`UnitsConverterFactory`] instance using compiled data.
+     *
+     * See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/experimental/units/converter_factory/struct.ConverterFactory.html#method.new) for more information.
+     */
     constructor() {
         if (arguments[0] === diplomatRuntime.exposeConstructor) {
             return this.#internalConstructor(...Array.prototype.slice.call(arguments, 1));

@@ -9,14 +9,13 @@ import { VariantOffsetsCalculator } from "./VariantOffsetsCalculator.mjs"
 import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
-
-/**
- * See the [Rust documentation for `TimeZoneInfo`](https://docs.rs/icu/latest/icu/time/struct.TimeZoneInfo.html) for more information.
- */
 const TimeZoneInfo_box_destroy_registry = new FinalizationRegistry((ptr) => {
     wasm.icu4x_TimeZoneInfo_destroy_mv1(ptr);
 });
 
+/**
+ * See the [Rust documentation for `TimeZoneInfo`](https://docs.rs/icu/latest/icu/time/struct.TimeZoneInfo.html) for more information.
+ */
 export class TimeZoneInfo {
     // Internal ptr reference:
     #ptr = null;
@@ -40,6 +39,7 @@ export class TimeZoneInfo {
 
         return this;
     }
+    /** @internal */
     get ffiValue() {
         return this.#ptr;
     }
@@ -200,6 +200,9 @@ export class TimeZoneInfo {
         }
     }
 
+    /**
+     * Creates a time zone info from parts.
+     */
     constructor(id, offset, variant) {
         if (arguments[0] === diplomatRuntime.exposeConstructor) {
             return this.#internalConstructor(...Array.prototype.slice.call(arguments, 1));

@@ -4,6 +4,9 @@ import { LocaleFallbacker } from "./LocaleFallbacker.mjs"
 import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
+const DataProvider_box_destroy_registry = new FinalizationRegistry((ptr) => {
+    wasm.icu4x_DataProvider_destroy_mv1(ptr);
+});
 
 /**
  * An ICU4X data provider, capable of loading ICU4X data keys from some source.
@@ -15,10 +18,6 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
  *
  * See the [Rust documentation for `icu_provider`](https://docs.rs/icu_provider/latest/icu_provider/index.html) for more information.
  */
-const DataProvider_box_destroy_registry = new FinalizationRegistry((ptr) => {
-    wasm.icu4x_DataProvider_destroy_mv1(ptr);
-});
-
 export class DataProvider {
     // Internal ptr reference:
     #ptr = null;
@@ -42,6 +41,7 @@ export class DataProvider {
 
         return this;
     }
+    /** @internal */
     get ffiValue() {
         return this.#ptr;
     }
@@ -62,7 +62,7 @@ export class DataProvider {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
-                throw new globalThis.Error('DataError: ' + cause.value, { cause });
+                throw new globalThis.Error('DataError.' + cause.value, { cause });
             }
             return new DataProvider(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -91,7 +91,7 @@ export class DataProvider {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
-                throw new globalThis.Error('DataError: ' + cause.value, { cause });
+                throw new globalThis.Error('DataError.' + cause.value, { cause });
             }
         }
 
@@ -114,7 +114,7 @@ export class DataProvider {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
-                throw new globalThis.Error('DataError: ' + cause.value, { cause });
+                throw new globalThis.Error('DataError.' + cause.value, { cause });
             }
         }
 
@@ -137,7 +137,7 @@ export class DataProvider {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
-                throw new globalThis.Error('DataError: ' + cause.value, { cause });
+                throw new globalThis.Error('DataError.' + cause.value, { cause });
             }
         }
 

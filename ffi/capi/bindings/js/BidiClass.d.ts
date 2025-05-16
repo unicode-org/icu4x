@@ -2,17 +2,18 @@
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
+
 /**
  * See the [Rust documentation for `BidiClass`](https://docs.rs/icu/latest/icu/properties/props/struct.BidiClass.html) for more information.
  */
-
-
 export class BidiClass {
 
+    /** @internal */
     static fromValue(value: BidiClass | string): BidiClass;
 
     get value(): string;
 
+    /** @internal */
     get ffiValue(): number;
 
     static LeftToRight : BidiClass;

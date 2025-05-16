@@ -4,6 +4,9 @@ import { DataProvider } from "./DataProvider.mjs"
 import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
+const EmojiSetData_box_destroy_registry = new FinalizationRegistry((ptr) => {
+    wasm.icu4x_EmojiSetData_destroy_mv1(ptr);
+});
 
 /**
  * An ICU4X Unicode Set Property object, capable of querying whether a code point is contained in a set based on a Unicode property.
@@ -16,10 +19,6 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
  *
  * See the [Rust documentation for `EmojiSetDataBorrowed`](https://docs.rs/icu/latest/icu/properties/struct.EmojiSetDataBorrowed.html) for more information.
  */
-const EmojiSetData_box_destroy_registry = new FinalizationRegistry((ptr) => {
-    wasm.icu4x_EmojiSetData_destroy_mv1(ptr);
-});
-
 export class EmojiSetData {
     // Internal ptr reference:
     #ptr = null;
@@ -43,6 +42,7 @@ export class EmojiSetData {
 
         return this;
     }
+    /** @internal */
     get ffiValue() {
         return this.#ptr;
     }
@@ -118,7 +118,7 @@ export class EmojiSetData {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
-                throw new globalThis.Error('DataError: ' + cause.value, { cause });
+                throw new globalThis.Error('DataError.' + cause.value, { cause });
             }
             return new EmojiSetData(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }

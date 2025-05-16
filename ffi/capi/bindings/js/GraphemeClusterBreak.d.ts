@@ -2,17 +2,18 @@
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
+
 /**
  * See the [Rust documentation for `GraphemeClusterBreak`](https://docs.rs/icu/latest/icu/properties/props/struct.GraphemeClusterBreak.html) for more information.
  */
-
-
 export class GraphemeClusterBreak {
 
+    /** @internal */
     static fromValue(value: GraphemeClusterBreak | string): GraphemeClusterBreak;
 
     get value(): string;
 
+    /** @internal */
     get ffiValue(): number;
 
     static Other : GraphemeClusterBreak;

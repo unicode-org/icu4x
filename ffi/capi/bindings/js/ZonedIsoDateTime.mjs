@@ -10,13 +10,12 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
+
 /**
  * An ICU4X ZonedDateTime object capable of containing a ISO-8601 date, time, and zone.
  *
  * See the [Rust documentation for `ZonedDateTime`](https://docs.rs/icu/latest/icu/time/struct.ZonedDateTime.html) for more information.
  */
-
-
 export class ZonedIsoDateTime {
     #date;
     get date() {
@@ -129,7 +128,7 @@ export class ZonedIsoDateTime {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new Rfc9557ParseError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
-                throw new globalThis.Error('Rfc9557ParseError: ' + cause.value, { cause });
+                throw new globalThis.Error('Rfc9557ParseError.' + cause.value, { cause });
             }
             return ZonedIsoDateTime._fromFFI(diplomatRuntime.internalConstructor, diplomatReceive.buffer);
         }

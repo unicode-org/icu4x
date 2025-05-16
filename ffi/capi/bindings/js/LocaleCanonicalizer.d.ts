@@ -6,14 +6,14 @@ import type { TransformResult } from "./TransformResult"
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
+
 /**
  * A locale canonicalizer.
  *
  * See the [Rust documentation for `LocaleCanonicalizer`](https://docs.rs/icu/latest/icu/locale/struct.LocaleCanonicalizer.html) for more information.
  */
-
-
 export class LocaleCanonicalizer {
+    /** @internal */
     get ffiValue(): pointer;
 
 
@@ -43,5 +43,10 @@ export class LocaleCanonicalizer {
      */
     canonicalize(locale: Locale): TransformResult;
 
+    /**
+     * Create a new [`LocaleCanonicalizer`] using compiled data.
+     *
+     * See the [Rust documentation for `new_common`](https://docs.rs/icu/latest/icu/locale/struct.LocaleCanonicalizer.html#method.new_common) for more information.
+     */
     constructor();
 }

@@ -3,15 +3,17 @@ import type { Weekday } from "./Weekday"
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
+
 /**
  * Documents which days of the week are considered to be a part of the weekend
  *
  * See the [Rust documentation for `WeekdaySetIterator`](https://docs.rs/icu/latest/icu/calendar/week/struct.WeekdaySetIterator.html) for more information.
  */
-
-
 export class WeekdaySetIterator {
+    /** @internal */
     get ffiValue(): pointer;
+    /** @internal */
+    constructor();
 
 
     next(): IteratorResult<Weekday>;

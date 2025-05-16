@@ -61,7 +61,7 @@ export function sign(selfF) {
     
     let out = self.sign;
     
-    out = out.value;;
+    out = out?.value || 'None';;
     
 
     return out;

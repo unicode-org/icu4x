@@ -8,14 +8,13 @@ import { VariantOffsets } from "./VariantOffsets.mjs"
 import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
-
-/**
- * See the [Rust documentation for `VariantOffsetsCalculator`](https://docs.rs/icu/latest/icu/time/zone/struct.VariantOffsetsCalculator.html) for more information.
- */
 const VariantOffsetsCalculator_box_destroy_registry = new FinalizationRegistry((ptr) => {
     wasm.icu4x_VariantOffsetsCalculator_destroy_mv1(ptr);
 });
 
+/**
+ * See the [Rust documentation for `VariantOffsetsCalculator`](https://docs.rs/icu/latest/icu/time/zone/struct.VariantOffsetsCalculator.html) for more information.
+ */
 export class VariantOffsetsCalculator {
     // Internal ptr reference:
     #ptr = null;
@@ -39,6 +38,7 @@ export class VariantOffsetsCalculator {
 
         return this;
     }
+    /** @internal */
     get ffiValue() {
         return this.#ptr;
     }
@@ -75,7 +75,7 @@ export class VariantOffsetsCalculator {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
-                throw new globalThis.Error('DataError: ' + cause.value, { cause });
+                throw new globalThis.Error('DataError.' + cause.value, { cause });
             }
             return new VariantOffsetsCalculator(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -106,6 +106,11 @@ export class VariantOffsetsCalculator {
         }
     }
 
+    /**
+     * Construct a new [`VariantOffsetsCalculator`] instance using compiled data.
+     *
+     * See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/time/zone/struct.VariantOffsetsCalculator.html#method.new) for more information.
+     */
     constructor() {
         if (arguments[0] === diplomatRuntime.exposeConstructor) {
             return this.#internalConstructor(...Array.prototype.slice.call(arguments, 1));

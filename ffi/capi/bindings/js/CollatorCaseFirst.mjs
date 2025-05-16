@@ -3,11 +3,10 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
+
 /**
  * See the [Rust documentation for `CollationCaseFirst`](https://docs.rs/icu/latest/icu/collator/preferences/enum.CollationCaseFirst.html) for more information.
  */
-
-
 export class CollatorCaseFirst {
     #value = undefined;
 
@@ -46,6 +45,7 @@ export class CollatorCaseFirst {
         throw TypeError(value + " is not a CollatorCaseFirst and does not correspond to any of its enumerator values.");
     }
 
+    /** @internal */
     static fromValue(value) {
         return new CollatorCaseFirst(value);
     }
@@ -54,6 +54,7 @@ export class CollatorCaseFirst {
         return [...CollatorCaseFirst.#values.keys()][this.#value];
     }
 
+    /** @internal */
     get ffiValue(){
         return this.#value;
     }

@@ -6,16 +6,15 @@ import { TransformResult } from "./TransformResult.mjs"
 import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
+const LocaleExpander_box_destroy_registry = new FinalizationRegistry((ptr) => {
+    wasm.icu4x_LocaleExpander_destroy_mv1(ptr);
+});
 
 /**
  * A locale expander.
  *
  * See the [Rust documentation for `LocaleExpander`](https://docs.rs/icu/latest/icu/locale/struct.LocaleExpander.html) for more information.
  */
-const LocaleExpander_box_destroy_registry = new FinalizationRegistry((ptr) => {
-    wasm.icu4x_LocaleExpander_destroy_mv1(ptr);
-});
-
 export class LocaleExpander {
     // Internal ptr reference:
     #ptr = null;
@@ -39,6 +38,7 @@ export class LocaleExpander {
 
         return this;
     }
+    /** @internal */
     get ffiValue() {
         return this.#ptr;
     }
@@ -75,7 +75,7 @@ export class LocaleExpander {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
-                throw new globalThis.Error('DataError: ' + cause.value, { cause });
+                throw new globalThis.Error('DataError.' + cause.value, { cause });
             }
             return new LocaleExpander(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -116,7 +116,7 @@ export class LocaleExpander {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
-                throw new globalThis.Error('DataError: ' + cause.value, { cause });
+                throw new globalThis.Error('DataError.' + cause.value, { cause });
             }
             return new LocaleExpander(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -171,6 +171,11 @@ export class LocaleExpander {
         }
     }
 
+    /**
+     * Create a new [`LocaleExpander`] using compiled data.
+     *
+     * See the [Rust documentation for `new_common`](https://docs.rs/icu/latest/icu/locale/struct.LocaleExpander.html#method.new_common) for more information.
+     */
     constructor() {
         if (arguments[0] === diplomatRuntime.exposeConstructor) {
             return this.#internalConstructor(...Array.prototype.slice.call(arguments, 1));

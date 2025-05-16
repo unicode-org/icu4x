@@ -2,6 +2,7 @@
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
+
 /**
  * Thin wrapper around a vector that maps visual indices to source indices
  *
@@ -9,10 +10,11 @@ import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
  *
  * Produced by `reorder_visual()` on [`Bidi`].
  */
-
-
 export class ReorderedIndexMap {
+    /** @internal */
     get ffiValue(): pointer;
+    /** @internal */
+    constructor();
 
 
     /**

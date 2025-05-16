@@ -2,17 +2,18 @@
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
+
 /**
  * See the [Rust documentation for `BidiPairedBracketType`](https://docs.rs/icu/latest/icu/properties/props/enum.BidiPairedBracketType.html) for more information.
  */
-
-
 export class BidiPairedBracketType {
 
+    /** @internal */
     static fromValue(value: BidiPairedBracketType | string): BidiPairedBracketType;
 
     get value(): string;
 
+    /** @internal */
     get ffiValue(): number;
 
     static Open : BidiPairedBracketType;

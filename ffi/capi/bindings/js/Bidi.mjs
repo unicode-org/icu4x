@@ -6,16 +6,15 @@ import { ReorderedIndexMap } from "./ReorderedIndexMap.mjs"
 import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
+const Bidi_box_destroy_registry = new FinalizationRegistry((ptr) => {
+    wasm.icu4x_Bidi_destroy_mv1(ptr);
+});
 
 /**
  * An ICU4X Bidi object, containing loaded bidi data
  *
  * See the [Rust documentation for `BidiClass`](https://docs.rs/icu/latest/icu/properties/props/struct.BidiClass.html) for more information.
  */
-const Bidi_box_destroy_registry = new FinalizationRegistry((ptr) => {
-    wasm.icu4x_Bidi_destroy_mv1(ptr);
-});
-
 export class Bidi {
     // Internal ptr reference:
     #ptr = null;
@@ -39,6 +38,7 @@ export class Bidi {
 
         return this;
     }
+    /** @internal */
     get ffiValue() {
         return this.#ptr;
     }
@@ -71,7 +71,7 @@ export class Bidi {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
-                throw new globalThis.Error('DataError: ' + cause.value, { cause });
+                throw new globalThis.Error('DataError.' + cause.value, { cause });
             }
             return new Bidi(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -212,6 +212,9 @@ export class Bidi {
         }
     }
 
+    /**
+     * Creates a new [`Bidi`] from locale data using compiled data.
+     */
     constructor() {
         if (arguments[0] === diplomatRuntime.exposeConstructor) {
             return this.#internalConstructor(...Array.prototype.slice.call(arguments, 1));

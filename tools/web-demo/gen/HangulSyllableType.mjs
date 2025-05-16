@@ -3,7 +3,7 @@ export function forChar(ch) {
     
     let out = HangulSyllableType.forChar(ch);
     
-    out = out.value;;
+    out = out?.value || 'None';;
     
 
     return out;

@@ -11,14 +11,13 @@ import { YearStyle } from "./YearStyle.mjs"
 import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
-
-/**
- * See the [Rust documentation for `FixedCalendarDateTimeFormatter`](https://docs.rs/icu/latest/icu/datetime/struct.FixedCalendarDateTimeFormatter.html) for more information.
- */
 const DateTimeFormatterGregorian_box_destroy_registry = new FinalizationRegistry((ptr) => {
     wasm.icu4x_DateTimeFormatterGregorian_destroy_mv1(ptr);
 });
 
+/**
+ * See the [Rust documentation for `FixedCalendarDateTimeFormatter`](https://docs.rs/icu/latest/icu/datetime/struct.FixedCalendarDateTimeFormatter.html) for more information.
+ */
 export class DateTimeFormatterGregorian {
     // Internal ptr reference:
     #ptr = null;
@@ -42,6 +41,7 @@ export class DateTimeFormatterGregorian {
 
         return this;
     }
+    /** @internal */
     get ffiValue() {
         return this.#ptr;
     }
@@ -65,7 +65,7 @@ export class DateTimeFormatterGregorian {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DateTimeFormatterLoadError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
-                throw new globalThis.Error('DateTimeFormatterLoadError: ' + cause.value, { cause });
+                throw new globalThis.Error('DateTimeFormatterLoadError.' + cause.value, { cause });
             }
             return new DateTimeFormatterGregorian(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -95,7 +95,7 @@ export class DateTimeFormatterGregorian {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DateTimeFormatterLoadError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
-                throw new globalThis.Error('DateTimeFormatterLoadError: ' + cause.value, { cause });
+                throw new globalThis.Error('DateTimeFormatterLoadError.' + cause.value, { cause });
             }
             return new DateTimeFormatterGregorian(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -125,7 +125,7 @@ export class DateTimeFormatterGregorian {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DateTimeFormatterLoadError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
-                throw new globalThis.Error('DateTimeFormatterLoadError: ' + cause.value, { cause });
+                throw new globalThis.Error('DateTimeFormatterLoadError.' + cause.value, { cause });
             }
             return new DateTimeFormatterGregorian(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -155,7 +155,7 @@ export class DateTimeFormatterGregorian {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DateTimeFormatterLoadError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
-                throw new globalThis.Error('DateTimeFormatterLoadError: ' + cause.value, { cause });
+                throw new globalThis.Error('DateTimeFormatterLoadError.' + cause.value, { cause });
             }
             return new DateTimeFormatterGregorian(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -185,7 +185,7 @@ export class DateTimeFormatterGregorian {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DateTimeFormatterLoadError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
-                throw new globalThis.Error('DateTimeFormatterLoadError: ' + cause.value, { cause });
+                throw new globalThis.Error('DateTimeFormatterLoadError.' + cause.value, { cause });
             }
             return new DateTimeFormatterGregorian(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -215,7 +215,7 @@ export class DateTimeFormatterGregorian {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DateTimeFormatterLoadError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
-                throw new globalThis.Error('DateTimeFormatterLoadError: ' + cause.value, { cause });
+                throw new globalThis.Error('DateTimeFormatterLoadError.' + cause.value, { cause });
             }
             return new DateTimeFormatterGregorian(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -245,7 +245,7 @@ export class DateTimeFormatterGregorian {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DateTimeFormatterLoadError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
-                throw new globalThis.Error('DateTimeFormatterLoadError: ' + cause.value, { cause });
+                throw new globalThis.Error('DateTimeFormatterLoadError.' + cause.value, { cause });
             }
             return new DateTimeFormatterGregorian(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -275,7 +275,7 @@ export class DateTimeFormatterGregorian {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DateTimeFormatterLoadError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
-                throw new globalThis.Error('DateTimeFormatterLoadError: ' + cause.value, { cause });
+                throw new globalThis.Error('DateTimeFormatterLoadError.' + cause.value, { cause });
             }
             return new DateTimeFormatterGregorian(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -305,7 +305,7 @@ export class DateTimeFormatterGregorian {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DateTimeFormatterLoadError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
-                throw new globalThis.Error('DateTimeFormatterLoadError: ' + cause.value, { cause });
+                throw new globalThis.Error('DateTimeFormatterLoadError.' + cause.value, { cause });
             }
             return new DateTimeFormatterGregorian(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -335,7 +335,7 @@ export class DateTimeFormatterGregorian {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DateTimeFormatterLoadError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
-                throw new globalThis.Error('DateTimeFormatterLoadError: ' + cause.value, { cause });
+                throw new globalThis.Error('DateTimeFormatterLoadError.' + cause.value, { cause });
             }
             return new DateTimeFormatterGregorian(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -365,7 +365,7 @@ export class DateTimeFormatterGregorian {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DateTimeFormatterLoadError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
-                throw new globalThis.Error('DateTimeFormatterLoadError: ' + cause.value, { cause });
+                throw new globalThis.Error('DateTimeFormatterLoadError.' + cause.value, { cause });
             }
             return new DateTimeFormatterGregorian(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -395,7 +395,7 @@ export class DateTimeFormatterGregorian {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DateTimeFormatterLoadError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
-                throw new globalThis.Error('DateTimeFormatterLoadError: ' + cause.value, { cause });
+                throw new globalThis.Error('DateTimeFormatterLoadError.' + cause.value, { cause });
             }
             return new DateTimeFormatterGregorian(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -425,7 +425,7 @@ export class DateTimeFormatterGregorian {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DateTimeFormatterLoadError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
-                throw new globalThis.Error('DateTimeFormatterLoadError: ' + cause.value, { cause });
+                throw new globalThis.Error('DateTimeFormatterLoadError.' + cause.value, { cause });
             }
             return new DateTimeFormatterGregorian(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -455,7 +455,7 @@ export class DateTimeFormatterGregorian {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DateTimeFormatterLoadError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
-                throw new globalThis.Error('DateTimeFormatterLoadError: ' + cause.value, { cause });
+                throw new globalThis.Error('DateTimeFormatterLoadError.' + cause.value, { cause });
             }
             return new DateTimeFormatterGregorian(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }

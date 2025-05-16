@@ -2,13 +2,15 @@
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
+
 /**
  * See the [Rust documentation for `SentenceBreakIterator`](https://docs.rs/icu/latest/icu/segmenter/iterators/struct.SentenceBreakIterator.html) for more information.
  */
-
-
 export class SentenceBreakIteratorLatin1 {
+    /** @internal */
     get ffiValue(): pointer;
+    /** @internal */
+    constructor();
 
 
     /**

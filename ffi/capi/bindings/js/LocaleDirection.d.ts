@@ -2,17 +2,18 @@
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
+
 /**
  * See the [Rust documentation for `Direction`](https://docs.rs/icu/latest/icu/locale/enum.Direction.html) for more information.
  */
-
-
 export class LocaleDirection {
 
+    /** @internal */
     static fromValue(value: LocaleDirection | string): LocaleDirection;
 
     get value(): string;
 
+    /** @internal */
     get ffiValue(): number;
 
     static LeftToRight : LocaleDirection;

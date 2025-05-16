@@ -4,6 +4,9 @@ import { LocaleFallbackIterator } from "./LocaleFallbackIterator.mjs"
 import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
+const LocaleFallbackerWithConfig_box_destroy_registry = new FinalizationRegistry((ptr) => {
+    wasm.icu4x_LocaleFallbackerWithConfig_destroy_mv1(ptr);
+});
 
 /**
  * An object that runs the ICU4X locale fallback algorithm with specific configurations.
@@ -12,10 +15,6 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
  *
  * See the [Rust documentation for `LocaleFallbackerWithConfig`](https://docs.rs/icu/latest/icu/locale/fallback/struct.LocaleFallbackerWithConfig.html) for more information.
  */
-const LocaleFallbackerWithConfig_box_destroy_registry = new FinalizationRegistry((ptr) => {
-    wasm.icu4x_LocaleFallbackerWithConfig_destroy_mv1(ptr);
-});
-
 export class LocaleFallbackerWithConfig {
     // Internal ptr reference:
     #ptr = null;
@@ -41,6 +40,7 @@ export class LocaleFallbackerWithConfig {
 
         return this;
     }
+    /** @internal */
     get ffiValue() {
         return this.#ptr;
     }

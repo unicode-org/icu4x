@@ -12,9 +12,6 @@ export default {
 	  index: [
 		'./src/js/index.mjs',
 		'./src/scss/styles.scss',
-	  ],
-	  rendering: [
-		'./src/js/runtime.mjs'
 	  ]
 	},
 	module: {

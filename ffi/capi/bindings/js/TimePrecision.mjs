@@ -3,13 +3,12 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
+
 /**
  * See the [Rust documentation for `TimePrecision`](https://docs.rs/icu/latest/icu/datetime/options/enum.TimePrecision.html) for more information.
  *
  * See the [Rust documentation for `SubsecondDigits`](https://docs.rs/icu/latest/icu/datetime/options/enum.SubsecondDigits.html) for more information.
  */
-
-
 export class TimePrecision {
     #value = undefined;
 
@@ -58,6 +57,7 @@ export class TimePrecision {
         throw TypeError(value + " is not a TimePrecision and does not correspond to any of its enumerator values.");
     }
 
+    /** @internal */
     static fromValue(value) {
         return new TimePrecision(value);
     }
@@ -66,6 +66,7 @@ export class TimePrecision {
         return [...TimePrecision.#values.keys()][this.#value];
     }
 
+    /** @internal */
     get ffiValue(){
         return this.#value;
     }

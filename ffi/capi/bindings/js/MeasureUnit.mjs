@@ -2,6 +2,9 @@
 import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
+const MeasureUnit_box_destroy_registry = new FinalizationRegistry((ptr) => {
+    wasm.icu4x_MeasureUnit_destroy_mv1(ptr);
+});
 
 /**
  * An ICU4X Measurement Unit object which represents a single unit of measurement
@@ -11,10 +14,6 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
  *
  * See the [Rust documentation for `MeasureUnit`](https://docs.rs/icu/latest/icu/experimental/measure/measureunit/struct.MeasureUnit.html) for more information.
  */
-const MeasureUnit_box_destroy_registry = new FinalizationRegistry((ptr) => {
-    wasm.icu4x_MeasureUnit_destroy_mv1(ptr);
-});
-
 export class MeasureUnit {
     // Internal ptr reference:
     #ptr = null;
@@ -38,6 +37,7 @@ export class MeasureUnit {
 
         return this;
     }
+    /** @internal */
     get ffiValue() {
         return this.#ptr;
     }

@@ -8,12 +8,12 @@ import type { TitlecaseOptions_obj } from "./TitlecaseOptions"
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
+
 /**
  * See the [Rust documentation for `CaseMapper`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html) for more information.
  */
-
-
 export class CaseMapper {
+    /** @internal */
     get ffiValue(): pointer;
 
 
@@ -148,5 +148,10 @@ export class CaseMapper {
      */
     simpleFoldTurkic(ch: codepoint): codepoint;
 
+    /**
+     * Construct a new CaseMapper instance using compiled data.
+     *
+     * See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.new) for more information.
+     */
     constructor();
 }

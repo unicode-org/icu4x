@@ -6,16 +6,15 @@ import { ScriptWithExtensionsBorrowed } from "./ScriptWithExtensionsBorrowed.mjs
 import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
+const ScriptWithExtensions_box_destroy_registry = new FinalizationRegistry((ptr) => {
+    wasm.icu4x_ScriptWithExtensions_destroy_mv1(ptr);
+});
 
 /**
  * An ICU4X ScriptWithExtensions map object, capable of holding a map of codepoints to scriptextensions values
  *
  * See the [Rust documentation for `ScriptWithExtensions`](https://docs.rs/icu/latest/icu/properties/script/struct.ScriptWithExtensions.html) for more information.
  */
-const ScriptWithExtensions_box_destroy_registry = new FinalizationRegistry((ptr) => {
-    wasm.icu4x_ScriptWithExtensions_destroy_mv1(ptr);
-});
-
 export class ScriptWithExtensions {
     // Internal ptr reference:
     #ptr = null;
@@ -39,6 +38,7 @@ export class ScriptWithExtensions {
 
         return this;
     }
+    /** @internal */
     get ffiValue() {
         return this.#ptr;
     }
@@ -75,7 +75,7 @@ export class ScriptWithExtensions {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
-                throw new globalThis.Error('DataError: ' + cause.value, { cause });
+                throw new globalThis.Error('DataError.' + cause.value, { cause });
             }
             return new ScriptWithExtensions(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -159,6 +159,11 @@ export class ScriptWithExtensions {
         }
     }
 
+    /**
+     * Create a map for the `Script`/`Script_Extensions` properties, using compiled data.
+     *
+     * See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/properties/script/struct.ScriptWithExtensions.html#method.new) for more information.
+     */
     constructor() {
         if (arguments[0] === diplomatRuntime.exposeConstructor) {
             return this.#internalConstructor(...Array.prototype.slice.call(arguments, 1));

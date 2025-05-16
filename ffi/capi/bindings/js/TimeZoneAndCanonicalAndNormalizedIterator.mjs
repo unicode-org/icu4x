@@ -3,14 +3,13 @@ import { TimeZoneAndCanonicalAndNormalized } from "./TimeZoneAndCanonicalAndNorm
 import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
-
-/**
- * See the [Rust documentation for `TimeZoneAndCanonicalAndNormalizedIter`](https://docs.rs/icu/latest/icu/time/zone/iana/struct.TimeZoneAndCanonicalAndNormalizedIter.html) for more information.
- */
 const TimeZoneAndCanonicalAndNormalizedIterator_box_destroy_registry = new FinalizationRegistry((ptr) => {
     wasm.icu4x_TimeZoneAndCanonicalAndNormalizedIterator_destroy_mv1(ptr);
 });
 
+/**
+ * See the [Rust documentation for `TimeZoneAndCanonicalAndNormalizedIter`](https://docs.rs/icu/latest/icu/time/zone/iana/struct.TimeZoneAndCanonicalAndNormalizedIter.html) for more information.
+ */
 export class TimeZoneAndCanonicalAndNormalizedIterator {
     // Internal ptr reference:
     #ptr = null;
@@ -36,6 +35,7 @@ export class TimeZoneAndCanonicalAndNormalizedIterator {
 
         return this;
     }
+    /** @internal */
     get ffiValue() {
         return this.#ptr;
     }

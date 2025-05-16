@@ -4,16 +4,15 @@ import { Rfc9557ParseError } from "./Rfc9557ParseError.mjs"
 import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
+const Time_box_destroy_registry = new FinalizationRegistry((ptr) => {
+    wasm.icu4x_Time_destroy_mv1(ptr);
+});
 
 /**
  * An ICU4X Time object representing a time in terms of hour, minute, second, nanosecond
  *
  * See the [Rust documentation for `Time`](https://docs.rs/icu/latest/icu/time/struct.Time.html) for more information.
  */
-const Time_box_destroy_registry = new FinalizationRegistry((ptr) => {
-    wasm.icu4x_Time_destroy_mv1(ptr);
-});
-
 export class Time {
     // Internal ptr reference:
     #ptr = null;
@@ -37,6 +36,7 @@ export class Time {
 
         return this;
     }
+    /** @internal */
     get ffiValue() {
         return this.#ptr;
     }
@@ -56,7 +56,7 @@ export class Time {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new CalendarError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
-                throw new globalThis.Error('CalendarError: ' + cause.value, { cause });
+                throw new globalThis.Error('CalendarError.' + cause.value, { cause });
             }
             return new Time(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -83,7 +83,7 @@ export class Time {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new Rfc9557ParseError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
-                throw new globalThis.Error('Rfc9557ParseError: ' + cause.value, { cause });
+                throw new globalThis.Error('Rfc9557ParseError.' + cause.value, { cause });
             }
             return new Time(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -109,7 +109,7 @@ export class Time {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new CalendarError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
-                throw new globalThis.Error('CalendarError: ' + cause.value, { cause });
+                throw new globalThis.Error('CalendarError.' + cause.value, { cause });
             }
             return new Time(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -133,7 +133,7 @@ export class Time {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new CalendarError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
-                throw new globalThis.Error('CalendarError: ' + cause.value, { cause });
+                throw new globalThis.Error('CalendarError.' + cause.value, { cause });
             }
             return new Time(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -211,6 +211,11 @@ export class Time {
         }
     }
 
+    /**
+     * Creates a new [`Time`] given field values
+     *
+     * See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/time/struct.Time.html#method.try_new) for more information.
+     */
     constructor(hour, minute, second, subsecond) {
         if (arguments[0] === diplomatRuntime.exposeConstructor) {
             return this.#internalConstructor(...Array.prototype.slice.call(arguments, 1));

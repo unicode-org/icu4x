@@ -3,12 +3,12 @@ import type { CodePointSetData } from "./CodePointSetData"
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
+
 /**
  * See the [Rust documentation for `CodePointInversionListBuilder`](https://docs.rs/icu/latest/icu/collections/codepointinvlist/struct.CodePointInversionListBuilder.html) for more information.
  */
-
-
 export class CodePointSetBuilder {
+    /** @internal */
     get ffiValue(): pointer;
 
 
@@ -127,5 +127,10 @@ export class CodePointSetBuilder {
      */
     complementSet(data: CodePointSetData): void;
 
+    /**
+     * Make a new set builder containing nothing
+     *
+     * See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/collections/codepointinvlist/struct.CodePointInversionListBuilder.html#method.new) for more information.
+     */
     constructor();
 }

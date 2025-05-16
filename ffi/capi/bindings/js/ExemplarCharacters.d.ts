@@ -5,6 +5,7 @@ import type { Locale } from "./Locale"
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
+
 /**
  * A set of "exemplar characters" for a given locale.
  *
@@ -14,10 +15,11 @@ import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
  *
  * See the [Rust documentation for `ExemplarCharactersBorrowed`](https://docs.rs/icu/latest/icu/locale/exemplar_chars/struct.ExemplarCharactersBorrowed.html) for more information.
  */
-
-
 export class ExemplarCharacters {
+    /** @internal */
     get ffiValue(): pointer;
+    /** @internal */
+    constructor();
 
 
     /**

@@ -3,7 +3,7 @@ export function forChar(ch) {
     
     let out = JoiningType.forChar(ch);
     
-    out = out.value;;
+    out = out?.value || 'None';;
     
 
     return out;

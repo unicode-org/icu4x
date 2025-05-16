@@ -6,16 +6,15 @@ import { LocaleFallbackerWithConfig } from "./LocaleFallbackerWithConfig.mjs"
 import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
+const LocaleFallbacker_box_destroy_registry = new FinalizationRegistry((ptr) => {
+    wasm.icu4x_LocaleFallbacker_destroy_mv1(ptr);
+});
 
 /**
  * An object that runs the ICU4X locale fallback algorithm.
  *
  * See the [Rust documentation for `LocaleFallbacker`](https://docs.rs/icu/latest/icu/locale/fallback/struct.LocaleFallbacker.html) for more information.
  */
-const LocaleFallbacker_box_destroy_registry = new FinalizationRegistry((ptr) => {
-    wasm.icu4x_LocaleFallbacker_destroy_mv1(ptr);
-});
-
 export class LocaleFallbacker {
     // Internal ptr reference:
     #ptr = null;
@@ -39,6 +38,7 @@ export class LocaleFallbacker {
 
         return this;
     }
+    /** @internal */
     get ffiValue() {
         return this.#ptr;
     }
@@ -75,7 +75,7 @@ export class LocaleFallbacker {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
-                throw new globalThis.Error('DataError: ' + cause.value, { cause });
+                throw new globalThis.Error('DataError.' + cause.value, { cause });
             }
             return new LocaleFallbacker(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -126,6 +126,11 @@ export class LocaleFallbacker {
         }
     }
 
+    /**
+     * Creates a new `LocaleFallbacker` from compiled data.
+     *
+     * See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/locale/fallback/struct.LocaleFallbacker.html#method.new) for more information.
+     */
     constructor() {
         if (arguments[0] === diplomatRuntime.exposeConstructor) {
             return this.#internalConstructor(...Array.prototype.slice.call(arguments, 1));

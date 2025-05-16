@@ -7,12 +7,12 @@ import type { TitlecaseOptions_obj } from "./TitlecaseOptions"
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
+
 /**
  * See the [Rust documentation for `TitlecaseMapper`](https://docs.rs/icu/latest/icu/casemap/struct.TitlecaseMapper.html) for more information.
  */
-
-
 export class TitlecaseMapper {
+    /** @internal */
     get ffiValue(): pointer;
 
 
@@ -41,5 +41,10 @@ export class TitlecaseMapper {
      */
     static titlecaseSegmentWithCompiledData(s: string, locale: Locale, options: TitlecaseOptions_obj): string;
 
+    /**
+     * Construct a new `TitlecaseMapper` instance using compiled data.
+     *
+     * See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/casemap/struct.TitlecaseMapper.html#method.new) for more information.
+     */
     constructor();
 }
