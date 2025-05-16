@@ -162,7 +162,7 @@ collation_provider!(
     (CollationMetadataV1, CollationMetadata, "_meta",),
     (CollationReorderingV1, CollationReordering, "_reord",),
     (
-        CollationSpecialPrimariesV1,
+        CollationSpecialPrimariesV2,
         CollationSpecialPrimaries,
         "_prim",
     ),
@@ -241,6 +241,7 @@ impl TryInto<CollationJamo<'static>> for &collator_serde::CollationJamo {
     type Error = DataError;
 
     fn try_into(self) -> Result<CollationJamo<'static>, Self::Error> {
+        // TODO: Validate length here.
         Ok(CollationJamo {
             ce32s: ZeroVec::alloc_from_slice(&self.ce32s),
         })
@@ -273,6 +274,15 @@ impl TryInto<CollationSpecialPrimaries<'static>> for &collator_serde::CollationS
     fn try_into(self) -> Result<CollationSpecialPrimaries<'static>, Self::Error> {
         Ok(CollationSpecialPrimaries {
             last_primaries: ZeroVec::alloc_from_slice(&self.last_primaries),
+            // TODO: Validate length here
+            // Note, at least for icu4x/2025-05-01/77.x, both `implicithan` and `unihan` have the same `compressible_bytes`.
+            compressible_bytes: ZeroVec::alloc_from_slice(self.compressible_bytes.as_ref().map_or(
+                &[
+                    0u8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0xfe, 0xff, 0xff, 0xff, 1, 0, 0, 0, 0, 0,
+                    0, 0, 0, 0, 0, 0, 0, 0, 0, 0x40,
+                ],
+                |v| &v[..],
+            )),
             numeric_primary: self.numeric_primary,
         })
     }
