@@ -244,14 +244,15 @@ void main() {
     );
 
     expect(
-      () => ZonedDateTimeFormatter.specificLong(
-        locale,
-        DateTimeFormatter.ymdet(locale),
-      ).formatIso(
-        zonedDateTimeIso.date,
-        zonedDateTimeIso.time,
-        TimeZoneInfo.utc(),
-      ),
+      () =>
+          ZonedDateTimeFormatter.specificLong(
+            locale,
+            DateTimeFormatter.ymdet(locale),
+          ).formatIso(
+            zonedDateTimeIso.date,
+            zonedDateTimeIso.time,
+            TimeZoneInfo.utc(),
+          ),
       throwsA(DateTimeWriteError.missingTimeZoneVariant),
     );
 
