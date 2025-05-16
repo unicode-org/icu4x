@@ -7,6 +7,7 @@
 //! The file:
 //! <https://github.com/unicode-org/cldr-json/blob/main/cldr-json/cldr-core/supplemental/units.json>
 
+use icu_provider::DataError;
 use serde::Deserialize;
 use std::collections::BTreeMap;
 
@@ -79,4 +80,30 @@ pub(crate) struct Supplemental {
 #[derive(Deserialize)]
 pub(crate) struct Resource {
     pub(crate) supplemental: Supplemental,
+}
+
+impl Resource {
+    pub fn get_unit_id(&self, unit_name: &str) -> Result<u16, DataError> {
+        self.supplemental
+            .convert_units
+            .convert_units
+            .iter()
+            .enumerate()
+            .find(|(_, (name, _))| name.as_str() == unit_name)
+            .map(|(index, _)| index)
+            .ok_or_else(|| DataError::custom("Unit not found"))
+            .and_then(|index| {
+                u16::try_from(index).map_err(|_| DataError::custom("Index out of range for u16"))
+            })
+    }
+
+    pub fn get_unit_ids_map(&self) -> BTreeMap<String, usize> {
+        self.supplemental
+            .convert_units
+            .convert_units
+            .iter()
+            .enumerate()
+            .map(|(index, (unit_name, _))| (unit_name.clone(), index))
+            .collect()
+    }
 }
