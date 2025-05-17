@@ -25,7 +25,7 @@ final class WeekInformation implements ffi.Finalizable {
 
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_WeekInformation_destroy_mv1));
 
-  /// Creates a new [`WeekInformation`] from locale data using compiled data.
+  /// Creates a new [WeekInformation] from locale data using compiled data.
   ///
   /// See the [Rust documentation for `try_new`](https://docs.rs/icu/2.0.0/icu/calendar/week/struct.WeekInformation.html#method.try_new) for more information.
   ///
@@ -38,7 +38,7 @@ final class WeekInformation implements ffi.Finalizable {
     return WeekInformation._fromFfi(result.union.ok, []);
   }
 
-  /// Creates a new [`WeekInformation`] from locale data using a particular data source.
+  /// Creates a new [WeekInformation] from locale data using a particular data source.
   ///
   /// See the [Rust documentation for `try_new`](https://docs.rs/icu/2.0.0/icu/calendar/week/struct.WeekInformation.html#method.try_new) for more information.
   ///

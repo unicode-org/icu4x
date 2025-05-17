@@ -40,12 +40,12 @@ class Bidi {
 public:
 
   /**
-   * Creates a new [`Bidi`] from locale data using compiled data.
+   * Creates a new {@link Bidi} from locale data using compiled data.
    */
   inline static std::unique_ptr<icu4x::Bidi> create();
 
   /**
-   * Creates a new [`Bidi`] from locale data, and a particular data source.
+   * Creates a new {@link Bidi} from locale data, and a particular data source.
    */
   inline static diplomat::result<std::unique_ptr<icu4x::Bidi>, icu4x::DataError> create_with_provider(const icu4x::DataProvider& provider);
 

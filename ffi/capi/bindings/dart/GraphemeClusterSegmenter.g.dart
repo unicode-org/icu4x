@@ -26,7 +26,7 @@ final class GraphemeClusterSegmenter implements ffi.Finalizable {
 
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_GraphemeClusterSegmenter_destroy_mv1));
 
-  /// Construct an [`GraphemeClusterSegmenter`] using compiled data.
+  /// Construct an [GraphemeClusterSegmenter] using compiled data.
   ///
   /// See the [Rust documentation for `new`](https://docs.rs/icu/2.0.0/icu/segmenter/struct.GraphemeClusterSegmenter.html#method.new) for more information.
   factory GraphemeClusterSegmenter() {
@@ -34,7 +34,7 @@ final class GraphemeClusterSegmenter implements ffi.Finalizable {
     return GraphemeClusterSegmenter._fromFfi(result, []);
   }
 
-  /// Construct an [`GraphemeClusterSegmenter`].
+  /// Construct an [GraphemeClusterSegmenter].
   ///
   /// See the [Rust documentation for `new`](https://docs.rs/icu/2.0.0/icu/segmenter/struct.GraphemeClusterSegmenter.html#method.new) for more information.
   ///

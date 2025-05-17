@@ -46,7 +46,7 @@ export class WeekInformation {
 
 
     /**
-     * Creates a new [`WeekInformation`] from locale data using compiled data.
+     * Creates a new {@link WeekInformation} from locale data using compiled data.
      *
      * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.0.0/icu/calendar/week/struct.WeekInformation.html#method.try_new) for more information.
      */
@@ -70,7 +70,7 @@ export class WeekInformation {
     }
 
     /**
-     * Creates a new [`WeekInformation`] from locale data using a particular data source.
+     * Creates a new {@link WeekInformation} from locale data using a particular data source.
      *
      * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.0.0/icu/calendar/week/struct.WeekInformation.html#method.try_new) for more information.
      */
@@ -143,7 +143,7 @@ export class WeekInformation {
     }
 
     /**
-     * Creates a new [`WeekInformation`] from locale data using compiled data.
+     * Creates a new {@link WeekInformation} from locale data using compiled data.
      *
      * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.0.0/icu/calendar/week/struct.WeekInformation.html#method.try_new) for more information.
      */

@@ -37,35 +37,35 @@ class Decimal {
 public:
 
   /**
-   * Construct an [`Decimal`] from an integer.
+   * Construct an {@link Decimal} from an integer.
    *
    * See the [Rust documentation for `Decimal`](https://docs.rs/fixed_decimal/0.7.0/fixed_decimal/type.Decimal.html) for more information.
    */
   inline static std::unique_ptr<icu4x::Decimal> from(int32_t v);
 
   /**
-   * Construct an [`Decimal`] from an integer.
+   * Construct an {@link Decimal} from an integer.
    *
    * See the [Rust documentation for `Decimal`](https://docs.rs/fixed_decimal/0.7.0/fixed_decimal/type.Decimal.html) for more information.
    */
   inline static std::unique_ptr<icu4x::Decimal> from(uint32_t v);
 
   /**
-   * Construct an [`Decimal`] from an integer.
+   * Construct an {@link Decimal} from an integer.
    *
    * See the [Rust documentation for `Decimal`](https://docs.rs/fixed_decimal/0.7.0/fixed_decimal/type.Decimal.html) for more information.
    */
   inline static std::unique_ptr<icu4x::Decimal> from(int64_t v);
 
   /**
-   * Construct an [`Decimal`] from an integer.
+   * Construct an {@link Decimal} from an integer.
    *
    * See the [Rust documentation for `Decimal`](https://docs.rs/fixed_decimal/0.7.0/fixed_decimal/type.Decimal.html) for more information.
    */
   inline static std::unique_ptr<icu4x::Decimal> from(uint64_t v);
 
   /**
-   * Construct an [`Decimal`] from an integer-valued float
+   * Construct an {@link Decimal} from an integer-valued float
    *
    * See the [Rust documentation for `try_from_f64`](https://docs.rs/fixed_decimal/0.7.0/fixed_decimal/type.Decimal.html#method.try_from_f64) for more information.
    *
@@ -74,7 +74,7 @@ public:
   inline static diplomat::result<std::unique_ptr<icu4x::Decimal>, icu4x::DecimalLimitError> from_double_with_integer_precision(double f);
 
   /**
-   * Construct an [`Decimal`] from an float, with a given power of 10 for the lower magnitude
+   * Construct an {@link Decimal} from an float, with a given power of 10 for the lower magnitude
    *
    * See the [Rust documentation for `try_from_f64`](https://docs.rs/fixed_decimal/0.7.0/fixed_decimal/type.Decimal.html#method.try_from_f64) for more information.
    *
@@ -83,7 +83,7 @@ public:
   inline static diplomat::result<std::unique_ptr<icu4x::Decimal>, icu4x::DecimalLimitError> from_double_with_lower_magnitude(double f, int16_t magnitude);
 
   /**
-   * Construct an [`Decimal`] from an float, for a given number of significant digits
+   * Construct an {@link Decimal} from an float, for a given number of significant digits
    *
    * See the [Rust documentation for `try_from_f64`](https://docs.rs/fixed_decimal/0.7.0/fixed_decimal/type.Decimal.html#method.try_from_f64) for more information.
    *
@@ -92,7 +92,7 @@ public:
   inline static diplomat::result<std::unique_ptr<icu4x::Decimal>, icu4x::DecimalLimitError> from_double_with_significant_digits(double f, uint8_t digits);
 
   /**
-   * Construct an [`Decimal`] from an float, with enough digits to recover
+   * Construct an {@link Decimal} from an float, with enough digits to recover
    * the original floating point in IEEE 754 without needing trailing zeros
    *
    * See the [Rust documentation for `try_from_f64`](https://docs.rs/fixed_decimal/0.7.0/fixed_decimal/type.Decimal.html#method.try_from_f64) for more information.
@@ -102,7 +102,7 @@ public:
   inline static diplomat::result<std::unique_ptr<icu4x::Decimal>, icu4x::DecimalLimitError> from_double_with_round_trip_precision(double f);
 
   /**
-   * Construct an [`Decimal`] from a string.
+   * Construct an {@link Decimal} from a string.
    *
    * See the [Rust documentation for `try_from_str`](https://docs.rs/fixed_decimal/0.7.0/fixed_decimal/type.Decimal.html#method.try_from_str) for more information.
    */
@@ -139,7 +139,7 @@ public:
   inline bool is_zero() const;
 
   /**
-   * Multiply the [`Decimal`] by a given power of ten.
+   * Multiply the {@link Decimal} by a given power of ten.
    *
    * See the [Rust documentation for `multiply_pow10`](https://docs.rs/fixed_decimal/0.7.0/fixed_decimal/type.Decimal.html#method.multiply_pow10) for more information.
    */
@@ -151,7 +151,7 @@ public:
   inline icu4x::DecimalSign sign() const;
 
   /**
-   * Set the sign of the [`Decimal`].
+   * Set the sign of the {@link Decimal}.
    *
    * See the [Rust documentation for `set_sign`](https://docs.rs/fixed_decimal/0.7.0/fixed_decimal/type.Decimal.html#method.set_sign) for more information.
    */
@@ -178,21 +178,21 @@ public:
   inline void trim_end_if_integer();
 
   /**
-   * Zero-pad the [`Decimal`] on the left to a particular position
+   * Zero-pad the {@link Decimal} on the left to a particular position
    *
    * See the [Rust documentation for `pad_start`](https://docs.rs/fixed_decimal/0.7.0/fixed_decimal/type.Decimal.html#method.pad_start) for more information.
    */
   inline void pad_start(int16_t position);
 
   /**
-   * Zero-pad the [`Decimal`] on the right to a particular position
+   * Zero-pad the {@link Decimal} on the right to a particular position
    *
    * See the [Rust documentation for `pad_end`](https://docs.rs/fixed_decimal/0.7.0/fixed_decimal/type.Decimal.html#method.pad_end) for more information.
    */
   inline void pad_end(int16_t position);
 
   /**
-   * Truncate the [`Decimal`] on the left to a particular position, deleting digits if necessary. This is useful for, e.g. abbreviating years
+   * Truncate the {@link Decimal} on the left to a particular position, deleting digits if necessary. This is useful for, e.g. abbreviating years
    * ("2022" -> "22")
    *
    * See the [Rust documentation for `set_max_position`](https://docs.rs/fixed_decimal/0.7.0/fixed_decimal/type.Decimal.html#method.set_max_position) for more information.
@@ -251,7 +251,7 @@ public:
   inline diplomat::result<std::monostate, std::monostate> concatenate_end(icu4x::Decimal& other);
 
   /**
-   * Format the [`Decimal`] as a string.
+   * Format the {@link Decimal} as a string.
    *
    * See the [Rust documentation for `write_to`](https://docs.rs/fixed_decimal/0.7.0/fixed_decimal/type.Decimal.html#method.write_to) for more information.
    */

@@ -24,28 +24,28 @@ export class ZonedDateTime {
 
 
     /**
-     * Creates a new [`ZonedDateTime`] from an IXDTF string.
+     * Creates a new {@link ZonedDateTime} from an IXDTF string.
      *
      * See the [Rust documentation for `try_full_from_str`](https://docs.rs/icu/2.0.0/icu/time/struct.ZonedDateTime.html#method.try_full_from_str) for more information.
      */
     static fullFromString(v: string, calendar: Calendar, ianaParser: IanaParser, offsetCalculator: VariantOffsetsCalculator): ZonedDateTime;
 
     /**
-     * Creates a new [`ZonedDateTime`] from a location-only IXDTF string.
+     * Creates a new {@link ZonedDateTime} from a location-only IXDTF string.
      *
      * See the [Rust documentation for `try_location_only_from_str`](https://docs.rs/icu/2.0.0/icu/time/struct.ZonedDateTime.html#method.try_location_only_from_str) for more information.
      */
     static locationOnlyFromString(v: string, calendar: Calendar, ianaParser: IanaParser): ZonedDateTime;
 
     /**
-     * Creates a new [`ZonedDateTime`] from an offset-only IXDTF string.
+     * Creates a new {@link ZonedDateTime} from an offset-only IXDTF string.
      *
      * See the [Rust documentation for `try_offset_only_from_str`](https://docs.rs/icu/2.0.0/icu/time/struct.ZonedDateTime.html#method.try_offset_only_from_str) for more information.
      */
     static offsetOnlyFromString(v: string, calendar: Calendar): ZonedDateTime;
 
     /**
-     * Creates a new [`ZonedDateTime`] from an IXDTF string, without requiring the offset or calculating the zone variant.
+     * Creates a new {@link ZonedDateTime} from an IXDTF string, without requiring the offset or calculating the zone variant.
      *
      * See the [Rust documentation for `try_lenient_from_str`](https://docs.rs/icu/2.0.0/icu/time/struct.ZonedDateTime.html#method.try_lenient_from_str) for more information.
      */

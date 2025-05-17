@@ -41,14 +41,14 @@ class VariantOffsetsCalculator {
 public:
 
   /**
-   * Construct a new [`VariantOffsetsCalculator`] instance using compiled data.
+   * Construct a new {@link VariantOffsetsCalculator} instance using compiled data.
    *
    * See the [Rust documentation for `new`](https://docs.rs/icu/2.0.0/icu/time/zone/struct.VariantOffsetsCalculator.html#method.new) for more information.
    */
   inline static std::unique_ptr<icu4x::VariantOffsetsCalculator> create();
 
   /**
-   * Construct a new [`VariantOffsetsCalculator`] instance using a particular data source.
+   * Construct a new {@link VariantOffsetsCalculator} instance using a particular data source.
    *
    * See the [Rust documentation for `new`](https://docs.rs/icu/2.0.0/icu/time/zone/struct.VariantOffsetsCalculator.html#method.new) for more information.
    */

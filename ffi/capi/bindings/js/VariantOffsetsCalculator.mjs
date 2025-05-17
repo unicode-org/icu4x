@@ -45,7 +45,7 @@ export class VariantOffsetsCalculator {
 
 
     /**
-     * Construct a new [`VariantOffsetsCalculator`] instance using compiled data.
+     * Construct a new {@link VariantOffsetsCalculator} instance using compiled data.
      *
      * See the [Rust documentation for `new`](https://docs.rs/icu/2.0.0/icu/time/zone/struct.VariantOffsetsCalculator.html#method.new) for more information.
      */
@@ -62,7 +62,7 @@ export class VariantOffsetsCalculator {
     }
 
     /**
-     * Construct a new [`VariantOffsetsCalculator`] instance using a particular data source.
+     * Construct a new {@link VariantOffsetsCalculator} instance using a particular data source.
      *
      * See the [Rust documentation for `new`](https://docs.rs/icu/2.0.0/icu/time/zone/struct.VariantOffsetsCalculator.html#method.new) for more information.
      */
@@ -107,7 +107,7 @@ export class VariantOffsetsCalculator {
     }
 
     /**
-     * Construct a new [`VariantOffsetsCalculator`] instance using compiled data.
+     * Construct a new {@link VariantOffsetsCalculator} instance using compiled data.
      *
      * See the [Rust documentation for `new`](https://docs.rs/icu/2.0.0/icu/time/zone/struct.VariantOffsetsCalculator.html#method.new) for more information.
      */

@@ -45,7 +45,7 @@ export class LocaleCanonicalizer {
 
 
     /**
-     * Create a new [`LocaleCanonicalizer`] using compiled data.
+     * Create a new {@link LocaleCanonicalizer} using compiled data.
      *
      * See the [Rust documentation for `new_common`](https://docs.rs/icu/2.0.0/icu/locale/struct.LocaleCanonicalizer.html#method.new_common) for more information.
      */
@@ -62,7 +62,7 @@ export class LocaleCanonicalizer {
     }
 
     /**
-     * Create a new [`LocaleCanonicalizer`].
+     * Create a new {@link LocaleCanonicalizer}.
      *
      * See the [Rust documentation for `new_common`](https://docs.rs/icu/2.0.0/icu/locale/struct.LocaleCanonicalizer.html#method.new_common) for more information.
      */
@@ -86,7 +86,7 @@ export class LocaleCanonicalizer {
     }
 
     /**
-     * Create a new [`LocaleCanonicalizer`] with extended data using compiled data.
+     * Create a new {@link LocaleCanonicalizer} with extended data using compiled data.
      *
      * See the [Rust documentation for `new_extended`](https://docs.rs/icu/2.0.0/icu/locale/struct.LocaleCanonicalizer.html#method.new_extended) for more information.
      */
@@ -103,7 +103,7 @@ export class LocaleCanonicalizer {
     }
 
     /**
-     * Create a new [`LocaleCanonicalizer`] with extended data.
+     * Create a new {@link LocaleCanonicalizer} with extended data.
      *
      * See the [Rust documentation for `new_extended`](https://docs.rs/icu/2.0.0/icu/locale/struct.LocaleCanonicalizer.html#method.new_extended) for more information.
      */
@@ -142,7 +142,7 @@ export class LocaleCanonicalizer {
     }
 
     /**
-     * Create a new [`LocaleCanonicalizer`] using compiled data.
+     * Create a new {@link LocaleCanonicalizer} using compiled data.
      *
      * See the [Rust documentation for `new_common`](https://docs.rs/icu/2.0.0/icu/locale/struct.LocaleCanonicalizer.html#method.new_common) for more information.
      */

@@ -43,14 +43,14 @@ class GraphemeClusterSegmenter {
 public:
 
   /**
-   * Construct an [`GraphemeClusterSegmenter`] using compiled data.
+   * Construct an {@link GraphemeClusterSegmenter} using compiled data.
    *
    * See the [Rust documentation for `new`](https://docs.rs/icu/2.0.0/icu/segmenter/struct.GraphemeClusterSegmenter.html#method.new) for more information.
    */
   inline static std::unique_ptr<icu4x::GraphemeClusterSegmenter> create();
 
   /**
-   * Construct an [`GraphemeClusterSegmenter`].
+   * Construct an {@link GraphemeClusterSegmenter}.
    *
    * See the [Rust documentation for `new`](https://docs.rs/icu/2.0.0/icu/segmenter/struct.GraphemeClusterSegmenter.html#method.new) for more information.
    */

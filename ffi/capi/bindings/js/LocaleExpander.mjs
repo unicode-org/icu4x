@@ -45,7 +45,7 @@ export class LocaleExpander {
 
 
     /**
-     * Create a new [`LocaleExpander`] using compiled data.
+     * Create a new {@link LocaleExpander} using compiled data.
      *
      * See the [Rust documentation for `new_common`](https://docs.rs/icu/2.0.0/icu/locale/struct.LocaleExpander.html#method.new_common) for more information.
      */
@@ -62,7 +62,7 @@ export class LocaleExpander {
     }
 
     /**
-     * Create a new [`LocaleExpander`] using a new_common data source.
+     * Create a new {@link LocaleExpander} using a new_common data source.
      *
      * See the [Rust documentation for `new_common`](https://docs.rs/icu/2.0.0/icu/locale/struct.LocaleExpander.html#method.new_common) for more information.
      */
@@ -86,7 +86,7 @@ export class LocaleExpander {
     }
 
     /**
-     * Create a new [`LocaleExpander`] with extended data using compiled data.
+     * Create a new {@link LocaleExpander} with extended data using compiled data.
      *
      * See the [Rust documentation for `new_extended`](https://docs.rs/icu/2.0.0/icu/locale/struct.LocaleExpander.html#method.new_extended) for more information.
      */
@@ -103,7 +103,7 @@ export class LocaleExpander {
     }
 
     /**
-     * Create a new [`LocaleExpander`] with extended data using a particular data source.
+     * Create a new {@link LocaleExpander} with extended data using a particular data source.
      *
      * See the [Rust documentation for `new_extended`](https://docs.rs/icu/2.0.0/icu/locale/struct.LocaleExpander.html#method.new_extended) for more information.
      */
@@ -172,7 +172,7 @@ export class LocaleExpander {
     }
 
     /**
-     * Create a new [`LocaleExpander`] using compiled data.
+     * Create a new {@link LocaleExpander} using compiled data.
      *
      * See the [Rust documentation for `new_common`](https://docs.rs/icu/2.0.0/icu/locale/struct.LocaleExpander.html#method.new_common) for more information.
      */

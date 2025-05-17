@@ -46,7 +46,7 @@ struct DateTime {
   std::unique_ptr<icu4x::Time> time;
 
   /**
-   * Creates a new [`DateTime`] from an IXDTF string.
+   * Creates a new {@link DateTime} from an IXDTF string.
    *
    * See the [Rust documentation for `try_from_str`](https://docs.rs/icu/2.0.0/icu/time/struct.DateTime.html#method.try_from_str) for more information.
    */

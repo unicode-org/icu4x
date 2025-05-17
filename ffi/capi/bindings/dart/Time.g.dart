@@ -25,7 +25,7 @@ final class Time implements ffi.Finalizable {
 
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_Time_destroy_mv1));
 
-  /// Creates a new [`Time`] given field values
+  /// Creates a new [Time] given field values
   ///
   /// See the [Rust documentation for `try_new`](https://docs.rs/icu/2.0.0/icu/time/struct.Time.html#method.try_new) for more information.
   ///
@@ -38,7 +38,7 @@ final class Time implements ffi.Finalizable {
     return Time._fromFfi(result.union.ok, []);
   }
 
-  /// Creates a new [`Time`] from an IXDTF string.
+  /// Creates a new [Time] from an IXDTF string.
   ///
   /// See the [Rust documentation for `try_from_str`](https://docs.rs/icu/2.0.0/icu/time/struct.Time.html#method.try_from_str) for more information.
   ///
@@ -52,7 +52,7 @@ final class Time implements ffi.Finalizable {
     return Time._fromFfi(result.union.ok, []);
   }
 
-  /// Creates a new [`Time`] representing the start of the day (00:00:00.000).
+  /// Creates a new [Time] representing the start of the day (00:00:00.000).
   ///
   /// See the [Rust documentation for `start_of_day`](https://docs.rs/icu/2.0.0/icu/time/struct.Time.html#method.start_of_day) for more information.
   ///
@@ -65,7 +65,7 @@ final class Time implements ffi.Finalizable {
     return Time._fromFfi(result.union.ok, []);
   }
 
-  /// Creates a new [`Time`] representing noon (12:00:00.000).
+  /// Creates a new [Time] representing noon (12:00:00.000).
   ///
   /// See the [Rust documentation for `noon`](https://docs.rs/icu/2.0.0/icu/time/struct.Time.html#method.noon) for more information.
   ///

@@ -10,7 +10,7 @@ const MeasureUnit_box_destroy_registry = new FinalizationRegistry((ptr) => {
  * An ICU4X Measurement Unit object which represents a single unit of measurement
  * such as `meter`, `second`, `kilometer-per-hour`, `square-meter`, etc.
  *
- * You can create an instance of this object using [`MeasureUnitParser`] by calling the `parse` method.
+ * You can create an instance of this object using {@link MeasureUnitParser} by calling the `parse` method.
  *
  * See the [Rust documentation for `MeasureUnit`](https://docs.rs/icu/2.0.0/icu/experimental/measure/measureunit/struct.MeasureUnit.html) for more information.
  */

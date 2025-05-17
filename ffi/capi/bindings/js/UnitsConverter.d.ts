@@ -4,9 +4,9 @@ import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
 /**
- * An ICU4X Units Converter object, capable of converting between two [`MeasureUnit`]s.
+ * An ICU4X Units Converter object, capable of converting between two {@link MeasureUnit}s.
  *
- * You can create an instance of this object using [`UnitsConverterFactory`] by calling the `converter` method.
+ * You can create an instance of this object using {@link UnitsConverterFactory} by calling the `converter` method.
  *
  * See the [Rust documentation for `UnitsConverter`](https://docs.rs/icu/2.0.0/icu/experimental/units/converter/struct.UnitsConverter.html) for more information.
  */
@@ -27,7 +27,7 @@ export class UnitsConverter {
     convertNumber(value: number): number;
 
     /**
-     * Clones the current [`UnitsConverter`] object.
+     * Clones the current {@link UnitsConverter} object.
      *
      * See the [Rust documentation for `clone`](https://docs.rs/icu/2.0.0/icu/experimental/units/converter/struct.UnitsConverter.html#method.clone) for more information.
      */

@@ -25,13 +25,13 @@ final class Bidi implements ffi.Finalizable {
 
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_Bidi_destroy_mv1));
 
-  /// Creates a new [`Bidi`] from locale data using compiled data.
+  /// Creates a new [Bidi] from locale data using compiled data.
   factory Bidi() {
     final result = _icu4x_Bidi_create_mv1();
     return Bidi._fromFfi(result, []);
   }
 
-  /// Creates a new [`Bidi`] from locale data, and a particular data source.
+  /// Creates a new [Bidi] from locale data, and a particular data source.
   ///
   /// Throws [DataError] on failure.
   factory Bidi.withProvider(DataProvider provider) {

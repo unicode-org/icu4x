@@ -23,7 +23,7 @@ final class Calendar implements ffi.Finalizable {
 
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_Calendar_destroy_mv1));
 
-  /// Creates a new [`Calendar`] for the specified kind, using compiled data.
+  /// Creates a new [Calendar] for the specified kind, using compiled data.
   ///
   /// See the [Rust documentation for `new`](https://docs.rs/icu/2.0.0/icu/calendar/enum.AnyCalendar.html#method.new) for more information.
   factory Calendar(CalendarKind kind) {
@@ -31,7 +31,7 @@ final class Calendar implements ffi.Finalizable {
     return Calendar._fromFfi(result, []);
   }
 
-  /// Creates a new [`Calendar`] for the specified kind, using a particular data source.
+  /// Creates a new [Calendar] for the specified kind, using a particular data source.
   ///
   /// See the [Rust documentation for `new`](https://docs.rs/icu/2.0.0/icu/calendar/enum.AnyCalendar.html#method.new) for more information.
   ///

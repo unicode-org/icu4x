@@ -25,7 +25,7 @@ final class IsoDate implements ffi.Finalizable {
 
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_IsoDate_destroy_mv1));
 
-  /// Creates a new [`IsoDate`] from the specified date.
+  /// Creates a new [IsoDate] from the specified date.
   ///
   /// See the [Rust documentation for `try_new_iso`](https://docs.rs/icu/2.0.0/icu/calendar/struct.Date.html#method.try_new_iso) for more information.
   ///
@@ -38,7 +38,7 @@ final class IsoDate implements ffi.Finalizable {
     return IsoDate._fromFfi(result.union.ok, []);
   }
 
-  /// Creates a new [`IsoDate`] from the given Rata Die
+  /// Creates a new [IsoDate] from the given Rata Die
   ///
   /// See the [Rust documentation for `from_rata_die`](https://docs.rs/icu/2.0.0/icu/calendar/struct.Date.html#method.from_rata_die) for more information.
   factory IsoDate.fromRataDie(int rd) {
@@ -46,7 +46,7 @@ final class IsoDate implements ffi.Finalizable {
     return IsoDate._fromFfi(result, []);
   }
 
-  /// Creates a new [`IsoDate`] from an IXDTF string.
+  /// Creates a new [IsoDate] from an IXDTF string.
   ///
   /// See the [Rust documentation for `try_from_str`](https://docs.rs/icu/2.0.0/icu/calendar/struct.Date.html#method.try_from_str) for more information.
   ///

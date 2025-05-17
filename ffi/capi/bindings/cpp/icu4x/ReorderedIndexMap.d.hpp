@@ -24,7 +24,7 @@ namespace icu4x {
  *
  * `map[visualIndex] = sourceIndex`
  *
- * Produced by `reorder_visual()` on [`Bidi`].
+ * Produced by `reorder_visual()` on {@link Bidi}.
  */
 class ReorderedIndexMap {
 public:

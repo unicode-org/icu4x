@@ -44,14 +44,14 @@ class IanaParserExtended {
 public:
 
   /**
-   * Create a new [`IanaParserExtended`] using compiled data
+   * Create a new {@link IanaParserExtended} using compiled data
    *
    * See the [Rust documentation for `new`](https://docs.rs/icu/2.0.0/icu/time/zone/iana/struct.IanaParserExtended.html#method.new) for more information.
    */
   inline static std::unique_ptr<icu4x::IanaParserExtended> create();
 
   /**
-   * Create a new [`IanaParserExtended`] using a particular data source
+   * Create a new {@link IanaParserExtended} using a particular data source
    *
    * See the [Rust documentation for `new`](https://docs.rs/icu/2.0.0/icu/time/zone/iana/struct.IanaParserExtended.html#method.new) for more information.
    */

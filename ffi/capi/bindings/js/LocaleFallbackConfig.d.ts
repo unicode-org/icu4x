@@ -2,7 +2,7 @@
 import type { LocaleFallbackPriority } from "./LocaleFallbackPriority"
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
-type LocaleFallbackConfig_obj = {
+export type LocaleFallbackConfig_obj = {
     priority: LocaleFallbackPriority;
 };
 

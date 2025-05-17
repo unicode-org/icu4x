@@ -43,7 +43,7 @@ export class Time {
 
 
     /**
-     * Creates a new [`Time`] given field values
+     * Creates a new {@link Time} given field values
      *
      * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.0.0/icu/time/struct.Time.html#method.try_new) for more information.
      */
@@ -67,7 +67,7 @@ export class Time {
     }
 
     /**
-     * Creates a new [`Time`] from an IXDTF string.
+     * Creates a new {@link Time} from an IXDTF string.
      *
      * See the [Rust documentation for `try_from_str`](https://docs.rs/icu/2.0.0/icu/time/struct.Time.html#method.try_from_str) for more information.
      */
@@ -96,7 +96,7 @@ export class Time {
     }
 
     /**
-     * Creates a new [`Time`] representing the start of the day (00:00:00.000).
+     * Creates a new {@link Time} representing the start of the day (00:00:00.000).
      *
      * See the [Rust documentation for `start_of_day`](https://docs.rs/icu/2.0.0/icu/time/struct.Time.html#method.start_of_day) for more information.
      */
@@ -120,7 +120,7 @@ export class Time {
     }
 
     /**
-     * Creates a new [`Time`] representing noon (12:00:00.000).
+     * Creates a new {@link Time} representing noon (12:00:00.000).
      *
      * See the [Rust documentation for `noon`](https://docs.rs/icu/2.0.0/icu/time/struct.Time.html#method.noon) for more information.
      */
@@ -212,7 +212,7 @@ export class Time {
     }
 
     /**
-     * Creates a new [`Time`] given field values
+     * Creates a new {@link Time} given field values
      *
      * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.0.0/icu/time/struct.Time.html#method.try_new) for more information.
      */

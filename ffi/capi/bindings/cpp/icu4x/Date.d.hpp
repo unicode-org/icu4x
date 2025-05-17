@@ -40,7 +40,7 @@ class Date {
 public:
 
   /**
-   * Creates a new [`Date`] representing the ISO date
+   * Creates a new {@link Date} representing the ISO date
    * given but in a given calendar
    *
    * See the [Rust documentation for `new_from_iso`](https://docs.rs/icu/2.0.0/icu/calendar/struct.Date.html#method.new_from_iso) for more information.
@@ -48,7 +48,7 @@ public:
   inline static diplomat::result<std::unique_ptr<icu4x::Date>, icu4x::CalendarError> from_iso_in_calendar(int32_t iso_year, uint8_t iso_month, uint8_t iso_day, const icu4x::Calendar& calendar);
 
   /**
-   * Creates a new [`Date`] from the given codes, which are interpreted in the given calendar system
+   * Creates a new {@link Date} from the given codes, which are interpreted in the given calendar system
    *
    * An empty era code will treat the year as an extended year
    *
@@ -57,14 +57,14 @@ public:
   inline static diplomat::result<std::unique_ptr<icu4x::Date>, icu4x::CalendarError> from_codes_in_calendar(std::string_view era_code, int32_t year, std::string_view month_code, uint8_t day, const icu4x::Calendar& calendar);
 
   /**
-   * Creates a new [`Date`] from the given Rata Die
+   * Creates a new {@link Date} from the given Rata Die
    *
    * See the [Rust documentation for `from_rata_die`](https://docs.rs/icu/2.0.0/icu/calendar/struct.Date.html#method.from_rata_die) for more information.
    */
   inline static diplomat::result<std::unique_ptr<icu4x::Date>, icu4x::CalendarError> from_rata_die(int64_t rd, const icu4x::Calendar& calendar);
 
   /**
-   * Creates a new [`Date`] from an IXDTF string.
+   * Creates a new {@link Date} from an IXDTF string.
    *
    * See the [Rust documentation for `try_from_str`](https://docs.rs/icu/2.0.0/icu/calendar/struct.Date.html#method.try_from_str) for more information.
    */
@@ -198,7 +198,7 @@ public:
   inline uint16_t days_in_year() const;
 
   /**
-   * Returns the [`Calendar`] object backing this date
+   * Returns the {@link Calendar} object backing this date
    *
    * See the [Rust documentation for `calendar`](https://docs.rs/icu/2.0.0/icu/calendar/struct.Date.html#method.calendar) for more information.
    */

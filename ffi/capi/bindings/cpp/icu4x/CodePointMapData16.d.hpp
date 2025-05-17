@@ -67,7 +67,7 @@ public:
   inline std::unique_ptr<icu4x::CodePointRangeIterator> iter_ranges_for_value_complemented(uint16_t value) const;
 
   /**
-   * Gets a [`CodePointSetData`] representing all entries in this map that map to the given value
+   * Gets a {@link CodePointSetData} representing all entries in this map that map to the given value
    *
    * See the [Rust documentation for `get_set_for_value`](https://docs.rs/icu/2.0.0/icu/properties/struct.CodePointMapDataBorrowed.html#method.get_set_for_value) for more information.
    */

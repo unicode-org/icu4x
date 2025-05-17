@@ -2,7 +2,7 @@
 import type { GeneralCategory } from "./GeneralCategory"
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
-type GeneralCategoryGroup_obj = {
+export type GeneralCategoryGroup_obj = {
     mask: number;
 };
 

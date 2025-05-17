@@ -28,7 +28,7 @@ final class WindowsParser implements ffi.Finalizable {
 
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_WindowsParser_destroy_mv1));
 
-  /// Create a new [`WindowsParser`] using compiled data
+  /// Create a new [WindowsParser] using compiled data
   ///
   /// See the [Rust documentation for `new`](https://docs.rs/icu/2.0.0/icu/time/zone/windows/struct.WindowsParser.html#method.new) for more information.
   factory WindowsParser() {
@@ -36,7 +36,7 @@ final class WindowsParser implements ffi.Finalizable {
     return WindowsParser._fromFfi(result, []);
   }
 
-  /// Create a new [`WindowsParser`] using a particular data source
+  /// Create a new [WindowsParser] using a particular data source
   ///
   /// See the [Rust documentation for `new`](https://docs.rs/icu/2.0.0/icu/time/zone/windows/struct.WindowsParser.html#method.new) for more information.
   ///

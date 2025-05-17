@@ -25,7 +25,7 @@ final class Date implements ffi.Finalizable {
 
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_Date_destroy_mv1));
 
-  /// Creates a new [`Date`] representing the ISO date
+  /// Creates a new [Date] representing the ISO date
   /// given but in a given calendar
   ///
   /// See the [Rust documentation for `new_from_iso`](https://docs.rs/icu/2.0.0/icu/calendar/struct.Date.html#method.new_from_iso) for more information.
@@ -39,7 +39,7 @@ final class Date implements ffi.Finalizable {
     return Date._fromFfi(result.union.ok, []);
   }
 
-  /// Creates a new [`Date`] from the given codes, which are interpreted in the given calendar system
+  /// Creates a new [Date] from the given codes, which are interpreted in the given calendar system
   ///
   /// An empty era code will treat the year as an extended year
   ///
@@ -55,7 +55,7 @@ final class Date implements ffi.Finalizable {
     return Date._fromFfi(result.union.ok, []);
   }
 
-  /// Creates a new [`Date`] from the given Rata Die
+  /// Creates a new [Date] from the given Rata Die
   ///
   /// See the [Rust documentation for `from_rata_die`](https://docs.rs/icu/2.0.0/icu/calendar/struct.Date.html#method.from_rata_die) for more information.
   ///
@@ -68,7 +68,7 @@ final class Date implements ffi.Finalizable {
     return Date._fromFfi(result.union.ok, []);
   }
 
-  /// Creates a new [`Date`] from an IXDTF string.
+  /// Creates a new [Date] from an IXDTF string.
   ///
   /// See the [Rust documentation for `try_from_str`](https://docs.rs/icu/2.0.0/icu/calendar/struct.Date.html#method.try_from_str) for more information.
   ///
@@ -227,7 +227,7 @@ final class Date implements ffi.Finalizable {
     return result;
   }
 
-  /// Returns the [`Calendar`] object backing this date
+  /// Returns the [Calendar] object backing this date
   ///
   /// See the [Rust documentation for `calendar`](https://docs.rs/icu/2.0.0/icu/calendar/struct.Date.html#method.calendar) for more information.
   Calendar get calendar {

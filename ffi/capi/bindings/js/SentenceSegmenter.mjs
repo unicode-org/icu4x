@@ -45,7 +45,7 @@ export class SentenceSegmenter {
 
 
     /**
-     * Construct a [`SentenceSegmenter`] using compiled data. This does not assume any content locale.
+     * Construct a {@link SentenceSegmenter} using compiled data. This does not assume any content locale.
      *
      * See the [Rust documentation for `new`](https://docs.rs/icu/2.0.0/icu/segmenter/struct.SentenceSegmenter.html#method.new) for more information.
      */
@@ -62,7 +62,7 @@ export class SentenceSegmenter {
     }
 
     /**
-     * Construct a [`SentenceSegmenter`] for content known to be of a given locale, using compiled data.
+     * Construct a {@link SentenceSegmenter} for content known to be of a given locale, using compiled data.
      */
     static createWithContentLocale(locale) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
@@ -84,7 +84,7 @@ export class SentenceSegmenter {
     }
 
     /**
-     * Construct a [`SentenceSegmenter`]  for content known to be of a given locale, using a particular data source.
+     * Construct a {@link SentenceSegmenter}  for content known to be of a given locale, using a particular data source.
      */
     static createWithContentLocaleAndProvider(provider, locale) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
@@ -133,7 +133,7 @@ export class SentenceSegmenter {
     }
 
     /**
-     * Construct a [`SentenceSegmenter`] using compiled data. This does not assume any content locale.
+     * Construct a {@link SentenceSegmenter} using compiled data. This does not assume any content locale.
      *
      * See the [Rust documentation for `new`](https://docs.rs/icu/2.0.0/icu/segmenter/struct.SentenceSegmenter.html#method.new) for more information.
      */

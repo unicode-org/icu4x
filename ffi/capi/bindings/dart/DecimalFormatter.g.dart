@@ -3,7 +3,7 @@
 
 part of 'lib.g.dart';
 
-/// An ICU4X Decimal Format object, capable of formatting a [`Decimal`] as a string.
+/// An ICU4X Decimal Format object, capable of formatting a [Decimal] as a string.
 ///
 /// See the [Rust documentation for `DecimalFormatter`](https://docs.rs/icu/2.0.0/icu/decimal/struct.DecimalFormatter.html) for more information.
 final class DecimalFormatter implements ffi.Finalizable {
@@ -25,7 +25,7 @@ final class DecimalFormatter implements ffi.Finalizable {
 
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_DecimalFormatter_destroy_mv1));
 
-  /// Creates a new [`DecimalFormatter`], using compiled data
+  /// Creates a new [DecimalFormatter], using compiled data
   ///
   /// See the [Rust documentation for `try_new`](https://docs.rs/icu/2.0.0/icu/decimal/struct.DecimalFormatter.html#method.try_new) for more information.
   ///
@@ -38,7 +38,7 @@ final class DecimalFormatter implements ffi.Finalizable {
     return DecimalFormatter._fromFfi(result.union.ok, []);
   }
 
-  /// Creates a new [`DecimalFormatter`], using a particular data source.
+  /// Creates a new [DecimalFormatter], using a particular data source.
   ///
   /// See the [Rust documentation for `try_new`](https://docs.rs/icu/2.0.0/icu/decimal/struct.DecimalFormatter.html#method.try_new) for more information.
   ///
@@ -51,7 +51,7 @@ final class DecimalFormatter implements ffi.Finalizable {
     return DecimalFormatter._fromFfi(result.union.ok, []);
   }
 
-  /// Creates a new [`DecimalFormatter`] from preconstructed locale data.
+  /// Creates a new [DecimalFormatter] from preconstructed locale data.
   ///
   /// See the [Rust documentation for `DecimalSymbolsV1`](https://docs.rs/icu/2.0.0/icu/decimal/provider/struct.DecimalSymbolsV1.html) for more information.
   ///
@@ -65,7 +65,7 @@ final class DecimalFormatter implements ffi.Finalizable {
     return DecimalFormatter._fromFfi(result.union.ok, []);
   }
 
-  /// Formats a [`Decimal`] to a string.
+  /// Formats a [Decimal] to a string.
   ///
   /// See the [Rust documentation for `format`](https://docs.rs/icu/2.0.0/icu/decimal/struct.DecimalFormatter.html#method.format) for more information.
   String format(Decimal value) {

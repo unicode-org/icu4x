@@ -5,7 +5,7 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
 /**
- * Result of a single iteration of [`CodePointRangeIterator`].
+ * Result of a single iteration of {@link CodePointRangeIterator}.
  * Logically can be considered to be an `Option<RangeInclusive<DiplomatChar>>`,
  *
  * `start` and `end` represent an inclusive range of code points `[start, end]`,
