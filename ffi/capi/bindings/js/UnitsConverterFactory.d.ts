@@ -13,7 +13,7 @@ import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
  *
  * Also, it can parse the CLDR unit identifier (e.g. `meter-per-square-second`) and get the [`MeasureUnit`].
  *
- * See the [Rust documentation for `ConverterFactory`](https://docs.rs/icu/latest/icu/experimental/units/converter_factory/struct.ConverterFactory.html) for more information.
+ * See the [Rust documentation for `ConverterFactory`](https://docs.rs/icu/2.0.0/icu/experimental/units/converter_factory/struct.ConverterFactory.html) for more information.
  */
 export class UnitsConverterFactory {
     /** @internal */
@@ -23,7 +23,7 @@ export class UnitsConverterFactory {
     /**
      * Construct a new [`UnitsConverterFactory`] instance using a particular data source.
      *
-     * See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/experimental/units/converter_factory/struct.ConverterFactory.html#method.new) for more information.
+     * See the [Rust documentation for `new`](https://docs.rs/icu/2.0.0/icu/experimental/units/converter_factory/struct.ConverterFactory.html#method.new) for more information.
      */
     static createWithProvider(provider: DataProvider): UnitsConverterFactory;
 
@@ -32,14 +32,14 @@ export class UnitsConverterFactory {
      * Returns nothing if the conversion between the two units is not possible.
      * For example, conversion between `meter` and `second` is not possible.
      *
-     * See the [Rust documentation for `converter`](https://docs.rs/icu/latest/icu/experimental/units/converter_factory/struct.ConverterFactory.html#method.converter) for more information.
+     * See the [Rust documentation for `converter`](https://docs.rs/icu/2.0.0/icu/experimental/units/converter_factory/struct.ConverterFactory.html#method.converter) for more information.
      */
     converter(from: MeasureUnit, to: MeasureUnit): UnitsConverter | null;
 
     /**
      * Construct a new [`UnitsConverterFactory`] instance using compiled data.
      *
-     * See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/experimental/units/converter_factory/struct.ConverterFactory.html#method.new) for more information.
+     * See the [Rust documentation for `new`](https://docs.rs/icu/2.0.0/icu/experimental/units/converter_factory/struct.ConverterFactory.html#method.new) for more information.
      */
     constructor();
 }

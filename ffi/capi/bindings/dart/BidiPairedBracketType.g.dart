@@ -3,7 +3,7 @@
 
 part of 'lib.g.dart';
 
-/// See the [Rust documentation for `BidiPairedBracketType`](https://docs.rs/icu/latest/icu/properties/props/enum.BidiPairedBracketType.html) for more information.
+/// See the [Rust documentation for `BidiPairedBracketType`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.BidiPairedBracketType.html) for more information.
 enum BidiPairedBracketType {
   /// Represents Bidi_Paired_Bracket_Type=Open.
   open,

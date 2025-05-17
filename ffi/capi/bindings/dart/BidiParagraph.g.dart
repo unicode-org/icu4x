@@ -37,7 +37,7 @@ final class BidiParagraph implements ffi.Finalizable {
 
   /// The primary direction of this paragraph
   ///
-  /// See the [Rust documentation for `level_at`](https://docs.rs/unicode_bidi/latest/unicode_bidi/struct.Paragraph.html#method.level_at) for more information.
+  /// See the [Rust documentation for `level_at`](https://docs.rs/unicode_bidi/0.3.11/unicode_bidi/struct.Paragraph.html#method.level_at) for more information.
   BidiDirection get direction {
     final result = _icu4x_BidiParagraph_direction_mv1(_ffi);
     return BidiDirection.values[result];
@@ -45,7 +45,7 @@ final class BidiParagraph implements ffi.Finalizable {
 
   /// The number of bytes in this paragraph
   ///
-  /// See the [Rust documentation for `len`](https://docs.rs/unicode_bidi/latest/unicode_bidi/struct.ParagraphInfo.html#method.len) for more information.
+  /// See the [Rust documentation for `len`](https://docs.rs/unicode_bidi/0.3.11/unicode_bidi/struct.ParagraphInfo.html#method.len) for more information.
   int get size {
     final result = _icu4x_BidiParagraph_size_mv1(_ffi);
     return result;
@@ -66,7 +66,7 @@ final class BidiParagraph implements ffi.Finalizable {
   /// Reorder a line based on display order. The ranges are specified relative to the source text and must be contained
   /// within this paragraph's range.
   ///
-  /// See the [Rust documentation for `level_at`](https://docs.rs/unicode_bidi/latest/unicode_bidi/struct.Paragraph.html#method.level_at) for more information.
+  /// See the [Rust documentation for `level_at`](https://docs.rs/unicode_bidi/0.3.11/unicode_bidi/struct.Paragraph.html#method.level_at) for more information.
   String? reorderLine(int rangeStart, int rangeEnd) {
     final write = _Write();
     final result = _icu4x_BidiParagraph_reorder_line_mv1(_ffi, rangeStart, rangeEnd, write._ffi);
@@ -82,7 +82,7 @@ final class BidiParagraph implements ffi.Finalizable {
   ///
   /// Returns 0 (equivalent to `Level::ltr()`) on error
   ///
-  /// See the [Rust documentation for `level_at`](https://docs.rs/unicode_bidi/latest/unicode_bidi/struct.Paragraph.html#method.level_at) for more information.
+  /// See the [Rust documentation for `level_at`](https://docs.rs/unicode_bidi/0.3.11/unicode_bidi/struct.Paragraph.html#method.level_at) for more information.
   int levelAt(int pos) {
     final result = _icu4x_BidiParagraph_level_at_mv1(_ffi, pos);
     return result;

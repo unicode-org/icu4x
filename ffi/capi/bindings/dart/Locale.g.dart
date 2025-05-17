@@ -5,7 +5,7 @@ part of 'lib.g.dart';
 
 /// An ICU4X Locale, capable of representing strings like `"en-US"`.
 ///
-/// See the [Rust documentation for `Locale`](https://docs.rs/icu/latest/icu/locale/struct.Locale.html) for more information.
+/// See the [Rust documentation for `Locale`](https://docs.rs/icu/2.0.0/icu/locale/struct.Locale.html) for more information.
 final class Locale implements ffi.Finalizable, core.Comparable<Locale> {
   final ffi.Pointer<ffi.Opaque> _ffi;
 
@@ -31,7 +31,7 @@ final class Locale implements ffi.Finalizable, core.Comparable<Locale> {
   /// performance are critical and the locale is of a known shape (such as
   /// `aa-BB`) use `create_und`, `set_language`, `set_script`, and `set_region`.
   ///
-  /// See the [Rust documentation for `try_from_str`](https://docs.rs/icu/latest/icu/locale/struct.Locale.html#method.try_from_str) for more information.
+  /// See the [Rust documentation for `try_from_str`](https://docs.rs/icu/2.0.0/icu/locale/struct.Locale.html#method.try_from_str) for more information.
   ///
   /// Throws [LocaleParseError] on failure.
   factory Locale.fromString(String name) {
@@ -45,7 +45,7 @@ final class Locale implements ffi.Finalizable, core.Comparable<Locale> {
 
   /// Construct a unknown [`Locale`] "und".
   ///
-  /// See the [Rust documentation for `UNKNOWN`](https://docs.rs/icu/latest/icu/locale/struct.Locale.html#associatedconstant.UNKNOWN) for more information.
+  /// See the [Rust documentation for `UNKNOWN`](https://docs.rs/icu/2.0.0/icu/locale/struct.Locale.html#associatedconstant.UNKNOWN) for more information.
   factory Locale.unknown() {
     final result = _icu4x_Locale_unknown_mv1();
     return Locale._fromFfi(result, []);
@@ -53,7 +53,7 @@ final class Locale implements ffi.Finalizable, core.Comparable<Locale> {
 
   /// Clones the [`Locale`].
   ///
-  /// See the [Rust documentation for `Locale`](https://docs.rs/icu/latest/icu/locale/struct.Locale.html) for more information.
+  /// See the [Rust documentation for `Locale`](https://docs.rs/icu/2.0.0/icu/locale/struct.Locale.html) for more information.
   Locale clone() {
     final result = _icu4x_Locale_clone_mv1(_ffi);
     return Locale._fromFfi(result, []);
@@ -62,7 +62,7 @@ final class Locale implements ffi.Finalizable, core.Comparable<Locale> {
   /// Returns a string representation of the `LanguageIdentifier` part of
   /// [`Locale`].
   ///
-  /// See the [Rust documentation for `id`](https://docs.rs/icu/latest/icu/locale/struct.Locale.html#structfield.id) for more information.
+  /// See the [Rust documentation for `id`](https://docs.rs/icu/2.0.0/icu/locale/struct.Locale.html#structfield.id) for more information.
   String get basename {
     final write = _Write();
     _icu4x_Locale_basename_mv1(_ffi, write._ffi);
@@ -71,7 +71,7 @@ final class Locale implements ffi.Finalizable, core.Comparable<Locale> {
 
   /// Returns a string representation of the unicode extension.
   ///
-  /// See the [Rust documentation for `extensions`](https://docs.rs/icu/latest/icu/locale/struct.Locale.html#structfield.extensions) for more information.
+  /// See the [Rust documentation for `extensions`](https://docs.rs/icu/2.0.0/icu/locale/struct.Locale.html#structfield.extensions) for more information.
   String? getUnicodeExtension(String s) {
     final temp = _FinalizedArena();
     final write = _Write();
@@ -84,7 +84,7 @@ final class Locale implements ffi.Finalizable, core.Comparable<Locale> {
 
   /// Returns a string representation of [`Locale`] language.
   ///
-  /// See the [Rust documentation for `id`](https://docs.rs/icu/latest/icu/locale/struct.Locale.html#structfield.id) for more information.
+  /// See the [Rust documentation for `id`](https://docs.rs/icu/2.0.0/icu/locale/struct.Locale.html#structfield.id) for more information.
   String get language {
     final write = _Write();
     _icu4x_Locale_language_mv1(_ffi, write._ffi);
@@ -93,7 +93,7 @@ final class Locale implements ffi.Finalizable, core.Comparable<Locale> {
 
   /// Set the language part of the [`Locale`].
   ///
-  /// See the [Rust documentation for `try_from_str`](https://docs.rs/icu/latest/icu/locale/struct.Locale.html#method.try_from_str) for more information.
+  /// See the [Rust documentation for `try_from_str`](https://docs.rs/icu/2.0.0/icu/locale/struct.Locale.html#method.try_from_str) for more information.
   ///
   /// Throws [LocaleParseError] on failure.
   set language(String s) {
@@ -106,7 +106,7 @@ final class Locale implements ffi.Finalizable, core.Comparable<Locale> {
 
   /// Returns a string representation of [`Locale`] region.
   ///
-  /// See the [Rust documentation for `id`](https://docs.rs/icu/latest/icu/locale/struct.Locale.html#structfield.id) for more information.
+  /// See the [Rust documentation for `id`](https://docs.rs/icu/2.0.0/icu/locale/struct.Locale.html#structfield.id) for more information.
   String? get region {
     final write = _Write();
     final result = _icu4x_Locale_region_mv1(_ffi, write._ffi);
@@ -118,7 +118,7 @@ final class Locale implements ffi.Finalizable, core.Comparable<Locale> {
 
   /// Set the region part of the [`Locale`].
   ///
-  /// See the [Rust documentation for `try_from_str`](https://docs.rs/icu/latest/icu/locale/struct.Locale.html#method.try_from_str) for more information.
+  /// See the [Rust documentation for `try_from_str`](https://docs.rs/icu/2.0.0/icu/locale/struct.Locale.html#method.try_from_str) for more information.
   ///
   /// Throws [LocaleParseError] on failure.
   void setRegion(String s) {
@@ -131,7 +131,7 @@ final class Locale implements ffi.Finalizable, core.Comparable<Locale> {
 
   /// Returns a string representation of [`Locale`] script.
   ///
-  /// See the [Rust documentation for `id`](https://docs.rs/icu/latest/icu/locale/struct.Locale.html#structfield.id) for more information.
+  /// See the [Rust documentation for `id`](https://docs.rs/icu/2.0.0/icu/locale/struct.Locale.html#structfield.id) for more information.
   String? get script {
     final write = _Write();
     final result = _icu4x_Locale_script_mv1(_ffi, write._ffi);
@@ -143,7 +143,7 @@ final class Locale implements ffi.Finalizable, core.Comparable<Locale> {
 
   /// Set the script part of the [`Locale`]. Pass an empty string to remove the script.
   ///
-  /// See the [Rust documentation for `try_from_str`](https://docs.rs/icu/latest/icu/locale/struct.Locale.html#method.try_from_str) for more information.
+  /// See the [Rust documentation for `try_from_str`](https://docs.rs/icu/2.0.0/icu/locale/struct.Locale.html#method.try_from_str) for more information.
   ///
   /// Throws [LocaleParseError] on failure.
   void setScript(String s) {
@@ -156,7 +156,7 @@ final class Locale implements ffi.Finalizable, core.Comparable<Locale> {
 
   /// Normalizes a locale string.
   ///
-  /// See the [Rust documentation for `normalize`](https://docs.rs/icu/latest/icu/locale/struct.Locale.html#method.normalize) for more information.
+  /// See the [Rust documentation for `normalize`](https://docs.rs/icu/2.0.0/icu/locale/struct.Locale.html#method.normalize) for more information.
   ///
   /// Throws [LocaleParseError] on failure.
   static String normalize(String s) {
@@ -171,7 +171,7 @@ final class Locale implements ffi.Finalizable, core.Comparable<Locale> {
 
   /// Returns a string representation of [`Locale`].
   ///
-  /// See the [Rust documentation for `write_to`](https://docs.rs/icu/latest/icu/locale/struct.Locale.html#method.write_to) for more information.
+  /// See the [Rust documentation for `write_to`](https://docs.rs/icu/2.0.0/icu/locale/struct.Locale.html#method.write_to) for more information.
   @override
   String toString() {
     final write = _Write();
@@ -179,21 +179,21 @@ final class Locale implements ffi.Finalizable, core.Comparable<Locale> {
     return write.finalize();
   }
 
-  /// See the [Rust documentation for `normalizing_eq`](https://docs.rs/icu/latest/icu/locale/struct.Locale.html#method.normalizing_eq) for more information.
+  /// See the [Rust documentation for `normalizing_eq`](https://docs.rs/icu/2.0.0/icu/locale/struct.Locale.html#method.normalizing_eq) for more information.
   bool normalizingEq(String other) {
     final temp = _FinalizedArena();
     final result = _icu4x_Locale_normalizing_eq_mv1(_ffi, other._utf8AllocIn(temp.arena));
     return result;
   }
 
-  /// See the [Rust documentation for `strict_cmp`](https://docs.rs/icu/latest/icu/locale/struct.Locale.html#method.strict_cmp) for more information.
+  /// See the [Rust documentation for `strict_cmp`](https://docs.rs/icu/2.0.0/icu/locale/struct.Locale.html#method.strict_cmp) for more information.
   int compareToString(String other) {
     final temp = _FinalizedArena();
     final result = _icu4x_Locale_compare_to_string_mv1(_ffi, other._utf8AllocIn(temp.arena));
     return result;
   }
 
-  /// See the [Rust documentation for `total_cmp`](https://docs.rs/icu/latest/icu/locale/struct.Locale.html#method.total_cmp) for more information.
+  /// See the [Rust documentation for `total_cmp`](https://docs.rs/icu/2.0.0/icu/locale/struct.Locale.html#method.total_cmp) for more information.
   @override
   int compareTo(Locale other) {
     final result = _icu4x_Locale_compare_to_mv1(_ffi, other._ffi);

@@ -3,7 +3,7 @@
 
 part of 'lib.g.dart';
 
-/// See the [Rust documentation for `LanguageDisplay`](https://docs.rs/icu/latest/icu/experimental/displaynames/options/enum.LanguageDisplay.html) for more information.
+/// See the [Rust documentation for `LanguageDisplay`](https://docs.rs/icu/2.0.0/icu/experimental/displaynames/enum.LanguageDisplay.html) for more information.
 enum LanguageDisplay {
 
   dialect,

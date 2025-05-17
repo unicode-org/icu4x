@@ -3,7 +3,7 @@
 
 part of 'lib.g.dart';
 
-/// See the [Rust documentation for `DateTimeFormatter`](https://docs.rs/icu/latest/icu/datetime/struct.DateTimeFormatter.html) for more information.
+/// See the [Rust documentation for `DateTimeFormatter`](https://docs.rs/icu/2.0.0/icu/datetime/struct.DateTimeFormatter.html) for more information.
 final class ZonedDateTimeFormatter implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _ffi;
 
@@ -28,7 +28,7 @@ final class ZonedDateTimeFormatter implements ffi.Finalizable {
   /// Caution: The locale provided here must match the locale used to construct the non-zoned formatter,
   /// or else unexpected behavior may occur!
   ///
-  /// See the [Rust documentation for `SpecificLong`](https://docs.rs/icu/latest/icu/datetime/fieldsets/zone/struct.SpecificLong.html) for more information.
+  /// See the [Rust documentation for `SpecificLong`](https://docs.rs/icu/2.0.0/icu/datetime/fieldsets/zone/struct.SpecificLong.html) for more information.
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   factory ZonedDateTimeFormatter.specificLong(Locale locale, DateTimeFormatter formatter) {
@@ -44,7 +44,7 @@ final class ZonedDateTimeFormatter implements ffi.Finalizable {
   /// Caution: The locale provided here must match the locale used to construct the non-zoned formatter,
   /// or else unexpected behavior may occur!
   ///
-  /// See the [Rust documentation for `SpecificLong`](https://docs.rs/icu/latest/icu/datetime/fieldsets/zone/struct.SpecificLong.html) for more information.
+  /// See the [Rust documentation for `SpecificLong`](https://docs.rs/icu/2.0.0/icu/datetime/fieldsets/zone/struct.SpecificLong.html) for more information.
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   factory ZonedDateTimeFormatter.specificLongWithProvider(DataProvider provider, Locale locale, DateTimeFormatter formatter) {
@@ -60,7 +60,7 @@ final class ZonedDateTimeFormatter implements ffi.Finalizable {
   /// Caution: The locale provided here must match the locale used to construct the non-zoned formatter,
   /// or else unexpected behavior may occur!
   ///
-  /// See the [Rust documentation for `SpecificShort`](https://docs.rs/icu/latest/icu/datetime/fieldsets/zone/struct.SpecificShort.html) for more information.
+  /// See the [Rust documentation for `SpecificShort`](https://docs.rs/icu/2.0.0/icu/datetime/fieldsets/zone/struct.SpecificShort.html) for more information.
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   factory ZonedDateTimeFormatter.specificShort(Locale locale, DateTimeFormatter formatter) {
@@ -76,7 +76,7 @@ final class ZonedDateTimeFormatter implements ffi.Finalizable {
   /// Caution: The locale provided here must match the locale used to construct the non-zoned formatter,
   /// or else unexpected behavior may occur!
   ///
-  /// See the [Rust documentation for `SpecificShort`](https://docs.rs/icu/latest/icu/datetime/fieldsets/zone/struct.SpecificShort.html) for more information.
+  /// See the [Rust documentation for `SpecificShort`](https://docs.rs/icu/2.0.0/icu/datetime/fieldsets/zone/struct.SpecificShort.html) for more information.
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   factory ZonedDateTimeFormatter.specificShortWithProvider(DataProvider provider, Locale locale, DateTimeFormatter formatter) {
@@ -92,7 +92,7 @@ final class ZonedDateTimeFormatter implements ffi.Finalizable {
   /// Caution: The locale provided here must match the locale used to construct the non-zoned formatter,
   /// or else unexpected behavior may occur!
   ///
-  /// See the [Rust documentation for `LocalizedOffsetLong`](https://docs.rs/icu/latest/icu/datetime/fieldsets/zone/struct.LocalizedOffsetLong.html) for more information.
+  /// See the [Rust documentation for `LocalizedOffsetLong`](https://docs.rs/icu/2.0.0/icu/datetime/fieldsets/zone/struct.LocalizedOffsetLong.html) for more information.
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   factory ZonedDateTimeFormatter.localizedOffsetLong(Locale locale, DateTimeFormatter formatter) {
@@ -108,7 +108,7 @@ final class ZonedDateTimeFormatter implements ffi.Finalizable {
   /// Caution: The locale provided here must match the locale used to construct the non-zoned formatter,
   /// or else unexpected behavior may occur!
   ///
-  /// See the [Rust documentation for `LocalizedOffsetLong`](https://docs.rs/icu/latest/icu/datetime/fieldsets/zone/struct.LocalizedOffsetLong.html) for more information.
+  /// See the [Rust documentation for `LocalizedOffsetLong`](https://docs.rs/icu/2.0.0/icu/datetime/fieldsets/zone/struct.LocalizedOffsetLong.html) for more information.
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   factory ZonedDateTimeFormatter.localizedOffsetLongWithProvider(DataProvider provider, Locale locale, DateTimeFormatter formatter) {
@@ -124,7 +124,7 @@ final class ZonedDateTimeFormatter implements ffi.Finalizable {
   /// Caution: The locale provided here must match the locale used to construct the non-zoned formatter,
   /// or else unexpected behavior may occur!
   ///
-  /// See the [Rust documentation for `LocalizedOffsetShort`](https://docs.rs/icu/latest/icu/datetime/fieldsets/zone/struct.LocalizedOffsetShort.html) for more information.
+  /// See the [Rust documentation for `LocalizedOffsetShort`](https://docs.rs/icu/2.0.0/icu/datetime/fieldsets/zone/struct.LocalizedOffsetShort.html) for more information.
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   factory ZonedDateTimeFormatter.localizedOffsetShort(Locale locale, DateTimeFormatter formatter) {
@@ -140,7 +140,7 @@ final class ZonedDateTimeFormatter implements ffi.Finalizable {
   /// Caution: The locale provided here must match the locale used to construct the non-zoned formatter,
   /// or else unexpected behavior may occur!
   ///
-  /// See the [Rust documentation for `LocalizedOffsetShort`](https://docs.rs/icu/latest/icu/datetime/fieldsets/zone/struct.LocalizedOffsetShort.html) for more information.
+  /// See the [Rust documentation for `LocalizedOffsetShort`](https://docs.rs/icu/2.0.0/icu/datetime/fieldsets/zone/struct.LocalizedOffsetShort.html) for more information.
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   factory ZonedDateTimeFormatter.localizedOffsetShortWithProvider(DataProvider provider, Locale locale, DateTimeFormatter formatter) {
@@ -156,7 +156,7 @@ final class ZonedDateTimeFormatter implements ffi.Finalizable {
   /// Caution: The locale provided here must match the locale used to construct the non-zoned formatter,
   /// or else unexpected behavior may occur!
   ///
-  /// See the [Rust documentation for `GenericLong`](https://docs.rs/icu/latest/icu/datetime/fieldsets/zone/struct.GenericLong.html) for more information.
+  /// See the [Rust documentation for `GenericLong`](https://docs.rs/icu/2.0.0/icu/datetime/fieldsets/zone/struct.GenericLong.html) for more information.
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   factory ZonedDateTimeFormatter.genericLong(Locale locale, DateTimeFormatter formatter) {
@@ -172,7 +172,7 @@ final class ZonedDateTimeFormatter implements ffi.Finalizable {
   /// Caution: The locale provided here must match the locale used to construct the non-zoned formatter,
   /// or else unexpected behavior may occur!
   ///
-  /// See the [Rust documentation for `GenericLong`](https://docs.rs/icu/latest/icu/datetime/fieldsets/zone/struct.GenericLong.html) for more information.
+  /// See the [Rust documentation for `GenericLong`](https://docs.rs/icu/2.0.0/icu/datetime/fieldsets/zone/struct.GenericLong.html) for more information.
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   factory ZonedDateTimeFormatter.genericLongWithProvider(DataProvider provider, Locale locale, DateTimeFormatter formatter) {
@@ -188,7 +188,7 @@ final class ZonedDateTimeFormatter implements ffi.Finalizable {
   /// Caution: The locale provided here must match the locale used to construct the non-zoned formatter,
   /// or else unexpected behavior may occur!
   ///
-  /// See the [Rust documentation for `GenericShort`](https://docs.rs/icu/latest/icu/datetime/fieldsets/zone/struct.GenericShort.html) for more information.
+  /// See the [Rust documentation for `GenericShort`](https://docs.rs/icu/2.0.0/icu/datetime/fieldsets/zone/struct.GenericShort.html) for more information.
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   factory ZonedDateTimeFormatter.genericShort(Locale locale, DateTimeFormatter formatter) {
@@ -204,7 +204,7 @@ final class ZonedDateTimeFormatter implements ffi.Finalizable {
   /// Caution: The locale provided here must match the locale used to construct the non-zoned formatter,
   /// or else unexpected behavior may occur!
   ///
-  /// See the [Rust documentation for `GenericShort`](https://docs.rs/icu/latest/icu/datetime/fieldsets/zone/struct.GenericShort.html) for more information.
+  /// See the [Rust documentation for `GenericShort`](https://docs.rs/icu/2.0.0/icu/datetime/fieldsets/zone/struct.GenericShort.html) for more information.
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   factory ZonedDateTimeFormatter.genericShortWithProvider(DataProvider provider, Locale locale, DateTimeFormatter formatter) {
@@ -220,7 +220,7 @@ final class ZonedDateTimeFormatter implements ffi.Finalizable {
   /// Caution: The locale provided here must match the locale used to construct the non-zoned formatter,
   /// or else unexpected behavior may occur!
   ///
-  /// See the [Rust documentation for `Location`](https://docs.rs/icu/latest/icu/datetime/fieldsets/zone/struct.Location.html) for more information.
+  /// See the [Rust documentation for `Location`](https://docs.rs/icu/2.0.0/icu/datetime/fieldsets/zone/struct.Location.html) for more information.
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   factory ZonedDateTimeFormatter.location(Locale locale, DateTimeFormatter formatter) {
@@ -236,7 +236,7 @@ final class ZonedDateTimeFormatter implements ffi.Finalizable {
   /// Caution: The locale provided here must match the locale used to construct the non-zoned formatter,
   /// or else unexpected behavior may occur!
   ///
-  /// See the [Rust documentation for `Location`](https://docs.rs/icu/latest/icu/datetime/fieldsets/zone/struct.Location.html) for more information.
+  /// See the [Rust documentation for `Location`](https://docs.rs/icu/2.0.0/icu/datetime/fieldsets/zone/struct.Location.html) for more information.
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   factory ZonedDateTimeFormatter.locationWithProvider(DataProvider provider, Locale locale, DateTimeFormatter formatter) {
@@ -252,7 +252,7 @@ final class ZonedDateTimeFormatter implements ffi.Finalizable {
   /// Caution: The locale provided here must match the locale used to construct the non-zoned formatter,
   /// or else unexpected behavior may occur!
   ///
-  /// See the [Rust documentation for `ExemplarCity`](https://docs.rs/icu/latest/icu/datetime/fieldsets/zone/struct.ExemplarCity.html) for more information.
+  /// See the [Rust documentation for `ExemplarCity`](https://docs.rs/icu/2.0.0/icu/datetime/fieldsets/zone/struct.ExemplarCity.html) for more information.
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   factory ZonedDateTimeFormatter.exemplarCity(Locale locale, DateTimeFormatter formatter) {
@@ -268,7 +268,7 @@ final class ZonedDateTimeFormatter implements ffi.Finalizable {
   /// Caution: The locale provided here must match the locale used to construct the non-zoned formatter,
   /// or else unexpected behavior may occur!
   ///
-  /// See the [Rust documentation for `ExemplarCity`](https://docs.rs/icu/latest/icu/datetime/fieldsets/zone/struct.ExemplarCity.html) for more information.
+  /// See the [Rust documentation for `ExemplarCity`](https://docs.rs/icu/2.0.0/icu/datetime/fieldsets/zone/struct.ExemplarCity.html) for more information.
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   factory ZonedDateTimeFormatter.exemplarCityWithProvider(DataProvider provider, Locale locale, DateTimeFormatter formatter) {
@@ -279,7 +279,7 @@ final class ZonedDateTimeFormatter implements ffi.Finalizable {
     return ZonedDateTimeFormatter._fromFfi(result.union.ok, []);
   }
 
-  /// See the [Rust documentation for `format`](https://docs.rs/icu/latest/icu/datetime/struct.DateTimeFormatter.html#method.format) for more information.
+  /// See the [Rust documentation for `format`](https://docs.rs/icu/2.0.0/icu/datetime/struct.DateTimeFormatter.html#method.format) for more information.
   ///
   /// Throws [DateTimeWriteError] on failure.
   String formatIso(IsoDate isoDate, Time time, TimeZoneInfo zone) {

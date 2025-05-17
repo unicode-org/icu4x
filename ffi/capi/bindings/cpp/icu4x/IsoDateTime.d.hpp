@@ -37,7 +37,7 @@ namespace icu4x {
 /**
  * An ICU4X DateTime object capable of containing a ISO-8601 date and time.
  *
- * See the [Rust documentation for `DateTime`](https://docs.rs/icu/latest/icu/time/struct.DateTime.html) for more information.
+ * See the [Rust documentation for `DateTime`](https://docs.rs/icu/2.0.0/icu/time/struct.DateTime.html) for more information.
  */
 struct IsoDateTime {
   std::unique_ptr<icu4x::IsoDate> date;
@@ -46,7 +46,7 @@ struct IsoDateTime {
   /**
    * Creates a new [`IsoDateTime`] from an IXDTF string.
    *
-   * See the [Rust documentation for `try_from_str`](https://docs.rs/icu/latest/icu/time/struct.DateTime.html#method.try_from_str) for more information.
+   * See the [Rust documentation for `try_from_str`](https://docs.rs/icu/2.0.0/icu/time/struct.DateTime.html#method.try_from_str) for more information.
    */
   inline static diplomat::result<icu4x::IsoDateTime, icu4x::Rfc9557ParseError> from_string(std::string_view v);
 

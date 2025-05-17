@@ -5,7 +5,7 @@ part of 'lib.g.dart';
 
 /// An ICU4X word-break segmenter, capable of finding word breakpoints in strings.
 ///
-/// See the [Rust documentation for `WordSegmenter`](https://docs.rs/icu/latest/icu/segmenter/struct.WordSegmenter.html) for more information.
+/// See the [Rust documentation for `WordSegmenter`](https://docs.rs/icu/2.0.0/icu/segmenter/struct.WordSegmenter.html) for more information.
 final class WordSegmenter implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _ffi;
 
@@ -31,7 +31,7 @@ final class WordSegmenter implements ffi.Finalizable {
   /// Note: currently, it uses dictionary for Chinese and Japanese, and LSTM for Burmese,
   /// Khmer, Lao, and Thai.
   ///
-  /// See the [Rust documentation for `new_auto`](https://docs.rs/icu/latest/icu/segmenter/struct.WordSegmenter.html#method.new_auto) for more information.
+  /// See the [Rust documentation for `new_auto`](https://docs.rs/icu/2.0.0/icu/segmenter/struct.WordSegmenter.html#method.new_auto) for more information.
   factory WordSegmenter.auto() {
     final result = _icu4x_WordSegmenter_create_auto_mv1();
     return WordSegmenter._fromFfi(result, []);
@@ -43,7 +43,7 @@ final class WordSegmenter implements ffi.Finalizable {
   /// Note: currently, it uses dictionary for Chinese and Japanese, and LSTM for Burmese,
   /// Khmer, Lao, and Thai.
   ///
-  /// See the [Rust documentation for `try_new_auto`](https://docs.rs/icu/latest/icu/segmenter/struct.WordSegmenter.html#method.try_new_auto) for more information.
+  /// See the [Rust documentation for `try_new_auto`](https://docs.rs/icu/2.0.0/icu/segmenter/struct.WordSegmenter.html#method.try_new_auto) for more information.
   ///
   /// Throws [DataError] on failure.
   factory WordSegmenter.autoWithContentLocale(Locale locale) {
@@ -60,7 +60,7 @@ final class WordSegmenter implements ffi.Finalizable {
   /// Note: currently, it uses dictionary for Chinese and Japanese, and LSTM for Burmese,
   /// Khmer, Lao, and Thai.
   ///
-  /// See the [Rust documentation for `try_new_auto`](https://docs.rs/icu/latest/icu/segmenter/struct.WordSegmenter.html#method.try_new_auto) for more information.
+  /// See the [Rust documentation for `try_new_auto`](https://docs.rs/icu/2.0.0/icu/segmenter/struct.WordSegmenter.html#method.try_new_auto) for more information.
   ///
   /// Throws [DataError] on failure.
   factory WordSegmenter.autoWithContentLocaleAndProvider(DataProvider provider, Locale locale) {
@@ -77,7 +77,7 @@ final class WordSegmenter implements ffi.Finalizable {
   /// Note: currently, it uses dictionary for Chinese and Japanese, and LSTM for Burmese,
   /// Khmer, Lao, and Thai.
   ///
-  /// See the [Rust documentation for `new_lstm`](https://docs.rs/icu/latest/icu/segmenter/struct.WordSegmenter.html#method.new_lstm) for more information.
+  /// See the [Rust documentation for `new_lstm`](https://docs.rs/icu/2.0.0/icu/segmenter/struct.WordSegmenter.html#method.new_lstm) for more information.
   factory WordSegmenter.lstm() {
     final result = _icu4x_WordSegmenter_create_lstm_mv1();
     return WordSegmenter._fromFfi(result, []);
@@ -89,7 +89,7 @@ final class WordSegmenter implements ffi.Finalizable {
   /// Note: currently, it uses dictionary for Chinese and Japanese, and LSTM for Burmese,
   /// Khmer, Lao, and Thai.
   ///
-  /// See the [Rust documentation for `try_new_lstm`](https://docs.rs/icu/latest/icu/segmenter/struct.WordSegmenter.html#method.try_new_lstm) for more information.
+  /// See the [Rust documentation for `try_new_lstm`](https://docs.rs/icu/2.0.0/icu/segmenter/struct.WordSegmenter.html#method.try_new_lstm) for more information.
   ///
   /// Throws [DataError] on failure.
   factory WordSegmenter.lstmWithContentLocale(Locale locale) {
@@ -106,7 +106,7 @@ final class WordSegmenter implements ffi.Finalizable {
   /// Note: currently, it uses dictionary for Chinese and Japanese, and LSTM for Burmese,
   /// Khmer, Lao, and Thai.
   ///
-  /// See the [Rust documentation for `try_new_lstm`](https://docs.rs/icu/latest/icu/segmenter/struct.WordSegmenter.html#method.try_new_lstm) for more information.
+  /// See the [Rust documentation for `try_new_lstm`](https://docs.rs/icu/2.0.0/icu/segmenter/struct.WordSegmenter.html#method.try_new_lstm) for more information.
   ///
   /// Throws [DataError] on failure.
   factory WordSegmenter.lstmWithContentLocaleAndProvider(DataProvider provider, Locale locale) {
@@ -123,7 +123,7 @@ final class WordSegmenter implements ffi.Finalizable {
   /// Note: currently, it uses dictionary for Chinese and Japanese, and dictionary for Burmese,
   /// Khmer, Lao, and Thai.
   ///
-  /// See the [Rust documentation for `new_dictionary`](https://docs.rs/icu/latest/icu/segmenter/struct.WordSegmenter.html#method.new_dictionary) for more information.
+  /// See the [Rust documentation for `new_dictionary`](https://docs.rs/icu/2.0.0/icu/segmenter/struct.WordSegmenter.html#method.new_dictionary) for more information.
   factory WordSegmenter.dictionary() {
     final result = _icu4x_WordSegmenter_create_dictionary_mv1();
     return WordSegmenter._fromFfi(result, []);
@@ -135,7 +135,7 @@ final class WordSegmenter implements ffi.Finalizable {
   /// Note: currently, it uses dictionary for Chinese and Japanese, and dictionary for Burmese,
   /// Khmer, Lao, and Thai.
   ///
-  /// See the [Rust documentation for `try_new_dictionary`](https://docs.rs/icu/latest/icu/segmenter/struct.WordSegmenter.html#method.try_new_dictionary) for more information.
+  /// See the [Rust documentation for `try_new_dictionary`](https://docs.rs/icu/2.0.0/icu/segmenter/struct.WordSegmenter.html#method.try_new_dictionary) for more information.
   ///
   /// Throws [DataError] on failure.
   factory WordSegmenter.dictionaryWithContentLocale(Locale locale) {
@@ -152,7 +152,7 @@ final class WordSegmenter implements ffi.Finalizable {
   /// Note: currently, it uses dictionary for Chinese and Japanese, and dictionary for Burmese,
   /// Khmer, Lao, and Thai.
   ///
-  /// See the [Rust documentation for `try_new_dictionary`](https://docs.rs/icu/latest/icu/segmenter/struct.WordSegmenter.html#method.try_new_dictionary) for more information.
+  /// See the [Rust documentation for `try_new_dictionary`](https://docs.rs/icu/2.0.0/icu/segmenter/struct.WordSegmenter.html#method.try_new_dictionary) for more information.
   ///
   /// Throws [DataError] on failure.
   factory WordSegmenter.dictionaryWithContentLocaleAndProvider(DataProvider provider, Locale locale) {
@@ -168,7 +168,7 @@ final class WordSegmenter implements ffi.Finalizable {
   /// Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
   /// to the WHATWG Encoding Standard.
   ///
-  /// See the [Rust documentation for `segment_utf16`](https://docs.rs/icu/latest/icu/segmenter/struct.WordSegmenterBorrowed.html#method.segment_utf16) for more information.
+  /// See the [Rust documentation for `segment_utf16`](https://docs.rs/icu/2.0.0/icu/segmenter/struct.WordSegmenterBorrowed.html#method.segment_utf16) for more information.
   WordBreakIteratorUtf16 segment(String input) {
     final inputArena = _FinalizedArena();
     // This lifetime edge depends on lifetimes: 'a

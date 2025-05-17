@@ -13,7 +13,7 @@ const Decimal_box_destroy_registry = new FinalizationRegistry((ptr) => {
 });
 
 /**
- * See the [Rust documentation for `Decimal`](https://docs.rs/fixed_decimal/latest/fixed_decimal/type.Decimal.html) for more information.
+ * See the [Rust documentation for `Decimal`](https://docs.rs/fixed_decimal/0.7.0/fixed_decimal/type.Decimal.html) for more information.
  */
 export class Decimal {
     // Internal ptr reference:
@@ -47,7 +47,7 @@ export class Decimal {
     /**
      * Construct an [`Decimal`] from an integer.
      *
-     * See the [Rust documentation for `Decimal`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.Decimal.html) for more information.
+     * See the [Rust documentation for `Decimal`](https://docs.rs/fixed_decimal/0.7.0/fixed_decimal/type.Decimal.html) for more information.
      */
     static fromNumber(v) {
 
@@ -64,7 +64,7 @@ export class Decimal {
     /**
      * Construct an [`Decimal`] from an integer.
      *
-     * See the [Rust documentation for `Decimal`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.Decimal.html) for more information.
+     * See the [Rust documentation for `Decimal`](https://docs.rs/fixed_decimal/0.7.0/fixed_decimal/type.Decimal.html) for more information.
      */
     static fromBigInt(v) {
 
@@ -81,9 +81,9 @@ export class Decimal {
     /**
      * Construct an [`Decimal`] from an float, with a given power of 10 for the lower magnitude
      *
-     * See the [Rust documentation for `try_from_f64`](https://docs.rs/fixed_decimal/latest/fixed_decimal/type.Decimal.html#method.try_from_f64) for more information.
+     * See the [Rust documentation for `try_from_f64`](https://docs.rs/fixed_decimal/0.7.0/fixed_decimal/type.Decimal.html#method.try_from_f64) for more information.
      *
-     * See the [Rust documentation for `FloatPrecision`](https://docs.rs/fixed_decimal/latest/fixed_decimal/enum.FloatPrecision.html) for more information.
+     * See the [Rust documentation for `FloatPrecision`](https://docs.rs/fixed_decimal/0.7.0/fixed_decimal/enum.FloatPrecision.html) for more information.
      */
     static fromNumberWithLowerMagnitude(f, magnitude) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
@@ -107,9 +107,9 @@ export class Decimal {
     /**
      * Construct an [`Decimal`] from an float, for a given number of significant digits
      *
-     * See the [Rust documentation for `try_from_f64`](https://docs.rs/fixed_decimal/latest/fixed_decimal/type.Decimal.html#method.try_from_f64) for more information.
+     * See the [Rust documentation for `try_from_f64`](https://docs.rs/fixed_decimal/0.7.0/fixed_decimal/type.Decimal.html#method.try_from_f64) for more information.
      *
-     * See the [Rust documentation for `FloatPrecision`](https://docs.rs/fixed_decimal/latest/fixed_decimal/enum.FloatPrecision.html) for more information.
+     * See the [Rust documentation for `FloatPrecision`](https://docs.rs/fixed_decimal/0.7.0/fixed_decimal/enum.FloatPrecision.html) for more information.
      */
     static fromNumberWithSignificantDigits(f, digits) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
@@ -134,9 +134,9 @@ export class Decimal {
      * Construct an [`Decimal`] from an float, with enough digits to recover
      * the original floating point in IEEE 754 without needing trailing zeros
      *
-     * See the [Rust documentation for `try_from_f64`](https://docs.rs/fixed_decimal/latest/fixed_decimal/type.Decimal.html#method.try_from_f64) for more information.
+     * See the [Rust documentation for `try_from_f64`](https://docs.rs/fixed_decimal/0.7.0/fixed_decimal/type.Decimal.html#method.try_from_f64) for more information.
      *
-     * See the [Rust documentation for `FloatPrecision`](https://docs.rs/fixed_decimal/latest/fixed_decimal/enum.FloatPrecision.html) for more information.
+     * See the [Rust documentation for `FloatPrecision`](https://docs.rs/fixed_decimal/0.7.0/fixed_decimal/enum.FloatPrecision.html) for more information.
      */
     static fromNumberWithRoundTripPrecision(f) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
@@ -160,7 +160,7 @@ export class Decimal {
     /**
      * Construct an [`Decimal`] from a string.
      *
-     * See the [Rust documentation for `try_from_str`](https://docs.rs/fixed_decimal/latest/fixed_decimal/type.Decimal.html#method.try_from_str) for more information.
+     * See the [Rust documentation for `try_from_str`](https://docs.rs/fixed_decimal/0.7.0/fixed_decimal/type.Decimal.html#method.try_from_str) for more information.
      */
     static fromString(v) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
@@ -187,7 +187,7 @@ export class Decimal {
     }
 
     /**
-     * See the [Rust documentation for `digit_at`](https://docs.rs/fixed_decimal/latest/fixed_decimal/type.Decimal.html#method.digit_at) for more information.
+     * See the [Rust documentation for `digit_at`](https://docs.rs/fixed_decimal/0.7.0/fixed_decimal/type.Decimal.html#method.digit_at) for more information.
      */
     digitAt(magnitude) {
 
@@ -202,7 +202,7 @@ export class Decimal {
     }
 
     /**
-     * See the [Rust documentation for `magnitude_range`](https://docs.rs/fixed_decimal/latest/fixed_decimal/type.Decimal.html#method.magnitude_range) for more information.
+     * See the [Rust documentation for `magnitude_range`](https://docs.rs/fixed_decimal/0.7.0/fixed_decimal/type.Decimal.html#method.magnitude_range) for more information.
      */
     get magnitudeStart() {
 
@@ -217,7 +217,7 @@ export class Decimal {
     }
 
     /**
-     * See the [Rust documentation for `magnitude_range`](https://docs.rs/fixed_decimal/latest/fixed_decimal/type.Decimal.html#method.magnitude_range) for more information.
+     * See the [Rust documentation for `magnitude_range`](https://docs.rs/fixed_decimal/0.7.0/fixed_decimal/type.Decimal.html#method.magnitude_range) for more information.
      */
     get magnitudeEnd() {
 
@@ -232,7 +232,7 @@ export class Decimal {
     }
 
     /**
-     * See the [Rust documentation for `nonzero_magnitude_start`](https://docs.rs/fixed_decimal/latest/fixed_decimal/type.Decimal.html#method.nonzero_magnitude_start) for more information.
+     * See the [Rust documentation for `nonzero_magnitude_start`](https://docs.rs/fixed_decimal/0.7.0/fixed_decimal/type.Decimal.html#method.nonzero_magnitude_start) for more information.
      */
     get nonzeroMagnitudeStart() {
 
@@ -247,7 +247,7 @@ export class Decimal {
     }
 
     /**
-     * See the [Rust documentation for `nonzero_magnitude_end`](https://docs.rs/fixed_decimal/latest/fixed_decimal/type.Decimal.html#method.nonzero_magnitude_end) for more information.
+     * See the [Rust documentation for `nonzero_magnitude_end`](https://docs.rs/fixed_decimal/0.7.0/fixed_decimal/type.Decimal.html#method.nonzero_magnitude_end) for more information.
      */
     get nonzeroMagnitudeEnd() {
 
@@ -262,7 +262,7 @@ export class Decimal {
     }
 
     /**
-     * See the [Rust documentation for `is_zero`](https://docs.rs/fixed_decimal/latest/fixed_decimal/type.Decimal.html#method.is_zero) for more information.
+     * See the [Rust documentation for `is_zero`](https://docs.rs/fixed_decimal/0.7.0/fixed_decimal/type.Decimal.html#method.is_zero) for more information.
      */
     get isZero() {
 
@@ -279,7 +279,7 @@ export class Decimal {
     /**
      * Multiply the [`Decimal`] by a given power of ten.
      *
-     * See the [Rust documentation for `multiply_pow10`](https://docs.rs/fixed_decimal/latest/fixed_decimal/type.Decimal.html#method.multiply_pow10) for more information.
+     * See the [Rust documentation for `multiply_pow10`](https://docs.rs/fixed_decimal/0.7.0/fixed_decimal/type.Decimal.html#method.multiply_pow10) for more information.
      */
     multiplyPow10(power) {
     wasm.icu4x_Decimal_multiply_pow10_mv1(this.ffiValue, power);
@@ -291,7 +291,7 @@ export class Decimal {
     }
 
     /**
-     * See the [Rust documentation for `sign`](https://docs.rs/fixed_decimal/latest/fixed_decimal/type.Decimal.html#method.sign) for more information.
+     * See the [Rust documentation for `sign`](https://docs.rs/fixed_decimal/0.7.0/fixed_decimal/type.Decimal.html#method.sign) for more information.
      */
     get sign() {
 
@@ -308,7 +308,7 @@ export class Decimal {
     /**
      * Set the sign of the [`Decimal`].
      *
-     * See the [Rust documentation for `set_sign`](https://docs.rs/fixed_decimal/latest/fixed_decimal/type.Decimal.html#method.set_sign) for more information.
+     * See the [Rust documentation for `set_sign`](https://docs.rs/fixed_decimal/0.7.0/fixed_decimal/type.Decimal.html#method.set_sign) for more information.
      */
     set sign(sign) {
     wasm.icu4x_Decimal_set_sign_mv1(this.ffiValue, sign.ffiValue);
@@ -320,7 +320,7 @@ export class Decimal {
     }
 
     /**
-     * See the [Rust documentation for `apply_sign_display`](https://docs.rs/fixed_decimal/latest/fixed_decimal/type.Decimal.html#method.apply_sign_display) for more information.
+     * See the [Rust documentation for `apply_sign_display`](https://docs.rs/fixed_decimal/0.7.0/fixed_decimal/type.Decimal.html#method.apply_sign_display) for more information.
      */
     applySignDisplay(signDisplay) {
     wasm.icu4x_Decimal_apply_sign_display_mv1(this.ffiValue, signDisplay.ffiValue);
@@ -332,7 +332,7 @@ export class Decimal {
     }
 
     /**
-     * See the [Rust documentation for `trim_start`](https://docs.rs/fixed_decimal/latest/fixed_decimal/type.Decimal.html#method.trim_start) for more information.
+     * See the [Rust documentation for `trim_start`](https://docs.rs/fixed_decimal/0.7.0/fixed_decimal/type.Decimal.html#method.trim_start) for more information.
      */
     trimStart() {
     wasm.icu4x_Decimal_trim_start_mv1(this.ffiValue);
@@ -344,7 +344,7 @@ export class Decimal {
     }
 
     /**
-     * See the [Rust documentation for `trim_end`](https://docs.rs/fixed_decimal/latest/fixed_decimal/type.Decimal.html#method.trim_end) for more information.
+     * See the [Rust documentation for `trim_end`](https://docs.rs/fixed_decimal/0.7.0/fixed_decimal/type.Decimal.html#method.trim_end) for more information.
      */
     trimEnd() {
     wasm.icu4x_Decimal_trim_end_mv1(this.ffiValue);
@@ -356,7 +356,7 @@ export class Decimal {
     }
 
     /**
-     * See the [Rust documentation for `trim_end_if_integer`](https://docs.rs/fixed_decimal/latest/fixed_decimal/type.Decimal.html#method.trim_end_if_integer) for more information.
+     * See the [Rust documentation for `trim_end_if_integer`](https://docs.rs/fixed_decimal/0.7.0/fixed_decimal/type.Decimal.html#method.trim_end_if_integer) for more information.
      */
     trimEndIfInteger() {
     wasm.icu4x_Decimal_trim_end_if_integer_mv1(this.ffiValue);
@@ -370,7 +370,7 @@ export class Decimal {
     /**
      * Zero-pad the [`Decimal`] on the left to a particular position
      *
-     * See the [Rust documentation for `pad_start`](https://docs.rs/fixed_decimal/latest/fixed_decimal/type.Decimal.html#method.pad_start) for more information.
+     * See the [Rust documentation for `pad_start`](https://docs.rs/fixed_decimal/0.7.0/fixed_decimal/type.Decimal.html#method.pad_start) for more information.
      */
     padStart(position) {
     wasm.icu4x_Decimal_pad_start_mv1(this.ffiValue, position);
@@ -384,7 +384,7 @@ export class Decimal {
     /**
      * Zero-pad the [`Decimal`] on the right to a particular position
      *
-     * See the [Rust documentation for `pad_end`](https://docs.rs/fixed_decimal/latest/fixed_decimal/type.Decimal.html#method.pad_end) for more information.
+     * See the [Rust documentation for `pad_end`](https://docs.rs/fixed_decimal/0.7.0/fixed_decimal/type.Decimal.html#method.pad_end) for more information.
      */
     padEnd(position) {
     wasm.icu4x_Decimal_pad_end_mv1(this.ffiValue, position);
@@ -399,7 +399,7 @@ export class Decimal {
      * Truncate the [`Decimal`] on the left to a particular position, deleting digits if necessary. This is useful for, e.g. abbreviating years
      * ("2022" -> "22")
      *
-     * See the [Rust documentation for `set_max_position`](https://docs.rs/fixed_decimal/latest/fixed_decimal/type.Decimal.html#method.set_max_position) for more information.
+     * See the [Rust documentation for `set_max_position`](https://docs.rs/fixed_decimal/0.7.0/fixed_decimal/type.Decimal.html#method.set_max_position) for more information.
      */
     setMaxPosition(position) {
     wasm.icu4x_Decimal_set_max_position_mv1(this.ffiValue, position);
@@ -416,7 +416,7 @@ export class Decimal {
      * This uses half to even rounding, which resolves ties by selecting the nearest
      * even integer to the original value.
      *
-     * See the [Rust documentation for `round`](https://docs.rs/fixed_decimal/latest/fixed_decimal/type.Decimal.html#method.round) for more information.
+     * See the [Rust documentation for `round`](https://docs.rs/fixed_decimal/0.7.0/fixed_decimal/type.Decimal.html#method.round) for more information.
      */
     round(position) {
     wasm.icu4x_Decimal_round_mv1(this.ffiValue, position);
@@ -428,7 +428,7 @@ export class Decimal {
     }
 
     /**
-     * See the [Rust documentation for `ceil`](https://docs.rs/fixed_decimal/latest/fixed_decimal/type.Decimal.html#method.ceil) for more information.
+     * See the [Rust documentation for `ceil`](https://docs.rs/fixed_decimal/0.7.0/fixed_decimal/type.Decimal.html#method.ceil) for more information.
      */
     ceil(position) {
     wasm.icu4x_Decimal_ceil_mv1(this.ffiValue, position);
@@ -440,7 +440,7 @@ export class Decimal {
     }
 
     /**
-     * See the [Rust documentation for `expand`](https://docs.rs/fixed_decimal/latest/fixed_decimal/type.Decimal.html#method.expand) for more information.
+     * See the [Rust documentation for `expand`](https://docs.rs/fixed_decimal/0.7.0/fixed_decimal/type.Decimal.html#method.expand) for more information.
      */
     expand(position) {
     wasm.icu4x_Decimal_expand_mv1(this.ffiValue, position);
@@ -452,7 +452,7 @@ export class Decimal {
     }
 
     /**
-     * See the [Rust documentation for `floor`](https://docs.rs/fixed_decimal/latest/fixed_decimal/type.Decimal.html#method.floor) for more information.
+     * See the [Rust documentation for `floor`](https://docs.rs/fixed_decimal/0.7.0/fixed_decimal/type.Decimal.html#method.floor) for more information.
      */
     floor(position) {
     wasm.icu4x_Decimal_floor_mv1(this.ffiValue, position);
@@ -464,7 +464,7 @@ export class Decimal {
     }
 
     /**
-     * See the [Rust documentation for `trunc`](https://docs.rs/fixed_decimal/latest/fixed_decimal/type.Decimal.html#method.trunc) for more information.
+     * See the [Rust documentation for `trunc`](https://docs.rs/fixed_decimal/0.7.0/fixed_decimal/type.Decimal.html#method.trunc) for more information.
      */
     trunc(position) {
     wasm.icu4x_Decimal_trunc_mv1(this.ffiValue, position);
@@ -476,7 +476,7 @@ export class Decimal {
     }
 
     /**
-     * See the [Rust documentation for `round_with_mode`](https://docs.rs/fixed_decimal/latest/fixed_decimal/type.Decimal.html#method.round_with_mode) for more information.
+     * See the [Rust documentation for `round_with_mode`](https://docs.rs/fixed_decimal/0.7.0/fixed_decimal/type.Decimal.html#method.round_with_mode) for more information.
      */
     roundWithMode(position, mode) {
     wasm.icu4x_Decimal_round_with_mode_mv1(this.ffiValue, position, mode.ffiValue);
@@ -488,7 +488,7 @@ export class Decimal {
     }
 
     /**
-     * See the [Rust documentation for `round_with_mode_and_increment`](https://docs.rs/fixed_decimal/latest/fixed_decimal/type.Decimal.html#method.round_with_mode_and_increment) for more information.
+     * See the [Rust documentation for `round_with_mode_and_increment`](https://docs.rs/fixed_decimal/0.7.0/fixed_decimal/type.Decimal.html#method.round_with_mode_and_increment) for more information.
      */
     roundWithModeAndIncrement(position, mode, increment) {
     wasm.icu4x_Decimal_round_with_mode_and_increment_mv1(this.ffiValue, position, mode.ffiValue, increment.ffiValue);
@@ -506,7 +506,7 @@ export class Decimal {
      *
      * If not successful, `other` will be unchanged and an error is returned.
      *
-     * See the [Rust documentation for `concatenate_end`](https://docs.rs/fixed_decimal/latest/fixed_decimal/type.Decimal.html#method.concatenate_end) for more information.
+     * See the [Rust documentation for `concatenate_end`](https://docs.rs/fixed_decimal/0.7.0/fixed_decimal/type.Decimal.html#method.concatenate_end) for more information.
      */
     concatenateEnd(other) {
 
@@ -523,7 +523,7 @@ export class Decimal {
     /**
      * Format the [`Decimal`] as a string.
      *
-     * See the [Rust documentation for `write_to`](https://docs.rs/fixed_decimal/latest/fixed_decimal/type.Decimal.html#method.write_to) for more information.
+     * See the [Rust documentation for `write_to`](https://docs.rs/fixed_decimal/0.7.0/fixed_decimal/type.Decimal.html#method.write_to) for more information.
      */
     toString() {
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
