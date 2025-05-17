@@ -2653,12 +2653,6 @@ let termini = Object.assign({
         parameters: [
             
             {
-                name: "self",
-                type: "TimeZoneVariant",
-                typeUse: "enumerator"
-            },
-            
-            {
                 name: "isdst",
                 type: "boolean",
                 typeUse: "boolean"

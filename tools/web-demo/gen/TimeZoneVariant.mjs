@@ -1,7 +1,7 @@
 import { TimeZoneVariant } from "icu4x"
-export function fromRearguardIsdst(self, isdst) {
+export function fromRearguardIsdst(isdst) {
     
-    let out = self.fromRearguardIsdst(isdst);
+    let out = TimeZoneVariant.fromRearguardIsdst(isdst);
     
     out = out?.value || 'None';;
     
