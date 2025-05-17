@@ -33,7 +33,7 @@ zerovec = { workspace = true, optional = true }
 iai = { workspace = true }
 icu = { path = "../../components/icu", default-features = false }
 icu_provider = { path = "../../provider/core" }
-litemap = { path = "../../utils/litemap", features = ["testing"] }
+litemap = { workspace = true, features = ["testing"] }
 postcard = { workspace = true, features = ["use-std"] }
 potential_utf = { workspace = true }
 serde = { workspace = true, features = ["derive"] }
