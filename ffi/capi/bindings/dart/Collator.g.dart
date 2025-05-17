@@ -28,7 +28,7 @@ final class Collator implements ffi.Finalizable {
   /// See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/collator/struct.Collator.html#method.try_new) for more information.
   ///
   /// Throws [DataError] on failure.
-  factory Collator.create(Locale locale, CollatorOptions options) {
+  factory Collator(Locale locale, CollatorOptions options) {
     final temp = _FinalizedArena();
     final result = _icu4x_Collator_create_v1_mv1(locale._ffi, options._toFfi(temp.arena));
     if (!result.isOk) {
@@ -42,7 +42,7 @@ final class Collator implements ffi.Finalizable {
   /// See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/collator/struct.Collator.html#method.try_new) for more information.
   ///
   /// Throws [DataError] on failure.
-  factory Collator(DataProvider provider, Locale locale, CollatorOptions options) {
+  factory Collator.createWithProvider(DataProvider provider, Locale locale, CollatorOptions options) {
     final temp = _FinalizedArena();
     final result = _icu4x_Collator_create_v1_with_provider_mv1(provider._ffi, locale._ffi, options._toFfi(temp.arena));
     if (!result.isOk) {

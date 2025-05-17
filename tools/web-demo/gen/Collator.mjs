@@ -12,7 +12,7 @@ export function compare(selfLocaleName, selfOptionsStrength, selfOptionsAlternat
         caseLevel: selfOptionsCaseLevel
     });
     
-    let self = Collator.create(selfLocale,selfOptions);
+    let self = new Collator(selfLocale,selfOptions);
     
     let out = self.compare(left,right);
     
