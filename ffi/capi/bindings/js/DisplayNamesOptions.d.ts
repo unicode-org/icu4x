@@ -4,7 +4,7 @@ import type { DisplayNamesStyle } from "./DisplayNamesStyle"
 import type { LanguageDisplay } from "./LanguageDisplay"
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
-type DisplayNamesOptions_obj = {
+export type DisplayNamesOptions_obj = {
     style?: DisplayNamesStyle | null;
     fallback?: DisplayNamesFallback | null;
     languageDisplay?: LanguageDisplay | null;

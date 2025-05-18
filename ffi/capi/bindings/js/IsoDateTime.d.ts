@@ -19,7 +19,7 @@ export class IsoDateTime {
 
 
     /**
-     * Creates a new [`IsoDateTime`] from an IXDTF string.
+     * Creates a new {@link IsoDateTime} from an IXDTF string.
      *
      * See the [Rust documentation for `try_from_str`](https://docs.rs/icu/2.0.0/icu/time/struct.DateTime.html#method.try_from_str) for more information.
      */

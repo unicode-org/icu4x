@@ -25,7 +25,7 @@ final class SentenceSegmenter implements ffi.Finalizable {
 
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_SentenceSegmenter_destroy_mv1));
 
-  /// Construct a [`SentenceSegmenter`] using compiled data. This does not assume any content locale.
+  /// Construct a [SentenceSegmenter] using compiled data. This does not assume any content locale.
   ///
   /// See the [Rust documentation for `new`](https://docs.rs/icu/2.0.0/icu/segmenter/struct.SentenceSegmenter.html#method.new) for more information.
   factory SentenceSegmenter() {
@@ -33,7 +33,7 @@ final class SentenceSegmenter implements ffi.Finalizable {
     return SentenceSegmenter._fromFfi(result, []);
   }
 
-  /// Construct a [`SentenceSegmenter`] for content known to be of a given locale, using compiled data.
+  /// Construct a [SentenceSegmenter] for content known to be of a given locale, using compiled data.
   ///
   /// Throws [DataError] on failure.
   factory SentenceSegmenter.withContentLocale(Locale locale) {
@@ -44,7 +44,7 @@ final class SentenceSegmenter implements ffi.Finalizable {
     return SentenceSegmenter._fromFfi(result.union.ok, []);
   }
 
-  /// Construct a [`SentenceSegmenter`]  for content known to be of a given locale, using a particular data source.
+  /// Construct a [SentenceSegmenter]  for content known to be of a given locale, using a particular data source.
   ///
   /// Throws [DataError] on failure.
   factory SentenceSegmenter.withContentLocaleAndProvider(DataProvider provider, Locale locale) {

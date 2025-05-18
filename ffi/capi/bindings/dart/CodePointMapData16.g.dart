@@ -59,7 +59,7 @@ final class CodePointMapData16 implements ffi.Finalizable {
     return CodePointRangeIterator._fromFfi(result, [], aEdges);
   }
 
-  /// Gets a [`CodePointSetData`] representing all entries in this map that map to the given value
+  /// Gets a [CodePointSetData] representing all entries in this map that map to the given value
   ///
   /// See the [Rust documentation for `get_set_for_value`](https://docs.rs/icu/2.0.0/icu/properties/struct.CodePointMapDataBorrowed.html#method.get_set_for_value) for more information.
   CodePointSetData getSetForValue(int value) {

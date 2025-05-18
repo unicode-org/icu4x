@@ -12,7 +12,7 @@ final class _CodePointRangeIteratorResultFfi extends ffi.Struct {
   external bool done;
 }
 
-/// Result of a single iteration of [`CodePointRangeIterator`].
+/// Result of a single iteration of [CodePointRangeIterator].
 /// Logically can be considered to be an `Option<RangeInclusive<DiplomatChar>>`,
 ///
 /// `start` and `end` represent an inclusive range of code points `[start, end]`,

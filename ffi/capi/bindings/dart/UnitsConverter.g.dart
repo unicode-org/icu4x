@@ -3,9 +3,9 @@
 
 part of 'lib.g.dart';
 
-/// An ICU4X Units Converter object, capable of converting between two [`MeasureUnit`]s.
+/// An ICU4X Units Converter object, capable of converting between two [MeasureUnit]s.
 ///
-/// You can create an instance of this object using [`UnitsConverterFactory`] by calling the `converter` method.
+/// You can create an instance of this object using [UnitsConverterFactory] by calling the `converter` method.
 ///
 /// See the [Rust documentation for `UnitsConverter`](https://docs.rs/icu/2.0.0/icu/experimental/units/converter/struct.UnitsConverter.html) for more information.
 final class UnitsConverter implements ffi.Finalizable {
@@ -37,7 +37,7 @@ final class UnitsConverter implements ffi.Finalizable {
     return result;
   }
 
-  /// Clones the current [`UnitsConverter`] object.
+  /// Clones the current [UnitsConverter] object.
   ///
   /// See the [Rust documentation for `clone`](https://docs.rs/icu/2.0.0/icu/experimental/units/converter/struct.UnitsConverter.html#method.clone) for more information.
   UnitsConverter clone() {

@@ -3,7 +3,7 @@ import type { LineBreakStrictness } from "./LineBreakStrictness"
 import type { LineBreakWordOption } from "./LineBreakWordOption"
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
-type LineBreakOptions_obj = {
+export type LineBreakOptions_obj = {
     strictness?: LineBreakStrictness | null;
     wordOption?: LineBreakWordOption | null;
 };

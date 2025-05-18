@@ -42,7 +42,7 @@ export class Locale {
 
 
     /**
-     * Construct an [`Locale`] from an locale identifier.
+     * Construct an {@link Locale} from an locale identifier.
      *
      * This will run the complete locale parsing algorithm. If code size and
      * performance are critical and the locale is of a known shape (such as
@@ -75,7 +75,7 @@ export class Locale {
     }
 
     /**
-     * Construct a unknown [`Locale`] "und".
+     * Construct a unknown {@link Locale} "und".
      *
      * See the [Rust documentation for `UNKNOWN`](https://docs.rs/icu/2.0.0/icu/locale/struct.Locale.html#associatedconstant.UNKNOWN) for more information.
      */
@@ -92,7 +92,7 @@ export class Locale {
     }
 
     /**
-     * Clones the [`Locale`].
+     * Clones the {@link Locale}.
      *
      * See the [Rust documentation for `Locale`](https://docs.rs/icu/2.0.0/icu/locale/struct.Locale.html) for more information.
      */
@@ -110,7 +110,7 @@ export class Locale {
 
     /**
      * Returns a string representation of the `LanguageIdentifier` part of
-     * [`Locale`].
+     * {@link Locale}.
      *
      * See the [Rust documentation for `id`](https://docs.rs/icu/2.0.0/icu/locale/struct.Locale.html#structfield.id) for more information.
      */
@@ -154,7 +154,7 @@ export class Locale {
     }
 
     /**
-     * Returns a string representation of [`Locale`] language.
+     * Returns a string representation of {@link Locale} language.
      *
      * See the [Rust documentation for `id`](https://docs.rs/icu/2.0.0/icu/locale/struct.Locale.html#structfield.id) for more information.
      */
@@ -173,7 +173,7 @@ export class Locale {
     }
 
     /**
-     * Set the language part of the [`Locale`].
+     * Set the language part of the {@link Locale}.
      *
      * See the [Rust documentation for `try_from_str`](https://docs.rs/icu/2.0.0/icu/locale/struct.Locale.html#method.try_from_str) for more information.
      */
@@ -201,7 +201,7 @@ export class Locale {
     }
 
     /**
-     * Returns a string representation of [`Locale`] region.
+     * Returns a string representation of {@link Locale} region.
      *
      * See the [Rust documentation for `id`](https://docs.rs/icu/2.0.0/icu/locale/struct.Locale.html#structfield.id) for more information.
      */
@@ -221,7 +221,7 @@ export class Locale {
     }
 
     /**
-     * Set the region part of the [`Locale`].
+     * Set the region part of the {@link Locale}.
      *
      * See the [Rust documentation for `try_from_str`](https://docs.rs/icu/2.0.0/icu/locale/struct.Locale.html#method.try_from_str) for more information.
      */
@@ -249,7 +249,7 @@ export class Locale {
     }
 
     /**
-     * Returns a string representation of [`Locale`] script.
+     * Returns a string representation of {@link Locale} script.
      *
      * See the [Rust documentation for `id`](https://docs.rs/icu/2.0.0/icu/locale/struct.Locale.html#structfield.id) for more information.
      */
@@ -269,7 +269,7 @@ export class Locale {
     }
 
     /**
-     * Set the script part of the [`Locale`]. Pass an empty string to remove the script.
+     * Set the script part of the {@link Locale}. Pass an empty string to remove the script.
      *
      * See the [Rust documentation for `try_from_str`](https://docs.rs/icu/2.0.0/icu/locale/struct.Locale.html#method.try_from_str) for more information.
      */
@@ -329,7 +329,7 @@ export class Locale {
     }
 
     /**
-     * Returns a string representation of [`Locale`].
+     * Returns a string representation of {@link Locale}.
      *
      * See the [Rust documentation for `write_to`](https://docs.rs/icu/2.0.0/icu/locale/struct.Locale.html#method.write_to) for more information.
      */

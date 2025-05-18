@@ -54,7 +54,7 @@ export class UtcOffset {
 
         try {
             if (!diplomatReceive.resultFlag) {
-                const cause = TimeZoneInvalidOffsetError.fromFields({}, diplomatRuntime.internalConstructor);
+                const cause = new TimeZoneInvalidOffsetError();
                 throw new globalThis.Error('TimeZoneInvalidOffsetError', { cause });
             }
             return new UtcOffset(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
@@ -83,7 +83,7 @@ export class UtcOffset {
 
         try {
             if (!diplomatReceive.resultFlag) {
-                const cause = TimeZoneInvalidOffsetError.fromFields({}, diplomatRuntime.internalConstructor);
+                const cause = new TimeZoneInvalidOffsetError();
                 throw new globalThis.Error('TimeZoneInvalidOffsetError', { cause });
             }
             return new UtcOffset(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);

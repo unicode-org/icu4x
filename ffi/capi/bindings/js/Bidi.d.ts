@@ -18,7 +18,7 @@ export class Bidi {
 
 
     /**
-     * Creates a new [`Bidi`] from locale data, and a particular data source.
+     * Creates a new {@link Bidi} from locale data, and a particular data source.
      */
     static createWithProvider(provider: DataProvider): Bidi;
 
@@ -78,7 +78,7 @@ export class Bidi {
     static levelLtr(): number;
 
     /**
-     * Creates a new [`Bidi`] from locale data using compiled data.
+     * Creates a new {@link Bidi} from locale data using compiled data.
      */
     constructor();
 }

@@ -44,7 +44,7 @@ class WordSegmenter {
 public:
 
   /**
-   * Construct an [`WordSegmenter`] with automatically selecting the best available LSTM
+   * Construct an {@link WordSegmenter} with automatically selecting the best available LSTM
    * or dictionary payload data, using compiled data. This does not assume any content locale.
    *
    * Note: currently, it uses dictionary for Chinese and Japanese, and LSTM for Burmese,
@@ -55,7 +55,7 @@ public:
   inline static std::unique_ptr<icu4x::WordSegmenter> create_auto();
 
   /**
-   * Construct an [`WordSegmenter`] with automatically selecting the best available LSTM
+   * Construct an {@link WordSegmenter} with automatically selecting the best available LSTM
    * or dictionary payload data, using compiled data.
    *
    * Note: currently, it uses dictionary for Chinese and Japanese, and LSTM for Burmese,
@@ -66,7 +66,7 @@ public:
   inline static diplomat::result<std::unique_ptr<icu4x::WordSegmenter>, icu4x::DataError> create_auto_with_content_locale(const icu4x::Locale& locale);
 
   /**
-   * Construct an [`WordSegmenter`] with automatically selecting the best available LSTM
+   * Construct an {@link WordSegmenter} with automatically selecting the best available LSTM
    * or dictionary payload data, using a particular data source.
    *
    * Note: currently, it uses dictionary for Chinese and Japanese, and LSTM for Burmese,
@@ -77,7 +77,7 @@ public:
   inline static diplomat::result<std::unique_ptr<icu4x::WordSegmenter>, icu4x::DataError> create_auto_with_content_locale_and_provider(const icu4x::DataProvider& provider, const icu4x::Locale& locale);
 
   /**
-   * Construct an [`WordSegmenter`] with LSTM payload data for Burmese, Khmer, Lao, and
+   * Construct an {@link WordSegmenter} with LSTM payload data for Burmese, Khmer, Lao, and
    * Thai, using compiled data.  This does not assume any content locale.
    *
    * Note: currently, it uses dictionary for Chinese and Japanese, and LSTM for Burmese,
@@ -88,7 +88,7 @@ public:
   inline static std::unique_ptr<icu4x::WordSegmenter> create_lstm();
 
   /**
-   * Construct an [`WordSegmenter`] with LSTM payload data for Burmese, Khmer, Lao, and
+   * Construct an {@link WordSegmenter} with LSTM payload data for Burmese, Khmer, Lao, and
    * Thai, using compiled data.
    *
    * Note: currently, it uses dictionary for Chinese and Japanese, and LSTM for Burmese,
@@ -99,7 +99,7 @@ public:
   inline static diplomat::result<std::unique_ptr<icu4x::WordSegmenter>, icu4x::DataError> create_lstm_with_content_locale(const icu4x::Locale& locale);
 
   /**
-   * Construct an [`WordSegmenter`] with LSTM payload data for Burmese, Khmer, Lao, and
+   * Construct an {@link WordSegmenter} with LSTM payload data for Burmese, Khmer, Lao, and
    * Thai, using a particular data source.
    *
    * Note: currently, it uses dictionary for Chinese and Japanese, and LSTM for Burmese,
@@ -110,7 +110,7 @@ public:
   inline static diplomat::result<std::unique_ptr<icu4x::WordSegmenter>, icu4x::DataError> create_lstm_with_content_locale_and_provider(const icu4x::DataProvider& provider, const icu4x::Locale& locale);
 
   /**
-   * Construct an [`WordSegmenter`] with with dictionary payload data for Chinese, Japanese,
+   * Construct an {@link WordSegmenter} with with dictionary payload data for Chinese, Japanese,
    * Burmese, Khmer, Lao, and Thai, using compiled data.  This does not assume any content locale.
    *
    * Note: currently, it uses dictionary for Chinese and Japanese, and dictionary for Burmese,
@@ -121,7 +121,7 @@ public:
   inline static std::unique_ptr<icu4x::WordSegmenter> create_dictionary();
 
   /**
-   * Construct an [`WordSegmenter`] with dictionary payload data for Chinese, Japanese,
+   * Construct an {@link WordSegmenter} with dictionary payload data for Chinese, Japanese,
    * Burmese, Khmer, Lao, and Thai, using compiled data.
    *
    * Note: currently, it uses dictionary for Chinese and Japanese, and dictionary for Burmese,
@@ -132,7 +132,7 @@ public:
   inline static diplomat::result<std::unique_ptr<icu4x::WordSegmenter>, icu4x::DataError> create_dictionary_with_content_locale(const icu4x::Locale& locale);
 
   /**
-   * Construct an [`WordSegmenter`] with dictionary payload data for Chinese, Japanese,
+   * Construct an {@link WordSegmenter} with dictionary payload data for Chinese, Japanese,
    * Burmese, Khmer, Lao, and Thai, using a particular data source.
    *
    * Note: currently, it uses dictionary for Chinese and Japanese, and dictionary for Burmese,

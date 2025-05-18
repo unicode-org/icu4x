@@ -21,7 +21,7 @@ export class IanaParser {
 
 
     /**
-     * Create a new [`IanaParser`] using a particular data source
+     * Create a new {@link IanaParser} using a particular data source
      *
      * See the [Rust documentation for `new`](https://docs.rs/icu/2.0.0/icu/time/zone/iana/struct.IanaParser.html#method.new) for more information.
      */
@@ -38,7 +38,7 @@ export class IanaParser {
     iter(): TimeZoneIterator;
 
     /**
-     * Create a new [`IanaParser`] using compiled data
+     * Create a new {@link IanaParser} using compiled data
      *
      * See the [Rust documentation for `new`](https://docs.rs/icu/2.0.0/icu/time/zone/iana/struct.IanaParser.html#method.new) for more information.
      */

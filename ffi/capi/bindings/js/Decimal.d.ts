@@ -20,21 +20,21 @@ export class Decimal {
 
 
     /**
-     * Construct an [`Decimal`] from an integer.
+     * Construct an {@link Decimal} from an integer.
      *
      * See the [Rust documentation for `Decimal`](https://docs.rs/fixed_decimal/0.7.0/fixed_decimal/type.Decimal.html) for more information.
      */
     static fromNumber(v: number): Decimal;
 
     /**
-     * Construct an [`Decimal`] from an integer.
+     * Construct an {@link Decimal} from an integer.
      *
      * See the [Rust documentation for `Decimal`](https://docs.rs/fixed_decimal/0.7.0/fixed_decimal/type.Decimal.html) for more information.
      */
     static fromBigInt(v: bigint): Decimal;
 
     /**
-     * Construct an [`Decimal`] from an float, with a given power of 10 for the lower magnitude
+     * Construct an {@link Decimal} from an float, with a given power of 10 for the lower magnitude
      *
      * See the [Rust documentation for `try_from_f64`](https://docs.rs/fixed_decimal/0.7.0/fixed_decimal/type.Decimal.html#method.try_from_f64) for more information.
      *
@@ -43,7 +43,7 @@ export class Decimal {
     static fromNumberWithLowerMagnitude(f: number, magnitude: number): Decimal;
 
     /**
-     * Construct an [`Decimal`] from an float, for a given number of significant digits
+     * Construct an {@link Decimal} from an float, for a given number of significant digits
      *
      * See the [Rust documentation for `try_from_f64`](https://docs.rs/fixed_decimal/0.7.0/fixed_decimal/type.Decimal.html#method.try_from_f64) for more information.
      *
@@ -52,7 +52,7 @@ export class Decimal {
     static fromNumberWithSignificantDigits(f: number, digits: number): Decimal;
 
     /**
-     * Construct an [`Decimal`] from an float, with enough digits to recover
+     * Construct an {@link Decimal} from an float, with enough digits to recover
      * the original floating point in IEEE 754 without needing trailing zeros
      *
      * See the [Rust documentation for `try_from_f64`](https://docs.rs/fixed_decimal/0.7.0/fixed_decimal/type.Decimal.html#method.try_from_f64) for more information.
@@ -62,7 +62,7 @@ export class Decimal {
     static fromNumberWithRoundTripPrecision(f: number): Decimal;
 
     /**
-     * Construct an [`Decimal`] from a string.
+     * Construct an {@link Decimal} from a string.
      *
      * See the [Rust documentation for `try_from_str`](https://docs.rs/fixed_decimal/0.7.0/fixed_decimal/type.Decimal.html#method.try_from_str) for more information.
      */
@@ -99,7 +99,7 @@ export class Decimal {
     get isZero(): boolean;
 
     /**
-     * Multiply the [`Decimal`] by a given power of ten.
+     * Multiply the {@link Decimal} by a given power of ten.
      *
      * See the [Rust documentation for `multiply_pow10`](https://docs.rs/fixed_decimal/0.7.0/fixed_decimal/type.Decimal.html#method.multiply_pow10) for more information.
      */
@@ -111,7 +111,7 @@ export class Decimal {
     get sign(): DecimalSign;
 
     /**
-     * Set the sign of the [`Decimal`].
+     * Set the sign of the {@link Decimal}.
      *
      * See the [Rust documentation for `set_sign`](https://docs.rs/fixed_decimal/0.7.0/fixed_decimal/type.Decimal.html#method.set_sign) for more information.
      */
@@ -138,21 +138,21 @@ export class Decimal {
     trimEndIfInteger(): void;
 
     /**
-     * Zero-pad the [`Decimal`] on the left to a particular position
+     * Zero-pad the {@link Decimal} on the left to a particular position
      *
      * See the [Rust documentation for `pad_start`](https://docs.rs/fixed_decimal/0.7.0/fixed_decimal/type.Decimal.html#method.pad_start) for more information.
      */
     padStart(position: number): void;
 
     /**
-     * Zero-pad the [`Decimal`] on the right to a particular position
+     * Zero-pad the {@link Decimal} on the right to a particular position
      *
      * See the [Rust documentation for `pad_end`](https://docs.rs/fixed_decimal/0.7.0/fixed_decimal/type.Decimal.html#method.pad_end) for more information.
      */
     padEnd(position: number): void;
 
     /**
-     * Truncate the [`Decimal`] on the left to a particular position, deleting digits if necessary. This is useful for, e.g. abbreviating years
+     * Truncate the {@link Decimal} on the left to a particular position, deleting digits if necessary. This is useful for, e.g. abbreviating years
      * ("2022" -> "22")
      *
      * See the [Rust documentation for `set_max_position`](https://docs.rs/fixed_decimal/0.7.0/fixed_decimal/type.Decimal.html#method.set_max_position) for more information.
@@ -211,7 +211,7 @@ export class Decimal {
     concatenateEnd(other: Decimal): boolean;
 
     /**
-     * Format the [`Decimal`] as a string.
+     * Format the {@link Decimal} as a string.
      *
      * See the [Rust documentation for `write_to`](https://docs.rs/fixed_decimal/0.7.0/fixed_decimal/type.Decimal.html#method.write_to) for more information.
      */

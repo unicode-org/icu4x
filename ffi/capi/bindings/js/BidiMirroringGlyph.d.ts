@@ -2,7 +2,7 @@
 import type { BidiPairedBracketType } from "./BidiPairedBracketType"
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
-type BidiMirroringGlyph_obj = {
+export type BidiMirroringGlyph_obj = {
     mirroringGlyph?: codepoint | null;
     mirrored: boolean;
     pairedBracketType: BidiPairedBracketType;

@@ -30,14 +30,14 @@
         </style>
         <template id="parameter">
             <link rel="stylesheet" href="dist/index.css"/>
-			<div class="input-group mb-3">
+			<div class="input-group">
 				<label class="input-group-text" style="min-width: 300px;"><code style="margin-left: auto;"><slot name="param-name"></slot></code></label>
 				<slot name="parameter"></slot>
 			</div>
         </template>
 
         <template id="enum">
-            <select data-oninput data-options style="width: 300px; font-size: 0.875em; font-family: var(--bs-font-monospace)">
+            <select class="form-select" data-oninput data-options style="width: 300px; font-size: 0.875em; font-family: var(--bs-font-monospace)">
                 <!-- Select doesn't evaluate anything other than option nodes, so to allow dropdowns (in addition to other HTML elements), we just search for data-options to append options to.-->
             </select>
         </template>
@@ -53,15 +53,17 @@
         </template>
 
         <template id="string-array">
-            <textarea data-oninput style="width: 300px;"></textarea>
+            <textarea class="form-control" data-oninput style="width: 300px;"></textarea>
         </template>
 
         <template id="number">
-            <input type="number" data-oninput style="width: 300px;"/>
+            <input class="form-control" type="number" data-oninput style="width: 300px;"/>
         </template>
 
         <template id="boolean">
-            <input type="checkbox" class="form-check-input" id="bool" data-oninput style="width: 300px;"/>
+              <div class="input-group-text">
+                <input class="form-check-input mt-0" type="checkbox" id="bool" data-oninput="">
+            </div>
         </template>
 	</body>
 </html>

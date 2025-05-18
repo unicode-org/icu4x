@@ -35,14 +35,14 @@ class Calendar {
 public:
 
   /**
-   * Creates a new [`Calendar`] for the specified kind, using compiled data.
+   * Creates a new {@link Calendar} for the specified kind, using compiled data.
    *
    * See the [Rust documentation for `new`](https://docs.rs/icu/2.0.0/icu/calendar/enum.AnyCalendar.html#method.new) for more information.
    */
   inline static std::unique_ptr<icu4x::Calendar> create(icu4x::CalendarKind kind);
 
   /**
-   * Creates a new [`Calendar`] for the specified kind, using a particular data source.
+   * Creates a new {@link Calendar} for the specified kind, using a particular data source.
    *
    * See the [Rust documentation for `new`](https://docs.rs/icu/2.0.0/icu/calendar/enum.AnyCalendar.html#method.new) for more information.
    */

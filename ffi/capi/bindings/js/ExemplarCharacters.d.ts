@@ -37,70 +37,70 @@ export class ExemplarCharacters {
     contains(cp: codepoint): boolean;
 
     /**
-     * Create an [`ExemplarCharacters`] for the "main" set of exemplar characters for a given locale, using compiled data.
+     * Create an {@link ExemplarCharacters} for the "main" set of exemplar characters for a given locale, using compiled data.
      *
      * See the [Rust documentation for `try_new_main`](https://docs.rs/icu/2.0.0/icu/locale/exemplar_chars/struct.ExemplarCharacters.html#method.try_new_main) for more information.
      */
     static createMain(locale: Locale): ExemplarCharacters;
 
     /**
-     * Create an [`ExemplarCharacters`] for the "main" set of exemplar characters for a given locale, using a particular data source
+     * Create an {@link ExemplarCharacters} for the "main" set of exemplar characters for a given locale, using a particular data source
      *
      * See the [Rust documentation for `try_new_main`](https://docs.rs/icu/2.0.0/icu/locale/exemplar_chars/struct.ExemplarCharacters.html#method.try_new_main) for more information.
      */
     static createMainWithProvider(provider: DataProvider, locale: Locale): ExemplarCharacters;
 
     /**
-     * Create an [`ExemplarCharacters`] for the "auxiliary" set of exemplar characters for a given locale, using compiled data.
+     * Create an {@link ExemplarCharacters} for the "auxiliary" set of exemplar characters for a given locale, using compiled data.
      *
      * See the [Rust documentation for `try_new_auxiliary`](https://docs.rs/icu/2.0.0/icu/locale/exemplar_chars/struct.ExemplarCharacters.html#method.try_new_auxiliary) for more information.
      */
     static createAuxiliary(locale: Locale): ExemplarCharacters;
 
     /**
-     * Create an [`ExemplarCharacters`] for the "auxiliary" set of exemplar characters for a given locale, using compiled data.
+     * Create an {@link ExemplarCharacters} for the "auxiliary" set of exemplar characters for a given locale, using compiled data.
      *
      * See the [Rust documentation for `try_new_auxiliary`](https://docs.rs/icu/2.0.0/icu/locale/exemplar_chars/struct.ExemplarCharacters.html#method.try_new_auxiliary) for more information.
      */
     static createAuxiliaryWithProvider(provider: DataProvider, locale: Locale): ExemplarCharacters;
 
     /**
-     * Create an [`ExemplarCharacters`] for the "punctuation" set of exemplar characters for a given locale, using compiled data.
+     * Create an {@link ExemplarCharacters} for the "punctuation" set of exemplar characters for a given locale, using compiled data.
      *
      * See the [Rust documentation for `try_new_punctuation`](https://docs.rs/icu/2.0.0/icu/locale/exemplar_chars/struct.ExemplarCharacters.html#method.try_new_punctuation) for more information.
      */
     static createPunctuation(locale: Locale): ExemplarCharacters;
 
     /**
-     * Create an [`ExemplarCharacters`] for the "punctuation" set of exemplar characters for a given locale, using compiled data.
+     * Create an {@link ExemplarCharacters} for the "punctuation" set of exemplar characters for a given locale, using compiled data.
      *
      * See the [Rust documentation for `try_new_punctuation`](https://docs.rs/icu/2.0.0/icu/locale/exemplar_chars/struct.ExemplarCharacters.html#method.try_new_punctuation) for more information.
      */
     static createPunctuationWithProvider(provider: DataProvider, locale: Locale): ExemplarCharacters;
 
     /**
-     * Create an [`ExemplarCharacters`] for the "numbers" set of exemplar characters for a given locale, using compiled data.
+     * Create an {@link ExemplarCharacters} for the "numbers" set of exemplar characters for a given locale, using compiled data.
      *
      * See the [Rust documentation for `try_new_numbers`](https://docs.rs/icu/2.0.0/icu/locale/exemplar_chars/struct.ExemplarCharacters.html#method.try_new_numbers) for more information.
      */
     static createNumbers(locale: Locale): ExemplarCharacters;
 
     /**
-     * Create an [`ExemplarCharacters`] for the "numbers" set of exemplar characters for a given locale, using compiled data.
+     * Create an {@link ExemplarCharacters} for the "numbers" set of exemplar characters for a given locale, using compiled data.
      *
      * See the [Rust documentation for `try_new_numbers`](https://docs.rs/icu/2.0.0/icu/locale/exemplar_chars/struct.ExemplarCharacters.html#method.try_new_numbers) for more information.
      */
     static createNumbersWithProvider(provider: DataProvider, locale: Locale): ExemplarCharacters;
 
     /**
-     * Create an [`ExemplarCharacters`] for the "index" set of exemplar characters for a given locale, using compiled data.
+     * Create an {@link ExemplarCharacters} for the "index" set of exemplar characters for a given locale, using compiled data.
      *
      * See the [Rust documentation for `try_new_index`](https://docs.rs/icu/2.0.0/icu/locale/exemplar_chars/struct.ExemplarCharacters.html#method.try_new_index) for more information.
      */
     static createIndex(locale: Locale): ExemplarCharacters;
 
     /**
-     * Create an [`ExemplarCharacters`] for the "index" set of exemplar characters for a given locale, using compiled data.
+     * Create an {@link ExemplarCharacters} for the "index" set of exemplar characters for a given locale, using compiled data.
      *
      * See the [Rust documentation for `try_new_index`](https://docs.rs/icu/2.0.0/icu/locale/exemplar_chars/struct.ExemplarCharacters.html#method.try_new_index) for more information.
      */

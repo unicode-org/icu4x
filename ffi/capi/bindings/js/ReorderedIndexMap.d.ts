@@ -8,7 +8,7 @@ import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
  *
  * `map[visualIndex] = sourceIndex`
  *
- * Produced by `reorder_visual()` on [`Bidi`].
+ * Produced by `reorder_visual()` on {@link Bidi}.
  */
 export class ReorderedIndexMap {
     /** @internal */

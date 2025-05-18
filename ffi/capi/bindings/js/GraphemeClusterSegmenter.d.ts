@@ -18,7 +18,7 @@ export class GraphemeClusterSegmenter {
 
 
     /**
-     * Construct an [`GraphemeClusterSegmenter`].
+     * Construct an {@link GraphemeClusterSegmenter}.
      *
      * See the [Rust documentation for `new`](https://docs.rs/icu/2.0.0/icu/segmenter/struct.GraphemeClusterSegmenter.html#method.new) for more information.
      */
@@ -35,7 +35,7 @@ export class GraphemeClusterSegmenter {
     segment(input: string): GraphemeClusterBreakIteratorUtf16;
 
     /**
-     * Construct an [`GraphemeClusterSegmenter`] using compiled data.
+     * Construct an {@link GraphemeClusterSegmenter} using compiled data.
      *
      * See the [Rust documentation for `new`](https://docs.rs/icu/2.0.0/icu/segmenter/struct.GraphemeClusterSegmenter.html#method.new) for more information.
      */

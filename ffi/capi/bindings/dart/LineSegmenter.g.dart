@@ -25,7 +25,7 @@ final class LineSegmenter implements ffi.Finalizable {
 
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_LineSegmenter_destroy_mv1));
 
-  /// Construct a [`LineSegmenter`] with default options (no locale-based tailoring) using compiled data. It automatically loads the best
+  /// Construct a [LineSegmenter] with default options (no locale-based tailoring) using compiled data. It automatically loads the best
   /// available payload data for Burmese, Khmer, Lao, and Thai.
   ///
   /// See the [Rust documentation for `new_auto`](https://docs.rs/icu/2.0.0/icu/segmenter/struct.LineSegmenter.html#method.new_auto) for more information.
@@ -34,7 +34,7 @@ final class LineSegmenter implements ffi.Finalizable {
     return LineSegmenter._fromFfi(result, []);
   }
 
-  /// Construct a [`LineSegmenter`] with default options (no locale-based tailoring) and LSTM payload data for
+  /// Construct a [LineSegmenter] with default options (no locale-based tailoring) and LSTM payload data for
   /// Burmese, Khmer, Lao, and Thai, using compiled data.
   ///
   /// See the [Rust documentation for `new_lstm`](https://docs.rs/icu/2.0.0/icu/segmenter/struct.LineSegmenter.html#method.new_lstm) for more information.
@@ -43,7 +43,7 @@ final class LineSegmenter implements ffi.Finalizable {
     return LineSegmenter._fromFfi(result, []);
   }
 
-  /// Construct a [`LineSegmenter`] with default options (no locale-based tailoring) and dictionary payload data for
+  /// Construct a [LineSegmenter] with default options (no locale-based tailoring) and dictionary payload data for
   /// Burmese, Khmer, Lao, and Thai, using compiled data
   ///
   /// See the [Rust documentation for `new_dictionary`](https://docs.rs/icu/2.0.0/icu/segmenter/struct.LineSegmenter.html#method.new_dictionary) for more information.
@@ -52,7 +52,7 @@ final class LineSegmenter implements ffi.Finalizable {
     return LineSegmenter._fromFfi(result, []);
   }
 
-  /// Construct a [`LineSegmenter`] with custom options using compiled data. It automatically loads the best
+  /// Construct a [LineSegmenter] with custom options using compiled data. It automatically loads the best
   /// available payload data for Burmese, Khmer, Lao, and Thai.
   ///
   /// See the [Rust documentation for `new_auto`](https://docs.rs/icu/2.0.0/icu/segmenter/struct.LineSegmenter.html#method.new_auto) for more information.
@@ -62,7 +62,7 @@ final class LineSegmenter implements ffi.Finalizable {
     return LineSegmenter._fromFfi(result, []);
   }
 
-  /// Construct a [`LineSegmenter`] with custom options. It automatically loads the best
+  /// Construct a [LineSegmenter] with custom options. It automatically loads the best
   /// available payload data for Burmese, Khmer, Lao, and Thai, using a particular data source.
   ///
   /// See the [Rust documentation for `new_auto`](https://docs.rs/icu/2.0.0/icu/segmenter/struct.LineSegmenter.html#method.new_auto) for more information.
@@ -77,7 +77,7 @@ final class LineSegmenter implements ffi.Finalizable {
     return LineSegmenter._fromFfi(result.union.ok, []);
   }
 
-  /// Construct a [`LineSegmenter`] with custom options and LSTM payload data for
+  /// Construct a [LineSegmenter] with custom options and LSTM payload data for
   /// Burmese, Khmer, Lao, and Thai, using compiled data.
   ///
   /// See the [Rust documentation for `new_lstm`](https://docs.rs/icu/2.0.0/icu/segmenter/struct.LineSegmenter.html#method.new_lstm) for more information.
@@ -87,7 +87,7 @@ final class LineSegmenter implements ffi.Finalizable {
     return LineSegmenter._fromFfi(result, []);
   }
 
-  /// Construct a [`LineSegmenter`] with custom options and LSTM payload data for
+  /// Construct a [LineSegmenter] with custom options and LSTM payload data for
   /// Burmese, Khmer, Lao, and Thai, using a particular data source.
   ///
   /// See the [Rust documentation for `new_lstm`](https://docs.rs/icu/2.0.0/icu/segmenter/struct.LineSegmenter.html#method.new_lstm) for more information.
@@ -102,7 +102,7 @@ final class LineSegmenter implements ffi.Finalizable {
     return LineSegmenter._fromFfi(result.union.ok, []);
   }
 
-  /// Construct a [`LineSegmenter`] with custom options and dictionary payload data for
+  /// Construct a [LineSegmenter] with custom options and dictionary payload data for
   /// Burmese, Khmer, Lao, and Thai, using compiled data.
   ///
   /// See the [Rust documentation for `new_dictionary`](https://docs.rs/icu/2.0.0/icu/segmenter/struct.LineSegmenter.html#method.new_dictionary) for more information.
@@ -112,7 +112,7 @@ final class LineSegmenter implements ffi.Finalizable {
     return LineSegmenter._fromFfi(result, []);
   }
 
-  /// Construct a [`LineSegmenter`] with custom options and dictionary payload data for
+  /// Construct a [LineSegmenter] with custom options and dictionary payload data for
   /// Burmese, Khmer, Lao, and Thai, using a particular data source.
   ///
   /// See the [Rust documentation for `new_dictionary`](https://docs.rs/icu/2.0.0/icu/segmenter/struct.LineSegmenter.html#method.new_dictionary) for more information.
