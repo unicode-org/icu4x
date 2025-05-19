@@ -2152,6 +2152,12 @@ impl CollatorBorrowed<'_> {
 pub trait CollationKeySink {
     /// Writes a buffer into the writer.
     fn write(&mut self, buf: &[u8]) -> Result<(), core::fmt::Error>;
+
+    /// Write a single byte into the writer.
+    fn write_byte(&mut self, b: u8) -> Result<(), core::fmt::Error> {
+        self.write(&[b])?;
+        Ok(())
+    }
 }
 
 impl CollationKeySink for Vec<u8> {
@@ -2164,21 +2170,6 @@ impl CollationKeySink for Vec<u8> {
 impl<const N: usize> CollationKeySink for SmallVec<[u8; N]> {
     fn write(&mut self, buf: &[u8]) -> Result<(), core::fmt::Error> {
         self.extend_from_slice(buf);
-        Ok(())
-    }
-}
-
-trait CollationKeySinkExt {
-    /// Write a single byte into the writer.
-    fn write_byte(&mut self, b: u8) -> Result<(), core::fmt::Error>;
-}
-
-impl<T> CollationKeySinkExt for T
-where
-    T: CollationKeySink,
-{
-    fn write_byte(&mut self, b: u8) -> Result<(), core::fmt::Error> {
-        self.write(&[b])?;
         Ok(())
     }
 }
