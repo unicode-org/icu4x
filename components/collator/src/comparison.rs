@@ -2270,10 +2270,9 @@ where
     fn write_slice(&mut self, s: &[u16]) -> core::fmt::Result {
         // For the identical level, if the input is UTF-16, transcode to UTF-8.
         let iter = char::decode_utf16(s.iter().cloned());
+        let mut bytes = [0u8; 4];
         for c in iter {
             let c = c.unwrap_or(char::REPLACEMENT_CHARACTER); // shouldn't happen
-            let mut bytes = [0u8; 4];
-            c.encode_utf8(&mut bytes);
             self.inner.write(c.encode_utf8(&mut bytes).as_bytes())?;
         }
         Ok(())
