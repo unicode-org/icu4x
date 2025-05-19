@@ -26,7 +26,7 @@
 //!
 #![allow(rustdoc::invalid_html_tags)] // attribute split over three lines because `cargo generate-readmes` does not evaluate `#![doc = ]` docs
 //! <p style='font-weight: bold; font-size: 24px;'> 🔗 See the <a target='_blank' href='https://icu4x.unicode.org/
-#![doc = core::env!("CARGO_PKG_VERSION")]
+#![cfg_attr(doc, doc = core::env!("CARGO_PKG_VERSION"))]
 //! '>ICU4X website</a> for FFI docs and examples</p>
 //!
 //! This crate is `no_std`-compatible, but requires an allocator. If you wish to use it in `no_std` mode, you can either
