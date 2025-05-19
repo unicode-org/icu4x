@@ -5,6 +5,7 @@
 //! Functions for region-specific weekday information.
 
 use crate::{error::RangeError, provider::*, types::Weekday};
+use icu_locale::preferences::extensions::unicode::keywords::FirstDay;
 use icu_locale_core::preferences::define_preferences;
 use icu_provider::prelude::*;
 
@@ -15,7 +16,10 @@ define_preferences!(
     /// The preferences for the week information.
     [Copy]
     WeekPreferences,
-    {}
+    {
+        /// The first day of the week
+        first_weekday: FirstDay
+    }
 );
 
 /// Information about the first day of the week and the weekend.
@@ -46,7 +50,16 @@ impl WeekInformation {
                 ..Default::default()
             })
             .map(|response| WeekInformation {
-                first_weekday: response.payload.get().first_weekday,
+                first_weekday: match prefs.first_weekday {
+                    Some(FirstDay::Mon) => Weekday::Monday,
+                    Some(FirstDay::Tue) => Weekday::Tuesday,
+                    Some(FirstDay::Wed) => Weekday::Wednesday,
+                    Some(FirstDay::Thu) => Weekday::Thursday,
+                    Some(FirstDay::Fri) => Weekday::Friday,
+                    Some(FirstDay::Sat) => Weekday::Saturday,
+                    Some(FirstDay::Sun) => Weekday::Sunday,
+                    _ => response.payload.get().first_weekday,
+                },
                 weekend: response.payload.get().weekend,
             })
     }
@@ -522,6 +535,32 @@ mod tests {
             }
         );
     }
+}
+
+#[test]
+fn test_first_day() {
+    use icu_locale_core::locale;
+
+    assert_eq!(
+        WeekInformation::try_new(locale!("und-US").into())
+            .unwrap()
+            .first_weekday,
+        Weekday::Sunday,
+    );
+
+    assert_eq!(
+        WeekInformation::try_new(locale!("und-FR").into())
+            .unwrap()
+            .first_weekday,
+        Weekday::Monday,
+    );
+
+    assert_eq!(
+        WeekInformation::try_new(locale!("und-FR-u-fw-tue").into())
+            .unwrap()
+            .first_weekday,
+        Weekday::Tuesday,
+    );
 }
 
 #[test]
