@@ -32,9 +32,9 @@
   "bugs": {
     "url": "https://github.com/unicode-org/icu4x/issues"
   },
-  "homepage": "https://github.com/unicode-org/icu4x#readme",
+  "homepage": "https://icu4x.unicode.org",
   "author": "The ICU4X Project Developers",
-  "license": "Apache-2.0",
+  "license": "Unicode-3.0",
   "devDependencies": {
     "ava": "^5.3.1",
     "benchmark": "^2.1.4"
