@@ -21,7 +21,11 @@ const REPO_VERSION: &str = "version.workspace = true";
 const COMPONENTS: &[(&str, &[DataMarkerInfo], &str)] = &[
     ("calendar", icu::calendar::provider::MARKERS, REPO_VERSION),
     ("casemap", icu::casemap::provider::MARKERS, REPO_VERSION),
-    ("collator", icu::collator::provider::MARKERS, REPO_VERSION),
+    (
+        "collator",
+        icu::collator::provider::MARKERS,
+        r#"version = "2.0.1""#,
+    ),
     ("datetime", icu::datetime::provider::MARKERS, REPO_VERSION),
     ("decimal", icu::decimal::provider::MARKERS, REPO_VERSION),
     ("list", icu::list::provider::MARKERS, REPO_VERSION),

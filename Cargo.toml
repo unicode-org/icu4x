@@ -172,7 +172,7 @@ icu_provider_registry = { version = "~2.0.0", path = "provider/registry", defaul
 # Baked data
 icu_calendar_data = { version = "~2.0.0", path = "provider/data/calendar", default-features = false }
 icu_casemap_data = { version = "~2.0.0", path = "provider/data/casemap", default-features = false }
-icu_collator_data = { version = "~2.0.0", path = "provider/data/collator", default-features = false }
+icu_collator_data = { version = ">= 2.0.1, <2.1.0", path = "provider/data/collator", default-features = false }
 icu_datetime_data = { version = "~2.0.0", path = "provider/data/datetime", default-features = false }
 icu_decimal_data = { version = "~2.0.0", path = "provider/data/decimal", default-features = false }
 icu_list_data = { version = "~2.0.0", path = "provider/data/list", default-features = false }
