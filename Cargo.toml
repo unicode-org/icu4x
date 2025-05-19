@@ -5,7 +5,7 @@
 [workspace]
 resolver = "2"
 members = [
-    # KEEP IN SYNC WITH workspace.dependencies and tutorials/.cargo/config.toml
+    # KEEP IN SYNC WITH workspace.dependencies and examples/.cargo/config.toml
 
     # ICU4X core
     "components/locale_core",
@@ -128,7 +128,7 @@ include = [
 ]
 
 [workspace.dependencies]
-# KEEP IN SYNC WITH workspace.members and tutorials/.cargo/config.toml
+# KEEP IN SYNC WITH workspace.members and examples/.cargo/config.toml
 
 # ICU4X core
 # These use non-tilde deps, see https://github.com/unicode-org/icu4x/issues/4343
