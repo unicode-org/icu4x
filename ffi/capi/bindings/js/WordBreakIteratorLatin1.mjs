@@ -3,14 +3,13 @@ import { SegmenterWordType } from "./SegmenterWordType.mjs"
 import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
-
-/**
- * See the [Rust documentation for `WordBreakIterator`](https://docs.rs/icu/latest/icu/segmenter/iterators/struct.WordBreakIterator.html) for more information.
- */
 const WordBreakIteratorLatin1_box_destroy_registry = new FinalizationRegistry((ptr) => {
     wasm.icu4x_WordBreakIteratorLatin1_destroy_mv1(ptr);
 });
 
+/**
+ * See the [Rust documentation for `WordBreakIterator`](https://docs.rs/icu/2.0.0/icu/segmenter/iterators/struct.WordBreakIterator.html) for more information.
+ */
 export class WordBreakIteratorLatin1 {
     // Internal ptr reference:
     #ptr = null;
@@ -36,6 +35,7 @@ export class WordBreakIteratorLatin1 {
 
         return this;
     }
+    /** @internal */
     get ffiValue() {
         return this.#ptr;
     }
@@ -45,7 +45,7 @@ export class WordBreakIteratorLatin1 {
      * Finds the next breakpoint. Returns -1 if at the end of the string or if the index is
      * out of range of a 32-bit signed integer.
      *
-     * See the [Rust documentation for `next`](https://docs.rs/icu/latest/icu/segmenter/iterators/struct.WordBreakIterator.html#method.next) for more information.
+     * See the [Rust documentation for `next`](https://docs.rs/icu/2.0.0/icu/segmenter/iterators/struct.WordBreakIterator.html#method.next) for more information.
      */
     next() {
 
@@ -62,7 +62,7 @@ export class WordBreakIteratorLatin1 {
     /**
      * Return the status value of break boundary.
      *
-     * See the [Rust documentation for `word_type`](https://docs.rs/icu/latest/icu/segmenter/iterators/struct.WordBreakIterator.html#method.word_type) for more information.
+     * See the [Rust documentation for `word_type`](https://docs.rs/icu/2.0.0/icu/segmenter/iterators/struct.WordBreakIterator.html#method.word_type) for more information.
      */
     get wordType() {
 
@@ -79,7 +79,7 @@ export class WordBreakIteratorLatin1 {
     /**
      * Return true when break boundary is word-like such as letter/number/CJK
      *
-     * See the [Rust documentation for `is_word_like`](https://docs.rs/icu/latest/icu/segmenter/iterators/struct.WordBreakIterator.html#method.is_word_like) for more information.
+     * See the [Rust documentation for `is_word_like`](https://docs.rs/icu/2.0.0/icu/segmenter/iterators/struct.WordBreakIterator.html#method.is_word_like) for more information.
      */
     get isWordLike() {
 

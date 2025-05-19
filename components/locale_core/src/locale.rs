@@ -99,6 +99,8 @@ pub struct Locale {
 }
 
 #[test]
+// Expected sizes are based on a 64-bit architecture
+#[cfg(target_pointer_width = "64")]
 fn test_sizes() {
     assert_eq!(core::mem::size_of::<subtags::Language>(), 3);
     assert_eq!(core::mem::size_of::<subtags::Script>(), 4);

@@ -328,6 +328,38 @@ dependencies = [
 ]
 
 [[package]]
+name = "camino"
+version = "1.1.9"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "8b96ec4966b5813e2c0507c1f86115c8c5abaadc3980879c3424042a02fd1ad3"
+dependencies = [
+ "serde",
+]
+
+[[package]]
+name = "cargo-platform"
+version = "0.1.7"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "694c8807f2ae16faecc43dc17d74b3eb042482789fd0eb64b39a2e04e087053f"
+dependencies = [
+ "serde",
+]
+
+[[package]]
+name = "cargo_metadata"
+version = "0.19.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "dd5eb614ed4c27c5d706420e4320fbe3216ab31fa1c33cd8246ac36dae4479ba"
+dependencies = [
+ "camino",
+ "cargo-platform",
+ "semver 1.0.26",
+ "serde",
+ "serde_json",
+ "thiserror",
+]
+
+[[package]]
 name = "cast"
 version = "0.3.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -679,8 +711,7 @@ dependencies = [
 [[package]]
 name = "diplomat"
 version = "0.11.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ea1fa372cd3d71ab28ee5d1176be9e93eaed0eba94a3498d12b8113109c4d313"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=f899eaf7082377f17666cb7608f7864e90969b3e#f899eaf7082377f17666cb7608f7864e90969b3e"
 dependencies = [
  "diplomat_core",
  "proc-macro2",
@@ -704,14 +735,14 @@ dependencies = [
 name = "diplomat-gen"
 version = "0.0.0"
 dependencies = [
+ "cargo_metadata",
  "diplomat-tool",
 ]
 
 [[package]]
 name = "diplomat-runtime"
 version = "0.11.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5ebd68bdec9f1f4e625f207e3179c0687e7c73bad578ec37df48a23a414da8d4"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=f899eaf7082377f17666cb7608f7864e90969b3e#f899eaf7082377f17666cb7608f7864e90969b3e"
 dependencies = [
  "log",
 ]
@@ -719,8 +750,7 @@ dependencies = [
 [[package]]
 name = "diplomat-tool"
 version = "0.11.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "461ea47dee0fef3e42ea3f11441d55ce173127b5318c794998879ada6a0a556e"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=f899eaf7082377f17666cb7608f7864e90969b3e#f899eaf7082377f17666cb7608f7864e90969b3e"
 dependencies = [
  "askama",
  "clap",
@@ -741,8 +771,7 @@ dependencies = [
 [[package]]
 name = "diplomat_core"
 version = "0.11.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f8372a0961d18867e19c8cc0a2afb3ad46d5c5bd5e30b2c71d4edc788c93bbb8"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=f899eaf7082377f17666cb7608f7864e90969b3e#f899eaf7082377f17666cb7608f7864e90969b3e"
 dependencies = [
  "displaydoc",
  "either",
@@ -1167,7 +1196,7 @@ version = "2.0.0"
 
 [[package]]
 name = "icu_capi"
-version = "2.0.0"
+version = "2.0.1"
 dependencies = [
  "diplomat",
  "diplomat-runtime",
@@ -2788,6 +2817,9 @@ name = "semver"
 version = "1.0.26"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "56e6fa9c48d24d85fb3de5ad847117517440f6beceb7798af16b4a87d616b8d0"
+dependencies = [
+ "serde",
+]
 
 [[package]]
 name = "semver-parser"
@@ -3034,6 +3066,26 @@ checksum = "1d863878d212c87a19c1a610eb53bb01fe12951c0501cf5a0d65f724914a667a"
 dependencies = [
  "filetime",
  "libc",
+]
+
+[[package]]
+name = "thiserror"
+version = "2.0.12"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "567b8a2dae586314f7be2a752ec7474332959c6460e02bde30d702a66d488708"
+dependencies = [
+ "thiserror-impl",
+]
+
+[[package]]
+name = "thiserror-impl"
+version = "2.0.12"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "7f7cf42b4507d8ea322120659672cf1b9dbb93f8f2d4ecfd6e51350ff5b17a1d"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn 2.0.101",
 ]
 
 [[package]]

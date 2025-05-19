@@ -3,11 +3,11 @@
 
 part of 'lib.g.dart';
 
-/// An ICU4X Units Converter object, capable of converting between two [`MeasureUnit`]s.
+/// An ICU4X Units Converter object, capable of converting between two [MeasureUnit]s.
 ///
-/// You can create an instance of this object using [`UnitsConverterFactory`] by calling the `converter` method.
+/// You can create an instance of this object using [UnitsConverterFactory] by calling the `converter` method.
 ///
-/// See the [Rust documentation for `UnitsConverter`](https://docs.rs/icu/latest/icu/experimental/units/converter/struct.UnitsConverter.html) for more information.
+/// See the [Rust documentation for `UnitsConverter`](https://docs.rs/icu/2.0.0/icu/experimental/units/converter/struct.UnitsConverter.html) for more information.
 final class UnitsConverter implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _ffi;
 
@@ -31,15 +31,15 @@ final class UnitsConverter implements ffi.Finalizable {
   /// NOTE:
   /// The conversion using floating-point operations is not as accurate as the conversion using ratios.
   ///
-  /// See the [Rust documentation for `convert`](https://docs.rs/icu/latest/icu/experimental/units/converter/struct.UnitsConverter.html#method.convert) for more information.
+  /// See the [Rust documentation for `convert`](https://docs.rs/icu/2.0.0/icu/experimental/units/converter/struct.UnitsConverter.html#method.convert) for more information.
   double convertDouble(double value) {
     final result = _icu4x_UnitsConverter_convert_double_mv1(_ffi, value);
     return result;
   }
 
-  /// Clones the current [`UnitsConverter`] object.
+  /// Clones the current [UnitsConverter] object.
   ///
-  /// See the [Rust documentation for `clone`](https://docs.rs/icu/latest/icu/experimental/units/converter/struct.UnitsConverter.html#method.clone) for more information.
+  /// See the [Rust documentation for `clone`](https://docs.rs/icu/2.0.0/icu/experimental/units/converter/struct.UnitsConverter.html#method.clone) for more information.
   UnitsConverter clone() {
     final result = _icu4x_UnitsConverter_clone_mv1(_ffi);
     return UnitsConverter._fromFfi(result, []);

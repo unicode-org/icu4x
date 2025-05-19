@@ -5,14 +5,13 @@ import { DataProvider } from "./DataProvider.mjs"
 import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
-
-/**
- * See the [Rust documentation for `CaseMapCloser`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapCloser.html) for more information.
- */
 const CaseMapCloser_box_destroy_registry = new FinalizationRegistry((ptr) => {
     wasm.icu4x_CaseMapCloser_destroy_mv1(ptr);
 });
 
+/**
+ * See the [Rust documentation for `CaseMapCloser`](https://docs.rs/icu/2.0.0/icu/casemap/struct.CaseMapCloser.html) for more information.
+ */
 export class CaseMapCloser {
     // Internal ptr reference:
     #ptr = null;
@@ -36,6 +35,7 @@ export class CaseMapCloser {
 
         return this;
     }
+    /** @internal */
     get ffiValue() {
         return this.#ptr;
     }
@@ -44,7 +44,7 @@ export class CaseMapCloser {
     /**
      * Construct a new CaseMapCloser instance using compiled data.
      *
-     * See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapCloser.html#method.new) for more information.
+     * See the [Rust documentation for `new`](https://docs.rs/icu/2.0.0/icu/casemap/struct.CaseMapCloser.html#method.new) for more information.
      */
     #defaultConstructor() {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
@@ -55,7 +55,7 @@ export class CaseMapCloser {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
-                throw new globalThis.Error('DataError: ' + cause.value, { cause });
+                throw new globalThis.Error('DataError.' + cause.value, { cause });
             }
             return new CaseMapCloser(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -68,7 +68,7 @@ export class CaseMapCloser {
     /**
      * Construct a new CaseMapCloser instance using a particular data source.
      *
-     * See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapCloser.html#method.new) for more information.
+     * See the [Rust documentation for `new`](https://docs.rs/icu/2.0.0/icu/casemap/struct.CaseMapCloser.html#method.new) for more information.
      */
     static createWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
@@ -79,7 +79,7 @@ export class CaseMapCloser {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
-                throw new globalThis.Error('DataError: ' + cause.value, { cause });
+                throw new globalThis.Error('DataError.' + cause.value, { cause });
             }
             return new CaseMapCloser(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -93,7 +93,7 @@ export class CaseMapCloser {
      * Adds all simple case mappings and the full case folding for `c` to `builder`.
      * Also adds special case closure mappings.
      *
-     * See the [Rust documentation for `add_case_closure_to`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapCloserBorrowed.html#method.add_case_closure_to) for more information.
+     * See the [Rust documentation for `add_case_closure_to`](https://docs.rs/icu/2.0.0/icu/casemap/struct.CaseMapCloserBorrowed.html#method.add_case_closure_to) for more information.
      */
     addCaseClosureTo(c, builder) {
     wasm.icu4x_CaseMapCloser_add_case_closure_to_mv1(this.ffiValue, c, builder.ffiValue);
@@ -110,7 +110,7 @@ export class CaseMapCloser {
      *
      * Returns true if the string was found
      *
-     * See the [Rust documentation for `add_string_case_closure_to`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapCloserBorrowed.html#method.add_string_case_closure_to) for more information.
+     * See the [Rust documentation for `add_string_case_closure_to`](https://docs.rs/icu/2.0.0/icu/casemap/struct.CaseMapCloserBorrowed.html#method.add_string_case_closure_to) for more information.
      */
     addStringCaseClosureTo(s, builder) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
@@ -129,6 +129,11 @@ export class CaseMapCloser {
         }
     }
 
+    /**
+     * Construct a new CaseMapCloser instance using compiled data.
+     *
+     * See the [Rust documentation for `new`](https://docs.rs/icu/2.0.0/icu/casemap/struct.CaseMapCloser.html#method.new) for more information.
+     */
     constructor() {
         if (arguments[0] === diplomatRuntime.exposeConstructor) {
             return this.#internalConstructor(...Array.prototype.slice.call(arguments, 1));

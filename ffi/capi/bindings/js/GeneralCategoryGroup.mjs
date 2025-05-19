@@ -4,13 +4,12 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
+
 /**
  * A mask that is capable of representing groups of `General_Category` values.
  *
- * See the [Rust documentation for `GeneralCategoryGroup`](https://docs.rs/icu/latest/icu/properties/props/struct.GeneralCategoryGroup.html) for more information.
+ * See the [Rust documentation for `GeneralCategoryGroup`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.GeneralCategoryGroup.html) for more information.
  */
-
-
 export class GeneralCategoryGroup {
     #mask;
     get mask() {
@@ -19,9 +18,7 @@ export class GeneralCategoryGroup {
     set mask(value){
         this.#mask = value;
     }
-    /** Create `GeneralCategoryGroup` from an object that contains all of `GeneralCategoryGroup`s fields.
-    * Optional fields do not need to be included in the provided object.
-    */
+    /** @internal */
     static fromFields(structObj) {
         return new GeneralCategoryGroup(structObj);
     }
@@ -87,7 +84,7 @@ export class GeneralCategoryGroup {
 
 
     /**
-     * See the [Rust documentation for `contains`](https://docs.rs/icu/latest/icu/properties/props/struct.GeneralCategoryGroup.html#method.contains) for more information.
+     * See the [Rust documentation for `contains`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.GeneralCategoryGroup.html#method.contains) for more information.
      */
     contains(val) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
@@ -106,7 +103,7 @@ export class GeneralCategoryGroup {
     }
 
     /**
-     * See the [Rust documentation for `complement`](https://docs.rs/icu/latest/icu/properties/props/struct.GeneralCategoryGroup.html#method.complement) for more information.
+     * See the [Rust documentation for `complement`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.GeneralCategoryGroup.html#method.complement) for more information.
      */
     complement() {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
@@ -125,7 +122,7 @@ export class GeneralCategoryGroup {
     }
 
     /**
-     * See the [Rust documentation for `all`](https://docs.rs/icu/latest/icu/properties/props/struct.GeneralCategoryGroup.html#method.all) for more information.
+     * See the [Rust documentation for `all`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.GeneralCategoryGroup.html#method.all) for more information.
      */
     static all() {
 
@@ -140,7 +137,7 @@ export class GeneralCategoryGroup {
     }
 
     /**
-     * See the [Rust documentation for `empty`](https://docs.rs/icu/latest/icu/properties/props/struct.GeneralCategoryGroup.html#method.empty) for more information.
+     * See the [Rust documentation for `empty`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.GeneralCategoryGroup.html#method.empty) for more information.
      */
     static empty() {
 
@@ -155,7 +152,7 @@ export class GeneralCategoryGroup {
     }
 
     /**
-     * See the [Rust documentation for `union`](https://docs.rs/icu/latest/icu/properties/props/struct.GeneralCategoryGroup.html#method.union) for more information.
+     * See the [Rust documentation for `union`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.GeneralCategoryGroup.html#method.union) for more information.
      */
     union(other) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
@@ -174,7 +171,7 @@ export class GeneralCategoryGroup {
     }
 
     /**
-     * See the [Rust documentation for `intersection`](https://docs.rs/icu/latest/icu/properties/props/struct.GeneralCategoryGroup.html#method.intersection) for more information.
+     * See the [Rust documentation for `intersection`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.GeneralCategoryGroup.html#method.intersection) for more information.
      */
     intersection(other) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
@@ -193,7 +190,7 @@ export class GeneralCategoryGroup {
     }
 
     /**
-     * See the [Rust documentation for `CasedLetter`](https://docs.rs/icu/latest/icu/properties/props/struct.GeneralCategoryGroup.html#associatedconstant.CasedLetter) for more information.
+     * See the [Rust documentation for `CasedLetter`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.GeneralCategoryGroup.html#associatedconstant.CasedLetter) for more information.
      */
     static casedLetter() {
 
@@ -208,7 +205,7 @@ export class GeneralCategoryGroup {
     }
 
     /**
-     * See the [Rust documentation for `Letter`](https://docs.rs/icu/latest/icu/properties/props/struct.GeneralCategoryGroup.html#associatedconstant.Letter) for more information.
+     * See the [Rust documentation for `Letter`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.GeneralCategoryGroup.html#associatedconstant.Letter) for more information.
      */
     static letter() {
 
@@ -223,7 +220,7 @@ export class GeneralCategoryGroup {
     }
 
     /**
-     * See the [Rust documentation for `Mark`](https://docs.rs/icu/latest/icu/properties/props/struct.GeneralCategoryGroup.html#associatedconstant.Mark) for more information.
+     * See the [Rust documentation for `Mark`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.GeneralCategoryGroup.html#associatedconstant.Mark) for more information.
      */
     static mark() {
 
@@ -238,7 +235,7 @@ export class GeneralCategoryGroup {
     }
 
     /**
-     * See the [Rust documentation for `Number`](https://docs.rs/icu/latest/icu/properties/props/struct.GeneralCategoryGroup.html#associatedconstant.Number) for more information.
+     * See the [Rust documentation for `Number`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.GeneralCategoryGroup.html#associatedconstant.Number) for more information.
      */
     static number() {
 
@@ -253,7 +250,7 @@ export class GeneralCategoryGroup {
     }
 
     /**
-     * See the [Rust documentation for `Other`](https://docs.rs/icu/latest/icu/properties/props/struct.GeneralCategoryGroup.html#associatedconstant.Other) for more information.
+     * See the [Rust documentation for `Other`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.GeneralCategoryGroup.html#associatedconstant.Other) for more information.
      */
     static separator() {
 
@@ -268,7 +265,7 @@ export class GeneralCategoryGroup {
     }
 
     /**
-     * See the [Rust documentation for `Letter`](https://docs.rs/icu/latest/icu/properties/props/struct.GeneralCategoryGroup.html#associatedconstant.Letter) for more information.
+     * See the [Rust documentation for `Letter`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.GeneralCategoryGroup.html#associatedconstant.Letter) for more information.
      */
     static other() {
 
@@ -283,7 +280,7 @@ export class GeneralCategoryGroup {
     }
 
     /**
-     * See the [Rust documentation for `Punctuation`](https://docs.rs/icu/latest/icu/properties/props/struct.GeneralCategoryGroup.html#associatedconstant.Punctuation) for more information.
+     * See the [Rust documentation for `Punctuation`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.GeneralCategoryGroup.html#associatedconstant.Punctuation) for more information.
      */
     static punctuation() {
 
@@ -298,7 +295,7 @@ export class GeneralCategoryGroup {
     }
 
     /**
-     * See the [Rust documentation for `Symbol`](https://docs.rs/icu/latest/icu/properties/props/struct.GeneralCategoryGroup.html#associatedconstant.Symbol) for more information.
+     * See the [Rust documentation for `Symbol`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.GeneralCategoryGroup.html#associatedconstant.Symbol) for more information.
      */
     static symbol() {
 

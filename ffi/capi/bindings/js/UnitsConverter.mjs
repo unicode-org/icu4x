@@ -2,18 +2,17 @@
 import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
-
-/**
- * An ICU4X Units Converter object, capable of converting between two [`MeasureUnit`]s.
- *
- * You can create an instance of this object using [`UnitsConverterFactory`] by calling the `converter` method.
- *
- * See the [Rust documentation for `UnitsConverter`](https://docs.rs/icu/latest/icu/experimental/units/converter/struct.UnitsConverter.html) for more information.
- */
 const UnitsConverter_box_destroy_registry = new FinalizationRegistry((ptr) => {
     wasm.icu4x_UnitsConverter_destroy_mv1(ptr);
 });
 
+/**
+ * An ICU4X Units Converter object, capable of converting between two {@link MeasureUnit}s.
+ *
+ * You can create an instance of this object using {@link UnitsConverterFactory} by calling the `converter` method.
+ *
+ * See the [Rust documentation for `UnitsConverter`](https://docs.rs/icu/2.0.0/icu/experimental/units/converter/struct.UnitsConverter.html) for more information.
+ */
 export class UnitsConverter {
     // Internal ptr reference:
     #ptr = null;
@@ -37,6 +36,7 @@ export class UnitsConverter {
 
         return this;
     }
+    /** @internal */
     get ffiValue() {
         return this.#ptr;
     }
@@ -47,7 +47,7 @@ export class UnitsConverter {
      * NOTE:
      * The conversion using floating-point operations is not as accurate as the conversion using ratios.
      *
-     * See the [Rust documentation for `convert`](https://docs.rs/icu/latest/icu/experimental/units/converter/struct.UnitsConverter.html#method.convert) for more information.
+     * See the [Rust documentation for `convert`](https://docs.rs/icu/2.0.0/icu/experimental/units/converter/struct.UnitsConverter.html#method.convert) for more information.
      */
     convertNumber(value) {
 
@@ -62,9 +62,9 @@ export class UnitsConverter {
     }
 
     /**
-     * Clones the current [`UnitsConverter`] object.
+     * Clones the current {@link UnitsConverter} object.
      *
-     * See the [Rust documentation for `clone`](https://docs.rs/icu/latest/icu/experimental/units/converter/struct.UnitsConverter.html#method.clone) for more information.
+     * See the [Rust documentation for `clone`](https://docs.rs/icu/2.0.0/icu/experimental/units/converter/struct.UnitsConverter.html#method.clone) for more information.
      */
     clone() {
 

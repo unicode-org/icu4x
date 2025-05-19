@@ -4,18 +4,17 @@ import { DataProvider } from "./DataProvider.mjs"
 import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
+const CanonicalComposition_box_destroy_registry = new FinalizationRegistry((ptr) => {
+    wasm.icu4x_CanonicalComposition_destroy_mv1(ptr);
+});
 
 /**
  * The raw canonical composition operation.
  *
  * Callers should generally use ComposingNormalizer unless they specifically need raw composition operations
  *
- * See the [Rust documentation for `CanonicalComposition`](https://docs.rs/icu/latest/icu/normalizer/properties/struct.CanonicalComposition.html) for more information.
+ * See the [Rust documentation for `CanonicalComposition`](https://docs.rs/icu/2.0.0/icu/normalizer/properties/struct.CanonicalComposition.html) for more information.
  */
-const CanonicalComposition_box_destroy_registry = new FinalizationRegistry((ptr) => {
-    wasm.icu4x_CanonicalComposition_destroy_mv1(ptr);
-});
-
 export class CanonicalComposition {
     // Internal ptr reference:
     #ptr = null;
@@ -39,6 +38,7 @@ export class CanonicalComposition {
 
         return this;
     }
+    /** @internal */
     get ffiValue() {
         return this.#ptr;
     }
@@ -47,7 +47,7 @@ export class CanonicalComposition {
     /**
      * Construct a new CanonicalComposition instance for NFC using compiled data.
      *
-     * See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/normalizer/properties/struct.CanonicalComposition.html#method.new) for more information.
+     * See the [Rust documentation for `new`](https://docs.rs/icu/2.0.0/icu/normalizer/properties/struct.CanonicalComposition.html#method.new) for more information.
      */
     #defaultConstructor() {
 
@@ -64,7 +64,7 @@ export class CanonicalComposition {
     /**
      * Construct a new CanonicalComposition instance for NFC using a particular data source.
      *
-     * See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/normalizer/properties/struct.CanonicalComposition.html#method.new) for more information.
+     * See the [Rust documentation for `new`](https://docs.rs/icu/2.0.0/icu/normalizer/properties/struct.CanonicalComposition.html#method.new) for more information.
      */
     static createWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
@@ -75,7 +75,7 @@ export class CanonicalComposition {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
-                throw new globalThis.Error('DataError: ' + cause.value, { cause });
+                throw new globalThis.Error('DataError.' + cause.value, { cause });
             }
             return new CanonicalComposition(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -89,7 +89,7 @@ export class CanonicalComposition {
      * Performs canonical composition (including Hangul) on a pair of characters
      * or returns NUL if these characters don’t compose. Composition exclusions are taken into account.
      *
-     * See the [Rust documentation for `compose`](https://docs.rs/icu/latest/icu/normalizer/properties/struct.CanonicalCompositionBorrowed.html#method.compose) for more information.
+     * See the [Rust documentation for `compose`](https://docs.rs/icu/2.0.0/icu/normalizer/properties/struct.CanonicalCompositionBorrowed.html#method.compose) for more information.
      */
     compose(starter, second) {
 
@@ -103,6 +103,11 @@ export class CanonicalComposition {
         }
     }
 
+    /**
+     * Construct a new CanonicalComposition instance for NFC using compiled data.
+     *
+     * See the [Rust documentation for `new`](https://docs.rs/icu/2.0.0/icu/normalizer/properties/struct.CanonicalComposition.html#method.new) for more information.
+     */
     constructor() {
         if (arguments[0] === diplomatRuntime.exposeConstructor) {
             return this.#internalConstructor(...Array.prototype.slice.call(arguments, 1));

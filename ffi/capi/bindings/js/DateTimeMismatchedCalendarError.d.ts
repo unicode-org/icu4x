@@ -2,28 +2,28 @@
 import type { CalendarKind } from "./CalendarKind"
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
-
-/**
- * See the [Rust documentation for `MismatchedCalendarError`](https://docs.rs/icu/latest/icu/datetime/struct.MismatchedCalendarError.html) for more information.
- */
-type DateTimeMismatchedCalendarError_obj = {
+export type DateTimeMismatchedCalendarError_obj = {
     thisKind: CalendarKind;
     dateKind?: CalendarKind | null;
 };
 
 
 
+/**
+ * See the [Rust documentation for `MismatchedCalendarError`](https://docs.rs/icu/2.0.0/icu/datetime/struct.MismatchedCalendarError.html) for more information.
+ */
 export class DateTimeMismatchedCalendarError {
     get thisKind(): CalendarKind;
     set thisKind(value: CalendarKind);
     get dateKind(): CalendarKind | null;
     set dateKind(value: CalendarKind | null);
-    /** Create `DateTimeMismatchedCalendarError` from an object that contains all of `DateTimeMismatchedCalendarError`s fields.
-    * Optional fields do not need to be included in the provided object.
-    */
+    /** @internal */
     static fromFields(structObj : DateTimeMismatchedCalendarError_obj) : DateTimeMismatchedCalendarError;
 
-
-
+    /**
+    * Create `DateTimeMismatchedCalendarError` from an object that contains all of `DateTimeMismatchedCalendarError`s fields.
+    * Optional fields do not need to be included in the provided object.
+    */
     constructor(structObj: DateTimeMismatchedCalendarError_obj);
+
 }

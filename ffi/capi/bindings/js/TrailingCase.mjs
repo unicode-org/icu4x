@@ -3,11 +3,10 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
+
 /**
- * See the [Rust documentation for `TrailingCase`](https://docs.rs/icu/latest/icu/casemap/options/enum.TrailingCase.html) for more information.
+ * See the [Rust documentation for `TrailingCase`](https://docs.rs/icu/2.0.0/icu/casemap/options/enum.TrailingCase.html) for more information.
  */
-
-
 export class TrailingCase {
     #value = undefined;
 
@@ -45,6 +44,7 @@ export class TrailingCase {
         throw TypeError(value + " is not a TrailingCase and does not correspond to any of its enumerator values.");
     }
 
+    /** @internal */
     static fromValue(value) {
         return new TrailingCase(value);
     }
@@ -53,6 +53,7 @@ export class TrailingCase {
         return [...TrailingCase.#values.keys()][this.#value];
     }
 
+    /** @internal */
     get ffiValue(){
         return this.#value;
     }

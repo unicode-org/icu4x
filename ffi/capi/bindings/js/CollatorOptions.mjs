@@ -7,11 +7,10 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
+
 /**
- * See the [Rust documentation for `CollatorOptions`](https://docs.rs/icu/latest/icu/collator/options/struct.CollatorOptions.html) for more information.
+ * See the [Rust documentation for `CollatorOptions`](https://docs.rs/icu/2.0.0/icu/collator/options/struct.CollatorOptions.html) for more information.
  */
-
-
 export class CollatorOptions {
     #strength;
     get strength() {
@@ -41,9 +40,7 @@ export class CollatorOptions {
     set caseLevel(value){
         this.#caseLevel = value;
     }
-    /** Create `CollatorOptions` from an object that contains all of `CollatorOptions`s fields.
-    * Optional fields do not need to be included in the provided object.
-    */
+    /** @internal */
     static fromFields(structObj) {
         return new CollatorOptions(structObj);
     }

@@ -3,11 +3,10 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
+
 /**
- * Additional information: [1](https://docs.rs/fixed_decimal/latest/fixed_decimal/enum.ParseError.html)
+ * Additional information: [1](https://docs.rs/fixed_decimal/0.7.0/fixed_decimal/enum.ParseError.html)
  */
-
-
 export class DecimalParseError {
     #value = undefined;
 
@@ -46,6 +45,7 @@ export class DecimalParseError {
         throw TypeError(value + " is not a DecimalParseError and does not correspond to any of its enumerator values.");
     }
 
+    /** @internal */
     static fromValue(value) {
         return new DecimalParseError(value);
     }
@@ -54,6 +54,7 @@ export class DecimalParseError {
         return [...DecimalParseError.#values.keys()][this.#value];
     }
 
+    /** @internal */
     get ffiValue(){
         return this.#value;
     }

@@ -47,9 +47,9 @@ namespace capi {
 
 namespace icu4x {
 /**
- * The various calendar types currently supported by [`Calendar`]
+ * The various calendar types currently supported by {@link Calendar}
  *
- * See the [Rust documentation for `AnyCalendarKind`](https://docs.rs/icu/latest/icu/calendar/enum.AnyCalendarKind.html) for more information.
+ * See the [Rust documentation for `AnyCalendarKind`](https://docs.rs/icu/2.0.0/icu/calendar/enum.AnyCalendarKind.html) for more information.
  */
 class CalendarKind {
 public:
@@ -82,9 +82,9 @@ public:
   explicit operator bool() const = delete;
 
   /**
-   * Creates a new [`CalendarKind`] for the specified locale, using compiled data.
+   * Creates a new {@link CalendarKind} for the specified locale, using compiled data.
    *
-   * See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/calendar/enum.AnyCalendarKind.html#method.new) for more information.
+   * See the [Rust documentation for `new`](https://docs.rs/icu/2.0.0/icu/calendar/enum.AnyCalendarKind.html#method.new) for more information.
    */
   inline static icu4x::CalendarKind create(const icu4x::Locale& locale);
 

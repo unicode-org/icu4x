@@ -7,16 +7,15 @@ import { Locale } from "./Locale.mjs"
 import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
-
-/**
- * An ICU4X Decimal Format object, capable of formatting a [`Decimal`] as a string.
- *
- * See the [Rust documentation for `DecimalFormatter`](https://docs.rs/icu/latest/icu/decimal/struct.DecimalFormatter.html) for more information.
- */
 const DecimalFormatter_box_destroy_registry = new FinalizationRegistry((ptr) => {
     wasm.icu4x_DecimalFormatter_destroy_mv1(ptr);
 });
 
+/**
+ * An ICU4X Decimal Format object, capable of formatting a {@link Decimal} as a string.
+ *
+ * See the [Rust documentation for `DecimalFormatter`](https://docs.rs/icu/2.0.0/icu/decimal/struct.DecimalFormatter.html) for more information.
+ */
 export class DecimalFormatter {
     // Internal ptr reference:
     #ptr = null;
@@ -40,15 +39,16 @@ export class DecimalFormatter {
 
         return this;
     }
+    /** @internal */
     get ffiValue() {
         return this.#ptr;
     }
 
 
     /**
-     * Creates a new [`DecimalFormatter`], using compiled data
+     * Creates a new {@link DecimalFormatter}, using compiled data
      *
-     * See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/decimal/struct.DecimalFormatter.html#method.try_new) for more information.
+     * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.0.0/icu/decimal/struct.DecimalFormatter.html#method.try_new) for more information.
      */
     static createWithGroupingStrategy(locale, groupingStrategy) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
@@ -61,7 +61,7 @@ export class DecimalFormatter {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
-                throw new globalThis.Error('DataError: ' + cause.value, { cause });
+                throw new globalThis.Error('DataError.' + cause.value, { cause });
             }
             return new DecimalFormatter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -74,9 +74,9 @@ export class DecimalFormatter {
     }
 
     /**
-     * Creates a new [`DecimalFormatter`], using a particular data source.
+     * Creates a new {@link DecimalFormatter}, using a particular data source.
      *
-     * See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/decimal/struct.DecimalFormatter.html#method.try_new) for more information.
+     * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.0.0/icu/decimal/struct.DecimalFormatter.html#method.try_new) for more information.
      */
     static createWithGroupingStrategyAndProvider(provider, locale, groupingStrategy) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
@@ -89,7 +89,7 @@ export class DecimalFormatter {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
-                throw new globalThis.Error('DataError: ' + cause.value, { cause });
+                throw new globalThis.Error('DataError.' + cause.value, { cause });
             }
             return new DecimalFormatter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -102,9 +102,9 @@ export class DecimalFormatter {
     }
 
     /**
-     * Creates a new [`DecimalFormatter`] from preconstructed locale data.
+     * Creates a new {@link DecimalFormatter} from preconstructed locale data.
      *
-     * See the [Rust documentation for `DecimalSymbolsV1`](https://docs.rs/icu/latest/icu/decimal/provider/struct.DecimalSymbolsV1.html) for more information.
+     * See the [Rust documentation for `DecimalSymbolsV1`](https://docs.rs/icu/2.0.0/icu/decimal/provider/struct.DecimalSymbolsV1.html) for more information.
      */
     static createWithManualData(plusSignPrefix, plusSignSuffix, minusSignPrefix, minusSignSuffix, decimalSeparator, groupingSeparator, primaryGroupSize, secondaryGroupSize, minGroupSize, digits, groupingStrategy) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
@@ -124,7 +124,7 @@ export class DecimalFormatter {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
-                throw new globalThis.Error('DataError: ' + cause.value, { cause });
+                throw new globalThis.Error('DataError.' + cause.value, { cause });
             }
             return new DecimalFormatter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -137,9 +137,9 @@ export class DecimalFormatter {
     }
 
     /**
-     * Formats a [`Decimal`] to a string.
+     * Formats a {@link Decimal} to a string.
      *
-     * See the [Rust documentation for `format`](https://docs.rs/icu/latest/icu/decimal/struct.DecimalFormatter.html#method.format) for more information.
+     * See the [Rust documentation for `format`](https://docs.rs/icu/2.0.0/icu/decimal/struct.DecimalFormatter.html#method.format) for more information.
      */
     format(value) {
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);

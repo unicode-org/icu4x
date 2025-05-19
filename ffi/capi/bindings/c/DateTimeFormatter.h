@@ -68,7 +68,7 @@ icu4x_DateTimeFormatter_create_et_mv1_result icu4x_DateTimeFormatter_create_et_m
 typedef struct icu4x_DateTimeFormatter_create_et_with_provider_mv1_result {union {DateTimeFormatter* ok; DateTimeFormatterLoadError err;}; bool is_ok;} icu4x_DateTimeFormatter_create_et_with_provider_mv1_result;
 icu4x_DateTimeFormatter_create_et_with_provider_mv1_result icu4x_DateTimeFormatter_create_et_with_provider_mv1(const DataProvider* provider, const Locale* locale, DateTimeLength_option length, TimePrecision_option time_precision, DateTimeAlignment_option alignment);
 
-void icu4x_DateTimeFormatter_format_iso_mv1(const DateTimeFormatter* self, const IsoDate* date, const Time* time, DiplomatWrite* write);
+void icu4x_DateTimeFormatter_format_iso_mv1(const DateTimeFormatter* self, const IsoDate* iso_date, const Time* time, DiplomatWrite* write);
 
 typedef struct icu4x_DateTimeFormatter_format_same_calendar_mv1_result {union { DateTimeMismatchedCalendarError err;}; bool is_ok;} icu4x_DateTimeFormatter_format_same_calendar_mv1_result;
 icu4x_DateTimeFormatter_format_same_calendar_mv1_result icu4x_DateTimeFormatter_format_same_calendar_mv1(const DateTimeFormatter* self, const Date* date, const Time* time, DiplomatWrite* write);

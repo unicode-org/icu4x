@@ -84,7 +84,7 @@ icu4x_DateFormatter_create_y_mv1_result icu4x_DateFormatter_create_y_mv1(const L
 typedef struct icu4x_DateFormatter_create_y_with_provider_mv1_result {union {DateFormatter* ok; DateTimeFormatterLoadError err;}; bool is_ok;} icu4x_DateFormatter_create_y_with_provider_mv1_result;
 icu4x_DateFormatter_create_y_with_provider_mv1_result icu4x_DateFormatter_create_y_with_provider_mv1(const DataProvider* provider, const Locale* locale, DateTimeLength_option length, DateTimeAlignment_option alignment, YearStyle_option year_style);
 
-void icu4x_DateFormatter_format_iso_mv1(const DateFormatter* self, const IsoDate* date, DiplomatWrite* write);
+void icu4x_DateFormatter_format_iso_mv1(const DateFormatter* self, const IsoDate* iso_date, DiplomatWrite* write);
 
 typedef struct icu4x_DateFormatter_format_same_calendar_mv1_result {union { DateTimeMismatchedCalendarError err;}; bool is_ok;} icu4x_DateFormatter_format_same_calendar_mv1_result;
 icu4x_DateFormatter_format_same_calendar_mv1_result icu4x_DateFormatter_format_same_calendar_mv1(const DateFormatter* self, const Date* date, DiplomatWrite* write);

@@ -8,7 +8,7 @@ final class _TimeZoneAndCanonicalFfi extends ffi.Struct {
   external _SliceUtf8 canonical;
 }
 
-/// See the [Rust documentation for `TimeZoneAndCanonical`](https://docs.rs/icu/latest/icu/time/zone/iana/struct.TimeZoneAndCanonical.html) for more information.
+/// See the [Rust documentation for `TimeZoneAndCanonical`](https://docs.rs/icu/2.0.0/icu/time/zone/iana/struct.TimeZoneAndCanonical.html) for more information.
 final class TimeZoneAndCanonical {
   final TimeZone timeZone;
   final String canonical;

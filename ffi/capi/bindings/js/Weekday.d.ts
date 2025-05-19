@@ -5,10 +5,12 @@ import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 export class Weekday {
 
+    /** @internal */
     static fromValue(value: Weekday | string): Weekday;
 
     get value(): string;
 
+    /** @internal */
     get ffiValue(): number;
 
     static Monday : Weekday;

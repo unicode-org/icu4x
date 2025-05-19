@@ -17,7 +17,7 @@ To verify that, open a terminal and check that the results are similar to:
 
 ```console
 cargo --version
-cargo 1.81.0 (2dbb1af80 2024-08-20)
+# cargo 1.86.0 (adf9b6ad1 2025-02-28)
 ```
 
 ## 2. Creating an app with ICU4X as a dependency
@@ -159,7 +159,7 @@ This concludes this introduction tutorial. With the help of `Locale` and `DateTi
 
 Internationalization is a broad domain and there are many more components in `ICU4X`.
 
-Next, learn how to [generate optimized data for your binary](data-management.md), [configure your Cargo.toml file](cargo.md), or continue exploring by reading [the docs](https://docs.rs/icu/latest/).
+Next, learn how to [generate optimized data for your binary](data-management.md), [configure your Cargo.toml file](../examples/cargo), or continue exploring by reading [the docs](https://docs.rs/icu/latest/).
 
 
 

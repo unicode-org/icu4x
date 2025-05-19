@@ -3,11 +3,10 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
+
 /**
- * See the [Rust documentation for `MaxVariable`](https://docs.rs/icu/latest/icu/collator/options/enum.MaxVariable.html) for more information.
+ * See the [Rust documentation for `MaxVariable`](https://docs.rs/icu/2.0.0/icu/collator/options/enum.MaxVariable.html) for more information.
  */
-
-
 export class CollatorMaxVariable {
     #value = undefined;
 
@@ -47,6 +46,7 @@ export class CollatorMaxVariable {
         throw TypeError(value + " is not a CollatorMaxVariable and does not correspond to any of its enumerator values.");
     }
 
+    /** @internal */
     static fromValue(value) {
         return new CollatorMaxVariable(value);
     }
@@ -55,6 +55,7 @@ export class CollatorMaxVariable {
         return [...CollatorMaxVariable.#values.keys()][this.#value];
     }
 
+    /** @internal */
     get ffiValue(){
         return this.#value;
     }

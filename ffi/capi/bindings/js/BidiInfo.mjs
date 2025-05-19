@@ -3,16 +3,15 @@ import { BidiParagraph } from "./BidiParagraph.mjs"
 import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
-
-/**
- * An object containing bidi information for a given string, produced by `for_text()` on `Bidi`
- *
- * See the [Rust documentation for `BidiInfo`](https://docs.rs/unicode_bidi/latest/unicode_bidi/struct.BidiInfo.html) for more information.
- */
 const BidiInfo_box_destroy_registry = new FinalizationRegistry((ptr) => {
     wasm.icu4x_BidiInfo_destroy_mv1(ptr);
 });
 
+/**
+ * An object containing bidi information for a given string, produced by `for_text()` on `Bidi`
+ *
+ * See the [Rust documentation for `BidiInfo`](https://docs.rs/unicode_bidi/0.3.11/unicode_bidi/struct.BidiInfo.html) for more information.
+ */
 export class BidiInfo {
     // Internal ptr reference:
     #ptr = null;
@@ -38,6 +37,7 @@ export class BidiInfo {
 
         return this;
     }
+    /** @internal */
     get ffiValue() {
         return this.#ptr;
     }

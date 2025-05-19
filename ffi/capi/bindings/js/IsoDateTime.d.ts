@@ -5,22 +5,23 @@ import type { Time } from "./Time"
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
+
 /**
  * An ICU4X DateTime object capable of containing a ISO-8601 date and time.
  *
- * See the [Rust documentation for `DateTime`](https://docs.rs/icu/latest/icu/time/struct.DateTime.html) for more information.
+ * See the [Rust documentation for `DateTime`](https://docs.rs/icu/2.0.0/icu/time/struct.DateTime.html) for more information.
  */
-
-
 export class IsoDateTime {
     get date(): IsoDate;
     get time(): Time;
+    /** @internal */
+    constructor();
 
 
     /**
-     * Creates a new [`IsoDateTime`] from an IXDTF string.
+     * Creates a new {@link IsoDateTime} from an IXDTF string.
      *
-     * See the [Rust documentation for `try_from_str`](https://docs.rs/icu/latest/icu/time/struct.DateTime.html#method.try_from_str) for more information.
+     * See the [Rust documentation for `try_from_str`](https://docs.rs/icu/2.0.0/icu/time/struct.DateTime.html#method.try_from_str) for more information.
      */
     static fromString(v: string): IsoDateTime;
 }
