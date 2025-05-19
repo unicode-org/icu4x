@@ -188,7 +188,7 @@ jobs:
         npm install typedoc@0.26.5 --exact -g
         cd ffi/npm
         make lib/index.mjs
-        node_modules/typedoc/bin/typedoc
+        typedoc
         cd ../..
 
     - uses: actions/upload-artifact@v4
