@@ -5,8 +5,7 @@
 //! Functions for region-specific weekday information.
 
 use crate::{error::RangeError, provider::*, types::Weekday};
-use icu_locale::preferences::extensions::unicode::keywords::FirstDay;
-use icu_locale_core::preferences::define_preferences;
+use icu_locale_core::preferences::{define_preferences, extensions::unicode::keywords::FirstDay};
 use icu_provider::prelude::*;
 
 /// Minimum number of days in a month unit required for using this module
