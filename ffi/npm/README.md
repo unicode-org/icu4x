@@ -14,13 +14,13 @@ _We are still working on improving the user experience of using ICU4X from other
 ICU4X can be used like any other NPM package:
 
 ```shell
-npm add icu4x
+npm add icu
 touch index.mjs
 ```
 
 `index.mjs`:
 ```js
-import { DateFormatter, DateTimeLength, IsoDate, Locale } from 'icu4x';
+import { DateFormatter, DateTimeLength, IsoDate, Locale } from 'icu';
 
 let locale = Locale.fromString('de-CH');
 
