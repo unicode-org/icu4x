@@ -1513,25 +1513,3 @@ impl CollatorBorrowed<'_> {
         Ordering::Equal
     }
 }
-
-/// Helper for checking if a byte is compressible
-pub(crate) struct CompressibleBytes<'a> {
-    arr: &'a [u8; 32],
-}
-
-impl<'a> CompressibleBytes<'a> {
-    pub(crate) fn new(arr: &'a [u8; 32]) -> Self {
-        Self { arr }
-    }
-
-    #[allow(dead_code)]
-    pub(crate) fn is_compressible(&self, b: u8) -> bool {
-        // Indexing OK by construction and pasting this
-        // into Compiler Explorer shows that the panic
-        // is optimized away.
-        #[allow(clippy::indexing_slicing)]
-        let field = self.arr[usize::from(b >> 3)];
-        let mask = 1 << (b & 0b111);
-        (field & mask) != 0
-    }
-}

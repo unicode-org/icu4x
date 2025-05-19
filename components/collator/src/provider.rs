@@ -25,7 +25,6 @@ use zerovec::ule::AsULE;
 use zerovec::ZeroVec;
 use zerovec::{zeroslice, ZeroSlice};
 
-use crate::comparison::CompressibleBytes;
 use crate::elements::CollationElement;
 use crate::elements::CollationElement32;
 use crate::elements::Tag;
@@ -566,8 +565,7 @@ pub struct CollationSpecialPrimaries<'data> {
     /// and have to do manual shifts and masks,
     /// so we might as well do them with the narrow
     /// type that is its own `ULE`.
-    #[cfg_attr(feature = "serde", serde(borrow))]
-    pub compressible_bytes: ZeroVec<'data, u8>,
+    pub compressible_bytes: [u8; 32],
     /// The high 8 bits of the numeric primary
     pub numeric_primary: u8,
 }
@@ -588,10 +586,13 @@ impl CollationSpecialPrimaries<'_> {
     }
 
     #[allow(dead_code)]
-    pub(crate) fn get_compressible_bytes(&self) -> CompressibleBytes<'_> {
-        // The length has already been validated when constructing the collator.
-        debug_assert_eq!(self.compressible_bytes.len(), 32);
-        #[allow(clippy::unwrap_used)]
-        CompressibleBytes::new(<&[u8; 32]>::try_from(self.compressible_bytes.as_bytes()).unwrap())
+    pub(crate) fn is_compressible(&self, b: u8) -> bool {
+        // Indexing OK by construction and pasting this
+        // into Compiler Explorer shows that the panic
+        // is optimized away.
+        #[allow(clippy::indexing_slicing)]
+        let field = self.compressible_bytes[usize::from(b >> 3)];
+        let mask = 1 << (b & 0b111);
+        (field & mask) != 0
     }
 }
