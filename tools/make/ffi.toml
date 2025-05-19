@@ -41,6 +41,7 @@ script_runner = "@duckscript"
 script = '''
 exit_on_error true
 exec --fail-on-error npm -C ffi/npm install-ci-test
+exec --fail-on-error npm -C ffi/npm run bench
 exec --fail-on-error npm -C examples/npm install
 exec --fail-on-error npm -C examples/npm run compile
 exec --fail-on-error npm -C examples/npm run start

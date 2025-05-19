@@ -1,5 +1,5 @@
 {
-  "name": "icu4x",
+  "name": "icu",
   "version": "2.0.0",
   "description": "ICU4X JavaScript bindings via WebAssembly",
   "main": "lib/index.mjs",

@@ -4,7 +4,7 @@
 
 import test from 'ava';
 
-import { Decimal, Locale, DecimalFormatter, DecimalGroupingStrategy, DataProvider } from 'icu4x';
+import { Decimal, Locale, DecimalFormatter, DecimalGroupingStrategy, DataProvider } from 'icu';
 
 test('use createFromBlob to format a simple decimal', async t => {
   // icu4x-datagen --markers DecimalSymbolsV1 DecimalDigitsV1 --locales bn --format blob --out bn.blob && xxd -i bn.blob

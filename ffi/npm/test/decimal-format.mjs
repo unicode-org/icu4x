@@ -1,10 +1,10 @@
-// This file is part of . For terms of use, please see the file
+// This file is part of ICU4X. For terms of use, please see the file
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 import test from 'ava';
 
-import { Decimal, Locale, DecimalFormatter, DecimalSign, DecimalGroupingStrategy } from 'icu4x';
+import { Decimal, Locale, DecimalFormatter, DecimalSign, DecimalGroupingStrategy } from 'icu';
 
 const locale = Locale.fromString('bn');
 const format = DecimalFormatter.createWithGroupingStrategy(locale, DecimalGroupingStrategy.Auto);
