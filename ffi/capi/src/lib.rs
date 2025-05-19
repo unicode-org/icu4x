@@ -24,6 +24,7 @@
 //! This crate contains the `extern "C"` FFI for ICU4X, as well as the [Diplomat](https://github.com/rust-diplomat/diplomat)-generated
 //! C, C++, Dart, JavaScript, and TypeScript bindings.
 //!
+#![allow(rustdoc::invalid_html_tags)] // attribute split over three lines because `cargo generate-readmes` does not evaluate `#![doc = ]` docs
 //! <p style='font-weight: bold; font-size: 24px;'> 🔗 See the <a target='_blank' href='https://icu4x.unicode.org/
 #![doc = core::env!("CARGO_PKG_VERSION")]
 //! '>ICU4X website</a> for FFI docs and examples</p>
