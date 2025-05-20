@@ -40,7 +40,7 @@ impl crate::IterableDataProviderCached<UnitsIdsV1> for SourceDataProvider {
             .read_and_parse("supplemental/units.json")?;
 
         let ids_set = units_data
-            .get_unit_ids_map()
+            .unit_ids_map()?
             .keys()
             .map(|unit_name| {
                 DataIdentifierCow::from_marker_attributes_owned(
