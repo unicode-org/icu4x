@@ -12,8 +12,8 @@ use displaydoc::Display;
 pub enum ParseError {
     #[displaydoc("Implementation error: this error must not throw.")]
     ImplAssert,
-    #[displaydoc("UTF16 digit was not mappable to an ASCII value")]
-    Utf16NonAsciiChar,
+    #[displaydoc("Code point was not ASCII")]
+    NonAsciiCodePoint,
     #[displaydoc("Invalid float while parsing fraction part.")]
     ParseFloat,
     #[displaydoc("Parsing ended abruptly while parsing {location}")]

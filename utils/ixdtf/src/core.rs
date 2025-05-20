@@ -41,12 +41,7 @@ impl EncodingType for Utf16 {
     }
 
     fn get_ascii(source: &[Self::CodeUnit], index: usize) -> ParserResult<Option<u8>> {
-        source
-            .get(index)
-            .copied()
-            .map(to_ascii_byte)
-            .transpose()
-            .map_err(|_| ParseError::Utf16NonAsciiChar)
+        source.get(index).copied().map(to_ascii_byte).transpose()
     }
 
     fn check_calendar_key(key: &[Self::CodeUnit]) -> bool {
@@ -57,7 +52,7 @@ impl EncodingType for Utf16 {
 #[inline]
 fn to_ascii_byte(b: u16) -> ParserResult<u8> {
     if !(0x01..0x7F).contains(&b) {
-        return Err(ParseError::Utf16NonAsciiChar);
+        return Err(ParseError::NonAsciiCodePoint);
     }
     Ok(b as u8)
 }
