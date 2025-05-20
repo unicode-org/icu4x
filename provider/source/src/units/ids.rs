@@ -4,7 +4,7 @@
 
 use std::collections::HashSet;
 
-use icu::experimental::measure::provider::UnitsIdsV1;
+use icu::experimental::measure::provider::UnitIdsV1;
 use icu_provider::prelude::*;
 use icu_provider::DataError;
 use icu_provider::DataMarkerAttributes;
@@ -15,9 +15,9 @@ use icu_provider::DataResponse;
 use crate::cldr_serde;
 use crate::SourceDataProvider;
 
-impl DataProvider<UnitsIdsV1> for SourceDataProvider {
-    fn load(&self, req: DataRequest) -> Result<DataResponse<UnitsIdsV1>, DataError> {
-        self.check_req::<UnitsIdsV1>(req)?;
+impl DataProvider<UnitIdsV1> for SourceDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<UnitIdsV1>, DataError> {
+        self.check_req::<UnitIdsV1>(req)?;
         let units_data: &cldr_serde::units::info::Resource = self
             .cldr()?
             .core()
@@ -32,7 +32,7 @@ impl DataProvider<UnitsIdsV1> for SourceDataProvider {
     }
 }
 
-impl crate::IterableDataProviderCached<UnitsIdsV1> for SourceDataProvider {
+impl crate::IterableDataProviderCached<UnitIdsV1> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         let units_data: &cldr_serde::units::info::Resource = self
             .cldr()?

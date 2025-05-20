@@ -3,8 +3,8 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 icu_provider::data_marker!(
-    // UnitsIdsV1
-    UnitsIdsV1, u16
+    // UnitIdsV1
+    UnitIdsV1, u16
 );
 
 pub mod si_prefix;
