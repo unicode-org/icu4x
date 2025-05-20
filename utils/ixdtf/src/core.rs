@@ -4,8 +4,6 @@
 
 //! Core functionality for `ixdtf`'s parsers
 
-use private::Sealed;
-
 use crate::{ParseError, ParserResult};
 
 mod private {
@@ -29,12 +27,12 @@ pub trait UtfEncodingType: private::Sealed {
     fn check_calendar_key(key: &[Self::Encoding]) -> bool;
 }
 
-/// A marker trait for providing a UTF-16 encoding to `ixdtf`'s parsers.
+/// A marker type that signals a parser should parse the source as UTF-16 bytes.
 #[derive(Debug, PartialEq, Clone)]
 #[allow(clippy::exhaustive_structs)] // ZST Marker trait, no fields should be added
 pub struct Utf16;
 
-impl Sealed for Utf16 {}
+impl private::Sealed for Utf16 {}
 
 impl UtfEncodingType for Utf16 {
     type Encoding = u16;
@@ -56,12 +54,20 @@ impl UtfEncodingType for Utf16 {
     }
 }
 
-/// A marker trait for providing a UTF-8 encoding to `ixdtf`'s parsers.
+#[inline]
+fn to_ascii_byte(b: u16) -> ParserResult<u8> {
+    if !(0x01..0x7F).contains(&b) {
+        return Err(ParseError::Utf16NonAsciiChar);
+    }
+    Ok(b as u8)
+}
+
+/// A marker type that signals a parser should parse the source as UTF-8 bytes.
 #[derive(Debug, PartialEq, Clone)]
 #[allow(clippy::exhaustive_structs)] // ZST Marker trait, no fields should be added.
 pub struct Utf8;
 
-impl Sealed for Utf8 {}
+impl private::Sealed for Utf8 {}
 
 impl UtfEncodingType for Utf8 {
     type Encoding = u8;
@@ -77,14 +83,6 @@ impl UtfEncodingType for Utf8 {
     fn check_calendar_key(key: &[Self::Encoding]) -> bool {
         key == "u-ca".as_bytes()
     }
-}
-
-#[inline]
-fn to_ascii_byte(b: u16) -> ParserResult<u8> {
-    if !(0x01..0x7F).contains(&b) {
-        return Err(ParseError::Utf16NonAsciiChar);
-    }
-    Ok(b as u8)
 }
 
 // ==== Mini cursor implementation for Iso8601 targets ====
