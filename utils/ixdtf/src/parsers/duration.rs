@@ -6,7 +6,7 @@
 
 use crate::{
     assert_syntax,
-    core::UtfEncodingType,
+    core::EncodingType,
     parsers::{
         grammar::{
             is_ascii_sign, is_day_designator, is_duration_designator, is_hour_designator,
@@ -20,7 +20,7 @@ use crate::{
     ParseError, ParserResult,
 };
 
-pub(crate) fn parse_duration<T: UtfEncodingType>(
+pub(crate) fn parse_duration<T: EncodingType>(
     cursor: &mut Cursor<T>,
 ) -> ParserResult<DurationParseRecord> {
     let sign = if cursor
@@ -63,7 +63,7 @@ enum DateUnit {
     Day,
 }
 
-pub(crate) fn parse_date_duration<T: UtfEncodingType>(
+pub(crate) fn parse_date_duration<T: EncodingType>(
     cursor: &mut Cursor<T>,
 ) -> ParserResult<DateDurationRecord> {
     let mut date = DateDurationRecord::default();
@@ -128,7 +128,7 @@ enum TimeUnit {
     Second,
 }
 
-pub(crate) fn parse_time_duration<T: UtfEncodingType>(
+pub(crate) fn parse_time_duration<T: EncodingType>(
     cursor: &mut Cursor<T>,
 ) -> ParserResult<Option<TimeDurationRecord>> {
     if !cursor.check_or(false, is_time_designator)? {

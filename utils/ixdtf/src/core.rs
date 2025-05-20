@@ -13,18 +13,18 @@ mod private {
 /// A trait for defining various supported encodings
 /// and implementing functionality that is encoding
 /// sensitive / specific.
-pub trait UtfEncodingType: private::Sealed {
-    type Encoding: PartialEq + core::fmt::Debug + Clone;
+pub trait EncodingType: private::Sealed {
+    type CodeUnit: PartialEq + core::fmt::Debug + Clone;
 
     /// Get a slice from the underlying source using for start..end
-    fn slice(source: &[Self::Encoding], start: usize, end: usize) -> Option<&[Self::Encoding]>;
+    fn slice(source: &[Self::CodeUnit], start: usize, end: usize) -> Option<&[Self::CodeUnit]>;
 
-    /// Retrieve the provided index and return the value constrained to a
-    /// representable ASCII range if required.
-    fn get_ascii(source: &[Self::Encoding], index: usize) -> ParserResult<Option<u8>>;
+    /// Retrieve the provided code unit index and returns the value as an ASCII byte
+    /// or None if the value is not ASCII representable.
+    fn get_ascii(source: &[Self::CodeUnit], index: usize) -> ParserResult<Option<u8>>;
 
     /// Checks for the known calendar annotation key `u-ca`.
-    fn check_calendar_key(key: &[Self::Encoding]) -> bool;
+    fn check_calendar_key(key: &[Self::CodeUnit]) -> bool;
 }
 
 /// A marker type that signals a parser should parse the source as UTF-16 bytes.
@@ -34,13 +34,13 @@ pub struct Utf16;
 
 impl private::Sealed for Utf16 {}
 
-impl UtfEncodingType for Utf16 {
-    type Encoding = u16;
-    fn slice(source: &[Self::Encoding], start: usize, end: usize) -> Option<&[Self::Encoding]> {
+impl EncodingType for Utf16 {
+    type CodeUnit = u16;
+    fn slice(source: &[Self::CodeUnit], start: usize, end: usize) -> Option<&[Self::CodeUnit]> {
         source.get(start..end)
     }
 
-    fn get_ascii(source: &[Self::Encoding], index: usize) -> ParserResult<Option<u8>> {
+    fn get_ascii(source: &[Self::CodeUnit], index: usize) -> ParserResult<Option<u8>> {
         source
             .get(index)
             .copied()
@@ -49,7 +49,7 @@ impl UtfEncodingType for Utf16 {
             .map_err(|_| ParseError::Utf16NonAsciiChar)
     }
 
-    fn check_calendar_key(key: &[Self::Encoding]) -> bool {
+    fn check_calendar_key(key: &[Self::CodeUnit]) -> bool {
         key == [0x75, 0x2d, 0x63, 0x61]
     }
 }
@@ -69,18 +69,18 @@ pub struct Utf8;
 
 impl private::Sealed for Utf8 {}
 
-impl UtfEncodingType for Utf8 {
-    type Encoding = u8;
+impl EncodingType for Utf8 {
+    type CodeUnit = u8;
 
-    fn slice<'a>(source: &[Self::Encoding], start: usize, end: usize) -> Option<&[Self::Encoding]> {
+    fn slice<'a>(source: &[Self::CodeUnit], start: usize, end: usize) -> Option<&[Self::CodeUnit]> {
         source.get(start..end)
     }
 
-    fn get_ascii(source: &[Self::Encoding], index: usize) -> ParserResult<Option<u8>> {
+    fn get_ascii(source: &[Self::CodeUnit], index: usize) -> ParserResult<Option<u8>> {
         Ok(source.get(index).copied())
     }
 
-    fn check_calendar_key(key: &[Self::Encoding]) -> bool {
+    fn check_calendar_key(key: &[Self::CodeUnit]) -> bool {
         key == "u-ca".as_bytes()
     }
 }
@@ -89,20 +89,20 @@ impl UtfEncodingType for Utf8 {
 
 /// `Cursor` is a small cursor implementation for parsing Iso8601 grammar.
 #[derive(Debug)]
-pub(crate) struct Cursor<'a, T: UtfEncodingType> {
+pub(crate) struct Cursor<'a, T: EncodingType> {
     pos: usize,
-    source: &'a [T::Encoding],
+    source: &'a [T::CodeUnit],
 }
 
-impl<'a, T: UtfEncodingType> Cursor<'a, T> {
+impl<'a, T: EncodingType> Cursor<'a, T> {
     /// Create a new cursor from a source UTF8 string.
     #[must_use]
-    pub fn new(source: &'a [T::Encoding]) -> Self {
+    pub fn new(source: &'a [T::CodeUnit]) -> Self {
         Self { pos: 0, source }
     }
 
     /// Returns a string value from a slice of the cursor.
-    pub(crate) fn slice(&self, start: usize, end: usize) -> Option<&'a [T::Encoding]> {
+    pub(crate) fn slice(&self, start: usize, end: usize) -> Option<&'a [T::CodeUnit]> {
         T::slice(self.source, start, end)
     }
 

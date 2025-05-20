@@ -4,7 +4,7 @@
 
 //! The parser module contains the implementation details for `IxdtfParser` and `IsoDurationParser`
 
-use crate::core::{Utf16, Utf8, UtfEncodingType};
+use crate::core::{EncodingType, Utf16, Utf8};
 use crate::{core::Cursor, ParserResult};
 
 #[cfg(feature = "duration")]
@@ -75,7 +75,7 @@ macro_rules! assert_syntax {
 /// [rfc9557]: https://datatracker.ietf.org/doc/rfc9557/
 /// [temporal-proposal]: https://tc39.es/proposal-temporal/
 #[derive(Debug)]
-pub struct IxdtfParser<'a, T: UtfEncodingType> {
+pub struct IxdtfParser<'a, T: EncodingType> {
     cursor: Cursor<'a, T>,
 }
 
@@ -103,11 +103,11 @@ impl<'a> IxdtfParser<'a, Utf16> {
     }
 }
 
-impl<'a, T: UtfEncodingType> IxdtfParser<'a, T> {
+impl<'a, T: EncodingType> IxdtfParser<'a, T> {
     /// Create a new `IxdtfParser` for the specified encoding.
     #[inline]
     #[must_use]
-    pub fn new(source: &'a [T::Encoding]) -> Self {
+    pub fn new(source: &'a [T::CodeUnit]) -> Self {
         Self {
             cursor: Cursor::new(source),
         }
@@ -249,7 +249,7 @@ impl<'a, T: UtfEncodingType> IxdtfParser<'a, T> {
 ///
 /// ✨ *Enabled with the `timezone` Cargo feature.*
 #[derive(Debug)]
-pub struct TimeZoneParser<'a, T: UtfEncodingType> {
+pub struct TimeZoneParser<'a, T: EncodingType> {
     cursor: Cursor<'a, T>,
 }
 
@@ -277,11 +277,11 @@ impl<'a> TimeZoneParser<'a, Utf16> {
     }
 }
 
-impl<'a, T: UtfEncodingType> TimeZoneParser<'a, T> {
+impl<'a, T: EncodingType> TimeZoneParser<'a, T> {
     /// Creates a new `TimeZoneParser` for the provided encoding.
     #[inline]
     #[must_use]
-    pub fn new(source: &'a [T::Encoding]) -> Self {
+    pub fn new(source: &'a [T::CodeUnit]) -> Self {
         Self {
             cursor: Cursor::new(source),
         }
@@ -348,7 +348,7 @@ impl<'a, T: UtfEncodingType> TimeZoneParser<'a, T> {
     /// assert_eq!(parse_result, iana_identifier.as_bytes());
     /// ```
     #[inline]
-    pub fn parse_iana_identifier(&mut self) -> ParserResult<&'a [T::Encoding]> {
+    pub fn parse_iana_identifier(&mut self) -> ParserResult<&'a [T::CodeUnit]> {
         let result = timezone::parse_tz_iana_name(&mut self.cursor)?;
         self.cursor.close()?;
         Ok(result)
@@ -392,7 +392,7 @@ impl<'a, T: UtfEncodingType> TimeZoneParser<'a, T> {
 /// ```
 #[cfg(feature = "duration")]
 #[derive(Debug)]
-pub struct IsoDurationParser<'a, T: UtfEncodingType> {
+pub struct IsoDurationParser<'a, T: EncodingType> {
     cursor: Cursor<'a, T>,
 }
 
@@ -425,11 +425,11 @@ impl<'a> IsoDurationParser<'a, Utf16> {
 }
 
 #[cfg(feature = "duration")]
-impl<'a, T: UtfEncodingType> IsoDurationParser<'a, T> {
+impl<'a, T: EncodingType> IsoDurationParser<'a, T> {
     /// Creates a new `IsoDurationParser` for the provided encoding.
     #[inline]
     #[must_use]
-    pub fn new(source: &'a [T::Encoding]) -> Self {
+    pub fn new(source: &'a [T::CodeUnit]) -> Self {
         Self {
             cursor: Cursor::new(source),
         }

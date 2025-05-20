@@ -15,7 +15,7 @@ use super::{
 };
 use crate::{
     assert_syntax,
-    core::UtfEncodingType,
+    core::EncodingType,
     records::{
         FullPrecisionOffset, MinutePrecisionOffset, Sign, TimeZoneAnnotation, TimeZoneRecord,
         UtcOffsetRecord, UtcOffsetRecordOrZ,
@@ -27,7 +27,7 @@ use crate::{
 
 // ==== Time Zone Annotation Parsing ====
 
-pub(crate) fn parse_ambiguous_tz_annotation<'a, T: UtfEncodingType>(
+pub(crate) fn parse_ambiguous_tz_annotation<'a, T: EncodingType>(
     cursor: &mut Cursor<'a, T>,
 ) -> ParserResult<Option<TimeZoneAnnotation<'a, T>>> {
     // Peek position + 1 to check for critical flag.
@@ -77,7 +77,7 @@ pub(crate) fn parse_ambiguous_tz_annotation<'a, T: UtfEncodingType>(
     Err(ParseError::AnnotationChar)
 }
 
-fn parse_tz_annotation<'a, T: UtfEncodingType>(
+fn parse_tz_annotation<'a, T: EncodingType>(
     cursor: &mut Cursor<'a, T>,
 ) -> ParserResult<TimeZoneAnnotation<'a, T>> {
     assert_syntax!(
@@ -101,7 +101,7 @@ fn parse_tz_annotation<'a, T: UtfEncodingType>(
 /// Parses the [`TimeZoneIdentifier`][tz] node.
 ///
 /// [tz]: https://tc39.es/proposal-temporal/#prod-TimeZoneIdentifier
-pub(crate) fn parse_time_zone<'a, T: UtfEncodingType>(
+pub(crate) fn parse_time_zone<'a, T: EncodingType>(
     cursor: &mut Cursor<'a, T>,
 ) -> ParserResult<TimeZoneRecord<'a, T>> {
     let is_iana = cursor
@@ -120,9 +120,9 @@ pub(crate) fn parse_time_zone<'a, T: UtfEncodingType>(
 }
 
 /// Parse a `TimeZoneIANAName` Parse Node
-pub(crate) fn parse_tz_iana_name<'a, T: UtfEncodingType>(
+pub(crate) fn parse_tz_iana_name<'a, T: EncodingType>(
     cursor: &mut Cursor<'a, T>,
-) -> ParserResult<&'a [T::Encoding]> {
+) -> ParserResult<&'a [T::CodeUnit]> {
     assert_syntax!(cursor.check_or(false, is_tz_leading_char)?, TzLeadingChar);
     let tz_name_start = cursor.pos();
     while let Some(potential_value_char) = cursor.next()? {
@@ -147,7 +147,7 @@ pub(crate) fn parse_tz_iana_name<'a, T: UtfEncodingType>(
 // ==== Utc Offset Parsing ====
 
 /// Parses a potentially full precision UTC offset or Z
-pub(crate) fn parse_date_time_utc_offset<T: UtfEncodingType>(
+pub(crate) fn parse_date_time_utc_offset<T: EncodingType>(
     cursor: &mut Cursor<T>,
 ) -> ParserResult<UtcOffsetRecordOrZ> {
     if cursor.check_or(false, is_utc_designator)? {
@@ -160,7 +160,7 @@ pub(crate) fn parse_date_time_utc_offset<T: UtfEncodingType>(
 }
 
 /// Parse a potentially full precision `UtcOffset`
-pub(crate) fn parse_utc_offset<T: UtfEncodingType>(
+pub(crate) fn parse_utc_offset<T: EncodingType>(
     cursor: &mut Cursor<T>,
 ) -> ParserResult<UtcOffsetRecord> {
     let (minute_precision_offset, separated) = parse_utc_offset_minute_precision(cursor)?;
@@ -189,7 +189,7 @@ pub(crate) fn parse_utc_offset<T: UtfEncodingType>(
 /// Parse an `UtcOffsetMinutePrecision` node
 ///
 /// Returns the offset and whether the utc parsing includes a minute.
-pub(crate) fn parse_utc_offset_minute_precision<T: UtfEncodingType>(
+pub(crate) fn parse_utc_offset_minute_precision<T: EncodingType>(
     cursor: &mut Cursor<T>,
 ) -> ParserResult<(MinutePrecisionOffset, bool)> {
     let sign = if cursor.check_or(false, is_ascii_sign)? {
