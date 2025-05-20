@@ -2,7 +2,11 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-pub mod ids;
+icu_provider::data_marker!(
+    // UnitsIdsV1
+    UnitsIdsV1, u16
+);
+
 pub mod si_prefix;
 pub mod single_unit;
 pub mod trie;

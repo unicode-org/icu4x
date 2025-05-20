@@ -4,7 +4,7 @@
 
 use std::collections::HashSet;
 
-use icu::experimental::measure::provider::ids::UnitsIdsV1;
+use icu::experimental::measure::provider::UnitsIdsV1;
 use icu_provider::prelude::*;
 use icu_provider::DataError;
 use icu_provider::DataMarkerAttributes;
