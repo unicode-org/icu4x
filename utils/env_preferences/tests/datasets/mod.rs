@@ -7,7 +7,6 @@
 /// List of real-world POSIX locales, based on GNU libc's localization data
 /// Data used:
 /// - Filenames in https://sourceware.org/git/?p=glibc.git;a=tree;f=localedata/locales;hb=HEAD
-/// - Aliases: https://sourceware.org/git/?p=glibc.git;a=blob;f=intl/locale.alias;hb=HEAD
 /// - Legacy `@saaho` modifier: https://sourceware.org/git/?p=glibc.git;a=blob;f=ChangeLog.old/ChangeLog.28;hb=HEAD#l356
 const POSIX_DATASET: &str = include_str!("posix.txt");
 /// List of real-world Windows locales, based on Microsoft's LCID reference.

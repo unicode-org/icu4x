@@ -49,53 +49,6 @@ fn modifier() {
     expect_success("ca_ES@valencia", "ca-ES-valencia");
 }
 
-#[test]
-fn alias() {
-    const CASES: [(&str, &str); 37] = [
-        ("bokmal", "nb-NO"),
-        ("catalan", "ca-ES"),
-        ("croatian", "hr-HR"),
-        ("czech", "cs-CZ"),
-        ("danish", "da-DK"),
-        ("dansk", "da-DK"),
-        ("deutsch", "de-DE"),
-        ("dutch", "nl-NL"),
-        ("eesti", "et-EE"),
-        ("estonian", "et-EE"),
-        ("finnish", "fi-FI"),
-        ("french", "fr-FR"),
-        ("galego", "gl-ES"),
-        ("galician", "gl-ES"),
-        ("german", "de-DE"),
-        ("greek", "el-GR"),
-        ("hebrew", "he-IL"),
-        ("hrvatski", "hr-HR"),
-        ("hungarian", "hu-HU"),
-        ("icelandic", "is-IS"),
-        ("italian", "it-IT"),
-        ("japanese", "ja-JP"),
-        ("korean", "ko-KR"),
-        ("lithuanian", "lt-LT"),
-        ("norwegian", "nb-NO"),
-        ("nynorsk", "nn-NO"),
-        ("polish", "pl-PL"),
-        ("portuguese", "pt-PT"),
-        ("romanian", "ro-RO"),
-        ("russian", "ru-RU"),
-        ("slovak", "sk-SK"),
-        ("slovene", "sl-SI"),
-        ("slovenian", "sl-SI"),
-        ("spanish", "es-ES"),
-        ("swedish", "sv-SE"),
-        ("thai", "th-TH"),
-        ("turkish", "tr-TR"),
-    ];
-
-    for (src, expected) in CASES {
-        expect_success(src, expected);
-    }
-}
-
 mod error {
     mod parse {
         use env_preferences::parse::posix::{PosixLocale, PosixParseError};
