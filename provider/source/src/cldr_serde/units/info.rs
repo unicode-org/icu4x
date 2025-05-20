@@ -83,14 +83,8 @@ pub(crate) struct Resource {
 }
 
 impl Resource {
-    /// Retrieves the unique identifier for a given unit name.
+    /// Retrieves the unique identifier for a given unit name which is the unit's index in the list.
     ///
-    /// This function searches for the specified unit name within the `convert_units`
-    /// and returns its position as a `u16` identifier.
-    ///
-    /// # Arguments
-    ///
-    /// * `unit_name` - A string slice that holds the name of the unit to search for.
     ///
     /// # Returns
     ///
@@ -110,10 +104,7 @@ impl Resource {
             })
     }
 
-    /// Constructs a map of unit names to their corresponding unique identifiers.
-    ///
-    /// This function iterates over the units and assigns each a unique identifier
-    /// based on its position in the list. The identifiers are represented as `u16`.
+    /// Constructs a map of unit names to their unique identifiers, which are the unit's indices in the list.
     ///
     /// # Errors
     ///
