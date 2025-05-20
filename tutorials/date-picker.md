@@ -30,10 +30,10 @@ cargo add icu
 We recommend using [CodePen](https://codepen.io/pen/?editors=1011) to follow along. To load ICU4X into CodePen, you can use this snippet in the JavaScript editor:
 
 ```javascript
-import { Locale, DateFormatter, IsoDate, DateTimeLength } from "https://storage.googleapis.com/static-493776/2_0/npm/lib/index.mjs";
+import { Locale, DateFormatter, IsoDate, DateTimeLength } from "https://unpkg.com/icu@2.0.0";
 ```
 
-This loads the full development ICU4X WebAssembly file. Since it may take some time to load on slow connections, we'll create a loading div. In future tutorials you will learn how to build an optimized WebAssembly file, reducing the size of the WASM file by 99% or more. Add this to your HTML:
+This loads the full ICU4X WebAssembly file. Since it may take a few seconds to load on slow connections, we'll create a loading div. Add this to your HTML:
 
 ```html
 <div id="loading">Loading…</div>
