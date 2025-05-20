@@ -11,14 +11,13 @@ import { YearStyle } from "./YearStyle.mjs"
 import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
-
-/**
- * See the [Rust documentation for `DateTimeFormatter`](https://docs.rs/icu/latest/icu/datetime/struct.DateTimeFormatter.html) for more information.
- */
 const DateFormatter_box_destroy_registry = new FinalizationRegistry((ptr) => {
     wasm.icu4x_DateFormatter_destroy_mv1(ptr);
 });
 
+/**
+ * See the [Rust documentation for `DateTimeFormatter`](https://docs.rs/icu/2.0.0/icu/datetime/struct.DateTimeFormatter.html) for more information.
+ */
 export class DateFormatter {
     // Internal ptr reference:
     #ptr = null;
@@ -42,17 +41,18 @@ export class DateFormatter {
 
         return this;
     }
+    /** @internal */
     get ffiValue() {
         return this.#ptr;
     }
 
 
     /**
-     * See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/datetime/struct.DateTimeFormatter.html#method.try_new) for more information.
+     * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.0.0/icu/datetime/struct.DateTimeFormatter.html#method.try_new) for more information.
      *
-     * See the [Rust documentation for `D`](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.D.html) for more information.
+     * See the [Rust documentation for `D`](https://docs.rs/icu/2.0.0/icu/datetime/fieldsets/struct.D.html) for more information.
      *
-     * Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.D.html#method.with_alignment), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.D.html#method.for_length)
+     * Additional information: [1](https://docs.rs/icu/2.0.0/icu/datetime/fieldsets/struct.D.html#method.with_alignment), [2](https://docs.rs/icu/2.0.0/icu/datetime/fieldsets/struct.D.html#method.for_length)
      */
     static createD(locale, length, alignment) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
@@ -65,7 +65,7 @@ export class DateFormatter {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DateTimeFormatterLoadError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
-                throw new globalThis.Error('DateTimeFormatterLoadError: ' + cause.value, { cause });
+                throw new globalThis.Error('DateTimeFormatterLoadError.' + cause.value, { cause });
             }
             return new DateFormatter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -78,11 +78,11 @@ export class DateFormatter {
     }
 
     /**
-     * See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/datetime/struct.DateTimeFormatter.html#method.try_new) for more information.
+     * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.0.0/icu/datetime/struct.DateTimeFormatter.html#method.try_new) for more information.
      *
-     * See the [Rust documentation for `D`](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.D.html) for more information.
+     * See the [Rust documentation for `D`](https://docs.rs/icu/2.0.0/icu/datetime/fieldsets/struct.D.html) for more information.
      *
-     * Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.D.html#method.with_alignment), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.D.html#method.for_length)
+     * Additional information: [1](https://docs.rs/icu/2.0.0/icu/datetime/fieldsets/struct.D.html#method.with_alignment), [2](https://docs.rs/icu/2.0.0/icu/datetime/fieldsets/struct.D.html#method.for_length)
      */
     static createDWithProvider(provider, locale, length, alignment) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
@@ -95,7 +95,7 @@ export class DateFormatter {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DateTimeFormatterLoadError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
-                throw new globalThis.Error('DateTimeFormatterLoadError: ' + cause.value, { cause });
+                throw new globalThis.Error('DateTimeFormatterLoadError.' + cause.value, { cause });
             }
             return new DateFormatter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -108,11 +108,11 @@ export class DateFormatter {
     }
 
     /**
-     * See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/datetime/struct.DateTimeFormatter.html#method.try_new) for more information.
+     * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.0.0/icu/datetime/struct.DateTimeFormatter.html#method.try_new) for more information.
      *
-     * See the [Rust documentation for `MD`](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.MD.html) for more information.
+     * See the [Rust documentation for `MD`](https://docs.rs/icu/2.0.0/icu/datetime/fieldsets/struct.MD.html) for more information.
      *
-     * Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.MD.html#method.with_alignment), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.MD.html#method.for_length)
+     * Additional information: [1](https://docs.rs/icu/2.0.0/icu/datetime/fieldsets/struct.MD.html#method.with_alignment), [2](https://docs.rs/icu/2.0.0/icu/datetime/fieldsets/struct.MD.html#method.for_length)
      */
     static createMd(locale, length, alignment) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
@@ -125,7 +125,7 @@ export class DateFormatter {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DateTimeFormatterLoadError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
-                throw new globalThis.Error('DateTimeFormatterLoadError: ' + cause.value, { cause });
+                throw new globalThis.Error('DateTimeFormatterLoadError.' + cause.value, { cause });
             }
             return new DateFormatter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -138,11 +138,11 @@ export class DateFormatter {
     }
 
     /**
-     * See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/datetime/struct.DateTimeFormatter.html#method.try_new) for more information.
+     * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.0.0/icu/datetime/struct.DateTimeFormatter.html#method.try_new) for more information.
      *
-     * See the [Rust documentation for `MD`](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.MD.html) for more information.
+     * See the [Rust documentation for `MD`](https://docs.rs/icu/2.0.0/icu/datetime/fieldsets/struct.MD.html) for more information.
      *
-     * Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.MD.html#method.with_alignment), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.MD.html#method.for_length)
+     * Additional information: [1](https://docs.rs/icu/2.0.0/icu/datetime/fieldsets/struct.MD.html#method.with_alignment), [2](https://docs.rs/icu/2.0.0/icu/datetime/fieldsets/struct.MD.html#method.for_length)
      */
     static createMdWithProvider(provider, locale, length, alignment) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
@@ -155,7 +155,7 @@ export class DateFormatter {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DateTimeFormatterLoadError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
-                throw new globalThis.Error('DateTimeFormatterLoadError: ' + cause.value, { cause });
+                throw new globalThis.Error('DateTimeFormatterLoadError.' + cause.value, { cause });
             }
             return new DateFormatter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -168,11 +168,11 @@ export class DateFormatter {
     }
 
     /**
-     * See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/datetime/struct.DateTimeFormatter.html#method.try_new) for more information.
+     * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.0.0/icu/datetime/struct.DateTimeFormatter.html#method.try_new) for more information.
      *
-     * See the [Rust documentation for `YMD`](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMD.html) for more information.
+     * See the [Rust documentation for `YMD`](https://docs.rs/icu/2.0.0/icu/datetime/fieldsets/struct.YMD.html) for more information.
      *
-     * Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMD.html#method.with_alignment), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMD.html#method.with_year_style), [3](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMD.html#method.for_length)
+     * Additional information: [1](https://docs.rs/icu/2.0.0/icu/datetime/fieldsets/struct.YMD.html#method.with_alignment), [2](https://docs.rs/icu/2.0.0/icu/datetime/fieldsets/struct.YMD.html#method.with_year_style), [3](https://docs.rs/icu/2.0.0/icu/datetime/fieldsets/struct.YMD.html#method.for_length)
      */
     static createYmd(locale, length, alignment, yearStyle) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
@@ -185,7 +185,7 @@ export class DateFormatter {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DateTimeFormatterLoadError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
-                throw new globalThis.Error('DateTimeFormatterLoadError: ' + cause.value, { cause });
+                throw new globalThis.Error('DateTimeFormatterLoadError.' + cause.value, { cause });
             }
             return new DateFormatter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -198,11 +198,11 @@ export class DateFormatter {
     }
 
     /**
-     * See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/datetime/struct.DateTimeFormatter.html#method.try_new) for more information.
+     * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.0.0/icu/datetime/struct.DateTimeFormatter.html#method.try_new) for more information.
      *
-     * See the [Rust documentation for `YMD`](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMD.html) for more information.
+     * See the [Rust documentation for `YMD`](https://docs.rs/icu/2.0.0/icu/datetime/fieldsets/struct.YMD.html) for more information.
      *
-     * Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMD.html#method.with_alignment), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMD.html#method.with_year_style), [3](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMD.html#method.for_length)
+     * Additional information: [1](https://docs.rs/icu/2.0.0/icu/datetime/fieldsets/struct.YMD.html#method.with_alignment), [2](https://docs.rs/icu/2.0.0/icu/datetime/fieldsets/struct.YMD.html#method.with_year_style), [3](https://docs.rs/icu/2.0.0/icu/datetime/fieldsets/struct.YMD.html#method.for_length)
      */
     static createYmdWithProvider(provider, locale, length, alignment, yearStyle) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
@@ -215,7 +215,7 @@ export class DateFormatter {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DateTimeFormatterLoadError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
-                throw new globalThis.Error('DateTimeFormatterLoadError: ' + cause.value, { cause });
+                throw new globalThis.Error('DateTimeFormatterLoadError.' + cause.value, { cause });
             }
             return new DateFormatter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -228,11 +228,11 @@ export class DateFormatter {
     }
 
     /**
-     * See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/datetime/struct.DateTimeFormatter.html#method.try_new) for more information.
+     * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.0.0/icu/datetime/struct.DateTimeFormatter.html#method.try_new) for more information.
      *
-     * See the [Rust documentation for `DE`](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.DE.html) for more information.
+     * See the [Rust documentation for `DE`](https://docs.rs/icu/2.0.0/icu/datetime/fieldsets/struct.DE.html) for more information.
      *
-     * Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.DE.html#method.with_alignment), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.DE.html#method.for_length)
+     * Additional information: [1](https://docs.rs/icu/2.0.0/icu/datetime/fieldsets/struct.DE.html#method.with_alignment), [2](https://docs.rs/icu/2.0.0/icu/datetime/fieldsets/struct.DE.html#method.for_length)
      */
     static createDe(locale, length, alignment) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
@@ -245,7 +245,7 @@ export class DateFormatter {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DateTimeFormatterLoadError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
-                throw new globalThis.Error('DateTimeFormatterLoadError: ' + cause.value, { cause });
+                throw new globalThis.Error('DateTimeFormatterLoadError.' + cause.value, { cause });
             }
             return new DateFormatter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -258,11 +258,11 @@ export class DateFormatter {
     }
 
     /**
-     * See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/datetime/struct.DateTimeFormatter.html#method.try_new) for more information.
+     * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.0.0/icu/datetime/struct.DateTimeFormatter.html#method.try_new) for more information.
      *
-     * See the [Rust documentation for `DE`](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.DE.html) for more information.
+     * See the [Rust documentation for `DE`](https://docs.rs/icu/2.0.0/icu/datetime/fieldsets/struct.DE.html) for more information.
      *
-     * Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.DE.html#method.with_alignment), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.DE.html#method.for_length)
+     * Additional information: [1](https://docs.rs/icu/2.0.0/icu/datetime/fieldsets/struct.DE.html#method.with_alignment), [2](https://docs.rs/icu/2.0.0/icu/datetime/fieldsets/struct.DE.html#method.for_length)
      */
     static createDeWithProvider(provider, locale, length, alignment) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
@@ -275,7 +275,7 @@ export class DateFormatter {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DateTimeFormatterLoadError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
-                throw new globalThis.Error('DateTimeFormatterLoadError: ' + cause.value, { cause });
+                throw new globalThis.Error('DateTimeFormatterLoadError.' + cause.value, { cause });
             }
             return new DateFormatter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -288,11 +288,11 @@ export class DateFormatter {
     }
 
     /**
-     * See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/datetime/struct.DateTimeFormatter.html#method.try_new) for more information.
+     * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.0.0/icu/datetime/struct.DateTimeFormatter.html#method.try_new) for more information.
      *
-     * See the [Rust documentation for `MDE`](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.MDE.html) for more information.
+     * See the [Rust documentation for `MDE`](https://docs.rs/icu/2.0.0/icu/datetime/fieldsets/struct.MDE.html) for more information.
      *
-     * Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.MDE.html#method.with_alignment), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.MDE.html#method.for_length)
+     * Additional information: [1](https://docs.rs/icu/2.0.0/icu/datetime/fieldsets/struct.MDE.html#method.with_alignment), [2](https://docs.rs/icu/2.0.0/icu/datetime/fieldsets/struct.MDE.html#method.for_length)
      */
     static createMde(locale, length, alignment) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
@@ -305,7 +305,7 @@ export class DateFormatter {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DateTimeFormatterLoadError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
-                throw new globalThis.Error('DateTimeFormatterLoadError: ' + cause.value, { cause });
+                throw new globalThis.Error('DateTimeFormatterLoadError.' + cause.value, { cause });
             }
             return new DateFormatter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -318,11 +318,11 @@ export class DateFormatter {
     }
 
     /**
-     * See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/datetime/struct.DateTimeFormatter.html#method.try_new) for more information.
+     * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.0.0/icu/datetime/struct.DateTimeFormatter.html#method.try_new) for more information.
      *
-     * See the [Rust documentation for `MDE`](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.MDE.html) for more information.
+     * See the [Rust documentation for `MDE`](https://docs.rs/icu/2.0.0/icu/datetime/fieldsets/struct.MDE.html) for more information.
      *
-     * Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.MDE.html#method.with_alignment), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.MDE.html#method.for_length)
+     * Additional information: [1](https://docs.rs/icu/2.0.0/icu/datetime/fieldsets/struct.MDE.html#method.with_alignment), [2](https://docs.rs/icu/2.0.0/icu/datetime/fieldsets/struct.MDE.html#method.for_length)
      */
     static createMdeWithProvider(provider, locale, length, alignment) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
@@ -335,7 +335,7 @@ export class DateFormatter {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DateTimeFormatterLoadError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
-                throw new globalThis.Error('DateTimeFormatterLoadError: ' + cause.value, { cause });
+                throw new globalThis.Error('DateTimeFormatterLoadError.' + cause.value, { cause });
             }
             return new DateFormatter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -348,11 +348,11 @@ export class DateFormatter {
     }
 
     /**
-     * See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/datetime/struct.DateTimeFormatter.html#method.try_new) for more information.
+     * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.0.0/icu/datetime/struct.DateTimeFormatter.html#method.try_new) for more information.
      *
-     * See the [Rust documentation for `YMDE`](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMDE.html) for more information.
+     * See the [Rust documentation for `YMDE`](https://docs.rs/icu/2.0.0/icu/datetime/fieldsets/struct.YMDE.html) for more information.
      *
-     * Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMDE.html#method.with_alignment), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMDE.html#method.with_year_style), [3](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMDE.html#method.for_length)
+     * Additional information: [1](https://docs.rs/icu/2.0.0/icu/datetime/fieldsets/struct.YMDE.html#method.with_alignment), [2](https://docs.rs/icu/2.0.0/icu/datetime/fieldsets/struct.YMDE.html#method.with_year_style), [3](https://docs.rs/icu/2.0.0/icu/datetime/fieldsets/struct.YMDE.html#method.for_length)
      */
     static createYmde(locale, length, alignment, yearStyle) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
@@ -365,7 +365,7 @@ export class DateFormatter {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DateTimeFormatterLoadError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
-                throw new globalThis.Error('DateTimeFormatterLoadError: ' + cause.value, { cause });
+                throw new globalThis.Error('DateTimeFormatterLoadError.' + cause.value, { cause });
             }
             return new DateFormatter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -378,11 +378,11 @@ export class DateFormatter {
     }
 
     /**
-     * See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/datetime/struct.DateTimeFormatter.html#method.try_new) for more information.
+     * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.0.0/icu/datetime/struct.DateTimeFormatter.html#method.try_new) for more information.
      *
-     * See the [Rust documentation for `YMDE`](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMDE.html) for more information.
+     * See the [Rust documentation for `YMDE`](https://docs.rs/icu/2.0.0/icu/datetime/fieldsets/struct.YMDE.html) for more information.
      *
-     * Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMDE.html#method.with_alignment), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMDE.html#method.with_year_style), [3](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YMDE.html#method.for_length)
+     * Additional information: [1](https://docs.rs/icu/2.0.0/icu/datetime/fieldsets/struct.YMDE.html#method.with_alignment), [2](https://docs.rs/icu/2.0.0/icu/datetime/fieldsets/struct.YMDE.html#method.with_year_style), [3](https://docs.rs/icu/2.0.0/icu/datetime/fieldsets/struct.YMDE.html#method.for_length)
      */
     static createYmdeWithProvider(provider, locale, length, alignment, yearStyle) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
@@ -395,7 +395,7 @@ export class DateFormatter {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DateTimeFormatterLoadError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
-                throw new globalThis.Error('DateTimeFormatterLoadError: ' + cause.value, { cause });
+                throw new globalThis.Error('DateTimeFormatterLoadError.' + cause.value, { cause });
             }
             return new DateFormatter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -408,11 +408,11 @@ export class DateFormatter {
     }
 
     /**
-     * See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/datetime/struct.DateTimeFormatter.html#method.try_new) for more information.
+     * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.0.0/icu/datetime/struct.DateTimeFormatter.html#method.try_new) for more information.
      *
-     * See the [Rust documentation for `E`](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.E.html) for more information.
+     * See the [Rust documentation for `E`](https://docs.rs/icu/2.0.0/icu/datetime/fieldsets/struct.E.html) for more information.
      *
-     * Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.E.html#method.for_length)
+     * Additional information: [1](https://docs.rs/icu/2.0.0/icu/datetime/fieldsets/struct.E.html#method.for_length)
      */
     static createE(locale, length) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
@@ -425,7 +425,7 @@ export class DateFormatter {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DateTimeFormatterLoadError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
-                throw new globalThis.Error('DateTimeFormatterLoadError: ' + cause.value, { cause });
+                throw new globalThis.Error('DateTimeFormatterLoadError.' + cause.value, { cause });
             }
             return new DateFormatter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -438,11 +438,11 @@ export class DateFormatter {
     }
 
     /**
-     * See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/datetime/struct.DateTimeFormatter.html#method.try_new) for more information.
+     * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.0.0/icu/datetime/struct.DateTimeFormatter.html#method.try_new) for more information.
      *
-     * See the [Rust documentation for `E`](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.E.html) for more information.
+     * See the [Rust documentation for `E`](https://docs.rs/icu/2.0.0/icu/datetime/fieldsets/struct.E.html) for more information.
      *
-     * Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.E.html#method.for_length)
+     * Additional information: [1](https://docs.rs/icu/2.0.0/icu/datetime/fieldsets/struct.E.html#method.for_length)
      */
     static createEWithProvider(provider, locale, length) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
@@ -455,7 +455,7 @@ export class DateFormatter {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DateTimeFormatterLoadError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
-                throw new globalThis.Error('DateTimeFormatterLoadError: ' + cause.value, { cause });
+                throw new globalThis.Error('DateTimeFormatterLoadError.' + cause.value, { cause });
             }
             return new DateFormatter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -468,11 +468,11 @@ export class DateFormatter {
     }
 
     /**
-     * See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/datetime/struct.DateTimeFormatter.html#method.try_new) for more information.
+     * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.0.0/icu/datetime/struct.DateTimeFormatter.html#method.try_new) for more information.
      *
-     * See the [Rust documentation for `M`](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.M.html) for more information.
+     * See the [Rust documentation for `M`](https://docs.rs/icu/2.0.0/icu/datetime/fieldsets/struct.M.html) for more information.
      *
-     * Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.M.html#method.with_alignment), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.M.html#method.for_length)
+     * Additional information: [1](https://docs.rs/icu/2.0.0/icu/datetime/fieldsets/struct.M.html#method.with_alignment), [2](https://docs.rs/icu/2.0.0/icu/datetime/fieldsets/struct.M.html#method.for_length)
      */
     static createM(locale, length, alignment) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
@@ -485,7 +485,7 @@ export class DateFormatter {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DateTimeFormatterLoadError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
-                throw new globalThis.Error('DateTimeFormatterLoadError: ' + cause.value, { cause });
+                throw new globalThis.Error('DateTimeFormatterLoadError.' + cause.value, { cause });
             }
             return new DateFormatter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -498,11 +498,11 @@ export class DateFormatter {
     }
 
     /**
-     * See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/datetime/struct.DateTimeFormatter.html#method.try_new) for more information.
+     * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.0.0/icu/datetime/struct.DateTimeFormatter.html#method.try_new) for more information.
      *
-     * See the [Rust documentation for `M`](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.M.html) for more information.
+     * See the [Rust documentation for `M`](https://docs.rs/icu/2.0.0/icu/datetime/fieldsets/struct.M.html) for more information.
      *
-     * Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.M.html#method.with_alignment), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.M.html#method.for_length)
+     * Additional information: [1](https://docs.rs/icu/2.0.0/icu/datetime/fieldsets/struct.M.html#method.with_alignment), [2](https://docs.rs/icu/2.0.0/icu/datetime/fieldsets/struct.M.html#method.for_length)
      */
     static createMWithProvider(provider, locale, length, alignment) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
@@ -515,7 +515,7 @@ export class DateFormatter {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DateTimeFormatterLoadError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
-                throw new globalThis.Error('DateTimeFormatterLoadError: ' + cause.value, { cause });
+                throw new globalThis.Error('DateTimeFormatterLoadError.' + cause.value, { cause });
             }
             return new DateFormatter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -528,11 +528,11 @@ export class DateFormatter {
     }
 
     /**
-     * See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/datetime/struct.DateTimeFormatter.html#method.try_new) for more information.
+     * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.0.0/icu/datetime/struct.DateTimeFormatter.html#method.try_new) for more information.
      *
-     * See the [Rust documentation for `YM`](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YM.html) for more information.
+     * See the [Rust documentation for `YM`](https://docs.rs/icu/2.0.0/icu/datetime/fieldsets/struct.YM.html) for more information.
      *
-     * Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YM.html#method.with_alignment), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YM.html#method.with_year_style), [3](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YM.html#method.for_length)
+     * Additional information: [1](https://docs.rs/icu/2.0.0/icu/datetime/fieldsets/struct.YM.html#method.with_alignment), [2](https://docs.rs/icu/2.0.0/icu/datetime/fieldsets/struct.YM.html#method.with_year_style), [3](https://docs.rs/icu/2.0.0/icu/datetime/fieldsets/struct.YM.html#method.for_length)
      */
     static createYm(locale, length, alignment, yearStyle) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
@@ -545,7 +545,7 @@ export class DateFormatter {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DateTimeFormatterLoadError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
-                throw new globalThis.Error('DateTimeFormatterLoadError: ' + cause.value, { cause });
+                throw new globalThis.Error('DateTimeFormatterLoadError.' + cause.value, { cause });
             }
             return new DateFormatter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -558,11 +558,11 @@ export class DateFormatter {
     }
 
     /**
-     * See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/datetime/struct.DateTimeFormatter.html#method.try_new) for more information.
+     * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.0.0/icu/datetime/struct.DateTimeFormatter.html#method.try_new) for more information.
      *
-     * See the [Rust documentation for `YM`](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YM.html) for more information.
+     * See the [Rust documentation for `YM`](https://docs.rs/icu/2.0.0/icu/datetime/fieldsets/struct.YM.html) for more information.
      *
-     * Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YM.html#method.with_alignment), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YM.html#method.with_year_style), [3](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.YM.html#method.for_length)
+     * Additional information: [1](https://docs.rs/icu/2.0.0/icu/datetime/fieldsets/struct.YM.html#method.with_alignment), [2](https://docs.rs/icu/2.0.0/icu/datetime/fieldsets/struct.YM.html#method.with_year_style), [3](https://docs.rs/icu/2.0.0/icu/datetime/fieldsets/struct.YM.html#method.for_length)
      */
     static createYmWithProvider(provider, locale, length, alignment, yearStyle) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
@@ -575,7 +575,7 @@ export class DateFormatter {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DateTimeFormatterLoadError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
-                throw new globalThis.Error('DateTimeFormatterLoadError: ' + cause.value, { cause });
+                throw new globalThis.Error('DateTimeFormatterLoadError.' + cause.value, { cause });
             }
             return new DateFormatter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -588,11 +588,11 @@ export class DateFormatter {
     }
 
     /**
-     * See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/datetime/struct.DateTimeFormatter.html#method.try_new) for more information.
+     * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.0.0/icu/datetime/struct.DateTimeFormatter.html#method.try_new) for more information.
      *
-     * See the [Rust documentation for `Y`](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.Y.html) for more information.
+     * See the [Rust documentation for `Y`](https://docs.rs/icu/2.0.0/icu/datetime/fieldsets/struct.Y.html) for more information.
      *
-     * Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.Y.html#method.with_alignment), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.Y.html#method.with_year_style), [3](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.Y.html#method.for_length)
+     * Additional information: [1](https://docs.rs/icu/2.0.0/icu/datetime/fieldsets/struct.Y.html#method.with_alignment), [2](https://docs.rs/icu/2.0.0/icu/datetime/fieldsets/struct.Y.html#method.with_year_style), [3](https://docs.rs/icu/2.0.0/icu/datetime/fieldsets/struct.Y.html#method.for_length)
      */
     static createY(locale, length, alignment, yearStyle) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
@@ -605,7 +605,7 @@ export class DateFormatter {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DateTimeFormatterLoadError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
-                throw new globalThis.Error('DateTimeFormatterLoadError: ' + cause.value, { cause });
+                throw new globalThis.Error('DateTimeFormatterLoadError.' + cause.value, { cause });
             }
             return new DateFormatter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -618,11 +618,11 @@ export class DateFormatter {
     }
 
     /**
-     * See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/datetime/struct.DateTimeFormatter.html#method.try_new) for more information.
+     * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.0.0/icu/datetime/struct.DateTimeFormatter.html#method.try_new) for more information.
      *
-     * See the [Rust documentation for `Y`](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.Y.html) for more information.
+     * See the [Rust documentation for `Y`](https://docs.rs/icu/2.0.0/icu/datetime/fieldsets/struct.Y.html) for more information.
      *
-     * Additional information: [1](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.Y.html#method.with_alignment), [2](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.Y.html#method.with_year_style), [3](https://docs.rs/icu/latest/icu/datetime/fieldsets/struct.Y.html#method.for_length)
+     * Additional information: [1](https://docs.rs/icu/2.0.0/icu/datetime/fieldsets/struct.Y.html#method.with_alignment), [2](https://docs.rs/icu/2.0.0/icu/datetime/fieldsets/struct.Y.html#method.with_year_style), [3](https://docs.rs/icu/2.0.0/icu/datetime/fieldsets/struct.Y.html#method.for_length)
      */
     static createYWithProvider(provider, locale, length, alignment, yearStyle) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
@@ -635,7 +635,7 @@ export class DateFormatter {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DateTimeFormatterLoadError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
-                throw new globalThis.Error('DateTimeFormatterLoadError: ' + cause.value, { cause });
+                throw new globalThis.Error('DateTimeFormatterLoadError.' + cause.value, { cause });
             }
             return new DateFormatter(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -648,12 +648,12 @@ export class DateFormatter {
     }
 
     /**
-     * See the [Rust documentation for `format`](https://docs.rs/icu/latest/icu/datetime/struct.DateTimeFormatter.html#method.format) for more information.
+     * See the [Rust documentation for `format`](https://docs.rs/icu/2.0.0/icu/datetime/struct.DateTimeFormatter.html#method.format) for more information.
      */
-    formatIso(date) {
+    formatIso(isoDate) {
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
 
-    wasm.icu4x_DateFormatter_format_iso_mv1(this.ffiValue, date.ffiValue, write.buffer);
+    wasm.icu4x_DateFormatter_format_iso_mv1(this.ffiValue, isoDate.ffiValue, write.buffer);
 
         try {
             return write.readString8();
@@ -665,7 +665,7 @@ export class DateFormatter {
     }
 
     /**
-     * See the [Rust documentation for `format_same_calendar`](https://docs.rs/icu/latest/icu/datetime/struct.DateTimeFormatter.html#method.format_same_calendar) for more information.
+     * See the [Rust documentation for `format_same_calendar`](https://docs.rs/icu/2.0.0/icu/datetime/struct.DateTimeFormatter.html#method.format_same_calendar) for more information.
      */
     formatSameCalendar(date) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 13, 4, true);

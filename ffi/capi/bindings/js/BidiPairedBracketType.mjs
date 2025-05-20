@@ -3,11 +3,10 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
+
 /**
- * See the [Rust documentation for `BidiPairedBracketType`](https://docs.rs/icu/latest/icu/properties/props/enum.BidiPairedBracketType.html) for more information.
+ * See the [Rust documentation for `BidiPairedBracketType`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.BidiPairedBracketType.html) for more information.
  */
-
-
 export class BidiPairedBracketType {
     #value = undefined;
 
@@ -46,6 +45,7 @@ export class BidiPairedBracketType {
         throw TypeError(value + " is not a BidiPairedBracketType and does not correspond to any of its enumerator values.");
     }
 
+    /** @internal */
     static fromValue(value) {
         return new BidiPairedBracketType(value);
     }
@@ -54,6 +54,7 @@ export class BidiPairedBracketType {
         return [...BidiPairedBracketType.#values.keys()][this.#value];
     }
 
+    /** @internal */
     get ffiValue(){
         return this.#value;
     }

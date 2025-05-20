@@ -4,14 +4,13 @@ import { DecimalParseError } from "./DecimalParseError.mjs"
 import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
-
-/**
- * See the [Rust documentation for `PluralOperands`](https://docs.rs/icu/latest/icu/plurals/struct.PluralOperands.html) for more information.
- */
 const PluralOperands_box_destroy_registry = new FinalizationRegistry((ptr) => {
     wasm.icu4x_PluralOperands_destroy_mv1(ptr);
 });
 
+/**
+ * See the [Rust documentation for `PluralOperands`](https://docs.rs/icu/2.0.0/icu/plurals/struct.PluralOperands.html) for more information.
+ */
 export class PluralOperands {
     // Internal ptr reference:
     #ptr = null;
@@ -35,6 +34,7 @@ export class PluralOperands {
 
         return this;
     }
+    /** @internal */
     get ffiValue() {
         return this.#ptr;
     }
@@ -43,7 +43,7 @@ export class PluralOperands {
     /**
      * Construct for a given string representing a number
      *
-     * See the [Rust documentation for `from_str`](https://docs.rs/icu/latest/icu/plurals/struct.PluralOperands.html#method.from_str) for more information.
+     * See the [Rust documentation for `from_str`](https://docs.rs/icu/2.0.0/icu/plurals/struct.PluralOperands.html#method.from_str) for more information.
      */
     static fromString(s) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
@@ -57,7 +57,7 @@ export class PluralOperands {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DecimalParseError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
-                throw new globalThis.Error('DecimalParseError: ' + cause.value, { cause });
+                throw new globalThis.Error('DecimalParseError.' + cause.value, { cause });
             }
             return new PluralOperands(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }

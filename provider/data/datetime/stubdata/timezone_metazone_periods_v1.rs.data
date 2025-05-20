@@ -7,6 +7,11 @@
 /// * 7421B[^1] for the singleton data struct
 ///
 /// [^1]: these numbers can be smaller in practice due to linker deduplication
+///
+/// This macro requires the following crates:
+/// * `icu`
+/// * `icu_provider`
+/// * `zerovec`
 #[doc(hidden)]
 #[macro_export]
 macro_rules! __impl_timezone_metazone_periods_v1 {

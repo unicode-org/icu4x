@@ -3,123 +3,123 @@
 
 part of 'lib.g.dart';
 
-/// See the [Rust documentation for `CanonicalCombiningClass`](https://docs.rs/icu/latest/icu/properties/props/struct.CanonicalCombiningClass.html) for more information.
+/// See the [Rust documentation for `CanonicalCombiningClass`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.CanonicalCombiningClass.html) for more information.
 enum CanonicalCombiningClass {
-  /// See the [Rust documentation for `NotReordered`](https://docs.rs/icu/latest/icu/properties/props/enum.CanonicalCombiningClass.html#variant.NotReordered) for more information.
+  /// See the [Rust documentation for `NotReordered`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.CanonicalCombiningClass.html#associatedconstant.NotReordered) for more information.
   notReordered,
-  /// See the [Rust documentation for `Overlay`](https://docs.rs/icu/latest/icu/properties/props/enum.CanonicalCombiningClass.html#variant.Overlay) for more information.
+  /// See the [Rust documentation for `Overlay`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.CanonicalCombiningClass.html#associatedconstant.Overlay) for more information.
   overlay,
-  /// See the [Rust documentation for `HanReading`](https://docs.rs/icu/latest/icu/properties/props/enum.CanonicalCombiningClass.html#variant.HanReading) for more information.
+  /// See the [Rust documentation for `HanReading`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.CanonicalCombiningClass.html#associatedconstant.HanReading) for more information.
   hanReading,
-  /// See the [Rust documentation for `Nukta`](https://docs.rs/icu/latest/icu/properties/props/enum.CanonicalCombiningClass.html#variant.Nukta) for more information.
+  /// See the [Rust documentation for `Nukta`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.CanonicalCombiningClass.html#associatedconstant.Nukta) for more information.
   nukta,
-  /// See the [Rust documentation for `KanaVoicing`](https://docs.rs/icu/latest/icu/properties/props/enum.CanonicalCombiningClass.html#variant.KanaVoicing) for more information.
+  /// See the [Rust documentation for `KanaVoicing`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.CanonicalCombiningClass.html#associatedconstant.KanaVoicing) for more information.
   kanaVoicing,
-  /// See the [Rust documentation for `Virama`](https://docs.rs/icu/latest/icu/properties/props/enum.CanonicalCombiningClass.html#variant.Virama) for more information.
+  /// See the [Rust documentation for `Virama`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.CanonicalCombiningClass.html#associatedconstant.Virama) for more information.
   virama,
-  /// See the [Rust documentation for `CCC10`](https://docs.rs/icu/latest/icu/properties/props/enum.CanonicalCombiningClass.html#variant.CCC10) for more information.
+  /// See the [Rust documentation for `CCC10`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.CanonicalCombiningClass.html#associatedconstant.CCC10) for more information.
   ccc10,
-  /// See the [Rust documentation for `CCC11`](https://docs.rs/icu/latest/icu/properties/props/enum.CanonicalCombiningClass.html#variant.CCC11) for more information.
+  /// See the [Rust documentation for `CCC11`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.CanonicalCombiningClass.html#associatedconstant.CCC11) for more information.
   ccc11,
-  /// See the [Rust documentation for `CCC12`](https://docs.rs/icu/latest/icu/properties/props/enum.CanonicalCombiningClass.html#variant.CCC12) for more information.
+  /// See the [Rust documentation for `CCC12`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.CanonicalCombiningClass.html#associatedconstant.CCC12) for more information.
   ccc12,
-  /// See the [Rust documentation for `CCC13`](https://docs.rs/icu/latest/icu/properties/props/enum.CanonicalCombiningClass.html#variant.CCC13) for more information.
+  /// See the [Rust documentation for `CCC13`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.CanonicalCombiningClass.html#associatedconstant.CCC13) for more information.
   ccc13,
-  /// See the [Rust documentation for `CCC14`](https://docs.rs/icu/latest/icu/properties/props/enum.CanonicalCombiningClass.html#variant.CCC14) for more information.
+  /// See the [Rust documentation for `CCC14`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.CanonicalCombiningClass.html#associatedconstant.CCC14) for more information.
   ccc14,
-  /// See the [Rust documentation for `CCC15`](https://docs.rs/icu/latest/icu/properties/props/enum.CanonicalCombiningClass.html#variant.CCC15) for more information.
+  /// See the [Rust documentation for `CCC15`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.CanonicalCombiningClass.html#associatedconstant.CCC15) for more information.
   ccc15,
-  /// See the [Rust documentation for `CCC16`](https://docs.rs/icu/latest/icu/properties/props/enum.CanonicalCombiningClass.html#variant.CCC16) for more information.
+  /// See the [Rust documentation for `CCC16`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.CanonicalCombiningClass.html#associatedconstant.CCC16) for more information.
   ccc16,
-  /// See the [Rust documentation for `CCC17`](https://docs.rs/icu/latest/icu/properties/props/enum.CanonicalCombiningClass.html#variant.CCC17) for more information.
+  /// See the [Rust documentation for `CCC17`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.CanonicalCombiningClass.html#associatedconstant.CCC17) for more information.
   ccc17,
-  /// See the [Rust documentation for `CCC18`](https://docs.rs/icu/latest/icu/properties/props/enum.CanonicalCombiningClass.html#variant.CCC18) for more information.
+  /// See the [Rust documentation for `CCC18`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.CanonicalCombiningClass.html#associatedconstant.CCC18) for more information.
   ccc18,
-  /// See the [Rust documentation for `CCC19`](https://docs.rs/icu/latest/icu/properties/props/enum.CanonicalCombiningClass.html#variant.CCC19) for more information.
+  /// See the [Rust documentation for `CCC19`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.CanonicalCombiningClass.html#associatedconstant.CCC19) for more information.
   ccc19,
-  /// See the [Rust documentation for `CCC20`](https://docs.rs/icu/latest/icu/properties/props/enum.CanonicalCombiningClass.html#variant.CCC20) for more information.
+  /// See the [Rust documentation for `CCC20`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.CanonicalCombiningClass.html#associatedconstant.CCC20) for more information.
   ccc20,
-  /// See the [Rust documentation for `CCC21`](https://docs.rs/icu/latest/icu/properties/props/enum.CanonicalCombiningClass.html#variant.CCC21) for more information.
+  /// See the [Rust documentation for `CCC21`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.CanonicalCombiningClass.html#associatedconstant.CCC21) for more information.
   ccc21,
-  /// See the [Rust documentation for `CCC22`](https://docs.rs/icu/latest/icu/properties/props/enum.CanonicalCombiningClass.html#variant.CCC22) for more information.
+  /// See the [Rust documentation for `CCC22`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.CanonicalCombiningClass.html#associatedconstant.CCC22) for more information.
   ccc22,
-  /// See the [Rust documentation for `CCC23`](https://docs.rs/icu/latest/icu/properties/props/enum.CanonicalCombiningClass.html#variant.CCC23) for more information.
+  /// See the [Rust documentation for `CCC23`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.CanonicalCombiningClass.html#associatedconstant.CCC23) for more information.
   ccc23,
-  /// See the [Rust documentation for `CCC24`](https://docs.rs/icu/latest/icu/properties/props/enum.CanonicalCombiningClass.html#variant.CCC24) for more information.
+  /// See the [Rust documentation for `CCC24`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.CanonicalCombiningClass.html#associatedconstant.CCC24) for more information.
   ccc24,
-  /// See the [Rust documentation for `CCC25`](https://docs.rs/icu/latest/icu/properties/props/enum.CanonicalCombiningClass.html#variant.CCC25) for more information.
+  /// See the [Rust documentation for `CCC25`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.CanonicalCombiningClass.html#associatedconstant.CCC25) for more information.
   ccc25,
-  /// See the [Rust documentation for `CCC26`](https://docs.rs/icu/latest/icu/properties/props/enum.CanonicalCombiningClass.html#variant.CCC26) for more information.
+  /// See the [Rust documentation for `CCC26`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.CanonicalCombiningClass.html#associatedconstant.CCC26) for more information.
   ccc26,
-  /// See the [Rust documentation for `CCC27`](https://docs.rs/icu/latest/icu/properties/props/enum.CanonicalCombiningClass.html#variant.CCC27) for more information.
+  /// See the [Rust documentation for `CCC27`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.CanonicalCombiningClass.html#associatedconstant.CCC27) for more information.
   ccc27,
-  /// See the [Rust documentation for `CCC28`](https://docs.rs/icu/latest/icu/properties/props/enum.CanonicalCombiningClass.html#variant.CCC28) for more information.
+  /// See the [Rust documentation for `CCC28`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.CanonicalCombiningClass.html#associatedconstant.CCC28) for more information.
   ccc28,
-  /// See the [Rust documentation for `CCC29`](https://docs.rs/icu/latest/icu/properties/props/enum.CanonicalCombiningClass.html#variant.CCC29) for more information.
+  /// See the [Rust documentation for `CCC29`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.CanonicalCombiningClass.html#associatedconstant.CCC29) for more information.
   ccc29,
-  /// See the [Rust documentation for `CCC30`](https://docs.rs/icu/latest/icu/properties/props/enum.CanonicalCombiningClass.html#variant.CCC30) for more information.
+  /// See the [Rust documentation for `CCC30`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.CanonicalCombiningClass.html#associatedconstant.CCC30) for more information.
   ccc30,
-  /// See the [Rust documentation for `CCC31`](https://docs.rs/icu/latest/icu/properties/props/enum.CanonicalCombiningClass.html#variant.CCC31) for more information.
+  /// See the [Rust documentation for `CCC31`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.CanonicalCombiningClass.html#associatedconstant.CCC31) for more information.
   ccc31,
-  /// See the [Rust documentation for `CCC32`](https://docs.rs/icu/latest/icu/properties/props/enum.CanonicalCombiningClass.html#variant.CCC32) for more information.
+  /// See the [Rust documentation for `CCC32`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.CanonicalCombiningClass.html#associatedconstant.CCC32) for more information.
   ccc32,
-  /// See the [Rust documentation for `CCC33`](https://docs.rs/icu/latest/icu/properties/props/enum.CanonicalCombiningClass.html#variant.CCC33) for more information.
+  /// See the [Rust documentation for `CCC33`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.CanonicalCombiningClass.html#associatedconstant.CCC33) for more information.
   ccc33,
-  /// See the [Rust documentation for `CCC34`](https://docs.rs/icu/latest/icu/properties/props/enum.CanonicalCombiningClass.html#variant.CCC34) for more information.
+  /// See the [Rust documentation for `CCC34`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.CanonicalCombiningClass.html#associatedconstant.CCC34) for more information.
   ccc34,
-  /// See the [Rust documentation for `CCC35`](https://docs.rs/icu/latest/icu/properties/props/enum.CanonicalCombiningClass.html#variant.CCC35) for more information.
+  /// See the [Rust documentation for `CCC35`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.CanonicalCombiningClass.html#associatedconstant.CCC35) for more information.
   ccc35,
-  /// See the [Rust documentation for `CCC36`](https://docs.rs/icu/latest/icu/properties/props/enum.CanonicalCombiningClass.html#variant.CCC36) for more information.
+  /// See the [Rust documentation for `CCC36`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.CanonicalCombiningClass.html#associatedconstant.CCC36) for more information.
   ccc36,
-  /// See the [Rust documentation for `CCC84`](https://docs.rs/icu/latest/icu/properties/props/enum.CanonicalCombiningClass.html#variant.CCC84) for more information.
+  /// See the [Rust documentation for `CCC84`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.CanonicalCombiningClass.html#associatedconstant.CCC84) for more information.
   ccc84,
-  /// See the [Rust documentation for `CCC91`](https://docs.rs/icu/latest/icu/properties/props/enum.CanonicalCombiningClass.html#variant.CCC91) for more information.
+  /// See the [Rust documentation for `CCC91`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.CanonicalCombiningClass.html#associatedconstant.CCC91) for more information.
   ccc91,
-  /// See the [Rust documentation for `CCC103`](https://docs.rs/icu/latest/icu/properties/props/enum.CanonicalCombiningClass.html#variant.CCC103) for more information.
+  /// See the [Rust documentation for `CCC103`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.CanonicalCombiningClass.html#associatedconstant.CCC103) for more information.
   ccc103,
-  /// See the [Rust documentation for `CCC107`](https://docs.rs/icu/latest/icu/properties/props/enum.CanonicalCombiningClass.html#variant.CCC107) for more information.
+  /// See the [Rust documentation for `CCC107`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.CanonicalCombiningClass.html#associatedconstant.CCC107) for more information.
   ccc107,
-  /// See the [Rust documentation for `CCC118`](https://docs.rs/icu/latest/icu/properties/props/enum.CanonicalCombiningClass.html#variant.CCC118) for more information.
+  /// See the [Rust documentation for `CCC118`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.CanonicalCombiningClass.html#associatedconstant.CCC118) for more information.
   ccc118,
-  /// See the [Rust documentation for `CCC122`](https://docs.rs/icu/latest/icu/properties/props/enum.CanonicalCombiningClass.html#variant.CCC122) for more information.
+  /// See the [Rust documentation for `CCC122`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.CanonicalCombiningClass.html#associatedconstant.CCC122) for more information.
   ccc122,
-  /// See the [Rust documentation for `CCC129`](https://docs.rs/icu/latest/icu/properties/props/enum.CanonicalCombiningClass.html#variant.CCC129) for more information.
+  /// See the [Rust documentation for `CCC129`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.CanonicalCombiningClass.html#associatedconstant.CCC129) for more information.
   ccc129,
-  /// See the [Rust documentation for `CCC130`](https://docs.rs/icu/latest/icu/properties/props/enum.CanonicalCombiningClass.html#variant.CCC130) for more information.
+  /// See the [Rust documentation for `CCC130`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.CanonicalCombiningClass.html#associatedconstant.CCC130) for more information.
   ccc130,
-  /// See the [Rust documentation for `CCC132`](https://docs.rs/icu/latest/icu/properties/props/enum.CanonicalCombiningClass.html#variant.CCC132) for more information.
+  /// See the [Rust documentation for `CCC132`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.CanonicalCombiningClass.html#associatedconstant.CCC132) for more information.
   ccc132,
-  /// See the [Rust documentation for `CCC133`](https://docs.rs/icu/latest/icu/properties/props/enum.CanonicalCombiningClass.html#variant.CCC133) for more information.
+  /// See the [Rust documentation for `CCC133`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.CanonicalCombiningClass.html#associatedconstant.CCC133) for more information.
   ccc133,
-  /// See the [Rust documentation for `AttachedBelowLeft`](https://docs.rs/icu/latest/icu/properties/props/enum.CanonicalCombiningClass.html#variant.AttachedBelowLeft) for more information.
+  /// See the [Rust documentation for `AttachedBelowLeft`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.CanonicalCombiningClass.html#associatedconstant.AttachedBelowLeft) for more information.
   attachedBelowLeft,
-  /// See the [Rust documentation for `AttachedBelow`](https://docs.rs/icu/latest/icu/properties/props/enum.CanonicalCombiningClass.html#variant.AttachedBelow) for more information.
+  /// See the [Rust documentation for `AttachedBelow`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.CanonicalCombiningClass.html#associatedconstant.AttachedBelow) for more information.
   attachedBelow,
-  /// See the [Rust documentation for `AttachedAbove`](https://docs.rs/icu/latest/icu/properties/props/enum.CanonicalCombiningClass.html#variant.AttachedAbove) for more information.
+  /// See the [Rust documentation for `AttachedAbove`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.CanonicalCombiningClass.html#associatedconstant.AttachedAbove) for more information.
   attachedAbove,
-  /// See the [Rust documentation for `AttachedAboveRight`](https://docs.rs/icu/latest/icu/properties/props/enum.CanonicalCombiningClass.html#variant.AttachedAboveRight) for more information.
+  /// See the [Rust documentation for `AttachedAboveRight`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.CanonicalCombiningClass.html#associatedconstant.AttachedAboveRight) for more information.
   attachedAboveRight,
-  /// See the [Rust documentation for `BelowLeft`](https://docs.rs/icu/latest/icu/properties/props/enum.CanonicalCombiningClass.html#variant.BelowLeft) for more information.
+  /// See the [Rust documentation for `BelowLeft`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.CanonicalCombiningClass.html#associatedconstant.BelowLeft) for more information.
   belowLeft,
-  /// See the [Rust documentation for `Below`](https://docs.rs/icu/latest/icu/properties/props/enum.CanonicalCombiningClass.html#variant.Below) for more information.
+  /// See the [Rust documentation for `Below`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.CanonicalCombiningClass.html#associatedconstant.Below) for more information.
   below,
-  /// See the [Rust documentation for `BelowRight`](https://docs.rs/icu/latest/icu/properties/props/enum.CanonicalCombiningClass.html#variant.BelowRight) for more information.
+  /// See the [Rust documentation for `BelowRight`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.CanonicalCombiningClass.html#associatedconstant.BelowRight) for more information.
   belowRight,
-  /// See the [Rust documentation for `Left`](https://docs.rs/icu/latest/icu/properties/props/enum.CanonicalCombiningClass.html#variant.Left) for more information.
+  /// See the [Rust documentation for `Left`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.CanonicalCombiningClass.html#associatedconstant.Left) for more information.
   left,
-  /// See the [Rust documentation for `Right`](https://docs.rs/icu/latest/icu/properties/props/enum.CanonicalCombiningClass.html#variant.Right) for more information.
+  /// See the [Rust documentation for `Right`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.CanonicalCombiningClass.html#associatedconstant.Right) for more information.
   right,
-  /// See the [Rust documentation for `AboveLeft`](https://docs.rs/icu/latest/icu/properties/props/enum.CanonicalCombiningClass.html#variant.AboveLeft) for more information.
+  /// See the [Rust documentation for `AboveLeft`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.CanonicalCombiningClass.html#associatedconstant.AboveLeft) for more information.
   aboveLeft,
-  /// See the [Rust documentation for `Above`](https://docs.rs/icu/latest/icu/properties/props/enum.CanonicalCombiningClass.html#variant.Above) for more information.
+  /// See the [Rust documentation for `Above`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.CanonicalCombiningClass.html#associatedconstant.Above) for more information.
   above,
-  /// See the [Rust documentation for `AboveRight`](https://docs.rs/icu/latest/icu/properties/props/enum.CanonicalCombiningClass.html#variant.AboveRight) for more information.
+  /// See the [Rust documentation for `AboveRight`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.CanonicalCombiningClass.html#associatedconstant.AboveRight) for more information.
   aboveRight,
-  /// See the [Rust documentation for `DoubleBelow`](https://docs.rs/icu/latest/icu/properties/props/enum.CanonicalCombiningClass.html#variant.DoubleBelow) for more information.
+  /// See the [Rust documentation for `DoubleBelow`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.CanonicalCombiningClass.html#associatedconstant.DoubleBelow) for more information.
   doubleBelow,
-  /// See the [Rust documentation for `DoubleAbove`](https://docs.rs/icu/latest/icu/properties/props/enum.CanonicalCombiningClass.html#variant.DoubleAbove) for more information.
+  /// See the [Rust documentation for `DoubleAbove`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.CanonicalCombiningClass.html#associatedconstant.DoubleAbove) for more information.
   doubleAbove,
-  /// See the [Rust documentation for `IotaSubscript`](https://docs.rs/icu/latest/icu/properties/props/enum.CanonicalCombiningClass.html#variant.IotaSubscript) for more information.
+  /// See the [Rust documentation for `IotaSubscript`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.CanonicalCombiningClass.html#associatedconstant.IotaSubscript) for more information.
   iotaSubscript;
 
   int get _ffi {
@@ -243,7 +243,7 @@ enum CanonicalCombiningClass {
     }
   }
 
-  /// See the [Rust documentation for `for_char`](https://docs.rs/icu/latest/icu/properties/props/trait.EnumeratedProperty.html#tymethod.for_char) for more information.
+  /// See the [Rust documentation for `for_char`](https://docs.rs/icu/2.0.0/icu/properties/props/trait.EnumeratedProperty.html#tymethod.for_char) for more information.
   static CanonicalCombiningClass forChar(Rune ch) {
     final result = _icu4x_CanonicalCombiningClass_for_char_mv1(ch);
     return CanonicalCombiningClass.values.firstWhere((v) => v._ffi == result);
@@ -251,7 +251,7 @@ enum CanonicalCombiningClass {
 
   /// Convert to an integer value usable with ICU4C and CodePointMapData
   ///
-  /// See the [Rust documentation for `to_icu4c_value`](https://docs.rs/icu/latest/icu/properties/props/struct.CanonicalCombiningClass.html#method.to_icu4c_value) for more information.
+  /// See the [Rust documentation for `to_icu4c_value`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.CanonicalCombiningClass.html#method.to_icu4c_value) for more information.
   int toIntegerValue() {
     final result = _icu4x_CanonicalCombiningClass_to_integer_value_mv1(_ffi);
     return result;
@@ -259,7 +259,7 @@ enum CanonicalCombiningClass {
 
   /// Convert from an integer value from ICU4C or CodePointMapData
   ///
-  /// See the [Rust documentation for `from_icu4c_value`](https://docs.rs/icu/latest/icu/properties/props/struct.CanonicalCombiningClass.html#method.from_icu4c_value) for more information.
+  /// See the [Rust documentation for `from_icu4c_value`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.CanonicalCombiningClass.html#method.from_icu4c_value) for more information.
   static CanonicalCombiningClass? fromIntegerValue(int other) {
     final result = _icu4x_CanonicalCombiningClass_from_integer_value_mv1(other);
     if (!result.isOk) {

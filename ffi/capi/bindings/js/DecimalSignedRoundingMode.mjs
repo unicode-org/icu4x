@@ -3,13 +3,12 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
+
 /**
  * Mode used in a rounding operation for signed numbers.
  *
- * See the [Rust documentation for `SignedRoundingMode`](https://docs.rs/fixed_decimal/latest/fixed_decimal/enum.SignedRoundingMode.html) for more information.
+ * See the [Rust documentation for `SignedRoundingMode`](https://docs.rs/fixed_decimal/0.7.0/fixed_decimal/enum.SignedRoundingMode.html) for more information.
  */
-
-
 export class DecimalSignedRoundingMode {
     #value = undefined;
 
@@ -54,6 +53,7 @@ export class DecimalSignedRoundingMode {
         throw TypeError(value + " is not a DecimalSignedRoundingMode and does not correspond to any of its enumerator values.");
     }
 
+    /** @internal */
     static fromValue(value) {
         return new DecimalSignedRoundingMode(value);
     }
@@ -62,6 +62,7 @@ export class DecimalSignedRoundingMode {
         return [...DecimalSignedRoundingMode.#values.keys()][this.#value];
     }
 
+    /** @internal */
     get ffiValue(){
         return this.#value;
     }

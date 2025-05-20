@@ -5,16 +5,15 @@ import { MeasureUnit } from "./MeasureUnit.mjs"
 import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
-
-/**
- * An ICU4X Measure Unit Parser object, capable of parsing the CLDR unit identifier (e.g. `meter-per-square-second`) and get the [`MeasureUnit`].
- *
- * See the [Rust documentation for `MeasureUnitParser`](https://docs.rs/icu/latest/icu/experimental/measure/parser/struct.MeasureUnitParser.html) for more information.
- */
 const MeasureUnitParser_box_destroy_registry = new FinalizationRegistry((ptr) => {
     wasm.icu4x_MeasureUnitParser_destroy_mv1(ptr);
 });
 
+/**
+ * An ICU4X Measure Unit Parser object, capable of parsing the CLDR unit identifier (e.g. `meter-per-square-second`) and get the {@link MeasureUnit}.
+ *
+ * See the [Rust documentation for `MeasureUnitParser`](https://docs.rs/icu/2.0.0/icu/experimental/measure/parser/struct.MeasureUnitParser.html) for more information.
+ */
 export class MeasureUnitParser {
     // Internal ptr reference:
     #ptr = null;
@@ -38,15 +37,16 @@ export class MeasureUnitParser {
 
         return this;
     }
+    /** @internal */
     get ffiValue() {
         return this.#ptr;
     }
 
 
     /**
-     * Construct a new [`MeasureUnitParser`] instance using compiled data.
+     * Construct a new {@link MeasureUnitParser} instance using compiled data.
      *
-     * See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/experimental/measure/parser/struct.MeasureUnitParser.html#method.new) for more information.
+     * See the [Rust documentation for `new`](https://docs.rs/icu/2.0.0/icu/experimental/measure/parser/struct.MeasureUnitParser.html#method.new) for more information.
      */
     #defaultConstructor() {
 
@@ -61,9 +61,9 @@ export class MeasureUnitParser {
     }
 
     /**
-     * Construct a new [`MeasureUnitParser`] instance using a particular data source.
+     * Construct a new {@link MeasureUnitParser} instance using a particular data source.
      *
-     * See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/experimental/measure/parser/struct.MeasureUnitParser.html#method.new) for more information.
+     * See the [Rust documentation for `new`](https://docs.rs/icu/2.0.0/icu/experimental/measure/parser/struct.MeasureUnitParser.html#method.new) for more information.
      */
     static createWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
@@ -74,7 +74,7 @@ export class MeasureUnitParser {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
-                throw new globalThis.Error('DataError: ' + cause.value, { cause });
+                throw new globalThis.Error('DataError.' + cause.value, { cause });
             }
             return new MeasureUnitParser(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -85,7 +85,7 @@ export class MeasureUnitParser {
     }
 
     /**
-     * See the [Rust documentation for `parse`](https://docs.rs/icu/latest/icu/experimental/measure/parser/struct.MeasureUnitParser.html#method.parse) for more information.
+     * See the [Rust documentation for `parse`](https://docs.rs/icu/2.0.0/icu/experimental/measure/parser/struct.MeasureUnitParser.html#method.parse) for more information.
      */
     parse(unitId) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
@@ -104,6 +104,11 @@ export class MeasureUnitParser {
         }
     }
 
+    /**
+     * Construct a new {@link MeasureUnitParser} instance using compiled data.
+     *
+     * See the [Rust documentation for `new`](https://docs.rs/icu/2.0.0/icu/experimental/measure/parser/struct.MeasureUnitParser.html#method.new) for more information.
+     */
     constructor() {
         if (arguments[0] === diplomatRuntime.exposeConstructor) {
             return this.#internalConstructor(...Array.prototype.slice.call(arguments, 1));

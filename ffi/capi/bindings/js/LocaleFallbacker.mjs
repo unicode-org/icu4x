@@ -6,16 +6,15 @@ import { LocaleFallbackerWithConfig } from "./LocaleFallbackerWithConfig.mjs"
 import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
-
-/**
- * An object that runs the ICU4X locale fallback algorithm.
- *
- * See the [Rust documentation for `LocaleFallbacker`](https://docs.rs/icu/latest/icu/locale/fallback/struct.LocaleFallbacker.html) for more information.
- */
 const LocaleFallbacker_box_destroy_registry = new FinalizationRegistry((ptr) => {
     wasm.icu4x_LocaleFallbacker_destroy_mv1(ptr);
 });
 
+/**
+ * An object that runs the ICU4X locale fallback algorithm.
+ *
+ * See the [Rust documentation for `LocaleFallbacker`](https://docs.rs/icu_locale/2.0.0/icu_locale/struct.LocaleFallbacker.html) for more information.
+ */
 export class LocaleFallbacker {
     // Internal ptr reference:
     #ptr = null;
@@ -39,6 +38,7 @@ export class LocaleFallbacker {
 
         return this;
     }
+    /** @internal */
     get ffiValue() {
         return this.#ptr;
     }
@@ -47,7 +47,7 @@ export class LocaleFallbacker {
     /**
      * Creates a new `LocaleFallbacker` from compiled data.
      *
-     * See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/locale/fallback/struct.LocaleFallbacker.html#method.new) for more information.
+     * See the [Rust documentation for `new`](https://docs.rs/icu_locale/2.0.0/icu_locale/struct.LocaleFallbacker.html#method.new) for more information.
      */
     #defaultConstructor() {
 
@@ -64,7 +64,7 @@ export class LocaleFallbacker {
     /**
      * Creates a new `LocaleFallbacker` from a data provider.
      *
-     * See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/locale/fallback/struct.LocaleFallbacker.html#method.new) for more information.
+     * See the [Rust documentation for `new`](https://docs.rs/icu_locale/2.0.0/icu_locale/struct.LocaleFallbacker.html#method.new) for more information.
      */
     static createWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
@@ -75,7 +75,7 @@ export class LocaleFallbacker {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
-                throw new globalThis.Error('DataError: ' + cause.value, { cause });
+                throw new globalThis.Error('DataError.' + cause.value, { cause });
             }
             return new LocaleFallbacker(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -88,7 +88,7 @@ export class LocaleFallbacker {
     /**
      * Creates a new `LocaleFallbacker` without data for limited functionality.
      *
-     * See the [Rust documentation for `new_without_data`](https://docs.rs/icu/latest/icu/locale/fallback/struct.LocaleFallbacker.html#method.new_without_data) for more information.
+     * See the [Rust documentation for `new_without_data`](https://docs.rs/icu_locale/2.0.0/icu_locale/struct.LocaleFallbacker.html#method.new_without_data) for more information.
      */
     static withoutData() {
 
@@ -105,7 +105,7 @@ export class LocaleFallbacker {
     /**
      * Associates this `LocaleFallbacker` with configuration options.
      *
-     * See the [Rust documentation for `for_config`](https://docs.rs/icu/latest/icu/locale/fallback/struct.LocaleFallbacker.html#method.for_config) for more information.
+     * See the [Rust documentation for `for_config`](https://docs.rs/icu_locale/2.0.0/icu_locale/struct.LocaleFallbacker.html#method.for_config) for more information.
      */
     forConfig(config) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
@@ -126,6 +126,11 @@ export class LocaleFallbacker {
         }
     }
 
+    /**
+     * Creates a new `LocaleFallbacker` from compiled data.
+     *
+     * See the [Rust documentation for `new`](https://docs.rs/icu_locale/2.0.0/icu_locale/struct.LocaleFallbacker.html#method.new) for more information.
+     */
     constructor() {
         if (arguments[0] === diplomatRuntime.exposeConstructor) {
             return this.#internalConstructor(...Array.prototype.slice.call(arguments, 1));

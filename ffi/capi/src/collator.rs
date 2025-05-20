@@ -104,7 +104,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::collator::CollatorBorrowed::try_new, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::collator::CollatorPreferences, Struct, hidden)]
         #[diplomat::rust_link(icu::collator::CollatorPreferences::extend, FnInStruct, hidden)]
-        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "with_provider")]
+        #[diplomat::attr(supports = fallible_constructors, constructor)]
         #[diplomat::attr(supports = non_exhaustive_structs, rename = "create")]
         #[cfg(feature = "compiled_data")]
         pub fn create_v1(
@@ -121,7 +121,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::collator::Collator::try_new, FnInStruct)]
         #[diplomat::rust_link(icu::collator::CollatorBorrowed::try_new, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::collator::CollatorPreferences, Struct, hidden)]
-        #[diplomat::attr(supports = fallible_constructors, constructor)]
+        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "with_provider")]
         #[diplomat::attr(supports = non_exhaustive_structs, rename = "create_with_provider")]
         #[cfg(feature = "buffer_provider")]
         pub fn create_v1_with_provider(

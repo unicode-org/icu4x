@@ -18,7 +18,7 @@ namespace icu4x {
 namespace capi {
     extern "C" {
 
-    icu4x::capi::TimeZoneVariant icu4x_TimeZoneVariant_from_rearguard_isdst_mv1(icu4x::capi::TimeZoneVariant self, bool isdst);
+    icu4x::capi::TimeZoneVariant icu4x_TimeZoneVariant_from_rearguard_isdst_mv1(bool isdst);
 
     } // extern "C"
 } // namespace capi
@@ -38,9 +38,8 @@ inline icu4x::TimeZoneVariant icu4x::TimeZoneVariant::FromFFI(icu4x::capi::TimeZ
   }
 }
 
-inline icu4x::TimeZoneVariant icu4x::TimeZoneVariant::from_rearguard_isdst(bool isdst) const {
-  auto result = icu4x::capi::icu4x_TimeZoneVariant_from_rearguard_isdst_mv1(this->AsFFI(),
-    isdst);
+inline icu4x::TimeZoneVariant icu4x::TimeZoneVariant::from_rearguard_isdst(bool isdst) {
+  auto result = icu4x::capi::icu4x_TimeZoneVariant_from_rearguard_isdst_mv1(isdst);
   return icu4x::TimeZoneVariant::FromFFI(result);
 }
 #endif // icu4x_TimeZoneVariant_HPP

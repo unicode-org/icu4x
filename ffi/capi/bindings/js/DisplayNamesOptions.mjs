@@ -6,11 +6,10 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
+
 /**
- * See the [Rust documentation for `DisplayNamesOptions`](https://docs.rs/icu/latest/icu/experimental/displaynames/options/struct.DisplayNamesOptions.html) for more information.
+ * See the [Rust documentation for `DisplayNamesOptions`](https://docs.rs/icu/2.0.0/icu/experimental/displaynames/struct.DisplayNamesOptions.html) for more information.
  */
-
-
 export class DisplayNamesOptions {
     #style;
     get style() {
@@ -33,9 +32,7 @@ export class DisplayNamesOptions {
     set languageDisplay(value){
         this.#languageDisplay = value;
     }
-    /** Create `DisplayNamesOptions` from an object that contains all of `DisplayNamesOptions`s fields.
-    * Optional fields do not need to be included in the provided object.
-    */
+    /** @internal */
     static fromFields(structObj) {
         return new DisplayNamesOptions(structObj);
     }

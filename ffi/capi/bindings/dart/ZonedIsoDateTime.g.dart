@@ -11,7 +11,7 @@ final class _ZonedIsoDateTimeFfi extends ffi.Struct {
 
 /// An ICU4X ZonedDateTime object capable of containing a ISO-8601 date, time, and zone.
 ///
-/// See the [Rust documentation for `ZonedDateTime`](https://docs.rs/icu/latest/icu/time/struct.ZonedDateTime.html) for more information.
+/// See the [Rust documentation for `ZonedDateTime`](https://docs.rs/icu/2.0.0/icu/time/struct.ZonedDateTime.html) for more information.
 final class ZonedIsoDateTime {
   final IsoDate date;
   final Time time;
@@ -37,9 +37,9 @@ final class ZonedIsoDateTime {
     return struct;
   }
 
-  /// Creates a new [`ZonedIsoDateTime`] from an IXDTF string.
+  /// Creates a new [ZonedIsoDateTime] from an IXDTF string.
   ///
-  /// See the [Rust documentation for `try_full_from_str`](https://docs.rs/icu/latest/icu/time/struct.ZonedDateTime.html#method.try_full_from_str) for more information.
+  /// See the [Rust documentation for `try_full_from_str`](https://docs.rs/icu/2.0.0/icu/time/struct.ZonedDateTime.html#method.try_full_from_str) for more information.
   ///
   /// Throws [Rfc9557ParseError] on failure.
   factory ZonedIsoDateTime.fullFromString(String v, IanaParser ianaParser, VariantOffsetsCalculator offsetCalculator) {
@@ -51,11 +51,11 @@ final class ZonedIsoDateTime {
     return ZonedIsoDateTime._fromFfi(result.union.ok);
   }
 
-  /// Creates a new [`ZonedIsoDateTime`] from milliseconds since epoch (timestamp) and a UTC offset.
+  /// Creates a new [ZonedIsoDateTime] from milliseconds since epoch (timestamp) and a UTC offset.
   ///
-  /// Note: [`ZonedIsoDateTime`]s created with this constructor can only be formatted using localized offset zone styles.
+  /// Note: [ZonedIsoDateTime]s created with this constructor can only be formatted using localized offset zone styles.
   ///
-  /// See the [Rust documentation for `from_epoch_milliseconds_and_utc_offset`](https://docs.rs/icu/latest/icu/time/struct.ZonedDateTime.html#method.from_epoch_milliseconds_and_utc_offset) for more information.
+  /// See the [Rust documentation for `from_epoch_milliseconds_and_utc_offset`](https://docs.rs/icu/2.0.0/icu/time/struct.ZonedDateTime.html#method.from_epoch_milliseconds_and_utc_offset) for more information.
   factory ZonedIsoDateTime.fromEpochMillisecondsAndUtcOffset(int epochMilliseconds, UtcOffset utcOffset) {
     final result = _icu4x_ZonedIsoDateTime_from_epoch_milliseconds_and_utc_offset_mv1(epochMilliseconds, utcOffset._ffi);
     return ZonedIsoDateTime._fromFfi(result);

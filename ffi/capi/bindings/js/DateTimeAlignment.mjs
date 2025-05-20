@@ -3,11 +3,10 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
+
 /**
- * See the [Rust documentation for `Alignment`](https://docs.rs/icu/latest/icu/datetime/options/enum.Alignment.html) for more information.
+ * See the [Rust documentation for `Alignment`](https://docs.rs/icu/2.0.0/icu/datetime/options/enum.Alignment.html) for more information.
  */
-
-
 export class DateTimeAlignment {
     #value = undefined;
 
@@ -45,6 +44,7 @@ export class DateTimeAlignment {
         throw TypeError(value + " is not a DateTimeAlignment and does not correspond to any of its enumerator values.");
     }
 
+    /** @internal */
     static fromValue(value) {
         return new DateTimeAlignment(value);
     }
@@ -53,6 +53,7 @@ export class DateTimeAlignment {
         return [...DateTimeAlignment.#values.keys()][this.#value];
     }
 
+    /** @internal */
     get ffiValue(){
         return this.#value;
     }

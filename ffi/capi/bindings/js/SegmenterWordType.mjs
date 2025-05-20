@@ -3,11 +3,10 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
+
 /**
- * See the [Rust documentation for `WordType`](https://docs.rs/icu/latest/icu/segmenter/options/enum.WordType.html) for more information.
+ * See the [Rust documentation for `WordType`](https://docs.rs/icu/2.0.0/icu/segmenter/options/enum.WordType.html) for more information.
  */
-
-
 export class SegmenterWordType {
     #value = undefined;
 
@@ -46,6 +45,7 @@ export class SegmenterWordType {
         throw TypeError(value + " is not a SegmenterWordType and does not correspond to any of its enumerator values.");
     }
 
+    /** @internal */
     static fromValue(value) {
         return new SegmenterWordType(value);
     }
@@ -54,6 +54,7 @@ export class SegmenterWordType {
         return [...SegmenterWordType.#values.keys()][this.#value];
     }
 
+    /** @internal */
     get ffiValue(){
         return this.#value;
     }
@@ -69,7 +70,7 @@ export class SegmenterWordType {
 
 
     /**
-     * See the [Rust documentation for `is_word_like`](https://docs.rs/icu/latest/icu/segmenter/options/enum.WordType.html#method.is_word_like) for more information.
+     * See the [Rust documentation for `is_word_like`](https://docs.rs/icu/2.0.0/icu/segmenter/options/enum.WordType.html#method.is_word_like) for more information.
      */
     get isWordLike() {
 

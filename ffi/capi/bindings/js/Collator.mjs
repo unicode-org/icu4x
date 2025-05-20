@@ -7,14 +7,13 @@ import { Locale } from "./Locale.mjs"
 import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
-
-/**
- * See the [Rust documentation for `Collator`](https://docs.rs/icu/latest/icu/collator/struct.Collator.html) for more information.
- */
 const Collator_box_destroy_registry = new FinalizationRegistry((ptr) => {
     wasm.icu4x_Collator_destroy_mv1(ptr);
 });
 
+/**
+ * See the [Rust documentation for `Collator`](https://docs.rs/icu/2.0.0/icu/collator/struct.Collator.html) for more information.
+ */
 export class Collator {
     // Internal ptr reference:
     #ptr = null;
@@ -38,6 +37,7 @@ export class Collator {
 
         return this;
     }
+    /** @internal */
     get ffiValue() {
         return this.#ptr;
     }
@@ -46,9 +46,9 @@ export class Collator {
     /**
      * Construct a new Collator instance using compiled data.
      *
-     * See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/collator/struct.Collator.html#method.try_new) for more information.
+     * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.0.0/icu/collator/struct.Collator.html#method.try_new) for more information.
      */
-    static create(locale, options) {
+    #defaultConstructor(locale, options) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
 
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
@@ -59,7 +59,7 @@ export class Collator {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
-                throw new globalThis.Error('DataError: ' + cause.value, { cause });
+                throw new globalThis.Error('DataError.' + cause.value, { cause });
             }
             return new Collator(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -74,9 +74,9 @@ export class Collator {
     /**
      * Construct a new Collator instance using a particular data source.
      *
-     * See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/collator/struct.Collator.html#method.try_new) for more information.
+     * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.0.0/icu/collator/struct.Collator.html#method.try_new) for more information.
      */
-    #defaultConstructor(provider, locale, options) {
+    static createWithProvider(provider, locale, options) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
 
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
@@ -87,7 +87,7 @@ export class Collator {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
-                throw new globalThis.Error('DataError: ' + cause.value, { cause });
+                throw new globalThis.Error('DataError.' + cause.value, { cause });
             }
             return new Collator(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -105,7 +105,7 @@ export class Collator {
      * Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
      * to the WHATWG Encoding Standard.
      *
-     * See the [Rust documentation for `compare_utf16`](https://docs.rs/icu/latest/icu/collator/struct.CollatorBorrowed.html#method.compare_utf16) for more information.
+     * See the [Rust documentation for `compare_utf16`](https://docs.rs/icu/2.0.0/icu/collator/struct.CollatorBorrowed.html#method.compare_utf16) for more information.
      */
     compare(left, right) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
@@ -130,7 +130,7 @@ export class Collator {
      * and the options from locale data were combined. None of the struct fields
      * will have `Auto` as the value.
      *
-     * See the [Rust documentation for `resolved_options`](https://docs.rs/icu/latest/icu/collator/struct.CollatorBorrowed.html#method.resolved_options) for more information.
+     * See the [Rust documentation for `resolved_options`](https://docs.rs/icu/2.0.0/icu/collator/struct.CollatorBorrowed.html#method.resolved_options) for more information.
      */
     get resolvedOptions() {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 24, 4, false);
@@ -147,7 +147,12 @@ export class Collator {
         }
     }
 
-    constructor(provider, locale, options) {
+    /**
+     * Construct a new Collator instance using compiled data.
+     *
+     * See the [Rust documentation for `try_new`](https://docs.rs/icu/2.0.0/icu/collator/struct.Collator.html#method.try_new) for more information.
+     */
+    constructor(locale, options) {
         if (arguments[0] === diplomatRuntime.exposeConstructor) {
             return this.#internalConstructor(...Array.prototype.slice.call(arguments, 1));
         } else if (arguments[0] === diplomatRuntime.internalConstructor) {

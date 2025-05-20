@@ -33,8 +33,7 @@ zerovec = { workspace = true, optional = true }
 iai = { workspace = true }
 icu = { path = "../../components/icu", default-features = false }
 icu_provider = { path = "../../provider/core" }
-icu_benchmark_macros = { path = "../../tools/benchmark/macros" }
-litemap = { path = "../../utils/litemap", features = ["testing"] }
+litemap = { workspace = true, features = ["testing"] }
 postcard = { workspace = true, features = ["use-std"] }
 potential_utf = { workspace = true }
 serde = { workspace = true, features = ["derive"] }
@@ -68,11 +67,3 @@ harness = false
 [[bench]]
 name = "iai_langid"
 harness = false
-
-[[example]]
-name = "filter_langids"
-test = true
-
-[[example]]
-name = "syntatically_canonicalize_locales"
-test = true

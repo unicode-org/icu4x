@@ -46,6 +46,7 @@ export class Weekday {
         throw TypeError(value + " is not a Weekday and does not correspond to any of its enumerator values.");
     }
 
+    /** @internal */
     static fromValue(value) {
         return new Weekday(value);
     }
@@ -58,6 +59,7 @@ export class Weekday {
         }
     }
 
+    /** @internal */
     get ffiValue(){
         return this.#value;
     }

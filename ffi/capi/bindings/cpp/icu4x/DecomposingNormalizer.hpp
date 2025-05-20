@@ -81,7 +81,7 @@ inline bool icu4x::DecomposingNormalizer::is_normalized(std::string_view s) cons
   return result;
 }
 
-inline bool icu4x::DecomposingNormalizer::is_normalized_utf16(std::u16string_view s) const {
+inline bool icu4x::DecomposingNormalizer::is_normalized16(std::u16string_view s) const {
   auto result = icu4x::capi::icu4x_DecomposingNormalizer_is_normalized_utf16_mv1(this->AsFFI(),
     {s.data(), s.size()});
   return result;
@@ -93,7 +93,7 @@ inline size_t icu4x::DecomposingNormalizer::is_normalized_up_to(std::string_view
   return result;
 }
 
-inline size_t icu4x::DecomposingNormalizer::is_normalized_utf16_up_to(std::u16string_view s) const {
+inline size_t icu4x::DecomposingNormalizer::is_normalized16_up_to(std::u16string_view s) const {
   auto result = icu4x::capi::icu4x_DecomposingNormalizer_is_normalized_utf16_up_to_mv1(this->AsFFI(),
     {s.data(), s.size()});
   return result;

@@ -5,18 +5,17 @@ import { GeneralCategoryGroup } from "./GeneralCategoryGroup.mjs"
 import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
-
-/**
- * A type capable of looking up General Category Group values from a string name.
- *
- * See the [Rust documentation for `PropertyParser`](https://docs.rs/icu/latest/icu/properties/struct.PropertyParser.html) for more information.
- *
- * See the [Rust documentation for `GeneralCategory`](https://docs.rs/icu/latest/icu/properties/props/enum.GeneralCategory.html) for more information.
- */
 const GeneralCategoryNameToGroupMapper_box_destroy_registry = new FinalizationRegistry((ptr) => {
     wasm.icu4x_GeneralCategoryNameToGroupMapper_destroy_mv1(ptr);
 });
 
+/**
+ * A type capable of looking up General Category Group values from a string name.
+ *
+ * See the [Rust documentation for `PropertyParser`](https://docs.rs/icu/2.0.0/icu/properties/struct.PropertyParser.html) for more information.
+ *
+ * See the [Rust documentation for `GeneralCategory`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.GeneralCategory.html) for more information.
+ */
 export class GeneralCategoryNameToGroupMapper {
     // Internal ptr reference:
     #ptr = null;
@@ -40,6 +39,7 @@ export class GeneralCategoryNameToGroupMapper {
 
         return this;
     }
+    /** @internal */
     get ffiValue() {
         return this.#ptr;
     }
@@ -50,7 +50,7 @@ export class GeneralCategoryNameToGroupMapper {
      *
      * Returns 0 if the name is unknown for this property
      *
-     * See the [Rust documentation for `get_strict`](https://docs.rs/icu/latest/icu/properties/struct.PropertyParserBorrowed.html#method.get_strict) for more information.
+     * See the [Rust documentation for `get_strict`](https://docs.rs/icu/2.0.0/icu/properties/struct.PropertyParserBorrowed.html#method.get_strict) for more information.
      */
     getStrict(name) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
@@ -74,7 +74,7 @@ export class GeneralCategoryNameToGroupMapper {
      *
      * Returns 0 if the name is unknown for this property
      *
-     * See the [Rust documentation for `get_loose`](https://docs.rs/icu/latest/icu/properties/struct.PropertyParserBorrowed.html#method.get_loose) for more information.
+     * See the [Rust documentation for `get_loose`](https://docs.rs/icu/2.0.0/icu/properties/struct.PropertyParserBorrowed.html#method.get_loose) for more information.
      */
     getLoose(name) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
@@ -96,7 +96,7 @@ export class GeneralCategoryNameToGroupMapper {
     /**
      * Create a name-to-mask mapper for the `General_Category` property, using compiled data.
      *
-     * See the [Rust documentation for `GeneralCategoryGroup`](https://docs.rs/icu/latest/icu/properties/props/struct.GeneralCategoryGroup.html) for more information.
+     * See the [Rust documentation for `GeneralCategoryGroup`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.GeneralCategoryGroup.html) for more information.
      */
     #defaultConstructor() {
 
@@ -113,7 +113,7 @@ export class GeneralCategoryNameToGroupMapper {
     /**
      * Create a name-to-mask mapper for the `General_Category` property, using a particular data source.
      *
-     * See the [Rust documentation for `GeneralCategoryGroup`](https://docs.rs/icu/latest/icu/properties/props/struct.GeneralCategoryGroup.html) for more information.
+     * See the [Rust documentation for `GeneralCategoryGroup`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.GeneralCategoryGroup.html) for more information.
      */
     static createWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
@@ -124,7 +124,7 @@ export class GeneralCategoryNameToGroupMapper {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
-                throw new globalThis.Error('DataError: ' + cause.value, { cause });
+                throw new globalThis.Error('DataError.' + cause.value, { cause });
             }
             return new GeneralCategoryNameToGroupMapper(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -134,6 +134,11 @@ export class GeneralCategoryNameToGroupMapper {
         }
     }
 
+    /**
+     * Create a name-to-mask mapper for the `General_Category` property, using compiled data.
+     *
+     * See the [Rust documentation for `GeneralCategoryGroup`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.GeneralCategoryGroup.html) for more information.
+     */
     constructor() {
         if (arguments[0] === diplomatRuntime.exposeConstructor) {
             return this.#internalConstructor(...Array.prototype.slice.call(arguments, 1));

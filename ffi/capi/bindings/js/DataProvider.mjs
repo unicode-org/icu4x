@@ -4,6 +4,9 @@ import { LocaleFallbacker } from "./LocaleFallbacker.mjs"
 import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
+const DataProvider_box_destroy_registry = new FinalizationRegistry((ptr) => {
+    wasm.icu4x_DataProvider_destroy_mv1(ptr);
+});
 
 /**
  * An ICU4X data provider, capable of loading ICU4X data keys from some source.
@@ -13,12 +16,8 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
  * If you wish to use ICU4X's builtin "compiled data", use the version of the constructors that do not have `_with_provider`
  * in their names.
  *
- * See the [Rust documentation for `icu_provider`](https://docs.rs/icu_provider/latest/icu_provider/index.html) for more information.
+ * See the [Rust documentation for `icu_provider`](https://docs.rs/icu_provider/2.0.0/icu_provider/index.html) for more information.
  */
-const DataProvider_box_destroy_registry = new FinalizationRegistry((ptr) => {
-    wasm.icu4x_DataProvider_destroy_mv1(ptr);
-});
-
 export class DataProvider {
     // Internal ptr reference:
     #ptr = null;
@@ -42,10 +41,38 @@ export class DataProvider {
 
         return this;
     }
+    /** @internal */
     get ffiValue() {
         return this.#ptr;
     }
 
+
+    /**
+     * See the [Rust documentation for `try_new_from_blob`](https://docs.rs/icu_provider_blob/2.0.0/icu_provider_blob/struct.BlobDataProvider.html#method.try_new_from_blob) for more information.
+     */
+    static fromByteSlice(blob) {
+        let functionCleanupArena = new diplomatRuntime.CleanupArena();
+
+        const blobSlice = diplomatRuntime.DiplomatBuf.slice(wasm, blob, "u8");
+        const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
+
+
+        const result = wasm.icu4x_DataProvider_from_owned_byte_slice_mv1(diplomatReceive.buffer, ...blobSlice.splat());
+
+        try {
+            if (!diplomatReceive.resultFlag) {
+                const cause = new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
+                throw new globalThis.Error('DataError.' + cause.value, { cause });
+            }
+            return new DataProvider(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
+        }
+
+        finally {
+            functionCleanupArena.free();
+
+            diplomatReceive.free();
+        }
+    }
 
     /**
      * Creates a provider that tries the current provider and then, if the current provider
@@ -53,7 +80,7 @@ export class DataProvider {
      *
      * This takes ownership of the `other` provider, leaving an empty provider in its place.
      *
-     * See the [Rust documentation for `ForkByMarkerProvider`](https://docs.rs/icu_provider_adapters/latest/icu_provider_adapters/fork/type.ForkByMarkerProvider.html) for more information.
+     * See the [Rust documentation for `ForkByMarkerProvider`](https://docs.rs/icu_provider_adapters/2.0.0/icu_provider_adapters/fork/type.ForkByMarkerProvider.html) for more information.
      */
     forkByMarker(other) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
@@ -64,7 +91,7 @@ export class DataProvider {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
-                throw new globalThis.Error('DataError: ' + cause.value, { cause });
+                throw new globalThis.Error('DataError.' + cause.value, { cause });
             }
         }
 
@@ -76,7 +103,7 @@ export class DataProvider {
     /**
      * Same as `fork_by_key` but forks by locale instead of key.
      *
-     * See the [Rust documentation for `IdentifierNotFoundPredicate`](https://docs.rs/icu_provider_adapters/latest/icu_provider_adapters/fork/predicates/struct.IdentifierNotFoundPredicate.html) for more information.
+     * See the [Rust documentation for `IdentifierNotFoundPredicate`](https://docs.rs/icu_provider_adapters/2.0.0/icu_provider_adapters/fork/predicates/struct.IdentifierNotFoundPredicate.html) for more information.
      */
     forkByLocale(other) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
@@ -87,7 +114,7 @@ export class DataProvider {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
-                throw new globalThis.Error('DataError: ' + cause.value, { cause });
+                throw new globalThis.Error('DataError.' + cause.value, { cause });
             }
         }
 
@@ -97,9 +124,9 @@ export class DataProvider {
     }
 
     /**
-     * See the [Rust documentation for `new`](https://docs.rs/icu_provider_adapters/latest/icu_provider_adapters/fallback/struct.LocaleFallbackProvider.html#method.new) for more information.
+     * See the [Rust documentation for `new`](https://docs.rs/icu_provider_adapters/2.0.0/icu_provider_adapters/fallback/struct.LocaleFallbackProvider.html#method.new) for more information.
      *
-     * Additional information: [1](https://docs.rs/icu_provider_adapters/latest/icu_provider_adapters/fallback/struct.LocaleFallbackProvider.html)
+     * Additional information: [1](https://docs.rs/icu_provider_adapters/2.0.0/icu_provider_adapters/fallback/struct.LocaleFallbackProvider.html)
      */
     enableLocaleFallbackWith(fallbacker) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
@@ -110,7 +137,7 @@ export class DataProvider {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
-                throw new globalThis.Error('DataError: ' + cause.value, { cause });
+                throw new globalThis.Error('DataError.' + cause.value, { cause });
             }
         }
 

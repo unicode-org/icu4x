@@ -35,6 +35,11 @@ macro_rules! __make_provider {
 }
 #[doc(inline)]
 pub use __make_provider as make_provider;
+/// This macro requires the following crates:
+/// * `icu`
+/// * `icu_locale_core`
+/// * `icu_provider`
+/// * `zerovec`
 #[allow(unused_macros)]
 macro_rules! impl_data_provider {
     ($ provider : ty) => {

@@ -40,9 +40,9 @@ namespace capi {
 
 namespace icu4x {
 /**
- * See the [Rust documentation for `TimePrecision`](https://docs.rs/icu/latest/icu/datetime/options/enum.TimePrecision.html) for more information.
+ * See the [Rust documentation for `TimePrecision`](https://docs.rs/icu/2.0.0/icu/datetime/options/enum.TimePrecision.html) for more information.
  *
- * See the [Rust documentation for `SubsecondDigits`](https://docs.rs/icu/latest/icu/datetime/options/enum.SubsecondDigits.html) for more information.
+ * See the [Rust documentation for `SubsecondDigits`](https://docs.rs/icu/2.0.0/icu/datetime/options/enum.SubsecondDigits.html) for more information.
  */
 class TimePrecision {
 public:
@@ -70,7 +70,7 @@ public:
   explicit operator bool() const = delete;
 
   /**
-   * See the [Rust documentation for `try_from_int`](https://docs.rs/icu/latest/icu/datetime/options/enum.SubsecondDigits.html#method.try_from_int) for more information.
+   * See the [Rust documentation for `try_from_int`](https://docs.rs/icu/2.0.0/icu/datetime/options/enum.SubsecondDigits.html#method.try_from_int) for more information.
    */
   inline static std::optional<icu4x::TimePrecision> from_subsecond_digits(uint8_t digits);
 
