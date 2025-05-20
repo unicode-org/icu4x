@@ -12,11 +12,10 @@ mod private {
     pub trait Sealed {}
 }
 
-
 /// A trait for defining various supported encodings
 /// and implementing functionality that is encoding
 /// sensitive / specific.
-pub trait UtfEncodingType : private::Sealed {
+pub trait UtfEncodingType: private::Sealed {
     type Encoding: PartialEq + core::fmt::Debug + Clone;
 
     /// Get a slice from the underlying source using for start..end
