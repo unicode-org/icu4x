@@ -7,6 +7,7 @@
 //! The file:
 //! <https://github.com/unicode-org/cldr-json/blob/main/cldr-json/cldr-core/supplemental/units.json>
 
+use icu_provider::DataError;
 use serde::Deserialize;
 use std::collections::BTreeMap;
 
@@ -79,4 +80,58 @@ pub(crate) struct Supplemental {
 #[derive(Deserialize)]
 pub(crate) struct Resource {
     pub(crate) supplemental: Supplemental,
+}
+
+impl Resource {
+    /// Retrieves the unique identifier for a given unit name.
+    ///
+    /// # NOTE
+    ///
+    /// The unique identifier is the unit's index in the list, starting from zero.
+    ///
+    /// # Arguments
+    ///
+    /// * `unit_name` - A string slice that holds the name of the unit to search for.
+    ///
+    /// # Returns
+    ///
+    /// * `Ok(u16)` - The unique identifier for the unit if found.
+    /// * `Err(DataError)` - An error if the unit is not found or if the index is out of range for `u16`.
+    pub fn unit_id(&self, unit_name: &str) -> Result<u16, DataError> {
+        self.supplemental
+            .convert_units
+            .convert_units
+            .iter()
+            .enumerate()
+            .find(|(_, (name, _))| name.as_str() == unit_name)
+            .map(|(index, _)| index)
+            .ok_or_else(|| DataError::custom("Unit not found"))
+            .and_then(|index| {
+                u16::try_from(index).map_err(|_| DataError::custom("Index out of range for u16"))
+            })
+    }
+
+    /// Constructs a map of unit names to their corresponding unique identifiers.
+    /// The identifiers are the unit's indices in the list, starting from zero.
+    ///
+    /// # Returns
+    ///
+    /// A `BTreeMap` where the keys are unit names and the values are their corresponding unique identifiers.
+    ///
+    /// # Errors
+    ///
+    /// Returns a `DataError` if the index cannot be converted to `u16`.
+    pub fn unit_ids_map(&self) -> Result<BTreeMap<String, u16>, DataError> {
+        self.supplemental
+            .convert_units
+            .convert_units
+            .iter()
+            .enumerate()
+            .map(|(index, (unit_name, _))| {
+                u16::try_from(index)
+                    .map_err(|_| DataError::custom("Index out of range for u16"))
+                    .map(|index_u16| (unit_name.clone(), index_u16))
+            })
+            .collect()
+    }
 }

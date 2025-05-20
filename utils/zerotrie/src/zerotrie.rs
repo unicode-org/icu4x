@@ -473,6 +473,21 @@ macro_rules! impl_zerotrie_subtype {
             }
         }
         #[cfg(feature = "alloc")]
+        impl<'a, K> TryFrom<&'a BTreeMap<K, u16>> for $name<Vec<u8>>
+        where
+            K: Borrow<[u8]>
+        {
+            type Error = crate::error::ZeroTrieBuildError;
+            fn try_from(map: &'a BTreeMap<K, u16>) -> Result<Self, Self::Error> {
+                let tuples: Vec<(&[u8], usize)> = map
+                    .iter()
+                    .map(|(k, v)| (k.borrow(), *v as usize))
+                    .collect();
+                let byte_str_slice = ByteStr::from_byte_slice_with_value(&tuples);
+                Self::try_from_tuple_slice(byte_str_slice)
+            }
+        }
+        #[cfg(feature = "alloc")]
         impl<Store> $name<Store>
         where
             Store: AsRef<[u8]> + ?Sized
@@ -525,7 +540,7 @@ macro_rules! impl_zerotrie_subtype {
             fn try_from(map: &'a LiteMap<K, usize, S>) -> Result<Self, Self::Error> {
                 let tuples: Vec<(&[u8], usize)> = map
                     .iter()
-                    .map(|(k, v)| (k.borrow(), *v))
+                    .map(|(k, v)| (k.borrow(), *v as usize))
                     .collect();
                 let byte_str_slice = ByteStr::from_byte_slice_with_value(&tuples);
                 Self::try_from_tuple_slice(byte_str_slice)

@@ -30,10 +30,6 @@ impl DataProvider<UnitsInfoV1> for SourceDataProvider {
 
         let clean_constants_map = process_constants(constants)?;
 
-        // Get all the units and their conversion information.
-        let convert_units = &units_data.supplemental.convert_units.convert_units;
-        let mut conversion_info_map = BTreeMap::<Vec<u8>, usize>::new();
-
         struct ConversionInfoPreProcessing<'a> {
             base_unit: &'a str,
             factor_scientific: ScientificNumber,
@@ -41,7 +37,7 @@ impl DataProvider<UnitsInfoV1> for SourceDataProvider {
         }
 
         let mut convert_units_vec = Vec::<ConversionInfoPreProcessing>::new();
-        for (unit_name, convert_unit) in convert_units {
+        for (_, convert_unit) in &units_data.supplemental.convert_units.convert_units {
             let base_unit = convert_unit.base_unit.as_str();
             let factor = match convert_unit.factor {
                 Some(ref factor) => factor.as_str(),
@@ -52,23 +48,26 @@ impl DataProvider<UnitsInfoV1> for SourceDataProvider {
                 None => "0",
             };
 
-            let convert_unit_index = convert_units_vec.len();
             convert_units_vec.push(ConversionInfoPreProcessing {
                 base_unit,
                 factor_scientific: process_factor(factor, &clean_constants_map)?,
                 offset_scientific: process_factor(offset, &clean_constants_map)?,
             });
-
-            conversion_info_map.insert(unit_name.as_bytes().to_vec(), convert_unit_index);
         }
 
         // TODO: remove this once we can use the `try_new_with_buffer_provider` constructor in `components/experimental/src/measure/parser.rs`.
         // OR just using `MeasureUnitParser::default()`
-        let units_conversion_trie =
-            ZeroTrieSimpleAscii::try_from(&conversion_info_map).map_err(|e| {
-                DataError::custom("Could not create ZeroTrie from units.json data")
-                    .with_display_context(&e)
-            })?;
+        let units_conversion_trie = ZeroTrieSimpleAscii::try_from(
+            &units_data
+                .unit_ids_map()?
+                .iter()
+                .map(|(k, v)| (k.as_bytes().to_vec(), *v as usize))
+                .collect::<BTreeMap<Vec<u8>, usize>>(),
+        )
+        .map_err(|e| {
+            DataError::custom("Could not create ZeroTrie from units.json data")
+                .with_display_context(&e)
+        })?;
 
         // Convert the trie to use ZeroVec and wrap it in UnitsTrie
         let units_trie = UnitsTrie {
