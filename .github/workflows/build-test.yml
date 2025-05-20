@@ -551,6 +551,9 @@ jobs:
     - name: Cargo doc
       run: cargo make ci-job-doc
 
+    - name: Check semver
+      uses: obi1kenobi/cargo-semver-checks-action@v2
+
 
   # Notify on slack  
   notify-slack:
