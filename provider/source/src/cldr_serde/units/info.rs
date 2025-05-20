@@ -83,7 +83,20 @@ pub(crate) struct Resource {
 }
 
 impl Resource {
-    pub fn get_unit_id(&self, unit_name: &str) -> Result<u16, DataError> {
+    /// Retrieves the unique identifier for a given unit name.
+    ///
+    /// This function searches for the specified unit name within the `convert_units`
+    /// and returns its position as a `u16` identifier.
+    ///
+    /// # Arguments
+    ///
+    /// * `unit_name` - A string slice that holds the name of the unit to search for.
+    ///
+    /// # Returns
+    ///
+    /// * `Ok(u16)` - The unique identifier for the unit if found.
+    /// * `Err(DataError)` - An error if the unit is not found or if the index is out of range for `u16`.
+    pub fn unit_id(&self, unit_name: &str) -> Result<u16, DataError> {
         self.supplemental
             .convert_units
             .convert_units
@@ -97,13 +110,25 @@ impl Resource {
             })
     }
 
-    pub fn get_unit_ids_map(&self) -> BTreeMap<String, usize> {
+    /// Constructs a map of unit names to their corresponding unique identifiers.
+    ///
+    /// This function iterates over the units and assigns each a unique identifier
+    /// based on its position in the list. The identifiers are represented as `u16`.
+    ///
+    /// # Errors
+    ///
+    /// Returns a `DataError` if the index cannot be converted to `u16`.
+    pub fn unit_ids_map(&self) -> Result<BTreeMap<String, u16>, DataError> {
         self.supplemental
             .convert_units
             .convert_units
             .iter()
             .enumerate()
-            .map(|(index, (unit_name, _))| (unit_name.clone(), index))
+            .map(|(index, (unit_name, _))| {
+                u16::try_from(index)
+                    .map_err(|_| DataError::custom("Index out of range for u16"))
+                    .map(|index_u16| (unit_name.clone(), index_u16))
+            })
             .collect()
     }
 }

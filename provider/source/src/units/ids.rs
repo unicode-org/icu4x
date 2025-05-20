@@ -26,7 +26,7 @@ impl DataProvider<UnitsIdsV1> for SourceDataProvider {
         let unit = req.id.marker_attributes.as_str();
 
         Ok(DataResponse {
-            payload: DataPayload::from_owned(units_data.get_unit_id(unit)?),
+            payload: DataPayload::from_owned(units_data.unit_id(unit)?),
             metadata: Default::default(),
         })
     }
