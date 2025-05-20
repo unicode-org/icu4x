@@ -13,12 +13,13 @@ use core::str::FromStr;
 use icu_calendar::{AnyCalendarKind, AsCalendar, Date, DateError, Iso, RangeError};
 use icu_locale_core::subtags::subtag;
 use ixdtf::{
+    encoding::Utf8,
     parsers::IxdtfParser,
     records::{
         DateRecord, IxdtfParseRecord, TimeRecord, TimeZoneAnnotation, TimeZoneRecord,
         UtcOffsetRecord, UtcOffsetRecordOrZ,
     },
-    ParseError as Rfc9557ParseError, Slice,
+    ParseError as Rfc9557ParseError,
 };
 
 /// The error type for parsing RFC 9557 strings.
@@ -134,7 +135,9 @@ struct Intermediate<'a> {
 }
 
 impl<'a> Intermediate<'a> {
-    fn try_from_ixdtf_record(ixdtf_record: &'a IxdtfParseRecord) -> Result<Self, ParseError> {
+    fn try_from_ixdtf_record(
+        ixdtf_record: &'a IxdtfParseRecord<'_, Utf8>,
+    ) -> Result<Self, ParseError> {
         let (offset, is_z, iana_identifier) = match ixdtf_record {
             // empty
             IxdtfParseRecord {
@@ -185,7 +188,7 @@ impl<'a> Intermediate<'a> {
                 offset: Some(UtcOffsetRecordOrZ::Offset(offset)),
                 tz:
                     Some(TimeZoneAnnotation {
-                        tz: TimeZoneRecord::Name(Slice::Utf8(iana_identifier)),
+                        tz: TimeZoneRecord::Name(iana_identifier),
                         ..
                     }),
                 ..
@@ -205,7 +208,7 @@ impl<'a> Intermediate<'a> {
                 offset: Some(UtcOffsetRecordOrZ::Z),
                 tz:
                     Some(TimeZoneAnnotation {
-                        tz: TimeZoneRecord::Name(Slice::Utf8(iana_identifier)),
+                        tz: TimeZoneRecord::Name(iana_identifier),
                         ..
                     }),
                 ..
@@ -215,7 +218,7 @@ impl<'a> Intermediate<'a> {
                 offset: None,
                 tz:
                     Some(TimeZoneAnnotation {
-                        tz: TimeZoneRecord::Name(Slice::Utf8(iana_identifier)),
+                        tz: TimeZoneRecord::Name(iana_identifier),
                         ..
                     }),
                 ..
@@ -738,7 +741,9 @@ impl Time {
         Self::try_from_ixdtf_record(&ixdtf_record)
     }
 
-    fn try_from_ixdtf_record(ixdtf_record: &IxdtfParseRecord) -> Result<Self, ParseError> {
+    fn try_from_ixdtf_record(
+        ixdtf_record: &IxdtfParseRecord<'_, Utf8>,
+    ) -> Result<Self, ParseError> {
         let time_record = ixdtf_record.time.ok_or(ParseError::MissingFields)?;
         Self::try_from_time_record(&time_record)
     }

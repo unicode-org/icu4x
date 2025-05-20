@@ -4,57 +4,79 @@
 
 //! Core functionality for `ixdtf`'s parsers
 
+use private::Sealed;
+
 use crate::{ParseError, ParserResult};
 
-/// A slice that can be either UTF8 or UTF16
-#[derive(Debug, Clone, PartialEq)]
-#[non_exhaustive]
-pub enum Slice<'a> {
-    /// A UTF8 slice
-    Utf8(&'a [u8]),
-    /// A UTF16 slice
-    Utf16(&'a [u16]),
+mod private {
+    pub trait Sealed {}
 }
 
-/// An internal way to represent the source text to be parsed.
-///
-/// Currently, only UTF8 and UTF16 are supported.
-#[derive(Debug)]
-#[non_exhaustive]
-pub(crate) enum Source<'a> {
-    Utf8(&'a [u8]),
-    Utf16(&'a [u16]),
-}
 
-impl<'a> Source<'a> {
+/// A trait for defining various supported encodings
+/// and implementing functionality that is encoding
+/// sensitive / specific.
+pub trait UtfEncodingType : private::Sealed {
+    type Encoding: PartialEq + core::fmt::Debug + Clone;
+
     /// Get a slice from the underlying source using for start..end
-    fn slice(&self, start: usize, end: usize) -> Option<Slice<'a>> {
-        match self {
-            Self::Utf8(s) => s.get(start..end).map(Slice::Utf8),
-            Self::Utf16(s) => s.get(start..end).map(Slice::Utf16),
-        }
-    }
+    fn slice(source: &[Self::Encoding], start: usize, end: usize) -> Option<&[Self::Encoding]>;
 
     /// Retrieve the provided index and return the value constrained to a
     /// representable ASCII range if required.
-    fn get(&self, index: usize) -> ParserResult<Option<u8>> {
-        match self {
-            Self::Utf8(s) => Ok(s.get(index).copied()),
-            Self::Utf16(s) => s
-                .get(index)
-                .copied()
-                .map(to_ascii_byte)
-                .transpose()
-                .map_err(|_| ParseError::Utf16NonAsciiChar),
-        }
+    fn get_ascii(source: &[Self::Encoding], index: usize) -> ParserResult<Option<u8>>;
+
+    /// Checks for the known calendar annotation key `u-ca`.
+    fn check_calendar_key(key: &[Self::Encoding]) -> bool;
+}
+
+/// A marker trait for providing a UTF-16 encoding to `ixdtf`'s parsers.
+#[derive(Debug, PartialEq, Clone)]
+#[allow(clippy::exhaustive_structs)] // ZST Marker trait, no fields should be added
+pub struct Utf16;
+
+impl Sealed for Utf16 {}
+
+impl UtfEncodingType for Utf16 {
+    type Encoding = u16;
+    fn slice(source: &[Self::Encoding], start: usize, end: usize) -> Option<&[Self::Encoding]> {
+        source.get(start..end)
     }
 
-    /// Get the length of the source text.
-    fn len(&self) -> usize {
-        match self {
-            Self::Utf8(s) => s.len(),
-            Self::Utf16(s) => s.len(),
-        }
+    fn get_ascii(source: &[Self::Encoding], index: usize) -> ParserResult<Option<u8>> {
+        source
+            .get(index)
+            .copied()
+            .map(to_ascii_byte)
+            .transpose()
+            .map_err(|_| ParseError::Utf16NonAsciiChar)
+    }
+
+    fn check_calendar_key(key: &[Self::Encoding]) -> bool {
+        key == [0x75, 0x2d, 0x63, 0x61]
+    }
+}
+
+/// A marker trait for providing a UTF-8 encoding to `ixdtf`'s parsers.
+#[derive(Debug, PartialEq, Clone)]
+#[allow(clippy::exhaustive_structs)] // ZST Marker trait, no fields should be added.
+pub struct Utf8;
+
+impl Sealed for Utf8 {}
+
+impl UtfEncodingType for Utf8 {
+    type Encoding = u8;
+
+    fn slice<'a>(source: &[Self::Encoding], start: usize, end: usize) -> Option<&[Self::Encoding]> {
+        source.get(start..end)
+    }
+
+    fn get_ascii(source: &[Self::Encoding], index: usize) -> ParserResult<Option<u8>> {
+        Ok(source.get(index).copied())
+    }
+
+    fn check_calendar_key(key: &[Self::Encoding]) -> bool {
+        key == "u-ca".as_bytes()
     }
 }
 
@@ -70,33 +92,21 @@ fn to_ascii_byte(b: u16) -> ParserResult<u8> {
 
 /// `Cursor` is a small cursor implementation for parsing Iso8601 grammar.
 #[derive(Debug)]
-pub(crate) struct Cursor<'a> {
+pub(crate) struct Cursor<'a, T: UtfEncodingType> {
     pos: usize,
-    source: Source<'a>,
+    source: &'a [T::Encoding],
 }
 
-impl<'a> Cursor<'a> {
+impl<'a, T: UtfEncodingType> Cursor<'a, T> {
     /// Create a new cursor from a source UTF8 string.
     #[must_use]
-    pub fn new(source: &'a [u8]) -> Self {
-        Self {
-            pos: 0,
-            source: Source::Utf8(source),
-        }
-    }
-
-    /// Create a new cursor from a source UTF16 string.
-    #[must_use]
-    pub fn from_utf16(source: &'a [u16]) -> Self {
-        Self {
-            pos: 0,
-            source: Source::Utf16(source),
-        }
+    pub fn new(source: &'a [T::Encoding]) -> Self {
+        Self { pos: 0, source }
     }
 
     /// Returns a string value from a slice of the cursor.
-    pub(crate) fn slice(&self, start: usize, end: usize) -> Option<Slice<'a>> {
-        self.source.slice(start, end)
+    pub(crate) fn slice(&self, start: usize, end: usize) -> Option<&'a [T::Encoding]> {
+        T::slice(self.source, start, end)
     }
 
     /// Get current position
@@ -116,7 +126,7 @@ impl<'a> Cursor<'a> {
 
     /// Peeks the value at `n` as a `char`.
     pub(crate) fn peek_n(&self, n: usize) -> ParserResult<Option<u8>> {
-        self.source.get(self.pos + n)
+        T::get_ascii(self.source, self.pos + n)
     }
 
     /// Runs the provided check on the current position.
@@ -160,12 +170,12 @@ impl<'a> Cursor<'a> {
         self.next()?.ok_or(err)
     }
 
-    /// Advances the cursor's position by n bytes.
+    /// Advances the cursor's position by n code points.
     pub(crate) fn advance_n(&mut self, n: usize) {
         self.pos += n;
     }
 
-    // Advances the cursor by 1 byte.
+    // Advances the cursor by 1 code point.
     pub(crate) fn advance(&mut self) {
         self.advance_n(1)
     }

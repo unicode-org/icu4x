@@ -8,6 +8,7 @@ use core::num::NonZeroU8;
 
 use crate::{
     assert_syntax,
+    core::UtfEncodingType,
     parsers::{
         grammar::{
             is_annotation_open, is_decimal_separator, is_time_designator, is_time_separator,
@@ -23,10 +24,10 @@ use super::{annotations, grammar::is_ascii_sign, timezone};
 
 /// Parse annotated time record is silently fallible returning None in the case that the
 /// value does not align
-pub(crate) fn parse_annotated_time_record<'a>(
-    cursor: &mut Cursor<'a>,
-    handler: impl FnMut(Annotation<'a>) -> Option<Annotation<'a>>,
-) -> ParserResult<IxdtfParseRecord<'a>> {
+pub(crate) fn parse_annotated_time_record<'a, T: UtfEncodingType>(
+    cursor: &mut Cursor<'a, T>,
+    handler: impl FnMut(Annotation<'a, T>) -> Option<Annotation<'a, T>>,
+) -> ParserResult<IxdtfParseRecord<'a, T>> {
     let designator = cursor.check_or(false, is_time_designator)?;
     cursor.advance_if(designator);
 
@@ -68,7 +69,9 @@ pub(crate) fn parse_annotated_time_record<'a>(
 }
 
 /// Parse `TimeRecord`
-pub(crate) fn parse_time_record(cursor: &mut Cursor) -> ParserResult<TimeRecord> {
+pub(crate) fn parse_time_record<T: UtfEncodingType>(
+    cursor: &mut Cursor<T>,
+) -> ParserResult<TimeRecord> {
     let hour = parse_hour(cursor)?;
 
     if !cursor.check_or(false, |ch| is_time_separator(ch) || ch.is_ascii_digit())? {
@@ -112,7 +115,7 @@ pub(crate) fn parse_time_record(cursor: &mut Cursor) -> ParserResult<TimeRecord>
 
 /// Parse an hour value.
 #[inline]
-pub(crate) fn parse_hour(cursor: &mut Cursor) -> ParserResult<u8> {
+pub(crate) fn parse_hour<T: UtfEncodingType>(cursor: &mut Cursor<T>) -> ParserResult<u8> {
     let first = cursor.next_digit()?.ok_or(ParseError::TimeHour)?;
     let hour_value = first * 10 + cursor.next_digit()?.ok_or(ParseError::TimeHour)?;
     if !(0..=23).contains(&hour_value) {
@@ -123,8 +126,8 @@ pub(crate) fn parse_hour(cursor: &mut Cursor) -> ParserResult<u8> {
 
 /// Parses `MinuteSecond` value.
 #[inline]
-pub(crate) fn parse_minute_second(
-    cursor: &mut Cursor,
+pub(crate) fn parse_minute_second<T: UtfEncodingType>(
+    cursor: &mut Cursor<T>,
     is_leap_second_valid: bool,
 ) -> ParserResult<u8> {
     let (valid_range, err) = if is_leap_second_valid {
@@ -145,7 +148,9 @@ pub(crate) fn parse_minute_second(
 /// This is primarily used in ISO8601 to add percision past
 /// a second.
 #[inline]
-pub(crate) fn parse_fraction(cursor: &mut Cursor) -> ParserResult<Option<Fraction>> {
+pub(crate) fn parse_fraction<T: UtfEncodingType>(
+    cursor: &mut Cursor<T>,
+) -> ParserResult<Option<Fraction>> {
     // Assert that the first char provided is a decimal separator.
     if !cursor.check_or(false, is_decimal_separator)? {
         return Ok(None);

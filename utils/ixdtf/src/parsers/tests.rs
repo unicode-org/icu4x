@@ -9,12 +9,13 @@ use alloc::string::String;
 use alloc::vec::Vec;
 
 use crate::{
+    core::Utf16,
     parsers::IxdtfParser,
     records::{
         Annotation, DateRecord, Fraction, IxdtfParseRecord, TimeRecord, TimeZoneAnnotation,
         TimeZoneRecord, UtcOffsetRecordOrZ,
     },
-    ParseError, Slice,
+    ParseError,
 };
 
 #[test]
@@ -73,7 +74,7 @@ fn good_zoned_date_time() {
         tz_annotation,
         TimeZoneAnnotation {
             critical: false,
-            tz: TimeZoneRecord::Name(Slice::Utf8("America/Chicago".as_bytes()))
+            tz: TimeZoneRecord::Name("America/Chicago".as_bytes())
         }
     );
 }
@@ -189,11 +190,11 @@ fn good_annotations_date_time() {
         tz_annotation,
         TimeZoneAnnotation {
             critical: true,
-            tz: TimeZoneRecord::Name(Slice::Utf8("America/Argentina/ComodRivadavia".as_bytes())),
+            tz: TimeZoneRecord::Name("America/Argentina/ComodRivadavia".as_bytes()),
         }
     );
 
-    assert_eq!(result.calendar, Some(Slice::Utf8("iso8601".as_bytes())));
+    assert_eq!(result.calendar, Some("iso8601".as_bytes()));
 
     let omit_result = IxdtfParser::from_str("+0020201108[!u-ca=iso8601][f-1a2b=a0sa-2l4s]")
         .parse()
@@ -201,10 +202,7 @@ fn good_annotations_date_time() {
 
     assert!(omit_result.tz.is_none());
 
-    assert_eq!(
-        omit_result.calendar,
-        Some(Slice::Utf8("iso8601".as_bytes()))
-    );
+    assert_eq!(omit_result.calendar, Some("iso8601".as_bytes()));
 }
 
 #[test]
@@ -329,7 +327,7 @@ fn duplicate_same_calendar() {
         let calendar = result.calendar.unwrap();
         assert_eq!(
             calendar,
-            Slice::Utf8("iso8601".as_bytes()),
+            "iso8601".as_bytes(),
             "Invalid Ixdtf parsing: \"{duplicate}\" should fail parsing."
         );
     }
@@ -347,7 +345,7 @@ fn valid_calendar_annotations() {
         .unwrap();
     assert_eq!(
         result.calendar,
-        Some(Slice::Utf8("japanese".as_bytes())),
+        Some("japanese".as_bytes()),
         "Valid annotation parsing: \"{value}\" should parse calendar as 'japanese'."
     );
 
@@ -355,8 +353,8 @@ fn valid_calendar_annotations() {
         annotations[1],
         Annotation {
             critical: false,
-            key: Slice::Utf8("u-ca".as_bytes()),
-            value: Slice::Utf8("iso8601".as_bytes())
+            key: "u-ca".as_bytes(),
+            value: "iso8601".as_bytes()
         },
         "Valid annotation parsing: \"{value}\" should parse first annotation as 'iso8601'."
     );
@@ -365,8 +363,8 @@ fn valid_calendar_annotations() {
         annotations[2],
         Annotation {
             critical: false,
-            key: Slice::Utf8("u-ca".as_bytes()),
-            value: Slice::Utf8("gregorian".as_bytes()),
+            key: "u-ca".as_bytes(),
+            value: "gregorian".as_bytes(),
         },
         "Valid annotation parsing: \"{value}\" should parse second annotation as 'gregorian'."
     );
@@ -381,7 +379,7 @@ fn valid_calendar_annotations() {
         .unwrap();
     assert_eq!(
         result.calendar,
-        Some(Slice::Utf8("gregorian".as_bytes())),
+        Some("gregorian".as_bytes()),
         "Valid annotation parsing: \"{value}\" should parse calendar as 'gregorian'."
     );
 
@@ -389,8 +387,8 @@ fn valid_calendar_annotations() {
         annotations[1],
         Annotation {
             critical: false,
-            key: Slice::Utf8("u-ca".as_bytes()),
-            value: Slice::Utf8("iso8601".as_bytes())
+            key: "u-ca".as_bytes(),
+            value: "iso8601".as_bytes()
         },
         "Valid annotation parsing: \"{value}\" should parse first annotation as 'iso8601'."
     );
@@ -399,8 +397,8 @@ fn valid_calendar_annotations() {
         annotations[2],
         Annotation {
             critical: false,
-            key: Slice::Utf8("u-ca".as_bytes()),
-            value: Slice::Utf8("japanese".as_bytes()),
+            key: "u-ca".as_bytes(),
+            value: "japanese".as_bytes(),
         },
         "Valid annotation parsing: \"{value}\" should parse second annotation as 'japanese'."
     );
@@ -1018,7 +1016,7 @@ fn test_zulu_offset() {
             offset: Some(crate::records::UtcOffsetRecordOrZ::Z),
             tz: Some(TimeZoneAnnotation {
                 critical: false,
-                tz: TimeZoneRecord::Name(Slice::Utf8("America/Chicago".as_bytes()))
+                tz: TimeZoneRecord::Name("America/Chicago".as_bytes())
             }),
             calendar: None,
         })
@@ -1404,7 +1402,7 @@ fn utf16_basic_test() {
         .copied()
         .map(u16::from)
         .collect();
-    let result = IxdtfParser::from_utf16(&utf16).parse();
+    let result = IxdtfParser::<Utf16>::new(&utf16).parse();
     let id = match result {
         Ok(IxdtfParseRecord {
             date:
@@ -1418,7 +1416,7 @@ fn utf16_basic_test() {
             tz:
                 Some(TimeZoneAnnotation {
                     critical: false,
-                    tz: TimeZoneRecord::Name(Slice::Utf16(id)),
+                    tz: TimeZoneRecord::Name(id),
                 }),
             calendar: None,
         }) => id,

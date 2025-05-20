@@ -4,7 +4,8 @@
 
 //! The parser module contains the implementation details for `IxdtfParser` and `IsoDurationParser`
 
-use crate::{core::Cursor, ParserResult, Slice};
+use crate::core::{Utf16, Utf8, UtfEncodingType};
+use crate::{core::Cursor, ParserResult};
 
 #[cfg(feature = "duration")]
 use crate::records::DurationParseRecord;
@@ -43,7 +44,6 @@ macro_rules! assert_syntax {
 /// use ixdtf::{
 ///     parsers::IxdtfParser,
 ///     records::{Sign, TimeZoneRecord, UtcOffsetRecord},
-///     Slice
 /// };
 ///
 /// let ixdtf_str = "2024-03-02T08:48:00-05:00[America/New_York]";
@@ -68,42 +68,49 @@ macro_rules! assert_syntax {
 /// assert!(!tz_annotation.critical);
 /// assert_eq!(
 ///     tz_annotation.tz,
-///     TimeZoneRecord::Name(Slice::Utf8("America/New_York".as_bytes()))
+///     TimeZoneRecord::Name("America/New_York".as_bytes())
 /// );
 /// ```
 ///
 /// [rfc9557]: https://datatracker.ietf.org/doc/rfc9557/
 /// [temporal-proposal]: https://tc39.es/proposal-temporal/
 #[derive(Debug)]
-pub struct IxdtfParser<'a> {
-    cursor: Cursor<'a>,
+pub struct IxdtfParser<'a, T: UtfEncodingType> {
+    cursor: Cursor<'a, T>,
 }
 
-impl<'a> IxdtfParser<'a> {
-    /// Creates a new `IxdtfParser` from a slice of utf-8 bytes.
-    #[inline]
-    #[must_use]
-    pub fn from_utf8(source: &'a [u8]) -> Self {
-        Self {
-            cursor: Cursor::new(source),
-        }
-    }
-
-    /// Creates a new `IxdtfParser` from a slice of utf-16 bytes.
-    #[inline]
-    #[must_use]
-    pub fn from_utf16(source: &'a [u16]) -> Self {
-        Self {
-            cursor: Cursor::from_utf16(source),
-        }
-    }
-
+impl<'a> IxdtfParser<'a, Utf8> {
     /// Creates a new `IxdtfParser` from a source `&str`.
     #[inline]
     #[must_use]
     #[allow(clippy::should_implement_trait)]
     pub fn from_str(source: &'a str) -> Self {
         Self::from_utf8(source.as_bytes())
+    }
+
+    /// Creates a new `IxdtfParser` from a slice of utf-8 bytes.
+    #[inline]
+    #[must_use]
+    pub fn from_utf8(source: &'a [u8]) -> Self {
+        Self::new(source)
+    }
+}
+
+impl<'a> IxdtfParser<'a, Utf16> {
+    /// Creates a new `IxdtfParser` from a slice of utf-16 bytes.
+    pub fn from_utf16(source: &'a [u16]) -> Self {
+        Self::new(source)
+    }
+}
+
+impl<'a, T: UtfEncodingType> IxdtfParser<'a, T> {
+    /// Create a new `IxdtfParser` for the specified encoding.
+    #[inline]
+    #[must_use]
+    pub fn new(source: &'a [T::Encoding]) -> Self {
+        Self {
+            cursor: Cursor::new(source),
+        }
     }
 
     /// Parses the source as an [extended Date/Time string][rfc9557].
@@ -114,7 +121,7 @@ impl<'a> IxdtfParser<'a> {
     /// # Example
     ///
     /// [rfc9557]: https://datatracker.ietf.org/doc/rfc9557/
-    pub fn parse(&mut self) -> ParserResult<IxdtfParseRecord<'a>> {
+    pub fn parse(&mut self) -> ParserResult<IxdtfParseRecord<'a, T>> {
         self.parse_with_annotation_handler(Some)
     }
 
@@ -123,8 +130,8 @@ impl<'a> IxdtfParser<'a> {
     /// For more, see [Implementing Annotation Handlers](crate#implementing-annotation-handlers)
     pub fn parse_with_annotation_handler(
         &mut self,
-        handler: impl FnMut(Annotation<'a>) -> Option<Annotation<'a>>,
-    ) -> ParserResult<IxdtfParseRecord<'a>> {
+        handler: impl FnMut(Annotation<'a, T>) -> Option<Annotation<'a, T>>,
+    ) -> ParserResult<IxdtfParseRecord<'a, T>> {
         datetime::parse_annotated_date_time(&mut self.cursor, handler)
     }
 
@@ -148,7 +155,7 @@ impl<'a> IxdtfParser<'a> {
     /// ```
     ///
     /// [temporal-ym]: https://tc39.es/proposal-temporal/#prod-TemporalYearMonthString
-    pub fn parse_year_month(&mut self) -> ParserResult<IxdtfParseRecord<'a>> {
+    pub fn parse_year_month(&mut self) -> ParserResult<IxdtfParseRecord<'a, T>> {
         self.parse_year_month_with_annotation_handler(Some)
     }
 
@@ -157,8 +164,8 @@ impl<'a> IxdtfParser<'a> {
     /// For more, see [Implementing Annotation Handlers](crate#implementing-annotation-handlers)
     pub fn parse_year_month_with_annotation_handler(
         &mut self,
-        handler: impl FnMut(Annotation<'a>) -> Option<Annotation<'a>>,
-    ) -> ParserResult<IxdtfParseRecord<'a>> {
+        handler: impl FnMut(Annotation<'a, T>) -> Option<Annotation<'a, T>>,
+    ) -> ParserResult<IxdtfParseRecord<'a, T>> {
         datetime::parse_annotated_year_month(&mut self.cursor, handler)
     }
 
@@ -181,7 +188,7 @@ impl<'a> IxdtfParser<'a> {
     /// ```
     ///
     /// [temporal-md]: https://tc39.es/proposal-temporal/#prod-TemporalMonthDayString
-    pub fn parse_month_day(&mut self) -> ParserResult<IxdtfParseRecord<'a>> {
+    pub fn parse_month_day(&mut self) -> ParserResult<IxdtfParseRecord<'a, T>> {
         self.parse_month_day_with_annotation_handler(Some)
     }
 
@@ -190,8 +197,8 @@ impl<'a> IxdtfParser<'a> {
     /// For more, see [Implementing Annotation Handlers](crate#implementing-annotation-handlers)
     pub fn parse_month_day_with_annotation_handler(
         &mut self,
-        handler: impl FnMut(Annotation<'a>) -> Option<Annotation<'a>>,
-    ) -> ParserResult<IxdtfParseRecord<'a>> {
+        handler: impl FnMut(Annotation<'a, T>) -> Option<Annotation<'a, T>>,
+    ) -> ParserResult<IxdtfParseRecord<'a, T>> {
         datetime::parse_annotated_month_day(&mut self.cursor, handler)
     }
 
@@ -200,7 +207,7 @@ impl<'a> IxdtfParser<'a> {
     /// # Example
     ///
     /// ```rust
-    /// # use ixdtf::{parsers::IxdtfParser, records::{Sign, TimeZoneRecord}, Slice};
+    /// # use ixdtf::{parsers::IxdtfParser, records::{Sign, TimeZoneRecord}};
     /// let extended_time = "12:01:04-05:00[America/New_York][u-ca=iso8601]";
     ///
     /// let result = IxdtfParser::from_str(extended_time).parse_time().unwrap();
@@ -218,12 +225,12 @@ impl<'a> IxdtfParser<'a> {
     /// assert!(!tz_annotation.critical);
     /// assert_eq!(
     ///     tz_annotation.tz,
-    ///     TimeZoneRecord::Name(Slice::Utf8("America/New_York".as_bytes()))
+    ///     TimeZoneRecord::Name("America/New_York".as_bytes())
     /// );
     /// ```
     ///
     /// [temporal-time]: https://tc39.es/proposal-temporal/#prod-TemporalTimeString
-    pub fn parse_time(&mut self) -> ParserResult<IxdtfParseRecord<'a>> {
+    pub fn parse_time(&mut self) -> ParserResult<IxdtfParseRecord<'a, T>> {
         self.parse_time_with_annotation_handler(Some)
     }
 
@@ -232,8 +239,8 @@ impl<'a> IxdtfParser<'a> {
     /// For more, see [Implementing Annotation Handlers](crate#implementing-annotation-handlers)
     pub fn parse_time_with_annotation_handler(
         &mut self,
-        handler: impl FnMut(Annotation<'a>) -> Option<Annotation<'a>>,
-    ) -> ParserResult<IxdtfParseRecord<'a>> {
+        handler: impl FnMut(Annotation<'a, T>) -> Option<Annotation<'a, T>>,
+    ) -> ParserResult<IxdtfParseRecord<'a, T>> {
         time::parse_annotated_time_record(&mut self.cursor, handler)
     }
 }
@@ -242,35 +249,42 @@ impl<'a> IxdtfParser<'a> {
 ///
 /// ✨ *Enabled with the `timezone` Cargo feature.*
 #[derive(Debug)]
-pub struct TimeZoneParser<'a> {
-    cursor: Cursor<'a>,
+pub struct TimeZoneParser<'a, T: UtfEncodingType> {
+    cursor: Cursor<'a, T>,
 }
 
-impl<'a> TimeZoneParser<'a> {
-    /// Creates a new `TimeZoneParser` from a slice of utf-8 bytes.
-    #[inline]
-    #[must_use]
-    pub fn from_utf8(source: &'a [u8]) -> Self {
-        Self {
-            cursor: Cursor::new(source),
-        }
-    }
-
-    /// Creates a new `TimeZoneParser` from a slice of utf-16 bytes.
-    #[inline]
-    #[must_use]
-    pub fn from_utf16(source: &'a [u16]) -> Self {
-        Self {
-            cursor: Cursor::from_utf16(source),
-        }
-    }
-
+impl<'a> TimeZoneParser<'a, Utf8> {
     /// Creates a new `TimeZoneParser` from a source `&str`.
     #[inline]
     #[must_use]
     #[allow(clippy::should_implement_trait)]
     pub fn from_str(source: &'a str) -> Self {
         Self::from_utf8(source.as_bytes())
+    }
+
+    /// Creates a new `TimeZoneParser` from a slice of utf-8 bytes.
+    #[inline]
+    #[must_use]
+    pub fn from_utf8(source: &'a [u8]) -> Self {
+        Self::new(source)
+    }
+}
+
+impl<'a> TimeZoneParser<'a, Utf16> {
+    /// Creates a new `TimeZoneParser` from a slice of utf-16 bytes.
+    pub fn from_utf16(source: &'a [u16]) -> Self {
+        Self::new(source)
+    }
+}
+
+impl<'a, T: UtfEncodingType> TimeZoneParser<'a, T> {
+    /// Creates a new `TimeZoneParser` for the provided encoding.
+    #[inline]
+    #[must_use]
+    pub fn new(source: &'a [T::Encoding]) -> Self {
+        Self {
+            cursor: Cursor::new(source),
+        }
     }
 
     /// Parse a UTC offset from the provided source.
@@ -319,22 +333,22 @@ impl<'a> TimeZoneParser<'a> {
     ///
     ///
     /// ```rust
-    /// use ixdtf::{records::Sign, parsers::TimeZoneParser, Slice};
+    /// use ixdtf::{records::Sign, parsers::TimeZoneParser};
     ///
     /// let iana_identifier = "America/Chicago";
     /// let parse_result = TimeZoneParser::from_str(iana_identifier)
     ///     .parse_iana_identifier()
     ///     .unwrap();
-    /// assert_eq!(parse_result, Slice::Utf8(iana_identifier.as_bytes()));
+    /// assert_eq!(parse_result, iana_identifier.as_bytes());
     ///
     /// let iana_identifier = "Europe/Berlin";
     /// let parse_result = TimeZoneParser::from_str(iana_identifier)
     ///     .parse_iana_identifier()
     ///     .unwrap();
-    /// assert_eq!(parse_result, Slice::Utf8(iana_identifier.as_bytes()));
+    /// assert_eq!(parse_result, iana_identifier.as_bytes());
     /// ```
     #[inline]
-    pub fn parse_iana_identifier(&mut self) -> ParserResult<Slice<'a>> {
+    pub fn parse_iana_identifier(&mut self) -> ParserResult<&'a [T::Encoding]> {
         let result = timezone::parse_tz_iana_name(&mut self.cursor)?;
         self.cursor.close()?;
         Ok(result)
@@ -378,36 +392,47 @@ impl<'a> TimeZoneParser<'a> {
 /// ```
 #[cfg(feature = "duration")]
 #[derive(Debug)]
-pub struct IsoDurationParser<'a> {
-    cursor: Cursor<'a>,
+pub struct IsoDurationParser<'a, T: UtfEncodingType> {
+    cursor: Cursor<'a, T>,
 }
 
 #[cfg(feature = "duration")]
-impl<'a> IsoDurationParser<'a> {
-    /// Creates a new `IsoDurationParser` from a slice of utf-8 bytes.
-    #[inline]
-    #[must_use]
-    pub fn from_utf8(source: &'a [u8]) -> Self {
-        Self {
-            cursor: Cursor::new(source),
-        }
-    }
-
-    /// Creates a new `IsoDurationParser` from a slice of utf-16 bytes.
-    #[inline]
-    #[must_use]
-    pub fn from_utf16(source: &'a [u16]) -> Self {
-        Self {
-            cursor: Cursor::from_utf16(source),
-        }
-    }
-
+impl<'a> IsoDurationParser<'a, Utf8> {
     /// Creates a new `IsoDurationParser` from a source `&str`.
     #[inline]
     #[must_use]
     #[allow(clippy::should_implement_trait)]
     pub fn from_str(source: &'a str) -> Self {
         Self::from_utf8(source.as_bytes())
+    }
+
+    /// Creates a new `IsoDurationParser` from a slice of utf-8 bytes.
+    #[inline]
+    #[must_use]
+    pub fn from_utf8(source: &'a [u8]) -> Self {
+        Self::new(source)
+    }
+}
+
+#[cfg(feature = "duration")]
+impl<'a> IsoDurationParser<'a, Utf16> {
+    /// Creates a new `IsoDurationParser` from a slice of utf-16 bytes.
+    #[inline]
+    #[must_use]
+    pub fn from_utf8(source: &'a [u16]) -> Self {
+        Self::new(source)
+    }
+}
+
+#[cfg(feature = "duration")]
+impl<'a, T: UtfEncodingType> IsoDurationParser<'a, T> {
+    /// Creates a new `IsoDurationParser` for the provided encoding.
+    #[inline]
+    #[must_use]
+    pub fn new(source: &'a [T::Encoding]) -> Self {
+        Self {
+            cursor: Cursor::new(source),
+        }
     }
 
     /// Parse the contents of this `IsoDurationParser` into a `DurationParseRecord`.

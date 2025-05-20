@@ -22,7 +22,6 @@ RFC 9557 also updates the interpretation of `Z` from RFC 3339.
 use ixdtf::{
     records::{Sign, TimeZoneRecord},
     parsers::IxdtfParser,
-    Slice
 };
 
 let ixdtf_str = "2024-03-02T08:48:00-05:00[America/New_York]";
@@ -47,7 +46,7 @@ assert_eq!(offset.fraction(), None);
 assert!(!tz_annotation.critical);
 assert_eq!(
     tz_annotation.tz,
-    TimeZoneRecord::Name(Slice::Utf8("America/New_York".as_bytes()))
+    TimeZoneRecord::Name("America/New_York".as_bytes())
 );
 ```
 
@@ -77,7 +76,6 @@ RFC 9557 updates the interpretation of `Z` to align with `-00:00`.
 use ixdtf::{
     parsers::IxdtfParser,
     records::{Sign, TimeZoneRecord},
-    Slice
 };
 
 let ixdtf_str = "2024-03-02T08:48:00Z[America/New_York]";
@@ -102,7 +100,7 @@ assert_eq!(offset.fraction(), None);
 assert!(!tz_annotation.critical);
 assert_eq!(
     tz_annotation.tz,
-    TimeZoneRecord::Name(Slice::Utf8("America/New_York".as_bytes()))
+    TimeZoneRecord::Name("America/New_York".as_bytes())
 );
 ```
 
@@ -139,7 +137,6 @@ zone annotation if it is provided.
 use ixdtf::{
     parsers::IxdtfParser,
     records::{Sign, TimeZoneRecord},
-    Slice
 };
 
 let zulu_offset = "2024-03-02T08:48:00Z[!America/New_York]";
@@ -159,7 +156,7 @@ assert_eq!(offset.fraction(), None);
 assert!(tz_annotation.critical);
 assert_eq!(
     tz_annotation.tz,
-    TimeZoneRecord::Name(Slice::Utf8("America/New_York".as_bytes()))
+    TimeZoneRecord::Name("America/New_York".as_bytes())
 );
 ```
 
@@ -226,7 +223,7 @@ order with the key value. When parsing this invalid annotation, `ixdtf`
 will attempt to parse the Time Zone annotation as a key-value annotation.
 
 ```rust
-use ixdtf::{parsers::IxdtfParser, ParseError, Slice};
+use ixdtf::{parsers::IxdtfParser, ParseError};
 
 let example_one =
     "2024-03-02T08:48:00-05:00[u-ca=iso8601][America/New_York]";
@@ -243,7 +240,7 @@ of the registered keys is flagged as critical, which throws an error as
 the ixdtf string must be treated as erroneous
 
 ```rust
-use ixdtf::{parsers::IxdtfParser, ParseError, Slice};
+use ixdtf::{parsers::IxdtfParser, ParseError};
 
 let example_two = "2024-03-02T08:48:00-05:00[u-ca=iso8601][!u-ca=japanese]";
 
@@ -258,7 +255,7 @@ This example shows an unknown key flagged as critical. `ixdtf` will return an
 error on an unknown flag being flagged as critical.
 
 ```rust
-use ixdtf::{parsers::IxdtfParser, ParseError, Slice};
+use ixdtf::{parsers::IxdtfParser, ParseError};
 
 let example_three =
     "2024-03-02T08:48:00-05:00[u-ca=iso8601][!answer-to-universe=fortytwo]";
@@ -292,7 +289,7 @@ of the offset and the Time Zone annotation. It is up to the user to handle this 
 between the offset and annotation.
 
 ```rust
-use ixdtf::{parsers::IxdtfParser, records::TimeZoneRecord, Slice};
+use ixdtf::{parsers::IxdtfParser, records::TimeZoneRecord};
 
 let example_two = "2024-03-02T08:48:00+01:00[!America/New_York]";
 
@@ -304,7 +301,7 @@ let offset = result.offset.unwrap().resolve_rfc_9557();
 // The time zone annotation and offset conflict with each other, and must therefore be
 // resolved by the user.
 assert!(tz_annotation.critical);
-assert_eq!(tz_annotation.tz, TimeZoneRecord::Name(Slice::Utf8("America/New_York".as_bytes())));
+assert_eq!(tz_annotation.tz, TimeZoneRecord::Name("America/New_York".as_bytes()));
 assert_eq!(offset.hour(), 1);
 ```
 
@@ -333,14 +330,14 @@ A user may wish to implement a custom key in an annotation set. This can be comp
 with custom handler.
 
 ```rust
-use ixdtf::{parsers::IxdtfParser, Slice};
+use ixdtf::parsers::IxdtfParser;
 
 let example_with_custom_key = "2024-03-02T08:48:00-05:00[u-ca=iso8601][!answer-to-universe=fortytwo]";
 
 let mut answer = None;
 
 let _ = IxdtfParser::from_str(example_with_custom_key).parse_with_annotation_handler(|annotation| {
-    if annotation.key == Slice::Utf8("answer-to-universe".as_bytes()) {
+    if annotation.key == "answer-to-universe".as_bytes() {
         answer.get_or_insert(annotation);
         // Found our value! We don't need `ixdtf` to handle this annotation.
         return None
@@ -353,7 +350,7 @@ let _ = IxdtfParser::from_str(example_with_custom_key).parse_with_annotation_han
 let answer = answer.unwrap();
 
 assert!(answer.critical);
-assert_eq!(answer.value, Slice::Utf8("fortytwo".as_bytes()));
+assert_eq!(answer.value, "fortytwo".as_bytes());
 ```
 
 It is worth noting that in the above example the annotation above found is a critically flagged

@@ -6,6 +6,7 @@
 
 use crate::{
     assert_syntax,
+    core::UtfEncodingType,
     parsers::{
         grammar::{
             is_a_key_char, is_a_key_leading_char, is_annotation_close,
@@ -15,20 +16,20 @@ use crate::{
         timezone, Cursor,
     },
     records::{Annotation, TimeZoneAnnotation},
-    ParseError, ParserResult, Slice,
+    ParseError, ParserResult,
 };
 
 /// Strictly a parsing intermediary for the checking the common annotation backing.
-pub(crate) struct AnnotationSet<'a> {
-    pub(crate) tz: Option<TimeZoneAnnotation<'a>>,
-    pub(crate) calendar: Option<Slice<'a>>,
+pub(crate) struct AnnotationSet<'a, T: UtfEncodingType> {
+    pub(crate) tz: Option<TimeZoneAnnotation<'a, T>>,
+    pub(crate) calendar: Option<&'a [T::Encoding]>,
 }
 
 /// Parse a `TimeZoneAnnotation` `Annotations` set
-pub(crate) fn parse_annotation_set<'a>(
-    cursor: &mut Cursor<'a>,
-    handler: impl FnMut(Annotation<'a>) -> Option<Annotation<'a>>,
-) -> ParserResult<AnnotationSet<'a>> {
+pub(crate) fn parse_annotation_set<'a, T: UtfEncodingType>(
+    cursor: &mut Cursor<'a, T>,
+    handler: impl FnMut(Annotation<'a, T>) -> Option<Annotation<'a, T>>,
+) -> ParserResult<AnnotationSet<'a, T>> {
     // Parse the first annotation.
     let tz_annotation = timezone::parse_ambiguous_tz_annotation(cursor)?;
 
@@ -50,18 +51,18 @@ pub(crate) fn parse_annotation_set<'a>(
 }
 
 /// Parse any number of `KeyValueAnnotation`s
-pub(crate) fn parse_annotations<'a>(
-    cursor: &mut Cursor<'a>,
-    mut handler: impl FnMut(Annotation<'a>) -> Option<Annotation<'a>>,
-) -> ParserResult<Option<Slice<'a>>> {
-    let mut calendar: Option<Annotation<'a>> = None;
+pub(crate) fn parse_annotations<'a, T: UtfEncodingType>(
+    cursor: &mut Cursor<'a, T>,
+    mut handler: impl FnMut(Annotation<'a, T>) -> Option<Annotation<'a, T>>,
+) -> ParserResult<Option<&'a [T::Encoding]>> {
+    let mut calendar: Option<Annotation<'a, T>> = None;
 
     while cursor.check_or(false, is_annotation_open)? {
         let annotation = handler(parse_kv_annotation(cursor)?);
 
         match annotation {
             // Check if the key is the registered key "u-ca".
-            Some(kv) if calendar_key_check(&kv.key) => {
+            Some(kv) if T::check_calendar_key(kv.key) => {
                 // Check the calendar
                 match calendar {
                     Some(calendar)
@@ -90,14 +91,10 @@ pub(crate) fn parse_annotations<'a>(
     Ok(calendar.map(|a| a.value))
 }
 
-const U_CA_UTF16: &[u16] = &[0x75, 0x2d, 0x63, 0x61];
-
-fn calendar_key_check(slice: &Slice<'_>) -> bool {
-    slice == &Slice::Utf8("u-ca".as_bytes()) || slice == &Slice::Utf16(U_CA_UTF16)
-}
-
 /// Parse an annotation with an `AnnotationKey`=`AnnotationValue` pair.
-fn parse_kv_annotation<'a>(cursor: &mut Cursor<'a>) -> ParserResult<Annotation<'a>> {
+fn parse_kv_annotation<'a, T: UtfEncodingType>(
+    cursor: &mut Cursor<'a, T>,
+) -> ParserResult<Annotation<'a, T>> {
     assert_syntax!(
         is_annotation_open(cursor.next_or(ParseError::AnnotationOpen)?),
         AnnotationOpen
@@ -128,7 +125,9 @@ fn parse_kv_annotation<'a>(cursor: &mut Cursor<'a>) -> ParserResult<Annotation<'
 }
 
 /// Parse an `AnnotationKey`.
-fn parse_annotation_key<'a>(cursor: &mut Cursor<'a>) -> ParserResult<Slice<'a>> {
+fn parse_annotation_key<'a, T: UtfEncodingType>(
+    cursor: &mut Cursor<'a, T>,
+) -> ParserResult<&'a [T::Encoding]> {
     let key_start = cursor.pos();
     assert_syntax!(
         is_a_key_leading_char(cursor.next_or(ParseError::AnnotationKeyLeadingChar)?),
@@ -151,7 +150,9 @@ fn parse_annotation_key<'a>(cursor: &mut Cursor<'a>) -> ParserResult<Slice<'a>> 
 }
 
 /// Parse an `AnnotationValue`.
-fn parse_annotation_value<'a>(cursor: &mut Cursor<'a>) -> ParserResult<Slice<'a>> {
+fn parse_annotation_value<'a, T: UtfEncodingType>(
+    cursor: &mut Cursor<'a, T>,
+) -> ParserResult<&'a [T::Encoding]> {
     let value_start = cursor.pos();
     cursor.advance();
     while let Some(potential_value_char) = cursor.next()? {
