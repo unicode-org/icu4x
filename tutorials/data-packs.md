@@ -1,23 +1,27 @@
-# Interactive Date Picker - Custom Data
+# Introduction to ICU4X - Data packs
+
+If you're happy shipping your app with the recommended set of locales included in `ICU4X`, you can stop reading now. If you want to include additional locales, do runtime data loading, or build your own complex data pipelines, this tutorial is for you.
 
 In this tutorial, we will add additional locale data to your app. ICU4X compiled data contains data for hundreds of languages, but there are languages that have data in CLDR that are not included (generally because they don't have comprehensive coverage). For example, if you try using the locale `ccp` (Chakma) in your app, you will get output like `2023 M11 7`. Believe it or not, but this is not actually correct output for Chakma. Instead ICU4X fell back to the "root locale", which tries to be as neutral as possible. Note how it avoided calling the month by name by using `M11`, even though we requested a format with a non-numeric month name.
 
 So, let's add some data for Chakma.
 
-## 1. Installing `icu4x-datagen`
+## 1. Prerequisites
+
+This tutorial assumes you have finished the [introductory tutorial](quickstart.md) and continues where that tutorial left off. In particular, you should still have the latest version of your code.
 
 Data generation is done using the `icu4x-datagen` tool, which pulls data from [Unicode's *Common Locale Data Repository* (*CLDR*)](http://cldr.unicode.org/index/downloads) and from `ICU4C` releases.
 
-Verify that Rust is installed. If it's not, you can install it in a few seconds from [https://rustup.rs/](https://rustup.rs/).
+Verify that Rust is installed (even if you're following the JavaScript tutorial). If it's not, you can install it in a few seconds from [https://rustup.rs/](https://rustup.rs/).
 
-```console
+```shell
 cargo --version
 # cargo 1.86.0 (adf9b6ad1 2025-02-28)
 ```
 
 Now you can run
 
-```console
+```shell
 cargo install icu4x-datagen
 ```
 
@@ -25,40 +29,41 @@ cargo install icu4x-datagen
 
 We're ready to generate the data. We will use the blob format, and create a blob that will contain just Chakma data. At runtime we can then load it as needed.
 
-```console
+```shell
 icu4x-datagen --markers all --locales ccp --format blob --out ccp.blob
 ```
 
 This will generate a `ccp.blob` file containing data for Chakma.
+
+`icu4x-datagen` has many options, some of which we'll discover below. The default options should work for most purposes, but check out `icu4x-datagen --help` to learn more about fine-tuning your data.
 
 💡 Note: if you're having technical difficulties, this file is available [here](https://storage.googleapis.com/static-493776/icu4x_2023-11-03/ccp.blob).
 
 
 ## 3. Using the data pack
 
-### Rust Part 3
+<details>
+<summary>Rust</summary>
 
 To use blob data, we will need to add the `icu_provider_blob` crate to our project:
 
-```console
+```shell
 cargo add icu_provider_blob --features alloc
 ```
 
 We also need to enable the `serde` feature on the `icu` crate to enable deserialization support:
 
-```console
+```shell
 cargo add icu --features serde
 ```
 
 Now, update the instantiation of the datetime formatter to load data from the blob if the
 locale is Chakma:
 
-```rust
-// At the top of the file:
+```rust, ignore
 use icu::locale::locale;
 use icu_provider_blob::BlobDataProvider;
 
-// replace the date_formatter creation
 let date_formatter = if locale == locale!("ccp") {
     println!("Using buffer provider");
 
@@ -78,9 +83,10 @@ let date_formatter = if locale == locale!("ccp") {
 };
 ```
 
-Try using `ccp` now!
+</details>
 
-### JavaScript Part 3
+<details>
+<summary>JavaScript</summary>
 
 Update the formatting logic to load data from the blob if the locale is Chakma. Note that this code uses a callback, as it does an HTTP request:
 
@@ -101,7 +107,7 @@ function load_blob(url, callback) {
 if (localeStr == "ccp") {
     load_blob("https://storage.googleapis.com/static-493776/icu4x_2023-11-03/ccp.blob", (blob) => {
         let dateTimeFormatter = DateTimeFormatter.createYmdtWithProvider(
-            DataProvider.createFromBlob(blob),
+            DataProvider.fromByteSlice(blob),
             locale,
             DateTimeLength.Long,
         );
@@ -116,6 +122,8 @@ if (localeStr == "ccp") {
 }
 ```
 
+</details>
+
 Try using `ccp` now!
 
 ## 4. Slimming the data pack
@@ -124,7 +132,7 @@ Note: the following steps are currently only possible in Rust. 🤷
 
 When we ran `icu4x-datagen`, we passed `--markers all`, which make it generate *all* data for the Chakma locale, even though we only need date formatting. We can make `icu4x-datagen` analyze our binary to figure out which markers are needed:
 
-```console
+```shell
 cargo build --release
 icu4x-datagen --markers-for-bin target/release/tutorial --locales ccp --format blob --out ccp_smaller.blob
 ```
@@ -135,7 +143,7 @@ This should generate a lot fewer markers!
 
 Let's look at the sizes:
 
-```console
+```shell
 wc -c *.blob
 # 5448603 ccp.blob
 #   13711 ccp_smaller.blob
@@ -149,32 +157,29 @@ The last datagen invocation still produced a lot of markers, as you saw in its o
 
 Replace the `DateTimeFormatter::try_new` calls with `FixedCalendarDateTimeFormatter::try_new`, and change the `format` invocation to convert the input to the Gregorian calendar:
 
-```rust
+```rust,ignore
     println!("Date: {}", date_formatter.format(&iso_date.to_calendar(Gregorian)));
 ```
 
-The generic type of `FixedCalendarDateTimeFormatter` will be inferred from the input, which now has type `&Date<Gregorian>` now. Unlike `DateTimeFormatter`, `FixedCalendarDateTimeFormatter` never applies calendar conversions on its input, so it will be a `FixedCalendarDateTimeFormatter<Gregorian, ...>`.
+The generic type of `FixedCalendarDateTimeFormatter` will be inferred from the input, which has type `&Date<Gregorian>` now. Unlike `DateTimeFormatter`, `FixedCalendarDateTimeFormatter` never applies calendar conversions on its input, so it will be a `FixedCalendarDateTimeFormatter<Gregorian, ...>`.
 
-Now we can run datagen with `--markers-for-bin` again:
+Now we can run datagen with `--markers-for-bin` again and the output should be much shorter:
 
-```console
+```shell
 cargo build --release
 icu4x-datagen --markers-for-bin target/release/tutorial --locales ccp --format blob --out ccp_smallest.blob
+# ...
+# 2025-05-14T14:26:52.306Z INFO  [icu_provider_export::export_impl] Generated marker DatetimeNamesMonthGregorianV1
+# 2025-05-14T14:26:52.308Z INFO  [icu_provider_export::export_impl] Generated marker DatetimeNamesYearGregorianV1
+# 2025-05-14T14:26:52.312Z INFO  [icu_provider_export::export_impl] Generated marker DatetimePatternsDateGregorianV1
+# 2025-05-14T14:26:52.324Z INFO  [icu_provider_export::export_impl] Generated marker DecimalDigitsV1
+# 2025-05-14T14:26:52.325Z INFO  [icu_provider_export::export_impl] Generated marker DecimalSymbolsV1
+# ...
 ```
 
-The output will be much shorter:
+The blob should also be even smaller:
 
-```console
-2025-05-14T14:26:52.306Z INFO  [icu_provider_export::export_impl] Generated marker DatetimeNamesMonthGregorianV1
-2025-05-14T14:26:52.308Z INFO  [icu_provider_export::export_impl] Generated marker DatetimeNamesYearGregorianV1
-2025-05-14T14:26:52.312Z INFO  [icu_provider_export::export_impl] Generated marker DatetimePatternsDateGregorianV1
-2025-05-14T14:26:52.324Z INFO  [icu_provider_export::export_impl] Generated marker DecimalDigitsV1
-2025-05-14T14:26:52.325Z INFO  [icu_provider_export::export_impl] Generated marker DecimalSymbolsV1
-```
-
-And the blob will also be much smaller at the sizes:
-
-```console
+```shell
 wc -c *.blob
 # 5448603 ccp.blob
 #   13711 ccp_smaller.blob
