@@ -6,7 +6,7 @@ Several crates have had patch releases in the 2.0 stream:
 
 - `icu_calendar`
   - Fix chinese day-of-year (unicode-org#6567)
-  - Respect `-u-fw` keyword in `WeekCalculator` (unicode-org#6615)
+  - Respect `-u-fw` keyword in `WeekInformation` (unicode-org#6615)
 - `icu_properties`, `icu_properties_data`
   - Fix a visibility bug in compiled data (unicode-org#6580)
 - `icu_provider_baked`
