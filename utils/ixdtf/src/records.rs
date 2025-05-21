@@ -6,10 +6,12 @@
 
 use core::num::NonZeroU8;
 
+use crate::core::EncodingType;
+
 /// An `IxdtfParseRecord` is an intermediary record returned by `IxdtfParser`.
 #[non_exhaustive]
 #[derive(Default, Debug, PartialEq)]
-pub struct IxdtfParseRecord<'a> {
+pub struct IxdtfParseRecord<'a, T: EncodingType> {
     /// Parsed `DateRecord`
     pub date: Option<DateRecord>,
     /// Parsed `TimeRecord`
@@ -17,21 +19,21 @@ pub struct IxdtfParseRecord<'a> {
     /// Parsed UtcOffset
     pub offset: Option<UtcOffsetRecordOrZ>,
     /// Parsed `TimeZone` annotation with critical flag and data (UTCOffset | IANA name)
-    pub tz: Option<TimeZoneAnnotation<'a>>,
+    pub tz: Option<TimeZoneAnnotation<'a, T>>,
     /// The parsed calendar value.
-    pub calendar: Option<&'a [u8]>,
+    pub calendar: Option<&'a [T::CodeUnit]>,
 }
 
 #[non_exhaustive]
 #[derive(Debug, Clone, PartialEq)]
 /// A record of an annotation.
-pub struct Annotation<'a> {
+pub struct Annotation<'a, T: EncodingType> {
     /// Whether this annotation is flagged as critical
     pub critical: bool,
     /// The parsed key value of the annotation
-    pub key: &'a [u8],
+    pub key: &'a [T::CodeUnit],
     /// The parsed value of the annotation
-    pub value: &'a [u8],
+    pub value: &'a [T::CodeUnit],
 }
 
 #[allow(clippy::exhaustive_structs)] // DateRecord only allows for a year, month, and day value.
@@ -63,19 +65,19 @@ pub struct TimeRecord {
 /// A `TimeZoneAnnotation` that represents a parsed `TimeZoneRecord` and its critical flag.
 #[non_exhaustive]
 #[derive(Debug, Clone, PartialEq)]
-pub struct TimeZoneAnnotation<'a> {
+pub struct TimeZoneAnnotation<'a, T: EncodingType> {
     /// Critical flag for the `TimeZoneAnnotation`.
     pub critical: bool,
     /// The parsed `TimeZoneRecord` for the annotation.
-    pub tz: TimeZoneRecord<'a>,
+    pub tz: TimeZoneRecord<'a, T>,
 }
 
 /// Parsed `TimeZone` data, which can be either a UTC Offset value or IANA Time Zone Name value.
 #[non_exhaustive]
 #[derive(Debug, Clone, PartialEq)]
-pub enum TimeZoneRecord<'a> {
+pub enum TimeZoneRecord<'a, T: EncodingType> {
     /// TimeZoneIANAName
-    Name(&'a [u8]),
+    Name(&'a [T::CodeUnit]),
     /// TimeZoneOffset
     Offset(MinutePrecisionOffset),
 }

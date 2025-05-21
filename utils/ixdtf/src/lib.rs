@@ -19,9 +19,9 @@
 //! ## Example Usage
 //!
 //! ```
-//! use ixdtf::parsers::{
+//! use ixdtf::{
 //!     records::{Sign, TimeZoneRecord},
-//!     IxdtfParser,
+//!     parsers::IxdtfParser,
 //! };
 //!
 //! let ixdtf_str = "2024-03-02T08:48:00-05:00[America/New_York]";
@@ -73,9 +73,9 @@
 //! RFC 9557 updates the interpretation of `Z` to align with `-00:00`.
 //!
 //! ```rust
-//! use ixdtf::parsers::{
+//! use ixdtf::{
+//!     parsers::IxdtfParser,
 //!     records::{Sign, TimeZoneRecord},
-//!     IxdtfParser,
 //! };
 //!
 //! let ixdtf_str = "2024-03-02T08:48:00Z[America/New_York]";
@@ -134,9 +134,9 @@
 //! zone annotation if it is provided.
 //!
 //! ```rust
-//! use ixdtf::parsers::{
+//! use ixdtf::{
+//!     parsers::IxdtfParser,
 //!     records::{Sign, TimeZoneRecord},
-//!     IxdtfParser,
 //! };
 //!
 //! let zulu_offset = "2024-03-02T08:48:00Z[!America/New_York]";
@@ -289,7 +289,7 @@
 //! between the offset and annotation.
 //!
 //! ```rust
-//! use ixdtf::parsers::{IxdtfParser, records::TimeZoneRecord};
+//! use ixdtf::{parsers::IxdtfParser, records::TimeZoneRecord};
 //!
 //! let example_two = "2024-03-02T08:48:00+01:00[!America/New_York]";
 //!
@@ -388,12 +388,19 @@
     )
 )]
 
+pub(crate) mod core;
 mod error;
 pub mod parsers;
+pub mod records;
 
 extern crate alloc;
 
 pub use error::ParseError;
+
+/// This module contains the supported encoding for `ixdtf` parsing.
+pub mod encoding {
+    pub use crate::core::{Utf16, Utf8};
+}
 
 /// The `ixdtf` crate's Result type.
 pub type ParserResult<T> = Result<T, ParseError>;

@@ -4,15 +4,14 @@
 
 //! The parser module contains the implementation details for `IxdtfParser` and `IsoDurationParser`
 
-use crate::{ParseError, ParserResult};
+use crate::core::{EncodingType, Utf16, Utf8};
+use crate::{core::Cursor, ParserResult};
 
 #[cfg(feature = "duration")]
-use records::DurationParseRecord;
-use records::{IxdtfParseRecord, UtcOffsetRecord};
+use crate::records::DurationParseRecord;
+use crate::records::{IxdtfParseRecord, UtcOffsetRecord};
 
-use self::records::Annotation;
-
-pub mod records;
+use crate::records::Annotation;
 
 mod annotations;
 pub(crate) mod datetime;
@@ -42,9 +41,9 @@ macro_rules! assert_syntax {
 /// laid out in [RFC9557][rfc9557] along with other variations laid out in the [`Temporal`][temporal-proposal].
 ///
 /// ```rust
-/// use ixdtf::parsers::{
+/// use ixdtf::{
+///     parsers::IxdtfParser,
 ///     records::{Sign, TimeZoneRecord, UtcOffsetRecord},
-///     IxdtfParser,
 /// };
 ///
 /// let ixdtf_str = "2024-03-02T08:48:00-05:00[America/New_York]";
@@ -76,26 +75,42 @@ macro_rules! assert_syntax {
 /// [rfc9557]: https://datatracker.ietf.org/doc/rfc9557/
 /// [temporal-proposal]: https://tc39.es/proposal-temporal/
 #[derive(Debug)]
-pub struct IxdtfParser<'a> {
-    cursor: Cursor<'a>,
+pub struct IxdtfParser<'a, T: EncodingType> {
+    cursor: Cursor<'a, T>,
 }
 
-impl<'a> IxdtfParser<'a> {
-    /// Creates a new `IxdtfParser` from a slice of utf-8 bytes.
-    #[inline]
-    #[must_use]
-    pub fn from_utf8(source: &'a [u8]) -> Self {
-        Self {
-            cursor: Cursor::new(source),
-        }
-    }
-
+impl<'a> IxdtfParser<'a, Utf8> {
     /// Creates a new `IxdtfParser` from a source `&str`.
     #[inline]
     #[must_use]
     #[allow(clippy::should_implement_trait)]
     pub fn from_str(source: &'a str) -> Self {
         Self::from_utf8(source.as_bytes())
+    }
+
+    /// Creates a new `IxdtfParser` from a slice of utf-8 bytes.
+    #[inline]
+    #[must_use]
+    pub fn from_utf8(source: &'a [u8]) -> Self {
+        Self::new(source)
+    }
+}
+
+impl<'a> IxdtfParser<'a, Utf16> {
+    /// Creates a new `IxdtfParser` from a slice of utf-16 bytes.
+    pub fn from_utf16(source: &'a [u16]) -> Self {
+        Self::new(source)
+    }
+}
+
+impl<'a, T: EncodingType> IxdtfParser<'a, T> {
+    /// Create a new `IxdtfParser` for the specified encoding.
+    #[inline]
+    #[must_use]
+    pub fn new(source: &'a [T::CodeUnit]) -> Self {
+        Self {
+            cursor: Cursor::new(source),
+        }
     }
 
     /// Parses the source as an [extended Date/Time string][rfc9557].
@@ -106,7 +121,7 @@ impl<'a> IxdtfParser<'a> {
     /// # Example
     ///
     /// [rfc9557]: https://datatracker.ietf.org/doc/rfc9557/
-    pub fn parse(&mut self) -> ParserResult<IxdtfParseRecord<'a>> {
+    pub fn parse(&mut self) -> ParserResult<IxdtfParseRecord<'a, T>> {
         self.parse_with_annotation_handler(Some)
     }
 
@@ -115,8 +130,8 @@ impl<'a> IxdtfParser<'a> {
     /// For more, see [Implementing Annotation Handlers](crate#implementing-annotation-handlers)
     pub fn parse_with_annotation_handler(
         &mut self,
-        handler: impl FnMut(Annotation<'a>) -> Option<Annotation<'a>>,
-    ) -> ParserResult<IxdtfParseRecord<'a>> {
+        handler: impl FnMut(Annotation<'a, T>) -> Option<Annotation<'a, T>>,
+    ) -> ParserResult<IxdtfParseRecord<'a, T>> {
         datetime::parse_annotated_date_time(&mut self.cursor, handler)
     }
 
@@ -140,7 +155,7 @@ impl<'a> IxdtfParser<'a> {
     /// ```
     ///
     /// [temporal-ym]: https://tc39.es/proposal-temporal/#prod-TemporalYearMonthString
-    pub fn parse_year_month(&mut self) -> ParserResult<IxdtfParseRecord<'a>> {
+    pub fn parse_year_month(&mut self) -> ParserResult<IxdtfParseRecord<'a, T>> {
         self.parse_year_month_with_annotation_handler(Some)
     }
 
@@ -149,8 +164,8 @@ impl<'a> IxdtfParser<'a> {
     /// For more, see [Implementing Annotation Handlers](crate#implementing-annotation-handlers)
     pub fn parse_year_month_with_annotation_handler(
         &mut self,
-        handler: impl FnMut(Annotation<'a>) -> Option<Annotation<'a>>,
-    ) -> ParserResult<IxdtfParseRecord<'a>> {
+        handler: impl FnMut(Annotation<'a, T>) -> Option<Annotation<'a, T>>,
+    ) -> ParserResult<IxdtfParseRecord<'a, T>> {
         datetime::parse_annotated_year_month(&mut self.cursor, handler)
     }
 
@@ -173,7 +188,7 @@ impl<'a> IxdtfParser<'a> {
     /// ```
     ///
     /// [temporal-md]: https://tc39.es/proposal-temporal/#prod-TemporalMonthDayString
-    pub fn parse_month_day(&mut self) -> ParserResult<IxdtfParseRecord<'a>> {
+    pub fn parse_month_day(&mut self) -> ParserResult<IxdtfParseRecord<'a, T>> {
         self.parse_month_day_with_annotation_handler(Some)
     }
 
@@ -182,8 +197,8 @@ impl<'a> IxdtfParser<'a> {
     /// For more, see [Implementing Annotation Handlers](crate#implementing-annotation-handlers)
     pub fn parse_month_day_with_annotation_handler(
         &mut self,
-        handler: impl FnMut(Annotation<'a>) -> Option<Annotation<'a>>,
-    ) -> ParserResult<IxdtfParseRecord<'a>> {
+        handler: impl FnMut(Annotation<'a, T>) -> Option<Annotation<'a, T>>,
+    ) -> ParserResult<IxdtfParseRecord<'a, T>> {
         datetime::parse_annotated_month_day(&mut self.cursor, handler)
     }
 
@@ -192,7 +207,7 @@ impl<'a> IxdtfParser<'a> {
     /// # Example
     ///
     /// ```rust
-    /// # use ixdtf::parsers::{IxdtfParser, records::{Sign, TimeZoneRecord}};
+    /// # use ixdtf::{parsers::IxdtfParser, records::{Sign, TimeZoneRecord}};
     /// let extended_time = "12:01:04-05:00[America/New_York][u-ca=iso8601]";
     ///
     /// let result = IxdtfParser::from_str(extended_time).parse_time().unwrap();
@@ -215,7 +230,7 @@ impl<'a> IxdtfParser<'a> {
     /// ```
     ///
     /// [temporal-time]: https://tc39.es/proposal-temporal/#prod-TemporalTimeString
-    pub fn parse_time(&mut self) -> ParserResult<IxdtfParseRecord<'a>> {
+    pub fn parse_time(&mut self) -> ParserResult<IxdtfParseRecord<'a, T>> {
         self.parse_time_with_annotation_handler(Some)
     }
 
@@ -224,8 +239,8 @@ impl<'a> IxdtfParser<'a> {
     /// For more, see [Implementing Annotation Handlers](crate#implementing-annotation-handlers)
     pub fn parse_time_with_annotation_handler(
         &mut self,
-        handler: impl FnMut(Annotation<'a>) -> Option<Annotation<'a>>,
-    ) -> ParserResult<IxdtfParseRecord<'a>> {
+        handler: impl FnMut(Annotation<'a, T>) -> Option<Annotation<'a, T>>,
+    ) -> ParserResult<IxdtfParseRecord<'a, T>> {
         time::parse_annotated_time_record(&mut self.cursor, handler)
     }
 }
@@ -234,26 +249,42 @@ impl<'a> IxdtfParser<'a> {
 ///
 /// ✨ *Enabled with the `timezone` Cargo feature.*
 #[derive(Debug)]
-pub struct TimeZoneParser<'a> {
-    cursor: Cursor<'a>,
+pub struct TimeZoneParser<'a, T: EncodingType> {
+    cursor: Cursor<'a, T>,
 }
 
-impl<'a> TimeZoneParser<'a> {
-    /// Creates a new `TimeZoneParser` from a slice of utf-8 bytes.
-    #[inline]
-    #[must_use]
-    pub fn from_utf8(source: &'a [u8]) -> Self {
-        Self {
-            cursor: Cursor::new(source),
-        }
-    }
-
+impl<'a> TimeZoneParser<'a, Utf8> {
     /// Creates a new `TimeZoneParser` from a source `&str`.
     #[inline]
     #[must_use]
     #[allow(clippy::should_implement_trait)]
     pub fn from_str(source: &'a str) -> Self {
         Self::from_utf8(source.as_bytes())
+    }
+
+    /// Creates a new `TimeZoneParser` from a slice of utf-8 bytes.
+    #[inline]
+    #[must_use]
+    pub fn from_utf8(source: &'a [u8]) -> Self {
+        Self::new(source)
+    }
+}
+
+impl<'a> TimeZoneParser<'a, Utf16> {
+    /// Creates a new `TimeZoneParser` from a slice of utf-16 bytes.
+    pub fn from_utf16(source: &'a [u16]) -> Self {
+        Self::new(source)
+    }
+}
+
+impl<'a, T: EncodingType> TimeZoneParser<'a, T> {
+    /// Creates a new `TimeZoneParser` for the provided encoding.
+    #[inline]
+    #[must_use]
+    pub fn new(source: &'a [T::CodeUnit]) -> Self {
+        Self {
+            cursor: Cursor::new(source),
+        }
     }
 
     /// Parse a UTC offset from the provided source.
@@ -264,7 +295,7 @@ impl<'a> TimeZoneParser<'a> {
     /// ## Minute precision offset example
     ///
     /// ```rust
-    /// use ixdtf::parsers::{records::Sign, TimeZoneParser};
+    /// use ixdtf::{records::Sign, parsers::TimeZoneParser};
     ///
     /// let offset_src = "-05:00";
     /// let parse_result =
@@ -279,7 +310,7 @@ impl<'a> TimeZoneParser<'a> {
     /// ## Full precision offset example
     ///
     /// ```rust
-    /// use ixdtf::parsers::{records::Sign, TimeZoneParser};
+    /// use ixdtf::{records::Sign, parsers::TimeZoneParser};
     ///
     /// let offset_src = "-05:00:30.123456789";
     /// let parse_result =
@@ -302,7 +333,7 @@ impl<'a> TimeZoneParser<'a> {
     ///
     ///
     /// ```rust
-    /// use ixdtf::parsers::{records::Sign, TimeZoneParser};
+    /// use ixdtf::{records::Sign, parsers::TimeZoneParser};
     ///
     /// let iana_identifier = "America/Chicago";
     /// let parse_result = TimeZoneParser::from_str(iana_identifier)
@@ -317,7 +348,7 @@ impl<'a> TimeZoneParser<'a> {
     /// assert_eq!(parse_result, iana_identifier.as_bytes());
     /// ```
     #[inline]
-    pub fn parse_iana_identifier(&mut self) -> ParserResult<&'a [u8]> {
+    pub fn parse_iana_identifier(&mut self) -> ParserResult<&'a [T::CodeUnit]> {
         let result = timezone::parse_tz_iana_name(&mut self.cursor)?;
         self.cursor.close()?;
         Ok(result)
@@ -331,7 +362,7 @@ impl<'a> TimeZoneParser<'a> {
 /// # Example
 ///
 /// ```rust
-/// use ixdtf::parsers::{IsoDurationParser, records::{Sign, DurationParseRecord, TimeDurationRecord}};
+/// use ixdtf::{parsers::IsoDurationParser, records::{Sign, DurationParseRecord, TimeDurationRecord}};
 ///
 /// let duration_str = "P1Y2M1DT2H10M30S";
 ///
@@ -361,27 +392,47 @@ impl<'a> TimeZoneParser<'a> {
 /// ```
 #[cfg(feature = "duration")]
 #[derive(Debug)]
-pub struct IsoDurationParser<'a> {
-    cursor: Cursor<'a>,
+pub struct IsoDurationParser<'a, T: EncodingType> {
+    cursor: Cursor<'a, T>,
 }
 
 #[cfg(feature = "duration")]
-impl<'a> IsoDurationParser<'a> {
-    /// Creates a new `IsoDurationParser` from a slice of utf-8 bytes.
-    #[inline]
-    #[must_use]
-    pub fn from_utf8(source: &'a [u8]) -> Self {
-        Self {
-            cursor: Cursor::new(source),
-        }
-    }
-
+impl<'a> IsoDurationParser<'a, Utf8> {
     /// Creates a new `IsoDurationParser` from a source `&str`.
     #[inline]
     #[must_use]
     #[allow(clippy::should_implement_trait)]
     pub fn from_str(source: &'a str) -> Self {
         Self::from_utf8(source.as_bytes())
+    }
+
+    /// Creates a new `IsoDurationParser` from a slice of utf-8 bytes.
+    #[inline]
+    #[must_use]
+    pub fn from_utf8(source: &'a [u8]) -> Self {
+        Self::new(source)
+    }
+}
+
+#[cfg(feature = "duration")]
+impl<'a> IsoDurationParser<'a, Utf16> {
+    /// Creates a new `IsoDurationParser` from a slice of utf-16 bytes.
+    #[inline]
+    #[must_use]
+    pub fn from_utf8(source: &'a [u16]) -> Self {
+        Self::new(source)
+    }
+}
+
+#[cfg(feature = "duration")]
+impl<'a, T: EncodingType> IsoDurationParser<'a, T> {
+    /// Creates a new `IsoDurationParser` for the provided encoding.
+    #[inline]
+    #[must_use]
+    pub fn new(source: &'a [T::CodeUnit]) -> Self {
+        Self {
+            cursor: Cursor::new(source),
+        }
     }
 
     /// Parse the contents of this `IsoDurationParser` into a `DurationParseRecord`.
@@ -391,7 +442,7 @@ impl<'a> IsoDurationParser<'a> {
     /// ## Parsing a date duration
     ///
     /// ```
-    /// # use ixdtf::parsers::{IsoDurationParser, records::DurationParseRecord };
+    /// # use ixdtf::{parsers::IsoDurationParser, records::DurationParseRecord };
     /// let date_duration = "P1Y2M3W1D";
     ///
     /// let result = IsoDurationParser::from_str(date_duration).parse().unwrap();
@@ -408,7 +459,7 @@ impl<'a> IsoDurationParser<'a> {
     /// ## Parsing a time duration
     ///
     /// ```rust
-    /// # use ixdtf::parsers::{IsoDurationParser, records::{DurationParseRecord, TimeDurationRecord }};
+    /// # use ixdtf::{parsers::IsoDurationParser, records::{DurationParseRecord, TimeDurationRecord }};
     /// let time_duration = "PT2H10M30S";
     ///
     /// let result = IsoDurationParser::from_str(time_duration).parse().unwrap();
@@ -430,113 +481,5 @@ impl<'a> IsoDurationParser<'a> {
     /// ```
     pub fn parse(&mut self) -> ParserResult<DurationParseRecord> {
         duration::parse_duration(&mut self.cursor)
-    }
-}
-
-// ==== Mini cursor implementation for Iso8601 targets ====
-
-/// `Cursor` is a small cursor implementation for parsing Iso8601 grammar.
-#[derive(Debug)]
-pub(crate) struct Cursor<'a> {
-    pos: usize,
-    source: &'a [u8],
-}
-
-impl<'a> Cursor<'a> {
-    /// Create a new cursor from a source `String` value.
-    #[must_use]
-    pub fn new(source: &'a [u8]) -> Self {
-        Self { pos: 0, source }
-    }
-
-    /// Returns a string value from a slice of the cursor.
-    fn slice(&self, start: usize, end: usize) -> Option<&'a [u8]> {
-        self.source.get(start..end)
-    }
-
-    /// Get current position
-    const fn pos(&self) -> usize {
-        self.pos
-    }
-
-    /// Peek the value at next position (current + 1).
-    fn peek(&self) -> Option<u8> {
-        self.peek_n(1)
-    }
-
-    /// Returns current position in source as `char`.
-    fn current(&self) -> Option<u8> {
-        self.peek_n(0)
-    }
-
-    /// Peeks the value at `n` as a `char`.
-    fn peek_n(&self, n: usize) -> Option<u8> {
-        self.source.get(self.pos + n).copied()
-    }
-
-    /// Runs the provided check on the current position.
-    fn check<F>(&self, f: F) -> Option<bool>
-    where
-        F: FnOnce(u8) -> bool,
-    {
-        self.current().map(f)
-    }
-
-    /// Runs the provided check on current position returns the default value if None.
-    fn check_or<F>(&self, default: bool, f: F) -> bool
-    where
-        F: FnOnce(u8) -> bool,
-    {
-        self.current().map_or(default, f)
-    }
-
-    /// Returns `Cursor`'s current char and advances to the next position.
-    fn next(&mut self) -> Option<u8> {
-        let result = self.current();
-        self.advance_n(1);
-        result
-    }
-
-    /// Returns the next value as a digit
-    ///
-    /// # Errors
-    ///   - Returns an AbruptEnd error if cursor ends.
-    fn next_digit(&mut self) -> ParserResult<Option<u8>> {
-        let ascii_char = self.next_or(ParseError::AbruptEnd { location: "digit" })?;
-        if ascii_char.is_ascii_digit() {
-            Ok(Some(ascii_char - 48))
-        } else {
-            Ok(None)
-        }
-    }
-
-    /// A utility next method that returns an `AbruptEnd` error if invalid.
-    fn next_or(&mut self, err: ParseError) -> ParserResult<u8> {
-        self.next().ok_or(err)
-    }
-
-    /// Advances the cursor's position by n bytes.
-    fn advance_n(&mut self, n: usize) {
-        self.pos += n;
-    }
-
-    // Advances the cursor by 1 byte.
-    fn advance(&mut self) {
-        self.advance_n(1)
-    }
-
-    /// Utility function to advance when a condition is true
-    fn advance_if(&mut self, condition: bool) {
-        if condition {
-            self.advance();
-        }
-    }
-
-    /// Closes the current cursor by checking if all contents have been consumed. If not, returns an error for invalid syntax.
-    fn close(&mut self) -> ParserResult<()> {
-        if self.pos < self.source.len() {
-            return Err(ParseError::InvalidEnd);
-        }
-        Ok(())
     }
 }

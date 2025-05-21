@@ -6,8 +6,9 @@ use core::str::FromStr;
 
 use crate::{AsCalendar, Calendar, Date, Iso, RangeError};
 use icu_locale_core::preferences::extensions::unicode::keywords::CalendarAlgorithm;
-use ixdtf::parsers::records::IxdtfParseRecord;
+use ixdtf::encoding::Utf8;
 use ixdtf::parsers::IxdtfParser;
+use ixdtf::records::IxdtfParseRecord;
 use ixdtf::ParseError as Rfc9557Error;
 
 /// An error returned from parsing an RFC 9557 string to an `icu_calendar` type.
@@ -93,7 +94,7 @@ impl<A: AsCalendar> Date<A> {
 
     #[doc(hidden)]
     pub fn try_from_ixdtf_record(
-        ixdtf_record: &IxdtfParseRecord,
+        ixdtf_record: &IxdtfParseRecord<'_, Utf8>,
         calendar: A,
     ) -> Result<Self, ParseError> {
         let date_record = ixdtf_record.date.ok_or(ParseError::MissingFields)?;
