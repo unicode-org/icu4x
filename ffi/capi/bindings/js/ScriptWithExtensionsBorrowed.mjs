@@ -4,16 +4,15 @@ import { ScriptExtensionsSet } from "./ScriptExtensionsSet.mjs"
 import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
-
-/**
- * A slightly faster ScriptWithExtensions object
- *
- * See the [Rust documentation for `ScriptWithExtensionsBorrowed`](https://docs.rs/icu/latest/icu/properties/script/struct.ScriptWithExtensionsBorrowed.html) for more information.
- */
 const ScriptWithExtensionsBorrowed_box_destroy_registry = new FinalizationRegistry((ptr) => {
     wasm.icu4x_ScriptWithExtensionsBorrowed_destroy_mv1(ptr);
 });
 
+/**
+ * A slightly faster ScriptWithExtensions object
+ *
+ * See the [Rust documentation for `ScriptWithExtensionsBorrowed`](https://docs.rs/icu/2.0.0/icu/properties/script/struct.ScriptWithExtensionsBorrowed.html) for more information.
+ */
 export class ScriptWithExtensionsBorrowed {
     // Internal ptr reference:
     #ptr = null;
@@ -39,6 +38,7 @@ export class ScriptWithExtensionsBorrowed {
 
         return this;
     }
+    /** @internal */
     get ffiValue() {
         return this.#ptr;
     }
@@ -48,7 +48,7 @@ export class ScriptWithExtensionsBorrowed {
      * Get the Script property value for a code point
      * Get the Script property value for a code point
      *
-     * See the [Rust documentation for `get_script_val`](https://docs.rs/icu/latest/icu/properties/script/struct.ScriptWithExtensionsBorrowed.html#method.get_script_val) for more information.
+     * See the [Rust documentation for `get_script_val`](https://docs.rs/icu/2.0.0/icu/properties/script/struct.ScriptWithExtensionsBorrowed.html#method.get_script_val) for more information.
      */
     getScriptVal(ch) {
 
@@ -65,7 +65,7 @@ export class ScriptWithExtensionsBorrowed {
     /**
      * Get the Script property value for a code point
      *
-     * See the [Rust documentation for `get_script_extensions_val`](https://docs.rs/icu/latest/icu/properties/script/struct.ScriptWithExtensionsBorrowed.html#method.get_script_extensions_val) for more information.
+     * See the [Rust documentation for `get_script_extensions_val`](https://docs.rs/icu/2.0.0/icu/properties/script/struct.ScriptWithExtensionsBorrowed.html#method.get_script_extensions_val) for more information.
      */
     getScriptExtensionsVal(ch) {
         // This lifetime edge depends on lifetimes 'a
@@ -85,7 +85,7 @@ export class ScriptWithExtensionsBorrowed {
     /**
      * Check if the Script_Extensions property of the given code point covers the given script
      *
-     * See the [Rust documentation for `has_script`](https://docs.rs/icu/latest/icu/properties/script/struct.ScriptWithExtensionsBorrowed.html#method.has_script) for more information.
+     * See the [Rust documentation for `has_script`](https://docs.rs/icu/2.0.0/icu/properties/script/struct.ScriptWithExtensionsBorrowed.html#method.has_script) for more information.
      */
     hasScript(ch, script) {
 
@@ -103,7 +103,7 @@ export class ScriptWithExtensionsBorrowed {
      * Build the CodePointSetData corresponding to a codepoints matching a particular script
      * in their Script_Extensions
      *
-     * See the [Rust documentation for `get_script_extensions_set`](https://docs.rs/icu/latest/icu/properties/script/struct.ScriptWithExtensionsBorrowed.html#method.get_script_extensions_set) for more information.
+     * See the [Rust documentation for `get_script_extensions_set`](https://docs.rs/icu/2.0.0/icu/properties/script/struct.ScriptWithExtensionsBorrowed.html#method.get_script_extensions_set) for more information.
      */
     getScriptExtensionsSet(script) {
 

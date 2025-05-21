@@ -5,10 +5,12 @@ import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 export class BidiDirection {
 
+    /** @internal */
     static fromValue(value: BidiDirection | string): BidiDirection;
 
     get value(): string;
 
+    /** @internal */
     get ffiValue(): number;
 
     static Ltr : BidiDirection;

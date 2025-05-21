@@ -94,11 +94,13 @@ pub mod ffi {
         }
 
         #[diplomat::rust_link(icu::locale::LocaleDirectionality::is_left_to_right, FnInStruct)]
+        #[diplomat::attr(demo_gen, disable)] // covered by `get`
         pub fn is_left_to_right(&self, locale: &Locale) -> bool {
             self.0.is_left_to_right(&locale.0.id)
         }
 
         #[diplomat::rust_link(icu::locale::LocaleDirectionality::is_right_to_left, FnInStruct)]
+        #[diplomat::attr(demo_gen, disable)] // covered by `get`
         pub fn is_right_to_left(&self, locale: &Locale) -> bool {
             self.0.is_right_to_left(&locale.0.id)
         }

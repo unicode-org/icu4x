@@ -28,7 +28,7 @@ pub mod ffi {
     #[diplomat::rust_link(icu::experimental::displaynames::RegionDisplayNames, Struct)]
     pub struct RegionDisplayNames(pub icu_experimental::displaynames::RegionDisplayNames);
 
-    #[diplomat::rust_link(icu::experimental::displaynames::options::DisplayNamesOptions, Struct)]
+    #[diplomat::rust_link(icu::experimental::displaynames::DisplayNamesOptions, Struct)]
     #[diplomat::attr(supports = non_exhaustive_structs, rename = "DisplayNamesOptions")]
     pub struct DisplayNamesOptionsV1 {
         /// The optional formatting style to use for display name.
@@ -40,7 +40,7 @@ pub mod ffi {
         pub language_display: DiplomatOption<LanguageDisplay>,
     }
 
-    #[diplomat::rust_link(icu::experimental::displaynames::options::Style, Enum)]
+    #[diplomat::rust_link(icu::experimental::displaynames::Style, Enum)]
     #[diplomat::enum_convert(icu_experimental::displaynames::Style, needs_wildcard)]
     pub enum DisplayNamesStyle {
         Narrow,
@@ -49,14 +49,14 @@ pub mod ffi {
         Menu,
     }
 
-    #[diplomat::rust_link(icu::experimental::displaynames::options::Fallback, Enum)]
+    #[diplomat::rust_link(icu::experimental::displaynames::Fallback, Enum)]
     #[diplomat::enum_convert(icu_experimental::displaynames::Fallback, needs_wildcard)]
     pub enum DisplayNamesFallback {
         Code,
         None,
     }
 
-    #[diplomat::rust_link(icu::experimental::displaynames::options::LanguageDisplay, Enum)]
+    #[diplomat::rust_link(icu::experimental::displaynames::LanguageDisplay, Enum)]
     #[diplomat::enum_convert(icu_experimental::displaynames::LanguageDisplay, needs_wildcard)]
     pub enum LanguageDisplay {
         Dialect,

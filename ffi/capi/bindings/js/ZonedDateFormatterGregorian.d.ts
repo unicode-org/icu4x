@@ -9,13 +9,15 @@ import type { TimeZoneInfo } from "./TimeZoneInfo"
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
+
 /**
- * See the [Rust documentation for `FixedCalendarDateTimeFormatter`](https://docs.rs/icu/latest/icu/datetime/struct.FixedCalendarDateTimeFormatter.html) for more information.
+ * See the [Rust documentation for `FixedCalendarDateTimeFormatter`](https://docs.rs/icu/2.0.0/icu/datetime/struct.FixedCalendarDateTimeFormatter.html) for more information.
  */
-
-
 export class ZonedDateFormatterGregorian {
+    /** @internal */
     get ffiValue(): pointer;
+    /** @internal */
+    constructor();
 
 
     /**
@@ -24,7 +26,7 @@ export class ZonedDateFormatterGregorian {
      * Caution: The locale provided here must match the locale used to construct the non-zoned formatter,
      * or else unexpected behavior may occur!
      *
-     * See the [Rust documentation for `SpecificLong`](https://docs.rs/icu/latest/icu/datetime/fieldsets/zone/struct.SpecificLong.html) for more information.
+     * See the [Rust documentation for `SpecificLong`](https://docs.rs/icu/2.0.0/icu/datetime/fieldsets/zone/struct.SpecificLong.html) for more information.
      */
     static createSpecificLong(locale: Locale, formatter: DateFormatterGregorian): ZonedDateFormatterGregorian;
 
@@ -34,7 +36,7 @@ export class ZonedDateFormatterGregorian {
      * Caution: The locale provided here must match the locale used to construct the non-zoned formatter,
      * or else unexpected behavior may occur!
      *
-     * See the [Rust documentation for `SpecificLong`](https://docs.rs/icu/latest/icu/datetime/fieldsets/zone/struct.SpecificLong.html) for more information.
+     * See the [Rust documentation for `SpecificLong`](https://docs.rs/icu/2.0.0/icu/datetime/fieldsets/zone/struct.SpecificLong.html) for more information.
      */
     static createSpecificLongWithProvider(provider: DataProvider, locale: Locale, formatter: DateFormatterGregorian): ZonedDateFormatterGregorian;
 
@@ -44,7 +46,7 @@ export class ZonedDateFormatterGregorian {
      * Caution: The locale provided here must match the locale used to construct the non-zoned formatter,
      * or else unexpected behavior may occur!
      *
-     * See the [Rust documentation for `SpecificShort`](https://docs.rs/icu/latest/icu/datetime/fieldsets/zone/struct.SpecificShort.html) for more information.
+     * See the [Rust documentation for `SpecificShort`](https://docs.rs/icu/2.0.0/icu/datetime/fieldsets/zone/struct.SpecificShort.html) for more information.
      */
     static createSpecificShort(locale: Locale, formatter: DateFormatterGregorian): ZonedDateFormatterGregorian;
 
@@ -54,7 +56,7 @@ export class ZonedDateFormatterGregorian {
      * Caution: The locale provided here must match the locale used to construct the non-zoned formatter,
      * or else unexpected behavior may occur!
      *
-     * See the [Rust documentation for `SpecificShort`](https://docs.rs/icu/latest/icu/datetime/fieldsets/zone/struct.SpecificShort.html) for more information.
+     * See the [Rust documentation for `SpecificShort`](https://docs.rs/icu/2.0.0/icu/datetime/fieldsets/zone/struct.SpecificShort.html) for more information.
      */
     static createSpecificShortWithProvider(provider: DataProvider, locale: Locale, formatter: DateFormatterGregorian): ZonedDateFormatterGregorian;
 
@@ -64,7 +66,7 @@ export class ZonedDateFormatterGregorian {
      * Caution: The locale provided here must match the locale used to construct the non-zoned formatter,
      * or else unexpected behavior may occur!
      *
-     * See the [Rust documentation for `LocalizedOffsetLong`](https://docs.rs/icu/latest/icu/datetime/fieldsets/zone/struct.LocalizedOffsetLong.html) for more information.
+     * See the [Rust documentation for `LocalizedOffsetLong`](https://docs.rs/icu/2.0.0/icu/datetime/fieldsets/zone/struct.LocalizedOffsetLong.html) for more information.
      */
     static createLocalizedOffsetLong(locale: Locale, formatter: DateFormatterGregorian): ZonedDateFormatterGregorian;
 
@@ -74,7 +76,7 @@ export class ZonedDateFormatterGregorian {
      * Caution: The locale provided here must match the locale used to construct the non-zoned formatter,
      * or else unexpected behavior may occur!
      *
-     * See the [Rust documentation for `LocalizedOffsetLong`](https://docs.rs/icu/latest/icu/datetime/fieldsets/zone/struct.LocalizedOffsetLong.html) for more information.
+     * See the [Rust documentation for `LocalizedOffsetLong`](https://docs.rs/icu/2.0.0/icu/datetime/fieldsets/zone/struct.LocalizedOffsetLong.html) for more information.
      */
     static createLocalizedOffsetLongWithProvider(provider: DataProvider, locale: Locale, formatter: DateFormatterGregorian): ZonedDateFormatterGregorian;
 
@@ -84,7 +86,7 @@ export class ZonedDateFormatterGregorian {
      * Caution: The locale provided here must match the locale used to construct the non-zoned formatter,
      * or else unexpected behavior may occur!
      *
-     * See the [Rust documentation for `LocalizedOffsetShort`](https://docs.rs/icu/latest/icu/datetime/fieldsets/zone/struct.LocalizedOffsetShort.html) for more information.
+     * See the [Rust documentation for `LocalizedOffsetShort`](https://docs.rs/icu/2.0.0/icu/datetime/fieldsets/zone/struct.LocalizedOffsetShort.html) for more information.
      */
     static createLocalizedOffsetShort(locale: Locale, formatter: DateFormatterGregorian): ZonedDateFormatterGregorian;
 
@@ -94,7 +96,7 @@ export class ZonedDateFormatterGregorian {
      * Caution: The locale provided here must match the locale used to construct the non-zoned formatter,
      * or else unexpected behavior may occur!
      *
-     * See the [Rust documentation for `LocalizedOffsetShort`](https://docs.rs/icu/latest/icu/datetime/fieldsets/zone/struct.LocalizedOffsetShort.html) for more information.
+     * See the [Rust documentation for `LocalizedOffsetShort`](https://docs.rs/icu/2.0.0/icu/datetime/fieldsets/zone/struct.LocalizedOffsetShort.html) for more information.
      */
     static createLocalizedOffsetShortWithProvider(provider: DataProvider, locale: Locale, formatter: DateFormatterGregorian): ZonedDateFormatterGregorian;
 
@@ -104,7 +106,7 @@ export class ZonedDateFormatterGregorian {
      * Caution: The locale provided here must match the locale used to construct the non-zoned formatter,
      * or else unexpected behavior may occur!
      *
-     * See the [Rust documentation for `GenericLong`](https://docs.rs/icu/latest/icu/datetime/fieldsets/zone/struct.GenericLong.html) for more information.
+     * See the [Rust documentation for `GenericLong`](https://docs.rs/icu/2.0.0/icu/datetime/fieldsets/zone/struct.GenericLong.html) for more information.
      */
     static createGenericLong(locale: Locale, formatter: DateFormatterGregorian): ZonedDateFormatterGregorian;
 
@@ -114,7 +116,7 @@ export class ZonedDateFormatterGregorian {
      * Caution: The locale provided here must match the locale used to construct the non-zoned formatter,
      * or else unexpected behavior may occur!
      *
-     * See the [Rust documentation for `GenericLong`](https://docs.rs/icu/latest/icu/datetime/fieldsets/zone/struct.GenericLong.html) for more information.
+     * See the [Rust documentation for `GenericLong`](https://docs.rs/icu/2.0.0/icu/datetime/fieldsets/zone/struct.GenericLong.html) for more information.
      */
     static createGenericLongWithProvider(provider: DataProvider, locale: Locale, formatter: DateFormatterGregorian): ZonedDateFormatterGregorian;
 
@@ -124,7 +126,7 @@ export class ZonedDateFormatterGregorian {
      * Caution: The locale provided here must match the locale used to construct the non-zoned formatter,
      * or else unexpected behavior may occur!
      *
-     * See the [Rust documentation for `GenericShort`](https://docs.rs/icu/latest/icu/datetime/fieldsets/zone/struct.GenericShort.html) for more information.
+     * See the [Rust documentation for `GenericShort`](https://docs.rs/icu/2.0.0/icu/datetime/fieldsets/zone/struct.GenericShort.html) for more information.
      */
     static createGenericShort(locale: Locale, formatter: DateFormatterGregorian): ZonedDateFormatterGregorian;
 
@@ -134,7 +136,7 @@ export class ZonedDateFormatterGregorian {
      * Caution: The locale provided here must match the locale used to construct the non-zoned formatter,
      * or else unexpected behavior may occur!
      *
-     * See the [Rust documentation for `GenericShort`](https://docs.rs/icu/latest/icu/datetime/fieldsets/zone/struct.GenericShort.html) for more information.
+     * See the [Rust documentation for `GenericShort`](https://docs.rs/icu/2.0.0/icu/datetime/fieldsets/zone/struct.GenericShort.html) for more information.
      */
     static createGenericShortWithProvider(provider: DataProvider, locale: Locale, formatter: DateFormatterGregorian): ZonedDateFormatterGregorian;
 
@@ -144,7 +146,7 @@ export class ZonedDateFormatterGregorian {
      * Caution: The locale provided here must match the locale used to construct the non-zoned formatter,
      * or else unexpected behavior may occur!
      *
-     * See the [Rust documentation for `Location`](https://docs.rs/icu/latest/icu/datetime/fieldsets/zone/struct.Location.html) for more information.
+     * See the [Rust documentation for `Location`](https://docs.rs/icu/2.0.0/icu/datetime/fieldsets/zone/struct.Location.html) for more information.
      */
     static createLocation(locale: Locale, formatter: DateFormatterGregorian): ZonedDateFormatterGregorian;
 
@@ -154,7 +156,7 @@ export class ZonedDateFormatterGregorian {
      * Caution: The locale provided here must match the locale used to construct the non-zoned formatter,
      * or else unexpected behavior may occur!
      *
-     * See the [Rust documentation for `Location`](https://docs.rs/icu/latest/icu/datetime/fieldsets/zone/struct.Location.html) for more information.
+     * See the [Rust documentation for `Location`](https://docs.rs/icu/2.0.0/icu/datetime/fieldsets/zone/struct.Location.html) for more information.
      */
     static createLocationWithProvider(provider: DataProvider, locale: Locale, formatter: DateFormatterGregorian): ZonedDateFormatterGregorian;
 
@@ -164,7 +166,7 @@ export class ZonedDateFormatterGregorian {
      * Caution: The locale provided here must match the locale used to construct the non-zoned formatter,
      * or else unexpected behavior may occur!
      *
-     * See the [Rust documentation for `ExemplarCity`](https://docs.rs/icu/latest/icu/datetime/fieldsets/zone/struct.ExemplarCity.html) for more information.
+     * See the [Rust documentation for `ExemplarCity`](https://docs.rs/icu/2.0.0/icu/datetime/fieldsets/zone/struct.ExemplarCity.html) for more information.
      */
     static createExemplarCity(locale: Locale, formatter: DateFormatterGregorian): ZonedDateFormatterGregorian;
 
@@ -174,12 +176,12 @@ export class ZonedDateFormatterGregorian {
      * Caution: The locale provided here must match the locale used to construct the non-zoned formatter,
      * or else unexpected behavior may occur!
      *
-     * See the [Rust documentation for `ExemplarCity`](https://docs.rs/icu/latest/icu/datetime/fieldsets/zone/struct.ExemplarCity.html) for more information.
+     * See the [Rust documentation for `ExemplarCity`](https://docs.rs/icu/2.0.0/icu/datetime/fieldsets/zone/struct.ExemplarCity.html) for more information.
      */
     static createExemplarCityWithProvider(provider: DataProvider, locale: Locale, formatter: DateFormatterGregorian): ZonedDateFormatterGregorian;
 
     /**
-     * See the [Rust documentation for `format`](https://docs.rs/icu/latest/icu/datetime/struct.FixedCalendarDateTimeFormatter.html#method.format) for more information.
+     * See the [Rust documentation for `format`](https://docs.rs/icu/2.0.0/icu/datetime/struct.FixedCalendarDateTimeFormatter.html#method.format) for more information.
      */
-    formatIso(date: IsoDate, zone: TimeZoneInfo): string;
+    formatIso(isoDate: IsoDate, zone: TimeZoneInfo): string;
 }

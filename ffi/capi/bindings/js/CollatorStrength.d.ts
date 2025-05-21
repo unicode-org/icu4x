@@ -2,17 +2,18 @@
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
+
 /**
- * See the [Rust documentation for `Strength`](https://docs.rs/icu/latest/icu/collator/options/enum.Strength.html) for more information.
+ * See the [Rust documentation for `Strength`](https://docs.rs/icu/2.0.0/icu/collator/options/enum.Strength.html) for more information.
  */
-
-
 export class CollatorStrength {
 
+    /** @internal */
     static fromValue(value: CollatorStrength | string): CollatorStrength;
 
     get value(): string;
 
+    /** @internal */
     get ffiValue(): number;
 
     static Primary : CollatorStrength;

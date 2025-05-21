@@ -9,4 +9,5 @@ publish = false
 edition = "2021"
 
 [dependencies]
+cargo_metadata = "0.19.2"
 diplomat-tool = { workspace = true }

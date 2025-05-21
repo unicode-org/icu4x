@@ -18,7 +18,7 @@ final class _CollatorResolvedOptionsFfi extends ffi.Struct {
   external int numeric;
 }
 
-/// See the [Rust documentation for `ResolvedCollatorOptions`](https://docs.rs/icu/latest/icu/collator/options/struct.ResolvedCollatorOptions.html) for more information.
+/// See the [Rust documentation for `ResolvedCollatorOptions`](https://docs.rs/icu/2.0.0/icu/collator/options/struct.ResolvedCollatorOptions.html) for more information.
 final class CollatorResolvedOptions {
   final CollatorStrength strength;
   final CollatorAlternateHandling alternateHandling;

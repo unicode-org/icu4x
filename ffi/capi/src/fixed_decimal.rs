@@ -67,7 +67,7 @@ pub mod ffi {
 
     impl Decimal {
         /// Construct an [`Decimal`] from an integer.
-        #[diplomat::rust_link(fixed_decimal::Decimal, Struct)]
+        #[diplomat::rust_link(fixed_decimal::Decimal, Typedef)]
         #[diplomat::attr(dart, disable)]
         #[diplomat::attr(js, rename = "from_number")]
         #[diplomat::attr(supports = method_overloading, rename = "from")]
@@ -77,7 +77,7 @@ pub mod ffi {
         }
 
         /// Construct an [`Decimal`] from an integer.
-        #[diplomat::rust_link(fixed_decimal::Decimal, Struct)]
+        #[diplomat::rust_link(fixed_decimal::Decimal, Typedef)]
         #[diplomat::attr(dart, disable)]
         #[diplomat::attr(js, disable)]
         #[diplomat::attr(supports = method_overloading, rename = "from")]
@@ -87,7 +87,7 @@ pub mod ffi {
         }
 
         /// Construct an [`Decimal`] from an integer.
-        #[diplomat::rust_link(fixed_decimal::Decimal, Struct)]
+        #[diplomat::rust_link(fixed_decimal::Decimal, Typedef)]
         #[diplomat::attr(dart, rename = "from_int")]
         #[diplomat::attr(js, rename = "from_big_int")]
         #[diplomat::attr(supports = method_overloading, rename = "from")]
@@ -97,7 +97,7 @@ pub mod ffi {
         }
 
         /// Construct an [`Decimal`] from an integer.
-        #[diplomat::rust_link(fixed_decimal::Decimal, Struct)]
+        #[diplomat::rust_link(fixed_decimal::Decimal, Typedef)]
         #[diplomat::attr(any(dart, js), disable)]
         #[diplomat::attr(supports = method_overloading, rename = "from")]
         #[diplomat::attr(auto, named_constructor)]
@@ -354,6 +354,7 @@ pub mod ffi {
         #[diplomat::rust_link(fixed_decimal::Decimal::write_to, FnInTypedef)]
         #[diplomat::rust_link(fixed_decimal::Decimal::to_string, FnInTypedef, hidden)]
         #[diplomat::attr(auto, stringifier)]
+        #[diplomat::attr(demo_gen, disable)] // this just returns the single constructor argument
         pub fn to_string(&self, to: &mut diplomat_runtime::DiplomatWrite) {
             let _ = self.0.write_to(to);
         }

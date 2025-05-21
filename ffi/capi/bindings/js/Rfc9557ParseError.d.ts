@@ -2,17 +2,18 @@
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
+
 /**
- * Additional information: [1](https://docs.rs/icu/latest/icu/calendar/enum.ParseError.html), [2](https://docs.rs/icu/latest/icu/time/enum.ParseError.html)
+ * Additional information: [1](https://docs.rs/icu/2.0.0/icu/calendar/enum.ParseError.html), [2](https://docs.rs/icu/2.0.0/icu/time/enum.ParseError.html)
  */
-
-
 export class Rfc9557ParseError {
 
+    /** @internal */
     static fromValue(value: Rfc9557ParseError | string): Rfc9557ParseError;
 
     get value(): string;
 
+    /** @internal */
     get ffiValue(): number;
 
     static Unknown : Rfc9557ParseError;

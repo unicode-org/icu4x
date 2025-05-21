@@ -6,13 +6,12 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
+
 /**
  * An ICU4X DateTime object capable of containing a ISO-8601 date and time.
  *
- * See the [Rust documentation for `DateTime`](https://docs.rs/icu/latest/icu/time/struct.DateTime.html) for more information.
+ * See the [Rust documentation for `DateTime`](https://docs.rs/icu/2.0.0/icu/time/struct.DateTime.html) for more information.
  */
-
-
 export class IsoDateTime {
     #date;
     get date() {
@@ -96,9 +95,9 @@ export class IsoDateTime {
 
 
     /**
-     * Creates a new [`IsoDateTime`] from an IXDTF string.
+     * Creates a new {@link IsoDateTime} from an IXDTF string.
      *
-     * See the [Rust documentation for `try_from_str`](https://docs.rs/icu/latest/icu/time/struct.DateTime.html#method.try_from_str) for more information.
+     * See the [Rust documentation for `try_from_str`](https://docs.rs/icu/2.0.0/icu/time/struct.DateTime.html#method.try_from_str) for more information.
      */
     static fromString(v) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
@@ -112,7 +111,7 @@ export class IsoDateTime {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new Rfc9557ParseError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
-                throw new globalThis.Error('Rfc9557ParseError: ' + cause.value, { cause });
+                throw new globalThis.Error('Rfc9557ParseError.' + cause.value, { cause });
             }
             return IsoDateTime._fromFFI(diplomatRuntime.internalConstructor, diplomatReceive.buffer);
         }

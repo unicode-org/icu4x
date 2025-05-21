@@ -4,11 +4,10 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
+
 /**
- * See the [Rust documentation for `TimeZoneAndCanonical`](https://docs.rs/icu/latest/icu/time/zone/iana/struct.TimeZoneAndCanonical.html) for more information.
+ * See the [Rust documentation for `TimeZoneAndCanonical`](https://docs.rs/icu/2.0.0/icu/time/zone/iana/struct.TimeZoneAndCanonical.html) for more information.
  */
-
-
 export class TimeZoneAndCanonical {
     #timeZone;
     get timeZone() {

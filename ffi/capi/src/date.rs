@@ -48,6 +48,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::calendar::Date::from_rata_die, FnInStruct)]
         #[diplomat::attr(all(supports = named_constructors), named_constructor)]
         #[diplomat::demo(default_constructor)]
+        #[diplomat::attr(demo_gen, disable)] // covered by Date
         pub fn from_rata_die(rd: i64) -> Box<IsoDate> {
             Box::new(IsoDate(icu_calendar::Date::from_rata_die(
                 icu_calendar::types::RataDie::new(rd),
@@ -60,6 +61,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::calendar::Date::try_from_utf8, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::calendar::Date::from_str, FnInStruct, hidden)]
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor)]
+        #[diplomat::attr(demo_gen, disable)] // covered by Date
         pub fn from_string(v: &DiplomatStr) -> Result<Box<IsoDate>, Rfc9557ParseError> {
             Ok(Box::new(IsoDate(icu_calendar::Date::try_from_utf8(
                 v, Iso,
@@ -68,11 +70,13 @@ pub mod ffi {
 
         /// Convert this date to one in a different calendar
         #[diplomat::rust_link(icu::calendar::Date::to_calendar, FnInStruct)]
+        #[diplomat::attr(demo_gen, disable)] // covered by Date
         pub fn to_calendar(&self, calendar: &Calendar) -> Box<Date> {
             Box::new(Date(self.0.to_calendar(calendar.0.clone())))
         }
 
         #[diplomat::rust_link(icu::calendar::Date::to_any, FnInStruct)]
+        #[diplomat::attr(demo_gen, disable)] // covered by Date
         pub fn to_any(&self) -> Box<Date> {
             Box::new(Date(self.0.to_any().into_atomic_ref_counted()))
         }
@@ -80,6 +84,7 @@ pub mod ffi {
         /// Returns this date's Rata Die
         #[diplomat::rust_link(icu::calendar::Date::to_rata_die, FnInStruct)]
         #[diplomat::attr(auto, getter = "rata_die")]
+        #[diplomat::attr(demo_gen, disable)] // covered by Date
         pub fn to_rata_die(&self) -> i64 {
             self.0.to_rata_die().to_i64_date()
         }
@@ -87,6 +92,7 @@ pub mod ffi {
         /// Returns the 1-indexed day in the year for this date
         #[diplomat::rust_link(icu::calendar::Date::day_of_year, FnInStruct)]
         #[diplomat::attr(auto, getter)]
+        #[diplomat::attr(demo_gen, disable)] // covered by Date
         pub fn day_of_year(&self) -> u16 {
             self.0.day_of_year().0
         }
@@ -94,6 +100,7 @@ pub mod ffi {
         /// Returns the 1-indexed day in the month for this date
         #[diplomat::rust_link(icu::calendar::Date::day_of_month, FnInStruct)]
         #[diplomat::attr(auto, getter)]
+        #[diplomat::attr(demo_gen, disable)] // covered by Date
         pub fn day_of_month(&self) -> u8 {
             self.0.day_of_month().0
         }
@@ -101,6 +108,7 @@ pub mod ffi {
         /// Returns the day in the week for this day
         #[diplomat::rust_link(icu::calendar::Date::day_of_week, FnInStruct)]
         #[diplomat::attr(auto, getter)]
+        #[diplomat::attr(demo_gen, disable)] // covered by Date
         pub fn day_of_week(&self) -> Weekday {
             self.0.day_of_week().into()
         }
@@ -108,6 +116,7 @@ pub mod ffi {
         /// Returns the week number in this year, using week data
         #[diplomat::rust_link(icu::calendar::Date::week_of_year, FnInStruct)]
         #[cfg(feature = "calendar")]
+        #[diplomat::attr(demo_gen, disable)] // covered by Date
         pub fn week_of_year(&self) -> IsoWeekOfYear {
             self.0.week_of_year().into()
         }
@@ -116,6 +125,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::calendar::types::MonthInfo::ordinal, StructField)]
         #[diplomat::rust_link(icu::calendar::Date::month, FnInStruct, compact)]
         #[diplomat::attr(auto, getter)]
+        #[diplomat::attr(demo_gen, disable)] // covered by Date
         pub fn month(&self) -> u8 {
             self.0.month().ordinal
         }
@@ -125,6 +135,7 @@ pub mod ffi {
         /// For calendars without an era, returns the extended year
         #[diplomat::rust_link(icu::calendar::Date::year, FnInStruct)]
         #[diplomat::attr(auto, getter)]
+        #[diplomat::attr(demo_gen, disable)] // covered by Date
         pub fn year(&self) -> i32 {
             self.0.extended_year()
         }
@@ -132,6 +143,7 @@ pub mod ffi {
         /// Returns if the year is a leap year for this date
         #[diplomat::rust_link(icu::calendar::Date::is_in_leap_year, FnInStruct)]
         #[diplomat::attr(auto, getter)]
+        #[diplomat::attr(demo_gen, disable)] // covered by Date
         pub fn is_in_leap_year(&self) -> bool {
             self.0.is_in_leap_year()
         }
@@ -139,6 +151,7 @@ pub mod ffi {
         /// Returns the number of months in the year represented by this date
         #[diplomat::rust_link(icu::calendar::Date::months_in_year, FnInStruct)]
         #[diplomat::attr(auto, getter)]
+        #[diplomat::attr(demo_gen, disable)] // covered by Date
         pub fn months_in_year(&self) -> u8 {
             self.0.months_in_year()
         }
@@ -146,6 +159,7 @@ pub mod ffi {
         /// Returns the number of days in the month represented by this date
         #[diplomat::rust_link(icu::calendar::Date::days_in_month, FnInStruct)]
         #[diplomat::attr(auto, getter)]
+        #[diplomat::attr(demo_gen, disable)] // covered by Date
         pub fn days_in_month(&self) -> u8 {
             self.0.days_in_month()
         }
@@ -153,6 +167,7 @@ pub mod ffi {
         /// Returns the number of days in the year represented by this date
         #[diplomat::rust_link(icu::calendar::Date::days_in_year, FnInStruct)]
         #[diplomat::attr(auto, getter)]
+        #[diplomat::attr(demo_gen, disable)] // covered by Date
         pub fn days_in_year(&self) -> u16 {
             self.0.days_in_year()
         }
@@ -171,14 +186,14 @@ pub mod ffi {
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor)]
         #[diplomat::demo(default_constructor)]
         pub fn from_iso_in_calendar(
-            year: i32,
-            month: u8,
-            day: u8,
+            iso_year: i32,
+            iso_month: u8,
+            iso_day: u8,
             calendar: &Calendar,
         ) -> Result<Box<Date>, CalendarError> {
             let cal = calendar.0.clone();
             Ok(Box::new(Date(
-                icu_calendar::Date::try_new_iso(year, month, day)?.to_calendar(cal),
+                icu_calendar::Date::try_new_iso(iso_year, iso_month, iso_day)?.to_calendar(cal),
             )))
         }
 

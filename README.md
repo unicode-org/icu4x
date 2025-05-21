@@ -16,11 +16,9 @@ The design goals of `ICU4X` are:
 
 ## Documentation
 
-For an introduction to the project, please visit the ["Introduction to ICU4X for Rust"](tutorials/quickstart.md) tutorial. Further tutorials can be found in the [tutorial index](tutorials/index.md).
+For an introduction to the project, please visit the [our website](https://icu4x.unicode.org/).
 
-For technical information on how to use ICU4X, visit our [API docs (latest stable)](https://docs.rs/icu/latest/) or [API docs (tip of main)](https://unicode-org.github.io/icu4x/rustdoc/icu/).
-
-More information about the project can be found in [the documents subdirectory](documents/README.md).
+For technical information on how to use ICU4X, visit our [API docs (latest release)](https://docs.rs/icu/latest/) or [API docs (tip of main)](https://unicode-org.github.io/icu4x/rustdoc/icu/).
 
 ## Quick Start
 
@@ -47,7 +45,6 @@ let dtf = DateTimeFormatter::try_new(
 .expect("locale should be present in compiled data");
 
 let date = Date::try_new_iso(2020, 9, 12).expect("date should be valid");
-let date = date.to_any();
 
 let formatted_date = dtf.format(&date).to_string();
 assert_eq!(

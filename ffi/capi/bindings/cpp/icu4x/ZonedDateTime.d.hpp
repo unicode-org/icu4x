@@ -46,7 +46,7 @@ namespace icu4x {
 /**
  * An ICU4X DateTime object capable of containing a date, time, and zone for any calendar.
  *
- * See the [Rust documentation for `ZonedDateTime`](https://docs.rs/icu/latest/icu/time/struct.ZonedDateTime.html) for more information.
+ * See the [Rust documentation for `ZonedDateTime`](https://docs.rs/icu/2.0.0/icu/time/struct.ZonedDateTime.html) for more information.
  */
 struct ZonedDateTime {
   std::unique_ptr<icu4x::Date> date;
@@ -54,30 +54,30 @@ struct ZonedDateTime {
   std::unique_ptr<icu4x::TimeZoneInfo> zone;
 
   /**
-   * Creates a new [`ZonedDateTime`] from an IXDTF string.
+   * Creates a new {@link ZonedDateTime} from an IXDTF string.
    *
-   * See the [Rust documentation for `try_full_from_str`](https://docs.rs/icu/latest/icu/time/struct.ZonedDateTime.html#method.try_full_from_str) for more information.
+   * See the [Rust documentation for `try_full_from_str`](https://docs.rs/icu/2.0.0/icu/time/struct.ZonedDateTime.html#method.try_full_from_str) for more information.
    */
   inline static diplomat::result<icu4x::ZonedDateTime, icu4x::Rfc9557ParseError> full_from_string(std::string_view v, const icu4x::Calendar& calendar, const icu4x::IanaParser& iana_parser, const icu4x::VariantOffsetsCalculator& offset_calculator);
 
   /**
-   * Creates a new [`ZonedDateTime`] from a location-only IXDTF string.
+   * Creates a new {@link ZonedDateTime} from a location-only IXDTF string.
    *
-   * See the [Rust documentation for `try_location_only_from_str`](https://docs.rs/icu/latest/icu/time/struct.ZonedDateTime.html#method.try_location_only_from_str) for more information.
+   * See the [Rust documentation for `try_location_only_from_str`](https://docs.rs/icu/2.0.0/icu/time/struct.ZonedDateTime.html#method.try_location_only_from_str) for more information.
    */
   inline static diplomat::result<icu4x::ZonedDateTime, icu4x::Rfc9557ParseError> location_only_from_string(std::string_view v, const icu4x::Calendar& calendar, const icu4x::IanaParser& iana_parser);
 
   /**
-   * Creates a new [`ZonedDateTime`] from an offset-only IXDTF string.
+   * Creates a new {@link ZonedDateTime} from an offset-only IXDTF string.
    *
-   * See the [Rust documentation for `try_offset_only_from_str`](https://docs.rs/icu/latest/icu/time/struct.ZonedDateTime.html#method.try_offset_only_from_str) for more information.
+   * See the [Rust documentation for `try_offset_only_from_str`](https://docs.rs/icu/2.0.0/icu/time/struct.ZonedDateTime.html#method.try_offset_only_from_str) for more information.
    */
   inline static diplomat::result<icu4x::ZonedDateTime, icu4x::Rfc9557ParseError> offset_only_from_string(std::string_view v, const icu4x::Calendar& calendar);
 
   /**
-   * Creates a new [`ZonedDateTime`] from an IXDTF string, without requiring the offset or calculating the zone variant.
+   * Creates a new {@link ZonedDateTime} from an IXDTF string, without requiring the offset or calculating the zone variant.
    *
-   * See the [Rust documentation for `try_lenient_from_str`](https://docs.rs/icu/latest/icu/time/struct.ZonedDateTime.html#method.try_lenient_from_str) for more information.
+   * See the [Rust documentation for `try_lenient_from_str`](https://docs.rs/icu/2.0.0/icu/time/struct.ZonedDateTime.html#method.try_lenient_from_str) for more information.
    */
   inline static diplomat::result<icu4x::ZonedDateTime, icu4x::Rfc9557ParseError> lenient_from_string(std::string_view v, const icu4x::Calendar& calendar, const icu4x::IanaParser& iana_parser);
 

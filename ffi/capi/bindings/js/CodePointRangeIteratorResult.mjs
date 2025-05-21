@@ -3,17 +3,16 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
+
 /**
- * Result of a single iteration of [`CodePointRangeIterator`].
+ * Result of a single iteration of {@link CodePointRangeIterator}.
  * Logically can be considered to be an `Option<RangeInclusive<DiplomatChar>>`,
  *
- * `start` and `end` represent an inclusive range of code points [start, end],
+ * `start` and `end` represent an inclusive range of code points `[start, end]`,
  * and `done` will be true if the iterator has already finished. The last contentful
- * iteration will NOT produce a range done=true, in other words `start` and `end` are useful
+ * iteration will NOT produce a range `done=true`, in other words `start` and `end` are useful
  * values if and only if `done=false`.
  */
-
-
 export class CodePointRangeIteratorResult {
     #start;
     get start() {

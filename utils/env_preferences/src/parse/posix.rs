@@ -12,7 +12,7 @@
 //! # use env_preferences::LocaleError;
 //! # fn main() -> Result<(), LocaleError> {
 //! let posix_locale = PosixLocale::try_from_str("en_US")?;
-//! assert_eq!(posix_locale.try_convert_lossy()?, locale!("en-US-posix"));
+//! assert_eq!(posix_locale.try_convert_lossy()?, locale!("en-US"));
 //! # Ok(())
 //! # }
 //! ```
@@ -21,11 +21,9 @@ use displaydoc::Display;
 use icu_locale_core::extensions::unicode::{key, value};
 use icu_locale_core::extensions::Extensions;
 use icu_locale_core::subtags::{language, script, variant, Language, Region, Variants};
-use icu_locale_core::{LanguageIdentifier, Locale};
+use icu_locale_core::{locale, LanguageIdentifier, Locale};
 
 use crate::ParseError;
-
-use super::aliases::find_posix_alias;
 
 #[derive(Display, Debug, PartialEq)]
 /// An error while parsing a POSIX locale identifier
@@ -208,17 +206,17 @@ impl<'src> PosixLocale<'src> {
     /// // Locales will always include the `posix` variant
     /// assert_eq!(
     ///     PosixLocale::try_from_str("en_US")?.try_convert_lossy()?,
-    ///     locale!("en-US-posix")
+    ///     locale!("en-US")
     /// );
     /// // The codeset field will be ignored
     /// assert_eq!(
     ///     PosixLocale::try_from_str("en_US.iso88591")?.try_convert_lossy()?,
-    ///     locale!("en-US-posix")
+    ///     locale!("en-US")
     /// );
     /// // Any unknown modifiers will be ignored
     /// assert_eq!(
     ///     PosixLocale::try_from_str("en_US@unknown")?.try_convert_lossy()?,
-    ///     locale!("en-US-posix")
+    ///     locale!("en-US")
     /// );
     /// # Ok(())
     /// # }
@@ -230,63 +228,57 @@ impl<'src> PosixLocale<'src> {
     /// # use env_preferences::parse::posix::PosixLocale;
     /// # use env_preferences::LocaleError;
     /// # fn main() -> Result<(), LocaleError> {
-    /// // The default "C"/"POSIX" locale will be converted to "und"
+    /// // The default "C"/"POSIX" locale will be converted to "en-US-posix"
     /// assert_eq!(
     ///     PosixLocale::try_from_str("C")?.try_convert_lossy()?,
-    ///     locale!("und-posix")
+    ///     locale!("en-US-posix")
     /// );
     /// assert_eq!(
     ///     PosixLocale::try_from_str("POSIX")?.try_convert_lossy()?,
-    ///     locale!("und-posix")
-    /// );
-    ///
-    /// // Known language aliases will be converted to the matching BCP-47 identifier
-    /// assert_eq!(
-    ///     PosixLocale::try_from_str("french")?.try_convert_lossy()?,
-    ///     locale!("fr-FR-posix")
+    ///     locale!("en-US-posix")
     /// );
     ///
     /// // Known script modifiers will be converted to the matching CLDR keys
     /// assert_eq!(
     ///     PosixLocale::try_from_str("uz_UZ@cyrillic")?.try_convert_lossy()?,
-    ///     locale!("uz-Cyrl-UZ-posix")
+    ///     locale!("uz-Cyrl-UZ")
     /// );
     /// assert_eq!(
     ///     PosixLocale::try_from_str("ks_IN@devanagari")?.try_convert_lossy()?,
-    ///     locale!("ks-Deva-IN-posix")
+    ///     locale!("ks-Deva-IN")
     /// );
     /// assert_eq!(
     ///     PosixLocale::try_from_str("be_BY@latin")?.try_convert_lossy()?,
-    ///     locale!("be-Latn-BY-posix")
+    ///     locale!("be-Latn-BY")
     /// );
     ///
     /// // Other known modifiers are handled accordingly
     /// assert_eq!(
     ///     PosixLocale::try_from_str("en_US@euro")?.try_convert_lossy()?,
-    ///     locale!("en-US-posix-u-cu-eur")
+    ///     locale!("en-US-u-cu-eur")
     /// );
     /// assert_eq!(
     ///     PosixLocale::try_from_str("aa_ER@saaho")?.try_convert_lossy()?,
-    ///     locale!("ssy-ER-posix")
+    ///     locale!("ssy-ER")
     /// );
     /// # Ok(())
     /// # }
     /// ```
     pub fn try_convert_lossy(&self) -> Result<Locale, ParseError> {
-        // Check if the language matches a known alias (e.g. "nynorsk"->("nn", "NO"))
-        let (mut language, region) = match find_posix_alias(self.language) {
-            Some((language, region)) => (language, region),
-            None => {
-                let language = Language::try_from_str(self.language)?;
-                let region = self.territory.map(Region::try_from_str).transpose()?;
-
-                (language, region)
-            }
-        };
+        // The default "C"/"POSIX" locale should map to "en-US-posix",
+        // which is the default behaviour in ICU4C:
+        // https://github.com/unicode-org/icu/blob/795d7ac82c4b29cf721d0ad62c0b178347d453bf/icu4c/source/common/putil.cpp#L1738
+        if self.language == "C" || self.language == "POSIX" {
+            return Ok(locale!("en-US-posix"));
+        }
 
         let mut extensions = Extensions::new();
         let mut script = None;
-        let mut variants = vec![variant!("posix")];
+        let mut variant = None;
+
+        // Parse the language/region
+        let mut language = Language::try_from_str(self.language)?;
+        let region = self.territory.map(Region::try_from_str).transpose()?;
 
         if let Some(modifier) = self.modifier {
             match modifier.to_ascii_lowercase().as_str() {
@@ -300,8 +292,7 @@ impl<'src> PosixLocale<'src> {
                 // Saaho seems to be the only "legacy variant" that appears as a modifier:
                 // https://www.unicode.org/reports/tr35/#table-legacy-variant-mappings
                 "saaho" => language = language!("ssy"),
-                // This keeps `variants` sorted; "-posix" comes before "-valencia"
-                "valencia" => variants.push(variant!("valencia")),
+                "valencia" => variant = Some(variant!("valencia")),
                 // Some modifiers are known but can't be expressed as a BCP-47 identifier
                 // e.g. "@abegede", "@iqtelif"
                 _ => (),
@@ -313,7 +304,7 @@ impl<'src> PosixLocale<'src> {
                 language,
                 region,
                 script,
-                variants: Variants::from_vec_unchecked(variants),
+                variants: variant.map_or_else(Variants::new, Variants::from_variant),
             },
             extensions,
         })

@@ -9,7 +9,7 @@ final class _TimeZoneAndCanonicalAndNormalizedFfi extends ffi.Struct {
   external _SliceUtf8 normalized;
 }
 
-/// See the [Rust documentation for `TimeZoneAndCanonicalAndNormalized`](https://docs.rs/icu/latest/icu/time/zone/iana/struct.TimeZoneAndCanonicalAndNormalized.html) for more information.
+/// See the [Rust documentation for `TimeZoneAndCanonicalAndNormalized`](https://docs.rs/icu/2.0.0/icu/time/zone/iana/struct.TimeZoneAndCanonicalAndNormalized.html) for more information.
 final class TimeZoneAndCanonicalAndNormalized {
   final TimeZone timeZone;
   final String canonical;

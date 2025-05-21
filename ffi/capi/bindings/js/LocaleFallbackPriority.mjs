@@ -3,13 +3,12 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
+
 /**
  * Priority mode for the ICU4X fallback algorithm.
  *
- * See the [Rust documentation for `LocaleFallbackPriority`](https://docs.rs/icu/latest/icu/locale/fallback/enum.LocaleFallbackPriority.html) for more information.
+ * See the [Rust documentation for `LocaleFallbackPriority`](https://docs.rs/icu/2.0.0/icu/locale/fallback/enum.LocaleFallbackPriority.html) for more information.
  */
-
-
 export class LocaleFallbackPriority {
     #value = undefined;
 
@@ -47,6 +46,7 @@ export class LocaleFallbackPriority {
         throw TypeError(value + " is not a LocaleFallbackPriority and does not correspond to any of its enumerator values.");
     }
 
+    /** @internal */
     static fromValue(value) {
         return new LocaleFallbackPriority(value);
     }
@@ -55,6 +55,7 @@ export class LocaleFallbackPriority {
         return [...LocaleFallbackPriority.#values.keys()][this.#value];
     }
 
+    /** @internal */
     get ffiValue(){
         return this.#value;
     }

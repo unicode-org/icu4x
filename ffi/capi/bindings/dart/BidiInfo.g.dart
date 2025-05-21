@@ -5,7 +5,7 @@ part of 'lib.g.dart';
 
 /// An object containing bidi information for a given string, produced by `for_text()` on `Bidi`
 ///
-/// See the [Rust documentation for `BidiInfo`](https://docs.rs/unicode_bidi/latest/unicode_bidi/struct.BidiInfo.html) for more information.
+/// See the [Rust documentation for `BidiInfo`](https://docs.rs/unicode_bidi/0.3.11/unicode_bidi/struct.BidiInfo.html) for more information.
 final class BidiInfo implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _ffi;
 

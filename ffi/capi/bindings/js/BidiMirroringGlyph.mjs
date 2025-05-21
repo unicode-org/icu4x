@@ -4,11 +4,10 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
+
 /**
- * See the [Rust documentation for `BidiMirroringGlyph`](https://docs.rs/icu/latest/icu/properties/props/struct.BidiMirroringGlyph.html) for more information.
+ * See the [Rust documentation for `BidiMirroringGlyph`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.BidiMirroringGlyph.html) for more information.
  */
-
-
 export class BidiMirroringGlyph {
     #mirroringGlyph;
     get mirroringGlyph() {
@@ -31,9 +30,7 @@ export class BidiMirroringGlyph {
     set pairedBracketType(value){
         this.#pairedBracketType = value;
     }
-    /** Create `BidiMirroringGlyph` from an object that contains all of `BidiMirroringGlyph`s fields.
-    * Optional fields do not need to be included in the provided object.
-    */
+    /** @internal */
     static fromFields(structObj) {
         return new BidiMirroringGlyph(structObj);
     }
@@ -118,7 +115,7 @@ export class BidiMirroringGlyph {
 
 
     /**
-     * See the [Rust documentation for `for_char`](https://docs.rs/icu/latest/icu/properties/props/trait.EnumeratedProperty.html#tymethod.for_char) for more information.
+     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.0.0/icu/properties/props/trait.EnumeratedProperty.html#tymethod.for_char) for more information.
      */
     static forChar(ch) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 16, 4, false);

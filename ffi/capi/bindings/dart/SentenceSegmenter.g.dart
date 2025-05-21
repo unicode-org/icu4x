@@ -5,7 +5,7 @@ part of 'lib.g.dart';
 
 /// An ICU4X sentence-break segmenter, capable of finding sentence breakpoints in strings.
 ///
-/// See the [Rust documentation for `SentenceSegmenter`](https://docs.rs/icu/latest/icu/segmenter/struct.SentenceSegmenter.html) for more information.
+/// See the [Rust documentation for `SentenceSegmenter`](https://docs.rs/icu/2.0.0/icu/segmenter/struct.SentenceSegmenter.html) for more information.
 final class SentenceSegmenter implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _ffi;
 
@@ -25,15 +25,15 @@ final class SentenceSegmenter implements ffi.Finalizable {
 
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_SentenceSegmenter_destroy_mv1));
 
-  /// Construct a [`SentenceSegmenter`] using compiled data. This does not assume any content locale.
+  /// Construct a [SentenceSegmenter] using compiled data. This does not assume any content locale.
   ///
-  /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/segmenter/struct.SentenceSegmenter.html#method.new) for more information.
+  /// See the [Rust documentation for `new`](https://docs.rs/icu/2.0.0/icu/segmenter/struct.SentenceSegmenter.html#method.new) for more information.
   factory SentenceSegmenter() {
     final result = _icu4x_SentenceSegmenter_create_mv1();
     return SentenceSegmenter._fromFfi(result, []);
   }
 
-  /// Construct a [`SentenceSegmenter`] for content known to be of a given locale, using compiled data.
+  /// Construct a [SentenceSegmenter] for content known to be of a given locale, using compiled data.
   ///
   /// Throws [DataError] on failure.
   factory SentenceSegmenter.withContentLocale(Locale locale) {
@@ -44,7 +44,7 @@ final class SentenceSegmenter implements ffi.Finalizable {
     return SentenceSegmenter._fromFfi(result.union.ok, []);
   }
 
-  /// Construct a [`SentenceSegmenter`]  for content known to be of a given locale, using a particular data source.
+  /// Construct a [SentenceSegmenter]  for content known to be of a given locale, using a particular data source.
   ///
   /// Throws [DataError] on failure.
   factory SentenceSegmenter.withContentLocaleAndProvider(DataProvider provider, Locale locale) {
@@ -60,7 +60,7 @@ final class SentenceSegmenter implements ffi.Finalizable {
   /// Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
   /// to the WHATWG Encoding Standard.
   ///
-  /// See the [Rust documentation for `segment_utf16`](https://docs.rs/icu/latest/icu/segmenter/struct.SentenceSegmenterBorrowed.html#method.segment_utf16) for more information.
+  /// See the [Rust documentation for `segment_utf16`](https://docs.rs/icu/2.0.0/icu/segmenter/struct.SentenceSegmenterBorrowed.html#method.segment_utf16) for more information.
   SentenceBreakIteratorUtf16 segment(String input) {
     final inputArena = _FinalizedArena();
     // This lifetime edge depends on lifetimes: 'a

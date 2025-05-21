@@ -46,6 +46,7 @@ icu_provider = { workspace = true }
 [dev-dependencies]
 icu_datetime = { path = "../../components/datetime", features = ["serde"] }
 icu_provider_adapters = { path = "../../provider/adapters", features = ["serde"] }
+icu_benchmark_macros = { path = "../../tools/benchmark/macros" }
 icu_provider_blob = { path = "../../provider/blob", features = ["alloc"] }
 writeable = { path = "../../utils/writeable" }
 jiff = { version = "0.2", default-features = false, features = ["tzdb-bundle-always", "std"] }
@@ -140,3 +141,34 @@ required-features = ["serde"]
 
 [[example]]
 name = "chrono_jiff"
+
+[[example]]
+name = "iso_date_manipulations"
+
+[[example]]
+name = "work_log"
+required-features = ["compiled_data"]
+
+[[example]]
+name = "code_line_diff"
+required-features = ["serde"]
+
+[[example]]
+name = "and_list"
+
+[[example]]
+name = "filter_langids"
+test = true
+
+[[example]]
+name = "syntatically_canonicalize_locales"
+test = true
+
+[[example]]
+name = "unread_emails"
+required-features = ["serde"]
+
+[[example]]
+name = "elevator_floors"
+required-features = ["serde"]
+
