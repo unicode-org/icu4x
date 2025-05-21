@@ -568,9 +568,30 @@ pub struct CollationSpecialPrimaries<'data> {
 
 impl CollationSpecialPrimaries<'static> {
     pub(crate) const HARDCODED_FALLBACK: &Self = &Self {
-        last_primaries: unsafe {
-            zerovec::ZeroVec::from_bytes_unchecked(b"\x06\x05\0\x0C\xA0\r\0\x0F\0\0\0\0\0\0\0\0\0\0\0\0\xFE\xFF\xFF\xFF\x01\0\0\0\0\0\0\0\0\0\0\0\0\0\0@")
-        },
+        last_primaries: zerovec::zerovec!(u16; <u16 as AsULE>::ULE::from_aligned; [
+          // Last primaries
+          1286,
+          3072,
+          3488,
+          3840,
+          // Compressible bytes
+          0b0000_0000_0000_0000,
+          0b0000_0000_0000_0000,
+          0b0000_0000_0000_0000,
+          0b0000_0000_0000_0000,
+          0b0000_0000_0000_0000,
+          0b0000_0000_0000_0000,
+          0b1111_1111_1111_1110,
+          0b1111_1111_1111_1111,
+          0b0000_0000_0000_0001,
+          0b0000_0000_0000_0000,
+          0b0000_0000_0000_0000,
+          0b0000_0000_0000_0000,
+          0b0000_0000_0000_0000,
+          0b0000_0000_0000_0000,
+          0b0000_0000_0000_0000,
+          0b0100_0000_0000_0000
+        ]),
         numeric_primary: 16u8,
     };
 }
