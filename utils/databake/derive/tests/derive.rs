@@ -60,3 +60,90 @@ fn test_cow_example() {
         test
     );
 }
+
+#[derive(Bake)]
+#[databake(path = test)]
+#[databake(custom_bake)]
+pub struct CustomBakeExample<'a> {
+    x: usize,
+    y: alloc::borrow::Cow<'a, str>,
+}
+
+impl CustomBake for CustomBakeExample<'_> {
+    type BakedType<'a>
+        = (usize, &'a str)
+    where
+        Self: 'a;
+    fn to_custom_bake(&self) -> Self::BakedType<'_> {
+        (self.x, &*self.y)
+    }
+}
+
+impl<'a> CustomBakeExample<'a> {
+    pub const fn from_custom_bake(baked: <Self as CustomBake>::BakedType<'a>) -> Self {
+        Self {
+            x: baked.0,
+            y: alloc::borrow::Cow::Borrowed(baked.1),
+        }
+    }
+}
+
+#[test]
+fn test_custom_bake_example() {
+    test_bake!(
+        CustomBakeExample<'static>,
+        const,
+        crate::CustomBakeExample {
+            x: 51423usize,
+            y: alloc::borrow::Cow::Borrowed("bar"),
+        },
+        crate::CustomBakeExample::from_custom_bake((51423usize, "bar")),
+        test
+    );
+}
+
+#[derive(Bake)]
+#[databake(path = test)]
+#[databake(custom_bake_unsafe)]
+pub struct CustomBakeUnsafeExample<'a> {
+    x: usize,
+    y: alloc::borrow::Cow<'a, str>,
+}
+
+impl CustomBake for CustomBakeUnsafeExample<'_> {
+    type BakedType<'a>
+        = (usize, &'a str)
+    where
+        Self: 'a;
+    fn to_custom_bake(&self) -> Self::BakedType<'_> {
+        (self.x, &*self.y)
+    }
+}
+
+// Safety: The type has a `from_custom_bake` fn of the required signature.
+unsafe impl CustomBakeUnsafe for CustomBakeExample<'_> {}
+
+impl<'a> CustomBakeUnsafeExample<'a> {
+    /// # Safety
+    /// The argument MUST have been returned from [`Self::to_custom_bake`].
+    pub const unsafe fn from_custom_bake(baked: <Self as CustomBake>::BakedType<'a>) -> Self {
+        Self {
+            x: baked.0,
+            y: alloc::borrow::Cow::Borrowed(baked.1),
+        }
+    }
+}
+
+#[test]
+fn test_custom_bake_unsafe_example() {
+    test_bake!(
+        CustomBakeUnsafeExample<'static>,
+        const,
+        crate::CustomBakeUnsafeExample {
+            x: 51423usize,
+            y: alloc::borrow::Cow::Borrowed("bar"),
+        },
+        unsafe { crate::CustomBakeUnsafeExample::from_custom_bake((51423usize, "bar")) },
+        test
+    );
+}

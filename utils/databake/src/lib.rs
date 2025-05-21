@@ -74,6 +74,7 @@
 
 mod alloc;
 pub mod converter;
+mod custom_bake;
 mod primitives;
 
 #[doc(no_inline)]
@@ -84,6 +85,8 @@ pub use quote::quote;
 
 #[cfg(feature = "derive")]
 pub use databake_derive::Bake;
+
+pub use custom_bake::*;
 
 use std::collections::HashSet;
 use std::sync::Mutex;
@@ -145,6 +148,27 @@ pub trait BakeSize: Sized + Bake {
 /// test_bake!(usize, const, 18usize);
 /// ```
 ///
+/// ## Custom baked type
+///
+/// If the baked type is different than the input type, pass both as arguments:
+///
+/// ```no_run
+/// # use databake::*;
+/// # struct MyStruct(usize);
+/// # impl Bake for MyStruct {
+/// #   fn bake(&self, _: &CrateEnv) -> TokenStream { unimplemented!() }
+/// # }
+/// # // We need an explicit main to put the struct at the crate root
+/// # fn main() {
+/// test_bake!(
+///     MyStruct,
+///     crate::MyStruct(42usize),
+///     crate::MyStruct::from_custom_bake(42usize),
+///     my_crate,
+/// );
+/// # }
+/// ```
+///
 /// ## Crates and imports
 ///
 /// As most output will need to reference its crate, and its not possible to name a crate from
@@ -172,16 +196,24 @@ pub trait BakeSize: Sized + Bake {
 #[macro_export]
 macro_rules! test_bake {
     ($type:ty, const, $expr:expr $(, $krate:ident)? $(, [$($env_crate:ident),+])? $(,)?) => {
-        const _: &$type = &$expr;
-        $crate::test_bake!($type, $expr $(, $krate)? $(, [$($env_crate),+])?);
+        $crate::test_bake!($type, const, $expr, $expr $(, $krate)? $(, [$($env_crate),+])?);
     };
 
     ($type:ty, $expr:expr $(, $krate:ident)? $(, [$($env_crate:ident),+])? $(,)?) => {
+        $crate::test_bake!($type, $expr, $expr $(, $krate)? $(, [$($env_crate),+])?);
+    };
+
+    ($type:ty, const, $init_expr:expr, $baked_expr:expr $(, $krate:ident)? $(, [$($env_crate:ident),+])? $(,)?) => {
+        const _: &$type = &$baked_expr;
+        $crate::test_bake!($type, $init_expr, $baked_expr $(, $krate)? $(, [$($env_crate),+])?);
+    };
+
+    ($type:ty, $init_expr:expr, $baked_expr:expr $(, $krate:ident)? $(, [$($env_crate:ident),+])? $(,)?) => {
         let env = Default::default();
-        let expr: &$type = &$expr;
+        let expr: &$type = &$init_expr;
         let bake = $crate::Bake::bake(expr, &env).to_string();
         // For some reason `TokenStream` behaves differently in this line
-        let expected_bake = $crate::quote!($expr).to_string().replace("::<", ":: <").replace(">::", "> ::");
+        let expected_bake = $crate::quote!($baked_expr).to_string().replace("::<", ":: <").replace(">::", "> ::");
         // Trailing commas are a mess as well
         let bake = bake.replace(" ,)", ")").replace(" ,]", "]").replace(" , }", " }").replace(" , >", " >");
         let expected_bake = expected_bake.replace(" ,)", ")").replace(" ,]", "]").replace(" , }", " }").replace(" , >", " >");
