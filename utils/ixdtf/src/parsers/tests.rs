@@ -684,6 +684,7 @@ fn duration_exceeds_range() {
 }
 
 #[test]
+#[cfg(feature = "duration")]
 fn maximum_duration_units() {
     use crate::parsers::IsoDurationParser;
 
@@ -1075,7 +1076,7 @@ fn invalid_offset() {
     let err = IxdtfParser::from_str(offset_leap_second).parse();
     assert_eq!(
         err,
-        Err(ParseError::AnnotationClose),
+        Err(ParseError::InvalidMinutePrecisionOffset),
         "Should enforce UtcMinutePrecision for annotations"
     );
 
@@ -1083,7 +1084,7 @@ fn invalid_offset() {
     let err = IxdtfParser::from_str(offset_leap_second).parse();
     assert_eq!(
         err,
-        Err(ParseError::AnnotationClose),
+        Err(ParseError::InvalidMinutePrecisionOffset),
         "Should enforce UtcMinutePrecision for annotations"
     );
 }
