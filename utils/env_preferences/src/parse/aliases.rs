@@ -18,7 +18,7 @@ pub fn strip_windows_collation_suffix_lossy(
         let collation_value = match suffix {
             "phoneb" => value!("phonebk"),
             "pronun" => value!("zhuyin"),
-            "radstr" => value!("stroke"),
+            "radstr" => value!("unihan"),
             "stroke" => value!("stroke"),
             "tradnl" => value!("trad"),
             // Strip the suffix on LCIDs with an underscore but no (known) matching CLDR data
