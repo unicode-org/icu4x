@@ -27,7 +27,7 @@ const _: () = {
     impl_collation_diacritics_v1!(TestingProvider);
     impl_collation_jamo_v1!(TestingProvider);
     impl_collation_metadata_v1!(TestingProvider);
-    impl_collation_special_primaries_v2!(TestingProvider);
+    impl_collation_special_primaries_v1!(TestingProvider);
     impl_collation_reordering_v1!(TestingProvider);
 
     icu_normalizer_data::impl_normalizer_nfc_v1!(TestingProvider);

@@ -64,7 +64,7 @@ const _: () = {
     impl_collation_diacritics_v1!(Baked);
     impl_collation_jamo_v1!(Baked);
     impl_collation_metadata_v1!(Baked);
-    impl_collation_special_primaries_v2!(Baked);
+    impl_collation_special_primaries_v1!(Baked);
     impl_collation_reordering_v1!(Baked);
 };
 
@@ -126,8 +126,8 @@ icu_provider::data_marker!(
 );
 icu_provider::data_marker!(
     /// Data marker for collcation special primaries data.
-    CollationSpecialPrimariesV2,
-    "collation/special/primaries/v2",
+    CollationSpecialPrimariesV1,
+    "collation/special/primaries/v1",
     CollationSpecialPrimaries<'static>,
     is_singleton = true,
 );
@@ -141,7 +141,7 @@ pub const MARKERS: &[DataMarkerInfo] = &[
     CollationJamoV1::INFO,
     CollationMetadataV1::INFO,
     CollationReorderingV1::INFO,
-    CollationSpecialPrimariesV2::INFO,
+    CollationSpecialPrimariesV1::INFO,
 ];
 
 const SINGLE_U32: &ZeroSlice<u32> =
@@ -556,18 +556,23 @@ pub struct CollationSpecialPrimaries<'data> {
     /// character classes packed so that each fits in
     /// 16 bits. Length must match the number of enum
     /// variants in `MaxVariable`, currently 4.
+    ///
+    /// This is potentially followed by 256 bits
+    /// (packed in 16 u16s) to classify every possible
+    /// byte into compressible or non-compressible.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub last_primaries: ZeroVec<'data, u16>,
-    /// 256 bits to classify every possible byte
-    /// into compressible or non-compressible.
-    /// The 256 bits are distributed across 32
-    /// `u8`s, since we don't have a native `u256`
-    /// and have to do manual shifts and masks,
-    /// so we might as well do them with the narrow
-    /// type that is its own `ULE`.
-    pub compressible_bytes: [u8; 32],
     /// The high 8 bits of the numeric primary
     pub numeric_primary: u8,
+}
+
+impl CollationSpecialPrimaries<'static> {
+    pub(crate) const HARDCODED_FALLBACK: &Self = &Self {
+        last_primaries: unsafe {
+            zerovec::ZeroVec::from_bytes_unchecked(b"\x06\x05\0\x0C\xA0\r\0\x0F\0\0\0\0\0\0\0\0\0\0\0\0\xFE\xFF\xFF\xFF\x01\0\0\0\0\0\0\0\0\0\0\0\0\0\0@")
+        },
+        numeric_primary: 16u8,
+    };
 }
 
 icu_provider::data_struct!(
@@ -587,12 +592,15 @@ impl CollationSpecialPrimaries<'_> {
 
     #[allow(dead_code)]
     pub(crate) fn is_compressible(&self, b: u8) -> bool {
-        // Indexing OK by construction and pasting this
+        // Unwrap OK by construction and pasting this
         // into Compiler Explorer shows that the panic
         // is optimized away.
-        #[allow(clippy::indexing_slicing)]
-        let field = self.compressible_bytes[usize::from(b >> 3)];
-        let mask = 1 << (b & 0b111);
+        #[allow(clippy::unwrap_used)]
+        let field = self
+            .last_primaries
+            .get(self.last_primaries.len() - 4 + usize::from(b >> 4))
+            .unwrap();
+        let mask = 1 << (b & 0b111_1111);
         (field & mask) != 0
     }
 }

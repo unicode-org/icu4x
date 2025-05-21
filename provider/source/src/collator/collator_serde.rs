@@ -52,6 +52,6 @@ pub(crate) struct CollationSpecialPrimaries {
     /// For correct results, when CLDR is updated on the ICU4C
     /// side, icuexportdata must start including this data in
     /// the TOML.
-    pub(crate) compressible_bytes: Option<Vec<u8>>,
+    pub(crate) compressible_bytes: Option<Vec<bool>>,
     pub(crate) numeric_primary: u8,
 }

@@ -36,7 +36,7 @@ use crate::provider::CollationReordering;
 use crate::provider::CollationReorderingV1;
 use crate::provider::CollationRootV1;
 use crate::provider::CollationSpecialPrimaries;
-use crate::provider::CollationSpecialPrimariesV2;
+use crate::provider::CollationSpecialPrimariesV1;
 use crate::provider::CollationTailoringV1;
 use core::cmp::Ordering;
 use core::convert::TryFrom;
@@ -379,7 +379,7 @@ impl LocaleSpecificDataHolder {
 /// Compares strings according to culturally-relevant ordering.
 #[derive(Debug)]
 pub struct Collator {
-    special_primaries: DataPayload<CollationSpecialPrimariesV2>,
+    special_primaries: DataPayload<CollationSpecialPrimariesV1>,
     root: DataPayload<CollationRootV1>,
     tailoring: Option<DataPayload<CollationTailoringV1>>,
     jamo: DataPayload<CollationJamoV1>,
@@ -434,7 +434,7 @@ impl Collator {
         options: CollatorOptions,
     ) -> Result<Self, DataError>
     where
-        D: DataProvider<CollationSpecialPrimariesV2>
+        D: DataProvider<CollationSpecialPrimariesV1>
             + DataProvider<CollationRootV1>
             + DataProvider<CollationTailoringV1>
             + DataProvider<CollationDiacriticsV1>
@@ -464,7 +464,7 @@ impl Collator {
         decompositions: DataPayload<NormalizerNfdDataV1>,
         tables: DataPayload<NormalizerNfdTablesV1>,
         jamo: DataPayload<CollationJamoV1>,
-        special_primaries: DataPayload<CollationSpecialPrimariesV2>,
+        mut special_primaries: DataPayload<CollationSpecialPrimariesV1>,
         prefs: CollatorPreferences,
         options: CollatorOptions,
     ) -> Result<Self, DataError>
@@ -487,10 +487,25 @@ impl Collator {
         // `variant_count` isn't stable yet:
         // https://github.com/rust-lang/rust/issues/73662
         if special_primaries.get().last_primaries.len() <= (MaxVariable::Currency as usize) {
-            return Err(DataError::custom("invalid").with_marker(CollationSpecialPrimariesV2::INFO));
+            return Err(DataError::custom("invalid").with_marker(CollationSpecialPrimariesV1::INFO));
         }
-        if special_primaries.get().compressible_bytes.len() != 32 {
-            return Err(DataError::custom("invalid").with_marker(CollationSpecialPrimariesV2::INFO));
+        if special_primaries.get().last_primaries.len() == (MaxVariable::Currency as usize) {
+            // Data without compressible bits, add hardcoded data
+            special_primaries = special_primaries.map_project(|csp, _| CollationSpecialPrimaries {
+                last_primaries: csp
+                    .last_primaries
+                    .iter()
+                    .chain(
+                        CollationSpecialPrimaries::HARDCODED_FALLBACK
+                            .last_primaries
+                            .iter()
+                            .rev()
+                            .take(4)
+                            .rev(),
+                    )
+                    .collect(),
+                ..csp
+            });
         }
 
         Ok(Collator {
@@ -571,14 +586,27 @@ impl CollatorBorrowed<'static> {
             return Err(DataError::custom("invalid").with_marker(CollationJamoV1::INFO));
         }
 
-        let special_primaries = crate::provider::Baked::SINGLETON_COLLATION_SPECIAL_PRIMARIES_V2;
+        let mut special_primaries =
+            crate::provider::Baked::SINGLETON_COLLATION_SPECIAL_PRIMARIES_V1;
         // `variant_count` isn't stable yet:
         // https://github.com/rust-lang/rust/issues/73662
         if special_primaries.last_primaries.len() <= (MaxVariable::Currency as usize) {
-            return Err(DataError::custom("invalid").with_marker(CollationSpecialPrimariesV2::INFO));
+            return Err(DataError::custom("invalid").with_marker(CollationSpecialPrimariesV1::INFO));
         }
-        if special_primaries.compressible_bytes.len() != 32 {
-            return Err(DataError::custom("invalid").with_marker(CollationSpecialPrimariesV2::INFO));
+        if special_primaries.last_primaries.len() == (MaxVariable::Currency as usize) {
+            // Baked data without compressible bits, use hardcoded data
+            if CollationSpecialPrimaries::HARDCODED_FALLBACK.numeric_primary
+                != special_primaries.numeric_primary
+                || CollationSpecialPrimaries::HARDCODED_FALLBACK
+                    .last_primaries
+                    .iter()
+                    .zip(special_primaries.last_primaries.iter())
+                    .any(|(a, b)| a != b)
+            {
+                return Err(DataError::custom("cannot fall back to compressible data")
+                    .with_marker(CollationSpecialPrimariesV1::INFO));
+            }
+            special_primaries = CollationSpecialPrimaries::HARDCODED_FALLBACK;
         }
 
         // Attribute belongs closer to `unwrap`, but
