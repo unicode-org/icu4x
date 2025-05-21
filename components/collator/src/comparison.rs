@@ -35,9 +35,10 @@ use crate::provider::CollationMetadataV1;
 use crate::provider::CollationReordering;
 use crate::provider::CollationReorderingV1;
 use crate::provider::CollationRootV1;
-use crate::provider::CollationSpecialPrimaries;
 use crate::provider::CollationSpecialPrimariesV1;
+use crate::provider::CollationSpecialPrimariesValidated;
 use crate::provider::CollationTailoringV1;
+use core::array;
 use core::cmp::Ordering;
 use core::convert::TryFrom;
 use icu_normalizer::provider::DecompositionData;
@@ -45,6 +46,7 @@ use icu_normalizer::provider::DecompositionTables;
 use icu_normalizer::provider::NormalizerNfdDataV1;
 use icu_normalizer::provider::NormalizerNfdTablesV1;
 use icu_normalizer::Decomposition;
+use icu_provider::marker::ErasedMarker;
 use icu_provider::prelude::*;
 use smallvec::SmallVec;
 use utf16_iter::Utf16CharsEx;
@@ -379,7 +381,7 @@ impl LocaleSpecificDataHolder {
 /// Compares strings according to culturally-relevant ordering.
 #[derive(Debug)]
 pub struct Collator {
-    special_primaries: DataPayload<CollationSpecialPrimariesV1>,
+    special_primaries: DataPayload<ErasedMarker<CollationSpecialPrimariesValidated<'static>>>,
     root: DataPayload<CollationRootV1>,
     tailoring: Option<DataPayload<CollationTailoringV1>>,
     jamo: DataPayload<CollationJamoV1>,
@@ -464,7 +466,7 @@ impl Collator {
         decompositions: DataPayload<NormalizerNfdDataV1>,
         tables: DataPayload<NormalizerNfdTablesV1>,
         jamo: DataPayload<CollationJamoV1>,
-        mut special_primaries: DataPayload<CollationSpecialPrimariesV1>,
+        special_primaries: DataPayload<CollationSpecialPrimariesV1>,
         prefs: CollatorPreferences,
         options: CollatorOptions,
     ) -> Result<Self, DataError>
@@ -489,24 +491,35 @@ impl Collator {
         if special_primaries.get().last_primaries.len() <= (MaxVariable::Currency as usize) {
             return Err(DataError::custom("invalid").with_marker(CollationSpecialPrimariesV1::INFO));
         }
-        if special_primaries.get().last_primaries.len() == (MaxVariable::Currency as usize) {
-            // Data without compressible bits, add hardcoded data
-            special_primaries = special_primaries.map_project(|csp, _| CollationSpecialPrimaries {
-                last_primaries: csp
-                    .last_primaries
-                    .iter()
-                    .chain(
-                        CollationSpecialPrimaries::HARDCODED_FALLBACK
-                            .last_primaries
-                            .iter()
-                            .rev()
-                            .take(4)
-                            .rev(),
+        let special_primaries = special_primaries.map_project(|csp, _| {
+            if csp.last_primaries.len()
+                == (MaxVariable::Currency as usize)
+                    + core::mem::size_of_val(
+                        &CollationSpecialPrimariesValidated::HARDCODED_FALLBACK.compressible_bytes,
                     )
-                    .collect(),
-                ..csp
-            });
-        }
+            {
+                CollationSpecialPrimariesValidated {
+                    compressible_bytes: array::from_fn(|i| {
+                        #[allow(clippy::unwrap_used)] // protected by the if
+                        {
+                            csp.last_primaries
+                                .get((MaxVariable::Currency as usize) + i)
+                                .unwrap()
+                        }
+                    }),
+                    last_primaries: csp.last_primaries.truncated(MaxVariable::Currency as usize),
+                    numeric_primary: csp.numeric_primary,
+                }
+            } else {
+                // Data without compressible bytes, add hardcoded data
+                CollationSpecialPrimariesValidated {
+                    last_primaries: csp.last_primaries,
+                    compressible_bytes: CollationSpecialPrimariesValidated::HARDCODED_FALLBACK
+                        .compressible_bytes,
+                    numeric_primary: csp.numeric_primary,
+                }
+            }
+        });
 
         Ok(Collator {
             special_primaries,
@@ -550,7 +563,7 @@ macro_rules! compare {
 /// borrowed version.
 #[derive(Debug)]
 pub struct CollatorBorrowed<'a> {
-    special_primaries: &'a CollationSpecialPrimaries<'a>,
+    special_primaries: &'a CollationSpecialPrimariesValidated<'a>,
     root: &'a CollationData<'a>,
     tailoring: Option<&'a CollationData<'a>>,
     jamo: &'a CollationJamo<'a>,
@@ -586,28 +599,26 @@ impl CollatorBorrowed<'static> {
             return Err(DataError::custom("invalid").with_marker(CollationJamoV1::INFO));
         }
 
-        let mut special_primaries =
-            crate::provider::Baked::SINGLETON_COLLATION_SPECIAL_PRIMARIES_V1;
+        let special_primaries = crate::provider::Baked::SINGLETON_COLLATION_SPECIAL_PRIMARIES_V1;
         // `variant_count` isn't stable yet:
         // https://github.com/rust-lang/rust/issues/73662
         if special_primaries.last_primaries.len() <= (MaxVariable::Currency as usize) {
             return Err(DataError::custom("invalid").with_marker(CollationSpecialPrimariesV1::INFO));
+        } else if CollationSpecialPrimariesValidated::HARDCODED_FALLBACK.numeric_primary
+            != special_primaries.numeric_primary
+            || CollationSpecialPrimariesValidated::HARDCODED_FALLBACK
+                .last_primaries
+                .iter()
+                .zip(special_primaries.last_primaries.iter())
+                .any(|(a, b)| a != b)
+        {
+            // Baked data without compressible bits, but not matching hardcoded data
+            return Err(
+                DataError::custom("cannot fall back to hardcoded compressible data")
+                    .with_marker(CollationSpecialPrimariesV1::INFO),
+            );
         }
-        if special_primaries.last_primaries.len() == (MaxVariable::Currency as usize) {
-            // Baked data without compressible bits, use hardcoded data
-            if CollationSpecialPrimaries::HARDCODED_FALLBACK.numeric_primary
-                != special_primaries.numeric_primary
-                || CollationSpecialPrimaries::HARDCODED_FALLBACK
-                    .last_primaries
-                    .iter()
-                    .zip(special_primaries.last_primaries.iter())
-                    .any(|(a, b)| a != b)
-            {
-                return Err(DataError::custom("cannot fall back to compressible data")
-                    .with_marker(CollationSpecialPrimariesV1::INFO));
-            }
-            special_primaries = CollationSpecialPrimaries::HARDCODED_FALLBACK;
-        }
+        let special_primaries = CollationSpecialPrimariesValidated::HARDCODED_FALLBACK;
 
         // Attribute belongs closer to `unwrap`, but
         // https://github.com/rust-lang/rust/issues/15701
