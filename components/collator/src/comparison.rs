@@ -496,7 +496,7 @@ impl Collator {
                 == (MaxVariable::Currency as usize)
                     + core::mem::size_of_val(
                         &CollationSpecialPrimariesValidated::HARDCODED_FALLBACK.compressible_bytes,
-                    )
+                    ) / core::mem::size_of::<u16>()
             {
                 CollationSpecialPrimariesValidated {
                     compressible_bytes: array::from_fn(|i| {
