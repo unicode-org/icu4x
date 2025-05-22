@@ -102,7 +102,7 @@ not fixed in code. However, there are legitimate use cases where only one calend
 in which case [`DateTimeFormatter`] would link unused data. In this case [`FixedCalendarDateTimeFormatter`]
 can be used, which is generic in a calendar type and only links the data for that calendar.
 
-Using [`FixedCalendarDateTimeFormatter`] also avoid linking code that converts inputs to the user's calendar.
+Using [`FixedCalendarDateTimeFormatter`] also avoids linking code that converts inputs to the user's calendar.
 For field sets that don't contain dates, this can also be achieved using [`NoCalendarFormatter`].
 
 <!-- cargo-rdme end -->
