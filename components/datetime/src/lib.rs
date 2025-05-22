@@ -102,7 +102,7 @@
 //! in which case [`DateTimeFormatter`] would link unused data. In this case [`FixedCalendarDateTimeFormatter`]
 //! can be used, which is generic in a calendar type and only links the data for that calendar.
 //! 
-//! Using [`FixedCalendarDateTimeFormatter`] also avoid linking code that converts inputs to the user's calendar.
+//! Using [`FixedCalendarDateTimeFormatter`] also avoids linking code that converts inputs to the user's calendar.
 //! For field sets that don't contain dates, this can also be achieved using [`NoCalendarFormatter`].
 
 // https://github.com/unicode-org/icu4x/blob/main/documents/process/boilerplate.md#library-annotations
