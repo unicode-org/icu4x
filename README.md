@@ -1,9 +1,18 @@
-# ICU4X [![Docs](https://docs.rs/icu/badge.svg)](https://docs.rs/icu) [![Build Status](https://github.com/unicode-org/icu4x/actions/workflows/build-test.yml/badge.svg)](https://github.com/unicode-org/icu4x/actions) [![Coverage Status (Coveralls)](https://coveralls.io/repos/github/unicode-org/icu4x/badge.svg?branch=main)](https://coveralls.io/github/unicode-org/icu4x?branch=main) [![Coverage Status (Codecov)](https://codecov.io/gh/unicode-org/icu4x/branch/main/graph/badge.svg)](https://app.codecov.io/gh/unicode-org/icu4x/tree/main)
+<p align="center">
+<a href="https://icu4x.unicode.org">
+<img src="https://icu4x.unicode.org/icon_glow.png" alt="Logo" width="150" height="150">
+</a>
+</p>
 
-Welcome to the home page for the `ICU4X` project.
+# Welcome to ICU4X 
 
-`ICU4X` provides components enabling wide range of software internationalization.
-It draws deeply from the experience of [`ICU4C`](https://unicode-org.github.io/icu-docs/apidoc/released/icu4c/), [`ICU4J`](https://unicode-org.github.io/icu-docs/apidoc/released/icu4j/) and [`ECMA-402`](https://github.com/tc39/ecma402/) and relies on data from the [`CLDR`](http://cldr.unicode.org/) project.
+[![Docs](https://docs.rs/icu/badge.svg)](https://docs.rs/icu) [![Build Status](https://github.com/unicode-org/icu4x/actions/workflows/build-test.yml/badge.svg)](https://github.com/unicode-org/icu4x/actions) [![Coverage Status (Coveralls)](https://coveralls.io/repos/github/unicode-org/icu4x/badge.svg?branch=main)](https://coveralls.io/github/unicode-org/icu4x?branch=main) [![Coverage Status (Codecov)](https://codecov.io/gh/unicode-org/icu4x/branch/main/graph/badge.svg)](https://app.codecov.io/gh/unicode-org/icu4x/tree/main)
+
+
+ICU4X provides components enabling wide range of software internationalization.
+It draws deeply from the experience of [ICU4C](https://unicode-org.github.io/icu-docs/apidoc/released/icu4c/), [ICU4J](https://unicode-org.github.io/icu-docs/apidoc/released/icu4j/) and [ECMA-402](https://github.com/tc39/ecma402/) and relies on data from the [CLDR](http://cldr.unicode.org/) project.
+
+ICU4X is fully implemented in the [Rust programming language](https://rust-lang.org).
 
 The design goals of `ICU4X` are:
 
@@ -14,15 +23,11 @@ The design goals of `ICU4X` are:
 
 ***Stay informed!*** Join our public, low-traffic mailing list: [icu4x-announce@unicode.org](https://groups.google.com/a/unicode.org/g/icu4x-announce).  *Note: After subscribing, check your spam folder for a confirmation.*
 
-## Documentation
-
-For an introduction to the project, please visit the [our website](https://icu4x.unicode.org/).
-
-For technical information on how to use ICU4X, visit our [API docs (latest release)](https://docs.rs/icu/latest/) or [API docs (tip of main)](https://unicode-org.github.io/icu4x/rustdoc/icu/).
+For more information, please visit [our website](https://icu4x.unicode.org/).
 
 ## Quick Start
 
-An example `ICU4X` powered application in Rust may look like below...
+An example ICU4X powered application in Rust may look like this:
 
 `Cargo.toml`:
 

@@ -1,6 +1,6 @@
-# Contributing to ICU4X Project
+# Contributing to ICU4X
 
-`ICU4X` is an open source project and welcomes everyone to participate.
+ICU4X is an open source project and welcomes everyone to participate.
 
 The core team has identified good starter projects and gave them **[good first issue](https://github.com/unicode-org/icu4x/issues?q=is%3Aissue+no%3Aassignee+label%3A%22good+first+issue%22+-label%3A%22blocked%22+) label**.  This is a great place to start as a volunteer.
 
@@ -42,7 +42,7 @@ To build all code paths, improve build times in VSCode, and prevent locking the 
 }
 ```
 
-Note: the path in `ICU4X_DATA_DIR` is relative to `provider/data/*/src/lib.rs` and it causes VSCode to build ICU4X with only the `und` locale. This reduces build times but also makes some tests fail; to run them normally, run `cargo test --all-features` on the command line.
+Note: the path in `ICU4X_DATA_DIR` is relative to `provider/data/*/src/lib.rs` and it causes Rust Analyzer to build ICU4X with only the `und` locale. This reduces build times but also makes some tests fail; to run them normally, run `cargo test --all-features` on the command line.
 
 ### Building and Rebuilding Repo Data
 
@@ -80,6 +80,10 @@ Tips:
 - Set your desired locales and data markers on the bottom two lines.
 - To overwrite the directly, add: `-W`
 - To print verbose logs, add: `-v`
+
+### Browsing artifacts
+
+Several artifacts that are generated from the `main` branch are viewable at <https://unicode-org.github.io/icu4x/>. These include API docs, benchmarks, and the WASM demo. It's useful to bookmark this page for quick access.
 
 ## Contributing a Pull Request
 
@@ -120,7 +124,7 @@ need to run in order to recreate them.  These files may be run in more comprehen
 - `cargo make bakeddata` - regenerates baked data in the `provider/data` directory.
     - `cargo make bakeddata foo` can be used to generate data in `provider/data/foo` only.
 - `cargo make generate-readmes` - generates README files according to Rust docs. Output files must be committed in git for check to pass.
-- `cargo make diplomat-gen` - recreates the Diplomat generated files in the `ffi/capi` directory.
+- `cargo make diplomat-gen` - recreates the Diplomat generated files in the `ffi/capi/bindings` directory.
 - `cargo make codegen` - recreates certain Askama generated files in the `ffi/capi/src` directory based on templates in `tools/make/codegen/templates`.
 
 ### Testing
@@ -222,7 +226,7 @@ We try to use [Conventional Comments](https://conventionalcomments.org/) for rev
 
 ### Social Contract
 
-`ICU4X` project focuses on a fairly hermetic domain of software internationalization, which requires prior knowledge of the domain.
+ICU4X project focuses on a fairly hermetic domain of software internationalization, which requires prior knowledge of the domain.
 With that in mind, most engineers working on patch authoring and reviews are expected to be senior enough to be trusted with the quality of their additions to the code.
 
 For those reasons, we are primarily placing **trust** in pull request authors to write high quality, readable, tested, maintainable and well documented code.
