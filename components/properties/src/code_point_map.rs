@@ -28,8 +28,6 @@ impl<T: TrieValue> CodePointMapData<T> {
     ///
     /// See the documentation on [`EnumeratedProperty`] implementations for details.
     ///
-    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
-    ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
     #[allow(clippy::new_ret_no_self)]
@@ -304,8 +302,6 @@ impl<T: TrieValue> CodePointMapDataBorrowed<'static, T> {
     ///
     /// See the documentation on [`EnumeratedProperty`] implementations for details.
     ///
-    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
-    ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
     pub const fn new() -> Self
@@ -380,8 +376,6 @@ pub trait EnumeratedProperty: crate::private::Sealed + TrieValue {
     const SHORT_NAME: &'static [u8];
 
     /// Convenience method for `CodePointMapData::new().get(ch)`
-    ///
-    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     #[cfg(feature = "compiled_data")]
     fn for_char(ch: char) -> Self {
         CodePointMapData::new().get(ch)

@@ -87,8 +87,6 @@ impl CompactDecimalFormatter {
     /// then collects all compiled data necessary to format numbers in short compact
     /// decimal notation for the given locale.
     ///
-    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
-    ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     ///
     /// # Examples
@@ -172,8 +170,6 @@ impl CompactDecimalFormatter {
     /// Constructor that takes a selected locale and a list of preferences,
     /// then collects all compiled data necessary to format numbers in short compact
     /// decimal notation for the given locale.
-    ///
-    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     ///
@@ -314,8 +310,6 @@ impl CompactDecimalFormatter {
     /// The result may have a fractional digit only if it is compact and its
     /// significand is less than 10. Trailing fractional 0s are omitted, and
     /// a sign is shown only for negative values.
-    ///
-    /// ✨ *Enabled with the `ryu` Cargo feature.*
     ///
     /// # Examples
     ///

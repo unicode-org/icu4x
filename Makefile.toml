@@ -251,8 +251,9 @@ dependencies = [
 [tasks.ci-job-doc]
 description = "Runs rustdoc generation for the CI 'doc' job"
 category = "CI"
-env = { RUSTDOCFLAGS = "-Dwarnings", ICU4X_DATA_DIR = "../stubdata" }
+env = { RUSTDOCFLAGS = "-Dwarnings --cfg docsrs", ICU4X_DATA_DIR = "../stubdata" }
 command = "cargo"
+toolchain = "${PINNED_CI_NIGHTLY}"
 args = ["doc", "--workspace", "--release", "--all-features", "--no-deps", "--lib"]
 
 [tasks.ci-all]

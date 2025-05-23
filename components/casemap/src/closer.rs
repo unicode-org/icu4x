@@ -89,8 +89,6 @@ impl CaseMapCloser<CaseMapper> {
     /// assert!(set.contains('ẞ'));
     /// ```
     ///
-    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
-    ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
     #[allow(clippy::new_ret_no_self)] // Intentional
@@ -111,8 +109,6 @@ impl<CM: AsRef<CaseMapper>> CaseMapCloser<CM> {
 
     /// A constructor which creates a [`CaseMapCloser`] from an existing [`CaseMapper`]
     /// (either owned or as a reference)
-    ///
-    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
@@ -181,8 +177,6 @@ impl CaseMapCloserBorrowed<'static> {
     /// assert!(set.contains('ß'));
     /// assert!(set.contains('ẞ'));
     /// ```
-    ///
-    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]

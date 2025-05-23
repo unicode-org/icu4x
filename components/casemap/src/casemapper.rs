@@ -68,8 +68,6 @@ impl CaseMapperBorrowed<'static> {
     }
     /// Creates a [`CaseMapperBorrowed`] using compiled data.
     ///
-    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
-    ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     ///
     /// # Examples
@@ -601,8 +599,6 @@ impl<'a> CaseMapperBorrowed<'a> {
 
 impl CaseMapper {
     /// Creates a [`CaseMapperBorrowed`] using compiled data.
-    ///
-    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     ///

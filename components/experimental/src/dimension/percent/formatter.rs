@@ -61,8 +61,6 @@ impl PercentFormatter<DecimalFormatter> {
 
     /// Creates a new [`PercentFormatter`] from compiled locale data and an options bag.
     ///
-    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
-    ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
     pub fn try_new(
@@ -132,8 +130,6 @@ where
     R: AsRef<DecimalFormatter>,
 {
     /// Creates a new [`PercentFormatter`] from compiled locale data, an options bag and fixed decimal formatter.
-    ///
-    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]

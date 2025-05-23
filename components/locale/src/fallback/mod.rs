@@ -100,8 +100,6 @@ pub struct LocaleFallbackIterator<'a> {
 impl LocaleFallbacker {
     /// Creates a [`LocaleFallbacker`] with compiled fallback data (likely subtags and parent locales).
     ///
-    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
-    ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
     #[allow(clippy::new_ret_no_self)] // keeping constructors together
@@ -184,8 +182,6 @@ impl<'a> LocaleFallbackerBorrowed<'a> {
 
 impl LocaleFallbackerBorrowed<'static> {
     /// Creates a [`LocaleFallbackerBorrowed`] with compiled fallback data (likely subtags and parent locales).
-    ///
-    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]

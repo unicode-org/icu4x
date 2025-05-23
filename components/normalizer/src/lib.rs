@@ -18,6 +18,7 @@
     )
 )]
 #![warn(missing_docs)]
+#![cfg_attr(docsrs, feature(doc_cfg, doc_auto_cfg))]
 
 //! Normalizing text into Unicode Normalization Forms.
 //!
@@ -1488,8 +1489,6 @@ macro_rules! normalizer_methods {
         ///
         /// Unpaired surrogates are mapped to the REPLACEMENT CHARACTER
         /// before normalizing.
-        ///
-        /// ✨ *Enabled with the `utf16_iter` Cargo feature.*
         #[cfg(feature = "utf16_iter")]
         pub fn normalize_utf16<'a>(&self, text: &'a [u16]) -> Cow<'a, [u16]> {
             let (head, tail) = self.split_normalized_utf16(text);
@@ -1505,8 +1504,6 @@ macro_rules! normalizer_methods {
         /// Split a slice of potentially-invalid UTF-16 into maximum normalized (and valid)
         /// prefix and unnormalized suffix such that the concatenation of the prefix and the
         /// normalization of the suffix is the normalization of the whole input.
-        ///
-        /// ✨ *Enabled with the `utf16_iter` Cargo feature.*
         #[cfg(feature = "utf16_iter")]
         pub fn split_normalized_utf16<'a>(&self, text: &'a [u16]) -> (&'a [u16], &'a [u16]) {
             let up_to = self.is_normalized_utf16_up_to(text);
@@ -1518,8 +1515,6 @@ macro_rules! normalizer_methods {
         }
 
         /// Return the index a slice of potentially-invalid UTF-16 is normalized up to.
-        ///
-        /// ✨ *Enabled with the `utf16_iter` Cargo feature.*
         #[cfg(feature = "utf16_iter")]
         fn is_normalized_utf16_up_to(&self, text: &[u16]) -> usize {
             let mut sink = IsNormalizedSinkUtf16::new(text);
@@ -1530,8 +1525,6 @@ macro_rules! normalizer_methods {
         /// Checks whether a slice of potentially-invalid UTF-16 is normalized.
         ///
         /// Unpaired surrogates are treated as the REPLACEMENT CHARACTER.
-        ///
-        /// ✨ *Enabled with the `utf16_iter` Cargo feature.*
         #[cfg(feature = "utf16_iter")]
         pub fn is_normalized_utf16(&self, text: &[u16]) -> bool {
             self.is_normalized_utf16_up_to(text) == text.len()
@@ -1541,8 +1534,6 @@ macro_rules! normalizer_methods {
         ///
         /// Ill-formed byte sequences are mapped to the REPLACEMENT CHARACTER
         /// according to the WHATWG Encoding Standard.
-        ///
-        /// ✨ *Enabled with the `utf8_iter` Cargo feature.*
         #[cfg(feature = "utf8_iter")]
         pub fn normalize_utf8<'a>(&self, text: &'a [u8]) -> Cow<'a, str> {
             let (head, tail) = self.split_normalized_utf8(text);
@@ -1559,8 +1550,6 @@ macro_rules! normalizer_methods {
         /// Split a slice of potentially-invalid UTF-8 into maximum normalized (and valid)
         /// prefix and unnormalized suffix such that the concatenation of the prefix and the
         /// normalization of the suffix is the normalization of the whole input.
-        ///
-        /// ✨ *Enabled with the `utf8_iter` Cargo feature.*
         #[cfg(feature = "utf8_iter")]
         pub fn split_normalized_utf8<'a>(&self, text: &'a [u8]) -> (&'a str, &'a [u8]) {
             let up_to = self.is_normalized_utf8_up_to(text);
@@ -1575,8 +1564,6 @@ macro_rules! normalizer_methods {
         }
 
         /// Return the index a slice of potentially-invalid UTF-8 is normalized up to
-        ///
-        /// ✨ *Enabled with the `utf8_iter` Cargo feature.*
         #[cfg(feature = "utf8_iter")]
         fn is_normalized_utf8_up_to(&self, text: &[u8]) -> usize {
             let mut sink = IsNormalizedSinkUtf8::new(text);
@@ -1588,8 +1575,6 @@ macro_rules! normalizer_methods {
         ///
         /// Ill-formed byte sequences are mapped to the REPLACEMENT CHARACTER
         /// according to the WHATWG Encoding Standard before checking.
-        ///
-        /// ✨ *Enabled with the `utf8_iter` Cargo feature.*
         #[cfg(feature = "utf8_iter")]
         pub fn is_normalized_utf8(&self, text: &[u8]) -> bool {
             self.is_normalized_utf8_up_to(text) == text.len()
@@ -1629,8 +1614,6 @@ impl DecomposingNormalizerBorrowed<'static> {
 
     /// NFD constructor using compiled data.
     ///
-    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
-    ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
     pub const fn new_nfd() -> Self {
@@ -1655,8 +1638,6 @@ impl DecomposingNormalizerBorrowed<'static> {
     }
 
     /// NFKD constructor using compiled data.
-    ///
-    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
@@ -1844,8 +1825,6 @@ impl<'data> DecomposingNormalizerBorrowed<'data> {
         ///
         /// Ill-formed byte sequences are mapped to the REPLACEMENT CHARACTER
         /// according to the WHATWG Encoding Standard.
-        ///
-        /// ✨ *Enabled with the `utf8_iter` Cargo feature.*
         #[cfg(feature = "utf8_iter")]
         ,
         normalize_utf8_to,
@@ -1942,8 +1921,6 @@ impl<'data> DecomposingNormalizerBorrowed<'data> {
         ///
         /// Unpaired surrogates are mapped to the REPLACEMENT CHARACTER
         /// before normalizing.
-        ///
-        /// ✨ *Enabled with the `utf16_iter` Cargo feature.*
         #[cfg(feature = "utf16_iter")]
         ,
         normalize_utf16_to,
@@ -2064,8 +2041,6 @@ impl DecomposingNormalizer {
 
     /// NFD constructor using compiled data.
     ///
-    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
-    ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
     pub const fn new_nfd() -> DecomposingNormalizerBorrowed<'static> {
@@ -2130,8 +2105,6 @@ impl DecomposingNormalizer {
     );
 
     /// NFKD constructor using compiled data.
-    ///
-    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
@@ -2272,8 +2245,6 @@ impl ComposingNormalizerBorrowed<'static> {
 
     /// NFC constructor using compiled data.
     ///
-    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
-    ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
     pub const fn new_nfc() -> Self {
@@ -2284,8 +2255,6 @@ impl ComposingNormalizerBorrowed<'static> {
     }
 
     /// NFKC constructor using compiled data.
-    ///
-    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
@@ -2414,8 +2383,6 @@ impl<'data> ComposingNormalizerBorrowed<'data> {
         ///
         /// Ill-formed byte sequences are mapped to the REPLACEMENT CHARACTER
         /// according to the WHATWG Encoding Standard.
-        ///
-        /// ✨ *Enabled with the `utf8_iter` Cargo feature.*
         #[cfg(feature = "utf8_iter")]
         ,
         normalize_utf8_to,
@@ -2498,8 +2465,6 @@ impl<'data> ComposingNormalizerBorrowed<'data> {
         ///
         /// Unpaired surrogates are mapped to the REPLACEMENT CHARACTER
         /// before normalizing.
-        ///
-        /// ✨ *Enabled with the `utf16_iter` Cargo feature.*
         #[cfg(feature = "utf16_iter")]
         ,
         normalize_utf16_to,
@@ -2630,8 +2595,6 @@ impl ComposingNormalizer {
 
     /// NFC constructor using compiled data.
     ///
-    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
-    ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
     pub const fn new_nfc() -> ComposingNormalizerBorrowed<'static> {
@@ -2668,8 +2631,6 @@ impl ComposingNormalizer {
     }
 
     /// NFKC constructor using compiled data.
-    ///
-    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]

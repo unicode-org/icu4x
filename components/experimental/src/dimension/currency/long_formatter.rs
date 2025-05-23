@@ -53,8 +53,6 @@ impl LongCurrencyFormatter {
 
     /// Creates a new [`LongCurrencyFormatter`] from compiled locale data.
     ///
-    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
-    ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
     pub fn try_new(

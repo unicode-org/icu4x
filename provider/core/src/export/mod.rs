@@ -4,8 +4,6 @@
 
 //! This module contains types required to export ICU4X data via the `icu_provider_export` crate.
 //! End users should not need to consume anything in this module.
-//!
-//! This module is enabled with the `export` Cargo feature.
 
 mod payload;
 

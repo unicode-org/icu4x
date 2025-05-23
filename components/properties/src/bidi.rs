@@ -70,8 +70,6 @@ pub enum BidiPairedBracketType {
 
 /// Implements [`unicode_bidi::BidiDataSource`] on [`CodePointMapDataBorrowed<BidiClass>`](crate::CodePointMapDataBorrowed).
 ///
-/// ✨ *Enabled with the `unicode_bidi` Cargo feature.*
-///
 /// # Examples
 ///
 ///```

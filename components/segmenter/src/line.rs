@@ -377,8 +377,6 @@ impl LineSegmenter {
     ///
     /// See also [`Self::new_auto`].
     ///
-    /// ✨ *Enabled with the `compiled_data` and `auto` Cargo features.*
-    ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "auto")]
     #[cfg(feature = "compiled_data")]
@@ -419,8 +417,6 @@ impl LineSegmenter {
     /// the full dictionary but more expensive during segmentation (inference).
     ///
     /// See also [`Self::new_lstm`].
-    ///
-    /// ✨ *Enabled with the `compiled_data` and `lstm` Cargo features.*
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "lstm")]
@@ -470,8 +466,6 @@ impl LineSegmenter {
     /// faster than the LSTM model but requires more data.
     ///
     /// See also [`Self::new_dictionary`].
-    ///
-    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]

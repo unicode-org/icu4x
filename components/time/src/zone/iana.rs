@@ -75,8 +75,6 @@ impl IanaParser {
     ///
     /// See [`IanaParser`] for an example.
     ///
-    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
-    ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
     #[allow(clippy::new_ret_no_self)]
@@ -145,8 +143,6 @@ impl IanaParserBorrowed<'static> {
     /// Creates a new [`IanaParserBorrowed`] using compiled data.
     ///
     /// See [`IanaParserBorrowed`] for an example.
-    ///
-    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
@@ -266,8 +262,6 @@ impl IanaParserExtended<IanaParser> {
     ///
     /// See [`IanaParserExtended`] for an example.
     ///
-    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
-    ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
     #[allow(clippy::new_ret_no_self)]
@@ -304,8 +298,6 @@ where
     /// and a pre-existing [`IanaParser`], which can be borrowed.
     ///
     /// See [`IanaParserExtended`] for an example.
-    ///
-    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
@@ -385,8 +377,6 @@ impl IanaParserExtendedBorrowed<'static> {
     /// Creates a new [`IanaParserExtendedBorrowed`] using compiled data.
     ///
     /// See [`IanaParserExtendedBorrowed`] for an example.
-    ///
-    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]

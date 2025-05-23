@@ -99,8 +99,6 @@ pub struct JapaneseDateInner {
 impl Japanese {
     /// Creates a new [`Japanese`] using only modern eras (post-meiji) from compiled data.
     ///
-    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
-    ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
     pub const fn new() -> Self {
@@ -133,8 +131,6 @@ impl Japanese {
 
 impl JapaneseExtended {
     /// Creates a new [`Japanese`] from using all eras (including pre-meiji) from compiled data.
-    ///
-    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]

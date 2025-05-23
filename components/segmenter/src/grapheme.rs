@@ -121,8 +121,6 @@ pub struct GraphemeClusterSegmenterBorrowed<'data> {
 impl GraphemeClusterSegmenter {
     /// Constructs a [`GraphemeClusterSegmenterBorrowed`] with an invariant locale from compiled data.
     ///
-    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
-    ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
     #[allow(clippy::new_ret_no_self)] // Deliberate choice, see #5554

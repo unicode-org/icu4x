@@ -69,8 +69,6 @@ impl CanonicalCompositionBorrowed<'static> {
 
     /// Constructs a new `CanonicalComposition` using compiled data.
     ///
-    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
-    ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
     pub const fn new() -> Self {
@@ -135,8 +133,6 @@ impl CanonicalComposition {
     }
 
     /// Constructs a new `CanonicalCompositionBorrowed` using compiled data.
-    ///
-    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
@@ -213,8 +209,6 @@ impl CanonicalDecompositionBorrowed<'static> {
     }
 
     /// Construct from compiled data.
-    ///
-    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
@@ -463,8 +457,6 @@ impl CanonicalDecomposition {
 
     /// Construct from compiled data.
     ///
-    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
-    ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
     #[allow(clippy::new_ret_no_self)]
@@ -552,8 +544,6 @@ impl CanonicalCombiningClassMapBorrowed<'static> {
 
     /// Construct from compiled data.
     ///
-    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
-    ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
     pub const fn new() -> Self {
@@ -591,8 +581,6 @@ impl CanonicalCombiningClassMapBorrowed<'_> {
     }
 
     /// Look up the canonical combining class for a scalar value
-    ///
-    /// ✨ *Enabled with the `icu_properties` Cargo feature.*
     #[inline(always)]
     #[cfg(feature = "icu_properties")]
     pub fn get(&self, c: char) -> CanonicalCombiningClass {
@@ -602,8 +590,6 @@ impl CanonicalCombiningClassMapBorrowed<'_> {
     /// Look up the canonical combining class for a scalar value
     /// represented as `u32`. If the argument is outside the scalar
     /// value range, `CanonicalCombiningClass::NotReordered` is returned.
-    ///
-    /// ✨ *Enabled with the `icu_properties` Cargo feature.*
     #[cfg(feature = "icu_properties")]
     pub fn get32(&self, c: u32) -> CanonicalCombiningClass {
         CanonicalCombiningClass::from_icu4c_value(self.get32_u8(c))
@@ -633,8 +619,6 @@ impl CanonicalCombiningClassMap {
     }
 
     /// Construct from compiled data.
-    ///
-    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]

@@ -73,6 +73,7 @@
     )
 )]
 #![warn(missing_docs)]
+#![cfg_attr(docsrs, feature(doc_cfg, doc_auto_cfg))]
 
 extern crate alloc;
 
@@ -525,8 +526,6 @@ impl PluralRules {
 
 /// A [`PluralRules`] that also has the ability to retrieve an appropriate [`Plural Category`] for a
 /// range.
-///
-/// ✨ *Enabled with the `experimental` Cargo feature.*
 ///
 /// <div class="stab unstable">
 /// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,

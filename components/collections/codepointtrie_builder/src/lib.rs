@@ -137,8 +137,6 @@ where
     /// Under the hood, this function runs ICU4C code compiled into WASM,
     /// or links natively to ICU4C as specified by the `ICU4C_LIB_PATH` env var
     ///
-    /// ✨ *Enabled with either the `wasm` or the `icu4c` Cargo feature.*
-    ///
     /// [`CodePointTrie`]: icu_collections::codepointtrie::CodePointTrie
     #[cfg(any(feature = "wasm", feature = "icu4c"))]
     pub fn build(self) -> icu_collections::codepointtrie::CodePointTrie<'static, T> {

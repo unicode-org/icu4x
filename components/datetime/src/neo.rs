@@ -220,8 +220,6 @@ where
     /// This ignores the `calendar_kind` preference and instead uses the static calendar type,
     /// and supports calendars that are not expressible as preferences, such as [`JapaneseExtended`](icu_calendar::cal::JapaneseExtended).
     ///
-    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
-    ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
     pub fn try_new(
@@ -439,8 +437,6 @@ where
     ///
     /// This method will use the calendar specified in the `calendar_algorithm` preference, or fall back to the default
     /// calendar for the preferences if unspecified or unsupported. See [`IntoFormattableAnyCalendar`] for a list of supported calendars.
-    ///
-    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[inline(never)]

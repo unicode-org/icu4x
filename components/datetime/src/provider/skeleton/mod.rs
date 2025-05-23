@@ -8,8 +8,6 @@
 //!
 //! See [`Skeleton`](reference::Skeleton) and [`Bag`](components::Bag) for more information.
 //!
-//! ✨ *Enabled with the `datagen` Cargo feature.*
-//!
 //! # Implementation status
 //!
 //! This is currently only a partial implementation of the UTS-35 skeleton matching algorithm.
