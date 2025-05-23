@@ -648,6 +648,8 @@ impl AnyCalendar {
     }
 
     #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::new)]
+    #[cfg_attr(not(feature = "unstable"), doc(hidden))]
+    #[cfg_attr(docsrs, doc(cfg(feature = "unstable")))]
     pub fn try_new_unstable<P>(provider: &P, kind: AnyCalendarKind) -> Result<Self, DataError>
     where
         P: DataProvider<crate::provider::CalendarJapaneseModernV1>
@@ -903,29 +905,49 @@ impl fmt::Display for AnyCalendarKind {
 }
 
 /// Trait for calendars that may be converted to [`AnyCalendar`]
+///
+/// <div class="stab unstable">
+/// 🚫 This trait is sealed; it should not be implemented by user code. If an API requests an item that implements this
+/// trait, please consider using a type from the implementors listed below.
+///
+/// It is still possible to implement this trait in userland (since `UnstableSealed` is public),
+/// do not do so unless you are prepared for things to occasionally break.
+/// </div>
 pub trait IntoAnyCalendar: Calendar + Sized {
     /// Convert this calendar into an [`AnyCalendar`], moving it
     ///
     /// You should not need to call this method directly
+    #[cfg_attr(not(feature = "unstable"), doc(hidden))]
+    #[cfg_attr(docsrs, doc(cfg(feature = "unstable")))]
     fn to_any(self) -> AnyCalendar;
 
     /// The [`AnyCalendarKind`] enum variant associated with this calendar
+    #[cfg_attr(not(feature = "unstable"), doc(hidden))]
+    #[cfg_attr(docsrs, doc(cfg(feature = "unstable")))]
     fn kind(&self) -> AnyCalendarKind;
 
     /// Move an [`AnyCalendar`] into a `Self`, or returning it as an error
+    #[cfg_attr(not(feature = "unstable"), doc(hidden))]
+    #[cfg_attr(docsrs, doc(cfg(feature = "unstable")))]
     /// if the types do not match.
     ///
     /// You should not need to call this method directly
+    #[cfg_attr(not(feature = "unstable"), doc(hidden))]
+    #[cfg_attr(docsrs, doc(cfg(feature = "unstable")))]
     fn from_any(any: AnyCalendar) -> Result<Self, AnyCalendar>;
 
     /// Convert an [`AnyCalendar`] reference into a `Self` reference.
     ///
     /// You should not need to call this method directly
+    #[cfg_attr(not(feature = "unstable"), doc(hidden))]
+    #[cfg_attr(docsrs, doc(cfg(feature = "unstable")))]
     fn from_any_ref(any: &AnyCalendar) -> Option<&Self>;
 
     /// Convert a date for this calendar into an `AnyDateInner`
     ///
     /// You should not need to call this method directly
+    #[cfg_attr(not(feature = "unstable"), doc(hidden))]
+    #[cfg_attr(docsrs, doc(cfg(feature = "unstable")))]
     fn date_to_any(&self, d: &Self::DateInner) -> AnyDateInner;
 }
 

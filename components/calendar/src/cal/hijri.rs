@@ -142,6 +142,8 @@ impl HijriSimulated {
     ]);
 
     #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::new_mecca)]
+    #[cfg_attr(not(feature = "unstable"), doc(hidden))]
+    #[cfg_attr(docsrs, doc(cfg(feature = "unstable")))]
     pub fn try_new_mecca_unstable<D: DataProvider<CalendarHijriSimulatedMeccaV1> + ?Sized>(
         provider: &D,
     ) -> Result<Self, DataError> {

@@ -131,6 +131,8 @@ impl Dangi {
     ]);
 
     #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::new)]
+    #[cfg_attr(not(feature = "unstable"), doc(hidden))]
+    #[cfg_attr(docsrs, doc(cfg(feature = "unstable")))]
     pub fn try_new_unstable<D: DataProvider<CalendarDangiV1> + ?Sized>(
         provider: &D,
     ) -> Result<Self, DataError> {

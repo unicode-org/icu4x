@@ -64,7 +64,8 @@ use core::marker::PhantomData;
 /// Currently unstable for ICU4X 1.0
 #[derive(Eq, PartialEq)]
 #[allow(clippy::exhaustive_structs)] // this type should be stable (and is intended to be constructed manually)
-#[doc(hidden)] // unstable
+#[cfg_attr(not(feature = "unstable"), doc(hidden))]
+#[cfg_attr(docsrs, doc(cfg(feature = "unstable")))]
 pub struct DateDuration<C: Calendar + ?Sized> {
     /// The number of years
     pub years: i32,
@@ -92,7 +93,8 @@ impl<C: Calendar + ?Sized> Copy for DateDuration<C> {}
 /// care about
 #[derive(Copy, Clone, Eq, PartialEq, Debug)]
 #[allow(clippy::exhaustive_enums)] // this type should be stable
-#[doc(hidden)] // unstable
+#[cfg_attr(not(feature = "unstable"), doc(hidden))]
+#[cfg_attr(docsrs, doc(cfg(feature = "unstable")))]
 pub enum DateDurationUnit {
     /// Duration in years
     Years,
