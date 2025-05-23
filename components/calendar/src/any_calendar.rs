@@ -549,8 +549,6 @@ impl Calendar for AnyCalendar {
 impl AnyCalendar {
     /// Constructs an AnyCalendar for a given calendar kind from compiled data.
     ///
-    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
-    ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
     pub const fn new(kind: AnyCalendarKind) -> Self {

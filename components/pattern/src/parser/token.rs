@@ -6,8 +6,6 @@ use alloc::borrow::Cow;
 
 /// A [`PatternItem`] with additional detail returned by the [`Parser`].
 ///
-/// ✨ *Enabled with the `alloc` Cargo feature.*
-///
 /// # Examples
 ///
 /// ```

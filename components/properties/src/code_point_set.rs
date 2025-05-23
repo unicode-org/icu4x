@@ -31,8 +31,6 @@ pub struct CodePointSetData {
 impl CodePointSetData {
     /// Creates a new [`CodePointSetDataBorrowed`] for a [`BinaryProperty`].
     ///
-    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
-    ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[allow(clippy::new_ret_no_self)]
     #[cfg(feature = "compiled_data")]
@@ -113,8 +111,6 @@ pub struct CodePointSetDataBorrowed<'a> {
 
 impl CodePointSetDataBorrowed<'static> {
     /// Creates a new [`CodePointSetData`] for a [`BinaryProperty`].
-    ///
-    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[inline]
@@ -233,8 +229,6 @@ pub trait BinaryProperty: crate::private::Sealed + Sized {
     const SHORT_NAME: &'static [u8];
 
     /// Convenience method for `CodePointSetData::new().contains(ch)`
-    ///
-    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     #[cfg(feature = "compiled_data")]
     fn for_char(ch: char) -> bool {
         CodePointSetData::new::<Self>().contains(ch)

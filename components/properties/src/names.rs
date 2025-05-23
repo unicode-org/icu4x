@@ -81,8 +81,6 @@ impl<T> Copy for PropertyParserBorrowed<'_, T> {}
 impl<T> PropertyParser<T> {
     /// Creates a new instance of `PropertyParser<T>` using compiled data.
     ///
-    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
-    ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
     #[allow(clippy::new_ret_no_self)]
@@ -251,8 +249,6 @@ impl<T: ParseableEnumeratedProperty> Default for PropertyParserBorrowed<'static,
 impl<T: TrieValue> PropertyParserBorrowed<'static, T> {
     /// Creates a new instance of `PropertyParserBorrowed<T>` using compiled data.
     ///
-    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
-    ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
     pub fn new() -> Self
@@ -378,8 +374,6 @@ impl<T: NamedEnumeratedProperty> Copy for PropertyNamesLongBorrowed<'_, T> {}
 impl<T: NamedEnumeratedProperty> PropertyNamesLong<T> {
     /// Creates a new instance of `PropertyNamesLongBorrowed<T>`.
     ///
-    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
-    ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
     #[allow(clippy::new_ret_no_self)]
@@ -442,8 +436,6 @@ impl<T: NamedEnumeratedProperty> Default for PropertyNamesLongBorrowed<'static, 
 
 impl<T: NamedEnumeratedProperty> PropertyNamesLongBorrowed<'static, T> {
     /// Creates a new instance of `PropertyNamesLongBorrowed<T>`.
-    ///
-    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
@@ -510,8 +502,6 @@ impl<T: NamedEnumeratedProperty> Copy for PropertyNamesShortBorrowed<'_, T> {}
 
 impl<T: NamedEnumeratedProperty> PropertyNamesShort<T> {
     /// Creates a new instance of `PropertyNamesShortBorrowed<T>`.
-    ///
-    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
@@ -616,8 +606,6 @@ impl<T: NamedEnumeratedProperty> Default for PropertyNamesShortBorrowed<'static,
 impl<T: NamedEnumeratedProperty> PropertyNamesShortBorrowed<'static, T> {
     /// Creates a new instance of `PropertyNamesShortBorrowed<T>`.
     ///
-    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
-    ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
     pub fn new() -> Self {
@@ -721,22 +709,16 @@ pub trait NamedEnumeratedProperty: ParseableEnumeratedProperty {
     ) -> &'static Self::DataStructShort;
 
     /// Convenience method for `PropertyParser::new().get_loose(s)`
-    ///
-    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     #[cfg(feature = "compiled_data")]
     fn try_from_str(s: &str) -> Option<Self> {
         PropertyParser::new().get_loose(s)
     }
     /// Convenience method for `PropertyNamesLong::new().get(*self).unwrap()`
-    ///
-    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     #[cfg(feature = "compiled_data")]
     fn long_name(&self) -> &'static str {
         PropertyNamesLong::new().get(*self).unwrap_or("unreachable")
     }
     /// Convenience method for `PropertyNamesShort::new().get(*self).unwrap()`
-    ///
-    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     #[cfg(feature = "compiled_data")]
     fn short_name(&self) -> &'static str {
         PropertyNamesShort::new()

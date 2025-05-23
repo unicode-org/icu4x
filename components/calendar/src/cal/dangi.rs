@@ -112,8 +112,6 @@ impl Ord for Dangi {
 impl Dangi {
     /// Creates a new [`Dangi`] with some precomputed calendrical calculations.
     ///
-    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
-    ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
     pub const fn new() -> Self {

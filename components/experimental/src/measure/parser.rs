@@ -26,8 +26,6 @@ pub struct MeasureUnitParser {
 impl Default for MeasureUnitParser {
     /// Creates a new [`MeasureUnitParser`] from compiled data.
     ///
-    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
-    ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
     fn default() -> Self {
@@ -39,8 +37,6 @@ impl Default for MeasureUnitParser {
 
 impl MeasureUnitParser {
     /// Creates a new [`MeasureUnitParser`] from compiled data.
-    ///
-    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]

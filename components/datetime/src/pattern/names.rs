@@ -781,8 +781,6 @@ impl<C, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, FSet> {
     ///
     /// For an example, see [`FixedCalendarDateTimeNames`].
     ///
-    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
-    ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
     pub fn try_new(prefs: DateTimeFormatterPreferences) -> Result<Self, DataError> {
@@ -962,8 +960,6 @@ where
     ///
     /// The names in the current [`FixedCalendarDateTimeNames`] _must_ be sufficient for the field set.
     /// If not, the input object will be returned with an error.
-    ///
-    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     ///
@@ -1169,8 +1165,6 @@ where
     /// The names in the current [`DateTimeNames`] _must_ be sufficient for the field set.
     /// If not, the input object will be returned with an error.
     ///
-    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
-    ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     ///
     /// # Examples
@@ -1320,8 +1314,6 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, F
     ///
     /// Does not support multiple field symbols or lengths. See [#4337](https://github.com/unicode-org/icu4x/issues/4337)
     ///
-    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
-    ///
     /// # Examples
     ///
     /// ```
@@ -1381,8 +1373,6 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, F
     /// Includes month names for the specified symbol and length with compiled data.
     ///
     /// Does not support multiple field symbols or lengths. See [#4337](https://github.com/unicode-org/icu4x/issues/4337)
-    ///
-    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
     /// # Examples
     ///
@@ -1451,8 +1441,6 @@ impl<C, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, FSet> {
     ///
     /// Does not support multiple field symbols or lengths. See [#4337](https://github.com/unicode-org/icu4x/issues/4337)
     ///
-    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
-    ///
     /// # Examples
     ///
     /// ```
@@ -1514,8 +1502,6 @@ impl<C, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, FSet> {
     ///
     /// Does not support multiple field symbols or lengths. See [#4337](https://github.com/unicode-org/icu4x/issues/4337)
     ///
-    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
-    ///
     /// # Examples
     ///
     /// ```
@@ -1574,8 +1560,6 @@ impl<C, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, FSet> {
     ///
     /// This data should always be loaded when performing time zone formatting.
     /// By itself, it allows localized offset formats.
-    ///
-    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
     /// # Examples
     ///
@@ -1699,8 +1683,6 @@ impl<C, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, FSet> {
     /// - [`FixedCalendarDateTimeNames::include_time_zone_essentials`]
     /// - [`FixedCalendarDateTimeNames::load_time_zone_essentials`]
     ///
-    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
-    ///
     /// # Examples
     ///
     /// ```
@@ -1770,8 +1752,6 @@ impl<C, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, FSet> {
     ///
     /// - [`FixedCalendarDateTimeNames::include_time_zone_location_names`]
     /// - [`FixedCalendarDateTimeNames::load_time_zone_location_names`]
-    ///
-    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
     /// # Examples
     ///
@@ -1847,8 +1827,6 @@ impl<C, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, FSet> {
     ///
     /// - [`FixedCalendarDateTimeNames::include_time_zone_essentials`]
     /// - [`FixedCalendarDateTimeNames::load_time_zone_essentials`]
-    ///
-    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
     /// # Examples
     ///
@@ -1938,8 +1916,6 @@ impl<C, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, FSet> {
     ///
     /// - [`FixedCalendarDateTimeNames::include_time_zone_essentials`]
     /// - [`FixedCalendarDateTimeNames::load_time_zone_essentials`]
-    ///
-    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
     /// # Examples
     ///
@@ -2034,8 +2010,6 @@ impl<C, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, FSet> {
     /// - [`FixedCalendarDateTimeNames::include_time_zone_essentials`]
     /// - [`FixedCalendarDateTimeNames::load_time_zone_essentials`]
     ///
-    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
-    ///
     /// # Examples
     ///
     /// ```
@@ -2120,8 +2094,6 @@ impl<C, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, FSet> {
     ///
     /// - [`FixedCalendarDateTimeNames::include_time_zone_essentials`]
     /// - [`FixedCalendarDateTimeNames::load_time_zone_essentials`]
-    ///
-    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
     /// # Examples
     ///
@@ -2221,8 +2193,6 @@ impl<C, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, FSet> {
     /// and all data required for its fallback formats, with compiled data.
     ///
     /// See [`GenericShort`](crate::fieldsets::zone::GenericShort)
-    ///
-    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     #[cfg(feature = "compiled_data")]
     pub fn include_time_zone_generic_short_names_with_fallback(
         &mut self,
@@ -2279,8 +2249,6 @@ impl<C, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, FSet> {
     /// and all data required for its fallback formats, with compiled data.
     ///
     /// See [`GenericLong`](crate::fieldsets::zone::GenericLong)
-    ///
-    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     #[cfg(feature = "compiled_data")]
     pub fn include_time_zone_generic_long_names_with_fallback(
         &mut self,
@@ -2336,8 +2304,6 @@ impl<C, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, FSet> {
     /// except for decimal formatting, with compiled data.
     ///
     /// See [`SpecificShort`](crate::fieldsets::zone::SpecificShort)
-    ///
-    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     #[cfg(feature = "compiled_data")]
     pub fn include_time_zone_specific_short_names_with_fallback(
         &mut self,
@@ -2394,8 +2360,6 @@ impl<C, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, FSet> {
     /// except for decimal formatting, with compiled data.
     ///
     /// See [`SpecificLong`](crate::fieldsets::zone::SpecificLong)
-    ///
-    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     #[cfg(feature = "compiled_data")]
     pub fn include_time_zone_specific_long_names_with_fallback(
         &mut self,
@@ -2448,8 +2412,6 @@ impl<C, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, FSet> {
     ///
     /// - [`LocalizedOffsetShort`](crate::fieldsets::zone::LocalizedOffsetShort)
     /// - [`LocalizedOffsetLong`](crate::fieldsets::zone::LocalizedOffsetLong)
-    ///
-    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     #[cfg(feature = "compiled_data")]
     pub fn include_time_zone_localized_offset_names_with_fallback(
         &mut self,
@@ -2475,8 +2437,6 @@ impl<C, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, FSet> {
     }
 
     /// Loads a [`DecimalFormatter`] with compiled data.
-    ///
-    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
     /// # Examples
     ///
@@ -2588,8 +2548,6 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, F
     /// and includes all data required for that pattern, from compiled data.
     ///
     /// Does not support duplicate textual field symbols. See [#4337](https://github.com/unicode-org/icu4x/issues/4337)
-    ///
-    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
     /// # Examples
     ///

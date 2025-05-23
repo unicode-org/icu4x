@@ -158,8 +158,6 @@ where
 {
     /// Creates a pattern from an iterator of pattern items.
     ///
-    /// ✨ *Enabled with the `alloc` Cargo feature.*
-    ///
     /// # Examples
     ///
     /// ```
@@ -202,8 +200,6 @@ where
     <B::PlaceholderKeyCow<'a> as FromStr>::Err: fmt::Debug,
 {
     /// Creates a pattern by parsing a syntax string.
-    ///
-    /// ✨ *Enabled with the `alloc` Cargo feature.*
     ///
     /// # Examples
     ///
@@ -261,8 +257,6 @@ where
     /// Interpolates the pattern directly to a string, returning the string or an error.
     ///
     /// In addition to the error, the lossy fallback string is returned in the failure case.
-    ///
-    /// ✨ *Enabled with the `alloc` Cargo feature.*
     pub fn try_interpolate_to_string<'a, P>(
         &'a self,
         value_provider: P,
@@ -295,8 +289,6 @@ where
 
     #[cfg(feature = "alloc")]
     /// Interpolates the pattern directly to a string.
-    ///
-    /// ✨ *Enabled with the `alloc` Cargo feature.*
     pub fn interpolate_to_string<'a, P>(&'a self, value_provider: P) -> String
     where
         P: PlaceholderValueProvider<B::PlaceholderKey<'a>, Error = B::Error<'a>> + 'a,

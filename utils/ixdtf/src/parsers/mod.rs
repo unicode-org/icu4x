@@ -231,8 +231,6 @@ impl<'a> IxdtfParser<'a> {
 }
 
 /// A parser for time zone offset and IANA identifier strings.
-///
-/// ✨ *Enabled with the `timezone` Cargo feature.*
 #[derive(Debug)]
 pub struct TimeZoneParser<'a> {
     cursor: Cursor<'a>,
@@ -325,8 +323,6 @@ impl<'a> TimeZoneParser<'a> {
 }
 
 /// A parser for ISO8601 Duration strings.
-///
-/// ✨ *Enabled with the `duration` Cargo feature.*
 ///
 /// # Example
 ///
