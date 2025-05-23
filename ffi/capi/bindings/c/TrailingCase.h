@@ -19,5 +19,4 @@
 
 
 
-
 #endif // TrailingCase_H

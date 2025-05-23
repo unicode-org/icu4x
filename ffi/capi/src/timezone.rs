@@ -27,7 +27,13 @@ pub mod ffi {
         #[diplomat::rust_link(icu::time::TimeZone::unknown, FnInStruct, hidden)]
         #[diplomat::attr(auto, named_constructor)]
         pub fn unknown() -> Box<TimeZone> {
-            Box::new(TimeZone(icu_time::TimeZone::unknown()))
+            Box::new(TimeZone(icu_time::TimeZone::UNKNOWN))
+        }
+
+        /// Whether the time zone is the unknown zone.
+        #[diplomat::rust_link(icu::time::TimeZone::is_unknown, FnInStruct)]
+        pub fn is_unknown(&self) -> bool {
+            self.0.is_unknown()
         }
 
         /// Creates a time zone from a BCP-47 string.
@@ -62,11 +68,10 @@ pub mod ffi {
     }
 
     impl TimeZoneVariant {
-        /// Sets the `variant` field to "daylight" time.
         #[diplomat::rust_link(icu::time::zone::TimeZoneVariant::from_rearguard_isdst, FnInEnum)]
         #[diplomat::rust_link(icu::time::TimeZoneInfo::with_variant, FnInStruct)]
         #[diplomat::rust_link(icu::time::zone::TimeZoneVariant, Enum, compact)]
-        pub fn from_rearguard_isdst(&mut self, isdst: bool) -> Self {
+        pub fn from_rearguard_isdst(isdst: bool) -> Self {
             icu_time::zone::TimeZoneVariant::from_rearguard_isdst(isdst).into()
         }
     }
@@ -108,6 +113,7 @@ pub mod ffi {
         }
 
         #[diplomat::rust_link(icu::time::TimeZoneInfo::id, FnInStruct)]
+        #[diplomat::attr(demo_gen, disable)] // this just returns a constructor argument
         pub fn id(&self) -> Box<TimeZone> {
             Box::new(TimeZone(self.id))
         }
@@ -193,6 +199,7 @@ pub mod ffi {
         }
 
         #[diplomat::rust_link(icu::time::TimeZoneInfo::variant, FnInStruct)]
+        #[diplomat::attr(demo_gen, disable)] // this just returns a constructor argument
         pub fn variant(&self) -> Option<TimeZoneVariant> {
             self.variant.map(Into::into)
         }
@@ -202,7 +209,7 @@ pub mod ffi {
 impl From<icu_time::zone::UtcOffset> for TimeZoneInfo {
     fn from(other: icu_time::zone::UtcOffset) -> Self {
         Self {
-            id: icu_time::TimeZone::unknown(),
+            id: icu_time::TimeZone::UNKNOWN,
             offset: Some(other),
             variant: None,
             zone_name_timestamp: None,

@@ -72,7 +72,7 @@ pub mod ffi {
     #[diplomat::rust_link(icu::calendar::ParseError, Enum, compact)]
     #[diplomat::rust_link(icu::time::ParseError, Enum, compact)]
     #[cfg(any(feature = "datetime", feature = "timezone", feature = "calendar"))]
-    pub enum CalendarParseError {
+    pub enum Rfc9557ParseError {
         Unknown = 0x00,
         InvalidSyntax = 0x01,
         OutOfRange = 0x02,
@@ -116,20 +116,21 @@ pub mod ffi {
         pub date_kind: DiplomatOption<CalendarKind>,
     }
 
+    /// An error when formatting a datetime.
+    ///
+    /// Currently the only reachable error here is a missing time zone variant. If you encounter
+    /// that error, you need to call `with_variant` or `infer_variant` on your `TimeZoneInfo`.
     #[cfg(feature = "datetime")]
     #[derive(Debug, PartialEq, Eq)]
     #[repr(C)]
-    #[diplomat::rust_link(icu::datetime::DateTimeWriteError, Enum, compact)]
+    #[diplomat::rust_link(
+        icu::datetime::unchecked::FormattedDateTimeUncheckedError,
+        Enum,
+        compact
+    )]
     pub enum DateTimeWriteError {
         Unknown = 0x00,
-        InvalidMonthCode = 0x02,
-        InvalidEra = 0x03,
-        InvalidCyclicYear = 0x04,
-        DecimalFormatterNotLoaded = 0x05,
-        NamesNotLoaded = 0x06,
-        MissingInputField = 0x07,
-        UnsupportedLength = 0x08,
-        UnsupportedField = 0x09,
+        MissingTimeZoneVariant = 0x01,
     }
 }
 
@@ -173,7 +174,7 @@ impl From<icu_calendar::DateError> for CalendarError {
 }
 
 #[cfg(any(feature = "datetime", feature = "timezone", feature = "calendar"))]
-impl From<icu_calendar::ParseError> for CalendarParseError {
+impl From<icu_calendar::ParseError> for Rfc9557ParseError {
     fn from(e: icu_calendar::ParseError) -> Self {
         match e {
             icu_calendar::ParseError::Syntax(_) => Self::InvalidSyntax,
@@ -186,7 +187,7 @@ impl From<icu_calendar::ParseError> for CalendarParseError {
 }
 
 #[cfg(any(feature = "datetime", feature = "timezone", feature = "calendar"))]
-impl From<icu_time::ParseError> for CalendarParseError {
+impl From<icu_time::ParseError> for Rfc9557ParseError {
     fn from(e: icu_time::ParseError) -> Self {
         match e {
             icu_time::ParseError::Syntax(_) => Self::InvalidSyntax,
@@ -272,20 +273,16 @@ impl From<icu_datetime::MismatchedCalendarError> for ffi::DateTimeMismatchedCale
 }
 
 #[cfg(feature = "datetime")]
-impl From<icu_datetime::DateTimeWriteError> for DateTimeWriteError {
-    fn from(value: icu_datetime::DateTimeWriteError) -> Self {
+impl From<icu_datetime::unchecked::FormattedDateTimeUncheckedError> for DateTimeWriteError {
+    fn from(value: icu_datetime::unchecked::FormattedDateTimeUncheckedError) -> Self {
         match value {
-            icu_datetime::DateTimeWriteError::InvalidMonthCode(_) => Self::InvalidMonthCode,
-            icu_datetime::DateTimeWriteError::InvalidEra(_) => Self::InvalidEra,
-            icu_datetime::DateTimeWriteError::InvalidCyclicYear { .. } => Self::InvalidCyclicYear,
-            icu_datetime::DateTimeWriteError::DecimalFormatterNotLoaded => {
-                Self::DecimalFormatterNotLoaded
+            icu_datetime::unchecked::FormattedDateTimeUncheckedError::MissingInputField(
+                icu_datetime::unchecked::MissingInputFieldKind::TimeZoneVariant,
+            ) => Self::MissingTimeZoneVariant,
+            err => {
+                debug_assert!(false, "unexpected datetime formatting error: {err}");
+                Self::Unknown
             }
-            icu_datetime::DateTimeWriteError::NamesNotLoaded(_) => Self::NamesNotLoaded,
-            icu_datetime::DateTimeWriteError::MissingInputField(_) => Self::MissingInputField,
-            icu_datetime::DateTimeWriteError::UnsupportedLength(_) => Self::UnsupportedLength,
-            icu_datetime::DateTimeWriteError::UnsupportedField(_) => Self::UnsupportedField,
-            _ => Self::Unknown,
         }
     }
 }

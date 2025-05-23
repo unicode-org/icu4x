@@ -121,3 +121,14 @@ impl<T, const N: usize> MaybeEncodeAsVarULE for [T; N] {
         None
     }
 }
+
+impl MaybeAsVarULE for u16 {
+    type EncodedStruct = [()];
+}
+
+#[cfg(feature = "export")]
+impl MaybeEncodeAsVarULE for u16 {
+    fn maybe_encode_as_varule(&self) -> Option<&Self::EncodedStruct> {
+        None
+    }
+}

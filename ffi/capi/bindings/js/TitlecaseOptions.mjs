@@ -5,34 +5,26 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
-/** 
- * See the [Rust documentation for `TitlecaseOptions`](https://docs.rs/icu/latest/icu/casemap/options/struct.TitlecaseOptions.html) for more information.
+
+/**
+ * See the [Rust documentation for `TitlecaseOptions`](https://docs.rs/icu/2.0.0/icu/casemap/options/struct.TitlecaseOptions.html) for more information.
  */
-
-
 export class TitlecaseOptions {
-    
     #leadingAdjustment;
-    
-    get leadingAdjustment()  {
+    get leadingAdjustment() {
         return this.#leadingAdjustment;
-    } 
-    set leadingAdjustment(value) {
+    }
+    set leadingAdjustment(value){
         this.#leadingAdjustment = value;
     }
-    
     #trailingCase;
-    
-    get trailingCase()  {
+    get trailingCase() {
         return this.#trailingCase;
-    } 
-    set trailingCase(value) {
+    }
+    set trailingCase(value){
         this.#trailingCase = value;
     }
-    
-    /** Create `TitlecaseOptions` from an object that contains all of `TitlecaseOptions`s fields.
-    * Optional fields do not need to be included in the provided object.
-    */
+    /** @internal */
     static fromFields(structObj) {
         return new TitlecaseOptions(diplomatRuntime.exposeConstructor, structObj);
     }
@@ -59,7 +51,6 @@ export class TitlecaseOptions {
 
     // Return this struct in FFI function friendly format.
     // Returns an array that can be expanded with spread syntax (...)
-    
     _intoFFI(
         functionCleanupArena,
         appendArrayMap
@@ -107,23 +98,28 @@ export class TitlecaseOptions {
         return new TitlecaseOptions(diplomatRuntime.exposeConstructor, structObj);
     }
 
-    /** 
-     * See the [Rust documentation for `default`](https://docs.rs/icu/latest/icu/casemap/options/struct.TitlecaseOptions.html#method.default) for more information.
+
+    /**
+     * See the [Rust documentation for `default`](https://docs.rs/icu/2.0.0/icu/casemap/options/struct.TitlecaseOptions.html#method.default) for more information.
      */
     #defaultConstructor() {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 16, 4, false);
-        
+
+
         const result = wasm.icu4x_TitlecaseOptionsV1_default_mv1(diplomatReceive.buffer);
-    
+
         try {
             return TitlecaseOptions._fromFFI(diplomatRuntime.internalConstructor, diplomatReceive.buffer);
         }
-        
+
         finally {
             diplomatReceive.free();
         }
     }
 
+    /**
+     * See the [Rust documentation for `default`](https://docs.rs/icu/2.0.0/icu/casemap/options/struct.TitlecaseOptions.html#method.default) for more information.
+     */
     constructor() {
         if (arguments[0] === diplomatRuntime.exposeConstructor) {
             return this.#internalConstructor(...Array.prototype.slice.call(arguments, 1));

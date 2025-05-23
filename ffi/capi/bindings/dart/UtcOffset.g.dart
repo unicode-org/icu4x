@@ -3,7 +3,7 @@
 
 part of 'lib.g.dart';
 
-/// See the [Rust documentation for `UtcOffset`](https://docs.rs/icu/latest/icu/time/zone/struct.UtcOffset.html) for more information.
+/// See the [Rust documentation for `UtcOffset`](https://docs.rs/icu/2.0.0/icu/time/zone/struct.UtcOffset.html) for more information.
 final class UtcOffset implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _ffi;
 
@@ -27,7 +27,7 @@ final class UtcOffset implements ffi.Finalizable {
   ///
   /// Errors if the offset seconds are out of range.
   ///
-  /// See the [Rust documentation for `try_from_seconds`](https://docs.rs/icu/latest/icu/time/zone/struct.UtcOffset.html#method.try_from_seconds) for more information.
+  /// See the [Rust documentation for `try_from_seconds`](https://docs.rs/icu/2.0.0/icu/time/zone/struct.UtcOffset.html#method.try_from_seconds) for more information.
   ///
   /// Throws [TimeZoneInvalidOffsetError] on failure.
   factory UtcOffset.fromSeconds(int seconds) {
@@ -38,21 +38,11 @@ final class UtcOffset implements ffi.Finalizable {
     return UtcOffset._fromFfi(result.union.ok, []);
   }
 
-  /// Creates an offset from eighths of an hour.
-  ///
-  /// See the [Rust documentation for `from_eighths_of_hour`](https://docs.rs/icu/latest/icu/time/zone/struct.UtcOffset.html#method.from_eighths_of_hour) for more information.
-  ///
-  /// Additional information: [1](https://docs.rs/icu/latest/icu/time/zone/struct.UtcOffset.html)
-  factory UtcOffset.fromEightsOfHour(int eighthsOfHour) {
-    final result = _icu4x_UtcOffset_from_eighths_of_hour_mv1(eighthsOfHour);
-    return UtcOffset._fromFfi(result, []);
-  }
-
   /// Creates an offset from a string.
   ///
-  /// See the [Rust documentation for `try_from_str`](https://docs.rs/icu/latest/icu/time/zone/struct.UtcOffset.html#method.try_from_str) for more information.
+  /// See the [Rust documentation for `try_from_str`](https://docs.rs/icu/2.0.0/icu/time/zone/struct.UtcOffset.html#method.try_from_str) for more information.
   ///
-  /// Additional information: [1](https://docs.rs/icu/latest/icu/time/zone/struct.UtcOffset.html)
+  /// Additional information: [1](https://docs.rs/icu/2.0.0/icu/time/zone/struct.UtcOffset.html)
   ///
   /// Throws [TimeZoneInvalidOffsetError] on failure.
   factory UtcOffset.fromString(String offset) {
@@ -64,21 +54,13 @@ final class UtcOffset implements ffi.Finalizable {
     return UtcOffset._fromFfi(result.union.ok, []);
   }
 
-  /// Gets the offset as eighths of an hour.
-  ///
-  /// See the [Rust documentation for `to_eighths_of_hour`](https://docs.rs/icu/latest/icu/time/zone/struct.UtcOffset.html#method.to_eighths_of_hour) for more information.
-  int get eighthsOfHour {
-    final result = _icu4x_UtcOffset_eighths_of_hour_mv1(_ffi);
-    return result;
-  }
-
   /// Returns the value as offset seconds.
   ///
-  /// See the [Rust documentation for `offset`](https://docs.rs/icu/latest/icu/time/struct.TimeZoneInfo.html#method.offset) for more information.
+  /// See the [Rust documentation for `offset`](https://docs.rs/icu/2.0.0/icu/time/struct.TimeZoneInfo.html#method.offset) for more information.
   ///
-  /// See the [Rust documentation for `to_seconds`](https://docs.rs/icu/latest/icu/time/zone/struct.UtcOffset.html#method.to_seconds) for more information.
+  /// See the [Rust documentation for `to_seconds`](https://docs.rs/icu/2.0.0/icu/time/zone/struct.UtcOffset.html#method.to_seconds) for more information.
   ///
-  /// Additional information: [1](https://docs.rs/icu/latest/icu/time/zone/struct.UtcOffset.html)
+  /// Additional information: [1](https://docs.rs/icu/2.0.0/icu/time/zone/struct.UtcOffset.html)
   int get seconds {
     final result = _icu4x_UtcOffset_seconds_mv1(_ffi);
     return result;
@@ -86,9 +68,9 @@ final class UtcOffset implements ffi.Finalizable {
 
   /// Returns whether the offset is positive.
   ///
-  /// See the [Rust documentation for `is_non_negative`](https://docs.rs/icu/latest/icu/time/zone/struct.UtcOffset.html#method.is_non_negative) for more information.
+  /// See the [Rust documentation for `is_non_negative`](https://docs.rs/icu/2.0.0/icu/time/zone/struct.UtcOffset.html#method.is_non_negative) for more information.
   ///
-  /// Additional information: [1](https://docs.rs/icu/latest/icu/time/zone/struct.UtcOffset.html)
+  /// Additional information: [1](https://docs.rs/icu/2.0.0/icu/time/zone/struct.UtcOffset.html)
   bool get isNonNegative {
     final result = _icu4x_UtcOffset_is_non_negative_mv1(_ffi);
     return result;
@@ -96,9 +78,9 @@ final class UtcOffset implements ffi.Finalizable {
 
   /// Returns whether the offset is zero.
   ///
-  /// See the [Rust documentation for `is_zero`](https://docs.rs/icu/latest/icu/time/zone/struct.UtcOffset.html#method.is_zero) for more information.
+  /// See the [Rust documentation for `is_zero`](https://docs.rs/icu/2.0.0/icu/time/zone/struct.UtcOffset.html#method.is_zero) for more information.
   ///
-  /// Additional information: [1](https://docs.rs/icu/latest/icu/time/zone/struct.UtcOffset.html)
+  /// Additional information: [1](https://docs.rs/icu/2.0.0/icu/time/zone/struct.UtcOffset.html)
   bool get isZero {
     final result = _icu4x_UtcOffset_is_zero_mv1(_ffi);
     return result;
@@ -106,9 +88,9 @@ final class UtcOffset implements ffi.Finalizable {
 
   /// Returns the hours part of the offset.
   ///
-  /// See the [Rust documentation for `hours_part`](https://docs.rs/icu/latest/icu/time/zone/struct.UtcOffset.html#method.hours_part) for more information.
+  /// See the [Rust documentation for `hours_part`](https://docs.rs/icu/2.0.0/icu/time/zone/struct.UtcOffset.html#method.hours_part) for more information.
   ///
-  /// Additional information: [1](https://docs.rs/icu/latest/icu/time/zone/struct.UtcOffset.html)
+  /// Additional information: [1](https://docs.rs/icu/2.0.0/icu/time/zone/struct.UtcOffset.html)
   int get hoursPart {
     final result = _icu4x_UtcOffset_hours_part_mv1(_ffi);
     return result;
@@ -116,9 +98,9 @@ final class UtcOffset implements ffi.Finalizable {
 
   /// Returns the minutes part of the offset.
   ///
-  /// See the [Rust documentation for `minutes_part`](https://docs.rs/icu/latest/icu/time/zone/struct.UtcOffset.html#method.minutes_part) for more information.
+  /// See the [Rust documentation for `minutes_part`](https://docs.rs/icu/2.0.0/icu/time/zone/struct.UtcOffset.html#method.minutes_part) for more information.
   ///
-  /// Additional information: [1](https://docs.rs/icu/latest/icu/time/zone/struct.UtcOffset.html)
+  /// Additional information: [1](https://docs.rs/icu/2.0.0/icu/time/zone/struct.UtcOffset.html)
   int get minutesPart {
     final result = _icu4x_UtcOffset_minutes_part_mv1(_ffi);
     return result;
@@ -126,13 +108,14 @@ final class UtcOffset implements ffi.Finalizable {
 
   /// Returns the seconds part of the offset.
   ///
-  /// See the [Rust documentation for `seconds_part`](https://docs.rs/icu/latest/icu/time/zone/struct.UtcOffset.html#method.seconds_part) for more information.
+  /// See the [Rust documentation for `seconds_part`](https://docs.rs/icu/2.0.0/icu/time/zone/struct.UtcOffset.html#method.seconds_part) for more information.
   ///
-  /// Additional information: [1](https://docs.rs/icu/latest/icu/time/zone/struct.UtcOffset.html)
+  /// Additional information: [1](https://docs.rs/icu/2.0.0/icu/time/zone/struct.UtcOffset.html)
   int get secondsPart {
     final result = _icu4x_UtcOffset_seconds_part_mv1(_ffi);
     return result;
   }
+
 }
 
 @_DiplomatFfiUse('icu4x_UtcOffset_destroy_mv1')
@@ -145,20 +128,10 @@ external void _icu4x_UtcOffset_destroy_mv1(ffi.Pointer<ffi.Void> self);
 // ignore: non_constant_identifier_names
 external _ResultOpaqueTimeZoneInvalidOffsetErrorFfi _icu4x_UtcOffset_from_seconds_mv1(int seconds);
 
-@_DiplomatFfiUse('icu4x_UtcOffset_from_eighths_of_hour_mv1')
-@ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Int8)>(isLeaf: true, symbol: 'icu4x_UtcOffset_from_eighths_of_hour_mv1')
-// ignore: non_constant_identifier_names
-external ffi.Pointer<ffi.Opaque> _icu4x_UtcOffset_from_eighths_of_hour_mv1(int eighthsOfHour);
-
 @_DiplomatFfiUse('icu4x_UtcOffset_from_string_mv1')
 @ffi.Native<_ResultOpaqueTimeZoneInvalidOffsetErrorFfi Function(_SliceUtf8)>(isLeaf: true, symbol: 'icu4x_UtcOffset_from_string_mv1')
 // ignore: non_constant_identifier_names
 external _ResultOpaqueTimeZoneInvalidOffsetErrorFfi _icu4x_UtcOffset_from_string_mv1(_SliceUtf8 offset);
-
-@_DiplomatFfiUse('icu4x_UtcOffset_eighths_of_hour_mv1')
-@ffi.Native<ffi.Int8 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_UtcOffset_eighths_of_hour_mv1')
-// ignore: non_constant_identifier_names
-external int _icu4x_UtcOffset_eighths_of_hour_mv1(ffi.Pointer<ffi.Opaque> self);
 
 @_DiplomatFfiUse('icu4x_UtcOffset_seconds_mv1')
 @ffi.Native<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_UtcOffset_seconds_mv1')

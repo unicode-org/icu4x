@@ -53,6 +53,19 @@ macro_rules! create_const_array {
             ];
         }
 
+        #[cfg(feature = "datagen")]
+        impl databake::Bake for $enum_ty {
+            fn bake(&self, env: &databake::CrateEnv) -> databake::TokenStream {
+                env.insert("icu_properties");
+                match *self {
+                    $(
+                        Self::$i => databake::quote!(icu_properties::props::$enum_ty::$i),
+                    )*
+                    Self(v) => databake::quote!(icu_properties::props::$enum_ty::from_icu4c_value(#v)),
+                }
+            }
+        }
+
 
         impl From<$enum_ty> for u16  {
             fn from(other: $enum_ty) -> Self {
@@ -108,15 +121,19 @@ macro_rules! make_enumerated_property {
 /// # Example
 ///
 /// ```
-/// use icu::properties::{CodePointMapData, props::BidiClass};
+/// use icu::properties::{props::BidiClass, CodePointMapData};
 ///
-/// assert_eq!(CodePointMapData::<BidiClass>::new().get('y'), BidiClass::LeftToRight);  // U+0079
-/// assert_eq!(CodePointMapData::<BidiClass>::new().get('ع'), BidiClass::ArabicLetter);  // U+0639
+/// assert_eq!(
+///     CodePointMapData::<BidiClass>::new().get('y'),
+///     BidiClass::LeftToRight
+/// ); // U+0079
+/// assert_eq!(
+///     CodePointMapData::<BidiClass>::new().get('ع'),
+///     BidiClass::ArabicLetter
+/// ); // U+0639
 /// ```
 #[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-#[cfg_attr(feature = "datagen", derive(databake::Bake))]
-#[cfg_attr(feature = "datagen", databake(path = icu_properties::props))]
 #[allow(clippy::exhaustive_structs)] // newtype
 #[repr(transparent)]
 pub struct BidiClass(pub(crate) u8);
@@ -208,10 +225,16 @@ pub(crate) mod gc {
     /// # Example
     ///
     /// ```
-    /// use icu::properties::{CodePointMapData, props::GeneralCategory};
+    /// use icu::properties::{props::GeneralCategory, CodePointMapData};
     ///
-    /// assert_eq!(CodePointMapData::<GeneralCategory>::new().get('木'), GeneralCategory::OtherLetter);  // U+6728
-    /// assert_eq!(CodePointMapData::<GeneralCategory>::new().get('🎃'), GeneralCategory::OtherSymbol);  // U+1F383 JACK-O-LANTERN
+    /// assert_eq!(
+    ///     CodePointMapData::<GeneralCategory>::new().get('木'),
+    ///     GeneralCategory::OtherLetter
+    /// ); // U+6728
+    /// assert_eq!(
+    ///     CodePointMapData::<GeneralCategory>::new().get('🎃'),
+    ///     GeneralCategory::OtherSymbol
+    /// ); // U+1F383 JACK-O-LANTERN
     /// ```
     #[derive(Copy, Clone, PartialEq, Eq, Debug, Ord, PartialOrd, Hash)]
     #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
@@ -675,8 +698,6 @@ impl From<GeneralCategoryGroup> for u32 {
 /// [`ScriptWithExtensionsBorrowed::has_script`]: crate::script::ScriptWithExtensionsBorrowed::has_script
 #[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-#[cfg_attr(feature = "datagen", derive(databake::Bake))]
-#[cfg_attr(feature = "datagen", databake(path = icu_properties::props))]
 #[allow(clippy::exhaustive_structs)] // newtype
 #[repr(transparent)]
 pub struct Script(pub(crate) u16);
@@ -883,15 +904,19 @@ make_enumerated_property! {
 /// # Example
 ///
 /// ```
-/// use icu::properties::{CodePointMapData, props::HangulSyllableType};
+/// use icu::properties::{props::HangulSyllableType, CodePointMapData};
 ///
-/// assert_eq!(CodePointMapData::<HangulSyllableType>::new().get('ᄀ'), HangulSyllableType::LeadingJamo);  // U+1100
-/// assert_eq!(CodePointMapData::<HangulSyllableType>::new().get('가'), HangulSyllableType::LeadingVowelSyllable);  // U+AC00
+/// assert_eq!(
+///     CodePointMapData::<HangulSyllableType>::new().get('ᄀ'),
+///     HangulSyllableType::LeadingJamo
+/// ); // U+1100
+/// assert_eq!(
+///     CodePointMapData::<HangulSyllableType>::new().get('가'),
+///     HangulSyllableType::LeadingVowelSyllable
+/// ); // U+AC00
 /// ```
 #[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-#[cfg_attr(feature = "datagen", derive(databake::Bake))]
-#[cfg_attr(feature = "datagen", databake(path = icu_properties::props))]
 #[allow(clippy::exhaustive_structs)] // newtype
 #[repr(transparent)]
 pub struct HangulSyllableType(pub(crate) u8);
@@ -943,15 +968,19 @@ make_enumerated_property! {
 /// # Example
 ///
 /// ```
-/// use icu::properties::{CodePointMapData, props::EastAsianWidth};
+/// use icu::properties::{props::EastAsianWidth, CodePointMapData};
 ///
-/// assert_eq!(CodePointMapData::<EastAsianWidth>::new().get('ｱ'), EastAsianWidth::Halfwidth); // U+FF71: Halfwidth Katakana Letter A
-/// assert_eq!(CodePointMapData::<EastAsianWidth>::new().get('ア'), EastAsianWidth::Wide); //U+30A2: Katakana Letter A
+/// assert_eq!(
+///     CodePointMapData::<EastAsianWidth>::new().get('ｱ'),
+///     EastAsianWidth::Halfwidth
+/// ); // U+FF71: Halfwidth Katakana Letter A
+/// assert_eq!(
+///     CodePointMapData::<EastAsianWidth>::new().get('ア'),
+///     EastAsianWidth::Wide
+/// ); //U+30A2: Katakana Letter A
 /// ```
 #[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-#[cfg_attr(feature = "datagen", derive(databake::Bake))]
-#[cfg_attr(feature = "datagen", databake(path = icu_properties::props))]
 #[allow(clippy::exhaustive_structs)] // newtype
 #[repr(transparent)]
 pub struct EastAsianWidth(pub(crate) u8);
@@ -1001,15 +1030,19 @@ make_enumerated_property! {
 /// # Example
 ///
 /// ```
-/// use icu::properties::{CodePointMapData, props::LineBreak};
+/// use icu::properties::{props::LineBreak, CodePointMapData};
 ///
-/// assert_eq!(CodePointMapData::<LineBreak>::new().get(')'), LineBreak::CloseParenthesis); // U+0029: Right Parenthesis
-/// assert_eq!(CodePointMapData::<LineBreak>::new().get('ぁ'), LineBreak::ConditionalJapaneseStarter); //U+3041: Hiragana Letter Small A
+/// assert_eq!(
+///     CodePointMapData::<LineBreak>::new().get(')'),
+///     LineBreak::CloseParenthesis
+/// ); // U+0029: Right Parenthesis
+/// assert_eq!(
+///     CodePointMapData::<LineBreak>::new().get('ぁ'),
+///     LineBreak::ConditionalJapaneseStarter
+/// ); //U+3041: Hiragana Letter Small A
 /// ```
 #[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-#[cfg_attr(feature = "datagen", derive(databake::Bake))]
-#[cfg_attr(feature = "datagen", databake(path = icu_properties::props))]
 #[allow(clippy::exhaustive_structs)] // newtype
 #[repr(transparent)]
 pub struct LineBreak(pub(crate) u8);
@@ -1102,15 +1135,19 @@ make_enumerated_property! {
 /// # Example
 ///
 /// ```
-/// use icu::properties::{CodePointMapData, props::GraphemeClusterBreak};
+/// use icu::properties::{props::GraphemeClusterBreak, CodePointMapData};
 ///
-/// assert_eq!(CodePointMapData::<GraphemeClusterBreak>::new().get('🇦'), GraphemeClusterBreak::RegionalIndicator); // U+1F1E6: Regional Indicator Symbol Letter A
-/// assert_eq!(CodePointMapData::<GraphemeClusterBreak>::new().get('ำ'), GraphemeClusterBreak::SpacingMark); //U+0E33: Thai Character Sara Am
+/// assert_eq!(
+///     CodePointMapData::<GraphemeClusterBreak>::new().get('🇦'),
+///     GraphemeClusterBreak::RegionalIndicator
+/// ); // U+1F1E6: Regional Indicator Symbol Letter A
+/// assert_eq!(
+///     CodePointMapData::<GraphemeClusterBreak>::new().get('ำ'),
+///     GraphemeClusterBreak::SpacingMark
+/// ); //U+0E33: Thai Character Sara Am
 /// ```
 #[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-#[cfg_attr(feature = "datagen", derive(databake::Bake))]
-#[cfg_attr(feature = "datagen", databake(path = icu_properties::props))]
 #[allow(clippy::exhaustive_structs)] // this type is stable
 #[repr(transparent)]
 pub struct GraphemeClusterBreak(pub(crate) u8);
@@ -1175,15 +1212,19 @@ make_enumerated_property! {
 /// # Example
 ///
 /// ```
-/// use icu::properties::{CodePointMapData, props::WordBreak};
+/// use icu::properties::{props::WordBreak, CodePointMapData};
 ///
-/// assert_eq!(CodePointMapData::<WordBreak>::new().get('.'), WordBreak::MidNumLet); // U+002E: Full Stop
-/// assert_eq!(CodePointMapData::<WordBreak>::new().get('，'), WordBreak::MidNum); // U+FF0C: Fullwidth Comma
+/// assert_eq!(
+///     CodePointMapData::<WordBreak>::new().get('.'),
+///     WordBreak::MidNumLet
+/// ); // U+002E: Full Stop
+/// assert_eq!(
+///     CodePointMapData::<WordBreak>::new().get('，'),
+///     WordBreak::MidNum
+/// ); // U+FF0C: Fullwidth Comma
 /// ```
 #[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-#[cfg_attr(feature = "datagen", derive(databake::Bake))]
-#[cfg_attr(feature = "datagen", databake(path = icu_properties::props))]
 #[allow(clippy::exhaustive_structs)] // newtype
 #[repr(transparent)]
 pub struct WordBreak(pub(crate) u8);
@@ -1253,15 +1294,19 @@ make_enumerated_property! {
 /// # Example
 ///
 /// ```
-/// use icu::properties::{CodePointMapData, props::SentenceBreak};
+/// use icu::properties::{props::SentenceBreak, CodePointMapData};
 ///
-/// assert_eq!(CodePointMapData::<SentenceBreak>::new().get('９'), SentenceBreak::Numeric); // U+FF19: Fullwidth Digit Nine
-/// assert_eq!(CodePointMapData::<SentenceBreak>::new().get(','), SentenceBreak::SContinue); // U+002C: Comma
+/// assert_eq!(
+///     CodePointMapData::<SentenceBreak>::new().get('９'),
+///     SentenceBreak::Numeric
+/// ); // U+FF19: Fullwidth Digit Nine
+/// assert_eq!(
+///     CodePointMapData::<SentenceBreak>::new().get(','),
+///     SentenceBreak::SContinue
+/// ); // U+002C: Comma
 /// ```
 #[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-#[cfg_attr(feature = "datagen", derive(databake::Bake))]
-#[cfg_attr(feature = "datagen", databake(path = icu_properties::props))]
 #[allow(clippy::exhaustive_structs)] // newtype
 #[repr(transparent)]
 pub struct SentenceBreak(pub(crate) u8);
@@ -1321,10 +1366,16 @@ make_enumerated_property! {
 /// # Example
 ///
 /// ```
-/// use icu::properties::{CodePointMapData, props::CanonicalCombiningClass};
+/// use icu::properties::{props::CanonicalCombiningClass, CodePointMapData};
 ///
-/// assert_eq!(CodePointMapData::<CanonicalCombiningClass>::new().get('a'), CanonicalCombiningClass::NotReordered); // U+0061: LATIN SMALL LETTER A
-/// assert_eq!(CodePointMapData::<CanonicalCombiningClass>::new().get('\u{0301}'), CanonicalCombiningClass::Above); // U+0301: COMBINING ACUTE ACCENT
+/// assert_eq!(
+///     CodePointMapData::<CanonicalCombiningClass>::new().get('a'),
+///     CanonicalCombiningClass::NotReordered
+/// ); // U+0061: LATIN SMALL LETTER A
+/// assert_eq!(
+///     CodePointMapData::<CanonicalCombiningClass>::new().get('\u{0301}'),
+///     CanonicalCombiningClass::Above
+/// ); // U+0301: COMBINING ACUTE ACCENT
 /// ```
 //
 // NOTE: The Pernosco debugger has special knowledge
@@ -1333,8 +1384,6 @@ make_enumerated_property! {
 // without coordination.
 #[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-#[cfg_attr(feature = "datagen", derive(databake::Bake))]
-#[cfg_attr(feature = "datagen", databake(path = icu_properties::props))]
 #[allow(clippy::exhaustive_structs)] // newtype
 #[repr(transparent)]
 pub struct CanonicalCombiningClass(pub(crate) u8);
@@ -1432,18 +1481,28 @@ make_enumerated_property! {
 /// # Example
 ///
 /// ```
-/// use icu::properties::{CodePointMapData, props::IndicConjunctBreak};
+/// use icu::properties::{props::IndicConjunctBreak, CodePointMapData};
 ///
-/// assert_eq!(CodePointMapData::<IndicConjunctBreak>::new().get('a'), IndicConjunctBreak::None);
-/// assert_eq!(CodePointMapData::<IndicConjunctBreak>::new().get('\u{094d}'), IndicConjunctBreak::Linker);
-/// assert_eq!(CodePointMapData::<IndicConjunctBreak>::new().get('\u{0915}'), IndicConjunctBreak::Consonant);
-/// assert_eq!(CodePointMapData::<IndicConjunctBreak>::new().get('\u{0300}'), IndicConjunctBreak::Extend);
+/// assert_eq!(
+///     CodePointMapData::<IndicConjunctBreak>::new().get('a'),
+///     IndicConjunctBreak::None
+/// );
+/// assert_eq!(
+///     CodePointMapData::<IndicConjunctBreak>::new().get('\u{094d}'),
+///     IndicConjunctBreak::Linker
+/// );
+/// assert_eq!(
+///     CodePointMapData::<IndicConjunctBreak>::new().get('\u{0915}'),
+///     IndicConjunctBreak::Consonant
+/// );
+/// assert_eq!(
+///     CodePointMapData::<IndicConjunctBreak>::new().get('\u{0300}'),
+///     IndicConjunctBreak::Extend
+/// );
 /// ```
 #[doc(hidden)] // draft API in ICU4C
 #[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-#[cfg_attr(feature = "datagen", derive(databake::Bake))]
-#[cfg_attr(feature = "datagen", databake(path = icu_properties::props))]
 #[allow(clippy::exhaustive_structs)] // newtype
 #[repr(transparent)]
 pub struct IndicConjunctBreak(pub(crate) u8);
@@ -1486,15 +1545,19 @@ make_enumerated_property! {
 /// # Example
 ///
 /// ```
-/// use icu::properties::{CodePointMapData, props::IndicSyllabicCategory};
+/// use icu::properties::{props::IndicSyllabicCategory, CodePointMapData};
 ///
-/// assert_eq!(CodePointMapData::<IndicSyllabicCategory>::new().get('a'), IndicSyllabicCategory::Other);
-/// assert_eq!(CodePointMapData::<IndicSyllabicCategory>::new().get('\u{0900}'), IndicSyllabicCategory::Bindu); // U+0900: DEVANAGARI SIGN INVERTED CANDRABINDU
+/// assert_eq!(
+///     CodePointMapData::<IndicSyllabicCategory>::new().get('a'),
+///     IndicSyllabicCategory::Other
+/// );
+/// assert_eq!(
+///     CodePointMapData::<IndicSyllabicCategory>::new().get('\u{0900}'),
+///     IndicSyllabicCategory::Bindu
+/// ); // U+0900: DEVANAGARI SIGN INVERTED CANDRABINDU
 /// ```
 #[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-#[cfg_attr(feature = "datagen", derive(databake::Bake))]
-#[cfg_attr(feature = "datagen", databake(path = icu_properties::props))]
 #[allow(clippy::exhaustive_structs)] // newtype
 #[repr(transparent)]
 pub struct IndicSyllabicCategory(pub(crate) u8);
@@ -1571,15 +1634,19 @@ make_enumerated_property! {
 /// # Example
 ///
 /// ```
-/// use icu::properties::{CodePointMapData, props::JoiningType};
+/// use icu::properties::{props::JoiningType, CodePointMapData};
 ///
-/// assert_eq!(CodePointMapData::<JoiningType>::new().get('ؠ'), JoiningType::DualJoining); // U+0620: Arabic Letter Kashmiri Yeh
-/// assert_eq!(CodePointMapData::<JoiningType>::new().get('𐫍'), JoiningType::LeftJoining); // U+10ACD: Manichaean Letter Heth
+/// assert_eq!(
+///     CodePointMapData::<JoiningType>::new().get('ؠ'),
+///     JoiningType::DualJoining
+/// ); // U+0620: Arabic Letter Kashmiri Yeh
+/// assert_eq!(
+///     CodePointMapData::<JoiningType>::new().get('𐫍'),
+///     JoiningType::LeftJoining
+/// ); // U+10ACD: Manichaean Letter Heth
 /// ```
 #[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-#[cfg_attr(feature = "datagen", derive(databake::Bake))]
-#[cfg_attr(feature = "datagen", databake(path = icu_properties::props))]
 #[allow(clippy::exhaustive_structs)] // newtype
 #[repr(transparent)]
 pub struct JoiningType(pub(crate) u8);
@@ -1625,17 +1692,27 @@ make_enumerated_property! {
 /// # Example
 ///
 /// ```
-/// use icu::properties::{CodePointMapData, props::VerticalOrientation};
+/// use icu::properties::{props::VerticalOrientation, CodePointMapData};
 ///
-/// assert_eq!(CodePointMapData::<VerticalOrientation>::new().get('a'), VerticalOrientation::Rotated);
-/// assert_eq!(CodePointMapData::<VerticalOrientation>::new().get('§'), VerticalOrientation::Upright);
-/// assert_eq!(CodePointMapData::<VerticalOrientation>::new().get32(0x2329), VerticalOrientation::TransformedRotated);
-/// assert_eq!(CodePointMapData::<VerticalOrientation>::new().get32(0x3001), VerticalOrientation::TransformedUpright);
+/// assert_eq!(
+///     CodePointMapData::<VerticalOrientation>::new().get('a'),
+///     VerticalOrientation::Rotated
+/// );
+/// assert_eq!(
+///     CodePointMapData::<VerticalOrientation>::new().get('§'),
+///     VerticalOrientation::Upright
+/// );
+/// assert_eq!(
+///     CodePointMapData::<VerticalOrientation>::new().get32(0x2329),
+///     VerticalOrientation::TransformedRotated
+/// );
+/// assert_eq!(
+///     CodePointMapData::<VerticalOrientation>::new().get32(0x3001),
+///     VerticalOrientation::TransformedUpright
+/// );
 /// ```
 #[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-#[cfg_attr(feature = "datagen", derive(databake::Bake))]
-#[cfg_attr(feature = "datagen", databake(path = icu_properties::props))]
 #[allow(clippy::exhaustive_structs)] // newtype
 #[repr(transparent)]
 pub struct VerticalOrientation(pub(crate) u8);

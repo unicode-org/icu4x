@@ -3,13 +3,11 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
-/** 
- * See the [Rust documentation for `Length`](https://docs.rs/icu/latest/icu/datetime/options/enum.Length.html) for more information.
+
+/**
+ * See the [Rust documentation for `Length`](https://docs.rs/icu/2.0.0/icu/datetime/options/enum.Length.html) for more information.
  */
-
-
 export class DateTimeLength {
-    
     #value = undefined;
 
     static #values = new Map([
@@ -21,7 +19,7 @@ export class DateTimeLength {
     static getAllEntries() {
         return DateTimeLength.#values.entries();
     }
-    
+
     #internalConstructor(value) {
         if (arguments.length > 1 && arguments[0] === diplomatRuntime.internalConstructor) {
             // We pass in two internalConstructor arguments to create *new*
@@ -47,15 +45,17 @@ export class DateTimeLength {
         throw TypeError(value + " is not a DateTimeLength and does not correspond to any of its enumerator values.");
     }
 
+    /** @internal */
     static fromValue(value) {
         return new DateTimeLength(value);
     }
 
-    get value() {
+    get value(){
         return [...DateTimeLength.#values.keys()][this.#value];
     }
 
-    get ffiValue() {
+    /** @internal */
+    get ffiValue(){
         return this.#value;
     }
     static #objectValues = [
@@ -67,6 +67,7 @@ export class DateTimeLength {
     static Long = DateTimeLength.#objectValues[0];
     static Medium = DateTimeLength.#objectValues[1];
     static Short = DateTimeLength.#objectValues[2];
+
 
     constructor(value) {
         return this.#internalConstructor(...arguments)

@@ -3,15 +3,13 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
-/** 
+
+/**
  * The sign of a Decimal, as shown in formatting.
  *
- * See the [Rust documentation for `Sign`](https://docs.rs/fixed_decimal/latest/fixed_decimal/enum.Sign.html) for more information.
+ * See the [Rust documentation for `Sign`](https://docs.rs/fixed_decimal/0.7.0/fixed_decimal/enum.Sign.html) for more information.
  */
-
-
 export class DecimalSign {
-    
     #value = undefined;
 
     static #values = new Map([
@@ -23,7 +21,7 @@ export class DecimalSign {
     static getAllEntries() {
         return DecimalSign.#values.entries();
     }
-    
+
     #internalConstructor(value) {
         if (arguments.length > 1 && arguments[0] === diplomatRuntime.internalConstructor) {
             // We pass in two internalConstructor arguments to create *new*
@@ -49,15 +47,17 @@ export class DecimalSign {
         throw TypeError(value + " is not a DecimalSign and does not correspond to any of its enumerator values.");
     }
 
+    /** @internal */
     static fromValue(value) {
         return new DecimalSign(value);
     }
 
-    get value() {
+    get value(){
         return [...DecimalSign.#values.keys()][this.#value];
     }
 
-    get ffiValue() {
+    /** @internal */
+    get ffiValue(){
         return this.#value;
     }
     static #objectValues = [
@@ -69,6 +69,7 @@ export class DecimalSign {
     static None = DecimalSign.#objectValues[0];
     static Negative = DecimalSign.#objectValues[1];
     static Positive = DecimalSign.#objectValues[2];
+
 
     constructor(value) {
         return this.#internalConstructor(...arguments)

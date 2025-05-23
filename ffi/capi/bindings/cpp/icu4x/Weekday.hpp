@@ -10,14 +10,14 @@
 #include <memory>
 #include <functional>
 #include <optional>
+#include <cstdlib>
 #include "../diplomat_runtime.hpp"
 
 
 namespace icu4x {
 namespace capi {
     extern "C" {
-    
-    
+
     } // extern "C"
 } // namespace capi
 } // namespace
@@ -37,7 +37,7 @@ inline icu4x::Weekday icu4x::Weekday::FromFFI(icu4x::capi::Weekday c_enum) {
     case icu4x::capi::Weekday_Sunday:
       return static_cast<icu4x::Weekday::Value>(c_enum);
     default:
-      abort();
+      std::abort();
   }
 }
 #endif // icu4x_Weekday_HPP

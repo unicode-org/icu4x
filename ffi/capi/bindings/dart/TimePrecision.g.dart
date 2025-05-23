@@ -3,10 +3,11 @@
 
 part of 'lib.g.dart';
 
-/// See the [Rust documentation for `TimePrecision`](https://docs.rs/icu/latest/icu/datetime/options/enum.TimePrecision.html) for more information.
+/// See the [Rust documentation for `TimePrecision`](https://docs.rs/icu/2.0.0/icu/datetime/options/enum.TimePrecision.html) for more information.
 ///
-/// See the [Rust documentation for `SubsecondDigits`](https://docs.rs/icu/latest/icu/datetime/options/enum.SubsecondDigits.html) for more information.
+/// See the [Rust documentation for `SubsecondDigits`](https://docs.rs/icu/2.0.0/icu/datetime/options/enum.SubsecondDigits.html) for more information.
 enum TimePrecision {
+
   hour,
 
   minute,
@@ -33,7 +34,7 @@ enum TimePrecision {
 
   subsecond9;
 
-  /// See the [Rust documentation for `try_from_int`](https://docs.rs/icu/latest/icu/datetime/options/enum.SubsecondDigits.html#method.try_from_int) for more information.
+  /// See the [Rust documentation for `try_from_int`](https://docs.rs/icu/2.0.0/icu/datetime/options/enum.SubsecondDigits.html#method.try_from_int) for more information.
   static TimePrecision? fromSubsecondDigits(int digits) {
     final result = _icu4x_TimePrecision_from_subsecond_digits_mv1(digits);
     if (!result.isOk) {
@@ -41,6 +42,7 @@ enum TimePrecision {
     }
     return TimePrecision.values[result.union.ok];
   }
+
 }
 
 @_DiplomatFfiUse('icu4x_TimePrecision_from_subsecond_digits_mv1')

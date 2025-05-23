@@ -3,13 +3,11 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
-/** 
- * See the [Rust documentation for `SentenceBreak`](https://docs.rs/icu/latest/icu/properties/props/struct.SentenceBreak.html) for more information.
+
+/**
+ * See the [Rust documentation for `SentenceBreak`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.SentenceBreak.html) for more information.
  */
-
-
 export class SentenceBreak {
-    
     #value = undefined;
 
     static #values = new Map([
@@ -33,7 +31,7 @@ export class SentenceBreak {
     static getAllEntries() {
         return SentenceBreak.#values.entries();
     }
-    
+
     #internalConstructor(value) {
         if (arguments.length > 1 && arguments[0] === diplomatRuntime.internalConstructor) {
             // We pass in two internalConstructor arguments to create *new*
@@ -59,15 +57,17 @@ export class SentenceBreak {
         throw TypeError(value + " is not a SentenceBreak and does not correspond to any of its enumerator values.");
     }
 
+    /** @internal */
     static fromValue(value) {
         return new SentenceBreak(value);
     }
 
-    get value() {
+    get value(){
         return [...SentenceBreak.#values.keys()][this.#value];
     }
 
-    get ffiValue() {
+    /** @internal */
+    get ffiValue(){
         return this.#value;
     }
     static #objectValues = [
@@ -104,95 +104,103 @@ export class SentenceBreak {
     static Lf = SentenceBreak.#objectValues[13];
     static SContinue = SentenceBreak.#objectValues[14];
 
-    /** 
-     * See the [Rust documentation for `for_char`](https://docs.rs/icu/latest/icu/properties/props/trait.EnumeratedProperty.html#tymethod.for_char) for more information.
+
+    /**
+     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.0.0/icu/properties/props/trait.EnumeratedProperty.html#tymethod.for_char) for more information.
      */
     static forChar(ch) {
+
         const result = wasm.icu4x_SentenceBreak_for_char_mv1(ch);
-    
+
         try {
             return new SentenceBreak(diplomatRuntime.internalConstructor, result);
         }
-        
-        finally {}
+
+        finally {
+        }
     }
 
-    /** 
+    /**
      * Get the "long" name of this property value (returns empty if property value is unknown)
      *
-     * See the [Rust documentation for `get`](https://docs.rs/icu/latest/icu/properties/struct.PropertyNamesLongBorrowed.html#method.get) for more information.
+     * See the [Rust documentation for `get`](https://docs.rs/icu/2.0.0/icu/properties/struct.PropertyNamesLongBorrowed.html#method.get) for more information.
      */
     longName() {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 9, 4, true);
-        
+
+
         const result = wasm.icu4x_SentenceBreak_long_name_mv1(diplomatReceive.buffer, this.ffiValue);
-    
+
         try {
             if (!diplomatReceive.resultFlag) {
                 return null;
             }
             return new diplomatRuntime.DiplomatSliceStr(wasm, diplomatReceive.buffer,  "string8", []).getValue();
         }
-        
+
         finally {
             diplomatReceive.free();
         }
     }
 
-    /** 
+    /**
      * Get the "short" name of this property value (returns empty if property value is unknown)
      *
-     * See the [Rust documentation for `get`](https://docs.rs/icu/latest/icu/properties/struct.PropertyNamesShortBorrowed.html#method.get) for more information.
+     * See the [Rust documentation for `get`](https://docs.rs/icu/2.0.0/icu/properties/struct.PropertyNamesShortBorrowed.html#method.get) for more information.
      */
     shortName() {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 9, 4, true);
-        
+
+
         const result = wasm.icu4x_SentenceBreak_short_name_mv1(diplomatReceive.buffer, this.ffiValue);
-    
+
         try {
             if (!diplomatReceive.resultFlag) {
                 return null;
             }
             return new diplomatRuntime.DiplomatSliceStr(wasm, diplomatReceive.buffer,  "string8", []).getValue();
         }
-        
+
         finally {
             diplomatReceive.free();
         }
     }
 
-    /** 
+    /**
      * Convert to an integer value usable with ICU4C and CodePointMapData
      *
-     * See the [Rust documentation for `to_icu4c_value`](https://docs.rs/icu/latest/icu/properties/props/struct.SentenceBreak.html#method.to_icu4c_value) for more information.
+     * See the [Rust documentation for `to_icu4c_value`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.SentenceBreak.html#method.to_icu4c_value) for more information.
      */
     toIntegerValue() {
+
         const result = wasm.icu4x_SentenceBreak_to_integer_value_mv1(this.ffiValue);
-    
+
         try {
             return result;
         }
-        
-        finally {}
+
+        finally {
+        }
     }
 
-    /** 
+    /**
      * Convert from an integer value from ICU4C or CodePointMapData
      *
-     * See the [Rust documentation for `from_icu4c_value`](https://docs.rs/icu/latest/icu/properties/props/struct.SentenceBreak.html#method.from_icu4c_value) for more information.
+     * See the [Rust documentation for `from_icu4c_value`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.SentenceBreak.html#method.from_icu4c_value) for more information.
      */
     static fromIntegerValue(other) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
-        
+
+
         const result = wasm.icu4x_SentenceBreak_from_integer_value_mv1(diplomatReceive.buffer, other);
-    
+
         try {
             if (!diplomatReceive.resultFlag) {
                 return null;
             }
             return new SentenceBreak(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
         }
-        
+
         finally {
             diplomatReceive.free();
         }

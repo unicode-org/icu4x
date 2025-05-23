@@ -8,6 +8,7 @@
 #include <memory>
 #include <functional>
 #include <optional>
+#include <cstdlib>
 #include "../diplomat_runtime.hpp"
 
 
@@ -18,14 +19,14 @@ namespace capi {
       LineBreakWordOption_BreakAll = 1,
       LineBreakWordOption_KeepAll = 2,
     };
-    
+
     typedef struct LineBreakWordOption_option {union { LineBreakWordOption ok; }; bool is_ok; } LineBreakWordOption_option;
 } // namespace capi
 } // namespace
 
 namespace icu4x {
 /**
- * See the [Rust documentation for `LineBreakWordOption`](https://docs.rs/icu/latest/icu/segmenter/options/enum.LineBreakWordOption.html) for more information.
+ * See the [Rust documentation for `LineBreakWordOption`](https://docs.rs/icu/2.0.0/icu/segmenter/options/enum.LineBreakWordOption.html) for more information.
  */
 class LineBreakWordOption {
 public:

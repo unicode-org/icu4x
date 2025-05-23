@@ -3,13 +3,11 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
-/** 
- * Additional information: [1](https://docs.rs/icu/latest/icu/locale/enum.ParseError.html)
+
+/**
+ * Additional information: [1](https://docs.rs/icu/2.0.0/icu/locale/enum.ParseError.html)
  */
-
-
 export class LocaleParseError {
-    
     #value = undefined;
 
     static #values = new Map([
@@ -22,7 +20,7 @@ export class LocaleParseError {
     static getAllEntries() {
         return LocaleParseError.#values.entries();
     }
-    
+
     #internalConstructor(value) {
         if (arguments.length > 1 && arguments[0] === diplomatRuntime.internalConstructor) {
             // We pass in two internalConstructor arguments to create *new*
@@ -48,15 +46,17 @@ export class LocaleParseError {
         throw TypeError(value + " is not a LocaleParseError and does not correspond to any of its enumerator values.");
     }
 
+    /** @internal */
     static fromValue(value) {
         return new LocaleParseError(value);
     }
 
-    get value() {
+    get value(){
         return [...LocaleParseError.#values.keys()][this.#value];
     }
 
-    get ffiValue() {
+    /** @internal */
+    get ffiValue(){
         return this.#value;
     }
     static #objectValues = [
@@ -70,6 +70,7 @@ export class LocaleParseError {
     static Language = LocaleParseError.#objectValues[1];
     static Subtag = LocaleParseError.#objectValues[2];
     static Extension = LocaleParseError.#objectValues[3];
+
 
     constructor(value) {
         return this.#internalConstructor(...arguments)

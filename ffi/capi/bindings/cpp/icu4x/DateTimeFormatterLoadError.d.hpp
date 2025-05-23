@@ -8,6 +8,7 @@
 #include <memory>
 #include <functional>
 #include <optional>
+#include <cstdlib>
 #include "../diplomat_runtime.hpp"
 
 
@@ -28,14 +29,14 @@ namespace capi {
       DateTimeFormatterLoadError_DataCustom = 7,
       DateTimeFormatterLoadError_DataIo = 8,
     };
-    
+
     typedef struct DateTimeFormatterLoadError_option {union { DateTimeFormatterLoadError ok; }; bool is_ok; } DateTimeFormatterLoadError_option;
 } // namespace capi
 } // namespace
 
 namespace icu4x {
 /**
- * Additional information: [1](https://docs.rs/icu/latest/icu/datetime/enum.DateTimeFormatterLoadError.html), [2](https://docs.rs/icu/latest/icu/datetime/pattern/enum.PatternLoadError.html), [3](https://docs.rs/icu_provider/latest/icu_provider/struct.DataError.html), [4](https://docs.rs/icu_provider/latest/icu_provider/enum.DataErrorKind.html)
+ * Additional information: [1](https://docs.rs/icu/2.0.0/icu/datetime/enum.DateTimeFormatterLoadError.html), [2](https://docs.rs/icu/2.0.0/icu/datetime/pattern/enum.PatternLoadError.html), [3](https://docs.rs/icu_provider/2.0.0/icu_provider/struct.DataError.html), [4](https://docs.rs/icu_provider/2.0.0/icu_provider/enum.DataErrorKind.html)
  */
 class DateTimeFormatterLoadError {
 public:

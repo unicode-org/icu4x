@@ -4,34 +4,26 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
-/** 
- * See the [Rust documentation for `MismatchedCalendarError`](https://docs.rs/icu/latest/icu/datetime/struct.MismatchedCalendarError.html) for more information.
+
+/**
+ * See the [Rust documentation for `MismatchedCalendarError`](https://docs.rs/icu/2.0.0/icu/datetime/struct.MismatchedCalendarError.html) for more information.
  */
-
-
 export class DateTimeMismatchedCalendarError {
-    
     #thisKind;
-    
-    get thisKind()  {
+    get thisKind() {
         return this.#thisKind;
-    } 
-    set thisKind(value) {
+    }
+    set thisKind(value){
         this.#thisKind = value;
     }
-    
     #dateKind;
-    
-    get dateKind()  {
+    get dateKind() {
         return this.#dateKind;
-    } 
-    set dateKind(value) {
+    }
+    set dateKind(value){
         this.#dateKind = value;
     }
-    
-    /** Create `DateTimeMismatchedCalendarError` from an object that contains all of `DateTimeMismatchedCalendarError`s fields.
-    * Optional fields do not need to be included in the provided object.
-    */
+    /** @internal */
     static fromFields(structObj) {
         return new DateTimeMismatchedCalendarError(structObj);
     }
@@ -58,7 +50,6 @@ export class DateTimeMismatchedCalendarError {
 
     // Return this struct in FFI function friendly format.
     // Returns an array that can be expanded with spread syntax (...)
-    
     _intoFFI(
         functionCleanupArena,
         appendArrayMap
@@ -105,6 +96,7 @@ export class DateTimeMismatchedCalendarError {
 
         return new DateTimeMismatchedCalendarError(structObj);
     }
+
 
     constructor(structObj) {
         return this.#internalConstructor(...arguments)

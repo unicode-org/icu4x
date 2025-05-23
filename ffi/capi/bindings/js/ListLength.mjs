@@ -3,13 +3,11 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
-/** 
- * See the [Rust documentation for `ListLength`](https://docs.rs/icu/latest/icu/list/options/enum.ListLength.html) for more information.
+
+/**
+ * See the [Rust documentation for `ListLength`](https://docs.rs/icu/2.0.0/icu/list/options/enum.ListLength.html) for more information.
  */
-
-
 export class ListLength {
-    
     #value = undefined;
 
     static #values = new Map([
@@ -21,7 +19,7 @@ export class ListLength {
     static getAllEntries() {
         return ListLength.#values.entries();
     }
-    
+
     #internalConstructor(value) {
         if (arguments.length > 1 && arguments[0] === diplomatRuntime.internalConstructor) {
             // We pass in two internalConstructor arguments to create *new*
@@ -47,15 +45,17 @@ export class ListLength {
         throw TypeError(value + " is not a ListLength and does not correspond to any of its enumerator values.");
     }
 
+    /** @internal */
     static fromValue(value) {
         return new ListLength(value);
     }
 
-    get value() {
+    get value(){
         return [...ListLength.#values.keys()][this.#value];
     }
 
-    get ffiValue() {
+    /** @internal */
+    get ffiValue(){
         return this.#value;
     }
     static #objectValues = [
@@ -67,6 +67,7 @@ export class ListLength {
     static Wide = ListLength.#objectValues[0];
     static Short = ListLength.#objectValues[1];
     static Narrow = ListLength.#objectValues[2];
+
 
     constructor(value) {
         return this.#internalConstructor(...arguments)

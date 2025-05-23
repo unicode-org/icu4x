@@ -35,7 +35,6 @@ TransformResult icu4x_LocaleExpander_minimize_mv1(const LocaleExpander* self, Lo
 
 TransformResult icu4x_LocaleExpander_minimize_favor_script_mv1(const LocaleExpander* self, Locale* locale);
 
-
 void icu4x_LocaleExpander_destroy_mv1(LocaleExpander* self);
 
 

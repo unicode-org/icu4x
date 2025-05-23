@@ -8,6 +8,7 @@
 #include <memory>
 #include <functional>
 #include <optional>
+#include <cstdlib>
 #include "../diplomat_runtime.hpp"
 
 namespace icu4x {
@@ -37,14 +38,14 @@ namespace capi {
       GraphemeClusterBreak_GlueAfterZwj = 16,
       GraphemeClusterBreak_ZWJ = 17,
     };
-    
+
     typedef struct GraphemeClusterBreak_option {union { GraphemeClusterBreak ok; }; bool is_ok; } GraphemeClusterBreak_option;
 } // namespace capi
 } // namespace
 
 namespace icu4x {
 /**
- * See the [Rust documentation for `GraphemeClusterBreak`](https://docs.rs/icu/latest/icu/properties/props/struct.GraphemeClusterBreak.html) for more information.
+ * See the [Rust documentation for `GraphemeClusterBreak`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.GraphemeClusterBreak.html) for more information.
  */
 class GraphemeClusterBreak {
 public:
@@ -77,21 +78,21 @@ public:
   explicit operator bool() const = delete;
 
   /**
-   * See the [Rust documentation for `for_char`](https://docs.rs/icu/latest/icu/properties/props/trait.EnumeratedProperty.html#tymethod.for_char) for more information.
+   * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.0.0/icu/properties/props/trait.EnumeratedProperty.html#tymethod.for_char) for more information.
    */
   inline static icu4x::GraphemeClusterBreak for_char(char32_t ch);
 
   /**
    * Convert to an integer value usable with ICU4C and CodePointMapData
    *
-   * See the [Rust documentation for `to_icu4c_value`](https://docs.rs/icu/latest/icu/properties/props/struct.GraphemeClusterBreak.html#method.to_icu4c_value) for more information.
+   * See the [Rust documentation for `to_icu4c_value`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.GraphemeClusterBreak.html#method.to_icu4c_value) for more information.
    */
   inline uint8_t to_integer_value() const;
 
   /**
    * Convert from an integer value from ICU4C or CodePointMapData
    *
-   * See the [Rust documentation for `from_icu4c_value`](https://docs.rs/icu/latest/icu/properties/props/struct.GraphemeClusterBreak.html#method.from_icu4c_value) for more information.
+   * See the [Rust documentation for `from_icu4c_value`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.GraphemeClusterBreak.html#method.from_icu4c_value) for more information.
    */
   inline static std::optional<icu4x::GraphemeClusterBreak> from_integer_value(uint8_t other);
 

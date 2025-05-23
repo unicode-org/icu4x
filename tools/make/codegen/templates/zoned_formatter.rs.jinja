@@ -81,6 +81,10 @@ pub mod ffi {
     impl {{ ffi_type }} {
         {%- for variant in variants %}
         {%- for ctor in ConstructorType::VALUES %}
+        /// Creates a zoned formatter based on a non-zoned formatter.
+        ///
+        /// Caution: The locale provided here must match the locale used to construct the non-zoned formatter,
+        /// or else unexpected behavior may occur!
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "{{ variant.name_lower() }}{{ ctor.suffix_ffi() }}")]
         #[diplomat::rust_link(icu::datetime::fieldsets::zone::{{ variant.name_camel() }}, Struct)]
         #[diplomat::rust_link(icu::datetime::fieldsets::Combo, Struct, hidden)]
@@ -179,7 +183,7 @@ pub mod ffi {
         pub fn format{% if flavor.has_date() %}_iso{% endif %}(
             &self,
             {%- if flavor.has_date() %}
-            date: &IsoDate,
+            iso_date: &IsoDate,
             {%- endif %}
             {%- if flavor.has_time() %}
             time: &Time,
@@ -187,12 +191,12 @@ pub mod ffi {
             zone: &TimeZoneInfo,
             write: &mut diplomat_runtime::DiplomatWrite,
         ) -> Result<(), DateTimeWriteError> {
-            let mut input = icu_datetime::DateTimeInputUnchecked::default();
+            let mut input = icu_datetime::unchecked::DateTimeInputUnchecked::default();
             {%- if flavor.has_date() %}
             {%- if formatter_kind.is_fixed_calendar %}
-            let date_in_calendar = date.0.to_calendar(Gregorian);
+            let date_in_calendar = iso_date.0.to_calendar(Gregorian);
             {%- else %}
-            let date_in_calendar = date.0.to_calendar(self.0.calendar());
+            let date_in_calendar = iso_date.0.to_calendar(self.0.calendar());
             {%- endif %}
             input.set_date_fields_unchecked(date_in_calendar); // calendar conversion on previous line
             {%- endif %}
@@ -209,9 +213,20 @@ pub mod ffi {
             {%- if flavor.has_date() && flavor.has_time() %}
             else {
                 input.set_time_zone_name_timestamp(icu_time::zone::ZoneNameTimestamp::from_date_time_iso(icu_time::DateTime {
-                    date: date.0,
+                    date: iso_date.0,
                     time: time.0
                 }))
+            }
+            {%- else if flavor.has_date() %}
+            else {
+                input.set_time_zone_name_timestamp(icu_time::zone::ZoneNameTimestamp::from_date_time_iso(icu_time::DateTime {
+                    date: iso_date.0,
+                    time: icu_time::Time::noon()
+                }))
+            }
+            {%- else %}
+            else {
+                input.set_time_zone_name_timestamp(icu_time::zone::ZoneNameTimestamp::far_in_future())
             }
             {%- endif %}
             if let Some(variant) = zone.variant {

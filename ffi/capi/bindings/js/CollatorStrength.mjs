@@ -3,13 +3,11 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
-/** 
- * See the [Rust documentation for `Strength`](https://docs.rs/icu/latest/icu/collator/options/enum.Strength.html) for more information.
+
+/**
+ * See the [Rust documentation for `Strength`](https://docs.rs/icu/2.0.0/icu/collator/options/enum.Strength.html) for more information.
  */
-
-
 export class CollatorStrength {
-    
     #value = undefined;
 
     static #values = new Map([
@@ -23,7 +21,7 @@ export class CollatorStrength {
     static getAllEntries() {
         return CollatorStrength.#values.entries();
     }
-    
+
     #internalConstructor(value) {
         if (arguments.length > 1 && arguments[0] === diplomatRuntime.internalConstructor) {
             // We pass in two internalConstructor arguments to create *new*
@@ -49,15 +47,17 @@ export class CollatorStrength {
         throw TypeError(value + " is not a CollatorStrength and does not correspond to any of its enumerator values.");
     }
 
+    /** @internal */
     static fromValue(value) {
         return new CollatorStrength(value);
     }
 
-    get value() {
+    get value(){
         return [...CollatorStrength.#values.keys()][this.#value];
     }
 
-    get ffiValue() {
+    /** @internal */
+    get ffiValue(){
         return this.#value;
     }
     static #objectValues = [
@@ -73,6 +73,7 @@ export class CollatorStrength {
     static Tertiary = CollatorStrength.#objectValues[2];
     static Quaternary = CollatorStrength.#objectValues[3];
     static Identical = CollatorStrength.#objectValues[4];
+
 
     constructor(value) {
         return this.#internalConstructor(...arguments)

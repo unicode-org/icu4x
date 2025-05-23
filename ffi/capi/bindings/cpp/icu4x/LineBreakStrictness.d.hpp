@@ -8,6 +8,7 @@
 #include <memory>
 #include <functional>
 #include <optional>
+#include <cstdlib>
 #include "../diplomat_runtime.hpp"
 
 
@@ -19,14 +20,14 @@ namespace capi {
       LineBreakStrictness_Strict = 2,
       LineBreakStrictness_Anywhere = 3,
     };
-    
+
     typedef struct LineBreakStrictness_option {union { LineBreakStrictness ok; }; bool is_ok; } LineBreakStrictness_option;
 } // namespace capi
 } // namespace
 
 namespace icu4x {
 /**
- * See the [Rust documentation for `LineBreakStrictness`](https://docs.rs/icu/latest/icu/segmenter/options/enum.LineBreakStrictness.html) for more information.
+ * See the [Rust documentation for `LineBreakStrictness`](https://docs.rs/icu/2.0.0/icu/segmenter/options/enum.LineBreakStrictness.html) for more information.
  */
 class LineBreakStrictness {
 public:

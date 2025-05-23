@@ -8,6 +8,7 @@
 #include <memory>
 #include <functional>
 #include <optional>
+#include <cstdlib>
 #include "../diplomat_runtime.hpp"
 #include "CollatorAlternateHandling.d.hpp"
 #include "CollatorCaseFirst.d.hpp"
@@ -36,7 +37,7 @@ namespace capi {
       icu4x::capi::CollatorCaseLevel case_level;
       icu4x::capi::CollatorNumericOrdering numeric;
     };
-    
+
     typedef struct CollatorResolvedOptionsV1_option {union { CollatorResolvedOptionsV1 ok; }; bool is_ok; } CollatorResolvedOptionsV1_option;
 } // namespace capi
 } // namespace
@@ -44,7 +45,7 @@ namespace capi {
 
 namespace icu4x {
 /**
- * See the [Rust documentation for `ResolvedCollatorOptions`](https://docs.rs/icu/latest/icu/collator/options/struct.ResolvedCollatorOptions.html) for more information.
+ * See the [Rust documentation for `ResolvedCollatorOptions`](https://docs.rs/icu/2.0.0/icu/collator/options/struct.ResolvedCollatorOptions.html) for more information.
  */
 struct CollatorResolvedOptionsV1 {
   icu4x::CollatorStrength strength;

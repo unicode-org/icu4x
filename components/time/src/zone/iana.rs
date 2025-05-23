@@ -35,9 +35,9 @@ use crate::{
 /// # Examples
 ///
 /// ```
+/// use icu::locale::subtags::subtag;
 /// use icu::time::zone::IanaParser;
 /// use icu::time::TimeZone;
-/// use icu::locale::subtags::subtag;
 ///
 /// let parser = IanaParser::new();
 ///
@@ -62,7 +62,7 @@ use crate::{
 /// // The IANA zone "Australia/Boing_Boing" does not exist
 /// // (maybe not *yet*), so it produces the special unknown
 /// // time zone in order for this operation to be infallible:
-/// assert_eq!(parser.parse("Australia/Boing_Boing"), TimeZone::unknown());
+/// assert_eq!(parser.parse("Australia/Boing_Boing"), TimeZone::UNKNOWN);
 /// ```
 #[derive(Debug, Clone)]
 pub struct IanaParser {
@@ -172,7 +172,7 @@ impl IanaParserBorrowed<'static> {
 impl<'a> IanaParserBorrowed<'a> {
     /// Gets the [`TimeZone`] from a case-insensitive IANA time zone ID.
     ///
-    /// Returns [`TimeZone::unknown()`] if the IANA ID is not found.
+    /// Returns [`TimeZone::UNKNOWN`] if the IANA ID is not found.
     ///
     /// # Examples
     ///
@@ -187,7 +187,7 @@ impl<'a> IanaParserBorrowed<'a> {
     /// assert_eq!(result.as_str(), "inccu");
     ///
     /// // Unknown IANA time zone ID:
-    /// assert_eq!(parser.parse("America/San_Francisco"), TimeZone::unknown());
+    /// assert_eq!(parser.parse("America/San_Francisco"), TimeZone::UNKNOWN);
     /// ```
     pub fn parse(&self, iana_id: &str) -> TimeZone {
         self.parse_from_utf8(iana_id.as_bytes())
@@ -196,11 +196,11 @@ impl<'a> IanaParserBorrowed<'a> {
     /// Same as [`Self::parse()`] but works with potentially ill-formed UTF-8.
     pub fn parse_from_utf8(&self, iana_id: &[u8]) -> TimeZone {
         let Some(trie_value) = self.trie_value(iana_id) else {
-            return TimeZone::unknown();
+            return TimeZone::UNKNOWN;
         };
         let Some(tz) = self.data.bcp47_ids.get(trie_value.index()) else {
             debug_assert!(false, "index should be in range");
-            return TimeZone::unknown();
+            return TimeZone::UNKNOWN;
         };
         tz
     }
@@ -221,10 +221,10 @@ impl<'a> IanaParserBorrowed<'a> {
     /// # Examples
     ///
     /// ```
+    /// use icu::locale::subtags::subtag;
     /// use icu::time::zone::IanaParser;
     /// use icu::time::zone::TimeZone;
     /// use std::collections::BTreeSet;
-    /// use icu::locale::subtags::subtag;
     ///
     /// let parser = IanaParser::new();
     ///
@@ -255,7 +255,6 @@ impl Iterator for TimeZoneIter<'_> {
 
 /// A parser that supplements [`IanaParser`] with about 10kB of additional data to support
 /// returning canonical and case-normalized IANA time zone IDs.
-///
 #[derive(Debug, Clone)]
 pub struct IanaParserExtended<I> {
     inner: I,
@@ -417,7 +416,7 @@ impl IanaParserExtendedBorrowed<'static> {
 impl<'a> IanaParserExtendedBorrowed<'a> {
     /// Gets the [`TimeZone`], the canonical IANA ID, and the case-normalized IANA ID from a case-insensitive IANA time zone ID.
     ///
-    /// Returns `TimeZone::unknown()` / `"Etc/Unknown"` if the IANA ID is not found.
+    /// Returns `TimeZone::UNKNOWN` / `"Etc/Unknown"` if the IANA ID is not found.
     ///
     /// # Examples
     ///
@@ -436,7 +435,7 @@ impl<'a> IanaParserExtendedBorrowed<'a> {
     /// // Unknown IANA time zone ID:
     /// let r = parser.parse("America/San_Francisco");
     ///
-    /// assert_eq!(r.time_zone, TimeZone::unknown());
+    /// assert_eq!(r.time_zone, TimeZone::UNKNOWN);
     /// assert_eq!(r.canonical, "Etc/Unknown");
     /// assert_eq!(r.normalized, "Etc/Unknown");
     /// ```
@@ -499,14 +498,17 @@ impl<'a> IanaParserExtendedBorrowed<'a> {
     /// # Examples
     ///
     /// ```
+    /// use icu::locale::subtags::subtag;
     /// use icu::time::zone::iana::IanaParserExtended;
     /// use icu::time::zone::TimeZone;
     /// use std::collections::BTreeSet;
-    /// use icu::locale::subtags::subtag;
     ///
     /// let parser = IanaParserExtended::new();
     ///
-    /// let ids = parser.iter().map(|t| (t.time_zone, t.canonical)).collect::<BTreeSet<_>>();
+    /// let ids = parser
+    ///     .iter()
+    ///     .map(|t| (t.time_zone, t.canonical))
+    ///     .collect::<BTreeSet<_>>();
     ///
     /// assert!(ids.contains(&(TimeZone(subtag!("uaiev")), "Europe/Kyiv")));
     /// assert!(parser.iter().count() >= 445);
@@ -583,7 +585,7 @@ pub struct TimeZoneAndCanonicalAndNormalized<'a> {
 
 impl TimeZoneAndCanonicalAndNormalized<'static> {
     const UKNONWN: Self = TimeZoneAndCanonicalAndNormalized {
-        time_zone: TimeZone::unknown(),
+        time_zone: TimeZone::UNKNOWN,
         canonical: "Etc/Unknown",
         normalized: "Etc/Unknown",
     };

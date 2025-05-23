@@ -8,6 +8,7 @@
 #include <memory>
 #include <functional>
 #include <optional>
+#include <cstdlib>
 #include "../diplomat_runtime.hpp"
 
 
@@ -19,7 +20,7 @@ namespace capi {
       DecimalRoundingIncrement_MultiplesOf5 = 2,
       DecimalRoundingIncrement_MultiplesOf25 = 3,
     };
-    
+
     typedef struct DecimalRoundingIncrement_option {union { DecimalRoundingIncrement ok; }; bool is_ok; } DecimalRoundingIncrement_option;
 } // namespace capi
 } // namespace
@@ -28,7 +29,7 @@ namespace icu4x {
 /**
  * Increment used in a rounding operation.
  *
- * See the [Rust documentation for `RoundingIncrement`](https://docs.rs/fixed_decimal/latest/fixed_decimal/enum.RoundingIncrement.html) for more information.
+ * See the [Rust documentation for `RoundingIncrement`](https://docs.rs/fixed_decimal/0.7.0/fixed_decimal/enum.RoundingIncrement.html) for more information.
  */
 class DecimalRoundingIncrement {
 public:

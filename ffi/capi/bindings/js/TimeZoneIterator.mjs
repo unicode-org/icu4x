@@ -3,16 +3,14 @@ import { TimeZone } from "./TimeZone.mjs"
 import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
-
-/** 
- * See the [Rust documentation for `TimeZoneIter`](https://docs.rs/icu/latest/icu/time/zone/iana/struct.TimeZoneIter.html) for more information.
- */
 const TimeZoneIterator_box_destroy_registry = new FinalizationRegistry((ptr) => {
     wasm.icu4x_TimeZoneIterator_destroy_mv1(ptr);
 });
 
+/**
+ * See the [Rust documentation for `TimeZoneIter`](https://docs.rs/icu/2.0.0/icu/time/zone/iana/struct.TimeZoneIter.html) for more information.
+ */
 export class TimeZoneIterator {
-    
     // Internal ptr reference:
     #ptr = null;
 
@@ -20,44 +18,45 @@ export class TimeZoneIterator {
     // Since JS won't garbage collect until there are no incoming edges.
     #selfEdge = [];
     #aEdge = [];
-    
+
     #internalConstructor(symbol, ptr, selfEdge, aEdge) {
         if (symbol !== diplomatRuntime.internalConstructor) {
             console.error("TimeZoneIterator is an Opaque type. You cannot call its constructor.");
             return;
         }
-        
-        
         this.#aEdge = aEdge;
-        
         this.#ptr = ptr;
         this.#selfEdge = selfEdge;
-        
+
         // Are we being borrowed? If not, we can register.
         if (this.#selfEdge.length === 0) {
             TimeZoneIterator_box_destroy_registry.register(this, this.#ptr);
         }
-        
+
         return this;
     }
+    /** @internal */
     get ffiValue() {
         return this.#ptr;
     }
 
-    /** 
-     * See the [Rust documentation for `next`](https://docs.rs/icu/latest/icu/time/zone/iana/struct.TimeZoneIter.html#method.next) for more information.
+
+    /**
+     * See the [Rust documentation for `next`](https://docs.rs/icu/2.0.0/icu/time/zone/iana/struct.TimeZoneIter.html#method.next) for more information.
      */
     #iteratorNext() {
+
         const result = wasm.icu4x_TimeZoneIterator_next_mv1(this.ffiValue);
-    
+
         try {
             return result === 0 ? null : new TimeZone(diplomatRuntime.internalConstructor, result, []);
         }
-        
-        finally {}
+
+        finally {
+        }
     }
 
-    next() {
+    next(){
         const out = this.#iteratorNext();
 
         return {

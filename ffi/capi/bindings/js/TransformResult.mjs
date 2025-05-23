@@ -3,13 +3,11 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
-/** 
- * See the [Rust documentation for `TransformResult`](https://docs.rs/icu/latest/icu/locale/enum.TransformResult.html) for more information.
+
+/**
+ * See the [Rust documentation for `TransformResult`](https://docs.rs/icu/2.0.0/icu/locale/enum.TransformResult.html) for more information.
  */
-
-
 export class TransformResult {
-    
     #value = undefined;
 
     static #values = new Map([
@@ -20,7 +18,7 @@ export class TransformResult {
     static getAllEntries() {
         return TransformResult.#values.entries();
     }
-    
+
     #internalConstructor(value) {
         if (arguments.length > 1 && arguments[0] === diplomatRuntime.internalConstructor) {
             // We pass in two internalConstructor arguments to create *new*
@@ -46,15 +44,17 @@ export class TransformResult {
         throw TypeError(value + " is not a TransformResult and does not correspond to any of its enumerator values.");
     }
 
+    /** @internal */
     static fromValue(value) {
         return new TransformResult(value);
     }
 
-    get value() {
+    get value(){
         return [...TransformResult.#values.keys()][this.#value];
     }
 
-    get ffiValue() {
+    /** @internal */
+    get ffiValue(){
         return this.#value;
     }
     static #objectValues = [
@@ -64,6 +64,7 @@ export class TransformResult {
 
     static Modified = TransformResult.#objectValues[0];
     static Unmodified = TransformResult.#objectValues[1];
+
 
     constructor(value) {
         return this.#internalConstructor(...arguments)

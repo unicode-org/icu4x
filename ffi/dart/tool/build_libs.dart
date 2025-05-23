@@ -5,7 +5,7 @@
 import 'dart:io';
 
 import 'package:args/args.dart';
-import 'package:native_assets_cli/code_assets.dart';
+import 'package:code_assets/code_assets.dart';
 import 'package:path/path.dart' as path;
 
 const crateName = 'icu_capi';
@@ -28,7 +28,10 @@ Future<void> main(List<String> args) async {
         ..addFlag(simulatorKey, defaultsTo: false)
         ..addOption(osKey, mandatory: true)
         ..addOption(architectureKey, mandatory: true)
-        ..addMultiOption(cargoFeaturesKey, defaultsTo: ['default_components']);
+        ..addMultiOption(
+          cargoFeaturesKey,
+          defaultsTo: ['default_components', 'compiled_data'],
+        );
 
   ArgResults parsed;
   try {

@@ -5,7 +5,7 @@ part of 'lib.g.dart';
 
 /// A locale expander.
 ///
-/// See the [Rust documentation for `LocaleExpander`](https://docs.rs/icu/latest/icu/locale/struct.LocaleExpander.html) for more information.
+/// See the [Rust documentation for `LocaleExpander`](https://docs.rs/icu/2.0.0/icu/locale/struct.LocaleExpander.html) for more information.
 final class LocaleExpander implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _ffi;
 
@@ -25,17 +25,17 @@ final class LocaleExpander implements ffi.Finalizable {
 
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_LocaleExpander_destroy_mv1));
 
-  /// Create a new [`LocaleExpander`] using compiled data.
+  /// Create a new [LocaleExpander] using compiled data.
   ///
-  /// See the [Rust documentation for `new_common`](https://docs.rs/icu/latest/icu/locale/struct.LocaleExpander.html#method.new_common) for more information.
+  /// See the [Rust documentation for `new_common`](https://docs.rs/icu/2.0.0/icu/locale/struct.LocaleExpander.html#method.new_common) for more information.
   factory LocaleExpander() {
     final result = _icu4x_LocaleExpander_create_common_mv1();
     return LocaleExpander._fromFfi(result, []);
   }
 
-  /// Create a new [`LocaleExpander`] using a new_common data source.
+  /// Create a new [LocaleExpander] using a new_common data source.
   ///
-  /// See the [Rust documentation for `new_common`](https://docs.rs/icu/latest/icu/locale/struct.LocaleExpander.html#method.new_common) for more information.
+  /// See the [Rust documentation for `new_common`](https://docs.rs/icu/2.0.0/icu/locale/struct.LocaleExpander.html#method.new_common) for more information.
   ///
   /// Throws [DataError] on failure.
   factory LocaleExpander.withProvider(DataProvider provider) {
@@ -46,17 +46,17 @@ final class LocaleExpander implements ffi.Finalizable {
     return LocaleExpander._fromFfi(result.union.ok, []);
   }
 
-  /// Create a new [`LocaleExpander`] with extended data using compiled data.
+  /// Create a new [LocaleExpander] with extended data using compiled data.
   ///
-  /// See the [Rust documentation for `new_extended`](https://docs.rs/icu/latest/icu/locale/struct.LocaleExpander.html#method.new_extended) for more information.
+  /// See the [Rust documentation for `new_extended`](https://docs.rs/icu/2.0.0/icu/locale/struct.LocaleExpander.html#method.new_extended) for more information.
   factory LocaleExpander.extended() {
     final result = _icu4x_LocaleExpander_create_extended_mv1();
     return LocaleExpander._fromFfi(result, []);
   }
 
-  /// Create a new [`LocaleExpander`] with extended data using a particular data source.
+  /// Create a new [LocaleExpander] with extended data using a particular data source.
   ///
-  /// See the [Rust documentation for `new_extended`](https://docs.rs/icu/latest/icu/locale/struct.LocaleExpander.html#method.new_extended) for more information.
+  /// See the [Rust documentation for `new_extended`](https://docs.rs/icu/2.0.0/icu/locale/struct.LocaleExpander.html#method.new_extended) for more information.
   ///
   /// Throws [DataError] on failure.
   factory LocaleExpander.extendedWithProvider(DataProvider provider) {
@@ -67,23 +67,24 @@ final class LocaleExpander implements ffi.Finalizable {
     return LocaleExpander._fromFfi(result.union.ok, []);
   }
 
-  /// See the [Rust documentation for `maximize`](https://docs.rs/icu/latest/icu/locale/struct.LocaleExpander.html#method.maximize) for more information.
+  /// See the [Rust documentation for `maximize`](https://docs.rs/icu/2.0.0/icu/locale/struct.LocaleExpander.html#method.maximize) for more information.
   TransformResult maximize(Locale locale) {
     final result = _icu4x_LocaleExpander_maximize_mv1(_ffi, locale._ffi);
     return TransformResult.values[result];
   }
 
-  /// See the [Rust documentation for `minimize`](https://docs.rs/icu/latest/icu/locale/struct.LocaleExpander.html#method.minimize) for more information.
+  /// See the [Rust documentation for `minimize`](https://docs.rs/icu/2.0.0/icu/locale/struct.LocaleExpander.html#method.minimize) for more information.
   TransformResult minimize(Locale locale) {
     final result = _icu4x_LocaleExpander_minimize_mv1(_ffi, locale._ffi);
     return TransformResult.values[result];
   }
 
-  /// See the [Rust documentation for `minimize_favor_script`](https://docs.rs/icu/latest/icu/locale/struct.LocaleExpander.html#method.minimize_favor_script) for more information.
+  /// See the [Rust documentation for `minimize_favor_script`](https://docs.rs/icu/2.0.0/icu/locale/struct.LocaleExpander.html#method.minimize_favor_script) for more information.
   TransformResult minimizeFavorScript(Locale locale) {
     final result = _icu4x_LocaleExpander_minimize_favor_script_mv1(_ffi, locale._ffi);
     return TransformResult.values[result];
   }
+
 }
 
 @_DiplomatFfiUse('icu4x_LocaleExpander_destroy_mv1')

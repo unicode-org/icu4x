@@ -3,13 +3,11 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
-/** 
- * See the [Rust documentation for `CanonicalCombiningClass`](https://docs.rs/icu/latest/icu/properties/props/struct.CanonicalCombiningClass.html) for more information.
+
+/**
+ * See the [Rust documentation for `CanonicalCombiningClass`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.CanonicalCombiningClass.html) for more information.
  */
-
-
 export class CanonicalCombiningClass {
-    
     #value = undefined;
 
     static #values = new Map([
@@ -76,7 +74,7 @@ export class CanonicalCombiningClass {
     static getAllEntries() {
         return CanonicalCombiningClass.#values.entries();
     }
-    
+
     #internalConstructor(value) {
         if (arguments.length > 1 && arguments[0] === diplomatRuntime.internalConstructor) {
             // We pass in two internalConstructor arguments to create *new*
@@ -102,11 +100,12 @@ export class CanonicalCombiningClass {
         throw TypeError(value + " is not a CanonicalCombiningClass and does not correspond to any of its enumerator values.");
     }
 
+    /** @internal */
     static fromValue(value) {
         return new CanonicalCombiningClass(value);
     }
 
-    get value() {
+    get value(){
         for (let entry of CanonicalCombiningClass.#values) {
             if (entry[1] == this.#value) {
                 return entry[0];
@@ -114,7 +113,8 @@ export class CanonicalCombiningClass {
         }
     }
 
-    get ffiValue() {
+    /** @internal */
+    get ffiValue(){
         return this.#value;
     }
     static #objectValues = {
@@ -237,51 +237,57 @@ export class CanonicalCombiningClass {
     static DoubleAbove = CanonicalCombiningClass.#objectValues[234];
     static IotaSubscript = CanonicalCombiningClass.#objectValues[240];
 
-    /** 
-     * See the [Rust documentation for `for_char`](https://docs.rs/icu/latest/icu/properties/props/trait.EnumeratedProperty.html#tymethod.for_char) for more information.
+
+    /**
+     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.0.0/icu/properties/props/trait.EnumeratedProperty.html#tymethod.for_char) for more information.
      */
     static forChar(ch) {
+
         const result = wasm.icu4x_CanonicalCombiningClass_for_char_mv1(ch);
-    
+
         try {
             return new CanonicalCombiningClass(diplomatRuntime.internalConstructor, result);
         }
-        
-        finally {}
+
+        finally {
+        }
     }
 
-    /** 
+    /**
      * Convert to an integer value usable with ICU4C and CodePointMapData
      *
-     * See the [Rust documentation for `to_icu4c_value`](https://docs.rs/icu/latest/icu/properties/props/struct.CanonicalCombiningClass.html#method.to_icu4c_value) for more information.
+     * See the [Rust documentation for `to_icu4c_value`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.CanonicalCombiningClass.html#method.to_icu4c_value) for more information.
      */
     toIntegerValue() {
+
         const result = wasm.icu4x_CanonicalCombiningClass_to_integer_value_mv1(this.ffiValue);
-    
+
         try {
             return result;
         }
-        
-        finally {}
+
+        finally {
+        }
     }
 
-    /** 
+    /**
      * Convert from an integer value from ICU4C or CodePointMapData
      *
-     * See the [Rust documentation for `from_icu4c_value`](https://docs.rs/icu/latest/icu/properties/props/struct.CanonicalCombiningClass.html#method.from_icu4c_value) for more information.
+     * See the [Rust documentation for `from_icu4c_value`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.CanonicalCombiningClass.html#method.from_icu4c_value) for more information.
      */
     static fromIntegerValue(other) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
-        
+
+
         const result = wasm.icu4x_CanonicalCombiningClass_from_integer_value_mv1(diplomatReceive.buffer, other);
-    
+
         try {
             if (!diplomatReceive.resultFlag) {
                 return null;
             }
             return new CanonicalCombiningClass(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
         }
-        
+
         finally {
             diplomatReceive.free();
         }

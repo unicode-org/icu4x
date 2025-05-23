@@ -165,9 +165,9 @@ impl ZoneNameTimestamp {
     /// DateTime does _not_ necessarily roundtrip:
     ///
     /// ```
-    /// use icu::time::zone::ZoneNameTimestamp;
     /// use icu::calendar::Date;
-    /// use icu::time::{Time, DateTime};
+    /// use icu::time::zone::ZoneNameTimestamp;
+    /// use icu::time::{DateTime, Time};
     ///
     /// let date_time = DateTime {
     ///     date: Date::try_new_iso(2025, 4, 30).unwrap(),

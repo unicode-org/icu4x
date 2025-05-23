@@ -10,7 +10,7 @@ final class _LocaleFallbackConfigFfi extends ffi.Struct {
 
 /// Collection of configurations for the ICU4X fallback algorithm.
 ///
-/// See the [Rust documentation for `LocaleFallbackConfig`](https://docs.rs/icu/latest/icu/locale/fallback/struct.LocaleFallbackConfig.html) for more information.
+/// See the [Rust documentation for `LocaleFallbackConfig`](https://docs.rs/icu/2.0.0/icu/locale/fallback/struct.LocaleFallbackConfig.html) for more information.
 final class LocaleFallbackConfig {
   LocaleFallbackPriority priority;
 
@@ -31,6 +31,7 @@ final class LocaleFallbackConfig {
     struct.priority = priority.index;
     return struct;
   }
+
 
   @override
   bool operator ==(Object other) =>

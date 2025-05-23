@@ -8,6 +8,7 @@
 #include <memory>
 #include <functional>
 #include <optional>
+#include <cstdlib>
 #include "../diplomat_runtime.hpp"
 
 
@@ -18,14 +19,14 @@ namespace capi {
       LeadingAdjustment_None = 1,
       LeadingAdjustment_ToCased = 2,
     };
-    
+
     typedef struct LeadingAdjustment_option {union { LeadingAdjustment ok; }; bool is_ok; } LeadingAdjustment_option;
 } // namespace capi
 } // namespace
 
 namespace icu4x {
 /**
- * See the [Rust documentation for `LeadingAdjustment`](https://docs.rs/icu/latest/icu/casemap/options/enum.LeadingAdjustment.html) for more information.
+ * See the [Rust documentation for `LeadingAdjustment`](https://docs.rs/icu/2.0.0/icu/casemap/options/enum.LeadingAdjustment.html) for more information.
  */
 class LeadingAdjustment {
 public:

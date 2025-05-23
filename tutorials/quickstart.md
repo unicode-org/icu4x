@@ -16,8 +16,8 @@ We also assume that the user is familiar with a terminal and have `rust` and `ca
 To verify that, open a terminal and check that the results are similar to:
 
 ```console
-$ cargo --version
-cargo 1.81.0 (2dbb1af80 2024-08-20)
+cargo --version
+# cargo 1.86.0 (adf9b6ad1 2025-02-28)
 ```
 
 ## 2. Creating an app with ICU4X as a dependency
@@ -32,7 +32,7 @@ cd myapp
 Then add a dependency on `ICU4X`'s main crate, `icu`:
 
 ```console
-$ cargo add icu
+cargo add icu
 ```
 
 ## 3. Locales
@@ -82,13 +82,13 @@ It's a bit unergonomic to have to parse them at runtime and handle a parser erro
 For that purpose, ICU4X provides a macro one can use to parse it at compilation time:
 
 ```rust
-use icu::locale::{Locale, locale};
+use icu::locale::{Locale, locale, subtags::language};
 
 const LOCALE: Locale = locale!("ES-AR");
 
 fn main() {
-    if LOCALE.id.language.as_str() == "es" {
-        println!("¡Hola amigo!");
+    if LOCALE.id.language == language!("es") {
+        println!("¡Hola!");
     }
 
     println!("You are using: {}", LOCALE);
@@ -115,18 +115,14 @@ fn main() {
 
     let dtf = DateTimeFormatter::try_new(
         LOCALE.into(),
-        YMD::medium(),
+        YMD::long(),
     )
     .expect("ja data should be available");
 
     let date = Date::try_new_iso(2020, 10, 14)
         .expect("date should be valid");
 
-    // DateTimeFormatter supports the ISO and native calendars as input via DateTime<AnyCalendar>.
-    // For smaller codesize you can use FixedCalendarDateTimeFormatter<Gregorian> with a DateTime<Gregorian>
-    let date = date.to_any();
-
-    let formatted_date = dtf.format(&date).to_string();
+    let formatted_date = dtf.format(&date);
 
     println!("📅: {}", formatted_date);
 }
@@ -135,7 +131,7 @@ fn main() {
 If all went well, running the app with `cargo run` should display:
 
 ```text
-📅: 2020年10月14日 13:21:28
+📅: 2020年10月14日
 ```
 
 Here's an internationalized date!
@@ -159,11 +155,11 @@ However, shipping the library with all locales will have a size impact on your b
 
 ## 6. Summary
 
-This concludes this introduction tutorial. With the help of `DateTimeFormat`, `Locale` and `DataProvider` we formatted a date to Japanese, but that's just the start. 
+This concludes this introduction tutorial. With the help of `Locale` and `DateTimeFormatter` we formatted a date to Japanese, but that's just the start. 
 
 Internationalization is a broad domain and there are many more components in `ICU4X`.
 
-Next, learn how to [generate optimized data for your binary](data-management.md), [configure your Cargo.toml file](cargo.md), or continue exploring by reading [the docs](https://docs.rs/icu/latest/).
+Next, learn how to [generate optimized data for your binary](data-management.md), [configure your Cargo.toml file](../examples/cargo), or continue exploring by reading [the docs](https://docs.rs/icu/latest/).
 
 
 

@@ -3,29 +3,23 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
-/** 
+
+/**
  * The outcome of non-recursive canonical decomposition of a character.
  * `second` will be NUL when the decomposition expands to a single character
  * (which may or may not be the original one)
  *
- * See the [Rust documentation for `Decomposed`](https://docs.rs/icu/latest/icu/normalizer/properties/enum.Decomposed.html) for more information.
+ * See the [Rust documentation for `Decomposed`](https://docs.rs/icu/2.0.0/icu/normalizer/properties/enum.Decomposed.html) for more information.
  */
-
-
 export class Decomposed {
-    
     #first;
-    
-    get first()  {
+    get first() {
         return this.#first;
     }
-    
     #second;
-    
-    get second()  {
+    get second() {
         return this.#second;
     }
-    
     #internalConstructor(structObj, internalConstructor) {
         if (typeof structObj !== "object") {
             throw new Error("Decomposed's constructor takes an object of Decomposed's fields.");
@@ -51,7 +45,6 @@ export class Decomposed {
 
     // Return this struct in FFI function friendly format.
     // Returns an array that can be expanded with spread syntax (...)
-    
     _intoFFI(
         functionCleanupArena,
         appendArrayMap
@@ -98,6 +91,7 @@ export class Decomposed {
 
         return new Decomposed(structObj, internalConstructor);
     }
+
 
     constructor(structObj, internalConstructor) {
         return this.#internalConstructor(...arguments)

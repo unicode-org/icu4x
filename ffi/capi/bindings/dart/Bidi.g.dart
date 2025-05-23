@@ -5,7 +5,7 @@ part of 'lib.g.dart';
 
 /// An ICU4X Bidi object, containing loaded bidi data
 ///
-/// See the [Rust documentation for `BidiClass`](https://docs.rs/icu/latest/icu/properties/props/struct.BidiClass.html) for more information.
+/// See the [Rust documentation for `BidiClass`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.BidiClass.html) for more information.
 final class Bidi implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _ffi;
 
@@ -25,13 +25,13 @@ final class Bidi implements ffi.Finalizable {
 
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_Bidi_destroy_mv1));
 
-  /// Creates a new [`Bidi`] from locale data using compiled data.
+  /// Creates a new [Bidi] from locale data using compiled data.
   factory Bidi() {
     final result = _icu4x_Bidi_create_mv1();
     return Bidi._fromFfi(result, []);
   }
 
-  /// Creates a new [`Bidi`] from locale data, and a particular data source.
+  /// Creates a new [Bidi] from locale data, and a particular data source.
   ///
   /// Throws [DataError] on failure.
   factory Bidi.withProvider(DataProvider provider) {
@@ -46,7 +46,7 @@ final class Bidi implements ffi.Finalizable {
   ///
   /// Takes in a Level for the default level, if it is an invalid value it will default to LTR
   ///
-  /// See the [Rust documentation for `new_with_data_source`](https://docs.rs/unicode_bidi/latest/unicode_bidi/struct.BidiInfo.html#method.new_with_data_source) for more information.
+  /// See the [Rust documentation for `new_with_data_source`](https://docs.rs/unicode_bidi/0.3.11/unicode_bidi/struct.BidiInfo.html#method.new_with_data_source) for more information.
   BidiInfo forText(String text, [int? defaultLevel]) {
     final textArena = _FinalizedArena();
     // This lifetime edge depends on lifetimes: 'text
@@ -64,7 +64,7 @@ final class Bidi implements ffi.Finalizable {
   /// Failure to follow this invariant may lead to incorrect results,
   /// but is still safe.
   ///
-  /// See the [Rust documentation for `reorder_visual`](https://docs.rs/unicode_bidi/latest/unicode_bidi/struct.BidiInfo.html#method.reorder_visual) for more information.
+  /// See the [Rust documentation for `reorder_visual`](https://docs.rs/unicode_bidi/0.3.11/unicode_bidi/struct.BidiInfo.html#method.reorder_visual) for more information.
   ReorderedIndexMap reorderVisual(core.List<int> levels) {
     final temp = _FinalizedArena();
     final result = _icu4x_Bidi_reorder_visual_mv1(_ffi, levels._uint8AllocIn(temp.arena));
@@ -75,7 +75,7 @@ final class Bidi implements ffi.Finalizable {
   ///
   /// Invalid levels (numbers greater than 125) will be assumed LTR
   ///
-  /// See the [Rust documentation for `is_rtl`](https://docs.rs/unicode_bidi/latest/unicode_bidi/struct.Level.html#method.is_rtl) for more information.
+  /// See the [Rust documentation for `is_rtl`](https://docs.rs/unicode_bidi/0.3.11/unicode_bidi/level/struct.Level.html#method.is_rtl) for more information.
   static bool levelIsRtl(int level) {
     final result = _icu4x_Bidi_level_is_rtl_mv1(level);
     return result;
@@ -85,7 +85,7 @@ final class Bidi implements ffi.Finalizable {
   ///
   /// Invalid levels (numbers greater than 125) will be assumed LTR
   ///
-  /// See the [Rust documentation for `is_ltr`](https://docs.rs/unicode_bidi/latest/unicode_bidi/struct.Level.html#method.is_ltr) for more information.
+  /// See the [Rust documentation for `is_ltr`](https://docs.rs/unicode_bidi/0.3.11/unicode_bidi/level/struct.Level.html#method.is_ltr) for more information.
   static bool levelIsLtr(int level) {
     final result = _icu4x_Bidi_level_is_ltr_mv1(level);
     return result;
@@ -93,7 +93,7 @@ final class Bidi implements ffi.Finalizable {
 
   /// Get a basic RTL Level value
   ///
-  /// See the [Rust documentation for `rtl`](https://docs.rs/unicode_bidi/latest/unicode_bidi/struct.Level.html#method.rtl) for more information.
+  /// See the [Rust documentation for `rtl`](https://docs.rs/unicode_bidi/0.3.11/unicode_bidi/level/struct.Level.html#method.rtl) for more information.
   static int levelRtl() {
     final result = _icu4x_Bidi_level_rtl_mv1();
     return result;
@@ -101,11 +101,12 @@ final class Bidi implements ffi.Finalizable {
 
   /// Get a simple LTR Level value
   ///
-  /// See the [Rust documentation for `ltr`](https://docs.rs/unicode_bidi/latest/unicode_bidi/struct.Level.html#method.ltr) for more information.
+  /// See the [Rust documentation for `ltr`](https://docs.rs/unicode_bidi/0.3.11/unicode_bidi/level/struct.Level.html#method.ltr) for more information.
   static int levelLtr() {
     final result = _icu4x_Bidi_level_ltr_mv1();
     return result;
   }
+
 }
 
 @_DiplomatFfiUse('icu4x_Bidi_destroy_mv1')

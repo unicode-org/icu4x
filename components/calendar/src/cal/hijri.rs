@@ -9,10 +9,9 @@
 //! use icu::calendar::Date;
 //!
 //! let hijri = HijriSimulated::new_mecca_always_calculating();
-//! let hijri_date = Date::try_new_simulated_hijri_with_calendar(
-//!     1348, 10, 11, hijri,
-//! )
-//! .expect("Failed to initialize Hijri Date instance.");
+//! let hijri_date =
+//!     Date::try_new_simulated_hijri_with_calendar(1348, 10, 11, hijri)
+//!         .expect("Failed to initialize Hijri Date instance.");
 //!
 //! assert_eq!(hijri_date.era_year().year, 1348);
 //! assert_eq!(hijri_date.month().ordinal, 10);
@@ -817,9 +816,8 @@ impl Date<HijriUmmAlQura> {
     /// use icu::calendar::cal::HijriUmmAlQura;
     /// use icu::calendar::Date;
     ///
-    /// let date_hijri =
-    ///     Date::try_new_ummalqura(1392, 4, 25)
-    ///         .expect("Failed to initialize Hijri Date instance.");
+    /// let date_hijri = Date::try_new_ummalqura(1392, 4, 25)
+    ///     .expect("Failed to initialize Hijri Date instance.");
     ///
     /// assert_eq!(date_hijri.era_year().year, 1392);
     /// assert_eq!(date_hijri.month().ordinal, 4);
@@ -1017,10 +1015,15 @@ impl<A: AsCalendar<Calendar = HijriTabular>> Date<A> {
     /// Construct new Tabular Hijri Date.
     ///
     /// ```rust
-    /// use icu::calendar::cal::{HijriTabular, HijriTabularEpoch, HijriTabularLeapYears};
+    /// use icu::calendar::cal::{
+    ///     HijriTabular, HijriTabularEpoch, HijriTabularLeapYears,
+    /// };
     /// use icu::calendar::Date;
     ///
-    /// let hijri = HijriTabular::new(HijriTabularLeapYears::TypeII, HijriTabularEpoch::Thursday);
+    /// let hijri = HijriTabular::new(
+    ///     HijriTabularLeapYears::TypeII,
+    ///     HijriTabularEpoch::Thursday,
+    /// );
     ///
     /// let date_hijri =
     ///     Date::try_new_hijri_tabular_with_calendar(1392, 4, 25, hijri)

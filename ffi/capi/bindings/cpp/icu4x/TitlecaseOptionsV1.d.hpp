@@ -8,6 +8,7 @@
 #include <memory>
 #include <functional>
 #include <optional>
+#include <cstdlib>
 #include "../diplomat_runtime.hpp"
 #include "LeadingAdjustment.d.hpp"
 #include "TrailingCase.d.hpp"
@@ -25,7 +26,7 @@ namespace capi {
       icu4x::capi::LeadingAdjustment_option leading_adjustment;
       icu4x::capi::TrailingCase_option trailing_case;
     };
-    
+
     typedef struct TitlecaseOptionsV1_option {union { TitlecaseOptionsV1 ok; }; bool is_ok; } TitlecaseOptionsV1_option;
 } // namespace capi
 } // namespace
@@ -33,14 +34,14 @@ namespace capi {
 
 namespace icu4x {
 /**
- * See the [Rust documentation for `TitlecaseOptions`](https://docs.rs/icu/latest/icu/casemap/options/struct.TitlecaseOptions.html) for more information.
+ * See the [Rust documentation for `TitlecaseOptions`](https://docs.rs/icu/2.0.0/icu/casemap/options/struct.TitlecaseOptions.html) for more information.
  */
 struct TitlecaseOptionsV1 {
   std::optional<icu4x::LeadingAdjustment> leading_adjustment;
   std::optional<icu4x::TrailingCase> trailing_case;
 
   /**
-   * See the [Rust documentation for `default`](https://docs.rs/icu/latest/icu/casemap/options/struct.TitlecaseOptions.html#method.default) for more information.
+   * See the [Rust documentation for `default`](https://docs.rs/icu/2.0.0/icu/casemap/options/struct.TitlecaseOptions.html#method.default) for more information.
    */
   inline static icu4x::TitlecaseOptionsV1 default_options();
 

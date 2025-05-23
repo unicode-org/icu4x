@@ -8,6 +8,7 @@
 #include <memory>
 #include <functional>
 #include <optional>
+#include <cstdlib>
 #include "../diplomat_runtime.hpp"
 
 
@@ -18,7 +19,7 @@ namespace capi {
       BidiDirection_Rtl = 1,
       BidiDirection_Mixed = 2,
     };
-    
+
     typedef struct BidiDirection_option {union { BidiDirection ok; }; bool is_ok; } BidiDirection_option;
 } // namespace capi
 } // namespace

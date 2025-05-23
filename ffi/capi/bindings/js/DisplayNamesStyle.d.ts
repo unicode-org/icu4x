@@ -2,24 +2,25 @@
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
-/** 
- * See the [Rust documentation for `Style`](https://docs.rs/icu/latest/icu/experimental/displaynames/options/enum.Style.html) for more information.
+
+/**
+ * See the [Rust documentation for `Style`](https://docs.rs/icu/2.0.0/icu/experimental/displaynames/enum.Style.html) for more information.
  */
-
-
 export class DisplayNamesStyle {
-    
 
-    static fromValue(value : DisplayNamesStyle | string) : DisplayNamesStyle; 
+    /** @internal */
+    static fromValue(value: DisplayNamesStyle | string): DisplayNamesStyle;
 
-    get value() : string;
+    get value(): string;
 
-    get ffiValue() : number;
+    /** @internal */
+    get ffiValue(): number;
 
     static Narrow : DisplayNamesStyle;
     static Short : DisplayNamesStyle;
     static Long : DisplayNamesStyle;
     static Menu : DisplayNamesStyle;
+
 
     constructor(value: DisplayNamesStyle | string );
 }

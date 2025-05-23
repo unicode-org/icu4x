@@ -3,8 +3,9 @@
 
 part of 'lib.g.dart';
 
-/// See the [Rust documentation for `LineBreakStrictness`](https://docs.rs/icu/latest/icu/segmenter/options/enum.LineBreakStrictness.html) for more information.
+/// See the [Rust documentation for `LineBreakStrictness`](https://docs.rs/icu/2.0.0/icu/segmenter/options/enum.LineBreakStrictness.html) for more information.
 enum LineBreakStrictness {
+
   loose,
 
   normal,
@@ -12,6 +13,7 @@ enum LineBreakStrictness {
   strict,
 
   anywhere;
+
 }
 
 // dart format on

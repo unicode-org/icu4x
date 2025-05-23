@@ -4,31 +4,23 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
-/** 
- * See the [Rust documentation for `TimeZoneAndCanonicalAndNormalized`](https://docs.rs/icu/latest/icu/time/zone/iana/struct.TimeZoneAndCanonicalAndNormalized.html) for more information.
+
+/**
+ * See the [Rust documentation for `TimeZoneAndCanonicalAndNormalized`](https://docs.rs/icu/2.0.0/icu/time/zone/iana/struct.TimeZoneAndCanonicalAndNormalized.html) for more information.
  */
-
-
 export class TimeZoneAndCanonicalAndNormalized {
-    
     #timeZone;
-    
-    get timeZone()  {
+    get timeZone() {
         return this.#timeZone;
     }
-    
     #canonical;
-    
-    get canonical()  {
+    get canonical() {
         return this.#canonical;
     }
-    
     #normalized;
-    
-    get normalized()  {
+    get normalized() {
         return this.#normalized;
     }
-    
     #internalConstructor(structObj, internalConstructor) {
         if (typeof structObj !== "object") {
             throw new Error("TimeZoneAndCanonicalAndNormalized's constructor takes an object of TimeZoneAndCanonicalAndNormalized's fields.");
@@ -59,8 +51,7 @@ export class TimeZoneAndCanonicalAndNormalized {
     }
 
     // Return this struct in FFI function friendly format.
-    // Returns an array that can be expanded with spread syntax (...)
-    // If this struct contains any slices, their lifetime-edge-relevant information will be
+    // Returns an array that can be expanded with spread syntax (...)// If this struct contains any slices, their lifetime-edge-relevant information will be
     // set up here, and can be appended to any relevant lifetime arrays here. <lifetime>AppendArray accepts a list
     // of arrays for each lifetime to do so. It accepts multiple lists per lifetime in case the caller needs to tie a lifetime to multiple
     // output arrays. Null is equivalent to an empty list: this lifetime is not being borrowed from.
@@ -109,14 +100,15 @@ export class TimeZoneAndCanonicalAndNormalized {
         return new TimeZoneAndCanonicalAndNormalized(structObj, internalConstructor);
     }
 
-    // Return all fields corresponding to lifetime `'a` 
+    // Return all fields corresponding to lifetime `'a`
     // without handling lifetime dependencies (this is the job of the caller)
     // This is all fields that may be borrowed from if borrowing `'a`,
     // assuming that there are no `'other: a`. bounds. In case of such bounds,
     // the caller should take care to also call _fieldsForLifetimeOther
-    get _fieldsForLifetimeA() { 
+    get _fieldsForLifetimeA() {
         return [this.#canonical, this.#normalized];
     };
+
 
     constructor(structObj, internalConstructor) {
         return this.#internalConstructor(...arguments)

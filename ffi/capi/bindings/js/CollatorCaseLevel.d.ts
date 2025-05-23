@@ -2,22 +2,23 @@
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
-/** 
- * See the [Rust documentation for `CaseLevel`](https://docs.rs/icu/latest/icu/collator/options/enum.CaseLevel.html) for more information.
+
+/**
+ * See the [Rust documentation for `CaseLevel`](https://docs.rs/icu/2.0.0/icu/collator/options/enum.CaseLevel.html) for more information.
  */
-
-
 export class CollatorCaseLevel {
-    
 
-    static fromValue(value : CollatorCaseLevel | string) : CollatorCaseLevel; 
+    /** @internal */
+    static fromValue(value: CollatorCaseLevel | string): CollatorCaseLevel;
 
-    get value() : string;
+    get value(): string;
 
-    get ffiValue() : number;
+    /** @internal */
+    get ffiValue(): number;
 
     static Off : CollatorCaseLevel;
     static On : CollatorCaseLevel;
+
 
     constructor(value: CollatorCaseLevel | string );
 }

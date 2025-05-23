@@ -22,16 +22,16 @@ fn collation() {
     const CASES: [(&str, &str); 12] = [
         ("de-DE_phoneb", "de-DE-u-co-phonebk"),
         ("es-ES_tradnl", "es-ES-u-co-trad"),
-        ("ja-JP_radstr", "ja-JP-u-co-stroke"),
+        ("ja-JP_radstr", "ja-JP-u-co-unihan"),
         ("zh-CN_phoneb", "zh-CN-u-co-phonebk"),
         ("zh-CN_stroke", "zh-CN-u-co-stroke"),
-        ("zh-HK_radstr", "zh-HK-u-co-stroke"),
-        ("zh-MO_radstr", "zh-MO-u-co-stroke"),
+        ("zh-HK_radstr", "zh-HK-u-co-unihan"),
+        ("zh-MO_radstr", "zh-MO-u-co-unihan"),
         ("zh-MO_stroke", "zh-MO-u-co-stroke"),
         ("zh-SG_phoneb", "zh-SG-u-co-phonebk"),
         ("zh-SG_stroke", "zh-SG-u-co-stroke"),
         ("zh-TW_pronun", "zh-TW-u-co-zhuyin"),
-        ("zh-TW_radstr", "zh-TW-u-co-stroke"),
+        ("zh-TW_radstr", "zh-TW-u-co-unihan"),
     ];
 
     for (src, expected) in CASES {

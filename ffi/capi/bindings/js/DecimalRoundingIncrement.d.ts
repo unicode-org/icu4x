@@ -2,26 +2,27 @@
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
-/** 
+
+/**
  * Increment used in a rounding operation.
  *
- * See the [Rust documentation for `RoundingIncrement`](https://docs.rs/fixed_decimal/latest/fixed_decimal/enum.RoundingIncrement.html) for more information.
+ * See the [Rust documentation for `RoundingIncrement`](https://docs.rs/fixed_decimal/0.7.0/fixed_decimal/enum.RoundingIncrement.html) for more information.
  */
-
-
 export class DecimalRoundingIncrement {
-    
 
-    static fromValue(value : DecimalRoundingIncrement | string) : DecimalRoundingIncrement; 
+    /** @internal */
+    static fromValue(value: DecimalRoundingIncrement | string): DecimalRoundingIncrement;
 
-    get value() : string;
+    get value(): string;
 
-    get ffiValue() : number;
+    /** @internal */
+    get ffiValue(): number;
 
     static MultiplesOf1 : DecimalRoundingIncrement;
     static MultiplesOf2 : DecimalRoundingIncrement;
     static MultiplesOf5 : DecimalRoundingIncrement;
     static MultiplesOf25 : DecimalRoundingIncrement;
+
 
     constructor(value: DecimalRoundingIncrement | string );
 }

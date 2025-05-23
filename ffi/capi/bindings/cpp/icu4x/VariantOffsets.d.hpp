@@ -8,6 +8,7 @@
 #include <memory>
 #include <functional>
 #include <optional>
+#include <cstdlib>
 #include "../diplomat_runtime.hpp"
 
 namespace icu4x {
@@ -22,7 +23,7 @@ namespace capi {
       icu4x::capi::UtcOffset* standard;
       icu4x::capi::UtcOffset* daylight;
     };
-    
+
     typedef struct VariantOffsets_option {union { VariantOffsets ok; }; bool is_ok; } VariantOffsets_option;
 } // namespace capi
 } // namespace
@@ -30,7 +31,7 @@ namespace capi {
 
 namespace icu4x {
 /**
- * See the [Rust documentation for `VariantOffsets`](https://docs.rs/icu/latest/icu/time/zone/struct.VariantOffsets.html) for more information.
+ * See the [Rust documentation for `VariantOffsets`](https://docs.rs/icu/2.0.0/icu/time/zone/struct.VariantOffsets.html) for more information.
  */
 struct VariantOffsets {
   std::unique_ptr<icu4x::UtcOffset> standard;

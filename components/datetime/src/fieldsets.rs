@@ -1494,7 +1494,6 @@ pub mod zone {
         /// use icu::datetime::input::{Date, DateTime, Time};
         /// use icu::datetime::NoCalendarFormatter;
         /// use icu::datetime::fieldsets::zone::GenericShort;
-        /// use icu::datetime::DateTimeWriteError;
         /// use icu::locale::locale;
         /// use icu::time::zone::IanaParser;
         /// use tinystr::tinystr;

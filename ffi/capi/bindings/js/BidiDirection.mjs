@@ -5,7 +5,6 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
 export class BidiDirection {
-    
     #value = undefined;
 
     static #values = new Map([
@@ -17,7 +16,7 @@ export class BidiDirection {
     static getAllEntries() {
         return BidiDirection.#values.entries();
     }
-    
+
     #internalConstructor(value) {
         if (arguments.length > 1 && arguments[0] === diplomatRuntime.internalConstructor) {
             // We pass in two internalConstructor arguments to create *new*
@@ -43,15 +42,17 @@ export class BidiDirection {
         throw TypeError(value + " is not a BidiDirection and does not correspond to any of its enumerator values.");
     }
 
+    /** @internal */
     static fromValue(value) {
         return new BidiDirection(value);
     }
 
-    get value() {
+    get value(){
         return [...BidiDirection.#values.keys()][this.#value];
     }
 
-    get ffiValue() {
+    /** @internal */
+    get ffiValue(){
         return this.#value;
     }
     static #objectValues = [
@@ -63,6 +64,7 @@ export class BidiDirection {
     static Ltr = BidiDirection.#objectValues[0];
     static Rtl = BidiDirection.#objectValues[1];
     static Mixed = BidiDirection.#objectValues[2];
+
 
     constructor(value) {
         return this.#internalConstructor(...arguments)

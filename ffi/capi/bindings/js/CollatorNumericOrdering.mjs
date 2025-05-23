@@ -3,13 +3,11 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
-/** 
- * See the [Rust documentation for `CollationNumericOrdering`](https://docs.rs/icu/latest/icu/collator/preferences/enum.CollationNumericOrdering.html) for more information.
+
+/**
+ * See the [Rust documentation for `CollationNumericOrdering`](https://docs.rs/icu/2.0.0/icu/collator/preferences/enum.CollationNumericOrdering.html) for more information.
  */
-
-
 export class CollatorNumericOrdering {
-    
     #value = undefined;
 
     static #values = new Map([
@@ -20,7 +18,7 @@ export class CollatorNumericOrdering {
     static getAllEntries() {
         return CollatorNumericOrdering.#values.entries();
     }
-    
+
     #internalConstructor(value) {
         if (arguments.length > 1 && arguments[0] === diplomatRuntime.internalConstructor) {
             // We pass in two internalConstructor arguments to create *new*
@@ -46,15 +44,17 @@ export class CollatorNumericOrdering {
         throw TypeError(value + " is not a CollatorNumericOrdering and does not correspond to any of its enumerator values.");
     }
 
+    /** @internal */
     static fromValue(value) {
         return new CollatorNumericOrdering(value);
     }
 
-    get value() {
+    get value(){
         return [...CollatorNumericOrdering.#values.keys()][this.#value];
     }
 
-    get ffiValue() {
+    /** @internal */
+    get ffiValue(){
         return this.#value;
     }
     static #objectValues = [
@@ -64,6 +64,7 @@ export class CollatorNumericOrdering {
 
     static Off = CollatorNumericOrdering.#objectValues[0];
     static On = CollatorNumericOrdering.#objectValues[1];
+
 
     constructor(value) {
         return this.#internalConstructor(...arguments)

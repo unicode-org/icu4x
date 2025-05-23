@@ -224,7 +224,7 @@ class span {
 public:
   constexpr span(T *data = nullptr, size_t size = Extent)
     : data_(data), size_(size) {}
- 
+
   constexpr span(const span<T> &o)
     : data_(o.data_), size_(o.size_) {}
   template <size_t N>
@@ -255,42 +255,51 @@ private:
 
 // Interop between std::function & our C Callback wrapper type
 
+template <typename T, typename = void>
+struct as_ffi {
+  using type = T;
+};
+
+template <typename T>
+struct as_ffi<T, std::void_t<decltype(std::declval<std::remove_pointer_t<T>>().AsFFI())>> {
+  using type = decltype(std::declval<std::remove_pointer_t<T>>().AsFFI());
+};
+
+template<typename T>
+using as_ffi_t = typename as_ffi<T>::type;
+
+template<typename T>
+using replace_string_view_t = std::conditional_t<std::is_same_v<T, std::string_view>, capi::DiplomatStringView, T>;
+
+template<typename T>
+using replace_ref_with_ptr_t = std::conditional_t<std::is_reference_v<T>, std::add_pointer_t<std::remove_reference_t<T>>, T>;
+
+/// Replace the argument types from the std::function with the argument types for th function pointer
+template<typename T>
+using replace_fn_t = replace_string_view_t<as_ffi_t<T>>;
+
 template <typename T> struct fn_traits;
 template <typename Ret, typename... Args> struct fn_traits<std::function<Ret(Args...)>> {
     using fn_ptr_t = Ret(Args...);
     using function_t = std::function<fn_ptr_t>;
     using ret = Ret;
 
-    template <typename T, typename = void>
-    struct as_ffi {
-      using type = T;
-    };
-
-    template <typename T>
-    struct as_ffi<T, std::void_t<decltype(&T::AsFFI)>> {
-      using type = decltype(std::declval<T>().AsFFI());
-    };
-
-    template<typename T>
-    using as_ffi_t = typename as_ffi<T>::type;
-
-    template<typename T>
-    using replace_string_view_t = std::conditional_t<std::is_same_v<T, std::string_view>, capi::DiplomatStringView, T>;
-
-    template<typename T>
-    using replace_fn_t = replace_string_view_t<as_ffi_t<T>>;
-
     // For a given T, creates a function that take in the C ABI version & return the C++ type.
     template<typename T>
     static T replace(replace_fn_t<T> val) {
-        if constexpr(std::is_same_v<T, std::string_view>)   {
-            return std::string_view{val.data, val.len};
-        } else if constexpr(!std::is_same_v<T, as_ffi_t<T>>) {
-            return T::FromFFI(val);
+      if constexpr(std::is_same_v<T, std::string_view>)   {
+          return std::string_view{val.data, val.len};
+      } else if constexpr (!std::is_same_v<T, as_ffi_t<T>>) {
+        if constexpr (std::is_lvalue_reference_v<T>) {
+          return *std::remove_reference_t<T>::FromFFI(val);
         }
         else {
-            return val;
+          return T::FromFFI(val);
         }
+      }
+      else {
+          return val;
+      }
     }
 
     static Ret c_run_callback(const void *cb, replace_fn_t<Args>... args) {
@@ -314,7 +323,7 @@ template<typename T> struct inner { using type = T; };
 template<typename T> struct inner<std::unique_ptr<T>> { using type = T; };
 template<typename T> struct inner<std::optional<T>>{ using type = T; };
 
-template<typename T, typename U = typename inner<T>::type> 
+template<typename T, typename U = typename inner<T>::type>
 inline const U get_inner_if_present(T v) {
   if constexpr(std::is_same_v<T,U>) {
     return std::move(v);
@@ -341,7 +350,7 @@ struct next_to_iter_helper {
   using iterator_category = std::input_iterator_tag;
 
   next_to_iter_helper(std::unique_ptr<T>&& ptr) : _ptr(std::move(ptr)), _curr(_ptr->next()) {}
-  
+
   // https://en.cppreference.com/w/cpp/named_req/InputIterator requires that the type be copyable
   next_to_iter_helper(const next_to_iter_helper& o) : _ptr(o._ptr), _curr(o._curr) {}
 

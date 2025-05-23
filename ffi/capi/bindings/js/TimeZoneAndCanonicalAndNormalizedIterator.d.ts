@@ -3,14 +3,16 @@ import type { TimeZoneAndCanonicalAndNormalized } from "./TimeZoneAndCanonicalAn
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
-/** 
- * See the [Rust documentation for `TimeZoneAndCanonicalAndNormalizedIter`](https://docs.rs/icu/latest/icu/time/zone/iana/struct.TimeZoneAndCanonicalAndNormalizedIter.html) for more information.
+
+/**
+ * See the [Rust documentation for `TimeZoneAndCanonicalAndNormalizedIter`](https://docs.rs/icu/2.0.0/icu/time/zone/iana/struct.TimeZoneAndCanonicalAndNormalizedIter.html) for more information.
  */
-
-
 export class TimeZoneAndCanonicalAndNormalizedIterator {
-    
+    /** @internal */
     get ffiValue(): pointer;
+    /** @internal */
+    constructor();
 
-    next() : IteratorResult<TimeZoneAndCanonicalAndNormalized>;
+
+    next(): IteratorResult<TimeZoneAndCanonicalAndNormalized>;
 }

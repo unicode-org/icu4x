@@ -3,13 +3,15 @@
 
 part of 'lib.g.dart';
 
-/// See the [Rust documentation for `Length`](https://docs.rs/icu/latest/icu/datetime/options/enum.Length.html) for more information.
+/// See the [Rust documentation for `Length`](https://docs.rs/icu/2.0.0/icu/datetime/options/enum.Length.html) for more information.
 enum DateTimeLength {
+
   long,
 
   medium,
 
   short;
+
 }
 
 // dart format on

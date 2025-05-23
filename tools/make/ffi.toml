@@ -10,7 +10,7 @@
 description = "Run C API tests"
 category = "ICU4X Development"
 command = "make"
-args = ["-C", "tutorials/c", "test"]
+args = ["-C", "examples/c", "test"]
 
 [tasks.test-c-tiny]
 description = "Run C API tests for tiny targets"
@@ -19,15 +19,15 @@ dependencies = ["install-unknown-linux-nightly"]
 script_runner = "@duckscript"
 script = '''
 exit_on_error true
-exec --fail-on-error make -C tutorials/c-tiny/fixeddecimal
-exec --fail-on-error make -C tutorials/c-tiny/segmenter
+exec --fail-on-error make -C examples/c-tiny/decimal
+exec --fail-on-error make -C examples/c-tiny/segmenter
 '''
 
 [tasks.test-cpp]
 description = "Run CPP tests"
 category = "ICU4X Development"
 command = "make"
-args = ["-C", "tutorials/cpp", "test"]
+args = ["-C", "examples/cpp", "test"]
 
 
 # JS/WASM tasks
@@ -37,15 +37,22 @@ description = "Run JS tests"
 category = "ICU4X Development"
 dependencies = ["install-wasm-nightly"]
 env = { PINNED_CI_NIGHTLY = "${PINNED_CI_NIGHTLY}" }
-command = "npm"
-args = ["-C", "ffi/npm", "install-ci-test"]
+script_runner = "@duckscript"
+script = '''
+exit_on_error true
+exec --fail-on-error npm -C ffi/npm install-ci-test
+exec --fail-on-error npm -C ffi/npm run bench
+exec --fail-on-error npm -C examples/npm install
+exec --fail-on-error npm -C examples/npm run compile
+exec --fail-on-error npm -C examples/npm run start
+'''
 
 [tasks.test-tinywasm]
 description = "Test the Tiny WASM example"
 category = "ICU4X Development"
 dependencies = ["install-wasm-nightly"]
 command = "make"
-args = ["-C", "tutorials/js-tiny", "test"]
+args = ["-C", "examples/js-tiny", "test"]
 
 
 # Dart tasks
@@ -56,8 +63,8 @@ category = "ICU4X Development"
 cwd = "ffi/dart"
 script_runner = "@duckscript"
 script = '''
-exec --fail-on-error dart format --set-exit-if-changed .
 exec --fail-on-error dart pub get
+exec --fail-on-error dart format --set-exit-if-changed .
 exec --fail-on-error dart analyze
 exec --fail-on-error dart --enable-experiment=native-assets test
 '''

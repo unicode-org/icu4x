@@ -3,7 +3,7 @@
 
 part of 'lib.g.dart';
 
-/// See the [Rust documentation for `Collator`](https://docs.rs/icu/latest/icu/collator/struct.Collator.html) for more information.
+/// See the [Rust documentation for `Collator`](https://docs.rs/icu/2.0.0/icu/collator/struct.Collator.html) for more information.
 final class Collator implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _ffi;
 
@@ -25,10 +25,10 @@ final class Collator implements ffi.Finalizable {
 
   /// Construct a new Collator instance using compiled data.
   ///
-  /// See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/collator/struct.Collator.html#method.try_new) for more information.
+  /// See the [Rust documentation for `try_new`](https://docs.rs/icu/2.0.0/icu/collator/struct.Collator.html#method.try_new) for more information.
   ///
   /// Throws [DataError] on failure.
-  factory Collator.create(Locale locale, CollatorOptions options) {
+  factory Collator(Locale locale, CollatorOptions options) {
     final temp = _FinalizedArena();
     final result = _icu4x_Collator_create_v1_mv1(locale._ffi, options._toFfi(temp.arena));
     if (!result.isOk) {
@@ -39,10 +39,10 @@ final class Collator implements ffi.Finalizable {
 
   /// Construct a new Collator instance using a particular data source.
   ///
-  /// See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/collator/struct.Collator.html#method.try_new) for more information.
+  /// See the [Rust documentation for `try_new`](https://docs.rs/icu/2.0.0/icu/collator/struct.Collator.html#method.try_new) for more information.
   ///
   /// Throws [DataError] on failure.
-  factory Collator(DataProvider provider, Locale locale, CollatorOptions options) {
+  factory Collator.createWithProvider(DataProvider provider, Locale locale, CollatorOptions options) {
     final temp = _FinalizedArena();
     final result = _icu4x_Collator_create_v1_with_provider_mv1(provider._ffi, locale._ffi, options._toFfi(temp.arena));
     if (!result.isOk) {
@@ -56,7 +56,7 @@ final class Collator implements ffi.Finalizable {
   /// Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
   /// to the WHATWG Encoding Standard.
   ///
-  /// See the [Rust documentation for `compare_utf16`](https://docs.rs/icu/latest/icu/collator/struct.CollatorBorrowed.html#method.compare_utf16) for more information.
+  /// See the [Rust documentation for `compare_utf16`](https://docs.rs/icu/2.0.0/icu/collator/struct.CollatorBorrowed.html#method.compare_utf16) for more information.
   int compare(String left, String right) {
     final temp = _FinalizedArena();
     final result = _icu4x_Collator_compare_utf16_mv1(_ffi, left._utf16AllocIn(temp.arena), right._utf16AllocIn(temp.arena));
@@ -67,11 +67,12 @@ final class Collator implements ffi.Finalizable {
   /// and the options from locale data were combined. None of the struct fields
   /// will have `Auto` as the value.
   ///
-  /// See the [Rust documentation for `resolved_options`](https://docs.rs/icu/latest/icu/collator/struct.CollatorBorrowed.html#method.resolved_options) for more information.
+  /// See the [Rust documentation for `resolved_options`](https://docs.rs/icu/2.0.0/icu/collator/struct.CollatorBorrowed.html#method.resolved_options) for more information.
   CollatorResolvedOptions get resolvedOptions {
     final result = _icu4x_Collator_resolved_options_v1_mv1(_ffi);
     return CollatorResolvedOptions._fromFfi(result);
   }
+
 }
 
 @_DiplomatFfiUse('icu4x_Collator_destroy_mv1')

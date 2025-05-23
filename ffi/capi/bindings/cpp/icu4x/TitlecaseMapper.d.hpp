@@ -8,6 +8,7 @@
 #include <memory>
 #include <functional>
 #include <optional>
+#include <cstdlib>
 #include "../diplomat_runtime.hpp"
 
 namespace icu4x {
@@ -30,7 +31,7 @@ namespace capi {
 
 namespace icu4x {
 /**
- * See the [Rust documentation for `TitlecaseMapper`](https://docs.rs/icu/latest/icu/casemap/struct.TitlecaseMapper.html) for more information.
+ * See the [Rust documentation for `TitlecaseMapper`](https://docs.rs/icu/2.0.0/icu/casemap/struct.TitlecaseMapper.html) for more information.
  */
 class TitlecaseMapper {
 public:
@@ -38,14 +39,14 @@ public:
   /**
    * Construct a new `TitlecaseMapper` instance using compiled data.
    *
-   * See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/casemap/struct.TitlecaseMapper.html#method.new) for more information.
+   * See the [Rust documentation for `new`](https://docs.rs/icu/2.0.0/icu/casemap/struct.TitlecaseMapper.html#method.new) for more information.
    */
   inline static diplomat::result<std::unique_ptr<icu4x::TitlecaseMapper>, icu4x::DataError> create();
 
   /**
    * Construct a new `TitlecaseMapper` instance using a particular data source.
    *
-   * See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/casemap/struct.TitlecaseMapper.html#method.new) for more information.
+   * See the [Rust documentation for `new`](https://docs.rs/icu/2.0.0/icu/casemap/struct.TitlecaseMapper.html#method.new) for more information.
    */
   inline static diplomat::result<std::unique_ptr<icu4x::TitlecaseMapper>, icu4x::DataError> create_with_provider(const icu4x::DataProvider& provider);
 
@@ -54,7 +55,7 @@ public:
    *
    * The `v1` refers to the version of the options struct, which may change as we add more options
    *
-   * See the [Rust documentation for `titlecase_segment`](https://docs.rs/icu/latest/icu/casemap/struct.TitlecaseMapperBorrowed.html#method.titlecase_segment) for more information.
+   * See the [Rust documentation for `titlecase_segment`](https://docs.rs/icu/2.0.0/icu/casemap/struct.TitlecaseMapperBorrowed.html#method.titlecase_segment) for more information.
    */
   inline diplomat::result<std::string, diplomat::Utf8Error> titlecase_segment_v1(std::string_view s, const icu4x::Locale& locale, icu4x::TitlecaseOptionsV1 options) const;
 
@@ -63,7 +64,7 @@ public:
    *
    * The `v1` refers to the version of the options struct, which may change as we add more options
    *
-   * See the [Rust documentation for `titlecase_segment`](https://docs.rs/icu/latest/icu/casemap/struct.TitlecaseMapperBorrowed.html#method.titlecase_segment) for more information.
+   * See the [Rust documentation for `titlecase_segment`](https://docs.rs/icu/2.0.0/icu/casemap/struct.TitlecaseMapperBorrowed.html#method.titlecase_segment) for more information.
    */
   inline static diplomat::result<std::string, diplomat::Utf8Error> titlecase_segment_with_compiled_data_v1(std::string_view s, const icu4x::Locale& locale, icu4x::TitlecaseOptionsV1 options);
 

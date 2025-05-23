@@ -8,6 +8,7 @@
 #include <memory>
 #include <functional>
 #include <optional>
+#include <cstdlib>
 #include "../diplomat_runtime.hpp"
 
 
@@ -22,7 +23,7 @@ namespace capi {
       Weekday_Saturday = 6,
       Weekday_Sunday = 7,
     };
-    
+
     typedef struct Weekday_option {union { Weekday ok; }; bool is_ok; } Weekday_option;
 } // namespace capi
 } // namespace

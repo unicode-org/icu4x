@@ -21,5 +21,4 @@ bool icu4x_SegmenterWordType_is_word_like_mv1(SegmenterWordType self);
 
 
 
-
 #endif // SegmenterWordType_H

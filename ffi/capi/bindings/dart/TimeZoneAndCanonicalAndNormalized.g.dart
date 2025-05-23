@@ -9,7 +9,7 @@ final class _TimeZoneAndCanonicalAndNormalizedFfi extends ffi.Struct {
   external _SliceUtf8 normalized;
 }
 
-/// See the [Rust documentation for `TimeZoneAndCanonicalAndNormalized`](https://docs.rs/icu/latest/icu/time/zone/iana/struct.TimeZoneAndCanonicalAndNormalized.html) for more information.
+/// See the [Rust documentation for `TimeZoneAndCanonicalAndNormalized`](https://docs.rs/icu/2.0.0/icu/time/zone/iana/struct.TimeZoneAndCanonicalAndNormalized.html) for more information.
 final class TimeZoneAndCanonicalAndNormalized {
   final TimeZone timeZone;
   final String canonical;
@@ -34,6 +34,7 @@ final class TimeZoneAndCanonicalAndNormalized {
     return struct;
   }
 
+
   @override
   bool operator ==(Object other) =>
       other is TimeZoneAndCanonicalAndNormalized &&
@@ -48,7 +49,7 @@ final class TimeZoneAndCanonicalAndNormalized {
         normalized,
       ]);
 
-  // Return all fields corresponding to lifetime `'a` 
+  // Return all fields corresponding to lifetime `'a`
   // without handling lifetime dependencies (this is the job of the caller)
   // This is all fields that may be borrowed from if borrowing `'a`,
   // assuming that there are no `'other: a`. bounds. In case of such bounds,

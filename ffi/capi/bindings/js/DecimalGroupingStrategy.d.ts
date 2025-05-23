@@ -2,24 +2,25 @@
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
-/** 
- * See the [Rust documentation for `GroupingStrategy`](https://docs.rs/icu/latest/icu/decimal/options/enum.GroupingStrategy.html) for more information.
+
+/**
+ * See the [Rust documentation for `GroupingStrategy`](https://docs.rs/icu/2.0.0/icu/decimal/options/enum.GroupingStrategy.html) for more information.
  */
-
-
 export class DecimalGroupingStrategy {
-    
 
-    static fromValue(value : DecimalGroupingStrategy | string) : DecimalGroupingStrategy; 
+    /** @internal */
+    static fromValue(value: DecimalGroupingStrategy | string): DecimalGroupingStrategy;
 
-    get value() : string;
+    get value(): string;
 
-    get ffiValue() : number;
+    /** @internal */
+    get ffiValue(): number;
 
     static Auto : DecimalGroupingStrategy;
     static Never : DecimalGroupingStrategy;
     static Always : DecimalGroupingStrategy;
     static Min2 : DecimalGroupingStrategy;
+
 
     constructor(value: DecimalGroupingStrategy | string );
 }

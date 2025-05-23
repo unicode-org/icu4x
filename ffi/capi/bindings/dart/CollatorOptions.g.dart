@@ -10,7 +10,7 @@ final class _CollatorOptionsFfi extends ffi.Struct {
   external _ResultInt32Void caseLevel;
 }
 
-/// See the [Rust documentation for `CollatorOptions`](https://docs.rs/icu/latest/icu/collator/options/struct.CollatorOptions.html) for more information.
+/// See the [Rust documentation for `CollatorOptions`](https://docs.rs/icu/2.0.0/icu/collator/options/struct.CollatorOptions.html) for more information.
 final class CollatorOptions {
   CollatorStrength? strength;
   CollatorAlternateHandling? alternateHandling;
@@ -44,6 +44,7 @@ final class CollatorOptions {
     struct.caseLevel = caseLevel != null ? _ResultInt32Void.ok(caseLevel.index) : _ResultInt32Void.err();
     return struct;
   }
+
 
   @override
   bool operator ==(Object other) =>

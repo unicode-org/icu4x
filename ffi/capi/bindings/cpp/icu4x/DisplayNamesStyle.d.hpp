@@ -8,6 +8,7 @@
 #include <memory>
 #include <functional>
 #include <optional>
+#include <cstdlib>
 #include "../diplomat_runtime.hpp"
 
 
@@ -19,14 +20,14 @@ namespace capi {
       DisplayNamesStyle_Long = 2,
       DisplayNamesStyle_Menu = 3,
     };
-    
+
     typedef struct DisplayNamesStyle_option {union { DisplayNamesStyle ok; }; bool is_ok; } DisplayNamesStyle_option;
 } // namespace capi
 } // namespace
 
 namespace icu4x {
 /**
- * See the [Rust documentation for `Style`](https://docs.rs/icu/latest/icu/experimental/displaynames/options/enum.Style.html) for more information.
+ * See the [Rust documentation for `Style`](https://docs.rs/icu/2.0.0/icu/experimental/displaynames/enum.Style.html) for more information.
  */
 class DisplayNamesStyle {
 public:

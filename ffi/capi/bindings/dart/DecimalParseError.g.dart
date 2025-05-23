@@ -3,13 +3,15 @@
 
 part of 'lib.g.dart';
 
-/// Additional information: [1](https://docs.rs/fixed_decimal/latest/fixed_decimal/enum.ParseError.html)
+/// Additional information: [1](https://docs.rs/fixed_decimal/0.7.0/fixed_decimal/enum.ParseError.html)
 enum DecimalParseError {
+
   unknown,
 
   limit,
 
   syntax;
+
 }
 
 // dart format on

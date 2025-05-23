@@ -10,6 +10,7 @@
 #include <memory>
 #include <functional>
 #include <optional>
+#include <cstdlib>
 #include "../diplomat_runtime.hpp"
 #include "DataError.hpp"
 #include "DataProvider.hpp"
@@ -20,26 +21,25 @@
 namespace icu4x {
 namespace capi {
     extern "C" {
-    
+
     icu4x::capi::LocaleExpander* icu4x_LocaleExpander_create_common_mv1(void);
-    
+
     typedef struct icu4x_LocaleExpander_create_common_with_provider_mv1_result {union {icu4x::capi::LocaleExpander* ok; icu4x::capi::DataError err;}; bool is_ok;} icu4x_LocaleExpander_create_common_with_provider_mv1_result;
     icu4x_LocaleExpander_create_common_with_provider_mv1_result icu4x_LocaleExpander_create_common_with_provider_mv1(const icu4x::capi::DataProvider* provider);
-    
+
     icu4x::capi::LocaleExpander* icu4x_LocaleExpander_create_extended_mv1(void);
-    
+
     typedef struct icu4x_LocaleExpander_create_extended_with_provider_mv1_result {union {icu4x::capi::LocaleExpander* ok; icu4x::capi::DataError err;}; bool is_ok;} icu4x_LocaleExpander_create_extended_with_provider_mv1_result;
     icu4x_LocaleExpander_create_extended_with_provider_mv1_result icu4x_LocaleExpander_create_extended_with_provider_mv1(const icu4x::capi::DataProvider* provider);
-    
+
     icu4x::capi::TransformResult icu4x_LocaleExpander_maximize_mv1(const icu4x::capi::LocaleExpander* self, icu4x::capi::Locale* locale);
-    
+
     icu4x::capi::TransformResult icu4x_LocaleExpander_minimize_mv1(const icu4x::capi::LocaleExpander* self, icu4x::capi::Locale* locale);
-    
+
     icu4x::capi::TransformResult icu4x_LocaleExpander_minimize_favor_script_mv1(const icu4x::capi::LocaleExpander* self, icu4x::capi::Locale* locale);
-    
-    
+
     void icu4x_LocaleExpander_destroy_mv1(LocaleExpander* self);
-    
+
     } // extern "C"
 } // namespace capi
 } // namespace

@@ -8,6 +8,7 @@
 #include <memory>
 #include <functional>
 #include <optional>
+#include <cstdlib>
 #include "../diplomat_runtime.hpp"
 
 namespace icu4x {
@@ -36,7 +37,7 @@ namespace capi {
 
 namespace icu4x {
 /**
- * See the [Rust documentation for `TimeZoneInfo`](https://docs.rs/icu/latest/icu/time/struct.TimeZoneInfo.html) for more information.
+ * See the [Rust documentation for `TimeZoneInfo`](https://docs.rs/icu/2.0.0/icu/time/struct.TimeZoneInfo.html) for more information.
  */
 class TimeZoneInfo {
 public:
@@ -44,7 +45,7 @@ public:
   /**
    * Creates a time zone for UTC (Coordinated Universal Time).
    *
-   * See the [Rust documentation for `utc`](https://docs.rs/icu/latest/icu/time/struct.TimeZoneInfo.html#method.utc) for more information.
+   * See the [Rust documentation for `utc`](https://docs.rs/icu/2.0.0/icu/time/struct.TimeZoneInfo.html#method.utc) for more information.
    */
   inline static std::unique_ptr<icu4x::TimeZoneInfo> utc();
 
@@ -54,7 +55,7 @@ public:
   inline static std::unique_ptr<icu4x::TimeZoneInfo> from_parts(const icu4x::TimeZone& id, const icu4x::UtcOffset* offset, std::optional<icu4x::TimeZoneVariant> variant);
 
   /**
-   * See the [Rust documentation for `id`](https://docs.rs/icu/latest/icu/time/struct.TimeZoneInfo.html#method.id) for more information.
+   * See the [Rust documentation for `id`](https://docs.rs/icu/2.0.0/icu/time/struct.TimeZoneInfo.html#method.id) for more information.
    */
   inline std::unique_ptr<icu4x::TimeZone> id() const;
 
@@ -68,19 +69,19 @@ public:
    * - The constraints are the same as with `ZoneNameTimestamp` in Rust.
    * - Set to year 1000 or 9999 for a reference far in the past or future.
    *
-   * See the [Rust documentation for `at_date_time_iso`](https://docs.rs/icu/latest/icu/time/struct.TimeZoneInfo.html#method.at_date_time_iso) for more information.
+   * See the [Rust documentation for `at_date_time_iso`](https://docs.rs/icu/2.0.0/icu/time/struct.TimeZoneInfo.html#method.at_date_time_iso) for more information.
    *
-   * Additional information: [1](https://docs.rs/icu/latest/icu/time/zone/struct.ZoneNameTimestamp.html)
+   * Additional information: [1](https://docs.rs/icu/2.0.0/icu/time/zone/struct.ZoneNameTimestamp.html)
    */
   inline std::unique_ptr<icu4x::TimeZoneInfo> at_date_time_iso(const icu4x::IsoDate& date, const icu4x::Time& time) const;
 
   /**
-   * See the [Rust documentation for `zone_name_timestamp`](https://docs.rs/icu/latest/icu/time/struct.TimeZoneInfo.html#method.zone_name_timestamp) for more information.
+   * See the [Rust documentation for `zone_name_timestamp`](https://docs.rs/icu/2.0.0/icu/time/struct.TimeZoneInfo.html#method.zone_name_timestamp) for more information.
    */
   inline std::optional<icu4x::IsoDateTime> zone_name_date_time() const;
 
   /**
-   * See the [Rust documentation for `with_variant`](https://docs.rs/icu/latest/icu/time/struct.TimeZoneInfo.html#method.with_variant) for more information.
+   * See the [Rust documentation for `with_variant`](https://docs.rs/icu/2.0.0/icu/time/struct.TimeZoneInfo.html#method.with_variant) for more information.
    */
   inline std::unique_ptr<icu4x::TimeZoneInfo> with_variant(icu4x::TimeZoneVariant time_variant) const;
 
@@ -89,14 +90,14 @@ public:
    *
    * Requires the offset and local time to be set.
    *
-   * See the [Rust documentation for `infer_variant`](https://docs.rs/icu/latest/icu/time/struct.TimeZoneInfo.html#method.infer_variant) for more information.
+   * See the [Rust documentation for `infer_variant`](https://docs.rs/icu/2.0.0/icu/time/struct.TimeZoneInfo.html#method.infer_variant) for more information.
    *
-   * Additional information: [1](https://docs.rs/icu/latest/icu/time/zone/enum.TimeZoneVariant.html)
+   * Additional information: [1](https://docs.rs/icu/2.0.0/icu/time/zone/enum.TimeZoneVariant.html)
    */
   inline std::optional<std::monostate> infer_variant(const icu4x::VariantOffsetsCalculator& offset_calculator);
 
   /**
-   * See the [Rust documentation for `variant`](https://docs.rs/icu/latest/icu/time/struct.TimeZoneInfo.html#method.variant) for more information.
+   * See the [Rust documentation for `variant`](https://docs.rs/icu/2.0.0/icu/time/struct.TimeZoneInfo.html#method.variant) for more information.
    */
   inline std::optional<icu4x::TimeZoneVariant> variant() const;
 

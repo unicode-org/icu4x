@@ -10,14 +10,14 @@
 #include <memory>
 #include <functional>
 #include <optional>
+#include <cstdlib>
 #include "../diplomat_runtime.hpp"
 
 
 namespace icu4x {
 namespace capi {
     extern "C" {
-    
-    
+
     } // extern "C"
 } // namespace capi
 } // namespace
@@ -33,7 +33,7 @@ inline icu4x::CollatorCaseFirst icu4x::CollatorCaseFirst::FromFFI(icu4x::capi::C
     case icu4x::capi::CollatorCaseFirst_Upper:
       return static_cast<icu4x::CollatorCaseFirst::Value>(c_enum);
     default:
-      abort();
+      std::abort();
   }
 }
 #endif // icu4x_CollatorCaseFirst_HPP

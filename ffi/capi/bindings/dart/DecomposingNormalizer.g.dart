@@ -3,7 +3,7 @@
 
 part of 'lib.g.dart';
 
-/// See the [Rust documentation for `DecomposingNormalizer`](https://docs.rs/icu/latest/icu/normalizer/struct.DecomposingNormalizer.html) for more information.
+/// See the [Rust documentation for `DecomposingNormalizer`](https://docs.rs/icu/2.0.0/icu/normalizer/struct.DecomposingNormalizer.html) for more information.
 final class DecomposingNormalizer implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _ffi;
 
@@ -25,7 +25,7 @@ final class DecomposingNormalizer implements ffi.Finalizable {
 
   /// Construct a new DecomposingNormalizer instance for NFD using compiled data.
   ///
-  /// See the [Rust documentation for `new_nfd`](https://docs.rs/icu/latest/icu/normalizer/struct.DecomposingNormalizer.html#method.new_nfd) for more information.
+  /// See the [Rust documentation for `new_nfd`](https://docs.rs/icu/2.0.0/icu/normalizer/struct.DecomposingNormalizer.html#method.new_nfd) for more information.
   factory DecomposingNormalizer.nfd() {
     final result = _icu4x_DecomposingNormalizer_create_nfd_mv1();
     return DecomposingNormalizer._fromFfi(result, []);
@@ -33,7 +33,7 @@ final class DecomposingNormalizer implements ffi.Finalizable {
 
   /// Construct a new DecomposingNormalizer instance for NFD using a particular data source.
   ///
-  /// See the [Rust documentation for `new_nfd`](https://docs.rs/icu/latest/icu/normalizer/struct.DecomposingNormalizer.html#method.new_nfd) for more information.
+  /// See the [Rust documentation for `new_nfd`](https://docs.rs/icu/2.0.0/icu/normalizer/struct.DecomposingNormalizer.html#method.new_nfd) for more information.
   ///
   /// Throws [DataError] on failure.
   factory DecomposingNormalizer.nfdWithProvider(DataProvider provider) {
@@ -46,7 +46,7 @@ final class DecomposingNormalizer implements ffi.Finalizable {
 
   /// Construct a new DecomposingNormalizer instance for NFKD using compiled data.
   ///
-  /// See the [Rust documentation for `new_nfkd`](https://docs.rs/icu/latest/icu/normalizer/struct.DecomposingNormalizer.html#method.new_nfkd) for more information.
+  /// See the [Rust documentation for `new_nfkd`](https://docs.rs/icu/2.0.0/icu/normalizer/struct.DecomposingNormalizer.html#method.new_nfkd) for more information.
   factory DecomposingNormalizer.nfkd() {
     final result = _icu4x_DecomposingNormalizer_create_nfkd_mv1();
     return DecomposingNormalizer._fromFfi(result, []);
@@ -54,7 +54,7 @@ final class DecomposingNormalizer implements ffi.Finalizable {
 
   /// Construct a new DecomposingNormalizer instance for NFKD using a particular data source.
   ///
-  /// See the [Rust documentation for `new_nfkd`](https://docs.rs/icu/latest/icu/normalizer/struct.DecomposingNormalizer.html#method.new_nfkd) for more information.
+  /// See the [Rust documentation for `new_nfkd`](https://docs.rs/icu/2.0.0/icu/normalizer/struct.DecomposingNormalizer.html#method.new_nfkd) for more information.
   ///
   /// Throws [DataError] on failure.
   factory DecomposingNormalizer.nfkdWithProvider(DataProvider provider) {
@@ -70,7 +70,7 @@ final class DecomposingNormalizer implements ffi.Finalizable {
   /// Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
   /// to the WHATWG Encoding Standard.
   ///
-  /// See the [Rust documentation for `normalize_utf8`](https://docs.rs/icu/latest/icu/normalizer/struct.DecomposingNormalizerBorrowed.html#method.normalize_utf8) for more information.
+  /// See the [Rust documentation for `normalize_utf8`](https://docs.rs/icu/2.0.0/icu/normalizer/struct.DecomposingNormalizerBorrowed.html#method.normalize_utf8) for more information.
   String normalize(String s) {
     final temp = _FinalizedArena();
     final write = _Write();
@@ -83,44 +83,22 @@ final class DecomposingNormalizer implements ffi.Finalizable {
   /// Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
   /// to the WHATWG Encoding Standard.
   ///
-  /// See the [Rust documentation for `is_normalized_utf8`](https://docs.rs/icu/latest/icu/normalizer/struct.DecomposingNormalizerBorrowed.html#method.is_normalized_utf8) for more information.
+  /// See the [Rust documentation for `is_normalized_utf16`](https://docs.rs/icu/2.0.0/icu/normalizer/struct.DecomposingNormalizerBorrowed.html#method.is_normalized_utf16) for more information.
   bool isNormalized(String s) {
-    final temp = _FinalizedArena();
-    final result = _icu4x_DecomposingNormalizer_is_normalized_mv1(_ffi, s._utf8AllocIn(temp.arena));
-    return result;
-  }
-
-  /// Check if a string is normalized
-  ///
-  /// Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
-  /// to the WHATWG Encoding Standard.
-  ///
-  /// See the [Rust documentation for `is_normalized_utf16`](https://docs.rs/icu/latest/icu/normalizer/struct.DecomposingNormalizerBorrowed.html#method.is_normalized_utf16) for more information.
-  bool isNormalizedUtf16(String s) {
     final temp = _FinalizedArena();
     final result = _icu4x_DecomposingNormalizer_is_normalized_utf16_mv1(_ffi, s._utf16AllocIn(temp.arena));
     return result;
   }
 
-  /// Return the index a slice of potentially-invalid UTF-8 is normalized up to
-  ///
-  /// See the [Rust documentation for `split_normalized_utf8`](https://docs.rs/icu/latest/icu/normalizer/struct.DecomposingNormalizerBorrowed.html#method.split_normalized_utf8) for more information.
-  ///
-  /// See the [Rust documentation for `split_normalized`](https://docs.rs/icu/latest/icu/normalizer/struct.DecomposingNormalizerBorrowed.html#method.split_normalized) for more information.
-  int isNormalizedUpTo(String s) {
-    final temp = _FinalizedArena();
-    final result = _icu4x_DecomposingNormalizer_is_normalized_up_to_mv1(_ffi, s._utf8AllocIn(temp.arena));
-    return result;
-  }
-
   /// Return the index a slice of potentially-invalid UTF-16 is normalized up to
   ///
-  /// See the [Rust documentation for `split_normalized_utf16`](https://docs.rs/icu/latest/icu/normalizer/struct.DecomposingNormalizerBorrowed.html#method.split_normalized_utf16) for more information.
-  int isNormalizedUtf16UpTo(String s) {
+  /// See the [Rust documentation for `split_normalized_utf16`](https://docs.rs/icu/2.0.0/icu/normalizer/struct.DecomposingNormalizerBorrowed.html#method.split_normalized_utf16) for more information.
+  int isNormalizedUpTo(String s) {
     final temp = _FinalizedArena();
     final result = _icu4x_DecomposingNormalizer_is_normalized_utf16_up_to_mv1(_ffi, s._utf16AllocIn(temp.arena));
     return result;
   }
+
 }
 
 @_DiplomatFfiUse('icu4x_DecomposingNormalizer_destroy_mv1')
@@ -153,20 +131,10 @@ external _ResultOpaqueInt32 _icu4x_DecomposingNormalizer_create_nfkd_with_provid
 // ignore: non_constant_identifier_names
 external void _icu4x_DecomposingNormalizer_normalize_mv1(ffi.Pointer<ffi.Opaque> self, _SliceUtf8 s, ffi.Pointer<ffi.Opaque> write);
 
-@_DiplomatFfiUse('icu4x_DecomposingNormalizer_is_normalized_mv1')
-@ffi.Native<ffi.Bool Function(ffi.Pointer<ffi.Opaque>, _SliceUtf8)>(isLeaf: true, symbol: 'icu4x_DecomposingNormalizer_is_normalized_mv1')
-// ignore: non_constant_identifier_names
-external bool _icu4x_DecomposingNormalizer_is_normalized_mv1(ffi.Pointer<ffi.Opaque> self, _SliceUtf8 s);
-
 @_DiplomatFfiUse('icu4x_DecomposingNormalizer_is_normalized_utf16_mv1')
 @ffi.Native<ffi.Bool Function(ffi.Pointer<ffi.Opaque>, _SliceUtf16)>(isLeaf: true, symbol: 'icu4x_DecomposingNormalizer_is_normalized_utf16_mv1')
 // ignore: non_constant_identifier_names
 external bool _icu4x_DecomposingNormalizer_is_normalized_utf16_mv1(ffi.Pointer<ffi.Opaque> self, _SliceUtf16 s);
-
-@_DiplomatFfiUse('icu4x_DecomposingNormalizer_is_normalized_up_to_mv1')
-@ffi.Native<ffi.Size Function(ffi.Pointer<ffi.Opaque>, _SliceUtf8)>(isLeaf: true, symbol: 'icu4x_DecomposingNormalizer_is_normalized_up_to_mv1')
-// ignore: non_constant_identifier_names
-external int _icu4x_DecomposingNormalizer_is_normalized_up_to_mv1(ffi.Pointer<ffi.Opaque> self, _SliceUtf8 s);
 
 @_DiplomatFfiUse('icu4x_DecomposingNormalizer_is_normalized_utf16_up_to_mv1')
 @ffi.Native<ffi.Size Function(ffi.Pointer<ffi.Opaque>, _SliceUtf16)>(isLeaf: true, symbol: 'icu4x_DecomposingNormalizer_is_normalized_utf16_up_to_mv1')

@@ -19,5 +19,4 @@
 
 
 
-
 #endif // DecimalRoundingIncrement_H

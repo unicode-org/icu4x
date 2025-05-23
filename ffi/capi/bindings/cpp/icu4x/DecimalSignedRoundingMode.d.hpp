@@ -8,6 +8,7 @@
 #include <memory>
 #include <functional>
 #include <optional>
+#include <cstdlib>
 #include "../diplomat_runtime.hpp"
 
 
@@ -24,7 +25,7 @@ namespace capi {
       DecimalSignedRoundingMode_HalfCeil = 7,
       DecimalSignedRoundingMode_HalfFloor = 8,
     };
-    
+
     typedef struct DecimalSignedRoundingMode_option {union { DecimalSignedRoundingMode ok; }; bool is_ok; } DecimalSignedRoundingMode_option;
 } // namespace capi
 } // namespace
@@ -33,7 +34,7 @@ namespace icu4x {
 /**
  * Mode used in a rounding operation for signed numbers.
  *
- * See the [Rust documentation for `SignedRoundingMode`](https://docs.rs/fixed_decimal/latest/fixed_decimal/enum.SignedRoundingMode.html) for more information.
+ * See the [Rust documentation for `SignedRoundingMode`](https://docs.rs/fixed_decimal/0.7.0/fixed_decimal/enum.SignedRoundingMode.html) for more information.
  */
 class DecimalSignedRoundingMode {
 public:

@@ -9,7 +9,7 @@ final class _DateTimeMismatchedCalendarErrorFfi extends ffi.Struct {
   external _ResultInt32Void dateKind;
 }
 
-/// See the [Rust documentation for `MismatchedCalendarError`](https://docs.rs/icu/latest/icu/datetime/struct.MismatchedCalendarError.html) for more information.
+/// See the [Rust documentation for `MismatchedCalendarError`](https://docs.rs/icu/2.0.0/icu/datetime/struct.MismatchedCalendarError.html) for more information.
 final class DateTimeMismatchedCalendarError {
   CalendarKind thisKind;
   CalendarKind? dateKind;
@@ -34,6 +34,7 @@ final class DateTimeMismatchedCalendarError {
     struct.dateKind = dateKind != null ? _ResultInt32Void.ok(dateKind._ffi) : _ResultInt32Void.err();
     return struct;
   }
+
 
   @override
   bool operator ==(Object other) =>

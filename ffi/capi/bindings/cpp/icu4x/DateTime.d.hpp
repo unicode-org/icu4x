@@ -8,6 +8,7 @@
 #include <memory>
 #include <functional>
 #include <optional>
+#include <cstdlib>
 #include "../diplomat_runtime.hpp"
 
 namespace icu4x {
@@ -18,7 +19,7 @@ class Date;
 namespace capi { struct Time; }
 class Time;
 struct DateTime;
-class CalendarParseError;
+class Rfc9557ParseError;
 }
 
 
@@ -28,7 +29,7 @@ namespace capi {
       icu4x::capi::Date* date;
       icu4x::capi::Time* time;
     };
-    
+
     typedef struct DateTime_option {union { DateTime ok; }; bool is_ok; } DateTime_option;
 } // namespace capi
 } // namespace
@@ -38,18 +39,18 @@ namespace icu4x {
 /**
  * An ICU4X DateTime object capable of containing a date and time for any calendar.
  *
- * See the [Rust documentation for `DateTime`](https://docs.rs/icu/latest/icu/time/struct.DateTime.html) for more information.
+ * See the [Rust documentation for `DateTime`](https://docs.rs/icu/2.0.0/icu/time/struct.DateTime.html) for more information.
  */
 struct DateTime {
   std::unique_ptr<icu4x::Date> date;
   std::unique_ptr<icu4x::Time> time;
 
   /**
-   * Creates a new [`DateTime`] from an IXDTF string.
+   * Creates a new {@link DateTime} from an IXDTF string.
    *
-   * See the [Rust documentation for `try_from_str`](https://docs.rs/icu/latest/icu/time/struct.DateTime.html#method.try_from_str) for more information.
+   * See the [Rust documentation for `try_from_str`](https://docs.rs/icu/2.0.0/icu/time/struct.DateTime.html#method.try_from_str) for more information.
    */
-  inline static diplomat::result<icu4x::DateTime, icu4x::CalendarParseError> from_string(std::string_view v, const icu4x::Calendar& calendar);
+  inline static diplomat::result<icu4x::DateTime, icu4x::Rfc9557ParseError> from_string(std::string_view v, const icu4x::Calendar& calendar);
 
   inline icu4x::capi::DateTime AsFFI() const;
   inline static icu4x::DateTime FromFFI(icu4x::capi::DateTime c_struct);

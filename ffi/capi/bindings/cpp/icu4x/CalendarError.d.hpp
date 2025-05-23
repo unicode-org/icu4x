@@ -8,6 +8,7 @@
 #include <memory>
 #include <functional>
 #include <optional>
+#include <cstdlib>
 #include "../diplomat_runtime.hpp"
 
 
@@ -19,14 +20,14 @@ namespace capi {
       CalendarError_UnknownEra = 2,
       CalendarError_UnknownMonthCode = 3,
     };
-    
+
     typedef struct CalendarError_option {union { CalendarError ok; }; bool is_ok; } CalendarError_option;
 } // namespace capi
 } // namespace
 
 namespace icu4x {
 /**
- * Additional information: [1](https://docs.rs/icu/latest/icu/calendar/struct.RangeError.html), [2](https://docs.rs/icu/latest/icu/calendar/enum.DateError.html)
+ * Additional information: [1](https://docs.rs/icu/2.0.0/icu/calendar/struct.RangeError.html), [2](https://docs.rs/icu/2.0.0/icu/calendar/enum.DateError.html)
  */
 class CalendarError {
 public:

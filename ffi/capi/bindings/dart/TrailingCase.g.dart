@@ -3,11 +3,13 @@
 
 part of 'lib.g.dart';
 
-/// See the [Rust documentation for `TrailingCase`](https://docs.rs/icu/latest/icu/casemap/options/enum.TrailingCase.html) for more information.
+/// See the [Rust documentation for `TrailingCase`](https://docs.rs/icu/2.0.0/icu/casemap/options/enum.TrailingCase.html) for more information.
 enum TrailingCase {
+
   lower,
 
   unchanged;
+
 }
 
 // dart format on

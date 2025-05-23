@@ -82,8 +82,7 @@ icu4x_DateFormatterGregorian_create_y_mv1_result icu4x_DateFormatterGregorian_cr
 typedef struct icu4x_DateFormatterGregorian_create_y_with_provider_mv1_result {union {DateFormatterGregorian* ok; DateTimeFormatterLoadError err;}; bool is_ok;} icu4x_DateFormatterGregorian_create_y_with_provider_mv1_result;
 icu4x_DateFormatterGregorian_create_y_with_provider_mv1_result icu4x_DateFormatterGregorian_create_y_with_provider_mv1(const DataProvider* provider, const Locale* locale, DateTimeLength_option length, DateTimeAlignment_option alignment, YearStyle_option year_style);
 
-void icu4x_DateFormatterGregorian_format_iso_mv1(const DateFormatterGregorian* self, const IsoDate* date, DiplomatWrite* write);
-
+void icu4x_DateFormatterGregorian_format_iso_mv1(const DateFormatterGregorian* self, const IsoDate* iso_date, DiplomatWrite* write);
 
 void icu4x_DateFormatterGregorian_destroy_mv1(DateFormatterGregorian* self);
 

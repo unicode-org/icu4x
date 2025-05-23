@@ -9,8 +9,16 @@
 //! This module holds the `Collator` struct whose `compare_impl()` contains
 //! the comparison of collation element sequences.
 
+use crate::elements::CharacterAndClassAndTrieValue;
+use crate::elements::CollationElement32;
+use crate::elements::Tag;
+use crate::elements::BACKWARD_COMBINING_MARKER;
+use crate::elements::CE_BUFFER_SIZE;
+use crate::elements::FALLBACK_CE32;
+use crate::elements::NON_ROUND_TRIP_MARKER;
 use crate::elements::{
-    CollationElement, CollationElements, NonPrimary, JAMO_COUNT, NO_CE, NO_CE_PRIMARY,
+    char_from_u32, CollationElement, CollationElements, NonPrimary, FFFD_CE32,
+    HANGUL_SYLLABLE_MARKER, HIGH_ZEROS_MASK, JAMO_COUNT, LOW_ZEROS_MASK, NO_CE, NO_CE_PRIMARY,
     NO_CE_SECONDARY, NO_CE_TERTIARY, OPTIMIZED_DIACRITICS_MAX_COUNT, QUATERNARY_MASK,
 };
 use crate::options::CollatorOptionsBitField;
@@ -60,6 +68,139 @@ impl AnyQuaternaryAccumulator {
     pub fn has_quaternary(&self) -> bool {
         self.0 & u32::from(QUATERNARY_MASK) != 0
     }
+}
+
+/// `true` iff `i` is greater or equal to `start` and less or equal
+/// to `end`.
+#[inline(always)]
+fn in_inclusive_range16(i: u16, start: u16, end: u16) -> bool {
+    i.wrapping_sub(start) <= (end - start)
+}
+
+/// Finds the identical prefix of `left` and `right` containing
+/// potentially ill-formed UTF-16, while avoiding splitting a
+/// well-formed surrogate pair. In case of ill-formed
+/// UTF-16, the prefix is not guaranteed to be maximal.
+///
+/// Returns the identical prefix, the part of `left` after the
+/// prefix, and the part of `right` after the prefix.
+fn split_prefix_u16<'a, 'b>(
+    left: &'a [u16],
+    right: &'b [u16],
+) -> (&'a [u16], &'a [u16], &'b [u16]) {
+    let mut i = left
+        .iter()
+        .zip(right.iter())
+        .take_while(|(l, r)| l == r)
+        .count();
+    if i != 0 {
+        if let Some(&last) = left.get(i.wrapping_sub(1)) {
+            if in_inclusive_range16(last, 0xD800, 0xDBFF) {
+                i -= 1;
+            }
+            if let Some((head, left_tail)) = left.split_at_checked(i) {
+                if let Some(right_tail) = right.get(i..) {
+                    return (head, left_tail, right_tail);
+                }
+            }
+        }
+    }
+    (&[], left, right)
+}
+
+/// Finds the identical prefix of `left` and `right` containing
+/// potentially ill-formed UTF-8, while avoiding splitting a UTF-8
+/// byte sequence. In case of ill-formed UTF-8, the prefix is
+/// not guaranteed to be maximal.
+///
+/// Returns the identical prefix, the part of `left` after the
+/// prefix, and the part of `right` after the prefix.
+fn split_prefix_u8<'a, 'b>(left: &'a [u8], right: &'b [u8]) -> (&'a [u8], &'a [u8], &'b [u8]) {
+    let mut i = left
+        .iter()
+        .zip(right.iter())
+        .take_while(|(l, r)| l == r)
+        .count();
+    if i != 0 {
+        // Tails must not start with a UTF-8 continuation
+        // byte unless it's the first byte of the original
+        // slice.
+
+        // First, left and right differ, but since they
+        // are the same afterwards, one of them needs checking
+        // only once.
+        if let Some(right_first) = right.get(i) {
+            if (right_first & 0b1100_0000) == 0b1000_0000 {
+                i -= 1;
+            }
+        }
+        while i != 0 {
+            if let Some(left_first) = left.get(i) {
+                if (left_first & 0b1100_0000) == 0b1000_0000 {
+                    i -= 1;
+                    continue;
+                }
+            }
+            break;
+        }
+        if let Some((head, left_tail)) = left.split_at_checked(i) {
+            if let Some(right_tail) = right.get(i..) {
+                return (head, left_tail, right_tail);
+            }
+        }
+    }
+    (&[], left, right)
+}
+
+/// Finds the identical prefix of `left` and `right` containing
+/// guaranteed well-format UTF-8.
+///
+/// Returns the identical prefix, the part of `left` after the
+/// prefix, and the part of `right` after the prefix.
+fn split_prefix<'a, 'b>(left: &'a str, right: &'b str) -> (&'a str, &'a str, &'b str) {
+    let left_bytes = left.as_bytes();
+    let right_bytes = right.as_bytes();
+    let mut i = left_bytes
+        .iter()
+        .zip(right_bytes.iter())
+        .take_while(|(l, r)| l == r)
+        .count();
+    if i != 0 {
+        // Tails must not start with a UTF-8 continuation
+        // byte.
+
+        // Since the inputs are valid UTF-8, the first byte
+        // of either input slice cannot be a contination slice,
+        // so we may rely on finding a lead byte when walking
+        // backwards.
+
+        // Since the inputs are valid UTF-8, if a tail starts
+        // with a continuation, both tails must start with a
+        // continuation, since the most recent lead byte must
+        // be equal, so the difference is within valid UTF-8
+        // sequences of equal length.
+
+        // Therefore, it's sufficient to examine only one of
+        // the sides.
+        loop {
+            if let Some(left_first) = left_bytes.get(i) {
+                if (left_first & 0b1100_0000) == 0b1000_0000 {
+                    i -= 1;
+                    continue;
+                }
+            }
+            break;
+        }
+        // The methods below perform useless UTF-8 boundary checks,
+        // since we just checked. However, avoiding `unsafe` to
+        // make this code easier to audit.
+        if let Some((head, left_tail)) = left.split_at_checked(i) {
+            if let Some(right_tail) = right.get(i..) {
+                return (head, left_tail, right_tail);
+            }
+        }
+    }
+    ("", left, right)
 }
 
 /// Holder struct for payloads that are locale-dependent. (For code
@@ -375,6 +516,29 @@ impl Collator {
     }
 }
 
+macro_rules! compare {
+    ($(#[$meta:meta])*,
+     $compare:ident,
+     $slice:ty,
+     $split_prefix:ident,
+    ) => {
+        $(#[$meta])*
+        pub fn $compare(&self, left: &$slice, right: &$slice) -> Ordering {
+            let (head, left_tail, right_tail) = $split_prefix(left, right);
+            if left_tail.is_empty() && right_tail.is_empty() {
+                return Ordering::Equal;
+            }
+            let ret = self.compare_impl(left_tail.chars(), right_tail.chars(), head.chars());
+            if self.options.strength() == Strength::Identical && ret == Ordering::Equal {
+                return Decomposition::new(left_tail.chars(), self.decompositions, self.tables).cmp(
+                    Decomposition::new(right_tail.chars(), self.decompositions, self.tables),
+                );
+            }
+            ret
+        }
+    }
+}
+
 /// Compares strings according to culturally-relevant ordering,
 /// borrowed version.
 #[derive(Debug)]
@@ -495,46 +659,51 @@ impl CollatorBorrowed<'_> {
         self.options.into()
     }
 
-    /// Compare potentially ill-formed UTF-16 slices. Unpaired surrogates
-    /// are compared as if each one was a REPLACEMENT CHARACTER.
-    pub fn compare_utf16(&self, left: &[u16], right: &[u16]) -> Ordering {
-        // TODO(#2010): Identical prefix skipping not implemented.
-        let ret = self.compare_impl(left.chars(), right.chars());
-        if self.options.strength() == Strength::Identical && ret == Ordering::Equal {
-            return Decomposition::new(left.chars(), self.decompositions, self.tables).cmp(
-                Decomposition::new(right.chars(), self.decompositions, self.tables),
-            );
-        }
-        ret
-    }
+    compare!(
+        /// Compare guaranteed well-formed UTF-8 slices.
+        ,
+        compare,
+        str,
+        split_prefix,
+    );
 
-    /// Compare guaranteed well-formed UTF-8 slices.
-    pub fn compare(&self, left: &str, right: &str) -> Ordering {
-        // TODO(#2010): Identical prefix skipping not implemented.
-        let ret = self.compare_impl(left.chars(), right.chars());
-        if self.options.strength() == Strength::Identical && ret == Ordering::Equal {
-            return Decomposition::new(left.chars(), self.decompositions, self.tables).cmp(
-                Decomposition::new(right.chars(), self.decompositions, self.tables),
-            );
-        }
-        ret
-    }
+    compare!(
+        /// Compare potentially ill-formed UTF-8 slices. Ill-formed input is compared
+        /// as if errors had been replaced with REPLACEMENT CHARACTERs according
+        /// to the WHATWG Encoding Standard.
+        ,
+        compare_utf8,
+        [u8],
+        split_prefix_u8,
+    );
 
-    /// Compare potentially well-formed UTF-8 slices. Ill-formed input is compared
-    /// as if errors had been replaced with REPLACEMENT CHARACTERs according
-    /// to the WHATWG Encoding Standard.
-    pub fn compare_utf8(&self, left: &[u8], right: &[u8]) -> Ordering {
-        // TODO(#2010): Identical prefix skipping not implemented.
-        let ret = self.compare_impl(left.chars(), right.chars());
-        if self.options.strength() == Strength::Identical && ret == Ordering::Equal {
-            return Decomposition::new(left.chars(), self.decompositions, self.tables).cmp(
-                Decomposition::new(right.chars(), self.decompositions, self.tables),
-            );
-        }
-        ret
-    }
+    compare!(
+        /// Compare potentially ill-formed UTF-16 slices. Unpaired surrogates
+        /// are compared as if each one was a REPLACEMENT CHARACTER.
+        ,
+        compare_utf16,
+        [u16],
+        split_prefix_u16,
+    );
 
-    fn compare_impl<I: Iterator<Item = char>>(&self, left_chars: I, right_chars: I) -> Ordering {
+    /// The implementation of the comparison operation.
+    ///
+    /// `head_chars` is an iterator over the identical prefix and
+    /// `left_chars` and `right_chars` are iterators over the parts
+    /// after the identical prefix.
+    ///
+    /// Currently, all three have the same concrete type, so the
+    /// trait bound is given as `DoubleEndedIterator`.
+    /// `head_chars` is iterated backwards and `left_chars` and
+    /// `right_chars` forward. If this were a public API, this
+    /// should have three generic types, one for each argument,
+    /// for maximum flexibility.
+    fn compare_impl<I: DoubleEndedIterator<Item = char>>(
+        &self,
+        left_chars: I,
+        right_chars: I,
+        mut head_chars: I,
+    ) -> Ordering {
         let tailoring: &CollationData = if let Some(tailoring) = &self.tailoring {
             tailoring
         } else {
@@ -564,9 +733,12 @@ impl CollatorBorrowed<'_> {
         // and only stores `NonPrimary` in `left_ces` and `right_ces`
         // with double the number of stack allocated elements.
 
-        // TODO(#2007): figure out a proper stack buffer length for these
-        let mut left_ces: SmallVec<[CollationElement; 8]> = SmallVec::new();
-        let mut right_ces: SmallVec<[CollationElement; 8]> = SmallVec::new();
+        // Note: These are used only after the identical prefix skipping,
+        // but initializing these up here improves performance at the time
+        // of writing. Presumably the source order affects the stack frame
+        // layout.
+        let mut left_ces: SmallVec<[CollationElement; CE_BUFFER_SIZE]> = SmallVec::new();
+        let mut right_ces: SmallVec<[CollationElement; CE_BUFFER_SIZE]> = SmallVec::new();
 
         // The algorithm comes from CollationCompare::compareUpToQuaternary in ICU4C.
 
@@ -630,6 +802,306 @@ impl CollatorBorrowed<'_> {
             numeric_primary,
             self.lithuanian_dot_above,
         );
+
+        // Start identical prefix
+
+        // The logic here to check whether the boundary found by skipping
+        // the identical prefix is safe is complicated compared to the ICU4C
+        // approach of having a set of characters that are unsafe as the character
+        // immediately following the identical prefix. However, the approach here
+        // avoids extra data, and working on the main data avoids the bug
+        // possibility of data structures not being mutually consistent.
+
+        // This code intentionally does not keep around the `CollationElement32`s
+        // that have been read from the collation data tries, because keeping
+        // them around turned out to be a pessimization: There would be added
+        // branches on the hot path of the algorithm that maps characters to
+        // collation elements, and the element size of the upcoming buffer
+        // would grow.
+        //
+        // However, the values read from the normalization trie _are_ kept around,
+        // since there is already a place where to put them.
+
+        // This loop is only broken out of as goto forward.
+        #[allow(clippy::never_loop)]
+        'prefix: loop {
+            if let Some(mut head_last_c) = head_chars.next_back() {
+                let norm_trie = &self.decompositions.trie;
+                let mut head_last = CharacterAndClassAndTrieValue::new_with_trie_val(
+                    head_last_c,
+                    norm_trie.get(head_last_c),
+                );
+                let mut head_last_ce32 = CollationElement32::default();
+                let mut head_last_ok = false;
+                if let Some(left_different) = left.iter_next_before_init() {
+                    left.prepend_upcoming_before_init(left_different.clone());
+                    if let Some(right_different) = right.iter_next_before_init() {
+                        // Note: left_different and right_different may both be U+FFFD.
+                        right.prepend_upcoming_before_init(right_different.clone());
+
+                        // The base logic is that a boundary between two starters
+                        // that decompose to selves is safe iff the starter
+                        // before the boundary can't contract a starter, the
+                        // starter after the boundary doesn't have a prefix
+                        // condition, and, with the numeric mode enabled,
+                        // they aren't both numeric.
+                        //
+                        // This base logic is then extended with Hangul
+                        // syllables and characters that decompose to a
+                        // BMP starter followed by a BMP non-starter.
+                        // The logic could be extended further, in
+                        // particular to cover singleton decompositions
+                        // to a BMP starter, but such characters can be
+                        // expected to be rare enough in real-world input
+                        // that it's not worthwhile to make this code more
+                        // branchy.
+                        //
+                        // A Hangul syllable is safe on either side of the
+                        // boundary, because Hangul syllables can't participate
+                        // in contraction or have prefix conditions. They are
+                        // also known not to be numeric.
+                        //
+                        // Hangul jamo is safe to look up from the main trie
+                        // instead of the jamo table, because they aren't
+                        // allowed to participate in contractions or prefix
+                        // conditions, either, and are known not to be numeric.
+                        //
+                        // After a boundary, a decomposition to a BMP starter
+                        // and a BMP non-starter can obviously be analyzed by
+                        // considering the starter as if it was a starter
+                        // that decomposes to self.
+                        //
+                        // Before a boundary the contraction condition considers
+                        // whether the contraction can contract a starter.
+                        // For the case of contracting a non-starter, it's
+                        // fine for the BMP starter of the decomposition to
+                        // contract the non-starter from the same decomposition:
+                        // Since that would happen as part of the prefix that
+                        // is identical, it wouldn't affect anything after.
+                        //
+                        // The case of contracting a non-starter other than
+                        // the one that came from the decomposition itself
+                        // is irrelevant, because we don't allow a non-starter
+                        // right after the boundary regardless of the contraction
+                        // status of what's before the boundary.
+                        //
+                        // Finally, decompositions to starter and non-starter
+                        // are known not to be numeric.
+
+                        // The checks below are repetitive, but an attempt to factor
+                        // repetitive code into an inlined function regressed,
+                        // performance, so it seems that having the control flow
+                        // right here without an intermediate enum from a
+                        // function return to branch on is important.
+
+                        // This loop is only broken out of as goto forward. The control flow
+                        // is much more readable this way.
+                        #[allow(clippy::never_loop)]
+                        loop {
+                            // The two highest bits are about NFC, which we don't
+                            // care about here.
+                            let decomposition = head_last.trie_val;
+                            if (decomposition
+                                & !(BACKWARD_COMBINING_MARKER | NON_ROUND_TRIP_MARKER))
+                                == 0
+                            {
+                                // Intentionally empty block to keep
+                                // the same structure as in the cases
+                                // where something happens here.
+                            } else if ((decomposition & HIGH_ZEROS_MASK) != 0)
+                                && ((decomposition & LOW_ZEROS_MASK) != 0)
+                            {
+                                // Decomposition into two BMP characters: starter and non-starter
+                                // Let's take the starter
+                                head_last_c = char_from_u32(decomposition & 0x7FFF);
+                            } else if decomposition == HANGUL_SYLLABLE_MARKER {
+                                head_last_ce32 = FFFD_CE32;
+                            } else {
+                                break;
+                            }
+                            head_last_ok = true;
+
+                            let mut left_ce32 = CollationElement32::default();
+                            let mut right_ce32 = CollationElement32::default();
+                            let left_c;
+                            let right_c;
+
+                            let decomposition = left_different.trie_val;
+                            if (decomposition
+                                & !(BACKWARD_COMBINING_MARKER | NON_ROUND_TRIP_MARKER))
+                                == 0
+                            {
+                                left_c = left_different.character();
+                            } else if ((decomposition & HIGH_ZEROS_MASK) != 0)
+                                && ((decomposition & LOW_ZEROS_MASK) != 0)
+                            {
+                                // Decomposition into two BMP characters: starter and non-starter
+                                // Let's take the starter
+                                left_c = char_from_u32(decomposition & 0x7FFF);
+                            } else if decomposition == HANGUL_SYLLABLE_MARKER {
+                                left_c = '\u{0}';
+                                left_ce32 = FFFD_CE32;
+                            } else {
+                                break;
+                            }
+
+                            let decomposition = right_different.trie_val;
+                            if (decomposition
+                                & !(BACKWARD_COMBINING_MARKER | NON_ROUND_TRIP_MARKER))
+                                == 0
+                            {
+                                right_c = right_different.character();
+                            } else if ((decomposition & HIGH_ZEROS_MASK) != 0)
+                                && ((decomposition & LOW_ZEROS_MASK) != 0)
+                            {
+                                // Decomposition into two BMP characters: starter and non-starter
+                                // Let's take the starter
+                                right_c = char_from_u32(decomposition & 0x7FFF);
+                            } else if decomposition == HANGUL_SYLLABLE_MARKER {
+                                right_c = '\u{0}';
+                                right_ce32 = FFFD_CE32;
+                            } else {
+                                break;
+                            }
+
+                            // The last character of the prefix is OK on the normalization
+                            // level. Now let's check its ce32 unless it's a Hangul syllable,
+                            // in which case `head_last_ce32` already is a non-default placeholder.
+                            if head_last_ce32 == CollationElement32::default() {
+                                head_last_ce32 = tailoring.ce32_for_char(head_last_c);
+                                if head_last_ce32 == FALLBACK_CE32 {
+                                    head_last_ce32 = self.root.ce32_for_char(head_last_c);
+                                }
+                                if head_last_ce32.tag_checked() == Some(Tag::Contraction)
+                                    && head_last_ce32.at_least_one_suffix_contains_starter()
+                                {
+                                    break;
+                                }
+                            }
+                            // The first character of each suffix is OK on the normalization
+                            // level. Now let's check their ce32s unless they are Hangul syllables.
+                            if left_ce32 == CollationElement32::default() {
+                                left_ce32 = tailoring.ce32_for_char(left_c);
+                                if left_ce32 == FALLBACK_CE32 {
+                                    left_ce32 = self.root.ce32_for_char(left_c);
+                                }
+                                if left_ce32.tag_checked() == Some(Tag::Prefix) {
+                                    break;
+                                }
+                            }
+                            if right_ce32 == CollationElement32::default() {
+                                right_ce32 = tailoring.ce32_for_char(right_c);
+                                if right_ce32 == FALLBACK_CE32 {
+                                    right_ce32 = self.root.ce32_for_char(right_c);
+                                }
+                                if right_ce32.tag_checked() == Some(Tag::Prefix) {
+                                    break;
+                                }
+                            }
+                            if self.options.numeric()
+                                && head_last_ce32.tag_checked() == Some(Tag::Digit)
+                                && (left_ce32.tag_checked() == Some(Tag::Digit)
+                                    || right_ce32.tag_checked() == Some(Tag::Digit))
+                            {
+                                break;
+                            }
+                            // We are at a good boundary!
+                            break 'prefix;
+                        }
+                    }
+                }
+                let mut tail_first_c;
+                let mut tail_first_ce32;
+                let mut tail_first_ok;
+                loop {
+                    // Take a step back.
+                    left.prepend_upcoming_before_init(head_last.clone());
+                    right.prepend_upcoming_before_init(head_last.clone());
+
+                    tail_first_c = head_last_c;
+                    tail_first_ce32 = head_last_ce32;
+                    tail_first_ok = head_last_ok;
+
+                    head_last_c = if let Some(head_last_c) = head_chars.next_back() {
+                        head_last_c
+                    } else {
+                        // We need to step back beyond the start of the prefix.
+                        // Treat as good boundary.
+                        break 'prefix;
+                    };
+                    let decomposition = norm_trie.get(head_last_c);
+                    head_last = CharacterAndClassAndTrieValue::new_with_trie_val(
+                        head_last_c,
+                        decomposition,
+                    );
+                    head_last_ce32 = CollationElement32::default();
+                    head_last_ok = false;
+
+                    if (decomposition & !(BACKWARD_COMBINING_MARKER | NON_ROUND_TRIP_MARKER)) == 0 {
+                        // Intentionally empty block to keep
+                        // the same structure as in the cases
+                        // where something happens here.
+                    } else if ((decomposition & HIGH_ZEROS_MASK) != 0)
+                        && ((decomposition & LOW_ZEROS_MASK) != 0)
+                    {
+                        // Decomposition into two BMP characters: starter and non-starter
+                        // Let's take the starter
+                        head_last_c = char_from_u32(decomposition & 0x7FFF);
+                    } else if decomposition == HANGUL_SYLLABLE_MARKER {
+                        head_last_ce32 = FFFD_CE32;
+                    } else {
+                        continue;
+                    }
+                    head_last_ok = true;
+                    if !tail_first_ok {
+                        continue;
+                    }
+                    // The last character of the prefix is OK on the normalization
+                    // level. Now let's check its ce32 unless it's a Hangul syllable.
+                    if head_last_ce32 == CollationElement32::default() {
+                        head_last_ce32 = tailoring.ce32_for_char(head_last_c);
+                        if head_last_ce32 == FALLBACK_CE32 {
+                            head_last_ce32 = self.root.ce32_for_char(head_last_c);
+                        }
+                        if head_last_ce32.tag_checked() == Some(Tag::Contraction)
+                            && head_last_ce32.at_least_one_suffix_contains_starter()
+                        {
+                            continue;
+                        }
+                    }
+                    // Check this _after_ `head_last_ce32` to make sure
+                    // `head_last_ce32` is initialized for the next loop round
+                    // trip if applicable.
+                    if tail_first_ce32 == CollationElement32::default() {
+                        tail_first_ce32 = tailoring.ce32_for_char(tail_first_c);
+                        if tail_first_ce32 == FALLBACK_CE32 {
+                            tail_first_ce32 = self.root.ce32_for_char(tail_first_c);
+                        }
+                    } // else we already have a trie value from the previous loop iteration or we have Hangul syllable
+                    if tail_first_ce32.tag_checked() == Some(Tag::Prefix) {
+                        continue;
+                    }
+                    if self.options.numeric()
+                        && head_last_ce32.tag_checked() == Some(Tag::Digit)
+                        && tail_first_ce32.tag_checked() == Some(Tag::Digit)
+                    {
+                        continue;
+                    }
+                    // We are at a good boundary!
+                    break 'prefix;
+                }
+            } else {
+                // The prefix is empty
+                break 'prefix;
+            }
+            // Unreachable line
+        }
+
+        // End identical prefix
+
+        left.init();
+        right.init();
+
         loop {
             let mut left_primary;
             'left_primary_loop: loop {

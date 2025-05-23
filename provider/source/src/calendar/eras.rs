@@ -562,7 +562,6 @@ fn test_calendar_eras() {
                 .try_into()
                 .expect(&calendar),
         };
-        println!("{calendar:?}");
 
         let cal = AnyCalendar::try_new_unstable(&provider, kind).unwrap();
         let cal = icu::calendar::Ref(&cal);
@@ -603,6 +602,10 @@ fn test_calendar_eras() {
             //         Ok(in_era)
             //     );
             // }
+
+            if era.start.is_some() && calendar != "japanese" {
+                assert_eq!(in_era.day_of_year().0, 1, "{calendar:?}");
+            }
 
             match in_era.year() {
                 icu::calendar::types::YearInfo::Era(era_year) => {

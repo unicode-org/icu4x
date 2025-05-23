@@ -5,34 +5,26 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
-/** 
- * See the [Rust documentation for `LineBreakOptions`](https://docs.rs/icu/latest/icu/segmenter/options/struct.LineBreakOptions.html) for more information.
+
+/**
+ * See the [Rust documentation for `LineBreakOptions`](https://docs.rs/icu/2.0.0/icu/segmenter/options/struct.LineBreakOptions.html) for more information.
  */
-
-
 export class LineBreakOptions {
-    
     #strictness;
-    
-    get strictness()  {
+    get strictness() {
         return this.#strictness;
-    } 
-    set strictness(value) {
+    }
+    set strictness(value){
         this.#strictness = value;
     }
-    
     #wordOption;
-    
-    get wordOption()  {
+    get wordOption() {
         return this.#wordOption;
-    } 
-    set wordOption(value) {
+    }
+    set wordOption(value){
         this.#wordOption = value;
     }
-    
-    /** Create `LineBreakOptions` from an object that contains all of `LineBreakOptions`s fields.
-    * Optional fields do not need to be included in the provided object.
-    */
+    /** @internal */
     static fromFields(structObj) {
         return new LineBreakOptions(structObj);
     }
@@ -59,7 +51,6 @@ export class LineBreakOptions {
 
     // Return this struct in FFI function friendly format.
     // Returns an array that can be expanded with spread syntax (...)
-    
     _intoFFI(
         functionCleanupArena,
         appendArrayMap
@@ -106,6 +97,7 @@ export class LineBreakOptions {
 
         return new LineBreakOptions(structObj);
     }
+
 
     constructor(structObj) {
         return this.#internalConstructor(...arguments)

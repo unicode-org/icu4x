@@ -3,13 +3,11 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
-/** 
- * See the [Rust documentation for `TrailingCase`](https://docs.rs/icu/latest/icu/casemap/options/enum.TrailingCase.html) for more information.
+
+/**
+ * See the [Rust documentation for `TrailingCase`](https://docs.rs/icu/2.0.0/icu/casemap/options/enum.TrailingCase.html) for more information.
  */
-
-
 export class TrailingCase {
-    
     #value = undefined;
 
     static #values = new Map([
@@ -20,7 +18,7 @@ export class TrailingCase {
     static getAllEntries() {
         return TrailingCase.#values.entries();
     }
-    
+
     #internalConstructor(value) {
         if (arguments.length > 1 && arguments[0] === diplomatRuntime.internalConstructor) {
             // We pass in two internalConstructor arguments to create *new*
@@ -46,15 +44,17 @@ export class TrailingCase {
         throw TypeError(value + " is not a TrailingCase and does not correspond to any of its enumerator values.");
     }
 
+    /** @internal */
     static fromValue(value) {
         return new TrailingCase(value);
     }
 
-    get value() {
+    get value(){
         return [...TrailingCase.#values.keys()][this.#value];
     }
 
-    get ffiValue() {
+    /** @internal */
+    get ffiValue(){
         return this.#value;
     }
     static #objectValues = [
@@ -64,6 +64,7 @@ export class TrailingCase {
 
     static Lower = TrailingCase.#objectValues[0];
     static Unchanged = TrailingCase.#objectValues[1];
+
 
     constructor(value) {
         return this.#internalConstructor(...arguments)

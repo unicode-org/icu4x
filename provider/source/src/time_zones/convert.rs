@@ -16,10 +16,12 @@ use icu::locale::LanguageIdentifier;
 use icu::time::provider::*;
 use icu::time::zone::TimeZoneVariant;
 use icu::time::zone::UtcOffset;
+use icu::time::zone::VariantOffsets;
 use icu::time::zone::ZoneNameTimestamp;
 use icu::time::DateTime;
 use icu::time::Time;
 use icu::time::ZonedDateTime;
+use icu_provider::prelude::icu_locale_core::subtags::Language;
 use icu_provider::prelude::*;
 use parse_zoneinfo::line::Year;
 use parse_zoneinfo::table::Saving;
@@ -171,7 +173,7 @@ impl SourceDataProvider {
         let mut locations = BTreeMap::new();
 
         exemplar_cities.retain(|&k, v| {
-            if k == TimeZone::unknown() {
+            if k.is_unknown() {
                 true
             } else if let Some(region) = primary_zones.get(&k) {
                 if let Some(region_name) = region_display_names.get(region) {
@@ -327,30 +329,36 @@ impl SourceDataProvider {
                     .iter()
                     .filter_map(|(bcp47, iana)| Some((bcp47, tzdb.get_zoneset(iana)?)))
                     .flat_map(|(bcp47, zoneset)| {
-                        let mut data = Vec::<(ZoneNameTimestamp, (UtcOffset, UtcOffset))>::new();
+                        let mut data = Vec::<(ZoneNameTimestamp, VariantOffsets)>::new();
 
                         fn store_offsets(
-                            data: &mut Vec<(ZoneNameTimestamp, (UtcOffset, UtcOffset))>,
+                            data: &mut Vec<(ZoneNameTimestamp, VariantOffsets)>,
                             end_time: ZoneNameTimestamp,
-                            utc_offset: i64,
+                            mut utc_offset: i64,
                             dst_offset_relative: i64,
                         ) {
+                            // Africa/Monrovia used -00:44:30 pre-1972. We cannot represent this, so we set it to -00:45
+                            if utc_offset == -2670 {
+                                utc_offset = -2700
+                            }
+
                             data.push((
                                 end_time,
-                                (
-                                    UtcOffset::try_from_seconds(utc_offset as i32).unwrap(),
-                                    UtcOffset::try_from_seconds(dst_offset_relative as i32)
-                                        .unwrap(),
-                                ),
+                                {
+                                    let mut vs = VariantOffsets::from_standard(UtcOffset::from_seconds_unchecked(utc_offset as i32));
+                                    if dst_offset_relative != 0 {
+                                        vs.daylight = Some(UtcOffset::from_seconds_unchecked(utc_offset as i32 + dst_offset_relative as i32));
+                                    }
+                                    vs
+                                }
                             ));
                         }
 
                         for zone_info in zoneset.iter() {
                             let offset_seconds = zone_info.offset;
-                            let utc_offset = UtcOffset::try_from_seconds(
+                            let utc_offset = UtcOffset::from_seconds_unchecked(
                                 i32::try_from(offset_seconds).unwrap(),
-                            )
-                            .unwrap();
+                            );
 
                             let local_end_time = match zone_info.end_time {
                                 // Skip transitions before the UNIX Epoch
@@ -471,27 +479,15 @@ impl SourceDataProvider {
                         data.dedup_by_key(|(_, offsets)| *offsets);
 
                         // Use start times instead of end times
-                        data = data
+                        data
                             .iter()
                             .copied()
                             .enumerate()
                             .map(|(i, (_, offsets))| {
-                                (data.get(i + 1).map(|d| d.0).unwrap_or(ZoneNameTimestamp::far_in_past()), offsets)
+                                (bcp47, data.get(i + 1).map(|d| d.0).unwrap_or(ZoneNameTimestamp::far_in_past()), offsets)
                             })
-                            .collect();
-
-                        data.into_iter().map(
-                            move |(end_time, (utc_offset, dst_offset_relative))| {
-                                (
-                                    bcp47,
-                                    end_time,
-                                    (
-                                        utc_offset.to_eighths_of_hour(),
-                                        dst_offset_relative.to_eighths_of_hour(),
-                                    ),
-                                )
-                            },
-                        )
+                            .collect::<Vec<_>>()
+                            .into_iter()
                     })
                     .collect())
             })
@@ -504,7 +500,7 @@ impl SourceDataProvider {
         self.cldr()?
             .extended_locale_expander()?
             .maximize(&mut group);
-        group.language = Default::default();
+        group.language = Language::UNKNOWN;
         group.region = Default::default();
         self.cldr()?
             .extended_locale_expander()?

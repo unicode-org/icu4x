@@ -32,5 +32,4 @@ icu4x_Script_from_integer_value_mv1_result icu4x_Script_from_integer_value_mv1(u
 
 
 
-
 #endif // Script_H

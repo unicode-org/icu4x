@@ -3,7 +3,7 @@
 
 part of 'lib.g.dart';
 
-/// See the [Rust documentation for `FixedCalendarDateTimeFormatter`](https://docs.rs/icu/latest/icu/datetime/struct.FixedCalendarDateTimeFormatter.html) for more information.
+/// See the [Rust documentation for `FixedCalendarDateTimeFormatter`](https://docs.rs/icu/2.0.0/icu/datetime/struct.FixedCalendarDateTimeFormatter.html) for more information.
 final class ZonedDateFormatterGregorian implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _ffi;
 
@@ -23,7 +23,12 @@ final class ZonedDateFormatterGregorian implements ffi.Finalizable {
 
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_ZonedDateFormatterGregorian_destroy_mv1));
 
-  /// See the [Rust documentation for `SpecificLong`](https://docs.rs/icu/latest/icu/datetime/fieldsets/zone/struct.SpecificLong.html) for more information.
+  /// Creates a zoned formatter based on a non-zoned formatter.
+  ///
+  /// Caution: The locale provided here must match the locale used to construct the non-zoned formatter,
+  /// or else unexpected behavior may occur!
+  ///
+  /// See the [Rust documentation for `SpecificLong`](https://docs.rs/icu/2.0.0/icu/datetime/fieldsets/zone/struct.SpecificLong.html) for more information.
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   factory ZonedDateFormatterGregorian.specificLong(Locale locale, DateFormatterGregorian formatter) {
@@ -34,7 +39,12 @@ final class ZonedDateFormatterGregorian implements ffi.Finalizable {
     return ZonedDateFormatterGregorian._fromFfi(result.union.ok, []);
   }
 
-  /// See the [Rust documentation for `SpecificLong`](https://docs.rs/icu/latest/icu/datetime/fieldsets/zone/struct.SpecificLong.html) for more information.
+  /// Creates a zoned formatter based on a non-zoned formatter.
+  ///
+  /// Caution: The locale provided here must match the locale used to construct the non-zoned formatter,
+  /// or else unexpected behavior may occur!
+  ///
+  /// See the [Rust documentation for `SpecificLong`](https://docs.rs/icu/2.0.0/icu/datetime/fieldsets/zone/struct.SpecificLong.html) for more information.
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   factory ZonedDateFormatterGregorian.specificLongWithProvider(DataProvider provider, Locale locale, DateFormatterGregorian formatter) {
@@ -45,7 +55,12 @@ final class ZonedDateFormatterGregorian implements ffi.Finalizable {
     return ZonedDateFormatterGregorian._fromFfi(result.union.ok, []);
   }
 
-  /// See the [Rust documentation for `SpecificShort`](https://docs.rs/icu/latest/icu/datetime/fieldsets/zone/struct.SpecificShort.html) for more information.
+  /// Creates a zoned formatter based on a non-zoned formatter.
+  ///
+  /// Caution: The locale provided here must match the locale used to construct the non-zoned formatter,
+  /// or else unexpected behavior may occur!
+  ///
+  /// See the [Rust documentation for `SpecificShort`](https://docs.rs/icu/2.0.0/icu/datetime/fieldsets/zone/struct.SpecificShort.html) for more information.
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   factory ZonedDateFormatterGregorian.specificShort(Locale locale, DateFormatterGregorian formatter) {
@@ -56,7 +71,12 @@ final class ZonedDateFormatterGregorian implements ffi.Finalizable {
     return ZonedDateFormatterGregorian._fromFfi(result.union.ok, []);
   }
 
-  /// See the [Rust documentation for `SpecificShort`](https://docs.rs/icu/latest/icu/datetime/fieldsets/zone/struct.SpecificShort.html) for more information.
+  /// Creates a zoned formatter based on a non-zoned formatter.
+  ///
+  /// Caution: The locale provided here must match the locale used to construct the non-zoned formatter,
+  /// or else unexpected behavior may occur!
+  ///
+  /// See the [Rust documentation for `SpecificShort`](https://docs.rs/icu/2.0.0/icu/datetime/fieldsets/zone/struct.SpecificShort.html) for more information.
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   factory ZonedDateFormatterGregorian.specificShortWithProvider(DataProvider provider, Locale locale, DateFormatterGregorian formatter) {
@@ -67,7 +87,12 @@ final class ZonedDateFormatterGregorian implements ffi.Finalizable {
     return ZonedDateFormatterGregorian._fromFfi(result.union.ok, []);
   }
 
-  /// See the [Rust documentation for `LocalizedOffsetLong`](https://docs.rs/icu/latest/icu/datetime/fieldsets/zone/struct.LocalizedOffsetLong.html) for more information.
+  /// Creates a zoned formatter based on a non-zoned formatter.
+  ///
+  /// Caution: The locale provided here must match the locale used to construct the non-zoned formatter,
+  /// or else unexpected behavior may occur!
+  ///
+  /// See the [Rust documentation for `LocalizedOffsetLong`](https://docs.rs/icu/2.0.0/icu/datetime/fieldsets/zone/struct.LocalizedOffsetLong.html) for more information.
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   factory ZonedDateFormatterGregorian.localizedOffsetLong(Locale locale, DateFormatterGregorian formatter) {
@@ -78,7 +103,12 @@ final class ZonedDateFormatterGregorian implements ffi.Finalizable {
     return ZonedDateFormatterGregorian._fromFfi(result.union.ok, []);
   }
 
-  /// See the [Rust documentation for `LocalizedOffsetLong`](https://docs.rs/icu/latest/icu/datetime/fieldsets/zone/struct.LocalizedOffsetLong.html) for more information.
+  /// Creates a zoned formatter based on a non-zoned formatter.
+  ///
+  /// Caution: The locale provided here must match the locale used to construct the non-zoned formatter,
+  /// or else unexpected behavior may occur!
+  ///
+  /// See the [Rust documentation for `LocalizedOffsetLong`](https://docs.rs/icu/2.0.0/icu/datetime/fieldsets/zone/struct.LocalizedOffsetLong.html) for more information.
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   factory ZonedDateFormatterGregorian.localizedOffsetLongWithProvider(DataProvider provider, Locale locale, DateFormatterGregorian formatter) {
@@ -89,7 +119,12 @@ final class ZonedDateFormatterGregorian implements ffi.Finalizable {
     return ZonedDateFormatterGregorian._fromFfi(result.union.ok, []);
   }
 
-  /// See the [Rust documentation for `LocalizedOffsetShort`](https://docs.rs/icu/latest/icu/datetime/fieldsets/zone/struct.LocalizedOffsetShort.html) for more information.
+  /// Creates a zoned formatter based on a non-zoned formatter.
+  ///
+  /// Caution: The locale provided here must match the locale used to construct the non-zoned formatter,
+  /// or else unexpected behavior may occur!
+  ///
+  /// See the [Rust documentation for `LocalizedOffsetShort`](https://docs.rs/icu/2.0.0/icu/datetime/fieldsets/zone/struct.LocalizedOffsetShort.html) for more information.
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   factory ZonedDateFormatterGregorian.localizedOffsetShort(Locale locale, DateFormatterGregorian formatter) {
@@ -100,7 +135,12 @@ final class ZonedDateFormatterGregorian implements ffi.Finalizable {
     return ZonedDateFormatterGregorian._fromFfi(result.union.ok, []);
   }
 
-  /// See the [Rust documentation for `LocalizedOffsetShort`](https://docs.rs/icu/latest/icu/datetime/fieldsets/zone/struct.LocalizedOffsetShort.html) for more information.
+  /// Creates a zoned formatter based on a non-zoned formatter.
+  ///
+  /// Caution: The locale provided here must match the locale used to construct the non-zoned formatter,
+  /// or else unexpected behavior may occur!
+  ///
+  /// See the [Rust documentation for `LocalizedOffsetShort`](https://docs.rs/icu/2.0.0/icu/datetime/fieldsets/zone/struct.LocalizedOffsetShort.html) for more information.
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   factory ZonedDateFormatterGregorian.localizedOffsetShortWithProvider(DataProvider provider, Locale locale, DateFormatterGregorian formatter) {
@@ -111,7 +151,12 @@ final class ZonedDateFormatterGregorian implements ffi.Finalizable {
     return ZonedDateFormatterGregorian._fromFfi(result.union.ok, []);
   }
 
-  /// See the [Rust documentation for `GenericLong`](https://docs.rs/icu/latest/icu/datetime/fieldsets/zone/struct.GenericLong.html) for more information.
+  /// Creates a zoned formatter based on a non-zoned formatter.
+  ///
+  /// Caution: The locale provided here must match the locale used to construct the non-zoned formatter,
+  /// or else unexpected behavior may occur!
+  ///
+  /// See the [Rust documentation for `GenericLong`](https://docs.rs/icu/2.0.0/icu/datetime/fieldsets/zone/struct.GenericLong.html) for more information.
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   factory ZonedDateFormatterGregorian.genericLong(Locale locale, DateFormatterGregorian formatter) {
@@ -122,7 +167,12 @@ final class ZonedDateFormatterGregorian implements ffi.Finalizable {
     return ZonedDateFormatterGregorian._fromFfi(result.union.ok, []);
   }
 
-  /// See the [Rust documentation for `GenericLong`](https://docs.rs/icu/latest/icu/datetime/fieldsets/zone/struct.GenericLong.html) for more information.
+  /// Creates a zoned formatter based on a non-zoned formatter.
+  ///
+  /// Caution: The locale provided here must match the locale used to construct the non-zoned formatter,
+  /// or else unexpected behavior may occur!
+  ///
+  /// See the [Rust documentation for `GenericLong`](https://docs.rs/icu/2.0.0/icu/datetime/fieldsets/zone/struct.GenericLong.html) for more information.
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   factory ZonedDateFormatterGregorian.genericLongWithProvider(DataProvider provider, Locale locale, DateFormatterGregorian formatter) {
@@ -133,7 +183,12 @@ final class ZonedDateFormatterGregorian implements ffi.Finalizable {
     return ZonedDateFormatterGregorian._fromFfi(result.union.ok, []);
   }
 
-  /// See the [Rust documentation for `GenericShort`](https://docs.rs/icu/latest/icu/datetime/fieldsets/zone/struct.GenericShort.html) for more information.
+  /// Creates a zoned formatter based on a non-zoned formatter.
+  ///
+  /// Caution: The locale provided here must match the locale used to construct the non-zoned formatter,
+  /// or else unexpected behavior may occur!
+  ///
+  /// See the [Rust documentation for `GenericShort`](https://docs.rs/icu/2.0.0/icu/datetime/fieldsets/zone/struct.GenericShort.html) for more information.
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   factory ZonedDateFormatterGregorian.genericShort(Locale locale, DateFormatterGregorian formatter) {
@@ -144,7 +199,12 @@ final class ZonedDateFormatterGregorian implements ffi.Finalizable {
     return ZonedDateFormatterGregorian._fromFfi(result.union.ok, []);
   }
 
-  /// See the [Rust documentation for `GenericShort`](https://docs.rs/icu/latest/icu/datetime/fieldsets/zone/struct.GenericShort.html) for more information.
+  /// Creates a zoned formatter based on a non-zoned formatter.
+  ///
+  /// Caution: The locale provided here must match the locale used to construct the non-zoned formatter,
+  /// or else unexpected behavior may occur!
+  ///
+  /// See the [Rust documentation for `GenericShort`](https://docs.rs/icu/2.0.0/icu/datetime/fieldsets/zone/struct.GenericShort.html) for more information.
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   factory ZonedDateFormatterGregorian.genericShortWithProvider(DataProvider provider, Locale locale, DateFormatterGregorian formatter) {
@@ -155,7 +215,12 @@ final class ZonedDateFormatterGregorian implements ffi.Finalizable {
     return ZonedDateFormatterGregorian._fromFfi(result.union.ok, []);
   }
 
-  /// See the [Rust documentation for `Location`](https://docs.rs/icu/latest/icu/datetime/fieldsets/zone/struct.Location.html) for more information.
+  /// Creates a zoned formatter based on a non-zoned formatter.
+  ///
+  /// Caution: The locale provided here must match the locale used to construct the non-zoned formatter,
+  /// or else unexpected behavior may occur!
+  ///
+  /// See the [Rust documentation for `Location`](https://docs.rs/icu/2.0.0/icu/datetime/fieldsets/zone/struct.Location.html) for more information.
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   factory ZonedDateFormatterGregorian.location(Locale locale, DateFormatterGregorian formatter) {
@@ -166,7 +231,12 @@ final class ZonedDateFormatterGregorian implements ffi.Finalizable {
     return ZonedDateFormatterGregorian._fromFfi(result.union.ok, []);
   }
 
-  /// See the [Rust documentation for `Location`](https://docs.rs/icu/latest/icu/datetime/fieldsets/zone/struct.Location.html) for more information.
+  /// Creates a zoned formatter based on a non-zoned formatter.
+  ///
+  /// Caution: The locale provided here must match the locale used to construct the non-zoned formatter,
+  /// or else unexpected behavior may occur!
+  ///
+  /// See the [Rust documentation for `Location`](https://docs.rs/icu/2.0.0/icu/datetime/fieldsets/zone/struct.Location.html) for more information.
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   factory ZonedDateFormatterGregorian.locationWithProvider(DataProvider provider, Locale locale, DateFormatterGregorian formatter) {
@@ -177,7 +247,12 @@ final class ZonedDateFormatterGregorian implements ffi.Finalizable {
     return ZonedDateFormatterGregorian._fromFfi(result.union.ok, []);
   }
 
-  /// See the [Rust documentation for `ExemplarCity`](https://docs.rs/icu/latest/icu/datetime/fieldsets/zone/struct.ExemplarCity.html) for more information.
+  /// Creates a zoned formatter based on a non-zoned formatter.
+  ///
+  /// Caution: The locale provided here must match the locale used to construct the non-zoned formatter,
+  /// or else unexpected behavior may occur!
+  ///
+  /// See the [Rust documentation for `ExemplarCity`](https://docs.rs/icu/2.0.0/icu/datetime/fieldsets/zone/struct.ExemplarCity.html) for more information.
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   factory ZonedDateFormatterGregorian.exemplarCity(Locale locale, DateFormatterGregorian formatter) {
@@ -188,7 +263,12 @@ final class ZonedDateFormatterGregorian implements ffi.Finalizable {
     return ZonedDateFormatterGregorian._fromFfi(result.union.ok, []);
   }
 
-  /// See the [Rust documentation for `ExemplarCity`](https://docs.rs/icu/latest/icu/datetime/fieldsets/zone/struct.ExemplarCity.html) for more information.
+  /// Creates a zoned formatter based on a non-zoned formatter.
+  ///
+  /// Caution: The locale provided here must match the locale used to construct the non-zoned formatter,
+  /// or else unexpected behavior may occur!
+  ///
+  /// See the [Rust documentation for `ExemplarCity`](https://docs.rs/icu/2.0.0/icu/datetime/fieldsets/zone/struct.ExemplarCity.html) for more information.
   ///
   /// Throws [DateTimeFormatterLoadError] on failure.
   factory ZonedDateFormatterGregorian.exemplarCityWithProvider(DataProvider provider, Locale locale, DateFormatterGregorian formatter) {
@@ -199,17 +279,18 @@ final class ZonedDateFormatterGregorian implements ffi.Finalizable {
     return ZonedDateFormatterGregorian._fromFfi(result.union.ok, []);
   }
 
-  /// See the [Rust documentation for `format`](https://docs.rs/icu/latest/icu/datetime/struct.FixedCalendarDateTimeFormatter.html#method.format) for more information.
+  /// See the [Rust documentation for `format`](https://docs.rs/icu/2.0.0/icu/datetime/struct.FixedCalendarDateTimeFormatter.html#method.format) for more information.
   ///
   /// Throws [DateTimeWriteError] on failure.
-  String formatIso(IsoDate date, TimeZoneInfo zone) {
+  String formatIso(IsoDate isoDate, TimeZoneInfo zone) {
     final write = _Write();
-    final result = _icu4x_ZonedDateFormatterGregorian_format_iso_mv1(_ffi, date._ffi, zone._ffi, write._ffi);
+    final result = _icu4x_ZonedDateFormatterGregorian_format_iso_mv1(_ffi, isoDate._ffi, zone._ffi, write._ffi);
     if (!result.isOk) {
-      throw DateTimeWriteError.values.firstWhere((v) => v._ffi == result.union.err);
+      throw DateTimeWriteError.values[result.union.err];
     }
     return write.finalize();
   }
+
 }
 
 @_DiplomatFfiUse('icu4x_ZonedDateFormatterGregorian_destroy_mv1')
@@ -300,6 +381,6 @@ external _ResultOpaqueInt32 _icu4x_ZonedDateFormatterGregorian_create_exemplar_c
 @_DiplomatFfiUse('icu4x_ZonedDateFormatterGregorian_format_iso_mv1')
 @ffi.Native<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_ZonedDateFormatterGregorian_format_iso_mv1')
 // ignore: non_constant_identifier_names
-external _ResultVoidInt32 _icu4x_ZonedDateFormatterGregorian_format_iso_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> date, ffi.Pointer<ffi.Opaque> zone, ffi.Pointer<ffi.Opaque> write);
+external _ResultVoidInt32 _icu4x_ZonedDateFormatterGregorian_format_iso_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> isoDate, ffi.Pointer<ffi.Opaque> zone, ffi.Pointer<ffi.Opaque> write);
 
 // dart format on

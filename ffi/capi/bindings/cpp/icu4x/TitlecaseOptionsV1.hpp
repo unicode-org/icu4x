@@ -10,6 +10,7 @@
 #include <memory>
 #include <functional>
 #include <optional>
+#include <cstdlib>
 #include "../diplomat_runtime.hpp"
 #include "LeadingAdjustment.hpp"
 #include "TrailingCase.hpp"
@@ -18,10 +19,9 @@
 namespace icu4x {
 namespace capi {
     extern "C" {
-    
+
     icu4x::capi::TitlecaseOptionsV1 icu4x_TitlecaseOptionsV1_default_mv1(void);
-    
-    
+
     } // extern "C"
 } // namespace capi
 } // namespace

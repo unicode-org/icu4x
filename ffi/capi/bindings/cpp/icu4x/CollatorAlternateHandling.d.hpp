@@ -8,6 +8,7 @@
 #include <memory>
 #include <functional>
 #include <optional>
+#include <cstdlib>
 #include "../diplomat_runtime.hpp"
 
 
@@ -17,14 +18,14 @@ namespace capi {
       CollatorAlternateHandling_NonIgnorable = 0,
       CollatorAlternateHandling_Shifted = 1,
     };
-    
+
     typedef struct CollatorAlternateHandling_option {union { CollatorAlternateHandling ok; }; bool is_ok; } CollatorAlternateHandling_option;
 } // namespace capi
 } // namespace
 
 namespace icu4x {
 /**
- * See the [Rust documentation for `AlternateHandling`](https://docs.rs/icu/latest/icu/collator/options/enum.AlternateHandling.html) for more information.
+ * See the [Rust documentation for `AlternateHandling`](https://docs.rs/icu/2.0.0/icu/collator/options/enum.AlternateHandling.html) for more information.
  */
 class CollatorAlternateHandling {
 public:

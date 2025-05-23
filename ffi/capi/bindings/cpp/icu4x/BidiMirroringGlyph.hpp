@@ -10,6 +10,7 @@
 #include <memory>
 #include <functional>
 #include <optional>
+#include <cstdlib>
 #include "../diplomat_runtime.hpp"
 #include "BidiPairedBracketType.hpp"
 
@@ -17,10 +18,9 @@
 namespace icu4x {
 namespace capi {
     extern "C" {
-    
+
     icu4x::capi::BidiMirroringGlyph icu4x_BidiMirroringGlyph_for_char_mv1(char32_t ch);
-    
-    
+
     } // extern "C"
 } // namespace capi
 } // namespace

@@ -48,7 +48,7 @@ use core::str::FromStr;
 ///     DataLocale::from(locale!("hi-IN-u-sd-inas"))
 /// );
 /// ```
-#[derive(Clone, Copy, Default, PartialEq, Hash, Eq)]
+#[derive(Clone, Copy, PartialEq, Hash, Eq)]
 #[non_exhaustive]
 pub struct DataLocale {
     /// Language subtag
@@ -61,6 +61,18 @@ pub struct DataLocale {
     pub variant: Option<Variant>,
     /// Subivision (-u-sd-) subtag
     pub subdivision: Option<Subtag>,
+}
+
+impl Default for DataLocale {
+    fn default() -> Self {
+        Self {
+            language: Language::UNKNOWN,
+            script: None,
+            region: None,
+            variant: None,
+            subdivision: None,
+        }
+    }
 }
 
 impl DataLocale {

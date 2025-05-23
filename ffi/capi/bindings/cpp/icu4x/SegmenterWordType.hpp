@@ -10,16 +10,16 @@
 #include <memory>
 #include <functional>
 #include <optional>
+#include <cstdlib>
 #include "../diplomat_runtime.hpp"
 
 
 namespace icu4x {
 namespace capi {
     extern "C" {
-    
+
     bool icu4x_SegmenterWordType_is_word_like_mv1(icu4x::capi::SegmenterWordType self);
-    
-    
+
     } // extern "C"
 } // namespace capi
 } // namespace
@@ -35,7 +35,7 @@ inline icu4x::SegmenterWordType icu4x::SegmenterWordType::FromFFI(icu4x::capi::S
     case icu4x::capi::SegmenterWordType_Letter:
       return static_cast<icu4x::SegmenterWordType::Value>(c_enum);
     default:
-      abort();
+      std::abort();
   }
 }
 

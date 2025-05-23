@@ -32,7 +32,6 @@ CodePointMapData16* icu4x_CodePointMapData16_create_script_mv1(void);
 typedef struct icu4x_CodePointMapData16_create_script_with_provider_mv1_result {union {CodePointMapData16* ok; DataError err;}; bool is_ok;} icu4x_CodePointMapData16_create_script_with_provider_mv1_result;
 icu4x_CodePointMapData16_create_script_with_provider_mv1_result icu4x_CodePointMapData16_create_script_with_provider_mv1(const DataProvider* provider);
 
-
 void icu4x_CodePointMapData16_destroy_mv1(CodePointMapData16* self);
 
 

@@ -3,11 +3,13 @@
 
 part of 'lib.g.dart';
 
-/// See the [Rust documentation for `Alignment`](https://docs.rs/icu/latest/icu/datetime/options/enum.Alignment.html) for more information.
+/// See the [Rust documentation for `Alignment`](https://docs.rs/icu/2.0.0/icu/datetime/options/enum.Alignment.html) for more information.
 enum DateTimeAlignment {
+
   auto,
 
   column;
+
 }
 
 // dart format on

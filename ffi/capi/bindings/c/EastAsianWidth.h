@@ -32,5 +32,4 @@ icu4x_EastAsianWidth_from_integer_value_mv1_result icu4x_EastAsianWidth_from_int
 
 
 
-
 #endif // EastAsianWidth_H

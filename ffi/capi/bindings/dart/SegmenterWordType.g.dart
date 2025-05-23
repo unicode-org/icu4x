@@ -3,19 +3,21 @@
 
 part of 'lib.g.dart';
 
-/// See the [Rust documentation for `WordType`](https://docs.rs/icu/latest/icu/segmenter/options/enum.WordType.html) for more information.
+/// See the [Rust documentation for `WordType`](https://docs.rs/icu/2.0.0/icu/segmenter/options/enum.WordType.html) for more information.
 enum SegmenterWordType {
+
   none,
 
   number,
 
   letter;
 
-  /// See the [Rust documentation for `is_word_like`](https://docs.rs/icu/latest/icu/segmenter/options/enum.WordType.html#method.is_word_like) for more information.
+  /// See the [Rust documentation for `is_word_like`](https://docs.rs/icu/2.0.0/icu/segmenter/options/enum.WordType.html#method.is_word_like) for more information.
   bool get isWordLike {
     final result = _icu4x_SegmenterWordType_is_word_like_mv1(index);
     return result;
   }
+
 }
 
 @_DiplomatFfiUse('icu4x_SegmenterWordType_is_word_like_mv1')

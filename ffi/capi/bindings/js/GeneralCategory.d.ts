@@ -3,19 +3,19 @@ import type { GeneralCategoryGroup } from "./GeneralCategoryGroup"
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
-/** 
- * See the [Rust documentation for `GeneralCategory`](https://docs.rs/icu/latest/icu/properties/props/enum.GeneralCategory.html) for more information.
+
+/**
+ * See the [Rust documentation for `GeneralCategory`](https://docs.rs/icu/2.0.0/icu/properties/props/enum.GeneralCategory.html) for more information.
  */
-
-
 export class GeneralCategory {
-    
 
-    static fromValue(value : GeneralCategory | string) : GeneralCategory; 
+    /** @internal */
+    static fromValue(value: GeneralCategory | string): GeneralCategory;
 
-    get value() : string;
+    get value(): string;
 
-    get ffiValue() : number;
+    /** @internal */
+    get ffiValue(): number;
 
     static Unassigned : GeneralCategory;
     static UppercaseLetter : GeneralCategory;
@@ -48,39 +48,40 @@ export class GeneralCategory {
     static ModifierSymbol : GeneralCategory;
     static OtherSymbol : GeneralCategory;
 
-    /** 
-     * See the [Rust documentation for `for_char`](https://docs.rs/icu/latest/icu/properties/props/trait.EnumeratedProperty.html#tymethod.for_char) for more information.
+
+    /**
+     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.0.0/icu/properties/props/trait.EnumeratedProperty.html#tymethod.for_char) for more information.
      */
     static forChar(ch: codepoint): GeneralCategory;
 
-    /** 
+    /**
      * Convert to an integer using the ICU4C integer mappings for `General_Category`
      * Get the "long" name of this property value (returns empty if property value is unknown)
      *
-     * See the [Rust documentation for `get`](https://docs.rs/icu/latest/icu/properties/struct.PropertyNamesLongBorrowed.html#method.get) for more information.
+     * See the [Rust documentation for `get`](https://docs.rs/icu/2.0.0/icu/properties/struct.PropertyNamesLongBorrowed.html#method.get) for more information.
      */
     longName(): string | null;
 
-    /** 
+    /**
      * Get the "short" name of this property value (returns empty if property value is unknown)
      *
-     * See the [Rust documentation for `get`](https://docs.rs/icu/latest/icu/properties/struct.PropertyNamesShortBorrowed.html#method.get) for more information.
+     * See the [Rust documentation for `get`](https://docs.rs/icu/2.0.0/icu/properties/struct.PropertyNamesShortBorrowed.html#method.get) for more information.
      */
     shortName(): string | null;
 
-    /** 
+    /**
      * Convert to an integer value usable with ICU4C and CodePointMapData
      */
     toIntegerValue(): number;
 
-    /** 
+    /**
      * Produces a GeneralCategoryGroup mask that can represent a group of general categories
      *
-     * See the [Rust documentation for `GeneralCategoryGroup`](https://docs.rs/icu/latest/icu/properties/props/struct.GeneralCategoryGroup.html) for more information.
+     * See the [Rust documentation for `GeneralCategoryGroup`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.GeneralCategoryGroup.html) for more information.
      */
     toGroup(): GeneralCategoryGroup;
 
-    /** 
+    /**
      * Convert from an integer using the ICU4C integer mappings for `General_Category`
      * Convert from an integer value from ICU4C or CodePointMapData
      */

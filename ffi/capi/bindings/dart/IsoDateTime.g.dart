@@ -10,7 +10,7 @@ final class _IsoDateTimeFfi extends ffi.Struct {
 
 /// An ICU4X DateTime object capable of containing a ISO-8601 date and time.
 ///
-/// See the [Rust documentation for `DateTime`](https://docs.rs/icu/latest/icu/time/struct.DateTime.html) for more information.
+/// See the [Rust documentation for `DateTime`](https://docs.rs/icu/2.0.0/icu/time/struct.DateTime.html) for more information.
 final class IsoDateTime {
   final IsoDate date;
   final Time time;
@@ -33,19 +33,20 @@ final class IsoDateTime {
     return struct;
   }
 
-  /// Creates a new [`IsoDateTime`] from an IXDTF string.
+  /// Creates a new [IsoDateTime] from an IXDTF string.
   ///
-  /// See the [Rust documentation for `try_from_str`](https://docs.rs/icu/latest/icu/time/struct.DateTime.html#method.try_from_str) for more information.
+  /// See the [Rust documentation for `try_from_str`](https://docs.rs/icu/2.0.0/icu/time/struct.DateTime.html#method.try_from_str) for more information.
   ///
-  /// Throws [CalendarParseError] on failure.
+  /// Throws [Rfc9557ParseError] on failure.
   factory IsoDateTime.fromString(String v) {
     final temp = _FinalizedArena();
     final result = _icu4x_IsoDateTime_from_string_mv1(v._utf8AllocIn(temp.arena));
     if (!result.isOk) {
-      throw CalendarParseError.values[result.union.err];
+      throw Rfc9557ParseError.values[result.union.err];
     }
     return IsoDateTime._fromFfi(result.union.ok);
   }
+
 
   @override
   bool operator ==(Object other) =>

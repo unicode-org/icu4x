@@ -3,11 +3,13 @@
 
 part of 'lib.g.dart';
 
-/// See the [Rust documentation for `TransformResult`](https://docs.rs/icu/latest/icu/locale/enum.TransformResult.html) for more information.
+/// See the [Rust documentation for `TransformResult`](https://docs.rs/icu/2.0.0/icu/locale/enum.TransformResult.html) for more information.
 enum TransformResult {
+
   modified,
 
   unmodified;
+
 }
 
 // dart format on

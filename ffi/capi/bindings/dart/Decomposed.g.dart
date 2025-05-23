@@ -14,7 +14,7 @@ final class _DecomposedFfi extends ffi.Struct {
 /// `second` will be NUL when the decomposition expands to a single character
 /// (which may or may not be the original one)
 ///
-/// See the [Rust documentation for `Decomposed`](https://docs.rs/icu/latest/icu/normalizer/properties/enum.Decomposed.html) for more information.
+/// See the [Rust documentation for `Decomposed`](https://docs.rs/icu/2.0.0/icu/normalizer/properties/enum.Decomposed.html) for more information.
 final class Decomposed {
   final Rune first;
   final Rune second;
@@ -36,6 +36,7 @@ final class Decomposed {
     struct.second = second;
     return struct;
   }
+
 
   @override
   bool operator ==(Object other) =>

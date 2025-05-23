@@ -73,6 +73,7 @@ pub mod ffi {
     ///
     /// You can create an instance of this object using [`UnitsConverterFactory`] by calling the `converter` method.
     #[diplomat::rust_link(icu::experimental::units::converter::UnitsConverter, Struct)]
+    #[diplomat::attr(demo_gen, disable)]
     pub struct UnitsConverter(pub icu_experimental::units::converter::UnitsConverter<f64>);
     impl UnitsConverter {
         /// Converts the input value from the input unit to the output unit (that have been used to create this converter).

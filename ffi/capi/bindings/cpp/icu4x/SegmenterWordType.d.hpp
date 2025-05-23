@@ -8,6 +8,7 @@
 #include <memory>
 #include <functional>
 #include <optional>
+#include <cstdlib>
 #include "../diplomat_runtime.hpp"
 
 
@@ -18,14 +19,14 @@ namespace capi {
       SegmenterWordType_Number = 1,
       SegmenterWordType_Letter = 2,
     };
-    
+
     typedef struct SegmenterWordType_option {union { SegmenterWordType ok; }; bool is_ok; } SegmenterWordType_option;
 } // namespace capi
 } // namespace
 
 namespace icu4x {
 /**
- * See the [Rust documentation for `WordType`](https://docs.rs/icu/latest/icu/segmenter/options/enum.WordType.html) for more information.
+ * See the [Rust documentation for `WordType`](https://docs.rs/icu/2.0.0/icu/segmenter/options/enum.WordType.html) for more information.
  */
 class SegmenterWordType {
 public:
@@ -43,7 +44,7 @@ public:
   explicit operator bool() const = delete;
 
   /**
-   * See the [Rust documentation for `is_word_like`](https://docs.rs/icu/latest/icu/segmenter/options/enum.WordType.html#method.is_word_like) for more information.
+   * See the [Rust documentation for `is_word_like`](https://docs.rs/icu/2.0.0/icu/segmenter/options/enum.WordType.html#method.is_word_like) for more information.
    */
   inline bool is_word_like() const;
 

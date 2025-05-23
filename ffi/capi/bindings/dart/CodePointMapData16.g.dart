@@ -7,11 +7,11 @@ part of 'lib.g.dart';
 ///
 /// For properties whose values fit into 16 bits.
 ///
-/// See the [Rust documentation for `properties`](https://docs.rs/icu/latest/icu/properties/index.html) for more information.
+/// See the [Rust documentation for `properties`](https://docs.rs/icu/2.0.0/icu/properties/index.html) for more information.
 ///
-/// See the [Rust documentation for `CodePointMapData`](https://docs.rs/icu/latest/icu/properties/struct.CodePointMapData.html) for more information.
+/// See the [Rust documentation for `CodePointMapData`](https://docs.rs/icu/2.0.0/icu/properties/struct.CodePointMapData.html) for more information.
 ///
-/// See the [Rust documentation for `CodePointMapDataBorrowed`](https://docs.rs/icu/latest/icu/properties/struct.CodePointMapDataBorrowed.html) for more information.
+/// See the [Rust documentation for `CodePointMapDataBorrowed`](https://docs.rs/icu/2.0.0/icu/properties/struct.CodePointMapDataBorrowed.html) for more information.
 final class CodePointMapData16 implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _ffi;
 
@@ -33,7 +33,7 @@ final class CodePointMapData16 implements ffi.Finalizable {
 
   /// Gets the value for a code point.
   ///
-  /// See the [Rust documentation for `get`](https://docs.rs/icu/latest/icu/properties/struct.CodePointMapDataBorrowed.html#method.get) for more information.
+  /// See the [Rust documentation for `get`](https://docs.rs/icu/2.0.0/icu/properties/struct.CodePointMapDataBorrowed.html#method.get) for more information.
   int operator [](Rune cp) {
     final result = _icu4x_CodePointMapData16_get_mv1(_ffi, cp);
     return result;
@@ -41,7 +41,7 @@ final class CodePointMapData16 implements ffi.Finalizable {
 
   /// Produces an iterator over ranges of code points that map to `value`
   ///
-  /// See the [Rust documentation for `iter_ranges_for_value`](https://docs.rs/icu/latest/icu/properties/struct.CodePointMapDataBorrowed.html#method.iter_ranges_for_value) for more information.
+  /// See the [Rust documentation for `iter_ranges_for_value`](https://docs.rs/icu/2.0.0/icu/properties/struct.CodePointMapDataBorrowed.html#method.iter_ranges_for_value) for more information.
   CodePointRangeIterator iterRangesForValue(int value) {
     // This lifetime edge depends on lifetimes: 'a
     core.List<Object> aEdges = [this];
@@ -51,7 +51,7 @@ final class CodePointMapData16 implements ffi.Finalizable {
 
   /// Produces an iterator over ranges of code points that do not map to `value`
   ///
-  /// See the [Rust documentation for `iter_ranges_for_value_complemented`](https://docs.rs/icu/latest/icu/properties/struct.CodePointMapDataBorrowed.html#method.iter_ranges_for_value_complemented) for more information.
+  /// See the [Rust documentation for `iter_ranges_for_value_complemented`](https://docs.rs/icu/2.0.0/icu/properties/struct.CodePointMapDataBorrowed.html#method.iter_ranges_for_value_complemented) for more information.
   CodePointRangeIterator iterRangesForValueComplemented(int value) {
     // This lifetime edge depends on lifetimes: 'a
     core.List<Object> aEdges = [this];
@@ -59,9 +59,9 @@ final class CodePointMapData16 implements ffi.Finalizable {
     return CodePointRangeIterator._fromFfi(result, [], aEdges);
   }
 
-  /// Gets a [`CodePointSetData`] representing all entries in this map that map to the given value
+  /// Gets a [CodePointSetData] representing all entries in this map that map to the given value
   ///
-  /// See the [Rust documentation for `get_set_for_value`](https://docs.rs/icu/latest/icu/properties/struct.CodePointMapDataBorrowed.html#method.get_set_for_value) for more information.
+  /// See the [Rust documentation for `get_set_for_value`](https://docs.rs/icu/2.0.0/icu/properties/struct.CodePointMapDataBorrowed.html#method.get_set_for_value) for more information.
   CodePointSetData getSetForValue(int value) {
     final result = _icu4x_CodePointMapData16_get_set_for_value_mv1(_ffi, value);
     return CodePointSetData._fromFfi(result, []);
@@ -69,7 +69,7 @@ final class CodePointMapData16 implements ffi.Finalizable {
 
   /// Create a map for the `Script` property, using compiled data.
   ///
-  /// See the [Rust documentation for `Script`](https://docs.rs/icu/latest/icu/properties/props/struct.Script.html) for more information.
+  /// See the [Rust documentation for `Script`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html) for more information.
   factory CodePointMapData16.script() {
     final result = _icu4x_CodePointMapData16_create_script_mv1();
     return CodePointMapData16._fromFfi(result, []);
@@ -77,7 +77,7 @@ final class CodePointMapData16 implements ffi.Finalizable {
 
   /// Create a map for the `Script` property, using a particular data source.
   ///
-  /// See the [Rust documentation for `Script`](https://docs.rs/icu/latest/icu/properties/props/struct.Script.html) for more information.
+  /// See the [Rust documentation for `Script`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html) for more information.
   ///
   /// Throws [DataError] on failure.
   factory CodePointMapData16.scriptWithProvider(DataProvider provider) {
@@ -87,6 +87,7 @@ final class CodePointMapData16 implements ffi.Finalizable {
     }
     return CodePointMapData16._fromFfi(result.union.ok, []);
   }
+
 }
 
 @_DiplomatFfiUse('icu4x_CodePointMapData16_destroy_mv1')

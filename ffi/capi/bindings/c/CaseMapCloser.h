@@ -28,7 +28,6 @@ void icu4x_CaseMapCloser_add_case_closure_to_mv1(const CaseMapCloser* self, char
 
 bool icu4x_CaseMapCloser_add_string_case_closure_to_mv1(const CaseMapCloser* self, DiplomatStringView s, CodePointSetBuilder* builder);
 
-
 void icu4x_CaseMapCloser_destroy_mv1(CaseMapCloser* self);
 
 

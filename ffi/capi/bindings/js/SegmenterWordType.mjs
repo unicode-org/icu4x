@@ -3,13 +3,11 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
-/** 
- * See the [Rust documentation for `WordType`](https://docs.rs/icu/latest/icu/segmenter/options/enum.WordType.html) for more information.
+
+/**
+ * See the [Rust documentation for `WordType`](https://docs.rs/icu/2.0.0/icu/segmenter/options/enum.WordType.html) for more information.
  */
-
-
 export class SegmenterWordType {
-    
     #value = undefined;
 
     static #values = new Map([
@@ -21,7 +19,7 @@ export class SegmenterWordType {
     static getAllEntries() {
         return SegmenterWordType.#values.entries();
     }
-    
+
     #internalConstructor(value) {
         if (arguments.length > 1 && arguments[0] === diplomatRuntime.internalConstructor) {
             // We pass in two internalConstructor arguments to create *new*
@@ -47,15 +45,17 @@ export class SegmenterWordType {
         throw TypeError(value + " is not a SegmenterWordType and does not correspond to any of its enumerator values.");
     }
 
+    /** @internal */
     static fromValue(value) {
         return new SegmenterWordType(value);
     }
 
-    get value() {
+    get value(){
         return [...SegmenterWordType.#values.keys()][this.#value];
     }
 
-    get ffiValue() {
+    /** @internal */
+    get ffiValue(){
         return this.#value;
     }
     static #objectValues = [
@@ -68,17 +68,20 @@ export class SegmenterWordType {
     static Number = SegmenterWordType.#objectValues[1];
     static Letter = SegmenterWordType.#objectValues[2];
 
-    /** 
-     * See the [Rust documentation for `is_word_like`](https://docs.rs/icu/latest/icu/segmenter/options/enum.WordType.html#method.is_word_like) for more information.
+
+    /**
+     * See the [Rust documentation for `is_word_like`](https://docs.rs/icu/2.0.0/icu/segmenter/options/enum.WordType.html#method.is_word_like) for more information.
      */
     get isWordLike() {
+
         const result = wasm.icu4x_SegmenterWordType_is_word_like_mv1(this.ffiValue);
-    
+
         try {
             return result;
         }
-        
-        finally {}
+
+        finally {
+        }
     }
 
     constructor(value) {

@@ -1,0 +1,15 @@
+{
+	"private": true,
+	"type": "module",
+	"scripts": {
+	  "compile": "tsc -p .",
+	  "start": "node dist/main.js"
+	},
+	"dependencies": {
+	  "icu": "file:../../ffi/npm"
+	},
+	"devDependencies": {
+	  "typescript": "^4.7.4"
+	}
+  }
+  

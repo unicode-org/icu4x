@@ -5,7 +5,7 @@ part of 'lib.g.dart';
 
 /// An iterator over the locale under fallback.
 ///
-/// See the [Rust documentation for `LocaleFallbackIterator`](https://docs.rs/icu/latest/icu/locale/fallback/struct.LocaleFallbackIterator.html) for more information.
+/// See the [Rust documentation for `LocaleFallbackIterator`](https://docs.rs/icu/2.0.0/icu/locale/fallback/struct.LocaleFallbackIterator.html) for more information.
 final class LocaleFallbackIterator implements ffi.Finalizable, core.Iterator<Locale> {
   final ffi.Pointer<ffi.Opaque> _ffi;
 
@@ -42,6 +42,7 @@ final class LocaleFallbackIterator implements ffi.Finalizable, core.Iterator<Loc
     final result = _icu4x_LocaleFallbackIterator_next_mv1(_ffi);
     return result.address == 0 ? null : Locale._fromFfi(result, []);
   }
+
 }
 
 @_DiplomatFfiUse('icu4x_LocaleFallbackIterator_destroy_mv1')

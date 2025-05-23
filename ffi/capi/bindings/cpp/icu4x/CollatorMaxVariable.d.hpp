@@ -8,6 +8,7 @@
 #include <memory>
 #include <functional>
 #include <optional>
+#include <cstdlib>
 #include "../diplomat_runtime.hpp"
 
 
@@ -19,14 +20,14 @@ namespace capi {
       CollatorMaxVariable_Symbol = 2,
       CollatorMaxVariable_Currency = 3,
     };
-    
+
     typedef struct CollatorMaxVariable_option {union { CollatorMaxVariable ok; }; bool is_ok; } CollatorMaxVariable_option;
 } // namespace capi
 } // namespace
 
 namespace icu4x {
 /**
- * See the [Rust documentation for `MaxVariable`](https://docs.rs/icu/latest/icu/collator/options/enum.MaxVariable.html) for more information.
+ * See the [Rust documentation for `MaxVariable`](https://docs.rs/icu/2.0.0/icu/collator/options/enum.MaxVariable.html) for more information.
  */
 class CollatorMaxVariable {
 public:

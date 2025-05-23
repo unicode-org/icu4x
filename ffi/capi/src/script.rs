@@ -21,12 +21,14 @@ pub mod ffi {
     #[diplomat::opaque]
     /// A slightly faster ScriptWithExtensions object
     #[diplomat::rust_link(icu::properties::script::ScriptWithExtensionsBorrowed, Struct)]
+    #[diplomat::attr(demo_gen, disable)] // TODO needs custom page
     pub struct ScriptWithExtensionsBorrowed<'a>(
         pub icu_properties::script::ScriptWithExtensionsBorrowed<'a>,
     );
     #[diplomat::opaque]
     /// An object that represents the Script_Extensions property for a single character
     #[diplomat::rust_link(icu::properties::script::ScriptExtensionsSet, Struct)]
+    #[diplomat::attr(demo_gen, disable)] // TODO needs custom page
     pub struct ScriptExtensionsSet<'a>(pub icu_properties::script::ScriptExtensionsSet<'a>);
 
     impl ScriptWithExtensions {

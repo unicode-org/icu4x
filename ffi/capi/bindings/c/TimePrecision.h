@@ -22,5 +22,4 @@ icu4x_TimePrecision_from_subsecond_digits_mv1_result icu4x_TimePrecision_from_su
 
 
 
-
 #endif // TimePrecision_H

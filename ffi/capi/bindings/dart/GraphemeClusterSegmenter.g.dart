@@ -6,7 +6,7 @@ part of 'lib.g.dart';
 /// An ICU4X grapheme-cluster-break segmenter, capable of finding grapheme cluster breakpoints
 /// in strings.
 ///
-/// See the [Rust documentation for `GraphemeClusterSegmenter`](https://docs.rs/icu/latest/icu/segmenter/struct.GraphemeClusterSegmenter.html) for more information.
+/// See the [Rust documentation for `GraphemeClusterSegmenter`](https://docs.rs/icu/2.0.0/icu/segmenter/struct.GraphemeClusterSegmenter.html) for more information.
 final class GraphemeClusterSegmenter implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _ffi;
 
@@ -26,17 +26,17 @@ final class GraphemeClusterSegmenter implements ffi.Finalizable {
 
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_GraphemeClusterSegmenter_destroy_mv1));
 
-  /// Construct an [`GraphemeClusterSegmenter`] using compiled data.
+  /// Construct an [GraphemeClusterSegmenter] using compiled data.
   ///
-  /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/segmenter/struct.GraphemeClusterSegmenter.html#method.new) for more information.
+  /// See the [Rust documentation for `new`](https://docs.rs/icu/2.0.0/icu/segmenter/struct.GraphemeClusterSegmenter.html#method.new) for more information.
   factory GraphemeClusterSegmenter() {
     final result = _icu4x_GraphemeClusterSegmenter_create_mv1();
     return GraphemeClusterSegmenter._fromFfi(result, []);
   }
 
-  /// Construct an [`GraphemeClusterSegmenter`].
+  /// Construct an [GraphemeClusterSegmenter].
   ///
-  /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/segmenter/struct.GraphemeClusterSegmenter.html#method.new) for more information.
+  /// See the [Rust documentation for `new`](https://docs.rs/icu/2.0.0/icu/segmenter/struct.GraphemeClusterSegmenter.html#method.new) for more information.
   ///
   /// Throws [DataError] on failure.
   factory GraphemeClusterSegmenter.withProvider(DataProvider provider) {
@@ -52,7 +52,7 @@ final class GraphemeClusterSegmenter implements ffi.Finalizable {
   /// Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
   /// to the WHATWG Encoding Standard.
   ///
-  /// See the [Rust documentation for `segment_utf16`](https://docs.rs/icu/latest/icu/segmenter/struct.GraphemeClusterSegmenterBorrowed.html#method.segment_utf16) for more information.
+  /// See the [Rust documentation for `segment_utf16`](https://docs.rs/icu/2.0.0/icu/segmenter/struct.GraphemeClusterSegmenterBorrowed.html#method.segment_utf16) for more information.
   GraphemeClusterBreakIteratorUtf16 segment(String input) {
     final inputArena = _FinalizedArena();
     // This lifetime edge depends on lifetimes: 'a
@@ -60,6 +60,7 @@ final class GraphemeClusterSegmenter implements ffi.Finalizable {
     final result = _icu4x_GraphemeClusterSegmenter_segment_utf16_mv1(_ffi, input._utf16AllocIn(inputArena.arena));
     return GraphemeClusterBreakIteratorUtf16._fromFfi(result, [], aEdges);
   }
+
 }
 
 @_DiplomatFfiUse('icu4x_GraphemeClusterSegmenter_destroy_mv1')

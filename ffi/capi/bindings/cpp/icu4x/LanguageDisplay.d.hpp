@@ -8,6 +8,7 @@
 #include <memory>
 #include <functional>
 #include <optional>
+#include <cstdlib>
 #include "../diplomat_runtime.hpp"
 
 
@@ -17,14 +18,14 @@ namespace capi {
       LanguageDisplay_Dialect = 0,
       LanguageDisplay_Standard = 1,
     };
-    
+
     typedef struct LanguageDisplay_option {union { LanguageDisplay ok; }; bool is_ok; } LanguageDisplay_option;
 } // namespace capi
 } // namespace
 
 namespace icu4x {
 /**
- * See the [Rust documentation for `LanguageDisplay`](https://docs.rs/icu/latest/icu/experimental/displaynames/options/enum.LanguageDisplay.html) for more information.
+ * See the [Rust documentation for `LanguageDisplay`](https://docs.rs/icu/2.0.0/icu/experimental/displaynames/enum.LanguageDisplay.html) for more information.
  */
 class LanguageDisplay {
 public:

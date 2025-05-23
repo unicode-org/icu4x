@@ -21,7 +21,6 @@ part 'BidiParagraph.g.dart';
 part 'Calendar.g.dart';
 part 'CalendarError.g.dart';
 part 'CalendarKind.g.dart';
-part 'CalendarParseError.g.dart';
 part 'CanonicalCombiningClass.g.dart';
 part 'CanonicalCombiningClassMap.g.dart';
 part 'CanonicalComposition.g.dart';
@@ -124,6 +123,7 @@ part 'PluralRules.g.dart';
 part 'PropertyValueNameToEnumMapper.g.dart';
 part 'RegionDisplayNames.g.dart';
 part 'ReorderedIndexMap.g.dart';
+part 'Rfc9557ParseError.g.dart';
 part 'Script.g.dart';
 part 'ScriptExtensionsSet.g.dart';
 part 'ScriptWithExtensions.g.dart';
@@ -182,17 +182,17 @@ class _DiplomatFfiUse extends meta.RecordUse {
 }
 
 /// A [Rune] is a Unicode code point, such as `a`, or `💡`.
-/// 
-/// The recommended way to obtain a [Rune] is to create it from a 
+///
+/// The recommended way to obtain a [Rune] is to create it from a
 /// [String], which is conceptually a sequence of [Rune]s. For
 /// example, `'a'.runes.first` is equal to the [Rune] `a`.
-/// 
+///
 /// Dart does not have a character/rune literal (https://github.com/dart-lang/language/issues/886),
-/// so integer literals need to be used. For example the Unicode code point 
+/// so integer literals need to be used. For example the Unicode code point
 /// U+1F4A1, `💡`, can be represented by `0x1F4A1`.
 ///
 /// A [String] can be constructed from a [Rune] using (the [confusingly named](
-/// https://github.com/dart-lang/sdk/issues/56304)) [String.fromCharCode]. 
+/// https://github.com/dart-lang/sdk/issues/56304)) [String.fromCharCode].
 typedef Rune = int;
 
 // ignore: unused_element
@@ -679,7 +679,6 @@ final class _ResultVoidInt32 extends ffi.Struct {
 }
 
 final class _ResultVoidVoid extends ffi.Struct {
-  
 
   @ffi.Bool()
   external bool isOk;
@@ -1052,7 +1051,7 @@ final class _Write {
   final ffi.Pointer<ffi.Opaque> _ffi;
 
   _Write() : _ffi = _diplomat_buffer_write_create(0);
-  
+
   String finalize() {
     try {
       final buf = _diplomat_buffer_write_get_bytes(_ffi);

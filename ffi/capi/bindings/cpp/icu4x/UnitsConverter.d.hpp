@@ -8,6 +8,7 @@
 #include <memory>
 #include <functional>
 #include <optional>
+#include <cstdlib>
 #include "../diplomat_runtime.hpp"
 
 namespace icu4x {
@@ -24,11 +25,11 @@ namespace capi {
 
 namespace icu4x {
 /**
- * An ICU4X Units Converter object, capable of converting between two [`MeasureUnit`]s.
+ * An ICU4X Units Converter object, capable of converting between two {@link MeasureUnit}s.
  *
- * You can create an instance of this object using [`UnitsConverterFactory`] by calling the `converter` method.
+ * You can create an instance of this object using {@link UnitsConverterFactory} by calling the `converter` method.
  *
- * See the [Rust documentation for `UnitsConverter`](https://docs.rs/icu/latest/icu/experimental/units/converter/struct.UnitsConverter.html) for more information.
+ * See the [Rust documentation for `UnitsConverter`](https://docs.rs/icu/2.0.0/icu/experimental/units/converter/struct.UnitsConverter.html) for more information.
  */
 class UnitsConverter {
 public:
@@ -38,14 +39,14 @@ public:
    * NOTE:
    * The conversion using floating-point operations is not as accurate as the conversion using ratios.
    *
-   * See the [Rust documentation for `convert`](https://docs.rs/icu/latest/icu/experimental/units/converter/struct.UnitsConverter.html#method.convert) for more information.
+   * See the [Rust documentation for `convert`](https://docs.rs/icu/2.0.0/icu/experimental/units/converter/struct.UnitsConverter.html#method.convert) for more information.
    */
   inline double convert(double value) const;
 
   /**
-   * Clones the current [`UnitsConverter`] object.
+   * Clones the current {@link UnitsConverter} object.
    *
-   * See the [Rust documentation for `clone`](https://docs.rs/icu/latest/icu/experimental/units/converter/struct.UnitsConverter.html#method.clone) for more information.
+   * See the [Rust documentation for `clone`](https://docs.rs/icu/2.0.0/icu/experimental/units/converter/struct.UnitsConverter.html#method.clone) for more information.
    */
   inline std::unique_ptr<icu4x::UnitsConverter> clone() const;
 

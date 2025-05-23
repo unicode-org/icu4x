@@ -10,6 +10,7 @@
 #include <memory>
 #include <functional>
 #include <optional>
+#include <cstdlib>
 #include "../diplomat_runtime.hpp"
 #include "DataError.hpp"
 #include "DataProvider.hpp"
@@ -23,37 +24,36 @@
 namespace icu4x {
 namespace capi {
     extern "C" {
-    
+
     icu4x::capi::LineSegmenter* icu4x_LineSegmenter_create_auto_mv1(void);
-    
+
     icu4x::capi::LineSegmenter* icu4x_LineSegmenter_create_lstm_mv1(void);
-    
+
     icu4x::capi::LineSegmenter* icu4x_LineSegmenter_create_dictionary_mv1(void);
-    
+
     icu4x::capi::LineSegmenter* icu4x_LineSegmenter_create_auto_with_options_v2_mv1(const icu4x::capi::Locale* content_locale, icu4x::capi::LineBreakOptionsV2 options);
-    
+
     typedef struct icu4x_LineSegmenter_create_auto_with_options_v2_and_provider_mv1_result {union {icu4x::capi::LineSegmenter* ok; icu4x::capi::DataError err;}; bool is_ok;} icu4x_LineSegmenter_create_auto_with_options_v2_and_provider_mv1_result;
     icu4x_LineSegmenter_create_auto_with_options_v2_and_provider_mv1_result icu4x_LineSegmenter_create_auto_with_options_v2_and_provider_mv1(const icu4x::capi::DataProvider* provider, const icu4x::capi::Locale* content_locale, icu4x::capi::LineBreakOptionsV2 options);
-    
+
     icu4x::capi::LineSegmenter* icu4x_LineSegmenter_create_lstm_with_options_v2_mv1(const icu4x::capi::Locale* content_locale, icu4x::capi::LineBreakOptionsV2 options);
-    
+
     typedef struct icu4x_LineSegmenter_create_lstm_with_options_v2_and_provider_mv1_result {union {icu4x::capi::LineSegmenter* ok; icu4x::capi::DataError err;}; bool is_ok;} icu4x_LineSegmenter_create_lstm_with_options_v2_and_provider_mv1_result;
     icu4x_LineSegmenter_create_lstm_with_options_v2_and_provider_mv1_result icu4x_LineSegmenter_create_lstm_with_options_v2_and_provider_mv1(const icu4x::capi::DataProvider* provider, const icu4x::capi::Locale* content_locale, icu4x::capi::LineBreakOptionsV2 options);
-    
+
     icu4x::capi::LineSegmenter* icu4x_LineSegmenter_create_dictionary_with_options_v2_mv1(const icu4x::capi::Locale* content_locale, icu4x::capi::LineBreakOptionsV2 options);
-    
+
     typedef struct icu4x_LineSegmenter_create_dictionary_with_options_v2_and_provider_mv1_result {union {icu4x::capi::LineSegmenter* ok; icu4x::capi::DataError err;}; bool is_ok;} icu4x_LineSegmenter_create_dictionary_with_options_v2_and_provider_mv1_result;
     icu4x_LineSegmenter_create_dictionary_with_options_v2_and_provider_mv1_result icu4x_LineSegmenter_create_dictionary_with_options_v2_and_provider_mv1(const icu4x::capi::DataProvider* provider, const icu4x::capi::Locale* content_locale, icu4x::capi::LineBreakOptionsV2 options);
-    
+
     icu4x::capi::LineBreakIteratorUtf8* icu4x_LineSegmenter_segment_utf8_mv1(const icu4x::capi::LineSegmenter* self, diplomat::capi::DiplomatStringView input);
-    
+
     icu4x::capi::LineBreakIteratorUtf16* icu4x_LineSegmenter_segment_utf16_mv1(const icu4x::capi::LineSegmenter* self, diplomat::capi::DiplomatString16View input);
-    
+
     icu4x::capi::LineBreakIteratorLatin1* icu4x_LineSegmenter_segment_latin1_mv1(const icu4x::capi::LineSegmenter* self, diplomat::capi::DiplomatU8View input);
-    
-    
+
     void icu4x_LineSegmenter_destroy_mv1(LineSegmenter* self);
-    
+
     } // extern "C"
 } // namespace capi
 } // namespace

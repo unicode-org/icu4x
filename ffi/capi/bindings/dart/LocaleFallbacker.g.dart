@@ -5,7 +5,7 @@ part of 'lib.g.dart';
 
 /// An object that runs the ICU4X locale fallback algorithm.
 ///
-/// See the [Rust documentation for `LocaleFallbacker`](https://docs.rs/icu/latest/icu/locale/fallback/struct.LocaleFallbacker.html) for more information.
+/// See the [Rust documentation for `LocaleFallbacker`](https://docs.rs/icu_locale/2.0.0/icu_locale/struct.LocaleFallbacker.html) for more information.
 final class LocaleFallbacker implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _ffi;
 
@@ -27,7 +27,7 @@ final class LocaleFallbacker implements ffi.Finalizable {
 
   /// Creates a new `LocaleFallbacker` from compiled data.
   ///
-  /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/locale/fallback/struct.LocaleFallbacker.html#method.new) for more information.
+  /// See the [Rust documentation for `new`](https://docs.rs/icu_locale/2.0.0/icu_locale/struct.LocaleFallbacker.html#method.new) for more information.
   factory LocaleFallbacker() {
     final result = _icu4x_LocaleFallbacker_create_mv1();
     return LocaleFallbacker._fromFfi(result, []);
@@ -35,7 +35,7 @@ final class LocaleFallbacker implements ffi.Finalizable {
 
   /// Creates a new `LocaleFallbacker` from a data provider.
   ///
-  /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/locale/fallback/struct.LocaleFallbacker.html#method.new) for more information.
+  /// See the [Rust documentation for `new`](https://docs.rs/icu_locale/2.0.0/icu_locale/struct.LocaleFallbacker.html#method.new) for more information.
   ///
   /// Throws [DataError] on failure.
   factory LocaleFallbacker.withProvider(DataProvider provider) {
@@ -48,7 +48,7 @@ final class LocaleFallbacker implements ffi.Finalizable {
 
   /// Creates a new `LocaleFallbacker` without data for limited functionality.
   ///
-  /// See the [Rust documentation for `new_without_data`](https://docs.rs/icu/latest/icu/locale/fallback/struct.LocaleFallbacker.html#method.new_without_data) for more information.
+  /// See the [Rust documentation for `new_without_data`](https://docs.rs/icu_locale/2.0.0/icu_locale/struct.LocaleFallbacker.html#method.new_without_data) for more information.
   factory LocaleFallbacker.withoutData() {
     final result = _icu4x_LocaleFallbacker_without_data_mv1();
     return LocaleFallbacker._fromFfi(result, []);
@@ -56,7 +56,7 @@ final class LocaleFallbacker implements ffi.Finalizable {
 
   /// Associates this `LocaleFallbacker` with configuration options.
   ///
-  /// See the [Rust documentation for `for_config`](https://docs.rs/icu/latest/icu/locale/fallback/struct.LocaleFallbacker.html#method.for_config) for more information.
+  /// See the [Rust documentation for `for_config`](https://docs.rs/icu_locale/2.0.0/icu_locale/struct.LocaleFallbacker.html#method.for_config) for more information.
   LocaleFallbackerWithConfig forConfig(LocaleFallbackConfig config) {
     final temp = _FinalizedArena();
     // This lifetime edge depends on lifetimes: 'a
@@ -64,6 +64,7 @@ final class LocaleFallbacker implements ffi.Finalizable {
     final result = _icu4x_LocaleFallbacker_for_config_mv1(_ffi, config._toFfi(temp.arena));
     return LocaleFallbackerWithConfig._fromFfi(result, [], aEdges);
   }
+
 }
 
 @_DiplomatFfiUse('icu4x_LocaleFallbacker_destroy_mv1')

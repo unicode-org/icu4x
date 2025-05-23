@@ -3,11 +3,13 @@
 
 part of 'lib.g.dart';
 
-/// See the [Rust documentation for `AlternateHandling`](https://docs.rs/icu/latest/icu/collator/options/enum.AlternateHandling.html) for more information.
+/// See the [Rust documentation for `AlternateHandling`](https://docs.rs/icu/2.0.0/icu/collator/options/enum.AlternateHandling.html) for more information.
 enum CollatorAlternateHandling {
+
   nonIgnorable,
 
   shifted;
+
 }
 
 // dart format on

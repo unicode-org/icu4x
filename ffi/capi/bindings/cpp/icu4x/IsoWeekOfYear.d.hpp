@@ -8,6 +8,7 @@
 #include <memory>
 #include <functional>
 #include <optional>
+#include <cstdlib>
 #include "../diplomat_runtime.hpp"
 
 
@@ -17,7 +18,7 @@ namespace capi {
       uint8_t week_number;
       int32_t iso_year;
     };
-    
+
     typedef struct IsoWeekOfYear_option {union { IsoWeekOfYear ok; }; bool is_ok; } IsoWeekOfYear_option;
 } // namespace capi
 } // namespace

@@ -2,6 +2,10 @@
 /// Implement `DataProvider<ShortMinuteRelativeV1>` on the given struct using the data
 /// hardcoded in this file. This allows the struct to be used with
 /// `icu`'s `_unstable` constructors.
+///
+/// This macro requires the following crates:
+/// * `icu`
+/// * `icu_provider`
 #[doc(hidden)]
 #[macro_export]
 macro_rules! __impl_short_minute_relative_v1 {

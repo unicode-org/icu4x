@@ -8,6 +8,7 @@
 #include <memory>
 #include <functional>
 #include <optional>
+#include <cstdlib>
 #include "../diplomat_runtime.hpp"
 
 
@@ -23,7 +24,7 @@ namespace icu4x {
  *
  * `map[visualIndex] = sourceIndex`
  *
- * Produced by `reorder_visual()` on [`Bidi`].
+ * Produced by `reorder_visual()` on {@link Bidi}.
  */
 class ReorderedIndexMap {
 public:

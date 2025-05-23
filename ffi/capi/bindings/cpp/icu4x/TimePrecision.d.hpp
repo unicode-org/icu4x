@@ -8,6 +8,7 @@
 #include <memory>
 #include <functional>
 #include <optional>
+#include <cstdlib>
 #include "../diplomat_runtime.hpp"
 
 namespace icu4x {
@@ -32,16 +33,16 @@ namespace capi {
       TimePrecision_Subsecond8 = 11,
       TimePrecision_Subsecond9 = 12,
     };
-    
+
     typedef struct TimePrecision_option {union { TimePrecision ok; }; bool is_ok; } TimePrecision_option;
 } // namespace capi
 } // namespace
 
 namespace icu4x {
 /**
- * See the [Rust documentation for `TimePrecision`](https://docs.rs/icu/latest/icu/datetime/options/enum.TimePrecision.html) for more information.
+ * See the [Rust documentation for `TimePrecision`](https://docs.rs/icu/2.0.0/icu/datetime/options/enum.TimePrecision.html) for more information.
  *
- * See the [Rust documentation for `SubsecondDigits`](https://docs.rs/icu/latest/icu/datetime/options/enum.SubsecondDigits.html) for more information.
+ * See the [Rust documentation for `SubsecondDigits`](https://docs.rs/icu/2.0.0/icu/datetime/options/enum.SubsecondDigits.html) for more information.
  */
 class TimePrecision {
 public:
@@ -69,7 +70,7 @@ public:
   explicit operator bool() const = delete;
 
   /**
-   * See the [Rust documentation for `try_from_int`](https://docs.rs/icu/latest/icu/datetime/options/enum.SubsecondDigits.html#method.try_from_int) for more information.
+   * See the [Rust documentation for `try_from_int`](https://docs.rs/icu/2.0.0/icu/datetime/options/enum.SubsecondDigits.html#method.try_from_int) for more information.
    */
   inline static std::optional<icu4x::TimePrecision> from_subsecond_digits(uint8_t digits);
 

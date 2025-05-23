@@ -1972,6 +1972,48 @@ fn test_prefs_overrides() {
     }
 }
 
+// This test fails if the root data isn't ICU4X identical prefix-aware.
+#[test]
+fn test_identical_prefix_root_builder_0cc2() {
+    let mut options = CollatorOptions::default();
+    options.strength = Some(Strength::Tertiary);
+    let collator = Collator::try_new(Default::default(), options).unwrap();
+    assert_eq!(
+        collator.compare_utf16(
+            &[0x0CC8, 0x0CC6, 0x0CC2, 0x0CD6],
+            &[0x0CC8, 0x0CC6, 0x0CC2, 0x0CD5]
+        ),
+        core::cmp::Ordering::Less
+    );
+}
+
+// This test fails if the root data isn't ICU4X identical prefix-aware.
+#[test]
+fn test_identical_prefix_root_builder_0dcf() {
+    let mut options = CollatorOptions::default();
+    options.strength = Some(Strength::Tertiary);
+    let collator = Collator::try_new(Default::default(), options).unwrap();
+    assert_eq!(
+        collator.compare_utf16(
+            &[0x0DC6, 0x0DD9, 0x0DCF, 0xAAF2],
+            &[0x0DC6, 0x0DD9, 0x0DCF, 0x0DCA]
+        ),
+        core::cmp::Ordering::Less
+    );
+}
+
+// Not really for testing the outcome but seeing the internals in a debugger.
+#[test]
+fn test_middle_contraction_markers() {
+    let mut options = CollatorOptions::default();
+    options.strength = Some(Strength::Tertiary);
+    let collator = Collator::try_new(Default::default(), options).unwrap();
+    assert_eq!(
+        collator.compare_utf16(&[0x0CC2, 0xDC00], &[0x0DCF, 0xDC00]),
+        core::cmp::Ordering::Less
+    );
+}
+
 // TODO: Test languages that map to the root.
 // The languages that map to root without script reordering are:
 // ca (at least for now)

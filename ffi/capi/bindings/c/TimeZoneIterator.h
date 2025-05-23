@@ -18,7 +18,6 @@
 
 TimeZone* icu4x_TimeZoneIterator_next_mv1(TimeZoneIterator* self);
 
-
 void icu4x_TimeZoneIterator_destroy_mv1(TimeZoneIterator* self);
 
 

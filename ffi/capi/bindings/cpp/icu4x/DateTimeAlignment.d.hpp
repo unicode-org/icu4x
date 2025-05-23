@@ -8,6 +8,7 @@
 #include <memory>
 #include <functional>
 #include <optional>
+#include <cstdlib>
 #include "../diplomat_runtime.hpp"
 
 
@@ -17,14 +18,14 @@ namespace capi {
       DateTimeAlignment_Auto = 0,
       DateTimeAlignment_Column = 1,
     };
-    
+
     typedef struct DateTimeAlignment_option {union { DateTimeAlignment ok; }; bool is_ok; } DateTimeAlignment_option;
 } // namespace capi
 } // namespace
 
 namespace icu4x {
 /**
- * See the [Rust documentation for `Alignment`](https://docs.rs/icu/latest/icu/datetime/options/enum.Alignment.html) for more information.
+ * See the [Rust documentation for `Alignment`](https://docs.rs/icu/2.0.0/icu/datetime/options/enum.Alignment.html) for more information.
  */
 class DateTimeAlignment {
 public:

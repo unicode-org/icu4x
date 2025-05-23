@@ -10,21 +10,21 @@
 #include <memory>
 #include <functional>
 #include <optional>
+#include <cstdlib>
 #include "../diplomat_runtime.hpp"
 
 
 namespace icu4x {
 namespace capi {
     extern "C" {
-    
+
     icu4x::capi::IndicSyllabicCategory icu4x_IndicSyllabicCategory_for_char_mv1(char32_t ch);
-    
+
     uint8_t icu4x_IndicSyllabicCategory_to_integer_value_mv1(icu4x::capi::IndicSyllabicCategory self);
-    
+
     typedef struct icu4x_IndicSyllabicCategory_from_integer_value_mv1_result {union {icu4x::capi::IndicSyllabicCategory ok; }; bool is_ok;} icu4x_IndicSyllabicCategory_from_integer_value_mv1_result;
     icu4x_IndicSyllabicCategory_from_integer_value_mv1_result icu4x_IndicSyllabicCategory_from_integer_value_mv1(uint8_t other);
-    
-    
+
     } // extern "C"
 } // namespace capi
 } // namespace
@@ -74,7 +74,7 @@ inline icu4x::IndicSyllabicCategory icu4x::IndicSyllabicCategory::FromFFI(icu4x:
     case icu4x::capi::IndicSyllabicCategory_ReorderingKiller:
       return static_cast<icu4x::IndicSyllabicCategory::Value>(c_enum);
     default:
-      abort();
+      std::abort();
   }
 }
 

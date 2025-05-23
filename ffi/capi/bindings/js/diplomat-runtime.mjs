@@ -34,16 +34,16 @@ export function withDiplomatWrite(wasm, callback) {
 
 /**
  * Get the pointer returned by an FFI function.
- * 
+ *
  * It's tempting to call `(new Uint32Array(wasm.memory.buffer, FFI_func(), 1))[0]`.
  * However, there's a chance that `wasm.memory.buffer` will be resized between
  * the time it's accessed and the time it's used, invalidating the view.
  * This function ensures that the view into wasm memory is fresh.
- * 
+ *
  * This is used for methods that return multiple types into a wasm buffer, where
  * one of those types is another ptr. Call this method to get access to the returned
  * ptr, so the return buffer can be freed.
- * @param {WebAssembly.Exports} wasm Provided by diplomat generated files. 
+ * @param {WebAssembly.Exports} wasm Provided by diplomat generated files.
  * @param {number} ptr Pointer of a pointer, to be read.
  * @returns {number} The underlying pointer.
  */
@@ -51,14 +51,14 @@ export function ptrRead(wasm, ptr) {
     return (new Uint32Array(wasm.memory.buffer, ptr, 1))[0];
 }
 
-/** 
+/**
  * Get the flag of a result type.
  */
 export function resultFlag(wasm, ptr, offset) {
     return (new Uint8Array(wasm.memory.buffer, ptr + offset, 1))[0];
 }
 
-/** 
+/**
  * Get the discriminant of a Rust enum.
 */
 export function enumDiscriminant(wasm, ptr) {
@@ -91,7 +91,7 @@ export function writeToArrayBuffer(arrayBuffer, offset, value, typedArrayKind) {
 * Take `jsValue` and write it to arrayBuffer at offset `offset` if it is non-null
 * calling `writeToArrayBufferCallback(arrayBuffer, offset, jsValue)` to write to the buffer,
 * also writing a tag bit.
-* 
+*
 * `size` and `align` are the size and alignment of T, not of Option<T>
 */
 export function writeOptionToArrayBuffer(arrayBuffer, offset, jsValue, size, align, writeToArrayBufferCallback) {
@@ -106,12 +106,12 @@ export function writeOptionToArrayBuffer(arrayBuffer, offset, jsValue, size, ali
 /**
 * For Option<T> of given size/align (of T, not the overall option type),
 * return an array of fields suitable for passing down to a parameter list.
-* 
+*
 * Calls writeToArrayBufferCallback(arrayBuffer, offset, jsValue) for non-null jsValues
-* 
+*
 * This array will have size<T>/align<T> elements for the actual T, then one element
 * for the is_ok bool, and then align<T> - 1 elements for padding.
-* 
+*
 * See wasm_abi_quirks.md's section on Unions for understanding this ABI.
 */
 export function optionToArgsForCalling(jsValue, size, align, writeToArrayBufferCallback) {
@@ -148,7 +148,6 @@ export function optionToArgsForCalling(jsValue, size, align, writeToArrayBufferC
 export function optionToBufferForCalling(wasm, jsValue, size, align, allocator, writeToArrayBufferCallback) {
     let buf = DiplomatBuf.struct(wasm, size, align);
 
-    
     let buffer;
     // Add 1 to the size since we're also accounting for the 0 or 1 is_ok field:
     if (align == 8) {
@@ -162,12 +161,12 @@ export function optionToBufferForCalling(wasm, jsValue, size, align, allocator, 
     }
 
     buffer.fill(0);
-    
+
     if (jsValue != null) {
         writeToArrayBufferCallback(buffer.buffer, 0, jsValue);
         buffer[buffer.length - 1] = 1;
     }
-    
+
     allocator.alloc(buf);
 }
 
@@ -188,7 +187,7 @@ export function readOption(wasm, ptr, size, readCallback) {
     }
 }
 
-/** 
+/**
  * A wrapper around a slice of WASM memory that can be freed manually or
  * automatically by the garbage collector.
  *
@@ -253,7 +252,7 @@ export class DiplomatBuf {
     const byteLength = list.length * elementSize;
     const ptr = wasm.diplomat_alloc(byteLength, elementSize);
 
-    /** 
+    /**
      * Create an array view of the buffer. This gives us the `set` method which correctly handles untyped values
      */
     const destination =
@@ -272,7 +271,6 @@ export class DiplomatBuf {
     return new DiplomatBuf(ptr, list.length, () => wasm.diplomat_free(ptr, byteLength, elementSize));
     }
 
-    
     static strs = (wasm, strings, encoding) => {
         let encodeStr = (encoding === "string16") ? DiplomatBuf.str16 : DiplomatBuf.str8;
 
@@ -335,7 +333,7 @@ export class DiplomatBuf {
     }
 }
 
-/** 
+/**
  * Helper class for creating and managing `diplomat_buffer_write`.
  * Meant to minimize direct calls to `wasm`.
  */
@@ -351,7 +349,7 @@ export class DiplomatWriteBuf {
 
         this.leak = () => { };
     }
-    
+
     free() {
         this.#wasm.diplomat_buffer_write_destroy(this.#buffer);
     }
@@ -398,7 +396,7 @@ export class DiplomatSlice {
 
     constructor(wasm, buffer, bufferType, lifetimeEdges) {
         this.#wasm = wasm;
-        
+
         const [ptr, size] = new Uint32Array(this.#wasm.memory.buffer, buffer, 2);
 
         this.#buffer = new bufferType(this.#wasm.memory.buffer, ptr, size);
@@ -546,18 +544,18 @@ export class DiplomatReceiveBuf {
 
         this.leak = () => { };
     }
-    
+
     free() {
         this.#wasm.diplomat_free(this.#buffer, this.#size, this.#align);
     }
-    
+
     get buffer() {
         return this.#buffer;
     }
 
     /**
      * Only for when a DiplomatReceiveBuf is allocating a buffer for an `Option<>` or a `Result<>` type.
-     * 
+     *
      * This just checks the last byte for a successful result (assuming that Rust's compiler does not change).
      */
     get resultFlag() {
@@ -572,20 +570,20 @@ export class DiplomatReceiveBuf {
 /**
  * For cleaning up slices inside struct _intoFFI functions.
  * Based somewhat on how the Dart backend handles slice cleanup.
- * 
+ *
  * We want to ensure a slice only lasts as long as its struct, so we have a `functionCleanupArena` CleanupArena that we use in each method for any slice that needs to be cleaned up. It lasts only as long as the function is called for.
- * 
+ *
  * Then we have `createWith`, which is meant for longer lasting slices. It takes an array of edges and will last as long as those edges do. Cleanup is only called later.
  */
 export class CleanupArena {
     #items = [];
-    
+
     constructor() {
     }
-    
+
     /**
      * When this arena is freed, call .free() on the given item.
-     * @param {DiplomatBuf} item 
+     * @param {DiplomatBuf} item
      * @returns {DiplomatBuf}
      */
     alloc(item) {

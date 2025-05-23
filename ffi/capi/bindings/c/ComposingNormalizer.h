@@ -37,7 +37,6 @@ size_t icu4x_ComposingNormalizer_is_normalized_utf8_up_to_mv1(const ComposingNor
 
 size_t icu4x_ComposingNormalizer_is_normalized_utf16_up_to_mv1(const ComposingNormalizer* self, DiplomatString16View s);
 
-
 void icu4x_ComposingNormalizer_destroy_mv1(ComposingNormalizer* self);
 
 

@@ -90,7 +90,6 @@ CodePointMapData8* icu4x_CodePointMapData8_create_vertical_orientation_mv1(void)
 typedef struct icu4x_CodePointMapData8_create_vertical_orientation_with_provider_mv1_result {union {CodePointMapData8* ok; DataError err;}; bool is_ok;} icu4x_CodePointMapData8_create_vertical_orientation_with_provider_mv1_result;
 icu4x_CodePointMapData8_create_vertical_orientation_with_provider_mv1_result icu4x_CodePointMapData8_create_vertical_orientation_with_provider_mv1(const DataProvider* provider);
 
-
 void icu4x_CodePointMapData8_destroy_mv1(CodePointMapData8* self);
 
 

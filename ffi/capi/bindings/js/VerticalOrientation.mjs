@@ -3,13 +3,11 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
-/** 
- * See the [Rust documentation for `VerticalOrientation`](https://docs.rs/icu/latest/icu/properties/props/struct.VerticalOrientation.html) for more information.
+
+/**
+ * See the [Rust documentation for `VerticalOrientation`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.VerticalOrientation.html) for more information.
  */
-
-
 export class VerticalOrientation {
-    
     #value = undefined;
 
     static #values = new Map([
@@ -22,7 +20,7 @@ export class VerticalOrientation {
     static getAllEntries() {
         return VerticalOrientation.#values.entries();
     }
-    
+
     #internalConstructor(value) {
         if (arguments.length > 1 && arguments[0] === diplomatRuntime.internalConstructor) {
             // We pass in two internalConstructor arguments to create *new*
@@ -48,15 +46,17 @@ export class VerticalOrientation {
         throw TypeError(value + " is not a VerticalOrientation and does not correspond to any of its enumerator values.");
     }
 
+    /** @internal */
     static fromValue(value) {
         return new VerticalOrientation(value);
     }
 
-    get value() {
+    get value(){
         return [...VerticalOrientation.#values.keys()][this.#value];
     }
 
-    get ffiValue() {
+    /** @internal */
+    get ffiValue(){
         return this.#value;
     }
     static #objectValues = [
@@ -71,95 +71,103 @@ export class VerticalOrientation {
     static TransformedUpright = VerticalOrientation.#objectValues[2];
     static Upright = VerticalOrientation.#objectValues[3];
 
-    /** 
-     * See the [Rust documentation for `for_char`](https://docs.rs/icu/latest/icu/properties/props/trait.EnumeratedProperty.html#tymethod.for_char) for more information.
+
+    /**
+     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.0.0/icu/properties/props/trait.EnumeratedProperty.html#tymethod.for_char) for more information.
      */
     static forChar(ch) {
+
         const result = wasm.icu4x_VerticalOrientation_for_char_mv1(ch);
-    
+
         try {
             return new VerticalOrientation(diplomatRuntime.internalConstructor, result);
         }
-        
-        finally {}
+
+        finally {
+        }
     }
 
-    /** 
+    /**
      * Get the "long" name of this property value (returns empty if property value is unknown)
      *
-     * See the [Rust documentation for `get`](https://docs.rs/icu/latest/icu/properties/struct.PropertyNamesLongBorrowed.html#method.get) for more information.
+     * See the [Rust documentation for `get`](https://docs.rs/icu/2.0.0/icu/properties/struct.PropertyNamesLongBorrowed.html#method.get) for more information.
      */
     longName() {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 9, 4, true);
-        
+
+
         const result = wasm.icu4x_VerticalOrientation_long_name_mv1(diplomatReceive.buffer, this.ffiValue);
-    
+
         try {
             if (!diplomatReceive.resultFlag) {
                 return null;
             }
             return new diplomatRuntime.DiplomatSliceStr(wasm, diplomatReceive.buffer,  "string8", []).getValue();
         }
-        
+
         finally {
             diplomatReceive.free();
         }
     }
 
-    /** 
+    /**
      * Get the "short" name of this property value (returns empty if property value is unknown)
      *
-     * See the [Rust documentation for `get`](https://docs.rs/icu/latest/icu/properties/struct.PropertyNamesShortBorrowed.html#method.get) for more information.
+     * See the [Rust documentation for `get`](https://docs.rs/icu/2.0.0/icu/properties/struct.PropertyNamesShortBorrowed.html#method.get) for more information.
      */
     shortName() {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 9, 4, true);
-        
+
+
         const result = wasm.icu4x_VerticalOrientation_short_name_mv1(diplomatReceive.buffer, this.ffiValue);
-    
+
         try {
             if (!diplomatReceive.resultFlag) {
                 return null;
             }
             return new diplomatRuntime.DiplomatSliceStr(wasm, diplomatReceive.buffer,  "string8", []).getValue();
         }
-        
+
         finally {
             diplomatReceive.free();
         }
     }
 
-    /** 
+    /**
      * Convert to an integer value usable with ICU4C and CodePointMapData
      *
-     * See the [Rust documentation for `to_icu4c_value`](https://docs.rs/icu/latest/icu/properties/props/struct.VerticalOrientation.html#method.to_icu4c_value) for more information.
+     * See the [Rust documentation for `to_icu4c_value`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.VerticalOrientation.html#method.to_icu4c_value) for more information.
      */
     toIntegerValue() {
+
         const result = wasm.icu4x_VerticalOrientation_to_integer_value_mv1(this.ffiValue);
-    
+
         try {
             return result;
         }
-        
-        finally {}
+
+        finally {
+        }
     }
 
-    /** 
+    /**
      * Convert from an integer value from ICU4C or CodePointMapData
      *
-     * See the [Rust documentation for `from_icu4c_value`](https://docs.rs/icu/latest/icu/properties/props/struct.VerticalOrientation.html#method.from_icu4c_value) for more information.
+     * See the [Rust documentation for `from_icu4c_value`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.VerticalOrientation.html#method.from_icu4c_value) for more information.
      */
     static fromIntegerValue(other) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
-        
+
+
         const result = wasm.icu4x_VerticalOrientation_from_integer_value_mv1(diplomatReceive.buffer, other);
-    
+
         try {
             if (!diplomatReceive.resultFlag) {
                 return null;
             }
             return new VerticalOrientation(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
         }
-        
+
         finally {
             diplomatReceive.free();
         }

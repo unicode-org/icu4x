@@ -4,15 +4,13 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
-/** 
- * The various calendar types currently supported by [`Calendar`]
+
+/**
+ * The various calendar types currently supported by {@link Calendar}
  *
- * See the [Rust documentation for `AnyCalendarKind`](https://docs.rs/icu/latest/icu/calendar/enum.AnyCalendarKind.html) for more information.
+ * See the [Rust documentation for `AnyCalendarKind`](https://docs.rs/icu/2.0.0/icu/calendar/enum.AnyCalendarKind.html) for more information.
  */
-
-
 export class CalendarKind {
-    
     #value = undefined;
 
     static #values = new Map([
@@ -39,7 +37,7 @@ export class CalendarKind {
     static getAllEntries() {
         return CalendarKind.#values.entries();
     }
-    
+
     #internalConstructor(value) {
         if (arguments.length > 1 && arguments[0] === diplomatRuntime.internalConstructor) {
             // We pass in two internalConstructor arguments to create *new*
@@ -65,11 +63,12 @@ export class CalendarKind {
         throw TypeError(value + " is not a CalendarKind and does not correspond to any of its enumerator values.");
     }
 
+    /** @internal */
     static fromValue(value) {
         return new CalendarKind(value);
     }
 
-    get value() {
+    get value(){
         for (let entry of CalendarKind.#values) {
             if (entry[1] == this.#value) {
                 return entry[0];
@@ -77,7 +76,8 @@ export class CalendarKind {
         }
     }
 
-    get ffiValue() {
+    /** @internal */
+    get ffiValue(){
         return this.#value;
     }
     static #objectValues = {
@@ -120,19 +120,22 @@ export class CalendarKind {
     static Persian = CalendarKind.#objectValues[16];
     static Roc = CalendarKind.#objectValues[17];
 
-    /** 
-     * Creates a new [`CalendarKind`] for the specified locale, using compiled data.
+
+    /**
+     * Creates a new {@link CalendarKind} for the specified locale, using compiled data.
      *
-     * See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/calendar/enum.AnyCalendarKind.html#method.new) for more information.
+     * See the [Rust documentation for `new`](https://docs.rs/icu/2.0.0/icu/calendar/enum.AnyCalendarKind.html#method.new) for more information.
      */
     static create(locale) {
+
         const result = wasm.icu4x_CalendarKind_create_mv1(locale.ffiValue);
-    
+
         try {
             return new CalendarKind(diplomatRuntime.internalConstructor, result);
         }
-        
-        finally {}
+
+        finally {
+        }
     }
 
     constructor(value) {

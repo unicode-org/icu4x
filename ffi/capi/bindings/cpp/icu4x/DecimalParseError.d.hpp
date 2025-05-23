@@ -8,6 +8,7 @@
 #include <memory>
 #include <functional>
 #include <optional>
+#include <cstdlib>
 #include "../diplomat_runtime.hpp"
 
 
@@ -18,14 +19,14 @@ namespace capi {
       DecimalParseError_Limit = 1,
       DecimalParseError_Syntax = 2,
     };
-    
+
     typedef struct DecimalParseError_option {union { DecimalParseError ok; }; bool is_ok; } DecimalParseError_option;
 } // namespace capi
 } // namespace
 
 namespace icu4x {
 /**
- * Additional information: [1](https://docs.rs/fixed_decimal/latest/fixed_decimal/enum.ParseError.html)
+ * Additional information: [1](https://docs.rs/fixed_decimal/0.7.0/fixed_decimal/enum.ParseError.html)
  */
 class DecimalParseError {
 public:

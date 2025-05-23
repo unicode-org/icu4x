@@ -8,6 +8,7 @@
 #include <memory>
 #include <functional>
 #include <optional>
+#include <cstdlib>
 #include "../diplomat_runtime.hpp"
 
 namespace icu4x {
@@ -23,7 +24,7 @@ namespace capi {
       diplomat::capi::DiplomatStringView canonical;
       diplomat::capi::DiplomatStringView normalized;
     };
-    
+
     typedef struct TimeZoneAndCanonicalAndNormalized_option {union { TimeZoneAndCanonicalAndNormalized ok; }; bool is_ok; } TimeZoneAndCanonicalAndNormalized_option;
 } // namespace capi
 } // namespace
@@ -31,7 +32,7 @@ namespace capi {
 
 namespace icu4x {
 /**
- * See the [Rust documentation for `TimeZoneAndCanonicalAndNormalized`](https://docs.rs/icu/latest/icu/time/zone/iana/struct.TimeZoneAndCanonicalAndNormalized.html) for more information.
+ * See the [Rust documentation for `TimeZoneAndCanonicalAndNormalized`](https://docs.rs/icu/2.0.0/icu/time/zone/iana/struct.TimeZoneAndCanonicalAndNormalized.html) for more information.
  */
 struct TimeZoneAndCanonicalAndNormalized {
   std::unique_ptr<icu4x::TimeZone> time_zone;

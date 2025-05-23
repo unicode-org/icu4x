@@ -25,7 +25,6 @@ icu4x_MeasureUnitParser_create_with_provider_mv1_result icu4x_MeasureUnitParser_
 
 MeasureUnit* icu4x_MeasureUnitParser_parse_mv1(const MeasureUnitParser* self, DiplomatStringView unit_id);
 
-
 void icu4x_MeasureUnitParser_destroy_mv1(MeasureUnitParser* self);
 
 

@@ -3,13 +3,11 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
-/** 
- * See the [Rust documentation for `YearStyle`](https://docs.rs/icu/latest/icu/datetime/options/enum.YearStyle.html) for more information.
+
+/**
+ * See the [Rust documentation for `YearStyle`](https://docs.rs/icu/2.0.0/icu/datetime/options/enum.YearStyle.html) for more information.
  */
-
-
 export class YearStyle {
-    
     #value = undefined;
 
     static #values = new Map([
@@ -21,7 +19,7 @@ export class YearStyle {
     static getAllEntries() {
         return YearStyle.#values.entries();
     }
-    
+
     #internalConstructor(value) {
         if (arguments.length > 1 && arguments[0] === diplomatRuntime.internalConstructor) {
             // We pass in two internalConstructor arguments to create *new*
@@ -47,15 +45,17 @@ export class YearStyle {
         throw TypeError(value + " is not a YearStyle and does not correspond to any of its enumerator values.");
     }
 
+    /** @internal */
     static fromValue(value) {
         return new YearStyle(value);
     }
 
-    get value() {
+    get value(){
         return [...YearStyle.#values.keys()][this.#value];
     }
 
-    get ffiValue() {
+    /** @internal */
+    get ffiValue(){
         return this.#value;
     }
     static #objectValues = [
@@ -67,6 +67,7 @@ export class YearStyle {
     static Auto = YearStyle.#objectValues[0];
     static Full = YearStyle.#objectValues[1];
     static WithEra = YearStyle.#objectValues[2];
+
 
     constructor(value) {
         return this.#internalConstructor(...arguments)

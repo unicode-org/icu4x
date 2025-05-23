@@ -89,7 +89,7 @@ use core::str::FromStr;
 ///
 /// [`Unicode Locale Identifier`]: https://unicode.org/reports/tr35/tr35.html#Unicode_locale_identifier
 /// [tr35-bcp]: https://unicode.org/reports/tr35/#BCP_47_Conformance
-#[derive(Default, PartialEq, Eq, Clone, Hash)] // no Ord or PartialOrd: see docs
+#[derive(PartialEq, Eq, Clone, Hash)] // no Ord or PartialOrd: see docs
 #[allow(clippy::exhaustive_structs)] // This struct is stable (and invoked by a macro)
 pub struct Locale {
     /// The basic language/script/region components in the locale identifier along with any variants.
@@ -99,6 +99,8 @@ pub struct Locale {
 }
 
 #[test]
+// Expected sizes are based on a 64-bit architecture
+#[cfg(target_pointer_width = "64")]
 fn test_sizes() {
     assert_eq!(core::mem::size_of::<subtags::Language>(), 3);
     assert_eq!(core::mem::size_of::<subtags::Script>(), 4);
@@ -144,14 +146,6 @@ impl Locale {
     #[cfg(feature = "alloc")]
     pub fn try_from_utf8(code_units: &[u8]) -> Result<Self, ParseError> {
         parse_locale(code_units)
-    }
-
-    /// Const-friendly version of [`Default::default`].
-    pub const fn default() -> Self {
-        Self {
-            id: LanguageIdentifier::default(),
-            extensions: extensions::Extensions::new(),
-        }
     }
 
     /// Normalize the locale (operating on UTF-8 formatted byte slices)
@@ -534,7 +528,7 @@ impl From<subtags::Language> for Locale {
     fn from(language: subtags::Language) -> Self {
         Self {
             id: language.into(),
-            ..Default::default()
+            extensions: extensions::Extensions::new(),
         }
     }
 }
@@ -551,7 +545,7 @@ impl From<Option<subtags::Script>> for Locale {
     fn from(script: Option<subtags::Script>) -> Self {
         Self {
             id: script.into(),
-            ..Default::default()
+            extensions: extensions::Extensions::new(),
         }
     }
 }
@@ -568,7 +562,7 @@ impl From<Option<subtags::Region>> for Locale {
     fn from(region: Option<subtags::Region>) -> Self {
         Self {
             id: region.into(),
-            ..Default::default()
+            extensions: extensions::Extensions::new(),
         }
     }
 }
@@ -607,7 +601,7 @@ impl
     ) -> Self {
         Self {
             id: lsr.into(),
-            ..Default::default()
+            extensions: extensions::Extensions::new(),
         }
     }
 }

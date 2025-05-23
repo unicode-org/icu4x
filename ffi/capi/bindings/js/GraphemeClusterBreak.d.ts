@@ -2,19 +2,19 @@
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
-/** 
- * See the [Rust documentation for `GraphemeClusterBreak`](https://docs.rs/icu/latest/icu/properties/props/struct.GraphemeClusterBreak.html) for more information.
+
+/**
+ * See the [Rust documentation for `GraphemeClusterBreak`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.GraphemeClusterBreak.html) for more information.
  */
-
-
 export class GraphemeClusterBreak {
-    
 
-    static fromValue(value : GraphemeClusterBreak | string) : GraphemeClusterBreak; 
+    /** @internal */
+    static fromValue(value: GraphemeClusterBreak | string): GraphemeClusterBreak;
 
-    get value() : string;
+    get value(): string;
 
-    get ffiValue() : number;
+    /** @internal */
+    get ffiValue(): number;
 
     static Other : GraphemeClusterBreak;
     static Control : GraphemeClusterBreak;
@@ -35,22 +35,23 @@ export class GraphemeClusterBreak {
     static GlueAfterZwj : GraphemeClusterBreak;
     static Zwj : GraphemeClusterBreak;
 
-    /** 
-     * See the [Rust documentation for `for_char`](https://docs.rs/icu/latest/icu/properties/props/trait.EnumeratedProperty.html#tymethod.for_char) for more information.
+
+    /**
+     * See the [Rust documentation for `for_char`](https://docs.rs/icu/2.0.0/icu/properties/props/trait.EnumeratedProperty.html#tymethod.for_char) for more information.
      */
     static forChar(ch: codepoint): GraphemeClusterBreak;
 
-    /** 
+    /**
      * Convert to an integer value usable with ICU4C and CodePointMapData
      *
-     * See the [Rust documentation for `to_icu4c_value`](https://docs.rs/icu/latest/icu/properties/props/struct.GraphemeClusterBreak.html#method.to_icu4c_value) for more information.
+     * See the [Rust documentation for `to_icu4c_value`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.GraphemeClusterBreak.html#method.to_icu4c_value) for more information.
      */
     toIntegerValue(): number;
 
-    /** 
+    /**
      * Convert from an integer value from ICU4C or CodePointMapData
      *
-     * See the [Rust documentation for `from_icu4c_value`](https://docs.rs/icu/latest/icu/properties/props/struct.GraphemeClusterBreak.html#method.from_icu4c_value) for more information.
+     * See the [Rust documentation for `from_icu4c_value`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.GraphemeClusterBreak.html#method.from_icu4c_value) for more information.
      */
     static fromIntegerValue(other: number): GraphemeClusterBreak | null;
 

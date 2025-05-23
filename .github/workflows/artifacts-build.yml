@@ -88,6 +88,11 @@ jobs:
           --exclude zerofrom-derive
           --exclude zerovec-derive
 
+    - uses: actions/upload-artifact@v4
+      with:
+        name: rustdoc
+        path: target/doc
+
     - name: Upload docs to Google Cloud Storage (non-main)
       run: |
         gsutil -m cp -r target/doc gs://${{ env.GCP_PR_BUCKET_ID }}/gha/${{ github.sha }}/rustdoc
@@ -134,6 +139,11 @@ jobs:
       uses: mattnotmitt/doxygen-action@411df0c62acb5b96b8a93d93a7bf4b753c47ea05 # v1.9.5
       with:
           doxyfile-path: 'tools/config.doxy'
+
+    - uses: actions/upload-artifact@v4
+      with:
+        name: cppdoc
+        path: html
         
     - name: Upload docs to Google Cloud Storage (non-main)
       run: |
@@ -175,11 +185,16 @@ jobs:
 
     - name: Build docs
       run: |
+        npm install typedoc@0.26.5 --exact -g
         cd ffi/npm
         make lib/index.mjs
-        npm install typedoc@0.26.5 --exact
-        node_modules/typedoc/bin/typedoc lib/index.d.ts --out docs --readme ../../tutorials/using-from-js.md --basePath lib
+        typedoc
         cd ../..
+
+    - uses: actions/upload-artifact@v4
+      with:
+        name: tsdoc
+        path: ffi/npm/docs
         
     - name: Upload docs to Google Cloud Storage (non-main)
       run: |
@@ -222,7 +237,7 @@ jobs:
     - name: Install Dart
       uses: dart-lang/setup-dart@0a8a0fc875eb934c15d08629302413c671d3f672 # v1.6.5
       with:
-        sdk: 3.7.0
+        sdk: 3.9.0-138.0.dev
         
     - name: Build docs
       run: |
@@ -230,6 +245,11 @@ jobs:
         dart pub get
         dart doc
         cd ../..
+
+    - uses: actions/upload-artifact@v4
+      with:
+        name: dartdoc
+        path: ffi/dart/doc/api
 
     - name: Upload docs to Google Cloud Storage (non-main)
       run: |
@@ -266,14 +286,19 @@ jobs:
     - name: Init packages
       run: |
         npm -C ffi/npm ci
-        npm -C tutorials/web-demo ci
+        npm -C tools/web-demo ci
 
     - name: Run Webpack
-      run: npm -C tutorials/web-demo run build
+      run: npm -C tools/web-demo run build
+
+    - uses: actions/upload-artifact@v4
+      with:
+        name: wasmdemo
+        path: tools/web-demo/public
 
     - name: Upload wasm-demo bundle to Google Cloud Storage
       run: |
-        gsutil -m cp -r tutorials/web-demo/public/* gs://${{ env.GCP_MAIN_BUCKET_ID }}/gha/wasm-demo
+        gsutil -m cp -r tools/web-demo/public/* gs://${{ env.GCP_MAIN_BUCKET_ID }}/gha/wasm-demo
 
     - name: "⭐⭐⭐ Links to Uploaded Artifacts ⭐⭐⭐"
       run: |
