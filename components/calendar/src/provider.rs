@@ -2,13 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! 🚧 \[Unstable\] Data provider struct definitions for this ICU4X component.
-//!
-//! <div class="stab unstable">
-//! 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
-//! including in SemVer minor releases. While the serde representation of data structs is guaranteed
-//! to be stable, their Rust representation might not be. Use with caution.
-//! </div>
+//! Data provider struct definitions for this ICU4X component.
 //!
 //! Read more about data providers: [`icu_provider`]
 
@@ -29,12 +23,6 @@ use zerovec::ZeroVec;
 #[cfg(feature = "compiled_data")]
 #[derive(Debug)]
 /// Baked data
-///
-/// <div class="stab unstable">
-/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
-/// including in SemVer minor releases. In particular, the `DataProvider` implementations are only
-/// guaranteed to match with this version's `*_unstable` providers. Use with caution.
-/// </div>
 pub struct Baked;
 
 #[cfg(feature = "compiled_data")]
@@ -81,6 +69,7 @@ icu_provider::data_marker!(
 );
 
 #[cfg(feature = "datagen")]
+#[cfg_attr(docsrs, doc(cfg(feature = "datagen")))]
 /// The latest minimum set of markers required by this component.
 pub const MARKERS: &[DataMarkerInfo] = &[
     CalendarChineseV1::INFO,
@@ -94,12 +83,6 @@ pub const MARKERS: &[DataMarkerInfo] = &[
 /// The date at which an era started
 ///
 /// The order of fields in this struct is important!
-///
-/// <div class="stab unstable">
-/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
-/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
-/// to be stable, their Rust representation might not be. Use with caution.
-/// </div>
 #[zerovec::make_ule(EraStartDateULE)]
 #[derive(
     Copy, Clone, PartialEq, PartialOrd, Eq, Ord, Hash, Debug, yoke::Yokeable, zerofrom::ZeroFrom,
@@ -118,12 +101,6 @@ pub struct EraStartDate {
 
 /// A data structure containing the necessary era data for constructing a
 /// [`Japanese`](crate::cal::Japanese) calendar object
-///
-/// <div class="stab unstable">
-/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
-/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
-/// to be stable, their Rust representation might not be. Use with caution.
-/// </div>
 #[derive(Debug, PartialEq, Clone, Default, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_calendar::provider))]
@@ -141,12 +118,6 @@ icu_provider::data_struct!(
 
 /// An ICU4X mapping to a subset of CLDR weekData.
 /// See CLDR-JSON's weekData.json for more context.
-///
-/// <div class="stab unstable">
-/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
-/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
-/// to be stable, their Rust representation might not be. Use with caution.
-/// </div>
 #[derive(Clone, Copy, Debug, PartialEq, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_calendar::provider))]
@@ -223,6 +194,7 @@ impl Weekday {
 }
 
 #[cfg(feature = "datagen")]
+#[cfg_attr(docsrs, doc(cfg(feature = "datagen")))]
 impl databake::Bake for WeekdaySet {
     fn bake(&self, ctx: &databake::CrateEnv) -> databake::TokenStream {
         ctx.insert("icu_calendar");
@@ -235,6 +207,7 @@ impl databake::Bake for WeekdaySet {
 }
 
 #[cfg(feature = "datagen")]
+#[cfg_attr(docsrs, doc(cfg(feature = "datagen")))]
 impl databake::BakeSize for WeekdaySet {
     fn borrows_size(&self) -> usize {
         0
@@ -242,6 +215,7 @@ impl databake::BakeSize for WeekdaySet {
 }
 
 #[cfg(feature = "datagen")]
+#[cfg_attr(docsrs, doc(cfg(feature = "datagen")))]
 impl serde::Serialize for WeekdaySet {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where

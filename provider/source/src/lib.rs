@@ -125,8 +125,6 @@ impl SourceDataProvider {
     /// [`TESTED_ICUEXPORT_TAG`](Self::TESTED_ICUEXPORT_TAG),
     /// [`TESTED_SEGMENTER_LSTM_TAG`](Self::TESTED_SEGMENTER_LSTM_TAG),
     /// [`TESTED_TZDB_TAG`](Self::TESTED_TZDB_TAG).
-    ///
-    /// ✨ *Enabled with the `networking` Cargo feature.*
     #[cfg(feature = "networking")]
     #[allow(clippy::new_without_default)]
     pub fn new() -> Self {
@@ -209,8 +207,6 @@ impl SourceDataProvider {
     /// using the given tag (see [GitHub releases](https://github.com/unicode-org/cldr-json/releases)).
     ///
     /// Also see: [`TESTED_CLDR_TAG`](Self::TESTED_CLDR_TAG)
-    ///
-    /// ✨ *Enabled with the `networking` Cargo feature.*
     #[cfg(feature = "networking")]
     pub fn with_cldr_for_tag(self, tag: &str) -> Self {
         Self {
@@ -225,8 +221,6 @@ impl SourceDataProvider {
     /// using the given tag (see [GitHub releases](https://github.com/unicode-org/icu/releases)).
     ///
     /// Also see: [`TESTED_ICUEXPORT_TAG`](Self::TESTED_ICUEXPORT_TAG)
-    ///
-    /// ✨ *Enabled with the `networking` Cargo feature.*
     #[cfg(feature = "networking")]
     pub fn with_icuexport_for_tag(self, mut tag: &str) -> Self {
         if tag == "release-71-1" {
@@ -245,8 +239,6 @@ impl SourceDataProvider {
     /// using the given tag (see [GitHub releases](https://github.com/unicode-org/lstm_word_segmentation/releases)).
     ///
     /// Also see: [`TESTED_SEGMENTER_LSTM_TAG`](Self::TESTED_SEGMENTER_LSTM_TAG)
-    ///
-    /// ✨ *Enabled with the `networking` Cargo feature.*
     #[cfg(feature = "networking")]
     pub fn with_segmenter_lstm_for_tag(self, tag: &str) -> Self {
         Self {
@@ -261,8 +253,6 @@ impl SourceDataProvider {
     /// using the given tag (see [GitHub](https://github.com/eggert/tz)).
     ///
     /// Also see: [`TESTED_SEGMENTER_LSTM_TAG`](Self::TESTED_SEGMENTER_LSTM_TAG)
-    ///
-    /// ✨ *Enabled with the `networking` Cargo feature.*
     #[cfg(feature = "networking")]
     pub fn with_tzdb_for_tag(self, tag: &str) -> Self {
         Self {

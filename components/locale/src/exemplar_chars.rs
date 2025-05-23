@@ -151,8 +151,6 @@ make_exemplar_chars_unicode_set_property!(
 
     /// Get the "main" set of exemplar characters.
     ///
-    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
-    ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     ///
     /// # Examples
@@ -181,8 +179,6 @@ make_exemplar_chars_unicode_set_property!(
     pub fn try_new_auxiliary_unstable();
 
     /// Get the "auxiliary" set of exemplar characters.
-    ///
-    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     ///
@@ -213,8 +209,6 @@ make_exemplar_chars_unicode_set_property!(
     pub fn try_new_punctuation_unstable();
 
     /// Get the "punctuation" set of exemplar characters.
-    ///
-    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     ///
@@ -247,8 +241,6 @@ make_exemplar_chars_unicode_set_property!(
 
     /// Get the "numbers" set of exemplar characters.
     ///
-    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
-    ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     ///
     /// # Examples
@@ -279,8 +271,6 @@ make_exemplar_chars_unicode_set_property!(
     pub fn try_new_index_unstable();
 
     /// Get the "index" set of exemplar characters.
-    ///
-    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     ///

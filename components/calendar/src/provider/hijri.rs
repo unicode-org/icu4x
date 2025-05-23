@@ -2,13 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! 🚧 \[Unstable\] Data provider struct definitions for chinese-based calendars.
-//!
-//! <div class="stab unstable">
-//! 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
-//! including in SemVer minor releases. While the serde representation of data structs is guaranteed
-//! to be stable, their Rust representation might not be. Use with caution.
-//! </div>
+//! Data provider struct definitions for chinese-based calendars.
 //!
 //! Read more about data providers: [`icu_provider`]
 
@@ -57,12 +51,6 @@ icu_provider::data_struct!(
 /// The start day is encoded as a signed offset from `Self::mean_synodic_start_day`. This number does not
 /// appear to be less than 2, however we use all remaining bits for it in case of drift in the math.
 /// The month lengths are stored as 1 = 30, 0 = 29 for each month including the leap month.
-///
-/// <div class="stab unstable">
-/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
-/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
-/// to be stable, their Rust representation might not be. Use with caution.
-/// </div>
 #[derive(Copy, Clone, Hash, PartialEq, Eq, PartialOrd, Ord, Debug)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_calendar::provider))]

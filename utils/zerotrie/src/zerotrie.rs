@@ -375,8 +375,6 @@ macro_rules! impl_zerotrie_subtype {
         {
             /// Converts a possibly-borrowed $name to an owned one.
             ///
-            /// ✨ *Enabled with the `alloc` Cargo feature.*
-            ///
             /// # Examples
             ///
             /// ```
@@ -395,8 +393,6 @@ macro_rules! impl_zerotrie_subtype {
                 )
             }
             /// Returns an iterator over the key/value pairs in this trie.
-            ///
-            /// ✨ *Enabled with the `alloc` Cargo feature.*
             ///
             /// # Examples
             ///
@@ -479,8 +475,6 @@ macro_rules! impl_zerotrie_subtype {
         {
             /// Exports the data from this ZeroTrie type into a BTreeMap.
             ///
-            /// ✨ *Enabled with the `alloc` Cargo feature.*
-            ///
             /// # Examples
             ///
             /// ```
@@ -537,8 +531,6 @@ macro_rules! impl_zerotrie_subtype {
             Store: AsRef<[u8]> + ?Sized,
         {
             /// Exports the data from this ZeroTrie type into a LiteMap.
-            ///
-            /// ✨ *Enabled with the `litemap` Cargo feature.*
             ///
             /// # Examples
             ///
@@ -613,8 +605,6 @@ macro_rules! impl_zerotrie_subtype {
             #[doc = concat!("This impl allows [`", stringify!($name), "`] to be used inside of a [`Cow`](alloc::borrow::Cow).")]
             ///
             #[doc = concat!("Note that it is also possible to use `", stringify!($name), "<ZeroVec<u8>>` for a similar result.")]
-            ///
-            /// ✨ *Enabled with the `alloc` Cargo feature.*
             ///
             /// # Examples
             ///

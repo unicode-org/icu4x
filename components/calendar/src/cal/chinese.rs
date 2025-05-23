@@ -114,8 +114,6 @@ impl Ord for Chinese {
 impl Chinese {
     /// Creates a new [`Chinese`] with some precomputed calendrical calculations.
     ///
-    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
-    ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
     pub const fn new() -> Self {
@@ -135,6 +133,8 @@ impl Chinese {
     ]);
 
     #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::new)]
+    #[cfg_attr(not(feature = "unstable"), doc(hidden))]
+    #[cfg_attr(docsrs, doc(cfg(feature = "unstable")))]
     pub fn try_new_unstable<D: DataProvider<CalendarChineseV1> + ?Sized>(
         provider: &D,
     ) -> Result<Self, DataError> {
@@ -218,12 +218,14 @@ impl Calendar for Chinese {
         date.0.days_in_month()
     }
 
-    #[doc(hidden)] // unstable
+    #[cfg_attr(not(feature = "unstable"), doc(hidden))]
+    #[cfg_attr(docsrs, doc(cfg(feature = "unstable")))]
     fn offset_date(&self, date: &mut Self::DateInner, offset: DateDuration<Self>) {
         date.0.offset_date(offset, &self.get_precomputed_data());
     }
 
-    #[doc(hidden)] // unstable
+    #[cfg_attr(not(feature = "unstable"), doc(hidden))]
+    #[cfg_attr(docsrs, doc(cfg(feature = "unstable")))]
     #[allow(clippy::field_reassign_with_default)]
     /// Calculate `date2 - date` as a duration
     ///

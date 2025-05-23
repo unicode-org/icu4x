@@ -18,8 +18,6 @@ impl EmojiSetData {
     ///
     /// See the documentation on [`EmojiSet`] implementations for details.
     ///
-    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
-    ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
     #[allow(clippy::new_ret_no_self)]
@@ -135,8 +133,6 @@ impl EmojiSetDataBorrowed<'static> {
     /// Creates a new [`EmojiSetDataBorrowed`] for a [`EmojiSet`].
     ///
     /// See the documentation on [`EmojiSet`] implementations for details.
-    ///
-    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[inline]

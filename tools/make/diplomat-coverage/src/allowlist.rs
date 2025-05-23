@@ -389,6 +389,11 @@ lazy_static::lazy_static! {
         // calendar types exist to implement the trait
         "icu::calendar::Date::from_raw",
         "icu::calendar::Date::inner",
+        "icu::calendar::Date::add",
+        "icu::calendar::Date::added",
+        "icu::calendar::Date::until",
+        "icu::calendar::DateDuration",
+        "icu::calendar::DateDurationUnit",
         "icu::calendar::Iso",
         "icu::calendar::cal::Iso",
         "icu::calendar::cal::IsoDateInner",

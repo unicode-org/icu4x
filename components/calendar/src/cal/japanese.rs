@@ -99,8 +99,6 @@ pub struct JapaneseDateInner {
 impl Japanese {
     /// Creates a new [`Japanese`] using only modern eras (post-meiji) from compiled data.
     ///
-    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
-    ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
     pub const fn new() -> Self {
@@ -120,6 +118,8 @@ impl Japanese {
     ]);
 
     #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::new)]
+    #[cfg_attr(not(feature = "unstable"), doc(hidden))]
+    #[cfg_attr(docsrs, doc(cfg(feature = "unstable")))]
     pub fn try_new_unstable<D: DataProvider<CalendarJapaneseModernV1> + ?Sized>(
         provider: &D,
     ) -> Result<Self, DataError> {
@@ -133,8 +133,6 @@ impl Japanese {
 
 impl JapaneseExtended {
     /// Creates a new [`Japanese`] from using all eras (including pre-meiji) from compiled data.
-    ///
-    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
@@ -155,6 +153,8 @@ impl JapaneseExtended {
     ]);
 
     #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::new)]
+    #[cfg_attr(not(feature = "unstable"), doc(hidden))]
+    #[cfg_attr(docsrs, doc(cfg(feature = "unstable")))]
     pub fn try_new_unstable<D: DataProvider<CalendarJapaneseExtendedV1> + ?Sized>(
         provider: &D,
     ) -> Result<Self, DataError> {

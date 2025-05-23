@@ -25,6 +25,7 @@
 //! ```
 
 #![warn(missing_docs)]
+#![cfg_attr(docsrs, feature(doc_cfg, doc_auto_cfg))]
 
 use combine::{stream, Parser};
 use data::{posix::PosixTzString, tzif::TzifData};

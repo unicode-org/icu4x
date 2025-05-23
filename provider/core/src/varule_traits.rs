@@ -26,8 +26,6 @@ pub trait MaybeAsVarULE {
 
 /// Export-only trait associated with [`MaybeAsVarULE`]. See that trait
 /// for additional details.
-///
-/// ✨ *Enabled with the `export` Cargo feature.*
 #[cfg(feature = "export")]
 pub trait MaybeEncodeAsVarULE: MaybeAsVarULE {
     /// Returns the [`MaybeAsVarULE::EncodedStruct`] that represents this data struct,

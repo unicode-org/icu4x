@@ -198,8 +198,6 @@ impl LocaleCanonicalizer<LocaleExpander> {
     /// A constructor which creates a [`LocaleCanonicalizer`] from compiled data,
     /// using a [`LocaleExpander`] for common locales.
     ///
-    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
-    ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
     pub const fn new_common() -> Self {
@@ -229,8 +227,6 @@ impl LocaleCanonicalizer<LocaleExpander> {
 
     /// A constructor which creates a [`LocaleCanonicalizer`] from compiled data,
     /// using a [`LocaleExpander`] for all locales.
-    ///
-    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
@@ -263,8 +259,6 @@ impl LocaleCanonicalizer<LocaleExpander> {
 
 impl<Expander: AsRef<LocaleExpander>> LocaleCanonicalizer<Expander> {
     /// Creates a [`LocaleCanonicalizer`] with a custom [`LocaleExpander`] and compiled data.
-    ///
-    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
