@@ -5,7 +5,10 @@
 //! Enumerations over [field sets](crate::fieldsets).
 //!
 //! These enumerations can be used when the field set is not known at compile time. However,
-//! they may contribute negatively to the binary size of the formatters.
+//! using dynamic field sets in constructors will link data for all possible values
+//! of the field set, which can significantly increase binary size. Prefer using
+//! [`cast_into_fset`](crate::DateTimeFormatter::cast_into_fset) on formatters constructed
+//! using static field sets instead.
 //!
 //! The most general type is [`CompositeFieldSet`], which supports all field
 //! sets in a single enumeration. [`CompositeDateTimeFieldSet`] is a good
