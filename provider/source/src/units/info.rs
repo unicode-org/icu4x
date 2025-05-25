@@ -7,7 +7,6 @@ use std::collections::{BTreeMap, HashSet};
 use crate::SourceDataProvider;
 use crate::{cldr_serde, units::helpers::ScientificNumber};
 use icu::experimental::measure::parser::MeasureUnitParser;
-use icu::experimental::measure::provider::ids::RESERVED_UNIT_IDS;
 use icu::experimental::measure::provider::trie::UnitsTrie;
 use icu::experimental::units::provider::{ConversionInfo, UnitsInfo, UnitsInfoV1};
 use icu_provider::prelude::*;
@@ -42,37 +41,7 @@ impl DataProvider<UnitsInfoV1> for SourceDataProvider {
 
         let mut convert_units_vec = Vec::<ConversionInfoPreProcessing>::new();
 
-        // First add the reserved unit ids to the `convert_units_vec`.
-        for cldr_unit_id in RESERVED_UNIT_IDS {
-            let convert_unit = convert_units.get(*cldr_unit_id).ok_or_else(|| {
-                DataError::custom("Could not get convert unit from units.json data, the convert unit id in the reserved unit ids must be found in the convert units")
-            })?;
-
-            let base_unit = convert_unit.base_unit.as_str();
-            let factor = match convert_unit.factor {
-                Some(ref factor) => factor.as_str(),
-                None => "1",
-            };
-
-            let offset = match convert_unit.offset {
-                Some(ref offset) => offset.as_str(),
-                None => "0",
-            };
-
-            let convert_unit_index = convert_units_vec.len();
-            convert_units_vec.push(ConversionInfoPreProcessing {
-                base_unit,
-                factor_scientific: process_factor(factor, &clean_constants_map)?,
-                offset_scientific: process_factor(offset, &clean_constants_map)?,
-            });
-
-            conversion_info_map.insert(cldr_unit_id.as_bytes().to_vec(), convert_unit_index);
-        }
-
         for (unit_name, convert_unit) in convert_units {
-            if RESERVED_UNIT_IDS.contains(&unit_name.as_str()) {
-                continue;
-            }
             let base_unit = convert_unit.base_unit.as_str();
             let factor = match convert_unit.factor {
                 Some(ref factor) => factor.as_str(),

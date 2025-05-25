@@ -3,12 +3,43 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::measure::measureunit::MeasureUnit;
+use crate::measure::provider::si_prefix::{Base, SiPrefix};
+use crate::measure::provider::single_unit::SingleUnit;
+use alloc::vec;
 
-use super::category;
+use crate::measure::category::category;
 
 impl category::Mass {
-    pub fn kilogram() -> &'static MeasureUnit {
-        todo!()
+    #[cfg(feature = "compiled_data")]
+    /// Returns a [`MeasureUnit`] representing the mass of one gram.
+    pub fn gram() -> MeasureUnit {
+        MeasureUnit {
+            single_units: vec![SingleUnit {
+                power: 1,
+                si_prefix: SiPrefix {
+                    power: 0,
+                    base: Base::Decimal,
+                },
+                unit_id: crate::provider::Baked::UNIT_IDS_V1_UND_GRAM,
+            }],
+            constant_denominator: 0,
+        }
+    }
+
+    #[cfg(feature = "compiled_data")]
+    /// Returns a [`MeasureUnit`] representing the mass of one kilogram.
+    pub fn kilogram() -> MeasureUnit {
+        MeasureUnit {
+            single_units: vec![SingleUnit {
+                power: 1,
+                si_prefix: SiPrefix {
+                    power: 3,
+                    base: Base::Decimal,
+                },
+                unit_id: crate::provider::Baked::UNIT_IDS_V1_UND_GRAM,
+            }],
+            constant_denominator: 0,
+        }
     }
 }
 

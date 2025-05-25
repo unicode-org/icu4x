@@ -2,28 +2,27 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-
-use super::category;
+use crate::measure::category::category;
 use crate::measure::measureunit::MeasureUnit;
-// use crate::measure::provider::si_prefix::{Base, SiPrefix};
-// use crate::measure::provider::single_unit::SingleUnit;
-// use smallvec::smallvec;
-// use alloc::vec;
-
+use crate::measure::provider::si_prefix::{Base, SiPrefix};
+use crate::measure::provider::single_unit::SingleUnit;
+use alloc::vec;
 
 impl category::Length {
-    pub fn meter() -> &'static MeasureUnit {
-        // static METER: MeasureUnit = MeasureUnit {
-        //     single_units: vec![SingleUnit {
-        //         power: 1,
-        //         si_prefix: SiPrefix { power: 0, base: Base::Decimal },
-        //         unit_id: 0,
-        //     }],
-        //     constant_denominator: 0,
-        // };
-        // &METER
-
-        todo!()
+    #[cfg(feature = "compiled_data")]
+    /// Returns a [`MeasureUnit`] representing the length of one meter.
+    pub fn meter() -> MeasureUnit {
+        MeasureUnit {
+            single_units: vec![SingleUnit {
+                power: 1,
+                si_prefix: SiPrefix {
+                    power: 0,
+                    base: Base::Decimal,
+                },
+                unit_id: crate::provider::Baked::UNIT_IDS_V1_UND_METER,
+            }],
+            constant_denominator: 0,
+        }
     }
 }
 
@@ -33,6 +32,6 @@ mod tests {
 
     #[test]
     fn test_length_category() {
-        let _meter = category::Length::meter();
+        let _meter: MeasureUnit = category::Length::meter();
     }
 }
