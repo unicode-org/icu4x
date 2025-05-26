@@ -70,7 +70,7 @@ zip = { workspace = true, features = ["deflate"] }
 ureq = { workspace = true, optional = true}
 
 # `experimental` feature 
-icu_experimental = { workspace = true, features = ["datagen"], optional = true }
+icu_experimental = { workspace = true, features = ["datagen", "alloc"], optional = true }
 num-bigint = { workspace = true, optional = true }
 num-rational = { workspace = true, optional = true }
 num-traits = { workspace = true, optional = true }
@@ -84,7 +84,7 @@ simple_logger = { workspace = true }
 icu = { path = "../../components/icu", default-features = false, features = ["experimental"] }
 
 [features]
-default = ["use_wasm", "networking"]
+default = ["use_wasm", "networking", "experimental"]
 # Use wasm for building codepointtries
 use_wasm = ["icu_codepointtrie_builder/wasm"]
 # Use local ICU4C libraries for building codepointtries
@@ -95,10 +95,12 @@ use_icu4c = ["icu_codepointtrie_builder/icu4c"]
 networking = ["dep:ureq"]
 experimental = [
     "icu/experimental",
+    "icu_experimental/alloc",
     "dep:num-bigint",
     "dep:num-rational",
     "dep:num-traits",
 ]
+alloc = []
 
 [package.metadata.cargo-all-features]
 # We don't need working CPT builders for check

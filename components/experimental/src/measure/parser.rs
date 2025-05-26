@@ -14,6 +14,7 @@ use icu_provider::DataError;
 
 use super::provider::si_prefix::{Base, SiPrefix};
 use super::provider::single_unit::SingleUnit;
+use super::single_unit_vec::SingleUnitVec;
 
 // TODO: add test cases for this parser after adding UnitsTest.txt to the test data.
 /// A parser for the CLDR unit identifier (e.g. `meter-per-square-second`)
@@ -222,6 +223,17 @@ impl MeasureUnitParser {
             return Err(InvalidUnitError);
         }
 
+        let single_units = match single_units.len() {
+            0 => SingleUnitVec::Zero,
+            1 => SingleUnitVec::One(single_units.remove(0)),
+            2 => SingleUnitVec::Two(single_units.remove(0), single_units.remove(0)),
+            #[cfg(feature = "alloc")]
+            _ => SingleUnitVec::Multi(single_units.into_vec()),
+
+            #[cfg(not(feature = "alloc"))]
+            _ => return Err(InvalidUnitError),
+        };
+
         Ok(MeasureUnit {
             single_units,
             constant_denominator,
@@ -231,7 +243,7 @@ impl MeasureUnitParser {
 
 #[cfg(test)]
 mod tests {
-    use crate::measure::parser::MeasureUnitParser;
+    use crate::measure::{parser::MeasureUnitParser, single_unit_vec::SingleUnitVec};
 
     #[test]
     fn test_parser_cases() {
@@ -245,7 +257,14 @@ mod tests {
 
         for (input, expected_len, expected_denominator) in test_cases {
             let measure_unit = parser.try_from_str(input).unwrap();
-            assert_eq!(measure_unit.single_units.len(), expected_len);
+            assert_eq!(
+                match measure_unit.single_units {
+                    SingleUnitVec::One(_) => 1,
+                    SingleUnitVec::Two(_, _) => 2,
+                    _ => 0,
+                },
+                expected_len
+            );
             assert_eq!(measure_unit.constant_denominator, expected_denominator);
         }
     }

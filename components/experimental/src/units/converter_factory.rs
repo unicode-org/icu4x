@@ -2,9 +2,12 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+#[cfg(feature = "alloc")]
+use alloc::vec::Vec;
+
 use crate::measure::measureunit::MeasureUnit;
 use crate::measure::provider::single_unit::SingleUnit;
-use crate::units::provider;
+use crate::measure::single_unit_vec::SingleUnitVec;
 use crate::units::ratio::IcuRatio;
 use crate::units::{
     converter::{
@@ -13,6 +16,7 @@ use crate::units::{
     },
     provider::Sign,
 };
+use crate::units::{provider, InvalidUnitError};
 
 use icu_provider::prelude::*;
 use icu_provider::DataError;
@@ -98,12 +102,19 @@ impl ConverterFactory {
         input_unit: &MeasureUnit,
         output_unit: &MeasureUnit,
     ) -> Option<IcuRatio> {
-        if !(input_unit.single_units.len() == 1
-            && output_unit.single_units.len() == 1
-            && input_unit.single_units[0].power == 1
-            && output_unit.single_units[0].power == 1
-            && input_unit.single_units[0].si_prefix.power == 0
-            && output_unit.single_units[0].si_prefix.power == 0)
+        let input_unit = match input_unit.single_units {
+            SingleUnitVec::One(input_single_unit) => input_single_unit,
+            _ => return Some(IcuRatio::zero()),
+        };
+        let output_unit = match output_unit.single_units {
+            SingleUnitVec::One(output_single_unit) => output_single_unit,
+            _ => return Some(IcuRatio::zero()),
+        };
+
+        if !(input_unit.power == 1
+            && output_unit.power == 1
+            && input_unit.si_prefix.power == 0
+            && output_unit.si_prefix.power == 0)
         {
             return Some(IcuRatio::zero());
         }
@@ -112,7 +123,7 @@ impl ConverterFactory {
             .payload
             .get()
             .conversion_info
-            .get(input_unit.single_units[0].unit_id as usize);
+            .get(input_unit.unit_id as usize);
         debug_assert!(
             input_conversion_info.is_some(),
             "Failed to get input conversion info"
@@ -123,7 +134,7 @@ impl ConverterFactory {
             .payload
             .get()
             .conversion_info
-            .get(output_unit.single_units[0].unit_id as usize);
+            .get(output_unit.unit_id as usize);
         debug_assert!(
             output_conversion_info.is_some(),
             "Failed to get output conversion info"
@@ -146,7 +157,11 @@ impl ConverterFactory {
     /// NOTE:
     ///   If the units are neither proportional nor reciprocal, the function will return `None`,
     ///   indicating that the units are incompatible.
-    fn is_reciprocal(&self, unit1: &MeasureUnit, unit2: &MeasureUnit) -> Option<bool> {
+    fn is_reciprocal(
+        &self,
+        unit1: &MeasureUnit,
+        unit2: &MeasureUnit,
+    ) -> Result<bool, InvalidUnitError> {
         /// A struct that contains the sum and difference of base unit powers.
         /// For example:
         ///     For the input unit `meter-per-second`, the base units are `meter` (power: 1) and `second` (power: -1).
@@ -168,10 +183,22 @@ impl ConverterFactory {
         ///     For example, `newton` has the basic units:  `gram`, `meter`, and `second` (each one has it is own power and si prefix).
         fn insert_non_basic_units(
             factory: &ConverterFactory,
-            units: &[SingleUnit],
+            units: &SingleUnitVec,
             sign: i16,
             map: &mut LiteMap<u16, PowersInfo>,
-        ) -> Option<()> {
+        ) -> Result<(), InvalidUnitError> {
+            let units: &[&SingleUnit] = match units {
+                SingleUnitVec::Zero => &[],
+                SingleUnitVec::One(unit) => &[unit],
+                SingleUnitVec::Two(unit1, unit2) => &[unit1, unit2],
+                #[cfg(feature = "alloc")]
+                SingleUnitVec::Multi(units) => &units.iter().collect::<Vec<_>>(),
+                #[cfg(not(feature = "alloc"))]
+                _ => return Err(InvalidUnitError),
+            };
+
+            let units = units.iter();
+
             for item in units {
                 let items_from_item = factory
                     .payload
@@ -181,10 +208,15 @@ impl ConverterFactory {
 
                 debug_assert!(items_from_item.is_some(), "Failed to get convert info");
 
-                insert_base_units(items_from_item?.basic_units(), item.power as i16, sign, map);
+                match items_from_item {
+                    Some(items) => {
+                        insert_base_units(items.basic_units(), item.power as i16, sign, map)
+                    }
+                    None => return Err(InvalidUnitError),
+                }
             }
 
-            Some(())
+            Ok(())
         }
 
         /// Inserting the basic units into the map.
@@ -233,11 +265,11 @@ impl ConverterFactory {
                 });
 
         if power_diffs_are_zero {
-            Some(false)
+            Ok(false)
         } else if power_sums_are_zero {
-            Some(true)
+            Ok(true)
         } else {
-            None
+            Err(InvalidUnitError)
         }
     }
 
@@ -271,13 +303,36 @@ impl ConverterFactory {
         input_unit: &MeasureUnit,
         output_unit: &MeasureUnit,
     ) -> Option<UnitsConverter<T>> {
-        let is_reciprocal = self.is_reciprocal(input_unit, output_unit)?;
+        let is_reciprocal = match self.is_reciprocal(input_unit, output_unit) {
+            Ok(is_reciprocal) => is_reciprocal,
+            Err(InvalidUnitError) => return None,
+        };
 
         // Determine the sign of the powers of the units from root to unit2.
         let root_to_unit2_direction_sign = if is_reciprocal { 1 } else { -1 };
 
         let mut conversion_rate = IcuRatio::one();
-        for input_item in input_unit.single_units.iter() {
+        let input_items: &[&SingleUnit] = match &input_unit.single_units {
+            SingleUnitVec::Zero => &[],
+            SingleUnitVec::One(input_item) => &[&input_item],
+            SingleUnitVec::Two(input_item1, input_item2) => &[&input_item1, &input_item2],
+            #[cfg(feature = "alloc")]
+            SingleUnitVec::Multi(input_items) => &input_items.iter().collect::<Vec<_>>(),
+            #[cfg(not(feature = "alloc"))]
+            _ => return None,
+        };
+
+        let output_items: &[&SingleUnit] = match &output_unit.single_units {
+            SingleUnitVec::Zero => &[],
+            SingleUnitVec::One(output_item) => &[&output_item],
+            SingleUnitVec::Two(output_item1, output_item2) => &[&output_item1, &output_item2],
+            #[cfg(feature = "alloc")]
+            SingleUnitVec::Multi(output_items) => &output_items.iter().collect::<Vec<_>>(),
+            #[cfg(not(feature = "alloc"))]
+            _ => return None,
+        };
+
+        for input_item in input_items {
             conversion_rate *= Self::compute_conversion_term(self, input_item, 1)?;
         }
 
@@ -285,7 +340,7 @@ impl ConverterFactory {
             conversion_rate /= IcuRatio::from_integer(input_unit.constant_denominator);
         }
 
-        for output_item in output_unit.single_units.iter() {
+        for output_item in output_items {
             conversion_rate *=
                 Self::compute_conversion_term(self, output_item, root_to_unit2_direction_sign)?;
         }

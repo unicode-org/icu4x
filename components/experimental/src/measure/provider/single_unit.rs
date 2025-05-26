@@ -9,7 +9,7 @@ use super::si_prefix::SiPrefix;
 ///    1. `kilometer` with power 1 and prefix 3 with base 10.
 ///    2. `second` with power -2 and prefix power equal to 0.
 #[zerovec::make_ule(SingleUnitULE)]
-#[derive(Copy, Clone, Debug, PartialOrd, Ord, PartialEq, Eq, Default)]
+#[derive(Copy, Clone, Debug, PartialOrd, Ord, PartialEq, Eq, Default, Hash)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_experimental::measure::provider::single_unit))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
