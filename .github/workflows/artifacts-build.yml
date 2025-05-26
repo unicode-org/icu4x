@@ -133,8 +133,7 @@ jobs:
 
     - name: Install doxygen-awesome
       run: |
-        git submodule init
-        git submodule update
+        git clone --depth 1 https://github.com/jothepro/doxygen-awesome-css.git
 
     - name: Build docs
       uses: mattnotmitt/doxygen-action@411df0c62acb5b96b8a93d93a7bf4b753c47ea05 # v1.9.5
