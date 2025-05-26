@@ -130,8 +130,6 @@ macro_rules! constructor {
 
         /// Create a new [`RelativeTimeFormatter`] from compiled data.
         ///
-        /// ✨ *Enabled with the `compiled_data` Cargo feature.*
-        ///
         /// [📚 Help choosing a constructor](icu_provider::constructors)
         #[cfg(feature = "compiled_data")]
         pub fn $baked(

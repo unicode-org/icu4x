@@ -192,8 +192,6 @@ impl Default for VariantOffsetsCalculatorBorrowed<'static> {
 impl VariantOffsetsCalculator {
     /// Constructs a `VariantOffsetsCalculator` using compiled data.
     ///
-    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
-    ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
     #[inline]
@@ -233,8 +231,6 @@ impl VariantOffsetsCalculator {
 
 impl VariantOffsetsCalculatorBorrowed<'static> {
     /// Constructs a `VariantOffsetsCalculatorBorrowed` using compiled data.
-    ///
-    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]

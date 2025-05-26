@@ -215,8 +215,6 @@ impl LocaleExpander {
     ///
     /// Use this constructor if you want limited likely subtags for data-oriented use cases.
     ///
-    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
-    ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     ///
     /// [CLDR coverage]: https://www.unicode.org/reports/tr35/tr35-info.html#Coverage_Levels
@@ -262,8 +260,6 @@ impl LocaleExpander {
     ///
     /// Use this constructor if you want to include data for all locales, including ones
     /// that may not have data for other services (i.e. [CLDR coverage] below *Basic*).
-    ///
-    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     ///

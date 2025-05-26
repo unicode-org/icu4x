@@ -314,8 +314,6 @@ mod _serde {
 
     /// Serialization for [`FieldSetBuilder`].
     ///
-    /// ✨ *Enabled with the `serde` and `experimental` Cargo features.*
-    ///
     /// # Examples
     ///
     /// ```
@@ -377,8 +375,6 @@ mod _serde {
     }
 
     /// Deserialization for [`FieldSetBuilder`].
-    ///
-    /// ✨ *Enabled with the `serde` and `experimental` Cargo features.*
     ///
     /// For an example, see the `Serialize` impl.
     impl<'de> Deserialize<'de> for FieldSetBuilder {

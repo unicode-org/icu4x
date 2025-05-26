@@ -78,15 +78,16 @@ jobs:
       uses: google-github-actions/setup-gcloud@98ddc00a17442e89a24bbf282954a3b65ce6d200 # v2.1.0
 
     - name: Build docs
-      run: >
-          cargo doc --workspace --release --all-features --no-deps --lib 
-          --exclude icu_benchmark_macros
-          --exclude icu_ffi_coverage
-          --exclude md-tests
-          --exclude databake-derive
-          --exclude yoke-derive
-          --exclude zerofrom-derive
-          --exclude zerovec-derive
+      run: |
+          rustup install nightly
+          RUSTDOCFLAGS="--cfg docsrs" cargo +nightly doc --workspace --release --all-features --no-deps --lib \
+          --exclude icu_benchmark_macros  \
+          --exclude icu_ffi_coverage \
+          --exclude md-tests \
+          --exclude databake-derive \
+          --exclude yoke-derive \
+          --exclude zerofrom-derive \
+          --exclude zerovec-derive \
 
     - uses: actions/upload-artifact@v4
       with:

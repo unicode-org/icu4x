@@ -239,8 +239,6 @@ impl CodePointSetData {
     /// - `General_Category` property values can themselves be treated like properties using a shorthand in ECMA262,
     ///   simply create the corresponding `GeneralCategory` set.
     ///
-    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
-    ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     ///
     /// ```

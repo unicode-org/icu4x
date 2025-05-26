@@ -7,8 +7,6 @@ use displaydoc::Display;
 
 /// An error returned when parsing a pattern.
 ///
-/// ✨ *Enabled with the `alloc` Cargo feature.*
-///
 /// # Examples
 /// ```
 /// use icu_pattern::{Parser, ParserError, ParserOptions};

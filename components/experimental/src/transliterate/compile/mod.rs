@@ -49,8 +49,6 @@ impl Direction {
 #[derive(Debug, Default)]
 /// A collection of transliteration rules.
 ///
-/// ✨ *Enabled with the `compile` Cargo feature.*
-///
 /// # Example
 /// ```
 /// use icu::experimental::transliterate::{RuleCollection, Transliterator};
@@ -146,8 +144,6 @@ impl RuleCollection {
     }
 
     /// Returns a provider that is usable by [`Transliterator::try_new_unstable`](crate::transliterate::Transliterator::try_new_unstable).
-    ///
-    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     #[cfg(feature = "compiled_data")]
     pub fn as_provider(
         &self,

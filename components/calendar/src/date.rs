@@ -193,7 +193,8 @@ impl<A: AsCalendar> Date<A> {
     }
 
     /// Add a `duration` to this date, mutating it
-    #[doc(hidden)] // unstable
+    #[cfg_attr(not(feature = "unstable"), doc(hidden))]
+    #[cfg_attr(docsrs, doc(cfg(feature = "unstable")))]
     #[inline]
     pub fn add(&mut self, duration: DateDuration<A::Calendar>) {
         self.calendar
@@ -202,7 +203,8 @@ impl<A: AsCalendar> Date<A> {
     }
 
     /// Add a `duration` to this date, returning the new one
-    #[doc(hidden)] // unstable
+    #[cfg_attr(not(feature = "unstable"), doc(hidden))]
+    #[cfg_attr(docsrs, doc(cfg(feature = "unstable")))]
     #[inline]
     pub fn added(mut self, duration: DateDuration<A::Calendar>) -> Self {
         self.add(duration);
@@ -210,7 +212,8 @@ impl<A: AsCalendar> Date<A> {
     }
 
     /// Calculating the duration between `other - self`
-    #[doc(hidden)] // unstable
+    #[cfg_attr(not(feature = "unstable"), doc(hidden))]
+    #[cfg_attr(docsrs, doc(cfg(feature = "unstable")))]
     #[inline]
     pub fn until<B: AsCalendar<Calendar = A::Calendar>>(
         &self,
@@ -278,12 +281,16 @@ impl<A: AsCalendar> Date<A> {
     /// AnyCalendar *will* panic if AnyCalendar [`Date`] objects with mismatching
     /// date and calendar types are constructed
     #[inline]
+    #[cfg_attr(not(feature = "unstable"), doc(hidden))]
+    #[cfg_attr(docsrs, doc(cfg(feature = "unstable")))]
     pub fn from_raw(inner: <A::Calendar as Calendar>::DateInner, calendar: A) -> Self {
         Self { inner, calendar }
     }
 
     /// Get the inner date implementation. Should not be called outside of calendar implementations
     #[inline]
+    #[cfg_attr(not(feature = "unstable"), doc(hidden))]
+    #[cfg_attr(docsrs, doc(cfg(feature = "unstable")))]
     pub fn inner(&self) -> &<A::Calendar as Calendar>::DateInner {
         &self.inner
     }

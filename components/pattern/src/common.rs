@@ -26,8 +26,6 @@ pub enum PatternItem<'a, T> {
 
 /// A borrowed-or-owned item in a [`Pattern`]. Items are either string literals or placeholders.
 ///
-/// ✨ *Enabled with the `alloc` Cargo feature.*
-///
 /// [`Pattern`]: crate::Pattern
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord)]
 #[allow(clippy::exhaustive_enums)] // Part of core data model

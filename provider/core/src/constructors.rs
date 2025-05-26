@@ -106,7 +106,6 @@ macro_rules! gen_buffer_unstable_docs {
         concat!(
             "A version of [`", stringify!($data), "`] that uses custom data ",
             "provided by a [`BufferProvider`](icu_provider::buf::BufferProvider).\n\n",
-            "✨ *Enabled with the `serde` feature.*\n\n",
             "[📚 Help choosing a constructor](icu_provider::constructors)",
         )
     };
@@ -196,8 +195,6 @@ macro_rules! gen_buffer_data_constructors {
     (($($options_arg:ident: $options_ty:ty),*) -> result: $result_ty:ty, $(#[$doc:meta])* functions: [$baked:ident, $buffer:ident, $unstable:ident $(, $struct:ident)? $(,)?]) => {
         #[cfg(feature = "compiled_data")]
         $(#[$doc])*
-        ///
-        /// ✨ *Enabled with the `compiled_data` Cargo feature.*
         ///
         /// [📚 Help choosing a constructor](icu_provider::constructors)
         pub fn $baked($($options_arg: $options_ty),* ) -> $result_ty {

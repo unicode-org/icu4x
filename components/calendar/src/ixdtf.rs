@@ -55,8 +55,6 @@ impl<A: AsCalendar> Date<A> {
     /// Returns an error if the string has a calendar annotation that does not
     /// match the calendar argument, unless the argument is [`Iso`].
     ///
-    /// ✨ *Enabled with the `ixdtf` Cargo feature.*
-    ///
     /// # Examples
     ///
     /// ```
@@ -85,8 +83,6 @@ impl<A: AsCalendar> Date<A> {
     /// match the calendar argument.
     ///
     /// See [`Self::try_from_str()`].
-    ///
-    /// ✨ *Enabled with the `ixdtf` Cargo feature.*
     pub fn try_from_utf8(rfc_9557_str: &[u8], calendar: A) -> Result<Self, ParseError> {
         let ixdtf_record = IxdtfParser::from_utf8(rfc_9557_str).parse()?;
         Self::try_from_ixdtf_record(&ixdtf_record, calendar)

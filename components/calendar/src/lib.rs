@@ -88,6 +88,7 @@
     )
 )]
 #![warn(missing_docs)]
+#![cfg_attr(docsrs, feature(doc_cfg, doc_auto_cfg))]
 
 #[cfg(feature = "alloc")]
 extern crate alloc;
@@ -98,6 +99,8 @@ mod date;
 // Public modules
 mod any_calendar;
 pub mod cal;
+#[cfg_attr(not(feature = "unstable"), doc(hidden))]
+#[cfg_attr(docsrs, doc(cfg(feature = "unstable")))]
 pub mod provider;
 pub mod types;
 pub mod week;
@@ -113,7 +116,8 @@ mod ixdtf;
 pub use any_calendar::IntoAnyCalendar;
 pub use calendar::Calendar;
 pub use date::{AsCalendar, Date, Ref};
-#[doc(hidden)] // unstable
+#[cfg_attr(not(feature = "unstable"), doc(hidden))]
+#[cfg_attr(docsrs, doc(cfg(feature = "unstable")))]
 pub use duration::{DateDuration, DateDurationUnit};
 pub use error::{DateError, RangeError};
 #[cfg(feature = "ixdtf")]

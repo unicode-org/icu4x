@@ -122,8 +122,6 @@ pub struct HijriTabular {
 impl HijriSimulated {
     /// Creates a new [`HijriSimulated`] for reference location Mecca, with some compiled data containing precomputed calendrical calculations.
     ///
-    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
-    ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
     pub const fn new_mecca() -> Self {
@@ -144,6 +142,8 @@ impl HijriSimulated {
     ]);
 
     #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::new_mecca)]
+    #[cfg_attr(not(feature = "unstable"), doc(hidden))]
+    #[cfg_attr(docsrs, doc(cfg(feature = "unstable")))]
     pub fn try_new_mecca_unstable<D: DataProvider<CalendarHijriSimulatedMeccaV1> + ?Sized>(
         provider: &D,
     ) -> Result<Self, DataError> {

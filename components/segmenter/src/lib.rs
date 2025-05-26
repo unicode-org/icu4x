@@ -119,6 +119,7 @@
     )
 )]
 #![warn(missing_docs)]
+#![cfg_attr(docsrs, feature(doc_cfg, doc_auto_cfg))]
 
 extern crate alloc;
 

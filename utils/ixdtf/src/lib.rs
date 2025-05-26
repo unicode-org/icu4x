@@ -387,6 +387,7 @@
         missing_debug_implementations,
     )
 )]
+#![cfg_attr(docsrs, feature(doc_cfg, doc_auto_cfg))]
 
 pub(crate) mod core;
 mod error;

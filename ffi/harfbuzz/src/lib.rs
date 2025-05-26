@@ -19,6 +19,7 @@
     )
 )]
 #![warn(missing_docs)]
+#![cfg_attr(docsrs, feature(doc_cfg, doc_auto_cfg))]
 
 //! Using ICU4X as the Unicode Database back end for HarfBuzz.
 //!

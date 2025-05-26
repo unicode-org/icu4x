@@ -43,6 +43,7 @@
     )
 )]
 #![warn(missing_docs)]
+#![cfg_attr(docsrs, feature(doc_cfg, doc_auto_cfg))]
 // We're using Greek identifiers here on purpose. These lints can only be disabled at the crate level
 #![allow(confusable_idents, uncommon_codepoints)]
 

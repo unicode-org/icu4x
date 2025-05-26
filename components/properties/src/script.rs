@@ -233,8 +233,6 @@ impl<'a> ScriptExtensionsSet<'a> {
 
 /// A struct that represents the data for the Script and Script_Extensions properties.
 ///
-/// ✨ *Enabled with the `compiled_data` Cargo feature.*
-///
 /// [📚 Help choosing a constructor](icu_provider::constructors)
 ///
 /// Most useful methods are on [`ScriptWithExtensionsBorrowed`] obtained by calling [`ScriptWithExtensions::as_borrowed()`]
@@ -305,8 +303,6 @@ pub struct ScriptWithExtensionsBorrowed<'a> {
 
 impl ScriptWithExtensions {
     /// Creates a new instance of `ScriptWithExtensionsBorrowed` using compiled data.
-    ///
-    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
@@ -665,8 +661,6 @@ impl Default for ScriptWithExtensionsBorrowed<'static> {
 
 impl ScriptWithExtensionsBorrowed<'static> {
     /// Creates a new instance of `ScriptWithExtensionsBorrowed` using compiled data.
-    ///
-    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]

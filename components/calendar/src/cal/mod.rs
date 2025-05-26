@@ -39,13 +39,10 @@ pub use roc::Roc;
 pub use crate::any_calendar::{AnyCalendar, AnyCalendarKind};
 
 /// Internal scaffolding types
+#[cfg_attr(not(feature = "unstable"), doc(hidden))]
+#[cfg_attr(docsrs, doc(cfg(feature = "unstable")))]
 pub mod scaffold {
     /// Trait marking other traits that are considered unstable and should not generally be
     /// implemented outside of the calendar crate.
-    ///
-    /// <div class="stab unstable">
-    /// 🚧 This trait is considered unstable; it may change at any time, in breaking or non-breaking ways,
-    /// including in SemVer minor releases. Do not implement this trait in userland unless you are prepared for things to occasionally break.
-    /// </div>
     pub trait UnstableSealed {}
 }
