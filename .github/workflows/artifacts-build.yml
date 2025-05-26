@@ -138,26 +138,28 @@ jobs:
     - name: Build docs
       uses: mattnotmitt/doxygen-action@411df0c62acb5b96b8a93d93a7bf4b753c47ea05 # v1.9.5
       with:
-          doxyfile-path: 'tools/config.doxy'
+          doxyfile-path: 'tools/doxygen/config.doxy'
 
     - uses: actions/upload-artifact@v4
+      id: upload_artifact
       with:
         name: cppdoc
-        path: html
+        path: tools/doxygen/html
         
     - name: Upload docs to Google Cloud Storage (non-main)
       run: |
-        gsutil -m cp -r html gs://${{ env.GCP_PR_BUCKET_ID }}/gha/${{ github.sha }}/cppdoc
+        gsutil -m cp -r tools/doxygen/html gs://${{ env.GCP_PR_BUCKET_ID }}/gha/${{ github.sha }}/cppdoc
     
     - name: Upload docs to Google Cloud Storage (main)
       if: github.ref == 'refs/heads/main' && github.repository == 'unicode-org/icu4x'
       run: |
-        gsutil -m cp -r html/* gs://${{ env.GCP_MAIN_BUCKET_ID }}/gha/cppdoc
+        gsutil -m cp -r tools/doxygen/html/* gs://${{ env.GCP_MAIN_BUCKET_ID }}/gha/cppdoc
 
     - name: "⭐⭐⭐ Links to Uploaded Artifacts ⭐⭐⭐"
       run: |
         echo "📖 C++ docs"
         echo "http://${{ env.GCP_PR_BUCKET_ID }}.storage.googleapis.com/gha/${{ github.sha }}/cppdoc/index.html"
+        echo "Artifact URL is: ${{ steps.upload_artifact.outputs.artifact-url }}"
 
   ts-docs:
     name: "TypeScript docs"
