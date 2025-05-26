@@ -6,6 +6,7 @@
 
 use proc_macro::TokenStream;
 use proc_macro2::TokenStream as TokenStream2;
+use quote::format_ident;
 use quote::quote;
 use syn::{
     parse::{Parse, ParseStream},
@@ -31,6 +32,40 @@ use synstructure::{AddBounds, Structure};
 ///     pub age: u32,
 /// }
 /// ```
+///
+/// # Custom baked type
+///
+/// To bake to a different type than this, use `custom_bake`
+/// and implement `CustomBake`.
+///
+/// ```rust
+/// use databake::Bake;
+/// use databake::CustomBake;
+///
+/// #[derive(Bake)]
+/// #[databake(path = bar::module)]
+/// #[databake(path = custom_bake)]
+/// pub struct Message<'a> {
+///     pub message: &'a str,
+/// }
+///
+/// // Bake to a string:
+/// impl CustomBake for Message<'_> {
+///     type BakedType<'a> = &'a str where Self: 'a;
+///     fn to_custom_bake(&self) -> Self::BakedType<'_> {
+///         &self.message
+///     }
+/// }
+///
+/// impl<'a> Message<'a> {
+///     pub fn from_custom_bake(message: &'a str) -> Self {
+///         Self { message }
+///     }
+/// }
+/// ```
+///
+/// If the constructor is unsafe, use `custom_bake_unsafe`
+/// and implement `CustomBakeUnsafe`.
 #[proc_macro_derive(Bake, attributes(databake))]
 pub fn bake_derive(input: TokenStream) -> TokenStream {
     let input = parse_macro_input!(input as DeriveInput);
@@ -40,44 +75,89 @@ pub fn bake_derive(input: TokenStream) -> TokenStream {
 fn bake_derive_impl(input: &DeriveInput) -> TokenStream2 {
     let mut structure = Structure::new(input);
 
-    struct PathAttr(Punctuated<PathSegment, Token![::]>);
+    enum DatabakeAttr {
+        Path(Punctuated<PathSegment, Token![::]>),
+        CustomBake,
+        CustomBakeUnsafe,
+    }
 
-    impl Parse for PathAttr {
+    impl Parse for DatabakeAttr {
         fn parse(input: ParseStream<'_>) -> syn::parse::Result<Self> {
             let i: Ident = input.parse()?;
-            if i != "path" {
-                return Err(input.error(format!("expected token \"path\", found {i:?}")));
+            if i == "path" {
+                input.parse::<Token![=]>()?;
+                Ok(Self::Path(input.parse::<Path>()?.segments))
+            } else if i == "custom_bake" {
+                Ok(Self::CustomBake)
+            } else if i == "custom_bake_unsafe" {
+                Ok(Self::CustomBakeUnsafe)
+            } else {
+                Err(input.error(format!("expected token \"path\", found {i:?}")))
             }
-            input.parse::<Token![=]>()?;
-            Ok(Self(input.parse::<Path>()?.segments))
         }
     }
 
-    let path = input
+    let attrs = input
         .attrs
         .iter()
-        .find(|a| a.path().is_ident("databake"))
-        .expect("missing databake(path = ...) attribute")
-        .parse_args::<PathAttr>()
-        .unwrap()
-        .0;
+        .filter(|a| a.path().is_ident("databake"))
+        .map(|a| a.parse_args::<DatabakeAttr>().unwrap())
+        .collect::<Vec<_>>();
 
-    let bake_body = structure.each_variant(|vi| {
-        let recursive_calls = vi.bindings().iter().map(|b| {
-            let ident = b.binding.clone();
-            quote! { let #ident =  #ident.bake(env); }
-        });
+    let path = attrs
+        .iter()
+        .filter_map(|a| match a {
+            DatabakeAttr::Path(path) => Some(path),
+            _ => None,
+        })
+        .next()
+        .expect("missing databake(path = ...) attribute");
 
-        let constructor = vi.construct(|_, i| {
-            let ident = &vi.bindings()[i].binding;
-            quote! { # #ident }
-        });
+    let is_custom_bake = attrs.iter().any(|a| matches!(a, DatabakeAttr::CustomBake));
 
-        quote! {
-            #(#recursive_calls)*
-            databake::quote! { #path::#constructor }
+    let is_custom_bake_unsafe = attrs
+        .iter()
+        .any(|a| matches!(a, DatabakeAttr::CustomBakeUnsafe));
+
+    let bake_body = if is_custom_bake || is_custom_bake_unsafe {
+        let type_ident = &structure.ast().ident;
+        let baked_ident = format_ident!("baked");
+        if is_custom_bake_unsafe {
+            quote! {
+                x => {
+                    let baked = databake::CustomBake::to_custom_bake(x).bake(env);
+                    databake::quote! {
+                        // Safety: the bake is generated from `CustomBakeUnsafe::to_custom_bake`
+                        unsafe { #path::#type_ident::from_custom_bake(##baked_ident) }
+                    }
+                }
+            }
+        } else {
+            quote! {
+                x => {
+                    let baked = databake::CustomBake::to_custom_bake(x).bake(env);
+                    databake::quote! { #path::#type_ident::from_custom_bake(##baked_ident) }
+                }
+            }
         }
-    });
+    } else {
+        structure.each_variant(|vi| {
+            let recursive_calls = vi.bindings().iter().map(|b| {
+                let ident = b.binding.clone();
+                quote! { let #ident =  #ident.bake(env); }
+            });
+
+            let constructor = vi.construct(|_, i| {
+                let ident = &vi.bindings()[i].binding;
+                quote! { # #ident }
+            });
+
+            quote! {
+                #(#recursive_calls)*
+                databake::quote! { #path::#constructor }
+            }
+        })
+    };
 
     let borrows_size_body = structure.each_variant(|vi| {
         let recursive_calls = vi.bindings().iter().map(|b| {
