@@ -314,8 +314,8 @@ impl ConverterFactory {
         let mut conversion_rate = IcuRatio::one();
         let input_items: &[&SingleUnit] = match &input_unit.single_units {
             SingleUnitVec::Zero => &[],
-            SingleUnitVec::One(input_item) => &[&input_item],
-            SingleUnitVec::Two(input_item1, input_item2) => &[&input_item1, &input_item2],
+            SingleUnitVec::One(input_item) => &[input_item],
+            SingleUnitVec::Two(input_item1, input_item2) => &[input_item1, input_item2],
             #[cfg(feature = "alloc")]
             SingleUnitVec::Multi(input_items) => &input_items.iter().collect::<Vec<_>>(),
             #[cfg(not(feature = "alloc"))]
@@ -324,8 +324,8 @@ impl ConverterFactory {
 
         let output_items: &[&SingleUnit] = match &output_unit.single_units {
             SingleUnitVec::Zero => &[],
-            SingleUnitVec::One(output_item) => &[&output_item],
-            SingleUnitVec::Two(output_item1, output_item2) => &[&output_item1, &output_item2],
+            SingleUnitVec::One(output_item) => &[output_item],
+            SingleUnitVec::Two(output_item1, output_item2) => &[output_item1, output_item2],
             #[cfg(feature = "alloc")]
             SingleUnitVec::Multi(output_items) => &output_items.iter().collect::<Vec<_>>(),
             #[cfg(not(feature = "alloc"))]
