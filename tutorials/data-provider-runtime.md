@@ -282,7 +282,7 @@ icu_provider::data_marker!(CustomV1, Custom<'static>);
 #[derive(Debug, PartialEq, serde::Deserialize, serde::Serialize, databake::Bake, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[databake(path = crate)]
 pub struct Custom<'data> {
-    message: Cow<'data, str>,
+    pub message: Cow<'data, str>,
 };
 
 icu_provider::data_struct!(Custom<'_>);
