@@ -100,7 +100,6 @@ experimental = [
     "dep:num-rational",
     "dep:num-traits",
 ]
-alloc = []
 
 [package.metadata.cargo-all-features]
 # We don't need working CPT builders for check
