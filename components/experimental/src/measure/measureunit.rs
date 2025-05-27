@@ -5,7 +5,7 @@
 use super::{provider::single_unit::SingleUnit, single_unit_vec::SingleUnitVec};
 
 #[cfg(feature = "alloc")]
-use alloc::boxed::Box;
+use alloc::vec::Vec;
 
 // TODO NOTE: the MeasureUnitParser takes the trie and the ConverterFactory takes the full payload and an instance of MeasureUnitParser.
 /// The [`MeasureUnit`] struct represents a processed CLDR compound unit.
@@ -35,10 +35,10 @@ pub struct MeasureUnit {
 }
 
 impl MeasureUnit {
-    /// Returns a reference to the single units contained within this measure unit.
+    /// Returns a vector of references to the single units contained within this measure unit.
     #[cfg(feature = "alloc")]
-    pub fn iter_single_units(&self) -> Box<dyn Iterator<Item = &SingleUnit> + '_> {
-        self.single_units.iter()
+    pub fn get_single_units(&self) -> Vec<&SingleUnit> {
+        self.single_units.as_ref_vec()
     }
 
     /// Returns the constant denominator of this measure unit.

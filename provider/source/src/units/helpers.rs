@@ -164,7 +164,7 @@ pub(crate) fn extract_conversion_info<'data>(
         .map_err(|_| DataError::custom("the base unit is not valid"))?;
 
     Ok(ConversionInfo {
-        basic_units: ZeroVec::from_iter(base_unit.iter_single_units().copied()),
+        basic_units: ZeroVec::from_iter(base_unit.get_single_units().into_iter().copied()),
         factor_num: factor_num.into(),
         factor_den: factor_den.into(),
         factor_sign,

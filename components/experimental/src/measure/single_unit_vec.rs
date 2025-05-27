@@ -5,7 +5,7 @@
 use super::provider::single_unit::SingleUnit;
 
 #[cfg(feature = "alloc")]
-use alloc::{boxed::Box, vec::Vec};
+use alloc::{vec, vec::Vec};
 
 // The SingleUnitVec enum is used to represent a collection of SingleUnit instances.
 // It can represent zero, one, two, or multiple units, depending on the variant.
@@ -21,15 +21,15 @@ pub(crate) enum SingleUnitVec {
 }
 
 impl SingleUnitVec {
+    /// Returns a vector of references to the [`SingleUnit`] instances contained
+    /// within the [`SingleUnitVec`].
     #[cfg(feature = "alloc")]
-    pub fn iter(&self) -> Box<dyn Iterator<Item = &SingleUnit> + '_> {
+    pub fn as_ref_vec(&self) -> Vec<&SingleUnit> {
         match self {
-            SingleUnitVec::Zero => Box::new(core::iter::empty()),
-            SingleUnitVec::One(unit) => Box::new(core::iter::once(unit)),
-            SingleUnitVec::Two(unit1, unit2) => {
-                Box::new(core::iter::once(unit1).chain(core::iter::once(unit2)))
-            }
-            SingleUnitVec::Multi(units) => Box::new(units.iter()),
+            SingleUnitVec::Zero => vec![],
+            SingleUnitVec::One(unit) => vec![unit],
+            SingleUnitVec::Two(unit1, unit2) => vec![unit1, unit2],
+            SingleUnitVec::Multi(units) => units.iter().collect(),
         }
     }
 }
