@@ -187,19 +187,7 @@ impl ConverterFactory {
             sign: i16,
             map: &mut LiteMap<u16, PowersInfo>,
         ) -> Result<(), InvalidUnitError> {
-            let units: &[&SingleUnit] = match units {
-                SingleUnitVec::Zero => &[],
-                SingleUnitVec::One(unit) => &[unit],
-                SingleUnitVec::Two(unit1, unit2) => &[unit1, unit2],
-                #[cfg(feature = "alloc")]
-                SingleUnitVec::Multi(units) => &units.iter().collect::<Vec<_>>(),
-                #[cfg(not(feature = "alloc"))]
-                _ => return Err(InvalidUnitError),
-            };
-
-            let units = units.iter();
-
-            for item in units {
+            for item in units.as_ref_vec().iter() {
                 let items_from_item = factory
                     .payload
                     .get()
@@ -312,27 +300,8 @@ impl ConverterFactory {
         let root_to_unit2_direction_sign = if is_reciprocal { 1 } else { -1 };
 
         let mut conversion_rate = IcuRatio::one();
-        let input_items: &[&SingleUnit] = match &input_unit.single_units {
-            SingleUnitVec::Zero => &[],
-            SingleUnitVec::One(input_item) => &[input_item],
-            SingleUnitVec::Two(input_item1, input_item2) => &[input_item1, input_item2],
-            #[cfg(feature = "alloc")]
-            SingleUnitVec::Multi(input_items) => &input_items.iter().collect::<Vec<_>>(),
-            #[cfg(not(feature = "alloc"))]
-            _ => return None,
-        };
 
-        let output_items: &[&SingleUnit] = match &output_unit.single_units {
-            SingleUnitVec::Zero => &[],
-            SingleUnitVec::One(output_item) => &[output_item],
-            SingleUnitVec::Two(output_item1, output_item2) => &[output_item1, output_item2],
-            #[cfg(feature = "alloc")]
-            SingleUnitVec::Multi(output_items) => &output_items.iter().collect::<Vec<_>>(),
-            #[cfg(not(feature = "alloc"))]
-            _ => return None,
-        };
-
-        for input_item in input_items {
+        for input_item in input_unit.get_single_units().iter() {
             conversion_rate *= Self::compute_conversion_term(self, input_item, 1)?;
         }
 
@@ -340,7 +309,7 @@ impl ConverterFactory {
             conversion_rate /= IcuRatio::from_integer(input_unit.constant_denominator);
         }
 
-        for output_item in output_items {
+        for output_item in output_unit.get_single_units().iter() {
             conversion_rate *=
                 Self::compute_conversion_term(self, output_item, root_to_unit2_direction_sign)?;
         }
