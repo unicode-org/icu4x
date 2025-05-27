@@ -4,7 +4,6 @@
 
 use crate::measure::measureunit::MeasureUnit;
 use crate::measure::provider::single_unit::SingleUnit;
-use crate::measure::single_unit_vec::SingleUnitVec;
 use crate::units::ratio::IcuRatio;
 use crate::units::{
     converter::{
@@ -99,13 +98,12 @@ impl ConverterFactory {
         input_unit: &MeasureUnit,
         output_unit: &MeasureUnit,
     ) -> Option<IcuRatio> {
-        let input_unit = match input_unit.single_units {
-            SingleUnitVec::One(input_single_unit) => input_single_unit,
-            _ => return Some(IcuRatio::zero()),
+        let &[input_unit] = input_unit.single_units() else {
+            return Some(IcuRatio::zero());
         };
-        let output_unit = match output_unit.single_units {
-            SingleUnitVec::One(output_single_unit) => output_single_unit,
-            _ => return Some(IcuRatio::zero()),
+
+        let &[output_unit] = output_unit.single_units() else {
+            return Some(IcuRatio::zero());
         };
 
         if !(input_unit.power == 1
