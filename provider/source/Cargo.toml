@@ -84,7 +84,7 @@ simple_logger = { workspace = true }
 icu = { path = "../../components/icu", default-features = false, features = ["experimental"] }
 
 [features]
-default = ["use_wasm", "networking", "experimental"]
+default = ["use_wasm", "networking"]
 # Use wasm for building codepointtries
 use_wasm = ["icu_codepointtrie_builder/wasm"]
 # Use local ICU4C libraries for building codepointtries
