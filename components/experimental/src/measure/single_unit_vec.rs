@@ -4,7 +4,7 @@
 
 use super::provider::single_unit::SingleUnit;
 
-use alloc::vec::Vec;
+use alloc::{vec, vec::Vec};
 
 // The SingleUnitVec enum is used to represent a collection of SingleUnit instances.
 // It can represent zero, one, two, or multiple units, depending on the variant.
@@ -34,11 +34,7 @@ impl SingleUnitVec {
             SingleUnitVec::Zero => *self = SingleUnitVec::One(unit),
             SingleUnitVec::One(unit) => *self = SingleUnitVec::Two([*unit, *unit]),
             SingleUnitVec::Two(units) => {
-                let mut new_units = Vec::with_capacity(3);
-                new_units.push(units[0]);
-                new_units.push(units[1]);
-                new_units.push(unit);
-                *self = SingleUnitVec::Multi(new_units);
+                *self = SingleUnitVec::Multi(vec![units[0], units[1], unit]);
             }
             SingleUnitVec::Multi(units) => {
                 let mut units = core::mem::take(units);
