@@ -59,6 +59,18 @@ void main() {
     );
   });
 
+  test('Locale extensions', () {
+    var locale = Locale.fromString('en-GB');
+    expect(locale.getUnicodeExtension('ca'), null);
+    expect(locale.setUnicodeExtension('ca', 'gregory'), true);
+    expect(locale.setUnicodeExtension('ca', 'gregorian'), false);
+    expect(locale.setUnicodeExtension('calendar', 'gregory'), false);
+    expect(locale.getUnicodeExtension('ca'), 'gregory');
+    expect(locale.toString(), 'en-GB-u-ca-gregory');
+    expect(locale.setUnicodeExtension('ka', 'gregory'), true);
+    expect(locale.toString(), 'en-GB-u-ca-gregory-ka-gregory');
+  });
+
   test('Time zones', () {
     final iter = IanaParserExtended().iterAll();
     iter.moveNext();

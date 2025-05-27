@@ -1200,7 +1200,7 @@ version = "2.0.0"
 
 [[package]]
 name = "icu_capi"
-version = "2.0.1"
+version = "2.0.2"
 dependencies = [
  "diplomat",
  "diplomat-runtime",

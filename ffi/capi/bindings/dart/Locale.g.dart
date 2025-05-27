@@ -82,6 +82,15 @@ final class Locale implements ffi.Finalizable, core.Comparable<Locale> {
     return write.finalize();
   }
 
+  /// Set a Unicode extension.
+  ///
+  /// See the [Rust documentation for `extensions`](https://docs.rs/icu/2.0.0/icu/locale/struct.Locale.html#structfield.extensions) for more information.
+  bool setUnicodeExtension(String k, String v) {
+    final temp = _FinalizedArena();
+    final result = _icu4x_Locale_set_unicode_extension_mv1(_ffi, k._utf8AllocIn(temp.arena), v._utf8AllocIn(temp.arena));
+    return result.isOk;
+  }
+
   /// Returns a string representation of [Locale] language.
   ///
   /// See the [Rust documentation for `id`](https://docs.rs/icu/2.0.0/icu/locale/struct.Locale.html#structfield.id) for more information.
@@ -236,6 +245,11 @@ external void _icu4x_Locale_basename_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Point
 @ffi.Native<_ResultVoidVoid Function(ffi.Pointer<ffi.Opaque>, _SliceUtf8, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_Locale_get_unicode_extension_mv1')
 // ignore: non_constant_identifier_names
 external _ResultVoidVoid _icu4x_Locale_get_unicode_extension_mv1(ffi.Pointer<ffi.Opaque> self, _SliceUtf8 s, ffi.Pointer<ffi.Opaque> write);
+
+@_DiplomatFfiUse('icu4x_Locale_set_unicode_extension_mv1')
+@ffi.Native<_ResultVoidVoid Function(ffi.Pointer<ffi.Opaque>, _SliceUtf8, _SliceUtf8)>(isLeaf: true, symbol: 'icu4x_Locale_set_unicode_extension_mv1')
+// ignore: non_constant_identifier_names
+external _ResultVoidVoid _icu4x_Locale_set_unicode_extension_mv1(ffi.Pointer<ffi.Opaque> self, _SliceUtf8 k, _SliceUtf8 v);
 
 @_DiplomatFfiUse('icu4x_Locale_language_mv1')
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_Locale_language_mv1')
