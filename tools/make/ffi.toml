@@ -117,7 +117,7 @@ dependencies = [
 script_runner = "@duckscript"
 script = '''
 exit_on_error true
-code = exec --get-exit-code git diff --exit-code -- ffi/capi
+code = exec --get-exit-code git diff --exit-code -- ffi/capi tools/web-demo/gen
 if ${code}
     trigger_error "Diplomat bindings need to be regenerated. Please run `cargo make diplomat-gen` and commit. (Testing against different Diplomat versions may omit install step.)"
 end
