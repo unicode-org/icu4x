@@ -298,7 +298,7 @@ impl ConverterFactory {
 
         let mut conversion_rate = IcuRatio::one();
 
-        for input_item in input_unit.get_single_units() {
+        for input_item in input_unit.single_units() {
             conversion_rate *= Self::compute_conversion_term(self, input_item, 1)?;
         }
 
@@ -306,7 +306,7 @@ impl ConverterFactory {
             conversion_rate /= IcuRatio::from_integer(input_unit.constant_denominator);
         }
 
-        for output_item in output_unit.get_single_units() {
+        for output_item in output_unit.single_units() {
             conversion_rate *=
                 Self::compute_conversion_term(self, output_item, root_to_unit2_direction_sign)?;
         }

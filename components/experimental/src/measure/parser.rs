@@ -247,7 +247,7 @@ mod tests {
 
         for (input, expected_len, expected_denominator) in test_cases {
             let measure_unit = parser.try_from_str(input).unwrap();
-            assert_eq!(measure_unit.get_single_units().len(), expected_len);
+            assert_eq!(measure_unit.single_units().len(), expected_len);
             assert_eq!(measure_unit.constant_denominator, expected_denominator);
         }
     }
