@@ -2,6 +2,11 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+//! This module defines the [`SingleUnitVec`] enum, which is used to represent a collection
+//! of [`SingleUnit`] instances. The [`SingleUnitVec`] can represent zero, one, two, or multiple
+//! units, depending on the variant. It provides methods to access the contained units,
+//! such as [`SingleUnitVec::as_slice`], which returns a slice of the [`SingleUnit`] instances.
+
 use super::provider::single_unit::SingleUnit;
 
 #[cfg(feature = "alloc")]
