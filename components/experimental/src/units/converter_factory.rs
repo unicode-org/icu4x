@@ -2,9 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-#[cfg(feature = "alloc")]
-use alloc::vec::Vec;
-
 use crate::measure::measureunit::MeasureUnit;
 use crate::measure::provider::single_unit::SingleUnit;
 use crate::measure::single_unit_vec::SingleUnitVec;
