@@ -12,9 +12,7 @@ pub mod ratio;
 
 #[derive(Display, Debug, Copy, Clone, PartialEq)]
 #[displaydoc("The unit is not valid or the alloc feature is not enabled.")]
-/// The unit is not valid or the alloc feature is not enabled.
-/// This can happen if the unit id is not following the CLDR specification.
-/// For example, `meter` is a valid unit id, but `metre` is not.
-///
-/// This can also happen if the alloc feature is not enabled and the unit has more than 2 single units.
+/// The unit is not valid.
+/// This can occur if the unit ID does not adhere to the CLDR specification.
+/// For example, `meter` is a valid unit ID, but `metre` is not.
 pub struct InvalidUnitError;

@@ -9,7 +9,6 @@
 
 use super::provider::single_unit::SingleUnit;
 
-#[cfg(feature = "alloc")]
 use alloc::vec::Vec;
 
 // The SingleUnitVec enum is used to represent a collection of SingleUnit instances.
@@ -20,15 +19,12 @@ pub(crate) enum SingleUnitVec {
     Zero,
     One(SingleUnit),
     Two([SingleUnit; 2]),
-
-    #[cfg(feature = "alloc")]
     Multi(Vec<SingleUnit>),
 }
 
 impl SingleUnitVec {
     /// Returns a slice of the [`SingleUnit`] instances contained
     /// within the [`SingleUnitVec`].
-    #[cfg(feature = "alloc")]
     pub fn as_slice(&self) -> &[SingleUnit] {
         match self {
             SingleUnitVec::Zero => &[],
@@ -39,7 +35,6 @@ impl SingleUnitVec {
     }
 }
 
-#[cfg(feature = "alloc")]
 impl FromIterator<SingleUnit> for SingleUnitVec {
     fn from_iter<I: IntoIterator<Item = SingleUnit>>(iter: I) -> Self {
         let mut iter = iter.into_iter();

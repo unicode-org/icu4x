@@ -33,7 +33,6 @@ pub struct MeasureUnit {
 
 impl MeasureUnit {
     /// Returns a slice of references to the single units contained within this measure unit.
-    #[cfg(feature = "alloc")]
     pub fn get_single_units(&self) -> &[SingleUnit] {
         self.single_units.as_slice()
     }
