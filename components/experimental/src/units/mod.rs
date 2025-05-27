@@ -11,7 +11,7 @@ pub mod provider;
 pub mod ratio;
 
 #[derive(Display, Debug, Copy, Clone, PartialEq)]
-#[displaydoc("The unit is not valid or the alloc feature is not enabled.")]
+#[displaydoc("The unit is not valid")]
 /// The unit is not valid.
 /// This can occur if the unit ID does not adhere to the CLDR specification.
 /// For example, `meter` is a valid unit ID, but `metre` is not.
