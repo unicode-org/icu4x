@@ -32,8 +32,8 @@ pub struct MeasureUnit {
 }
 
 impl MeasureUnit {
-    /// Returns a slice of references to the single units contained within this measure unit.
-    pub fn single_units(&self) -> &[SingleUnit] {
+    /// Returns a slice of the single units contained within this measure unit.
+    pub fn get_single_units(&self) -> &[SingleUnit] {
         self.single_units.as_slice()
     }
 
