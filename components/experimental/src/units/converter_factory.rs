@@ -180,11 +180,11 @@ impl ConverterFactory {
         ///     For example, `newton` has the basic units:  `gram`, `meter`, and `second` (each one has it is own power and si prefix).
         fn insert_non_basic_units(
             factory: &ConverterFactory,
-            units: &SingleUnitVec,
+            units: &[SingleUnit],
             sign: i16,
             map: &mut LiteMap<u16, PowersInfo>,
         ) -> Result<(), InvalidUnitError> {
-            for item in units.as_slice().iter() {
+            for item in units {
                 let items_from_item = factory
                     .payload
                     .get()
@@ -237,8 +237,8 @@ impl ConverterFactory {
         let unit2 = &unit2.single_units;
 
         let mut map = LiteMap::new();
-        insert_non_basic_units(self, unit1, 1, &mut map)?;
-        insert_non_basic_units(self, unit2, -1, &mut map)?;
+        insert_non_basic_units(self, unit1.as_slice(), 1, &mut map)?;
+        insert_non_basic_units(self, unit2.as_slice(), -1, &mut map)?;
 
         let (power_sums_are_zero, power_diffs_are_zero) =
             map.values()
@@ -298,7 +298,7 @@ impl ConverterFactory {
 
         let mut conversion_rate = IcuRatio::one();
 
-        for input_item in input_unit.get_single_units().iter() {
+        for input_item in input_unit.get_single_units() {
             conversion_rate *= Self::compute_conversion_term(self, input_item, 1)?;
         }
 
@@ -306,7 +306,7 @@ impl ConverterFactory {
             conversion_rate /= IcuRatio::from_integer(input_unit.constant_denominator);
         }
 
-        for output_item in output_unit.get_single_units().iter() {
+        for output_item in output_unit.get_single_units() {
             conversion_rate *=
                 Self::compute_conversion_term(self, output_item, root_to_unit2_direction_sign)?;
         }
