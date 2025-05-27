@@ -28,6 +28,25 @@ impl SingleUnitVec {
             SingleUnitVec::Multi(units) => &units[..],
         }
     }
+
+    pub(crate) fn push(&mut self, unit: SingleUnit) {
+        match self {
+            SingleUnitVec::Zero => *self = SingleUnitVec::One(unit),
+            SingleUnitVec::One(unit) => *self = SingleUnitVec::Two([*unit, *unit]),
+            SingleUnitVec::Two(units) => {
+                let mut new_units = Vec::with_capacity(3);
+                new_units.push(units[0]);
+                new_units.push(units[1]);
+                new_units.push(unit);
+                *self = SingleUnitVec::Multi(new_units);
+            }
+            SingleUnitVec::Multi(units) => {
+                let mut units = core::mem::take(units);
+                units.push(unit);
+                *self = SingleUnitVec::Multi(units);
+            }
+        }
+    }
 }
 
 impl FromIterator<SingleUnit> for SingleUnitVec {

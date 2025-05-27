@@ -2,8 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use smallvec::SmallVec;
-
 use crate::measure::measureunit::MeasureUnit;
 use crate::measure::power::get_power;
 use crate::measure::si_prefix::get_si_prefix;
@@ -139,7 +137,7 @@ impl MeasureUnitParser {
         }
 
         let mut constant_denominator = 0;
-        let mut single_units = SmallVec::<[SingleUnit; 8]>::new();
+        let mut single_units = SingleUnitVec::Zero;
         let mut sign = 1;
         while !code_units.is_empty() {
             // First: extract the power.
@@ -220,12 +218,12 @@ impl MeasureUnitParser {
 
         // TODO: shall we allow units without any single units?
         // There is no unit without any valid single units.
-        if single_units.is_empty() {
+        if single_units.as_slice().is_empty() {
             return Err(InvalidUnitError);
         }
 
         Ok(MeasureUnit {
-            single_units: SingleUnitVec::from_iter(single_units),
+            single_units,
             constant_denominator,
         })
     }
