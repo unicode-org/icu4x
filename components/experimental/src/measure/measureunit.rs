@@ -41,7 +41,7 @@ impl MeasureUnit {
     ///
     /// NOTE:
     ///   If the constant denominator is not set, a value of `0` is returned.
-    pub fn get_constant_denominator(&self) -> u64 {
+    pub fn constant_denominator(&self) -> u64 {
         self.constant_denominator
     }
 }

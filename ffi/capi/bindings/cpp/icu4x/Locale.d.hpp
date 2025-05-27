@@ -74,6 +74,13 @@ public:
   inline std::optional<std::string> get_unicode_extension(std::string_view s) const;
 
   /**
+   * Set a Unicode extension.
+   *
+   * See the [Rust documentation for `extensions`](https://docs.rs/icu/2.0.0/icu/locale/struct.Locale.html#structfield.extensions) for more information.
+   */
+  inline std::optional<std::monostate> set_unicode_extension(std::string_view k, std::string_view v);
+
+  /**
    * Returns a string representation of {@link Locale} language.
    *
    * See the [Rust documentation for `id`](https://docs.rs/icu/2.0.0/icu/locale/struct.Locale.html#structfield.id) for more information.
