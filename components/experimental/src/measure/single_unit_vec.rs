@@ -32,4 +32,37 @@ impl SingleUnitVec {
             SingleUnitVec::Multi(units) => units.iter().collect(),
         }
     }
+
+    #[cfg(feature = "alloc")]
+    pub fn len(&self) -> usize {
+        match self {
+            SingleUnitVec::Zero => 0,
+            SingleUnitVec::One(_) => 1,
+            SingleUnitVec::Two(_, _) => 2,
+            SingleUnitVec::Multi(units) => units.len(),
+        }
+    }
+}
+
+#[cfg(feature = "alloc")]
+impl FromIterator<SingleUnit> for SingleUnitVec {
+    fn from_iter<I: IntoIterator<Item = SingleUnit>>(iter: I) -> Self {
+        let mut iter = iter.into_iter();
+
+        if let Some(unit1) = iter.next() {
+            if let Some(unit2) = iter.next() {
+                if let Some(unit3) = iter.next() {
+                    let mut units = Vec::with_capacity(3);
+                    units.push(unit1);
+                    units.push(unit2);
+                    units.push(unit3);
+                    units.extend(iter);
+                    return SingleUnitVec::Multi(units);
+                }
+                return SingleUnitVec::Two(unit1, unit2);
+            }
+            return SingleUnitVec::One(unit1);
+        }
+        SingleUnitVec::Zero
+    }
 }

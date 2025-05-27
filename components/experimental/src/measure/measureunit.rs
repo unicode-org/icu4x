@@ -48,4 +48,9 @@ impl MeasureUnit {
     pub fn get_constant_denominator(&self) -> u64 {
         self.constant_denominator
     }
+
+    /// Returns the number of single units contained within this measure unit.
+    pub fn count_single_units(&self) -> usize {
+        self.single_units.len()
+    }
 }

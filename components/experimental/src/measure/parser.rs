@@ -218,24 +218,14 @@ impl MeasureUnitParser {
             };
         }
 
+        // TODO: shall we allow units without any single units?
         // There is no unit without any valid single units.
         if single_units.is_empty() {
             return Err(InvalidUnitError);
         }
 
-        let single_units = match single_units.len() {
-            0 => SingleUnitVec::Zero,
-            1 => SingleUnitVec::One(single_units.remove(0)),
-            2 => SingleUnitVec::Two(single_units.remove(0), single_units.remove(0)),
-            #[cfg(feature = "alloc")]
-            _ => SingleUnitVec::Multi(single_units.into_vec()),
-
-            #[cfg(not(feature = "alloc"))]
-            _ => return Err(InvalidUnitError),
-        };
-
         Ok(MeasureUnit {
-            single_units,
+            single_units: SingleUnitVec::from_iter(single_units),
             constant_denominator,
         })
     }
