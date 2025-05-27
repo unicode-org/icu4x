@@ -184,7 +184,7 @@ impl ConverterFactory {
             sign: i16,
             map: &mut LiteMap<u16, PowersInfo>,
         ) -> Result<(), InvalidUnitError> {
-            for item in units.as_ref_vec().iter() {
+            for item in units.as_slice().iter() {
                 let items_from_item = factory
                     .payload
                     .get()

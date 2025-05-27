@@ -5,7 +5,7 @@
 use super::provider::single_unit::SingleUnit;
 
 #[cfg(feature = "alloc")]
-use alloc::{vec, vec::Vec};
+use alloc::vec::Vec;
 
 // The SingleUnitVec enum is used to represent a collection of SingleUnit instances.
 // It can represent zero, one, two, or multiple units, depending on the variant.
@@ -14,32 +14,22 @@ use alloc::{vec, vec::Vec};
 pub(crate) enum SingleUnitVec {
     Zero,
     One(SingleUnit),
-    Two(SingleUnit, SingleUnit),
+    Two([SingleUnit; 2]),
 
     #[cfg(feature = "alloc")]
     Multi(Vec<SingleUnit>),
 }
 
 impl SingleUnitVec {
-    /// Returns a vector of references to the [`SingleUnit`] instances contained
+    /// Returns a slice of the [`SingleUnit`] instances contained
     /// within the [`SingleUnitVec`].
     #[cfg(feature = "alloc")]
-    pub fn as_ref_vec(&self) -> Vec<&SingleUnit> {
+    pub fn as_slice(&self) -> &[SingleUnit] {
         match self {
-            SingleUnitVec::Zero => vec![],
-            SingleUnitVec::One(unit) => vec![unit],
-            SingleUnitVec::Two(unit1, unit2) => vec![unit1, unit2],
-            SingleUnitVec::Multi(units) => units.iter().collect(),
-        }
-    }
-
-    #[cfg(feature = "alloc")]
-    pub fn len(&self) -> usize {
-        match self {
-            SingleUnitVec::Zero => 0,
-            SingleUnitVec::One(_) => 1,
-            SingleUnitVec::Two(_, _) => 2,
-            SingleUnitVec::Multi(units) => units.len(),
+            SingleUnitVec::Zero => &[],
+            SingleUnitVec::One(unit) => core::slice::from_ref(unit),
+            SingleUnitVec::Two(units) => &units[..],
+            SingleUnitVec::Multi(units) => &units[..],
         }
     }
 }
@@ -59,7 +49,7 @@ impl FromIterator<SingleUnit> for SingleUnitVec {
                     units.extend(iter);
                     return SingleUnitVec::Multi(units);
                 }
-                return SingleUnitVec::Two(unit1, unit2);
+                return SingleUnitVec::Two([unit1, unit2]);
             }
             return SingleUnitVec::One(unit1);
         }

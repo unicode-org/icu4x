@@ -233,7 +233,7 @@ impl MeasureUnitParser {
 
 #[cfg(test)]
 mod tests {
-    use crate::measure::{parser::MeasureUnitParser, single_unit_vec::SingleUnitVec};
+    use crate::measure::parser::MeasureUnitParser;
 
     #[test]
     fn test_parser_cases() {
@@ -247,14 +247,7 @@ mod tests {
 
         for (input, expected_len, expected_denominator) in test_cases {
             let measure_unit = parser.try_from_str(input).unwrap();
-            assert_eq!(
-                match measure_unit.single_units {
-                    SingleUnitVec::One(_) => 1,
-                    SingleUnitVec::Two(_, _) => 2,
-                    _ => 0,
-                },
-                expected_len
-            );
+            assert_eq!(measure_unit.get_single_units().len(), expected_len);
             assert_eq!(measure_unit.constant_denominator, expected_denominator);
         }
     }

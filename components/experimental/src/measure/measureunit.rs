@@ -4,9 +4,6 @@
 
 use super::{provider::single_unit::SingleUnit, single_unit_vec::SingleUnitVec};
 
-#[cfg(feature = "alloc")]
-use alloc::vec::Vec;
-
 // TODO NOTE: the MeasureUnitParser takes the trie and the ConverterFactory takes the full payload and an instance of MeasureUnitParser.
 /// The [`MeasureUnit`] struct represents a processed CLDR compound unit.
 /// Examples include:
@@ -35,10 +32,10 @@ pub struct MeasureUnit {
 }
 
 impl MeasureUnit {
-    /// Returns a vector of references to the single units contained within this measure unit.
+    /// Returns a slice of references to the single units contained within this measure unit.
     #[cfg(feature = "alloc")]
-    pub fn get_single_units(&self) -> Vec<&SingleUnit> {
-        self.single_units.as_ref_vec()
+    pub fn get_single_units(&self) -> &[SingleUnit] {
+        self.single_units.as_slice()
     }
 
     /// Returns the constant denominator of this measure unit.
@@ -47,10 +44,5 @@ impl MeasureUnit {
     ///   If the constant denominator is not set, a value of `0` is returned.
     pub fn get_constant_denominator(&self) -> u64 {
         self.constant_denominator
-    }
-
-    /// Returns the number of single units contained within this measure unit.
-    pub fn count_single_units(&self) -> usize {
-        self.single_units.len()
     }
 }
