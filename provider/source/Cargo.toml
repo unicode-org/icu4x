@@ -95,7 +95,6 @@ use_icu4c = ["icu_codepointtrie_builder/icu4c"]
 networking = ["dep:ureq"]
 experimental = [
     "icu/experimental",
-    "icu_experimental/alloc",
     "dep:num-bigint",
     "dep:num-rational",
     "dep:num-traits",
