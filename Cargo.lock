@@ -710,8 +710,9 @@ dependencies = [
 
 [[package]]
 name = "diplomat"
-version = "0.11.0"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=f899eaf7082377f17666cb7608f7864e90969b3e#f899eaf7082377f17666cb7608f7864e90969b3e"
+version = "0.12.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ced081520ee8cf2b8c5b64a1a901eccd7030ece670dac274afe64607d6499b71"
 dependencies = [
  "diplomat_core",
  "proc-macro2",
@@ -741,16 +742,18 @@ dependencies = [
 
 [[package]]
 name = "diplomat-runtime"
-version = "0.11.0"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=f899eaf7082377f17666cb7608f7864e90969b3e#f899eaf7082377f17666cb7608f7864e90969b3e"
+version = "0.12.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "098f9520ec5c190943b083bca3ea4cc4e67dc5f85a37062e528ecf1d25f04eb4"
 dependencies = [
  "log",
 ]
 
 [[package]]
 name = "diplomat-tool"
-version = "0.11.1"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=f899eaf7082377f17666cb7608f7864e90969b3e#f899eaf7082377f17666cb7608f7864e90969b3e"
+version = "0.12.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e5e4f4dca06f60e3845a1c59130c312efcd020da95b6fd0183c0f9d9419d831a"
 dependencies = [
  "askama",
  "clap",
@@ -770,8 +773,9 @@ dependencies = [
 
 [[package]]
 name = "diplomat_core"
-version = "0.11.0"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=f899eaf7082377f17666cb7608f7864e90969b3e#f899eaf7082377f17666cb7608f7864e90969b3e"
+version = "0.12.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b2adc721d57b84cb388d5569bb0b5771dd38dc9f2d3f14a6205e5ef76c9b1990"
 dependencies = [
  "displaydoc",
  "either",
@@ -1170,7 +1174,7 @@ dependencies = [
 
 [[package]]
 name = "icu_calendar"
-version = "2.0.1"
+version = "2.0.2"
 dependencies = [
  "calendrical_calculations",
  "criterion",
@@ -1196,7 +1200,7 @@ version = "2.0.0"
 
 [[package]]
 name = "icu_capi"
-version = "2.0.1"
+version = "2.0.2"
 dependencies = [
  "diplomat",
  "diplomat-runtime",
@@ -1382,7 +1386,7 @@ version = "2.0.0"
 
 [[package]]
 name = "icu_experimental"
-version = "0.3.0"
+version = "0.4.0-dev"
 dependencies = [
  "criterion",
  "databake",
@@ -1436,7 +1440,7 @@ dependencies = [
 
 [[package]]
 name = "icu_harfbuzz"
-version = "0.2.0"
+version = "0.3.0"
 dependencies = [
  "displaydoc",
  "harfbuzz-traits",
@@ -1882,7 +1886,7 @@ checksum = "4a5f13b858c8d314ee3e8f639011f7ccefe71f97f96e50151fb991f267928e2c"
 
 [[package]]
 name = "ixdtf"
-version = "0.5.0"
+version = "0.6.0-dev"
 dependencies = [
  "criterion",
  "displaydoc",

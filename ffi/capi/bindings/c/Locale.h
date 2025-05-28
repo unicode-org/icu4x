@@ -28,6 +28,9 @@ void icu4x_Locale_basename_mv1(const Locale* self, DiplomatWrite* write);
 typedef struct icu4x_Locale_get_unicode_extension_mv1_result { bool is_ok;} icu4x_Locale_get_unicode_extension_mv1_result;
 icu4x_Locale_get_unicode_extension_mv1_result icu4x_Locale_get_unicode_extension_mv1(const Locale* self, DiplomatStringView s, DiplomatWrite* write);
 
+typedef struct icu4x_Locale_set_unicode_extension_mv1_result { bool is_ok;} icu4x_Locale_set_unicode_extension_mv1_result;
+icu4x_Locale_set_unicode_extension_mv1_result icu4x_Locale_set_unicode_extension_mv1(Locale* self, DiplomatStringView k, DiplomatStringView v);
+
 void icu4x_Locale_language_mv1(const Locale* self, DiplomatWrite* write);
 
 typedef struct icu4x_Locale_set_language_mv1_result {union { LocaleParseError err;}; bool is_ok;} icu4x_Locale_set_language_mv1_result;

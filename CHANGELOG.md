@@ -1,18 +1,21 @@
 # Changelog
 
-## icu4x 2.0.1
+## icu4x 2.0.x
 
 Several crates have had patch releases in the 2.0 stream:
 
 - `icu_calendar`
-  - Fix chinese day-of-year (unicode-org#6567)
+  - (2.0.1) Fix chinese day-of-year (unicode-org#6567)
+  - (2.0.2) Respect `-u-fw` keyword in `WeekInformation` (unicode-org#6615)
 - `icu_properties`, `icu_properties_data`
-  - Fix a visibility bug in compiled data (unicode-org#6580)
+  - (2.0.1) Fix a visibility bug in compiled data (unicode-org#6580)
 - `icu_provider_baked`
-  - Fix an issue where a single-locale data generation would skip fallback (unicode-org#6582)
+  - (2.0.1) Fix an issue where a single-locale data generation would skip fallback (unicode-org#6582)
 - `icu_capi`
-  - Rename string-methods on `DecomposingNormalizer` to match those on `ComposingNormalizer` (unicode-org#6594)
-  - Add `DataProvider` constructors in JS and Dart (unicode-org#6596)
+  - (2.0.1) Rename string-methods on `DecomposingNormalizer` to match those on `ComposingNormalizer` (unicode-org#6594)
+  - (2.0.1) Add `DataProvider` constructors in JS and Dart (unicode-org#6596)
+  - (2.0.1) Fix `TimeZoneVariant` constructor (unicode-org#6610)
+  - (2.0.2) Add `Locale::set_unicode_extension` (unicode-org#6636)
 
 ## icu4x 2.0
 

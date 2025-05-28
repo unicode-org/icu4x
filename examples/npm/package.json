@@ -6,7 +6,7 @@
 	  "start": "node dist/main.js"
 	},
 	"dependencies": {
-	  "icu4x": "file:../../ffi/npm"
+	  "icu": "file:../../ffi/npm"
 	},
 	"devDependencies": {
 	  "typescript": "^4.7.4"

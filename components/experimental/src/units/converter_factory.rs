@@ -281,8 +281,8 @@ impl ConverterFactory {
             conversion_rate *= Self::compute_conversion_term(self, input_item, 1)?;
         }
 
-        if input_unit.constant_denominator != 0 {
-            conversion_rate /= IcuRatio::from_integer(input_unit.constant_denominator);
+        if input_unit.constant_denominator() != 0 {
+            conversion_rate /= IcuRatio::from_integer(input_unit.constant_denominator());
         }
 
         for output_item in output_unit.single_units.iter() {
@@ -290,11 +290,11 @@ impl ConverterFactory {
                 Self::compute_conversion_term(self, output_item, root_to_unit2_direction_sign)?;
         }
 
-        if output_unit.constant_denominator != 0 {
+        if output_unit.constant_denominator() != 0 {
             if is_reciprocal {
-                conversion_rate /= IcuRatio::from_integer(output_unit.constant_denominator);
+                conversion_rate /= IcuRatio::from_integer(output_unit.constant_denominator());
             } else {
-                conversion_rate *= IcuRatio::from_integer(output_unit.constant_denominator);
+                conversion_rate *= IcuRatio::from_integer(output_unit.constant_denominator());
             }
         }
 

@@ -31,6 +31,9 @@ namespace capi {
     typedef struct icu4x_Locale_get_unicode_extension_mv1_result { bool is_ok;} icu4x_Locale_get_unicode_extension_mv1_result;
     icu4x_Locale_get_unicode_extension_mv1_result icu4x_Locale_get_unicode_extension_mv1(const icu4x::capi::Locale* self, diplomat::capi::DiplomatStringView s, diplomat::capi::DiplomatWrite* write);
 
+    typedef struct icu4x_Locale_set_unicode_extension_mv1_result { bool is_ok;} icu4x_Locale_set_unicode_extension_mv1_result;
+    icu4x_Locale_set_unicode_extension_mv1_result icu4x_Locale_set_unicode_extension_mv1(icu4x::capi::Locale* self, diplomat::capi::DiplomatStringView k, diplomat::capi::DiplomatStringView v);
+
     void icu4x_Locale_language_mv1(const icu4x::capi::Locale* self, diplomat::capi::DiplomatWrite* write);
 
     typedef struct icu4x_Locale_set_language_mv1_result {union { icu4x::capi::LocaleParseError err;}; bool is_ok;} icu4x_Locale_set_language_mv1_result;
@@ -95,6 +98,13 @@ inline std::optional<std::string> icu4x::Locale::get_unicode_extension(std::stri
     {s.data(), s.size()},
     &write);
   return result.is_ok ? std::optional<std::string>(std::move(output)) : std::nullopt;
+}
+
+inline std::optional<std::monostate> icu4x::Locale::set_unicode_extension(std::string_view k, std::string_view v) {
+  auto result = icu4x::capi::icu4x_Locale_set_unicode_extension_mv1(this->AsFFI(),
+    {k.data(), k.size()},
+    {v.data(), v.size()});
+  return result.is_ok ? std::optional<std::monostate>() : std::nullopt;
 }
 
 inline std::string icu4x::Locale::language() const {

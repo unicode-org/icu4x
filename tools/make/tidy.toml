@@ -25,12 +25,12 @@ script = '''
 exit_on_error true
 
 # Check files matching these patterns.
-glob_pattern_array = array "./**/*.rs" "./**/*.yml" "./**/*.toml" "./**/*.rst" "./**/*.bat" "./**/*.c" "./**/*.cpp"
+glob_pattern_array = array "./**/*.rs" "./**/*.yml" "./**/*.toml" "./**/*.rst" "./**/*.bat" "./**/*.c" "./**/*.cpp" "./**/*.hpp" "./**/*.h" "./**/*.mjs" "./**/*.ts" "./**/*.*.dart"
 
 files = exec --fail-on-error git ls-files --cached --others --exclude-standard
 
 # Skip the files matching these patterns.
-glob_skip_pattern_array = array "**/target/**/*" "**/node_modules/**/*" "**/data/**/*" "examples/gn/vendor/**/*" "examples/gn/third_party_tools/**/*" "ffi/capi/tests/tinyc/*/baked_data/**/*"
+glob_skip_pattern_array = array "ffi/capi/bindings/**/*" "ffi/npm/lib/**/*" "ffi/dart/lib/src/**/*" "tools/web-demo/gen/**/*" "**/target/**/*" "**/node_modules/**/*" "**/data/**/*" "examples/gn/vendor/**/*" "examples/gn/third_party_tools/**/*" "ffi/capi/tests/tinyc/*/baked_data/**/*"
 
 blank_line = set ""
 

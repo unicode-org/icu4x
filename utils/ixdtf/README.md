@@ -19,9 +19,9 @@ RFC 9557 also updates the interpretation of `Z` from RFC 3339.
 ### Example Usage
 
 ```rust
-use ixdtf::parsers::{
+use ixdtf::{
     records::{Sign, TimeZoneRecord},
-    IxdtfParser,
+    parsers::IxdtfParser,
 };
 
 let ixdtf_str = "2024-03-02T08:48:00-05:00[America/New_York]";
@@ -73,9 +73,9 @@ time is unknown".
 RFC 9557 updates the interpretation of `Z` to align with `-00:00`.
 
 ```rust
-use ixdtf::parsers::{
+use ixdtf::{
+    parsers::IxdtfParser,
     records::{Sign, TimeZoneRecord},
-    IxdtfParser,
 };
 
 let ixdtf_str = "2024-03-02T08:48:00Z[America/New_York]";
@@ -134,9 +134,9 @@ time. Instead, an application may decide to calculate the time with the rules of
 zone annotation if it is provided.
 
 ```rust
-use ixdtf::parsers::{
+use ixdtf::{
+    parsers::IxdtfParser,
     records::{Sign, TimeZoneRecord},
-    IxdtfParser,
 };
 
 let zulu_offset = "2024-03-02T08:48:00Z[!America/New_York]";
@@ -289,7 +289,7 @@ of the offset and the Time Zone annotation. It is up to the user to handle this 
 between the offset and annotation.
 
 ```rust
-use ixdtf::parsers::{IxdtfParser, records::TimeZoneRecord};
+use ixdtf::{parsers::IxdtfParser, records::TimeZoneRecord};
 
 let example_two = "2024-03-02T08:48:00+01:00[!America/New_York]";
 

@@ -57,6 +57,13 @@ export class Locale {
     getUnicodeExtension(s: string): string | null;
 
     /**
+     * Set a Unicode extension.
+     *
+     * See the [Rust documentation for `extensions`](https://docs.rs/icu/2.0.0/icu/locale/struct.Locale.html#structfield.extensions) for more information.
+     */
+    setUnicodeExtension(k: string, v: string): boolean;
+
+    /**
      * Returns a string representation of {@link Locale} language.
      *
      * See the [Rust documentation for `id`](https://docs.rs/icu/2.0.0/icu/locale/struct.Locale.html#structfield.id) for more information.
