@@ -271,8 +271,49 @@ impl TryInto<CollationSpecialPrimaries<'static>> for &collator_serde::CollationS
     type Error = DataError;
 
     fn try_into(self) -> Result<CollationSpecialPrimaries<'static>, Self::Error> {
+        // Note, at least for icu4x/2025-05-01/77.x, both `implicithan` and `unihan` have the same `compressible_bytes`.
+        let compressible_bytes = self.compressible_bytes.as_deref().unwrap_or(&[
+            false, false, false, false, false, false, false, false, false, false, false, false,
+            false, false, false, false, false, false, false, false, false, false, false, false,
+            false, false, false, false, false, false, false, false, false, false, false, false,
+            false, false, false, false, false, false, false, false, false, false, false, false,
+            false, false, false, false, false, false, false, false, false, false, false, false,
+            false, false, false, false, false, false, false, false, false, false, false, false,
+            false, false, false, false, false, false, false, false, false, false, false, false,
+            false, false, false, false, false, false, false, false, false, false, false, false,
+            false, true, true, true, true, true, true, true, true, true, true, true, true, true,
+            true, true, true, true, true, true, true, true, true, true, true, true, true, true,
+            true, true, true, true, true, false, false, false, false, false, false, false, false,
+            false, false, false, false, false, false, false, false, false, false, false, false,
+            false, false, false, false, false, false, false, false, false, false, false, false,
+            false, false, false, false, false, false, false, false, false, false, false, false,
+            false, false, false, false, false, false, false, false, false, false, false, false,
+            false, false, false, false, false, false, false, false, false, false, false, false,
+            false, false, false, false, false, false, false, false, false, false, false, false,
+            false, false, false, false, false, false, false, false, false, false, false, false,
+            false, false, false, false, false, false, false, false, false, false, false, false,
+            false, false, false, false, false, false, false, false, false, false, false, false,
+            false, false, false, false, false, false, false, false, false, true, false,
+        ]);
+
+        assert_eq!(compressible_bytes.len(), 256);
+
+        let mut packed_compressible_bytes = [0u16; 16];
+        for (i, &is_compressible) in compressible_bytes.iter().enumerate() {
+            if is_compressible {
+                let arr_index = i >> 4;
+                let mask = 1 << (i & 0b1111);
+                packed_compressible_bytes[arr_index] |= mask;
+            }
+        }
+
         Ok(CollationSpecialPrimaries {
-            last_primaries: ZeroVec::alloc_from_slice(&self.last_primaries),
+            last_primaries: self
+                .last_primaries
+                .iter()
+                .copied()
+                .chain(packed_compressible_bytes)
+                .collect(),
             numeric_primary: self.numeric_primary,
         })
     }

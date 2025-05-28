@@ -35,9 +35,10 @@ use crate::provider::CollationMetadataV1;
 use crate::provider::CollationReordering;
 use crate::provider::CollationReorderingV1;
 use crate::provider::CollationRootV1;
-use crate::provider::CollationSpecialPrimaries;
 use crate::provider::CollationSpecialPrimariesV1;
+use crate::provider::CollationSpecialPrimariesValidated;
 use crate::provider::CollationTailoringV1;
+use core::array;
 use core::cmp::Ordering;
 use core::convert::TryFrom;
 use icu_normalizer::provider::DecompositionData;
@@ -45,6 +46,7 @@ use icu_normalizer::provider::DecompositionTables;
 use icu_normalizer::provider::NormalizerNfdDataV1;
 use icu_normalizer::provider::NormalizerNfdTablesV1;
 use icu_normalizer::Decomposition;
+use icu_provider::marker::ErasedMarker;
 use icu_provider::prelude::*;
 use smallvec::SmallVec;
 use utf16_iter::Utf16CharsEx;
@@ -379,7 +381,7 @@ impl LocaleSpecificDataHolder {
 /// Compares strings according to culturally-relevant ordering.
 #[derive(Debug)]
 pub struct Collator {
-    special_primaries: Option<DataPayload<CollationSpecialPrimariesV1>>,
+    special_primaries: DataPayload<ErasedMarker<CollationSpecialPrimariesValidated<'static>>>,
     root: DataPayload<CollationRootV1>,
     tailoring: Option<DataPayload<CollationTailoringV1>>,
     jamo: DataPayload<CollationJamoV1>,
@@ -395,7 +397,7 @@ impl Collator {
     /// Constructs a borrowed version of this type for more efficient querying.
     pub fn as_borrowed(&self) -> CollatorBorrowed {
         CollatorBorrowed {
-            special_primaries: self.special_primaries.as_ref().map(|s| s.get()),
+            special_primaries: self.special_primaries.get(),
             root: self.root.get(),
             tailoring: self.tailoring.as_ref().map(|s| s.get()),
             jamo: self.jamo.get(),
@@ -451,7 +453,7 @@ impl Collator {
             provider.load(Default::default())?.payload,
             provider.load(Default::default())?.payload,
             provider.load(Default::default())?.payload,
-            || provider.load(Default::default()).map(|r| r.payload),
+            provider.load(Default::default())?.payload,
             prefs,
             options,
         )
@@ -464,7 +466,7 @@ impl Collator {
         decompositions: DataPayload<NormalizerNfdDataV1>,
         tables: DataPayload<NormalizerNfdTablesV1>,
         jamo: DataPayload<CollationJamoV1>,
-        special_primaries: impl FnOnce() -> Result<DataPayload<CollationSpecialPrimariesV1>, DataError>,
+        special_primaries: DataPayload<CollationSpecialPrimariesV1>,
         prefs: CollatorPreferences,
         options: CollatorOptions,
     ) -> Result<Self, DataError>
@@ -484,22 +486,40 @@ impl Collator {
             return Err(DataError::custom("invalid").with_marker(CollationJamoV1::INFO));
         }
 
-        let special_primaries = if locale_dependent.merged_options.alternate_handling()
-            == AlternateHandling::Shifted
-            || locale_dependent.merged_options.numeric()
-        {
-            let special_primaries = special_primaries()?;
-            // `variant_count` isn't stable yet:
-            // https://github.com/rust-lang/rust/issues/73662
-            if special_primaries.get().last_primaries.len() <= (MaxVariable::Currency as usize) {
-                return Err(
-                    DataError::custom("invalid").with_marker(CollationSpecialPrimariesV1::INFO)
-                );
+        // `variant_count` isn't stable yet:
+        // https://github.com/rust-lang/rust/issues/73662
+        if special_primaries.get().last_primaries.len() <= (MaxVariable::Currency as usize) {
+            return Err(DataError::custom("invalid").with_marker(CollationSpecialPrimariesV1::INFO));
+        }
+        let special_primaries = special_primaries.map_project(|csp, _| {
+            if csp.last_primaries.len()
+                == (MaxVariable::Currency as usize)
+                    + core::mem::size_of_val(
+                        &CollationSpecialPrimariesValidated::HARDCODED_FALLBACK.compressible_bytes,
+                    ) / core::mem::size_of::<u16>()
+            {
+                CollationSpecialPrimariesValidated {
+                    compressible_bytes: array::from_fn(|i| {
+                        #[allow(clippy::unwrap_used)] // protected by the if
+                        {
+                            csp.last_primaries
+                                .get((MaxVariable::Currency as usize) + i)
+                                .unwrap()
+                        }
+                    }),
+                    last_primaries: csp.last_primaries.truncated(MaxVariable::Currency as usize),
+                    numeric_primary: csp.numeric_primary,
+                }
+            } else {
+                // Data without compressible bytes, add hardcoded data
+                CollationSpecialPrimariesValidated {
+                    last_primaries: csp.last_primaries,
+                    compressible_bytes: CollationSpecialPrimariesValidated::HARDCODED_FALLBACK
+                        .compressible_bytes,
+                    numeric_primary: csp.numeric_primary,
+                }
             }
-            Some(special_primaries)
-        } else {
-            None
-        };
+        });
 
         Ok(Collator {
             special_primaries,
@@ -543,7 +563,7 @@ macro_rules! compare {
 /// borrowed version.
 #[derive(Debug)]
 pub struct CollatorBorrowed<'a> {
-    special_primaries: Option<&'a CollationSpecialPrimaries<'a>>,
+    special_primaries: &'a CollationSpecialPrimariesValidated<'a>,
     root: &'a CollationData<'a>,
     tailoring: Option<&'a CollationData<'a>>,
     jamo: &'a CollationJamo<'a>,
@@ -579,23 +599,26 @@ impl CollatorBorrowed<'static> {
             return Err(DataError::custom("invalid").with_marker(CollationJamoV1::INFO));
         }
 
-        let special_primaries = if locale_dependent.merged_options.alternate_handling()
-            == AlternateHandling::Shifted
-            || locale_dependent.merged_options.numeric()
+        let special_primaries = crate::provider::Baked::SINGLETON_COLLATION_SPECIAL_PRIMARIES_V1;
+        // `variant_count` isn't stable yet:
+        // https://github.com/rust-lang/rust/issues/73662
+        if special_primaries.last_primaries.len() <= (MaxVariable::Currency as usize) {
+            return Err(DataError::custom("invalid").with_marker(CollationSpecialPrimariesV1::INFO));
+        } else if CollationSpecialPrimariesValidated::HARDCODED_FALLBACK.numeric_primary
+            != special_primaries.numeric_primary
+            || CollationSpecialPrimariesValidated::HARDCODED_FALLBACK
+                .last_primaries
+                .iter()
+                .zip(special_primaries.last_primaries.iter())
+                .any(|(a, b)| a != b)
         {
-            let special_primaries =
-                crate::provider::Baked::SINGLETON_COLLATION_SPECIAL_PRIMARIES_V1;
-            // `variant_count` isn't stable yet:
-            // https://github.com/rust-lang/rust/issues/73662
-            if special_primaries.last_primaries.len() <= (MaxVariable::Currency as usize) {
-                return Err(
-                    DataError::custom("invalid").with_marker(CollationSpecialPrimariesV1::INFO)
-                );
-            }
-            Some(special_primaries)
-        } else {
-            None
-        };
+            // Baked data without compressible bits, but not matching hardcoded data
+            return Err(
+                DataError::custom("cannot fall back to hardcoded compressible data")
+                    .with_marker(CollationSpecialPrimariesV1::INFO),
+            );
+        }
+        let special_primaries = CollationSpecialPrimariesValidated::HARDCODED_FALLBACK;
 
         // Attribute belongs closer to `unwrap`, but
         // https://github.com/rust-lang/rust/issues/15701
@@ -623,12 +646,7 @@ impl CollatorBorrowed<'static> {
     /// compile-time optimizations that are possible with [`CollatorBorrowed`].
     pub const fn static_to_owned(self) -> Collator {
         Collator {
-            special_primaries: if let Some(s) = self.special_primaries {
-                // `map` not available in const context
-                Some(DataPayload::from_static_ref(s))
-            } else {
-                None
-            },
+            special_primaries: DataPayload::from_static_ref(self.special_primaries),
             root: DataPayload::from_static_ref(self.root),
             tailoring: if let Some(s) = self.tailoring {
                 // `map` not available in const context
@@ -751,10 +769,6 @@ impl CollatorBorrowed<'_> {
         } else {
             // +1 so that we can use "<" and primary ignorables test out early.
             self.special_primaries
-                .as_ref()
-                // `unwrap()` is OK, because we've ensured in the constructor that value
-                // is `Some` if we have alternate handling.
-                .unwrap()
                 .last_primary_for_group(self.options.max_variable())
                 + 1
         };
@@ -763,13 +777,7 @@ impl CollatorBorrowed<'_> {
         // https://github.com/rust-lang/rust/issues/15701
         #[allow(clippy::unwrap_used)]
         let numeric_primary = if self.options.numeric() {
-            Some(
-                self.special_primaries
-                    .as_ref()
-                    // `unwrap` is OK, because we've ensured `Some` in the constructor
-                    .unwrap()
-                    .numeric_primary,
-            )
+            Some(self.special_primaries.numeric_primary)
         } else {
             None
         };

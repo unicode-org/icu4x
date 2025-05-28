@@ -521,7 +521,26 @@ impl CollationMetadata {
     }
 }
 
-/// Special primaries associated with the root collation
+/// Root-associated additional data that doesn't change in tailorings
+///
+/// These are the fields that logically belong to the root data but
+/// don't belong to the tailoring data and that are on this separate
+/// struct, since we have the same struct for a tailoring and the
+/// bulk of the root.
+///
+/// As a practical matter, this struct happens to only carry
+/// information about what concrete numeric values for primary
+/// weights are special in particular ways. In principle, when the
+/// root data is built, the root builder is allowed to assign the
+/// numeric values as it sees fit, which is why these aren't
+/// hard-coded.
+///
+/// Note: In 2.0.0 and prior, this struct was loaded only if
+/// it was known at collator construction time (based on options)
+/// that the data here was going to be needed. With the introduction
+/// of collation keys and the decision not to introduce a collator
+/// key generator object separate from the collator, this struct
+/// is now always loaded.
 ///
 /// <div class="stab unstable">
 /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
@@ -537,10 +556,60 @@ pub struct CollationSpecialPrimaries<'data> {
     /// character classes packed so that each fits in
     /// 16 bits. Length must match the number of enum
     /// variants in `MaxVariable`, currently 4.
+    ///
+    /// This is potentially followed by 256 bits
+    /// (packed in 16 u16s) to classify every possible
+    /// byte into compressible or non-compressible.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub last_primaries: ZeroVec<'data, u16>,
     /// The high 8 bits of the numeric primary
     pub numeric_primary: u8,
+}
+
+#[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
+pub(crate) struct CollationSpecialPrimariesValidated<'data> {
+    /// The primaries corresponding to `MaxVariable`
+    /// character classes packed so that each fits in
+    /// 16 bits. Length must match the number of enum
+    /// variants in `MaxVariable`, currently 4.
+    pub last_primaries: ZeroVec<'data, u16>,
+    /// The high 8 bits of the numeric primary
+    pub numeric_primary: u8,
+    /// 256 bits (packed in 16 u16s) to classify every possible
+    /// byte into compressible or non-compressible.
+    pub compressible_bytes: [u16; 16],
+}
+
+impl CollationSpecialPrimariesValidated<'static> {
+    pub(crate) const HARDCODED_FALLBACK: &Self = &Self {
+        last_primaries: zerovec::zerovec!(u16; <u16 as AsULE>::ULE::from_aligned; [
+          // Last primaries
+          1286,
+          3072,
+          3488,
+          3840,
+        ]),
+        numeric_primary: 16u8,
+        compressible_bytes: [
+            // Compressible bytes
+            0b0000_0000_0000_0000,
+            0b0000_0000_0000_0000,
+            0b0000_0000_0000_0000,
+            0b0000_0000_0000_0000,
+            0b0000_0000_0000_0000,
+            0b0000_0000_0000_0000,
+            0b1111_1111_1111_1110,
+            0b1111_1111_1111_1111,
+            0b0000_0000_0000_0001,
+            0b0000_0000_0000_0000,
+            0b0000_0000_0000_0000,
+            0b0000_0000_0000_0000,
+            0b0000_0000_0000_0000,
+            0b0000_0000_0000_0000,
+            0b0000_0000_0000_0000,
+            0b0100_0000_0000_0000,
+        ],
+    };
 }
 
 icu_provider::data_struct!(
@@ -548,7 +617,7 @@ icu_provider::data_struct!(
     #[cfg(feature = "datagen")]
 );
 
-impl CollationSpecialPrimaries<'_> {
+impl CollationSpecialPrimariesValidated<'_> {
     #[allow(clippy::unwrap_used)]
     pub(crate) fn last_primary_for_group(&self, max_variable: MaxVariable) -> u32 {
         // `unwrap` is OK, because `Collator::try_new` validates the length.
@@ -556,5 +625,16 @@ impl CollationSpecialPrimaries<'_> {
         // Minus one to generate the right lower 16 bits from the high 16 bits.
         // See parse.cpp in genrb and getLastPrimaryForGroup in ICU4C.
         (u32::from(self.last_primaries.get(max_variable as usize).unwrap()) << 16) - 1
+    }
+
+    #[allow(dead_code)]
+    pub(crate) fn is_compressible(&self, b: u8) -> bool {
+        // Indexing slicing OK by construction and pasting this
+        // into Compiler Explorer shows that the panic
+        // is optimized away.
+        #[allow(clippy::indexing_slicing)]
+        let field = self.compressible_bytes[usize::from(b >> 4)];
+        let mask = 1 << (b & 0b1111);
+        (field & mask) != 0
     }
 }
