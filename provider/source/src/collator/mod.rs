@@ -302,7 +302,7 @@ impl TryInto<CollationSpecialPrimaries<'static>> for &collator_serde::CollationS
         for (i, &is_compressible) in compressible_bytes.iter().enumerate() {
             if is_compressible {
                 let arr_index = i >> 4;
-                let mask = 1 << (i & 15);
+                let mask = 1 << (i & 0b1111);
                 packed_compressible_bytes[arr_index] |= mask;
             }
         }
