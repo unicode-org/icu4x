@@ -276,11 +276,6 @@ jobs:
     - name: Show the selected Rust toolchain
       run: rustup show
 
-    # Job-specific dependencies
-    # TODO: Remove on 2025-05-05, when clang-19 is in ubuntu-latest (https://github.com/actions/runner-images/issues/11895)
-    - name: Install LLD and Clang
-      run: sudo apt-get install lld-19 clang-19
-
     # Actual job
     - name: Run `cargo make ci-job-test-c`
       run: cargo make ci-job-test-c
@@ -310,11 +305,6 @@ jobs:
       run: cargo make set-ci-toolchain
     - name: Show the selected Rust toolchain
       run: rustup show
-
-    # Job-specific dependencies
-    # TODO: Remove on 2025-05-05, when clang-19 is in ubuntu-latest (https://github.com/actions/runner-images/issues/11895)
-    - name: Install LLD
-      run: sudo apt-get install lld-19
 
     # Actual job
     - name: Run `cargo make ci-job-test-js`
