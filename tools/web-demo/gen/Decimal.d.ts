@@ -1,8 +1,8 @@
 import { Decimal } from "icu4x"
-export function digitAt(selfF: number, magnitude: number);
-export function magnitudeStart(selfF: number);
-export function magnitudeEnd(selfF: number);
-export function nonzeroMagnitudeStart(selfF: number);
-export function nonzeroMagnitudeEnd(selfF: number);
-export function isZero(selfF: number);
-export function sign(selfF: number);
+export function digitAt(selfV: string, magnitude: number);
+export function magnitudeStart(selfV: string);
+export function magnitudeEnd(selfV: string);
+export function nonzeroMagnitudeStart(selfV: string);
+export function nonzeroMagnitudeEnd(selfV: string);
+export function isZero(selfV: string);
+export function sign(selfV: string);

@@ -159,7 +159,6 @@ pub mod ffi {
         #[diplomat::rust_link(fixed_decimal::DoublePrecision, Enum, hidden)]
         #[diplomat::attr(js, rename = "from_number_with_round_trip_precision")]
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor)]
-        #[diplomat::demo(default_constructor)]
         pub fn from_double_with_round_trip_precision(
             f: f64,
         ) -> Result<Box<Decimal>, DecimalLimitError> {
@@ -174,6 +173,7 @@ pub mod ffi {
         #[diplomat::rust_link(fixed_decimal::Decimal::try_from_utf8, FnInTypedef, hidden)]
         #[diplomat::rust_link(fixed_decimal::Decimal::from_str, FnInTypedef, hidden)]
         #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor)]
+        #[diplomat::demo(default_constructor)]
         pub fn from_string(v: &DiplomatStr) -> Result<Box<Decimal>, DecimalParseError> {
             Ok(Box::new(Decimal(fixed_decimal::Decimal::try_from_utf8(v)?)))
         }
