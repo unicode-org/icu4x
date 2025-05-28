@@ -8,7 +8,7 @@ part of 'lib.g.dart';
 /// Currently the only reachable error here is a missing time zone variant. If you encounter
 /// that error, you need to call `with_variant` or `infer_variant` on your `TimeZoneInfo`.
 ///
-/// Additional information: [1](https://docs.rs/icu/latest/icu/datetime/unchecked/enum.FormattedDateTimeUncheckedError.html)
+/// Additional information: [1](https://docs.rs/icu/2.0.0/icu/datetime/unchecked/enum.FormattedDateTimeUncheckedError.html)
 enum DateTimeWriteError {
 
   unknown,

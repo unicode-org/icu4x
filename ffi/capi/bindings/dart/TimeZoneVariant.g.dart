@@ -9,23 +9,21 @@ enum TimeZoneVariant {
 
   daylight;
 
-  /// Sets the `variant` field to "daylight" time.
+  /// See the [Rust documentation for `from_rearguard_isdst`](https://docs.rs/icu/2.0.0/icu/time/zone/enum.TimeZoneVariant.html#method.from_rearguard_isdst) for more information.
   ///
-  /// See the [Rust documentation for `from_rearguard_isdst`](https://docs.rs/icu/latest/icu/time/zone/enum.TimeZoneVariant.html#method.from_rearguard_isdst) for more information.
+  /// See the [Rust documentation for `with_variant`](https://docs.rs/icu/2.0.0/icu/time/struct.TimeZoneInfo.html#method.with_variant) for more information.
   ///
-  /// See the [Rust documentation for `with_variant`](https://docs.rs/icu/latest/icu/time/struct.TimeZoneInfo.html#method.with_variant) for more information.
-  ///
-  /// Additional information: [1](https://docs.rs/icu/latest/icu/time/zone/enum.TimeZoneVariant.html)
-  TimeZoneVariant fromRearguardIsdst(bool isdst) {
-    final result = _icu4x_TimeZoneVariant_from_rearguard_isdst_mv1(index, isdst);
+  /// Additional information: [1](https://docs.rs/icu/2.0.0/icu/time/zone/enum.TimeZoneVariant.html)
+  static TimeZoneVariant fromRearguardIsdst(bool isdst) {
+    final result = _icu4x_TimeZoneVariant_from_rearguard_isdst_mv1(isdst);
     return TimeZoneVariant.values[result];
   }
 
 }
 
 @_DiplomatFfiUse('icu4x_TimeZoneVariant_from_rearguard_isdst_mv1')
-@ffi.Native<ffi.Int32 Function(ffi.Int32, ffi.Bool)>(isLeaf: true, symbol: 'icu4x_TimeZoneVariant_from_rearguard_isdst_mv1')
+@ffi.Native<ffi.Int32 Function(ffi.Bool)>(isLeaf: true, symbol: 'icu4x_TimeZoneVariant_from_rearguard_isdst_mv1')
 // ignore: non_constant_identifier_names
-external int _icu4x_TimeZoneVariant_from_rearguard_isdst_mv1(int self, bool isdst);
+external int _icu4x_TimeZoneVariant_from_rearguard_isdst_mv1(bool isdst);
 
 // dart format on

@@ -2,17 +2,18 @@
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
+
 /**
- * See the [Rust documentation for `LineBreakStrictness`](https://docs.rs/icu/latest/icu/segmenter/options/enum.LineBreakStrictness.html) for more information.
+ * See the [Rust documentation for `LineBreakStrictness`](https://docs.rs/icu/2.0.0/icu/segmenter/options/enum.LineBreakStrictness.html) for more information.
  */
-
-
 export class LineBreakStrictness {
 
+    /** @internal */
     static fromValue(value: LineBreakStrictness | string): LineBreakStrictness;
 
     get value(): string;
 
+    /** @internal */
     get ffiValue(): number;
 
     static Loose : LineBreakStrictness;

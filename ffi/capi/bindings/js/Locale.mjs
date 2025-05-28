@@ -3,16 +3,15 @@ import { LocaleParseError } from "./LocaleParseError.mjs"
 import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
-
-/**
- * An ICU4X Locale, capable of representing strings like `"en-US"`.
- *
- * See the [Rust documentation for `Locale`](https://docs.rs/icu/latest/icu/locale/struct.Locale.html) for more information.
- */
 const Locale_box_destroy_registry = new FinalizationRegistry((ptr) => {
     wasm.icu4x_Locale_destroy_mv1(ptr);
 });
 
+/**
+ * An ICU4X Locale, capable of representing strings like `"en-US"`.
+ *
+ * See the [Rust documentation for `Locale`](https://docs.rs/icu/2.0.0/icu/locale/struct.Locale.html) for more information.
+ */
 export class Locale {
     // Internal ptr reference:
     #ptr = null;
@@ -36,19 +35,20 @@ export class Locale {
 
         return this;
     }
+    /** @internal */
     get ffiValue() {
         return this.#ptr;
     }
 
 
     /**
-     * Construct an [`Locale`] from an locale identifier.
+     * Construct an {@link Locale} from an locale identifier.
      *
      * This will run the complete locale parsing algorithm. If code size and
      * performance are critical and the locale is of a known shape (such as
      * `aa-BB`) use `create_und`, `set_language`, `set_script`, and `set_region`.
      *
-     * See the [Rust documentation for `try_from_str`](https://docs.rs/icu/latest/icu/locale/struct.Locale.html#method.try_from_str) for more information.
+     * See the [Rust documentation for `try_from_str`](https://docs.rs/icu/2.0.0/icu/locale/struct.Locale.html#method.try_from_str) for more information.
      */
     static fromString(name) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
@@ -62,7 +62,7 @@ export class Locale {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new LocaleParseError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
-                throw new globalThis.Error('LocaleParseError: ' + cause.value, { cause });
+                throw new globalThis.Error('LocaleParseError.' + cause.value, { cause });
             }
             return new Locale(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -75,9 +75,9 @@ export class Locale {
     }
 
     /**
-     * Construct a unknown [`Locale`] "und".
+     * Construct a unknown {@link Locale} "und".
      *
-     * See the [Rust documentation for `UNKNOWN`](https://docs.rs/icu/latest/icu/locale/struct.Locale.html#associatedconstant.UNKNOWN) for more information.
+     * See the [Rust documentation for `UNKNOWN`](https://docs.rs/icu/2.0.0/icu/locale/struct.Locale.html#associatedconstant.UNKNOWN) for more information.
      */
     static unknown() {
 
@@ -92,9 +92,9 @@ export class Locale {
     }
 
     /**
-     * Clones the [`Locale`].
+     * Clones the {@link Locale}.
      *
-     * See the [Rust documentation for `Locale`](https://docs.rs/icu/latest/icu/locale/struct.Locale.html) for more information.
+     * See the [Rust documentation for `Locale`](https://docs.rs/icu/2.0.0/icu/locale/struct.Locale.html) for more information.
      */
     clone() {
 
@@ -110,9 +110,9 @@ export class Locale {
 
     /**
      * Returns a string representation of the `LanguageIdentifier` part of
-     * [`Locale`].
+     * {@link Locale}.
      *
-     * See the [Rust documentation for `id`](https://docs.rs/icu/latest/icu/locale/struct.Locale.html#structfield.id) for more information.
+     * See the [Rust documentation for `id`](https://docs.rs/icu/2.0.0/icu/locale/struct.Locale.html#structfield.id) for more information.
      */
     get basename() {
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
@@ -131,7 +131,7 @@ export class Locale {
     /**
      * Returns a string representation of the unicode extension.
      *
-     * See the [Rust documentation for `extensions`](https://docs.rs/icu/latest/icu/locale/struct.Locale.html#structfield.extensions) for more information.
+     * See the [Rust documentation for `extensions`](https://docs.rs/icu/2.0.0/icu/locale/struct.Locale.html#structfield.extensions) for more information.
      */
     getUnicodeExtension(s) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
@@ -154,9 +154,32 @@ export class Locale {
     }
 
     /**
-     * Returns a string representation of [`Locale`] language.
+     * Set a Unicode extension.
      *
-     * See the [Rust documentation for `id`](https://docs.rs/icu/latest/icu/locale/struct.Locale.html#structfield.id) for more information.
+     * See the [Rust documentation for `extensions`](https://docs.rs/icu/2.0.0/icu/locale/struct.Locale.html#structfield.extensions) for more information.
+     */
+    setUnicodeExtension(k, v) {
+        let functionCleanupArena = new diplomatRuntime.CleanupArena();
+
+        const kSlice = diplomatRuntime.DiplomatBuf.str8(wasm, k);
+        const vSlice = diplomatRuntime.DiplomatBuf.str8(wasm, v);
+
+        const result = wasm.icu4x_Locale_set_unicode_extension_mv1(this.ffiValue, ...kSlice.splat(), ...vSlice.splat());
+
+        try {
+            return result === 1;
+        }
+
+        finally {
+            functionCleanupArena.free();
+
+        }
+    }
+
+    /**
+     * Returns a string representation of {@link Locale} language.
+     *
+     * See the [Rust documentation for `id`](https://docs.rs/icu/2.0.0/icu/locale/struct.Locale.html#structfield.id) for more information.
      */
     get language() {
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
@@ -173,9 +196,9 @@ export class Locale {
     }
 
     /**
-     * Set the language part of the [`Locale`].
+     * Set the language part of the {@link Locale}.
      *
-     * See the [Rust documentation for `try_from_str`](https://docs.rs/icu/latest/icu/locale/struct.Locale.html#method.try_from_str) for more information.
+     * See the [Rust documentation for `try_from_str`](https://docs.rs/icu/2.0.0/icu/locale/struct.Locale.html#method.try_from_str) for more information.
      */
     set language(s) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
@@ -189,7 +212,7 @@ export class Locale {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new LocaleParseError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
-                throw new globalThis.Error('LocaleParseError: ' + cause.value, { cause });
+                throw new globalThis.Error('LocaleParseError.' + cause.value, { cause });
             }
         }
 
@@ -201,9 +224,9 @@ export class Locale {
     }
 
     /**
-     * Returns a string representation of [`Locale`] region.
+     * Returns a string representation of {@link Locale} region.
      *
-     * See the [Rust documentation for `id`](https://docs.rs/icu/latest/icu/locale/struct.Locale.html#structfield.id) for more information.
+     * See the [Rust documentation for `id`](https://docs.rs/icu/2.0.0/icu/locale/struct.Locale.html#structfield.id) for more information.
      */
     get region() {
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
@@ -221,9 +244,9 @@ export class Locale {
     }
 
     /**
-     * Set the region part of the [`Locale`].
+     * Set the region part of the {@link Locale}.
      *
-     * See the [Rust documentation for `try_from_str`](https://docs.rs/icu/latest/icu/locale/struct.Locale.html#method.try_from_str) for more information.
+     * See the [Rust documentation for `try_from_str`](https://docs.rs/icu/2.0.0/icu/locale/struct.Locale.html#method.try_from_str) for more information.
      */
     set region(s) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
@@ -237,7 +260,7 @@ export class Locale {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new LocaleParseError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
-                throw new globalThis.Error('LocaleParseError: ' + cause.value, { cause });
+                throw new globalThis.Error('LocaleParseError.' + cause.value, { cause });
             }
         }
 
@@ -249,9 +272,9 @@ export class Locale {
     }
 
     /**
-     * Returns a string representation of [`Locale`] script.
+     * Returns a string representation of {@link Locale} script.
      *
-     * See the [Rust documentation for `id`](https://docs.rs/icu/latest/icu/locale/struct.Locale.html#structfield.id) for more information.
+     * See the [Rust documentation for `id`](https://docs.rs/icu/2.0.0/icu/locale/struct.Locale.html#structfield.id) for more information.
      */
     get script() {
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
@@ -269,9 +292,9 @@ export class Locale {
     }
 
     /**
-     * Set the script part of the [`Locale`]. Pass an empty string to remove the script.
+     * Set the script part of the {@link Locale}. Pass an empty string to remove the script.
      *
-     * See the [Rust documentation for `try_from_str`](https://docs.rs/icu/latest/icu/locale/struct.Locale.html#method.try_from_str) for more information.
+     * See the [Rust documentation for `try_from_str`](https://docs.rs/icu/2.0.0/icu/locale/struct.Locale.html#method.try_from_str) for more information.
      */
     set script(s) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
@@ -285,7 +308,7 @@ export class Locale {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new LocaleParseError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
-                throw new globalThis.Error('LocaleParseError: ' + cause.value, { cause });
+                throw new globalThis.Error('LocaleParseError.' + cause.value, { cause });
             }
         }
 
@@ -299,7 +322,7 @@ export class Locale {
     /**
      * Normalizes a locale string.
      *
-     * See the [Rust documentation for `normalize`](https://docs.rs/icu/latest/icu/locale/struct.Locale.html#method.normalize) for more information.
+     * See the [Rust documentation for `normalize`](https://docs.rs/icu/2.0.0/icu/locale/struct.Locale.html#method.normalize) for more information.
      */
     static normalize(s) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
@@ -315,7 +338,7 @@ export class Locale {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new LocaleParseError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
-                throw new globalThis.Error('LocaleParseError: ' + cause.value, { cause });
+                throw new globalThis.Error('LocaleParseError.' + cause.value, { cause });
             }
             return write.readString8();
         }
@@ -329,9 +352,9 @@ export class Locale {
     }
 
     /**
-     * Returns a string representation of [`Locale`].
+     * Returns a string representation of {@link Locale}.
      *
-     * See the [Rust documentation for `write_to`](https://docs.rs/icu/latest/icu/locale/struct.Locale.html#method.write_to) for more information.
+     * See the [Rust documentation for `write_to`](https://docs.rs/icu/2.0.0/icu/locale/struct.Locale.html#method.write_to) for more information.
      */
     toString() {
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
@@ -348,7 +371,7 @@ export class Locale {
     }
 
     /**
-     * See the [Rust documentation for `normalizing_eq`](https://docs.rs/icu/latest/icu/locale/struct.Locale.html#method.normalizing_eq) for more information.
+     * See the [Rust documentation for `normalizing_eq`](https://docs.rs/icu/2.0.0/icu/locale/struct.Locale.html#method.normalizing_eq) for more information.
      */
     normalizingEq(other) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
@@ -368,7 +391,7 @@ export class Locale {
     }
 
     /**
-     * See the [Rust documentation for `strict_cmp`](https://docs.rs/icu/latest/icu/locale/struct.Locale.html#method.strict_cmp) for more information.
+     * See the [Rust documentation for `strict_cmp`](https://docs.rs/icu/2.0.0/icu/locale/struct.Locale.html#method.strict_cmp) for more information.
      */
     compareToString(other) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
@@ -388,7 +411,7 @@ export class Locale {
     }
 
     /**
-     * See the [Rust documentation for `total_cmp`](https://docs.rs/icu/latest/icu/locale/struct.Locale.html#method.total_cmp) for more information.
+     * See the [Rust documentation for `total_cmp`](https://docs.rs/icu/2.0.0/icu/locale/struct.Locale.html#method.total_cmp) for more information.
      */
     compareTo(other) {
 

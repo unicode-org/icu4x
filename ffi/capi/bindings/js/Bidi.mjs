@@ -6,16 +6,15 @@ import { ReorderedIndexMap } from "./ReorderedIndexMap.mjs"
 import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
-
-/**
- * An ICU4X Bidi object, containing loaded bidi data
- *
- * See the [Rust documentation for `BidiClass`](https://docs.rs/icu/latest/icu/properties/props/struct.BidiClass.html) for more information.
- */
 const Bidi_box_destroy_registry = new FinalizationRegistry((ptr) => {
     wasm.icu4x_Bidi_destroy_mv1(ptr);
 });
 
+/**
+ * An ICU4X Bidi object, containing loaded bidi data
+ *
+ * See the [Rust documentation for `BidiClass`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.BidiClass.html) for more information.
+ */
 export class Bidi {
     // Internal ptr reference:
     #ptr = null;
@@ -39,13 +38,14 @@ export class Bidi {
 
         return this;
     }
+    /** @internal */
     get ffiValue() {
         return this.#ptr;
     }
 
 
     /**
-     * Creates a new [`Bidi`] from locale data using compiled data.
+     * Creates a new {@link Bidi} from locale data using compiled data.
      */
     #defaultConstructor() {
 
@@ -60,7 +60,7 @@ export class Bidi {
     }
 
     /**
-     * Creates a new [`Bidi`] from locale data, and a particular data source.
+     * Creates a new {@link Bidi} from locale data, and a particular data source.
      */
     static createWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
@@ -71,7 +71,7 @@ export class Bidi {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
-                throw new globalThis.Error('DataError: ' + cause.value, { cause });
+                throw new globalThis.Error('DataError.' + cause.value, { cause });
             }
             return new Bidi(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -86,7 +86,7 @@ export class Bidi {
      *
      * Takes in a Level for the default level, if it is an invalid value it will default to LTR
      *
-     * See the [Rust documentation for `new_with_data_source`](https://docs.rs/unicode_bidi/latest/unicode_bidi/struct.BidiInfo.html#method.new_with_data_source) for more information.
+     * See the [Rust documentation for `new_with_data_source`](https://docs.rs/unicode_bidi/0.3.11/unicode_bidi/struct.BidiInfo.html#method.new_with_data_source) for more information.
      */
     forText(text, defaultLevel) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
@@ -121,7 +121,7 @@ export class Bidi {
      * Failure to follow this invariant may lead to incorrect results,
      * but is still safe.
      *
-     * See the [Rust documentation for `reorder_visual`](https://docs.rs/unicode_bidi/latest/unicode_bidi/struct.BidiInfo.html#method.reorder_visual) for more information.
+     * See the [Rust documentation for `reorder_visual`](https://docs.rs/unicode_bidi/0.3.11/unicode_bidi/struct.BidiInfo.html#method.reorder_visual) for more information.
      */
     reorderVisual(levels) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
@@ -145,7 +145,7 @@ export class Bidi {
      *
      * Invalid levels (numbers greater than 125) will be assumed LTR
      *
-     * See the [Rust documentation for `is_rtl`](https://docs.rs/unicode_bidi/latest/unicode_bidi/struct.Level.html#method.is_rtl) for more information.
+     * See the [Rust documentation for `is_rtl`](https://docs.rs/unicode_bidi/0.3.11/unicode_bidi/level/struct.Level.html#method.is_rtl) for more information.
      */
     static levelIsRtl(level) {
 
@@ -164,7 +164,7 @@ export class Bidi {
      *
      * Invalid levels (numbers greater than 125) will be assumed LTR
      *
-     * See the [Rust documentation for `is_ltr`](https://docs.rs/unicode_bidi/latest/unicode_bidi/struct.Level.html#method.is_ltr) for more information.
+     * See the [Rust documentation for `is_ltr`](https://docs.rs/unicode_bidi/0.3.11/unicode_bidi/level/struct.Level.html#method.is_ltr) for more information.
      */
     static levelIsLtr(level) {
 
@@ -181,7 +181,7 @@ export class Bidi {
     /**
      * Get a basic RTL Level value
      *
-     * See the [Rust documentation for `rtl`](https://docs.rs/unicode_bidi/latest/unicode_bidi/struct.Level.html#method.rtl) for more information.
+     * See the [Rust documentation for `rtl`](https://docs.rs/unicode_bidi/0.3.11/unicode_bidi/level/struct.Level.html#method.rtl) for more information.
      */
     static levelRtl() {
 
@@ -198,7 +198,7 @@ export class Bidi {
     /**
      * Get a simple LTR Level value
      *
-     * See the [Rust documentation for `ltr`](https://docs.rs/unicode_bidi/latest/unicode_bidi/struct.Level.html#method.ltr) for more information.
+     * See the [Rust documentation for `ltr`](https://docs.rs/unicode_bidi/0.3.11/unicode_bidi/level/struct.Level.html#method.ltr) for more information.
      */
     static levelLtr() {
 
@@ -212,6 +212,9 @@ export class Bidi {
         }
     }
 
+    /**
+     * Creates a new {@link Bidi} from locale data using compiled data.
+     */
     constructor() {
         if (arguments[0] === diplomatRuntime.exposeConstructor) {
             return this.#internalConstructor(...Array.prototype.slice.call(arguments, 1));

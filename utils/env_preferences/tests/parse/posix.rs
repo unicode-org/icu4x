@@ -15,85 +15,38 @@ fn expect_success(src: &str, expected: &str) {
 
 #[test]
 fn default_locale() {
-    expect_success("C", "und-posix");
-    expect_success("POSIX", "und-posix");
+    expect_success("C", "en-US-posix");
+    expect_success("POSIX", "en-US-posix");
 }
 
 #[test]
 fn region() {
-    expect_success("en_US", "en-US-posix");
-    expect_success("ne_NP", "ne-NP-posix");
-    expect_success("zh_TW", "zh-TW-posix");
+    expect_success("en_US", "en-US");
+    expect_success("ne_NP", "ne-NP");
+    expect_success("zh_TW", "zh-TW");
 }
 
 #[test]
 fn codeset_ignored() {
-    expect_success("lv_LV.iso885913", "lv-LV-posix");
-    expect_success("hy_AM.armscii8", "hy-AM-posix");
+    expect_success("lv_LV.iso885913", "lv-LV");
+    expect_success("hy_AM.armscii8", "hy-AM");
 }
 
 #[test]
 fn modifier() {
     // Currency
-    expect_success("it_IT@euro", "it-IT-posix-u-cu-eur");
+    expect_success("it_IT@euro", "it-IT-u-cu-eur");
 
     // Script
-    expect_success("uz_UZ@cyrillic", "uz-Cyrl-UZ-posix");
-    expect_success("sd_IN@devanagari", "sd-Deva-IN-posix");
-    expect_success("sr_RS@latin", "sr-Latn-RS-posix");
+    expect_success("uz_UZ@cyrillic", "uz-Cyrl-UZ");
+    expect_success("sd_IN@devanagari", "sd-Deva-IN");
+    expect_success("sr_RS@latin", "sr-Latn-RS");
 
     // Language
-    expect_success("aa_ER@saaho", "ssy-ER-posix");
+    expect_success("aa_ER@saaho", "ssy-ER");
 
     // Variant
-    expect_success("ca_ES@valencia", "ca-ES-posix-valencia");
-}
-
-#[test]
-fn alias() {
-    const CASES: [(&str, &str); 37] = [
-        ("bokmal", "nb-NO-posix"),
-        ("catalan", "ca-ES-posix"),
-        ("croatian", "hr-HR-posix"),
-        ("czech", "cs-CZ-posix"),
-        ("danish", "da-DK-posix"),
-        ("dansk", "da-DK-posix"),
-        ("deutsch", "de-DE-posix"),
-        ("dutch", "nl-NL-posix"),
-        ("eesti", "et-EE-posix"),
-        ("estonian", "et-EE-posix"),
-        ("finnish", "fi-FI-posix"),
-        ("french", "fr-FR-posix"),
-        ("galego", "gl-ES-posix"),
-        ("galician", "gl-ES-posix"),
-        ("german", "de-DE-posix"),
-        ("greek", "el-GR-posix"),
-        ("hebrew", "he-IL-posix"),
-        ("hrvatski", "hr-HR-posix"),
-        ("hungarian", "hu-HU-posix"),
-        ("icelandic", "is-IS-posix"),
-        ("italian", "it-IT-posix"),
-        ("japanese", "ja-JP-posix"),
-        ("korean", "ko-KR-posix"),
-        ("lithuanian", "lt-LT-posix"),
-        ("norwegian", "nb-NO-posix"),
-        ("nynorsk", "nn-NO-posix"),
-        ("polish", "pl-PL-posix"),
-        ("portuguese", "pt-PT-posix"),
-        ("romanian", "ro-RO-posix"),
-        ("russian", "ru-RU-posix"),
-        ("slovak", "sk-SK-posix"),
-        ("slovene", "sl-SI-posix"),
-        ("slovenian", "sl-SI-posix"),
-        ("spanish", "es-ES-posix"),
-        ("swedish", "sv-SE-posix"),
-        ("thai", "th-TH-posix"),
-        ("turkish", "tr-TR-posix"),
-    ];
-
-    for (src, expected) in CASES {
-        expect_success(src, expected);
-    }
+    expect_success("ca_ES@valencia", "ca-ES-valencia");
 }
 
 mod error {

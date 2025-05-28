@@ -89,6 +89,7 @@ pub mod provider {
         impl_transliterator_rules_v1!(Baked);
         impl_units_info_v1!(Baked);
         impl_units_trie_v1!(Baked);
+        impl_unit_ids_v1!(Baked);
     };
 
     #[cfg(feature = "datagen")]
@@ -116,6 +117,7 @@ pub mod provider {
         super::displaynames::provider::ScriptDisplayNamesV1::INFO,
         super::displaynames::provider::VariantDisplayNamesV1::INFO,
         super::measure::provider::trie::UnitsTrieV1::INFO,
+        super::measure::provider::UnitIdsV1::INFO,
         super::personnames::provider::PersonNamesFormatV1::INFO,
         super::relativetime::provider::LongDayRelativeV1::INFO,
         super::relativetime::provider::LongHourRelativeV1::INFO,

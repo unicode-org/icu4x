@@ -4,19 +4,21 @@ import type { DecimalParseError } from "./DecimalParseError"
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
+
 /**
- * See the [Rust documentation for `PluralOperands`](https://docs.rs/icu/latest/icu/plurals/struct.PluralOperands.html) for more information.
+ * See the [Rust documentation for `PluralOperands`](https://docs.rs/icu/2.0.0/icu/plurals/struct.PluralOperands.html) for more information.
  */
-
-
 export class PluralOperands {
+    /** @internal */
     get ffiValue(): pointer;
+    /** @internal */
+    constructor();
 
 
     /**
      * Construct for a given string representing a number
      *
-     * See the [Rust documentation for `from_str`](https://docs.rs/icu/latest/icu/plurals/struct.PluralOperands.html#method.from_str) for more information.
+     * See the [Rust documentation for `from_str`](https://docs.rs/icu/2.0.0/icu/plurals/struct.PluralOperands.html#method.from_str) for more information.
      */
     static fromString(s: string): PluralOperands;
 

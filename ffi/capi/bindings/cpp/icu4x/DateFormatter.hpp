@@ -87,7 +87,7 @@ namespace capi {
     typedef struct icu4x_DateFormatter_create_y_with_provider_mv1_result {union {icu4x::capi::DateFormatter* ok; icu4x::capi::DateTimeFormatterLoadError err;}; bool is_ok;} icu4x_DateFormatter_create_y_with_provider_mv1_result;
     icu4x_DateFormatter_create_y_with_provider_mv1_result icu4x_DateFormatter_create_y_with_provider_mv1(const icu4x::capi::DataProvider* provider, const icu4x::capi::Locale* locale, icu4x::capi::DateTimeLength_option length, icu4x::capi::DateTimeAlignment_option alignment, icu4x::capi::YearStyle_option year_style);
 
-    void icu4x_DateFormatter_format_iso_mv1(const icu4x::capi::DateFormatter* self, const icu4x::capi::IsoDate* date, diplomat::capi::DiplomatWrite* write);
+    void icu4x_DateFormatter_format_iso_mv1(const icu4x::capi::DateFormatter* self, const icu4x::capi::IsoDate* iso_date, diplomat::capi::DiplomatWrite* write);
 
     typedef struct icu4x_DateFormatter_format_same_calendar_mv1_result {union { icu4x::capi::DateTimeMismatchedCalendarError err;}; bool is_ok;} icu4x_DateFormatter_format_same_calendar_mv1_result;
     icu4x_DateFormatter_format_same_calendar_mv1_result icu4x_DateFormatter_format_same_calendar_mv1(const icu4x::capi::DateFormatter* self, const icu4x::capi::Date* date, diplomat::capi::DiplomatWrite* write);
@@ -254,11 +254,11 @@ inline diplomat::result<std::unique_ptr<icu4x::DateFormatter>, icu4x::DateTimeFo
   return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::DateFormatter>, icu4x::DateTimeFormatterLoadError>(diplomat::Ok<std::unique_ptr<icu4x::DateFormatter>>(std::unique_ptr<icu4x::DateFormatter>(icu4x::DateFormatter::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::DateFormatter>, icu4x::DateTimeFormatterLoadError>(diplomat::Err<icu4x::DateTimeFormatterLoadError>(icu4x::DateTimeFormatterLoadError::FromFFI(result.err)));
 }
 
-inline std::string icu4x::DateFormatter::format_iso(const icu4x::IsoDate& date) const {
+inline std::string icu4x::DateFormatter::format_iso(const icu4x::IsoDate& iso_date) const {
   std::string output;
   diplomat::capi::DiplomatWrite write = diplomat::WriteFromString(output);
   icu4x::capi::icu4x_DateFormatter_format_iso_mv1(this->AsFFI(),
-    date.AsFFI(),
+    iso_date.AsFFI(),
     &write);
   return output;
 }

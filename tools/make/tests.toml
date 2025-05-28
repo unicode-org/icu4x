@@ -62,7 +62,7 @@ exit_on_error true
 pwd = pwd
 set_env CARGO_TARGET_DIR ${pwd}/target
 
-cd tutorials/rust
+cd examples/cargo
 
 exec --fail-on-error cargo check --manifest-path default/Cargo.toml
 exec --fail-on-error cargo check --manifest-path buffer/Cargo.toml
@@ -72,7 +72,7 @@ exec --fail-on-error cargo check --manifest-path sync/Cargo.toml
 # custom_compiled doesn't compile without data
 '''
 
-[tasks.test-tutorials-local]
+[tasks.test-cargo]
 description = "Build and run the Cargo tutorial projects based on local crates"
 category = "ICU4X Development"
 script_runner = "@duckscript"
@@ -84,7 +84,7 @@ set_env CARGO_TARGET_DIR ${project_dir}/target
 
 exec --fail-on-error cargo build -p icu4x-datagen
 
-cd tutorials/rust
+cd examples/cargo
 
 mkdir bin
 cp ${project_dir}/target/debug/icu4x-datagen bin/icu4x-datagen
@@ -103,44 +103,8 @@ exec --fail-on-error make -C buffer buffer_data.postcard
 exec --fail-on-error cargo run --manifest-path buffer/Cargo.toml
 
 exec --fail-on-error make -C custom_compiled baked_data/mod.rs
-set_env ICU4X_DATA_DIR ${project_dir}/tutorials/rust/custom_compiled/baked_data
+set_env ICU4X_DATA_DIR ${project_dir}/examples/cargo/custom_compiled/baked_data
 exec --fail-on-error cargo run --manifest-path custom_compiled/Cargo.toml
-'''
-
-[tasks.test-tutorials-cratesio]
-description = "Build and run the Cargo tutorial projects based on crates.io"
-category = "ICU4X Development"
-script_runner = "@duckscript"
-script = '''
-exit_on_error true
-
-cd tutorials/rust
-
-# Delete the lockfile to make a clean crates.io build
-rm -f Cargo.lock
-# Delete the patch file to use crates.io
-rm -f ../.cargo/config.toml
-
-pwd = pwd
-set_env CARGO_TARGET_DIR ${pwd}/target/cratesio
-
-exec --fail-on-error cargo run --release --manifest-path default/Cargo.toml
-exec --fail-on-error cargo run --release --manifest-path experimental/Cargo.toml
-exec --fail-on-error cargo run --release --manifest-path sync/Cargo.toml
-exec --fail-on-error cargo run --release --manifest-path baked/Cargo.toml
-exec --fail-on-error cargo run --release --manifest-path harfbuzz/Cargo.toml
-
-# Build the postcard file
-# Use the full Makefile task
-exec --fail-on-error cargo build --release --manifest-path buffer/Cargo.toml
-exec --fail-on-error make -C buffer
-exec --fail-on-error cargo run --release --manifest-path buffer/Cargo.toml
-
-# Build custom compiled data
-# Use the full Makefile task
-exec --fail-on-error make -C custom_compiled
-set_env ICU4X_DATA_DIR ${pwd}/custom_compiled/baked_data
-exec --fail-on-error cargo run --release --manifest-path custom_compiled/Cargo.toml
 '''
 
 [tasks.install-cortex-7]

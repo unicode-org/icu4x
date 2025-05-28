@@ -16,8 +16,6 @@ mod tutorials {
     mod data_provider_runtime_md {}
     #[doc = include_str!("../../../tutorials/data-management.md")]
     mod data_management_md {}
-    #[doc = include_str!("../../../tutorials/using-from-js.md")]
-    mod using_from_js_md {}
 }
 
 mod documents {

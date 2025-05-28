@@ -34,6 +34,7 @@ pub mod ffi {
         FnInStruct,
         hidden
     )]
+    #[diplomat::attr(demo_gen, disable)] // TODO needs custom page
     pub struct CodePointMapData8(icu_properties::CodePointMapData<u8>);
 
     #[cfg(any(feature = "compiled_data", feature = "buffer_provider"))]
@@ -386,6 +387,7 @@ pub mod ffi {
     #[diplomat::rust_link(icu::properties, Mod)]
     #[diplomat::rust_link(icu::properties::CodePointMapData, Struct)]
     #[diplomat::rust_link(icu::properties::CodePointMapDataBorrowed, Struct)]
+    #[diplomat::attr(demo_gen, disable)] // TODO needs custom page
     pub struct CodePointMapData16(icu_properties::CodePointMapData<u16>);
 
     impl CodePointMapData16 {

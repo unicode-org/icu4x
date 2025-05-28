@@ -10,13 +10,12 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
+
 /**
  * An ICU4X DateTime object capable of containing a date, time, and zone for any calendar.
  *
- * See the [Rust documentation for `ZonedDateTime`](https://docs.rs/icu/latest/icu/time/struct.ZonedDateTime.html) for more information.
+ * See the [Rust documentation for `ZonedDateTime`](https://docs.rs/icu/2.0.0/icu/time/struct.ZonedDateTime.html) for more information.
  */
-
-
 export class ZonedDateTime {
     #date;
     get date() {
@@ -113,9 +112,9 @@ export class ZonedDateTime {
 
 
     /**
-     * Creates a new [`ZonedDateTime`] from an IXDTF string.
+     * Creates a new {@link ZonedDateTime} from an IXDTF string.
      *
-     * See the [Rust documentation for `try_full_from_str`](https://docs.rs/icu/latest/icu/time/struct.ZonedDateTime.html#method.try_full_from_str) for more information.
+     * See the [Rust documentation for `try_full_from_str`](https://docs.rs/icu/2.0.0/icu/time/struct.ZonedDateTime.html#method.try_full_from_str) for more information.
      */
     static fullFromString(v, calendar, ianaParser, offsetCalculator) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
@@ -129,7 +128,7 @@ export class ZonedDateTime {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new Rfc9557ParseError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
-                throw new globalThis.Error('Rfc9557ParseError: ' + cause.value, { cause });
+                throw new globalThis.Error('Rfc9557ParseError.' + cause.value, { cause });
             }
             return ZonedDateTime._fromFFI(diplomatRuntime.internalConstructor, diplomatReceive.buffer);
         }
@@ -142,9 +141,9 @@ export class ZonedDateTime {
     }
 
     /**
-     * Creates a new [`ZonedDateTime`] from a location-only IXDTF string.
+     * Creates a new {@link ZonedDateTime} from a location-only IXDTF string.
      *
-     * See the [Rust documentation for `try_location_only_from_str`](https://docs.rs/icu/latest/icu/time/struct.ZonedDateTime.html#method.try_location_only_from_str) for more information.
+     * See the [Rust documentation for `try_location_only_from_str`](https://docs.rs/icu/2.0.0/icu/time/struct.ZonedDateTime.html#method.try_location_only_from_str) for more information.
      */
     static locationOnlyFromString(v, calendar, ianaParser) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
@@ -158,7 +157,7 @@ export class ZonedDateTime {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new Rfc9557ParseError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
-                throw new globalThis.Error('Rfc9557ParseError: ' + cause.value, { cause });
+                throw new globalThis.Error('Rfc9557ParseError.' + cause.value, { cause });
             }
             return ZonedDateTime._fromFFI(diplomatRuntime.internalConstructor, diplomatReceive.buffer);
         }
@@ -171,9 +170,9 @@ export class ZonedDateTime {
     }
 
     /**
-     * Creates a new [`ZonedDateTime`] from an offset-only IXDTF string.
+     * Creates a new {@link ZonedDateTime} from an offset-only IXDTF string.
      *
-     * See the [Rust documentation for `try_offset_only_from_str`](https://docs.rs/icu/latest/icu/time/struct.ZonedDateTime.html#method.try_offset_only_from_str) for more information.
+     * See the [Rust documentation for `try_offset_only_from_str`](https://docs.rs/icu/2.0.0/icu/time/struct.ZonedDateTime.html#method.try_offset_only_from_str) for more information.
      */
     static offsetOnlyFromString(v, calendar) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
@@ -187,7 +186,7 @@ export class ZonedDateTime {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new Rfc9557ParseError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
-                throw new globalThis.Error('Rfc9557ParseError: ' + cause.value, { cause });
+                throw new globalThis.Error('Rfc9557ParseError.' + cause.value, { cause });
             }
             return ZonedDateTime._fromFFI(diplomatRuntime.internalConstructor, diplomatReceive.buffer);
         }
@@ -200,9 +199,9 @@ export class ZonedDateTime {
     }
 
     /**
-     * Creates a new [`ZonedDateTime`] from an IXDTF string, without requiring the offset or calculating the zone variant.
+     * Creates a new {@link ZonedDateTime} from an IXDTF string, without requiring the offset or calculating the zone variant.
      *
-     * See the [Rust documentation for `try_lenient_from_str`](https://docs.rs/icu/latest/icu/time/struct.ZonedDateTime.html#method.try_lenient_from_str) for more information.
+     * See the [Rust documentation for `try_lenient_from_str`](https://docs.rs/icu/2.0.0/icu/time/struct.ZonedDateTime.html#method.try_lenient_from_str) for more information.
      */
     static lenientFromString(v, calendar, ianaParser) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
@@ -216,7 +215,7 @@ export class ZonedDateTime {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new Rfc9557ParseError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
-                throw new globalThis.Error('Rfc9557ParseError: ' + cause.value, { cause });
+                throw new globalThis.Error('Rfc9557ParseError.' + cause.value, { cause });
             }
             return ZonedDateTime._fromFFI(diplomatRuntime.internalConstructor, diplomatReceive.buffer);
         }

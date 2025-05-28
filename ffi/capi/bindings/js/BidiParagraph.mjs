@@ -3,14 +3,13 @@ import { BidiDirection } from "./BidiDirection.mjs"
 import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
-
-/**
- * Bidi information for a single processed paragraph
- */
 const BidiParagraph_box_destroy_registry = new FinalizationRegistry((ptr) => {
     wasm.icu4x_BidiParagraph_destroy_mv1(ptr);
 });
 
+/**
+ * Bidi information for a single processed paragraph
+ */
 export class BidiParagraph {
     // Internal ptr reference:
     #ptr = null;
@@ -36,6 +35,7 @@ export class BidiParagraph {
 
         return this;
     }
+    /** @internal */
     get ffiValue() {
         return this.#ptr;
     }
@@ -63,7 +63,7 @@ export class BidiParagraph {
     /**
      * The primary direction of this paragraph
      *
-     * See the [Rust documentation for `level_at`](https://docs.rs/unicode_bidi/latest/unicode_bidi/struct.Paragraph.html#method.level_at) for more information.
+     * See the [Rust documentation for `level_at`](https://docs.rs/unicode_bidi/0.3.11/unicode_bidi/struct.Paragraph.html#method.level_at) for more information.
      */
     get direction() {
 
@@ -80,7 +80,7 @@ export class BidiParagraph {
     /**
      * The number of bytes in this paragraph
      *
-     * See the [Rust documentation for `len`](https://docs.rs/unicode_bidi/latest/unicode_bidi/struct.ParagraphInfo.html#method.len) for more information.
+     * See the [Rust documentation for `len`](https://docs.rs/unicode_bidi/0.3.11/unicode_bidi/struct.ParagraphInfo.html#method.len) for more information.
      */
     get size() {
 
@@ -128,7 +128,7 @@ export class BidiParagraph {
      * Reorder a line based on display order. The ranges are specified relative to the source text and must be contained
      * within this paragraph's range.
      *
-     * See the [Rust documentation for `level_at`](https://docs.rs/unicode_bidi/latest/unicode_bidi/struct.Paragraph.html#method.level_at) for more information.
+     * See the [Rust documentation for `level_at`](https://docs.rs/unicode_bidi/0.3.11/unicode_bidi/struct.Paragraph.html#method.level_at) for more information.
      */
     reorderLine(rangeStart, rangeEnd) {
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
@@ -152,7 +152,7 @@ export class BidiParagraph {
      *
      * Returns 0 (equivalent to `Level::ltr()`) on error
      *
-     * See the [Rust documentation for `level_at`](https://docs.rs/unicode_bidi/latest/unicode_bidi/struct.Paragraph.html#method.level_at) for more information.
+     * See the [Rust documentation for `level_at`](https://docs.rs/unicode_bidi/0.3.11/unicode_bidi/struct.Paragraph.html#method.level_at) for more information.
      */
     levelAt(pos) {
 

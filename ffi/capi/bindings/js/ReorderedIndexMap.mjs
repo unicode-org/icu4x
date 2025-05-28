@@ -2,18 +2,17 @@
 import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
+const ReorderedIndexMap_box_destroy_registry = new FinalizationRegistry((ptr) => {
+    wasm.icu4x_ReorderedIndexMap_destroy_mv1(ptr);
+});
 
 /**
  * Thin wrapper around a vector that maps visual indices to source indices
  *
  * `map[visualIndex] = sourceIndex`
  *
- * Produced by `reorder_visual()` on [`Bidi`].
+ * Produced by `reorder_visual()` on {@link Bidi}.
  */
-const ReorderedIndexMap_box_destroy_registry = new FinalizationRegistry((ptr) => {
-    wasm.icu4x_ReorderedIndexMap_destroy_mv1(ptr);
-});
-
 export class ReorderedIndexMap {
     // Internal ptr reference:
     #ptr = null;
@@ -37,6 +36,7 @@ export class ReorderedIndexMap {
 
         return this;
     }
+    /** @internal */
     get ffiValue() {
         return this.#ptr;
     }

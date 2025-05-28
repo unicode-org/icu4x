@@ -2,14 +2,13 @@
 import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
-
-/**
- * See the [Rust documentation for `SentenceBreakIterator`](https://docs.rs/icu/latest/icu/segmenter/iterators/struct.SentenceBreakIterator.html) for more information.
- */
 const SentenceBreakIteratorLatin1_box_destroy_registry = new FinalizationRegistry((ptr) => {
     wasm.icu4x_SentenceBreakIteratorLatin1_destroy_mv1(ptr);
 });
 
+/**
+ * See the [Rust documentation for `SentenceBreakIterator`](https://docs.rs/icu/2.0.0/icu/segmenter/iterators/struct.SentenceBreakIterator.html) for more information.
+ */
 export class SentenceBreakIteratorLatin1 {
     // Internal ptr reference:
     #ptr = null;
@@ -35,6 +34,7 @@ export class SentenceBreakIteratorLatin1 {
 
         return this;
     }
+    /** @internal */
     get ffiValue() {
         return this.#ptr;
     }
@@ -44,7 +44,7 @@ export class SentenceBreakIteratorLatin1 {
      * Finds the next breakpoint. Returns -1 if at the end of the string or if the index is
      * out of range of a 32-bit signed integer.
      *
-     * See the [Rust documentation for `next`](https://docs.rs/icu/latest/icu/segmenter/iterators/struct.SentenceBreakIterator.html#method.next) for more information.
+     * See the [Rust documentation for `next`](https://docs.rs/icu/2.0.0/icu/segmenter/iterators/struct.SentenceBreakIterator.html#method.next) for more information.
      */
     next() {
 

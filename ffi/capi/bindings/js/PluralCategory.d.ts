@@ -2,17 +2,18 @@
 import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 
+
 /**
- * See the [Rust documentation for `PluralCategory`](https://docs.rs/icu/latest/icu/plurals/enum.PluralCategory.html) for more information.
+ * See the [Rust documentation for `PluralCategory`](https://docs.rs/icu/2.0.0/icu/plurals/enum.PluralCategory.html) for more information.
  */
-
-
 export class PluralCategory {
 
+    /** @internal */
     static fromValue(value: PluralCategory | string): PluralCategory;
 
     get value(): string;
 
+    /** @internal */
     get ffiValue(): number;
 
     static Zero : PluralCategory;
@@ -27,9 +28,9 @@ export class PluralCategory {
      * Construct from a string in the format
      * [specified in TR35](https://unicode.org/reports/tr35/tr35-numbers.html#Language_Plural_Rules)
      *
-     * See the [Rust documentation for `get_for_cldr_string`](https://docs.rs/icu/latest/icu/plurals/enum.PluralCategory.html#method.get_for_cldr_string) for more information.
+     * See the [Rust documentation for `get_for_cldr_string`](https://docs.rs/icu/2.0.0/icu/plurals/enum.PluralCategory.html#method.get_for_cldr_string) for more information.
      *
-     * See the [Rust documentation for `get_for_cldr_bytes`](https://docs.rs/icu/latest/icu/plurals/enum.PluralCategory.html#method.get_for_cldr_bytes) for more information.
+     * See the [Rust documentation for `get_for_cldr_bytes`](https://docs.rs/icu/2.0.0/icu/plurals/enum.PluralCategory.html#method.get_for_cldr_bytes) for more information.
      */
     static getForCldrString(s: string): PluralCategory | null;
 

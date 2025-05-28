@@ -26,22 +26,25 @@ pub mod ffi {
     /// An ICU4X word-break segmenter, capable of finding word breakpoints in strings.
     #[diplomat::rust_link(icu::segmenter::WordSegmenter, Struct)]
     #[diplomat::rust_link(icu::segmenter::WordSegmenterBorrowed, Struct, hidden)]
-    #[diplomat::demo(custom_func = "../../npm/demo_gen_custom/WordSegmenter.mjs")]
+    #[diplomat::demo(custom_func = "../../../tools/web-demo/custom/WordSegmenter.mjs")]
     pub struct WordSegmenter(icu_segmenter::WordSegmenter);
 
     #[diplomat::opaque]
     #[diplomat::rust_link(icu::segmenter::iterators::WordBreakIterator, Struct)]
+    #[diplomat::attr(demo_gen, disable)] // iterator type
     pub struct WordBreakIteratorUtf8<'a>(
         icu_segmenter::iterators::WordBreakIterator<'a, 'a, PotentiallyIllFormedUtf8>,
     );
 
     #[diplomat::opaque]
     #[diplomat::rust_link(icu::segmenter::iterators::WordBreakIterator, Struct)]
+    #[diplomat::attr(demo_gen, disable)] // iterator type
     pub struct WordBreakIteratorUtf16<'a>(
         icu_segmenter::iterators::WordBreakIterator<'a, 'a, Utf16>,
     );
     #[diplomat::opaque]
     #[diplomat::rust_link(icu::segmenter::iterators::WordBreakIterator, Struct)]
+    #[diplomat::attr(demo_gen, disable)] // iterator type
     pub struct WordBreakIteratorLatin1<'a>(
         icu_segmenter::iterators::WordBreakIterator<'a, 'a, Latin1>,
     );

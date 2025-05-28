@@ -5,20 +5,19 @@ import { Locale } from "./Locale.mjs"
 import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
-
-/**
- * A set of "exemplar characters" for a given locale.
- *
- * See the [Rust documentation for `locale`](https://docs.rs/icu/latest/icu/locale/index.html) for more information.
- *
- * See the [Rust documentation for `ExemplarCharacters`](https://docs.rs/icu/latest/icu/locale/exemplar_chars/struct.ExemplarCharacters.html) for more information.
- *
- * See the [Rust documentation for `ExemplarCharactersBorrowed`](https://docs.rs/icu/latest/icu/locale/exemplar_chars/struct.ExemplarCharactersBorrowed.html) for more information.
- */
 const ExemplarCharacters_box_destroy_registry = new FinalizationRegistry((ptr) => {
     wasm.icu4x_ExemplarCharacters_destroy_mv1(ptr);
 });
 
+/**
+ * A set of "exemplar characters" for a given locale.
+ *
+ * See the [Rust documentation for `locale`](https://docs.rs/icu/2.0.0/icu/locale/index.html) for more information.
+ *
+ * See the [Rust documentation for `ExemplarCharacters`](https://docs.rs/icu/2.0.0/icu/locale/exemplar_chars/struct.ExemplarCharacters.html) for more information.
+ *
+ * See the [Rust documentation for `ExemplarCharactersBorrowed`](https://docs.rs/icu/2.0.0/icu/locale/exemplar_chars/struct.ExemplarCharactersBorrowed.html) for more information.
+ */
 export class ExemplarCharacters {
     // Internal ptr reference:
     #ptr = null;
@@ -42,6 +41,7 @@ export class ExemplarCharacters {
 
         return this;
     }
+    /** @internal */
     get ffiValue() {
         return this.#ptr;
     }
@@ -50,7 +50,7 @@ export class ExemplarCharacters {
     /**
      * Checks whether the string is in the set.
      *
-     * See the [Rust documentation for `contains_str`](https://docs.rs/icu/latest/icu/collections/codepointinvliststringlist/struct.CodePointInversionListAndStringList.html#method.contains_str) for more information.
+     * See the [Rust documentation for `contains_str`](https://docs.rs/icu/2.0.0/icu/collections/codepointinvliststringlist/struct.CodePointInversionListAndStringList.html#method.contains_str) for more information.
      */
     containsStr(s) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
@@ -72,7 +72,7 @@ export class ExemplarCharacters {
     /**
      * Checks whether the code point is in the set.
      *
-     * See the [Rust documentation for `contains`](https://docs.rs/icu/latest/icu/collections/codepointinvliststringlist/struct.CodePointInversionListAndStringList.html#method.contains) for more information.
+     * See the [Rust documentation for `contains`](https://docs.rs/icu/2.0.0/icu/collections/codepointinvliststringlist/struct.CodePointInversionListAndStringList.html#method.contains) for more information.
      */
     contains(cp) {
 
@@ -87,9 +87,9 @@ export class ExemplarCharacters {
     }
 
     /**
-     * Create an [`ExemplarCharacters`] for the "main" set of exemplar characters for a given locale, using compiled data.
+     * Create an {@link ExemplarCharacters} for the "main" set of exemplar characters for a given locale, using compiled data.
      *
-     * See the [Rust documentation for `try_new_main`](https://docs.rs/icu/latest/icu/locale/exemplar_chars/struct.ExemplarCharacters.html#method.try_new_main) for more information.
+     * See the [Rust documentation for `try_new_main`](https://docs.rs/icu/2.0.0/icu/locale/exemplar_chars/struct.ExemplarCharacters.html#method.try_new_main) for more information.
      */
     static createMain(locale) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
@@ -100,7 +100,7 @@ export class ExemplarCharacters {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
-                throw new globalThis.Error('DataError: ' + cause.value, { cause });
+                throw new globalThis.Error('DataError.' + cause.value, { cause });
             }
             return new ExemplarCharacters(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -111,9 +111,9 @@ export class ExemplarCharacters {
     }
 
     /**
-     * Create an [`ExemplarCharacters`] for the "main" set of exemplar characters for a given locale, using a particular data source
+     * Create an {@link ExemplarCharacters} for the "main" set of exemplar characters for a given locale, using a particular data source
      *
-     * See the [Rust documentation for `try_new_main`](https://docs.rs/icu/latest/icu/locale/exemplar_chars/struct.ExemplarCharacters.html#method.try_new_main) for more information.
+     * See the [Rust documentation for `try_new_main`](https://docs.rs/icu/2.0.0/icu/locale/exemplar_chars/struct.ExemplarCharacters.html#method.try_new_main) for more information.
      */
     static createMainWithProvider(provider, locale) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
@@ -124,7 +124,7 @@ export class ExemplarCharacters {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
-                throw new globalThis.Error('DataError: ' + cause.value, { cause });
+                throw new globalThis.Error('DataError.' + cause.value, { cause });
             }
             return new ExemplarCharacters(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -135,9 +135,9 @@ export class ExemplarCharacters {
     }
 
     /**
-     * Create an [`ExemplarCharacters`] for the "auxiliary" set of exemplar characters for a given locale, using compiled data.
+     * Create an {@link ExemplarCharacters} for the "auxiliary" set of exemplar characters for a given locale, using compiled data.
      *
-     * See the [Rust documentation for `try_new_auxiliary`](https://docs.rs/icu/latest/icu/locale/exemplar_chars/struct.ExemplarCharacters.html#method.try_new_auxiliary) for more information.
+     * See the [Rust documentation for `try_new_auxiliary`](https://docs.rs/icu/2.0.0/icu/locale/exemplar_chars/struct.ExemplarCharacters.html#method.try_new_auxiliary) for more information.
      */
     static createAuxiliary(locale) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
@@ -148,7 +148,7 @@ export class ExemplarCharacters {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
-                throw new globalThis.Error('DataError: ' + cause.value, { cause });
+                throw new globalThis.Error('DataError.' + cause.value, { cause });
             }
             return new ExemplarCharacters(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -159,9 +159,9 @@ export class ExemplarCharacters {
     }
 
     /**
-     * Create an [`ExemplarCharacters`] for the "auxiliary" set of exemplar characters for a given locale, using compiled data.
+     * Create an {@link ExemplarCharacters} for the "auxiliary" set of exemplar characters for a given locale, using compiled data.
      *
-     * See the [Rust documentation for `try_new_auxiliary`](https://docs.rs/icu/latest/icu/locale/exemplar_chars/struct.ExemplarCharacters.html#method.try_new_auxiliary) for more information.
+     * See the [Rust documentation for `try_new_auxiliary`](https://docs.rs/icu/2.0.0/icu/locale/exemplar_chars/struct.ExemplarCharacters.html#method.try_new_auxiliary) for more information.
      */
     static createAuxiliaryWithProvider(provider, locale) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
@@ -172,7 +172,7 @@ export class ExemplarCharacters {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
-                throw new globalThis.Error('DataError: ' + cause.value, { cause });
+                throw new globalThis.Error('DataError.' + cause.value, { cause });
             }
             return new ExemplarCharacters(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -183,9 +183,9 @@ export class ExemplarCharacters {
     }
 
     /**
-     * Create an [`ExemplarCharacters`] for the "punctuation" set of exemplar characters for a given locale, using compiled data.
+     * Create an {@link ExemplarCharacters} for the "punctuation" set of exemplar characters for a given locale, using compiled data.
      *
-     * See the [Rust documentation for `try_new_punctuation`](https://docs.rs/icu/latest/icu/locale/exemplar_chars/struct.ExemplarCharacters.html#method.try_new_punctuation) for more information.
+     * See the [Rust documentation for `try_new_punctuation`](https://docs.rs/icu/2.0.0/icu/locale/exemplar_chars/struct.ExemplarCharacters.html#method.try_new_punctuation) for more information.
      */
     static createPunctuation(locale) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
@@ -196,7 +196,7 @@ export class ExemplarCharacters {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
-                throw new globalThis.Error('DataError: ' + cause.value, { cause });
+                throw new globalThis.Error('DataError.' + cause.value, { cause });
             }
             return new ExemplarCharacters(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -207,9 +207,9 @@ export class ExemplarCharacters {
     }
 
     /**
-     * Create an [`ExemplarCharacters`] for the "punctuation" set of exemplar characters for a given locale, using compiled data.
+     * Create an {@link ExemplarCharacters} for the "punctuation" set of exemplar characters for a given locale, using compiled data.
      *
-     * See the [Rust documentation for `try_new_punctuation`](https://docs.rs/icu/latest/icu/locale/exemplar_chars/struct.ExemplarCharacters.html#method.try_new_punctuation) for more information.
+     * See the [Rust documentation for `try_new_punctuation`](https://docs.rs/icu/2.0.0/icu/locale/exemplar_chars/struct.ExemplarCharacters.html#method.try_new_punctuation) for more information.
      */
     static createPunctuationWithProvider(provider, locale) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
@@ -220,7 +220,7 @@ export class ExemplarCharacters {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
-                throw new globalThis.Error('DataError: ' + cause.value, { cause });
+                throw new globalThis.Error('DataError.' + cause.value, { cause });
             }
             return new ExemplarCharacters(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -231,9 +231,9 @@ export class ExemplarCharacters {
     }
 
     /**
-     * Create an [`ExemplarCharacters`] for the "numbers" set of exemplar characters for a given locale, using compiled data.
+     * Create an {@link ExemplarCharacters} for the "numbers" set of exemplar characters for a given locale, using compiled data.
      *
-     * See the [Rust documentation for `try_new_numbers`](https://docs.rs/icu/latest/icu/locale/exemplar_chars/struct.ExemplarCharacters.html#method.try_new_numbers) for more information.
+     * See the [Rust documentation for `try_new_numbers`](https://docs.rs/icu/2.0.0/icu/locale/exemplar_chars/struct.ExemplarCharacters.html#method.try_new_numbers) for more information.
      */
     static createNumbers(locale) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
@@ -244,7 +244,7 @@ export class ExemplarCharacters {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
-                throw new globalThis.Error('DataError: ' + cause.value, { cause });
+                throw new globalThis.Error('DataError.' + cause.value, { cause });
             }
             return new ExemplarCharacters(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -255,9 +255,9 @@ export class ExemplarCharacters {
     }
 
     /**
-     * Create an [`ExemplarCharacters`] for the "numbers" set of exemplar characters for a given locale, using compiled data.
+     * Create an {@link ExemplarCharacters} for the "numbers" set of exemplar characters for a given locale, using compiled data.
      *
-     * See the [Rust documentation for `try_new_numbers`](https://docs.rs/icu/latest/icu/locale/exemplar_chars/struct.ExemplarCharacters.html#method.try_new_numbers) for more information.
+     * See the [Rust documentation for `try_new_numbers`](https://docs.rs/icu/2.0.0/icu/locale/exemplar_chars/struct.ExemplarCharacters.html#method.try_new_numbers) for more information.
      */
     static createNumbersWithProvider(provider, locale) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
@@ -268,7 +268,7 @@ export class ExemplarCharacters {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
-                throw new globalThis.Error('DataError: ' + cause.value, { cause });
+                throw new globalThis.Error('DataError.' + cause.value, { cause });
             }
             return new ExemplarCharacters(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -279,9 +279,9 @@ export class ExemplarCharacters {
     }
 
     /**
-     * Create an [`ExemplarCharacters`] for the "index" set of exemplar characters for a given locale, using compiled data.
+     * Create an {@link ExemplarCharacters} for the "index" set of exemplar characters for a given locale, using compiled data.
      *
-     * See the [Rust documentation for `try_new_index`](https://docs.rs/icu/latest/icu/locale/exemplar_chars/struct.ExemplarCharacters.html#method.try_new_index) for more information.
+     * See the [Rust documentation for `try_new_index`](https://docs.rs/icu/2.0.0/icu/locale/exemplar_chars/struct.ExemplarCharacters.html#method.try_new_index) for more information.
      */
     static createIndex(locale) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
@@ -292,7 +292,7 @@ export class ExemplarCharacters {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
-                throw new globalThis.Error('DataError: ' + cause.value, { cause });
+                throw new globalThis.Error('DataError.' + cause.value, { cause });
             }
             return new ExemplarCharacters(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -303,9 +303,9 @@ export class ExemplarCharacters {
     }
 
     /**
-     * Create an [`ExemplarCharacters`] for the "index" set of exemplar characters for a given locale, using compiled data.
+     * Create an {@link ExemplarCharacters} for the "index" set of exemplar characters for a given locale, using compiled data.
      *
-     * See the [Rust documentation for `try_new_index`](https://docs.rs/icu/latest/icu/locale/exemplar_chars/struct.ExemplarCharacters.html#method.try_new_index) for more information.
+     * See the [Rust documentation for `try_new_index`](https://docs.rs/icu/2.0.0/icu/locale/exemplar_chars/struct.ExemplarCharacters.html#method.try_new_index) for more information.
      */
     static createIndexWithProvider(provider, locale) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
@@ -316,7 +316,7 @@ export class ExemplarCharacters {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
-                throw new globalThis.Error('DataError: ' + cause.value, { cause });
+                throw new globalThis.Error('DataError.' + cause.value, { cause });
             }
             return new ExemplarCharacters(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }

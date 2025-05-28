@@ -25,7 +25,7 @@ components/normalizer/            @hsivonen @echeran
 components/plurals/               @zbraniecki @sffc
 components/segmenter/             @aethanyc @makotokato @sffc
 components/time/              @nekevss @robertbastian @sffc
-tutorials/gn/                     @sffc
+examples/gn/                     @sffc
 ffi/capi/                         @Manishearth
 ffi/ecma402/                      @filmil
 ffi/harfbuzz/                     @hsivonen

@@ -5,7 +5,7 @@ part of 'lib.g.dart';
 
 /// An ICU4X Date object capable of containing a ISO-8601 date
 ///
-/// See the [Rust documentation for `Date`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html) for more information.
+/// See the [Rust documentation for `Date`](https://docs.rs/icu/2.0.0/icu/calendar/struct.Date.html) for more information.
 final class IsoDate implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _ffi;
 
@@ -25,9 +25,9 @@ final class IsoDate implements ffi.Finalizable {
 
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_IsoDate_destroy_mv1));
 
-  /// Creates a new [`IsoDate`] from the specified date.
+  /// Creates a new [IsoDate] from the specified date.
   ///
-  /// See the [Rust documentation for `try_new_iso`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.try_new_iso) for more information.
+  /// See the [Rust documentation for `try_new_iso`](https://docs.rs/icu/2.0.0/icu/calendar/struct.Date.html#method.try_new_iso) for more information.
   ///
   /// Throws [CalendarError] on failure.
   factory IsoDate(int year, int month, int day) {
@@ -38,17 +38,17 @@ final class IsoDate implements ffi.Finalizable {
     return IsoDate._fromFfi(result.union.ok, []);
   }
 
-  /// Creates a new [`IsoDate`] from the given Rata Die
+  /// Creates a new [IsoDate] from the given Rata Die
   ///
-  /// See the [Rust documentation for `from_rata_die`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.from_rata_die) for more information.
+  /// See the [Rust documentation for `from_rata_die`](https://docs.rs/icu/2.0.0/icu/calendar/struct.Date.html#method.from_rata_die) for more information.
   factory IsoDate.fromRataDie(int rd) {
     final result = _icu4x_IsoDate_from_rata_die_mv1(rd);
     return IsoDate._fromFfi(result, []);
   }
 
-  /// Creates a new [`IsoDate`] from an IXDTF string.
+  /// Creates a new [IsoDate] from an IXDTF string.
   ///
-  /// See the [Rust documentation for `try_from_str`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.try_from_str) for more information.
+  /// See the [Rust documentation for `try_from_str`](https://docs.rs/icu/2.0.0/icu/calendar/struct.Date.html#method.try_from_str) for more information.
   ///
   /// Throws [Rfc9557ParseError] on failure.
   factory IsoDate.fromString(String v) {
@@ -62,13 +62,13 @@ final class IsoDate implements ffi.Finalizable {
 
   /// Convert this date to one in a different calendar
   ///
-  /// See the [Rust documentation for `to_calendar`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.to_calendar) for more information.
+  /// See the [Rust documentation for `to_calendar`](https://docs.rs/icu/2.0.0/icu/calendar/struct.Date.html#method.to_calendar) for more information.
   Date toCalendar(Calendar calendar) {
     final result = _icu4x_IsoDate_to_calendar_mv1(_ffi, calendar._ffi);
     return Date._fromFfi(result, []);
   }
 
-  /// See the [Rust documentation for `to_any`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.to_any) for more information.
+  /// See the [Rust documentation for `to_any`](https://docs.rs/icu/2.0.0/icu/calendar/struct.Date.html#method.to_any) for more information.
   Date toAny() {
     final result = _icu4x_IsoDate_to_any_mv1(_ffi);
     return Date._fromFfi(result, []);
@@ -76,7 +76,7 @@ final class IsoDate implements ffi.Finalizable {
 
   /// Returns this date's Rata Die
   ///
-  /// See the [Rust documentation for `to_rata_die`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.to_rata_die) for more information.
+  /// See the [Rust documentation for `to_rata_die`](https://docs.rs/icu/2.0.0/icu/calendar/struct.Date.html#method.to_rata_die) for more information.
   int get rataDie {
     final result = _icu4x_IsoDate_to_rata_die_mv1(_ffi);
     return result;
@@ -84,7 +84,7 @@ final class IsoDate implements ffi.Finalizable {
 
   /// Returns the 1-indexed day in the year for this date
   ///
-  /// See the [Rust documentation for `day_of_year`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.day_of_year) for more information.
+  /// See the [Rust documentation for `day_of_year`](https://docs.rs/icu/2.0.0/icu/calendar/struct.Date.html#method.day_of_year) for more information.
   int get dayOfYear {
     final result = _icu4x_IsoDate_day_of_year_mv1(_ffi);
     return result;
@@ -92,7 +92,7 @@ final class IsoDate implements ffi.Finalizable {
 
   /// Returns the 1-indexed day in the month for this date
   ///
-  /// See the [Rust documentation for `day_of_month`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.day_of_month) for more information.
+  /// See the [Rust documentation for `day_of_month`](https://docs.rs/icu/2.0.0/icu/calendar/struct.Date.html#method.day_of_month) for more information.
   int get dayOfMonth {
     final result = _icu4x_IsoDate_day_of_month_mv1(_ffi);
     return result;
@@ -100,7 +100,7 @@ final class IsoDate implements ffi.Finalizable {
 
   /// Returns the day in the week for this day
   ///
-  /// See the [Rust documentation for `day_of_week`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.day_of_week) for more information.
+  /// See the [Rust documentation for `day_of_week`](https://docs.rs/icu/2.0.0/icu/calendar/struct.Date.html#method.day_of_week) for more information.
   Weekday get dayOfWeek {
     final result = _icu4x_IsoDate_day_of_week_mv1(_ffi);
     return Weekday.values.firstWhere((v) => v._ffi == result);
@@ -108,7 +108,7 @@ final class IsoDate implements ffi.Finalizable {
 
   /// Returns the week number in this year, using week data
   ///
-  /// See the [Rust documentation for `week_of_year`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.week_of_year) for more information.
+  /// See the [Rust documentation for `week_of_year`](https://docs.rs/icu/2.0.0/icu/calendar/struct.Date.html#method.week_of_year) for more information.
   IsoWeekOfYear weekOfYear() {
     final result = _icu4x_IsoDate_week_of_year_mv1(_ffi);
     return IsoWeekOfYear._fromFfi(result);
@@ -116,9 +116,9 @@ final class IsoDate implements ffi.Finalizable {
 
   /// Returns 1-indexed number of the month of this date in its year
   ///
-  /// See the [Rust documentation for `ordinal`](https://docs.rs/icu/latest/icu/calendar/types/struct.MonthInfo.html#structfield.ordinal) for more information.
+  /// See the [Rust documentation for `ordinal`](https://docs.rs/icu/2.0.0/icu/calendar/types/struct.MonthInfo.html#structfield.ordinal) for more information.
   ///
-  /// Additional information: [1](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.month)
+  /// Additional information: [1](https://docs.rs/icu/2.0.0/icu/calendar/struct.Date.html#method.month)
   int get month {
     final result = _icu4x_IsoDate_month_mv1(_ffi);
     return result;
@@ -128,7 +128,7 @@ final class IsoDate implements ffi.Finalizable {
   ///
   /// For calendars without an era, returns the extended year
   ///
-  /// See the [Rust documentation for `year`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.year) for more information.
+  /// See the [Rust documentation for `year`](https://docs.rs/icu/2.0.0/icu/calendar/struct.Date.html#method.year) for more information.
   int get year {
     final result = _icu4x_IsoDate_year_mv1(_ffi);
     return result;
@@ -136,7 +136,7 @@ final class IsoDate implements ffi.Finalizable {
 
   /// Returns if the year is a leap year for this date
   ///
-  /// See the [Rust documentation for `is_in_leap_year`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.is_in_leap_year) for more information.
+  /// See the [Rust documentation for `is_in_leap_year`](https://docs.rs/icu/2.0.0/icu/calendar/struct.Date.html#method.is_in_leap_year) for more information.
   bool get isInLeapYear {
     final result = _icu4x_IsoDate_is_in_leap_year_mv1(_ffi);
     return result;
@@ -144,7 +144,7 @@ final class IsoDate implements ffi.Finalizable {
 
   /// Returns the number of months in the year represented by this date
   ///
-  /// See the [Rust documentation for `months_in_year`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.months_in_year) for more information.
+  /// See the [Rust documentation for `months_in_year`](https://docs.rs/icu/2.0.0/icu/calendar/struct.Date.html#method.months_in_year) for more information.
   int get monthsInYear {
     final result = _icu4x_IsoDate_months_in_year_mv1(_ffi);
     return result;
@@ -152,7 +152,7 @@ final class IsoDate implements ffi.Finalizable {
 
   /// Returns the number of days in the month represented by this date
   ///
-  /// See the [Rust documentation for `days_in_month`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.days_in_month) for more information.
+  /// See the [Rust documentation for `days_in_month`](https://docs.rs/icu/2.0.0/icu/calendar/struct.Date.html#method.days_in_month) for more information.
   int get daysInMonth {
     final result = _icu4x_IsoDate_days_in_month_mv1(_ffi);
     return result;
@@ -160,7 +160,7 @@ final class IsoDate implements ffi.Finalizable {
 
   /// Returns the number of days in the year represented by this date
   ///
-  /// See the [Rust documentation for `days_in_year`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.days_in_year) for more information.
+  /// See the [Rust documentation for `days_in_year`](https://docs.rs/icu/2.0.0/icu/calendar/struct.Date.html#method.days_in_year) for more information.
   int get daysInYear {
     final result = _icu4x_IsoDate_days_in_year_mv1(_ffi);
     return result;

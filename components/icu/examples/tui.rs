@@ -6,13 +6,13 @@
 // in a pseudo-real-world application of Textual User Interface.
 
 use icu::calendar::{Date, Gregorian};
+use icu::collections::codepointinvlist::CodePointInversionListBuilder;
+use icu::datetime::fieldsets::{self, YMDT};
+use icu::datetime::FixedCalendarDateTimeFormatter;
 use icu::locale::locale;
 use icu::plurals::{PluralCategory, PluralRules};
 use icu::time::TimeZoneInfo;
-use icu_collections::codepointinvlist::CodePointInversionListBuilder;
-use icu_datetime::fieldsets::{self, YMDT};
-use icu_datetime::FixedCalendarDateTimeFormatter;
-use icu_time::{Time, ZonedDateTime};
+use icu::time::{Time, ZonedDateTime};
 use std::env;
 
 fn main() {

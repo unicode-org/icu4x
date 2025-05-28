@@ -3,7 +3,7 @@
 # (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 extend = [
-    { path = "./tutorials/gn/gn.toml"}, #
+    { path = "./examples/gn/gn.toml"}, #
     { path = "./tools/make/data.toml"}, #
     { path = "./tools/make/valgrind.toml"}, #
     { path = "./tools/make/tidy.toml"}, #
@@ -97,18 +97,11 @@ dependencies = [
     "test-dev-without-assertions",
 ]
 
-[tasks.ci-job-test-tutorials-local]
-description = "Run all checks for the CI 'test-tutorials' job"
+[tasks.ci-job-test-cargo]
+description = "Run all checks for the CI 'test-cargo' job"
 category = "CI"
 dependencies = [
-    "test-tutorials-local",
-]
-
-[tasks.ci-job-test-tutorials-cratesio]
-description = "Run all checks for the CI 'test-tutorials' job"
-category = "CI"
-dependencies = [
-    "test-tutorials-cratesio",
+    "test-cargo",
 ]
 
 [tasks.ci-job-testdata]
@@ -278,7 +271,7 @@ dependencies = [
     # Get a coffee
     "ci-job-test",
     "ci-job-test-docs",
-    "ci-job-test-tutorials-cratesio",
+    "ci-job-test-cargo",
     "ci-job-testdata",
     "ci-job-msrv-features",
     "ci-job-full-datagen",

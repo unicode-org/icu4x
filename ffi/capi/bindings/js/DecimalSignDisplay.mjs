@@ -3,13 +3,12 @@ import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
 
+
 /**
  * ECMA-402 compatible sign display preference.
  *
- * See the [Rust documentation for `SignDisplay`](https://docs.rs/fixed_decimal/latest/fixed_decimal/enum.SignDisplay.html) for more information.
+ * See the [Rust documentation for `SignDisplay`](https://docs.rs/fixed_decimal/0.7.0/fixed_decimal/enum.SignDisplay.html) for more information.
  */
-
-
 export class DecimalSignDisplay {
     #value = undefined;
 
@@ -50,6 +49,7 @@ export class DecimalSignDisplay {
         throw TypeError(value + " is not a DecimalSignDisplay and does not correspond to any of its enumerator values.");
     }
 
+    /** @internal */
     static fromValue(value) {
         return new DecimalSignDisplay(value);
     }
@@ -58,6 +58,7 @@ export class DecimalSignDisplay {
         return [...DecimalSignDisplay.#values.keys()][this.#value];
     }
 
+    /** @internal */
     get ffiValue(){
         return this.#value;
     }

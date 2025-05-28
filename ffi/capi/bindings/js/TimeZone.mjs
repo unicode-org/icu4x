@@ -4,14 +4,13 @@ import { UtcOffset } from "./UtcOffset.mjs"
 import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
-
-/**
- * See the [Rust documentation for `TimeZone`](https://docs.rs/icu/latest/icu/time/struct.TimeZone.html) for more information.
- */
 const TimeZone_box_destroy_registry = new FinalizationRegistry((ptr) => {
     wasm.icu4x_TimeZone_destroy_mv1(ptr);
 });
 
+/**
+ * See the [Rust documentation for `TimeZone`](https://docs.rs/icu/2.0.0/icu/time/struct.TimeZone.html) for more information.
+ */
 export class TimeZone {
     // Internal ptr reference:
     #ptr = null;
@@ -35,6 +34,7 @@ export class TimeZone {
 
         return this;
     }
+    /** @internal */
     get ffiValue() {
         return this.#ptr;
     }
@@ -43,7 +43,7 @@ export class TimeZone {
     /**
      * The unknown time zone.
      *
-     * See the [Rust documentation for `unknown`](https://docs.rs/icu/latest/icu/time/struct.TimeZoneInfo.html#method.unknown) for more information.
+     * See the [Rust documentation for `unknown`](https://docs.rs/icu/2.0.0/icu/time/struct.TimeZoneInfo.html#method.unknown) for more information.
      */
     static unknown() {
 
@@ -60,7 +60,7 @@ export class TimeZone {
     /**
      * Whether the time zone is the unknown zone.
      *
-     * See the [Rust documentation for `is_unknown`](https://docs.rs/icu/latest/icu/time/struct.TimeZone.html#method.is_unknown) for more information.
+     * See the [Rust documentation for `is_unknown`](https://docs.rs/icu/2.0.0/icu/time/struct.TimeZone.html#method.is_unknown) for more information.
      */
     isUnknown() {
 
@@ -79,7 +79,7 @@ export class TimeZone {
      *
      * Returns the unknown time zone if the string is not a valid BCP-47 subtag.
      *
-     * Additional information: [1](https://docs.rs/icu/latest/icu/time/struct.TimeZone.html)
+     * Additional information: [1](https://docs.rs/icu/2.0.0/icu/time/struct.TimeZone.html)
      */
     static createFromBcp47(id) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
@@ -99,7 +99,7 @@ export class TimeZone {
     }
 
     /**
-     * See the [Rust documentation for `with_offset`](https://docs.rs/icu/latest/icu/time/struct.TimeZone.html#method.with_offset) for more information.
+     * See the [Rust documentation for `with_offset`](https://docs.rs/icu/2.0.0/icu/time/struct.TimeZone.html#method.with_offset) for more information.
      */
     withOffset(offset) {
 
@@ -114,7 +114,7 @@ export class TimeZone {
     }
 
     /**
-     * See the [Rust documentation for `without_offset`](https://docs.rs/icu/latest/icu/time/struct.TimeZone.html#method.without_offset) for more information.
+     * See the [Rust documentation for `without_offset`](https://docs.rs/icu/2.0.0/icu/time/struct.TimeZone.html#method.without_offset) for more information.
      */
     withoutOffset() {
 

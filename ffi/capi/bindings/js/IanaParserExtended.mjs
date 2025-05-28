@@ -7,6 +7,9 @@ import { TimeZoneAndCanonicalIterator } from "./TimeZoneAndCanonicalIterator.mjs
 import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
+const IanaParserExtended_box_destroy_registry = new FinalizationRegistry((ptr) => {
+    wasm.icu4x_IanaParserExtended_destroy_mv1(ptr);
+});
 
 /**
  * A mapper between IANA time zone identifiers and BCP-47 time zone identifiers.
@@ -14,12 +17,8 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
  * This mapper supports two-way mapping, but it is optimized for the case of IANA to BCP-47.
  * It also supports normalizing and canonicalizing the IANA strings.
  *
- * See the [Rust documentation for `IanaParserExtended`](https://docs.rs/icu/latest/icu/time/zone/iana/struct.IanaParserExtended.html) for more information.
+ * See the [Rust documentation for `IanaParserExtended`](https://docs.rs/icu/2.0.0/icu/time/zone/iana/struct.IanaParserExtended.html) for more information.
  */
-const IanaParserExtended_box_destroy_registry = new FinalizationRegistry((ptr) => {
-    wasm.icu4x_IanaParserExtended_destroy_mv1(ptr);
-});
-
 export class IanaParserExtended {
     // Internal ptr reference:
     #ptr = null;
@@ -43,15 +42,16 @@ export class IanaParserExtended {
 
         return this;
     }
+    /** @internal */
     get ffiValue() {
         return this.#ptr;
     }
 
 
     /**
-     * Create a new [`IanaParserExtended`] using compiled data
+     * Create a new {@link IanaParserExtended} using compiled data
      *
-     * See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/time/zone/iana/struct.IanaParserExtended.html#method.new) for more information.
+     * See the [Rust documentation for `new`](https://docs.rs/icu/2.0.0/icu/time/zone/iana/struct.IanaParserExtended.html#method.new) for more information.
      */
     #defaultConstructor() {
 
@@ -66,9 +66,9 @@ export class IanaParserExtended {
     }
 
     /**
-     * Create a new [`IanaParserExtended`] using a particular data source
+     * Create a new {@link IanaParserExtended} using a particular data source
      *
-     * See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/time/zone/iana/struct.IanaParserExtended.html#method.new) for more information.
+     * See the [Rust documentation for `new`](https://docs.rs/icu/2.0.0/icu/time/zone/iana/struct.IanaParserExtended.html#method.new) for more information.
      */
     static createWithProvider(provider) {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
@@ -79,7 +79,7 @@ export class IanaParserExtended {
         try {
             if (!diplomatReceive.resultFlag) {
                 const cause = new DataError(diplomatRuntime.internalConstructor, diplomatRuntime.enumDiscriminant(wasm, diplomatReceive.buffer));
-                throw new globalThis.Error('DataError: ' + cause.value, { cause });
+                throw new globalThis.Error('DataError.' + cause.value, { cause });
             }
             return new IanaParserExtended(diplomatRuntime.internalConstructor, diplomatRuntime.ptrRead(wasm, diplomatReceive.buffer), []);
         }
@@ -90,7 +90,7 @@ export class IanaParserExtended {
     }
 
     /**
-     * See the [Rust documentation for `parse`](https://docs.rs/icu/latest/icu/time/zone/iana/struct.IanaParserExtendedBorrowed.html#method.parse) for more information.
+     * See the [Rust documentation for `parse`](https://docs.rs/icu/2.0.0/icu/time/zone/iana/struct.IanaParserExtendedBorrowed.html#method.parse) for more information.
      */
     parse(value) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
@@ -116,7 +116,7 @@ export class IanaParserExtended {
     }
 
     /**
-     * See the [Rust documentation for `iter`](https://docs.rs/icu/latest/icu/time/zone/iana/struct.IanaParserExtendedBorrowed.html#method.iter) for more information.
+     * See the [Rust documentation for `iter`](https://docs.rs/icu/2.0.0/icu/time/zone/iana/struct.IanaParserExtendedBorrowed.html#method.iter) for more information.
      */
     iter() {
         // This lifetime edge depends on lifetimes 'a
@@ -134,7 +134,7 @@ export class IanaParserExtended {
     }
 
     /**
-     * See the [Rust documentation for `iter_all`](https://docs.rs/icu/latest/icu/time/zone/iana/struct.IanaParserExtendedBorrowed.html#method.iter_all) for more information.
+     * See the [Rust documentation for `iter_all`](https://docs.rs/icu/2.0.0/icu/time/zone/iana/struct.IanaParserExtendedBorrowed.html#method.iter_all) for more information.
      */
     iterAll() {
         // This lifetime edge depends on lifetimes 'a
@@ -151,6 +151,11 @@ export class IanaParserExtended {
         }
     }
 
+    /**
+     * Create a new {@link IanaParserExtended} using compiled data
+     *
+     * See the [Rust documentation for `new`](https://docs.rs/icu/2.0.0/icu/time/zone/iana/struct.IanaParserExtended.html#method.new) for more information.
+     */
     constructor() {
         if (arguments[0] === diplomatRuntime.exposeConstructor) {
             return this.#internalConstructor(...Array.prototype.slice.call(arguments, 1));

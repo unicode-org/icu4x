@@ -35,27 +35,27 @@ namespace icu4x {
  * This mapper supports two-way mapping, but it is optimized for the case of Windows to BCP-47.
  * It also supports normalizing and canonicalizing the Windows strings.
  *
- * See the [Rust documentation for `WindowsParser`](https://docs.rs/icu/latest/icu/time/zone/windows/struct.WindowsParser.html) for more information.
+ * See the [Rust documentation for `WindowsParser`](https://docs.rs/icu/2.0.0/icu/time/zone/windows/struct.WindowsParser.html) for more information.
  */
 class WindowsParser {
 public:
 
   /**
-   * Create a new [`WindowsParser`] using compiled data
+   * Create a new {@link WindowsParser} using compiled data
    *
-   * See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/time/zone/windows/struct.WindowsParser.html#method.new) for more information.
+   * See the [Rust documentation for `new`](https://docs.rs/icu/2.0.0/icu/time/zone/windows/struct.WindowsParser.html#method.new) for more information.
    */
   inline static std::unique_ptr<icu4x::WindowsParser> create();
 
   /**
-   * Create a new [`WindowsParser`] using a particular data source
+   * Create a new {@link WindowsParser} using a particular data source
    *
-   * See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/time/zone/windows/struct.WindowsParser.html#method.new) for more information.
+   * See the [Rust documentation for `new`](https://docs.rs/icu/2.0.0/icu/time/zone/windows/struct.WindowsParser.html#method.new) for more information.
    */
   inline static diplomat::result<std::unique_ptr<icu4x::WindowsParser>, icu4x::DataError> create_with_provider(const icu4x::DataProvider& provider);
 
   /**
-   * See the [Rust documentation for `parse`](https://docs.rs/icu/latest/icu/time/zone/windows/struct.WindowsParserBorrowed.html#method.parse) for more information.
+   * See the [Rust documentation for `parse`](https://docs.rs/icu/2.0.0/icu/time/zone/windows/struct.WindowsParserBorrowed.html#method.parse) for more information.
    */
   inline std::unique_ptr<icu4x::TimeZone> parse(std::string_view value, std::string_view region) const;
 

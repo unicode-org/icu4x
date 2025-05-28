@@ -68,11 +68,10 @@ pub mod ffi {
     }
 
     impl TimeZoneVariant {
-        /// Sets the `variant` field to "daylight" time.
         #[diplomat::rust_link(icu::time::zone::TimeZoneVariant::from_rearguard_isdst, FnInEnum)]
         #[diplomat::rust_link(icu::time::TimeZoneInfo::with_variant, FnInStruct)]
         #[diplomat::rust_link(icu::time::zone::TimeZoneVariant, Enum, compact)]
-        pub fn from_rearguard_isdst(&mut self, isdst: bool) -> Self {
+        pub fn from_rearguard_isdst(isdst: bool) -> Self {
             icu_time::zone::TimeZoneVariant::from_rearguard_isdst(isdst).into()
         }
     }
@@ -114,6 +113,7 @@ pub mod ffi {
         }
 
         #[diplomat::rust_link(icu::time::TimeZoneInfo::id, FnInStruct)]
+        #[diplomat::attr(demo_gen, disable)] // this just returns a constructor argument
         pub fn id(&self) -> Box<TimeZone> {
             Box::new(TimeZone(self.id))
         }
@@ -199,6 +199,7 @@ pub mod ffi {
         }
 
         #[diplomat::rust_link(icu::time::TimeZoneInfo::variant, FnInStruct)]
+        #[diplomat::attr(demo_gen, disable)] // this just returns a constructor argument
         pub fn variant(&self) -> Option<TimeZoneVariant> {
             self.variant.map(Into::into)
         }
