@@ -74,6 +74,8 @@ pub enum ParseError {
     AnnotationValueCharPostHyphen,
     #[displaydoc("Invalid annotation value character.")]
     AnnotationValueChar,
+    #[displaydoc("Offset must be minute precision")]
+    InvalidMinutePrecisionOffset,
 
     // Duplicate calendar with critical.
     #[displaydoc("Duplicate calendars cannot be provided when one is critical.")]

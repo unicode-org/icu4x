@@ -112,7 +112,7 @@ pub(crate) fn parse_time_zone<'a, T: EncodingType>(
     if is_iana {
         return Ok(TimeZoneRecord::Name(parse_tz_iana_name(cursor)?));
     } else if is_offset {
-        let (offset, _) = parse_utc_offset_minute_precision(cursor)?;
+        let offset = parse_utc_offset_minute_precision_strict(cursor)?;
         return Ok(TimeZoneRecord::Offset(offset));
     }
 
@@ -186,9 +186,19 @@ pub(crate) fn parse_utc_offset<T: EncodingType>(
     }))
 }
 
+pub(crate) fn parse_utc_offset_minute_precision_strict<T: EncodingType>(
+    cursor: &mut Cursor<T>,
+) -> ParserResult<MinutePrecisionOffset> {
+    let (offset, _) = parse_utc_offset_minute_precision(cursor)?;
+    if cursor.check_or(false, |ch| is_time_separator(ch) || ch.is_ascii_digit())? {
+        return Err(ParseError::InvalidMinutePrecisionOffset);
+    }
+    Ok(offset)
+}
+
 /// Parse an `UtcOffsetMinutePrecision` node
 ///
-/// Returns the offset and whether the utc parsing includes a minute.
+/// Returns the offset and whether the utc parsing includes a minute separator.
 pub(crate) fn parse_utc_offset_minute_precision<T: EncodingType>(
     cursor: &mut Cursor<T>,
 ) -> ParserResult<(MinutePrecisionOffset, bool)> {
