@@ -9,7 +9,7 @@ use alloc::{vec, vec::Vec};
 // The SingleUnitVec enum is used to represent a collection of SingleUnit instances.
 // It can represent zero, one, two, or multiple units, depending on the variant.
 // The iter method provides an iterator over the contained SingleUnit instances.
-#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord)]
 pub(crate) enum SingleUnitVec {
     Zero,
     One(SingleUnit),
