@@ -11,8 +11,8 @@ pub mod provider;
 pub mod ratio;
 
 #[derive(Display, Debug, Copy, Clone, PartialEq)]
-#[displaydoc("The unit is not valid.")]
+#[displaydoc("The unit is not valid")]
 /// The unit is not valid.
-/// This can happen if the unit id is not following the CLDR specification.
-/// For example, `meter` is a valid unit id, but `metre` is not.
+/// This can occur if the unit ID does not adhere to the CLDR specification.
+/// For example, `meter` is a valid unit ID, but `metre` is not.
 pub struct InvalidUnitError;
