@@ -87,12 +87,12 @@ impl ConverterFactory {
     ///    which simplifies to: Offset = (Offset1 - Offset2) * (1/ConversionRate2).
     ///
     /// NOTE:
-    ///   An offset can be calculated if both the input and output units are simple.
-    ///   A unit is considered simple if it is made up of a single unit item, with a power of 1 and an SI prefix of 0.
-    ///   
-    ///   For example:
-    ///     `meter` and `foot` are simple units.
-    ///     `meter-per-second` and `foot-per-second` are not simple units.
+    ///   - An offset can be calculated if both the input and output units are simple.
+    ///   - A unit is considered simple if it is made up of a single unit, with a power of 1 and an SI prefix power of 0.
+    ///     - For example:
+    ///         - `meter` and `foot` are simple units.
+    ///         - `square-meter` and `square-foot` are simple units.
+    ///         - `meter-per-second` and `foot-per-second` are not simple units.
     fn compute_offset(
         &self,
         input_unit: &MeasureUnit,
@@ -277,17 +277,20 @@ impl ConverterFactory {
         let root_to_unit2_direction_sign = if is_reciprocal { 1 } else { -1 };
 
         let mut conversion_rate = IcuRatio::one();
-        for input_item in input_unit.single_units.iter() {
-            conversion_rate *= Self::compute_conversion_term(self, input_item, 1)?;
+        for input_single_unit in input_unit.single_units.iter() {
+            conversion_rate *= Self::compute_conversion_term(self, input_single_unit, 1)?;
         }
 
         if input_unit.constant_denominator() != 0 {
             conversion_rate /= IcuRatio::from_integer(input_unit.constant_denominator());
         }
 
-        for output_item in output_unit.single_units.iter() {
-            conversion_rate *=
-                Self::compute_conversion_term(self, output_item, root_to_unit2_direction_sign)?;
+        for output_single_unit in output_unit.single_units.iter() {
+            conversion_rate *= Self::compute_conversion_term(
+                self,
+                output_single_unit,
+                root_to_unit2_direction_sign,
+            )?;
         }
 
         if output_unit.constant_denominator() != 0 {
