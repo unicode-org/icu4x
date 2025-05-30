@@ -36,11 +36,7 @@ impl SingleUnitVec {
             SingleUnitVec::Two(units) => {
                 *self = SingleUnitVec::Multi(vec![units[0], units[1], unit]);
             }
-            SingleUnitVec::Multi(units) => {
-                let mut units = core::mem::take(units);
-                units.push(unit);
-                *self = SingleUnitVec::Multi(units);
-            }
+            SingleUnitVec::Multi(units) => units.push(unit),
         }
     }
 }
