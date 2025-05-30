@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use smallvec::SmallVec;
+use alloc::vec::Vec;
 
 use crate::measure::measureunit::MeasureUnit;
 use crate::measure::power::get_power;
@@ -138,7 +138,7 @@ impl MeasureUnitParser {
         }
 
         let mut constant_denominator = 0;
-        let mut single_units = SmallVec::<[SingleUnit; 8]>::new();
+        let mut single_units = Vec::<SingleUnit>::new();
         let mut sign = 1;
         while !code_units.is_empty() {
             // First: extract the power.

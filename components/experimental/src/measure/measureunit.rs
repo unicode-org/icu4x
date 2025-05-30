@@ -2,9 +2,9 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use smallvec::SmallVec;
+use crate::measure::provider::single_unit::SingleUnit;
 
-use super::provider::single_unit::SingleUnit;
+use alloc::vec::Vec;
 
 // TODO NOTE: the MeasureUnitParser takes the trie and the ConverterFactory takes the full payload and an instance of MeasureUnitParser.
 /// The [`MeasureUnit`] struct represents a processed CLDR compound unit.
@@ -19,7 +19,7 @@ use super::provider::single_unit::SingleUnit;
 #[derive(Debug)]
 pub struct MeasureUnit {
     /// Contains the processed units.
-    pub(crate) single_units: SmallVec<[SingleUnit; 8]>,
+    pub(crate) single_units: Vec<SingleUnit>,
 
     /// Represents the constant denominator of this measure unit.
     ///
@@ -35,7 +35,7 @@ pub struct MeasureUnit {
 
 impl MeasureUnit {
     /// Returns a reference to the single units contained within this measure unit.
-    pub fn get_single_units(&self) -> &SmallVec<[SingleUnit; 8]> {
+    pub fn get_single_units(&self) -> &Vec<SingleUnit> {
         &self.single_units
     }
 
