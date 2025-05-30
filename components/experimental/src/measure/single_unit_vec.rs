@@ -29,14 +29,16 @@ impl SingleUnitVec {
         }
     }
 
-    pub(crate) fn push(&mut self, unit: SingleUnit) {
+    pub(crate) fn push(&mut self, input_unit: SingleUnit) {
         match self {
-            SingleUnitVec::Zero => *self = SingleUnitVec::One(unit),
-            SingleUnitVec::One(unit) => *self = SingleUnitVec::Two([*unit, *unit]),
-            SingleUnitVec::Two(units) => {
-                *self = SingleUnitVec::Multi(vec![units[0], units[1], unit]);
+            SingleUnitVec::Zero => *self = SingleUnitVec::One(input_unit),
+            SingleUnitVec::One(current_unit) => {
+                *self = SingleUnitVec::Two([*current_unit, input_unit])
             }
-            SingleUnitVec::Multi(units) => units.push(unit),
+            SingleUnitVec::Two(current_units) => {
+                *self = SingleUnitVec::Multi(vec![current_units[0], current_units[1], input_unit]);
+            }
+            SingleUnitVec::Multi(current_units) => current_units.push(input_unit),
         }
     }
 }
