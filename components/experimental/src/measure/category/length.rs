@@ -15,7 +15,6 @@ use crate::measure::{
 
 #[cfg(feature = "compiled_data")]
 impl category::Length {
-    #[cfg(feature = "compiled_data")]
     /// Returns a [`MeasureUnit`] representing the length of one meter.
     pub fn meter() -> MeasureUnit {
         MeasureUnit {
