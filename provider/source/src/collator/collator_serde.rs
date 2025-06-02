@@ -43,6 +43,15 @@ pub(crate) struct CollationReordering {
 /// Serde counterpart for `CollationSpecialPrimaries`.
 #[derive(serde::Deserialize)]
 pub(crate) struct CollationSpecialPrimaries {
-    pub(crate) last_primaries: Vec<u16>, // length always supposed to be 4
+    /// Length always supposed to be 4
+    pub(crate) last_primaries: Vec<u16>, //
+    /// `Option` to support datagen with ICU4X 2.0.0-associated
+    /// TOML from ICU4C tag icu4x/2025-05-01/77.x, which doesn't
+    /// have this data.
+    ///
+    /// For correct results, when CLDR is updated on the ICU4C
+    /// side, icuexportdata must start including this data in
+    /// the TOML.
+    pub(crate) compressible_bytes: Option<Vec<bool>>,
     pub(crate) numeric_primary: u8,
 }
