@@ -40,7 +40,6 @@ impl DataProvider<UnitsInfoV1> for SourceDataProvider {
         }
 
         let mut convert_units_vec = Vec::<ConversionInfoPreProcessing>::new();
-
         for (unit_name, convert_unit) in convert_units {
             let base_unit = convert_unit.base_unit.as_str();
             let factor = match convert_unit.factor {
