@@ -14,8 +14,8 @@ use crate::measure::{
 
 use crate::measure::category::category;
 
+#[cfg(feature = "compiled_data")]
 impl category::Volume {
-    #[cfg(feature = "compiled_data")]
     /// Returns a [`MeasureUnit`] representing the volume of one cubic meter.
     pub fn cubic_meter() -> MeasureUnit {
         MeasureUnit {
@@ -31,7 +31,6 @@ impl category::Volume {
         }
     }
 
-    #[cfg(feature = "compiled_data")]
     /// Returns a [`MeasureUnit`] representing the volume of one liter.
     pub fn liter() -> MeasureUnit {
         MeasureUnit {

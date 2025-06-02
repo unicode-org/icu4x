@@ -13,6 +13,7 @@ use crate::measure::{
     single_unit_vec::SingleUnitVec,
 };
 
+#[cfg(feature = "compiled_data")]
 impl category::Area {
     #[cfg(feature = "compiled_data")]
     /// Returns a [`MeasureUnit`] representing the area of one square meter.

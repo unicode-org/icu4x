@@ -13,8 +13,8 @@ use crate::measure::{
     single_unit_vec::SingleUnitVec,
 };
 
+#[cfg(feature = "compiled_data")]
 impl category::Mass {
-    #[cfg(feature = "compiled_data")]
     /// Returns a [`MeasureUnit`] representing the mass of one gram.
     pub fn gram() -> MeasureUnit {
         MeasureUnit {
@@ -30,7 +30,6 @@ impl category::Mass {
         }
     }
 
-    #[cfg(feature = "compiled_data")]
     /// Returns a [`MeasureUnit`] representing the mass of one kilogram.
     pub fn kilogram() -> MeasureUnit {
         MeasureUnit {

@@ -13,6 +13,7 @@ use crate::measure::{
     single_unit_vec::SingleUnitVec,
 };
 
+#[cfg(feature = "compiled_data")]
 impl category::Length {
     #[cfg(feature = "compiled_data")]
     /// Returns a [`MeasureUnit`] representing the length of one meter.
