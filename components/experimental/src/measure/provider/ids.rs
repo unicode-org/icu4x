@@ -4,7 +4,6 @@
 
 //! This module temporarily saves unit IDs until they can be read directly from databake.
 
-#[cfg(feature = "compiled_data")]
 impl crate::provider::Baked {
     pub const UNIT_IDS_V1_UND_METER: u16 = 85;
     pub const UNIT_IDS_V1_UND_GRAM: u16 = 59;

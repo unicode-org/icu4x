@@ -2,7 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-#[cfg(feature = "compiled_data")]
 use crate::measure::{
     measureunit::MeasureUnit,
     provider::{
@@ -15,7 +14,6 @@ use crate::measure::{
 use crate::measure::category::category;
 
 impl category::Volume {
-    #[cfg(feature = "compiled_data")]
     /// Returns a [`MeasureUnit`] representing the volume of one cubic meter.
     pub fn cubic_meter() -> MeasureUnit {
         MeasureUnit {
@@ -31,7 +29,6 @@ impl category::Volume {
         }
     }
 
-    #[cfg(feature = "compiled_data")]
     /// Returns a [`MeasureUnit`] representing the volume of one liter.
     pub fn liter() -> MeasureUnit {
         MeasureUnit {
@@ -49,7 +46,6 @@ impl category::Volume {
 }
 
 #[cfg(test)]
-#[cfg(feature = "compiled_data")]
 mod tests {
     use super::*;
     use crate::measure::parser::MeasureUnitParser;
