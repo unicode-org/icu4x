@@ -4,6 +4,7 @@
 
 #[cfg(feature = "compiled_data")]
 use crate::measure::{
+    category::category,
     measureunit::MeasureUnit,
     provider::{
         si_prefix::{Base, SiPrefix},
@@ -11,8 +12,6 @@ use crate::measure::{
     },
     single_unit_vec::SingleUnitVec,
 };
-
-use crate::measure::category::category;
 
 #[cfg(feature = "compiled_data")]
 impl category::Volume {
