@@ -30,7 +30,6 @@ impl DataProvider<UnitsTrieV1> for SourceDataProvider {
         // Pre-process the conversion information to convert the factor and offset to scientific notation.
         // This used to get the id for each unit which is used to get the conversion information from the `UnitsInfo`.
         let mut convert_units_vec = Vec::<&ConvertUnit>::new();
-
         for (unit_name, convert_unit) in convert_units {
             let convert_unit_index = convert_units_vec.len();
             convert_units_vec.push(convert_unit);
