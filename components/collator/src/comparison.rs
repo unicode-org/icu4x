@@ -1818,7 +1818,7 @@ impl CollatorBorrowed<'_> {
             // primary level but terminate compression on all levels and then exit the loop.
             if p > NO_CE_PRIMARY && levels & PRIMARY_LEVEL_FLAG != 0 {
                 // Test the un-reordered primary for compressibility.
-                let is_compressible = false; // TODO?
+                let is_compressible = self.special_primaries.is_compressible((p >> 24) as _);
                 if let Some(reordering) = &self.reordering {
                     p = reordering.reorder(p);
                 }
