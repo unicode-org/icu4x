@@ -1200,7 +1200,7 @@ version = "2.0.0"
 
 [[package]]
 name = "icu_capi"
-version = "2.0.1"
+version = "2.0.2"
 dependencies = [
  "diplomat",
  "diplomat-runtime",
@@ -1272,7 +1272,7 @@ dependencies = [
 
 [[package]]
 name = "icu_collator"
-version = "2.0.0"
+version = "2.0.1"
 dependencies = [
  "arraystring",
  "atoi",
@@ -1298,7 +1298,7 @@ dependencies = [
 
 [[package]]
 name = "icu_collator_data"
-version = "2.0.0"
+version = "2.0.1"
 
 [[package]]
 name = "icu_collections"
@@ -1386,7 +1386,7 @@ version = "2.0.0"
 
 [[package]]
 name = "icu_experimental"
-version = "0.3.0"
+version = "0.4.0-dev"
 dependencies = [
  "criterion",
  "databake",
@@ -1886,7 +1886,7 @@ checksum = "4a5f13b858c8d314ee3e8f639011f7ccefe71f97f96e50151fb991f267928e2c"
 
 [[package]]
 name = "ixdtf"
-version = "0.5.0"
+version = "0.6.0-dev"
 dependencies = [
  "criterion",
  "displaydoc",

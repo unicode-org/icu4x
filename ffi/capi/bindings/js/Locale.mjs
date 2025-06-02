@@ -154,6 +154,29 @@ export class Locale {
     }
 
     /**
+     * Set a Unicode extension.
+     *
+     * See the [Rust documentation for `extensions`](https://docs.rs/icu/2.0.0/icu/locale/struct.Locale.html#structfield.extensions) for more information.
+     */
+    setUnicodeExtension(k, v) {
+        let functionCleanupArena = new diplomatRuntime.CleanupArena();
+
+        const kSlice = diplomatRuntime.DiplomatBuf.str8(wasm, k);
+        const vSlice = diplomatRuntime.DiplomatBuf.str8(wasm, v);
+
+        const result = wasm.icu4x_Locale_set_unicode_extension_mv1(this.ffiValue, ...kSlice.splat(), ...vSlice.splat());
+
+        try {
+            return result === 1;
+        }
+
+        finally {
+            functionCleanupArena.free();
+
+        }
+    }
+
+    /**
      * Returns a string representation of {@link Locale} language.
      *
      * See the [Rust documentation for `id`](https://docs.rs/icu/2.0.0/icu/locale/struct.Locale.html#structfield.id) for more information.

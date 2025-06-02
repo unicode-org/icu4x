@@ -2,8 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use alloc::vec::Vec;
-
 use crate::measure::measureunit::MeasureUnit;
 use crate::measure::power::get_power;
 use crate::measure::si_prefix::get_si_prefix;
@@ -14,6 +12,7 @@ use icu_provider::DataError;
 
 use super::provider::si_prefix::{Base, SiPrefix};
 use super::provider::single_unit::SingleUnit;
+use super::single_unit_vec::SingleUnitVec;
 
 // TODO: add test cases for this parser after adding UnitsTest.txt to the test data.
 /// A parser for the CLDR unit identifier (e.g. `meter-per-square-second`)
@@ -138,7 +137,7 @@ impl MeasureUnitParser {
         }
 
         let mut constant_denominator = 0;
-        let mut single_units = Vec::<SingleUnit>::new();
+        let mut single_units = SingleUnitVec::Zero;
         let mut sign = 1;
         while !code_units.is_empty() {
             // First: extract the power.
@@ -217,8 +216,9 @@ impl MeasureUnitParser {
             };
         }
 
+        // TODO: shall we allow units without any single units?
         // There is no unit without any valid single units.
-        if single_units.is_empty() {
+        if single_units.as_slice().is_empty() {
             return Err(InvalidUnitError);
         }
 
@@ -245,7 +245,7 @@ mod tests {
 
         for (input, expected_len, expected_denominator) in test_cases {
             let measure_unit = parser.try_from_str(input).unwrap();
-            assert_eq!(measure_unit.single_units.len(), expected_len);
+            assert_eq!(measure_unit.single_units().len(), expected_len);
             assert_eq!(measure_unit.constant_denominator, expected_denominator);
         }
     }
