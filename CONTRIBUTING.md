@@ -147,7 +147,7 @@ Our wider testsuite is organized as `ci-job-foo` make tasks corresponding to eac
 
  - `ci-job-doc`: Builds all Rustdoc; any warning is treated as an error.
  - `ci-job-test-docs`: Runs `cargo test --doc` on all the crates. This takes a while but is the main way of ensuring that nothing has been broken.
- - `ci-job-test-tutorials`: Builds all our tutorials against both local code (`locale`), and released ICU4X (`cratesio`).
+ - `ci-job-test-cargo`: Tests all our Cargo examples.
 <br/>
  
  - `ci-job-testdata`: Runs an `icu_provider_source` integration test with a subset of CLDR, ICU, and LSTM source data.

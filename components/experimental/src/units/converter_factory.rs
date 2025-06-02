@@ -87,12 +87,12 @@ impl ConverterFactory {
     ///    which simplifies to: Offset = (Offset1 - Offset2) * (1/ConversionRate2).
     ///
     /// NOTE:
-    ///   An offset can be calculated if both the input and output units are simple.
-    ///   A unit is considered simple if it is made up of a single unit item, with a power of 1 and an SI prefix of 0.
-    ///   
-    ///   For example:
-    ///     `meter` and `foot` are simple units.
-    ///     `meter-per-second` and `foot-per-second` are not simple units.
+    ///   - An offset can be calculated if both the input and output units are simple.
+    ///   - A unit is considered simple if it is made up of a single unit, with a power of 1 and an SI prefix power of 0.
+    ///     - For example:
+    ///         - `meter` and `foot` are simple units.
+    ///         - `square-meter` and `square-foot` are simple units.
+    ///         - `meter-per-second` and `foot-per-second` are not simple units.
     fn compute_offset(
         &self,
         input_unit: &MeasureUnit,
@@ -172,11 +172,11 @@ impl ConverterFactory {
             sums: i16,
         }
 
-        /// Inserting the units item into the map.
+        /// Inserts composite units into the map by decomposing them into their basic units.
         /// NOTE:
-        ///     This will require to go through the basic units of the given unit items.
-        ///     For example, `newton` has the basic units:  `gram`, `meter`, and `second` (each one has it is own power and si prefix).
-        fn insert_non_basic_units(
+        ///     This process involves iterating through the basic units of the provided composite units.
+        ///     For example, `newton` is composed of the basic units: `gram`, `meter`, and `second` (each with its own power and SI prefix).
+        fn insert_composite_units(
             factory: &ConverterFactory,
             single_units: &[SingleUnit],
             sign: i16,
@@ -231,12 +231,10 @@ impl ConverterFactory {
             }
         }
 
-        let unit1 = &unit1.single_units;
-        let unit2 = &unit2.single_units;
-
         let mut map = LiteMap::new();
-        insert_non_basic_units(self, unit1.as_slice(), 1, &mut map)?;
-        insert_non_basic_units(self, unit2.as_slice(), -1, &mut map)?;
+        for (single_units, sign) in [(&unit1.single_units, 1), (&unit2.single_units, -1)] {
+            insert_composite_units(self, single_units, sign, &mut map)?;
+        }
 
         let (power_sums_are_zero, power_diffs_are_zero) =
             map.values()
@@ -295,18 +293,20 @@ impl ConverterFactory {
         let root_to_unit2_direction_sign = if is_reciprocal { 1 } else { -1 };
 
         let mut conversion_rate = IcuRatio::one();
-
-        for input_item in input_unit.single_units() {
-            conversion_rate *= Self::compute_conversion_term(self, input_item, 1)?;
+        for input_single_unit in input_unit.single_units.iter() {
+            conversion_rate *= Self::compute_conversion_term(self, input_single_unit, 1)?;
         }
 
         if input_unit.constant_denominator() != 0 {
             conversion_rate /= IcuRatio::from_integer(input_unit.constant_denominator());
         }
 
-        for output_item in output_unit.single_units() {
-            conversion_rate *=
-                Self::compute_conversion_term(self, output_item, root_to_unit2_direction_sign)?;
+        for output_single_unit in output_unit.single_units.iter() {
+            conversion_rate *= Self::compute_conversion_term(
+                self,
+                output_single_unit,
+                root_to_unit2_direction_sign,
+            )?;
         }
 
         if output_unit.constant_denominator() != 0 {
