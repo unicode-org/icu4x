@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+#[cfg(feature = "compiled_data")]
 use crate::measure::{
     category::category,
     measureunit::MeasureUnit,
@@ -13,6 +14,7 @@ use crate::measure::{
 };
 
 impl category::Mass {
+    #[cfg(feature = "compiled_data")]
     /// Returns a [`MeasureUnit`] representing the mass of one gram.
     pub fn gram() -> MeasureUnit {
         MeasureUnit {
@@ -28,6 +30,7 @@ impl category::Mass {
         }
     }
 
+    #[cfg(feature = "compiled_data")]
     /// Returns a [`MeasureUnit`] representing the mass of one kilogram.
     pub fn kilogram() -> MeasureUnit {
         MeasureUnit {
@@ -45,6 +48,7 @@ impl category::Mass {
 }
 
 #[cfg(test)]
+#[cfg(feature = "compiled_data")]
 mod tests {
     use super::*;
     use crate::measure::parser::MeasureUnitParser;

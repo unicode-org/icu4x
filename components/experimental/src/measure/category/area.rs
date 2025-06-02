@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+#[cfg(feature = "compiled_data")]
 use crate::measure::{
     category::category,
     measureunit::MeasureUnit,
@@ -13,6 +14,7 @@ use crate::measure::{
 };
 
 impl category::Area {
+    #[cfg(feature = "compiled_data")]
     /// Returns a [`MeasureUnit`] representing the area of one square meter.
     pub fn square_meter() -> MeasureUnit {
         MeasureUnit {
@@ -30,6 +32,7 @@ impl category::Area {
 }
 
 #[cfg(test)]
+#[cfg(feature = "compiled_data")]
 mod tests {
     use super::*;
     use crate::measure::parser::MeasureUnitParser;
