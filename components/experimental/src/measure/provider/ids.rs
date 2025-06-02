@@ -8,5 +8,6 @@
 impl crate::provider::Baked {
     pub const UNIT_IDS_V1_UND_METER: u16 = 85;
     pub const UNIT_IDS_V1_UND_GRAM: u16 = 59;
+    pub const UNIT_IDS_V1_UND_KILOGRAM: u16 = 75;
     pub const UNIT_IDS_V1_UND_LITER: u16 = 82;
 }

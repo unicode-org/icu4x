@@ -2,11 +2,16 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::measure::category::category;
-use crate::measure::measureunit::MeasureUnit;
-use crate::measure::provider::si_prefix::{Base, SiPrefix};
-use crate::measure::provider::single_unit::SingleUnit;
-use crate::measure::single_unit_vec::SingleUnitVec;
+#[cfg(feature = "compiled_data")]
+use crate::measure::{
+    category::category,
+    measureunit::MeasureUnit,
+    provider::{
+        si_prefix::{Base, SiPrefix},
+        single_unit::SingleUnit,
+    },
+    single_unit_vec::SingleUnitVec,
+};
 
 impl category::Length {
     #[cfg(feature = "compiled_data")]
@@ -27,11 +32,16 @@ impl category::Length {
 }
 
 #[cfg(test)]
+#[cfg(feature = "compiled_data")]
 mod tests {
     use super::*;
+    use crate::measure::parser::MeasureUnitParser;
 
     #[test]
     fn test_length_category() {
-        let _meter: MeasureUnit = category::Length::meter();
+        let parser = MeasureUnitParser::default();
+        let meter = category::Length::meter();
+        let meter_parsed = parser.try_from_str("meter").unwrap();
+        assert_eq!(meter, meter_parsed);
     }
 }

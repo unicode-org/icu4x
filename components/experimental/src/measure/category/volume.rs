@@ -2,10 +2,15 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::measure::measureunit::MeasureUnit;
-use crate::measure::provider::si_prefix::{Base, SiPrefix};
-use crate::measure::provider::single_unit::SingleUnit;
-use crate::measure::single_unit_vec::SingleUnitVec;
+#[cfg(feature = "compiled_data")]
+use crate::measure::{
+    measureunit::MeasureUnit,
+    provider::{
+        si_prefix::{Base, SiPrefix},
+        single_unit::SingleUnit,
+    },
+    single_unit_vec::SingleUnitVec,
+};
 
 use crate::measure::category::category;
 
@@ -44,11 +49,20 @@ impl category::Volume {
 }
 
 #[cfg(test)]
+#[cfg(feature = "compiled_data")]
 mod tests {
     use super::*;
+    use crate::measure::parser::MeasureUnitParser;
 
     #[test]
     fn test_volume_category() {
-        let _cubic_meter = category::Volume::cubic_meter();
+        let parser = MeasureUnitParser::default();
+        let cubic_meter = category::Volume::cubic_meter();
+        let cubic_meter_parsed = parser.try_from_str("cubic-meter").unwrap();
+        assert_eq!(cubic_meter, cubic_meter_parsed);
+
+        let liter = category::Volume::liter();
+        let liter_parsed = parser.try_from_str("liter").unwrap();
+        assert_eq!(liter, liter_parsed);
     }
 }
