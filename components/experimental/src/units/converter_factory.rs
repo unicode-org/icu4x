@@ -162,26 +162,31 @@ impl ConverterFactory {
             sums: i16,
         }
 
-        /// Inserting the units item into the map.
+        /// Inserts composite units into the map by decomposing them into their basic units.
         /// NOTE:
-        ///     This will require to go through the basic units of the given unit items.
-        ///     For example, `newton` has the basic units:  `gram`, `meter`, and `second` (each one has it is own power and si prefix).
-        fn insert_non_basic_units(
+        ///     This process involves iterating through the basic units of the provided composite units.
+        ///     For example, `newton` is composed of the basic units: `gram`, `meter`, and `second` (each with its own power and SI prefix).
+        fn insert_composite_units(
             factory: &ConverterFactory,
-            units: &[SingleUnit],
+            single_units: &[SingleUnit],
             sign: i16,
             map: &mut LiteMap<u16, PowersInfo>,
         ) -> Option<()> {
-            for item in units {
-                let items_from_item = factory
+            for single_unit in single_units {
+                let conversion_info = factory
                     .payload
                     .get()
                     .conversion_info
-                    .get(item.unit_id as usize);
+                    .get(single_unit.unit_id as usize);
 
-                debug_assert!(items_from_item.is_some(), "Failed to get convert info");
+                debug_assert!(conversion_info.is_some(), "Failed to get convert info");
 
-                insert_base_units(items_from_item?.basic_units(), item.power as i16, sign, map);
+                insert_base_units(
+                    conversion_info?.basic_units(),
+                    single_unit.power as i16,
+                    sign,
+                    map,
+                );
             }
 
             Some(())
@@ -216,12 +221,10 @@ impl ConverterFactory {
             }
         }
 
-        let unit1 = &unit1.single_units;
-        let unit2 = &unit2.single_units;
-
         let mut map = LiteMap::new();
-        insert_non_basic_units(self, unit1, 1, &mut map)?;
-        insert_non_basic_units(self, unit2, -1, &mut map)?;
+        for (single_units, sign) in [(&unit1.single_units, 1), (&unit2.single_units, -1)] {
+            insert_composite_units(self, single_units, sign, &mut map)?;
+        }
 
         let (power_sums_are_zero, power_diffs_are_zero) =
             map.values()
