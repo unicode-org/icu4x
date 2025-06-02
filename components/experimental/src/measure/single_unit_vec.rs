@@ -20,7 +20,7 @@ pub(crate) enum SingleUnitVec {
 impl SingleUnitVec {
     /// Returns a slice of the [`SingleUnit`] instances contained
     /// within the [`SingleUnitVec`].
-    pub fn as_slice(&self) -> &[SingleUnit] {
+    pub(crate) fn as_slice(&self) -> &[SingleUnit] {
         match self {
             SingleUnitVec::Zero => &[],
             SingleUnitVec::One(unit) => core::slice::from_ref(unit),
@@ -40,27 +40,5 @@ impl SingleUnitVec {
             }
             SingleUnitVec::Multi(current_units) => current_units.push(input_unit),
         }
-    }
-}
-
-impl FromIterator<SingleUnit> for SingleUnitVec {
-    fn from_iter<I: IntoIterator<Item = SingleUnit>>(iter: I) -> Self {
-        let mut iter = iter.into_iter();
-
-        if let Some(unit1) = iter.next() {
-            if let Some(unit2) = iter.next() {
-                if let Some(unit3) = iter.next() {
-                    let mut units = Vec::with_capacity(3);
-                    units.push(unit1);
-                    units.push(unit2);
-                    units.push(unit3);
-                    units.extend(iter);
-                    return SingleUnitVec::Multi(units);
-                }
-                return SingleUnitVec::Two([unit1, unit2]);
-            }
-            return SingleUnitVec::One(unit1);
-        }
-        SingleUnitVec::Zero
     }
 }
