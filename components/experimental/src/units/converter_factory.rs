@@ -233,7 +233,7 @@ impl ConverterFactory {
 
         let mut map = LiteMap::new();
         for (single_units, sign) in [(&unit1.single_units, 1), (&unit2.single_units, -1)] {
-            insert_composite_units(self, single_units, sign, &mut map)?;
+            insert_composite_units(self, single_units.as_slice(), sign, &mut map)?;
         }
 
         let (power_sums_are_zero, power_diffs_are_zero) =
@@ -293,7 +293,7 @@ impl ConverterFactory {
         let root_to_unit2_direction_sign = if is_reciprocal { 1 } else { -1 };
 
         let mut conversion_rate = IcuRatio::one();
-        for input_single_unit in input_unit.single_units.iter() {
+        for input_single_unit in input_unit.single_units.as_slice() {
             conversion_rate *= Self::compute_conversion_term(self, input_single_unit, 1)?;
         }
 
@@ -301,7 +301,7 @@ impl ConverterFactory {
             conversion_rate /= IcuRatio::from_integer(input_unit.constant_denominator());
         }
 
-        for output_single_unit in output_unit.single_units.iter() {
+        for output_single_unit in output_unit.single_units.as_slice() {
             conversion_rate *= Self::compute_conversion_term(
                 self,
                 output_single_unit,
