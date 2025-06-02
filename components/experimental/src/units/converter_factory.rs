@@ -4,7 +4,6 @@
 
 use crate::measure::measureunit::MeasureUnit;
 use crate::measure::provider::single_unit::SingleUnit;
-use crate::units::provider;
 use crate::units::ratio::IcuRatio;
 use crate::units::{
     converter::{
@@ -13,6 +12,7 @@ use crate::units::{
     },
     provider::Sign,
 };
+use crate::units::{provider, InvalidUnitError};
 
 use icu_provider::prelude::*;
 use icu_provider::DataError;
@@ -98,12 +98,18 @@ impl ConverterFactory {
         input_unit: &MeasureUnit,
         output_unit: &MeasureUnit,
     ) -> Option<IcuRatio> {
-        if !(input_unit.single_units.len() == 1
-            && output_unit.single_units.len() == 1
-            && input_unit.single_units[0].power == 1
-            && output_unit.single_units[0].power == 1
-            && input_unit.single_units[0].si_prefix.power == 0
-            && output_unit.single_units[0].si_prefix.power == 0)
+        let &[input_unit] = input_unit.single_units() else {
+            return Some(IcuRatio::zero());
+        };
+
+        let &[output_unit] = output_unit.single_units() else {
+            return Some(IcuRatio::zero());
+        };
+
+        if !(input_unit.power == 1
+            && output_unit.power == 1
+            && input_unit.si_prefix.power == 0
+            && output_unit.si_prefix.power == 0)
         {
             return Some(IcuRatio::zero());
         }
@@ -112,7 +118,7 @@ impl ConverterFactory {
             .payload
             .get()
             .conversion_info
-            .get(input_unit.single_units[0].unit_id as usize);
+            .get(input_unit.unit_id as usize);
         debug_assert!(
             input_conversion_info.is_some(),
             "Failed to get input conversion info"
@@ -123,7 +129,7 @@ impl ConverterFactory {
             .payload
             .get()
             .conversion_info
-            .get(output_unit.single_units[0].unit_id as usize);
+            .get(output_unit.unit_id as usize);
         debug_assert!(
             output_conversion_info.is_some(),
             "Failed to get output conversion info"
@@ -146,7 +152,11 @@ impl ConverterFactory {
     /// NOTE:
     ///   If the units are neither proportional nor reciprocal, the function will return `None`,
     ///   indicating that the units are incompatible.
-    fn is_reciprocal(&self, unit1: &MeasureUnit, unit2: &MeasureUnit) -> Option<bool> {
+    fn is_reciprocal(
+        &self,
+        unit1: &MeasureUnit,
+        unit2: &MeasureUnit,
+    ) -> Result<bool, InvalidUnitError> {
         /// A struct that contains the sum and difference of base unit powers.
         /// For example:
         ///     For the input unit `meter-per-second`, the base units are `meter` (power: 1) and `second` (power: -1).
@@ -171,7 +181,7 @@ impl ConverterFactory {
             single_units: &[SingleUnit],
             sign: i16,
             map: &mut LiteMap<u16, PowersInfo>,
-        ) -> Option<()> {
+        ) -> Result<(), InvalidUnitError> {
             for single_unit in single_units {
                 let conversion_info = factory
                     .payload
@@ -181,15 +191,15 @@ impl ConverterFactory {
 
                 debug_assert!(conversion_info.is_some(), "Failed to get convert info");
 
-                insert_base_units(
-                    conversion_info?.basic_units(),
-                    single_unit.power as i16,
-                    sign,
-                    map,
-                );
+                match conversion_info {
+                    Some(items) => {
+                        insert_base_units(items.basic_units(), single_unit.power as i16, sign, map)
+                    }
+                    None => return Err(InvalidUnitError),
+                }
             }
 
-            Some(())
+            Ok(())
         }
 
         /// Inserting the basic units into the map.
@@ -223,7 +233,7 @@ impl ConverterFactory {
 
         let mut map = LiteMap::new();
         for (single_units, sign) in [(&unit1.single_units, 1), (&unit2.single_units, -1)] {
-            insert_composite_units(self, single_units, sign, &mut map)?;
+            insert_composite_units(self, single_units.as_slice(), sign, &mut map)?;
         }
 
         let (power_sums_are_zero, power_diffs_are_zero) =
@@ -236,11 +246,11 @@ impl ConverterFactory {
                 });
 
         if power_diffs_are_zero {
-            Some(false)
+            Ok(false)
         } else if power_sums_are_zero {
-            Some(true)
+            Ok(true)
         } else {
-            None
+            Err(InvalidUnitError)
         }
     }
 
@@ -274,13 +284,16 @@ impl ConverterFactory {
         input_unit: &MeasureUnit,
         output_unit: &MeasureUnit,
     ) -> Option<UnitsConverter<T>> {
-        let is_reciprocal = self.is_reciprocal(input_unit, output_unit)?;
+        let is_reciprocal = match self.is_reciprocal(input_unit, output_unit) {
+            Ok(is_reciprocal) => is_reciprocal,
+            Err(InvalidUnitError) => return None,
+        };
 
         // Determine the sign of the powers of the units from root to unit2.
         let root_to_unit2_direction_sign = if is_reciprocal { 1 } else { -1 };
 
         let mut conversion_rate = IcuRatio::one();
-        for input_single_unit in input_unit.single_units.iter() {
+        for input_single_unit in input_unit.single_units.as_slice() {
             conversion_rate *= Self::compute_conversion_term(self, input_single_unit, 1)?;
         }
 
@@ -288,7 +301,7 @@ impl ConverterFactory {
             conversion_rate /= IcuRatio::from_integer(input_unit.constant_denominator());
         }
 
-        for output_single_unit in output_unit.single_units.iter() {
+        for output_single_unit in output_unit.single_units.as_slice() {
             conversion_rate *= Self::compute_conversion_term(
                 self,
                 output_single_unit,
