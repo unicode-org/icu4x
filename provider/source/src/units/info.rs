@@ -26,9 +26,6 @@ impl DataProvider<UnitsInfoV1> for SourceDataProvider {
             .core()
             .read_and_parse("supplemental/units.json")?;
 
-        let clean_constants_map =
-            process_constants(&units_data.supplemental.unit_constants.constants)?;
-
         struct ConversionInfoPreProcessing<'a> {
             base_unit: &'a str,
             factor_scientific: ScientificNumber,
@@ -38,20 +35,19 @@ impl DataProvider<UnitsInfoV1> for SourceDataProvider {
         // Initialize a vector to store pre-processed conversion information for `MeasureUnitParser`.
         let mut convert_units_vec =
             Vec::with_capacity(units_data.supplemental.convert_units.convert_units.len());
+
         // Initialize a map to associate unit names with their corresponding index in `convert_units_vec`.
         let mut conversion_info_map = BTreeMap::new();
+
+        // Process the unit constants to remove any constants that are in string format.
+        let clean_constants_map =
+            process_constants(&units_data.supplemental.unit_constants.constants)?;
 
         // Iterate over all the units and their conversion information.
         for (unit_name, convert_unit) in &units_data.supplemental.convert_units.convert_units {
             let base_unit = convert_unit.base_unit.as_str();
-            let factor = match convert_unit.factor {
-                Some(ref factor) => factor.as_str(),
-                None => "1",
-            };
-            let offset = match convert_unit.offset {
-                Some(ref offset) => offset.as_str(),
-                None => "0",
-            };
+            let factor = convert_unit.factor.as_deref().unwrap_or("1");
+            let offset = convert_unit.offset.as_deref().unwrap_or("0");
 
             let convert_unit_index = convert_units_vec.len();
             convert_units_vec.push(ConversionInfoPreProcessing {
