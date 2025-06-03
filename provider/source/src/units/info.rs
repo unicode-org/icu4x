@@ -20,14 +20,15 @@ impl DataProvider<UnitsInfoV1> for SourceDataProvider {
     fn load(&self, _req: DataRequest) -> Result<DataResponse<UnitsInfoV1>, DataError> {
         self.check_req::<UnitsInfoV1>(_req)?;
 
-        // Load and parse the unit constants from the supplemental data file.
+        // Get all the constants in the form of a map from constant name to constant value as numerator and denominator.
         let units_data: &cldr_serde::units::info::Resource = self
             .cldr()?
             .core()
             .read_and_parse("supplemental/units.json")?;
 
-        let clean_constants_map =
-            process_constants(&units_data.supplemental.unit_constants.constants)?;
+        let constants = &units_data.supplemental.unit_constants.constants;
+
+        let clean_constants_map = process_constants(constants)?;
 
         // Get all the units and their conversion information.
         let convert_units = &units_data.supplemental.convert_units.convert_units;
