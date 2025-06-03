@@ -2266,8 +2266,7 @@ where
     }
 
     fn write_char(&mut self, c: char) -> core::fmt::Result {
-        let mut buf = [0u8; 4];
-        self.inner.write(c.encode_utf8(&mut buf).as_bytes())
+        self.inner.write(c.encode_utf8(&mut [0u8; 4]).as_bytes())
     }
 }
 
