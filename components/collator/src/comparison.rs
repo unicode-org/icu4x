@@ -9,7 +9,6 @@
 //! This module holds the `Collator` struct whose `compare_impl()` contains
 //! the comparison of collation element sequences.
 
-extern crate alloc;
 use alloc::vec::Vec;
 
 use crate::elements::CharacterAndClassAndTrieValue;
