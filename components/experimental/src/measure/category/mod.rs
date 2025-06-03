@@ -21,16 +21,16 @@ pub struct CategorizedMeasureUnit<T: MeasureUnitCategory> {
     pub unit: MeasureUnit,
 }
 
-/// A [`super::MeasureUnit`] that is related to the length category.
+/// A [`MeasureUnit`] that is related to the length category.
 pub struct Length;
 
-/// A [`super::MeasureUnit`] that is related to the area category.
+/// A [`MeasureUnit`] that is related to the area category.
 pub struct Area;
 
-/// A [`super::MeasureUnit`] that is related to the volume category.
+/// A [`MeasureUnit`] that is related to the volume category.
 pub struct Volume;
 
-/// A [`super::MeasureUnit`] that is related to the mass category.
+/// A [`MeasureUnit`] that is related to the mass category.
 pub struct Mass;
 
 impl MeasureUnitCategory for Length {}
