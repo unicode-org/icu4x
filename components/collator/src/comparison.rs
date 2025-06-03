@@ -1914,7 +1914,7 @@ impl CollatorBorrowed<'_> {
                     if 0 < p && p <= MERGE_SEPARATOR_PRIMARY {
                         // The backwards secondary level compares secondary weights backwards
                         // within segments separated by the merge separator (U+FFFE).
-                        let secs = secondaries.as_mut();
+                        let secs = &mut secondaries.buf;
                         let last = secs.len() - 1;
                         if sec_segment_start < last {
                             let mut q = sec_segment_start;
@@ -2111,7 +2111,7 @@ impl CollatorBorrowed<'_> {
             ($key:ident, $level:expr, $flag:ident) => {
                 if levels & $flag != 0 {
                     sink.write(&[LEVEL_SEPARATOR_BYTE])?;
-                    sink.write($key.as_ref())?;
+                    sink.write(&$key.buf)?;
                 }
             };
         }
@@ -2123,7 +2123,7 @@ impl CollatorBorrowed<'_> {
 
             // Write pairs of nibbles as bytes, except separator bytes as themselves.
             let mut b = 0;
-            for c in cases.as_ref() {
+            for c in &cases.buf {
                 debug_assert_eq!(*c & 0xf, 0);
                 debug_assert_ne!(*c, 0);
                 if b == 0 {
@@ -2227,18 +2227,6 @@ impl SortKeyLevel {
                 }
             }
         }
-    }
-}
-
-impl AsRef<SmallVec<[u8; 40]>> for SortKeyLevel {
-    fn as_ref(&self) -> &SmallVec<[u8; 40]> {
-        &self.buf
-    }
-}
-
-impl AsMut<SmallVec<[u8; 40]>> for SortKeyLevel {
-    fn as_mut(&mut self) -> &mut SmallVec<[u8; 40]> {
-        &mut self.buf
     }
 }
 
