@@ -4,7 +4,7 @@
 
 #[cfg(feature = "compiled_data")]
 use crate::measure::{
-    category::{category, CategorizedMeasureUnit},
+    category::{CategorizedMeasureUnit, Mass},
     measureunit::MeasureUnit,
     provider::{
         si_prefix::{Base, SiPrefix},
@@ -14,9 +14,9 @@ use crate::measure::{
 };
 
 #[cfg(feature = "compiled_data")]
-impl category::Mass {
+impl Mass {
     /// Returns a [`MeasureUnit`] representing the mass of one gram.
-    pub fn gram() -> CategorizedMeasureUnit<category::Mass> {
+    pub fn gram() -> CategorizedMeasureUnit<Mass> {
         CategorizedMeasureUnit {
             _category: core::marker::PhantomData,
             unit: MeasureUnit {
@@ -34,7 +34,7 @@ impl category::Mass {
     }
 
     /// Returns a [`MeasureUnit`] representing the mass of one kilogram.
-    pub fn kilogram() -> CategorizedMeasureUnit<category::Mass> {
+    pub fn kilogram() -> CategorizedMeasureUnit<Mass> {
         CategorizedMeasureUnit {
             _category: core::marker::PhantomData,
             unit: MeasureUnit {
@@ -62,11 +62,11 @@ mod tests {
     fn test_mass_category() {
         let parser = MeasureUnitParser::default();
 
-        let gram = category::Mass::gram();
+        let gram = Mass::gram();
         let gram_parsed = parser.try_from_str("gram").unwrap();
         assert_eq!(gram.unit, gram_parsed);
 
-        let kilogram = category::Mass::kilogram();
+        let kilogram = Mass::kilogram();
         let kilogram_parsed = parser.try_from_str("kilogram").unwrap();
         assert_eq!(kilogram.unit, kilogram_parsed);
     }

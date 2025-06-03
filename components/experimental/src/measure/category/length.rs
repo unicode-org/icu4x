@@ -4,7 +4,7 @@
 
 #[cfg(feature = "compiled_data")]
 use crate::measure::{
-    category::{category, CategorizedMeasureUnit},
+    category::{CategorizedMeasureUnit, Length},
     measureunit::MeasureUnit,
     provider::{
         si_prefix::{Base, SiPrefix},
@@ -14,9 +14,9 @@ use crate::measure::{
 };
 
 #[cfg(feature = "compiled_data")]
-impl category::Length {
+impl Length {
     /// Returns a [`MeasureUnit`] representing the length of one meter.
-    pub fn meter() -> CategorizedMeasureUnit<category::Length> {
+    pub fn meter() -> CategorizedMeasureUnit<Length> {
         CategorizedMeasureUnit {
             _category: core::marker::PhantomData,
             unit: MeasureUnit {
@@ -43,7 +43,7 @@ mod tests {
     #[test]
     fn test_length_category() {
         let parser = MeasureUnitParser::default();
-        let meter = category::Length::meter();
+        let meter = Length::meter();
         let meter_parsed = parser.try_from_str("meter").unwrap();
         assert_eq!(meter.unit, meter_parsed);
     }

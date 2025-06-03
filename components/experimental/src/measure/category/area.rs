@@ -4,7 +4,7 @@
 
 #[cfg(feature = "compiled_data")]
 use crate::measure::{
-    category::{category, CategorizedMeasureUnit},
+    category::{Area, CategorizedMeasureUnit},
     measureunit::MeasureUnit,
     provider::{
         si_prefix::{Base, SiPrefix},
@@ -14,9 +14,9 @@ use crate::measure::{
 };
 
 #[cfg(feature = "compiled_data")]
-impl category::Area {
+impl Area {
     /// Returns a [`MeasureUnit`] representing the area of one square meter.
-    pub fn square_meter() -> CategorizedMeasureUnit<category::Area> {
+    pub fn square_meter() -> CategorizedMeasureUnit<Area> {
         CategorizedMeasureUnit {
             _category: core::marker::PhantomData,
             unit: MeasureUnit {
@@ -43,7 +43,7 @@ mod tests {
     #[test]
     fn test_area_category() {
         let parser = MeasureUnitParser::default();
-        let square_meter = category::Area::square_meter();
+        let square_meter = Area::square_meter();
         let square_meter_parsed = parser.try_from_str("square-meter").unwrap();
         assert_eq!(square_meter.unit, square_meter_parsed);
     }

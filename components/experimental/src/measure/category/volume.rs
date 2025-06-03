@@ -4,7 +4,7 @@
 
 #[cfg(feature = "compiled_data")]
 use crate::measure::{
-    category::{category, CategorizedMeasureUnit},
+    category::{CategorizedMeasureUnit, Volume},
     measureunit::MeasureUnit,
     provider::{
         si_prefix::{Base, SiPrefix},
@@ -14,9 +14,9 @@ use crate::measure::{
 };
 
 #[cfg(feature = "compiled_data")]
-impl category::Volume {
+impl Volume {
     /// Returns a [`MeasureUnit`] representing the volume of one cubic meter.
-    pub fn cubic_meter() -> CategorizedMeasureUnit<category::Volume> {
+    pub fn cubic_meter() -> CategorizedMeasureUnit<Volume> {
         CategorizedMeasureUnit {
             _category: core::marker::PhantomData,
             unit: MeasureUnit {
@@ -34,7 +34,7 @@ impl category::Volume {
     }
 
     /// Returns a [`MeasureUnit`] representing the volume of one liter.
-    pub fn liter() -> CategorizedMeasureUnit<category::Volume> {
+    pub fn liter() -> CategorizedMeasureUnit<Volume> {
         CategorizedMeasureUnit {
             _category: core::marker::PhantomData,
             unit: MeasureUnit {
@@ -61,11 +61,11 @@ mod tests {
     #[test]
     fn test_volume_category() {
         let parser = MeasureUnitParser::default();
-        let cubic_meter = category::Volume::cubic_meter();
+        let cubic_meter = Volume::cubic_meter();
         let cubic_meter_parsed = parser.try_from_str("cubic-meter").unwrap();
         assert_eq!(cubic_meter.unit, cubic_meter_parsed);
 
-        let liter = category::Volume::liter();
+        let liter = Volume::liter();
         let liter_parsed = parser.try_from_str("liter").unwrap();
         assert_eq!(liter.unit, liter_parsed);
     }

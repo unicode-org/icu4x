@@ -21,22 +21,19 @@ pub struct CategorizedMeasureUnit<T: MeasureUnitCategory> {
     pub unit: MeasureUnit,
 }
 
-/// The categories of [`MeasureUnit`]s.
-pub mod category {
-    /// A [`super::MeasureUnit`] that is related to the length category.
-    pub struct Length;
+/// A [`super::MeasureUnit`] that is related to the length category.
+pub struct Length;
 
-    /// A [`super::MeasureUnit`] that is related to the area category.
-    pub struct Area;
+/// A [`super::MeasureUnit`] that is related to the area category.
+pub struct Area;
 
-    /// A [`super::MeasureUnit`] that is related to the volume category.
-    pub struct Volume;
+/// A [`super::MeasureUnit`] that is related to the volume category.
+pub struct Volume;
 
-    /// A [`super::MeasureUnit`] that is related to the mass category.
-    pub struct Mass;
-}
+/// A [`super::MeasureUnit`] that is related to the mass category.
+pub struct Mass;
 
-impl MeasureUnitCategory for category::Length {}
-impl MeasureUnitCategory for category::Area {}
-impl MeasureUnitCategory for category::Volume {}
-impl MeasureUnitCategory for category::Mass {}
+impl MeasureUnitCategory for Length {}
+impl MeasureUnitCategory for Area {}
+impl MeasureUnitCategory for Volume {}
+impl MeasureUnitCategory for Mass {}
