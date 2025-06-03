@@ -4,7 +4,7 @@
 
 #[cfg(feature = "compiled_data")]
 use crate::measure::{
-    category::category,
+    category::{category, CategorizedMeasureUnit},
     measureunit::MeasureUnit,
     provider::{
         si_prefix::{Base, SiPrefix},
@@ -16,17 +16,20 @@ use crate::measure::{
 #[cfg(feature = "compiled_data")]
 impl category::Area {
     /// Returns a [`MeasureUnit`] representing the area of one square meter.
-    pub fn square_meter() -> MeasureUnit {
-        MeasureUnit {
-            single_units: SingleUnitVec::One(SingleUnit {
-                power: 2,
-                si_prefix: SiPrefix {
-                    power: 0,
-                    base: Base::Decimal,
-                },
-                unit_id: crate::provider::Baked::UNIT_IDS_V1_UND_METER,
-            }),
-            constant_denominator: 0,
+    pub fn square_meter() -> CategorizedMeasureUnit<category::Area> {
+        CategorizedMeasureUnit {
+            _category: core::marker::PhantomData,
+            unit: MeasureUnit {
+                single_units: SingleUnitVec::One(SingleUnit {
+                    power: 2,
+                    si_prefix: SiPrefix {
+                        power: 0,
+                        base: Base::Decimal,
+                    },
+                    unit_id: crate::provider::Baked::UNIT_IDS_V1_UND_METER,
+                }),
+                constant_denominator: 0,
+            },
         }
     }
 }
@@ -42,6 +45,6 @@ mod tests {
         let parser = MeasureUnitParser::default();
         let square_meter = category::Area::square_meter();
         let square_meter_parsed = parser.try_from_str("square-meter").unwrap();
-        assert_eq!(square_meter, square_meter_parsed);
+        assert_eq!(square_meter.unit, square_meter_parsed);
     }
 }

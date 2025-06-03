@@ -4,7 +4,7 @@
 
 #[cfg(feature = "compiled_data")]
 use crate::measure::{
-    category::category,
+    category::{category, CategorizedMeasureUnit},
     measureunit::MeasureUnit,
     provider::{
         si_prefix::{Base, SiPrefix},
@@ -16,17 +16,20 @@ use crate::measure::{
 #[cfg(feature = "compiled_data")]
 impl category::Length {
     /// Returns a [`MeasureUnit`] representing the length of one meter.
-    pub fn meter() -> MeasureUnit {
-        MeasureUnit {
-            single_units: SingleUnitVec::One(SingleUnit {
-                power: 1,
-                si_prefix: SiPrefix {
-                    power: 0,
-                    base: Base::Decimal,
-                },
-                unit_id: crate::provider::Baked::UNIT_IDS_V1_UND_METER,
-            }),
-            constant_denominator: 0,
+    pub fn meter() -> CategorizedMeasureUnit<category::Length> {
+        CategorizedMeasureUnit {
+            _category: core::marker::PhantomData,
+            unit: MeasureUnit {
+                single_units: SingleUnitVec::One(SingleUnit {
+                    power: 1,
+                    si_prefix: SiPrefix {
+                        power: 0,
+                        base: Base::Decimal,
+                    },
+                    unit_id: crate::provider::Baked::UNIT_IDS_V1_UND_METER,
+                }),
+                constant_denominator: 0,
+            },
         }
     }
 }
@@ -42,6 +45,6 @@ mod tests {
         let parser = MeasureUnitParser::default();
         let meter = category::Length::meter();
         let meter_parsed = parser.try_from_str("meter").unwrap();
-        assert_eq!(meter, meter_parsed);
+        assert_eq!(meter.unit, meter_parsed);
     }
 }

@@ -4,7 +4,7 @@
 
 #[cfg(feature = "compiled_data")]
 use crate::measure::{
-    category::category,
+    category::{category, CategorizedMeasureUnit},
     measureunit::MeasureUnit,
     provider::{
         si_prefix::{Base, SiPrefix},
@@ -16,32 +16,38 @@ use crate::measure::{
 #[cfg(feature = "compiled_data")]
 impl category::Mass {
     /// Returns a [`MeasureUnit`] representing the mass of one gram.
-    pub fn gram() -> MeasureUnit {
-        MeasureUnit {
-            single_units: SingleUnitVec::One(SingleUnit {
-                power: 1,
-                si_prefix: SiPrefix {
-                    power: 0,
-                    base: Base::Decimal,
-                },
-                unit_id: crate::provider::Baked::UNIT_IDS_V1_UND_GRAM,
-            }),
-            constant_denominator: 0,
+    pub fn gram() -> CategorizedMeasureUnit<category::Mass> {
+        CategorizedMeasureUnit {
+            _category: core::marker::PhantomData,
+            unit: MeasureUnit {
+                single_units: SingleUnitVec::One(SingleUnit {
+                    power: 1,
+                    si_prefix: SiPrefix {
+                        power: 0,
+                        base: Base::Decimal,
+                    },
+                    unit_id: crate::provider::Baked::UNIT_IDS_V1_UND_GRAM,
+                }),
+                constant_denominator: 0,
+            },
         }
     }
 
     /// Returns a [`MeasureUnit`] representing the mass of one kilogram.
-    pub fn kilogram() -> MeasureUnit {
-        MeasureUnit {
-            single_units: SingleUnitVec::One(SingleUnit {
-                power: 1,
-                si_prefix: SiPrefix {
-                    power: 0,
-                    base: Base::Decimal,
-                },
-                unit_id: crate::provider::Baked::UNIT_IDS_V1_UND_KILOGRAM,
-            }),
-            constant_denominator: 0,
+    pub fn kilogram() -> CategorizedMeasureUnit<category::Mass> {
+        CategorizedMeasureUnit {
+            _category: core::marker::PhantomData,
+            unit: MeasureUnit {
+                single_units: SingleUnitVec::One(SingleUnit {
+                    power: 1,
+                    si_prefix: SiPrefix {
+                        power: 0,
+                        base: Base::Decimal,
+                    },
+                    unit_id: crate::provider::Baked::UNIT_IDS_V1_UND_KILOGRAM,
+                }),
+                constant_denominator: 0,
+            },
         }
     }
 }
@@ -58,10 +64,10 @@ mod tests {
 
         let gram = category::Mass::gram();
         let gram_parsed = parser.try_from_str("gram").unwrap();
-        assert_eq!(gram, gram_parsed);
+        assert_eq!(gram.unit, gram_parsed);
 
         let kilogram = category::Mass::kilogram();
         let kilogram_parsed = parser.try_from_str("kilogram").unwrap();
-        assert_eq!(kilogram, kilogram_parsed);
+        assert_eq!(kilogram.unit, kilogram_parsed);
     }
 }

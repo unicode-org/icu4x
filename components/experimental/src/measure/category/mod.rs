@@ -35,3 +35,8 @@ pub mod category {
     /// A [`super::MeasureUnit`] that is related to the mass category.
     pub struct Mass;
 }
+
+impl MeasureUnitCategory for category::Length {}
+impl MeasureUnitCategory for category::Area {}
+impl MeasureUnitCategory for category::Volume {}
+impl MeasureUnitCategory for category::Mass {}
