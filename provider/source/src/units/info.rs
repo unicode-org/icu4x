@@ -20,19 +20,11 @@ impl DataProvider<UnitsInfoV1> for SourceDataProvider {
     fn load(&self, _req: DataRequest) -> Result<DataResponse<UnitsInfoV1>, DataError> {
         self.check_req::<UnitsInfoV1>(_req)?;
 
-        // Get all the constants in the form of a map from constant name to constant value as numerator and denominator.
+        // Load and parse the unit constants from the supplemental data file.
         let units_data: &cldr_serde::units::info::Resource = self
             .cldr()?
             .core()
             .read_and_parse("supplemental/units.json")?;
-
-        let constants = &units_data.supplemental.unit_constants.constants;
-
-        let clean_constants_map = process_constants(constants)?;
-
-        // Get all the units and their conversion information.
-        let convert_units = &units_data.supplemental.convert_units.convert_units;
-        let mut conversion_info_map = BTreeMap::<Vec<u8>, usize>::new();
 
         struct ConversionInfoPreProcessing<'a> {
             base_unit: &'a str,
@@ -40,17 +32,22 @@ impl DataProvider<UnitsInfoV1> for SourceDataProvider {
             offset_scientific: ScientificNumber,
         }
 
-        let mut convert_units_vec = Vec::<ConversionInfoPreProcessing>::new();
-        for (unit_name, convert_unit) in convert_units {
+        // Initialize a vector to store pre-processed conversion information for `MeasureUnitParser`.
+        let mut convert_units_vec =
+            Vec::with_capacity(units_data.supplemental.convert_units.convert_units.len());
+
+        // Initialize a map to associate unit names with their corresponding index in `convert_units_vec`.
+        let mut conversion_info_map = BTreeMap::new();
+
+        // Process the unit constants to remove any constants that are in string format.
+        let clean_constants_map =
+            process_constants(&units_data.supplemental.unit_constants.constants)?;
+
+        // Iterate over all the units and their conversion information.
+        for (unit_name, convert_unit) in &units_data.supplemental.convert_units.convert_units {
             let base_unit = convert_unit.base_unit.as_str();
-            let factor = match convert_unit.factor {
-                Some(ref factor) => factor.as_str(),
-                None => "1",
-            };
-            let offset = match convert_unit.offset {
-                Some(ref offset) => offset.as_str(),
-                None => "0",
-            };
+            let factor = convert_unit.factor.as_deref().unwrap_or("1");
+            let offset = convert_unit.offset.as_deref().unwrap_or("0");
 
             let convert_unit_index = convert_units_vec.len();
             convert_units_vec.push(ConversionInfoPreProcessing {
