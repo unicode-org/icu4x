@@ -496,9 +496,6 @@ jobs:
 
   # ci-job-clippy
   clippy:
-    # We don't expect to be clippy-clean on nightly cronjob.
-    if: ${{ github.event_name != 'schedule' }}
-
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
@@ -522,6 +519,8 @@ jobs:
     # Actual job
     - name: Run `ci-job-clippy`
       run: cargo make ci-job-clippy
+      # We don't expect to be clippy-clean on nightly cronjob, but it's still useful to see results
+      continue-on-error: ${{ github.event_name == 'schedule' }}
 
 
   # ci-job-doc
