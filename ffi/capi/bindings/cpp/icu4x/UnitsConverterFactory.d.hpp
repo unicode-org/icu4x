@@ -14,8 +14,8 @@
 namespace icu4x {
 namespace capi { struct DataProvider; }
 class DataProvider;
-namespace capi { struct MeasureUnit; }
-class MeasureUnit;
+namespace capi { struct ErasedMeasureUnit; }
+class ErasedMeasureUnit;
 namespace capi { struct UnitsConverter; }
 class UnitsConverter;
 namespace capi { struct UnitsConverterFactory; }
@@ -33,9 +33,9 @@ namespace capi {
 namespace icu4x {
 /**
  * An ICU4X Units Converter Factory object, capable of creating converters a {@link UnitsConverter}
- * for converting between two {@link MeasureUnit}s.
+ * for converting between two {@link ErasedMeasureUnit}s.
  *
- * Also, it can parse the CLDR unit identifier (e.g. `meter-per-square-second`) and get the {@link MeasureUnit}.
+ * Also, it can parse the CLDR unit identifier (e.g. `meter-per-square-second`) and get the {@link ErasedMeasureUnit}.
  *
  * See the [Rust documentation for `ConverterFactory`](https://docs.rs/icu/2.0.0/icu/experimental/units/converter_factory/struct.ConverterFactory.html) for more information.
  */
@@ -57,13 +57,13 @@ public:
   inline static diplomat::result<std::unique_ptr<icu4x::UnitsConverterFactory>, icu4x::DataError> create_with_provider(const icu4x::DataProvider& provider);
 
   /**
-   * Creates a new {@link UnitsConverter} from the input and output {@link MeasureUnit}s.
+   * Creates a new {@link UnitsConverter} from the input and output {@link ErasedMeasureUnit}s.
    * Returns nothing if the conversion between the two units is not possible.
    * For example, conversion between `meter` and `second` is not possible.
    *
    * See the [Rust documentation for `converter`](https://docs.rs/icu/2.0.0/icu/experimental/units/converter_factory/struct.ConverterFactory.html#method.converter) for more information.
    */
-  inline std::unique_ptr<icu4x::UnitsConverter> converter(const icu4x::MeasureUnit& from, const icu4x::MeasureUnit& to) const;
+  inline std::unique_ptr<icu4x::UnitsConverter> converter(const icu4x::ErasedMeasureUnit& from, const icu4x::ErasedMeasureUnit& to) const;
 
   inline const icu4x::capi::UnitsConverterFactory* AsFFI() const;
   inline icu4x::capi::UnitsConverterFactory* AsFFI();

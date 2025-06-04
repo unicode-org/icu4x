@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::measure::measureunit::MeasureUnit;
+use crate::measure::measureunit::ErasedMeasureUnit;
 use crate::measure::power::get_power;
 use crate::measure::si_prefix::get_si_prefix;
 use crate::units::InvalidUnitError;
@@ -15,15 +15,15 @@ use super::provider::single_unit::SingleUnit;
 use super::single_unit_vec::SingleUnitVec;
 
 // TODO: add test cases for this parser after adding UnitsTest.txt to the test data.
-/// A parser for the CLDR unit identifier (e.g. `meter-per-square-second`)
-pub struct MeasureUnitParser {
+/// A parser designed to interpret and process CLDR unit identifiers, such as `meter-per-square-second`.
+pub struct ErasedMeasureUnitParser {
     /// Contains the trie for the unit identifiers.
     payload: DataPayload<super::provider::trie::UnitsTrieV1>,
 }
 
 #[cfg(feature = "compiled_data")]
-impl Default for MeasureUnitParser {
-    /// Creates a new [`MeasureUnitParser`] from compiled data.
+impl Default for ErasedMeasureUnitParser {
+    /// Creates a new [`ErasedMeasureUnitParser`] from compiled data.
     ///
     /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
@@ -36,8 +36,8 @@ impl Default for MeasureUnitParser {
     }
 }
 
-impl MeasureUnitParser {
-    /// Creates a new [`MeasureUnitParser`] from compiled data.
+impl ErasedMeasureUnitParser {
+    /// Creates a new [`ErasedMeasureUnitParser`] from compiled data.
     ///
     /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
@@ -126,12 +126,15 @@ impl MeasureUnitParser {
     ///    - Ok(MeasureUnit) if the identifier is valid.
     ///    - Err(InvalidUnitError) if the identifier is invalid.
     #[inline]
-    pub fn try_from_str(&self, s: &str) -> Result<MeasureUnit, InvalidUnitError> {
+    pub fn try_from_str(&self, s: &str) -> Result<ErasedMeasureUnit, InvalidUnitError> {
         self.try_from_utf8(s.as_bytes())
     }
 
     /// See [`Self::try_from_str`]
-    pub fn try_from_utf8(&self, mut code_units: &[u8]) -> Result<MeasureUnit, InvalidUnitError> {
+    pub fn try_from_utf8(
+        &self,
+        mut code_units: &[u8],
+    ) -> Result<ErasedMeasureUnit, InvalidUnitError> {
         if code_units.starts_with(b"-") || code_units.ends_with(b"-") {
             return Err(InvalidUnitError);
         }
@@ -222,7 +225,7 @@ impl MeasureUnitParser {
             return Err(InvalidUnitError);
         }
 
-        Ok(MeasureUnit {
+        Ok(ErasedMeasureUnit {
             single_units,
             constant_denominator,
         })
@@ -231,7 +234,7 @@ impl MeasureUnitParser {
 
 #[cfg(test)]
 mod tests {
-    use crate::measure::parser::MeasureUnitParser;
+    use crate::measure::parser::ErasedMeasureUnitParser;
 
     #[test]
     fn test_parser_cases() {
@@ -241,7 +244,7 @@ mod tests {
             ("portion-per-1000000000", 1, 1_000_000_000),
             ("liter-per-100-kilometer", 2, 100),
         ];
-        let parser = MeasureUnitParser::default();
+        let parser = ErasedMeasureUnitParser::default();
 
         for (input, expected_len, expected_denominator) in test_cases {
             let measure_unit = parser.try_from_str(input).unwrap();
@@ -308,7 +311,7 @@ mod tests {
                 continue;
             }
 
-            let parser = MeasureUnitParser::default();
+            let parser = ErasedMeasureUnitParser::default();
             let measure_unit = parser.try_from_str(input);
             if measure_unit.is_ok() {
                 println!("OK:  {}", input);

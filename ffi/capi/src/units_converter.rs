@@ -6,7 +6,7 @@
 #[diplomat::abi_rename = "icu4x_{0}_mv1"]
 #[diplomat::attr(auto, namespace = "icu4x")]
 pub mod ffi {
-    use crate::unstable::measure_unit_parser::ffi::MeasureUnit;
+    use crate::unstable::measure_unit_parser::ffi::ErasedMeasureUnit;
     use alloc::boxed::Box;
 
     #[cfg(feature = "buffer_provider")]
@@ -16,9 +16,9 @@ pub mod ffi {
 
     #[diplomat::opaque]
     /// An ICU4X Units Converter Factory object, capable of creating converters a [`UnitsConverter`]
-    /// for converting between two [`MeasureUnit`]s.
+    /// for converting between two [`ErasedMeasureUnit`]s.
     ///
-    /// Also, it can parse the CLDR unit identifier (e.g. `meter-per-square-second`) and get the [`MeasureUnit`].
+    /// Also, it can parse the CLDR unit identifier (e.g. `meter-per-square-second`) and get the [`ErasedMeasureUnit`].
     #[diplomat::rust_link(icu::experimental::units::converter_factory::ConverterFactory, Struct)]
     pub struct UnitsConverterFactory(
         pub icu_experimental::units::converter_factory::ConverterFactory,
@@ -49,7 +49,7 @@ pub mod ffi {
         ) -> Result<Box<UnitsConverterFactory>, DataError> {
             Ok(Box::new(UnitsConverterFactory(icu_experimental::units::converter_factory::ConverterFactory::try_new_with_buffer_provider(provider.get()?)?)))
         }
-        /// Creates a new [`UnitsConverter`] from the input and output [`MeasureUnit`]s.
+        /// Creates a new [`UnitsConverter`] from the input and output [`ErasedMeasureUnit`]s.
         /// Returns nothing if the conversion between the two units is not possible.
         /// For example, conversion between `meter` and `second` is not possible.
         #[diplomat::rust_link(
@@ -58,8 +58,8 @@ pub mod ffi {
         )]
         pub fn converter(
             &self,
-            from: &MeasureUnit,
-            to: &MeasureUnit,
+            from: &ErasedMeasureUnit,
+            to: &ErasedMeasureUnit,
         ) -> Option<Box<UnitsConverter>> {
             self.0
                 .converter(&from.0, &to.0)
@@ -69,7 +69,7 @@ pub mod ffi {
     }
 
     #[diplomat::opaque]
-    /// An ICU4X Units Converter object, capable of converting between two [`MeasureUnit`]s.
+    /// An ICU4X Units Converter object, capable of converting between two [`ErasedMeasureUnit`]s.
     ///
     /// You can create an instance of this object using [`UnitsConverterFactory`] by calling the `converter` method.
     #[diplomat::rust_link(icu::experimental::units::converter::UnitsConverter, Struct)]

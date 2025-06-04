@@ -4,9 +4,9 @@
 part of 'lib.g.dart';
 
 /// An ICU4X Units Converter Factory object, capable of creating converters a [UnitsConverter]
-/// for converting between two [MeasureUnit]s.
+/// for converting between two [ErasedMeasureUnit]s.
 ///
-/// Also, it can parse the CLDR unit identifier (e.g. `meter-per-square-second`) and get the [MeasureUnit].
+/// Also, it can parse the CLDR unit identifier (e.g. `meter-per-square-second`) and get the [ErasedMeasureUnit].
 ///
 /// See the [Rust documentation for `ConverterFactory`](https://docs.rs/icu/2.0.0/icu/experimental/units/converter_factory/struct.ConverterFactory.html) for more information.
 final class UnitsConverterFactory implements ffi.Finalizable {
@@ -49,12 +49,12 @@ final class UnitsConverterFactory implements ffi.Finalizable {
     return UnitsConverterFactory._fromFfi(result.union.ok, []);
   }
 
-  /// Creates a new [UnitsConverter] from the input and output [MeasureUnit]s.
+  /// Creates a new [UnitsConverter] from the input and output [ErasedMeasureUnit]s.
   /// Returns nothing if the conversion between the two units is not possible.
   /// For example, conversion between `meter` and `second` is not possible.
   ///
   /// See the [Rust documentation for `converter`](https://docs.rs/icu/2.0.0/icu/experimental/units/converter_factory/struct.ConverterFactory.html#method.converter) for more information.
-  UnitsConverter? converter(MeasureUnit from, MeasureUnit to) {
+  UnitsConverter? converter(ErasedMeasureUnit from, ErasedMeasureUnit to) {
     final result = _icu4x_UnitsConverterFactory_converter_mv1(_ffi, from._ffi, to._ffi);
     return result.address == 0 ? null : UnitsConverter._fromFfi(result, []);
   }

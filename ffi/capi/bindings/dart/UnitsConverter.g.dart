@@ -3,7 +3,7 @@
 
 part of 'lib.g.dart';
 
-/// An ICU4X Units Converter object, capable of converting between two [MeasureUnit]s.
+/// An ICU4X Units Converter object, capable of converting between two [ErasedMeasureUnit]s.
 ///
 /// You can create an instance of this object using [UnitsConverterFactory] by calling the `converter` method.
 ///

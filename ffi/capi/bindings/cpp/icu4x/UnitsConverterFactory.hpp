@@ -14,7 +14,7 @@
 #include "../diplomat_runtime.hpp"
 #include "DataError.hpp"
 #include "DataProvider.hpp"
-#include "MeasureUnit.hpp"
+#include "ErasedMeasureUnit.hpp"
 #include "UnitsConverter.hpp"
 
 
@@ -27,7 +27,7 @@ namespace capi {
     typedef struct icu4x_UnitsConverterFactory_create_with_provider_mv1_result {union {icu4x::capi::UnitsConverterFactory* ok; icu4x::capi::DataError err;}; bool is_ok;} icu4x_UnitsConverterFactory_create_with_provider_mv1_result;
     icu4x_UnitsConverterFactory_create_with_provider_mv1_result icu4x_UnitsConverterFactory_create_with_provider_mv1(const icu4x::capi::DataProvider* provider);
 
-    icu4x::capi::UnitsConverter* icu4x_UnitsConverterFactory_converter_mv1(const icu4x::capi::UnitsConverterFactory* self, const icu4x::capi::MeasureUnit* from, const icu4x::capi::MeasureUnit* to);
+    icu4x::capi::UnitsConverter* icu4x_UnitsConverterFactory_converter_mv1(const icu4x::capi::UnitsConverterFactory* self, const icu4x::capi::ErasedMeasureUnit* from, const icu4x::capi::ErasedMeasureUnit* to);
 
     void icu4x_UnitsConverterFactory_destroy_mv1(UnitsConverterFactory* self);
 
@@ -45,7 +45,7 @@ inline diplomat::result<std::unique_ptr<icu4x::UnitsConverterFactory>, icu4x::Da
   return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::UnitsConverterFactory>, icu4x::DataError>(diplomat::Ok<std::unique_ptr<icu4x::UnitsConverterFactory>>(std::unique_ptr<icu4x::UnitsConverterFactory>(icu4x::UnitsConverterFactory::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::UnitsConverterFactory>, icu4x::DataError>(diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
 }
 
-inline std::unique_ptr<icu4x::UnitsConverter> icu4x::UnitsConverterFactory::converter(const icu4x::MeasureUnit& from, const icu4x::MeasureUnit& to) const {
+inline std::unique_ptr<icu4x::UnitsConverter> icu4x::UnitsConverterFactory::converter(const icu4x::ErasedMeasureUnit& from, const icu4x::ErasedMeasureUnit& to) const {
   auto result = icu4x::capi::icu4x_UnitsConverterFactory_converter_mv1(this->AsFFI(),
     from.AsFFI(),
     to.AsFFI());

@@ -6,7 +6,7 @@ use std::collections::{BTreeMap, HashSet};
 
 use crate::SourceDataProvider;
 use crate::{cldr_serde, units::helpers::ScientificNumber};
-use icu::experimental::measure::parser::MeasureUnitParser;
+use icu::experimental::measure::parser::ErasedMeasureUnitParser;
 use icu::experimental::measure::provider::trie::UnitsTrie;
 use icu::experimental::units::provider::{ConversionInfo, UnitsInfo, UnitsInfoV1};
 use icu_provider::prelude::*;
@@ -72,7 +72,8 @@ impl DataProvider<UnitsInfoV1> for SourceDataProvider {
             trie: units_conversion_trie.convert_store(),
         };
 
-        let parser = MeasureUnitParser::try_new_unstable(&FixedProvider::from_owned(units_trie))?;
+        let parser =
+            ErasedMeasureUnitParser::try_new_unstable(&FixedProvider::from_owned(units_trie))?;
 
         let conversion_info = convert_units_vec
             .iter()

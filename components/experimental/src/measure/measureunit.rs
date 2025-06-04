@@ -4,8 +4,7 @@
 
 use super::{provider::single_unit::SingleUnit, single_unit_vec::SingleUnitVec};
 
-// TODO NOTE: the MeasureUnitParser takes the trie and the ConverterFactory takes the full payload and an instance of MeasureUnitParser.
-/// The [`MeasureUnit`] struct represents a processed CLDR compound unit.
+/// The [`ErasedMeasureUnit`] struct represents a uncatogrized processed CLDR compound unit.
 /// Examples include:
 ///  1. `meter-per-second`
 ///  2. `square-meter`
@@ -13,9 +12,9 @@ use super::{provider::single_unit::SingleUnit, single_unit_vec::SingleUnitVec};
 ///  4. `portion-per-1e9`
 ///  5. `square-meter` (Note: a single unit is a special case of a compound unit containing only one single unit.)
 ///
-/// To construct a [`MeasureUnit`] from a CLDR unit identifier, use the [`crate::measure::parser::MeasureUnitParser`].
+/// To construct a [`ErasedMeasureUnit`] from a CLDR unit identifier, use the [`crate::measure::parser::MeasureUnitParser`].
 #[derive(Debug)]
-pub struct MeasureUnit {
+pub struct ErasedMeasureUnit {
     /// Contains the processed units.
     pub(crate) single_units: SingleUnitVec,
 
@@ -31,7 +30,7 @@ pub struct MeasureUnit {
     pub(crate) constant_denominator: u64,
 }
 
-impl MeasureUnit {
+impl ErasedMeasureUnit {
     /// Returns a slice of the single units contained within this measure unit.
     pub fn single_units(&self) -> &[SingleUnit] {
         self.single_units.as_slice()

@@ -4,7 +4,7 @@
 
 use core::str::FromStr;
 
-use icu_experimental::measure::parser::MeasureUnitParser;
+use icu_experimental::measure::parser::ErasedMeasureUnitParser;
 use icu_experimental::units::converter::UnitsConverter;
 use icu_experimental::units::converter_factory::ConverterFactory;
 use icu_experimental::units::ratio::IcuRatio;
@@ -39,7 +39,7 @@ fn test_cldr_unit_tests() {
         .collect();
 
     let converter_factory = ConverterFactory::new();
-    let parser = MeasureUnitParser::default();
+    let parser = ErasedMeasureUnitParser::default();
 
     for test in tests {
         let input_unit = parser
@@ -208,7 +208,7 @@ fn test_units_non_convertible() {
     ];
 
     let converter_factory = ConverterFactory::new();
-    let parser = MeasureUnitParser::default();
+    let parser = ErasedMeasureUnitParser::default();
 
     for (input, output) in non_convertible_units.iter() {
         let input_unit = parser
@@ -286,7 +286,7 @@ fn test_unparsable_units() {
         "meter second",
     ];
 
-    let parser = MeasureUnitParser::default();
+    let parser = ErasedMeasureUnitParser::default();
 
     unparsable_units.iter().for_each(|unit| {
         assert!(
