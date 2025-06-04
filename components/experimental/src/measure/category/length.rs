@@ -15,7 +15,7 @@ use crate::measure::{
 
 #[cfg(feature = "compiled_data")]
 impl Length {
-    /// Returns a [`MeasureUnit`] representing the length of meters.
+    /// Returns a [`MeasureUnit`] representing length in meters.
     pub fn meter() -> CategorizedMeasureUnit<Length> {
         CategorizedMeasureUnit {
             _category: core::marker::PhantomData,
