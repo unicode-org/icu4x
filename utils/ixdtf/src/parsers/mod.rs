@@ -296,7 +296,7 @@ impl<'a, T: EncodingType> TimeZoneParser<'a, T> {
     /// use ixdtf::{parsers::TimeZoneParser, records::TimeZoneRecord};
     ///
     /// let identifier = "Europe/London";
-    /// let record = TimeZoneParser::from_str(identifier).parse().unwrap();
+    /// let record = TimeZoneParser::from_str(identifier).parse_identifier().unwrap();
     /// assert_eq!(record, TimeZoneRecord::Name(identifier.as_bytes()))
     /// ```
     ///
@@ -306,7 +306,7 @@ impl<'a, T: EncodingType> TimeZoneParser<'a, T> {
     /// use ixdtf::{parsers::TimeZoneParser, records::{MinutePrecisionOffset, TimeZoneRecord, Sign}};
     ///
     /// let identifier = "+00:00";
-    /// let offset = match TimeZoneParser::from_str(identifier).parse() {
+    /// let offset = match TimeZoneParser::from_str(identifier).parse_identifier() {
     ///     Ok(TimeZoneRecord::Offset(o)) => o,
     ///     _ => unreachable!(),
     /// };
@@ -328,10 +328,10 @@ impl<'a, T: EncodingType> TimeZoneParser<'a, T> {
     /// use ixdtf::{ParseError, parsers::TimeZoneParser};
     ///
     /// let identifier = "+00:00:00";
-    /// let err = TimeZoneParser::from_str(identifier).parse().unwrap_err();
+    /// let err = TimeZoneParser::from_str(identifier).parse_identifier().unwrap_err();
     /// assert_eq!(err, ParseError::InvalidMinutePrecisionOffset);
     /// ```
-    pub fn parse(&mut self) -> ParserResult<TimeZoneRecord<'a, T>> {
+    pub fn parse_identifier(&mut self) -> ParserResult<TimeZoneRecord<'a, T>> {
         timezone::parse_time_zone(&mut self.cursor)
     }
 
