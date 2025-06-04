@@ -49,7 +49,12 @@ impl<'a> ZeroFrom<'a, str> for HelloWorld<'a> {
     }
 }
 
-crate::data_struct!(HelloWorld<'_>);
+crate::data_struct!(
+    HelloWorld<'data>,
+    varule: str,
+    #[cfg(feature = "export")]
+    encode_as_varule: |v: &HelloWorld<'_>| &*v.message
+);
 
 data_marker!(
     /// Marker type for [`HelloWorld`].
@@ -57,8 +62,6 @@ data_marker!(
     HelloWorldV1,
     HelloWorld<'static>,
     has_checksum = true,
-    #[cfg(feature = "export")]
-    expose_baked_consts = true,
 );
 
 /// A data provider returning Hello World strings in different languages.
