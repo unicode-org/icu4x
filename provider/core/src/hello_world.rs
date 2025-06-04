@@ -49,12 +49,7 @@ impl<'a> ZeroFrom<'a, str> for HelloWorld<'a> {
     }
 }
 
-crate::data_struct!(
-    HelloWorld<'data>,
-    varule: str,
-    #[cfg(feature = "export")]
-    encode_as_varule: |v: &HelloWorld<'_>| &*v.message
-);
+crate::data_struct!(HelloWorld<'_>);
 
 data_marker!(
     /// Marker type for [`HelloWorld`].
