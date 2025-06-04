@@ -12,7 +12,7 @@ use super::{provider::single_unit::SingleUnit, single_unit_vec::SingleUnitVec};
 ///  4. `portion-per-1e9`
 ///  5. `square-meter` (Note: a single unit is a special case of a compound unit containing only one single unit.)
 ///
-/// To construct a [`ErasedMeasureUnit`] from a CLDR unit identifier, use the [`crate::measure::parser::MeasureUnitParser`].
+/// To construct a [`ErasedMeasureUnit`] from a CLDR unit identifier, use the [`crate::measure::parser::ErasedMeasureUnitParser`].
 #[derive(Debug)]
 pub struct ErasedMeasureUnit {
     /// Contains the processed units.
