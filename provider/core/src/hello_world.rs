@@ -57,6 +57,8 @@ data_marker!(
     HelloWorldV1,
     HelloWorld<'static>,
     has_checksum = true,
+    #[cfg(feature = "export")]
+    expose_baked_consts = true,
 );
 
 /// A data provider returning Hello World strings in different languages.
