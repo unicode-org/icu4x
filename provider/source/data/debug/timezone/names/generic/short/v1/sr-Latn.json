@@ -3,7 +3,7 @@
     "50": "CET",
     "51": "EET",
     "53": "WET",
-    "101": "GMT"
+    "58": "GMT"
   },
   "overrides": {
     "utc": "UTC"

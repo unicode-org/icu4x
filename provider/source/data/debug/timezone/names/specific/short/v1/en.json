@@ -2,14 +2,14 @@
   "defaults": [
     [
       [
-        8,
+        7,
         "Standard"
       ],
       "AKST"
     ],
     [
       [
-        8,
+        7,
         "Daylight"
       ],
       "AKDT"
@@ -86,24 +86,24 @@
     ],
     [
       [
-        68,
+        58,
+        "Standard"
+      ],
+      "GMT"
+    ],
+    [
+      [
+        69,
         "Standard"
       ],
       "HAST"
     ],
     [
       [
-        68,
+        69,
         "Daylight"
       ],
       "HADT"
-    ],
-    [
-      [
-        101,
-        "Standard"
-      ],
-      "GMT"
     ]
   ],
   "overrides": [

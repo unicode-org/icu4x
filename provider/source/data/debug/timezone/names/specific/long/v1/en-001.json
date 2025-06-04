@@ -23,14 +23,14 @@
     ],
     [
       [
-        8,
+        7,
         "Standard"
       ],
       "Alaska Standard Time"
     ],
     [
       [
-        8,
+        7,
         "Daylight"
       ],
       "Alaska Daylight Time"
@@ -226,7 +226,7 @@
     ],
     [
       [
-        47,
+        48,
         "Daylight"
       ],
       "Easter Island Summer Time"
@@ -282,20 +282,6 @@
     ],
     [
       [
-        62,
-        "Standard"
-      ],
-      "East Greenland Standard Time"
-    ],
-    [
-      [
-        62,
-        "Daylight"
-      ],
-      "East Greenland Summer Time"
-    ],
-    [
-      [
         63,
         "Standard"
       ],
@@ -313,81 +299,95 @@
         64,
         "Standard"
       ],
-      "West Greenland Standard Time"
+      "East Greenland Standard Time"
     ],
     [
       [
         64,
         "Daylight"
       ],
+      "East Greenland Summer Time"
+    ],
+    [
+      [
+        65,
+        "Standard"
+      ],
+      "West Greenland Standard Time"
+    ],
+    [
+      [
+        65,
+        "Daylight"
+      ],
       "West Greenland Summer Time"
     ],
     [
       [
-        68,
+        69,
         "Standard"
       ],
       "Hawaii-Aleutian Standard Time"
     ],
     [
       [
-        68,
+        69,
         "Daylight"
       ],
       "Hawaii-Aleutian Daylight Time"
     ],
     [
       [
-        70,
+        71,
         "Daylight"
       ],
       "Hovd Summer Time"
     ],
     [
       [
-        78,
+        79,
         "Standard"
       ],
       "Irkutsk Standard Time"
     ],
     [
       [
-        85,
+        86,
         "Standard"
       ],
       "Korean Standard Time"
     ],
     [
       [
-        87,
+        88,
         "Standard"
       ],
       "Krasnoyarsk Standard Time"
     ],
     [
       [
-        91,
+        92,
         "Standard"
       ],
       "Lord Howe Standard Time"
     ],
     [
       [
-        91,
+        92,
         "Daylight"
       ],
       "Lord Howe Daylight Time"
     ],
     [
       [
-        100,
+        101,
         "Standard"
       ],
       "Mexican Pacific Standard Time"
     ],
     [
       [
-        100,
+        101,
         "Daylight"
       ],
       "Mexican Pacific Daylight Time"
@@ -411,28 +411,28 @@
         108,
         "Standard"
       ],
-      "Newfoundland Standard Time"
+      "New Zealand Standard Time"
     ],
     [
       [
         108,
         "Daylight"
       ],
-      "Newfoundland Daylight Time"
+      "New Zealand Daylight Time"
     ],
     [
       [
         109,
         "Standard"
       ],
-      "New Zealand Standard Time"
+      "Newfoundland Standard Time"
     ],
     [
       [
         109,
         "Daylight"
       ],
-      "New Zealand Daylight Time"
+      "Newfoundland Daylight Time"
     ],
     [
       [
@@ -515,42 +515,42 @@
     30,
     31,
     33,
-    34,
+    35,
     36,
     40,
     41,
     45,
     46,
-    48,
+    47,
     49,
     56,
     57,
     58,
     59,
-    61,
-    66,
+    60,
+    62,
     67,
-    71,
+    68,
     72,
     73,
     74,
     75,
     76,
-    81,
+    77,
     83,
     84,
-    86,
-    88,
-    90,
-    94,
+    85,
+    87,
+    89,
+    91,
     95,
     96,
     97,
-    99,
-    101,
+    98,
+    100,
     104,
     105,
-    107,
+    106,
     110,
     117,
     118,

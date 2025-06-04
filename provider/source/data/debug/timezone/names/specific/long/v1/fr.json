@@ -23,14 +23,14 @@
     ],
     [
       [
-        8,
+        7,
         "Standard"
       ],
       "heure normale de l’Alaska"
     ],
     [
       [
-        8,
+        7,
         "Daylight"
       ],
       "heure d’été de l’Alaska"
@@ -142,7 +142,7 @@
     ],
     [
       [
-        20,
+        21,
         "Standard"
       ],
       "heure normale de l’Arménie"
@@ -254,7 +254,7 @@
     ],
     [
       [
-        35,
+        34,
         "Standard"
       ],
       "heure normale du Cap-Vert"
@@ -324,14 +324,14 @@
     ],
     [
       [
-        47,
+        48,
         "Standard"
       ],
       "heure normale de l’île de Pâques"
     ],
     [
       [
-        47,
+        48,
         "Daylight"
       ],
       "heure d’été de l’île de Pâques"
@@ -401,112 +401,112 @@
     ],
     [
       [
-        60,
+        61,
         "Standard"
       ],
       "heure normale de la Géorgie"
     ],
     [
       [
-        62,
+        64,
         "Standard"
       ],
       "heure normale de l’Est du Groenland"
     ],
     [
       [
-        62,
+        64,
         "Daylight"
       ],
       "heure d’été de l’Est du Groenland"
     ],
     [
       [
-        64,
+        65,
         "Standard"
       ],
       "heure normale de l’Ouest du Groenland"
     ],
     [
       [
-        64,
+        65,
         "Daylight"
       ],
       "heure d’été de l’Ouest du Groenland"
     ],
     [
       [
-        68,
+        69,
         "Standard"
       ],
       "heure normale d’Hawaï - Aléoutiennes"
     ],
     [
       [
-        68,
+        69,
         "Daylight"
       ],
       "heure d’été d’Hawaï - Aléoutiennes"
     ],
     [
       [
-        69,
+        70,
         "Standard"
       ],
       "heure normale de Hong Kong"
     ],
     [
       [
-        70,
+        71,
         "Standard"
       ],
       "heure normale de Hovd"
     ],
     [
       [
-        70,
+        71,
         "Daylight"
       ],
       "heure d’été de Hovd"
     ],
     [
       [
-        77,
+        78,
         "Standard"
       ],
       "heure normale d’Iran"
     ],
     [
       [
-        77,
+        78,
         "Daylight"
       ],
       "heure d’été d’Iran"
     ],
     [
       [
-        78,
+        79,
         "Standard"
       ],
       "heure normale d’Irkoutsk"
     ],
     [
       [
-        79,
+        80,
         "Standard"
       ],
       "heure normale d’Israël"
     ],
     [
       [
-        79,
+        80,
         "Daylight"
       ],
       "heure d’été d’Israël"
     ],
     [
       [
-        80,
+        81,
         "Standard"
       ],
       "heure normale du Japon"
@@ -520,56 +520,56 @@
     ],
     [
       [
-        85,
+        86,
         "Standard"
       ],
       "heure normale de la Corée"
     ],
     [
       [
-        87,
+        88,
         "Standard"
       ],
       "heure normale de Krasnoïarsk"
     ],
     [
       [
-        91,
+        92,
         "Standard"
       ],
       "heure normale de Lord Howe"
     ],
     [
       [
-        91,
+        92,
         "Daylight"
       ],
       "heure d’été de Lord Howe"
     ],
     [
       [
-        93,
+        94,
         "Standard"
       ],
       "heure normale de Magadan"
     ],
     [
       [
-        98,
+        99,
         "Standard"
       ],
       "heure normale de Maurice"
     ],
     [
       [
-        100,
+        101,
         "Standard"
       ],
       "heure normale du Pacifique mexicain"
     ],
     [
       [
-        100,
+        101,
         "Daylight"
       ],
       "heure d’été du Pacifique mexicain"
@@ -597,7 +597,7 @@
     ],
     [
       [
-        106,
+        107,
         "Standard"
       ],
       "heure normale de la Nouvelle-Calédonie"
@@ -607,46 +607,46 @@
         108,
         "Standard"
       ],
-      "heure normale de Terre-Neuve"
+      "heure normale de la Nouvelle-Zélande"
     ],
     [
       [
         108,
         "Daylight"
       ],
-      "heure d’été de Terre-Neuve"
+      "heure d’été de la Nouvelle-Zélande"
     ],
     [
       [
         109,
         "Standard"
       ],
-      "heure normale de la Nouvelle-Zélande"
+      "heure normale de Terre-Neuve"
     ],
     [
       [
         109,
         "Daylight"
       ],
-      "heure d’été de la Nouvelle-Zélande"
+      "heure d’été de Terre-Neuve"
     ],
     [
       [
-        112,
+        111,
         "Standard"
       ],
       "heure normale de l’île Norfolk"
     ],
     [
       [
-        112,
+        111,
         "Daylight"
       ],
       "heure d’été de l’île Norfolk"
     ],
     [
       [
-        113,
+        112,
         "Standard"
       ],
       "heure normale de Fernando de Noronha"
@@ -849,36 +849,36 @@
     41,
     45,
     46,
-    48,
+    47,
     49,
     56,
     57,
     58,
     59,
-    61,
-    66,
+    60,
+    62,
     67,
-    71,
+    68,
     72,
     73,
     74,
     75,
     76,
-    81,
+    77,
     83,
     84,
-    86,
-    88,
-    90,
-    94,
+    85,
+    87,
+    89,
+    91,
     95,
     96,
     97,
-    99,
-    101,
+    98,
+    100,
     104,
     105,
-    107,
+    106,
     110,
     117,
     118,
