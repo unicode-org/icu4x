@@ -657,7 +657,7 @@ impl DataExporter for BakedExporter {
                     let bake = payload.tokenize(&dependencies);
 
                     consts.push(quote! {
-                        pub const #ident: <#marker_bake as icu_provider::baked::zerotrie::DynamicDataMarker>::DataStruct = #bake;
+                        pub const #ident: &<#marker_bake as icu_provider::baked::zerotrie::DynamicDataMarker>::DataStruct = &#bake;
                     });
 
                     for deduped in ids.iter().skip(1) {
@@ -668,7 +668,7 @@ impl DataExporter for BakedExporter {
                         .parse::<TokenStream>()
                         .unwrap();
                         consts.push(quote! {
-                            pub const #deduped_ident: <#marker_bake as icu_provider::baked::zerotrie::DynamicDataMarker>::DataStruct = Self::#ident;
+                            pub const #deduped_ident: &<#marker_bake as icu_provider::baked::zerotrie::DynamicDataMarker>::DataStruct = Self::#ident;
                         });
                     }
 
@@ -676,8 +676,8 @@ impl DataExporter for BakedExporter {
                 });
                 let data = quote! {
                     // Safety invariant upheld: see above
-                    const #data_ident: icu_provider::baked::zerotrie::Data<#marker_bake> = unsafe {
-                        icu_provider::baked::zerotrie::Data::from_trie_and_values_unchecked(icu_provider::baked:: #baked_trie, &[#(#bakes,)*])
+                    const #data_ident: icu_provider::baked::zerotrie::DataRef<#marker_bake> = unsafe {
+                        icu_provider::baked::zerotrie::DataRef::from_trie_and_refs_unchecked(icu_provider::baked:: #baked_trie, &[#(#bakes,)*])
                     };
                 };
                 consts.push(data);
