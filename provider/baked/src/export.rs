@@ -581,7 +581,7 @@ impl DataExporter for BakedExporter {
         } else {
             let mut stats = Statistics::default();
 
-            let mut baked_values = deduplicated_values
+            let mut values = deduplicated_values
                 .iter()
                 .map(|(payload, ids)| {
                     // TODO(#5230): Update these size calculations for EncodedStruct storage
@@ -593,12 +593,74 @@ impl DataExporter for BakedExporter {
                 .collect::<Vec<_>>();
 
             // Stability
-            baked_values.sort_by(|a, b| a.1.first().cmp(&b.1.first()));
+            values.sort_by(|a, b| a.1.first().cmp(&b.1.first()));
 
-            let (data, lookup_struct_size) =
-                crate::zerotrie::bake(&marker_bake, &baked_values, &dependencies);
+            let values = values.iter().enumerate();
 
-            stats.lookup_struct_size = lookup_struct_size;
+            // Safety invariant upheld: the only values being added to the trie are `index`
+            // values, which come from enumerating `values`
+            let trie = icu_provider::baked::zerotrie::ZeroTrieSimpleAscii::from_iter(
+                values.clone().flat_map(|(index, (_payload, ids))| {
+                    ids.iter().map(move |id| {
+                        let mut encoded = id.locale.to_string().into_bytes();
+                        if !id.marker_attributes.is_empty() {
+                            encoded.push(icu_provider::baked::zerotrie::ID_SEPARATOR);
+                            encoded.extend_from_slice(id.marker_attributes.as_bytes());
+                        }
+                        (encoded, index)
+                    })
+                }),
+            );
+
+            stats.lookup_struct_size = core::mem::size_of::<
+                icu_provider::baked::zerotrie::Data<icu_provider::hello_world::HelloWorldV1>,
+            >() + trie.as_borrowed_slice().borrows_size();
+
+            let maybe_vzv_tokens = DataPayload::tokenize_encoded_seq(
+                &values
+                    .clone()
+                    .map(|(_index, (payload, _ids))| *payload)
+                    .collect::<Vec<_>>(),
+                &dependencies,
+            );
+
+            let (baked_values, value_store_ty) = if let Some(vzv_tokens) = maybe_vzv_tokens {
+                (
+                    quote! {
+                        const VALUES: &'static zerovec::VarZeroSlice<<<#marker_bake as icu_provider::baked::zerotrie::DynamicDataMarker>::DataStruct as icu_provider::ule::MaybeAsVarULE>::EncodedStruct> = #vzv_tokens;
+                    },
+                    quote! {
+                        icu_provider::baked::zerotrie::DataForVarULEs
+                    },
+                )
+            } else {
+                let bakes = values
+                    .clone()
+                    .map(|(_index, (payload, _ids))| payload.tokenize(&dependencies));
+                (
+                    quote! {
+                        const VALUES: &'static [<#marker_bake as icu_provider::baked::zerotrie::DynamicDataMarker>::DataStruct] = &[#(#bakes,)*];
+                    },
+                    quote! {
+                        icu_provider::baked::zerotrie::Data
+                    },
+                )
+            };
+
+            let data = {
+                let baked_trie = trie.as_borrowed_slice().bake(&Default::default());
+                quote! {
+                    // Safety invariant upheld: see above
+                    #value_store_ty<#marker_bake> = {
+                        const TRIE: icu_provider::baked::zerotrie::ZeroTrieSimpleAscii<&'static [u8]> = icu_provider::baked:: #baked_trie;
+                        #baked_values
+                        unsafe {
+                            #value_store_ty::from_trie_and_values_unchecked(TRIE, VALUES)
+                        }
+                    }
+
+                }
+            };
 
             let metadata_bake = if let Some(checksum) = metadata.checksum {
                 quote! {
