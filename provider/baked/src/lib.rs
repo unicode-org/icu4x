@@ -5,5 +5,3 @@
 //! Tooling for the baked provider.
 
 pub mod export;
-
-mod zerotrie;

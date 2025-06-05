@@ -32,7 +32,9 @@ use zerovec::*;
 icu_provider::data_marker!(
     /// `TransliteratorRulesV1`
     TransliteratorRulesV1,
-    RuleBasedTransliterator<'static>
+    RuleBasedTransliterator<'static>,
+    #[cfg(feature = "datagen")]
+    expose_baked_consts = true,
 );
 
 /// The data struct representing [UTS #35 transform rules](https://unicode.org/reports/tr35/tr35-general.html#Transforms).
