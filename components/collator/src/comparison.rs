@@ -1677,9 +1677,9 @@ impl CollatorBorrowed<'_> {
     /// options.strength = Some(Strength::Primary);
     /// let collator = Collator::try_new(locale, options).unwrap();
     ///
-    /// let mut k1: Vec<u8> = Vec::new();
+    /// let mut k1 = Vec::new();
     /// collator.write_sort_key("hello", &mut k1);
-    /// let mut k2: Vec<u8> = Vec::new();
+    /// let mut k2 = Vec::new();
     /// collator.write_sort_key("Héłłö", &mut k2);
     /// assert_eq!(k1, k2);
     /// ```
@@ -2287,11 +2287,11 @@ mod test {
     fn keys(strength: Strength) -> (Key, Key, Key) {
         let collator = collator_en(strength);
 
-        let mut k0: Key = Vec::new();
+        let mut k0 = Vec::new();
         collator.write_sort_key("aabc", &mut k0).unwrap();
-        let mut k1: Key = Vec::new();
+        let mut k1 = Vec::new();
         collator.write_sort_key("aAbc", &mut k1).unwrap();
-        let mut k2: Key = Vec::new();
+        let mut k2 = Vec::new();
         collator.write_sort_key("áAbc", &mut k2).unwrap();
 
         (k0, k1, k2)
@@ -2328,9 +2328,9 @@ mod test {
     fn keys_ja_strs(strength: Strength, s0: &str, s1: &str) -> (Key, Key) {
         let collator = collator_ja(strength);
 
-        let mut k0: Key = Vec::new();
+        let mut k0 = Vec::new();
         collator.write_sort_key(s0, &mut k0).unwrap();
-        let mut k1: Key = Vec::new();
+        let mut k1 = Vec::new();
         collator.write_sort_key(s1, &mut k1).unwrap();
 
         (k0, k1)
@@ -2365,13 +2365,13 @@ mod test {
         let collator = collator_en(Strength::Identical);
 
         const STR8: &[u8] = b"hello world!";
-        let mut k8: Key = Vec::new();
+        let mut k8 = Vec::new();
         collator.write_sort_key_utf8(STR8, &mut k8).unwrap();
 
         const STR16: &[u16] = &[
             0x68, 0x65, 0x6c, 0x6c, 0x6f, 0x20, 0x77, 0x6f, 0x72, 0x6c, 0x64, 0x21,
         ];
-        let mut k16: Key = Vec::new();
+        let mut k16 = Vec::new();
         collator.write_sort_key_utf16(STR16, &mut k16).unwrap();
         assert_eq!(k8, k16);
     }
@@ -2381,9 +2381,9 @@ mod test {
         let collator = collator_en(Strength::Identical);
 
         // some invalid strings
-        let mut k: Key = Vec::new();
+        let mut k = Vec::new();
         collator.write_sort_key_utf8(b"\xf0\x90", &mut k).unwrap();
-        let mut k: Key = Vec::new();
+        let mut k = Vec::new();
         collator.write_sort_key_utf16(&[0xdd1e], &mut k).unwrap();
     }
 }
