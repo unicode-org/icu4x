@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::measure::measureunit::MeasureUnit;
+use crate::measure::measureunit::ErasedMeasureUnit;
 use crate::measure::provider::single_unit::SingleUnit;
 use crate::units::ratio::IcuRatio;
 use crate::units::{
@@ -95,8 +95,8 @@ impl ConverterFactory {
     ///         - `meter-per-second` and `foot-per-second` are not simple units.
     fn compute_offset(
         &self,
-        input_unit: &MeasureUnit,
-        output_unit: &MeasureUnit,
+        input_unit: &ErasedMeasureUnit,
+        output_unit: &ErasedMeasureUnit,
     ) -> Option<IcuRatio> {
         let &[input_unit] = input_unit.single_units() else {
             return Some(IcuRatio::zero());
@@ -154,8 +154,8 @@ impl ConverterFactory {
     ///   indicating that the units are incompatible.
     fn is_reciprocal(
         &self,
-        unit1: &MeasureUnit,
-        unit2: &MeasureUnit,
+        unit1: &ErasedMeasureUnit,
+        unit2: &ErasedMeasureUnit,
     ) -> Result<bool, InvalidUnitError> {
         /// A struct that contains the sum and difference of base unit powers.
         /// For example:
@@ -281,8 +281,8 @@ impl ConverterFactory {
     ///    such as, from "meter" to "foot-and-inch".
     pub fn converter<T: Convertible>(
         &self,
-        input_unit: &MeasureUnit,
-        output_unit: &MeasureUnit,
+        input_unit: &ErasedMeasureUnit,
+        output_unit: &ErasedMeasureUnit,
     ) -> Option<UnitsConverter<T>> {
         let is_reciprocal = match self.is_reciprocal(input_unit, output_unit) {
             Ok(is_reciprocal) => is_reciprocal,
@@ -353,12 +353,12 @@ impl ConverterFactory {
 #[cfg(test)]
 mod tests {
     use super::ConverterFactory;
-    use crate::measure::parser::MeasureUnitParser;
+    use crate::measure::parser::ErasedMeasureUnitParser;
 
     #[test]
     fn test_converter_factory() {
         let factory = ConverterFactory::new();
-        let parser = MeasureUnitParser::default();
+        let parser = ErasedMeasureUnitParser::default();
         let input_unit = parser.try_from_str("meter").unwrap();
         let output_unit = parser.try_from_str("foot").unwrap();
         let converter = factory.converter::<f64>(&input_unit, &output_unit).unwrap();
@@ -373,7 +373,7 @@ mod tests {
     #[test]
     fn test_converter_factory_with_constant_denominator() {
         let factory = ConverterFactory::new();
-        let parser = MeasureUnitParser::default();
+        let parser = ErasedMeasureUnitParser::default();
         let input_unit = parser.try_from_str("liter-per-100-kilometer").unwrap();
         let output_unit = parser.try_from_str("mile-per-gallon").unwrap();
         let converter = factory.converter::<f64>(&input_unit, &output_unit).unwrap();
@@ -388,7 +388,7 @@ mod tests {
     #[test]
     fn test_converter_factory_with_offset() {
         let factory = ConverterFactory::new();
-        let parser = MeasureUnitParser::default();
+        let parser = ErasedMeasureUnitParser::default();
         let input_unit = parser.try_from_str("celsius").unwrap();
         let output_unit = parser.try_from_str("fahrenheit").unwrap();
         let converter = factory.converter::<f64>(&input_unit, &output_unit).unwrap();

@@ -9,7 +9,7 @@
 
 #include "DataError.d.h"
 #include "DataProvider.d.h"
-#include "MeasureUnit.d.h"
+#include "ErasedMeasureUnit.d.h"
 #include "UnitsConverter.d.h"
 
 #include "UnitsConverterFactory.d.h"
@@ -24,7 +24,7 @@ UnitsConverterFactory* icu4x_UnitsConverterFactory_create_mv1(void);
 typedef struct icu4x_UnitsConverterFactory_create_with_provider_mv1_result {union {UnitsConverterFactory* ok; DataError err;}; bool is_ok;} icu4x_UnitsConverterFactory_create_with_provider_mv1_result;
 icu4x_UnitsConverterFactory_create_with_provider_mv1_result icu4x_UnitsConverterFactory_create_with_provider_mv1(const DataProvider* provider);
 
-UnitsConverter* icu4x_UnitsConverterFactory_converter_mv1(const UnitsConverterFactory* self, const MeasureUnit* from, const MeasureUnit* to);
+UnitsConverter* icu4x_UnitsConverterFactory_converter_mv1(const UnitsConverterFactory* self, const ErasedMeasureUnit* from, const ErasedMeasureUnit* to);
 
 void icu4x_UnitsConverterFactory_destroy_mv1(UnitsConverterFactory* self);
 

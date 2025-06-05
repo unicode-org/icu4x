@@ -5,7 +5,7 @@
 use core::str::FromStr;
 use std::collections::{BTreeMap, VecDeque};
 
-use icu::experimental::measure::parser::MeasureUnitParser;
+use icu::experimental::measure::parser::ErasedMeasureUnitParser;
 use icu::experimental::units::provider::{ConversionInfo, Exactness, Sign};
 use icu::experimental::units::ratio::IcuRatio;
 use icu_provider::DataError;
@@ -144,7 +144,7 @@ pub(crate) fn extract_conversion_info<'data>(
     base_unit: &str,
     factor: &ScientificNumber,
     offset: &ScientificNumber,
-    parser: &MeasureUnitParser,
+    parser: &ErasedMeasureUnitParser,
 ) -> Result<ConversionInfo<'data>, DataError> {
     let factor_fraction = convert_slices_to_fraction(&factor.clean_num, &factor.clean_den)?;
     let offset_fraction = convert_slices_to_fraction(&offset.clean_num, &offset.clean_den)?;

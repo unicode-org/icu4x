@@ -2,19 +2,19 @@
 import wasm from "./diplomat-wasm.mjs";
 import * as diplomatRuntime from "./diplomat-runtime.mjs";
 
-const MeasureUnit_box_destroy_registry = new FinalizationRegistry((ptr) => {
-    wasm.icu4x_MeasureUnit_destroy_mv1(ptr);
+const ErasedMeasureUnit_box_destroy_registry = new FinalizationRegistry((ptr) => {
+    wasm.icu4x_ErasedMeasureUnit_destroy_mv1(ptr);
 });
 
 /**
- * An ICU4X Measurement Unit object which represents a single unit of measurement
+ * An ICU4X Erased Measurement Unit object which represents a single unit of measurement
  * such as `meter`, `second`, `kilometer-per-hour`, `square-meter`, etc.
  *
- * You can create an instance of this object using {@link MeasureUnitParser} by calling the `parse` method.
+ * You can create an instance of this object using {@link ErasedMeasureUnitParser} by calling the `parse` method.
  *
- * See the [Rust documentation for `MeasureUnit`](https://docs.rs/icu/2.0.0/icu/experimental/measure/measureunit/struct.MeasureUnit.html) for more information.
+ * See the [Rust documentation for `ErasedMeasureUnit`](https://docs.rs/icu/2.0.0/icu/experimental/measure/measureunit/struct.ErasedMeasureUnit.html) for more information.
  */
-export class MeasureUnit {
+export class ErasedMeasureUnit {
     // Internal ptr reference:
     #ptr = null;
 
@@ -24,7 +24,7 @@ export class MeasureUnit {
 
     #internalConstructor(symbol, ptr, selfEdge) {
         if (symbol !== diplomatRuntime.internalConstructor) {
-            console.error("MeasureUnit is an Opaque type. You cannot call its constructor.");
+            console.error("ErasedMeasureUnit is an Opaque type. You cannot call its constructor.");
             return;
         }
         this.#ptr = ptr;
@@ -32,7 +32,7 @@ export class MeasureUnit {
 
         // Are we being borrowed? If not, we can register.
         if (this.#selfEdge.length === 0) {
-            MeasureUnit_box_destroy_registry.register(this, this.#ptr);
+            ErasedMeasureUnit_box_destroy_registry.register(this, this.#ptr);
         }
 
         return this;

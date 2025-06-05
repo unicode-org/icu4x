@@ -116,9 +116,9 @@ export { LocaleDirectionality } from "./LocaleDirectionality"
 
 export { Logger } from "./Logger"
 
-export { MeasureUnit } from "./MeasureUnit"
+export { ErasedMeasureUnit } from "./ErasedMeasureUnit"
 
-export { MeasureUnitParser } from "./MeasureUnitParser"
+export { ErasedMeasureUnitParser } from "./ErasedMeasureUnitParser"
 
 export { ComposingNormalizer } from "./ComposingNormalizer"
 
