@@ -222,9 +222,9 @@ lazy_static::lazy_static! {
         "icu::normalizer::Decomposition",
 
         // Trait required
-        "icu::collator::CollatorBorrowed::write_sort_key",
-        "icu::collator::CollatorBorrowed::write_sort_key_utf8",
-        "icu::collator::CollatorBorrowed::write_sort_key_utf16",
+        "icu::collator::CollatorBorrowed::write_sort_key_to",
+        "icu::collator::CollatorBorrowed::write_sort_key_utf8_to",
+        "icu::collator::CollatorBorrowed::write_sort_key_utf16_to",
 
         // Not planned for 2.0
         // We aren't exposing these collections directly, we instead expose them in a domain specific
