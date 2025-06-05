@@ -1678,12 +1678,12 @@ impl CollatorBorrowed<'_> {
     /// let collator = Collator::try_new(locale, options).unwrap();
     ///
     /// let mut k1 = Vec::new();
-    /// collator.write_sort_key("hello", &mut k1);
+    /// collator.write_sort_key_to("hello", &mut k1);
     /// let mut k2 = Vec::new();
-    /// collator.write_sort_key("Héłłö", &mut k2);
+    /// collator.write_sort_key_to("Héłłö", &mut k2);
     /// assert_eq!(k1, k2);
     /// ```
-    pub fn write_sort_key<S>(&self, s: &str, sink: &mut S) -> Result<(), core::fmt::Error>
+    pub fn write_sort_key_to<S>(&self, s: &str, sink: &mut S) -> Result<(), core::fmt::Error>
     where
         S: CollationKeySink,
     {
@@ -1692,8 +1692,8 @@ impl CollatorBorrowed<'_> {
 
     /// Given potentially invalid UTF-8, write the sort key bytes up to the collator's strength.
     ///
-    /// For further details, see [`Self::write_sort_key`].
-    pub fn write_sort_key_utf8<S>(&self, s: &[u8], sink: &mut S) -> Result<(), core::fmt::Error>
+    /// For further details, see [`Self::write_sort_key_to`].
+    pub fn write_sort_key_utf8_to<S>(&self, s: &[u8], sink: &mut S) -> Result<(), core::fmt::Error>
     where
         S: CollationKeySink,
     {
@@ -1702,8 +1702,8 @@ impl CollatorBorrowed<'_> {
 
     /// Given potentially invalid UTF-16, write the sort key bytes up to the collator's strength.
     ///
-    /// For further details, see [`Self::write_sort_key`].
-    pub fn write_sort_key_utf16<S>(&self, s: &[u16], sink: &mut S) -> Result<(), core::fmt::Error>
+    /// For further details, see [`Self::write_sort_key_to`].
+    pub fn write_sort_key_utf16_to<S>(&self, s: &[u16], sink: &mut S) -> Result<(), core::fmt::Error>
     where
         S: CollationKeySink,
     {
@@ -2288,11 +2288,11 @@ mod test {
         let collator = collator_en(strength);
 
         let mut k0 = Vec::new();
-        collator.write_sort_key("aabc", &mut k0).unwrap();
+        collator.write_sort_key_to("aabc", &mut k0).unwrap();
         let mut k1 = Vec::new();
-        collator.write_sort_key("aAbc", &mut k1).unwrap();
+        collator.write_sort_key_to("aAbc", &mut k1).unwrap();
         let mut k2 = Vec::new();
-        collator.write_sort_key("áAbc", &mut k2).unwrap();
+        collator.write_sort_key_to("áAbc", &mut k2).unwrap();
 
         (k0, k1, k2)
     }
@@ -2329,9 +2329,9 @@ mod test {
         let collator = collator_ja(strength);
 
         let mut k0 = Vec::new();
-        collator.write_sort_key(s0, &mut k0).unwrap();
+        collator.write_sort_key_to(s0, &mut k0).unwrap();
         let mut k1 = Vec::new();
-        collator.write_sort_key(s1, &mut k1).unwrap();
+        collator.write_sort_key_to(s1, &mut k1).unwrap();
 
         (k0, k1)
     }
@@ -2366,13 +2366,13 @@ mod test {
 
         const STR8: &[u8] = b"hello world!";
         let mut k8 = Vec::new();
-        collator.write_sort_key_utf8(STR8, &mut k8).unwrap();
+        collator.write_sort_key_utf8_to(STR8, &mut k8).unwrap();
 
         const STR16: &[u16] = &[
             0x68, 0x65, 0x6c, 0x6c, 0x6f, 0x20, 0x77, 0x6f, 0x72, 0x6c, 0x64, 0x21,
         ];
         let mut k16 = Vec::new();
-        collator.write_sort_key_utf16(STR16, &mut k16).unwrap();
+        collator.write_sort_key_utf16_to(STR16, &mut k16).unwrap();
         assert_eq!(k8, k16);
     }
 
@@ -2382,8 +2382,8 @@ mod test {
 
         // some invalid strings
         let mut k = Vec::new();
-        collator.write_sort_key_utf8(b"\xf0\x90", &mut k).unwrap();
+        collator.write_sort_key_utf8_to(b"\xf0\x90", &mut k).unwrap();
         let mut k = Vec::new();
-        collator.write_sort_key_utf16(&[0xdd1e], &mut k).unwrap();
+        collator.write_sort_key_utf16_to(&[0xdd1e], &mut k).unwrap();
     }
 }
