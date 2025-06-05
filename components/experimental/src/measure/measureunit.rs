@@ -14,7 +14,7 @@ use super::{provider::single_unit::SingleUnit, single_unit_vec::SingleUnitVec};
 ///  5. `square-meter` (Note: a single unit is a special case of a compound unit containing only one single unit.)
 ///
 /// To construct a [`MeasureUnit`] from a CLDR unit identifier, use the [`crate::measure::parser::MeasureUnitParser`].
-#[derive(Debug)]
+#[derive(Debug, Eq, PartialEq)]
 pub struct MeasureUnit {
     /// Contains the processed units.
     pub(crate) single_units: SingleUnitVec,
