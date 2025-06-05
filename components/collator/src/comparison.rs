@@ -10,6 +10,7 @@
 //! the comparison of collation element sequences.
 
 use alloc::vec::Vec;
+use alloc::collections::VecDeque;
 
 use crate::elements::CharacterAndClassAndTrieValue;
 use crate::elements::CollationElement32;
@@ -2209,6 +2210,25 @@ impl CollationKeySink for Vec<u8> {
     }
 }
 
+impl CollationKeySink for VecDeque<u8> {
+    type Error = core::convert::Infallible;
+    type State = ();
+    type Output = ();
+
+    fn write(&mut self, _: &mut Self::State, buf: &[u8]) -> Result<(), Self::Error> {
+        self.extend(buf.iter());
+        Ok(())
+    }
+
+    fn finish(&self, _: Self::State) -> Result<Self::Output, Self::Error> {
+        Ok(())
+    }
+
+    fn error(_: core::fmt::Error) -> Self::Error {
+        unreachable!("infallible CollationKeySink");
+    }
+}
+
 impl<const N: usize> CollationKeySink for SmallVec<[u8; N]> {
     type Error = core::convert::Infallible;
     type State = ();
@@ -2475,6 +2495,17 @@ mod test {
         let Ok(()) = collator.write_sort_key_utf8_to(b"\xf0\x90", &mut k);
         let mut k = Vec::new();
         let Ok(()) = collator.write_sort_key_utf16_to(&[0xdd1e], &mut k);
+    }
+
+    #[test]
+    fn sort_key_to_vecdeque() {
+        let collator = collator_en(Strength::Identical);
+
+        let mut k0 = Vec::new();
+        let Ok(()) = collator.write_sort_key_to("áAbc", &mut k0);
+        let mut k1 = VecDeque::new();
+        let Ok(()) = collator.write_sort_key_to("áAbc", &mut k1);
+        assert!(k0.iter().eq(k1.iter()));
     }
 
     #[test]
