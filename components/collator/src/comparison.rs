@@ -1683,7 +1683,7 @@ impl CollatorBorrowed<'_> {
     /// collator.write_sort_key_to("Héłłö", &mut k2);
     /// assert_eq!(k1, k2);
     /// ```
-    pub fn write_sort_key_to<S>(&self, s: &str, sink: &mut S) -> Result<(), core::fmt::Error>
+    pub fn write_sort_key_to<S>(&self, s: &str, sink: &mut S) -> Result<(), S::Error>
     where
         S: CollationKeySink,
     {
@@ -1693,7 +1693,7 @@ impl CollatorBorrowed<'_> {
     /// Given potentially invalid UTF-8, write the sort key bytes up to the collator's strength.
     ///
     /// For further details, see [`Self::write_sort_key_to`].
-    pub fn write_sort_key_utf8_to<S>(&self, s: &[u8], sink: &mut S) -> Result<(), core::fmt::Error>
+    pub fn write_sort_key_utf8_to<S>(&self, s: &[u8], sink: &mut S) -> Result<(), S::Error>
     where
         S: CollationKeySink,
     {
@@ -1703,7 +1703,7 @@ impl CollatorBorrowed<'_> {
     /// Given potentially invalid UTF-16, write the sort key bytes up to the collator's strength.
     ///
     /// For further details, see [`Self::write_sort_key_to`].
-    pub fn write_sort_key_utf16_to<S>(&self, s: &[u16], sink: &mut S) -> Result<(), core::fmt::Error>
+    pub fn write_sort_key_utf16_to<S>(&self, s: &[u16], sink: &mut S) -> Result<(), S::Error>
     where
         S: CollationKeySink,
     {
@@ -1715,7 +1715,7 @@ impl CollatorBorrowed<'_> {
         iter: I,
         sink: &mut S,
         normalize: N,
-    ) -> Result<(), core::fmt::Error>
+    ) -> Result<(), S::Error>
     where
         I: Iterator<Item = char>,
         S: CollationKeySink,
@@ -1728,7 +1728,7 @@ impl CollatorBorrowed<'_> {
                 DecomposingNormalizerBorrowed::new_with_data(self.decompositions, self.tables);
             sink.write_byte(LEVEL_SEPARATOR_BYTE)?;
             let mut adapter = SinkAdapter::new(sink);
-            normalize(nfd, &mut adapter)?;
+            normalize(nfd, &mut adapter).map_err(S::error)?;
         }
 
         Ok(())
@@ -1738,11 +1738,7 @@ impl CollatorBorrowed<'_> {
     ///
     /// Optionally write the case level.  Separate levels with the `LEVEL_SEPARATOR_BYTE`, but
     /// do not write a terminating zero as with a C string.
-    fn write_sort_key_up_to_quaternary<I, S>(
-        &self,
-        iter: I,
-        sink: &mut S,
-    ) -> Result<(), core::fmt::Error>
+    fn write_sort_key_up_to_quaternary<I, S>(&self, iter: I, sink: &mut S) -> Result<(), S::Error>
     where
         I: Iterator<Item = char>,
         S: CollationKeySink,
@@ -2149,27 +2145,50 @@ impl CollatorBorrowed<'_> {
 ///
 /// (This crate does not have access to [`std`].)
 pub trait CollationKeySink {
+    /// The type of error the sink may return.
+    type Error;
+
     /// Writes a buffer into the writer.
-    fn write(&mut self, buf: &[u8]) -> Result<(), core::fmt::Error>;
+    fn write(&mut self, buf: &[u8]) -> Result<(), Self::Error>;
 
     /// Write a single byte into the writer.
-    fn write_byte(&mut self, b: u8) -> Result<(), core::fmt::Error> {
+    fn write_byte(&mut self, b: u8) -> Result<(), Self::Error> {
         self.write(&[b])?;
         Ok(())
     }
+
+    /// Translate an error indicating that the sink is out of space.
+    // Because the normalizer call is unconditionally fallible, we can't map an error that may
+    // come out of it into a CollationSink::Error because that might mean creating an Infallible,
+    // which is impossible.
+    //
+    // This shape is so it fits neatly into Result::map_err.
+    fn error(err: core::fmt::Error) -> Self::Error;
 }
 
 impl CollationKeySink for Vec<u8> {
-    fn write(&mut self, buf: &[u8]) -> Result<(), core::fmt::Error> {
+    type Error = core::convert::Infallible;
+
+    fn write(&mut self, buf: &[u8]) -> Result<(), Self::Error> {
         self.extend_from_slice(buf);
         Ok(())
+    }
+
+    fn error(_: core::fmt::Error) -> Self::Error {
+        unreachable!("infallible CollationKeySink");
     }
 }
 
 impl<const N: usize> CollationKeySink for SmallVec<[u8; N]> {
-    fn write(&mut self, buf: &[u8]) -> Result<(), core::fmt::Error> {
+    type Error = core::convert::Infallible;
+
+    fn write(&mut self, buf: &[u8]) -> Result<(), Self::Error> {
         self.extend_from_slice(buf);
         Ok(())
+    }
+
+    fn error(_: core::fmt::Error) -> Self::Error {
+        unreachable!("infallible CollationKeySink");
     }
 }
 
@@ -2245,8 +2264,9 @@ where
     S: CollationKeySink,
 {
     fn write_str(&mut self, s: &str) -> core::fmt::Result {
-        self.inner.write(s.as_bytes())?;
-        Ok(())
+        self.inner
+            .write(s.as_bytes())
+            .map_err(|_| core::fmt::Error)
     }
 }
 
@@ -2260,13 +2280,17 @@ where
         let mut bytes = [0u8; 4];
         for c in iter {
             let c = c.unwrap_or(char::REPLACEMENT_CHARACTER); // shouldn't happen
-            self.inner.write(c.encode_utf8(&mut bytes).as_bytes())?;
+            self.inner
+                .write(c.encode_utf8(&mut bytes).as_bytes())
+                .map_err(|_| core::fmt::Error)?;
         }
         Ok(())
     }
 
     fn write_char(&mut self, c: char) -> core::fmt::Result {
-        self.inner.write(c.encode_utf8(&mut [0u8; 4]).as_bytes())
+        self.inner
+            .write(c.encode_utf8(&mut [0u8; 4]).as_bytes())
+            .map_err(|_| core::fmt::Error)
     }
 }
 
@@ -2288,11 +2312,11 @@ mod test {
         let collator = collator_en(strength);
 
         let mut k0 = Vec::new();
-        collator.write_sort_key_to("aabc", &mut k0).unwrap();
+        let Ok(()) = collator.write_sort_key_to("aabc", &mut k0);
         let mut k1 = Vec::new();
-        collator.write_sort_key_to("aAbc", &mut k1).unwrap();
+        let Ok(()) = collator.write_sort_key_to("aAbc", &mut k1);
         let mut k2 = Vec::new();
-        collator.write_sort_key_to("áAbc", &mut k2).unwrap();
+        let Ok(()) = collator.write_sort_key_to("áAbc", &mut k2);
 
         (k0, k1, k2)
     }
@@ -2329,9 +2353,9 @@ mod test {
         let collator = collator_ja(strength);
 
         let mut k0 = Vec::new();
-        collator.write_sort_key_to(s0, &mut k0).unwrap();
+        let Ok(()) = collator.write_sort_key_to(s0, &mut k0);
         let mut k1 = Vec::new();
-        collator.write_sort_key_to(s1, &mut k1).unwrap();
+        let Ok(()) = collator.write_sort_key_to(s1, &mut k1);
 
         (k0, k1)
     }
@@ -2366,13 +2390,13 @@ mod test {
 
         const STR8: &[u8] = b"hello world!";
         let mut k8 = Vec::new();
-        collator.write_sort_key_utf8_to(STR8, &mut k8).unwrap();
+        let Ok(()) = collator.write_sort_key_utf8_to(STR8, &mut k8);
 
         const STR16: &[u16] = &[
             0x68, 0x65, 0x6c, 0x6c, 0x6f, 0x20, 0x77, 0x6f, 0x72, 0x6c, 0x64, 0x21,
         ];
         let mut k16 = Vec::new();
-        collator.write_sort_key_utf16_to(STR16, &mut k16).unwrap();
+        let Ok(()) = collator.write_sort_key_utf16_to(STR16, &mut k16);
         assert_eq!(k8, k16);
     }
 
@@ -2382,8 +2406,8 @@ mod test {
 
         // some invalid strings
         let mut k = Vec::new();
-        collator.write_sort_key_utf8_to(b"\xf0\x90", &mut k).unwrap();
+        let Ok(()) = collator.write_sort_key_utf8_to(b"\xf0\x90", &mut k);
         let mut k = Vec::new();
-        collator.write_sort_key_utf16_to(&[0xdd1e], &mut k).unwrap();
+        let Ok(()) = collator.write_sort_key_utf16_to(&[0xdd1e], &mut k);
     }
 }
