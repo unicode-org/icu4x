@@ -1683,9 +1683,10 @@ impl CollatorBorrowed<'_> {
     /// collator.write_sort_key_to("Héłłö", &mut k2);
     /// assert_eq!(k1, k2);
     /// ```
-    pub fn write_sort_key_to<S>(&self, s: &str, sink: &mut S) -> Result<(), S::Error>
+    pub fn write_sort_key_to<S>(&self, s: &str, sink: &mut S) -> Result<S::Output, S::Error>
     where
-        S: CollationKeySink,
+        S: CollationKeySink + ?Sized,
+        S::State: Default,
     {
         self.write_sort_key_impl(s.chars(), sink, |nfd, sink| nfd.normalize_to(s, sink))
     }
@@ -1693,9 +1694,10 @@ impl CollatorBorrowed<'_> {
     /// Given potentially invalid UTF-8, write the sort key bytes up to the collator's strength.
     ///
     /// For further details, see [`Self::write_sort_key_to`].
-    pub fn write_sort_key_utf8_to<S>(&self, s: &[u8], sink: &mut S) -> Result<(), S::Error>
+    pub fn write_sort_key_utf8_to<S>(&self, s: &[u8], sink: &mut S) -> Result<S::Output, S::Error>
     where
-        S: CollationKeySink,
+        S: CollationKeySink + ?Sized,
+        S::State: Default,
     {
         self.write_sort_key_impl(s.chars(), sink, |nfd, sink| nfd.normalize_utf8_to(s, sink))
     }
@@ -1703,9 +1705,10 @@ impl CollatorBorrowed<'_> {
     /// Given potentially invalid UTF-16, write the sort key bytes up to the collator's strength.
     ///
     /// For further details, see [`Self::write_sort_key_to`].
-    pub fn write_sort_key_utf16_to<S>(&self, s: &[u16], sink: &mut S) -> Result<(), S::Error>
+    pub fn write_sort_key_utf16_to<S>(&self, s: &[u16], sink: &mut S) -> Result<S::Output, S::Error>
     where
-        S: CollationKeySink,
+        S: CollationKeySink + ?Sized,
+        S::State: Default,
     {
         self.write_sort_key_impl(s.chars(), sink, |nfd, sink| nfd.normalize_utf16_to(s, sink))
     }
@@ -1715,33 +1718,40 @@ impl CollatorBorrowed<'_> {
         iter: I,
         sink: &mut S,
         normalize: N,
-    ) -> Result<(), S::Error>
+    ) -> Result<S::Output, S::Error>
     where
         I: Iterator<Item = char>,
-        S: CollationKeySink,
+        S: CollationKeySink + ?Sized,
+        S::State: Default,
         N: Fn(DecomposingNormalizerBorrowed, &mut SinkAdapter<'_, S>) -> core::fmt::Result,
     {
-        self.write_sort_key_up_to_quaternary(iter, sink)?;
+        let mut state = S::State::default();
+        self.write_sort_key_up_to_quaternary(iter, sink, &mut state)?;
 
         if self.options.strength() == Strength::Identical {
             let nfd =
                 DecomposingNormalizerBorrowed::new_with_data(self.decompositions, self.tables);
-            sink.write_byte(LEVEL_SEPARATOR_BYTE)?;
-            let mut adapter = SinkAdapter::new(sink);
+            sink.write_byte(&mut state, LEVEL_SEPARATOR_BYTE)?;
+            let mut adapter = SinkAdapter::new(sink, &mut state);
             normalize(nfd, &mut adapter).map_err(S::error)?;
         }
 
-        Ok(())
+        sink.finish(state)
     }
 
     /// Write the sort key bytes up to the collator's strength.
     ///
     /// Optionally write the case level.  Separate levels with the `LEVEL_SEPARATOR_BYTE`, but
     /// do not write a terminating zero as with a C string.
-    fn write_sort_key_up_to_quaternary<I, S>(&self, iter: I, sink: &mut S) -> Result<(), S::Error>
+    fn write_sort_key_up_to_quaternary<I, S>(
+        &self,
+        iter: I,
+        sink: &mut S,
+        state: &mut S::State,
+    ) -> Result<(), S::Error>
     where
         I: Iterator<Item = char>,
-        S: CollationKeySink,
+        S: CollationKeySink + ?Sized,
     {
         // This algorithm comes from `CollationKeys::writeSortKeyUpToQuaternary` in ICU4C.
         let levels = self.sort_key_levels();
@@ -1824,24 +1834,24 @@ impl CollatorBorrowed<'_> {
                             // No primary compression terminator at the end of the level or
                             // merged segment.
                             if p1 > MERGE_SEPARATOR_BYTE {
-                                sink.write(&[PRIMARY_COMPRESSION_LOW_BYTE])?;
+                                sink.write(state, &[PRIMARY_COMPRESSION_LOW_BYTE])?;
                             }
                         } else {
-                            sink.write(&[PRIMARY_COMPRESSION_HIGH_BYTE])?;
+                            sink.write(state, &[PRIMARY_COMPRESSION_HIGH_BYTE])?;
                         }
                     }
-                    sink.write_byte(p1)?;
+                    sink.write_byte(state, p1)?;
                     prev_reordered_primary = if is_compressible { p } else { 0 };
                 }
 
                 let p2 = (p >> 16) as u8;
                 if p2 != 0 {
                     let (b0, b1, b2) = (p2, (p >> 8) as _, p as _);
-                    sink.write_byte(b0)?;
+                    sink.write_byte(state, b0)?;
                     if b1 != 0 {
-                        sink.write_byte(b1)?;
+                        sink.write_byte(state, b1)?;
                         if b2 != 0 {
-                            sink.write_byte(b2)?;
+                            sink.write_byte(state, b2)?;
                         }
                     }
                 }
@@ -2106,8 +2116,8 @@ impl CollatorBorrowed<'_> {
         macro_rules! write_level {
             ($key:ident, $level:expr, $flag:ident) => {
                 if levels & $flag != 0 {
-                    sink.write(&[LEVEL_SEPARATOR_BYTE])?;
-                    sink.write(&$key.buf)?;
+                    sink.write(state, &[LEVEL_SEPARATOR_BYTE])?;
+                    sink.write(state, &$key.buf)?;
                 }
             };
         }
@@ -2115,7 +2125,7 @@ impl CollatorBorrowed<'_> {
         write_level!(secondaries, Level::Secondary, SECONDARY_LEVEL_FLAG);
 
         if levels & CASE_LEVEL_FLAG != 0 {
-            sink.write(&[LEVEL_SEPARATOR_BYTE])?;
+            sink.write(state, &[LEVEL_SEPARATOR_BYTE])?;
 
             // Write pairs of nibbles as bytes, except separator bytes as themselves.
             let mut b = 0;
@@ -2125,12 +2135,12 @@ impl CollatorBorrowed<'_> {
                 if b == 0 {
                     b = *c;
                 } else {
-                    sink.write_byte(b | (*c >> 4))?;
+                    sink.write_byte(state, b | (*c >> 4))?;
                     b = 0;
                 }
             }
             if b != 0 {
-                sink.write_byte(b)?;
+                sink.write_byte(state, b)?;
             }
         }
 
@@ -2141,6 +2151,10 @@ impl CollatorBorrowed<'_> {
     }
 }
 
+/// Error indicating that a [`CollationKeySink`] with limited space ran out of space.
+#[derive(Debug, PartialEq, Eq)]
+pub struct TooSmall;
+
 /// A [`std::io::Write`]-like trait for writing to a buffer-like object.
 ///
 /// (This crate does not have access to [`std`].)
@@ -2148,14 +2162,24 @@ pub trait CollationKeySink {
     /// The type of error the sink may return.
     type Error;
 
+    /// An intermediate state object used by the sink, which must implement [`Default`].
+    type State;
+
+    /// A result value indicating the final state of the sink (e.g. a number of bytes written).
+    type Output;
+
     /// Writes a buffer into the writer.
-    fn write(&mut self, buf: &[u8]) -> Result<(), Self::Error>;
+    fn write(&mut self, state: &mut Self::State, buf: &[u8]) -> Result<(), Self::Error>;
 
     /// Write a single byte into the writer.
-    fn write_byte(&mut self, b: u8) -> Result<(), Self::Error> {
-        self.write(&[b])?;
+    fn write_byte(&mut self, state: &mut Self::State, b: u8) -> Result<(), Self::Error> {
+        self.write(state, &[b])?;
         Ok(())
     }
+
+    /// Finalize any internal sink state (perhaps by flushing a buffer) and return the final
+    /// output value.
+    fn finish(&self, state: Self::State) -> Result<Self::Output, Self::Error>;
 
     /// Translate an error indicating that the sink is out of space.
     // Because the normalizer call is unconditionally fallible, we can't map an error that may
@@ -2168,9 +2192,15 @@ pub trait CollationKeySink {
 
 impl CollationKeySink for Vec<u8> {
     type Error = core::convert::Infallible;
+    type State = ();
+    type Output = ();
 
-    fn write(&mut self, buf: &[u8]) -> Result<(), Self::Error> {
+    fn write(&mut self, _: &mut Self::State, buf: &[u8]) -> Result<(), Self::Error> {
         self.extend_from_slice(buf);
+        Ok(())
+    }
+
+    fn finish(&self, _: Self::State) -> Result<Self::Output, Self::Error> {
         Ok(())
     }
 
@@ -2181,14 +2211,46 @@ impl CollationKeySink for Vec<u8> {
 
 impl<const N: usize> CollationKeySink for SmallVec<[u8; N]> {
     type Error = core::convert::Infallible;
+    type State = ();
+    type Output = ();
 
-    fn write(&mut self, buf: &[u8]) -> Result<(), Self::Error> {
+    fn write(&mut self, _: &mut (), buf: &[u8]) -> Result<(), Self::Error> {
         self.extend_from_slice(buf);
+        Ok(())
+    }
+
+    fn finish(&self, _: Self::State) -> Result<Self::Output, Self::Error> {
         Ok(())
     }
 
     fn error(_: core::fmt::Error) -> Self::Error {
         unreachable!("infallible CollationKeySink");
+    }
+}
+
+impl CollationKeySink for [u8] {
+    type Error = TooSmall;
+    type State = usize;
+    type Output = usize;
+
+    fn write(&mut self, used: &mut Self::State, buf: &[u8]) -> Result<(), Self::Error> {
+        if buf.len() <= self.len() - *used {
+            // just checked bounds
+            #[allow(clippy::indexing_slicing)]
+            self[*used..*used + buf.len()].copy_from_slice(buf);
+            *used += buf.len();
+            Ok(())
+        } else {
+            Err(TooSmall)
+        }
+    }
+
+    fn finish(&self, used: Self::State) -> Result<Self::Output, Self::Error> {
+        Ok(used)
+    }
+
+    fn error(_: core::fmt::Error) -> Self::Error {
+        TooSmall
     }
 }
 
@@ -2249,30 +2311,34 @@ impl SortKeyLevel {
     }
 }
 
-struct SinkAdapter<'a, S> {
+struct SinkAdapter<'a, S: CollationKeySink + ?Sized> {
     inner: &'a mut S,
+    state: &'a mut S::State,
 }
 
-impl<'a, S> SinkAdapter<'a, S> {
-    fn new(inner: &'a mut S) -> Self {
-        Self { inner }
+impl<'a, S> SinkAdapter<'a, S>
+where
+    S: CollationKeySink + ?Sized,
+{
+    fn new(inner: &'a mut S, state: &'a mut S::State) -> Self {
+        Self { inner, state }
     }
 }
 
 impl<S> core::fmt::Write for SinkAdapter<'_, S>
 where
-    S: CollationKeySink,
+    S: CollationKeySink + ?Sized,
 {
     fn write_str(&mut self, s: &str) -> core::fmt::Result {
         self.inner
-            .write(s.as_bytes())
+            .write(self.state, s.as_bytes())
             .map_err(|_| core::fmt::Error)
     }
 }
 
 impl<S> write16::Write16 for SinkAdapter<'_, S>
 where
-    S: CollationKeySink,
+    S: CollationKeySink + ?Sized,
 {
     fn write_slice(&mut self, s: &[u16]) -> core::fmt::Result {
         // For the identical level, if the input is UTF-16, transcode to UTF-8.
@@ -2281,7 +2347,7 @@ where
         for c in iter {
             let c = c.unwrap_or(char::REPLACEMENT_CHARACTER); // shouldn't happen
             self.inner
-                .write(c.encode_utf8(&mut bytes).as_bytes())
+                .write(self.state, c.encode_utf8(&mut bytes).as_bytes())
                 .map_err(|_| core::fmt::Error)?;
         }
         Ok(())
@@ -2289,7 +2355,7 @@ where
 
     fn write_char(&mut self, c: char) -> core::fmt::Result {
         self.inner
-            .write(c.encode_utf8(&mut [0u8; 4]).as_bytes())
+            .write(self.state, c.encode_utf8(&mut [0u8; 4]).as_bytes())
             .map_err(|_| core::fmt::Error)
     }
 }
@@ -2409,5 +2475,21 @@ mod test {
         let Ok(()) = collator.write_sort_key_utf8_to(b"\xf0\x90", &mut k);
         let mut k = Vec::new();
         let Ok(()) = collator.write_sort_key_utf16_to(&[0xdd1e], &mut k);
+    }
+
+    #[test]
+    fn sort_key_to_slice() {
+        let collator = collator_en(Strength::Identical);
+
+        let mut k0 = Vec::new();
+        let Ok(()) = collator.write_sort_key_to("áAbc", &mut k0);
+        let mut k1 = [0u8; 100];
+        let len = collator.write_sort_key_to("áAbc", &mut k1[..]).unwrap();
+        assert_eq!(len, k0.len());
+        assert!(k0.iter().eq(k1[..len].iter()));
+
+        let mut k2 = [0u8; 0];
+        let res = collator.write_sort_key_to("áAbc", &mut k2[..]);
+        assert_eq!(res, Err(TooSmall));
     }
 }
