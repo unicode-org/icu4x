@@ -2230,19 +2230,19 @@ impl SortKeyLevel {
     }
 }
 
-struct SinkAdapter<'a, W> {
-    inner: &'a mut W,
+struct SinkAdapter<'a, S> {
+    inner: &'a mut S,
 }
 
-impl<'a, W> SinkAdapter<'a, W> {
-    fn new(inner: &'a mut W) -> Self {
+impl<'a, S> SinkAdapter<'a, S> {
+    fn new(inner: &'a mut S) -> Self {
         Self { inner }
     }
 }
 
-impl<W> core::fmt::Write for SinkAdapter<'_, W>
+impl<S> core::fmt::Write for SinkAdapter<'_, S>
 where
-    W: CollationKeySink,
+    S: CollationKeySink,
 {
     fn write_str(&mut self, s: &str) -> core::fmt::Result {
         self.inner.write(s.as_bytes())?;
@@ -2250,9 +2250,9 @@ where
     }
 }
 
-impl<W> write16::Write16 for SinkAdapter<'_, W>
+impl<S> write16::Write16 for SinkAdapter<'_, S>
 where
-    W: CollationKeySink,
+    S: CollationKeySink,
 {
     fn write_slice(&mut self, s: &[u16]) -> core::fmt::Result {
         // For the identical level, if the input is UTF-16, transcode to UTF-8.
