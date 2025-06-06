@@ -1293,6 +1293,7 @@ dependencies = [
  "smallvec",
  "utf16_iter",
  "utf8_iter",
+ "write16",
  "zerovec",
 ]
 
