@@ -9,8 +9,8 @@
 //! This module holds the `Collator` struct whose `compare_impl()` contains
 //! the comparison of collation element sequences.
 
-use alloc::vec::Vec;
 use alloc::collections::VecDeque;
+use alloc::vec::Vec;
 
 use crate::elements::CharacterAndClassAndTrieValue;
 use crate::elements::CollationElement32;
