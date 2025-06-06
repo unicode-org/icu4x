@@ -9,7 +9,7 @@ use crate::{core::Cursor, ParserResult};
 
 #[cfg(feature = "duration")]
 use crate::records::DurationParseRecord;
-use crate::records::{IxdtfParseRecord, UtcOffsetRecord};
+use crate::records::{IxdtfParseRecord, TimeZoneRecord, UtcOffsetRecord};
 
 use crate::records::Annotation;
 
@@ -285,6 +285,54 @@ impl<'a, T: EncodingType> TimeZoneParser<'a, T> {
         Self {
             cursor: Cursor::new(source),
         }
+    }
+
+    /// Parse a time zone identifier that can be either an
+    /// IANA identifer name or minute precision offset.
+    ///
+    /// ## IANA identifier example
+    ///
+    /// ```rust
+    /// use ixdtf::{parsers::TimeZoneParser, records::TimeZoneRecord};
+    ///
+    /// let identifier = "Europe/London";
+    /// let record = TimeZoneParser::from_str(identifier).parse_identifier().unwrap();
+    /// assert_eq!(record, TimeZoneRecord::Name(identifier.as_bytes()))
+    /// ```
+    ///
+    /// ## Minute precision offset example
+    ///
+    /// ```rust
+    /// use ixdtf::{parsers::TimeZoneParser, records::{MinutePrecisionOffset, TimeZoneRecord, Sign}};
+    ///
+    /// let identifier = "+00:00";
+    /// let offset = match TimeZoneParser::from_str(identifier).parse_identifier() {
+    ///     Ok(TimeZoneRecord::Offset(o)) => o,
+    ///     _ => unreachable!(),
+    /// };
+    ///
+    /// assert_eq!(offset.sign, Sign::Positive);
+    /// assert_eq!(offset.hour, 0);
+    /// assert_eq!(offset.minute, 0);
+    /// ```
+    ///
+    /// ## Errors
+    ///
+    /// It is an error to provide a full precision offset as a
+    /// time zone identifier.
+    ///
+    /// **NOTE**: To parse either a full or minute precision,
+    /// use [`Self::parse_offset`].
+    ///
+    /// ```rust
+    /// use ixdtf::{ParseError, parsers::TimeZoneParser};
+    ///
+    /// let identifier = "+00:00:00";
+    /// let err = TimeZoneParser::from_str(identifier).parse_identifier().unwrap_err();
+    /// assert_eq!(err, ParseError::InvalidMinutePrecisionOffset);
+    /// ```
+    pub fn parse_identifier(&mut self) -> ParserResult<TimeZoneRecord<'a, T>> {
+        timezone::parse_time_zone(&mut self.cursor)
     }
 
     /// Parse a UTC offset from the provided source.
