@@ -1679,9 +1679,9 @@ impl CollatorBorrowed<'_> {
     /// let collator = Collator::try_new(locale, options).unwrap();
     ///
     /// let mut k1 = Vec::new();
-    /// collator.write_sort_key_to("hello", &mut k1);
+    /// let Ok(()) = collator.write_sort_key_to("hello", &mut k1);
     /// let mut k2 = Vec::new();
-    /// collator.write_sort_key_to("Héłłö", &mut k2);
+    /// let Ok(()) = collator.write_sort_key_to("Héłłö", &mut k2);
     /// assert_eq!(k1, k2);
     /// ```
     pub fn write_sort_key_to<S>(&self, s: &str, sink: &mut S) -> Result<S::Output, S::Error>
