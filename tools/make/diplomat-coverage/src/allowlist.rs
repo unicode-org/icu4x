@@ -221,11 +221,6 @@ lazy_static::lazy_static! {
         "icu::normalizer::Composition",
         "icu::normalizer::Decomposition",
 
-        // Trait required
-        "icu::collator::CollatorBorrowed::write_sort_key_to",
-        "icu::collator::CollatorBorrowed::write_sort_key_utf8_to",
-        "icu::collator::CollatorBorrowed::write_sort_key_utf16_to",
-
         // Not planned for 2.0
         // We aren't exposing these collections directly, we instead expose them in a domain specific
         // way like CodePointSetDataBuilder. We may eventually add these as utilities for users.
