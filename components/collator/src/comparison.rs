@@ -2155,7 +2155,16 @@ impl CollatorBorrowed<'_> {
 
 /// Error indicating that a [`CollationKeySink`] with limited space ran out of space.
 #[derive(Debug, PartialEq, Eq)]
-pub struct TooSmall;
+pub struct TooSmall {
+    /// The total length, in bytes, of the sort key.
+    pub length: usize,
+}
+
+impl TooSmall {
+    pub fn new(length: usize) -> Self {
+        Self { length }
+    }
+}
 
 /// A [`std::io::Write`]-like trait for writing to a buffer-like object.
 ///
@@ -2233,20 +2242,22 @@ impl CollationKeySink for [u8] {
     type State = usize;
     type Output = usize;
 
-    fn write(&mut self, used: &mut Self::State, buf: &[u8]) -> Result<(), Self::Error> {
-        if buf.len() <= self.len() - *used {
+    fn write(&mut self, offset: &mut Self::State, buf: &[u8]) -> Result<(), Self::Error> {
+        if *offset + buf.len() <= self.len() {
             // just checked bounds
             #[allow(clippy::indexing_slicing)]
-            self[*used..*used + buf.len()].copy_from_slice(buf);
-            *used += buf.len();
-            Ok(())
-        } else {
-            Err(TooSmall)
+            self[*offset..*offset + buf.len()].copy_from_slice(buf);
         }
+        *offset += buf.len();
+        Ok(())
     }
 
-    fn finish(&mut self, used: Self::State) -> Result<Self::Output, Self::Error> {
-        Ok(used)
+    fn finish(&mut self, offset: Self::State) -> Result<Self::Output, Self::Error> {
+        if offset <= self.len() {
+            Ok(offset)
+        } else {
+            Err(TooSmall::new(offset))
+        }
     }
 }
 
@@ -2515,7 +2526,7 @@ mod test {
         let collator = collator_en(Strength::Identical);
         let mut k = [0u8; 0];
         let res = collator.write_sort_key_to("áAbc", &mut k[..]);
-        assert_eq!(res, Err(TooSmall));
+        assert!(matches!(res, Err(TooSmall { .. })));
     }
 
     #[test]
@@ -2524,7 +2535,7 @@ mod test {
         let collator = collator_en(Strength::Identical);
         let mut k = [0u8; 5];
         let res = collator.write_sort_key_to("áAbc", &mut k[..]);
-        assert_eq!(res, Err(TooSmall));
+        assert!(matches!(res, Err(TooSmall { .. })));
     }
 
     #[test]
@@ -2533,7 +2544,26 @@ mod test {
         let collator = collator_en(Strength::Identical);
         let mut k = [0u8; 22];
         let res = collator.write_sort_key_to("áAbc", &mut k[..]);
-        assert_eq!(res, Err(TooSmall));
+        assert!(matches!(res, Err(TooSmall { .. })));
+    }
+
+    #[test]
+    fn sort_key_just_right() {
+        // get the length needed
+        let collator = collator_en(Strength::Identical);
+        let mut k = [0u8; 0];
+        let res = collator.write_sort_key_to("áAbc", &mut k[..]);
+        let len = res.unwrap_err().length;
+
+        // almost enough
+        let mut k = vec![0u8; len - 1];
+        let res = collator.write_sort_key_to("áAbc", &mut k[..]);
+        let len = res.unwrap_err().length;
+
+        // just right
+        let mut k = vec![0u8; len];
+        let res = collator.write_sort_key_to("áAbc", &mut k[..]);
+        assert_eq!(res, Ok(len));
     }
 
     #[test]
@@ -2542,6 +2572,6 @@ mod test {
         const STR16: &[u16] = &[0x68, 0x65, 0x6c, 0x6c, 0x6f];
         let mut k = [0u8; 4];
         let res = collator.write_sort_key_utf16_to(STR16, &mut k[..]);
-        assert_eq!(res, Err(TooSmall));
+        assert!(matches!(res, Err(TooSmall { .. })));
     }
 }
