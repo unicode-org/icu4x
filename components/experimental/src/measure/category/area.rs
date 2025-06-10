@@ -26,7 +26,7 @@ impl Area {
                         power: 0,
                         base: Base::Decimal,
                     },
-                    unit_id: crate::provider::Baked::UNIT_IDS_V1_UND_METER,
+                    unit_id: *crate::provider::Baked::UNIT_IDS_V1_UND_METER,
                 }),
                 constant_denominator: 0,
             },
