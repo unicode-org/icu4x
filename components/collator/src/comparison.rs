@@ -9,6 +9,9 @@
 //! This module holds the `Collator` struct whose `compare_impl()` contains
 //! the comparison of collation element sequences.
 
+use alloc::collections::VecDeque;
+use alloc::vec::Vec;
+
 use crate::elements::CharacterAndClassAndTrieValue;
 use crate::elements::CollationElement32;
 use crate::elements::Tag;
@@ -19,7 +22,8 @@ use crate::elements::NON_ROUND_TRIP_MARKER;
 use crate::elements::{
     char_from_u32, CollationElement, CollationElements, NonPrimary, FFFD_CE32,
     HANGUL_SYLLABLE_MARKER, HIGH_ZEROS_MASK, JAMO_COUNT, LOW_ZEROS_MASK, NO_CE, NO_CE_PRIMARY,
-    NO_CE_SECONDARY, NO_CE_TERTIARY, OPTIMIZED_DIACRITICS_MAX_COUNT, QUATERNARY_MASK,
+    NO_CE_QUATERNARY, NO_CE_SECONDARY, NO_CE_TERTIARY, OPTIMIZED_DIACRITICS_MAX_COUNT,
+    QUATERNARY_MASK,
 };
 use crate::options::CollatorOptionsBitField;
 use crate::options::{
@@ -45,6 +49,7 @@ use icu_normalizer::provider::DecompositionData;
 use icu_normalizer::provider::DecompositionTables;
 use icu_normalizer::provider::NormalizerNfdDataV1;
 use icu_normalizer::provider::NormalizerNfdTablesV1;
+use icu_normalizer::DecomposingNormalizerBorrowed;
 use icu_normalizer::Decomposition;
 use icu_provider::marker::ErasedMarker;
 use icu_provider::prelude::*;
@@ -53,7 +58,81 @@ use utf16_iter::Utf16CharsEx;
 use utf8_iter::Utf8CharsEx;
 use zerovec::ule::AsULE;
 
+// Special sort key bytes for all levels.
+const LEVEL_SEPARATOR_BYTE: u8 = 1;
+
+/// Merge-sort-key separator.
+///
+/// Same as the unique primary and identical-level weights of U+FFFE.  Must not
+/// be used as primary compression low terminator.  Otherwise usable.
+const MERGE_SEPARATOR_BYTE: u8 = 2;
 const MERGE_SEPARATOR_PRIMARY: u32 = 0x02000000; // for U+FFFE
+
+/// Primary compression low terminator, must be greater than MERGE_SEPARATOR_BYTE.
+///
+/// Reserved value in primary second byte if the lead byte is compressible.
+/// Otherwise usable in all CE weight bytes.
+const PRIMARY_COMPRESSION_LOW_BYTE: u8 = 3;
+
+/// Primary compression high terminator.
+///
+/// Reserved value in primary second byte if the lead byte is compressible.
+/// Otherwise usable in all CE weight bytes.
+const PRIMARY_COMPRESSION_HIGH_BYTE: u8 = 0xff;
+
+/// Default secondary/tertiary weight lead byte.
+const COMMON_BYTE: u8 = 5;
+const COMMON_WEIGHT16: u16 = 0x0500;
+
+// Internal flags for sort key generation
+const PRIMARY_LEVEL_FLAG: u8 = 0x01;
+const SECONDARY_LEVEL_FLAG: u8 = 0x02;
+const CASE_LEVEL_FLAG: u8 = 0x04;
+const TERTIARY_LEVEL_FLAG: u8 = 0x08;
+const QUATERNARY_LEVEL_FLAG: u8 = 0x10;
+
+const LEVEL_MASKS: [u8; Strength::Identical as usize + 1] = [
+    PRIMARY_LEVEL_FLAG,
+    PRIMARY_LEVEL_FLAG | SECONDARY_LEVEL_FLAG,
+    PRIMARY_LEVEL_FLAG | SECONDARY_LEVEL_FLAG | TERTIARY_LEVEL_FLAG,
+    PRIMARY_LEVEL_FLAG | SECONDARY_LEVEL_FLAG | TERTIARY_LEVEL_FLAG | QUATERNARY_LEVEL_FLAG,
+    0,
+    0,
+    0,
+    PRIMARY_LEVEL_FLAG | SECONDARY_LEVEL_FLAG | TERTIARY_LEVEL_FLAG | QUATERNARY_LEVEL_FLAG,
+];
+
+// Internal constants for indexing into the below compression configurations
+const WEIGHT_LOW: usize = 0;
+const WEIGHT_MIDDLE: usize = 1;
+const WEIGHT_HIGH: usize = 2;
+const WEIGHT_MAX_COUNT: usize = 3;
+
+// Secondary level: Compress up to 33 common weights as 05..25 or 25..45.
+const SEC_COMMON: [u8; 4] = [COMMON_BYTE, COMMON_BYTE + 0x20, COMMON_BYTE + 0x40, 0x21];
+
+// Case level, lowerFirst: Compress up to 7 common weights as 1..7 or 7..13.
+const CASE_LOWER_FIRST_COMMON: [u8; 4] = [1, 7, 13, 7];
+
+// Case level, upperFirst: Compress up to 13 common weights as 3..15.
+const CASE_UPPER_FIRST_COMMON: [u8; 4] = [3, 0 /* unused */, 15, 13];
+
+// Tertiary level only (no case): Compress up to 97 common weights as 05..65 or 65..C5.
+const TER_ONLY_COMMON: [u8; 4] = [COMMON_BYTE, COMMON_BYTE + 0x60, COMMON_BYTE + 0xc0, 0x61];
+
+// Tertiary with case, lowerFirst: Compress up to 33 common weights as 05..25 or 25..45.
+const TER_LOWER_FIRST_COMMON: [u8; 4] = [COMMON_BYTE, COMMON_BYTE + 0x20, COMMON_BYTE + 0x40, 0x21];
+
+// Tertiary with case, upperFirst: Compress up to 33 common weights as 85..A5 or A5..C5.
+const TER_UPPER_FIRST_COMMON: [u8; 4] = [
+    COMMON_BYTE + 0x80,
+    COMMON_BYTE + 0x80 + 0x20,
+    COMMON_BYTE + 0x80 + 0x40,
+    0x21,
+];
+
+const QUAT_COMMON: [u8; 4] = [0x1c, 0x1c + 0x70, 0x1c + 0xe0, 0x71];
+const QUAT_SHIFTED_LIMIT_BYTE: u8 = QUAT_COMMON[WEIGHT_LOW] - 1; // 0x1b
 
 struct AnyQuaternaryAccumulator(u32);
 
@@ -670,6 +749,28 @@ impl CollatorBorrowed<'static> {
     }
 }
 
+macro_rules! collation_elements {
+    ($self:expr, $chars:expr, $tailoring:expr, $numeric_primary:expr) => {{
+        let jamo = <&[<u32 as AsULE>::ULE; JAMO_COUNT]>::try_from($self.jamo.ce32s.as_ule_slice());
+
+        // `unwrap` OK, because length already validated
+        #[allow(clippy::unwrap_used)]
+        let jamo = jamo.unwrap();
+
+        CollationElements::new(
+            $chars,
+            $self.root,
+            $tailoring,
+            jamo,
+            &$self.diacritics.secondaries,
+            $self.decompositions,
+            $self.tables,
+            $numeric_primary,
+            $self.lithuanian_dot_above,
+        )
+    }};
+}
+
 impl CollatorBorrowed<'_> {
     /// The resolved options showing how the default options, the requested options,
     /// and the options from locale data were combined.
@@ -704,6 +805,49 @@ impl CollatorBorrowed<'_> {
         split_prefix_u16,
     );
 
+    #[inline(always)]
+    fn tailoring_or_root(&self) -> &CollationData {
+        if let Some(tailoring) = &self.tailoring {
+            tailoring
+        } else {
+            // If the root collation is valid for the locale,
+            // use the root as the tailoring so that reads from the
+            // tailoring always succeed.
+            //
+            // TODO(#2011): Do we instead want to have an untailored
+            // copypaste of the iterator that omits the tailoring
+            // branches for performance at the expense of code size
+            // and having to maintain both a tailoring-capable and
+            // a tailoring-incapable version of the iterator?
+            // Or, in order not to flip the branch prediction around,
+            // should we have a no-op tailoring that contains a
+            // specially-crafted CodePointTrie that always returns
+            // a FALLBACK_CE32 after a single branch?
+            self.root
+        }
+    }
+
+    #[inline(always)]
+    fn numeric_primary(&self) -> Option<u8> {
+        if self.options.numeric() {
+            Some(self.special_primaries.numeric_primary)
+        } else {
+            None
+        }
+    }
+
+    #[inline(always)]
+    fn variable_top(&self) -> u32 {
+        if self.options.alternate_handling() == AlternateHandling::NonIgnorable {
+            0
+        } else {
+            // +1 so that we can use "<" and primary ignorables test out early.
+            self.special_primaries
+                .last_primary_for_group(self.options.max_variable())
+                + 1
+        }
+    }
+
     /// The implementation of the comparison operation.
     ///
     /// `head_chars` is an iterator over the identical prefix and
@@ -722,25 +866,6 @@ impl CollatorBorrowed<'_> {
         right_chars: I,
         mut head_chars: I,
     ) -> Ordering {
-        let tailoring: &CollationData = if let Some(tailoring) = &self.tailoring {
-            tailoring
-        } else {
-            // If the root collation is valid for the locale,
-            // use the root as the tailoring so that reads from the
-            // tailoring always succeed.
-            //
-            // TODO(#2011): Do we instead want to have an untailored
-            // copypaste of the iterator that omits the tailoring
-            // branches for performance at the expense of code size
-            // and having to maintain both a tailoring-capable and
-            // a tailoring-incapable version of the iterator?
-            // Or, in order not to flip the branch prediction around,
-            // should we have a no-op tailoring that contains a
-            // specially-crafted CodePointTrie that always returns
-            // a FALLBACK_CE32 after a single branch?
-            self.root
-        };
-
         // Sadly, it looks like variable CEs and backward second level
         // require us to store the full 64-bit CEs instead of storing only
         // the NonPrimary part.
@@ -761,55 +886,12 @@ impl CollatorBorrowed<'_> {
         // The algorithm comes from CollationCompare::compareUpToQuaternary in ICU4C.
 
         let mut any_variable = false;
-        // Attribute belongs closer to `unwrap`, but
-        // https://github.com/rust-lang/rust/issues/15701
-        #[allow(clippy::unwrap_used)]
-        let variable_top = if self.options.alternate_handling() == AlternateHandling::NonIgnorable {
-            0
-        } else {
-            // +1 so that we can use "<" and primary ignorables test out early.
-            self.special_primaries
-                .last_primary_for_group(self.options.max_variable())
-                + 1
-        };
+        let variable_top = self.variable_top();
 
-        // Attribute belongs on inner expression, but
-        // https://github.com/rust-lang/rust/issues/15701
-        #[allow(clippy::unwrap_used)]
-        let numeric_primary = if self.options.numeric() {
-            Some(self.special_primaries.numeric_primary)
-        } else {
-            None
-        };
-
-        // Attribute belongs on inner expression, but
-        // https://github.com/rust-lang/rust/issues/15701
-        #[allow(clippy::unwrap_used)]
-        let mut left = CollationElements::new(
-            left_chars,
-            self.root,
-            tailoring,
-            <&[<u32 as AsULE>::ULE; JAMO_COUNT]>::try_from(self.jamo.ce32s.as_ule_slice()).unwrap(), // `unwrap` OK, because length already validated
-            &self.diacritics.secondaries,
-            self.decompositions,
-            self.tables,
-            numeric_primary,
-            self.lithuanian_dot_above,
-        );
-        // Attribute belongs on inner expression, but
-        // https://github.com/rust-lang/rust/issues/15701
-        #[allow(clippy::unwrap_used)]
-        let mut right = CollationElements::new(
-            right_chars,
-            self.root,
-            tailoring,
-            <&[<u32 as AsULE>::ULE; JAMO_COUNT]>::try_from(self.jamo.ce32s.as_ule_slice()).unwrap(), // `unwrap` OK, because length already validated
-            &self.diacritics.secondaries,
-            self.decompositions,
-            self.tables,
-            numeric_primary,
-            self.lithuanian_dot_above,
-        );
+        let tailoring = self.tailoring_or_root();
+        let numeric_primary = self.numeric_primary();
+        let mut left = collation_elements!(self, left_chars, tailoring, numeric_primary);
+        let mut right = collation_elements!(self, right_chars, tailoring, numeric_primary);
 
         // Start identical prefix
 
@@ -1550,5 +1632,917 @@ impl CollatorBorrowed<'_> {
         }
 
         Ordering::Equal
+    }
+
+    fn sort_key_levels(&self) -> u8 {
+        #[allow(clippy::indexing_slicing)]
+        let mut levels = LEVEL_MASKS[self.options.strength() as usize];
+        if self.options.case_level() {
+            levels |= CASE_LEVEL_FLAG;
+        }
+        levels
+    }
+
+    /// Given valid UTF-8, write the sort key bytes up to the collator's strength.
+    ///
+    /// If two sort keys generated at the same strength are compared bytewise, the result is
+    /// the same as a collation comparison of the original strings at that strength.
+    ///
+    /// For identical strength, the UTF-8 NFD normalization is appended for breaking ties.
+    ///
+    /// No terminating zero byte is written to the output, so the output is not a valid C
+    /// string, but the caller may append a zero afterward if a C string is desired.
+    ///
+    /// ⚠️ Generating a sort key is expensive relative to comparison because to compare, the
+    /// collator skips identical prefixes before doing more complex comparison.  Only use sort
+    /// keys if you expect to compare them many times so as to amortize the cost of generating
+    /// them.  Measurement of this performance trade-off would be a good idea.
+    ///
+    /// ⚠️ Sort keys, if stored durably, should be presumed to be invalidated by a CLDR update, a
+    /// new version of Unicode, or an update to the ICU4X code.  Applications using sort keys
+    /// *must* be prepared to recompute them if required and should take the performance of
+    /// such an operation into account when deciding to use sort keys.
+    ///
+    /// ⚠️ If you should store sort keys in a database that is or becomes so large that
+    /// regenerating sort keys becomes impractical, you should not expect ICU4X to support your
+    /// using an older, frozen copy of the sort key generation algorithm with a later version
+    /// of the library.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu_locale::locale;
+    /// use icu_collator::{Collator, options::{CollatorOptions, Strength}};
+    /// let locale = locale!("utf").into();
+    /// let mut options = CollatorOptions::default();
+    /// options.strength = Some(Strength::Primary);
+    /// let collator = Collator::try_new(locale, options).unwrap();
+    ///
+    /// let mut k1 = Vec::new();
+    /// let Ok(()) = collator.write_sort_key_to("hello", &mut k1);
+    /// let mut k2 = Vec::new();
+    /// let Ok(()) = collator.write_sort_key_to("Héłłö", &mut k2);
+    /// assert_eq!(k1, k2);
+    /// ```
+    pub fn write_sort_key_to<S>(&self, s: &str, sink: &mut S) -> Result<S::Output, S::Error>
+    where
+        S: CollationKeySink + ?Sized,
+        S::State: Default,
+    {
+        self.write_sort_key_impl(s.chars(), sink, |nfd, sink| nfd.normalize_to(s, sink))
+    }
+
+    /// Given potentially invalid UTF-8, write the sort key bytes up to the collator's strength.
+    ///
+    /// For further details, see [`Self::write_sort_key_to`].
+    pub fn write_sort_key_utf8_to<S>(&self, s: &[u8], sink: &mut S) -> Result<S::Output, S::Error>
+    where
+        S: CollationKeySink + ?Sized,
+        S::State: Default,
+    {
+        self.write_sort_key_impl(s.chars(), sink, |nfd, sink| nfd.normalize_utf8_to(s, sink))
+    }
+
+    /// Given potentially invalid UTF-16, write the sort key bytes up to the collator's strength.
+    ///
+    /// For further details, see [`Self::write_sort_key_to`].
+    pub fn write_sort_key_utf16_to<S>(&self, s: &[u16], sink: &mut S) -> Result<S::Output, S::Error>
+    where
+        S: CollationKeySink + ?Sized,
+        S::State: Default,
+    {
+        self.write_sort_key_impl(s.chars(), sink, |nfd, sink| nfd.normalize_utf16_to(s, sink))
+    }
+
+    fn write_sort_key_impl<I, S, N>(
+        &self,
+        iter: I,
+        sink: &mut S,
+        normalize: N,
+    ) -> Result<S::Output, S::Error>
+    where
+        I: Iterator<Item = char>,
+        S: CollationKeySink + ?Sized,
+        S::State: Default,
+        N: Fn(DecomposingNormalizerBorrowed, &mut SinkAdapter<'_, S>) -> core::fmt::Result,
+    {
+        let mut state = S::State::default();
+        self.write_sort_key_up_to_quaternary(iter, sink, &mut state)?;
+
+        if self.options.strength() == Strength::Identical {
+            let nfd =
+                DecomposingNormalizerBorrowed::new_with_data(self.decompositions, self.tables);
+            sink.write_byte(&mut state, LEVEL_SEPARATOR_BYTE)?;
+            let mut adapter = SinkAdapter::new(sink, &mut state);
+            let _ = normalize(nfd, &mut adapter);
+            adapter.finish()?;
+        }
+
+        sink.finish(state)
+    }
+
+    /// Write the sort key bytes up to the collator's strength.
+    ///
+    /// Optionally write the case level.  Separate levels with the `LEVEL_SEPARATOR_BYTE`, but
+    /// do not write a terminating zero as with a C string.
+    fn write_sort_key_up_to_quaternary<I, S>(
+        &self,
+        iter: I,
+        sink: &mut S,
+        state: &mut S::State,
+    ) -> Result<(), S::Error>
+    where
+        I: Iterator<Item = char>,
+        S: CollationKeySink + ?Sized,
+    {
+        // This algorithm comes from `CollationKeys::writeSortKeyUpToQuaternary` in ICU4C.
+        let levels = self.sort_key_levels();
+
+        let mut iter =
+            collation_elements!(self, iter, self.tailoring_or_root(), self.numeric_primary());
+        iter.init();
+        let variable_top = self.variable_top();
+
+        let tertiary_mask = self.options.tertiary_mask().unwrap_or_default();
+
+        let mut cases = SortKeyLevel::default();
+        let mut secondaries = SortKeyLevel::default();
+        let mut tertiaries = SortKeyLevel::default();
+        let mut quaternaries = SortKeyLevel::default();
+
+        let mut prev_reordered_primary = 0;
+        let mut common_cases = 0;
+        let mut common_secondaries = 0;
+        let mut common_tertiaries = 0;
+        let mut common_quaternaries = 0;
+        let mut prev_secondary = 0;
+        let mut sec_segment_start = 0;
+
+        loop {
+            let mut ce = iter.next();
+            let mut p = ce.primary();
+            if p < variable_top && p > MERGE_SEPARATOR_PRIMARY {
+                // Variable CE, shift it to quaternary level.  Ignore all following primary
+                // ignorables, and shift further variable CEs.
+                if common_quaternaries != 0 {
+                    common_quaternaries -= 1;
+                    while common_quaternaries >= QUAT_COMMON[WEIGHT_MAX_COUNT] {
+                        quaternaries.append_byte(QUAT_COMMON[WEIGHT_MIDDLE]);
+                        common_quaternaries -= QUAT_COMMON[WEIGHT_MAX_COUNT];
+                    }
+                    // Shifted primary weights are lower than the common weight.
+                    quaternaries.append_byte(QUAT_COMMON[WEIGHT_LOW] + common_quaternaries);
+                    common_quaternaries = 0;
+                }
+
+                loop {
+                    if levels & QUATERNARY_LEVEL_FLAG != 0 {
+                        if let Some(reordering) = &self.reordering {
+                            p = reordering.reorder(p);
+                        }
+                        if (p >> 24) as u8 >= QUAT_SHIFTED_LIMIT_BYTE {
+                            // Prevent shifted primary lead bytes from overlapping with the
+                            // common compression range.
+                            quaternaries.append_byte(QUAT_SHIFTED_LIMIT_BYTE);
+                        }
+                        quaternaries.append_weight_32(p);
+                    }
+                    loop {
+                        ce = iter.next();
+                        p = ce.primary();
+                        if p != 0 {
+                            break;
+                        }
+                    }
+                    if !(p < variable_top && p > MERGE_SEPARATOR_PRIMARY) {
+                        break;
+                    }
+                }
+            }
+
+            // ce could be primary ignorable, or NO_CE, or the merge separator, or a regular
+            // primary CE, but it is not variable.  If ce == NO_CE, then write nothing for the
+            // primary level but terminate compression on all levels and then exit the loop.
+            if p > NO_CE_PRIMARY && levels & PRIMARY_LEVEL_FLAG != 0 {
+                // Test the un-reordered primary for compressibility.
+                let is_compressible = self.special_primaries.is_compressible((p >> 24) as _);
+                if let Some(reordering) = &self.reordering {
+                    p = reordering.reorder(p);
+                }
+                let p1 = (p >> 24) as u8;
+                if !is_compressible || p1 != (prev_reordered_primary >> 24) as u8 {
+                    if prev_reordered_primary != 0 {
+                        if p < prev_reordered_primary {
+                            // No primary compression terminator at the end of the level or
+                            // merged segment.
+                            if p1 > MERGE_SEPARATOR_BYTE {
+                                sink.write(state, &[PRIMARY_COMPRESSION_LOW_BYTE])?;
+                            }
+                        } else {
+                            sink.write(state, &[PRIMARY_COMPRESSION_HIGH_BYTE])?;
+                        }
+                    }
+                    sink.write_byte(state, p1)?;
+                    prev_reordered_primary = if is_compressible { p } else { 0 };
+                }
+
+                let p2 = (p >> 16) as u8;
+                if p2 != 0 {
+                    let (b0, b1, b2) = (p2, (p >> 8) as _, p as _);
+                    sink.write_byte(state, b0)?;
+                    if b1 != 0 {
+                        sink.write_byte(state, b1)?;
+                        if b2 != 0 {
+                            sink.write_byte(state, b2)?;
+                        }
+                    }
+                }
+            }
+
+            let non_primary = ce.non_primary();
+            if non_primary.ignorable() {
+                continue; // completely ignorable, no secondary/case/tertiary/quaternary
+            }
+
+            macro_rules! handle_common {
+                ($key:ident, $w:ident, $common:ident, $weights:ident, $lim:expr) => {
+                    if $common != 0 {
+                        $common -= 1;
+                        while $common >= $weights[WEIGHT_MAX_COUNT] {
+                            $key.append_byte($weights[WEIGHT_MIDDLE]);
+                            $common -= $weights[WEIGHT_MAX_COUNT];
+                        }
+                        let b = if $w < $lim {
+                            $weights[WEIGHT_LOW] + $common
+                        } else {
+                            $weights[WEIGHT_HIGH] - $common
+                        };
+                        $key.append_byte(b);
+                        $common = 0;
+                    }
+                };
+                ($key:ident, $w:ident, $common:ident, $weights:ident) => {
+                    handle_common!($key, $w, $common, $weights, COMMON_WEIGHT16);
+                };
+            }
+
+            if levels & SECONDARY_LEVEL_FLAG != 0 {
+                let s = non_primary.secondary();
+                if s == 0 {
+                    // secondary ignorable
+                } else if s == COMMON_WEIGHT16
+                    && (!self.options.backward_second_level() || p != MERGE_SEPARATOR_PRIMARY)
+                {
+                    // s is a common secondary weight, and backwards-secondary is off or the ce
+                    // is not the merge separator.
+                    common_secondaries += 1;
+                } else if !self.options.backward_second_level() {
+                    handle_common!(secondaries, s, common_secondaries, SEC_COMMON);
+                    secondaries.append_weight_16(s);
+                } else {
+                    if common_secondaries != 0 {
+                        common_secondaries -= 1;
+                        // Append reverse weights.  The level will be re-reversed later.
+                        let remainder = common_secondaries % SEC_COMMON[WEIGHT_MAX_COUNT];
+                        let b = if prev_secondary < COMMON_WEIGHT16 {
+                            SEC_COMMON[WEIGHT_LOW] + remainder
+                        } else {
+                            SEC_COMMON[WEIGHT_HIGH] - remainder
+                        };
+                        secondaries.append_byte(b);
+                        common_secondaries -= remainder;
+                        // common_secondaries is now a multiple of SEC_COMMON[WEIGHT_MAX_COUNT]
+                        while common_secondaries > 0 {
+                            // same as >= SEC_COMMON[WEIGHT_MAX_COUNT]
+                            secondaries.append_byte(SEC_COMMON[WEIGHT_MIDDLE]);
+                            common_secondaries -= SEC_COMMON[WEIGHT_MAX_COUNT];
+                        }
+                        // commonSecondaries == 0
+                    }
+                    if 0 < p && p <= MERGE_SEPARATOR_PRIMARY {
+                        // The backwards secondary level compares secondary weights backwards
+                        // within segments separated by the merge separator (U+FFFE).
+                        let secs = &mut secondaries.buf;
+                        let last = secs.len() - 1;
+                        if sec_segment_start < last {
+                            let mut q = sec_segment_start;
+                            let mut r = last;
+
+                            // these indices start at valid values and we stop when they cross
+                            #[allow(clippy::indexing_slicing)]
+                            while q < r {
+                                let b = secs[q];
+                                secs[q] = secs[r];
+                                q += 1;
+                                secs[r] = b;
+                                r -= 1;
+                            }
+                        }
+                        let b = if p == NO_CE_PRIMARY {
+                            LEVEL_SEPARATOR_BYTE
+                        } else {
+                            MERGE_SEPARATOR_BYTE
+                        };
+                        secondaries.append_byte(b);
+                        prev_secondary = 0;
+                        sec_segment_start = secondaries.len();
+                    } else {
+                        secondaries.append_reverse_weight_16(s);
+                        prev_secondary = s;
+                    }
+                }
+            }
+
+            if levels & CASE_LEVEL_FLAG != 0 {
+                if self.options.strength() == Strength::Primary && p == 0
+                    || non_primary.bits() <= 0xffff
+                {
+                    // Primary+caseLevel: Ignore case level weights of primary ignorables.
+                    // Otherwise: Ignore case level weights of secondary ignorables.  For
+                    // details see the comments in the CollationCompare class.
+                } else {
+                    // case bits & tertiary lead byte
+                    let mut c = ((non_primary.bits() >> 8) & 0xff) as u8;
+                    debug_assert_ne!(c & 0xc0, 0xc0);
+                    if c & 0xc0 == 0 && c > LEVEL_SEPARATOR_BYTE {
+                        common_cases += 1;
+                    } else {
+                        if !self.options.upper_first() {
+                            // lower first:  Compress common weights to nibbles 1..7..13,
+                            // mixed=14, upper=15.  If there are only common (=lowest) weights
+                            // in the whole level, then we need not write anything.  Level
+                            // length differences are handled already on the next-higher level.
+                            if common_cases != 0 && (c > LEVEL_SEPARATOR_BYTE || !cases.is_empty())
+                            {
+                                common_cases -= 1;
+                                while common_cases >= CASE_LOWER_FIRST_COMMON[WEIGHT_MAX_COUNT] {
+                                    cases.append_byte(CASE_LOWER_FIRST_COMMON[WEIGHT_MIDDLE] << 4);
+                                    common_cases -= CASE_LOWER_FIRST_COMMON[WEIGHT_MAX_COUNT];
+                                }
+                                let b = if c <= LEVEL_SEPARATOR_BYTE {
+                                    CASE_LOWER_FIRST_COMMON[WEIGHT_LOW] + common_cases
+                                } else {
+                                    CASE_LOWER_FIRST_COMMON[WEIGHT_HIGH] - common_cases
+                                };
+                                cases.append_byte(b << 4);
+                                common_cases = 0;
+                            }
+                            if c > LEVEL_SEPARATOR_BYTE {
+                                // 14 or 15
+                                c = (CASE_LOWER_FIRST_COMMON[WEIGHT_HIGH] + (c >> 6)) << 4;
+                            }
+                        } else {
+                            // upper first:  Compress common weights to nibbles 3..15, mixed=2,
+                            // upper=1.  The compressed common case weights only go up from the
+                            // "low" value because with upperFirst the common weight is the
+                            // highest one.
+                            if common_cases != 0 {
+                                common_cases -= 1;
+                                while common_cases >= CASE_UPPER_FIRST_COMMON[WEIGHT_MAX_COUNT] {
+                                    cases.append_byte(CASE_UPPER_FIRST_COMMON[WEIGHT_LOW] << 4);
+                                    common_cases -= CASE_UPPER_FIRST_COMMON[WEIGHT_MAX_COUNT];
+                                }
+                                cases.append_byte(
+                                    (CASE_UPPER_FIRST_COMMON[WEIGHT_LOW] + common_cases) << 4,
+                                );
+                                common_cases = 0;
+                            }
+                            if c > LEVEL_SEPARATOR_BYTE {
+                                // 2 or 1
+                                c = (CASE_UPPER_FIRST_COMMON[WEIGHT_LOW] - (c >> 6)) << 4;
+                            }
+                        }
+                        // c is a separator byte 01 or a left-shifted nibble 0x10, 0x20, ...
+                        // 0xf0.
+                        cases.append_byte(c);
+                    }
+                }
+            }
+
+            if levels & TERTIARY_LEVEL_FLAG != 0 {
+                let mut t = non_primary.tertiary_case_quarternary(tertiary_mask);
+                debug_assert_ne!(non_primary.bits() & 0xc000, 0xc000);
+                if t == COMMON_WEIGHT16 {
+                    common_tertiaries += 1;
+                } else if tertiary_mask & 0x8000 == 0 {
+                    // Tertiary weights without case bits.  Move lead bytes 06..3F to C6..FF
+                    // for a large common-weight range.
+                    handle_common!(tertiaries, t, common_tertiaries, TER_ONLY_COMMON);
+                    if t > COMMON_WEIGHT16 {
+                        t += 0xc000;
+                    }
+                    tertiaries.append_weight_16(t);
+                } else if !self.options.upper_first() {
+                    // Tertiary weights with caseFirst=lowerFirst.  Move lead bytes 06..BF to
+                    // 46..FF for the common-weight range.
+                    handle_common!(tertiaries, t, common_tertiaries, TER_LOWER_FIRST_COMMON);
+                    if t > COMMON_WEIGHT16 {
+                        t += 0x4000;
+                    }
+                    tertiaries.append_weight_16(t);
+                } else {
+                    // Tertiary weights with caseFirst=upperFirst.  Do not change the
+                    // artificial uppercase weight of a tertiary CE (0.0.ut), to keep tertiary
+                    // CEs well-formed.  Their case+tertiary weights must be greater than those
+                    // of primary and secondary CEs.
+                    //
+                    // Separator         01 -> 01      (unchanged)
+                    // Lowercase     02..04 -> 82..84  (includes uncased)
+                    // Common weight     05 -> 85..C5  (common-weight compression range)
+                    // Lowercase     06..3F -> C6..FF
+                    // Mixed case    42..7F -> 42..7F
+                    // Uppercase     82..BF -> 02..3F
+                    // Tertiary CE   86..BF -> C6..FF
+                    if t <= NO_CE_TERTIARY {
+                        // Keep separators unchanged.
+                    } else if non_primary.bits() > 0xffff {
+                        // Invert case bits of primary & secondary CEs.
+                        t ^= 0xc000;
+                        if t < (TER_UPPER_FIRST_COMMON[WEIGHT_HIGH] as u16) << 8 {
+                            t -= 0x4000;
+                        }
+                    } else {
+                        // Keep uppercase bits of tertiary CEs.
+                        debug_assert!((0x8600..=0xbfff).contains(&t));
+                        t += 0x4000;
+                    }
+                    handle_common!(
+                        tertiaries,
+                        t,
+                        common_tertiaries,
+                        TER_UPPER_FIRST_COMMON,
+                        (TER_UPPER_FIRST_COMMON[WEIGHT_LOW] as u16) << 8
+                    );
+                    tertiaries.append_weight_16(t);
+                }
+            }
+
+            if levels & QUATERNARY_LEVEL_FLAG != 0 {
+                let q = (non_primary.bits() & 0xffff) as u16;
+                if q & 0xc0 == 0 && q > NO_CE_QUATERNARY {
+                    common_quaternaries += 1;
+                } else if q == NO_CE_QUATERNARY
+                    && self.options.alternate_handling() == AlternateHandling::NonIgnorable
+                    && quaternaries.is_empty()
+                {
+                    // If alternate=non-ignorable and there are only common quaternary weights,
+                    // then we need not write anything.  The only weights greater than the
+                    // merge separator and less than the common weight are shifted primary
+                    // weights, which are not generated for alternate=non-ignorable.  There are
+                    // also exactly as many quaternary weights as tertiary weights, so level
+                    // length differences are handled already on tertiary level.  Any
+                    // above-common quaternary weight will compare greater regardless.
+                    quaternaries.append_byte(LEVEL_SEPARATOR_BYTE);
+                } else {
+                    let q = if q == NO_CE_QUATERNARY {
+                        LEVEL_SEPARATOR_BYTE
+                    } else {
+                        (0xfc + ((q >> 6) & 3)) as u8
+                    };
+                    handle_common!(
+                        quaternaries,
+                        q,
+                        common_quaternaries,
+                        QUAT_COMMON,
+                        QUAT_COMMON[WEIGHT_LOW]
+                    );
+                    quaternaries.append_byte(q);
+                }
+            }
+
+            if (non_primary.bits() >> 24) as u8 == LEVEL_SEPARATOR_BYTE {
+                break; // ce == NO_CE
+            }
+        }
+
+        macro_rules! write_level {
+            ($key:ident, $level:expr, $flag:ident) => {
+                if levels & $flag != 0 {
+                    sink.write(state, &[LEVEL_SEPARATOR_BYTE])?;
+                    sink.write(state, &$key.buf)?;
+                }
+            };
+        }
+
+        write_level!(secondaries, Level::Secondary, SECONDARY_LEVEL_FLAG);
+
+        if levels & CASE_LEVEL_FLAG != 0 {
+            sink.write(state, &[LEVEL_SEPARATOR_BYTE])?;
+
+            // Write pairs of nibbles as bytes, except separator bytes as themselves.
+            let mut b = 0;
+            for c in &cases.buf {
+                debug_assert_eq!(*c & 0xf, 0);
+                debug_assert_ne!(*c, 0);
+                if b == 0 {
+                    b = *c;
+                } else {
+                    sink.write_byte(state, b | (*c >> 4))?;
+                    b = 0;
+                }
+            }
+            if b != 0 {
+                sink.write_byte(state, b)?;
+            }
+        }
+
+        write_level!(tertiaries, Level::Tertiary, TERTIARY_LEVEL_FLAG);
+        write_level!(quaternaries, Level::Quaternary, QUATERNARY_LEVEL_FLAG);
+
+        Ok(())
+    }
+}
+
+/// Error indicating that a [`CollationKeySink`] with limited space ran out of space.
+#[derive(Debug, PartialEq, Eq)]
+pub struct TooSmall;
+
+/// A [`std::io::Write`]-like trait for writing to a buffer-like object.
+///
+/// (This crate does not have access to [`std`].)
+pub trait CollationKeySink {
+    /// The type of error the sink may return.
+    type Error;
+
+    /// An intermediate state object used by the sink, which must implement [`Default`].
+    type State;
+
+    /// A result value indicating the final state of the sink (e.g. a number of bytes written).
+    type Output;
+
+    /// Writes a buffer into the writer.
+    fn write(&mut self, state: &mut Self::State, buf: &[u8]) -> Result<(), Self::Error>;
+
+    /// Write a single byte into the writer.
+    fn write_byte(&mut self, state: &mut Self::State, b: u8) -> Result<(), Self::Error> {
+        self.write(state, &[b])?;
+        Ok(())
+    }
+
+    /// Finalize any internal sink state (perhaps by flushing a buffer) and return the final
+    /// output value.
+    fn finish(&self, state: Self::State) -> Result<Self::Output, Self::Error>;
+}
+
+impl CollationKeySink for Vec<u8> {
+    type Error = core::convert::Infallible;
+    type State = ();
+    type Output = ();
+
+    fn write(&mut self, _: &mut Self::State, buf: &[u8]) -> Result<(), Self::Error> {
+        self.extend_from_slice(buf);
+        Ok(())
+    }
+
+    fn finish(&self, _: Self::State) -> Result<Self::Output, Self::Error> {
+        Ok(())
+    }
+}
+
+impl CollationKeySink for VecDeque<u8> {
+    type Error = core::convert::Infallible;
+    type State = ();
+    type Output = ();
+
+    fn write(&mut self, _: &mut Self::State, buf: &[u8]) -> Result<(), Self::Error> {
+        self.extend(buf.iter());
+        Ok(())
+    }
+
+    fn finish(&self, _: Self::State) -> Result<Self::Output, Self::Error> {
+        Ok(())
+    }
+}
+
+impl<const N: usize> CollationKeySink for SmallVec<[u8; N]> {
+    type Error = core::convert::Infallible;
+    type State = ();
+    type Output = ();
+
+    fn write(&mut self, _: &mut (), buf: &[u8]) -> Result<(), Self::Error> {
+        self.extend_from_slice(buf);
+        Ok(())
+    }
+
+    fn finish(&self, _: Self::State) -> Result<Self::Output, Self::Error> {
+        Ok(())
+    }
+}
+
+impl CollationKeySink for [u8] {
+    type Error = TooSmall;
+    type State = usize;
+    type Output = usize;
+
+    fn write(&mut self, used: &mut Self::State, buf: &[u8]) -> Result<(), Self::Error> {
+        if buf.len() <= self.len() - *used {
+            // just checked bounds
+            #[allow(clippy::indexing_slicing)]
+            self[*used..*used + buf.len()].copy_from_slice(buf);
+            *used += buf.len();
+            Ok(())
+        } else {
+            Err(TooSmall)
+        }
+    }
+
+    fn finish(&self, used: Self::State) -> Result<Self::Output, Self::Error> {
+        Ok(used)
+    }
+}
+
+#[derive(Default)]
+struct SortKeyLevel {
+    buf: SmallVec<[u8; 40]>,
+}
+
+impl SortKeyLevel {
+    fn len(&self) -> usize {
+        self.buf.len()
+    }
+
+    fn is_empty(&self) -> bool {
+        self.buf.is_empty()
+    }
+
+    fn append_byte(&mut self, x: u8) {
+        self.buf.push(x);
+    }
+
+    fn append_weight_16(&mut self, w: u16) {
+        debug_assert_ne!(w, 0);
+        let b0 = (w >> 8) as u8;
+        let b1 = w as u8;
+        self.append_byte(b0);
+        if b1 != 0 {
+            self.append_byte(b1);
+        }
+    }
+
+    fn append_reverse_weight_16(&mut self, w: u16) {
+        debug_assert_ne!(w, 0);
+        let b0 = (w >> 8) as u8;
+        let b1 = w as u8;
+        if b1 != 0 {
+            self.append_byte(b1);
+        }
+        self.append_byte(b0);
+    }
+
+    fn append_weight_32(&mut self, w: u32) {
+        debug_assert_ne!(w, 0);
+        let b0 = (w >> 24) as u8;
+        let b1 = (w >> 16) as u8;
+        let b2 = (w >> 8) as u8;
+        let b3 = w as u8;
+        self.append_byte(b0);
+        if b1 != 0 {
+            self.append_byte(b1);
+            if b2 != 0 {
+                self.append_byte(b2);
+                if b3 != 0 {
+                    self.append_byte(b3);
+                }
+            }
+        }
+    }
+}
+
+struct SinkAdapter<'a, S: CollationKeySink + ?Sized> {
+    inner: &'a mut S,
+    state: &'a mut S::State,
+    error: Option<S::Error>,
+}
+
+impl<'a, S> SinkAdapter<'a, S>
+where
+    S: CollationKeySink + ?Sized,
+{
+    fn new(inner: &'a mut S, state: &'a mut S::State) -> Self {
+        Self {
+            inner,
+            state,
+            error: None,
+        }
+    }
+
+    fn finish(self) -> Result<(), S::Error> {
+        self.error.map_or(Ok(()), Err)
+    }
+
+    fn map_err(&mut self, error: S::Error) -> core::fmt::Error {
+        self.error = Some(error);
+        core::fmt::Error
+    }
+}
+
+impl<S> core::fmt::Write for SinkAdapter<'_, S>
+where
+    S: CollationKeySink + ?Sized,
+{
+    fn write_str(&mut self, s: &str) -> core::fmt::Result {
+        self.inner
+            .write(self.state, s.as_bytes())
+            .map_err(|e| self.map_err(e))
+    }
+}
+
+impl<S> write16::Write16 for SinkAdapter<'_, S>
+where
+    S: CollationKeySink + ?Sized,
+{
+    fn write_slice(&mut self, s: &[u16]) -> core::fmt::Result {
+        // For the identical level, if the input is UTF-16, transcode to UTF-8.
+        let iter = char::decode_utf16(s.iter().cloned());
+        let mut bytes = [0u8; 4];
+        for c in iter {
+            let c = c.unwrap_or(char::REPLACEMENT_CHARACTER); // shouldn't happen
+            self.inner
+                .write(self.state, c.encode_utf8(&mut bytes).as_bytes())
+                .map_err(|e| self.map_err(e))?;
+        }
+        Ok(())
+    }
+
+    fn write_char(&mut self, c: char) -> core::fmt::Result {
+        self.inner
+            .write(self.state, c.encode_utf8(&mut [0u8; 4]).as_bytes())
+            .map_err(|e| self.map_err(e))
+    }
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+    use icu_locale::locale;
+
+    type Key = Vec<u8>;
+
+    fn collator_en(strength: Strength) -> CollatorBorrowed<'static> {
+        let locale = locale!("en").into();
+        let mut options = CollatorOptions::default();
+        options.strength = Some(strength);
+        Collator::try_new(locale, options).unwrap()
+    }
+
+    fn keys(strength: Strength) -> (Key, Key, Key) {
+        let collator = collator_en(strength);
+
+        let mut k0 = Vec::new();
+        let Ok(()) = collator.write_sort_key_to("aabc", &mut k0);
+        let mut k1 = Vec::new();
+        let Ok(()) = collator.write_sort_key_to("aAbc", &mut k1);
+        let mut k2 = Vec::new();
+        let Ok(()) = collator.write_sort_key_to("áAbc", &mut k2);
+
+        (k0, k1, k2)
+    }
+
+    #[test]
+    fn sort_key_primary() {
+        let (k0, k1, k2) = keys(Strength::Primary);
+        assert_eq!(k0, k1);
+        assert_eq!(k1, k2);
+    }
+
+    #[test]
+    fn sort_key_secondary() {
+        let (k0, k1, k2) = keys(Strength::Secondary);
+        assert_eq!(k0, k1);
+        assert!(k1 < k2);
+    }
+
+    #[test]
+    fn sort_key_tertiary() {
+        let (k0, k1, k2) = keys(Strength::Tertiary);
+        assert!(k0 < k1);
+        assert!(k1 < k2);
+    }
+
+    fn collator_ja(strength: Strength) -> CollatorBorrowed<'static> {
+        let locale = locale!("ja").into();
+        let mut options = CollatorOptions::default();
+        options.strength = Some(strength);
+        Collator::try_new(locale, options).unwrap()
+    }
+
+    fn keys_ja_strs(strength: Strength, s0: &str, s1: &str) -> (Key, Key) {
+        let collator = collator_ja(strength);
+
+        let mut k0 = Vec::new();
+        let Ok(()) = collator.write_sort_key_to(s0, &mut k0);
+        let mut k1 = Vec::new();
+        let Ok(()) = collator.write_sort_key_to(s1, &mut k1);
+
+        (k0, k1)
+    }
+
+    fn keys_ja(strength: Strength) -> (Key, Key) {
+        keys_ja_strs(strength, "あ", "ア")
+    }
+
+    #[test]
+    fn sort_keys_ja_to_quaternary() {
+        let (k0, k1) = keys_ja(Strength::Primary);
+        assert_eq!(k0, k1);
+        let (k0, k1) = keys_ja(Strength::Secondary);
+        assert_eq!(k0, k1);
+        let (k0, k1) = keys_ja(Strength::Tertiary);
+        assert_eq!(k0, k1);
+        let (k0, k1) = keys_ja(Strength::Quaternary);
+        assert!(k0 < k1);
+    }
+
+    #[test]
+    fn sort_keys_ja_identical() {
+        let (k0, k1) = keys_ja_strs(Strength::Quaternary, "ア", "ｱ");
+        assert_eq!(k0, k1);
+        let (k0, k1) = keys_ja_strs(Strength::Identical, "ア", "ｱ");
+        assert!(k0 < k1);
+    }
+
+    #[test]
+    fn sort_keys_utf16() {
+        let collator = collator_en(Strength::Identical);
+
+        const STR8: &[u8] = b"hello world!";
+        let mut k8 = Vec::new();
+        let Ok(()) = collator.write_sort_key_utf8_to(STR8, &mut k8);
+
+        const STR16: &[u16] = &[
+            0x68, 0x65, 0x6c, 0x6c, 0x6f, 0x20, 0x77, 0x6f, 0x72, 0x6c, 0x64, 0x21,
+        ];
+        let mut k16 = Vec::new();
+        let Ok(()) = collator.write_sort_key_utf16_to(STR16, &mut k16);
+        assert_eq!(k8, k16);
+    }
+
+    #[test]
+    fn sort_keys_invalid() {
+        let collator = collator_en(Strength::Identical);
+
+        // some invalid strings
+        let mut k = Vec::new();
+        let Ok(()) = collator.write_sort_key_utf8_to(b"\xf0\x90", &mut k);
+        let mut k = Vec::new();
+        let Ok(()) = collator.write_sort_key_utf16_to(&[0xdd1e], &mut k);
+    }
+
+    #[test]
+    fn sort_key_to_vecdeque() {
+        let collator = collator_en(Strength::Identical);
+
+        let mut k0 = Vec::new();
+        let Ok(()) = collator.write_sort_key_to("áAbc", &mut k0);
+        let mut k1 = VecDeque::new();
+        let Ok(()) = collator.write_sort_key_to("áAbc", &mut k1);
+        assert!(k0.iter().eq(k1.iter()));
+    }
+
+    #[test]
+    fn sort_key_to_slice() {
+        let collator = collator_en(Strength::Identical);
+
+        let mut k0 = Vec::new();
+        let Ok(()) = collator.write_sort_key_to("áAbc", &mut k0);
+        let mut k1 = [0u8; 100];
+        let len = collator.write_sort_key_to("áAbc", &mut k1[..]).unwrap();
+        assert_eq!(len, k0.len());
+        assert!(k0.iter().eq(k1[..len].iter()));
+    }
+
+    #[test]
+    fn sort_key_to_slice_no_space() {
+        let collator = collator_en(Strength::Identical);
+        let mut k = [0u8; 0];
+        let res = collator.write_sort_key_to("áAbc", &mut k[..]);
+        assert_eq!(res, Err(TooSmall));
+    }
+
+    #[test]
+    fn sort_key_to_slice_too_long() {
+        // This runs out of space in write_sort_key_up_to_quaternary.
+        let collator = collator_en(Strength::Identical);
+        let mut k = [0u8; 5];
+        let res = collator.write_sort_key_to("áAbc", &mut k[..]);
+        assert_eq!(res, Err(TooSmall));
+    }
+
+    #[test]
+    fn sort_key_to_slice_identical_too_long() {
+        // This runs out of space while appending UTF-8 in the SinkAdapter.
+        let collator = collator_en(Strength::Identical);
+        let mut k = [0u8; 22];
+        let res = collator.write_sort_key_to("áAbc", &mut k[..]);
+        assert_eq!(res, Err(TooSmall));
+    }
+
+    #[test]
+    fn sort_key_utf16_slice_too_small() {
+        let collator = collator_en(Strength::Identical);
+        const STR16: &[u16] = &[0x68, 0x65, 0x6c, 0x6c, 0x6f];
+        let mut k = [0u8; 4];
+        let res = collator.write_sort_key_utf16_to(STR16, &mut k[..]);
+        assert_eq!(res, Err(TooSmall));
     }
 }

@@ -308,6 +308,8 @@
 //!
 //! [`CollatorOptions`]: options::CollatorOptions
 
+extern crate alloc;
+
 mod comparison;
 #[cfg(doc)]
 pub mod docs;
