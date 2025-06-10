@@ -114,9 +114,9 @@ export { LocaleDirectionality } from "./LocaleDirectionality.mjs"
 
 export { Logger } from "./Logger.mjs"
 
-export { MeasureUnit } from "./MeasureUnit.mjs"
+export { ErasedMeasureUnit } from "./ErasedMeasureUnit.mjs"
 
-export { MeasureUnitParser } from "./MeasureUnitParser.mjs"
+export { ErasedMeasureUnitParser } from "./ErasedMeasureUnitParser.mjs"
 
 export { ComposingNormalizer } from "./ComposingNormalizer.mjs"
 

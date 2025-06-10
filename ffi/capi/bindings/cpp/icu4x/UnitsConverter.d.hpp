@@ -25,7 +25,7 @@ namespace capi {
 
 namespace icu4x {
 /**
- * An ICU4X Units Converter object, capable of converting between two {@link MeasureUnit}s.
+ * An ICU4X Units Converter object, capable of converting between two {@link ErasedMeasureUnit}s.
  *
  * You can create an instance of this object using {@link UnitsConverterFactory} by calling the `converter` method.
  *
