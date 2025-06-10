@@ -1135,9 +1135,9 @@ let termini = Object.assign({
             },
             
             {
-                name: "value.f",
-                type: "number",
-                typeUse: "number"
+                name: "value.v",
+                type: "string",
+                typeUse: "string"
             }
             
         ]
@@ -1192,9 +1192,9 @@ let termini = Object.assign({
         parameters: [
             
             {
-                name: "self.f",
-                type: "number",
-                typeUse: "number"
+                name: "self.v",
+                type: "string",
+                typeUse: "string"
             },
             
             {
@@ -1213,9 +1213,9 @@ let termini = Object.assign({
         parameters: [
             
             {
-                name: "self.f",
-                type: "number",
-                typeUse: "number"
+                name: "self.v",
+                type: "string",
+                typeUse: "string"
             }
             
         ]
@@ -1228,9 +1228,9 @@ let termini = Object.assign({
         parameters: [
             
             {
-                name: "self.f",
-                type: "number",
-                typeUse: "number"
+                name: "self.v",
+                type: "string",
+                typeUse: "string"
             }
             
         ]
@@ -1243,9 +1243,9 @@ let termini = Object.assign({
         parameters: [
             
             {
-                name: "self.f",
-                type: "number",
-                typeUse: "number"
+                name: "self.v",
+                type: "string",
+                typeUse: "string"
             }
             
         ]
@@ -1258,9 +1258,9 @@ let termini = Object.assign({
         parameters: [
             
             {
-                name: "self.f",
-                type: "number",
-                typeUse: "number"
+                name: "self.v",
+                type: "string",
+                typeUse: "string"
             }
             
         ]
@@ -1273,9 +1273,9 @@ let termini = Object.assign({
         parameters: [
             
             {
-                name: "self.f",
-                type: "number",
-                typeUse: "number"
+                name: "self.v",
+                type: "string",
+                typeUse: "string"
             }
             
         ]
@@ -1288,9 +1288,9 @@ let termini = Object.assign({
         parameters: [
             
             {
-                name: "self.f",
-                type: "number",
-                typeUse: "number"
+                name: "self.v",
+                type: "string",
+                typeUse: "string"
             }
             
         ]
@@ -1651,9 +1651,9 @@ let termini = Object.assign({
             },
             
             {
-                name: "op.x.f",
-                type: "number",
-                typeUse: "number"
+                name: "op.x.v",
+                type: "string",
+                typeUse: "string"
             }
             
         ]

@@ -1,52 +1,52 @@
 import { Decimal } from "icu4x"
-export function digitAt(selfF, magnitude) {
+export function digitAt(selfV, magnitude) {
     
-    let self = Decimal.fromNumberWithRoundTripPrecision(selfF);
+    let self = Decimal.fromString(selfV);
     
     let out = self.digitAt(magnitude);
     
 
     return out;
 }
-export function magnitudeStart(selfF) {
+export function magnitudeStart(selfV) {
     
-    let self = Decimal.fromNumberWithRoundTripPrecision(selfF);
+    let self = Decimal.fromString(selfV);
     
     let out = self.magnitudeStart;
     
 
     return out;
 }
-export function magnitudeEnd(selfF) {
+export function magnitudeEnd(selfV) {
     
-    let self = Decimal.fromNumberWithRoundTripPrecision(selfF);
+    let self = Decimal.fromString(selfV);
     
     let out = self.magnitudeEnd;
     
 
     return out;
 }
-export function nonzeroMagnitudeStart(selfF) {
+export function nonzeroMagnitudeStart(selfV) {
     
-    let self = Decimal.fromNumberWithRoundTripPrecision(selfF);
+    let self = Decimal.fromString(selfV);
     
     let out = self.nonzeroMagnitudeStart;
     
 
     return out;
 }
-export function nonzeroMagnitudeEnd(selfF) {
+export function nonzeroMagnitudeEnd(selfV) {
     
-    let self = Decimal.fromNumberWithRoundTripPrecision(selfF);
+    let self = Decimal.fromString(selfV);
     
     let out = self.nonzeroMagnitudeEnd;
     
 
     return out;
 }
-export function isZero(selfF) {
+export function isZero(selfV) {
     
-    let self = Decimal.fromNumberWithRoundTripPrecision(selfF);
+    let self = Decimal.fromString(selfV);
     
     let out = self.isZero;
     
@@ -55,9 +55,9 @@ export function isZero(selfF) {
 
     return out;
 }
-export function sign(selfF) {
+export function sign(selfV) {
     
-    let self = Decimal.fromNumberWithRoundTripPrecision(selfF);
+    let self = Decimal.fromString(selfV);
     
     let out = self.sign;
     
