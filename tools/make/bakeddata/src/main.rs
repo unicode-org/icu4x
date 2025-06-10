@@ -264,11 +264,15 @@ struct StubExporter<E>(E);
 impl<E: DataExporter> DataExporter for StubExporter<E> {
     fn put_payload(
         &self,
-        _marker: DataMarkerInfo,
-        _id: DataIdentifierBorrowed,
-        _payload: &DataPayload<ExportMarker>,
+        marker: DataMarkerInfo,
+        id: DataIdentifierBorrowed,
+        payload: &DataPayload<ExportMarker>,
     ) -> Result<(), DataError> {
-        Ok(())
+        if id.locale.is_unknown() && marker.expose_baked_consts {
+            self.0.put_payload(marker, id, payload)
+        } else {
+            Ok(())
+        }
     }
 
     fn flush_singleton(

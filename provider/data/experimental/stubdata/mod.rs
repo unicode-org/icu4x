@@ -72,6 +72,7 @@ pub use __make_provider as make_provider;
 /// This macro requires the following crates:
 /// * `icu`
 /// * `icu_provider`
+/// * `icu_provider/baked`
 /// * `zerotrie`
 /// * `zerovec`
 #[allow(unused_macros)]

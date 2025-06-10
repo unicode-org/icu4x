@@ -5,6 +5,7 @@
 pub(crate) mod power;
 pub(crate) mod si_prefix;
 
+pub mod category;
 pub mod measureunit;
 pub mod parser;
 pub mod provider;
