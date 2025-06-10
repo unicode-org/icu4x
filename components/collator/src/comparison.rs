@@ -2180,7 +2180,7 @@ pub trait CollationKeySink {
 
     /// Finalize any internal sink state (perhaps by flushing a buffer) and return the final
     /// output value.
-    fn finish(&self, state: Self::State) -> Result<Self::Output, Self::Error>;
+    fn finish(&mut self, state: Self::State) -> Result<Self::Output, Self::Error>;
 }
 
 impl CollationKeySink for Vec<u8> {
@@ -2193,7 +2193,7 @@ impl CollationKeySink for Vec<u8> {
         Ok(())
     }
 
-    fn finish(&self, _: Self::State) -> Result<Self::Output, Self::Error> {
+    fn finish(&mut self, _: Self::State) -> Result<Self::Output, Self::Error> {
         Ok(())
     }
 }
@@ -2208,7 +2208,7 @@ impl CollationKeySink for VecDeque<u8> {
         Ok(())
     }
 
-    fn finish(&self, _: Self::State) -> Result<Self::Output, Self::Error> {
+    fn finish(&mut self, _: Self::State) -> Result<Self::Output, Self::Error> {
         Ok(())
     }
 }
@@ -2223,7 +2223,7 @@ impl<const N: usize> CollationKeySink for SmallVec<[u8; N]> {
         Ok(())
     }
 
-    fn finish(&self, _: Self::State) -> Result<Self::Output, Self::Error> {
+    fn finish(&mut self, _: Self::State) -> Result<Self::Output, Self::Error> {
         Ok(())
     }
 }
@@ -2245,7 +2245,7 @@ impl CollationKeySink for [u8] {
         }
     }
 
-    fn finish(&self, used: Self::State) -> Result<Self::Output, Self::Error> {
+    fn finish(&mut self, used: Self::State) -> Result<Self::Output, Self::Error> {
         Ok(used)
     }
 }
