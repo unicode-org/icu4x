@@ -44,7 +44,7 @@ use crate::provider::CollationSpecialPrimariesValidated;
 use crate::provider::CollationTailoringV1;
 use core::array;
 use core::cmp::Ordering;
-use core::convert::TryFrom;
+use core::convert::{Infallible, TryFrom};
 use icu_normalizer::provider::DecompositionData;
 use icu_normalizer::provider::DecompositionTables;
 use icu_normalizer::provider::NormalizerNfdDataV1;
@@ -2175,8 +2175,7 @@ pub trait CollationKeySink {
 
     /// Write a single byte into the writer.
     fn write_byte(&mut self, state: &mut Self::State, b: u8) -> Result<(), Self::Error> {
-        self.write(state, &[b])?;
-        Ok(())
+        self.write(state, &[b])
     }
 
     /// Finalize any internal sink state (perhaps by flushing a buffer) and return the final
@@ -2185,7 +2184,7 @@ pub trait CollationKeySink {
 }
 
 impl CollationKeySink for Vec<u8> {
-    type Error = core::convert::Infallible;
+    type Error = Infallible;
     type State = ();
     type Output = ();
 
@@ -2200,7 +2199,7 @@ impl CollationKeySink for Vec<u8> {
 }
 
 impl CollationKeySink for VecDeque<u8> {
-    type Error = core::convert::Infallible;
+    type Error = Infallible;
     type State = ();
     type Output = ();
 
@@ -2215,11 +2214,11 @@ impl CollationKeySink for VecDeque<u8> {
 }
 
 impl<const N: usize> CollationKeySink for SmallVec<[u8; N]> {
-    type Error = core::convert::Infallible;
+    type Error = Infallible;
     type State = ();
     type Output = ();
 
-    fn write(&mut self, _: &mut (), buf: &[u8]) -> Result<(), Self::Error> {
+    fn write(&mut self, _: &mut Self::State, buf: &[u8]) -> Result<(), Self::Error> {
         self.extend_from_slice(buf);
         Ok(())
     }
