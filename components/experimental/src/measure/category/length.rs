@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-#[cfg(feature = "compiled_data")]
+#![cfg(feature = "compiled_data")]
 use crate::measure::{
     category::{CategorizedMeasureUnit, Length},
     measureunit::MeasureUnit,
@@ -13,7 +13,6 @@ use crate::measure::{
     single_unit_vec::SingleUnitVec,
 };
 
-#[cfg(feature = "compiled_data")]
 impl Length {
     /// Returns a [`MeasureUnit`] representing length in meters.
     pub fn meter() -> CategorizedMeasureUnit<Length> {
@@ -35,7 +34,6 @@ impl Length {
 }
 
 #[cfg(test)]
-#[cfg(feature = "compiled_data")]
 mod tests {
     use super::*;
     use crate::measure::parser::MeasureUnitParser;
