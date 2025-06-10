@@ -206,6 +206,7 @@ pub(crate) const NO_CE_PRIMARY: u32 = 1; // not a left-adjusted weight
                                          // const NO_CE_NON_PRIMARY: NonPrimary = NonPrimary::default();
 pub(crate) const NO_CE_SECONDARY: u16 = 0x0100;
 pub(crate) const NO_CE_TERTIARY: u16 = 0x0100;
+pub(crate) const NO_CE_QUATERNARY: u16 = 0x0100;
 const NO_CE_VALUE: u64 =
     ((NO_CE_PRIMARY as u64) << 32) | ((NO_CE_SECONDARY as u64) << 16) | (NO_CE_TERTIARY as u64); // 0x101000100
 
@@ -680,6 +681,11 @@ impl NonPrimary {
     #[inline(always)]
     pub fn case_quaternary(self) -> u16 {
         (self.0 as u16) & (CASE_MASK | QUATERNARY_MASK)
+    }
+
+    #[inline(always)]
+    pub fn ignorable(self) -> bool {
+        self.0 == 0
     }
 }
 
