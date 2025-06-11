@@ -331,6 +331,7 @@ impl_data_provider!(
 #[cfg(test)]
 mod test {
     use super::*;
+    use icu::datetime::provider::skeleton::{DateSkeletonPatterns, SkeletonData};
     use icu::locale::langid;
 
     #[test]

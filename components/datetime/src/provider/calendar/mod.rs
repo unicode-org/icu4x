@@ -4,15 +4,11 @@
 
 //! Data structs for calendar-specific symbols and patterns.
 
-#[cfg(feature = "datagen")]
-mod skeletons;
 mod symbols;
 
 use crate::provider::pattern;
 use crate::size_test_macro::size_test;
 use icu_provider::prelude::*;
-#[cfg(feature = "datagen")]
-pub use skeletons::*;
 pub use symbols::*;
 
 size_test!(DateLengths, date_lengths_v1_size, 224);

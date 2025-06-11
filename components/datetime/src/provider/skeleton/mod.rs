@@ -54,6 +54,7 @@
 #[cfg(doc)]
 use crate::provider::fields::components;
 
+mod available_formats;
 mod error;
 mod helpers;
 mod plural;
@@ -61,6 +62,7 @@ pub mod reference;
 pub mod runtime;
 #[cfg(feature = "serde")]
 mod serde;
+pub use available_formats::*;
 pub use error::*;
 pub use helpers::*;
 pub use plural::*;

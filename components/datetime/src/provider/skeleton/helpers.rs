@@ -7,13 +7,11 @@ use alloc::vec::Vec;
 use core::cmp::Ordering;
 
 use super::plural::PatternPlurals;
+use super::DateSkeletonPatterns;
 use crate::{
     options::SubsecondDigits,
     provider::{
-        calendar::{
-            patterns::{FullLongMediumShort, GenericLengthPatterns},
-            DateSkeletonPatterns,
-        },
+        calendar::patterns::{FullLongMediumShort, GenericLengthPatterns},
         fields::{self, components, Field, FieldLength, FieldSymbol},
         pattern::{naively_apply_preferences, runtime, PatternItem, TimeGranularity},
     },

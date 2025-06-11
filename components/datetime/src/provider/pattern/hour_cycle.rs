@@ -61,7 +61,7 @@ impl CoarseHourCycle {
     pub fn apply_on_pattern<'data>(
         &self,
         date_time: &provider::calendar::patterns::GenericLengthPatterns<'data>,
-        skeletons: &provider::calendar::DateSkeletonPatterns<'data>,
+        skeletons: &provider::skeleton::DateSkeletonPatterns<'data>,
         pattern_str: &str,
         mut pattern: reference::Pattern,
     ) -> Option<reference::Pattern> {
