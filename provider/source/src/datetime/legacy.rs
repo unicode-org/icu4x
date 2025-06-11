@@ -5,21 +5,21 @@
 //! TODO(#5613): Even though these markers are no longer exported, we need them in order to export
 //! semantic skeleton data markers. This should be refactored to skip the intermediate data struct.
 
+use super::DatagenCalendar;
+use crate::cldr_serde::eras::EraData;
+use crate::cldr_serde::{self, ca};
+use crate::IterableDataProviderCached;
+use crate::SourceDataProvider;
 use alloc::borrow::Cow;
+use icu::datetime::provider::pattern::runtime;
+use icu::datetime::provider::skeleton::*;
 use icu::{calendar::types::MonthCode, datetime::provider::pattern::CoarseHourCycle};
 use icu_provider::prelude::*;
 use potential_utf::PotentialUtf8;
+use std::collections::BTreeMap;
+use std::collections::HashSet;
 use tinystr::{tinystr, TinyStr4};
 use zerovec::ZeroMap;
-use icu::datetime::provider::skeleton::*;
-use icu::datetime::provider::pattern::runtime;
-use crate::cldr_serde::eras::EraData;
-use crate::cldr_serde::{self, ca};
-use std::collections::BTreeMap;
-use super::DatagenCalendar;
-use crate::SourceDataProvider;
-use crate::IterableDataProviderCached;
-use std::collections::HashSet;
 
 /// Data struct for date/time patterns broken down by pattern length.
 ///
@@ -248,9 +248,7 @@ symbols!(
         /// Twelve symbols for a solar calendar
         ///
         /// This is an optimization to reduce data size.
-        SolarTwelve(
-            [Cow<'data, str>; 12],
-        ),
+        SolarTwelve([Cow<'data, str>; 12]),
         /// A calendar with an arbitrary number of months, potentially including leap months
         Other(ZeroMap<'data, MonthCode, str>),
     }
@@ -307,9 +305,7 @@ symbols!(
     weekdays,
     Weekday,
     #[derive(Default)]
-    pub struct Symbols<'data>(
-        pub [Cow<'data, str>; 7],
-    );
+    pub struct Symbols<'data>(pub [Cow<'data, str>; 7]);
 );
 
 symbols!(
@@ -540,21 +536,13 @@ impl_data_provider!(
     |dates, _, _| DateLengths::from(dates),
     DatagenCalendar::Coptic
 );
-impl_data_provider!(
-    CopticDateSymbolsV1,
-    convert_dates,
-    DatagenCalendar::Coptic
-);
+impl_data_provider!(CopticDateSymbolsV1, convert_dates, DatagenCalendar::Coptic);
 impl_data_provider!(
     DangiDateLengthsV1,
     |dates, _, _| DateLengths::from(dates),
     DatagenCalendar::Dangi
 );
-impl_data_provider!(
-    DangiDateSymbolsV1,
-    convert_dates,
-    DatagenCalendar::Dangi
-);
+impl_data_provider!(DangiDateSymbolsV1, convert_dates, DatagenCalendar::Dangi);
 impl_data_provider!(
     EthiopianDateLengthsV1,
     |dates, _, _| DateLengths::from(dates),
@@ -580,31 +568,19 @@ impl_data_provider!(
     |dates, _, _| DateLengths::from(dates),
     DatagenCalendar::Hebrew
 );
-impl_data_provider!(
-    HebrewDateSymbolsV1,
-    convert_dates,
-    DatagenCalendar::Hebrew
-);
+impl_data_provider!(HebrewDateSymbolsV1, convert_dates, DatagenCalendar::Hebrew);
 impl_data_provider!(
     IndianDateLengthsV1,
     |dates, _, _| DateLengths::from(dates),
     DatagenCalendar::Indian
 );
-impl_data_provider!(
-    IndianDateSymbolsV1,
-    convert_dates,
-    DatagenCalendar::Indian
-);
+impl_data_provider!(IndianDateSymbolsV1, convert_dates, DatagenCalendar::Indian);
 impl_data_provider!(
     HijriDateLengthsV1,
     |dates, _, _| DateLengths::from(dates),
     DatagenCalendar::Hijri
 );
-impl_data_provider!(
-    HijriDateSymbolsV1,
-    convert_dates,
-    DatagenCalendar::Hijri
-);
+impl_data_provider!(HijriDateSymbolsV1, convert_dates, DatagenCalendar::Hijri);
 impl_data_provider!(
     JapaneseDateLengthsV1,
     |dates, _, _| DateLengths::from(dates),
@@ -640,11 +616,7 @@ impl_data_provider!(
     |dates, _, _| DateLengths::from(dates),
     DatagenCalendar::Roc
 );
-impl_data_provider!(
-    RocDateSymbolsV1,
-    convert_dates,
-    DatagenCalendar::Roc
-);
+impl_data_provider!(RocDateSymbolsV1, convert_dates, DatagenCalendar::Roc);
 
 impl_data_provider!(
     TimeLengthsV1,
@@ -925,11 +897,11 @@ symbols_from!(
 
 #[cfg(test)]
 mod tests {
+    use super::*;
     use crate::SourceDataProvider;
-    use icu_provider::prelude::*;
     use icu::datetime::provider::neo::*;
     use icu::locale::langid;
-    use super::*;
+    use icu_provider::prelude::*;
 
     mod key_attr_consts {
         use super::*;

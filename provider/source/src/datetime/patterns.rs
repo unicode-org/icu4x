@@ -2,11 +2,11 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use super::legacy::*;
 use crate::cldr_serde;
 use icu::datetime::provider::pattern;
 use icu::datetime::provider::pattern::CoarseHourCycle;
 use icu::datetime::provider::skeleton::*;
-use super::legacy::*;
 
 impl From<&cldr_serde::ca::LengthPatterns> for LengthPatterns<'_> {
     fn from(other: &cldr_serde::ca::LengthPatterns) -> Self {

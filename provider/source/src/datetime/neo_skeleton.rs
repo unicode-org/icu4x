@@ -17,8 +17,8 @@ use icu::plurals::PluralElements;
 use icu_locale_core::preferences::extensions::unicode::keywords::HourCycle;
 use icu_provider::prelude::*;
 
-use super::DatagenCalendar;
 use super::legacy::*;
+use super::DatagenCalendar;
 
 type VariantPatternsElement<'a> = PatternsWithDistance<PluralElements<runtime::Pattern<'a>>>;
 

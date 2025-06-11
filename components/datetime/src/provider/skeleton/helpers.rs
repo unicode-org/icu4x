@@ -12,7 +12,8 @@ use crate::{
     options::SubsecondDigits,
     provider::{
         fields::{self, components, Field, FieldLength, FieldSymbol},
-        pattern::{naively_apply_preferences, runtime, PatternItem, TimeGranularity}, skeleton::{FullLongMediumShort, GenericLengthPatterns},
+        pattern::{naively_apply_preferences, runtime, PatternItem, TimeGranularity},
+        skeleton::{FullLongMediumShort, GenericLengthPatterns},
     },
 };
 

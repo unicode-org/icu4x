@@ -75,6 +75,7 @@ impl From<&cldr_serde::ca::AvailableFormats> for DateSkeletonPatterns<'_> {
 
 #[cfg(test)]
 mod test {
+    use super::super::legacy::DateLengths;
     use super::*;
     use core::convert::TryFrom;
     use core::str::FromStr;
@@ -87,7 +88,6 @@ mod test {
     use icu::locale::locale;
     use icu::locale::preferences::extensions::unicode::keywords::HourCycle;
     use litemap::LiteMap;
-    use super::super::legacy::DateLengths;
 
     use crate::datetime::DatagenCalendar;
     use crate::SourceDataProvider;

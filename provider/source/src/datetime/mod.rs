@@ -137,10 +137,10 @@ impl SourceDataProvider {
 
 #[cfg(test)]
 mod test {
+    use super::legacy::*;
     use super::*;
     use icu::datetime::provider::skeleton::{DateSkeletonPatterns, SkeletonData};
     use icu::locale::langid;
-    use super::legacy::*;
 
     #[test]
     fn test_basic_patterns() {

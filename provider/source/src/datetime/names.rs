@@ -2,9 +2,9 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use super::legacy::*;
 use icu::calendar::types::MonthCode;
 use icu::datetime::provider::neo::*;
-use super::legacy::*;
 
 impl<'a> From<&months::Symbols<'a>> for MonthNames<'a> {
     fn from(other: &months::Symbols<'a>) -> Self {
