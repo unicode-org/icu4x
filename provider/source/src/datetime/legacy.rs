@@ -901,7 +901,6 @@ mod tests {
     use crate::SourceDataProvider;
     use icu::datetime::provider::neo::*;
     use icu::locale::langid;
-    use icu_provider::prelude::*;
 
     mod key_attr_consts {
         use super::*;

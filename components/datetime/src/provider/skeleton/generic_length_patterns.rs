@@ -10,7 +10,13 @@ use icu_provider::prelude::*;
 use crate::provider::pattern::runtime;
 
 /// An enum containing four lengths (full, long, medium, short) for interfacing
-/// with [`LengthPatterns`] and [`GenericLengthPatterns`]
+/// with [`GenericLengthPatterns`]
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+/// to be stable, their Rust representation might not be. Use with caution.
+/// </div>
 #[derive(Debug)]
 pub enum FullLongMediumShort {
     /// "full" length
