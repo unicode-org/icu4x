@@ -2116,7 +2116,7 @@ impl CollatorBorrowed<'_> {
         }
 
         macro_rules! write_level {
-            ($key:ident, $level:expr, $flag:ident) => {
+            ($key:ident, $flag:ident) => {
                 if levels & $flag != 0 {
                     sink.write(state, &[LEVEL_SEPARATOR_BYTE])?;
                     sink.write(state, &$key.buf)?;
@@ -2124,7 +2124,7 @@ impl CollatorBorrowed<'_> {
             };
         }
 
-        write_level!(secondaries, Level::Secondary, SECONDARY_LEVEL_FLAG);
+        write_level!(secondaries, SECONDARY_LEVEL_FLAG);
 
         if levels & CASE_LEVEL_FLAG != 0 {
             sink.write(state, &[LEVEL_SEPARATOR_BYTE])?;
@@ -2146,8 +2146,8 @@ impl CollatorBorrowed<'_> {
             }
         }
 
-        write_level!(tertiaries, Level::Tertiary, TERTIARY_LEVEL_FLAG);
-        write_level!(quaternaries, Level::Quaternary, QUATERNARY_LEVEL_FLAG);
+        write_level!(tertiaries, TERTIARY_LEVEL_FLAG);
+        write_level!(quaternaries, QUATERNARY_LEVEL_FLAG);
 
         Ok(())
     }
