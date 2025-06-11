@@ -8,13 +8,18 @@
 use alloc::borrow::Cow;
 use icu::{calendar::types::MonthCode, datetime::provider::pattern::CoarseHourCycle};
 use icu_provider::prelude::*;
-use icu::datetime::provider::neo::*;
 use potential_utf::PotentialUtf8;
 use tinystr::{tinystr, TinyStr4};
 use zerovec::ZeroMap;
-use alloc::vec;
 use icu::datetime::provider::skeleton::*;
 use icu::datetime::provider::pattern::runtime;
+use crate::cldr_serde::eras::EraData;
+use crate::cldr_serde::{self, ca};
+use std::collections::BTreeMap;
+use super::DatagenCalendar;
+use crate::SourceDataProvider;
+use crate::IterableDataProviderCached;
+use std::collections::HashSet;
 
 /// Data struct for date/time patterns broken down by pattern length.
 ///
@@ -464,62 +469,459 @@ icu_provider::data_marker!(
     TimeSymbols<'static>
 );
 
-impl<'a> From<&months::Symbols<'a>> for MonthNames<'a> {
-    fn from(other: &months::Symbols<'a>) -> Self {
-        match other {
-            months::Symbols::SolarTwelve(cow_list) => {
-                // Can't zero-copy convert a cow list to a VarZeroVec, so we need to allocate
-                // a new VarZeroVec. Since VarZeroVec does not implement `from_iter`, first we
-                // make a Vec of string references.
-                let vec: alloc::vec::Vec<&str> = cow_list.iter().map(|x| &**x).collect();
-                MonthNames::Linear((&vec).into())
-            }
-            months::Symbols::Other(zero_map) => {
-                // Only calendar that uses this is hebrew, we can assume it is 12-month
-                let mut vec = vec![""; 24];
+macro_rules! impl_data_provider {
+    ($marker:ident, $expr:expr, $calendar:expr) => {
+        impl DataProvider<$marker> for SourceDataProvider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<$marker>, DataError> {
+                self.check_req::<$marker>(req)?;
 
-                for (k, v) in zero_map.iter() {
-                    let Some((number, leap)) = MonthCode(*k).parsed() else {
-                        debug_assert!(false, "Found unknown month code {k}");
-                        continue;
-                    };
-                    let offset = if leap { 12 } else { 0 };
-                    if let Some(entry) = vec.get_mut((number + offset - 1) as usize) {
-                        *entry = v;
-                    } else {
-                        debug_assert!(false, "Found out of bounds hebrew month code {k}")
-                    }
+                let data = self.get_datetime_resources(&req.id.locale, Some($calendar))?;
+
+                let eras = &self.all_eras()?[&$calendar];
+
+                #[allow(clippy::redundant_closure_call)]
+                Ok(DataResponse {
+                    metadata: Default::default(),
+                    payload: DataPayload::from_owned(($expr)(&data, $calendar, eras)),
+                })
+            }
+        }
+
+        impl IterableDataProviderCached<$marker> for SourceDataProvider {
+            fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
+                let mut r = HashSet::new();
+
+                r.extend(
+                    self.cldr()?
+                        .dates($calendar.cldr_name())
+                        .list_locales()?
+                        .map(|l| DataIdentifierCow::from_locale(DataLocale::from(l))),
+                );
+
+                // TODO(#3212): Remove
+                if $marker::INFO == TimeLengthsV1::INFO {
+                    r.retain(|id| {
+                        id.locale != DataLocale::from(icu::locale::langid!("byn"))
+                            && id.locale != DataLocale::from(icu::locale::langid!("ssy"))
+                    });
                 }
-                MonthNames::LeapLinear((&vec).into())
+
+                Ok(r)
             }
         }
+    };
+}
+
+// TODO(#5613): Even though these markers are no longer exported, we need them in order to export
+// semantic skeleton data markers. This should be refactored to skip the intermediate data struct.
+
+impl_data_provider!(
+    BuddhistDateLengthsV1,
+    |dates, _, _| DateLengths::from(dates),
+    DatagenCalendar::Buddhist
+);
+impl_data_provider!(
+    BuddhistDateSymbolsV1,
+    convert_dates,
+    DatagenCalendar::Buddhist
+);
+impl_data_provider!(
+    ChineseDateLengthsV1,
+    |dates, _, _| DateLengths::from(dates),
+    DatagenCalendar::Chinese
+);
+impl_data_provider!(
+    ChineseDateSymbolsV1,
+    convert_dates,
+    DatagenCalendar::Chinese
+);
+impl_data_provider!(
+    CopticDateLengthsV1,
+    |dates, _, _| DateLengths::from(dates),
+    DatagenCalendar::Coptic
+);
+impl_data_provider!(
+    CopticDateSymbolsV1,
+    convert_dates,
+    DatagenCalendar::Coptic
+);
+impl_data_provider!(
+    DangiDateLengthsV1,
+    |dates, _, _| DateLengths::from(dates),
+    DatagenCalendar::Dangi
+);
+impl_data_provider!(
+    DangiDateSymbolsV1,
+    convert_dates,
+    DatagenCalendar::Dangi
+);
+impl_data_provider!(
+    EthiopianDateLengthsV1,
+    |dates, _, _| DateLengths::from(dates),
+    DatagenCalendar::Ethiopic
+);
+impl_data_provider!(
+    EthiopianDateSymbolsV1,
+    convert_dates,
+    DatagenCalendar::Ethiopic
+);
+impl_data_provider!(
+    GregorianDateLengthsV1,
+    |dates, _, _| DateLengths::from(dates),
+    DatagenCalendar::Gregorian
+);
+impl_data_provider!(
+    GregorianDateSymbolsV1,
+    convert_dates,
+    DatagenCalendar::Gregorian
+);
+impl_data_provider!(
+    HebrewDateLengthsV1,
+    |dates, _, _| DateLengths::from(dates),
+    DatagenCalendar::Hebrew
+);
+impl_data_provider!(
+    HebrewDateSymbolsV1,
+    convert_dates,
+    DatagenCalendar::Hebrew
+);
+impl_data_provider!(
+    IndianDateLengthsV1,
+    |dates, _, _| DateLengths::from(dates),
+    DatagenCalendar::Indian
+);
+impl_data_provider!(
+    IndianDateSymbolsV1,
+    convert_dates,
+    DatagenCalendar::Indian
+);
+impl_data_provider!(
+    HijriDateLengthsV1,
+    |dates, _, _| DateLengths::from(dates),
+    DatagenCalendar::Hijri
+);
+impl_data_provider!(
+    HijriDateSymbolsV1,
+    convert_dates,
+    DatagenCalendar::Hijri
+);
+impl_data_provider!(
+    JapaneseDateLengthsV1,
+    |dates, _, _| DateLengths::from(dates),
+    DatagenCalendar::JapaneseModern
+);
+impl_data_provider!(
+    JapaneseDateSymbolsV1,
+    convert_dates,
+    DatagenCalendar::JapaneseModern
+);
+impl_data_provider!(
+    JapaneseExtendedDateLengthsV1,
+    |dates, _, _| DateLengths::from(dates),
+    DatagenCalendar::JapaneseExtended
+);
+impl_data_provider!(
+    JapaneseExtendedDateSymbolsV1,
+    convert_dates,
+    DatagenCalendar::JapaneseExtended
+);
+impl_data_provider!(
+    PersianDateLengthsV1,
+    |dates, _, _| DateLengths::from(dates),
+    DatagenCalendar::Persian
+);
+impl_data_provider!(
+    PersianDateSymbolsV1,
+    convert_dates,
+    DatagenCalendar::Persian
+);
+impl_data_provider!(
+    RocDateLengthsV1,
+    |dates, _, _| DateLengths::from(dates),
+    DatagenCalendar::Roc
+);
+impl_data_provider!(
+    RocDateSymbolsV1,
+    convert_dates,
+    DatagenCalendar::Roc
+);
+
+impl_data_provider!(
+    TimeLengthsV1,
+    |dates, _, _| TimeLengths::from(dates),
+    DatagenCalendar::Gregorian
+);
+impl_data_provider!(
+    TimeSymbolsV1,
+    |dates, _, _| { convert_times(dates) },
+    DatagenCalendar::Gregorian
+);
+
+pub(crate) fn convert_dates(
+    other: &cldr_serde::ca::Dates,
+    calendar: DatagenCalendar,
+    all_eras: &[(usize, EraData)],
+) -> DateSymbols<'static> {
+    DateSymbols {
+        months: other
+            .months
+            .get(&(get_month_code_map(calendar), calendar.cldr_name())),
+        weekdays: other.days.get(&()),
+        eras: other
+            .eras
+            .as_ref()
+            .map(|in_eras| convert_eras(in_eras, all_eras))
+            .unwrap_or_default(),
     }
 }
 
-impl<'a> From<&weekdays::Symbols<'a>> for LinearNames<'a> {
-    fn from(other: &weekdays::Symbols<'a>) -> Self {
-        // Input is a cow array of length 7. Need to make it a VarZeroVec.
-        let vec: alloc::vec::Vec<&str> = other.0.iter().map(|x| &**x).collect();
-        LinearNames {
-            names: (&vec).into(),
+pub(crate) fn convert_times(other: &cldr_serde::ca::Dates) -> TimeSymbols<'static> {
+    TimeSymbols {
+        day_periods: other.day_periods.get(&()),
+    }
+}
+
+fn convert_eras(in_eras: &cldr_serde::ca::Eras, all_eras: &[(usize, EraData)]) -> Eras<'static> {
+    let mut out_eras = Eras::default();
+
+    for (index, era) in all_eras {
+        if let Some(name) = in_eras.names.get(&index.to_string()) {
+            out_eras
+                .names
+                .insert(era.code.as_deref().unwrap().into(), name);
+        }
+        if let Some(abbr) = in_eras.abbr.get(&index.to_string()) {
+            out_eras
+                .abbr
+                .insert(era.code.as_deref().unwrap().into(), abbr);
+        }
+        if let Some(narrow) = in_eras.narrow.get(&index.to_string()) {
+            out_eras
+                .narrow
+                .insert(era.code.as_deref().unwrap().into(), narrow);
+        }
+    }
+    out_eras
+}
+/// Returns a month code map and whether the map has leap months
+pub(crate) fn get_month_code_map(calendar: DatagenCalendar) -> &'static [TinyStr4] {
+    // This will need to be more complicated to handle lunar calendars
+    // https://github.com/unicode-org/icu4x/issues/2066
+    static SOLAR_MONTH_CODES: &[TinyStr4] = &[
+        tinystr!(4, "M01"),
+        tinystr!(4, "M02"),
+        tinystr!(4, "M03"),
+        tinystr!(4, "M04"),
+        tinystr!(4, "M05"),
+        tinystr!(4, "M06"),
+        tinystr!(4, "M07"),
+        tinystr!(4, "M08"),
+        tinystr!(4, "M09"),
+        tinystr!(4, "M10"),
+        tinystr!(4, "M11"),
+        tinystr!(4, "M12"),
+        tinystr!(4, "M13"),
+    ];
+    // CLDR labels the regular months and M05L by their ordinals
+    // whereas M06L is stored as 7-yeartype-leap
+    static HEBREW_MONTH_CODES: &[TinyStr4] = &[
+        tinystr!(4, "M01"),
+        tinystr!(4, "M02"),
+        tinystr!(4, "M03"),
+        tinystr!(4, "M04"),
+        tinystr!(4, "M05"),
+        tinystr!(4, "M05L"),
+        tinystr!(4, "M06"),
+        tinystr!(4, "M07"),
+        tinystr!(4, "M08"),
+        tinystr!(4, "M09"),
+        tinystr!(4, "M10"),
+        tinystr!(4, "M11"),
+        tinystr!(4, "M12"),
+        // M06L is handled separately in MonthSymbols code
+    ];
+    match calendar {
+        DatagenCalendar::Buddhist
+        | DatagenCalendar::Chinese
+        | DatagenCalendar::Dangi
+        | DatagenCalendar::Gregorian
+        | DatagenCalendar::Indian
+        | DatagenCalendar::Hijri
+        | DatagenCalendar::JapaneseExtended
+        | DatagenCalendar::JapaneseModern
+        | DatagenCalendar::Persian
+        | DatagenCalendar::Roc => &SOLAR_MONTH_CODES[0..12],
+        DatagenCalendar::Coptic | DatagenCalendar::Ethiopic => SOLAR_MONTH_CODES,
+        DatagenCalendar::Hebrew => HEBREW_MONTH_CODES,
+    }
+}
+
+macro_rules! symbols_from {
+    ([$symbols: path, $name2: ident $(,)?], $ctx:ty, [ $($element: ident),+ $(,)? ] $(,)?) => {
+        impl $symbols {
+            fn get(&self, _ctx: &$ctx) -> $name2::Symbols<'static> {
+                $name2::Symbols([
+                    $(
+                        Cow::Owned(self.$element.clone()),
+                    )*
+                ])
+            }
+        }
+        symbols_from!([$symbols, $name2], $ctx);
+    };
+    ([$symbols: path, $name2: ident $(,)?], $ctx:ty, { $($element: ident),+ $(,)? } $(,)?) => {
+        impl $symbols {
+            fn get(&self, _ctx: &$ctx) -> $name2::Symbols<'static> {
+                $name2::Symbols {
+                    $(
+                        $element: self.$element.clone(),
+                    )*
+                }
+            }
+        }
+        symbols_from!([$symbols, $name2], $ctx);
+    };
+    ([$symbols: path, $name2: ident], $ctx:ty) => {
+        impl $symbols {
+            // Helper function which returns `None` if the two groups of symbols overlap.
+            pub(crate) fn get_unaliased(&self, other: &Self) -> Option<Self> {
+                if self == other {
+                    None
+                } else {
+                    Some(self.clone())
+                }
+            }
+        }
+
+        impl ca::Contexts<$symbols> {
+            fn get(&self, ctx: &$ctx) -> $name2::Contexts<'static> {
+                $name2::Contexts {
+                    format: self.format.get(ctx),
+                    stand_alone: self.stand_alone.as_ref().and_then(|stand_alone| {
+                        stand_alone.get_unaliased(&self.format)
+                    }).map(|ref stand_alone| stand_alone.get(ctx))
+                }
+            }
+        }
+
+        impl ca::StandAloneWidths<$symbols> {
+            // Helper function which returns `None` if the two groups of symbols overlap.
+            pub(crate) fn get_unaliased(&self, other: &ca::FormatWidths<$symbols>) -> Option<Self> {
+                let abbreviated = self.abbreviated.as_ref().and_then(|v| v.get_unaliased(&other.abbreviated));
+                let narrow = self.narrow.as_ref().and_then(|v| v.get_unaliased(&other.narrow));
+                let short = if self.short == other.short {
+                    None
+                } else {
+                    self.short.clone()
+                };
+                let wide = self.wide.as_ref().and_then(|v| v.get_unaliased(&other.wide));
+
+                if abbreviated.is_none() && narrow.is_none() && wide.is_none() && short.is_none() {
+                    None
+                } else {
+                    Some(Self {
+                        abbreviated,
+                        narrow,
+                        short,
+                        wide,
+                    })
+                }
+            }
+        }
+
+        impl ca::FormatWidths<$symbols> {
+            fn get(&self, ctx: &$ctx) -> $name2::FormatWidths<'static> {
+                $name2::FormatWidths {
+                    abbreviated: self.abbreviated.get(ctx),
+                    narrow: self.narrow.get(ctx),
+                    short: self.short.as_ref().map(|width| width.get(ctx)),
+                    wide: self.wide.get(ctx),
+                }
+            }
+        }
+
+        impl ca::StandAloneWidths<$symbols> {
+            fn get(&self, ctx: &$ctx) -> $name2::StandAloneWidths<'static> {
+                $name2::StandAloneWidths {
+                    abbreviated: self.abbreviated.as_ref().map(|width| width.get(ctx)),
+                    narrow: self.narrow.as_ref().map(|width| width.get(ctx)),
+                    short: self.short.as_ref().map(|width| width.get(ctx)),
+                    wide: self.wide.as_ref().map(|width| width.get(ctx)),
+                }
+            }
+        }
+    };
+}
+symbols_from!(
+    [cldr_serde::ca::MonthSymbols, months],
+    (&'static [TinyStr4], &str)
+);
+
+impl cldr_serde::ca::MonthSymbols {
+    fn get(&self, ctx: &(&'static [TinyStr4], &str)) -> months::Symbols<'static> {
+        if ctx.0.len() == 12 && self.0.len() == 12 {
+            let mut arr: [Cow<'static, str>; 12] = Default::default();
+            for (k, v) in self.0.iter() {
+                let index: usize = k
+                    .parse()
+                    .expect("CLDR month indices must parse as numbers!");
+                if index == 0 {
+                    panic!("CLDR month indices cannot be zero");
+                }
+
+                arr[index - 1] = Cow::Owned(v.into());
+            }
+
+            for (i, val) in arr.iter().enumerate() {
+                if val.is_empty() {
+                    panic!("Solar calendar does not have data for month {i}");
+                }
+            }
+            months::Symbols::SolarTwelve(arr)
+        } else {
+            let mut map = BTreeMap::new();
+            for (k, v) in self.0.iter() {
+                let code = if k == "7-yeartype-leap" && ctx.1 == "hebrew" {
+                    tinystr!(4, "M06L")
+                } else {
+                    let index: usize = k
+                        .parse()
+                        .expect("CLDR month indices must parse as numbers!");
+
+                    if index == 0 {
+                        panic!("CLDR month indices cannot be zero");
+                    }
+                    *ctx.0
+                        .get(index - 1)
+                        .expect("Found out of bounds month index for calendar")
+                };
+
+                map.insert(MonthCode(code), v.as_ref());
+            }
+            months::Symbols::Other(map.into_iter().collect())
         }
     }
 }
 
-impl<'a> From<&day_periods::Symbols<'a>> for LinearNames<'a> {
-    fn from(other: &day_periods::Symbols<'a>) -> Self {
-        // Input is a struct with four fields. Need to make it a VarZeroVec.
-        let vec: alloc::vec::Vec<&str> = match (other.noon.as_ref(), other.midnight.as_ref()) {
-            (Some(noon), Some(midnight)) => vec![&other.am, &other.pm, &noon, &midnight],
-            (Some(noon), None) => vec![&other.am, &other.pm, &noon],
-            (None, Some(midnight)) => vec![&other.am, &other.pm, "", &midnight],
-            (None, None) => vec![&other.am, &other.pm],
-        };
-        LinearNames {
-            names: (&vec).into(),
-        }
-    }
-}
+symbols_from!(
+    [cldr_serde::ca::DaySymbols, weekdays],
+    (),
+    [sun, mon, tue, wed, thu, fri, sat]
+);
+
+symbols_from!(
+    [
+        cldr_serde::ca::DayPeriodSymbols,
+        day_periods,
+    ],
+    (),
+    {
+        am,
+        pm,
+        noon,
+        midnight,
+    },
+);
 
 #[cfg(test)]
 mod tests {
