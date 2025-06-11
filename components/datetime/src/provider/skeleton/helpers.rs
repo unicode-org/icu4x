@@ -11,9 +11,8 @@ use super::DateSkeletonPatterns;
 use crate::{
     options::SubsecondDigits,
     provider::{
-        calendar::patterns::{FullLongMediumShort, GenericLengthPatterns},
         fields::{self, components, Field, FieldLength, FieldSymbol},
-        pattern::{naively_apply_preferences, runtime, PatternItem, TimeGranularity},
+        pattern::{naively_apply_preferences, runtime, PatternItem, TimeGranularity}, skeleton::{FullLongMediumShort, GenericLengthPatterns},
     },
 };
 

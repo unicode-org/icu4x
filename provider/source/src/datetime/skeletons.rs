@@ -81,13 +81,13 @@ mod test {
     use icu::datetime::provider::fields::components;
     use icu::datetime::provider::skeleton::reference::Skeleton;
     use icu::datetime::{
-        provider::calendar::DateLengths,
         provider::fields::{Day, Field, FieldLength, Month, Weekday},
         provider::pattern::{reference, runtime},
     };
     use icu::locale::locale;
     use icu::locale::preferences::extensions::unicode::keywords::HourCycle;
     use litemap::LiteMap;
+    use super::super::legacy::DateLengths;
 
     use crate::datetime::DatagenCalendar;
     use crate::SourceDataProvider;

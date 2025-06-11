@@ -5,12 +5,12 @@
 use crate::cldr_serde::eras::EraData;
 use crate::cldr_serde::{self, ca};
 use icu::calendar::types::MonthCode;
-use icu::datetime::provider::calendar::*;
 use std::borrow::Cow;
 use std::collections::BTreeMap;
 use tinystr::{tinystr, TinyStr4};
 
 use super::DatagenCalendar;
+use super::legacy::*;
 
 pub(crate) fn convert_dates(
     other: &cldr_serde::ca::Dates,

@@ -6,20 +6,19 @@ use std::collections::HashSet;
 
 use crate::debug_provider::DebugProvider;
 use crate::{cldr_serde, IterableDataProviderCached, SourceDataProvider};
-use calendar::patterns::GenericLengthPatterns;
 use icu::datetime::fieldsets::enums::*;
 use icu::datetime::options::Length;
 use icu::datetime::pattern::{ErrorField, FixedCalendarDateTimeNames};
-use icu::datetime::provider::calendar::TimeLengths;
 use icu::datetime::provider::fields::components;
 use icu::datetime::provider::pattern::{reference, runtime, CoarseHourCycle};
-use icu::datetime::provider::skeleton::{DateSkeletonPatterns, PatternPlurals, SkeletonQuality};
+use icu::datetime::provider::skeleton::*;
 use icu::datetime::provider::*;
 use icu::plurals::PluralElements;
 use icu_locale_core::preferences::extensions::unicode::keywords::HourCycle;
 use icu_provider::prelude::*;
 
 use super::DatagenCalendar;
+use super::legacy::*;
 
 type VariantPatternsElement<'a> = PatternsWithDistance<PluralElements<runtime::Pattern<'a>>>;
 

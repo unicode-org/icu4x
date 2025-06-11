@@ -6,7 +6,6 @@ use crate::cldr_serde;
 use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;
 use icu::calendar::AnyCalendarKind;
-use icu::datetime::provider::calendar::*;
 use icu_provider::prelude::*;
 use std::collections::HashSet;
 

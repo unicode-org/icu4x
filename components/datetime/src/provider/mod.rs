@@ -15,8 +15,6 @@
 //!
 //! Read more about data providers: [`icu_provider`]
 
-#[cfg(feature = "datagen")]
-pub mod calendar;
 pub mod fields;
 pub mod neo;
 pub(crate) mod packed_pattern;
