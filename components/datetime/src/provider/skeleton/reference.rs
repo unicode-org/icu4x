@@ -6,7 +6,6 @@
 
 use super::error::SkeletonError;
 use crate::provider::fields::{self, Field, FieldLength, FieldSymbol};
-#[cfg(feature = "datagen")]
 use crate::provider::pattern::reference::Pattern;
 use alloc::vec::Vec;
 use core::convert::TryFrom;
@@ -24,6 +23,12 @@ use smallvec::SmallVec;
 ///
 /// The `Field`s are only sorted in the [`Skeleton`] in order to provide a deterministic
 /// serialization strategy, and to provide a faster [`Skeleton`] matching operation.
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+/// to be stable, their Rust representation might not be. Use with caution.
+/// </div>
 #[derive(Debug, Eq, PartialEq, Clone, Ord, PartialOrd)]
 // TODO(#876): Use ZeroVec instead of SmallVec
 pub struct Skeleton(pub(crate) SmallVec<[fields::Field; 5]>);
@@ -68,8 +73,6 @@ impl From<&[fields::Field]> for Skeleton {
 ///
 /// At the time of this writing, it's being used for applying hour cycle preferences and should not
 /// be exposed as a public API for end users.
-#[doc(hidden)]
-#[cfg(feature = "datagen")]
 impl From<&Pattern> for Skeleton {
     fn from(pattern: &Pattern) -> Self {
         let mut fields: SmallVec<[fields::Field; 5]> = SmallVec::new();
@@ -171,7 +174,6 @@ impl TryFrom<&str> for Skeleton {
     }
 }
 
-#[cfg(feature = "datagen")]
 impl core::fmt::Display for Skeleton {
     fn fmt(&self, formatter: &mut core::fmt::Formatter) -> core::fmt::Result {
         use core::fmt::Write;
