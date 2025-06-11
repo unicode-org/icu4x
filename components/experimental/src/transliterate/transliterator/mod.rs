@@ -180,6 +180,248 @@ pub struct Transliterator {
     env: Env,
 }
 
+/// Builder type for [`Transliterator`]
+#[derive(Debug)]
+#[cfg(feature = "compiled_data")]
+pub struct TransliteratorBuilder {
+    env: Env,
+    transliterator: DataPayload<TransliteratorRulesV1>,
+}
+
+#[cfg(feature = "compiled_data")]
+impl Default for TransliteratorBuilder {
+    fn default() -> Self {
+        Self {
+            env: LiteMap::from_iter([
+                ("any-remove".into(), InternalTransliterator::Remove),
+                ("any-null".into(), InternalTransliterator::Null),
+            ]),
+            transliterator: DataPayload::from_owned(RuleBasedTransliterator {
+                visibility: false,
+                variable_table: Default::default(),
+                filter: CodePointInversionList::all(),
+                id_group_list: Default::default(),
+                rule_group_list: Default::default(),
+            }),
+        }
+    }
+}
+
+#[cfg(feature = "compiled_data")]
+impl TransliteratorBuilder {
+    /// Creates a [`TransliteratorBuilder`] from a baked data struct.
+    ///
+    /// This method can be used to statically construct a [`Transliterator`] without including
+    /// all transliterators (which [`Transliterator::try_new`] does).
+    ///
+    /// Warning: adding additional rules after using this constructor will allocate `rules`.
+    /// If you need to add more rules, prefer using [`TransliteratorBuilder::default()`] and
+    /// [`TransliteratorBuilder::call`].
+    pub fn from_rules(rules: &'static RuleBasedTransliterator<'static>) -> Self {
+        Self {
+            transliterator: DataPayload::from_static_ref(rules),
+            ..Default::default()
+        }
+    }
+
+    /// Adds a replacement rule, replacing all strings in `source` by `target`.
+    pub fn replace(mut self, source: &[&str], target: &str) -> Self {
+        // TODO: This encodes [a b c] -> d as "a -> d; b -> d; c -> d", which is not
+        // quite the same as "[a b c] -> d" (i.e. if d is a substring of b or c)
+        let vec = source
+            .iter()
+            .map(|&s| Rule {
+                ante: Cow::Owned(String::new()),
+                key: Cow::Owned(String::from(s)),
+                post: Cow::Owned(String::new()),
+                replacer: Cow::Owned(String::from(target)),
+            })
+            .collect::<Vec<_>>();
+
+        self.transliterator
+            .with_mut(move |r| r.rule_group_list.make_mut().push(&vec));
+
+        self
+    }
+
+    /// Adds a `::NFC` rule
+    pub fn nfc(mut self, filter: CodePointInversionList<'static>) -> Self {
+        self.chain(filter, Cow::Borrowed("any-nfc"));
+        self.load_nfc()
+    }
+
+    /// Adds a `::NFC (NFKC)` rule
+    pub fn nfkc(mut self, filter: CodePointInversionList<'static>) -> Self {
+        self.chain(filter, Cow::Borrowed("any-nfkc"));
+        self.load_nfkc()
+    }
+
+    /// Adds a `::NFD` rule
+    pub fn nfd(mut self, filter: CodePointInversionList<'static>) -> Self {
+        self.chain(filter, Cow::Borrowed("any-nfd"));
+
+        self.load_nfd()
+    }
+
+    /// Adds a `::NFD (NFKD)` rule
+    pub fn nfkd(mut self, filter: CodePointInversionList<'static>) -> Self {
+        self.chain(filter, Cow::Borrowed("any-nfkd"));
+
+        self.load_nfkd()
+    }
+
+    /// Adds a `::Lower` rule
+    pub fn lower(mut self, filter: CodePointInversionList<'static>) -> Self {
+        self.chain(filter, Cow::Borrowed("any-lower"));
+
+        self.load_casing()
+    }
+
+    /// Adds a `::Upper` rule
+    pub fn upper(mut self, filter: CodePointInversionList<'static>) -> Self {
+        self.chain(filter, Cow::Borrowed("any-upper"));
+
+        self.load_casing()
+    }
+
+    /// Adds a `::Remove` rule
+    pub fn remove(mut self, filter: CodePointInversionList<'static>) -> Self {
+        self.chain(filter, Cow::Borrowed("any-remove"));
+
+        self
+    }
+
+    /// Adds a call to another transliterator
+    pub fn call(
+        mut self,
+        rules: &'static RuleBasedTransliterator<'static>,
+        filter: CodePointInversionList<'static>,
+    ) -> Self {
+        let id = self.env.len().to_string();
+
+        self.env.insert(
+            id.clone(),
+            InternalTransliterator::RuleBased(DataPayload::from_static_ref(rules)),
+        );
+
+        self.chain(filter, Cow::Owned(id));
+
+        self
+    }
+
+    fn chain(&mut self, filter: CodePointInversionList<'static>, id: Cow<'static, str>) {
+        self.transliterator.with_mut(|r| {
+            r.id_group_list
+                .make_mut()
+                .push(&alloc::vec![SimpleId { filter, id }]);
+
+            r.rule_group_list
+                .make_mut()
+                .push(&alloc::vec::Vec::<Rule<'static>>::new());
+        });
+    }
+
+    /// Builds the transliterator.
+    ///
+    /// This method fails if a recursive dependency has not been loaded. Methods that add rules, such as
+    /// [`Self::nfc`] load NFC data implicitly, but if this builder was constructed with [`Self::from_rules`] or
+    /// calls a transliterator using [`Self::call`], all dependencies for the recursive transliterator need to
+    /// have been loaded.
+    pub fn build(self) -> Result<Transliterator, DataError> {
+        for dep in self.transliterator.get().deps() {
+            if !self.env.contains_key(&*dep) {
+                return Err(DataError::custom("dependency not loaded").with_display_context(&dep));
+            }
+        }
+
+        for (_, dep) in &self.env {
+            if let InternalTransliterator::RuleBased(rbt) = dep {
+                for dep in rbt.get().deps() {
+                    if !self.env.contains_key(&*dep) {
+                        return Err(
+                            DataError::custom("dependency not loaded").with_display_context(&dep)
+                        );
+                    }
+                }
+            }
+        }
+        Ok(Transliterator {
+            transliterator: self.transliterator,
+            env: self.env,
+        })
+    }
+
+    /// Loads NFC data. Call this if you load rules that use `::NFC`.
+    pub fn load_nfc(mut self) -> Self {
+        if !self.env.contains_key("any-nfc") {
+            self.env.insert(
+                String::from("any-nfc"),
+                InternalTransliterator::Composing(ComposingNormalizer::new_nfc().static_to_owned()),
+            );
+        }
+
+        self
+    }
+
+    /// Loads NFKC data. Call this if you load rules that use `::NFC (NFKC)`.
+    pub fn load_nfkc(mut self) -> Self {
+        if !self.env.contains_key("any-nfkc") {
+            self.env.insert(
+                String::from("any-nfkc"),
+                InternalTransliterator::Composing(
+                    ComposingNormalizer::new_nfkc().static_to_owned(),
+                ),
+            );
+        }
+
+        self
+    }
+
+    /// Loads NFD data. Call this if you load rules that use `::NFD`.
+    pub fn load_nfd(mut self) -> Self {
+        if !self.env.contains_key("any-nfd") {
+            self.env.insert(
+                String::from("any-nfd"),
+                InternalTransliterator::Decomposing(
+                    DecomposingNormalizer::new_nfd().static_to_owned(),
+                ),
+            );
+        }
+
+        self
+    }
+
+    /// Loads NFKD data. Call this if you load rules that use `::NFD (NFKD)`.
+    pub fn load_nfkd(mut self) -> Self {
+        if !self.env.contains_key("any-nfkd") {
+            self.env.insert(
+                String::from("any-nfkd"),
+                InternalTransliterator::Decomposing(
+                    DecomposingNormalizer::new_nfkd().static_to_owned(),
+                ),
+            );
+        }
+
+        self
+    }
+
+    /// Loads casing data. Call this if you load rules that use `::Lower` or `::Upper`.
+    pub fn load_casing(mut self) -> Self {
+        if !self.env.contains_key("any-lower") {
+            self.env.insert(
+                String::from("any-lower"),
+                InternalTransliterator::Lower(CaseMapper::new().static_to_owned()),
+            );
+            self.env.insert(
+                String::from("any-upper"),
+                InternalTransliterator::Upper(CaseMapper::new().static_to_owned()),
+            );
+        }
+
+        self
+    }
+}
+
 impl Transliterator {
     /// Construct a [`Transliterator`] from the given [`Locale`].
     ///
