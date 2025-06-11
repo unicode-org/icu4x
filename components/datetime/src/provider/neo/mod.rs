@@ -4,6 +4,7 @@
 
 //! Data structs and markers for semantic skeletons and datetime names.
 
+#[cfg(feature = "datagen")]
 mod adapter;
 
 use crate::provider::pattern::runtime;
