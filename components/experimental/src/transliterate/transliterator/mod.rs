@@ -225,68 +225,125 @@ impl TransliteratorBuilder {
     }
 
     /// Adds a replacement rule, replacing all strings in `source` by `target`.
-    pub fn replace(mut self, source: &[&str], target: &str) -> Self {
-        // TODO: This encodes [a b c] -> d as "a -> d; b -> d; c -> d", which is not
-        // quite the same as "[a b c] -> d" (i.e. if d is a substring of b or c)
-        let vec = source
-            .iter()
-            .map(|&s| Rule {
-                ante: Cow::Owned(String::new()),
-                key: Cow::Owned(String::from(s)),
-                post: Cow::Owned(String::new()),
-                replacer: Cow::Owned(String::from(target)),
-            })
-            .collect::<Vec<_>>();
+    pub fn replace(
+        mut self,
+        matcher: CodePointInversionListAndStringList<'static>,
+        replacer: String,
+    ) -> Self {
+        if matcher.size() == 0 {
+            return self;
+        }
+        self.transliterator.with_mut(move |r| {
+            let rule_group_list = r.rule_group_list.make_mut();
 
-        self.transliterator
-            .with_mut(move |r| r.rule_group_list.make_mut().push(&vec));
+            let mut group = if rule_group_list.is_empty() {
+                Default::default()
+            } else {
+                let g = rule_group_list
+                    .get(rule_group_list.len() - 1)
+                    .unwrap()
+                    .as_varzerovec()
+                    .into_owned();
+                rule_group_list.remove(rule_group_list.len() - 1);
+                g
+            };
+            group.make_mut().push(&Rule {
+                key: Cow::Owned(String::from(
+                    // We can just use the index in the unicode_sets list because that's the only
+                    // part of the variable table we use. If we used any of the other fields,
+                    // we'd have to update all rules that use those indices on every insertion,
+                    // as an insertion pushes the following indices up by one.
+                    char::from_u32(
+                        VarTable::BASE as u32 + r.variable_table.unicode_sets.len() as u32,
+                    )
+                    .unwrap(),
+                )),
+                replacer: Cow::Owned(replacer),
+                ante: Cow::Borrowed(""),
+                post: Cow::Borrowed(""),
+            });
+            rule_group_list.push(&group);
+
+            r.variable_table.unicode_sets.make_mut().push(&matcher);
+        });
 
         self
     }
 
     /// Adds a `::NFC` rule
     pub fn nfc(mut self, filter: CodePointInversionList<'static>) -> Self {
+        if filter.is_empty() {
+            return self;
+        }
         self.chain(filter, Cow::Borrowed("any-nfc"));
         self.load_nfc()
     }
 
-    /// Adds a `::NFC (NFKC)` rule
+    /// Adds a `::NFKC` rule
     pub fn nfkc(mut self, filter: CodePointInversionList<'static>) -> Self {
+        if filter.is_empty() {
+            return self;
+        }
         self.chain(filter, Cow::Borrowed("any-nfkc"));
         self.load_nfkc()
     }
 
     /// Adds a `::NFD` rule
     pub fn nfd(mut self, filter: CodePointInversionList<'static>) -> Self {
+        if filter.is_empty() {
+            return self;
+        }
         self.chain(filter, Cow::Borrowed("any-nfd"));
-
         self.load_nfd()
     }
 
-    /// Adds a `::NFD (NFKD)` rule
+    /// Adds a `::NFKD` rule
     pub fn nfkd(mut self, filter: CodePointInversionList<'static>) -> Self {
+        if filter.is_empty() {
+            return self;
+        }
         self.chain(filter, Cow::Borrowed("any-nfkd"));
-
         self.load_nfkd()
     }
 
     /// Adds a `::Lower` rule
     pub fn lower(mut self, filter: CodePointInversionList<'static>) -> Self {
+        if filter.is_empty() {
+            return self;
+        }
         self.chain(filter, Cow::Borrowed("any-lower"));
-
         self.load_casing()
     }
 
     /// Adds a `::Upper` rule
     pub fn upper(mut self, filter: CodePointInversionList<'static>) -> Self {
+        if filter.is_empty() {
+            return self;
+        }
         self.chain(filter, Cow::Borrowed("any-upper"));
-
         self.load_casing()
     }
 
     /// Adds a `::Remove` rule
     pub fn remove(mut self, filter: CodePointInversionList<'static>) -> Self {
+        if filter.is_empty() {
+            return self;
+        }
         self.chain(filter, Cow::Borrowed("any-remove"));
+        self
+    }
+
+    /// Adds a `::Null` rule
+    pub fn null(mut self) -> Self {
+        self.transliterator.with_mut(|r| {
+            r.id_group_list
+                .make_mut()
+                .push::<&[SimpleId]>(&[].as_slice());
+
+            r.rule_group_list
+                .make_mut()
+                .push::<&[Rule]>(&[].as_slice());
+        });
 
         self
     }
@@ -297,6 +354,9 @@ impl TransliteratorBuilder {
         rules: &'static RuleBasedTransliterator<'static>,
         filter: CodePointInversionList<'static>,
     ) -> Self {
+        if filter.is_empty() {
+            return self;
+        }
         let id = self.env.len().to_string();
 
         self.env.insert(
@@ -313,11 +373,11 @@ impl TransliteratorBuilder {
         self.transliterator.with_mut(|r| {
             r.id_group_list
                 .make_mut()
-                .push(&alloc::vec![SimpleId { filter, id }]);
+                .push(&[SimpleId { filter, id }].as_slice());
 
             r.rule_group_list
                 .make_mut()
-                .push(&alloc::vec::Vec::<Rule<'static>>::new());
+                .push::<&[Rule]>(&[].as_slice());
         });
     }
 
@@ -363,7 +423,7 @@ impl TransliteratorBuilder {
         self
     }
 
-    /// Loads NFKC data. Call this if you load rules that use `::NFC (NFKC)`.
+    /// Loads NFKC data. Call this if you load rules that use `::NFKC`.
     pub fn load_nfkc(mut self) -> Self {
         if !self.env.contains_key("any-nfkc") {
             self.env.insert(
@@ -391,7 +451,7 @@ impl TransliteratorBuilder {
         self
     }
 
-    /// Loads NFKD data. Call this if you load rules that use `::NFD (NFKD)`.
+    /// Loads NFKD data. Call this if you load rules that use `::NFKD`.
     pub fn load_nfkd(mut self) -> Self {
         if !self.env.contains_key("any-nfkd") {
             self.env.insert(
