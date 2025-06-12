@@ -555,7 +555,7 @@ jobs:
     - name: Check semver
       uses: sffc/cargo-semver-checks-action@99233fa6fae21c528b2072684ce69fbd71a4105a
       with:
-        baseline-rev: origin/release/2.0
+        baseline-rev: d38a3efe1ea5b9e9348b5b4b3804bb9ec2017001 # release/2.0
 
 
   # Notify on slack  
