@@ -547,8 +547,15 @@ jobs:
     - name: Cargo doc
       run: cargo make ci-job-doc
 
+  semver:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+
     - name: Check semver
-      uses: obi1kenobi/cargo-semver-checks-action@v2
+      uses: sffc/cargo-semver-checks-action@99233fa6fae21c528b2072684ce69fbd71a4105a
+      with:
+        baseline-rev: release/2.0
 
 
   # Notify on slack  
