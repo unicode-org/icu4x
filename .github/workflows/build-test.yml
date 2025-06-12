@@ -546,9 +546,29 @@ jobs:
     # Actual job
     - name: Cargo doc
       run: cargo make ci-job-doc
+  
+  # this job runs on PRs only, and is not required for merging as we currently don't model our
+  # unstable APIs in a way that cargo semver-checks understands
+  semver:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+
+    steps:
+    - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+      with:
+        ref: main
+    - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+
+    # Install cargo semver-checks
+    - name: Install cargo semver-checks
+      uses: taiki-e/install-action@64e4e2f995104968c78bd697b253d55bf557af66 # v2.41.11
+      with:
+        tool: cargo-semver-checks@0.41.0
 
     - name: Check semver
-      uses: obi1kenobi/cargo-semver-checks-action@v2
+      run: cargo semver-checks --baseline-rev origin/main
+      env:
+        ICU4X_DATA_DIR: "../stubdata"
 
 
   # Notify on slack  
