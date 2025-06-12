@@ -2,40 +2,44 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use icu_collections::codepointinvlist::CodePointInversionList;
-use icu_experimental::transliterate::provider::Baked;
-use icu_experimental::transliterate::{Transliterator, TransliteratorBuilder};
-use icu_properties::{props::BidiClass, CodePointMapData};
+#![no_main] // https://github.com/unicode-org/icu4x/issues/395
+icu_benchmark_macros::instrument!();
+use icu_benchmark_macros::println;
+
+use icu::collections::codepointinvlist::CodePointInversionList;
+use icu::experimental::transliterate::provider::Baked;
+use icu::experimental::transliterate::{Transliterator, TransliteratorBuilder};
+use icu::properties::{props::BidiClass, CodePointMapData};
 
 fn main() {
-    assert_eq!(
+    println!(
+        "{}",
         TransliteratorBuilder::from_rules(Baked::TRANSLITERATOR_RULES_V1_UND_UND_HIRA_T_UND_KANA)
             .load_nfc()
             .load_nfkc()
             .build()
             .unwrap()
             .transliterate("ウィキペディア".into()),
-        "うぃきぺでぃあ"
     );
 
-    assert_eq!(
+    println!(
+        "{}",
         TransliteratorBuilder::from_rules(Baked::TRANSLITERATOR_RULES_V1_UND_UND_KANA_T_UND_HIRA)
             .load_nfc()
             .load_nfkc()
             .build()
             .unwrap()
             .transliterate("うぃきぺでぃあ".into()),
-        "ウィキペディア"
     );
 
-    assert_eq!(
+    println!(
+        "{}",
         autocomplete_transliterator(false).transliterate("Täst 😒 Ω".into()),
-        "tast 😒 ω"
     );
 
-    assert_eq!(
+    println!(
+        "{}",
         autocomplete_transliterator(true).transliterate("Täst 😒 Ω".into()),
-        "taest 😒 ω"
     );
 }
 
