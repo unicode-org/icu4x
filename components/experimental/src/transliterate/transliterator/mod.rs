@@ -224,7 +224,7 @@ impl TransliteratorBuilder {
         }
     }
 
-    /// Adds a replacement rule, replacing all strings in `source` by `target`.
+    /// Adds a replacement rule, replacing all strings in `matcher` by `replacer`.
     pub fn replace(
         mut self,
         matcher: CodePointInversionListAndStringList<'static>,
@@ -340,9 +340,7 @@ impl TransliteratorBuilder {
                 .make_mut()
                 .push::<&[SimpleId]>(&[].as_slice());
 
-            r.rule_group_list
-                .make_mut()
-                .push::<&[Rule]>(&[].as_slice());
+            r.rule_group_list.make_mut().push::<&[Rule]>(&[].as_slice());
         });
 
         self
@@ -375,9 +373,7 @@ impl TransliteratorBuilder {
                 .make_mut()
                 .push(&[SimpleId { filter, id }].as_slice());
 
-            r.rule_group_list
-                .make_mut()
-                .push::<&[Rule]>(&[].as_slice());
+            r.rule_group_list.make_mut().push::<&[Rule]>(&[].as_slice());
         });
     }
 
