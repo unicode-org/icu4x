@@ -553,7 +553,7 @@ jobs:
       # This is the baseline for semver-check. It can be changed,
       # such as if unstable APIs were changed but semver-check
       # didn't know that they were unstable.
-      BASELINE_REF: d38a3efe1ea5b9e9348b5b4b3804bb9ec2017001 # release/2.0
+      BASELINE_REF: 6c91bf7cfcb524cba85eb1c3030ae43d437052e9 # a commit on main
     steps:
 
     # Checkout baseline revision; required because actions/checkout is shallow
