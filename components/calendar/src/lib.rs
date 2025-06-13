@@ -98,6 +98,7 @@ mod date;
 // Public modules
 mod any_calendar;
 pub mod cal;
+#[cfg_attr(not(feature = "unstable"), doc(hidden))]
 pub mod provider;
 pub mod types;
 pub mod week;
@@ -113,8 +114,10 @@ mod ixdtf;
 pub use any_calendar::IntoAnyCalendar;
 pub use calendar::Calendar;
 pub use date::{AsCalendar, Date, Ref};
-#[doc(hidden)] // unstable
+#[cfg(feature = "unstable")]
 pub use duration::{DateDuration, DateDurationUnit};
+#[cfg(not(feature = "unstable"))]
+use duration::{DateDuration, DateDurationUnit};
 pub use error::{DateError, RangeError};
 #[cfg(feature = "ixdtf")]
 pub use ixdtf::ParseError;

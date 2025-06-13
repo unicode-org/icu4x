@@ -295,7 +295,10 @@ impl Date<Ethiopian> {
         }
         ArithmeticDate::new_from_ordinals(year, month, day)
             .map(EthiopianDateInner)
-            .map(|inner| Date::from_raw(inner, Ethiopian::new_with_era_style(era_style)))
+            .map(|inner| Date {
+                inner,
+                calendar: Ethiopian::new_with_era_style(era_style),
+            })
     }
 }
 

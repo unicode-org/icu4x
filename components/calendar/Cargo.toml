@@ -56,6 +56,7 @@ datagen = ["serde", "dep:databake", "zerovec/databake", "tinystr/databake", "all
 compiled_data = ["dep:icu_calendar_data", "dep:icu_locale", "icu_locale?/compiled_data", "icu_provider/baked"]
 
 alloc = []
+unstable = []
 
 [[bench]]
 name = "date"

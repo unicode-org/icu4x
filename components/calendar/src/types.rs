@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! This module contains various types used by `icu_calendar` and `icu::datetime`
+//! This module contains various types used by `icu::calendar` and `icu::datetime`
 
 #[doc(no_inline)]
 pub use calendrical_calculations::rata_die::RataDie;

@@ -61,10 +61,12 @@ use core::marker::PhantomData;
 /// assert_eq!(mutated_date_iso.day_of_month().0, 27);
 /// ```
 ///
-/// Currently unstable for ICU4X 1.0
+/// <div class="stab unstable">
+/// 🚧 This struct is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. This requires the `unstable` Cargo feature.
+/// </div>
 #[derive(Eq, PartialEq)]
 #[allow(clippy::exhaustive_structs)] // this type should be stable (and is intended to be constructed manually)
-#[doc(hidden)] // unstable
 pub struct DateDuration<C: Calendar + ?Sized> {
     /// The number of years
     pub years: i32,
@@ -90,9 +92,13 @@ impl<C: Calendar + ?Sized> Copy for DateDuration<C> {}
 
 /// A "duration unit" used to specify the minimum or maximum duration of time to
 /// care about
+///
+/// <div class="stab unstable">
+/// 🚧 This struct is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. This requires the `unstable` Cargo feature.
+/// </div>
 #[derive(Copy, Clone, Eq, PartialEq, Debug)]
 #[allow(clippy::exhaustive_enums)] // this type should be stable
-#[doc(hidden)] // unstable
 pub enum DateDurationUnit {
     /// Duration in years
     Years,

@@ -244,7 +244,10 @@ impl Date<Indian> {
     pub fn try_new_indian(year: i32, month: u8, day: u8) -> Result<Date<Indian>, RangeError> {
         ArithmeticDate::new_from_ordinals(year, month, day)
             .map(IndianDateInner)
-            .map(|inner| Date::from_raw(inner, Indian))
+            .map(|inner| Date {
+                inner,
+                calendar: Indian,
+            })
     }
 }
 

@@ -200,7 +200,10 @@ impl Date<Iso> {
     pub fn try_new_iso(year: i32, month: u8, day: u8) -> Result<Date<Iso>, RangeError> {
         ArithmeticDate::new_from_ordinals(year, month, day)
             .map(IsoDateInner)
-            .map(|inner| Date::from_raw(inner, Iso))
+            .map(|inner| Date {
+                inner,
+                calendar: Iso,
+            })
     }
 }
 

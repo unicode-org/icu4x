@@ -216,7 +216,10 @@ impl Date<Coptic> {
     pub fn try_new_coptic(year: i32, month: u8, day: u8) -> Result<Date<Coptic>, RangeError> {
         ArithmeticDate::new_from_ordinals(year, month, day)
             .map(CopticDateInner)
-            .map(|inner| Date::from_raw(inner, Coptic))
+            .map(|inner| Date {
+                inner,
+                calendar: Coptic,
+            })
     }
 }
 
