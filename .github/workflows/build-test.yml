@@ -547,8 +547,28 @@ jobs:
     - name: Cargo doc
       run: cargo make ci-job-doc
 
+  semver:
+    runs-on: ubuntu-latest
+    env:
+      # This is the baseline for semver-check. It can be changed,
+      # such as if unstable APIs were changed but semver-check
+      # didn't know that they were unstable.
+      BASELINE_REF: d38a3efe1ea5b9e9348b5b4b3804bb9ec2017001 # release/2.0
+    steps:
+
+    # Checkout baseline revision; required because actions/checkout is shallow
+    - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+      with:
+        ref: ${{ env.BASELINE_REF }}
+
+    # Checkout HEAD revision
+    - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+
+    # Actual job
     - name: Check semver
-      uses: obi1kenobi/cargo-semver-checks-action@v2
+      uses: sffc/cargo-semver-checks-action@99233fa6fae21c528b2072684ce69fbd71a4105a
+      with:
+        baseline-rev: ${{ env.BASELINE_REF }}
 
 
   # Notify on slack  
