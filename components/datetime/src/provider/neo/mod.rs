@@ -4,8 +4,6 @@
 
 //! Data structs and markers for semantic skeletons and datetime names.
 
-mod adapter;
-
 use crate::provider::pattern::runtime;
 use crate::size_test_macro::size_test;
 use alloc::borrow::Cow;

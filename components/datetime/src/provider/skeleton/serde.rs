@@ -3,7 +3,6 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use alloc::format;
-#[cfg(feature = "datagen")]
 use alloc::string::ToString;
 use core::convert::TryFrom;
 use smallvec::SmallVec;
@@ -12,7 +11,6 @@ pub mod reference {
     use super::super::reference::Skeleton;
     use super::*;
 
-    #[cfg(feature = "datagen")]
     use ::serde::{ser, Serialize};
     use serde::{de, Deserialize, Deserializer};
     /// This is an implementation of the serde deserialization visitor pattern.
@@ -58,7 +56,6 @@ pub mod reference {
         }
     }
 
-    #[cfg(feature = "datagen")]
     impl Serialize for Skeleton {
         fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
         where
@@ -79,7 +76,6 @@ pub mod runtime {
     use super::super::runtime::Skeleton;
     use super::*;
 
-    #[cfg(feature = "datagen")]
     use ::serde::{ser, Serialize};
     use serde::{de, Deserialize, Deserializer};
     use zerovec::ZeroVec;
@@ -119,7 +115,6 @@ pub mod runtime {
         }
     }
 
-    #[cfg(feature = "datagen")]
     impl Serialize for Skeleton<'_> {
         fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
         where
