@@ -7,7 +7,7 @@ use crate::calendar_arithmetic::CalendarArithmetic;
 use crate::error::DateError;
 use crate::types::{CyclicYear, EraYear, IsoWeekOfYear};
 use crate::week::{RelativeUnit, WeekCalculator, WeekOf};
-use crate::{types, Calendar, DateDuration, DateDurationUnit, Iso};
+use crate::{types, Calendar, Iso};
 #[cfg(feature = "alloc")]
 use alloc::rc::Rc;
 #[cfg(feature = "alloc")]
@@ -146,7 +146,7 @@ impl<A: AsCalendar> Date<A> {
     /// Convert the date to a [`RataDie`]
     #[inline]
     pub fn to_rata_die(&self) -> RataDie {
-        self.calendar.as_calendar().to_rata_die(self.inner())
+        self.calendar.as_calendar().to_rata_die(&self.inner)
     }
 
     /// Construct a date from an ISO date and some calendar representation
@@ -159,7 +159,10 @@ impl<A: AsCalendar> Date<A> {
     /// Convert the Date to an ISO Date
     #[inline]
     pub fn to_iso(&self) -> Date<Iso> {
-        Date::from_raw(self.calendar.as_calendar().to_iso(self.inner()), Iso)
+        Date {
+            inner: self.calendar.as_calendar().to_iso(&self.inner),
+            calendar: Iso,
+        }
     }
 
     /// Convert the Date to a date in a different calendar
@@ -171,19 +174,19 @@ impl<A: AsCalendar> Date<A> {
     /// The number of months in the year of this date
     #[inline]
     pub fn months_in_year(&self) -> u8 {
-        self.calendar.as_calendar().months_in_year(self.inner())
+        self.calendar.as_calendar().months_in_year(&self.inner)
     }
 
     /// The number of days in the year of this date
     #[inline]
     pub fn days_in_year(&self) -> u16 {
-        self.calendar.as_calendar().days_in_year(self.inner())
+        self.calendar.as_calendar().days_in_year(&self.inner)
     }
 
     /// The number of days in the month of this date
     #[inline]
     pub fn days_in_month(&self) -> u8 {
-        self.calendar.as_calendar().days_in_month(self.inner())
+        self.calendar.as_calendar().days_in_month(&self.inner)
     }
 
     /// The day of the week for this date
@@ -193,33 +196,48 @@ impl<A: AsCalendar> Date<A> {
     }
 
     /// Add a `duration` to this date, mutating it
-    #[doc(hidden)] // unstable
+    ///
+    /// <div class="stab unstable">
+    /// 🚧 This method is considered unstable; it may change at any time, in breaking or non-breaking ways,
+    /// including in SemVer minor releases. This requires the `unstable` Cargo feature.
+    /// </div>
+    #[cfg(feature = "unstable")]
     #[inline]
-    pub fn add(&mut self, duration: DateDuration<A::Calendar>) {
+    pub fn add(&mut self, duration: crate::DateDuration<A::Calendar>) {
         self.calendar
             .as_calendar()
             .offset_date(&mut self.inner, duration)
     }
 
     /// Add a `duration` to this date, returning the new one
-    #[doc(hidden)] // unstable
+    ///
+    /// <div class="stab unstable">
+    /// 🚧 This method is considered unstable; it may change at any time, in breaking or non-breaking ways,
+    /// including in SemVer minor releases. This requires the `unstable` Cargo feature.
+    /// </div>
+    #[cfg(feature = "unstable")]
     #[inline]
-    pub fn added(mut self, duration: DateDuration<A::Calendar>) -> Self {
+    pub fn added(mut self, duration: crate::DateDuration<A::Calendar>) -> Self {
         self.add(duration);
         self
     }
 
     /// Calculating the duration between `other - self`
-    #[doc(hidden)] // unstable
+    ///
+    /// <div class="stab unstable">
+    /// 🚧 This method is considered unstable; it may change at any time, in breaking or non-breaking ways,
+    /// including in SemVer minor releases. This requires the `unstable` Cargo feature.
+    /// </div>
+    #[cfg(feature = "unstable")]
     #[inline]
     pub fn until<B: AsCalendar<Calendar = A::Calendar>>(
         &self,
         other: &Date<B>,
-        largest_unit: DateDurationUnit,
-        smallest_unit: DateDurationUnit,
-    ) -> DateDuration<A::Calendar> {
+        largest_unit: crate::DateDurationUnit,
+        smallest_unit: crate::DateDurationUnit,
+    ) -> crate::DateDuration<A::Calendar> {
         self.calendar.as_calendar().until(
-            self.inner(),
+            &self.inner,
             other.inner(),
             other.calendar.as_calendar(),
             largest_unit,
@@ -277,13 +295,25 @@ impl<A: AsCalendar> Date<A> {
     ///
     /// AnyCalendar *will* panic if AnyCalendar [`Date`] objects with mismatching
     /// date and calendar types are constructed
+    ///
+    /// <div class="stab unstable">
+    /// 🚧 This method is considered unstable; it may change at any time, in breaking or non-breaking ways,
+    /// including in SemVer minor releases. This requires the `unstable` Cargo feature.
+    /// </div>
     #[inline]
+    #[cfg(feature = "unstable")]
     pub fn from_raw(inner: <A::Calendar as Calendar>::DateInner, calendar: A) -> Self {
         Self { inner, calendar }
     }
 
     /// Get the inner date implementation. Should not be called outside of calendar implementations
+    ///
+    /// <div class="stab unstable">
+    /// 🚧 This method is considered unstable; it may change at any time, in breaking or non-breaking ways,
+    /// including in SemVer minor releases. This requires the `unstable` Cargo feature.
+    /// </div>
     #[inline]
+    #[cfg(feature = "unstable")]
     pub fn inner(&self) -> &<A::Calendar as Calendar>::DateInner {
         &self.inner
     }
@@ -306,14 +336,14 @@ impl<A: AsCalendar> Date<A> {
 impl<A: AsCalendar<Calendar = C>, C: Calendar<Year = EraYear>> Date<A> {
     /// Returns information about the era for calendars using eras.
     pub fn era_year(&self) -> EraYear {
-        self.calendar.as_calendar().year_info(self.inner())
+        self.calendar.as_calendar().year_info(&self.inner)
     }
 }
 
 impl<A: AsCalendar<Calendar = C>, C: Calendar<Year = CyclicYear>> Date<A> {
     /// Returns information about the year cycle, for cyclic calendars.
     pub fn cyclic_year(&self) -> CyclicYear {
-        self.calendar.as_calendar().year_info(self.inner())
+        self.calendar.as_calendar().year_info(&self.inner)
     }
 }
 
@@ -367,10 +397,10 @@ impl Date<Iso> {
 impl<C: IntoAnyCalendar> Date<C> {
     /// Type-erase the date, converting it to a date for [`AnyCalendar`]
     pub fn to_any(self) -> Date<AnyCalendar> {
-        Date::from_raw(
-            self.calendar.date_to_any(&self.inner),
-            self.calendar.to_any(),
-        )
+        Date {
+            inner: self.calendar.date_to_any(&self.inner),
+            calendar: self.calendar.to_any(),
+        }
     }
 }
 
@@ -380,7 +410,10 @@ impl<A: AsCalendar> Date<A> {
     /// Useful when paired with [`Self::to_any()`] to obtain a `Date<Rc<AnyCalendar>>`
     #[cfg(feature = "alloc")]
     pub fn into_ref_counted(self) -> Date<Rc<A>> {
-        Date::from_raw(self.inner, Rc::new(self.calendar))
+        Date {
+            inner: self.inner,
+            calendar: Rc::new(self.calendar),
+        }
     }
 
     /// Wrap the contained calendar type in `Arc<T>`, making it cheaper to clone in a thread-safe manner.
@@ -388,7 +421,10 @@ impl<A: AsCalendar> Date<A> {
     /// Useful when paired with [`Self::to_any()`] to obtain a `Date<Arc<AnyCalendar>>`
     #[cfg(feature = "alloc")]
     pub fn into_atomic_ref_counted(self) -> Date<Arc<A>> {
-        Date::from_raw(self.inner, Arc::new(self.calendar))
+        Date {
+            inner: self.inner,
+            calendar: Arc::new(self.calendar),
+        }
     }
 
     /// Wrap the calendar type in `Ref<T>`, making it cheaper to clone (by introducing a borrow)
@@ -396,7 +432,10 @@ impl<A: AsCalendar> Date<A> {
     /// Useful for converting a `&Date<C>` into an equivalent `Date<D>` without cloning
     /// the calendar.
     pub fn as_borrowed(&self) -> Date<Ref<A>> {
-        Date::from_raw(self.inner, Ref(&self.calendar))
+        Date {
+            inner: self.inner,
+            calendar: Ref(&self.calendar),
+        }
     }
 }
 

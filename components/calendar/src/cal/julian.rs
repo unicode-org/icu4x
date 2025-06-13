@@ -230,7 +230,10 @@ impl Date<Julian> {
     pub fn try_new_julian(year: i32, month: u8, day: u8) -> Result<Date<Julian>, RangeError> {
         ArithmeticDate::new_from_ordinals(year, month, day)
             .map(JulianDateInner)
-            .map(|inner| Date::from_raw(inner, Julian))
+            .map(|inner| Date {
+                inner,
+                calendar: Julian,
+            })
     }
 }
 
