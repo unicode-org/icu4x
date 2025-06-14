@@ -177,7 +177,7 @@ exec --fail-on-error rustup run ${PINNED_CI_NIGHTLY} ./third_party_tools/depot_t
 description = "Run the GN version of ICU4X"
 category = "ICU4X Development"
 install_crate = { crate_name = "wasmer-cli", binary = "wasmer", test_arg = ["--help"] }
-install_crate_args = ["--features=singlepass,cranelift", "--version=2.3.0"]
+install_crate_args = ["--features=singlepass,cranelift", "--version=6.0.0"]
 dependencies = [
     "gn-build",
     "gn-build-wasi",
