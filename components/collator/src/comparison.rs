@@ -44,7 +44,7 @@ use crate::provider::CollationSpecialPrimariesValidated;
 use crate::provider::CollationTailoringV1;
 use core::array;
 use core::cmp::Ordering;
-use core::convert::TryFrom;
+use core::convert::{Infallible, TryFrom};
 use icu_normalizer::provider::DecompositionData;
 use icu_normalizer::provider::DecompositionTables;
 use icu_normalizer::provider::NormalizerNfdDataV1;
@@ -2116,7 +2116,7 @@ impl CollatorBorrowed<'_> {
         }
 
         macro_rules! write_level {
-            ($key:ident, $level:expr, $flag:ident) => {
+            ($key:ident, $flag:ident) => {
                 if levels & $flag != 0 {
                     sink.write(state, &[LEVEL_SEPARATOR_BYTE])?;
                     sink.write(state, &$key.buf)?;
@@ -2124,7 +2124,7 @@ impl CollatorBorrowed<'_> {
             };
         }
 
-        write_level!(secondaries, Level::Secondary, SECONDARY_LEVEL_FLAG);
+        write_level!(secondaries, SECONDARY_LEVEL_FLAG);
 
         if levels & CASE_LEVEL_FLAG != 0 {
             sink.write(state, &[LEVEL_SEPARATOR_BYTE])?;
@@ -2146,8 +2146,8 @@ impl CollatorBorrowed<'_> {
             }
         }
 
-        write_level!(tertiaries, Level::Tertiary, TERTIARY_LEVEL_FLAG);
-        write_level!(quaternaries, Level::Quaternary, QUATERNARY_LEVEL_FLAG);
+        write_level!(tertiaries, TERTIARY_LEVEL_FLAG);
+        write_level!(quaternaries, QUATERNARY_LEVEL_FLAG);
 
         Ok(())
     }
@@ -2155,7 +2155,16 @@ impl CollatorBorrowed<'_> {
 
 /// Error indicating that a [`CollationKeySink`] with limited space ran out of space.
 #[derive(Debug, PartialEq, Eq)]
-pub struct TooSmall;
+pub struct TooSmall {
+    /// The total length, in bytes, of the sort key.
+    pub length: usize,
+}
+
+impl TooSmall {
+    pub fn new(length: usize) -> Self {
+        Self { length }
+    }
+}
 
 /// A [`std::io::Write`]-like trait for writing to a buffer-like object.
 ///
@@ -2175,17 +2184,16 @@ pub trait CollationKeySink {
 
     /// Write a single byte into the writer.
     fn write_byte(&mut self, state: &mut Self::State, b: u8) -> Result<(), Self::Error> {
-        self.write(state, &[b])?;
-        Ok(())
+        self.write(state, &[b])
     }
 
     /// Finalize any internal sink state (perhaps by flushing a buffer) and return the final
     /// output value.
-    fn finish(&self, state: Self::State) -> Result<Self::Output, Self::Error>;
+    fn finish(&mut self, state: Self::State) -> Result<Self::Output, Self::Error>;
 }
 
 impl CollationKeySink for Vec<u8> {
-    type Error = core::convert::Infallible;
+    type Error = Infallible;
     type State = ();
     type Output = ();
 
@@ -2194,13 +2202,13 @@ impl CollationKeySink for Vec<u8> {
         Ok(())
     }
 
-    fn finish(&self, _: Self::State) -> Result<Self::Output, Self::Error> {
+    fn finish(&mut self, _: Self::State) -> Result<Self::Output, Self::Error> {
         Ok(())
     }
 }
 
 impl CollationKeySink for VecDeque<u8> {
-    type Error = core::convert::Infallible;
+    type Error = Infallible;
     type State = ();
     type Output = ();
 
@@ -2209,22 +2217,22 @@ impl CollationKeySink for VecDeque<u8> {
         Ok(())
     }
 
-    fn finish(&self, _: Self::State) -> Result<Self::Output, Self::Error> {
+    fn finish(&mut self, _: Self::State) -> Result<Self::Output, Self::Error> {
         Ok(())
     }
 }
 
 impl<const N: usize> CollationKeySink for SmallVec<[u8; N]> {
-    type Error = core::convert::Infallible;
+    type Error = Infallible;
     type State = ();
     type Output = ();
 
-    fn write(&mut self, _: &mut (), buf: &[u8]) -> Result<(), Self::Error> {
+    fn write(&mut self, _: &mut Self::State, buf: &[u8]) -> Result<(), Self::Error> {
         self.extend_from_slice(buf);
         Ok(())
     }
 
-    fn finish(&self, _: Self::State) -> Result<Self::Output, Self::Error> {
+    fn finish(&mut self, _: Self::State) -> Result<Self::Output, Self::Error> {
         Ok(())
     }
 }
@@ -2234,20 +2242,22 @@ impl CollationKeySink for [u8] {
     type State = usize;
     type Output = usize;
 
-    fn write(&mut self, used: &mut Self::State, buf: &[u8]) -> Result<(), Self::Error> {
-        if buf.len() <= self.len() - *used {
+    fn write(&mut self, offset: &mut Self::State, buf: &[u8]) -> Result<(), Self::Error> {
+        if *offset + buf.len() <= self.len() {
             // just checked bounds
             #[allow(clippy::indexing_slicing)]
-            self[*used..*used + buf.len()].copy_from_slice(buf);
-            *used += buf.len();
-            Ok(())
-        } else {
-            Err(TooSmall)
+            self[*offset..*offset + buf.len()].copy_from_slice(buf);
         }
+        *offset += buf.len();
+        Ok(())
     }
 
-    fn finish(&self, used: Self::State) -> Result<Self::Output, Self::Error> {
-        Ok(used)
+    fn finish(&mut self, offset: Self::State) -> Result<Self::Output, Self::Error> {
+        if offset <= self.len() {
+            Ok(offset)
+        } else {
+            Err(TooSmall::new(offset))
+        }
     }
 }
 
@@ -2516,7 +2526,7 @@ mod test {
         let collator = collator_en(Strength::Identical);
         let mut k = [0u8; 0];
         let res = collator.write_sort_key_to("áAbc", &mut k[..]);
-        assert_eq!(res, Err(TooSmall));
+        assert!(matches!(res, Err(TooSmall { .. })));
     }
 
     #[test]
@@ -2525,7 +2535,7 @@ mod test {
         let collator = collator_en(Strength::Identical);
         let mut k = [0u8; 5];
         let res = collator.write_sort_key_to("áAbc", &mut k[..]);
-        assert_eq!(res, Err(TooSmall));
+        assert!(matches!(res, Err(TooSmall { .. })));
     }
 
     #[test]
@@ -2534,7 +2544,26 @@ mod test {
         let collator = collator_en(Strength::Identical);
         let mut k = [0u8; 22];
         let res = collator.write_sort_key_to("áAbc", &mut k[..]);
-        assert_eq!(res, Err(TooSmall));
+        assert!(matches!(res, Err(TooSmall { .. })));
+    }
+
+    #[test]
+    fn sort_key_just_right() {
+        // get the length needed
+        let collator = collator_en(Strength::Identical);
+        let mut k = [0u8; 0];
+        let res = collator.write_sort_key_to("áAbc", &mut k[..]);
+        let len = res.unwrap_err().length;
+
+        // almost enough
+        let mut k = vec![0u8; len - 1];
+        let res = collator.write_sort_key_to("áAbc", &mut k[..]);
+        let len = res.unwrap_err().length;
+
+        // just right
+        let mut k = vec![0u8; len];
+        let res = collator.write_sort_key_to("áAbc", &mut k[..]);
+        assert_eq!(res, Ok(len));
     }
 
     #[test]
@@ -2543,6 +2572,6 @@ mod test {
         const STR16: &[u16] = &[0x68, 0x65, 0x6c, 0x6c, 0x6f];
         let mut k = [0u8; 4];
         let res = collator.write_sort_key_utf16_to(STR16, &mut k[..]);
-        assert_eq!(res, Err(TooSmall));
+        assert!(matches!(res, Err(TooSmall { .. })));
     }
 }
