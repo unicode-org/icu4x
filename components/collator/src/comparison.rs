@@ -158,6 +158,68 @@ fn in_inclusive_range16(i: u16, start: u16, end: u16) -> bool {
     i.wrapping_sub(start) <= (end - start)
 }
 
+/// Helper trait for getting a `char` iterator from Latin1 data.
+///
+/// ✨ *Enabled with the `latin1` Cargo feature.*
+#[cfg(feature = "latin1")]
+trait Latin1Chars {
+    fn latin1_chars(&self) -> impl DoubleEndedIterator<Item = char>;
+}
+
+#[cfg(feature = "latin1")]
+impl Latin1Chars for [u8] {
+    fn latin1_chars(&self) -> impl DoubleEndedIterator<Item = char> {
+        self.iter().map(|b| char::from(*b))
+    }
+}
+
+/// Finds the identical prefix of `left` and `right` containing
+/// Latin1.
+///
+/// Returns the identical prefix, the part of `left` after the
+/// prefix, and the part of `right` after the prefix.
+///
+/// ✨ *Enabled with the `latin1` Cargo feature.*
+#[cfg(feature = "latin1")]
+fn split_prefix_latin1<'a, 'b>(left: &'a [u8], right: &'b [u8]) -> (&'a [u8], &'a [u8], &'b [u8]) {
+    let i = left
+        .iter()
+        .zip(right.iter())
+        .take_while(|(l, r)| l == r)
+        .count();
+    if let Some((head, left_tail)) = left.split_at_checked(i) {
+        if let Some(right_tail) = right.get(i..) {
+            return (head, left_tail, right_tail);
+        }
+    }
+    (&[], left, right)
+}
+
+/// Finds the identical prefix of `left` containing Latin1
+/// and `right` containing potentially ill-formed UTF-16.
+///
+/// Returns the identical prefix, the part of `left` after the
+/// prefix, and the part of `right` after the prefix.
+///
+/// ✨ *Enabled with the `latin1` Cargo feature.*
+#[cfg(feature = "latin1")]
+fn split_prefix_latin1_utf16<'a, 'b>(
+    left: &'a [u8],
+    right: &'b [u16],
+) -> (&'a [u8], &'a [u8], &'b [u16]) {
+    let i = left
+        .iter()
+        .zip(right.iter())
+        .take_while(|(l, r)| u16::from(**l) == **r)
+        .count();
+    if let Some((head, left_tail)) = left.split_at_checked(i) {
+        if let Some(right_tail) = right.get(i..) {
+            return (head, left_tail, right_tail);
+        }
+    }
+    (&[], left, right)
+}
+
 /// Finds the identical prefix of `left` and `right` containing
 /// potentially ill-formed UTF-16, while avoiding splitting a
 /// well-formed surrogate pair. In case of ill-formed
@@ -618,19 +680,22 @@ impl Collator {
 macro_rules! compare {
     ($(#[$meta:meta])*,
      $compare:ident,
-     $slice:ty,
+     $left_slice:ty,
+     $right_slice:ty,
      $split_prefix:ident,
+     $left_to_iter:ident,
+     $right_to_iter:ident,
     ) => {
         $(#[$meta])*
-        pub fn $compare(&self, left: &$slice, right: &$slice) -> Ordering {
+        pub fn $compare(&self, left: &$left_slice, right: &$right_slice) -> Ordering {
             let (head, left_tail, right_tail) = $split_prefix(left, right);
             if left_tail.is_empty() && right_tail.is_empty() {
                 return Ordering::Equal;
             }
-            let ret = self.compare_impl(left_tail.chars(), right_tail.chars(), head.chars().rev());
+            let ret = self.compare_impl(left_tail.$left_to_iter(), right_tail.$right_to_iter(), head.$left_to_iter().rev());
             if self.options.strength() == Strength::Identical && ret == Ordering::Equal {
-                return Decomposition::new(left_tail.chars(), self.decompositions, self.tables).cmp(
-                    Decomposition::new(right_tail.chars(), self.decompositions, self.tables),
+                return Decomposition::new(left_tail.$left_to_iter(), self.decompositions, self.tables).cmp(
+                    Decomposition::new(right_tail.$right_to_iter(), self.decompositions, self.tables),
                 );
             }
             ret
@@ -783,7 +848,10 @@ impl CollatorBorrowed<'_> {
         ,
         compare,
         str,
+        str,
         split_prefix,
+        chars,
+        chars,
     );
 
     compare!(
@@ -793,7 +861,10 @@ impl CollatorBorrowed<'_> {
         ,
         compare_utf8,
         [u8],
+        [u8],
         split_prefix_u8,
+        chars,
+        chars,
     );
 
     compare!(
@@ -802,7 +873,43 @@ impl CollatorBorrowed<'_> {
         ,
         compare_utf16,
         [u16],
+        [u16],
         split_prefix_u16,
+        chars,
+        chars,
+    );
+
+    compare!(
+        /// Compare Latin1 slices.
+        ///
+        /// ✨ *Enabled with the `latin1` Cargo feature.*
+        #[cfg(feature = "latin1")]
+        ,
+        compare_latin1,
+        [u8],
+        [u8],
+        split_prefix_latin1,
+        latin1_chars,
+        latin1_chars,
+    );
+
+    compare!(
+        /// Compare Latin1 slice with potentially ill-formed UTF-16
+        /// slice.
+        ///
+        /// If you need to compare a potentially ill-formed UTF-16
+        /// slice with a Latin1 slice, swap the arguments and
+        /// call `reverse()` on the return value.
+        ///
+        /// ✨ *Enabled with the `latin1` Cargo feature.*
+        #[cfg(feature = "latin1")]
+        ,
+        compare_latin1_utf16,
+        [u8],
+        [u16],
+        split_prefix_latin1_utf16,
+        latin1_chars,
+        chars,
     );
 
     #[inline(always)]
