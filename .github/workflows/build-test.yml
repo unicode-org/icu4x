@@ -348,7 +348,7 @@ jobs:
     - uses: dart-lang/setup-dart@0a8a0fc875eb934c15d08629302413c671d3f672 # v1.6.5
       with:
         # test latest stable toolchain on nightly cronjob
-        sdk: ${{ github.event_name != 'schedule' && '3.8.0' || 'stable'}}
+        sdk: ${{ github.event_name != 'schedule' && '3.9.0-21.0.dev' || 'dev'}}
 
     # Actual job
     - name: Run `cargo make ci-job-test-dart`
