@@ -7,8 +7,9 @@ environment:
   sdk: '>=3.7.0 <4.0.0'
 
 dependencies:
+  code_assets: ^0.19.4
   ffi: ^2.0.0
-  native_assets_cli: ^0.11.0
+  hooks: ^0.19.5
   meta: ^1.16.0
 
 dev_dependencies:
