@@ -6,8 +6,7 @@ import 'dart:io';
 
 import 'package:code_assets/code_assets.dart';
 import 'package:hooks/hooks.dart';
-
-import '../tool/build_libs.dart' show buildLib;
+import 'package:icu/build.dart';
 
 void main(List<String> args) async {
   await build(args, (input, output) async {
