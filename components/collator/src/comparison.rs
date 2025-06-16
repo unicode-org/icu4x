@@ -627,7 +627,7 @@ macro_rules! compare {
             if left_tail.is_empty() && right_tail.is_empty() {
                 return Ordering::Equal;
             }
-            let ret = self.compare_impl(left_tail.chars(), right_tail.chars(), head.chars());
+            let ret = self.compare_impl(left_tail.chars(), right_tail.chars(), head.chars().rev());
             if self.options.strength() == Strength::Identical && ret == Ordering::Equal {
                 return Decomposition::new(left_tail.chars(), self.decompositions, self.tables).cmp(
                     Decomposition::new(right_tail.chars(), self.decompositions, self.tables),
@@ -850,21 +850,18 @@ impl CollatorBorrowed<'_> {
 
     /// The implementation of the comparison operation.
     ///
-    /// `head_chars` is an iterator over the identical prefix and
-    /// `left_chars` and `right_chars` are iterators over the parts
-    /// after the identical prefix.
-    ///
-    /// Currently, all three have the same concrete type, so the
-    /// trait bound is given as `DoubleEndedIterator`.
-    /// `head_chars` is iterated backwards and `left_chars` and
-    /// `right_chars` forward. If this were a public API, this
-    /// should have three generic types, one for each argument,
-    /// for maximum flexibility.
-    fn compare_impl<I: DoubleEndedIterator<Item = char>>(
+    /// `head_chars` is an iterator _backward_ over the identical
+    /// prefix and `left_chars` and `right_chars` are iterators
+    /// _forward_ over the parts after the identical prefix.
+    fn compare_impl<
+        L: Iterator<Item = char>,
+        R: Iterator<Item = char>,
+        H: Iterator<Item = char>,
+    >(
         &self,
-        left_chars: I,
-        right_chars: I,
-        mut head_chars: I,
+        left_chars: L,
+        right_chars: R,
+        mut head_chars: H,
     ) -> Ordering {
         // Sadly, it looks like variable CEs and backward second level
         // require us to store the full 64-bit CEs instead of storing only
@@ -915,7 +912,7 @@ impl CollatorBorrowed<'_> {
         // This loop is only broken out of as goto forward.
         #[allow(clippy::never_loop)]
         'prefix: loop {
-            if let Some(mut head_last_c) = head_chars.next_back() {
+            if let Some(mut head_last_c) = head_chars.next() {
                 let norm_trie = &self.decompositions.trie;
                 let mut head_last = CharacterAndClassAndTrieValue::new_with_trie_val(
                     head_last_c,
@@ -1112,7 +1109,7 @@ impl CollatorBorrowed<'_> {
                     tail_first_ce32 = head_last_ce32;
                     tail_first_ok = head_last_ok;
 
-                    head_last_c = if let Some(head_last_c) = head_chars.next_back() {
+                    head_last_c = if let Some(head_last_c) = head_chars.next() {
                         head_last_c
                     } else {
                         // We need to step back beyond the start of the prefix.
