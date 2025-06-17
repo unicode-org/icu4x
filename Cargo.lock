@@ -1354,7 +1354,7 @@ dependencies = [
 
 [[package]]
 name = "icu_datetime_data"
-version = "2.0.0"
+version = "2.0.1"
 
 [[package]]
 name = "icu_decimal"
