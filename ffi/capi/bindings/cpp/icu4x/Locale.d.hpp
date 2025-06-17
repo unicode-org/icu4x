@@ -65,6 +65,8 @@ public:
    * See the [Rust documentation for `id`](https://docs.rs/icu/2.0.0/icu/locale/struct.Locale.html#structfield.id) for more information.
    */
   inline std::string basename() const;
+  template<typename W>
+  inline void basename_write(W& writeable_output) const;
 
   /**
    * Returns a string representation of the unicode extension.
@@ -72,6 +74,8 @@ public:
    * See the [Rust documentation for `extensions`](https://docs.rs/icu/2.0.0/icu/locale/struct.Locale.html#structfield.extensions) for more information.
    */
   inline std::optional<std::string> get_unicode_extension(std::string_view s) const;
+  template<typename W>
+  inline std::optional<std::monostate> get_unicode_extension_write(std::string_view s, W& writeable_output) const;
 
   /**
    * Set a Unicode extension.
@@ -86,6 +90,8 @@ public:
    * See the [Rust documentation for `id`](https://docs.rs/icu/2.0.0/icu/locale/struct.Locale.html#structfield.id) for more information.
    */
   inline std::string language() const;
+  template<typename W>
+  inline void language_write(W& writeable_output) const;
 
   /**
    * Set the language part of the {@link Locale}.
@@ -100,6 +106,8 @@ public:
    * See the [Rust documentation for `id`](https://docs.rs/icu/2.0.0/icu/locale/struct.Locale.html#structfield.id) for more information.
    */
   inline std::optional<std::string> region() const;
+  template<typename W>
+  inline std::optional<std::monostate> region_write(W& writeable_output) const;
 
   /**
    * Set the region part of the {@link Locale}.
@@ -114,6 +122,8 @@ public:
    * See the [Rust documentation for `id`](https://docs.rs/icu/2.0.0/icu/locale/struct.Locale.html#structfield.id) for more information.
    */
   inline std::optional<std::string> script() const;
+  template<typename W>
+  inline std::optional<std::monostate> script_write(W& writeable_output) const;
 
   /**
    * Set the script part of the {@link Locale}. Pass an empty string to remove the script.
@@ -128,6 +138,8 @@ public:
    * See the [Rust documentation for `normalize`](https://docs.rs/icu/2.0.0/icu/locale/struct.Locale.html#method.normalize) for more information.
    */
   inline static diplomat::result<std::string, icu4x::LocaleParseError> normalize(std::string_view s);
+  template<typename W>
+  inline static diplomat::result<std::monostate, icu4x::LocaleParseError> normalize_write(std::string_view s, W& writeable_output);
 
   /**
    * Returns a string representation of {@link Locale}.
@@ -135,6 +147,8 @@ public:
    * See the [Rust documentation for `write_to`](https://docs.rs/icu/2.0.0/icu/locale/struct.Locale.html#method.write_to) for more information.
    */
   inline std::string to_string() const;
+  template<typename W>
+  inline void to_string_write(W& writeable_output) const;
 
   /**
    * See the [Rust documentation for `normalizing_eq`](https://docs.rs/icu/2.0.0/icu/locale/struct.Locale.html#method.normalizing_eq) for more information.

@@ -108,6 +108,22 @@ inline capi::DiplomatWrite WriteFromString(std::string& string) {
   return w;
 }
 
+// This "trait" allows one to use _write() methods to efficiently
+// write to a custom string type. To do this you need to write a specialized
+// `WriteTrait<YourType>` (see WriteTrait<std::string> below)
+// that is capable of constructing a DiplomatWrite, which can wrap
+// your string type with appropriate resize/flush functionality.
+template<typename T> struct WriteTrait {
+  // Fill in this method on a specialization to implement this trait
+  // static inline capi::DiplomatWrite Construct(T& t);
+};
+
+template<> struct WriteTrait<std::string> {
+  static inline capi::DiplomatWrite Construct(std::string& t) {
+    return diplomat::WriteFromString(t);
+  }
+};
+
 template<class T> struct Ok {
   T inner;
   Ok(T&& i): inner(std::forward<T>(i)) {}

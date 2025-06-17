@@ -256,6 +256,8 @@ public:
    * See the [Rust documentation for `write_to`](https://docs.rs/fixed_decimal/0.7.0/fixed_decimal/type.Decimal.html#method.write_to) for more information.
    */
   inline std::string to_string() const;
+  template<typename W>
+  inline void to_string_write(W& writeable_output) const;
 
   inline const icu4x::capi::Decimal* AsFFI() const;
   inline icu4x::capi::Decimal* AsFFI();

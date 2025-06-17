@@ -80,7 +80,8 @@ public:
     WSegSpace = 22,
   };
 
-  WordBreak() = default;
+  WordBreak(): value(Value::Other) {}
+
   // Implicit conversions between enum and ::Value
   constexpr WordBreak(Value v) : value(v) {}
   constexpr operator Value() const { return value; }

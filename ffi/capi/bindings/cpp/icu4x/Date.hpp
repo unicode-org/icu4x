@@ -147,6 +147,12 @@ inline std::string icu4x::Date::month_code() const {
     &write);
   return output;
 }
+template<typename W>
+inline void icu4x::Date::month_code_write(W& writeable) const {
+  diplomat::capi::DiplomatWrite write = diplomat::WriteTrait<W>::Construct(writeable);
+  icu4x::capi::icu4x_Date_month_code_mv1(this->AsFFI(),
+    &write);
+}
 
 inline uint8_t icu4x::Date::month_number() const {
   auto result = icu4x::capi::icu4x_Date_month_number_mv1(this->AsFFI());
@@ -174,6 +180,12 @@ inline std::string icu4x::Date::era() const {
   icu4x::capi::icu4x_Date_era_mv1(this->AsFFI(),
     &write);
   return output;
+}
+template<typename W>
+inline void icu4x::Date::era_write(W& writeable) const {
+  diplomat::capi::DiplomatWrite write = diplomat::WriteTrait<W>::Construct(writeable);
+  icu4x::capi::icu4x_Date_era_mv1(this->AsFFI(),
+    &write);
 }
 
 inline uint8_t icu4x::Date::months_in_year() const {

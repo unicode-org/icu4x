@@ -197,6 +197,16 @@ inline diplomat::result<std::string, icu4x::DateTimeWriteError> icu4x::ZonedDate
     &write);
   return result.is_ok ? diplomat::result<std::string, icu4x::DateTimeWriteError>(diplomat::Ok<std::string>(std::move(output))) : diplomat::result<std::string, icu4x::DateTimeWriteError>(diplomat::Err<icu4x::DateTimeWriteError>(icu4x::DateTimeWriteError::FromFFI(result.err)));
 }
+template<typename W>
+inline diplomat::result<std::monostate, icu4x::DateTimeWriteError> icu4x::ZonedDateTimeFormatterGregorian::format_iso_write(const icu4x::IsoDate& iso_date, const icu4x::Time& time, const icu4x::TimeZoneInfo& zone, W& writeable) const {
+  diplomat::capi::DiplomatWrite write = diplomat::WriteTrait<W>::Construct(writeable);
+  auto result = icu4x::capi::icu4x_ZonedDateTimeFormatterGregorian_format_iso_mv1(this->AsFFI(),
+    iso_date.AsFFI(),
+    time.AsFFI(),
+    zone.AsFFI(),
+    &write);
+  return result.is_ok ? diplomat::result<std::monostate, icu4x::DateTimeWriteError>(diplomat::Ok<std::monostate>()) : diplomat::result<std::monostate, icu4x::DateTimeWriteError>(diplomat::Err<icu4x::DateTimeWriteError>(icu4x::DateTimeWriteError::FromFFI(result.err)));
+}
 
 inline const icu4x::capi::ZonedDateTimeFormatterGregorian* icu4x::ZonedDateTimeFormatterGregorian::AsFFI() const {
   return reinterpret_cast<const icu4x::capi::ZonedDateTimeFormatterGregorian*>(this);

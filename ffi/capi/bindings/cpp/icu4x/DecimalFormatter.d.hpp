@@ -67,6 +67,8 @@ public:
    * See the [Rust documentation for `format`](https://docs.rs/icu/2.0.0/icu/decimal/struct.DecimalFormatter.html#method.format) for more information.
    */
   inline std::string format(const icu4x::Decimal& value) const;
+  template<typename W>
+  inline void format_write(const icu4x::Decimal& value, W& writeable_output) const;
 
   inline const icu4x::capi::DecimalFormatter* AsFFI() const;
   inline icu4x::capi::DecimalFormatter* AsFFI();

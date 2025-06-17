@@ -36,7 +36,8 @@ public:
     WithEra = 2,
   };
 
-  YearStyle() = default;
+  YearStyle(): value(Value::Auto) {}
+
   // Implicit conversions between enum and ::Value
   constexpr YearStyle(Value v) : value(v) {}
   constexpr operator Value() const { return value; }

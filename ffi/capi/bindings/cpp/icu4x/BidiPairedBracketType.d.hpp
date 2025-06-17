@@ -36,7 +36,8 @@ public:
     None = 2,
   };
 
-  BidiPairedBracketType() = default;
+  BidiPairedBracketType(): value(Value::Open) {}
+
   // Implicit conversions between enum and ::Value
   constexpr BidiPairedBracketType(Value v) : value(v) {}
   constexpr operator Value() const { return value; }

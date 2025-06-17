@@ -46,7 +46,8 @@ public:
     Wide = 5,
   };
 
-  EastAsianWidth() = default;
+  EastAsianWidth(): value(Value::Neutral) {}
+
   // Implicit conversions between enum and ::Value
   constexpr EastAsianWidth(Value v) : value(v) {}
   constexpr operator Value() const { return value; }

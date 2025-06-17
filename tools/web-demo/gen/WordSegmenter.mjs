@@ -38,6 +38,15 @@ export default {
 			
 			return segments.join(" . ");
 		},
+		expr: (model, text) => {
+			switch (model) {
+				case '"LSTM"':
+					return 'WordSegmenter.createLstm().segment(text)';
+				case '"Dictionary"':
+					return 'WordSegmenter.createDictionary().segment(text)';
+			}
+			return 'WordSegmenter.createAuto().segment(text)';
+		},
 		funcName: "WordSegmenter.segment",
 		parameters: [
 			{
@@ -47,7 +56,7 @@ export default {
 				defaultValue: "Auto"
 			},
 			{
-				name: "Text",
+				name: "text",
 				type: "string",
 				typeUse: "string",
 				defaultValue: "โดยที่การยอมรับนับถือเกียรติศักดิ์ประจำตัว และสิทธิเท่าเทียมกันและโอนมิได้ของบรรดา สมาชิก ทั้ง หลายแห่งครอบครัว มนุษย์เป็นหลักมูลเหตุแห่งอิสรภาพ ความยุติธรรม และสันติภาพในโลก"

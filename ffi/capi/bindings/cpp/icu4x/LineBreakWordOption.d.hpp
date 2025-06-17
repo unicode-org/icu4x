@@ -36,7 +36,8 @@ public:
     KeepAll = 2,
   };
 
-  LineBreakWordOption() = default;
+  LineBreakWordOption(): value(Value::Normal) {}
+
   // Implicit conversions between enum and ::Value
   constexpr LineBreakWordOption(Value v) : value(v) {}
   constexpr operator Value() const { return value; }

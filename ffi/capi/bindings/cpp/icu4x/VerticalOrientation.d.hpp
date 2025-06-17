@@ -42,7 +42,8 @@ public:
     Upright = 3,
   };
 
-  VerticalOrientation() = default;
+  VerticalOrientation(): value(Value::Rotated) {}
+
   // Implicit conversions between enum and ::Value
   constexpr VerticalOrientation(Value v) : value(v) {}
   constexpr operator Value() const { return value; }

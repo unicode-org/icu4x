@@ -36,7 +36,8 @@ public:
     Unknown = 2,
   };
 
-  LocaleDirection() = default;
+  LocaleDirection(): value(Value::LeftToRight) {}
+
   // Implicit conversions between enum and ::Value
   constexpr LocaleDirection(Value v) : value(v) {}
   constexpr operator Value() const { return value; }

@@ -36,7 +36,8 @@ public:
     Letter = 2,
   };
 
-  SegmenterWordType() = default;
+  SegmenterWordType(): value(Value::None) {}
+
   // Implicit conversions between enum and ::Value
   constexpr SegmenterWordType(Value v) : value(v) {}
   constexpr operator Value() const { return value; }
