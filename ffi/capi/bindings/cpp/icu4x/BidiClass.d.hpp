@@ -80,7 +80,8 @@ public:
     PopDirectionalIsolate = 22,
   };
 
-  BidiClass() = default;
+  BidiClass(): value(Value::LeftToRight) {}
+
   // Implicit conversions between enum and ::Value
   constexpr BidiClass(Value v) : value(v) {}
   constexpr operator Value() const { return value; }

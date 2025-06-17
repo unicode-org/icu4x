@@ -46,7 +46,8 @@ public:
     LeadingVowelTrailingSyllable = 5,
   };
 
-  HangulSyllableType() = default;
+  HangulSyllableType(): value(Value::NotApplicable) {}
+
   // Implicit conversions between enum and ::Value
   constexpr HangulSyllableType(Value v) : value(v) {}
   constexpr operator Value() const { return value; }

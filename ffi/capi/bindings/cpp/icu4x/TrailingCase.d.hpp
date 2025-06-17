@@ -34,7 +34,8 @@ public:
     Unchanged = 1,
   };
 
-  TrailingCase() = default;
+  TrailingCase(): value(Value::Lower) {}
+
   // Implicit conversions between enum and ::Value
   constexpr TrailingCase(Value v) : value(v) {}
   constexpr operator Value() const { return value; }

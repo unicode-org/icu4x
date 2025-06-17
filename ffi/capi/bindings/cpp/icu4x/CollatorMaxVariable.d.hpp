@@ -38,7 +38,8 @@ public:
     Currency = 3,
   };
 
-  CollatorMaxVariable() = default;
+  CollatorMaxVariable(): value(Value::Space) {}
+
   // Implicit conversions between enum and ::Value
   constexpr CollatorMaxVariable(Value v) : value(v) {}
   constexpr operator Value() const { return value; }

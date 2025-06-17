@@ -48,7 +48,8 @@ public:
     Io = 8,
   };
 
-  DataError() = default;
+  DataError(): value(Value::Unknown) {}
+
   // Implicit conversions between enum and ::Value
   constexpr DataError(Value v) : value(v) {}
   constexpr operator Value() const { return value; }

@@ -38,7 +38,8 @@ public:
     Extension = 3,
   };
 
-  LocaleParseError() = default;
+  LocaleParseError(): value(Value::Unknown) {}
+
   // Implicit conversions between enum and ::Value
   constexpr LocaleParseError(Value v) : value(v) {}
   constexpr operator Value() const { return value; }

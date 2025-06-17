@@ -39,7 +39,8 @@ public:
     MissingTimeZoneVariant = 1,
   };
 
-  DateTimeWriteError() = default;
+  DateTimeWriteError(): value(Value::Unknown) {}
+
   // Implicit conversions between enum and ::Value
   constexpr DateTimeWriteError(Value v) : value(v) {}
   constexpr operator Value() const { return value; }

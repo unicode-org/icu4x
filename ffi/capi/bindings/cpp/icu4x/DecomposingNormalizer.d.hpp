@@ -70,6 +70,8 @@ public:
    * See the [Rust documentation for `normalize_utf8`](https://docs.rs/icu/2.0.0/icu/normalizer/struct.DecomposingNormalizerBorrowed.html#method.normalize_utf8) for more information.
    */
   inline std::string normalize(std::string_view s) const;
+  template<typename W>
+  inline void normalize_write(std::string_view s, W& writeable_output) const;
 
   /**
    * Check if a string is normalized

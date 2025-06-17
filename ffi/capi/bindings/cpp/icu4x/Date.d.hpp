@@ -134,6 +134,8 @@ public:
    * Additional information: [1](https://docs.rs/icu/2.0.0/icu/calendar/struct.Date.html#method.month)
    */
   inline std::string month_code() const;
+  template<typename W>
+  inline void month_code_write(W& writeable_output) const;
 
   /**
    * Returns the month number of this month.
@@ -175,6 +177,8 @@ public:
    * Additional information: [1](https://docs.rs/icu/2.0.0/icu/calendar/struct.Date.html#method.year)
    */
   inline std::string era() const;
+  template<typename W>
+  inline void era_write(W& writeable_output) const;
 
   /**
    * Returns the number of months in the year represented by this date

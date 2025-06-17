@@ -568,6 +568,28 @@ export class DiplomatReceiveBuf {
 }
 
 /**
+ * For preallocating owned slices
+ * 
+ * Doesn't actually do anything, but helps code readability of generated code
+ */
+export class OwnedSliceLeaker {
+    #items = [];
+
+    constructor() {
+    }
+
+    /**
+     * Leak an item
+     * @param {DiplomatBuf} item
+     * @returns {DiplomatBuf}
+     */
+    alloc(item) {
+        item.leak();
+        return item;
+    }
+}
+
+/**
  * For cleaning up slices inside struct _intoFFI functions.
  * Based somewhat on how the Dart backend handles slice cleanup.
  *

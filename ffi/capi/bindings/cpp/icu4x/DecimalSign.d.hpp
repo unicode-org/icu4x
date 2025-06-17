@@ -38,7 +38,8 @@ public:
     Positive = 2,
   };
 
-  DecimalSign() = default;
+  DecimalSign(): value(Value::None) {}
+
   // Implicit conversions between enum and ::Value
   constexpr DecimalSign(Value v) : value(v) {}
   constexpr operator Value() const { return value; }
