@@ -100,7 +100,13 @@ impl SourceDataProvider {
             .filter_map(|(&bcp47, bcp47_tzid_data)| {
                 Some((
                     bcp47,
-                    bcp47_tzid_data.alias.as_ref()?.split(' ').next().unwrap().to_owned(),
+                    bcp47_tzid_data
+                        .alias
+                        .as_ref()?
+                        .split(' ')
+                        .next()
+                        .unwrap()
+                        .to_owned(),
                 ))
             })
             .chain(self.future_zones()?.map(|(a, b)| (b, a)))
