@@ -40,7 +40,8 @@ public:
     UnknownCalendar = 4,
   };
 
-  Rfc9557ParseError() = default;
+  Rfc9557ParseError(): value(Value::Unknown) {}
+
   // Implicit conversions between enum and ::Value
   constexpr Rfc9557ParseError(Value v) : value(v) {}
   constexpr operator Value() const { return value; }

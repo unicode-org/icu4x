@@ -36,7 +36,8 @@ public:
     Syntax = 2,
   };
 
-  DecimalParseError() = default;
+  DecimalParseError(): value(Value::Unknown) {}
+
   // Implicit conversions between enum and ::Value
   constexpr DecimalParseError(Value v) : value(v) {}
   constexpr operator Value() const { return value; }

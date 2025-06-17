@@ -46,7 +46,8 @@ public:
     Other = 5,
   };
 
-  PluralCategory() = default;
+  PluralCategory(): value(Value::Zero) {}
+
   // Implicit conversions between enum and ::Value
   constexpr PluralCategory(Value v) : value(v) {}
   constexpr operator Value() const { return value; }

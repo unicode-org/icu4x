@@ -50,7 +50,8 @@ public:
     HalfFloor = 8,
   };
 
-  DecimalSignedRoundingMode() = default;
+  DecimalSignedRoundingMode(): value(Value::Expand) {}
+
   // Implicit conversions between enum and ::Value
   constexpr DecimalSignedRoundingMode(Value v) : value(v) {}
   constexpr operator Value() const { return value; }

@@ -62,6 +62,8 @@ public:
    * See the [Rust documentation for `format`](https://docs.rs/icu/2.0.0/icu/datetime/type.NoCalendarFormatter.html#method.format) for more information.
    */
   inline std::string format(const icu4x::Time& time) const;
+  template<typename W>
+  inline void format_write(const icu4x::Time& time, W& writeable_output) const;
 
   inline const icu4x::capi::TimeFormatter* AsFFI() const;
   inline icu4x::capi::TimeFormatter* AsFFI();

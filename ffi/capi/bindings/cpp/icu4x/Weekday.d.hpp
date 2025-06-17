@@ -41,7 +41,8 @@ public:
     Sunday = 7,
   };
 
-  Weekday() = default;
+  Weekday(): value(Value::Monday) {}
+
   // Implicit conversions between enum and ::Value
   constexpr Weekday(Value v) : value(v) {}
   constexpr operator Value() const { return value; }

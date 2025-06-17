@@ -34,7 +34,8 @@ public:
     Standard = 1,
   };
 
-  LanguageDisplay() = default;
+  LanguageDisplay(): value(Value::Dialect) {}
+
   // Implicit conversions between enum and ::Value
   constexpr LanguageDisplay(Value v) : value(v) {}
   constexpr operator Value() const { return value; }

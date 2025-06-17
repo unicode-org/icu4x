@@ -56,6 +56,8 @@ public:
    * See the [Rust documentation for `of`](https://docs.rs/icu/2.0.0/icu/experimental/displaynames/struct.LocaleDisplayNamesFormatter.html#method.of) for more information.
    */
   inline std::string of(const icu4x::Locale& locale) const;
+  template<typename W>
+  inline void of_write(const icu4x::Locale& locale, W& writeable_output) const;
 
   inline const icu4x::capi::LocaleDisplayNamesFormatter* AsFFI() const;
   inline icu4x::capi::LocaleDisplayNamesFormatter* AsFFI();

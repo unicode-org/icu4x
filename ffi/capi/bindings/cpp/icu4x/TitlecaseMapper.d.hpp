@@ -58,6 +58,8 @@ public:
    * See the [Rust documentation for `titlecase_segment`](https://docs.rs/icu/2.0.0/icu/casemap/struct.TitlecaseMapperBorrowed.html#method.titlecase_segment) for more information.
    */
   inline diplomat::result<std::string, diplomat::Utf8Error> titlecase_segment_v1(std::string_view s, const icu4x::Locale& locale, icu4x::TitlecaseOptionsV1 options) const;
+  template<typename W>
+  inline diplomat::result<std::monostate, diplomat::Utf8Error> titlecase_segment_v1_write(std::string_view s, const icu4x::Locale& locale, icu4x::TitlecaseOptionsV1 options, W& writeable_output) const;
 
   /**
    * Returns the full titlecase mapping of the given string, using compiled data (avoids having to allocate a TitlecaseMapper object)
@@ -67,6 +69,8 @@ public:
    * See the [Rust documentation for `titlecase_segment`](https://docs.rs/icu/2.0.0/icu/casemap/struct.TitlecaseMapperBorrowed.html#method.titlecase_segment) for more information.
    */
   inline static diplomat::result<std::string, diplomat::Utf8Error> titlecase_segment_with_compiled_data_v1(std::string_view s, const icu4x::Locale& locale, icu4x::TitlecaseOptionsV1 options);
+  template<typename W>
+  inline static diplomat::result<std::monostate, diplomat::Utf8Error> titlecase_segment_with_compiled_data_v1_write(std::string_view s, const icu4x::Locale& locale, icu4x::TitlecaseOptionsV1 options, W& writeable_output);
 
   inline const icu4x::capi::TitlecaseMapper* AsFFI() const;
   inline icu4x::capi::TitlecaseMapper* AsFFI();

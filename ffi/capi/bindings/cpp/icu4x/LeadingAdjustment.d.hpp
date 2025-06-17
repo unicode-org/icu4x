@@ -36,7 +36,8 @@ public:
     ToCased = 2,
   };
 
-  LeadingAdjustment() = default;
+  LeadingAdjustment(): value(Value::Auto) {}
+
   // Implicit conversions between enum and ::Value
   constexpr LeadingAdjustment(Value v) : value(v) {}
   constexpr operator Value() const { return value; }

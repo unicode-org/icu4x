@@ -59,6 +59,14 @@ inline diplomat::result<std::string, icu4x::LocaleParseError> icu4x::RegionDispl
     &write);
   return result.is_ok ? diplomat::result<std::string, icu4x::LocaleParseError>(diplomat::Ok<std::string>(std::move(output))) : diplomat::result<std::string, icu4x::LocaleParseError>(diplomat::Err<icu4x::LocaleParseError>(icu4x::LocaleParseError::FromFFI(result.err)));
 }
+template<typename W>
+inline diplomat::result<std::monostate, icu4x::LocaleParseError> icu4x::RegionDisplayNames::of_write(std::string_view region, W& writeable) const {
+  diplomat::capi::DiplomatWrite write = diplomat::WriteTrait<W>::Construct(writeable);
+  auto result = icu4x::capi::icu4x_RegionDisplayNames_of_mv1(this->AsFFI(),
+    {region.data(), region.size()},
+    &write);
+  return result.is_ok ? diplomat::result<std::monostate, icu4x::LocaleParseError>(diplomat::Ok<std::monostate>()) : diplomat::result<std::monostate, icu4x::LocaleParseError>(diplomat::Err<icu4x::LocaleParseError>(icu4x::LocaleParseError::FromFFI(result.err)));
+}
 
 inline const icu4x::capi::RegionDisplayNames* icu4x::RegionDisplayNames::AsFFI() const {
   return reinterpret_cast<const icu4x::capi::RegionDisplayNames*>(this);

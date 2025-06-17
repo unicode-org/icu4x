@@ -36,7 +36,8 @@ public:
     Narrow = 2,
   };
 
-  ListLength() = default;
+  ListLength(): value(Value::Wide) {}
+
   // Implicit conversions between enum and ::Value
   constexpr ListLength(Value v) : value(v) {}
   constexpr operator Value() const { return value; }

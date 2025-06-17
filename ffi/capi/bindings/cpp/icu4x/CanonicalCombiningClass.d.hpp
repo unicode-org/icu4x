@@ -150,7 +150,8 @@ public:
     IotaSubscript = 240,
   };
 
-  CanonicalCombiningClass() = default;
+  CanonicalCombiningClass(): value(Value::NotReordered) {}
+
   // Implicit conversions between enum and ::Value
   constexpr CanonicalCombiningClass(Value v) : value(v) {}
   constexpr operator Value() const { return value; }

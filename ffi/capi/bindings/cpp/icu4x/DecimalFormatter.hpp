@@ -76,6 +76,13 @@ inline std::string icu4x::DecimalFormatter::format(const icu4x::Decimal& value) 
     &write);
   return output;
 }
+template<typename W>
+inline void icu4x::DecimalFormatter::format_write(const icu4x::Decimal& value, W& writeable) const {
+  diplomat::capi::DiplomatWrite write = diplomat::WriteTrait<W>::Construct(writeable);
+  icu4x::capi::icu4x_DecimalFormatter_format_mv1(this->AsFFI(),
+    value.AsFFI(),
+    &write);
+}
 
 inline const icu4x::capi::DecimalFormatter* icu4x::DecimalFormatter::AsFFI() const {
   return reinterpret_cast<const icu4x::capi::DecimalFormatter*>(this);

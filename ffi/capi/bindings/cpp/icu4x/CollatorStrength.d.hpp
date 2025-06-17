@@ -40,7 +40,8 @@ public:
     Identical = 4,
   };
 
-  CollatorStrength() = default;
+  CollatorStrength(): value(Value::Primary) {}
+
   // Implicit conversions between enum and ::Value
   constexpr CollatorStrength(Value v) : value(v) {}
   constexpr operator Value() const { return value; }
