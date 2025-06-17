@@ -32,16 +32,12 @@ void main(List<String> args) async {
     );
 
     // Rebuild if bindings change
-    output.addDependencies(
-      Directory(
-        '${input.packageRoot.path}/lib/src',
-      ).listSync().map((e) => Uri.file(e.path)),
-    );
+    output.addDependency(input.packageRoot);
 
     output.assets.code.add(
       CodeAsset(
         package: input.packageName,
-        name: 'src/lib.g.dart',
+        name: 'src/dart/lib.g.dart',
         linkMode: DynamicLoadingBundled(),
         file: lib.uri,
       ),
