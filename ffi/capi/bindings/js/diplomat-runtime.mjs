@@ -569,7 +569,7 @@ export class DiplomatReceiveBuf {
 
 /**
  * For preallocating owned slices
- * 
+ *
  * Doesn't actually do anything, but helps code readability of generated code
  */
 export class OwnedSliceLeaker {

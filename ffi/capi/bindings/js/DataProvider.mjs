@@ -53,7 +53,7 @@ export class DataProvider {
     static fromByteSlice(blob) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
 
-        const blobSlice = OwnedSliceLeaker.alloc(diplomatRuntime.DiplomatBuf.sliceWrapper(wasm, diplomatRuntime.DiplomatBuf.slice(wasm, blob, "u8")));
+        const blobSlice = diplomatRuntime.OwnedSliceLeaker.alloc(diplomatRuntime.DiplomatBuf.sliceWrapper(wasm, diplomatRuntime.DiplomatBuf.slice(wasm, blob, "u8")));
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
