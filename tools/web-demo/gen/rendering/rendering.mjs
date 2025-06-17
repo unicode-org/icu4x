@@ -5,12 +5,12 @@ function generateTemplate(className, variable, selector) {
 }
 
 class ParameterTemplate extends HTMLElement {
-    default = null;
+    default;
 
     inputElement = null;
 
     static baseTemplate;
-    constructor(options = {}, className, selector, defaultValue=null, ...args) {
+    constructor(options = {}, className, selector, ...args) {
         super();
         generateTemplate(ParameterTemplate, "baseTemplate", "#parameter");
         generateTemplate(className, "template", selector);
@@ -33,9 +33,7 @@ class ParameterTemplate extends HTMLElement {
 
         if ("defaultValue" in options) {
             this.default = options.defaultValue;
-            this.setValue(options.defaultValue);
-        } else if (this.default === null) {
-            this.default = defaultValue;
+            this.setValue(this.default);
         }
     }
 
@@ -69,7 +67,7 @@ customElements.define("terminus-param", ParameterTemplate);
 class BooleanTemplate extends ParameterTemplate {
     static template;
     constructor(options) {
-        super(options, BooleanTemplate, "template#boolean", false);
+        super(options, BooleanTemplate, "template#boolean");
     }
 
     getEventValue(event) {
@@ -90,7 +88,7 @@ customElements.define("terminus-param-boolean", BooleanTemplate);
 class NumberTemplate extends ParameterTemplate {
     static template;
     constructor(options) {
-        super(options, NumberTemplate, "template#number", 0);
+        super(options, NumberTemplate, "template#number");
     }
 
     getEventValue(event) {
@@ -107,7 +105,7 @@ customElements.define("terminus-param-number", NumberTemplate);
 class StringTemplate extends ParameterTemplate {
     static template;
     constructor(options) {
-        super(options, StringTemplate, "template#string", "");
+        super(options, StringTemplate, "template#string");
     }
 }
 
@@ -116,7 +114,7 @@ customElements.define("terminus-param-string", StringTemplate);
 class CodepointTemplate extends ParameterTemplate {
     static template;
     constructor(options) {
-        super(options, CodepointTemplate, "template#string", "");
+        super(options, CodepointTemplate, "template#string");
     }
 
     getEventValue(event) {
@@ -145,7 +143,7 @@ customElements.define("terminus-param-codepoint", CodepointTemplate);
 class StringArrayTemplate extends ParameterTemplate {
     static template;
     constructor(options) {
-        super(options, StringArrayTemplate, "template#string-array", []);
+        super(options, StringArrayTemplate, "template#string-array");
     }
 
     getEventValue(event) {
@@ -179,7 +177,7 @@ class EnumTemplate extends ParameterTemplate {
 
     #enumType;
     constructor(options, enumType) {
-        super(options, EnumTemplate, "template#enum", null, enumType);
+        super(options, EnumTemplate, "template#enum", enumType);
         this.#enumType = enumType;
     }
 

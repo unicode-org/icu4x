@@ -15,10 +15,11 @@ export default {
 
 			return locale.toString();
 		},
+		expr: (locale) => `let locale = Locale.fromString(${locale});\nnew LocaleCanonicalizer().canonicalize(locale);\nlocale`,
 		funcName: "LocaleCanonicalizer.canonicalize",
 		parameters: [
 			{
-                name: "Locale:Name",
+                name: "locale_name",
                 type: "string",
                 typeUse: "string"
 			}

@@ -35,7 +35,7 @@ export default {
 	  ]
 	},
 	resolve: {
-	  extensions: ['.mjs'],
+	  extensions: ['.mjs', '.js'],
 	  fallback: {
 		"fs": false,
 	  },

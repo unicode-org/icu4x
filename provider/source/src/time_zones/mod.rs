@@ -46,6 +46,19 @@ enum MzMembership {
 }
 
 impl SourceDataProvider {
+    // Lists additional zones that haven't been added to CLDR yet.
+    // If data is generated with a TZDB that contains these zones, they are added.
+    fn future_zones(&self) -> Result<impl Iterator<Item = (String, TimeZone)> + '_, DataError> {
+        let tzdb = self.tzdb()?.transitions()?;
+        Ok([(
+            "America/Coyhaique",
+            TimeZone(icu::locale::subtags::subtag!("clcxq")),
+        )]
+        .into_iter()
+        .filter(|(i, _)| tzdb.get_zoneset(i).is_some())
+        .map(|(i, t)| (String::from(i), t)))
+    }
+
     fn reverse_metazones(
         &self,
     ) -> Result<&BTreeMap<(MetazoneId, MzMembership), Vec<TimeZone>>, DataError> {
@@ -168,6 +181,7 @@ impl SourceDataProvider {
                         );
                     }
                 }
+                bcp47_tzids.extend(self.future_zones()?);
                 Ok(bcp47_tzids)
             })
             .as_ref()
@@ -213,6 +227,7 @@ impl SourceDataProvider {
                         );
                     }
                 }
+                canonical_tzids.extend(self.future_zones()?.map(|(i, t)| (t, i)));
                 Ok(canonical_tzids)
             })
             .as_ref()
