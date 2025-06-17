@@ -4,6 +4,3 @@
 
 [demo-gen]
 module-name = "icu4x"
-
-[js]
-abi = "spec"
