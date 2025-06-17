@@ -5,7 +5,7 @@
 import 'dart:io';
 
 import 'package:args/args.dart';
-import 'package:native_assets_cli/code_assets.dart';
+import 'package:code_assets/code_assets.dart';
 import 'package:path/path.dart' as path;
 
 const crateName = 'icu_capi';
@@ -17,18 +17,18 @@ Future<void> main(List<String> args) async {
   const simulatorKey = 'simulator';
   const compileTypeKey = 'compile_type';
   const cargoFeaturesKey = 'cargo_features';
-  final argParser =
-      ArgParser()
-        ..addOption(fileKey, mandatory: true)
-        ..addOption(
-          compileTypeKey,
-          allowed: ['static', 'dynamic'],
-          mandatory: true,
-        )
-        ..addFlag(simulatorKey, defaultsTo: false)
-        ..addOption(osKey, mandatory: true)
-        ..addOption(architectureKey, mandatory: true)
-        ..addMultiOption(cargoFeaturesKey, defaultsTo: ['default_components']);
+  const workingDirectoryKey = 'working_directory';
+  final argParser = ArgParser()
+    ..addOption(fileKey, mandatory: true)
+    ..addOption(compileTypeKey, allowed: ['static', 'dynamic'], mandatory: true)
+    ..addFlag(simulatorKey, defaultsTo: false)
+    ..addOption(osKey, mandatory: true)
+    ..addOption(architectureKey, mandatory: true)
+    ..addOption(workingDirectoryKey)
+    ..addMultiOption(
+      cargoFeaturesKey,
+      defaultsTo: ['default_components', 'compiled_data'],
+    );
 
   ArgResults parsed;
   try {
@@ -46,12 +46,20 @@ Future<void> main(List<String> args) async {
     ),
     parsed.option(compileTypeKey)! == 'static',
     parsed.flag(simulatorKey),
-    File.fromUri(Platform.script).parent,
+    (parsed.option(workingDirectoryKey) != null
+            ? Directory(parsed.option(workingDirectoryKey)!)
+            : null) ??
+        File.fromUri(Platform.script).parent,
     parsed.multiOption(cargoFeaturesKey),
   );
-  await lib.copy(
-    Uri.file(parsed.option(fileKey)!).toFilePath(windows: Platform.isWindows),
-  );
+  if (!lib.existsSync()) {
+    throw FileSystemException('Building the dylib failed', lib.path);
+  }
+  final file = Uri.file(
+    parsed.option(fileKey)!,
+  ).toFilePath(windows: Platform.isWindows);
+  File(file).parent.createSync(recursive: true);
+  await lib.copy(file);
 }
 
 // Copied from Dart's package:intl4x build.dart, see
@@ -147,10 +155,9 @@ String _asRustTarget(OS os, Architecture? architecture, bool isSimulator) {
     (OS.windows, Architecture.arm64) => 'aarch64-pc-windows-msvc',
     (OS.windows, Architecture.ia32) => 'i686-pc-windows-msvc',
     (OS.windows, Architecture.x64) => 'x86_64-pc-windows-msvc',
-    (_, _) =>
-      throw UnimplementedError(
-        'Target ${(os, architecture)} not available for rust',
-      ),
+    (_, _) => throw UnimplementedError(
+      'Target ${(os, architecture)} not available for rust',
+    ),
   };
 }
 

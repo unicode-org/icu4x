@@ -4,9 +4,9 @@
 
 import 'dart:io';
 
-import 'package:native_assets_cli/code_assets.dart';
-
-import '../tool/build_libs.dart' show buildLib;
+import 'package:code_assets/code_assets.dart';
+import 'package:hooks/hooks.dart';
+import 'package:icu/build.dart';
 
 void main(List<String> args) async {
   await build(args, (input, output) async {
@@ -32,19 +32,13 @@ void main(List<String> args) async {
     );
 
     // Rebuild if bindings change
-    output.addDependencies(
-      Directory(
-        '${input.packageRoot.path}/lib/src',
-      ).listSync().map((e) => Uri.file(e.path)),
-    );
+    output.addDependency(input.packageRoot);
 
     output.assets.code.add(
       CodeAsset(
         package: input.packageName,
-        name: 'src/lib.g.dart',
+        name: 'src/dart/lib.g.dart',
         linkMode: DynamicLoadingBundled(),
-        os: input.config.code.targetOS,
-        architecture: input.config.code.targetArchitecture,
         file: lib.uri,
       ),
     );
