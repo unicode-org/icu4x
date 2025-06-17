@@ -16,6 +16,8 @@ Several crates have had patch releases in the 2.0 stream:
   - (2.0.1) Add `DataProvider` constructors in JS and Dart (unicode-org#6596)
   - (2.0.1) Fix `TimeZoneVariant` constructor (unicode-org#6610)
   - (2.0.2) Add `Locale::set_unicode_extension` (unicode-org#6636)
+- `icu_datetime_data`, `icu_time_data`, `icu_provider_source`
+  - (2.0.1) Update to tzdb 2025b
 
 ## icu4x 2.0
 
