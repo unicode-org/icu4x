@@ -583,7 +583,7 @@ export class OwnedSliceLeaker {
      * @param {DiplomatBuf} item
      * @returns {DiplomatBuf}
      */
-    alloc(item) {
+    static alloc(item) {
         item.leak();
         return item;
     }
