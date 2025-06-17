@@ -42,7 +42,7 @@ const COMPONENTS: &[(&str, &[DataMarkerInfo], &str)] = &[
         r#"version = "2.0.1""#,
     ),
     ("segmenter", icu::segmenter::provider::MARKERS, REPO_VERSION),
-    ("time", icu::time::provider::MARKERS, REPO_VERSION),
+    ("time", icu::time::provider::MARKERS, r#"version = "2.0.1""#),
     (
         "experimental",
         icu::experimental::provider::MARKERS,
