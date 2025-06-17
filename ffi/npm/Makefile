@@ -18,7 +18,7 @@ lib/index.mjs: FORCE
 ../../target/wasm32-unknown-unknown/release/icu_capi.wasm: FORCE
 	rustup toolchain install ${PINNED_CI_NIGHTLY}
 	rustup component add rust-src --toolchain ${PINNED_CI_NIGHTLY}
-	RUSTFLAGS="-Cpanic=abort -Copt-level=s -C link-args=-zstack-size=${WASM_STACK_SIZE} -Clto -Cembed-bitcode" \
+	RUSTFLAGS="-Cpanic=abort -Copt-level=s -C link-args=-zstack-size=${WASM_STACK_SIZE} -Clto -Cembed-bitcode -Zwasm-c-abi=spec" \
 	cargo +${PINNED_CI_NIGHTLY} rustc \
 		-Z build-std=std,panic_abort -Z build-std-features=panic_immediate_abort \
 		--target wasm32-unknown-unknown \
