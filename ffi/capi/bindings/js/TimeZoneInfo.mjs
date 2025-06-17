@@ -69,7 +69,7 @@ export class TimeZoneInfo {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
 
 
-        const result = wasm.icu4x_TimeZoneInfo_from_parts_mv1(id.ffiValue, offset.ffiValue ?? 0, ...diplomatRuntime.optionToArgsForCalling(variant, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]));
+        const result = wasm.icu4x_TimeZoneInfo_from_parts_mv1(id.ffiValue, offset.ffiValue ?? 0, diplomatRuntime.optionToBufferForCalling(wasm, variant, 4, 4, functionCleanupArena, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]));
 
         try {
             return new TimeZoneInfo(diplomatRuntime.internalConstructor, result, []);

@@ -91,7 +91,13 @@ export class CollatorResolvedOptions {
         functionCleanupArena,
         appendArrayMap
     ) {
-        return [this.#strength.ffiValue, this.#alternateHandling.ffiValue, this.#caseFirst.ffiValue, this.#maxVariable.ffiValue, this.#caseLevel.ffiValue, this.#numeric.ffiValue]
+        let buffer = diplomatRuntime.DiplomatBuf.struct(wasm, 24, 4);
+
+        this._writeToArrayBuffer(wasm.memory.buffer, buffer.ptr, functionCleanupArena, appendArrayMap);
+
+        functionCleanupArena.alloc(buffer);
+
+        return buffer.ptr;
     }
 
     static _fromSuppliedValue(internalConstructor, obj) {

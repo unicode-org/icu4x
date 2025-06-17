@@ -114,7 +114,7 @@ export class LocaleFallbacker {
         let aEdges = [this];
 
 
-        const result = wasm.icu4x_LocaleFallbacker_for_config_mv1(this.ffiValue, ...LocaleFallbackConfig._fromSuppliedValue(diplomatRuntime.internalConstructor, config)._intoFFI(functionCleanupArena, {}));
+        const result = wasm.icu4x_LocaleFallbacker_for_config_mv1(this.ffiValue, LocaleFallbackConfig._fromSuppliedValue(diplomatRuntime.internalConstructor, config)._intoFFI(functionCleanupArena, {}, false));
 
         try {
             return new LocaleFallbackerWithConfig(diplomatRuntime.internalConstructor, result, [], aEdges);

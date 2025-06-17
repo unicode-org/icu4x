@@ -117,7 +117,7 @@ export class CodePointSetData {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
 
 
-        const result = wasm.icu4x_CodePointSetData_create_general_category_group_mv1(...GeneralCategoryGroup._fromSuppliedValue(diplomatRuntime.internalConstructor, group)._intoFFI(functionCleanupArena, {}));
+        const result = wasm.icu4x_CodePointSetData_create_general_category_group_mv1(GeneralCategoryGroup._fromSuppliedValue(diplomatRuntime.internalConstructor, group)._intoFFI(functionCleanupArena, {}, false));
 
         try {
             return new CodePointSetData(diplomatRuntime.internalConstructor, result, []);
@@ -3934,11 +3934,11 @@ export class CodePointSetData {
     static createForEcma262(propertyName) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
 
-        const propertyNameSlice = diplomatRuntime.DiplomatBuf.str8(wasm, propertyName);
+        const propertyNameSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.sliceWrapper(wasm, diplomatRuntime.DiplomatBuf.str8(wasm, propertyName)));
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_CodePointSetData_create_for_ecma262_mv1(diplomatReceive.buffer, ...propertyNameSlice.splat());
+        const result = wasm.icu4x_CodePointSetData_create_for_ecma262_mv1(diplomatReceive.buffer, propertyNameSlice.ptr);
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -3963,11 +3963,11 @@ export class CodePointSetData {
     static createForEcma262WithProvider(provider, propertyName) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
 
-        const propertyNameSlice = diplomatRuntime.DiplomatBuf.str8(wasm, propertyName);
+        const propertyNameSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.sliceWrapper(wasm, diplomatRuntime.DiplomatBuf.str8(wasm, propertyName)));
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_CodePointSetData_create_for_ecma262_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue, ...propertyNameSlice.splat());
+        const result = wasm.icu4x_CodePointSetData_create_for_ecma262_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue, propertyNameSlice.ptr);
 
         try {
             if (!diplomatReceive.resultFlag) {
