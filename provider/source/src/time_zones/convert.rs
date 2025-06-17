@@ -98,8 +98,13 @@ impl SourceDataProvider {
         let mut exemplar_cities = bcp47_tzids
             .iter()
             .filter_map(|(&bcp47, bcp47_tzid_data)| {
-                let canonical_alias = bcp47_tzid_data.alias.as_ref()?.split(' ').next().unwrap(); // non-empty
-
+                Some((
+                    bcp47,
+                    bcp47_tzid_data.alias.as_ref()?.split(' ').next().unwrap().to_owned(),
+                ))
+            })
+            .chain(self.future_zones()?.map(|(a, b)| (b, a)))
+            .filter_map(|(bcp47, canonical_alias)| {
                 // Etc zones don't have locations, with the exception of Unknown, which we still want to skip in root
                 if canonical_alias.starts_with("Etc/")
                     && (canonical_alias != "Etc/Unknown" || locale.is_unknown())
