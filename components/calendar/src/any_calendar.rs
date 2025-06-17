@@ -923,31 +923,25 @@ pub trait IntoAnyCalendar: Calendar + Sized {
     /// Convert this calendar into an [`AnyCalendar`], moving it
     ///
     /// You should not need to call this method directly
-    #[cfg_attr(not(feature = "unstable"), doc(hidden))]
     fn to_any(self) -> AnyCalendar;
 
     /// The [`AnyCalendarKind`] enum variant associated with this calendar
-    #[cfg_attr(not(feature = "unstable"), doc(hidden))]
     fn kind(&self) -> AnyCalendarKind;
 
     /// Move an [`AnyCalendar`] into a `Self`, or returning it as an error
-    #[cfg_attr(not(feature = "unstable"), doc(hidden))]
     /// if the types do not match.
     ///
     /// You should not need to call this method directly
-    #[cfg_attr(not(feature = "unstable"), doc(hidden))]
     fn from_any(any: AnyCalendar) -> Result<Self, AnyCalendar>;
 
     /// Convert an [`AnyCalendar`] reference into a `Self` reference.
     ///
     /// You should not need to call this method directly
-    #[cfg_attr(not(feature = "unstable"), doc(hidden))]
     fn from_any_ref(any: &AnyCalendar) -> Option<&Self>;
 
     /// Convert a date for this calendar into an `AnyDateInner`
     ///
     /// You should not need to call this method directly
-    #[cfg_attr(not(feature = "unstable"), doc(hidden))]
     fn date_to_any(&self, d: &Self::DateInner) -> AnyDateInner;
 }
 

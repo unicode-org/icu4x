@@ -295,25 +295,14 @@ impl<A: AsCalendar> Date<A> {
     ///
     /// AnyCalendar *will* panic if AnyCalendar [`Date`] objects with mismatching
     /// date and calendar types are constructed
-    ///
-    /// <div class="stab unstable">
-    /// 🚧 This method is considered unstable; it may change at any time, in breaking or non-breaking ways,
-    /// including in SemVer minor releases. This requires the `unstable` Cargo feature.
-    /// </div>
     #[inline]
-    #[cfg(feature = "unstable")]
     pub fn from_raw(inner: <A::Calendar as Calendar>::DateInner, calendar: A) -> Self {
         Self { inner, calendar }
     }
 
     /// Get the inner date implementation. Should not be called outside of calendar implementations
-    ///
-    /// <div class="stab unstable">
-    /// 🚧 This method is considered unstable; it may change at any time, in breaking or non-breaking ways,
-    /// including in SemVer minor releases. This requires the `unstable` Cargo feature.
-    /// </div>
+
     #[inline]
-    #[cfg(feature = "unstable")]
     pub fn inner(&self) -> &<A::Calendar as Calendar>::DateInner {
         &self.inner
     }
