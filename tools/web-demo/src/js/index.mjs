@@ -4,6 +4,7 @@
 
 import { RenderInfo, lib } from "../../gen/index.mjs";
 import { TerminusRender } from "../../gen/rendering/rendering.mjs";
+import beautify from 'js-beautify';
 
 // Renders all termini into the class="container" element
 Object.values(RenderInfo.termini).toSorted((a, b) => a.funcName < b.funcName ? -1 : 1).forEach((t) => {
@@ -12,6 +13,15 @@ Object.values(RenderInfo.termini).toSorted((a, b) => a.funcName < b.funcName ? -
 	summary.innerHTML = `<code>${t.funcName}</code>`;
 	details.appendChild(summary);
 	details.appendChild(document.createElement("br"));
-	details.appendChild(new TerminusRender(lib, () => { }, RenderInfo.termini[t.funcName]));
+	details.appendChild(new TerminusRender(lib, () => { }, RenderInfo.termini[t.funcName],
+		(code) => {
+			code.innerText = beautify.js(code.innerText, {
+				"indent_size": "2",
+				"indent_char": " ",
+				"break_chained_methods": true,
+				// "brace_style": "collapse",
+				"wrap_line_length": "45"
+			});
+		}));
 	document.getElementsByClassName("container")[0].appendChild(details);
 });
