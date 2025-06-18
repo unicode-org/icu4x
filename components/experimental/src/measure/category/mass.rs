@@ -58,14 +58,12 @@ mod tests {
 
     #[test]
     fn test_mass_category() {
-        let parser = MeasureUnitParser::default();
-
         let gram = Mass::gram();
-        let gram_parsed = parser.try_from_str("gram").unwrap();
+        let gram_parsed = MeasureUnitParser::try_from_str("gram").unwrap();
         assert_eq!(gram.unit, gram_parsed);
 
         let kilogram = Mass::kilogram();
-        let kilogram_parsed = parser.try_from_str("kilogram").unwrap();
+        let kilogram_parsed = MeasureUnitParser::try_from_str("kilogram").unwrap();
         assert_eq!(kilogram.unit, kilogram_parsed);
     }
 }

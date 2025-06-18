@@ -40,9 +40,8 @@ mod tests {
 
     #[test]
     fn test_area_category() {
-        let parser = MeasureUnitParser::default();
         let square_meter = Area::square_meter();
-        let square_meter_parsed = parser.try_from_str("square-meter").unwrap();
+        let square_meter_parsed = MeasureUnitParser::try_from_str("square-meter").unwrap();
         assert_eq!(square_meter.unit, square_meter_parsed);
     }
 }

@@ -11,6 +11,7 @@ use icu::experimental::measure::provider::trie::UnitsTrie;
 use icu::experimental::units::provider::{ConversionInfo, UnitsInfo, UnitsInfoV1};
 use icu_provider::prelude::*;
 use icu_provider_adapters::fixed::FixedProvider;
+use itertools::Itertools;
 use zerotrie::ZeroTrieSimpleAscii;
 use zerovec::VarZeroVec;
 
@@ -27,17 +28,15 @@ impl DataProvider<UnitsInfoV1> for SourceDataProvider {
             .read_and_parse("supplemental/units.json")?;
 
         struct ConversionInfoPreProcessing<'a> {
+            unit_id: u16,
             base_unit: &'a str,
             factor_scientific: ScientificNumber,
             offset_scientific: ScientificNumber,
         }
 
-        // Initialize a vector to store pre-processed conversion information for `MeasureUnitParser`.
+        // Initialize a vector to store pre-processed conversion information.
         let mut convert_units_vec =
             Vec::with_capacity(units_data.supplemental.convert_units.convert_units.len());
-
-        // Initialize a map to associate unit names with their corresponding index in `convert_units_vec`.
-        let mut conversion_info_map = BTreeMap::new();
 
         // Process the unit constants to remove any constants that are in string format.
         let clean_constants_map =
@@ -49,39 +48,25 @@ impl DataProvider<UnitsInfoV1> for SourceDataProvider {
             let factor = convert_unit.factor.as_deref().unwrap_or("1");
             let offset = convert_unit.offset.as_deref().unwrap_or("0");
 
-            let convert_unit_index = convert_units_vec.len();
             convert_units_vec.push(ConversionInfoPreProcessing {
+                unit_id: units_data.unit_id(unit_name)?,
                 base_unit,
                 factor_scientific: process_factor(factor, &clean_constants_map)?,
                 offset_scientific: process_factor(offset, &clean_constants_map)?,
             });
-
-            conversion_info_map.insert(unit_name.as_bytes().to_vec(), convert_unit_index);
         }
 
-        // TODO: remove this once we can use the `try_new_with_buffer_provider` constructor in `components/experimental/src/measure/parser.rs`.
-        // OR just using `MeasureUnitParser::default()`
-        let units_conversion_trie =
-            ZeroTrieSimpleAscii::try_from(&conversion_info_map).map_err(|e| {
-                DataError::custom("Could not create ZeroTrie from units.json data")
-                    .with_display_context(&e)
-            })?;
+        // Ensure the conversion units are sorted by `unit_id` before the processing.
+        convert_units_vec.sort_by_key(|convert_unit| convert_unit.unit_id);
 
-        // Convert the trie to use ZeroVec and wrap it in UnitsTrie
-        let units_trie = UnitsTrie {
-            trie: units_conversion_trie.convert_store(),
-        };
-
-        let parser = MeasureUnitParser::try_new_unstable(&FixedProvider::from_owned(units_trie))?;
-
-        let conversion_info = convert_units_vec
+        let mut conversion_info = convert_units_vec
             .iter()
             .map(|convert_unit| {
                 extract_conversion_info(
+                    convert_unit.unit_id,
                     convert_unit.base_unit,
                     &convert_unit.factor_scientific,
                     &convert_unit.offset_scientific,
-                    &parser,
                 )
             })
             .collect::<Result<Vec<ConversionInfo>, DataError>>()?;
@@ -156,6 +141,7 @@ fn test_basic() {
     assert_eq!(
         meter_convert,
         ConversionInfo {
+            unit_id: meter_index as u16,
             basic_units: {
                 let base_unit = vec![SingleUnit {
                     power: 1,
@@ -185,6 +171,7 @@ fn test_basic() {
     assert_eq!(
         foot_convert,
         ConversionInfo {
+            unit_id: foot_convert_index as u16,
             basic_units: {
                 let base_unit = vec![SingleUnit {
                     power: 1,

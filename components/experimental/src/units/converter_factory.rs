@@ -12,7 +12,7 @@ use crate::units::{
     },
     provider::Sign,
 };
-use crate::units::{provider, InvalidUnitError};
+use crate::units::{provider, InvalidConversionError};
 
 use icu_provider::prelude::*;
 use icu_provider::DataError;
@@ -117,8 +117,7 @@ impl ConverterFactory {
         let input_conversion_info = self
             .payload
             .get()
-            .conversion_info
-            .get(input_unit.unit_id as usize);
+            .conversion_info_by_unit_id(input_unit.unit_id);
         debug_assert!(
             input_conversion_info.is_some(),
             "Failed to get input conversion info"
@@ -128,8 +127,7 @@ impl ConverterFactory {
         let output_conversion_info = self
             .payload
             .get()
-            .conversion_info
-            .get(output_unit.unit_id as usize);
+            .conversion_info_by_unit_id(output_unit.unit_id);
         debug_assert!(
             output_conversion_info.is_some(),
             "Failed to get output conversion info"
@@ -156,7 +154,7 @@ impl ConverterFactory {
         &self,
         unit1: &MeasureUnit,
         unit2: &MeasureUnit,
-    ) -> Result<bool, InvalidUnitError> {
+    ) -> Result<bool, InvalidConversionError> {
         /// A struct that contains the sum and difference of base unit powers.
         /// For example:
         ///     For the input unit `meter-per-second`, the base units are `meter` (power: 1) and `second` (power: -1).
@@ -181,13 +179,12 @@ impl ConverterFactory {
             single_units: &[SingleUnit],
             sign: i16,
             map: &mut LiteMap<u16, PowersInfo>,
-        ) -> Result<(), InvalidUnitError> {
+        ) -> Result<(), InvalidConversionError> {
             for single_unit in single_units {
                 let conversion_info = factory
                     .payload
                     .get()
-                    .conversion_info
-                    .get(single_unit.unit_id as usize);
+                    .conversion_info_by_unit_id(single_unit.unit_id);
 
                 debug_assert!(conversion_info.is_some(), "Failed to get convert info");
 
@@ -195,7 +192,7 @@ impl ConverterFactory {
                     Some(items) => {
                         insert_base_units(items.basic_units(), single_unit.power as i16, sign, map)
                     }
-                    None => return Err(InvalidUnitError),
+                    None => return Err(InvalidConversionError),
                 }
             }
 
@@ -250,7 +247,7 @@ impl ConverterFactory {
         } else if power_sums_are_zero {
             Ok(true)
         } else {
-            Err(InvalidUnitError)
+            Err(InvalidConversionError)
         }
     }
 
@@ -258,8 +255,7 @@ impl ConverterFactory {
         let conversion_info = self
             .payload
             .get()
-            .conversion_info
-            .get(unit_item.unit_id as usize);
+            .conversion_info_by_unit_id(unit_item.unit_id);
         debug_assert!(conversion_info.is_some(), "Failed to get conversion info");
         let conversion_info = conversion_info?;
 
@@ -286,7 +282,7 @@ impl ConverterFactory {
     ) -> Option<UnitsConverter<T>> {
         let is_reciprocal = match self.is_reciprocal(input_unit, output_unit) {
             Ok(is_reciprocal) => is_reciprocal,
-            Err(InvalidUnitError) => return None,
+            Err(InvalidConversionError) => return None,
         };
 
         // Determine the sign of the powers of the units from root to unit2.
