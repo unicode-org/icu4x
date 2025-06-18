@@ -5,7 +5,8 @@
 .DEFAULT_GOAL := build
 FORCE:
 
-PINNED_CI_NIGHTLY ?= "nightly"
+# TODO: Set this back to nightly once the -zwasm-c-abi mess is resolved
+PINNED_CI_NIGHTLY ?= "nightly-2025-02-17"
 
 # 100 KiB, working around a bug in older rustc
 # https://github.com/unicode-org/icu4x/issues/2753
