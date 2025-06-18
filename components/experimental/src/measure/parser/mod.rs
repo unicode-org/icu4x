@@ -199,10 +199,9 @@ mod tests {
             ("portion-per-1000000000", 1, 1_000_000_000),
             ("liter-per-100-kilometer", 2, 100),
         ];
-        let parser = MeasureUnitParser::default();
 
         for (input, expected_len, expected_denominator) in test_cases {
-            let measure_unit = parser.try_from_str(input).unwrap();
+            let measure_unit = MeasureUnitParser::try_from_str(input).unwrap();
             assert_eq!(measure_unit.single_units().len(), expected_len);
             assert_eq!(measure_unit.constant_denominator, expected_denominator);
         }
@@ -266,8 +265,7 @@ mod tests {
                 continue;
             }
 
-            let parser = MeasureUnitParser::default();
-            let measure_unit = parser.try_from_str(input);
+            let measure_unit = MeasureUnitParser::try_from_str(input);
             if measure_unit.is_ok() {
                 println!("OK:  {}", input);
                 continue;

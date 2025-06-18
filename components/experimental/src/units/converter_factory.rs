@@ -354,9 +354,8 @@ mod tests {
     #[test]
     fn test_converter_factory() {
         let factory = ConverterFactory::new();
-        let parser = MeasureUnitParser::default();
-        let input_unit = parser.try_from_str("meter").unwrap();
-        let output_unit = parser.try_from_str("foot").unwrap();
+        let input_unit = MeasureUnitParser::try_from_str("meter").unwrap();
+        let output_unit = MeasureUnitParser::try_from_str("foot").unwrap();
         let converter = factory.converter::<f64>(&input_unit, &output_unit).unwrap();
         let result = converter.convert(&1000.0);
         assert!(
@@ -369,9 +368,8 @@ mod tests {
     #[test]
     fn test_converter_factory_with_constant_denominator() {
         let factory = ConverterFactory::new();
-        let parser = MeasureUnitParser::default();
-        let input_unit = parser.try_from_str("liter-per-100-kilometer").unwrap();
-        let output_unit = parser.try_from_str("mile-per-gallon").unwrap();
+        let input_unit = MeasureUnitParser::try_from_str("liter-per-100-kilometer").unwrap();
+        let output_unit = MeasureUnitParser::try_from_str("mile-per-gallon").unwrap();
         let converter = factory.converter::<f64>(&input_unit, &output_unit).unwrap();
         let result = converter.convert(&1.0);
         assert!(
@@ -384,9 +382,8 @@ mod tests {
     #[test]
     fn test_converter_factory_with_offset() {
         let factory = ConverterFactory::new();
-        let parser = MeasureUnitParser::default();
-        let input_unit = parser.try_from_str("celsius").unwrap();
-        let output_unit = parser.try_from_str("fahrenheit").unwrap();
+        let input_unit = MeasureUnitParser::try_from_str("celsius").unwrap();
+        let output_unit = MeasureUnitParser::try_from_str("fahrenheit").unwrap();
         let converter = factory.converter::<f64>(&input_unit, &output_unit).unwrap();
         let result = converter.convert(&0.0);
         assert!(
