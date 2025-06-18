@@ -31,7 +31,7 @@ impl MeasureUnitParser {
     /// NOTE:
     ///    if the unit id is found, the function will return (unit id, part without the unit id and without `-` at the beginning of the remaining part if it exists).
     ///    if the unit id is not found, the function will return an error.
-    fn get_unit_id<'a>(part: &'a [u8]) -> Result<(u16, &'a [u8]), InvalidUnitError> {
+    fn get_unit_id(part: &[u8]) -> Result<(u16, &[u8]), InvalidUnitError> {
         let mut cursor = DECIMAL_PREFIXES_TRIE.cursor();
         let mut longest_match = Err(InvalidUnitError);
 
@@ -47,7 +47,7 @@ impl MeasureUnitParser {
         longest_match
     }
 
-    fn get_power<'a>(part: &'a [u8]) -> Result<(u8, &'a [u8]), InvalidUnitError> {
+    fn get_power(part: &[u8]) -> Result<(u8, &[u8]), InvalidUnitError> {
         let (power, part_without_power) = get_power(part);
 
         // If the power is not found, return the part as it is.
@@ -65,7 +65,7 @@ impl MeasureUnitParser {
     /// Get the SI prefix.
     /// NOTE:
     ///    if the prefix is not found, the function will return (SiPrefix { power: 0, base: Base::Decimal }, part).
-    fn get_si_prefix<'a>(part: &'a [u8]) -> (SiPrefix, &'a [u8]) {
+    fn get_si_prefix(part: &[u8]) -> (SiPrefix, &[u8]) {
         let (si_prefix, part_without_si_prefix) = get_si_prefix(part);
         if part_without_si_prefix.len() == part.len() {
             return (si_prefix, part);

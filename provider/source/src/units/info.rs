@@ -2,17 +2,12 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use std::collections::{BTreeMap, HashSet};
+use std::collections::HashSet;
 
 use crate::SourceDataProvider;
 use crate::{cldr_serde, units::helpers::ScientificNumber};
-use icu::experimental::measure::parser::MeasureUnitParser;
-use icu::experimental::measure::provider::trie::UnitsTrie;
 use icu::experimental::units::provider::{ConversionInfo, UnitsInfo, UnitsInfoV1};
 use icu_provider::prelude::*;
-use icu_provider_adapters::fixed::FixedProvider;
-use itertools::Itertools;
-use zerotrie::ZeroTrieSimpleAscii;
 use zerovec::VarZeroVec;
 
 use super::helpers::{extract_conversion_info, process_constants, process_factor};
@@ -59,7 +54,7 @@ impl DataProvider<UnitsInfoV1> for SourceDataProvider {
         // Ensure the conversion units are sorted by `unit_id` before the processing.
         convert_units_vec.sort_by_key(|convert_unit| convert_unit.unit_id);
 
-        let mut conversion_info = convert_units_vec
+        let conversion_info = convert_units_vec
             .iter()
             .map(|convert_unit| {
                 extract_conversion_info(

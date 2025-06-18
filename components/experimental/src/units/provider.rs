@@ -46,7 +46,7 @@ pub struct UnitsInfo<'data> {
     pub conversion_info: VarZeroVec<'data, ConversionInfoULE>,
 }
 
-impl<'data> UnitsInfo<'data> {
+impl UnitsInfo<'_> {
     /// Retrieves the conversion details associated with a specific unit_id.
     ///
     /// # Parameters
