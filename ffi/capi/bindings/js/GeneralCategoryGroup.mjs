@@ -43,7 +43,7 @@ export class GeneralCategoryGroup {
         functionCleanupArena,
         appendArrayMap
     ) {
-        return [this.#mask]
+        return this.#mask;
     }
 
     static _fromSuppliedValue(internalConstructor, obj) {
@@ -90,7 +90,7 @@ export class GeneralCategoryGroup {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
 
 
-        const result = wasm.icu4x_GeneralCategoryGroup_contains_mv1(...GeneralCategoryGroup._fromSuppliedValue(diplomatRuntime.internalConstructor, this)._intoFFI(functionCleanupArena, {}), val.ffiValue);
+        const result = wasm.icu4x_GeneralCategoryGroup_contains_mv1(GeneralCategoryGroup._fromSuppliedValue(diplomatRuntime.internalConstructor, this)._intoFFI(functionCleanupArena, {}, false), val.ffiValue);
 
         try {
             return result;
@@ -109,7 +109,7 @@ export class GeneralCategoryGroup {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
 
 
-        const result = wasm.icu4x_GeneralCategoryGroup_complement_mv1(...GeneralCategoryGroup._fromSuppliedValue(diplomatRuntime.internalConstructor, this)._intoFFI(functionCleanupArena, {}));
+        const result = wasm.icu4x_GeneralCategoryGroup_complement_mv1(GeneralCategoryGroup._fromSuppliedValue(diplomatRuntime.internalConstructor, this)._intoFFI(functionCleanupArena, {}, false));
 
         try {
             return GeneralCategoryGroup._fromFFI(diplomatRuntime.internalConstructor, result);
@@ -158,7 +158,7 @@ export class GeneralCategoryGroup {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
 
 
-        const result = wasm.icu4x_GeneralCategoryGroup_union_mv1(...GeneralCategoryGroup._fromSuppliedValue(diplomatRuntime.internalConstructor, this)._intoFFI(functionCleanupArena, {}), ...GeneralCategoryGroup._fromSuppliedValue(diplomatRuntime.internalConstructor, other)._intoFFI(functionCleanupArena, {}));
+        const result = wasm.icu4x_GeneralCategoryGroup_union_mv1(GeneralCategoryGroup._fromSuppliedValue(diplomatRuntime.internalConstructor, this)._intoFFI(functionCleanupArena, {}, false), GeneralCategoryGroup._fromSuppliedValue(diplomatRuntime.internalConstructor, other)._intoFFI(functionCleanupArena, {}, false));
 
         try {
             return GeneralCategoryGroup._fromFFI(diplomatRuntime.internalConstructor, result);
@@ -177,7 +177,7 @@ export class GeneralCategoryGroup {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
 
 
-        const result = wasm.icu4x_GeneralCategoryGroup_intersection_mv1(...GeneralCategoryGroup._fromSuppliedValue(diplomatRuntime.internalConstructor, this)._intoFFI(functionCleanupArena, {}), ...GeneralCategoryGroup._fromSuppliedValue(diplomatRuntime.internalConstructor, other)._intoFFI(functionCleanupArena, {}));
+        const result = wasm.icu4x_GeneralCategoryGroup_intersection_mv1(GeneralCategoryGroup._fromSuppliedValue(diplomatRuntime.internalConstructor, this)._intoFFI(functionCleanupArena, {}, false), GeneralCategoryGroup._fromSuppliedValue(diplomatRuntime.internalConstructor, other)._intoFFI(functionCleanupArena, {}, false));
 
         try {
             return GeneralCategoryGroup._fromFFI(diplomatRuntime.internalConstructor, result);

@@ -61,7 +61,13 @@ export class CodePointRangeIteratorResult {
         functionCleanupArena,
         appendArrayMap
     ) {
-        return [this.#start, this.#end, this.#done, /* [3 x i8] padding */ 0, 0, 0 /* end padding */]
+        let buffer = diplomatRuntime.DiplomatBuf.struct(wasm, 12, 4);
+
+        this._writeToArrayBuffer(wasm.memory.buffer, buffer.ptr, functionCleanupArena, appendArrayMap);
+
+        functionCleanupArena.alloc(buffer);
+
+        return buffer.ptr;
     }
 
     static _fromSuppliedValue(internalConstructor, obj) {

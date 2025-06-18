@@ -93,10 +93,10 @@ export class WindowsParser {
     parse(value, region) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
 
-        const valueSlice = diplomatRuntime.DiplomatBuf.str8(wasm, value);
-        const regionSlice = diplomatRuntime.DiplomatBuf.str8(wasm, region);
+        const valueSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.sliceWrapper(wasm, diplomatRuntime.DiplomatBuf.str8(wasm, value)));
+        const regionSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.sliceWrapper(wasm, diplomatRuntime.DiplomatBuf.str8(wasm, region)));
 
-        const result = wasm.icu4x_WindowsParser_parse_mv1(this.ffiValue, ...valueSlice.splat(), ...regionSlice.splat());
+        const result = wasm.icu4x_WindowsParser_parse_mv1(this.ffiValue, valueSlice.ptr, regionSlice.ptr);
 
         try {
             return result === 0 ? null : new TimeZone(diplomatRuntime.internalConstructor, result, []);

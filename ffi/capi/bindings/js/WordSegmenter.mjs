@@ -285,12 +285,12 @@ export class WordSegmenter {
      */
     segment(input) {
         let functionGarbageCollectorGrip = new diplomatRuntime.GarbageCollectorGrip();
-        const inputSlice = diplomatRuntime.DiplomatBuf.str16(wasm, input);
+        const inputSlice = functionGarbageCollectorGrip.alloc(diplomatRuntime.DiplomatBuf.sliceWrapper(wasm, diplomatRuntime.DiplomatBuf.str16(wasm, input)));
         // This lifetime edge depends on lifetimes 'a
         let aEdges = [this, inputSlice];
 
 
-        const result = wasm.icu4x_WordSegmenter_segment_utf16_mv1(this.ffiValue, ...inputSlice.splat());
+        const result = wasm.icu4x_WordSegmenter_segment_utf16_mv1(this.ffiValue, inputSlice.ptr);
 
         try {
             return new WordBreakIteratorUtf16(diplomatRuntime.internalConstructor, result, [], aEdges);

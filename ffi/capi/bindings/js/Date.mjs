@@ -80,12 +80,12 @@ export class Date {
     static fromCodesInCalendar(eraCode, year, monthCode, day, calendar) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
 
-        const eraCodeSlice = diplomatRuntime.DiplomatBuf.str8(wasm, eraCode);
-        const monthCodeSlice = diplomatRuntime.DiplomatBuf.str8(wasm, monthCode);
+        const eraCodeSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.sliceWrapper(wasm, diplomatRuntime.DiplomatBuf.str8(wasm, eraCode)));
+        const monthCodeSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.sliceWrapper(wasm, diplomatRuntime.DiplomatBuf.str8(wasm, monthCode)));
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_Date_from_codes_in_calendar_mv1(diplomatReceive.buffer, ...eraCodeSlice.splat(), year, ...monthCodeSlice.splat(), day, calendar.ffiValue);
+        const result = wasm.icu4x_Date_from_codes_in_calendar_mv1(diplomatReceive.buffer, eraCodeSlice.ptr, year, monthCodeSlice.ptr, day, calendar.ffiValue);
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -134,11 +134,11 @@ export class Date {
     static fromString(v, calendar) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
 
-        const vSlice = diplomatRuntime.DiplomatBuf.str8(wasm, v);
+        const vSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.sliceWrapper(wasm, diplomatRuntime.DiplomatBuf.str8(wasm, v)));
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_Date_from_string_mv1(diplomatReceive.buffer, ...vSlice.splat(), calendar.ffiValue);
+        const result = wasm.icu4x_Date_from_string_mv1(diplomatReceive.buffer, vSlice.ptr, calendar.ffiValue);
 
         try {
             if (!diplomatReceive.resultFlag) {
