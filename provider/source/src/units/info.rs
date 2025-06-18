@@ -87,14 +87,12 @@ impl crate::IterableDataProviderCached<UnitsInfoV1> for SourceDataProvider {
 fn test_basic() {
     use icu::experimental::measure::provider::si_prefix::{Base, SiPrefix};
     use icu::experimental::measure::provider::single_unit::SingleUnit;
-    use icu::experimental::measure::provider::trie::UnitsTrieV1;
     use icu::experimental::units::provider::*;
     use icu::locale::langid;
     use icu_provider::prelude::*;
     use num_bigint::BigUint;
     use num_rational::Ratio;
     use zerofrom::ZeroFrom;
-    use zerovec::maps::ZeroVecLike;
     use zerovec::ZeroVec;
 
     let provider = SourceDataProvider::new_testing();
@@ -106,24 +104,22 @@ fn test_basic() {
         })
         .unwrap();
 
-    let und_trie: DataResponse<UnitsTrieV1> = provider.load(Default::default()).unwrap();
-
     let units_info = und.payload.get().to_owned();
-    let units_info_map = &und_trie.payload.get().trie;
-    let conversion_info = &units_info.conversion_info;
 
-    let meter_index = units_info_map.get("meter").unwrap();
+    let meter_index = units_info.conversion_info_by_unit_id(1).unwrap().unit_id;
 
     let big_one = BigUint::from(1u32);
 
-    let meter_convert_ule = conversion_info.zvl_get(meter_index).unwrap();
+    let meter_convert_ule = units_info
+        .conversion_info_by_unit_id(meter_index.as_unsigned_int())
+        .unwrap();
     let meter_convert: ConversionInfo = ZeroFrom::zero_from(meter_convert_ule);
 
     assert_eq!(meter_convert.factor_sign, Sign::Positive);
     let meter_convert_base_unit = meter_convert.basic_units.to_owned();
     assert_eq!(
         meter_convert_base_unit.get(0).unwrap().unit_id,
-        meter_index as u16
+        meter_index.as_unsigned_int()
     );
     assert_eq!(
         meter_convert.factor_num,
@@ -136,7 +132,7 @@ fn test_basic() {
     assert_eq!(
         meter_convert,
         ConversionInfo {
-            unit_id: meter_index as u16,
+            unit_id: meter_index.as_unsigned_int(),
             basic_units: {
                 let base_unit = vec![SingleUnit {
                     power: 1,
@@ -144,7 +140,7 @@ fn test_basic() {
                         power: 0,
                         base: Base::Decimal,
                     },
-                    unit_id: meter_index as u16,
+                    unit_id: meter_index.as_unsigned_int(),
                 }];
                 ZeroVec::from_iter(base_unit.into_iter())
             },
@@ -158,15 +154,17 @@ fn test_basic() {
         }
     );
 
-    let foot_convert_index = units_info_map.get("foot").unwrap();
-    let foot_convert_ule = conversion_info.zvl_get(foot_convert_index).unwrap();
+    let foot_convert_index = units_info.conversion_info_by_unit_id(2).unwrap().unit_id;
+    let foot_convert_ule = units_info
+        .conversion_info_by_unit_id(foot_convert_index.as_unsigned_int())
+        .unwrap();
     let foot_convert: ConversionInfo = ZeroFrom::zero_from(foot_convert_ule);
     let ft_to_m = Ratio::new(BigUint::from(3048u32), BigUint::from(10000u32));
 
     assert_eq!(
         foot_convert,
         ConversionInfo {
-            unit_id: foot_convert_index as u16,
+            unit_id: foot_convert_index.as_unsigned_int(),
             basic_units: {
                 let base_unit = vec![SingleUnit {
                     power: 1,
@@ -174,7 +172,7 @@ fn test_basic() {
                         power: 0,
                         base: Base::Decimal,
                     },
-                    unit_id: meter_index as u16,
+                    unit_id: meter_index.as_unsigned_int(),
                 }];
                 ZeroVec::from_iter(base_unit.into_iter())
             },

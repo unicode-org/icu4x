@@ -4,7 +4,6 @@
 
 pub mod si_prefix;
 pub mod single_unit;
-pub mod trie;
 
 icu_provider::data_marker!(
     // UnitIdsV1
