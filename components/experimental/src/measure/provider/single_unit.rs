@@ -71,15 +71,15 @@ impl ToString for SingleUnit {
     fn to_string(&self) -> String {
         let mut short_representation = String::new();
         if self.power != 1 {
-            short_representation.push_str("P");
+            short_representation.push('P');
             short_representation.push_str(&self.power.to_string());
         }
 
         if self.si_prefix.power != 0 {
             short_representation.push_str(&self.si_prefix.to_string());
         }
-        short_representation.push_str("I");
-        short_representation.push_str(&self.unit_id.to_string().as_str());
+        short_representation.push('I');
+        short_representation.push_str(self.unit_id.to_string().as_str());
         short_representation
     }
 }

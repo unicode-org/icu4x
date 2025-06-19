@@ -207,7 +207,7 @@ impl MeasureUnit {
                 negative_part.insert(0, '#');
             }
             negative_part.insert_str(0, &power_of_10_to_scientific(self.constant_denominator));
-            negative_part.insert_str(0, "C");
+            negative_part.insert(0, 'C');
         }
 
         // Glue the positive and negative parts together to get the final short representation
