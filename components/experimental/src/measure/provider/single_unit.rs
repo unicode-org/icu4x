@@ -3,8 +3,6 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use super::si_prefix::SiPrefix;
-use alloc::string::String;
-use alloc::string::ToString;
 
 /// Represents a single unit in a measure unit.
 /// For example, the MeasureUnit `kilometer-per-square-second` contains two single units:
@@ -67,19 +65,16 @@ pub struct SingleUnit {
 /// assert_eq!(full_unit.len() - string_representation.len(), 9, "{}", full_unit);
 ///
 /// ```
-impl ToString for SingleUnit {
-    fn to_string(&self) -> String {
-        let mut short_representation = String::new();
+impl core::fmt::Display for SingleUnit {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
         if self.power != 1 {
-            short_representation.push('P');
-            short_representation.push_str(&self.power.to_string());
+            write!(f, "P{}", self.power)?;
         }
 
         if self.si_prefix.power != 0 {
-            short_representation.push_str(&self.si_prefix.to_string());
+            write!(f, "{}", self.si_prefix)?;
         }
-        short_representation.push('I');
-        short_representation.push_str(self.unit_id.to_string().as_str());
-        short_representation
+
+        write!(f, "I{}", self.unit_id)
     }
 }

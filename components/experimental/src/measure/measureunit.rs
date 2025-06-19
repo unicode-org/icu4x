@@ -49,12 +49,9 @@ impl MeasureUnit {
 
     /// Returns a short representation of this measure unit as follows:
     /// 1. Each single unit will be represented by its short representation.
-    /// 2. the constant denominator will be represented by its value prefixed with `C`.
-    ///     2.1 If the constant is greater than or equal to 1000 and has more than 3 trailing zeros, then it will be represented in scientific notation.
-    /// 3. the per will be represented by `R`  symbol.
-    ///
-    ///
-    /// The short representation is a string that contains the short representations of all the single units in the measure unit.
+    /// 2. The constant denominator will be represented by its value prefixed with `C`.
+    ///    2.1 If the constant denominator is greater than or equal to 1000 and has more than 3 trailing zeros, it will be represented in scientific notation.
+    /// 3. The division (per) will be represented by the `R` symbol.
     ///
     /// # Examples
     ///
