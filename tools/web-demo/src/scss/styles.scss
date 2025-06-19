@@ -2,14 +2,28 @@
 @import "~bootstrap/scss/bootstrap";
 @import "~prismjs/themes/prism.css";
 
+:is(.readable-width) {
+  max-width: 120ch;
+}
+
 :is(.mb-small) {
   margin-bottom: 5px;
 }
 
-:is(code, pre)[class*="language-"] {
+.form-control pre {
+  white-space: pre-wrap;
+  margin: 0;
   font-size: 0.875rem;
 }
 
-:is(.readable-width) {
-  max-width: 120ch;
+code[class*="language-"][slot="code"] {
+  // Unset all `:not(pre) > code` styles from prismjs, which erroneously matches
+  // due to being rendered inside a shadow DOM `<slot>`
+  all: unset;
+  white-space: pre-wrap;
+
+  .token.operator {
+    background: none;
+    opacity: .6;
+  }
 }

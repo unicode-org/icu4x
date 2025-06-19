@@ -18,8 +18,11 @@ Object.values(RenderInfo.termini).toSorted((a, b) => a.funcName < b.funcName ? -
 	details.appendChild(summary);
 	details.appendChild(document.createElement("br"));
 	details.appendChild(new TerminusRender(lib, () => {}, RenderInfo.termini[t.funcName],
-		(el, expr) => {
-			el.textContent = beautify.js(expr, {
+		(el) => {
+			// Necessary for Prism to know the language to highlight for, and also
+			// to ensure CSS `white-space: pre-wrap` is applied from selector
+			el.classList.add("language-js");
+			el.textContent = beautify.js(el.textContent, {
 				indent_size: 2,
 				indent_char: " ",
 				break_chained_methods: true,

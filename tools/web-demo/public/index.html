@@ -21,7 +21,7 @@
             <div class="vstack gap-2">
                 <slot name="parameters"></slot>
                 <div class="input-group mb-small">
-                    <div class="form-control" style="background: var(--bs-secondary-bg); min-width: 400px"><slot name="code"></slot></div>
+                    <div class="form-control" style="background: var(--bs-secondary-bg); min-width: 400px"><pre><slot name="code"></slot></pre></div>
                     <button type="submit" class="btn btn-primary" data-submit>▶</button>
                     <div class="form-control" style="background: var(--bs-secondary-bg)"><slot name="output"></slot></div>
                 </div>

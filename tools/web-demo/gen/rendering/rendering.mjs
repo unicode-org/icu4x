@@ -290,7 +290,7 @@ export class TerminusRender extends HTMLElement {
     #parameters;
     #output;
     #code;
-    constructor(library, evaluateExternal, terminus, renderExpr = (el, expr) => el.textContent = expr) {
+    constructor(library, evaluateExternal, terminus, exprCallback = ((element) => {})) {
         super();
         generateTemplate(TerminusRender, "template", "template#terminus");
         let clone = TerminusRender.template.cloneNode(true);
@@ -314,13 +314,9 @@ export class TerminusRender extends HTMLElement {
         this.#parameters.slot = "parameters";
         this.appendChild(this.#parameters);
 
-        const pre = document.createElement("pre");
-        pre.classList.add("language-js");
-        pre.slot = "code";
-        this.appendChild(pre);
-
         this.#code = document.createElement("code");
-        pre.appendChild(this.#code);
+        this.#code.slot = "code";
+        this.appendChild(this.#code);
 
         this.#output = document.createElement("span");
         this.#output.slot = "output";
@@ -329,11 +325,13 @@ export class TerminusRender extends HTMLElement {
         const shadowRoot = this.attachShadow({ mode: "open" });
         shadowRoot.appendChild(clone);
 
-        renderExpr(this.#code, this.#expr(...this.#parameters.exprs));
+        this.#code.innerText = this.#expr(...this.#parameters.exprs);
+        exprCallback(this.#code);
         for (let param of this.#parameters.children) {
             param.addEventListener('parameter-input', () => {
-                renderExpr(this.#code, this.#expr(...this.#parameters.exprs));
-                this.#output.textContent = "";
+                this.#code.innerText = this.#expr(...this.#parameters.exprs);
+                exprCallback(this.#code);                
+                this.#output.innerText = "";
                 this.#output.classList = "";
                 if (this.#parameters.values.every((e) => e != undefined)) {
                     button.removeAttribute("disabled");
