@@ -290,7 +290,7 @@ export class TerminusRender extends HTMLElement {
     #parameters;
     #output;
     #code;
-    constructor(library, evaluateExternal, terminus, exprCallback = ((element) => {})) {
+    constructor(library, evaluateExternal, terminus, renderExpr = (el, expr) => el.textContent = expr) {
         super();
         generateTemplate(TerminusRender, "template", "template#terminus");
         let clone = TerminusRender.template.cloneNode(true);
@@ -329,12 +329,10 @@ export class TerminusRender extends HTMLElement {
         const shadowRoot = this.attachShadow({ mode: "open" });
         shadowRoot.appendChild(clone);
 
-        this.#code.textContent = this.#expr(...this.#parameters.exprs);
-        exprCallback(this.#code);
+        renderExpr(this.#code, this.#expr(...this.#parameters.exprs));
         for (let param of this.#parameters.children) {
             param.addEventListener('parameter-input', () => {
-                this.#code.textContent = this.#expr(...this.#parameters.exprs);
-                exprCallback(this.#code);
+                renderExpr(this.#code, this.#expr(...this.#parameters.exprs));
                 this.#output.textContent = "";
                 this.#output.classList = "";
                 if (this.#parameters.values.every((e) => e != undefined)) {

@@ -17,17 +17,18 @@ Object.values(RenderInfo.termini).toSorted((a, b) => a.funcName < b.funcName ? -
 	summary.innerHTML = `<code>${t.funcName}</code>`;
 	details.appendChild(summary);
 	details.appendChild(document.createElement("br"));
-	details.appendChild(new TerminusRender(lib, () => { }, RenderInfo.termini[t.funcName],
-		(code) => {
-			code.textContent = beautify.js(code.textContent, {
+	details.appendChild(new TerminusRender(lib, () => {}, RenderInfo.termini[t.funcName],
+		(el, expr) => {
+			el.textContent = beautify.js(expr, {
 				indent_size: 2,
 				indent_char: " ",
 				break_chained_methods: true,
 				// brace_style: "collapse",
 				wrap_line_length: 45,
 			});
-			Prism.highlightElement(code);
-		}));
+			Prism.highlightElement(el);
+		},
+	));
 	document.getElementsByClassName("container")[0].appendChild(details);
 });
 
