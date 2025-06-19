@@ -9,7 +9,8 @@
 	"license": "ISC",
 	"dependencies": {
 		"icu4x": "file:../../ffi/npm",
-		"js-beautify": "^1.15.4"
+		"js-beautify": "^1.15.4",
+		"prismjs": "^1.30.0"
 	},
 	"devDependencies": {
 		"bootstrap": "^5.3.3",
