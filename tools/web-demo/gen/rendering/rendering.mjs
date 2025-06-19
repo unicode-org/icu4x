@@ -314,9 +314,13 @@ export class TerminusRender extends HTMLElement {
         this.#parameters.slot = "parameters";
         this.appendChild(this.#parameters);
 
+        const pre = document.createElement("pre");
+        pre.classList.add("language-js");
+        pre.slot = "code";
+        this.appendChild(pre);
+
         this.#code = document.createElement("code");
-        this.#code.slot = "code";
-        this.appendChild(this.#code);
+        pre.appendChild(this.#code);
 
         this.#output = document.createElement("span");
         this.#output.slot = "output";
@@ -325,13 +329,13 @@ export class TerminusRender extends HTMLElement {
         const shadowRoot = this.attachShadow({ mode: "open" });
         shadowRoot.appendChild(clone);
 
-        this.#code.innerText = this.#expr(...this.#parameters.exprs);
+        this.#code.textContent = this.#expr(...this.#parameters.exprs);
         exprCallback(this.#code);
         for (let param of this.#parameters.children) {
             param.addEventListener('parameter-input', () => {
-                this.#code.innerText = this.#expr(...this.#parameters.exprs);
-                exprCallback(this.#code);                
-                this.#output.innerText = "";
+                this.#code.textContent = this.#expr(...this.#parameters.exprs);
+                exprCallback(this.#code);
+                this.#output.textContent = "";
                 this.#output.classList = "";
                 if (this.#parameters.values.every((e) => e != undefined)) {
                     button.removeAttribute("disabled");

@@ -7,13 +7,21 @@
         <link rel="stylesheet" href="dist/index.css"/>
         <meta name="viewport" content="width=device-width, initial-scale=1">
     </head>
-    <body class="container">
+    <body class="container my-2 mx-0 readable-width">
+        <div id="loading">Loading...</div>
+        <div id="loaded" hidden>
+            <p>
+                The ICU4X classes can be accessed in the browser console under the
+                <code>ICU4X</code> module, e.g.
+                <code>const { TitlecaseMapper, TitlecaseOptions } = ICU4X</code>.
+            </p>
+        </div>
         <template id="terminus">
             <link rel="stylesheet" href="dist/index.css"/>
             <div class="vstack gap-2">
                 <slot name="parameters"></slot>
-                <div class="input-group mb-3">
-                    <div class="form-control" style="background: var(--bs-secondary-bg); min-width: 400px"><pre><slot name="code"></slot></pre></div>
+                <div class="input-group mb-small">
+                    <div class="form-control" style="background: var(--bs-secondary-bg); min-width: 400px"><slot name="code"></slot></div>
                     <button type="submit" class="btn btn-primary" data-submit>▶</button>
                     <div class="form-control" style="background: var(--bs-secondary-bg)"><slot name="output"></slot></div>
                 </div>
