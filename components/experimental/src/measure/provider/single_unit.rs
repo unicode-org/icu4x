@@ -3,6 +3,8 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use super::si_prefix::SiPrefix;
+use alloc::string::String;
+use alloc::string::ToString;
 
 /// Represents a single unit in a measure unit.
 /// For example, the MeasureUnit `kilometer-per-square-second` contains two single units:
@@ -22,4 +24,62 @@ pub struct SingleUnit {
 
     /// The id of the unit.
     pub unit_id: u16,
+}
+
+/// Returns a string representation of the `SingleUnit`.
+///
+/// The format of the string is as follows:
+///  - The power is prefixed with "P" followed by the power value.
+///  - The SI prefix is represented by its base character ('D' for Decimal, 'B' for Binary) followed by the prefix power value.
+///  - The unit ID is prefixed with "I" and appended to the string.
+///
+/// NOTE:
+///  - If the power is 1, the power is not included in the string representation.
+///  - If the SI prefix power is 0, the SI prefix is not included in the string representation.
+///
+/// # Returns
+/// A `String` representing the `SingleUnit` in the format described above.
+///
+/// # Examples
+///
+/// ```
+/// use icu_experimental::measure::provider::single_unit::SingleUnit;
+/// use icu_experimental::measure::provider::si_prefix::SiPrefix;
+/// use icu_experimental::measure::provider::si_prefix::Base;
+/// use icu_experimental::measure::parser::MeasureUnitParser;
+///
+///
+/// let parser = MeasureUnitParser::new();
+///
+/// let full_unit = "meter";
+/// let measure_unit = parser.try_from_str(full_unit).unwrap();
+/// let single_unit = measure_unit.single_units().first().unwrap();
+/// let string_representation = single_unit.to_string();
+/// assert_eq!(string_representation, "I85", "{}", full_unit);
+/// assert_eq!(full_unit.len() - string_representation.len(), 2, "{}", full_unit);
+///
+///
+/// let full_unit = "square-millimeter";
+/// let measure_unit = parser.try_from_str(full_unit).unwrap();
+/// let single_unit = measure_unit.single_units().last().unwrap();
+/// let string_representation = single_unit.to_string();
+/// assert_eq!(string_representation, "P2D-3I85", "{}", full_unit);
+/// assert_eq!(full_unit.len() - string_representation.len(), 9, "{}", full_unit);
+///
+/// ```
+impl ToString for SingleUnit {
+    fn to_string(&self) -> String {
+        let mut short_representation = String::new();
+        if self.power != 1 {
+            short_representation.push_str("P");
+            short_representation.push_str(&self.power.to_string());
+        }
+
+        if self.si_prefix.power != 0 {
+            short_representation.push_str(&self.si_prefix.to_string());
+        }
+        short_representation.push_str("I");
+        short_representation.push_str(&self.unit_id.to_string().as_str());
+        short_representation
+    }
 }
