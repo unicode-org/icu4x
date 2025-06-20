@@ -141,10 +141,10 @@ pub(crate) fn process_factor(
 
 /// Extracts the conversion info from a base unit, factor and offset.
 pub(crate) fn extract_conversion_info<'data>(
+    unit_id: u16,
     base_unit: &str,
     factor: &ScientificNumber,
     offset: &ScientificNumber,
-    parser: &MeasureUnitParser,
 ) -> Result<ConversionInfo<'data>, DataError> {
     let factor_fraction = convert_slices_to_fraction(&factor.clean_num, &factor.clean_den)?;
     let offset_fraction = convert_slices_to_fraction(&offset.clean_num, &offset.clean_den)?;
@@ -159,11 +159,11 @@ pub(crate) fn extract_conversion_info<'data>(
         Exactness::Approximate
     };
 
-    let base_unit = parser
-        .try_from_str(base_unit)
+    let base_unit = MeasureUnitParser::try_from_str(base_unit)
         .map_err(|_| DataError::custom("the base unit is not valid"))?;
 
     Ok(ConversionInfo {
+        unit_id,
         basic_units: ZeroVec::from_iter(base_unit.single_units().iter().copied()),
         factor_num: factor_num.into(),
         factor_den: factor_den.into(),

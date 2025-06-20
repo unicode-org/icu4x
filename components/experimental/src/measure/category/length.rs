@@ -40,9 +40,8 @@ mod tests {
 
     #[test]
     fn test_length_category() {
-        let parser = MeasureUnitParser::default();
         let meter = Length::meter();
-        let meter_parsed = parser.try_from_str("meter").unwrap();
+        let meter_parsed = MeasureUnitParser::try_from_str("meter").unwrap();
         assert_eq!(meter.unit, meter_parsed);
     }
 }

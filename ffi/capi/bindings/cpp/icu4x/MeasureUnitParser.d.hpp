@@ -12,13 +12,8 @@
 #include "../diplomat_runtime.hpp"
 
 namespace icu4x {
-namespace capi { struct DataProvider; }
-class DataProvider;
 namespace capi { struct MeasureUnit; }
 class MeasureUnit;
-namespace capi { struct MeasureUnitParser; }
-class MeasureUnitParser;
-class DataError;
 }
 
 
@@ -38,23 +33,9 @@ class MeasureUnitParser {
 public:
 
   /**
-   * Construct a new {@link MeasureUnitParser} instance using compiled data.
-   *
-   * See the [Rust documentation for `new`](https://docs.rs/icu/2.0.0/icu/experimental/measure/parser/struct.MeasureUnitParser.html#method.new) for more information.
-   */
-  inline static std::unique_ptr<icu4x::MeasureUnitParser> create();
-
-  /**
-   * Construct a new {@link MeasureUnitParser} instance using a particular data source.
-   *
-   * See the [Rust documentation for `new`](https://docs.rs/icu/2.0.0/icu/experimental/measure/parser/struct.MeasureUnitParser.html#method.new) for more information.
-   */
-  inline static diplomat::result<std::unique_ptr<icu4x::MeasureUnitParser>, icu4x::DataError> create_with_provider(const icu4x::DataProvider& provider);
-
-  /**
    * See the [Rust documentation for `parse`](https://docs.rs/icu/2.0.0/icu/experimental/measure/parser/struct.MeasureUnitParser.html#method.parse) for more information.
    */
-  inline std::unique_ptr<icu4x::MeasureUnit> parse(std::string_view unit_id) const;
+  inline static std::unique_ptr<icu4x::MeasureUnit> parse(std::string_view unit_id);
 
   inline const icu4x::capi::MeasureUnitParser* AsFFI() const;
   inline icu4x::capi::MeasureUnitParser* AsFFI();

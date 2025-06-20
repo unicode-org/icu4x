@@ -8,11 +8,6 @@
 pub mod ffi {
     use alloc::boxed::Box;
 
-    #[cfg(feature = "buffer_provider")]
-    use crate::unstable::errors::ffi::DataError;
-    #[cfg(feature = "buffer_provider")]
-    use crate::unstable::provider::ffi::DataProvider;
-
     #[diplomat::opaque]
     /// An ICU4X Measurement Unit object which represents a single unit of measurement
     /// such as `meter`, `second`, `kilometer-per-hour`, `square-meter`, etc.
@@ -27,42 +22,12 @@ pub mod ffi {
     pub struct MeasureUnitParser(pub icu_experimental::measure::parser::MeasureUnitParser);
 
     impl MeasureUnitParser {
-        /// Construct a new [`MeasureUnitParser`] instance using compiled data.
-        #[diplomat::rust_link(
-            icu::experimental::measure::parser::MeasureUnitParser::new,
-            FnInStruct
-        )]
-        #[diplomat::attr(auto, constructor)]
-        #[cfg(feature = "compiled_data")]
-        pub fn create() -> Box<MeasureUnitParser> {
-            Box::new(MeasureUnitParser(
-                icu_experimental::measure::parser::MeasureUnitParser::default(),
-            ))
-        }
-        /// Construct a new [`MeasureUnitParser`] instance using a particular data source.
-        #[diplomat::rust_link(
-            icu::experimental::measure::parser::MeasureUnitParser::new,
-            FnInStruct
-        )]
-        #[diplomat::attr(all(supports = fallible_constructors, supports = named_constructors), named_constructor = "with_provider")]
-        #[cfg(feature = "buffer_provider")]
-        pub fn create_with_provider(
-            provider: &DataProvider,
-        ) -> Result<Box<MeasureUnitParser>, DataError> {
-            Ok(Box::new(MeasureUnitParser(
-                icu_experimental::measure::parser::MeasureUnitParser::try_new_with_buffer_provider(
-                    provider.get()?,
-                )?,
-            )))
-        }
-
         #[diplomat::rust_link(
             icu::experimental::measure::parser::MeasureUnitParser::parse,
             FnInStruct
         )]
-        pub fn parse(&self, unit_id: &DiplomatStr) -> Option<Box<MeasureUnit>> {
-            self.0
-                .try_from_utf8(unit_id)
+        pub fn parse(unit_id: &DiplomatStr) -> Option<Box<MeasureUnit>> {
+            icu_experimental::measure::parser::MeasureUnitParser::try_from_utf8(unit_id)
                 .ok()
                 .map(MeasureUnit)
                 .map(Box::new)

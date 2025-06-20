@@ -13,9 +13,8 @@ using namespace icu4x;
 
 int main() {
   auto converter_factory = UnitsConverterFactory::create();
-  auto parser = MeasureUnitParser::create();
-  auto from = parser->parse("meter");
-  auto to = parser->parse("foot");
+  auto from = MeasureUnitParser::parse("meter");
+  auto to = MeasureUnitParser::parse("foot");
   auto converter = converter_factory->converter(*from.get(), *to.get());
   auto result = converter->convert(1.0);
 

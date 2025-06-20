@@ -25,31 +25,10 @@ final class MeasureUnitParser implements ffi.Finalizable {
 
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_MeasureUnitParser_destroy_mv1));
 
-  /// Construct a new [MeasureUnitParser] instance using compiled data.
-  ///
-  /// See the [Rust documentation for `new`](https://docs.rs/icu/2.0.0/icu/experimental/measure/parser/struct.MeasureUnitParser.html#method.new) for more information.
-  factory MeasureUnitParser() {
-    final result = _icu4x_MeasureUnitParser_create_mv1();
-    return MeasureUnitParser._fromFfi(result, []);
-  }
-
-  /// Construct a new [MeasureUnitParser] instance using a particular data source.
-  ///
-  /// See the [Rust documentation for `new`](https://docs.rs/icu/2.0.0/icu/experimental/measure/parser/struct.MeasureUnitParser.html#method.new) for more information.
-  ///
-  /// Throws [DataError] on failure.
-  factory MeasureUnitParser.withProvider(DataProvider provider) {
-    final result = _icu4x_MeasureUnitParser_create_with_provider_mv1(provider._ffi);
-    if (!result.isOk) {
-      throw DataError.values[result.union.err];
-    }
-    return MeasureUnitParser._fromFfi(result.union.ok, []);
-  }
-
   /// See the [Rust documentation for `parse`](https://docs.rs/icu/2.0.0/icu/experimental/measure/parser/struct.MeasureUnitParser.html#method.parse) for more information.
-  MeasureUnit? parse(String unitId) {
+  static MeasureUnit? parse(String unitId) {
     final temp = _FinalizedArena();
-    final result = _icu4x_MeasureUnitParser_parse_mv1(_ffi, unitId._utf8AllocIn(temp.arena));
+    final result = _icu4x_MeasureUnitParser_parse_mv1(unitId._utf8AllocIn(temp.arena));
     return result.address == 0 ? null : MeasureUnit._fromFfi(result, []);
   }
 
@@ -60,19 +39,9 @@ final class MeasureUnitParser implements ffi.Finalizable {
 // ignore: non_constant_identifier_names
 external void _icu4x_MeasureUnitParser_destroy_mv1(ffi.Pointer<ffi.Void> self);
 
-@_DiplomatFfiUse('icu4x_MeasureUnitParser_create_mv1')
-@ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true, symbol: 'icu4x_MeasureUnitParser_create_mv1')
-// ignore: non_constant_identifier_names
-external ffi.Pointer<ffi.Opaque> _icu4x_MeasureUnitParser_create_mv1();
-
-@_DiplomatFfiUse('icu4x_MeasureUnitParser_create_with_provider_mv1')
-@ffi.Native<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_MeasureUnitParser_create_with_provider_mv1')
-// ignore: non_constant_identifier_names
-external _ResultOpaqueInt32 _icu4x_MeasureUnitParser_create_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider);
-
 @_DiplomatFfiUse('icu4x_MeasureUnitParser_parse_mv1')
-@ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, _SliceUtf8)>(isLeaf: true, symbol: 'icu4x_MeasureUnitParser_parse_mv1')
+@ffi.Native<ffi.Pointer<ffi.Opaque> Function(_SliceUtf8)>(isLeaf: true, symbol: 'icu4x_MeasureUnitParser_parse_mv1')
 // ignore: non_constant_identifier_names
-external ffi.Pointer<ffi.Opaque> _icu4x_MeasureUnitParser_parse_mv1(ffi.Pointer<ffi.Opaque> self, _SliceUtf8 unitId);
+external ffi.Pointer<ffi.Opaque> _icu4x_MeasureUnitParser_parse_mv1(_SliceUtf8 unitId);
 
 // dart format on
