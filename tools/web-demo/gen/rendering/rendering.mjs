@@ -205,7 +205,7 @@ class EnumTemplate extends ParameterTemplate {
     }
 
     getEventExpr(event) {
-        return this.#enumType.name + "." + event.target.value;
+        return "'" + event.target.value + "'";
     }
 }
 

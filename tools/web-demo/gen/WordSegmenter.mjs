@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-import { lib } from "./index.mjs";
+import { icu } from "./index.mjs";
 
 export default {
 	"WordSegmenter.segment": {
@@ -10,13 +10,13 @@ export default {
 			var segmenter;
 			switch (model) {
 				case "Auto":
-					segmenter = lib.WordSegmenter.createAuto();
+					segmenter = icu.WordSegmenter.createAuto();
 					break;
 				case "LSTM":
-					segmenter = lib.WordSegmenter.createLstm();
+					segmenter = icu.WordSegmenter.createLstm();
 					break;
 				case "Dictionary":
-					segmenter = lib.WordSegmenter.createDictionary();
+					segmenter = icu.WordSegmenter.createDictionary();
 			}
 			
 			let last = 0;
@@ -41,11 +41,11 @@ export default {
 		expr: (model, text) => {
 			switch (model) {
 				case '"LSTM"':
-					return 'WordSegmenter.createLstm().segment(text)';
+					return 'icu.WordSegmenter.createLstm().segment(text)';
 				case '"Dictionary"':
-					return 'WordSegmenter.createDictionary().segment(text)';
+					return 'icu.WordSegmenter.createDictionary().segment(text)';
 			}
-			return 'WordSegmenter.createAuto().segment(text)';
+			return 'icu.WordSegmenter.createAuto().segment(text)';
 		},
 		funcName: "WordSegmenter.segment",
 		parameters: [
