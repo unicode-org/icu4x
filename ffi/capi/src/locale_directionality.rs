@@ -19,6 +19,8 @@ pub mod ffi {
     pub enum LocaleDirection {
         LeftToRight,
         RightToLeft,
+        // This is an output type, so the default mostly impacts deferred initialization.
+        #[diplomat::attr(auto, default)]
         Unknown,
     }
 

@@ -63,6 +63,7 @@ pub mod ffi {
 
     #[diplomat::enum_convert(icu_time::zone::TimeZoneVariant, needs_wildcard)]
     pub enum TimeZoneVariant {
+        #[diplomat::attr(auto, default)]
         Standard,
         Daylight,
     }

@@ -50,29 +50,19 @@ pub enum Style {
 /// requested display name.
 #[allow(missing_docs)] // The variants are self explanatory.
 #[non_exhaustive]
-#[derive(Debug, Eq, PartialEq, Clone, Copy)]
+#[derive(Debug, Default, Eq, PartialEq, Clone, Copy)]
 pub enum Fallback {
+    #[default]
     Code,
     None,
-}
-
-impl Default for Fallback {
-    fn default() -> Self {
-        Self::Code
-    }
 }
 
 /// An enum for the language display kind.
 #[allow(missing_docs)] // The variants are self explanatory.
 #[non_exhaustive]
-#[derive(Debug, Eq, PartialEq, Clone, Copy)]
+#[derive(Debug, Default, Eq, PartialEq, Clone, Copy)]
 pub enum LanguageDisplay {
+    #[default]
     Dialect,
     Standard,
-}
-
-impl Default for LanguageDisplay {
-    fn default() -> Self {
-        Self::Dialect
-    }
 }
