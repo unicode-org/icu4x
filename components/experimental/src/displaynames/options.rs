@@ -48,12 +48,14 @@ pub enum Style {
 
 /// An enum for fallback return when the system does not have the
 /// requested display name.
-#[allow(missing_docs)] // The variants are self explanatory.
+#[allow(missing_docs)]
 #[non_exhaustive]
 #[derive(Debug, Default, Eq, PartialEq, Clone, Copy)]
 pub enum Fallback {
+    /// Fall back to the BCP-47 code when display name cannot be found
     #[default]
     Code,
+    /// Do not fall back, return an error when the display name cannot be found
     None,
 }
 
