@@ -49,9 +49,8 @@ impl MeasureUnit {
 
     /// Returns a short representation of this measure unit as follows:
     /// 1. Each single unit will be represented by its short representation.
-    /// 2. The constant denominator will be represented by its value prefixed with `C`.
+    /// 2. The constant denominator, at the beginning of the short representation, will be represented by its value prefixed with `C`.
     ///    2.1 If the constant denominator is greater than or equal to 1000 and has more than 3 trailing zeros, it will be represented in scientific notation.
-    /// 3. The division (per) will be represented by the `R` symbol.
     ///
     /// # Examples
     ///
@@ -62,78 +61,19 @@ impl MeasureUnit {
     ///
     /// let parser = MeasureUnitParser::new();
     ///
-    /// let full_unit = "meter";
-    /// let measure_unit = parser.try_from_str(full_unit).unwrap();
+    /// let measure_unit = parser.try_from_str("meter").unwrap();
     /// let short_representation = measure_unit.generate_short_representation();
-    /// assert_eq!(short_representation, "I85", "{}", full_unit);
-    /// assert_eq!(full_unit.len() - short_representation.len(), 2, "{}", full_unit);
+    /// assert_eq!(short_representation, "I85", "{}", "meter");
     ///
-    /// let full_unit = "foot";
-    /// let measure_unit = parser.try_from_str(full_unit).unwrap();
+    ///
+    /// let measure_unit = parser.try_from_str("square-meter").unwrap();
     /// let short_representation = measure_unit.generate_short_representation();
-    /// assert_eq!(short_representation, "I50", "{}", full_unit);
-    /// assert_eq!(full_unit.len() - short_representation.len(), 1);
+    /// assert_eq!(short_representation, "P2I85", "{}", "square-meter");
     ///
-    /// let full_unit = "inch";
-    /// let measure_unit = parser.try_from_str(full_unit).unwrap();
+    ///
+    /// let measure_unit = parser.try_from_str("liter-per-100-kilometer").unwrap();
     /// let short_representation = measure_unit.generate_short_representation();
-    /// assert_eq!(short_representation, "I66", "{}", full_unit);
-    /// assert_eq!(full_unit.len() - short_representation.len(), 1);
-    ///
-    /// let full_unit = "square-meter";
-    /// let measure_unit = parser.try_from_str(full_unit).unwrap();
-    /// let short_representation = measure_unit.generate_short_representation();
-    /// assert_eq!(short_representation, "P2I85", "{}", full_unit);
-    /// assert_eq!(full_unit.len() - short_representation.len(), 7, "{}", full_unit);
-    ///
-    /// let full_unit = "square-millimeter";
-    /// let measure_unit = parser.try_from_str(full_unit).unwrap();
-    /// let short_representation = measure_unit.generate_short_representation();
-    /// assert_eq!(short_representation, "P2D-3I85", "{}", full_unit);
-    /// assert_eq!(full_unit.len() - short_representation.len(), 9, "{}", full_unit);
-    ///
-    /// let full_unit = "micrometer";
-    /// let measure_unit = parser.try_from_str(full_unit).unwrap();
-    /// let short_representation = measure_unit.generate_short_representation();
-    /// assert_eq!(short_representation, "D-6I85", "{}", full_unit);
-    /// assert_eq!(full_unit.len() - short_representation.len(), 4, "{}", full_unit);
-    ///
-    /// let full_unit = "meter-per-second";
-    /// let measure_unit = parser.try_from_str(full_unit).unwrap();
-    /// let short_representation = measure_unit.generate_short_representation();
-    /// assert_eq!(short_representation, "I85#R#P-1I127", "{}", full_unit);
-    /// assert_eq!(full_unit.len() - short_representation.len(), 3, "{}", full_unit);
-    ///
-    /// let full_unit = "liter-per-100-kilometer";
-    /// let measure_unit = parser.try_from_str(full_unit).unwrap();
-    /// let short_representation = measure_unit.generate_short_representation();
-    /// assert_eq!(short_representation, "I82#R#C100#P-1D3I85", "{}", full_unit);
-    /// assert_eq!(full_unit.len() - short_representation.len(), 4, "{}", full_unit);
-    ///
-    /// let full_unit = "portion-per-1e9";
-    /// let measure_unit = parser.try_from_str(full_unit).unwrap();
-    /// let short_representation = measure_unit.generate_short_representation();
-    /// assert_eq!(short_representation, "I113#R#C1E9", "{}", full_unit);
-    /// assert_eq!(full_unit.len() - short_representation.len(), 4, "{}", full_unit);
-    ///
-    /// let full_unit = "per-10000000000-portion";
-    /// let measure_unit = parser.try_from_str(full_unit).unwrap();
-    /// let short_representation = measure_unit.generate_short_representation();
-    /// assert_eq!(short_representation, "R#C1E10#P-1I113", "{}", full_unit);
-    /// assert_eq!(full_unit.len() - short_representation.len(), 8, "{}", full_unit);
-    ///
-    /// let full_unit = "liter-per-240000000000-kilometer";
-    /// let measure_unit = parser.try_from_str(full_unit).unwrap();
-    /// let short_representation = measure_unit.generate_short_representation();
-    /// assert_eq!(short_representation, "I82#R#C24E10#P-1D3I85", "{}", full_unit);
-    /// assert_eq!(full_unit.len() - short_representation.len(), 11, "{}", full_unit);
-    ///
-    /// let full_unit = "millimeter-per-square-microsecond";
-    /// let measure_unit = parser.try_from_str(full_unit).unwrap();
-    /// let short_representation = measure_unit.generate_short_representation();
-    /// assert_eq!(short_representation, "D-3I85#R#P-2D-6I127", "{}", full_unit);
-    /// assert_eq!(full_unit.len() - short_representation.len(), 14, "{}", full_unit);
-    ///
+    /// assert_eq!(short_representation, "C100I82P-1D3I85", "{}", "liter-per-100-kilometer");
     /// ```
     pub fn generate_short_representation(&self) -> String {
         // Convert the constant to scientific notation if it is a power of 10 with more than 3 trailing zeros
@@ -158,64 +98,54 @@ impl MeasureUnit {
             result
         }
 
-        // Split the single units into two groups based on their SI prefix power:
-        // 1. Single units with a non-negative SI prefix power (positive or zero).
-        // 2. Single units with a negative SI prefix power.
-        // Since single units with non-negative powers are expected to appear first,
-        // we can efficiently partition them by finding the first unit with a negative power.
-        let split_index = self
-            .single_units
-            .as_slice()
-            .iter()
-            .position(|unit| unit.power < 0)
-            .unwrap_or_else(|| self.single_units.as_slice().len());
-        let (positive_prefix_units, negative_prefix_units) =
-            self.single_units.as_slice().split_at(split_index);
+        let mut short_representation = String::new();
 
-        // Generate the first part of the short representation
-        let positive_part =
-            positive_prefix_units
-                .iter()
-                .enumerate()
-                .fold(String::new(), |acc, (index, unit)| {
-                    if index < positive_prefix_units.len() - 1 {
-                        acc + &unit.to_string() + "#"
-                    } else {
-                        acc + &unit.to_string()
-                    }
-                });
-
-        // Generate the second part of the short representation
-        let mut negative_part =
-            negative_prefix_units
-                .iter()
-                .enumerate()
-                .fold(String::new(), |acc, (index, unit)| {
-                    if index < negative_prefix_units.len() - 1 {
-                        acc + &unit.to_string() + "#"
-                    } else {
-                        acc + &unit.to_string()
-                    }
-                });
-
-        // add constant part to the negative part
         if self.constant_denominator > 0 {
-            if !negative_part.is_empty() {
-                negative_part.insert(0, '#');
-            }
-            negative_part.insert_str(0, &power_of_10_to_scientific(self.constant_denominator));
-            negative_part.insert(0, 'C');
+            short_representation.push('C');
+            short_representation.push_str(&power_of_10_to_scientific(self.constant_denominator));
         }
 
-        // Glue the positive and negative parts together to get the final short representation
-        let mut short_representation = positive_part;
-        if !short_representation.is_empty() && !negative_part.is_empty() {
-            short_representation.push_str("#R#"); // --> -per- representation
-        } else if !negative_part.is_empty() {
-            short_representation.push_str("R#"); // --> per- representation
-        }
+        self.single_units.as_slice().iter().for_each(|single_unit| {
+            short_representation.push_str(&single_unit.to_string());
+        });
 
-        short_representation.push_str(&negative_part);
         short_representation
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use icu::experimental::measure::parser::MeasureUnitParser;
+
+    #[test]
+    fn test_generate_short_representation() {
+        let parser = MeasureUnitParser::new();
+
+        let test_cases = vec![
+            ("meter", "I85", 2),
+            ("foot", "I50", 1),
+            ("inch", "I66", 1),
+            ("square-meter", "P2I85", 7),
+            ("square-millimeter", "P2D-3I85", 9),
+            ("micrometer", "D-6I85", 4),
+            ("meter-per-second", "I85P-1I127", 6),
+            ("liter-per-100-kilometer", "C100I82P-1D3I85", 8),
+            ("portion-per-1e9", "C1E9I113", 7),
+            ("per-10000000000-portion", "C1E10P-1I113", 11),
+            ("liter-per-240000000000-kilometer", "C24E10I82P-1D3I85", 15),
+            ("millimeter-per-square-microsecond", "D-3I85P-2D-6I127", 17),
+        ];
+
+        for (full_unit, expected_short, expected_diff) in test_cases {
+            let measure_unit = parser.try_from_str(full_unit).unwrap();
+            let short_representation = measure_unit.generate_short_representation();
+            assert_eq!(short_representation, expected_short, "{}", full_unit);
+            assert_eq!(
+                full_unit.len() - short_representation.len(),
+                expected_diff,
+                "{}",
+                full_unit
+            );
+        }
     }
 }
