@@ -29,7 +29,8 @@ let termini = Object.assign({
             {
                 name: "val",
                 type: "GeneralCategory",
-                typeUse: "enumerator"
+                typeUse: "enumerator",
+                values: ["Unassigned", "UppercaseLetter", "LowercaseLetter", "TitlecaseLetter", "ModifierLetter", "OtherLetter", "NonspacingMark", "SpacingMark", "EnclosingMark", "DecimalNumber", "LetterNumber", "OtherNumber", "SpaceSeparator", "LineSeparator", "ParagraphSeparator", "Control", "Format", "PrivateUse", "Surrogate", "DashPunctuation", "OpenPunctuation", "ClosePunctuation", "ConnectorPunctuation", "InitialPunctuation", "FinalPunctuation", "OtherPunctuation", "MathSymbol", "CurrencySymbol", "ModifierSymbol", "OtherSymbol"]
             }
             
         ]
@@ -104,13 +105,15 @@ let termini = Object.assign({
             {
                 name: "options_leadingAdjustment",
                 type: "LeadingAdjustment",
-                typeUse: "enumerator"
+                typeUse: "enumerator",
+                values: ["Auto", "None", "ToCased"]
             },
             
             {
                 name: "options_trailingCase",
                 type: "TrailingCase",
-                typeUse: "enumerator"
+                typeUse: "enumerator",
+                values: ["Lower", "Unchanged"]
             }
             
         ]
@@ -258,13 +261,15 @@ let termini = Object.assign({
             {
                 name: "options_leadingAdjustment",
                 type: "LeadingAdjustment",
-                typeUse: "enumerator"
+                typeUse: "enumerator",
+                values: ["Auto", "None", "ToCased"]
             },
             
             {
                 name: "options_trailingCase",
                 type: "TrailingCase",
-                typeUse: "enumerator"
+                typeUse: "enumerator",
+                values: ["Lower", "Unchanged"]
             }
             
         ]
@@ -292,25 +297,29 @@ let termini = Object.assign({
             {
                 name: "self_options_strength",
                 type: "CollatorStrength",
-                typeUse: "enumerator"
+                typeUse: "enumerator",
+                values: ["Primary", "Secondary", "Tertiary", "Quaternary", "Identical"]
             },
             
             {
                 name: "self_options_alternateHandling",
                 type: "CollatorAlternateHandling",
-                typeUse: "enumerator"
+                typeUse: "enumerator",
+                values: ["NonIgnorable", "Shifted"]
             },
             
             {
                 name: "self_options_maxVariable",
                 type: "CollatorMaxVariable",
-                typeUse: "enumerator"
+                typeUse: "enumerator",
+                values: ["Space", "Punctuation", "Symbol", "Currency"]
             },
             
             {
                 name: "self_options_caseLevel",
                 type: "CollatorCaseLevel",
-                typeUse: "enumerator"
+                typeUse: "enumerator",
+                values: ["Off", "On"]
             },
             
             {
@@ -356,7 +365,8 @@ let termini = Object.assign({
             {
                 name: "self_calendar_kind",
                 type: "CalendarKind",
-                typeUse: "enumerator"
+                typeUse: "enumerator",
+                values: ["Iso", "Gregorian", "Buddhist", "Japanese", "JapaneseExtended", "Ethiopian", "EthiopianAmeteAlem", "Indian", "Coptic", "Dangi", "Chinese", "Hebrew", "HijriTabularTypeIIFriday", "HijriSimulatedMecca", "HijriTabularTypeIIThursday", "HijriUmmAlQura", "Persian", "Roc"]
             }
             
         ]
@@ -390,7 +400,8 @@ let termini = Object.assign({
             {
                 name: "self_calendar_kind",
                 type: "CalendarKind",
-                typeUse: "enumerator"
+                typeUse: "enumerator",
+                values: ["Iso", "Gregorian", "Buddhist", "Japanese", "JapaneseExtended", "Ethiopian", "EthiopianAmeteAlem", "Indian", "Coptic", "Dangi", "Chinese", "Hebrew", "HijriTabularTypeIIFriday", "HijriSimulatedMecca", "HijriTabularTypeIIThursday", "HijriUmmAlQura", "Persian", "Roc"]
             }
             
         ]
@@ -424,7 +435,8 @@ let termini = Object.assign({
             {
                 name: "self_calendar_kind",
                 type: "CalendarKind",
-                typeUse: "enumerator"
+                typeUse: "enumerator",
+                values: ["Iso", "Gregorian", "Buddhist", "Japanese", "JapaneseExtended", "Ethiopian", "EthiopianAmeteAlem", "Indian", "Coptic", "Dangi", "Chinese", "Hebrew", "HijriTabularTypeIIFriday", "HijriSimulatedMecca", "HijriTabularTypeIIThursday", "HijriUmmAlQura", "Persian", "Roc"]
             }
             
         ]
@@ -459,7 +471,8 @@ let termini = Object.assign({
             {
                 name: "self_calendar_kind",
                 type: "CalendarKind",
-                typeUse: "enumerator"
+                typeUse: "enumerator",
+                values: ["Iso", "Gregorian", "Buddhist", "Japanese", "JapaneseExtended", "Ethiopian", "EthiopianAmeteAlem", "Indian", "Coptic", "Dangi", "Chinese", "Hebrew", "HijriTabularTypeIIFriday", "HijriSimulatedMecca", "HijriTabularTypeIIThursday", "HijriUmmAlQura", "Persian", "Roc"]
             }
             
         ]
@@ -493,7 +506,8 @@ let termini = Object.assign({
             {
                 name: "self_calendar_kind",
                 type: "CalendarKind",
-                typeUse: "enumerator"
+                typeUse: "enumerator",
+                values: ["Iso", "Gregorian", "Buddhist", "Japanese", "JapaneseExtended", "Ethiopian", "EthiopianAmeteAlem", "Indian", "Coptic", "Dangi", "Chinese", "Hebrew", "HijriTabularTypeIIFriday", "HijriSimulatedMecca", "HijriTabularTypeIIThursday", "HijriUmmAlQura", "Persian", "Roc"]
             }
             
         ]
@@ -527,7 +541,8 @@ let termini = Object.assign({
             {
                 name: "self_calendar_kind",
                 type: "CalendarKind",
-                typeUse: "enumerator"
+                typeUse: "enumerator",
+                values: ["Iso", "Gregorian", "Buddhist", "Japanese", "JapaneseExtended", "Ethiopian", "EthiopianAmeteAlem", "Indian", "Coptic", "Dangi", "Chinese", "Hebrew", "HijriTabularTypeIIFriday", "HijriSimulatedMecca", "HijriTabularTypeIIThursday", "HijriUmmAlQura", "Persian", "Roc"]
             }
             
         ]
@@ -561,7 +576,8 @@ let termini = Object.assign({
             {
                 name: "self_calendar_kind",
                 type: "CalendarKind",
-                typeUse: "enumerator"
+                typeUse: "enumerator",
+                values: ["Iso", "Gregorian", "Buddhist", "Japanese", "JapaneseExtended", "Ethiopian", "EthiopianAmeteAlem", "Indian", "Coptic", "Dangi", "Chinese", "Hebrew", "HijriTabularTypeIIFriday", "HijriSimulatedMecca", "HijriTabularTypeIIThursday", "HijriUmmAlQura", "Persian", "Roc"]
             }
             
         ]
@@ -596,7 +612,8 @@ let termini = Object.assign({
             {
                 name: "self_calendar_kind",
                 type: "CalendarKind",
-                typeUse: "enumerator"
+                typeUse: "enumerator",
+                values: ["Iso", "Gregorian", "Buddhist", "Japanese", "JapaneseExtended", "Ethiopian", "EthiopianAmeteAlem", "Indian", "Coptic", "Dangi", "Chinese", "Hebrew", "HijriTabularTypeIIFriday", "HijriSimulatedMecca", "HijriTabularTypeIIThursday", "HijriUmmAlQura", "Persian", "Roc"]
             }
             
         ]
@@ -630,7 +647,8 @@ let termini = Object.assign({
             {
                 name: "self_calendar_kind",
                 type: "CalendarKind",
-                typeUse: "enumerator"
+                typeUse: "enumerator",
+                values: ["Iso", "Gregorian", "Buddhist", "Japanese", "JapaneseExtended", "Ethiopian", "EthiopianAmeteAlem", "Indian", "Coptic", "Dangi", "Chinese", "Hebrew", "HijriTabularTypeIIFriday", "HijriSimulatedMecca", "HijriTabularTypeIIThursday", "HijriUmmAlQura", "Persian", "Roc"]
             }
             
         ]
@@ -664,7 +682,8 @@ let termini = Object.assign({
             {
                 name: "self_calendar_kind",
                 type: "CalendarKind",
-                typeUse: "enumerator"
+                typeUse: "enumerator",
+                values: ["Iso", "Gregorian", "Buddhist", "Japanese", "JapaneseExtended", "Ethiopian", "EthiopianAmeteAlem", "Indian", "Coptic", "Dangi", "Chinese", "Hebrew", "HijriTabularTypeIIFriday", "HijriSimulatedMecca", "HijriTabularTypeIIThursday", "HijriUmmAlQura", "Persian", "Roc"]
             }
             
         ]
@@ -698,7 +717,8 @@ let termini = Object.assign({
             {
                 name: "self_calendar_kind",
                 type: "CalendarKind",
-                typeUse: "enumerator"
+                typeUse: "enumerator",
+                values: ["Iso", "Gregorian", "Buddhist", "Japanese", "JapaneseExtended", "Ethiopian", "EthiopianAmeteAlem", "Indian", "Coptic", "Dangi", "Chinese", "Hebrew", "HijriTabularTypeIIFriday", "HijriSimulatedMecca", "HijriTabularTypeIIThursday", "HijriUmmAlQura", "Persian", "Roc"]
             }
             
         ]
@@ -732,7 +752,8 @@ let termini = Object.assign({
             {
                 name: "self_calendar_kind",
                 type: "CalendarKind",
-                typeUse: "enumerator"
+                typeUse: "enumerator",
+                values: ["Iso", "Gregorian", "Buddhist", "Japanese", "JapaneseExtended", "Ethiopian", "EthiopianAmeteAlem", "Indian", "Coptic", "Dangi", "Chinese", "Hebrew", "HijriTabularTypeIIFriday", "HijriSimulatedMecca", "HijriTabularTypeIIThursday", "HijriUmmAlQura", "Persian", "Roc"]
             }
             
         ]
@@ -766,7 +787,8 @@ let termini = Object.assign({
             {
                 name: "self_calendar_kind",
                 type: "CalendarKind",
-                typeUse: "enumerator"
+                typeUse: "enumerator",
+                values: ["Iso", "Gregorian", "Buddhist", "Japanese", "JapaneseExtended", "Ethiopian", "EthiopianAmeteAlem", "Indian", "Coptic", "Dangi", "Chinese", "Hebrew", "HijriTabularTypeIIFriday", "HijriSimulatedMecca", "HijriTabularTypeIIThursday", "HijriUmmAlQura", "Persian", "Roc"]
             }
             
         ]
@@ -800,7 +822,8 @@ let termini = Object.assign({
             {
                 name: "self_calendar_kind",
                 type: "CalendarKind",
-                typeUse: "enumerator"
+                typeUse: "enumerator",
+                values: ["Iso", "Gregorian", "Buddhist", "Japanese", "JapaneseExtended", "Ethiopian", "EthiopianAmeteAlem", "Indian", "Coptic", "Dangi", "Chinese", "Hebrew", "HijriTabularTypeIIFriday", "HijriSimulatedMecca", "HijriTabularTypeIIThursday", "HijriUmmAlQura", "Persian", "Roc"]
             }
             
         ]
@@ -822,19 +845,22 @@ let termini = Object.assign({
             {
                 name: "self_length",
                 type: "DateTimeLength",
-                typeUse: "enumerator"
+                typeUse: "enumerator",
+                values: ["Long", "Medium", "Short"]
             },
             
             {
                 name: "self_alignment",
                 type: "DateTimeAlignment",
-                typeUse: "enumerator"
+                typeUse: "enumerator",
+                values: ["Auto", "Column"]
             },
             
             {
                 name: "self_yearStyle",
                 type: "YearStyle",
-                typeUse: "enumerator"
+                typeUse: "enumerator",
+                values: ["Auto", "Full", "WithEra"]
             },
             
             {
@@ -874,19 +900,22 @@ let termini = Object.assign({
             {
                 name: "self_length",
                 type: "DateTimeLength",
-                typeUse: "enumerator"
+                typeUse: "enumerator",
+                values: ["Long", "Medium", "Short"]
             },
             
             {
                 name: "self_alignment",
                 type: "DateTimeAlignment",
-                typeUse: "enumerator"
+                typeUse: "enumerator",
+                values: ["Auto", "Column"]
             },
             
             {
                 name: "self_yearStyle",
                 type: "YearStyle",
-                typeUse: "enumerator"
+                typeUse: "enumerator",
+                values: ["Auto", "Full", "WithEra"]
             },
             
             {
@@ -926,25 +955,29 @@ let termini = Object.assign({
             {
                 name: "self_length",
                 type: "DateTimeLength",
-                typeUse: "enumerator"
+                typeUse: "enumerator",
+                values: ["Long", "Medium", "Short"]
             },
             
             {
                 name: "self_timePrecision",
                 type: "TimePrecision",
-                typeUse: "enumerator"
+                typeUse: "enumerator",
+                values: ["Hour", "Minute", "MinuteOptional", "Second", "Subsecond1", "Subsecond2", "Subsecond3", "Subsecond4", "Subsecond5", "Subsecond6", "Subsecond7", "Subsecond8", "Subsecond9"]
             },
             
             {
                 name: "self_alignment",
                 type: "DateTimeAlignment",
-                typeUse: "enumerator"
+                typeUse: "enumerator",
+                values: ["Auto", "Column"]
             },
             
             {
                 name: "self_yearStyle",
                 type: "YearStyle",
-                typeUse: "enumerator"
+                typeUse: "enumerator",
+                values: ["Auto", "Full", "WithEra"]
             },
             
             {
@@ -1008,25 +1041,29 @@ let termini = Object.assign({
             {
                 name: "self_length",
                 type: "DateTimeLength",
-                typeUse: "enumerator"
+                typeUse: "enumerator",
+                values: ["Long", "Medium", "Short"]
             },
             
             {
                 name: "self_timePrecision",
                 type: "TimePrecision",
-                typeUse: "enumerator"
+                typeUse: "enumerator",
+                values: ["Hour", "Minute", "MinuteOptional", "Second", "Subsecond1", "Subsecond2", "Subsecond3", "Subsecond4", "Subsecond5", "Subsecond6", "Subsecond7", "Subsecond8", "Subsecond9"]
             },
             
             {
                 name: "self_alignment",
                 type: "DateTimeAlignment",
-                typeUse: "enumerator"
+                typeUse: "enumerator",
+                values: ["Auto", "Column"]
             },
             
             {
                 name: "self_yearStyle",
                 type: "YearStyle",
-                typeUse: "enumerator"
+                typeUse: "enumerator",
+                values: ["Auto", "Full", "WithEra"]
             },
             
             {
@@ -1090,7 +1127,8 @@ let termini = Object.assign({
             {
                 name: "self_groupingStrategy",
                 type: "DecimalGroupingStrategy",
-                typeUse: "enumerator"
+                typeUse: "enumerator",
+                values: ["Auto", "Never", "Always", "Min2"]
             },
             
             {
@@ -1284,7 +1322,8 @@ let termini = Object.assign({
             {
                 name: "self_length",
                 type: "ListLength",
-                typeUse: "enumerator"
+                typeUse: "enumerator",
+                values: ["Wide", "Short", "Narrow"]
             },
             
             {
@@ -1749,19 +1788,22 @@ let termini = Object.assign({
             {
                 name: "self_length",
                 type: "DateTimeLength",
-                typeUse: "enumerator"
+                typeUse: "enumerator",
+                values: ["Long", "Medium", "Short"]
             },
             
             {
                 name: "self_timePrecision",
                 type: "TimePrecision",
-                typeUse: "enumerator"
+                typeUse: "enumerator",
+                values: ["Hour", "Minute", "MinuteOptional", "Second", "Subsecond1", "Subsecond2", "Subsecond3", "Subsecond4", "Subsecond5", "Subsecond6", "Subsecond7", "Subsecond8", "Subsecond9"]
             },
             
             {
                 name: "self_alignment",
                 type: "DateTimeAlignment",
-                typeUse: "enumerator"
+                typeUse: "enumerator",
+                values: ["Auto", "Column"]
             },
             
             {
@@ -1836,7 +1878,8 @@ let termini = Object.assign({
             {
                 name: "zone_variant",
                 type: "TimeZoneVariant",
-                typeUse: "enumerator"
+                typeUse: "enumerator",
+                values: ["Standard", "Daylight"]
             }
             
         ]
@@ -1974,7 +2017,8 @@ let termini = Object.assign({
             {
                 name: "day",
                 type: "Weekday",
-                typeUse: "enumerator"
+                typeUse: "enumerator",
+                values: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
             }
             
         ]
@@ -2002,19 +2046,22 @@ let termini = Object.assign({
             {
                 name: "self_formatter_length",
                 type: "DateTimeLength",
-                typeUse: "enumerator"
+                typeUse: "enumerator",
+                values: ["Long", "Medium", "Short"]
             },
             
             {
                 name: "self_formatter_alignment",
                 type: "DateTimeAlignment",
-                typeUse: "enumerator"
+                typeUse: "enumerator",
+                values: ["Auto", "Column"]
             },
             
             {
                 name: "self_formatter_yearStyle",
                 type: "YearStyle",
-                typeUse: "enumerator"
+                typeUse: "enumerator",
+                values: ["Auto", "Full", "WithEra"]
             },
             
             {
@@ -2050,7 +2097,8 @@ let termini = Object.assign({
             {
                 name: "zone_variant",
                 type: "TimeZoneVariant",
-                typeUse: "enumerator"
+                typeUse: "enumerator",
+                values: ["Standard", "Daylight"]
             }
             
         ]
@@ -2078,19 +2126,22 @@ let termini = Object.assign({
             {
                 name: "self_formatter_length",
                 type: "DateTimeLength",
-                typeUse: "enumerator"
+                typeUse: "enumerator",
+                values: ["Long", "Medium", "Short"]
             },
             
             {
                 name: "self_formatter_alignment",
                 type: "DateTimeAlignment",
-                typeUse: "enumerator"
+                typeUse: "enumerator",
+                values: ["Auto", "Column"]
             },
             
             {
                 name: "self_formatter_yearStyle",
                 type: "YearStyle",
-                typeUse: "enumerator"
+                typeUse: "enumerator",
+                values: ["Auto", "Full", "WithEra"]
             },
             
             {
@@ -2126,7 +2177,8 @@ let termini = Object.assign({
             {
                 name: "zone_variant",
                 type: "TimeZoneVariant",
-                typeUse: "enumerator"
+                typeUse: "enumerator",
+                values: ["Standard", "Daylight"]
             }
             
         ]
@@ -2154,25 +2206,29 @@ let termini = Object.assign({
             {
                 name: "self_formatter_length",
                 type: "DateTimeLength",
-                typeUse: "enumerator"
+                typeUse: "enumerator",
+                values: ["Long", "Medium", "Short"]
             },
             
             {
                 name: "self_formatter_timePrecision",
                 type: "TimePrecision",
-                typeUse: "enumerator"
+                typeUse: "enumerator",
+                values: ["Hour", "Minute", "MinuteOptional", "Second", "Subsecond1", "Subsecond2", "Subsecond3", "Subsecond4", "Subsecond5", "Subsecond6", "Subsecond7", "Subsecond8", "Subsecond9"]
             },
             
             {
                 name: "self_formatter_alignment",
                 type: "DateTimeAlignment",
-                typeUse: "enumerator"
+                typeUse: "enumerator",
+                values: ["Auto", "Column"]
             },
             
             {
                 name: "self_formatter_yearStyle",
                 type: "YearStyle",
-                typeUse: "enumerator"
+                typeUse: "enumerator",
+                values: ["Auto", "Full", "WithEra"]
             },
             
             {
@@ -2232,7 +2288,8 @@ let termini = Object.assign({
             {
                 name: "zone_variant",
                 type: "TimeZoneVariant",
-                typeUse: "enumerator"
+                typeUse: "enumerator",
+                values: ["Standard", "Daylight"]
             }
             
         ]
@@ -2260,25 +2317,29 @@ let termini = Object.assign({
             {
                 name: "self_formatter_length",
                 type: "DateTimeLength",
-                typeUse: "enumerator"
+                typeUse: "enumerator",
+                values: ["Long", "Medium", "Short"]
             },
             
             {
                 name: "self_formatter_timePrecision",
                 type: "TimePrecision",
-                typeUse: "enumerator"
+                typeUse: "enumerator",
+                values: ["Hour", "Minute", "MinuteOptional", "Second", "Subsecond1", "Subsecond2", "Subsecond3", "Subsecond4", "Subsecond5", "Subsecond6", "Subsecond7", "Subsecond8", "Subsecond9"]
             },
             
             {
                 name: "self_formatter_alignment",
                 type: "DateTimeAlignment",
-                typeUse: "enumerator"
+                typeUse: "enumerator",
+                values: ["Auto", "Column"]
             },
             
             {
                 name: "self_formatter_yearStyle",
                 type: "YearStyle",
-                typeUse: "enumerator"
+                typeUse: "enumerator",
+                values: ["Auto", "Full", "WithEra"]
             },
             
             {
@@ -2338,7 +2399,8 @@ let termini = Object.assign({
             {
                 name: "zone_variant",
                 type: "TimeZoneVariant",
-                typeUse: "enumerator"
+                typeUse: "enumerator",
+                values: ["Standard", "Daylight"]
             }
             
         ]
@@ -2360,19 +2422,22 @@ let termini = Object.assign({
             {
                 name: "self_length",
                 type: "DateTimeLength",
-                typeUse: "enumerator"
+                typeUse: "enumerator",
+                values: ["Long", "Medium", "Short"]
             },
             
             {
                 name: "self_timePrecision",
                 type: "TimePrecision",
-                typeUse: "enumerator"
+                typeUse: "enumerator",
+                values: ["Hour", "Minute", "MinuteOptional", "Second", "Subsecond1", "Subsecond2", "Subsecond3", "Subsecond4", "Subsecond5", "Subsecond6", "Subsecond7", "Subsecond8", "Subsecond9"]
             },
             
             {
                 name: "self_alignment",
                 type: "DateTimeAlignment",
-                typeUse: "enumerator"
+                typeUse: "enumerator",
+                values: ["Auto", "Column"]
             },
             
             {
@@ -2414,7 +2479,8 @@ let termini = Object.assign({
             {
                 name: "zone_variant",
                 type: "TimeZoneVariant",
-                typeUse: "enumerator"
+                typeUse: "enumerator",
+                values: ["Standard", "Daylight"]
             }
             
         ]
@@ -2703,7 +2769,8 @@ let termini = Object.assign({
             {
                 name: "self",
                 type: "SegmenterWordType",
-                typeUse: "enumerator"
+                typeUse: "enumerator",
+                values: ["None", "Number", "Letter"]
             }
             
         ]

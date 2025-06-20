@@ -40,20 +40,21 @@ export default {
 		},
 		expr: (model, text) => {
 			switch (model) {
-				case '"LSTM"':
+				case "'Auto'":
+					return 'icu.WordSegmenter.createAuto().segment(text)';
+				case "'LSTM'":
 					return 'icu.WordSegmenter.createLstm().segment(text)';
-				case '"Dictionary"':
+				case "'Dictionary'":
 					return 'icu.WordSegmenter.createDictionary().segment(text)';
 			}
-			return 'icu.WordSegmenter.createAuto().segment(text)';
+			return 'icu.WordSegmenter.type().segment(text)';
 		},
 		funcName: "WordSegmenter.segment",
 		parameters: [
 			{
-				name: "Model Type (Auto, LSTM, or Dictionary)",
-				type: "string",
-				typeUse: "string",
-				defaultValue: "Auto"
+				name: "type",
+				typeUse: "enumerator",
+				values: ["Auto", "LSTM", "Dictionary"],
 			},
 			{
 				name: "text",
