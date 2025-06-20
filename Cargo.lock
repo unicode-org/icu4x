@@ -1351,7 +1351,7 @@ dependencies = [
 
 [[package]]
 name = "icu_datetime_data"
-version = "2.0.1"
+version = "2.0.2"
 
 [[package]]
 name = "icu_decimal"
@@ -1730,7 +1730,7 @@ dependencies = [
 
 [[package]]
 name = "icu_provider_source"
-version = "2.0.1"
+version = "2.0.2"
 dependencies = [
  "calendrical_calculations",
  "displaydoc",
@@ -1822,7 +1822,7 @@ dependencies = [
 
 [[package]]
 name = "icu_time_data"
-version = "2.0.1"
+version = "2.0.2"
 
 [[package]]
 name = "indenter"
