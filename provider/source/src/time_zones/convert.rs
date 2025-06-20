@@ -450,7 +450,10 @@ impl SourceDataProvider {
                                         })
                                         .collect::<Vec<_>>();
 
-                                    rules.sort_by_key(|&(local_end_time, _)| local_end_time);
+                                    // Dedup consecutive rules, keeping higher end time
+                                    rules.sort_by_key(|(end_time, _)| core::cmp::Reverse(*end_time));
+                                    rules.dedup_by_key(|(_, offsets)| *offsets);
+                                    rules.reverse();
 
                                     if rules.is_empty() {
                                         // No rule applies
@@ -461,10 +464,12 @@ impl SourceDataProvider {
                                             0,
                                         );
                                     } else {
-                                        for &(local_end_time, dst_offset_relative) in &rules {
+                                        for &(rule_end_time, dst_offset_relative) in &rules {
                                             store_offsets(
                                                 &mut data,
-                                                local_end_time,
+                                                // use the rule until the end of the zone info, or the end of the rule
+                                                // whichever is earlier
+                                                core::cmp::min(rule_end_time, local_end_time),
                                                 zone_info.offset,
                                                 dst_offset_relative,
                                             );

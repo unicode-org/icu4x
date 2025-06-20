@@ -711,7 +711,7 @@ dependencies = [
 [[package]]
 name = "diplomat"
 version = "0.12.0"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=788de127aeb2b054088ec6594594502bf5f98bcd#788de127aeb2b054088ec6594594502bf5f98bcd"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=cb25802511626a368e84bee55796e492a115c35a#cb25802511626a368e84bee55796e492a115c35a"
 dependencies = [
  "diplomat_core",
  "proc-macro2",
@@ -742,7 +742,7 @@ dependencies = [
 [[package]]
 name = "diplomat-runtime"
 version = "0.12.0"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=788de127aeb2b054088ec6594594502bf5f98bcd#788de127aeb2b054088ec6594594502bf5f98bcd"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=cb25802511626a368e84bee55796e492a115c35a#cb25802511626a368e84bee55796e492a115c35a"
 dependencies = [
  "log",
 ]
@@ -750,7 +750,7 @@ dependencies = [
 [[package]]
 name = "diplomat-tool"
 version = "0.12.0"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=788de127aeb2b054088ec6594594502bf5f98bcd#788de127aeb2b054088ec6594594502bf5f98bcd"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=cb25802511626a368e84bee55796e492a115c35a#cb25802511626a368e84bee55796e492a115c35a"
 dependencies = [
  "askama",
  "clap",
@@ -771,7 +771,7 @@ dependencies = [
 [[package]]
 name = "diplomat_core"
 version = "0.12.0"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=788de127aeb2b054088ec6594594502bf5f98bcd#788de127aeb2b054088ec6594594502bf5f98bcd"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=cb25802511626a368e84bee55796e492a115c35a#cb25802511626a368e84bee55796e492a115c35a"
 dependencies = [
  "displaydoc",
  "either",
@@ -1351,7 +1351,7 @@ dependencies = [
 
 [[package]]
 name = "icu_datetime_data"
-version = "2.0.1"
+version = "2.0.2"
 
 [[package]]
 name = "icu_decimal"
@@ -1730,7 +1730,7 @@ dependencies = [
 
 [[package]]
 name = "icu_provider_source"
-version = "2.0.1"
+version = "2.0.2"
 dependencies = [
  "calendrical_calculations",
  "displaydoc",
@@ -1822,7 +1822,7 @@ dependencies = [
 
 [[package]]
 name = "icu_time_data"
-version = "2.0.1"
+version = "2.0.2"
 
 [[package]]
 name = "indenter"
