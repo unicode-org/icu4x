@@ -459,9 +459,7 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
     /// #     }
     /// #
     /// #     unsafe fn make(from: Bar<'a>) -> Self {
-    /// #         let ret = mem::transmute_copy(&from);
-    /// #         mem::forget(from);
-    /// #         ret
+    /// #         unsafe { mem::transmute(from) }
     /// #     }
     /// #
     /// #     fn transform_mut<F>(&'a mut self, f: F)
@@ -803,9 +801,7 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
     /// #     }
     /// #
     /// #     unsafe fn make(from: Bar<'a>) -> Self {
-    /// #         let ret = mem::transmute_copy(&from);
-    /// #         mem::forget(from);
-    /// #         ret
+    /// #         unsafe { mem::transmute(from) }
     /// #     }
     /// #
     /// #     fn transform_mut<F>(&'a mut self, f: F)
@@ -912,9 +908,7 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
     /// #     }
     /// #
     /// #     unsafe fn make(from: Bar<'a>) -> Self {
-    /// #         let ret = mem::transmute_copy(&from);
-    /// #         mem::forget(from);
-    /// #         ret
+    /// #         unsafe { mem::transmute(from) }
     /// #     }
     /// #
     /// #     fn transform_mut<F>(&'a mut self, f: F)
