@@ -8,7 +8,7 @@ pub(crate) mod si_prefix;
 
 use crate::measure::measureunit::MeasureUnit;
 use displaydoc::Display;
-use ids::DECIMAL_PREFIXES_TRIE;
+use ids::CLDR_IDS_TRIE;
 use power::get_power;
 use si_prefix::get_si_prefix;
 
@@ -32,7 +32,7 @@ impl MeasureUnitParser {
     ///    if the unit id is found, the function will return (unit id, part without the unit id and without `-` at the beginning of the remaining part if it exists).
     ///    if the unit id is not found, the function will return an error.
     fn get_unit_id(part: &[u8]) -> Result<(u16, &[u8]), InvalidUnitError> {
-        let mut cursor = DECIMAL_PREFIXES_TRIE.cursor();
+        let mut cursor = CLDR_IDS_TRIE.cursor();
         let mut longest_match = Err(InvalidUnitError);
 
         for (i, byte) in part.iter().enumerate() {

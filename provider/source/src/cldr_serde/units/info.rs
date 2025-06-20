@@ -7,10 +7,10 @@
 //! The file:
 //! <https://github.com/unicode-org/cldr-json/blob/main/cldr-json/cldr-core/supplemental/units.json>
 
-use icu::experimental::measure::parser::ids::DECIMAL_PREFIXES_TRIE;
+use icu::experimental::measure::parser::ids::CLDR_IDS_TRIE;
 use icu_provider::DataError;
 use serde::Deserialize;
-use std::collections::BTreeMap;
+use std::{collections::BTreeMap, fmt::Write};
 
 #[derive(PartialEq, Debug, Deserialize)]
 pub(crate) struct Constant {
@@ -92,24 +92,16 @@ impl Resource {
     /// * `Ok(u16)` - The unique identifier for the unit if found.
     /// * `Err(DataError)` - An error if the unit is not found or if the index is out of range for `u16`.
     pub fn unit_id(&self, unit_name: &str) -> Result<u16, DataError> {
-        let mut cursor = unit_name.as_bytes().iter().try_fold(
-            DECIMAL_PREFIXES_TRIE.cursor(),
-            |mut cursor, &byte| {
-                cursor.step(byte);
-                if cursor.is_empty() {
-                    Err(DataError::custom("Unit not found"))
-                } else {
-                    Ok(cursor)
-                }
-            },
-        )?;
-
-        cursor.take_value().map_or_else(
-            || Err(DataError::custom("Unit not found")),
-            |value| {
+        let mut cursor = CLDR_IDS_TRIE.cursor();
+        cursor
+            .write_str(unit_name)
+            .map_err(|_| DataError::custom("Unit not found"))?;
+        cursor
+            .take_value()
+            .ok_or_else(|| DataError::custom("Unit not found"))
+            .and_then(|value| {
                 u16::try_from(value).map_err(|_| DataError::custom("Value out of range for u16"))
-            },
-        )
+            })
     }
 
     /// Constructs a map of unit names to their unique identifiers, which are the unit's indices in the list.
@@ -118,7 +110,7 @@ impl Resource {
     ///
     /// Returns a `DataError` if the index cannot be converted to `u16`.
     pub fn unit_ids_map(&self) -> Result<BTreeMap<String, u16>, DataError> {
-        DECIMAL_PREFIXES_TRIE
+        CLDR_IDS_TRIE
             .iter()
             .map(|(unit_name, unit_id)| {
                 u16::try_from(unit_id)

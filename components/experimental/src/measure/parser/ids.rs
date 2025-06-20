@@ -4,13 +4,13 @@
 
 use zerotrie::ZeroTrieSimpleAscii;
 
-/// This constant maps simple unit names to their unique identifiers.
+/// This constant maps simple cldr unit names to their unique identifiers.
 /// Identifiers are immutable; any new unit must be assigned a distinct identifier.
 /// NOTE: These identifiers are tied to the units data generation. After adding a new unit,
 /// remember to regenerate the units data to reflect changes.
-pub const DECIMAL_PREFIXES_TRIE: ZeroTrieSimpleAscii<[u8; 1332]> =
+pub const CLDR_IDS_TRIE: ZeroTrieSimpleAscii<[u8; 1332]> =
     ZeroTrieSimpleAscii::from_sorted_str_tuples(&[
-        // NOTE: `100-kilometer` is must be removed from CLDR, see https://unicode-org.atlassian.net/browse/CLDR-18736
+        // NOTE: `100-kilometer` must be removed from CLDR, see https://unicode-org.atlassian.net/browse/CLDR-18736
         ("100-kilometer", 0_usize),
         ("acre", 1_usize),
         ("ampere", 2_usize),
@@ -168,3 +168,110 @@ pub const DECIMAL_PREFIXES_TRIE: ZeroTrieSimpleAscii<[u8; 1332]> =
         ("year", 153_usize),
         ("year-person", 154_usize),
     ]);
+
+#[cfg(test)]
+mod tests {
+    use crate::measure::parser::CLDR_IDS_TRIE;
+
+    // This test is to ensure that that the IDs is fixed and not changed.
+    #[test]
+    fn test_all_ids() {
+        let expected_ids = vec![
+            ("100-kilometer", 0_usize),
+            ("acre", 1_usize),
+            ("ampere", 2_usize),
+            ("arc-minute", 3_usize),
+            ("arc-second", 4_usize),
+            ("astronomical-unit", 5_usize),
+            ("atmosphere", 6_usize),
+            ("bar", 7_usize),
+            ("barrel", 8_usize),
+            ("beaufort", 9_usize),
+            ("becquerel", 10_usize),
+            ("bit", 11_usize),
+            ("british-thermal-unit", 12_usize),
+            ("british-thermal-unit-it", 13_usize),
+            ("bu-jp", 14_usize),
+            ("bushel", 15_usize),
+            ("byte", 16_usize),
+            ("calorie", 17_usize),
+            ("calorie-it", 18_usize),
+            ("candela", 19_usize),
+            ("carat", 20_usize),
+            ("celsius", 21_usize),
+            ("century", 22_usize),
+            ("chain", 23_usize),
+            ("cho", 24_usize),
+            ("coulomb", 25_usize),
+            ("cup", 26_usize),
+            ("cup-jp", 27_usize),
+            ("cup-metric", 28_usize),
+            ("dalton", 29_usize),
+            ("day", 30_usize),
+            ("day-person", 31_usize),
+            ("decade", 32_usize),
+            ("degree", 33_usize),
+            ("dessert-spoon", 34_usize),
+            ("dessert-spoon-imperial", 35_usize),
+            ("dot", 36_usize),
+            ("dram", 37_usize),
+            ("drop", 38_usize),
+            ("dunam", 39_usize),
+            ("earth-mass", 40_usize),
+            ("earth-radius", 41_usize),
+            ("electronvolt", 42_usize),
+            ("em", 43_usize),
+            ("fahrenheit", 44_usize),
+            ("farad", 45_usize),
+            ("fathom", 46_usize),
+            ("fluid-ounce", 47_usize),
+            ("fluid-ounce-imperial", 48_usize),
+            ("portion", 113_usize),
+            ("pound", 114_usize),
+            ("pound-force", 115_usize),
+            ("quart", 116_usize),
+            ("quart-imperial", 117_usize),
+            ("quarter", 118_usize),
+            ("radian", 119_usize),
+            ("rankine", 120_usize),
+            ("revolution", 121_usize),
+            ("ri-jp", 122_usize),
+            ("rin", 123_usize),
+            ("rod", 124_usize),
+            ("sai", 125_usize),
+            ("se-jp", 126_usize),
+            ("second", 127_usize),
+            ("shaku", 128_usize),
+            ("shaku-cloth", 129_usize),
+            ("shaku-length", 130_usize),
+            ("siemens", 131_usize),
+            ("sievert", 132_usize),
+            ("slug", 133_usize),
+            ("solar-luminosity", 134_usize),
+            ("solar-mass", 135_usize),
+            ("solar-radius", 136_usize),
+            ("steradian", 137_usize),
+            ("stone", 138_usize),
+            ("sun", 139_usize),
+            ("tablespoon", 140_usize),
+            ("teaspoon", 141_usize),
+            ("tesla", 142_usize),
+            ("therm-us", 143_usize),
+            ("to-jp", 144_usize),
+            ("ton", 145_usize),
+            ("tonne", 146_usize),
+            ("volt", 147_usize),
+            ("watt", 148_usize),
+            ("weber", 149_usize),
+            ("week", 150_usize),
+            ("week-person", 151_usize),
+            ("yard", 152_usize),
+            ("year", 153_usize),
+            ("year-person", 154_usize),
+        ];
+
+        for (name, id) in expected_ids {
+            assert_eq!(CLDR_IDS_TRIE.get(name), Some(id));
+        }
+    }
+}
