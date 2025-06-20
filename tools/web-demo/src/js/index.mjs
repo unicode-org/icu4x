@@ -16,7 +16,8 @@ Object.values(RenderInfo.termini).toSorted((a, b) => a.funcName < b.funcName ? -
 	summary.innerHTML = `<code>${t.funcName}</code>`;
 	details.appendChild(summary);
 	details.appendChild(document.createElement("br"));
-	details.appendChild(new TerminusRender(icu, () => {}, RenderInfo.termini[t.funcName],
+	details.appendChild(new TerminusRender(
+		RenderInfo.termini[t.funcName],
 		(el) => {
 			// Necessary for Prism to know the language to highlight for, and also
 			// to ensure CSS `white-space: pre-wrap` is applied from selector

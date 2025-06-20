@@ -10,7 +10,7 @@ class ParameterTemplate extends HTMLElement {
     inputElement = null;
 
     static baseTemplate;
-    constructor(options = {}, className, selector, ...args) {
+    constructor(options = {}, className, selector) {
         super();
         generateTemplate(ParameterTemplate, "baseTemplate", "#parameter");
         generateTemplate(className, "template", selector);
@@ -18,7 +18,7 @@ class ParameterTemplate extends HTMLElement {
 
         let clone = className["template"].cloneNode(true);
 
-        this.initialize(clone, ...args);
+        this.initialize(clone, options);
 
         this.inputElement = clone.querySelector("*[data-oninput]");
         if (this.inputElement !== null) {
@@ -57,9 +57,7 @@ class ParameterTemplate extends HTMLElement {
         }));
     }
 
-    initialize(clone) {
-
-    }
+    initialize() {}
 }
 
 customElements.define("terminus-param", ParameterTemplate);
@@ -175,33 +173,27 @@ customElements.define("terminus-enum-option", EnumOption);
 class EnumTemplate extends ParameterTemplate {
     static template;
 
-    #enumType;
-    constructor(options, enumType) {
-        super(options, EnumTemplate, "template#enum", enumType);
-        this.#enumType = enumType;
+    constructor(options) {
+        super(options, EnumTemplate, "template#enum");
     }
 
-    initialize(clone, enumType) {
-        let options = clone.querySelector("*[data-options]");
+    initialize(clone, options) {
+        let values = clone.querySelector("*[data-options]");
 
         let nullOption = document.createElement("option");
         nullOption.setAttribute("value", "null");
         nullOption.setAttribute("disabled", "true");
         nullOption.setAttribute("selected", "true");
         nullOption.setAttribute("style", "display:none");
-        options.appendChild(nullOption);
+        values.appendChild(nullOption);
 
-        for (let entry of enumType.getAllEntries()) {
-
-            if (this.default === null) {
-                this.default = entry[0];
-            }
-            options.append(...(new EnumOption(entry[0])).children);
+        for (let entry of options.values) {
+            values.append(...(new EnumOption(entry)).children);
         }
     }
 
     getEventValue(event) {
-        return this.#enumType[event.target.value];
+        return event.target.value;
     }
 
     getEventExpr(event) {
@@ -215,7 +207,7 @@ class TerminusParams extends HTMLElement {
     #params = [];
     #exprs = [];
 
-    constructor(library, evaluateExternal, params) {
+    constructor(params, evaluateExternal) {
         super();
 
         for (var i = 0; i < params.length; i++) {
@@ -240,7 +232,7 @@ class TerminusParams extends HTMLElement {
                     newChild = new StringArrayTemplate(param);
                     break;
                 case "enumerator":
-                    newChild = new EnumTemplate(param, library[param.type]);
+                    newChild = new EnumTemplate(param);
                     break;
                 case "codepoint":
                     newChild = new CodepointTemplate(param);
@@ -290,7 +282,7 @@ export class TerminusRender extends HTMLElement {
     #parameters;
     #output;
     #code;
-    constructor(library, evaluateExternal, terminus, exprCallback = ((element) => {})) {
+    constructor(terminus, exprCallback = (() => {}), evaluateExternal = (() => {}))  {
         super();
         generateTemplate(TerminusRender, "template", "template#terminus");
         let clone = TerminusRender.template.cloneNode(true);
@@ -310,7 +302,7 @@ export class TerminusRender extends HTMLElement {
         funcText.innerText = terminus.funcName;
         this.appendChild(funcText);
 
-        this.#parameters = new TerminusParams(library, evaluateExternal, terminus.parameters);
+        this.#parameters = new TerminusParams(terminus.parameters, evaluateExternal);
         this.#parameters.slot = "parameters";
         this.appendChild(this.#parameters);
 
