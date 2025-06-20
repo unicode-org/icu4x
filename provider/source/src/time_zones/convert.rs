@@ -467,6 +467,8 @@ impl SourceDataProvider {
                                         for &(rule_end_time, dst_offset_relative) in &rules {
                                             store_offsets(
                                                 &mut data,
+                                                // use the rule until the end of the zone info, or the end of the rule
+                                                // whichever is earlier
                                                 core::cmp::min(rule_end_time, local_end_time),
                                                 zone_info.offset,
                                                 dst_offset_relative,
