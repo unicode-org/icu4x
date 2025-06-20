@@ -2,23 +2,24 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-import { lib } from "./index.mjs";
+import { icu } from "./index.mjs";
 
 export default {
 	"LocaleCanonicalizer.canonicalize": {
 		func: (locale) => {
-			let canonicalizer = new lib.LocaleCanonicalizer();
+			let canonicalizer = new icu.LocaleCanonicalizer();
 
-			locale = lib.Locale.fromString(locale);
+			locale = icu.Locale.fromString(locale);
 
 			canonicalizer.canonicalize(locale);
 
 			return locale.toString();
 		},
+		expr: (locale) => `let locale = icu.Locale.fromString(${locale});\nnew icu.LocaleCanonicalizer().canonicalize(locale);\nlocale`,
 		funcName: "LocaleCanonicalizer.canonicalize",
 		parameters: [
 			{
-                name: "Locale:Name",
+                name: "locale_name",
                 type: "string",
                 typeUse: "string"
 			}

@@ -74,6 +74,13 @@ inline std::string icu4x::ComposingNormalizer::normalize(std::string_view s) con
     &write);
   return output;
 }
+template<typename W>
+inline void icu4x::ComposingNormalizer::normalize_write(std::string_view s, W& writeable) const {
+  diplomat::capi::DiplomatWrite write = diplomat::WriteTrait<W>::Construct(writeable);
+  icu4x::capi::icu4x_ComposingNormalizer_normalize_mv1(this->AsFFI(),
+    {s.data(), s.size()},
+    &write);
+}
 
 inline bool icu4x::ComposingNormalizer::is_normalized(std::string_view s) const {
   auto result = icu4x::capi::icu4x_ComposingNormalizer_is_normalized_utf8_mv1(this->AsFFI(),

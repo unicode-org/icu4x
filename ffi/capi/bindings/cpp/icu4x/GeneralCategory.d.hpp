@@ -95,7 +95,8 @@ public:
     OtherSymbol = 27,
   };
 
-  GeneralCategory() = default;
+  GeneralCategory(): value(Value::Unassigned) {}
+
   // Implicit conversions between enum and ::Value
   constexpr GeneralCategory(Value v) : value(v) {}
   constexpr operator Value() const { return value; }

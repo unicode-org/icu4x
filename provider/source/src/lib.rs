@@ -117,7 +117,7 @@ impl SourceDataProvider {
     pub const TESTED_SEGMENTER_LSTM_TAG: &'static str = "v0.1.0";
 
     /// The TZDB tag that has been verified to work with this version of `SourceDataProvider`.
-    pub const TESTED_TZDB_TAG: &'static str = "2025a";
+    pub const TESTED_TZDB_TAG: &'static str = "2025b";
 
     /// A provider using the data that has been verified to work with this version of `SourceDataProvider`.
     ///

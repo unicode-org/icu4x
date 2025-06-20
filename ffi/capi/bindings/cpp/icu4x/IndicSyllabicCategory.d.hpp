@@ -108,7 +108,8 @@ public:
     ReorderingKiller = 36,
   };
 
-  IndicSyllabicCategory() = default;
+  IndicSyllabicCategory(): value(Value::Other) {}
+
   // Implicit conversions between enum and ::Value
   constexpr IndicSyllabicCategory(Value v) : value(v) {}
   constexpr operator Value() const { return value; }

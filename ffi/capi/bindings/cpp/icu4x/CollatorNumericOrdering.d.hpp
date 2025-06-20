@@ -34,7 +34,8 @@ public:
     On = 1,
   };
 
-  CollatorNumericOrdering() = default;
+  CollatorNumericOrdering(): value(Value::Off) {}
+
   // Implicit conversions between enum and ::Value
   constexpr CollatorNumericOrdering(Value v) : value(v) {}
   constexpr operator Value() const { return value; }

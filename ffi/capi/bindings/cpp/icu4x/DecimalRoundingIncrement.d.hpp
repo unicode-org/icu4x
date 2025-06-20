@@ -40,7 +40,8 @@ public:
     MultiplesOf25 = 3,
   };
 
-  DecimalRoundingIncrement() = default;
+  DecimalRoundingIncrement(): value(Value::MultiplesOf1) {}
+
   // Implicit conversions between enum and ::Value
   constexpr DecimalRoundingIncrement(Value v) : value(v) {}
   constexpr operator Value() const { return value; }

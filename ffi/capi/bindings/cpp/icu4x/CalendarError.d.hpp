@@ -38,7 +38,8 @@ public:
     UnknownMonthCode = 3,
   };
 
-  CalendarError() = default;
+  CalendarError(): value(Value::Unknown) {}
+
   // Implicit conversions between enum and ::Value
   constexpr CalendarError(Value v) : value(v) {}
   constexpr operator Value() const { return value; }

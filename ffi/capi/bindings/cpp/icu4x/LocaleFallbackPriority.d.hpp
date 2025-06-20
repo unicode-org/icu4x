@@ -36,7 +36,8 @@ public:
     Region = 1,
   };
 
-  LocaleFallbackPriority() = default;
+  LocaleFallbackPriority(): value(Value::Language) {}
+
   // Implicit conversions between enum and ::Value
   constexpr LocaleFallbackPriority(Value v) : value(v) {}
   constexpr operator Value() const { return value; }

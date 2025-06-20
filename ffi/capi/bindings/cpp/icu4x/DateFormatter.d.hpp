@@ -227,11 +227,15 @@ public:
    * See the [Rust documentation for `format`](https://docs.rs/icu/2.0.0/icu/datetime/struct.DateTimeFormatter.html#method.format) for more information.
    */
   inline std::string format_iso(const icu4x::IsoDate& iso_date) const;
+  template<typename W>
+  inline void format_iso_write(const icu4x::IsoDate& iso_date, W& writeable_output) const;
 
   /**
    * See the [Rust documentation for `format_same_calendar`](https://docs.rs/icu/2.0.0/icu/datetime/struct.DateTimeFormatter.html#method.format_same_calendar) for more information.
    */
   inline diplomat::result<std::string, icu4x::DateTimeMismatchedCalendarError> format_same_calendar(const icu4x::Date& date) const;
+  template<typename W>
+  inline diplomat::result<std::monostate, icu4x::DateTimeMismatchedCalendarError> format_same_calendar_write(const icu4x::Date& date, W& writeable_output) const;
 
   inline const icu4x::capi::DateFormatter* AsFFI() const;
   inline icu4x::capi::DateFormatter* AsFFI();

@@ -75,11 +75,11 @@ export class UtcOffset {
     static fromString(offset) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
 
-        const offsetSlice = diplomatRuntime.DiplomatBuf.str8(wasm, offset);
+        const offsetSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.sliceWrapper(wasm, diplomatRuntime.DiplomatBuf.str8(wasm, offset)));
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_UtcOffset_from_string_mv1(diplomatReceive.buffer, ...offsetSlice.splat());
+        const result = wasm.icu4x_UtcOffset_from_string_mv1(diplomatReceive.buffer, offsetSlice.ptr);
 
         try {
             if (!diplomatReceive.resultFlag) {

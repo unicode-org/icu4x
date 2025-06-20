@@ -75,6 +75,15 @@ inline std::optional<std::string> icu4x::BidiParagraph::reorder_line(size_t rang
     &write);
   return result.is_ok ? std::optional<std::string>(std::move(output)) : std::nullopt;
 }
+template<typename W>
+inline std::optional<std::monostate> icu4x::BidiParagraph::reorder_line_write(size_t range_start, size_t range_end, W& writeable) const {
+  diplomat::capi::DiplomatWrite write = diplomat::WriteTrait<W>::Construct(writeable);
+  auto result = icu4x::capi::icu4x_BidiParagraph_reorder_line_mv1(this->AsFFI(),
+    range_start,
+    range_end,
+    &write);
+  return result.is_ok ? std::optional<std::monostate>() : std::nullopt;
+}
 
 inline uint8_t icu4x::BidiParagraph::level_at(size_t pos) const {
   auto result = icu4x::capi::icu4x_BidiParagraph_level_at_mv1(this->AsFFI(),

@@ -17,6 +17,7 @@ include = [
     "LICENSE",
     "README.md",
 ]
+version = "2.0.2"
 
 authors.workspace = true
 categories.workspace = true
@@ -24,7 +25,6 @@ edition.workspace = true
 homepage.workspace = true
 repository.workspace = true
 rust-version.workspace = true
-version.workspace = true
 
 [package.metadata.docs.rs]
 all-features = true

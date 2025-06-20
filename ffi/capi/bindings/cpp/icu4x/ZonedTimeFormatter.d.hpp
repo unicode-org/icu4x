@@ -207,6 +207,8 @@ public:
    * See the [Rust documentation for `format`](https://docs.rs/icu/2.0.0/icu/datetime/struct.FixedCalendarDateTimeFormatter.html#method.format) for more information.
    */
   inline diplomat::result<std::string, icu4x::DateTimeWriteError> format(const icu4x::Time& time, const icu4x::TimeZoneInfo& zone) const;
+  template<typename W>
+  inline diplomat::result<std::monostate, icu4x::DateTimeWriteError> format_write(const icu4x::Time& time, const icu4x::TimeZoneInfo& zone, W& writeable_output) const;
 
   inline const icu4x::capi::ZonedTimeFormatter* AsFFI() const;
   inline icu4x::capi::ZonedTimeFormatter* AsFFI();

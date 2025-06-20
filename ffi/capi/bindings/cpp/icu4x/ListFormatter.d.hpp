@@ -82,11 +82,15 @@ public:
    * See the [Rust documentation for `format`](https://docs.rs/icu/2.0.0/icu/list/struct.ListFormatter.html#method.format) for more information.
    */
   inline std::string format(diplomat::span<const std::string_view> list) const;
+  template<typename W>
+  inline void format_write(diplomat::span<const std::string_view> list, W& writeable_output) const;
 
   /**
    * See the [Rust documentation for `format`](https://docs.rs/icu/2.0.0/icu/list/struct.ListFormatter.html#method.format) for more information.
    */
   inline std::string format16(diplomat::span<const std::u16string_view> list) const;
+  template<typename W>
+  inline void format16_write(diplomat::span<const std::u16string_view> list, W& writeable_output) const;
 
   inline const icu4x::capi::ListFormatter* AsFFI() const;
   inline icu4x::capi::ListFormatter* AsFFI();

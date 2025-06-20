@@ -33,7 +33,8 @@ public:
     Mixed = 2,
   };
 
-  BidiDirection() = default;
+  BidiDirection(): value(Value::Ltr) {}
+
   // Implicit conversions between enum and ::Value
   constexpr BidiDirection(Value v) : value(v) {}
   constexpr operator Value() const { return value; }

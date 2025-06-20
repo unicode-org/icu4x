@@ -26,7 +26,11 @@ const COMPONENTS: &[(&str, &[DataMarkerInfo], &str)] = &[
         icu::collator::provider::MARKERS,
         r#"version = "2.0.1""#,
     ),
-    ("datetime", icu::datetime::provider::MARKERS, REPO_VERSION),
+    (
+        "datetime",
+        icu::datetime::provider::MARKERS,
+        r#"version = "2.0.2""#,
+    ),
     ("decimal", icu::decimal::provider::MARKERS, REPO_VERSION),
     ("list", icu::list::provider::MARKERS, REPO_VERSION),
     ("locale", icu::locale::provider::MARKERS, REPO_VERSION),
@@ -42,7 +46,7 @@ const COMPONENTS: &[(&str, &[DataMarkerInfo], &str)] = &[
         r#"version = "2.0.1""#,
     ),
     ("segmenter", icu::segmenter::provider::MARKERS, REPO_VERSION),
-    ("time", icu::time::provider::MARKERS, REPO_VERSION),
+    ("time", icu::time::provider::MARKERS, r#"version = "2.0.2""#),
     (
         "experimental",
         icu::experimental::provider::MARKERS,

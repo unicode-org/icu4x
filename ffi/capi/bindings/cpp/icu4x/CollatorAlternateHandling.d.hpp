@@ -34,7 +34,8 @@ public:
     Shifted = 1,
   };
 
-  CollatorAlternateHandling() = default;
+  CollatorAlternateHandling(): value(Value::NonIgnorable) {}
+
   // Implicit conversions between enum and ::Value
   constexpr CollatorAlternateHandling(Value v) : value(v) {}
   constexpr operator Value() const { return value; }

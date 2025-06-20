@@ -38,7 +38,8 @@ public:
     Min2 = 3,
   };
 
-  DecimalGroupingStrategy() = default;
+  DecimalGroupingStrategy(): value(Value::Auto) {}
+
   // Implicit conversions between enum and ::Value
   constexpr DecimalGroupingStrategy(Value v) : value(v) {}
   constexpr operator Value() const { return value; }

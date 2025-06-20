@@ -59,6 +59,8 @@ public:
    * See the [Rust documentation for `of`](https://docs.rs/icu/2.0.0/icu/experimental/displaynames/struct.RegionDisplayNames.html#method.of) for more information.
    */
   inline diplomat::result<std::string, icu4x::LocaleParseError> of(std::string_view region) const;
+  template<typename W>
+  inline diplomat::result<std::monostate, icu4x::LocaleParseError> of_write(std::string_view region, W& writeable_output) const;
 
   inline const icu4x::capi::RegionDisplayNames* AsFFI() const;
   inline icu4x::capi::RegionDisplayNames* AsFFI();
