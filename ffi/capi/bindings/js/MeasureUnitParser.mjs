@@ -47,9 +47,9 @@ export class MeasureUnitParser {
     static parse(unitId) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
 
-        const unitIdSlice = diplomatRuntime.DiplomatBuf.str8(wasm, unitId);
+        const unitIdSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.sliceWrapper(wasm, diplomatRuntime.DiplomatBuf.str8(wasm, unitId)));
 
-        const result = wasm.icu4x_MeasureUnitParser_parse_mv1(...unitIdSlice.splat());
+        const result = wasm.icu4x_MeasureUnitParser_parse_mv1(unitIdSlice.ptr);
 
         try {
             return result === 0 ? null : new MeasureUnit(diplomatRuntime.internalConstructor, result, []);
