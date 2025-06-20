@@ -3,6 +3,8 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use super::si_prefix::SiPrefix;
+use alloc::string::String;
+use alloc::string::ToString;
 
 /// Represents a single unit in a measure unit.
 /// For example, the MeasureUnit `kilometer-per-square-second` contains two single units:
@@ -24,57 +26,41 @@ pub struct SingleUnit {
     pub unit_id: u16,
 }
 
-/// Returns a string representation of the `SingleUnit`.
-///
-/// The format of the string is as follows:
-///  - The power is prefixed with "P" followed by the power value.
-///  - The SI prefix is represented by its base character ('D' for Decimal, 'B' for Binary) followed by the prefix power value.
-///  - The unit ID is prefixed with "I" and appended to the string.
-///
-/// NOTE:
-///  - If the power is 1, the power is not included in the string representation.
-///  - If the SI prefix power is 0, the SI prefix is not included in the string representation.
-///
-/// # Returns
-/// A `String` representing the `SingleUnit` in the format described above.
-///
-/// # Examples
-///
-/// ```
-/// use icu_experimental::measure::provider::single_unit::SingleUnit;
-/// use icu_experimental::measure::provider::si_prefix::SiPrefix;
-/// use icu_experimental::measure::provider::si_prefix::Base;
-/// use icu_experimental::measure::parser::MeasureUnitParser;
-///
-///
-/// let parser = MeasureUnitParser::new();
-///
-/// let full_unit = "meter";
-/// let measure_unit = parser.try_from_str(full_unit).unwrap();
-/// let single_unit = measure_unit.single_units().first().unwrap();
-/// let string_representation = single_unit.to_string();
-/// assert_eq!(string_representation, "I85", "{}", full_unit);
-/// assert_eq!(full_unit.len() - string_representation.len(), 2, "{}", full_unit);
-///
-///
-/// let full_unit = "square-millimeter";
-/// let measure_unit = parser.try_from_str(full_unit).unwrap();
-/// let single_unit = measure_unit.single_units().last().unwrap();
-/// let string_representation = single_unit.to_string();
-/// assert_eq!(string_representation, "P2D-3I85", "{}", full_unit);
-/// assert_eq!(full_unit.len() - string_representation.len(), 9, "{}", full_unit);
-///
-/// ```
-impl core::fmt::Display for SingleUnit {
-    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+impl SingleUnit {
+    /// Appends the short representation of the single unit to the given string.
+    ///
+    /// The format of the short representation is as follows:
+    /// 1. If the power is not 1, the power is prefixed with "P" followed by the power value.
+    /// 2. If the si prefix power is not 0, the si prefix is represented by its base character ('D' for Decimal, 'B' for Binary) followed by the prefix power value.
+    /// 3. The unit ID is prefixed with "I" and appended to the string.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu_experimental::measure::provider::single_unit::SingleUnit;
+    /// use icu_experimental::measure::provider::si_prefix::SiPrefix;
+    /// use icu_experimental::measure::provider::si_prefix::Base;
+    ///
+    /// let mut short_representation = String::new();
+    /// let single_unit = SingleUnit {
+    ///     power: 3,
+    ///     si_prefix: SiPrefix { power: 2, base: Base::Decimal },
+    ///     unit_id: 85,
+    /// };
+    /// single_unit.append_short_representation(&mut short_representation);
+    /// assert_eq!(short_representation, "P3D2I85");
+    /// ```
+    pub fn append_short_representation(&self, append_to: &mut String) {
         if self.power != 1 {
-            write!(f, "P{}", self.power)?;
+            append_to.push('P');
+            append_to.push_str(&self.power.to_string());
         }
 
         if self.si_prefix.power != 0 {
-            write!(f, "{}", self.si_prefix)?;
+            self.si_prefix.append_short_representation(append_to);
         }
 
-        write!(f, "I{}", self.unit_id)
+        append_to.push('I');
+        append_to.push_str(&self.unit_id.to_string());
     }
 }

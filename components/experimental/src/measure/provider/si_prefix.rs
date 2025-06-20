@@ -9,6 +9,9 @@
 //!
 //! Read more about data providers: [`icu_provider`]
 
+use alloc::string::String;
+use alloc::string::ToString;
+
 /// Represents the base of an si prefix.
 #[zerovec::make_ule(BaseULE)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
@@ -40,25 +43,27 @@ pub struct SiPrefix {
     pub base: Base,
 }
 
-/// Represents the si prefix as a string in a short representation.
-///
-/// # Examples
-///
-/// ```
-/// use icu_experimental::measure::provider::si_prefix::SiPrefix;
-/// use icu_experimental::measure::provider::si_prefix::Base;
-///
-/// let si_prefix = SiPrefix { power: 3, base: Base::Decimal };
-/// let string_representation = si_prefix.to_string();
-/// assert_eq!(string_representation, "D3");
-///
-/// let si_prefix = SiPrefix { power: -3, base: Base::Binary };
-/// let string_representation = si_prefix.to_string();
-/// assert_eq!(string_representation, "B-3");
-/// ```
-impl core::fmt::Display for SiPrefix {
-    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
-        let base_char = if self.base == Base::Decimal { 'D' } else { 'B' };
-        write!(f, "{}{}", base_char, self.power)
+impl SiPrefix {
+    /// Appends the short representation of the si prefix to the given string.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu_experimental::measure::provider::si_prefix::SiPrefix;
+    /// use icu_experimental::measure::provider::si_prefix::Base;
+    ///
+    /// let mut short_representation = String::new();
+    /// let si_prefix = SiPrefix { power: 3, base: Base::Decimal };
+    /// si_prefix.append_short_representation(&mut short_representation);
+    /// assert_eq!(short_representation, "D3");
+    ///
+    /// let mut short_representation = String::new();
+    /// let si_prefix = SiPrefix { power: -3, base: Base::Binary };
+    /// si_prefix.append_short_representation(&mut short_representation);
+    /// assert_eq!(short_representation, "B-3");
+    /// ```
+    pub fn append_short_representation(&self, append_to: &mut String) {
+        append_to.push(if self.base == Base::Decimal { 'D' } else { 'B' });
+        append_to.push_str(&self.power.to_string());
     }
 }
