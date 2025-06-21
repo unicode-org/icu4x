@@ -195,7 +195,7 @@ pub(crate) mod ule {
     /// This should not generally be constructed by client code. Instead, use
     /// * [`TimeZoneVariant::from_rearguard_isdst`]
     /// * [`TimeZoneInfo::infer_variant`](crate::TimeZoneInfo::infer_variant)
-    #[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd, Hash, Default)]
+    #[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd, Hash)]
     #[zerovec::make_ule(TimeZoneVariantULE)]
     #[repr(u8)]
     #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
@@ -209,7 +209,6 @@ pub(crate) mod ule {
         /// name of this variant may or may not be called "Standard Time".
         ///
         /// This is the variant with the lower UTC offset.
-        #[default]
         Standard = 0,
         /// The variant corresponding to `"daylight"` in CLDR.
         ///
