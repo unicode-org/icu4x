@@ -1,5 +1,19 @@
 # Changelog
 
+## Unreleased
+
+- Components
+    - General
+    - ...
+    - 
+- Data model and providers
+    - ...
+- FFI
+    - `icu_capi`
+        - All C++ enums now default to a valid value; which is the `Default` impl where there is one, and some semi-logical value otherwise. This has changed defaults in some cases and may cause a behavioral change for people relying on C++ default constructors. (unicode-org#6692)
+- Utils
+    - ...
+
 ## icu4x 2.0.x
 
 Several crates have had patch releases in the 2.0 stream:

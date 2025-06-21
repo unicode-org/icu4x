@@ -46,7 +46,7 @@ public:
     Other = 5,
   };
 
-  PluralCategory(): value(Value::Zero) {}
+  PluralCategory(): value(Value::Other) {}
 
   // Implicit conversions between enum and ::Value
   constexpr PluralCategory(Value v) : value(v) {}

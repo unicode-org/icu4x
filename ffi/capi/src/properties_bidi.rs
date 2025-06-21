@@ -27,6 +27,8 @@ pub mod ffi {
         /// Represents Bidi_Paired_Bracket_Type=Close.
         Close,
         /// Represents Bidi_Paired_Bracket_Type=None.
+        // This is an output type, so the default mostly impacts deferred initialization.
+        #[diplomat::attr(auto, default)]
         None,
     }
 

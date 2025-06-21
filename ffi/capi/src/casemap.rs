@@ -22,6 +22,7 @@ pub mod ffi {
     #[diplomat::enum_convert(icu_casemap::options::LeadingAdjustment, needs_wildcard)]
     #[diplomat::rust_link(icu::casemap::options::LeadingAdjustment, Enum)]
     pub enum LeadingAdjustment {
+        #[diplomat::attr(auto, default)]
         Auto,
         None,
         ToCased,
@@ -30,6 +31,7 @@ pub mod ffi {
     #[diplomat::enum_convert(icu_casemap::options::TrailingCase, needs_wildcard)]
     #[diplomat::rust_link(icu::casemap::options::TrailingCase, Enum)]
     pub enum TrailingCase {
+        #[diplomat::attr(auto, default)]
         Lower,
         Unchanged,
     }

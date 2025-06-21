@@ -750,6 +750,7 @@ pub mod ffi {
         )]
         Ugaritic = 53,
         #[diplomat::rust_link(icu::properties::props::Script::Unknown, AssociatedConstantInStruct)]
+        #[diplomat::attr(auto, default)]
         Unknown = 103,
         #[diplomat::rust_link(icu::properties::props::Script::Vai, AssociatedConstantInStruct)]
         Vai = 99,

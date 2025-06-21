@@ -28,6 +28,7 @@ pub mod ffi {
     #[diplomat::rust_link(icu::decimal::options::GroupingStrategy, Enum)]
     #[diplomat::enum_convert(icu_decimal::options::GroupingStrategy, needs_wildcard)]
     pub enum DecimalGroupingStrategy {
+        #[diplomat::attr(auto, default)]
         Auto,
         Never,
         Always,
