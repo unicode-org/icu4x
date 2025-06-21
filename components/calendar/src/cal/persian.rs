@@ -221,7 +221,10 @@ impl Date<Persian> {
     pub fn try_new_persian(year: i32, month: u8, day: u8) -> Result<Date<Persian>, RangeError> {
         ArithmeticDate::new_from_ordinals(year, month, day)
             .map(PersianDateInner)
-            .map(|inner| Date::from_raw(inner, Persian))
+            .map(|inner| Date {
+                inner,
+                calendar: Persian,
+            })
     }
 }
 

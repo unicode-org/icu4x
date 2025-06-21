@@ -135,6 +135,12 @@ impl Chinese {
     ]);
 
     #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::new)]
+    ///
+    /// <div class="stab unstable">
+    /// 🚧 This method is considered unstable; it may change at any time, in breaking or non-breaking ways,
+    /// including in SemVer minor releases. This requires the `unstable` Cargo feature.
+    /// </div>
+    #[cfg_attr(not(feature = "unstable"), doc(hidden))]
     pub fn try_new_unstable<D: DataProvider<CalendarChineseV1> + ?Sized>(
         provider: &D,
     ) -> Result<Self, DataError> {
@@ -218,17 +224,11 @@ impl Calendar for Chinese {
         date.0.days_in_month()
     }
 
-    #[doc(hidden)] // unstable
     fn offset_date(&self, date: &mut Self::DateInner, offset: DateDuration<Self>) {
         date.0.offset_date(offset, &self.get_precomputed_data());
     }
 
-    #[doc(hidden)] // unstable
     #[allow(clippy::field_reassign_with_default)]
-    /// Calculate `date2 - date` as a duration
-    ///
-    /// `calendar2` is the calendar object associated with `date2`. In case the specific calendar objects
-    /// differ on date, the date for the first calendar is used, and `date2` may be converted if necessary.
     fn until(
         &self,
         date1: &Self::DateInner,
@@ -322,10 +322,10 @@ impl<A: AsCalendar<Calendar = Chinese>> Date<A> {
             .get_precomputed_data()
             .load_or_compute_info(related_iso_year);
         year.validate_md(month, day)?;
-        Ok(Date::from_raw(
-            ChineseDateInner(ArithmeticDate::new_unchecked(year, month, day)),
+        Ok(Date {
+            inner: ChineseDateInner(ArithmeticDate::new_unchecked(year, month, day)),
             calendar,
-        ))
+        })
     }
 }
 

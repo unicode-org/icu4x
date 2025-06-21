@@ -650,6 +650,12 @@ impl AnyCalendar {
     }
 
     #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::new)]
+    ///
+    /// <div class="stab unstable">
+    /// 🚧 This method is considered unstable; it may change at any time, in breaking or non-breaking ways,
+    /// including in SemVer minor releases. This requires the `unstable` Cargo feature.
+    /// </div>
+    #[cfg_attr(not(feature = "unstable"), doc(hidden))]
     pub fn try_new_unstable<P>(provider: &P, kind: AnyCalendarKind) -> Result<Self, DataError>
     where
         P: DataProvider<crate::provider::CalendarJapaneseModernV1>
@@ -905,6 +911,14 @@ impl fmt::Display for AnyCalendarKind {
 }
 
 /// Trait for calendars that may be converted to [`AnyCalendar`]
+///
+/// <div class="stab unstable">
+/// 🚫 This trait is sealed; it should not be implemented by user code. If an API requests an item that implements this
+/// trait, please consider using a type from the implementors listed below.
+///
+/// It is still possible to implement this trait in userland (since `UnstableSealed` is public),
+/// do not do so unless you are prepared for things to occasionally break.
+/// </div>
 pub trait IntoAnyCalendar: Calendar + Sized {
     /// Convert this calendar into an [`AnyCalendar`], moving it
     ///
