@@ -10,7 +10,7 @@
 //! Read more about data providers: [`icu_provider`]
 
 use alloc::string::String;
-use alloc::string::ToString;
+use core::fmt::Write;
 
 /// Represents the base of an si prefix.
 #[zerovec::make_ule(BaseULE)]
@@ -63,7 +63,10 @@ impl SiPrefix {
     /// assert_eq!(short_representation, "B-3");
     /// ```
     pub fn append_short_representation(&self, append_to: &mut String) {
-        append_to.push(if self.base == Base::Decimal { 'D' } else { 'B' });
-        append_to.push_str(&self.power.to_string());
+        append_to.push(match self.base {
+            Base::Decimal => 'D',
+            Base::Binary => 'B',
+        });
+        write!(append_to, "{}", self.power).unwrap();
     }
 }

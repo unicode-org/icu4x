@@ -4,7 +4,7 @@
 
 use super::si_prefix::SiPrefix;
 use alloc::string::String;
-use alloc::string::ToString;
+use core::fmt::Write;
 
 /// Represents a single unit in a measure unit.
 /// For example, the MeasureUnit `kilometer-per-square-second` contains two single units:
@@ -53,7 +53,7 @@ impl SingleUnit {
     pub fn append_short_representation(&self, append_to: &mut String) {
         if self.power != 1 {
             append_to.push('P');
-            append_to.push_str(&self.power.to_string());
+            write!(append_to, "{}", self.power).unwrap();
         }
 
         if self.si_prefix.power != 0 {
@@ -61,6 +61,6 @@ impl SingleUnit {
         }
 
         append_to.push('I');
-        append_to.push_str(&self.unit_id.to_string());
+        write!(append_to, "{}", self.unit_id).unwrap();
     }
 }
