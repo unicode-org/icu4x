@@ -62,7 +62,7 @@ public:
     Subsecond9 = 12,
   };
 
-  TimePrecision(): value(Value::Hour) {}
+  TimePrecision(): value(Value::Second) {}
 
   // Implicit conversions between enum and ::Value
   constexpr TimePrecision(Value v) : value(v) {}
