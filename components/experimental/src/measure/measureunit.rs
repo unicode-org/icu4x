@@ -77,9 +77,9 @@ impl MeasureUnit {
     /// ```
     pub fn generate_short_representation(&self) -> String {
         // Convert the constant to scientific notation if it is a power of 10 with more than 3 trailing zeros
-        fn append_power_of_10_to_scientific(n: u64, append_to: &mut String) {
+        fn append_power_of_10_to_scientific(n: u64, buff: &mut String) {
             if n < 1000 {
-                append_to.push_str(&n.to_string());
+                buff.push_str(&n.to_string());
                 return;
             }
 
@@ -88,13 +88,13 @@ impl MeasureUnit {
 
             if zeros_count > 3 {
                 let significant_digits = &result.split_at(result.len() - zeros_count).0;
-                append_to.push_str(significant_digits);
-                append_to.push('E');
-                append_to.push_str(&zeros_count.to_string());
+                buff.push_str(significant_digits);
+                buff.push('E');
+                buff.push_str(&zeros_count.to_string());
                 return;
             }
 
-            append_to.push_str(&result);
+            buff.push_str(&result);
         }
 
         let mut short_representation = String::new();

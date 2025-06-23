@@ -62,11 +62,11 @@ impl SiPrefix {
     /// si_prefix.append_short_representation(&mut short_representation);
     /// assert_eq!(short_representation, "B-3");
     /// ```
-    pub fn append_short_representation(&self, append_to: &mut String) {
-        append_to.push(match self.base {
+    pub fn append_short_representation(&self, buff: &mut String) {
+        buff.push(match self.base {
             Base::Decimal => 'D',
             Base::Binary => 'B',
         });
-        write!(append_to, "{}", self.power).unwrap();
+        write!(buff, "{}", self.power).unwrap();
     }
 }

@@ -50,17 +50,17 @@ impl SingleUnit {
     /// single_unit.append_short_representation(&mut short_representation);
     /// assert_eq!(short_representation, "P3D2I85");
     /// ```
-    pub fn append_short_representation(&self, append_to: &mut String) {
+    pub fn append_short_representation(&self, buff: &mut String) {
         if self.power != 1 {
-            append_to.push('P');
-            write!(append_to, "{}", self.power).unwrap();
+            buff.push('P');
+            write!(buff, "{}", self.power).unwrap();
         }
 
         if self.si_prefix.power != 0 {
-            self.si_prefix.append_short_representation(append_to);
+            self.si_prefix.append_short_representation(buff);
         }
 
-        append_to.push('I');
-        write!(append_to, "{}", self.unit_id).unwrap();
+        buff.push('I');
+        write!(buff, "{}", self.unit_id).unwrap();
     }
 }
