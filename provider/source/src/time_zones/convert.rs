@@ -23,6 +23,9 @@ use icu::time::Time;
 use icu::time::ZonedDateTime;
 use icu_provider::prelude::icu_locale_core::subtags::Language;
 use icu_provider::prelude::*;
+use parse_zoneinfo::line::ChangeTime;
+use parse_zoneinfo::line::DaySpec;
+use parse_zoneinfo::line::Month;
 use parse_zoneinfo::line::Year;
 use parse_zoneinfo::table::Saving;
 use std::borrow::Cow;
@@ -409,7 +412,8 @@ impl SourceDataProvider {
                                 }
 
                                 Saving::Multiple(ref rules) => {
-                                    let mut rules = tzdb.rulesets[rules]
+                                    let ruleset = &tzdb.rulesets[rules];
+                                    let mut rules = ruleset
                                         .iter()
                                         // Only want transitions into DST
                                         .filter(|rule| rule.time_to_add != 0)
@@ -476,7 +480,16 @@ impl SourceDataProvider {
                                             );
                                         }
 
-                                        if rules.last().unwrap().0 < local_end_time {
+                                        let end_year = match zone_info.end_time {
+                                            None => i64::MAX,
+                                            Some(
+                                                ChangeTime::UntilYear(Year::Number(y))
+                                                | ChangeTime::UntilMonth(Year::Number(y), Month::January)
+                                                | ChangeTime::UntilDay(Year::Number(y), Month::January, DaySpec::Ordinal(1))) => y - 1,
+                                            Some(c) => c.year(),
+                                        };
+
+                                        if !ruleset.iter().any(|r| r.applies_to_year(end_year)) {
                                             // rules end before zoneinfo ends, continue without offset
                                             store_offsets(
                                                 &mut data,
