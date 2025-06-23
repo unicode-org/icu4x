@@ -34,7 +34,7 @@ public:
     Unmodified = 1,
   };
 
-  TransformResult(): value(Value::Modified) {}
+  TransformResult(): value(Value::Unmodified) {}
 
   // Implicit conversions between enum and ::Value
   constexpr TransformResult(Value v) : value(v) {}

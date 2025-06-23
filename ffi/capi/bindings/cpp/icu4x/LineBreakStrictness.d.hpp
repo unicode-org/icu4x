@@ -38,7 +38,7 @@ public:
     Anywhere = 3,
   };
 
-  LineBreakStrictness(): value(Value::Loose) {}
+  LineBreakStrictness(): value(Value::Strict) {}
 
   // Implicit conversions between enum and ::Value
   constexpr LineBreakStrictness(Value v) : value(v) {}
