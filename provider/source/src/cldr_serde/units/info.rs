@@ -10,7 +10,7 @@
 use icu::experimental::measure::parser::ids::CLDR_IDS_TRIE;
 use icu_provider::DataError;
 use serde::Deserialize;
-use std::{collections::BTreeMap, fmt::Write};
+use std::collections::BTreeMap;
 
 #[derive(PartialEq, Debug, Deserialize)]
 pub(crate) struct Constant {
@@ -92,12 +92,8 @@ impl Resource {
     /// * `Ok(u16)` - The unique identifier for the unit if found.
     /// * `Err(DataError)` - An error if the unit is not found or if the index is out of range for `u16`.
     pub fn unit_id(&self, unit_name: &str) -> Result<u16, DataError> {
-        let mut cursor = CLDR_IDS_TRIE.cursor();
-        cursor
-            .write_str(unit_name)
-            .map_err(|_| DataError::custom("Unit not found"))?;
-        cursor
-            .take_value()
+        CLDR_IDS_TRIE
+            .get(unit_name)
             .ok_or_else(|| DataError::custom("Unit not found"))
             .and_then(|value| {
                 u16::try_from(value).map_err(|_| DataError::custom("Value out of range for u16"))

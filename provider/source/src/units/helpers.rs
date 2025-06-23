@@ -5,9 +5,9 @@
 use core::str::FromStr;
 use std::collections::{BTreeMap, VecDeque};
 
+use icu::experimental::measure::measureunit::MeasureUnit;
 use icu::experimental::units::provider::{ConversionInfo, Exactness, Sign};
 use icu::experimental::units::ratio::IcuRatio;
-use icu_experimental::measure::measureunit::MeasureUnit;
 use icu_provider::DataError;
 use num_traits::One;
 use num_traits::Signed;
