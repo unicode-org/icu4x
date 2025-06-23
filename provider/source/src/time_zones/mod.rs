@@ -50,10 +50,16 @@ impl SourceDataProvider {
     // If data is generated with a TZDB that contains these zones, they are added.
     fn future_zones(&self) -> Result<impl Iterator<Item = (String, TimeZone)> + '_, DataError> {
         let tzdb = self.tzdb()?.transitions()?;
-        Ok([(
-            "America/Coyhaique",
-            TimeZone(icu::locale::subtags::subtag!("clcxq")),
-        )]
+        Ok([
+            (
+                "America/Coyhaique",
+                TimeZone(icu::locale::subtags::subtag!("clcxq")),
+            ),
+            (
+                "Asia/Hanoi",
+                TimeZone(icu::locale::subtags::subtag!("vnhan")),
+            ),
+        ]
         .into_iter()
         .filter(|(i, _)| tzdb.get_zoneset(i).is_some())
         .map(|(i, t)| (String::from(i), t)))
@@ -182,6 +188,19 @@ impl SourceDataProvider {
                     }
                 }
                 bcp47_tzids.extend(self.future_zones()?);
+
+                for zone in self.tzdb()?.transitions()?.zonesets.keys() {
+                    if !bcp47_tzids.contains_key(zone) {
+                        log::error!("TZDB zone {zone:?} not in CLDR. Add BCP-47 code to `fn future_zones()`?");
+                    }
+                }
+
+                for zone in self.tzdb()?.transitions()?.links.keys() {
+                    if !bcp47_tzids.contains_key(zone) {
+                        log::warn!("TZDB link {zone:?} not in CLDR");
+                    }
+                }
+
                 Ok(bcp47_tzids)
             })
             .as_ref()
