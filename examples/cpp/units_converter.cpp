@@ -3,7 +3,6 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 #include <icu4x/MeasureUnit.hpp>
-#include <icu4x/MeasureUnitParser.hpp>
 #include <icu4x/UnitsConverter.hpp>
 #include <icu4x/UnitsConverterFactory.hpp>
 
@@ -13,8 +12,8 @@ using namespace icu4x;
 
 int main() {
   auto converter_factory = UnitsConverterFactory::create();
-  auto from = MeasureUnitParser::parse("meter");
-  auto to = MeasureUnitParser::parse("foot");
+  auto from = MeasureUnit::create_from_string("meter");
+  auto to = MeasureUnit::create_from_string("foot");
   auto converter = converter_factory->converter(*from.get(), *to.get());
   auto result = converter->convert(1.0);
 

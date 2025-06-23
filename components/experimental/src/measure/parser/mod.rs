@@ -23,61 +23,7 @@ use super::single_unit_vec::SingleUnitVec;
 /// For example, `meter` is a valid unit ID, but `metre` is not.
 pub struct InvalidUnitError;
 
-/// A parser for the CLDR unit identifier (e.g. `meter-per-square-second`)
-pub struct MeasureUnitParser;
-
-impl MeasureUnitParser {
-    /// Get the unit id.
-    /// NOTE:
-    ///    if the unit id is found, the function will return (unit id, part without the unit id and without `-` at the beginning of the remaining part if it exists).
-    ///    if the unit id is not found, the function will return an error.
-    fn get_unit_id(part: &[u8]) -> Result<(u16, &[u8]), InvalidUnitError> {
-        let mut cursor = CLDR_IDS_TRIE.cursor();
-        let mut longest_match = Err(InvalidUnitError);
-
-        for (i, byte) in part.iter().enumerate() {
-            cursor.step(*byte);
-            if cursor.is_empty() {
-                break;
-            }
-            if let Some(value) = cursor.take_value() {
-                longest_match = Ok((value as u16, &part[i + 1..]));
-            }
-        }
-        longest_match
-    }
-
-    fn get_power(part: &[u8]) -> Result<(u8, &[u8]), InvalidUnitError> {
-        let (power, part_without_power) = get_power(part);
-
-        // If the power is not found, return the part as it is.
-        if part_without_power.len() == part.len() {
-            return Ok((power, part));
-        }
-
-        // If the power is found, this means that the part must start with the `-` sign.
-        match part_without_power.strip_prefix(b"-") {
-            Some(part_without_power) => Ok((power, part_without_power)),
-            None => Err(InvalidUnitError),
-        }
-    }
-
-    /// Get the SI prefix.
-    /// NOTE:
-    ///    if the prefix is not found, the function will return (SiPrefix { power: 0, base: Base::Decimal }, part).
-    fn get_si_prefix(part: &[u8]) -> (SiPrefix, &[u8]) {
-        let (si_prefix, part_without_si_prefix) = get_si_prefix(part);
-        if part_without_si_prefix.len() == part.len() {
-            return (si_prefix, part);
-        }
-
-        match part_without_si_prefix.strip_prefix(b"-") {
-            Some(part_without_dash) => (si_prefix, part_without_dash),
-            None => (si_prefix, part_without_si_prefix),
-        }
-    }
-
-    // TODO: add test cases for this function.
+impl MeasureUnit {
     /// Parses a CLDR unit identifier and returns a MeasureUnit.
     /// Examples include: `meter`, `foot`, `meter-per-second`, `meter-per-square-second`, `meter-per-square-second-per-second`, etc.
     /// Returns:
@@ -99,11 +45,11 @@ impl MeasureUnitParser {
         let mut sign = 1;
         while !code_units.is_empty() {
             // First: extract the power.
-            let (power, identifier_part_without_power) = Self::get_power(code_units)?;
+            let (power, identifier_part_without_power) = Self::power(code_units)?;
 
             // Second: extract the si_prefix and the unit_id.
             let (si_prefix, unit_id, identifier_part_without_unit_id) =
-                match Self::get_unit_id(identifier_part_without_power) {
+                match Self::unit_id(identifier_part_without_power) {
                     Ok((unit_id, identifier_part_without_unit_id)) => (
                         SiPrefix {
                             power: 0,
@@ -114,9 +60,9 @@ impl MeasureUnitParser {
                     ),
                     Err(_) => {
                         let (si_prefix, identifier_part_without_si_prefix) =
-                            Self::get_si_prefix(identifier_part_without_power);
+                            Self::si_prefix(identifier_part_without_power);
                         let (unit_id, identifier_part_without_unit_id) =
-                            match Self::get_unit_id(identifier_part_without_si_prefix) {
+                            match Self::unit_id(identifier_part_without_si_prefix) {
                                 Ok((unit_id, identifier_part_without_unit_id)) => {
                                     (unit_id, identifier_part_without_unit_id)
                                 }
@@ -185,11 +131,69 @@ impl MeasureUnitParser {
             constant_denominator,
         })
     }
+
+    /// Retrieves the unit identifier from the given byte slice.
+    ///
+    /// # Returns
+    /// - `Ok((unit_id, remaining_part))`: If the unit id is successfully found, where `unit_id` is the identifier and `remaining_part` is the slice without the unit name and any leading `-` if present.
+    /// - `Err(InvalidUnitError)`: If the unit id is not found in the provided slice.
+    fn unit_id(part: &[u8]) -> Result<(u16, &[u8]), InvalidUnitError> {
+        let mut cursor = CLDR_IDS_TRIE.cursor();
+        let mut longest_match = Err(InvalidUnitError);
+
+        for (i, byte) in part.iter().enumerate() {
+            cursor.step(*byte);
+            if cursor.is_empty() {
+                break;
+            }
+            if let Some(value) = cursor.take_value() {
+                longest_match = Ok((value as u16, &part[i + 1..]));
+            }
+        }
+        longest_match
+    }
+
+    /// Retrieves the power from the given byte slice.
+    ///
+    /// # Returns
+    /// - `Ok((power, remaining_part))`: If the power is successfully found, where `power` is the power and `remaining_part` is the slice without the power and any leading `-` if present.
+    /// - `Err(InvalidUnitError)`: If the power is not found in the provided slice.
+    fn power(part: &[u8]) -> Result<(u8, &[u8]), InvalidUnitError> {
+        let (power, part_without_power) = get_power(part);
+
+        // If the power is not found, return the part as it is.
+        if part_without_power.len() == part.len() {
+            return Ok((power, part));
+        }
+
+        // If the power is found, this means that the part must start with the `-` sign.
+        match part_without_power.strip_prefix(b"-") {
+            Some(part_without_power) => Ok((power, part_without_power)),
+            None => Err(InvalidUnitError),
+        }
+    }
+
+    /// Retrieves the SI prefix from the given byte slice.
+    ///
+    /// # Returns
+    /// - `(SiPrefix, &[u8])`: If the prefix is successfully found, where `prefix` is the prefix and `remaining_part` is the slice without the prefix.
+    /// - `(SiPrefix, &[u8])`: If the prefix is not found, the function will return (SiPrefix { power: 0, base: Base::Decimal }, part).
+    fn si_prefix(part: &[u8]) -> (SiPrefix, &[u8]) {
+        let (si_prefix, part_without_si_prefix) = get_si_prefix(part);
+        if part_without_si_prefix.len() == part.len() {
+            return (si_prefix, part);
+        }
+
+        match part_without_si_prefix.strip_prefix(b"-") {
+            Some(part_without_dash) => (si_prefix, part_without_dash),
+            None => (si_prefix, part_without_si_prefix),
+        }
+    }
 }
 
 #[cfg(test)]
 mod tests {
-    use crate::measure::parser::MeasureUnitParser;
+    use crate::measure::measureunit::MeasureUnit;
 
     #[test]
     fn test_parser_cases() {
@@ -201,7 +205,7 @@ mod tests {
         ];
 
         for (input, expected_len, expected_denominator) in test_cases {
-            let measure_unit = MeasureUnitParser::try_from_str(input).unwrap();
+            let measure_unit = MeasureUnit::try_from_str(input).unwrap();
             assert_eq!(measure_unit.single_units().len(), expected_len);
             assert_eq!(measure_unit.constant_denominator, expected_denominator);
         }
@@ -265,7 +269,7 @@ mod tests {
                 continue;
             }
 
-            let measure_unit = MeasureUnitParser::try_from_str(input);
+            let measure_unit = MeasureUnit::try_from_str(input);
             if measure_unit.is_ok() {
                 println!("OK:  {}", input);
                 continue;

@@ -116,8 +116,6 @@ export { Logger } from "./Logger.mjs"
 
 export { MeasureUnit } from "./MeasureUnit.mjs"
 
-export { MeasureUnitParser } from "./MeasureUnitParser.mjs"
-
 export { ComposingNormalizer } from "./ComposingNormalizer.mjs"
 
 export { DecomposingNormalizer } from "./DecomposingNormalizer.mjs"

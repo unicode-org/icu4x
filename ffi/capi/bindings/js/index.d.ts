@@ -118,8 +118,6 @@ export { Logger } from "./Logger"
 
 export { MeasureUnit } from "./MeasureUnit"
 
-export { MeasureUnitParser } from "./MeasureUnitParser"
-
 export { ComposingNormalizer } from "./ComposingNormalizer"
 
 export { DecomposingNormalizer } from "./DecomposingNormalizer"

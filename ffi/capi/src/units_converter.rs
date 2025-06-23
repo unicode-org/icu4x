@@ -6,7 +6,7 @@
 #[diplomat::abi_rename = "icu4x_{0}_mv1"]
 #[diplomat::attr(auto, namespace = "icu4x")]
 pub mod ffi {
-    use crate::unstable::measure_unit_parser::ffi::MeasureUnit;
+    use crate::unstable::measure_unit::ffi::MeasureUnit;
     use alloc::boxed::Box;
 
     #[cfg(feature = "buffer_provider")]
@@ -17,8 +17,6 @@ pub mod ffi {
     #[diplomat::opaque]
     /// An ICU4X Units Converter Factory object, capable of creating converters a [`UnitsConverter`]
     /// for converting between two [`MeasureUnit`]s.
-    ///
-    /// Also, it can parse the CLDR unit identifier (e.g. `meter-per-square-second`) and get the [`MeasureUnit`].
     #[diplomat::rust_link(icu::experimental::units::converter_factory::ConverterFactory, Struct)]
     pub struct UnitsConverterFactory(
         pub icu_experimental::units::converter_factory::ConverterFactory,

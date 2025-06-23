@@ -4,7 +4,7 @@
 
 use super::{provider::single_unit::SingleUnit, single_unit_vec::SingleUnitVec};
 
-// TODO NOTE: the MeasureUnitParser takes the trie and the ConverterFactory takes the full payload and an instance of MeasureUnitParser.
+// TODO: move this to `mod.rs`
 /// The [`MeasureUnit`] struct represents a processed CLDR compound unit.
 /// Examples include:
 ///  1. `meter-per-second`
@@ -12,8 +12,6 @@ use super::{provider::single_unit::SingleUnit, single_unit_vec::SingleUnitVec};
 ///  3. `liter-per-100-kilometer`
 ///  4. `portion-per-1e9`
 ///  5. `square-meter` (Note: a single unit is a special case of a compound unit containing only one single unit.)
-///
-/// To construct a [`MeasureUnit`] from a CLDR unit identifier, use the [`crate::measure::parser::MeasureUnitParser`].
 #[derive(Debug, Eq, PartialEq, Clone)]
 pub struct MeasureUnit {
     /// Contains the processed units.

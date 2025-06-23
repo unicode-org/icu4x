@@ -5,9 +5,9 @@
 use core::str::FromStr;
 use std::collections::{BTreeMap, VecDeque};
 
-use icu::experimental::measure::parser::MeasureUnitParser;
 use icu::experimental::units::provider::{ConversionInfo, Exactness, Sign};
 use icu::experimental::units::ratio::IcuRatio;
+use icu_experimental::measure::measureunit::MeasureUnit;
 use icu_provider::DataError;
 use num_traits::One;
 use num_traits::Signed;
@@ -159,7 +159,7 @@ pub(crate) fn extract_conversion_info<'data>(
         Exactness::Approximate
     };
 
-    let base_unit = MeasureUnitParser::try_from_str(base_unit)
+    let base_unit = MeasureUnit::try_from_str(base_unit)
         .map_err(|_| DataError::custom("the base unit is not valid"))?;
 
     Ok(ConversionInfo {

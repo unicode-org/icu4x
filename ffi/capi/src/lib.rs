@@ -115,7 +115,7 @@ pub mod unstable {
     #[cfg(feature = "locale")]
     pub mod locale_directionality;
     #[cfg(feature = "experimental")]
-    pub mod measure_unit_parser;
+    pub mod measure_unit;
     #[cfg(feature = "normalizer")]
     pub mod normalizer;
     #[cfg(feature = "normalizer")]

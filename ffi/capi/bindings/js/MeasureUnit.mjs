@@ -10,8 +10,6 @@ const MeasureUnit_box_destroy_registry = new FinalizationRegistry((ptr) => {
  * An ICU4X Measurement Unit object which represents a single unit of measurement
  * such as `meter`, `second`, `kilometer-per-hour`, `square-meter`, etc.
  *
- * You can create an instance of this object using {@link MeasureUnitParser} by calling the `parse` method.
- *
  * See the [Rust documentation for `MeasureUnit`](https://docs.rs/icu/2.0.0/icu/experimental/measure/measureunit/struct.MeasureUnit.html) for more information.
  */
 export class MeasureUnit {
@@ -43,7 +41,36 @@ export class MeasureUnit {
     }
 
 
-    constructor(symbol, ptr, selfEdge) {
-        return this.#internalConstructor(...arguments)
+    /**
+     * See the [Rust documentation for `try_from_str`](https://docs.rs/icu/2.0.0/icu/experimental/measure/measureunit/struct.MeasureUnit.html#method.try_from_str) for more information.
+     */
+    #defaultConstructor(unitId) {
+        let functionCleanupArena = new diplomatRuntime.CleanupArena();
+
+        const unitIdSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.sliceWrapper(wasm, diplomatRuntime.DiplomatBuf.str8(wasm, unitId)));
+
+        const result = wasm.icu4x_MeasureUnit_create_from_string_mv1(unitIdSlice.ptr);
+
+        try {
+            return result === 0 ? null : new MeasureUnit(diplomatRuntime.internalConstructor, result, []);
+        }
+
+        finally {
+            functionCleanupArena.free();
+
+        }
+    }
+
+    /**
+     * See the [Rust documentation for `try_from_str`](https://docs.rs/icu/2.0.0/icu/experimental/measure/measureunit/struct.MeasureUnit.html#method.try_from_str) for more information.
+     */
+    constructor(unitId) {
+        if (arguments[0] === diplomatRuntime.exposeConstructor) {
+            return this.#internalConstructor(...Array.prototype.slice.call(arguments, 1));
+        } else if (arguments[0] === diplomatRuntime.internalConstructor) {
+            return this.#internalConstructor(...arguments);
+        } else {
+            return this.#defaultConstructor(...arguments);
+        }
     }
 }

@@ -6,8 +6,6 @@ part of 'lib.g.dart';
 /// An ICU4X Measurement Unit object which represents a single unit of measurement
 /// such as `meter`, `second`, `kilometer-per-hour`, `square-meter`, etc.
 ///
-/// You can create an instance of this object using [MeasureUnitParser] by calling the `parse` method.
-///
 /// See the [Rust documentation for `MeasureUnit`](https://docs.rs/icu/2.0.0/icu/experimental/measure/measureunit/struct.MeasureUnit.html) for more information.
 final class MeasureUnit implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _ffi;
@@ -28,11 +26,23 @@ final class MeasureUnit implements ffi.Finalizable {
 
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_MeasureUnit_destroy_mv1));
 
+  /// See the [Rust documentation for `try_from_str`](https://docs.rs/icu/2.0.0/icu/experimental/measure/measureunit/struct.MeasureUnit.html#method.try_from_str) for more information.
+  factory MeasureUnit(String unitId) {
+    final temp = _FinalizedArena();
+    final result = _icu4x_MeasureUnit_create_from_string_mv1(unitId._utf8AllocIn(temp.arena));
+    return result.address == 0 ? null : MeasureUnit._fromFfi(result, []);
+  }
+
 }
 
 @_DiplomatFfiUse('icu4x_MeasureUnit_destroy_mv1')
 @ffi.Native<ffi.Void Function(ffi.Pointer<ffi.Void>)>(isLeaf: true, symbol: 'icu4x_MeasureUnit_destroy_mv1')
 // ignore: non_constant_identifier_names
 external void _icu4x_MeasureUnit_destroy_mv1(ffi.Pointer<ffi.Void> self);
+
+@_DiplomatFfiUse('icu4x_MeasureUnit_create_from_string_mv1')
+@ffi.Native<ffi.Pointer<ffi.Opaque> Function(_SliceUtf8)>(isLeaf: true, symbol: 'icu4x_MeasureUnit_create_from_string_mv1')
+// ignore: non_constant_identifier_names
+external ffi.Pointer<ffi.Opaque> _icu4x_MeasureUnit_create_from_string_mv1(_SliceUtf8 unitId);
 
 // dart format on
