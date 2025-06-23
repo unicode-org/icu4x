@@ -228,6 +228,15 @@ impl ZeroTrieSimpleAsciiCursor<'_> {
     /// let trie = ZeroTrieSimpleAscii::from_bytes(b"\x80abc\x81");
     ///
     /// assert_eq!(Some(0), trie.get(""));
+    /// assert_eq!(None, trie.get("fofofo"));
+    /// assert_eq!(Some(1), trie.get("abc"));
+    /// assert_eq!(None, trie.get("ab"));
+    /// assert_eq!(None, trie.get("abcd"));
+    /// assert_eq!(Some(2), trie.get("abcdef"));
+    /// assert_eq!(None, trie.get("abcdefg"));
+    /// assert_eq!(Some(3), trie.get("abcdefgh"));
+    /// assert_eq!(Some(4), trie.get("abcdefghi"));
+    /// assert_eq!(Some(5), trie.get("abcdefghij"));
     /// let mut cursor = trie.cursor();
     /// assert_eq!(Some(0), cursor.take_value());
     /// assert_eq!(None, cursor.take_value());
