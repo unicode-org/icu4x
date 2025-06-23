@@ -5,6 +5,7 @@
 use super::{provider::single_unit::SingleUnit, single_unit_vec::SingleUnitVec};
 use alloc::string::String;
 use alloc::string::ToString;
+use core::fmt::Write;
 
 // TODO NOTE: the MeasureUnitParser takes the trie and the ConverterFactory takes the full payload and an instance of MeasureUnitParser.
 /// The [`MeasureUnit`] struct represents a processed CLDR compound unit.
@@ -79,7 +80,7 @@ impl MeasureUnit {
         // Convert the constant to scientific notation if it is a power of 10 with more than 3 trailing zeros
         fn append_power_of_10_to_scientific(n: u64, buff: &mut String) {
             if n < 1000 {
-                buff.push_str(&n.to_string());
+                write!(buff, "{}", n).unwrap();
                 return;
             }
 
@@ -88,13 +89,11 @@ impl MeasureUnit {
 
             if zeros_count > 3 {
                 let significant_digits = &result.split_at(result.len() - zeros_count).0;
-                buff.push_str(significant_digits);
-                buff.push('E');
-                buff.push_str(&zeros_count.to_string());
+                write!(buff, "{}E{}", significant_digits, zeros_count).unwrap();
                 return;
             }
 
-            buff.push_str(&result);
+            write!(buff, "{}", result).unwrap();
         }
 
         let mut short_representation = String::new();
