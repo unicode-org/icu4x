@@ -19,7 +19,7 @@ pub(crate) const JAPANEXT_FILE: &str =
 
 /// calendarData.json
 impl SourceDataProvider {
-    #[allow(clippy::type_complexity)]
+    #[expect(clippy::type_complexity)]
     pub(crate) fn all_eras(
         &self,
     ) -> Result<&BTreeMap<DatagenCalendar, Vec<(usize, EraData)>>, DataError> {

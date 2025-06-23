@@ -999,7 +999,7 @@ where
     ///
     /// assert_writeable_eq!(formatter.format(&Time::start_of_day()), "12:00 a.m.");
     /// ```
-    #[allow(clippy::result_large_err)] // returning self as the error
+    #[expect(clippy::result_large_err)] // returning self as the error
     #[cfg(feature = "compiled_data")]
     pub fn try_into_formatter(
         self,
@@ -1021,7 +1021,7 @@ where
     }
 
     #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_into_formatter)]
-    #[allow(clippy::result_large_err)] // returning self as the error
+    #[expect(clippy::result_large_err)] // returning self as the error
     pub fn try_into_formatter_unstable<P>(
         self,
         provider: &P,
@@ -1043,7 +1043,7 @@ where
     }
 
     #[doc = icu_provider::gen_buffer_unstable_docs!(BUFFER, Self::try_into_formatter)]
-    #[allow(clippy::result_large_err)] // returning self as the error
+    #[expect(clippy::result_large_err)] // returning self as the error
     #[cfg(feature = "serde")]
     pub fn try_into_formatter_with_buffer_provider<P>(
         self,
@@ -1209,7 +1209,7 @@ where
     ///
     /// assert_writeable_eq!(formatter.format(&Time::start_of_day()), "12:00 a.m.");
     /// ```
-    #[allow(clippy::result_large_err)] // returning self as the error
+    #[expect(clippy::result_large_err)] // returning self as the error
     #[cfg(feature = "compiled_data")]
     pub fn try_into_formatter(
         self,
@@ -1232,7 +1232,7 @@ where
     }
 
     #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_into_formatter)]
-    #[allow(clippy::result_large_err)] // returning self as the error
+    #[expect(clippy::result_large_err)] // returning self as the error
     pub fn try_into_formatter_unstable<P>(
         self,
         provider: &P,
@@ -1255,7 +1255,7 @@ where
     }
 
     #[doc = icu_provider::gen_buffer_unstable_docs!(BUFFER, Self::try_into_formatter)]
-    #[allow(clippy::result_large_err)] // returning self as the error
+    #[expect(clippy::result_large_err)] // returning self as the error
     #[cfg(feature = "serde")]
     pub fn try_into_formatter_with_buffer_provider<P>(
         self,
@@ -3267,7 +3267,7 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
         )
     }
 
-    #[allow(clippy::too_many_arguments)]
+    #[expect(clippy::too_many_arguments)]
     pub(crate) fn load_time_zone_field_zzzz_except_decimals(
         &mut self,
         zone_essentials_provider: &(impl BoundDataProvider<tz::EssentialsV1> + ?Sized),
@@ -3290,7 +3290,7 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
         )
     }
 
-    #[allow(clippy::too_many_arguments)] // internal function with lots of generics
+    #[expect(clippy::too_many_arguments)] // internal function with lots of generics
     pub(crate) fn load_time_zone_field_v_except_decimals(
         &mut self,
         zone_essentials_provider: &(impl BoundDataProvider<tz::EssentialsV1> + ?Sized),
@@ -3312,7 +3312,7 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
         )
     }
 
-    #[allow(clippy::too_many_arguments)]
+    #[expect(clippy::too_many_arguments)]
     pub(crate) fn load_time_zone_field_vvvv_except_decimals(
         &mut self,
         zone_essentials_provider: &(impl BoundDataProvider<tz::EssentialsV1> + ?Sized),
@@ -3414,7 +3414,7 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
     ///
     /// This function has a lot of arguments because many of the arguments are generic,
     /// and pulling them out to an options struct would be cumbersome.
-    #[allow(clippy::too_many_arguments)]
+    #[expect(clippy::too_many_arguments)]
     pub(crate) fn load_for_pattern(
         &mut self,
         year_provider: &(impl BoundDataProvider<YearNamesV1> + ?Sized),

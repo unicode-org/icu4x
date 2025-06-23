@@ -264,7 +264,7 @@ impl DataMarkerAttributes {
     const fn validate(s: &[u8]) -> Result<(), AttributeParseError> {
         let mut i = 0;
         while i < s.len() {
-            #[allow(clippy::indexing_slicing)] // duh
+            #[expect(clippy::indexing_slicing)] // duh
             if !matches!(s[i], b'a'..=b'z' | b'A'..=b'Z' | b'0'..=b'9' | b'-' | b'_') {
                 return Err(AttributeParseError);
             }

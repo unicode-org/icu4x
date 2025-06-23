@@ -976,7 +976,7 @@ impl<T> PluralElements<T> {
 
     /// Immutably applies a function `f` to each value.
     pub fn for_each<F: FnMut(&T)>(&self, mut f: F) {
-        #[allow(clippy::unit_arg)] // consistency with map and one-liner
+        #[expect(clippy::unit_arg)] // consistency with map and one-liner
         let Ok(()) = self.try_for_each(move |x| Ok::<(), Infallible>(f(x)));
     }
 
@@ -1011,7 +1011,7 @@ impl<T> PluralElements<T> {
     /// assert_eq!(*x.one(), 30);
     /// ```
     pub fn for_each_mut<F: FnMut(&mut T)>(&mut self, mut f: F) {
-        #[allow(clippy::unit_arg)] // consistency with map and one-liner
+        #[expect(clippy::unit_arg)] // consistency with map and one-liner
         let Ok(()) = self.try_for_each_mut(move |x| Ok::<(), Infallible>(f(x)));
     }
 

@@ -115,7 +115,7 @@ impl LanguageIdentifier {
     }
 
     #[doc(hidden)] // macro use
-    #[allow(clippy::type_complexity)]
+    #[expect(clippy::type_complexity)]
     // The return type should be `Result<Self, ParseError>` once the `const_precise_live_drops`
     // is stabilized ([rust-lang#73255](https://github.com/rust-lang/rust/issues/73255)).
     pub const fn try_from_utf8_with_single_variant(

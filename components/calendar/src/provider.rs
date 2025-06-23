@@ -198,7 +198,7 @@ impl WeekdaySet {
     pub const fn new(days: &[Weekday]) -> Self {
         let mut i = 0;
         let mut w = 0;
-        #[allow(clippy::indexing_slicing)]
+        #[expect(clippy::indexing_slicing)]
         while i < days.len() {
             w |= days[i].bit_value();
             i += 1;

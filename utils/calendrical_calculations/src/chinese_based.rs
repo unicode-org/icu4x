@@ -502,7 +502,7 @@ pub fn month_structure_for_year<C: ChineseBased>(
 
         let diff = next_month_start - current_month_start;
         debug_assert!(diff == 29 || diff == 30);
-        #[allow(clippy::indexing_slicing)] // array is of length 13, we iterate till i=11
+        #[expect(clippy::indexing_slicing)] // array is of length 13, we iterate till i=11
         if diff == 30 {
             ret[usize::from(i)] = true;
         }

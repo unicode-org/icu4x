@@ -42,7 +42,7 @@ impl<S: TrieBuilderStore> ZeroTrieBuilder<S> {
                 if old_front & 0b11100000 == 0b10100000 {
                     // Extend an existing span
                     // Unwrap OK: there is a varint at this location in the buffer
-                    #[allow(clippy::unwrap_used)]
+                    #[expect(clippy::unwrap_used)]
                     let old_span_size =
                         varint::try_read_varint_meta3_from_tstore(old_front, &mut self.data)
                             .unwrap();
@@ -153,7 +153,7 @@ impl<S: TrieBuilderStore> ZeroTrieBuilder<S> {
     }
 
     /// The actual builder algorithm. For an explanation, see [`crate::builder`].
-    #[allow(clippy::unwrap_used)] // lots of indexing, but all indexes should be in range
+    #[expect(clippy::unwrap_used)] // lots of indexing, but all indexes should be in range
     fn create(&mut self, all_items: &[(&ByteStr, usize)]) -> Result<usize, ZeroTrieBuildError> {
         let mut prefix_len = match all_items.last() {
             Some(x) => x.0.len(),

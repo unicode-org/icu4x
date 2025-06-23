@@ -311,7 +311,7 @@ impl Calendar for AnyCalendar {
             }
             (Self::Roc(c), AnyDateInner::Roc(ref mut d)) => c.offset_date(d, offset.cast_unit()),
             // This is only reached from misuse of from_raw, a semi-internal api
-            #[allow(clippy::panic)]
+            #[expect(clippy::panic)]
             (_, d) => panic!(
                 "Found AnyCalendar with mixed calendar type {} and date type {}!",
                 self.kind().debug_name(),

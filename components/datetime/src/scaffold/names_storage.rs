@@ -317,7 +317,6 @@ impl<M: DynamicDataMarker, Variables> MaybePayload<M, Variables> for () {
     {
         Err(MaybePayloadError::FormatterTooSpecific)
     }
-    #[allow(clippy::needless_lifetimes)] // Yokeable is involved
     #[inline]
     fn get(&self) -> DataPayloadWithVariablesBorrowed<M, Variables> {
         DataPayloadWithVariablesBorrowed {
@@ -372,7 +371,7 @@ impl<M: DynamicDataMarker, Variables> OptionalNames<Variables, DataPayload<M>>
 where
     Variables: Copy,
 {
-    #[allow(clippy::needless_lifetimes)] // Yokeable is involved
+    #[expect(clippy::needless_lifetimes)] // Yokeable is involved
     #[inline]
     pub(crate) fn as_borrowed<'a>(
         &'a self,

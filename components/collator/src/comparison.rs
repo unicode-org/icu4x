@@ -600,7 +600,7 @@ impl Collator {
         )
     }
 
-    #[allow(clippy::too_many_arguments)]
+    #[expect(clippy::too_many_arguments)]
     fn try_new_unstable_internal<D>(
         provider: &D,
         root: DataPayload<CollationRootV1>,
@@ -641,7 +641,7 @@ impl Collator {
             {
                 CollationSpecialPrimariesValidated {
                     compressible_bytes: array::from_fn(|i| {
-                        #[allow(clippy::unwrap_used)] // protected by the if
+                        #[expect(clippy::unwrap_used)] // protected by the if
                         {
                             csp.last_primaries
                                 .get((MaxVariable::Currency as usize) + i)
@@ -766,7 +766,7 @@ impl CollatorBorrowed<'static> {
 
         // Attribute belongs closer to `unwrap`, but
         // https://github.com/rust-lang/rust/issues/15701
-        #[allow(clippy::unwrap_used)]
+        #[expect(clippy::unwrap_used)]
         Ok(CollatorBorrowed {
             special_primaries,
             root,
@@ -818,8 +818,6 @@ macro_rules! collation_elements {
     ($self:expr, $chars:expr, $tailoring:expr, $numeric_primary:expr) => {{
         let jamo = <&[<u32 as AsULE>::ULE; JAMO_COUNT]>::try_from($self.jamo.ce32s.as_ule_slice());
 
-        // `unwrap` OK, because length already validated
-        #[allow(clippy::unwrap_used)]
         let jamo = jamo.unwrap();
 
         CollationElements::new(
@@ -1017,7 +1015,7 @@ impl CollatorBorrowed<'_> {
         // since there is already a place where to put them.
 
         // This loop is only broken out of as goto forward.
-        #[allow(clippy::never_loop)]
+        #[expect(clippy::never_loop)]
         'prefix: loop {
             if let Some(mut head_last_c) = head_chars.next() {
                 let norm_trie = &self.decompositions.trie;
@@ -1090,7 +1088,7 @@ impl CollatorBorrowed<'_> {
 
                         // This loop is only broken out of as goto forward. The control flow
                         // is much more readable this way.
-                        #[allow(clippy::never_loop)]
+                        #[expect(clippy::never_loop)]
                         loop {
                             // The two highest bits are about NFC, which we don't
                             // care about here.
@@ -1453,7 +1451,7 @@ impl CollatorBorrowed<'_> {
                         }
                         let left_new_remaining = left_iter.as_slice();
                         // Index in range by construction
-                        #[allow(clippy::indexing_slicing)]
+                        #[expect(clippy::indexing_slicing)]
                         let left_prefix =
                             &left_remaining[..left_remaining.len() - 1 - left_new_remaining.len()];
                         left_remaining = left_new_remaining;
@@ -1468,7 +1466,7 @@ impl CollatorBorrowed<'_> {
                         }
                         let right_new_remaining = right_iter.as_slice();
                         // Index in range by construction
-                        #[allow(clippy::indexing_slicing)]
+                        #[expect(clippy::indexing_slicing)]
                         let right_prefix = &right_remaining
                             [..right_remaining.len() - 1 - right_new_remaining.len()];
                         right_remaining = right_new_remaining;
@@ -1739,7 +1737,7 @@ impl CollatorBorrowed<'_> {
     }
 
     fn sort_key_levels(&self) -> u8 {
-        #[allow(clippy::indexing_slicing)]
+        #[expect(clippy::indexing_slicing)]
         let mut levels = LEVEL_MASKS[self.options.strength() as usize];
         if self.options.case_level() {
             levels |= CASE_LEVEL_FLAG;
@@ -2033,7 +2031,7 @@ impl CollatorBorrowed<'_> {
                             let mut r = last;
 
                             // these indices start at valid values and we stop when they cross
-                            #[allow(clippy::indexing_slicing)]
+                            #[expect(clippy::indexing_slicing)]
                             while q < r {
                                 let b = secs[q];
                                 secs[q] = secs[r];
@@ -2349,7 +2347,7 @@ impl CollationKeySink for [u8] {
     fn write(&mut self, offset: &mut Self::State, buf: &[u8]) -> Result<(), Self::Error> {
         if *offset + buf.len() <= self.len() {
             // just checked bounds
-            #[allow(clippy::indexing_slicing)]
+            #[expect(clippy::indexing_slicing)]
             self[*offset..*offset + buf.len()].copy_from_slice(buf);
         }
         *offset += buf.len();

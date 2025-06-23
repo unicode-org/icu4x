@@ -102,7 +102,6 @@ impl Calendar for Buddhist {
         Iso.offset_date(date, offset.cast_unit())
     }
 
-    #[allow(clippy::field_reassign_with_default)] // it's more clear this way
     fn until(
         &self,
         date1: &Self::DateInner,

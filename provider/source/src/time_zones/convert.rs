@@ -69,7 +69,7 @@ impl DataProvider<TimezoneNamesEssentialsV1> for SourceDataProvider {
 }
 
 impl SourceDataProvider {
-    #[allow(clippy::type_complexity)]
+    #[expect(clippy::type_complexity)]
     fn calculate_locations(
         &self,
         locale: &DataLocale,

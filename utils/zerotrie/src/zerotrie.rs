@@ -412,7 +412,6 @@ macro_rules! impl_zerotrie_subtype {
             /// assert_eq!(it.next(), None);
             /// ```
             #[inline]
-            #[allow(clippy::type_complexity)]
             pub fn iter(&self) -> $iter_ty {
                  $iter_fn(self.as_bytes())
             }
@@ -847,7 +846,7 @@ where
         let mut items: Vec<(&[u8], usize)> = items.iter().map(|(k, v)| (k.as_ref(), *v)).collect();
         items.sort();
         let byte_str_slice = ByteStr::from_byte_slice_with_value(&items);
-        #[allow(clippy::unwrap_used)] // FromIterator is panicky
+        #[expect(clippy::unwrap_used)] // FromIterator is panicky
         Self::try_from_tuple_slice(byte_str_slice).unwrap()
     }
 }

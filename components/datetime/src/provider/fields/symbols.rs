@@ -216,7 +216,7 @@ impl AsULE for FieldSymbol {
         FieldSymbolULE(self.idx())
     }
     fn from_unaligned(unaligned: Self::ULE) -> Self {
-        #[allow(clippy::unwrap_used)] // OK because the ULE is pre-validated
+        #[expect(clippy::unwrap_used)] // OK because the ULE is pre-validated
         Self::from_idx(unaligned.0).unwrap()
     }
 }
@@ -772,7 +772,6 @@ impl LengthType for TimeZone {
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_datetime::fields))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-#[allow(clippy::enum_variant_names)]
 #[repr(u8)]
 #[zerovec::make_ule(DecimalSecondULE)]
 #[zerovec::derive(Debug)]

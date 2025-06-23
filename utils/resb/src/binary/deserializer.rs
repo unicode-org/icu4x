@@ -782,7 +782,7 @@ impl<'de> de::MapAccess<'de> for EmptyMapAccess {
         Ok(None)
     }
 
-    #[allow(clippy::panic)]
+    #[expect(clippy::panic)]
     fn next_value_seed<V>(&mut self, _seed: V) -> Result<V::Value, Self::Error>
     where
         V: de::DeserializeSeed<'de>,
@@ -881,7 +881,7 @@ impl<'de> Resource16BitDeserializer<'de> {
         let units = byte_slices.map(|bytes| {
             // We can safely unwrap as we guarantee above that this chunk is
             // exactly 2 bytes.
-            #[allow(clippy::unwrap_used)]
+            #[expect(clippy::unwrap_used)]
             let bytes = <[u8; 2]>::try_from(bytes).unwrap();
             u16::from_le_bytes(bytes)
         });
@@ -1243,7 +1243,7 @@ impl TryFrom<u32> for ResDescriptor {
 fn read_u32(input: &[u8]) -> Result<(u32, &[u8]), BinaryDeserializerError> {
     // Safe to unwrap at the end of this because `try_into()` for arrays will
     // only fail if the slice is the wrong size.
-    #[allow(clippy::unwrap_used)]
+    #[expect(clippy::unwrap_used)]
     let bytes = input
         .get(0..core::mem::size_of::<u32>())
         .ok_or(BinaryDeserializerError::invalid_data(
