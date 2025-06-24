@@ -7,6 +7,7 @@ use std::collections::HashSet;
 use crate::SourceDataProvider;
 use crate::{cldr_serde, units::helpers::ScientificNumber};
 use icu::experimental::units::provider::{ConversionInfo, UnitsInfo, UnitsInfoV1};
+use icu_experimental::measure::parser::ids::CLDR_IDS_TRIE;
 use icu_provider::prelude::*;
 use zerovec::VarZeroVec;
 
@@ -106,21 +107,16 @@ fn test_basic() {
 
     let units_info = und.payload.get().to_owned();
 
-    let meter_index = units_info.conversion_info_by_unit_id(1).unwrap().unit_id;
+    let meter_index = CLDR_IDS_TRIE.get("meter").unwrap() as u16;
 
     let big_one = BigUint::from(1u32);
 
-    let meter_convert_ule = units_info
-        .conversion_info_by_unit_id(meter_index.as_unsigned_int())
-        .unwrap();
+    let meter_convert_ule = units_info.conversion_info_by_unit_id(meter_index).unwrap();
     let meter_convert: ConversionInfo = ZeroFrom::zero_from(meter_convert_ule);
 
     assert_eq!(meter_convert.factor_sign, Sign::Positive);
     let meter_convert_base_unit = meter_convert.basic_units.to_owned();
-    assert_eq!(
-        meter_convert_base_unit.get(0).unwrap().unit_id,
-        meter_index.as_unsigned_int()
-    );
+    assert_eq!(meter_convert_base_unit.get(0).unwrap().unit_id, meter_index);
     assert_eq!(
         meter_convert.factor_num,
         ZeroVec::from(big_one.to_bytes_le())
@@ -132,7 +128,7 @@ fn test_basic() {
     assert_eq!(
         meter_convert,
         ConversionInfo {
-            unit_id: meter_index.as_unsigned_int(),
+            unit_id: meter_index,
             basic_units: {
                 let base_unit = vec![SingleUnit {
                     power: 1,
@@ -140,7 +136,7 @@ fn test_basic() {
                         power: 0,
                         base: Base::Decimal,
                     },
-                    unit_id: meter_index.as_unsigned_int(),
+                    unit_id: meter_index,
                 }];
                 ZeroVec::from_iter(base_unit.into_iter())
             },
@@ -154,7 +150,11 @@ fn test_basic() {
         }
     );
 
-    let foot_convert_index = units_info.conversion_info_by_unit_id(2).unwrap().unit_id;
+    let foot_index = CLDR_IDS_TRIE.get("foot").unwrap() as u16;
+    let foot_convert_index = units_info
+        .conversion_info_by_unit_id(foot_index)
+        .unwrap()
+        .unit_id;
     let foot_convert_ule = units_info
         .conversion_info_by_unit_id(foot_convert_index.as_unsigned_int())
         .unwrap();
@@ -172,7 +172,7 @@ fn test_basic() {
                         power: 0,
                         base: Base::Decimal,
                     },
-                    unit_id: meter_index.as_unsigned_int(),
+                    unit_id: meter_index as u16,
                 }];
                 ZeroVec::from_iter(base_unit.into_iter())
             },
@@ -185,6 +185,4 @@ fn test_basic() {
             exactness: Exactness::Exact,
         }
     );
-
-    // TODO: add more tests
 }
