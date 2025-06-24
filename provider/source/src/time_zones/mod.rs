@@ -50,16 +50,10 @@ impl SourceDataProvider {
     // If data is generated with a TZDB that contains these zones, they are added.
     fn future_zones(&self) -> Result<impl Iterator<Item = (String, TimeZone)> + '_, DataError> {
         let tzdb = self.tzdb()?.transitions()?;
-        Ok([
-            (
-                "America/Coyhaique",
-                TimeZone(icu::locale::subtags::subtag!("clcxq")),
-            ),
-            (
-                "Asia/Hanoi",
-                TimeZone(icu::locale::subtags::subtag!("vnhan")),
-            ),
-        ]
+        Ok([(
+            "America/Coyhaique",
+            TimeZone(icu::locale::subtags::subtag!("clcxq")),
+        )]
         .into_iter()
         .filter(|(i, _)| tzdb.get_zoneset(i).is_some())
         .map(|(i, t)| (String::from(i), t)))
