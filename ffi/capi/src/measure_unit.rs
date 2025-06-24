@@ -19,7 +19,8 @@ pub mod ffi {
             icu::experimental::measure::measureunit::MeasureUnit::try_from_str,
             FnInStruct
         )]
-        #[diplomat::attr(*, constructor)]
+        #[diplomat::attr(dart, rename = "from_str")]
+        #[diplomat::attr(not(dart), constructor)]
         pub fn create_from_string(unit_id: &DiplomatStr) -> Option<Box<MeasureUnit>> {
             icu_experimental::measure::measureunit::MeasureUnit::try_from_utf8(unit_id)
                 .ok()
