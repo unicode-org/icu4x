@@ -6,8 +6,8 @@ use std::collections::HashSet;
 
 use crate::SourceDataProvider;
 use crate::{cldr_serde, units::helpers::ScientificNumber};
+use icu::experimental::measure::parser::ids::CLDR_IDS_TRIE;
 use icu::experimental::units::provider::{ConversionInfo, UnitsInfo, UnitsInfoV1};
-use icu_experimental::measure::parser::ids::CLDR_IDS_TRIE;
 use icu_provider::prelude::*;
 use zerovec::VarZeroVec;
 
