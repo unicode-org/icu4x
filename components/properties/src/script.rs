@@ -310,7 +310,7 @@ impl ScriptWithExtensions {
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
-    #[allow(clippy::new_ret_no_self)]
+    #[expect(clippy::new_ret_no_self)]
     pub fn new() -> ScriptWithExtensionsBorrowed<'static> {
         ScriptWithExtensionsBorrowed::new()
     }

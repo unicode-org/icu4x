@@ -184,7 +184,6 @@ impl Calendar for Ethiopian {
         date.0.offset_date(offset, &());
     }
 
-    #[allow(clippy::field_reassign_with_default)]
     fn until(
         &self,
         date1: &Self::DateInner,

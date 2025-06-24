@@ -497,7 +497,7 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
         let slice = &[error_ule];
         let error_vec = ZeroVec::<T>::new_borrowed(slice);
         let error_converted = error_vec.try_into_converted::<P>()?;
-        #[allow(clippy::expect_used)] // we know this cannot fail
+        #[expect(clippy::expect_used)] // we know this cannot fail
         Ok(CodePointTrie {
             header: self.header,
             index: self.index,

@@ -107,7 +107,6 @@ unsafe impl<'a, T: 'static + ?Sized> Yokeable<'a> for VarZeroCow<'static, T> {
 }
 
 /// This impl requires enabling the optional `yoke` Cargo feature of the `zerovec` crate
-#[allow(clippy::transmute_ptr_to_ptr)]
 #[cfg(feature = "alloc")]
 unsafe impl<'a, K, V> Yokeable<'a> for ZeroMap<'static, K, V>
 where
@@ -154,7 +153,6 @@ where
 }
 
 /// This impl requires enabling the optional `yoke` Cargo feature of the `zerovec` crate
-#[allow(clippy::transmute_ptr_to_ptr)]
 #[cfg(feature = "alloc")]
 unsafe impl<'a, K, V> Yokeable<'a> for ZeroMapBorrowed<'static, K, V>
 where
@@ -201,7 +199,6 @@ where
 }
 
 /// This impl requires enabling the optional `yoke` Cargo feature of the `zerovec` crate
-#[allow(clippy::transmute_ptr_to_ptr)]
 #[cfg(feature = "alloc")]
 unsafe impl<'a, K0, K1, V> Yokeable<'a> for ZeroMap2d<'static, K0, K1, V>
 where
@@ -250,7 +247,6 @@ where
 }
 
 /// This impl requires enabling the optional `yoke` Cargo feature of the `zerovec` crate
-#[allow(clippy::transmute_ptr_to_ptr)]
 #[cfg(feature = "alloc")]
 unsafe impl<'a, K0, K1, V> Yokeable<'a> for ZeroMap2dBorrowed<'static, K0, K1, V>
 where

@@ -87,7 +87,7 @@ impl PackedHijriYearInfo {
 
         let mut i = 0;
         while i < 12 {
-            #[allow(clippy::indexing_slicing)]
+            #[expect(clippy::indexing_slicing)]
             if month_lengths[i] {
                 all |= 1 << i;
             }

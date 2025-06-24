@@ -79,7 +79,7 @@ pub mod ffi {
 
         /// Creates a new [`DecimalFormatter`] from preconstructed locale data.
         #[diplomat::rust_link(icu::decimal::provider::DecimalSymbolsV1, Struct)]
-        #[allow(clippy::too_many_arguments)]
+        #[expect(clippy::too_many_arguments)]
         pub fn create_with_manual_data(
             plus_sign_prefix: &DiplomatStr,
             plus_sign_suffix: &DiplomatStr,
