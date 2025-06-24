@@ -6,7 +6,6 @@ use std::collections::HashSet;
 
 use crate::SourceDataProvider;
 use crate::{cldr_serde, units::helpers::ScientificNumber};
-use icu::experimental::measure::parser::ids::CLDR_IDS_TRIE;
 use icu::experimental::units::provider::{ConversionInfo, UnitsInfo, UnitsInfoV1};
 use icu_provider::prelude::*;
 use zerovec::VarZeroVec;
@@ -86,6 +85,7 @@ impl crate::IterableDataProviderCached<UnitsInfoV1> for SourceDataProvider {
 
 #[test]
 fn test_basic() {
+    use icu::experimental::measure::parser::ids::CLDR_IDS_TRIE;
     use icu::experimental::measure::provider::si_prefix::{Base, SiPrefix};
     use icu::experimental::measure::provider::single_unit::SingleUnit;
     use icu::experimental::units::provider::*;
@@ -172,7 +172,7 @@ fn test_basic() {
                         power: 0,
                         base: Base::Decimal,
                     },
-                    unit_id: meter_index as u16,
+                    unit_id: meter_index,
                 }];
                 ZeroVec::from_iter(base_unit.into_iter())
             },
