@@ -4,7 +4,6 @@
 
 use super::{provider::single_unit::SingleUnit, single_unit_vec::SingleUnitVec};
 use alloc::string::String;
-use alloc::string::ToString;
 use core::fmt::Write;
 
 // TODO NOTE: the MeasureUnitParser takes the trie and the ConverterFactory takes the full payload and an instance of MeasureUnitParser.
@@ -77,23 +76,52 @@ impl MeasureUnit {
     /// assert_eq!(short_representation, "C100I82P-1D3I85", "{}", "liter-per-100-kilometer");
     /// ```
     pub fn generate_short_representation(&self) -> String {
+        // Decomposes a number into its significant digits and counts the trailing zeros.
+        fn decompose_number_and_trailing_zeros(mut n: u64) -> (u64, u8) {
+            let mut zeros_count = 0;
+
+            // Divide by 10^8
+            while n % 100_000_000 == 0 {
+                n /= 100_000_000;
+                zeros_count += 8;
+            }
+
+            // Divide by 10^4
+            while n % 10_000 == 0 {
+                n /= 10_000;
+                zeros_count += 4;
+            }
+
+            // Divide by 10^2
+            while n % 100 == 0 {
+                n /= 100;
+                zeros_count += 2;
+            }
+
+            // Divide by 10
+            while n % 10 == 0 {
+                n /= 10;
+                zeros_count += 1;
+            }
+
+            (n, zeros_count)
+        }
+
         // Convert the constant to scientific notation if it is a power of 10 with more than 3 trailing zeros
-        fn append_power_of_10_to_scientific(n: u64, buff: &mut String) {
-            if n < 1000 {
-                let _infallible = write!(buff, "{}", n);
+        fn append_power_of_10_to_scientific(input: u64, buff: &mut String) {
+            if input < 1000 {
+                let _infallible = write!(buff, "{input}");
                 return;
             }
 
-            let result = n.to_string();
-            let zeros_count = result.chars().rev().take_while(|&c| c == '0').count();
+            let (significant_digits, zeros_count) = decompose_number_and_trailing_zeros(input);
 
             if zeros_count > 3 {
-                let significant_digits = &result.split_at(result.len() - zeros_count).0;
-                write!(buff, "{significant_digits}E{zeros_count}").unwrap();
+                let _infallible = write!(buff, "{significant_digits}E{zeros_count}");
                 return;
             }
 
-            write!(buff, "{}", result).unwrap();
+            let _infallible = write!(buff, "{input}");
         }
 
         let mut short_representation = String::new();
