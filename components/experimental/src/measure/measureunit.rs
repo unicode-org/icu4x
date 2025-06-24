@@ -89,7 +89,7 @@ impl MeasureUnit {
 
             if zeros_count > 3 {
                 let significant_digits = &result.split_at(result.len() - zeros_count).0;
-                write!(buff, "{}E{}", significant_digits, zeros_count).unwrap();
+                write!(buff, "{significant_digits}E{zeros_count}").unwrap();
                 return;
             }
 
