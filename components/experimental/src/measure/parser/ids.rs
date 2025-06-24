@@ -86,7 +86,7 @@ pub const CLDR_IDS_TRIE: ZeroTrieSimpleAscii<[u8; 1332]> =
         ("katal", 72_usize),
         ("kelvin", 73_usize),
         ("ken", 74_usize),
-        // NOTE: `kilometer` is must be removed from CLDR, see https://unicode-org.atlassian.net/browse/CLDR-18736
+        // NOTE: `kilometer` must be removed from CLDR, see https://unicode-org.atlassian.net/browse/CLDR-18736
         ("kilogram", 75_usize),
         ("kilogram-force", 76_usize),
         ("knot", 77_usize),
