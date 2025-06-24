@@ -80,7 +80,7 @@ impl MeasureUnit {
         // Convert the constant to scientific notation if it is a power of 10 with more than 3 trailing zeros
         fn append_power_of_10_to_scientific(n: u64, buff: &mut String) {
             if n < 1000 {
-                write!(buff, "{}", n).unwrap();
+                let _infallible = write!(buff, "{}", n);
                 return;
             }
 
