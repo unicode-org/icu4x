@@ -185,7 +185,6 @@ pub mod ffi {
             self.offset.map(UtcOffset).map(Box::new)
         }
 
-
         /// Infers the zone variant.
         ///
         /// Requires the offset and local time to be set.
