@@ -85,6 +85,8 @@ public:
    */
   inline std::unique_ptr<icu4x::TimeZoneInfo> with_variant(icu4x::TimeZoneVariant time_variant) const;
 
+  inline std::unique_ptr<icu4x::UtcOffset> offset() const;
+
   /**
    * Infers the zone variant.
    *
