@@ -40,7 +40,7 @@ pub struct WindowsParser {
 
 impl WindowsParser {
     /// Creates a new static [`WindowsParserBorrowed`].
-    #[allow(clippy::new_ret_no_self)]
+    #[expect(clippy::new_ret_no_self)]
     #[cfg(feature = "compiled_data")]
     pub fn new() -> WindowsParserBorrowed<'static> {
         WindowsParserBorrowed::new()

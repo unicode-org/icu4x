@@ -268,7 +268,7 @@ impl ExportDriver {
 
 /// Selects the maximal set of locales to export based on a [`DataMarkerInfo`] and this datagen
 /// provider's options bag. The locales may be later optionally deduplicated for fallback.
-#[allow(clippy::type_complexity)] // sigh
+#[expect(clippy::type_complexity)] // sigh
 fn select_locales_for_marker<'a>(
     provider: &'a dyn ExportableProvider,
     marker: DataMarkerInfo,

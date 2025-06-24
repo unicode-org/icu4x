@@ -54,7 +54,7 @@ impl<const N: usize> TinyAsciiStr<N> {
         };
 
         // Indexing is protected by the len check above
-        #[allow(clippy::indexing_slicing)]
+        #[expect(clippy::indexing_slicing)]
         while i < len {
             let b = code_units[i];
             if b > 0 && b < 0x80 {
@@ -89,7 +89,7 @@ impl<const N: usize> TinyAsciiStr<N> {
         };
 
         // Indexing is protected by the len check above
-        #[allow(clippy::indexing_slicing)]
+        #[expect(clippy::indexing_slicing)]
         while i < len {
             let b = code_units[i];
             if b > 0 && b < 0x80 {
@@ -145,7 +145,7 @@ impl<const N: usize> TinyAsciiStr<N> {
         let mut i = 0;
         let mut found_null = false;
         // Indexing is protected by TinyStrError::TooLarge
-        #[allow(clippy::indexing_slicing)]
+        #[expect(clippy::indexing_slicing)]
         while i < code_units.len() {
             let b = code_units[i];
 
@@ -188,7 +188,7 @@ impl<const N: usize> TinyAsciiStr<N> {
         let mut i = 0;
         let mut found_null = false;
         // Indexing is protected by TinyStrError::TooLarge
-        #[allow(clippy::indexing_slicing)]
+        #[expect(clippy::indexing_slicing)]
         while i < len {
             let b = code_units[start + i];
 
@@ -231,7 +231,7 @@ impl<const N: usize> TinyAsciiStr<N> {
             Aligned8::from_ascii_bytes(&self.bytes).len()
         } else {
             let mut i = 0;
-            #[allow(clippy::indexing_slicing)] // < N is safe
+            #[expect(clippy::indexing_slicing)] // < N is safe
             while i < N && self.bytes[i] as u8 != AsciiByte::B0 as u8 {
                 i += 1
             }
@@ -272,7 +272,7 @@ impl<const N: usize> TinyAsciiStr<N> {
         let mut bytes = [0; M];
         let mut i = 0;
         // Indexing is protected by the loop guard
-        #[allow(clippy::indexing_slicing)]
+        #[expect(clippy::indexing_slicing)]
         while i < M && i < N {
             bytes[i] = self.bytes[i] as u8;
             i += 1;
@@ -316,7 +316,7 @@ impl<const N: usize> TinyAsciiStr<N> {
         let mut i = self.len();
         let mut j = 0;
         // Indexing is protected by the loop guard
-        #[allow(clippy::indexing_slicing)]
+        #[expect(clippy::indexing_slicing)]
         while i < Q && j < M {
             result.bytes[i] = other.bytes[j];
             i += 1;
@@ -344,8 +344,6 @@ macro_rules! check_is {
             Aligned8::from_ascii_bytes(&$self.bytes).$check_int()
         } else {
             let mut i = 0;
-            // Won't panic because self.bytes has length N
-            #[allow(clippy::indexing_slicing)]
             while i < N && $self.bytes[i] as u8 != AsciiByte::B0 as u8 {
                 if !($self.bytes[i] as u8).$check_u8() {
                     return false;
@@ -366,8 +364,6 @@ macro_rules! check_is {
                 return false;
             }
             let mut i = 1;
-            // Won't panic because self.bytes has length N
-            #[allow(clippy::indexing_slicing)]
             while i < N && $self.bytes[i] as u8 != AsciiByte::B0 as u8 {
                 if ($self.bytes[i] as u8).$check_u8_1_inv() {
                     return false;
@@ -388,8 +384,6 @@ macro_rules! check_is {
                 return false;
             }
             let mut i = 1;
-            // Won't panic because self.bytes has length N
-            #[allow(clippy::indexing_slicing)]
             while i < N && $self.bytes[i] as u8 != AsciiByte::B0 as u8 {
                 if !($self.bytes[i] as u8).$check_u8_1_inv() {
                     return false;
@@ -654,7 +648,7 @@ macro_rules! to {
         if N <= 4 {
             let aligned = Aligned4::from_ascii_bytes(&$self.bytes).$to().to_ascii_bytes();
             // Won't panic because self.bytes has length N and aligned has length >= N
-            #[allow(clippy::indexing_slicing)]
+            #[expect(clippy::indexing_slicing)]
             while i < N {
                 $self.bytes[i] = aligned[i];
                 i += 1;
@@ -662,14 +656,12 @@ macro_rules! to {
         } else if N <= 8 {
             let aligned = Aligned8::from_ascii_bytes(&$self.bytes).$to().to_ascii_bytes();
             // Won't panic because self.bytes has length N and aligned has length >= N
-            #[allow(clippy::indexing_slicing)]
+            #[expect(clippy::indexing_slicing)]
             while i < N {
                 $self.bytes[i] = aligned[i];
                 i += 1;
             }
         } else {
-            // Won't panic because self.bytes has length N
-            #[allow(clippy::indexing_slicing)]
             while i < N && $self.bytes[i] as u8 != AsciiByte::B0 as u8 {
                 // SAFETY: AsciiByte is repr(u8) and has same size as u8
                 unsafe {

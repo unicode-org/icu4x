@@ -2,8 +2,9 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+#![expect(clippy::indexing_slicing, clippy::unwrap_used)] // TODO(#3958): Remove.
+
 mod hardcoded;
-#[allow(clippy::indexing_slicing, clippy::unwrap_used)] // TODO(#3958): Remove.
 mod replaceable;
 
 use crate::transliterate::provider::{FunctionCall, Rule, RuleULE, SimpleId, VarTable};
@@ -664,7 +665,7 @@ impl Transliterator {
         let mut env = LiteMap::new();
 
         let transliterator = Transliterator::load_rbt(
-            #[allow(clippy::unwrap_used)] // infallible
+            #[expect(clippy::unwrap_used)] // infallible
             DataMarkerAttributes::try_from_str(&locale.to_string().to_ascii_lowercase()).unwrap(),
             lookup,
             transliterator_provider,
@@ -721,7 +722,7 @@ impl Transliterator {
                     // c) the data
                     .unwrap_or_else(|| {
                         Transliterator::load_rbt(
-                            #[allow(clippy::unwrap_used)] // infallible
+                            #[expect(clippy::unwrap_used)] // infallible
                             DataMarkerAttributes::try_from_str(&dep.to_ascii_lowercase()).unwrap(),
                             lookup,
                             transliterator_provider,

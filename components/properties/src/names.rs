@@ -85,7 +85,7 @@ impl<T> PropertyParser<T> {
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
-    #[allow(clippy::new_ret_no_self)]
+    #[expect(clippy::new_ret_no_self)]
     pub fn new() -> PropertyParserBorrowed<'static, T>
     where
         T: ParseableEnumeratedProperty,
@@ -382,7 +382,7 @@ impl<T: NamedEnumeratedProperty> PropertyNamesLong<T> {
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
-    #[allow(clippy::new_ret_no_self)]
+    #[expect(clippy::new_ret_no_self)]
     pub fn new() -> PropertyNamesLongBorrowed<'static, T> {
         PropertyNamesLongBorrowed::new()
     }
@@ -515,7 +515,7 @@ impl<T: NamedEnumeratedProperty> PropertyNamesShort<T> {
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
-    #[allow(clippy::new_ret_no_self)]
+    #[expect(clippy::new_ret_no_self)]
     pub fn new() -> PropertyNamesShortBorrowed<'static, T> {
         PropertyNamesShortBorrowed::new()
     }

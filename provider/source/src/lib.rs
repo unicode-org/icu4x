@@ -84,7 +84,7 @@ pub struct SourceDataProvider {
     trie_type: TrieType,
     collation_root_han: CollationRootHan,
     pub(crate) timezone_horizon: Date<Iso>,
-    #[allow(clippy::type_complexity)] // not as complex as it appears
+    #[expect(clippy::type_complexity)] // not as complex as it appears
     requests_cache: Arc<
         FrozenMap<
             DataMarkerInfo,
@@ -128,7 +128,7 @@ impl SourceDataProvider {
     ///
     /// ✨ *Enabled with the `networking` Cargo feature.*
     #[cfg(feature = "networking")]
-    #[allow(clippy::new_without_default)]
+    #[expect(clippy::new_without_default)]
     pub fn new() -> Self {
         // Singleton so that all instantiations share the same cache.
         static SINGLETON: std::sync::OnceLock<SourceDataProvider> = std::sync::OnceLock::new();
@@ -439,7 +439,6 @@ trait IterableDataProviderCached<M: DataMarker>: DataProvider<M> {
 }
 
 impl SourceDataProvider {
-    #[allow(clippy::type_complexity)] // not as complex as it appears
     fn populate_requests_cache<M: DataMarker>(
         &self,
     ) -> Result<&HashSet<DataIdentifierCow>, DataError>

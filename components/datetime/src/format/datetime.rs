@@ -67,7 +67,6 @@ where
     }
 }
 
-#[allow(clippy::too_many_arguments)]
 pub(crate) fn try_write_pattern_items<W>(
     pattern_metadata: PatternMetadata,
     pattern_items: impl Iterator<Item = PatternItem>,

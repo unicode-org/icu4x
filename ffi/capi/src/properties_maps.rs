@@ -41,7 +41,7 @@ pub mod ffi {
     fn convert_8<P: icu_collections::codepointtrie::TrieValue>(
         data: icu_properties::CodePointMapData<P>,
     ) -> Box<CodePointMapData8> {
-        #[allow(clippy::unwrap_used)] // infallible for the chosen properties
+        #[expect(clippy::unwrap_used)] // infallible for the chosen properties
         Box::new(CodePointMapData8(
             data.try_into_converted().map_err(|_| ()).unwrap(),
         ))
@@ -442,7 +442,7 @@ pub mod ffi {
         #[diplomat::attr(auto, named_constructor = "script")]
         #[cfg(feature = "compiled_data")]
         pub fn create_script() -> Box<CodePointMapData16> {
-            #[allow(clippy::unwrap_used)] // script is a 16-bit property
+            #[expect(clippy::unwrap_used)] // script is a 16-bit property
             let data = icu_properties::CodePointMapData::<Script>::new()
                 .static_to_owned()
                 .try_into_converted()
@@ -458,7 +458,7 @@ pub mod ffi {
         pub fn create_script_with_provider(
             provider: &DataProvider,
         ) -> Result<Box<CodePointMapData16>, DataError> {
-            #[allow(clippy::unwrap_used)] // script is a 16-bit property
+            #[expect(clippy::unwrap_used)] // script is a 16-bit property
             Ok(Box::new(CodePointMapData16(
                 icu_properties::CodePointMapData::<Script>::try_new_unstable(
                     &provider.get_unstable()?,

@@ -642,7 +642,7 @@ where
     // Restore iterator to move to head of complex string
     iter.iter = start_iter;
     iter.current_pos_data = start_point;
-    #[allow(clippy::unwrap_used)] // iter.complex present for word segmenter
+    #[expect(clippy::unwrap_used)] // iter.complex present for word segmenter
     let breaks = iter.complex.unwrap().complex_language_segment_str(&s);
     iter.result_cache = breaks;
     let first_pos = *iter.result_cache.first()?;
@@ -693,7 +693,7 @@ impl WordBreakType for Utf16 {
         // Restore iterator to move to head of complex string
         iter.iter = start_iter;
         iter.current_pos_data = start_point;
-        #[allow(clippy::unwrap_used)] // iter.complex present for word segmenter
+        #[expect(clippy::unwrap_used)] // iter.complex present for word segmenter
         let breaks = iter.complex.unwrap().complex_language_segment_utf16(&s);
         iter.result_cache = breaks;
         // result_cache vector is utf-16 index that is in BMP.

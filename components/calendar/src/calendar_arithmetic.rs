@@ -259,8 +259,6 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
         }
 
         debug_assert!(day <= C::days_in_provided_month(year, month) as i32);
-        #[allow(clippy::unwrap_used)]
-        // The day is expected to be within the range of month_days of C
         ArithmeticDate {
             year,
             month,

@@ -61,7 +61,6 @@ pub(crate) struct FullCaseWriteable<'a, 'data, const IS_TITLE_CONTEXT: bool> {
 }
 
 impl<'a, const IS_TITLE_CONTEXT: bool> Writeable for FullCaseWriteable<'a, '_, IS_TITLE_CONTEXT> {
-    #[allow(clippy::indexing_slicing)] // last_uncopied_index and i are known to be in bounds
     fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
         let src = self.src;
         let mut mapping = self.mapping;

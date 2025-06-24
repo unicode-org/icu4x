@@ -243,7 +243,7 @@ macro_rules! symbols {
 symbols!(
     months,
     Month,
-    #[allow(clippy::large_enum_variant)]
+    #[expect(clippy::large_enum_variant)]
     pub enum Symbols<'data> {
         /// Twelve symbols for a solar calendar
         ///

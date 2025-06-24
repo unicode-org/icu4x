@@ -14,7 +14,6 @@ pub mod reference {
     use ::serde::{ser, Serialize};
     use serde::{de, Deserialize, Deserializer};
     /// This is an implementation of the serde deserialization visitor pattern.
-    #[allow(clippy::upper_case_acronyms)]
     pub(super) struct DeserializeSkeletonUTS35String;
 
     impl de::Visitor<'_> for DeserializeSkeletonUTS35String {
@@ -80,7 +79,6 @@ pub mod runtime {
     use serde::{de, Deserialize, Deserializer};
     use zerovec::ZeroVec;
     /// This is an implementation of the serde deserialization visitor pattern.
-    #[allow(clippy::upper_case_acronyms)]
     struct DeserializeSkeletonUTS35String;
 
     impl<'de> de::Visitor<'de> for DeserializeSkeletonUTS35String {

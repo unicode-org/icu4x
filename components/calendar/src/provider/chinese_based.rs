@@ -107,7 +107,6 @@ impl PackedChineseBasedYearInfo {
         let mut all = 0u32; // last byte unused
 
         for (month, length_30) in month_lengths.iter().enumerate() {
-            #[allow(clippy::indexing_slicing)]
             if *length_30 {
                 all |= 1 << month as u32;
             }

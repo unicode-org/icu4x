@@ -847,7 +847,7 @@ impl Pass1ResultGenerator {
         let mut used_variables = seed_vars.clone();
         for var in seed_vars {
             self.visit_var(var, var_data_map)?;
-            #[allow(clippy::indexing_slicing)] // an non-error `visit_var` ensures this exists
+            #[expect(clippy::indexing_slicing)] // an non-error `visit_var` ensures this exists
             let deps = self.transitive_var_dependencies[var].clone();
             used_variables.extend(deps);
         }
@@ -887,7 +887,7 @@ impl Pass1ResultGenerator {
             .iter()
             .try_for_each(|var| -> Result<()> {
                 self.visit_var(var, var_data_map)?;
-                #[allow(clippy::indexing_slicing)] // an non-error `visit_var` ensures this exists
+                #[expect(clippy::indexing_slicing)] // an non-error `visit_var` ensures this exists
                 let deps = self.transitive_var_dependencies[var].clone();
                 transitive_dependencies.extend(deps);
 

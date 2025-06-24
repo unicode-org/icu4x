@@ -63,7 +63,7 @@ where
     let mut seq = serializer.serialize_tuple(N)?;
 
     for i in 0..N {
-        #[allow(clippy::indexing_slicing)] // i, j in 0..N
+        #[expect(clippy::indexing_slicing)] // i, j in 0..N
         match array.iter().take(i).position(|item| item == &array[i]) {
             None if human => seq.serialize_element(&HumanSer::Value(&array[i]))?,
             None => seq.serialize_element(&MachineSer::Value(&array[i]))?,
@@ -93,7 +93,7 @@ where
         {
             match r {
                 HumanDe::Value(v) => {
-                    #[allow(clippy::indexing_slicing)] // i in 0..N by enumerate
+                    #[expect(clippy::indexing_slicing)] // i in 0..N by enumerate
                     array[i].write(v);
                 }
                 HumanDe::Fallback([j]) => unsafe {
@@ -104,7 +104,7 @@ where
                             "Illegal forward fallback {i}->{j}",
                         )));
                     }
-                    #[allow(clippy::indexing_slicing)] // j < i in 0..N by enumerate
+                    #[expect(clippy::indexing_slicing)] // j < i in 0..N by enumerate
                     array[i].write(array[j].assume_init_ref().clone());
                 },
             }
@@ -115,7 +115,7 @@ where
         {
             match r {
                 MachineDe::Value(v) => {
-                    #[allow(clippy::indexing_slicing)] // i in 0..N by enumerate
+                    #[expect(clippy::indexing_slicing)] // i in 0..N by enumerate
                     array[i].write(v);
                 }
                 MachineDe::Fallback(j) => unsafe {
@@ -126,7 +126,7 @@ where
                             "Illegal forward fallback {i}->{j}",
                         )));
                     }
-                    #[allow(clippy::indexing_slicing)] // j < i in 0..N by enumerate
+                    #[expect(clippy::indexing_slicing)] // j < i in 0..N by enumerate
                     array[i].write(array[j].assume_init_ref().clone());
                 },
             }

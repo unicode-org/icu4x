@@ -34,7 +34,7 @@ pub(crate) struct DecimalSubPattern {
 impl FromStr for DecimalSubPattern {
     type Err = Error;
 
-    #[allow(clippy::many_single_char_names)]
+    #[expect(clippy::many_single_char_names)]
     fn from_str(subpattern: &str) -> Result<Self, Self::Err> {
         // Split the subpattern into prefix, body, and suffix.
         // TODO(#567): Handle quoted literals in prefix and suffix.
