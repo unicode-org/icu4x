@@ -27,7 +27,7 @@ final class MeasureUnit implements ffi.Finalizable {
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_MeasureUnit_destroy_mv1));
 
   /// See the [Rust documentation for `try_from_str`](https://docs.rs/icu/2.0.0/icu/experimental/measure/measureunit/struct.MeasureUnit.html#method.try_from_str) for more information.
-  static MeasureUnit? fromStr(String unitId) {
+  static MeasureUnit? fromString(String unitId) {
     final temp = _FinalizedArena();
     final result = _icu4x_MeasureUnit_create_from_string_mv1(unitId._utf8AllocIn(temp.arena));
     return result.address == 0 ? null : MeasureUnit._fromFfi(result, []);
