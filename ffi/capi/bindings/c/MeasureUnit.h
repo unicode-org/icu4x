@@ -15,6 +15,8 @@
 
 
 
+MeasureUnit* icu4x_MeasureUnit_create_from_string_mv1(DiplomatStringView unit_id);
+
 void icu4x_MeasureUnit_destroy_mv1(MeasureUnit* self);
 
 

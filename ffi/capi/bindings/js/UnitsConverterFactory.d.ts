@@ -11,8 +11,6 @@ import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
  * An ICU4X Units Converter Factory object, capable of creating converters a {@link UnitsConverter}
  * for converting between two {@link MeasureUnit}s.
  *
- * Also, it can parse the CLDR unit identifier (e.g. `meter-per-square-second`) and get the {@link MeasureUnit}.
- *
  * See the [Rust documentation for `ConverterFactory`](https://docs.rs/icu/2.0.0/icu/experimental/units/converter_factory/struct.ConverterFactory.html) for more information.
  */
 export class UnitsConverterFactory {

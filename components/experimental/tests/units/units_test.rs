@@ -4,7 +4,7 @@
 
 use core::str::FromStr;
 
-use icu_experimental::measure::parser::MeasureUnitParser;
+use icu_experimental::measure::measureunit::MeasureUnit;
 use icu_experimental::units::converter::UnitsConverter;
 use icu_experimental::units::converter_factory::ConverterFactory;
 use icu_experimental::units::ratio::IcuRatio;
@@ -39,15 +39,12 @@ fn test_cldr_unit_tests() {
         .collect();
 
     let converter_factory = ConverterFactory::new();
-    let parser = MeasureUnitParser::default();
 
     for test in tests {
-        let input_unit = parser
-            .try_from_str(&test.input_unit)
-            .expect("Failed to parse input unit");
-        let output_unit = parser
-            .try_from_str(&test.output_unit)
-            .expect("Failed to parse output unit");
+        let input_unit =
+            MeasureUnit::try_from_str(&test.input_unit).expect("Failed to parse input unit");
+        let output_unit =
+            MeasureUnit::try_from_str(&test.output_unit).expect("Failed to parse output unit");
 
         let converter: UnitsConverter<Ratio<BigInt>> = converter_factory
             .converter(&input_unit, &output_unit)
@@ -208,15 +205,10 @@ fn test_units_non_convertible() {
     ];
 
     let converter_factory = ConverterFactory::new();
-    let parser = MeasureUnitParser::default();
 
     for (input, output) in non_convertible_units.iter() {
-        let input_unit = parser
-            .try_from_str(input)
-            .expect("Failed to parse input unit");
-        let output_unit = parser
-            .try_from_str(output)
-            .expect("Failed to parse output unit");
+        let input_unit = MeasureUnit::try_from_str(input).expect("Failed to parse input unit");
+        let output_unit = MeasureUnit::try_from_str(output).expect("Failed to parse output unit");
 
         let result: Option<UnitsConverter<f64>> =
             converter_factory.converter(&input_unit, &output_unit);
@@ -286,11 +278,9 @@ fn test_unparsable_units() {
         "meter second",
     ];
 
-    let parser = MeasureUnitParser::default();
-
     unparsable_units.iter().for_each(|unit| {
         assert!(
-            parser.try_from_str(unit).is_err(),
+            MeasureUnit::try_from_str(unit).is_err(),
             "Unit '{}' should be unparsable but was parsed successfully.",
             unit
         );

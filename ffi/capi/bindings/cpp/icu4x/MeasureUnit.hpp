@@ -18,11 +18,18 @@ namespace icu4x {
 namespace capi {
     extern "C" {
 
+    icu4x::capi::MeasureUnit* icu4x_MeasureUnit_create_from_string_mv1(diplomat::capi::DiplomatStringView unit_id);
+
     void icu4x_MeasureUnit_destroy_mv1(MeasureUnit* self);
 
     } // extern "C"
 } // namespace capi
 } // namespace
+
+inline std::unique_ptr<icu4x::MeasureUnit> icu4x::MeasureUnit::create_from_string(std::string_view unit_id) {
+  auto result = icu4x::capi::icu4x_MeasureUnit_create_from_string_mv1({unit_id.data(), unit_id.size()});
+  return std::unique_ptr<icu4x::MeasureUnit>(icu4x::MeasureUnit::FromFFI(result));
+}
 
 inline const icu4x::capi::MeasureUnit* icu4x::MeasureUnit::AsFFI() const {
   return reinterpret_cast<const icu4x::capi::MeasureUnit*>(this);

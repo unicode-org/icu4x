@@ -11,6 +11,11 @@
 #include <cstdlib>
 #include "../diplomat_runtime.hpp"
 
+namespace icu4x {
+namespace capi { struct MeasureUnit; }
+class MeasureUnit;
+}
+
 
 namespace icu4x {
 namespace capi {
@@ -23,12 +28,15 @@ namespace icu4x {
  * An ICU4X Measurement Unit object which represents a single unit of measurement
  * such as `meter`, `second`, `kilometer-per-hour`, `square-meter`, etc.
  *
- * You can create an instance of this object using {@link MeasureUnitParser} by calling the `parse` method.
- *
  * See the [Rust documentation for `MeasureUnit`](https://docs.rs/icu/2.0.0/icu/experimental/measure/measureunit/struct.MeasureUnit.html) for more information.
  */
 class MeasureUnit {
 public:
+
+  /**
+   * See the [Rust documentation for `try_from_str`](https://docs.rs/icu/2.0.0/icu/experimental/measure/measureunit/struct.MeasureUnit.html#method.try_from_str) for more information.
+   */
+  inline static std::unique_ptr<icu4x::MeasureUnit> create_from_string(std::string_view unit_id);
 
   inline const icu4x::capi::MeasureUnit* AsFFI() const;
   inline icu4x::capi::MeasureUnit* AsFFI();
