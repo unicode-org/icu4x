@@ -6,6 +6,9 @@
 mod databake;
 #[cfg(feature = "serde")]
 pub(crate) mod serde;
+#[cfg(all(feature = "zerovec", feature = "alloc"))]
+mod zerovec;
+
 use crate::common::*;
 #[cfg(feature = "alloc")]
 use crate::Error;
