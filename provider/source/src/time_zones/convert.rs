@@ -145,7 +145,11 @@ impl SourceDataProvider {
 
         let primary_zones_values = primary_zones.values().copied().collect::<BTreeSet<_>>();
 
-        let region_display_names = if locale.is_unknown() {
+        let region_display_names = if !self
+            .cldr()?
+            .displaynames()
+            .file_exists(locale, "territories.json")?
+        {
             BTreeMap::default()
         } else {
             let regions = &self

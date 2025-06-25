@@ -138,10 +138,9 @@ impl From<&cldr_serde::ca::Dates> for TimeLengths<'_> {
         let iter = arr.iter().flatten();
         for hour_cycle in iter {
             if let Some(preferred_hour_cycle) = preferred_hour_cycle {
-                assert_eq!(
-                    *hour_cycle, preferred_hour_cycle,
-                    "A locale contained a mix of coarse hour cycle types"
-                );
+                if *hour_cycle != preferred_hour_cycle {
+                    log::warn!("A locale contained a mix of coarse hour cycle types");
+                }
             } else {
                 preferred_hour_cycle = Some(*hour_cycle);
             }

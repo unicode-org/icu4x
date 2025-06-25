@@ -261,6 +261,28 @@ fn main() {
             writeln!(&mut out, "{line}").unwrap();
         }
     }
+
+    // validate that `--markers all --locales full` works
+    struct SinkExporter;
+    impl DataExporter for SinkExporter {
+        fn put_payload(
+            &self,
+            _marker: DataMarkerInfo,
+            _id: DataIdentifierBorrowed,
+            _payload: &DataPayload<ExportMarker>,
+        ) -> Result<(), DataError> {
+            Ok(())
+        }
+    }
+    ExportDriver::new(
+        [DataLocaleFamily::FULL],
+        DeduplicationStrategy::Maximal.into(),
+        LocaleFallbacker::try_new_unstable(&source).unwrap(),
+    )
+    // These are all supported models
+    .with_recommended_segmenter_models()
+    .export(&source, SinkExporter)
+    .unwrap();
 }
 
 struct StubExporter<E>(E);
