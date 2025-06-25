@@ -4,6 +4,7 @@
 
 //! Experimental.
 
+pub mod categorized;
 pub mod format;
 pub mod formatter;
 pub mod options;
