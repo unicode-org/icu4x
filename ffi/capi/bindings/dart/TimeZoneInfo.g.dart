@@ -38,7 +38,7 @@ final class TimeZoneInfo implements ffi.Finalizable {
   }
 
   /// See the [Rust documentation for `id`](https://docs.rs/icu/2.0.0/icu/time/struct.TimeZoneInfo.html#method.id) for more information.
-  TimeZone id() {
+  TimeZone get id {
     final result = _icu4x_TimeZoneInfo_id_mv1(_ffi);
     return TimeZone._fromFfi(result, []);
   }
@@ -61,7 +61,7 @@ final class TimeZoneInfo implements ffi.Finalizable {
   }
 
   /// See the [Rust documentation for `zone_name_timestamp`](https://docs.rs/icu/2.0.0/icu/time/struct.TimeZoneInfo.html#method.zone_name_timestamp) for more information.
-  IsoDateTime? zoneNameDateTime() {
+  IsoDateTime? get zoneNameDateTime {
     final result = _icu4x_TimeZoneInfo_zone_name_date_time_mv1(_ffi);
     if (!result.isOk) {
       return null;
@@ -73,6 +73,11 @@ final class TimeZoneInfo implements ffi.Finalizable {
   TimeZoneInfo withVariant(TimeZoneVariant timeVariant) {
     final result = _icu4x_TimeZoneInfo_with_variant_mv1(_ffi, timeVariant.index);
     return TimeZoneInfo._fromFfi(result, []);
+  }
+
+  UtcOffset? get offset {
+    final result = _icu4x_TimeZoneInfo_offset_mv1(_ffi);
+    return result.address == 0 ? null : UtcOffset._fromFfi(result, []);
   }
 
   /// Infers the zone variant.
@@ -132,6 +137,11 @@ external _ResultIsoDateTimeFfiVoid _icu4x_TimeZoneInfo_zone_name_date_time_mv1(f
 @ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, ffi.Int32)>(isLeaf: true, symbol: 'icu4x_TimeZoneInfo_with_variant_mv1')
 // ignore: non_constant_identifier_names
 external ffi.Pointer<ffi.Opaque> _icu4x_TimeZoneInfo_with_variant_mv1(ffi.Pointer<ffi.Opaque> self, int timeVariant);
+
+@_DiplomatFfiUse('icu4x_TimeZoneInfo_offset_mv1')
+@ffi.Native<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_TimeZoneInfo_offset_mv1')
+// ignore: non_constant_identifier_names
+external ffi.Pointer<ffi.Opaque> _icu4x_TimeZoneInfo_offset_mv1(ffi.Pointer<ffi.Opaque> self);
 
 @_DiplomatFfiUse('icu4x_TimeZoneInfo_infer_variant_mv1')
 @ffi.Native<_ResultVoidVoid Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_TimeZoneInfo_infer_variant_mv1')

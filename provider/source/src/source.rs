@@ -401,15 +401,24 @@ impl TzdbCache {
         self.transitions
             .get_or_init(|| {
                 let tzfiles = [
+                    // Core zones
                     "africa",
                     "antarctica",
                     "asia",
                     "australasia",
-                    "backward",
                     "etcetera",
                     "europe",
                     "northamerica",
                     "southamerica",
+                    // backzone contains zones that are out of scope for TZDB. It's unclear if IDs that are _only_ defined in
+                    // backzone are meant for interchange, but there is CLDR bug for the one ID in 2025b that is (`Asia/Hanoi`):
+                    // https://unicode-org.atlassian.net/browse/CLDR-11977. It's probably best to check that CLDR can resolve
+                    // these IDs.
+                    "backzone",
+                    // backward contains links for IDs that were previously included in TZDB, but have been collapsed into other
+                    // zones in the 2019 policy change (such as Europe/Oslo into Europe/Berlin). If we want to validate that all
+                    // TZDB IDs (that have ever existed) resolve in CLDR, we should include these as well.
+                    "backward",
                 ];
 
                 let mut lines = Vec::<String>::new();
@@ -504,7 +513,13 @@ impl TzdbCache {
                         Line::Zone(zone) => table.add_zone_line(zone).unwrap(),
                         Line::Continuation(cont) => table.add_continuation_line(cont).unwrap(),
                         Line::Rule(rule) => table.add_rule_line(rule).unwrap(),
-                        Line::Link(link) => table.add_link_line(link).unwrap(),
+                        Line::Link(link) => match table.add_link_line(link) {
+                            // This is expected because we add both backzone and backward
+                            Ok(_) | Err(parse_zoneinfo::table::Error::DuplicateLink(_)) => {}
+                            e => {
+                                e.unwrap();
+                            }
+                        },
                         Line::Space => {}
                     }
                 }

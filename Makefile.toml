@@ -174,6 +174,8 @@ category = "CI"
 dependencies = [
     "verify-gn-gen",
     "gn-run",
+    # Until https://github.com/wasmerio/wasmer/issues/5610
+    # "gn-run-wasi",
 ]
 
 [tasks.ci-job-msrv-features-1]

@@ -182,6 +182,19 @@ impl SourceDataProvider {
                     }
                 }
                 bcp47_tzids.extend(self.future_zones()?);
+
+                for zone in self.tzdb()?.transitions()?.zonesets.keys() {
+                    if !bcp47_tzids.contains_key(zone) {
+                        log::error!("TZDB zone {zone:?} not in CLDR. Add BCP-47 code to `fn future_zones()`?");
+                    }
+                }
+
+                for zone in self.tzdb()?.transitions()?.links.keys() {
+                    if !bcp47_tzids.contains_key(zone) {
+                        log::warn!("TZDB link {zone:?} not in CLDR");
+                    }
+                }
+
                 Ok(bcp47_tzids)
             })
             .as_ref()

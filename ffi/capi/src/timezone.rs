@@ -117,6 +117,7 @@ pub mod ffi {
 
         #[diplomat::rust_link(icu::time::TimeZoneInfo::id, FnInStruct)]
         #[diplomat::attr(demo_gen, disable)] // this just returns a constructor argument
+        #[diplomat::attr(auto, getter)]
         pub fn id(&self) -> Box<TimeZone> {
             Box::new(TimeZone(self.id))
         }
@@ -165,6 +166,7 @@ pub mod ffi {
             FnInStruct,
             hidden
         )]
+        #[diplomat::attr(auto, getter)]
         pub fn zone_name_date_time(&self) -> Option<IsoDateTime> {
             let datetime = self.zone_name_timestamp?.to_date_time_iso();
             Some(IsoDateTime {
@@ -179,6 +181,11 @@ pub mod ffi {
                 variant: Some(time_variant.into()),
                 ..*self
             })
+        }
+
+        #[diplomat::attr(auto, getter)]
+        pub fn offset(&self) -> Option<Box<UtcOffset>> {
+            self.offset.map(UtcOffset).map(Box::new)
         }
 
         /// Infers the zone variant.
