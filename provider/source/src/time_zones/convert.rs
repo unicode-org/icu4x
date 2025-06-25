@@ -300,6 +300,17 @@ impl SourceDataProvider {
                                 .flatten()
                                 .collect::<Vec<_>>();
 
+                            if iana == "Africa/Casablanca" || iana == "Africa/El_Aaiun" {
+                                periods.push((
+                                    bcp47,
+                                    DateTime {
+                                        date: Date::try_new_iso(2018, 12, 28).unwrap(),
+                                        time: Time::try_new(2, 0, 0, 0).unwrap(),
+                                    },
+                                    NichedOption(meta_zone_id_data.get("Europe_Central").copied()),
+                                ));
+                            }
+
                             let mut i = 0;
                             while i < periods.len() {
                                 if i + 1 < periods.len() && periods[i].1 == periods[i + 1].1 {
@@ -346,11 +357,19 @@ impl SourceDataProvider {
                             data: &mut Vec<(ZoneNameTimestamp, VariantOffsets)>,
                             end_time: ZoneNameTimestamp,
                             mut utc_offset: i64,
-                            dst_offset_relative: i64,
+                            mut dst_offset_relative: i64,
                         ) {
                             // Africa/Monrovia used -00:44:30 pre-1972. We cannot represent this, so we set it to -00:45
                             if utc_offset == -2670 {
                                 utc_offset = -2700
+                            }
+                            // Morocco's Ramadan time is modeled as a negative DST offset. We don't support time zone variants
+                            // other than standard and daylight (because CLDR doesn't have patterns for "{0} Ramadan Time"),
+                            // so we ignore the possibility of this offset.
+                            // Clients using `infer_variant()` will see a fallback to a localized UTC offset, which is way
+                            // less ambiguous than either Morocco Standard Time or Morocco Daylight time.
+                            if dst_offset_relative == -3600 {
+                                dst_offset_relative = 0;
                             }
 
                             data.push((
