@@ -151,7 +151,7 @@ impl SourceDataProvider {
         let data = self.get_datetime_resources(locale, calendar)?;
 
         let length_combinations_v1 = GenericLengthPatterns::from(&data.datetime_formats);
-        let time_lengths_v1 = TimeLengths::from(&data);
+        let time_lengths_v1 = TimeLengths::from_serde(&data, locale);
         let skeleton_patterns =
             DateSkeletonPatterns::from(&data.datetime_formats.available_formats);
 
@@ -893,7 +893,7 @@ mod date_skeleton_consistency_tests {
         let mut num_problems = 0;
         let data = provider.get_datetime_resources(locale, Some(cal)).unwrap();
         let length_combinations_v1 = GenericLengthPatterns::from(&data.datetime_formats);
-        let time_lengths_v1 = TimeLengths::from(&data);
+        let time_lengths_v1 = TimeLengths::from_serde(&data, locale);
         let skeleton_patterns =
             DateSkeletonPatterns::from(&data.datetime_formats.available_formats);
         let skeleton_pattern_set = data
