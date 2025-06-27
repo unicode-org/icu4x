@@ -47,7 +47,7 @@ final class VariantOffsetsCalculator implements ffi.Finalizable {
 
   /// See the [Rust documentation for `compute_offsets_from_time_zone_and_name_timestamp`](https://docs.rs/icu/2.0.0/icu/time/zone/struct.VariantOffsetsCalculatorBorrowed.html#method.compute_offsets_from_time_zone_and_name_timestamp) for more information.
   VariantOffsets? computeOffsetsFromTimeZoneAndDateTime(TimeZone timeZone, IsoDate utcDate, Time utcTime) {
-    final result = _icu4x_VariantOffsetsCalculator_compute_offsets_from_time_zone_and_date_time_mv1(_ffi, timeZone._ffi, utcDate._ffi, utcTime._ffi);
+    final result = _icu4x_VariantOffsetsCalculator_compute_offsets_from_time_zone_and_date_time_mv2(_ffi, timeZone._ffi, utcDate._ffi, utcTime._ffi);
     if (!result.isOk) {
       return null;
     }
@@ -80,10 +80,10 @@ external ffi.Pointer<ffi.Opaque> _icu4x_VariantOffsetsCalculator_create_mv1();
 // ignore: non_constant_identifier_names
 external _ResultOpaqueInt32 _icu4x_VariantOffsetsCalculator_create_with_provider_mv1(ffi.Pointer<ffi.Opaque> provider);
 
-@_DiplomatFfiUse('icu4x_VariantOffsetsCalculator_compute_offsets_from_time_zone_and_date_time_mv1')
-@ffi.Native<_ResultVariantOffsetsFfiVoid Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_VariantOffsetsCalculator_compute_offsets_from_time_zone_and_date_time_mv1')
+@_DiplomatFfiUse('icu4x_VariantOffsetsCalculator_compute_offsets_from_time_zone_and_date_time_mv2')
+@ffi.Native<_ResultVariantOffsetsFfiVoid Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_VariantOffsetsCalculator_compute_offsets_from_time_zone_and_date_time_mv2')
 // ignore: non_constant_identifier_names
-external _ResultVariantOffsetsFfiVoid _icu4x_VariantOffsetsCalculator_compute_offsets_from_time_zone_and_date_time_mv1(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> timeZone, ffi.Pointer<ffi.Opaque> utcDate, ffi.Pointer<ffi.Opaque> utcTime);
+external _ResultVariantOffsetsFfiVoid _icu4x_VariantOffsetsCalculator_compute_offsets_from_time_zone_and_date_time_mv2(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Opaque> timeZone, ffi.Pointer<ffi.Opaque> utcDate, ffi.Pointer<ffi.Opaque> utcTime);
 
 @_DiplomatFfiUse('icu4x_VariantOffsetsCalculator_compute_offsets_from_time_zone_and_timestamp_mv1')
 @ffi.Native<_ResultVariantOffsetsFfiVoid Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Int64)>(isLeaf: true, symbol: 'icu4x_VariantOffsetsCalculator_compute_offsets_from_time_zone_and_timestamp_mv1')

@@ -70,6 +70,7 @@ pub mod ffi {
         #[diplomat::attr(auto, default)]
         Standard,
         Daylight,
+        Sundown,
     }
 
     impl TimeZoneVariant {

@@ -132,10 +132,9 @@ impl FormatTimeZone for GenericNonLocationFormat {
             return Ok(Err(FormatTimeZoneError::Fallback));
         };
 
-        if input
-            .zone_offset
-            .is_some_and(|o| o != offsets.standard && Some(o) != offsets.daylight)
-        {
+        if input.zone_offset.is_some_and(|o| {
+            o != offsets.standard && Some(o) != offsets.daylight && Some(o) != offsets.sundown
+        }) {
             // Not a correct offset for the zone
             return Ok(Err(FormatTimeZoneError::Fallback));
         };
@@ -154,8 +153,10 @@ impl FormatTimeZone for GenericNonLocationFormat {
             return Ok(Err(FormatTimeZoneError::Fallback));
         };
 
-        if offsets.daylight.is_some() && golden_offsets.daylight.is_none() {
-            // The MZ's golden does not use daylight, but we do (e.g. London, Dublin, Troll,
+        if offsets.daylight.is_some() && golden_offsets.daylight.is_none()
+            || offsets.sundown.is_some() && golden_offsets.sundown.is_none()
+        {
+            // The MZ's golden does not use daylight/sundown, but we do (e.g. London, Dublin, Troll,
             // Windhoek).
             // Because we might be on an offset that no other zone in the metazone ever uses,
             // fall back to location format.
@@ -170,8 +171,10 @@ impl FormatTimeZone for GenericNonLocationFormat {
             return Ok(Err(FormatTimeZoneError::Fallback));
         };
 
-        if offsets.daylight.is_none() && golden_offsets.daylight.is_some() {
-            // The MZ's golden uses daylight but we don't (e.g. Phoenix, Regina, Algiers,
+        if offsets.daylight.is_none() && golden_offsets.daylight.is_some()
+            || offsets.sundown.is_none() & &golden_offsets.sundown.is_some()
+        {
+            // The MZ's golden uses daylight/sundown but we don't (e.g. Phoenix, Regina, Algiers,
             // Brisbane).
             // Disambiguate using the location.
             // TODO: Use the standard name here
@@ -241,6 +244,8 @@ impl FormatTimeZone for SpecificNonLocationFormat {
             TimeZoneVariant::Standard
         } else if Some(offset) == offsets.daylight {
             TimeZoneVariant::Daylight
+        } else if Some(offset) == offsets.sundown {
+            TimeZoneVariant::Sundown
         } else {
             // Not a correct offset for the zone
             return Ok(Err(FormatTimeZoneError::Fallback));
@@ -262,6 +267,8 @@ impl FormatTimeZone for SpecificNonLocationFormat {
             TimeZoneVariant::Standard
         } else if Some(offset) == golden_offsets.daylight {
             TimeZoneVariant::Daylight
+        } else if Some(offset) == golden_offsets.sundown {
+            TimeZoneVariant::Sundown
         } else {
             // Not a correct offset for the metazone
             return Ok(Err(FormatTimeZoneError::Fallback));
@@ -424,7 +431,7 @@ impl FormatTimeZone for GenericLocationFormat {
             input.zone_name_timestamp,
         ) {
             if let Some((os, _)) = mz_periods.get(time_zone_id, timestamp) {
-                if offset != os.standard && Some(offset) != os.daylight {
+                if offset != os.standard && Some(offset) != os.daylight && Some(offset) != os.sundown {
                     return Ok(Err(FormatTimeZoneError::Fallback));
                 };
             }

@@ -365,8 +365,10 @@ impl VariantOffsetsCalculatorBorrowed<'_> {
 pub struct VariantOffsets {
     /// The standard offset.
     pub standard: UtcOffset,
-    /// The daylight-saving offset, if used.
+    /// The daylight-saving offset, if used. This is higher than the standard offset.
     pub daylight: Option<UtcOffset>,
+    /// The sundown offset, if used. This is lower than the standard offset.
+    pub sundown: Option<UtcOffset>,
 }
 
 impl VariantOffsets {
@@ -375,6 +377,7 @@ impl VariantOffsets {
         Self {
             standard,
             daylight: None,
+            sundown: None,
         }
     }
 }

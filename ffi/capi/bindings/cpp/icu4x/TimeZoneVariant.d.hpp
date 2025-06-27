@@ -21,6 +21,7 @@ namespace capi {
     enum TimeZoneVariant {
       TimeZoneVariant_Standard = 0,
       TimeZoneVariant_Daylight = 1,
+      TimeZoneVariant_Sundown = 2,
     };
 
     typedef struct TimeZoneVariant_option {union { TimeZoneVariant ok; }; bool is_ok; } TimeZoneVariant_option;
@@ -36,6 +37,7 @@ public:
   enum Value {
     Standard = 0,
     Daylight = 1,
+    Sundown = 2,
   };
 
   TimeZoneVariant(): value(Value::Standard) {}

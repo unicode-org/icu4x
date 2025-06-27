@@ -198,18 +198,28 @@ pub(crate) mod ule {
     pub enum TimeZoneVariant {
         /// The variant corresponding to `"standard"` in CLDR.
         ///
-        /// The semantics vary from time zone to time zone. The time zone display
-        /// name of this variant may or may not be called "Standard Time".
+        /// The display name might include the term "standard time" or "normal time",
+        /// however many zones that only use the `Standard` variant might not include
+        /// such a term at all.
         ///
-        /// This is the variant with the lower UTC offset.
+        /// Most zones only use this variant.
         Standard = 0,
         /// The variant corresponding to `"daylight"` in CLDR.
         ///
-        /// The semantics vary from time zone to time zone. The time zone display
-        /// name of this variant may or may not be called "Daylight Time".
+        /// This is used by some zones that observe daylight saving time, and is used
+        /// during periods with a higher offset than during `Standard` time.
         ///
-        /// This is the variant with the higher UTC offset.
+        /// The display name of this variant may be "Daylight Time", "Summer Time",
+        /// or even, [in Ireland, "Standard Time"](https://en.wikipedia.org/wiki/Time_in_the_Republic_of_Ireland).
         Daylight = 1,
+        /// The variant corresponding to `"sundown"` in CLDR.
+        ///
+        /// This is used by some zones that observe "daylight-avoidance time",
+        /// and is used during periods with a *lower offset* than during `Standard` time.
+        ///
+        /// The only current use case of this variant is for some regions to have earlier
+        /// sunsets than normal during Ramadan, so the display name may be "Ramadan Time".
+        Sundown = 2,
     }
 }
 pub use ule::TimeZoneVariant;
@@ -487,6 +497,8 @@ impl TimeZoneInfo<models::AtTime> {
                     Some(TimeZoneVariant::Standard)
                 } else if os.daylight == Some(offset) {
                     Some(TimeZoneVariant::Daylight)
+                } else if os.sundown == Some(offset) {
+                    Some(TimeZoneVariant::Sundown)
                 } else {
                     None
                 }

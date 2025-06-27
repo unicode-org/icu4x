@@ -17,6 +17,10 @@ export class VariantOffsets {
     get daylight() {
         return this.#daylight;
     }
+    #sundown;
+    get sundown() {
+        return this.#sundown;
+    }
     #internalConstructor(structObj, internalConstructor) {
         if (typeof structObj !== "object") {
             throw new Error("VariantOffsets's constructor takes an object of VariantOffsets's fields.");
@@ -37,6 +41,12 @@ export class VariantOffsets {
             throw new Error("Missing required field daylight.");
         }
 
+        if ("sundown" in structObj) {
+            this.#sundown = structObj.sundown;
+        } else {
+            throw new Error("Missing required field sundown.");
+        }
+
         return this;
     }
 
@@ -46,7 +56,7 @@ export class VariantOffsets {
         functionCleanupArena,
         appendArrayMap
     ) {
-        let buffer = diplomatRuntime.DiplomatBuf.struct(wasm, 8, 4);
+        let buffer = diplomatRuntime.DiplomatBuf.struct(wasm, 12, 4);
 
         this._writeToArrayBuffer(wasm.memory.buffer, buffer.ptr, functionCleanupArena, appendArrayMap);
 
@@ -75,6 +85,7 @@ export class VariantOffsets {
     ) {
         diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, this.#standard.ffiValue, Uint32Array);
         diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 4, this.#daylight.ffiValue ?? 0, Uint32Array);
+        diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 8, this.#sundown.ffiValue ?? 0, Uint32Array);
     }
 
     // This struct contains borrowed fields, so this takes in a list of
@@ -91,6 +102,8 @@ export class VariantOffsets {
         structObj.standard = new UtcOffset(diplomatRuntime.internalConstructor, standardDeref, []);
         const daylightDeref = diplomatRuntime.ptrRead(wasm, ptr + 4);
         structObj.daylight = daylightDeref === 0 ? null : new UtcOffset(diplomatRuntime.internalConstructor, daylightDeref, []);
+        const sundownDeref = diplomatRuntime.ptrRead(wasm, ptr + 8);
+        structObj.sundown = sundownDeref === 0 ? null : new UtcOffset(diplomatRuntime.internalConstructor, sundownDeref, []);
 
         return new VariantOffsets(structObj, internalConstructor);
     }

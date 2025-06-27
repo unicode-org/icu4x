@@ -8,7 +8,9 @@ enum TimeZoneVariant {
 
   standard,
 
-  daylight;
+  daylight,
+
+  sundown;
 
   /// DEPRECATED
   ///

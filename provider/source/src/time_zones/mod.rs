@@ -116,7 +116,7 @@ impl SourceDataProvider {
                             bcp47,
                             transitions
                                 .map(|ts| {
-                                   let (mut std_offset, dst_offset) =  special_cases
+                                   let (mut std_offset, alternate_offset) =  special_cases
                                         .iter()
                                         .find_map(|&(k, v)|
                                             ((k.0, k.1) == (bcp47.as_str(), ts.name.as_str()) && k.2 <= ts.transition).then_some(v)
@@ -134,7 +134,8 @@ impl SourceDataProvider {
                                     };
 
                                     let mut os = VariantOffsets::from_standard(UtcOffset::from_seconds_unchecked(std_offset));
-                                    os.daylight = dst_offset.map(UtcOffset::from_seconds_unchecked);
+                                    os.daylight = alternate_offset.filter(|&o| o > std_offset).map(UtcOffset::from_seconds_unchecked);
+                                    os.sundown = alternate_offset.filter(|&o| o < std_offset).map(UtcOffset::from_seconds_unchecked);
                                     (ts.transition, os)
                                 })
                                 .collect::<Vec<_>>(),

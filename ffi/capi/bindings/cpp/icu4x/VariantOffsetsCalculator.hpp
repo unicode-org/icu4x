@@ -18,6 +18,7 @@
 #include "Time.hpp"
 #include "TimeZone.hpp"
 #include "VariantOffsets.hpp"
+#include "VariantOffsetsV2.hpp"
 
 
 namespace icu4x {
@@ -30,9 +31,12 @@ namespace capi {
     icu4x_VariantOffsetsCalculator_create_with_provider_mv1_result icu4x_VariantOffsetsCalculator_create_with_provider_mv1(const icu4x::capi::DataProvider* provider);
 
     typedef struct icu4x_VariantOffsetsCalculator_compute_offsets_from_time_zone_and_date_time_mv1_result {union {icu4x::capi::VariantOffsets ok; }; bool is_ok;} icu4x_VariantOffsetsCalculator_compute_offsets_from_time_zone_and_date_time_mv1_result;
-    icu4x_VariantOffsetsCalculator_compute_offsets_from_time_zone_and_date_time_mv1_result icu4x_VariantOffsetsCalculator_compute_offsets_from_time_zone_and_date_time_mv1(const icu4x::capi::VariantOffsetsCalculator* self, const icu4x::capi::TimeZone* time_zone, const icu4x::capi::IsoDate* utc_date, const icu4x::capi::Time* utc_time);
+    icu4x_VariantOffsetsCalculator_compute_offsets_from_time_zone_and_date_time_mv1_result icu4x_VariantOffsetsCalculator_compute_offsets_from_time_zone_and_date_time_mv1(const icu4x::capi::VariantOffsetsCalculator* self, const icu4x::capi::TimeZone* time_zone, const icu4x::capi::IsoDate* local_date, const icu4x::capi::Time* local_time);
 
-    typedef struct icu4x_VariantOffsetsCalculator_compute_offsets_from_time_zone_and_timestamp_mv1_result {union {icu4x::capi::VariantOffsets ok; }; bool is_ok;} icu4x_VariantOffsetsCalculator_compute_offsets_from_time_zone_and_timestamp_mv1_result;
+    typedef struct icu4x_VariantOffsetsCalculator_compute_offsets_from_time_zone_and_date_time_mv2_result {union {icu4x::capi::VariantOffsetsV2 ok; }; bool is_ok;} icu4x_VariantOffsetsCalculator_compute_offsets_from_time_zone_and_date_time_mv2_result;
+    icu4x_VariantOffsetsCalculator_compute_offsets_from_time_zone_and_date_time_mv2_result icu4x_VariantOffsetsCalculator_compute_offsets_from_time_zone_and_date_time_mv2(const icu4x::capi::VariantOffsetsCalculator* self, const icu4x::capi::TimeZone* time_zone, const icu4x::capi::IsoDate* utc_date, const icu4x::capi::Time* utc_time);
+
+    typedef struct icu4x_VariantOffsetsCalculator_compute_offsets_from_time_zone_and_timestamp_mv1_result {union {icu4x::capi::VariantOffsetsV2 ok; }; bool is_ok;} icu4x_VariantOffsetsCalculator_compute_offsets_from_time_zone_and_timestamp_mv1_result;
     icu4x_VariantOffsetsCalculator_compute_offsets_from_time_zone_and_timestamp_mv1_result icu4x_VariantOffsetsCalculator_compute_offsets_from_time_zone_and_timestamp_mv1(const icu4x::capi::VariantOffsetsCalculator* self, const icu4x::capi::TimeZone* time_zone, int64_t timestamp);
 
     void icu4x_VariantOffsetsCalculator_destroy_mv1(VariantOffsetsCalculator* self);
@@ -51,19 +55,27 @@ inline diplomat::result<std::unique_ptr<icu4x::VariantOffsetsCalculator>, icu4x:
   return result.is_ok ? diplomat::result<std::unique_ptr<icu4x::VariantOffsetsCalculator>, icu4x::DataError>(diplomat::Ok<std::unique_ptr<icu4x::VariantOffsetsCalculator>>(std::unique_ptr<icu4x::VariantOffsetsCalculator>(icu4x::VariantOffsetsCalculator::FromFFI(result.ok)))) : diplomat::result<std::unique_ptr<icu4x::VariantOffsetsCalculator>, icu4x::DataError>(diplomat::Err<icu4x::DataError>(icu4x::DataError::FromFFI(result.err)));
 }
 
-inline std::optional<icu4x::VariantOffsets> icu4x::VariantOffsetsCalculator::compute_offsets_from_time_zone_and_date_time(const icu4x::TimeZone& time_zone, const icu4x::IsoDate& utc_date, const icu4x::Time& utc_time) const {
+inline std::optional<icu4x::VariantOffsets> icu4x::VariantOffsetsCalculator::compute_offsets_from_time_zone_and_date_time(const icu4x::TimeZone& time_zone, const icu4x::IsoDate& local_date, const icu4x::Time& local_time) const {
   auto result = icu4x::capi::icu4x_VariantOffsetsCalculator_compute_offsets_from_time_zone_and_date_time_mv1(this->AsFFI(),
     time_zone.AsFFI(),
-    utc_date.AsFFI(),
-    utc_time.AsFFI());
+    local_date.AsFFI(),
+    local_time.AsFFI());
   return result.is_ok ? std::optional<icu4x::VariantOffsets>(icu4x::VariantOffsets::FromFFI(result.ok)) : std::nullopt;
 }
 
-inline std::optional<icu4x::VariantOffsets> icu4x::VariantOffsetsCalculator::compute_offsets_from_time_zone_and_timestamp(const icu4x::TimeZone& time_zone, int64_t timestamp) const {
+inline std::optional<icu4x::VariantOffsetsV2> icu4x::VariantOffsetsCalculator::compute_offsets_from_time_zone_and_date_time_v2(const icu4x::TimeZone& time_zone, const icu4x::IsoDate& utc_date, const icu4x::Time& utc_time) const {
+  auto result = icu4x::capi::icu4x_VariantOffsetsCalculator_compute_offsets_from_time_zone_and_date_time_mv2(this->AsFFI(),
+    time_zone.AsFFI(),
+    utc_date.AsFFI(),
+    utc_time.AsFFI());
+  return result.is_ok ? std::optional<icu4x::VariantOffsetsV2>(icu4x::VariantOffsetsV2::FromFFI(result.ok)) : std::nullopt;
+}
+
+inline std::optional<icu4x::VariantOffsetsV2> icu4x::VariantOffsetsCalculator::compute_offsets_from_time_zone_and_timestamp(const icu4x::TimeZone& time_zone, int64_t timestamp) const {
   auto result = icu4x::capi::icu4x_VariantOffsetsCalculator_compute_offsets_from_time_zone_and_timestamp_mv1(this->AsFFI(),
     time_zone.AsFFI(),
     timestamp);
-  return result.is_ok ? std::optional<icu4x::VariantOffsets>(icu4x::VariantOffsets::FromFFI(result.ok)) : std::nullopt;
+  return result.is_ok ? std::optional<icu4x::VariantOffsetsV2>(icu4x::VariantOffsetsV2::FromFFI(result.ok)) : std::nullopt;
 }
 
 inline const icu4x::capi::VariantOffsetsCalculator* icu4x::VariantOffsetsCalculator::AsFFI() const {

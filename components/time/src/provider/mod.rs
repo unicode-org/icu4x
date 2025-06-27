@@ -68,7 +68,7 @@ const SECONDS_TO_EIGHTS_OF_HOURS: i32 = 60 * 60 / 8;
 impl AsULE for VariantOffsets {
     type ULE = [i8; 2];
 
-    fn from_unaligned([std, dst]: Self::ULE) -> Self {
+    fn from_unaligned([std, alt]: Self::ULE) -> Self {
         fn decode(encoded: i8) -> i32 {
             encoded as i32 * SECONDS_TO_EIGHTS_OF_HOURS
                 + match encoded % 8 {
@@ -85,7 +85,8 @@ impl AsULE for VariantOffsets {
 
         Self {
             standard: UtcOffset::from_seconds_unchecked(decode(std)),
-            daylight: (dst != 0).then(|| UtcOffset::from_seconds_unchecked(decode(std + dst))),
+            daylight: (alt > 0).then(|| UtcOffset::from_seconds_unchecked(decode(std + alt))),
+            sundown: (alt < 0).then(|| UtcOffset::from_seconds_unchecked(decode(std + alt))),
         }
     }
 
@@ -110,9 +111,11 @@ impl AsULE for VariantOffsets {
             debug_assert!(i8::MIN as i32 <= scaled && scaled <= i8::MAX as i32);
             scaled as i8
         }
+        assert!(self.daylight.is_none() || self.sundown.is_none());
         [
             encode(self.standard.to_seconds()),
             self.daylight
+                .or(self.sundown)
                 .map(|d| encode(d.to_seconds() - self.standard.to_seconds()))
                 .unwrap_or_default(),
         ]
@@ -165,13 +168,13 @@ impl serde::Serialize for VariantOffsets {
         S: serde::Serializer,
     {
         if serializer.is_human_readable() {
-            serializer.serialize_str(&if let Some(dst) = self.daylight {
+            serializer.serialize_str(&if let Some(alt) = self.daylight.or(self.sundown) {
                 alloc::format!(
                     "{:+02}:{:02}/{:+02}:{:02}",
                     self.standard.hours_part(),
                     self.standard.minutes_part(),
-                    dst.hours_part(),
-                    dst.minutes_part(),
+                    alt.hours_part(),
+                    alt.minutes_part(),
                 )
             } else {
                 alloc::format!(
@@ -195,20 +198,24 @@ impl<'de> serde::Deserialize<'de> for VariantOffsets {
         use serde::de::Error;
         if deserializer.is_human_readable() {
             let raw = <&str>::deserialize(deserializer)?;
-            Ok(if let Some((std, dst)) = raw.split_once('/') {
+            Ok(if let Some((std, alt)) = raw.split_once('/') {
+                use core::ops::Not;
+
+                let standard =
+                    UtcOffset::try_from_str(std).map_err(|_| D::Error::custom("invalid offset"))?;
+                let alternate =
+                    UtcOffset::try_from_str(alt).map_err(|_| D::Error::custom("invalid offset"))?;
                 Self {
-                    standard: UtcOffset::try_from_str(std)
-                        .map_err(|_| D::Error::custom("invalid offset"))?,
-                    daylight: Some(
-                        UtcOffset::try_from_str(dst)
-                            .map_err(|_| D::Error::custom("invalid offset"))?,
-                    ),
+                    standard,
+                    daylight: alternate.is_non_negative().then_some(alternate),
+                    sundown: alternate.is_non_negative().not().then_some(alternate),
                 }
             } else {
                 Self {
                     standard: UtcOffset::try_from_str(raw)
                         .map_err(|_| D::Error::custom("invalid offset"))?,
                     daylight: None,
+                    sundown: None,
                 }
             })
         } else {

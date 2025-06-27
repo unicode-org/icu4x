@@ -6,12 +6,14 @@ part of 'lib.g.dart';
 final class _VariantOffsetsFfi extends ffi.Struct {
   external ffi.Pointer<ffi.Opaque> standard;
   external ffi.Pointer<ffi.Opaque> daylight;
+  external ffi.Pointer<ffi.Opaque> sundown;
 }
 
 /// See the [Rust documentation for `VariantOffsets`](https://docs.rs/icu/2.0.0/icu/time/zone/struct.VariantOffsets.html) for more information.
 final class VariantOffsets {
   final UtcOffset standard;
   final UtcOffset? daylight;
+  final UtcOffset? sundown;
 
   // This struct contains borrowed fields, so this takes in a list of
   // "edges" corresponding to where each lifetime's data may have been borrowed from
@@ -21,13 +23,15 @@ final class VariantOffsets {
   // ignore: unused_element
   VariantOffsets._fromFfi(_VariantOffsetsFfi ffi) :
     standard = UtcOffset._fromFfi(ffi.standard, []),
-    daylight = ffi.daylight.address == 0 ? null : UtcOffset._fromFfi(ffi.daylight, []);
+    daylight = ffi.daylight.address == 0 ? null : UtcOffset._fromFfi(ffi.daylight, []),
+    sundown = ffi.sundown.address == 0 ? null : UtcOffset._fromFfi(ffi.sundown, []);
 
   // ignore: unused_element
   _VariantOffsetsFfi _toFfi(ffi.Allocator temp) {
     final struct = ffi.Struct.create<_VariantOffsetsFfi>();
     struct.standard = standard._ffi;
     struct.daylight = daylight?._ffi ?? ffi.Pointer.fromAddress(0);
+    struct.sundown = sundown?._ffi ?? ffi.Pointer.fromAddress(0);
     return struct;
   }
 
@@ -36,12 +40,14 @@ final class VariantOffsets {
   bool operator ==(Object other) =>
       other is VariantOffsets &&
       other.standard == standard &&
-      other.daylight == daylight;
+      other.daylight == daylight &&
+      other.sundown == sundown;
 
   @override
   int get hashCode => Object.hashAll([
         standard,
         daylight,
+        sundown,
       ]);
 }
 

@@ -12,7 +12,8 @@ export class TimeZoneVariant {
 
     static #values = new Map([
         ["Standard", 0],
-        ["Daylight", 1]
+        ["Daylight", 1],
+        ["Sundown", 2]
     ]);
 
     static getAllEntries() {
@@ -60,10 +61,12 @@ export class TimeZoneVariant {
     static #objectValues = [
         new TimeZoneVariant(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 0),
         new TimeZoneVariant(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 1),
+        new TimeZoneVariant(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 2),
     ];
 
     static Standard = TimeZoneVariant.#objectValues[0];
     static Daylight = TimeZoneVariant.#objectValues[1];
+    static Sundown = TimeZoneVariant.#objectValues[2];
 
 
     /**

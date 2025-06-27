@@ -354,18 +354,28 @@ impl DataProvider<TimezonePeriodsV1> for SourceDataProvider {
                     if mza != mzb {
                         return false;
                     }
-                    match (oa.daylight, ob.daylight) {
-                        (None, None) => true,
-                        (Some(a), Some(b)) => a == b,
-                        // It's fine if one period doesn't use DST,
-                        (Some(a), None) => {
+                    match (oa.daylight, oa.sundown, ob.daylight, ob.sundown) {
+                        (None, None, None, None) => true,
+                        (Some(a), None, Some(b), None) | (None, Some(a), None, Some(b)) => a == b,
+                        (None, Some(a), None, None) => {
+                            ob.sundown = Some(a);
+                            true
+                        }
+                        (None, None, None, Some(b)) => {
+                            oa.sundown = Some(b);
+                            true
+                        }
+                        (Some(a), None, None, None) => {
                             ob.daylight = Some(a);
                             true
                         }
-                        (None, Some(b)) => {
+                        (None, None, Some(b), None) => {
                             oa.daylight = Some(b);
                             true
                         }
+                        (None, Some(_), Some(_), None) => false,
+                        (Some(_), None, None, Some(_)) => false,
+                        _ => unreachable!(),
                     }
                 });
 
