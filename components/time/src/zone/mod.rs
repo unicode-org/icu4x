@@ -193,9 +193,8 @@ pub(crate) mod ule {
     /// An indication of a period when a time zone maps to a specific UTC offset.
     ///
     /// Although the variants are named `Standard` and `Daylight`, what they actually indicate
-    /// is whether the period has a lower offset or a higher offset from UTC. They do NOT
-    /// unambiguously indicate "standard time" and "daylight time" in all time zones. Some
-    /// examples of differences between `TimeZoneVariant` and ground truth:
+    /// is whether the period has a lower offset or a higher offset from UTC. Their behavior may
+    /// not be intuitive; for example:
     ///
     /// - Irish Standard Time, UTC+1, is the `Daylight` variant of "Europe/Dublin",
     ///   which observes Greenwich Mean Time, UTC+0, during the winter.
@@ -218,7 +217,7 @@ pub(crate) mod ule {
     #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
     #[non_exhaustive]
     pub enum TimeZoneVariant {
-        /// ⚠️ READ THE DOCS! Indicates the period in a time zone with a lower UTC offset.
+        /// Indicates the period in a time zone with a lower UTC offset.
         ///
         /// ❗ Clients should generally NOT construct this variant directly. Instead, use:
         /// * [`TimeZoneVariant::from_rearguard_isdst`]
@@ -228,7 +227,7 @@ pub(crate) mod ule {
         /// from time zone to time zone. The time zone display name of this variant
         /// may or may not be called "Standard Time".
         Standard = 0,
-        /// ⚠️ READ THE DOCS! Indicates the period in a time zone with a higher UTC offset.
+        /// Indicates the period in a time zone with a higher UTC offset.
         ///
         /// ❗ Clients should generally NOT construct this variant directly. Instead, use:
         /// * [`TimeZoneVariant::from_rearguard_isdst`]
