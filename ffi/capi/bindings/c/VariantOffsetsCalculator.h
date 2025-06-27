@@ -13,6 +13,7 @@
 #include "Time.d.h"
 #include "TimeZone.d.h"
 #include "VariantOffsets.d.h"
+#include "VariantOffsetsV2.d.h"
 
 #include "VariantOffsetsCalculator.d.h"
 
@@ -28,6 +29,9 @@ icu4x_VariantOffsetsCalculator_create_with_provider_mv1_result icu4x_VariantOffs
 
 typedef struct icu4x_VariantOffsetsCalculator_compute_offsets_from_time_zone_and_date_time_mv1_result {union {VariantOffsets ok; }; bool is_ok;} icu4x_VariantOffsetsCalculator_compute_offsets_from_time_zone_and_date_time_mv1_result;
 icu4x_VariantOffsetsCalculator_compute_offsets_from_time_zone_and_date_time_mv1_result icu4x_VariantOffsetsCalculator_compute_offsets_from_time_zone_and_date_time_mv1(const VariantOffsetsCalculator* self, const TimeZone* time_zone, const IsoDate* local_date, const Time* local_time);
+
+typedef struct icu4x_VariantOffsetsCalculator_compute_offsets_from_time_zone_and_date_time_mv2_result {union {VariantOffsetsV2 ok; }; bool is_ok;} icu4x_VariantOffsetsCalculator_compute_offsets_from_time_zone_and_date_time_mv2_result;
+icu4x_VariantOffsetsCalculator_compute_offsets_from_time_zone_and_date_time_mv2_result icu4x_VariantOffsetsCalculator_compute_offsets_from_time_zone_and_date_time_mv2(const VariantOffsetsCalculator* self, const TimeZone* time_zone, const IsoDate* local_date, const Time* local_time);
 
 void icu4x_VariantOffsetsCalculator_destroy_mv1(VariantOffsetsCalculator* self);
 
