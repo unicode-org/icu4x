@@ -32,6 +32,7 @@ inline icu4x::TimeZoneVariant icu4x::TimeZoneVariant::FromFFI(icu4x::capi::TimeZ
   switch (c_enum) {
     case icu4x::capi::TimeZoneVariant_Standard:
     case icu4x::capi::TimeZoneVariant_Daylight:
+    case icu4x::capi::TimeZoneVariant_Sundown:
       return static_cast<icu4x::TimeZoneVariant::Value>(c_enum);
     default:
       std::abort();

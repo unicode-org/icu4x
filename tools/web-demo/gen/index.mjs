@@ -1879,7 +1879,7 @@ let termini = Object.assign({
                 name: "zone_variant",
                 type: "TimeZoneVariant",
                 typeUse: "enumerator",
-                values: ["Standard", "Daylight"]
+                values: ["Standard", "Daylight", "Sundown"]
             }
             
         ]
@@ -2098,7 +2098,7 @@ let termini = Object.assign({
                 name: "zone_variant",
                 type: "TimeZoneVariant",
                 typeUse: "enumerator",
-                values: ["Standard", "Daylight"]
+                values: ["Standard", "Daylight", "Sundown"]
             }
             
         ]
@@ -2178,7 +2178,7 @@ let termini = Object.assign({
                 name: "zone_variant",
                 type: "TimeZoneVariant",
                 typeUse: "enumerator",
-                values: ["Standard", "Daylight"]
+                values: ["Standard", "Daylight", "Sundown"]
             }
             
         ]
@@ -2289,7 +2289,7 @@ let termini = Object.assign({
                 name: "zone_variant",
                 type: "TimeZoneVariant",
                 typeUse: "enumerator",
-                values: ["Standard", "Daylight"]
+                values: ["Standard", "Daylight", "Sundown"]
             }
             
         ]
@@ -2400,7 +2400,7 @@ let termini = Object.assign({
                 name: "zone_variant",
                 type: "TimeZoneVariant",
                 typeUse: "enumerator",
-                values: ["Standard", "Daylight"]
+                values: ["Standard", "Daylight", "Sundown"]
             }
             
         ]
@@ -2480,7 +2480,7 @@ let termini = Object.assign({
                 name: "zone_variant",
                 type: "TimeZoneVariant",
                 typeUse: "enumerator",
-                values: ["Standard", "Daylight"]
+                values: ["Standard", "Daylight", "Sundown"]
             }
             
         ]
