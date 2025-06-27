@@ -198,9 +198,9 @@ pub(crate) mod ule {
     ///
     /// - Irish Standard Time, UTC+1, is the `Daylight` variant of "Europe/Dublin",
     ///   which observes Greenwich Mean Time, UTC+0, during the winter.
-    /// - Morocco observes UTC+1 for most of the year, but falls back to UTC+0 during
-    ///   Ramadan; therefore, Ramadan time is considered `Standard` whereas the
-    ///   year-round time is `Daylight`.
+    /// - Some countries change their clocks backward during the Hijri month Ramadan;
+    ///   in such cases, they may be modeled as being on the `Daylight` variant for
+    ///   most of the year and switching to `Standard` during Ramadan.
     ///
     /// The zone variant is required when formatting with a "specific" time zone style,
     /// but not a "generic" or "location" time zone style.
