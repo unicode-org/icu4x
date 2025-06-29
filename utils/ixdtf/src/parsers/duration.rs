@@ -37,7 +37,10 @@ pub(crate) fn parse_duration<T: EncodingType>(
         DurationDisgnator,
     );
 
-    let date = if cursor.check_or(false, is_time_designator)? {
+    let date = if cursor
+        .check(is_time_designator)?
+        .ok_or(ParseError::abrupt_end("Duration"))?
+    {
         None
     } else {
         Some(parse_date_duration(cursor)?)
