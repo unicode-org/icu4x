@@ -54,10 +54,6 @@ pub enum ParseError {
     TimeSeparator,
     #[displaydoc("Invalid character while parsing decimal separator.")]
     DecimalSeparator,
-    #[displaydoc("Time is ambiguous with MonthDay")]
-    AmbiguousTimeMonthDay,
-    #[displaydoc("Time is ambiguous with YearMonth")]
-    AmbiguousTimeYearMonth,
 
     // Annotation Related Errors
     #[displaydoc("Invalid annotation.")]
@@ -100,8 +96,6 @@ pub enum ParseError {
     // MonthDay Errors
     #[displaydoc("MonthDay must begin with a month or '--'")]
     MonthDayHyphen,
-    #[displaydoc("MonthDay was not valid.")]
-    InvalidMonthDay,
 
     // Duration Errors
     #[displaydoc("Invalid duration designator.")]
@@ -114,6 +108,13 @@ pub enum ParseError {
     TimeDurationPartOrder,
     #[displaydoc("Invalid time duration designator.")]
     TimeDurationDesignator,
+
+    #[displaydoc("Time is ambiguous with MonthDay")]
+    AmbiguousTimeMonthDay,
+    #[displaydoc("Time is ambiguous with YearMonth")]
+    AmbiguousTimeYearMonth,
+    #[displaydoc("MonthDay was not valid.")]
+    InvalidMonthDay,
 }
 
 impl core::error::Error for ParseError {}
