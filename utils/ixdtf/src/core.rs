@@ -107,7 +107,7 @@ impl<'a, T: EncodingType> Cursor<'a, T> {
     }
 
     /// Get current position
-    pub(crate) const fn set_position(&mut self, pos: usize) {
+    pub(crate) fn set_position(&mut self, pos: usize) {
         self.pos = pos;
     }
 
