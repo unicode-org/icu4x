@@ -14,7 +14,7 @@ use super::{provider::single_unit::SingleUnit, single_unit_vec::SingleUnitVec};
 ///  5. `square-meter` (Note: a single unit is a special case of a compound unit containing only one single unit.)
 ///
 /// To construct a [`MeasureUnit`] from a CLDR unit identifier, use the [`crate::measure::parser::MeasureUnitParser`].
-#[derive(Debug, Eq, PartialEq, Clone)]
+#[derive(Debug, Clone)]
 pub struct MeasureUnit {
     // TODO: remove this field once we are using the short units name in the datagen to locate the units.
     /// The CLDR ID of the unit.
@@ -33,6 +33,15 @@ pub struct MeasureUnit {
     /// NOTE:
     ///   If the constant denominator is not set, the value defaults to `0`.
     pub(crate) constant_denominator: u64,
+}
+
+impl PartialEq for MeasureUnit {
+    fn eq(&self, other: &Self) -> bool {
+        // self.id is not part of the equality because if the user used the parser it will be NONE for now.
+        // self.id == other.id
+        self.single_units == other.single_units
+            && self.constant_denominator == other.constant_denominator
+    }
 }
 
 impl MeasureUnit {
