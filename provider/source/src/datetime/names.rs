@@ -2,10 +2,9 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::provider::calendar::*;
-use crate::provider::neo::*;
-use alloc::vec;
-use icu_calendar::types::MonthCode;
+use super::legacy::{day_periods, months, weekdays};
+use icu::calendar::types::MonthCode;
+use icu::datetime::provider::neo::*;
 
 impl<'a> From<&months::Symbols<'a>> for MonthNames<'a> {
     fn from(other: &months::Symbols<'a>) -> Self {

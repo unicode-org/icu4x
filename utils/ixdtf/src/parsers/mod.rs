@@ -83,7 +83,7 @@ impl<'a> IxdtfParser<'a, Utf8> {
     /// Creates a new `IxdtfParser` from a source `&str`.
     #[inline]
     #[must_use]
-    #[allow(clippy::should_implement_trait)]
+    #[expect(clippy::should_implement_trait)]
     pub fn from_str(source: &'a str) -> Self {
         Self::from_utf8(source.as_bytes())
     }
@@ -257,7 +257,7 @@ impl<'a> TimeZoneParser<'a, Utf8> {
     /// Creates a new `TimeZoneParser` from a source `&str`.
     #[inline]
     #[must_use]
-    #[allow(clippy::should_implement_trait)]
+    #[expect(clippy::should_implement_trait)]
     pub fn from_str(source: &'a str) -> Self {
         Self::from_utf8(source.as_bytes())
     }
@@ -449,7 +449,7 @@ impl<'a> IsoDurationParser<'a, Utf8> {
     /// Creates a new `IsoDurationParser` from a source `&str`.
     #[inline]
     #[must_use]
-    #[allow(clippy::should_implement_trait)]
+    #[expect(clippy::should_implement_trait)]
     pub fn from_str(source: &'a str) -> Self {
         Self::from_utf8(source.as_bytes())
     }

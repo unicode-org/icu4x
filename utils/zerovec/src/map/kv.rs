@@ -14,7 +14,6 @@ use alloc::boxed::Box;
 /// implementing your own [`AsULE`] or [`VarULE`] type you may wish to implement
 /// this trait.
 // this lifetime should be a GAT on Container once that is possible
-#[allow(clippy::upper_case_acronyms)] // KV is not an acronym
 pub trait ZeroMapKV<'a> {
     /// The container that can be used with this type: [`ZeroVec`] or [`VarZeroVec`].
     type Container: MutableZeroVecLike<

@@ -16,6 +16,8 @@ pub mod ffi {
     #[diplomat::enum_convert(icu_locale::TransformResult)]
     pub enum TransformResult {
         Modified,
+        // This is an output type, so the default mostly impacts deferred initialization.
+        #[diplomat::attr(auto, default)]
         Unmodified,
     }
 

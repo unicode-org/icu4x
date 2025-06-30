@@ -97,6 +97,13 @@ inline std::string icu4x::ListFormatter::format(diplomat::span<const std::string
     &write);
   return output;
 }
+template<typename W>
+inline void icu4x::ListFormatter::format_write(diplomat::span<const std::string_view> list, W& writeable) const {
+  diplomat::capi::DiplomatWrite write = diplomat::WriteTrait<W>::Construct(writeable);
+  icu4x::capi::icu4x_ListFormatter_format_utf8_mv1(this->AsFFI(),
+    {reinterpret_cast<const diplomat::capi::DiplomatStringView*>(list.data()), list.size()},
+    &write);
+}
 
 inline std::string icu4x::ListFormatter::format16(diplomat::span<const std::u16string_view> list) const {
   std::string output;
@@ -105,6 +112,13 @@ inline std::string icu4x::ListFormatter::format16(diplomat::span<const std::u16s
     {reinterpret_cast<const diplomat::capi::DiplomatStringView*>(list.data()), list.size()},
     &write);
   return output;
+}
+template<typename W>
+inline void icu4x::ListFormatter::format16_write(diplomat::span<const std::u16string_view> list, W& writeable) const {
+  diplomat::capi::DiplomatWrite write = diplomat::WriteTrait<W>::Construct(writeable);
+  icu4x::capi::icu4x_ListFormatter_format_utf16_mv1(this->AsFFI(),
+    {reinterpret_cast<const diplomat::capi::DiplomatStringView*>(list.data()), list.size()},
+    &write);
 }
 
 inline const icu4x::capi::ListFormatter* icu4x::ListFormatter::AsFFI() const {

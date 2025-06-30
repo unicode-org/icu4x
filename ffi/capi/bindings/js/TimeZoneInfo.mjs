@@ -69,7 +69,7 @@ export class TimeZoneInfo {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
 
 
-        const result = wasm.icu4x_TimeZoneInfo_from_parts_mv1(id.ffiValue, offset.ffiValue ?? 0, ...diplomatRuntime.optionToArgsForCalling(variant, 4, 4, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]));
+        const result = wasm.icu4x_TimeZoneInfo_from_parts_mv1(id.ffiValue, offset.ffiValue ?? 0, diplomatRuntime.optionToBufferForCalling(wasm, variant, 4, 4, functionCleanupArena, (arrayBuffer, offset, jsValue) => [diplomatRuntime.writeToArrayBuffer(arrayBuffer, offset + 0, jsValue.ffiValue, Int32Array)]));
 
         try {
             return new TimeZoneInfo(diplomatRuntime.internalConstructor, result, []);
@@ -84,7 +84,7 @@ export class TimeZoneInfo {
     /**
      * See the [Rust documentation for `id`](https://docs.rs/icu/2.0.0/icu/time/struct.TimeZoneInfo.html#method.id) for more information.
      */
-    id() {
+    get id() {
 
         const result = wasm.icu4x_TimeZoneInfo_id_mv1(this.ffiValue);
 
@@ -125,7 +125,7 @@ export class TimeZoneInfo {
     /**
      * See the [Rust documentation for `zone_name_timestamp`](https://docs.rs/icu/2.0.0/icu/time/struct.TimeZoneInfo.html#method.zone_name_timestamp) for more information.
      */
-    zoneNameDateTime() {
+    get zoneNameDateTime() {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 9, 4, true);
 
 
@@ -152,6 +152,18 @@ export class TimeZoneInfo {
 
         try {
             return new TimeZoneInfo(diplomatRuntime.internalConstructor, result, []);
+        }
+
+        finally {
+        }
+    }
+
+    get offset() {
+
+        const result = wasm.icu4x_TimeZoneInfo_offset_mv1(this.ffiValue);
+
+        try {
+            return result === 0 ? null : new UtcOffset(diplomatRuntime.internalConstructor, result, []);
         }
 
         finally {

@@ -98,7 +98,7 @@ impl PartialEq for Chinese {
     }
 }
 impl Eq for Chinese {}
-#[allow(clippy::non_canonical_partial_ord_impl)] // this is intentional
+#[expect(clippy::non_canonical_partial_ord_impl)] // this is intentional
 impl PartialOrd for Chinese {
     fn partial_cmp(&self, _: &Self) -> Option<Ordering> {
         Some(Ordering::Equal)
@@ -223,7 +223,6 @@ impl Calendar for Chinese {
         date.0.offset_date(offset, &self.get_precomputed_data());
     }
 
-    #[allow(clippy::field_reassign_with_default)]
     fn until(
         &self,
         date1: &Self::DateInner,

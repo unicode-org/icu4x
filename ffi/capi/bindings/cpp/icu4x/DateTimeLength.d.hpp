@@ -36,7 +36,8 @@ public:
     Short = 2,
   };
 
-  DateTimeLength() = default;
+  DateTimeLength(): value(Value::Medium) {}
+
   // Implicit conversions between enum and ::Value
   constexpr DateTimeLength(Value v) : value(v) {}
   constexpr operator Value() const { return value; }

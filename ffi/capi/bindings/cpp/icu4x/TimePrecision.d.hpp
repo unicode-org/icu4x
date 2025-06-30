@@ -62,7 +62,8 @@ public:
     Subsecond9 = 12,
   };
 
-  TimePrecision() = default;
+  TimePrecision(): value(Value::Second) {}
+
   // Implicit conversions between enum and ::Value
   constexpr TimePrecision(Value v) : value(v) {}
   constexpr operator Value() const { return value; }

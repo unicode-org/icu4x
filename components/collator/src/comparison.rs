@@ -44,7 +44,7 @@ use crate::provider::CollationSpecialPrimariesValidated;
 use crate::provider::CollationTailoringV1;
 use core::array;
 use core::cmp::Ordering;
-use core::convert::TryFrom;
+use core::convert::{Infallible, TryFrom};
 use icu_normalizer::provider::DecompositionData;
 use icu_normalizer::provider::DecompositionTables;
 use icu_normalizer::provider::NormalizerNfdDataV1;
@@ -156,6 +156,68 @@ impl AnyQuaternaryAccumulator {
 #[inline(always)]
 fn in_inclusive_range16(i: u16, start: u16, end: u16) -> bool {
     i.wrapping_sub(start) <= (end - start)
+}
+
+/// Helper trait for getting a `char` iterator from Latin1 data.
+///
+/// ✨ *Enabled with the `latin1` Cargo feature.*
+#[cfg(feature = "latin1")]
+trait Latin1Chars {
+    fn latin1_chars(&self) -> impl DoubleEndedIterator<Item = char>;
+}
+
+#[cfg(feature = "latin1")]
+impl Latin1Chars for [u8] {
+    fn latin1_chars(&self) -> impl DoubleEndedIterator<Item = char> {
+        self.iter().map(|b| char::from(*b))
+    }
+}
+
+/// Finds the identical prefix of `left` and `right` containing
+/// Latin1.
+///
+/// Returns the identical prefix, the part of `left` after the
+/// prefix, and the part of `right` after the prefix.
+///
+/// ✨ *Enabled with the `latin1` Cargo feature.*
+#[cfg(feature = "latin1")]
+fn split_prefix_latin1<'a, 'b>(left: &'a [u8], right: &'b [u8]) -> (&'a [u8], &'a [u8], &'b [u8]) {
+    let i = left
+        .iter()
+        .zip(right.iter())
+        .take_while(|(l, r)| l == r)
+        .count();
+    if let Some((head, left_tail)) = left.split_at_checked(i) {
+        if let Some(right_tail) = right.get(i..) {
+            return (head, left_tail, right_tail);
+        }
+    }
+    (&[], left, right)
+}
+
+/// Finds the identical prefix of `left` containing Latin1
+/// and `right` containing potentially ill-formed UTF-16.
+///
+/// Returns the identical prefix, the part of `left` after the
+/// prefix, and the part of `right` after the prefix.
+///
+/// ✨ *Enabled with the `latin1` Cargo feature.*
+#[cfg(feature = "latin1")]
+fn split_prefix_latin1_utf16<'a, 'b>(
+    left: &'a [u8],
+    right: &'b [u16],
+) -> (&'a [u8], &'a [u8], &'b [u16]) {
+    let i = left
+        .iter()
+        .zip(right.iter())
+        .take_while(|(l, r)| u16::from(**l) == **r)
+        .count();
+    if let Some((head, left_tail)) = left.split_at_checked(i) {
+        if let Some(right_tail) = right.get(i..) {
+            return (head, left_tail, right_tail);
+        }
+    }
+    (&[], left, right)
 }
 
 /// Finds the identical prefix of `left` and `right` containing
@@ -538,7 +600,7 @@ impl Collator {
         )
     }
 
-    #[allow(clippy::too_many_arguments)]
+    #[expect(clippy::too_many_arguments)]
     fn try_new_unstable_internal<D>(
         provider: &D,
         root: DataPayload<CollationRootV1>,
@@ -579,7 +641,7 @@ impl Collator {
             {
                 CollationSpecialPrimariesValidated {
                     compressible_bytes: array::from_fn(|i| {
-                        #[allow(clippy::unwrap_used)] // protected by the if
+                        #[expect(clippy::unwrap_used)] // protected by the if
                         {
                             csp.last_primaries
                                 .get((MaxVariable::Currency as usize) + i)
@@ -618,19 +680,22 @@ impl Collator {
 macro_rules! compare {
     ($(#[$meta:meta])*,
      $compare:ident,
-     $slice:ty,
+     $left_slice:ty,
+     $right_slice:ty,
      $split_prefix:ident,
+     $left_to_iter:ident,
+     $right_to_iter:ident,
     ) => {
         $(#[$meta])*
-        pub fn $compare(&self, left: &$slice, right: &$slice) -> Ordering {
+        pub fn $compare(&self, left: &$left_slice, right: &$right_slice) -> Ordering {
             let (head, left_tail, right_tail) = $split_prefix(left, right);
             if left_tail.is_empty() && right_tail.is_empty() {
                 return Ordering::Equal;
             }
-            let ret = self.compare_impl(left_tail.chars(), right_tail.chars(), head.chars());
+            let ret = self.compare_impl(left_tail.$left_to_iter(), right_tail.$right_to_iter(), head.$left_to_iter().rev());
             if self.options.strength() == Strength::Identical && ret == Ordering::Equal {
-                return Decomposition::new(left_tail.chars(), self.decompositions, self.tables).cmp(
-                    Decomposition::new(right_tail.chars(), self.decompositions, self.tables),
+                return Decomposition::new(left_tail.$left_to_iter(), self.decompositions, self.tables).cmp(
+                    Decomposition::new(right_tail.$right_to_iter(), self.decompositions, self.tables),
                 );
             }
             ret
@@ -701,7 +766,7 @@ impl CollatorBorrowed<'static> {
 
         // Attribute belongs closer to `unwrap`, but
         // https://github.com/rust-lang/rust/issues/15701
-        #[allow(clippy::unwrap_used)]
+        #[expect(clippy::unwrap_used)]
         Ok(CollatorBorrowed {
             special_primaries,
             root,
@@ -753,8 +818,6 @@ macro_rules! collation_elements {
     ($self:expr, $chars:expr, $tailoring:expr, $numeric_primary:expr) => {{
         let jamo = <&[<u32 as AsULE>::ULE; JAMO_COUNT]>::try_from($self.jamo.ce32s.as_ule_slice());
 
-        // `unwrap` OK, because length already validated
-        #[allow(clippy::unwrap_used)]
         let jamo = jamo.unwrap();
 
         CollationElements::new(
@@ -783,7 +846,10 @@ impl CollatorBorrowed<'_> {
         ,
         compare,
         str,
+        str,
         split_prefix,
+        chars,
+        chars,
     );
 
     compare!(
@@ -793,7 +859,10 @@ impl CollatorBorrowed<'_> {
         ,
         compare_utf8,
         [u8],
+        [u8],
         split_prefix_u8,
+        chars,
+        chars,
     );
 
     compare!(
@@ -802,7 +871,43 @@ impl CollatorBorrowed<'_> {
         ,
         compare_utf16,
         [u16],
+        [u16],
         split_prefix_u16,
+        chars,
+        chars,
+    );
+
+    compare!(
+        /// Compare Latin1 slices.
+        ///
+        /// ✨ *Enabled with the `latin1` Cargo feature.*
+        #[cfg(feature = "latin1")]
+        ,
+        compare_latin1,
+        [u8],
+        [u8],
+        split_prefix_latin1,
+        latin1_chars,
+        latin1_chars,
+    );
+
+    compare!(
+        /// Compare Latin1 slice with potentially ill-formed UTF-16
+        /// slice.
+        ///
+        /// If you need to compare a potentially ill-formed UTF-16
+        /// slice with a Latin1 slice, swap the arguments and
+        /// call `reverse()` on the return value.
+        ///
+        /// ✨ *Enabled with the `latin1` Cargo feature.*
+        #[cfg(feature = "latin1")]
+        ,
+        compare_latin1_utf16,
+        [u8],
+        [u16],
+        split_prefix_latin1_utf16,
+        latin1_chars,
+        chars,
     );
 
     #[inline(always)]
@@ -850,21 +955,18 @@ impl CollatorBorrowed<'_> {
 
     /// The implementation of the comparison operation.
     ///
-    /// `head_chars` is an iterator over the identical prefix and
-    /// `left_chars` and `right_chars` are iterators over the parts
-    /// after the identical prefix.
-    ///
-    /// Currently, all three have the same concrete type, so the
-    /// trait bound is given as `DoubleEndedIterator`.
-    /// `head_chars` is iterated backwards and `left_chars` and
-    /// `right_chars` forward. If this were a public API, this
-    /// should have three generic types, one for each argument,
-    /// for maximum flexibility.
-    fn compare_impl<I: DoubleEndedIterator<Item = char>>(
+    /// `head_chars` is an iterator _backward_ over the identical
+    /// prefix and `left_chars` and `right_chars` are iterators
+    /// _forward_ over the parts after the identical prefix.
+    fn compare_impl<
+        L: Iterator<Item = char>,
+        R: Iterator<Item = char>,
+        H: Iterator<Item = char>,
+    >(
         &self,
-        left_chars: I,
-        right_chars: I,
-        mut head_chars: I,
+        left_chars: L,
+        right_chars: R,
+        mut head_chars: H,
     ) -> Ordering {
         // Sadly, it looks like variable CEs and backward second level
         // require us to store the full 64-bit CEs instead of storing only
@@ -913,9 +1015,9 @@ impl CollatorBorrowed<'_> {
         // since there is already a place where to put them.
 
         // This loop is only broken out of as goto forward.
-        #[allow(clippy::never_loop)]
+        #[expect(clippy::never_loop)]
         'prefix: loop {
-            if let Some(mut head_last_c) = head_chars.next_back() {
+            if let Some(mut head_last_c) = head_chars.next() {
                 let norm_trie = &self.decompositions.trie;
                 let mut head_last = CharacterAndClassAndTrieValue::new_with_trie_val(
                     head_last_c,
@@ -986,7 +1088,7 @@ impl CollatorBorrowed<'_> {
 
                         // This loop is only broken out of as goto forward. The control flow
                         // is much more readable this way.
-                        #[allow(clippy::never_loop)]
+                        #[expect(clippy::never_loop)]
                         loop {
                             // The two highest bits are about NFC, which we don't
                             // care about here.
@@ -1112,7 +1214,7 @@ impl CollatorBorrowed<'_> {
                     tail_first_ce32 = head_last_ce32;
                     tail_first_ok = head_last_ok;
 
-                    head_last_c = if let Some(head_last_c) = head_chars.next_back() {
+                    head_last_c = if let Some(head_last_c) = head_chars.next() {
                         head_last_c
                     } else {
                         // We need to step back beyond the start of the prefix.
@@ -1349,7 +1451,7 @@ impl CollatorBorrowed<'_> {
                         }
                         let left_new_remaining = left_iter.as_slice();
                         // Index in range by construction
-                        #[allow(clippy::indexing_slicing)]
+                        #[expect(clippy::indexing_slicing)]
                         let left_prefix =
                             &left_remaining[..left_remaining.len() - 1 - left_new_remaining.len()];
                         left_remaining = left_new_remaining;
@@ -1364,7 +1466,7 @@ impl CollatorBorrowed<'_> {
                         }
                         let right_new_remaining = right_iter.as_slice();
                         // Index in range by construction
-                        #[allow(clippy::indexing_slicing)]
+                        #[expect(clippy::indexing_slicing)]
                         let right_prefix = &right_remaining
                             [..right_remaining.len() - 1 - right_new_remaining.len()];
                         right_remaining = right_new_remaining;
@@ -1635,7 +1737,7 @@ impl CollatorBorrowed<'_> {
     }
 
     fn sort_key_levels(&self) -> u8 {
-        #[allow(clippy::indexing_slicing)]
+        #[expect(clippy::indexing_slicing)]
         let mut levels = LEVEL_MASKS[self.options.strength() as usize];
         if self.options.case_level() {
             levels |= CASE_LEVEL_FLAG;
@@ -1929,7 +2031,7 @@ impl CollatorBorrowed<'_> {
                             let mut r = last;
 
                             // these indices start at valid values and we stop when they cross
-                            #[allow(clippy::indexing_slicing)]
+                            #[expect(clippy::indexing_slicing)]
                             while q < r {
                                 let b = secs[q];
                                 secs[q] = secs[r];
@@ -2116,7 +2218,7 @@ impl CollatorBorrowed<'_> {
         }
 
         macro_rules! write_level {
-            ($key:ident, $level:expr, $flag:ident) => {
+            ($key:ident, $flag:ident) => {
                 if levels & $flag != 0 {
                     sink.write(state, &[LEVEL_SEPARATOR_BYTE])?;
                     sink.write(state, &$key.buf)?;
@@ -2124,7 +2226,7 @@ impl CollatorBorrowed<'_> {
             };
         }
 
-        write_level!(secondaries, Level::Secondary, SECONDARY_LEVEL_FLAG);
+        write_level!(secondaries, SECONDARY_LEVEL_FLAG);
 
         if levels & CASE_LEVEL_FLAG != 0 {
             sink.write(state, &[LEVEL_SEPARATOR_BYTE])?;
@@ -2146,8 +2248,8 @@ impl CollatorBorrowed<'_> {
             }
         }
 
-        write_level!(tertiaries, Level::Tertiary, TERTIARY_LEVEL_FLAG);
-        write_level!(quaternaries, Level::Quaternary, QUATERNARY_LEVEL_FLAG);
+        write_level!(tertiaries, TERTIARY_LEVEL_FLAG);
+        write_level!(quaternaries, QUATERNARY_LEVEL_FLAG);
 
         Ok(())
     }
@@ -2155,7 +2257,16 @@ impl CollatorBorrowed<'_> {
 
 /// Error indicating that a [`CollationKeySink`] with limited space ran out of space.
 #[derive(Debug, PartialEq, Eq)]
-pub struct TooSmall;
+pub struct TooSmall {
+    /// The total length, in bytes, of the sort key.
+    pub length: usize,
+}
+
+impl TooSmall {
+    pub fn new(length: usize) -> Self {
+        Self { length }
+    }
+}
 
 /// A [`std::io::Write`]-like trait for writing to a buffer-like object.
 ///
@@ -2175,17 +2286,16 @@ pub trait CollationKeySink {
 
     /// Write a single byte into the writer.
     fn write_byte(&mut self, state: &mut Self::State, b: u8) -> Result<(), Self::Error> {
-        self.write(state, &[b])?;
-        Ok(())
+        self.write(state, &[b])
     }
 
     /// Finalize any internal sink state (perhaps by flushing a buffer) and return the final
     /// output value.
-    fn finish(&self, state: Self::State) -> Result<Self::Output, Self::Error>;
+    fn finish(&mut self, state: Self::State) -> Result<Self::Output, Self::Error>;
 }
 
 impl CollationKeySink for Vec<u8> {
-    type Error = core::convert::Infallible;
+    type Error = Infallible;
     type State = ();
     type Output = ();
 
@@ -2194,13 +2304,13 @@ impl CollationKeySink for Vec<u8> {
         Ok(())
     }
 
-    fn finish(&self, _: Self::State) -> Result<Self::Output, Self::Error> {
+    fn finish(&mut self, _: Self::State) -> Result<Self::Output, Self::Error> {
         Ok(())
     }
 }
 
 impl CollationKeySink for VecDeque<u8> {
-    type Error = core::convert::Infallible;
+    type Error = Infallible;
     type State = ();
     type Output = ();
 
@@ -2209,22 +2319,22 @@ impl CollationKeySink for VecDeque<u8> {
         Ok(())
     }
 
-    fn finish(&self, _: Self::State) -> Result<Self::Output, Self::Error> {
+    fn finish(&mut self, _: Self::State) -> Result<Self::Output, Self::Error> {
         Ok(())
     }
 }
 
 impl<const N: usize> CollationKeySink for SmallVec<[u8; N]> {
-    type Error = core::convert::Infallible;
+    type Error = Infallible;
     type State = ();
     type Output = ();
 
-    fn write(&mut self, _: &mut (), buf: &[u8]) -> Result<(), Self::Error> {
+    fn write(&mut self, _: &mut Self::State, buf: &[u8]) -> Result<(), Self::Error> {
         self.extend_from_slice(buf);
         Ok(())
     }
 
-    fn finish(&self, _: Self::State) -> Result<Self::Output, Self::Error> {
+    fn finish(&mut self, _: Self::State) -> Result<Self::Output, Self::Error> {
         Ok(())
     }
 }
@@ -2234,20 +2344,22 @@ impl CollationKeySink for [u8] {
     type State = usize;
     type Output = usize;
 
-    fn write(&mut self, used: &mut Self::State, buf: &[u8]) -> Result<(), Self::Error> {
-        if buf.len() <= self.len() - *used {
+    fn write(&mut self, offset: &mut Self::State, buf: &[u8]) -> Result<(), Self::Error> {
+        if *offset + buf.len() <= self.len() {
             // just checked bounds
-            #[allow(clippy::indexing_slicing)]
-            self[*used..*used + buf.len()].copy_from_slice(buf);
-            *used += buf.len();
-            Ok(())
-        } else {
-            Err(TooSmall)
+            #[expect(clippy::indexing_slicing)]
+            self[*offset..*offset + buf.len()].copy_from_slice(buf);
         }
+        *offset += buf.len();
+        Ok(())
     }
 
-    fn finish(&self, used: Self::State) -> Result<Self::Output, Self::Error> {
-        Ok(used)
+    fn finish(&mut self, offset: Self::State) -> Result<Self::Output, Self::Error> {
+        if offset <= self.len() {
+            Ok(offset)
+        } else {
+            Err(TooSmall::new(offset))
+        }
     }
 }
 
@@ -2516,7 +2628,7 @@ mod test {
         let collator = collator_en(Strength::Identical);
         let mut k = [0u8; 0];
         let res = collator.write_sort_key_to("áAbc", &mut k[..]);
-        assert_eq!(res, Err(TooSmall));
+        assert!(matches!(res, Err(TooSmall { .. })));
     }
 
     #[test]
@@ -2525,7 +2637,7 @@ mod test {
         let collator = collator_en(Strength::Identical);
         let mut k = [0u8; 5];
         let res = collator.write_sort_key_to("áAbc", &mut k[..]);
-        assert_eq!(res, Err(TooSmall));
+        assert!(matches!(res, Err(TooSmall { .. })));
     }
 
     #[test]
@@ -2534,7 +2646,26 @@ mod test {
         let collator = collator_en(Strength::Identical);
         let mut k = [0u8; 22];
         let res = collator.write_sort_key_to("áAbc", &mut k[..]);
-        assert_eq!(res, Err(TooSmall));
+        assert!(matches!(res, Err(TooSmall { .. })));
+    }
+
+    #[test]
+    fn sort_key_just_right() {
+        // get the length needed
+        let collator = collator_en(Strength::Identical);
+        let mut k = [0u8; 0];
+        let res = collator.write_sort_key_to("áAbc", &mut k[..]);
+        let len = res.unwrap_err().length;
+
+        // almost enough
+        let mut k = vec![0u8; len - 1];
+        let res = collator.write_sort_key_to("áAbc", &mut k[..]);
+        let len = res.unwrap_err().length;
+
+        // just right
+        let mut k = vec![0u8; len];
+        let res = collator.write_sort_key_to("áAbc", &mut k[..]);
+        assert_eq!(res, Ok(len));
     }
 
     #[test]
@@ -2543,6 +2674,6 @@ mod test {
         const STR16: &[u16] = &[0x68, 0x65, 0x6c, 0x6c, 0x6f];
         let mut k = [0u8; 4];
         let res = collator.write_sort_key_utf16_to(STR16, &mut k[..]);
-        assert_eq!(res, Err(TooSmall));
+        assert!(matches!(res, Err(TooSmall { .. })));
     }
 }

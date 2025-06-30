@@ -36,7 +36,8 @@ public:
     Upper = 2,
   };
 
-  CollatorCaseFirst() = default;
+  CollatorCaseFirst(): value(Value::Off) {}
+
   // Implicit conversions between enum and ::Value
   constexpr CollatorCaseFirst(Value v) : value(v) {}
   constexpr operator Value() const { return value; }

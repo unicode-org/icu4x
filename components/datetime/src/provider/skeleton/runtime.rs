@@ -10,6 +10,12 @@ use alloc::vec::Vec;
 use zerovec::ZeroVec;
 
 /// A skeleton that supports zero-copy deserialization.
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+/// to be stable, their Rust representation might not be. Use with caution.
+/// </div>
 #[derive(Debug, PartialEq, Clone)]
 pub struct Skeleton<'data>(pub(crate) ZeroVec<'data, Field>);
 
@@ -26,7 +32,6 @@ impl<'data> From<ZeroVec<'data, Field>> for Skeleton<'data> {
     }
 }
 
-#[cfg(feature = "datagen")]
 impl core::fmt::Display for Skeleton<'_> {
     fn fmt(&self, formatter: &mut core::fmt::Formatter) -> core::fmt::Result {
         use core::fmt::Write;

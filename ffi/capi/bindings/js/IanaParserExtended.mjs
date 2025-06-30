@@ -95,14 +95,14 @@ export class IanaParserExtended {
     parse(value) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
 
-        const valueSlice = diplomatRuntime.DiplomatBuf.str8(wasm, value);
+        const valueSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.sliceWrapper(wasm, diplomatRuntime.DiplomatBuf.str8(wasm, value)));
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 20, 4, false);
 
         // This lifetime edge depends on lifetimes 'a
         let aEdges = [this];
 
 
-        const result = wasm.icu4x_IanaParserExtended_parse_mv1(diplomatReceive.buffer, this.ffiValue, ...valueSlice.splat());
+        const result = wasm.icu4x_IanaParserExtended_parse_mv1(diplomatReceive.buffer, this.ffiValue, valueSlice.ptr);
 
         try {
             return TimeZoneAndCanonicalAndNormalized._fromFFI(diplomatRuntime.internalConstructor, diplomatReceive.buffer, aEdges);

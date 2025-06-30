@@ -132,7 +132,6 @@ impl Calendar for Iso {
         date.0.offset_date(offset, &());
     }
 
-    #[allow(clippy::field_reassign_with_default)]
     fn until(
         &self,
         date1: &Self::DateInner,
@@ -236,7 +235,7 @@ impl Iso {
         // Cumulatively how much are dates in each month
         // offset from "30 days in each month" (in non leap years)
         let month_offset = [0, 1, -1, 0, 0, 1, 1, 2, 3, 3, 4, 4];
-        #[allow(clippy::indexing_slicing)] // date.0.month in 1..=12
+        #[expect(clippy::indexing_slicing)] // date.0.month in 1..=12
         let mut offset = month_offset[date.0.month as usize - 1];
         if Self::provided_year_is_leap(date.0.year) && date.0.month > 2 {
             // Months after February in a leap year are offset by one less

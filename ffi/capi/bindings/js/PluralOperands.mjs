@@ -48,11 +48,11 @@ export class PluralOperands {
     static fromString(s) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
 
-        const sSlice = diplomatRuntime.DiplomatBuf.str8(wasm, s);
+        const sSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.sliceWrapper(wasm, diplomatRuntime.DiplomatBuf.str8(wasm, s)));
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_PluralOperands_from_string_mv1(diplomatReceive.buffer, ...sSlice.splat());
+        const result = wasm.icu4x_PluralOperands_from_string_mv1(diplomatReceive.buffer, sSlice.ptr);
 
         try {
             if (!diplomatReceive.resultFlag) {

@@ -96,7 +96,7 @@ impl PartialEq for Dangi {
     }
 }
 impl Eq for Dangi {}
-#[allow(clippy::non_canonical_partial_ord_impl)] // this is intentional
+#[expect(clippy::non_canonical_partial_ord_impl)] // this is intentional
 impl PartialOrd for Dangi {
     fn partial_cmp(&self, _: &Self) -> Option<Ordering> {
         Some(Ordering::Equal)

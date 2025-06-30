@@ -35,7 +35,8 @@ public:
     Daylight = 1,
   };
 
-  TimeZoneVariant() = default;
+  TimeZoneVariant(): value(Value::Standard) {}
+
   // Implicit conversions between enum and ::Value
   constexpr TimeZoneVariant(Value v) : value(v) {}
   constexpr operator Value() const { return value; }

@@ -54,7 +54,7 @@ export class RegionDisplayNames {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_RegionDisplayNames_create_v1_mv1(diplomatReceive.buffer, locale.ffiValue, ...DisplayNamesOptions._fromSuppliedValue(diplomatRuntime.internalConstructor, options)._intoFFI(functionCleanupArena, {}));
+        const result = wasm.icu4x_RegionDisplayNames_create_v1_mv1(diplomatReceive.buffer, locale.ffiValue, DisplayNamesOptions._fromSuppliedValue(diplomatRuntime.internalConstructor, options)._intoFFI(functionCleanupArena, {}, false));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -82,7 +82,7 @@ export class RegionDisplayNames {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
 
-        const result = wasm.icu4x_RegionDisplayNames_create_v1_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue, ...DisplayNamesOptions._fromSuppliedValue(diplomatRuntime.internalConstructor, options)._intoFFI(functionCleanupArena, {}));
+        const result = wasm.icu4x_RegionDisplayNames_create_v1_with_provider_mv1(diplomatReceive.buffer, provider.ffiValue, locale.ffiValue, DisplayNamesOptions._fromSuppliedValue(diplomatRuntime.internalConstructor, options)._intoFFI(functionCleanupArena, {}, false));
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -109,13 +109,13 @@ export class RegionDisplayNames {
     of(region) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
 
-        const regionSlice = diplomatRuntime.DiplomatBuf.str8(wasm, region);
+        const regionSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.sliceWrapper(wasm, diplomatRuntime.DiplomatBuf.str8(wasm, region)));
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);
 
         const write = new diplomatRuntime.DiplomatWriteBuf(wasm);
 
 
-        const result = wasm.icu4x_RegionDisplayNames_of_mv1(diplomatReceive.buffer, this.ffiValue, ...regionSlice.splat(), write.buffer);
+        const result = wasm.icu4x_RegionDisplayNames_of_mv1(diplomatReceive.buffer, this.ffiValue, regionSlice.ptr, write.buffer);
 
         try {
             if (!diplomatReceive.resultFlag) {

@@ -150,7 +150,7 @@ impl Default for Options {
     }
 }
 
-#[allow(clippy::type_complexity)]
+#[expect(clippy::type_complexity)]
 /// See the module-level documentation for details.
 pub struct BakedExporter {
     // Input arguments

@@ -46,7 +46,8 @@ public:
     Transparent = 5,
   };
 
-  JoiningType() = default;
+  JoiningType(): value(Value::NonJoining) {}
+
   // Implicit conversions between enum and ::Value
   constexpr JoiningType(Value v) : value(v) {}
   constexpr operator Value() const { return value; }

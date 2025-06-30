@@ -69,7 +69,7 @@ impl DataProvider<TimezoneNamesEssentialsV1> for SourceDataProvider {
 }
 
 impl SourceDataProvider {
-    #[allow(clippy::type_complexity)]
+    #[expect(clippy::type_complexity)]
     fn calculate_locations(
         &self,
         locale: &DataLocale,
@@ -98,8 +98,19 @@ impl SourceDataProvider {
         let mut exemplar_cities = bcp47_tzids
             .iter()
             .filter_map(|(&bcp47, bcp47_tzid_data)| {
-                let canonical_alias = bcp47_tzid_data.alias.as_ref()?.split(' ').next().unwrap(); // non-empty
-
+                Some((
+                    bcp47,
+                    bcp47_tzid_data
+                        .alias
+                        .as_ref()?
+                        .split(' ')
+                        .next()
+                        .unwrap()
+                        .to_owned(),
+                ))
+            })
+            .chain(self.future_zones()?.map(|(a, b)| (b, a)))
+            .filter_map(|(bcp47, canonical_alias)| {
                 // Etc zones don't have locations, with the exception of Unknown, which we still want to skip in root
                 if canonical_alias.starts_with("Etc/")
                     && (canonical_alias != "Etc/Unknown" || locale.is_unknown())
@@ -134,7 +145,11 @@ impl SourceDataProvider {
 
         let primary_zones_values = primary_zones.values().copied().collect::<BTreeSet<_>>();
 
-        let region_display_names = if locale.is_unknown() {
+        let region_display_names = if !self
+            .cldr()?
+            .displaynames()
+            .file_exists(locale, "territories.json")?
+        {
             BTreeMap::default()
         } else {
             let regions = &self
@@ -439,7 +454,10 @@ impl SourceDataProvider {
                                         })
                                         .collect::<Vec<_>>();
 
-                                    rules.sort_by_key(|&(local_end_time, _)| local_end_time);
+                                    // Dedup consecutive rules, keeping higher end time
+                                    rules.sort_by_key(|(end_time, _)| core::cmp::Reverse(*end_time));
+                                    rules.dedup_by_key(|(_, offsets)| *offsets);
+                                    rules.reverse();
 
                                     if rules.is_empty() {
                                         // No rule applies
@@ -450,10 +468,12 @@ impl SourceDataProvider {
                                             0,
                                         );
                                     } else {
-                                        for &(local_end_time, dst_offset_relative) in &rules {
+                                        for &(rule_end_time, dst_offset_relative) in &rules {
                                             store_offsets(
                                                 &mut data,
-                                                local_end_time,
+                                                // use the rule until the end of the zone info, or the end of the rule
+                                                // whichever is earlier
+                                                core::cmp::min(rule_end_time, local_end_time),
                                                 zone_info.offset,
                                                 dst_offset_relative,
                                             );

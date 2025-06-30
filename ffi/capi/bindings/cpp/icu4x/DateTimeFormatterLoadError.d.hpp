@@ -56,7 +56,8 @@ public:
     DataIo = 8,
   };
 
-  DateTimeFormatterLoadError() = default;
+  DateTimeFormatterLoadError(): value(Value::Unknown) {}
+
   // Implicit conversions between enum and ::Value
   constexpr DateTimeFormatterLoadError(Value v) : value(v) {}
   constexpr operator Value() const { return value; }

@@ -7,6 +7,7 @@ use core::marker::PhantomData;
 use crate::measure::measureunit::MeasureUnit;
 
 pub mod area;
+pub mod duration;
 pub mod length;
 pub mod mass;
 pub mod volume;
@@ -21,19 +22,23 @@ pub struct CategorizedMeasureUnit<T: MeasureUnitCategory> {
     pub unit: MeasureUnit,
 }
 
-/// A [`MeasureUnit`] that is related to the length category.
-pub struct Length;
-
 /// A [`MeasureUnit`] that is related to the area category.
 pub struct Area;
 
-/// A [`MeasureUnit`] that is related to the volume category.
-pub struct Volume;
+/// A [`MeasureUnit`] that is related to the duration category.
+pub struct Duration;
+
+/// A [`MeasureUnit`] that is related to the length category.
+pub struct Length;
 
 /// A [`MeasureUnit`] that is related to the mass category.
 pub struct Mass;
 
-impl MeasureUnitCategory for Length {}
+/// A [`MeasureUnit`] that is related to the volume category.
+pub struct Volume;
+
 impl MeasureUnitCategory for Area {}
-impl MeasureUnitCategory for Volume {}
+impl MeasureUnitCategory for Duration {}
+impl MeasureUnitCategory for Length {}
 impl MeasureUnitCategory for Mass {}
+impl MeasureUnitCategory for Volume {}

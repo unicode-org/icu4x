@@ -30,7 +30,7 @@ impl GenericPattern {
         for item in self.items {
             match item {
                 GenericPatternItem::Placeholder(idx) => {
-                    #[allow(clippy::unwrap_used)] // idx is a valid base-10 digit
+                    #[expect(clippy::unwrap_used)] // idx is a valid base-10 digit
                     let replacement = replacements.get(idx as usize).ok_or_else(|| {
                         PatternError::UnknownSubstitution(char::from_digit(idx as u32, 10).unwrap())
                     })?;

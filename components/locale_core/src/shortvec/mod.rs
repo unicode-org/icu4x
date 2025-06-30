@@ -203,7 +203,7 @@ impl<T> ShortBoxSlice<T> {
                 let mut v = v.into_vec();
                 let removed_item = v.remove(index);
                 match v.len() {
-                    #[allow(clippy::unwrap_used)]
+                    #[expect(clippy::unwrap_used)]
                     // we know that the vec has exactly one element left
                     1 => (ZeroOne(Some(v.pop().unwrap())), removed_item),
                     // v has at least 2 elements, create a Multi variant
@@ -274,7 +274,7 @@ impl<T> From<Vec<T>> for ShortBoxSlice<T> {
         use ShortBoxSliceInner::*;
         match v.len() {
             0 => Self(ZeroOne(None)),
-            #[allow(clippy::unwrap_used)] // we know that the vec is not empty
+            #[expect(clippy::unwrap_used)] // we know that the vec is not empty
             1 => Self(ZeroOne(Some(v.into_iter().next().unwrap()))),
             _ => Self(Multi(v.into_boxed_slice())),
         }
@@ -347,7 +347,7 @@ mod tests {
     use super::*;
 
     #[test]
-    #[allow(clippy::get_first)]
+    #[expect(clippy::get_first)]
     fn test_new_single_const() {
         const MY_CONST_SLICE: ShortBoxSlice<i32> = ShortBoxSlice::new_single(42);
 
@@ -356,7 +356,7 @@ mod tests {
     }
 
     #[test]
-    #[allow(clippy::redundant_pattern_matching)]
+    #[expect(clippy::redundant_pattern_matching)]
     fn test_get_single() {
         let mut vec = ShortBoxSlice::new();
         assert!(matches!(vec.single(), None));

@@ -34,7 +34,8 @@ public:
     None = 1,
   };
 
-  DisplayNamesFallback() = default;
+  DisplayNamesFallback(): value(Value::Code) {}
+
   // Implicit conversions between enum and ::Value
   constexpr DisplayNamesFallback(Value v) : value(v) {}
   constexpr operator Value() const { return value; }

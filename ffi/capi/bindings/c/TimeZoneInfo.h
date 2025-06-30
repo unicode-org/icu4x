@@ -35,6 +35,8 @@ icu4x_TimeZoneInfo_zone_name_date_time_mv1_result icu4x_TimeZoneInfo_zone_name_d
 
 TimeZoneInfo* icu4x_TimeZoneInfo_with_variant_mv1(const TimeZoneInfo* self, TimeZoneVariant time_variant);
 
+UtcOffset* icu4x_TimeZoneInfo_offset_mv1(const TimeZoneInfo* self);
+
 typedef struct icu4x_TimeZoneInfo_infer_variant_mv1_result { bool is_ok;} icu4x_TimeZoneInfo_infer_variant_mv1_result;
 icu4x_TimeZoneInfo_infer_variant_mv1_result icu4x_TimeZoneInfo_infer_variant_mv1(TimeZoneInfo* self, const VariantOffsetsCalculator* offset_calculator);
 

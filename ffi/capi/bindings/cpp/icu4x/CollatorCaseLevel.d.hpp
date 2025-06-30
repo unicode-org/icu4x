@@ -34,7 +34,8 @@ public:
     On = 1,
   };
 
-  CollatorCaseLevel() = default;
+  CollatorCaseLevel(): value(Value::Off) {}
+
   // Implicit conversions between enum and ::Value
   constexpr CollatorCaseLevel(Value v) : value(v) {}
   constexpr operator Value() const { return value; }

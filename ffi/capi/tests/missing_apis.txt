@@ -14,6 +14,8 @@
 # Please check in with @Manishearth, @robertbastian, or @sffc if you have questions
 
 
+icu::collator::CollatorBorrowed::compare_latin1#FnInStruct
+icu::collator::CollatorBorrowed::compare_latin1_utf16#FnInStruct
 icu::collator::CollatorBorrowed::write_sort_key_to#FnInStruct
 icu::collator::CollatorBorrowed::write_sort_key_utf16_to#FnInStruct
 icu::collator::CollatorBorrowed::write_sort_key_utf8_to#FnInStruct

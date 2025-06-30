@@ -10,6 +10,7 @@ pub mod ffi {
     #[diplomat::rust_link(icu::datetime::options::Length, Enum)]
     pub enum DateTimeLength {
         Long,
+        #[diplomat::attr(auto, default)]
         Medium,
         Short,
     }
@@ -17,6 +18,7 @@ pub mod ffi {
     #[diplomat::enum_convert(icu_datetime::options::Alignment, needs_wildcard)]
     #[diplomat::rust_link(icu::datetime::options::Alignment, Enum)]
     pub enum DateTimeAlignment {
+        #[diplomat::attr(auto, default)]
         Auto,
         Column,
     }
@@ -24,6 +26,7 @@ pub mod ffi {
     #[diplomat::enum_convert(icu_datetime::options::YearStyle, needs_wildcard)]
     #[diplomat::rust_link(icu::datetime::options::YearStyle, Enum)]
     pub enum YearStyle {
+        #[diplomat::attr(auto, default)]
         Auto,
         Full,
         WithEra,
@@ -35,6 +38,7 @@ pub mod ffi {
         Hour,
         Minute,
         MinuteOptional,
+        #[diplomat::attr(auto, default)]
         Second,
         Subsecond1,
         Subsecond2,

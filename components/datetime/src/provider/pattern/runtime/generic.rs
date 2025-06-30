@@ -82,7 +82,7 @@ impl<'data> GenericPattern<'data> {
                     result.extend(date.items.iter());
                 }
                 GenericPatternItem::Placeholder(idx) => {
-                    #[allow(clippy::unwrap_used)] // idx is a valid base-10 digit
+                    #[expect(clippy::unwrap_used)] // idx is a valid base-10 digit
                     return Err(PatternError::UnknownSubstitution(
                         char::from_digit(idx as u32, 10).unwrap(),
                     ));

@@ -38,7 +38,8 @@ public:
     Anywhere = 3,
   };
 
-  LineBreakStrictness() = default;
+  LineBreakStrictness(): value(Value::Strict) {}
+
   // Implicit conversions between enum and ::Value
   constexpr LineBreakStrictness(Value v) : value(v) {}
   constexpr operator Value() const { return value; }

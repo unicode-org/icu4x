@@ -38,7 +38,8 @@ public:
     Menu = 3,
   };
 
-  DisplayNamesStyle() = default;
+  DisplayNamesStyle(): value(Value::Narrow) {}
+
   // Implicit conversions between enum and ::Value
   constexpr DisplayNamesStyle(Value v) : value(v) {}
   constexpr operator Value() const { return value; }

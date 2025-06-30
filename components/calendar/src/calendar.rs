@@ -33,7 +33,7 @@ pub trait Calendar: crate::cal::scaffold::UnstableSealed {
     /// Construct a date from era/month codes and fields
     ///
     /// The year is extended_year if no era is provided
-    #[allow(clippy::wrong_self_convention)]
+    #[expect(clippy::wrong_self_convention)]
     fn from_codes(
         &self,
         era: Option<&str>,
@@ -43,13 +43,13 @@ pub trait Calendar: crate::cal::scaffold::UnstableSealed {
     ) -> Result<Self::DateInner, DateError>;
 
     /// Construct the date from an ISO date
-    #[allow(clippy::wrong_self_convention)]
+    #[expect(clippy::wrong_self_convention)]
     fn from_iso(&self, iso: IsoDateInner) -> Self::DateInner;
     /// Obtain an ISO date from this date
     fn to_iso(&self, date: &Self::DateInner) -> IsoDateInner;
 
     /// Construct the date from a [`RataDie`]
-    #[allow(clippy::wrong_self_convention)]
+    #[expect(clippy::wrong_self_convention)]
     fn from_rata_die(&self, rd: RataDie) -> Self::DateInner;
     /// Obtain a [`RataDie`] from this date
     fn to_rata_die(&self, date: &Self::DateInner) -> RataDie;

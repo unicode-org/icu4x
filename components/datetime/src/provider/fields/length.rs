@@ -134,7 +134,7 @@ impl AsULE for FieldLength {
         FieldLengthULE(self.idx())
     }
     fn from_unaligned(unaligned: Self::ULE) -> Self {
-        #[allow(clippy::unwrap_used)] // OK because the ULE is pre-validated
+        #[expect(clippy::unwrap_used)] // OK because the ULE is pre-validated
         Self::from_idx(unaligned.0).unwrap()
     }
 }

@@ -24,7 +24,7 @@ struct_keyword!(
             .ok_or(PreferencesParseError::InvalidKeywordValue)
     },
     |input: RegionalSubdivision| {
-        #[allow(clippy::unwrap_used)] // TODO
+        #[expect(clippy::unwrap_used)] // TODO
         Value::from_subtag(Some(Subtag::try_from_str(&input.0.to_string()).unwrap()))
     }
 );

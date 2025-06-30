@@ -34,7 +34,8 @@ public:
     Column = 1,
   };
 
-  DateTimeAlignment() = default;
+  DateTimeAlignment(): value(Value::Auto) {}
+
   // Implicit conversions between enum and ::Value
   constexpr DateTimeAlignment(Value v) : value(v) {}
   constexpr operator Value() const { return value; }

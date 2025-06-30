@@ -64,7 +64,8 @@ public:
     SContinue = 14,
   };
 
-  SentenceBreak() = default;
+  SentenceBreak(): value(Value::Other) {}
+
   // Implicit conversions between enum and ::Value
   constexpr SentenceBreak(Value v) : value(v) {}
   constexpr operator Value() const { return value; }

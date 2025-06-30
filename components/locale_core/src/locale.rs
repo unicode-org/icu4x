@@ -245,7 +245,7 @@ impl Locale {
         writeable::cmp_utf8(self, other)
     }
 
-    #[allow(clippy::type_complexity)]
+    #[expect(clippy::type_complexity)]
     pub(crate) fn as_tuple(
         &self,
     ) -> (
@@ -424,7 +424,7 @@ impl Locale {
     }
 
     #[doc(hidden)] // macro use
-    #[allow(clippy::type_complexity)]
+    #[expect(clippy::type_complexity)]
     pub const fn try_from_utf8_with_single_variant_single_keyword_unicode_extension(
         code_units: &[u8],
     ) -> Result<

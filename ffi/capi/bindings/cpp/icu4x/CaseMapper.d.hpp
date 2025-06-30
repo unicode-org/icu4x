@@ -58,6 +58,8 @@ public:
    * See the [Rust documentation for `lowercase`](https://docs.rs/icu/2.0.0/icu/casemap/struct.CaseMapperBorrowed.html#method.lowercase) for more information.
    */
   inline diplomat::result<std::string, diplomat::Utf8Error> lowercase(std::string_view s, const icu4x::Locale& locale) const;
+  template<typename W>
+  inline diplomat::result<std::monostate, diplomat::Utf8Error> lowercase_write(std::string_view s, const icu4x::Locale& locale, W& writeable_output) const;
 
   /**
    * Returns the full uppercase mapping of the given string
@@ -65,6 +67,8 @@ public:
    * See the [Rust documentation for `uppercase`](https://docs.rs/icu/2.0.0/icu/casemap/struct.CaseMapperBorrowed.html#method.uppercase) for more information.
    */
   inline diplomat::result<std::string, diplomat::Utf8Error> uppercase(std::string_view s, const icu4x::Locale& locale) const;
+  template<typename W>
+  inline diplomat::result<std::monostate, diplomat::Utf8Error> uppercase_write(std::string_view s, const icu4x::Locale& locale, W& writeable_output) const;
 
   /**
    * Returns the full lowercase mapping of the given string, using compiled data (avoids having to allocate a CaseMapper object)
@@ -72,6 +76,8 @@ public:
    * See the [Rust documentation for `lowercase`](https://docs.rs/icu/2.0.0/icu/casemap/struct.CaseMapperBorrowed.html#method.lowercase) for more information.
    */
   inline static diplomat::result<std::string, diplomat::Utf8Error> lowercase_with_compiled_data(std::string_view s, const icu4x::Locale& locale);
+  template<typename W>
+  inline static diplomat::result<std::monostate, diplomat::Utf8Error> lowercase_with_compiled_data_write(std::string_view s, const icu4x::Locale& locale, W& writeable_output);
 
   /**
    * Returns the full uppercase mapping of the given string, using compiled data (avoids having to allocate a CaseMapper object)
@@ -79,6 +85,8 @@ public:
    * See the [Rust documentation for `uppercase`](https://docs.rs/icu/2.0.0/icu/casemap/struct.CaseMapperBorrowed.html#method.uppercase) for more information.
    */
   inline static diplomat::result<std::string, diplomat::Utf8Error> uppercase_with_compiled_data(std::string_view s, const icu4x::Locale& locale);
+  template<typename W>
+  inline static diplomat::result<std::monostate, diplomat::Utf8Error> uppercase_with_compiled_data_write(std::string_view s, const icu4x::Locale& locale, W& writeable_output);
 
   /**
    * Returns the full titlecase mapping of the given string, performing head adjustment without
@@ -90,6 +98,8 @@ public:
    * See the [Rust documentation for `titlecase_segment_with_only_case_data`](https://docs.rs/icu/2.0.0/icu/casemap/struct.CaseMapperBorrowed.html#method.titlecase_segment_with_only_case_data) for more information.
    */
   inline diplomat::result<std::string, diplomat::Utf8Error> titlecase_segment_with_only_case_data_v1(std::string_view s, const icu4x::Locale& locale, icu4x::TitlecaseOptionsV1 options) const;
+  template<typename W>
+  inline diplomat::result<std::monostate, diplomat::Utf8Error> titlecase_segment_with_only_case_data_v1_write(std::string_view s, const icu4x::Locale& locale, icu4x::TitlecaseOptionsV1 options, W& writeable_output) const;
 
   /**
    * Case-folds the characters in the given string
@@ -97,6 +107,8 @@ public:
    * See the [Rust documentation for `fold`](https://docs.rs/icu/2.0.0/icu/casemap/struct.CaseMapperBorrowed.html#method.fold) for more information.
    */
   inline diplomat::result<std::string, diplomat::Utf8Error> fold(std::string_view s) const;
+  template<typename W>
+  inline diplomat::result<std::monostate, diplomat::Utf8Error> fold_write(std::string_view s, W& writeable_output) const;
 
   /**
    * Case-folds the characters in the given string
@@ -105,6 +117,8 @@ public:
    * See the [Rust documentation for `fold_turkic`](https://docs.rs/icu/2.0.0/icu/casemap/struct.CaseMapperBorrowed.html#method.fold_turkic) for more information.
    */
   inline diplomat::result<std::string, diplomat::Utf8Error> fold_turkic(std::string_view s) const;
+  template<typename W>
+  inline diplomat::result<std::monostate, diplomat::Utf8Error> fold_turkic_write(std::string_view s, W& writeable_output) const;
 
   /**
    * Adds all simple case mappings and the full case folding for `c` to `builder`.

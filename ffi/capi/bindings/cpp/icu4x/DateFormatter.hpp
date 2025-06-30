@@ -262,6 +262,13 @@ inline std::string icu4x::DateFormatter::format_iso(const icu4x::IsoDate& iso_da
     &write);
   return output;
 }
+template<typename W>
+inline void icu4x::DateFormatter::format_iso_write(const icu4x::IsoDate& iso_date, W& writeable) const {
+  diplomat::capi::DiplomatWrite write = diplomat::WriteTrait<W>::Construct(writeable);
+  icu4x::capi::icu4x_DateFormatter_format_iso_mv1(this->AsFFI(),
+    iso_date.AsFFI(),
+    &write);
+}
 
 inline diplomat::result<std::string, icu4x::DateTimeMismatchedCalendarError> icu4x::DateFormatter::format_same_calendar(const icu4x::Date& date) const {
   std::string output;
@@ -270,6 +277,14 @@ inline diplomat::result<std::string, icu4x::DateTimeMismatchedCalendarError> icu
     date.AsFFI(),
     &write);
   return result.is_ok ? diplomat::result<std::string, icu4x::DateTimeMismatchedCalendarError>(diplomat::Ok<std::string>(std::move(output))) : diplomat::result<std::string, icu4x::DateTimeMismatchedCalendarError>(diplomat::Err<icu4x::DateTimeMismatchedCalendarError>(icu4x::DateTimeMismatchedCalendarError::FromFFI(result.err)));
+}
+template<typename W>
+inline diplomat::result<std::monostate, icu4x::DateTimeMismatchedCalendarError> icu4x::DateFormatter::format_same_calendar_write(const icu4x::Date& date, W& writeable) const {
+  diplomat::capi::DiplomatWrite write = diplomat::WriteTrait<W>::Construct(writeable);
+  auto result = icu4x::capi::icu4x_DateFormatter_format_same_calendar_mv1(this->AsFFI(),
+    date.AsFFI(),
+    &write);
+  return result.is_ok ? diplomat::result<std::monostate, icu4x::DateTimeMismatchedCalendarError>(diplomat::Ok<std::monostate>()) : diplomat::result<std::monostate, icu4x::DateTimeMismatchedCalendarError>(diplomat::Err<icu4x::DateTimeMismatchedCalendarError>(icu4x::DateTimeMismatchedCalendarError::FromFFI(result.err)));
 }
 
 inline const icu4x::capi::DateFormatter* icu4x::DateFormatter::AsFFI() const {

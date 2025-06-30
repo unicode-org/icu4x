@@ -2,12 +2,14 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use super::legacy::{DateLengths, LengthPatterns, TimeLengths};
 use crate::cldr_serde;
-use icu::datetime::provider::calendar::*;
 use icu::datetime::provider::pattern;
 use icu::datetime::provider::pattern::CoarseHourCycle;
+use icu::datetime::provider::skeleton::*;
+use icu_provider::DataLocale;
 
-impl From<&cldr_serde::ca::LengthPatterns> for patterns::LengthPatterns<'_> {
+impl From<&cldr_serde::ca::LengthPatterns> for LengthPatterns<'_> {
     fn from(other: &cldr_serde::ca::LengthPatterns) -> Self {
         // TODO(#308): Support numbering system variations. We currently throw them away.
         Self {
@@ -35,7 +37,7 @@ impl From<&cldr_serde::ca::LengthPatterns> for patterns::LengthPatterns<'_> {
     }
 }
 
-impl From<&cldr_serde::ca::DateTimeFormats> for patterns::LengthPatterns<'_> {
+impl From<&cldr_serde::ca::DateTimeFormats> for LengthPatterns<'_> {
     fn from(other: &cldr_serde::ca::DateTimeFormats) -> Self {
         // TODO(#308): Support numbering system variations. We currently throw them away.
         Self {
@@ -63,7 +65,7 @@ impl From<&cldr_serde::ca::DateTimeFormats> for patterns::LengthPatterns<'_> {
     }
 }
 
-impl From<&cldr_serde::ca::DateTimeFormats> for patterns::GenericLengthPatterns<'_> {
+impl From<&cldr_serde::ca::DateTimeFormats> for GenericLengthPatterns<'_> {
     fn from(other: &cldr_serde::ca::DateTimeFormats) -> Self {
         // TODO(#308): Support numbering system variations. We currently throw them away.
         Self {
@@ -93,7 +95,7 @@ impl From<&cldr_serde::ca::DateTimeFormats> for patterns::GenericLengthPatterns<
 
 impl From<&cldr_serde::ca::Dates> for DateLengths<'_> {
     fn from(other: &cldr_serde::ca::Dates) -> Self {
-        let length_combinations_v1 = patterns::GenericLengthPatterns::from(&other.datetime_formats);
+        let length_combinations_v1 = GenericLengthPatterns::from(&other.datetime_formats);
 
         Self {
             date: (&other.date_skeletons).into(),
@@ -102,9 +104,9 @@ impl From<&cldr_serde::ca::Dates> for DateLengths<'_> {
     }
 }
 
-impl From<&cldr_serde::ca::Dates> for TimeLengths<'_> {
-    fn from(other: &cldr_serde::ca::Dates) -> Self {
-        let length_combinations_v1 = patterns::GenericLengthPatterns::from(&other.datetime_formats);
+impl TimeLengths<'_> {
+    pub(crate) fn from_serde(other: &cldr_serde::ca::Dates, locale: &DataLocale) -> Self {
+        let length_combinations_v1 = GenericLengthPatterns::from(&other.datetime_formats);
         let skeletons_v1 = DateSkeletonPatterns::from(&other.datetime_formats.available_formats);
 
         // Note: TimeLengths is only used for preferred_hour_cycle, we don't really use
@@ -137,10 +139,9 @@ impl From<&cldr_serde::ca::Dates> for TimeLengths<'_> {
         let iter = arr.iter().flatten();
         for hour_cycle in iter {
             if let Some(preferred_hour_cycle) = preferred_hour_cycle {
-                assert_eq!(
-                    *hour_cycle, preferred_hour_cycle,
-                    "A locale contained a mix of coarse hour cycle types"
-                );
+                if *hour_cycle != preferred_hour_cycle {
+                    log::warn!("{locale:?} contained a mix of coarse hour cycle types ({hour_cycle:?}, {preferred_hour_cycle:?})");
+                }
             } else {
                 preferred_hour_cycle = Some(*hour_cycle);
             }
@@ -156,7 +157,7 @@ impl From<&cldr_serde::ca::Dates> for TimeLengths<'_> {
 
         let (time_h11_h12, time_h23_h24) = {
             let time = (&other.time_skeletons).into();
-            let alt_time = patterns::LengthPatterns {
+            let alt_time = LengthPatterns {
                 full: alt_hour_cycle
                     .apply_on_pattern(
                         &length_combinations_v1,

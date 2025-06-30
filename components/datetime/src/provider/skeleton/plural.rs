@@ -9,6 +9,12 @@ use icu_plurals::PluralCategory;
 use icu_provider::prelude::*;
 
 /// A collection of plural variants of a pattern.
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+/// to be stable, their Rust representation might not be. Use with caution.
+/// </div>
 #[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[allow(missing_docs)]
 pub struct PluralPattern<'data> {
@@ -109,8 +115,13 @@ impl<'data> PluralPattern<'data> {
 /// patterns when there are plural variants.
 ///
 /// Currently, the plural forms are only based on the week number.
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+/// to be stable, their Rust representation might not be. Use with caution.
+/// </div>
 #[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
-#[allow(clippy::large_enum_variant)]
 pub enum PatternPlurals<'data> {
     /// A collection of pattern variants for when plurals differ.
     MultipleVariants(PluralPattern<'data>),

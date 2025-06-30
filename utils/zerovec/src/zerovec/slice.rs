@@ -393,7 +393,7 @@ where
             return Some((
                 first,
                 // `unwrap()` must succeed, because `first()` returned `Some`.
-                #[allow(clippy::unwrap_used)]
+                #[expect(clippy::unwrap_used)]
                 self.get_subslice(1..self.len()).unwrap(),
             ));
         }

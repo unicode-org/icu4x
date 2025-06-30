@@ -90,6 +90,12 @@ inline std::string icu4x::Locale::basename() const {
     &write);
   return output;
 }
+template<typename W>
+inline void icu4x::Locale::basename_write(W& writeable) const {
+  diplomat::capi::DiplomatWrite write = diplomat::WriteTrait<W>::Construct(writeable);
+  icu4x::capi::icu4x_Locale_basename_mv1(this->AsFFI(),
+    &write);
+}
 
 inline std::optional<std::string> icu4x::Locale::get_unicode_extension(std::string_view s) const {
   std::string output;
@@ -98,6 +104,14 @@ inline std::optional<std::string> icu4x::Locale::get_unicode_extension(std::stri
     {s.data(), s.size()},
     &write);
   return result.is_ok ? std::optional<std::string>(std::move(output)) : std::nullopt;
+}
+template<typename W>
+inline std::optional<std::monostate> icu4x::Locale::get_unicode_extension_write(std::string_view s, W& writeable) const {
+  diplomat::capi::DiplomatWrite write = diplomat::WriteTrait<W>::Construct(writeable);
+  auto result = icu4x::capi::icu4x_Locale_get_unicode_extension_mv1(this->AsFFI(),
+    {s.data(), s.size()},
+    &write);
+  return result.is_ok ? std::optional<std::monostate>() : std::nullopt;
 }
 
 inline std::optional<std::monostate> icu4x::Locale::set_unicode_extension(std::string_view k, std::string_view v) {
@@ -114,6 +128,12 @@ inline std::string icu4x::Locale::language() const {
     &write);
   return output;
 }
+template<typename W>
+inline void icu4x::Locale::language_write(W& writeable) const {
+  diplomat::capi::DiplomatWrite write = diplomat::WriteTrait<W>::Construct(writeable);
+  icu4x::capi::icu4x_Locale_language_mv1(this->AsFFI(),
+    &write);
+}
 
 inline diplomat::result<std::monostate, icu4x::LocaleParseError> icu4x::Locale::set_language(std::string_view s) {
   auto result = icu4x::capi::icu4x_Locale_set_language_mv1(this->AsFFI(),
@@ -127,6 +147,13 @@ inline std::optional<std::string> icu4x::Locale::region() const {
   auto result = icu4x::capi::icu4x_Locale_region_mv1(this->AsFFI(),
     &write);
   return result.is_ok ? std::optional<std::string>(std::move(output)) : std::nullopt;
+}
+template<typename W>
+inline std::optional<std::monostate> icu4x::Locale::region_write(W& writeable) const {
+  diplomat::capi::DiplomatWrite write = diplomat::WriteTrait<W>::Construct(writeable);
+  auto result = icu4x::capi::icu4x_Locale_region_mv1(this->AsFFI(),
+    &write);
+  return result.is_ok ? std::optional<std::monostate>() : std::nullopt;
 }
 
 inline diplomat::result<std::monostate, icu4x::LocaleParseError> icu4x::Locale::set_region(std::string_view s) {
@@ -142,6 +169,13 @@ inline std::optional<std::string> icu4x::Locale::script() const {
     &write);
   return result.is_ok ? std::optional<std::string>(std::move(output)) : std::nullopt;
 }
+template<typename W>
+inline std::optional<std::monostate> icu4x::Locale::script_write(W& writeable) const {
+  diplomat::capi::DiplomatWrite write = diplomat::WriteTrait<W>::Construct(writeable);
+  auto result = icu4x::capi::icu4x_Locale_script_mv1(this->AsFFI(),
+    &write);
+  return result.is_ok ? std::optional<std::monostate>() : std::nullopt;
+}
 
 inline diplomat::result<std::monostate, icu4x::LocaleParseError> icu4x::Locale::set_script(std::string_view s) {
   auto result = icu4x::capi::icu4x_Locale_set_script_mv1(this->AsFFI(),
@@ -156,6 +190,13 @@ inline diplomat::result<std::string, icu4x::LocaleParseError> icu4x::Locale::nor
     &write);
   return result.is_ok ? diplomat::result<std::string, icu4x::LocaleParseError>(diplomat::Ok<std::string>(std::move(output))) : diplomat::result<std::string, icu4x::LocaleParseError>(diplomat::Err<icu4x::LocaleParseError>(icu4x::LocaleParseError::FromFFI(result.err)));
 }
+template<typename W>
+inline diplomat::result<std::monostate, icu4x::LocaleParseError> icu4x::Locale::normalize_write(std::string_view s, W& writeable) {
+  diplomat::capi::DiplomatWrite write = diplomat::WriteTrait<W>::Construct(writeable);
+  auto result = icu4x::capi::icu4x_Locale_normalize_mv1({s.data(), s.size()},
+    &write);
+  return result.is_ok ? diplomat::result<std::monostate, icu4x::LocaleParseError>(diplomat::Ok<std::monostate>()) : diplomat::result<std::monostate, icu4x::LocaleParseError>(diplomat::Err<icu4x::LocaleParseError>(icu4x::LocaleParseError::FromFFI(result.err)));
+}
 
 inline std::string icu4x::Locale::to_string() const {
   std::string output;
@@ -163,6 +204,12 @@ inline std::string icu4x::Locale::to_string() const {
   icu4x::capi::icu4x_Locale_to_string_mv1(this->AsFFI(),
     &write);
   return output;
+}
+template<typename W>
+inline void icu4x::Locale::to_string_write(W& writeable) const {
+  diplomat::capi::DiplomatWrite write = diplomat::WriteTrait<W>::Construct(writeable);
+  icu4x::capi::icu4x_Locale_to_string_mv1(this->AsFFI(),
+    &write);
 }
 
 inline bool icu4x::Locale::normalizing_eq(std::string_view other) const {

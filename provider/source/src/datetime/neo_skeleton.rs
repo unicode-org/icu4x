@@ -6,19 +6,18 @@ use std::collections::HashSet;
 
 use crate::debug_provider::DebugProvider;
 use crate::{cldr_serde, IterableDataProviderCached, SourceDataProvider};
-use calendar::patterns::GenericLengthPatterns;
 use icu::datetime::fieldsets::enums::*;
 use icu::datetime::options::Length;
 use icu::datetime::pattern::{ErrorField, FixedCalendarDateTimeNames};
-use icu::datetime::provider::calendar::{DateSkeletonPatterns, TimeLengths};
 use icu::datetime::provider::fields::components;
 use icu::datetime::provider::pattern::{reference, runtime, CoarseHourCycle};
-use icu::datetime::provider::skeleton::{PatternPlurals, SkeletonQuality};
+use icu::datetime::provider::skeleton::*;
 use icu::datetime::provider::*;
 use icu::plurals::PluralElements;
 use icu_locale_core::preferences::extensions::unicode::keywords::HourCycle;
 use icu_provider::prelude::*;
 
+use super::legacy::TimeLengths;
 use super::DatagenCalendar;
 
 type VariantPatternsElement<'a> = PatternsWithDistance<PluralElements<runtime::Pattern<'a>>>;
@@ -152,7 +151,7 @@ impl SourceDataProvider {
         let data = self.get_datetime_resources(locale, calendar)?;
 
         let length_combinations_v1 = GenericLengthPatterns::from(&data.datetime_formats);
-        let time_lengths_v1 = TimeLengths::from(&data);
+        let time_lengths_v1 = TimeLengths::from_serde(&data, locale);
         let skeleton_patterns =
             DateSkeletonPatterns::from(&data.datetime_formats.available_formats);
 
@@ -894,7 +893,7 @@ mod date_skeleton_consistency_tests {
         let mut num_problems = 0;
         let data = provider.get_datetime_resources(locale, Some(cal)).unwrap();
         let length_combinations_v1 = GenericLengthPatterns::from(&data.datetime_formats);
-        let time_lengths_v1 = TimeLengths::from(&data);
+        let time_lengths_v1 = TimeLengths::from_serde(&data, locale);
         let skeleton_patterns =
             DateSkeletonPatterns::from(&data.datetime_formats.available_formats);
         let skeleton_pattern_set = data

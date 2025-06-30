@@ -70,7 +70,8 @@ public:
     ZWJ = 17,
   };
 
-  GraphemeClusterBreak() = default;
+  GraphemeClusterBreak(): value(Value::Other) {}
+
   // Implicit conversions between enum and ::Value
   constexpr GraphemeClusterBreak(Value v) : value(v) {}
   constexpr operator Value() const { return value; }

@@ -64,7 +64,13 @@ export class ZonedIsoDateTime {
         functionCleanupArena,
         appendArrayMap
     ) {
-        return [this.#date.ffiValue, this.#time.ffiValue, this.#zone.ffiValue]
+        let buffer = diplomatRuntime.DiplomatBuf.struct(wasm, 12, 4);
+
+        this._writeToArrayBuffer(wasm.memory.buffer, buffer.ptr, functionCleanupArena, appendArrayMap);
+
+        functionCleanupArena.alloc(buffer);
+
+        return buffer.ptr;
     }
 
     static _fromSuppliedValue(internalConstructor, obj) {
@@ -119,11 +125,11 @@ export class ZonedIsoDateTime {
     static fullFromString(v, ianaParser, offsetCalculator) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
 
-        const vSlice = diplomatRuntime.DiplomatBuf.str8(wasm, v);
+        const vSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.sliceWrapper(wasm, diplomatRuntime.DiplomatBuf.str8(wasm, v)));
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 13, 4, true);
 
 
-        const result = wasm.icu4x_ZonedIsoDateTime_full_from_string_mv1(diplomatReceive.buffer, ...vSlice.splat(), ianaParser.ffiValue, offsetCalculator.ffiValue);
+        const result = wasm.icu4x_ZonedIsoDateTime_full_from_string_mv1(diplomatReceive.buffer, vSlice.ptr, ianaParser.ffiValue, offsetCalculator.ffiValue);
 
         try {
             if (!diplomatReceive.resultFlag) {

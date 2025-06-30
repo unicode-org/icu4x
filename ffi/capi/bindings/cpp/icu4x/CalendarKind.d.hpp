@@ -74,7 +74,8 @@ public:
     Roc = 17,
   };
 
-  CalendarKind() = default;
+  CalendarKind(): value(Value::Iso) {}
+
   // Implicit conversions between enum and ::Value
   constexpr CalendarKind(Value v) : value(v) {}
   constexpr operator Value() const { return value; }

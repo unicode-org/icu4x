@@ -459,9 +459,7 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
     /// #     }
     /// #
     /// #     unsafe fn make(from: Bar<'a>) -> Self {
-    /// #         let ret = mem::transmute_copy(&from);
-    /// #         mem::forget(from);
-    /// #         ret
+    /// #         unsafe { mem::transmute(from) }
     /// #     }
     /// #
     /// #     fn transform_mut<F>(&'a mut self, f: F)
@@ -803,9 +801,7 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
     /// #     }
     /// #
     /// #     unsafe fn make(from: Bar<'a>) -> Self {
-    /// #         let ret = mem::transmute_copy(&from);
-    /// #         mem::forget(from);
-    /// #         ret
+    /// #         unsafe { mem::transmute(from) }
     /// #     }
     /// #
     /// #     fn transform_mut<F>(&'a mut self, f: F)
@@ -912,9 +908,7 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
     /// #     }
     /// #
     /// #     unsafe fn make(from: Bar<'a>) -> Self {
-    /// #         let ret = mem::transmute_copy(&from);
-    /// #         mem::forget(from);
-    /// #         ret
+    /// #         unsafe { mem::transmute(from) }
     /// #     }
     /// #
     /// #     fn transform_mut<F>(&'a mut self, f: F)
@@ -1038,7 +1032,7 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
     /// See [#1061](https://github.com/unicode-org/icu4x/issues/1061).
     ///
     /// See the docs of [`Yoke::try_map_project`] for how this works.
-    #[allow(clippy::type_complexity)]
+    #[expect(clippy::type_complexity)]
     pub fn try_map_project_with_explicit_capture<P, T, E>(
         self,
         capture: T,
@@ -1072,7 +1066,7 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
     /// See [#1061](https://github.com/unicode-org/icu4x/issues/1061).
     ///
     /// See the docs of [`Yoke::try_map_project_cloned`] for how this works.
-    #[allow(clippy::type_complexity)]
+    #[expect(clippy::type_complexity)]
     pub fn try_map_project_cloned_with_explicit_capture<'this, P, T, E>(
         &'this self,
         capture: T,

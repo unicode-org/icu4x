@@ -364,7 +364,8 @@ public:
     ZanabazarSquare = 177,
   };
 
-  Script() = default;
+  Script(): value(Value::Unknown) {}
+
   // Implicit conversions between enum and ::Value
   constexpr Script(Value v) : value(v) {}
   constexpr operator Value() const { return value; }

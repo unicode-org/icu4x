@@ -17,7 +17,7 @@ mod lstm;
 use lstm::*;
 
 #[derive(Debug, Clone)]
-#[allow(clippy::large_enum_variant)]
+#[expect(clippy::large_enum_variant)]
 enum DictOrLstm {
     Dict(DataPayload<UCharDictionaryBreakDataV1>),
     #[cfg(feature = "lstm")]
@@ -159,7 +159,7 @@ impl ComplexPayloadsBorrowed<'static> {
     #[cfg(feature = "lstm")]
     #[cfg(feature = "compiled_data")]
     pub(crate) fn new_lstm() -> Self {
-        #[allow(clippy::unwrap_used)]
+        #[expect(clippy::unwrap_used)]
         // try_load is infallible if the provider only returns `MissingLocale`.
         Self {
             grapheme: GraphemeClusterSegmenter::new(),
@@ -180,7 +180,7 @@ impl ComplexPayloadsBorrowed<'static> {
     }
     #[cfg(feature = "auto")]
     #[cfg(feature = "compiled_data")]
-    #[allow(clippy::unwrap_used)]
+    #[expect(clippy::unwrap_used)]
     pub(crate) fn new_auto() -> Self {
         let mut this = Self::new_lstm();
         this.ja = try_load_static::<SegmenterDictionaryAutoV1, _>(&crate::provider::Baked, CJ_DICT)
@@ -189,7 +189,7 @@ impl ComplexPayloadsBorrowed<'static> {
     }
     #[cfg(feature = "compiled_data")]
     pub(crate) fn new_dict() -> Self {
-        #[allow(clippy::unwrap_used)]
+        #[expect(clippy::unwrap_used)]
         // try_load is infallible if the provider only returns `MissingLocale`.
         Self {
             grapheme: GraphemeClusterSegmenter::new(),
@@ -224,7 +224,7 @@ impl ComplexPayloadsBorrowed<'static> {
 
     #[cfg(feature = "compiled_data")]
     pub(crate) fn new_southeast_asian() -> Self {
-        #[allow(clippy::unwrap_used)]
+        #[expect(clippy::unwrap_used)]
         // try_load is infallible if the provider only returns `MissingLocale`.
         Self {
             grapheme: GraphemeClusterSegmenter::new(),

@@ -130,7 +130,8 @@ public:
     Virama = 47,
   };
 
-  LineBreak() = default;
+  LineBreak(): value(Value::Unknown) {}
+
   // Implicit conversions between enum and ::Value
   constexpr LineBreak(Value v) : value(v) {}
   constexpr operator Value() const { return value; }

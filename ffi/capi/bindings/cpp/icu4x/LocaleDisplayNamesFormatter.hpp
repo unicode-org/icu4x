@@ -57,6 +57,13 @@ inline std::string icu4x::LocaleDisplayNamesFormatter::of(const icu4x::Locale& l
     &write);
   return output;
 }
+template<typename W>
+inline void icu4x::LocaleDisplayNamesFormatter::of_write(const icu4x::Locale& locale, W& writeable) const {
+  diplomat::capi::DiplomatWrite write = diplomat::WriteTrait<W>::Construct(writeable);
+  icu4x::capi::icu4x_LocaleDisplayNamesFormatter_of_mv1(this->AsFFI(),
+    locale.AsFFI(),
+    &write);
+}
 
 inline const icu4x::capi::LocaleDisplayNamesFormatter* icu4x::LocaleDisplayNamesFormatter::AsFFI() const {
   return reinterpret_cast<const icu4x::capi::LocaleDisplayNamesFormatter*>(this);

@@ -69,6 +69,8 @@ public:
    * See the [Rust documentation for `level_at`](https://docs.rs/unicode_bidi/0.3.11/unicode_bidi/struct.Paragraph.html#method.level_at) for more information.
    */
   inline std::optional<std::string> reorder_line(size_t range_start, size_t range_end) const;
+  template<typename W>
+  inline std::optional<std::monostate> reorder_line_write(size_t range_start, size_t range_end, W& writeable_output) const;
 
   /**
    * Get the BIDI level at a particular byte index in this paragraph.

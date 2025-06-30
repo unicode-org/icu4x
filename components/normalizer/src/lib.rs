@@ -928,7 +928,7 @@ where
         }
         // Slicing succeeds by construction; we've always ensured that `combining_start`
         // is in permissible range.
-        #[allow(clippy::indexing_slicing)]
+        #[expect(clippy::indexing_slicing)]
         sort_slice_by_ccc(&mut self.buffer[combining_start..], self.trie);
     }
 }
@@ -1024,7 +1024,7 @@ where
         let mut undecomposed_starter = CharacterAndTrieValue::new('\u{0}', 0); // The compiler can't figure out that this gets overwritten before use.
         if self.unprocessed_starter.is_none() {
             // The loop is only broken out of as goto forward
-            #[allow(clippy::never_loop)]
+            #[expect(clippy::never_loop)]
             loop {
                 if let Some((character, ccc)) = self
                     .decomposition
@@ -1168,7 +1168,7 @@ where
                 return Some(starter);
             }
             // Now we need to check if composition with an upcoming starter is possible.
-            #[allow(clippy::unwrap_used)]
+            #[expect(clippy::unwrap_used)]
             if self.decomposition.pending.is_some() {
                 // We know that `pending_starter` decomposes to start with a starter.
                 // Otherwise, it would have been moved to `self.decomposition.buffer`
@@ -1240,9 +1240,6 @@ macro_rules! composing_normalize_to {
                     } else {
                         return Ok(());
                     };
-                // Allowing indexed slicing, because a failure would be a code bug and
-                // not a data issue.
-                #[allow(clippy::indexing_slicing)]
                 if u32::from($undecomposed_starter.character) < $composition_passthrough_bound ||
                     $undecomposed_starter.potential_passthrough()
                 {
@@ -1427,9 +1424,6 @@ macro_rules! decomposing_normalize_to {
                 } else {
                     return Ok(());
                 };
-                // Allowing indexed slicing, because a failure would be a code bug and
-                // not a data issue.
-                #[allow(clippy::indexing_slicing)]
                 if $undecomposed_starter.starter_and_decomposes_to_self() {
                     // Don't bother including `undecomposed_starter` in a contiguous buffer
                     // write: Just write it right away:
@@ -1805,7 +1799,7 @@ impl<'data> DecomposingNormalizerBorrowed<'data> {
                 decomposition_passthrough_bound.min(0x80) as u8
             };
             // The attribute belongs on an inner statement, but Rust doesn't allow it there.
-            #[allow(clippy::unwrap_used)]
+            #[expect(clippy::unwrap_used)]
             'fast: loop {
                 let mut code_unit_iter = decomposition.delegate.as_str().as_bytes().iter();
                 'fastest: loop {
@@ -1875,8 +1869,6 @@ impl<'data> DecomposingNormalizerBorrowed<'data> {
         as_slice,
         {
             let decomposition_passthrough_byte_bound = decomposition_passthrough_bound.min(0x80) as u8;
-            // The attribute belongs on an inner statement, but Rust doesn't allow it there.
-            #[allow(clippy::unwrap_used)]
             'fast: loop {
                 let mut code_unit_iter = decomposition.delegate.as_slice().iter();
                 'fastest: loop {
@@ -1891,10 +1883,12 @@ impl<'data> DecomposingNormalizerBorrowed<'data> {
                     sink.write_str(unsafe { core::str::from_utf8_unchecked(pending_slice) })?;
                     return Ok(());
                 }
-                decomposition.delegate = pending_slice[pending_slice.len() - code_unit_iter.as_slice().len() - 1..].chars();
+                #[expect(clippy::indexing_slicing)]
+                {decomposition.delegate = pending_slice[pending_slice.len() - code_unit_iter.as_slice().len() - 1..].chars();}
 
                 // `unwrap()` OK, because the slice is valid UTF-8 and we know there
                 // is an upcoming byte.
+                #[expect(clippy::unwrap_used)]
                 let upcoming = decomposition.delegate.next().unwrap();
                 let upcoming_with_trie_value = decomposition.attach_trie_value(upcoming);
                 if upcoming_with_trie_value.starter_and_decomposes_to_self_except_replacement() {
@@ -1913,6 +1907,7 @@ impl<'data> DecomposingNormalizerBorrowed<'data> {
 
                     // Since the U+FFFD might signify an error, we can't
                     // assume `upcoming.len_utf8()` for the backoff length.
+                    #[expect(clippy::indexing_slicing)]
                     let mut consumed_so_far = pending_slice[..pending_slice.len() - decomposition.delegate.as_slice().len()].chars();
                     let back = consumed_so_far.next_back();
                     debug_assert_eq!(back, Some(REPLACEMENT_CHARACTER));
@@ -1927,6 +1922,7 @@ impl<'data> DecomposingNormalizerBorrowed<'data> {
                     break 'fast;
                 }
 
+                #[expect(clippy::indexing_slicing)]
                 let consumed_so_far_slice = &pending_slice[..pending_slice.len()
                     - decomposition.delegate.as_slice().len()
                     - upcoming.len_utf8()];
@@ -1988,7 +1984,7 @@ impl<'data> DecomposingNormalizerBorrowed<'data> {
                     }
                     // We might now be looking at a surrogate.
                     // The loop is only broken out of as goto forward
-                    #[allow(clippy::never_loop)]
+                    #[expect(clippy::never_loop)]
                     'surrogateloop: loop {
                         let surrogate_base = upcoming32.wrapping_sub(0xD800);
                         if surrogate_base > (0xDFFF - 0xD800) {
@@ -2021,6 +2017,7 @@ impl<'data> DecomposingNormalizerBorrowed<'data> {
                     let upcoming = unsafe { char::from_u32_unchecked(upcoming32) };
                     let upcoming_with_trie_value = CharacterAndTrieValue::new(upcoming, trie_value);
 
+                    #[expect(clippy::indexing_slicing)]
                     let consumed_so_far_slice = &pending_slice[..pending_slice.len()
                         - code_unit_iter.as_slice().len()
                         - upcoming.len_utf16()];
@@ -2380,7 +2377,7 @@ impl<'data> ComposingNormalizerBorrowed<'data> {
                 composition_passthrough_bound.min(0x80) as u8
             };
             // Attributes have to be on blocks, so hoisting all the way here.
-            #[allow(clippy::unwrap_used)]
+            #[expect(clippy::unwrap_used)]
             'fast: loop {
                 let mut code_unit_iter = composition.decomposition.delegate.as_str().as_bytes().iter();
                 'fastest: loop {
@@ -2471,6 +2468,7 @@ impl<'data> ComposingNormalizerBorrowed<'data> {
 
                         // Since the U+FFFD might signify an error, we can't
                         // assume `upcoming.len_utf8()` for the backoff length.
+                        #[expect(clippy::indexing_slicing)]
                         let mut consumed_so_far = pending_slice[..pending_slice.len() - composition.decomposition.delegate.as_slice().len()].chars();
                         let back = consumed_so_far.next_back();
                         debug_assert_eq!(back, Some(REPLACEMENT_CHARACTER));
@@ -2484,8 +2482,9 @@ impl<'data> ComposingNormalizerBorrowed<'data> {
                     composition.decomposition.pending = Some(upcoming_with_trie_value);
                     // slicing and unwrap OK, because we've just evidently read enough previously.
                     // `unwrap` OK, because we've previously manage to read the previous character
+                    #[expect(clippy::indexing_slicing)]
                     let mut consumed_so_far = pending_slice[..pending_slice.len() - composition.decomposition.delegate.as_slice().len() - upcoming.len_utf8()].chars();
-                    #[allow(clippy::unwrap_used)]
+                    #[expect(clippy::unwrap_used)]
                     {
                         // TODO: If the previous character was below the passthrough bound,
                         // we really need to read from the trie. Otherwise, we could maintain
@@ -2562,7 +2561,7 @@ impl<'data> ComposingNormalizerBorrowed<'data> {
 
                     // We might now be looking at a surrogate.
                     // The loop is only broken out of as goto forward
-                    #[allow(clippy::never_loop)]
+                    #[expect(clippy::never_loop)]
                     'surrogateloop: loop {
                         let surrogate_base = upcoming32.wrapping_sub(0xD800);
                         if surrogate_base > (0xDFFF - 0xD800) {
@@ -2599,9 +2598,10 @@ impl<'data> ComposingNormalizerBorrowed<'data> {
                     let upcoming_with_trie_value = CharacterAndTrieValue::new(upcoming, trie_value);
                     // We need to fall off the fast path.
                     composition.decomposition.pending = Some(upcoming_with_trie_value);
+                    #[expect(clippy::indexing_slicing)]
                     let mut consumed_so_far = pending_slice[..pending_slice.len() - code_unit_iter.as_slice().len() - upcoming.len_utf16()].chars();
                     // `unwrap` OK, because we've previously managed to read the previous character
-                    #[allow(clippy::unwrap_used)]
+                    #[expect(clippy::unwrap_used)]
                     {
                         // TODO: If the previous character was below the passthrough bound,
                         // we really need to read from the trie. Otherwise, we could maintain
@@ -2771,7 +2771,7 @@ impl write16::Write16 for IsNormalizedSinkUtf16<'_> {
         // so we can compare addresses. Indexing is OK, because
         // an indexing failure would be a code bug rather than
         // an input or data issue.
-        #[allow(clippy::indexing_slicing)]
+        #[expect(clippy::indexing_slicing)]
         if core::ptr::eq(s.as_ptr(), self.expect.as_ptr()) {
             self.expect = &self.expect[s.len()..];
             Ok(())
@@ -2813,7 +2813,7 @@ impl core::fmt::Write for IsNormalizedSinkUtf8<'_> {
         // so we can compare addresses. Indexing is OK, because
         // an indexing failure would be a code bug rather than
         // an input or data issue.
-        #[allow(clippy::indexing_slicing)]
+        #[expect(clippy::indexing_slicing)]
         if core::ptr::eq(s.as_ptr(), self.expect.as_ptr()) {
             self.expect = &self.expect[s.len()..];
             Ok(())
@@ -2852,7 +2852,6 @@ impl core::fmt::Write for IsNormalizedSinkStr<'_> {
         // so we can compare addresses. Indexing is OK, because
         // an indexing failure would be a code bug rather than
         // an input or data issue.
-        #[allow(clippy::indexing_slicing)]
         if core::ptr::eq(s.as_ptr(), self.expect.as_ptr()) {
             self.expect = &self.expect[s.len()..];
             Ok(())
