@@ -19,6 +19,7 @@ impl Area {
         CategorizedMeasureUnit {
             _category: core::marker::PhantomData,
             unit: MeasureUnit {
+                id: Some("square-meter"),
                 single_units: SingleUnitVec::One(SingleUnit {
                     power: 2,
                     si_prefix: SiPrefix {

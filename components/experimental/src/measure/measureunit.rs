@@ -16,6 +16,10 @@ use super::{provider::single_unit::SingleUnit, single_unit_vec::SingleUnitVec};
 /// To construct a [`MeasureUnit`] from a CLDR unit identifier, use the [`crate::measure::parser::MeasureUnitParser`].
 #[derive(Debug, Eq, PartialEq, Clone)]
 pub struct MeasureUnit {
+    // TODO: remove this field once we are using the short units name in the datagen to locate the units.
+    /// The CLDR ID of the unit.
+    pub id: Option<&'static str>,
+
     /// Contains the processed units.
     pub(crate) single_units: SingleUnitVec,
 

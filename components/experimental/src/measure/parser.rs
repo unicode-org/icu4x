@@ -223,6 +223,7 @@ impl MeasureUnitParser {
         }
 
         Ok(MeasureUnit {
+            id: None,
             single_units,
             constant_denominator,
         })
