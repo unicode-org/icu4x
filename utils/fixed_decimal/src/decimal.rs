@@ -2538,7 +2538,7 @@ fn test_from_str() {
         },
     ];
     for cas in &cases {
-        println!("cas: {:?}", cas);
+        println!("cas: {cas:?}");
         let fd = UnsignedDecimal::from_str(cas.input_str).unwrap();
         assert_eq!(
             fd.magnitude_range(),

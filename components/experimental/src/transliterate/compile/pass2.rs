@@ -222,8 +222,8 @@ enum LiteralOrStandin<'a> {
 impl Display for LiteralOrStandin<'_> {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         match *self {
-            LiteralOrStandin::Literal(s) => write!(f, "{}", s),
-            LiteralOrStandin::Standin(c) => write!(f, "{}", c),
+            LiteralOrStandin::Literal(s) => write!(f, "{s}"),
+            LiteralOrStandin::Standin(c) => write!(f, "{c}"),
         }
     }
 }

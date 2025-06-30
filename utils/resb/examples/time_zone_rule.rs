@@ -59,7 +59,7 @@ impl Debug for ZeroUTF16String<'_> {
         let decoded = char::decode_utf16(self.iter())
             .map(|r| r.unwrap_or(char::REPLACEMENT_CHARACTER))
             .collect::<String>();
-        write!(f, "{}", decoded)
+        write!(f, "{decoded}")
     }
 }
 

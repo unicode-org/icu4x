@@ -245,8 +245,7 @@ impl<S: TrieBuilderStore> ZeroTrieBuilder<S> {
                 }
                 debug_assert!(
                     i == new_i || i == new_i + 1,
-                    "only the exact prefix string can be picked up at this level: {}",
-                    key_ascii
+                    "only the exact prefix string can be picked up at this level: {key_ascii}"
                 );
                 i = new_i;
                 debug_assert_eq!(j, new_j);

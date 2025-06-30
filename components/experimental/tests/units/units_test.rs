@@ -222,9 +222,7 @@ fn test_units_non_convertible() {
             converter_factory.converter(&input_unit, &output_unit);
         assert!(
             result.is_none(),
-            "Conversion should not be possible between {:?} and {:?}",
-            input,
-            output
+            "Conversion should not be possible between {input:?} and {output:?}"
         );
     }
 }
@@ -291,8 +289,7 @@ fn test_unparsable_units() {
     unparsable_units.iter().for_each(|unit| {
         assert!(
             parser.try_from_str(unit).is_err(),
-            "Unit '{}' should be unparsable but was parsed successfully.",
-            unit
+            "Unit '{unit}' should be unparsable but was parsed successfully."
         );
     });
 }

@@ -175,7 +175,7 @@ mod tests {
 
         for sample in ["", "gb", "o"] {
             let oe: Result<SubdivisionId, _> = sample.parse();
-            assert!(oe.is_err(), "Should fail: {}", sample);
+            assert!(oe.is_err(), "Should fail: {sample}");
         }
     }
 }

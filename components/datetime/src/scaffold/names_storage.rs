@@ -371,7 +371,6 @@ impl<M: DynamicDataMarker, Variables> OptionalNames<Variables, DataPayload<M>>
 where
     Variables: Copy,
 {
-    #[expect(clippy::needless_lifetimes)] // Yokeable is involved
     #[inline]
     pub(crate) fn as_borrowed<'a>(
         &'a self,

@@ -261,7 +261,7 @@ impl AbstractFs {
                     .map_err(|e| DataError::from(e).with_path_context(&root.join(path)))
             }
             Self::Zip(zip) => {
-                log::debug!("Reading: <zip>/{}", path);
+                log::debug!("Reading: <zip>/{path}");
                 let mut buf = Vec::new();
                 zip.write()
                     .expect("poison")
@@ -280,7 +280,7 @@ impl AbstractFs {
                 Ok(buf)
             }
             Self::Tar(tar) => {
-                log::debug!("Reading: <tar>/{}", path);
+                log::debug!("Reading: <tar>/{path}");
                 tar::Archive::new(Cursor::new(
                     &tar.read().expect("poison").as_ref().unwrap().archive,
                 )) // init called

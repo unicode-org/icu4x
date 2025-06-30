@@ -1032,7 +1032,7 @@ fn estimate_replacement_size(replacement: &str, data: &MatchData, vt: &VarTable)
         let replacer = match vt.lookup_replacer(rep_c) {
             Some(replacer) => replacer,
             None => {
-                debug_assert!(false, "invalid encoded special {:?}", rep_c);
+                debug_assert!(false, "invalid encoded special {rep_c:?}");
                 // GIGO behavior. we just skip invalid encodings
                 continue;
             }
@@ -1075,7 +1075,7 @@ fn replace_str_with_specials(
         let replacer = match vt.lookup_replacer(rep_c) {
             Some(replacer) => replacer,
             None => {
-                debug_assert!(false, "invalid encoded special {:?}", rep_c);
+                debug_assert!(false, "invalid encoded special {rep_c:?}");
                 // GIGO behavior. we just skip invalid encodings
                 continue;
             }
@@ -1121,7 +1121,7 @@ fn match_str_with_specials(
         let special_matcher = match vt.lookup_matcher(query_c) {
             Some(matcher) => matcher,
             None => {
-                debug_assert!(false, "invalid encoded special {:?}", query_c);
+                debug_assert!(false, "invalid encoded special {query_c:?}");
                 // GIGO behavior. we just skip invalid encodings
                 continue;
             }
@@ -1170,7 +1170,7 @@ fn rev_match_str_with_specials(
         let special_matcher = match vt.lookup_matcher(query_c) {
             Some(matcher) => matcher,
             None => {
-                debug_assert!(false, "invalid encoded special {:?}", query_c);
+                debug_assert!(false, "invalid encoded special {query_c:?}");
                 // GIGO behavior. we just skip invalid encodings
                 continue;
             }
