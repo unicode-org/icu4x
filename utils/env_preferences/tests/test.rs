@@ -36,7 +36,7 @@ mod linux_tests {
 
             // Skipping "C" and those ending with "UTF-8", as they cannot be converted
             // into the locale
-            if !parts.iter().any(|&part| part == "C")
+            if !parts.contains(&"C")
                 && (parts.len() > 1 && parts[parts.len() - 1] != "UTF-8")
             {
                 let mut locale_converted: Locale = locale.parse().unwrap();
