@@ -614,7 +614,15 @@ fn temporal_duration_parsing() {
 fn temporal_invalid_durations() {
     use crate::parsers::IsoDurationParser;
 
-    let invalids = ["P1Y1M1W0,5D", "+PT", "P1Y1M1W1DT1H0.5M0.5S"];
+    let invalids = [
+        "P1Y1M1W0,5D",
+        "+PT",
+        "P1Y1M1W1DT1H0.5M0.5S",
+        "P",
+        "PT",
+        "-P",
+        "-PT",
+    ];
 
     for test in invalids {
         let err = IsoDurationParser::from_str(test).parse();
