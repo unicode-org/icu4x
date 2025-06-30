@@ -132,12 +132,7 @@ impl Dangi {
             Self,
     ]);
 
-    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::new)]
-    ///
-    /// <div class="stab unstable">
-    /// 🚧 This method is considered unstable; it may change at any time, in breaking or non-breaking ways,
-    /// including in SemVer minor releases. This requires the `unstable` Cargo feature.
-    /// </div>
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE_WITH_WARNING, Self::new)]
     #[cfg_attr(not(feature = "unstable"), doc(hidden))]
     pub fn try_new_unstable<D: DataProvider<CalendarDangiV1> + ?Sized>(
         provider: &D,

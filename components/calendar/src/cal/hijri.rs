@@ -143,12 +143,7 @@ impl HijriSimulated {
             Self,
     ]);
 
-    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::new_mecca)]
-    ///
-    /// <div class="stab unstable">
-    /// 🚧 This method is considered unstable; it may change at any time, in breaking or non-breaking ways,
-    /// including in SemVer minor releases. This requires the `unstable` Cargo feature.
-    /// </div>
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE_WITH_WARNING, Self::new_mecca)]
     #[cfg_attr(not(feature = "unstable"), doc(hidden))]
     pub fn try_new_mecca_unstable<D: DataProvider<CalendarHijriSimulatedMeccaV1> + ?Sized>(
         provider: &D,

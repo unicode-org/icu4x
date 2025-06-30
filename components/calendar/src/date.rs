@@ -301,7 +301,6 @@ impl<A: AsCalendar> Date<A> {
     }
 
     /// Get the inner date implementation. Should not be called outside of calendar implementations
-
     #[inline]
     pub fn inner(&self) -> &<A::Calendar as Calendar>::DateInner {
         &self.inner

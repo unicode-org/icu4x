@@ -118,6 +118,15 @@ macro_rules! gen_buffer_unstable_docs {
             "<div class=\"stab unstable\">⚠️ The bounds on <tt>provider</tt> may change over time, including in SemVer minor releases.</div>"
         )
     };
+    (UNSTABLE_WITH_WARNING, $data:path) => {
+        concat!(
+            $crate::gen_buffer_unstable_docs!(UNSTABLE, $data), "\n\n",
+            "<div class=\"stab unstable\">\n",
+            "🚧 This method is considered unstable; it may change at any time, in breaking or non-breaking ways,\n",
+            "including in SemVer minor releases. This requires the `unstable` Cargo feature.\n",
+            "</div>\n"
+            )
+    };
 }
 
 /// Usage:
