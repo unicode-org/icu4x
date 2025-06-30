@@ -10,6 +10,7 @@ use crate::{
     assert_syntax,
     core::EncodingType,
     parsers::{
+        datetime::{parse_month_day, parse_year_month},
         grammar::{
             is_annotation_open, is_decimal_separator, is_time_designator, is_time_separator,
             is_utc_designator,
@@ -28,6 +29,7 @@ pub(crate) fn parse_annotated_time_record<'a, T: EncodingType>(
     cursor: &mut Cursor<'a, T>,
     handler: impl FnMut(Annotation<'a, T>) -> Option<Annotation<'a, T>>,
 ) -> ParserResult<IxdtfParseRecord<'a, T>> {
+    let start = cursor.pos();
     let designator = cursor.check_or(false, is_time_designator)?;
     cursor.advance_if(designator);
 
@@ -45,6 +47,7 @@ pub(crate) fn parse_annotated_time_record<'a, T: EncodingType>(
     // Check if annotations exist.
     if !cursor.check_or(false, is_annotation_open)? {
         cursor.close()?;
+        check_time_ambiguity(cursor, start)?;
 
         return Ok(IxdtfParseRecord {
             date: None,
@@ -55,6 +58,7 @@ pub(crate) fn parse_annotated_time_record<'a, T: EncodingType>(
         });
     }
 
+    check_time_ambiguity(cursor, start)?;
     let annotations = annotations::parse_annotation_set(cursor, handler)?;
 
     cursor.close()?;
@@ -66,6 +70,23 @@ pub(crate) fn parse_annotated_time_record<'a, T: EncodingType>(
         tz: annotations.tz,
         calendar: annotations.calendar,
     })
+}
+
+#[inline]
+fn check_time_ambiguity<T: EncodingType>(cursor: &mut Cursor<T>, start: usize) -> ParserResult<()> {
+    let current_loc = cursor.pos();
+    // It is a Syntax Error if ParseText(Time DateTimeUTCOffset[~Z], DateSpecMonthDay) is a Parse Node.
+    cursor.set_position(start);
+    if parse_month_day(cursor).is_ok() {
+        return Err(ParseError::AmbiguousTimeMonthDay);
+    }
+    // It is a Syntax Error if ParseText(Time DateTimeUTCOffset[~Z], DateSpecYearMonth) is a Parse Node.
+    cursor.set_position(start);
+    if parse_year_month(cursor).is_ok() {
+        return Err(ParseError::AmbiguousTimeYearMonth);
+    }
+    cursor.set_position(current_loc);
+    Ok(())
 }
 
 /// Parse `TimeRecord`
