@@ -28,7 +28,7 @@ impl<T: MeasureUnitCategory> CategorizedMeasureUnit<T> {
     pub fn cldr_id(&self) -> &str {
         match self.unit.id {
             Some(id) => id,
-            None => uninmplemented!(),
+            None => unimplemented!(),
         }
     }
 }
