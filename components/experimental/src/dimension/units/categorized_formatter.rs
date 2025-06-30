@@ -20,7 +20,7 @@ use crate::dimension::units::options::UnitsFormatterOptions;
 use crate::measure::category::CategorizedMeasureUnit;
 use crate::measure::category::MeasureUnitCategory;
 
-/// A [`MeasureUnit`] that is related to a specific category.
+/// A [`UnitsFormatter`] that is related to a specific category.
 ///
 /// This is useful for type inference and for ensuring that the correct units are used.
 pub struct CategorizedFormatter<C: MeasureUnitCategory> {
