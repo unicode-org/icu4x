@@ -4,7 +4,8 @@
 
 - Components
     - General
-    - ...
+    - `icu_calendar`
+      - Fix extended years in RoC and Ethiopian calendars (unicode-org#6721)
     - 
 - Data model and providers
     - ...
