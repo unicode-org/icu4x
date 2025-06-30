@@ -325,7 +325,6 @@ impl HelloWorldFormatter {
     }
 
     /// Formats a hello world message, returning a [`FormattedHelloWorld`].
-    #[expect(clippy::needless_lifetimes)] // documentary example
     pub fn format<'l>(&'l self) -> FormattedHelloWorld<'l> {
         FormattedHelloWorld {
             data: self.data.get(),

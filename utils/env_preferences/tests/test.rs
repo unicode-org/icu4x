@@ -87,7 +87,7 @@ mod macos_test {
                 }
             }
             Err(e) => {
-                panic!("{:?}", e)
+                panic!("{e:?}")
             }
         }
     }

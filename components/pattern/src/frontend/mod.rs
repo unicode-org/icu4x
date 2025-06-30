@@ -187,7 +187,7 @@ where
         match B::validate_store(core::borrow::Borrow::borrow(&store)) {
             Ok(()) => (),
             Err(e) => {
-                debug_assert!(false, "{:?}", e);
+                debug_assert!(false, "{e:?}");
             }
         };
         Ok(Self::from_boxed_store_unchecked(store))
@@ -226,7 +226,7 @@ where
         match B::validate_store(core::borrow::Borrow::borrow(&store)) {
             Ok(()) => (),
             Err(e) => {
-                debug_assert!(false, "{:?} for pattern {:?}", e, pattern);
+                debug_assert!(false, "{e:?} for pattern {pattern:?}");
             }
         };
         Ok(Self::from_boxed_store_unchecked(store))

@@ -16,7 +16,7 @@ fn main() {
     let mut in_string = String::new();
     match reader.read_to_string(&mut in_string) {
         Ok(_) => (),
-        Err(err) => panic!("Unable to read file: {}", err),
+        Err(err) => panic!("Unable to read file: {err}"),
     };
 
     let (in_bundle, keys_in_discovery_order) = match text::Reader::read(&in_string) {

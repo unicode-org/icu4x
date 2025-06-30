@@ -81,8 +81,7 @@ impl AsULE for CurrencyPatternConfig {
             };
         if short_most_significant_byte & 0b1111_1000 != 0 {
             panic!(
-                "short_placeholder_value is too large {}, {}",
-                short_most_significant_byte, short_least_significant_byte_ule
+                "short_placeholder_value is too large {short_most_significant_byte}, {short_least_significant_byte_ule}"
             )
         }
         first_byte_ule |= short_most_significant_byte << INDEX_SHORT_SHIFT;
@@ -96,8 +95,7 @@ impl AsULE for CurrencyPatternConfig {
             };
         if narrow_most_significant_byte & 0b1111_1000 != 0 {
             panic!(
-                "narrow_placeholder_value is too large {}, {}",
-                narrow_most_significant_byte, narrow_least_significant_byte_ule
+                "narrow_placeholder_value is too large {narrow_most_significant_byte}, {narrow_least_significant_byte_ule}"
             )
         }
         first_byte_ule |= narrow_most_significant_byte << INDEX_NARROW_SHIFT;

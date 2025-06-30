@@ -87,7 +87,7 @@ impl SourceDataProvider {
         let resource: &cldr_serde::ca::Resource = self
             .cldr()?
             .dates(cldr_cal)
-            .read_and_parse(locale, &format!("ca-{}.json", cldr_cal))?;
+            .read_and_parse(locale, &format!("ca-{cldr_cal}.json"))?;
 
         let mut data = resource
             .main

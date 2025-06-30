@@ -53,9 +53,9 @@ fn test_all_cldr() {
                 output
             );
             let actual = t.transliterate(input.to_string());
-            assert_eq!(actual, output, "Transliterator {:?} failed", locale);
+            assert_eq!(actual, output, "Transliterator {locale:?} failed");
             eprintln!("Passed testcase {}!", idx + 1);
         }
-        eprintln!("Transliterator {:?} passed", locale);
+        eprintln!("Transliterator {locale:?} passed");
     }
 }

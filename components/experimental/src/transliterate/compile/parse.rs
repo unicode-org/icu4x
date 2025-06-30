@@ -1418,7 +1418,7 @@ fn test_variable_rules_err() {
 
     for source in sources {
         if let Ok(rules) = parse(source) {
-            panic!("Parsed invalid source {:?}: {:?}", source, rules);
+            panic!("Parsed invalid source {source:?}: {rules:?}");
         }
     }
 }
@@ -1462,7 +1462,7 @@ fn test_global_filters_err() {
 
     for source in sources {
         if let Ok(rules) = parse(source) {
-            panic!("Parsed invalid source {:?}: {:?}", source, rules);
+            panic!("Parsed invalid source {source:?}: {rules:?}");
         }
     }
 }
@@ -1494,7 +1494,7 @@ fn test_function_calls_err() {
 
     for source in sources {
         if let Ok(rules) = parse(source) {
-            panic!("Parsed invalid source {:?}: {:?}", source, rules);
+            panic!("Parsed invalid source {source:?}: {rules:?}");
         }
     }
 }
@@ -1540,7 +1540,7 @@ fn test_transform_rules_err() {
 
     for source in sources {
         if let Ok(rules) = parse(source) {
-            panic!("Parsed invalid source {:?}: {:?}", source, rules);
+            panic!("Parsed invalid source {source:?}: {rules:?}");
         }
     }
 }
