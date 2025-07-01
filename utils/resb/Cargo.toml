@@ -31,6 +31,8 @@ serde = { workspace = true, features = ["alloc"]}
 [dev-dependencies]
 serde = { workspace = true, features = ["derive"] }
 zerovec = { workspace = true, features = ["serde"] }
+icu.workspace = true
+chrono = "0.4"
 
 [features]
 default = []
