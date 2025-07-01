@@ -16,11 +16,13 @@ fn main() {
         .expect("Failed to generate binary bundle.");
 
     if bytes != include_bytes!("data/zoneinfo64.res") {
-        std::fs::write(
-            concat!(env!("CARGO_MANIFEST_DIR"), "/examples/data/zoneinfo64.res"),
-            bytes,
-        )
-        .unwrap();
+        // TODO: This does not currently generate a file that matches ICU4C's, and the file it generates
+        // does not parse either.
+        // std::fs::write(
+        //     concat!(env!("CARGO_MANIFEST_DIR"), "/examples/data/zoneinfo64.res"),
+        //     bytes,
+        // )
+        // .unwrap();
         panic!("zoneinfo64.res differs");
     }
 }
