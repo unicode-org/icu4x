@@ -565,11 +565,28 @@ fn main() {
         .nth(2)
         .unwrap_or_default()
         .parse()
-        .unwrap_or(1000000000);
+        .unwrap_or_default();
 
     let (zone, region) = tzdb.get(&id).unwrap();
-
     let transition = zone.previous_transition(seconds_since_epoch);
+
+    let chrono = chrono::offset::TimeZone::offset_from_utc_datetime(
+        &<chrono_tz::Tz as core::str::FromStr>::from_str(&id).unwrap(),
+        &chrono::DateTime::from_timestamp(seconds_since_epoch, 0)
+            .unwrap()
+            .naive_utc(),
+    );
+
+    assert_eq!(
+        transition.offset.to_seconds(),
+        (chrono_tz::OffsetComponents::base_utc_offset(&chrono)
+            + chrono_tz::OffsetComponents::dst_offset(&chrono))
+        .num_seconds() as i32
+    );
+    assert_eq!(
+        transition.rule_applies,
+        !chrono_tz::OffsetComponents::dst_offset(&chrono).is_zero()
+    );
 
     println!(
         "Zone {id:?} ({region}) at {time:?}: {offset:?} ({is_dst}) since {transition:?}",

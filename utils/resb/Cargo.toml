@@ -33,6 +33,7 @@ potential_utf.workspace = true
 serde = { workspace = true, features = ["derive"] }
 icu.workspace = true
 chrono = "0.4"
+chrono-tz = "0.10"
 
 [features]
 default = []
