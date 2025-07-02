@@ -106,6 +106,11 @@ impl<'a, T: EncodingType> Cursor<'a, T> {
         self.pos
     }
 
+    /// Get current position
+    pub(crate) fn set_position(&mut self, pos: usize) {
+        self.pos = pos;
+    }
+
     /// Peek the value at next position (current + 1).
     pub(crate) fn peek(&self) -> ParserResult<Option<u8>> {
         self.peek_n(1)
