@@ -545,7 +545,6 @@ where
 {
     /// Similar to [`Self::iter()`] except it returns a direct copy of the keys values instead of references
     /// to `K::ULE` and `V::ULE`, in cases when `K` and `V` are fixed-size
-    #[expect(clippy::needless_lifetimes)] // Lifetime is necessary in impl Trait
     pub fn iter_copied<'b>(&'b self) -> impl Iterator<Item = (K, V)> + 'b {
         let keys = &self.keys;
         let values = &self.values;

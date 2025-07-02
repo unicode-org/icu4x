@@ -335,12 +335,10 @@ fn test_clone_eq() {
     assert_eq!(p1, p2);
 
     let p1 = DataPayloadOr::<HelloWorldV1, usize>::from_payload(p1);
-    #[expect(clippy::redundant_clone)]
     let p2 = p1.clone();
     assert_eq!(p1, p2);
 
     let p3 = DataPayloadOr::<HelloWorldV1, usize>::from_other(555);
-    #[expect(clippy::redundant_clone)]
     let p4 = p3.clone();
     assert_eq!(p3, p4);
 
@@ -460,7 +458,6 @@ where
     /// assert_eq!("Demo", payload.get().message);
     /// ```
     #[inline]
-    #[expect(clippy::needless_lifetimes)]
     pub fn get<'a>(&'a self) -> &'a <M::DataStruct as Yokeable<'a>>::Output {
         match &self.0 {
             DataPayloadInner::Yoke(yoke) => yoke.get(),
@@ -967,7 +964,6 @@ where
     }
 
     /// Gets the value from this [`DataPayload`] as `Ok` or the other type as `Err`.
-    #[expect(clippy::needless_lifetimes)]
     #[inline]
     pub fn get<'a>(&'a self) -> Result<&'a <M::DataStruct as Yokeable<'a>>::Output, &'a O> {
         match &self.0 {
@@ -1004,7 +1000,6 @@ where
     }
 
     /// Convenience function to return `Some` or `None` for other type `()`
-    #[expect(clippy::needless_lifetimes)]
     #[inline]
     pub fn get_option<'a>(&'a self) -> Option<&'a <M::DataStruct as Yokeable<'a>>::Output> {
         self.get().ok()

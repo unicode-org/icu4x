@@ -323,8 +323,7 @@ mod testing {
                     })
                     .collect::<Vec<_>>(),
                 test.expected,
-                "for test case: {}",
-                i
+                "for test case: {i}"
             );
         }
         Ok(())

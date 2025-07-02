@@ -312,7 +312,7 @@ mod tests {
             let parser = MeasureUnitParser::default();
             let measure_unit = parser.try_from_str(input);
             if measure_unit.is_ok() {
-                println!("OK:  {}", input);
+                println!("OK:  {input}");
                 continue;
             }
             assert!(measure_unit.is_err());

@@ -120,7 +120,7 @@ impl UnicodeCodePoint {
         if cp <= char::MAX as u32 {
             Ok(Self(cp))
         } else {
-            Err(format!("Not a Unicode code point {}", cp))
+            Err(format!("Not a Unicode code point {cp}"))
         }
     }
 

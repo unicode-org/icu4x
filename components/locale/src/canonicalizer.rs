@@ -589,8 +589,7 @@ mod test {
                     rule.variants.iter().map(Variant::as_str),
                 ),
                 result,
-                "{}",
-                source
+                "{source}"
             );
         }
     }
