@@ -2661,8 +2661,8 @@ dependencies = [
  "indexmap",
  "log",
  "nom",
+ "potential_utf",
  "serde",
- "zerovec",
 ]
 
 [[package]]
