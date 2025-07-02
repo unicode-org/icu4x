@@ -2,168 +2,44 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use std::{collections::HashMap, fmt::Debug, marker::PhantomData};
+use std::{fmt::Debug, marker::PhantomData};
 
-use serde::{
-    de::{self, Visitor},
-    Deserialize, Serialize,
-};
+use potential_utf::PotentialUtf16;
+use resb::include_bytes_as_u32;
+use serde::Deserialize;
 
 use icu::{locale::subtags::Region, time::zone::UtcOffset};
 
-use zerovec::ZeroVec;
-
-/// A zero-copy representation of a little-endian UTF-16 string.
-///
-/// Unlike `String`, the contents are not required to be valid UTF-16. Consumers
-/// are expected to validate the contents or use `try_into::<String>()`. No zero
-/// terminator is included.
-#[derive(Deserialize, Serialize)]
-#[serde(transparent)]
-pub struct ZeroUTF16String<'a> {
-    #[serde(borrow)]
-    units: ZeroVec<'a, u16>,
-}
-
-impl ZeroUTF16String<'_> {
-    /// Gets whether the UTF-16 string is empty.
-    pub fn is_empty(&self) -> bool {
-        self.units.is_empty()
-    }
-
-    /// Gets the count of units in the string.
-    ///
-    /// This value does not necessarily equal the length of the string in
-    /// characters, as characters outside the Basic Multilingual Plane are
-    /// represented by 2 units.
-    pub fn len(&self) -> usize {
-        self.units.len()
-    }
-
-    /// Gets an iterator for the units of the string.
-    ///
-    /// See `len` for details on why this does not correspond to characters.
-    pub fn chars(&self) -> impl Iterator<Item = char> + '_ {
-        char::decode_utf16(self.units.iter()).map(|c| c.unwrap_or(char::REPLACEMENT_CHARACTER))
-    }
-}
-
-impl From<&'_ ZeroUTF16String<'_>> for String {
-    fn from(value: &'_ ZeroUTF16String<'_>) -> Self {
-        value.chars().collect::<String>()
-    }
-}
-
-impl Debug for ZeroUTF16String<'_> {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        let decoded = String::from(self);
-        write!(f, "{decoded}")
-    }
-}
-
-#[derive(Debug, Deserialize, Serialize)]
-#[serde(rename_all = "camelCase")]
-pub struct TzDataRuleData<'a> {
-    #[serde(borrow)]
-    // values are standard and special time
-    type_offsets: ZeroVec<'a, (i32, i32)>,
-    #[serde(borrow)]
-    trans: Option<ZeroVec<'a, i32>>,
-    #[serde(borrow)]
-    // values are an i64 encoded as two i32s?
-    trans_pre32: Option<ZeroVec<'a, (i32, i32)>>,
-    #[serde(borrow)]
-    // values are an i64 encoded as two i32s?
-    trans_post32: Option<ZeroVec<'a, (i32, i32)>>,
-    type_map: Option<&'a [u8]>,
-    #[serde(borrow)]
-    final_rule: Option<ZeroUTF16String<'a>>,
-    final_raw: Option<i32>,
-    final_year: Option<u32>,
-    #[serde(borrow)]
-    links: Option<ZeroVec<'a, u32>>,
+#[derive(Debug)]
+struct ZoneInfo64<'a> {
+    zones: Vec<TzZone<'a>>,
+    names: Vec<&'a PotentialUtf16>,
+    rules: Vec<TzRule>,
+    regions: Vec<Region>,
 }
 
 #[derive(Debug)]
-pub enum TzDataRule<'a> {
+enum TzZone<'a> {
     // The rule data is boxed here due to the large size difference between the
     // `TzDataRuleData` struct and `u32`. It's not strictly necessary.
-    Table(Box<TzDataRuleData<'a>>),
+    Table(Box<TzZoneData<'a>>),
     Int(u32),
 }
 
-impl<'de: 'a, 'a> Deserialize<'de> for TzDataRule<'a> {
-    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
-    where
-        D: serde::Deserializer<'de>,
-    {
-        deserializer.deserialize_any(TzDataRuleEnumVisitor {
-            phantom: PhantomData,
-        })
-    }
-}
-
-struct TzDataRuleEnumVisitor<'a> {
-    phantom: PhantomData<TzDataRule<'a>>,
-}
-
-impl<'de: 'a, 'a> Visitor<'de> for TzDataRuleEnumVisitor<'a> {
-    type Value = TzDataRule<'a>;
-
-    fn expecting(&self, formatter: &mut std::fmt::Formatter) -> std::fmt::Result {
-        formatter.write_str("an unsigned 32-bit integer or a table of rule data")
-    }
-
-    fn visit_u32<E>(self, v: u32) -> Result<Self::Value, E>
-    where
-        E: serde::de::Error,
-    {
-        Ok(TzDataRule::Int(v))
-    }
-
-    fn visit_map<A>(self, map: A) -> Result<Self::Value, A::Error>
-    where
-        A: serde::de::MapAccess<'de>,
-    {
-        let value = TzDataRuleData::deserialize(de::value::MapAccessDeserializer::new(map))?;
-
-        Ok(TzDataRule::Table(Box::new(value)))
-    }
-}
-
-#[derive(Debug, Deserialize)]
-#[serde(rename = "zoneinfo64")]
-#[serde(rename_all = "PascalCase")]
-struct ZoneInfo64<'a> {
-    #[serde(borrow)]
-    zones: Vec<TzDataRule<'a>>,
-    #[serde(borrow)]
-    names: Vec<ZeroUTF16String<'a>>,
-    #[serde(borrow)]
-    rules: HashMap<&'a str, ZeroVec<'a, i32>>,
-    #[serde(borrow)]
-    regions: Vec<ZeroUTF16String<'a>>,
-}
-
 #[derive(Debug)]
-pub struct Zone<'a> {
-    // values are an i64 encoded as two i32s?
-    trans_pre32: ZeroVec<'a, (i32, i32)>,
-    trans: ZeroVec<'a, i32>,
-    // values are an i64 encoded as two i32s?
-    trans_post32: ZeroVec<'a, (i32, i32)>,
+struct TzZoneData<'a> {
+    type_offsets: &'a [(i32, i32)],
+    trans: &'a [i32],
+    trans_pre32: &'a [(i32, i32)],
+    trans_post32: &'a [(i32, i32)],
     type_map: &'a [u8],
-    // values are standard and relative dst offset
-    type_offsets: ZeroVec<'a, (i32, i32)>,
-    final_rule: Option<Rule>,
-    pub region: Region,
+    final_rule_offset_year: Option<(u32, i32, u32)>,
+    #[allow(dead_code)]
+    links: Option<&'a [u32]>,
 }
 
 #[derive(Debug)]
-struct Rule {
-    start_year: u32,
-
-    std: i32,
+struct TzRule {
     dst: i32,
 
     savings_start_month: i8,
@@ -179,7 +55,333 @@ struct Rule {
     savings_end_time_mode: i8,
 }
 
-impl Rule {
+impl<'de> Deserialize<'de> for ZoneInfo64<'de> {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::de::Deserializer<'de>,
+    {
+        use serde::de::*;
+
+        #[derive(Debug, Deserialize)]
+        #[serde(rename = "zoneinfo64")]
+        #[serde(rename_all = "PascalCase")]
+        struct ZoneInfo64Raw<'a> {
+            #[serde(borrow)]
+            zones: Vec<TzZoneRaw<'a>>,
+            #[serde(borrow, deserialize_with = "resb::binary::helpers::vec_utf_16")]
+            names: Vec<&'a PotentialUtf16>,
+            #[serde(borrow, deserialize_with = "rules")]
+            rules: Vec<(&'a str, TzRule)>,
+            #[serde(deserialize_with = "regions")]
+            regions: Vec<Region>,
+        }
+
+        #[derive(Debug)]
+        pub enum TzZoneRaw<'a> {
+            Table(TzZoneDataRaw<'a>),
+            Int(u32),
+        }
+
+        impl<'de: 'a, 'a> Deserialize<'de> for TzZoneRaw<'a> {
+            fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+            where
+                D: serde::Deserializer<'de>,
+            {
+                struct TzDataRuleEnumVisitor<'a> {
+                    phantom: PhantomData<TzZoneRaw<'a>>,
+                }
+
+                impl<'de: 'a, 'a> Visitor<'de> for TzDataRuleEnumVisitor<'a> {
+                    type Value = TzZoneRaw<'a>;
+
+                    fn expecting(&self, formatter: &mut std::fmt::Formatter) -> std::fmt::Result {
+                        formatter.write_str("an unsigned 32-bit integer or a table of rule data")
+                    }
+
+                    fn visit_u32<E>(self, v: u32) -> Result<Self::Value, E>
+                    where
+                        E: Error,
+                    {
+                        Ok(TzZoneRaw::Int(v))
+                    }
+
+                    fn visit_map<A>(self, map: A) -> Result<Self::Value, A::Error>
+                    where
+                        A: MapAccess<'de>,
+                    {
+                        let value =
+                            TzZoneDataRaw::deserialize(value::MapAccessDeserializer::new(map))?;
+
+                        Ok(TzZoneRaw::Table(value))
+                    }
+                }
+
+                deserializer.deserialize_any(TzDataRuleEnumVisitor {
+                    phantom: PhantomData,
+                })
+            }
+        }
+
+        #[derive(Debug, Deserialize)]
+        #[serde(rename_all = "camelCase")]
+        pub struct TzZoneDataRaw<'a> {
+            #[serde(borrow, deserialize_with = "resb::binary::helpers::i32_tuple")]
+            type_offsets: &'a [(i32, i32)],
+            #[serde(
+                borrow,
+                default,
+                deserialize_with = "resb::binary::helpers::option_i32"
+            )]
+            trans: Option<&'a [i32]>,
+            #[serde(
+                borrow,
+                default,
+                deserialize_with = "resb::binary::helpers::option_i32_tuple"
+            )]
+            trans_pre32: Option<&'a [(i32, i32)]>,
+            #[serde(
+                borrow,
+                default,
+                deserialize_with = "resb::binary::helpers::option_i32_tuple"
+            )]
+            trans_post32: Option<&'a [(i32, i32)]>,
+            type_map: Option<&'a [u8]>,
+            #[serde(
+                borrow,
+                default,
+                deserialize_with = "resb::binary::helpers::option_utf_16"
+            )]
+            final_rule: Option<&'a PotentialUtf16>,
+            final_raw: Option<i32>,
+            final_year: Option<u32>,
+            #[allow(dead_code)]
+            #[serde(
+                borrow,
+                default,
+                deserialize_with = "resb::binary::helpers::option_u32"
+            )]
+            links: Option<&'a [u32]>,
+        }
+
+        fn rules<'de, D: Deserializer<'de>>(
+            deserializer: D,
+        ) -> Result<Vec<(&'de str, TzRule)>, D::Error> {
+            struct RulesVisitor;
+
+            impl<'de> Visitor<'de> for RulesVisitor {
+                type Value = Vec<(&'de str, TzRule)>;
+
+                fn expecting(&self, formatter: &mut std::fmt::Formatter) -> std::fmt::Result {
+                    write!(formatter, "a sequence of UTF-16 slices")
+                }
+
+                fn visit_map<A>(self, mut map: A) -> Result<Self::Value, A::Error>
+                where
+                    A: MapAccess<'de>,
+                {
+                    let mut vec = vec![];
+                    while let Some((key, value)) = map.next_entry::<&str, &[u8]>()? {
+                        if value.as_ptr().align_offset(core::mem::align_of::<i32>()) != 0
+                            || value.len() != core::mem::size_of::<i32>() * 11
+                        {
+                            return Err(A::Error::custom("Wrong length or align"));
+                        }
+                        let value = unsafe { &*(value.as_ptr() as *const [i32; 11]) };
+
+                        vec.push((
+                            key,
+                            TzRule {
+                                dst: value[10],
+
+                                savings_start_month: value[0] as i8,
+                                savings_start_day: value[1] as i8,
+                                savings_start_day_of_week: value[2] as i8,
+                                savings_start_time_seconds_of_day: value[3],
+                                savings_start_time_mode: value[4] as i8,
+
+                                savings_end_month: value[5] as i8,
+                                savings_end_day: value[6] as i8,
+                                savings_end_day_of_week: value[7] as i8,
+                                savings_end_time_seconds_of_day: value[8],
+                                savings_end_time_mode: value[9] as i8,
+                            },
+                        ));
+                    }
+                    Ok(vec)
+                }
+            }
+
+            deserializer.deserialize_map(RulesVisitor)
+        }
+
+        fn regions<'de, D: Deserializer<'de>>(deserializer: D) -> Result<Vec<Region>, D::Error> {
+            struct RegionsVisitor;
+
+            impl<'de> Visitor<'de> for RegionsVisitor {
+                type Value = Vec<Region>;
+
+                fn expecting(&self, formatter: &mut std::fmt::Formatter) -> std::fmt::Result {
+                    write!(formatter, "a sequence of UTF-16 slices")
+                }
+
+                fn visit_seq<A>(self, mut seq: A) -> Result<Self::Value, A::Error>
+                where
+                    A: SeqAccess<'de>,
+                {
+                    let mut vec = vec![];
+                    while let Some(bytes) = seq.next_element::<&[u8]>()? {
+                        if bytes.as_ptr().align_offset(core::mem::align_of::<u16>()) != 0
+                            || bytes.len() % core::mem::size_of::<u16>() != 0
+                        {
+                            return Err(A::Error::custom("Wrong length or align"));
+                        }
+
+                        // Safety: The check gurantees length and alignment
+                        let utf16 = potential_utf::PotentialUtf16::from_slice(unsafe {
+                            core::slice::from_raw_parts(
+                                bytes.as_ptr() as *const u16,
+                                bytes.len() / core::mem::size_of::<u16>(),
+                            )
+                        });
+
+                        let mut utf16 = utf16.chars();
+
+                        let Ok(region) = Region::try_from_raw([
+                            // interpreting the UTF-16 code points as UTF-8 code points, which is fine because they're
+                            // guaranteed ASCII
+                            utf16.next().unwrap_or_default() as u8,
+                            utf16.next().unwrap_or_default() as u8,
+                            utf16.next().unwrap_or_default() as u8,
+                        ]) else {
+                            return Err(A::Error::custom("Invalid region code"));
+                        };
+
+                        vec.push(region);
+                    }
+                    Ok(vec)
+                }
+            }
+
+            deserializer.deserialize_seq(RegionsVisitor)
+        }
+
+        let ZoneInfo64Raw {
+            zones,
+            names,
+            rules,
+            regions,
+        } = ZoneInfo64Raw::deserialize(deserializer)?;
+
+        if zones.len() != names.len() || names.len() != regions.len() {
+            return Err(D::Error::custom(
+                "zones, names, regions need to have matching lengths",
+            ));
+        }
+
+        // Translate rule string keys to indices
+        let rules_lookup =
+            |name: &PotentialUtf16| rules.iter().position(|&(n, _)| name.chars().eq(n.chars()));
+
+        let raw_zones = zones;
+        let mut zones = Vec::with_capacity(raw_zones.len());
+
+        for zone in &raw_zones {
+            match *zone {
+                TzZoneRaw::Int(i) => {
+                    let Some(alias) = raw_zones.get(i as usize) else {
+                        return Err(D::Error::custom("invalid alias idx"));
+                    };
+                    if let TzZoneRaw::Int(_) = alias {
+                        return Err(D::Error::custom("multi-step alias"));
+                    }
+                    zones.push(TzZone::Int(i))
+                }
+                TzZoneRaw::Table(TzZoneDataRaw {
+                    type_offsets,
+                    trans,
+                    trans_pre32,
+                    trans_post32,
+                    type_map,
+                    final_rule,
+                    final_raw,
+                    final_year,
+                    links,
+                }) => {
+                    let trans = trans.unwrap_or_default();
+                    let trans_pre32 = trans_pre32.unwrap_or_default();
+                    let trans_post32 = trans_post32.unwrap_or_default();
+                    let type_map = type_map.unwrap_or_default();
+
+                    if trans.len() + trans_post32.len() + trans_pre32.len() != type_map.len()
+                        || type_offsets.is_empty()
+                    {
+                        return Err(D::Error::custom("inconsistent offset data"));
+                    }
+
+                    for &idx in type_map {
+                        if idx as usize >= type_offsets.len() {
+                            return Err(D::Error::custom("invalid offset map"));
+                        }
+                    }
+
+                    let final_rule_offset_year = match (final_rule, final_raw, final_year) {
+                        (Some(name), Some(offset), Some(year)) => {
+                            let Some(idx) = rules_lookup(name) else {
+                                return Err(D::Error::custom("invalid rule id"));
+                            };
+                            Some((idx as u32, offset, year))
+                        }
+                        (None, None, None) => None,
+                        _ => {
+                            return Err(D::Error::custom(
+                                "inconsisent finalRule, finalRaw, finalYear",
+                            ))
+                        }
+                    };
+
+                    zones.push(TzZone::Table(Box::new(TzZoneData {
+                        type_offsets,
+                        trans,
+                        trans_pre32,
+                        trans_post32,
+                        type_map,
+                        final_rule_offset_year,
+                        links,
+                    })))
+                }
+            }
+        }
+
+        let rules = rules.into_iter().map(|(_name, rule)| rule).collect();
+
+        Ok(Self {
+            zones,
+            names,
+            rules,
+            regions,
+        })
+    }
+}
+
+#[derive(Debug)]
+pub struct Zone<'a> {
+    trans_pre32: &'a [(i32, i32)],
+    trans: &'a [i32],
+    trans_post32: &'a [(i32, i32)],
+    type_map: &'a [u8],
+    type_offsets: &'a [(i32, i32)],
+    final_rule: Option<Rule<'a>>,
+    pub region: Region,
+}
+
+#[derive(Debug)]
+struct Rule<'a> {
+    start_year: u32,
+    std: i32,
+    inner: &'a TzRule,
+}
+
+impl Rule<'_> {
     fn previous_transition(&self, seconds_since_epoch: i64) -> Transition {
         // TODO
         let is_dst = true;
@@ -187,22 +389,24 @@ impl Rule {
 
         let _ = self.start_year;
 
-        let _ = self.savings_start_month;
-        let _ = self.savings_start_day;
-        let _ = self.savings_start_day_of_week;
-        let _ = self.savings_start_time_seconds_of_day;
-        let _ = self.savings_start_time_mode;
+        let _ = self.inner.savings_start_month;
+        let _ = self.inner.savings_start_day;
+        let _ = self.inner.savings_start_day_of_week;
+        let _ = self.inner.savings_start_time_seconds_of_day;
+        let _ = self.inner.savings_start_time_mode;
 
-        let _ = self.savings_end_month;
-        let _ = self.savings_end_day;
-        let _ = self.savings_end_day_of_week;
-        let _ = self.savings_end_time_seconds_of_day;
-        let _ = self.savings_end_time_mode;
+        let _ = self.inner.savings_end_month;
+        let _ = self.inner.savings_end_day;
+        let _ = self.inner.savings_end_day_of_week;
+        let _ = self.inner.savings_end_time_seconds_of_day;
+        let _ = self.inner.savings_end_time_mode;
 
         Transition {
             transition,
             is_dst,
-            offset: UtcOffset::from_seconds_unchecked(self.std + if is_dst { self.dst } else { 0 }),
+            offset: UtcOffset::from_seconds_unchecked(
+                self.std + if is_dst { self.inner.dst } else { 0 },
+            ),
         }
     }
 }
@@ -249,7 +453,8 @@ impl Zone<'_> {
 
         // before first transition don't use `type_map`, just the first entry in `type_offsets`
         if idx == -1 {
-            let (std, dst) = self.type_offsets.get(0).unwrap();
+            #[expect(clippy::unwrap_used)] // type_offsets non-empty by invariant
+            let &(std, dst) = self.type_offsets.first().unwrap();
             return Transition {
                 transition: i64::MIN,
                 offset: UtcOffset::from_seconds_unchecked(std + dst),
@@ -266,21 +471,18 @@ impl Zone<'_> {
             }
         }
 
-        let (std, dst) = self
-            .type_offsets
-            .get(*self.type_map.get(idx).unwrap() as usize)
-            .unwrap();
+        #[expect(clippy::indexing_slicing)]
+        // type_map has length sum(trans*), and type_map values are validated to be valid indices in type_offsets
+        let (std, dst) = self.type_offsets[self.type_map[idx] as usize];
 
+        #[expect(clippy::indexing_slicing)] // by guards or invariant
         let transition = if idx < self.trans_pre32.len() {
-            let (lo, hi) = self.trans_pre32.get(idx).unwrap();
+            let (lo, hi) = self.trans_pre32[idx];
             (lo as i64) << 32 | hi as i64
         } else if idx - self.trans_pre32.len() < self.trans.len() {
-            self.trans.get(idx - self.trans_pre32.len()).unwrap() as i64
+            self.trans[idx - self.trans_pre32.len()] as i64
         } else {
-            let (lo, hi) = self
-                .trans_pre32
-                .get(idx - self.trans_pre32.len() - self.trans.len())
-                .unwrap();
+            let (lo, hi) = self.trans_pre32[idx - self.trans_pre32.len() - self.trans.len()];
             (lo as i64) << 32 | hi as i64
         };
 
@@ -296,95 +498,67 @@ impl<'a> ZoneInfo64<'a> {
     fn zone(&'a self, name: &str) -> Option<Zone<'a>> {
         let idx = self
             .names
-            .binary_search_by(|n| n.chars().cmp(name.chars()))
+            .binary_search_by(|&n| n.chars().cmp(name.chars()))
             .ok()?;
 
-        let mut zone = self.zones.get(idx)?; // invalid data
-        if let &TzDataRule::Int(i) = zone {
-            zone = self.zones.get(i as usize)?; // invalid data
+        #[expect(clippy::indexing_slicing)] // regions and names have the same length
+        let region = self.regions[idx];
+        #[expect(clippy::indexing_slicing)] // zones and names have the same length
+        let mut zone = &self.zones[idx];
+
+        #[expect(clippy::indexing_slicing)] // TzZone::Ints are validated as indices
+        if let &TzZone::Int(i) = zone {
+            zone = &self.zones[i as usize];
         }
-        let TzDataRule::Table(ref zone) = zone else {
-            return None; // invalid data
+        let TzZone::Table(ref zone) = zone else {
+            unreachable!() // data validate to have at most one alias jump
         };
 
-        let TzDataRuleData {
-            ref type_offsets,
-            ref trans,
-            ref trans_pre32,
-            ref trans_post32,
-            ref type_map,
-            ref final_rule,
-            ref final_raw,
-            ref final_year,
+        let &TzZoneData {
+            type_offsets,
+            trans,
+            trans_pre32,
+            trans_post32,
+            type_map,
+            final_rule_offset_year,
             ..
         } = zone.as_ref();
 
-        let final_rule = final_rule
-            .as_ref()
-            .and_then(|r| self.rule(&String::from(r)))
-            .zip(*final_raw)
-            .zip(*final_year)
-            .map(|((rule, raw), year)| Rule {
-                start_year: year,
-
-                std: raw,
-                dst: rule.get(10).unwrap(),
-
-                savings_start_month: rule.get(0).unwrap() as i8,
-                savings_start_day: rule.get(1).unwrap() as i8,
-                savings_start_day_of_week: rule.get(2).unwrap() as i8,
-                savings_start_time_seconds_of_day: rule.get(3).unwrap(),
-                savings_start_time_mode: rule.get(4).unwrap() as i8,
-
-                savings_end_month: rule.get(5).unwrap() as i8,
-                savings_end_day: rule.get(6).unwrap() as i8,
-                savings_end_day_of_week: rule.get(7).unwrap() as i8,
-                savings_end_time_seconds_of_day: rule.get(8).unwrap(),
-                savings_end_time_mode: rule.get(9).unwrap() as i8,
+        #[expect(clippy::indexing_slicing)] // rules indices are all valid
+        let final_rule = final_rule_offset_year
+            .map(|(idx, offset, year)| (&self.rules[idx as usize], offset, year))
+            .map(|(inner, std, start_year)| Rule {
+                start_year,
+                std,
+                inner,
             });
 
-        let mut region = self.regions.get(idx)?.chars(); // invalid data
-        let region = Region::try_from_raw([
-            region.next().unwrap_or(0 as char) as u8,
-            region.next().unwrap_or(0 as char) as u8,
-            region.next().unwrap_or(0 as char) as u8,
-        ])
-        .unwrap();
-
-        assert_eq!(
-            trans.as_ref().map(|z| z.len()).unwrap_or_default()
-                + trans_post32.as_ref().map(|z| z.len()).unwrap_or_default()
-                + trans_pre32.as_ref().map(|z| z.len()).unwrap_or_default(),
-            type_map.map(|z| z.len()).unwrap_or_default()
-        );
-
-        assert_eq!(type_offsets.len() % 2, 0);
-        assert!(!type_offsets.is_empty());
-
         Some(Zone {
-            trans_pre32: trans_pre32.clone().unwrap_or_default(),
-            trans: trans.clone().unwrap_or_default(),
-            trans_post32: trans_post32.clone().unwrap_or_default(),
-            type_map: (*type_map).unwrap_or_default(),
-            type_offsets: type_offsets.clone(),
+            trans_pre32,
+            trans,
+            trans_post32,
+            type_map,
+            type_offsets,
             final_rule,
             region,
         })
     }
-
-    pub fn rule(&'a self, name: &str) -> Option<&'a ZeroVec<'a, i32>> {
-        self.rules.get(name)
-    }
 }
 
 fn main() {
-    let in_bytes = include_bytes!("data/zoneinfo64.res");
+    let in_bytes = include_bytes_as_u32!("data/zoneinfo64.res");
 
-    let tzdb = resb::binary::from_bytes::<ZoneInfo64>(in_bytes)
+    let tzdb = resb::binary::from_words::<ZoneInfo64>(in_bytes)
         .expect("Error processing resource bundle file");
 
-    let id = std::env::args().nth(1).unwrap_or_default();
-    let seconds_since_epoch = std::env::args().nth(2).unwrap_or_default().parse().unwrap();
+    let id = std::env::args()
+        .nth(1)
+        .unwrap_or_else(|| "Europe/Zurich".into());
+    let seconds_since_epoch = std::env::args()
+        .nth(2)
+        .unwrap_or_default()
+        .parse()
+        .unwrap_or(1000000000);
 
     let zone = tzdb.zone(&id).unwrap();
 
