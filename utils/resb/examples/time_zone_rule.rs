@@ -40,19 +40,18 @@ struct TzZoneData<'a> {
 
 #[derive(Debug)]
 struct TzRule {
-    dst: i32,
+    additional_offset_secs: i32,
+    start: TzRuleDate,
+    end: TzRuleDate,
+}
 
-    savings_start_month: i8,
-    savings_start_day: i8,
-    savings_start_day_of_week: i8,
-    savings_start_time_seconds_of_day: i32,
-    savings_start_time_mode: i8,
-
-    savings_end_month: i8,
-    savings_end_day: i8,
-    savings_end_day_of_week: i8,
-    savings_end_time_seconds_of_day: i32,
-    savings_end_time_mode: i8,
+#[derive(Debug)]
+struct TzRuleDate {
+    month: i8,
+    day: i8,
+    day_of_week: i8,
+    seconds_of_day: i32,
+    time_mode: i8,
 }
 
 impl<'de> Deserialize<'de> for ZoneInfo64<'de> {
@@ -191,19 +190,21 @@ impl<'de> Deserialize<'de> for ZoneInfo64<'de> {
                         vec.push((
                             key,
                             TzRule {
-                                dst: value[10],
-
-                                savings_start_month: value[0] as i8,
-                                savings_start_day: value[1] as i8,
-                                savings_start_day_of_week: value[2] as i8,
-                                savings_start_time_seconds_of_day: value[3],
-                                savings_start_time_mode: value[4] as i8,
-
-                                savings_end_month: value[5] as i8,
-                                savings_end_day: value[6] as i8,
-                                savings_end_day_of_week: value[7] as i8,
-                                savings_end_time_seconds_of_day: value[8],
-                                savings_end_time_mode: value[9] as i8,
+                                additional_offset_secs: value[10],
+                                start: TzRuleDate {
+                                    month: value[0] as i8,
+                                    day: value[1] as i8,
+                                    day_of_week: value[2] as i8,
+                                    seconds_of_day: value[3],
+                                    time_mode: value[4] as i8,
+                                },
+                                end: TzRuleDate {
+                                    month: value[5] as i8,
+                                    day: value[6] as i8,
+                                    day_of_week: value[7] as i8,
+                                    seconds_of_day: value[8],
+                                    time_mode: value[9] as i8,
+                                },
                             },
                         ));
                     }
@@ -363,49 +364,106 @@ impl<'de> Deserialize<'de> for ZoneInfo64<'de> {
     }
 }
 
+impl<'a> ZoneInfo64<'a> {
+    fn get(&'a self, iana: &str) -> Option<(Transitions<'a>, Region)> {
+        let idx = self
+            .names
+            .binary_search_by(|&n| n.chars().cmp(iana.chars()))
+            .ok()?;
+
+        #[expect(clippy::indexing_slicing)] // regions and names have the same length
+        let region = self.regions[idx];
+        #[expect(clippy::indexing_slicing)] // zones and names have the same length
+        let mut zone = &self.zones[idx];
+
+        #[expect(clippy::indexing_slicing)] // TzZone::Ints are validated as indices
+        if let &TzZone::Int(i) = zone {
+            zone = &self.zones[i as usize];
+        }
+        let TzZone::Table(ref zone) = zone else {
+            unreachable!() // data validate to have at most one alias jump
+        };
+
+        let &TzZoneData {
+            type_offsets,
+            trans,
+            trans_pre32,
+            trans_post32,
+            type_map,
+            final_rule_offset_year,
+            ..
+        } = zone.as_ref();
+
+        #[expect(clippy::indexing_slicing)] // rules indices are all valid
+        let final_rule = final_rule_offset_year
+            .map(|(idx, offset, year)| (&self.rules[idx as usize], offset, year))
+            .map(|(inner, offset_seconds, start_year)| Rule {
+                start_year,
+                standard_offset_seconds: offset_seconds,
+                inner,
+            });
+
+        Some((
+            Transitions {
+                trans_pre32,
+                trans,
+                trans_post32,
+                type_map,
+                type_offsets,
+                final_rule,
+            },
+            region,
+        ))
+    }
+}
+
 #[derive(Debug)]
-pub struct Zone<'a> {
+pub struct Transitions<'a> {
     trans_pre32: &'a [(i32, i32)],
     trans: &'a [i32],
     trans_post32: &'a [(i32, i32)],
     type_map: &'a [u8],
     type_offsets: &'a [(i32, i32)],
     final_rule: Option<Rule<'a>>,
-    pub region: Region,
 }
 
 #[derive(Debug)]
 struct Rule<'a> {
     start_year: u32,
-    std: i32,
+    standard_offset_seconds: i32,
     inner: &'a TzRule,
 }
 
 impl Rule<'_> {
     fn previous_transition(&self, seconds_since_epoch: i64) -> Transition {
         // TODO
-        let is_dst = true;
+        let rule_applies = true;
         let transition = seconds_since_epoch;
 
         let _ = self.start_year;
 
-        let _ = self.inner.savings_start_month;
-        let _ = self.inner.savings_start_day;
-        let _ = self.inner.savings_start_day_of_week;
-        let _ = self.inner.savings_start_time_seconds_of_day;
-        let _ = self.inner.savings_start_time_mode;
+        let _ = self.inner.start.month;
+        let _ = self.inner.start.day;
+        let _ = self.inner.start.day_of_week;
+        let _ = self.inner.start.seconds_of_day;
+        let _ = self.inner.start.time_mode;
 
-        let _ = self.inner.savings_end_month;
-        let _ = self.inner.savings_end_day;
-        let _ = self.inner.savings_end_day_of_week;
-        let _ = self.inner.savings_end_time_seconds_of_day;
-        let _ = self.inner.savings_end_time_mode;
+        let _ = self.inner.end.month;
+        let _ = self.inner.end.day;
+        let _ = self.inner.end.day_of_week;
+        let _ = self.inner.end.seconds_of_day;
+        let _ = self.inner.end.time_mode;
 
         Transition {
             transition,
-            is_dst,
+            rule_applies,
             offset: UtcOffset::from_seconds_unchecked(
-                self.std + if is_dst { self.inner.dst } else { 0 },
+                self.standard_offset_seconds
+                    + if rule_applies {
+                        self.inner.additional_offset_secs
+                    } else {
+                        0
+                    },
             ),
         }
     }
@@ -415,10 +473,10 @@ impl Rule<'_> {
 pub struct Transition {
     pub transition: i64,
     pub offset: UtcOffset,
-    pub is_dst: bool,
+    pub rule_applies: bool,
 }
 
-impl Zone<'_> {
+impl Transitions<'_> {
     fn previous_transition(&self, seconds_since_epoch: i64) -> Transition {
         let idx = if seconds_since_epoch < i32::MIN as i64 {
             self.trans_pre32
@@ -454,11 +512,11 @@ impl Zone<'_> {
         // before first transition don't use `type_map`, just the first entry in `type_offsets`
         if idx == -1 {
             #[expect(clippy::unwrap_used)] // type_offsets non-empty by invariant
-            let &(std, dst) = self.type_offsets.first().unwrap();
+            let &(standard, rule_additional) = self.type_offsets.first().unwrap();
             return Transition {
                 transition: i64::MIN,
-                offset: UtcOffset::from_seconds_unchecked(std + dst),
-                is_dst: dst > 0,
+                offset: UtcOffset::from_seconds_unchecked(standard + rule_additional),
+                rule_applies: rule_additional > 0,
             };
         }
 
@@ -473,7 +531,7 @@ impl Zone<'_> {
 
         #[expect(clippy::indexing_slicing)]
         // type_map has length sum(trans*), and type_map values are validated to be valid indices in type_offsets
-        let (std, dst) = self.type_offsets[self.type_map[idx] as usize];
+        let (standard, rule_additional) = self.type_offsets[self.type_map[idx] as usize];
 
         #[expect(clippy::indexing_slicing)] // by guards or invariant
         let transition = if idx < self.trans_pre32.len() {
@@ -488,60 +546,9 @@ impl Zone<'_> {
 
         Transition {
             transition,
-            offset: UtcOffset::from_seconds_unchecked(std + dst),
-            is_dst: dst > 0,
+            offset: UtcOffset::from_seconds_unchecked(standard + rule_additional),
+            rule_applies: rule_additional > 0,
         }
-    }
-}
-
-impl<'a> ZoneInfo64<'a> {
-    fn zone(&'a self, name: &str) -> Option<Zone<'a>> {
-        let idx = self
-            .names
-            .binary_search_by(|&n| n.chars().cmp(name.chars()))
-            .ok()?;
-
-        #[expect(clippy::indexing_slicing)] // regions and names have the same length
-        let region = self.regions[idx];
-        #[expect(clippy::indexing_slicing)] // zones and names have the same length
-        let mut zone = &self.zones[idx];
-
-        #[expect(clippy::indexing_slicing)] // TzZone::Ints are validated as indices
-        if let &TzZone::Int(i) = zone {
-            zone = &self.zones[i as usize];
-        }
-        let TzZone::Table(ref zone) = zone else {
-            unreachable!() // data validate to have at most one alias jump
-        };
-
-        let &TzZoneData {
-            type_offsets,
-            trans,
-            trans_pre32,
-            trans_post32,
-            type_map,
-            final_rule_offset_year,
-            ..
-        } = zone.as_ref();
-
-        #[expect(clippy::indexing_slicing)] // rules indices are all valid
-        let final_rule = final_rule_offset_year
-            .map(|(idx, offset, year)| (&self.rules[idx as usize], offset, year))
-            .map(|(inner, std, start_year)| Rule {
-                start_year,
-                std,
-                inner,
-            });
-
-        Some(Zone {
-            trans_pre32,
-            trans,
-            trans_post32,
-            type_map,
-            type_offsets,
-            final_rule,
-            region,
-        })
     }
 }
 
@@ -560,16 +567,16 @@ fn main() {
         .parse()
         .unwrap_or(1000000000);
 
-    let zone = tzdb.zone(&id).unwrap();
+    let (zone, region) = tzdb.get(&id).unwrap();
 
     let transition = zone.previous_transition(seconds_since_epoch);
 
     println!(
         "Zone {id:?} ({region}) at {time:?}: {offset:?} ({is_dst}) since {transition:?}",
         time = chrono::DateTime::from_timestamp(seconds_since_epoch, 0).unwrap(),
-        region = zone.region.as_str(),
+        region = region.as_str(),
         offset = transition.offset,
-        is_dst = if transition.is_dst {
+        is_dst = if transition.rule_applies {
             "Daylight"
         } else {
             "Standard"
