@@ -526,6 +526,33 @@ fn invalid_time() {
 }
 
 #[test]
+fn invalid_ambiguous_time() {
+    let bad_value = "1208-10";
+    let err = IxdtfParser::from_str(bad_value).parse_time();
+    assert_eq!(
+        err,
+        Err(ParseError::AmbiguousTimeMonthDay),
+        "Invalid time parsing: \"{bad_value}\" is ambiguous."
+    );
+
+    let bad_value = "12-14";
+    let err = IxdtfParser::from_str(bad_value).parse_time();
+    assert_eq!(
+        err,
+        Err(ParseError::AmbiguousTimeMonthDay),
+        "Invalid time parsing: \"{bad_value}\" is ambiguous."
+    );
+
+    let bad_value = "202112";
+    let err = IxdtfParser::from_str(bad_value).parse_time();
+    assert_eq!(
+        err,
+        Err(ParseError::AmbiguousTimeYearMonth),
+        "Invalid time parsing: \"{bad_value}\" is ambiguous."
+    );
+}
+
+#[test]
 fn temporal_valid_instant_strings() {
     let instants = [
         "1970-01-01T00:00+00:00[!Africa/Abidjan]",
@@ -614,7 +641,15 @@ fn temporal_duration_parsing() {
 fn temporal_invalid_durations() {
     use crate::parsers::IsoDurationParser;
 
-    let invalids = ["P1Y1M1W0,5D", "+PT", "P1Y1M1W1DT1H0.5M0.5S"];
+    let invalids = [
+        "P1Y1M1W0,5D",
+        "+PT",
+        "P1Y1M1W1DT1H0.5M0.5S",
+        "P",
+        "PT",
+        "-P",
+        "-PT",
+    ];
 
     for test in invalids {
         let err = IsoDurationParser::from_str(test).parse();

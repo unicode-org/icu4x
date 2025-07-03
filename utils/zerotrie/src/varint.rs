@@ -363,7 +363,7 @@ mod tests {
     fn test_read() {
         for cas in CASES {
             let recovered = read_varint_meta2(cas.bytes[0], &cas.bytes[1..]);
-            assert_eq!(recovered, (cas.value, cas.remainder), "{:?}", cas);
+            assert_eq!(recovered, (cas.value, cas.remainder), "{cas:?}");
         }
     }
 
@@ -374,23 +374,20 @@ mod tests {
             assert_eq!(
                 reference_bytes.len(),
                 cas.bytes.len() - cas.remainder.len(),
-                "{:?}",
-                cas
+                "{cas:?}"
             );
             assert_eq!(
                 reference_bytes.as_slice(),
                 &cas.bytes[0..reference_bytes.len()],
-                "{:?}",
-                cas
+                "{cas:?}"
             );
             let recovered = read_varint_meta2(cas.bytes[0], &cas.bytes[1..]);
-            assert_eq!(recovered, (cas.value, cas.remainder), "{:?}", cas);
+            assert_eq!(recovered, (cas.value, cas.remainder), "{cas:?}");
             let write_bytes = write_varint_meta2(cas.value);
             assert_eq!(
                 reference_bytes.as_slice(),
                 write_bytes.as_slice(),
-                "{:?}",
-                cas
+                "{cas:?}"
             );
         }
     }

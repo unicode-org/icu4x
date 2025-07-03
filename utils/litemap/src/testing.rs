@@ -94,9 +94,8 @@ where
     assert_eq!(0, map.len());
     assert!(map.is_empty());
     for (k, v) in SORTED_DATA.iter() {
-        match map.try_append(*k, *v) {
-            Some(_) => panic!("appending sorted data: {k:?} to {map:?}"),
-            None => (), // OK
+        if map.try_append(*k, *v).is_some() {
+            panic!("appending sorted data: {k:?} to {map:?}");
         };
     }
     assert_eq!(10, map.len());

@@ -271,7 +271,7 @@ mod tests {
 
             let measure_unit = MeasureUnit::try_from_str(input);
             if measure_unit.is_ok() {
-                println!("OK:  {}", input);
+                println!("OK:  {input}");
                 continue;
             }
             assert!(measure_unit.is_err());

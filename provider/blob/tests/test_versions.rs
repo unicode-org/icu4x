@@ -57,11 +57,10 @@ fn check_hello_world(blob_provider: impl DataProvider<HelloWorldV1>, test_prefix
                 ..Default::default()
             })
             .unwrap();
-        assert_eq!(blob_result.payload, expected_result.payload, "{:?}", id);
+        assert_eq!(blob_result.payload, expected_result.payload, "{id:?}");
         assert_eq!(
             blob_result.metadata.checksum, expected_result.metadata.checksum,
-            "{:?}",
-            id
+            "{id:?}"
         );
     }
 
