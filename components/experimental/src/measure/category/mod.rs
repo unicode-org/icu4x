@@ -22,6 +22,17 @@ pub struct CategorizedMeasureUnit<T: MeasureUnitCategory> {
     pub unit: MeasureUnit,
 }
 
+impl<T: MeasureUnitCategory> CategorizedMeasureUnit<T> {
+    // TODO: remove this once we are using the short units name in the datagen to locate the units.
+    /// Returns the CLDR ID of the unit.
+    pub fn cldr_id(&self) -> &str {
+        match self.unit.id {
+            Some(id) => id,
+            None => unimplemented!(),
+        }
+    }
+}
+
 /// A [`MeasureUnit`] that is related to the area category.
 pub struct Area;
 
