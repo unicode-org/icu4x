@@ -19,6 +19,7 @@ impl Volume {
         CategorizedMeasureUnit {
             _category: core::marker::PhantomData,
             unit: MeasureUnit {
+                id: Some("cubic-meter"),
                 single_units: SingleUnitVec::One(SingleUnit {
                     power: 3,
                     si_prefix: SiPrefix {
@@ -37,6 +38,7 @@ impl Volume {
         CategorizedMeasureUnit {
             _category: core::marker::PhantomData,
             unit: MeasureUnit {
+                id: Some("liter"),
                 single_units: SingleUnitVec::One(SingleUnit {
                     power: 1,
                     si_prefix: SiPrefix {

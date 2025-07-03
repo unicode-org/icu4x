@@ -19,6 +19,7 @@ impl Mass {
         CategorizedMeasureUnit {
             _category: core::marker::PhantomData,
             unit: MeasureUnit {
+                id: Some("gram"),
                 single_units: SingleUnitVec::One(SingleUnit {
                     power: 1,
                     si_prefix: SiPrefix {
@@ -37,6 +38,7 @@ impl Mass {
         CategorizedMeasureUnit {
             _category: core::marker::PhantomData,
             unit: MeasureUnit {
+                id: Some("kilogram"),
                 single_units: SingleUnitVec::One(SingleUnit {
                     power: 1,
                     si_prefix: SiPrefix {

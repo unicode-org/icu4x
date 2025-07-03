@@ -19,6 +19,7 @@ impl Duration {
         CategorizedMeasureUnit {
             _category: core::marker::PhantomData,
             unit: MeasureUnit {
+                id: Some("millisecond"),
                 single_units: SingleUnitVec::One(SingleUnit {
                     power: 1,
                     si_prefix: SiPrefix {
@@ -37,6 +38,7 @@ impl Duration {
         CategorizedMeasureUnit {
             _category: core::marker::PhantomData,
             unit: MeasureUnit {
+                id: Some("second"),
                 single_units: SingleUnitVec::One(SingleUnit {
                     power: 1,
                     si_prefix: SiPrefix {
@@ -55,6 +57,7 @@ impl Duration {
         CategorizedMeasureUnit {
             _category: core::marker::PhantomData,
             unit: MeasureUnit {
+                id: Some("minute"),
                 single_units: SingleUnitVec::One(SingleUnit {
                     power: 1,
                     si_prefix: SiPrefix {
@@ -73,6 +76,7 @@ impl Duration {
         CategorizedMeasureUnit {
             _category: core::marker::PhantomData,
             unit: MeasureUnit {
+                id: Some("hour"),
                 single_units: SingleUnitVec::One(SingleUnit {
                     power: 1,
                     si_prefix: SiPrefix {
@@ -91,6 +95,7 @@ impl Duration {
         CategorizedMeasureUnit {
             _category: core::marker::PhantomData,
             unit: MeasureUnit {
+                id: Some("day"),
                 single_units: SingleUnitVec::One(SingleUnit {
                     power: 1,
                     si_prefix: SiPrefix {
@@ -109,6 +114,7 @@ impl Duration {
         CategorizedMeasureUnit {
             _category: core::marker::PhantomData,
             unit: MeasureUnit {
+                id: Some("week"),
                 single_units: SingleUnitVec::One(SingleUnit {
                     power: 1,
                     si_prefix: SiPrefix {
