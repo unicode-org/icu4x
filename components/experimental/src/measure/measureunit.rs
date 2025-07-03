@@ -148,7 +148,7 @@ mod tests {
         for (full_unit, expected_short) in test_cases {
             let measure_unit = parser.try_from_str(full_unit).unwrap();
             let short_representation = measure_unit.generate_short_representation();
-            assert_eq!(short_representation, expected_short, "{}", full_unit);
+            assert_eq!(short_representation, expected_short, "{full_unit}");
         }
     }
 }
