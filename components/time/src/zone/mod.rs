@@ -506,7 +506,6 @@ impl TimeZoneVariant {
     ///
     /// * `Europe/Dublin` since 1968-10-27
     /// * `Africa/Windhoek` between 1994-03-20 and 2017-10-24
-    /// * `Africa/Casablanca` and `Africa/El_Aaiun` since 2018-10-28
     ///
     /// If the TZDB build mode is unknown or variable, use [`TimeZoneInfo::infer_variant`].
     pub const fn from_rearguard_isdst(isdst: bool) -> Self {

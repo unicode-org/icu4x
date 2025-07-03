@@ -487,6 +487,13 @@
   "overrides": [
     [
       [
+        "eheai",
+        "Sundown"
+      ],
+      "Western Sahara Ramadan Time"
+    ],
+    [
+      [
         "gblon",
         "Daylight"
       ],
@@ -498,6 +505,13 @@
         "Daylight"
       ],
       "Irish Standard Time"
+    ],
+    [
+      [
+        "macas",
+        "Sundown"
+      ],
+      "Morocco Ramadan Time"
     ],
     [
       [
