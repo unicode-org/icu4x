@@ -80,28 +80,11 @@ impl MeasureUnit {
         fn decompose_number_and_trailing_zeros(mut n: u64) -> (u64, u8) {
             let mut zeros_count = 0;
 
-            // Divide by 10^8
-            while n % 100_000_000 == 0 {
-                n /= 100_000_000;
-                zeros_count += 8;
-            }
-
-            // Divide by 10^4
-            while n % 10_000 == 0 {
-                n /= 10_000;
-                zeros_count += 4;
-            }
-
-            // Divide by 10^2
-            while n % 100 == 0 {
-                n /= 100;
-                zeros_count += 2;
-            }
-
-            // Divide by 10
-            while n % 10 == 0 {
-                n /= 10;
-                zeros_count += 1;
+            for (divisor, zeros) in [(100_000_000, 8), (10_000, 4), (100, 2), (10, 1)] {
+                while n % divisor == 0 {
+                    n /= divisor;
+                    zeros_count += zeros;
+                }
             }
 
             (n, zeros_count)
