@@ -65,13 +65,13 @@ impl Decimal {
         if input_str.is_empty() {
             return Err(ParseError::Syntax);
         }
-        #[allow(clippy::indexing_slicing)] // The string is not empty.
+        #[expect(clippy::indexing_slicing)] // The string is not empty.
         let sign = match input_str[0] {
             b'-' => Sign::Negative,
             b'+' => Sign::Positive,
             _ => Sign::None,
         };
-        #[allow(clippy::indexing_slicing)] // The string is not empty.
+        #[expect(clippy::indexing_slicing)] // The string is not empty.
         let no_sign_str = if sign == Sign::None {
             input_str
         } else {

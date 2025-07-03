@@ -24,6 +24,8 @@ pub mod ffi {
         Two,
         Few,
         Many,
+        // This is an output type, so the default mostly impacts deferred initialization.
+        #[diplomat::attr(auto, default)]
         Other,
     }
 

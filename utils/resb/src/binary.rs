@@ -438,7 +438,7 @@ where
 fn read_u16(input: &[u8]) -> Result<(u16, &[u8]), BinaryDeserializerError> {
     // Safe to unwrap at the end of this because `try_into()` for arrays will
     // only fail if the slice is the wrong size.
-    #[allow(clippy::unwrap_used)]
+    #[expect(clippy::unwrap_used)]
     let bytes = get_subslice(input, ..core::mem::size_of::<u16>())?
         .try_into()
         .unwrap();

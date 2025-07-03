@@ -614,7 +614,7 @@ impl Japanese {
         if let Some(year) = era.split('-').nth(1) {
             if let Ok(ref int) = year.parse::<i32>() {
                 if let Ok(index) = data.binary_search_by(|(d, _)| d.year.cmp(int)) {
-                    #[allow(clippy::expect_used)] // see expect message
+                    #[expect(clippy::expect_used)] // see expect message
                     let (era_start, code) = data
                         .get(index)
                         .expect("Indexing from successful binary search must succeed");

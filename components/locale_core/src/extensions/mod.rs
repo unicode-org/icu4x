@@ -194,7 +194,7 @@ impl Extensions {
             && self.other.is_empty()
     }
 
-    #[allow(clippy::type_complexity)]
+    #[expect(clippy::type_complexity)]
     pub(crate) fn as_tuple(
         &self,
     ) -> (

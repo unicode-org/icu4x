@@ -28,6 +28,7 @@ pub mod ffi {
     #[diplomat::rust_link(icu::decimal::options::GroupingStrategy, Enum)]
     #[diplomat::enum_convert(icu_decimal::options::GroupingStrategy, needs_wildcard)]
     pub enum DecimalGroupingStrategy {
+        #[diplomat::attr(auto, default)]
         Auto,
         Never,
         Always,
@@ -78,7 +79,7 @@ pub mod ffi {
 
         /// Creates a new [`DecimalFormatter`] from preconstructed locale data.
         #[diplomat::rust_link(icu::decimal::provider::DecimalSymbolsV1, Struct)]
-        #[allow(clippy::too_many_arguments)]
+        #[expect(clippy::too_many_arguments)]
         pub fn create_with_manual_data(
             plus_sign_prefix: &DiplomatStr,
             plus_sign_suffix: &DiplomatStr,

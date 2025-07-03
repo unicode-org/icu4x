@@ -28,7 +28,7 @@ export class TimeZoneInfo {
     /**
      * See the [Rust documentation for `id`](https://docs.rs/icu/2.0.0/icu/time/struct.TimeZoneInfo.html#method.id) for more information.
      */
-    id(): TimeZone;
+    get id(): TimeZone;
 
     /**
      * Sets the datetime at which to interpret the time zone
@@ -49,12 +49,14 @@ export class TimeZoneInfo {
     /**
      * See the [Rust documentation for `zone_name_timestamp`](https://docs.rs/icu/2.0.0/icu/time/struct.TimeZoneInfo.html#method.zone_name_timestamp) for more information.
      */
-    zoneNameDateTime(): IsoDateTime | null;
+    get zoneNameDateTime(): IsoDateTime | null;
 
     /**
      * See the [Rust documentation for `with_variant`](https://docs.rs/icu/2.0.0/icu/time/struct.TimeZoneInfo.html#method.with_variant) for more information.
      */
     withVariant(timeVariant: TimeZoneVariant): TimeZoneInfo;
+
+    get offset(): UtcOffset | null;
 
     /**
      * Infers the zone variant.

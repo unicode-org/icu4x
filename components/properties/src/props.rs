@@ -3198,8 +3198,7 @@ mod test_enumerated_property_completeness {
 
         assert!(
             fmt_diff.is_empty(),
-            "Values defined in data do not match values defined in consts. Difference:\n{}",
-            fmt_diff
+            "Values defined in data do not match values defined in consts. Difference:\n{fmt_diff}"
         );
     }
 

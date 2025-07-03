@@ -114,8 +114,6 @@ pub mod unstable {
     pub mod locale;
     #[cfg(feature = "locale")]
     pub mod locale_directionality;
-    #[cfg(feature = "experimental")]
-    pub mod measure_unit_parser;
     #[cfg(feature = "normalizer")]
     pub mod normalizer;
     #[cfg(feature = "normalizer")]
@@ -154,8 +152,6 @@ pub mod unstable {
     pub mod timezone;
     #[cfg(feature = "datetime")]
     pub mod timezone_formatter;
-    #[cfg(feature = "experimental")]
-    pub mod units_converter;
     #[cfg(any(feature = "datetime", feature = "timezone"))]
     pub mod variant_offset;
     #[cfg(feature = "calendar")]

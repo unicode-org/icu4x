@@ -36,9 +36,7 @@ mod linux_tests {
 
             // Skipping "C" and those ending with "UTF-8", as they cannot be converted
             // into the locale
-            if !parts.iter().any(|&part| part == "C")
-                && (parts.len() > 1 && parts[parts.len() - 1] != "UTF-8")
-            {
+            if !parts.contains(&"C") && (parts.len() > 1 && parts[parts.len() - 1] != "UTF-8") {
                 let mut locale_converted: Locale = locale.parse().unwrap();
                 locale_converted.extensions.unicode.clear();
                 assert_eq!(locale_converted, locale.parse().unwrap());
@@ -87,7 +85,7 @@ mod macos_test {
                 }
             }
             Err(e) => {
-                panic!("{:?}", e)
+                panic!("{e:?}")
             }
         }
     }

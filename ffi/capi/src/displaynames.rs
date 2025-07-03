@@ -52,6 +52,7 @@ pub mod ffi {
     #[diplomat::rust_link(icu::experimental::displaynames::Fallback, Enum)]
     #[diplomat::enum_convert(icu_experimental::displaynames::Fallback, needs_wildcard)]
     pub enum DisplayNamesFallback {
+        #[diplomat::attr(auto, default)]
         Code,
         None,
     }
@@ -59,6 +60,7 @@ pub mod ffi {
     #[diplomat::rust_link(icu::experimental::displaynames::LanguageDisplay, Enum)]
     #[diplomat::enum_convert(icu_experimental::displaynames::LanguageDisplay, needs_wildcard)]
     pub enum LanguageDisplay {
+        #[diplomat::attr(auto, default)]
         Dialect,
         Standard,
     }

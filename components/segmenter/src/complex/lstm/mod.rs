@@ -24,7 +24,6 @@ impl Iterator for LstmSegmenterIterator<'_, '_> {
     type Item = usize;
 
     fn next(&mut self) -> Option<Self::Item> {
-        #[allow(clippy::indexing_slicing)] // pos_utf8 in range
         loop {
             let is_e = self.bies.next()?;
             self.pos_utf8 += self.input[self.pos_utf8..].chars().next()?.len_utf8();
@@ -76,9 +75,9 @@ impl<'data> LstmSegmenter<'data> {
     ) -> Self {
         let LstmData::Float32(lstm) = lstm;
         let time_w = MatrixZero::from(&lstm.time_w);
-        #[allow(clippy::unwrap_used)] // shape (2, 4, hunits)
+        #[expect(clippy::unwrap_used)] // shape (2, 4, hunits)
         let timew_fw = time_w.submatrix(0).unwrap();
-        #[allow(clippy::unwrap_used)] // shape (2, 4, hunits)
+        #[expect(clippy::unwrap_used)] // shape (2, 4, hunits)
         let timew_bw = time_w.submatrix(1).unwrap();
         Self {
             dic: lstm.dic.as_borrowed(),
@@ -213,7 +212,7 @@ impl<'l, 'data> BiesIterator<'l, 'data> {
             if i + 1 < input_seq.len() {
                 h_bw.as_mut().copy_submatrix::<1>(i + 1, i);
             }
-            #[allow(clippy::unwrap_used)]
+            #[expect(clippy::unwrap_used)]
             compute_hc(
                 segmenter.embedding.submatrix::<1>(g_id as usize).unwrap(), /* shape (dict.len() + 1, hunit), g_id is at most dict.len() */
                 h_bw.submatrix_mut(i).unwrap(), // shape (input_seq.len(), hunits)
@@ -246,7 +245,7 @@ impl Iterator for BiesIterator<'_, '_> {
     fn next(&mut self) -> Option<Self::Item> {
         let (i, g_id) = self.input_seq.next()?;
 
-        #[allow(clippy::unwrap_used)]
+        #[expect(clippy::unwrap_used)]
         compute_hc(
             self.segmenter
                 .embedding
@@ -259,7 +258,7 @@ impl Iterator for BiesIterator<'_, '_> {
             self.segmenter.fw_b,
         );
 
-        #[allow(clippy::unwrap_used)] // shape (input_seq.len(), hunits)
+        #[expect(clippy::unwrap_used)] // shape (input_seq.len(), hunits)
         let curr_bw = self.h_bw.submatrix::<1>(i).unwrap();
         let mut weights = [0.0; 4];
         let mut curr_est = MatrixBorrowedMut {
@@ -268,7 +267,7 @@ impl Iterator for BiesIterator<'_, '_> {
         };
         curr_est.add_dot_2d(self.curr_fw.as_borrowed(), self.segmenter.timew_fw);
         curr_est.add_dot_2d(curr_bw, self.segmenter.timew_bw);
-        #[allow(clippy::unwrap_used)] // both shape (4)
+        #[expect(clippy::unwrap_used)] // both shape (4)
         curr_est.add(self.segmenter.time_b).unwrap();
         // For correct BIES weight calculation we'd now have to apply softmax, however
         // we're only doing a naive argmax, so a monotonic function doesn't make a difference.
@@ -301,23 +300,23 @@ fn compute_hc<'a>(
     s_t.as_mut().add_dot_3d_2(x_t, w);
     s_t.as_mut().add_dot_3d_1(h_tm1.as_borrowed(), u);
 
-    #[allow(clippy::unwrap_used)] // first dimension is 4
+    #[expect(clippy::unwrap_used)] // first dimension is 4
     s_t.submatrix_mut::<1>(0).unwrap().sigmoid_transform();
-    #[allow(clippy::unwrap_used)] // first dimension is 4
+    #[expect(clippy::unwrap_used)] // first dimension is 4
     s_t.submatrix_mut::<1>(1).unwrap().sigmoid_transform();
-    #[allow(clippy::unwrap_used)] // first dimension is 4
+    #[expect(clippy::unwrap_used)] // first dimension is 4
     s_t.submatrix_mut::<1>(2).unwrap().tanh_transform();
-    #[allow(clippy::unwrap_used)] // first dimension is 4
+    #[expect(clippy::unwrap_used)] // first dimension is 4
     s_t.submatrix_mut::<1>(3).unwrap().sigmoid_transform();
 
-    #[allow(clippy::unwrap_used)] // first dimension is 4
+    #[expect(clippy::unwrap_used)] // first dimension is 4
     c_tm1.convolve(
         s_t.as_borrowed().submatrix(0).unwrap(),
         s_t.as_borrowed().submatrix(2).unwrap(),
         s_t.as_borrowed().submatrix(1).unwrap(),
     );
 
-    #[allow(clippy::unwrap_used)] // first dimension is 4
+    #[expect(clippy::unwrap_used)] // first dimension is 4
     h_tm1.mul_tanh(s_t.as_borrowed().submatrix(3).unwrap(), c_tm1.as_borrowed());
 }
 

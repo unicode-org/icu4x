@@ -209,6 +209,7 @@ const TZDB_GLOB: &[&str] = &[
     "asia",
     "australasia",
     "backward",
+    "backzone",
     "etcetera",
     "europe",
     "northamerica",

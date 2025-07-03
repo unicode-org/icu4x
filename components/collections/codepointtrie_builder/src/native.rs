@@ -91,7 +91,7 @@ where
     };
 
     if error != 0 {
-        panic!("cpt builder returned error code {}", error);
+        panic!("cpt builder returned error code {error}");
     }
 
     let CodePointTrieBuilderData::ValuesByCodePoint(values) = cpt_builder.data;
@@ -105,7 +105,7 @@ where
                 umutablecptrie_set(builder, cp as u32, value, &mut error);
             }
             if error != 0 {
-                panic!("cpt builder returned error code {}", error);
+                panic!("cpt builder returned error code {error}");
             }
         }
     }
@@ -118,7 +118,7 @@ where
     // leak-safety: we clean up `built` except in panicky codepaths
     let built = unsafe { umutablecptrie_buildImmutable(builder, trie_type, width, &mut error) };
     if error != 0 {
-        panic!("cpt builder returned error code {}", error);
+        panic!("cpt builder returned error code {error}");
     }
     unsafe {
         // safety: builder is a valid UMutableCPTrie

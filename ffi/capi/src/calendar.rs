@@ -20,6 +20,9 @@ pub mod ffi {
     #[diplomat::rust_link(icu::calendar::AnyCalendarKind, Enum)]
     pub enum CalendarKind {
         /// The kind of an Iso calendar
+        // AnyCalendarKind in Rust doesn't have a default, but it is useful to have one
+        // here for consistent behavior.
+        #[diplomat::attr(auto, default)]
         Iso = 0,
         /// The kind of a Gregorian calendar
         Gregorian = 1,

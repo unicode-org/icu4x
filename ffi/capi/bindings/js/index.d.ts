@@ -116,10 +116,6 @@ export { LocaleDirectionality } from "./LocaleDirectionality"
 
 export { Logger } from "./Logger"
 
-export { MeasureUnit } from "./MeasureUnit"
-
-export { MeasureUnitParser } from "./MeasureUnitParser"
-
 export { ComposingNormalizer } from "./ComposingNormalizer"
 
 export { DecomposingNormalizer } from "./DecomposingNormalizer"
@@ -197,10 +193,6 @@ export { TimeZone } from "./TimeZone"
 export { TimeZoneInfo } from "./TimeZoneInfo"
 
 export { TimeZoneFormatter } from "./TimeZoneFormatter"
-
-export { UnitsConverter } from "./UnitsConverter"
-
-export { UnitsConverterFactory } from "./UnitsConverterFactory"
 
 export { UtcOffset } from "./UtcOffset"
 

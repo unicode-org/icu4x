@@ -44,7 +44,7 @@ impl ElementKind {
     // returns true if the element has no effect in the location. this is not equivalent to
     // syntactically being allowed in that location.
     pub(crate) fn skipped_in(self, location: ElementLocation) -> bool {
-        #[allow(clippy::match_like_matches_macro)] // I think the explicit match is clearer here
+        #[expect(clippy::match_like_matches_macro)] // I think the explicit match is clearer here
         match (location, self) {
             (ElementLocation::Source, Self::Cursor) => true,
             (ElementLocation::Target, Self::AnchorStart | Self::AnchorEnd) => true,
@@ -229,7 +229,6 @@ pub(crate) struct HalfRule {
 }
 
 #[derive(Debug, Clone)]
-#[allow(clippy::large_enum_variant)]
 pub(crate) enum Rule {
     GlobalFilter(FilterSet),
     GlobalInverseFilter(FilterSet),
@@ -414,8 +413,6 @@ where
         loop {
             self.skip_whitespace();
             if let Some(start) = self.peek_index() {
-                // the returned index comes from `self.source`'s `char_indices`.
-                #[allow(clippy::indexing_slicing)]
                 let start_source = &self.source[start..];
                 if start_source.starts_with("use variable range 0x") {
                     let conv_idx = start_source.find(['>', '<', '→', '←', '↔']);
@@ -476,12 +473,12 @@ where
         ) {
             (true, false, false, false) => {
                 // by match, forward_filter.is_some() is true
-                #[allow(clippy::unwrap_used)]
+                #[expect(clippy::unwrap_used)]
                 return Ok(Rule::GlobalFilter(forward_filter.unwrap()));
             }
             (false, false, true, false) => {
                 // by match, reverse_filter.is_some() is true
-                #[allow(clippy::unwrap_used)]
+                #[expect(clippy::unwrap_used)]
                 return Ok(Rule::GlobalInverseFilter(reverse_filter.unwrap()));
             }
             _ => {}
@@ -536,7 +533,7 @@ where
     }
 
     // consumes everything between '::' and ';', exclusive.
-    #[allow(clippy::type_complexity)] // used internally in one place only
+    #[expect(clippy::type_complexity)] // used internally in one place only
     fn parse_filter_or_transform_rule_parts(
         &mut self,
     ) -> Result<(
@@ -881,7 +878,6 @@ where
         // first_offset is valid by `Chars`, and the inclusive end_offset
         // is valid because we only set it to the indices of ASCII chars,
         // which are all exactly 1 UTF-8 byte
-        #[allow(clippy::indexing_slicing)]
         self.source[first_offset..=end_offset]
             .parse()
             .map_err(|_| CompileErrorKind::InvalidNumber.with_offset(end_offset))
@@ -995,7 +991,6 @@ where
 
         // validate_hex_digits ensures that chars (including the last one) are ascii hex digits,
         // which are all exactly one UTF-8 byte long, so slicing on these offsets always respects char boundaries
-        #[allow(clippy::indexing_slicing)]
         let hex_source = &self.source[first_offset..=end_offset];
         let num = u32::from_str_radix(hex_source, 16)
             .map_err(|_| CompileErrorKind::Internal("expected valid hex escape"))?;
@@ -1042,7 +1037,6 @@ where
         let pre_offset = self.must_peek_index()?;
         // pre_offset is a valid index because self.iter (used in must_peek_index)
         // was created from self.source
-        #[allow(clippy::indexing_slicing)]
         let set_source = &self.source[pre_offset..];
         let (set, consumed_bytes) = icu_unicodeset_parse::parse_unstable_with_variables(
             set_source,
@@ -1424,7 +1418,7 @@ fn test_variable_rules_err() {
 
     for source in sources {
         if let Ok(rules) = parse(source) {
-            panic!("Parsed invalid source {:?}: {:?}", source, rules);
+            panic!("Parsed invalid source {source:?}: {rules:?}");
         }
     }
 }
@@ -1468,7 +1462,7 @@ fn test_global_filters_err() {
 
     for source in sources {
         if let Ok(rules) = parse(source) {
-            panic!("Parsed invalid source {:?}: {:?}", source, rules);
+            panic!("Parsed invalid source {source:?}: {rules:?}");
         }
     }
 }
@@ -1500,7 +1494,7 @@ fn test_function_calls_err() {
 
     for source in sources {
         if let Ok(rules) = parse(source) {
-            panic!("Parsed invalid source {:?}: {:?}", source, rules);
+            panic!("Parsed invalid source {source:?}: {rules:?}");
         }
     }
 }
@@ -1546,7 +1540,7 @@ fn test_transform_rules_err() {
 
     for source in sources {
         if let Ok(rules) = parse(source) {
-            panic!("Parsed invalid source {:?}: {:?}", source, rules);
+            panic!("Parsed invalid source {source:?}: {rules:?}");
         }
     }
 }

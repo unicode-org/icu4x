@@ -146,7 +146,7 @@ impl From<&cldr_serde::displaynames::language::Resource> for LocaleDisplayNames<
         let mut long_names = BTreeMap::new();
         let mut menu_names = BTreeMap::new();
         for entry in other.main.value.localedisplaynames.languages.iter() {
-            #[allow(clippy::collapsible_if)] // consistency
+            #[expect(clippy::collapsible_if)] // consistency
             if let Some(locale) = entry.0.strip_suffix(ALT_SHORT_SUBSTRING) {
                 if locale.contains('-') {
                     short_names.insert(locale, entry.1.as_ref());

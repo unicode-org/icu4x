@@ -197,7 +197,7 @@ impl VariantOffsetsCalculator {
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
     #[inline]
-    #[allow(clippy::new_ret_no_self)]
+    #[expect(clippy::new_ret_no_self)]
     pub const fn new() -> VariantOffsetsCalculatorBorrowed<'static> {
         VariantOffsetsCalculatorBorrowed {
             offset_period: crate::provider::Baked::SINGLETON_TIMEZONE_VARIANTS_OFFSETS_V1,

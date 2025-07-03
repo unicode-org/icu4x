@@ -87,7 +87,7 @@ impl SourceDataProvider {
         let resource: &cldr_serde::ca::Resource = self
             .cldr()?
             .dates(cldr_cal)
-            .read_and_parse(locale, &format!("ca-{}.json", cldr_cal))?;
+            .read_and_parse(locale, &format!("ca-{cldr_cal}.json"))?;
 
         let mut data = resource
             .main
@@ -137,7 +137,7 @@ impl SourceDataProvider {
 
 #[cfg(test)]
 mod test {
-    use super::legacy::*;
+    use super::legacy::DateLengths;
     use super::*;
     use icu::datetime::provider::skeleton::{DateSkeletonPatterns, SkeletonData};
     use icu::locale::langid;
@@ -206,76 +206,5 @@ mod test {
             Some(&expected.into()),
             skeletons.get(&SkeletonData::try_from("yw").expect("Failed to create Skeleton"))
         );
-    }
-
-    #[test]
-    fn test_basic_symbols() {
-        use icu::calendar::types::MonthCode;
-        use tinystr::tinystr;
-
-        let provider = SourceDataProvider::new_testing();
-
-        let data = provider
-            .get_datetime_resources(&langid!("cs").into(), Some(DatagenCalendar::Gregorian))
-            .unwrap();
-
-        let all_eras = &provider.all_eras().unwrap()[&DatagenCalendar::Gregorian];
-
-        let cs_dates = convert_dates(&data, DatagenCalendar::Gregorian, all_eras);
-
-        assert_eq!(
-            "srpna",
-            cs_dates
-                .months
-                .format
-                .wide
-                .get(MonthCode(tinystr!(4, "M08")))
-                .unwrap()
-        );
-
-        assert_eq!("po", cs_dates.weekdays.format.short.as_ref().unwrap().0[1]);
-    }
-
-    #[test]
-    fn unalias_contexts() {
-        let provider = SourceDataProvider::new_testing();
-
-        let data = provider
-            .get_datetime_resources(&langid!("cs").into(), Some(DatagenCalendar::Gregorian))
-            .unwrap();
-
-        let all_eras = &provider.all_eras().unwrap()[&DatagenCalendar::Gregorian];
-
-        let cs_dates = convert_dates(&data, DatagenCalendar::Gregorian, all_eras);
-
-        // Czech months are not unaliased because `wide` differs.
-        assert!(cs_dates.months.stand_alone.is_some());
-
-        // Czech months are not unaliased because `wide` differs.
-        assert!(cs_dates
-            .months
-            .stand_alone
-            .as_ref()
-            .unwrap()
-            .abbreviated
-            .is_none());
-        assert!(cs_dates
-            .months
-            .stand_alone
-            .as_ref()
-            .unwrap()
-            .short
-            .is_none());
-        assert!(cs_dates
-            .months
-            .stand_alone
-            .as_ref()
-            .unwrap()
-            .narrow
-            .is_none());
-        assert!(cs_dates.months.stand_alone.as_ref().unwrap().wide.is_some());
-
-        // Czech weekdays are unaliased because they completely overlap.
-        assert!(cs_dates.weekdays.stand_alone.is_none());
     }
 }

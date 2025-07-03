@@ -19,7 +19,7 @@ macro_rules! impl_insert {
         fn $fn_name(&mut self, elt: $elt_type) -> char {
             // pass 1 is responsible for this
             debug_assert!(self.$field.current < self.$($next_field)*);
-            #[allow(clippy::unwrap_used)] // the whole PUP (15) consists of valid chars
+            // the whole PUP (15) consists of valid chars
             let standin = char::try_from(self.$field.current).unwrap();
             self.$field.vec.push(elt);
             self.$field.current += 1;
@@ -159,12 +159,12 @@ impl MutVarTable {
             (0, 0) => ds::VarTable::RESERVED_PURE_CURSOR,
             (left, 0) => {
                 debug_assert!(left <= self.counts.max_left_placeholders);
-                #[allow(clippy::unwrap_used)] // constructor checks this via num_totals
+                #[expect(clippy::unwrap_used)] // constructor checks this via num_totals
                 char::try_from(self.left_placeholder_base + left - 1).unwrap()
             }
             (0, right) => {
                 debug_assert!(right <= self.counts.max_right_placeholders);
-                #[allow(clippy::unwrap_used)] // constructor checks this via num_totals
+                #[expect(clippy::unwrap_used)] // constructor checks this via num_totals
                 char::try_from(self.right_placeholder_base + right - 1).unwrap()
             }
             _ => {
@@ -179,7 +179,7 @@ impl MutVarTable {
         // -1 because backrefs are 1-indexed
         let standin = self.backref_base + backref_num - 1;
         debug_assert!(standin <= ds::VarTable::MAX_DYNAMIC as u32);
-        #[allow(clippy::unwrap_used)] // constructor checks this via num_totals
+        #[expect(clippy::unwrap_used)] // constructor checks this via num_totals
         char::try_from(standin).unwrap()
     }
 
@@ -222,8 +222,8 @@ enum LiteralOrStandin<'a> {
 impl Display for LiteralOrStandin<'_> {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         match *self {
-            LiteralOrStandin::Literal(s) => write!(f, "{}", s),
-            LiteralOrStandin::Standin(c) => write!(f, "{}", c),
+            LiteralOrStandin::Literal(s) => write!(f, "{s}"),
+            LiteralOrStandin::Standin(c) => write!(f, "{c}"),
         }
     }
 }
@@ -302,7 +302,6 @@ impl<'a, 'p> Pass2<'a, 'p> {
             return c;
         }
         // the first pass ensures that all variables are defined
-        #[allow(clippy::indexing_slicing)]
         let definition = self.var_definitions[var];
         let compiled = self.compile_section(definition, parse::ElementLocation::VariableDefinition);
         let standin = self.var_table.insert_compound(compiled);

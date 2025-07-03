@@ -2,11 +2,12 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use super::legacy::*;
+use super::legacy::{DateLengths, LengthPatterns, TimeLengths};
 use crate::cldr_serde;
 use icu::datetime::provider::pattern;
 use icu::datetime::provider::pattern::CoarseHourCycle;
 use icu::datetime::provider::skeleton::*;
+use icu_provider::DataLocale;
 
 impl From<&cldr_serde::ca::LengthPatterns> for LengthPatterns<'_> {
     fn from(other: &cldr_serde::ca::LengthPatterns) -> Self {
@@ -103,8 +104,8 @@ impl From<&cldr_serde::ca::Dates> for DateLengths<'_> {
     }
 }
 
-impl From<&cldr_serde::ca::Dates> for TimeLengths<'_> {
-    fn from(other: &cldr_serde::ca::Dates) -> Self {
+impl TimeLengths<'_> {
+    pub(crate) fn from_serde(other: &cldr_serde::ca::Dates, locale: &DataLocale) -> Self {
         let length_combinations_v1 = GenericLengthPatterns::from(&other.datetime_formats);
         let skeletons_v1 = DateSkeletonPatterns::from(&other.datetime_formats.available_formats);
 
@@ -138,10 +139,9 @@ impl From<&cldr_serde::ca::Dates> for TimeLengths<'_> {
         let iter = arr.iter().flatten();
         for hour_cycle in iter {
             if let Some(preferred_hour_cycle) = preferred_hour_cycle {
-                assert_eq!(
-                    *hour_cycle, preferred_hour_cycle,
-                    "A locale contained a mix of coarse hour cycle types"
-                );
+                if *hour_cycle != preferred_hour_cycle {
+                    log::warn!("{locale:?} contained a mix of coarse hour cycle types ({hour_cycle:?}, {preferred_hour_cycle:?})");
+                }
             } else {
                 preferred_hour_cycle = Some(*hour_cycle);
             }

@@ -23,6 +23,7 @@ pub mod ffi {
     #[diplomat::enum_convert(fixed_decimal::Sign, needs_wildcard)]
     pub enum DecimalSign {
         /// No sign (implicitly positive, e.g., 1729).
+        #[diplomat::attr(auto, default)]
         None,
         /// A negative sign, e.g., -1729.
         Negative,
@@ -34,6 +35,7 @@ pub mod ffi {
     #[diplomat::rust_link(fixed_decimal::SignDisplay, Enum)]
     #[diplomat::enum_convert(fixed_decimal::SignDisplay, needs_wildcard)]
     pub enum DecimalSignDisplay {
+        #[diplomat::attr(auto, default)]
         Auto,
         Never,
         Always,
@@ -45,6 +47,7 @@ pub mod ffi {
     #[diplomat::rust_link(fixed_decimal::RoundingIncrement, Enum)]
     #[diplomat::enum_convert(fixed_decimal::RoundingIncrement, needs_wildcard)]
     pub enum DecimalRoundingIncrement {
+        #[diplomat::attr(auto, default)]
         MultiplesOf1,
         MultiplesOf2,
         MultiplesOf5,
