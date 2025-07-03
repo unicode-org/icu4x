@@ -192,7 +192,7 @@ databake = { version = "0.2.0", path = "utils/databake", default-features = fals
 databake-derive = { version = "0.2.0", path = "utils/databake/derive", default-features = false }
 deduplicating_array = { version = "0.1.6", path = "utils/deduplicating_array", default-features = false }
 fixed_decimal = { version = "0.7.0", path = "utils/fixed_decimal", default-features = false }
-ixdtf = { version = "0.6.0-dev", path = "utils/ixdtf", default-features = false }
+ixdtf = { version = "0.6.0", path = "utils/ixdtf", default-features = false }
 litemap = { version = "0.8.0", path = "utils/litemap", default-features = false }
 potential_utf = { version = "0.1.1", path = "utils/potential_utf", default-features = false }
 tzif = { version = "0.4.0", path = "utils/tzif", default-features = false }
