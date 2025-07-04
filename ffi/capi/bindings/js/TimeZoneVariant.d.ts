@@ -15,6 +15,7 @@ export class TimeZoneVariant {
 
     static Standard : TimeZoneVariant;
     static Daylight : TimeZoneVariant;
+    static Sundown : TimeZoneVariant;
 
 
     /**

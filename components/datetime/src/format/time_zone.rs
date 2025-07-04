@@ -413,6 +413,13 @@ impl FormatTimeZone for SpecificLocationFormat {
             return Ok(Err(FormatTimeZoneError::NamesNotLoaded));
         };
 
+        let pattern = match variant {
+            TimeZoneVariant::Standard => &locations.pattern_standard,
+            TimeZoneVariant::Daylight => &locations.pattern_daylight,
+            // No standard pattern for other variants
+            _ => return Ok(Err(FormatTimeZoneError::Fallback)),
+        };
+
         let Some(location) = locations
             .locations
             .get(&time_zone_id)
@@ -421,14 +428,7 @@ impl FormatTimeZone for SpecificLocationFormat {
             return Ok(Err(FormatTimeZoneError::Fallback));
         };
 
-        match variant {
-            TimeZoneVariant::Standard => &locations.pattern_standard,
-            TimeZoneVariant::Daylight => &locations.pattern_daylight,
-            // Compiles out due to tilde dependency on `icu_time`
-            _ => unreachable!(),
-        }
-        .interpolate([location])
-        .write_to(sink)?;
+        pattern.interpolate([location]).write_to(sink)?;
 
         Ok(Ok(()))
     }

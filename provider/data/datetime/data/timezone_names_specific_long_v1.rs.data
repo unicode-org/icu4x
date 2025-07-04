@@ -5,7 +5,7 @@
 ///
 /// Using this implementation will embed the following data in the binary's data segment:
 /// * 940B for the lookup data structure (192 data identifiers)
-/// * 725436B[^1] for the actual data (170 unique structs)
+/// * 725643B[^1] for the actual data (170 unique structs)
 ///
 /// [^1]: these numbers can be smaller in practice due to linker deduplication
 ///
@@ -362,7 +362,7 @@ macro_rules! __impl_timezone_names_specific_long_v1 {
                         },
                         overrides: unsafe {
                             #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"gblon\0\0\0\x01iedub\0\0\0\x01utc\0\0\0\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x03\0\x13\0&\0British Summer TimeIrish Standard TimeCoordinated Universal Time") })
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"eheai\0\0\0\x02gblon\0\0\0\x01iedub\0\0\0\x01macas\0\0\0\x02utc\0\0\0\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x05\0\x1B\0.\0A\0U\0Western Sahara Ramadan TimeBritish Summer TimeIrish Standard TimeMorocco Ramadan TimeCoordinated Universal Time") })
                         },
                         use_standard: unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x02\x03\x04\x05\x1E\x1F!\"$()-.0189:;=BCGHIJKLQSTVXZ^_`acehiknuvz|}~\x80\x81\x85\x87\x88\x89\x8A\x8B\x8D\x8E\x90\x92\x96\x99\x9A\x9B\x9E") },
                     },
@@ -373,7 +373,7 @@ macro_rules! __impl_timezone_names_specific_long_v1 {
                         },
                         overrides: unsafe {
                             #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"gblon\0\0\0\x01iedub\0\0\0\x01utc\0\0\0\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x03\0\x13\0&\0British Summer TimeIrish Standard TimeCoordinated Universal Time") })
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"eheai\0\0\0\x02gblon\0\0\0\x01iedub\0\0\0\x01macas\0\0\0\x02utc\0\0\0\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x05\0\x1B\0.\0A\0U\0Western Sahara Ramadan TimeBritish Summer TimeIrish Standard TimeMorocco Ramadan TimeCoordinated Universal Time") })
                         },
                         use_standard: unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x02\x03\x04\x05\x1E\x1F!\"$()-.0189:;=BCGHIJKLQSTVXZ^_`acehiknuvz|}~\x80\x81\x85\x87\x88\x89\x8A\x8B\x8D\x8E\x90\x92\x96\x99\x9A\x9B\x9E") },
                     },
@@ -384,7 +384,7 @@ macro_rules! __impl_timezone_names_specific_long_v1 {
                         },
                         overrides: unsafe {
                             #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"gblon\0\0\0\x01iedub\0\0\0\x01utc\0\0\0\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x03\0\x13\0&\0British Summer TimeIrish Standard TimeCoordinated Universal Time") })
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"eheai\0\0\0\x02gblon\0\0\0\x01iedub\0\0\0\x01macas\0\0\0\x02utc\0\0\0\0\0\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x05\0\x1B\0.\0A\0U\0Western Sahara Ramadan TimeBritish Summer TimeIrish Standard TimeMorocco Ramadan TimeCoordinated Universal Time") })
                         },
                         use_standard: unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x02\x03\x04\x05\x1E\x1F!\"$()-.0189:;=BCGHIJKLQSTVXZ^_`acehiknuvz|}~\x80\x81\x85\x87\x88\x89\x8A\x8B\x8D\x8E\x90\x92\x96\x99\x9A\x9B\x9E") },
                     },

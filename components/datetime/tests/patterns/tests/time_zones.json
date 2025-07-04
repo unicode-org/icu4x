@@ -263,5 +263,39 @@
       "xxxx": "+0000",
       "XXXXX": "Z"
     }
+  },
+  {
+    "locale": "en-GB",
+    "datetime": "2021-07-11T12:00:00.000+01[Africa/Casablanca]",
+    "expectations": {
+      "z": "CET",
+      "zzzz": "Central European Standard Time",
+
+      "v": "CET",
+      "vvvv": "Central European Time",
+
+      "VVV": "Casablanca",
+      "VVVV": "Morocco Time",
+
+      "O": "GMT+1",
+      "OOOO": "GMT+01:00"
+    }
+  },
+  {
+    "locale": "en-GB",
+    "datetime": "2021-07-11T12:00:00.000+00[Africa/Casablanca]",
+    "expectations": {
+      "z": "GMT+0",
+      "zzzz": "Morocco Ramadan Time",
+
+      "v": "CET",
+      "vvvv": "Central European Time",
+
+      "VVV": "Casablanca",
+      "VVVV": "Morocco Time",
+
+      "O": "GMT+0",
+      "OOOO": "GMT+00:00"
+    }
   }
 ]
