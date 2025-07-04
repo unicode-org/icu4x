@@ -28,7 +28,7 @@ use icu::properties::props::{GeneralCategory, GeneralCategoryGroup};
 use icu::properties::CodePointMapData;
 use icu_provider::DataProvider;
 
-use icu::experimental::dimension::provider::currency::essential::*;
+use icu::experimental::dimension::provider::currency::essentials::*;
 use icu_provider::prelude::*;
 
 /// Returns the pattern selection for a currency.

@@ -255,7 +255,7 @@ macro_rules! registry(
             icu::experimental::compactdecimal::provider::ShortCompactDecimalFormatDataV1: ShortCompactDecimalFormatDataV1,
             icu::experimental::dimension::provider::currency::compact::ShortCurrencyCompactV1: ShortCurrencyCompactV1,
             icu::experimental::dimension::provider::currency::displayname::CurrencyDisplaynameV1: CurrencyDisplaynameV1,
-            icu::experimental::dimension::provider::currency::essential::CurrencyEssentialsV1: CurrencyEssentialsV1,
+            icu::experimental::dimension::provider::currency::essentials::CurrencyEssentialsV1: CurrencyEssentialsV1,
             icu::experimental::dimension::provider::currency::patterns::CurrencyPatternsDataV1: CurrencyPatternsDataV1,
             icu::experimental::dimension::provider::currency::extended::CurrencyExtendedDataV1: CurrencyExtendedDataV1,
             icu::experimental::dimension::provider::percent::PercentEssentialsV1: PercentEssentialsV1,

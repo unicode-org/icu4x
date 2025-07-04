@@ -5,7 +5,7 @@
 pub mod compact;
 pub mod compact_count_ule;
 pub mod displayname;
-pub mod essential;
+pub mod essentials;
 pub mod extended;
 pub mod patterns;
 pub mod ule;

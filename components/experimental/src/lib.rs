@@ -104,7 +104,7 @@ pub mod provider {
         super::compactdecimal::provider::ShortCompactDecimalFormatDataV1::INFO,
         super::dimension::provider::currency::compact::ShortCurrencyCompactV1::INFO,
         super::dimension::provider::currency::displayname::CurrencyDisplaynameV1::INFO,
-        super::dimension::provider::currency::essential::CurrencyEssentialsV1::INFO,
+        super::dimension::provider::currency::essentials::CurrencyEssentialsV1::INFO,
         super::dimension::provider::currency::patterns::CurrencyPatternsDataV1::INFO,
         super::dimension::provider::currency::extended::CurrencyExtendedDataV1::INFO,
         super::dimension::provider::percent::PercentEssentialsV1::INFO,
