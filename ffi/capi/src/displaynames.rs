@@ -42,6 +42,7 @@ pub mod ffi {
 
     #[diplomat::rust_link(icu::experimental::displaynames::Style, Enum)]
     #[diplomat::enum_convert(icu_experimental::displaynames::Style, needs_wildcard)]
+    #[non_exhaustive]
     pub enum DisplayNamesStyle {
         Narrow,
         Short,
@@ -51,6 +52,7 @@ pub mod ffi {
 
     #[diplomat::rust_link(icu::experimental::displaynames::Fallback, Enum)]
     #[diplomat::enum_convert(icu_experimental::displaynames::Fallback, needs_wildcard)]
+    #[non_exhaustive]
     pub enum DisplayNamesFallback {
         #[diplomat::attr(auto, default)]
         Code,
@@ -59,6 +61,7 @@ pub mod ffi {
 
     #[diplomat::rust_link(icu::experimental::displaynames::LanguageDisplay, Enum)]
     #[diplomat::enum_convert(icu_experimental::displaynames::LanguageDisplay, needs_wildcard)]
+    #[non_exhaustive]
     pub enum LanguageDisplay {
         #[diplomat::attr(auto, default)]
         Dialect,

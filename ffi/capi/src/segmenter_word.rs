@@ -16,6 +16,7 @@ pub mod ffi {
 
     #[diplomat::enum_convert(icu_segmenter::options::WordType, needs_wildcard)]
     #[diplomat::rust_link(icu::segmenter::options::WordType, Enum)]
+    #[non_exhaustive]
     pub enum SegmenterWordType {
         // This is an output type, so the default mostly impacts deferred initialization.
         #[diplomat::attr(auto, default)]
