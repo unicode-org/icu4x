@@ -93,7 +93,7 @@ icu_provider::data_struct!(CurrencyEssentials<'_>, #[cfg(feature = "datagen")]);
 #[zerovec::make_ule(PatternSelectionULE)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
-#[cfg_attr(feature = "datagen", databake(path = icu_experimental::dimension::provider::currency))]
+#[cfg_attr(feature = "datagen", databake(path = icu_experimental::dimension::provider::currency::essentials))]
 #[derive(Copy, Clone, Debug, PartialOrd, Ord, PartialEq, Eq, Default)]
 #[repr(u8)]
 pub enum PatternSelection {
@@ -107,7 +107,7 @@ pub enum PatternSelection {
 
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
-#[cfg_attr(feature = "datagen", databake(path = icu_experimental::dimension::provider::currency))]
+#[cfg_attr(feature = "datagen", databake(path = icu_experimental::dimension::provider::currency::essentials))]
 #[derive(Copy, Debug, Clone, PartialEq, PartialOrd, Eq, Ord)]
 #[repr(u16)]
 pub enum PlaceholderValue {
@@ -121,7 +121,7 @@ pub enum PlaceholderValue {
 
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
-#[cfg_attr(feature = "datagen", databake(path = icu_experimental::dimension::provider::currency))]
+#[cfg_attr(feature = "datagen", databake(path = icu_experimental::dimension::provider::currency::essentials))]
 #[derive(Copy, Debug, Clone, Default, PartialEq, PartialOrd, Eq, Ord)]
 pub struct CurrencyPatternConfig {
     /// Indicates which pattern to use for short currency formatting.
