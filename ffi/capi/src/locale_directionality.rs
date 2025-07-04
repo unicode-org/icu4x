@@ -16,6 +16,7 @@ pub mod ffi {
     use crate::unstable::locale_core::ffi::Locale;
 
     #[diplomat::rust_link(icu::locale::Direction, Enum)]
+    #[non_exhaustive]
     pub enum LocaleDirection {
         LeftToRight,
         RightToLeft,

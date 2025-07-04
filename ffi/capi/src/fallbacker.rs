@@ -26,6 +26,7 @@ pub mod ffi {
         FnInEnum,
         hidden
     )]
+    #[non_exhaustive]
     pub enum LocaleFallbackPriority {
         #[diplomat::attr(auto, default)]
         Language = 0,
