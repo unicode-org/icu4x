@@ -44,7 +44,7 @@ icu_provider::data_struct!(ShortCurrencyCompact<'_>, #[cfg(feature = "datagen")]
 #[derive(Copy, Clone, PartialOrd, Ord, PartialEq, Eq, Debug)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
-#[cfg_attr(feature = "datagen", databake(path = icu_experimental::dimension::provider::currency::currency_compact))]
+#[cfg_attr(feature = "datagen", databake(path = icu_experimental::dimension::provider::currency::cucompact))]
 #[repr(u8)]
 pub enum CompactCount {
     Standard(PluralCategory),
