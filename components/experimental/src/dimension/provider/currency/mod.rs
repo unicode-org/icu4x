@@ -2,8 +2,10 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-pub mod currency;
-pub mod pattern_key;
-pub mod percent;
-pub mod units;
-pub mod units_essentials;
+pub mod compact;
+pub mod compact_count_ule;
+pub mod displayname;
+pub mod essential;
+pub mod extended;
+pub mod patterns;
+pub mod ule;

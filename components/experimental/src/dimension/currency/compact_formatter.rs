@@ -7,7 +7,7 @@ use crate::{
         CompactDecimalFormatter, CompactDecimalFormatterOptions, CompactDecimalFormatterPreferences,
     },
     dimension::provider::{
-        currency::CurrencyEssentialsV1, currency_compact::ShortCurrencyCompactV1,
+        currency::compact::ShortCurrencyCompactV1, currency::essential::CurrencyEssentialsV1,
     },
 };
 use fixed_decimal::Decimal;
@@ -126,8 +126,8 @@ impl CompactCurrencyFormatter {
     ) -> Result<Self, DataError>
     where
         D: ?Sized
-            + DataProvider<crate::dimension::provider::currency::CurrencyEssentialsV1>
-            + DataProvider<crate::dimension::provider::currency_compact::ShortCurrencyCompactV1>
+            + DataProvider<crate::dimension::provider::currency::essential::CurrencyEssentialsV1>
+            + DataProvider<crate::dimension::provider::currency::compact::ShortCurrencyCompactV1>
             + DataProvider<crate::compactdecimal::provider::ShortCompactDecimalFormatDataV1>
             + DataProvider<icu_decimal::provider::DecimalSymbolsV1>
             + DataProvider<icu_decimal::provider::DecimalDigitsV1>

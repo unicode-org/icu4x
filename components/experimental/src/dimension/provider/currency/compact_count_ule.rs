@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::dimension::provider::currency_compact::CompactCount;
+use crate::dimension::provider::currency::compact::CompactCount;
 use icu_plurals::PluralCategory;
 use zerovec::ule::{AsULE, UleError, ULE};
 

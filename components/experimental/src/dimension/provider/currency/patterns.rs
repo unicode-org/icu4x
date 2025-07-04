@@ -23,7 +23,7 @@ icu_provider::data_marker!(
 #[derive(Debug, Clone, PartialEq, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
-#[cfg_attr(feature = "datagen", databake(path = icu_experimental::dimension::provider::currency_patterns))]
+#[cfg_attr(feature = "datagen", databake(path = icu_experimental::dimension::provider::currency::currency_patterns))]
 #[yoke(prove_covariance_manually)]
 pub struct CurrencyPatternsData<'data> {
     /// Contains the unit patterns for a currency based on plural rules.

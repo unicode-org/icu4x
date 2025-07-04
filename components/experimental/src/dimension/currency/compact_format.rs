@@ -8,9 +8,9 @@ use super::{
 };
 use crate::{
     compactdecimal::CompactDecimalFormatter,
-    dimension::provider::{
-        currency::{self, CurrencyEssentials},
-        currency_compact::ShortCurrencyCompact,
+    dimension::provider::currency::{
+        compact::ShortCurrencyCompact,
+        essential::{self, CurrencyEssentials},
     },
 };
 use fixed_decimal::Decimal;
@@ -44,12 +44,12 @@ impl Writeable for FormattedCompactCurrency<'_> {
         };
 
         let currency_placeholder = match placeholder_index {
-            Some(currency::PlaceholderValue::Index(index)) => self
+            Some(essential::PlaceholderValue::Index(index)) => self
                 .essential
                 .placeholders
                 .get(index.into())
                 .ok_or(core::fmt::Error)?,
-            Some(currency::PlaceholderValue::ISO) | None => self.currency_code.0.as_str(),
+            Some(essential::PlaceholderValue::ISO) | None => self.currency_code.0.as_str(),
         };
 
         let pattern_selection = match self.options.width {
@@ -61,8 +61,8 @@ impl Writeable for FormattedCompactCurrency<'_> {
         // Therefore, in the next PR, we will add the code to handle using the compact currency patterns.
 
         let pattern = match pattern_selection {
-            currency::PatternSelection::Standard => self.essential.standard_pattern.as_ref(),
-            currency::PatternSelection::StandardAlphaNextToNumber => self
+            essential::PatternSelection::Standard => self.essential.standard_pattern.as_ref(),
+            essential::PatternSelection::StandardAlphaNextToNumber => self
                 .essential
                 .standard_alpha_next_to_number_pattern
                 .as_ref(),
