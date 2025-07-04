@@ -32,6 +32,7 @@
     )
 )]
 #![warn(missing_docs)]
+#![feature(ptr_metadata)]
 
 #[cfg(feature = "alloc")]
 extern crate alloc;
