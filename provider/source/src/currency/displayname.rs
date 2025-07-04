@@ -4,7 +4,7 @@
 
 use crate::cldr_serde;
 use crate::SourceDataProvider;
-use icu::experimental::dimension::provider::currency_displayname::*;
+use icu::experimental::dimension::provider::currency::displayname::*;
 use icu_provider::prelude::*;
 use std::borrow::Cow;
 use std::collections::HashSet;
