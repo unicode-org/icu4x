@@ -23,7 +23,7 @@ const SYSTEM_CHARSET_FAMILY: CharsetFamily = CharsetFamily::Ascii;
 
 /// Deserializes an instance of type `T` from bytes representing a binary ICU
 /// resource bundle.
-pub fn from_bytes<'a, T>(input: &'a [u8]) -> Result<T, BinaryDeserializerError>
+pub fn from_words<'a, T>(input: &'a [u32]) -> Result<T, BinaryDeserializerError>
 where
     T: Deserialize<'a>,
 {
@@ -65,7 +65,11 @@ struct ResourceTreeDeserializer<'de> {
 impl<'de> ResourceTreeDeserializer<'de> {
     /// Creates a new deserializer from the header and index of the resource
     /// bundle.
-    fn from_bytes(input: &'de [u8]) -> Result<Self, BinaryDeserializerError> {
+    fn from_bytes(input: &'de [u32]) -> Result<Self, BinaryDeserializerError> {
+        let input = unsafe {
+            core::slice::from_raw_parts(input.as_ptr() as *const u8, core::mem::size_of_val(input))
+        };
+
         let header = BinHeader::try_from(input)?;
 
         // Verify that the representation in the resource bundle is one we're
