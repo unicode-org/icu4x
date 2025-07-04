@@ -18,6 +18,7 @@ pub mod ffi {
     /// The various calendar types currently supported by [`Calendar`]
     #[diplomat::enum_convert(icu_calendar::AnyCalendarKind, needs_wildcard)]
     #[diplomat::rust_link(icu::calendar::AnyCalendarKind, Enum)]
+    #[non_exhaustive]
     pub enum CalendarKind {
         /// The kind of an Iso calendar
         // AnyCalendarKind in Rust doesn't have a default, but it is useful to have one

@@ -18,6 +18,7 @@ pub mod ffi {
 
     #[diplomat::rust_link(icu::plurals::PluralCategory, Enum)]
     #[diplomat::enum_convert(icu_plurals::PluralCategory)]
+    #[non_exhaustive]
     pub enum PluralCategory {
         Zero,
         One,

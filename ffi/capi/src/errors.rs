@@ -18,6 +18,7 @@ pub mod ffi {
     #[repr(C)]
     #[diplomat::rust_link(icu_provider::DataError, Struct, compact)]
     #[diplomat::rust_link(icu_provider::DataErrorKind, Enum, compact)]
+    #[non_exhaustive]
     pub enum DataError {
         Unknown = 0x00,
         MarkerNotFound = 0x01,
@@ -33,6 +34,7 @@ pub mod ffi {
     #[derive(Debug, PartialEq, Eq)]
     #[repr(C)]
     #[diplomat::rust_link(icu::locale::ParseError, Enum, compact)]
+    #[non_exhaustive]
     pub enum LocaleParseError {
         Unknown = 0x00,
         Language = 0x01,
@@ -44,6 +46,7 @@ pub mod ffi {
     #[repr(C)]
     #[diplomat::rust_link(fixed_decimal::ParseError, Enum, compact)]
     #[cfg(any(feature = "decimal", feature = "plurals"))]
+    #[non_exhaustive]
     pub enum DecimalParseError {
         Unknown = 0x00,
         Limit = 0x01,
@@ -60,6 +63,7 @@ pub mod ffi {
     #[diplomat::rust_link(icu::calendar::RangeError, Struct, compact)]
     #[diplomat::rust_link(icu::calendar::DateError, Enum, compact)]
     #[cfg(any(feature = "datetime", feature = "timezone", feature = "calendar"))]
+    #[non_exhaustive]
     pub enum CalendarError {
         Unknown = 0x00,
         OutOfRange = 0x01,
@@ -72,6 +76,7 @@ pub mod ffi {
     #[diplomat::rust_link(icu::calendar::ParseError, Enum, compact)]
     #[diplomat::rust_link(icu::time::ParseError, Enum, compact)]
     #[cfg(any(feature = "datetime", feature = "timezone", feature = "calendar"))]
+    #[non_exhaustive]
     pub enum Rfc9557ParseError {
         Unknown = 0x00,
         InvalidSyntax = 0x01,
@@ -91,6 +96,7 @@ pub mod ffi {
     #[diplomat::rust_link(icu::datetime::pattern::PatternLoadError, Enum, compact)]
     #[diplomat::rust_link(icu_provider::DataError, Struct, compact)]
     #[diplomat::rust_link(icu_provider::DataErrorKind, Enum, compact)]
+    #[non_exhaustive]
     pub enum DateTimeFormatterLoadError {
         Unknown = 0x00,
 
@@ -128,6 +134,7 @@ pub mod ffi {
         Enum,
         compact
     )]
+    #[non_exhaustive]
     pub enum DateTimeWriteError {
         Unknown = 0x00,
         MissingTimeZoneVariant = 0x01,
