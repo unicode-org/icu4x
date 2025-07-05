@@ -459,5 +459,12 @@ lazy_static::lazy_static! {
         "icu::locale::Locale::Err",
         "icu::plurals::PluralOperands::Err",
 
+        // unstable APIs
+        "icu::calendar::Date::add",
+        "icu::calendar::Date::added",
+        "icu::calendar::Date::until",
+        "icu::calendar::DateDuration",
+        "icu::calendar::DateDurationUnit",
+
     ].iter().map(|s| s.split("::").map(str::to_owned).collect()).collect();
 }
