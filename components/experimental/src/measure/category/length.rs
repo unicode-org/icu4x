@@ -37,13 +37,12 @@ impl Length {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::measure::parser::MeasureUnitParser;
+    use crate::measure::measureunit::MeasureUnit;
 
     #[test]
     fn test_length_category() {
-        let parser = MeasureUnitParser::default();
         let meter = Length::meter();
-        let meter_parsed = parser.try_from_str("meter").unwrap();
+        let meter_parsed = MeasureUnit::try_from_str("meter").unwrap();
         assert_eq!(meter.unit, meter_parsed);
     }
 }
