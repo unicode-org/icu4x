@@ -32,8 +32,16 @@ use core::str::FromStr;
 ///     "islamic-civil"
 /// );
 ///
-/// // The value "true" has the special, empty string representation
+/// // The value "true" has the special, empty string representation,
+/// // making it an "implicit" subtag.
 /// assert_eq!(value!("true").to_string(), "");
+///
+/// // However, when the "true" subtag is part of a multiple subtag Value, it becomes
+/// // an explicit subtag.
+/// assert_writeable_eq!(
+///     "true-value".parse::<Value>().unwrap(),
+///     "true-value"
+/// );
 /// ```
 #[derive(Debug, PartialEq, Eq, Clone, Hash, PartialOrd, Ord, Default)]
 pub struct Value(ShortBoxSlice<Subtag>);
@@ -63,10 +71,25 @@ impl Value {
         let mut v = ShortBoxSlice::new();
 
         if !code_units.is_empty() {
-            for chunk in SubtagIterator::new(code_units) {
-                let subtag = Subtag::try_from_utf8(chunk)?;
-                if subtag != TRUE_VALUE {
-                    v.push(subtag);
+            let mut iter = SubtagIterator::new(code_units);
+            match (iter.next(), iter.next()) {
+                (Some(single), None) => {
+                    let subtag = Subtag::try_from_utf8(single)?;
+                    if subtag != TRUE_VALUE {
+                        v.push(subtag);
+                    }
+                }
+                (Some(first), Some(second)) => {
+                    v.push(Subtag::try_from_utf8(first)?);
+                    v.push(Subtag::try_from_utf8(second)?);
+
+                    for chunk in iter {
+                        let subtag = Subtag::try_from_utf8(chunk)?;
+                        v.push(subtag);
+                    }
+                }
+                _ => {
+                    // Should technically be unreachable thanks to the `code_units.is_empty()` check above.
                 }
             }
         }
@@ -74,7 +97,7 @@ impl Value {
     }
 
     /// Returns a reference to a single [`Subtag`] if the [`Value`] contains exactly one
-    /// subtag, or `None` otherwise.
+    /// explicit subtag, or `None` otherwise.
     ///
     /// # Examples
     ///
@@ -82,18 +105,20 @@ impl Value {
     /// use core::str::FromStr;
     /// use icu::locale::extensions::unicode::Value;
     ///
-    /// let value1 = Value::from_str("foo").expect("failed to parse a Value");
-    /// let value2 = Value::from_str("foo-bar").expect("failed to parse a Value");
+    /// let value1 = Value::default();
+    /// let value2 = Value::from_str("foo").expect("failed to parse a Value");
+    /// let value3 = Value::from_str("foo-bar").expect("failed to parse a Value");
     ///
-    /// assert!(value1.as_single_subtag().is_some());
-    /// assert!(value2.as_single_subtag().is_none());
+    /// assert!(value1.as_single_subtag().is_none());
+    /// assert!(value2.as_single_subtag().is_some());
+    /// assert!(value3.as_single_subtag().is_none());
     /// ```
     pub const fn as_single_subtag(&self) -> Option<&Subtag> {
         self.0.single()
     }
 
     /// Destructs into a single [`Subtag`] if the [`Value`] contains exactly one
-    /// subtag, or returns `None` otherwise.
+    /// explicit subtag, or returns `None` otherwise.
     ///
     /// # Examples
     ///
@@ -101,11 +126,13 @@ impl Value {
     /// use core::str::FromStr;
     /// use icu::locale::extensions::unicode::Value;
     ///
-    /// let value1 = Value::from_str("foo").expect("failed to parse a Value");
-    /// let value2 = Value::from_str("foo-bar").expect("failed to parse a Value");
+    /// let value1 = Value::default();
+    /// let value2 = Value::from_str("foo").expect("failed to parse a Value");
+    /// let value3 = Value::from_str("foo-bar").expect("failed to parse a Value");
     ///
-    /// assert!(value1.into_single_subtag().is_some());
-    /// assert!(value2.into_single_subtag().is_none());
+    /// assert!(value1.into_single_subtag().is_none());
+    /// assert!(value2.into_single_subtag().is_some());
+    /// assert!(value3.into_single_subtag().is_none());
     /// ```
     pub fn into_single_subtag(self) -> Option<Subtag> {
         self.0.into_single()
@@ -116,34 +143,43 @@ impl Value {
         &self.0
     }
 
-    /// Appends a subtag to the back of a [`Value`].
+    /// Appends a subtag to the back of a [`Value`]. If the value is empty,
+    /// this will push an explicit `true` subtag to the value.
     ///
     /// # Examples
     ///
     /// ```
     /// use icu::locale::{extensions::unicode::Value, subtags::subtag};
     ///
-    /// let mut v = Value::default();
-    /// v.push_subtag(subtag!("foo"));
+    /// let mut v = Value::from_subtag(Some(subtag!("foo")));
     /// v.push_subtag(subtag!("bar"));
     /// assert_eq!(v, "foo-bar");
+    ///
+    /// let mut v = Value::default();
+    /// v.push_subtag(subtag!("bar"));
+    /// assert_eq!(v, "true-bar");
     /// ```
     #[cfg(feature = "alloc")]
     pub fn push_subtag(&mut self, subtag: Subtag) {
+        if self.is_empty() {
+            self.0.push(subtag!("true"));
+        }
         self.0.push(subtag);
     }
 
-    /// Returns the number of subtags in the [`Value`].
+    /// Returns the number of explicit subtags in the [`Value`], returning
+    /// 0 if the value is "true".
     ///
     /// # Examples
     ///
     /// ```
     /// use icu::locale::{extensions::unicode::Value, subtags::subtag};
     ///
-    /// let mut v = Value::default();
-    /// assert_eq!(v.subtag_count(), 0);
-    /// v.push_subtag(subtag!("foo"));
-    /// assert_eq!(v.subtag_count(), 1);
+    /// let v1 = Value::default();
+    /// assert_eq!(v1.subtag_count(), 0);
+    ///
+    /// let v2 = Value::from_subtag(Some(subtag!("foo")));
+    /// assert_eq!(v2.subtag_count(), 1);
     /// ```
     pub fn subtag_count(&self) -> usize {
         self.0.len()
@@ -162,15 +198,18 @@ impl Value {
         Self(ShortBoxSlice::new())
     }
 
-    /// Returns `true` if the Value has no subtags.
+    /// Returns `true` if the Value has no explicit subtags.
     ///
     /// # Examples
     ///
     /// ```
     /// use icu::locale::{extensions::unicode::Value, subtags::subtag};
     ///
-    /// let mut v = Value::default();
-    /// assert_eq!(v.is_empty(), true);
+    /// let v1 = Value::default();
+    /// assert_eq!(v1.is_empty(), true);
+    ///
+    /// let v2 = Value::from_subtag(Some(subtag!("foo")));
+    /// assert_eq!(v2.is_empty(), false);
     /// ```
     pub fn is_empty(&self) -> bool {
         self.0.is_empty()
@@ -179,23 +218,38 @@ impl Value {
     /// Removes and returns the subtag at position `index` within the value,
     /// shifting all subtags after it to the left.
     ///
+    /// If after removing the subtag the value only contains an explicit
+    /// "true" subtag, this will automatically empty the value.
+    ///
     /// # Examples
     ///
     /// ```
     /// use icu::locale::{extensions::unicode::Value, subtags::subtag};
-    /// let mut v = Value::default();
-    /// v.push_subtag(subtag!("foo"));
-    /// v.push_subtag(subtag!("bar"));
-    /// v.push_subtag(subtag!("baz"));
     ///
-    /// assert_eq!(v.remove_subtag(1), Some(subtag!("bar")));
-    /// assert_eq!(v, "foo-baz");
+    /// let mut v1 = Value::from_subtag(Some(subtag!("foo")));
+    /// v1.push_subtag(subtag!("bar"));
+    /// v1.push_subtag(subtag!("baz"));
+    ///
+    /// assert_eq!(v1.remove_subtag(1), Some(subtag!("bar")));
+    /// assert_eq!(v1, "foo-baz");
+    ///
+    /// let mut v2 = Value::default();
+    /// v2.push_subtag(subtag!("bar"));
+    /// v2.push_subtag(subtag!("baz"));
+    ///
+    /// assert_eq!(v2.get_subtag(0), Some(&subtag!("true")));
+    /// assert_eq!(v2.remove_subtag(2), Some(subtag!("baz")));
+    /// assert_eq!(v2.remove_subtag(1), Some(subtag!("bar")));
+    /// assert_eq!(v2.is_empty(), true);
     /// ```
     pub fn remove_subtag(&mut self, idx: usize) -> Option<Subtag> {
         if self.0.len() < idx {
             None
         } else {
             let item = self.0.remove(idx);
+            if self.subtag_count() == 1 && self.get_subtag(0) == Some(&TRUE_VALUE) {
+                *self = Self::new_empty();
+            }
             Some(item)
         }
     }
@@ -206,8 +260,7 @@ impl Value {
     ///
     /// ```
     /// use icu::locale::{extensions::unicode::Value, subtags::subtag};
-    /// let mut v = Value::default();
-    /// v.push_subtag(subtag!("foo"));
+    /// let mut v = Value::from_subtag(Some(subtag!("foo")));
     /// v.push_subtag(subtag!("bar"));
     /// v.push_subtag(subtag!("baz"));
     ///
