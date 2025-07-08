@@ -23,12 +23,12 @@ use zerovec::ZeroMap;
 use icu_pattern::DoublePlaceholderKey;
 use icu_pattern::PatternItemCow;
 
-use icu::experimental::dimension::provider::ule::MAX_PLACEHOLDER_INDEX;
+use icu::experimental::dimension::provider::currency::ule::MAX_PLACEHOLDER_INDEX;
 use icu::properties::props::{GeneralCategory, GeneralCategoryGroup};
 use icu::properties::CodePointMapData;
 use icu_provider::DataProvider;
 
-use icu::experimental::dimension::provider::currency::*;
+use icu::experimental::dimension::provider::currency::essentials::*;
 use icu_provider::prelude::*;
 
 /// Returns the pattern selection for a currency.
@@ -343,7 +343,6 @@ fn test_basic() {
         (short_placeholder, narrow_placeholder)
     }
 
-    use icu::experimental::dimension::provider::currency::*;
     use icu::locale::langid;
 
     let provider = SourceDataProvider::new_testing();
