@@ -50,6 +50,6 @@ impl SiPrefix {
             Base::Decimal => 'D',
             Base::Binary => 'B',
         });
-        write!(buff, "{}", self.power).unwrap();
+        let _infallible = write!(buff, "{}", self.power);
     }
 }
