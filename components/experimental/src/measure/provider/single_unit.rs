@@ -21,5 +21,8 @@ pub struct SingleUnit {
     pub si_prefix: SiPrefix,
 
     /// The id of the unit.
-    pub unit_id: u16,
+    pub unit_id: UnitID,
 }
+
+/// Represents the unique identifier for a unit.
+pub type UnitID = u16;
