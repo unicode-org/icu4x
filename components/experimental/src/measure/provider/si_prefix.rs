@@ -45,23 +45,6 @@ pub struct SiPrefix {
 
 impl SiPrefix {
     /// Appends the short representation of the si prefix to the given string.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use icu_experimental::measure::provider::si_prefix::SiPrefix;
-    /// use icu_experimental::measure::provider::si_prefix::Base;
-    ///
-    /// let mut short_representation = String::new();
-    /// let si_prefix = SiPrefix { power: 3, base: Base::Decimal };
-    /// si_prefix.append_short_representation(&mut short_representation);
-    /// assert_eq!(short_representation, "D3");
-    ///
-    /// let mut short_representation = String::new();
-    /// let si_prefix = SiPrefix { power: -3, base: Base::Binary };
-    /// si_prefix.append_short_representation(&mut short_representation);
-    /// assert_eq!(short_representation, "B-3");
-    /// ```
     pub(crate) fn append_short_representation(&self, buff: &mut String) {
         buff.push(match self.base {
             Base::Decimal => 'D',

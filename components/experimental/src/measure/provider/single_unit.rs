@@ -33,23 +33,6 @@ impl SingleUnit {
     /// 1. If the power is not 1, the power is prefixed with "P" followed by the power value.
     /// 2. If the si prefix power is not 0, the si prefix is represented by its base character ('D' for Decimal, 'B' for Binary) followed by the prefix power value.
     /// 3. The unit ID is prefixed with "I" and appended to the string.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use icu_experimental::measure::provider::single_unit::SingleUnit;
-    /// use icu_experimental::measure::provider::si_prefix::SiPrefix;
-    /// use icu_experimental::measure::provider::si_prefix::Base;
-    ///
-    /// let mut short_representation = String::new();
-    /// let single_unit = SingleUnit {
-    ///     power: 3,
-    ///     si_prefix: SiPrefix { power: 2, base: Base::Decimal },
-    ///     unit_id: 85,
-    /// };
-    /// single_unit.append_short_representation(&mut short_representation);
-    /// assert_eq!(short_representation, "P3D2I85");
-    /// ```
     pub(crate) fn append_short_representation(&self, buff: &mut String) {
         if self.power != 1 {
             buff.push('P');
