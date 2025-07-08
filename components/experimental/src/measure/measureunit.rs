@@ -134,12 +134,10 @@ impl MeasureUnit {
 
 #[cfg(test)]
 mod tests {
-    use icu::experimental::measure::parser::MeasureUnitParser;
+    use crate::measure::measureunit::MeasureUnit;
 
     #[test]
     fn test_generate_short_representation() {
-        let parser = MeasureUnitParser::new();
-
         let test_cases = vec![
             ("meter", "I85"),
             ("foot", "I50"),
@@ -156,7 +154,7 @@ mod tests {
         ];
 
         for (full_unit, expected_short) in test_cases {
-            let measure_unit = parser.try_from_str(full_unit).unwrap();
+            let measure_unit = MeasureUnit::try_from_str(full_unit).unwrap();
             let short_representation = measure_unit.generate_short_representation();
             assert_eq!(short_representation, expected_short, "{full_unit}");
         }
