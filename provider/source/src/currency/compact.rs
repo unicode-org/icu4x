@@ -9,7 +9,7 @@ use crate::SourceDataProvider;
 use std::collections::BTreeMap;
 use std::collections::HashSet;
 
-use icu::experimental::dimension::provider::currency_compact::*;
+use icu::experimental::dimension::provider::currency::compact::*;
 use icu::plurals::PluralCategory;
 use icu_provider::prelude::*;
 use icu_provider::DataProvider;
@@ -132,7 +132,7 @@ impl IterableDataProviderCached<ShortCurrencyCompactV1> for SourceDataProvider {
 
 #[test]
 fn test_basic() {
-    use icu::experimental::dimension::provider::currency_compact::*;
+    use icu::experimental::dimension::provider::currency::compact::*;
     use icu::locale::langid;
 
     let provider = SourceDataProvider::new_testing();

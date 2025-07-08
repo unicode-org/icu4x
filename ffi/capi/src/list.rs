@@ -20,6 +20,7 @@ pub mod ffi {
 
     #[diplomat::rust_link(icu::list::options::ListLength, Enum)]
     #[diplomat::enum_convert(icu_list::options::ListLength, needs_wildcard)]
+    #[non_exhaustive]
     pub enum ListLength {
         #[diplomat::attr(auto, default)]
         Wide,

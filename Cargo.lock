@@ -1383,7 +1383,7 @@ version = "2.0.0"
 
 [[package]]
 name = "icu_experimental"
-version = "0.4.0-dev.2"
+version = "0.4.0-dev.1"
 dependencies = [
  "criterion",
  "databake",
@@ -1883,7 +1883,7 @@ checksum = "4a5f13b858c8d314ee3e8f639011f7ccefe71f97f96e50151fb991f267928e2c"
 
 [[package]]
 name = "ixdtf"
-version = "0.6.0-dev"
+version = "0.6.0"
 dependencies = [
  "criterion",
  "displaydoc",

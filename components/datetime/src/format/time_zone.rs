@@ -277,68 +277,63 @@ impl FormatTimeZone for LocalizedOffsetFormat {
             sink.write_str(&essentials.offset_unknown)?;
             return Ok(Ok(()));
         };
-        Ok(if offset.is_zero() && self.0 != FieldLength::Four {
-            sink.write_str(&essentials.offset_zero)?;
-            Ok(())
-        } else {
-            struct FormattedOffset<'a> {
-                offset: UtcOffset,
-                separator: &'a str,
-                formatter: &'a DecimalFormatter,
-                length: FieldLength,
-            }
+        struct FormattedOffset<'a> {
+            offset: UtcOffset,
+            separator: &'a str,
+            formatter: &'a DecimalFormatter,
+            length: FieldLength,
+        }
 
-            impl Writeable for FormattedOffset<'_> {
-                fn write_to_parts<S: writeable::PartsWrite + ?Sized>(
-                    &self,
-                    sink: &mut S,
-                ) -> fmt::Result {
-                    let decimal = {
-                        let mut decimal = Decimal::from(self.offset.hours_part())
-                            .with_sign_display(fixed_decimal::SignDisplay::Always);
-                        decimal.pad_start(if self.length == FieldLength::Four {
-                            2
-                        } else {
-                            0
-                        });
-                        decimal
-                    };
+        impl Writeable for FormattedOffset<'_> {
+            fn write_to_parts<S: writeable::PartsWrite + ?Sized>(
+                &self,
+                sink: &mut S,
+            ) -> fmt::Result {
+                let decimal = {
+                    let mut decimal = Decimal::from(self.offset.hours_part())
+                        .with_sign_display(fixed_decimal::SignDisplay::Always);
+                    decimal.pad_start(if self.length == FieldLength::Four {
+                        2
+                    } else {
+                        0
+                    });
+                    decimal
+                };
+                self.formatter.format(&decimal).write_to(sink)?;
+
+                if self.length == FieldLength::Four
+                    || self.offset.minutes_part() != 0
+                    || self.offset.seconds_part() != 0
+                {
+                    let mut decimal = Decimal::from(self.offset.minutes_part());
+                    decimal.absolute.pad_start(2);
+                    sink.write_str(self.separator)?;
                     self.formatter.format(&decimal).write_to(sink)?;
-
-                    if self.length == FieldLength::Four
-                        || self.offset.minutes_part() != 0
-                        || self.offset.seconds_part() != 0
-                    {
-                        let mut decimal = Decimal::from(self.offset.minutes_part());
-                        decimal.absolute.pad_start(2);
-                        sink.write_str(self.separator)?;
-                        self.formatter.format(&decimal).write_to(sink)?;
-                    }
-
-                    if self.offset.seconds_part() != 0 {
-                        sink.write_str(self.separator)?;
-
-                        let mut decimal = Decimal::from(self.offset.seconds_part());
-                        decimal.absolute.pad_start(2);
-                        self.formatter.format(&decimal).write_to(sink)?;
-                    }
-
-                    Ok(())
                 }
+
+                if self.offset.seconds_part() != 0 {
+                    sink.write_str(self.separator)?;
+
+                    let mut decimal = Decimal::from(self.offset.seconds_part());
+                    decimal.absolute.pad_start(2);
+                    self.formatter.format(&decimal).write_to(sink)?;
+                }
+
+                Ok(())
             }
+        }
 
-            essentials
-                .offset_pattern
-                .interpolate([FormattedOffset {
-                    offset,
-                    separator: &essentials.offset_separator,
-                    formatter,
-                    length: self.0,
-                }])
-                .write_to(sink)?;
+        essentials
+            .offset_pattern
+            .interpolate([FormattedOffset {
+                offset,
+                separator: &essentials.offset_separator,
+                formatter,
+                length: self.0,
+            }])
+            .write_to(sink)?;
 
-            Ok(())
-        })
+        Ok(Ok(()))
     }
 }
 

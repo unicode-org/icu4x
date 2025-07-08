@@ -21,6 +21,7 @@ pub mod ffi {
     /// The sign of a Decimal, as shown in formatting.
     #[diplomat::rust_link(fixed_decimal::Sign, Enum)]
     #[diplomat::enum_convert(fixed_decimal::Sign, needs_wildcard)]
+    #[non_exhaustive]
     pub enum DecimalSign {
         /// No sign (implicitly positive, e.g., 1729).
         #[diplomat::attr(auto, default)]
@@ -34,6 +35,7 @@ pub mod ffi {
     /// ECMA-402 compatible sign display preference.
     #[diplomat::rust_link(fixed_decimal::SignDisplay, Enum)]
     #[diplomat::enum_convert(fixed_decimal::SignDisplay, needs_wildcard)]
+    #[non_exhaustive]
     pub enum DecimalSignDisplay {
         #[diplomat::attr(auto, default)]
         Auto,
@@ -46,6 +48,7 @@ pub mod ffi {
     /// Increment used in a rounding operation.
     #[diplomat::rust_link(fixed_decimal::RoundingIncrement, Enum)]
     #[diplomat::enum_convert(fixed_decimal::RoundingIncrement, needs_wildcard)]
+    #[non_exhaustive]
     pub enum DecimalRoundingIncrement {
         #[diplomat::attr(auto, default)]
         MultiplesOf1,
@@ -56,6 +59,7 @@ pub mod ffi {
 
     /// Mode used in a rounding operation for signed numbers.
     #[diplomat::rust_link(fixed_decimal::SignedRoundingMode, Enum)]
+    #[non_exhaustive]
     pub enum DecimalSignedRoundingMode {
         Expand,
         Trunc,

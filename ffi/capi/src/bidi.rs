@@ -13,6 +13,7 @@ pub mod ffi {
     #[cfg(feature = "buffer_provider")]
     use crate::unstable::{errors::ffi::DataError, provider::ffi::DataProvider};
 
+    #[non_exhaustive]
     pub enum BidiDirection {
         // This is an output type, so the default mostly impacts deferred initialization.
         // We pick Ltr since the algorithm defaults to Ltr in the absence of other info.

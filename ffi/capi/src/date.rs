@@ -19,6 +19,7 @@ pub mod ffi {
     use tinystr::TinyAsciiStr;
 
     #[diplomat::enum_convert(icu_calendar::types::Weekday)]
+    #[non_exhaustive]
     pub enum Weekday {
         Monday = 1,
         Tuesday,
