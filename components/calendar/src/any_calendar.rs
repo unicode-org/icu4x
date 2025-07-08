@@ -825,7 +825,7 @@ impl AnyCalendarKind {
         } else if region == Some(region!("AF")) || region == Some(region!("IR")) {
             AnyCalendarKind::Persian
         } else if region == Some(region!("SA")) && algo == Some(CalendarAlgorithm::Hijri(None)) {
-            AnyCalendarKind::HijriSimulatedMecca
+            AnyCalendarKind::HijriUmmAlQura
         } else {
             AnyCalendarKind::Gregorian
         }

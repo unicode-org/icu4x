@@ -251,7 +251,7 @@ impl IntoFormattableAnyCalendar for Persian {}
 impl IntoFormattableAnyCalendar for Roc {}
 
 // keep in sync with IntoFormattableAnyCalendar
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq)]
 pub(crate) enum FormattableAnyCalendarKind {
     Buddhist,
     Chinese,
@@ -303,27 +303,39 @@ impl FormattableAnyCalendarKind {
     }
 
     pub(crate) fn from_preferences(mut prefs: DateTimeFormatterPreferences) -> Self {
-        if let Some(algo) = prefs.calendar_algorithm {
-            if let Ok(kind) = AnyCalendarKind::try_from(algo) {
-                if let Some(res) = Self::try_from_any_calendar_kind(kind) {
-                    return res;
-                }
-            }
+        if let Some(res) = Self::try_from_any_calendar_kind(AnyCalendarKind::new((&prefs).into())) {
+            return res;
         }
-        // Calendar not specified or not supported by DateTimeFormatter
+
+        // Calendar not supported by DateTimeFormatter
         // Currently this is CalendarAlgorithm::Iso8601, CalendarAlgorithm::Hijri(Rgsa)
         // Let AnyCalendarKind constructor select an appropriate fallback
         prefs.calendar_algorithm = None;
-        let kind = AnyCalendarKind::new((&prefs).into());
-        match Self::try_from_any_calendar_kind(kind) {
-            Some(res) => res,
-            None => {
-                debug_assert!(false, "all locale-default calendars are supported");
-                // fall back to something non-Gregorian to make errors more obvious
-                FormattableAnyCalendarKind::Coptic
-            }
+        if let Some(res) = Self::try_from_any_calendar_kind(AnyCalendarKind::new((&prefs).into())) {
+            return res;
         }
+
+        debug_assert!(false, "all locale-default calendars are supported");
+        // fall back to something non-Gregorian to make errors more obvious
+        FormattableAnyCalendarKind::Coptic
     }
+}
+
+#[test]
+fn asfd() {
+    use icu_locale_core::locale;
+    assert_eq!(
+        FormattableAnyCalendarKind::from_preferences(locale!("en-TH-u-ca-iso8601").into()),
+        FormattableAnyCalendarKind::Buddhist
+    );
+    assert_eq!(
+        FormattableAnyCalendarKind::from_preferences(locale!("en-TH").into()),
+        FormattableAnyCalendarKind::Buddhist
+    );
+    assert_eq!(
+        FormattableAnyCalendarKind::from_preferences(locale!("en-SA-u-ca-islamic").into()),
+        FormattableAnyCalendarKind::HijriUmmAlQura
+    );
 }
 
 /// A version of [`AnyCalendar`] for the calendars supported in the any-calendar formatter.
