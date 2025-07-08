@@ -50,7 +50,7 @@ impl SingleUnit {
     /// single_unit.append_short_representation(&mut short_representation);
     /// assert_eq!(short_representation, "P3D2I85");
     /// ```
-    pub fn append_short_representation(&self, buff: &mut String) {
+    pub(crate) fn append_short_representation(&self, buff: &mut String) {
         if self.power != 1 {
             buff.push('P');
             write!(buff, "{}", self.power).unwrap();
