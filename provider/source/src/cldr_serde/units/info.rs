@@ -12,6 +12,9 @@ use icu_provider::DataError;
 use serde::Deserialize;
 use std::collections::BTreeMap;
 
+/// Represents the unique identifier for a unit.
+pub type UnitID = u16;
+
 #[derive(PartialEq, Debug, Deserialize)]
 pub(crate) struct Constant {
     #[serde(rename = "_value")]
@@ -91,12 +94,12 @@ impl Resource {
     ///
     /// * `Ok(u16)` - The unique identifier for the unit if found.
     /// * `Err(DataError)` - An error if the unit is not found or if the index is out of range for `u16`.
-    pub fn unit_id(&self, unit_name: &str) -> Result<u16, DataError> {
+    pub fn unit_id(&self, unit_name: &str) -> Result<UnitID, DataError> {
         CLDR_IDS_TRIE
             .get(unit_name)
             .ok_or_else(|| DataError::custom("Unit not found"))
             .and_then(|value| {
-                u16::try_from(value).map_err(|_| DataError::custom("Value out of range for u16"))
+                UnitID::try_from(value).map_err(|_| DataError::custom("Value out of range for u16"))
             })
     }
 
@@ -105,11 +108,11 @@ impl Resource {
     /// # Errors
     ///
     /// Returns a `DataError` if the index cannot be converted to `u16`.
-    pub fn unit_ids_map(&self) -> Result<BTreeMap<String, u16>, DataError> {
+    pub fn unit_ids_map(&self) -> Result<BTreeMap<String, UnitID>, DataError> {
         CLDR_IDS_TRIE
             .iter()
             .map(|(unit_name, unit_id)| {
-                u16::try_from(unit_id)
+                UnitID::try_from(unit_id)
                     .map(|id| (unit_name.to_string(), id))
                     .map_err(|_| DataError::custom("Value out of range for u16"))
             })

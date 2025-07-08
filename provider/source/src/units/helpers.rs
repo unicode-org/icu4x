@@ -13,7 +13,7 @@ use num_traits::One;
 use num_traits::Signed;
 use zerovec::ZeroVec;
 
-use crate::cldr_serde::units::info::Constant;
+use crate::cldr_serde::units::info::{Constant, UnitID};
 
 /// Represents a scientific number that contains only clean numerator and denominator terms.
 /// NOTE:
@@ -141,7 +141,7 @@ pub(crate) fn process_factor(
 
 /// Extracts the conversion info from a base unit, factor and offset.
 pub(crate) fn extract_conversion_info<'data>(
-    unit_id: u16,
+    unit_id: UnitID,
     base_unit: &str,
     factor: &ScientificNumber,
     offset: &ScientificNumber,
