@@ -7,6 +7,7 @@ use std::collections::HashSet;
 use crate::SourceDataProvider;
 use crate::{cldr_serde, units::helpers::ScientificNumber};
 use icu::experimental::units::provider::{ConversionInfo, UnitsInfo, UnitsInfoV1};
+use icu_experimental::measure::provider::single_unit::UnitID;
 use icu_provider::prelude::*;
 use zerovec::VarZeroVec;
 
@@ -23,7 +24,7 @@ impl DataProvider<UnitsInfoV1> for SourceDataProvider {
             .read_and_parse("supplemental/units.json")?;
 
         struct ConversionInfoPreProcessing<'a> {
-            unit_id: u16,
+            unit_id: UnitID,
             base_unit: &'a str,
             factor_scientific: ScientificNumber,
             offset_scientific: ScientificNumber,
@@ -107,7 +108,7 @@ fn test_basic() {
 
     let units_info = und.payload.get().to_owned();
 
-    let meter_index = CLDR_IDS_TRIE.get("meter").unwrap() as u16;
+    let meter_index = CLDR_IDS_TRIE.get("meter").unwrap() as UnitID;
 
     let big_one = BigUint::from(1u32);
 
@@ -150,7 +151,7 @@ fn test_basic() {
         }
     );
 
-    let foot_index = CLDR_IDS_TRIE.get("foot").unwrap() as u16;
+    let foot_index = CLDR_IDS_TRIE.get("foot").unwrap() as UnitID;
     let foot_convert_index = units_info
         .conversion_info_by_unit_id(foot_index)
         .unwrap()
