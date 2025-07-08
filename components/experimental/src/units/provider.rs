@@ -13,7 +13,7 @@ use icu_provider::prelude::*;
 use num_bigint::BigInt;
 use zerovec::{maps::ZeroVecLike, ule::AsULE, VarZeroVec, ZeroVec};
 
-use crate::measure::provider::single_unit::SingleUnit;
+use crate::measure::provider::single_unit::{SingleUnit, UnitID};
 #[cfg(feature = "compiled_data")]
 /// Baked data
 ///
@@ -57,7 +57,7 @@ impl UnitsInfo<'_> {
     ///
     /// * `Some(&ConversionInfoULE)` - A reference to the conversion information if the unit_id is found.
     /// * `None` - If the unit_id is not found.
-    pub fn conversion_info_by_unit_id(&self, unit_id: u16) -> Option<&ConversionInfoULE> {
+    pub fn conversion_info_by_unit_id(&self, unit_id: UnitID) -> Option<&ConversionInfoULE> {
         self.conversion_info
             .zvl_binary_search_by(|convert_unit| {
                 convert_unit.unit_id.as_unsigned_int().cmp(&unit_id)
@@ -89,7 +89,7 @@ icu_provider::data_struct!(UnitsInfo<'_>, #[cfg(feature = "datagen")]);
 pub struct ConversionInfo<'data> {
     /// Represents the unique identifier for the unit that is being converted.
     /// For example, when converting from `square-meter`, `unit_id` corresponds to the identifier of `meter`.
-    pub unit_id: u16,
+    pub unit_id: UnitID,
 
     /// Contains the base unit (after parsing) which what the unit is converted to.
     #[cfg_attr(feature = "serde", serde(borrow))]
