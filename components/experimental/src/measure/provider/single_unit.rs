@@ -23,7 +23,7 @@ pub struct SingleUnit {
     pub si_prefix: SiPrefix,
 
     /// The id of the unit.
-    pub unit_id: u16,
+    pub unit_id: UnitID,
 }
 
 impl SingleUnit {
@@ -47,3 +47,6 @@ impl SingleUnit {
         let _infallible = write!(buff, "{}", self.unit_id);
     }
 }
+
+/// Represents the unique identifier for a unit.
+pub type UnitID = u16;

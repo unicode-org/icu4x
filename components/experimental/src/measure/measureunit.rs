@@ -6,7 +6,6 @@ use super::{provider::single_unit::SingleUnit, single_unit_vec::SingleUnitVec};
 use alloc::string::String;
 use core::fmt::Write;
 
-// TODO NOTE: the MeasureUnitParser takes the trie and the ConverterFactory takes the full payload and an instance of MeasureUnitParser.
 /// The [`MeasureUnit`] struct represents a processed CLDR compound unit.
 /// Examples include:
 ///  1. `meter-per-second`
@@ -14,8 +13,6 @@ use core::fmt::Write;
 ///  3. `liter-per-100-kilometer`
 ///  4. `portion-per-1e9`
 ///  5. `square-meter` (Note: a single unit is a special case of a compound unit containing only one single unit.)
-///
-/// To construct a [`MeasureUnit`] from a CLDR unit identifier, use the [`crate::measure::parser::MeasureUnitParser`].
 #[derive(Debug, Eq, Clone)]
 pub struct MeasureUnit {
     // TODO: remove this field once we are using the short units name in the datagen to locate the units.
@@ -68,23 +65,20 @@ impl MeasureUnit {
     /// # Examples
     ///
     /// ```
-    /// use icu_experimental::measure::parser::MeasureUnitParser;
     /// use icu_experimental::measure::measureunit::MeasureUnit;
     ///
     ///
-    /// let parser = MeasureUnitParser::new();
-    ///
-    /// let measure_unit = parser.try_from_str("meter").unwrap();
+    /// let measure_unit = MeasureUnit::try_from_str("meter").unwrap();
     /// let short_representation = measure_unit.generate_short_representation();
     /// assert_eq!(short_representation, "I85", "{}", "meter");
     ///
     ///
-    /// let measure_unit = parser.try_from_str("square-meter").unwrap();
+    /// let measure_unit = MeasureUnit::try_from_str("square-meter").unwrap();
     /// let short_representation = measure_unit.generate_short_representation();
     /// assert_eq!(short_representation, "P2I85", "{}", "square-meter");
     ///
     ///
-    /// let measure_unit = parser.try_from_str("liter-per-100-kilometer").unwrap();
+    /// let measure_unit = MeasureUnit::try_from_str("liter-per-100-kilometer").unwrap();
     /// let short_representation = measure_unit.generate_short_representation();
     /// assert_eq!(short_representation, "C100I82P-1D3I85", "{}", "liter-per-100-kilometer");
     /// ```
@@ -137,12 +131,10 @@ impl MeasureUnit {
 
 #[cfg(test)]
 mod tests {
-    use icu::experimental::measure::parser::MeasureUnitParser;
+    use crate::measure::measureunit::MeasureUnit;
 
     #[test]
     fn test_generate_short_representation() {
-        let parser = MeasureUnitParser::new();
-
         let test_cases = vec![
             ("meter", "I85"),
             ("foot", "I50"),
@@ -159,7 +151,7 @@ mod tests {
         ];
 
         for (full_unit, expected_short) in test_cases {
-            let measure_unit = parser.try_from_str(full_unit).unwrap();
+            let measure_unit = MeasureUnit::try_from_str(full_unit).unwrap();
             let short_representation = measure_unit.generate_short_representation();
             assert_eq!(short_representation, expected_short, "{full_unit}");
         }

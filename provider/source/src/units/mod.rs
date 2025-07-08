@@ -7,4 +7,3 @@ pub(crate) mod essentials;
 pub(crate) mod helpers;
 pub(crate) mod ids;
 pub(crate) mod info;
-pub(crate) mod trie;

@@ -37,13 +37,12 @@ impl Area {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::measure::parser::MeasureUnitParser;
+    use crate::measure::measureunit::MeasureUnit;
 
     #[test]
     fn test_area_category() {
-        let parser = MeasureUnitParser::default();
         let square_meter = Area::square_meter();
-        let square_meter_parsed = parser.try_from_str("square-meter").unwrap();
+        let square_meter_parsed = MeasureUnit::try_from_str("square-meter").unwrap();
         assert_eq!(square_meter.unit, square_meter_parsed);
     }
 }

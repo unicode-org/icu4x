@@ -7,6 +7,8 @@
 //! The file:
 //! <https://github.com/unicode-org/cldr-json/blob/main/cldr-json/cldr-core/supplemental/units.json>
 
+use icu::experimental::measure::parser::ids::CLDR_IDS_TRIE;
+use icu::experimental::measure::provider::single_unit::UnitID;
 use icu_provider::DataError;
 use serde::Deserialize;
 use std::collections::BTreeMap;
@@ -90,17 +92,12 @@ impl Resource {
     ///
     /// * `Ok(u16)` - The unique identifier for the unit if found.
     /// * `Err(DataError)` - An error if the unit is not found or if the index is out of range for `u16`.
-    pub fn unit_id(&self, unit_name: &str) -> Result<u16, DataError> {
-        self.supplemental
-            .convert_units
-            .convert_units
-            .iter()
-            .enumerate()
-            .find(|(_, (name, _))| name.as_str() == unit_name)
-            .map(|(index, _)| index)
+    pub fn unit_id(&self, unit_name: &str) -> Result<UnitID, DataError> {
+        CLDR_IDS_TRIE
+            .get(unit_name)
             .ok_or_else(|| DataError::custom("Unit not found"))
-            .and_then(|index| {
-                u16::try_from(index).map_err(|_| DataError::custom("Index out of range for u16"))
+            .and_then(|value| {
+                UnitID::try_from(value).map_err(|_| DataError::custom("Value out of range for u16"))
             })
     }
 
@@ -109,17 +106,14 @@ impl Resource {
     /// # Errors
     ///
     /// Returns a `DataError` if the index cannot be converted to `u16`.
-    pub fn unit_ids_map(&self) -> Result<BTreeMap<String, u16>, DataError> {
-        self.supplemental
-            .convert_units
-            .convert_units
+    pub fn unit_ids_map(&self) -> Result<BTreeMap<String, UnitID>, DataError> {
+        CLDR_IDS_TRIE
             .iter()
-            .enumerate()
-            .map(|(index, (unit_name, _))| {
-                u16::try_from(index)
-                    .map_err(|_| DataError::custom("Index out of range for u16"))
-                    .map(|index_u16| (unit_name.clone(), index_u16))
+            .map(|(unit_name, unit_id)| {
+                UnitID::try_from(unit_id)
+                    .map(|id| (unit_name.to_string(), id))
+                    .map_err(|_| DataError::custom("Value out of range for u16"))
             })
-            .collect()
+            .collect::<Result<BTreeMap<_, _>, _>>()
     }
 }

@@ -2,16 +2,13 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use std::collections::{BTreeMap, HashSet};
+use std::collections::HashSet;
 
 use crate::SourceDataProvider;
 use crate::{cldr_serde, units::helpers::ScientificNumber};
-use icu::experimental::measure::parser::MeasureUnitParser;
-use icu::experimental::measure::provider::trie::UnitsTrie;
+use icu::experimental::measure::provider::single_unit::UnitID;
 use icu::experimental::units::provider::{ConversionInfo, UnitsInfo, UnitsInfoV1};
 use icu_provider::prelude::*;
-use icu_provider_adapters::fixed::FixedProvider;
-use zerotrie::ZeroTrieSimpleAscii;
 use zerovec::VarZeroVec;
 
 use super::helpers::{extract_conversion_info, process_constants, process_factor};
@@ -27,17 +24,15 @@ impl DataProvider<UnitsInfoV1> for SourceDataProvider {
             .read_and_parse("supplemental/units.json")?;
 
         struct ConversionInfoPreProcessing<'a> {
+            unit_id: UnitID,
             base_unit: &'a str,
             factor_scientific: ScientificNumber,
             offset_scientific: ScientificNumber,
         }
 
-        // Initialize a vector to store pre-processed conversion information for `MeasureUnitParser`.
+        // Initialize a vector to store pre-processed conversion information.
         let mut convert_units_vec =
             Vec::with_capacity(units_data.supplemental.convert_units.convert_units.len());
-
-        // Initialize a map to associate unit names with their corresponding index in `convert_units_vec`.
-        let mut conversion_info_map = BTreeMap::new();
 
         // Process the unit constants to remove any constants that are in string format.
         let clean_constants_map =
@@ -49,39 +44,25 @@ impl DataProvider<UnitsInfoV1> for SourceDataProvider {
             let factor = convert_unit.factor.as_deref().unwrap_or("1");
             let offset = convert_unit.offset.as_deref().unwrap_or("0");
 
-            let convert_unit_index = convert_units_vec.len();
             convert_units_vec.push(ConversionInfoPreProcessing {
+                unit_id: units_data.unit_id(unit_name)?,
                 base_unit,
                 factor_scientific: process_factor(factor, &clean_constants_map)?,
                 offset_scientific: process_factor(offset, &clean_constants_map)?,
             });
-
-            conversion_info_map.insert(unit_name.as_bytes().to_vec(), convert_unit_index);
         }
 
-        // TODO: remove this once we can use the `try_new_with_buffer_provider` constructor in `components/experimental/src/measure/parser.rs`.
-        // OR just using `MeasureUnitParser::default()`
-        let units_conversion_trie =
-            ZeroTrieSimpleAscii::try_from(&conversion_info_map).map_err(|e| {
-                DataError::custom("Could not create ZeroTrie from units.json data")
-                    .with_display_context(&e)
-            })?;
-
-        // Convert the trie to use ZeroVec and wrap it in UnitsTrie
-        let units_trie = UnitsTrie {
-            trie: units_conversion_trie.convert_store(),
-        };
-
-        let parser = MeasureUnitParser::try_new_unstable(&FixedProvider::from_owned(units_trie))?;
+        // Ensure the conversion units are sorted by `unit_id` before the processing.
+        convert_units_vec.sort_by_key(|convert_unit| convert_unit.unit_id);
 
         let conversion_info = convert_units_vec
             .iter()
             .map(|convert_unit| {
                 extract_conversion_info(
+                    convert_unit.unit_id,
                     convert_unit.base_unit,
                     &convert_unit.factor_scientific,
                     &convert_unit.offset_scientific,
-                    &parser,
                 )
             })
             .collect::<Result<Vec<ConversionInfo>, DataError>>()?;
@@ -105,16 +86,15 @@ impl crate::IterableDataProviderCached<UnitsInfoV1> for SourceDataProvider {
 
 #[test]
 fn test_basic() {
+    use icu::experimental::measure::parser::ids::CLDR_IDS_TRIE;
     use icu::experimental::measure::provider::si_prefix::{Base, SiPrefix};
     use icu::experimental::measure::provider::single_unit::SingleUnit;
-    use icu::experimental::measure::provider::trie::UnitsTrieV1;
     use icu::experimental::units::provider::*;
     use icu::locale::langid;
     use icu_provider::prelude::*;
     use num_bigint::BigUint;
     use num_rational::Ratio;
     use zerofrom::ZeroFrom;
-    use zerovec::maps::ZeroVecLike;
     use zerovec::ZeroVec;
 
     let provider = SourceDataProvider::new_testing();
@@ -126,25 +106,18 @@ fn test_basic() {
         })
         .unwrap();
 
-    let und_trie: DataResponse<UnitsTrieV1> = provider.load(Default::default()).unwrap();
-
     let units_info = und.payload.get().to_owned();
-    let units_info_map = &und_trie.payload.get().trie;
-    let conversion_info = &units_info.conversion_info;
 
-    let meter_index = units_info_map.get("meter").unwrap();
+    let meter_index = CLDR_IDS_TRIE.get("meter").unwrap() as UnitID;
 
     let big_one = BigUint::from(1u32);
 
-    let meter_convert_ule = conversion_info.zvl_get(meter_index).unwrap();
+    let meter_convert_ule = units_info.conversion_info_by_unit_id(meter_index).unwrap();
     let meter_convert: ConversionInfo = ZeroFrom::zero_from(meter_convert_ule);
 
     assert_eq!(meter_convert.factor_sign, Sign::Positive);
     let meter_convert_base_unit = meter_convert.basic_units.to_owned();
-    assert_eq!(
-        meter_convert_base_unit.get(0).unwrap().unit_id,
-        meter_index as u16
-    );
+    assert_eq!(meter_convert_base_unit.get(0).unwrap().unit_id, meter_index);
     assert_eq!(
         meter_convert.factor_num,
         ZeroVec::from(big_one.to_bytes_le())
@@ -156,6 +129,7 @@ fn test_basic() {
     assert_eq!(
         meter_convert,
         ConversionInfo {
+            unit_id: meter_index,
             basic_units: {
                 let base_unit = vec![SingleUnit {
                     power: 1,
@@ -163,7 +137,7 @@ fn test_basic() {
                         power: 0,
                         base: Base::Decimal,
                     },
-                    unit_id: meter_index as u16,
+                    unit_id: meter_index,
                 }];
                 ZeroVec::from_iter(base_unit.into_iter())
             },
@@ -177,14 +151,21 @@ fn test_basic() {
         }
     );
 
-    let foot_convert_index = units_info_map.get("foot").unwrap();
-    let foot_convert_ule = conversion_info.zvl_get(foot_convert_index).unwrap();
+    let foot_index = CLDR_IDS_TRIE.get("foot").unwrap() as UnitID;
+    let foot_convert_index = units_info
+        .conversion_info_by_unit_id(foot_index)
+        .unwrap()
+        .unit_id;
+    let foot_convert_ule = units_info
+        .conversion_info_by_unit_id(foot_convert_index.as_unsigned_int())
+        .unwrap();
     let foot_convert: ConversionInfo = ZeroFrom::zero_from(foot_convert_ule);
     let ft_to_m = Ratio::new(BigUint::from(3048u32), BigUint::from(10000u32));
 
     assert_eq!(
         foot_convert,
         ConversionInfo {
+            unit_id: foot_convert_index.as_unsigned_int(),
             basic_units: {
                 let base_unit = vec![SingleUnit {
                     power: 1,
@@ -192,7 +173,7 @@ fn test_basic() {
                         power: 0,
                         base: Base::Decimal,
                     },
-                    unit_id: meter_index as u16,
+                    unit_id: meter_index,
                 }];
                 ZeroVec::from_iter(base_unit.into_iter())
             },
@@ -205,6 +186,4 @@ fn test_basic() {
             exactness: Exactness::Exact,
         }
     );
-
-    // TODO: add more tests
 }
