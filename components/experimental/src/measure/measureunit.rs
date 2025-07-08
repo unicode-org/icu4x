@@ -65,23 +65,20 @@ impl MeasureUnit {
     /// # Examples
     ///
     /// ```
-    /// use icu_experimental::measure::parser::MeasureUnitParser;
     /// use icu_experimental::measure::measureunit::MeasureUnit;
     ///
     ///
-    /// let parser = MeasureUnitParser::new();
-    ///
-    /// let measure_unit = parser.try_from_str("meter").unwrap();
+    /// let measure_unit = MeasureUnit::try_from_str("meter").unwrap();
     /// let short_representation = measure_unit.generate_short_representation();
     /// assert_eq!(short_representation, "I85", "{}", "meter");
     ///
     ///
-    /// let measure_unit = parser.try_from_str("square-meter").unwrap();
+    /// let measure_unit = MeasureUnit::try_from_str("square-meter").unwrap();
     /// let short_representation = measure_unit.generate_short_representation();
     /// assert_eq!(short_representation, "P2I85", "{}", "square-meter");
     ///
     ///
-    /// let measure_unit = parser.try_from_str("liter-per-100-kilometer").unwrap();
+    /// let measure_unit = MeasureUnit::try_from_str("liter-per-100-kilometer").unwrap();
     /// let short_representation = measure_unit.generate_short_representation();
     /// assert_eq!(short_representation, "C100I82P-1D3I85", "{}", "liter-per-100-kilometer");
     /// ```
