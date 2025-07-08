@@ -171,7 +171,9 @@ pub const CLDR_IDS_TRIE: ZeroTrieSimpleAscii<[u8; 1332]> =
 
 #[cfg(test)]
 mod tests {
-    use crate::measure::parser::CLDR_IDS_TRIE;
+    use crate::measure::{
+        measureunit::MeasureUnit, provider::single_unit::UnitID, single_unit_vec::SingleUnitVec,
+    };
 
     // This test is to ensure that that the IDs is fixed and not changed.
     #[test]
@@ -271,7 +273,12 @@ mod tests {
         ];
 
         for (name, id) in expected_ids {
-            assert_eq!(CLDR_IDS_TRIE.get(name), Some(id));
+            let unit = MeasureUnit::try_from_str(name).unwrap();
+            if let SingleUnitVec::One(single_unit) = unit.single_units {
+                assert_eq!(single_unit.unit_id, UnitID::try_from(id).unwrap());
+            } else {
+                panic!("Expected SingleUnitVec::One");
+            }
         }
     }
 }

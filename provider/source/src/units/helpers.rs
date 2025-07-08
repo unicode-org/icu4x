@@ -6,6 +6,7 @@ use core::str::FromStr;
 use std::collections::{BTreeMap, VecDeque};
 
 use icu::experimental::measure::measureunit::MeasureUnit;
+use icu::experimental::measure::provider::single_unit::UnitID;
 use icu::experimental::units::provider::{ConversionInfo, Exactness, Sign};
 use icu::experimental::units::ratio::IcuRatio;
 use icu_provider::DataError;
@@ -13,7 +14,7 @@ use num_traits::One;
 use num_traits::Signed;
 use zerovec::ZeroVec;
 
-use crate::cldr_serde::units::info::{Constant, UnitID};
+use crate::cldr_serde::units::info::Constant;
 
 /// Represents a scientific number that contains only clean numerator and denominator terms.
 /// NOTE:

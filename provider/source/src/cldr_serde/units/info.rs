@@ -8,12 +8,10 @@
 //! <https://github.com/unicode-org/cldr-json/blob/main/cldr-json/cldr-core/supplemental/units.json>
 
 use icu::experimental::measure::parser::ids::CLDR_IDS_TRIE;
+use icu::experimental::measure::provider::single_unit::UnitID;
 use icu_provider::DataError;
 use serde::Deserialize;
 use std::collections::BTreeMap;
-
-/// Represents the unique identifier for a unit.
-pub type UnitID = u16;
 
 #[derive(PartialEq, Debug, Deserialize)]
 pub(crate) struct Constant {
