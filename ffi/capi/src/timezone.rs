@@ -62,6 +62,7 @@ pub mod ffi {
     }
 
     #[diplomat::enum_convert(icu_time::zone::TimeZoneVariant, needs_wildcard)]
+    #[non_exhaustive]
     pub enum TimeZoneVariant {
         // TimeZoneVariant in Rust doesn't have a default, but it is useful to have one
         // here for consistent behavior.

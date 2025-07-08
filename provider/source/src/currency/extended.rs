@@ -4,7 +4,7 @@
 
 use crate::cldr_serde;
 use crate::SourceDataProvider;
-use icu::experimental::dimension::provider::extended_currency::*;
+use icu::experimental::dimension::provider::currency::extended::*;
 use icu::plurals::PluralElements;
 use icu_provider::prelude::*;
 use std::collections::HashSet;

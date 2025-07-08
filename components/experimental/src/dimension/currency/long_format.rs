@@ -8,8 +8,8 @@ use icu_decimal::DecimalFormatter;
 use icu_plurals::PluralRules;
 use writeable::Writeable;
 
-use crate::dimension::provider::currency_patterns::CurrencyPatternsData;
-use crate::dimension::provider::extended_currency::CurrencyExtendedData;
+use crate::dimension::provider::currency::extended::CurrencyExtendedData;
+use crate::dimension::provider::currency::patterns::CurrencyPatternsData;
 
 use super::CurrencyCode;
 

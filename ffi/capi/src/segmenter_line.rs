@@ -25,6 +25,7 @@ pub mod ffi {
 
     #[diplomat::rust_link(icu::segmenter::options::LineBreakStrictness, Enum)]
     #[diplomat::enum_convert(icu_segmenter::options::LineBreakStrictness, needs_wildcard)]
+    #[non_exhaustive]
     pub enum LineBreakStrictness {
         Loose,
         Normal,
@@ -35,6 +36,7 @@ pub mod ffi {
 
     #[diplomat::rust_link(icu::segmenter::options::LineBreakWordOption, Enum)]
     #[diplomat::enum_convert(icu_segmenter::options::LineBreakWordOption, needs_wildcard)]
+    #[non_exhaustive]
     pub enum LineBreakWordOption {
         #[diplomat::attr(auto, default)]
         Normal,

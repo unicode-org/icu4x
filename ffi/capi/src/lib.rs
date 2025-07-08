@@ -11,7 +11,10 @@
         clippy::unwrap_used,
         clippy::expect_used,
         clippy::panic,
-        // Exhaustiveness and Debug is not required for Diplomat types
+        // Enums should be non-exhaustive, as exhaustive enums don't exist in other languages anyway
+        clippy::exhaustive_enums,
+        // Structs should be exhaustive, as they are exhaustive in C/C++
+        // Debug is not required as there is no stable Rust API
     )
 )]
 // Diplomat limitations
