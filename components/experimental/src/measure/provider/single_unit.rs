@@ -36,7 +36,7 @@ impl SingleUnit {
     pub(crate) fn append_short_representation(&self, buff: &mut String) {
         if self.power != 1 {
             buff.push('P');
-            write!(buff, "{}", self.power).unwrap();
+            let _infallible = write!(buff, "{}", self.power);
         }
 
         if self.si_prefix.power != 0 {
@@ -44,6 +44,6 @@ impl SingleUnit {
         }
 
         buff.push('I');
-        write!(buff, "{}", self.unit_id).unwrap();
+        let _infallible = write!(buff, "{}", self.unit_id);
     }
 }
