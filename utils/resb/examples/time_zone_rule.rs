@@ -47,11 +47,95 @@ struct TzRule {
 
 #[derive(Debug)]
 struct TzRuleDate {
-    month: i8,
     day: i8,
     day_of_week: i8,
-    seconds_of_day: i32,
-    time_mode: i8,
+    month: u8,
+    millis_of_day: u32,
+    time_mode: TimeMode,
+    mode: RuleMode,
+}
+
+#[derive(Debug)]
+enum TimeMode {
+    Wall = 0,
+    Standard = 1,
+    Utc = 2,
+}
+
+#[derive(Debug, PartialEq)]
+#[allow(non_camel_case_types)]
+enum RuleMode {
+    DOW_IN_MONTH,
+    DOM,
+    DOW_GE_DOM,
+    DOW_LE_DOM,
+}
+
+impl TzRuleDate {
+    fn new(
+        mut day: i8,
+        mut day_of_week: i8,
+        month: u8,
+        millis_of_day: u32,
+        time_mode: i8,
+    ) -> Option<Self> {
+        const GREGORIAN_MONTHS: [i8; 12] = [31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+
+        if day == 0 {
+            return None;
+        }
+        if month > 11 {
+            return None;
+        }
+        if millis_of_day > 24 * 60 * 60 * 1000 {
+            return None;
+        }
+
+        let time_mode = match time_mode {
+            0 => TimeMode::Wall,
+            1 => TimeMode::Standard,
+            2 => TimeMode::Utc,
+            _ => return None,
+        };
+
+        let mode;
+
+        if day_of_week == 0 {
+            mode = RuleMode::DOM;
+        } else {
+            if day_of_week > 0 {
+                mode = RuleMode::DOW_IN_MONTH
+            } else {
+                day_of_week = -day_of_week;
+                if day > 0 {
+                    mode = RuleMode::DOW_GE_DOM;
+                } else {
+                    day = -day;
+                    mode = RuleMode::DOW_LE_DOM;
+                }
+            }
+            if day_of_week > 7 {
+                return None;
+            }
+        }
+
+        if mode == RuleMode::DOW_IN_MONTH {
+            if !(-5..=5).contains(&day) {
+                return None;
+            }
+        } else if day < 1 || day > GREGORIAN_MONTHS[month as usize] {
+            return None;
+        }
+
+        Some(Self {
+            day,
+            day_of_week,
+            month,
+            millis_of_day,
+            time_mode,
+            mode,
+        })
+    }
 }
 
 impl<'de> Deserialize<'de> for ZoneInfo64<'de> {
@@ -191,20 +275,22 @@ impl<'de> Deserialize<'de> for ZoneInfo64<'de> {
                             key,
                             TzRule {
                                 additional_offset_secs: value[10],
-                                start: TzRuleDate {
-                                    month: value[0] as i8,
-                                    day: value[1] as i8,
-                                    day_of_week: value[2] as i8,
-                                    seconds_of_day: value[3],
-                                    time_mode: value[4] as i8,
-                                },
-                                end: TzRuleDate {
-                                    month: value[5] as i8,
-                                    day: value[6] as i8,
-                                    day_of_week: value[7] as i8,
-                                    seconds_of_day: value[8],
-                                    time_mode: value[9] as i8,
-                                },
+                                start: TzRuleDate::new(
+                                    value[1] as i8,
+                                    value[2] as i8,
+                                    value[0] as u8,
+                                    value[3] as u32,
+                                    value[4] as i8,
+                                )
+                                .unwrap(),
+                                end: TzRuleDate::new(
+                                    value[6] as i8,
+                                    value[7] as i8,
+                                    value[5] as u8,
+                                    value[8] as u32,
+                                    value[9] as i8,
+                                )
+                                .unwrap(),
                             },
                         ));
                     }
@@ -445,14 +531,16 @@ impl Rule<'_> {
         let _ = self.inner.start.month;
         let _ = self.inner.start.day;
         let _ = self.inner.start.day_of_week;
-        let _ = self.inner.start.seconds_of_day;
+        let _ = self.inner.start.millis_of_day;
         let _ = self.inner.start.time_mode;
+        let _ = self.inner.start.mode;
 
         let _ = self.inner.end.month;
         let _ = self.inner.end.day;
         let _ = self.inner.end.day_of_week;
-        let _ = self.inner.end.seconds_of_day;
+        let _ = self.inner.end.millis_of_day;
         let _ = self.inner.end.time_mode;
+        let _ = self.inner.end.mode;
 
         Transition {
             transition,
