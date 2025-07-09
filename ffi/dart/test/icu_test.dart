@@ -1,4 +1,4 @@
-import 'package:icu/icu.dart';
+import 'package:icu4x/icu4x.dart';
 import 'package:test/test.dart';
 
 void main() {

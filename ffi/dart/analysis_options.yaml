@@ -3,3 +3,7 @@ include: package:lints/recommended.yaml
 linter:
   rules:
     - prefer_single_quotes
+
+analyzer:
+  exclude:
+    - lib/src/bindings/*
