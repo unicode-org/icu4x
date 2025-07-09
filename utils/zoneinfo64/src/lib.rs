@@ -2,16 +2,25 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+//! TODO
+
 use std::{fmt::Debug, marker::PhantomData};
 
 use potential_utf::PotentialUtf16;
-use resb::include_bytes_as_u32;
+use resb::binary::BinaryDeserializerError;
 use serde::Deserialize;
 
-use icu::{locale::subtags::Region, time::zone::UtcOffset};
+use icu_locale_core::subtags::Region;
+use icu_time::zone::UtcOffset;
+
+#[cfg(feature = "chrono")]
+mod chrono_impls;
+
+mod rule;
+use rule::*;
 
 #[derive(Debug)]
-struct ZoneInfo64<'a> {
+pub struct ZoneInfo64<'a> {
     zones: Vec<TzZone<'a>>,
     names: Vec<&'a PotentialUtf16>,
     rules: Vec<TzRule>,
@@ -26,123 +35,57 @@ enum TzZone<'a> {
     Int(u32),
 }
 
-#[derive(Debug)]
 struct TzZoneData<'a> {
-    type_offsets: &'a [(i32, i32)],
-    trans: &'a [i32],
     trans_pre32: &'a [(i32, i32)],
+    trans: &'a [i32],
     trans_post32: &'a [(i32, i32)],
     type_map: &'a [u8],
+    type_offsets: &'a [(i32, i32)],
     final_rule_offset_year: Option<(u32, i32, u32)>,
     #[allow(dead_code)]
-    links: Option<&'a [u32]>,
+    links: &'a [u32],
 }
 
-#[derive(Debug)]
-struct TzRule {
-    additional_offset_secs: i32,
-    start: TzRuleDate,
-    end: TzRuleDate,
-}
+impl Debug for TzZoneData<'_> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "TzZoneData {{ ")?;
 
-#[derive(Debug)]
-struct TzRuleDate {
-    day: i8,
-    day_of_week: i8,
-    month: u8,
-    millis_of_day: u32,
-    time_mode: TimeMode,
-    mode: RuleMode,
-}
-
-#[derive(Debug)]
-enum TimeMode {
-    Wall = 0,
-    Standard = 1,
-    Utc = 2,
-}
-
-#[derive(Debug, PartialEq)]
-#[allow(non_camel_case_types)]
-enum RuleMode {
-    DOW_IN_MONTH,
-    DOM,
-    DOW_GE_DOM,
-    DOW_LE_DOM,
-}
-
-impl TzRuleDate {
-    fn new(
-        mut day: i8,
-        mut day_of_week: i8,
-        month: u8,
-        millis_of_day: u32,
-        time_mode: i8,
-    ) -> Option<Self> {
-        const GREGORIAN_MONTHS: [i8; 12] = [31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
-
-        if day == 0 {
-            return None;
-        }
-        if month > 11 {
-            return None;
-        }
-        if millis_of_day > 24 * 60 * 60 * 1000 {
-            return None;
+        fn dbg_timestamp(f: &mut std::fmt::Formatter<'_>, t: i64) -> std::fmt::Result {
+            #[cfg(feature = "chrono")]
+            let t = chrono::DateTime::from_timestamp(t, 0).unwrap();
+            write!(f, "{t:?}, ")
         }
 
-        let time_mode = match time_mode {
-            0 => TimeMode::Wall,
-            1 => TimeMode::Standard,
-            2 => TimeMode::Utc,
-            _ => return None,
-        };
-
-        let mode;
-
-        if day_of_week == 0 {
-            mode = RuleMode::DOM;
-        } else {
-            if day_of_week > 0 {
-                mode = RuleMode::DOW_IN_MONTH
-            } else {
-                day_of_week = -day_of_week;
-                if day > 0 {
-                    mode = RuleMode::DOW_GE_DOM;
-                } else {
-                    day = -day;
-                    mode = RuleMode::DOW_LE_DOM;
-                }
-            }
-            if day_of_week > 7 {
-                return None;
-            }
+        write!(f, "transitions/offsets: [")?;
+        write!(f, "{:?}, ", self.type_offsets[0])?;
+        let mut i = 0;
+        for &(lo, hi) in self.trans_pre32 {
+            dbg_timestamp(f, (lo as i64) << 32 | hi as i64)?;
+            write!(f, "{:?}, ", self.type_offsets[self.type_map[i] as usize])?;
+            i += 1;
+        }
+        for &t in self.trans {
+            dbg_timestamp(f, t as i64)?;
+            let (std, rule) = self.type_offsets[self.type_map[i] as usize];
+            let std = std as f64 / 3600.0;
+            let rule = rule as f64 / 3600.0;
+            write!(f, "{:?}, ", (std, rule))?;
+            i += 1;
         }
 
-        if mode == RuleMode::DOW_IN_MONTH {
-            if !(-5..=5).contains(&day) {
-                return None;
-            }
-        } else if day < 1 || day > GREGORIAN_MONTHS[month as usize] {
-            return None;
+        for &(lo, hi) in self.trans_post32 {
+            dbg_timestamp(f, (lo as i64) << 32 | hi as i64)?;
+            write!(f, "{:?}, ", self.type_offsets[self.type_map[i] as usize])?;
+            i += 1;
         }
+        write!(f, "], ")?;
 
-        Some(Self {
-            day,
-            day_of_week,
-            month,
-            millis_of_day,
-            time_mode,
-            mode,
-        })
+        write!(f, "}}")
     }
 }
 
-impl<'de> Deserialize<'de> for ZoneInfo64<'de> {
-    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
-    where
-        D: serde::de::Deserializer<'de>,
-    {
+impl<'a> ZoneInfo64<'a> {
+    pub fn try_from_u32s(resb: &'a [u32]) -> Result<Self, BinaryDeserializerError> {
         use serde::de::*;
 
         #[derive(Debug, Deserialize)]
@@ -264,35 +207,17 @@ impl<'de> Deserialize<'de> for ZoneInfo64<'de> {
                 {
                     let mut vec = vec![];
                     while let Some((key, value)) = map.next_entry::<&str, &[u8]>()? {
-                        if value.as_ptr().align_offset(core::mem::align_of::<i32>()) != 0
-                            || value.len() != core::mem::size_of::<i32>() * 11
+                        if value
+                            .as_ptr()
+                            .align_offset(core::mem::align_of::<[i32; 11]>())
+                            != 0
+                            || value.len() != core::mem::size_of::<[i32; 11]>()
                         {
                             return Err(A::Error::custom("Wrong length or align"));
                         }
                         let value = unsafe { &*(value.as_ptr() as *const [i32; 11]) };
 
-                        vec.push((
-                            key,
-                            TzRule {
-                                additional_offset_secs: value[10],
-                                start: TzRuleDate::new(
-                                    value[1] as i8,
-                                    value[2] as i8,
-                                    value[0] as u8,
-                                    value[3] as u32,
-                                    value[4] as i8,
-                                )
-                                .unwrap(),
-                                end: TzRuleDate::new(
-                                    value[6] as i8,
-                                    value[7] as i8,
-                                    value[5] as u8,
-                                    value[8] as u32,
-                                    value[9] as i8,
-                                )
-                                .unwrap(),
-                            },
-                        ));
+                        vec.push((key, TzRule::from_raw(value)));
                     }
                     Ok(vec)
                 }
@@ -317,28 +242,19 @@ impl<'de> Deserialize<'de> for ZoneInfo64<'de> {
                 {
                     let mut vec = vec![];
                     while let Some(bytes) = seq.next_element::<&[u8]>()? {
-                        if bytes.as_ptr().align_offset(core::mem::align_of::<u16>()) != 0
-                            || bytes.len() % core::mem::size_of::<u16>() != 0
-                        {
-                            return Err(A::Error::custom("Wrong length or align"));
-                        }
-
-                        // Safety: The check gurantees length and alignment
-                        let utf16 = potential_utf::PotentialUtf16::from_slice(unsafe {
-                            core::slice::from_raw_parts(
-                                bytes.as_ptr() as *const u16,
-                                bytes.len() / core::mem::size_of::<u16>(),
-                            )
-                        });
+                        let utf16 = potential_utf::PotentialUtf16::from_slice(
+                            // Safety: all byte representations are valid u16s
+                            unsafe {
+                                resb::binary::helpers::cast_bytes_to_slice::<_, A::Error>(bytes)?
+                            },
+                        );
 
                         let mut utf16 = utf16.chars();
 
                         let Ok(region) = Region::try_from_raw([
-                            // interpreting the UTF-16 code points as UTF-8 code points, which is fine because they're
-                            // guaranteed ASCII
-                            utf16.next().unwrap_or_default() as u8,
-                            utf16.next().unwrap_or_default() as u8,
-                            utf16.next().unwrap_or_default() as u8,
+                            utf16.next().filter(char::is_ascii).unwrap_or_default() as u8,
+                            utf16.next().filter(char::is_ascii).unwrap_or_default() as u8,
+                            utf16.next().filter(char::is_ascii).unwrap_or_default() as u8,
                         ]) else {
                             return Err(A::Error::custom("Invalid region code"));
                         };
@@ -357,10 +273,10 @@ impl<'de> Deserialize<'de> for ZoneInfo64<'de> {
             names,
             rules,
             regions,
-        } = ZoneInfo64Raw::deserialize(deserializer)?;
+        } = resb::binary::from_words::<ZoneInfo64Raw>(resb)?;
 
         if zones.len() != names.len() || names.len() != regions.len() {
-            return Err(D::Error::custom(
+            return Err(BinaryDeserializerError::unknown(
                 "zones, names, regions need to have matching lengths",
             ));
         }
@@ -376,10 +292,10 @@ impl<'de> Deserialize<'de> for ZoneInfo64<'de> {
             match *zone {
                 TzZoneRaw::Int(i) => {
                     let Some(alias) = raw_zones.get(i as usize) else {
-                        return Err(D::Error::custom("invalid alias idx"));
+                        return Err(BinaryDeserializerError::unknown("invalid alias idx"));
                     };
                     if let TzZoneRaw::Int(_) = alias {
-                        return Err(D::Error::custom("multi-step alias"));
+                        return Err(BinaryDeserializerError::unknown("multi-step alias"));
                     }
                     zones.push(TzZone::Int(i))
                 }
@@ -399,28 +315,30 @@ impl<'de> Deserialize<'de> for ZoneInfo64<'de> {
                     let trans_post32 = trans_post32.unwrap_or_default();
                     let type_map = type_map.unwrap_or_default();
 
+                    let links = links.unwrap_or_default();
+
                     if trans.len() + trans_post32.len() + trans_pre32.len() != type_map.len()
                         || type_offsets.is_empty()
                     {
-                        return Err(D::Error::custom("inconsistent offset data"));
+                        return Err(BinaryDeserializerError::unknown("inconsistent offset data"));
                     }
 
                     for &idx in type_map {
                         if idx as usize >= type_offsets.len() {
-                            return Err(D::Error::custom("invalid offset map"));
+                            return Err(BinaryDeserializerError::unknown("invalid offset map"));
                         }
                     }
 
                     let final_rule_offset_year = match (final_rule, final_raw, final_year) {
                         (Some(name), Some(offset), Some(year)) => {
                             let Some(idx) = rules_lookup(name) else {
-                                return Err(D::Error::custom("invalid rule id"));
+                                return Err(BinaryDeserializerError::unknown("invalid rule id"));
                             };
                             Some((idx as u32, offset, year))
                         }
                         (None, None, None) => None,
                         _ => {
-                            return Err(D::Error::custom(
+                            return Err(BinaryDeserializerError::unknown(
                                 "inconsisent finalRule, finalRaw, finalYear",
                             ))
                         }
@@ -448,14 +366,15 @@ impl<'de> Deserialize<'de> for ZoneInfo64<'de> {
             regions,
         })
     }
-}
 
-impl<'a> ZoneInfo64<'a> {
-    fn get(&'a self, iana: &str) -> Option<(Transitions<'a>, Region)> {
+    pub fn get(&'a self, iana: &str) -> Option<Zone<'a>> {
         let idx = self
             .names
             .binary_search_by(|&n| n.chars().cmp(iana.chars()))
             .ok()?;
+
+        #[expect(clippy::indexing_slicing)] // binary search
+        let name = self.names[idx];
 
         #[expect(clippy::indexing_slicing)] // regions and names have the same length
         let region = self.regions[idx];
@@ -470,18 +389,9 @@ impl<'a> ZoneInfo64<'a> {
             unreachable!() // data validate to have at most one alias jump
         };
 
-        let &TzZoneData {
-            type_offsets,
-            trans,
-            trans_pre32,
-            trans_post32,
-            type_map,
-            final_rule_offset_year,
-            ..
-        } = zone.as_ref();
-
         #[expect(clippy::indexing_slicing)] // rules indices are all valid
-        let final_rule = final_rule_offset_year
+        let final_rule = zone
+            .final_rule_offset_year
             .map(|(idx, offset, year)| (&self.rules[idx as usize], offset, year))
             .map(|(inner, offset_seconds, start_year)| Rule {
                 start_year,
@@ -489,85 +399,42 @@ impl<'a> ZoneInfo64<'a> {
                 inner,
             });
 
-        Some((
-            Transitions {
-                trans_pre32,
-                trans,
-                trans_post32,
-                type_map,
-                type_offsets,
-                final_rule,
-            },
+        Some(Zone {
+            simple: zone.as_ref(),
+            final_rule,
             region,
-        ))
+            name,
+        })
     }
 }
 
-#[derive(Debug)]
-pub struct Transitions<'a> {
-    trans_pre32: &'a [(i32, i32)],
-    trans: &'a [i32],
-    trans_post32: &'a [(i32, i32)],
-    type_map: &'a [u8],
-    type_offsets: &'a [(i32, i32)],
+#[derive(Debug, Clone, Copy)]
+pub struct Zone<'a> {
+    simple: &'a TzZoneData<'a>,
     final_rule: Option<Rule<'a>>,
+    pub name: &'a PotentialUtf16,
+    pub region: Region,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone, Copy)]
 struct Rule<'a> {
     start_year: u32,
     standard_offset_seconds: i32,
     inner: &'a TzRule,
 }
 
-impl Rule<'_> {
-    fn previous_transition(&self, seconds_since_epoch: i64) -> Transition {
-        // TODO
-        let rule_applies = true;
-        let transition = seconds_since_epoch;
-
-        let _ = self.start_year;
-
-        let _ = self.inner.start.month;
-        let _ = self.inner.start.day;
-        let _ = self.inner.start.day_of_week;
-        let _ = self.inner.start.millis_of_day;
-        let _ = self.inner.start.time_mode;
-        let _ = self.inner.start.mode;
-
-        let _ = self.inner.end.month;
-        let _ = self.inner.end.day;
-        let _ = self.inner.end.day_of_week;
-        let _ = self.inner.end.millis_of_day;
-        let _ = self.inner.end.time_mode;
-        let _ = self.inner.end.mode;
-
-        Transition {
-            transition,
-            rule_applies,
-            offset: UtcOffset::from_seconds_unchecked(
-                self.standard_offset_seconds
-                    + if rule_applies {
-                        self.inner.additional_offset_secs
-                    } else {
-                        0
-                    },
-            ),
-        }
-    }
-}
-
-#[derive(Debug)]
+#[derive(Debug, Clone, Copy)]
 pub struct Transition {
     pub transition: i64,
     pub offset: UtcOffset,
     pub rule_applies: bool,
 }
 
-impl Transitions<'_> {
+impl Zone<'_> {
     fn previous_transition(&self, seconds_since_epoch: i64) -> Transition {
         let idx = if seconds_since_epoch < i32::MIN as i64 {
-            self.trans_pre32
+            self.simple
+                .trans_pre32
                 .binary_search(&(
                     (seconds_since_epoch >> 32) as i32,
                     (seconds_since_epoch & 0xFFFFFFFF) as i32,
@@ -576,17 +443,19 @@ impl Transitions<'_> {
                 // binary_search returns the index of the next (higher) transition, so we subtract one
                 .unwrap_or_else(|i| i as isize - 1)
         } else if seconds_since_epoch <= i32::MAX as i64 {
-            self.trans_pre32.len() as isize
+            self.simple.trans_pre32.len() as isize
                 + self
+                    .simple
                     .trans
                     .binary_search(&(seconds_since_epoch as i32))
                     .map(|i| i as isize)
                     // binary_search returns the index of the next (higher) transition, so we subtract one
                     .unwrap_or_else(|i| i as isize - 1)
         } else {
-            self.trans_pre32.len() as isize
-                + self.trans.len() as isize
+            self.simple.trans_pre32.len() as isize
+                + self.simple.trans.len() as isize
                 + self
+                    .simple
                     .trans_post32
                     .binary_search(&(
                         (seconds_since_epoch >> 32) as i32,
@@ -600,7 +469,7 @@ impl Transitions<'_> {
         // before first transition don't use `type_map`, just the first entry in `type_offsets`
         if idx == -1 {
             #[expect(clippy::unwrap_used)] // type_offsets non-empty by invariant
-            let &(standard, rule_additional) = self.type_offsets.first().unwrap();
+            let &(standard, rule_additional) = self.simple.type_offsets.first().unwrap();
             return Transition {
                 transition: i64::MIN,
                 offset: UtcOffset::from_seconds_unchecked(standard + rule_additional),
@@ -611,24 +480,35 @@ impl Transitions<'_> {
         let idx = idx as usize;
 
         // after the last transition, respect the rule
-        if idx == self.type_map.len() - 1 {
+        if idx == self.simple.type_map.len() - 1 {
             if let Some(rule) = self.final_rule.as_ref() {
-                return rule.previous_transition(seconds_since_epoch);
+                let (additional_offset_seconds, transition) = rule
+                    .inner
+                    .additional_offset_since(seconds_since_epoch, rule.start_year);
+                return Transition {
+                    transition,
+                    rule_applies: additional_offset_seconds != 0,
+                    offset: UtcOffset::from_seconds_unchecked(
+                        rule.standard_offset_seconds + additional_offset_seconds,
+                    ),
+                };
             }
         }
 
         #[expect(clippy::indexing_slicing)]
         // type_map has length sum(trans*), and type_map values are validated to be valid indices in type_offsets
-        let (standard, rule_additional) = self.type_offsets[self.type_map[idx] as usize];
+        let (standard, rule_additional) =
+            self.simple.type_offsets[self.simple.type_map[idx] as usize];
 
         #[expect(clippy::indexing_slicing)] // by guards or invariant
-        let transition = if idx < self.trans_pre32.len() {
-            let (lo, hi) = self.trans_pre32[idx];
+        let transition = if idx < self.simple.trans_pre32.len() {
+            let (lo, hi) = self.simple.trans_pre32[idx];
             (lo as i64) << 32 | hi as i64
-        } else if idx - self.trans_pre32.len() < self.trans.len() {
-            self.trans[idx - self.trans_pre32.len()] as i64
+        } else if idx - self.simple.trans_pre32.len() < self.simple.trans.len() {
+            self.simple.trans[idx - self.simple.trans_pre32.len()] as i64
         } else {
-            let (lo, hi) = self.trans_pre32[idx - self.trans_pre32.len() - self.trans.len()];
+            let (lo, hi) = self.simple.trans_post32
+                [idx - self.simple.trans_pre32.len() - self.simple.trans.len()];
             (lo as i64) << 32 | hi as i64
         };
 
@@ -640,52 +520,70 @@ impl Transitions<'_> {
     }
 }
 
-fn main() {
-    let in_bytes = include_bytes_as_u32!("data/zoneinfo64.res");
+#[test]
+fn test() {
+    use chrono::Offset;
+    use chrono::TimeZone;
+    use chrono_tz::OffsetComponents;
 
-    let tzdb = resb::binary::from_words::<ZoneInfo64>(in_bytes)
-        .expect("Error processing resource bundle file");
+    // Tests pre32 transitions
+    // 1938-04-24T22:00:00Z
+    const PAST: i64 = -1_000_000_000 - 800;
+    // Tests rules and post32 transitions
+    // 2033-05-18T03:00:00Z
+    const FUTURE: i64 = 3_000_000_000 - 2000;
 
-    let id = std::env::args()
-        .nth(1)
-        .unwrap_or_else(|| "Europe/Zurich".into());
-    let seconds_since_epoch = std::env::args()
-        .nth(2)
-        .unwrap_or_default()
-        .parse()
-        .unwrap_or_default();
+    let tzdb =
+        ZoneInfo64::try_from_u32s(resb::include_bytes_as_u32!("../tests/data/zoneinfo64.res"))
+            .expect("Error processing resource bundle file");
 
-    let (zone, region) = tzdb.get(&id).unwrap();
-    let transition = zone.previous_transition(seconds_since_epoch);
+    for chrono in chrono_tz::TZ_VARIANTS {
+        let iana = chrono.name();
 
-    let chrono = chrono::offset::TimeZone::offset_from_utc_datetime(
-        &<chrono_tz::Tz as core::str::FromStr>::from_str(&id).unwrap(),
-        &chrono::DateTime::from_timestamp(seconds_since_epoch, 0)
-            .unwrap()
-            .naive_utc(),
-    );
+        println!("{iana}");
 
-    assert_eq!(
-        transition.offset.to_seconds(),
-        (chrono_tz::OffsetComponents::base_utc_offset(&chrono)
-            + chrono_tz::OffsetComponents::dst_offset(&chrono))
-        .num_seconds() as i32
-    );
-    assert_eq!(
-        transition.rule_applies,
-        !chrono_tz::OffsetComponents::dst_offset(&chrono).is_zero()
-    );
+        let zoneinfo64 = tzdb.get(iana).unwrap();
 
-    println!(
-        "Zone {id:?} ({region}) at {time:?}: {offset:?} ({is_dst}) since {transition:?}",
-        time = chrono::DateTime::from_timestamp(seconds_since_epoch, 0).unwrap(),
-        region = region.as_str(),
-        offset = transition.offset,
-        is_dst = if transition.rule_applies {
-            "Daylight"
+        // TODO
+        let max_working_timestamp = if zoneinfo64.final_rule.is_some() {
+            zoneinfo64.simple.trans.last().copied().unwrap_or(i32::MAX) as i64
         } else {
-            "Standard"
-        },
-        transition = chrono::DateTime::from_timestamp(transition.transition, 0).unwrap(),
-    );
+            FUTURE
+        };
+
+        for seconds_since_epoch in (PAST..max_working_timestamp).step_by(60 * 60) {
+            let utc_datetime = chrono::DateTime::from_timestamp(seconds_since_epoch, 0)
+                .unwrap()
+                .naive_utc();
+            let zoneinfo64_date = zoneinfo64.offset_from_utc_datetime(&utc_datetime);
+            let chrono_date = chrono.offset_from_utc_datetime(&utc_datetime);
+
+            assert_eq!(
+                zoneinfo64_date.fix(),
+                chrono_date.fix(),
+                "{seconds_since_epoch}, {iana:?}",
+            );
+
+            // Rearguard / vanguard diffs
+            if [
+                "Africa/Casablanca",
+                "Africa/El_Aaiun",
+                "Africa/Windhoek",
+                "Europe/Dublin",
+                "Eire",
+                "Europe/Bratislava",
+                "Europe/Prague",
+            ]
+            .contains(&chrono.name())
+            {
+                continue;
+            }
+
+            assert_eq!(
+                zoneinfo64_date.rule_applies(),
+                !chrono_date.dst_offset().is_zero(),
+                "{seconds_since_epoch}, {iana:?}",
+            );
+        }
+    }
 }

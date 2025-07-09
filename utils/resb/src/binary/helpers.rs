@@ -4,39 +4,30 @@
 
 //! This module contains helpers for zero-copy deserialization of slices other than `&[u8]`.
 
+use potential_utf::PotentialUtf16;
 use serde::de::*;
 
 /// TODO
 pub fn option_utf_16<'de, D: Deserializer<'de>>(
     deserializer: D,
-) -> Result<Option<&'de potential_utf::PotentialUtf16>, D::Error> {
-    let bytes = <Option<&[u8]>>::deserialize(deserializer)?;
-    if let Some(bytes) = bytes {
-        if bytes.as_ptr().align_offset(core::mem::align_of::<u16>()) != 0
-            || bytes.len() % core::mem::size_of::<u16>() != 0
-        {
-            return Err(D::Error::custom("Wrong length or align"));
-        }
-        // Safety: The check gurantees length and alignment
-        Ok(Some(potential_utf::PotentialUtf16::from_slice(unsafe {
-            core::slice::from_raw_parts(
-                bytes.as_ptr() as *const u16,
-                bytes.len() / core::mem::size_of::<u16>(),
-            )
-        })))
-    } else {
-        Ok(None)
-    }
+) -> Result<Option<&'de PotentialUtf16>, D::Error> {
+    let Some(bytes) = <Option<&[u8]>>::deserialize(deserializer)? else {
+        return Ok(None);
+    };
+    // Safety: all byte representations are valid u16s
+    unsafe { cast_bytes_to_slice(bytes) }
+        .map(PotentialUtf16::from_slice)
+        .map(Some)
 }
 
 /// TODO
 pub fn vec_utf_16<'de, D: Deserializer<'de>>(
     deserializer: D,
-) -> Result<alloc::vec::Vec<&'de potential_utf::PotentialUtf16>, D::Error> {
+) -> Result<alloc::vec::Vec<&'de PotentialUtf16>, D::Error> {
     struct Utf16Visitor;
 
     impl<'de> Visitor<'de> for Utf16Visitor {
-        type Value = alloc::vec::Vec<&'de potential_utf::PotentialUtf16>;
+        type Value = alloc::vec::Vec<&'de PotentialUtf16>;
 
         fn expecting(&self, formatter: &mut alloc::fmt::Formatter) -> alloc::fmt::Result {
             write!(formatter, "a sequence of UTF-16 slices")
@@ -48,19 +39,10 @@ pub fn vec_utf_16<'de, D: Deserializer<'de>>(
         {
             let mut vec = alloc::vec::Vec::with_capacity(seq.size_hint().unwrap_or_default());
             while let Some(bytes) = seq.next_element::<&[u8]>()? {
-                if bytes.as_ptr().align_offset(core::mem::align_of::<u16>()) != 0
-                    || bytes.len() % core::mem::size_of::<u16>() != 0
-                {
-                    return Err(A::Error::custom("Wrong length or align"));
-                }
-
-                // Safety: The check gurantees length and alignment
-                vec.push(potential_utf::PotentialUtf16::from_slice(unsafe {
-                    core::slice::from_raw_parts(
-                        bytes.as_ptr() as *const u16,
-                        bytes.len() / core::mem::size_of::<u16>(),
-                    )
-                }));
+                vec.push(PotentialUtf16::from_slice(
+                    // Safety: all byte representations are valid u16s
+                    unsafe { cast_bytes_to_slice(bytes) }?,
+                ));
             }
             Ok(vec)
         }
@@ -73,46 +55,22 @@ pub fn vec_utf_16<'de, D: Deserializer<'de>>(
 pub fn option_i32<'de, D: Deserializer<'de>>(
     deserializer: D,
 ) -> Result<Option<&'de [i32]>, D::Error> {
-    let bytes = <Option<&[u8]>>::deserialize(deserializer)?;
-    if let Some(bytes) = bytes {
-        if bytes.as_ptr().align_offset(core::mem::align_of::<i32>()) != 0
-            || bytes.len() % core::mem::size_of::<i32>() != 0
-        {
-            return Err(D::Error::custom("Wrong length or align"));
-        }
-        // Safety: The check gurantees length and alignment
-        Ok(Some(unsafe {
-            core::slice::from_raw_parts(
-                bytes.as_ptr() as *const i32,
-                bytes.len() / core::mem::size_of::<i32>(),
-            )
-        }))
-    } else {
-        Ok(None)
-    }
+    let Some(bytes) = <Option<&[u8]>>::deserialize(deserializer)? else {
+        return Ok(None);
+    };
+    // Safety: all byte representations are valid i32s
+    unsafe { cast_bytes_to_slice(bytes) }.map(Some)
 }
 
 /// TODO
 pub fn option_u32<'de, D: Deserializer<'de>>(
     deserializer: D,
 ) -> Result<Option<&'de [u32]>, D::Error> {
-    let bytes = <Option<&[u8]>>::deserialize(deserializer)?;
-    if let Some(bytes) = bytes {
-        if bytes.as_ptr().align_offset(core::mem::align_of::<u32>()) != 0
-            || bytes.len() % core::mem::size_of::<u32>() != 0
-        {
-            return Err(D::Error::custom("Wrong length or align"));
-        }
-        // Safety: The check gurantees length and alignment
-        Ok(Some(unsafe {
-            core::slice::from_raw_parts(
-                bytes.as_ptr() as *const u32,
-                bytes.len() / core::mem::size_of::<u32>(),
-            )
-        }))
-    } else {
-        Ok(None)
-    }
+    let Some(bytes) = <Option<&[u8]>>::deserialize(deserializer)? else {
+        return Ok(None);
+    };
+    // Safety: all byte representations are valid u32s
+    unsafe { cast_bytes_to_slice(bytes) }.map(Some)
 }
 
 /// TODO
@@ -120,21 +78,8 @@ pub fn i32_tuple<'de, D: Deserializer<'de>>(
     deserializer: D,
 ) -> Result<&'de [(i32, i32)], D::Error> {
     let bytes = <&[u8]>::deserialize(deserializer)?;
-    if bytes
-        .as_ptr()
-        .align_offset(core::mem::align_of::<(i32, i32)>())
-        != 0
-        || bytes.len() % core::mem::size_of::<(i32, i32)>() != 0
-    {
-        return Err(D::Error::custom("Wrong length or align"));
-    }
-    // Safety: The check gurantees length and alignment
-    Ok(unsafe {
-        core::slice::from_raw_parts(
-            bytes.as_ptr() as *const (i32, i32),
-            bytes.len() / core::mem::size_of::<(i32, i32)>(),
-        )
-    })
+    // Safety: all byte representations are valid (i32, i32)
+    unsafe { cast_bytes_to_slice(bytes) }
 }
 
 /// TODO
@@ -142,24 +87,29 @@ pub fn i32_tuple<'de, D: Deserializer<'de>>(
 pub fn option_i32_tuple<'de, D: Deserializer<'de>>(
     deserializer: D,
 ) -> Result<Option<&'de [(i32, i32)]>, D::Error> {
-    let bytes = <Option<&[u8]>>::deserialize(deserializer)?;
-    if let Some(bytes) = bytes {
-        if bytes
-            .as_ptr()
-            .align_offset(core::mem::align_of::<(i32, i32)>())
-            != 0
-            || bytes.len() % core::mem::size_of::<(i32, i32)>() != 0
-        {
-            return Err(D::Error::custom("Wrong length or align"));
-        }
-        // Safety: The check gurantees length and alignment
-        Ok(Some(unsafe {
-            core::slice::from_raw_parts(
-                bytes.as_ptr() as *const (i32, i32),
-                bytes.len() / core::mem::size_of::<(i32, i32)>(),
-            )
-        }))
-    } else {
-        Ok(None)
+    let Some(bytes) = <Option<&[u8]>>::deserialize(deserializer)? else {
+        return Ok(None);
+    };
+    // Safety: all byte representations are valid (i32, i32)
+    unsafe { cast_bytes_to_slice(bytes) }.map(Some)
+}
+
+/// Casts a slice of byte to a slice of T
+///
+/// # Safety
+/// Alignment and length are checked, however the caller has to guarantee that the byte representation is valid for type T.
+pub unsafe fn cast_bytes_to_slice<T, E: serde::de::Error>(bytes: &[u8]) -> Result<&[T], E> {
+    if bytes.as_ptr().align_offset(core::mem::align_of::<T>()) != 0
+        && bytes.len() % core::mem::size_of::<T>() != 0
+    {
+        return Err(E::custom("Wrong length or align"));
     }
+
+    // Safety: The check gurantees length and alignment
+    Ok(unsafe {
+        core::slice::from_raw_parts(
+            bytes.as_ptr() as *const T,
+            bytes.len() / core::mem::size_of::<T>(),
+        )
+    })
 }

@@ -1,0 +1,32 @@
+# This file is part of ICU4X. For terms of use, please see the file
+# called LICENSE at the top level of the ICU4X source tree
+# (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
+
+[package]
+name = "zoneinfo64"
+version = "0.0.0"
+publish = false
+
+rust-version.workspace = true
+authors.workspace = true
+edition.workspace = true
+repository.workspace = true
+homepage.workspace = true
+license.workspace = true
+categories.workspace = true
+include.workspace = true
+
+[dependencies]
+icu_locale_core = { workspace = true }
+icu_time = { workspace = true }
+potential_utf = { workspace = true }
+resb = { workspace = true }
+serde = { workspace = true, features = ["derive"] }
+
+chrono = { version = "0.4", optional = true }
+
+[dev-dependencies]
+chrono-tz = { git = "https://github.com/robertbastian/chrono-tz", branch = "fix" }
+
+[features]
+chrono = ["dep:chrono"]

@@ -387,28 +387,32 @@ pub struct BinaryDeserializerError {
 }
 
 impl BinaryDeserializerError {
-    fn invalid_data(message: &'static str) -> Self {
+    /// TODO
+    pub fn invalid_data(message: &'static str) -> Self {
         Self {
             kind: ErrorKind::InvalidData,
             message,
         }
     }
 
-    fn resource_type_mismatch(message: &'static str) -> Self {
+    /// TODO
+    pub fn resource_type_mismatch(message: &'static str) -> Self {
         Self {
             kind: ErrorKind::ResourceTypeMismatch,
             message,
         }
     }
 
-    fn unsupported_format(message: &'static str) -> Self {
+    /// TODO
+    pub fn unsupported_format(message: &'static str) -> Self {
         Self {
             kind: ErrorKind::UnsupportedFormat,
             message,
         }
     }
 
-    fn unknown(message: &'static str) -> Self {
+    /// TODO
+    pub fn unknown(message: &'static str) -> Self {
         Self {
             kind: ErrorKind::Unknown,
             message,
