@@ -18,7 +18,7 @@ icu_provider::data_marker!(
     UnitsDisplayNameV1,
     UnitsDisplayName<'static>,
     #[cfg(feature = "datagen")]
-    attributes_domain = "display_names"
+    attributes_domain = "units"
 );
 
 #[derive(Clone, PartialEq, Debug, yoke::Yokeable, zerofrom::ZeroFrom)]
