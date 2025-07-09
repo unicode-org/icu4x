@@ -322,7 +322,7 @@ impl FormattableAnyCalendarKind {
 }
 
 #[test]
-fn asfd() {
+fn test_calendar_fallback() {
     use icu_locale_core::locale;
     assert_eq!(
         FormattableAnyCalendarKind::from_preferences(locale!("en-TH-u-ca-iso8601").into()),
