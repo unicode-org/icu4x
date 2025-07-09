@@ -46,7 +46,7 @@ icu_provider::data_marker!(
 /// </div>
 #[derive(Clone, PartialEq, Debug, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
-#[cfg_attr(feature = "datagen", databake(path = icu_experimental::dimension::provider::units_essentials))]
+#[cfg_attr(feature = "datagen", databake(path = icu_experimental::dimension::provider::units::essentials))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
 pub struct UnitsEssentials<'data> {
@@ -71,7 +71,7 @@ icu_provider::data_struct!(UnitsEssentials<'_>, #[cfg(feature = "datagen")]);
 #[derive(Copy, Clone, PartialOrd, Ord, PartialEq, Eq, Debug)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
-#[cfg_attr(feature = "datagen", databake(path = icu_experimental::dimension::provider::units_essentials))]
+#[cfg_attr(feature = "datagen", databake(path = icu_experimental::dimension::provider::units::essentials))]
 #[repr(u8)]
 pub enum CompoundCount {
     /// The CLDR keyword `zero`.
