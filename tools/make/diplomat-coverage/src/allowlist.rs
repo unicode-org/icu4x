@@ -187,6 +187,7 @@ lazy_static::lazy_static! {
         "icu::calendar::CalendarPreferences",
         "icu::calendar::any_calendar::CalendarPreferences",
         "icu::calendar::week::WeekPreferences",
+        "icu::collator::CollatorPreferences",
         "icu::datetime::DateTimeFormatterPreferences",
         "icu::decimal::DecimalFormatterPreferences",
         "icu::list::ListFormatterPreferences",

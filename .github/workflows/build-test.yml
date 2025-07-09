@@ -550,8 +550,8 @@ jobs:
   semver:
     runs-on: ubuntu-latest
     env:
-      # This is the baseline for semver-check. It can be changed,
-      # such as if unstable APIs were changed but semver-check
+      # This is the baseline for semver-check. It can be changed
+      # if unstable APIs were changed but semver-check
       # didn't know that they were unstable.
       BASELINE_REF: 2ddba9c1ffc918946c7e7b23f0c5bf6feeb71a3a # a commit on main
     steps:
@@ -566,7 +566,7 @@ jobs:
 
     # Actual job
     - name: Check semver
-      uses: sffc/cargo-semver-checks-action@99233fa6fae21c528b2072684ce69fbd71a4105a
+      uses: obi1kenobi/cargo-semver-checks-action@5b298c9520f7096a4683c0bd981a7ac5a7e249ae
       with:
         baseline-rev: ${{ env.BASELINE_REF }}
 
