@@ -336,6 +336,10 @@ fn test_calendar_fallback() {
         FormattableAnyCalendarKind::from_preferences(locale!("en-SA-u-ca-islamic").into()),
         FormattableAnyCalendarKind::HijriUmmAlQura
     );
+    assert_eq!(
+        FormattableAnyCalendarKind::from_preferences(locale!("en-IL-u-ca-islamic").into()),
+        FormattableAnyCalendarKind::Gregorian
+    );
 }
 
 /// A version of [`AnyCalendar`] for the calendars supported in the any-calendar formatter.
