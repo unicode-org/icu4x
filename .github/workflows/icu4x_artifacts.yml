@@ -54,7 +54,7 @@ jobs:
       if: matrix.os == 'ubuntu-latest'
       run: |
         sudo apt-get install gcc-aarch64-linux-gnu gcc-arm-linux-gnueabihf gcc-riscv64-linux-gnu gcc-i686-linux-gnu
-        mkdir .cargo
+        mkdir -p .cargo
         echo "[target]" >> .cargo/config.toml
         echo "aarch64-linux-android.linker=\"$ANDROID_NDK_LATEST_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android30-clang\"" >> .cargo/config.toml
         echo "armv7-linux-androideabi.linker=\"$ANDROID_NDK_LATEST_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/armv7a-linux-androideabi30-clang\"" >> .cargo/config.toml
