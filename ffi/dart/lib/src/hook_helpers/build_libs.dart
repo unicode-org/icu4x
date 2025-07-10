@@ -15,12 +15,14 @@ Future<void> main(List<String> args) async {
   const simulatorKey = 'simulator';
   const compileTypeKey = 'compile_type';
   const cargoFeaturesKey = 'cargo_features';
+  const workingDirectoryKey = 'working_directory';
   final argParser = ArgParser()
     ..addOption(fileKey, mandatory: true)
     ..addOption(compileTypeKey, allowed: ['static', 'dynamic'], mandatory: true)
     ..addFlag(simulatorKey, defaultsTo: false)
     ..addOption(osKey, mandatory: true)
     ..addOption(architectureKey, mandatory: true)
+    ..addOption(workingDirectoryKey)
     ..addMultiOption(
       cargoFeaturesKey,
       defaultsTo: ['default_components', 'compiled_data'],
@@ -42,12 +44,20 @@ Future<void> main(List<String> args) async {
     ),
     parsed.option(compileTypeKey)! == 'static',
     parsed.flag(simulatorKey),
-    File.fromUri(Platform.script).parent,
+    (parsed.option(workingDirectoryKey) != null
+            ? Directory(parsed.option(workingDirectoryKey)!)
+            : null) ??
+        File.fromUri(Platform.script).parent,
     parsed.multiOption(cargoFeaturesKey),
   );
-  await lib.copy(
-    Uri.file(parsed.option(fileKey)!).toFilePath(windows: Platform.isWindows),
-  );
+  if (!lib.existsSync()) {
+    throw FileSystemException('Building the dylib failed', lib.path);
+  }
+  final file = Uri.file(
+    parsed.option(fileKey)!,
+  ).toFilePath(windows: Platform.isWindows);
+  File(file).parent.createSync(recursive: true);
+  await lib.copy(file);
 }
 
 Future<File> buildLib(
@@ -78,9 +88,9 @@ Future<File> buildLib(
     );
   }
 
-  final features = isNoStd
-      ? [...cargoFeatures, 'libc_alloc', 'panic_handler']
-      : [...cargoFeatures, 'logging', 'simple_logger'];
+  final additionalFeatures = isNoStd
+      ? ['libc_alloc', 'looping_panic_handler']
+      : ['logging', 'simple_logger'];
   await runProcess('cargo', [
     if (buildStatic || isNoStd) '+nightly',
     'rustc',
@@ -90,7 +100,7 @@ Future<File> buildLib(
     '--config=profile.release.panic="abort"',
     '--config=profile.release.codegen-units=1',
     '--no-default-features',
-    '--features=${features.join(',')}',
+    '--features=${{...cargoFeatures, ...additionalFeatures}.join(',')}',
     if (isNoStd) '-Zbuild-std=core,alloc',
     if (buildStatic || isNoStd) ...[
       '-Zbuild-std=std,panic_abort',

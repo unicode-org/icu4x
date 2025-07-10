@@ -198,6 +198,11 @@ final class CheckoutMode extends BuildMode {
         'pubspec build options.',
       );
     }
+    if (!File.fromUri(checkoutPath!.resolve('Cargo.lock')).existsSync()) {
+      throw ArgumentError(
+        'The `Cargo.lock` file could not by found at $checkoutPath',
+      );
+    }
     final builtLib = await buildLib(
       input.config.code.targetOS,
       input.config.code.targetArchitecture,
