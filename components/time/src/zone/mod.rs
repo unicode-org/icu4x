@@ -48,9 +48,9 @@
 //! Many zones use different names and offsets in the summer than in the winter. In ICU4X,
 //! this is called the _zone variant_.
 //!
-//! CLDR has two zone variants. Although they are named `"standard"` and `"daylight"`, the mapping of these
-//! variants to specific observed offsets varies from time zone to time zone, and they may not
-//! consistently represent winter versus summer time.
+//! CLDR has two zone variants. Although they are named `"standard"` and `"daylight"`, the corresponding
+//! display names may or may not correspond to "Standard Time" and "Daylight Time". For more information,
+//! see [`TimeZoneVariant`].
 //!
 //! Note: It is not required to set the zone variant on [`TimeZoneInfo`]. If it is not set, some string
 //! formats may be unsupported.
@@ -193,8 +193,9 @@ pub(crate) mod ule {
     /// An indication of a period when a time zone maps to a specific UTC offset.
     ///
     /// The `Daylight` variant is defined to be the period that has a higher
-    /// offset from UTC than the `Standard` variant. This
-    /// behavior may or may not be intuitive; for example:
+    /// offset from UTC than the `Standard` variant. Although these definitions
+    /// correspond to daylight saving time as observed in some parts of the world,
+    /// the actual behavior may or may not be intuitive; for example:
     ///
     /// - "Irish Standard Time" is the English display name for the `Daylight`
     ///   (summer, UTC+1) variant of "Europe/Dublin", with "Greenwich Mean Time"
