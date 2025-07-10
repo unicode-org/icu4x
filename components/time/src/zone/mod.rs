@@ -192,16 +192,16 @@ impl TimeZone {
 pub(crate) mod ule {
     /// An indication of a period when a time zone maps to a specific UTC offset.
     ///
-    /// Although the variants are named `Standard` and `Daylight`, what they actually indicate
-    /// is whether the period has a lower offset or a higher offset from UTC. Their behavior may
-    /// not be intuitive; for example:
+    /// The `Daylight` variant is _defined_ to be the period that has a _higher_
+    /// offset from UTC than the `Standard` variant in the same time zone. This
+    /// behavior may or may not be intuitive; for example:
     ///
     /// - "Irish Standard Time" is the English display name for the `Daylight`
-    /// (summer, UTC+1) variant of "Europe/Dublin", with "Greenwich Mean Time"
-    /// used during `Standard` (winter, UTC+0). Other locales usually use a
-    /// translation of "Irish Summer Time" for the `Daylight` variant.
+    ///   (summer, UTC+1) variant of "Europe/Dublin", with "Greenwich Mean Time"
+    ///   used during `Standard` (winter, UTC+0). Other locales usually use a
+    ///   translation of "Irish Summer Time" for the `Daylight` variant.
     /// - Some countries change their clocks backward during the Hijri month Ramadan;
-    ///   in such cases, they may be modeled as being on the `Daylight` variant for
+    ///   in such cases, they _may_ be modeled as being on the `Daylight` variant for
     ///   most of the year and switching to `Standard` during Ramadan.
     ///
     /// The zone variant is required when formatting with a "specific" time zone style,
