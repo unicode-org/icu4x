@@ -110,30 +110,30 @@ jobs:
       - run: dart test
 
       - run: dart pub get
-        working-directory: ffi/dart/example
+        working-directory: examples/dart
 
-      - run: dart tool/write_option_file.dart example/pubspec.yaml checkout $(realpath ${{ github.workspace }})
+      - run: dart tool/write_option_file.dart ../../examples/dart/pubspec.yaml checkout $(realpath ${{ github.workspace }})
         if: matrix.os == 'ubuntu-latest'
 
-      - run: dart tool/write_option_file.dart example/pubspec.yaml checkout $(realpath ${{ github.workspace }})
+      - run: dart tool/write_option_file.dart ../../examples/dart/pubspec.yaml checkout $(realpath ${{ github.workspace }})
         if: matrix.os == 'macos-latest'
 
-      - run: dart tool/write_option_file.dart example/pubspec.yaml checkout (Get-Item  ${{ github.workspace }}).FullName -replace '/', '\'
+      - run: dart tool/write_option_file.dart ../../examples/dart/pubspec.yaml checkout (Get-Item  ${{ github.workspace }}).FullName -replace '/', '\'
         if: matrix.os == 'windows-latest'
 
       - run: dart --enable-experiment=record-use build cli bin/example.dart
-        working-directory: ffi/dart/example
+        working-directory: examples/dart
 
       - run: tree . -a
         if: matrix.os == 'ubuntu-latest'
 
       - name: Run example (Linux)
-        working-directory: ffi/dart/example
+        working-directory: examples/dart
         if: matrix.os == 'ubuntu-latest'
         run: ./build/cli/linux_x64/bundle/bin/example
 
       - name: Print file size and check limit for example (Linux)
-        working-directory: ffi/dart/example
+        working-directory: examples/dart
         if: matrix.os == 'ubuntu-latest'
         run: |
           FILE_PATH="build/cli/linux_x64/bundle/lib/libicu4x.so"
@@ -145,11 +145,11 @@ jobs:
           fi
 
       - name: Run example (Mac)
-        working-directory: ffi/dart/example
+        working-directory: examples/dart
         if: matrix.os == 'macos-latest'
         run: ./build/cli/macos_arm64/bundle/bin/example
       - name: Print file size and check limit for example (Mac)
-        working-directory: ffi/dart/example
+        working-directory: examples/dart
         # skip until https://github.com/dart-lang/i18n/issues/989 issue is resolved
         if: matrix.os == 'macos-latest' && false 
         run: |
@@ -162,11 +162,11 @@ jobs:
           fi
 
       - name: Run example (Windows)
-        working-directory: ffi/dart/example
+        working-directory: examples/dart
         if: matrix.os == 'windows-latest'
         run: .\build\cli\windows_x64\bundle\bin\example.exe
       - name: Print file size and check limit for example (Windows)
-        working-directory: ffi/dart/example
+        working-directory: examples/dart
         if: matrix.os == 'windows-latest'
         run: |
           $filePath = ".\build\cli\windows_x64\bundle\lib\icu4x.dll"
@@ -204,23 +204,23 @@ jobs:
 
       - run: |
           dart tool/write_option_file.dart pubspec.yaml fetch
-          dart tool/write_option_file.dart example/pubspec.yaml fetch
+          dart tool/write_option_file.dart ../../examples/dart/pubspec.yaml fetch
 
       - run: dart test
 
       - run: dart pub get
-        working-directory: ffi/dart/example
+        working-directory: examples/dart
 
       - run: dart --enable-experiment=record-use build cli bin/example.dart
-        working-directory: ffi/dart/example
+        working-directory: examples/dart
 
       - name: Run example (Linux)
-        working-directory: ffi/dart/example
+        working-directory: examples/dart
         if: matrix.os == 'ubuntu-latest'
         run: ./build/cli/linux_x64/bundle/bin/example
 
       - name: Print file size and check limit for example (Linux)
-        working-directory: ffi/dart/example
+        working-directory: examples/dart
         if: matrix.os == 'ubuntu-latest'
         run: |
           FILE_PATH="build/cli/linux_x64/bundle/lib/libicu4x.so"
@@ -232,12 +232,12 @@ jobs:
           fi
 
       - name: Run example (Mac)
-        working-directory: ffi/dart/example
+        working-directory: examples/dart
         if: matrix.os == 'macos-latest'
         run: ./build/cli/macos_arm64/bundle/bin/example
 
       - name: Print file size and check limit for example (Mac)
-        working-directory: ffi/dart/example
+        working-directory: examples/dart
         # skip until https://github.com/dart-lang/i18n/issues/989 issue is resolved
         if: matrix.os == 'macos-latest' && false
         run: |
@@ -250,12 +250,12 @@ jobs:
           fi
 
       - name: Run example (Windows)
-        working-directory: ffi/dart/example
+        working-directory: examples/dart
         if: matrix.os == 'windows-latest'
         run: .\build\cli\windows_x64\bundle\bin\example.exe
 
       - name: Print file size and check limit for example (Windows)
-        working-directory: ffi/dart/example
+        working-directory: examples/dart
         if: matrix.os == 'windows-latest'
         run: |
           $filePath = ".\build\cli\windows_x64\bundle\lib\icu4x.dll"
@@ -340,7 +340,7 @@ jobs:
           dart test
 
       - run: dart pub get
-        working-directory: ffi/dart/example
+        working-directory: examples/dart
 
       - run: dart --enable-experiment=record-use build cli
-        working-directory: ffi/dart/example
+        working-directory: examples/dart
