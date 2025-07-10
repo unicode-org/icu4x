@@ -219,7 +219,12 @@ pub(crate) mod ule {
     #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
     #[non_exhaustive]
     pub enum TimeZoneVariant {
-        /// Indicates the period in a time zone with a lower UTC offset.
+        /// Indicates the period in a time zone with a lower UTC offset than `Daylight`.
+        ///
+        /// Typically, if a time zone does not change its clocks, it uses the `Standard`
+        /// variant year-round. However, a time zone may use the `Daylight` variant
+        /// year-round if it shares display names with another time zones that observes
+        /// daylight savings time.
         ///
         /// ❗ Clients should generally NOT construct this variant directly. Instead, use:
         /// * [`TimeZoneVariant::from_rearguard_isdst`]
@@ -229,7 +234,8 @@ pub(crate) mod ule {
         /// from time zone to time zone. The time zone display name of this variant
         /// may or may not be called "Standard Time".
         Standard = 0,
-        /// Indicates the period in a time zone with a higher UTC offset.
+        /// Indicates the period in a time zone with a higher UTC offset than `Standard`.
+        /// Not every time zone has a `Daylight` variant.
         ///
         /// ❗ Clients should generally NOT construct this variant directly. Instead, use:
         /// * [`TimeZoneVariant::from_rearguard_isdst`]
