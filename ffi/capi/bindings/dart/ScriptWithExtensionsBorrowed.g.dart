@@ -25,6 +25,7 @@ final class ScriptWithExtensionsBorrowed implements ffi.Finalizable {
     }
   }
 
+  @_DiplomatFfiUse('icu4x_ScriptWithExtensionsBorrowed_destroy_mv1')
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_ScriptWithExtensionsBorrowed_destroy_mv1));
 
   /// Get the Script property value for a code point

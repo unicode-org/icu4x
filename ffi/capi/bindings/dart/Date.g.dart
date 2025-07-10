@@ -23,6 +23,7 @@ final class Date implements ffi.Finalizable {
     }
   }
 
+  @_DiplomatFfiUse('icu4x_Date_destroy_mv1')
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_Date_destroy_mv1));
 
   /// Creates a new [Date] representing the ISO date

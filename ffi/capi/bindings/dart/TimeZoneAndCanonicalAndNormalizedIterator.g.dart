@@ -23,6 +23,7 @@ final class TimeZoneAndCanonicalAndNormalizedIterator implements ffi.Finalizable
     }
   }
 
+  @_DiplomatFfiUse('icu4x_TimeZoneAndCanonicalAndNormalizedIterator_destroy_mv1')
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_TimeZoneAndCanonicalAndNormalizedIterator_destroy_mv1));
 
   TimeZoneAndCanonicalAndNormalized? _current;
