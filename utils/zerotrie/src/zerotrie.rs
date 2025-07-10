@@ -317,8 +317,9 @@ macro_rules! impl_zerotrie_subtype {
         Store: AsRef<[u8]> + ?Sized,
         {
             /// Queries the trie for a string.
+            // Note: We do not need the Borrow trait's guarantees, so we use
+            // the more general AsRef trait.
             pub fn get<K>(&self, key: K) -> Option<usize> where K: AsRef<[u8]> {
-                // TODO: Should this be AsRef or Borrow?
                 reader::get_parameterized::<Self>(self.store.as_ref(), key.as_ref())
             }
             /// Returns `true` if the trie is empty.

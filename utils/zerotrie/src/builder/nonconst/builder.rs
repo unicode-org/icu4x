@@ -134,6 +134,7 @@ impl<S: TrieBuilderStore> ZeroTrieBuilder<S> {
         items: &[(&ByteStr, usize)],
         options: ZeroTrieBuilderOptions,
     ) -> Result<Self, ZeroTrieBuildError> {
+        #[allow(clippy::indexing_slicing)] // a debug assertion only
         for ab in items.windows(2) {
             debug_assert!(cmp_keys_values(
                 options,
@@ -225,7 +226,7 @@ impl<S: TrieBuilderStore> ZeroTrieBuilder<S> {
                     break;
                 }
                 if candidate.len() == prefix_len {
-                    panic!("A shorter string should be earlier in the sequence");
+                    unreachable!("A shorter string should be earlier in the sequence");
                 }
                 let candidate = candidate.byte_at_or_panic(prefix_len);
                 if candidate != ascii_j {
@@ -301,6 +302,7 @@ impl<S: TrieBuilderStore> ZeroTrieBuilder<S> {
                 for c in original_keys.as_const_slice().as_slice() {
                     if c.is_ascii_alphabetic() {
                         let i = (c.to_ascii_lowercase() - b'a') as usize;
+                        #[allow(clippy::indexing_slicing)] // 26 letters
                         if seen_ascii_alpha[i] {
                             return Err(ZeroTrieBuildError::MixedCase);
                         } else {
@@ -327,6 +329,7 @@ impl<S: TrieBuilderStore> ZeroTrieBuilder<S> {
                         let b_idx = phf_vec.keys().iter().position(|x| x == &b.ascii).unwrap();
                         if a_idx > b_idx {
                             // std::println!("{a:?} <=> {b:?} ({phf_vec:?})");
+                            // This method call won't panic because the ranges are valid.
                             self.data.atbs_swap_ranges(
                                 start,
                                 start + a.local_length,
