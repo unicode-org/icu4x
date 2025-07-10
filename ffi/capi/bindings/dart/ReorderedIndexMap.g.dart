@@ -25,6 +25,7 @@ final class ReorderedIndexMap implements ffi.Finalizable {
     }
   }
 
+  @_DiplomatFfiUse('icu4x_ReorderedIndexMap_destroy_mv1')
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_ReorderedIndexMap_destroy_mv1));
 
   /// Get this as a slice/array of indices

@@ -21,6 +21,7 @@ final class TimeFormatter implements ffi.Finalizable {
     }
   }
 
+  @_DiplomatFfiUse('icu4x_TimeFormatter_destroy_mv1')
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_TimeFormatter_destroy_mv1));
 
   /// See the [Rust documentation for `try_new`](https://docs.rs/icu/2.0.0/icu/datetime/type.NoCalendarFormatter.html#method.try_new) for more information.

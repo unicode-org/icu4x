@@ -23,6 +23,7 @@ final class TimeZoneIterator implements ffi.Finalizable, core.Iterator<TimeZone>
     }
   }
 
+  @_DiplomatFfiUse('icu4x_TimeZoneIterator_destroy_mv1')
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_TimeZoneIterator_destroy_mv1));
 
   TimeZone? _current;

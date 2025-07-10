@@ -21,6 +21,7 @@ final class TitlecaseMapper implements ffi.Finalizable {
     }
   }
 
+  @_DiplomatFfiUse('icu4x_TitlecaseMapper_destroy_mv1')
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_TitlecaseMapper_destroy_mv1));
 
   /// Construct a new `TitlecaseMapper` instance using compiled data.

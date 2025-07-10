@@ -21,6 +21,7 @@ final class UtcOffset implements ffi.Finalizable {
     }
   }
 
+  @_DiplomatFfiUse('icu4x_UtcOffset_destroy_mv1')
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_UtcOffset_destroy_mv1));
 
   /// Creates an offset from seconds.

@@ -23,6 +23,7 @@ final class SentenceSegmenter implements ffi.Finalizable {
     }
   }
 
+  @_DiplomatFfiUse('icu4x_SentenceSegmenter_destroy_mv1')
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_SentenceSegmenter_destroy_mv1));
 
   /// Construct a [SentenceSegmenter] using compiled data. This does not assume any content locale.
