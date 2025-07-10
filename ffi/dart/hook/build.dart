@@ -1,7 +1,3 @@
-// Copyright (c) 2024, the Dart project authors. Please see the AUTHORS file
-// for details. All rights reserved. Use of this source code is governed by a
-// BSD-style license that can be found in the LICENSE file.
-
 import 'dart:io';
 
 import 'package:code_assets/code_assets.dart';
@@ -82,10 +78,9 @@ Also, the optional `packageWithLinker` can be set to link in another package tha
         linkMode: DynamicLoadingBundled(),
         file: builtLibrary,
       ),
-      routing:
-          input.config.linkingEnabled
-              ? ToLinkHook(buildOptions.packageWithLinker ?? package)
-              : const ToAppBundle(),
+      routing: input.config.linkingEnabled
+          ? ToLinkHook(buildOptions.packageWithLinker ?? package)
+          : const ToAppBundle(),
     );
     output.addDependencies(buildMode.dependencies);
     output.addDependency(input.packageRoot.resolve('pubspec.yaml'));
@@ -112,8 +107,9 @@ final class FetchMode extends BuildMode {
     print('Running in `fetch` mode');
     final targetOS = input.config.code.targetOS;
     final targetArchitecture = input.config.code.targetArchitecture;
-    final libraryType =
-        input.config.buildStatic(treeshake) ? 'static_data' : 'dynamic';
+    final libraryType = input.config.buildStatic(treeshake)
+        ? 'static_data'
+        : 'dynamic';
     final target = [targetOS, targetArchitecture, libraryType].join('_');
     print('Fetching pre-built binary for $version and $target');
     final dylibRemoteUri = Uri.parse(
@@ -233,8 +229,7 @@ extension on BuildConfig {
       code.linkModePreference == LinkModePreference.static ||
       (linkingEnabled && treeshake);
 
-  String Function(String) filename(bool treeshake) =>
-      buildStatic(treeshake)
-          ? code.targetOS.staticlibFileName
-          : code.targetOS.dylibFileName;
+  String Function(String) filename(bool treeshake) => buildStatic(treeshake)
+      ? code.targetOS.staticlibFileName
+      : code.targetOS.dylibFileName;
 }
