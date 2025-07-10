@@ -232,7 +232,7 @@ pub(crate) mod ule {
         /// * [`TimeZoneVariant::from_rearguard_isdst`]
         /// * [`TimeZoneInfo::infer_variant`](crate::TimeZoneInfo::infer_variant)
         ///
-        /// Although CLDR calls this variant `"standard"`, the semantics vary
+        /// Although CLDR calls this variant `"standard"`, the display names vary
         /// from time zone to time zone. The time zone display name of this variant
         /// may or may not be called "Standard Time".
         Standard = 0,
@@ -244,7 +244,7 @@ pub(crate) mod ule {
         /// * [`TimeZoneVariant::from_rearguard_isdst`]
         /// * [`TimeZoneInfo::infer_variant`](crate::TimeZoneInfo::infer_variant)
         ///
-        /// Although CLDR calls this variant `"daylight"`, the semantics vary
+        /// Although CLDR calls this variant `"daylight"`, the display names vary
         /// from time zone to time zone. The time zone display name of this variant
         /// may or may not be called "Daylight Time".
         Daylight = 1,
