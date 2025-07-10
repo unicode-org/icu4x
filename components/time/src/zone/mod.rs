@@ -196,8 +196,10 @@ pub(crate) mod ule {
     /// is whether the period has a lower offset or a higher offset from UTC. Their behavior may
     /// not be intuitive; for example:
     ///
-    /// - Irish Standard Time, UTC+1, is the `Daylight` variant of "Europe/Dublin",
-    ///   which observes Greenwich Mean Time, UTC+0, during the winter.
+    /// - "Irish Standard Time" is the English display name for the `Daylight`
+    /// (summer, UTC+1) variant of "Europe/Dublin", with "Greenwich Mean Time"
+    /// used during `Standard` (winter, UTC+0). Other locales usually use a
+    /// translation of "Irish Summer Time" for the `Daylight` variant.
     /// - Some countries change their clocks backward during the Hijri month Ramadan;
     ///   in such cases, they may be modeled as being on the `Daylight` variant for
     ///   most of the year and switching to `Standard` during Ramadan.
