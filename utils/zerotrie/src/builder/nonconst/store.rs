@@ -60,7 +60,6 @@ impl TrieBuilderStore for VecDeque<u8> {
         self.push_front(byte);
     }
     fn atbs_extend_front(&mut self, other: &[u8]) {
-        // TODO: No extend_front on VecDeque?
         self.reserve(other.len());
         for b in other.iter().rev() {
             self.push_front(*b);
