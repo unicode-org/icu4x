@@ -26,7 +26,7 @@
 //! - `i` and `j` bracket a window of strings in the input that share the same prefix.
 //! - `current_len` is the length in bytes of the current self-contained trie.
 //! - `lengths_stack` contains metadata for branch nodes.
-//! 
+//!
 //! Consider a trie containing the following strings and values:
 //!
 //! - "" → 11
