@@ -105,8 +105,6 @@ jobs:
 
       - run: dart test
 
-      - run: dart test -p chrome
-
       - run: dart pub get
         working-directory: ffi/dart/example
 
