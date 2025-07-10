@@ -21,6 +21,7 @@ final class TimeZone implements ffi.Finalizable {
     }
   }
 
+  @_DiplomatFfiUse('icu4x_TimeZone_destroy_mv1')
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_TimeZone_destroy_mv1));
 
   /// The unknown time zone.

@@ -23,6 +23,7 @@ final class WeekdaySetIterator implements ffi.Finalizable, core.Iterator<Weekday
     }
   }
 
+  @_DiplomatFfiUse('icu4x_WeekdaySetIterator_destroy_mv1')
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_WeekdaySetIterator_destroy_mv1));
 
   Weekday? _current;

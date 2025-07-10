@@ -28,6 +28,7 @@ final class DataProvider implements ffi.Finalizable {
     }
   }
 
+  @_DiplomatFfiUse('icu4x_DataProvider_destroy_mv1')
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_DataProvider_destroy_mv1));
 
   /// See the [Rust documentation for `try_new_from_blob`](https://docs.rs/icu_provider_blob/2.0.0/icu_provider_blob/struct.BlobDataProvider.html#method.try_new_from_blob) for more information.

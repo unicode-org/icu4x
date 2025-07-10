@@ -21,6 +21,7 @@ final class Decimal implements ffi.Finalizable {
     }
   }
 
+  @_DiplomatFfiUse('icu4x_Decimal_destroy_mv1')
   static final _finalizer = ffi.NativeFinalizer(ffi.Native.addressOf(_icu4x_Decimal_destroy_mv1));
 
   /// Construct an [Decimal] from an integer.
