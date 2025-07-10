@@ -78,6 +78,9 @@ Future<File> buildLib(
     );
   }
 
+  final features = isNoStd
+      ? [...cargoFeatures, 'libc_alloc', 'panic_handler']
+      : [...cargoFeatures, 'logging', 'simple_logger'];
   await runProcess('cargo', [
     if (buildStatic || isNoStd) '+nightly',
     'rustc',
@@ -87,10 +90,7 @@ Future<File> buildLib(
     '--config=profile.release.panic="abort"',
     '--config=profile.release.codegen-units=1',
     '--no-default-features',
-    '--features=${{
-      ...cargoFeatures,
-      ...(isNoStd ? ['libc_alloc', 'panic_handler'] : ['logging', 'simple_logger']),
-    }.join(',')}',
+    '--features=${features.join(',')}',
     if (isNoStd) '-Zbuild-std=core,alloc',
     if (buildStatic || isNoStd) ...[
       '-Zbuild-std=std,panic_abort',

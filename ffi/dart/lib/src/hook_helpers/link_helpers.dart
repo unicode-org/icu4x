@@ -5,10 +5,11 @@ import 'package:code_assets/code_assets.dart'
     show HookConfigCodeConfig, LinkInputCodeAssets, OS;
 import 'package:collection/collection.dart' show IterableExtension;
 import 'package:hooks/hooks.dart' show LinkInput, LinkOutputBuilder;
-import 'package:icu4x/src/hook_helpers/shared.dart' show assetId, package;
 import 'package:logging/logging.dart';
 import 'package:native_toolchain_c/native_toolchain_c.dart';
 import 'package:record_use/record_use.dart' as record_use;
+
+import 'shared.dart' show assetId, package;
 
 const diplomatFfiUseIdentifier = record_use.Identifier(
   importUri: 'package:icu4x/src/bindings/lib.g.dart',
@@ -59,16 +60,15 @@ ${usedSymbols?.join('\n')}
         // the linker on what libraries to link against. To make up for that,
         // the libraries used have to be provided to the linker explicitly.
         input.config.code.targetOS == OS.windows
-            ? const ['MSVCRT', 'ws2_32', 'userenv', 'ntdll']
-            : const [],
+        ? const ['MSVCRT', 'ws2_32', 'userenv', 'ntdll']
+        : const [],
     linkerOptions: LinkerOptions.treeshake(symbols: usedSymbols),
   ).run(
     input: input,
     output: output,
-    logger:
-        Logger('')
-          ..level = Level.ALL
-          ..onRecord.listen((record) => print(record.message)),
+    logger: Logger('')
+      ..level = Level.ALL
+      ..onRecord.listen((record) => print(record.message)),
   );
 }
 
