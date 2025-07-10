@@ -204,6 +204,11 @@ pub(crate) mod ule {
     ///   in such cases, they are currently modeled as being on the `Daylight` variant for
     ///   most of the year and switching to `Standard` during Ramadan.
     ///
+    /// Typically, if a time zone does not change its clocks, it uses the `Standard`
+    /// variant year-round. However, a time zone may use the `Daylight` variant
+    /// year-round if it shares display names with another time zones that observes
+    /// daylight savings time.
+    ///
     /// The zone variant is required when formatting with a "specific" time zone style,
     /// but not a "generic" or "location" time zone style.
     ///
@@ -221,10 +226,7 @@ pub(crate) mod ule {
     pub enum TimeZoneVariant {
         /// Indicates the period in a time zone with a lower UTC offset than `Daylight`.
         ///
-        /// Typically, if a time zone does not change its clocks, it uses the `Standard`
-        /// variant year-round. However, a time zone may use the `Daylight` variant
-        /// year-round if it shares display names with another time zones that observes
-        /// daylight savings time.
+        /// Every time zone supports the `Standard` variant.
         ///
         /// ❗ Clients should generally NOT construct this variant directly. Instead, use:
         /// * [`TimeZoneVariant::from_rearguard_isdst`]
@@ -235,7 +237,8 @@ pub(crate) mod ule {
         /// may or may not be called "Standard Time".
         Standard = 0,
         /// Indicates the period in a time zone with a higher UTC offset than `Standard`.
-        /// Not every time zone has a `Daylight` variant.
+        ///
+        /// Not every time zone supports the `Daylight` variant.
         ///
         /// ❗ Clients should generally NOT construct this variant directly. Instead, use:
         /// * [`TimeZoneVariant::from_rearguard_isdst`]
