@@ -53,7 +53,7 @@ impl<const N: usize> ZeroTrieBuilderConst<N> {
         let mut data = self.data;
         let varint_array = varint::write_varint_meta3(value);
         data = data.const_extend_front_or_panic(varint_array.as_const_slice());
-        data = data.const_bitor_assign(0, 0b10000000);
+        data = data.const_bitor_assign_or_panic(0, 0b10000000);
         (Self { data }, varint_array.len())
     }
 
@@ -64,7 +64,7 @@ impl<const N: usize> ZeroTrieBuilderConst<N> {
         let mut data = self.data;
         let varint_array = varint::write_varint_meta2(value);
         data = data.const_extend_front_or_panic(varint_array.as_const_slice());
-        data = data.const_bitor_assign(0, 0b11000000);
+        data = data.const_bitor_assign_or_panic(0, 0b11000000);
         (Self { data }, varint_array.len())
     }
 
@@ -94,9 +94,9 @@ impl<const N: usize> ZeroTrieBuilderConst<N> {
     }
 
     /// Performs the operation `self[index] |= bits`
-    const fn bitor_assign_at(self, index: usize, bits: u8) -> Self {
+    const fn bitor_assign_at_or_panic(self, index: usize, bits: u8) -> Self {
         let mut data = self.data;
-        data = data.const_bitor_assign(index, bits);
+        data = data.const_bitor_assign_or_panic(index, bits);
         Self { data }
     }
 
@@ -306,7 +306,7 @@ impl<const N: usize> ZeroTrieBuilderConst<N> {
                         m += 1;
                     }
                     if l > 0 {
-                        self = self.bitor_assign_at(l - 1, adjusted_length as u8);
+                        self = self.bitor_assign_at_or_panic(l - 1, adjusted_length as u8);
                     }
                     l += 1;
                     length_to_write += local_length;
