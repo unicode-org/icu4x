@@ -12,6 +12,7 @@ use core::cmp::Ordering;
 use icu::calendar::Date;
 use icu::calendar::Iso;
 use icu::datetime::provider::time_zones::*;
+use icu::locale::subtags::{subtag, Language};
 use icu::locale::LanguageIdentifier;
 use icu::time::provider::*;
 use icu::time::zone::TimeZoneVariant;
@@ -21,7 +22,6 @@ use icu::time::zone::ZoneNameTimestamp;
 use icu::time::DateTime;
 use icu::time::Time;
 use icu::time::ZonedDateTime;
-use icu_provider::prelude::icu_locale_core::subtags::Language;
 use icu_provider::prelude::*;
 use parse_zoneinfo::line::Year;
 use parse_zoneinfo::table::Saving;
@@ -304,6 +304,17 @@ impl SourceDataProvider {
                                 .flatten()
                                 .collect::<Vec<_>>();
 
+                            if iana == "Africa/Casablanca" || iana == "Africa/El_Aaiun" {
+                                periods.push((
+                                    bcp47,
+                                    DateTime {
+                                        date: Date::try_new_iso(2018, 12, 28).unwrap(),
+                                        time: Time::try_new(2, 0, 0, 0).unwrap(),
+                                    },
+                                    NichedOption(meta_zone_id_data.get("Europe_Central").copied()),
+                                ));
+                            }
+
                             let mut i = 0;
                             while i < periods.len() {
                                 if i + 1 < periods.len() && periods[i].1 == periods[i + 1].1 {
@@ -350,7 +361,7 @@ impl SourceDataProvider {
                             data: &mut Vec<(ZoneNameTimestamp, VariantOffsets)>,
                             end_time: ZoneNameTimestamp,
                             mut utc_offset: i64,
-                            dst_offset_relative: i64,
+                            alternate_offset_relative: i64,
                         ) {
                             // Africa/Monrovia used -00:44:30 pre-1972. We cannot represent this, so we set it to -00:45
                             if utc_offset == -2670 {
@@ -361,8 +372,10 @@ impl SourceDataProvider {
                                 end_time,
                                 {
                                     let mut vs = VariantOffsets::from_standard(UtcOffset::from_seconds_unchecked(utc_offset as i32));
-                                    if dst_offset_relative != 0 {
-                                        vs.daylight = Some(UtcOffset::from_seconds_unchecked(utc_offset as i32 + dst_offset_relative as i32));
+                                    if alternate_offset_relative > 0 {
+                                        vs.daylight = Some(UtcOffset::from_seconds_unchecked(utc_offset as i32 + alternate_offset_relative as i32));
+                                    } else if alternate_offset_relative < 0 {
+                                        vs.sundown = Some(UtcOffset::from_seconds_unchecked(utc_offset as i32 + alternate_offset_relative as i32));
                                     }
                                     vs
                                 }
@@ -878,9 +891,20 @@ impl DataProvider<TimezoneNamesSpecificLongV1> for SourceDataProvider {
                 true
             }
         });
-        let overrides = iter_mz_overrides(time_zone_names_resource, bcp47_tzid_data, true)
+        let mut overrides = iter_mz_overrides(time_zone_names_resource, bcp47_tzid_data, true)
             .flat_map(|(tz, zf)| variant_convert(zf).map(move |(zv, v)| ((tz, zv), v)))
-            .collect();
+            .collect::<zerovec::ZeroMap<(TimeZone, TimeZoneVariant), str>>();
+
+        if req.id.locale.language.as_str() == "en" {
+            overrides.insert(
+                &(TimeZone(subtag!("macas")), TimeZoneVariant::Sundown),
+                "Morocco Ramadan Time",
+            );
+            overrides.insert(
+                &(TimeZone(subtag!("eheai")), TimeZoneVariant::Sundown),
+                "Western Sahara Ramadan Time",
+            );
+        }
 
         Ok(DataResponse {
             metadata: DataResponseMetadata::default().with_checksum(checksum),
