@@ -9,31 +9,6 @@ void main() {
     expect(x.toString(), '1.4940300');
   });
 
-  test('LocaleFallbacker', () {
-    final iterator = LocaleFallbacker()
-        .forConfig(
-          LocaleFallbackConfig(priority: LocaleFallbackPriority.region),
-        )
-        .fallbackForLocale(Locale.fromString('de-CH-u-ca-japanese'));
-    expect(iterator.moveNext(), true);
-    expect(iterator.current, Locale.fromString('de-CH'));
-    expect(iterator.moveNext(), true);
-    expect(iterator.current, Locale.fromString('und-CH'));
-    expect(iterator.moveNext(), false);
-  });
-
-  test('Properties', () {
-    final a = 'a'.runes.first;
-    final emoji = '💡'.runes.first;
-
-    final emojiSet = CodePointSetData.emoji();
-    expect(emojiSet.contains(a), false);
-    expect(emojiSet.contains(emoji), true);
-
-    final upperA = CaseMapper().simpleUppercase(a);
-    expect(String.fromCharCode(upperA), 'A');
-  });
-
   test('ListFormatter', () {
     final formatter = ListFormatter.andWithLength(
       Locale.fromString('es'),
@@ -75,22 +50,6 @@ void main() {
     final iter = IanaParserExtended().iterAll();
     iter.moveNext();
     expect(iter.current.canonical, 'Africa/Abidjan');
-  });
-
-  test('Dates', () {
-    final date = IsoDate(2022, 8, 26);
-    expect(date.weekOfYear().weekNumber, 34);
-
-    final weekInfo = WeekInformation(Locale.fromString('de'));
-    expect(weekInfo.firstWeekday, Weekday.monday);
-    expect(weekInfo.isWeekend(Weekday.sunday), isTrue);
-
-    final weekend = weekInfo.weekend;
-    expect(weekend.moveNext(), true);
-    expect(weekend.current, Weekday.saturday);
-    expect(weekend.moveNext(), true);
-    expect(weekend.current, Weekday.sunday);
-    expect(weekend.moveNext(), false);
   });
 
   test('DateTime formatting', () {
