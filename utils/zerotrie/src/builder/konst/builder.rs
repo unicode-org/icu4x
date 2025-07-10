@@ -12,6 +12,8 @@ use crate::error::ZeroTrieBuildError;
 use crate::varint;
 
 /// A low-level builder for ZeroTrieSimpleAscii. Works in const contexts.
+///
+/// All methods that grow the trie will panic if the capacity N is not enough.
 pub(crate) struct ZeroTrieBuilderConst<const N: usize> {
     data: ConstArrayBuilder<N, u8>,
 }
@@ -52,7 +54,9 @@ impl<const N: usize> ZeroTrieBuilderConst<N> {
     const fn prepend_value(self, value: usize) -> (Self, usize) {
         let mut data = self.data;
         let varint_array = varint::write_varint_meta3(value);
+        // Can panic (as documented in class docs):
         data = data.const_extend_front_or_panic(varint_array.as_const_slice());
+        // Shouldn't panic: index 0 is always a valid index, and the array is nonempty now
         data = data.const_bitor_assign_or_panic(0, 0b10000000);
         (Self { data }, varint_array.len())
     }
@@ -63,7 +67,9 @@ impl<const N: usize> ZeroTrieBuilderConst<N> {
     const fn prepend_branch(self, value: usize) -> (Self, usize) {
         let mut data = self.data;
         let varint_array = varint::write_varint_meta2(value);
+        // Can panic (as documented in class docs):
         data = data.const_extend_front_or_panic(varint_array.as_const_slice());
+        // Shouldn't panic: index 0 is always a valid index, and the array is nonempty now
         data = data.const_bitor_assign_or_panic(0, 0b11000000);
         (Self { data }, varint_array.len())
     }
@@ -75,6 +81,7 @@ impl<const N: usize> ZeroTrieBuilderConst<N> {
         let mut data = self.data;
         let mut i = s.len();
         while i > 0 {
+            // Can panic (as documented in class docs):
             data = data.const_push_front_or_panic(*s.get_or_panic(i - 1));
             i -= 1;
         }
@@ -87,6 +94,7 @@ impl<const N: usize> ZeroTrieBuilderConst<N> {
         let mut data = self.data;
         let mut i = 0;
         while i < n {
+            // Can panic (as documented in class docs):
             data = data.const_push_front_or_panic(0);
             i += 1;
         }
