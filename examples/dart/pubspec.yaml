@@ -8,10 +8,10 @@ environment:
 
 dependencies:
   icu4x:
-    path: ../
+    path: ../../ffi/dart/
 
 hooks:
   user_defines:
     icu4x:
       buildMode: checkout
-      checkoutPath: ../../../
+      checkoutPath: ../../
