@@ -377,15 +377,12 @@ impl SourceDataProvider {
 
                             let local_end_time = match zone_info.end_time {
                                 // Skip transitions before the UNIX Epoch
-                                Some(t) if t.to_timestamp() < 0 => continue,
+                                Some(t) if t.to_timestamp(zone_info.offset, 0) < 0 => continue,
                                 // None means the rules are in effect "until the end of time"
                                 None => ZoneNameTimestamp::far_in_future(),
-                                // WARNING: This produces a *local* timestamp, i.e. seconds since 1970-01-01 00:00:00 *wall time*,
-                                // even though the docs say that this is since the UNIX epoch (i.e. 1970-01-01 00:00:00 UTC).
-                                // This also assumes `t` uses the same offset as 1970-01-01 00:00:00.
-                                // While the local timestamps are what we want, the offset assumption probably needs fixing (TODO).
+                                // This assumes DST is not active at the zone change
                                 Some(t) => {
-                                    let epoch_seconds = t.to_timestamp();
+                                    let epoch_seconds = t.to_timestamp(zone_info.offset, 0);
                                     let zdt = ZonedDateTime::from_epoch_milliseconds_and_utc_offset(
                                         epoch_seconds * 1000,
                                         utc_offset,
