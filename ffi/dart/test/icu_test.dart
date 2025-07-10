@@ -23,14 +23,14 @@ void main() {
   });
 
   test('Properties', () {
-    Rune a = 'a'.runes.first;
-    Rune emoji = '💡'.runes.first;
+    final a = 'a'.runes.first;
+    final emoji = '💡'.runes.first;
 
     final emojiSet = CodePointSetData.emoji();
     expect(emojiSet.contains(a), false);
     expect(emojiSet.contains(emoji), true);
 
-    Rune upperA = CaseMapper().simpleUppercase(a);
+    final upperA = CaseMapper().simpleUppercase(a);
     expect(String.fromCharCode(upperA), 'A');
   });
 
@@ -60,7 +60,7 @@ void main() {
   });
 
   test('Locale extensions', () {
-    var locale = Locale.fromString('en-GB');
+    final locale = Locale.fromString('en-GB');
     expect(locale.getUnicodeExtension('ca'), null);
     expect(locale.setUnicodeExtension('ca', 'gregory'), true);
     expect(locale.setUnicodeExtension('ca', 'gregorian'), false);
@@ -117,7 +117,7 @@ void main() {
       offset: utcOffset,
     );
 
-    var locale = Locale.fromString('de-u-ca-islamic-umalqura');
+    final locale = Locale.fromString('de-u-ca-islamic-umalqura');
 
     ///// DateFormatter /////
 
