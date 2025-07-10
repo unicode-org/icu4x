@@ -6,6 +6,7 @@
 
 use std::{fmt::Debug, marker::PhantomData};
 
+use calendrical_calculations::rata_die::RataDie;
 use potential_utf::PotentialUtf16;
 use resb::binary::BinaryDeserializerError;
 use serde::Deserialize;
@@ -57,25 +58,25 @@ impl Debug for TzZoneData<'_> {
         }
 
         write!(f, "transitions/offsets: [")?;
-        write!(f, "{:?}, ", self.type_offsets[0])?;
+        let (std, rule) = self.type_offsets[0];
+        write!(f, "{:?}, ", (std as f64 / 3600.0, rule as f64 / 3600.0))?;
         let mut i = 0;
-        for &(lo, hi) in self.trans_pre32 {
-            dbg_timestamp(f, (lo as i64) << 32 | hi as i64)?;
-            write!(f, "{:?}, ", self.type_offsets[self.type_map[i] as usize])?;
+        for &(hi, lo) in self.trans_pre32 {
+            dbg_timestamp(f, ((hi as u32 as u64) << 32 | (lo as u32 as u64)) as i64)?;
+            let (std, rule) = self.type_offsets[self.type_map[i] as usize];
+            write!(f, "{:?}, ", (std as f64 / 3600.0, rule as f64 / 3600.0))?;
             i += 1;
         }
         for &t in self.trans {
             dbg_timestamp(f, t as i64)?;
             let (std, rule) = self.type_offsets[self.type_map[i] as usize];
-            let std = std as f64 / 3600.0;
-            let rule = rule as f64 / 3600.0;
-            write!(f, "{:?}, ", (std, rule))?;
+            write!(f, "{:?}, ", (std as f64 / 3600.0, rule as f64 / 3600.0))?;
             i += 1;
         }
-
-        for &(lo, hi) in self.trans_post32 {
-            dbg_timestamp(f, (lo as i64) << 32 | hi as i64)?;
-            write!(f, "{:?}, ", self.type_offsets[self.type_map[i] as usize])?;
+        for &(hi, lo) in self.trans_post32 {
+            dbg_timestamp(f, ((hi as u32 as u64) << 32 | (lo as u32 as u64)) as i64)?;
+            let (std, rule) = self.type_offsets[self.type_map[i] as usize];
+            write!(f, "{:?}, ", (std as f64 / 3600.0, rule as f64 / 3600.0))?;
             i += 1;
         }
         write!(f, "], ")?;
@@ -423,16 +424,23 @@ struct Rule<'a> {
     inner: &'a TzRule,
 }
 
-#[derive(Debug, Clone, Copy)]
-pub struct Transition {
-    pub transition: i64,
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub struct Offset {
+    pub since: i64,
     pub offset: UtcOffset,
     pub rule_applies: bool,
 }
 
+pub enum PossibleOffset {
+    Single(Offset),
+    Ambiguous(Offset, Offset),
+    None,
+}
+
 impl Zone<'_> {
-    fn previous_transition(&self, seconds_since_epoch: i64) -> Transition {
-        let idx = if seconds_since_epoch < i32::MIN as i64 {
+    // Returns the index of the previous transition. As this can be -1, it returns an isize.
+    fn offset_idx(&self, seconds_since_epoch: i64) -> isize {
+        if seconds_since_epoch < i32::MIN as i64 {
             self.simple
                 .trans_pre32
                 .binary_search(&(
@@ -464,14 +472,16 @@ impl Zone<'_> {
                     .map(|i| i as isize)
                     // binary_search returns the index of the next (higher) transition, so we subtract one
                     .unwrap_or_else(|i| i as isize - 1)
-        };
+        }
+    }
 
+    fn offset_at(&self, idx: isize, seconds_since_epoch: i64) -> Offset {
         // before first transition don't use `type_map`, just the first entry in `type_offsets`
-        if idx == -1 {
+        if idx < 0 || self.simple.type_map.is_empty() {
             #[expect(clippy::unwrap_used)] // type_offsets non-empty by invariant
             let &(standard, rule_additional) = self.simple.type_offsets.first().unwrap();
-            return Transition {
-                transition: i64::MIN,
+            return Offset {
+                since: i64::MIN,
                 offset: UtcOffset::from_seconds_unchecked(standard + rule_additional),
                 rule_applies: rule_additional > 0,
             };
@@ -480,13 +490,13 @@ impl Zone<'_> {
         let idx = idx as usize;
 
         // after the last transition, respect the rule
-        if idx == self.simple.type_map.len() - 1 {
+        if idx >= self.simple.type_map.len() - 1 {
             if let Some(rule) = self.final_rule.as_ref() {
                 let (additional_offset_seconds, transition) = rule
                     .inner
                     .additional_offset_since(seconds_since_epoch, rule.start_year);
-                return Transition {
-                    transition,
+                return Offset {
+                    since: transition,
                     rule_applies: additional_offset_seconds != 0,
                     offset: UtcOffset::from_seconds_unchecked(
                         rule.standard_offset_seconds + additional_offset_seconds,
@@ -495,28 +505,101 @@ impl Zone<'_> {
             }
         }
 
+        let idx = core::cmp::min(idx, self.simple.type_map.len() - 1);
+
         #[expect(clippy::indexing_slicing)]
         // type_map has length sum(trans*), and type_map values are validated to be valid indices in type_offsets
         let (standard, rule_additional) =
             self.simple.type_offsets[self.simple.type_map[idx] as usize];
 
         #[expect(clippy::indexing_slicing)] // by guards or invariant
-        let transition = if idx < self.simple.trans_pre32.len() {
-            let (lo, hi) = self.simple.trans_pre32[idx];
-            (lo as i64) << 32 | hi as i64
+        let since = if idx < self.simple.trans_pre32.len() {
+            let (hi, lo) = self.simple.trans_pre32[idx];
+            ((hi as u32 as u64) << 32 | (lo as u32 as u64)) as i64
         } else if idx - self.simple.trans_pre32.len() < self.simple.trans.len() {
             self.simple.trans[idx - self.simple.trans_pre32.len()] as i64
         } else {
-            let (lo, hi) = self.simple.trans_post32
+            let (hi, lo) = self.simple.trans_post32
                 [idx - self.simple.trans_pre32.len() - self.simple.trans.len()];
-            (lo as i64) << 32 | hi as i64
+            ((hi as u32 as u64) << 32 | (lo as u32 as u64)) as i64
         };
 
-        Transition {
-            transition,
+        Offset {
+            since,
             offset: UtcOffset::from_seconds_unchecked(standard + rule_additional),
             rule_applies: rule_additional > 0,
         }
+    }
+
+    pub fn for_date_time(
+        &self,
+        year: i32,
+        month: u8,
+        day: u8,
+        hour: u8,
+        minute: u8,
+        second: u8,
+    ) -> PossibleOffset {
+        const EPOCH: RataDie = calendrical_calculations::iso::const_fixed_from_iso(1970, 1, 1);
+        let seconds_since_local_epoch =
+            (((calendrical_calculations::iso::fixed_from_iso(year, month, day) - EPOCH) * 24
+                + hour as i64)
+                * 60
+                + minute as i64)
+                * 60
+                + second as i64;
+
+        // Pretend date time is UTC to get a candidate
+        let idx = self.offset_idx(seconds_since_local_epoch);
+
+        let candidate = self.offset_at(idx, seconds_since_local_epoch);
+        let before_candidate = self.offset_at(idx - 1, seconds_since_local_epoch);
+        let after_candidate = self.offset_at(idx + 1, seconds_since_local_epoch);
+
+        let before_candidate_local_until = candidate
+            .since
+            .saturating_add(before_candidate.offset.to_seconds() as i64);
+
+        let candidate_local_since = candidate
+            .since
+            .saturating_add(candidate.offset.to_seconds() as i64);
+        let candidate_local_until = after_candidate
+            .since
+            .saturating_add(candidate.offset.to_seconds() as i64);
+
+        let after_candidate_local_since = after_candidate
+            .since
+            .saturating_add(after_candidate.offset.to_seconds() as i64);
+
+        if seconds_since_local_epoch < before_candidate_local_until
+            && seconds_since_local_epoch >= candidate_local_since
+            && before_candidate != candidate
+        {
+            return PossibleOffset::Ambiguous(before_candidate, candidate);
+        }
+
+        if seconds_since_local_epoch < candidate_local_until
+            && seconds_since_local_epoch >= after_candidate_local_since
+            && candidate != after_candidate
+        {
+            return PossibleOffset::Ambiguous(candidate, after_candidate);
+        }
+
+        if seconds_since_local_epoch < before_candidate_local_until {
+            return PossibleOffset::Single(before_candidate);
+        }
+        if seconds_since_local_epoch < candidate_local_until {
+            return PossibleOffset::Single(candidate);
+        }
+        if seconds_since_local_epoch >= after_candidate_local_since {
+            return PossibleOffset::Single(after_candidate);
+        }
+
+        PossibleOffset::None
+    }
+
+    pub fn for_timestamp(&self, seconds_since_epoch: i64) -> Offset {
+        self.offset_at(self.offset_idx(seconds_since_epoch), seconds_since_epoch)
     }
 }
 
@@ -546,7 +629,13 @@ fn test() {
 
         // TODO
         let max_working_timestamp = if zoneinfo64.final_rule.is_some() {
-            zoneinfo64.simple.trans.last().copied().unwrap_or(i32::MAX) as i64
+            zoneinfo64
+                .simple
+                .trans
+                .len()
+                .checked_sub(2)
+                .map(|i| zoneinfo64.simple.trans[i])
+                .unwrap_or(i32::MAX) as i64
         } else {
             FUTURE
         };
@@ -555,13 +644,24 @@ fn test() {
             let utc_datetime = chrono::DateTime::from_timestamp(seconds_since_epoch, 0)
                 .unwrap()
                 .naive_utc();
-            let zoneinfo64_date = zoneinfo64.offset_from_utc_datetime(&utc_datetime);
-            let chrono_date = chrono.offset_from_utc_datetime(&utc_datetime);
 
+            let zoneinfo64_date = zoneinfo64.from_utc_datetime(&utc_datetime);
+            let chrono_date = chrono.from_utc_datetime(&utc_datetime);
             assert_eq!(
-                zoneinfo64_date.fix(),
-                chrono_date.fix(),
+                zoneinfo64_date.offset().fix(),
+                chrono_date.offset().fix(),
                 "{seconds_since_epoch}, {iana:?}",
+            );
+
+            let local_datetime = chrono_date.naive_local();
+            assert_eq!(
+                zoneinfo64
+                    .offset_from_local_datetime(&local_datetime)
+                    .map(|o| o.fix()),
+                chrono
+                    .offset_from_local_datetime(&local_datetime)
+                    .map(|o| o.fix()),
+                "{seconds_since_epoch}, {zoneinfo64:?} {local_datetime}",
             );
 
             // Rearguard / vanguard diffs
@@ -580,8 +680,8 @@ fn test() {
             }
 
             assert_eq!(
-                zoneinfo64_date.rule_applies(),
-                !chrono_date.dst_offset().is_zero(),
+                zoneinfo64_date.offset().rule_applies(),
+                !chrono_date.offset().dst_offset().is_zero(),
                 "{seconds_since_epoch}, {iana:?}",
             );
         }

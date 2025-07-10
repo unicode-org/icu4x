@@ -4130,6 +4130,7 @@ dependencies = [
 name = "zoneinfo64"
 version = "0.0.0"
 dependencies = [
+ "calendrical_calculations",
  "chrono",
  "chrono-tz 0.10.3 (git+https://github.com/robertbastian/chrono-tz?branch=fix)",
  "icu_locale_core",
