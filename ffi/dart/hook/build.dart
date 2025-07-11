@@ -220,6 +220,7 @@ final class CheckoutMode extends BuildMode {
         'experimental',
         'casemap',
         'compiled_data',
+        'default',
       ],
     );
     return builtLib.uri;
