@@ -288,7 +288,7 @@ iai = "0.1.1"
 indexmap = "2.0.0"
 itertools = "0.14.0"
 ndarray = "0.16.0"
-parse-zoneinfo =  { git = "https://github.com/chronotope/chrono-tz", rev = "f0145ee6068a282368346bb59fcdbde98a757316" }
+parse-zoneinfo =  "0.4.0"
 proc-macro2 = "1.0.61"
 quote = "1.0.28"
 rand = "0.9"
