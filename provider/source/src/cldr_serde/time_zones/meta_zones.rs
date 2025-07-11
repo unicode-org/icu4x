@@ -7,28 +7,20 @@
 //! Sample file:
 //! <https://github.com/unicode-org/cldr-json/blob/main/cldr-json/cldr-core/supplemental/metaZones.json>
 
+use icu::calendar::Date;
+use icu::calendar::Iso;
+use icu::time::{DateTime, Time};
 use serde::Deserialize;
 use std::collections::BTreeMap;
-
-#[derive(PartialEq, Debug, Clone, Deserialize)]
-pub(crate) struct MetazoneAliasData {
-    #[serde(rename = "_longId")]
-    pub(crate) long_id: String,
-    #[serde(rename = "_since")]
-    pub(crate) since: String,
-}
-
-#[derive(Debug, Clone, Deserialize)]
-pub(crate) struct MetazoneIds(pub(crate) BTreeMap<tinystr::TinyAsciiStr<4>, MetazoneAliasData>);
 
 #[derive(PartialEq, Debug, Clone, Deserialize)]
 pub(crate) struct UsesMetazone {
     #[serde(rename = "_mzone")]
     pub(crate) mzone: String,
-    #[serde(rename = "_from")]
-    pub(crate) from: Option<String>,
-    #[serde(rename = "_to")]
-    pub(crate) to: Option<String>,
+    #[serde(rename = "_from", default, deserialize_with = "deserialize_date")]
+    pub(crate) from: Option<DateTime<Iso>>,
+    #[serde(rename = "_to", default, deserialize_with = "deserialize_date")]
+    pub(crate) to: Option<DateTime<Iso>>,
 }
 
 #[derive(PartialEq, Debug, Clone, Deserialize)]
@@ -85,8 +77,6 @@ pub(crate) struct Metazones {
     pub(crate) meta_zone_info: MetazoneInfo,
     #[serde(rename = "metazones")]
     pub(crate) _meta_zones_territory: MetazonesTerritory,
-    #[serde(rename = "metazoneIds")]
-    pub(crate) meta_zone_ids: MetazoneIds,
 }
 
 #[derive(Debug, Clone, Deserialize)]
@@ -98,4 +88,52 @@ pub(crate) struct Supplemental {
 #[derive(Debug, Clone, Deserialize)]
 pub(crate) struct Resource {
     pub(crate) supplemental: Supplemental,
+}
+
+impl TimeZonePeriod {
+    pub(crate) fn iter(&self) -> impl Iterator<Item = (String, &Vec<MetazoneForPeriod>)> + '_ {
+        self.0.iter().flat_map(|(key, zone)| match zone {
+            ZonePeriod::Region(periods) => vec![(key.to_string(), periods)],
+            ZonePeriod::LocationOrSubRegion(place) => place
+                .iter()
+                .flat_map(
+                    move |(key2, location_or_subregion)| match location_or_subregion {
+                        MetaLocationOrSubRegion::Location(periods) => {
+                            vec![(format!("{key}/{key2}"), periods)]
+                        }
+                        MetaLocationOrSubRegion::SubRegion(subregion) => subregion
+                            .iter()
+                            .flat_map(move |(key3, periods)| {
+                                vec![(format!("{key}/{key2}/{key3}"), periods)]
+                            })
+                            .collect::<Vec<_>>(),
+                    },
+                )
+                .collect::<Vec<_>>(),
+        })
+    }
+}
+
+fn deserialize_date<'de, D: serde::de::Deserializer<'de>>(
+    deserializer: D,
+) -> Result<Option<DateTime<Iso>>, D::Error> {
+    let Some(from) = Option::<String>::deserialize(deserializer)? else {
+        return Ok(None);
+    };
+    // TODO(#2127): Ideally this parsing can move into a library function
+    let mut parts = from.split(' ');
+    let date = parts.next().unwrap();
+    let time = parts.next().unwrap();
+    let mut date_parts = date.split('-');
+    let year = date_parts.next().unwrap().parse::<i32>().unwrap();
+    let month = date_parts.next().unwrap().parse::<u8>().unwrap();
+    let day = date_parts.next().unwrap().parse::<u8>().unwrap();
+    let mut time_parts = time.split(':');
+    let hour = time_parts.next().unwrap().parse::<u8>().unwrap();
+    let minute = time_parts.next().unwrap().parse::<u8>().unwrap();
+
+    Ok(Some(DateTime {
+        date: Date::try_new_iso(year, month, day).unwrap(),
+        time: Time::try_new(hour, minute, 0, 0).unwrap(),
+    }))
 }

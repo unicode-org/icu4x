@@ -255,7 +255,7 @@ impl SourceDataProvider {
             .tz_caches
             .metazone_to_short
             .get_or_init(|| {
-                let meta_zone_ids_resource = &self
+                let meta_zones_resource = &self
                     .cldr()?
                     .core()
                     .read_and_parse::<cldr_serde::time_zones::meta_zones::Resource>(
@@ -263,22 +263,33 @@ impl SourceDataProvider {
                     )?
                     .supplemental
                     .meta_zones
-                    .meta_zone_ids
-                    .0;
+                    .meta_zone_info
+                    .time_zone;
+
+                let all_metazones = meta_zones_resource
+                    .iter()
+                    .flat_map(|(_id, memberships)| {
+                        memberships
+                            .iter()
+                            .filter(|m| {
+                                m.uses_meta_zone
+                                    .to
+                                    .is_none_or(|t| t.date > self.timezone_horizon)
+                            })
+                            .map(|m| m.uses_meta_zone.mzone.as_str())
+                    })
+                    .collect::<BTreeSet<_>>();
 
                 let mut hash = XxHash64::with_seed(0);
-                meta_zone_ids_resource.len().hash(&mut hash);
+                all_metazones.len().hash(&mut hash);
 
                 Ok((
-                    meta_zone_ids_resource
-                        .values()
-                        .map(|a| &a.long_id)
-                        .collect::<BTreeSet<_>>()
-                        .into_iter()
+                    all_metazones
+                        .iter()
                         .enumerate()
-                        .map(|(idx, alias)| {
+                        .map(|(idx, &alias)| {
                             alias.hash(&mut hash);
-                            (alias.clone(), MetazoneId::new(idx as u8 + 1).unwrap())
+                            (String::from(alias), MetazoneId::new(idx as u8 + 1).unwrap())
                         })
                         .collect(),
                     hash.finish(),

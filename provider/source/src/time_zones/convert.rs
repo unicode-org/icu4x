@@ -5,12 +5,9 @@
 use super::MzMembership;
 use crate::cldr_serde;
 use crate::SourceDataProvider;
-use cldr_serde::time_zones::meta_zones::MetaLocationOrSubRegion;
-use cldr_serde::time_zones::meta_zones::ZonePeriod;
 use cldr_serde::time_zones::time_zone_names::*;
 use core::cmp::Ordering;
 use icu::calendar::Date;
-use icu::calendar::Iso;
 use icu::datetime::provider::time_zones::*;
 use icu::locale::LanguageIdentifier;
 use icu::time::provider::*;
@@ -226,66 +223,20 @@ impl SourceDataProvider {
                     list: metazones
                         .meta_zone_info
                         .time_zone
-                        .0
                         .iter()
-                        .flat_map(|(key, zone)| match zone {
-                            ZonePeriod::Region(periods) => vec![(key.to_string(), periods)],
-                            ZonePeriod::LocationOrSubRegion(place) => place
-                                .iter()
-                                .flat_map(move |(key2, location_or_subregion)| {
-                                    match location_or_subregion {
-                                        MetaLocationOrSubRegion::Location(periods) => {
-                                            vec![(format!("{key}/{key2}"), periods)]
-                                        }
-                                        MetaLocationOrSubRegion::SubRegion(subregion) => subregion
-                                            .iter()
-                                            .flat_map(move |(key3, periods)| {
-                                                vec![(format!("{key}/{key2}/{key3}"), periods)]
-                                            })
-                                            .collect::<Vec<_>>(),
-                                    }
-                                })
-                                .collect::<Vec<_>>(),
-                        })
                         .flat_map(|(iana, periods)| {
                             let &bcp47 = bcp47_tzid_data.get(&iana).unwrap();
                             let mut periods = periods
                                 .iter()
                                 .flat_map(move |period| {
-                                    fn parse_mzone_date(from: &str) -> DateTime<Iso> {
-                                        // TODO(#2127): Ideally this parsing can move into a library function
-                                        let mut parts = from.split(' ');
-                                        let date = parts.next().unwrap();
-                                        let time = parts.next().unwrap();
-                                        let mut date_parts = date.split('-');
-                                        let year =
-                                            date_parts.next().unwrap().parse::<i32>().unwrap();
-                                        let month =
-                                            date_parts.next().unwrap().parse::<u8>().unwrap();
-                                        let day = date_parts.next().unwrap().parse::<u8>().unwrap();
-                                        let mut time_parts = time.split(':');
-                                        let hour =
-                                            time_parts.next().unwrap().parse::<u8>().unwrap();
-                                        let minute =
-                                            time_parts.next().unwrap().parse::<u8>().unwrap();
-
-                                        DateTime {
-                                            date: Date::try_new_iso(year, month, day).unwrap(),
-                                            time: Time::try_new(hour, minute, 0, 0).unwrap(),
-                                        }
-                                    }
-
                                     [
                                         // join the metazone
                                         Some((
                                             bcp47,
-                                            parse_mzone_date(
-                                                period
-                                                    .uses_meta_zone
-                                                    .from
-                                                    .as_deref()
-                                                    .unwrap_or("1970-01-01 00:00"),
-                                            ),
+                                            period.uses_meta_zone.from.unwrap_or(DateTime {
+                                                date: Date::try_new_iso(1970, 1, 1).unwrap(),
+                                                time: Time::start_of_day(),
+                                            }),
                                             NichedOption(
                                                 meta_zone_id_data
                                                     .get(&period.uses_meta_zone.mzone)
@@ -296,8 +247,6 @@ impl SourceDataProvider {
                                         period
                                             .uses_meta_zone
                                             .to
-                                            .as_deref()
-                                            .map(parse_mzone_date)
                                             .map(|m| (bcp47, m, NichedOption(None))),
                                     ]
                                 })
@@ -306,13 +255,17 @@ impl SourceDataProvider {
 
                             let mut i = 0;
                             while i < periods.len() {
-                                if i + 1 < periods.len() && periods[i].1 == periods[i + 1].1 {
+                                if i + 1 < periods.len()
+                                    && periods[i].0 == periods[i + 1].0
+                                    && periods[i].1 == periods[i + 1].1
+                                {
                                     // The next period starts at the same time
                                     periods.remove(i);
                                 } else if i + 1 < periods.len()
+                                    && periods[i].0 == periods[i + 1].0
                                     && periods[i + 1].1.date <= self.timezone_horizon
                                 {
-                                    // This next period still starts before the horizon, so we can drop this one
+                                    // The next period still starts before the horizon, so we can drop this one
                                     periods.remove(i);
                                 } else {
                                     i += 1;

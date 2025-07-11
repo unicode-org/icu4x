@@ -4,7 +4,7 @@
     "4": "EAT",
     "5": "SAST",
     "6": "WAT",
-    "58": "GMT"
+    "53": "GMT"
   },
   "overrides": {
     "utc": "UTC"
