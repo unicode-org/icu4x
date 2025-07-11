@@ -77,14 +77,24 @@ pub trait Calendar: crate::cal::scaffold::UnstableSealed {
     /// Information of the day of the year
     fn day_of_year(&self, date: &Self::DateInner) -> types::DayOfYear;
 
-    #[doc(hidden)] // unstable
     /// Add `offset` to `date`
+    ///
+    /// <div class="stab unstable">
+    /// 🚧 This method is considered unstable; it may change at any time, in breaking or non-breaking ways,
+    /// including in SemVer minor releases.
+    /// </div>
+    #[cfg_attr(not(feature = "unstable"), doc(hidden))]
     fn offset_date(&self, date: &mut Self::DateInner, offset: DateDuration<Self>);
-    #[doc(hidden)] // unstable
     /// Calculate `date2 - date` as a duration
     ///
     /// `calendar2` is the calendar object associated with `date2`. In case the specific calendar objects
     /// differ on data, the data for the first calendar is used, and `date2` may be converted if necessary.
+    ///
+    /// <div class="stab unstable">
+    /// 🚧 This method is considered unstable; it may change at any time, in breaking or non-breaking ways,
+    /// including in SemVer minor releases.
+    /// </div>
+    #[cfg_attr(not(feature = "unstable"), doc(hidden))]
     fn until(
         &self,
         date1: &Self::DateInner,

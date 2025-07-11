@@ -39,6 +39,7 @@ pub use roc::Roc;
 pub use crate::any_calendar::{AnyCalendar, AnyCalendarKind};
 
 /// Internal scaffolding types
+#[cfg_attr(not(feature = "unstable"), doc(hidden))]
 pub mod scaffold {
     /// Trait marking other traits that are considered unstable and should not generally be
     /// implemented outside of the calendar crate.
