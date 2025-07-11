@@ -299,21 +299,21 @@ jobs:
         run: |
           rustup component add rust-src --toolchain nightly-x86_64-unknown-linux-gnu
 
-          dart ffi/dart/lib/src/hook_helpers/build_libs.dart --working_directory . --file bin/linux_x64 --os linux --architecture x64 --compile_type dynamic --cargo_features collator,datetime,list,decimal,plurals,casemap,experimental,compiled_data
+          dart ffi/dart/lib/src/hook_helpers/build_libs.dart --working_directory . --file bin/linux_x64 --os linux --architecture x64 --compile_type dynamic --cargo_features collator,datetime,list,decimal,plurals,casemap,experimental,default,compiled_data
 
       - name: Build Mac
         if: matrix.os == 'macos-latest'
         run: |
           rustup component add rust-src --toolchain nightly-aarch64-apple-darwin
 
-          dart ffi/dart/lib/src/hook_helpers/build_libs.dart --working_directory . --file bin/macos_arm64 --os macos --architecture arm64 --compile_type dynamic --cargo_features collator,datetime,list,decimal,plurals,casemap,experimental,compiled_data
+          dart ffi/dart/lib/src/hook_helpers/build_libs.dart --working_directory . --file bin/macos_arm64 --os macos --architecture arm64 --compile_type dynamic --cargo_features collator,datetime,list,decimal,plurals,casemap,experimental,default,compiled_data
 
       - name: Build Windows
         if: matrix.os == 'windows-latest'
         run: |
           rustup component add rust-src --toolchain nightly-x86_64-pc-windows-msvc
 
-          dart ffi/dart/lib/src/hook_helpers/build_libs.dart --working_directory . --file bin/windows_x64 --os windows --architecture x64 --compile_type dynamic --cargo_features collator,datetime,list,decimal,plurals,casemap,experimental,compiled_data
+          dart ffi/dart/lib/src/hook_helpers/build_libs.dart --working_directory . --file bin/windows_x64 --os windows --architecture x64 --compile_type dynamic --cargo_features collator,datetime,list,decimal,plurals,casemap,experimental,default,compiled_data
 
       - name: Run `dart pub get`
         run: |
