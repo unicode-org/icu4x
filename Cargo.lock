@@ -253,7 +253,7 @@ version = "0.2.4"
 dependencies = [
  "itertools 0.14.0",
  "partial-min-max",
- "rand 0.9.1",
+ "rand",
  "rand_distr",
  "rand_pcg",
  "strum",
@@ -411,42 +411,12 @@ dependencies = [
 
 [[package]]
 name = "chrono-tz"
-version = "0.10.3"
+version = "0.10.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "efdce149c370f133a071ca8ef6ea340b7b88748ab0810097a9e2976eaa34b4f3"
+checksum = "a6139a8597ed92cf816dfb33f5dd6cf0bb93a6adc938f11039f371bc5bcd26c3"
 dependencies = [
  "chrono",
- "chrono-tz-build 0.4.1",
- "phf 0.11.3",
-]
-
-[[package]]
-name = "chrono-tz"
-version = "0.10.3"
-source = "git+https://github.com/chronotope/chrono-tz?rev=f0145ee6068a282368346bb59fcdbde98a757316#f0145ee6068a282368346bb59fcdbde98a757316"
-dependencies = [
- "chrono",
- "chrono-tz-build 0.4.2",
- "phf 0.12.1",
-]
-
-[[package]]
-name = "chrono-tz-build"
-version = "0.4.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8f10f8c9340e31fc120ff885fcdb54a0b48e474bbd77cab557f0c30a3e569402"
-dependencies = [
- "parse-zoneinfo 0.3.1",
- "phf_codegen 0.11.3",
-]
-
-[[package]]
-name = "chrono-tz-build"
-version = "0.4.2"
-source = "git+https://github.com/chronotope/chrono-tz?rev=f0145ee6068a282368346bb59fcdbde98a757316#f0145ee6068a282368346bb59fcdbde98a757316"
-dependencies = [
- "parse-zoneinfo 0.4.0",
- "phf_codegen 0.12.1",
+ "phf",
 ]
 
 [[package]]
@@ -950,12 +920,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "fastrand"
-version = "2.3.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "37909eebbb50d72f9059c3b6d82c0463f2ff062c9e95845c43a6c9c0355411be"
-
-[[package]]
 name = "filetime"
 version = "0.2.25"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -975,7 +939,7 @@ dependencies = [
  "displaydoc",
  "getrandom 0.3.2",
  "icu_benchmark_macros",
- "rand 0.9.1",
+ "rand",
  "rand_distr",
  "rand_pcg",
  "ryu",
@@ -1162,7 +1126,7 @@ name = "icu"
 version = "2.0.0"
 dependencies = [
  "chrono",
- "chrono-tz 0.10.3 (registry+https://github.com/rust-lang/crates.io-index)",
+ "chrono-tz",
  "icu_benchmark_macros",
  "icu_calendar",
  "icu_casemap",
@@ -1436,7 +1400,7 @@ dependencies = [
  "icu_locale_core",
  "icu_provider",
  "icu_provider_adapters",
- "rand 0.9.1",
+ "rand",
  "rand_distr",
  "rand_pcg",
  "serde",
@@ -1822,7 +1786,7 @@ dependencies = [
  "num-bigint",
  "num-rational",
  "num-traits",
- "parse-zoneinfo 0.3.1",
+ "parse-zoneinfo",
  "postcard",
  "potential_utf",
  "serde",
@@ -2050,7 +2014,7 @@ dependencies = [
  "icu_benchmark_macros",
  "icu_locale_core",
  "postcard",
- "rand 0.9.1",
+ "rand",
  "rkyv",
  "serde",
  "serde_json",
@@ -2335,14 +2299,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "parse-zoneinfo"
-version = "0.4.0"
-source = "git+https://github.com/chronotope/chrono-tz?rev=f0145ee6068a282368346bb59fcdbde98a757316#f0145ee6068a282368346bb59fcdbde98a757316"
-dependencies = [
- "regex",
-]
-
-[[package]]
 name = "partial-min-max"
 version = "0.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2362,69 +2318,11 @@ checksum = "e3148f5046208a5d56bcfc03053e3ca6334e51da8dfb19b6cdc8b306fae3283e"
 
 [[package]]
 name = "phf"
-version = "0.11.3"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1fd6780a80ae0c52cc120a26a1a42c1ae51b247a253e4e06113d23d2c2edd078"
-dependencies = [
- "phf_shared 0.11.3",
-]
-
-[[package]]
-name = "phf"
 version = "0.12.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "913273894cec178f401a31ec4b656318d95473527be05c0752cc41cdc32be8b7"
 dependencies = [
- "phf_shared 0.12.1",
-]
-
-[[package]]
-name = "phf_codegen"
-version = "0.11.3"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "aef8048c789fa5e851558d709946d6d79a8ff88c0440c587967f8e94bfb1216a"
-dependencies = [
- "phf_generator 0.11.3",
- "phf_shared 0.11.3",
-]
-
-[[package]]
-name = "phf_codegen"
-version = "0.12.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "efbdcb6f01d193b17f0b9c3360fa7e0e620991b193ff08702f78b3ce365d7e61"
-dependencies = [
- "phf_generator 0.12.1",
- "phf_shared 0.12.1",
-]
-
-[[package]]
-name = "phf_generator"
-version = "0.11.3"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3c80231409c20246a13fddb31776fb942c38553c51e871f8cbd687a4cfb5843d"
-dependencies = [
- "phf_shared 0.11.3",
- "rand 0.8.5",
-]
-
-[[package]]
-name = "phf_generator"
-version = "0.12.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2cbb1126afed61dd6368748dae63b1ee7dc480191c6262a3b4ff1e29d86a6c5b"
-dependencies = [
- "fastrand",
- "phf_shared 0.12.1",
-]
-
-[[package]]
-name = "phf_shared"
-version = "0.11.3"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "67eabc2ef2a60eb7faa00097bd1ffdb5bd28e62bf39990626a582201b7a754e5"
-dependencies = [
- "siphasher",
+ "phf_shared",
 ]
 
 [[package]]
@@ -2589,21 +2487,12 @@ checksum = "dc33ff2d4973d518d823d61aa239014831e521c75da58e3df4840d3f47749d09"
 
 [[package]]
 name = "rand"
-version = "0.8.5"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "34af8d1a0e25924bc5b7c43c079c942339d8f0a8b57c39049bef581b46327404"
-dependencies = [
- "rand_core 0.6.4",
-]
-
-[[package]]
-name = "rand"
 version = "0.9.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "9fbfd9d094a40bf3ae768db9361049ace4c0e04a4fd6b359518bd7b73a73dd97"
 dependencies = [
  "rand_chacha",
- "rand_core 0.9.3",
+ "rand_core",
 ]
 
 [[package]]
@@ -2613,14 +2502,8 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d3022b5f1df60f26e1ffddd6c66e8aa15de382ae63b3a0c1bfc0e4d3e3f325cb"
 dependencies = [
  "ppv-lite86",
- "rand_core 0.9.3",
+ "rand_core",
 ]
-
-[[package]]
-name = "rand_core"
-version = "0.6.4"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ec0be4795e2f6a28069bec0b5ff3e2ac9bafc99e6a9a7dc3547996c5c816922c"
 
 [[package]]
 name = "rand_core"
@@ -2638,7 +2521,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "6a8615d50dcf34fa31f7ab52692afec947c4dd0ab803cc87cb3b0b4570ff7463"
 dependencies = [
  "num-traits",
- "rand 0.9.1",
+ "rand",
 ]
 
 [[package]]
@@ -2647,7 +2530,7 @@ version = "0.9.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b48ac3f7ffaab7fac4d2376632268aa5f89abdb55f7ebf8f4d11fffccb2320f7"
 dependencies = [
- "rand_core 0.9.3",
+ "rand_core",
 ]
 
 [[package]]
@@ -3251,7 +3134,7 @@ dependencies = [
  "databake",
  "displaydoc",
  "postcard",
- "rand 0.9.1",
+ "rand",
  "serde",
  "serde_json",
  "zerovec",
@@ -3969,7 +3852,7 @@ dependencies = [
  "criterion",
  "either",
  "icu_benchmark_macros",
- "rand 0.9.1",
+ "rand",
 ]
 
 [[package]]
@@ -4062,7 +3945,7 @@ dependencies = [
  "icu_locale_core",
  "litemap",
  "postcard",
- "rand 0.9.1",
+ "rand",
  "rand_pcg",
  "rmp-serde",
  "serde",
@@ -4085,7 +3968,7 @@ dependencies = [
  "icu_benchmark_macros",
  "postcard",
  "potential_utf",
- "rand 0.9.1",
+ "rand",
  "rand_distr",
  "rand_pcg",
  "rmp-serde",
@@ -4132,7 +4015,7 @@ version = "0.0.0"
 dependencies = [
  "calendrical_calculations",
  "chrono",
- "chrono-tz 0.10.3 (git+https://github.com/chronotope/chrono-tz?rev=f0145ee6068a282368346bb59fcdbde98a757316)",
+ "chrono-tz",
  "icu_locale_core",
  "icu_time",
  "potential_utf",

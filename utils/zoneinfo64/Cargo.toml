@@ -27,7 +27,7 @@ calendrical_calculations = { workspace = true }
 chrono = { version = "0.4", optional = true }
 
 [dev-dependencies]
-chrono-tz = { git = "https://github.com/chronotope/chrono-tz", rev = "f0145ee6068a282368346bb59fcdbde98a757316" }
+chrono-tz = "0.10.4"
 
 [features]
 chrono = ["dep:chrono"]
