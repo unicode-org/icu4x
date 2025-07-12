@@ -7,7 +7,6 @@ use crate::cldr_serde;
 use crate::SourceDataProvider;
 use cldr_serde::time_zones::time_zone_names::*;
 use core::cmp::Ordering;
-use icu::calendar::Date;
 use icu::datetime::provider::time_zones::*;
 use icu::locale::LanguageIdentifier;
 use icu::time::provider::*;
@@ -16,7 +15,6 @@ use icu::time::zone::UtcOffset;
 use icu::time::zone::VariantOffsets;
 use icu::time::zone::ZoneNameTimestamp;
 use icu::time::DateTime;
-use icu::time::Time;
 use icu::time::ZonedDateTime;
 use icu_provider::prelude::icu_locale_core::subtags::Language;
 use icu_provider::prelude::*;
@@ -233,10 +231,9 @@ impl SourceDataProvider {
                                         // join the metazone
                                         Some((
                                             bcp47,
-                                            period.uses_meta_zone.from.unwrap_or(DateTime {
-                                                date: Date::try_new_iso(1970, 1, 1).unwrap(),
-                                                time: Time::start_of_day(),
-                                            }),
+                                            period.uses_meta_zone.from.unwrap_or(
+                                                ZoneNameTimestamp::far_in_past().to_date_time_iso(),
+                                            ),
                                             NichedOption(
                                                 meta_zone_id_data
                                                     .get(&period.uses_meta_zone.mzone)
