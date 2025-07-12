@@ -202,84 +202,6 @@ impl SourceDataProvider {
         Ok((locations, exemplar_cities))
     }
 
-    pub(super) fn metazone_period(&self) -> Result<&MetazonePeriod<'static>, DataError> {
-        let metazones = &self
-            .cldr()?
-            .core()
-            .read_and_parse::<cldr_serde::time_zones::meta_zones::Resource>(
-                "supplemental/metaZones.json",
-            )?
-            .supplemental
-            .meta_zones;
-        let bcp47_tzid_data = self.iana_to_bcp47_map()?;
-        let (meta_zone_id_data, _checksum) = self.metazone_to_id_map()?;
-        self.cldr()?
-            .tz_caches
-            .mz_period
-            .get_or_init(|| {
-                Ok(MetazonePeriod {
-                    list: metazones
-                        .meta_zone_info
-                        .time_zone
-                        .iter()
-                        .flat_map(|(iana, periods)| {
-                            let &bcp47 = bcp47_tzid_data.get(&iana).unwrap();
-                            let mut periods = periods
-                                .iter()
-                                .flat_map(move |period| {
-                                    [
-                                        // join the metazone
-                                        Some((
-                                            bcp47,
-                                            period.uses_meta_zone.from.unwrap_or(
-                                                ZoneNameTimestamp::far_in_past().to_date_time_iso(),
-                                            ),
-                                            NichedOption(
-                                                meta_zone_id_data
-                                                    .get(&period.uses_meta_zone.mzone)
-                                                    .copied(),
-                                            ),
-                                        )),
-                                        // leave the metazone if there's a `to` date
-                                        period
-                                            .uses_meta_zone
-                                            .to
-                                            .map(|m| (bcp47, m, NichedOption(None))),
-                                    ]
-                                })
-                                .flatten()
-                                .collect::<Vec<_>>();
-
-                            let mut i = 0;
-                            while i < periods.len() {
-                                if i + 1 < periods.len()
-                                    && periods[i].0 == periods[i + 1].0
-                                    && periods[i].1 == periods[i + 1].1
-                                {
-                                    // The next period starts at the same time
-                                    periods.remove(i);
-                                } else if i + 1 < periods.len()
-                                    && periods[i].0 == periods[i + 1].0
-                                    && periods[i + 1].1.date <= self.timezone_horizon
-                                {
-                                    // The next period still starts before the horizon, so we can drop this one
-                                    periods.remove(i);
-                                } else {
-                                    i += 1;
-                                }
-                            }
-
-                            periods.into_iter().map(|(b, dt, mz)| {
-                                (b, ZoneNameTimestamp::from_date_time_iso(dt), mz)
-                            })
-                        })
-                        .collect(),
-                })
-            })
-            .as_ref()
-            .map_err(|&e| e)
-    }
-
     pub(crate) fn offset_period(
         &self,
     ) -> Result<&<TimezoneVariantsOffsetsV1 as DynamicDataMarker>::DataStruct, DataError> {
@@ -604,11 +526,18 @@ impl DataProvider<TimezoneMetazonePeriodsV1> for SourceDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<TimezoneMetazonePeriodsV1>, DataError> {
         self.check_req::<TimezoneMetazonePeriodsV1>(req)?;
 
-        let (_, checksum) = self.metazone_to_id_map()?;
+        let metazones = self.metazones()?;
 
         Ok(DataResponse {
-            metadata: DataResponseMetadata::default().with_checksum(checksum),
-            payload: DataPayload::from_owned(self.metazone_period()?.clone()),
+            metadata: DataResponseMetadata::default().with_checksum(metazones.checksum),
+            payload: DataPayload::from_owned(MetazonePeriod {
+                list: self
+                    .metazones()?
+                    .periods
+                    .iter()
+                    .flat_map(|(tz, ps)| ps.iter().map(move |&(t, mz)| (tz, t, NichedOption(mz))))
+                    .collect(),
+            }),
         })
     }
 }
@@ -643,16 +572,15 @@ impl DataProvider<TimezoneNamesGenericLongV1> for SourceDataProvider {
             .dates
             .time_zone_names;
         let bcp47_tzid_data = self.iana_to_bcp47_map()?;
-        let (meta_zone_id_data, checksum) = self.metazone_to_id_map()?;
-        let reverse_metazones = self.reverse_metazones()?;
+        let metazones = self.metazones()?;
         let locations = self.calculate_locations(req.id.locale)?.0;
 
-        let defaults = iter_mz_defaults(time_zone_names_resource, meta_zone_id_data, true)
+        let defaults = iter_mz_defaults(time_zone_names_resource, &metazones.ids, true)
             .filter_map(|(mz, zf)| {
                 let v = zf.0.get("generic")?.as_str();
 
                 // The generic name will be used for all zones using this metazone
-                let tzs = reverse_metazones.get(&(mz, MzMembership::Any))?;
+                let tzs = metazones.reverse.get(&(mz, MzMembership::Any))?;
 
                 let same_as_location = tzs.iter().all(|tz| {
                     let Some(location) = locations.get(tz) else {
@@ -678,7 +606,7 @@ impl DataProvider<TimezoneNamesGenericLongV1> for SourceDataProvider {
             .collect();
 
         Ok(DataResponse {
-            metadata: DataResponseMetadata::default().with_checksum(checksum),
+            metadata: DataResponseMetadata::default().with_checksum(metazones.checksum),
             payload: DataPayload::from_owned(MetazoneGenericNames {
                 defaults,
                 overrides,
@@ -706,11 +634,10 @@ impl DataProvider<TimezoneNamesStandardLongV1> for SourceDataProvider {
             .dates
             .time_zone_names;
         let bcp47_tzid_data = self.iana_to_bcp47_map()?;
-        let (meta_zone_id_data, checksum) = self.metazone_to_id_map()?;
-        let reverse_metazones = self.reverse_metazones()?;
+        let metazones = self.metazones()?;
         let locations = self.calculate_locations(req.id.locale)?.0;
 
-        let defaults = iter_mz_defaults(time_zone_names_resource, meta_zone_id_data, true)
+        let defaults = iter_mz_defaults(time_zone_names_resource, &metazones.ids, true)
             .filter_map(|(mz, zf)| {
                 // Add the standard name if the generic name does not exist
                 let v = (!zf.0.contains_key("generic"))
@@ -719,7 +646,7 @@ impl DataProvider<TimezoneNamesStandardLongV1> for SourceDataProvider {
                     .as_str();
 
                 // The standard name will be used for all zones using this metazone
-                let tzs = reverse_metazones.get(&(mz, MzMembership::Any))?;
+                let tzs = metazones.reverse.get(&(mz, MzMembership::Any))?;
 
                 let same_as_location = tzs.iter().all(|tz| {
                     let Some(location) = locations.get(tz) else {
@@ -745,7 +672,7 @@ impl DataProvider<TimezoneNamesStandardLongV1> for SourceDataProvider {
             .collect();
 
         Ok(DataResponse {
-            metadata: DataResponseMetadata::default().with_checksum(checksum),
+            metadata: DataResponseMetadata::default().with_checksum(metazones.checksum),
             payload: DataPayload::from_owned(MetazoneGenericNames {
                 defaults,
                 overrides,
@@ -774,14 +701,13 @@ impl DataProvider<TimezoneNamesSpecificLongV1> for SourceDataProvider {
             .time_zone_names;
 
         let bcp47_tzid_data = self.iana_to_bcp47_map()?;
-        let (meta_zone_id_data, checksum) = self.metazone_to_id_map()?;
-        let reverse_metazones = self.reverse_metazones()?;
+        let metazones = self.metazones()?;
         let locations = &self.calculate_locations(req.id.locale)?.0;
 
-        let mut defaults = iter_mz_defaults(time_zone_names_resource, meta_zone_id_data, true)
+        let mut defaults = iter_mz_defaults(time_zone_names_resource, &metazones.ids, true)
             .flat_map(move |(mz, zf)| {
                 variant_convert(zf).flat_map(move |(zv, v)| {
-                    let tzs = reverse_metazones.get(&(
+                    let tzs = metazones.reverse.get(&(
                         mz,
                         if zv == TimeZoneVariant::Daylight {
                             // The daylight name will only be used by zones that use DST
@@ -833,7 +759,7 @@ impl DataProvider<TimezoneNamesSpecificLongV1> for SourceDataProvider {
             .collect();
 
         Ok(DataResponse {
-            metadata: DataResponseMetadata::default().with_checksum(checksum),
+            metadata: DataResponseMetadata::default().with_checksum(metazones.checksum),
             payload: DataPayload::from_owned(MetazoneSpecificNames {
                 defaults: defaults.into_iter().collect(),
                 overrides,
@@ -862,9 +788,9 @@ impl DataProvider<TimezoneNamesGenericShortV1> for SourceDataProvider {
             .dates
             .time_zone_names;
         let bcp47_tzid_data = self.iana_to_bcp47_map()?;
-        let (meta_zone_id_data, checksum) = self.metazone_to_id_map()?;
+        let metazones = self.metazones()?;
 
-        let defaults = iter_mz_defaults(time_zone_names_resource, meta_zone_id_data, false)
+        let defaults = iter_mz_defaults(time_zone_names_resource, &metazones.ids, false)
             .flat_map(|(mz, zf)| variant_fallback(zf).map(move |v| (mz, v)))
             .collect();
         let overrides = iter_mz_overrides(time_zone_names_resource, bcp47_tzid_data, false)
@@ -872,7 +798,7 @@ impl DataProvider<TimezoneNamesGenericShortV1> for SourceDataProvider {
             .collect();
 
         Ok(DataResponse {
-            metadata: DataResponseMetadata::default().with_checksum(checksum),
+            metadata: DataResponseMetadata::default().with_checksum(metazones.checksum),
             payload: DataPayload::from_owned(MetazoneGenericNames {
                 defaults,
                 overrides,
@@ -900,9 +826,9 @@ impl DataProvider<TimezoneNamesSpecificShortV1> for SourceDataProvider {
             .time_zone_names;
 
         let bcp47_tzid_data = self.iana_to_bcp47_map()?;
-        let (meta_zone_id_data, checksum) = self.metazone_to_id_map()?;
+        let metazones = self.metazones()?;
 
-        let defaults = iter_mz_defaults(time_zone_names_resource, meta_zone_id_data, false)
+        let defaults = iter_mz_defaults(time_zone_names_resource, &metazones.ids, false)
             .flat_map(|(mz, zf)| variant_convert(zf).map(move |(zv, v)| ((mz, zv), v)))
             .collect();
         let overrides = iter_mz_overrides(time_zone_names_resource, bcp47_tzid_data, false)
@@ -910,7 +836,7 @@ impl DataProvider<TimezoneNamesSpecificShortV1> for SourceDataProvider {
             .collect();
 
         Ok(DataResponse {
-            metadata: DataResponseMetadata::default().with_checksum(checksum),
+            metadata: DataResponseMetadata::default().with_checksum(metazones.checksum),
             payload: DataPayload::from_owned(MetazoneSpecificNames {
                 defaults,
                 overrides,
