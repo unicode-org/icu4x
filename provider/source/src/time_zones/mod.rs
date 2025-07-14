@@ -109,7 +109,7 @@ impl SourceDataProvider {
 
                         let mut i = 0;
                         while i < periods.len() {
-                            if i + 1 < periods.len() && periods[i].1 == periods[i + 1].1 {
+                            if i + 1 < periods.len() && periods[i].0 == periods[i + 1].0 {
                                 // The next period starts at the same time
                                 periods.remove(i);
                             } else if i + 1 < periods.len()
