@@ -328,3 +328,6 @@ lto = true
 [profile.bench-memory]
 inherits = "bench"
 debug = true
+
+[workspace.metadata.cargo-semver-checks.lints]
+type_method_marked_deprecated.level = "allow"

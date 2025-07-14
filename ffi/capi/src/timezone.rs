@@ -206,6 +206,11 @@ pub mod ffi {
 
         #[diplomat::rust_link(icu::time::TimeZoneInfo::zone_name_timestamp, FnInStruct)]
         #[diplomat::rust_link(
+            icu::time::zone::ZoneNameTimestamp::to_zoned_date_time_iso,
+            FnInStruct,
+            hidden
+        )]
+        #[diplomat::rust_link(
             icu::time::zone::ZoneNameTimestamp::to_date_time_iso,
             FnInStruct,
             hidden

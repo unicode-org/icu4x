@@ -103,8 +103,10 @@ impl ZoneNameTimestampParts {
 /// Alaska Time multiple times between 2010 and 2025.
 ///
 /// ```
+/// use icu::calendar::Iso;
 /// use icu::time::zone::IanaParser;
 /// use icu::time::zone::ZoneNameTimestamp;
+/// use icu::time::ZonedDateTime;
 /// use icu::datetime::NoCalendarFormatter;
 /// use icu::datetime::fieldsets::zone::GenericLong;
 /// use icu::locale::locale;
@@ -118,8 +120,8 @@ impl ZoneNameTimestampParts {
 /// )
 /// .unwrap();
 ///
-/// let time_zone_info_2010 = metlakatla.without_offset().with_zone_name_timestamp(ZoneNameTimestamp::from_zoned_date_time_iso("2010-01-01T00:00Z".parse().unwrap()));
-/// let time_zone_info_2025 = metlakatla.without_offset().with_zone_name_timestamp(ZoneNameTimestamp::from_zoned_date_time_iso("2025-01-01T00:00Z".parse().unwrap()));
+/// let time_zone_info_2010 = metlakatla.without_offset().with_zone_name_timestamp(ZoneNameTimestamp::from_zoned_date_time_iso(ZonedDateTime::try_offset_only_from_str("2010-01-01T00:00Z", Iso).unwrap()));
+/// let time_zone_info_2025 = metlakatla.without_offset().with_zone_name_timestamp(ZoneNameTimestamp::from_zoned_date_time_iso(ZonedDateTime::try_offset_only_from_str("2025-01-01T00:00Z", Iso).unwrap()));
 ///
 /// // Check the display names:
 /// let name_2010 = zone_formatter.format(&time_zone_info_2010);
