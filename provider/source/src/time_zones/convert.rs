@@ -23,6 +23,9 @@ use icu::time::Time;
 use icu::time::ZonedDateTime;
 use icu_provider::prelude::icu_locale_core::subtags::Language;
 use icu_provider::prelude::*;
+use parse_zoneinfo::line::ChangeTime;
+use parse_zoneinfo::line::DaySpec;
+use parse_zoneinfo::line::Month;
 use parse_zoneinfo::line::Year;
 use parse_zoneinfo::table::Saving;
 use std::borrow::Cow;
@@ -377,15 +380,12 @@ impl SourceDataProvider {
 
                             let local_end_time = match zone_info.end_time {
                                 // Skip transitions before the UNIX Epoch
-                                Some(t) if t.to_timestamp() < 0 => continue,
+                                Some(t) if t.to_timestamp(zone_info.offset, 0) < 0 => continue,
                                 // None means the rules are in effect "until the end of time"
                                 None => ZoneNameTimestamp::far_in_future(),
-                                // WARNING: This produces a *local* timestamp, i.e. seconds since 1970-01-01 00:00:00 *wall time*,
-                                // even though the docs say that this is since the UNIX epoch (i.e. 1970-01-01 00:00:00 UTC).
-                                // This also assumes `t` uses the same offset as 1970-01-01 00:00:00.
-                                // While the local timestamps are what we want, the offset assumption probably needs fixing (TODO).
+                                // This assumes DST is not active at the zone change
                                 Some(t) => {
-                                    let epoch_seconds = t.to_timestamp();
+                                    let epoch_seconds = t.to_timestamp(zone_info.offset, 0);
                                     let zdt = ZonedDateTime::from_epoch_milliseconds_and_utc_offset(
                                         epoch_seconds * 1000,
                                         utc_offset,
@@ -412,7 +412,8 @@ impl SourceDataProvider {
                                 }
 
                                 Saving::Multiple(ref rules) => {
-                                    let mut rules = tzdb.rulesets[rules]
+                                    let ruleset = &tzdb.rulesets[rules];
+                                    let mut rules = ruleset
                                         .iter()
                                         // Only want transitions into DST
                                         .filter(|rule| rule.time_to_add != 0)
@@ -479,7 +480,16 @@ impl SourceDataProvider {
                                             );
                                         }
 
-                                        if rules.last().unwrap().0 < local_end_time {
+                                        let end_year = match zone_info.end_time {
+                                            None => i64::MAX,
+                                            Some(
+                                                ChangeTime::UntilYear(Year::Number(y))
+                                                | ChangeTime::UntilMonth(Year::Number(y), Month::January)
+                                                | ChangeTime::UntilDay(Year::Number(y), Month::January, DaySpec::Ordinal(1))) => y - 1,
+                                            Some(c) => c.year(),
+                                        };
+
+                                        if !ruleset.iter().any(|r| r.applies_to_year(end_year)) {
                                             // rules end before zoneinfo ends, continue without offset
                                             store_offsets(
                                                 &mut data,

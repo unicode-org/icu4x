@@ -395,7 +395,7 @@ pub(crate) struct TzdbCache {
 
 impl TzdbCache {
     pub(crate) fn transitions(&self) -> Result<&parse_zoneinfo::table::Table, DataError> {
-        use parse_zoneinfo::line::{Line, LineParser};
+        use parse_zoneinfo::line::Line;
         use parse_zoneinfo::table::TableBuilder;
 
         self.transitions
@@ -504,12 +504,10 @@ impl TzdbCache {
                     *line = line.replace("1:00\tMorocco\t%z", "0:00\tMorocco\t+00/+01");
                 }
 
-                #[allow(deprecated)] // no alternative?!
-                let parser = LineParser::new();
                 let mut table = TableBuilder::new();
 
                 for line in lines {
-                    match parser.parse_str(&line).unwrap() {
+                    match Line::new(&line).unwrap() {
                         Line::Zone(zone) => table.add_zone_line(zone).unwrap(),
                         Line::Continuation(cont) => table.add_continuation_line(cont).unwrap(),
                         Line::Rule(rule) => table.add_rule_line(rule).unwrap(),
