@@ -27293,7 +27293,7 @@ datetime/patterns/time/v1, zh/h, -> yue-Hans/h
 datetime/patterns/time/v1, zh/h0, -> yue-Hans/h0
 datetime/patterns/time/v1, zh/j, -> yue-Hans/h0
 datetime/patterns/time/v1, zu/h, -> az/h
-timezone/metazone/periods/v1, <singleton>, 7421B, 7333B, fc132dbef8824967
+timezone/metazone/periods/v1, <singleton>, 7387B, 7299B, 73c9c33c0b79d0da
 timezone/names/cities/override/v1, <lookup>, 840B, 161 identifiers
 timezone/names/cities/override/v1, <total>, 248266B, 241799B, 146 unique payloads
 timezone/names/cities/override/v1, af, 882B, 838B, 1f378152ac0f4a7f
