@@ -263,7 +263,7 @@ fn main() {
     }
 
     if components.len() == COMPONENTS.len() {
-        // validate that `--markers all --locales full` works
+        // On full datagen runs (as in CI) validate that `--markers all --locales full` works
         struct SinkExporter;
         impl DataExporter for SinkExporter {
             fn put_payload(
