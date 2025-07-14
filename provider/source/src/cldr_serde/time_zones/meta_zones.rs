@@ -7,9 +7,7 @@
 //! Sample file:
 //! <https://github.com/unicode-org/cldr-json/blob/main/cldr-json/cldr-core/supplemental/metaZones.json>
 
-use icu::calendar::Date;
-use icu::calendar::Iso;
-use icu::time::{DateTime, Time};
+use icu::time::zone::ZoneNameTimestamp;
 use serde::Deserialize;
 use std::collections::BTreeMap;
 
@@ -18,9 +16,9 @@ pub(crate) struct UsesMetazone {
     #[serde(rename = "_mzone")]
     pub(crate) mzone: String,
     #[serde(rename = "_from", default, deserialize_with = "deserialize_date")]
-    pub(crate) from: Option<DateTime<Iso>>,
+    pub(crate) from: Option<ZoneNameTimestamp>,
     #[serde(rename = "_to", default, deserialize_with = "deserialize_date")]
-    pub(crate) to: Option<DateTime<Iso>>,
+    pub(crate) to: Option<ZoneNameTimestamp>,
 }
 
 #[derive(PartialEq, Debug, Clone, Deserialize)]
@@ -116,24 +114,17 @@ impl TimeZonePeriod {
 
 fn deserialize_date<'de, D: serde::de::Deserializer<'de>>(
     deserializer: D,
-) -> Result<Option<DateTime<Iso>>, D::Error> {
-    let Some(from) = Option::<String>::deserialize(deserializer)? else {
+) -> Result<Option<ZoneNameTimestamp>, D::Error> {
+    use icu::calendar::Iso;
+    use icu::time::DateTime;
+    use serde::de::Error;
+
+    let Some(timestamp) = Option::<String>::deserialize(deserializer)? else {
         return Ok(None);
     };
-    // TODO(#2127): Ideally this parsing can move into a library function
-    let mut parts = from.split(' ');
-    let date = parts.next().unwrap();
-    let time = parts.next().unwrap();
-    let mut date_parts = date.split('-');
-    let year = date_parts.next().unwrap().parse::<i32>().unwrap();
-    let month = date_parts.next().unwrap().parse::<u8>().unwrap();
-    let day = date_parts.next().unwrap().parse::<u8>().unwrap();
-    let mut time_parts = time.split(':');
-    let hour = time_parts.next().unwrap().parse::<u8>().unwrap();
-    let minute = time_parts.next().unwrap().parse::<u8>().unwrap();
 
-    Ok(Some(DateTime {
-        date: Date::try_new_iso(year, month, day).unwrap(),
-        time: Time::try_new(hour, minute, 0, 0).unwrap(),
-    }))
+    let date_time = DateTime::try_from_str(&timestamp, Iso)
+        .map_err(|_| D::Error::custom("Invalid metazone timestamp"))?;
+
+    Ok(Some(ZoneNameTimestamp::from_date_time_iso(date_time)))
 }

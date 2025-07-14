@@ -96,13 +96,14 @@ impl SourceDataProvider {
                                 [
                                     // join the metazone
                                     Some((
-                                        period.uses_meta_zone.from.unwrap_or(
-                                            ZoneNameTimestamp::far_in_past().to_date_time_iso(),
-                                        ),
+                                        period
+                                            .uses_meta_zone
+                                            .from
+                                            .unwrap_or(ZoneNameTimestamp::far_in_past()),
                                         Some(&period.uses_meta_zone.mzone),
                                     )),
                                     // leave the metazone if there's a `to` date
-                                    period.uses_meta_zone.to.map(|m| (m, None)),
+                                    period.uses_meta_zone.to.map(|t| (t, None)),
                                 ]
                             })
                             .flatten()
@@ -114,25 +115,17 @@ impl SourceDataProvider {
                                 // The next period starts at the same time
                                 periods.remove(i);
                             } else if i + 1 < periods.len()
-                                && periods[i + 1].0.date <= self.timezone_horizon
+                                && periods[i + 1].0.to_date_time_iso().date <= self.timezone_horizon
                             {
                                 // The next period still starts before the horizon, so we can drop this one
                                 periods.remove(i);
                             } else {
+                                all_metazones.extend(periods[i].1);
                                 i += 1;
                             }
                         }
 
-                        (
-                            bcp47,
-                            periods
-                                .into_iter()
-                                .map(|(dt, mz)| {
-                                    all_metazones.extend(mz);
-                                    (ZoneNameTimestamp::from_date_time_iso(dt), mz)
-                                })
-                                .collect(),
-                        )
+                        (bcp47, periods)
                     })
                     .collect::<BTreeMap<TimeZone, Vec<(ZoneNameTimestamp, Option<&String>)>>>();
 

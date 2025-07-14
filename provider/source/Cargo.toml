@@ -34,6 +34,8 @@ all-features = true
 # ICU components
 icu = { workspace = true, features = ["datagen"] }
 
+icu_time = { workspace = true, features = ["ixdtf"] }
+
 # ICU infrastructure
 calendrical_calculations = { workspace = true }
 icu_codepointtrie_builder = { workspace = true }
