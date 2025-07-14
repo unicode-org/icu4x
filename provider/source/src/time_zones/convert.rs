@@ -556,9 +556,43 @@ impl DataProvider<TimezoneVariantsOffsetsV1> for SourceDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<TimezoneVariantsOffsetsV1>, DataError> {
         self.check_req::<TimezoneVariantsOffsetsV1>(req)?;
 
+        // Collapse periods a bit more. This cannot be done in offset_period, as it extends DST usage to periods
+        // that didn't actually use DST, which interferes with excluding display names beyond the metazone horizon.
+        let data = self
+            .offset_period()?
+            .iter0()
+            .flat_map(|c| {
+                let tz = *c.key0();
+                use zerovec::ule::AsULE;
+                let mut offsets = c
+                    .iter1_copied()
+                    .map(|(k, v)| (ZoneNameTimestamp::from_unaligned(*k), v))
+                    .collect::<Vec<_>>();
+                offsets.dedup_by(|(_, a), (_, b)| {
+                    if a.standard != b.standard {
+                        return false;
+                    }
+                    match (a.daylight, b.daylight) {
+                        (None, None) => true,
+                        (Some(a), Some(b)) => a == b,
+                        // It's fine if one period doesn't use DST,
+                        (Some(a), None) => {
+                            b.daylight = Some(a);
+                            true
+                        }
+                        (None, Some(b)) => {
+                            a.daylight = Some(b);
+                            true
+                        }
+                    }
+                });
+                offsets.into_iter().map(move |(t, o)| (tz, t, o))
+            })
+            .collect();
+
         Ok(DataResponse {
             metadata: Default::default(),
-            payload: DataPayload::from_owned(self.offset_period()?.clone()),
+            payload: DataPayload::from_owned(data),
         })
     }
 }
