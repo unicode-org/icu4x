@@ -591,9 +591,10 @@ pub mod ffi {
                 input.set_time_zone_name_timestamp(zone_name_timestamp);
             }
             else {
-                input.set_time_zone_name_timestamp(icu_time::zone::ZoneNameTimestamp::from_date_time_iso(icu_time::DateTime {
+                input.set_time_zone_name_timestamp(icu_time::zone::ZoneNameTimestamp::from_zoned_date_time_iso(icu_time::ZonedDateTime {
                     date: iso_date.0,
-                    time: icu_time::Time::noon()
+                    time: icu_time::Time::noon(),
+                    zone: zone.offset.unwrap_or(icu_time::zone::UtcOffset::zero()),
                 }))
             }
             if let Some(variant) = zone.variant {
@@ -1153,9 +1154,10 @@ pub mod ffi {
                 input.set_time_zone_name_timestamp(zone_name_timestamp);
             }
             else {
-                input.set_time_zone_name_timestamp(icu_time::zone::ZoneNameTimestamp::from_date_time_iso(icu_time::DateTime {
+                input.set_time_zone_name_timestamp(icu_time::zone::ZoneNameTimestamp::from_zoned_date_time_iso(icu_time::ZonedDateTime {
                     date: iso_date.0,
-                    time: icu_time::Time::noon()
+                    time: icu_time::Time::noon(),
+                    zone: zone.offset.unwrap_or(icu_time::zone::UtcOffset::zero()),
                 }))
             }
             if let Some(variant) = zone.variant {

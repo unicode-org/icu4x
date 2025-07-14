@@ -679,7 +679,7 @@ macro_rules! datetime_marker_helper {
     (@input/timezone/variant, yes) => {
         TimeZoneVariant
     };
-    (@input/timezone/local_time, yes) => {
+    (@input/timezone/timestamp, yes) => {
         ZoneNameTimestamp
     };
     (@input/timezone/$any:ident,) => {

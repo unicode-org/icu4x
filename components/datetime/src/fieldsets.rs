@@ -922,8 +922,8 @@ macro_rules! impl_zone_marker {
         $(input_tzid = $tzid_input_yes:ident,)?
         // Whether to require the TimeZoneVariant
         $(input_variant = $variant_input_yes:ident,)?
-        // Whether to require the Local Time
-        $(input_localtime = $localtime_input_yes:ident,)?
+        // Whether to require the Timestamp
+        $(input_timestamp = $timestamp_input_yes:ident,)?
     ) => {
         #[doc = concat!("**“", $sample, "**” ⇒ ", $description)]
         ///
@@ -980,7 +980,7 @@ macro_rules! impl_zone_marker {
             type TimeZoneIdInput = datetime_marker_helper!(@input/timezone/id, $($tzid_input_yes)?);
             type TimeZoneOffsetInput = datetime_marker_helper!(@input/timezone/offset, yes);
             type TimeZoneVariantInput = datetime_marker_helper!(@input/timezone/variant, $($variant_input_yes)?);
-            type TimeZoneNameTimestampInput = datetime_marker_helper!(@input/timezone/local_time, $($localtime_input_yes)?);
+            type TimeZoneNameTimestampInput = datetime_marker_helper!(@input/timezone/timestamp, $($timestamp_input_yes)?);
             type EssentialsV1 = datetime_marker_helper!(@data/zone/essentials, $($zone_essentials_yes)?);
             type LocationsV1 = datetime_marker_helper!(@data/zone/locations, $($zone_locations_yes)?);
             type LocationsRootV1 = datetime_marker_helper!(@data/zone/locations_root, $($zone_locations_yes)?);
@@ -1352,7 +1352,7 @@ pub mod zone {
         metazone_periods = yes,
         input_tzid = yes,
         input_variant = yes,
-        input_localtime = yes,
+        input_timestamp = yes,
     );
 
     impl_zone_marker!(
@@ -1393,7 +1393,7 @@ pub mod zone {
         metazone_periods = yes,
         input_tzid = yes,
         input_variant = yes,
-        input_localtime = yes,
+        input_timestamp = yes,
     );
 
     impl_zone_marker!(
@@ -1555,7 +1555,7 @@ pub mod zone {
         /// )
         /// .unwrap();
         ///
-        /// // error[E0271]: type mismatch resolving `<Base as TimeZoneModel>::LocalTime == (Date<Iso>, Time)`
+        /// // error[E0271]: type mismatch resolving `<Base as TimeZoneModel>::ZoneNameTimestamp == (Date<Iso>, Time)`
         /// // note: required by a bound in `NoCalendarFormatter::<C, FSet>::format`
         /// formatter.format(&time_zone_basic);
         /// ```
@@ -1570,7 +1570,7 @@ pub mod zone {
         zone_standard_long = yes,
         metazone_periods = yes,
         input_tzid = yes,
-        input_localtime = yes,
+        input_timestamp = yes,
     );
 
     impl_zone_marker!(
@@ -1596,7 +1596,7 @@ pub mod zone {
         /// )
         /// .unwrap();
         ///
-        /// // error[E0271]: type mismatch resolving `<Base as TimeZoneModel>::LocalTime == (Date<Iso>, Time)`
+        /// // error[E0271]: type mismatch resolving `<Base as TimeZoneModel>::ZoneNameTimestamp == (Date<Iso>, Time)`
         /// // note: required by a bound in `FixedCalendarDateTimeFormatter::<C, FSet>::format`
         /// formatter.format(&time_zone_basic);
         /// ```
@@ -1610,7 +1610,7 @@ pub mod zone {
         zone_generic_short = yes,
         metazone_periods = yes,
         input_tzid = yes,
-        input_localtime = yes,
+        input_timestamp = yes,
     );
 
     impl_zone_marker!(

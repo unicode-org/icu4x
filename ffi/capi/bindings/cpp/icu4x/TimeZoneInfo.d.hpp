@@ -66,6 +66,7 @@ public:
    * Notes:
    *
    * - If not set, the formatting datetime is used if possible.
+   * - If the offset is not set, the datetime is interpreted as UTC.
    * - The constraints are the same as with `ZoneNameTimestamp` in Rust.
    * - Set to year 1000 or 9999 for a reference far in the past or future.
    *
@@ -76,6 +77,23 @@ public:
   inline std::unique_ptr<icu4x::TimeZoneInfo> at_date_time_iso(const icu4x::IsoDate& date, const icu4x::Time& time) const;
 
   /**
+   * Sets the timestamp at which to interpret the time zone
+   * for display name lookup.
+   *
+   * Notes:
+   *
+   * - If not set, the formatting datetime is used if possible.
+   * - The constraints are the same as with `ZoneNameTimestamp` in Rust.
+   *
+   * See the [Rust documentation for `at_date_time_iso`](https://docs.rs/icu/2.0.0/icu/time/struct.TimeZoneInfo.html#method.at_date_time_iso) for more information.
+   *
+   * Additional information: [1](https://docs.rs/icu/2.0.0/icu/time/zone/struct.ZoneNameTimestamp.html)
+   */
+  inline std::unique_ptr<icu4x::TimeZoneInfo> at_timestamp(int64_t timestamp) const;
+
+  /**
+   * Returns the DateTime for the UTC zone name reference time
+   *
    * See the [Rust documentation for `zone_name_timestamp`](https://docs.rs/icu/2.0.0/icu/time/struct.TimeZoneInfo.html#method.zone_name_timestamp) for more information.
    */
   inline std::optional<icu4x::IsoDateTime> zone_name_date_time() const;

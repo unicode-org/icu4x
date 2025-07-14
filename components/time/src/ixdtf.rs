@@ -661,6 +661,13 @@ impl FromStr for DateTime<Iso> {
     }
 }
 
+impl FromStr for ZonedDateTime<Iso, UtcOffset> {
+    type Err = ParseError;
+    fn from_str(rfc_9557_str: &str) -> Result<Self, Self::Err> {
+        Self::try_offset_only_from_str(rfc_9557_str, Iso)
+    }
+}
+
 impl<A: AsCalendar> DateTime<A> {
     /// Creates a [`DateTime`] in any calendar from an RFC 9557 string.
     ///

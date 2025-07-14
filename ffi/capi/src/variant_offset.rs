@@ -151,8 +151,8 @@ pub mod ffi {
         pub fn compute_offsets_from_time_zone_and_date_time(
             &self,
             time_zone: &TimeZone,
-            local_date: &IsoDate,
-            local_time: &Time,
+            utc_date: &IsoDate,
+            utc_time: &Time,
         ) -> Option<VariantOffsets> {
             let icu_time::zone::VariantOffsets {
                 standard, daylight, ..
@@ -161,10 +161,43 @@ pub mod ffi {
                 .as_borrowed()
                 .compute_offsets_from_time_zone_and_name_timestamp(
                     time_zone.0,
-                    icu_time::zone::ZoneNameTimestamp::from_date_time_iso(icu_time::DateTime {
-                        date: local_date.0,
-                        time: local_time.0,
-                    }),
+                    icu_time::zone::ZoneNameTimestamp::from_zoned_date_time_iso(
+                        icu_time::ZonedDateTime {
+                            date: utc_date.0,
+                            time: utc_time.0,
+                            zone: icu_time::zone::UtcOffset::zero(),
+                        },
+                    ),
+                )?;
+
+            Some(VariantOffsets {
+                standard: Box::new(UtcOffset(standard)),
+                daylight: daylight.map(UtcOffset).map(Box::new),
+            })
+        }
+
+        #[diplomat::rust_link(
+            icu::time::zone::VariantOffsetsCalculatorBorrowed::compute_offsets_from_time_zone_and_name_timestamp,
+            FnInStruct
+        )]
+        pub fn compute_offsets_from_time_zone_and_timestamp(
+            &self,
+            time_zone: &TimeZone,
+            timestamp: i64,
+        ) -> Option<VariantOffsets> {
+            let icu_time::zone::VariantOffsets {
+                standard, daylight, ..
+            } = self
+                .0
+                .as_borrowed()
+                .compute_offsets_from_time_zone_and_name_timestamp(
+                    time_zone.0,
+                    icu_time::zone::ZoneNameTimestamp::from_zoned_date_time_iso(
+                        icu_time::ZonedDateTime::from_epoch_milliseconds_and_utc_offset(
+                            timestamp,
+                            icu_time::zone::UtcOffset::zero(),
+                        ),
+                    ),
                 )?;
 
             Some(VariantOffsets {

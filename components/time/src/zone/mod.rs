@@ -385,9 +385,24 @@ impl TimeZoneInfo<models::Base> {
         }
     }
 
-    /// Sets the [`ZoneNameTimestamp`] to the given local datetime.
+    /// Sets the [`ZoneNameTimestamp`] to the given datetime.
+    ///
+    /// If the offset is knonw, the datetime is interpreted as a local time,
+    /// otherwise as UTC. This produces correct results for the vast majority
+    /// of cases, however close to metazone changes (Eastern Time -> Central Time)
+    /// it might be incorrect if the offset is not known.
+    ///
+    /// Also see [`Self::with_zone_name_timestamp`].
     pub fn at_date_time_iso(self, date_time: DateTime<Iso>) -> TimeZoneInfo<models::AtTime> {
-        Self::with_zone_name_timestamp(self, ZoneNameTimestamp::from_date_time_iso(date_time))
+        Self::with_zone_name_timestamp(
+            self,
+            ZoneNameTimestamp::from_zoned_date_time_iso(crate::ZonedDateTime {
+                date: date_time.date,
+                time: date_time.time,
+                // If we don't have an offset, interpret as UTC. This is incorrect during a couple of hours in 50 years
+                zone: self.offset.unwrap_or(UtcOffset::zero()),
+            }),
+        )
     }
 }
 
@@ -405,7 +420,7 @@ impl TimeZoneInfo<models::AtTime> {
     /// Sets the zone variant by calculating it using a [`VariantOffsetsCalculator`].
     ///
     /// If `offset()` is `None`, or if it doesn't match either of the
-    /// timezone's standard or daylight offset around `local_time()`,
+    /// timezone's standard or daylight offset around [`zone_name_timestamp`](Self::zone_name_timestamp),
     /// the variant will be set to [`TimeZoneVariant::Standard`] and the time zone
     /// to [`TimeZone::UNKNOWN`].
     ///
@@ -465,7 +480,11 @@ impl TimeZoneInfo<models::AtTime> {
                 .with_variant(TimeZoneVariant::Standard);
         };
         let Some(variant) = calculator
-            .compute_offsets_from_time_zone_and_name_timestamp(self.id, self.zone_name_timestamp)
+            .compute_offsets_from_time_zone_and_name_timestamp(
+                self.id,
+                self.zone_name_timestamp
+                    .adjust_zone(offset, UtcOffset::zero()),
+            )
             .and_then(|os| {
                 if os.standard == offset {
                     Some(TimeZoneVariant::Standard)

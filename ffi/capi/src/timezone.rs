@@ -129,6 +129,7 @@ pub mod ffi {
         /// Notes:
         ///
         /// - If not set, the formatting datetime is used if possible.
+        /// - If the offset is not set, the datetime is interpreted as UTC.
         /// - The constraints are the same as with `ZoneNameTimestamp` in Rust.
         /// - Set to year 1000 or 9999 for a reference far in the past or future.
         #[diplomat::rust_link(icu::time::TimeZoneInfo::at_date_time_iso, FnInStruct)]
@@ -151,12 +152,54 @@ pub mod ffi {
         #[diplomat::rust_link(icu::time::zone::ZoneNameTimestamp::far_in_past, FnInStruct, hidden)] // documented
         pub fn at_date_time_iso(&self, date: &IsoDate, time: &Time) -> Box<Self> {
             Box::new(Self {
-                zone_name_timestamp: Some(icu_time::zone::ZoneNameTimestamp::from_date_time_iso(
-                    icu_time::DateTime {
-                        date: date.0,
-                        time: time.0,
-                    },
-                )),
+                zone_name_timestamp: Some(
+                    icu_time::zone::ZoneNameTimestamp::from_zoned_date_time_iso(
+                        icu_time::ZonedDateTime {
+                            date: date.0,
+                            time: time.0,
+                            zone: self.offset.unwrap_or(icu_time::zone::UtcOffset::zero()),
+                        },
+                    ),
+                ),
+                ..*self
+            })
+        }
+
+        /// Sets the timestamp at which to interpret the time zone
+        /// for display name lookup.
+        ///
+        /// Notes:
+        ///
+        /// - If not set, the formatting datetime is used if possible.
+        /// - The constraints are the same as with `ZoneNameTimestamp` in Rust.
+        #[diplomat::rust_link(icu::time::TimeZoneInfo::at_date_time_iso, FnInStruct)]
+        #[diplomat::rust_link(icu::time::zone::ZoneNameTimestamp, Struct, compact)]
+        #[diplomat::rust_link(
+            icu::time::TimeZoneInfo::with_zone_name_timestamp,
+            FnInStruct,
+            hidden
+        )]
+        #[diplomat::rust_link(
+            icu::time::zone::ZoneNameTimestamp::from_date_time_iso,
+            FnInStruct,
+            hidden
+        )]
+        #[diplomat::rust_link(
+            icu::time::zone::ZoneNameTimestamp::far_in_future,
+            FnInStruct,
+            hidden
+        )] // documented
+        #[diplomat::rust_link(icu::time::zone::ZoneNameTimestamp::far_in_past, FnInStruct, hidden)] // documented
+        pub fn at_timestamp(&self, timestamp: i64) -> Box<Self> {
+            Box::new(Self {
+                zone_name_timestamp: Some(
+                    icu_time::zone::ZoneNameTimestamp::from_zoned_date_time_iso(
+                        icu_time::ZonedDateTime::from_epoch_milliseconds_and_utc_offset(
+                            timestamp,
+                            icu_time::zone::UtcOffset::zero(),
+                        ),
+                    ),
+                ),
                 ..*self
             })
         }
@@ -168,8 +211,9 @@ pub mod ffi {
             hidden
         )]
         #[diplomat::attr(auto, getter)]
+        /// Returns the DateTime for the UTC zone name reference time
         pub fn zone_name_date_time(&self) -> Option<IsoDateTime> {
-            let datetime = self.zone_name_timestamp?.to_date_time_iso();
+            let datetime = self.zone_name_timestamp?.to_zoned_date_time_iso();
             Some(IsoDateTime {
                 date: Box::new(IsoDate(datetime.date)),
                 time: Box::new(Time(datetime.time)),

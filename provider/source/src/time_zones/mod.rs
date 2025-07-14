@@ -12,8 +12,6 @@ use icu::datetime::provider::time_zones::*;
 use icu::locale::subtags::region;
 use icu::time::provider::*;
 use icu::time::zone::ZoneNameTimestamp;
-use icu::time::DateTime;
-use icu::time::Time;
 use icu_locale_core::subtags::Region;
 use icu_provider::prelude::*;
 use std::collections::BTreeMap;
@@ -115,7 +113,8 @@ impl SourceDataProvider {
                                 // The next period starts at the same time
                                 periods.remove(i);
                             } else if i + 1 < periods.len()
-                                && periods[i + 1].0.to_date_time_iso().date <= self.timezone_horizon
+                                && periods[i + 1].0.to_zoned_date_time_iso().date
+                                    <= self.timezone_horizon
                             {
                                 // The next period still starts before the horizon, so we can drop this one
                                 periods.remove(i);
@@ -144,12 +143,9 @@ impl SourceDataProvider {
                     let mut curr_offset = offsets.next().unwrap();
                     let mut curr_mz = mzs.next().unwrap();
 
-                    let horizon = ZoneNameTimestamp::from_date_time_iso(DateTime {
-                        date: self.timezone_horizon,
-                        time: Time::start_of_day(),
-                    });
-
-                    while offsets.peek().is_some_and(|&(start, _)| start < horizon) {
+                    while offsets.peek().is_some_and(|&(start, _)| {
+                        start.to_zoned_date_time_iso().date < self.timezone_horizon
+                    }) {
                         curr_offset = offsets.next().unwrap();
                     }
 

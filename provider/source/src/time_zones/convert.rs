@@ -14,7 +14,6 @@ use icu::time::zone::TimeZoneVariant;
 use icu::time::zone::UtcOffset;
 use icu::time::zone::VariantOffsets;
 use icu::time::zone::ZoneNameTimestamp;
-use icu::time::DateTime;
 use icu::time::ZonedDateTime;
 use icu_provider::prelude::icu_locale_core::subtags::Language;
 use icu_provider::prelude::*;
@@ -245,11 +244,6 @@ impl SourceDataProvider {
                         }
 
                         for zone_info in zoneset.iter() {
-                            let offset_seconds = zone_info.offset;
-                            let utc_offset = UtcOffset::from_seconds_unchecked(
-                                i32::try_from(offset_seconds).unwrap(),
-                            );
-
                             let local_end_time = match zone_info.end_time {
                                 // Skip transitions before the UNIX Epoch
                                 Some(t) if t.to_timestamp(zone_info.offset, 0) < 0 => continue,
@@ -258,14 +252,10 @@ impl SourceDataProvider {
                                 // This assumes DST is not active at the zone change
                                 Some(t) => {
                                     let epoch_seconds = t.to_timestamp(zone_info.offset, 0);
-                                    let zdt = ZonedDateTime::from_epoch_milliseconds_and_utc_offset(
+                                    ZoneNameTimestamp::from_zoned_date_time_iso(ZonedDateTime::from_epoch_milliseconds_and_utc_offset(
                                         epoch_seconds * 1000,
-                                        utc_offset,
-                                    );
-                                    ZoneNameTimestamp::from_date_time_iso(DateTime {
-                                        date: zdt.date,
-                                        time: zdt.time,
-                                    })
+                                        UtcOffset::zero(),
+                                    ))
                                 }
                             };
 
@@ -304,22 +294,18 @@ impl SourceDataProvider {
                                                     Year::Maximum => local_end_time,
                                                     Year::Number(y) => {
                                                         let epoch_seconds = rule.absolute_datetime(y, zone_info.offset, rule.time_to_add);
-                                                        let zdt = ZonedDateTime::from_epoch_milliseconds_and_utc_offset(
+                                                        ZoneNameTimestamp::from_zoned_date_time_iso(ZonedDateTime::from_epoch_milliseconds_and_utc_offset(
                                                             epoch_seconds * 1000,
-                                                            utc_offset
-                                                        );
-                                                        ZoneNameTimestamp::from_date_time_iso(DateTime {
-                                                            date: zdt.date,
-                                                            time: zdt.time
-                                                        })
+                                                            UtcOffset::zero()
+                                                        ))
                                                     }
                                                 },
                                                 rule.time_to_add,
                                             )
                                         })
-                                        .filter(|&(rule_local_end_time, _)| {
+                                        .filter(|&(rule_end_time, _)| {
                                             // Discard rules from before this zoneinfo (or before the epoch)
-                                            rule_local_end_time
+                                            rule_end_time
                                                 > data
                                                     .last()
                                                     .map(|&(prev_end_time, _)| prev_end_time)

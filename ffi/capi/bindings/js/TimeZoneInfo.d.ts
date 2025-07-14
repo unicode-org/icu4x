@@ -37,6 +37,7 @@ export class TimeZoneInfo {
      * Notes:
      *
      * - If not set, the formatting datetime is used if possible.
+     * - If the offset is not set, the datetime is interpreted as UTC.
      * - The constraints are the same as with `ZoneNameTimestamp` in Rust.
      * - Set to year 1000 or 9999 for a reference far in the past or future.
      *
@@ -47,6 +48,23 @@ export class TimeZoneInfo {
     atDateTimeIso(date: IsoDate, time: Time): TimeZoneInfo;
 
     /**
+     * Sets the timestamp at which to interpret the time zone
+     * for display name lookup.
+     *
+     * Notes:
+     *
+     * - If not set, the formatting datetime is used if possible.
+     * - The constraints are the same as with `ZoneNameTimestamp` in Rust.
+     *
+     * See the [Rust documentation for `at_date_time_iso`](https://docs.rs/icu/2.0.0/icu/time/struct.TimeZoneInfo.html#method.at_date_time_iso) for more information.
+     *
+     * Additional information: [1](https://docs.rs/icu/2.0.0/icu/time/zone/struct.ZoneNameTimestamp.html)
+     */
+    atTimestamp(timestamp: bigint): TimeZoneInfo;
+
+    /**
+     * Returns the DateTime for the UTC zone name reference time
+     *
      * See the [Rust documentation for `zone_name_timestamp`](https://docs.rs/icu/2.0.0/icu/time/struct.TimeZoneInfo.html#method.zone_name_timestamp) for more information.
      */
     get zoneNameDateTime(): IsoDateTime | null;
