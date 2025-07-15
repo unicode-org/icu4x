@@ -212,19 +212,23 @@ pub mod ffi {
             }
             {%- if flavor.has_date() && flavor.has_time() %}
             else {
-                input.set_time_zone_name_timestamp(icu_time::zone::ZoneNameTimestamp::from_zoned_date_time_iso(icu_time::ZonedDateTime {
-                    date: iso_date.0,
-                    time: time.0,
-                    zone: zone.offset.unwrap_or(icu_time::zone::UtcOffset::zero()),
-                }))
+                #[allow(deprecated)] // clean up in 3.0
+                input.set_time_zone_name_timestamp(zone.id.with_offset(zone.offset).with_zone_name_timestamp(
+                    icu_time::zone::ZoneNameTimestamp::from_date_time_iso(icu_time::DateTime {
+                        date: iso_date.0,
+                        time: time.0,
+                    })
+                ).zone_name_timestamp());
             }
             {%- else if flavor.has_date() %}
             else {
-                input.set_time_zone_name_timestamp(icu_time::zone::ZoneNameTimestamp::from_zoned_date_time_iso(icu_time::ZonedDateTime {
-                    date: iso_date.0,
-                    time: icu_time::Time::noon(),
-                    zone: zone.offset.unwrap_or(icu_time::zone::UtcOffset::zero()),
-                }))
+                #[allow(deprecated)] // clean up in 3.0
+                input.set_time_zone_name_timestamp(zone.id.with_offset(zone.offset).with_zone_name_timestamp(
+                    icu_time::zone::ZoneNameTimestamp::from_date_time_iso(icu_time::DateTime {
+                        date: iso_date.0,
+                        time: icu_time::Time::noon(),
+                    })
+                ).zone_name_timestamp());
             }
             {%- else %}
             else {

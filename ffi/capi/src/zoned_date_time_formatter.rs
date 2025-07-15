@@ -593,11 +593,13 @@ pub mod ffi {
                 input.set_time_zone_name_timestamp(zone_name_timestamp);
             }
             else {
-                input.set_time_zone_name_timestamp(icu_time::zone::ZoneNameTimestamp::from_zoned_date_time_iso(icu_time::ZonedDateTime {
-                    date: iso_date.0,
-                    time: time.0,
-                    zone: zone.offset.unwrap_or(icu_time::zone::UtcOffset::zero()),
-                }))
+                #[allow(deprecated)] // clean up in 3.0
+                input.set_time_zone_name_timestamp(zone.id.with_offset(zone.offset).with_zone_name_timestamp(
+                    icu_time::zone::ZoneNameTimestamp::from_date_time_iso(icu_time::DateTime {
+                        date: iso_date.0,
+                        time: time.0,
+                    })
+                ).zone_name_timestamp());
             }
             if let Some(variant) = zone.variant {
                 input.set_time_zone_variant(variant);
@@ -1158,11 +1160,13 @@ pub mod ffi {
                 input.set_time_zone_name_timestamp(zone_name_timestamp);
             }
             else {
-                input.set_time_zone_name_timestamp(icu_time::zone::ZoneNameTimestamp::from_zoned_date_time_iso(icu_time::ZonedDateTime {
-                    date: iso_date.0,
-                    time: time.0,
-                    zone: zone.offset.unwrap_or(icu_time::zone::UtcOffset::zero()),
-                }))
+                #[allow(deprecated)] // clean up in 3.0
+                input.set_time_zone_name_timestamp(zone.id.with_offset(zone.offset).with_zone_name_timestamp(
+                    icu_time::zone::ZoneNameTimestamp::from_date_time_iso(icu_time::DateTime {
+                        date: iso_date.0,
+                        time: time.0,
+                    })
+                ).zone_name_timestamp());
             }
             if let Some(variant) = zone.variant {
                 input.set_time_zone_variant(variant);

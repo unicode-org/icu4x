@@ -173,7 +173,11 @@ pub mod ffi {
         /// - If not set, the formatting datetime is used if possible.
         /// - The constraints are the same as with `ZoneNameTimestamp` in Rust.
         #[diplomat::rust_link(icu::time::TimeZoneInfo::with_zone_name_timestamp, FnInStruct)]
-        #[diplomat::rust_link(icu::time::zone::ZoneNameTimestamp::from_zoned_date_time_iso, FnInStruct, compact)]
+        #[diplomat::rust_link(
+            icu::time::zone::ZoneNameTimestamp::from_zoned_date_time_iso,
+            FnInStruct,
+            compact
+        )]
         #[diplomat::rust_link(icu::time::zone::ZoneNameTimestamp, Struct, compact)]
         pub fn at_timestamp(&self, timestamp: i64) -> Box<Self> {
             Box::new(Self {
