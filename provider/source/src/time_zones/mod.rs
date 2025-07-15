@@ -8,17 +8,16 @@ use crate::SourceDataProvider;
 use core::cmp::Ordering;
 use core::hash::Hash;
 use core::hash::Hasher;
+use icu::calendar::Iso;
 use icu::datetime::provider::time_zones::*;
 use icu::locale::subtags::region;
 use icu::time::provider::*;
 use icu::time::zone::UtcOffset;
 use icu::time::zone::VariantOffsets;
 use icu::time::zone::ZoneNameTimestamp;
-use icu::time::ZonedDateTime;
 use icu_locale_core::subtags::Region;
 use icu_provider::prelude::*;
-use parse_zoneinfo::transitions::FixedTimespan;
-use parse_zoneinfo::transitions::TableTransitions;
+use icu_time::ZonedDateTime;
 use std::collections::BTreeMap;
 use std::collections::BTreeSet;
 use std::collections::HashSet;
@@ -57,13 +56,13 @@ impl SourceDataProvider {
     // Lists additional zones that haven't been added to CLDR yet.
     // If data is generated with a TZDB that contains these zones, they are added.
     fn future_zones(&self) -> Result<impl Iterator<Item = (String, TimeZone)> + '_, DataError> {
-        let tzdb = self.tzdb()?.transitions()?;
+        let tzdb = self.tzdb()?.parsed()?;
         Ok([(
             "America/Coyhaique",
             TimeZone(icu::locale::subtags::subtag!("clcxq")),
         )]
         .into_iter()
-        .filter(|(i, _)| tzdb.get_zoneset(i).is_some())
+        .filter(|&(i, _)| tzdb.main.zonesets.contains_key(i))
         .map(|(i, t)| (String::from(i), t)))
     }
 
@@ -81,65 +80,64 @@ impl SourceDataProvider {
                     .supplemental
                     .meta_zones;
 
-                let tzdb = self.tzdb()?.transitions()?;
+                let tzdb = self.tzdb()?.parsed()?;
 
                 let bcp47_tzid_data = self.iana_to_bcp47_map()?;
+
+                // TODO: The special cases should be defined in CLDR
+                let special_cases= &[
+                    // (zone,   name,   if_after                      ) -> (std, dst)
+                    // Ireland is modeled using negative DST, because "IST" stands for Irish Standard Time.
+                    // This doesn't fit into our model where Ireland is in the GMT metazone.
+                    (("iedub", "GMT", ZoneNameTimestamp::far_in_past()), (0, None)),
+                    (("iedub", "IST", ZoneNameTimestamp::far_in_past()), (0, Some(3600))),
+                    // Morroco and Western Sahara used to observe +0 with normal summer DST, but currently they observe +1 with
+                    // negative DST during Ramadan. Model this all as normal DST.
+                    // TODO: Here we could set the zone variant to Ramadan
+                    (("macas", "+00", ZoneNameTimestamp::far_in_past()), (0, None)),
+                    (("macas", "+01", ZoneNameTimestamp::far_in_past()), (0, Some(3600))),
+                    (("eheai", "+00", ZoneNameTimestamp::far_in_past()), (0, None)),
+                    (("eheai", "+01", ZoneNameTimestamp::far_in_past()), (0, Some(3600))),
+                    // This is wrong, but for now match what we've done before (and what ICU is doing).
+                    (("nawdh", "CAT", ZoneNameTimestamp::from_zoned_date_time_iso(ZonedDateTime::try_offset_only_from_str("2017-09-03T01:00Z", Iso).unwrap())), (7200, None)),
+                    (("nawdh", "CAT", ZoneNameTimestamp::from_zoned_date_time_iso(ZonedDateTime::try_offset_only_from_str("1994-03-20T22:00Z", Iso).unwrap())), (3600, Some(7200))),
+                    (("nawdh", "WAT", ZoneNameTimestamp::from_zoned_date_time_iso(ZonedDateTime::try_offset_only_from_str("1994-03-20T22:00Z", Iso).unwrap())), (3600, None)),
+                ];
 
                 let offsets = self
                     .bcp47_to_canonical_iana_map()?
                     .iter()
-                    .filter_map(|(bcp47, iana)| Some((bcp47, tzdb.timespans(iana)?)))
-                    .map(|(&bcp47, zoneset)| {
-                        fn make(ts: &FixedTimespan) -> VariantOffsets {
-                            // Africa/Monrovia used -00:44:30 pre-1972. We cannot represent this, so we set it to -00:45
-                            let utc_offset = if ts.utc_offset == -2670 {
-                                -2700
-                            } else {
-                                ts.utc_offset
-                            };
-
-                            let mut os = VariantOffsets::from_standard(
-                                UtcOffset::from_seconds_unchecked(utc_offset as i32),
-                            );
-                            if ts.dst_offset != 0 {
-                                os.daylight = Some(UtcOffset::from_seconds_unchecked(
-                                    (utc_offset + ts.dst_offset) as i32,
-                                ))
-                            }
-                            os
-                        }
-
+                    .filter_map(|(bcp47, iana)| Some((bcp47, tzdb.transitions(iana)?)))
+                    .map(|(&bcp47, transitions)| {
                         (
                             bcp47,
-                            Some((
-                                ZoneNameTimestamp::far_in_past(),
-                                make(
-                                    zoneset
-                                        .rest
+                            transitions
+                                .map(|ts| {
+                                   let (mut std_offset, dst_offset) =  special_cases
                                         .iter()
-                                        .filter(|&&(start, _)| start < 0)
-                                        .map(|(_, ts)| ts)
-                                        .next_back()
-                                        .unwrap_or(&zoneset.first),
-                                ),
-                            ))
-                            .into_iter()
-                            .chain(
-                                zoneset
-                                    .rest
-                                    .into_iter()
-                                    .filter(|&(start, _)| start >= 0)
-                                    .map(move |(start, ts)| {
-                                        (
-                                                ZoneNameTimestamp::from_zoned_date_time_iso(ZonedDateTime::from_epoch_milliseconds_and_utc_offset(start * 1000, UtcOffset::zero())),
-                                            make(&ts),
+                                        .find_map(|&(k, v)|
+                                            ((k.0, k.1) == (bcp47.as_str(), ts.name.as_str()) && k.2 <= ts.transition).then_some(v)
                                         )
-                                    }),
-                            )
-                            .collect::<Vec<_>>(),
+                                        .unwrap_or_else(|| {
+                                            if ts.rearguard_agrees == Some(false) || ts.vanguard_agrees == Some(false) {
+                                                log::warn!("Unhandled TZDB inconsistency for {bcp47:?}: {ts:?}");
+                                            }
+                                            (ts.utc_offset as i32, (ts.dst_offset_relative != 0).then_some((ts.utc_offset + ts.dst_offset_relative) as i32))
+                                        });
+
+                                    // Africa/Monrovia used -00:44:30 pre-1972. We cannot represent this, so we set it to -00:45
+                                    if std_offset == -2670 {
+                                        std_offset = -2700;
+                                    };
+
+                                    let mut os = VariantOffsets::from_standard(UtcOffset::from_seconds_unchecked(std_offset));
+                                    os.daylight = dst_offset.map(UtcOffset::from_seconds_unchecked);
+                                    (ts.transition, os)
+                                })
+                                .collect::<Vec<_>>(),
                         )
                     })
-                    .collect::<BTreeMap<_, _>>();
+                    .collect::<BTreeMap<TimeZone, Vec<(ZoneNameTimestamp, VariantOffsets)>>>();
 
                 let mut all_metazones = BTreeSet::new();
 
@@ -159,7 +157,7 @@ impl SourceDataProvider {
                                             .uses_meta_zone
                                             .from
                                             .unwrap_or(ZoneNameTimestamp::far_in_past()),
-                                        Some(&period.uses_meta_zone.mzone),
+                                        Some(period.uses_meta_zone.mzone.as_str()),
                                     )),
                                     // leave the metazone if there's a `to` date
                                     period.uses_meta_zone.to.map(|t| (t, None)),
@@ -189,11 +187,11 @@ impl SourceDataProvider {
 
                         (bcp47, periods)
                     })
-                    .collect::<BTreeMap<TimeZone, Vec<(ZoneNameTimestamp, Option<&String>)>>>();
+                    .collect::<BTreeMap<TimeZone, Vec<(ZoneNameTimestamp, Option<&str>)>>>();
 
                 let mut offsets_and_metazones = BTreeMap::<
                     TimeZone,
-                    Vec<(ZoneNameTimestamp, VariantOffsets, Option<&String>)>,
+                    Vec<(ZoneNameTimestamp, VariantOffsets, Option<&str>)>,
                 >::new();
 
                 for (&tz, offsets) in &offsets {
@@ -234,7 +232,7 @@ impl SourceDataProvider {
                     }
                 }
 
-                let mut reverse = BTreeMap::<(&String, MzMembership), Vec<TimeZone>>::new();
+                let mut reverse = BTreeMap::<(&str, MzMembership), Vec<TimeZone>>::new();
                 for (&tz, ps) in &offsets_and_metazones {
                     let mut ps = ps.iter().copied().peekable();
 
@@ -347,13 +345,13 @@ impl SourceDataProvider {
                 }
                 bcp47_tzids.extend(self.future_zones()?);
 
-                for zone in self.tzdb()?.transitions()?.zonesets.keys() {
+                for zone in self.tzdb()?.parsed()?.main.zonesets.keys() {
                     if !bcp47_tzids.contains_key(zone) {
                         log::error!("TZDB zone {zone:?} not in CLDR. Add BCP-47 code to `fn future_zones()`?");
                     }
                 }
 
-                for zone in self.tzdb()?.transitions()?.links.keys() {
+                for zone in self.tzdb()?.parsed()?.main.links.keys() {
                     if !bcp47_tzids.contains_key(zone) {
                         log::warn!("TZDB link {zone:?} not in CLDR");
                     }
@@ -533,6 +531,105 @@ impl IterableDataProviderCached<TimezoneMetazonePeriodsV1> for SourceDataProvide
 impl IterableDataProviderCached<TimezoneVariantsOffsetsV1> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
+    }
+}
+
+impl crate::source::Tzdb {
+    fn transitions<'a>(&'a self, iana: &str) -> Option<impl Iterator<Item = Transition> + 'a> {
+        use icu_time::zone::UtcOffset;
+        use parse_zoneinfo::transitions::*;
+
+        let main = self.main.timespans(iana)?;
+        let rearguard = self.rearguard.as_ref().map(|tzdb| tzdb.timespans(iana));
+        let vanguard = self.vanguard.as_ref().map(|tzdb| tzdb.timespans(iana));
+
+        fn fixed_timespans_to_map(
+            set: FixedTimespanSet,
+        ) -> BTreeMap<ZoneNameTimestamp, FixedTimespan> {
+            Some((
+                ZoneNameTimestamp::far_in_past(),
+                set.rest
+                    .iter()
+                    .filter(|&&(start, _)| start < 0)
+                    .map(|(_, ts)| ts)
+                    .next_back()
+                    .cloned()
+                    .unwrap_or(set.first),
+            ))
+            .into_iter()
+            .chain(
+                set.rest
+                    .into_iter()
+                    .filter(|&(start, _)| start >= 0)
+                    .map(move |(start, ts)| {
+                        (
+                            ZoneNameTimestamp::from_zoned_date_time_iso(
+                                ZonedDateTime::from_epoch_milliseconds_and_utc_offset(
+                                    start * 1000,
+                                    UtcOffset::zero(),
+                                ),
+                            ),
+                            ts,
+                        )
+                    }),
+            )
+            .collect()
+        }
+
+        let main = fixed_timespans_to_map(main);
+        let rearguard = rearguard.map(|set| set.map(fixed_timespans_to_map).unwrap_or_default());
+        let vanguard = vanguard.map(|set| set.map(fixed_timespans_to_map).unwrap_or_default());
+
+        Some(main.into_iter().map(move |(transition, ts)| {
+            Transition {
+                transition,
+                utc_offset: ts.utc_offset,
+                dst_offset_relative: ts.dst_offset,
+                rearguard_agrees: rearguard
+                    .as_ref()
+                    .map(|z| z.get(&transition).is_some_and(|rts| rts == &ts)),
+                vanguard_agrees: vanguard
+                    .as_ref()
+                    .map(|z| z.get(&transition).is_some_and(|rts| rts == &ts)),
+                name: ts.name,
+            }
+        }))
+    }
+}
+
+struct Transition {
+    transition: ZoneNameTimestamp,
+    utc_offset: i64,
+    dst_offset_relative: i64,
+    rearguard_agrees: Option<bool>,
+    vanguard_agrees: Option<bool>,
+    name: String,
+}
+
+impl std::fmt::Debug for Transition {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let zdt = self.transition.to_zoned_date_time_iso();
+        write!(
+            f,
+            "{:04}-{:02}-{:02} {:02}:{:02}",
+            zdt.date.era_year().year,
+            zdt.date.month().ordinal,
+            zdt.date.day_of_month().0,
+            zdt.time.hour.number(),
+            zdt.time.minute.number()
+        )?;
+        write!(
+            f,
+            " - {:?} - {}+{}",
+            self.name, self.utc_offset, self.dst_offset_relative
+        )?;
+        if self.rearguard_agrees == Some(false) {
+            write!(f, " !rearguard")?;
+        }
+        if self.vanguard_agrees == Some(false) {
+            write!(f, " !vanguard")?;
+        }
+        Ok(())
     }
 }
 
