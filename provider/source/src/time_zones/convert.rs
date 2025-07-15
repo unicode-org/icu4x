@@ -11,14 +11,16 @@ use icu::datetime::provider::time_zones::*;
 use icu::locale::LanguageIdentifier;
 use icu::time::provider::*;
 use icu::time::zone::TimeZoneVariant;
-use icu::time::zone::ZoneNameTimestamp;
 use icu_provider::prelude::icu_locale_core::subtags::Language;
 use icu_provider::prelude::*;
+use icu_time::zone::ZoneNameTimestamp;
 use std::borrow::Cow;
 use std::collections::BTreeMap;
 use std::collections::BTreeSet;
 use writeable::Writeable;
+use zerovec::ule::vartuple::VarTuple;
 use zerovec::ule::NichedOption;
+use zerovec::ZeroVec;
 
 impl DataProvider<TimezoneNamesEssentialsV1> for SourceDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<TimezoneNamesEssentialsV1>, DataError> {
@@ -331,75 +333,61 @@ impl DataProvider<TimezoneNamesCitiesRootV1> for SourceDataProvider {
     }
 }
 
-impl DataProvider<TimezoneMetazonePeriodsV1> for SourceDataProvider {
-    fn load(&self, req: DataRequest) -> Result<DataResponse<TimezoneMetazonePeriodsV1>, DataError> {
-        self.check_req::<TimezoneMetazonePeriodsV1>(req)?;
+impl DataProvider<TimezonePeriodsV1> for SourceDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<TimezonePeriodsV1>, DataError> {
+        self.check_req::<TimezonePeriodsV1>(req)?;
 
         let metazones = self.metazones()?;
 
         let list = metazones
             .periods
             .iter()
-            .flat_map(|(tz, ps)| {
-                let mut mzs = ps
-                    .iter()
-                    .copied()
-                    .map(|(t, _os, mz)| (t, mz))
-                    .collect::<Vec<_>>();
-                mzs.dedup_by_key(|(_t, mz)| *mz);
-                mzs.into_iter()
-                    // The entry 1970-01-01 + null is usesless
-                    .filter(|&x| x != (ZoneNameTimestamp::far_in_past(), None))
-                    .map(move |(t, mz)| (tz, t, NichedOption(mz)))
+            .map(|(tz, ps)| {
+                let mut ps = ps.clone();
+                ps.dedup_by(|(_, oa, mza), (_, ob, mzb)| {
+                    if oa.standard != ob.standard {
+                        return false;
+                    }
+                    if mza != mzb {
+                        return false;
+                    }
+                    match (oa.daylight, ob.daylight) {
+                        (None, None) => true,
+                        (Some(a), Some(b)) => a == b,
+                        // It's fine if one period doesn't use DST,
+                        (Some(a), None) => {
+                            ob.daylight = Some(a);
+                            true
+                        }
+                        (None, Some(b)) => {
+                            oa.daylight = Some(b);
+                            true
+                        }
+                    }
+                });
+
+                let (past, os, mz) = ps.remove(0);
+
+                assert_eq!(past, ZoneNameTimestamp::far_in_past());
+
+                let rest = ps
+                    .into_iter()
+                    .map(move |(t, os, mz)| (t, os, NichedOption(mz)))
+                    .collect::<ZeroVec<_>>();
+
+                (
+                    tz,
+                    zerovec::ule::encode_varule_to_box(&VarTuple {
+                        sized: (os, NichedOption(mz)),
+                        variable: rest.as_slice(),
+                    }),
+                )
             })
             .collect();
 
         Ok(DataResponse {
             metadata: DataResponseMetadata::default().with_checksum(metazones.checksum),
-            payload: DataPayload::from_owned(MetazonePeriod { list }),
-        })
-    }
-}
-
-impl DataProvider<TimezoneVariantsOffsetsV1> for SourceDataProvider {
-    fn load(&self, req: DataRequest) -> Result<DataResponse<TimezoneVariantsOffsetsV1>, DataError> {
-        self.check_req::<TimezoneVariantsOffsetsV1>(req)?;
-
-        let data = self
-            .metazones()?
-            .periods
-            .iter()
-            .flat_map(|(tz, ps)| {
-                let mut offsets = ps
-                    .iter()
-                    .copied()
-                    .map(|(t, os, _mz)| (t, os))
-                    .collect::<Vec<_>>();
-                offsets.dedup_by(|(_, a), (_, b)| {
-                    if a.standard != b.standard {
-                        return false;
-                    }
-                    match (a.daylight, b.daylight) {
-                        (None, None) => true,
-                        (Some(a), Some(b)) => a == b,
-                        // It's fine if one period doesn't use DST,
-                        (Some(a), None) => {
-                            b.daylight = Some(a);
-                            true
-                        }
-                        (None, Some(b)) => {
-                            a.daylight = Some(b);
-                            true
-                        }
-                    }
-                });
-                offsets.into_iter().map(move |(t, o)| (tz, t, o))
-            })
-            .collect();
-
-        Ok(DataResponse {
-            metadata: Default::default(),
-            payload: DataPayload::from_owned(data),
+            payload: DataPayload::from_owned(TimezonePeriods(list)),
         })
     }
 }

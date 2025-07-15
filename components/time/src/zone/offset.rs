@@ -4,12 +4,11 @@
 
 use core::str::FromStr;
 
-use crate::provider::TimezoneVariantsOffsetsV1;
+use crate::provider::{legacy::TimezoneVariantsOffsetsV1, TimezonePeriods, TimezonePeriodsV1};
 use crate::TimeZone;
 use icu_provider::prelude::*;
 
 use displaydoc::Display;
-use zerovec::ZeroMap2d;
 
 use super::ZoneNameTimestamp;
 
@@ -168,18 +167,30 @@ impl FromStr for UtcOffset {
     }
 }
 
+#[derive(Debug)]
+enum OffsetData {
+    Old(DataPayload<TimezoneVariantsOffsetsV1>),
+    New(DataPayload<TimezonePeriodsV1>),
+}
+
+#[derive(Debug)]
+enum OffsetDataBorrowed<'a> {
+    Old(&'a zerovec::ZeroMap2d<'a, TimeZone, ZoneNameTimestamp, VariantOffsets>),
+    New(&'a TimezonePeriods<'a>),
+}
+
 /// [`VariantOffsetsCalculator`] uses data from the [data provider] to calculate time zone offsets.
 ///
 /// [data provider]: icu_provider
 #[derive(Debug)]
 pub struct VariantOffsetsCalculator {
-    pub(super) offset_period: DataPayload<TimezoneVariantsOffsetsV1>,
+    offset_period: OffsetData,
 }
 
 /// The borrowed version of a  [`VariantOffsetsCalculator`]
 #[derive(Debug)]
 pub struct VariantOffsetsCalculatorBorrowed<'a> {
-    pub(super) offset_period: &'a ZeroMap2d<'a, TimeZone, ZoneNameTimestamp, VariantOffsets>,
+    offset_period: OffsetDataBorrowed<'a>,
 }
 
 #[cfg(feature = "compiled_data")]
@@ -199,26 +210,43 @@ impl VariantOffsetsCalculator {
     #[inline]
     #[expect(clippy::new_ret_no_self)]
     pub const fn new() -> VariantOffsetsCalculatorBorrowed<'static> {
-        VariantOffsetsCalculatorBorrowed {
-            offset_period: crate::provider::Baked::SINGLETON_TIMEZONE_VARIANTS_OFFSETS_V1,
+        VariantOffsetsCalculatorBorrowed::new()
+    }
+
+    #[cfg(feature = "serde")]
+    #[doc = icu_provider::gen_buffer_unstable_docs!(BUFFER, Self::new)]
+    pub fn try_new_with_buffer_provider(
+        provider: &(impl icu_provider::buf::BufferProvider + ?Sized),
+    ) -> Result<Self, DataError> {
+        use icu_provider::buf::AsDeserializingBufferProvider;
+        {
+            Ok(Self {
+                offset_period: if let Ok(payload) = DataProvider::<TimezonePeriodsV1>::load(
+                    &provider.as_deserializing(),
+                    Default::default(),
+                ) {
+                    OffsetData::New(payload.payload)
+                } else {
+                    OffsetData::Old(
+                        DataProvider::<TimezoneVariantsOffsetsV1>::load(
+                            &provider.as_deserializing(),
+                            Default::default(),
+                        )?
+                        .payload,
+                    )
+                },
+            })
         }
     }
 
-    icu_provider::gen_buffer_data_constructors!(() -> error: DataError,
-        functions: [
-            new: skip,
-            try_new_with_buffer_provider,
-            try_new_unstable,
-            Self,
-        ]
-    );
-
     #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::new)]
     pub fn try_new_unstable(
-        provider: &(impl DataProvider<TimezoneVariantsOffsetsV1> + ?Sized),
+        provider: &(impl DataProvider<TimezonePeriodsV1> + ?Sized),
     ) -> Result<Self, DataError> {
         let offset_period = provider.load(Default::default())?.payload;
-        Ok(Self { offset_period })
+        Ok(Self {
+            offset_period: OffsetData::New(offset_period),
+        })
     }
 
     /// Returns a borrowed version of the calculator that can be queried.
@@ -226,7 +254,10 @@ impl VariantOffsetsCalculator {
     /// This avoids a small potential indirection cost when querying.
     pub fn as_borrowed(&self) -> VariantOffsetsCalculatorBorrowed {
         VariantOffsetsCalculatorBorrowed {
-            offset_period: self.offset_period.get(),
+            offset_period: match self.offset_period {
+                OffsetData::New(ref payload) => OffsetDataBorrowed::New(payload.get()),
+                OffsetData::Old(ref payload) => OffsetDataBorrowed::Old(payload.get()),
+            },
         }
     }
 }
@@ -241,7 +272,9 @@ impl VariantOffsetsCalculatorBorrowed<'static> {
     #[inline]
     pub const fn new() -> Self {
         Self {
-            offset_period: crate::provider::Baked::SINGLETON_TIMEZONE_VARIANTS_OFFSETS_V1,
+            offset_period: OffsetDataBorrowed::New(
+                crate::provider::Baked::SINGLETON_TIMEZONE_PERIODS_V1,
+            ),
         }
     }
 
@@ -251,7 +284,10 @@ impl VariantOffsetsCalculatorBorrowed<'static> {
     /// compile-time optimizations that are possible with [`VariantOffsetsCalculatorBorrowed`].
     pub fn static_to_owned(&self) -> VariantOffsetsCalculator {
         VariantOffsetsCalculator {
-            offset_period: DataPayload::from_static_ref(self.offset_period),
+            offset_period: match self.offset_period {
+                OffsetDataBorrowed::New(p) => OffsetData::New(DataPayload::from_static_ref(p)),
+                OffsetDataBorrowed::Old(p) => OffsetData::Old(DataPayload::from_static_ref(p)),
+            },
         }
     }
 }
@@ -304,25 +340,21 @@ impl VariantOffsetsCalculatorBorrowed<'_> {
     pub fn compute_offsets_from_time_zone_and_name_timestamp(
         &self,
         time_zone_id: TimeZone,
-        zone_name_timestamp: ZoneNameTimestamp,
+        timestamp: ZoneNameTimestamp,
     ) -> Option<VariantOffsets> {
         use zerovec::ule::AsULE;
-        match self.offset_period.get0(&time_zone_id) {
-            Some(cursor) => {
-                let mut offsets = None;
-                for (bytes, id) in cursor.iter1_copied() {
-                    if zone_name_timestamp
-                        .cmp(&ZoneNameTimestamp::from_unaligned(*bytes))
-                        .is_ge()
-                    {
+        let mut offsets = None;
+        match self.offset_period {
+            OffsetDataBorrowed::New(p) => p.get(time_zone_id, timestamp).map(|(os, _)| os),
+            OffsetDataBorrowed::Old(p) => {
+                for (bytes, id) in p.get0(&time_zone_id)?.iter1_copied().rev() {
+                    if timestamp > ZoneNameTimestamp::from_unaligned(*bytes) {
                         offsets = Some(id);
-                    } else {
                         break;
                     }
                 }
                 Some(offsets?)
             }
-            None => None,
         }
     }
 }

@@ -4,6 +4,7 @@
 
 // Provider structs must be stable
 #![allow(clippy::exhaustive_structs, clippy::exhaustive_enums)]
+#![allow(clippy::type_complexity)]
 
 //! 🚧 \[Unstable\] Data provider struct definitions for this ICU4X component.
 //!
@@ -16,11 +17,11 @@
 //! Read more about data providers: [`icu_provider`]
 
 use crate::zone::{UtcOffset, VariantOffsets, ZoneNameTimestamp};
-#[cfg(feature = "datagen")]
 use icu_provider::prelude::*;
 use zerovec::maps::ZeroMapKV;
-use zerovec::ule::AsULE;
-use zerovec::{ZeroMap2d, ZeroSlice, ZeroVec};
+use zerovec::ule::vartuple::VarTupleULE;
+use zerovec::ule::{AsULE, NichedOption};
+use zerovec::{ZeroMap, ZeroSlice, ZeroVec};
 
 pub use crate::zone::ule::TimeZoneVariantULE;
 pub use crate::zone::TimeZone;
@@ -49,7 +50,7 @@ const _: () = {
     impl_timezone_identifiers_iana_extended_v1!(Baked);
     impl_timezone_identifiers_iana_core_v1!(Baked);
     impl_timezone_identifiers_windows_v1!(Baked);
-    impl_timezone_variants_offsets_v1!(Baked);
+    impl_timezone_periods_v1!(Baked);
 };
 
 #[cfg(feature = "datagen")]
@@ -58,7 +59,7 @@ pub const MARKERS: &[DataMarkerInfo] = &[
     iana::TimezoneIdentifiersIanaExtendedV1::INFO,
     iana::TimezoneIdentifiersIanaCoreV1::INFO,
     windows::TimezoneIdentifiersWindowsV1::INFO,
-    TimezoneVariantsOffsetsV1::INFO,
+    TimezonePeriodsV1::INFO,
 ];
 
 const SECONDS_TO_EIGHTS_OF_HOURS: i32 = 60 * 60 / 8;
@@ -215,14 +216,88 @@ impl<'de> serde::Deserialize<'de> for VariantOffsets {
     }
 }
 
-icu_provider::data_marker!(
-    /// The default mapping between period and offsets. The second level key is a wall-clock time encoded as
-    /// [`ZoneNameTimestamp`]. It represents when the offsets started to be used.
-    ///
-    /// The values are the standard offset, and the daylight offset *relative to the standard offset*. As such,
-    /// if the second value is 0, there is no daylight time.
-    TimezoneVariantsOffsetsV1,
-    "timezone/variants/offsets/v1",
-    ZeroMap2d<'static, TimeZone, ZoneNameTimestamp, VariantOffsets>,
-    is_singleton = true
+/// Metazone ID in a compact format
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+/// to be stable, their Rust representation might not be. Use with caution.
+/// </div>
+pub type MetazoneId = core::num::NonZeroU8;
+
+/// Data struct for the [`TimezonePeriodsV1`] marker.
+#[derive(PartialEq, Debug, Clone, Default, yoke::Yokeable, zerofrom::ZeroFrom)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_time::provider))]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[yoke(prove_covariance_manually)]
+pub struct TimezonePeriods<'a>(
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub  ZeroMap<
+        'a,
+        TimeZone,
+        VarTupleULE<
+            (VariantOffsets, NichedOption<MetazoneId, 1>),
+            ZeroSlice<(
+                ZoneNameTimestamp,
+                VariantOffsets,
+                NichedOption<MetazoneId, 1>,
+            )>,
+        >,
+    >,
 );
+
+impl TimezonePeriods<'_> {
+    /// Gets the information for a time zone at at timestamp
+    pub fn get(
+        &self,
+        time_zone_id: TimeZone,
+        timestamp: ZoneNameTimestamp,
+    ) -> Option<(VariantOffsets, Option<MetazoneId>)> {
+        use zerovec::ule::vartuple::VarTupleULE;
+        use zerovec::ule::AsULE;
+        let &VarTupleULE {
+            sized: first,
+            variable: ref rest,
+        } = self.0.get(&time_zone_id)?;
+
+        let i = match rest.binary_search_by(|(t, ..)| t.cmp(&timestamp)) {
+            Err(0) => {
+                let (os, mz) =
+                    <(VariantOffsets, NichedOption<MetazoneId, 1>)>::from_unaligned(first);
+                return Some((os, mz.0));
+            }
+            Err(i) => i - 1,
+            Ok(i) => i,
+        };
+        let (_, os, mz) = rest.get(i)?;
+        Some((os, mz.0))
+    }
+}
+
+icu_provider::data_struct!(
+    TimezonePeriods<'_>,
+    #[cfg(feature = "datagen")]
+);
+
+icu_provider::data_marker!(
+    /// An ICU4X mapping to timezone offset data and metazones at a given period.
+    TimezonePeriodsV1,
+    TimezonePeriods<'static>,
+    is_singleton = true,
+    has_checksum = true
+);
+
+pub(crate) mod legacy {
+    use super::*;
+    use zerovec::ZeroMap2d;
+
+    icu_provider::data_marker!(
+        /// The default mapping between period and offsets. The second level key is a wall-clock time encoded as
+        /// [`ZoneNameTimestamp`]. It represents when the offsets started to be used.
+        TimezoneVariantsOffsetsV1,
+        "timezone/variants/offsets/v1",
+        ZeroMap2d<'static, TimeZone, ZoneNameTimestamp, VariantOffsets>,
+        is_singleton = true
+    );
+}
