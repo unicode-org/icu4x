@@ -48,9 +48,9 @@
 //! Many zones use different names and offsets in the summer than in the winter. In ICU4X,
 //! this is called the _zone variant_.
 //!
-//! CLDR has two zone variants, named `"standard"` and `"daylight"`. However, the mapping of these
-//! variants to specific observed offsets varies from time zone to time zone, and they may not
-//! consistently represent winter versus summer time.
+//! CLDR has two zone variants. Although they are named `"standard"` and `"daylight"`, the corresponding
+//! display names may or may not correspond to "Standard Time" and "Daylight Time". For more information,
+//! see [`TimeZoneVariant`].
 //!
 //! Note: It is not required to set the zone variant on [`TimeZoneInfo`]. If it is not set, some string
 //! formats may be unsupported.
@@ -190,11 +190,33 @@ impl TimeZone {
 
 /// This module exists so we can cleanly reexport TimeZoneVariantULE from the provider module, whilst retaining a public stable TimeZoneVariant type.
 pub(crate) mod ule {
-    /// A time zone variant, such as Standard Time, or Daylight/Summer Time.
+    /// An indication of a period when a time zone maps to a specific UTC offset.
     ///
-    /// This should not generally be constructed by client code. Instead, use
+    /// The `Daylight` variant is defined to be the period that has a higher
+    /// offset from UTC than the `Standard` variant. Although these definitions
+    /// correspond to daylight saving time as observed in some parts of the world,
+    /// the actual behavior may or may not be intuitive; for example:
+    ///
+    /// - "Irish Standard Time" is the English display name for the `Daylight`
+    ///   (summer, UTC+1) variant of "Europe/Dublin", with "Greenwich Mean Time"
+    ///   used during `Standard` (winter, UTC+0). Other locales usually use a
+    ///   translation of "Irish Summer Time" for the `Daylight` variant.
+    /// - Some countries change their clocks backward during the Hijri month Ramadan;
+    ///   in such cases, they are currently modeled as being on the `Daylight` variant for
+    ///   most of the year and switching to `Standard` during Ramadan.
+    ///
+    /// Typically, if a time zone does not change its clocks, it uses the `Standard`
+    /// variant year-round. However, a time zone may use the `Daylight` variant
+    /// year-round if it shares display names with another time zones that observes
+    /// daylight saving time.
+    ///
+    /// The zone variant is required when formatting with a "specific" time zone style,
+    /// but not a "generic" or "location" time zone style.
+    ///
+    /// ❗ Clients should generally NOT construct variants directly. Instead, use:
     /// * [`TimeZoneVariant::from_rearguard_isdst`]
     /// * [`TimeZoneInfo::infer_variant`](crate::TimeZoneInfo::infer_variant)
+    // Note: To avoid client bugs, please do not impl Default on this enum.
     #[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd, Hash)]
     #[zerovec::make_ule(TimeZoneVariantULE)]
     #[repr(u8)]
@@ -203,19 +225,29 @@ pub(crate) mod ule {
     #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
     #[non_exhaustive]
     pub enum TimeZoneVariant {
-        /// The variant corresponding to `"standard"` in CLDR.
+        /// Indicates the period in a time zone with a lower UTC offset than `Daylight`.
         ///
-        /// The semantics vary from time zone to time zone. The time zone display
-        /// name of this variant may or may not be called "Standard Time".
+        /// Every time zone has a `Standard` variant.
         ///
-        /// This is the variant with the lower UTC offset.
+        /// ❗ Clients should generally NOT construct this variant directly. Instead, use:
+        /// * [`TimeZoneVariant::from_rearguard_isdst`]
+        /// * [`TimeZoneInfo::infer_variant`](crate::TimeZoneInfo::infer_variant)
+        ///
+        /// Although CLDR calls this variant `"standard"`, the display names vary
+        /// from time zone to time zone. The time zone display name of this variant
+        /// may or may not be called "Standard Time".
         Standard = 0,
-        /// The variant corresponding to `"daylight"` in CLDR.
+        /// Indicates the period in a time zone with a higher UTC offset than `Standard`.
         ///
-        /// The semantics vary from time zone to time zone. The time zone display
-        /// name of this variant may or may not be called "Daylight Time".
+        /// Not all time zones use the `Daylight` variant.
         ///
-        /// This is the variant with the higher UTC offset.
+        /// ❗ Clients should generally NOT construct this variant directly. Instead, use:
+        /// * [`TimeZoneVariant::from_rearguard_isdst`]
+        /// * [`TimeZoneInfo::infer_variant`](crate::TimeZoneInfo::infer_variant)
+        ///
+        /// Although CLDR calls this variant `"daylight"`, the display names vary
+        /// from time zone to time zone. The time zone display name of this variant
+        /// may or may not be called "Daylight Time".
         Daylight = 1,
     }
 }
