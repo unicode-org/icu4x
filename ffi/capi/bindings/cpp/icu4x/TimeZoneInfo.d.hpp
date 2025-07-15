@@ -77,7 +77,7 @@ public:
   inline std::unique_ptr<icu4x::TimeZoneInfo> at_date_time_iso(const icu4x::IsoDate& date, const icu4x::Time& time) const;
 
   /**
-   * Sets the timestamp at which to interpret the time zone
+   * Sets the timestamp, in milliseconds since Unix epoch, at which to interpret the time zone
    * for display name lookup.
    *
    * Notes:
@@ -85,9 +85,9 @@ public:
    * - If not set, the formatting datetime is used if possible.
    * - The constraints are the same as with `ZoneNameTimestamp` in Rust.
    *
-   * See the [Rust documentation for `at_date_time_iso`](https://docs.rs/icu/2.0.0/icu/time/struct.TimeZoneInfo.html#method.at_date_time_iso) for more information.
+   * See the [Rust documentation for `with_zone_name_timestamp`](https://docs.rs/icu/2.0.0/icu/time/struct.TimeZoneInfo.html#method.with_zone_name_timestamp) for more information.
    *
-   * Additional information: [1](https://docs.rs/icu/2.0.0/icu/time/zone/struct.ZoneNameTimestamp.html)
+   * Additional information: [1](https://docs.rs/icu/2.0.0/icu/time/zone/struct.ZoneNameTimestamp.html#method.from_zoned_date_time_iso), [2](https://docs.rs/icu/2.0.0/icu/time/zone/struct.ZoneNameTimestamp.html)
    */
   inline std::unique_ptr<icu4x::TimeZoneInfo> at_timestamp(int64_t timestamp) const;
 

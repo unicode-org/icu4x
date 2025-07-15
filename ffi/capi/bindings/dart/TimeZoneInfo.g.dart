@@ -62,7 +62,7 @@ final class TimeZoneInfo implements ffi.Finalizable {
     return TimeZoneInfo._fromFfi(result, []);
   }
 
-  /// Sets the timestamp at which to interpret the time zone
+  /// Sets the timestamp, in milliseconds since Unix epoch, at which to interpret the time zone
   /// for display name lookup.
   ///
   /// Notes:
@@ -70,9 +70,9 @@ final class TimeZoneInfo implements ffi.Finalizable {
   /// - If not set, the formatting datetime is used if possible.
   /// - The constraints are the same as with `ZoneNameTimestamp` in Rust.
   ///
-  /// See the [Rust documentation for `at_date_time_iso`](https://docs.rs/icu/2.0.0/icu/time/struct.TimeZoneInfo.html#method.at_date_time_iso) for more information.
+  /// See the [Rust documentation for `with_zone_name_timestamp`](https://docs.rs/icu/2.0.0/icu/time/struct.TimeZoneInfo.html#method.with_zone_name_timestamp) for more information.
   ///
-  /// Additional information: [1](https://docs.rs/icu/2.0.0/icu/time/zone/struct.ZoneNameTimestamp.html)
+  /// Additional information: [1](https://docs.rs/icu/2.0.0/icu/time/zone/struct.ZoneNameTimestamp.html#method.from_zoned_date_time_iso), [2](https://docs.rs/icu/2.0.0/icu/time/zone/struct.ZoneNameTimestamp.html)
   TimeZoneInfo atTimestamp(int timestamp) {
     final result = _icu4x_TimeZoneInfo_at_timestamp_mv1(_ffi, timestamp);
     return TimeZoneInfo._fromFfi(result, []);
