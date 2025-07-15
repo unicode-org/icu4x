@@ -47,3 +47,6 @@ serde = ["dep:serde", "zerovec/serde", "zerotrie/serde", "tinystr/serde", "icu_p
 datagen = ["serde", "dep:databake", "zerovec/databake", "zerotrie/databake", "tinystr/databake", "icu_provider/export", "icu_locale_core/databake"]
 compiled_data = ["dep:icu_time_data", "icu_calendar/compiled_data", "icu_provider/baked"]
 alloc = ["tinystr/alloc", "zerotrie/alloc", "serde?/alloc"]
+
+[package.metadata.cargo-semver-checks.lints]
+workspace = true

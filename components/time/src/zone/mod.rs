@@ -399,7 +399,9 @@ impl TimeZoneInfo<models::Base> {
             ZoneNameTimestamp::from_zoned_date_time_iso(crate::ZonedDateTime {
                 date: date_time.date,
                 time: date_time.time,
-                // If we don't have an offset, interpret as UTC. This is incorrect during a couple of hours in 50 years
+                // If we don't have an offset, interpret as UTC. This is incorrect during O(a couple of 
+                // hours) since the UNIX epoch (a handful of transitions times the few hours this is too
+                // early/late).
                 zone: self.offset.unwrap_or(UtcOffset::zero()),
             }),
         )
