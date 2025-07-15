@@ -8,6 +8,7 @@
 //! <https://github.com/unicode-org/cldr-json/blob/main/cldr-json/cldr-core/supplemental/metaZones.json>
 
 use icu::time::zone::ZoneNameTimestamp;
+use icu_time::ZonedDateTime;
 use serde::Deserialize;
 use std::collections::BTreeMap;
 
@@ -116,6 +117,7 @@ fn deserialize_date<'de, D: serde::de::Deserializer<'de>>(
     deserializer: D,
 ) -> Result<Option<ZoneNameTimestamp>, D::Error> {
     use icu::calendar::Iso;
+    use icu::time::zone::UtcOffset;
     use icu::time::DateTime;
     use serde::de::Error;
 
@@ -123,8 +125,14 @@ fn deserialize_date<'de, D: serde::de::Deserializer<'de>>(
         return Ok(None);
     };
 
-    let date_time = DateTime::try_from_str(&timestamp, Iso)
+    let DateTime { date, time } = DateTime::try_from_str(&timestamp, Iso)
         .map_err(|_| D::Error::custom("Invalid metazone timestamp"))?;
 
-    Ok(Some(ZoneNameTimestamp::from_date_time_iso(date_time)))
+    Ok(Some(ZoneNameTimestamp::from_zoned_date_time_iso(
+        ZonedDateTime {
+            date,
+            time,
+            zone: UtcOffset::zero(),
+        },
+    )))
 }

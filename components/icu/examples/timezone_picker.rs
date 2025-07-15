@@ -4,11 +4,9 @@
 
 use std::collections::BTreeMap;
 
-use icu::calendar::Date;
 use icu::datetime::{fieldsets, NoCalendarFormatter};
 use icu::locale::locale;
 use icu::time::zone::ZoneNameTimestamp;
-use icu::time::{DateTime, Time};
 
 fn main() {
     let parser = icu::time::zone::IanaParser::new();
@@ -23,10 +21,7 @@ fn main() {
     let city_formatter =
         NoCalendarFormatter::try_new(prefs, fieldsets::zone::ExemplarCity).unwrap();
 
-    let reference_date_time = DateTime {
-        date: Date::try_new_iso(2025, 1, 1).unwrap(),
-        time: Time::start_of_day(),
-    };
+    let reference_timestamp = ZoneNameTimestamp::far_in_future();
 
     let mut grouped_tzs = BTreeMap::<_, Vec<_>>::new();
 
@@ -36,15 +31,12 @@ fn main() {
         }
 
         let offsets = offsets
-            .compute_offsets_from_time_zone_and_name_timestamp(
-                tz,
-                ZoneNameTimestamp::from_date_time_iso(reference_date_time),
-            )
+            .compute_offsets_from_time_zone_and_name_timestamp(tz, reference_timestamp)
             .unwrap();
 
         let tzi = tz
             .with_offset(Some(offsets.standard))
-            .at_date_time_iso(reference_date_time);
+            .with_zone_name_timestamp(reference_timestamp);
 
         grouped_tzs
             .entry(non_location_formatter.format(&tzi).to_string())
@@ -67,7 +59,7 @@ fn main() {
                             offset_formatter.format(
                                 &tzi.id()
                                     .with_offset(Some(daylight))
-                                    .at_date_time_iso(reference_date_time)
+                                    .with_zone_name_timestamp(reference_timestamp)
                             )
                         )
                     } else {

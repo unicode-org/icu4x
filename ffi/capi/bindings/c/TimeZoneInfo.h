@@ -30,6 +30,8 @@ TimeZone* icu4x_TimeZoneInfo_id_mv1(const TimeZoneInfo* self);
 
 TimeZoneInfo* icu4x_TimeZoneInfo_at_date_time_iso_mv1(const TimeZoneInfo* self, const IsoDate* date, const Time* time);
 
+TimeZoneInfo* icu4x_TimeZoneInfo_at_timestamp_mv1(const TimeZoneInfo* self, int64_t timestamp);
+
 typedef struct icu4x_TimeZoneInfo_zone_name_date_time_mv1_result {union {IsoDateTime ok; }; bool is_ok;} icu4x_TimeZoneInfo_zone_name_date_time_mv1_result;
 icu4x_TimeZoneInfo_zone_name_date_time_mv1_result icu4x_TimeZoneInfo_zone_name_date_time_mv1(const TimeZoneInfo* self);
 

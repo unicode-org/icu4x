@@ -57,7 +57,12 @@ public:
   /**
    * See the [Rust documentation for `compute_offsets_from_time_zone_and_name_timestamp`](https://docs.rs/icu/2.0.0/icu/time/zone/struct.VariantOffsetsCalculatorBorrowed.html#method.compute_offsets_from_time_zone_and_name_timestamp) for more information.
    */
-  inline std::optional<icu4x::VariantOffsets> compute_offsets_from_time_zone_and_date_time(const icu4x::TimeZone& time_zone, const icu4x::IsoDate& local_date, const icu4x::Time& local_time) const;
+  inline std::optional<icu4x::VariantOffsets> compute_offsets_from_time_zone_and_date_time(const icu4x::TimeZone& time_zone, const icu4x::IsoDate& utc_date, const icu4x::Time& utc_time) const;
+
+  /**
+   * See the [Rust documentation for `compute_offsets_from_time_zone_and_name_timestamp`](https://docs.rs/icu/2.0.0/icu/time/zone/struct.VariantOffsetsCalculatorBorrowed.html#method.compute_offsets_from_time_zone_and_name_timestamp) for more information.
+   */
+  inline std::optional<icu4x::VariantOffsets> compute_offsets_from_time_zone_and_timestamp(const icu4x::TimeZone& time_zone, int64_t timestamp) const;
 
   inline const icu4x::capi::VariantOffsetsCalculator* AsFFI() const;
   inline icu4x::capi::VariantOffsetsCalculator* AsFFI();

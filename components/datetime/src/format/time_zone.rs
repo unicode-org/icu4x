@@ -19,17 +19,13 @@ use icu_time::{
 use writeable::Writeable;
 
 impl crate::provider::time_zones::MetazonePeriod<'_> {
-    fn resolve(
-        &self,
-        time_zone_id: TimeZone,
-        zone_name_timestamp: ZoneNameTimestamp,
-    ) -> Option<MetazoneId> {
+    fn resolve(&self, time_zone_id: TimeZone, timestamp: ZoneNameTimestamp) -> Option<MetazoneId> {
         use zerovec::ule::AsULE;
         let cursor = self.list.get0(&time_zone_id)?;
         let mut metazone_id = None;
         for (bytes, id) in cursor.iter1().rev() {
             let candidate = ZoneNameTimestamp::from_unaligned(*bytes);
-            if zone_name_timestamp >= candidate {
+            if timestamp >= candidate {
                 metazone_id = id.get();
                 break;
             }
@@ -123,7 +119,7 @@ impl FormatTimeZone for GenericNonLocationFormat {
                 MissingInputFieldKind::TimeZoneId,
             )));
         };
-        let Some(local_time) = input.zone_name_timestamp else {
+        let Some(timestamp) = input.zone_name_timestamp else {
             return Ok(Err(FormatTimeZoneError::MissingInputField(
                 MissingInputFieldKind::TimeZoneNameTimestamp,
             )));
@@ -149,7 +145,7 @@ impl FormatTimeZone for GenericNonLocationFormat {
             .get(&time_zone_id)
             .or_else(|| standard_names.overrides.get(&time_zone_id))
             .or_else(|| {
-                let mz = metazone_period.resolve(time_zone_id, local_time)?;
+                let mz = metazone_period.resolve(time_zone_id, timestamp)?;
                 generic_names
                     .defaults
                     .get(&mz)
@@ -188,7 +184,7 @@ impl FormatTimeZone for SpecificNonLocationFormat {
                 MissingInputFieldKind::TimeZoneVariant,
             )));
         };
-        let Some(local_time) = input.zone_name_timestamp else {
+        let Some(timestamp) = input.zone_name_timestamp else {
             return Ok(Err(FormatTimeZoneError::MissingInputField(
                 MissingInputFieldKind::TimeZoneNameTimestamp,
             )));
@@ -213,7 +209,7 @@ impl FormatTimeZone for SpecificNonLocationFormat {
                 .get(&(time_zone_id, TimeZoneVariant::Standard))
             {
                 n
-            } else if let Some(mz) = metazone_period.resolve(time_zone_id, local_time) {
+            } else if let Some(mz) = metazone_period.resolve(time_zone_id, timestamp) {
                 if specific.use_standard.binary_search(&mz).is_ok() {
                     if let Some(n) = standard_names.defaults.get(&mz) {
                         n
@@ -236,7 +232,7 @@ impl FormatTimeZone for SpecificNonLocationFormat {
             .or_else(|| {
                 specific
                     .defaults
-                    .get(&(metazone_period.resolve(time_zone_id, local_time)?, variant))
+                    .get(&(metazone_period.resolve(time_zone_id, timestamp)?, variant))
             })
         {
             n
@@ -502,7 +498,7 @@ impl FormatTimeZone for GenericPartialLocationFormat {
                 MissingInputFieldKind::TimeZoneId,
             )));
         };
-        let Some(local_time) = input.zone_name_timestamp else {
+        let Some(timestamp) = input.zone_name_timestamp else {
             return Ok(Err(FormatTimeZoneError::MissingInputField(
                 MissingInputFieldKind::TimeZoneNameTimestamp,
             )));
@@ -533,7 +529,7 @@ impl FormatTimeZone for GenericPartialLocationFormat {
         let Some(non_location) = non_locations.overrides.get(&time_zone_id).or_else(|| {
             non_locations
                 .defaults
-                .get(&metazone_period.resolve(time_zone_id, local_time)?)
+                .get(&metazone_period.resolve(time_zone_id, timestamp)?)
         }) else {
             return Ok(Err(FormatTimeZoneError::Fallback));
         };

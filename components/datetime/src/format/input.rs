@@ -95,8 +95,8 @@ impl DateTimeInputUnchecked {
     }
 
     /// Sets the local time for time zone name resolution.
-    pub fn set_time_zone_name_timestamp(&mut self, local_time: ZoneNameTimestamp) {
-        self.zone_name_timestamp = Some(local_time);
+    pub fn set_time_zone_name_timestamp(&mut self, timestamp: ZoneNameTimestamp) {
+        self.zone_name_timestamp = Some(timestamp);
     }
 
     /// Sets the time zone variant.

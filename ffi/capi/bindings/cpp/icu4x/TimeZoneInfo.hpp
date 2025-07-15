@@ -33,6 +33,8 @@ namespace capi {
 
     icu4x::capi::TimeZoneInfo* icu4x_TimeZoneInfo_at_date_time_iso_mv1(const icu4x::capi::TimeZoneInfo* self, const icu4x::capi::IsoDate* date, const icu4x::capi::Time* time);
 
+    icu4x::capi::TimeZoneInfo* icu4x_TimeZoneInfo_at_timestamp_mv1(const icu4x::capi::TimeZoneInfo* self, int64_t timestamp);
+
     typedef struct icu4x_TimeZoneInfo_zone_name_date_time_mv1_result {union {icu4x::capi::IsoDateTime ok; }; bool is_ok;} icu4x_TimeZoneInfo_zone_name_date_time_mv1_result;
     icu4x_TimeZoneInfo_zone_name_date_time_mv1_result icu4x_TimeZoneInfo_zone_name_date_time_mv1(const icu4x::capi::TimeZoneInfo* self);
 
@@ -73,6 +75,12 @@ inline std::unique_ptr<icu4x::TimeZoneInfo> icu4x::TimeZoneInfo::at_date_time_is
   auto result = icu4x::capi::icu4x_TimeZoneInfo_at_date_time_iso_mv1(this->AsFFI(),
     date.AsFFI(),
     time.AsFFI());
+  return std::unique_ptr<icu4x::TimeZoneInfo>(icu4x::TimeZoneInfo::FromFFI(result));
+}
+
+inline std::unique_ptr<icu4x::TimeZoneInfo> icu4x::TimeZoneInfo::at_timestamp(int64_t timestamp) const {
+  auto result = icu4x::capi::icu4x_TimeZoneInfo_at_timestamp_mv1(this->AsFFI(),
+    timestamp);
   return std::unique_ptr<icu4x::TimeZoneInfo>(icu4x::TimeZoneInfo::FromFFI(result));
 }
 
