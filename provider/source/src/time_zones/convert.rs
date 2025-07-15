@@ -18,8 +18,10 @@ use std::borrow::Cow;
 use std::collections::BTreeMap;
 use std::collections::BTreeSet;
 use writeable::Writeable;
+use zerotrie::ZeroTrieSimpleAscii;
 use zerovec::ule::vartuple::VarTuple;
 use zerovec::ule::NichedOption;
+use zerovec::VarZeroVec;
 use zerovec::ZeroVec;
 
 impl DataProvider<TimezoneNamesEssentialsV1> for SourceDataProvider {
@@ -339,10 +341,10 @@ impl DataProvider<TimezonePeriodsV1> for SourceDataProvider {
 
         let metazones = self.metazones()?;
 
-        let list = metazones
+        let values = metazones
             .periods
             .iter()
-            .map(|(tz, ps)| {
+            .map(|(&tz, ps)| {
                 let mut ps = ps.clone();
                 ps.dedup_by(|(_, oa, mza), (_, ob, mzb)| {
                     if oa.standard != ob.standard {
@@ -366,28 +368,47 @@ impl DataProvider<TimezonePeriodsV1> for SourceDataProvider {
                     }
                 });
 
-                let (past, os, mz) = ps.remove(0);
+                (tz, ps)
+            })
+            .collect::<BTreeMap<_, _>>();
 
-                assert_eq!(past, ZoneNameTimestamp::far_in_past());
+        let mut deduped = BTreeMap::<_, BTreeSet<_>>::new();
+        for (tz, value) in values {
+            deduped.entry(value).or_default().insert(tz);
+        }
 
-                let rest = ps
-                    .into_iter()
-                    .map(move |(t, os, mz)| (t, os, NichedOption(mz)))
-                    .collect::<ZeroVec<_>>();
+        let index = ZeroTrieSimpleAscii::<Vec<u8>>::from_iter(
+            deduped
+                .values()
+                .enumerate()
+                .flat_map(|(i, vs)| vs.iter().map(move |tz| (tz.as_str(), i))),
+        )
+        .convert_store();
 
-                (
-                    tz,
+        let list = VarZeroVec::from(
+            &deduped
+                .into_keys()
+                .map(|mut ps| {
+                    let (past, os, mz) = ps.remove(0);
+
+                    assert_eq!(past, ZoneNameTimestamp::far_in_past());
+
+                    let rest = ps
+                        .into_iter()
+                        .map(move |(t, os, mz)| (t, os, NichedOption(mz)))
+                        .collect::<ZeroVec<_>>();
+
                     zerovec::ule::encode_varule_to_box(&VarTuple {
                         sized: (os, NichedOption(mz)),
                         variable: rest.as_slice(),
-                    }),
-                )
-            })
-            .collect();
+                    })
+                })
+                .collect::<Vec<_>>(),
+        );
 
         Ok(DataResponse {
             metadata: DataResponseMetadata::default().with_checksum(metazones.checksum),
-            payload: DataPayload::from_owned(TimezonePeriods(list)),
+            payload: DataPayload::from_owned(TimezonePeriods { index, list }),
         })
     }
 }

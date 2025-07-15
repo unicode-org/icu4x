@@ -18,10 +18,11 @@
 
 use crate::zone::{UtcOffset, VariantOffsets, ZoneNameTimestamp};
 use icu_provider::prelude::*;
+use zerotrie::ZeroTrieSimpleAscii;
 use zerovec::maps::ZeroMapKV;
 use zerovec::ule::vartuple::VarTupleULE;
 use zerovec::ule::{AsULE, NichedOption};
-use zerovec::{ZeroMap, ZeroSlice, ZeroVec};
+use zerovec::{VarZeroVec, ZeroSlice, ZeroVec};
 
 pub use crate::zone::ule::TimeZoneVariantULE;
 pub use crate::zone::TimeZone;
@@ -226,16 +227,15 @@ impl<'de> serde::Deserialize<'de> for VariantOffsets {
 pub type MetazoneId = core::num::NonZeroU8;
 
 /// Data struct for the [`TimezonePeriodsV1`] marker.
-#[derive(PartialEq, Debug, Clone, Default, yoke::Yokeable, zerofrom::ZeroFrom)]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[derive(PartialEq, Debug, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
+#[cfg_attr(feature = "datagen", derive(databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_time::provider))]
-#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-#[yoke(prove_covariance_manually)]
-pub struct TimezonePeriods<'a>(
-    #[cfg_attr(feature = "serde", serde(borrow))]
-    pub  ZeroMap<
+pub struct TimezonePeriods<'a> {
+    /// Index into `list`
+    pub index: ZeroTrieSimpleAscii<ZeroVec<'a, u8>>,
+    /// Values
+    pub list: VarZeroVec<
         'a,
-        TimeZone,
         VarTupleULE<
             (VariantOffsets, NichedOption<MetazoneId, 1>),
             ZeroSlice<(
@@ -245,7 +245,80 @@ pub struct TimezonePeriods<'a>(
             )>,
         >,
     >,
-);
+}
+
+#[cfg(all(feature = "alloc", feature = "serde"))]
+impl serde::Serialize for TimezonePeriods<'_> {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        use serde::ser::SerializeMap;
+        if serializer.is_human_readable() {
+            let mut map = serializer.serialize_map(None)?;
+            for (tz, idx) in self.index.iter() {
+                if let Some(value) = self.list.get(idx) {
+                    map.serialize_entry(&tz, value)?;
+                }
+            }
+            map.end()
+        } else {
+            #[derive(serde::Serialize)]
+            pub struct Raw<'a> {
+                pub index: ZeroTrieSimpleAscii<ZeroVec<'a, u8>>,
+                pub list: VarZeroVec<
+                    'a,
+                    VarTupleULE<
+                        (VariantOffsets, NichedOption<MetazoneId, 1>),
+                        ZeroSlice<(
+                            ZoneNameTimestamp,
+                            VariantOffsets,
+                            NichedOption<MetazoneId, 1>,
+                        )>,
+                    >,
+                >,
+            }
+            Raw {
+                list: self.list.clone(),
+                index: self.index.clone(),
+            }
+            .serialize(serializer)
+        }
+    }
+}
+
+#[cfg(feature = "serde")]
+impl<'de> serde::Deserialize<'de> for TimezonePeriods<'de> {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        use serde::de::Error;
+        if deserializer.is_human_readable() {
+            Err(D::Error::custom("nah"))
+        } else {
+            #[derive(serde::Deserialize)]
+            pub struct Raw<'a> {
+                #[cfg_attr(feature = "serde", serde(borrow))]
+                pub index: ZeroTrieSimpleAscii<ZeroVec<'a, u8>>,
+                #[cfg_attr(feature = "serde", serde(borrow))]
+                pub list: VarZeroVec<
+                    'a,
+                    VarTupleULE<
+                        (VariantOffsets, NichedOption<MetazoneId, 1>),
+                        ZeroSlice<(
+                            ZoneNameTimestamp,
+                            VariantOffsets,
+                            NichedOption<MetazoneId, 1>,
+                        )>,
+                    >,
+                >,
+            }
+            let Raw { index, list } = Raw::deserialize(deserializer)?;
+            Ok(Self { index, list })
+        }
+    }
+}
 
 impl TimezonePeriods<'_> {
     /// Gets the information for a time zone at at timestamp
@@ -259,7 +332,7 @@ impl TimezonePeriods<'_> {
         let &VarTupleULE {
             sized: first,
             variable: ref rest,
-        } = self.0.get(&time_zone_id)?;
+        } = self.list.get(self.index.get(time_zone_id.as_str())?)?;
 
         let i = match rest.binary_search_by(|(t, ..)| t.cmp(&timestamp)) {
             Err(0) => {
