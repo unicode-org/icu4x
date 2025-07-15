@@ -165,31 +165,16 @@ pub mod ffi {
             })
         }
 
-        /// Sets the timestamp at which to interpret the time zone
+        /// Sets the timestamp, in milliseconds since Unix epoch, at which to interpret the time zone
         /// for display name lookup.
         ///
         /// Notes:
         ///
         /// - If not set, the formatting datetime is used if possible.
         /// - The constraints are the same as with `ZoneNameTimestamp` in Rust.
-        #[diplomat::rust_link(icu::time::TimeZoneInfo::at_date_time_iso, FnInStruct)]
+        #[diplomat::rust_link(icu::time::TimeZoneInfo::with_zone_name_timestamp, FnInStruct)]
+        #[diplomat::rust_link(icu::time::zone::ZoneNameTimestamp::from_zoned_date_time_iso, FnInStruct, compact)]
         #[diplomat::rust_link(icu::time::zone::ZoneNameTimestamp, Struct, compact)]
-        #[diplomat::rust_link(
-            icu::time::TimeZoneInfo::with_zone_name_timestamp,
-            FnInStruct,
-            hidden
-        )]
-        #[diplomat::rust_link(
-            icu::time::zone::ZoneNameTimestamp::from_date_time_iso,
-            FnInStruct,
-            hidden
-        )]
-        #[diplomat::rust_link(
-            icu::time::zone::ZoneNameTimestamp::far_in_future,
-            FnInStruct,
-            hidden
-        )] // documented
-        #[diplomat::rust_link(icu::time::zone::ZoneNameTimestamp::far_in_past, FnInStruct, hidden)] // documented
         pub fn at_timestamp(&self, timestamp: i64) -> Box<Self> {
             Box::new(Self {
                 zone_name_timestamp: Some(
