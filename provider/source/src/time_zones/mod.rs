@@ -8,7 +8,6 @@ use crate::SourceDataProvider;
 use core::cmp::Ordering;
 use core::hash::Hash;
 use core::hash::Hasher;
-use icu::calendar::Iso;
 use icu::datetime::provider::time_zones::*;
 use icu::locale::subtags::region;
 use icu::time::provider::*;
@@ -100,10 +99,11 @@ impl SourceDataProvider {
                     (("macas", "+01", ZoneNameTimestamp::far_in_past()), (0, Some(3600))),
                     (("eheai", "+00", ZoneNameTimestamp::far_in_past()), (0, None)),
                     (("eheai", "+01", ZoneNameTimestamp::far_in_past()), (0, Some(3600))),
-                    // This is wrong, but for now match what we've done before (and what ICU is doing).
-                    (("nawdh", "CAT", ZoneNameTimestamp::from_zoned_date_time_iso(ZonedDateTime::try_offset_only_from_str("2017-09-03T01:00Z", Iso).unwrap())), (7200, None)),
-                    (("nawdh", "CAT", ZoneNameTimestamp::from_zoned_date_time_iso(ZonedDateTime::try_offset_only_from_str("1994-03-20T22:00Z", Iso).unwrap())), (3600, Some(7200))),
-                    (("nawdh", "WAT", ZoneNameTimestamp::from_zoned_date_time_iso(ZonedDateTime::try_offset_only_from_str("1994-03-20T22:00Z", Iso).unwrap())), (3600, None)),
+                    // Namibia is modeled with DST changes for 1994-2017, but the TZDB display names
+                    // tell us that really these should be metazone changes between Africa_Central and
+                    // Africa_Western. So we treat them as standard time changes.
+                    (("nawdh", "CAT", ZoneNameTimestamp::far_in_past()), (7200, None)),
+                    (("nawdh", "WAT", ZoneNameTimestamp::far_in_past()), (3600, None)),
                 ];
 
                 let offsets = self
@@ -204,6 +204,16 @@ impl SourceDataProvider {
                     let mut curr_mz = mzs.next_if(|&(s, _)| s == start).and_then(|(_, mz)| mz);
 
                     loop {
+
+                        // TODO: Upstream Africa/Windhoek WAT/CAT metazones jumps to CLDR
+                        if tz.as_str() == "nawdh" && matches!(curr_mz, Some("Africa_Central") | Some("Africa_Western")) {
+                            if curr_offset.standard.to_seconds() == 3600 {
+                                curr_mz = Some("Africa_Western");
+                            } else if curr_offset.standard.to_seconds() == 7200 {
+                                curr_mz = Some("Africa_Central")
+                            }
+                        }
+
                         offsets_and_metazones.entry(tz).or_default().push((
                             start,
                             curr_offset,
