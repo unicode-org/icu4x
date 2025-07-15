@@ -119,7 +119,8 @@ impl Japanese {
             Self,
     ]);
 
-    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::new)]
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE_WITH_WARNING, Self::new)]
+    #[cfg_attr(not(feature = "unstable"), doc(hidden))]
     pub fn try_new_unstable<D: DataProvider<CalendarJapaneseModernV1> + ?Sized>(
         provider: &D,
     ) -> Result<Self, DataError> {
@@ -154,7 +155,8 @@ impl JapaneseExtended {
             Self,
     ]);
 
-    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::new)]
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE_WITH_WARNING, Self::new)]
+    #[cfg_attr(not(feature = "unstable"), doc(hidden))]
     pub fn try_new_unstable<D: DataProvider<CalendarJapaneseExtendedV1> + ?Sized>(
         provider: &D,
     ) -> Result<Self, DataError> {
@@ -440,12 +442,12 @@ impl Date<Japanese> {
         year: i32,
         month: u8,
         day: u8,
-        japanese_calendar: A,
+        calendar: A,
     ) -> Result<Date<A>, DateError> {
-        let inner = japanese_calendar
+        let inner = calendar
             .as_calendar()
             .new_japanese_date_inner(era, year, month, day)?;
-        Ok(Date::from_raw(inner, japanese_calendar))
+        Ok(Date { inner, calendar })
     }
 }
 
@@ -488,13 +490,13 @@ impl Date<JapaneseExtended> {
         year: i32,
         month: u8,
         day: u8,
-        japanext_calendar: A,
+        calendar: A,
     ) -> Result<Date<A>, DateError> {
-        let inner = japanext_calendar
+        let inner = calendar
             .as_calendar()
             .0
             .new_japanese_date_inner(era, year, month, day)?;
-        Ok(Date::from_raw(inner, japanext_calendar))
+        Ok(Date { inner, calendar })
     }
 }
 
