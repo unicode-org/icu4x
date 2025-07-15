@@ -177,8 +177,10 @@ impl SourceDataProvider {
                                 && periods[i + 1].0.to_zoned_date_time_iso().date
                                     <= self.timezone_horizon
                             {
-                                // The next period still starts before the horizon, so we can drop this one
-                                periods.remove(i);
+                                // The next period still starts before the horizon.
+                                // Keep the period, but don't add the metazone to allMetazones, so that
+                                // it's only included if it's also used after the horizon.
+                                i += 1;
                             } else {
                                 all_metazones.extend(periods[i].1);
                                 i += 1;
@@ -286,14 +288,16 @@ impl SourceDataProvider {
                             (
                                 tz,
                                 ps.into_iter()
-                                    .map(|(t, os, mz)| (t, os, mz.map(|mz| ids[mz])))
+                                    .map(|(t, os, mz)| (t, os, mz.and_then(|mz| ids.get(mz).copied())))
                                     .collect(),
                             )
                         })
                         .collect(),
                     reverse: reverse
                         .into_iter()
-                        .map(|((mz, membership), tzs)| ((ids[mz], membership), tzs))
+                        .filter_map(|((mz, membership), tzs)| {
+                            Some(((*ids.get(mz)?, membership), tzs))
+                        })
                         .collect(),
                     ids,
                     checksum: hash,
