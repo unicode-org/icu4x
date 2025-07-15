@@ -71,9 +71,468 @@
                 "usesMetazone": {
                   "_mzone": "Africa_Western",
                   "_from": "1994-03-20 22:00",
+                  "_to": "1994-09-04 01:00",
+                  "_variantOverrides": {
+                    "WAT": "standard"
+                  }
+                }
+              },
+              {
+                "usesMetazone": {
+                  "_mzone": "Africa_Central",
+                  "_from": "1994-09-04 01:00",
+                  "_to": "1995-04-02 00:00",
+                  "_variantOverrides": {
+                    "CAT": "standard"
+                  }
+                }
+              },
+              {
+                "usesMetazone": {
+                  "_mzone": "Africa_Western",
+                  "_from": "1995-04-02 00:00",
+                  "_to": "1995-09-03 01:00",
+                  "_variantOverrides": {
+                    "WAT": "standard"
+                  }
+                }
+              },
+              {
+                "usesMetazone": {
+                  "_mzone": "Africa_Central",
+                  "_from": "1995-09-03 01:00",
+                  "_to": "1996-04-07 00:00",
+                  "_variantOverrides": {
+                    "CAT": "standard"
+                  }
+                }
+              },
+              {
+                "usesMetazone": {
+                  "_mzone": "Africa_Western",
+                  "_from": "1996-04-07 00:00",
+                  "_to": "1996-09-01 01:00",
+                  "_variantOverrides": {
+                    "WAT": "standard"
+                  }
+                }
+              },
+              {
+                "usesMetazone": {
+                  "_mzone": "Africa_Central",
+                  "_from": "1996-09-01 01:00",
+                  "_to": "1997-04-06 00:00",
+                  "_variantOverrides": {
+                    "CAT": "standard"
+                  }
+                }
+              },
+              {
+                "usesMetazone": {
+                  "_mzone": "Africa_Western",
+                  "_from": "1997-04-06 00:00",
+                  "_to": "1997-09-07 01:00",
+                  "_variantOverrides": {
+                    "WAT": "standard"
+                  }
+                }
+              },
+              {
+                "usesMetazone": {
+                  "_mzone": "Africa_Central",
+                  "_from": "1997-09-07 01:00",
+                  "_to": "1998-04-05 00:00",
+                  "_variantOverrides": {
+                    "CAT": "standard"
+                  }
+                }
+              },
+              {
+                "usesMetazone": {
+                  "_mzone": "Africa_Western",
+                  "_from": "1998-04-05 00:00",
+                  "_to": "1998-09-06 01:00",
+                  "_variantOverrides": {
+                    "WAT": "standard"
+                  }
+                }
+              },
+              {
+                "usesMetazone": {
+                  "_mzone": "Africa_Central",
+                  "_from": "1998-09-06 01:00",
+                  "_to": "1999-04-04 00:00",
+                  "_variantOverrides": {
+                    "CAT": "standard"
+                  }
+                }
+              },
+              {
+                "usesMetazone": {
+                  "_mzone": "Africa_Western",
+                  "_from": "1999-04-04 00:00",
+                  "_to": "1999-09-05 01:00",
+                  "_variantOverrides": {
+                    "WAT": "standard"
+                  }
+                }
+              },
+              {
+                "usesMetazone": {
+                  "_mzone": "Africa_Central",
+                  "_from": "1999-09-05 01:00",
+                  "_to": "2000-04-02 00:00",
+                  "_variantOverrides": {
+                    "CAT": "standard"
+                  }
+                }
+              },
+              {
+                "usesMetazone": {
+                  "_mzone": "Africa_Western",
+                  "_from": "2000-04-02 00:00",
+                  "_to": "2000-09-03 01:00",
+                  "_variantOverrides": {
+                    "WAT": "standard"
+                  }
+                }
+              },
+              {
+                "usesMetazone": {
+                  "_mzone": "Africa_Central",
+                  "_from": "2000-09-03 01:00",
+                  "_to": "2001-04-01 00:00",
+                  "_variantOverrides": {
+                    "CAT": "standard"
+                  }
+                }
+              },
+              {
+                "usesMetazone": {
+                  "_mzone": "Africa_Western",
+                  "_from": "2001-04-01 00:00",
+                  "_to": "2001-09-02 01:00",
+                  "_variantOverrides": {
+                    "WAT": "standard"
+                  }
+                }
+              },
+              {
+                "usesMetazone": {
+                  "_mzone": "Africa_Central",
+                  "_from": "2001-09-02 01:00",
+                  "_to": "2002-04-07 00:00",
+                  "_variantOverrides": {
+                    "CAT": "standard"
+                  }
+                }
+              },
+              {
+                "usesMetazone": {
+                  "_mzone": "Africa_Western",
+                  "_from": "2002-04-07 00:00",
+                  "_to": "2002-09-01 01:00",
+                  "_variantOverrides": {
+                    "WAT": "standard"
+                  }
+                }
+              },
+              {
+                "usesMetazone": {
+                  "_mzone": "Africa_Central",
+                  "_from": "2002-09-01 01:00",
+                  "_to": "2003-04-06 00:00",
+                  "_variantOverrides": {
+                    "CAT": "standard"
+                  }
+                }
+              },
+              {
+                "usesMetazone": {
+                  "_mzone": "Africa_Western",
+                  "_from": "2003-04-06 00:00",
+                  "_to": "2003-09-07 01:00",
+                  "_variantOverrides": {
+                    "WAT": "standard"
+                  }
+                }
+              },
+              {
+                "usesMetazone": {
+                  "_mzone": "Africa_Central",
+                  "_from": "2003-09-07 01:00",
+                  "_to": "2004-04-04 00:00",
+                  "_variantOverrides": {
+                    "CAT": "standard"
+                  }
+                }
+              },
+              {
+                "usesMetazone": {
+                  "_mzone": "Africa_Western",
+                  "_from": "2004-04-04 00:00",
+                  "_to": "2004-09-05 01:00",
+                  "_variantOverrides": {
+                    "WAT": "standard"
+                  }
+                }
+              },
+              {
+                "usesMetazone": {
+                  "_mzone": "Africa_Central",
+                  "_from": "2004-09-05 01:00",
+                  "_to": "2005-04-03 00:00",
+                  "_variantOverrides": {
+                    "CAT": "standard"
+                  }
+                }
+              },
+              {
+                "usesMetazone": {
+                  "_mzone": "Africa_Western",
+                  "_from": "2005-04-03 00:00",
+                  "_to": "2005-09-04 01:00",
+                  "_variantOverrides": {
+                    "WAT": "standard"
+                  }
+                }
+              },
+              {
+                "usesMetazone": {
+                  "_mzone": "Africa_Central",
+                  "_from": "2005-09-04 01:00",
+                  "_to": "2006-04-02 00:00",
+                  "_variantOverrides": {
+                    "CAT": "standard"
+                  }
+                }
+              },
+              {
+                "usesMetazone": {
+                  "_mzone": "Africa_Western",
+                  "_from": "2006-04-02 00:00",
+                  "_to": "2006-09-03 01:00",
+                  "_variantOverrides": {
+                    "WAT": "standard"
+                  }
+                }
+              },
+              {
+                "usesMetazone": {
+                  "_mzone": "Africa_Central",
+                  "_from": "2006-09-03 01:00",
+                  "_to": "2007-04-01 00:00",
+                  "_variantOverrides": {
+                    "CAT": "standard"
+                  }
+                }
+              },
+              {
+                "usesMetazone": {
+                  "_mzone": "Africa_Western",
+                  "_from": "2007-04-01 00:00",
+                  "_to": "2007-09-02 01:00",
+                  "_variantOverrides": {
+                    "WAT": "standard"
+                  }
+                }
+              },
+              {
+                "usesMetazone": {
+                  "_mzone": "Africa_Central",
+                  "_from": "2007-09-02 01:00",
+                  "_to": "2008-04-06 00:00",
+                  "_variantOverrides": {
+                    "CAT": "standard"
+                  }
+                }
+              },
+              {
+                "usesMetazone": {
+                  "_mzone": "Africa_Western",
+                  "_from": "2008-04-06 00:00",
+                  "_to": "2008-09-07 01:00",
+                  "_variantOverrides": {
+                    "WAT": "standard"
+                  }
+                }
+              },
+              {
+                "usesMetazone": {
+                  "_mzone": "Africa_Central",
+                  "_from": "2008-09-07 01:00",
+                  "_to": "2009-04-05 00:00",
+                  "_variantOverrides": {
+                    "CAT": "standard"
+                  }
+                }
+              },
+              {
+                "usesMetazone": {
+                  "_mzone": "Africa_Western",
+                  "_from": "2009-04-05 00:00",
+                  "_to": "2009-09-06 01:00",
+                  "_variantOverrides": {
+                    "WAT": "standard"
+                  }
+                }
+              },
+              {
+                "usesMetazone": {
+                  "_mzone": "Africa_Central",
+                  "_from": "2009-09-06 01:00",
+                  "_to": "2010-04-04 00:00",
+                  "_variantOverrides": {
+                    "CAT": "standard"
+                  }
+                }
+              },
+              {
+                "usesMetazone": {
+                  "_mzone": "Africa_Western",
+                  "_from": "2010-04-04 00:00",
+                  "_to": "2010-09-05 01:00",
+                  "_variantOverrides": {
+                    "WAT": "standard"
+                  }
+                }
+              },
+              {
+                "usesMetazone": {
+                  "_mzone": "Africa_Central",
+                  "_from": "2010-09-05 01:00",
+                  "_to": "2011-04-03 00:00",
+                  "_variantOverrides": {
+                    "CAT": "standard"
+                  }
+                }
+              },
+              {
+                "usesMetazone": {
+                  "_mzone": "Africa_Western",
+                  "_from": "2011-04-03 00:00",
+                  "_to": "2011-09-04 01:00",
+                  "_variantOverrides": {
+                    "WAT": "standard"
+                  }
+                }
+              },
+              {
+                "usesMetazone": {
+                  "_mzone": "Africa_Central",
+                  "_from": "2011-09-04 01:00",
+                  "_to": "2012-04-01 00:00",
+                  "_variantOverrides": {
+                    "CAT": "standard"
+                  }
+                }
+              },
+              {
+                "usesMetazone": {
+                  "_mzone": "Africa_Western",
+                  "_from": "2012-04-01 00:00",
+                  "_to": "2012-09-02 01:00",
+                  "_variantOverrides": {
+                    "WAT": "standard"
+                  }
+                }
+              },
+              {
+                "usesMetazone": {
+                  "_mzone": "Africa_Central",
+                  "_from": "2012-09-02 01:00",
+                  "_to": "2013-04-07 00:00",
+                  "_variantOverrides": {
+                    "CAT": "standard"
+                  }
+                }
+              },
+              {
+                "usesMetazone": {
+                  "_mzone": "Africa_Western",
+                  "_from": "2013-04-07 00:00",
+                  "_to": "2013-09-01 01:00",
+                  "_variantOverrides": {
+                    "WAT": "standard"
+                  }
+                }
+              },
+              {
+                "usesMetazone": {
+                  "_mzone": "Africa_Central",
+                  "_from": "2013-09-01 01:00",
+                  "_to": "2014-04-06 00:00",
+                  "_variantOverrides": {
+                    "CAT": "standard"
+                  }
+                }
+              },
+              {
+                "usesMetazone": {
+                  "_mzone": "Africa_Western",
+                  "_from": "2014-04-06 00:00",
+                  "_to": "2014-09-07 01:00",
+                  "_variantOverrides": {
+                    "WAT": "standard"
+                  }
+                }
+              },
+              {
+                "usesMetazone": {
+                  "_mzone": "Africa_Central",
+                  "_from": "2014-09-07 01:00",
+                  "_to": "2015-04-05 00:00",
+                  "_variantOverrides": {
+                    "CAT": "standard"
+                  }
+                }
+              },
+              {
+                "usesMetazone": {
+                  "_mzone": "Africa_Western",
+                  "_from": "2015-04-05 00:00",
+                  "_to": "2015-09-06 01:00",
+                  "_variantOverrides": {
+                    "WAT": "standard"
+                  }
+                }
+              },
+              {
+                "usesMetazone": {
+                  "_mzone": "Africa_Central",
+                  "_from": "2015-09-06 01:00",
+                  "_to": "2016-04-03 00:00",
+                  "_variantOverrides": {
+                    "CAT": "standard"
+                  }
+                }
+              },
+              {
+                "usesMetazone": {
+                  "_mzone": "Africa_Western",
+                  "_from": "2016-04-03 00:00",
+                  "_to": "2016-09-04 01:00",
+                  "_variantOverrides": {
+                    "WAT": "standard"
+                  }
+                }
+              },
+              {
+                "usesMetazone": {
+                  "_mzone": "Africa_Central",
+                  "_from": "2016-09-04 01:00",
+                  "_to": "2017-04-02 00:00",
+                  "_variantOverrides": {
+                    "CAT": "standard"
+                  }
+                }
+              },
+              {
+                "usesMetazone": {
+                  "_mzone": "Africa_Western",
+                  "_from": "2017-04-02 00:00",
                   "_to": "2017-09-03 01:00",
                   "_variantOverrides": {
-                    "CAT": "daylight",
                     "WAT": "standard"
                   }
                 }
