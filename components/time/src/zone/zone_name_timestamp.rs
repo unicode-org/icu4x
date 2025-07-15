@@ -240,7 +240,7 @@ impl ZoneNameTimestamp {
     // to ZNT.
     // This saturates at 0 and u32::MAX, which is correct for the use case of looking up
     // in the offset periods data struct
-    pub(crate) fn adjust_zone(self, from: UtcOffset, to: UtcOffset) -> Self {
+    fn adjust_zone(self, from: UtcOffset, to: UtcOffset) -> Self {
         let diff = (to.to_seconds() - from.to_seconds()) / 60 / 15;
         Self(if diff < 0 {
             self.0.saturating_sub(diff.unsigned_abs())

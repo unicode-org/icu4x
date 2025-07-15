@@ -482,11 +482,7 @@ impl TimeZoneInfo<models::AtTime> {
                 .with_variant(TimeZoneVariant::Standard);
         };
         let Some(variant) = calculator
-            .compute_offsets_from_time_zone_and_name_timestamp(
-                self.id,
-                self.zone_name_timestamp
-                    .adjust_zone(offset, UtcOffset::zero()),
-            )
+            .compute_offsets_from_time_zone_and_name_timestamp(self.id, self.zone_name_timestamp)
             .and_then(|os| {
                 if os.standard == offset {
                     Some(TimeZoneVariant::Standard)
