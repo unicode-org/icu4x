@@ -180,6 +180,22 @@
   },
   {
     "locale": "en",
+    "datetime": "2013-08-15T12:00:00+01[Africa/Windhoek]",
+    "expectations": {
+      "vvvv": "West Africa Time",
+      "zzzz": "West Africa Standard Time"
+    }
+  },
+  {
+    "locale": "en",
+    "datetime": "2013-09-15T12:00:00+02[Africa/Windhoek]",
+    "expectations": {
+      "vvvv": "West Africa Time",
+      "zzzz": "West Africa Summer Time"
+    }
+  },
+  {
+    "locale": "en",
     "datetime": "2021-07-11T12:00:00.000-07:00[Etc/Unknown]",
     "expectations": {
       "z": "GMT-7",

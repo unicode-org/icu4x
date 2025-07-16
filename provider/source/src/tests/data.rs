@@ -685,11 +685,13 @@ impl SourceDataProvider {
                         ("asia", include_bytes!("../../tests/data/tzdb/asia").as_slice()),
                         ("australasia", include_bytes!("../../tests/data/tzdb/australasia").as_slice()),
                         ("backward", include_bytes!("../../tests/data/tzdb/backward").as_slice()),
-                        ("backzone", include_bytes!("../../tests/data/tzdb/backzone").as_slice()),
                         ("etcetera", include_bytes!("../../tests/data/tzdb/etcetera").as_slice()),
                         ("europe", include_bytes!("../../tests/data/tzdb/europe").as_slice()),
+                        ("factory", include_bytes!("../../tests/data/tzdb/factory").as_slice()),
                         ("northamerica", include_bytes!("../../tests/data/tzdb/northamerica").as_slice()),
-                        ("southamerica", include_bytes!("../../tests/data/tzdb/southamerica").as_slice())
+                        ("rearguard.zi", include_bytes!("../../tests/data/tzdb/rearguard.zi").as_slice()),
+                        ("southamerica", include_bytes!("../../tests/data/tzdb/southamerica").as_slice()),
+                        ("vanguard.zi", include_bytes!("../../tests/data/tzdb/vanguard.zi").as_slice())
                     ].into_iter().collect(),
                 ), transitions: Default::default() })),
                 ..SourceDataProvider::new_custom()
