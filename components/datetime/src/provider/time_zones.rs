@@ -377,7 +377,7 @@ pub(crate) mod legacy {
             payload: DataPayload::from_owned(TimezonePeriods {
                 index,
                 list: list.into(),
-                offsets: Default::default(),
+                offsets: ZeroVec::from(alloc::vec![Default::default()]),
             }),
             metadata,
         })
