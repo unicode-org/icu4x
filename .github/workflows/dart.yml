@@ -181,8 +181,10 @@ jobs:
     runs-on: ${{ matrix.os }}
     needs: [check_skip_fetch]
     # Only run if not PR, or if PR and skip_fetch is false
-    if: github.event_name != 'pull_request' || needs.check_skip_fetch.outputs.skip_fetch == 'false'
-
+    # TODO: Uncomment this after releasing artifacts.
+    # if: github.event_name != 'pull_request' || needs.check_skip_fetch.outputs.skip_fetch == 'false'
+    if: false
+    
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]

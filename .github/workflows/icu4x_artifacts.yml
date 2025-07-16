@@ -162,7 +162,9 @@ jobs:
   check_hashes:
     needs: dart-libs
     runs-on: ubuntu-latest
-    if: github.event_name != 'push'
+    # TODO: Uncomment this after releasing artifacts
+    # if: github.event_name != 'push'
+    if: false
 
     env:
       ICU4X_BUILD_MODE: local
