@@ -222,7 +222,7 @@
     "datetime": "2013-08-15T12:00:00+01[Africa/Windhoek]",
     "expectations": {
       "vvvv": "West Africa Time",
-      "zzzz": "West Africa Standard Time"
+      "zzzz": "West Africa Time"
     }
   },
   {

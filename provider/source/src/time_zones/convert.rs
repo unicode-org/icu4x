@@ -472,6 +472,13 @@ impl DataProvider<TimezoneNamesGenericLongV1> for SourceDataProvider {
 
         let defaults = iter_mz_defaults(time_zone_names_resource, &metazones.ids, true)
             .filter_map(|(mz, zf)| {
+                if Some(&mz) == metazones.ids.get("Africa_Western") {
+                    // Unset "Western Africa Time" as the generic name, as in ICU4X that time zone never uses DST
+                    // and should just have a standard name (like other African zones).
+                    // TODO: upstream this to CLDR
+                    return None;
+                }
+
                 let v = zf.0.get("generic")?.as_str();
 
                 // The generic name will be used for zones that use Dst
@@ -534,6 +541,13 @@ impl DataProvider<TimezoneNamesStandardLongV1> for SourceDataProvider {
 
         let defaults = iter_mz_defaults(time_zone_names_resource, &metazones.ids, true)
             .filter_map(|(mz, zf)| {
+                if Some(&mz) == metazones.ids.get("Africa_Western") {
+                    // Set "Western Africa Time" (generic) as the standard name, as in ICU4X that time zone never uses DST
+                    // and should just have a standard name (like other African zones).
+                    // TODO: upstream this to CLDR
+                    return Some((mz, zf.0.get("generic")?.as_str()));
+                }
+
                 // Add the standard name if the generic name does not exist
                 let v = (!zf.0.contains_key("generic"))
                     .then(|| zf.0.get("standard"))
@@ -631,7 +645,10 @@ impl DataProvider<TimezoneNamesSpecificLongV1> for SourceDataProvider {
                     if same_as_specific_location {
                         // Deduplicate against specific location format
                         None
-                    } else if zv == TimeZoneVariant::Standard && !zf.0.contains_key("generic") {
+                    } else if zv == TimeZoneVariant::Standard
+                        && (!zf.0.contains_key("generic")
+                            || Some(&mz) == metazones.ids.get("Africa_Western"))
+                    {
                         // Deduplicate against GenericStandard
                         Some(((mz, zv), ""))
                     } else {
