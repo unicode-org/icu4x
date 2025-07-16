@@ -21,7 +21,7 @@ use icu_provider::prelude::*;
 use zerotrie::ZeroTrieSimpleAscii;
 use zerovec::maps::ZeroMapKV;
 use zerovec::ule::vartuple::VarTupleULE;
-use zerovec::ule::{AsULE, NichedOption};
+use zerovec::ule::{AsULE, NichedOption, RawBytesULE};
 use zerovec::{VarZeroVec, ZeroSlice, ZeroVec};
 
 pub use crate::zone::ule::TimeZoneVariantULE;
@@ -236,22 +236,42 @@ pub struct TimezonePeriods<'a> {
     /// Each value contains at least one period, which implicitly starts at the UNIX epoch.
     /// This is stored in the first tuple element.
     ///
-    /// If more periods are requried the second tuple element contains them, along with their
+    /// If more periods are required the second tuple element contains them, along with their
     /// starting timestamp. These entries are ordered chronologically.
     ///
-    /// The values ((VariantsOffsets, Option<MetazoneId)) are the offsets that the time zone
-    /// observes in that period, and optionally whether it is part of a metazone.
+    /// The values ((u8, Option<MetazoneId)) are an index into the offsets list for the offset
+    /// that the zone observes in that period, and optionally whether it is part of a metazone.
     pub list: VarZeroVec<
         'a,
         VarTupleULE<
-            (VariantOffsets, NichedOption<MetazoneId, 1>),
-            ZeroSlice<(
-                ZoneNameTimestamp,
-                VariantOffsets,
-                NichedOption<MetazoneId, 1>,
-            )>,
+            (u8, NichedOption<MetazoneId, 1>),
+            ZeroSlice<(Timestamp24, u8, NichedOption<MetazoneId, 1>)>,
         >,
     >,
+
+    /// The deduplicated list of offsets.
+    ///
+    /// There are currently 83 unique VariantOffsets, so storing the index as a u8 is plenty enough.
+    pub offsets: ZeroVec<'a, VariantOffsets>,
+}
+
+/// Encodes ZoneNameTimestamp in 3 bytes by dropping the unused metadata
+#[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Debug)]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize))]
+pub struct Timestamp24(pub ZoneNameTimestamp);
+
+impl AsULE for Timestamp24 {
+    type ULE = RawBytesULE<3>;
+    #[inline]
+    fn to_unaligned(self) -> Self::ULE {
+        let RawBytesULE([a, b, c, _]) = self.0.to_unaligned();
+        RawBytesULE([a, b, c])
+    }
+    #[inline]
+    fn from_unaligned(RawBytesULE([a, b, c]): Self::ULE) -> Self {
+        Self(ZoneNameTimestamp::from_unaligned(RawBytesULE([a, b, c, 0])))
+    }
 }
 
 #[cfg(feature = "serde")]
@@ -264,14 +284,12 @@ struct TimeZonePeriodsSerde<'a> {
     pub list: VarZeroVec<
         'a,
         VarTupleULE<
-            (VariantOffsets, NichedOption<MetazoneId, 1>),
-            ZeroSlice<(
-                ZoneNameTimestamp,
-                VariantOffsets,
-                NichedOption<MetazoneId, 1>,
-            )>,
+            (u8, NichedOption<MetazoneId, 1>),
+            ZeroSlice<(Timestamp24, u8, NichedOption<MetazoneId, 1>)>,
         >,
     >,
+
+    pub offsets: ZeroVec<'a, VariantOffsets>,
 }
 
 #[cfg(feature = "datagen")]
@@ -285,7 +303,24 @@ impl serde::Serialize for TimezonePeriods<'_> {
             let mut map = serializer.serialize_map(None)?;
             for (tz, idx) in self.index.iter() {
                 if let Some(value) = self.list.get(idx) {
-                    map.serialize_entry(&tz, value)?;
+                    map.serialize_entry(
+                        &tz,
+                        &[(
+                            ZoneNameTimestamp::far_in_past(),
+                            (
+                                self.offsets.get(value.sized.0 as usize),
+                                NichedOption::from_unaligned(value.sized.1).0,
+                            ),
+                        )]
+                        .into_iter()
+                        .chain(
+                            value
+                                .variable
+                                .iter()
+                                .map(|(t, os, mz)| (t.0, (self.offsets.get(os as usize), mz.0))),
+                        )
+                        .collect::<alloc::collections::BTreeMap<_, _>>(),
+                    )?;
                 }
             }
             map.end()
@@ -293,6 +328,7 @@ impl serde::Serialize for TimezonePeriods<'_> {
             TimeZonePeriodsSerde {
                 list: self.list.clone(),
                 index: self.index.clone(),
+                offsets: self.offsets.clone(),
             }
             .serialize(serializer)
         }
@@ -310,9 +346,16 @@ impl<'de> serde::Deserialize<'de> for TimezonePeriods<'de> {
             // TODO(#6752): Add human-readable deserialization for this data
             Err(D::Error::custom("not yet supported; see icu4x#6752"))
         } else {
-            let TimeZonePeriodsSerde { index, list } =
-                TimeZonePeriodsSerde::deserialize(deserializer)?;
-            Ok(Self { index, list })
+            let TimeZonePeriodsSerde {
+                index,
+                list,
+                offsets,
+            } = TimeZonePeriodsSerde::deserialize(deserializer)?;
+            Ok(Self {
+                index,
+                list,
+                offsets,
+            })
         }
     }
 }
@@ -331,17 +374,16 @@ impl TimezonePeriods<'_> {
             variable: ref rest,
         } = self.list.get(self.index.get(time_zone_id.as_str())?)?;
 
-        let i = match rest.binary_search_by(|(t, ..)| t.cmp(&timestamp)) {
+        let i = match rest.binary_search_by(|(t, ..)| t.cmp(&Timestamp24(timestamp))) {
             Err(0) => {
-                let (os, mz) =
-                    <(VariantOffsets, NichedOption<MetazoneId, 1>)>::from_unaligned(first);
-                return Some((os, mz.0));
+                let (os, mz) = <(u8, NichedOption<MetazoneId, 1>)>::from_unaligned(first);
+                return Some((self.offsets.get(os as usize)?, mz.0));
             }
             Err(i) => i - 1,
             Ok(i) => i,
         };
         let (_, os, mz) = rest.get(i)?;
-        Some((os, mz.0))
+        Some((self.offsets.get(os as usize)?, mz.0))
     }
 }
 

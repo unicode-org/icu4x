@@ -331,8 +331,8 @@ pub(crate) mod legacy {
         req: DataRequest<'_>,
     ) -> Result<DataResponse<icu_time::provider::TimezonePeriodsV1>, DataError> {
         use alloc::vec::Vec;
+        use icu_time::provider::Timestamp24;
         use icu_time::provider::TimezonePeriods;
-        use icu_time::zone::VariantOffsets;
         use zerotrie::ZeroTrieSimpleAscii;
         use zerovec::ule::vartuple::VarTuple;
         use zerovec::ule::AsULE;
@@ -362,17 +362,11 @@ pub(crate) mod legacy {
             };
 
             let rest = cursor
-                .map(move |(&t, mz)| {
-                    (
-                        ZoneNameTimestamp::from_unaligned(t),
-                        VariantOffsets::from_standard(Default::default()),
-                        mz,
-                    )
-                })
+                .map(move |(&t, mz)| (Timestamp24(ZoneNameTimestamp::from_unaligned(t)), 0, mz))
                 .collect::<ZeroVec<_>>();
 
             let rest = VarTuple {
-                sized: (VariantOffsets::from_standard(Default::default()), mz),
+                sized: (0, mz),
                 variable: rest.as_slice(),
             };
 
@@ -383,6 +377,7 @@ pub(crate) mod legacy {
             payload: DataPayload::from_owned(TimezonePeriods {
                 index,
                 list: list.into(),
+                offsets: Default::default(),
             }),
             metadata,
         })

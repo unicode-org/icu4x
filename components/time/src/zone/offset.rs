@@ -381,9 +381,9 @@ impl VariantOffsets {
 
 #[test]
 pub fn test_legacy_offsets_data() {
+    use crate::ZonedDateTime;
     use icu_locale_core::subtags::subtag;
     use icu_provider_blob::BlobDataProvider;
-    use crate::ZonedDateTime;
 
     let c = VariantOffsetsCalculator::try_new_with_buffer_provider(
         &BlobDataProvider::try_new_from_static_blob(
@@ -424,7 +424,7 @@ pub fn test_legacy_offsets_data() {
                 .compute_offsets_from_time_zone_and_name_timestamp(tz, t),
             VariantOffsetsCalculator::new()
                 .compute_offsets_from_time_zone_and_name_timestamp(tz, t),
-                "{timestamp:?}",
+            "{timestamp:?}",
         );
     }
 }

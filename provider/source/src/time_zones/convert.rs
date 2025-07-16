@@ -372,6 +372,22 @@ impl DataProvider<TimezonePeriodsV1> for SourceDataProvider {
             })
             .collect::<BTreeMap<_, _>>();
 
+        let mut offsets = BTreeSet::new();
+
+        for ps in values.values() {
+            for &(_, os, _) in ps {
+                offsets.insert(os);
+            }
+        }
+
+        let offset_index = offsets
+            .iter()
+            .enumerate()
+            .map(|(i, &v)| (v, i as u8))
+            .collect::<BTreeMap<_, _>>();
+
+        let offsets = offsets.into_iter().collect::<ZeroVec<_>>();
+
         let mut deduped = BTreeMap::<_, BTreeSet<_>>::new();
         for (tz, value) in values {
             deduped.entry(value).or_default().insert(tz);
@@ -395,11 +411,11 @@ impl DataProvider<TimezonePeriodsV1> for SourceDataProvider {
 
                     let rest = ps
                         .into_iter()
-                        .map(move |(t, os, mz)| (t, os, NichedOption(mz)))
+                        .map(|(t, os, mz)| (Timestamp24(t), offset_index[&os], NichedOption(mz)))
                         .collect::<ZeroVec<_>>();
 
                     zerovec::ule::encode_varule_to_box(&VarTuple {
-                        sized: (os, NichedOption(mz)),
+                        sized: (offset_index[&os], NichedOption(mz)),
                         variable: rest.as_slice(),
                     })
                 })
@@ -408,7 +424,11 @@ impl DataProvider<TimezonePeriodsV1> for SourceDataProvider {
 
         Ok(DataResponse {
             metadata: DataResponseMetadata::default().with_checksum(metazones.checksum),
-            payload: DataPayload::from_owned(TimezonePeriods { index, list }),
+            payload: DataPayload::from_owned(TimezonePeriods {
+                index,
+                list,
+                offsets,
+            }),
         })
     }
 }
