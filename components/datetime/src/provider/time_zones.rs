@@ -330,11 +330,61 @@ pub(crate) mod legacy {
         provider: &impl BufferProvider,
         req: DataRequest<'_>,
     ) -> Result<DataResponse<icu_time::provider::TimezonePeriodsV1>, DataError> {
+        use alloc::vec::Vec;
+        use icu_time::provider::TimezonePeriods;
+        use icu_time::zone::VariantOffsets;
+        use zerotrie::ZeroTrieSimpleAscii;
+        use zerovec::ule::vartuple::VarTuple;
+        use zerovec::ule::AsULE;
+        use zerovec::vecs::VarZeroVecOwned;
+
         let DataResponse::<TimezoneMetazonePeriodsV1> {
             payload: old_payload,
             metadata,
         } = provider.as_deserializing().load(req)?;
-        let payload: DataPayload<icu_time::provider::TimezonePeriodsV1> = todo!();
-        Ok(DataResponse { payload, metadata })
+
+        let index = ZeroTrieSimpleAscii::<Vec<u8>>::from_iter(
+            old_payload
+                .get()
+                .list
+                .iter0()
+                .enumerate()
+                .map(|(i, v)| (v.key0().as_str(), i)),
+        )
+        .convert_store();
+
+        let mut list = VarZeroVecOwned::new();
+
+        for ps in old_payload.get().list.iter0() {
+            let mut cursor = ps.into_iter1_copied();
+            let Some((_, mz)) = cursor.next() else {
+                continue; // unreachable
+            };
+
+            let rest = cursor
+                .map(move |(&t, mz)| {
+                    (
+                        ZoneNameTimestamp::from_unaligned(t),
+                        VariantOffsets::from_standard(Default::default()),
+                        mz,
+                    )
+                })
+                .collect::<ZeroVec<_>>();
+
+            let rest = VarTuple {
+                sized: (VariantOffsets::from_standard(Default::default()), mz),
+                variable: rest.as_slice(),
+            };
+
+            list.push(&rest);
+        }
+
+        Ok(DataResponse {
+            payload: DataPayload::from_owned(TimezonePeriods {
+                index,
+                list: list.into(),
+            }),
+            metadata,
+        })
     }
 }
