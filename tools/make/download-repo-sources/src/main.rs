@@ -8,7 +8,6 @@ use icu_locale_core::*;
 use icu_provider::DataError;
 use icu_provider_source::SourceDataProvider;
 use simple_logger::SimpleLogger;
-use std::collections::BTreeSet;
 use std::fs::{self, File};
 use std::io::{self, BufWriter, Cursor, Write};
 use std::path::PathBuf;
@@ -108,12 +107,7 @@ fn main() -> eyre::Result<()> {
         Ok(())
     }
 
-    fn extract_tar(
-        tar: PathBuf,
-        paths: BTreeSet<String>,
-        root: PathBuf,
-        success: &mut Vec<String>,
-    ) -> eyre::Result<()> {
+    fn extract_tar(tar: PathBuf, root: PathBuf, success: &mut Vec<String>) -> eyre::Result<()> {
         let mut tar = tar::Archive::new(flate2::read::GzDecoder::new(
             std::fs::File::open(&tar).expect("should just have been downloaded"),
         ));
@@ -123,19 +117,17 @@ fn main() -> eyre::Result<()> {
             let Some(spath) = e.path()?.to_str().map(ToString::to_string) else {
                 continue;
             };
-            if paths.contains(&spath) {
-                let path = root.join(&spath);
-                fs::create_dir_all(path.parent().unwrap())?;
-                io::copy(
-                    &mut e,
-                    &mut crlify::BufWriterWithLineEndingFix::new(
-                        File::create(&path)
-                            .with_context(|| format!("Failed to create file {:?}", &path))?,
-                    ),
-                )
-                .with_context(|| format!("Failed to write file {:?}", &spath))?;
-                success.push(spath);
-            }
+            let path = root.join(&spath);
+            fs::create_dir_all(path.parent().unwrap())?;
+            io::copy(
+                &mut e,
+                &mut crlify::BufWriterWithLineEndingFix::new(
+                    File::create(&path)
+                        .with_context(|| format!("Failed to create file {:?}", &path))?,
+                ),
+            )
+            .with_context(|| format!("Failed to write file {:?}", &spath))?;
+            success.push(spath);
         }
         Ok(())
     }
@@ -208,25 +200,67 @@ fn main() -> eyre::Result<()> {
             SourceDataProvider::TESTED_TZDB_TAG,
         ))
         .with_context(|| "Failed to download TZDB ZIP".to_owned())?,
-        TZDB_GLOB.iter().copied().map(String::from).collect(),
         out_root.join("tests/data/tzdb"),
         &mut Default::default(),
     )?;
 
-    let mut tzdb_data = TZDB_GLOB.iter().copied().collect::<BTreeSet<_>>();
+    for dep in [
+        "asctime.c",
+        "date.1",
+        "date.c",
+        "difftime.c",
+        "date.c",
+        "difftime.c",
+        "localtime.c",
+        "newctime.3",
+        "newstrftime.3",
+        "newtzset.3",
+        "private.h",
+        "strftime.c",
+        "time2posix.3",
+        "tz-art.html",
+        "tz-how-to.html",
+        "tz-link.html",
+        "tzfile.5",
+        "tzfile.h",
+        "tzselect.8",
+        "tzselect.ksh",
+        "workman.sh",
+        "zdump.8",
+        "zdump.c",
+        "zic.8",
+        "zic.c",
+    ] {
+        let _ = std::fs::File::create_new(out_root.join("tests/data/tzdb").join(dep));
+    }
 
-    let gen_files = ["rearguard.zi", "vanguard.zi"];
-    Command::new("make")
-        .arg("-C")
-        .arg(out_root.join("tests/data/tzdb"))
-        .args(gen_files)
-        .status()
-        .unwrap();
-    tzdb_data.extend(gen_files);
-    std::fs::remove_file(out_root.join("tests/data/tzdb/Makefile")).unwrap();
-    std::fs::remove_file(out_root.join("tests/data/tzdb/ziguard.awk")).unwrap();
-    tzdb_data.remove("Makefile");
-    tzdb_data.remove("ziguard.awk");
+    for form in ["rearguard", "vanguard"] {
+        let target = out_root
+            .join("tests/data/tzdb")
+            .join(form)
+            .with_extension("zi");
+        Command::new("make")
+            .arg("-C")
+            .arg(out_root.join("tests/data/tzdb"))
+            .arg("-e")
+            .env("DATAFORM", form)
+            .args(["tzdata.zi"])
+            .status()
+            .unwrap();
+        std::fs::remove_file(&target).unwrap();
+        std::fs::rename(out_root.join("tests/data/tzdb/tzdata.zi"), target).unwrap();
+    }
+    for path in std::fs::read_dir(out_root.join("tests/data/tzdb")).unwrap() {
+        let path = path.unwrap().path();
+        if !TZDB_GLOB.contains(
+            &&*path
+                .strip_prefix(out_root.join("tests/data/tzdb"))
+                .unwrap()
+                .to_string_lossy(),
+        ) {
+            std::fs::remove_file(path).unwrap();
+        }
+    }
 
     let cldr_data = cldr_data
         .iter()
@@ -252,7 +286,7 @@ fn main() -> eyre::Result<()> {
         })
         .collect::<Vec<_>>()
         .join(",\n                        ");
-    let tzdb_data: String = tzdb_data
+    let tzdb_data: String = TZDB_GLOB
         .iter()
         .map(|path| {
             let path = path.replace('\\', "/");
