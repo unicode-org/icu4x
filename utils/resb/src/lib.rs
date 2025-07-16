@@ -27,6 +27,8 @@
 )]
 #![warn(missing_docs)]
 
+extern crate alloc;
+
 pub mod binary;
 
 #[cfg(feature = "text")]
