@@ -231,9 +231,16 @@ pub type MetazoneId = core::num::NonZeroU8;
 #[cfg_attr(feature = "datagen", derive(databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_time::provider))]
 pub struct TimezonePeriods<'a> {
-    /// Index into `list`
+    /// Index of `TimeZone`s into `list`.
     pub index: ZeroTrieSimpleAscii<ZeroVec<'a, u8>>,
-    /// Values
+    /// Each value contains at least one period, which implicitly starts at the UNIX epoch.
+    /// This is stored in the first tuple element.
+    ///
+    /// If more periods are requried the second tuple element contains them, along with their
+    /// starting timestamp. These entries are ordered chronologically.
+    ///
+    /// The values ((VariantsOffsets, Option<MetazoneId)) are the offsets that the time zone
+    /// observes in that period, and optionally whether it is part of a metazone.
     pub list: VarZeroVec<
         'a,
         VarTupleULE<
@@ -247,7 +254,27 @@ pub struct TimezonePeriods<'a> {
     >,
 }
 
-#[cfg(all(feature = "alloc", feature = "serde"))]
+#[cfg(feature = "serde")]
+#[derive(serde::Deserialize)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize))]
+struct TimeZonePeriodsSerde<'a> {
+    #[serde(borrow)]
+    pub index: ZeroTrieSimpleAscii<ZeroVec<'a, u8>>,
+    #[serde(borrow)]
+    pub list: VarZeroVec<
+        'a,
+        VarTupleULE<
+            (VariantOffsets, NichedOption<MetazoneId, 1>),
+            ZeroSlice<(
+                ZoneNameTimestamp,
+                VariantOffsets,
+                NichedOption<MetazoneId, 1>,
+            )>,
+        >,
+    >,
+}
+
+#[cfg(feature = "datagen")]
 impl serde::Serialize for TimezonePeriods<'_> {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
@@ -263,22 +290,7 @@ impl serde::Serialize for TimezonePeriods<'_> {
             }
             map.end()
         } else {
-            #[derive(serde::Serialize)]
-            pub struct Raw<'a> {
-                pub index: ZeroTrieSimpleAscii<ZeroVec<'a, u8>>,
-                pub list: VarZeroVec<
-                    'a,
-                    VarTupleULE<
-                        (VariantOffsets, NichedOption<MetazoneId, 1>),
-                        ZeroSlice<(
-                            ZoneNameTimestamp,
-                            VariantOffsets,
-                            NichedOption<MetazoneId, 1>,
-                        )>,
-                    >,
-                >,
-            }
-            Raw {
+            TimeZonePeriodsSerde {
                 list: self.list.clone(),
                 index: self.index.clone(),
             }
@@ -295,26 +307,11 @@ impl<'de> serde::Deserialize<'de> for TimezonePeriods<'de> {
     {
         use serde::de::Error;
         if deserializer.is_human_readable() {
-            Err(D::Error::custom("nah"))
+            // TODO(#6752): Add human-readable deserialization for this data
+            Err(D::Error::custom("not yet supported; see icu4x#6752"))
         } else {
-            #[derive(serde::Deserialize)]
-            pub struct Raw<'a> {
-                #[cfg_attr(feature = "serde", serde(borrow))]
-                pub index: ZeroTrieSimpleAscii<ZeroVec<'a, u8>>,
-                #[cfg_attr(feature = "serde", serde(borrow))]
-                pub list: VarZeroVec<
-                    'a,
-                    VarTupleULE<
-                        (VariantOffsets, NichedOption<MetazoneId, 1>),
-                        ZeroSlice<(
-                            ZoneNameTimestamp,
-                            VariantOffsets,
-                            NichedOption<MetazoneId, 1>,
-                        )>,
-                    >,
-                >,
-            }
-            let Raw { index, list } = Raw::deserialize(deserializer)?;
+            let TimeZonePeriodsSerde { index, list } =
+                TimeZonePeriodsSerde::deserialize(deserializer)?;
             Ok(Self { index, list })
         }
     }
