@@ -212,8 +212,8 @@ const TZDB_GLOB: &[&str] = &[
     "etcetera",
     "europe",
     "factory",
+    "Makefile",
     "northamerica",
-    "rearguard.zi",
     "southamerica",
-    "vanguard.zi",
+    "ziguard.awk",
 ];
