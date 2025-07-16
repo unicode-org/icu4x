@@ -15,6 +15,8 @@
 //!
 //! Read more about data providers: [`icu_provider`]
 
+#[cfg(feature = "serde")]
+pub(crate) mod compat;
 pub mod fields;
 pub mod neo;
 pub(crate) mod packed_pattern;

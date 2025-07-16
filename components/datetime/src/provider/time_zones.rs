@@ -287,6 +287,7 @@ icu_provider::data_struct!(
 
 pub(crate) mod legacy {
     use super::*;
+    use icu_time::provider::TimezonePeriodsV1;
     use icu_time::zone::ZoneNameTimestamp;
     use zerovec::ule::NichedOption;
     use zerovec::ZeroMap2d;
@@ -323,4 +324,17 @@ pub(crate) mod legacy {
         MetazonePeriod<'_>,
         #[cfg(feature = "datagen")]
     );
+
+    #[inline(never)] // keep this compat code self-contained and not duplicated
+    pub(crate) fn metazone_timezone_compat(
+        provider: &impl BufferProvider,
+        req: DataRequest<'_>,
+    ) -> Result<DataResponse<TimezonePeriodsV1>, DataError> {
+        let DataResponse::<TimezoneMetazonePeriodsV1> {
+            payload: old_payload,
+            metadata,
+        } = provider.as_deserializing().load(req)?;
+        let payload: DataPayload<TimezonePeriodsV1> = todo!();
+        Ok(DataResponse { payload, metadata })
+    }
 }
