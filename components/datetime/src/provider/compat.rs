@@ -8,7 +8,7 @@ use icu_provider::prelude::*;
 use icu_time::provider::TimezonePeriodsV1;
 
 /// Data provider for compatibility with old 2.x buffer providers
-pub struct CompatProvider<P0, P1>(pub(crate) P0, pub(crate) P1);
+pub(crate) struct CompatProvider<P0, P1>(pub(crate) P0, pub(crate) P1);
 
 impl<M, P0, P1> DataProvider<M> for CompatProvider<P0, P1>
 where
