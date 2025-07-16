@@ -387,4 +387,55 @@ pub(crate) mod legacy {
             metadata,
         })
     }
+
+    #[test]
+    fn test_metazone_timezone_compat() {
+        use icu_locale::subtags::subtag;
+        use icu_time::ZonedDateTime;
+
+        let converted = metazone_timezone_compat(
+            &icu_provider_blob::BlobDataProvider::try_new_from_static_blob(
+                // icu4x-datagen --markers TimezoneMetazonePeriodsV1 --format blob
+                include_bytes!("../../tests/data/metazone_periods_old.postcard"),
+            )
+            .unwrap(),
+            Default::default(),
+        )
+        .unwrap()
+        .payload;
+
+        let tz = TimeZone(subtag!("aqcas"));
+        for timestamp in [
+            "1970-01-01 00:00Z",
+            "2009-10-17 18:00Z",
+            "2010-03-04 15:00Z",
+            "2011-10-27 18:00Z",
+            "2012-02-21 17:00Z",
+            "2016-10-21 16:00Z",
+            "2018-03-10 17:00Z",
+            "2018-10-06 20:00Z",
+            "2019-03-16 16:00Z",
+            "2019-10-03 19:00Z",
+            "2020-03-07 16:00Z",
+            "2020-10-03 16:00Z",
+            "2021-03-13 13:00Z",
+            "2021-10-02 16:00Z",
+            "2022-03-12 13:00Z",
+            "2022-10-01 16:00Z",
+            "2023-03-08 16:00Z",
+        ] {
+            let t = ZoneNameTimestamp::from_zoned_date_time_iso(
+                ZonedDateTime::try_offset_only_from_str(timestamp, icu_calendar::Iso).unwrap(),
+            );
+
+            assert_eq!(
+                converted.get().get(tz, t).unwrap().1,
+                icu_time::provider::Baked::SINGLETON_TIMEZONE_PERIODS_V1
+                    .get(tz, t)
+                    .unwrap()
+                    .1,
+                "{timestamp:?}",
+            );
+        }
+    }
 }

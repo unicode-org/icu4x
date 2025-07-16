@@ -39,6 +39,7 @@ icu_time_data = { workspace = true, optional = true }
 [dev-dependencies]
 icu = { path = "../../components/icu", default-features = false }
 icu_datetime = { path = "../../components/datetime", features = ["compiled_data"] }
+icu_provider_blob = { path = "../../provider/blob" }
 
 [features]
 default = ["compiled_data", "ixdtf"]

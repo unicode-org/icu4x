@@ -1802,6 +1802,7 @@ dependencies = [
  "icu_datetime",
  "icu_locale_core",
  "icu_provider",
+ "icu_provider_blob",
  "icu_time_data",
  "ixdtf",
  "serde",
