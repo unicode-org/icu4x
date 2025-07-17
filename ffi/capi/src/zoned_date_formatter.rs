@@ -599,9 +599,6 @@ pub mod ffi {
                     })
                 ).zone_name_timestamp());
             }
-            if let Some(variant) = zone.variant {
-                input.set_time_zone_variant(variant);
-            }
             let _infallible = self
                 .0
                 .format_unchecked(input)
@@ -1163,9 +1160,6 @@ pub mod ffi {
                         time: icu_time::Time::noon(),
                     })
                 ).zone_name_timestamp());
-            }
-            if let Some(variant) = zone.variant {
-                input.set_time_zone_variant(variant);
             }
             let _infallible = self
                 .0

@@ -51,8 +51,10 @@ public:
 
   /**
    * Creates a time zone info from parts.
+   *
+   * `variant` is ignored.
    */
-  inline static std::unique_ptr<icu4x::TimeZoneInfo> from_parts(const icu4x::TimeZone& id, const icu4x::UtcOffset* offset, std::optional<icu4x::TimeZoneVariant> variant);
+  inline static std::unique_ptr<icu4x::TimeZoneInfo> from_parts(const icu4x::TimeZone& id, const icu4x::UtcOffset* offset, std::optional<icu4x::TimeZoneVariant> _variant);
 
   /**
    * See the [Rust documentation for `id`](https://docs.rs/icu/2.0.0/icu/time/struct.TimeZoneInfo.html#method.id) for more information.
@@ -99,24 +101,30 @@ public:
   inline std::optional<icu4x::IsoDateTime> zone_name_date_time() const;
 
   /**
+   * DEPRECATED
+   *
+   * Just clones
+   *
    * See the [Rust documentation for `with_variant`](https://docs.rs/icu/2.0.0/icu/time/struct.TimeZoneInfo.html#method.with_variant) for more information.
    */
-  inline std::unique_ptr<icu4x::TimeZoneInfo> with_variant(icu4x::TimeZoneVariant time_variant) const;
+  inline std::unique_ptr<icu4x::TimeZoneInfo> with_variant(icu4x::TimeZoneVariant _time_variant) const;
 
   inline std::unique_ptr<icu4x::UtcOffset> offset() const;
 
   /**
-   * Infers the zone variant.
+   * DEPRECATED
    *
-   * Requires the offset and local time to be set.
+   * No-op
    *
    * See the [Rust documentation for `infer_variant`](https://docs.rs/icu/2.0.0/icu/time/struct.TimeZoneInfo.html#method.infer_variant) for more information.
    *
    * Additional information: [1](https://docs.rs/icu/2.0.0/icu/time/zone/enum.TimeZoneVariant.html)
    */
-  inline std::optional<std::monostate> infer_variant(const icu4x::VariantOffsetsCalculator& offset_calculator);
+  inline std::optional<std::monostate> infer_variant(const icu4x::VariantOffsetsCalculator& _offset_calculator);
 
   /**
+   * DEPRECATED
+   *
    * See the [Rust documentation for `variant`](https://docs.rs/icu/2.0.0/icu/time/struct.TimeZoneInfo.html#method.variant) for more information.
    */
   inline std::optional<icu4x::TimeZoneVariant> variant() const;

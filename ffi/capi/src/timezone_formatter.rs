@@ -486,9 +486,6 @@ pub mod ffi {
             else {
                 input.set_time_zone_name_timestamp(icu_time::zone::ZoneNameTimestamp::far_in_future())
             }
-            if let Some(variant) = zone.variant {
-                input.set_time_zone_variant(variant);
-            }
             let _infallible = self
                 .0
                 .format_unchecked(input)

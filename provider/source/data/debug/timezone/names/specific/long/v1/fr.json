@@ -9,20 +9,6 @@
     ],
     [
       [
-        6,
-        "Standard"
-      ],
-      "heure normale d’Afrique de l’Ouest"
-    ],
-    [
-      [
-        6,
-        "Daylight"
-      ],
-      "heure d’été d’Afrique de l’Ouest"
-    ],
-    [
-      [
         7,
         "Standard"
       ],
@@ -41,13 +27,6 @@
         "Standard"
       ],
       "heure normale de l’Amazonie"
-    ],
-    [
-      [
-        8,
-        "Daylight"
-      ],
-      "heure d’été de l’Amazonie"
     ],
     [
       [
@@ -440,13 +419,6 @@
         "Standard"
       ],
       "heure normale d’Hawaï - Aléoutiennes"
-    ],
-    [
-      [
-        63,
-        "Daylight"
-      ],
-      "heure d’été d’Hawaï - Aléoutiennes"
     ],
     [
       [
@@ -848,6 +820,7 @@
     3,
     4,
     5,
+    6,
     26,
     27,
     29,

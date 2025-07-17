@@ -283,7 +283,7 @@ pub enum MissingInputFieldKind {
     TimeZoneId,
     /// Time zone name timestamp
     TimeZoneNameTimestamp,
-    /// Time zone variant
+    /// Unused as of 2.1.0
     TimeZoneVariant,
 }
 

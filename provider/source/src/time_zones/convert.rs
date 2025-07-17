@@ -7,6 +7,7 @@ use crate::cldr_serde;
 use crate::SourceDataProvider;
 use cldr_serde::time_zones::time_zone_names::*;
 use core::cmp::Ordering;
+use core::num::NonZeroU8;
 use icu::datetime::provider::time_zones::*;
 use icu::locale::LanguageIdentifier;
 use icu::time::provider::*;
@@ -422,12 +423,26 @@ impl DataProvider<TimezonePeriodsV1> for SourceDataProvider {
                 .collect::<Vec<_>>(),
         );
 
+        let goldens = (0..metazones.goldens.keys().max().unwrap().get())
+            .map(|mz| {
+                let Some(mz) = NonZeroU8::new(mz) else {
+                    return u16::MAX;
+                };
+                let Some(&golden) = metazones.goldens.get(&mz) else {
+                    return u16::MAX;
+                };
+                let golden_idx = index.get(golden.as_str()).unwrap();
+                golden_idx as u16
+            })
+            .collect();
+
         Ok(DataResponse {
             metadata: DataResponseMetadata::default().with_checksum(metazones.checksum),
             payload: DataPayload::from_owned(TimezonePeriods {
                 index,
                 list,
                 offsets,
+                goldens,
             }),
         })
     }
@@ -457,9 +472,16 @@ impl DataProvider<TimezoneNamesGenericLongV1> for SourceDataProvider {
 
         let defaults = iter_mz_defaults(time_zone_names_resource, &metazones.ids, true)
             .filter_map(|(mz, zf)| {
+                if Some(&mz) == metazones.ids.get("Africa_Western") {
+                    // Unset "Western Africa Time" as the generic name, as in ICU4X that time zone never uses DST
+                    // and should just have a standard name (like other African zones).
+                    // TODO: upstream this to CLDR
+                    return None;
+                }
+
                 let v = zf.0.get("generic")?.as_str();
 
-                // The generic name will be used for all zones using this metazone
+                // The generic name will be used for zones that use Dst
                 let tzs = metazones.reverse.get(&(mz, MzMembership::Any))?;
 
                 let same_as_location = tzs.iter().all(|tz| {
@@ -519,6 +541,13 @@ impl DataProvider<TimezoneNamesStandardLongV1> for SourceDataProvider {
 
         let defaults = iter_mz_defaults(time_zone_names_resource, &metazones.ids, true)
             .filter_map(|(mz, zf)| {
+                if Some(&mz) == metazones.ids.get("Africa_Western") {
+                    // Set "Western Africa Time" (generic) as the standard name, as in ICU4X that time zone never uses DST
+                    // and should just have a standard name (like other African zones).
+                    // TODO: upstream this to CLDR
+                    return Some((mz, zf.0.get("generic")?.as_str()));
+                }
+
                 // Add the standard name if the generic name does not exist
                 let v = (!zf.0.contains_key("generic"))
                     .then(|| zf.0.get("standard"))
@@ -591,7 +620,7 @@ impl DataProvider<TimezoneNamesSpecificLongV1> for SourceDataProvider {
                         mz,
                         if zv == TimeZoneVariant::Daylight {
                             // The daylight name will only be used by zones that use DST
-                            MzMembership::Daylight
+                            MzMembership::StandardAndDaylight
                         } else {
                             // The standard name will be used by all zones
                             MzMembership::Any
@@ -616,7 +645,10 @@ impl DataProvider<TimezoneNamesSpecificLongV1> for SourceDataProvider {
                     if same_as_specific_location {
                         // Deduplicate against specific location format
                         None
-                    } else if zv == TimeZoneVariant::Standard && !zf.0.contains_key("generic") {
+                    } else if zv == TimeZoneVariant::Standard
+                        && (!zf.0.contains_key("generic")
+                            || Some(&mz) == metazones.ids.get("Africa_Western"))
+                    {
                         // Deduplicate against GenericStandard
                         Some(((mz, zv), ""))
                     } else {

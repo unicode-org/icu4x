@@ -9,20 +9,6 @@
     ],
     [
       [
-        6,
-        "Standard"
-      ],
-      "West Africa Standard Time"
-    ],
-    [
-      [
-        6,
-        "Daylight"
-      ],
-      "West Africa Summer Time"
-    ],
-    [
-      [
         7,
         "Standard"
       ],
@@ -41,13 +27,6 @@
         "Standard"
       ],
       "Amazon Standard Time"
-    ],
-    [
-      [
-        8,
-        "Daylight"
-      ],
-      "Amazon Summer Time"
     ],
     [
       [
@@ -331,13 +310,6 @@
     ],
     [
       [
-        63,
-        "Daylight"
-      ],
-      "Hawaii-Aleutian Daylight Time"
-    ],
-    [
-      [
         65,
         "Daylight"
       ],
@@ -519,6 +491,7 @@
     3,
     4,
     5,
+    6,
     26,
     27,
     29,

@@ -233,13 +233,13 @@ pub type MetazoneId = core::num::NonZeroU8;
 pub struct TimezonePeriods<'a> {
     /// Index of `TimeZone`s into `list`.
     pub index: ZeroTrieSimpleAscii<ZeroVec<'a, u8>>,
-    /// Each value contains at least one period, which implicitly starts at the UNIX epoch.
+    /// Each entry contains at least one period, which implicitly starts at the UNIX epoch.
     /// This is stored in the first tuple element.
     ///
     /// If more periods are required the second tuple element contains them, along with their
     /// starting timestamp. These entries are ordered chronologically.
     ///
-    /// The values ((u8, Option<MetazoneId)) are an index into the offsets list for the offset
+    /// The values (`(u8, Option<MetazoneId>)`) are an index into the `offsets` list for the offset
     /// that the zone observes in that period, and optionally whether it is part of a metazone.
     pub list: VarZeroVec<
         'a,
@@ -253,6 +253,12 @@ pub struct TimezonePeriods<'a> {
     ///
     /// There are currently 83 unique VariantOffsets, so storing the index as a u8 is plenty enough.
     pub offsets: ZeroVec<'a, VariantOffsets>,
+
+    /// Map from `MetazoneId` (the index) to the periods for the golden zone for that metazone.
+    ///
+    /// The values are indices into `list`, which unfortunately need to be u16 as they currently
+    /// go up to 284.
+    pub goldens: ZeroVec<'a, u16>,
 }
 
 /// Encodes ZoneNameTimestamp in 3 bytes by dropping the unused metadata
@@ -290,6 +296,7 @@ struct TimeZonePeriodsSerde<'a> {
     >,
 
     pub offsets: ZeroVec<'a, VariantOffsets>,
+    pub goldens: ZeroVec<'a, u16>,
 }
 
 #[cfg(feature = "datagen")]
@@ -323,12 +330,24 @@ impl serde::Serialize for TimezonePeriods<'_> {
                     )?;
                 }
             }
+            map.serialize_entry(
+                "__goldens",
+                &self
+                    .index
+                    .iter()
+                    .filter_map(|(tz, idx)| {
+                        let mz = self.goldens.iter().position(|v| idx as u16 == v)?;
+                        Some((mz, tz))
+                    })
+                    .collect::<alloc::collections::BTreeMap<_, _>>(),
+            )?;
             map.end()
         } else {
             TimeZonePeriodsSerde {
                 list: self.list.clone(),
                 index: self.index.clone(),
                 offsets: self.offsets.clone(),
+                goldens: self.goldens.clone(),
             }
             .serialize(serializer)
         }
@@ -350,11 +369,13 @@ impl<'de> serde::Deserialize<'de> for TimezonePeriods<'de> {
                 index,
                 list,
                 offsets,
+                goldens,
             } = TimeZonePeriodsSerde::deserialize(deserializer)?;
             Ok(Self {
                 index,
                 list,
                 offsets,
+                goldens,
             })
         }
     }
@@ -362,28 +383,65 @@ impl<'de> serde::Deserialize<'de> for TimezonePeriods<'de> {
 
 impl TimezonePeriods<'_> {
     /// Gets the information for a time zone at at timestamp
+    ///
+    /// If the timezone is in a metazone, returns the metazone ID as well as the offsets
+    /// that the metazone's golden zone currently uses.
     pub fn get(
         &self,
         time_zone_id: TimeZone,
         timestamp: ZoneNameTimestamp,
-    ) -> Option<(VariantOffsets, Option<MetazoneId>)> {
+    ) -> Option<(VariantOffsets, Option<(MetazoneId, VariantOffsets)>)> {
+        let (os_idx, NichedOption(mz)) =
+            self.find_period(self.index.get(time_zone_id.as_str())?, timestamp)?;
+
+        let os = self.offsets.get(os_idx as usize)?;
+
+        let Some(mz) = mz else {
+            return Some((os, None));
+        };
+
+        let (golden_os_idx, _) = self
+            .goldens
+            .get(mz.get() as usize)
+            .and_then(|i| self.find_period(i as usize, timestamp))
+            // This happens in case we construct this struct from the legacy seralized struct.
+            // In that case, each zone will appear as its metazone's golden.
+            .unwrap_or((os_idx, Default::default()));
+
+        if golden_os_idx == os_idx {
+            // This is the hot path as most zones in a metazone agree (and self.offsets is deduplicated,
+            // the the offsets are the same iff the indices are).
+            Some((os, Some((mz, os))))
+        } else {
+            let golden_os = self.offsets.get(golden_os_idx as usize)?;
+            debug_assert_eq!(
+                os.standard, golden_os.standard,
+                "{time_zone_id:?}, {os:?}, {golden_os:?}"
+            );
+            Some((os, Some((mz, golden_os))))
+        }
+    }
+
+    // Given an index in `list`, returns the values at the `timestamp`
+    fn find_period(
+        &self,
+        idx: usize,
+        timestamp: ZoneNameTimestamp,
+    ) -> Option<(u8, NichedOption<MetazoneId, 1>)> {
         use zerovec::ule::vartuple::VarTupleULE;
         use zerovec::ule::AsULE;
         let &VarTupleULE {
             sized: first,
             variable: ref rest,
-        } = self.list.get(self.index.get(time_zone_id.as_str())?)?;
+        } = self.list.get(idx)?;
 
         let i = match rest.binary_search_by(|(t, ..)| t.cmp(&Timestamp24(timestamp))) {
-            Err(0) => {
-                let (os, mz) = <(u8, NichedOption<MetazoneId, 1>)>::from_unaligned(first);
-                return Some((self.offsets.get(os as usize)?, mz.0));
-            }
+            Err(0) => return Some(<(u8, NichedOption<MetazoneId, 1>)>::from_unaligned(first)),
             Err(i) => i - 1,
             Ok(i) => i,
         };
         let (_, os, mz) = rest.get(i)?;
-        Some((self.offsets.get(os as usize)?, mz.0))
+        Some((os, mz))
     }
 }
 

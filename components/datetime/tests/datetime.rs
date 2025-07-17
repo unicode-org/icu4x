@@ -34,8 +34,6 @@ use patterns::{
 };
 use writeable::{assert_try_writeable_eq, assert_writeable_eq};
 
-mod mock;
-
 fn test_fixture(fixture_name: &str, file: &str) {
     for fx in serde_json::from_str::<fixtures::Fixture>(file)
         .expect("Unable to get fixture.")
@@ -283,7 +281,9 @@ fn test_fixture_with_time_zones(fixture_name: &str, file: &str) {
             }
         };
 
-        let zoned_datetime = mock::parse_zoned_gregorian_from_str(&fx.input.value);
+        let zoned_datetime =
+            ZonedDateTime::try_lenient_from_str(&fx.input.value, Gregorian, IanaParser::new())
+                .expect(&fx.input.value);
 
         let description = match fx.description {
             Some(description) => {
@@ -360,7 +360,9 @@ fn test_time_zone_format_configs() {
             .0
     {
         let prefs: DateTimeFormatterPreferences = test.locale.parse::<Locale>().unwrap().into();
-        let zoned_datetime = mock::parse_zoned_gregorian_from_str(&test.datetime);
+        let zoned_datetime =
+            ZonedDateTime::try_lenient_from_str(&test.datetime, Gregorian, IanaParser::new())
+                .expect(&test.datetime);
         for (pattern_input, expect) in &test.expectations {
             let Some(skeleton) = patterns::time_zones::pattern_to_semantic_skeleton(pattern_input)
             else {
@@ -422,7 +424,9 @@ fn test_time_zone_patterns() {
             .0
     {
         let prefs: DateTimeFormatterPreferences = test.locale.parse::<Locale>().unwrap().into();
-        let zoned_datetime = mock::parse_zoned_gregorian_from_str(&test.datetime);
+        let zoned_datetime =
+            ZonedDateTime::try_lenient_from_str(&test.datetime, Gregorian, IanaParser::new())
+                .expect(&test.datetime);
 
         for (pattern_input, expect) in &test.expectations {
             let parsed_pattern = DateTimePattern::try_from_pattern_str(pattern_input).unwrap();

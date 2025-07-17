@@ -33,6 +33,8 @@ final class TimeZoneInfo implements ffi.Finalizable {
   }
 
   /// Creates a time zone info from parts.
+  ///
+  /// `variant` is ignored.
   factory TimeZoneInfo(TimeZone id, {UtcOffset? offset, TimeZoneVariant? variant}) {
     final result = _icu4x_TimeZoneInfo_from_parts_mv1(id._ffi, offset?._ffi ?? ffi.Pointer.fromAddress(0), variant != null ? _ResultInt32Void.ok(variant.index) : _ResultInt32Void.err());
     return TimeZoneInfo._fromFfi(result, []);
@@ -89,6 +91,10 @@ final class TimeZoneInfo implements ffi.Finalizable {
     return IsoDateTime._fromFfi(result.union.ok);
   }
 
+  /// DEPRECATED
+  ///
+  /// Just clones
+  ///
   /// See the [Rust documentation for `with_variant`](https://docs.rs/icu/2.0.0/icu/time/struct.TimeZoneInfo.html#method.with_variant) for more information.
   TimeZoneInfo withVariant(TimeZoneVariant timeVariant) {
     final result = _icu4x_TimeZoneInfo_with_variant_mv1(_ffi, timeVariant.index);
@@ -100,9 +106,9 @@ final class TimeZoneInfo implements ffi.Finalizable {
     return result.address == 0 ? null : UtcOffset._fromFfi(result, []);
   }
 
-  /// Infers the zone variant.
+  /// DEPRECATED
   ///
-  /// Requires the offset and local time to be set.
+  /// No-op
   ///
   /// See the [Rust documentation for `infer_variant`](https://docs.rs/icu/2.0.0/icu/time/struct.TimeZoneInfo.html#method.infer_variant) for more information.
   ///
@@ -112,6 +118,8 @@ final class TimeZoneInfo implements ffi.Finalizable {
     return result.isOk;
   }
 
+  /// DEPRECATED
+  ///
   /// See the [Rust documentation for `variant`](https://docs.rs/icu/2.0.0/icu/time/struct.TimeZoneInfo.html#method.variant) for more information.
   TimeZoneVariant? variant() {
     final result = _icu4x_TimeZoneInfo_variant_mv1(_ffi);

@@ -601,9 +601,6 @@ pub mod ffi {
                     })
                 ).zone_name_timestamp());
             }
-            if let Some(variant) = zone.variant {
-                input.set_time_zone_variant(variant);
-            }
             let _infallible = self
                 .0
                 .format_unchecked(input)
@@ -1167,9 +1164,6 @@ pub mod ffi {
                         time: time.0,
                     })
                 ).zone_name_timestamp());
-            }
-            if let Some(variant) = zone.variant {
-                input.set_time_zone_variant(variant);
             }
             let _infallible = self
                 .0

@@ -9,20 +9,6 @@
     ],
     [
       [
-        6,
-        "Standard"
-      ],
-      "Batı Afrika Standart Saati"
-    ],
-    [
-      [
-        6,
-        "Daylight"
-      ],
-      "Batı Afrika Yaz Saati"
-    ],
-    [
-      [
         7,
         "Standard"
       ],
@@ -41,13 +27,6 @@
         "Standard"
       ],
       "Amazon Standart Saati"
-    ],
-    [
-      [
-        8,
-        "Daylight"
-      ],
-      "Amazon Yaz Saati"
     ],
     [
       [
@@ -324,13 +303,6 @@
     ],
     [
       [
-        63,
-        "Daylight"
-      ],
-      "Hawaii-Aleut Yaz Saati"
-    ],
-    [
-      [
         73,
         "Standard"
       ],
@@ -470,6 +442,7 @@
     3,
     4,
     5,
+    6,
     26,
     27,
     29,

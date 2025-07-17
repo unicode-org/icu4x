@@ -123,9 +123,6 @@ pub mod ffi {
     }
 
     /// An error when formatting a datetime.
-    ///
-    /// Currently the only reachable error here is a missing time zone variant. If you encounter
-    /// that error, you need to call `with_variant` or `infer_variant` on your `TimeZoneInfo`.
     #[cfg(feature = "datetime")]
     #[derive(Debug, PartialEq, Eq)]
     #[repr(C)]
@@ -137,6 +134,7 @@ pub mod ffi {
     #[non_exhaustive]
     pub enum DateTimeWriteError {
         Unknown = 0x00,
+        /// Unused
         MissingTimeZoneVariant = 0x01,
     }
 }

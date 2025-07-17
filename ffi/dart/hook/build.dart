@@ -32,11 +32,21 @@ void main(List<String> args) async {
       ],
     );
 
-    // Rebuild if bindings change
+    // Rebuild if anything changes, Cargo handles caching
     output.addDependencies(
       Directory(
-        '${input.packageRoot.path}/lib/src',
-      ).listSync().map((e) => Uri.file(e.path)),
+        '${input.packageRoot.path}/..',
+      ).listSync(recursive: true).map((e) => Uri.file(e.path)),
+    );
+    output.addDependencies(
+      Directory(
+        '${input.packageRoot.path}/../../components',
+      ).listSync(recursive: true).map((e) => Uri.file(e.path)),
+    );
+    output.addDependencies(
+      Directory(
+        '${input.packageRoot.path}/../../utils',
+      ).listSync(recursive: true).map((e) => Uri.file(e.path)),
     );
 
     output.assets.code.add(

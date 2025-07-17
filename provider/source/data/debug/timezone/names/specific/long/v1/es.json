@@ -9,20 +9,6 @@
     ],
     [
       [
-        6,
-        "Standard"
-      ],
-      "hora estándar de África occidental"
-    ],
-    [
-      [
-        6,
-        "Daylight"
-      ],
-      "hora de verano de África occidental"
-    ],
-    [
-      [
         7,
         "Standard"
       ],
@@ -41,13 +27,6 @@
         "Standard"
       ],
       "hora estándar del Amazonas"
-    ],
-    [
-      [
-        8,
-        "Daylight"
-      ],
-      "hora de verano del Amazonas"
     ],
     [
       [
@@ -440,13 +419,6 @@
         "Standard"
       ],
       "hora estándar de Hawái-Aleutianas"
-    ],
-    [
-      [
-        63,
-        "Daylight"
-      ],
-      "hora de verano de Hawái-Aleutianas"
     ],
     [
       [
@@ -848,6 +820,7 @@
     3,
     4,
     5,
+    6,
     26,
     27,
     29,
