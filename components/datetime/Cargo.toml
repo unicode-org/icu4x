@@ -129,3 +129,6 @@ required-features = ["compiled_data"]
 [[test]]
 name = "skeleton_serialization"
 required-features = ["experimental"]
+
+[package.metadata.cargo-semver-checks.lints]
+workspace = true

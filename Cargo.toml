@@ -331,3 +331,4 @@ debug = true
 
 [workspace.metadata.cargo-semver-checks.lints]
 type_method_marked_deprecated.level = "allow" # allow deprecation in patch releases
+type_marked_deprecated.level = "allow" # allow deprecation in patch releases

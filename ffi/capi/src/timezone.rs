@@ -63,6 +63,7 @@ pub mod ffi {
 
     #[diplomat::enum_convert(icu_time::zone::TimeZoneVariant, needs_wildcard)]
     #[non_exhaustive]
+    /// DEPRECATED
     pub enum TimeZoneVariant {
         // TimeZoneVariant in Rust doesn't have a default, but it is useful to have one
         // here for consistent behavior.
@@ -75,6 +76,8 @@ pub mod ffi {
         #[diplomat::rust_link(icu::time::zone::TimeZoneVariant::from_rearguard_isdst, FnInEnum)]
         #[diplomat::rust_link(icu::time::TimeZoneInfo::with_variant, FnInStruct)]
         #[diplomat::rust_link(icu::time::zone::TimeZoneVariant, Enum, compact)]
+        /// DEPRECATED
+        #[allow(deprecated)] // remove in 3.0
         pub fn from_rearguard_isdst(isdst: bool) -> Self {
             icu_time::zone::TimeZoneVariant::from_rearguard_isdst(isdst).into()
         }
@@ -85,10 +88,10 @@ pub mod ffi {
     #[diplomat::rust_link(icu::time::zone::models::AtTime, Struct, hidden)]
     #[diplomat::rust_link(icu::time::zone::models::Base, Struct, hidden)]
     #[diplomat::rust_link(icu::time::zone::models::Full, Struct, hidden)]
+    #[derive(Clone, Copy)]
     pub struct TimeZoneInfo {
         pub(crate) id: icu_time::TimeZone,
         pub(crate) offset: Option<icu_time::zone::UtcOffset>,
-        pub(crate) variant: Option<icu_time::zone::TimeZoneVariant>,
         pub(crate) zone_name_timestamp: Option<icu_time::zone::ZoneNameTimestamp>,
     }
 
@@ -102,16 +105,17 @@ pub mod ffi {
         }
 
         /// Creates a time zone info from parts.
+        ///
+        /// `variant` is ignored.
         #[diplomat::attr(auto, constructor)]
         pub fn from_parts(
             id: &TimeZone,
             offset: Option<&UtcOffset>,
-            variant: Option<TimeZoneVariant>,
+            _variant: Option<TimeZoneVariant>,
         ) -> Box<TimeZoneInfo> {
             Box::new(Self {
                 id: id.0,
                 offset: offset.map(|o| o.0),
-                variant: variant.map(Into::into),
                 zone_name_timestamp: None,
             })
         }
@@ -215,11 +219,11 @@ pub mod ffi {
         }
 
         #[diplomat::rust_link(icu::time::TimeZoneInfo::with_variant, FnInStruct)]
-        pub fn with_variant(&self, time_variant: TimeZoneVariant) -> Box<Self> {
-            Box::new(Self {
-                variant: Some(time_variant.into()),
-                ..*self
-            })
+        /// DEPRECATED
+        ///
+        /// Just clones
+        pub fn with_variant(&self, _time_variant: TimeZoneVariant) -> Box<Self> {
+            Box::new(*self)
         }
 
         #[diplomat::attr(auto, getter)]
@@ -227,30 +231,23 @@ pub mod ffi {
             self.offset.map(UtcOffset).map(Box::new)
         }
 
-        /// Infers the zone variant.
+        /// DEPRECATED
         ///
-        /// Requires the offset and local time to be set.
+        /// No-op
         #[diplomat::rust_link(icu::time::TimeZoneInfo::infer_variant, FnInStruct)]
         #[diplomat::rust_link(icu::time::zone::TimeZoneVariant, Enum, compact)]
         pub fn infer_variant(
             &mut self,
-            offset_calculator: &VariantOffsetsCalculator,
+            _offset_calculator: &VariantOffsetsCalculator,
         ) -> Option<()> {
-            let info = self
-                .id
-                .with_offset(self.offset)
-                .with_zone_name_timestamp(self.zone_name_timestamp?)
-                .infer_variant(offset_calculator.0.as_borrowed());
-
-            self.id = info.id();
-            self.variant = Some(info.variant());
             Some(())
         }
 
         #[diplomat::rust_link(icu::time::TimeZoneInfo::variant, FnInStruct)]
         #[diplomat::attr(demo_gen, disable)] // this just returns a constructor argument
+        /// DEPRECATED
         pub fn variant(&self) -> Option<TimeZoneVariant> {
-            self.variant.map(Into::into)
+            None
         }
     }
 }
@@ -260,7 +257,6 @@ impl From<icu_time::zone::UtcOffset> for TimeZoneInfo {
         Self {
             id: icu_time::TimeZone::UNKNOWN,
             offset: Some(other),
-            variant: None,
             zone_name_timestamp: None,
         }
     }
@@ -271,7 +267,6 @@ impl From<icu_time::TimeZoneInfo<icu_time::zone::models::Base>> for TimeZoneInfo
         Self {
             id: other.id(),
             offset: other.offset(),
-            variant: None,
             zone_name_timestamp: None,
         }
     }
@@ -282,18 +277,17 @@ impl From<icu_time::TimeZoneInfo<icu_time::zone::models::AtTime>> for TimeZoneIn
         Self {
             id: other.id(),
             offset: other.offset(),
-            variant: None,
             zone_name_timestamp: Some(other.zone_name_timestamp()),
         }
     }
 }
 
+#[allow(deprecated)]
 impl From<icu_time::TimeZoneInfo<icu_time::zone::models::Full>> for TimeZoneInfo {
     fn from(other: icu_time::TimeZoneInfo<icu_time::zone::models::Full>) -> Self {
         Self {
             id: other.id(),
             offset: other.offset(),
-            variant: Some(other.variant()),
             zone_name_timestamp: Some(other.zone_name_timestamp()),
         }
     }
