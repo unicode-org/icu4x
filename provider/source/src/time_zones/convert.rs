@@ -11,14 +11,18 @@ use icu::datetime::provider::time_zones::*;
 use icu::locale::LanguageIdentifier;
 use icu::time::provider::*;
 use icu::time::zone::TimeZoneVariant;
-use icu::time::zone::ZoneNameTimestamp;
 use icu_provider::prelude::icu_locale_core::subtags::Language;
 use icu_provider::prelude::*;
+use icu_time::zone::ZoneNameTimestamp;
 use std::borrow::Cow;
 use std::collections::BTreeMap;
 use std::collections::BTreeSet;
 use writeable::Writeable;
+use zerotrie::ZeroTrieSimpleAscii;
+use zerovec::ule::vartuple::VarTuple;
 use zerovec::ule::NichedOption;
+use zerovec::VarZeroVec;
+use zerovec::ZeroVec;
 
 impl DataProvider<TimezoneNamesEssentialsV1> for SourceDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<TimezoneNamesEssentialsV1>, DataError> {
@@ -331,75 +335,100 @@ impl DataProvider<TimezoneNamesCitiesRootV1> for SourceDataProvider {
     }
 }
 
-impl DataProvider<TimezoneMetazonePeriodsV1> for SourceDataProvider {
-    fn load(&self, req: DataRequest) -> Result<DataResponse<TimezoneMetazonePeriodsV1>, DataError> {
-        self.check_req::<TimezoneMetazonePeriodsV1>(req)?;
+impl DataProvider<TimezonePeriodsV1> for SourceDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<TimezonePeriodsV1>, DataError> {
+        self.check_req::<TimezonePeriodsV1>(req)?;
 
         let metazones = self.metazones()?;
 
-        let list = metazones
+        let values = metazones
             .periods
             .iter()
-            .flat_map(|(tz, ps)| {
-                let mut mzs = ps
-                    .iter()
-                    .copied()
-                    .map(|(t, _os, mz)| (t, mz))
-                    .collect::<Vec<_>>();
-                mzs.dedup_by_key(|(_t, mz)| *mz);
-                mzs.into_iter()
-                    // The entry 1970-01-01 + null is usesless
-                    .filter(|&x| x != (ZoneNameTimestamp::far_in_past(), None))
-                    .map(move |(t, mz)| (tz, t, NichedOption(mz)))
-            })
-            .collect();
-
-        Ok(DataResponse {
-            metadata: DataResponseMetadata::default().with_checksum(metazones.checksum),
-            payload: DataPayload::from_owned(MetazonePeriod { list }),
-        })
-    }
-}
-
-impl DataProvider<TimezoneVariantsOffsetsV1> for SourceDataProvider {
-    fn load(&self, req: DataRequest) -> Result<DataResponse<TimezoneVariantsOffsetsV1>, DataError> {
-        self.check_req::<TimezoneVariantsOffsetsV1>(req)?;
-
-        let data = self
-            .metazones()?
-            .periods
-            .iter()
-            .flat_map(|(tz, ps)| {
-                let mut offsets = ps
-                    .iter()
-                    .copied()
-                    .map(|(t, os, _mz)| (t, os))
-                    .collect::<Vec<_>>();
-                offsets.dedup_by(|(_, a), (_, b)| {
-                    if a.standard != b.standard {
+            .map(|(&tz, ps)| {
+                let mut ps = ps.clone();
+                ps.dedup_by(|(_, oa, mza), (_, ob, mzb)| {
+                    if oa.standard != ob.standard {
                         return false;
                     }
-                    match (a.daylight, b.daylight) {
+                    if mza != mzb {
+                        return false;
+                    }
+                    match (oa.daylight, ob.daylight) {
                         (None, None) => true,
                         (Some(a), Some(b)) => a == b,
                         // It's fine if one period doesn't use DST,
                         (Some(a), None) => {
-                            b.daylight = Some(a);
+                            ob.daylight = Some(a);
                             true
                         }
                         (None, Some(b)) => {
-                            a.daylight = Some(b);
+                            oa.daylight = Some(b);
                             true
                         }
                     }
                 });
-                offsets.into_iter().map(move |(t, o)| (tz, t, o))
+
+                (tz, ps)
             })
-            .collect();
+            .collect::<BTreeMap<_, _>>();
+
+        let mut offsets = BTreeSet::new();
+
+        for ps in values.values() {
+            for &(_, os, _) in ps {
+                offsets.insert(os);
+            }
+        }
+
+        let offset_index = offsets
+            .iter()
+            .enumerate()
+            .map(|(i, &v)| (v, i as u8))
+            .collect::<BTreeMap<_, _>>();
+
+        let offsets = offsets.into_iter().collect::<ZeroVec<_>>();
+
+        let mut deduped = BTreeMap::<_, BTreeSet<_>>::new();
+        for (tz, value) in values {
+            deduped.entry(value).or_default().insert(tz);
+        }
+
+        let index = ZeroTrieSimpleAscii::<Vec<u8>>::from_iter(
+            deduped
+                .values()
+                .enumerate()
+                .flat_map(|(i, vs)| vs.iter().map(move |tz| (tz.as_str(), i))),
+        )
+        .convert_store();
+
+        let list = VarZeroVec::from(
+            &deduped
+                .into_keys()
+                .map(|mut ps| {
+                    let (past, os, mz) = ps.remove(0);
+
+                    assert_eq!(past, ZoneNameTimestamp::far_in_past());
+
+                    let rest = ps
+                        .into_iter()
+                        .map(|(t, os, mz)| (Timestamp24(t), offset_index[&os], NichedOption(mz)))
+                        .collect::<ZeroVec<_>>();
+
+                    zerovec::ule::encode_varule_to_box(&VarTuple {
+                        sized: (offset_index[&os], NichedOption(mz)),
+                        variable: rest.as_slice(),
+                    })
+                })
+                .collect::<Vec<_>>(),
+        );
 
         Ok(DataResponse {
-            metadata: Default::default(),
-            payload: DataPayload::from_owned(data),
+            metadata: DataResponseMetadata::default().with_checksum(metazones.checksum),
+            payload: DataPayload::from_owned(TimezonePeriods {
+                index,
+                list,
+                offsets,
+            }),
         })
     }
 }

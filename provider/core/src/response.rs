@@ -1031,7 +1031,7 @@ where
     /// Can be used to erase the marker of a data payload in cases where multiple markers correspond
     /// to the same data struct.
     ///
-    /// For runtime dynamic casting, use [`DataPayload::dynamic_cast_mut()`].
+    /// For runtime dynamic casting, use [`DataResponse::dynamic_cast()`].
     #[inline]
     pub fn cast<M2>(self) -> DataResponse<M2>
     where
@@ -1041,6 +1041,24 @@ where
             metadata: self.metadata,
             payload: self.payload.cast(),
         }
+    }
+
+    /// Convert a [`DataResponse`] to one of the same type with runtime type checking.
+    ///
+    /// Primarily useful to convert from a generic to a concrete marker type.
+    ///
+    /// If the `M2` type argument does not match the true marker type, a `DataError` is returned.
+    ///
+    /// For compile-time static casting, use [`DataResponse::cast()`].
+    #[inline]
+    pub fn dynamic_cast<M2>(self) -> Result<DataResponse<M2>, DataError>
+    where
+        M2: DynamicDataMarker,
+    {
+        Ok(DataResponse {
+            metadata: self.metadata,
+            payload: self.payload.dynamic_cast()?,
+        })
     }
 }
 

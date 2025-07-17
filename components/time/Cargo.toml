@@ -39,12 +39,13 @@ icu_time_data = { workspace = true, optional = true }
 [dev-dependencies]
 icu = { path = "../../components/icu", default-features = false }
 icu_datetime = { path = "../../components/datetime", features = ["compiled_data"] }
+icu_provider_blob = { path = "../../provider/blob" }
 
 [features]
 default = ["compiled_data", "ixdtf"]
 ixdtf = ["dep:ixdtf", "icu_calendar/ixdtf"]
 serde = ["dep:serde", "zerovec/serde", "zerotrie/serde", "tinystr/serde", "icu_provider/serde", "icu_locale_core/serde"]
-datagen = ["serde", "dep:databake", "zerovec/databake", "zerotrie/databake", "tinystr/databake", "icu_provider/export", "icu_locale_core/databake"]
+datagen = ["serde", "dep:databake", "zerovec/databake", "zerotrie/databake", "tinystr/databake", "icu_provider/export", "icu_locale_core/databake", "alloc"]
 compiled_data = ["dep:icu_time_data", "icu_calendar/compiled_data", "icu_provider/baked"]
 alloc = ["tinystr/alloc", "zerotrie/alloc", "serde?/alloc"]
 

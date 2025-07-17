@@ -1820,6 +1820,7 @@ impl<C, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, FSet> {
     }
 
     /// Loads generic non-location long time zone names.
+    // NOTE: If a buffer version of this fn is added in 2.x, it should use the CompatProvider
     pub fn load_time_zone_generic_long_names<P>(
         &mut self,
         provider: &P,
@@ -1915,6 +1916,7 @@ impl<C, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, FSet> {
     }
 
     /// Loads generic non-location short time zone names.
+    // NOTE: If a buffer version of this fn is added in 2.x, it should use the CompatProvider
     pub fn load_time_zone_generic_short_names<P>(
         &mut self,
         provider: &P,
@@ -2006,6 +2008,7 @@ impl<C, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, FSet> {
     }
 
     /// Loads specific non-location long time zone names.
+    // NOTE: If a buffer version of this fn is added in 2.x, it should use the CompatProvider
     pub fn load_time_zone_specific_long_names<P>(
         &mut self,
         provider: &P,
@@ -2097,6 +2100,7 @@ impl<C, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, FSet> {
     }
 
     /// Loads specific non-location short time zone names.
+    // NOTE: If a buffer version of this fn is added in 2.x, it should use the CompatProvider
     pub fn load_time_zone_specific_short_names<P>(
         &mut self,
         provider: &P,
@@ -2189,6 +2193,7 @@ impl<C, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, FSet> {
     /// and all data required for its fallback formats.
     ///
     /// See [`GenericShort`](crate::fieldsets::zone::GenericShort)
+    // NOTE: If a buffer version of this fn is added in 2.x, it should use the CompatProvider
     pub fn load_time_zone_generic_short_names_with_fallback<P>(
         &mut self,
         provider: &P,
@@ -2245,6 +2250,7 @@ impl<C, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, FSet> {
     /// and all data required for its fallback formats.
     ///
     /// See [`GenericLong`](crate::fieldsets::zone::GenericLong)
+    // NOTE: If a buffer version of this fn is added in 2.x, it should use the CompatProvider
     pub fn load_time_zone_generic_long_names_with_fallback<P>(
         &mut self,
         provider: &P,
@@ -2305,6 +2311,7 @@ impl<C, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, FSet> {
     /// except for decimal formatting.
     ///
     /// See [`SpecificShort`](crate::fieldsets::zone::SpecificShort)
+    // NOTE: If a buffer version of this fn is added in 2.x, it should use the CompatProvider
     pub fn load_time_zone_specific_short_names_with_fallback<P>(
         &mut self,
         provider: &P,
@@ -2359,6 +2366,7 @@ impl<C, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, FSet> {
     /// except for decimal formatting.
     ///
     /// See [`SpecificLong`](crate::fieldsets::zone::SpecificLong)
+    // NOTE: If a buffer version of this fn is added in 2.x, it should use the CompatProvider
     pub fn load_time_zone_specific_long_names_with_fallback<P>(
         &mut self,
         provider: &P,
@@ -2531,6 +2539,7 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, F
     /// and loads all data required for that pattern.
     ///
     /// Does not duplicate textual field symbols. See [#4337](https://github.com/unicode-org/icu4x/issues/4337)
+    // NOTE: If a buffer version of this fn is added in 2.x, it should use the CompatProvider
     pub fn load_for_pattern<'l, P>(
         &'l mut self,
         provider: &P,

@@ -522,13 +522,7 @@ impl_iterable_data_provider!(
     TimezoneNamesSpecificShortV1
 );
 
-impl IterableDataProviderCached<TimezoneMetazonePeriodsV1> for SourceDataProvider {
-    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
-        Ok(HashSet::from_iter([Default::default()]))
-    }
-}
-
-impl IterableDataProviderCached<TimezoneVariantsOffsetsV1> for SourceDataProvider {
+impl IterableDataProviderCached<TimezonePeriodsV1> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
     }
