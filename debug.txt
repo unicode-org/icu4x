@@ -1,0 +1,2491 @@
+{
+    (
+        "Acre",
+        Any,
+    ): [
+        "brern",
+        "brrbr",
+    ],
+    (
+        "Acre",
+        StandardOnly,
+    ): [
+        "brern",
+        "brrbr",
+    ],
+    (
+        "Afghanistan",
+        Any,
+    ): [
+        "afkbl",
+    ],
+    (
+        "Afghanistan",
+        StandardOnly,
+    ): [
+        "afkbl",
+    ],
+    (
+        "Africa_Central",
+        Any,
+    ): [
+        "bibjm",
+        "bwgbe",
+        "cdfbm",
+        "mwblz",
+        "mzmpm",
+        "nawdh",
+        "rwkgl",
+        "sdkrt",
+        "ssjub",
+        "zmlun",
+        "zwhre",
+    ],
+    (
+        "Africa_Central",
+        StandardOnly,
+    ): [
+        "bibjm",
+        "bwgbe",
+        "cdfbm",
+        "mwblz",
+        "mzmpm",
+        "nawdh",
+        "rwkgl",
+        "sdkrt",
+        "ssjub",
+        "zmlun",
+        "zwhre",
+    ],
+    (
+        "Africa_Eastern",
+        Any,
+    ): [
+        "djjib",
+        "erasm",
+        "etadd",
+        "kenbo",
+        "kmyva",
+        "mgtnr",
+        "sdkrt",
+        "somgq",
+        "ssjub",
+        "tzdar",
+        "ugkla",
+        "ytmam",
+    ],
+    (
+        "Africa_Eastern",
+        StandardOnly,
+    ): [
+        "djjib",
+        "erasm",
+        "etadd",
+        "kenbo",
+        "kmyva",
+        "mgtnr",
+        "sdkrt",
+        "somgq",
+        "ssjub",
+        "tzdar",
+        "ugkla",
+        "ytmam",
+    ],
+    (
+        "Africa_Southern",
+        Any,
+    ): [
+        "lsmsu",
+        "szqmn",
+        "zajnb",
+    ],
+    (
+        "Africa_Southern",
+        StandardOnly,
+    ): [
+        "lsmsu",
+        "szqmn",
+        "zajnb",
+    ],
+    (
+        "Africa_Western",
+        Any,
+    ): [
+        "aolad",
+        "bjptn",
+        "cdfih",
+        "cfbgf",
+        "cgbzv",
+        "cmdla",
+        "galbv",
+        "gqssg",
+        "nawdh",
+        "nenim",
+        "nglos",
+        "sttms",
+        "tdndj",
+    ],
+    (
+        "Africa_Western",
+        StandardOnly,
+    ): [
+        "aolad",
+        "bjptn",
+        "cdfih",
+        "cfbgf",
+        "cgbzv",
+        "cmdla",
+        "galbv",
+        "gqssg",
+        "nenim",
+        "nglos",
+        "sttms",
+        "tdndj",
+    ],
+    (
+        "Africa_Western",
+        StandardAndDst,
+    ): [
+        "nawdh",
+    ],
+    (
+        "Alaska",
+        Any,
+    ): [
+        "usanc",
+        "usjnu",
+        "usmtm",
+        "usmtm",
+        "usome",
+        "ussit",
+        "usyak",
+    ],
+    (
+        "Alaska",
+        StandardAndDst,
+    ): [
+        "usanc",
+        "usjnu",
+        "usmtm",
+        "usmtm",
+        "usome",
+        "ussit",
+        "usyak",
+    ],
+    (
+        "Amazon",
+        Any,
+    ): [
+        "brbvb",
+        "brcgb",
+        "brcgr",
+        "brmao",
+        "brpvh",
+    ],
+    (
+        "Amazon",
+        StandardOnly,
+    ): [
+        "brbvb",
+        "brmao",
+        "brpvh",
+    ],
+    (
+        "Amazon",
+        StandardAndDst,
+    ): [
+        "brcgb",
+        "brcgr",
+    ],
+    (
+        "America_Central",
+        Any,
+    ): [
+        "bzbze",
+        "careb",
+        "careg",
+        "cawnp",
+        "cayek",
+        "cayyn",
+        "crsjo",
+        "gtgua",
+        "hntgu",
+        "mxchi",
+        "mxcjs",
+        "mxcun",
+        "mxmam",
+        "mxmex",
+        "mxmid",
+        "mxmty",
+        "mxoji",
+        "mxpvr",
+        "nimga",
+        "svsal",
+        "uschi",
+        "usknx",
+        "usmnm",
+        "usndcnt",
+        "usndnsl",
+        "ustel",
+        "usxul",
+    ],
+    (
+        "America_Central",
+        StandardOnly,
+    ): [
+        "bzbze",
+        "careg",
+        "cayyn",
+        "crsjo",
+        "gtgua",
+        "hntgu",
+        "mxchi",
+        "mxcjs",
+        "mxcun",
+        "nimga",
+        "svsal",
+    ],
+    (
+        "America_Central",
+        StandardAndDst,
+    ): [
+        "careb",
+        "cawnp",
+        "cayek",
+        "mxmam",
+        "mxmex",
+        "mxmid",
+        "mxmty",
+        "mxoji",
+        "mxpvr",
+        "uschi",
+        "usknx",
+        "usmnm",
+        "usndcnt",
+        "usndnsl",
+        "ustel",
+        "usxul",
+    ],
+    (
+        "America_Eastern",
+        Any,
+    ): [
+        "bsnas",
+        "caiql",
+        "cator",
+        "cayzs",
+        "htpap",
+        "jmkin",
+        "kygec",
+        "mxcun",
+        "papty",
+        "tcgdt",
+        "tcgdt",
+        "usaeg",
+        "usdet",
+        "usind",
+        "usinvev",
+        "uslui",
+        "usmoc",
+        "usnyc",
+        "usoea",
+        "uswlz",
+        "uswsq",
+    ],
+    (
+        "America_Eastern",
+        StandardOnly,
+    ): [
+        "cayzs",
+        "jmkin",
+        "kygec",
+        "mxcun",
+        "papty",
+        "tcgdt",
+    ],
+    (
+        "America_Eastern",
+        StandardAndDst,
+    ): [
+        "bsnas",
+        "caiql",
+        "cator",
+        "htpap",
+        "tcgdt",
+        "usaeg",
+        "usdet",
+        "usind",
+        "usinvev",
+        "uslui",
+        "usmoc",
+        "usnyc",
+        "usoea",
+        "uswlz",
+        "uswsq",
+    ],
+    (
+        "America_Mountain",
+        Any,
+    ): [
+        "cacfq",
+        "caedm",
+        "cafne",
+        "caycb",
+        "caydq",
+        "cayev",
+        "mxcjs",
+        "mxoji",
+        "usboi",
+        "usden",
+        "usphx",
+    ],
+    (
+        "America_Mountain",
+        StandardOnly,
+    ): [
+        "cacfq",
+        "cafne",
+        "caydq",
+        "usphx",
+    ],
+    (
+        "America_Mountain",
+        StandardAndDst,
+    ): [
+        "caedm",
+        "caycb",
+        "cayev",
+        "mxcjs",
+        "mxoji",
+        "usboi",
+        "usden",
+    ],
+    (
+        "America_Pacific",
+        Any,
+    ): [
+        "cafne",
+        "cavan",
+        "cayda",
+        "cayxy",
+        "mxtij",
+        "uslax",
+        "usmtm",
+        "usmtm",
+    ],
+    (
+        "America_Pacific",
+        StandardOnly,
+    ): [
+        "cafne",
+        "usmtm",
+        "usmtm",
+    ],
+    (
+        "America_Pacific",
+        StandardAndDst,
+    ): [
+        "cavan",
+        "cayda",
+        "cayxy",
+        "mxtij",
+        "uslax",
+    ],
+    (
+        "Anadyr",
+        Any,
+    ): [
+        "rudyr",
+    ],
+    (
+        "Anadyr",
+        StandardOnly,
+    ): [
+        "rudyr",
+    ],
+    (
+        "Apia",
+        Any,
+    ): [
+        "wsapw",
+    ],
+    (
+        "Apia",
+        StandardAndDst,
+    ): [
+        "wsapw",
+    ],
+    (
+        "Arabian",
+        Any,
+    ): [
+        "bhbah",
+        "iqbgw",
+        "kwkwi",
+        "qadoh",
+        "saruh",
+        "yeade",
+    ],
+    (
+        "Arabian",
+        StandardOnly,
+    ): [
+        "bhbah",
+        "iqbgw",
+        "kwkwi",
+        "qadoh",
+        "saruh",
+        "yeade",
+    ],
+    (
+        "Argentina",
+        Any,
+    ): [
+        "arbue",
+        "arcor",
+        "arctc",
+        "arirj",
+        "arjuj",
+        "arluq",
+        "armdz",
+        "arrgl",
+        "arsla",
+        "artuc",
+        "aruaq",
+        "arush",
+    ],
+    (
+        "Argentina",
+        StandardOnly,
+    ): [
+        "arbue",
+        "arcor",
+        "arctc",
+        "arirj",
+        "arjuj",
+        "arluq",
+        "armdz",
+        "arrgl",
+        "arsla",
+        "artuc",
+        "aruaq",
+        "arush",
+    ],
+    (
+        "Armenia",
+        Any,
+    ): [
+        "amevn",
+    ],
+    (
+        "Armenia",
+        StandardOnly,
+    ): [
+        "amevn",
+    ],
+    (
+        "Atlantic",
+        Any,
+    ): [
+        "aganu",
+        "aiaxa",
+        "ancur",
+        "awaua",
+        "bbbgi",
+        "bmbda",
+        "bqkra",
+        "caglb",
+        "cagoo",
+        "cahal",
+        "camon",
+        "caybx",
+        "dmdom",
+        "dosdq",
+        "gdgnd",
+        "glthu",
+        "gpbbr",
+        "gpmsb",
+        "gpsbh",
+        "knbas",
+        "lccas",
+        "mqfdf",
+        "msmni",
+        "prsju",
+        "sxphi",
+        "tcgdt",
+        "ttpos",
+        "vcsvd",
+        "vgtov",
+        "vistt",
+    ],
+    (
+        "Atlantic",
+        StandardOnly,
+    ): [
+        "aganu",
+        "aiaxa",
+        "ancur",
+        "awaua",
+        "bbbgi",
+        "bqkra",
+        "caybx",
+        "dmdom",
+        "dosdq",
+        "gdgnd",
+        "gpbbr",
+        "gpmsb",
+        "gpsbh",
+        "knbas",
+        "lccas",
+        "mqfdf",
+        "msmni",
+        "prsju",
+        "sxphi",
+        "tcgdt",
+        "ttpos",
+        "vcsvd",
+        "vgtov",
+        "vistt",
+    ],
+    (
+        "Atlantic",
+        StandardAndDst,
+    ): [
+        "bmbda",
+        "caglb",
+        "cagoo",
+        "cahal",
+        "camon",
+        "glthu",
+    ],
+    (
+        "Australia_Central",
+        Any,
+    ): [
+        "auadl",
+        "aubhq",
+        "audrw",
+    ],
+    (
+        "Australia_Central",
+        StandardOnly,
+    ): [
+        "audrw",
+    ],
+    (
+        "Australia_Central",
+        StandardAndDst,
+    ): [
+        "auadl",
+        "aubhq",
+    ],
+    (
+        "Australia_CentralWestern",
+        Any,
+    ): [
+        "aueuc",
+    ],
+    (
+        "Australia_CentralWestern",
+        StandardOnly,
+    ): [
+        "aueuc",
+    ],
+    (
+        "Australia_Eastern",
+        Any,
+    ): [
+        "aubne",
+        "auhba",
+        "auldc",
+        "aumel",
+        "aumqi",
+        "ausyd",
+    ],
+    (
+        "Australia_Eastern",
+        StandardOnly,
+    ): [
+        "aubne",
+        "auldc",
+    ],
+    (
+        "Australia_Eastern",
+        StandardAndDst,
+    ): [
+        "auhba",
+        "aumel",
+        "aumqi",
+        "ausyd",
+    ],
+    (
+        "Australia_Western",
+        Any,
+    ): [
+        "aqcas",
+        "aqcas",
+        "aqcas",
+        "aqcas",
+        "aqcas",
+        "aqcas",
+        "aqcas",
+        "auper",
+    ],
+    (
+        "Australia_Western",
+        StandardOnly,
+    ): [
+        "aqcas",
+        "aqcas",
+        "aqcas",
+        "aqcas",
+        "aqcas",
+        "aqcas",
+        "aqcas",
+        "auper",
+    ],
+    (
+        "Azerbaijan",
+        Any,
+    ): [
+        "azbak",
+    ],
+    (
+        "Azerbaijan",
+        StandardAndDst,
+    ): [
+        "azbak",
+    ],
+    (
+        "Azores",
+        Any,
+    ): [
+        "ptpdl",
+    ],
+    (
+        "Azores",
+        StandardAndDst,
+    ): [
+        "ptpdl",
+    ],
+    (
+        "Bangladesh",
+        Any,
+    ): [
+        "bddac",
+    ],
+    (
+        "Bangladesh",
+        StandardOnly,
+    ): [
+        "bddac",
+    ],
+    (
+        "Bhutan",
+        Any,
+    ): [
+        "btthi",
+    ],
+    (
+        "Bhutan",
+        StandardOnly,
+    ): [
+        "btthi",
+    ],
+    (
+        "Bolivia",
+        Any,
+    ): [
+        "bolpb",
+    ],
+    (
+        "Bolivia",
+        StandardOnly,
+    ): [
+        "bolpb",
+    ],
+    (
+        "Brasilia",
+        Any,
+    ): [
+        "braux",
+        "brbel",
+        "brfor",
+        "brmcz",
+        "brrec",
+        "brsao",
+        "brssa",
+        "brstm",
+    ],
+    (
+        "Brasilia",
+        StandardOnly,
+    ): [
+        "braux",
+        "brbel",
+        "brfor",
+        "brmcz",
+        "brrec",
+        "brssa",
+        "brstm",
+    ],
+    (
+        "Brasilia",
+        StandardAndDst,
+    ): [
+        "brsao",
+    ],
+    (
+        "Brunei",
+        Any,
+    ): [
+        "bnbwn",
+    ],
+    (
+        "Brunei",
+        StandardOnly,
+    ): [
+        "bnbwn",
+    ],
+    (
+        "Cape_Verde",
+        Any,
+    ): [
+        "cvrai",
+    ],
+    (
+        "Cape_Verde",
+        StandardOnly,
+    ): [
+        "cvrai",
+    ],
+    (
+        "Casey",
+        Any,
+    ): [
+        "aqcas",
+        "aqcas",
+        "aqcas",
+        "aqcas",
+        "aqcas",
+        "aqcas",
+    ],
+    (
+        "Casey",
+        StandardOnly,
+    ): [
+        "aqcas",
+        "aqcas",
+        "aqcas",
+        "aqcas",
+        "aqcas",
+        "aqcas",
+    ],
+    (
+        "Chamorro",
+        Any,
+    ): [
+        "gugum",
+        "mpspn",
+    ],
+    (
+        "Chamorro",
+        StandardOnly,
+    ): [
+        "gugum",
+        "mpspn",
+    ],
+    (
+        "Chatham",
+        Any,
+    ): [
+        "nzcht",
+    ],
+    (
+        "Chatham",
+        StandardAndDst,
+    ): [
+        "nzcht",
+    ],
+    (
+        "Chile",
+        Any,
+    ): [
+        "aqplm",
+        "clpuq",
+        "clscl",
+    ],
+    (
+        "Chile",
+        StandardAndDst,
+    ): [
+        "aqplm",
+        "clpuq",
+        "clscl",
+    ],
+    (
+        "China",
+        Any,
+    ): [
+        "cnsha",
+        "momfm",
+    ],
+    (
+        "China",
+        StandardOnly,
+    ): [
+        "cnsha",
+        "momfm",
+    ],
+    (
+        "Christmas",
+        Any,
+    ): [
+        "cxxch",
+    ],
+    (
+        "Christmas",
+        StandardOnly,
+    ): [
+        "cxxch",
+    ],
+    (
+        "Cocos",
+        Any,
+    ): [
+        "cccck",
+    ],
+    (
+        "Cocos",
+        StandardOnly,
+    ): [
+        "cccck",
+    ],
+    (
+        "Colombia",
+        Any,
+    ): [
+        "cobog",
+    ],
+    (
+        "Colombia",
+        StandardOnly,
+    ): [
+        "cobog",
+    ],
+    (
+        "Cook",
+        Any,
+    ): [
+        "ckrar",
+    ],
+    (
+        "Cook",
+        StandardOnly,
+    ): [
+        "ckrar",
+    ],
+    (
+        "Cuba",
+        Any,
+    ): [
+        "cuhav",
+    ],
+    (
+        "Cuba",
+        StandardAndDst,
+    ): [
+        "cuhav",
+    ],
+    (
+        "Davis",
+        Any,
+    ): [
+        "aqdav",
+    ],
+    (
+        "Davis",
+        StandardOnly,
+    ): [
+        "aqdav",
+    ],
+    (
+        "DumontDUrville",
+        Any,
+    ): [
+        "aqddu",
+    ],
+    (
+        "DumontDUrville",
+        StandardOnly,
+    ): [
+        "aqddu",
+    ],
+    (
+        "East_Timor",
+        Any,
+    ): [
+        "tldil",
+    ],
+    (
+        "East_Timor",
+        StandardOnly,
+    ): [
+        "tldil",
+    ],
+    (
+        "Easter",
+        Any,
+    ): [
+        "clipc",
+    ],
+    (
+        "Easter",
+        StandardAndDst,
+    ): [
+        "clipc",
+    ],
+    (
+        "Ecuador",
+        Any,
+    ): [
+        "ecgye",
+    ],
+    (
+        "Ecuador",
+        StandardOnly,
+    ): [
+        "ecgye",
+    ],
+    (
+        "Europe_Central",
+        Any,
+    ): [
+        "adalv",
+        "altia",
+        "atvie",
+        "basjj",
+        "bebru",
+        "chzrh",
+        "czprg",
+        "deber",
+        "debsngn",
+        "dkcph",
+        "dzalg",
+        "esceu",
+        "esmad",
+        "frpar",
+        "gigib",
+        "hrzag",
+        "hubud",
+        "itrom",
+        "livdz",
+        "lulux",
+        "mcmon",
+        "metgd",
+        "mkskp",
+        "mtmla",
+        "nlams",
+        "noosl",
+        "plwaw",
+        "rsbeg",
+        "sesto",
+        "silju",
+        "sjlyr",
+        "skbts",
+        "smsai",
+        "tntun",
+        "vavat",
+    ],
+    (
+        "Europe_Central",
+        StandardOnly,
+    ): [
+        "dzalg",
+        "tntun",
+    ],
+    (
+        "Europe_Central",
+        StandardAndDst,
+    ): [
+        "adalv",
+        "altia",
+        "atvie",
+        "basjj",
+        "bebru",
+        "chzrh",
+        "czprg",
+        "deber",
+        "debsngn",
+        "dkcph",
+        "esceu",
+        "esmad",
+        "frpar",
+        "gigib",
+        "hrzag",
+        "hubud",
+        "itrom",
+        "livdz",
+        "lulux",
+        "mcmon",
+        "metgd",
+        "mkskp",
+        "mtmla",
+        "nlams",
+        "noosl",
+        "plwaw",
+        "rsbeg",
+        "sesto",
+        "silju",
+        "sjlyr",
+        "skbts",
+        "smsai",
+        "vavat",
+    ],
+    (
+        "Europe_Eastern",
+        Any,
+    ): [
+        "bgsof",
+        "cyfmg",
+        "cynic",
+        "eetll",
+        "egcai",
+        "fihel",
+        "fimhq",
+        "gazastrp",
+        "grath",
+        "hebron",
+        "joamm",
+        "lbbey",
+        "ltvno",
+        "lvrix",
+        "lytip",
+        "mdkiv",
+        "robuh",
+        "rukgd",
+        "sydam",
+        "trist",
+        "uaiev",
+    ],
+    (
+        "Europe_Eastern",
+        StandardOnly,
+    ): [
+        "lytip",
+        "rukgd",
+    ],
+    (
+        "Europe_Eastern",
+        StandardAndDst,
+    ): [
+        "bgsof",
+        "cyfmg",
+        "cynic",
+        "eetll",
+        "egcai",
+        "fihel",
+        "fimhq",
+        "gazastrp",
+        "grath",
+        "hebron",
+        "joamm",
+        "lbbey",
+        "ltvno",
+        "lvrix",
+        "mdkiv",
+        "robuh",
+        "sydam",
+        "trist",
+        "uaiev",
+    ],
+    (
+        "Europe_Western",
+        Any,
+    ): [
+        "eheai",
+        "eslpa",
+        "fotho",
+        "macas",
+        "ptfnc",
+        "ptlis",
+    ],
+    (
+        "Europe_Western",
+        StandardAndDst,
+    ): [
+        "eheai",
+        "eslpa",
+        "fotho",
+        "macas",
+        "ptfnc",
+        "ptlis",
+    ],
+    (
+        "Falkland",
+        Any,
+    ): [
+        "fkpsy",
+    ],
+    (
+        "Falkland",
+        StandardOnly,
+    ): [
+        "fkpsy",
+    ],
+    (
+        "Fiji",
+        Any,
+    ): [
+        "fjsuv",
+    ],
+    (
+        "Fiji",
+        StandardAndDst,
+    ): [
+        "fjsuv",
+    ],
+    (
+        "French_Guiana",
+        Any,
+    ): [
+        "gfcay",
+    ],
+    (
+        "French_Guiana",
+        StandardOnly,
+    ): [
+        "gfcay",
+    ],
+    (
+        "French_Southern",
+        Any,
+    ): [
+        "tfpfr",
+    ],
+    (
+        "French_Southern",
+        StandardOnly,
+    ): [
+        "tfpfr",
+    ],
+    (
+        "GMT",
+        Any,
+    ): [
+        "aqtrl",
+        "bfoua",
+        "ciabj",
+        "gblon",
+        "gggci",
+        "ghacc",
+        "gldkshvn",
+        "gmbjl",
+        "gmt",
+        "gncky",
+        "gwoxb",
+        "iedub",
+        "imdgs",
+        "isrey",
+        "jesth",
+        "lrmlw",
+        "mlbko",
+        "mrnkc",
+        "shshn",
+        "slfna",
+        "sndkr",
+        "sttms",
+        "sttms",
+        "tglfw",
+    ],
+    (
+        "GMT",
+        StandardOnly,
+    ): [
+        "bfoua",
+        "ciabj",
+        "ghacc",
+        "gldkshvn",
+        "gmbjl",
+        "gmt",
+        "gncky",
+        "gwoxb",
+        "isrey",
+        "lrmlw",
+        "mlbko",
+        "mrnkc",
+        "shshn",
+        "slfna",
+        "sndkr",
+        "sttms",
+        "sttms",
+        "tglfw",
+    ],
+    (
+        "GMT",
+        StandardAndDst,
+    ): [
+        "aqtrl",
+        "gblon",
+        "gggci",
+        "iedub",
+        "imdgs",
+        "jesth",
+    ],
+    (
+        "Galapagos",
+        Any,
+    ): [
+        "ecgps",
+    ],
+    (
+        "Galapagos",
+        StandardOnly,
+    ): [
+        "ecgps",
+    ],
+    (
+        "Gambier",
+        Any,
+    ): [
+        "pfgmr",
+    ],
+    (
+        "Gambier",
+        StandardOnly,
+    ): [
+        "pfgmr",
+    ],
+    (
+        "Georgia",
+        Any,
+    ): [
+        "getbs",
+    ],
+    (
+        "Georgia",
+        StandardOnly,
+    ): [
+        "getbs",
+    ],
+    (
+        "Gilbert_Islands",
+        Any,
+    ): [
+        "kitrw",
+    ],
+    (
+        "Gilbert_Islands",
+        StandardOnly,
+    ): [
+        "kitrw",
+    ],
+    (
+        "Greenland",
+        Any,
+    ): [
+        "glgoh",
+        "globy",
+    ],
+    (
+        "Greenland",
+        StandardAndDst,
+    ): [
+        "glgoh",
+        "globy",
+    ],
+    (
+        "Greenland_Eastern",
+        Any,
+    ): [
+        "globy",
+    ],
+    (
+        "Greenland_Eastern",
+        StandardAndDst,
+    ): [
+        "globy",
+    ],
+    (
+        "Greenland_Western",
+        Any,
+    ): [
+        "glgoh",
+    ],
+    (
+        "Greenland_Western",
+        StandardAndDst,
+    ): [
+        "glgoh",
+    ],
+    (
+        "Gulf",
+        Any,
+    ): [
+        "aedxb",
+        "ommct",
+    ],
+    (
+        "Gulf",
+        StandardOnly,
+    ): [
+        "aedxb",
+        "ommct",
+    ],
+    (
+        "Guyana",
+        Any,
+    ): [
+        "gygeo",
+    ],
+    (
+        "Guyana",
+        StandardOnly,
+    ): [
+        "gygeo",
+    ],
+    (
+        "Hawaii_Aleutian",
+        Any,
+    ): [
+        "usadk",
+        "ushnl",
+    ],
+    (
+        "Hawaii_Aleutian",
+        StandardOnly,
+    ): [
+        "ushnl",
+    ],
+    (
+        "Hawaii_Aleutian",
+        StandardAndDst,
+    ): [
+        "usadk",
+    ],
+    (
+        "Hong_Kong",
+        Any,
+    ): [
+        "hkhkg",
+    ],
+    (
+        "Hong_Kong",
+        StandardOnly,
+    ): [
+        "hkhkg",
+    ],
+    (
+        "Hovd",
+        Any,
+    ): [
+        "mnhvd",
+    ],
+    (
+        "Hovd",
+        StandardAndDst,
+    ): [
+        "mnhvd",
+    ],
+    (
+        "India",
+        Any,
+    ): [
+        "inccu",
+        "lkcmb",
+    ],
+    (
+        "India",
+        StandardOnly,
+    ): [
+        "inccu",
+        "lkcmb",
+    ],
+    (
+        "Indian_Ocean",
+        Any,
+    ): [
+        "iodga",
+    ],
+    (
+        "Indian_Ocean",
+        StandardOnly,
+    ): [
+        "iodga",
+    ],
+    (
+        "Indochina",
+        Any,
+    ): [
+        "khpnh",
+        "lavte",
+        "thbkk",
+        "vnsgn",
+    ],
+    (
+        "Indochina",
+        StandardOnly,
+    ): [
+        "khpnh",
+        "lavte",
+        "thbkk",
+        "vnsgn",
+    ],
+    (
+        "Indonesia_Central",
+        Any,
+    ): [
+        "idmak",
+    ],
+    (
+        "Indonesia_Central",
+        StandardOnly,
+    ): [
+        "idmak",
+    ],
+    (
+        "Indonesia_Eastern",
+        Any,
+    ): [
+        "iddjj",
+    ],
+    (
+        "Indonesia_Eastern",
+        StandardOnly,
+    ): [
+        "iddjj",
+    ],
+    (
+        "Indonesia_Western",
+        Any,
+    ): [
+        "idjkt",
+        "idpnk",
+    ],
+    (
+        "Indonesia_Western",
+        StandardOnly,
+    ): [
+        "idjkt",
+        "idpnk",
+    ],
+    (
+        "Iran",
+        Any,
+    ): [
+        "irthr",
+    ],
+    (
+        "Iran",
+        StandardAndDst,
+    ): [
+        "irthr",
+    ],
+    (
+        "Irkutsk",
+        Any,
+    ): [
+        "ruchita",
+        "ruikt",
+    ],
+    (
+        "Irkutsk",
+        StandardOnly,
+    ): [
+        "ruchita",
+        "ruikt",
+    ],
+    (
+        "Israel",
+        Any,
+    ): [
+        "jeruslm",
+    ],
+    (
+        "Israel",
+        StandardAndDst,
+    ): [
+        "jeruslm",
+    ],
+    (
+        "Japan",
+        Any,
+    ): [
+        "jptyo",
+    ],
+    (
+        "Japan",
+        StandardOnly,
+    ): [
+        "jptyo",
+    ],
+    (
+        "Kamchatka",
+        Any,
+    ): [
+        "rupkc",
+    ],
+    (
+        "Kamchatka",
+        StandardOnly,
+    ): [
+        "rupkc",
+    ],
+    (
+        "Kazakhstan",
+        Any,
+    ): [
+        "kzaau",
+        "kzakx",
+        "kzala",
+        "kzguw",
+        "kzksn",
+        "kzkzo",
+        "kzura",
+    ],
+    (
+        "Kazakhstan",
+        StandardOnly,
+    ): [
+        "kzaau",
+        "kzakx",
+        "kzala",
+        "kzguw",
+        "kzksn",
+        "kzkzo",
+        "kzura",
+    ],
+    (
+        "Kazakhstan_Eastern",
+        Any,
+    ): [
+        "kzala",
+        "kzksn",
+        "kzkzo",
+    ],
+    (
+        "Kazakhstan_Eastern",
+        StandardOnly,
+    ): [
+        "kzala",
+        "kzksn",
+        "kzkzo",
+    ],
+    (
+        "Kazakhstan_Western",
+        Any,
+    ): [
+        "kzaau",
+        "kzakx",
+        "kzguw",
+        "kzkzo",
+        "kzura",
+    ],
+    (
+        "Kazakhstan_Western",
+        StandardOnly,
+    ): [
+        "kzaau",
+        "kzakx",
+        "kzguw",
+        "kzkzo",
+        "kzura",
+    ],
+    (
+        "Korea",
+        Any,
+    ): [
+        "kpfnj",
+        "kpfnj",
+        "krsel",
+    ],
+    (
+        "Korea",
+        StandardOnly,
+    ): [
+        "kpfnj",
+        "kpfnj",
+        "krsel",
+    ],
+    (
+        "Kosrae",
+        Any,
+    ): [
+        "fmksa",
+    ],
+    (
+        "Kosrae",
+        StandardOnly,
+    ): [
+        "fmksa",
+    ],
+    (
+        "Krasnoyarsk",
+        Any,
+    ): [
+        "rukra",
+        "runoz",
+    ],
+    (
+        "Krasnoyarsk",
+        StandardOnly,
+    ): [
+        "rukra",
+        "runoz",
+    ],
+    (
+        "Kyrgystan",
+        Any,
+    ): [
+        "kgfru",
+    ],
+    (
+        "Kyrgystan",
+        StandardOnly,
+    ): [
+        "kgfru",
+    ],
+    (
+        "Line_Islands",
+        Any,
+    ): [
+        "kicxi",
+    ],
+    (
+        "Line_Islands",
+        StandardOnly,
+    ): [
+        "kicxi",
+    ],
+    (
+        "Lord_Howe",
+        Any,
+    ): [
+        "auldh",
+    ],
+    (
+        "Lord_Howe",
+        StandardAndDst,
+    ): [
+        "auldh",
+    ],
+    (
+        "Magadan",
+        Any,
+    ): [
+        "rugdx",
+    ],
+    (
+        "Magadan",
+        StandardOnly,
+    ): [
+        "rugdx",
+    ],
+    (
+        "Malaysia",
+        Any,
+    ): [
+        "mykch",
+        "mykul",
+    ],
+    (
+        "Malaysia",
+        StandardOnly,
+    ): [
+        "mykch",
+        "mykul",
+    ],
+    (
+        "Maldives",
+        Any,
+    ): [
+        "mvmle",
+    ],
+    (
+        "Maldives",
+        StandardOnly,
+    ): [
+        "mvmle",
+    ],
+    (
+        "Marquesas",
+        Any,
+    ): [
+        "pfnhv",
+    ],
+    (
+        "Marquesas",
+        StandardOnly,
+    ): [
+        "pfnhv",
+    ],
+    (
+        "Marshall_Islands",
+        Any,
+    ): [
+        "mhkwa",
+        "mhmaj",
+    ],
+    (
+        "Marshall_Islands",
+        StandardOnly,
+    ): [
+        "mhkwa",
+        "mhmaj",
+    ],
+    (
+        "Mauritius",
+        Any,
+    ): [
+        "muplu",
+    ],
+    (
+        "Mauritius",
+        StandardOnly,
+    ): [
+        "muplu",
+    ],
+    (
+        "Mawson",
+        Any,
+    ): [
+        "aqmaw",
+    ],
+    (
+        "Mawson",
+        StandardOnly,
+    ): [
+        "aqmaw",
+    ],
+    (
+        "Mexico_Pacific",
+        Any,
+    ): [
+        "mxchi",
+        "mxcjs",
+        "mxhmo",
+        "mxmzt",
+    ],
+    (
+        "Mexico_Pacific",
+        StandardOnly,
+    ): [
+        "mxhmo",
+    ],
+    (
+        "Mexico_Pacific",
+        StandardAndDst,
+    ): [
+        "mxchi",
+        "mxcjs",
+        "mxmzt",
+    ],
+    (
+        "Mongolia",
+        Any,
+    ): [
+        "mnuln",
+    ],
+    (
+        "Mongolia",
+        StandardAndDst,
+    ): [
+        "mnuln",
+    ],
+    (
+        "Moscow",
+        Any,
+    ): [
+        "bymsq",
+        "ruasf",
+        "rumow",
+        "rurtw",
+        "ruuly",
+        "uasip",
+    ],
+    (
+        "Moscow",
+        StandardOnly,
+    ): [
+        "bymsq",
+        "ruasf",
+        "rumow",
+        "rurtw",
+        "ruuly",
+        "uasip",
+    ],
+    (
+        "Myanmar",
+        Any,
+    ): [
+        "mmrgn",
+    ],
+    (
+        "Myanmar",
+        StandardOnly,
+    ): [
+        "mmrgn",
+    ],
+    (
+        "Nauru",
+        Any,
+    ): [
+        "nrinu",
+    ],
+    (
+        "Nauru",
+        StandardOnly,
+    ): [
+        "nrinu",
+    ],
+    (
+        "Nepal",
+        Any,
+    ): [
+        "npktm",
+    ],
+    (
+        "Nepal",
+        StandardOnly,
+    ): [
+        "npktm",
+    ],
+    (
+        "New_Caledonia",
+        Any,
+    ): [
+        "ncnou",
+    ],
+    (
+        "New_Caledonia",
+        StandardOnly,
+    ): [
+        "ncnou",
+    ],
+    (
+        "New_Zealand",
+        Any,
+    ): [
+        "aqmcm",
+        "nzakl",
+    ],
+    (
+        "New_Zealand",
+        StandardAndDst,
+    ): [
+        "aqmcm",
+        "nzakl",
+    ],
+    (
+        "Newfoundland",
+        Any,
+    ): [
+        "casjf",
+    ],
+    (
+        "Newfoundland",
+        StandardAndDst,
+    ): [
+        "casjf",
+    ],
+    (
+        "Niue",
+        Any,
+    ): [
+        "nuiue",
+    ],
+    (
+        "Niue",
+        StandardOnly,
+    ): [
+        "nuiue",
+    ],
+    (
+        "Norfolk",
+        Any,
+    ): [
+        "nfnlk",
+    ],
+    (
+        "Norfolk",
+        StandardAndDst,
+    ): [
+        "nfnlk",
+    ],
+    (
+        "Noronha",
+        Any,
+    ): [
+        "brfen",
+    ],
+    (
+        "Noronha",
+        StandardOnly,
+    ): [
+        "brfen",
+    ],
+    (
+        "Novosibirsk",
+        Any,
+    ): [
+        "ruovb",
+    ],
+    (
+        "Novosibirsk",
+        StandardOnly,
+    ): [
+        "ruovb",
+    ],
+    (
+        "Omsk",
+        Any,
+    ): [
+        "ruoms",
+    ],
+    (
+        "Omsk",
+        StandardOnly,
+    ): [
+        "ruoms",
+    ],
+    (
+        "Pakistan",
+        Any,
+    ): [
+        "pkkhi",
+    ],
+    (
+        "Pakistan",
+        StandardOnly,
+    ): [
+        "pkkhi",
+    ],
+    (
+        "Palau",
+        Any,
+    ): [
+        "pwror",
+    ],
+    (
+        "Palau",
+        StandardOnly,
+    ): [
+        "pwror",
+    ],
+    (
+        "Papua_New_Guinea",
+        Any,
+    ): [
+        "pgpom",
+    ],
+    (
+        "Papua_New_Guinea",
+        StandardOnly,
+    ): [
+        "pgpom",
+    ],
+    (
+        "Paraguay",
+        Any,
+    ): [
+        "pyasu",
+    ],
+    (
+        "Paraguay",
+        StandardAndDst,
+    ): [
+        "pyasu",
+    ],
+    (
+        "Peru",
+        Any,
+    ): [
+        "pelim",
+    ],
+    (
+        "Peru",
+        StandardOnly,
+    ): [
+        "pelim",
+    ],
+    (
+        "Philippines",
+        Any,
+    ): [
+        "phmnl",
+    ],
+    (
+        "Philippines",
+        StandardOnly,
+    ): [
+        "phmnl",
+    ],
+    (
+        "Phoenix_Islands",
+        Any,
+    ): [
+        "kipho",
+    ],
+    (
+        "Phoenix_Islands",
+        StandardOnly,
+    ): [
+        "kipho",
+    ],
+    (
+        "Pierre_Miquelon",
+        Any,
+    ): [
+        "pmmqc",
+    ],
+    (
+        "Pierre_Miquelon",
+        StandardAndDst,
+    ): [
+        "pmmqc",
+    ],
+    (
+        "Pitcairn",
+        Any,
+    ): [
+        "pnpcn",
+    ],
+    (
+        "Pitcairn",
+        StandardOnly,
+    ): [
+        "pnpcn",
+    ],
+    (
+        "Ponape",
+        Any,
+    ): [
+        "fmpni",
+    ],
+    (
+        "Ponape",
+        StandardOnly,
+    ): [
+        "fmpni",
+    ],
+    (
+        "Pyongyang",
+        Any,
+    ): [
+        "kpfnj",
+    ],
+    (
+        "Pyongyang",
+        StandardOnly,
+    ): [
+        "kpfnj",
+    ],
+    (
+        "Reunion",
+        Any,
+    ): [
+        "rereu",
+    ],
+    (
+        "Reunion",
+        StandardOnly,
+    ): [
+        "rereu",
+    ],
+    (
+        "Rothera",
+        Any,
+    ): [
+        "aqrot",
+    ],
+    (
+        "Rothera",
+        StandardOnly,
+    ): [
+        "aqrot",
+    ],
+    (
+        "Sakhalin",
+        Any,
+    ): [
+        "ruuus",
+    ],
+    (
+        "Sakhalin",
+        StandardOnly,
+    ): [
+        "ruuus",
+    ],
+    (
+        "Samara",
+        Any,
+    ): [
+        "rukuf",
+    ],
+    (
+        "Samara",
+        StandardOnly,
+    ): [
+        "rukuf",
+    ],
+    (
+        "Samoa",
+        Any,
+    ): [
+        "asppg",
+        "ummdy",
+    ],
+    (
+        "Samoa",
+        StandardOnly,
+    ): [
+        "asppg",
+        "ummdy",
+    ],
+    (
+        "Seychelles",
+        Any,
+    ): [
+        "scmaw",
+    ],
+    (
+        "Seychelles",
+        StandardOnly,
+    ): [
+        "scmaw",
+    ],
+    (
+        "Singapore",
+        Any,
+    ): [
+        "sgsin",
+    ],
+    (
+        "Singapore",
+        StandardOnly,
+    ): [
+        "sgsin",
+    ],
+    (
+        "Solomon",
+        Any,
+    ): [
+        "sbhir",
+    ],
+    (
+        "Solomon",
+        StandardOnly,
+    ): [
+        "sbhir",
+    ],
+    (
+        "South_Georgia",
+        Any,
+    ): [
+        "gsgrv",
+    ],
+    (
+        "South_Georgia",
+        StandardOnly,
+    ): [
+        "gsgrv",
+    ],
+    (
+        "Suriname",
+        Any,
+    ): [
+        "srpbm",
+    ],
+    (
+        "Suriname",
+        StandardOnly,
+    ): [
+        "srpbm",
+    ],
+    (
+        "Syowa",
+        Any,
+    ): [
+        "aqsyw",
+    ],
+    (
+        "Syowa",
+        StandardOnly,
+    ): [
+        "aqsyw",
+    ],
+    (
+        "Tahiti",
+        Any,
+    ): [
+        "pfppt",
+    ],
+    (
+        "Tahiti",
+        StandardOnly,
+    ): [
+        "pfppt",
+    ],
+    (
+        "Taipei",
+        Any,
+    ): [
+        "twtpe",
+    ],
+    (
+        "Taipei",
+        StandardOnly,
+    ): [
+        "twtpe",
+    ],
+    (
+        "Tajikistan",
+        Any,
+    ): [
+        "tjdyu",
+    ],
+    (
+        "Tajikistan",
+        StandardOnly,
+    ): [
+        "tjdyu",
+    ],
+    (
+        "Tokelau",
+        Any,
+    ): [
+        "tkfko",
+    ],
+    (
+        "Tokelau",
+        StandardOnly,
+    ): [
+        "tkfko",
+    ],
+    (
+        "Tonga",
+        Any,
+    ): [
+        "totbu",
+    ],
+    (
+        "Tonga",
+        StandardAndDst,
+    ): [
+        "totbu",
+    ],
+    (
+        "Truk",
+        Any,
+    ): [
+        "fmtkk",
+    ],
+    (
+        "Truk",
+        StandardOnly,
+    ): [
+        "fmtkk",
+    ],
+    (
+        "Turkey",
+        Any,
+    ): [
+        "trist",
+    ],
+    (
+        "Turkey",
+        StandardOnly,
+    ): [
+        "trist",
+    ],
+    (
+        "Turkmenistan",
+        Any,
+    ): [
+        "tmasb",
+    ],
+    (
+        "Turkmenistan",
+        StandardOnly,
+    ): [
+        "tmasb",
+    ],
+    (
+        "Tuvalu",
+        Any,
+    ): [
+        "tvfun",
+    ],
+    (
+        "Tuvalu",
+        StandardOnly,
+    ): [
+        "tvfun",
+    ],
+    (
+        "Uruguay",
+        Any,
+    ): [
+        "uymvd",
+    ],
+    (
+        "Uruguay",
+        StandardAndDst,
+    ): [
+        "uymvd",
+    ],
+    (
+        "Urumqi",
+        Any,
+    ): [
+        "cnurc",
+    ],
+    (
+        "Urumqi",
+        StandardOnly,
+    ): [
+        "cnurc",
+    ],
+    (
+        "Uzbekistan",
+        Any,
+    ): [
+        "uzskd",
+        "uztas",
+    ],
+    (
+        "Uzbekistan",
+        StandardOnly,
+    ): [
+        "uzskd",
+        "uztas",
+    ],
+    (
+        "Vanuatu",
+        Any,
+    ): [
+        "vuvli",
+    ],
+    (
+        "Vanuatu",
+        StandardOnly,
+    ): [
+        "vuvli",
+    ],
+    (
+        "Venezuela",
+        Any,
+    ): [
+        "veccs",
+    ],
+    (
+        "Venezuela",
+        StandardOnly,
+    ): [
+        "veccs",
+    ],
+    (
+        "Vladivostok",
+        Any,
+    ): [
+        "ruunera",
+        "ruvvo",
+    ],
+    (
+        "Vladivostok",
+        StandardOnly,
+    ): [
+        "ruunera",
+        "ruvvo",
+    ],
+    (
+        "Volgograd",
+        Any,
+    ): [
+        "ruvog",
+    ],
+    (
+        "Volgograd",
+        StandardOnly,
+    ): [
+        "ruvog",
+    ],
+    (
+        "Vostok",
+        Any,
+    ): [
+        "aqvos",
+    ],
+    (
+        "Vostok",
+        StandardOnly,
+    ): [
+        "aqvos",
+    ],
+    (
+        "Wake",
+        Any,
+    ): [
+        "umawk",
+    ],
+    (
+        "Wake",
+        StandardOnly,
+    ): [
+        "umawk",
+    ],
+    (
+        "Wallis",
+        Any,
+    ): [
+        "wfmau",
+    ],
+    (
+        "Wallis",
+        StandardOnly,
+    ): [
+        "wfmau",
+    ],
+    (
+        "Yakutsk",
+        Any,
+    ): [
+        "ruchita",
+        "rukhndg",
+        "ruyks",
+    ],
+    (
+        "Yakutsk",
+        StandardOnly,
+    ): [
+        "ruchita",
+        "rukhndg",
+        "ruyks",
+    ],
+    (
+        "Yekaterinburg",
+        Any,
+    ): [
+        "ruyek",
+    ],
+    (
+        "Yekaterinburg",
+        StandardOnly,
+    ): [
+        "ruyek",
+    ],
+    (
+        "Yukon",
+        Any,
+    ): [
+        "cayda",
+        "cayxy",
+    ],
+    (
+        "Yukon",
+        StandardOnly,
+    ): [
+        "cayda",
+        "cayxy",
+    ],
+}
