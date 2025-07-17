@@ -32,14 +32,36 @@
     }
   },
   {
+    "locale": "fr",
+    "datetime": "2021-07-11T12:00:00.000+01:00[Africa/Algiers]",
+    "expectations": {
+      "z": "UTC+1",
+      "zzzz": "heure normale d’Europe centrale",
+
+      "v": "heure : Algérie",
+      "vvvv": "heure d’Europe centrale (Algérie)"
+    }
+  },
+  {
+    "locale": "en",
+    "datetime": "2021-07-11T12:00:00.000-06:00[America/Regina]",
+    "expectations": {
+      "z": "CST",
+      "zzzz": "Central Standard Time",
+
+      "v": "CT (Regina)",
+      "vvvv": "Central Time (Regina)"
+    }
+  },
+  {
     "locale": "en",
     "datetime": "2021-07-11T12:00:00.000+01:00[Europe/London]",
     "expectations": {
       "z": "GMT+1",
       "zzzz": "British Summer Time",
 
-      "v": "GMT",
-      "vvvv": "Greenwich Mean Time",
+      "v": "UK Time",
+      "vvvv": "UK Time",
 
       "VVV": "London",
       "VVVV": "UK Time",
@@ -50,13 +72,30 @@
   },
   {
     "locale": "en",
+    "datetime": "2021-07-11T12:00:00.000+00:00[Europe/London]",
+    "expectations": {
+      "z": "GMT",
+      "zzzz": "Greenwich Mean Time",
+
+      "v": "UK Time",
+      "vvvv": "UK Time",
+
+      "VVV": "London",
+      "VVVV": "UK Time",
+
+      "O": "GMT+0",
+      "OOOO": "GMT+00:00"
+    }
+  },
+  {
+    "locale": "en",
     "datetime": "2021-07-11T12:00:00.000+01:00[Europe/Dublin]",
     "expectations": {
       "z": "GMT+1",
       "zzzz": "Irish Standard Time",
 
-      "v": "GMT",
-      "vvvv": "Greenwich Mean Time",
+      "v": "Ireland Time",
+      "vvvv": "Ireland Time",
 
       "VVV": "Dublin",
       "VVVV": "Ireland Time",
@@ -90,7 +129,7 @@
       "zzzz": "Среднее время по Гринвичу",
 
       "v": "Тролль",
-      "vvvv": "Среднее время по Гринвичу",
+      "vvvv": "Тролль",
 
       "VVV": "Тролль",
       "VVVV": "Тролль",
@@ -182,7 +221,7 @@
     "locale": "en",
     "datetime": "2013-08-15T12:00:00+01[Africa/Windhoek]",
     "expectations": {
-      "vvvv": "West Africa Time",
+      "vvvv": "Namibia Time",
       "zzzz": "West Africa Standard Time"
     }
   },
@@ -190,8 +229,8 @@
     "locale": "en",
     "datetime": "2013-09-15T12:00:00+02[Africa/Windhoek]",
     "expectations": {
-      "vvvv": "West Africa Time",
-      "zzzz": "West Africa Summer Time"
+      "vvvv": "Namibia Time",
+      "zzzz": "Namibia Daylight Time"
     }
   },
   {

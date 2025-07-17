@@ -106,6 +106,12 @@ impl FormatTimeZone for GenericNonLocationFormat {
                 MissingInputFieldKind::TimeZoneNameTimestamp,
             )));
         };
+        let Some(locations) = data_payloads.locations else {
+            return Ok(Err(FormatTimeZoneError::NamesNotLoaded));
+        };
+        let Some(locations_root) = data_payloads.locations_root else {
+            return Ok(Err(FormatTimeZoneError::NamesNotLoaded));
+        };
         let Some(generic_names) = (match self.0 {
             FieldLength::Four => data_payloads.mz_generic_long.as_ref(),
             _ => data_payloads.mz_generic_short.as_ref(),
@@ -130,7 +136,7 @@ impl FormatTimeZone for GenericNonLocationFormat {
             .zone_offset
             .is_some_and(|o| o != offsets.standard && Some(o) != offsets.daylight)
         {
-            // Not correctly using the metazone
+            // Not a correct offset for the zone
             return Ok(Err(FormatTimeZoneError::Fallback));
         };
 
@@ -144,9 +150,17 @@ impl FormatTimeZone for GenericNonLocationFormat {
             return Ok(Ok(()));
         }
 
-        let Some(mz) = mz else {
+        let Some((mz, golden_offsets)) = mz else {
             return Ok(Err(FormatTimeZoneError::Fallback));
         };
+
+        if offsets.daylight.is_some() && golden_offsets.daylight.is_none() {
+            // The MZ's golden does not use daylight, but we do (e.g. London, Dublin, Troll,
+            // Windhoek).
+            // Because we might be on an offset that no other zone in the metazone ever uses,
+            // fall back to location format.
+            return Ok(Err(FormatTimeZoneError::Fallback));
+        }
 
         let Some(name) = generic_names
             .defaults
@@ -156,7 +170,26 @@ impl FormatTimeZone for GenericNonLocationFormat {
             return Ok(Err(FormatTimeZoneError::Fallback));
         };
 
-        sink.write_str(name)?;
+        if offsets.daylight.is_none() && golden_offsets.daylight.is_some() {
+            // The MZ's golden uses daylight but we don't (e.g. Phoenix, Regina, Algiers,
+            // Brisbane).
+            // Disambiguate using the location.
+            // TODO: Use the standard name here
+            let Some(location) = locations
+                .locations
+                .get(&time_zone_id)
+                .or_else(|| locations_root.locations.get(&time_zone_id))
+            else {
+                return Ok(Err(FormatTimeZoneError::Fallback));
+            };
+
+            locations
+                .pattern_partial_location
+                .interpolate([location, name])
+                .write_to(sink)?;
+        } else {
+            name.write_to(sink)?;
+        }
 
         Ok(Ok(()))
     }
@@ -209,7 +242,7 @@ impl FormatTimeZone for SpecificNonLocationFormat {
         } else if Some(offset) == offsets.daylight {
             TimeZoneVariant::Daylight
         } else {
-            // Not correctly using the metazone
+            // Not a correct offset for the zone
             return Ok(Err(FormatTimeZoneError::Fallback));
         };
 
@@ -219,7 +252,18 @@ impl FormatTimeZone for SpecificNonLocationFormat {
             return Ok(Ok(()));
         }
 
-        let Some(mz) = mz else {
+        let Some((mz, golden_offsets)) = mz else {
+            return Ok(Err(FormatTimeZoneError::Fallback));
+        };
+
+        // Metazone names are defined for the offsets of the golden zone,
+        // so recalculate the variant just in case.
+        let variant = if offset == golden_offsets.standard {
+            TimeZoneVariant::Standard
+        } else if Some(offset) == golden_offsets.daylight {
+            TimeZoneVariant::Daylight
+        } else {
+            // Not a correct offset for the metazone
             return Ok(Err(FormatTimeZoneError::Fallback));
         };
 
@@ -566,7 +610,7 @@ impl FormatTimeZone for GenericPartialLocationFormat {
         let Some(non_location) = non_locations.overrides.get(&time_zone_id).or_else(|| {
             non_locations
                 .defaults
-                .get(&metazone_period.get(time_zone_id, timestamp)?.1?)
+                .get(&metazone_period.get(time_zone_id, timestamp)?.1?.0)
         }) else {
             return Ok(Err(FormatTimeZoneError::Fallback));
         };

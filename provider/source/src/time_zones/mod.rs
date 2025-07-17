@@ -11,6 +11,7 @@ use core::hash::Hasher;
 use icu::calendar::Iso;
 use icu::datetime::provider::time_zones::*;
 use icu::locale::subtags::region;
+use icu::locale::subtags::subtag;
 use icu::time::provider::*;
 use icu::time::zone::UtcOffset;
 use icu::time::zone::VariantOffsets;
@@ -43,13 +44,15 @@ struct MetazoneData {
     periods: BTreeMap<TimeZone, Vec<(ZoneNameTimestamp, VariantOffsets, Option<MetazoneId>)>>,
     reverse: BTreeMap<(MetazoneId, MzMembership), Vec<TimeZone>>,
     ids: BTreeMap<String, MetazoneId>,
+    goldens: BTreeMap<MetazoneId, TimeZone>,
     checksum: u64,
 }
 
 #[derive(PartialEq, Eq, Ord, PartialOrd, Clone, Copy, Debug)]
 enum MzMembership {
     Any,
-    Daylight,
+    StandardAndDaylight,
+    StandardOnly,
 }
 
 impl SourceDataProvider {
@@ -71,7 +74,7 @@ impl SourceDataProvider {
             .tz_caches
             .metazones
             .get_or_init(|| {
-                let metazones = &self
+                let metazones_resource = &self
                     .cldr()?
                     .core()
                     .read_and_parse::<cldr_serde::time_zones::meta_zones::Resource>(
@@ -141,7 +144,7 @@ impl SourceDataProvider {
 
                 let mut all_metazones = BTreeSet::new();
 
-                let metazones = metazones
+                let metazones = metazones_resource
                     .meta_zone_info
                     .time_zone
                     .iter()
@@ -232,11 +235,29 @@ impl SourceDataProvider {
                     }
                 }
 
-                let mut reverse = BTreeMap::<(&str, MzMembership), Vec<TimeZone>>::new();
-                for (&tz, ps) in &offsets_and_metazones {
-                    let mut ps = ps.iter().copied().peekable();
+                let mut goldens = metazones_resource
+                    .meta_zones_territory
+                    .0
+                    .iter()
+                    .filter_map(|mt| {
+                        if mt.map_zone.territory != region!("001") {
+                            return None;
+                        }
+                        Some((mt.map_zone.metazone.as_str(), *bcp47_tzid_data.get(&mt.map_zone.time_zone)?))
+                    })
+                    .collect::<BTreeMap<_, _>>();
 
-                    let mut curr = *ps.peek().unwrap();
+                // CLDR sets the golden for Hawaii-Aleutian Time to Honolulu, but that doesn't fit our model as
+                // Honolulu has never used DST while Adak has.
+                // In v48, Honolulu will have overrides in all locales, and could be removed from the metazone.
+                goldens.insert("Hawaii_Aleutian", TimeZone(subtag!("usadk")));
+
+                let mut reverse = BTreeMap::<(&str, MzMembership), Vec<TimeZone>>::new();
+                for &tz in goldens.values().chain(offsets_and_metazones.keys()) {
+                    let mut ps = offsets_and_metazones[&tz].iter().copied().peekable();
+
+                    let mut curr = ps.next().unwrap();
+                    let mut uses_dst = false;
 
                     // Skip entries before the metazone horizon
                     while ps.peek().is_some_and(|&(start, ..)| {
@@ -246,15 +267,26 @@ impl SourceDataProvider {
                     }
 
                     loop {
-                        if let (_, offsets, Some(mz)) = curr {
-                            reverse.entry((mz, MzMembership::Any)).or_default().push(tz);
-                            // The daylight name is only required if a zone using this metazone actually observes DST
-                            if offsets.daylight.is_some() {
+                        if curr.1.daylight.is_some() {
+                            uses_dst = true;
+                        }
+
+                        if ps.peek().is_none_or(|&(_, _, next_mz)| next_mz != curr.2) {
+                            // End of metazone period. Record usage
+                            if let Some(curr_mz) = curr.2 {
+                                uses_dst = uses_dst && (
+                                    goldens[&curr_mz] == tz ||
+                                    // Only record DST usage if we are a golden zone, or if our golden zone has ever
+                                    // used DST. Golden zones are iterated first, which makes the check work.
+                                    offsets_and_metazones[&goldens[&curr_mz]].iter().any(|&(_, os, mz)| Some(curr_mz) == mz && os.daylight.is_some())
+                                );
+                                reverse.entry((curr_mz, MzMembership::Any)).or_default().push(tz);
                                 reverse
-                                    .entry((mz, MzMembership::Daylight))
+                                    .entry((curr_mz, if uses_dst { MzMembership::StandardAndDaylight } else { MzMembership::StandardOnly }))
                                     .or_default()
                                     .push(tz);
                             }
+                            uses_dst = false;
                         }
 
                         if let Some(next) = ps.next() {
@@ -297,6 +329,7 @@ impl SourceDataProvider {
                             Some(((*ids.get(mz)?, membership), tzs))
                         })
                         .collect(),
+                    goldens: goldens.into_iter().filter_map(|(mz, tz)| Some((*ids.get(mz)?, tz))).collect(),
                     ids,
                     checksum: hash,
                 })

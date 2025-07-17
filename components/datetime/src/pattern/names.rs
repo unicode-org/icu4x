@@ -1863,16 +1863,16 @@ impl<C, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, FSet> {
     /// use icu::time::zone::{IanaParser, VariantOffsetsCalculator};
     /// use writeable::assert_try_writeable_eq;
     ///
-    /// let mut zone_london_winter = ZonedDateTime::try_full_from_str(
-    ///     "2024-01-01T00:00:00+00:00[Europe/London]",
+    /// let mut zone_berlin_winter = ZonedDateTime::try_full_from_str(
+    ///     "2024-01-01T00:00:00+01:00[Europe/Berlin]",
     ///     Gregorian,
     ///     IanaParser::new(),
     ///     VariantOffsetsCalculator::new(),
     /// )
     /// .unwrap()
     /// .zone;
-    /// let mut zone_london_summer = ZonedDateTime::try_full_from_str(
-    ///     "2024-07-01T00:00:00+01:00[Europe/London]",
+    /// let mut zone_berlin_summer = ZonedDateTime::try_full_from_str(
+    ///     "2024-07-01T00:00:00+02:00[Europe/Berlin]",
     ///     Gregorian,
     ///     IanaParser::new(),
     ///     VariantOffsetsCalculator::new(),
@@ -1888,6 +1888,7 @@ impl<C, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, FSet> {
     ///
     /// names.include_time_zone_essentials().unwrap();
     /// names.include_time_zone_generic_long_names().unwrap();
+    /// names.include_time_zone_location_names().unwrap();
     ///
     /// // Create a pattern with symbol `vvvv`:
     /// let pattern_str = "'Your time zone is:' vvvv";
@@ -1896,18 +1897,14 @@ impl<C, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, FSet> {
     /// assert_try_writeable_eq!(
     ///     names
     ///         .with_pattern_unchecked(&pattern)
-    ///         .format(&zone_london_winter),
-    ///     "Your time zone is: Greenwich Mean Time",
+    ///         .format(&zone_berlin_winter),
+    ///     "Your time zone is: Central European Time",
     /// );
     /// assert_try_writeable_eq!(
     ///     names
     ///         .with_pattern_unchecked(&pattern)
-    ///         .format(&zone_london_summer),
-    ///     // Note: The year-round generic name of this zone is Greenwich
-    ///     // Mean Time, which may be confusing since the zone observes
-    ///     // daylight savings time. See:
-    ///     // <https://unicode-org.atlassian.net/issues/CLDR-18378>
-    ///     "Your time zone is: Greenwich Mean Time",
+    ///         .format(&zone_berlin_summer),
+    ///     "Your time zone is: Central European Time",
     /// );
     /// ```
     #[cfg(feature = "compiled_data")]
@@ -1955,16 +1952,16 @@ impl<C, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, FSet> {
     /// use icu::time::zone::{IanaParser, VariantOffsetsCalculator};
     /// use writeable::assert_try_writeable_eq;
     ///
-    /// let mut zone_london_winter = ZonedDateTime::try_full_from_str(
-    ///     "2024-01-01T00:00:00+00:00[Europe/London]",
+    /// let mut zone_berlin_winter = ZonedDateTime::try_full_from_str(
+    ///     "2024-01-01T00:00:00+01:00[Europe/Berlin]",
     ///     Gregorian,
     ///     IanaParser::new(),
     ///     VariantOffsetsCalculator::new(),
     /// )
     /// .unwrap()
     /// .zone;
-    /// let mut zone_london_summer = ZonedDateTime::try_full_from_str(
-    ///     "2024-07-01T00:00:00+01:00[Europe/London]",
+    /// let mut zone_berlin_summer = ZonedDateTime::try_full_from_str(
+    ///     "2024-07-01T00:00:00+02:00[Europe/Berlin]",
     ///     Gregorian,
     ///     IanaParser::new(),
     ///     VariantOffsetsCalculator::new(),
@@ -1980,6 +1977,7 @@ impl<C, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, FSet> {
     ///
     /// names.include_time_zone_essentials().unwrap();
     /// names.include_time_zone_generic_short_names().unwrap();
+    /// names.include_time_zone_location_names().unwrap();
     ///
     /// // Create a pattern with symbol `v`:
     /// let pattern_str = "'Your time zone is:' v";
@@ -1988,18 +1986,14 @@ impl<C, FSet: DateTimeNamesMarker> FixedCalendarDateTimeNames<C, FSet> {
     /// assert_try_writeable_eq!(
     ///     names
     ///         .with_pattern_unchecked(&pattern)
-    ///         .format(&zone_london_winter),
-    ///     "Your time zone is: GMT",
+    ///         .format(&zone_berlin_winter),
+    ///     "Your time zone is: CET",
     /// );
     /// assert_try_writeable_eq!(
     ///     names
     ///         .with_pattern_unchecked(&pattern)
-    ///         .format(&zone_london_summer),
-    ///     // Note: The year-round generic name of this zone is Greenwich
-    ///     // Mean Time, which may be confusing since the zone observes
-    ///     // daylight savings time. See:
-    ///     // <https://unicode-org.atlassian.net/issues/CLDR-18378>
-    ///     "Your time zone is: GMT",
+    ///         .format(&zone_berlin_summer),
+    ///     "Your time zone is: CET",
     /// );
     /// ```
     #[cfg(feature = "compiled_data")]

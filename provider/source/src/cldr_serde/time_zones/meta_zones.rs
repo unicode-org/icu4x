@@ -7,6 +7,7 @@
 //! Sample file:
 //! <https://github.com/unicode-org/cldr-json/blob/main/cldr-json/cldr-core/supplemental/metaZones.json>
 
+use icu::locale::subtags::Region;
 use icu::time::zone::ZoneNameTimestamp;
 use icu_time::ZonedDateTime;
 use serde::Deserialize;
@@ -54,11 +55,11 @@ pub(crate) struct MetazoneInfo {
 #[derive(PartialEq, Debug, Clone, Deserialize)]
 pub(crate) struct MapZone {
     #[serde(rename = "_other")]
-    pub(crate) other: String,
+    pub(crate) metazone: String,
     #[serde(rename = "_type")]
-    pub(crate) zone_type: String,
+    pub(crate) time_zone: String,
     #[serde(rename = "_territory")]
-    pub(crate) territory: String,
+    pub(crate) territory: Region,
 }
 
 #[derive(PartialEq, Debug, Clone, Deserialize)]
@@ -75,7 +76,7 @@ pub(crate) struct Metazones {
     #[serde(rename = "metazoneInfo")]
     pub(crate) meta_zone_info: MetazoneInfo,
     #[serde(rename = "metazones")]
-    pub(crate) _meta_zones_territory: MetazonesTerritory,
+    pub(crate) meta_zones_territory: MetazonesTerritory,
 }
 
 #[derive(Debug, Clone, Deserialize)]
