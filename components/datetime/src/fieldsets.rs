@@ -1721,7 +1721,7 @@ pub mod zone {
         ///
         /// let formatter = NoCalendarFormatter::try_new(
         ///     locale!("en-US").into(),
-        ///     Generic,
+        ///     GenericShort,
         /// )
         /// .unwrap();
         ///

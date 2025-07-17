@@ -378,6 +378,7 @@ pub(crate) mod legacy {
                 index,
                 list: list.into(),
                 offsets: ZeroVec::from(alloc::vec![Default::default()]),
+                goldens: Default::default(),
             }),
             metadata,
         })
@@ -424,11 +425,17 @@ pub(crate) mod legacy {
             );
 
             assert_eq!(
-                converted.get().get(tz, t).unwrap().1,
+                converted
+                    .get()
+                    .get(tz, t)
+                    .unwrap()
+                    .1
+                    .map(|(mz, _golden_os)| mz),
                 icu_time::provider::Baked::SINGLETON_TIMEZONE_PERIODS_V1
                     .get(tz, t)
                     .unwrap()
-                    .1,
+                    .1
+                    .map(|(mz, _golden_os)| mz),
                 "{timestamp:?}",
             );
         }
