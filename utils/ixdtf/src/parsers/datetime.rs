@@ -222,7 +222,7 @@ pub(crate) fn parse_month_day<T: EncodingType>(cursor: &mut Cursor<T>) -> Parser
 
     let day = parse_date_day(cursor)?;
 
-    if !is_valid_month_day(day, month) {
+    if !is_valid_month_day(month, day) {
         return Err(ParseError::InvalidMonthDay);
     }
 
