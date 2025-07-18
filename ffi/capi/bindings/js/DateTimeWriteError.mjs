@@ -7,6 +7,8 @@ import * as diplomatRuntime from "./diplomat-runtime.mjs";
 /**
  * An error when formatting a datetime.
  *
+ * Currently never returned by any API.
+ *
  * Additional information: [1](https://docs.rs/icu/2.0.0/icu/datetime/unchecked/enum.FormattedDateTimeUncheckedError.html)
  */
 export class DateTimeWriteError {

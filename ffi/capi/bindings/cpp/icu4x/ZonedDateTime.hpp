@@ -25,8 +25,8 @@ namespace icu4x {
 namespace capi {
     extern "C" {
 
-    typedef struct icu4x_ZonedDateTime_from_string_mv1_result {union {icu4x::capi::ZonedDateTime ok; icu4x::capi::Rfc9557ParseError err;}; bool is_ok;} icu4x_ZonedDateTime_from_string_mv1_result;
-    icu4x_ZonedDateTime_from_string_mv1_result icu4x_ZonedDateTime_from_string_mv1(diplomat::capi::DiplomatStringView v, const icu4x::capi::Calendar* calendar, const icu4x::capi::IanaParser* iana_parser);
+    typedef struct icu4x_ZonedDateTime_strict_from_string_mv1_result {union {icu4x::capi::ZonedDateTime ok; icu4x::capi::Rfc9557ParseError err;}; bool is_ok;} icu4x_ZonedDateTime_strict_from_string_mv1_result;
+    icu4x_ZonedDateTime_strict_from_string_mv1_result icu4x_ZonedDateTime_strict_from_string_mv1(diplomat::capi::DiplomatStringView v, const icu4x::capi::Calendar* calendar, const icu4x::capi::IanaParser* iana_parser);
 
     typedef struct icu4x_ZonedDateTime_full_from_string_mv1_result {union {icu4x::capi::ZonedDateTime ok; icu4x::capi::Rfc9557ParseError err;}; bool is_ok;} icu4x_ZonedDateTime_full_from_string_mv1_result;
     icu4x_ZonedDateTime_full_from_string_mv1_result icu4x_ZonedDateTime_full_from_string_mv1(diplomat::capi::DiplomatStringView v, const icu4x::capi::Calendar* calendar, const icu4x::capi::IanaParser* iana_parser, const icu4x::capi::VariantOffsetsCalculator* _offset_calculator);
@@ -44,8 +44,8 @@ namespace capi {
 } // namespace capi
 } // namespace
 
-inline diplomat::result<icu4x::ZonedDateTime, icu4x::Rfc9557ParseError> icu4x::ZonedDateTime::from_string(std::string_view v, const icu4x::Calendar& calendar, const icu4x::IanaParser& iana_parser) {
-  auto result = icu4x::capi::icu4x_ZonedDateTime_from_string_mv1({v.data(), v.size()},
+inline diplomat::result<icu4x::ZonedDateTime, icu4x::Rfc9557ParseError> icu4x::ZonedDateTime::strict_from_string(std::string_view v, const icu4x::Calendar& calendar, const icu4x::IanaParser& iana_parser) {
+  auto result = icu4x::capi::icu4x_ZonedDateTime_strict_from_string_mv1({v.data(), v.size()},
     calendar.AsFFI(),
     iana_parser.AsFFI());
   return result.is_ok ? diplomat::result<icu4x::ZonedDateTime, icu4x::Rfc9557ParseError>(diplomat::Ok<icu4x::ZonedDateTime>(icu4x::ZonedDateTime::FromFFI(result.ok))) : diplomat::result<icu4x::ZonedDateTime, icu4x::Rfc9557ParseError>(diplomat::Err<icu4x::Rfc9557ParseError>(icu4x::Rfc9557ParseError::FromFFI(result.err)));

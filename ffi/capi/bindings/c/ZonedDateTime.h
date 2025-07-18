@@ -19,8 +19,8 @@
 
 
 
-typedef struct icu4x_ZonedDateTime_from_string_mv1_result {union {ZonedDateTime ok; Rfc9557ParseError err;}; bool is_ok;} icu4x_ZonedDateTime_from_string_mv1_result;
-icu4x_ZonedDateTime_from_string_mv1_result icu4x_ZonedDateTime_from_string_mv1(DiplomatStringView v, const Calendar* calendar, const IanaParser* iana_parser);
+typedef struct icu4x_ZonedDateTime_strict_from_string_mv1_result {union {ZonedDateTime ok; Rfc9557ParseError err;}; bool is_ok;} icu4x_ZonedDateTime_strict_from_string_mv1_result;
+icu4x_ZonedDateTime_strict_from_string_mv1_result icu4x_ZonedDateTime_strict_from_string_mv1(DiplomatStringView v, const Calendar* calendar, const IanaParser* iana_parser);
 
 typedef struct icu4x_ZonedDateTime_full_from_string_mv1_result {union {ZonedDateTime ok; Rfc9557ParseError err;}; bool is_ok;} icu4x_ZonedDateTime_full_from_string_mv1_result;
 icu4x_ZonedDateTime_full_from_string_mv1_result icu4x_ZonedDateTime_full_from_string_mv1(DiplomatStringView v, const Calendar* calendar, const IanaParser* iana_parser, const VariantOffsetsCalculator* _offset_calculator);

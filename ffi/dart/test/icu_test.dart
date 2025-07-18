@@ -94,12 +94,12 @@ void main() {
   });
 
   test('DateTime formatting', () {
-    final zonedDateTimeIso = ZonedIsoDateTime.fromString(
+    final zonedDateTimeIso = ZonedIsoDateTime.strictFromString(
       '2025-01-15T14:32:12.34+01[Europe/Zurich]',
       IanaParser(),
     );
 
-    final zonedDateTimeBuddhist = ZonedDateTime.fromString(
+    final zonedDateTimeBuddhist = ZonedDateTime.strictFromString(
       '2026-01-15T05:32:12.34+07[Asia/Bangkok][u-ca=buddhist]',
       Calendar(CalendarKind.buddhist),
       IanaParser(),

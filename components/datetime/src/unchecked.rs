@@ -284,6 +284,7 @@ pub enum MissingInputFieldKind {
     /// Time zone name timestamp
     TimeZoneNameTimestamp,
     /// Unused as of 2.1.0
+    #[deprecated(since = "2.1.0", note = "unused, never returned")]
     TimeZoneVariant,
 }
 

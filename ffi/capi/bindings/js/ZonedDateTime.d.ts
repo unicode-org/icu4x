@@ -26,16 +26,16 @@ export class ZonedDateTime {
     /**
      * Creates a new {@link ZonedIsoDateTime} from an IXDTF string.
      *
-     * See the [Rust documentation for `try_from_str`](https://docs.rs/icu/2.0.0/icu/time/struct.ZonedDateTime.html#method.try_from_str) for more information.
+     * See the [Rust documentation for `try_strict_from_str`](https://docs.rs/icu/2.0.0/icu/time/struct.ZonedDateTime.html#method.try_strict_from_str) for more information.
      */
-    static fromString(v: string, calendar: Calendar, ianaParser: IanaParser): ZonedDateTime;
+    static strictFromString(v: string, calendar: Calendar, ianaParser: IanaParser): ZonedDateTime;
 
     /**
      * Creates a new {@link ZonedDateTime} from an IXDTF string.
      *
      * DEPRECATED
      *
-     * Use `from_string`
+     * Use `strict_from_string`
      *
      * See the [Rust documentation for `try_full_from_str`](https://docs.rs/icu/2.0.0/icu/time/struct.ZonedDateTime.html#method.try_full_from_str) for more information.
      */

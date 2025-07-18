@@ -120,16 +120,16 @@ export class ZonedIsoDateTime {
     /**
      * Creates a new {@link ZonedIsoDateTime} from an IXDTF string.
      *
-     * See the [Rust documentation for `try_from_str`](https://docs.rs/icu/2.0.0/icu/time/struct.ZonedDateTime.html#method.try_from_str) for more information.
+     * See the [Rust documentation for `try_strict_from_str`](https://docs.rs/icu/2.0.0/icu/time/struct.ZonedDateTime.html#method.try_strict_from_str) for more information.
      */
-    static fromString(v, ianaParser) {
+    static strictFromString(v, ianaParser) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
 
         const vSlice = functionCleanupArena.alloc(diplomatRuntime.DiplomatBuf.sliceWrapper(wasm, diplomatRuntime.DiplomatBuf.str8(wasm, v)));
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 13, 4, true);
 
 
-        const result = wasm.icu4x_ZonedIsoDateTime_from_string_mv1(diplomatReceive.buffer, vSlice.ptr, ianaParser.ffiValue);
+        const result = wasm.icu4x_ZonedIsoDateTime_strict_from_string_mv1(diplomatReceive.buffer, vSlice.ptr, ianaParser.ffiValue);
 
         try {
             if (!diplomatReceive.resultFlag) {
@@ -151,7 +151,7 @@ export class ZonedIsoDateTime {
      *
      * DEPRECATED
      *
-     * Use `from_string`.
+     * Use `strict_from_string`.
      *
      * See the [Rust documentation for `try_full_from_str`](https://docs.rs/icu/2.0.0/icu/time/struct.ZonedDateTime.html#method.try_full_from_str) for more information.
      */

@@ -39,12 +39,12 @@ final class ZonedIsoDateTime {
 
   /// Creates a new [ZonedIsoDateTime] from an IXDTF string.
   ///
-  /// See the [Rust documentation for `try_from_str`](https://docs.rs/icu/2.0.0/icu/time/struct.ZonedDateTime.html#method.try_from_str) for more information.
+  /// See the [Rust documentation for `try_strict_from_str`](https://docs.rs/icu/2.0.0/icu/time/struct.ZonedDateTime.html#method.try_strict_from_str) for more information.
   ///
   /// Throws [Rfc9557ParseError] on failure.
-  factory ZonedIsoDateTime.fromString(String v, IanaParser ianaParser) {
+  factory ZonedIsoDateTime.strictFromString(String v, IanaParser ianaParser) {
     final temp = _FinalizedArena();
-    final result = _icu4x_ZonedIsoDateTime_from_string_mv1(v._utf8AllocIn(temp.arena), ianaParser._ffi);
+    final result = _icu4x_ZonedIsoDateTime_strict_from_string_mv1(v._utf8AllocIn(temp.arena), ianaParser._ffi);
     if (!result.isOk) {
       throw Rfc9557ParseError.values[result.union.err];
     }
@@ -55,7 +55,7 @@ final class ZonedIsoDateTime {
   ///
   /// DEPRECATED
   ///
-  /// Use `from_string`.
+  /// Use `strict_from_string`.
   ///
   /// See the [Rust documentation for `try_full_from_str`](https://docs.rs/icu/2.0.0/icu/time/struct.ZonedDateTime.html#method.try_full_from_str) for more information.
   ///
@@ -95,10 +95,10 @@ final class ZonedIsoDateTime {
       ]);
 }
 
-@_DiplomatFfiUse('icu4x_ZonedIsoDateTime_from_string_mv1')
-@ffi.Native<_ResultZonedIsoDateTimeFfiInt32 Function(_SliceUtf8, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_ZonedIsoDateTime_from_string_mv1')
+@_DiplomatFfiUse('icu4x_ZonedIsoDateTime_strict_from_string_mv1')
+@ffi.Native<_ResultZonedIsoDateTimeFfiInt32 Function(_SliceUtf8, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_ZonedIsoDateTime_strict_from_string_mv1')
 // ignore: non_constant_identifier_names
-external _ResultZonedIsoDateTimeFfiInt32 _icu4x_ZonedIsoDateTime_from_string_mv1(_SliceUtf8 v, ffi.Pointer<ffi.Opaque> ianaParser);
+external _ResultZonedIsoDateTimeFfiInt32 _icu4x_ZonedIsoDateTime_strict_from_string_mv1(_SliceUtf8 v, ffi.Pointer<ffi.Opaque> ianaParser);
 
 @_DiplomatFfiUse('icu4x_ZonedIsoDateTime_full_from_string_mv1')
 @ffi.Native<_ResultZonedIsoDateTimeFfiInt32 Function(_SliceUtf8, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true, symbol: 'icu4x_ZonedIsoDateTime_full_from_string_mv1')

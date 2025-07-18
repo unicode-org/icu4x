@@ -477,7 +477,7 @@ impl<A: AsCalendar> ZonedDateTime<A, TimeZoneInfo<models::AtTime>> {
     ///     TimeZone, TimeZoneInfo, ZonedDateTime,
     /// };
     ///
-    /// let zoneddatetime = ZonedDateTime::try_from_str(
+    /// let zoneddatetime = ZonedDateTime::try_strict_from_str(
     ///     "2024-08-08T12:08:19-05:00[America/Chicago][u-ca=hebrew]",
     ///     Hebrew,
     ///     IanaParser::new(),
@@ -602,18 +602,18 @@ impl<A: AsCalendar> ZonedDateTime<A, TimeZoneInfo<models::AtTime>> {
     ///     Err(ParseError::InconsistentTimeUtcOffsets)
     /// ));
     /// ```
-    pub fn try_from_str(
+    pub fn try_strict_from_str(
         rfc_9557_str: &str,
         calendar: A,
         iana_parser: IanaParserBorrowed,
     ) -> Result<Self, ParseError> {
-        Self::try_from_utf8(rfc_9557_str.as_bytes(), calendar, iana_parser)
+        Self::try_strict_from_utf8(rfc_9557_str.as_bytes(), calendar, iana_parser)
     }
 
     /// Create a [`ZonedDateTime`] in any calendar from RFC 9557 UTF-8 bytes.
     ///
-    /// See [`Self::try_from_str`].
-    pub fn try_from_utf8(
+    /// See [`Self::try_strict_from_str`].
+    pub fn try_strict_from_utf8(
         rfc_9557_str: &[u8],
         calendar: A,
         iana_parser: IanaParserBorrowed,
@@ -630,7 +630,7 @@ impl<A: AsCalendar> ZonedDateTime<A, TimeZoneInfo<models::AtTime>> {
 #[allow(deprecated)]
 impl<A: AsCalendar> ZonedDateTime<A, TimeZoneInfo<models::Full>> {
     /// Create a [`ZonedDateTime`] in any calendar from an RFC 9557 string.
-    #[deprecated(since = "2.1.0", note = "use `try_from_str`")]
+    #[deprecated(since = "2.1.0", note = "use `try_strict_from_str`")]
     pub fn try_full_from_str(
         rfc_9557_str: &str,
         calendar: A,
@@ -648,7 +648,7 @@ impl<A: AsCalendar> ZonedDateTime<A, TimeZoneInfo<models::Full>> {
     /// Create a [`ZonedDateTime`] in any calendar from RFC 9557 UTF-8 bytes.
     ///
     /// See [`Self::try_full_from_str`].
-    #[deprecated(since = "2.1.0", note = "use `try_from_utf8`")]
+    #[deprecated(since = "2.1.0", note = "use `try_strict_from_utf8`")]
     pub fn try_full_from_utf8(
         rfc_9557_str: &[u8],
         calendar: A,

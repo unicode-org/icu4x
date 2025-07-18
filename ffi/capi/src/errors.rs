@@ -123,6 +123,8 @@ pub mod ffi {
     }
 
     /// An error when formatting a datetime.
+    ///
+    /// Currently never returned by any API.
     #[cfg(feature = "datetime")]
     #[derive(Debug, PartialEq, Eq)]
     #[repr(C)]
@@ -279,16 +281,9 @@ impl From<icu_datetime::MismatchedCalendarError> for ffi::DateTimeMismatchedCale
 
 #[cfg(feature = "datetime")]
 impl From<icu_datetime::unchecked::FormattedDateTimeUncheckedError> for DateTimeWriteError {
-    fn from(value: icu_datetime::unchecked::FormattedDateTimeUncheckedError) -> Self {
-        match value {
-            icu_datetime::unchecked::FormattedDateTimeUncheckedError::MissingInputField(
-                icu_datetime::unchecked::MissingInputFieldKind::TimeZoneVariant,
-            ) => Self::MissingTimeZoneVariant,
-            err => {
-                debug_assert!(false, "unexpected datetime formatting error: {err}");
-                Self::Unknown
-            }
-        }
+    fn from(err: icu_datetime::unchecked::FormattedDateTimeUncheckedError) -> Self {
+        debug_assert!(false, "unexpected datetime formatting error: {err}");
+        Self::Unknown
     }
 }
 
