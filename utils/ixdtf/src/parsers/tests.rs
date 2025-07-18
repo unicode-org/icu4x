@@ -527,29 +527,63 @@ fn invalid_time() {
 
 #[test]
 fn invalid_ambiguous_time() {
-    let bad_value = "1208-10";
-    let err = IxdtfParser::from_str(bad_value).parse_time();
-    assert_eq!(
-        err,
-        Err(ParseError::AmbiguousTimeMonthDay),
-        "Invalid time parsing: \"{bad_value}\" is ambiguous."
-    );
+    // Things that are valid MonthDay/YearMonths should not successfully parse as Time
+    // since it is unambiguous, users should use an explicit T marker in the string.
+    const TIMES: &[(&str, ParseError)] = &[
+        // Our own tests
+        ("1208-10", ParseError::AmbiguousTimeMonthDay),
+        // From plainTimeStringsAmbiguous() in test262
+        ("2021-12", ParseError::AmbiguousTimeYearMonth),
+        ("2021-12[-12:00]", ParseError::AmbiguousTimeYearMonth),
+        ("1214", ParseError::AmbiguousTimeMonthDay),
+        ("0229", ParseError::AmbiguousTimeMonthDay),
+        ("1130", ParseError::AmbiguousTimeMonthDay),
+        ("12-14", ParseError::AmbiguousTimeMonthDay),
+        ("12-14[-14:00]", ParseError::AmbiguousTimeMonthDay),
+        ("202112", ParseError::AmbiguousTimeYearMonth),
+        ("202112[UTC]", ParseError::AmbiguousTimeYearMonth),
+    ];
 
-    let bad_value = "12-14";
-    let err = IxdtfParser::from_str(bad_value).parse_time();
-    assert_eq!(
-        err,
-        Err(ParseError::AmbiguousTimeMonthDay),
-        "Invalid time parsing: \"{bad_value}\" is ambiguous."
-    );
+    for (bad_value, error) in TIMES {
+        let result = IxdtfParser::from_str(bad_value).parse_time();
+        assert_eq!(
+            result,
+            Err(*error),
+            "Invalid time parsing: \"{bad_value}\" is ambiguous, expected {error:}, got {result:?}"
+        );
+    }
+}
 
-    let bad_value = "202112";
-    let err = IxdtfParser::from_str(bad_value).parse_time();
-    assert_eq!(
-        err,
-        Err(ParseError::AmbiguousTimeYearMonth),
-        "Invalid time parsing: \"{bad_value}\" is ambiguous."
-    );
+#[test]
+fn valid_unambiguous_time() {
+    // These times look like MonthDay/YearMonths, but are not actually ambiguous
+    // since they are invalid MonthDay/YearMonths.
+    const TIMES: &[&str] = &[
+        // From plainTimeStringsUnambiguous() in test262
+        "2021-13",
+        "202113",
+        "2021-13[-13:00]",
+        "202113[-13:00]",
+        "0000-00",
+        "000000",
+        "0000-00[UTC]",
+        "000000[UTC]",
+        "1314",
+        "13-14",
+        "1232",
+        "0230",
+        "0631",
+        "0000",
+        "00-00",
+    ];
+
+    for good_value in TIMES {
+        let result = IxdtfParser::from_str(good_value).parse_time();
+        assert!(
+            result.is_ok(),
+            "Invalid time parsing: \"{good_value}\" is unambiguous, expected success, got {result:?}"
+        );
+    }
 }
 
 #[test]
