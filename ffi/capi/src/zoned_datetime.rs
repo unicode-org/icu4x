@@ -28,26 +28,36 @@ pub mod ffi {
 
     impl ZonedIsoDateTime {
         /// Creates a new [`ZonedIsoDateTime`] from an IXDTF string.
+        #[diplomat::rust_link(icu::time::ZonedDateTime::try_strict_from_str, FnInStruct)]
+        #[diplomat::rust_link(icu::time::ZonedDateTime::try_strict_from_utf8, FnInStruct, hidden)]
+        #[diplomat::attr(all(supports = named_constructors, supports = fallible_constructors), named_constructor = "strict_from_string")]
+        pub fn strict_from_string(
+            v: &DiplomatStr,
+            iana_parser: &IanaParser,
+        ) -> Result<ZonedIsoDateTime, Rfc9557ParseError> {
+            let icu_time::ZonedDateTime { date, time, zone } =
+                icu_time::ZonedDateTime::try_strict_from_utf8(v, Iso, iana_parser.0.as_borrowed())?;
+            Ok(ZonedIsoDateTime {
+                date: Box::new(IsoDate(date)),
+                time: Box::new(Time(time)),
+                zone: Box::new(TimeZoneInfo::from(zone)),
+            })
+        }
+
+        /// Creates a new [`ZonedIsoDateTime`] from an IXDTF string.
+        ///
+        /// DEPRECATED
+        ///
+        /// Use `strict_from_string`.
         #[diplomat::rust_link(icu::time::ZonedDateTime::try_full_from_str, FnInStruct)]
         #[diplomat::rust_link(icu::time::ZonedDateTime::try_full_from_utf8, FnInStruct, hidden)]
         #[diplomat::attr(all(supports = named_constructors, supports = fallible_constructors), named_constructor = "full_from_string")]
         pub fn full_from_string(
             v: &DiplomatStr,
             iana_parser: &IanaParser,
-            offset_calculator: &VariantOffsetsCalculator,
+            _offset_calculator: &VariantOffsetsCalculator,
         ) -> Result<ZonedIsoDateTime, Rfc9557ParseError> {
-            let icu_time::ZonedDateTime { date, time, zone } =
-                icu_time::ZonedDateTime::try_full_from_utf8(
-                    v,
-                    Iso,
-                    iana_parser.0.as_borrowed(),
-                    offset_calculator.0.as_borrowed(),
-                )?;
-            Ok(ZonedIsoDateTime {
-                date: Box::new(IsoDate(date)),
-                time: Box::new(Time(time)),
-                zone: Box::new(TimeZoneInfo::from(zone)),
-            })
+            Self::strict_from_string(v, iana_parser)
         }
 
         /// Creates a new [`ZonedIsoDateTime`] from milliseconds since epoch (timestamp) and a UTC offset.
@@ -84,28 +94,44 @@ pub mod ffi {
     }
 
     impl ZonedDateTime {
-        /// Creates a new [`ZonedDateTime`] from an IXDTF string.
-        #[diplomat::rust_link(icu::time::ZonedDateTime::try_full_from_str, FnInStruct)]
-        #[diplomat::rust_link(icu::time::ZonedDateTime::try_from_utf8, FnInStruct, hidden)]
-        #[diplomat::attr(all(supports = named_constructors, supports = fallible_constructors), named_constructor = "full_from_string")]
-        pub fn full_from_string(
+        /// Creates a new [`ZonedIsoDateTime`] from an IXDTF string.
+        #[diplomat::rust_link(icu::time::ZonedDateTime::try_strict_from_str, FnInStruct)]
+        #[diplomat::rust_link(icu::time::ZonedDateTime::try_strict_from_utf8, FnInStruct, hidden)]
+        #[diplomat::attr(all(supports = named_constructors, supports = fallible_constructors), named_constructor = "strict_from_string")]
+        pub fn strict_from_string(
             v: &DiplomatStr,
             calendar: &Calendar,
             iana_parser: &IanaParser,
-            offset_calculator: &VariantOffsetsCalculator,
         ) -> Result<ZonedDateTime, Rfc9557ParseError> {
             let icu_time::ZonedDateTime { date, time, zone } =
-                icu_time::ZonedDateTime::try_full_from_utf8(
+                icu_time::ZonedDateTime::try_strict_from_utf8(
                     v,
                     calendar.0.clone(),
                     iana_parser.0.as_borrowed(),
-                    offset_calculator.0.as_borrowed(),
                 )?;
             Ok(ZonedDateTime {
                 date: Box::new(Date(date)),
                 time: Box::new(Time(time)),
                 zone: Box::new(TimeZoneInfo::from(zone)),
             })
+        }
+
+        /// Creates a new [`ZonedDateTime`] from an IXDTF string.
+        ///
+        /// DEPRECATED
+        ///
+        /// Use `strict_from_string`
+        #[diplomat::rust_link(icu::time::ZonedDateTime::try_full_from_str, FnInStruct)]
+        #[diplomat::rust_link(icu::time::ZonedDateTime::try_from_utf8, FnInStruct, hidden)]
+        #[diplomat::attr(all(supports = named_constructors, supports = fallible_constructors), named_constructor = "full_from_string")]
+        #[allow(deprecated)]
+        pub fn full_from_string(
+            v: &DiplomatStr,
+            calendar: &Calendar,
+            iana_parser: &IanaParser,
+            _offset_calculator: &VariantOffsetsCalculator,
+        ) -> Result<ZonedDateTime, Rfc9557ParseError> {
+            Self::strict_from_string(v, calendar, iana_parser)
         }
 
         /// Creates a new [`ZonedDateTime`] from a location-only IXDTF string.
@@ -155,7 +181,7 @@ pub mod ffi {
             })
         }
 
-        /// Creates a new [`ZonedDateTime`] from an IXDTF string, without requiring the offset or calculating the zone variant.
+        /// Creates a new [`ZonedDateTime`] from an IXDTF string, without requiring the offset.
         #[diplomat::rust_link(icu::time::ZonedDateTime::try_lenient_from_str, FnInStruct)]
         #[diplomat::rust_link(icu::time::ZonedDateTime::try_lenient_from_utf8, FnInStruct, hidden)]
         #[diplomat::attr(all(supports = named_constructors, supports = fallible_constructors), named_constructor = "lenient_from_string")]

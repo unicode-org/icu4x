@@ -64,6 +64,8 @@ export class TimeZoneInfo {
 
     /**
      * Creates a time zone info from parts.
+     *
+     * `variant` is ignored.
      */
     #defaultConstructor(id, offset, variant) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
@@ -172,6 +174,10 @@ export class TimeZoneInfo {
     }
 
     /**
+     * DEPRECATED
+     *
+     * Just clones
+     *
      * See the [Rust documentation for `with_variant`](https://docs.rs/icu/2.0.0/icu/time/struct.TimeZoneInfo.html#method.with_variant) for more information.
      */
     withVariant(timeVariant) {
@@ -199,9 +205,9 @@ export class TimeZoneInfo {
     }
 
     /**
-     * Infers the zone variant.
+     * DEPRECATED
      *
-     * Requires the offset and local time to be set.
+     * No-op
      *
      * See the [Rust documentation for `infer_variant`](https://docs.rs/icu/2.0.0/icu/time/struct.TimeZoneInfo.html#method.infer_variant) for more information.
      *
@@ -220,6 +226,8 @@ export class TimeZoneInfo {
     }
 
     /**
+     * DEPRECATED
+     *
      * See the [Rust documentation for `variant`](https://docs.rs/icu/2.0.0/icu/time/struct.TimeZoneInfo.html#method.variant) for more information.
      */
     variant() {
@@ -242,6 +250,8 @@ export class TimeZoneInfo {
 
     /**
      * Creates a time zone info from parts.
+     *
+     * `variant` is ignored.
      */
     constructor(id, offset, variant) {
         if (arguments[0] === diplomatRuntime.exposeConstructor) {
