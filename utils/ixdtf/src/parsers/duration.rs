@@ -160,6 +160,12 @@ pub(crate) fn parse_time_duration<T: EncodingType>(
 
         let fraction = parse_fraction(cursor)?;
 
+        // https://tc39.es/ecma262/#prod-TemporalDecimalFraction
+        // Only supports up to 9 fractional digits
+        if fraction.map(|f| u8::from(f.digits) > 9).unwrap_or(false) {
+            return Err(ParseError::FractionPart)
+        }
+
         match cursor.next()? {
             Some(ch) if is_hour_designator(ch) => {
                 if previous_unit > TimeUnit::Hour {
