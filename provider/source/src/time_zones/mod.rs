@@ -95,8 +95,11 @@ impl SourceDataProvider {
                     (("iedub", "GMT", ZoneNameTimestamp::far_in_past()), (0, None)),
                     (("iedub", "IST", ZoneNameTimestamp::far_in_past()), (0, Some(3600))),
                     // Morroco and Western Sahara used to observe +0 with normal summer DST, but currently they observe +1 with
-                    // negative DST during Ramadan. Model this all as normal DST.
-                    // TODO: Here we could set the zone variant to Ramadan
+                    // negative DST during Ramadan.
+                    (("macas", "+00", ZoneNameTimestamp::from_zoned_date_time_iso(ZonedDateTime::try_offset_only_from_str("2018-10-28T02:00:00Z", Iso).unwrap())), (3600, Some(0))),
+                    (("macas", "+01", ZoneNameTimestamp::from_zoned_date_time_iso(ZonedDateTime::try_offset_only_from_str("2018-10-28T02:00:00Z", Iso).unwrap())), (3600, None)),
+                    (("eheai", "+00", ZoneNameTimestamp::from_zoned_date_time_iso(ZonedDateTime::try_offset_only_from_str("2018-10-28T02:00:00Z", Iso).unwrap())), (3600, Some(0))),
+                    (("eheai", "+01", ZoneNameTimestamp::from_zoned_date_time_iso(ZonedDateTime::try_offset_only_from_str("2018-10-28T02:00:00Z", Iso).unwrap())), (3600, None)),
                     (("macas", "+00", ZoneNameTimestamp::far_in_past()), (0, None)),
                     (("macas", "+01", ZoneNameTimestamp::far_in_past()), (0, Some(3600))),
                     (("eheai", "+00", ZoneNameTimestamp::far_in_past()), (0, None)),
@@ -169,6 +172,19 @@ impl SourceDataProvider {
                             })
                             .flatten()
                             .collect::<Vec<_>>();
+
+                        if iana == "Africa/Casablanca" {
+                            periods = vec![
+                                (ZoneNameTimestamp::far_in_past(), Some("Europe_Western")),
+                                (ZoneNameTimestamp::from_zoned_date_time_iso(ZonedDateTime::try_offset_only_from_str("2018-10-28T02:00:00Z", Iso).unwrap()), Some("Europe_Central")),
+                            ];
+                        } else if iana == "Africa/El_Aaiun" {
+                            periods = vec![
+                                (ZoneNameTimestamp::far_in_past(), None),
+                                (ZoneNameTimestamp::from_zoned_date_time_iso(ZonedDateTime::try_offset_only_from_str("1976-04-14T00:00:00-01", Iso).unwrap()), Some("Europe_Western")),
+                                (ZoneNameTimestamp::from_zoned_date_time_iso(ZonedDateTime::try_offset_only_from_str("2018-10-28T02:00:00Z", Iso).unwrap()), Some("Europe_Central")),
+                            ];
+                        }
 
                         let mut i = 0;
                         while i < periods.len() {

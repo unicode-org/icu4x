@@ -43,6 +43,28 @@
     }
   },
   {
+    "locale": "en-GB",
+    "datetime": "2021-07-11T12:00:00.000+01[Africa/Casablanca]",
+    "expectations": {
+      "z": "CET",
+      "zzzz": "Central European Standard Time",
+
+      "v": "Morocco Time",
+      "vvvv": "Morocco Time"
+    }
+  },
+  {
+    "locale": "en-GB",
+    "datetime": "2021-07-11T12:00:00.000+00[Africa/Casablanca]",
+    "expectations": {
+      "z": "GMT+0",
+      "zzzz": "GMT+00:00",
+
+      "v": "Morocco Time",
+      "vvvv": "Morocco Time"
+    }
+  },
+  {
     "locale": "en",
     "datetime": "2021-07-11T12:00:00.000-06:00[America/Regina]",
     "expectations": {
