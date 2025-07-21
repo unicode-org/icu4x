@@ -202,9 +202,8 @@ impl SourceDataProvider {
                                                 .filter(|(_, o)| variants.get(&o.name) == Some(&Variant::Standard))
                                                 .map(|(_, o)| o.utc_offset + o.dst_offset_relative)
                                                 .next()
-                                            // Just guess that we're on 1h DST. This does not make a difference for formatting,
-                                            // it's just the value that VariantOffsetsCalculator will return.
-                                            .unwrap_or(curr_offset.utc_offset + curr_offset.dst_offset_relative - 3600),
+                                            // Permanent DST
+                                            .unwrap_or(curr_offset.utc_offset + curr_offset.dst_offset_relative),
                                             Some(curr_offset.utc_offset + curr_offset.dst_offset_relative),
                                         )
                                     }
@@ -305,13 +304,15 @@ impl SourceDataProvider {
                                     .unwrap()
                                     .1;
 
-                                if golden_os.standard != os.standard {
+                                if (!os.is_permanent_dst() && golden_os.standard != os.standard)
+                                    || (os.is_permanent_dst() && golden_os.daylight != os.daylight)
+                                {
                                     log::warn!("Offsets don't agree with metazone golden: {tz:?} - {golden:?}");
                                 }
 
                                 let kind = if os.daylight.is_some() && golden_os.daylight.is_none() {
                                     MetazoneMembershipKind::CustomVariants
-                                } else if os.daylight.is_none() && golden_os.daylight.is_some() {
+                                } else if os.daylight.is_none() && golden_os.daylight.is_some() || os.is_permanent_dst() {
                                     // TODO: this needs to look at actual transitions
                                     MetazoneMembershipKind::CustomTransitions
                                 } else {
