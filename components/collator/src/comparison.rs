@@ -1873,10 +1873,10 @@ impl CollatorBorrowed<'_> {
         let mut quaternaries = SortKeyLevel::default();
 
         let mut prev_reordered_primary = 0;
-        let mut common_cases = 0;
-        let mut common_secondaries = 0;
-        let mut common_tertiaries = 0;
-        let mut common_quaternaries = 0;
+        let mut common_cases = 0usize;
+        let mut common_secondaries = 0usize;
+        let mut common_tertiaries = 0usize;
+        let mut common_quaternaries = 0usize;
         let mut prev_secondary = 0;
         let mut sec_segment_start = 0;
 
@@ -1888,12 +1888,12 @@ impl CollatorBorrowed<'_> {
                 // ignorables, and shift further variable CEs.
                 if common_quaternaries != 0 {
                     common_quaternaries -= 1;
-                    while common_quaternaries >= QUAT_COMMON[WEIGHT_MAX_COUNT] {
+                    while common_quaternaries >= QUAT_COMMON[WEIGHT_MAX_COUNT] as _ {
                         quaternaries.append_byte(QUAT_COMMON[WEIGHT_MIDDLE]);
-                        common_quaternaries -= QUAT_COMMON[WEIGHT_MAX_COUNT];
+                        common_quaternaries -= QUAT_COMMON[WEIGHT_MAX_COUNT] as usize;
                     }
                     // Shifted primary weights are lower than the common weight.
-                    quaternaries.append_byte(QUAT_COMMON[WEIGHT_LOW] + common_quaternaries);
+                    quaternaries.append_byte(QUAT_COMMON[WEIGHT_LOW] + common_quaternaries as u8);
                     common_quaternaries = 0;
                 }
 
@@ -1970,14 +1970,14 @@ impl CollatorBorrowed<'_> {
                 ($key:ident, $w:ident, $common:ident, $weights:ident, $lim:expr) => {
                     if $common != 0 {
                         $common -= 1;
-                        while $common >= $weights[WEIGHT_MAX_COUNT] {
+                        while $common >= $weights[WEIGHT_MAX_COUNT] as _ {
                             $key.append_byte($weights[WEIGHT_MIDDLE]);
-                            $common -= $weights[WEIGHT_MAX_COUNT];
+                            $common -= $weights[WEIGHT_MAX_COUNT] as usize;
                         }
                         let b = if $w < $lim {
-                            $weights[WEIGHT_LOW] + $common
+                            $weights[WEIGHT_LOW] + ($common as u8)
                         } else {
-                            $weights[WEIGHT_HIGH] - $common
+                            $weights[WEIGHT_HIGH] - ($common as u8)
                         };
                         $key.append_byte(b);
                         $common = 0;
@@ -2005,11 +2005,11 @@ impl CollatorBorrowed<'_> {
                     if common_secondaries != 0 {
                         common_secondaries -= 1;
                         // Append reverse weights.  The level will be re-reversed later.
-                        let remainder = common_secondaries % SEC_COMMON[WEIGHT_MAX_COUNT];
+                        let remainder = common_secondaries % SEC_COMMON[WEIGHT_MAX_COUNT] as usize;
                         let b = if prev_secondary < COMMON_WEIGHT16 {
-                            SEC_COMMON[WEIGHT_LOW] + remainder
+                            SEC_COMMON[WEIGHT_LOW] + remainder as u8
                         } else {
-                            SEC_COMMON[WEIGHT_HIGH] - remainder
+                            SEC_COMMON[WEIGHT_HIGH] - remainder as u8
                         };
                         secondaries.append_byte(b);
                         common_secondaries -= remainder;
@@ -2017,7 +2017,7 @@ impl CollatorBorrowed<'_> {
                         while common_secondaries > 0 {
                             // same as >= SEC_COMMON[WEIGHT_MAX_COUNT]
                             secondaries.append_byte(SEC_COMMON[WEIGHT_MIDDLE]);
-                            common_secondaries -= SEC_COMMON[WEIGHT_MAX_COUNT];
+                            common_secondaries -= SEC_COMMON[WEIGHT_MAX_COUNT] as usize;
                         }
                         // commonSecondaries == 0
                     }
@@ -2077,14 +2077,16 @@ impl CollatorBorrowed<'_> {
                             if common_cases != 0 && (c > LEVEL_SEPARATOR_BYTE || !cases.is_empty())
                             {
                                 common_cases -= 1;
-                                while common_cases >= CASE_LOWER_FIRST_COMMON[WEIGHT_MAX_COUNT] {
+                                while common_cases >= CASE_LOWER_FIRST_COMMON[WEIGHT_MAX_COUNT] as _
+                                {
                                     cases.append_byte(CASE_LOWER_FIRST_COMMON[WEIGHT_MIDDLE] << 4);
-                                    common_cases -= CASE_LOWER_FIRST_COMMON[WEIGHT_MAX_COUNT];
+                                    common_cases -=
+                                        CASE_LOWER_FIRST_COMMON[WEIGHT_MAX_COUNT] as usize;
                                 }
                                 let b = if c <= LEVEL_SEPARATOR_BYTE {
-                                    CASE_LOWER_FIRST_COMMON[WEIGHT_LOW] + common_cases
+                                    CASE_LOWER_FIRST_COMMON[WEIGHT_LOW] + common_cases as u8
                                 } else {
-                                    CASE_LOWER_FIRST_COMMON[WEIGHT_HIGH] - common_cases
+                                    CASE_LOWER_FIRST_COMMON[WEIGHT_HIGH] - common_cases as u8
                                 };
                                 cases.append_byte(b << 4);
                                 common_cases = 0;
@@ -2100,12 +2102,14 @@ impl CollatorBorrowed<'_> {
                             // highest one.
                             if common_cases != 0 {
                                 common_cases -= 1;
-                                while common_cases >= CASE_UPPER_FIRST_COMMON[WEIGHT_MAX_COUNT] {
+                                while common_cases >= CASE_UPPER_FIRST_COMMON[WEIGHT_MAX_COUNT] as _
+                                {
                                     cases.append_byte(CASE_UPPER_FIRST_COMMON[WEIGHT_LOW] << 4);
-                                    common_cases -= CASE_UPPER_FIRST_COMMON[WEIGHT_MAX_COUNT];
+                                    common_cases -=
+                                        CASE_UPPER_FIRST_COMMON[WEIGHT_MAX_COUNT] as usize;
                                 }
                                 cases.append_byte(
-                                    (CASE_UPPER_FIRST_COMMON[WEIGHT_LOW] + common_cases) << 4,
+                                    (CASE_UPPER_FIRST_COMMON[WEIGHT_LOW] + common_cases as u8) << 4,
                                 );
                                 common_cases = 0;
                             }
@@ -2675,5 +2679,12 @@ mod test {
         let mut k = [0u8; 4];
         let res = collator.write_sort_key_utf16_to(STR16, &mut k[..]);
         assert!(matches!(res, Err(TooSmall { .. })));
+    }
+
+    #[test]
+    fn sort_key_very_long() {
+        let collator = collator_en(Strength::Secondary);
+        let mut k = Vec::new();
+        let Ok(()) = collator.write_sort_key_to(&"a".repeat(300), &mut k);
     }
 }
