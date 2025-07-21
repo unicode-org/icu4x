@@ -70,6 +70,22 @@
                   "_from": "1983-10-30 12:00"
                 }
               }
+            ],
+            "Punta_Arenas": [
+              {
+                "usesMetazone": {
+                  "_mzone": "Chile",
+                  "_to": "2016-12-03 23:00"
+                }
+              },{
+                "usesMetazone": {
+                  "_mzone": "Chile",
+                  "_from": "2016-12-03 23:00",
+                  "_variantOverrides": {
+                    "-03": "daylight"
+                  }
+                }
+              }
             ]
           },
           "Europe": {
