@@ -4,85 +4,10 @@
 
 use core::fmt;
 
-use icu_calendar::{types::RataDie, Date, Iso};
+use icu_calendar::Iso;
 use zerovec::{maps::ZeroMapKV, ule::AsULE, ZeroSlice, ZeroVec};
 
-/// The epoch for time zone names. This is set to 1970-01-01 since the TZDB often drops data before then.
-const ZONE_NAME_EPOCH: RataDie = calendrical_calculations::iso::const_fixed_from_iso(1970, 1, 1);
-const QUARTER_HOURS_IN_DAY_I64: i64 = 24 * 4;
-const QUARTER_HOURS_IN_DAY_U32: u32 = 24 * 4;
-const MIN_QUARTER_HOURS_I64: i64 = 0;
-const MIN_QUARTER_HOURS_U32: u32 = 0;
-const MAX_QUARTER_HOURS_I64: i64 = 0xFFFFFF;
-const MAX_QUARTER_HOURS_U32: u32 = 0xFFFFFF;
-
-use crate::{zone::UtcOffset, DateTime, Hour, Minute, Nanosecond, Second, Time, ZonedDateTime};
-
-/// Internal intermediate type for interfacing with [`ZoneNameTimestamp`].
-#[derive(Debug, Copy, Clone)]
-struct ZoneNameTimestampParts {
-    /// Invariant: between MIN_QUARTER_HOURS_U32 and MAX_QUARTER_HOURS_U32 (inclusive).
-    /// This range covers almost 500 years.
-    quarter_hours_since_local_unix_epoch: u32,
-    /// Currently the metadata is unused. It is reserved for future use, such as:
-    /// - A time zone UTC offset
-    /// - Extra bits for the epoch quarter-hours
-    /// - Bitmask to use the epoch quarter hour bits more efficiently
-    metadata: u8,
-}
-
-impl ZoneNameTimestampParts {
-    /// Recovers the UTC DateTime from these parts.
-    fn date_time(self) -> DateTime<Iso> {
-        let qh = self.quarter_hours_since_local_unix_epoch;
-        // Note: the `as` casts below are trivially safe because the remainder is in range
-        let (days, remainder) = (
-            (qh / QUARTER_HOURS_IN_DAY_U32) as i64,
-            (qh % QUARTER_HOURS_IN_DAY_U32) as u8,
-        );
-        let (hours, minutes) = (remainder / 4, (remainder % 4) * 15);
-        DateTime {
-            date: Date::from_rata_die(ZONE_NAME_EPOCH + days, Iso),
-            time: Time {
-                hour: Hour::try_from(hours).unwrap_or_else(|_| {
-                    debug_assert!(false, "ZoneNameTimestampParts: out of range: {self:?}");
-                    Hour::zero()
-                }),
-                minute: Minute::try_from(minutes).unwrap_or_else(|_| {
-                    debug_assert!(false, "ZoneNameTimestampParts: out of range: {self:?}");
-                    Minute::zero()
-                }),
-                second: Second::zero(),
-                subsecond: Nanosecond::zero(),
-            },
-        }
-    }
-
-    /// Creates an instance of this type with all invariants upheld.
-    fn from_saturating_date_time_with_metadata(date_time: DateTime<Iso>, metadata: u8) -> Self {
-        // Note: RataDie should be in range for this multiplication.
-        let qh_days = (date_time.date.to_rata_die() - ZONE_NAME_EPOCH) * QUARTER_HOURS_IN_DAY_I64;
-        // Note: Hour is 0 to 23 in a u8 so it should be in range for this multiplication.
-        let qh_hours = date_time.time.hour.number() * 4;
-        let qh_minutes = date_time.time.minute.number() / 15;
-        let qh_total = qh_days + (qh_hours as i64) + (qh_minutes as i64);
-        let qh_clamped = qh_total.clamp(MIN_QUARTER_HOURS_I64, MAX_QUARTER_HOURS_I64);
-        let qh_u32 = match u32::try_from(qh_clamped) {
-            Ok(x) => x,
-            Err(_) => {
-                debug_assert!(
-                    false,
-                    "ZoneNameTimestampParts: saturation invariants not upheld: {date_time:?}"
-                );
-                0
-            }
-        };
-        ZoneNameTimestampParts {
-            quarter_hours_since_local_unix_epoch: qh_u32,
-            metadata,
-        }
-    }
-}
+use crate::{zone::UtcOffset, DateTime, ZonedDateTime};
 
 /// The moment in time for resolving a time zone name.
 ///
@@ -138,24 +63,15 @@ impl ZoneNameTimestamp {
     ///
     /// This will always return a [`ZonedDateTime`] with [`UtcOffset::zero()`]
     pub fn to_zoned_date_time_iso(self) -> ZonedDateTime<Iso, UtcOffset> {
-        let parts = self.to_parts();
-        let DateTime { date, time } = parts.date_time();
-        ZonedDateTime {
-            date,
-            time,
-            zone: UtcOffset::zero(),
-        }
+        ZonedDateTime::from_epoch_milliseconds_and_utc_offset(
+            self.0 as i64 * 15 * 60 * 1000,
+            UtcOffset::zero(),
+        )
     }
 
     /// Creates an instance of [`ZoneNameTimestamp`] from a zoned datetime.
     ///
     /// The datetime might be clamped and might lose precision.
-    ///
-    /// Note: Currently, this type cannot represent ambiguous times in the
-    /// period after a time zone transition. For example, if a "fall back"
-    /// time zone transition occurs at 02:00, then the times 01:00-02:00
-    /// occur twice. To ensure that you get the correct time zone display
-    /// name _after_ a transition, you can pick any time later in the day.
     ///
     /// # Examples
     ///
@@ -187,13 +103,11 @@ impl ZoneNameTimestamp {
     /// assert_eq!(recovered_zoned_date_time.time.subsecond.number(), 0); // always zero
     /// ```
     pub fn from_zoned_date_time_iso(zoned_date_time: ZonedDateTime<Iso, UtcOffset>) -> Self {
-        let metadata = 0; // currently unused (reserved)
-        let ZonedDateTime { date, time, zone } = zoned_date_time;
-        let parts = ZoneNameTimestampParts::from_saturating_date_time_with_metadata(
-            DateTime { date, time },
-            metadata,
-        );
-        Self::from_parts(parts).adjust_zone(zone, UtcOffset::zero())
+        let qh = zoned_date_time.to_epoch_milliseconds_utc() / 1000 / 60 / 15;
+        let qh_clamped = qh.clamp(Self::far_in_past().0 as i64, Self::far_in_future().0 as i64);
+        // Valid cast as the value is clamped to u32 values.
+        let qh_u32 = qh_clamped as u32;
+        Self(qh_u32)
     }
 
     /// Recovers the UTC datetime for this [`ZoneNameTimestamp`].
@@ -202,8 +116,12 @@ impl ZoneNameTimestamp {
         note = "returns a UTC DateTime, which is the wrong type. Use `to_zoned_date_time_iso` instead"
     )]
     pub fn to_date_time_iso(self) -> DateTime<Iso> {
-        let parts = self.to_parts();
-        parts.date_time()
+        let ZonedDateTime {
+            date,
+            time,
+            zone: _utc_offset_zero,
+        } = self.to_zoned_date_time_iso();
+        DateTime { date, time }
     }
 
     /// Creates an instance of [`ZoneNameTimestamp`] from a UTC datetime.
@@ -213,66 +131,28 @@ impl ZoneNameTimestamp {
         since = "2.1.0",
         note = "implicitly interprets the DateTime as UTC. Use `from_zoned_date_time_iso` instead."
     )]
-    pub fn from_date_time_iso(date_time: DateTime<Iso>) -> Self {
-        let metadata = 0; // currently unused (reserved)
-        let parts =
-            ZoneNameTimestampParts::from_saturating_date_time_with_metadata(date_time, metadata);
-        Self::from_parts(parts)
+    pub fn from_date_time_iso(DateTime { date, time }: DateTime<Iso>) -> Self {
+        Self::from_zoned_date_time_iso(ZonedDateTime {
+            date,
+            time,
+            zone: UtcOffset::zero(),
+        })
     }
 
     /// Returns a [`ZoneNameTimestamp`] for a time far in the past.
     pub fn far_in_past() -> Self {
-        Self::from_parts(ZoneNameTimestampParts {
-            quarter_hours_since_local_unix_epoch: MIN_QUARTER_HOURS_U32,
-            metadata: 0, // currently unused (reserved)
-        })
+        Self(0)
     }
 
     /// Returns a [`ZoneNameTimestamp`] for a time far in the future.
     pub fn far_in_future() -> Self {
-        Self::from_parts(ZoneNameTimestampParts {
-            quarter_hours_since_local_unix_epoch: MAX_QUARTER_HOURS_U32,
-            metadata: 0, // currently unused (reserved)
-        })
-    }
-
-    // This is equivalent of converting to ZDT, changing the zone, and converting back
-    // to ZNT.
-    // This saturates at 0 and u32::MAX, which is correct for the use case of looking up
-    // in the offset periods data struct
-    fn adjust_zone(self, from: UtcOffset, to: UtcOffset) -> Self {
-        let diff = (to.to_seconds() - from.to_seconds()) / 60 / 15;
-        Self(if diff < 0 {
-            self.0.saturating_sub(diff.unsigned_abs())
-        } else {
-            self.0.saturating_add(diff.unsigned_abs())
-        })
-    }
-
-    fn to_parts(self) -> ZoneNameTimestampParts {
-        let metadata = ((self.0 & 0xFF000000) >> 24) as u8;
-        let qh_recovered = self.0 & 0x00FFFFFF;
-        ZoneNameTimestampParts {
-            quarter_hours_since_local_unix_epoch: qh_recovered,
-            metadata,
-        }
-    }
-
-    fn from_parts(parts: ZoneNameTimestampParts) -> Self {
-        let metadata_shifted = (parts.metadata as u32) << 24;
-        debug_assert!(parts.quarter_hours_since_local_unix_epoch <= 0x00FFFFFF);
-        let qh_masked = parts.quarter_hours_since_local_unix_epoch & 0x00FFFFFF;
-        Self(metadata_shifted | qh_masked)
+        Self(0xFFFFFF)
     }
 }
 
 impl fmt::Debug for ZoneNameTimestamp {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let parts = self.to_parts();
-        f.debug_struct("ZoneNameTimestamp")
-            .field("date_time", &parts.date_time())
-            .field("metadata", &parts.metadata)
-            .finish()
+        fmt::Debug::fmt(&self.to_zoned_date_time_iso(), f)
     }
 }
 
@@ -342,8 +222,8 @@ impl<'de> serde::Deserialize<'de> for ZoneNameTimestamp {
             let hour = parts[11..13].parse::<u8>().map_err(e1)?;
             let minute = parts[14..16].parse::<u8>().map_err(e1)?;
             return Ok(Self::from_zoned_date_time_iso(ZonedDateTime {
-                date: Date::try_new_iso(year, month, day).map_err(e2)?,
-                time: Time::try_new(hour, minute, 0, 0).map_err(e3)?,
+                date: icu_calendar::Date::try_new_iso(year, month, day).map_err(e2)?,
+                time: crate::Time::try_new(hour, minute, 0, 0).map_err(e3)?,
                 zone: UtcOffset::zero(),
             }));
         }
@@ -431,19 +311,5 @@ mod test {
                 "{test_case:?}"
             );
         }
-    }
-
-    #[test]
-    fn test_metadata_noop() {
-        let raw = (0x12345678u32).to_unaligned();
-        let znt = ZoneNameTimestamp::from_unaligned(raw);
-        let roundtrip_znt =
-            ZoneNameTimestamp::from_zoned_date_time_iso(znt.to_zoned_date_time_iso());
-        let roundtrip_raw = roundtrip_znt.to_unaligned();
-
-        // [0..3] is the datetime. [3] is the metadata.
-        assert_eq!(raw.0[0..3], roundtrip_raw.0[0..3]);
-        assert_eq!(raw.0[3], 0x12);
-        assert_eq!(roundtrip_raw.0[3], 0);
     }
 }
