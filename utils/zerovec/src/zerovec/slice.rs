@@ -410,6 +410,10 @@ impl<'a, T: AsULE> Iterator for ZeroSliceIter<'a, T> {
     fn next(&mut self) -> Option<T> {
         self.0.next().copied().map(T::from_unaligned)
     }
+
+    fn size_hint(&self) -> (usize, Option<usize>) {
+        self.0.size_hint()
+    }
 }
 
 impl<'a, T: AsULE> ExactSizeIterator for ZeroSliceIter<'a, T> {
