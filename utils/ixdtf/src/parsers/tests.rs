@@ -1439,6 +1439,12 @@ fn tz_parser_offset_invalid() {
         .unwrap_err();
     assert_eq!(err, ParseError::AbruptEnd { location: "digit" });
 
+    let invalid_offset = "00:00"; // needs sign
+    let err = TimeZoneParser::from_str(invalid_offset)
+        .parse_offset()
+        .unwrap_err();
+    assert_eq!(err, ParseError::OffsetNeedsSign);
+
     let invalid_offset = "+08:00[";
     let err = TimeZoneParser::from_str(invalid_offset)
         .parse_offset()
