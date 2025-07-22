@@ -34,6 +34,8 @@ macro_rules! include_bytes_as_u32 {
                 bytes: *include_bytes!($path),
             }
             .bytes;
+            // SAFETY: B is statically borrowed, 4-aligned, and the length is within
+            // the static slice (truncated to a multiple of four).
             unsafe {
                 core::slice::from_raw_parts(
                     B.as_ptr() as *const u32,
