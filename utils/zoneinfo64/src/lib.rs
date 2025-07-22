@@ -623,6 +623,10 @@ fn test() {
     for chrono in chrono_tz::TZ_VARIANTS {
         let iana = chrono.name();
 
+        if !std::env::var("EXHAUSTIVE_TZ_TEST").is_ok() && iana != "Europe/Zurich" {
+            continue;
+        }
+
         println!("{iana}");
 
         let zoneinfo64 = tzdb.get(iana).unwrap();
