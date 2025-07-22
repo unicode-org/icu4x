@@ -57,6 +57,10 @@ compiled_data = ["dep:icu_calendar_data", "dep:icu_locale", "icu_locale?/compile
 
 alloc = []
 
+[[test]]
+name = "extended_ecma_year"
+required-features = ["compiled_data"]
+
 [[bench]]
 name = "date"
 harness = false

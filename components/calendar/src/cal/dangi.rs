@@ -248,6 +248,10 @@ impl Calendar for Dangi {
         chinese_based::extended_from_iso::<chinese_based::Dangi>(date.0.year.related_iso)
     }
 
+    fn ecma_year(&self, date: &Self::DateInner) -> i32 {
+        date.0.year.related_iso
+    }
+
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
         Self::provided_year_is_leap(date.0.year)
     }

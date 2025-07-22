@@ -236,13 +236,21 @@ impl<A: AsCalendar> Date<A> {
         self.calendar.as_calendar().year_info(&self.inner).into()
     }
 
-    /// The "extended year", typically anchored with year 1 as the year 1 of either the most modern or
-    /// otherwise some "major" era for the calendar
+    /// The extended year value, defined to match what ICU4C returns for the
+    /// `"u"` datetime pattern character.
     ///
     /// See [`Self::year()`] for more information about the year.
     #[inline]
     pub fn extended_year(&self) -> i32 {
         self.calendar.as_calendar().extended_year(&self.inner)
+    }
+
+    /// The year value defined as part of the Temporal component of ECMA-402.
+    ///
+    /// See [`Self::year()`] for more information about the year.
+    #[inline]
+    pub fn ecma_year(&self) -> i32 {
+        self.calendar.as_calendar().ecma_year(&self.inner)
     }
 
     /// Returns whether `self` is in a calendar-specific leap year

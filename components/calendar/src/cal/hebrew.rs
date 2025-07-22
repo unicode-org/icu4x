@@ -273,6 +273,10 @@ impl Calendar for Hebrew {
         date.0.extended_year()
     }
 
+    fn ecma_year(&self, date: &Self::DateInner) -> i32 {
+        self.extended_year(date)
+    }
+
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
         Self::provided_year_is_leap(date.0.year)
     }

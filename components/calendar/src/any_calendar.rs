@@ -477,6 +477,10 @@ impl Calendar for AnyCalendar {
         match_cal_and_date!(match (self, date): (c, d) => c.extended_year(d))
     }
 
+    fn ecma_year(&self, date: &Self::DateInner) -> i32 {
+        match_cal_and_date!(match (self, date): (c, d) => c.ecma_year(d))
+    }
+
     /// The calendar-specific check if `date` is in a leap year
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
         match_cal_and_date!(match (self, date): (c, d) => c.is_in_leap_year(d))

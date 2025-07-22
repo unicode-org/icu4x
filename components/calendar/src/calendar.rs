@@ -68,8 +68,11 @@ pub trait Calendar: crate::cal::scaffold::UnstableSealed {
 
     /// Information about the year
     fn year_info(&self, date: &Self::DateInner) -> Self::Year;
-    /// The extended year value
+    /// The extended year value, defined to match what ICU4C returns for the
+    /// `"u"` datetime pattern character.
     fn extended_year(&self, date: &Self::DateInner) -> i32;
+    /// The year value defined as part of the Temporal component of ECMA-402.
+    fn ecma_year(&self, date: &Self::DateInner) -> i32;
     /// The calendar-specific month represented by `date`
     fn month(&self, date: &Self::DateInner) -> types::MonthInfo;
     /// The calendar-specific day-of-month represented by `date`

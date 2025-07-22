@@ -215,6 +215,10 @@ impl Calendar for Ethiopian {
     }
 
     fn extended_year(&self, date: &Self::DateInner) -> i32 {
+        date.0.extended_year() - INCARNATION_OFFSET
+    }
+
+    fn ecma_year(&self, date: &Self::DateInner) -> i32 {
         let year = date.0.extended_year();
         if self.0 {
             year
