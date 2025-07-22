@@ -202,12 +202,13 @@ pub(crate) fn parse_utc_offset_minute_precision_strict<T: EncodingType>(
 pub(crate) fn parse_utc_offset_minute_precision<T: EncodingType>(
     cursor: &mut Cursor<T>,
 ) -> ParserResult<(MinutePrecisionOffset, bool)> {
-    let sign = if cursor.check_or(false, is_ascii_sign)? {
-        let sign = cursor.next_or(ParseError::ImplAssert)?;
-        Sign::from(sign == b'+')
-    } else {
-        Sign::Positive
-    };
+    // https://tc39.es/proposal-temporal/#prod-UTCOffset
+    let sign = cursor.next_or(ParseError::OffsetNeedsSign)?;
+    if !is_ascii_sign(sign) {
+        return Err(ParseError::OffsetNeedsSign);
+    }
+    let sign = Sign::from(sign == b'+');
+
     let hour = parse_hour(cursor)?;
 
     // If at the end of the utc, then return.
