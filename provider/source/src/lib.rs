@@ -20,6 +20,8 @@
 use cldr_cache::CldrCache;
 use elsa::sync::FrozenMap;
 use icu::calendar::{Date, Iso};
+use icu::time::zone::{UtcOffset, ZoneNameTimestamp};
+use icu::time::{Time, ZonedDateTime};
 use icu_provider::prelude::*;
 use source::{AbstractFs, SerdeCache, TzdbCache};
 use std::collections::{BTreeSet, HashSet};
@@ -83,7 +85,7 @@ pub struct SourceDataProvider {
     tzdb_paths: Option<Arc<TzdbCache>>,
     trie_type: TrieType,
     collation_root_han: CollationRootHan,
-    pub(crate) timezone_horizon: Date<Iso>,
+    pub(crate) timezone_horizon: ZoneNameTimestamp,
     #[expect(clippy::type_complexity)] // not as complex as it appears
     requests_cache: Arc<
         FrozenMap<
@@ -155,7 +157,9 @@ impl SourceDataProvider {
             segmenter_lstm_paths: None,
             tzdb_paths: None,
             trie_type: Default::default(),
-            timezone_horizon: Date::try_new_iso(2015, 1, 1).unwrap(),
+            timezone_horizon: ZoneNameTimestamp::from_zoned_date_time_iso(
+                ZonedDateTime::try_offset_only_from_str("2015-01-01T00:00:00Z", Iso).unwrap(),
+            ),
             collation_root_han: Default::default(),
             requests_cache: Default::default(),
         }
@@ -349,16 +353,20 @@ impl SourceDataProvider {
         }
     }
 
-    /// Set the timezone horizon.
+    /// Set the timezone horizon from a UTC date.
     ///
     /// Timezone names that have not been in use since before this date are not included,
     /// formatting will fall back to formats like "Germany Time" or "GMT+1".
     ///
     /// Defaults to 2015-01-01, which is a reasonable time frame where people remember
     /// time zone changes.
-    pub fn with_timezone_horizon(self, timezone_horizon: Date<Iso>) -> Self {
+    pub fn with_timezone_horizon(self, date: Date<Iso>) -> Self {
         Self {
-            timezone_horizon,
+            timezone_horizon: ZoneNameTimestamp::from_zoned_date_time_iso(ZonedDateTime {
+                date,
+                time: Time::start_of_day(),
+                zone: UtcOffset::zero(),
+            }),
             ..self
         }
     }
