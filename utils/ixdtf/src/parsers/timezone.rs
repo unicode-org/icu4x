@@ -202,8 +202,8 @@ pub(crate) fn parse_utc_offset_minute_precision_strict<T: EncodingType>(
 pub(crate) fn parse_utc_offset_minute_precision<T: EncodingType>(
     cursor: &mut Cursor<T>,
 ) -> ParserResult<(MinutePrecisionOffset, bool)> {
-    // https://tc39.es/proposal-temporal/#prod-UTCOffset
-    let sign = cursor.next_or(ParseError::abrupt_end("UTCOffset"))?;
+    // https://www.rfc-editor.org/rfc/rfc3339#section-5.6
+    let sign = cursor.next_or(ParseError::abrupt_end("time-numoffset"))?;
     if !is_ascii_sign(sign) {
         return Err(ParseError::OffsetNeedsSign);
     }
