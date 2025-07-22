@@ -623,7 +623,7 @@ fn test() {
     for chrono in chrono_tz::TZ_VARIANTS {
         let iana = chrono.name();
 
-        if !std::env::var("EXHAUSTIVE_TZ_TEST").is_ok() && iana != "Europe/Zurich" {
+        if std::env::var("EXHAUSTIVE_TZ_TEST").is_err() && iana != "Europe/Zurich" {
             continue;
         }
 
