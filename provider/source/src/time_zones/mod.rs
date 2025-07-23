@@ -39,15 +39,6 @@ pub(crate) struct Caches {
     metazones: Cache<MetazoneData>,
 }
 
-// Exhaustive internal version of `icu::time::provider::MetazoneInfo`
-#[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Clone, Copy)]
-#[non_exhaustive]
-struct MetazoneInfo {
-    id: MetazoneId,
-    uses_non_golden_variant: bool,
-    uses_custom_transitions: bool,
-}
-
 #[derive(Debug)]
 struct MetazoneData {
     periods: BTreeMap<TimeZone, Vec<(ZoneNameTimestamp, VariantOffsets, Option<MetazoneInfo>)>>,
@@ -303,14 +294,16 @@ impl SourceDataProvider {
                                     log::warn!("Offsets don't agree with metazone golden: {tz:?} - {golden:?}");
                                 }
 
-                                let uses_non_golden_variant =
-                                    os.daylight.is_some() && golden_os.daylight.is_none();
+                                let kind = if os.daylight.is_some() && golden_os.daylight.is_none() {
+                                    MetazoneMembershipKind::CustomVariants
+                                } else if os.daylight.is_none() && golden_os.daylight.is_some() {
+                                    // TODO: this needs to look at actual transitions
+                                    MetazoneMembershipKind::CustomTransitions
+                                } else {
+                                    MetazoneMembershipKind::BehavesLikeGolden
+                                };
 
-                                // TODO: this needs to look at actual transitions
-                                let uses_custom_transitions =
-                                    os.daylight.is_none() && golden_os.daylight.is_some();
-
-                                Some((mz, uses_non_golden_variant, uses_custom_transitions))
+                                Some((mz, kind))
                             } else {
                                 None
                             };
@@ -385,8 +378,8 @@ impl SourceDataProvider {
                                 .map(|(t, os, mz)| (
                                     t,
                                     os,
-                                    mz.and_then(|(mz, uses_non_golden_variant, uses_custom_transitions)| {
-                                        Some(MetazoneInfo { id: ids.get(mz).copied()?, uses_non_golden_variant, uses_custom_transitions })
+                                    mz.and_then(|(mz, kind)| {
+                                        Some(MetazoneInfo { id: ids.get(mz).copied()?, kind })
                                     }
                                 )))
                                 .collect::<Vec<_>>();

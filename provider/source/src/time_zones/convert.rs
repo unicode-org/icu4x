@@ -342,20 +342,22 @@ impl DataProvider<TimezonePeriodsV1> for SourceDataProvider {
 
         let metazones = self.metazones()?;
 
-        fn add_flags_to_offsets(
+        fn pack_offsets_and_mzmsk(
             offsets: VariantOffsets,
             mz: Option<MetazoneInfo>,
-        ) -> VariantOffsetsWithFlags {
-            let mut v = VariantOffsetsWithFlags::from(offsets);
-            v.uses_non_golden_variant = mz.map(|i| i.uses_non_golden_variant).unwrap_or_default();
-            v.uses_custom_transitions = mz.map(|i| i.uses_custom_transitions).unwrap_or_default();
-            v
+        ) -> VariantOffsetsWithMetazoneMembershipKind {
+            VariantOffsetsWithMetazoneMembershipKind {
+                offsets,
+                mzmsk: mz
+                    .map(|i| i.kind)
+                    .unwrap_or(MetazoneMembershipKind::BehavesLikeGolden),
+            }
         }
 
         let mut offsets = BTreeSet::new();
         for ps in metazones.periods.values() {
             for &(_, os, mz) in ps {
-                offsets.insert(add_flags_to_offsets(os, mz));
+                offsets.insert(pack_offsets_and_mzmsk(os, mz));
             }
         }
 
@@ -387,7 +389,7 @@ impl DataProvider<TimezonePeriodsV1> for SourceDataProvider {
                     let convert = |&(t, os, mz)| {
                         (
                             Timestamp24(t),
-                            offset_index[&add_flags_to_offsets(os, mz)],
+                            offset_index[&pack_offsets_and_mzmsk(os, mz)],
                             NichedOption(mz.map(|i| i.id)),
                         )
                     };

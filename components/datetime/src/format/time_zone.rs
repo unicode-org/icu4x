@@ -10,7 +10,7 @@ use crate::{format::DateTimeInputUnchecked, provider::fields::FieldLength};
 use core::fmt;
 use fixed_decimal::{Decimal, Sign};
 use icu_decimal::DecimalFormatter;
-use icu_time::provider::MetazoneInfo;
+use icu_time::provider::MetazoneMembershipKind;
 use icu_time::{
     zone::{TimeZoneVariant, UtcOffset},
     TimeZone,
@@ -151,17 +151,11 @@ impl FormatTimeZone for GenericNonLocationFormat {
             return Ok(Ok(()));
         }
 
-        let Some(MetazoneInfo {
-            id: mz,
-            uses_non_golden_variant,
-            uses_custom_transitions,
-            ..
-        }) = mz
-        else {
+        let Some(mz) = mz else {
             return Ok(Err(FormatTimeZoneError::Fallback));
         };
 
-        if uses_non_golden_variant {
+        if mz.kind == MetazoneMembershipKind::CustomVariants {
             // Because we might be on an offset that no other zone in the metazone ever uses,
             // fall back to location format.
             return Ok(Err(FormatTimeZoneError::Fallback));
@@ -169,17 +163,16 @@ impl FormatTimeZone for GenericNonLocationFormat {
 
         let Some(name) = generic_names
             .defaults
-            .get(&mz)
-            .or_else(|| standard_names.defaults.get(&mz))
+            .get(&mz.id)
+            .or_else(|| standard_names.defaults.get(&mz.id))
         else {
             return Ok(Err(FormatTimeZoneError::Fallback));
         };
 
-        if uses_custom_transitions {
+        if mz.kind == MetazoneMembershipKind::CustomTransitions {
             // Disambiguate using the location.
             // TODO: Use the standard name here if zone only uses that
             // (= has no transitions = `offsets.daylight.is_none()`).
-
             let Some(location) = locations
                 .locations
                 .get(&time_zone_id)
@@ -257,16 +250,12 @@ impl FormatTimeZone for SpecificNonLocationFormat {
             return Ok(Ok(()));
         }
 
-        let Some(MetazoneInfo {
-            id: mz,
-            uses_non_golden_variant,
-            ..
-        }) = mz
-        else {
+        let Some(mz) = mz else {
             return Ok(Err(FormatTimeZoneError::Fallback));
         };
 
-        if uses_non_golden_variant && variant != TimeZoneVariant::Standard {
+        if mz.kind == MetazoneMembershipKind::CustomVariants && variant != TimeZoneVariant::Standard
+        {
             // Non-golden display names should use overrides (such as BST for London in
             // the GMT metazone), so we shouldn't be here.
             // TODO: something?
@@ -276,20 +265,20 @@ impl FormatTimeZone for SpecificNonLocationFormat {
             let Some(standard_names) = data_payloads.mz_standard_long.as_ref() else {
                 return Ok(Err(FormatTimeZoneError::NamesNotLoaded));
             };
-            if specific.use_standard.binary_search(&mz).is_ok() {
-                if let Some(n) = standard_names.defaults.get(&mz) {
+            if specific.use_standard.binary_search(&mz.id).is_ok() {
+                if let Some(n) = standard_names.defaults.get(&mz.id) {
                     n
                 } else {
                     // The only reason why the name is not in GenericStandard even though we expect it
                     // to be, is that it was deduplicated against the generic location format.
                     return GenericLocationFormat.format(sink, input, data_payloads, _fdf);
                 }
-            } else if let Some(n) = specific.defaults.get(&(mz, TimeZoneVariant::Standard)) {
+            } else if let Some(n) = specific.defaults.get(&(mz.id, TimeZoneVariant::Standard)) {
                 n
             } else {
                 return Ok(Err(FormatTimeZoneError::Fallback));
             }
-        } else if let Some(n) = specific.defaults.get(&(mz, variant)) {
+        } else if let Some(n) = specific.defaults.get(&(mz.id, variant)) {
             n
         } else {
             return Ok(Err(FormatTimeZoneError::Fallback));

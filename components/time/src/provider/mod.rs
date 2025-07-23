@@ -65,32 +65,40 @@ pub const MARKERS: &[DataMarkerInfo] = &[
 
 const SECONDS_TO_EIGHTS_OF_HOURS: i32 = 60 * 60 / 8;
 
-/// A [`VariantOffsets`] and some flags
-///
-/// The ULE representation has space for up to 5 flags, currently
-/// two are used.
+/// Metadata about a metazone membership
 #[derive(Debug, Clone, Copy, PartialEq, PartialOrd, Eq, Ord)]
 #[non_exhaustive]
-pub struct VariantOffsetsWithFlags {
-    /// The offsets
-    pub offsets: VariantOffsets,
-    /// See [`MetazoneInfo`]
-    pub uses_non_golden_variant: bool,
-    /// See [`MetazoneInfo`]
-    pub uses_custom_transitions: bool,
+pub enum MetazoneMembershipKind {
+    /// This zone is equivalent to the metazone's golden time zone.
+    BehavesLikeGolden,
+    /// This zone uses variants that the golden zone does not use.
+    /// This happens for example for London, Dublin, Troll (all in GMT), Windhoek (in WAT).
+    CustomVariants,
+    /// This zone uses different transitions than the golden zone.
+    /// This happens for example for Phoenix, Regina, Algiers, Brisbane (no DST),
+    /// or Chisinau (transitions at different times, not implemented yet).
+    CustomTransitions,
 }
 
-impl From<VariantOffsets> for VariantOffsetsWithFlags {
+/// A [`VariantOffsets`] and a [`MetazoneMembershipKind`] packed into one byte.
+#[derive(Debug, Clone, Copy, PartialEq, PartialOrd, Eq, Ord)]
+pub struct VariantOffsetsWithMetazoneMembershipKind {
+    /// The offsets. Currently uses 3 bits.
+    pub offsets: VariantOffsets,
+    /// Metazone membership metadata. Currently uses 2 bits.
+    pub mzmsk: MetazoneMembershipKind,
+}
+
+impl From<VariantOffsets> for VariantOffsetsWithMetazoneMembershipKind {
     fn from(offsets: VariantOffsets) -> Self {
         Self {
             offsets,
-            uses_non_golden_variant: false,
-            uses_custom_transitions: false,
+            mzmsk: MetazoneMembershipKind::BehavesLikeGolden,
         }
     }
 }
 
-impl AsULE for VariantOffsetsWithFlags {
+impl AsULE for VariantOffsetsWithMetazoneMembershipKind {
     type ULE = [i8; 2];
 
     fn from_unaligned([std, dst]: Self::ULE) -> Self {
@@ -109,7 +117,7 @@ impl AsULE for VariantOffsetsWithFlags {
                             _ => 0,
                         },
                 ),
-                daylight: match dst & 0b0011_1111 {
+                daylight: match dst as u8 & 0b0011_1111 {
                     0 => None,
                     1 => Some(0),
                     2 => Some(1800),
@@ -125,8 +133,15 @@ impl AsULE for VariantOffsetsWithFlags {
                     UtcOffset::from_seconds_unchecked(std as i32 * SECONDS_TO_EIGHTS_OF_HOURS + d)
                 }),
             },
-            uses_non_golden_variant: dst & 0b1000_0000u8 as i8 != 0,
-            uses_custom_transitions: dst & 0b0100_0000 != 0,
+            mzmsk: match (dst as u8 & 0b1100_0000) >> 6 {
+                0b00 => MetazoneMembershipKind::BehavesLikeGolden,
+                0b10 => MetazoneMembershipKind::CustomTransitions,
+                0b01 => MetazoneMembershipKind::CustomVariants,
+                x => {
+                    debug_assert!(false, "unknown MetazoneMembershipKind encoding {x}");
+                    MetazoneMembershipKind::BehavesLikeGolden
+                }
+            },
         }
     }
 
@@ -168,21 +183,17 @@ impl AsULE for VariantOffsetsWithFlags {
                     debug_assert!(false, "unhandled DST value {x}");
                     0
                 }
-            } | (if self.uses_non_golden_variant {
-                0b1000_0000u8 as i8
-            } else {
-                0
-            }) | (if self.uses_custom_transitions {
-                0b0100_0000
-            } else {
-                0
-            }),
+            } | (match self.mzmsk {
+                MetazoneMembershipKind::BehavesLikeGolden => 0b00u8,
+                MetazoneMembershipKind::CustomTransitions => 0b10,
+                MetazoneMembershipKind::CustomVariants => 0b01,
+            } << 6) as i8,
         ]
     }
 }
 
 #[cfg(all(feature = "alloc", feature = "serde"))]
-impl serde::Serialize for VariantOffsetsWithFlags {
+impl serde::Serialize for VariantOffsetsWithMetazoneMembershipKind {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
         S: serde::Serializer,
@@ -192,7 +203,7 @@ impl serde::Serialize for VariantOffsetsWithFlags {
 }
 
 #[cfg(feature = "serde")]
-impl<'de> serde::Deserialize<'de> for VariantOffsetsWithFlags {
+impl<'de> serde::Deserialize<'de> for VariantOffsetsWithMetazoneMembershipKind {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
     where
         D: serde::Deserializer<'de>,
@@ -333,8 +344,8 @@ pub struct TimezonePeriods<'a> {
 
     /// The deduplicated list of offsets.
     ///
-    /// There are currently 99 unique VariantOffsetsWithFlags, so storing the index as a u8 is plenty enough.
-    pub offsets: ZeroVec<'a, VariantOffsetsWithFlags>,
+    /// There are currently 99 unique VariantOffsetsWithMetazoneMembershipKind, so storing the index as a u8 is plenty enough.
+    pub offsets: ZeroVec<'a, VariantOffsetsWithMetazoneMembershipKind>,
 }
 
 /// Encodes ZoneNameTimestamp in 3 bytes by dropping the unused metadata
@@ -371,7 +382,7 @@ struct TimeZonePeriodsSerde<'a> {
         >,
     >,
 
-    pub offsets: ZeroVec<'a, VariantOffsetsWithFlags>,
+    pub offsets: ZeroVec<'a, VariantOffsetsWithMetazoneMembershipKind>,
 }
 
 #[cfg(feature = "datagen")]
@@ -393,9 +404,6 @@ impl serde::Serialize for TimezonePeriods<'_> {
                             .map(|t| {
                                 use icu_locale_core::subtags::Subtag;
 
-                                #[derive(serde::Serialize)]
-                                struct Info(MetazoneId, alloc::vec::Vec<&'static str>);
-
                                 #[allow(clippy::unwrap_used)] // JSON debug format
                                 let (os, mz_info) = self
                                     .get(TimeZone(Subtag::try_from_str(&tz).unwrap()), t)
@@ -405,16 +413,19 @@ impl serde::Serialize for TimezonePeriods<'_> {
                                     (
                                         os,
                                         mz_info.map(|i| {
-                                            Info(
+                                            (
                                                 i.id,
-                                                i.uses_custom_transitions
-                                                    .then_some("custom transitions")
-                                                    .into_iter()
-                                                    .chain(
-                                                        i.uses_non_golden_variant
-                                                            .then_some("non-golden variant"),
-                                                    )
-                                                    .collect(),
+                                                match i.kind {
+                                                    MetazoneMembershipKind::BehavesLikeGolden => {
+                                                        [].as_slice()
+                                                    }
+                                                    MetazoneMembershipKind::CustomVariants => {
+                                                        &["custom variants"]
+                                                    }
+                                                    MetazoneMembershipKind::CustomTransitions => {
+                                                        &["custom transitions"]
+                                                    }
+                                                },
                                             )
                                         }),
                                     ),
@@ -463,15 +474,11 @@ impl<'de> serde::Deserialize<'de> for TimezonePeriods<'de> {
 
 /// Information about a metazone membership
 #[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Clone, Copy)]
-#[non_exhaustive]
 pub struct MetazoneInfo {
     /// The metazone ID.
     pub id: MetazoneId,
-    /// This happens for example for London, Dublin, Troll (all in GMT), Windhoek (in WAT).
-    pub uses_non_golden_variant: bool,
-    /// This happens for example for Phoenix, Regina, Algiers, Brisbane (no DST),
-    /// or Chisinau (transitions at different times, not implemented).
-    pub uses_custom_transitions: bool,
+    /// The kind.
+    pub kind: MetazoneMembershipKind,
 }
 
 impl TimezonePeriods<'_> {
@@ -497,8 +504,7 @@ impl TimezonePeriods<'_> {
             os.offsets,
             Some(MetazoneInfo {
                 id: mz,
-                uses_non_golden_variant: os.uses_non_golden_variant,
-                uses_custom_transitions: os.uses_custom_transitions,
+                kind: os.mzmsk,
             }),
         ))
     }
