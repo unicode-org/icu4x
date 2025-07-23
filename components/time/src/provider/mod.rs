@@ -69,52 +69,76 @@ impl AsULE for VariantOffsets {
     type ULE = [i8; 2];
 
     fn from_unaligned([std, dst]: Self::ULE) -> Self {
-        fn decode(encoded: i8) -> i32 {
-            encoded as i32 * SECONDS_TO_EIGHTS_OF_HOURS
-                + match encoded % 8 {
-                    // 7.5, 37.5, representing 10, 40
-                    1 | 5 => 150,
-                    -1 | -5 => -150,
-                    // 22.5, 52.5, representing 20, 50
-                    3 | 7 => -150,
-                    -3 | -7 => 150,
-                    // 0, 15, 30, 45
-                    _ => 0,
-                }
-        }
-
         Self {
-            standard: UtcOffset::from_seconds_unchecked(decode(std)),
-            daylight: (dst != 0).then(|| UtcOffset::from_seconds_unchecked(decode(std + dst))),
+            standard: UtcOffset::from_seconds_unchecked(
+                std as i32 * SECONDS_TO_EIGHTS_OF_HOURS
+                    + match std % 8 {
+                        // 7.5, 37.5, representing 10, 40
+                        1 | 5 => 150,
+                        -1 | -5 => -150,
+                        // 22.5, 52.5, representing 20, 50
+                        3 | 7 => -150,
+                        -3 | -7 => 150,
+                        // 0, 15, 30, 45
+                        _ => 0,
+                    },
+            ),
+            daylight: match dst {
+                0 => None,
+                1 => Some(0),
+                2 => Some(1800),
+                3 => Some(3600),
+                4 => Some(5400),
+                5 => Some(7200),
+                x => {
+                    debug_assert!(false, "unknown DST encoding {x}");
+                    None
+                }
+            }
+            .map(|d| {
+                UtcOffset::from_seconds_unchecked(std as i32 * SECONDS_TO_EIGHTS_OF_HOURS + d)
+            }),
         }
     }
 
     fn to_unaligned(self) -> Self::ULE {
-        fn encode(offset: i32) -> i8 {
-            debug_assert_eq!(offset.abs() % 60, 0);
-            let scaled = match offset.abs() / 60 % 60 {
-                0 | 15 | 30 | 45 => offset / SECONDS_TO_EIGHTS_OF_HOURS,
-                10 | 40 => {
-                    // stored as 7.5, 37.5, truncating div
-                    offset / SECONDS_TO_EIGHTS_OF_HOURS
-                }
-                20 | 50 => {
-                    // stored as 22.5, 52.5, need to add one
-                    offset / SECONDS_TO_EIGHTS_OF_HOURS + offset.signum()
-                }
-                _ => {
-                    debug_assert!(false, "{offset:?}");
-                    offset / SECONDS_TO_EIGHTS_OF_HOURS
-                }
-            };
-            debug_assert!(i8::MIN as i32 <= scaled && scaled <= i8::MAX as i32);
-            scaled as i8
-        }
         [
-            encode(self.standard.to_seconds()),
-            self.daylight
-                .map(|d| encode(d.to_seconds() - self.standard.to_seconds()))
-                .unwrap_or_default(),
+            {
+                let offset = self.standard.to_seconds();
+                debug_assert_eq!(offset.abs() % 60, 0);
+                let scaled = match offset.abs() / 60 % 60 {
+                    0 | 15 | 30 | 45 => offset / SECONDS_TO_EIGHTS_OF_HOURS,
+                    10 | 40 => {
+                        // stored as 7.5, 37.5, truncating div
+                        offset / SECONDS_TO_EIGHTS_OF_HOURS
+                    }
+                    20 | 50 => {
+                        // stored as 22.5, 52.5, need to add one
+                        offset / SECONDS_TO_EIGHTS_OF_HOURS + offset.signum()
+                    }
+                    _ => {
+                        debug_assert!(false, "{offset:?}");
+                        offset / SECONDS_TO_EIGHTS_OF_HOURS
+                    }
+                };
+                debug_assert!(i8::MIN as i32 <= scaled && scaled <= i8::MAX as i32);
+                scaled as i8
+            },
+            match self
+                .daylight
+                .map(|o| o.to_seconds() - self.standard.to_seconds())
+            {
+                None => 0,
+                Some(0) => 1,
+                Some(1800) => 2,
+                Some(3600) => 3,
+                Some(5400) => 4,
+                Some(7200) => 5,
+                Some(x) => {
+                    debug_assert!(false, "unhandled DST value {x}");
+                    0
+                }
+            },
         ]
     }
 }

@@ -174,10 +174,7 @@ impl SourceDataProvider {
                             if i + 1 < periods.len() && periods[i].0 == periods[i + 1].0 {
                                 // The next period starts at the same time
                                 periods.remove(i);
-                            } else if i + 1 < periods.len()
-                                && periods[i + 1].0.to_zoned_date_time_iso().date
-                                    <= self.timezone_horizon
-                            {
+                            } else if i + 1 < periods.len() && periods[i + 1].0 <= self.timezone_horizon {
                                 // The next period still starts before the horizon.
                                 // Keep the period, but don't add the metazone to allMetazones, so that
                                 // it's only included if it's also used after the horizon.
@@ -260,9 +257,7 @@ impl SourceDataProvider {
                     let mut uses_dst = false;
 
                     // Skip entries before the metazone horizon
-                    while ps.peek().is_some_and(|&(start, ..)| {
-                        start.to_zoned_date_time_iso().date < self.timezone_horizon
-                    }) {
+                    while ps.peek().is_some_and(|&(start, ..)| start < self.timezone_horizon) {
                         curr = ps.next().unwrap();
                     }
 
