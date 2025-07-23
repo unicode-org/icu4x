@@ -42,3 +42,11 @@ hooks:
     icu4x:
       buildMode: checkout
       checkoutPath: ../../
+
+dependency_overrides:
+  code_assets: 
+    path: ../../../native/pkgs/code_assets
+  hooks:
+    path: ../../../native/pkgs/hooks
+  native_toolchain_c: 
+    path: ../../../native/pkgs/native_toolchain_c
