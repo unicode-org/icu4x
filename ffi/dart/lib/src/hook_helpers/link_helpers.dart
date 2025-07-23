@@ -19,7 +19,14 @@ extension SymbolReader on LinkInput {
   Map<String, Set<String>> get fetchSymbolsToBeKept => metadata.entries
       .where((entry) => entry.key.startsWith(_prefix))
       .map((e) => e.value as Map)
-      .map((e) => e.map((key, value) => MapEntry(key, (value as List).toSet())))
+      .map(
+        (symbols) => symbols.map(
+          (packageName, symbolList) => MapEntry(
+            packageName as String,
+            (symbolList as List).map((e) => e as String).toSet(),
+          ),
+        ),
+      )
       .cast<Map<String, Set<String>>>()
       .fold({}, _mergeMaps);
 }

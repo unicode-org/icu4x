@@ -49,8 +49,6 @@ hooks:
       checkoutPath: path/to/checkout
 ```
 
-Also, the optional `packageWithLinker` can be set to link in another package than icu4x.
-
 ''');
     }
     print('Read build options: ${buildOptions.toJson()}');
@@ -79,7 +77,7 @@ Also, the optional `packageWithLinker` can be set to link in another package tha
         file: builtLibrary,
       ),
       routing: input.config.linkingEnabled
-          ? ToLinkHook(buildOptions.packageWithLinker ?? package)
+          ? const ToLinkHook(package)
           : const ToAppBundle(),
     );
     output.addDependencies(buildMode.dependencies);
