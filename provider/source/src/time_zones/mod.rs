@@ -381,18 +381,19 @@ impl SourceDataProvider {
                     periods: collapsed_and_annotated_offsets_and_metazones
                         .into_iter()
                         .map(|(tz, ps)| {
-                            (
-                                tz,
-                                ps.into_iter()
-                                    .map(|(t, os, mz)| (
-                                        t,
-                                        os,
-                                        mz.and_then(|(mz, uses_non_golden_variant, uses_custom_transitions)| {
-                                            Some(MetazoneInfo { id: ids.get(mz).copied()?, uses_non_golden_variant, uses_custom_transitions })
-                                        }
-                                    )))
-                                    .collect(),
-                            )
+                            let mut ps = ps.into_iter()
+                                .map(|(t, os, mz)| (
+                                    t,
+                                    os,
+                                    mz.and_then(|(mz, uses_non_golden_variant, uses_custom_transitions)| {
+                                        Some(MetazoneInfo { id: ids.get(mz).copied()?, uses_non_golden_variant, uses_custom_transitions })
+                                    }
+                                )))
+                                .collect::<Vec<_>>();
+
+                            ps.dedup_by_key(|&mut (_, os, mz)| (os, mz));
+
+                            (tz, ps)
                         })
                         .collect(),
                     reverse: reverse
