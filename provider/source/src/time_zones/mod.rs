@@ -18,6 +18,7 @@ use icu::time::zone::ZoneNameTimestamp;
 use icu_locale_core::subtags::Region;
 use icu_provider::prelude::*;
 use icu_time::ZonedDateTime;
+use itertools::Itertools;
 use std::collections::BTreeMap;
 use std::collections::BTreeSet;
 use std::collections::HashSet;
@@ -340,14 +341,18 @@ impl SourceDataProvider {
                 }
                 bcp47_tzids.extend(self.future_zones()?);
 
+                // Etc/Unknown's aliases don't need to be included
+                let unk_aliases =
+                    bcp47_tzids_resource[&TimeZone::UNKNOWN].alias.as_ref().into_iter().flat_map(|a| a.split(' '));
+
                 for zone in self.tzdb()?.parsed()?.main.zonesets.keys() {
-                    if !bcp47_tzids.contains_key(zone) {
+                    if !bcp47_tzids.contains_key(zone) && !unk_aliases.clone().contains(zone.as_str()) {
                         log::error!("TZDB zone {zone:?} not in CLDR. Add BCP-47 code to `fn future_zones()`?");
                     }
                 }
 
                 for zone in self.tzdb()?.parsed()?.main.links.keys() {
-                    if !bcp47_tzids.contains_key(zone) {
+                    if !bcp47_tzids.contains_key(zone) && !unk_aliases.clone().contains(zone.as_str()) {
                         log::warn!("TZDB link {zone:?} not in CLDR");
                     }
                 }
