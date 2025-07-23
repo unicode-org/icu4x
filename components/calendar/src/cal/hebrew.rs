@@ -360,7 +360,10 @@ impl Date<Hebrew> {
 
         ArithmeticDate::new_from_ordinals(year, month, day)
             .map(HebrewDateInner)
-            .map(|inner| Date::from_raw(inner, Hebrew))
+            .map(|inner| Date {
+                inner,
+                calendar: Hebrew,
+            })
     }
 }
 

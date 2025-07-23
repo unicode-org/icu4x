@@ -37,7 +37,8 @@ impl WeekInformation {
         /// Creates a new [`WeekCalculator`] from compiled data.
     );
 
-    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE_WITH_WARNING, Self::try_new)]
+    #[cfg_attr(not(feature = "unstable"), doc(hidden))]
     pub fn try_new_unstable<P>(provider: &P, prefs: WeekPreferences) -> Result<Self, DataError>
     where
         P: DataProvider<crate::provider::CalendarWeekV1> + ?Sized,
