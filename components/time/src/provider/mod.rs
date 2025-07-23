@@ -143,6 +143,142 @@ impl AsULE for VariantOffsets {
     }
 }
 
+/// A [`VariantOffsets`] and some flags
+///
+/// The ULE representation has space for up to 5 flags, currently
+/// two are used.
+#[derive(Debug, Clone, Copy, PartialEq, PartialOrd, Eq, Ord)]
+#[non_exhaustive]
+pub struct VariantOffsetsWithFlags {
+    /// The offsets
+    pub offsets: VariantOffsets,
+    /// See [`MetazoneInfo`]
+    pub uses_non_golden_variant: bool,
+    /// See [`MetazoneInfo`]
+    pub uses_custom_transitions: bool,
+}
+
+impl From<VariantOffsets> for VariantOffsetsWithFlags {
+    fn from(offsets: VariantOffsets) -> Self {
+        Self {
+            offsets,
+            uses_non_golden_variant: false,
+            uses_custom_transitions: false,
+        }
+    }
+}
+
+impl AsULE for VariantOffsetsWithFlags {
+    type ULE = [i8; 2];
+
+    fn from_unaligned([std, dst]: Self::ULE) -> Self {
+        Self {
+            offsets: VariantOffsets {
+                standard: UtcOffset::from_seconds_unchecked(
+                    std as i32 * SECONDS_TO_EIGHTS_OF_HOURS
+                        + match std % 8 {
+                            // 7.5, 37.5, representing 10, 40
+                            1 | 5 => 150,
+                            -1 | -5 => -150,
+                            // 22.5, 52.5, representing 20, 50
+                            3 | 7 => -150,
+                            -3 | -7 => 150,
+                            // 0, 15, 30, 45
+                            _ => 0,
+                        },
+                ),
+                daylight: match dst & 0b0011_1111 {
+                    0 => None,
+                    1 => Some(0),
+                    2 => Some(1800),
+                    3 => Some(3600),
+                    4 => Some(5400),
+                    5 => Some(7200),
+                    x => {
+                        debug_assert!(false, "unknown DST encoding {x}");
+                        None
+                    }
+                }
+                .map(|d| {
+                    UtcOffset::from_seconds_unchecked(std as i32 * SECONDS_TO_EIGHTS_OF_HOURS + d)
+                }),
+            },
+            uses_non_golden_variant: dst & 0b1000_0000u8 as i8 != 0,
+            uses_custom_transitions: dst & 0b0100_0000 != 0,
+        }
+    }
+
+    fn to_unaligned(self) -> Self::ULE {
+        [
+            {
+                let offset = self.offsets.standard.to_seconds();
+                debug_assert_eq!(offset.abs() % 60, 0);
+                let scaled = match offset.abs() / 60 % 60 {
+                    0 | 15 | 30 | 45 => offset / SECONDS_TO_EIGHTS_OF_HOURS,
+                    10 | 40 => {
+                        // stored as 7.5, 37.5, truncating div
+                        offset / SECONDS_TO_EIGHTS_OF_HOURS
+                    }
+                    20 | 50 => {
+                        // stored as 22.5, 52.5, need to add one
+                        offset / SECONDS_TO_EIGHTS_OF_HOURS + offset.signum()
+                    }
+                    _ => {
+                        debug_assert!(false, "{offset:?}");
+                        offset / SECONDS_TO_EIGHTS_OF_HOURS
+                    }
+                };
+                debug_assert!(i8::MIN as i32 <= scaled && scaled <= i8::MAX as i32);
+                scaled as i8
+            },
+            match self
+                .offsets
+                .daylight
+                .map(|o| o.to_seconds() - self.offsets.standard.to_seconds())
+            {
+                None => 0,
+                Some(0) => 1,
+                Some(1800) => 2,
+                Some(3600) => 3,
+                Some(5400) => 4,
+                Some(7200) => 5,
+                Some(x) => {
+                    debug_assert!(false, "unhandled DST value {x}");
+                    0
+                }
+            } | (if self.uses_non_golden_variant {
+                0b1000_0000u8 as i8
+            } else {
+                0
+            }) | (if self.uses_custom_transitions {
+                0b0100_0000
+            } else {
+                0
+            }),
+        ]
+    }
+}
+
+#[cfg(all(feature = "alloc", feature = "serde"))]
+impl serde::Serialize for VariantOffsetsWithFlags {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        self.to_unaligned().serialize(serializer)
+    }
+}
+
+#[cfg(feature = "serde")]
+impl<'de> serde::Deserialize<'de> for VariantOffsetsWithFlags {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        <_>::deserialize(deserializer).map(Self::from_unaligned)
+    }
+}
+
 #[test]
 fn offsets_ule() {
     #[track_caller]
@@ -275,14 +411,8 @@ pub struct TimezonePeriods<'a> {
 
     /// The deduplicated list of offsets.
     ///
-    /// There are currently 83 unique VariantOffsets, so storing the index as a u8 is plenty enough.
-    pub offsets: ZeroVec<'a, VariantOffsets>,
-
-    /// Map from `MetazoneId` (the index) to the periods for the golden zone for that metazone.
-    ///
-    /// The values are indices into `list`, which unfortunately need to be u16 as they currently
-    /// go up to 284.
-    pub goldens: ZeroVec<'a, u16>,
+    /// There are currently 99 unique VariantOffsetsWithFlags, so storing the index as a u8 is plenty enough.
+    pub offsets: ZeroVec<'a, VariantOffsetsWithFlags>,
 }
 
 /// Encodes ZoneNameTimestamp in 3 bytes by dropping the unused metadata
@@ -319,8 +449,7 @@ struct TimeZonePeriodsSerde<'a> {
         >,
     >,
 
-    pub offsets: ZeroVec<'a, VariantOffsets>,
-    pub goldens: ZeroVec<'a, u16>,
+    pub offsets: ZeroVec<'a, VariantOffsetsWithFlags>,
 }
 
 #[cfg(feature = "datagen")]
@@ -336,42 +465,49 @@ impl serde::Serialize for TimezonePeriods<'_> {
                 if let Some(value) = self.list.get(idx) {
                     map.serialize_entry(
                         &tz,
-                        &[(
-                            ZoneNameTimestamp::far_in_past(),
-                            (
-                                self.offsets.get(value.sized.0 as usize),
-                                NichedOption::from_unaligned(value.sized.1).0,
-                            ),
-                        )]
-                        .into_iter()
-                        .chain(
-                            value
-                                .variable
-                                .iter()
-                                .map(|(t, os, mz)| (t.0, (self.offsets.get(os as usize), mz.0))),
-                        )
-                        .collect::<alloc::collections::BTreeMap<_, _>>(),
+                        &[ZoneNameTimestamp::far_in_past()]
+                            .into_iter()
+                            .chain(value.variable.iter().map(|(t, _, _)| t.0))
+                            .map(|t| {
+                                use icu_locale_core::subtags::Subtag;
+
+                                #[derive(serde::Serialize)]
+                                struct Info(MetazoneId, alloc::vec::Vec<&'static str>);
+
+                                #[allow(clippy::unwrap_used)] // JSON debug format
+                                let (os, mz_info) = self
+                                    .get(TimeZone(Subtag::try_from_str(&tz).unwrap()), t)
+                                    .unwrap();
+                                (
+                                    t,
+                                    (
+                                        os,
+                                        mz_info.map(|i| {
+                                            Info(
+                                                i.id,
+                                                i.uses_custom_transitions
+                                                    .then_some("custom transitions")
+                                                    .into_iter()
+                                                    .chain(
+                                                        i.uses_non_golden_variant
+                                                            .then_some("non-golden variant"),
+                                                    )
+                                                    .collect(),
+                                            )
+                                        }),
+                                    ),
+                                )
+                            })
+                            .collect::<alloc::collections::BTreeMap<_, _>>(),
                     )?;
                 }
             }
-            map.serialize_entry(
-                "__goldens",
-                &self
-                    .index
-                    .iter()
-                    .filter_map(|(tz, idx)| {
-                        let mz = self.goldens.iter().position(|v| idx as u16 == v)?;
-                        Some((mz, tz))
-                    })
-                    .collect::<alloc::collections::BTreeMap<_, _>>(),
-            )?;
             map.end()
         } else {
             TimeZonePeriodsSerde {
                 list: self.list.clone(),
                 index: self.index.clone(),
                 offsets: self.offsets.clone(),
-                goldens: self.goldens.clone(),
             }
             .serialize(serializer)
         }
@@ -393,16 +529,27 @@ impl<'de> serde::Deserialize<'de> for TimezonePeriods<'de> {
                 index,
                 list,
                 offsets,
-                goldens,
             } = TimeZonePeriodsSerde::deserialize(deserializer)?;
             Ok(Self {
                 index,
                 list,
                 offsets,
-                goldens,
             })
         }
     }
+}
+
+/// Information about a metazone membership
+#[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Clone, Copy)]
+#[non_exhaustive]
+pub struct MetazoneInfo {
+    /// The metazone ID.
+    pub id: MetazoneId,
+    /// This happens for example for London, Dublin, Troll (all in GMT), Windhoek (in WAT).
+    pub uses_non_golden_variant: bool,
+    /// This happens for example for Phoenix, Regina, Algiers, Brisbane (no DST),
+    /// or Chisinau (transitions at different times, not implemented).
+    pub uses_custom_transitions: bool,
 }
 
 impl TimezonePeriods<'_> {
@@ -414,36 +561,24 @@ impl TimezonePeriods<'_> {
         &self,
         time_zone_id: TimeZone,
         timestamp: ZoneNameTimestamp,
-    ) -> Option<(VariantOffsets, Option<(MetazoneId, VariantOffsets)>)> {
+    ) -> Option<(VariantOffsets, Option<MetazoneInfo>)> {
         let (os_idx, NichedOption(mz)) =
             self.find_period(self.index.get(time_zone_id.as_str())?, timestamp)?;
 
         let os = self.offsets.get(os_idx as usize)?;
 
         let Some(mz) = mz else {
-            return Some((os, None));
+            return Some((os.offsets, None));
         };
 
-        let (golden_os_idx, _) = self
-            .goldens
-            .get(mz.get() as usize)
-            .and_then(|i| self.find_period(i as usize, timestamp))
-            // This happens in case we construct this struct from the legacy seralized struct.
-            // In that case, each zone will appear as its metazone's golden.
-            .unwrap_or((os_idx, Default::default()));
-
-        if golden_os_idx == os_idx {
-            // This is the hot path as most zones in a metazone agree (and self.offsets is deduplicated,
-            // the the offsets are the same iff the indices are).
-            Some((os, Some((mz, os))))
-        } else {
-            let golden_os = self.offsets.get(golden_os_idx as usize)?;
-            debug_assert_eq!(
-                os.standard, golden_os.standard,
-                "{time_zone_id:?}, {os:?}, {golden_os:?}"
-            );
-            Some((os, Some((mz, golden_os))))
-        }
+        Some((
+            os.offsets,
+            Some(MetazoneInfo {
+                id: mz,
+                uses_non_golden_variant: os.uses_non_golden_variant,
+                uses_custom_transitions: os.uses_custom_transitions,
+            }),
+        ))
     }
 
     // Given an index in `list`, returns the values at the `timestamp`

@@ -39,12 +39,20 @@ pub(crate) struct Caches {
     metazones: Cache<MetazoneData>,
 }
 
+// Exhaustive internal version of `icu::time::provider::MetazoneInfo`
+#[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Clone, Copy)]
+#[non_exhaustive]
+struct MetazoneInfo {
+    id: MetazoneId,
+    uses_non_golden_variant: bool,
+    uses_custom_transitions: bool,
+}
+
 #[derive(Debug)]
 struct MetazoneData {
-    periods: BTreeMap<TimeZone, Vec<(ZoneNameTimestamp, VariantOffsets, Option<MetazoneId>)>>,
+    periods: BTreeMap<TimeZone, Vec<(ZoneNameTimestamp, VariantOffsets, Option<MetazoneInfo>)>>,
     reverse: BTreeMap<(MetazoneId, MzMembership), Vec<TimeZone>>,
     ids: BTreeMap<String, MetazoneId>,
-    goldens: BTreeMap<MetazoneId, TimeZone>,
     checksum: u64,
 }
 
@@ -144,6 +152,23 @@ impl SourceDataProvider {
 
                 let mut all_metazones = BTreeSet::new();
 
+                let mut goldens = metazones_resource
+                    .meta_zones_territory
+                    .0
+                    .iter()
+                    .filter_map(|mt| {
+                        if mt.map_zone.territory != region!("001") {
+                            return None;
+                        }
+                        Some((mt.map_zone.metazone.as_str(), *bcp47_tzid_data.get(&mt.map_zone.time_zone)?))
+                    })
+                    .collect::<BTreeMap<_, _>>();
+
+                // CLDR sets the golden for Hawaii-Aleutian Time to Honolulu, but that doesn't fit our model as
+                // Honolulu has never used DST while Adak has.
+                // In v48, Honolulu will have overrides in all locales, and could be removed from the metazone.
+                goldens.insert("Hawaii_Aleutian", TimeZone(subtag!("usadk")));
+
                 let metazones = metazones_resource
                     .meta_zone_info
                     .time_zone
@@ -232,22 +257,68 @@ impl SourceDataProvider {
                     }
                 }
 
-                let mut goldens = metazones_resource
-                    .meta_zones_territory
-                    .0
-                    .iter()
-                    .filter_map(|mt| {
-                        if mt.map_zone.territory != region!("001") {
-                            return None;
+                let collapsed_offsets_and_metazones = offsets_and_metazones.iter().map(|(&tz, ps)| {
+                    let mut ps = ps.clone();
+                    ps.dedup_by(|(_, oa, mza), (_, ob, mzb)| {
+                        if oa.standard != ob.standard {
+                            return false;
                         }
-                        Some((mt.map_zone.metazone.as_str(), *bcp47_tzid_data.get(&mt.map_zone.time_zone)?))
-                    })
-                    .collect::<BTreeMap<_, _>>();
+                        if mza != mzb {
+                            return false;
+                        }
+                        match (oa.daylight, ob.daylight) {
+                            (None, None) => true,
+                            (Some(a), Some(b)) => a == b,
+                            // It's fine if one period doesn't use DST,
+                            (Some(a), None) => {
+                                ob.daylight = Some(a);
+                                true
+                            }
+                            (None, Some(b)) => {
+                                oa.daylight = Some(b);
+                                true
+                            }
+                        }
+                    });
 
-                // CLDR sets the golden for Hawaii-Aleutian Time to Honolulu, but that doesn't fit our model as
-                // Honolulu has never used DST while Adak has.
-                // In v48, Honolulu will have overrides in all locales, and could be removed from the metazone.
-                goldens.insert("Hawaii_Aleutian", TimeZone(subtag!("usadk")));
+                    (tz, ps)
+                })
+                .collect::<BTreeMap<_, _>>();
+
+
+                let collapsed_and_annotated_offsets_and_metazones = collapsed_offsets_and_metazones.iter().map(|(&tz, ps)| {
+                    (
+                        tz,
+                        ps.iter().map(|&(t, os, mz)| {
+                            let mz = if let Some(mz) = mz {
+                                let golden = goldens[mz];
+                                let golden_os = collapsed_offsets_and_metazones[&golden]
+                                    .iter()
+                                    .rev()
+                                    .find(|&&(ts, _, _)| ts <= t)
+                                    .unwrap()
+                                    .1;
+
+                                if golden_os.standard != os.standard {
+                                    log::warn!("Offsets don't agree with metazone golden: {tz:?} - {golden:?}");
+                                }
+
+                                let uses_non_golden_variant =
+                                    os.daylight.is_some() && golden_os.daylight.is_none();
+
+                                // TODO: this needs to look at actual transitions
+                                let uses_custom_transitions =
+                                    os.daylight.is_none() && golden_os.daylight.is_some();
+
+                                Some((mz, uses_non_golden_variant, uses_custom_transitions))
+                            } else {
+                                None
+                            };
+
+                            (t, os, mz)
+                        }).collect::<Vec<_>>()
+                    )
+                }).collect::<BTreeMap<_, _>>();
 
                 let mut reverse = BTreeMap::<(&str, MzMembership), Vec<TimeZone>>::new();
                 for &tz in goldens.values().chain(offsets_and_metazones.keys()) {
@@ -307,13 +378,19 @@ impl SourceDataProvider {
                 let hash = hash.finish();
 
                 Ok(MetazoneData {
-                    periods: offsets_and_metazones
+                    periods: collapsed_and_annotated_offsets_and_metazones
                         .into_iter()
                         .map(|(tz, ps)| {
                             (
                                 tz,
                                 ps.into_iter()
-                                    .map(|(t, os, mz)| (t, os, mz.and_then(|mz| ids.get(mz).copied())))
+                                    .map(|(t, os, mz)| (
+                                        t,
+                                        os,
+                                        mz.and_then(|(mz, uses_non_golden_variant, uses_custom_transitions)| {
+                                            Some(MetazoneInfo { id: ids.get(mz).copied()?, uses_non_golden_variant, uses_custom_transitions })
+                                        }
+                                    )))
                                     .collect(),
                             )
                         })
@@ -324,7 +401,6 @@ impl SourceDataProvider {
                             Some(((*ids.get(mz)?, membership), tzs))
                         })
                         .collect(),
-                    goldens: goldens.into_iter().filter_map(|(mz, tz)| Some((*ids.get(mz)?, tz))).collect(),
                     ids,
                     checksum: hash,
                 })
@@ -726,6 +802,7 @@ mod tests {
                 .unwrap()
                 .2
                 .unwrap()
+                .id
         };
 
         let generic_names_long: DataPayload<TimezoneNamesGenericLongV1> =

@@ -2,18 +2,18 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use super::MzMembership;
+use super::{MetazoneInfo, MzMembership};
 use crate::cldr_serde;
 use crate::SourceDataProvider;
 use cldr_serde::time_zones::time_zone_names::*;
 use core::cmp::Ordering;
-use core::num::NonZeroU8;
 use icu::datetime::provider::time_zones::*;
 use icu::locale::LanguageIdentifier;
 use icu::time::provider::*;
 use icu::time::zone::TimeZoneVariant;
 use icu_provider::prelude::icu_locale_core::subtags::Language;
 use icu_provider::prelude::*;
+use icu_time::zone::VariantOffsets;
 use icu_time::zone::ZoneNameTimestamp;
 use std::borrow::Cow;
 use std::collections::BTreeMap;
@@ -342,42 +342,20 @@ impl DataProvider<TimezonePeriodsV1> for SourceDataProvider {
 
         let metazones = self.metazones()?;
 
-        let values = metazones
-            .periods
-            .iter()
-            .map(|(&tz, ps)| {
-                let mut ps = ps.clone();
-                ps.dedup_by(|(_, oa, mza), (_, ob, mzb)| {
-                    if oa.standard != ob.standard {
-                        return false;
-                    }
-                    if mza != mzb {
-                        return false;
-                    }
-                    match (oa.daylight, ob.daylight) {
-                        (None, None) => true,
-                        (Some(a), Some(b)) => a == b,
-                        // It's fine if one period doesn't use DST,
-                        (Some(a), None) => {
-                            ob.daylight = Some(a);
-                            true
-                        }
-                        (None, Some(b)) => {
-                            oa.daylight = Some(b);
-                            true
-                        }
-                    }
-                });
-
-                (tz, ps)
-            })
-            .collect::<BTreeMap<_, _>>();
+        fn add_flags_to_offsets(
+            offsets: VariantOffsets,
+            mz: Option<MetazoneInfo>,
+        ) -> VariantOffsetsWithFlags {
+            let mut v = VariantOffsetsWithFlags::from(offsets);
+            v.uses_non_golden_variant = mz.map(|i| i.uses_non_golden_variant).unwrap_or_default();
+            v.uses_custom_transitions = mz.map(|i| i.uses_custom_transitions).unwrap_or_default();
+            v
+        }
 
         let mut offsets = BTreeSet::new();
-
-        for ps in values.values() {
-            for &(_, os, _) in ps {
-                offsets.insert(os);
+        for ps in metazones.periods.values() {
+            for &(_, os, mz) in ps {
+                offsets.insert(add_flags_to_offsets(os, mz));
             }
         }
 
@@ -390,7 +368,7 @@ impl DataProvider<TimezonePeriodsV1> for SourceDataProvider {
         let offsets = offsets.into_iter().collect::<ZeroVec<_>>();
 
         let mut deduped = BTreeMap::<_, BTreeSet<_>>::new();
-        for (tz, value) in values {
+        for (&tz, value) in &metazones.periods {
             deduped.entry(value).or_default().insert(tz);
         }
 
@@ -405,36 +383,28 @@ impl DataProvider<TimezonePeriodsV1> for SourceDataProvider {
         let list = VarZeroVec::from(
             &deduped
                 .into_keys()
-                .map(|mut ps| {
-                    let (past, os, mz) = ps.remove(0);
+                .map(|ps| {
+                    let convert = |&(t, os, mz)| {
+                        (
+                            Timestamp24(t),
+                            offset_index[&add_flags_to_offsets(os, mz)],
+                            NichedOption(mz.map(|i| i.id)),
+                        )
+                    };
 
-                    assert_eq!(past, ZoneNameTimestamp::far_in_past());
+                    let (past, os, mz) = convert(&ps[0]);
 
-                    let rest = ps
-                        .into_iter()
-                        .map(|(t, os, mz)| (Timestamp24(t), offset_index[&os], NichedOption(mz)))
-                        .collect::<ZeroVec<_>>();
+                    assert_eq!(past.0, ZoneNameTimestamp::far_in_past());
+
+                    let rest = ps[1..].iter().map(convert).collect::<ZeroVec<_>>();
 
                     zerovec::ule::encode_varule_to_box(&VarTuple {
-                        sized: (offset_index[&os], NichedOption(mz)),
+                        sized: (os, mz),
                         variable: rest.as_slice(),
                     })
                 })
                 .collect::<Vec<_>>(),
         );
-
-        let goldens = (0..metazones.goldens.keys().max().unwrap().get())
-            .map(|mz| {
-                let Some(mz) = NonZeroU8::new(mz) else {
-                    return u16::MAX;
-                };
-                let Some(&golden) = metazones.goldens.get(&mz) else {
-                    return u16::MAX;
-                };
-                let golden_idx = index.get(golden.as_str()).unwrap();
-                golden_idx as u16
-            })
-            .collect();
 
         Ok(DataResponse {
             metadata: DataResponseMetadata::default().with_checksum(metazones.checksum),
@@ -442,7 +412,6 @@ impl DataProvider<TimezonePeriodsV1> for SourceDataProvider {
                 index,
                 list,
                 offsets,
-                goldens,
             }),
         })
     }
