@@ -64,6 +64,8 @@ export class TimeZoneInfo {
 
     /**
      * Creates a time zone info from parts.
+     *
+     * `variant` is ignored.
      */
     #defaultConstructor(id, offset, variant) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();
@@ -103,6 +105,7 @@ export class TimeZoneInfo {
      * Notes:
      *
      * - If not set, the formatting datetime is used if possible.
+     * - If the offset is not set, the datetime is interpreted as UTC.
      * - The constraints are the same as with `ZoneNameTimestamp` in Rust.
      * - Set to year 1000 or 9999 for a reference far in the past or future.
      *
@@ -123,6 +126,33 @@ export class TimeZoneInfo {
     }
 
     /**
+     * Sets the timestamp, in milliseconds since Unix epoch, at which to interpret the time zone
+     * for display name lookup.
+     *
+     * Notes:
+     *
+     * - If not set, the formatting datetime is used if possible.
+     * - The constraints are the same as with `ZoneNameTimestamp` in Rust.
+     *
+     * See the [Rust documentation for `with_zone_name_timestamp`](https://docs.rs/icu/2.0.0/icu/time/struct.TimeZoneInfo.html#method.with_zone_name_timestamp) for more information.
+     *
+     * Additional information: [1](https://docs.rs/icu/2.0.0/icu/time/zone/struct.ZoneNameTimestamp.html#method.from_zoned_date_time_iso), [2](https://docs.rs/icu/2.0.0/icu/time/zone/struct.ZoneNameTimestamp.html)
+     */
+    atTimestamp(timestamp) {
+
+        const result = wasm.icu4x_TimeZoneInfo_at_timestamp_mv1(this.ffiValue, timestamp);
+
+        try {
+            return new TimeZoneInfo(diplomatRuntime.internalConstructor, result, []);
+        }
+
+        finally {
+        }
+    }
+
+    /**
+     * Returns the DateTime for the UTC zone name reference time
+     *
      * See the [Rust documentation for `zone_name_timestamp`](https://docs.rs/icu/2.0.0/icu/time/struct.TimeZoneInfo.html#method.zone_name_timestamp) for more information.
      */
     get zoneNameDateTime() {
@@ -144,6 +174,10 @@ export class TimeZoneInfo {
     }
 
     /**
+     * DEPRECATED
+     *
+     * Just clones
+     *
      * See the [Rust documentation for `with_variant`](https://docs.rs/icu/2.0.0/icu/time/struct.TimeZoneInfo.html#method.with_variant) for more information.
      */
     withVariant(timeVariant) {
@@ -171,9 +205,9 @@ export class TimeZoneInfo {
     }
 
     /**
-     * Infers the zone variant.
+     * DEPRECATED
      *
-     * Requires the offset and local time to be set.
+     * No-op
      *
      * See the [Rust documentation for `infer_variant`](https://docs.rs/icu/2.0.0/icu/time/struct.TimeZoneInfo.html#method.infer_variant) for more information.
      *
@@ -192,6 +226,8 @@ export class TimeZoneInfo {
     }
 
     /**
+     * DEPRECATED
+     *
      * See the [Rust documentation for `variant`](https://docs.rs/icu/2.0.0/icu/time/struct.TimeZoneInfo.html#method.variant) for more information.
      */
     variant() {
@@ -214,6 +250,8 @@ export class TimeZoneInfo {
 
     /**
      * Creates a time zone info from parts.
+     *
+     * `variant` is ignored.
      */
     constructor(id, offset, variant) {
         if (arguments[0] === diplomatRuntime.exposeConstructor) {

@@ -124,8 +124,7 @@ pub mod ffi {
 
     /// An error when formatting a datetime.
     ///
-    /// Currently the only reachable error here is a missing time zone variant. If you encounter
-    /// that error, you need to call `with_variant` or `infer_variant` on your `TimeZoneInfo`.
+    /// Currently never returned by any API.
     #[cfg(feature = "datetime")]
     #[derive(Debug, PartialEq, Eq)]
     #[repr(C)]
@@ -137,6 +136,7 @@ pub mod ffi {
     #[non_exhaustive]
     pub enum DateTimeWriteError {
         Unknown = 0x00,
+        /// Unused
         MissingTimeZoneVariant = 0x01,
     }
 }
@@ -281,16 +281,9 @@ impl From<icu_datetime::MismatchedCalendarError> for ffi::DateTimeMismatchedCale
 
 #[cfg(feature = "datetime")]
 impl From<icu_datetime::unchecked::FormattedDateTimeUncheckedError> for DateTimeWriteError {
-    fn from(value: icu_datetime::unchecked::FormattedDateTimeUncheckedError) -> Self {
-        match value {
-            icu_datetime::unchecked::FormattedDateTimeUncheckedError::MissingInputField(
-                icu_datetime::unchecked::MissingInputFieldKind::TimeZoneVariant,
-            ) => Self::MissingTimeZoneVariant,
-            err => {
-                debug_assert!(false, "unexpected datetime formatting error: {err}");
-                Self::Unknown
-            }
-        }
+    fn from(err: icu_datetime::unchecked::FormattedDateTimeUncheckedError) -> Self {
+        debug_assert!(false, "unexpected datetime formatting error: {err}");
+        Self::Unknown
     }
 }
 

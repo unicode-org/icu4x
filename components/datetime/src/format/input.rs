@@ -10,7 +10,7 @@ use icu_calendar::types::DayOfYear;
 use icu_calendar::{AsCalendar, Calendar};
 use icu_time::scaffold::IntoOption;
 use icu_time::zone::ZoneNameTimestamp;
-use icu_time::{zone::TimeZoneVariant, Hour, Minute, Nanosecond, Second};
+use icu_time::{Hour, Minute, Nanosecond, Second};
 
 use icu_calendar::Date;
 use icu_time::{zone::UtcOffset, Time, TimeZone};
@@ -52,9 +52,6 @@ pub struct DateTimeInputUnchecked {
     /// The time zone UTC offset, required for field sets with
     /// certain time zone styles.
     pub(crate) zone_offset: Option<UtcOffset>,
-    /// The time zone variant, required for field sets with
-    /// certain time zone styles.
-    pub(crate) zone_variant: Option<TimeZoneVariant>,
     /// The local ISO time, required for field sets with
     /// certain time zone styles.
     pub(crate) zone_name_timestamp: Option<ZoneNameTimestamp>,
@@ -95,14 +92,13 @@ impl DateTimeInputUnchecked {
     }
 
     /// Sets the local time for time zone name resolution.
-    pub fn set_time_zone_name_timestamp(&mut self, local_time: ZoneNameTimestamp) {
-        self.zone_name_timestamp = Some(local_time);
+    pub fn set_time_zone_name_timestamp(&mut self, timestamp: ZoneNameTimestamp) {
+        self.zone_name_timestamp = Some(timestamp);
     }
 
-    /// Sets the time zone variant.
-    pub fn set_time_zone_variant(&mut self, zone_variant: TimeZoneVariant) {
-        self.zone_variant = Some(zone_variant);
-    }
+    /// No-op
+    #[deprecated]
+    pub fn set_time_zone_variant(&mut self, _zone_variant: icu_time::zone::TimeZoneVariant) {}
 
     /// Construct given neo date input instances.
     pub(crate) fn extract_from_neo_input<D, T, Z, I>(input: &I) -> Self
@@ -122,7 +118,6 @@ impl DateTimeInputUnchecked {
             + GetField<T::NanosecondInput>
             + GetField<Z::TimeZoneIdInput>
             + GetField<Z::TimeZoneOffsetInput>
-            + GetField<Z::TimeZoneVariantInput>
             + GetField<Z::TimeZoneNameTimestampInput>,
     {
         Self {
@@ -137,7 +132,6 @@ impl DateTimeInputUnchecked {
             subsecond: GetField::<T::NanosecondInput>::get_field(input).into_option(),
             zone_id: GetField::<Z::TimeZoneIdInput>::get_field(input).into_option(),
             zone_offset: GetField::<Z::TimeZoneOffsetInput>::get_field(input).into_option(),
-            zone_variant: GetField::<Z::TimeZoneVariantInput>::get_field(input).into_option(),
             zone_name_timestamp: GetField::<Z::TimeZoneNameTimestampInput>::get_field(input)
                 .into_option(),
         }

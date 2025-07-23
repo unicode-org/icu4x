@@ -7,7 +7,7 @@ use icu::{
     datetime::{fieldsets, DateTimeFormatter},
     locale::locale,
     time::{
-        zone::{models::Full, IanaParser, TimeZoneVariant, UtcOffset, VariantOffsetsCalculator},
+        zone::{models::AtTime, IanaParser, UtcOffset},
         DateTime, Time, TimeZoneInfo, ZonedDateTime,
     },
 };
@@ -26,11 +26,10 @@ fn main() {
             .with_timezone(&"Asia/Tokyo".parse().unwrap()),
     );
 
-    let from_ixdtf = ZonedDateTime::try_full_from_str(
+    let from_ixdtf = ZonedDateTime::try_strict_from_str(
         "2024-09-11T08:37:20.123456789+09:00[Asia/Tokyo]",
         Iso,
         IanaParser::new(),
-        VariantOffsetsCalculator::new(),
     )
     .expect("valid string");
 
@@ -47,7 +46,7 @@ fn main() {
     println!("{}", formatter.format(&from_chrono)); // 11 Sept 6 Reiwa, 08:37:20 Japan Standard Time
 }
 
-fn jiff_to_icu(jiff: &jiff::Zoned) -> ZonedDateTime<Iso, TimeZoneInfo<Full>> {
+fn jiff_to_icu(jiff: &jiff::Zoned) -> ZonedDateTime<Iso, TimeZoneInfo<AtTime>> {
     let date = Date::try_new_iso(jiff.year() as i32, jiff.month() as u8, jiff.day() as u8)
         .expect("jiff returns valid fields");
 
@@ -70,17 +69,14 @@ fn jiff_to_icu(jiff: &jiff::Zoned) -> ZonedDateTime<Iso, TimeZoneInfo<Full>> {
         .with_offset(UtcOffset::try_from_seconds(jiff.offset().seconds()).ok())
         // Display names might change over time for a given zone (e.g. it might change from Eastern Time to
         // Central Time), so the ICU timezone needs a reference date and time.
-        .at_date_time_iso(date_time)
-        // And finally, the zone variant is also required for formatting
-        // TODO(jiff#258): Jiff does not currently guarantee rearguard semantics
-        .with_variant(TimeZoneVariant::from_rearguard_isdst(jiff.time_zone().to_offset_info(jiff.timestamp()).dst().is_dst()));
+        .at_date_time_iso(date_time);
 
     ZonedDateTime { date, time, zone }
 }
 
 fn chrono_to_icu(
     chrono: &chrono::DateTime<chrono_tz::Tz>,
-) -> ZonedDateTime<Iso, TimeZoneInfo<Full>> {
+) -> ZonedDateTime<Iso, TimeZoneInfo<AtTime>> {
     use chrono::Datelike;
     let date = Date::try_new_iso(chrono.year(), chrono.month() as u8, chrono.day() as u8)
         .expect("chrono returns valid fields");
@@ -104,10 +100,7 @@ fn chrono_to_icu(
         .with_offset(UtcOffset::try_from_seconds((chrono.offset().base_utc_offset() + chrono.offset().dst_offset()).num_seconds() as i32).ok())
         // Display names might change over time for a given zone (e.g. it might change from Eastern Time to
         // Central Time), so the ICU timezone needs a reference date and time.
-        .at_date_time_iso(date_time)
-        // And finally, the zone variant is also required for formatting
-        // TODO: chrono_tz does not use rearguard semantics
-        .with_variant(TimeZoneVariant::from_rearguard_isdst(!chrono.offset().dst_offset().is_zero()));
+        .at_date_time_iso(date_time);
 
     ZonedDateTime { date, time, zone }
 }

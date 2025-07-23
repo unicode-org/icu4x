@@ -8,14 +8,16 @@ use crate::SourceDataProvider;
 use core::cmp::Ordering;
 use core::hash::Hash;
 use core::hash::Hasher;
+use icu::calendar::Iso;
 use icu::datetime::provider::time_zones::*;
 use icu::locale::subtags::region;
 use icu::time::provider::*;
+use icu::time::zone::UtcOffset;
+use icu::time::zone::VariantOffsets;
 use icu::time::zone::ZoneNameTimestamp;
-use icu::time::DateTime;
-use icu::time::Time;
 use icu_locale_core::subtags::Region;
 use icu_provider::prelude::*;
+use icu_time::ZonedDateTime;
 use std::collections::BTreeMap;
 use std::collections::BTreeSet;
 use std::collections::HashSet;
@@ -32,11 +34,16 @@ type Cache<T> = OnceLock<Result<T, DataError>>;
 pub(crate) struct Caches {
     iana_to_bcp47: Cache<BTreeMap<String, TimeZone>>,
     bcp47_to_canonical_iana: Cache<BTreeMap<TimeZone, String>>,
-    metazone_to_short: Cache<(BTreeMap<String, MetazoneId>, u64)>,
     primary_zones: Cache<BTreeMap<TimeZone, Region>>,
-    mz_period: Cache<MetazonePeriod<'static>>,
-    offset_period: Cache<<TimezoneVariantsOffsetsV1 as DynamicDataMarker>::DataStruct>,
-    reverse_metazones: Cache<BTreeMap<(MetazoneId, MzMembership), Vec<TimeZone>>>,
+    metazones: Cache<MetazoneData>,
+}
+
+#[derive(Debug)]
+struct MetazoneData {
+    periods: BTreeMap<TimeZone, Vec<(ZoneNameTimestamp, VariantOffsets, Option<MetazoneId>)>>,
+    reverse: BTreeMap<(MetazoneId, MzMembership), Vec<TimeZone>>,
+    ids: BTreeMap<String, MetazoneId>,
+    checksum: u64,
 }
 
 #[derive(PartialEq, Eq, Ord, PartialOrd, Clone, Copy, Debug)]
@@ -49,95 +56,245 @@ impl SourceDataProvider {
     // Lists additional zones that haven't been added to CLDR yet.
     // If data is generated with a TZDB that contains these zones, they are added.
     fn future_zones(&self) -> Result<impl Iterator<Item = (String, TimeZone)> + '_, DataError> {
-        let tzdb = self.tzdb()?.transitions()?;
+        let tzdb = self.tzdb()?.parsed()?;
         Ok([(
             "America/Coyhaique",
             TimeZone(icu::locale::subtags::subtag!("clcxq")),
         )]
         .into_iter()
-        .filter(|(i, _)| tzdb.get_zoneset(i).is_some())
+        .filter(|&(i, _)| tzdb.main.zonesets.contains_key(i))
         .map(|(i, t)| (String::from(i), t)))
     }
 
-    fn reverse_metazones(
-        &self,
-    ) -> Result<&BTreeMap<(MetazoneId, MzMembership), Vec<TimeZone>>, DataError> {
+    fn metazones(&self) -> Result<&MetazoneData, DataError> {
         self.cldr()?
             .tz_caches
-            .reverse_metazones
+            .metazones
             .get_or_init(|| {
-                let mz_period = self.metazone_period()?;
-                let offset_periods = self.offset_period()?;
+                let metazones = &self
+                    .cldr()?
+                    .core()
+                    .read_and_parse::<cldr_serde::time_zones::meta_zones::Resource>(
+                        "supplemental/metaZones.json",
+                    )?
+                    .supplemental
+                    .meta_zones;
 
-                let mut reverse_metazones =
-                    BTreeMap::<(MetazoneId, MzMembership), Vec<TimeZone>>::new();
+                let tzdb = self.tzdb()?.parsed()?;
 
-                for c in mz_period.list.iter0() {
-                    let &tz = c.key0();
+                let bcp47_tzid_data = self.iana_to_bcp47_map()?;
 
-                    use zerovec::ule::AsULE;
-                    let mut mzs = c
-                        .into_iter1_copied()
-                        .map(|(k, v)| (ZoneNameTimestamp::from_unaligned(*k), v))
-                        .peekable();
-                    let mut offsets = offset_periods
-                        .get0(&tz)
-                        .unwrap()
-                        .into_iter1_copied()
-                        .map(|(k, v)| (ZoneNameTimestamp::from_unaligned(*k), v))
-                        .peekable();
+                // TODO: The special cases should be defined in CLDR
+                let special_cases= &[
+                    // (zone,   name,   if_after                      ) -> (std, dst)
+                    // Ireland is modeled using negative DST, because "IST" stands for Irish Standard Time.
+                    // This doesn't fit into our model where Ireland is in the GMT metazone.
+                    (("iedub", "GMT", ZoneNameTimestamp::far_in_past()), (0, None)),
+                    (("iedub", "IST", ZoneNameTimestamp::far_in_past()), (0, Some(3600))),
+                    // Morroco and Western Sahara used to observe +0 with normal summer DST, but currently they observe +1 with
+                    // negative DST during Ramadan. Model this all as normal DST.
+                    // TODO: Here we could set the zone variant to Ramadan
+                    (("macas", "+00", ZoneNameTimestamp::far_in_past()), (0, None)),
+                    (("macas", "+01", ZoneNameTimestamp::far_in_past()), (0, Some(3600))),
+                    (("eheai", "+00", ZoneNameTimestamp::far_in_past()), (0, None)),
+                    (("eheai", "+01", ZoneNameTimestamp::far_in_past()), (0, Some(3600))),
+                    // This is wrong, but for now match what we've done before (and what ICU is doing).
+                    (("nawdh", "CAT", ZoneNameTimestamp::from_zoned_date_time_iso(ZonedDateTime::try_offset_only_from_str("2017-09-03T01:00Z", Iso).unwrap())), (7200, None)),
+                    (("nawdh", "CAT", ZoneNameTimestamp::from_zoned_date_time_iso(ZonedDateTime::try_offset_only_from_str("1994-03-20T22:00Z", Iso).unwrap())), (3600, Some(7200))),
+                    (("nawdh", "WAT", ZoneNameTimestamp::from_zoned_date_time_iso(ZonedDateTime::try_offset_only_from_str("1994-03-20T22:00Z", Iso).unwrap())), (3600, None)),
+                ];
 
-                    let mut curr_offset = offsets.next().unwrap();
-                    let mut curr_mz = mzs.next().unwrap();
+                let offsets = self
+                    .bcp47_to_canonical_iana_map()?
+                    .iter()
+                    .filter_map(|(bcp47, iana)| Some((bcp47, tzdb.transitions(iana)?)))
+                    .map(|(&bcp47, transitions)| {
+                        (
+                            bcp47,
+                            transitions
+                                .map(|ts| {
+                                   let (mut std_offset, dst_offset) =  special_cases
+                                        .iter()
+                                        .find_map(|&(k, v)|
+                                            ((k.0, k.1) == (bcp47.as_str(), ts.name.as_str()) && k.2 <= ts.transition).then_some(v)
+                                        )
+                                        .unwrap_or_else(|| {
+                                            if ts.rearguard_agrees == Some(false) || ts.vanguard_agrees == Some(false) {
+                                                log::warn!("Unhandled TZDB inconsistency for {bcp47:?}: {ts:?}");
+                                            }
+                                            (ts.utc_offset as i32, (ts.dst_offset_relative != 0).then_some((ts.utc_offset + ts.dst_offset_relative) as i32))
+                                        });
 
-                    let horizon = ZoneNameTimestamp::from_date_time_iso(DateTime {
-                        date: self.timezone_horizon,
-                        time: Time::start_of_day(),
-                    });
+                                    // Africa/Monrovia used -00:44:30 pre-1972. We cannot represent this, so we set it to -00:45
+                                    if std_offset == -2670 {
+                                        std_offset = -2700;
+                                    };
 
-                    while offsets.peek().is_some_and(|&(start, _)| start < horizon) {
-                        curr_offset = offsets.next().unwrap();
+                                    let mut os = VariantOffsets::from_standard(UtcOffset::from_seconds_unchecked(std_offset));
+                                    os.daylight = dst_offset.map(UtcOffset::from_seconds_unchecked);
+                                    (ts.transition, os)
+                                })
+                                .collect::<Vec<_>>(),
+                        )
+                    })
+                    .collect::<BTreeMap<TimeZone, Vec<(ZoneNameTimestamp, VariantOffsets)>>>();
+
+                let mut all_metazones = BTreeSet::new();
+
+                let metazones = metazones
+                    .meta_zone_info
+                    .time_zone
+                    .iter()
+                    .map(|(iana, periods)| {
+                        let &bcp47 = bcp47_tzid_data.get(&iana).unwrap();
+                        let mut periods = periods
+                            .iter()
+                            .flat_map(|period| {
+                                [
+                                    // join the metazone
+                                    Some((
+                                        period
+                                            .uses_meta_zone
+                                            .from
+                                            .unwrap_or(ZoneNameTimestamp::far_in_past()),
+                                        Some(period.uses_meta_zone.mzone.as_str()),
+                                    )),
+                                    // leave the metazone if there's a `to` date
+                                    period.uses_meta_zone.to.map(|t| (t, None)),
+                                ]
+                            })
+                            .flatten()
+                            .collect::<Vec<_>>();
+
+                        let mut i = 0;
+                        while i < periods.len() {
+                            if i + 1 < periods.len() && periods[i].0 == periods[i + 1].0 {
+                                // The next period starts at the same time
+                                periods.remove(i);
+                            } else if i + 1 < periods.len() && periods[i + 1].0 <= self.timezone_horizon {
+                                // The next period still starts before the horizon.
+                                // Keep the period, but don't add the metazone to allMetazones, so that
+                                // it's only included if it's also used after the horizon.
+                                i += 1;
+                            } else {
+                                all_metazones.extend(periods[i].1);
+                                i += 1;
+                            }
+                        }
+
+                        (bcp47, periods)
+                    })
+                    .collect::<BTreeMap<TimeZone, Vec<(ZoneNameTimestamp, Option<&str>)>>>();
+
+                let mut offsets_and_metazones = BTreeMap::<
+                    TimeZone,
+                    Vec<(ZoneNameTimestamp, VariantOffsets, Option<&str>)>,
+                >::new();
+
+                for (&tz, offsets) in &offsets {
+                    let mut offsets = offsets.iter().copied().peekable();
+                    let mut mzs = metazones.get(&tz).into_iter().flatten().copied().peekable();
+
+                    let (mut start, mut curr_offset) = offsets.next().unwrap();
+                    let mut curr_mz = mzs.next_if(|&(s, _)| s == start).and_then(|(_, mz)| mz);
+
+                    loop {
+                        offsets_and_metazones.entry(tz).or_default().push((
+                            start,
+                            curr_offset,
+                            curr_mz,
+                        ));
+
+                        match (offsets.peek().copied(), mzs.peek().copied()) {
+                            (None, None) => break,
+                            (Some(_), None) => {
+                                (start, curr_offset) = offsets.next().unwrap();
+                            }
+                            (None, Some(_)) => {
+                                (start, curr_mz) = mzs.next().unwrap();
+                            }
+                            (Some(o), Some(m)) => match o.0.cmp(&m.0) {
+                                Ordering::Less => {
+                                    (start, curr_offset) = offsets.next().unwrap();
+                                }
+                                Ordering::Greater => {
+                                    (start, curr_mz) = mzs.next().unwrap();
+                                }
+                                Ordering::Equal => {
+                                    (start, curr_offset) = offsets.next().unwrap();
+                                    (_, curr_mz) = mzs.next().unwrap();
+                                }
+                            },
+                        }
+                    }
+                }
+
+                let mut reverse = BTreeMap::<(&str, MzMembership), Vec<TimeZone>>::new();
+                for (&tz, ps) in &offsets_and_metazones {
+                    let mut ps = ps.iter().copied().peekable();
+
+                    let mut curr = *ps.peek().unwrap();
+
+                    // Skip entries before the metazone horizon
+                    while ps.peek().is_some_and(|&(start, ..)| start < self.timezone_horizon) {
+                        curr = ps.next().unwrap();
                     }
 
                     loop {
-                        if let Some(mz) = curr_mz.1 .0 {
-                            reverse_metazones
-                                .entry((mz, MzMembership::Any))
-                                .or_default()
-                                .push(tz);
-                            // The daylight name is only required if a zone usign this metazone actually observes DST
-                            if curr_offset.1.daylight.is_some() {
-                                reverse_metazones
+                        if let (_, offsets, Some(mz)) = curr {
+                            reverse.entry((mz, MzMembership::Any)).or_default().push(tz);
+                            // The daylight name is only required if a zone using this metazone actually observes DST
+                            if offsets.daylight.is_some() {
+                                reverse
                                     .entry((mz, MzMembership::Daylight))
                                     .or_default()
                                     .push(tz);
                             }
                         }
 
-                        match (offsets.peek().copied(), mzs.peek().copied()) {
-                            (None, None) => break,
-                            (Some(_), None) => {
-                                curr_offset = offsets.next().unwrap();
-                            }
-                            (None, Some(_)) => {
-                                curr_mz = mzs.next().unwrap();
-                            }
-                            (Some(o), Some(m)) => match o.0.cmp(&m.0) {
-                                Ordering::Less => {
-                                    curr_offset = offsets.next().unwrap();
-                                }
-                                Ordering::Greater => {
-                                    curr_mz = mzs.next().unwrap();
-                                }
-                                Ordering::Equal => {
-                                    curr_offset = offsets.next().unwrap();
-                                    curr_mz = mzs.next().unwrap();
-                                }
-                            },
+                        if let Some(next) = ps.next() {
+                            curr = next;
+                        } else {
+                            break;
                         }
                     }
                 }
-                Ok(reverse_metazones)
+
+                let mut hash = XxHash64::with_seed(0);
+                all_metazones.len().hash(&mut hash);
+
+                let ids: BTreeMap<String, MetazoneId> = all_metazones
+                    .iter()
+                    .enumerate()
+                    .map(|(idx, &alias)| {
+                        alias.hash(&mut hash);
+                        (String::from(alias), MetazoneId::new(idx as u8 + 1).unwrap())
+                    })
+                    .collect();
+
+                let hash = hash.finish();
+
+                Ok(MetazoneData {
+                    periods: offsets_and_metazones
+                        .into_iter()
+                        .map(|(tz, ps)| {
+                            (
+                                tz,
+                                ps.into_iter()
+                                    .map(|(t, os, mz)| (t, os, mz.and_then(|mz| ids.get(mz).copied())))
+                                    .collect(),
+                            )
+                        })
+                        .collect(),
+                    reverse: reverse
+                        .into_iter()
+                        .filter_map(|((mz, membership), tzs)| {
+                            Some(((*ids.get(mz)?, membership), tzs))
+                        })
+                        .collect(),
+                    ids,
+                    checksum: hash,
+                })
             })
             .as_ref()
             .map_err(|&e| e)
@@ -183,13 +340,13 @@ impl SourceDataProvider {
                 }
                 bcp47_tzids.extend(self.future_zones()?);
 
-                for zone in self.tzdb()?.transitions()?.zonesets.keys() {
+                for zone in self.tzdb()?.parsed()?.main.zonesets.keys() {
                     if !bcp47_tzids.contains_key(zone) {
                         log::error!("TZDB zone {zone:?} not in CLDR. Add BCP-47 code to `fn future_zones()`?");
                     }
                 }
 
-                for zone in self.tzdb()?.transitions()?.links.keys() {
+                for zone in self.tzdb()?.parsed()?.main.links.keys() {
                     if !bcp47_tzids.contains_key(zone) {
                         log::warn!("TZDB link {zone:?} not in CLDR");
                     }
@@ -244,48 +401,6 @@ impl SourceDataProvider {
                 Ok(canonical_tzids)
             })
             .as_ref()
-            .map_err(|&e| e)
-    }
-
-    /// Returns a map from metazone long identifier to metazone BCP-47 ID.
-    ///
-    /// For example: "America_Central" to "amce"
-    fn metazone_to_id_map(&self) -> Result<(&BTreeMap<String, MetazoneId>, u64), DataError> {
-        self.cldr()?
-            .tz_caches
-            .metazone_to_short
-            .get_or_init(|| {
-                let meta_zone_ids_resource = &self
-                    .cldr()?
-                    .core()
-                    .read_and_parse::<cldr_serde::time_zones::meta_zones::Resource>(
-                        "supplemental/metaZones.json",
-                    )?
-                    .supplemental
-                    .meta_zones
-                    .meta_zone_ids
-                    .0;
-
-                let mut hash = XxHash64::with_seed(0);
-                meta_zone_ids_resource.len().hash(&mut hash);
-
-                Ok((
-                    meta_zone_ids_resource
-                        .iter()
-                        .enumerate()
-                        .map(|(idx, (_short_id, alias))| {
-                            alias.long_id.hash(&mut hash);
-                            (
-                                alias.long_id.clone(),
-                                MetazoneId::new(idx as u8 + 1).unwrap(),
-                            )
-                        })
-                        .collect(),
-                    hash.finish(),
-                ))
-            })
-            .as_ref()
-            .map(|(map, checksum)| (map, *checksum))
             .map_err(|&e| e)
     }
 
@@ -402,15 +517,108 @@ impl_iterable_data_provider!(
     TimezoneNamesSpecificShortV1
 );
 
-impl IterableDataProviderCached<TimezoneMetazonePeriodsV1> for SourceDataProvider {
+impl IterableDataProviderCached<TimezonePeriodsV1> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
         Ok(HashSet::from_iter([Default::default()]))
     }
 }
 
-impl IterableDataProviderCached<TimezoneVariantsOffsetsV1> for SourceDataProvider {
-    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
-        Ok(HashSet::from_iter([Default::default()]))
+impl crate::source::Tzdb {
+    fn transitions<'a>(&'a self, iana: &str) -> Option<impl Iterator<Item = Transition> + 'a> {
+        use icu_time::zone::UtcOffset;
+        use parse_zoneinfo::transitions::*;
+
+        let main = self.main.timespans(iana)?;
+        let rearguard = self.rearguard.as_ref().map(|tzdb| tzdb.timespans(iana));
+        let vanguard = self.vanguard.as_ref().map(|tzdb| tzdb.timespans(iana));
+
+        fn fixed_timespans_to_map(
+            set: FixedTimespanSet,
+        ) -> BTreeMap<ZoneNameTimestamp, FixedTimespan> {
+            Some((
+                ZoneNameTimestamp::far_in_past(),
+                set.rest
+                    .iter()
+                    .filter(|&&(start, _)| start < 0)
+                    .map(|(_, ts)| ts)
+                    .next_back()
+                    .cloned()
+                    .unwrap_or(set.first),
+            ))
+            .into_iter()
+            .chain(
+                set.rest
+                    .into_iter()
+                    .filter(|&(start, _)| start >= 0)
+                    .map(move |(start, ts)| {
+                        (
+                            ZoneNameTimestamp::from_zoned_date_time_iso(
+                                ZonedDateTime::from_epoch_milliseconds_and_utc_offset(
+                                    start * 1000,
+                                    UtcOffset::zero(),
+                                ),
+                            ),
+                            ts,
+                        )
+                    }),
+            )
+            .collect()
+        }
+
+        let main = fixed_timespans_to_map(main);
+        let rearguard = rearguard.map(|set| set.map(fixed_timespans_to_map).unwrap_or_default());
+        let vanguard = vanguard.map(|set| set.map(fixed_timespans_to_map).unwrap_or_default());
+
+        Some(main.into_iter().map(move |(transition, ts)| {
+            Transition {
+                transition,
+                utc_offset: ts.utc_offset,
+                dst_offset_relative: ts.dst_offset,
+                rearguard_agrees: rearguard
+                    .as_ref()
+                    .map(|z| z.get(&transition).is_some_and(|rts| rts == &ts)),
+                vanguard_agrees: vanguard
+                    .as_ref()
+                    .map(|z| z.get(&transition).is_some_and(|rts| rts == &ts)),
+                name: ts.name,
+            }
+        }))
+    }
+}
+
+struct Transition {
+    transition: ZoneNameTimestamp,
+    utc_offset: i64,
+    dst_offset_relative: i64,
+    rearguard_agrees: Option<bool>,
+    vanguard_agrees: Option<bool>,
+    name: String,
+}
+
+impl std::fmt::Debug for Transition {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let zdt = self.transition.to_zoned_date_time_iso();
+        write!(
+            f,
+            "{:04}-{:02}-{:02} {:02}:{:02}",
+            zdt.date.era_year().year,
+            zdt.date.month().ordinal,
+            zdt.date.day_of_month().0,
+            zdt.time.hour.number(),
+            zdt.time.minute.number()
+        )?;
+        write!(
+            f,
+            " - {:?} - {}+{}",
+            self.name, self.utc_offset, self.dst_offset_relative
+        )?;
+        if self.rearguard_agrees == Some(false) {
+            write!(f, " !rearguard")?;
+        }
+        if self.vanguard_agrees == Some(false) {
+            write!(f, " !vanguard")?;
+        }
+        Ok(())
     }
 }
 
@@ -474,18 +682,16 @@ mod tests {
                 .unwrap()
         );
 
-        let metazone_period = provider.metazone_period().unwrap();
+        let metazone_period = &provider.metazones().unwrap().periods;
 
         let metazone_now = |bcp47| {
             metazone_period
-                .list
-                .get0(&bcp47)
+                .get(&bcp47)
                 .unwrap()
-                .iter1_copied()
+                .iter()
                 .last()
                 .unwrap()
-                .1
-                 .0
+                .2
                 .unwrap()
         };
 

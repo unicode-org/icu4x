@@ -5,38 +5,16 @@
 //! A formatter specifically for the time zone.
 
 use crate::pattern::TimeZoneDataPayloadsBorrowed;
-use crate::provider::time_zones::MetazoneId;
 use crate::unchecked::MissingInputFieldKind;
 use crate::{format::DateTimeInputUnchecked, provider::fields::FieldLength};
 use core::fmt;
-use fixed_decimal::Decimal;
+use fixed_decimal::{Decimal, Sign};
 use icu_decimal::DecimalFormatter;
-use icu_time::zone::ZoneNameTimestamp;
 use icu_time::{
     zone::{TimeZoneVariant, UtcOffset},
     TimeZone,
 };
 use writeable::Writeable;
-
-impl crate::provider::time_zones::MetazonePeriod<'_> {
-    fn resolve(
-        &self,
-        time_zone_id: TimeZone,
-        zone_name_timestamp: ZoneNameTimestamp,
-    ) -> Option<MetazoneId> {
-        use zerovec::ule::AsULE;
-        let cursor = self.list.get0(&time_zone_id)?;
-        let mut metazone_id = None;
-        for (bytes, id) in cursor.iter1().rev() {
-            let candidate = ZoneNameTimestamp::from_unaligned(*bytes);
-            if zone_name_timestamp >= candidate {
-                metazone_id = id.get();
-                break;
-            }
-        }
-        metazone_id
-    }
-}
 
 // An enum for time zone format unit.
 #[derive(Debug, Clone, Copy, PartialEq)]
@@ -123,7 +101,7 @@ impl FormatTimeZone for GenericNonLocationFormat {
                 MissingInputFieldKind::TimeZoneId,
             )));
         };
-        let Some(local_time) = input.zone_name_timestamp else {
+        let Some(timestamp) = input.zone_name_timestamp else {
             return Ok(Err(FormatTimeZoneError::MissingInputField(
                 MissingInputFieldKind::TimeZoneNameTimestamp,
             )));
@@ -144,17 +122,36 @@ impl FormatTimeZone for GenericNonLocationFormat {
             return Ok(Err(FormatTimeZoneError::NamesNotLoaded));
         };
 
-        let Some(name) = generic_names
+        let Some((offsets, mz)) = metazone_period.get(time_zone_id, timestamp) else {
+            return Ok(Err(FormatTimeZoneError::Fallback));
+        };
+
+        if input
+            .zone_offset
+            .is_some_and(|o| o != offsets.standard && Some(o) != offsets.daylight)
+        {
+            // Not correctly using the metazone
+            return Ok(Err(FormatTimeZoneError::Fallback));
+        };
+
+        if let Some(n) = generic_names
             .overrides
             .get(&time_zone_id)
             .or_else(|| standard_names.overrides.get(&time_zone_id))
-            .or_else(|| {
-                let mz = metazone_period.resolve(time_zone_id, local_time)?;
-                generic_names
-                    .defaults
-                    .get(&mz)
-                    .or_else(|| standard_names.defaults.get(&mz))
-            })
+        {
+            n.write_to(sink)?;
+
+            return Ok(Ok(()));
+        }
+
+        let Some(mz) = mz else {
+            return Ok(Err(FormatTimeZoneError::Fallback));
+        };
+
+        let Some(name) = generic_names
+            .defaults
+            .get(&mz)
+            .or_else(|| standard_names.defaults.get(&mz))
         else {
             return Ok(Err(FormatTimeZoneError::Fallback));
         };
@@ -183,12 +180,11 @@ impl FormatTimeZone for SpecificNonLocationFormat {
                 MissingInputFieldKind::TimeZoneId,
             )));
         };
-        let Some(variant) = input.zone_variant else {
-            return Ok(Err(FormatTimeZoneError::MissingInputField(
-                MissingInputFieldKind::TimeZoneVariant,
-            )));
+        let Some(offset) = input.zone_offset else {
+            // We don't require the offset, this will eventually hit GMT+?
+            return Ok(Err(FormatTimeZoneError::Fallback));
         };
-        let Some(local_time) = input.zone_name_timestamp else {
+        let Some(timestamp) = input.zone_name_timestamp else {
             return Ok(Err(FormatTimeZoneError::MissingInputField(
                 MissingInputFieldKind::TimeZoneNameTimestamp,
             )));
@@ -204,41 +200,47 @@ impl FormatTimeZone for SpecificNonLocationFormat {
             return Ok(Err(FormatTimeZoneError::NamesNotLoaded));
         };
 
+        let Some((offsets, mz)) = metazone_period.get(time_zone_id, timestamp) else {
+            return Ok(Err(FormatTimeZoneError::Fallback));
+        };
+
+        let variant = if offset == offsets.standard {
+            TimeZoneVariant::Standard
+        } else if Some(offset) == offsets.daylight {
+            TimeZoneVariant::Daylight
+        } else {
+            // Not correctly using the metazone
+            return Ok(Err(FormatTimeZoneError::Fallback));
+        };
+
+        if let Some(n) = specific.overrides.get(&(time_zone_id, variant)) {
+            n.write_to(sink)?;
+
+            return Ok(Ok(()));
+        }
+
+        let Some(mz) = mz else {
+            return Ok(Err(FormatTimeZoneError::Fallback));
+        };
+
         let name = if variant == TimeZoneVariant::Standard && self.0 == FieldLength::Four {
             let Some(standard_names) = data_payloads.mz_standard_long.as_ref() else {
                 return Ok(Err(FormatTimeZoneError::NamesNotLoaded));
             };
-            if let Some(n) = specific
-                .overrides
-                .get(&(time_zone_id, TimeZoneVariant::Standard))
-            {
-                n
-            } else if let Some(mz) = metazone_period.resolve(time_zone_id, local_time) {
-                if specific.use_standard.binary_search(&mz).is_ok() {
-                    if let Some(n) = standard_names.defaults.get(&mz) {
-                        n
-                    } else {
-                        // The only reason why the name is not in GenericStandard even though we expect it
-                        // to be, is that it was deduplicated against the generic location format.
-                        return GenericLocationFormat.format(sink, input, data_payloads, _fdf);
-                    }
-                } else if let Some(n) = specific.defaults.get(&(mz, TimeZoneVariant::Standard)) {
+            if specific.use_standard.binary_search(&mz).is_ok() {
+                if let Some(n) = standard_names.defaults.get(&mz) {
                     n
                 } else {
-                    return Ok(Err(FormatTimeZoneError::Fallback));
+                    // The only reason why the name is not in GenericStandard even though we expect it
+                    // to be, is that it was deduplicated against the generic location format.
+                    return GenericLocationFormat.format(sink, input, data_payloads, _fdf);
                 }
+            } else if let Some(n) = specific.defaults.get(&(mz, TimeZoneVariant::Standard)) {
+                n
             } else {
                 return Ok(Err(FormatTimeZoneError::Fallback));
             }
-        } else if let Some(n) = specific
-            .overrides
-            .get(&(time_zone_id, variant))
-            .or_else(|| {
-                specific
-                    .defaults
-                    .get(&(metazone_period.resolve(time_zone_id, local_time)?, variant))
-            })
-        {
+        } else if let Some(n) = specific.defaults.get(&(mz, variant)) {
             n
         } else {
             return Ok(Err(FormatTimeZoneError::Fallback));
@@ -290,8 +292,13 @@ impl FormatTimeZone for LocalizedOffsetFormat {
                 sink: &mut S,
             ) -> fmt::Result {
                 let decimal = {
-                    let mut decimal = Decimal::from(self.offset.hours_part())
-                        .with_sign_display(fixed_decimal::SignDisplay::Always);
+                    let mut decimal = Decimal::from(self.offset.hours_part()).with_sign(
+                        if self.offset.is_non_negative() {
+                            Sign::Positive
+                        } else {
+                            Sign::Negative
+                        },
+                    );
                     decimal.pad_start(if self.length == FieldLength::Four {
                         2
                     } else {
@@ -365,6 +372,20 @@ impl FormatTimeZone for GenericLocationFormat {
             return Ok(Err(FormatTimeZoneError::NamesNotLoaded));
         };
 
+        // If we have the periods data, and offset and timestamp input (such as when falling
+        // back from generic non-location), only continue if the offset makes sense
+        if let (Some(mz_periods), Some(offset), Some(timestamp)) = (
+            data_payloads.mz_periods,
+            input.zone_offset,
+            input.zone_name_timestamp,
+        ) {
+            if let Some((os, _)) = mz_periods.get(time_zone_id, timestamp) {
+                if offset != os.standard && Some(offset) != os.daylight {
+                    return Ok(Err(FormatTimeZoneError::Fallback));
+                };
+            }
+        }
+
         let Some(location) = locations
             .locations
             .get(&time_zone_id)
@@ -401,16 +422,27 @@ impl FormatTimeZone for SpecificLocationFormat {
                 MissingInputFieldKind::TimeZoneId,
             )));
         };
-        let Some(variant) = input.zone_variant else {
+        let Some(offset) = input.zone_offset else {
+            // We don't require the offset, this will eventually hit GMT+?
+            return Ok(Err(FormatTimeZoneError::Fallback));
+        };
+        let Some(timestamp) = input.zone_name_timestamp else {
             return Ok(Err(FormatTimeZoneError::MissingInputField(
-                MissingInputFieldKind::TimeZoneVariant,
+                MissingInputFieldKind::TimeZoneNameTimestamp,
             )));
         };
+
         let Some(locations) = data_payloads.locations else {
             return Ok(Err(FormatTimeZoneError::NamesNotLoaded));
         };
         let Some(locations_root) = data_payloads.locations_root else {
             return Ok(Err(FormatTimeZoneError::NamesNotLoaded));
+        };
+        let Some(metazone_period) = data_payloads.mz_periods else {
+            return Ok(Err(FormatTimeZoneError::NamesNotLoaded));
+        };
+        let Some((offsets, _)) = metazone_period.get(time_zone_id, timestamp) else {
+            return Ok(Err(FormatTimeZoneError::Fallback));
         };
 
         let Some(location) = locations
@@ -421,11 +453,12 @@ impl FormatTimeZone for SpecificLocationFormat {
             return Ok(Err(FormatTimeZoneError::Fallback));
         };
 
-        match variant {
-            TimeZoneVariant::Standard => &locations.pattern_standard,
-            TimeZoneVariant::Daylight => &locations.pattern_daylight,
-            // Compiles out due to tilde dependency on `icu_time`
-            _ => unreachable!(),
+        if offset == offsets.standard {
+            &locations.pattern_standard
+        } else if Some(offset) == offsets.daylight {
+            &locations.pattern_daylight
+        } else {
+            return Ok(Err(FormatTimeZoneError::Fallback));
         }
         .interpolate([location])
         .write_to(sink)?;
@@ -502,7 +535,7 @@ impl FormatTimeZone for GenericPartialLocationFormat {
                 MissingInputFieldKind::TimeZoneId,
             )));
         };
-        let Some(local_time) = input.zone_name_timestamp else {
+        let Some(timestamp) = input.zone_name_timestamp else {
             return Ok(Err(FormatTimeZoneError::MissingInputField(
                 MissingInputFieldKind::TimeZoneNameTimestamp,
             )));
@@ -533,7 +566,7 @@ impl FormatTimeZone for GenericPartialLocationFormat {
         let Some(non_location) = non_locations.overrides.get(&time_zone_id).or_else(|| {
             non_locations
                 .defaults
-                .get(&metazone_period.resolve(time_zone_id, local_time)?)
+                .get(&metazone_period.get(time_zone_id, timestamp)?.1?)
         }) else {
             return Ok(Err(FormatTimeZoneError::Fallback));
         };

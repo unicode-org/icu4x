@@ -169,6 +169,7 @@ pub const EXTRA_SOURCE_DEPS: &[&str] = &[
     "indexmap",
     "itertools",
     "itoa",
+    "ixdtf",
     "libc",
     "matrixmultiply",
     "ndarray",

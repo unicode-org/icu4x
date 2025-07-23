@@ -7,14 +7,11 @@ mod fixtures;
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
 use icu_datetime::{fieldsets, DateTimeFormatter, FixedCalendarDateTimeFormatter};
 
-use icu_calendar::{Date, Gregorian};
+use icu_calendar::Gregorian;
 use icu_locale_core::{locale, Locale};
-use icu_time::{zone::TimeZoneVariant, DateTime, Time, TimeZoneInfo, ZonedDateTime};
-use mock::parse_zoned_gregorian_from_str;
+use icu_time::zone::{IanaParser, ZoneNameTimestamp};
+use icu_time::{DateTime, TimeZoneInfo, ZonedDateTime};
 use writeable::Writeable;
-
-#[path = "../tests/mock.rs"]
-mod mock;
 
 fn datetime_benches(c: &mut Criterion) {
     let mut group = c.benchmark_group("datetime");
@@ -27,19 +24,15 @@ fn datetime_benches(c: &mut Criterion) {
             .iter()
             .map(|s| {
                 if has_zones {
-                    parse_zoned_gregorian_from_str(s)
+                    ZonedDateTime::try_lenient_from_str(s, Gregorian, IanaParser::new()).expect(s)
                 } else {
                     let DateTime { date, time } = DateTime::try_from_str(s, Gregorian).unwrap();
                     ZonedDateTime {
                         date,
                         time,
                         // zone is unused but we need to make the types match
-                        zone: TimeZoneInfo::utc()
-                            .at_date_time_iso(DateTime {
-                                date: Date::try_new_iso(2024, 1, 1).unwrap(),
-                                time: Time::start_of_day(),
-                            })
-                            .with_variant(TimeZoneVariant::Standard),
+                        zone: TimeZoneInfo::unknown()
+                            .with_zone_name_timestamp(ZoneNameTimestamp::far_in_future()),
                     }
                 }
             })

@@ -7,7 +7,7 @@ use icu_calendar::{
     AsCalendar, Calendar, Date,
 };
 use icu_time::{
-    zone::{models::TimeZoneModel, TimeZoneVariant, UtcOffset, ZoneNameTimestamp},
+    zone::{models::TimeZoneModel, UtcOffset, ZoneNameTimestamp},
     DateTime, Hour, Minute, Nanosecond, Second, Time, TimeZone, TimeZoneInfo, ZonedDateTime,
 };
 
@@ -254,16 +254,6 @@ where
     }
 }
 
-impl<C: Calendar, A: AsCalendar<Calendar = C>, Z> GetField<TimeZoneVariant> for ZonedDateTime<A, Z>
-where
-    Z: GetField<TimeZoneVariant>,
-{
-    #[inline]
-    fn get_field(&self) -> TimeZoneVariant {
-        self.zone.get_field()
-    }
-}
-
 impl<C: Calendar, A: AsCalendar<Calendar = C>, Z> GetField<ZoneNameTimestamp>
     for ZonedDateTime<A, Z>
 where
@@ -303,16 +293,6 @@ where
     #[inline]
     fn get_field(&self) -> Option<UtcOffset> {
         self.offset()
-    }
-}
-
-impl<O> GetField<TimeZoneVariant> for TimeZoneInfo<O>
-where
-    O: TimeZoneModel<TimeZoneVariant = TimeZoneVariant>,
-{
-    #[inline]
-    fn get_field(&self) -> TimeZoneVariant {
-        self.variant()
     }
 }
 

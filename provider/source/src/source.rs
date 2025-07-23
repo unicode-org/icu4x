@@ -390,141 +390,95 @@ impl AbstractFs {
 #[derive(Debug)]
 pub(crate) struct TzdbCache {
     pub(crate) root: AbstractFs,
-    pub(crate) transitions: OnceLock<Result<parse_zoneinfo::table::Table, DataError>>,
+    pub(crate) transitions: OnceLock<Result<Tzdb, DataError>>,
+}
+
+#[derive(Debug)]
+pub(crate) struct Tzdb {
+    // The main TZDB as defined by main.zi (i.e. `cat africa antarctica asia ...`)
+    pub(crate) main: parse_zoneinfo::table::Table,
+
+    // The TZDB defined by the rearguard.zi file, if present.
+    // This file requires running `make` in the tzdata directory, which is not
+    // generally possible. However, it is present in testdata.
+    pub(crate) rearguard: Option<parse_zoneinfo::table::Table>,
+    // The TZDB defined by the vanguard.zi file, if present.
+    // This file requires running `make` in the tzdata directory, which is not
+    // generally possible. However, it is present in testdata.
+    pub(crate) vanguard: Option<parse_zoneinfo::table::Table>,
 }
 
 impl TzdbCache {
-    pub(crate) fn transitions(&self) -> Result<&parse_zoneinfo::table::Table, DataError> {
-        use parse_zoneinfo::line::{Line, LineParser};
-        use parse_zoneinfo::table::TableBuilder;
-
+    pub(crate) fn parsed(&self) -> Result<&Tzdb, DataError> {
         self.transitions
             .get_or_init(|| {
-                let tzfiles = [
-                    // Core zones
-                    "africa",
-                    "antarctica",
-                    "asia",
-                    "australasia",
-                    "etcetera",
-                    "europe",
-                    "northamerica",
-                    "southamerica",
-                    // backzone contains zones that are out of scope for TZDB. It's unclear if IDs that are _only_ defined in
-                    // backzone are meant for interchange, but there is CLDR bug for the one ID in 2025b that is (`Asia/Hanoi`):
-                    // https://unicode-org.atlassian.net/browse/CLDR-11977. It's probably best to check that CLDR can resolve
-                    // these IDs.
-                    "backzone",
-                    // backward contains links for IDs that were previously included in TZDB, but have been collapsed into other
-                    // zones in the 2019 policy change (such as Europe/Oslo into Europe/Berlin). If we want to validate that all
-                    // TZDB IDs (that have ever existed) resolve in CLDR, we should include these as well.
-                    "backward",
-                ];
+                fn parse(lines: Vec<String>) -> parse_zoneinfo::table::Table {
+                    use parse_zoneinfo::line::Line;
+                    use parse_zoneinfo::table::TableBuilder;
 
-                let mut lines = Vec::<String>::new();
+                    let mut table = TableBuilder::new();
 
-                for file in tzfiles {
-                    lines.extend(
-                        self.root
-                            .read_to_string(file)?
-                            .lines()
-                            .map(ToOwned::to_owned),
-                    );
-                }
-
-                enum Section {
-                    Normal,
-                    Vanguard,
-                    Rearguard,
-                }
-                let mut i = 0;
-                let mut section = Section::Normal;
-
-                while i < lines.len() {
-                    match section {
-                        Section::Normal => {
-                            if lines[i].starts_with("# Vanguard section") {
-                                lines.remove(i);
-                                section = Section::Vanguard;
-                            } else if lines[i].starts_with('#') {
-                                lines.remove(i);
-                            } else {
-                                i += 1;
-                            }
-                        }
-                        Section::Vanguard => {
-                            if lines[i].starts_with("# Rearguard section") {
-                                section = Section::Rearguard;
-                            }
-                            lines.remove(i);
-                        }
-                        Section::Rearguard => {
-                            if lines[i].starts_with("# End of rearguard section") {
-                                section = Section::Normal;
-                                lines.remove(i);
-                            } else {
-                                // Rearguard lines mighht start with a # not followed by a space (that's a comment), or
-                                // they might not ¯\_(ツ)_/¯.
-                                if (lines[i].starts_with('#') && !lines[i].starts_with("# "))
-                                    || !lines[i].contains('#')
-                                {
-                                    lines[i] =
-                                        lines[i].strip_prefix('#').unwrap_or(&lines[i]).into();
-                                    i += 1;
-                                } else {
-                                    lines.remove(i);
-                                }
-                            }
+                    for line in lines {
+                        match Line::new(&line).unwrap() {
+                            Line::Zone(zone) => table.add_zone_line(zone).unwrap(),
+                            Line::Continuation(cont) => table.add_continuation_line(cont).unwrap(),
+                            Line::Rule(rule) => table.add_rule_line(rule).unwrap(),
+                            Line::Link(link) => table.add_link_line(link).unwrap(),
+                            Line::Space => {}
                         }
                     }
+
+                    table.build()
                 }
 
-                // Morocco doesn't have have rearguard data in the text file, so we have to replicate the transform from
-                // ziguard.awk: https://github.com/eggert/tz/blob/271a5784a59e454b659d85948b5e65c17c11516a/ziguard.awk#L261-L299
-                for line in lines.iter_mut() {
-                    if line.starts_with("Rule\tMorocco") {
-                        let mut parts = line.split('\t').skip(2);
-                        let from = parts.next().unwrap();
-                        let to = parts.next().unwrap();
-                        let _type = parts.next().unwrap();
-                        let month = parts.next().unwrap();
-                        let _day = parts.next().unwrap();
-                        let _time = parts.next().unwrap();
-                        let save = parts.next().unwrap();
-                        if to == "2018" && month == "Oct" {
-                            *line = line.replace("2018", "2017");
-                        } else if from.parse::<i32>().unwrap() >= 2019 {
-                            if save.trim() == "0" {
-                                *line = line.replace("\t0\t", "\t1:00\t");
-                            } else {
-                                *line = line.replace("\t-1:00\t", "\t0\t");
-                            }
-                        }
-                    }
-                    *line = line.replace("1:00\tMorocco\t%z", "0:00\tMorocco\t+00/+01");
-                }
+                Ok(Tzdb {
+                    main: parse(
+                        [
+                            "africa",
+                            "antarctica",
+                            "asia",
+                            "australasia",
+                            "europe",
+                            "northamerica",
+                            "southamerica",
+                            "etcetera",
+                            "factory",
+                            "backward",
+                        ]
+                        .into_iter()
+                        .try_fold(Vec::new(), |mut lines, file| {
+                            lines.extend(
+                                self.root
+                                    .read_to_string(file)?
+                                    .lines()
+                                    .map(ToOwned::to_owned),
+                            );
+                            Ok::<_, DataError>(lines)
+                        })?,
+                    ),
 
-                #[allow(deprecated)] // no alternative?!
-                let parser = LineParser::new();
-                let mut table = TableBuilder::new();
+                    rearguard: self.root.file_exists("rearguard.zi")?.then(|| {
+                        parse(
+                            self.root
+                                .read_to_string("rearguard.zi")
+                                .unwrap()
+                                .lines()
+                                .map(ToOwned::to_owned)
+                                .collect(),
+                        )
+                    }),
 
-                for line in lines {
-                    match parser.parse_str(&line).unwrap() {
-                        Line::Zone(zone) => table.add_zone_line(zone).unwrap(),
-                        Line::Continuation(cont) => table.add_continuation_line(cont).unwrap(),
-                        Line::Rule(rule) => table.add_rule_line(rule).unwrap(),
-                        Line::Link(link) => match table.add_link_line(link) {
-                            // This is expected because we add both backzone and backward
-                            Ok(_) | Err(parse_zoneinfo::table::Error::DuplicateLink(_)) => {}
-                            e => {
-                                e.unwrap();
-                            }
-                        },
-                        Line::Space => {}
-                    }
-                }
-
-                Ok(table.build())
+                    vanguard: self.root.file_exists("vanguard.zi")?.then(|| {
+                        parse(
+                            self.root
+                                .read_to_string("vanguard.zi")
+                                .unwrap()
+                                .lines()
+                                .map(ToOwned::to_owned)
+                                .collect(),
+                        )
+                    }),
+                })
             })
             .as_ref()
             .map_err(|&e| e)

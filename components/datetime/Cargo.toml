@@ -37,6 +37,7 @@ writeable = { workspace = true }
 zerovec = { workspace = true, features = ["alloc", "yoke"] }
 
 serde = { workspace = true, features = ["derive", "alloc"], optional = true }
+zerotrie = { workspace = true, features = ["alloc"], optional = true }
 databake = { workspace = true, features = ["derive"], optional = true}
 
 icu_datetime_data = { workspace = true, optional = true }
@@ -77,6 +78,7 @@ serde = [
     "tinystr/serde",
     "potential_utf/serde",
     "zerovec/serde",
+    "dep:zerotrie",
 ]
 datagen = [
     "dep:databake",
@@ -127,3 +129,6 @@ required-features = ["compiled_data"]
 [[test]]
 name = "skeleton_serialization"
 required-features = ["experimental"]
+
+[package.metadata.cargo-semver-checks.lints]
+workspace = true

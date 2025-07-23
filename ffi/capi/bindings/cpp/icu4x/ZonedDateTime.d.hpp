@@ -54,11 +54,22 @@ struct ZonedDateTime {
   std::unique_ptr<icu4x::TimeZoneInfo> zone;
 
   /**
+   * Creates a new {@link ZonedIsoDateTime} from an IXDTF string.
+   *
+   * See the [Rust documentation for `try_strict_from_str`](https://docs.rs/icu/2.0.0/icu/time/struct.ZonedDateTime.html#method.try_strict_from_str) for more information.
+   */
+  inline static diplomat::result<icu4x::ZonedDateTime, icu4x::Rfc9557ParseError> strict_from_string(std::string_view v, const icu4x::Calendar& calendar, const icu4x::IanaParser& iana_parser);
+
+  /**
    * Creates a new {@link ZonedDateTime} from an IXDTF string.
+   *
+   * DEPRECATED
+   *
+   * Use `strict_from_string`
    *
    * See the [Rust documentation for `try_full_from_str`](https://docs.rs/icu/2.0.0/icu/time/struct.ZonedDateTime.html#method.try_full_from_str) for more information.
    */
-  inline static diplomat::result<icu4x::ZonedDateTime, icu4x::Rfc9557ParseError> full_from_string(std::string_view v, const icu4x::Calendar& calendar, const icu4x::IanaParser& iana_parser, const icu4x::VariantOffsetsCalculator& offset_calculator);
+  inline static diplomat::result<icu4x::ZonedDateTime, icu4x::Rfc9557ParseError> full_from_string(std::string_view v, const icu4x::Calendar& calendar, const icu4x::IanaParser& iana_parser, const icu4x::VariantOffsetsCalculator& _offset_calculator);
 
   /**
    * Creates a new {@link ZonedDateTime} from a location-only IXDTF string.
@@ -75,7 +86,7 @@ struct ZonedDateTime {
   inline static diplomat::result<icu4x::ZonedDateTime, icu4x::Rfc9557ParseError> offset_only_from_string(std::string_view v, const icu4x::Calendar& calendar);
 
   /**
-   * Creates a new {@link ZonedDateTime} from an IXDTF string, without requiring the offset or calculating the zone variant.
+   * Creates a new {@link ZonedDateTime} from an IXDTF string, without requiring the offset.
    *
    * See the [Rust documentation for `try_lenient_from_str`](https://docs.rs/icu/2.0.0/icu/time/struct.ZonedDateTime.html#method.try_lenient_from_str) for more information.
    */

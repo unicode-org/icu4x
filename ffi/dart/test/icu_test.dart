@@ -94,27 +94,15 @@ void main() {
   });
 
   test('DateTime formatting', () {
-    final zonedDateTimeIso = ZonedIsoDateTime.fullFromString(
+    final zonedDateTimeIso = ZonedIsoDateTime.strictFromString(
       '2025-01-15T14:32:12.34+01[Europe/Zurich]',
       IanaParser(),
-      VariantOffsetsCalculator(),
     );
 
-    final zonedDateTimeBuddhist = ZonedDateTime.fullFromString(
+    final zonedDateTimeBuddhist = ZonedDateTime.strictFromString(
       '2026-01-15T05:32:12.34+07[Asia/Bangkok][u-ca=buddhist]',
       Calendar(CalendarKind.buddhist),
       IanaParser(),
-      VariantOffsetsCalculator(),
-    );
-
-    final utcOffset = UtcOffset.fromSeconds(-420);
-    final customZDT = ZonedIsoDateTime.fromEpochMillisecondsAndUtcOffset(
-      1746140981731,
-      utcOffset,
-    );
-    final customZone = TimeZoneInfo(
-      TimeZone.fromBcp47('uslax'),
-      offset: utcOffset,
     );
 
     final locale = Locale.fromString('de-u-ca-islamic-umalqura');
@@ -256,16 +244,15 @@ void main() {
     );
 
     expect(
-      () =>
-          ZonedDateTimeFormatter.specificLong(
-            locale,
-            DateTimeFormatter.ymdet(locale),
-          ).formatIso(
-            zonedDateTimeIso.date,
-            zonedDateTimeIso.time,
-            TimeZoneInfo.utc(),
-          ),
-      throwsA(DateTimeWriteError.missingTimeZoneVariant),
+      ZonedDateTimeFormatter.specificLong(
+        locale,
+        DateTimeFormatter.ymdet(locale),
+      ).formatIso(
+        zonedDateTimeIso.date,
+        zonedDateTimeIso.time,
+        TimeZoneInfo.utc(),
+      ),
+      'Mi., 15. Raj. 1446 AH, 14:32:12 Koordinierte Weltzeit',
     );
 
     expect(
@@ -296,8 +283,30 @@ void main() {
       ZonedDateTimeFormatter.genericLong(
         locale,
         DateTimeFormatter.mdt(locale),
-      ).formatIso(customZDT.date, customZDT.time, customZone),
-      '03.11., 23:02:41 Nordamerikanische Westküstenzeit',
+      ).formatIso(
+        zonedDateTimeIso.date,
+        zonedDateTimeIso.time,
+        TimeZoneInfo(
+          TimeZone.fromBcp47('uslax'),
+          offset: UtcOffset.fromSeconds(-420),
+        ),
+      ),
+      '15.07., 14:32:12 GMT-00:07',
+    );
+
+    var customZDT = ZonedIsoDateTime.fromEpochMillisecondsAndUtcOffset(
+      1746140981731, // 2025-05-01T23:09:41.731Z
+      UtcOffset.fromString('+02'),
+    );
+    expect(
+      ZonedDateTimeFormatter.genericShort(
+        Locale.fromString('en'),
+        DateTimeFormatter.ymdt(
+          Locale.fromString('en'),
+          timePrecision: TimePrecision.subsecond3,
+        ),
+      ).formatIso(customZDT.date, customZDT.time, customZDT.zone),
+      'May 2, 2025, 1:09:41.731 AM GMT+2',
     );
 
     ///// ZonedDateTimeFormatterGregorian /////
