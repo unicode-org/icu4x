@@ -74,12 +74,9 @@ impl SourceDataProvider {
             .tz_caches
             .metazones
             .get_or_init(|| {
-                let metazones_resource = &self
-                    .cldr()?
-                    .core()
-                    .read_and_parse::<cldr_serde::time_zones::meta_zones::Resource>(
-                        "supplemental/metaZones.json",
-                    )?
+                let metazones_resource =
+                    serde_json::from_str::<cldr_serde::time_zones::meta_zones::Resource>(include_str!("../../data/metaZonesPatched.json"))
+                    .unwrap()
                     .supplemental
                     .meta_zones;
 
