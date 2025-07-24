@@ -138,6 +138,10 @@ impl Calendar for Gregorian {
         Iso.extended_year(&date.0)
     }
 
+    fn ecma_year(&self, date: &Self::DateInner) -> i32 {
+        self.extended_year(date)
+    }
+
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
         Iso.is_in_leap_year(&date.0)
     }

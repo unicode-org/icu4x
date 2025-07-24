@@ -128,6 +128,10 @@ impl Calendar for Buddhist {
         Iso.extended_year(date) + BUDDHIST_ERA_OFFSET
     }
 
+    fn ecma_year(&self, date: &Self::DateInner) -> i32 {
+        self.extended_year(date)
+    }
+
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
         Iso.is_in_leap_year(date)
     }

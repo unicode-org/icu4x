@@ -260,6 +260,10 @@ impl Calendar for Japanese {
         Iso.extended_year(&date.inner)
     }
 
+    fn ecma_year(&self, date: &Self::DateInner) -> i32 {
+        self.extended_year(date)
+    }
+
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
         Iso.is_in_leap_year(&date.inner)
     }
@@ -359,6 +363,10 @@ impl Calendar for JapaneseExtended {
 
     fn extended_year(&self, date: &Self::DateInner) -> i32 {
         Japanese::extended_year(&self.0, date)
+    }
+
+    fn ecma_year(&self, date: &Self::DateInner) -> i32 {
+        self.extended_year(date)
     }
 
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
