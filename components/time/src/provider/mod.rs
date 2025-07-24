@@ -89,15 +89,6 @@ pub struct VariantOffsetsWithMetazoneMembershipKind {
     pub mzmsk: MetazoneMembershipKind,
 }
 
-impl From<VariantOffsets> for VariantOffsetsWithMetazoneMembershipKind {
-    fn from(offsets: VariantOffsets) -> Self {
-        Self {
-            offsets,
-            mzmsk: MetazoneMembershipKind::BehavesLikeGolden,
-        }
-    }
-}
-
 impl AsULE for VariantOffsetsWithMetazoneMembershipKind {
     type ULE = [i8; 2];
 
