@@ -199,16 +199,11 @@ final class CheckoutMode extends BuildMode {
           input.config.code.iOS.targetSdk == IOSSdk.iPhoneSimulator,
       Directory.fromUri(checkoutPath!),
       [
-        'collator',
-        'datetime',
-        'list',
-        'decimal',
-        'plurals',
-        'buffer_provider',
+        'default_components',
         'experimental',
-        'casemap',
+
+        'buffer_provider',
         'compiled_data',
-        'default',
       ],
     );
     return builtLib.uri;

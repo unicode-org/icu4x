@@ -294,7 +294,7 @@ void main() {
       '15.07., 14:32:12 GMT-00:07',
     );
 
-    var customZDT = ZonedIsoDateTime.fromEpochMillisecondsAndUtcOffset(
+    final customZDT = ZonedIsoDateTime.fromEpochMillisecondsAndUtcOffset(
       1746140981731, // 2025-05-01T23:09:41.731Z
       UtcOffset.fromString('+02'),
     );

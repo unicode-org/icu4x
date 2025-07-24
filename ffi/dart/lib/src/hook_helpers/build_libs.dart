@@ -90,7 +90,7 @@ Future<File> buildLib(
 
   final additionalFeatures = isNoStd
       ? ['libc_alloc', 'looping_panic_handler']
-      : ['logging', 'simple_logger'];
+      : ['simple_logger'];
   await runProcess('cargo', [
     if (buildStatic || isNoStd) '+nightly',
     'rustc',
