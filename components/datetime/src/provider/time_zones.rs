@@ -424,11 +424,12 @@ pub(crate) mod legacy {
             );
 
             assert_eq!(
-                converted.get().get(tz, t).unwrap().1,
+                converted.get().get(tz, t).unwrap().1.map(|mz| mz.id),
                 icu_time::provider::Baked::SINGLETON_TIMEZONE_PERIODS_V1
                     .get(tz, t)
                     .unwrap()
-                    .1,
+                    .1
+                    .map(|mz| mz.id),
                 "{timestamp:?}",
             );
         }

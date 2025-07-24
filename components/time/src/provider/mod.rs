@@ -65,46 +65,81 @@ pub const MARKERS: &[DataMarkerInfo] = &[
 
 const SECONDS_TO_EIGHTS_OF_HOURS: i32 = 60 * 60 / 8;
 
-impl AsULE for VariantOffsets {
+/// Metadata about a metazone membership
+#[derive(Debug, Clone, Copy, PartialEq, PartialOrd, Eq, Ord)]
+#[non_exhaustive]
+pub enum MetazoneMembershipKind {
+    /// This zone is equivalent to the metazone's golden time zone.
+    BehavesLikeGolden,
+    /// This zone uses variants that the golden zone does not use.
+    /// This happens for example for London, Dublin, Troll (all in GMT), Windhoek (in WAT).
+    CustomVariants,
+    /// This zone uses different transitions than the golden zone.
+    /// This happens for example for Phoenix, Regina, Algiers, Brisbane (no DST),
+    /// or Chisinau (transitions at different times, not implemented yet).
+    CustomTransitions,
+}
+
+/// A [`VariantOffsets`] and a [`MetazoneMembershipKind`] packed into one byte.
+#[derive(Debug, Clone, Copy, PartialEq, PartialOrd, Eq, Ord)]
+pub struct VariantOffsetsWithMetazoneMembershipKind {
+    /// The offsets. Currently uses 3 bits.
+    pub offsets: VariantOffsets,
+    /// Metazone membership metadata. Currently uses 2 bits.
+    pub mzmsk: MetazoneMembershipKind,
+}
+
+impl AsULE for VariantOffsetsWithMetazoneMembershipKind {
     type ULE = [i8; 2];
 
     fn from_unaligned([std, dst]: Self::ULE) -> Self {
         Self {
-            standard: UtcOffset::from_seconds_unchecked(
-                std as i32 * SECONDS_TO_EIGHTS_OF_HOURS
-                    + match std % 8 {
-                        // 7.5, 37.5, representing 10, 40
-                        1 | 5 => 150,
-                        -1 | -5 => -150,
-                        // 22.5, 52.5, representing 20, 50
-                        3 | 7 => -150,
-                        -3 | -7 => 150,
-                        // 0, 15, 30, 45
-                        _ => 0,
-                    },
-            ),
-            daylight: match dst {
-                0 => None,
-                1 => Some(0),
-                2 => Some(1800),
-                3 => Some(3600),
-                4 => Some(5400),
-                5 => Some(7200),
-                x => {
-                    debug_assert!(false, "unknown DST encoding {x}");
-                    None
+            offsets: VariantOffsets {
+                standard: UtcOffset::from_seconds_unchecked(
+                    std as i32 * SECONDS_TO_EIGHTS_OF_HOURS
+                        + match std % 8 {
+                            // 7.5, 37.5, representing 10, 40
+                            1 | 5 => 150,
+                            -1 | -5 => -150,
+                            // 22.5, 52.5, representing 20, 50
+                            3 | 7 => -150,
+                            -3 | -7 => 150,
+                            // 0, 15, 30, 45
+                            _ => 0,
+                        },
+                ),
+                daylight: match dst as u8 & 0b0011_1111 {
+                    0 => None,
+                    1 => Some(0),
+                    2 => Some(1800),
+                    3 => Some(3600),
+                    4 => Some(5400),
+                    5 => Some(7200),
+                    x => {
+                        debug_assert!(false, "unknown DST encoding {x}");
+                        None
+                    }
                 }
-            }
-            .map(|d| {
-                UtcOffset::from_seconds_unchecked(std as i32 * SECONDS_TO_EIGHTS_OF_HOURS + d)
-            }),
+                .map(|d| {
+                    UtcOffset::from_seconds_unchecked(std as i32 * SECONDS_TO_EIGHTS_OF_HOURS + d)
+                }),
+            },
+            mzmsk: match (dst as u8 & 0b1100_0000) >> 6 {
+                0b00 => MetazoneMembershipKind::BehavesLikeGolden,
+                0b10 => MetazoneMembershipKind::CustomTransitions,
+                0b01 => MetazoneMembershipKind::CustomVariants,
+                x => {
+                    debug_assert!(false, "unknown MetazoneMembershipKind encoding {x}");
+                    MetazoneMembershipKind::BehavesLikeGolden
+                }
+            },
         }
     }
 
     fn to_unaligned(self) -> Self::ULE {
         [
             {
-                let offset = self.standard.to_seconds();
+                let offset = self.offsets.standard.to_seconds();
                 debug_assert_eq!(offset.abs() % 60, 0);
                 let scaled = match offset.abs() / 60 % 60 {
                     0 | 15 | 30 | 45 => offset / SECONDS_TO_EIGHTS_OF_HOURS,
@@ -125,8 +160,9 @@ impl AsULE for VariantOffsets {
                 scaled as i8
             },
             match self
+                .offsets
                 .daylight
-                .map(|o| o.to_seconds() - self.standard.to_seconds())
+                .map(|o| o.to_seconds() - self.offsets.standard.to_seconds())
             {
                 None => 0,
                 Some(0) => 1,
@@ -138,8 +174,32 @@ impl AsULE for VariantOffsets {
                     debug_assert!(false, "unhandled DST value {x}");
                     0
                 }
-            },
+            } | (match self.mzmsk {
+                MetazoneMembershipKind::BehavesLikeGolden => 0b00u8,
+                MetazoneMembershipKind::CustomTransitions => 0b10,
+                MetazoneMembershipKind::CustomVariants => 0b01,
+            } << 6) as i8,
         ]
+    }
+}
+
+#[cfg(all(feature = "alloc", feature = "serde"))]
+impl serde::Serialize for VariantOffsetsWithMetazoneMembershipKind {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        self.to_unaligned().serialize(serializer)
+    }
+}
+
+#[cfg(feature = "serde")]
+impl<'de> serde::Deserialize<'de> for VariantOffsetsWithMetazoneMembershipKind {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        <_>::deserialize(deserializer).map(Self::from_unaligned)
     }
 }
 
@@ -257,13 +317,13 @@ pub type MetazoneId = core::num::NonZeroU8;
 pub struct TimezonePeriods<'a> {
     /// Index of `TimeZone`s into `list`.
     pub index: ZeroTrieSimpleAscii<ZeroVec<'a, u8>>,
-    /// Each value contains at least one period, which implicitly starts at the UNIX epoch.
+    /// Each entry contains at least one period, which implicitly starts at the UNIX epoch.
     /// This is stored in the first tuple element.
     ///
     /// If more periods are required the second tuple element contains them, along with their
     /// starting timestamp. These entries are ordered chronologically.
     ///
-    /// The values ((u8, Option<MetazoneId)) are an index into the offsets list for the offset
+    /// The values (`(u8, Option<MetazoneId>)`) are an index into the `offsets` list for the offset
     /// that the zone observes in that period, and optionally whether it is part of a metazone.
     pub list: VarZeroVec<
         'a,
@@ -275,8 +335,8 @@ pub struct TimezonePeriods<'a> {
 
     /// The deduplicated list of offsets.
     ///
-    /// There are currently 83 unique VariantOffsets, so storing the index as a u8 is plenty enough.
-    pub offsets: ZeroVec<'a, VariantOffsets>,
+    /// There are currently 99 unique VariantOffsetsWithMetazoneMembershipKind, so storing the index as a u8 is plenty enough.
+    pub offsets: ZeroVec<'a, VariantOffsetsWithMetazoneMembershipKind>,
 }
 
 /// Encodes ZoneNameTimestamp in 3 bytes by dropping the unused metadata
@@ -313,7 +373,7 @@ struct TimeZonePeriodsSerde<'a> {
         >,
     >,
 
-    pub offsets: ZeroVec<'a, VariantOffsets>,
+    pub offsets: ZeroVec<'a, VariantOffsetsWithMetazoneMembershipKind>,
 }
 
 #[cfg(feature = "datagen")]
@@ -329,21 +389,40 @@ impl serde::Serialize for TimezonePeriods<'_> {
                 if let Some(value) = self.list.get(idx) {
                     map.serialize_entry(
                         &tz,
-                        &[(
-                            ZoneNameTimestamp::far_in_past(),
-                            (
-                                self.offsets.get(value.sized.0 as usize),
-                                NichedOption::from_unaligned(value.sized.1).0,
-                            ),
-                        )]
-                        .into_iter()
-                        .chain(
-                            value
-                                .variable
-                                .iter()
-                                .map(|(t, os, mz)| (t.0, (self.offsets.get(os as usize), mz.0))),
-                        )
-                        .collect::<alloc::collections::BTreeMap<_, _>>(),
+                        &[ZoneNameTimestamp::far_in_past()]
+                            .into_iter()
+                            .chain(value.variable.iter().map(|(t, _, _)| t.0))
+                            .map(|t| {
+                                use icu_locale_core::subtags::Subtag;
+
+                                #[allow(clippy::unwrap_used)] // JSON debug format
+                                let (os, mz_info) = self
+                                    .get(TimeZone(Subtag::try_from_str(&tz).unwrap()), t)
+                                    .unwrap();
+                                (
+                                    t,
+                                    (
+                                        os,
+                                        mz_info.map(|i| {
+                                            (
+                                                i.id,
+                                                match i.kind {
+                                                    MetazoneMembershipKind::BehavesLikeGolden => {
+                                                        [].as_slice()
+                                                    }
+                                                    MetazoneMembershipKind::CustomVariants => {
+                                                        &["custom variants"]
+                                                    }
+                                                    MetazoneMembershipKind::CustomTransitions => {
+                                                        &["custom transitions"]
+                                                    }
+                                                },
+                                            )
+                                        }),
+                                    ),
+                                )
+                            })
+                            .collect::<alloc::collections::BTreeMap<_, _>>(),
                     )?;
                 }
             }
@@ -384,30 +463,63 @@ impl<'de> serde::Deserialize<'de> for TimezonePeriods<'de> {
     }
 }
 
+/// Information about a metazone membership
+#[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Clone, Copy)]
+pub struct MetazoneInfo {
+    /// The metazone ID.
+    pub id: MetazoneId,
+    /// The kind.
+    pub kind: MetazoneMembershipKind,
+}
+
 impl TimezonePeriods<'_> {
     /// Gets the information for a time zone at at timestamp
+    ///
+    /// If the timezone is in a metazone, returns the metazone ID as well as the offsets
+    /// that the metazone's golden zone currently uses.
     pub fn get(
         &self,
         time_zone_id: TimeZone,
         timestamp: ZoneNameTimestamp,
-    ) -> Option<(VariantOffsets, Option<MetazoneId>)> {
+    ) -> Option<(VariantOffsets, Option<MetazoneInfo>)> {
+        let (os_idx, NichedOption(mz)) =
+            self.find_period(self.index.get(time_zone_id.as_str())?, timestamp)?;
+
+        let os = self.offsets.get(os_idx as usize)?;
+
+        let Some(mz) = mz else {
+            return Some((os.offsets, None));
+        };
+
+        Some((
+            os.offsets,
+            Some(MetazoneInfo {
+                id: mz,
+                kind: os.mzmsk,
+            }),
+        ))
+    }
+
+    // Given an index in `list`, returns the values at the `timestamp`
+    fn find_period(
+        &self,
+        idx: usize,
+        timestamp: ZoneNameTimestamp,
+    ) -> Option<(u8, NichedOption<MetazoneId, 1>)> {
         use zerovec::ule::vartuple::VarTupleULE;
         use zerovec::ule::AsULE;
         let &VarTupleULE {
             sized: first,
             variable: ref rest,
-        } = self.list.get(self.index.get(time_zone_id.as_str())?)?;
+        } = self.list.get(idx)?;
 
         let i = match rest.binary_search_by(|(t, ..)| t.cmp(&Timestamp24(timestamp))) {
-            Err(0) => {
-                let (os, mz) = <(u8, NichedOption<MetazoneId, 1>)>::from_unaligned(first);
-                return Some((self.offsets.get(os as usize)?, mz.0));
-            }
+            Err(0) => return Some(<(u8, NichedOption<MetazoneId, 1>)>::from_unaligned(first)),
             Err(i) => i - 1,
             Ok(i) => i,
         };
         let (_, os, mz) = rest.get(i)?;
-        Some((self.offsets.get(os as usize)?, mz.0))
+        Some((os, mz))
     }
 }
 
@@ -424,9 +536,64 @@ icu_provider::data_marker!(
     has_checksum = true
 );
 
+// remove in 3.0
 pub(crate) mod legacy {
     use super::*;
     use zerovec::ZeroMap2d;
+
+    impl AsULE for VariantOffsets {
+        type ULE = [i8; 2];
+
+        fn from_unaligned([std, dst]: Self::ULE) -> Self {
+            fn decode(encoded: i8) -> i32 {
+                encoded as i32 * SECONDS_TO_EIGHTS_OF_HOURS
+                    + match encoded % 8 {
+                        // 7.5, 37.5, representing 10, 40
+                        1 | 5 => 150,
+                        -1 | -5 => -150,
+                        // 22.5, 52.5, representing 20, 50
+                        3 | 7 => -150,
+                        -3 | -7 => 150,
+                        // 0, 15, 30, 45
+                        _ => 0,
+                    }
+            }
+
+            Self {
+                standard: UtcOffset::from_seconds_unchecked(decode(std)),
+                daylight: (dst != 0).then(|| UtcOffset::from_seconds_unchecked(decode(std + dst))),
+            }
+        }
+
+        fn to_unaligned(self) -> Self::ULE {
+            fn encode(offset: i32) -> i8 {
+                debug_assert_eq!(offset.abs() % 60, 0);
+                let scaled = match offset.abs() / 60 % 60 {
+                    0 | 15 | 30 | 45 => offset / SECONDS_TO_EIGHTS_OF_HOURS,
+                    10 | 40 => {
+                        // stored as 7.5, 37.5, truncating div
+                        offset / SECONDS_TO_EIGHTS_OF_HOURS
+                    }
+                    20 | 50 => {
+                        // stored as 22.5, 52.5, need to add one
+                        offset / SECONDS_TO_EIGHTS_OF_HOURS + offset.signum()
+                    }
+                    _ => {
+                        debug_assert!(false, "{offset:?}");
+                        offset / SECONDS_TO_EIGHTS_OF_HOURS
+                    }
+                };
+                debug_assert!(i8::MIN as i32 <= scaled && scaled <= i8::MAX as i32);
+                scaled as i8
+            }
+            [
+                encode(self.standard.to_seconds()),
+                self.daylight
+                    .map(|d| encode(d.to_seconds() - self.standard.to_seconds()))
+                    .unwrap_or_default(),
+            ]
+        }
+    }
 
     icu_provider::data_marker!(
         /// The default mapping between period and offsets. The second level key is a wall-clock time encoded as
