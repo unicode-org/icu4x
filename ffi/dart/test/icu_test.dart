@@ -1,4 +1,4 @@
-import 'package:icu/icu.dart';
+import 'package:icu4x/icu4x.dart';
 import 'package:test/test.dart';
 
 void main() {
@@ -23,14 +23,14 @@ void main() {
   });
 
   test('Properties', () {
-    Rune a = 'a'.runes.first;
-    Rune emoji = '💡'.runes.first;
+    final a = 'a'.runes.first;
+    final emoji = '💡'.runes.first;
 
     final emojiSet = CodePointSetData.emoji();
     expect(emojiSet.contains(a), false);
     expect(emojiSet.contains(emoji), true);
 
-    Rune upperA = CaseMapper().simpleUppercase(a);
+    final upperA = CaseMapper().simpleUppercase(a);
     expect(String.fromCharCode(upperA), 'A');
   });
 
@@ -60,7 +60,7 @@ void main() {
   });
 
   test('Locale extensions', () {
-    var locale = Locale.fromString('en-GB');
+    final locale = Locale.fromString('en-GB');
     expect(locale.getUnicodeExtension('ca'), null);
     expect(locale.setUnicodeExtension('ca', 'gregory'), true);
     expect(locale.setUnicodeExtension('ca', 'gregorian'), false);
@@ -105,7 +105,7 @@ void main() {
       IanaParser(),
     );
 
-    var locale = Locale.fromString('de-u-ca-islamic-umalqura');
+    final locale = Locale.fromString('de-u-ca-islamic-umalqura');
 
     ///// DateFormatter /////
 
@@ -294,7 +294,7 @@ void main() {
       '15.07., 14:32:12 GMT-00:07',
     );
 
-    var customZDT = ZonedIsoDateTime.fromEpochMillisecondsAndUtcOffset(
+    final customZDT = ZonedIsoDateTime.fromEpochMillisecondsAndUtcOffset(
       1746140981731, // 2025-05-01T23:09:41.731Z
       UtcOffset.fromString('+02'),
     );

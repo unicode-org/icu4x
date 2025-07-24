@@ -1,5 +1,14 @@
-include: package:lints/recommended.yaml
+include: package:dart_flutter_team_lints/analysis_options.yaml
 
 linter:
   rules:
+    - conditional_uri_does_not_exist
+    - prefer_const_constructors
+    - prefer_final_locals
+    - prefer_relative_imports
+    - unnecessary_parenthesis
     - prefer_single_quotes
+
+analyzer:
+  exclude:
+    - lib/src/bindings/*
