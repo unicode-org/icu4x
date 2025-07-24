@@ -182,6 +182,27 @@
       "O": "GMT\u200e+3\u200e",
       "OOOO": "GMT\u200e+03:00\u200e"
     }
+  },{
+    "locale": "en-GB",
+    "datetime": "2021-07-11T12:00:00.000+01[Africa/Casablanca]",
+    "expectations": {
+      "z": "GMT+1",
+      "zzzz": "Morocco Daylight Time",
+
+      "v": "Morocco Time",
+      "vvvv": "Morocco Time"
+    }
+  },
+  {
+    "locale": "en-GB",
+    "datetime": "2021-07-11T12:00:00.000+00[Africa/Casablanca]",
+    "expectations": {
+      "z": "GMT+0",
+      "zzzz": "Morocco Standard Time",
+
+      "v": "Morocco Time",
+      "vvvv": "Morocco Time"
+    }
   },
   {
     "locale": "en",
