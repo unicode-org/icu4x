@@ -3,15 +3,14 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::cldr_serde;
+use crate::cldr_serde::time_zones::meta_zones::UsesMetazone;
 use crate::IterableDataProviderCached;
 use crate::SourceDataProvider;
 use core::cmp::Ordering;
 use core::hash::Hash;
 use core::hash::Hasher;
-use icu::calendar::Iso;
 use icu::datetime::provider::time_zones::*;
 use icu::locale::subtags::region;
-use icu::locale::subtags::subtag;
 use icu::time::provider::*;
 use icu::time::zone::UtcOffset;
 use icu::time::zone::VariantOffsets;
@@ -84,26 +83,6 @@ impl SourceDataProvider {
 
                 let bcp47_tzid_data = self.iana_to_bcp47_map()?;
 
-                // TODO: The special cases should be defined in CLDR
-                let special_cases= &[
-                    // (zone,   name,   if_after                      ) -> (std, dst)
-                    // Ireland is modeled using negative DST, because "IST" stands for Irish Standard Time.
-                    // This doesn't fit into our model where Ireland is in the GMT metazone.
-                    (("iedub", "GMT", ZoneNameTimestamp::far_in_past()), (0, None)),
-                    (("iedub", "IST", ZoneNameTimestamp::far_in_past()), (0, Some(3600))),
-                    // Morroco and Western Sahara used to observe +0 with normal summer DST, but currently they observe +1 with
-                    // negative DST during Ramadan. Model this all as normal DST.
-                    // TODO: Here we could set the zone variant to Ramadan
-                    (("macas", "+00", ZoneNameTimestamp::far_in_past()), (0, None)),
-                    (("macas", "+01", ZoneNameTimestamp::far_in_past()), (0, Some(3600))),
-                    (("eheai", "+00", ZoneNameTimestamp::far_in_past()), (0, None)),
-                    (("eheai", "+01", ZoneNameTimestamp::far_in_past()), (0, Some(3600))),
-                    // This is wrong, but for now match what we've done before (and what ICU is doing).
-                    (("nawdh", "CAT", ZoneNameTimestamp::from_zoned_date_time_iso(ZonedDateTime::try_offset_only_from_str("2017-09-03T01:00Z", Iso).unwrap())), (7200, None)),
-                    (("nawdh", "CAT", ZoneNameTimestamp::from_zoned_date_time_iso(ZonedDateTime::try_offset_only_from_str("1994-03-20T22:00Z", Iso).unwrap())), (3600, Some(7200))),
-                    (("nawdh", "WAT", ZoneNameTimestamp::from_zoned_date_time_iso(ZonedDateTime::try_offset_only_from_str("1994-03-20T22:00Z", Iso).unwrap())), (3600, None)),
-                ];
-
                 let offsets = self
                     .bcp47_to_canonical_iana_map()?
                     .iter()
@@ -112,36 +91,15 @@ impl SourceDataProvider {
                         (
                             bcp47,
                             transitions
-                                .map(|ts| {
-                                   let (mut std_offset, dst_offset) =  special_cases
-                                        .iter()
-                                        .find_map(|&(k, v)|
-                                            ((k.0, k.1) == (bcp47.as_str(), ts.name.as_str()) && k.2 <= ts.transition).then_some(v)
-                                        )
-                                        .unwrap_or_else(|| {
-                                            if ts.rearguard_agrees == Some(false) || ts.vanguard_agrees == Some(false) {
-                                                log::warn!("Unhandled TZDB inconsistency for {bcp47:?}: {ts:?}");
-                                            }
-                                            (ts.utc_offset as i32, (ts.dst_offset_relative != 0).then_some((ts.utc_offset + ts.dst_offset_relative) as i32))
-                                        });
-
-                                    // Africa/Monrovia used -00:44:30 pre-1972. We cannot represent this, so we set it to -00:45
-                                    if std_offset == -2670 {
-                                        std_offset = -2700;
-                                    };
-
-                                    let mut os = VariantOffsets::from_standard(UtcOffset::from_seconds_unchecked(std_offset));
-                                    os.daylight = dst_offset.map(UtcOffset::from_seconds_unchecked);
-                                    (ts.transition, os)
-                                })
+                                .map(|ts|  (ts.transition, ts))
                                 .collect::<Vec<_>>(),
                         )
                     })
-                    .collect::<BTreeMap<TimeZone, Vec<(ZoneNameTimestamp, VariantOffsets)>>>();
+                    .collect::<BTreeMap<TimeZone, Vec<(ZoneNameTimestamp, Transition)>>>();
 
                 let mut all_metazones = BTreeSet::new();
 
-                let mut goldens = metazones_resource
+                let goldens = metazones_resource
                     .meta_zones_territory
                     .0
                     .iter()
@@ -152,11 +110,6 @@ impl SourceDataProvider {
                         Some((mt.map_zone.metazone.as_str(), *bcp47_tzid_data.get(&mt.map_zone.time_zone)?))
                     })
                     .collect::<BTreeMap<_, _>>();
-
-                // CLDR sets the golden for Hawaii-Aleutian Time to Honolulu, but that doesn't fit our model as
-                // Honolulu has never used DST while Adak has.
-                // In v48, Honolulu will have overrides in all locales, and could be removed from the metazone.
-                goldens.insert("Hawaii_Aleutian", TimeZone(subtag!("usadk")));
 
                 let metazones = metazones_resource
                     .meta_zone_info
@@ -174,7 +127,7 @@ impl SourceDataProvider {
                                             .uses_meta_zone
                                             .from
                                             .unwrap_or(ZoneNameTimestamp::far_in_past()),
-                                        Some(period.uses_meta_zone.mzone.as_str()),
+                                        Some(&period.uses_meta_zone),
                                     )),
                                     // leave the metazone if there's a `to` date
                                     period.uses_meta_zone.to.map(|t| (t, None)),
@@ -194,35 +147,84 @@ impl SourceDataProvider {
                                 // it's only included if it's also used after the horizon.
                                 i += 1;
                             } else {
-                                all_metazones.extend(periods[i].1);
+                                all_metazones.extend(periods[i].1.map(|m| &m.mzone));
                                 i += 1;
                             }
                         }
 
                         (bcp47, periods)
                     })
-                    .collect::<BTreeMap<TimeZone, Vec<(ZoneNameTimestamp, Option<&str>)>>>();
+                    .collect::<BTreeMap<TimeZone, Vec<(ZoneNameTimestamp, Option<&UsesMetazone>)>>>();
 
                 let mut offsets_and_metazones = BTreeMap::<
                     TimeZone,
                     Vec<(ZoneNameTimestamp, VariantOffsets, Option<&str>)>,
                 >::new();
 
-                for (&tz, offsets) in &offsets {
-                    let mut offsets = offsets.iter().copied().peekable();
+                for (&tz, offsets_vec) in &offsets {
+                    let mut offsets = offsets_vec.iter().cloned().peekable();
                     let mut mzs = metazones.get(&tz).into_iter().flatten().copied().peekable();
 
                     let (mut start, mut curr_offset) = offsets.next().unwrap();
                     let mut curr_mz = mzs.next_if(|&(s, _)| s == start).and_then(|(_, mz)| mz);
 
                     loop {
+                        let (mut std, daylight) = curr_mz.and_then(|mzi| {
+                                use cldr_serde::time_zones::meta_zones::Variant;
+                                let variants = mzi.variant_overrides.as_ref()?;
+                                Some(match variants.get(&curr_offset.name)? {
+                                    Variant::Standard => (curr_offset.utc_offset + curr_offset.dst_offset_relative, None),
+                                    Variant::Daylight => {
+                                        let previous_offset = offsets_vec
+                                            .iter()
+                                            .rev()
+                                            .find(|&&(tp, _)| curr_offset.transition > tp)
+                                            .filter(|_| mzi.from.is_none_or(|f| f <= curr_offset.transition));
+                                        let next_offset = offsets
+                                            .peek()
+                                            .filter(|&&(tn, _)| mzi.to.is_none_or(|to| tn < to));
+                                        (
+                                            // Check the previous or next offset for the standard offset
+                                            previous_offset
+                                                .into_iter()
+                                                .chain(next_offset)
+                                                .filter(|(_, o)| variants.get(&o.name) == Some(&Variant::Standard))
+                                                .map(|(_, o)| o.utc_offset + o.dst_offset_relative)
+                                                .next()
+                                            // Just guess that we're on 1h DST. This does not make a difference for formatting,
+                                            // it's just the value that VariantOffsetsCalculator will return.
+                                            .unwrap_or(curr_offset.utc_offset + curr_offset.dst_offset_relative - 3600),
+                                            Some(curr_offset.utc_offset + curr_offset.dst_offset_relative),
+                                        )
+                                    }
+                                })
+                            })
+                            .unwrap_or_else(|| {
+                                if curr_mz.is_some() && (curr_offset.rearguard_agrees == Some(false) || curr_offset.vanguard_agrees == Some(false)) {
+                                    log::warn!("Unhandled TZDB inconsistency for {tz:?}: {curr_offset:?}");
+                                }
+                                (
+                                    curr_offset.utc_offset,
+                                    // If a rule applies, we treat this as DST
+                                    (curr_offset.dst_offset_relative != 0).then_some(curr_offset.utc_offset + curr_offset.dst_offset_relative)
+                                )
+                            });
+
+                        // Africa/Monrovia used -00:44:30 pre-1972. We cannot represent this, so we set it to -00:45
+                        if std == -2670 {
+                            std = -2700;
+                        };
+
+                        let mut os = VariantOffsets::from_standard(UtcOffset::from_seconds_unchecked(std as i32));
+                        os.daylight = daylight.map(|o| UtcOffset::from_seconds_unchecked(o as i32));
+
                         offsets_and_metazones.entry(tz).or_default().push((
                             start,
-                            curr_offset,
-                            curr_mz,
+                            os,
+                            curr_mz.map(|mz| mz.mzone.as_str()),
                         ));
 
-                        match (offsets.peek().copied(), mzs.peek().copied()) {
+                        match (offsets.peek().as_ref(), mzs.peek().copied()) {
                             (None, None) => break,
                             (Some(_), None) => {
                                 (start, curr_offset) = offsets.next().unwrap();
@@ -691,6 +693,7 @@ impl crate::source::Tzdb {
     }
 }
 
+#[derive(Clone)]
 struct Transition {
     transition: ZoneNameTimestamp,
     utc_offset: i64,

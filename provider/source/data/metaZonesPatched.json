@@ -131,21 +131,10 @@
               {
                 "usesMetazone": {
                   "_mzone": "Europe_Western",
-                  "_to": "1984-03-16 00:00"
-                }
-              },
-              {
-                "usesMetazone": {
-                  "_mzone": "Europe_Central",
-                  "_from": "1984-03-16 00:00",
-                  "_to": "1985-12-31 23:00"
-                }
-              },
-              {
-                "usesMetazone": {
-                  "_mzone": "Europe_Western",
-                  "_from": "1985-12-31 23:00",
-                  "_to": "2018-10-28 02:00"
+                  "_to": "2018-10-28 02:00",
+                  "_variantOverrides": {
+                    "+01": "daylight"
+                  }
                 }
               }
             ],
@@ -532,13 +521,20 @@
                 "usesMetazone": {
                   "_mzone": "Africa_Western",
                   "_from": "1994-03-20 22:00",
-                  "_to": "2017-10-23 22:00"
+                  "_to": "2017-09-03 01:00",
+                  "_variantOverrides": {
+                    "CAT": "daylight",
+                    "WAT": "standard"
+                  }
                 }
               },
               {
                 "usesMetazone": {
                   "_mzone": "Africa_Central",
-                  "_from": "2017-10-23 22:00"
+                  "_from": "2017-09-03 01:00",
+                  "_variantOverrides": {
+                    "CAT": "standard"
+                  }
                 }
               }
             ]
@@ -554,7 +550,7 @@
               {
                 "usesMetazone": {
                   "_mzone": "Hawaii_Aleutian",
-                  "_from": "1983-11-30 10:00"
+                  "_from": "1983-10-30 12:00"
                 }
               }
             ],
@@ -3810,13 +3806,21 @@
               {
                 "usesMetazone": {
                   "_mzone": "Irish",
-                  "_to": "1971-10-31 02:00"
+                  "_to": "1971-10-31 02:00",
+                  "_variantOverrides": {
+                    "GMT": "standard",
+                    "IST": "daylight"
+                  }
                 }
               },
               {
                 "usesMetazone": {
                   "_mzone": "GMT",
-                  "_from": "1971-10-31 02:00"
+                  "_from": "1971-10-31 02:00",
+                  "_variantOverrides": {
+                    "GMT": "standard",
+                    "IST": "daylight"
+                  }
                 }
               }
             ],
@@ -4540,13 +4544,13 @@
               {
                 "usesMetazone": {
                   "_mzone": "Alaska_Hawaii",
-                  "_to": "1983-10-30 11:00"
+                  "_to": "1983-11-30 10:00"
                 }
               },
               {
                 "usesMetazone": {
                   "_mzone": "Hawaii_Aleutian",
-                  "_from": "1983-10-30 11:00"
+                  "_from": "1983-11-30 10:00"
                 }
               }
             ],
@@ -6216,7 +6220,7 @@
         {
           "mapZone": {
             "_other": "Hawaii_Aleutian",
-            "_type": "Pacific/Honolulu",
+            "_type": "America/Adak",
             "_territory": "001"
           }
         },
