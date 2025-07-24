@@ -133,6 +133,7 @@
                   "_mzone": "Europe_Western",
                   "_to": "2018-10-28 02:00",
                   "_variantOverrides": {
+                    "+00": "standard",
                     "+01": "daylight"
                   }
                 }
