@@ -23,7 +23,6 @@ pub(super) enum TimeZoneFormatterUnit {
     GenericNonLocation(FieldLength),
     SpecificNonLocation(FieldLength),
     GenericLocation,
-    SpecificLocation,
     ExemplarCity,
     #[allow(dead_code)]
     GenericPartialLocation(FieldLength),
@@ -68,9 +67,6 @@ impl FormatTimeZone for TimeZoneFormatterUnit {
                 SpecificNonLocationFormat(length).format(sink, input, data_payloads, fdf)
             }
             Self::GenericLocation => GenericLocationFormat.format(sink, input, data_payloads, fdf),
-            Self::SpecificLocation => {
-                SpecificLocationFormat.format(sink, input, data_payloads, fdf)
-            }
             Self::ExemplarCity => ExemplarCityFormat.format(sink, input, data_payloads, fdf),
             Self::GenericPartialLocation(length) => {
                 GenericPartialLocationFormat(length).format(sink, input, data_payloads, fdf)
@@ -267,24 +263,51 @@ impl FormatTimeZone for SpecificNonLocationFormat {
             };
             if specific.use_standard.binary_search(&mz.id).is_ok() {
                 if let Some(n) = standard_names.defaults.get(&mz.id) {
-                    n
+                    Some(n)
                 } else {
                     // The only reason why the name is not in GenericStandard even though we expect it
                     // to be, is that it was deduplicated against the generic location format.
                     return GenericLocationFormat.format(sink, input, data_payloads, _fdf);
                 }
-            } else if let Some(n) = specific.defaults.get(&(mz.id, TimeZoneVariant::Standard)) {
-                n
             } else {
-                return Ok(Err(FormatTimeZoneError::Fallback));
+                None
             }
-        } else if let Some(n) = specific.defaults.get(&(mz.id, variant)) {
-            n
+        } else {
+            None
+        }
+        .or_else(|| specific.defaults.get(&(mz.id, variant)));
+
+        if let Some(name) = name {
+            sink.write_str(name)?;
+        } else if self.0 == FieldLength::Four {
+            // We expect a metazone name but didn't find one. This is either because
+            // * the name was deduplicated against the specific location format, or
+            // * the zone uses DST but the metazone doesn't have a DST name
+            // In both cases we want the specific location format.
+            let Some(locations) = data_payloads.locations else {
+                return Ok(Err(FormatTimeZoneError::NamesNotLoaded));
+            };
+            let Some(locations_root) = data_payloads.locations_root else {
+                return Ok(Err(FormatTimeZoneError::NamesNotLoaded));
+            };
+            let Some(location) = locations
+                .locations
+                .get(&time_zone_id)
+                .or_else(|| locations_root.locations.get(&time_zone_id))
+            else {
+                return Ok(Err(FormatTimeZoneError::Fallback));
+            };
+
+            match variant {
+                TimeZoneVariant::Standard => &locations.pattern_standard,
+                TimeZoneVariant::Daylight => &locations.pattern_daylight,
+                _ => return Ok(Err(FormatTimeZoneError::Fallback)),
+            }
+            .interpolate([location])
+            .write_to(sink)?;
         } else {
             return Ok(Err(FormatTimeZoneError::Fallback));
-        };
-
-        sink.write_str(name)?;
+        }
 
         Ok(Ok(()))
     }
@@ -436,70 +459,6 @@ impl FormatTimeZone for GenericLocationFormat {
             .pattern_generic
             .interpolate([location])
             .write_to(sink)?;
-
-        Ok(Ok(()))
-    }
-}
-
-// Los Angeles Daylight Time
-struct SpecificLocationFormat;
-
-impl FormatTimeZone for SpecificLocationFormat {
-    /// Writes the time zone in a specific location format as defined by the UTS-35 spec.
-    /// e.g. France Time
-    /// <https://unicode.org/reports/tr35/tr35-dates.html#Time_Zone_Format_Terminology>
-    fn format<W: writeable::PartsWrite + ?Sized>(
-        &self,
-        sink: &mut W,
-        input: &DateTimeInputUnchecked,
-        data_payloads: TimeZoneDataPayloadsBorrowed,
-        _decimal_formatter: Option<&DecimalFormatter>,
-    ) -> Result<Result<(), FormatTimeZoneError>, fmt::Error> {
-        let Some(time_zone_id) = input.zone_id else {
-            return Ok(Err(FormatTimeZoneError::MissingInputField(
-                MissingInputFieldKind::TimeZoneId,
-            )));
-        };
-        let Some(offset) = input.zone_offset else {
-            // We don't require the offset, this will eventually hit GMT+?
-            return Ok(Err(FormatTimeZoneError::Fallback));
-        };
-        let Some(timestamp) = input.zone_name_timestamp else {
-            return Ok(Err(FormatTimeZoneError::MissingInputField(
-                MissingInputFieldKind::TimeZoneNameTimestamp,
-            )));
-        };
-
-        let Some(locations) = data_payloads.locations else {
-            return Ok(Err(FormatTimeZoneError::NamesNotLoaded));
-        };
-        let Some(locations_root) = data_payloads.locations_root else {
-            return Ok(Err(FormatTimeZoneError::NamesNotLoaded));
-        };
-        let Some(metazone_period) = data_payloads.mz_periods else {
-            return Ok(Err(FormatTimeZoneError::NamesNotLoaded));
-        };
-        let Some((offsets, _)) = metazone_period.get(time_zone_id, timestamp) else {
-            return Ok(Err(FormatTimeZoneError::Fallback));
-        };
-
-        let Some(location) = locations
-            .locations
-            .get(&time_zone_id)
-            .or_else(|| locations_root.locations.get(&time_zone_id))
-        else {
-            return Ok(Err(FormatTimeZoneError::Fallback));
-        };
-
-        if offset == offsets.standard {
-            &locations.pattern_standard
-        } else if Some(offset) == offsets.daylight {
-            &locations.pattern_daylight
-        } else {
-            return Ok(Err(FormatTimeZoneError::Fallback));
-        }
-        .interpolate([location])
-        .write_to(sink)?;
 
         Ok(Ok(()))
     }

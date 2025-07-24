@@ -432,7 +432,6 @@ where
                 field,
                 &[
                     TimeZoneFormatterUnit::SpecificNonLocation(FieldLength::Four),
-                    TimeZoneFormatterUnit::SpecificLocation,
                     TimeZoneFormatterUnit::LocalizedOffset(FieldLength::Four),
                 ],
             )?

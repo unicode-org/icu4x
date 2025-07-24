@@ -182,13 +182,34 @@
       "O": "GMT\u200e+3\u200e",
       "OOOO": "GMT\u200e+03:00\u200e"
     }
+  },{
+    "locale": "en-GB",
+    "datetime": "2021-07-11T12:00:00.000+01[Africa/Casablanca]",
+    "expectations": {
+      "z": "GMT+1",
+      "zzzz": "GMT+01:00",
+
+      "v": "Morocco Time",
+      "vvvv": "Morocco Time"
+    }
+  },
+  {
+    "locale": "en-GB",
+    "datetime": "2021-07-11T12:00:00.000+00[Africa/Casablanca]",
+    "expectations": {
+      "z": "GMT+0",
+      "zzzz": "GMT+00:00",
+
+      "v": "Morocco Time",
+      "vvvv": "Morocco Time"
+    }
   },
   {
     "locale": "en",
     "datetime": "2008-02-21T12:00:00.000-04:00[America/Argentina/San_Luis]",
     "expectations": {
       "z": "GMT-4",
-      "zzzz": "San Luis Standard Time",
+      "zzzz": "GMT-04:00",
 
       "v": "San Luis Time",
       "vvvv": "San Luis Time",
