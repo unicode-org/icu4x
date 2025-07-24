@@ -9,23 +9,16 @@ enum BuildModeEnum { local, checkout, fetch }
 
 class BuildOptions {
   final BuildModeEnum buildMode;
-  final Uri? localDylibPath;
+  final Uri? localPath;
   final Uri? checkoutPath;
-  final bool? treeshake;
 
-  BuildOptions({
-    required this.buildMode,
-    this.localDylibPath,
-    this.checkoutPath,
-    this.treeshake,
-  });
+  BuildOptions({required this.buildMode, this.localPath, this.checkoutPath});
 
   Map<String, dynamic> toMap() {
     return {
       'buildMode': buildMode.name,
-      if (localDylibPath != null) 'localDylibPath': localDylibPath.toString(),
+      if (localPath != null) 'localPath': localPath.toString(),
       if (checkoutPath != null) 'checkoutPath': checkoutPath.toString(),
-      if (treeshake != null) 'treeshake': treeshake.toString(),
     };
   }
 
@@ -36,9 +29,8 @@ class BuildOptions {
             (element) => element.name == defines['buildMode'],
           ) ??
           BuildModeEnum.fetch,
-      localDylibPath: defines.path('localDylibPath'),
+      localPath: defines.path('localPath'),
       checkoutPath: defines.path('checkoutPath'),
-      treeshake: (defines['treeshake'] ?? true) == true,
     );
   }
 

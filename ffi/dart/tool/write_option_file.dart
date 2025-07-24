@@ -14,7 +14,7 @@ Future<void> main(List<String> args) async {
   final buildOptions = switch (buildMode) {
     BuildModeEnum.local => BuildOptions(
       buildMode: buildMode,
-      localDylibPath: Uri.file(pathString!),
+      localPath: Uri.file(pathString!),
     ),
     BuildModeEnum.checkout => BuildOptions(
       buildMode: buildMode,

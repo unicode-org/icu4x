@@ -29,8 +29,6 @@ Future<void> main(List<String> args) async {
     final usages = input.usages;
     final symbolsToKeep = input.fetchSymbolsToBeKept;
 
-    output.addDependency(staticLib.file!);
-
     final symbols = usages
         ?.constantsOf(diplomatFfiUseIdentifier)
         .map((instance) => instance['symbol'] as String);

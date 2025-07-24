@@ -31,13 +31,13 @@ hooks:
       buildMode: fetch
 ```
 
-* local: Use a locally existing binary at the environment variable `LOCAL_ICU4X_BINARY`.
+* local: Use a locally existing binary.
 ```
 hooks:
   user_defines:
     icu4x:
       buildMode: local
-      localDylibPath: path/to/dylib.so
+      localPath: path/to/dylib.so
 ```
 
 * checkout: Build a fresh library from a local git checkout of the icu4x repository.
@@ -52,19 +52,10 @@ hooks:
 ''');
     }
     print('Read build options: ${buildOptions.toJson()}');
-    final treeshake = buildOptions.treeshake ?? false;
     final buildMode = switch (buildOptions.buildMode) {
-      BuildModeEnum.local => LocalMode(
-        input,
-        buildOptions.localDylibPath,
-        treeshake,
-      ),
-      BuildModeEnum.checkout => CheckoutMode(
-        input,
-        buildOptions.checkoutPath,
-        treeshake,
-      ),
-      BuildModeEnum.fetch => FetchMode(input, treeshake),
+      BuildModeEnum.local => LocalMode(input, buildOptions.localPath),
+      BuildModeEnum.checkout => CheckoutMode(input, buildOptions.checkoutPath),
+      BuildModeEnum.fetch => FetchMode(input),
     };
 
     final builtLibrary = await buildMode.build();
@@ -76,7 +67,9 @@ hooks:
         linkMode: DynamicLoadingBundled(),
         file: builtLibrary,
       ),
-      routing: input.config.linkingEnabled
+      routing:
+          buildOptions.buildMode != BuildModeEnum.local &&
+              input.config.linkingEnabled
           ? const ToLinkHook(package)
           : const ToAppBundle(),
     );
@@ -87,9 +80,8 @@ hooks:
 
 sealed class BuildMode {
   final BuildInput input;
-  final bool treeshake;
 
-  const BuildMode(this.input, this.treeshake);
+  const BuildMode(this.input);
 
   List<Uri> get dependencies;
 
@@ -97,7 +89,7 @@ sealed class BuildMode {
 }
 
 final class FetchMode extends BuildMode {
-  FetchMode(super.input, super.treeshake);
+  FetchMode(super.input);
   final httpClient = HttpClient();
 
   @override
@@ -105,9 +97,7 @@ final class FetchMode extends BuildMode {
     print('Running in `fetch` mode');
     final targetOS = input.config.code.targetOS;
     final targetArchitecture = input.config.code.targetArchitecture;
-    final libraryType = input.config.buildStatic(treeshake)
-        ? 'static_data'
-        : 'dynamic';
+    final libraryType = input.config.buildStatic ? 'static_data' : 'dynamic';
     final target = [targetOS, targetArchitecture, libraryType].join('_');
     print('Fetching pre-built binary for $version and $target');
     final dylibRemoteUri = Uri.parse(
@@ -115,7 +105,7 @@ final class FetchMode extends BuildMode {
     );
     final library = await fetchToFile(
       dylibRemoteUri,
-      input.outputDirectory.resolve(input.config.filename(treeshake)('icu4x')),
+      input.outputDirectory.resolve(input.config.filename('icu4x')),
     );
 
     final bytes = await library.readAsBytes();
@@ -150,16 +140,16 @@ final class FetchMode extends BuildMode {
 
 final class LocalMode extends BuildMode {
   final Uri? localPath;
-  LocalMode(super.input, this.localPath, super.treeshake);
+  LocalMode(super.input, this.localPath);
 
   String get _localLibraryPath {
     if (localPath != null) {
       return localPath!.toFilePath(windows: Platform.isWindows);
     }
     throw ArgumentError(
-      '`LOCAL_ICU4X_BINARY` is empty. '
-      'If the `ICU4X_BUILD_MODE` is set to `local`, the '
-      '`LOCAL_ICU4X_BINARY` environment variable must contain the path to '
+      '`localPath` is not set in the build options. '
+      'If the `buildMode` is set to `local`, the '
+      '`localPath` key must contain the path to '
       'the binary.',
     );
   }
@@ -185,7 +175,7 @@ final class LocalMode extends BuildMode {
 final class CheckoutMode extends BuildMode {
   final Uri? checkoutPath;
 
-  CheckoutMode(super.input, this.checkoutPath, super.treeshake);
+  CheckoutMode(super.input, this.checkoutPath);
 
   @override
   Future<Uri> build() async {
@@ -204,7 +194,7 @@ final class CheckoutMode extends BuildMode {
     final builtLib = await buildLib(
       input.config.code.targetOS,
       input.config.code.targetArchitecture,
-      input.config.buildStatic(treeshake),
+      input.config.buildStatic,
       input.config.code.targetOS == OS.iOS &&
           input.config.code.iOS.targetSdk == IOSSdk.iPhoneSimulator,
       Directory.fromUri(checkoutPath!),
@@ -229,11 +219,10 @@ final class CheckoutMode extends BuildMode {
 }
 
 extension on BuildConfig {
-  bool buildStatic(bool treeshake) =>
-      code.linkModePreference == LinkModePreference.static ||
-      (linkingEnabled && treeshake);
+  bool get buildStatic =>
+      code.linkModePreference == LinkModePreference.static || linkingEnabled;
 
-  String Function(String) filename(bool treeshake) => buildStatic(treeshake)
+  String Function(String) get filename => buildStatic
       ? code.targetOS.staticlibFileName
       : code.targetOS.dylibFileName;
 }
