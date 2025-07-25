@@ -73,7 +73,16 @@ impl SourceDataProvider {
             .tz_caches
             .metazones
             .get_or_init(|| {
-                let metazones_resource =
+                let metazones_resource = &self
+                    .cldr()?
+                    .core()
+                    .read_and_parse::<cldr_serde::time_zones::meta_zones::Resource>(
+                        "supplemental/metaZones.json",
+                    )?
+                    .supplemental
+                    .meta_zones;
+
+                let metazones_patch =
                     serde_json::from_str::<cldr_serde::time_zones::meta_zones::Resource>(include_str!("../../data/metaZonesPatched.json"))
                     .unwrap()
                     .supplemental
@@ -103,6 +112,7 @@ impl SourceDataProvider {
                     .meta_zones_territory
                     .0
                     .iter()
+                    .chain(metazones_patch.meta_zones_territory.0.iter())
                     .filter_map(|mt| {
                         if mt.map_zone.territory != region!("001") {
                             return None;
@@ -115,6 +125,7 @@ impl SourceDataProvider {
                     .meta_zone_info
                     .time_zone
                     .iter()
+                    .chain(metazones_patch.meta_zone_info.time_zone.iter())
                     .map(|(iana, periods)| {
                         let &bcp47 = bcp47_tzid_data.get(&iana).unwrap();
                         let mut periods = periods
