@@ -377,6 +377,12 @@ impl VariantOffsets {
             daylight: None,
         }
     }
+
+    /// Whether this offset set is considered permanent DST, i.e. standard and daylight
+    /// offsets are the same.
+    pub fn is_permanent_dst(self) -> bool {
+        Some(self.standard) == self.daylight
+    }
 }
 
 #[test]
