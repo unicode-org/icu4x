@@ -115,6 +115,7 @@ impl AsULE for VariantOffsetsWithMetazoneMembershipKind {
                     3 => Some(3600),
                     4 => Some(5400),
                     5 => Some(7200),
+                    6 => Some(-3600),
                     x => {
                         debug_assert!(false, "unknown DST encoding {x}");
                         None
@@ -170,6 +171,7 @@ impl AsULE for VariantOffsetsWithMetazoneMembershipKind {
                 Some(3600) => 3,
                 Some(5400) => 4,
                 Some(7200) => 5,
+                Some(-3600) => 6,
                 Some(x) => {
                     debug_assert!(false, "unhandled DST value {x}");
                     0
