@@ -27,6 +27,13 @@ use crate::{
 
 // ==== Time Zone Annotation Parsing ====
 
+/// We support two kinds of annotations here: annotations (e.g. `[u-ca=foo]`)
+/// and "time zone annotations" (`[UTC]` or `[+05:30]`)
+///
+/// When parsing bracketed contents, we need to figure out which one we're dealing with.
+///
+/// This function returns a time zone annotation if we are dealing with a time zone,
+/// otherwise it returns None (and the caller must handle non-tz annotations).
 pub(crate) fn parse_ambiguous_tz_annotation<'a, T: EncodingType>(
     cursor: &mut Cursor<'a, T>,
 ) -> ParserResult<Option<TimeZoneAnnotation<'a, T>>> {
@@ -52,14 +59,19 @@ pub(crate) fn parse_ambiguous_tz_annotation<'a, T: EncodingType>(
             let mut peek_pos = current_peek + 1;
             while let Some(ch) = cursor.peek_n(peek_pos)? {
                 if is_tz_name_separator(ch) || (is_tz_char(ch) && !is_a_key_char(ch)) {
+                    // This is stuff like `asia/kolkata` where there is a non-annotation
+                    // character (the slash).
                     let tz = parse_tz_annotation(cursor)?;
                     return Ok(Some(tz));
                 } else if is_annotation_key_value_separator(ch)
                     || (is_a_key_char(ch) && !is_tz_char(ch))
                 {
+                    // We have an `=` sigh, this is a non-tz annotation
                     return Ok(None);
                 } else if is_annotation_close(ch) {
-                    return Err(ParseError::InvalidAnnotation);
+                    // This is stuff like `cet` which is just a lowercase timezone
+                    let tz = parse_tz_annotation(cursor)?;
+                    return Ok(Some(tz));
                 }
 
                 peek_pos += 1;

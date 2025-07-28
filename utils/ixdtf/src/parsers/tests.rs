@@ -587,6 +587,31 @@ fn valid_unambiguous_time() {
 }
 
 #[test]
+fn ambiguous_annotations() {
+    const TESTS_TIMEZONE: &[&str] = &[
+        "2020-01-01[Asia/Kolkata]",
+        // Has a slash
+        "2020-01-01[asia/kolkata]",
+        "2020-01-01[cet]",
+    ];
+    const TESTS_ANNOTATIONS: &[&str] = &[
+        // Calendar
+        "2020-01-01[u-ca=foo]",
+        // Nonesense annotations (must still parse)
+        "2020-01-01[c-et=foo]",
+        "2020-01-01[cet=foo]",
+    ];
+    for test in TESTS_TIMEZONE {
+        let result = IxdtfParser::from_str(test).parse().expect(test);
+        assert!(result.tz.is_some());
+    }
+    for test in TESTS_ANNOTATIONS {
+        let result = IxdtfParser::from_str(test).parse().expect(test);
+        assert!(result.tz.is_none());
+    }
+}
+
+#[test]
 fn temporal_valid_instant_strings() {
     let instants = [
         "1970-01-01T00:00+00:00[!Africa/Abidjan]",
