@@ -1093,6 +1093,240 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
     }
 }
 
+impl<Y: for<'a> Yokeable<'a>, C: StableDeref> Yoke<Y, C>
+where
+    <C as Deref>::Target: 'static,
+{
+    /// Allows one to produce a new yoke from both the cart and the old yoke. This will move the
+    /// cart, and the provided transformation is only allowed to use data known to be borrowed from
+    /// the cart.
+    ///
+    /// If access to the old [`Yokeable`] `Y` is sufficient to produce new [`Yokeable`] `P`, then
+    /// [`Yoke::map_project`] should be preferred, as `map_with_cart` places additional
+    /// constraints on the cart.
+    ///
+    /// This can be used, for example, to transform data between two formats, one of which contains
+    /// more data:
+    ///
+    /// ```
+    /// # use yoke::{Yoke, Yokeable};
+    /// # use std::mem;
+    /// # use std::rc::Rc;
+    /// #
+    /// // Both structs have `first_line`, which won't need to be recomputed in `map_with_cart`.
+    ///
+    /// // Safely implements Yokeable<'a>
+    /// struct Foo<'a> {
+    ///     first_line: Option<&'a str>,
+    /// }
+    ///
+    /// // Also safely implements Yokeable<'a>
+    /// struct Bar<'a> {
+    ///     first_line: Option<&'a str>,
+    ///     last_line: Option<&'a str>,
+    /// }
+    ///
+    /// fn foo_to_bar(
+    ///     foo: Yoke<Foo<'static>, Rc<str>>,
+    /// ) -> Yoke<Bar<'static>, Rc<str>> {
+    ///     foo.map_with_cart(|foo, cart| {
+    ///         Bar {
+    ///             first_line: foo.first_line,
+    ///             last_line: cart.lines().next_back(),
+    ///         }
+    ///     })
+    /// }
+    ///
+    /// fn bar_to_foo(
+    ///     bar: Yoke<Bar<'static>, Rc<str>>,
+    /// ) -> Yoke<Foo<'static>, Rc<str>> {
+    ///     bar.map_project(|bar, _| {
+    ///         Foo {
+    ///             first_line: bar.first_line,
+    ///         }
+    ///     })
+    /// }
+    ///
+    /// #
+    /// # unsafe impl<'a> Yokeable<'a> for Foo<'static> {
+    /// #     type Output = Foo<'a>;
+    /// #     fn transform(&'a self) -> &'a Foo<'a> {
+    /// #         self
+    /// #     }
+    /// #
+    /// #     fn transform_owned(self) -> Foo<'a> {
+    /// #         // covariant lifetime cast, can be done safely
+    /// #         self
+    /// #     }
+    /// #
+    /// #     unsafe fn make(from: Foo<'a>) -> Self {
+    /// #         unsafe { mem::transmute(from) }
+    /// #     }
+    /// #
+    /// #     fn transform_mut<F>(&'a mut self, f: F)
+    /// #     where
+    /// #         F: 'static + FnOnce(&'a mut Self::Output),
+    /// #     {
+    /// #         unsafe { f(mem::transmute(self)) }
+    /// #     }
+    /// # }
+    /// #
+    /// # unsafe impl<'a> Yokeable<'a> for Bar<'static> {
+    /// #     type Output = Bar<'a>;
+    /// #     fn transform(&'a self) -> &'a Bar<'a> {
+    /// #         self
+    /// #     }
+    /// #
+    /// #     fn transform_owned(self) -> Bar<'a> {
+    /// #         // covariant lifetime cast, can be done safely
+    /// #         self
+    /// #     }
+    /// #
+    /// #     unsafe fn make(from: Bar<'a>) -> Self {
+    /// #         unsafe { mem::transmute(from) }
+    /// #     }
+    /// #
+    /// #     fn transform_mut<F>(&'a mut self, f: F)
+    /// #     where
+    /// #         F: 'static + FnOnce(&'a mut Self::Output),
+    /// #     {
+    /// #         unsafe { f(mem::transmute(self)) }
+    /// #     }
+    /// # }
+    /// ```
+    //
+    // Safety docs can be found at the end of the file.
+    pub fn map_with_cart<P, F>(self, f: F) -> Yoke<P, C>
+    where
+        P: for<'a> Yokeable<'a>,
+        F: for<'a> FnOnce(
+            <Y as Yokeable<'a>>::Output,
+            &'a <C as Deref>::Target,
+        ) -> <P as Yokeable<'a>>::Output,
+        <C as Deref>::Target: 'static,
+    {
+        let p = f(self.yokeable.into_inner().transform_owned(), self.cart.deref());
+        Yoke {
+            yokeable: KindaSortaDangling::new(
+                // Safety: the resulting `yokeable` is dropped before the `cart` because
+                // of the Yoke invariant. See the safety docs below for the justification of why
+                // yokeable could only borrow from the Cart.
+                unsafe { P::make(p) },
+            ),
+            cart: self.cart,
+        }
+    }
+
+    /// This is similar to [`Yoke::map_with_cart`], but it does not move [`Self`] and instead
+    /// clones the cart (only if the cart is a [`CloneableCart`]).
+    ///
+    /// This is a bit more efficient than cloning the [`Yoke`] and then calling
+    /// [`Yoke::map_with_cart`] because it will not clone fields that are going to be discarded.
+    ///
+    /// If access to the old [`Yokeable`] `Y` is sufficient to produce new [`Yokeable`] `P`, then
+    /// [`Yoke::map_project_cloned`] should be preferred, as `map_with_cart_cloned` places
+    /// additional constraints on the cart.
+    pub fn map_with_cart_cloned<'this, P, F>(&'this self, f: F) -> Yoke<P, C>
+    where
+        P: for<'a> Yokeable<'a>,
+        F: for<'a> FnOnce(
+            &'this <Y as Yokeable<'a>>::Output,
+            &'a <C as Deref>::Target,
+        ) -> <P as Yokeable<'a>>::Output,
+        C: CloneableCart,
+        <C as Deref>::Target: 'static,
+    {
+        let p = f(self.get(), self.cart.deref());
+        Yoke {
+            yokeable: KindaSortaDangling::new(
+                // Safety: the resulting `yokeable` is dropped before the `cart` because
+                // of the Yoke invariant. See the safety docs below for the justification of why
+                // yokeable could only borrow from the Cart.
+                unsafe { P::make(p) },
+            ),
+            cart: self.cart.clone(),
+        }
+    }
+
+    /// This is similar to [`Yoke::map_with_cart`], but it can also bubble up an error
+    /// from the callback.
+    ///
+    /// If access to the old [`Yokeable`] `Y` is sufficient to produce new [`Yokeable`] `P`, then
+    /// [`Yoke::try_map_project`] should be preferred, as `try_map_with_cart` places
+    /// additional constraints on the cart.
+    ///
+    /// ```
+    /// # use std::rc::Rc;
+    /// # use yoke::Yoke;
+    /// # use std::str::{self, Utf8Error};
+    /// #
+    /// // Implements `Yokeable`
+    /// type P<'a> = (&'a str, Option<&'a u8>);
+    ///
+    /// fn slice(
+    ///     y: Yoke<&'static [u8], Rc<[u8]>>,
+    /// ) -> Result<Yoke<P<'static>, Rc<[u8]>>, Utf8Error> {
+    ///     y.try_map_with_cart(move |bytes, cart| {
+    ///         Ok((
+    ///             str::from_utf8(bytes)?,
+    ///             bytes.first(),
+    ///         ))
+    ///     })
+    /// }
+    /// ```
+    pub fn try_map_with_cart<P, F, E>(self, f: F) -> Result<Yoke<P, C>, E>
+    where
+        P: for<'a> Yokeable<'a>,
+        F: for<'a> FnOnce(
+            <Y as Yokeable<'a>>::Output,
+            &'a <C as Deref>::Target,
+        ) -> Result<<P as Yokeable<'a>>::Output, E>,
+        <C as Deref>::Target: 'static,
+    {
+        let p = f(self.yokeable.into_inner().transform_owned(), self.cart.deref())?;
+        Ok(Yoke {
+            yokeable: KindaSortaDangling::new(
+                // Safety: the resulting `yokeable` is dropped before the `cart` because
+                // of the Yoke invariant. See the safety docs below for the justification of why
+                // yokeable could only borrow from the Cart.
+                unsafe { P::make(p) },
+            ),
+            cart: self.cart,
+        })
+    }
+
+    /// This is similar to [`Yoke::try_map_with_cart`], but it does not move [`Self`] and instead
+    /// clones the cart (only if the cart is a [`CloneableCart`]).
+    ///
+    /// This is a bit more efficient than cloning the [`Yoke`] and then calling
+    /// [`Yoke::try_map_with_cart`] because it will not clone fields that are going to be discarded.
+    ///
+    /// If access to the old [`Yokeable`] `Y` is sufficient to produce new [`Yokeable`] `P`, then
+    /// [`Yoke::try_map_project_cloned`] should be preferred, as `try_map_with_cart_cloned` places
+    /// additional constraints on the cart.
+    pub fn try_map_with_cart_cloned<'this, P, F, E>(&'this self, f: F) -> Result<Yoke<P, C>, E>
+    where
+        P: for<'a> Yokeable<'a>,
+        C: CloneableCart,
+        F: for<'a> FnOnce(
+            &'this <Y as Yokeable<'a>>::Output,
+            &'a <C as Deref>::Target,
+        ) -> Result<<P as Yokeable<'a>>::Output, E>,
+        <C as Deref>::Target: 'static,
+    {
+        let p = f(self.get(), self.cart.deref())?;
+        Ok(Yoke {
+            yokeable: KindaSortaDangling::new(
+                // Safety: the resulting `yokeable` is dropped before the `cart` because
+                // of the Yoke invariant. See the safety docs below for the justification of why
+                // yokeable could only borrow from the Cart.
+                unsafe { P::make(p) },
+            ),
+            cart: self.cart.clone(),
+        })
+    }
+}
+
 #[cfg(feature = "alloc")]
 impl<Y: for<'a> Yokeable<'a>, C: 'static + Sized> Yoke<Y, Rc<C>> {
     /// Allows type-erasing the cart in a `Yoke<Y, Rc<C>>`.
