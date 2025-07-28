@@ -158,7 +158,7 @@ impl SourceDataProvider {
                                 // it's only included if it's also used after the horizon.
                                 i += 1;
                             } else {
-                                all_metazones.extend(periods[i].1.map(|m| &m.mzone));
+                                all_metazones.extend(periods[i].1.and_then(|m| m.mzone.as_ref()));
                                 i += 1;
                             }
                         }
@@ -211,7 +211,7 @@ impl SourceDataProvider {
                                 })
                             })
                             .unwrap_or_else(|| {
-                                if curr_mz.is_some() && (curr_offset.rearguard_agrees == Some(false) || curr_offset.vanguard_agrees == Some(false)) {
+                                if curr_offset.rearguard_agrees == Some(false) || curr_offset.vanguard_agrees == Some(false) {
                                     log::warn!("Unhandled TZDB inconsistency for {tz:?}: {curr_offset:?}");
                                 }
                                 (
@@ -226,13 +226,17 @@ impl SourceDataProvider {
                             std = -2700;
                         };
 
+                        if daylight.map(|d| d - std) == Some(-3600) {
+                            log::error!("{tz:?}, {curr_mz:?}");
+                        }
+
                         let mut os = VariantOffsets::from_standard(UtcOffset::from_seconds_unchecked(std as i32));
                         os.daylight = daylight.map(|o| UtcOffset::from_seconds_unchecked(o as i32));
 
                         offsets_and_metazones.entry(tz).or_default().push((
                             start,
                             os,
-                            curr_mz.map(|mz| mz.mzone.as_str()),
+                            curr_mz.and_then(|mz| mz.mzone.as_ref().map(|m| m.as_str())),
                         ));
 
                         match (offsets.peek().as_ref(), mzs.peek().copied()) {

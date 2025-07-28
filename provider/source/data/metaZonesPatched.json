@@ -18,6 +18,39 @@
                     "+01": "daylight"
                   }
                 }
+              },
+              {
+                "usesMetazone": {
+                  "_from": "2018-10-28 02:00",
+                  "_variantOverrides": {
+                    "+00": "standard",
+                    "+01": "daylight"
+                  }
+                }
+              }
+            ],
+            "El_Aaiun": [
+              {
+                "usesMetazone": {
+                  "_mzone": "Africa_FarWestern",
+                  "_to": "1976-04-14 01:00"
+                }
+              },
+              {
+                "usesMetazone": {
+                  "_mzone": "Europe_Western",
+                  "_from": "1976-04-14 01:00",
+                  "_to": "2018-10-28 02:00"
+                }
+              },
+              {
+                "usesMetazone": {
+                  "_from": "2018-10-28 02:00",
+                  "_variantOverrides": {
+                    "+00": "standard",
+                    "+01": "daylight"
+                  }
+                }
               }
             ],
             "Windhoek": [

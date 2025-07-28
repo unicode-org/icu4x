@@ -16,7 +16,7 @@ use std::collections::BTreeMap;
 #[derive(PartialEq, Debug, Clone, Deserialize)]
 pub(crate) struct UsesMetazone {
     #[serde(rename = "_mzone")]
-    pub(crate) mzone: String,
+    pub(crate) mzone: Option<String>,
     #[serde(rename = "_from", default, deserialize_with = "deserialize_date")]
     pub(crate) from: Option<ZoneNameTimestamp>,
     #[serde(rename = "_to", default, deserialize_with = "deserialize_date")]
