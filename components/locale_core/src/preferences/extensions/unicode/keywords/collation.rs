@@ -28,8 +28,16 @@ enum_keyword!(
         /// Pinyin ordering for Latin and for CJK characters (used in Chinese)
         ("pinyin" => Pinyin),
         /// Special collation type for string search
+        ///
+        /// Note: `icu_collator` does not include search collation rules by default.
+        /// For more information, see [`ExportDriver::with_additional_collations`]
+        /// (https://docs.rs/icu_provider_export/latest/icu_provider_export/struct.ExportDriver.html#method.with_additional_collations).
         ("search" => Search),
         /// Special collation type for Korean initial consonant search
+        ///
+        /// Note: `icu_collator` does not include search collation rules by default.
+        /// For more information, see [`ExportDriver::with_additional_collations`]
+        /// (https://docs.rs/icu_provider_export/latest/icu_provider_export/struct.ExportDriver.html#method.with_additional_collations).
         ("searchjl" => Searchjl),
         /// Default ordering for each language
         ("standard" => Standard),
