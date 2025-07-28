@@ -236,7 +236,7 @@ impl SourceDataProvider {
                         offsets_and_metazones.entry(tz).or_default().push((
                             start,
                             os,
-                            curr_mz.and_then(|mz| mz.mzone.as_ref().map(|m| m.as_str())),
+                            curr_mz.and_then(|mz| mz.mzone.as_deref()),
                         ));
 
                         match (offsets.peek().as_ref(), mzs.peek().copied()) {
