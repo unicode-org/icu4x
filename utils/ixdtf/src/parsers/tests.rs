@@ -279,14 +279,6 @@ fn invalid_annotations() {
         "Invalid annotation parsing: \"{bad_value}\" should fail to parse."
     );
 
-    let bad_value = "2021-01-29 02:12:48+01:00:00[u][u-ca=iso8601]";
-    let err = IxdtfParser::from_str(bad_value).parse();
-    assert_eq!(
-        err,
-        Err(ParseError::InvalidAnnotation),
-        "Invalid annotation parsing: \"{bad_value}\" should fail to parse."
-    );
-
     let bad_value = "2021-01-29 02:12:48+01:00:00[u-ca=iso8601][!foo=bar]";
     let err = IxdtfParser::from_str(bad_value).parse();
     assert_eq!(
@@ -589,10 +581,13 @@ fn valid_unambiguous_time() {
 #[test]
 fn ambiguous_annotations() {
     const TESTS_TIMEZONE: &[&str] = &[
+        // Starts with capital, must be timezone
         "2020-01-01[Asia/Kolkata]",
         // Has a slash
         "2020-01-01[asia/kolkata]",
         "2020-01-01[cet]",
+        // both annotation and tz
+        "2021-01-29 02:12:48+01:00:00[u][u-ca=iso8601]",
     ];
     const TESTS_ANNOTATIONS: &[&str] = &[
         // Calendar
