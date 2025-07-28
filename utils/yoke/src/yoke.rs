@@ -1280,7 +1280,7 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
     }
 }
 
-/// # Safety docs for project()
+/// # Safety docs for map_project_*()
 ///
 /// (Docs are on a private const to allow the use of compile_fail doctests)
 ///
@@ -1305,7 +1305,7 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
 /// # use yoke::Yoke;
 /// # use std::borrow::Cow;
 /// fn borrow_potentially_owned(y: &Yoke<Cow<'static, str>, Rc<[u8]>>) -> Yoke<&'static str, Rc<[u8]>> {
-///    y.map_project_cloned(|cow, _| &*cow)   
+///    y.map_project_cloned(|cow, _| &*cow)
 /// }
 /// ```
 ///
@@ -1318,7 +1318,7 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
 /// # use yoke::Yoke;
 /// # use std::borrow::Cow;
 /// fn borrow_potentially_owned(y: Yoke<Cow<'static, str>, Rc<[u8]>>) -> Yoke<&'static str, Rc<[u8]>> {
-///    y.map_project(|cow, _| &*cow)   
+///    y.map_project(|cow, _| &*cow)
 /// }
 /// ```
 ///
@@ -1340,7 +1340,7 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
 ///
 /// fn map_project_owned(bar: &Yoke<Bar<'static>, Rc<[u8]>>) -> Yoke<&'static str, Rc<[u8]>> {
 ///     // ERROR (but works if you replace owned with string_2)
-///     bar.map_project_cloned(|bar, _| &*bar.owned)   
+///     bar.map_project_cloned(|bar, _| &*bar.owned)
 /// }
 ///
 /// #
@@ -1371,12 +1371,12 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
 /// ```
 ///
 /// Borrowed data from `Y` similarly cannot escape with the wrong lifetime because of the `for<'a>`, since
-/// it will never be valid for the borrowed data to escape for all lifetimes of 'a. Internally, `.project()`
+/// it will never be valid for the borrowed data to escape for all lifetimes of 'a. Internally, `.map_project()`
 /// uses `.get()`, however the signature forces the callers to be able to handle every lifetime.
 ///
 ///  `'a` is the only lifetime that matters here; `Yokeable`s must be `'static` and since
 /// `Output` is an associated type it can only have one lifetime, `'a` (there's nowhere for it to get another from).
-/// `Yoke`s can get additional lifetimes via the cart, and indeed, `project()` can operate on `Yoke<_, &'b [u8]>`,
+/// `Yoke`s can get additional lifetimes via the cart, and indeed, `map_project()` can operate on `Yoke<_, &'b [u8]>`,
 /// however this lifetime is inaccessible to the closure, and even if it were accessible the `for<'a>` would force
 /// it out of the output. All external lifetimes (from other found outside the yoke/closures
 /// are similarly constrained here.
