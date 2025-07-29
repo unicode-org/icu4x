@@ -53,6 +53,20 @@
                 }
               }
             ],
+            "Monrovia": [
+              {
+                "usesMetazone": {
+                  "_mzone": "Liberia",
+                  "_to": "1972-01-07 00:30"
+                }
+              },
+              {
+                "usesMetazone": {
+                  "_mzone": "GMT",
+                  "_from": "1972-01-07 00:30"
+                }
+              }
+            ],
             "Windhoek": [
               {
                 "usesMetazone": {
@@ -103,9 +117,295 @@
                   "_from": "1983-10-30 12:00"
                 }
               }
+            ],
+            "Anchorage": [
+              {
+                "usesMetazone": {
+                  "_mzone": "Alaska_Hawaii",
+                  "_to": "1983-11-30 09:00",
+                  "_variantOverrides": {
+                    "YST": "daylight"
+                  }
+                }
+              },
+              {
+                "usesMetazone": {
+                  "_mzone": "Alaska",
+                  "_from": "1983-11-30 09:00"
+                }
+              }
+            ],
+            "Cambridge_Bay": [
+              {
+                "usesMetazone": {
+                  "_mzone": "America_Mountain",
+                  "_to": "1999-10-31 08:00"
+                }
+              },
+              {
+                "usesMetazone": {
+                  "_mzone": "America_Central",
+                  "_from": "1999-10-31 08:00",
+                  "_to": "2001-04-01 09:00",
+                  "_variantOverrides": {
+                    "EST": "daylight"
+                  }
+                }
+              },
+              {
+                "usesMetazone": {
+                  "_mzone": "America_Mountain",
+                  "_from": "2001-04-01 09:00"
+                }
+              }
+            ],
+            "Juneau": [
+              {
+                "usesMetazone": {
+                  "_mzone": "America_Pacific",
+                  "_to": "1983-10-30 09:00",
+                  "_variantOverrides": {
+                    "YDT": "standard"
+                  }
+                }
+              },
+              {
+                "usesMetazone": {
+                  "_mzone": "Alaska",
+                  "_from": "1983-10-30 09:00"
+                }
+              }
+            ],
+            "Nome": [
+              {
+                "usesMetazone": {
+                  "_mzone": "Bering",
+                  "_to": "1983-10-30 12:00"
+                }
+              },
+              {
+                "usesMetazone": {
+                  "_mzone": "Alaska",
+                  "_from": "1983-10-30 12:00"
+                }
+              }
+            ],
+            "Punta_Arenas": [
+              {
+                "usesMetazone": {
+                  "_mzone": "Chile",
+                  "_to": "2016-12-04 03:00"
+                }
+              }
+            ],
+            "Rankin_Inlet": [
+              {
+                "usesMetazone": {
+                  "_mzone": "America_Central",
+                  "_variantOverrides": {
+                    "EST": "daylight"
+                  }
+                }
+              }
+            ],
+            "Resolute": [
+              {
+                "usesMetazone": {
+                  "_mzone": "America_Central",
+                  "_variantOverrides": {
+                    "EST": "daylight"
+                  }
+                }
+              }
+            ],
+            "Sitka": [
+              {
+                "usesMetazone": {
+                  "_mzone": "America_Pacific",
+                  "_to": "1983-10-30 09:00"
+                }
+              },
+              {
+                "usesMetazone": {
+                  "_mzone": "Alaska",
+                  "_from": "1983-10-30 09:00"
+                }
+              }
+            ]
+          },
+          "Antarctica": {
+            "Palmer": [
+              {
+                "usesMetazone": {
+                  "_mzone": "Argentina",
+                  "_to": "1982-05-01 03:00"
+                }
+              },
+              {
+                "usesMetazone": {
+                  "_mzone": "Chile",
+                  "_from": "1982-05-01 03:00",
+                  "_to": "2016-12-04 03:00"
+                }
+              }
+            ]
+          },
+          "Asia": {
+            "Ashgabat": [
+              {
+                "usesMetazone": {
+                  "_mzone": "Ashkhabad",
+                  "_to": "1992-01-18 22:00"
+                }
+              },
+              {
+                "usesMetazone": {
+                  "_mzone": "Turkmenistan",
+                  "_from": "1992-01-18 22:00"
+                }
+              }
+            ],
+            "Baku": [
+              {
+                "usesMetazone": {
+                  "_mzone": "Baku",
+                  "_to": "1991-03-30 22:00"
+                }
+              },
+              {
+                "usesMetazone": {
+                  "_mzone": "Azerbaijan",
+                  "_from": "1991-03-30 22:00"
+                }
+              }
+            ],
+            "Bishkek": [
+              {
+                "usesMetazone": {
+                  "_mzone": "Frunze",
+                  "_to": "1991-03-30 20:00"
+                }
+              },
+              {
+                "usesMetazone": {
+                  "_mzone": "Kyrgystan",
+                  "_from": "1991-03-30 20:00"
+                }
+              }
+            ],
+            "Chita": [
+              {
+                "usesMetazone": {
+                  "_mzone": "Yakutsk",
+                  "_to": "2014-10-25 16:00"
+                }
+              },
+              {
+                "usesMetazone": {
+                  "_mzone": "Irkutsk",
+                  "_from": "2014-10-25 17:00",
+                  "_to": "2016-03-26 18:00"
+                }
+              },
+              {
+                "usesMetazone": {
+                  "_mzone": "Yakutsk",
+                  "_from": "2016-03-26 18:00"
+                }
+              }
+            ],
+            "Dushanbe": [
+              {
+                "usesMetazone": {
+                  "_mzone": "Dushanbe",
+                  "_to": "1991-09-08 21:00",
+                  "_variantOverrides": {
+                    "+06": "standard"
+                  }
+                }
+              },
+              {
+                "usesMetazone": {
+                  "_mzone": "Tajikistan",
+                  "_from": "1991-09-08 21:00"
+                }
+              }
+            ],
+            "Samarkand": [
+              {
+                "usesMetazone": {
+                  "_mzone": "Samarkand",
+                  "_to": "1991-08-31 18:00",
+                  "_variantOverrides": {
+                    "+06": "daylight"
+                  }
+                }
+              },
+              {
+                "usesMetazone": {
+                  "_mzone": "Uzbekistan",
+                  "_from": "1991-08-31 18:00"
+                }
+              }
+            ],
+            "Tashkent": [
+              {
+                "usesMetazone": {
+                  "_mzone": "Tashkent",
+                  "_to": "1991-03-30 20:00"
+                }
+              },
+              {
+                "usesMetazone": {
+                  "_mzone": "Uzbekistan",
+                  "_from": "1991-03-30 20:00"
+                }
+              }
+            ],
+            "Tbilisi": [
+              {
+                "usesMetazone": {
+                  "_mzone": "Tbilisi",
+                  "_to": "1991-03-30 22:00"
+                }
+              },
+              {
+                "usesMetazone": {
+                  "_mzone": "Georgia",
+                  "_from": "1991-03-30 22:00"
+                }
+              }
+            ],
+            "Yerevan": [
+              {
+                "usesMetazone": {
+                  "_mzone": "Yerevan",
+                  "_to": "1991-03-30 22:00"
+                }
+              },
+              {
+                "usesMetazone": {
+                  "_mzone": "Armenia",
+                  "_from": "1991-03-30 22:00"
+                }
+              }
             ]
           },
           "Europe": {
+            "Chisinau": [
+              {
+                "usesMetazone": {
+                  "_mzone": "Moscow",
+                  "_to": "1990-05-05 22:00"
+                }
+              },
+              {
+                "usesMetazone": {
+                  "_mzone": "Europe_Eastern",
+                  "_from": "1990-05-05 22:00"
+                }
+              }
+            ],
             "Dublin": [
               {
                 "usesMetazone": {
@@ -125,6 +425,34 @@
                     "GMT": "standard",
                     "IST": "daylight"
                   }
+                }
+              }
+            ],
+            "Istanbul": [
+              {
+                "usesMetazone": {
+                  "_mzone": "Europe_Eastern",
+                  "_to": "1978-06-28 21:00"
+                }
+              },
+              {
+                "usesMetazone": {
+                  "_mzone": "Turkey",
+                  "_from": "1978-06-28 21:00",
+                  "_to": "1984-10-31 23:00"
+                }
+              },
+              {
+                "usesMetazone": {
+                  "_mzone": "Europe_Eastern",
+                  "_from": "1984-10-31 23:00",
+                  "_to": "2016-09-06 21:00"
+                }
+              },
+              {
+                "usesMetazone": {
+                  "_mzone": "Turkey",
+                  "_from": "2016-09-06 21:00"
                 }
               }
             ]
