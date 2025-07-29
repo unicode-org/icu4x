@@ -729,6 +729,7 @@ impl Script {
     pub const BassaVah: Script = Script(134);
     pub const Batak: Script = Script(63);
     pub const Bengali: Script = Script(4);
+    pub const BeriaErfe: Script = Script(208);
     pub const Bhaiksuki: Script = Script(168);
     pub const Bopomofo: Script = Script(5);
     pub const Brahmi: Script = Script(65);
@@ -741,6 +742,7 @@ impl Script {
     pub const Chakma: Script = Script(118);
     pub const Cham: Script = Script(66);
     pub const Cherokee: Script = Script(6);
+    pub const Chisoi: Script = Script(209);
     pub const Chorasmian: Script = Script(189);
     pub const Common: Script = Script(0);
     pub const Coptic: Script = Script(7);
@@ -818,8 +820,8 @@ impl Script {
     pub const NagMundari: Script = Script(199);
     pub const Nandinagari: Script = Script(187);
     pub const Nastaliq: Script = Script(200);
-    pub const NewTaiLue: Script = Script(59);
     pub const Newa: Script = Script(170);
+    pub const NewTaiLue: Script = Script(59);
     pub const Nko: Script = Script(87);
     pub const Nushu: Script = Script(150);
     pub const NyiakengPuachueHmong: Script = Script(186);
@@ -850,6 +852,7 @@ impl Script {
     pub const Sharada: Script = Script(151);
     pub const Shavian: Script = Script(51);
     pub const Siddham: Script = Script(166);
+    pub const Sidetic: Script = Script(210);
     pub const SignWriting: Script = Script(112);
     pub const Sinhala: Script = Script(33);
     pub const Sogdian: Script = Script(183);
@@ -863,6 +866,7 @@ impl Script {
     pub const TaiLe: Script = Script(52);
     pub const TaiTham: Script = Script(106);
     pub const TaiViet: Script = Script(127);
+    pub const TaiYo: Script = Script(211);
     pub const Takri: Script = Script(153);
     pub const Tamil: Script = Script(35);
     pub const Tangsa: Script = Script(195);
@@ -873,6 +877,7 @@ impl Script {
     pub const Tibetan: Script = Script(39);
     pub const Tifinagh: Script = Script(60);
     pub const Tirhuta: Script = Script(158);
+    pub const TolongSiki: Script = Script(212);
     pub const Toto: Script = Script(196);
     pub const Ugaritic: Script = Script(53);
     pub const Unknown: Script = Script(103);
@@ -1109,10 +1114,13 @@ impl LineBreak {
 
     // Added in ICU 74:
     pub const Aksara: LineBreak = LineBreak(43); // name="AK"
-    pub const AksaraPrebase: LineBreak = LineBreak(44); // name=AP"
-    pub const AksaraStart: LineBreak = LineBreak(45); // name=AS"
-    pub const ViramaFinal: LineBreak = LineBreak(46); // name=VF"
-    pub const Virama: LineBreak = LineBreak(47); // name=VI"
+    pub const AksaraPrebase: LineBreak = LineBreak(44); // name="AP"
+    pub const AksaraStart: LineBreak = LineBreak(45); // name="AS"
+    pub const ViramaFinal: LineBreak = LineBreak(46); // name="VF"
+    pub const Virama: LineBreak = LineBreak(47); // name="VI"
+
+    // Added in ICU 78:
+    pub const UnambiguousHyphen: LineBreak = LineBreak(48); // name="HH"
 }
 }
 
