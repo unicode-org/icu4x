@@ -1,0 +1,161 @@
+{
+  "supplemental": {
+    "version": {
+      "_unicodeVersion": "16.0.0",
+      "_cldrVersion": "47"
+    },
+    "metaZones": {
+      "metazoneInfo": {
+        "timezone": {
+          "Africa": {
+            "Casablanca": [
+              {
+                "usesMetazone": {
+                  "_mzone": "Europe_Western",
+                  "_to": "2018-10-28 02:00",
+                  "_variantOverrides": {
+                    "+00": "standard",
+                    "+01": "daylight"
+                  }
+                }
+              },
+              {
+                "usesMetazone": {
+                  "_from": "2018-10-28 02:00",
+                  "_variantOverrides": {
+                    "+00": "standard",
+                    "+01": "daylight"
+                  }
+                }
+              }
+            ],
+            "El_Aaiun": [
+              {
+                "usesMetazone": {
+                  "_mzone": "Africa_FarWestern",
+                  "_to": "1976-04-14 01:00"
+                }
+              },
+              {
+                "usesMetazone": {
+                  "_mzone": "Europe_Western",
+                  "_from": "1976-04-14 01:00",
+                  "_to": "2018-10-28 02:00"
+                }
+              },
+              {
+                "usesMetazone": {
+                  "_from": "2018-10-28 02:00",
+                  "_variantOverrides": {
+                    "+00": "standard",
+                    "+01": "daylight"
+                  }
+                }
+              }
+            ],
+            "Windhoek": [
+              {
+                "usesMetazone": {
+                  "_mzone": "Africa_Southern",
+                  "_to": "1990-03-20 22:00"
+                }
+              },
+              {
+                "usesMetazone": {
+                  "_mzone": "Africa_Central",
+                  "_from": "1990-03-20 22:00",
+                  "_to": "1994-03-20 22:00"
+                }
+              },
+              {
+                "usesMetazone": {
+                  "_mzone": "Africa_Western",
+                  "_from": "1994-03-20 22:00",
+                  "_to": "2017-09-03 01:00",
+                  "_variantOverrides": {
+                    "CAT": "daylight",
+                    "WAT": "standard"
+                  }
+                }
+              },
+              {
+                "usesMetazone": {
+                  "_mzone": "Africa_Central",
+                  "_from": "2017-09-03 01:00",
+                  "_variantOverrides": {
+                    "CAT": "standard"
+                  }
+                }
+              }
+            ]
+          },
+          "America": {
+            "Adak": [
+              {
+                "usesMetazone": {
+                  "_mzone": "Bering",
+                  "_to": "1983-10-30 12:00"
+                }
+              },
+              {
+                "usesMetazone": {
+                  "_mzone": "Hawaii_Aleutian",
+                  "_from": "1983-10-30 12:00"
+                }
+              }
+            ]
+          },
+          "Europe": {
+            "Dublin": [
+              {
+                "usesMetazone": {
+                  "_mzone": "Irish",
+                  "_to": "1971-10-31 02:00",
+                  "_variantOverrides": {
+                    "GMT": "standard",
+                    "IST": "daylight"
+                  }
+                }
+              },
+              {
+                "usesMetazone": {
+                  "_mzone": "GMT",
+                  "_from": "1971-10-31 02:00",
+                  "_variantOverrides": {
+                    "GMT": "standard",
+                    "IST": "daylight"
+                  }
+                }
+              }
+            ]
+          },
+          "Pacific": {
+            "Honolulu": [
+              {
+                "usesMetazone": {
+                  "_mzone": "Alaska_Hawaii",
+                  "_to": "1983-11-30 10:00"
+                }
+              },
+              {
+                "usesMetazone": {
+                  "_mzone": "Hawaii_Aleutian",
+                  "_from": "1983-11-30 10:00"
+                }
+              }
+            ]
+          }
+        }
+      },
+      "metazones": [
+        {
+          "mapZone": {
+            "_other": "Hawaii_Aleutian",
+            "_type": "America/Adak",
+            "_territory": "001"
+          }
+        }
+      ]
+    }
+  }
+}
