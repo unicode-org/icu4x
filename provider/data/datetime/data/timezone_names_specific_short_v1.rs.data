@@ -5,7 +5,7 @@
 ///
 /// Using this implementation will embed the following data in the binary's data segment:
 /// * 648B for the lookup data structure (134 data identifiers)
-/// * 11527B[^1] for the actual data (58 unique structs)
+/// * 11511B[^1] for the actual data (58 unique structs)
 ///
 /// [^1]: these numbers can be smaller in practice due to linker deduplication
 ///
@@ -28,7 +28,7 @@ macro_rules! __impl_timezone_names_specific_short_v1 {
                     icu::datetime::provider::time_zones::MetazoneSpecificNames {
                         defaults: unsafe {
                             #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x03\0\x04\0\x05\0\x06\0\x06\x01") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x05\0\x03\0\x06\0\n\0\r\0CATEATSASTWATWAST") })
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x03\0\x04\0\x05\0\x06\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x04\0\x03\0\x06\0\n\0CATEATSASTWAT") })
                         },
                         overrides: unsafe {
                             #[allow(unused_unsafe)]
@@ -182,7 +182,7 @@ macro_rules! __impl_timezone_names_specific_short_v1 {
                     icu::datetime::provider::time_zones::MetazoneSpecificNames {
                         defaults: unsafe {
                             #[allow(unused_unsafe)]
-                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x03\0\x04\0\x05\0\x06\0\x06\x015\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x06\0\x03\0\x06\0\n\0\r\0\x11\0CATEATSASTWATWASTGMT") })
+                            zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x03\0\x04\0\x05\0\x06\x005\0") }, unsafe { zerovec::vecs::VarZeroVec16::from_bytes_unchecked(b"\x05\0\x03\0\x06\0\n\0\r\0CATEATSASTWATGMT") })
                         },
                         overrides: unsafe {
                             #[allow(unused_unsafe)]

@@ -253,8 +253,8 @@ impl FormatTimeZone for SpecificNonLocationFormat {
         if mz.kind == MetazoneMembershipKind::CustomVariants && variant != TimeZoneVariant::Standard
         {
             // Non-golden display names should use overrides (such as BST for London in
-            // the GMT metazone), so we shouldn't be here.
-            // TODO: something?
+            // the GMT metazone), if we don't have one, fall back.
+            return Ok(Err(FormatTimeZoneError::Fallback));
         }
 
         let name = if variant == TimeZoneVariant::Standard && self.0 == FieldLength::Four {
@@ -280,10 +280,8 @@ impl FormatTimeZone for SpecificNonLocationFormat {
         if let Some(name) = name {
             sink.write_str(name)?;
         } else if self.0 == FieldLength::Four {
-            // We expect a metazone name but didn't find one. This is either because
-            // * the name was deduplicated against the specific location format, or
-            // * the zone uses DST but the metazone doesn't have a DST name
-            // In both cases we want the specific location format.
+            // We expect a metazone name but didn't find one. This is because
+            // the name was deduplicated against the specific location format.
             let Some(locations) = data_payloads.locations else {
                 return Ok(Err(FormatTimeZoneError::NamesNotLoaded));
             };
