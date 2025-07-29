@@ -152,8 +152,8 @@ final class CaseMapper implements ffi.Finalizable {
   /// Returns the simple lowercase mapping of the given character, using compiled data (avoids having to allocate a CaseMapper object)
   ///
   /// See the [Rust documentation for `simple_lowercase`](https://docs.rs/icu/2.0.0/icu/casemap/struct.CaseMapperBorrowed.html#method.simple_lowercase) for more information.
-  Rune simpleLowercaseWithCompiledData(Rune ch) {
-    final result = _icu4x_CaseMapper_simple_lowercase_with_compiled_data_mv1(_ffi, ch);
+  static Rune simpleLowercaseWithCompiledData(Rune ch) {
+    final result = _icu4x_CaseMapper_simple_lowercase_with_compiled_data_mv1(ch);
     return result;
   }
 
@@ -172,8 +172,8 @@ final class CaseMapper implements ffi.Finalizable {
   /// Returns the simple uppercase mapping of the given character, using compiled data (avoids having to allocate a CaseMapper object)
   ///
   /// See the [Rust documentation for `simple_uppercase`](https://docs.rs/icu/2.0.0/icu/casemap/struct.CaseMapperBorrowed.html#method.simple_uppercase) for more information.
-  Rune simpleUppercaseWithCompiledData(Rune ch) {
-    final result = _icu4x_CaseMapper_simple_uppercase_with_compiled_data_mv1(_ffi, ch);
+  static Rune simpleUppercaseWithCompiledData(Rune ch) {
+    final result = _icu4x_CaseMapper_simple_uppercase_with_compiled_data_mv1(ch);
     return result;
   }
 
@@ -192,8 +192,8 @@ final class CaseMapper implements ffi.Finalizable {
   /// Returns the simple titlecase mapping of the given character, using compiled data (avoids having to allocate a CaseMapper object)
   ///
   /// See the [Rust documentation for `simple_titlecase`](https://docs.rs/icu/2.0.0/icu/casemap/struct.CaseMapperBorrowed.html#method.simple_titlecase) for more information.
-  Rune simpleTitlecaseWithCompiledData(Rune ch) {
-    final result = _icu4x_CaseMapper_simple_titlecase_with_compiled_data_mv1(_ffi, ch);
+  static Rune simpleTitlecaseWithCompiledData(Rune ch) {
+    final result = _icu4x_CaseMapper_simple_titlecase_with_compiled_data_mv1(ch);
     return result;
   }
 
@@ -211,8 +211,8 @@ final class CaseMapper implements ffi.Finalizable {
   /// Returns the simple casefolding of the given character, using compiled data (avoids having to allocate a CaseMapper object)
   ///
   /// See the [Rust documentation for `simple_fold`](https://docs.rs/icu/2.0.0/icu/casemap/struct.CaseMapperBorrowed.html#method.simple_fold) for more information.
-  Rune simpleFoldWithCompiledData(Rune ch) {
-    final result = _icu4x_CaseMapper_simple_fold_with_compiled_data_mv1(_ffi, ch);
+  static Rune simpleFoldWithCompiledData(Rune ch) {
+    final result = _icu4x_CaseMapper_simple_fold_with_compiled_data_mv1(ch);
     return result;
   }
 
@@ -230,8 +230,8 @@ final class CaseMapper implements ffi.Finalizable {
   /// Returns the simple Turkic casefolding of the given character, using compiled data (avoids having to allocate a CaseMapper object)
   ///
   /// See the [Rust documentation for `simple_fold_turkic`](https://docs.rs/icu/2.0.0/icu/casemap/struct.CaseMapperBorrowed.html#method.simple_fold_turkic) for more information.
-  Rune simpleFoldTurkicWithCompiledData(Rune ch) {
-    final result = _icu4x_CaseMapper_simple_fold_turkic_with_compiled_data_mv1(_ffi, ch);
+  static Rune simpleFoldTurkicWithCompiledData(Rune ch) {
+    final result = _icu4x_CaseMapper_simple_fold_turkic_with_compiled_data_mv1(ch);
     return result;
   }
 
@@ -298,9 +298,9 @@ external void _icu4x_CaseMapper_add_case_closure_to_mv1(ffi.Pointer<ffi.Opaque> 
 external Rune _icu4x_CaseMapper_simple_lowercase_mv1(ffi.Pointer<ffi.Opaque> self, Rune ch);
 
 @_DiplomatFfiUse('icu4x_CaseMapper_simple_lowercase_with_compiled_data_mv1')
-@ffi.Native<ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32)>(isLeaf: true, symbol: 'icu4x_CaseMapper_simple_lowercase_with_compiled_data_mv1')
+@ffi.Native<ffi.Uint32 Function(ffi.Uint32)>(isLeaf: true, symbol: 'icu4x_CaseMapper_simple_lowercase_with_compiled_data_mv1')
 // ignore: non_constant_identifier_names
-external Rune _icu4x_CaseMapper_simple_lowercase_with_compiled_data_mv1(ffi.Pointer<ffi.Opaque> self, Rune ch);
+external Rune _icu4x_CaseMapper_simple_lowercase_with_compiled_data_mv1(Rune ch);
 
 @_DiplomatFfiUse('icu4x_CaseMapper_simple_uppercase_mv1')
 @ffi.Native<ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32)>(isLeaf: true, symbol: 'icu4x_CaseMapper_simple_uppercase_mv1')
@@ -308,9 +308,9 @@ external Rune _icu4x_CaseMapper_simple_lowercase_with_compiled_data_mv1(ffi.Poin
 external Rune _icu4x_CaseMapper_simple_uppercase_mv1(ffi.Pointer<ffi.Opaque> self, Rune ch);
 
 @_DiplomatFfiUse('icu4x_CaseMapper_simple_uppercase_with_compiled_data_mv1')
-@ffi.Native<ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32)>(isLeaf: true, symbol: 'icu4x_CaseMapper_simple_uppercase_with_compiled_data_mv1')
+@ffi.Native<ffi.Uint32 Function(ffi.Uint32)>(isLeaf: true, symbol: 'icu4x_CaseMapper_simple_uppercase_with_compiled_data_mv1')
 // ignore: non_constant_identifier_names
-external Rune _icu4x_CaseMapper_simple_uppercase_with_compiled_data_mv1(ffi.Pointer<ffi.Opaque> self, Rune ch);
+external Rune _icu4x_CaseMapper_simple_uppercase_with_compiled_data_mv1(Rune ch);
 
 @_DiplomatFfiUse('icu4x_CaseMapper_simple_titlecase_mv1')
 @ffi.Native<ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32)>(isLeaf: true, symbol: 'icu4x_CaseMapper_simple_titlecase_mv1')
@@ -318,9 +318,9 @@ external Rune _icu4x_CaseMapper_simple_uppercase_with_compiled_data_mv1(ffi.Poin
 external Rune _icu4x_CaseMapper_simple_titlecase_mv1(ffi.Pointer<ffi.Opaque> self, Rune ch);
 
 @_DiplomatFfiUse('icu4x_CaseMapper_simple_titlecase_with_compiled_data_mv1')
-@ffi.Native<ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32)>(isLeaf: true, symbol: 'icu4x_CaseMapper_simple_titlecase_with_compiled_data_mv1')
+@ffi.Native<ffi.Uint32 Function(ffi.Uint32)>(isLeaf: true, symbol: 'icu4x_CaseMapper_simple_titlecase_with_compiled_data_mv1')
 // ignore: non_constant_identifier_names
-external Rune _icu4x_CaseMapper_simple_titlecase_with_compiled_data_mv1(ffi.Pointer<ffi.Opaque> self, Rune ch);
+external Rune _icu4x_CaseMapper_simple_titlecase_with_compiled_data_mv1(Rune ch);
 
 @_DiplomatFfiUse('icu4x_CaseMapper_simple_fold_mv1')
 @ffi.Native<ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32)>(isLeaf: true, symbol: 'icu4x_CaseMapper_simple_fold_mv1')
@@ -328,9 +328,9 @@ external Rune _icu4x_CaseMapper_simple_titlecase_with_compiled_data_mv1(ffi.Poin
 external Rune _icu4x_CaseMapper_simple_fold_mv1(ffi.Pointer<ffi.Opaque> self, Rune ch);
 
 @_DiplomatFfiUse('icu4x_CaseMapper_simple_fold_with_compiled_data_mv1')
-@ffi.Native<ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32)>(isLeaf: true, symbol: 'icu4x_CaseMapper_simple_fold_with_compiled_data_mv1')
+@ffi.Native<ffi.Uint32 Function(ffi.Uint32)>(isLeaf: true, symbol: 'icu4x_CaseMapper_simple_fold_with_compiled_data_mv1')
 // ignore: non_constant_identifier_names
-external Rune _icu4x_CaseMapper_simple_fold_with_compiled_data_mv1(ffi.Pointer<ffi.Opaque> self, Rune ch);
+external Rune _icu4x_CaseMapper_simple_fold_with_compiled_data_mv1(Rune ch);
 
 @_DiplomatFfiUse('icu4x_CaseMapper_simple_fold_turkic_mv1')
 @ffi.Native<ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32)>(isLeaf: true, symbol: 'icu4x_CaseMapper_simple_fold_turkic_mv1')
@@ -338,8 +338,8 @@ external Rune _icu4x_CaseMapper_simple_fold_with_compiled_data_mv1(ffi.Pointer<f
 external Rune _icu4x_CaseMapper_simple_fold_turkic_mv1(ffi.Pointer<ffi.Opaque> self, Rune ch);
 
 @_DiplomatFfiUse('icu4x_CaseMapper_simple_fold_turkic_with_compiled_data_mv1')
-@ffi.Native<ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32)>(isLeaf: true, symbol: 'icu4x_CaseMapper_simple_fold_turkic_with_compiled_data_mv1')
+@ffi.Native<ffi.Uint32 Function(ffi.Uint32)>(isLeaf: true, symbol: 'icu4x_CaseMapper_simple_fold_turkic_with_compiled_data_mv1')
 // ignore: non_constant_identifier_names
-external Rune _icu4x_CaseMapper_simple_fold_turkic_with_compiled_data_mv1(ffi.Pointer<ffi.Opaque> self, Rune ch);
+external Rune _icu4x_CaseMapper_simple_fold_turkic_with_compiled_data_mv1(Rune ch);
 
 // dart format on

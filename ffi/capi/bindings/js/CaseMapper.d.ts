@@ -111,7 +111,7 @@ export class CaseMapper {
      *
      * See the [Rust documentation for `simple_lowercase`](https://docs.rs/icu/2.0.0/icu/casemap/struct.CaseMapperBorrowed.html#method.simple_lowercase) for more information.
      */
-    simpleLowercaseWithCompiledData(ch: codepoint): codepoint;
+    static simpleLowercaseWithCompiledData(ch: codepoint): codepoint;
 
     /**
      * Returns the simple uppercase mapping of the given character.
@@ -129,7 +129,7 @@ export class CaseMapper {
      *
      * See the [Rust documentation for `simple_uppercase`](https://docs.rs/icu/2.0.0/icu/casemap/struct.CaseMapperBorrowed.html#method.simple_uppercase) for more information.
      */
-    simpleUppercaseWithCompiledData(ch: codepoint): codepoint;
+    static simpleUppercaseWithCompiledData(ch: codepoint): codepoint;
 
     /**
      * Returns the simple titlecase mapping of the given character.
@@ -147,7 +147,7 @@ export class CaseMapper {
      *
      * See the [Rust documentation for `simple_titlecase`](https://docs.rs/icu/2.0.0/icu/casemap/struct.CaseMapperBorrowed.html#method.simple_titlecase) for more information.
      */
-    simpleTitlecaseWithCompiledData(ch: codepoint): codepoint;
+    static simpleTitlecaseWithCompiledData(ch: codepoint): codepoint;
 
     /**
      * Returns the simple casefolding of the given character.
@@ -164,7 +164,7 @@ export class CaseMapper {
      *
      * See the [Rust documentation for `simple_fold`](https://docs.rs/icu/2.0.0/icu/casemap/struct.CaseMapperBorrowed.html#method.simple_fold) for more information.
      */
-    simpleFoldWithCompiledData(ch: codepoint): codepoint;
+    static simpleFoldWithCompiledData(ch: codepoint): codepoint;
 
     /**
      * Returns the simple casefolding of the given character in the Turkic locale.
@@ -181,7 +181,7 @@ export class CaseMapper {
      *
      * See the [Rust documentation for `simple_fold_turkic`](https://docs.rs/icu/2.0.0/icu/casemap/struct.CaseMapperBorrowed.html#method.simple_fold_turkic) for more information.
      */
-    simpleFoldTurkicWithCompiledData(ch: codepoint): codepoint;
+    static simpleFoldTurkicWithCompiledData(ch: codepoint): codepoint;
 
     /**
      * Construct a new CaseMapper instance using compiled data.

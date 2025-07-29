@@ -153,7 +153,7 @@ public:
    *
    * See the [Rust documentation for `simple_lowercase`](https://docs.rs/icu/2.0.0/icu/casemap/struct.CaseMapperBorrowed.html#method.simple_lowercase) for more information.
    */
-  inline char32_t simple_lowercase_with_compiled_data(char32_t ch) const;
+  inline static char32_t simple_lowercase_with_compiled_data(char32_t ch);
 
   /**
    * Returns the simple uppercase mapping of the given character.
@@ -171,7 +171,7 @@ public:
    *
    * See the [Rust documentation for `simple_uppercase`](https://docs.rs/icu/2.0.0/icu/casemap/struct.CaseMapperBorrowed.html#method.simple_uppercase) for more information.
    */
-  inline char32_t simple_uppercase_with_compiled_data(char32_t ch) const;
+  inline static char32_t simple_uppercase_with_compiled_data(char32_t ch);
 
   /**
    * Returns the simple titlecase mapping of the given character.
@@ -189,7 +189,7 @@ public:
    *
    * See the [Rust documentation for `simple_titlecase`](https://docs.rs/icu/2.0.0/icu/casemap/struct.CaseMapperBorrowed.html#method.simple_titlecase) for more information.
    */
-  inline char32_t simple_titlecase_with_compiled_data(char32_t ch) const;
+  inline static char32_t simple_titlecase_with_compiled_data(char32_t ch);
 
   /**
    * Returns the simple casefolding of the given character.
@@ -206,7 +206,7 @@ public:
    *
    * See the [Rust documentation for `simple_fold`](https://docs.rs/icu/2.0.0/icu/casemap/struct.CaseMapperBorrowed.html#method.simple_fold) for more information.
    */
-  inline char32_t simple_fold_with_compiled_data(char32_t ch) const;
+  inline static char32_t simple_fold_with_compiled_data(char32_t ch);
 
   /**
    * Returns the simple casefolding of the given character in the Turkic locale.
@@ -223,7 +223,7 @@ public:
    *
    * See the [Rust documentation for `simple_fold_turkic`](https://docs.rs/icu/2.0.0/icu/casemap/struct.CaseMapperBorrowed.html#method.simple_fold_turkic) for more information.
    */
-  inline char32_t simple_fold_turkic_with_compiled_data(char32_t ch) const;
+  inline static char32_t simple_fold_turkic_with_compiled_data(char32_t ch);
 
   inline const icu4x::capi::CaseMapper* AsFFI() const;
   inline icu4x::capi::CaseMapper* AsFFI();

@@ -307,9 +307,9 @@ export class CaseMapper {
      *
      * See the [Rust documentation for `simple_lowercase`](https://docs.rs/icu/2.0.0/icu/casemap/struct.CaseMapperBorrowed.html#method.simple_lowercase) for more information.
      */
-    simpleLowercaseWithCompiledData(ch) {
+    static simpleLowercaseWithCompiledData(ch) {
 
-        const result = wasm.icu4x_CaseMapper_simple_lowercase_with_compiled_data_mv1(this.ffiValue, ch);
+        const result = wasm.icu4x_CaseMapper_simple_lowercase_with_compiled_data_mv1(ch);
 
         try {
             return result;
@@ -345,9 +345,9 @@ export class CaseMapper {
      *
      * See the [Rust documentation for `simple_uppercase`](https://docs.rs/icu/2.0.0/icu/casemap/struct.CaseMapperBorrowed.html#method.simple_uppercase) for more information.
      */
-    simpleUppercaseWithCompiledData(ch) {
+    static simpleUppercaseWithCompiledData(ch) {
 
-        const result = wasm.icu4x_CaseMapper_simple_uppercase_with_compiled_data_mv1(this.ffiValue, ch);
+        const result = wasm.icu4x_CaseMapper_simple_uppercase_with_compiled_data_mv1(ch);
 
         try {
             return result;
@@ -383,9 +383,9 @@ export class CaseMapper {
      *
      * See the [Rust documentation for `simple_titlecase`](https://docs.rs/icu/2.0.0/icu/casemap/struct.CaseMapperBorrowed.html#method.simple_titlecase) for more information.
      */
-    simpleTitlecaseWithCompiledData(ch) {
+    static simpleTitlecaseWithCompiledData(ch) {
 
-        const result = wasm.icu4x_CaseMapper_simple_titlecase_with_compiled_data_mv1(this.ffiValue, ch);
+        const result = wasm.icu4x_CaseMapper_simple_titlecase_with_compiled_data_mv1(ch);
 
         try {
             return result;
@@ -420,9 +420,9 @@ export class CaseMapper {
      *
      * See the [Rust documentation for `simple_fold`](https://docs.rs/icu/2.0.0/icu/casemap/struct.CaseMapperBorrowed.html#method.simple_fold) for more information.
      */
-    simpleFoldWithCompiledData(ch) {
+    static simpleFoldWithCompiledData(ch) {
 
-        const result = wasm.icu4x_CaseMapper_simple_fold_with_compiled_data_mv1(this.ffiValue, ch);
+        const result = wasm.icu4x_CaseMapper_simple_fold_with_compiled_data_mv1(ch);
 
         try {
             return result;
@@ -457,9 +457,9 @@ export class CaseMapper {
      *
      * See the [Rust documentation for `simple_fold_turkic`](https://docs.rs/icu/2.0.0/icu/casemap/struct.CaseMapperBorrowed.html#method.simple_fold_turkic) for more information.
      */
-    simpleFoldTurkicWithCompiledData(ch) {
+    static simpleFoldTurkicWithCompiledData(ch) {
 
-        const result = wasm.icu4x_CaseMapper_simple_fold_turkic_with_compiled_data_mv1(this.ffiValue, ch);
+        const result = wasm.icu4x_CaseMapper_simple_fold_turkic_with_compiled_data_mv1(ch);
 
         try {
             return result;
