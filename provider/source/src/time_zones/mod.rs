@@ -304,15 +304,15 @@ impl SourceDataProvider {
                                     .unwrap()
                                     .1;
 
-                                if (!os.is_permanent_dst() && golden_os.standard != os.standard)
-                                    || (os.is_permanent_dst() && golden_os.daylight != os.daylight)
+                                if (Some(os.standard) != os.daylight && golden_os.standard != os.standard)
+                                    || (Some(os.standard) == os.daylight && golden_os.daylight != os.daylight)
                                 {
                                     log::warn!("Offsets don't agree with metazone golden: {tz:?} - {golden:?}");
                                 }
 
                                 let kind = if os.daylight.is_some() && golden_os.daylight.is_none() {
                                     MetazoneMembershipKind::CustomVariants
-                                } else if os.daylight.is_none() && golden_os.daylight.is_some() || os.is_permanent_dst() {
+                                } else if os.daylight.is_none() && golden_os.daylight.is_some() || Some(os.standard) == os.daylight {
                                     // TODO: this needs to look at actual transitions
                                     MetazoneMembershipKind::CustomTransitions
                                 } else {
