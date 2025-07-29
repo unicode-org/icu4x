@@ -46,13 +46,23 @@ namespace capi {
 
     char32_t icu4x_CaseMapper_simple_lowercase_mv1(const icu4x::capi::CaseMapper* self, char32_t ch);
 
+    char32_t icu4x_CaseMapper_simple_lowercase_with_compiled_data_mv1(char32_t ch);
+
     char32_t icu4x_CaseMapper_simple_uppercase_mv1(const icu4x::capi::CaseMapper* self, char32_t ch);
+
+    char32_t icu4x_CaseMapper_simple_uppercase_with_compiled_data_mv1(char32_t ch);
 
     char32_t icu4x_CaseMapper_simple_titlecase_mv1(const icu4x::capi::CaseMapper* self, char32_t ch);
 
+    char32_t icu4x_CaseMapper_simple_titlecase_with_compiled_data_mv1(char32_t ch);
+
     char32_t icu4x_CaseMapper_simple_fold_mv1(const icu4x::capi::CaseMapper* self, char32_t ch);
 
+    char32_t icu4x_CaseMapper_simple_fold_with_compiled_data_mv1(char32_t ch);
+
     char32_t icu4x_CaseMapper_simple_fold_turkic_mv1(const icu4x::capi::CaseMapper* self, char32_t ch);
+
+    char32_t icu4x_CaseMapper_simple_fold_turkic_with_compiled_data_mv1(char32_t ch);
 
     void icu4x_CaseMapper_destroy_mv1(CaseMapper* self);
 
@@ -251,9 +261,19 @@ inline char32_t icu4x::CaseMapper::simple_lowercase(char32_t ch) const {
   return result;
 }
 
+inline char32_t icu4x::CaseMapper::simple_lowercase_with_compiled_data(char32_t ch) {
+  auto result = icu4x::capi::icu4x_CaseMapper_simple_lowercase_with_compiled_data_mv1(ch);
+  return result;
+}
+
 inline char32_t icu4x::CaseMapper::simple_uppercase(char32_t ch) const {
   auto result = icu4x::capi::icu4x_CaseMapper_simple_uppercase_mv1(this->AsFFI(),
     ch);
+  return result;
+}
+
+inline char32_t icu4x::CaseMapper::simple_uppercase_with_compiled_data(char32_t ch) {
+  auto result = icu4x::capi::icu4x_CaseMapper_simple_uppercase_with_compiled_data_mv1(ch);
   return result;
 }
 
@@ -263,15 +283,30 @@ inline char32_t icu4x::CaseMapper::simple_titlecase(char32_t ch) const {
   return result;
 }
 
+inline char32_t icu4x::CaseMapper::simple_titlecase_with_compiled_data(char32_t ch) {
+  auto result = icu4x::capi::icu4x_CaseMapper_simple_titlecase_with_compiled_data_mv1(ch);
+  return result;
+}
+
 inline char32_t icu4x::CaseMapper::simple_fold(char32_t ch) const {
   auto result = icu4x::capi::icu4x_CaseMapper_simple_fold_mv1(this->AsFFI(),
     ch);
   return result;
 }
 
+inline char32_t icu4x::CaseMapper::simple_fold_with_compiled_data(char32_t ch) {
+  auto result = icu4x::capi::icu4x_CaseMapper_simple_fold_with_compiled_data_mv1(ch);
+  return result;
+}
+
 inline char32_t icu4x::CaseMapper::simple_fold_turkic(char32_t ch) const {
   auto result = icu4x::capi::icu4x_CaseMapper_simple_fold_turkic_mv1(this->AsFFI(),
     ch);
+  return result;
+}
+
+inline char32_t icu4x::CaseMapper::simple_fold_turkic_with_compiled_data(char32_t ch) {
+  auto result = icu4x::capi::icu4x_CaseMapper_simple_fold_turkic_with_compiled_data_mv1(ch);
   return result;
 }
 
