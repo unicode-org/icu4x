@@ -64,6 +64,7 @@ export class LineBreak {
     static AksaraStart : LineBreak;
     static ViramaFinal : LineBreak;
     static Virama : LineBreak;
+    static UnambiguousHyphen : LineBreak;
 
 
     /**
