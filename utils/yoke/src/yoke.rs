@@ -1114,13 +1114,10 @@ where
     /// # use std::rc::Rc;
     /// #
     /// // Both structs have `first_line`, which won't need to be recomputed in `map_with_cart`.
-    ///
-    /// // Safely implements Yokeable<'a>
+    /// // They also safely implement `Yokeable<'a>`
     /// struct Foo<'a> {
     ///     first_line: Option<&'a str>,
     /// }
-    ///
-    /// // Also safely implements Yokeable<'a>
     /// struct Bar<'a> {
     ///     first_line: Option<&'a str>,
     ///     last_line: Option<&'a str>,
@@ -1205,7 +1202,10 @@ where
         ) -> <P as Yokeable<'a>>::Output,
         <C as Deref>::Target: 'static,
     {
-        let p = f(self.yokeable.into_inner().transform_owned(), self.cart.deref());
+        let p = f(
+            self.yokeable.into_inner().transform_owned(),
+            self.cart.deref(),
+        );
         Yoke {
             yokeable: KindaSortaDangling::new(
                 // Safety: the resulting `yokeable` is dropped before the `cart` because
@@ -1283,7 +1283,10 @@ where
         ) -> Result<<P as Yokeable<'a>>::Output, E>,
         <C as Deref>::Target: 'static,
     {
-        let p = f(self.yokeable.into_inner().transform_owned(), self.cart.deref())?;
+        let p = f(
+            self.yokeable.into_inner().transform_owned(),
+            self.cart.deref(),
+        )?;
         Ok(Yoke {
             yokeable: KindaSortaDangling::new(
                 // Safety: the resulting `yokeable` is dropped before the `cart` because
@@ -1514,7 +1517,7 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
     }
 }
 
-/// # Safety docs for map_project_*()
+/// # Safety docs for *map_project*()
 ///
 /// (Docs are on a private const to allow the use of compile_fail doctests)
 ///
@@ -1764,5 +1767,303 @@ const _: () = ();
 /// println!("pre-drop: {reference}");
 /// drop(local);
 /// println!("post-drop: {reference}");
+/// ```
+const _: () = ();
+
+/// # Safety docs for *map_with_cart*()
+///
+/// [`Yoke::map_with_cart`] has both the problems of [`Yoke::map_project`] (with a
+/// potentially-pathological callback) and [`Yoke::attach_to_cart`] (with a potentially
+/// pathological cart, capable of permitting a bad callback).
+///
+/// [`map_project`] forces the callback to be well-behaved with the bounds:
+/// ```rust,ignore
+/// F: for<'a> FnOnce(
+///     <Y as Yokeable<'a>>::Output,
+///     PhantomData<&'a ()>,
+/// ) -> <P as Yokeable<'a>>::Output,
+/// ```
+///
+/// The `for<'a>` constraint prevents `F` from inserting additional borrows that did not come
+/// from the input; `<P as Yokeable<'a>>::Output` can be `'static` or only `'a`, but that
+/// `'a` could potentially be `'static` as well. Therefore, `F` has to be capable of returning
+/// `'static` data (under certain constraints), and cannot insert additional borrows. Nor can a
+/// reference leak out, as for a sufficiently short `'a`, the data would not live long enough.
+/// The `PhantomData<&'a ()>` is just to make sure that the lifetime `'a` is constrained
+/// to fix <https://github.com/rust-lang/rust/issues/86702>.
+///
+/// Next, [`Yoke::attach_to_cart`] follows mostly the same approach, but needs to ensure that
+/// the `for<'a>` bound remains a fully universal quantifier.
+/// It uses the bounds:
+/// ```rust,ignore
+/// F: for<'de> FnOnce(&'de <C as Deref>::Target) -> <Y as Yokeable<'de>>::Output,
+/// <C as Deref>::Target: 'static,
+/// ```
+///
+/// The problem is that the `for<'de>` quantifier is bounded by whatever the lifetime of
+/// `<C as Deref>::Target` is, so for it to cover all lifetimes, `<C as Deref>::Target` must
+/// be `'static`.
+///
+///
+/// [`Yoke::map_with_cart`] combines the relevant bounds into one:
+/// ```rust,ignore
+/// F: for<'a> FnOnce(
+///     <Y as Yokeable<'a>>::Output,
+///     &'a <C as Deref>::Target,
+/// ) -> <P as Yokeable<'a>>::Output,
+/// <C as Deref>::Target: 'static,
+/// ```
+///
+/// The techniques ensure that, for any lifetime `'a`, the callback must be capable of taking in
+/// data from the old `Yokeable` and from the cart which is known only to outlive `'a`, and return
+/// data that outlives `'a`. `F` is incapable of inserting external data which is not `'static`,
+/// and is otherwise constrained to using the data in the cart and old `Yokeable` to produce
+/// a new `Yokeable`.
+/// A `PhantomData` is not needed, since the lifetime `'a` is constrained by
+/// `&'a <C as Deref>::Target`.
+///
+/// # Fail tests
+///
+/// We can confirm that problematic cases analogous to those in [`Yoke::map_project`] and
+/// [`Yoke::attach_to_cart`] still fail here. They're copied and adapted slightly.
+///
+/// ### From `map_project`'s safety docs
+///
+/// ```rust, compile_fail
+/// # use std::rc::Rc;
+/// # use yoke::Yoke;
+/// # use std::borrow::Cow;
+/// fn borrow_potentially_owned(y: &Yoke<Cow<'static, str>, Rc<[u8]>>) -> Yoke<&'static str, Rc<[u8]>> {
+///    y.map_with_cart_cloned(|cow, _cart| &**cow)
+/// }
+/// ```
+///
+/// ```rust, compile_fail
+/// # use std::rc::Rc;
+/// # use yoke::Yoke;
+/// # use std::borrow::Cow;
+/// fn borrow_potentially_owned(y: Yoke<Cow<'static, str>, Rc<[u8]>>) -> Yoke<&'static str, Rc<[u8]>> {
+///    y.map_with_cart(|cow: Cow<'_, _>, _cart| &*cow)
+/// }
+/// ```
+///
+/// ```rust,compile_fail
+/// # use std::borrow::Cow;
+/// # use yoke::{Yoke, Yokeable};
+/// # use std::mem;
+/// # use std::rc::Rc;
+/// #
+/// // also safely implements Yokeable<'a>
+/// struct Bar<'a> {
+///     owned: String,
+///     string_2: &'a str,
+/// }
+///
+/// fn map_with_cart_owned(bar: &Yoke<Bar<'static>, Rc<[u8]>>) -> Yoke<&'static str, Rc<[u8]>> {
+///     // ERROR (but works if you replace owned with string_2)
+///     bar.map_with_cart_cloned(|bar, _cart| &*bar.owned)
+/// }
+///
+/// #
+/// # unsafe impl<'a> Yokeable<'a> for Bar<'static> {
+/// #     type Output = Bar<'a>;
+/// #     fn transform(&'a self) -> &'a Bar<'a> {
+/// #         self
+/// #     }
+/// #
+/// #     fn transform_owned(self) -> Bar<'a> {
+/// #         // covariant lifetime cast, can be done safely
+/// #         self
+/// #     }
+/// #
+/// #     unsafe fn make(from: Bar<'a>) -> Self {
+/// #         let ret = mem::transmute_copy(&from);
+/// #         mem::forget(from);
+/// #         ret
+/// #     }
+/// #
+/// #     fn transform_mut<F>(&'a mut self, f: F)
+/// #     where
+/// #         F: 'static + FnOnce(&'a mut Self::Output),
+/// #     {
+/// #         unsafe { f(mem::transmute(self)) }
+/// #     }
+/// # }
+/// ```
+///
+/// ### From `attach_to_cart`'s safety docs
+///
+/// Being slightly paranoid, confirm that the expected line is the one causing the error.
+/// ```rust
+/// use std::rc::Rc;
+/// use yoke::Yoke;
+///
+/// let cart: Vec<u8> = vec![1, 2, 3, 4];
+/// let cart: Rc<[u8]> = Rc::from(&*cart);
+///
+/// let local = vec![4, 5, 6, 7];
+/// let local: Rc<[u8]> = Rc::from(&*local);
+///
+/// let yoke: Yoke<&[u8], Rc<[u8]>> = Yoke::attach_to_cart(cart, |cart| &*cart);
+/// let yoke: Yoke<&[u8], Rc<[u8]>> = yoke.map_with_cart(|_, cart| &*cart);
+/// ```
+///
+/// ```rust,compile_fail
+/// use std::rc::Rc;
+/// use yoke::Yoke;
+///
+/// let cart: Vec<u8> = vec![1, 2, 3, 4];
+/// let cart: Rc<[u8]> = Rc::from(&*cart);
+///
+/// let local = vec![4, 5, 6, 7];
+/// let local: Rc<[u8]> = Rc::from(&*local);
+///
+/// let yoke: Yoke<&[u8], Rc<[u8]>> = Yoke::attach_to_cart(cart, |cart| &*cart);
+/// let yoke: Yoke<&[u8], Rc<[u8]>> = yoke.map_with_cart(|_, _| &*local);
+/// ```
+///
+///
+/// ```rust
+/// use std::rc::Rc;
+/// use yoke::Yoke;
+///
+/// // longer lived
+/// let local = vec![4_u8, 5, 6, 7];
+/// let local: Rc<[u8]> = Rc::from(&*local);
+///
+/// let backing = vec![1_u8, 2, 3, 4];
+/// let cart: Rc<[u8]> = Rc::from(&*backing);
+///
+/// let yoke: Yoke<&[u8], Rc<[u8]>> = Yoke::attach_to_cart(cart, |cart| &*cart);
+/// let yoke: Yoke<&[u8], Rc<[u8]>> = yoke.map_with_cart(|_, cart: &[u8]| &*cart);
+/// println!("{:?}", yoke.get());
+/// ```
+///
+/// ```rust,compile_fail
+/// use std::rc::Rc;
+/// use yoke::Yoke;
+///
+/// // longer lived
+/// let local: Rc<[u8]> = Rc::from(&*local);
+///
+/// let backing = vec![1_u8, 2, 3, 4];
+/// let cart: Rc<[u8]> = Rc::from(&*backing);
+///
+/// let yoke: Yoke<&[u8], Rc<[u8]>> = Yoke::attach_to_cart(cart, |cart| &*cart);
+/// let yoke: Yoke<&[u8], Rc<[u8]>> = yoke.map_with_cart(|_, cart: &[u8]| &*local);
+/// println!("{:?}", yoke.get());
+/// ```
+///
+///
+/// I don't see a way to closely adapt `attach_to_cart`'s last two test cases on contravariant
+/// carts, since the problematic `Cart` type is stopped at the stage of construction. We can use
+/// one of `Yoke`'s other constructors instead, and try mapping it.
+///
+/// ```rust
+/// use std::rc::Rc;
+/// use yoke::Yoke;
+///
+/// type Contra<'a> = fn(&'a ());
+///
+/// let local = String::from("Hello World!");
+/// let yoke: Yoke<&'static str, Option<Rc<Contra<'_>>>> = Yoke::new_owned("hi");
+/// println!("{:?}", yoke.get());
+/// ```
+///
+/// This case might actually be fine to allow, since `attach_to_cart` could not possibly succeed
+/// with this cart type and thus the `Yokeable` must always be owned. But whether it's safe to
+/// permit *any* contravariant cart in `map_with_cart` is not immediately clear to me. Therefore,
+/// compile fail.
+/// ```rust,compile_fail
+/// use std::rc::Rc;
+/// use yoke::Yoke;
+///
+/// type Contra<'a> = fn(&'a ());
+///
+/// fn scope<'b>() {
+///     let local = String::from("Hello World!");
+///     let yoke: Yoke<&'static str, Option<Rc<Contra<'b>>>> = Yoke::new_owned("hi");
+///     let yoke: Yoke<&'static str, Rc<Option<Rc<Contra<'b>>>>> = yoke.wrap_cart_in_rc);
+///     let yoke: Yoke<&'static str, Rc<Option<Rc<Contra<'b>>>>> = yoke.map_with_cart(|yoke, _| yoke);
+///     println!("{:?}", yoke.get());
+/// }
+/// ```
+///
+/// This version succeeds, though.
+/// ```rust
+/// use std::rc::Rc;
+/// use yoke::Yoke;
+///
+/// type Contra<'a> = fn(&'a ());
+///
+/// fn scope<'b>() {
+///     let local = String::from("Hello World!");
+///     let yoke: Yoke<&'static str, Option<Rc<Contra<'b>>>> = Yoke::new_owned("hi");
+///     let yoke: Yoke<&'static str, Rc<Option<Rc<Contra<'b>>>>> = yoke.wrap_cart_in_rc();
+///     let yoke: Yoke<&'static str, Rc<Option<Rc<Contra<'static>>>>> = yoke;
+///     let yoke: Yoke<&'static str, Rc<Option<Rc<Contra<'static>>>>> = yoke.map_with_cart(|yoke, _| yoke);
+///     println!("{:?}", yoke.get());
+/// }
+/// ```
+///
+/// # Test running the function
+///
+/// The above verifies the method signature. We can also check that the implementation is correct,
+/// by running Miri on the following test (analogous to [`Yoke::map_with_cart`]'s doctest):
+/// ```
+/// use std::rc::Rc;
+/// use yoke::Yoke;
+///
+/// type Foo<'a> = Option<&'a str>;
+/// type Bar<'a> = (Option<&'a str>, Option<&'a str>);
+///
+/// fn foo_to_bar(
+///     foo: Yoke<Foo<'static>, Rc<str>>,
+/// ) -> Yoke<Bar<'static>, Rc<str>> {
+///     foo.map_with_cart(|foo, cart| {
+///         (foo, cart.lines().next_back())
+///     })
+/// }
+///
+/// fn foo_to_bar_cloned(
+///     foo: &Yoke<Foo<'static>, Rc<str>>,
+/// ) -> Yoke<Bar<'static>, Rc<str>> {
+///     foo.map_with_cart_cloned(|foo, cart| {
+///         (*foo, cart.lines().next_back())
+///     })
+/// }
+///
+/// fn bar_to_foo(
+///     bar: Yoke<Bar<'static>, Rc<str>>,
+/// ) -> Yoke<Foo<'static>, Rc<str>> {
+///     bar.map_project(|bar, _| {
+///         (bar.0)
+///     })
+/// }
+///
+/// fn main() {
+///     fn assert_hello_world(bar: &Yoke::<Bar<'static>, Rc<str>>) {
+///         assert_eq!(bar.get().0, Some("hello"));
+///         assert_eq!(bar.get().1, Some("world"));
+///     }
+///
+///     let foo = Yoke::<Foo<'static>, Rc<str>>::attach_to_cart(
+///         Rc::from("hello\nworld"),
+///         |cart| cart.lines().next(),
+///     );
+///
+///     assert_eq!(*foo.get(), Some("hello"));
+///
+///     let bar = foo_to_bar(foo);
+///     assert_hello_world(&bar);
+///
+///     let foo = bar_to_foo(bar);
+///
+///     let bar_one = foo_to_bar_cloned(&foo);
+///     let bar_two = foo_to_bar_cloned(&foo);
+///
+///     assert_hello_world(&bar_one);
+///     assert_hello_world(&bar_two);
+/// }
 /// ```
 const _: () = ();
