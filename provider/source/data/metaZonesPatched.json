@@ -196,6 +196,14 @@
                   "_mzone": "Chile",
                   "_to": "2016-12-04 03:00"
                 }
+              },{
+                "usesMetazone": {
+                  "_mzone": "Chile",
+                  "_from": "2016-12-04 03:00",
+                  "_variantOverrides": {
+                    "-03": "daylight"
+                  }
+                }
               }
             ],
             "Rankin_Inlet": [

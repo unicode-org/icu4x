@@ -256,6 +256,38 @@
   },
   {
     "locale": "en",
+    "datetime": "2013-09-15T12:00:00-03[America/Punta_Arenas]",
+    "expectations": {
+      "vvvv": "Chile Time",
+      "zzzz": "Chile Summer Time"
+    }
+  },
+  {
+    "locale": "en",
+    "datetime": "2013-09-15T12:00:00-03[America/Santiago]",
+    "expectations": {
+      "vvvv": "Chile Time",
+      "zzzz": "Chile Summer Time"
+    }
+  },
+  {
+    "locale": "en",
+    "datetime": "2018-09-15T12:00:00-03[America/Punta_Arenas]",
+    "expectations": {
+      "vvvv": "Chile Time (Punta Arenas)",
+      "zzzz": "Chile Summer Time"
+    }
+  },
+  {
+    "locale": "en",
+    "datetime": "2018-09-15T12:00:00-04[America/Santiago]",
+    "expectations": {
+      "vvvv": "Chile Time",
+      "zzzz": "Chile Standard Time"
+    }
+  },
+  {
+    "locale": "en",
     "datetime": "2021-07-11T12:00:00.000-07:00[Etc/Unknown]",
     "expectations": {
       "z": "GMT-7",

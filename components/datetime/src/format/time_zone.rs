@@ -167,8 +167,8 @@ impl FormatTimeZone for GenericNonLocationFormat {
 
         if mz.kind == MetazoneMembershipKind::CustomTransitions {
             // Disambiguate using the location.
-            // TODO: Use the standard name here if zone only uses that
-            // (= has no transitions = `offsets.daylight.is_none()`).
+            // TODO: Use the specific name here if zone only uses that
+            // (= has no transitions = `offsets.daylight.is_none() || offsets.daylight == Some(offsets.standard))`).
             let Some(location) = locations
                 .locations
                 .get(&time_zone_id)
@@ -231,10 +231,11 @@ impl FormatTimeZone for SpecificNonLocationFormat {
             return Ok(Err(FormatTimeZoneError::Fallback));
         };
 
-        let variant = if offset == offsets.standard {
-            TimeZoneVariant::Standard
-        } else if Some(offset) == offsets.daylight {
+        let variant = if Some(offset) == offsets.daylight {
+            // Check daylight first in case of permanent DST (where standard is the same)
             TimeZoneVariant::Daylight
+        } else if offset == offsets.standard {
+            TimeZoneVariant::Standard
         } else {
             // Not a correct offset for the zone
             return Ok(Err(FormatTimeZoneError::Fallback));
