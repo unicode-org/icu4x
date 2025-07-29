@@ -27,6 +27,8 @@ enum Script {
   batak,
   /// See the [Rust documentation for `Bengali`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.Bengali) for more information.
   bengali,
+  /// See the [Rust documentation for `BeriaErfe`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.BeriaErfe) for more information.
+  beriaErfe,
   /// See the [Rust documentation for `Bhaiksuki`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.Bhaiksuki) for more information.
   bhaiksuki,
   /// See the [Rust documentation for `Bopomofo`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.Bopomofo) for more information.
@@ -51,6 +53,8 @@ enum Script {
   cham,
   /// See the [Rust documentation for `Cherokee`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.Cherokee) for more information.
   cherokee,
+  /// See the [Rust documentation for `Chisoi`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.Chisoi) for more information.
+  chisoi,
   /// See the [Rust documentation for `Chorasmian`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.Chorasmian) for more information.
   chorasmian,
   /// See the [Rust documentation for `Common`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.Common) for more information.
@@ -269,6 +273,8 @@ enum Script {
   shavian,
   /// See the [Rust documentation for `Siddham`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.Siddham) for more information.
   siddham,
+  /// See the [Rust documentation for `Sidetic`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.Sidetic) for more information.
+  sidetic,
   /// See the [Rust documentation for `SignWriting`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.SignWriting) for more information.
   signWriting,
   /// See the [Rust documentation for `Sinhala`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.Sinhala) for more information.
@@ -295,6 +301,8 @@ enum Script {
   taiTham,
   /// See the [Rust documentation for `TaiViet`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.TaiViet) for more information.
   taiViet,
+  /// See the [Rust documentation for `TaiYo`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.TaiYo) for more information.
+  taiYo,
   /// See the [Rust documentation for `Takri`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.Takri) for more information.
   takri,
   /// See the [Rust documentation for `Tamil`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.Tamil) for more information.
@@ -315,6 +323,8 @@ enum Script {
   tifinagh,
   /// See the [Rust documentation for `Tirhuta`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.Tirhuta) for more information.
   tirhuta,
+  /// See the [Rust documentation for `TolongSiki`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.TolongSiki) for more information.
+  tolongSiki,
   /// See the [Rust documentation for `Toto`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.Toto) for more information.
   toto,
   /// See the [Rust documentation for `Ugaritic`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.Script.html#associatedconstant.Ugaritic) for more information.
@@ -360,6 +370,8 @@ enum Script {
         return 63;
       case bengali:
         return 4;
+      case beriaErfe:
+        return 208;
       case bhaiksuki:
         return 168;
       case bopomofo:
@@ -384,6 +396,8 @@ enum Script {
         return 66;
       case cherokee:
         return 6;
+      case chisoi:
+        return 209;
       case chorasmian:
         return 189;
       case common:
@@ -602,6 +616,8 @@ enum Script {
         return 51;
       case siddham:
         return 166;
+      case sidetic:
+        return 210;
       case signWriting:
         return 112;
       case sinhala:
@@ -628,6 +644,8 @@ enum Script {
         return 106;
       case taiViet:
         return 127;
+      case taiYo:
+        return 211;
       case takri:
         return 153;
       case tamil:
@@ -648,6 +666,8 @@ enum Script {
         return 60;
       case tirhuta:
         return 158;
+      case tolongSiki:
+        return 212;
       case toto:
         return 196;
       case ugaritic:
