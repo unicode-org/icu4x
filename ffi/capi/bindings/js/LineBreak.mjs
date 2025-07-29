@@ -58,7 +58,8 @@ export class LineBreak {
         ["AksaraPrebase", 44],
         ["AksaraStart", 45],
         ["ViramaFinal", 46],
-        ["Virama", 47]
+        ["Virama", 47],
+        ["UnambiguousHyphen", 48]
     ]);
 
     static getAllEntries() {
@@ -152,6 +153,7 @@ export class LineBreak {
         new LineBreak(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 45),
         new LineBreak(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 46),
         new LineBreak(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 47),
+        new LineBreak(diplomatRuntime.internalConstructor, diplomatRuntime.internalConstructor, 48),
     ];
 
     static Unknown = LineBreak.#objectValues[0];
@@ -202,6 +204,7 @@ export class LineBreak {
     static AksaraStart = LineBreak.#objectValues[45];
     static ViramaFinal = LineBreak.#objectValues[46];
     static Virama = LineBreak.#objectValues[47];
+    static UnambiguousHyphen = LineBreak.#objectValues[48];
 
 
     /**

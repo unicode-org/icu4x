@@ -100,7 +100,9 @@ enum LineBreak {
   /// See the [Rust documentation for `ViramaFinal`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.LineBreak.html#associatedconstant.ViramaFinal) for more information.
   viramaFinal,
   /// See the [Rust documentation for `Virama`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.LineBreak.html#associatedconstant.Virama) for more information.
-  virama;
+  virama,
+  /// See the [Rust documentation for `UnambiguousHyphen`](https://docs.rs/icu/2.0.0/icu/properties/props/struct.LineBreak.html#associatedconstant.UnambiguousHyphen) for more information.
+  unambiguousHyphen;
 
   /// See the [Rust documentation for `for_char`](https://docs.rs/icu/2.0.0/icu/properties/props/trait.EnumeratedProperty.html#tymethod.for_char) for more information.
   static LineBreak forChar(Rune ch) {
