@@ -168,7 +168,7 @@ impl FormatTimeZone for GenericNonLocationFormat {
         if mz.kind == MetazoneMembershipKind::CustomTransitions {
             // Disambiguate using the location.
             // TODO: Use the specific name here if zone only uses that
-            // (= has no transitions = `offsets.daylight.is_none() || offsets.is_permanent_dst()`).
+            // (= has no transitions = `offsets.daylight.is_none() || offsets.daylight == Some(offsets.standard))`).
             let Some(location) = locations
                 .locations
                 .get(&time_zone_id)
