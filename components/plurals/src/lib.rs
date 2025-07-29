@@ -73,6 +73,7 @@
     )
 )]
 #![warn(missing_docs)]
+#![feature(ptr_metadata)]
 
 extern crate alloc;
 
