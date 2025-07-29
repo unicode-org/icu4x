@@ -143,7 +143,8 @@ impl HijriSimulated {
             Self,
     ]);
 
-    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::new_mecca)]
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE_WITH_WARNING, Self::new_mecca)]
+    #[cfg_attr(not(feature = "unstable"), doc(hidden))]
     pub fn try_new_mecca_unstable<D: DataProvider<CalendarHijriSimulatedMeccaV1> + ?Sized>(
         provider: &D,
     ) -> Result<Self, DataError> {
@@ -620,7 +621,7 @@ impl<A: AsCalendar<Calendar = HijriSimulated>> Date<A> {
         let y = calendar.as_calendar().load_or_compute_info(year);
         ArithmeticDate::new_from_ordinals(y, month, day)
             .map(HijriSimulatedDateInner)
-            .map(|inner| Date::from_raw(inner, calendar))
+            .map(|inner| Date { inner, calendar })
     }
 }
 
@@ -829,10 +830,10 @@ impl Date<HijriUmmAlQura> {
         day: u8,
     ) -> Result<Date<HijriUmmAlQura>, RangeError> {
         let y = HijriUmmAlQura.load_or_compute_info(year);
-        Ok(Date::from_raw(
-            HijriUmmAlQuraDateInner(ArithmeticDate::new_from_ordinals(y, month, day)?),
-            HijriUmmAlQura,
-        ))
+        Ok(Date {
+            inner: HijriUmmAlQuraDateInner(ArithmeticDate::new_from_ordinals(y, month, day)?),
+            calendar: HijriUmmAlQura,
+        })
     }
 }
 
@@ -1041,7 +1042,7 @@ impl<A: AsCalendar<Calendar = HijriTabular>> Date<A> {
     ) -> Result<Date<A>, RangeError> {
         ArithmeticDate::new_from_ordinals(year, month, day)
             .map(HijriTabularDateInner)
-            .map(|inner| Date::from_raw(inner, calendar))
+            .map(|inner| Date { inner, calendar })
     }
 }
 
