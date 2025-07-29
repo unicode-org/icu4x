@@ -35,15 +35,15 @@ enum_keyword!(
         ("dict" => Dict),
         /// The default Unicode collation element table order
         /// 
-        /// 🛈 `icu_collator` does not support the `ducet` ordering. See [`CollationType`].
+        /// 🛈 `icu::collator` does not support the `ducet` ordering. See [`CollationType`].
         ("ducet" => Ducet),
         /// Recommended ordering for emoji characters
         /// 
-        /// 🛈 `icu_collator` supports this ordering only in the root locale. See [`CollationType`].
+        /// 🛈 `icu::collator` supports this ordering only in the root locale. See [`CollationType`].
         ("emoji" => Emoji),
         /// European ordering rules
         /// 
-        /// 🛈 `icu_collator` supports this ordering only in the root locale. See [`CollationType`].
+        /// 🛈 `icu::collator` supports this ordering only in the root locale. See [`CollationType`].
         ("eor" => Eor),
         /// Phonebook style ordering (such as in German)
         ("phonebk" => Phonebk),
@@ -53,11 +53,11 @@ enum_keyword!(
         ("pinyin" => Pinyin),
         /// Special collation type for string search
         ///
-        /// 🛈 `icu_collator` does not include search collation rules by default. See [`CollationType`].
+        /// 🛈 `icu::collator` does not include search collation rules by default. See [`CollationType`].
         ("search" => Search),
         /// Special collation type for Korean initial consonant search
         ///
-        /// 🛈 `icu_collator` does not include search collation rules by default. See [`CollationType`].
+        /// 🛈 `icu::collator` does not include search collation rules by default. See [`CollationType`].
         ("searchjl" => Searchjl),
         /// Default ordering for each language
         ("standard" => Standard),
