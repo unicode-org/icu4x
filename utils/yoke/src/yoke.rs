@@ -754,6 +754,9 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
     /// looking at a subfield, and producing a new yoke. This will move cart, and the provided
     /// transformation is only allowed to use data known to be borrowed from the cart.
     ///
+    /// If producing the new [`Yokeable`] `P` requires access to the cart in addition to the old
+    /// `Y`, then [`Yoke::map_with_cart`] can be used if the cart satisfies additional constraints.
+    ///
     /// The callback takes an additional `PhantomData<&()>` parameter to anchor lifetimes
     /// (see [#86702](https://github.com/rust-lang/rust/issues/86702)) This parameter
     /// should just be ignored in the callback.
@@ -1101,8 +1104,8 @@ where
     /// cart, and the provided transformation is only allowed to use data known to be borrowed from
     /// the cart.
     ///
-    /// If access to the old [`Yokeable`] `Y` is sufficient to produce new [`Yokeable`] `P`, then
-    /// [`Yoke::map_project`] should be preferred, as `map_with_cart` places additional
+    /// If access to the old [`Yokeable`] `Y` is sufficient to produce the new [`Yokeable`] `P`,
+    /// then [`Yoke::map_project`] should be preferred, as `map_with_cart` places additional
     /// constraints on the cart.
     ///
     /// This can be used, for example, to transform data between two formats, one of which contains
@@ -1223,8 +1226,8 @@ where
     /// This is a bit more efficient than cloning the [`Yoke`] and then calling
     /// [`Yoke::map_with_cart`] because it will not clone fields that are going to be discarded.
     ///
-    /// If access to the old [`Yokeable`] `Y` is sufficient to produce new [`Yokeable`] `P`, then
-    /// [`Yoke::map_project_cloned`] should be preferred, as `map_with_cart_cloned` places
+    /// If access to the old [`Yokeable`] `Y` is sufficient to produce the new [`Yokeable`] `P`,
+    /// then [`Yoke::map_project_cloned`] should be preferred, as `map_with_cart_cloned` places
     /// additional constraints on the cart.
     pub fn map_with_cart_cloned<'this, P, F>(&'this self, f: F) -> Yoke<P, C>
     where
@@ -1251,8 +1254,8 @@ where
     /// This is similar to [`Yoke::map_with_cart`], but it can also bubble up an error
     /// from the callback.
     ///
-    /// If access to the old [`Yokeable`] `Y` is sufficient to produce new [`Yokeable`] `P`, then
-    /// [`Yoke::try_map_project`] should be preferred, as `try_map_with_cart` places
+    /// If access to the old [`Yokeable`] `Y` is sufficient to produce the new [`Yokeable`] `P`,
+    /// then [`Yoke::try_map_project`] should be preferred, as `try_map_with_cart` places
     /// additional constraints on the cart.
     ///
     /// ```
@@ -1304,9 +1307,9 @@ where
     /// This is a bit more efficient than cloning the [`Yoke`] and then calling
     /// [`Yoke::try_map_with_cart`] because it will not clone fields that are going to be discarded.
     ///
-    /// If access to the old [`Yokeable`] `Y` is sufficient to produce new [`Yokeable`] `P`, then
-    /// [`Yoke::try_map_project_cloned`] should be preferred, as `try_map_with_cart_cloned` places
-    /// additional constraints on the cart.
+    /// If access to the old [`Yokeable`] `Y` is sufficient to producethe new [`Yokeable`] `P`,
+    /// then [`Yoke::try_map_project_cloned`] should be preferred, as `try_map_with_cart_cloned`
+    /// places additional constraints on the cart.
     pub fn try_map_with_cart_cloned<'this, P, F, E>(&'this self, f: F) -> Result<Yoke<P, C>, E>
     where
         P: for<'a> Yokeable<'a>,
