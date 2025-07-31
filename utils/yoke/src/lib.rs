@@ -52,6 +52,7 @@ pub mod either;
 pub mod erased;
 mod kinda_sorta_dangling;
 mod macro_impls;
+pub mod utils;
 mod yoke;
 mod yokeable;
 #[cfg(feature = "zerofrom")]
