@@ -421,7 +421,7 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
     /// #     })
     /// # }
     ///
-    /// // also implements Yokeable
+    /// #[derive(Yokeable)]
     /// struct Bar<'a> {
     ///     numbers: Cow<'a, [u8]>,
     ///     string: Cow<'a, str>,
@@ -447,29 +447,6 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
     /// // Unchanged and still Cow::Borrowed
     /// assert_eq!(&*bar.get().numbers, &[0x68, 0x65, 0x6c, 0x6c, 0x6f]);
     /// assert!(matches!(bar.get().numbers, Cow::Borrowed(_)));
-    ///
-    /// # unsafe impl<'a> Yokeable<'a> for Bar<'static> {
-    /// #     type Output = Bar<'a>;
-    /// #     fn transform(&'a self) -> &'a Bar<'a> {
-    /// #         self
-    /// #     }
-    /// #
-    /// #     fn transform_owned(self) -> Bar<'a> {
-    /// #         // covariant lifetime cast, can be done safely
-    /// #         self
-    /// #     }
-    /// #
-    /// #     unsafe fn make(from: Bar<'a>) -> Self {
-    /// #         unsafe { mem::transmute(from) }
-    /// #     }
-    /// #
-    /// #     fn transform_mut<F>(&'a mut self, f: F)
-    /// #     where
-    /// #         F: 'static + FnOnce(&'a mut Self::Output),
-    /// #     {
-    /// #         unsafe { f(mem::transmute(self)) }
-    /// #     }
-    /// # }
     /// ```
     pub fn with_mut<'a, F>(&'a mut self, f: F)
     where
@@ -777,7 +754,7 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
     /// # use std::mem;
     /// # use std::rc::Rc;
     /// #
-    /// // also safely implements Yokeable<'a>
+    /// #[derive(Yokeable)]
     /// struct Bar<'a> {
     ///     string_1: &'a str,
     ///     string_2: &'a str,
@@ -788,30 +765,6 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
     /// ) -> Yoke<&'static str, Rc<[u8]>> {
     ///     bar.map_project(|bar, _| bar.string_1)
     /// }
-    ///
-    /// #
-    /// # unsafe impl<'a> Yokeable<'a> for Bar<'static> {
-    /// #     type Output = Bar<'a>;
-    /// #     fn transform(&'a self) -> &'a Bar<'a> {
-    /// #         self
-    /// #     }
-    /// #
-    /// #     fn transform_owned(self) -> Bar<'a> {
-    /// #         // covariant lifetime cast, can be done safely
-    /// #         self
-    /// #     }
-    /// #
-    /// #     unsafe fn make(from: Bar<'a>) -> Self {
-    /// #         unsafe { mem::transmute(from) }
-    /// #     }
-    /// #
-    /// #     fn transform_mut<F>(&'a mut self, f: F)
-    /// #     where
-    /// #         F: 'static + FnOnce(&'a mut Self::Output),
-    /// #     {
-    /// #         unsafe { f(mem::transmute(self)) }
-    /// #     }
-    /// # }
     /// ```
     //
     // Safety docs can be found at the end of the file.
@@ -884,7 +837,7 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
     /// # use std::rc::Rc;
     /// # use std::str::{self, Utf8Error};
     /// #
-    /// // also safely implements Yokeable<'a>
+    /// #[derive(Yokeable)]
     /// struct Bar<'a> {
     ///     bytes_1: &'a [u8],
     ///     string_2: &'a str,
@@ -895,30 +848,6 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
     /// ) -> Result<Yoke<&'static str, Rc<[u8]>>, Utf8Error> {
     ///     bar.try_map_project(|bar, _| str::from_utf8(bar.bytes_1))
     /// }
-    ///
-    /// #
-    /// # unsafe impl<'a> Yokeable<'a> for Bar<'static> {
-    /// #     type Output = Bar<'a>;
-    /// #     fn transform(&'a self) -> &'a Bar<'a> {
-    /// #         self
-    /// #     }
-    /// #
-    /// #     fn transform_owned(self) -> Bar<'a> {
-    /// #         // covariant lifetime cast, can be done safely
-    /// #         self
-    /// #     }
-    /// #
-    /// #     unsafe fn make(from: Bar<'a>) -> Self {
-    /// #         unsafe { mem::transmute(from) }
-    /// #     }
-    /// #
-    /// #     fn transform_mut<F>(&'a mut self, f: F)
-    /// #     where
-    /// #         F: 'static + FnOnce(&'a mut Self::Output),
-    /// #     {
-    /// #         unsafe { f(mem::transmute(self)) }
-    /// #     }
-    /// # }
     /// ```
     pub fn try_map_project<P, F, E>(self, f: F) -> Result<Yoke<P, C>, E>
     where
@@ -1333,7 +1262,7 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
 /// # use std::mem;
 /// # use std::rc::Rc;
 /// #
-/// // also safely implements Yokeable<'a>
+/// #[derive(Yokeable)]
 /// struct Bar<'a> {
 ///     owned: String,
 ///     string_2: &'a str,
@@ -1343,32 +1272,6 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
 ///     // ERROR (but works if you replace owned with string_2)
 ///     bar.map_project_cloned(|bar, _| &*bar.owned)
 /// }
-///
-/// #
-/// # unsafe impl<'a> Yokeable<'a> for Bar<'static> {
-/// #     type Output = Bar<'a>;
-/// #     fn transform(&'a self) -> &'a Bar<'a> {
-/// #         self
-/// #     }
-/// #
-/// #     fn transform_owned(self) -> Bar<'a> {
-/// #         // covariant lifetime cast, can be done safely
-/// #         self
-/// #     }
-/// #
-/// #     unsafe fn make(from: Bar<'a>) -> Self {
-/// #         let ret = mem::transmute_copy(&from);
-/// #         mem::forget(from);
-/// #         ret
-/// #     }
-/// #
-/// #     fn transform_mut<F>(&'a mut self, f: F)
-/// #     where
-/// #         F: 'static + FnOnce(&'a mut Self::Output),
-/// #     {
-/// #         unsafe { f(mem::transmute(self)) }
-/// #     }
-/// # }
 /// ```
 ///
 /// Borrowed data from `Y` similarly cannot escape with the wrong lifetime because of the `for<'a>`, since
