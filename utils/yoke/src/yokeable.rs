@@ -247,32 +247,6 @@ pub unsafe trait Yokeable<'a>: Sized + 'static {
     {
         utils::transform_mut_yokeable(self, f);
     }
-
-    /// This method must cast `self` between `&'a mut Self<'static>` and `&'a mut Self<'a>`,
-    /// and pass it to `f`.
-    ///
-    /// # Implementation safety
-    ///
-    /// A safe implementation of this method must be equivalent to a pointer cast/transmute between
-    /// `&mut Self<'a>` and `&mut Self<'static>` being passed to `f`.
-    ///
-    /// In other words, a safe implementation must be equivalent to the default implementation,
-    /// so it is unlikely that a manual implementation is worthwhile.
-    ///
-    /// # Why is this safe?
-    ///
-    /// See [`Yokeable::transform_mut`]. The added ability to return `'static` data is incapable
-    /// of leaking out non-`'static` data that would be unexpectedly invalidated too early,
-    /// unless `f` uses unsound `unsafe` code.
-    #[inline]
-    fn transform_mut_return<F, R>(&'a mut self, f: F) -> R
-    where
-        // be VERY CAREFUL changing this signature, it is very nuanced (see above)
-        F: 'static + for<'b> FnOnce(&'b mut Self::Output) -> R,
-        R: 'static,
-    {
-        utils::transform_mut_yokeable(self, f)
-    }
 }
 
 #[cfg(feature = "alloc")]
