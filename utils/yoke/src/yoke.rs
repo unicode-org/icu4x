@@ -392,6 +392,10 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
 
     /// Mutate the stored [`Yokeable`] data.
     ///
+    /// If the callback needs to return `'static` data, then [`Yoke::with_mut_return`] can be
+    /// used until the next breaking release of `yoke`, at which time the callback to this
+    /// function will be able to return any `'static` data.
+    ///
     /// See [`Yokeable::transform_mut()`] for why this operation is safe.
     ///
     /// # Example
@@ -453,6 +457,23 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
         F: 'static + for<'b> FnOnce(&'b mut <Y as Yokeable<'a>>::Output),
     {
         self.yokeable.transform_mut(f);
+    }
+
+    /// Mutate the stored [`Yokeable`] data, and return `'static` data (possibly just `()`).
+    ///
+    /// See [`Yokeable::transform_mut()`] and [`utils::transform_mut_yokeable`] for why this
+    /// operation is safe.
+    ///
+    /// ### Will be removed
+    /// This method will be removed on the next breaking release of `yoke`, when the callback of
+    /// [`Yoke::with_mut`] will gain the ability to return any `R: 'static` and supersede this
+    /// method.
+    pub fn with_mut_return<'a, F, R>(&'a mut self, f: F) -> R
+    where
+        F: 'static + for<'b> FnOnce(&'b mut <Y as Yokeable<'a>>::Output) -> R,
+        R: 'static,
+    {
+        utils::transform_mut_yokeable(&mut *self.yokeable, f)
     }
 
     /// Helper function allowing one to wrap the cart type `C` in an `Option<T>`.
