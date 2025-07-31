@@ -39,7 +39,8 @@ pub const fn cast_yokeable<Y: Yokeable<'static>>(from: Y::Output) -> Y {
 /// This method casts `yokeable` between `&'a mut Y<'static>` and `&'a mut Y<'a>`,
 /// and passes it to `f`.
 ///
-/// See [`Yokeable::transform_mut`] and [`Yokeable::transform_mut_return`] for why this is safe.
+/// See [`Yokeable::transform_mut`] for why this is safe, noting that the same reasoning about
+/// the `'static` return type applies beyond `()` to `R: 'static`.
 #[inline]
 pub fn transform_mut_yokeable<'a, Y, F, R>(yokeable: &'a mut Y, f: F) -> R
 where
@@ -50,7 +51,6 @@ where
 {
     // Cast away the lifetime of `Y`
     // Safety: this is equivalent to f(transmute(yokeable)), and the documentation of
-    // [`Yokeable::transform_mut`] and [`Yokeable::transform_mut_return`]
-    // explain why doing so is sound.
+    // [`Yokeable::transform_mut`] and this function explain why doing so is sound.
     unsafe { f(mem::transmute::<&'a mut Y, &'a mut Y::Output>(yokeable)) }
 }

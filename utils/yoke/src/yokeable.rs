@@ -239,6 +239,9 @@ pub unsafe trait Yokeable<'a>: Sized + 'static {
     ///  - one of f's captures: since F: 'static, the resulting reference must refer
     ///    to 'static data.
     ///  - a static or thread_local variable: ditto.
+    ///
+    /// Additionally, the return type `()` of `f` is `'static`, so it cannot expose non-`'static`
+    /// data that could be unexpectedly invalidated by the `Yokeable` or its cart.
     #[inline]
     fn transform_mut<F>(&'a mut self, f: F)
     where
