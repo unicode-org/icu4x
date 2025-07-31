@@ -94,6 +94,7 @@ pub unsafe trait Yokeable<'a>: Sized + 'static {
     /// If the invariants of [`Yokeable`] are being satisfied, the body of this method
     /// should simply be `{ self }`, though it's acceptable to include additional assertions
     /// if desired.
+    #[must_use]
     fn transform(&'a self) -> &'a Self::Output;
 
     /// This method must cast `self` between `Self<'static>` and `Self<'a>`.
@@ -103,6 +104,7 @@ pub unsafe trait Yokeable<'a>: Sized + 'static {
     /// If the invariants of [`Yokeable`] are being satisfied, the body of this method
     /// should simply be `{ self }`, though it's acceptable to include additional assertions
     /// if desired.
+    #[must_use]
     fn transform_owned(self) -> Self::Output;
 
     /// This method can be used to cast away `Self<'a>`'s lifetime.
@@ -116,6 +118,7 @@ pub unsafe trait Yokeable<'a>: Sized + 'static {
     /// A safe implementation of this method must be equivalent to a transmute between
     /// `Self<'a>` and `Self<'static>`
     #[deprecated(since = "0.8.1", note = "use `yoke::utils::make_yokeable` instead")]
+    #[must_use]
     #[inline]
     unsafe fn make(from: Self::Output) -> Self {
         utils::make_yokeable(from)

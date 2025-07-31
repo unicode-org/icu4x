@@ -318,6 +318,7 @@ where
     ///
     /// - If `true`, the instance is `None`
     /// - If `false`, the instance is a valid `SelectedRc`
+    #[must_use]
     #[inline]
     pub fn is_none(&self) -> bool {
         self.inner == sentinel_for::<C::Raw>()

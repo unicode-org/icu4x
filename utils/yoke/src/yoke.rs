@@ -190,6 +190,7 @@ where
     /// assert!(matches!(yoke.get(), &Cow::Borrowed(_)));
     /// assert_eq!(bytes_remaining, 3);
     /// ```
+    #[must_use]
     pub fn attach_to_cart<F>(cart: C, f: F) -> Self
     where
         // safety note: This works by enforcing that the *only* place the return value of F
@@ -238,6 +239,7 @@ where
     /// Use [`Yoke::attach_to_cart()`].
     ///
     /// This was needed because the pre-1.61 compiler couldn't always handle the FnOnce trait bound.
+    #[must_use]
     #[deprecated]
     pub fn attach_to_cart_badly(
         cart: C,
@@ -288,6 +290,7 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
     /// let yoke: Yoke<Cow<str>, _> = load_object("filename.bincode");
     /// assert_eq!(yoke.get(), "hello");
     /// ```
+    #[must_use]
     #[inline]
     pub fn get<'a>(&'a self) -> &'a <Y as Yokeable<'a>>::Output {
         self.yokeable.transform()
@@ -297,6 +300,7 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
     ///
     /// This can be useful when building caches, etc. However, if you plan to store the cart
     /// separately from the yoke, read the note of caution below in [`Yoke::into_backing_cart`].
+    #[must_use]
     pub fn backing_cart(&self) -> &C {
         &self.cart
     }
@@ -350,6 +354,7 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
     /// let cart = yoke.into_backing_cart();
     /// assert_eq!(&*cart, "foo"); // WHOOPS!
     /// ```
+    #[must_use]
     pub fn into_backing_cart(self) -> C {
         self.cart
     }
@@ -379,6 +384,7 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
     /// `Yoke` only really cares about destructors for its carts so it's fine to erase other
     /// information about the cart, as long as the backing data will still be destroyed at the
     /// same time.
+    #[must_use]
     #[inline]
     pub unsafe fn replace_cart<C2>(self, f: impl FnOnce(C) -> C2) -> Yoke<Y, C2> {
         Yoke {
@@ -477,6 +483,7 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
     }
 
     /// Helper function allowing one to wrap the cart type `C` in an `Option<T>`.
+    #[must_use]
     #[inline]
     pub fn wrap_cart_in_option(self) -> Yoke<Y, Option<C>> {
         // Safety: the cart is preserved (since it is just wrapped into a Some),
@@ -507,6 +514,7 @@ impl<Y: for<'a> Yokeable<'a>> Yoke<Y, ()> {
     ///
     /// assert_eq!(yoke.get(), "hello");
     /// ```
+    #[must_use]
     pub fn new_always_owned(yokeable: Y) -> Self {
         Self {
             // Safety note: this `yokeable` certainly does not reference data owned by (), so we do
@@ -521,6 +529,7 @@ impl<Y: for<'a> Yokeable<'a>> Yoke<Y, ()> {
     /// For most `Yoke` types this would be unsafe but it's
     /// fine for `Yoke<Y, ()>` since there are no actual internal
     /// references
+    #[must_use]
     pub fn into_yokeable(self) -> Y {
         // Safety note: since `yokeable` cannot reference data owned by `()`, this is certainly
         // safe.
@@ -555,6 +564,7 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, Option<C>> {
     ///
     /// assert_eq!(yoke.get(), "hello");
     /// ```
+    #[must_use]
     pub const fn new_owned(yokeable: Y) -> Self {
         Self {
             // Safety note: this `yokeable` is known not to borrow from the cart.
@@ -625,6 +635,7 @@ impl<Y: for<'a> Yokeable<'a>, C: CartablePointerLike> Yoke<Y, Option<C>> {
     /// }
     /// assert_eq!(W * 7, size_of::<StaticOrYoke2>());
     /// ```
+    #[must_use]
     #[inline]
     pub fn convert_cart_into_option_pointer(self) -> Yoke<Y, CartableOptionPointer<C>> {
         match self.cart {
@@ -789,6 +800,7 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
     /// ```
     //
     // Safety docs can be found at the end of the file.
+    #[must_use]
     pub fn map_project<P, F>(self, f: F) -> Yoke<P, C>
     where
         P: for<'a> Yokeable<'a>,
@@ -814,6 +826,7 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
     ///
     /// This is a bit more efficient than cloning the [`Yoke`] and then calling [`Yoke::map_project`]
     /// because then it will not clone fields that are going to be discarded.
+    #[must_use]
     pub fn map_project_cloned<'this, P, F>(&'this self, f: F) -> Yoke<P, C>
     where
         P: for<'a> Yokeable<'a>,
@@ -920,6 +933,7 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
     /// See [#1061](https://github.com/unicode-org/icu4x/issues/1061).
     ///
     /// See the docs of [`Yoke::map_project`] for how this works.
+    #[must_use]
     pub fn map_project_with_explicit_capture<P, T>(
         self,
         capture: T,
@@ -1081,6 +1095,7 @@ impl<Y: for<'a> Yokeable<'a>, C: 'static + Sized> Yoke<Y, Rc<C>> {
     ///
     /// // Now erased1 and erased2 have the same type!
     /// ```
+    #[must_use]
     pub fn erase_rc_cart(self) -> Yoke<Y, ErasedRcCart> {
         // Safety: safe because the cart is preserved, as it is just type-erased
         unsafe { self.replace_cart(|c| c as ErasedRcCart) }
@@ -1124,6 +1139,7 @@ impl<Y: for<'a> Yokeable<'a>, C: 'static + Sized + Send + Sync> Yoke<Y, Arc<C>> 
     ///
     /// // Now erased1 and erased2 have the same type!
     /// ```
+   #[must_use]
     pub fn erase_arc_cart(self) -> Yoke<Y, ErasedArcCart> {
         // Safety: safe because the cart is preserved, as it is just type-erased
         unsafe { self.replace_cart(|c| c as ErasedArcCart) }
@@ -1167,6 +1183,7 @@ impl<Y: for<'a> Yokeable<'a>, C: 'static + Sized> Yoke<Y, Box<C>> {
     ///
     /// // Now erased1 and erased2 have the same type!
     /// ```
+    #[must_use]
     pub fn erase_box_cart(self) -> Yoke<Y, ErasedBoxCart> {
         // Safety: safe because the cart is preserved, as it is just type-erased
         unsafe { self.replace_cart(|c| c as ErasedBoxCart) }
@@ -1179,6 +1196,7 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
     /// Can be paired with [`Yoke::erase_box_cart()`]
     ///
     /// ✨ *Enabled with the `alloc` Cargo feature.*
+    #[must_use]
     #[inline]
     pub fn wrap_cart_in_box(self) -> Yoke<Y, Box<C>> {
         // Safety: safe because the cart is preserved, as it is just wrapped.
@@ -1189,6 +1207,7 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
     /// to make the [`Yoke`] cloneable.
     ///
     /// ✨ *Enabled with the `alloc` Cargo feature.*
+    #[must_use]
     #[inline]
     pub fn wrap_cart_in_rc(self) -> Yoke<Y, Rc<C>> {
         // Safety: safe because the cart is preserved, as it is just wrapped
@@ -1199,6 +1218,7 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
     /// to make the [`Yoke`] cloneable.
     ///
     /// ✨ *Enabled with the `alloc` Cargo feature.*
+    #[must_use]
     #[inline]
     pub fn wrap_cart_in_arc(self) -> Yoke<Y, Arc<C>> {
         // Safety: safe because the cart is preserved, as it is just wrapped
@@ -1213,6 +1233,7 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
     /// `B` variant, use [`Self::wrap_cart_in_either_b()`].
     ///
     /// For an example, see [`EitherCart`].
+    #[must_use]
     #[inline]
     pub fn wrap_cart_in_either_a<B>(self) -> Yoke<Y, EitherCart<C, B>> {
         // Safety: safe because the cart is preserved, as it is just wrapped.
@@ -1224,6 +1245,7 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
     /// `A` variant, use [`Self::wrap_cart_in_either_a()`].
     ///
     /// For an example, see [`EitherCart`].
+    #[must_use]
     #[inline]
     pub fn wrap_cart_in_either_b<A>(self) -> Yoke<Y, EitherCart<A, C>> {
         // Safety: safe because the cart is preserved, as it is just wrapped.

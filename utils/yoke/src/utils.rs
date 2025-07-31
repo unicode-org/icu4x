@@ -8,6 +8,7 @@ use core::mem::ManuallyDrop;
 /// # Safety
 ///
 /// The returned value must be destroyed before the data `from` was borrowing from is.
+#[must_use]
 #[inline]
 pub const unsafe fn make_yokeable<'a, Y: Yokeable<'a>>(from: Y::Output) -> Y {
     // Unfortunately, Rust doesn't think `mem::transmute` is possible since it's not sure the sizes
@@ -28,6 +29,7 @@ pub const unsafe fn make_yokeable<'a, Y: Yokeable<'a>>(from: Y::Output) -> Y {
 /// `Y` and `Y::Output` are the same type.
 ///
 /// [`Output`]: Yokeable::Output
+#[must_use]
 #[inline]
 pub const fn cast_yokeable<Y: Yokeable<'static>>(from: Y::Output) -> Y {
     // SAFETY:
