@@ -7,6 +7,7 @@ use crate::either::EitherCart;
 #[cfg(feature = "alloc")]
 use crate::erased::{ErasedArcCart, ErasedBoxCart, ErasedRcCart};
 use crate::kinda_sorta_dangling::KindaSortaDangling;
+use crate::utils;
 use crate::Yokeable;
 use core::marker::PhantomData;
 use core::ops::Deref;
@@ -206,7 +207,7 @@ where
                 // Safety: the resulting `yokeable` is dropped before the `cart` because
                 // of the Yoke invariant. See the safety docs at the bottom of this file
                 // for the justification of why yokeable could only borrow from the Cart.
-                unsafe { Y::make(deserialized) },
+                unsafe { utils::make_yokeable(deserialized) },
             ),
             cart,
         }
@@ -228,7 +229,7 @@ where
                 // Safety: the resulting `yokeable` is dropped before the `cart` because
                 // of the Yoke invariant. See the safety docs at the bottom of this file
                 // for the justification of why yokeable could only borrow from the Cart.
-                unsafe { Y::make(deserialized) },
+                unsafe { utils::make_yokeable(deserialized) },
             ),
             cart,
         })
@@ -474,7 +475,7 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
     where
         F: 'static + for<'b> FnOnce(&'b mut <Y as Yokeable<'a>>::Output),
     {
-        self.yokeable.transform_mut(f)
+        self.yokeable.transform_mut(f);
     }
 
     /// Helper function allowing one to wrap the cart type `C` in an `Option<T>`.
@@ -710,7 +711,7 @@ where
             yokeable: KindaSortaDangling::new(
                 // Safety: C being a CloneableCart guarantees that the data referenced by the
                 // `yokeable` is kept alive by the clone of the cart.
-                unsafe { Y::make(this) },
+                unsafe { utils::make_yokeable(this) },
             ),
             cart: self.cart.clone(),
         }
@@ -828,7 +829,7 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
                 // Safety: the resulting `yokeable` is dropped before the `cart` because
                 // of the Yoke invariant. See the safety docs below for the justification of why
                 // yokeable could only borrow from the Cart.
-                unsafe { P::make(p) },
+                unsafe { utils::make_yokeable(p) },
             ),
             cart: self.cart,
         }
@@ -854,7 +855,7 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
                 // Safety: the resulting `yokeable` is dropped before the `cart` because
                 // of the Yoke invariant. See the safety docs below for the justification of why
                 // yokeable could only borrow from the Cart.
-                unsafe { P::make(p) },
+                unsafe { utils::make_yokeable(p) },
             ),
             cart: self.cart.clone(),
         }
@@ -933,7 +934,7 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
                 // Safety: the resulting `yokeable` is dropped before the `cart` because
                 // of the Yoke invariant. See the safety docs below for the justification of why
                 // yokeable could only borrow from the Cart.
-                unsafe { P::make(p) },
+                unsafe { utils::make_yokeable(p) },
             ),
             cart: self.cart,
         })
@@ -959,7 +960,7 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
                 // Safety: the resulting `yokeable` is dropped before the `cart` because
                 // of the Yoke invariant. See the safety docs below for the justification of why
                 // yokeable could only borrow from the Cart.
-                unsafe { P::make(p) },
+                unsafe { utils::make_yokeable(p) },
             ),
             cart: self.cart.clone(),
         })
@@ -991,7 +992,7 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
                 // Safety: the resulting `yokeable` is dropped before the `cart` because
                 // of the Yoke invariant. See the safety docs below for the justification of why
                 // yokeable could only borrow from the Cart.
-                unsafe { P::make(p) },
+                unsafe { utils::make_yokeable(p) },
             ),
             cart: self.cart,
         }
@@ -1021,7 +1022,7 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
                 // Safety: the resulting `yokeable` is dropped before the `cart` because
                 // of the Yoke invariant. See the safety docs below for the justification of why
                 // yokeable could only borrow from the Cart.
-                unsafe { P::make(p) },
+                unsafe { utils::make_yokeable(p) },
             ),
             cart: self.cart.clone(),
         }
@@ -1055,7 +1056,7 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
                 // Safety: the resulting `yokeable` is dropped before the `cart` because
                 // of the Yoke invariant. See the safety docs below for the justification of why
                 // yokeable could only borrow from the Cart.
-                unsafe { P::make(p) },
+                unsafe { utils::make_yokeable(p) },
             ),
             cart: self.cart,
         })
@@ -1086,7 +1087,7 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
                 // Safety: the resulting `yokeable` is dropped before the `cart` because
                 // of the Yoke invariant. See the safety docs below for the justification of why
                 // yokeable could only borrow from the Cart.
-                unsafe { P::make(p) },
+                unsafe { utils::make_yokeable(p) },
             ),
             cart: self.cart.clone(),
         })
@@ -1305,7 +1306,7 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
 /// # use yoke::Yoke;
 /// # use std::borrow::Cow;
 /// fn borrow_potentially_owned(y: &Yoke<Cow<'static, str>, Rc<[u8]>>) -> Yoke<&'static str, Rc<[u8]>> {
-///    y.map_project_cloned(|cow, _| &*cow)   
+///    y.map_project_cloned(|cow, _| &*cow)
 /// }
 /// ```
 ///
@@ -1318,7 +1319,7 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
 /// # use yoke::Yoke;
 /// # use std::borrow::Cow;
 /// fn borrow_potentially_owned(y: Yoke<Cow<'static, str>, Rc<[u8]>>) -> Yoke<&'static str, Rc<[u8]>> {
-///    y.map_project(|cow, _| &*cow)   
+///    y.map_project(|cow, _| &*cow)
 /// }
 /// ```
 ///
@@ -1340,7 +1341,7 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
 ///
 /// fn map_project_owned(bar: &Yoke<Bar<'static>, Rc<[u8]>>) -> Yoke<&'static str, Rc<[u8]>> {
 ///     // ERROR (but works if you replace owned with string_2)
-///     bar.map_project_cloned(|bar, _| &*bar.owned)   
+///     bar.map_project_cloned(|bar, _| &*bar.owned)
 /// }
 ///
 /// #
