@@ -22,17 +22,6 @@ macro_rules! copy_yoke_impl {
         fn transform_owned(self) -> Self::Output {
             self
         }
-        #[inline]
-        unsafe fn make(this: Self::Output) -> Self {
-            this
-        }
-        #[inline]
-        fn transform_mut<F>(&'a mut self, f: F)
-        where
-            F: 'static + for<'b> FnOnce(&'b mut Self::Output),
-        {
-            f(self)
-        }
     };
 }
 macro_rules! impl_copy_type {
@@ -81,25 +70,6 @@ macro_rules! unsafe_complex_yoke_impl {
                 let _ = ManuallyDrop::new(self);
                 ptr::read(ptr)
             }
-        }
-
-        unsafe fn make(from: Self::Output) -> Self {
-            debug_assert!(mem::size_of::<Self::Output>() == mem::size_of::<Self>());
-            let ptr: *const Self = (&from as *const Self::Output).cast();
-            let _ = ManuallyDrop::new(from);
-            // Safety: `ptr` is certainly valid, aligned and points to a properly initialized value, as
-            // it comes from a value that was moved into a ManuallyDrop.
-            unsafe { ptr::read(ptr) }
-        }
-
-        fn transform_mut<F>(&'a mut self, f: F)
-        where
-            F: 'static + for<'b> FnOnce(&'b mut Self::Output),
-        {
-            // Cast away the lifetime of Self
-            // Safety: this is equivalent to f(transmute(self)), and the documentation of the trait
-            // method explains why doing so is sound.
-            unsafe { f(mem::transmute::<&'a mut Self, &'a mut Self::Output>(self)) }
         }
     };
 }

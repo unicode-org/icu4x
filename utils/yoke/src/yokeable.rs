@@ -2,9 +2,10 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::utils;
 #[cfg(feature = "alloc")]
 use alloc::borrow::{Cow, ToOwned};
-use core::{marker::PhantomData, mem};
+use core::marker::PhantomData;
 
 /// The `Yokeable<'a>` trait is implemented on the `'static` version of any zero-copy type; for
 /// example, `Cow<'static, T>` implements `Yokeable<'a>` (for all `'a`).
@@ -82,7 +83,7 @@ use core::{marker::PhantomData, mem};
 ///     }
 /// }
 /// ```
-pub unsafe trait Yokeable<'a>: 'static {
+pub unsafe trait Yokeable<'a>: Sized + 'static {
     /// This type MUST be `Self` with the `'static` replaced with `'a`, i.e. `Self<'a>`
     type Output: 'a;
 
@@ -114,7 +115,11 @@ pub unsafe trait Yokeable<'a>: 'static {
     ///
     /// A safe implementation of this method must be equivalent to a transmute between
     /// `Self<'a>` and `Self<'static>`
-    unsafe fn make(from: Self::Output) -> Self;
+    #[deprecated(since = "0.8.1", note = "use `yoke::utils::make_yokeable` instead")]
+    #[inline]
+    unsafe fn make(from: Self::Output) -> Self {
+        utils::make_yokeable(from)
+    }
 
     /// This method must cast `self` between `&'a mut Self<'static>` and `&'a mut Self<'a>`,
     /// and pass it to `f`.
@@ -122,7 +127,10 @@ pub unsafe trait Yokeable<'a>: 'static {
     /// # Implementation safety
     ///
     /// A safe implementation of this method must be equivalent to a pointer cast/transmute between
-    /// `&mut Self<'a>` and `&mut Self<'static>` being passed to `f`
+    /// `&mut Self<'a>` and `&mut Self<'static>` being passed to `f`.
+    ///
+    /// In other words, a safe implementation must be equivalent to the default implementation,
+    /// so it is unlikely that a manual implementation is worthwhile.
     ///
     /// # Why is this safe?
     ///
@@ -231,10 +239,40 @@ pub unsafe trait Yokeable<'a>: 'static {
     ///  - one of f's captures: since F: 'static, the resulting reference must refer
     ///    to 'static data.
     ///  - a static or thread_local variable: ditto.
+    #[inline]
     fn transform_mut<F>(&'a mut self, f: F)
     where
         // be VERY CAREFUL changing this signature, it is very nuanced (see above)
-        F: 'static + for<'b> FnOnce(&'b mut Self::Output);
+        F: 'static + for<'b> FnOnce(&'b mut Self::Output),
+    {
+        utils::transform_mut_yokeable(self, f);
+    }
+
+    /// This method must cast `self` between `&'a mut Self<'static>` and `&'a mut Self<'a>`,
+    /// and pass it to `f`.
+    ///
+    /// # Implementation safety
+    ///
+    /// A safe implementation of this method must be equivalent to a pointer cast/transmute between
+    /// `&mut Self<'a>` and `&mut Self<'static>` being passed to `f`.
+    ///
+    /// In other words, a safe implementation must be equivalent to the default implementation,
+    /// so it is unlikely that a manual implementation is worthwhile.
+    ///
+    /// # Why is this safe?
+    ///
+    /// See [`Yokeable::transform_mut`]. The added ability to return `'static` data is incapable
+    /// of leaking out non-`'static` data that would be unexpectedly invalidated too early,
+    /// unless `f` uses unsound `unsafe` code.
+    #[inline]
+    fn transform_mut_return<F, R>(&'a mut self, f: F) -> R
+    where
+        // be VERY CAREFUL changing this signature, it is very nuanced (see above)
+        F: 'static + for<'b> FnOnce(&'b mut Self::Output) -> R,
+        R: 'static,
+    {
+        utils::transform_mut_yokeable(self, f)
+    }
 }
 
 #[cfg(feature = "alloc")]
@@ -244,68 +282,34 @@ where
     <T as ToOwned>::Owned: Sized,
 {
     type Output = Cow<'a, T>;
+
     #[inline]
     fn transform(&'a self) -> &'a Cow<'a, T> {
         // Doesn't need unsafe: `'a` is covariant so this lifetime cast is always safe
         self
     }
+
     #[inline]
     fn transform_owned(self) -> Cow<'a, T> {
         // Doesn't need unsafe: `'a` is covariant so this lifetime cast is always safe
         self
-    }
-    #[inline]
-    unsafe fn make(from: Cow<'a, T>) -> Self {
-        // i hate this
-        // unfortunately Rust doesn't think `mem::transmute` is possible since it's not sure the sizes
-        // are the same
-        debug_assert!(mem::size_of::<Cow<'a, T>>() == mem::size_of::<Self>());
-        let ptr: *const Self = (&from as *const Self::Output).cast();
-        let _ = core::mem::ManuallyDrop::new(from);
-        // Safety: `ptr` is certainly valid, aligned and points to a properly initialized value, as
-        // it comes from a value that was moved into a ManuallyDrop.
-        unsafe { core::ptr::read(ptr) }
-    }
-    #[inline]
-    fn transform_mut<F>(&'a mut self, f: F)
-    where
-        F: 'static + for<'b> FnOnce(&'b mut Self::Output),
-    {
-        // Cast away the lifetime of Self
-        // Safety: this is equivalent to f(transmute(self)), and the documentation of the trait
-        // method explains why doing so is sound.
-        unsafe { f(mem::transmute::<&'a mut Self, &'a mut Self::Output>(self)) }
     }
 }
 
 // Safety: &'a T is covariant in 'a.
 unsafe impl<'a, T: 'static + ?Sized> Yokeable<'a> for &'static T {
     type Output = &'a T;
+
     #[inline]
     fn transform(&'a self) -> &'a &'a T {
         // Doesn't need unsafe: `'a` is covariant so this lifetime cast is always safe
         self
     }
+
     #[inline]
     fn transform_owned(self) -> &'a T {
         // Doesn't need unsafe: `'a` is covariant so this lifetime cast is always safe
         self
-    }
-    #[inline]
-    unsafe fn make(from: &'a T) -> Self {
-        // Safety: function safety invariant guarantees that the returned reference
-        // will never be used beyond its original lifetime.
-        unsafe { mem::transmute(from) }
-    }
-    #[inline]
-    fn transform_mut<F>(&'a mut self, f: F)
-    where
-        F: 'static + for<'b> FnOnce(&'b mut Self::Output),
-    {
-        // Cast away the lifetime of Self
-        // Safety: this is equivalent to f(transmute(self)), and the documentation of the trait
-        // method explains why doing so is sound.
-        unsafe { f(mem::transmute::<&'a mut Self, &'a mut Self::Output>(self)) }
     }
 }
 
@@ -313,24 +317,15 @@ unsafe impl<'a, T: 'static + ?Sized> Yokeable<'a> for &'static T {
 // Safety: Vec<T: 'static> never borrows.
 unsafe impl<'a, T: 'static> Yokeable<'a> for alloc::vec::Vec<T> {
     type Output = alloc::vec::Vec<T>;
+
     #[inline]
     fn transform(&'a self) -> &'a alloc::vec::Vec<T> {
         self
     }
+
     #[inline]
     fn transform_owned(self) -> alloc::vec::Vec<T> {
         self
-    }
-    #[inline]
-    unsafe fn make(from: alloc::vec::Vec<T>) -> Self {
-        from
-    }
-    #[inline]
-    fn transform_mut<F>(&'a mut self, f: F)
-    where
-        F: 'static + for<'b> FnOnce(&'b mut Self::Output),
-    {
-        f(self)
     }
 }
 
@@ -344,17 +339,5 @@ unsafe impl<'a, T: ?Sized + 'static> Yokeable<'a> for PhantomData<T> {
 
     fn transform_owned(self) -> Self::Output {
         self
-    }
-
-    unsafe fn make(from: Self::Output) -> Self {
-        from
-    }
-
-    fn transform_mut<F>(&'a mut self, f: F)
-    where
-        // be VERY CAREFUL changing this signature, it is very nuanced (see above)
-        F: 'static + for<'b> FnOnce(&'b mut Self::Output),
-    {
-        f(self)
     }
 }

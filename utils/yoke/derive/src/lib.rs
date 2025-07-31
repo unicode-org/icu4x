@@ -62,23 +62,15 @@ fn yokeable_derive_impl(input: &DeriveInput) -> TokenStream2 {
             // This is safe because there are no lifetime parameters.
             unsafe impl<'a, #(#tybounds),*> yoke::Yokeable<'a> for #name<#(#typarams),*> where #(#static_bounds,)* Self: Sized {
                 type Output = Self;
+
                 #[inline]
                 fn transform(&self) -> &Self::Output {
                     self
                 }
+
                 #[inline]
                 fn transform_owned(self) -> Self::Output {
                     self
-                }
-                #[inline]
-                unsafe fn make(this: Self::Output) -> Self {
-                    this
-                }
-                #[inline]
-                fn transform_mut<F>(&'a mut self, f: F)
-                where
-                    F: 'static + for<'b> FnOnce(&'b mut Self::Output) {
-                    f(self)
                 }
             }
         }
@@ -173,6 +165,7 @@ fn yokeable_derive_impl(input: &DeriveInput) -> TokenStream2 {
                     where #(#static_bounds,)*
                     #(#yoke_bounds,)* {
                     type Output = #name<'a, #(#typarams),*>;
+
                     #[inline]
                     fn transform(&'a self) -> &'a Self::Output {
                         // These are just type asserts, we don't need them for anything
@@ -187,26 +180,10 @@ fn yokeable_derive_impl(input: &DeriveInput) -> TokenStream2 {
                             ::core::mem::transmute(self)
                         }
                     }
+
                     #[inline]
                     fn transform_owned(self) -> Self::Output {
                         match self { #owned_body }
-                    }
-                    #[inline]
-                    unsafe fn make(this: Self::Output) -> Self {
-                        use core::{mem, ptr};
-                        // unfortunately Rust doesn't think `mem::transmute` is possible since it's not sure the sizes
-                        // are the same
-                        debug_assert!(mem::size_of::<Self::Output>() == mem::size_of::<Self>());
-                        let ptr: *const Self = (&this as *const Self::Output).cast();
-                        #[allow(forgetting_copy_types, clippy::forget_copy, clippy::forget_non_drop)] // This is a noop if the struct is copy, which Clippy doesn't like
-                        mem::forget(this);
-                        ptr::read(ptr)
-                    }
-                    #[inline]
-                    fn transform_mut<F>(&'a mut self, f: F)
-                    where
-                        F: 'static + for<'b> FnOnce(&'b mut Self::Output) {
-                        unsafe { f(core::mem::transmute::<&'a mut Self, &'a mut Self::Output>(self)) }
                     }
                 }
             };
@@ -222,30 +199,15 @@ fn yokeable_derive_impl(input: &DeriveInput) -> TokenStream2 {
             // necessary
             unsafe impl<'a, #(#tybounds),*> yoke::Yokeable<'a> for #name<'static, #(#typarams),*> where #(#static_bounds,)* {
                 type Output = #name<'a, #(#typarams),*>;
+
                 #[inline]
                 fn transform(&'a self) -> &'a Self::Output {
                     self
                 }
+
                 #[inline]
                 fn transform_owned(self) -> Self::Output {
                     self
-                }
-                #[inline]
-                unsafe fn make(this: Self::Output) -> Self {
-                    use core::{mem, ptr};
-                    // unfortunately Rust doesn't think `mem::transmute` is possible since it's not sure the sizes
-                    // are the same
-                    debug_assert!(mem::size_of::<Self::Output>() == mem::size_of::<Self>());
-                    let ptr: *const Self = (&this as *const Self::Output).cast();
-                    #[allow(forgetting_copy_types, clippy::forget_copy, clippy::forget_non_drop)] // This is a noop if the struct is copy, which Clippy doesn't like
-                    mem::forget(this);
-                    ptr::read(ptr)
-                }
-                #[inline]
-                fn transform_mut<F>(&'a mut self, f: F)
-                where
-                    F: 'static + for<'b> FnOnce(&'b mut Self::Output) {
-                    unsafe { f(core::mem::transmute::<&'a mut Self, &'a mut Self::Output>(self)) }
                 }
             }
         }
