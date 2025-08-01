@@ -11,9 +11,27 @@
     ],
     [
       [
+        3,
+        {
+          "AlphaNextToNumber": "Other"
+        }
+      ],
+      "0 тыс'.' ¤"
+    ],
+    [
+      [
         4,
         {
           "Standard": "Other"
+        }
+      ],
+      "00 тыс'.' ¤"
+    ],
+    [
+      [
+        4,
+        {
+          "AlphaNextToNumber": "Other"
         }
       ],
       "00 тыс'.' ¤"
@@ -29,9 +47,27 @@
     ],
     [
       [
+        5,
+        {
+          "AlphaNextToNumber": "Other"
+        }
+      ],
+      "000 тыс'.' ¤"
+    ],
+    [
+      [
         6,
         {
           "Standard": "Other"
+        }
+      ],
+      "0 млн ¤"
+    ],
+    [
+      [
+        6,
+        {
+          "AlphaNextToNumber": "Other"
         }
       ],
       "0 млн ¤"
@@ -47,9 +83,27 @@
     ],
     [
       [
+        7,
+        {
+          "AlphaNextToNumber": "Other"
+        }
+      ],
+      "00 млн ¤"
+    ],
+    [
+      [
         8,
         {
           "Standard": "Other"
+        }
+      ],
+      "000 млн ¤"
+    ],
+    [
+      [
+        8,
+        {
+          "AlphaNextToNumber": "Other"
         }
       ],
       "000 млн ¤"
@@ -65,9 +119,27 @@
     ],
     [
       [
+        9,
+        {
+          "AlphaNextToNumber": "Other"
+        }
+      ],
+      "0 млрд ¤"
+    ],
+    [
+      [
         10,
         {
           "Standard": "Other"
+        }
+      ],
+      "00 млрд ¤"
+    ],
+    [
+      [
+        10,
+        {
+          "AlphaNextToNumber": "Other"
         }
       ],
       "00 млрд ¤"
@@ -83,9 +155,27 @@
     ],
     [
       [
+        11,
+        {
+          "AlphaNextToNumber": "Other"
+        }
+      ],
+      "000 млрд ¤"
+    ],
+    [
+      [
         12,
         {
           "Standard": "Other"
+        }
+      ],
+      "0 трлн ¤"
+    ],
+    [
+      [
+        12,
+        {
+          "AlphaNextToNumber": "Other"
         }
       ],
       "0 трлн ¤"
@@ -101,9 +191,27 @@
     ],
     [
       [
+        13,
+        {
+          "AlphaNextToNumber": "Other"
+        }
+      ],
+      "00 трлн ¤"
+    ],
+    [
+      [
         14,
         {
           "Standard": "Other"
+        }
+      ],
+      "000 трлн ¤"
+    ],
+    [
+      [
+        14,
+        {
+          "AlphaNextToNumber": "Other"
         }
       ],
       "000 трлн ¤"

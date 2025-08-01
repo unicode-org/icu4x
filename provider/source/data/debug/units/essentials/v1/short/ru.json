@@ -196,10 +196,64 @@
       {
         "Power": {
           "power": "Two",
+          "count": "One"
+        }
+      },
+      "{0}²"
+    ],
+    [
+      {
+        "Power": {
+          "power": "Two",
+          "count": "Few"
+        }
+      },
+      "{0}²"
+    ],
+    [
+      {
+        "Power": {
+          "power": "Two",
+          "count": "Many"
+        }
+      },
+      "{0}²"
+    ],
+    [
+      {
+        "Power": {
+          "power": "Two",
           "count": "Other"
         }
       },
       "{0}²"
+    ],
+    [
+      {
+        "Power": {
+          "power": "Three",
+          "count": "One"
+        }
+      },
+      "{0}³"
+    ],
+    [
+      {
+        "Power": {
+          "power": "Three",
+          "count": "Few"
+        }
+      },
+      "{0}³"
+    ],
+    [
+      {
+        "Power": {
+          "power": "Three",
+          "count": "Many"
+        }
+      },
+      "{0}³"
     ],
     [
       {

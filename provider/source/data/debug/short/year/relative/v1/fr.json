@@ -1,8 +1,8 @@
 {
   "relatives": {
-    "-1": "l’année dernière",
+    "-1": "l’an dernier",
     "0": "cette année",
-    "1": "l’année prochaine"
+    "1": "l’an prochain"
   },
   "past": {
     "other": [
