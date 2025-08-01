@@ -10,6 +10,6 @@
   ],
   "elements": [
     "GGGGy年M月d日EEEE",
-    "GGGy年MM月dd日(E)"
+    "GGGy/MM/dd(E)"
   ]
 }

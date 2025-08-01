@@ -7,7 +7,7 @@
     4,
     5,
     6,
-    6
+    7
   ],
   "elements": [
     "EEEE, d 'de' MMMM 'de' y",
@@ -15,6 +15,7 @@
     "EEE, d/M/yy",
     "EEE, d/M/y",
     "EEEE, d 'de' MMMM 'de' y GGG",
-    "E, d MMM y GGG"
+    "E, d MMM y GGG",
+    "E, d/M/y GGG"
   ]
 }

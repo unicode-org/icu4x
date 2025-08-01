@@ -72,24 +72,31 @@
     ],
     [
       [
-        18,
+        17,
         "Standard"
       ],
       "AST"
     ],
     [
       [
-        18,
+        17,
         "Daylight"
       ],
       "ADT"
     ],
     [
       [
-        53,
+        52,
         "Standard"
       ],
       "GMT"
+    ],
+    [
+      [
+        62,
+        "Standard"
+      ],
+      "HST"
     ],
     [
       [
@@ -107,20 +114,6 @@
     ]
   ],
   "overrides": [
-    [
-      [
-        "ushnl",
-        "Standard"
-      ],
-      "HST"
-    ],
-    [
-      [
-        "ushnl",
-        "Daylight"
-      ],
-      "HDT"
-    ],
     [
       [
         "utc",
