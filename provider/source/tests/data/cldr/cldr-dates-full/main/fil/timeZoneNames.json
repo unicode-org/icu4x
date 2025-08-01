@@ -9,6 +9,7 @@
           "hourFormat": "+HH:mm;-HH:mm",
           "gmtFormat": "GMT{0}",
           "gmtZeroFormat": "GMT",
+          "gmtUnknownFormat": "GMT+?",
           "regionFormat": "Oras sa {0}",
           "regionFormat-type-daylight": "Daylight Time ng {0}",
           "regionFormat-type-standard": "Standard na Oras sa {0}",
@@ -18,6 +19,10 @@
               "Honolulu": {
                 "_type": "zone",
                 "exemplarCity": "Honolulu"
+              },
+              "Galapagos": {
+                "_type": "zone",
+                "exemplarCity": "Galápagos"
               },
               "Truk": {
                 "_type": "zone",
@@ -29,7 +34,15 @@
               },
               "Enderbury": {
                 "_type": "zone",
-                "exemplarCity": "Enderbury"
+                "exemplarCity": "Canton Island"
+              },
+              "Noumea": {
+                "_type": "zone",
+                "exemplarCity": "Nouméa"
+              },
+              "Wallis": {
+                "_type": "zone",
+                "exemplarCity": "Wallis & Futuna"
               }
             },
             "Etc": {
@@ -47,16 +60,92 @@
                 "exemplarCity": "Di-kilalang Lungsod"
               }
             },
+            "Europe": {
+              "Tirane": {
+                "_type": "zone",
+                "exemplarCity": "Tirana"
+              },
+              "Busingen": {
+                "_type": "zone",
+                "exemplarCity": "Büsingen"
+              },
+              "London": {
+                "_type": "zone",
+                "long": {
+                  "daylight": "Oras sa Tag-init ng Britain"
+                }
+              },
+              "Dublin": {
+                "_type": "zone",
+                "long": {
+                  "daylight": "Standard na Oras sa Ireland"
+                }
+              },
+              "Chisinau": {
+                "_type": "zone",
+                "exemplarCity": "Chișinău"
+              },
+              "Kiev": {
+                "_type": "zone",
+                "exemplarCity": "Kiev"
+              }
+            },
             "Antarctica": {
+              "Syowa": {
+                "_type": "zone",
+                "exemplarCity": "Showa"
+              },
               "DumontDUrville": {
                 "_type": "zone",
                 "exemplarCity": "Dumont-d’Urville"
               }
             },
             "America": {
+              "Argentina": {
+                "Rio_Gallegos": {
+                  "_type": "zone",
+                  "exemplarCity": "Río Gallegos"
+                },
+                "Tucuman": {
+                  "_type": "zone",
+                  "exemplarCity": "Tucumán"
+                }
+              },
+              "Cordoba": {
+                "_type": "zone",
+                "exemplarCity": "Córdoba"
+              },
               "St_Barthelemy": {
                 "_type": "zone",
                 "exemplarCity": "St. Barthélemy"
+              },
+              "Eirunepe": {
+                "_type": "zone",
+                "exemplarCity": "Eirunepé"
+              },
+              "Cuiaba": {
+                "_type": "zone",
+                "exemplarCity": "Cuiabá"
+              },
+              "Santarem": {
+                "_type": "zone",
+                "exemplarCity": "Santarém"
+              },
+              "Belem": {
+                "_type": "zone",
+                "exemplarCity": "Belém"
+              },
+              "Araguaina": {
+                "_type": "zone",
+                "exemplarCity": "Araguaína"
+              },
+              "Sao_Paulo": {
+                "_type": "zone",
+                "exemplarCity": "São Paulo"
+              },
+              "Maceio": {
+                "_type": "zone",
+                "exemplarCity": "Maceió"
               },
               "Noronha": {
                 "_type": "zone",
@@ -73,6 +162,10 @@
               "St_Johns": {
                 "_type": "zone",
                 "exemplarCity": "St. John’s"
+              },
+              "Bogota": {
+                "_type": "zone",
+                "exemplarCity": "Bogotá"
               },
               "Curacao": {
                 "_type": "zone",
@@ -98,6 +191,10 @@
                 "_type": "zone",
                 "exemplarCity": "Lungsod ng Juárez"
               },
+              "Mazatlan": {
+                "_type": "zone",
+                "exemplarCity": "Mazatlán"
+              },
               "Bahia_Banderas": {
                 "_type": "zone",
                 "exemplarCity": "Bahia Banderas"
@@ -113,6 +210,10 @@
               "Cancun": {
                 "_type": "zone",
                 "exemplarCity": "Cancun"
+              },
+              "Miquelon": {
+                "_type": "zone",
+                "exemplarCity": "Saint-Pierre"
               },
               "Asuncion": {
                 "_type": "zone",
@@ -185,45 +286,11 @@
                 "exemplarCity": "St. Thomas"
               }
             },
-            "Africa": {
-              "Asmera": {
-                "_type": "zone",
-                "exemplarCity": "Asmara"
-              },
-              "Sao_Tome": {
-                "_type": "zone",
-                "exemplarCity": "São Tomé"
-              }
-            },
-            "Atlantic": {
-              "Faeroe": {
-                "_type": "zone",
-                "exemplarCity": "Faroe"
-              },
-              "St_Helena": {
-                "_type": "zone",
-                "exemplarCity": "St. Helena"
-              }
-            },
-            "Europe": {
-              "London": {
-                "_type": "zone",
-                "long": {
-                  "daylight": "Oras sa Tag-init ng Britain"
-                }
-              },
-              "Dublin": {
-                "_type": "zone",
-                "long": {
-                  "daylight": "Standard na Oras sa Ireland"
-                }
-              },
-              "Kiev": {
-                "_type": "zone",
-                "exemplarCity": "Kiev"
-              }
-            },
             "Asia": {
+              "Urumqi": {
+                "_type": "zone",
+                "exemplarCity": "Ürümqi"
+              },
               "Calcutta": {
                 "_type": "zone",
                 "exemplarCity": "Kolkata"
@@ -235,6 +302,10 @@
               "Rangoon": {
                 "_type": "zone",
                 "exemplarCity": "Yangon"
+              },
+              "Hovd": {
+                "_type": "zone",
+                "exemplarCity": "Khovd"
               },
               "Macau": {
                 "_type": "zone",
@@ -249,10 +320,54 @@
                 "exemplarCity": "Lungsod ng Ho Chi Minh"
               }
             },
+            "Africa": {
+              "El_Aaiun": {
+                "_type": "zone",
+                "exemplarCity": "El Aaiún"
+              },
+              "Asmera": {
+                "_type": "zone",
+                "exemplarCity": "Asmara"
+              },
+              "Sao_Tome": {
+                "_type": "zone",
+                "exemplarCity": "São Tomé"
+              },
+              "Ndjamena": {
+                "_type": "zone",
+                "exemplarCity": "N’Djamena"
+              },
+              "Lome": {
+                "_type": "zone",
+                "exemplarCity": "Lomé"
+              }
+            },
+            "Atlantic": {
+              "Canary": {
+                "_type": "zone",
+                "exemplarCity": "Canarias"
+              },
+              "Faeroe": {
+                "_type": "zone",
+                "exemplarCity": "Faroe"
+              },
+              "St_Helena": {
+                "_type": "zone",
+                "exemplarCity": "St. Helena"
+              }
+            },
             "Indian": {
+              "Comoro": {
+                "_type": "zone",
+                "exemplarCity": "Comores"
+              },
               "Reunion": {
                 "_type": "zone",
                 "exemplarCity": "Réunion"
+              },
+              "Mahe": {
+                "_type": "zone",
+                "exemplarCity": "Mahé"
               }
             }
           },
@@ -279,9 +394,7 @@
             },
             "Africa_Western": {
               "long": {
-                "generic": "Oras sa Kanlurang Africa",
-                "standard": "Standard na Oras sa Kanlurang Africa",
-                "daylight": "Oras sa Tag-init ng Kanlurang Africa"
+                "standard": "Oras sa Kanlurang Africa"
               }
             },
             "Alaska": {
@@ -636,6 +749,11 @@
             "Guyana": {
               "long": {
                 "standard": "Oras sa Guyana"
+              }
+            },
+            "Hawaii": {
+              "long": {
+                "standard": "Standard na Oras sa Hawaii-Aleutian"
               }
             },
             "Hawaii_Aleutian": {

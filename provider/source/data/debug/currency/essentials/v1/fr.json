@@ -942,7 +942,9 @@
       "short_placeholder_value": {
         "Index": 89
       },
-      "narrow_placeholder_value": null
+      "narrow_placeholder_value": {
+        "Index": 89
+      }
     },
     "XOF": {
       "short_pattern_selection": "StandardAlphaNextToNumber",
@@ -998,13 +1000,13 @@
   ],
   "standard_alpha_next_to_number_pattern": [
     {
-      "Placeholder": "Place1"
+      "Placeholder": "Place0"
     },
     {
       "Literal": " "
     },
     {
-      "Placeholder": "Place0"
+      "Placeholder": "Place1"
     }
   ],
   "placeholders": [

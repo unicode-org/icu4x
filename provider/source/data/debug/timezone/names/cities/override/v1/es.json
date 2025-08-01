@@ -1,7 +1,6 @@
 {
   "exemplars": {
     "aedxb": "Dubái",
-    "altia": "Tirana",
     "amevn": "Ereván",
     "atvie": "Viena",
     "azbak": "Bakú",
@@ -17,7 +16,6 @@
     "clscl": "Santiago de Chile",
     "cmdla": "Duala",
     "cnsha": "Shanghái",
-    "cobog": "Bogotá",
     "cuhav": "La Habana",
     "cxxch": "Navidad",
     "czprg": "Praga",
@@ -26,7 +24,6 @@
     "dzalg": "Argel",
     "eetll": "Tallin",
     "egcai": "El Cairo",
-    "eheai": "El Aaiún",
     "etadd": "Adís Abeba",
     "frpar": "París",
     "gblon": "Londres",
@@ -40,6 +37,7 @@
     "htpap": "Puerto Príncipe",
     "iedub": "Dublín",
     "inccu": "Calcuta",
+    "iodga": "Chagos",
     "iqbgw": "Bagdad",
     "irthr": "Teherán",
     "isrey": "Reikiavik",
@@ -70,7 +68,6 @@
     "robuh": "Bucarest",
     "rsbeg": "Belgrado",
     "saruh": "Riad",
-    "scmaw": "Mahé",
     "sdkrt": "Jartum",
     "sesto": "Estocolmo",
     "silju": "Liubliana",
@@ -79,7 +76,7 @@
     "sydam": "Damasco",
     "tcgdt": "Gran Turca",
     "tdndj": "Yamena",
-    "tglfw": "Lomé",
+    "tfpfr": "Kerguelen",
     "tjdyu": "Dusambé",
     "tmasb": "Asjabad",
     "trist": "Estambul",
@@ -92,6 +89,7 @@
     "vcsvd": "San Vicente",
     "vgtov": "Tórtola",
     "vnsgn": "Ciudad Ho Chi Minh",
+    "wfmau": "Wallis & Futuna",
     "yeade": "Adén",
     "zajnb": "Johannesburgo"
   }

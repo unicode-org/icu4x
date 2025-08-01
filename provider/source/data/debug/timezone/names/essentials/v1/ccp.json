@@ -9,5 +9,5 @@
     }
   ],
   "offset_zero": "GMT",
-  "offset_unknown": "GMT +?"
+  "offset_unknown": "GMT+?"
 }

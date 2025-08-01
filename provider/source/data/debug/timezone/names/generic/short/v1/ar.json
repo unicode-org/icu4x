@@ -1,6 +1,6 @@
 {
   "defaults": {
-    "61": "GST"
+    "60": "GST"
   },
   "overrides": {
     "utc": "UTC"

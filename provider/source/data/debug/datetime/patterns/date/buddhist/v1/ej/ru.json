@@ -9,11 +9,11 @@
     6
   ],
   "elements": [
-    "cccc, HH",
-    "ccc, HH",
-    "cccc H:m",
-    "ccc HH:mm",
-    "cccc H:m:s",
-    "ccc HH:mm:ss"
+    "EEEE, H ч.",
+    "E, HH ч.",
+    "EEEE H:m",
+    "EEE HH:mm",
+    "EEEE H:m:s",
+    "EEE HH:mm:ss"
   ]
 }

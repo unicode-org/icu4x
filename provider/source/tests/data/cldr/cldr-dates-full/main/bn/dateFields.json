@@ -556,36 +556,36 @@
             "displayName": "ঘণ্টা",
             "relative-type-0": "এই ঘণ্টায়",
             "relativeTime-type-future": {
-              "relativeTimePattern-count-one": "{0} ঘন্টায়",
-              "relativeTimePattern-count-other": "{0} ঘন্টায়"
+              "relativeTimePattern-count-one": "{0} ঘণ্টায়",
+              "relativeTimePattern-count-other": "{0} ঘণ্টায়"
             },
             "relativeTime-type-past": {
-              "relativeTimePattern-count-one": "{0} ঘন্টা আগে",
-              "relativeTimePattern-count-other": "{0} ঘন্টা আগে"
+              "relativeTimePattern-count-one": "{0} ঘণ্টা আগে",
+              "relativeTimePattern-count-other": "{0} ঘণ্টা আগে"
             }
           },
           "hour-short": {
             "displayName": "ঘণ্টা",
             "relative-type-0": "এই ঘণ্টায়",
             "relativeTime-type-future": {
-              "relativeTimePattern-count-one": "{0} ঘন্টায়",
-              "relativeTimePattern-count-other": "{0} ঘন্টায়"
+              "relativeTimePattern-count-one": "{0} ঘণ্টায়",
+              "relativeTimePattern-count-other": "{0} ঘণ্টায়"
             },
             "relativeTime-type-past": {
-              "relativeTimePattern-count-one": "{0} ঘন্টা আগে",
-              "relativeTimePattern-count-other": "{0} ঘন্টা আগে"
+              "relativeTimePattern-count-one": "{0} ঘণ্টা আগে",
+              "relativeTimePattern-count-other": "{0} ঘণ্টা আগে"
             }
           },
           "hour-narrow": {
             "displayName": "ঘণ্টা",
             "relative-type-0": "এই ঘণ্টায়",
             "relativeTime-type-future": {
-              "relativeTimePattern-count-one": "{0} ঘন্টায়",
-              "relativeTimePattern-count-other": "{0} ঘন্টায়"
+              "relativeTimePattern-count-one": "{0} ঘণ্টায়",
+              "relativeTimePattern-count-other": "{0} ঘণ্টায়"
             },
             "relativeTime-type-past": {
-              "relativeTimePattern-count-one": "{0} ঘন্টা আগে",
-              "relativeTimePattern-count-other": "{0} ঘন্টা আগে"
+              "relativeTimePattern-count-one": "{0} ঘণ্টা আগে",
+              "relativeTimePattern-count-other": "{0} ঘণ্টা আগে"
             }
           },
           "minute": {

@@ -7,13 +7,14 @@
     0,
     4,
     5,
-    5
+    6
   ],
   "elements": [
     "LLLL y г.",
     "LLL y г.",
     "MM.y",
     "LLLL y г. GGG",
-    "LLL y г. GGG"
+    "LLL y г. GGG",
+    "MM.y GGG"
   ]
 }

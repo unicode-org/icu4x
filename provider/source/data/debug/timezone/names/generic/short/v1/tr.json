@@ -1,5 +1,7 @@
 {
-  "defaults": {},
+  "defaults": {
+    "134": "TSİ"
+  },
   "overrides": {
     "utc": "UTC"
   }
