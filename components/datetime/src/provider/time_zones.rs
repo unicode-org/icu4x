@@ -421,12 +421,22 @@ pub(crate) mod legacy {
             );
 
             assert_eq!(
-                converted.get().get(tz, t).unwrap().1.map(|mz| mz.id),
+                converted
+                    .get()
+                    .get(tz, t)
+                    .unwrap()
+                    .1
+                    .map(|mz| match mz.id.get() {
+                        // the ID list changed with CLDR 48
+                        22 => 21,
+                        31 => 30,
+                        _ => unreachable!(),
+                    }),
                 icu_time::provider::Baked::SINGLETON_TIMEZONE_PERIODS_V1
                     .get(tz, t)
                     .unwrap()
                     .1
-                    .map(|mz| mz.id),
+                    .map(|mz| mz.id.get()),
                 "{timestamp:?}",
             );
         }

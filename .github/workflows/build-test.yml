@@ -368,6 +368,8 @@ jobs:
         rm dylib
 
     - name: Run `cargo make ci-job-test-dart` in fetch mode
+      # reenable after next release
+      if: false
       run: |
         git clean -xf ffi examples
         yq -i ".hooks.user_defines.icu4x.buildMode = \"fetch\"" ffi/dart/pubspec.yaml

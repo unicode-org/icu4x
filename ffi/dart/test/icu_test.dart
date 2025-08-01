@@ -127,7 +127,7 @@ void main() {
       DateTimeFormatter.ymdet(
         locale,
       ).formatIso(zonedDateTimeIso.date, zonedDateTimeIso.time),
-      'Mi., 15. Raj. 1446 AH, 14:32:12',
+      'Mi., 15.07.1446 AH, 14:32:12',
     );
 
     expect(
@@ -159,7 +159,7 @@ void main() {
         ),
         zonedDateTimeBuddhist.time,
       ),
-      'Do., 26. Raj. 1447 AH, 05:32:12',
+      'Do., 26.07.1447 AH, 05:32:12',
     );
 
     expect(
@@ -167,7 +167,7 @@ void main() {
         zonedDateTimeBuddhist.date.toIso(),
         zonedDateTimeBuddhist.time,
       ),
-      'Do., 26. Raj. 1447 AH, 05:32:12',
+      'Do., 26.07.1447 AH, 05:32:12',
     );
 
     ///// DateTimeFormatterGregorian /////
@@ -240,7 +240,7 @@ void main() {
         zonedDateTimeIso.time,
         zonedDateTimeIso.zone,
       ),
-      'Mi., 15. Raj. 1446 AH, 14:32:12 Mitteleuropäische Zeit',
+      'Mi., 15.07.1446 AH, 14:32:12 Mitteleuropäische Zeit',
     );
 
     expect(
@@ -252,7 +252,7 @@ void main() {
         zonedDateTimeIso.time,
         TimeZoneInfo.utc(),
       ),
-      'Mi., 15. Raj. 1446 AH, 14:32:12 Koordinierte Weltzeit',
+      'Mi., 15.07.1446 AH, 14:32:12 Koordinierte Weltzeit',
     );
 
     expect(
