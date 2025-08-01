@@ -385,7 +385,7 @@
     "pqm": "malisepasamakvodi",
     "prg": "pruski",
     "pro": "starooksitanski",
-    "ps": "paštunski",
+    "ps": "pašto",
     "pt": "portugalski",
     "qu": "kečua",
     "quc": "kiče",
@@ -545,6 +545,7 @@
   },
   "long_names": {},
   "menu_names": {
+    "ckb": "centralni kurdski",
     "yue": "kantonski kineski",
     "zh": "mandarinski kineski"
   }
