@@ -104,7 +104,8 @@ exclude = [
     # Examples are tested outside the workspace to simulate external users
     "examples",
     # Don't publish the graveyard
-    "tools/graveyard"
+    "tools/graveyard",
+    "dart_icu4x/rust"
 ]
 
 [workspace.package]
