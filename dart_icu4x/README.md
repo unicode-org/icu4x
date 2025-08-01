@@ -1,92 +1,243 @@
 # dart_icu4x
 
-A new Flutter FFI plugin project.
+A Flutter plugin that provides Unicode and internationalization (i18n) functionality using ICU4X (International Components for Unicode) through Rust bindings. This project leverages Flutter Rust Bridge to seamlessly integrate Rust's ICU4X library with Flutter applications.
 
-## Getting Started
+## Overview
 
-This project is a starting point for a Flutter
-[FFI plugin](https://flutter.dev/to/ffi-package),
-a specialized package that includes native code directly invoked with Dart FFI.
+ICU4X is a modern, modular internationalization library that provides Unicode and localization support. This Flutter plugin makes ICU4X's powerful features available to Flutter applications, including:
 
-## Project structure
+- **Unicode Character Properties**: Access detailed information about Unicode characters including general category, script, block, and various properties
+- **Case Mapping**: Convert text between different cases (uppercase, lowercase, titlecase)
+- **Internationalization Support**: Foundation for building fully localized applications
 
-This template uses the following structure:
+## Project Structure
 
-* `src`: Contains the native source code, and a CmakeFile.txt file for building
-  that source code into a dynamic library.
-
-* `lib`: Contains the Dart code that defines the API of the plugin, and which
-  calls into the native code using `dart:ffi`.
-
-* platform folders (`android`, `ios`, `windows`, etc.): Contains the build files
-  for building and bundling the native code library with the platform application.
-
-## Building and bundling native code
-
-The `pubspec.yaml` specifies FFI plugins as follows:
-
-```yaml
-  plugin:
-    platforms:
-      some_platform:
-        ffiPlugin: true
+```
+dart_icu4x/
+├── rust/                          # Rust backend with ICU4X integration
+│   ├── src/
+│   │   ├── api/                   # API definitions
+│   │   │   ├── mod.rs            # Module declarations
+│   │   │   └── simple.rs         # Core Unicode functionality
+│   │   ├── lib.rs                # Library entry point
+│   │   └── frb_generated.rs      # Auto-generated Flutter Rust Bridge code
+│   └── Cargo.toml                # Rust dependencies
+├── lib/                          # Dart library code
+│   ├── src/rust/                 # Auto-generated Dart bindings
+│   │   ├── api/                  # Dart API classes
+│   │   │   ├── simple.dart       # Unicode character properties
+│   │   │   └── model_helper.dart # Helper classes
+│   │   └── frb_generated.dart    # Core bridge functionality
+│   └── dart_icu4x.dart          # Main library exports
+├── example/                      # Example Flutter application
+├── android/                      # Android platform configuration
+├── ios/                         # iOS platform configuration
+├── linux/                       # Linux platform configuration
+├── macos/                       # macOS platform configuration
+├── windows/                     # Windows platform configuration
+├── cargokit/                    # Build tools for native code
+├── test_driver/                 # Integration test configuration
+├── flutter_rust_bridge.yaml     # Flutter Rust Bridge configuration
+├── pubspec.yaml                 # Flutter package configuration
+└── Makefile                     # Build automation
 ```
 
-This configuration invokes the native build for the various target platforms
-and bundles the binaries in Flutter applications using these FFI plugins.
+## Key Components
 
-This can be combined with dartPluginClass, such as when FFI is used for the
-implementation of one platform in a federated plugin:
+### Rust Backend (`rust/`)
+- **ICU4X Integration**: Uses ICU4X crates for Unicode and internationalization
+- **API Layer**: Provides clean interfaces for Unicode character analysis and case mapping
+- **Flutter Rust Bridge**: Automatically generates bindings between Rust and Dart
 
-```yaml
-  plugin:
-    implements: some_other_plugin
-    platforms:
-      some_platform:
-        dartPluginClass: SomeClass
-        ffiPlugin: true
+### Dart Library (`lib/`)
+- **Auto-generated Bindings**: Dart classes and functions generated from Rust code
+- **Type-safe API**: Full type safety with proper Dart classes for all data structures
+- **Cross-platform Support**: Works on all Flutter supported platforms
+
+### Platform Support
+- **Android**: Native ARM64 and x86_64 support
+- **iOS**: Native ARM64 and x86_64 support  
+- **Linux**: Native x86_64 support
+- **macOS**: Native ARM64 and x86_64 support
+- **Windows**: Native x86_64 support
+
+## Features
+
+### Unicode Character Properties
+Get comprehensive information about Unicode characters:
+
+```dart
+List<UnicodeCharProperties> properties = getUnicodeCharProperties(
+  offset: BigInt.from(0),
+  limit: BigInt.from(10),
+);
+
+for (var prop in properties) {
+  print('Character: ${prop.character}');
+  print('Code Point: ${prop.codePoint}');
+  print('General Category: ${prop.generalCategory}');
+  print('Script: ${prop.script}');
+  print('Block: ${prop.block}');
+  print('Is Alphabetic: ${prop.isAlphabetic}');
+  print('Is Emoji: ${prop.isEmoji}');
+}
 ```
 
-A plugin can have both FFI and method channels:
+### Case Mapping
+Convert text between different cases:
 
-```yaml
-  plugin:
-    platforms:
-      some_platform:
-        pluginClass: SomeName
-        ffiPlugin: true
+```dart
+CaseMappingResult result = getCharacterCaseMapping(character: 'a');
+print('Original: ${result.original}');
+print('Mapped: ${result.mapped}');
+print('Has Mapping: ${result.hasMapping}');
 ```
 
-The native build systems that are invoked by FFI (and method channel) plugins are:
+### Search Functionality
+Search for specific Unicode characters:
 
-* For Android: Gradle, which invokes the Android NDK for native builds.
-  * See the documentation in android/build.gradle.
-* For iOS and MacOS: Xcode, via CocoaPods.
-  * See the documentation in ios/dart_icu4x.podspec.
-  * See the documentation in macos/dart_icu4x.podspec.
-* For Linux and Windows: CMake.
-  * See the documentation in linux/CMakeLists.txt.
-  * See the documentation in windows/CMakeLists.txt.
+```dart
+List<UnicodeCharProperties> results = getUnicodeCharProperties(
+  search: 'emoji',
+  offset: BigInt.from(0),
+  limit: BigInt.from(20),
+);
+```
 
-## Binding to native code
+## Installation
 
-To use the native code, bindings in Dart are needed.
-To avoid writing these by hand, they are generated from the header file
-(`src/dart_icu4x.h`) by `package:ffigen`.
-Regenerate the bindings by running `dart run ffigen --config ffigen.yaml`.
+### Prerequisites
+- Flutter SDK (>=3.3.0)
+- Dart SDK (^3.8.1)
+- Rust toolchain (for development)
+- Platform-specific build tools (Android NDK, Xcode, etc.)
 
-## Invoking native code
+### Adding to Your Project
 
-Very short-running native functions can be directly invoked from any isolate.
-For example, see `sum` in `lib/dart_icu4x.dart`.
+1. **Add dependency** to your `pubspec.yaml`:
+```yaml
+dependencies:
+  dart_icu4x:
+    path: ../icu4x/dart_icu4x
+```
 
-Longer-running functions should be invoked on a helper isolate to avoid
-dropping frames in Flutter applications.
-For example, see `sumAsync` in `lib/dart_icu4x.dart`.
+2. **Initialize the library** in your app:
+```dart
+import 'package:dart_icu4x/dart_icu4x.dart';
 
-## Flutter help
+Future<void> main() async {
+  await RustLib.init();
+  runApp(MyApp());
+}
+```
 
-For help getting started with Flutter, view our
-[online documentation](https://docs.flutter.dev), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+3. **Use the API**:
+```dart
+// Get Unicode character properties
+final properties = getUnicodeCharProperties(
+  offset: BigInt.from(0),
+  limit: BigInt.from(10),
+);
+
+// Get case mapping
+final caseResult = getCharacterCaseMapping(character: 'A');
+```
+
+## Development
+
+### Building from Source
+
+1. **Clone the repository**:
+```bash
+git clone <repository-url>
+cd dart_icu4x
+```
+
+2. **Install dependencies**:
+```bash
+flutter pub get
+```
+
+3. **Build Rust code**:
+```bash
+make cargo-build
+```
+
+4. **Generate bindings**:
+```bash
+make generate
+```
+
+5. **Run the example**:
+```bash
+cd example
+flutter run
+```
+
+### Available Make Commands
+
+- `make help` - Show all available commands
+- `make fresh` - Clean build and regenerate everything
+- `make clean` - Clean Flutter project and rebuild Rust
+- `make cargo-build` - Build Rust code only
+- `make generate` - Generate Flutter Rust Bridge bindings
+- `make analyze` - Run Flutter analysis
+- `make format` - Format Dart code
+- `make test` - Run unit tests
+
+### Code Generation
+
+The project uses Flutter Rust Bridge for automatic code generation:
+
+1. **Rust API**: Define functions in `rust/src/api/simple.rs`
+2. **Configuration**: Configure in `flutter_rust_bridge.yaml`
+3. **Generation**: Run `make generate` to create Dart bindings
+
+## Example Usage
+
+See the `example/` directory for a complete Flutter application demonstrating:
+
+- Unicode character property display
+- Character search functionality
+- Case mapping operations
+- Integration with Flutter UI
+
+## Dependencies
+
+### Rust Dependencies
+- `icu` - Core ICU4X functionality
+- `icu_casemap` - Case mapping support
+- `icu_collections` - Data structures
+- `icu_properties` - Unicode properties
+- `flutter_rust_bridge` - Flutter-Rust integration
+
+### Dart Dependencies
+- `flutter_rust_bridge` - Runtime bridge support
+- `plugin_platform_interface` - Plugin interface support
+
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Add tests if applicable
+5. Run `make test` to ensure everything works
+6. Submit a pull request
+
+## License
+
+This project is licensed under the same license as the parent ICU4X project.
+
+## Related Projects
+
+- [ICU4X](https://github.com/unicode-org/icu4x) - The underlying Unicode library
+- [Flutter Rust Bridge](https://github.com/fzyzcjy/flutter_rust_bridge) - Flutter-Rust integration framework
+- [Flutter FFI](https://docs.flutter.dev/development/platform-integration/c-interop) - Flutter's foreign function interface
+
+## Support
+
+For issues and questions:
+- Check the [example application](example/) for usage patterns
+- Review the [ICU4X documentation](https://docs.rs/icu/)
+- Open an issue on the project repository
 
