@@ -1,7 +1,10 @@
-use crate::Yokeable;
-use core::{mem, ptr};
-use core::mem::ManuallyDrop;
+// This file is part of ICU4X. For terms of use, please see the file
+// called LICENSE at the top level of the ICU4X source tree
+// (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::Yokeable;
+use core::mem::ManuallyDrop;
+use core::{mem, ptr};
 
 /// This method can be used to cast away the `Yokeable<'a>`'s lifetime.
 ///

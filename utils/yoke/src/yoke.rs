@@ -1139,7 +1139,7 @@ impl<Y: for<'a> Yokeable<'a>, C: 'static + Sized + Send + Sync> Yoke<Y, Arc<C>> 
     ///
     /// // Now erased1 and erased2 have the same type!
     /// ```
-   #[must_use]
+    #[must_use]
     pub fn erase_arc_cart(self) -> Yoke<Y, ErasedArcCart> {
         // Safety: safe because the cart is preserved, as it is just type-erased
         unsafe { self.replace_cart(|c| c as ErasedArcCart) }

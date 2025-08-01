@@ -83,7 +83,7 @@ use core::marker::PhantomData;
 ///     }
 /// }
 /// ```
-pub unsafe trait Yokeable<'a>: Sized + 'static {
+pub unsafe trait Yokeable<'a>: 'static {
     /// This type MUST be `Self` with the `'static` replaced with `'a`, i.e. `Self<'a>`
     type Output: 'a;
 
@@ -117,10 +117,14 @@ pub unsafe trait Yokeable<'a>: Sized + 'static {
     ///
     /// A safe implementation of this method must be equivalent to a transmute between
     /// `Self<'a>` and `Self<'static>`
-    #[deprecated(since = "0.8.1", note = "use `yoke::utils::make_yokeable` instead")]
+    // TODO: actually deprecate this, and move the rest of ICU4X to `yoke::utils::make_yokeable`.
+    // #[deprecated(since = "0.8.1", note = "use `yoke::utils::make_yokeable` instead")]
     #[must_use]
     #[inline]
-    unsafe fn make(from: Self::Output) -> Self {
+    unsafe fn make(from: Self::Output) -> Self
+    where
+        Self: Sized,
+    {
         utils::make_yokeable(from)
     }
 
@@ -250,6 +254,7 @@ pub unsafe trait Yokeable<'a>: Sized + 'static {
     where
         // be VERY CAREFUL changing this signature, it is very nuanced (see above)
         F: 'static + for<'b> FnOnce(&'b mut Self::Output),
+        Self: Sized,
     {
         utils::transform_mut_yokeable(self, f);
     }
