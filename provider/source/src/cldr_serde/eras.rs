@@ -16,6 +16,13 @@ pub(crate) struct Resource {
 pub(crate) struct Supplemental {
     #[serde(rename = "calendarData")]
     pub(crate) calendar_data: BTreeMap<String, CalendarData>,
+    pub(crate) version: Version,
+}
+
+#[derive(PartialEq, Debug, Deserialize)]
+pub(crate) struct Version {
+    #[serde(rename = "_cldrVersion")]
+    pub(crate) version: String,
 }
 
 #[derive(PartialEq, Debug, Deserialize, Clone)]

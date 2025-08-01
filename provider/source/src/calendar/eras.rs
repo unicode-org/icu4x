@@ -33,7 +33,7 @@ impl SourceDataProvider {
                     .cldr()?
                     .dates("japanese")
                     .read_and_parse::<cldr_serde::ca::Resource>(
-                        &locale!("en").into(),
+                        &locale!("und").into(),
                         "ca-japanese.json",
                     )?
                     .main
@@ -49,13 +49,14 @@ impl SourceDataProvider {
                     .expect("japanese must have eras")
                     .abbr;
 
-                let era_dates_map = &cldr
-                    .core()
-                    .read_and_parse::<cldr_serde::eras::Resource>("supplemental/calendarData.json")?
-                    .supplemental
-                    .calendar_data;
+                let era_dates_map = &cldr.core().read_and_parse::<cldr_serde::eras::Resource>(
+                    "supplemental/calendarData.json",
+                )?;
 
-                let era_dates_map = process_era_dates_map(era_dates_map.clone());
+                let era_dates_map = process_era_dates_map(
+                    era_dates_map.supplemental.calendar_data.clone(),
+                    era_dates_map.supplemental.version.version.parse().unwrap(),
+                );
 
                 Ok([
                     DatagenCalendar::Buddhist,
@@ -149,6 +150,7 @@ impl SourceDataProvider {
 /// Aplies some fixes to the data, as it is pretty buggy as of v47
 fn process_era_dates_map(
     mut data: BTreeMap<String, cldr_serde::eras::CalendarData>,
+    version: u8,
 ) -> BTreeMap<String, cldr_serde::eras::CalendarData> {
     // https://github.com/unicode-org/cldr/pull/4519 - New era codes
     for cal in data.values_mut() {
@@ -164,6 +166,9 @@ fn process_era_dates_map(
                     "gregory" => Some("ce"),
                     "hebrew" => Some("am"),
                     "indian" => Some("shaka"),
+                    islamic if islamic.starts_with("islamic") && islamic.ends_with("inverse") => {
+                        Some("bh")
+                    }
                     islamic if islamic.starts_with("islamic") => Some("ah"),
                     "persian" => Some("ap"),
                     "roc-inverse" => Some("broc"),
@@ -181,7 +186,7 @@ fn process_era_dates_map(
     data.get_mut("coptic").unwrap().eras.remove("0");
 
     // https://github.com/unicode-org/cldr/pull/4568 - Fix era start dates
-    {
+    if version < 48 {
         fn replace_julian_by_iso(d: &mut EraStartDate) {
             let date = Date::try_new_julian(d.year, d.month, d.day)
                 .unwrap()
@@ -350,7 +355,7 @@ fn process_era_dates_map(
                         };
                     }
                     // https://github.com/unicode-org/cldr/pull/4610 - Fix Meiji start date
-                    if era.code.as_deref() == Some("meiji") {
+                    if version < 48 && era.code.as_deref() == Some("meiji") {
                         start.month = 10;
                         start.day = 23;
                     }
@@ -546,10 +551,11 @@ fn test_calendar_eras() {
         .unwrap()
         .core()
         .read_and_parse::<cldr_serde::eras::Resource>("supplemental/calendarData.json")
-        .unwrap()
-        .supplemental
-        .calendar_data;
-    let era_dates_map = process_era_dates_map(era_dates_map.clone());
+        .unwrap();
+    let era_dates_map = process_era_dates_map(
+        era_dates_map.supplemental.calendar_data.clone(),
+        era_dates_map.supplemental.version.version.parse().unwrap(),
+    );
 
     for (calendar, data) in era_dates_map {
         let kind = match calendar.as_str() {
