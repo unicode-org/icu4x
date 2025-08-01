@@ -20,26 +20,6 @@
       }
     },
     "6": {
-      "Zero": {
-        "exponent": 0,
-        "index": 0,
-        "literal_text": ""
-      },
-      "Two": {
-        "exponent": 0,
-        "index": 0,
-        "literal_text": ""
-      },
-      "Few": {
-        "exponent": 0,
-        "index": 0,
-        "literal_text": ""
-      },
-      "Many": {
-        "exponent": 0,
-        "index": 0,
-        "literal_text": ""
-      },
       "Other": {
         "exponent": 6,
         "index": 0,
@@ -47,26 +27,6 @@
       }
     },
     "9": {
-      "Zero": {
-        "exponent": 0,
-        "index": 0,
-        "literal_text": ""
-      },
-      "Two": {
-        "exponent": 0,
-        "index": 0,
-        "literal_text": ""
-      },
-      "Few": {
-        "exponent": 0,
-        "index": 0,
-        "literal_text": ""
-      },
-      "Many": {
-        "exponent": 0,
-        "index": 0,
-        "literal_text": ""
-      },
       "Other": {
         "exponent": 9,
         "index": 0,
@@ -74,26 +34,6 @@
       }
     },
     "12": {
-      "Zero": {
-        "exponent": 0,
-        "index": 0,
-        "literal_text": ""
-      },
-      "Two": {
-        "exponent": 0,
-        "index": 0,
-        "literal_text": ""
-      },
-      "Few": {
-        "exponent": 0,
-        "index": 0,
-        "literal_text": ""
-      },
-      "Many": {
-        "exponent": 0,
-        "index": 0,
-        "literal_text": ""
-      },
       "Other": {
         "exponent": 12,
         "index": 0,

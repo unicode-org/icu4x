@@ -61,7 +61,16 @@
           "Standard": "Other"
         }
       ],
-      "¤ 0G"
+      "0G¤"
+    ],
+    [
+      [
+        9,
+        {
+          "AlphaNextToNumber": "Other"
+        }
+      ],
+      "0G ¤"
     ],
     [
       [
@@ -70,7 +79,16 @@
           "Standard": "Other"
         }
       ],
-      "¤ 00G"
+      "00G¤"
+    ],
+    [
+      [
+        10,
+        {
+          "AlphaNextToNumber": "Other"
+        }
+      ],
+      "00G ¤"
     ],
     [
       [
@@ -79,7 +97,16 @@
           "Standard": "Other"
         }
       ],
-      "¤ 000G"
+      "000G¤"
+    ],
+    [
+      [
+        11,
+        {
+          "AlphaNextToNumber": "Other"
+        }
+      ],
+      "000G ¤"
     ],
     [
       [
@@ -88,7 +115,16 @@
           "Standard": "Other"
         }
       ],
-      "¤ 0T"
+      "0T¤"
+    ],
+    [
+      [
+        12,
+        {
+          "AlphaNextToNumber": "Other"
+        }
+      ],
+      "0T ¤"
     ],
     [
       [
@@ -97,7 +133,16 @@
           "Standard": "Other"
         }
       ],
-      "¤ 00T"
+      "00T¤"
+    ],
+    [
+      [
+        13,
+        {
+          "AlphaNextToNumber": "Other"
+        }
+      ],
+      "00T ¤"
     ],
     [
       [
@@ -106,7 +151,16 @@
           "Standard": "Other"
         }
       ],
-      "¤ 000T"
+      "000T¤"
+    ],
+    [
+      [
+        14,
+        {
+          "AlphaNextToNumber": "Other"
+        }
+      ],
+      "000T ¤"
     ]
   ]
 }

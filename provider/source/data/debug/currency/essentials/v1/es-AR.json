@@ -814,11 +814,13 @@
     },
     "XCG": {
       "short_pattern_selection": "Standard",
-      "narrow_pattern_selection": "StandardAlphaNextToNumber",
+      "narrow_pattern_selection": "Standard",
       "short_placeholder_value": {
         "Index": 62
       },
-      "narrow_placeholder_value": null
+      "narrow_placeholder_value": {
+        "Index": 62
+      }
     },
     "XOF": {
       "short_pattern_selection": "StandardAlphaNextToNumber",
