@@ -104,7 +104,7 @@
     "chp": "Çipevya dili",
     "chr": "Çerokice",
     "chy": "Şayence",
-    "ckb": "Orta Kürtçe",
+    "ckb": "Kürtçe, Sorani",
     "clc": "Çilkotince",
     "co": "Korsikaca",
     "cop": "Kıptice",
@@ -633,7 +633,9 @@
     "zxx": "Dilbilim içeriği yok",
     "zza": "Zazaca"
   },
-  "short_names": {},
+  "short_names": {
+    "az": "Azerbaycan dili"
+  },
   "long_names": {},
   "menu_names": {
     "ars": "Arapça, Necd",

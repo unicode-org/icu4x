@@ -843,7 +843,7 @@
       }
     },
     "XCG": {
-      "short_pattern_selection": "Standard",
+      "short_pattern_selection": "StandardAlphaNextToNumber",
       "narrow_pattern_selection": "StandardAlphaNextToNumber",
       "short_placeholder_value": {
         "Index": 66
@@ -975,7 +975,7 @@
     "₫",
     "FCFA",
     "EC$",
-    "Cg.",
+    "Cg",
     "F CFA",
     "CFPF",
     "R",

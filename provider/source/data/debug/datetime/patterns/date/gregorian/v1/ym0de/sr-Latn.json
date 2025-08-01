@@ -15,7 +15,7 @@
     "E, d. M. yy.",
     "E, d. M. y.",
     "EEEE, dd. MMMM y. GGG",
-    "E, dd. MMM y. GGG",
-    "E, d. MMM y. GGG"
+    "GGG y-MM-dd, E",
+    "GGG y-M-d, E"
   ]
 }

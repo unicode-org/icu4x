@@ -12,6 +12,6 @@
   "elements": [
     "EEEE, d MMMM y г. GGG",
     "E, d MMM y г. GGG",
-    "E, dd MMM y г. GGG"
+    "E, dd.MM.y GGG"
   ]
 }

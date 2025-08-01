@@ -23,19 +23,19 @@
     },
     "10": {
       "One": {
-        "exponent": 9,
+        "exponent": 10,
         "index": 0,
         "literal_text": " শত কো"
       },
       "Other": {
-        "exponent": 9,
+        "exponent": 10,
         "index": 0,
         "literal_text": "শত কো"
       }
     },
     "11": {
       "Other": {
-        "exponent": 9,
+        "exponent": 11,
         "index": 0,
         "literal_text": "কো"
       }
