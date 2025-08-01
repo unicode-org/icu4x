@@ -9,6 +9,7 @@
           "hourFormat": "+HH:mm;-HH:mm",
           "gmtFormat": "GMT{0}",
           "gmtZeroFormat": "GMT",
+          "gmtUnknownFormat": "GMT+?",
           "regionFormat": "{0}",
           "regionFormat-type-daylight": "{0}, летње време",
           "regionFormat-type-standard": "{0}, стандардно време",
@@ -56,10 +57,6 @@
                 "exemplarCity": "Гуам"
               },
               "Enderbury": {
-                "_type": "zone",
-                "exemplarCity": "Ендербери"
-              },
-              "Kanton": {
                 "_type": "zone",
                 "exemplarCity": "Кантон"
               },
@@ -1000,6 +997,10 @@
                 "_type": "zone",
                 "exemplarCity": "Св. Џон"
               },
+              "Coyhaique": {
+                "_type": "zone",
+                "exemplarCity": "Којајке"
+              },
               "Punta_Arenas": {
                 "_type": "zone",
                 "exemplarCity": "Пунта Аренас"
@@ -1766,9 +1767,7 @@
             },
             "Africa_Western": {
               "long": {
-                "generic": "Западно-афричко време",
-                "standard": "Западно-афричко стандардно време",
-                "daylight": "Западно-афричко летње време"
+                "standard": "Западно-афричко време"
               }
             },
             "Alaska": {
@@ -2167,6 +2166,11 @@
             "Guyana": {
               "long": {
                 "standard": "Гвајана време"
+              }
+            },
+            "Hawaii": {
+              "long": {
+                "standard": "Хавајско-алеутско стандардно време"
               }
             },
             "Hawaii_Aleutian": {
@@ -2617,6 +2621,13 @@
             "Truk": {
               "long": {
                 "standard": "Чуук време"
+              }
+            },
+            "Turkey": {
+              "long": {
+                "generic": "Турска време",
+                "standard": "Турска стандардно време",
+                "daylight": "Турска летње рачунање времена"
               }
             },
             "Turkmenistan": {

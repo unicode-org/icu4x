@@ -14,7 +14,7 @@
     "E، dd‏/MM‏/y",
     "E، d‏/M‏/y",
     "EEEE، d MMMM y GGG",
-    "E، dd MMM y GGG",
-    "E، d MMM y GGG"
+    "E dd/MM/y GGG",
+    "E d/M/y GGG"
   ]
 }

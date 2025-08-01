@@ -347,24 +347,31 @@
                 "Bhms": "B h:mm:ss",
                 "d": "d",
                 "E": "ccc",
+                "EBh": "E h B",
                 "EBhm": "E B h:mm",
                 "EBhms": "E B h:mm:ss",
                 "Ed": "d E",
+                "Eh": "E h a",
+                "EH": "E HH'h'",
                 "Ehm": "E a h:mm",
                 "EHm": "E HH:mm",
                 "Ehms": "E a h:mm:ss",
                 "EHms": "E HH:mm:ss",
                 "Gy": "G y",
+                "GyM": "G M.y",
                 "GyMd": "d/M/y GGGGG",
+                "GyMEd": "G dd.MM.y E",
                 "GyMMM": "G MMM y",
                 "GyMMMd": "G d MMM y",
                 "GyMMMEd": "G d MMM y E",
                 "h": "h a",
-                "H": "HH",
+                "H": "HH'h'",
                 "hm": "h:mm a",
                 "Hm": "HH:mm",
                 "hms": "h:mm:ss a",
                 "Hms": "HH:mm:ss",
+                "hv": "h a v",
+                "Hv": "HH'h' v",
                 "M": "L",
                 "Md": "dd/MM",
                 "MEd": "dd/MM E",
@@ -458,7 +465,7 @@
                   "h": "h–h a"
                 },
                 "H": {
-                  "H": "HH–HH"
+                  "H": "HH–HH'h'"
                 },
                 "hm": {
                   "a": "h:mm a – h:mm a",
@@ -483,7 +490,7 @@
                   "h": "h–h a v"
                 },
                 "Hv": {
-                  "H": "HH–HH v"
+                  "H": "HH–HH'h' v"
                 },
                 "M": {
                   "M": "MM–MM"
@@ -545,6 +552,14 @@
               }
             },
             "dateTimeFormats-atTime": {
+              "standard": {
+                "full": "{1} {0}",
+                "long": "{1} {0}",
+                "medium": "{1} {0}",
+                "short": "{1} {0}"
+              }
+            },
+            "dateTimeFormats-relative": {
               "standard": {
                 "full": "{1} {0}",
                 "long": "{1} {0}",

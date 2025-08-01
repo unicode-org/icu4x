@@ -2,7 +2,7 @@
   "supplemental": {
     "version": {
       "_unicodeVersion": "16.0.0",
-      "_cldrVersion": "47"
+      "_cldrVersion": "48"
     },
     "calendarData": {
       "buddhist": {
@@ -20,7 +20,7 @@
         "eras": {
           "0": {
             "_code": "chinese",
-            "_start": "-2636-01-01"
+            "_start": "-2636-02-15"
           }
         }
       },
@@ -42,7 +42,7 @@
         "eras": {
           "0": {
             "_code": "dangi",
-            "_start": "-2332-01-01"
+            "_start": "-2332-02-15"
           }
         }
       },
@@ -52,12 +52,12 @@
           "0": {
             "_code": "ethioaa",
             "_aliases": "ethiopic-amete-alem mundi",
-            "_end": "8-08-28"
+            "_start": "-5492-07-17"
           },
           "1": {
             "_code": "ethiopic",
             "_aliases": "incar",
-            "_start": "8-08-29"
+            "_start": "8-08-27"
           }
         }
       },
@@ -66,7 +66,7 @@
           "0": {
             "_code": "ethioaa",
             "_aliases": "ethiopic-amete-alem mundi",
-            "_end": "-5492-08-29"
+            "_start": "-5492-07-17"
           }
         }
       },
@@ -92,7 +92,7 @@
           "0": {
             "_code": "hebrew",
             "_aliases": "am",
-            "_start": "-3760-10-7"
+            "_start": "-3760-09-07"
           }
         }
       },
@@ -101,7 +101,7 @@
           "0": {
             "_code": "indian",
             "_aliases": "saka",
-            "_start": "79-01-01"
+            "_start": "79-03-22"
           }
         }
       },
@@ -111,7 +111,12 @@
           "0": {
             "_code": "islamic",
             "_aliases": "ah",
-            "_start": "622-7-15"
+            "_start": "622-07-19"
+          },
+          "1": {
+            "_code": "islamic-inverse",
+            "_aliases": "bh",
+            "_end": "622-07-18"
           }
         }
       },
@@ -121,7 +126,12 @@
           "0": {
             "_code": "islamic-civil",
             "_aliases": "islamicc ah",
-            "_start": "622-7-16"
+            "_start": "622-07-19"
+          },
+          "1": {
+            "_code": "islamic-civil-inverse",
+            "_aliases": "bh",
+            "_end": "622-07-18"
           }
         }
       },
@@ -131,7 +141,12 @@
           "0": {
             "_code": "islamic-rgsa",
             "_aliases": "ah",
-            "_start": "622-7-15"
+            "_start": "622-07-19"
+          },
+          "1": {
+            "_code": "islamic-rgsa-inverse",
+            "_aliases": "bh",
+            "_end": "622-07-18"
           }
         }
       },
@@ -141,7 +156,12 @@
           "0": {
             "_code": "islamic-tbla",
             "_aliases": "ah",
-            "_start": "622-7-15"
+            "_start": "622-07-18"
+          },
+          "1": {
+            "_code": "islamic-tbla-inverse",
+            "_aliases": "bh",
+            "_end": "622-07-17"
           }
         }
       },
@@ -151,7 +171,12 @@
           "0": {
             "_code": "islamic-umalqura",
             "_aliases": "ah",
-            "_start": "622-7-15"
+            "_start": "622-07-19"
+          },
+          "1": {
+            "_code": "islamic-umalqura-inverse",
+            "_aliases": "bh",
+            "_end": "622-07-18"
           }
         }
       },
@@ -859,11 +884,11 @@
           },
           "232": {
             "_code": "meiji",
-            "_start": "1868-9-8"
+            "_start": "1868-10-23"
           },
           "233": {
             "_code": "taisho",
-            "_start": "1912-7-30"
+            "_start": "1912-07-30"
           },
           "234": {
             "_code": "showa",
@@ -871,11 +896,11 @@
           },
           "235": {
             "_code": "heisei",
-            "_start": "1989-1-8"
+            "_start": "1989-01-08"
           },
           "236": {
             "_code": "reiwa",
-            "_start": "2019-5-1"
+            "_start": "2019-05-01"
           }
         }
       },
@@ -885,7 +910,7 @@
           "0": {
             "_code": "persian",
             "_aliases": "ap",
-            "_start": "622-01-01"
+            "_start": "622-03-21"
           }
         }
       },

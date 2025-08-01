@@ -30,7 +30,14 @@
     ],
     [
       [
-        53,
+        6,
+        "Daylight"
+      ],
+      "WAST"
+    ],
+    [
+      [
+        52,
         "Standard"
       ],
       "GMT"

@@ -196,10 +196,28 @@
       {
         "Power": {
           "power": "Two",
+          "count": "One"
+        }
+      },
+      "{0}²"
+    ],
+    [
+      {
+        "Power": {
+          "power": "Two",
           "count": "Other"
         }
       },
       "{0}²"
+    ],
+    [
+      {
+        "Power": {
+          "power": "Three",
+          "count": "One"
+        }
+      },
+      "{0}³"
     ],
     [
       {
