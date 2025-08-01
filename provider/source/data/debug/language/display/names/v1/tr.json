@@ -298,7 +298,7 @@
     "ksb": "Şambala",
     "ksf": "Bafia",
     "ksh": "Köln lehçesi",
-    "ku": "Kürtçe",
+    "ku": "Kurmanci",
     "kum": "Kumukça",
     "kut": "Kutenai dili",
     "kv": "Komi",
@@ -633,7 +633,9 @@
     "zxx": "Dilbilim içeriği yok",
     "zza": "Zazaca"
   },
-  "short_names": {},
+  "short_names": {
+    "az": "Azerbaycan dili"
+  },
   "long_names": {},
   "menu_names": {
     "ars": "Arapça, Necd",

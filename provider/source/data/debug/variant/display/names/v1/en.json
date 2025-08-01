@@ -38,7 +38,7 @@
     "osojs": "Oseacco/Osojane dialect",
     "oxendict": "Oxford English Dictionary spelling",
     "pamaka": "Pamaka dialect",
-    "pinyin": "Pinyin Romanization",
+    "pinyin": "Pinyin romanization",
     "polyton": "Polytonic",
     "posix": "Computer",
     "revised": "Revised Orthography",
@@ -54,6 +54,6 @@
     "ucrcor": "Unified Revised Orthography",
     "unifon": "Unifon phonetic alphabet",
     "valencia": "Valencian",
-    "wadegile": "Wade-Giles Romanization"
+    "wadegile": "Wade-Giles romanization"
   }
 }

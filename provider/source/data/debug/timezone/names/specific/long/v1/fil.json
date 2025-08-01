@@ -89,242 +89,235 @@
         13,
         "Standard"
       ],
-      "Standard Time sa Anadyr"
-    ],
-    [
-      [
-        14,
-        "Standard"
-      ],
       "Standard na Oras sa Apia"
     ],
     [
       [
-        14,
+        13,
         "Daylight"
       ],
       "Daylight Time sa Apia"
     ],
     [
       [
-        15,
+        14,
         "Standard"
       ],
       "Standard na Oras sa Arabia"
     ],
     [
       [
-        16,
+        15,
         "Standard"
       ],
       "Standard na Oras sa Argentina"
     ],
     [
       [
-        18,
+        17,
         "Standard"
       ],
       "Standard na Oras sa Atlantiko"
     ],
     [
       [
-        18,
+        17,
         "Daylight"
       ],
       "Daylight na Oras sa Atlantiko"
     ],
     [
       [
-        19,
+        18,
         "Standard"
       ],
       "Standard na Oras sa Gitnang Australya"
     ],
     [
       [
-        19,
+        18,
         "Daylight"
       ],
       "Daylight Time sa Gitnang Australya"
     ],
     [
       [
-        20,
+        19,
         "Standard"
       ],
       "Standard Time ng Gitnang Kanluran ng Australia"
     ],
     [
       [
-        21,
+        20,
         "Standard"
       ],
       "Standard na Oras sa Silangang Australia"
     ],
     [
       [
-        21,
+        20,
         "Daylight"
       ],
       "Daylight Time sa Silangang Australia"
     ],
     [
       [
-        22,
+        21,
         "Standard"
       ],
       "Standard na Oras sa Kanlurang Australia"
     ],
     [
       [
-        23,
+        22,
         "Daylight"
       ],
       "Oras sa Tag-init ng Azerbaijan"
     ],
     [
       [
-        24,
+        23,
         "Daylight"
       ],
       "Oras sa Tag-init ng Azores"
     ],
     [
       [
-        28,
+        27,
         "Standard"
       ],
       "Standard na Oras sa Brasilia"
     ],
     [
       [
-        28,
+        27,
         "Daylight"
       ],
       "Oras sa Tag-init ng Brasilia"
     ],
     [
       [
-        33,
+        32,
         "Daylight"
       ],
       "Daylight Time sa Chatham"
     ],
     [
       [
-        34,
+        33,
         "Standard"
       ],
       "Standard na Oras sa Chile"
     ],
     [
       [
-        34,
+        33,
         "Daylight"
       ],
       "Oras sa Tag-init ng Chile"
     ],
     [
       [
-        35,
+        34,
         "Standard"
       ],
       "Standard na Oras sa China"
     ],
     [
       [
-        40,
+        39,
         "Daylight"
       ],
       "Daylight na Oras sa Cuba"
     ],
     [
       [
-        44,
+        43,
         "Standard"
       ],
       "Standard na Oras sa Easter Island"
     ],
     [
       [
-        44,
+        43,
         "Daylight"
       ],
       "Oras sa Tag-init ng Easter Island"
     ],
     [
       [
-        46,
+        45,
         "Standard"
       ],
       "Standard na Oras sa Gitnang Europe"
     ],
     [
       [
-        46,
+        45,
         "Daylight"
       ],
       "Oras sa Tag-init ng Gitnang Europe"
     ],
     [
       [
-        47,
+        46,
         "Standard"
       ],
       "Standard na Oras sa Silangang Europe"
     ],
     [
       [
-        47,
+        46,
         "Daylight"
       ],
       "Oras sa Tag-init ng Silangang Europe"
     ],
     [
       [
-        48,
+        47,
         "Standard"
       ],
       "Standard na Oras sa Kanlurang Europe"
     ],
     [
       [
-        48,
+        47,
         "Daylight"
       ],
       "Oras sa Tag-init ng Kanlurang Europe"
     ],
     [
       [
-        50,
+        49,
         "Daylight"
       ],
       "Oras sa Tag-init ng Fiji"
     ],
     [
       [
-        59,
+        58,
         "Standard"
       ],
       "Standard na Oras sa Silangang Greenland"
     ],
     [
       [
-        59,
+        58,
         "Daylight"
       ],
       "Oras sa Tag-init ng Silangang Greenland"
     ],
     [
       [
-        60,
+        59,
         "Standard"
       ],
       "Standard na Oras sa Kanlurang Greenland"
     ],
     [
       [
-        60,
+        59,
         "Daylight"
       ],
       "Oras sa Tag-init ng Kanlurang Greenland"
@@ -342,6 +335,13 @@
         "Daylight"
       ],
       "Oras sa Tag-init ng Hawaii-Aleutian"
+    ],
+    [
+      [
+        65,
+        "Standard"
+      ],
+      "Standard na Oras sa Hovd"
     ],
     [
       [
@@ -398,6 +398,13 @@
         "Daylight"
       ],
       "Daylight Time sa Lorde Howe"
+    ],
+    [
+      [
+        86,
+        "Standard"
+      ],
+      "Standard na Oras sa Magadan"
     ],
     [
       [
@@ -492,56 +499,56 @@
     ],
     [
       [
-        121,
+        120,
         "Standard"
       ],
       "Standard Time sa Samara"
     ],
     [
       [
-        122,
+        121,
         "Standard"
       ],
       "Standard na Oras sa Samoa"
     ],
     [
       [
-        130,
+        129,
         "Standard"
       ],
       "Standard na Oras sa Taipei"
     ],
     [
       [
-        133,
+        132,
         "Daylight"
       ],
       "Oras sa Tag-init ng Tonga"
     ],
     [
       [
-        138,
+        137,
         "Daylight"
       ],
       "Oras sa Tag-init ng Uruguay"
     ],
     [
       [
-        140,
+        139,
         "Standard"
       ],
       "Standard na Oras sa Uzbekistan"
     ],
     [
       [
-        143,
+        142,
         "Standard"
       ],
       "Standard na Oras sa Vladivostok"
     ],
     [
       [
-        148,
+        147,
         "Standard"
       ],
       "Standard na Oras sa Yakutsk"
@@ -576,22 +583,23 @@
     4,
     5,
     6,
+    25,
     26,
-    27,
-    29,
-    32,
+    28,
+    31,
+    35,
     36,
-    37,
+    40,
     41,
     42,
-    43,
-    45,
+    44,
+    50,
     51,
     52,
     53,
     54,
-    55,
-    57,
+    56,
+    60,
     61,
     62,
     66,
@@ -623,20 +631,20 @@
     117,
     118,
     119,
-    123,
+    122,
+    124,
     125,
     126,
     127,
     128,
-    129,
+    130,
     131,
-    132,
-    134,
-    137,
-    142,
+    133,
+    136,
+    141,
+    144,
     145,
     146,
-    147,
-    150
+    149
   ]
 }
