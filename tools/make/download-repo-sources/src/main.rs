@@ -55,7 +55,7 @@ fn main() -> eyre::Result<()> {
     let out_root =
         std::path::Path::new(std::env!("CARGO_MANIFEST_DIR")).join("../../../provider/source");
 
-    fn cached(resource: &str) -> Result<PathBuf, DataError> {
+    fn cached(resource: &str) -> Result<Vec<u8>, DataError> {
         let root = std::env::var_os("ICU4X_SOURCE_CACHE")
             .map(PathBuf::from)
             .unwrap_or_else(|| std::env::temp_dir().join("icu4x-source-cache/"))
@@ -76,19 +76,17 @@ fn main() -> eyre::Result<()> {
 
         log::info!("Reading: {root:?}");
 
-        Ok(root)
+        Ok(std::fs::read(&root).expect("should just have been downloaded"))
     }
 
     fn extract_zip(
-        zip: PathBuf,
+        zip: Vec<u8>,
         paths: Vec<String>,
         root: PathBuf,
         success: &mut Vec<String>,
     ) -> eyre::Result<()> {
-        let mut zip = ZipArchive::new(Cursor::new(
-            std::fs::read(&zip).expect("should just have been downloaded"),
-        ))
-        .with_context(|| format!("Failed to read zip file {:?}", &zip))?;
+        let mut zip = ZipArchive::new(Cursor::new(zip))
+            .with_context(|| format!("Failed to read zip file"))?;
 
         for spath in paths {
             if let Ok(mut file) = zip.by_name(&spath) {
@@ -109,14 +107,12 @@ fn main() -> eyre::Result<()> {
     }
 
     fn extract_tar(
-        tar: PathBuf,
+        tar: Vec<u8>,
         paths: BTreeSet<String>,
         root: PathBuf,
         success: &mut Vec<String>,
     ) -> eyre::Result<()> {
-        let mut tar = tar::Archive::new(flate2::read::GzDecoder::new(
-            std::fs::File::open(&tar).expect("should just have been downloaded"),
-        ));
+        let mut tar = tar::Archive::new(flate2::read::GzDecoder::new(Cursor::new(tar)));
 
         for e in tar.entries()? {
             let mut e = e?;
@@ -164,12 +160,7 @@ fn main() -> eyre::Result<()> {
     std::fs::remove_dir_all(out_root.join("tests/data/cldr"))?;
     let mut cldr_data = Vec::new();
     extract_zip(
-        cached(&format!(
-            "https://github.com/unicode-org/cldr-json/releases/download/{}/cldr-{}-json-full.zip",
-            SourceDataProvider::TESTED_CLDR_TAG,
-            SourceDataProvider::TESTED_CLDR_TAG
-        ))
-        .with_context(|| "Failed to download CLDR ZIP".to_owned())?,
+        include_bytes!("../../../../../cldr-json/dist/cldr-48.0.0-draft-json-full.zip").into(),
         expand_paths(CLDR_JSON_GLOB, false),
         out_root.join("tests/data/cldr"),
         &mut cldr_data,
