@@ -13,7 +13,8 @@ use core::{mem, ptr};
 /// The returned value must be destroyed before the data `from` was borrowing from is.
 #[must_use]
 #[inline]
-pub const unsafe fn make_yokeable<'a, Y: Yokeable<'a>>(from: Y::Output) -> Y {
+// Can likely be made `const` starting with 1.83.0
+pub unsafe fn make_yokeable<'a, Y: Yokeable<'a>>(from: Y::Output) -> Y {
     // Unfortunately, Rust doesn't think `mem::transmute` is possible since it's not sure the sizes
     // are the same.
     const {
@@ -34,7 +35,8 @@ pub const unsafe fn make_yokeable<'a, Y: Yokeable<'a>>(from: Y::Output) -> Y {
 /// [`Output`]: Yokeable::Output
 #[must_use]
 #[inline]
-pub const fn cast_yokeable<Y: Yokeable<'static>>(from: Y::Output) -> Y {
+// Can likely be made `const` starting with 1.83.0
+pub fn cast_yokeable<Y: Yokeable<'static>>(from: Y::Output) -> Y {
     // SAFETY:
     // `from` is `'static`, and thus anything it borrows won't be destroyed
     // (at least, not before the returned `Y` is).
