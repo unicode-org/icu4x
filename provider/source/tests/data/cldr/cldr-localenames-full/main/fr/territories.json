@@ -91,6 +91,7 @@
           "CN": "Chine",
           "CO": "Colombie",
           "CP": "Île Clipperton",
+          "CQ": "Sercq",
           "CR": "Costa Rica",
           "CU": "Cuba",
           "CV": "Cap-Vert",
@@ -157,6 +158,7 @@
           "IM": "Île de Man",
           "IN": "Inde",
           "IO": "Territoire britannique de l’océan Indien",
+          "IO-alt-biot": "Territoire britannique de l’océan Indien",
           "IO-alt-chagos": "Archipel des Chagos",
           "IQ": "Irak",
           "IR": "Iran",
@@ -315,7 +317,7 @@
           "ZA": "Afrique du Sud",
           "ZM": "Zambie",
           "ZW": "Zimbabwe",
-          "ZZ": "région indéterminée"
+          "ZZ": "région inconnue"
         }
       }
     }

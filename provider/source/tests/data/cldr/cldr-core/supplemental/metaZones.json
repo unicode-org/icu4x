@@ -2,7 +2,7 @@
   "supplemental": {
     "version": {
       "_unicodeVersion": "16.0.0",
-      "_cldrVersion": "47"
+      "_cldrVersion": "48"
     },
     "metaZones": {
       "metazoneInfo": {
@@ -1110,6 +1110,14 @@
               {
                 "usesMetazone": {
                   "_mzone": "America_Central"
+                }
+              }
+            ],
+            "Coyhaique": [
+              {
+                "usesMetazone": {
+                  "_mzone": "Chile",
+                  "_to": "2025-03-20 03:00"
                 }
               }
             ],
@@ -2618,13 +2626,13 @@
                 "usesMetazone": {
                   "_mzone": "Magadan",
                   "_from": "2010-03-27 14:00",
-                  "_to": "2014-10-25 14:00"
+                  "_to": "2011-03-26 15:00"
                 }
               },
               {
                 "usesMetazone": {
-                  "_mzone": "Anadyr",
-                  "_from": "2014-10-25 14:00"
+                  "_mzone": "Kamchatka",
+                  "_from": "2011-03-26 15:00"
                 }
               }
             ],
@@ -2752,6 +2760,14 @@
               {
                 "usesMetazone": {
                   "_mzone": "Indochina"
+                }
+              }
+            ],
+            "Barnaul": [
+              {
+                "usesMetazone": {
+                  "_mzone": "Krasnoyarsk",
+                  "_from": "2016-03-26 20:00"
                 }
               }
             ],
@@ -2901,6 +2917,12 @@
                 "usesMetazone": {
                   "_mzone": "Europe_Eastern",
                   "_to": "2016-09-07 21:00"
+                }
+              },
+              {
+                "usesMetazone": {
+                  "_mzone": "Europe_Eastern",
+                  "_from": "2017-10-29 01:00"
                 }
               }
             ],
@@ -3145,7 +3167,14 @@
             "Novosibirsk": [
               {
                 "usesMetazone": {
-                  "_mzone": "Novosibirsk"
+                  "_mzone": "Novosibirsk",
+                  "_to": "2016-07-23 20:00"
+                }
+              },
+              {
+                "usesMetazone": {
+                  "_mzone": "Krasnoyarsk",
+                  "_from": "2016-07-23 20:00"
                 }
               }
             ],
@@ -3315,7 +3344,21 @@
             "Sakhalin": [
               {
                 "usesMetazone": {
-                  "_mzone": "Sakhalin"
+                  "_mzone": "Sakhalin",
+                  "_to": "2014-10-25 15:00"
+                }
+              },
+              {
+                "usesMetazone": {
+                  "_mzone": "Magadan",
+                  "_from": "2014-10-25 15:00",
+                  "_to": "2016-03-26 16:00"
+                }
+              },
+              {
+                "usesMetazone": {
+                  "_mzone": "Magadan",
+                  "_from": "2016-04-26 16:00"
                 }
               }
             ],
@@ -3373,6 +3416,12 @@
                 "usesMetazone": {
                   "_mzone": "Magadan",
                   "_to": "2014-10-25 14:00"
+                }
+              },
+              {
+                "usesMetazone": {
+                  "_mzone": "Magadan",
+                  "_from": "2016-04-23 16:00"
                 }
               }
             ],
@@ -3436,6 +3485,14 @@
               {
                 "usesMetazone": {
                   "_mzone": "Japan"
+                }
+              }
+            ],
+            "Tomsk": [
+              {
+                "usesMetazone": {
+                  "_mzone": "Krasnoyarsk",
+                  "_from": "2016-05-28 20:00"
                 }
               }
             ],
@@ -3727,6 +3784,12 @@
                   "_from": "1992-03-28 22:00",
                   "_to": "2016-03-26 23:00"
                 }
+              },
+              {
+                "usesMetazone": {
+                  "_mzone": "Samara",
+                  "_from": "2016-03-26 23:00"
+                }
               }
             ],
             "Athens": [
@@ -3943,6 +4006,14 @@
                 "usesMetazone": {
                   "_mzone": "Europe_Eastern",
                   "_from": "1990-06-30 22:00"
+                }
+              }
+            ],
+            "Kirov": [
+              {
+                "usesMetazone": {
+                  "_mzone": "Moscow",
+                  "_from": "2014-10-25 22:00"
                 }
               }
             ],
@@ -4177,6 +4248,12 @@
                   "_from": "1992-03-28 22:00",
                   "_to": "2016-12-03 23:00"
                 }
+              },
+              {
+                "usesMetazone": {
+                  "_mzone": "Samara",
+                  "_from": "2016-12-03 23:00"
+                }
               }
             ],
             "Simferopol": [
@@ -4263,6 +4340,12 @@
                   "_from": "1992-01-19 00:00",
                   "_to": "2016-03-26 23:00"
                 }
+              },
+              {
+                "usesMetazone": {
+                  "_mzone": "Samara",
+                  "_from": "2016-03-26 23:00"
+                }
               }
             ],
             "Vaduz": [
@@ -4317,7 +4400,14 @@
             "Volgograd": [
               {
                 "usesMetazone": {
-                  "_mzone": "Volgograd"
+                  "_mzone": "Volgograd",
+                  "_to": "2020-12-26 22:00"
+                }
+              },
+              {
+                "usesMetazone": {
+                  "_mzone": "Moscow",
+                  "_from": "2020-12-26 22:00"
                 }
               }
             ],
@@ -4539,14 +4629,7 @@
             "Honolulu": [
               {
                 "usesMetazone": {
-                  "_mzone": "Alaska_Hawaii",
-                  "_to": "1983-10-30 11:00"
-                }
-              },
-              {
-                "usesMetazone": {
-                  "_mzone": "Hawaii_Aleutian",
-                  "_from": "1983-10-30 11:00"
+                  "_mzone": "Hawaii"
                 }
               }
             ],
@@ -6215,8 +6298,15 @@
         },
         {
           "mapZone": {
-            "_other": "Hawaii_Aleutian",
+            "_other": "Hawaii",
             "_type": "Pacific/Honolulu",
+            "_territory": "001"
+          }
+        },
+        {
+          "mapZone": {
+            "_other": "Hawaii_Aleutian",
+            "_type": "America/Adak",
             "_territory": "001"
           }
         },
@@ -7270,6 +7360,10 @@
         },
         "hovd": {
           "_longId": "Hovd",
+          "_since": "40"
+        },
+        "hwai": {
+          "_longId": "Hawaii",
           "_since": "40"
         },
         "ince": {
