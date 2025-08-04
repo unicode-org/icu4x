@@ -83,9 +83,7 @@ fn main() {
             .collect()
     };
 
-    let source = SourceDataProvider::new()
-        .with_cldr(Path::new("../cldr-json/cldr-json"))
-        .unwrap();
+    let source = SourceDataProvider::new();
 
     let driver = ExportDriver::new(
         source
