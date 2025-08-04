@@ -1065,33 +1065,15 @@
               }
             },
             "dateFormats": {
-              "full": {
-                "_value": "U年MMMd日EEEE",
-                "_numbers": "hanidec"
-              },
-              "long": {
-                "_value": "U年MMMd日",
-                "_numbers": "hanidec"
-              },
-              "medium": {
-                "_value": "U年MMMd日",
-                "_numbers": "hanidec"
-              },
+              "full": "U年MMMd日EEEE",
+              "long": "U年MMMd日",
+              "medium": "U年MMMd日",
               "short": "U-M-d"
             },
             "dateSkeletons": {
-              "full": {
-                "_value": "UMMMEEEEd",
-                "_numbers": "hanidec"
-              },
-              "long": {
-                "_value": "UMMMd",
-                "_numbers": "hanidec"
-              },
-              "medium": {
-                "_value": "UMMMd",
-                "_numbers": "hanidec"
-              },
+              "full": "UMMMEEEEd",
+              "long": "UMMMd",
+              "medium": "UMMMd",
               "short": "UMd"
             },
             "timeFormats": {
@@ -1117,6 +1099,7 @@
                 "Bhms": "BK:mm:ss",
                 "d": "d日",
                 "E": "ccc",
+                "EBh": "BK時 (E)",
                 "EBhm": "BK:mm (E)",
                 "EBhms": "BK:mm:ss (E)",
                 "Ed": "d日(E)",
@@ -1136,6 +1119,8 @@
                 "Hm": "H:mm",
                 "hms": "aK:mm:ss",
                 "Hms": "H:mm:ss",
+                "hv": "aK時 v",
+                "Hv": "H時 v",
                 "M": "MMM",
                 "Md": "M/d",
                 "MEd": "M/d(E)",
@@ -1289,6 +1274,14 @@
               }
             },
             "dateTimeFormats-atTime": {
+              "standard": {
+                "full": "{1} {0}",
+                "long": "{1} {0}",
+                "medium": "{1} {0}",
+                "short": "{1} {0}"
+              }
+            },
+            "dateTimeFormats-relative": {
               "standard": {
                 "full": "{1} {0}",
                 "long": "{1} {0}",
