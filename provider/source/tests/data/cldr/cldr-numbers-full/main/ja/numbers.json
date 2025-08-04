@@ -72,6 +72,468 @@
             }
           }
         },
+        "adlm": {
+          "rationalPattern": "{0}⁄{1}",
+          "integerAndRationalPattern": "{0} {1}",
+          "integerAndRationalPattern-alt-superSub": "{0}⁠{1}",
+          "rationalUsage": "sometimes"
+        },
+        "ahom": {
+          "rationalPattern": "{0}⁄{1}",
+          "integerAndRationalPattern": "{0} {1}",
+          "integerAndRationalPattern-alt-superSub": "{0}⁠{1}",
+          "rationalUsage": "sometimes"
+        },
+        "arab": {
+          "rationalPattern": "{0}⁄{1}",
+          "integerAndRationalPattern": "{0} {1}",
+          "integerAndRationalPattern-alt-superSub": "{0}⁠{1}",
+          "rationalUsage": "sometimes"
+        },
+        "arabext": {
+          "rationalPattern": "{0}⁄{1}",
+          "integerAndRationalPattern": "{0} {1}",
+          "integerAndRationalPattern-alt-superSub": "{0}⁠{1}",
+          "rationalUsage": "sometimes"
+        },
+        "bali": {
+          "rationalPattern": "{0}⁄{1}",
+          "integerAndRationalPattern": "{0} {1}",
+          "integerAndRationalPattern-alt-superSub": "{0}⁠{1}",
+          "rationalUsage": "sometimes"
+        },
+        "beng": {
+          "rationalPattern": "{0}⁄{1}",
+          "integerAndRationalPattern": "{0} {1}",
+          "integerAndRationalPattern-alt-superSub": "{0}⁠{1}",
+          "rationalUsage": "sometimes"
+        },
+        "bhks": {
+          "rationalPattern": "{0}⁄{1}",
+          "integerAndRationalPattern": "{0} {1}",
+          "integerAndRationalPattern-alt-superSub": "{0}⁠{1}",
+          "rationalUsage": "sometimes"
+        },
+        "brah": {
+          "rationalPattern": "{0}⁄{1}",
+          "integerAndRationalPattern": "{0} {1}",
+          "integerAndRationalPattern-alt-superSub": "{0}⁠{1}",
+          "rationalUsage": "sometimes"
+        },
+        "cakm": {
+          "rationalPattern": "{0}⁄{1}",
+          "integerAndRationalPattern": "{0} {1}",
+          "integerAndRationalPattern-alt-superSub": "{0}⁠{1}",
+          "rationalUsage": "sometimes"
+        },
+        "cham": {
+          "rationalPattern": "{0}⁄{1}",
+          "integerAndRationalPattern": "{0} {1}",
+          "integerAndRationalPattern-alt-superSub": "{0}⁠{1}",
+          "rationalUsage": "sometimes"
+        },
+        "deva": {
+          "rationalPattern": "{0}⁄{1}",
+          "integerAndRationalPattern": "{0} {1}",
+          "integerAndRationalPattern-alt-superSub": "{0}⁠{1}",
+          "rationalUsage": "sometimes"
+        },
+        "diak": {
+          "rationalPattern": "{0}⁄{1}",
+          "integerAndRationalPattern": "{0} {1}",
+          "integerAndRationalPattern-alt-superSub": "{0}⁠{1}",
+          "rationalUsage": "sometimes"
+        },
+        "fullwide": {
+          "rationalPattern": "{0}⁄{1}",
+          "integerAndRationalPattern": "{0} {1}",
+          "integerAndRationalPattern-alt-superSub": "{0}⁠{1}",
+          "rationalUsage": "sometimes"
+        },
+        "gara": {
+          "rationalPattern": "{0}⁄{1}",
+          "integerAndRationalPattern": "{0} {1}",
+          "integerAndRationalPattern-alt-superSub": "{0}⁠{1}",
+          "rationalUsage": "sometimes"
+        },
+        "gong": {
+          "rationalPattern": "{0}⁄{1}",
+          "integerAndRationalPattern": "{0} {1}",
+          "integerAndRationalPattern-alt-superSub": "{0}⁠{1}",
+          "rationalUsage": "sometimes"
+        },
+        "gonm": {
+          "rationalPattern": "{0}⁄{1}",
+          "integerAndRationalPattern": "{0} {1}",
+          "integerAndRationalPattern-alt-superSub": "{0}⁠{1}",
+          "rationalUsage": "sometimes"
+        },
+        "gujr": {
+          "rationalPattern": "{0}⁄{1}",
+          "integerAndRationalPattern": "{0} {1}",
+          "integerAndRationalPattern-alt-superSub": "{0}⁠{1}",
+          "rationalUsage": "sometimes"
+        },
+        "gukh": {
+          "rationalPattern": "{0}⁄{1}",
+          "integerAndRationalPattern": "{0} {1}",
+          "integerAndRationalPattern-alt-superSub": "{0}⁠{1}",
+          "rationalUsage": "sometimes"
+        },
+        "guru": {
+          "rationalPattern": "{0}⁄{1}",
+          "integerAndRationalPattern": "{0} {1}",
+          "integerAndRationalPattern-alt-superSub": "{0}⁠{1}",
+          "rationalUsage": "sometimes"
+        },
+        "hanidec": {
+          "rationalPattern": "{0}⁄{1}",
+          "integerAndRationalPattern": "{0} {1}",
+          "integerAndRationalPattern-alt-superSub": "{0}⁠{1}",
+          "rationalUsage": "sometimes"
+        },
+        "hmng": {
+          "rationalPattern": "{0}⁄{1}",
+          "integerAndRationalPattern": "{0} {1}",
+          "integerAndRationalPattern-alt-superSub": "{0}⁠{1}",
+          "rationalUsage": "sometimes"
+        },
+        "hmnp": {
+          "rationalPattern": "{0}⁄{1}",
+          "integerAndRationalPattern": "{0} {1}",
+          "integerAndRationalPattern-alt-superSub": "{0}⁠{1}",
+          "rationalUsage": "sometimes"
+        },
+        "java": {
+          "rationalPattern": "{0}⁄{1}",
+          "integerAndRationalPattern": "{0} {1}",
+          "integerAndRationalPattern-alt-superSub": "{0}⁠{1}",
+          "rationalUsage": "sometimes"
+        },
+        "kali": {
+          "rationalPattern": "{0}⁄{1}",
+          "integerAndRationalPattern": "{0} {1}",
+          "integerAndRationalPattern-alt-superSub": "{0}⁠{1}",
+          "rationalUsage": "sometimes"
+        },
+        "kawi": {
+          "rationalPattern": "{0}⁄{1}",
+          "integerAndRationalPattern": "{0} {1}",
+          "integerAndRationalPattern-alt-superSub": "{0}⁠{1}",
+          "rationalUsage": "sometimes"
+        },
+        "khmr": {
+          "rationalPattern": "{0}⁄{1}",
+          "integerAndRationalPattern": "{0} {1}",
+          "integerAndRationalPattern-alt-superSub": "{0}⁠{1}",
+          "rationalUsage": "sometimes"
+        },
+        "knda": {
+          "rationalPattern": "{0}⁄{1}",
+          "integerAndRationalPattern": "{0} {1}",
+          "integerAndRationalPattern-alt-superSub": "{0}⁠{1}",
+          "rationalUsage": "sometimes"
+        },
+        "krai": {
+          "rationalPattern": "{0}⁄{1}",
+          "integerAndRationalPattern": "{0} {1}",
+          "integerAndRationalPattern-alt-superSub": "{0}⁠{1}",
+          "rationalUsage": "sometimes"
+        },
+        "lana": {
+          "rationalPattern": "{0}⁄{1}",
+          "integerAndRationalPattern": "{0} {1}",
+          "integerAndRationalPattern-alt-superSub": "{0}⁠{1}",
+          "rationalUsage": "sometimes"
+        },
+        "lanatham": {
+          "rationalPattern": "{0}⁄{1}",
+          "integerAndRationalPattern": "{0} {1}",
+          "integerAndRationalPattern-alt-superSub": "{0}⁠{1}",
+          "rationalUsage": "sometimes"
+        },
+        "laoo": {
+          "rationalPattern": "{0}⁄{1}",
+          "integerAndRationalPattern": "{0} {1}",
+          "integerAndRationalPattern-alt-superSub": "{0}⁠{1}",
+          "rationalUsage": "sometimes"
+        },
+        "latn": {
+          "rationalPattern": "{0}⁄{1}",
+          "integerAndRationalPattern": "{0} {1}",
+          "integerAndRationalPattern-alt-superSub": "{0}⁠{1}",
+          "rationalUsage": "sometimes"
+        },
+        "lepc": {
+          "rationalPattern": "{0}⁄{1}",
+          "integerAndRationalPattern": "{0} {1}",
+          "integerAndRationalPattern-alt-superSub": "{0}⁠{1}",
+          "rationalUsage": "sometimes"
+        },
+        "limb": {
+          "rationalPattern": "{0}⁄{1}",
+          "integerAndRationalPattern": "{0} {1}",
+          "integerAndRationalPattern-alt-superSub": "{0}⁠{1}",
+          "rationalUsage": "sometimes"
+        },
+        "mathbold": {
+          "rationalPattern": "{0}⁄{1}",
+          "integerAndRationalPattern": "{0} {1}",
+          "integerAndRationalPattern-alt-superSub": "{0}⁠{1}",
+          "rationalUsage": "sometimes"
+        },
+        "mathdbl": {
+          "rationalPattern": "{0}⁄{1}",
+          "integerAndRationalPattern": "{0} {1}",
+          "integerAndRationalPattern-alt-superSub": "{0}⁠{1}",
+          "rationalUsage": "sometimes"
+        },
+        "mathmono": {
+          "rationalPattern": "{0}⁄{1}",
+          "integerAndRationalPattern": "{0} {1}",
+          "integerAndRationalPattern-alt-superSub": "{0}⁠{1}",
+          "rationalUsage": "sometimes"
+        },
+        "mathsanb": {
+          "rationalPattern": "{0}⁄{1}",
+          "integerAndRationalPattern": "{0} {1}",
+          "integerAndRationalPattern-alt-superSub": "{0}⁠{1}",
+          "rationalUsage": "sometimes"
+        },
+        "mathsans": {
+          "rationalPattern": "{0}⁄{1}",
+          "integerAndRationalPattern": "{0} {1}",
+          "integerAndRationalPattern-alt-superSub": "{0}⁠{1}",
+          "rationalUsage": "sometimes"
+        },
+        "mlym": {
+          "rationalPattern": "{0}⁄{1}",
+          "integerAndRationalPattern": "{0} {1}",
+          "integerAndRationalPattern-alt-superSub": "{0}⁠{1}",
+          "rationalUsage": "sometimes"
+        },
+        "modi": {
+          "rationalPattern": "{0}⁄{1}",
+          "integerAndRationalPattern": "{0} {1}",
+          "integerAndRationalPattern-alt-superSub": "{0}⁠{1}",
+          "rationalUsage": "sometimes"
+        },
+        "mong": {
+          "rationalPattern": "{0}⁄{1}",
+          "integerAndRationalPattern": "{0} {1}",
+          "integerAndRationalPattern-alt-superSub": "{0}⁠{1}",
+          "rationalUsage": "sometimes"
+        },
+        "mroo": {
+          "rationalPattern": "{0}⁄{1}",
+          "integerAndRationalPattern": "{0} {1}",
+          "integerAndRationalPattern-alt-superSub": "{0}⁠{1}",
+          "rationalUsage": "sometimes"
+        },
+        "mtei": {
+          "rationalPattern": "{0}⁄{1}",
+          "integerAndRationalPattern": "{0} {1}",
+          "integerAndRationalPattern-alt-superSub": "{0}⁠{1}",
+          "rationalUsage": "sometimes"
+        },
+        "mymr": {
+          "rationalPattern": "{0}⁄{1}",
+          "integerAndRationalPattern": "{0} {1}",
+          "integerAndRationalPattern-alt-superSub": "{0}⁠{1}",
+          "rationalUsage": "sometimes"
+        },
+        "mymrepka": {
+          "rationalPattern": "{0}⁄{1}",
+          "integerAndRationalPattern": "{0} {1}",
+          "integerAndRationalPattern-alt-superSub": "{0}⁠{1}",
+          "rationalUsage": "sometimes"
+        },
+        "mymrpao": {
+          "rationalPattern": "{0}⁄{1}",
+          "integerAndRationalPattern": "{0} {1}",
+          "integerAndRationalPattern-alt-superSub": "{0}⁠{1}",
+          "rationalUsage": "sometimes"
+        },
+        "mymrshan": {
+          "rationalPattern": "{0}⁄{1}",
+          "integerAndRationalPattern": "{0} {1}",
+          "integerAndRationalPattern-alt-superSub": "{0}⁠{1}",
+          "rationalUsage": "sometimes"
+        },
+        "mymrtlng": {
+          "rationalPattern": "{0}⁄{1}",
+          "integerAndRationalPattern": "{0} {1}",
+          "integerAndRationalPattern-alt-superSub": "{0}⁠{1}",
+          "rationalUsage": "sometimes"
+        },
+        "nagm": {
+          "rationalPattern": "{0}⁄{1}",
+          "integerAndRationalPattern": "{0} {1}",
+          "integerAndRationalPattern-alt-superSub": "{0}⁠{1}",
+          "rationalUsage": "sometimes"
+        },
+        "newa": {
+          "rationalPattern": "{0}⁄{1}",
+          "integerAndRationalPattern": "{0} {1}",
+          "integerAndRationalPattern-alt-superSub": "{0}⁠{1}",
+          "rationalUsage": "sometimes"
+        },
+        "nkoo": {
+          "rationalPattern": "{0}⁄{1}",
+          "integerAndRationalPattern": "{0} {1}",
+          "integerAndRationalPattern-alt-superSub": "{0}⁠{1}",
+          "rationalUsage": "sometimes"
+        },
+        "olck": {
+          "rationalPattern": "{0}⁄{1}",
+          "integerAndRationalPattern": "{0} {1}",
+          "integerAndRationalPattern-alt-superSub": "{0}⁠{1}",
+          "rationalUsage": "sometimes"
+        },
+        "onao": {
+          "rationalPattern": "{0}⁄{1}",
+          "integerAndRationalPattern": "{0} {1}",
+          "integerAndRationalPattern-alt-superSub": "{0}⁠{1}",
+          "rationalUsage": "sometimes"
+        },
+        "orya": {
+          "rationalPattern": "{0}⁄{1}",
+          "integerAndRationalPattern": "{0} {1}",
+          "integerAndRationalPattern-alt-superSub": "{0}⁠{1}",
+          "rationalUsage": "sometimes"
+        },
+        "osma": {
+          "rationalPattern": "{0}⁄{1}",
+          "integerAndRationalPattern": "{0} {1}",
+          "integerAndRationalPattern-alt-superSub": "{0}⁠{1}",
+          "rationalUsage": "sometimes"
+        },
+        "outlined": {
+          "rationalPattern": "{0}⁄{1}",
+          "integerAndRationalPattern": "{0} {1}",
+          "integerAndRationalPattern-alt-superSub": "{0}⁠{1}",
+          "rationalUsage": "sometimes"
+        },
+        "rohg": {
+          "rationalPattern": "{0}⁄{1}",
+          "integerAndRationalPattern": "{0} {1}",
+          "integerAndRationalPattern-alt-superSub": "{0}⁠{1}",
+          "rationalUsage": "sometimes"
+        },
+        "saur": {
+          "rationalPattern": "{0}⁄{1}",
+          "integerAndRationalPattern": "{0} {1}",
+          "integerAndRationalPattern-alt-superSub": "{0}⁠{1}",
+          "rationalUsage": "sometimes"
+        },
+        "segment": {
+          "rationalPattern": "{0}⁄{1}",
+          "integerAndRationalPattern": "{0} {1}",
+          "integerAndRationalPattern-alt-superSub": "{0}⁠{1}",
+          "rationalUsage": "sometimes"
+        },
+        "shrd": {
+          "rationalPattern": "{0}⁄{1}",
+          "integerAndRationalPattern": "{0} {1}",
+          "integerAndRationalPattern-alt-superSub": "{0}⁠{1}",
+          "rationalUsage": "sometimes"
+        },
+        "sind": {
+          "rationalPattern": "{0}⁄{1}",
+          "integerAndRationalPattern": "{0} {1}",
+          "integerAndRationalPattern-alt-superSub": "{0}⁠{1}",
+          "rationalUsage": "sometimes"
+        },
+        "sinh": {
+          "rationalPattern": "{0}⁄{1}",
+          "integerAndRationalPattern": "{0} {1}",
+          "integerAndRationalPattern-alt-superSub": "{0}⁠{1}",
+          "rationalUsage": "sometimes"
+        },
+        "sora": {
+          "rationalPattern": "{0}⁄{1}",
+          "integerAndRationalPattern": "{0} {1}",
+          "integerAndRationalPattern-alt-superSub": "{0}⁠{1}",
+          "rationalUsage": "sometimes"
+        },
+        "sund": {
+          "rationalPattern": "{0}⁄{1}",
+          "integerAndRationalPattern": "{0} {1}",
+          "integerAndRationalPattern-alt-superSub": "{0}⁠{1}",
+          "rationalUsage": "sometimes"
+        },
+        "sunu": {
+          "rationalPattern": "{0}⁄{1}",
+          "integerAndRationalPattern": "{0} {1}",
+          "integerAndRationalPattern-alt-superSub": "{0}⁠{1}",
+          "rationalUsage": "sometimes"
+        },
+        "takr": {
+          "rationalPattern": "{0}⁄{1}",
+          "integerAndRationalPattern": "{0} {1}",
+          "integerAndRationalPattern-alt-superSub": "{0}⁠{1}",
+          "rationalUsage": "sometimes"
+        },
+        "talu": {
+          "rationalPattern": "{0}⁄{1}",
+          "integerAndRationalPattern": "{0} {1}",
+          "integerAndRationalPattern-alt-superSub": "{0}⁠{1}",
+          "rationalUsage": "sometimes"
+        },
+        "tamldec": {
+          "rationalPattern": "{0}⁄{1}",
+          "integerAndRationalPattern": "{0} {1}",
+          "integerAndRationalPattern-alt-superSub": "{0}⁠{1}",
+          "rationalUsage": "sometimes"
+        },
+        "telu": {
+          "rationalPattern": "{0}⁄{1}",
+          "integerAndRationalPattern": "{0} {1}",
+          "integerAndRationalPattern-alt-superSub": "{0}⁠{1}",
+          "rationalUsage": "sometimes"
+        },
+        "thai": {
+          "rationalPattern": "{0}⁄{1}",
+          "integerAndRationalPattern": "{0} {1}",
+          "integerAndRationalPattern-alt-superSub": "{0}⁠{1}",
+          "rationalUsage": "sometimes"
+        },
+        "tibt": {
+          "rationalPattern": "{0}⁄{1}",
+          "integerAndRationalPattern": "{0} {1}",
+          "integerAndRationalPattern-alt-superSub": "{0}⁠{1}",
+          "rationalUsage": "sometimes"
+        },
+        "tirh": {
+          "rationalPattern": "{0}⁄{1}",
+          "integerAndRationalPattern": "{0} {1}",
+          "integerAndRationalPattern-alt-superSub": "{0}⁠{1}",
+          "rationalUsage": "sometimes"
+        },
+        "tnsa": {
+          "rationalPattern": "{0}⁄{1}",
+          "integerAndRationalPattern": "{0} {1}",
+          "integerAndRationalPattern-alt-superSub": "{0}⁠{1}",
+          "rationalUsage": "sometimes"
+        },
+        "vaii": {
+          "rationalPattern": "{0}⁄{1}",
+          "integerAndRationalPattern": "{0} {1}",
+          "integerAndRationalPattern-alt-superSub": "{0}⁠{1}",
+          "rationalUsage": "sometimes"
+        },
+        "wara": {
+          "rationalPattern": "{0}⁄{1}",
+          "integerAndRationalPattern": "{0} {1}",
+          "integerAndRationalPattern-alt-superSub": "{0}⁠{1}",
+          "rationalUsage": "sometimes"
+        },
+        "wcho": {
+          "rationalPattern": "{0}⁄{1}",
+          "integerAndRationalPattern": "{0} {1}",
+          "integerAndRationalPattern-alt-superSub": "{0}⁠{1}",
+          "rationalUsage": "sometimes"
+        },
         "scientificFormats-numberSystem-latn": {
           "standard": "#E0"
         },

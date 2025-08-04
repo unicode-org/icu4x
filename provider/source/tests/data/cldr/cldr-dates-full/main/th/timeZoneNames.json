@@ -9,6 +9,7 @@
           "hourFormat": "+HH:mm;-HH:mm",
           "gmtFormat": "GMT{0}",
           "gmtZeroFormat": "GMT",
+          "gmtUnknownFormat": "GMT+?",
           "regionFormat": "เวลา{0}",
           "regionFormat-type-daylight": "เวลาออมแสง{0}",
           "regionFormat-type-standard": "เวลามาตรฐาน{0}",
@@ -56,10 +57,6 @@
                 "exemplarCity": "กวม"
               },
               "Enderbury": {
-                "_type": "zone",
-                "exemplarCity": "เอนเดอร์เบอรี"
-              },
-              "Kanton": {
                 "_type": "zone",
                 "exemplarCity": "แคนทอน"
               },
@@ -1000,6 +997,10 @@
                 "_type": "zone",
                 "exemplarCity": "เซนต์จอนส์"
               },
+              "Coyhaique": {
+                "_type": "zone",
+                "exemplarCity": "โกไยเก"
+              },
               "Punta_Arenas": {
                 "_type": "zone",
                 "exemplarCity": "ปุนตาอาเรนัส"
@@ -1766,9 +1767,7 @@
             },
             "Africa_Western": {
               "long": {
-                "generic": "เวลาแอฟริกาตะวันตก",
-                "standard": "เวลามาตรฐานแอฟริกาตะวันตก",
-                "daylight": "เวลาฤดูร้อนแอฟริกาตะวันตก"
+                "standard": "เวลาแอฟริกาตะวันตก"
               }
             },
             "Alaska": {
@@ -2154,6 +2153,11 @@
             "Guyana": {
               "long": {
                 "standard": "เวลากายอานา"
+              }
+            },
+            "Hawaii": {
+              "long": {
+                "standard": "เวลามาตรฐานฮาวาย-อะลูเชียน"
               }
             },
             "Hawaii_Aleutian": {
@@ -2604,6 +2608,13 @@
             "Truk": {
               "long": {
                 "standard": "เวลาชุก"
+              }
+            },
+            "Turkey": {
+              "long": {
+                "generic": "เวลาตุรกี",
+                "standard": "เวลามาตรฐานตุรกี",
+                "daylight": "เวลาฤดูร้อนตุรกี"
               }
             },
             "Turkmenistan": {
