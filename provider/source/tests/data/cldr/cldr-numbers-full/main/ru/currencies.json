@@ -21,10 +21,12 @@
             "displayName-count-other": "дирхама ОАЭ"
           },
           "AFA": {
-            "displayName": "Афгани (1927–2002)"
+            "displayName": "Афгани (1927–2002)",
+            "displayName-count-other": "Афгани (1927–2002)"
           },
           "AFN": {
             "displayName": "афгани",
+            "displayName-count-other": "афгани",
             "symbol-alt-narrow": "؋"
           },
           "ALL": {
@@ -65,7 +67,8 @@
             "displayName-count-other": "ангольских кванз (1977–1991)"
           },
           "AON": {
-            "displayName": "Ангольская новая кванза (1990–2000)"
+            "displayName": "Ангольская новая кванза (1990–2000)",
+            "displayName-count-other": "Ангольская новая кванза (1990–2000)"
           },
           "AOR": {
             "displayName": "Ангольская кванза реюстадо (1995–1999)",
@@ -75,10 +78,12 @@
             "displayName-count-other": "ангольских кванз реюстадо (1995–1999)"
           },
           "ARA": {
-            "displayName": "Аргентинский аустрал"
+            "displayName": "Аргентинский аустрал",
+            "displayName-count-other": "Аргентинский аустрал"
           },
           "ARP": {
-            "displayName": "Аргентинское песо (1983–1985)"
+            "displayName": "Аргентинское песо (1983–1985)",
+            "displayName-count-other": "Аргентинское песо (1983–1985)"
           },
           "ARS": {
             "displayName": "аргентинский песо",
@@ -89,7 +94,8 @@
             "symbol-alt-narrow": "$"
           },
           "ATS": {
-            "displayName": "Австрийский шиллинг"
+            "displayName": "Австрийский шиллинг",
+            "displayName-count-other": "Австрийский шиллинг"
           },
           "AUD": {
             "displayName": "австралийский доллар",
@@ -108,7 +114,8 @@
             "displayName-count-other": "арубанского флорина"
           },
           "AZM": {
-            "displayName": "Старый азербайджанский манат"
+            "displayName": "Старый азербайджанский манат",
+            "displayName-count-other": "Старый азербайджанский манат"
           },
           "AZN": {
             "displayName": "азербайджанский манат",
@@ -119,7 +126,8 @@
             "symbol-alt-narrow": "₼"
           },
           "BAD": {
-            "displayName": "Динар Боснии и Герцеговины"
+            "displayName": "Динар Боснии и Герцеговины",
+            "displayName-count-other": "Динар Боснии и Герцеговины"
           },
           "BAM": {
             "displayName": "конвертируемая марка Боснии и Герцеговины",
@@ -146,16 +154,20 @@
             "symbol-alt-narrow": "৳"
           },
           "BEC": {
-            "displayName": "Бельгийский франк (конвертируемый)"
+            "displayName": "Бельгийский франк (конвертируемый)",
+            "displayName-count-other": "Бельгийский франк (конвертируемый)"
           },
           "BEF": {
-            "displayName": "Бельгийский франк"
+            "displayName": "Бельгийский франк",
+            "displayName-count-other": "Бельгийский франк"
           },
           "BEL": {
-            "displayName": "Бельгийский франк (финансовый)"
+            "displayName": "Бельгийский франк (финансовый)",
+            "displayName-count-other": "Бельгийский франк (финансовый)"
           },
           "BGL": {
-            "displayName": "Лев"
+            "displayName": "Лев",
+            "displayName-count-other": "Лев"
           },
           "BGN": {
             "displayName": "болгарский лев",
@@ -203,19 +215,24 @@
             "symbol-alt-narrow": "Bs"
           },
           "BOP": {
-            "displayName": "Боливийское песо"
+            "displayName": "Боливийское песо",
+            "displayName-count-other": "Боливийское песо"
           },
           "BOV": {
-            "displayName": "Боливийский мвдол"
+            "displayName": "Боливийский мвдол",
+            "displayName-count-other": "Боливийский мвдол"
           },
           "BRB": {
-            "displayName": "Бразильский новый крузейро (1967–1986)"
+            "displayName": "Бразильский новый крузейро (1967–1986)",
+            "displayName-count-other": "Бразильский новый крузейро (1967–1986)"
           },
           "BRC": {
-            "displayName": "Бразильское крузадо"
+            "displayName": "Бразильское крузадо",
+            "displayName-count-other": "Бразильское крузадо"
           },
           "BRE": {
-            "displayName": "Бразильский крузейро (1990–1993)"
+            "displayName": "Бразильский крузейро (1990–1993)",
+            "displayName-count-other": "Бразильский крузейро (1990–1993)"
           },
           "BRL": {
             "displayName": "бразильский реал",
@@ -227,10 +244,12 @@
             "symbol-alt-narrow": "R$"
           },
           "BRN": {
-            "displayName": "Бразильское новое крузадо"
+            "displayName": "Бразильское новое крузадо",
+            "displayName-count-other": "Бразильское новое крузадо"
           },
           "BRR": {
-            "displayName": "Бразильский крузейро"
+            "displayName": "Бразильский крузейро",
+            "displayName-count-other": "Бразильский крузейро"
           },
           "BSD": {
             "displayName": "багамский доллар",
@@ -248,7 +267,8 @@
             "displayName-count-other": "бутанского нгултрума"
           },
           "BUK": {
-            "displayName": "Джа"
+            "displayName": "Джа",
+            "displayName-count-other": "Джа"
           },
           "BWP": {
             "displayName": "ботсванская пула",
@@ -259,7 +279,8 @@
             "symbol-alt-narrow": "P"
           },
           "BYB": {
-            "displayName": "Белорусский рубль (1994–1999)"
+            "displayName": "Белорусский рубль (1994–1999)",
+            "displayName-count-other": "Белорусский рубль (1994–1999)"
           },
           "BYN": {
             "displayName": "белорусский рубль",
@@ -301,7 +322,8 @@
             "displayName-count-other": "конголезского франка"
           },
           "CHE": {
-            "displayName": "WIR евро"
+            "displayName": "WIR евро",
+            "displayName-count-other": "WIR евро"
           },
           "CHF": {
             "displayName": "швейцарский франк",
@@ -311,10 +333,12 @@
             "displayName-count-other": "швейцарского франка"
           },
           "CHW": {
-            "displayName": "WIR франк"
+            "displayName": "WIR франк",
+            "displayName-count-other": "WIR франк"
           },
           "CLF": {
-            "displayName": "Условная расчетная единица Чили"
+            "displayName": "Условная расчетная единица Чили",
+            "displayName-count-other": "Условная расчетная единица Чили"
           },
           "CLP": {
             "displayName": "чилийский песо",
@@ -349,7 +373,8 @@
             "symbol-alt-narrow": "$"
           },
           "COU": {
-            "displayName": "Единица реальной стоимости Колумбии"
+            "displayName": "Единица реальной стоимости Колумбии",
+            "displayName-count-other": "Единица реальной стоимости Колумбии"
           },
           "CRC": {
             "displayName": "костариканский колон",
@@ -360,10 +385,12 @@
             "symbol-alt-narrow": "₡"
           },
           "CSD": {
-            "displayName": "Старый Сербский динар"
+            "displayName": "Старый Сербский динар",
+            "displayName-count-other": "Старый Сербский динар"
           },
           "CSK": {
-            "displayName": "Чехословацкая твердая крона"
+            "displayName": "Чехословацкая твердая крона",
+            "displayName-count-other": "Чехословацкая твердая крона"
           },
           "CUC": {
             "displayName": "кубинский конвертируемый песо",
@@ -382,10 +409,12 @@
             "symbol-alt-narrow": "$"
           },
           "CVE": {
-            "displayName": "эскудо Кабо-Верде"
+            "displayName": "эскудо Кабо-Верде",
+            "displayName-count-other": "эскудо Кабо-Верде"
           },
           "CYP": {
-            "displayName": "Кипрский фунт"
+            "displayName": "Кипрский фунт",
+            "displayName-count-other": "Кипрский фунт"
           },
           "CZK": {
             "displayName": "чешская крона",
@@ -396,10 +425,12 @@
             "symbol-alt-narrow": "Kč"
           },
           "DDM": {
-            "displayName": "Восточногерманская марка"
+            "displayName": "Восточногерманская марка",
+            "displayName-count-other": "Восточногерманская марка"
           },
           "DEM": {
-            "displayName": "Немецкая марка"
+            "displayName": "Немецкая марка",
+            "displayName-count-other": "Немецкая марка"
           },
           "DJF": {
             "displayName": "франк Джибути",
@@ -432,13 +463,16 @@
             "displayName-count-other": "алжирского динара"
           },
           "ECS": {
-            "displayName": "Эквадорский сукре"
+            "displayName": "Эквадорский сукре",
+            "displayName-count-other": "Эквадорский сукре"
           },
           "ECV": {
-            "displayName": "Постоянная единица стоимости Эквадора"
+            "displayName": "Постоянная единица стоимости Эквадора",
+            "displayName-count-other": "Постоянная единица стоимости Эквадора"
           },
           "EEK": {
-            "displayName": "Эстонская крона"
+            "displayName": "Эстонская крона",
+            "displayName-count-other": "Эстонская крона"
           },
           "EGP": {
             "displayName": "египетский фунт",
@@ -456,13 +490,16 @@
             "displayName-count-other": "эритрейской накфы"
           },
           "ESA": {
-            "displayName": "Испанская песета (А)"
+            "displayName": "Испанская песета (А)",
+            "displayName-count-other": "Испанская песета (А)"
           },
           "ESB": {
-            "displayName": "Испанская песета (конвертируемая)"
+            "displayName": "Испанская песета (конвертируемая)",
+            "displayName-count-other": "Испанская песета (конвертируемая)"
           },
           "ESP": {
             "displayName": "Испанская песета",
+            "displayName-count-other": "Испанская песета",
             "symbol-alt-narrow": "₧"
           },
           "ETB": {
@@ -474,11 +511,13 @@
           },
           "EUR": {
             "displayName": "евро",
+            "displayName-count-other": "евро",
             "symbol": "€",
             "symbol-alt-narrow": "€"
           },
           "FIM": {
-            "displayName": "Финская марка"
+            "displayName": "Финская марка",
+            "displayName-count-other": "Финская марка"
           },
           "FJD": {
             "displayName": "доллар Фиджи",
@@ -497,7 +536,8 @@
             "symbol-alt-narrow": "£"
           },
           "FRF": {
-            "displayName": "Французский франк"
+            "displayName": "Французский франк",
+            "displayName-count-other": "Французский франк"
           },
           "GBP": {
             "displayName": "британский фунт стерлингов",
@@ -509,7 +549,8 @@
             "symbol-alt-narrow": "£"
           },
           "GEK": {
-            "displayName": "Грузинский купон"
+            "displayName": "Грузинский купон",
+            "displayName-count-other": "Грузинский купон"
           },
           "GEL": {
             "displayName": "грузинский лари",
@@ -520,7 +561,8 @@
             "symbol-alt-narrow": "ლ"
           },
           "GHC": {
-            "displayName": "Ганский седи (1979–2007)"
+            "displayName": "Ганский седи (1979–2007)",
+            "displayName-count-other": "Ганский седи (1979–2007)"
           },
           "GHS": {
             "displayName": "ганский седи",
@@ -554,13 +596,16 @@
             "symbol-alt-narrow": "FG"
           },
           "GNS": {
-            "displayName": "Гвинейская сили"
+            "displayName": "Гвинейская сили",
+            "displayName-count-other": "Гвинейская сили"
           },
           "GQE": {
-            "displayName": "Эквеле экваториальной Гвинеи"
+            "displayName": "Эквеле экваториальной Гвинеи",
+            "displayName-count-other": "Эквеле экваториальной Гвинеи"
           },
           "GRD": {
-            "displayName": "Греческая драхма"
+            "displayName": "Греческая драхма",
+            "displayName-count-other": "Греческая драхма"
           },
           "GTQ": {
             "displayName": "гватемальский кетсаль",
@@ -571,10 +616,12 @@
             "symbol-alt-narrow": "Q"
           },
           "GWE": {
-            "displayName": "Эскудо Португальской Гвинеи"
+            "displayName": "Эскудо Португальской Гвинеи",
+            "displayName-count-other": "Эскудо Португальской Гвинеи"
           },
           "GWP": {
-            "displayName": "Песо Гвинеи-Бисау"
+            "displayName": "Песо Гвинеи-Бисау",
+            "displayName-count-other": "Песо Гвинеи-Бисау"
           },
           "GYD": {
             "displayName": "гайанский доллар",
@@ -602,7 +649,8 @@
             "symbol-alt-narrow": "L"
           },
           "HRD": {
-            "displayName": "Хорватский динар"
+            "displayName": "Хорватский динар",
+            "displayName-count-other": "Хорватский динар"
           },
           "HRK": {
             "displayName": "хорватская куна",
@@ -636,10 +684,12 @@
             "symbol-alt-narrow": "Rp"
           },
           "IEP": {
-            "displayName": "Ирландский фунт"
+            "displayName": "Ирландский фунт",
+            "displayName-count-other": "Ирландский фунт"
           },
           "ILP": {
-            "displayName": "Израильский фунт"
+            "displayName": "Израильский фунт",
+            "displayName-count-other": "Израильский фунт"
           },
           "ILS": {
             "displayName": "новый израильский шекель",
@@ -682,7 +732,8 @@
             "symbol-alt-narrow": "kr"
           },
           "ITL": {
-            "displayName": "Итальянская лира"
+            "displayName": "Итальянская лира",
+            "displayName-count-other": "Итальянская лира"
           },
           "JMD": {
             "displayName": "ямайский доллар",
@@ -812,7 +863,8 @@
             "symbol-alt-narrow": "$"
           },
           "LSL": {
-            "displayName": "лоти"
+            "displayName": "лоти",
+            "displayName-count-other": "лоти"
           },
           "LTL": {
             "displayName": "Литовский лит",
@@ -823,16 +875,20 @@
             "symbol-alt-narrow": "Lt"
           },
           "LTT": {
-            "displayName": "Литовский талон"
+            "displayName": "Литовский талон",
+            "displayName-count-other": "Литовский талон"
           },
           "LUC": {
-            "displayName": "Конвертируемый франк Люксембурга"
+            "displayName": "Конвертируемый франк Люксембурга",
+            "displayName-count-other": "Конвертируемый франк Люксембурга"
           },
           "LUF": {
-            "displayName": "Люксембургский франк"
+            "displayName": "Люксембургский франк",
+            "displayName-count-other": "Люксембургский франк"
           },
           "LUL": {
-            "displayName": "Финансовый франк Люксембурга"
+            "displayName": "Финансовый франк Люксембурга",
+            "displayName-count-other": "Финансовый франк Люксембурга"
           },
           "LVL": {
             "displayName": "Латвийский лат",
@@ -843,7 +899,8 @@
             "symbol-alt-narrow": "Ls"
           },
           "LVR": {
-            "displayName": "Латвийский рубль"
+            "displayName": "Латвийский рубль",
+            "displayName-count-other": "Латвийский рубль"
           },
           "LYD": {
             "displayName": "ливийский динар",
@@ -860,7 +917,8 @@
             "displayName-count-other": "марокканского дирхама"
           },
           "MAF": {
-            "displayName": "Марокканский франк"
+            "displayName": "Марокканский франк",
+            "displayName-count-other": "Марокканский франк"
           },
           "MDL": {
             "displayName": "молдавский лей",
@@ -878,7 +936,8 @@
             "symbol-alt-narrow": "Ar"
           },
           "MGF": {
-            "displayName": "Малагасийский франк"
+            "displayName": "Малагасийский франк",
+            "displayName-count-other": "Малагасийский франк"
           },
           "MKD": {
             "displayName": "македонский денар",
@@ -888,7 +947,8 @@
             "displayName-count-other": "македонского денара"
           },
           "MLF": {
-            "displayName": "Малийский франк"
+            "displayName": "Малийский франк",
+            "displayName-count-other": "Малийский франк"
           },
           "MMK": {
             "displayName": "мьянманский кьят",
@@ -928,10 +988,12 @@
             "displayName-count-other": "мавританской угии"
           },
           "MTL": {
-            "displayName": "Мальтийская лира"
+            "displayName": "Мальтийская лира",
+            "displayName-count-other": "Мальтийская лира"
           },
           "MTP": {
-            "displayName": "Мальтийский фунт"
+            "displayName": "Мальтийский фунт",
+            "displayName-count-other": "Мальтийский фунт"
           },
           "MUR": {
             "displayName": "маврикийская рупия",
@@ -965,10 +1027,12 @@
             "symbol-alt-narrow": "$"
           },
           "MXP": {
-            "displayName": "Мексиканское серебряное песо (1861–1992)"
+            "displayName": "Мексиканское серебряное песо (1861–1992)",
+            "displayName-count-other": "Мексиканское серебряное песо (1861–1992)"
           },
           "MXV": {
-            "displayName": "Мексиканская пересчетная единица (UDI)"
+            "displayName": "Мексиканская пересчетная единица (UDI)",
+            "displayName-count-other": "Мексиканская пересчетная единица (UDI)"
           },
           "MYR": {
             "displayName": "малайзийский ринггит",
@@ -979,10 +1043,12 @@
             "symbol-alt-narrow": "RM"
           },
           "MZE": {
-            "displayName": "Мозамбикское эскудо"
+            "displayName": "Мозамбикское эскудо",
+            "displayName-count-other": "Мозамбикское эскудо"
           },
           "MZM": {
-            "displayName": "Старый мозамбикский метикал"
+            "displayName": "Старый мозамбикский метикал",
+            "displayName-count-other": "Старый мозамбикский метикал"
           },
           "MZN": {
             "displayName": "мозамбикский метикал",
@@ -1008,7 +1074,8 @@
             "symbol-alt-narrow": "₦"
           },
           "NIC": {
-            "displayName": "Никарагуанская кордоба (1988–1991)"
+            "displayName": "Никарагуанская кордоба (1988–1991)",
+            "displayName-count-other": "Никарагуанская кордоба (1988–1991)"
           },
           "NIO": {
             "displayName": "никарагуанская кордоба",
@@ -1019,7 +1086,8 @@
             "symbol-alt-narrow": "C$"
           },
           "NLG": {
-            "displayName": "Нидерландский гульден"
+            "displayName": "Нидерландский гульден",
+            "displayName-count-other": "Нидерландский гульден"
           },
           "NOK": {
             "displayName": "норвежская крона",
@@ -1061,7 +1129,8 @@
             "displayName-count-other": "панамского бальбоа"
           },
           "PEI": {
-            "displayName": "Перуанское инти"
+            "displayName": "Перуанское инти",
+            "displayName-count-other": "Перуанское инти"
           },
           "PEN": {
             "displayName": "перуанский соль",
@@ -1110,10 +1179,12 @@
             "symbol-alt-narrow": "zł"
           },
           "PLZ": {
-            "displayName": "Злотый"
+            "displayName": "Злотый",
+            "displayName-count-other": "Злотый"
           },
           "PTE": {
-            "displayName": "Португальское эскудо"
+            "displayName": "Португальское эскудо",
+            "displayName-count-other": "Португальское эскудо"
           },
           "PYG": {
             "displayName": "парагвайский гуарани",
@@ -1131,10 +1202,12 @@
             "displayName-count-other": "катарского риала"
           },
           "RHD": {
-            "displayName": "Родезийский доллар"
+            "displayName": "Родезийский доллар",
+            "displayName-count-other": "Родезийский доллар"
           },
           "ROL": {
-            "displayName": "Старый Румынский лей"
+            "displayName": "Старый Румынский лей",
+            "displayName-count-other": "Старый Румынский лей"
           },
           "RON": {
             "displayName": "румынский лей",
@@ -1162,6 +1235,7 @@
           },
           "RUR": {
             "displayName": "Российский рубль (1991–1998)",
+            "displayName-count-other": "Российский рубль (1991–1998)",
             "symbol": "р."
           },
           "RWF": {
@@ -1177,7 +1251,8 @@
             "displayName-count-one": "саудовский риял",
             "displayName-count-few": "саудовских рияла",
             "displayName-count-many": "саудовских риялов",
-            "displayName-count-other": "саудовского рияла"
+            "displayName-count-other": "саудовского рияла",
+            "symbol-alt-variant": "⃁"
           },
           "SBD": {
             "displayName": "доллар Соломоновых Островов",
@@ -1195,7 +1270,8 @@
             "displayName-count-other": "сейшельской рупии"
           },
           "SDD": {
-            "displayName": "Суданский динар"
+            "displayName": "Суданский динар",
+            "displayName-count-other": "Суданский динар"
           },
           "SDG": {
             "displayName": "суданский фунт",
@@ -1205,7 +1281,8 @@
             "displayName-count-other": "суданского фунта"
           },
           "SDP": {
-            "displayName": "Старый суданский фунт"
+            "displayName": "Старый суданский фунт",
+            "displayName-count-other": "Старый суданский фунт"
           },
           "SEK": {
             "displayName": "шведская крона",
@@ -1232,16 +1309,20 @@
             "symbol-alt-narrow": "£"
           },
           "SIT": {
-            "displayName": "Словенский толар"
+            "displayName": "Словенский толар",
+            "displayName-count-other": "Словенский толар"
           },
           "SKK": {
-            "displayName": "Словацкая крона"
+            "displayName": "Словацкая крона",
+            "displayName-count-other": "Словацкая крона"
           },
           "SLE": {
-            "displayName": "леоне"
+            "displayName": "леоне",
+            "displayName-count-other": "леоне"
           },
           "SLL": {
-            "displayName": "леоне (1964—2022)"
+            "displayName": "леоне (1964—2022)",
+            "displayName-count-other": "леоне (1964—2022)"
           },
           "SOS": {
             "displayName": "сомалийский шиллинг",
@@ -1259,7 +1340,8 @@
             "symbol-alt-narrow": "$"
           },
           "SRG": {
-            "displayName": "Суринамский гульден"
+            "displayName": "Суринамский гульден",
+            "displayName-count-other": "Суринамский гульден"
           },
           "SSP": {
             "displayName": "южносуданский фунт",
@@ -1285,10 +1367,12 @@
             "symbol-alt-narrow": "Db"
           },
           "SUR": {
-            "displayName": "Рубль СССР"
+            "displayName": "Рубль СССР",
+            "displayName-count-other": "Рубль СССР"
           },
           "SVC": {
-            "displayName": "Сальвадорский колон"
+            "displayName": "Сальвадорский колон",
+            "displayName-count-other": "Сальвадорский колон"
           },
           "SYP": {
             "displayName": "сирийский фунт",
@@ -1315,7 +1399,8 @@
             "symbol-alt-narrow": "฿"
           },
           "TJR": {
-            "displayName": "Таджикский рубль"
+            "displayName": "Таджикский рубль",
+            "displayName-count-other": "Таджикский рубль"
           },
           "TJS": {
             "displayName": "таджикский сомони",
@@ -1325,7 +1410,8 @@
             "displayName-count-other": "таджикского сомони"
           },
           "TMM": {
-            "displayName": "Туркменский манат"
+            "displayName": "Туркменский манат",
+            "displayName-count-other": "Туркменский манат"
           },
           "TMT": {
             "displayName": "новый туркменский манат",
@@ -1351,7 +1437,8 @@
             "symbol-alt-narrow": "T$"
           },
           "TPE": {
-            "displayName": "Тиморское эскудо"
+            "displayName": "Тиморское эскудо",
+            "displayName-count-other": "Тиморское эскудо"
           },
           "TRL": {
             "displayName": "Турецкая лира (1922–2005)",
@@ -1404,10 +1491,12 @@
             "symbol-alt-variant": "грн."
           },
           "UAK": {
-            "displayName": "Карбованец (украинский)"
+            "displayName": "Карбованец (украинский)",
+            "displayName-count-other": "Карбованец (украинский)"
           },
           "UGS": {
-            "displayName": "Старый угандийский шиллинг"
+            "displayName": "Старый угандийский шиллинг",
+            "displayName-count-other": "Старый угандийский шиллинг"
           },
           "UGX": {
             "displayName": "угандийский шиллинг",
@@ -1426,16 +1515,20 @@
             "symbol-alt-narrow": "$"
           },
           "USN": {
-            "displayName": "Доллар США следующего дня"
+            "displayName": "Доллар США следующего дня",
+            "displayName-count-other": "Доллар США следующего дня"
           },
           "USS": {
-            "displayName": "Доллар США текущего дня"
+            "displayName": "Доллар США текущего дня",
+            "displayName-count-other": "Доллар США текущего дня"
           },
           "UYI": {
-            "displayName": "Уругвайский песо (индекс инфляции)"
+            "displayName": "Уругвайский песо (индекс инфляции)",
+            "displayName-count-other": "Уругвайский песо (индекс инфляции)"
           },
           "UYP": {
-            "displayName": "Уругвайское старое песо (1975–1993)"
+            "displayName": "Уругвайское старое песо (1975–1993)",
+            "displayName-count-other": "Уругвайское старое песо (1975–1993)"
           },
           "UYU": {
             "displayName": "уругвайский песо",
@@ -1453,7 +1546,8 @@
             "displayName-count-other": "узбекского сума"
           },
           "VEB": {
-            "displayName": "Венесуэльский боливар (1871–2008)"
+            "displayName": "Венесуэльский боливар (1871–2008)",
+            "displayName-count-other": "Венесуэльский боливар (1871–2008)"
           },
           "VEF": {
             "displayName": "венесуэльский боливар (2008–2018)",
@@ -1480,7 +1574,8 @@
             "symbol-alt-narrow": "₫"
           },
           "VUV": {
-            "displayName": "вату Вануату"
+            "displayName": "вату Вануату",
+            "displayName-count-other": "вату Вануату"
           },
           "WST": {
             "displayName": "самоанская тала",
@@ -1498,22 +1593,28 @@
             "symbol": "FCFA"
           },
           "XAG": {
-            "displayName": "Серебро"
+            "displayName": "Серебро",
+            "displayName-count-other": "Серебро"
           },
           "XAU": {
-            "displayName": "Золото"
+            "displayName": "Золото",
+            "displayName-count-other": "Золото"
           },
           "XBA": {
-            "displayName": "Европейская составная единица"
+            "displayName": "Европейская составная единица",
+            "displayName-count-other": "Европейская составная единица"
           },
           "XBB": {
-            "displayName": "Европейская денежная единица"
+            "displayName": "Европейская денежная единица",
+            "displayName-count-other": "Европейская денежная единица"
           },
           "XBC": {
-            "displayName": "расчетная единица европейского валютного соглашения (XBC)"
+            "displayName": "расчетная единица европейского валютного соглашения (XBC)",
+            "displayName-count-other": "расчетная единица европейского валютного соглашения (XBC)"
           },
           "XBD": {
-            "displayName": "расчетная единица европейского валютного соглашения (XBD)"
+            "displayName": "расчетная единица европейского валютного соглашения (XBD)",
+            "displayName-count-other": "расчетная единица европейского валютного соглашения (XBD)"
           },
           "XCD": {
             "displayName": "восточно-карибский доллар",
@@ -1525,19 +1626,28 @@
             "symbol-alt-narrow": "$"
           },
           "XCG": {
-            "symbol": "Cg."
+            "displayName": "карибский гульден",
+            "displayName-count-one": "карибский гульден",
+            "displayName-count-few": "карибских гульдена",
+            "displayName-count-many": "карибских гульденов",
+            "displayName-count-other": "карибского гульдена",
+            "symbol": "Cg"
           },
           "XDR": {
-            "displayName": "СДР (специальные права заимствования)"
+            "displayName": "СДР (специальные права заимствования)",
+            "displayName-count-other": "СДР (специальные права заимствования)"
           },
           "XEU": {
-            "displayName": "ЭКЮ (единица европейской валюты)"
+            "displayName": "ЭКЮ (единица европейской валюты)",
+            "displayName-count-other": "ЭКЮ (единица европейской валюты)"
           },
           "XFO": {
-            "displayName": "Французский золотой франк"
+            "displayName": "Французский золотой франк",
+            "displayName-count-other": "Французский золотой франк"
           },
           "XFU": {
-            "displayName": "Французский UIC-франк"
+            "displayName": "Французский UIC-франк",
+            "displayName-count-other": "Французский UIC-франк"
           },
           "XOF": {
             "displayName": "франк КФА ВСЕАО",
@@ -1548,7 +1658,8 @@
             "symbol": "F CFA"
           },
           "XPD": {
-            "displayName": "Палладий"
+            "displayName": "Палладий",
+            "displayName-count-other": "Палладий"
           },
           "XPF": {
             "displayName": "французский тихоокеанский франк",
@@ -1559,13 +1670,16 @@
             "symbol": "CFPF"
           },
           "XPT": {
-            "displayName": "Платина"
+            "displayName": "Платина",
+            "displayName-count-other": "Платина"
           },
           "XRE": {
-            "displayName": "единица RINET-фондов"
+            "displayName": "единица RINET-фондов",
+            "displayName-count-other": "единица RINET-фондов"
           },
           "XTS": {
-            "displayName": "тестовый валютный код"
+            "displayName": "тестовый валютный код",
+            "displayName-count-other": "тестовый валютный код"
           },
           "XXX": {
             "displayName": "неизвестная валюта",
@@ -1576,7 +1690,8 @@
             "symbol": "XXXX"
           },
           "YDD": {
-            "displayName": "Йеменский динар"
+            "displayName": "Йеменский динар",
+            "displayName-count-other": "Йеменский динар"
           },
           "YER": {
             "displayName": "йеменский риал",
@@ -1586,16 +1701,20 @@
             "displayName-count-other": "йеменского риала"
           },
           "YUD": {
-            "displayName": "Югославский твердый динар"
+            "displayName": "Югославский твердый динар",
+            "displayName-count-other": "Югославский твердый динар"
           },
           "YUM": {
-            "displayName": "Югославский новый динар"
+            "displayName": "Югославский новый динар",
+            "displayName-count-other": "Югославский новый динар"
           },
           "YUN": {
-            "displayName": "Югославский динар"
+            "displayName": "Югославский динар",
+            "displayName-count-other": "Югославский динар"
           },
           "ZAL": {
-            "displayName": "Южноафриканский рэнд (финансовый)"
+            "displayName": "Южноафриканский рэнд (финансовый)",
+            "displayName-count-other": "Южноафриканский рэнд (финансовый)"
           },
           "ZAR": {
             "displayName": "южноафриканский рэнд",
@@ -1621,16 +1740,27 @@
             "symbol-alt-narrow": "ZK"
           },
           "ZRN": {
-            "displayName": "Новый заир"
+            "displayName": "Новый заир",
+            "displayName-count-other": "Новый заир"
           },
           "ZRZ": {
-            "displayName": "Заир"
+            "displayName": "Заир",
+            "displayName-count-other": "Заир"
           },
           "ZWD": {
-            "displayName": "Доллар Зимбабве"
+            "displayName": "Доллар Зимбабве",
+            "displayName-count-other": "Доллар Зимбабве"
+          },
+          "ZWG": {
+            "displayName": "зимбабвийский золотой",
+            "displayName-count-one": "зимбабвийский золотой",
+            "displayName-count-few": "зимбабвийских золотых",
+            "displayName-count-many": "зимбабвийских золотых",
+            "displayName-count-other": "зимбабвийского золотого"
           },
           "ZWL": {
-            "displayName": "Доллар Зимбабве (2009)"
+            "displayName": "Доллар Зимбабве (2009)",
+            "displayName-count-other": "Доллар Зимбабве (2009)"
           }
         }
       }

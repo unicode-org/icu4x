@@ -1110,9 +1110,12 @@
                 "Bhms": "h:mm:ss B",
                 "d": "d",
                 "E": "ccc",
+                "EBh": "E h B",
                 "EBhm": "E h:mm B",
                 "EBhms": "E h:mm:ss B",
                 "Ed": "E d",
+                "Eh": "E h a",
+                "Eh-alt-ascii": "E h a",
                 "Ehm": "E h:mm a",
                 "Ehm-alt-ascii": "E h:mm a",
                 "EHm": "E HH:mm",
@@ -1135,6 +1138,9 @@
                 "hms": "h:mm:ss a",
                 "hms-alt-ascii": "h:mm:ss a",
                 "Hms": "HH:mm:ss",
+                "hv": "h a v",
+                "hv-alt-ascii": "h a v",
+                "Hv": "HH'h' v",
                 "M": "LL",
                 "Md": "dd/MM",
                 "MEd": "E, dd/MM",
@@ -1280,6 +1286,14 @@
               }
             },
             "dateTimeFormats-atTime": {
+              "standard": {
+                "full": "{1} 'at' {0}",
+                "long": "{1} 'at' {0}",
+                "medium": "{1}, {0}",
+                "short": "{1}, {0}"
+              }
+            },
+            "dateTimeFormats-relative": {
               "standard": {
                 "full": "{1} 'at' {0}",
                 "long": "{1} 'at' {0}",

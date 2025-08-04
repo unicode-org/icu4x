@@ -1103,7 +1103,8 @@
           "SAR": {
             "displayName": "riyal saoudien",
             "displayName-count-one": "riyal saoudien",
-            "displayName-count-other": "riyals saoudiens"
+            "displayName-count-other": "riyals saoudiens",
+            "symbol-alt-variant": "⃁"
           },
           "SBD": {
             "displayName": "dollar des îles Salomon",
@@ -1360,7 +1361,8 @@
             "displayName-count-other": "sums ouzbeks"
           },
           "VEB": {
-            "displayName": "bolivar vénézuélien (1871–2008)"
+            "displayName": "bolivar vénézuélien (1871–2008)",
+            "displayName-count-other": "bolivar vénézuélien (1871–2008)"
           },
           "VEF": {
             "displayName": "bolivar vénézuélien (2008–2018)",
@@ -1446,7 +1448,8 @@
             "displayName-count-other": "droits de tirage spéciaux"
           },
           "XEU": {
-            "displayName": "unité de compte européenne (ECU)"
+            "displayName": "unité de compte européenne (ECU)",
+            "displayName-count-other": "unité de compte européenne (ECU)"
           },
           "XFO": {
             "displayName": "franc or",
@@ -1557,6 +1560,11 @@
             "displayName": "dollar zimbabwéen",
             "displayName-count-one": "dollar zimbabwéen",
             "displayName-count-other": "dollars zimbabwéens"
+          },
+          "ZWG": {
+            "displayName": "or du Zimbabwe",
+            "displayName-count-one": "or du Zimbabwe",
+            "displayName-count-other": "or du Zimbabwe"
           },
           "ZWL": {
             "displayName": "dollar zimbabwéen (2009)",

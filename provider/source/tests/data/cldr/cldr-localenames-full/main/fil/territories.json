@@ -6,7 +6,7 @@
       },
       "localeDisplayNames": {
         "territories": {
-          "001": "Mundo",
+          "001": "mundo",
           "002": "Africa",
           "003": "Hilagang Amerika",
           "005": "Timog Amerika",
@@ -91,6 +91,7 @@
           "CN": "China",
           "CO": "Colombia",
           "CP": "Clipperton Island",
+          "CQ": "Sark",
           "CR": "Costa Rica",
           "CU": "Cuba",
           "CV": "Cape Verde",
@@ -125,7 +126,7 @@
           "FR": "France",
           "GA": "Gabon",
           "GB": "United Kingdom",
-          "GB-alt-short": "U.K.",
+          "GB-alt-short": "UK",
           "GD": "Grenada",
           "GE": "Georgia",
           "GF": "French Guiana",

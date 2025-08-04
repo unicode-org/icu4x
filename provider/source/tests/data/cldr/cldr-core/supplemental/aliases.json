@@ -2,7 +2,7 @@
   "supplemental": {
     "version": {
       "_unicodeVersion": "16.0.0",
-      "_cldrVersion": "47"
+      "_cldrVersion": "48"
     },
     "metadata": {
       "alias": {
@@ -338,6 +338,10 @@
           "dap": {
             "_reason": "deprecated",
             "_replacement": "njz"
+          },
+          "dek": {
+            "_reason": "deprecated",
+            "_replacement": "sqm"
           },
           "deu": {
             "_reason": "overlong",
@@ -1055,10 +1059,6 @@
             "_reason": "overlong",
             "_replacement": "mt"
           },
-          "mnk": {
-            "_reason": "macrolanguage",
-            "_replacement": "man"
-          },
           "mnt": {
             "_reason": "deprecated",
             "_replacement": "wnn"
@@ -1214,6 +1214,10 @@
           "npi": {
             "_reason": "macrolanguage",
             "_replacement": "ne"
+          },
+          "nte": {
+            "_reason": "deprecated",
+            "_replacement": "eko"
           },
           "nts": {
             "_reason": "deprecated",
