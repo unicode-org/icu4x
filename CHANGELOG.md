@@ -37,6 +37,14 @@ Several crates have had patch releases in the 2.0 stream:
   - (2.0.2) Add `Locale::set_unicode_extension` (unicode-org#6636)
 - `icu_datetime_data`, `icu_time_data`, `icu_provider_source`
   - (2.0.1) Update to tzdb 2025b
+- `ixdtf`
+    - (0.6.0) Add UTF16 handling (unicode-org#6577)
+    - (0.6.0) Add TimeZoneParser::parse_identifier for TimeZoneRecord (unicode-org#6584)
+    - (0.6.0) Reject empty durations when parsing ISO8601 durations (unicode-org#6718)
+    - (0.6.0) Handle ambiguous time parsing with MonthDay and YearMonth in `ixdtf` (unicode-org#6717)
+    - (0.6.1) Fix is_valid_month_day argument ordering bug (unicode-org#6756)
+    - (0.6.2) Offset must have a sign (#6763)
+    - (0.6.2) Correctly handle ambiguous annotations (#6776)
 - `zerovec`:
   - (0.11.3) Make `VZV::Default` work with non-default index (unicode-org#6661)
   - (0.11.3) Make ZeroVec.iter().collect() faster (unicode-org#6764)
