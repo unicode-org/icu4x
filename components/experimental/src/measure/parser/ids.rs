@@ -8,10 +8,8 @@ use zerotrie::ZeroTrieSimpleAscii;
 /// Identifiers are immutable; any new unit must be assigned a distinct identifier.
 /// NOTE: These identifiers are tied to the units data generation. After adding a new unit,
 /// remember to regenerate the units data to reflect changes.
-pub const CLDR_IDS_TRIE: ZeroTrieSimpleAscii<[u8; 1332]> =
+pub const CLDR_IDS_TRIE: ZeroTrieSimpleAscii<[u8; 1341]> =
     ZeroTrieSimpleAscii::from_sorted_str_tuples(&[
-        // NOTE: `100-kilometer` must be removed from CLDR, see https://unicode-org.atlassian.net/browse/CLDR-18736
-        ("100-kilometer", 0_usize),
         ("acre", 1_usize),
         ("ampere", 2_usize),
         ("arc-minute", 3_usize),
@@ -38,6 +36,7 @@ pub const CLDR_IDS_TRIE: ZeroTrieSimpleAscii<[u8; 1332]> =
         ("cho", 24_usize),
         ("coulomb", 25_usize),
         ("cup", 26_usize),
+        ("cup-imperial", 0_usize),
         ("cup-jp", 27_usize),
         ("cup-metric", 28_usize),
         ("dalton", 29_usize),
@@ -60,6 +59,7 @@ pub const CLDR_IDS_TRIE: ZeroTrieSimpleAscii<[u8; 1332]> =
         ("fathom", 46_usize),
         ("fluid-ounce", 47_usize),
         ("fluid-ounce-imperial", 48_usize),
+        ("fluid-ounce-metric", 156_usize),
         ("foodcalorie", 49_usize),
         ("foot", 50_usize),
         ("fortnight", 51_usize),
@@ -114,6 +114,7 @@ pub const CLDR_IDS_TRIE: ZeroTrieSimpleAscii<[u8; 1332]> =
         ("ounce", 99_usize),
         ("ounce-troy", 100_usize),
         ("parsec", 101_usize),
+        ("part", 155_usize),
         ("pascal", 102_usize),
         ("percent", 103_usize),
         ("permille", 104_usize),
