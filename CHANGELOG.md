@@ -37,6 +37,11 @@ Several crates have had patch releases in the 2.0 stream:
   - (2.0.2) Add `Locale::set_unicode_extension` (unicode-org#6636)
 - `icu_datetime_data`, `icu_time_data`, `icu_provider_source`
   - (2.0.1) Update to tzdb 2025b
+- `zerovec`:
+  - (0.11.3) Make `VZV::Default` work with non-default index (unicode-org#6661)
+  - (0.11.3) Make ZeroVec.iter().collect() faster (unicode-org#6764)
+  - (0.11.3) Implement `ZeroMapKV` for `VarTupleULE` (unicode-org#6750)
+  - (0.11.3) Add `ZeroVec::truncated()` (unicode-org#6604)
 
 ## icu4x 2.0
 
@@ -200,7 +205,7 @@ Some major changes worth highlighting:
         - No update, still at `0.8.0`
     - `zerofrom`, `zerofrom-derive`:
         - No update, still at `0.1.6`
-    - `zerovec`: `0.1.1 -> 0.1.2`
+    - `zerovec`: `0.11.1 -> 0.11.2`
         - Use `const` blocks (unicode-orgc#6300)
         - No update to `zerovec-derive`, still at `0.1.6`
     - `zerotrie`: `0.2.1 -> 0.2.2`
