@@ -101,7 +101,7 @@ final class FetchMode extends BuildMode {
     final target = [targetOS, targetArchitecture, libraryType].join('_');
     print('Fetching pre-built binary for $version and $target');
     final dylibRemoteUri = Uri.parse(
-      'https://github.com/dart-lang/i18n/releases/download/$version/$target',
+      'https://github.com/unicode-org/icu4x/releases/download/$version/$target',
     );
     final library = await fetchToFile(
       dylibRemoteUri,
