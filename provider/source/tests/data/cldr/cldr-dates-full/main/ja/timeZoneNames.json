@@ -9,6 +9,7 @@
           "hourFormat": "+HH:mm;-HH:mm",
           "gmtFormat": "GMT{0}",
           "gmtZeroFormat": "GMT",
+          "gmtUnknownFormat": "GMT+?",
           "regionFormat": "{0}時間",
           "regionFormat-type-daylight": "{0}夏時間",
           "regionFormat-type-standard": "{0}標準時",
@@ -56,10 +57,6 @@
                 "exemplarCity": "グアム"
               },
               "Enderbury": {
-                "_type": "zone",
-                "exemplarCity": "エンダーベリー島"
-              },
-              "Kanton": {
                 "_type": "zone",
                 "exemplarCity": "カントン島"
               },
@@ -1000,6 +997,10 @@
                 "_type": "zone",
                 "exemplarCity": "セントジョンズ"
               },
+              "Coyhaique": {
+                "_type": "zone",
+                "exemplarCity": "コジャイケ"
+              },
               "Punta_Arenas": {
                 "_type": "zone",
                 "exemplarCity": "プンタアレナス"
@@ -1766,9 +1767,7 @@
             },
             "Africa_Western": {
               "long": {
-                "generic": "西アフリカ時間",
-                "standard": "西アフリカ標準時",
-                "daylight": "西アフリカ夏時間"
+                "standard": "西アフリカ時間"
               }
             },
             "Alaska": {
@@ -1794,30 +1793,30 @@
             },
             "America_Central": {
               "long": {
-                "generic": "アメリカ中部時間",
-                "standard": "アメリカ中部標準時",
-                "daylight": "アメリカ中部夏時間"
+                "generic": "米国中部時間",
+                "standard": "米国中部標準時",
+                "daylight": "米国中部夏時間"
               }
             },
             "America_Eastern": {
               "long": {
-                "generic": "アメリカ東部時間",
-                "standard": "アメリカ東部標準時",
-                "daylight": "アメリカ東部夏時間"
+                "generic": "米国東部時間",
+                "standard": "米国東部標準時",
+                "daylight": "米国東部夏時間"
               }
             },
             "America_Mountain": {
               "long": {
-                "generic": "アメリカ山地時間",
-                "standard": "アメリカ山地標準時",
-                "daylight": "アメリカ山地夏時間"
+                "generic": "米国山岳部時間",
+                "standard": "米国山岳標準時",
+                "daylight": "米国山岳夏時間"
               }
             },
             "America_Pacific": {
               "long": {
-                "generic": "アメリカ太平洋時間",
-                "standard": "アメリカ太平洋標準時",
-                "daylight": "アメリカ太平洋夏時間"
+                "generic": "米国太平洋時間",
+                "standard": "米国太平洋標準時",
+                "daylight": "米国太平洋夏時間"
               }
             },
             "Anadyr": {
@@ -1829,9 +1828,9 @@
             },
             "Apia": {
               "long": {
-                "generic": "アピア時間",
-                "standard": "アピア標準時",
-                "daylight": "アピア夏時間"
+                "generic": "サモア時間",
+                "standard": "サモア標準時",
+                "daylight": "サモア夏時間"
               }
             },
             "Aqtau": {
@@ -1951,7 +1950,7 @@
             },
             "Brunei": {
               "long": {
-                "standard": "ブルネイ・ダルサラーム時間"
+                "standard": "ブルネイ時間"
               }
             },
             "Cape_Verde": {
@@ -2154,6 +2153,11 @@
             "Guyana": {
               "long": {
                 "standard": "ガイアナ時間"
+              }
+            },
+            "Hawaii": {
+              "long": {
+                "standard": "ハワイ・アリューシャン標準時"
               }
             },
             "Hawaii_Aleutian": {
@@ -2500,12 +2504,12 @@
             },
             "Ponape": {
               "long": {
-                "standard": "ポナペ時間"
+                "standard": "ポンペイ時間"
               }
             },
             "Pyongyang": {
               "long": {
-                "standard": "平壌時間"
+                "standard": "北朝鮮時間"
               }
             },
             "Qyzylorda": {
@@ -2541,9 +2545,9 @@
             },
             "Samoa": {
               "long": {
-                "generic": "サモア時間",
-                "standard": "サモア標準時",
-                "daylight": "サモア夏時間"
+                "generic": "米領サモア時間",
+                "standard": "米領サモア標準時",
+                "daylight": "米領サモア夏時間"
               }
             },
             "Seychelles": {
@@ -2583,9 +2587,9 @@
             },
             "Taipei": {
               "long": {
-                "generic": "台北時間",
-                "standard": "台北標準時",
-                "daylight": "台北夏時間"
+                "generic": "台湾時間",
+                "standard": "台湾標準時",
+                "daylight": "台湾夏時間"
               }
             },
             "Tajikistan": {
@@ -2608,6 +2612,13 @@
             "Truk": {
               "long": {
                 "standard": "チューク時間"
+              }
+            },
+            "Turkey": {
+              "long": {
+                "generic": "トルコ時間",
+                "standard": "トルコ標準時",
+                "daylight": "トルコ夏時間"
               }
             },
             "Turkmenistan": {

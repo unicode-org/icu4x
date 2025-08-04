@@ -1289,7 +1289,8 @@
             "displayName": "saudijski rijal",
             "displayName-count-one": "saudijski rijal",
             "displayName-count-few": "saudijska rijala",
-            "displayName-count-other": "saudijskih rijala"
+            "displayName-count-other": "saudijskih rijala",
+            "symbol-alt-variant": "⃁"
           },
           "SBD": {
             "displayName": "solomonski dolar",
@@ -1683,6 +1684,10 @@
             "symbol-alt-narrow": "$"
           },
           "XCG": {
+            "displayName": "karipski gulden",
+            "displayName-count-one": "karipski gulden",
+            "displayName-count-few": "karipski gulden",
+            "displayName-count-other": "karipski gulden",
             "symbol": "Cg."
           },
           "XDR": {
@@ -1827,6 +1832,12 @@
             "displayName-count-one": "zimbabvejski dolar (1980–2008)",
             "displayName-count-few": "zimbabvejska dolara (1980–2008)",
             "displayName-count-other": "zimbabvejskih dolara (1980–2008)"
+          },
+          "ZWG": {
+            "displayName": "zimbabveansko zlato",
+            "displayName-count-one": "zimbabveansko zlato",
+            "displayName-count-few": "zimbabveansko zlato",
+            "displayName-count-other": "zimbabveansko zlato"
           },
           "ZWL": {
             "displayName": "Zimbabveanski dolar (2009)",

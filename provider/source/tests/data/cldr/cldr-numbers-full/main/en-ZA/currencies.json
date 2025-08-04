@@ -796,9 +796,9 @@
             "symbol": "KES"
           },
           "KGS": {
-            "displayName": "Kyrgystani Som",
-            "displayName-count-one": "Kyrgystani som",
-            "displayName-count-other": "Kyrgystani soms",
+            "displayName": "Kyrgyz Som",
+            "displayName-count-one": "Kyrgyz som",
+            "displayName-count-other": "Kyrgyz soms",
             "symbol": "KGS",
             "symbol-alt-narrow": "⃀"
           },
@@ -1273,7 +1273,8 @@
             "displayName": "Saudi Riyal",
             "displayName-count-one": "Saudi riyal",
             "displayName-count-other": "Saudi riyals",
-            "symbol": "SAR"
+            "symbol": "SAR",
+            "symbol-alt-variant": "⃁"
           },
           "SBD": {
             "displayName": "Solomon Islands Dollar",
