@@ -96,21 +96,22 @@ impl From<&cldr_serde::displaynames::language::Resource> for LanguageDisplayName
         let mut short_names = BTreeMap::new();
         let mut long_names = BTreeMap::new();
         let mut menu_names = BTreeMap::new();
-        for entry in other.main.value.localedisplaynames.languages.iter() {
-            if let Some(lang) = entry.0.strip_suffix(ALT_SHORT_SUBSTRING) {
-                if let Ok(lang) = lang.parse::<Language>() {
-                    short_names.insert(lang.to_tinystr(), entry.1.as_ref());
+        for (key, value) in other.main.value.localedisplaynames.languages.iter() {
+            let locale = key.split("-type-").nth(1).unwrap_or(key);
+            if key.contains(ALT_SHORT_SUBSTRING) {
+                if let Ok(lang) = locale.parse::<Language>() {
+                    short_names.insert(lang.to_tinystr(), value.as_ref());
                 }
-            } else if let Some(lang) = entry.0.strip_suffix(ALT_LONG_SUBSTRING) {
-                if let Ok(lang) = lang.parse::<Language>() {
-                    long_names.insert(lang.to_tinystr(), entry.1.as_ref());
+            } else if key.contains(ALT_LONG_SUBSTRING) {
+                if let Ok(lang) = locale.parse::<Language>() {
+                    long_names.insert(lang.to_tinystr(), value.as_ref());
                 }
-            } else if let Some(lang) = entry.0.strip_suffix(ALT_MENU_SUBSTRING) {
-                if let Ok(lang) = lang.parse::<Language>() {
-                    menu_names.insert(lang.to_tinystr(), entry.1.as_ref());
+            } else if key.contains(ALT_MENU_SUBSTRING) {
+                if let Ok(lang) = locale.parse::<Language>() {
+                    menu_names.insert(lang.to_tinystr(), value.as_ref());
                 }
-            } else if let Ok(lang) = entry.0.parse::<Language>() {
-                names.insert(lang.to_tinystr(), entry.1.as_ref());
+            } else if let Ok(lang) = locale.parse::<Language>() {
+                names.insert(lang.to_tinystr(), value.as_ref());
             }
         }
         Self {
@@ -145,23 +146,24 @@ impl From<&cldr_serde::displaynames::language::Resource> for LocaleDisplayNames<
         let mut short_names = BTreeMap::new();
         let mut long_names = BTreeMap::new();
         let mut menu_names = BTreeMap::new();
-        for entry in other.main.value.localedisplaynames.languages.iter() {
+        for (key, value) in other.main.value.localedisplaynames.languages.iter() {
+            let locale = key.split("-type-").nth(1).unwrap_or(key);
             #[expect(clippy::collapsible_if)] // consistency
-            if let Some(locale) = entry.0.strip_suffix(ALT_SHORT_SUBSTRING) {
+            if key.contains(ALT_SHORT_SUBSTRING) {
                 if locale.contains('-') {
-                    short_names.insert(locale, entry.1.as_ref());
+                    short_names.insert(locale, value.as_ref());
                 }
-            } else if let Some(locale) = entry.0.strip_suffix(ALT_LONG_SUBSTRING) {
+            } else if key.contains(ALT_LONG_SUBSTRING) {
                 if locale.contains('-') {
-                    long_names.insert(locale, entry.1.as_ref());
+                    long_names.insert(locale, value.as_ref());
                 }
-            } else if let Some(locale) = entry.0.strip_suffix(ALT_MENU_SUBSTRING) {
+            } else if key.contains(ALT_MENU_SUBSTRING) {
                 if locale.contains('-') {
-                    menu_names.insert(locale, entry.1.as_ref());
+                    menu_names.insert(locale, value.as_ref());
                 }
-            } else if !entry.0.contains(ALT_SUBSTRING) {
-                if entry.0.contains('-') {
-                    names.insert(entry.0, entry.1.as_ref());
+            } else if !locale.contains(ALT_SUBSTRING) {
+                if locale.contains('-') {
+                    names.insert(locale, value.as_ref());
                 }
             }
         }
