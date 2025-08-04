@@ -2,7 +2,7 @@
   "supplemental": {
     "version": {
       "_unicodeVersion": "16.0.0",
-      "_cldrVersion": "47"
+      "_cldrVersion": "48"
     },
     "parentLocales": {
       "parentLocale": {
@@ -98,11 +98,15 @@
         "en-CZ": "en-150",
         "en-DE": "en-150",
         "en-DK": "en-150",
+        "en-EE": "en-150",
         "en-ES": "en-150",
         "en-FI": "en-150",
         "en-FR": "en-150",
+        "en-GE": "en-150",
         "en-HU": "en-150",
         "en-IT": "en-150",
+        "en-LT": "en-150",
+        "en-LV": "en-150",
         "en-NL": "en-150",
         "en-NO": "en-150",
         "en-PL": "en-150",
@@ -111,6 +115,7 @@
         "en-SE": "en-150",
         "en-SI": "en-150",
         "en-SK": "en-150",
+        "en-UA": "en-150",
         "hi-Latn": "en-IN",
         "es-AR": "es-419",
         "es-BO": "es-419",
@@ -189,6 +194,7 @@
         "so-Arab": "und",
         "sr-Latn": "und",
         "sw-Arab": "und",
+        "suz-Sunu": "und",
         "tg-Arab": "und",
         "ug-Cyrl": "und",
         "uz-Arab": "und",

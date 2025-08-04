@@ -2,7 +2,7 @@
   "supplemental": {
     "version": {
       "_unicodeVersion": "16.0.0",
-      "_cldrVersion": "47"
+      "_cldrVersion": "48"
     },
     "windowsZones": {
       "mapTimezones": [
@@ -1500,7 +1500,7 @@
         {
           "mapZone": {
             "_other": "Magallanes Standard Time",
-            "_type": "America/Punta_Arenas",
+            "_type": "America/Punta_Arenas America/Coyhaique",
             "_territory": "CL"
           }
         },
