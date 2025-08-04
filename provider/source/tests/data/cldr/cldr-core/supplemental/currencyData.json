@@ -2,7 +2,7 @@
   "supplemental": {
     "version": {
       "_unicodeVersion": "16.0.0",
-      "_cldrVersion": "47"
+      "_cldrVersion": "48"
     },
     "currencyData": {
       "fractions": {
@@ -312,6 +312,10 @@
         "XAF": {
           "_rounding": "0",
           "_digits": "0"
+        },
+        "XAU": {
+          "_rounding": "0",
+          "_digits": "2"
         },
         "XOF": {
           "_rounding": "0",
@@ -1099,7 +1103,7 @@
           {
             "CUC": {
               "_from": "1994-01-01",
-              "_to": "2021-01-01"
+              "_to": "2021-06-01"
             }
           },
           {
@@ -3544,6 +3548,11 @@
           }
         ],
         "ZZ": [
+          {
+            "XAD": {
+              "_tender": "false"
+            }
+          },
           {
             "XAG": {
               "_tender": "false"

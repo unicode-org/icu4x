@@ -297,13 +297,16 @@
             },
             "eras": {
               "eraNames": {
-                "0": "ฮิจเราะห์ศักราช"
+                "0": "ฮิจเราะห์ศักราช",
+                "1": "BH"
               },
               "eraAbbr": {
-                "0": "ฮ.ศ."
+                "0": "ฮ.ศ.",
+                "1": "BH"
               },
               "eraNarrow": {
-                "0": "ฮ.ศ."
+                "0": "ฮ.ศ.",
+                "1": "BH"
               }
             },
             "dateFormats": {
@@ -341,25 +344,32 @@
                 "Bhms": "h:mm:ss B",
                 "d": "d",
                 "E": "ccc",
+                "EBh": "E h B",
                 "EBhm": "E h:mm B",
                 "EBhms": "E h:mm:ss B",
                 "Ed": "E d",
+                "Eh": "E h a",
+                "EH": "E HH'h'",
                 "Ehm": "E h:mm a",
                 "EHm": "E HH:mm",
                 "Ehms": "E h:mm:ss a",
                 "EHms": "E HH:mm:ss",
                 "Gy": "G y",
+                "GyM": "M/y G",
                 "GyMd": "d/M/y GGGGG",
+                "GyMEd": "E ที่ d/M/y G",
                 "GyMMM": "MMM G y",
                 "GyMMMd": "d MMM G y",
                 "GyMMMEd": "E d MMM G y",
                 "GyMMMEEEEd": "EEEEที่ d MMM G y",
                 "h": "h a",
-                "H": "HH",
+                "H": "HH'h'",
                 "hm": "h:mm a",
                 "Hm": "HH:mm",
                 "hms": "h:mm:ss a",
                 "Hms": "HH:mm:ss",
+                "hv": "h a v",
+                "Hv": "HH'h' v",
                 "M": "L",
                 "Md": "d/M",
                 "MEd": "E, d/M",
@@ -548,6 +558,14 @@
               }
             },
             "dateTimeFormats-atTime": {
+              "standard": {
+                "full": "{1} เวลา {0}",
+                "long": "{1} เวลา {0}",
+                "medium": "{1} {0}",
+                "short": "{1} {0}"
+              }
+            },
+            "dateTimeFormats-relative": {
               "standard": {
                 "full": "{1} เวลา {0}",
                 "long": "{1} เวลา {0}",

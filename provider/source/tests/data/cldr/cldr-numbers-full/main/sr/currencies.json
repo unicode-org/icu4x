@@ -1682,6 +1682,10 @@
             "symbol-alt-narrow": "$"
           },
           "XCG": {
+            "displayName": "карипски гулден",
+            "displayName-count-one": "карипски гулден",
+            "displayName-count-few": "карипски гулден",
+            "displayName-count-other": "карипски гулден",
             "symbol": "Cg."
           },
           "XDR": {
@@ -1826,6 +1830,12 @@
             "displayName-count-one": "зимбабвејски долар (1980–2008)",
             "displayName-count-few": "зимбабвејска долара (1980–2008)",
             "displayName-count-other": "зимбабвејских долара (1980–2008)"
+          },
+          "ZWG": {
+            "displayName": "зимбабвеанско злато",
+            "displayName-count-one": "зимбабвеанско злато",
+            "displayName-count-few": "зимбабвеанско злато",
+            "displayName-count-other": "зимбабвеанско злато"
           },
           "ZWL": {
             "displayName": "Зимбабвеански долар (2009)",
