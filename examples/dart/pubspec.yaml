@@ -1,0 +1,17 @@
+name: example
+description: A sample command-line application.
+
+publish_to: none
+
+environment:
+  sdk: ^3.8.1
+
+dependencies:
+  icu4x:
+    path: ../../ffi/dart/
+
+hooks:
+  user_defines:
+    icu4x:
+      buildMode: checkout
+      checkoutPath: ../../
