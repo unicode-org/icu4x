@@ -5,7 +5,7 @@
 - Components
     - General
     - `icu_calendar`
-      - Fix extended years in RoC and Ethiopian calendars (unicode-org#6721)
+      - Fix `und-SA-u-ca-islamic` (unicode-org#6736)
     - 
 - Data model and providers
     - ...
@@ -24,6 +24,8 @@ Several crates have had patch releases in the 2.0 stream:
 - `icu_calendar`
   - (2.0.1) Fix chinese day-of-year (unicode-org#6567)
   - (2.0.2) Respect `-u-fw` keyword in `WeekInformation` (unicode-org#6615)
+  - (2.0.3) Fix extended year for Roc/Ethiopic (unicode-org#6721)
+  - (2.0.3) Fix treatment of None era code for Gregorian (unicode-org#6794)
 - `icu_properties`, `icu_properties_data`
   - (2.0.1) Fix a visibility bug in compiled data (unicode-org#6580)
 - `icu_provider_baked`
