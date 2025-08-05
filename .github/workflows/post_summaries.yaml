@@ -5,7 +5,7 @@ on:
   # do things like create comments on the PR, even if the original workflow couldn't.
   workflow_run:
     workflows: 
-      - Health
+      - Build and Test
     types:
       - completed
 

@@ -33,6 +33,7 @@ on:
 
 permissions:
   contents: read
+  pull-requests: write
 
 concurrency:
   # Allow one run at a time for PRs, but multiple for other invocations
@@ -349,7 +350,13 @@ jobs:
     # Actual job
     - name: Run `cargo make ci-job-test-dart`
       run: cargo make ci-job-test-dart
- 
+
+    - name: Run `dart-pr-health` checks
+      uses: dart-lang/ecosystem/.github/workflows/health.yaml@main
+      with:
+        checks: changelog,coverage,breaking,do-not-submit,leaking
+        coverage_web: true
+        sdk: 3.9.0-138.0.dev
 
   # ci-job-nostd
   nostd:
