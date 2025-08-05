@@ -356,7 +356,7 @@ jobs:
       with:
         checks: changelog,coverage,breaking,do-not-submit,leaking
         coverage_web: true
-        sdk: 3.9.0-138.0.dev
+        sdk: ${{ github.event_name != 'schedule' && '3.9.0-138.0.dev' || 'dev' }}
 
   # ci-job-nostd
   nostd:
