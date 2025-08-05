@@ -95,7 +95,8 @@ impl Calendar for Julian {
         day: u8,
     ) -> Result<Self::DateInner, DateError> {
         let year = match era {
-            Some("ce" | "ad") | None => year_check(year, 1..)?,
+            Some("ce" | "ad") => year_check(year, 1..)?,
+            None => year,
             Some("bce" | "bc") => 1 - year_check(year, 1..)?,
             Some(_) => return Err(DateError::UnknownEra),
         };

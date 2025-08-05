@@ -67,7 +67,8 @@ impl Calendar for Roc {
         day: u8,
     ) -> Result<Self::DateInner, DateError> {
         let year = match era {
-            Some("roc") | None => ROC_ERA_OFFSET + year_check(year, 1..)?,
+            Some("roc") => ROC_ERA_OFFSET + year_check(year, 1..)?,
+            None => ROC_ERA_OFFSET + year,
             Some("broc") => ROC_ERA_OFFSET + 1 - year_check(year, 1..)?,
             Some(_) => return Err(DateError::UnknownEra),
         };

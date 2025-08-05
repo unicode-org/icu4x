@@ -122,9 +122,10 @@ impl Calendar for Ethiopian {
         day: u8,
     ) -> Result<Self::DateInner, DateError> {
         let year = match (self.era_style(), era) {
-            (EthiopianEraStyle::AmeteMihret, Some("am") | None) => {
+            (EthiopianEraStyle::AmeteMihret, Some("am")) => {
                 year_check(year, 1..)? + INCARNATION_OFFSET
             }
+            (EthiopianEraStyle::AmeteMihret, None) => year + INCARNATION_OFFSET,
             (EthiopianEraStyle::AmeteMihret, Some("aa")) => {
                 year_check(year, ..=INCARNATION_OFFSET)?
             }

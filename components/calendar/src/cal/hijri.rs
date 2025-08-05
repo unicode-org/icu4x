@@ -384,7 +384,8 @@ impl Calendar for HijriSimulated {
         day: u8,
     ) -> Result<Self::DateInner, DateError> {
         let year = match era {
-            Some("ah") | None => year_check(year, 1..)?,
+            Some("ah") => year_check(year, 1..)?,
+            None => year,
             Some("bh") => 1 - year_check(year, 1..)?,
             Some(_) => return Err(DateError::UnknownEra),
         };
@@ -667,7 +668,8 @@ impl Calendar for HijriUmmAlQura {
         day: u8,
     ) -> Result<Self::DateInner, DateError> {
         let year = match era {
-            Some("ah") | None => year_check(year, 1..)?,
+            Some("ah") => year_check(year, 1..)?,
+            None => year,
             Some("bh") => 1 - year_check(year, 1..)?,
             Some(_) => return Err(DateError::UnknownEra),
         };
@@ -892,7 +894,8 @@ impl Calendar for HijriTabular {
         day: u8,
     ) -> Result<Self::DateInner, DateError> {
         let year = match era {
-            Some("ah") | None => year_check(year, 1..)?,
+            Some("ah") => year_check(year, 1..)?,
+            None => year,
             Some("bh") => 1 - year_check(year, 1..)?,
             Some(_) => return Err(DateError::UnknownEra),
         };
