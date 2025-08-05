@@ -50,6 +50,7 @@ Several crates have had patch releases in the 2.0 stream:
   - (0.11.3) Make ZeroVec.iter().collect() faster (unicode-org#6764)
   - (0.11.3) Implement `ZeroMapKV` for `VarTupleULE` (unicode-org#6750)
   - (0.11.3) Add `ZeroVec::truncated()` (unicode-org#6604)
+  - (0.11.4) Fix safety issue in `ZeroVec::truncated()` (unicode-org#6805)
 
 ## icu4x 2.0
 

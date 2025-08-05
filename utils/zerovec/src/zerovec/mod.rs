@@ -172,7 +172,7 @@ impl<U> EyepatchHackVector<U> {
         self.buf = unsafe {
             NonNull::new_unchecked(core::ptr::slice_from_raw_parts_mut(
                 self.buf.as_mut().as_mut_ptr(),
-                core::cmp::max(max, self.buf.as_ref().len()),
+                core::cmp::min(max, self.buf.as_ref().len()),
             ))
         };
     }
