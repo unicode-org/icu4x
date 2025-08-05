@@ -1,3 +1,4 @@
 *.postcard  binary
 */**/README.md linguist-generated=true
+ffi/dart/README.md linguist-generated=false
 *.rs.data linguist-language=Rust
