@@ -2014,6 +2014,25 @@ fn test_middle_contraction_markers() {
     );
 }
 
+#[test]
+fn test_fffe_issue_6811() {
+    let mut options = CollatorOptions::default();
+    options.strength = Some(Strength::Identical);
+    let collator = Collator::try_new(Default::default(), options).unwrap();
+    // All of these control codes are completely-ignorable, so that
+    // their low code points are compared with the merge separator.
+    // The merge separator must compare less than any other character.
+    assert_eq!(
+        collator.compare_utf16(&[0xFFFE, 0x0001], &[0x0001, 0xFFFE]),
+        core::cmp::Ordering::Less
+    );
+    // The merge separator must even compare less than U+0000.
+    assert_eq!(
+        collator.compare_utf16(&[0xFFFE, 0x0000], &[0x0000, 0xFFFE]),
+        core::cmp::Ordering::Less
+    );
+}
+
 #[cfg(feature = "latin1")]
 #[test]
 fn test_latin1_root() {
