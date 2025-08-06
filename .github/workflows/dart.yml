@@ -94,13 +94,16 @@ jobs:
 
       - run: dart pub get
 
-      - run: dart tool/write_option_file.dart pubspec.yaml checkout $(realpath ${{ github.workspace }})
-        if: matrix.os == 'ubuntu-latest'
+      - run: |
+          yq -i ".hooks.user_defines.icu4x.buildMode = \"checkout\"" pubspec.yaml
+          yq -i ".hooks.user_defines.icu4x.checkoutPath = \"file://$(realpath ${{ github.workspace }})/\"" pubspec.yaml
+          cat pubspec.yaml
+        if: matrix.os == 'ubuntu-latest' || matrix.os == 'macos-latest'
 
-      - run: dart tool/write_option_file.dart pubspec.yaml checkout $(realpath ${{ github.workspace }})
-        if: matrix.os == 'macos-latest'
-
-      - run: dart tool/write_option_file.dart pubspec.yaml checkout (Get-Item  ${{ github.workspace }}).FullName -replace '/', '\'
+      - run: |
+          choco install yq
+          yq -i ".hooks.user_defines.icu4x.buildMode = \"checkout\"" pubspec.yaml
+          yq -i ".hooks.user_defines.icu4x.checkoutPath = \"file://$((Get-Item  ${{ github.workspace }}).FullName -replace '/', '\')\"" pubspec.yaml
         if: matrix.os == 'windows-latest'
 
       - run: dart analyze --fatal-infos
@@ -112,14 +115,14 @@ jobs:
       - run: dart pub get
         working-directory: examples/dart
 
-      - run: dart tool/write_option_file.dart ../../examples/dart/pubspec.yaml checkout $(realpath ${{ github.workspace }})
-        if: matrix.os == 'ubuntu-latest'
+      - run: |
+          yq -i ".hooks.user_defines.icu4x.buildMode = \"checkout\"" ../../examples/dart/pubspec.yaml
+          yq -i ".hooks.user_defines.icu4x.checkoutPath = \"$(realpath ${{ github.workspace }})/\"" ../../examples/dart/pubspec.yaml
+        if: matrix.os == 'ubuntu-latest' || matrix.os == 'macos-latest'
 
-      - run: dart tool/write_option_file.dart ../../examples/dart/pubspec.yaml checkout $(realpath ${{ github.workspace }})
-        if: matrix.os == 'macos-latest'
-
-      - run: dart tool/write_option_file.dart ../../examples/dart/pubspec.yaml checkout (Get-Item  ${{ github.workspace }}).FullName -replace '/', '\'
-        if: matrix.os == 'windows-latest'
+      - run: |
+          yq -i ".hooks.user_defines.icu4x.buildMode = \"checkout\"" pubspec.yaml
+          yq -i ".hooks.user_defines.icu4x.checkoutPath = \"$((Get-Item  ${{ github.workspace }}).FullName -replace '/', '\')/\"" ../../examples/dart/pubspec.yaml
 
       - run: dart --enable-experiment=record-use build cli bin/example.dart
         working-directory: examples/dart
@@ -205,8 +208,8 @@ jobs:
       - run: dart pub get
 
       - run: |
-          dart tool/write_option_file.dart pubspec.yaml fetch
-          dart tool/write_option_file.dart ../../examples/dart/pubspec.yaml fetch
+          yq -i ".hooks.user_defines.icu4x.buildMode = \"fetch\"" pubspec.yaml
+          yq -i ".hooks.user_defines.icu4x.buildMode = \"fetch\"" ../../examples/dart/pubspec.yaml
 
       - run: dart test
 
@@ -322,13 +325,20 @@ jobs:
           cd ffi/dart
           dart pub get
 
-      - run: dart ffi/dart/tool/write_option_file.dart ffi/dart/pubspec.yaml local $(realpath bin/linux_x64)
+      - run: |
+          yq -i ".hooks.user_defines.icu4x.buildMode = \"local\"" ffi/dart/pubspec.yaml
+          yq -i ".hooks.user_defines.icu4x.localPath = \"file://$(realpath bin/linux_x64)\"" ffi/dart/pubspec.yaml
         if: matrix.os == 'ubuntu-latest'
 
-      - run: dart ffi/dart/tool/write_option_file.dart ffi/dart/pubspec.yaml local $(realpath bin/macos_arm64)
+      - run: |
+          yq -i ".hooks.user_defines.icu4x.buildMode = \"local\"" ffi/dart/pubspec.yaml
+          yq -i ".hooks.user_defines.icu4x.localPath = \"file://$(realpath bin/macos_arm64)\"" ffi/dart/pubspec.yaml
         if: matrix.os == 'macos-latest'
 
-      - run: dart ffi/dart/tool/write_option_file.dart ffi/dart/pubspec.yaml local (Get-Item bin\windows_x64).FullName -replace '/', '\'
+      - run: |
+          choco install yq
+          yq -i ".hooks.user_defines.icu4x.buildMode = \"local\"" ffi/dart/pubspec.yaml
+          yq -i ".hooks.user_defines.icu4x.localPath = \"file://$((Get-Item bin\windows_x64).FullName -replace '/', '\')\"" ffi/dart/pubspec.yaml
         if: matrix.os == 'windows-latest'
 
       - run: echo $LOCAL_ICU4X_BINARY
