@@ -117,6 +117,7 @@ are on track to be eventually stabilized into this crate.
 [`FsDataProvider`]: https://docs.rs/icu_provider_fs/latest/icu_provider_fs/struct.FsDataProvider.html
 [`BlobDataProvider`]: https://docs.rs/icu_provider_blob/latest/icu_provider_blob/struct.BlobDataProvider.html
 [`icu_provider_adapters`]: https://docs.rs/icu_provider_adapters/latest/icu_provider_adapters/
+[`icu4x-datagen`]: https://crates.io/crates/icu4x-datagen
 [data management tutorial]: https://github.com/unicode-org/icu4x/blob/main/tutorials/data-provider-runtime.md#loading-additional-data-at-runtime
 
 <!-- cargo-rdme end -->
