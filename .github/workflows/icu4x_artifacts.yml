@@ -72,7 +72,6 @@ jobs:
     - name: Build Linux
       if: matrix.os == 'ubuntu-latest'
       run: |
-        rustup component add rust-src --toolchain nightly-x86_64-unknown-linux-gnu
         (cd ffi/dart && dart pub get)
         
         dart ffi/dart/lib/src/hook_helpers/build_libs.dart --working_directory . --file bin/android_arm_${{ matrix.compiletype }}${{ env.FILENAME_SUFFIX }} --os android --architecture arm --compile_type ${{ matrix.compiletype }} --cargo_features ${{ env.FEATURES }}
@@ -105,8 +104,6 @@ jobs:
     - name: Build Mac
       if: matrix.os == 'macos-latest'
       run: |
-        rustup component add rust-src --toolchain nightly-aarch64-apple-darwin
-        
         (cd ffi/dart && dart pub get)
 
         dart ffi/dart/lib/src/hook_helpers/build_libs.dart --working_directory . --file bin/ios_arm64_${{ matrix.compiletype }}${{ env.FILENAME_SUFFIX }} --os ios --architecture arm64 --compile_type ${{ matrix.compiletype }} --cargo_features ${{ env.FEATURES }}
@@ -130,8 +127,6 @@ jobs:
     - name: Build Windows
       if: matrix.os == 'windows-latest'
       run: |
-        rustup component add rust-src --toolchain nightly-x86_64-pc-windows-msvc
-        
         pushd ffi/dart
         dart pub get
         popd

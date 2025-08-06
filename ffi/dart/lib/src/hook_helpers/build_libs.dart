@@ -79,14 +79,24 @@ Future<File> buildLib(
 
   final isNoStd = _isNoStdTarget((targetOS, targetArchitecture));
   final target = _asRustTarget(targetOS, targetArchitecture, isSimulator);
-  if (!isNoStd) {
-    final rustArguments = ['target', 'add', target];
-    await runProcess(
-      'rustup',
-      rustArguments,
-      workingDirectory: workingDirectory,
-    );
+
+  if (buildStatic || isNoStd) {
+    await runProcess('rustup', [
+      'toolchain',
+      'install',
+      '--no-self-update',
+      'nightly',
+      '--component',
+      'rust-src',
+    ], workingDirectory: workingDirectory);
   }
+
+  await runProcess('rustup', [
+    'target',
+    'add',
+    target,
+    if (buildStatic || isNoStd) ...['--toolchain', 'nightly'],
+  ], workingDirectory: workingDirectory);
 
   final additionalFeatures = isNoStd
       ? ['libc_alloc', 'looping_panic_handler']
