@@ -79,8 +79,9 @@ libs = glob_array ./bin/example/lib/*
 lib = array_pop ${libs}
 size = filesize ${lib}
 println ${size} "bytes"
-# skip until https://github.com/dart-lang/i18n/issues/989 issue is resolved
-if not equals ${lib} "bin/example/lib/libicu4x.dylib" # Mac
+pubspec = readfile pubspec.yaml
+is_local = contains ${pubspec} "buildMode: local"
+if not ${is_local} # local dylib is not treeshaken
     if greater_than ${size} 10000000
         trigger_error "Dart example binary >10MB"
     end
