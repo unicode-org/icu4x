@@ -352,7 +352,6 @@ jobs:
       run: cargo make ci-job-test-dart
 
   dart-pr-health:
-    runs-on: ubuntu-latest
     uses: dart-lang/ecosystem/.github/workflows/health.yaml@main
     with:
       checks: changelog,coverage,breaking,do-not-submit,leaking
