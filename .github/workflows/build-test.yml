@@ -351,14 +351,8 @@ jobs:
     - name: Run `cargo make ci-job-test-dart`
       run: cargo make ci-job-test-dart
 
-    - name: Run `dart-pr-health` checks
-      uses: dart-lang/ecosystem/.github/workflows/health.yaml@main
-      with:
-        checks: changelog,coverage,breaking,do-not-submit,leaking
-        fail_on: changelog,breaking,do-not-submit,leaking
-        sdk: ${{ github.event_name != 'schedule' && '3.9.0-138.0.dev' || 'dev' }}
-
   dart-pr-health:
+    runs-on: ubuntu-latest
     uses: dart-lang/ecosystem/.github/workflows/health.yaml@main
     with:
       checks: changelog,coverage,breaking,do-not-submit,leaking
