@@ -355,7 +355,7 @@ jobs:
       uses: dart-lang/ecosystem/.github/workflows/health.yaml@main
       with:
         checks: changelog,coverage,breaking,do-not-submit,leaking
-        coverage_web: true
+        fail_on: changelog,breaking,do-not-submit,leaking
         sdk: ${{ github.event_name != 'schedule' && '3.9.0-138.0.dev' || 'dev' }}
 
   # ci-job-nostd
