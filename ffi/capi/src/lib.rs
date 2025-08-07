@@ -19,7 +19,6 @@
 )]
 // Diplomat limitations
 #![allow(
-    clippy::needless_lifetimes,
     clippy::result_unit_err,
     clippy::should_implement_trait
 )]
