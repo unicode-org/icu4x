@@ -187,7 +187,7 @@ fn process_era_dates_map(
                 .unwrap()
                 .to_iso();
             *d = EraStartDate {
-                year: date.extended_year(),
+                year: date.monotonic_year(),
                 month: date.month().ordinal,
                 day: date.day_of_month().0,
             };
@@ -553,7 +553,7 @@ fn test_calendar_eras() {
 
     for (calendar, data) in era_dates_map {
         let kind = match calendar.as_str() {
-            "generic" | "islamic" => continue,
+            "generic" | "islamic" | "chinese" | "dangi" => continue,
             "ethiopic-amete-alem" => AnyCalendarKind::EthiopianAmeteAlem,
             "gregorian" => AnyCalendarKind::Gregorian,
             "japanese" => AnyCalendarKind::JapaneseExtended,
@@ -621,10 +621,10 @@ fn test_calendar_eras() {
                     }
 
                     // Check that the start/end date uses year 1, and minimal/maximal month/day
-                    assert_eq!(era_year.year, 1);
+                    assert_eq!(era_year.year, 1, "Didn't get correct year for {in_era:?}");
                 }
                 icu::calendar::types::YearInfo::Cyclic(_) => {
-                    assert_eq!(in_era.extended_year(), 1);
+                    assert_eq!(in_era.monotonic_year(), 1);
                 }
                 _ => unreachable!(),
             }

@@ -116,7 +116,7 @@ impl Calendar for Buddhist {
 
     /// The calendar-specific year represented by `date`
     fn year_info(&self, date: &Self::DateInner) -> Self::Year {
-        let year = date.iso_year() - BUDDHIST_ERA_OFFSET;
+        let year = date.iso_year() + BUDDHIST_ERA_OFFSET;
         types::EraYear {
             era: tinystr!(16, "be"),
             era_index: Some(0),

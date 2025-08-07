@@ -43,7 +43,7 @@ pub struct Iso;
 pub struct IsoDateInner(pub(crate) ArithmeticDate<Iso>);
 
 impl IsoDateInner {
-    pub(crate) fn iso_year(&self) -> i32 {
+    pub(crate) fn iso_year(self) -> i32 {
         self.0.monotonic_year()
     }
 }
