@@ -161,7 +161,7 @@ pub mod ffi {
     impl ReorderedIndexMap {
         /// Get this as a slice/array of indices
         #[diplomat::attr(auto, getter)]
-        pub fn as_slice(&self) -> &[usize] {
+        pub fn as_slice<'a>(&'a self) -> &'a [usize] {
             &self.0
         }
 
