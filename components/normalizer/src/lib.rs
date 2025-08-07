@@ -2068,7 +2068,7 @@ pub struct DecomposingNormalizer {
 
 impl DecomposingNormalizer {
     /// Constructs a borrowed version of this type for more efficient querying.
-    pub fn as_borrowed(&self) -> DecomposingNormalizerBorrowed {
+    pub fn as_borrowed(&self) -> DecomposingNormalizerBorrowed<'_> {
         DecomposingNormalizerBorrowed {
             decompositions: self.decompositions.get(),
             tables: self.tables.get(),

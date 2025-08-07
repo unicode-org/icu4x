@@ -383,7 +383,7 @@ impl ZonePatternSelectionData {
     }
 
     /// Borrows a resolved pattern based on the given datetime
-    pub(crate) fn select(&self, _input: &DateTimeInputUnchecked) -> ZonePatternDataBorrowed {
+    pub(crate) fn select(&self, _input: &DateTimeInputUnchecked) -> ZonePatternDataBorrowed<'_> {
         let Self::SinglePatternItem(_, pattern_item) = self;
         ZonePatternDataBorrowed::SinglePatternItem(pattern_item)
     }
@@ -633,7 +633,10 @@ impl DateTimeZonePatternSelectionData {
     }
 
     /// Borrows a resolved pattern based on the given datetime
-    pub(crate) fn select(&self, input: &DateTimeInputUnchecked) -> DateTimeZonePatternDataBorrowed {
+    pub(crate) fn select(
+        &self,
+        input: &DateTimeInputUnchecked,
+    ) -> DateTimeZonePatternDataBorrowed<'_> {
         DateTimeZonePatternDataBorrowed {
             date: self.date.select(input, self.options),
             time: self.time.select(input, self.options, self.prefs),

@@ -161,7 +161,7 @@ impl LocaleFallbacker {
     }
 
     /// Creates a borrowed version of this fallbacker for performance.
-    pub fn as_borrowed(&self) -> LocaleFallbackerBorrowed {
+    pub fn as_borrowed(&self) -> LocaleFallbackerBorrowed<'_> {
         LocaleFallbackerBorrowed {
             likely_subtags: self.likely_subtags.get(),
             parents: self.parents.get(),

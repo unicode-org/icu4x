@@ -536,7 +536,7 @@ pub struct Collator {
 
 impl Collator {
     /// Constructs a borrowed version of this type for more efficient querying.
-    pub fn as_borrowed(&self) -> CollatorBorrowed {
+    pub fn as_borrowed(&self) -> CollatorBorrowed<'_> {
         CollatorBorrowed {
             special_primaries: self.special_primaries.get(),
             root: self.root.get(),
@@ -911,7 +911,7 @@ impl CollatorBorrowed<'_> {
     );
 
     #[inline(always)]
-    fn tailoring_or_root(&self) -> &CollationData {
+    fn tailoring_or_root(&self) -> &CollationData<'_> {
         if let Some(tailoring) = &self.tailoring {
             tailoring
         } else {

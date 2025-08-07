@@ -474,7 +474,11 @@ pub(crate) enum PackedSkeletonVariant {
 }
 
 impl PackedPatterns<'_> {
-    pub(crate) fn get(&self, length: Length, variant: PackedSkeletonVariant) -> PatternBorrowed {
+    pub(crate) fn get(
+        &self,
+        length: Length,
+        variant: PackedSkeletonVariant,
+    ) -> PatternBorrowed<'_> {
         use Length::*;
         use PackedSkeletonVariant::*;
         let lms = self.header & constants::LMS_MASK;

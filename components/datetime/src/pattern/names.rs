@@ -2827,7 +2827,7 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
         }
     }
 
-    pub(crate) fn as_borrowed(&self) -> RawDateTimeNamesBorrowed {
+    pub(crate) fn as_borrowed(&self) -> RawDateTimeNamesBorrowed<'_> {
         RawDateTimeNamesBorrowed {
             year_names: self.year_names.get().inner,
             month_names: self.month_names.get().inner,
