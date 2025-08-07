@@ -358,7 +358,7 @@ jobs:
 
     - name: Run `cargo make ci-job-test-dart` in local mode
       run: |
-        cp examples/dart/.dart_tool/native_assets/lib/* dylib
+        cp ffi/dart/.dart_tool/native_assets/lib/* dylib
         yq -i ".hooks.user_defines.icu4x.buildMode = \"local\"" ffi/dart/pubspec.yaml
         yq -i ".hooks.user_defines.icu4x.localPath = \"file://$(realpath dylib)\"" ffi/dart/pubspec.yaml
         yq -i ".hooks.user_defines.icu4x.buildMode = \"local\"" examples/dart/pubspec.yaml
