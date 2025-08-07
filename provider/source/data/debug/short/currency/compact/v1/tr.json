@@ -11,9 +11,27 @@
     ],
     [
       [
+        3,
+        {
+          "AlphaNextToNumber": "Other"
+        }
+      ],
+      "0 B ¤"
+    ],
+    [
+      [
         4,
         {
           "Standard": "Other"
+        }
+      ],
+      "00 B ¤"
+    ],
+    [
+      [
+        4,
+        {
+          "AlphaNextToNumber": "Other"
         }
       ],
       "00 B ¤"
@@ -29,9 +47,27 @@
     ],
     [
       [
+        5,
+        {
+          "AlphaNextToNumber": "Other"
+        }
+      ],
+      "000 B ¤"
+    ],
+    [
+      [
         6,
         {
           "Standard": "Other"
+        }
+      ],
+      "0 Mn ¤"
+    ],
+    [
+      [
+        6,
+        {
+          "AlphaNextToNumber": "Other"
         }
       ],
       "0 Mn ¤"
@@ -47,9 +83,27 @@
     ],
     [
       [
+        7,
+        {
+          "AlphaNextToNumber": "Other"
+        }
+      ],
+      "00 Mn ¤"
+    ],
+    [
+      [
         8,
         {
           "Standard": "Other"
+        }
+      ],
+      "000 Mn ¤"
+    ],
+    [
+      [
+        8,
+        {
+          "AlphaNextToNumber": "Other"
         }
       ],
       "000 Mn ¤"
@@ -65,9 +119,27 @@
     ],
     [
       [
+        9,
+        {
+          "AlphaNextToNumber": "Other"
+        }
+      ],
+      "0 Mr ¤"
+    ],
+    [
+      [
         10,
         {
           "Standard": "Other"
+        }
+      ],
+      "00 Mr ¤"
+    ],
+    [
+      [
+        10,
+        {
+          "AlphaNextToNumber": "Other"
         }
       ],
       "00 Mr ¤"
@@ -83,9 +155,27 @@
     ],
     [
       [
+        11,
+        {
+          "AlphaNextToNumber": "Other"
+        }
+      ],
+      "000 Mr ¤"
+    ],
+    [
+      [
         12,
         {
           "Standard": "Other"
+        }
+      ],
+      "0 Tn ¤"
+    ],
+    [
+      [
+        12,
+        {
+          "AlphaNextToNumber": "Other"
         }
       ],
       "0 Tn ¤"
@@ -101,9 +191,27 @@
     ],
     [
       [
+        13,
+        {
+          "AlphaNextToNumber": "Other"
+        }
+      ],
+      "00 Tn ¤"
+    ],
+    [
+      [
         14,
         {
           "Standard": "Other"
+        }
+      ],
+      "000 Tn ¤"
+    ],
+    [
+      [
+        14,
+        {
+          "AlphaNextToNumber": "Other"
         }
       ],
       "000 Tn ¤"

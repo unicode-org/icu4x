@@ -7,7 +7,7 @@
     4,
     5,
     6,
-    6
+    7
   ],
   "elements": [
     "MMMM 'de' y",
@@ -15,6 +15,7 @@
     "M/yy",
     "M/y",
     "MMMM 'de' y GGG",
-    "MMM y GGG"
+    "MMM y GGG",
+    "M/y GGG"
   ]
 }

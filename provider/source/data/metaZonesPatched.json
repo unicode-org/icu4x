@@ -104,20 +104,6 @@
             ]
           },
           "America": {
-            "Adak": [
-              {
-                "usesMetazone": {
-                  "_mzone": "Bering",
-                  "_to": "1983-10-30 12:00"
-                }
-              },
-              {
-                "usesMetazone": {
-                  "_mzone": "Hawaii_Aleutian",
-                  "_from": "1983-10-30 12:00"
-                }
-              }
-            ],
             "Anchorage": [
               {
                 "usesMetazone": {
@@ -464,34 +450,10 @@
                 }
               }
             ]
-          },
-          "Pacific": {
-            "Honolulu": [
-              {
-                "usesMetazone": {
-                  "_mzone": "Alaska_Hawaii",
-                  "_to": "1983-11-30 10:00"
-                }
-              },
-              {
-                "usesMetazone": {
-                  "_mzone": "Hawaii_Aleutian",
-                  "_from": "1983-11-30 10:00"
-                }
-              }
-            ]
           }
         }
       },
-      "metazones": [
-        {
-          "mapZone": {
-            "_other": "Hawaii_Aleutian",
-            "_type": "America/Adak",
-            "_territory": "001"
-          }
-        }
-      ]
+      "metazones": []
     }
   }
 }

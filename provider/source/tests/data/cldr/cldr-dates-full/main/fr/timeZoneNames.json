@@ -9,6 +9,7 @@
           "hourFormat": "+HH:mm;−HH:mm",
           "gmtFormat": "UTC{0}",
           "gmtZeroFormat": "UTC",
+          "gmtUnknownFormat": "GMT+?",
           "regionFormat": "heure : {0}",
           "regionFormat-type-daylight": "{0} (heure d’été)",
           "regionFormat-type-standard": "{0} (heure standard)",
@@ -41,10 +42,6 @@
               },
               "Enderbury": {
                 "_type": "zone",
-                "exemplarCity": "Enderbury"
-              },
-              "Kanton": {
-                "_type": "zone",
                 "exemplarCity": "Canton"
               },
               "Noumea": {
@@ -62,6 +59,10 @@
               "Efate": {
                 "_type": "zone",
                 "exemplarCity": "Éfaté"
+              },
+              "Wallis": {
+                "_type": "zone",
+                "exemplarCity": "Wallis & Futuna"
               }
             },
             "Etc": {
@@ -76,7 +77,7 @@
               },
               "Unknown": {
                 "_type": "zone",
-                "exemplarCity": "ville inconnue"
+                "exemplarCity": "lieu inconnu"
               }
             },
             "Europe": {
@@ -128,6 +129,10 @@
               "Isle_of_Man": {
                 "_type": "zone",
                 "exemplarCity": "Île de Man"
+              },
+              "Chisinau": {
+                "_type": "zone",
+                "exemplarCity": "Chișinău"
               },
               "Malta": {
                 "_type": "zone",
@@ -270,6 +275,10 @@
               "Rangoon": {
                 "_type": "zone",
                 "exemplarCity": "Rangoun"
+              },
+              "Hovd": {
+                "_type": "zone",
+                "exemplarCity": "Khovd"
               },
               "Ulaanbaatar": {
                 "_type": "zone",
@@ -441,6 +450,10 @@
                 "_type": "zone",
                 "exemplarCity": "Saint-Jean de Terre-Neuve"
               },
+              "Bogota": {
+                "_type": "zone",
+                "exemplarCity": "Bogotá"
+              },
               "Havana": {
                 "_type": "zone",
                 "exemplarCity": "La Havane"
@@ -512,6 +525,10 @@
               "Cancun": {
                 "_type": "zone",
                 "exemplarCity": "Cancún"
+              },
+              "Miquelon": {
+                "_type": "zone",
+                "exemplarCity": "Saint-Pierre"
               },
               "Puerto_Rico": {
                 "_type": "zone",
@@ -723,9 +740,7 @@
             },
             "Africa_Western": {
               "long": {
-                "generic": "heure d’Afrique de l’Ouest",
-                "standard": "heure normale d’Afrique de l’Ouest",
-                "daylight": "heure d’été d’Afrique de l’Ouest"
+                "standard": "heure d’Afrique de l’Ouest"
               }
             },
             "Alaska": {
@@ -1106,6 +1121,11 @@
             "Guyana": {
               "long": {
                 "standard": "heure du Guyana"
+              }
+            },
+            "Hawaii": {
+              "long": {
+                "standard": "heure normale d’Hawaï - Aléoutiennes"
               }
             },
             "Hawaii_Aleutian": {
@@ -1537,6 +1557,13 @@
             "Truk": {
               "long": {
                 "standard": "heure de Chuuk"
+              }
+            },
+            "Turkey": {
+              "long": {
+                "generic": "heure de Turquie",
+                "standard": "heure normale de Turquie",
+                "daylight": "heure avancée de Turquie"
               }
             },
             "Turkmenistan": {

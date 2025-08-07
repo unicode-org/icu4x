@@ -13,6 +13,7 @@
     "fa-AF": "dari",
     "fr-CA": "français canadien",
     "fr-CH": "français suisse",
+    "hi-Latn": "hinglish",
     "nds-NL": "bas-saxon néerlandais",
     "nl-BE": "flamand",
     "pt-BR": "portugais brésilien",
@@ -22,7 +23,10 @@
     "zh-Hans": "chinois simplifié",
     "zh-Hant": "chinois traditionnel"
   },
-  "short_names": {},
+  "short_names": {
+    "en-GB": "anglais britannique",
+    "en-US": "anglais américain"
+  },
   "long_names": {
     "zh-Hans": "mandarin simplifié",
     "zh-Hant": "mandarin traditionnel"
