@@ -525,7 +525,7 @@ impl Reader {
     ///
     /// Returns the parsed resource bundle and a list of the keys encountered in
     /// the resource bundle in the order they were encountered.
-    pub fn read(input: &str) -> Result<(ResourceBundle, Vec<Key>), TextParserError> {
+    pub fn read(input: &str) -> Result<(ResourceBundle<'_>, Vec<Key<'_>>), TextParserError> {
         let input = ParseState::new(input);
 
         let (final_state, bundle) = bundle::<VerboseError<ParseState>>(input.clone())

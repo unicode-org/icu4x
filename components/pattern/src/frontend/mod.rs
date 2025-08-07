@@ -238,7 +238,7 @@ where
     B: PatternBackend,
 {
     /// Returns an iterator over the [`PatternItem`]s in this pattern.
-    pub fn iter(&self) -> impl Iterator<Item = PatternItem<B::PlaceholderKey<'_>>> + '_ {
+    pub fn iter(&self) -> impl Iterator<Item = PatternItem<'_, B::PlaceholderKey<'_>>> + '_ {
         B::iter_items(&self.store)
     }
 

@@ -312,7 +312,7 @@ impl<A: AsCalendar<Calendar = Dangi>> Date<A> {
 
 impl ChineseBasedWithDataLoading for Dangi {
     type CB = calendrical_calculations::chinese_based::Dangi;
-    fn get_precomputed_data(&self) -> ChineseBasedPrecomputedData<Self::CB> {
+    fn get_precomputed_data(&self) -> ChineseBasedPrecomputedData<'_, Self::CB> {
         ChineseBasedPrecomputedData::new(self.data.as_ref().map(|d| d.get()))
     }
 }

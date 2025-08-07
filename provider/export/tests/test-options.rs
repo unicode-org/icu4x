@@ -70,7 +70,7 @@ impl DataProvider<HelloWorldV1> for TestingProvider {
 }
 
 impl IterableDataProvider<HelloWorldV1> for TestingProvider {
-    fn iter_ids(&self) -> Result<BTreeSet<DataIdentifierCow>, DataError> {
+    fn iter_ids(&self) -> Result<BTreeSet<DataIdentifierCow<'_>>, DataError> {
         Ok(self
             .0
             .keys()

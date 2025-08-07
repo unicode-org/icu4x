@@ -449,7 +449,7 @@ trait IterableDataProviderCached<M: DataMarker>: DataProvider<M> {
 impl SourceDataProvider {
     fn populate_requests_cache<M: DataMarker>(
         &self,
-    ) -> Result<&HashSet<DataIdentifierCow>, DataError>
+    ) -> Result<&HashSet<DataIdentifierCow<'_>>, DataError>
     where
         SourceDataProvider: IterableDataProviderCached<M>,
     {
@@ -466,7 +466,7 @@ impl<M: DataMarker> IterableDataProvider<M> for SourceDataProvider
 where
     SourceDataProvider: IterableDataProviderCached<M>,
 {
-    fn iter_ids(&self) -> Result<BTreeSet<DataIdentifierCow>, DataError> {
+    fn iter_ids(&self) -> Result<BTreeSet<DataIdentifierCow<'_>>, DataError> {
         Ok(if <M as DataMarker>::INFO.is_singleton {
             [Default::default()].into_iter().collect()
         } else {

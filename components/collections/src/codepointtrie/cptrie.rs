@@ -930,7 +930,7 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
     /// assert_eq!(ranges.next(), None);
     /// assert_eq!(ranges.next(), None);
     /// ```
-    pub fn iter_ranges(&self) -> CodePointMapRangeIterator<T> {
+    pub fn iter_ranges(&self) -> CodePointMapRangeIterator<'_, T> {
         let init_range = Some(CodePointMapRange {
             range: u32::MAX..=u32::MAX,
             value: self.error_value(),

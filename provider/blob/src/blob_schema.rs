@@ -56,7 +56,7 @@ impl<'data> BlobSchema<'data> {
     pub fn iter_ids(
         &self,
         marker: DataMarkerInfo,
-    ) -> Result<alloc::collections::BTreeSet<DataIdentifierCow>, DataError> {
+    ) -> Result<alloc::collections::BTreeSet<DataIdentifierCow<'_>>, DataError> {
         match self {
             BlobSchema::V001(..) | BlobSchema::V002(..) | BlobSchema::V002Bigger(..) => {
                 unreachable!("Unreachable blob schema")
@@ -186,7 +186,7 @@ impl<'data, LocaleVecFormat: VarZeroVecFormat> BlobSchemaV1<'data, LocaleVecForm
     pub fn iter_ids(
         &self,
         marker: DataMarkerInfo,
-    ) -> Result<alloc::collections::BTreeSet<DataIdentifierCow>, DataError> {
+    ) -> Result<alloc::collections::BTreeSet<DataIdentifierCow<'_>>, DataError> {
         let marker_index = self
             .markers
             .binary_search(&marker.id.hashed())

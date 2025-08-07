@@ -83,7 +83,7 @@ impl<M> IterableDataProvider<M> for EmptyDataProvider
 where
     M: DataMarker,
 {
-    fn iter_ids(&self) -> Result<BTreeSet<DataIdentifierCow>, DataError> {
+    fn iter_ids(&self) -> Result<BTreeSet<DataIdentifierCow<'_>>, DataError> {
         Ok(Default::default())
     }
 }
@@ -95,7 +95,7 @@ where
     fn iter_ids_for_marker(
         &self,
         _: DataMarkerInfo,
-    ) -> Result<BTreeSet<DataIdentifierCow>, DataError> {
+    ) -> Result<BTreeSet<DataIdentifierCow<'_>>, DataError> {
         Ok(Default::default())
     }
 }

@@ -666,7 +666,7 @@ impl CompactDecimalFormatter {
     fn plural_map_and_exponent_for_magnitude(
         &self,
         magnitude: i16,
-    ) -> (Option<ZeroMap2dCursor<i8, Count, PatternULE>>, u8) {
+    ) -> (Option<ZeroMap2dCursor<'_, '_, i8, Count, PatternULE>>, u8) {
         let plural_map = self
             .compact_data
             .get()

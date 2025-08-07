@@ -395,7 +395,7 @@ impl<A: AsCalendar> Date<A> {
     ///
     /// Useful for converting a `&Date<C>` into an equivalent `Date<D>` without cloning
     /// the calendar.
-    pub fn as_borrowed(&self) -> Date<Ref<A>> {
+    pub fn as_borrowed(&self) -> Date<Ref<'_, A>> {
         Date::from_raw(self.inner, Ref(&self.calendar))
     }
 }

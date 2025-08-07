@@ -177,7 +177,7 @@ impl DatePatternSelectionData {
         &self,
         input: &DateTimeInputUnchecked,
         options: RawOptions,
-    ) -> Option<DatePatternDataBorrowed> {
+    ) -> Option<DatePatternDataBorrowed<'_>> {
         let payload = self.payload.get_option()?;
         let year_style = options.year_style.unwrap_or_default();
         let variant = match (
@@ -339,7 +339,7 @@ impl TimePatternSelectionData {
         input: &DateTimeInputUnchecked,
         options: RawOptions,
         prefs: RawPreferences,
-    ) -> Option<TimePatternDataBorrowed> {
+    ) -> Option<TimePatternDataBorrowed<'_>> {
         let payload = self.payload.get_option()?;
         let time_precision = options.time_precision.unwrap_or_default();
         let (variant, subsecond_digits) = input.resolve_time_precision(time_precision);

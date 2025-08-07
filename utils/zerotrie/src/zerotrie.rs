@@ -685,14 +685,14 @@ impl_zerotrie_subtype!(
     ZeroTrieSimpleAscii,
     String,
     reader::get_iter_ascii_or_panic,
-    ZeroTrieStringIterator,
+    ZeroTrieStringIterator<'_>,
     string_to_box_u8
 );
 impl_zerotrie_subtype!(
     ZeroAsciiIgnoreCaseTrie,
     String,
     reader::get_iter_ascii_or_panic,
-    ZeroTrieStringIterator,
+    ZeroTrieStringIterator<'_>,
     string_to_box_u8
 );
 impl_zerotrie_subtype!(

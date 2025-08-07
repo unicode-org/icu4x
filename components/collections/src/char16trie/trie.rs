@@ -93,7 +93,7 @@ impl<'data> Char16Trie<'data> {
     }
 
     /// Returns a new [`Char16TrieIterator`] backed by borrowed data from the `trie` data
-    pub fn iter(&self) -> Char16TrieIterator {
+    pub fn iter(&self) -> Char16TrieIterator<'_> {
         Char16TrieIterator::new(&self.data)
     }
 }

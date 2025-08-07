@@ -374,7 +374,7 @@ where
     FSet::Z: ZoneMarkers,
 {
     /// Formats a datetime. Calendars and fields must match at compile time.
-    pub fn format<I>(&self, input: &I) -> FormattedDateTime
+    pub fn format<I>(&self, input: &I) -> FormattedDateTime<'_>
     where
         I: ?Sized + InFixedCalendar<C> + AllInputMarkers<FSet>,
     {
@@ -666,7 +666,7 @@ where
     pub fn format_same_calendar<I>(
         &self,
         datetime: &I,
-    ) -> Result<FormattedDateTime, crate::MismatchedCalendarError>
+    ) -> Result<FormattedDateTime<'_>, crate::MismatchedCalendarError>
     where
         I: ?Sized + InSameCalendar + AllInputMarkers<FSet>,
     {
@@ -1009,7 +1009,7 @@ impl<FSet: DateTimeMarkers> DateTimeFormatter<FSet> {
     ///
     /// assert_eq!(formatter.calendar().kind(), AnyCalendarKind::Buddhist);
     /// ```
-    pub fn calendar(&self) -> icu_calendar::Ref<AnyCalendar> {
+    pub fn calendar(&self) -> icu_calendar::Ref<'_, AnyCalendar> {
         icu_calendar::Ref(self.calendar.any_calendar())
     }
 

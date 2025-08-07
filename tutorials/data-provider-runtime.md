@@ -300,7 +300,7 @@ impl DataProvider<CustomV1> for CustomProvider {
 }
 
 impl IterableDataProvider<CustomV1> for CustomProvider {
-    fn iter_ids(&self) -> Result<BTreeSet<DataIdentifierCow>, DataError> {
+    fn iter_ids(&self) -> Result<BTreeSet<DataIdentifierCow<'_>>, DataError> {
         Ok([locale!("es"), locale!("ja")]
             .into_iter()
             .map(DataLocale::from)

@@ -156,7 +156,7 @@ impl LocaleFallbacker {
 
     /// Associates a configuration with this fallbacker.
     #[inline]
-    pub fn for_config(&self, config: LocaleFallbackConfig) -> LocaleFallbackerWithConfig {
+    pub fn for_config(&self, config: LocaleFallbackConfig) -> LocaleFallbackerWithConfig<'_> {
         self.as_borrowed().for_config(config)
     }
 
