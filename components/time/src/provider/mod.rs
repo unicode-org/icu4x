@@ -74,8 +74,14 @@ const SECONDS_TO_EIGHTS_OF_HOURS: i32 = 60 * 60 / 8;
 #[non_exhaustive]
 pub enum TimeZoneVariant {
     /// The variant corresponding to `"standard"` in CLDR.
+    ///
+    /// The semantics vary from time zone to time zone. The time zone display
+    /// name of this variant may or may not be called "Standard Time".
     Standard = 0,
     /// The variant corresponding to `"daylight"` in CLDR.
+    ///
+    /// The semantics vary from time zone to time zone. The time zone display
+    /// name of this variant may or may not be called "Daylight Time".
     Daylight = 1,
 }
 
