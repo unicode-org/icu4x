@@ -252,13 +252,9 @@ impl Calendar for Japanese {
             era: date.era,
             era_index: None,
             year: date.adjusted_year,
-            monotonic_year: date.adjusted_year,
+            monotonic_year: date.inner.0.monotonic_year(),
             ambiguity: types::YearAmbiguity::CenturyRequired,
         }
-    }
-
-    fn extended_year(&self, date: &Self::DateInner) -> i32 {
-        Iso.extended_year(&date.inner)
     }
 
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
@@ -356,10 +352,6 @@ impl Calendar for JapaneseExtended {
 
     fn year_info(&self, date: &Self::DateInner) -> Self::Year {
         Japanese::year_info(&self.0, date)
-    }
-
-    fn extended_year(&self, date: &Self::DateInner) -> i32 {
-        Japanese::extended_year(&self.0, date)
     }
 
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {

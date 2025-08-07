@@ -226,10 +226,6 @@ impl Calendar for Ethiopian {
         }
     }
 
-    fn extended_year(&self, date: &Self::DateInner) -> i32 {
-        self.year_info(date).monotonic_year
-    }
-
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
         Self::provided_year_is_leap(date.0.year)
     }
@@ -362,7 +358,7 @@ mod test {
     }
 
     #[test]
-    fn extended_year() {
+    fn monotonic_year() {
         assert_eq!(
             Date::new_from_iso(
                 Date::try_new_iso(-5500 + 9, 1, 1).unwrap(),

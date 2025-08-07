@@ -112,7 +112,7 @@ impl Calendar for Gregorian {
     }
     /// The calendar-specific year represented by `date`
     fn year_info(&self, date: &Self::DateInner) -> Self::Year {
-        let monotonic_year = self.extended_year(date);
+        let monotonic_year = date.0.iso_year();
         if monotonic_year > 0 {
             types::EraYear {
                 era: tinystr!(16, "ce"),
@@ -135,10 +135,6 @@ impl Calendar for Gregorian {
                 ambiguity: types::YearAmbiguity::EraAndCenturyRequired,
             }
         }
-    }
-
-    fn extended_year(&self, date: &Self::DateInner) -> i32 {
-        Iso.extended_year(&date.0)
     }
 
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {

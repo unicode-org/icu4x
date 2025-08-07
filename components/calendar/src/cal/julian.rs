@@ -156,7 +156,7 @@ impl Calendar for Julian {
     /// The calendar-specific year represented by `date`
     /// Julian has the same era scheme as Gregorian
     fn year_info(&self, date: &Self::DateInner) -> Self::Year {
-        let monotonic_year = self.extended_year(date);
+        let monotonic_year = date.0.monotonic_year();
         if monotonic_year > 0 {
             types::EraYear {
                 era: tinystr!(16, "ce"),
@@ -174,10 +174,6 @@ impl Calendar for Julian {
                 ambiguity: types::YearAmbiguity::EraAndCenturyRequired,
             }
         }
-    }
-
-    fn extended_year(&self, date: &Self::DateInner) -> i32 {
-        date.0.monotonic_year()
     }
 
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {

@@ -42,6 +42,12 @@ pub struct Iso;
 /// The inner date type used for representing [`Date`]s of [`Iso`]. See [`Date`] and [`Iso`] for more details.
 pub struct IsoDateInner(pub(crate) ArithmeticDate<Iso>);
 
+impl IsoDateInner {
+    pub(crate) fn iso_year(&self) -> i32 {
+        self.0.monotonic_year()
+    }
+}
+
 impl CalendarArithmetic for Iso {
     type YearInfo = i32;
 
@@ -152,10 +158,6 @@ impl Calendar for Iso {
             monotonic_year,
             ambiguity: types::YearAmbiguity::Unambiguous,
         }
-    }
-
-    fn extended_year(&self, date: &Self::DateInner) -> i32 {
-        date.0.monotonic_year()
     }
 
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
