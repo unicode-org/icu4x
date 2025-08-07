@@ -183,10 +183,12 @@ impl Calendar for Indian {
     }
 
     fn year_info(&self, date: &Self::DateInner) -> Self::Year {
+        let monotonic_year = date.0.monotonic_year();
         types::EraYear {
             era_index: Some(0),
             era: tinystr!(16, "shaka"),
-            year: self.extended_year(date),
+            year: monotonic_year,
+            monotonic_year,
             ambiguity: types::YearAmbiguity::CenturyRequired,
         }
     }

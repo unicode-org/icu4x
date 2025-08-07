@@ -166,6 +166,7 @@ impl Calendar for Coptic {
             era: tinystr!(16, "am"),
             era_index: Some(0),
             year,
+            monotonic_year: year,
             ambiguity: types::YearAmbiguity::CenturyRequired,
         }
     }

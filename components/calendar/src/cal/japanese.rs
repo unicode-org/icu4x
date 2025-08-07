@@ -252,6 +252,7 @@ impl Calendar for Japanese {
             era: date.era,
             era_index: None,
             year: date.adjusted_year,
+            monotonic_year: date.adjusted_year,
             ambiguity: types::YearAmbiguity::CenturyRequired,
         }
     }

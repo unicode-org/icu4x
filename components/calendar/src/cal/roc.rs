@@ -133,6 +133,7 @@ impl Calendar for Roc {
                 era: tinystr!(16, "roc"),
                 era_index: Some(1),
                 year: extended_year,
+                monotonic_year: extended_year,
                 ambiguity: types::YearAmbiguity::CenturyRequired,
             }
         } else {
@@ -140,6 +141,7 @@ impl Calendar for Roc {
                 era: tinystr!(16, "broc"),
                 era_index: Some(0),
                 year: 1 - extended_year,
+                monotonic_year: extended_year,
                 ambiguity: types::YearAmbiguity::EraAndCenturyRequired,
             }
         }

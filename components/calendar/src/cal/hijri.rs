@@ -42,6 +42,7 @@ fn era_year(year: i32) -> EraYear {
             era: tinystr!(16, "ah"),
             era_index: Some(0),
             year,
+            monotonic_year: year,
             ambiguity: types::YearAmbiguity::CenturyRequired,
         }
     } else {
@@ -49,6 +50,7 @@ fn era_year(year: i32) -> EraYear {
             era: tinystr!(16, "bh"),
             era_index: Some(1),
             year: 1 - year,
+            monotonic_year: year,
             ambiguity: types::YearAmbiguity::CenturyRequired,
         }
     }

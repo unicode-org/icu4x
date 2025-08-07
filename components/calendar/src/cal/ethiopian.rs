@@ -199,12 +199,20 @@ impl Calendar for Ethiopian {
     }
 
     fn year_info(&self, date: &Self::DateInner) -> Self::Year {
+        let year = date.0.monotonic_year();
+        let monotonic_year = if self.0 {
+            year
+        } else {
+            year - INCARNATION_OFFSET
+        };
+
         let year = date.0.year;
         if self.0 || year <= INCARNATION_OFFSET {
             types::EraYear {
                 era: tinystr!(16, "aa"),
                 era_index: Some(0),
                 year,
+                monotonic_year,
                 ambiguity: types::YearAmbiguity::CenturyRequired,
             }
         } else {
@@ -212,18 +220,14 @@ impl Calendar for Ethiopian {
                 era: tinystr!(16, "am"),
                 era_index: Some(1),
                 year: year - INCARNATION_OFFSET,
+                monotonic_year,
                 ambiguity: types::YearAmbiguity::CenturyRequired,
             }
         }
     }
 
     fn extended_year(&self, date: &Self::DateInner) -> i32 {
-        let year = date.0.monotonic_year();
-        if self.0 {
-            year
-        } else {
-            year - INCARNATION_OFFSET
-        }
+        self.year_info(date).monotonic_year
     }
 
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {

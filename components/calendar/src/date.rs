@@ -240,7 +240,7 @@ impl<A: AsCalendar> Date<A> {
     #[deprecated = "Please use monotonic_year() instead"]
     #[inline]
     pub fn extended_year(&self) -> i32 {
-        self.calendar.as_calendar().extended_year(&self.inner)
+        self.monotonic_year()
     }
 
     /// The "monotonic year", typically anchored with year 1 as the year 1 of either the most modern or
@@ -255,7 +255,7 @@ impl<A: AsCalendar> Date<A> {
     /// See [`Self::year()`] for more information about the year.
     #[inline]
     pub fn monotonic_year(&self) -> i32 {
-        self.calendar.as_calendar().extended_year(&self.inner)
+        self.year().monotonic_year()
     }
 
     /// Returns whether `self` is in a calendar-specific leap year

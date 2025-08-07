@@ -112,13 +112,14 @@ impl Calendar for Gregorian {
     }
     /// The calendar-specific year represented by `date`
     fn year_info(&self, date: &Self::DateInner) -> Self::Year {
-        let extended_year = self.extended_year(date);
-        if extended_year > 0 {
+        let monotonic_year = self.extended_year(date);
+        if monotonic_year > 0 {
             types::EraYear {
                 era: tinystr!(16, "ce"),
                 era_index: Some(1),
-                year: extended_year,
-                ambiguity: match extended_year {
+                year: monotonic_year,
+                monotonic_year,
+                ambiguity: match monotonic_year {
                     ..=999 => types::YearAmbiguity::EraAndCenturyRequired,
                     1000..=1949 => types::YearAmbiguity::CenturyRequired,
                     1950..=2049 => types::YearAmbiguity::Unambiguous,
@@ -129,7 +130,8 @@ impl Calendar for Gregorian {
             types::EraYear {
                 era: tinystr!(16, "bce"),
                 era_index: Some(0),
-                year: 1_i32.saturating_sub(extended_year),
+                year: 1_i32.saturating_sub(monotonic_year),
+                monotonic_year,
                 ambiguity: types::YearAmbiguity::EraAndCenturyRequired,
             }
         }
