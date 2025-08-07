@@ -31,6 +31,7 @@ yoke = { workspace = true, features = ["derive"], optional = true }
 zerovec = { workspace = true, default-features = false, optional = true }
 
 [dev-dependencies]
+litemap = { workspace = true, features = ["alloc"] }
 zerofrom = { workspace = true, features = ["alloc"] }
 zerovec = { workspace = true, features = ["databake", "serde"] }
 rmp-serde = { workspace = true }
