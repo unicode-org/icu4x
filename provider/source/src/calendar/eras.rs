@@ -236,9 +236,27 @@ fn process_era_dates_map(
             .unwrap()
             .clone();
 
-        data.remove("chinese");
+        data.get_mut("chinese")
+            .unwrap()
+            .eras
+            .get_mut("0")
+            .unwrap()
+            .start = Some(EraStartDate {
+            year: -2636,
+            month: 2,
+            day: 15,
+        });
 
-        data.remove("dangi");
+        data.get_mut("dangi")
+            .unwrap()
+            .eras
+            .get_mut("0")
+            .unwrap()
+            .start = Some(EraStartDate {
+            year: -2332,
+            month: 2,
+            day: 15,
+        });
 
         data.get_mut("hebrew")
             .unwrap()
