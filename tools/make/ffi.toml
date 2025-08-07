@@ -74,7 +74,7 @@ exec --fail-on-error dart pub get
 exec --fail-on-error dart format --set-exit-if-changed .
 exec --fail-on-error dart analyze
 exec --fail-on-error dart --enable-experiment=native-assets --enable-experiment=record-use build bin/example.dart
-exec --fail-on-error dart --enable-experiment=native-assets --enable-experiment=record-use run bin/example.dart
+exec --fail-on-error bin/example/example.exe
 libs = glob_array ./bin/example/lib/*
 lib = array_pop ${libs}
 size = filesize ${lib}
