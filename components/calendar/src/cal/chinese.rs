@@ -461,7 +461,7 @@ mod test {
                     let chinese = Date::from_rata_die(rata_die, chinese);
                     assert_eq!(
                         case.expected_year,
-                        chinese.extended_year(),
+                        chinese.monotonic_year(),
                         "[{calendar_type}] Chinese from RD failed, case: {case:?}"
                     );
                     assert_eq!(

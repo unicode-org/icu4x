@@ -1615,7 +1615,7 @@ mod tests {
         } else {
             assert_eq!(
                 year,
-                date.extended_year(),
+                date.monotonic_year(),
                 "Failed to roundtrip year for calendar {}",
                 calendar.debug_name()
             );

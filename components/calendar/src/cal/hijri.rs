@@ -472,7 +472,7 @@ impl Calendar for HijriSimulated {
     }
 
     fn extended_year(&self, date: &Self::DateInner) -> i32 {
-        date.0.extended_year()
+        date.0.monotonic_year()
     }
 
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
@@ -756,7 +756,7 @@ impl Calendar for HijriUmmAlQura {
     }
 
     fn extended_year(&self, date: &Self::DateInner) -> i32 {
-        date.0.extended_year()
+        date.0.monotonic_year()
     }
 
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
@@ -977,7 +977,7 @@ impl Calendar for HijriTabular {
     }
 
     fn extended_year(&self, date: &Self::DateInner) -> i32 {
-        date.0.extended_year()
+        date.0.monotonic_year()
     }
 
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {

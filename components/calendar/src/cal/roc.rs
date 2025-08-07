@@ -235,7 +235,7 @@ mod test {
             "Failed era check from RD: {case:?}\nISO: {iso_from_rd:?}\nROC: {roc_from_rd:?}"
         );
         assert_eq!(
-            roc_from_rd.extended_year(),
+            roc_from_rd.monotonic_year(),
             if case.expected_era == "roc" {
                 case.expected_year
             } else {
