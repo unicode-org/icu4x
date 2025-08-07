@@ -22,7 +22,7 @@ pub(super) struct MatrixOwned<const D: usize> {
 }
 
 impl<const D: usize> MatrixOwned<D> {
-    pub(super) fn as_borrowed(&self) -> MatrixBorrowed<D> {
+    pub(super) fn as_borrowed(&self) -> MatrixBorrowed<'_, D> {
         MatrixBorrowed {
             data: &self.data,
             dims: self.dims,
@@ -44,7 +44,7 @@ impl<const D: usize> MatrixOwned<D> {
     ///
     /// The type parameter `M` should be `D - 1`.
     #[inline]
-    pub(super) fn submatrix<const M: usize>(&self, index: usize) -> Option<MatrixBorrowed<M>> {
+    pub(super) fn submatrix<const M: usize>(&self, index: usize) -> Option<MatrixBorrowed<'_, M>> {
         // This assertion is based on const generics; it should always succeed and be elided.
         assert_eq!(M, D - 1);
         let (range, dims) = self.as_borrowed().submatrix_range(index);
@@ -52,7 +52,7 @@ impl<const D: usize> MatrixOwned<D> {
         Some(MatrixBorrowed { data, dims })
     }
 
-    pub(super) fn as_mut(&mut self) -> MatrixBorrowedMut<D> {
+    pub(super) fn as_mut(&mut self) -> MatrixBorrowedMut<'_, D> {
         MatrixBorrowedMut {
             data: &mut self.data,
             dims: self.dims,
@@ -64,7 +64,7 @@ impl<const D: usize> MatrixOwned<D> {
     pub(super) fn submatrix_mut<const M: usize>(
         &mut self,
         index: usize,
-    ) -> Option<MatrixBorrowedMut<M>> {
+    ) -> Option<MatrixBorrowedMut<'_, M>> {
         // This assertion is based on const generics; it should always succeed and be elided.
         assert_eq!(M, D - 1);
         let (range, dims) = self.as_borrowed().submatrix_range(index);
@@ -160,7 +160,7 @@ pub(super) struct MatrixBorrowedMut<'a, const D: usize> {
 }
 
 impl<const D: usize> MatrixBorrowedMut<'_, D> {
-    pub(super) fn as_borrowed(&self) -> MatrixBorrowed<D> {
+    pub(super) fn as_borrowed(&self) -> MatrixBorrowed<'_, D> {
         MatrixBorrowed {
             data: self.data,
             dims: self.dims,

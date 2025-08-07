@@ -84,7 +84,7 @@ impl<'a> Hide<'a> {
         self.raw.splice(adjusted_range, replace_with);
     }
 
-    fn child(&mut self) -> Hide {
+    fn child(&mut self) -> Hide<'_> {
         Hide {
             raw: self.raw,
             hide_pre_len: self.hide_pre_len,
@@ -93,7 +93,7 @@ impl<'a> Hide<'a> {
     }
 
     /// Borrows into a child `Hide` with its visible part restricted to the given range.
-    fn tighten(&mut self, visible_range: Range<usize>) -> Hide {
+    fn tighten(&mut self, visible_range: Range<usize>) -> Hide<'_> {
         debug_assert!(visible_range.start <= self.len());
         debug_assert!(visible_range.end <= self.len());
 
@@ -255,7 +255,7 @@ impl<'a> Replaceable<'a> {
     /// Returns a `Replaceable` with the same content as the current one.
     ///
     /// This is useful for repeated transliterations of the same modifiable range.
-    pub(crate) fn child(&mut self) -> Replaceable {
+    pub(crate) fn child(&mut self) -> Replaceable<'_> {
         Replaceable {
             content: self.content.child(),
             freeze_pre_len: self.freeze_pre_len,
@@ -296,7 +296,11 @@ impl<'a> Replaceable<'a> {
     ///
     /// # Safety
     /// The caller must ensure that `start` is a valid UTF-8 index into the internal text.
-    unsafe fn next_filtered_run(&mut self, start: usize, filter: &Filter) -> Option<Replaceable> {
+    unsafe fn next_filtered_run(
+        &mut self,
+        start: usize,
+        filter: &Filter,
+    ) -> Option<Replaceable<'_>> {
         if start == self.allowed_upper_bound() {
             // we have reached the end, there are no more runs
             return None;
@@ -945,7 +949,7 @@ where
 {
     /// Returns a type that allows getting a `Replaceable` from it. The replaceable will
     /// transliterate everything since `self` was created with [`Insertable::start_replaceable_adapter`].
-    pub(super) fn as_replaceable(&mut self) -> InsertableGuard<impl FnMut(&[u8]) + '_> {
+    pub(super) fn as_replaceable(&mut self) -> InsertableGuard<'_, impl FnMut(&[u8]) + '_> {
         // Thought: we don't need to make the Insertable contiguous because the visible length hides
         //  the invalid UTF-8 tail. However, we do not gain anything from that empty buffer at the
         //  moment, because the child Replaceable's Insertable will not know about it. can we
@@ -1024,7 +1028,7 @@ where
         Self { rep, on_drop }
     }
 
-    pub(crate) fn child(&mut self) -> Replaceable {
+    pub(crate) fn child(&mut self) -> Replaceable<'_> {
         self.rep.child()
     }
 }

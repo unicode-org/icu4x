@@ -331,7 +331,7 @@ impl<A: AsCalendar<Calendar = Chinese>> Date<A> {
 type ChineseCB = calendrical_calculations::chinese_based::Chinese;
 impl ChineseBasedWithDataLoading for Chinese {
     type CB = ChineseCB;
-    fn get_precomputed_data(&self) -> ChineseBasedPrecomputedData<Self::CB> {
+    fn get_precomputed_data(&self) -> ChineseBasedPrecomputedData<'_, Self::CB> {
         ChineseBasedPrecomputedData::new(self.data.as_ref().map(|d| d.get()))
     }
 }

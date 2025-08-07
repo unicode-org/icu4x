@@ -517,7 +517,7 @@ where
     NP: ?Sized,
     NC: ?Sized,
 {
-    fn iter_ids(&self) -> Result<alloc::collections::BTreeSet<DataIdentifierCow>, DataError> {
+    fn iter_ids(&self) -> Result<alloc::collections::BTreeSet<DataIdentifierCow<'_>>, DataError> {
         let exclusive_data = self.collection.data.borrow();
         Ok(exclusive_data
             .0

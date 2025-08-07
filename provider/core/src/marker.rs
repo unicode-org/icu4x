@@ -350,7 +350,7 @@ impl Ord for DataMarkerId {
 impl PartialOrd for DataMarkerId {
     #[inline]
     fn partial_cmp(&self, other: &Self) -> Option<core::cmp::Ordering> {
-        Some(self.hash.cmp(&other.hash))
+        Some(self.cmp(other))
     }
 }
 
@@ -447,7 +447,7 @@ pub struct DataMarkerInfo {
 
 impl PartialOrd for DataMarkerInfo {
     fn partial_cmp(&self, other: &Self) -> Option<core::cmp::Ordering> {
-        Some(self.id.cmp(&other.id))
+        Some(self.cmp(other))
     }
 }
 

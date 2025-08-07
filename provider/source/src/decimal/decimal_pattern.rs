@@ -78,7 +78,7 @@ impl FromStr for DecimalSubPattern {
 
 impl DecimalSubPattern {
     #[cfg(feature = "experimental")]
-    pub(crate) fn to_pattern_items(&self) -> Vec<PatternItemCow<DoublePlaceholderKey>> {
+    pub(crate) fn to_pattern_items(&self) -> Vec<PatternItemCow<'_, DoublePlaceholderKey>> {
         use std::borrow::Cow;
         vec![
             PatternItemCow::Literal(Cow::Borrowed(&self.prefix)),

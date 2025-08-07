@@ -1374,7 +1374,7 @@ where
     S: StoreMut<K, V>,
 {
     /// Gets the entry for the given key in the map for in-place manipulation.
-    pub fn entry(&mut self, key: K) -> Entry<K, V, S> {
+    pub fn entry(&mut self, key: K) -> Entry<'_, K, V, S> {
         match self.values.lm_binary_search_by(|k| k.cmp(&key)) {
             Ok(index) => Entry::Occupied(OccupiedEntry { map: self, index }),
             Err(index) => Entry::Vacant(VacantEntry {

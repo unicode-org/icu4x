@@ -2827,7 +2827,7 @@ impl<FSet: DateTimeNamesMarker> RawDateTimeNames<FSet> {
         }
     }
 
-    pub(crate) fn as_borrowed(&self) -> RawDateTimeNamesBorrowed {
+    pub(crate) fn as_borrowed(&self) -> RawDateTimeNamesBorrowed<'_> {
         RawDateTimeNamesBorrowed {
             year_names: self.year_names.get().inner,
             month_names: self.month_names.get().inner,
@@ -3668,7 +3668,7 @@ impl RawDateTimeNamesBorrowed<'_> {
         field_symbol: fields::Month,
         field_length: FieldLength,
         code: MonthCode,
-    ) -> Result<MonthPlaceholderValue, GetNameForMonthError> {
+    ) -> Result<MonthPlaceholderValue<'_>, GetNameForMonthError> {
         let month_name_length = MonthNameLength::from_field(field_symbol, field_length)
             .ok_or(GetNameForMonthError::InvalidFieldLength)?;
         let month_names = self

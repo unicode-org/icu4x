@@ -95,7 +95,10 @@ impl<C: CldrCalendar, FSet: DateTimeNamesMarker> FixedCalendarDateTimeFormatter<
     /// [`ZonedDateTime`]: crate::input::ZonedDateTime
     /// [`YMD`]: crate::fieldsets::YMD
     /// [`format_unchecked`]: Self::format_unchecked
-    pub fn format_unchecked(&self, datetime: DateTimeInputUnchecked) -> FormattedDateTimeUnchecked {
+    pub fn format_unchecked(
+        &self,
+        datetime: DateTimeInputUnchecked,
+    ) -> FormattedDateTimeUnchecked<'_> {
         FormattedDateTimeUnchecked {
             pattern: self.selection.select(&datetime),
             input: datetime,
@@ -173,7 +176,10 @@ impl<FSet: DateTimeNamesMarker> DateTimeFormatter<FSet> {
     /// [`ZonedDateTime`]: crate::input::ZonedDateTime
     /// [`YMD`]: crate::fieldsets::YMD
     /// [`format_unchecked`]: Self::format_unchecked
-    pub fn format_unchecked(&self, datetime: DateTimeInputUnchecked) -> FormattedDateTimeUnchecked {
+    pub fn format_unchecked(
+        &self,
+        datetime: DateTimeInputUnchecked,
+    ) -> FormattedDateTimeUnchecked<'_> {
         FormattedDateTimeUnchecked {
             pattern: self.selection.select(&datetime),
             input: datetime,

@@ -44,6 +44,7 @@ pub mod ffi {
             &self,
         ) -> Result<
             icu_provider::buf::DeserializingBufferProvider<
+                '_,
                 (dyn icu_provider::buf::BufferProvider + 'static),
             >,
             icu_provider::DataError,

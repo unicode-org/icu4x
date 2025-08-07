@@ -119,7 +119,7 @@ impl DateTimePattern {
         self.pattern.items.iter()
     }
 
-    pub(crate) fn as_borrowed(&self) -> DateTimePatternBorrowed {
+    pub(crate) fn as_borrowed(&self) -> DateTimePatternBorrowed<'_> {
         DateTimePatternBorrowed(&self.pattern)
     }
 }
