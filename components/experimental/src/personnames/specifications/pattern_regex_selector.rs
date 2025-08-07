@@ -26,7 +26,7 @@ impl PersonNamePattern<'_> {}
 
 impl PersonNamePattern<'_> {
     #[cfg(test)]
-    fn get_field(&self, lookup_name_field: &NameField) -> Option<Cow<str>> {
+    fn get_field(&self, lookup_name_field: &NameField) -> Option<Cow<'_, str>> {
         self.name_fields
             .iter()
             .find(|(k, _)| k == lookup_name_field)

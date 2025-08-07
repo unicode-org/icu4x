@@ -158,7 +158,7 @@ macro_rules! impl_tinystr_subtag {
             }
             #[inline]
             #[cfg(feature = "alloc")]
-            fn write_to_string(&self) -> alloc::borrow::Cow<str> {
+            fn write_to_string(&self) -> alloc::borrow::Cow<'_, str> {
                 alloc::borrow::Cow::Borrowed(self.0.as_str())
             }
         }
@@ -360,7 +360,7 @@ macro_rules! impl_writeable_for_each_subtag_str_no_test {
 
             $(
                 #[cfg(feature = "alloc")]
-                fn write_to_string(&self) -> alloc::borrow::Cow<str> {
+                fn write_to_string(&self) -> alloc::borrow::Cow<'_, str> {
                     let $self = self;
                     if $borrow_cond {
                         $borrow

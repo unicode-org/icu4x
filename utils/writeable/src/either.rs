@@ -32,7 +32,7 @@ where
         }
     }
 
-    fn write_to_string(&self) -> Cow<str> {
+    fn write_to_string(&self) -> Cow<'_, str> {
         match self {
             Either::Left(w) => w.write_to_string(),
             Either::Right(w) => w.write_to_string(),

@@ -238,7 +238,7 @@ impl writeable::Writeable for Other {
     }
 
     #[cfg(feature = "alloc")]
-    fn write_to_string(&self) -> alloc::borrow::Cow<str> {
+    fn write_to_string(&self) -> alloc::borrow::Cow<'_, str> {
         if self.keys.is_empty() {
             return alloc::borrow::Cow::Borrowed("");
         }

@@ -102,7 +102,7 @@ impl<T: Writeable + ?Sized> Writeable for WithPart<T> {
     }
 
     #[inline]
-    fn write_to_string(&self) -> Cow<str> {
+    fn write_to_string(&self) -> Cow<'_, str> {
         self.writeable.write_to_string()
     }
 }

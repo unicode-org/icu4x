@@ -342,7 +342,7 @@ impl Writeable for FormattedHelloWorld<'_> {
         self.data.message.write_to(sink)
     }
 
-    fn write_to_string(&self) -> Cow<str> {
+    fn write_to_string(&self) -> Cow<'_, str> {
         self.data.message.clone()
     }
 
