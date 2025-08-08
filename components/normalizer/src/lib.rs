@@ -1976,9 +1976,27 @@ impl<'data> DecomposingNormalizerBorrowed<'data> {
             // detecting an internal bug without panic. (In debug builds, internal bugs panic instead.)
             #[expect(clippy::never_loop)]
             'fastwrap: loop {
-                let mut code_unit_iter = decomposition.delegate.as_slice().iter();
+                // Commented out `code_unit_iter` and used `ptr` and `end` to
+                // work around https://github.com/rust-lang/rust/issues/144684 .
+                //
+                // let mut code_unit_iter = decomposition.delegate.as_slice().iter();
+                let delegate_as_slice = decomposition.delegate.as_slice();
+                let mut ptr: *const u16 = delegate_as_slice.as_ptr();
+                // SAFETY: materializing a pointer immediately past the end of an
+                // allocation is OK.
+                let end: *const u16 = unsafe { ptr.add(delegate_as_slice.len()) };
                 'fast: loop {
-                    if let Some(&upcoming_code_unit) = code_unit_iter.next() {
+                    // if let Some(&upcoming_code_unit) = code_unit_iter.next() {
+                    if ptr != end {
+                        // SAFETY: We just checked that `ptr` has not reached `end`.
+                        // `ptr` always advances by one, and we always have a check
+                        // per advancement.
+                        let upcoming_code_unit = unsafe { *ptr };
+                        // SAFETY: Since `ptr` hadn't reached `end`, yet, advancing
+                        // by one points to the same allocation or to immediately
+                        // after, which is OK.
+                        ptr = unsafe { ptr.add(1) };
+
                         let mut upcoming32 = u32::from(upcoming_code_unit);
                         if upcoming32 < decomposition_passthrough_bound {
                             continue 'fast;
@@ -1999,9 +2017,19 @@ impl<'data> DecomposingNormalizerBorrowed<'data> {
                                 break 'surrogateloop;
                             }
                             if surrogate_base <= (0xDBFF - 0xD800) {
-                                let iter_backup = code_unit_iter.clone();
-                                if let Some(&low) = code_unit_iter.next() {
+                                // let iter_backup = code_unit_iter.clone();
+                                // if let Some(&low) = code_unit_iter.next() {
+                                if ptr != end {
+                                    // SAFETY: We just checked that `ptr` has not reached `end`.
+                                    // `ptr` always advances by one, and we always have a check
+                                    // per advancement.
+                                    let low = unsafe { *ptr };
                                     if in_inclusive_range16(low, 0xDC00, 0xDFFF) {
+                                        // SAFETY: Since `ptr` hadn't reached `end`, yet, advancing
+                                        // by one points to the same allocation or to immediately
+                                        // after, which is OK.
+                                        ptr = unsafe { ptr.add(1) };
+
                                         upcoming32 = (upcoming32 << 10) + u32::from(low)
                                             - (((0xD800u32 << 10) - 0x10000u32) + 0xDC00u32);
                                         // Successfully-paired surrogate. Read from the trie again.
@@ -2010,8 +2038,8 @@ impl<'data> DecomposingNormalizerBorrowed<'data> {
                                             continue 'fast;
                                         }
                                         break 'surrogateloop;
-                                    } else {
-                                        code_unit_iter = iter_backup;
+                                    // } else {
+                                    //     code_unit_iter = iter_backup;
                                     }
                                 }
                             }
@@ -2025,7 +2053,12 @@ impl<'data> DecomposingNormalizerBorrowed<'data> {
                         let upcoming_with_trie_value = CharacterAndTrieValue::new(upcoming, trie_value);
 
 
-                        let Some(consumed_so_far_slice) = pending_slice.get(..pending_slice.len() - code_unit_iter.as_slice().len() - upcoming.len_utf16()) else {
+                        let Some(consumed_so_far_slice) = pending_slice.get(..pending_slice.len() -
+                            // code_unit_iter.as_slice().len()
+                            // SAFETY: `ptr` and `end` have been derived from the same allocation
+                            // and `ptr` is never greater than `end`.
+                            unsafe { end.offset_from(ptr) as usize }
+                            - upcoming.len_utf16()) else {
                             // If we ever come here, it's a bug, but let's avoid panic code paths in release builds.
                             debug_assert!(false);
                             // Throw away the results of the fast path.
@@ -2037,7 +2070,10 @@ impl<'data> DecomposingNormalizerBorrowed<'data> {
                             upcoming_with_trie_value.trie_val,
                         ) {
                             // Sync with main iterator
-                            decomposition.delegate = code_unit_iter.as_slice().chars();
+                            // decomposition.delegate = code_unit_iter.as_slice().chars();
+                            // SAFETY: `ptr` and `end` have been derived from the same allocation
+                            // and `ptr` is never greater than `end`.
+                            decomposition.delegate = unsafe { core::slice::from_raw_parts(ptr, end.offset_from(ptr) as usize) }.chars();
                             // Let this trie value to be reprocessed in case it is
                             // one of the rare decomposing ones.
                             decomposition.pending = Some(upcoming_with_trie_value);
@@ -2053,7 +2089,10 @@ impl<'data> DecomposingNormalizerBorrowed<'data> {
                     return Ok(());
                 }
                 // Sync the main iterator
-                decomposition.delegate = code_unit_iter.as_slice().chars();
+                // decomposition.delegate = code_unit_iter.as_slice().chars();
+                // SAFETY: `ptr` and `end` have been derived from the same allocation
+                // and `ptr` is never greater than `end`.
+                decomposition.delegate = unsafe { core::slice::from_raw_parts(ptr, end.offset_from(ptr) as usize) }.chars();
                 break 'fastwrap;
             }
         },
@@ -2550,13 +2589,32 @@ impl<'data> ComposingNormalizerBorrowed<'data> {
             // detecting an internal bug without panic. (In debug builds, internal bugs panic instead.)
             #[expect(clippy::never_loop)]
             'fastwrap: loop {
-                let mut code_unit_iter = composition.decomposition.delegate.as_slice().iter();
+                // Commented out `code_unit_iter` and used `ptr` and `end` to
+                // work around https://github.com/rust-lang/rust/issues/144684 .
+                //
+                // let mut code_unit_iter = composition.decomposition.delegate.as_slice().iter();
+                let delegate_as_slice = composition.decomposition.delegate.as_slice();
+                let mut ptr: *const u16 = delegate_as_slice.as_ptr();
+                // SAFETY: materializing a pointer immediately past the end of an
+                // allocation is OK.
+                let end: *const u16 = unsafe { ptr.add(delegate_as_slice.len()) };
+
                 let mut upcoming32;
                 // Declaring this up here is useful for getting compile errors about invalid changes
                 // to the code structure below.
                 let mut trie_value;
                 'fast: loop {
-                    if let Some(&upcoming_code_unit) = code_unit_iter.next() {
+                    // if let Some(&upcoming_code_unit) = code_unit_iter.next() {
+                    if ptr != end {
+                        // SAFETY: We just checked that `ptr` has not reached `end`.
+                        // `ptr` always advances by one, and we always have a check
+                        // per advancement.
+                        let upcoming_code_unit = unsafe { *ptr };
+                        // SAFETY: Since `ptr` hadn't reached `end`, yet, advancing
+                        // by one points to the same allocation or to immediately
+                        // after, which is OK.
+                        ptr = unsafe { ptr.add(1) };
+
                         upcoming32 = u32::from(upcoming_code_unit); // may be surrogate
                         if upcoming32 < composition_passthrough_bound {
                             // No need for surrogate or U+FFFD check, because
@@ -2590,9 +2648,19 @@ impl<'data> ComposingNormalizerBorrowed<'data> {
                                 break 'surrogateloop;
                             }
                             if surrogate_base <= (0xDBFF - 0xD800) {
-                                let iter_backup = code_unit_iter.clone();
-                                if let Some(&low) = code_unit_iter.next() {
+                                // let iter_backup = code_unit_iter.clone();
+                                // if let Some(&low) = code_unit_iter.next() {
+                                if ptr != end {
+                                    // SAFETY: We just checked that `ptr` has not reached `end`.
+                                    // `ptr` always advances by one, and we always have a check
+                                    // per advancement.
+                                    let low = unsafe { *ptr };
                                     if in_inclusive_range16(low, 0xDC00, 0xDFFF) {
+                                        // SAFETY: Since `ptr` hadn't reached `end`, yet, advancing
+                                        // by one points to the same allocation or to immediately
+                                        // after, which is OK.
+                                        ptr = unsafe { ptr.add(1) };
+
                                         upcoming32 = (upcoming32 << 10) + u32::from(low)
                                             - (((0xD800u32 << 10) - 0x10000u32) + 0xDC00u32);
                                         // Successfully-paired surrogate. Read from the trie again.
@@ -2602,8 +2670,8 @@ impl<'data> ComposingNormalizerBorrowed<'data> {
                                             continue 'fast;
                                         }
                                         break 'surrogateloop;
-                                    } else {
-                                        code_unit_iter = iter_backup;
+                                    // } else {
+                                    //     code_unit_iter = iter_backup;
                                     }
                                 }
                             }
@@ -2619,7 +2687,12 @@ impl<'data> ComposingNormalizerBorrowed<'data> {
                         let upcoming_with_trie_value = CharacterAndTrieValue::new(upcoming, trie_value);
                         // We need to fall off the fast path.
                         composition.decomposition.pending = Some(upcoming_with_trie_value);
-                        let Some(consumed_so_far_slice) = pending_slice.get(..pending_slice.len() - code_unit_iter.as_slice().len() - upcoming.len_utf16()) else {
+                        let Some(consumed_so_far_slice) = pending_slice.get(..pending_slice.len() -
+                            // code_unit_iter.as_slice().len()
+                            // SAFETY: `ptr` and `end` have been derived from the same allocation
+                            // and `ptr` is never greater than `end`.
+                            unsafe { end.offset_from(ptr) as usize }
+                            - upcoming.len_utf16()) else {
                             // If we ever come here, it's a bug, but let's avoid panic code paths in release builds.
                             debug_assert!(false);
                             // Throw away the results of the fast path.
@@ -2646,7 +2719,10 @@ impl<'data> ComposingNormalizerBorrowed<'data> {
                     return Ok(());
                 }
                 // Sync the main iterator
-                composition.decomposition.delegate = code_unit_iter.as_slice().chars();
+                // composition.decomposition.delegate = code_unit_iter.as_slice().chars();
+                // SAFETY: `ptr` and `end` have been derive from the same allocation
+                // and `ptr` is never greater than `end`.
+                composition.decomposition.delegate = unsafe { core::slice::from_raw_parts(ptr, end.offset_from(ptr) as usize) }.chars();
                 break 'fastwrap;
             }
         },
