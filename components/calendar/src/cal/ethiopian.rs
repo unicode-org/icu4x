@@ -207,7 +207,7 @@ impl Calendar for Ethiopian {
         };
 
         let year = date.0.year;
-        if self.0 || year <= INCARNATION_OFFSET {
+        if self.0 || monotonic_year <= 0 {
             types::EraYear {
                 era: tinystr!(16, "aa"),
                 era_index: Some(0),
