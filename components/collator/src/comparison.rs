@@ -1821,7 +1821,7 @@ impl CollatorBorrowed<'_> {
         S: CollationKeySink + ?Sized,
         S::State: Default,
     {
-        self.write_sort_key_impl(s.chars(), sink, |nfd, sink| nfd.normalize_to(s, sink))
+        self.write_sort_key_impl(s.chars(), sink)
     }
 
     /// Given potentially invalid UTF-8, write the sort key bytes up to the collator's strength.
@@ -1832,7 +1832,7 @@ impl CollatorBorrowed<'_> {
         S: CollationKeySink + ?Sized,
         S::State: Default,
     {
-        self.write_sort_key_impl(s.chars(), sink, |nfd, sink| nfd.normalize_utf8_to(s, sink))
+        self.write_sort_key_impl(s.chars(), sink)
     }
 
     /// Given potentially invalid UTF-16, write the sort key bytes up to the collator's strength.
@@ -1843,33 +1843,31 @@ impl CollatorBorrowed<'_> {
         S: CollationKeySink + ?Sized,
         S::State: Default,
     {
-        self.write_sort_key_impl(s.chars(), sink, |nfd, sink| nfd.normalize_utf16_to(s, sink))
+        self.write_sort_key_impl(s.chars(), sink)
     }
 
-    fn write_sort_key_impl<I, S, N>(
-        &self,
-        iter: I,
-        sink: &mut S,
-        normalize: N,
-    ) -> Result<S::Output, S::Error>
+    fn write_sort_key_impl<I, S>(&self, iter: I, sink: &mut S) -> Result<S::Output, S::Error>
     where
-        I: Iterator<Item = char>,
+        I: Iterator<Item = char> + Clone,
         S: CollationKeySink + ?Sized,
         S::State: Default,
-        N: Fn(DecomposingNormalizerBorrowed, &mut SinkAdapter<'_>) -> core::fmt::Result,
     {
+        let identical = if self.options.strength() == Strength::Identical {
+            Some(iter.clone())
+        } else {
+            None
+        };
+
         let mut state = S::State::default();
         self.write_sort_key_up_to_quaternary(iter, sink, &mut state)?;
 
-        if self.options.strength() == Strength::Identical {
+        if let Some(iter) = identical {
             let nfd =
                 DecomposingNormalizerBorrowed::new_with_data(self.decompositions, self.tables);
             sink.write_byte(&mut state, LEVEL_SEPARATOR_BYTE)?;
 
-            let mut tmp = Vec::new();
-            let mut adapter = SinkAdapter::new(&mut tmp);
-            let _ = normalize(nfd, &mut adapter);
-            write_identical_level(tmp.chars(), sink, &mut state)?;
+            let iter = nfd.normalize_iter(iter);
+            write_identical_level(iter, sink, &mut state)?;
         }
 
         sink.finish(state)
@@ -2453,43 +2451,6 @@ impl SortKeyLevel {
                 }
             }
         }
-    }
-}
-
-struct SinkAdapter<'a> {
-    tmp: &'a mut Vec<u8>,
-}
-
-impl<'a> SinkAdapter<'a> {
-    fn new(tmp: &'a mut Vec<u8>) -> Self {
-        Self { tmp }
-    }
-}
-
-impl core::fmt::Write for SinkAdapter<'_> {
-    fn write_str(&mut self, s: &str) -> core::fmt::Result {
-        self.tmp.extend_from_slice(s.as_bytes());
-        Ok(())
-    }
-}
-
-impl write16::Write16 for SinkAdapter<'_> {
-    fn write_slice(&mut self, s: &[u16]) -> core::fmt::Result {
-        // For the identical level, if the input is UTF-16, transcode to UTF-8.
-        let iter = char::decode_utf16(s.iter().cloned());
-        let mut bytes = [0u8; 4];
-        for c in iter {
-            let c = c.unwrap_or(char::REPLACEMENT_CHARACTER); // shouldn't happen
-            self.tmp
-                .extend_from_slice(c.encode_utf8(&mut bytes).as_bytes());
-        }
-        Ok(())
-    }
-
-    fn write_char(&mut self, c: char) -> core::fmt::Result {
-        self.tmp
-            .extend_from_slice(c.encode_utf8(&mut [0u8; 4]).as_bytes());
-        Ok(())
     }
 }
 
