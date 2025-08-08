@@ -15,13 +15,45 @@ use crate::{
     CollatorPreferences,
 };
 
-/// The collation strength that indicates how many levels to compare.
+/// The collation strength that indicates how many levels to compare. The primary
+/// level considers base letters, i.e. 'a' and 'b' are unequal but 'E' and 'é'
+/// are equal, with further levels dealing with distinctions such as accents
+/// and case.
 ///
 /// If an earlier level isn't equal, the earlier level is decisive.
 /// If the result is equal on a level, but the strength is higher,
 /// the comparison proceeds to the next level.
 ///
-/// Note: The bit layout of `CollatorOptions` requires `Strength`
+/// Note that lowering the strength means that more user-perceptible differences
+/// compare as equal. This may make sense when sorting more complex structures
+/// where the string to be compared is just one field, and ties between strings
+/// that differ only in case, accent, or similar are resolved by comparing some
+/// secondary field in the larger structure to be sorted.
+///
+/// However, if the sort is just a string sort without some other field for
+/// resolving ties, lowering the strength means that factors that don't make
+/// sense to the user (such as the order of items prior to sorting with a stable
+/// sort algorithm or the internal details of a sorting algorithm that doesn't
+/// provide the stability property) affect the relative order of strings that
+/// do have user-perceptible differences particularly in accents or case.
+///
+/// Lowering the strength is less of a perfomance optimization that it may seem
+/// directly from the above description. As described above, in the case
+/// of identical strings to be compared, the algorithm has to work though all
+/// the levels included in the strength without an early exit. However, this
+/// collator implements an identical prefix optimization, which examines the
+/// code units of the strings to be compared to skip the identical prefix before
+/// starting the actual collation algorithm. When the strings to be compared
+/// are identical on the byte level, they are found to be equal without the
+/// actual collation algorithm running at all! Therefore, the strength setting
+/// only has an effect (whether order effect or performance effect) for
+/// comparisons where the strings to be compared are not equal on the byte level
+/// but are equal on the primary level/strength. The common cases are that
+/// a comparison is decided on the primary level or the strings are byte
+/// equal, which narrows the performance effect of lowering the strength
+/// setting.
+///
+/// Note: The bit layout of `CollatorOptionsBitField` requires `Strength`
 /// to fit in 3 bits.
 #[derive(Eq, PartialEq, Debug, Copy, Clone, PartialOrd, Ord)]
 #[repr(u8)]
