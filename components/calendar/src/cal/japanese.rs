@@ -641,13 +641,13 @@ impl Japanese {
     ) -> Result<JapaneseDateInner, DateError> {
         let cal = Ref(self);
         let era = match era {
-            Some("ce" | "ad") => {
-                return Ok(Date::try_new_gregorian(year_check(year, 1..)?, month, day)?
+            None => {
+                return Ok(Date::try_new_gregorian(year, month, day)?
                     .to_calendar(cal)
                     .inner);
             }
-            None => {
-                return Ok(Date::try_new_gregorian(year, month, day)?
+            Some("ce" | "ad") => {
+                return Ok(Date::try_new_gregorian(year_check(year, 1..)?, month, day)?
                     .to_calendar(cal)
                     .inner);
             }

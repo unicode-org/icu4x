@@ -56,9 +56,9 @@ impl Calendar for Gregorian {
         day: u8,
     ) -> Result<Self::DateInner, DateError> {
         let year = match era {
-            Some("bce" | "bc") => 1 - year_check(year, 1..)?,
-            Some("ad" | "ce") => year_check(year, 1..)?,
             None => year,
+            Some("ad" | "ce") => year_check(year, 1..)?,
+            Some("bce" | "bc") => 1 - year_check(year, 1..)?,
             Some(_) => return Err(DateError::UnknownEra),
         };
 
