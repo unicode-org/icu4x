@@ -32,7 +32,7 @@ pub trait Calendar: crate::cal::scaffold::UnstableSealed {
 
     /// Construct a date from era/month codes and fields
     ///
-    /// The year is the [monotonic year](Date::monotonic_year) if no era is provided
+    /// The year is the [monotonic year](crate::Date::monotonic_year) if no era is provided
     #[expect(clippy::wrong_self_convention)]
     fn from_codes(
         &self,
