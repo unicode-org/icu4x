@@ -355,7 +355,7 @@ pub mod ffi {
             self.0.year().era_year_or_related_iso()
         }
 
-        /// Deprecated, use [`Self::montonic_year`]
+        /// Deprecated, use [`Self::monotonic_year`]
         #[diplomat::rust_link(icu::calendar::Date::extended_year, FnInStruct)]
         #[diplomat::attr(auto, getter)]
         pub fn extended_year(&self) -> i32 {
