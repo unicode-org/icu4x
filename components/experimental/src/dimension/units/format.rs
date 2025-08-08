@@ -4,7 +4,7 @@
 
 //! Experimental.
 
-use crate::dimension::provider::units::UnitsDisplayName;
+use crate::dimension::provider::units::display_name::UnitsDisplayName;
 use fixed_decimal::Decimal;
 use icu_decimal::DecimalFormatter;
 use icu_plurals::PluralRules;
