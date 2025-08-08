@@ -1,0 +1,23 @@
+[package]
+name = "dart_icu4x"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+crate-type = ["cdylib", "staticlib"]
+
+[dependencies]
+flutter_rust_bridge = "=2.11.1"
+icu = "2.0.0"
+icu_casemap = "2.0.0"
+icu_collections = "2.0.0"
+icu_properties = "2.0.1"
+icu_provider = "2.0.0"
+icu_locale_core = "2.0.0"
+icu_locid = "1.5.0"
+serde = { version = "1.0", features = ["derive"] }
+unicode_names2 = "2.0.0"
+unicode-blocks = "0.1.9"
+
+[lints.rust]
+unexpected_cfgs = { level = "warn", check-cfg = ['cfg(frb_expand)'] }
