@@ -48,13 +48,8 @@ impl YearInfo {
         }
     }
 
-    /// Get the monotonic year
-    ///
-    /// The monotonic year can be meaningfully compared with monotonic years
-    /// from other eras and used for arithmetic.
-    ///
-    /// Typically this is the era year for some "primary" (most modern, or other significant)
-    /// era in the calendar, or related_iso for non-era calendars.
+    /// Get the monotonic year (See [`Date::monotonic_year`](crate::Date::monotonic_year))
+    /// for more information
     pub fn monotonic_year(self) -> i32 {
         match self {
             YearInfo::Era(e) => e.monotonic_year,
