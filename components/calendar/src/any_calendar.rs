@@ -1583,7 +1583,6 @@ mod tests {
             });
 
         let roundtrip_year = date.year();
-        // FIXME: these APIs should be improved
         let roundtrip_month = date.month().standard_code;
         let roundtrip_day = date.day_of_month().0;
 
