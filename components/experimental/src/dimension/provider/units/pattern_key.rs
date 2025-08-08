@@ -10,7 +10,7 @@ use zerovec::{
     ule::{AsULE, UleError, ULE},
 };
 
-use crate::dimension::provider::units_essentials::CompoundCount;
+use crate::dimension::provider::units::essentials::CompoundCount;
 
 #[derive(Copy, Clone, PartialOrd, Ord, PartialEq, Eq, Debug)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]

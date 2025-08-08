@@ -7,7 +7,9 @@ use std::collections::HashSet;
 use crate::cldr_serde::{self};
 use crate::SourceDataProvider;
 
-use icu::experimental::dimension::provider::units::{UnitsDisplayName, UnitsDisplayNameV1};
+use icu::experimental::dimension::provider::units::display_name::{
+    UnitsDisplayName, UnitsDisplayNameV1,
+};
 use icu::plurals::PluralElements;
 use icu_provider::prelude::*;
 use icu_provider::DataMarkerAttributes;
