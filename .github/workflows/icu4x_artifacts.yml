@@ -35,7 +35,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     env:
       FEATURES: ${{ matrix.include_data == true && 'default_components,experimental,buffer_provider,compiled_data' || 'default_components,experimental,buffer_provider' }}
-      FILENAME_SUFFIX: ${{ matrix.compiletype == 'static' && matrix.include_data == true && '_data' || '' }}
+      FILENAME_SUFFIX: ${{ matrix.compiletype == 'static' && matrix.include_data == true && '-data' || '' }}
 
     steps:
     - uses: actions/checkout@c85c95e3d7251135ab7dc9ce3241c5835cc595a9
@@ -74,14 +74,14 @@ jobs:
       run: |
         (cd ffi/dart && dart pub get)
         
-        dart ffi/dart/lib/src/hook_helpers/build_libs.dart --working_directory . --file bin/android_arm_${{ matrix.compiletype }}${{ env.FILENAME_SUFFIX }} --os android --architecture arm --compile_type ${{ matrix.compiletype }} --cargo_features ${{ env.FEATURES }}
-        dart ffi/dart/lib/src/hook_helpers/build_libs.dart --working_directory . --file bin/android_arm64_${{ matrix.compiletype }}${{ env.FILENAME_SUFFIX }} --os android --architecture arm64 --compile_type ${{ matrix.compiletype }} --cargo_features ${{ env.FEATURES }}
-        dart ffi/dart/lib/src/hook_helpers/build_libs.dart --working_directory . --file bin/android_ia32_${{ matrix.compiletype }}${{ env.FILENAME_SUFFIX }} --os android --architecture ia32 --compile_type ${{ matrix.compiletype }} --cargo_features ${{ env.FEATURES }}
-        dart ffi/dart/lib/src/hook_helpers/build_libs.dart --working_directory . --file bin/android_x64_${{ matrix.compiletype }}${{ env.FILENAME_SUFFIX }} --os android --architecture x64 --compile_type ${{ matrix.compiletype }} --cargo_features ${{ env.FEATURES }}
-        dart ffi/dart/lib/src/hook_helpers/build_libs.dart --working_directory . --file bin/linux_arm_${{ matrix.compiletype }}${{ env.FILENAME_SUFFIX }} --os linux --architecture arm --compile_type ${{ matrix.compiletype }} --cargo_features ${{ env.FEATURES }}
-        dart ffi/dart/lib/src/hook_helpers/build_libs.dart --working_directory . --file bin/linux_arm64_${{ matrix.compiletype }}${{ env.FILENAME_SUFFIX }} --os linux --architecture arm64 --compile_type ${{ matrix.compiletype }} --cargo_features ${{ env.FEATURES }}
-        dart ffi/dart/lib/src/hook_helpers/build_libs.dart --working_directory . --file bin/linux_riscv64_${{ matrix.compiletype }}${{ env.FILENAME_SUFFIX }} --os linux --architecture riscv64 --compile_type ${{ matrix.compiletype }} --cargo_features ${{ env.FEATURES }}
-        dart ffi/dart/lib/src/hook_helpers/build_libs.dart --working_directory . --file bin/linux_x64_${{ matrix.compiletype }}${{ env.FILENAME_SUFFIX }} --os linux --architecture x64 --compile_type ${{ matrix.compiletype }} --cargo_features ${{ env.FEATURES }}
+        dart ffi/dart/lib/src/hook_helpers/build_libs.dart --working_directory . --file bin/icu4x-2-${{ matrix.compiletype }}${{ env.FILENAME_SUFFIX }}-armv7-linux-androideabi --target armv7-linux-androideabi --compile_type ${{ matrix.compiletype }} --cargo_features ${{ env.FEATURES }}
+        dart ffi/dart/lib/src/hook_helpers/build_libs.dart --working_directory . --file bin/icu4x-2-${{ matrix.compiletype }}${{ env.FILENAME_SUFFIX }}-aarch64-linux-android --target aarch64-linux-android --compile_type ${{ matrix.compiletype }} --cargo_features ${{ env.FEATURES }}
+        dart ffi/dart/lib/src/hook_helpers/build_libs.dart --working_directory . --file bin/icu4x-2-${{ matrix.compiletype }}${{ env.FILENAME_SUFFIX }}-i686-linux-android --target i686-linux-android --compile_type ${{ matrix.compiletype }} --cargo_features ${{ env.FEATURES }}
+        dart ffi/dart/lib/src/hook_helpers/build_libs.dart --working_directory . --file bin/icu4x-2-${{ matrix.compiletype }}${{ env.FILENAME_SUFFIX }}-x86_64-linux-android --target x86_64-linux-android --compile_type ${{ matrix.compiletype }} --cargo_features ${{ env.FEATURES }}
+        dart ffi/dart/lib/src/hook_helpers/build_libs.dart --working_directory . --file bin/icu4x-2-${{ matrix.compiletype }}${{ env.FILENAME_SUFFIX }}-armv7-unknown-linux-gnueabihf --target armv7-unknown-linux-gnueabihf --compile_type ${{ matrix.compiletype }} --cargo_features ${{ env.FEATURES }}
+        dart ffi/dart/lib/src/hook_helpers/build_libs.dart --working_directory . --file bin/icu4x-2-${{ matrix.compiletype }}${{ env.FILENAME_SUFFIX }}-aarch64-unknown-linux-gnu --target aarch64-unknown-linux-gnu --compile_type ${{ matrix.compiletype }} --cargo_features ${{ env.FEATURES }}
+        dart ffi/dart/lib/src/hook_helpers/build_libs.dart --working_directory . --file bin/icu4x-2-${{ matrix.compiletype }}${{ env.FILENAME_SUFFIX }}-riscv64gc-unknown-linux-gnu --target riscv64gc-unknown-linux-gnu --compile_type ${{ matrix.compiletype }} --cargo_features ${{ env.FEATURES }}
+        dart ffi/dart/lib/src/hook_helpers/build_libs.dart --working_directory . --file bin/icu4x-2-${{ matrix.compiletype }}${{ env.FILENAME_SUFFIX }}-x86_64-unknown-linux-gnu --target x86_64-unknown-linux-gnu --compile_type ${{ matrix.compiletype }} --cargo_features ${{ env.FEATURES }}
 
     - name: Build Linux data
       if: matrix.os == 'ubuntu-latest' && matrix.compiletype == 'static' && matrix.include_data == false
@@ -97,19 +97,19 @@ jobs:
         cargo build --release --bin icu4x-datagen --no-default-features --features blob_exporter,blob_input,rayon --target x86_64-unknown-linux-gnu
         cd ../..
 
-        cp target/aarch64-unknown-linux-gnu/release/icu4x-datagen bin/linux_arm64-datagen
-        cp target/riscv64gc-unknown-linux-gnu/release/icu4x-datagen bin/linux_riscv64-datagen
-        cp target/x86_64-unknown-linux-gnu/release/icu4x-datagen bin/linux_x64-datagen
+        cp target/aarch64-unknown-linux-gnu/release/icu4x-datagen bin/icu4x-datagen-aarch64-unknown-linux-gnu
+        cp target/riscv64gc-unknown-linux-gnu/release/icu4x-datagen bin/icu4x-datagen-riscv64gc-unknown-linux-gnu
+        cp target/x86_64-unknown-linux-gnu/release/icu4x-datagen bin/icu4x-datagen-x86_64-unknown-linux-gnu
   
     - name: Build Mac
       if: matrix.os == 'macos-latest'
       run: |
         (cd ffi/dart && dart pub get)
 
-        dart ffi/dart/lib/src/hook_helpers/build_libs.dart --working_directory . --file bin/ios_arm64_${{ matrix.compiletype }}${{ env.FILENAME_SUFFIX }} --os ios --architecture arm64 --compile_type ${{ matrix.compiletype }} --cargo_features ${{ env.FEATURES }}
-        dart ffi/dart/lib/src/hook_helpers/build_libs.dart --working_directory . --file bin/ios_x64_${{ matrix.compiletype }}${{ env.FILENAME_SUFFIX }} --os ios --architecture x64 --compile_type ${{ matrix.compiletype }} --cargo_features ${{ env.FEATURES }}
-        dart ffi/dart/lib/src/hook_helpers/build_libs.dart --working_directory . --file bin/macos_arm64_${{ matrix.compiletype }}${{ env.FILENAME_SUFFIX }} --os macos --architecture arm64 --compile_type ${{ matrix.compiletype }} --cargo_features ${{ env.FEATURES }}
-        dart ffi/dart/lib/src/hook_helpers/build_libs.dart --working_directory . --file bin/macos_x64_${{ matrix.compiletype }}${{ env.FILENAME_SUFFIX }} --os macos --architecture x64 --compile_type ${{ matrix.compiletype }} --cargo_features ${{ env.FEATURES }}
+        dart ffi/dart/lib/src/hook_helpers/build_libs.dart --working_directory . --file bin/icu4x-2-${{ matrix.compiletype }}${{ env.FILENAME_SUFFIX }}-aarch64-apple-ios --target aarch64-apple-ios --compile_type ${{ matrix.compiletype }} --cargo_features ${{ env.FEATURES }}
+        dart ffi/dart/lib/src/hook_helpers/build_libs.dart --working_directory . --file bin/icu4x-2-${{ matrix.compiletype }}${{ env.FILENAME_SUFFIX }}-x86_64-apple-ios --target x86_64-apple-ios --compile_type ${{ matrix.compiletype }} --cargo_features ${{ env.FEATURES }}
+        dart ffi/dart/lib/src/hook_helpers/build_libs.dart --working_directory . --file bin/icu4x-2-${{ matrix.compiletype }}${{ env.FILENAME_SUFFIX }}-aarch64-apple-darwin --target aarch64-apple-darwin --compile_type ${{ matrix.compiletype }} --cargo_features ${{ env.FEATURES }}
+        dart ffi/dart/lib/src/hook_helpers/build_libs.dart --working_directory . --file bin/icu4x-2-${{ matrix.compiletype }}${{ env.FILENAME_SUFFIX }}-x86_64-apple-darwin --target x86_64-apple-darwin --compile_type ${{ matrix.compiletype }} --cargo_features ${{ env.FEATURES }}
 
     - name: Build Mac data
       if: matrix.os == 'macos-latest' && matrix.compiletype == 'static' && matrix.include_data == false
@@ -121,8 +121,8 @@ jobs:
         cargo build --release --bin icu4x-datagen --no-default-features --features blob_exporter,blob_input,rayon --target x86_64-apple-darwin
         cd ../..
 
-        cp target/aarch64-apple-darwin/release/icu4x-datagen bin/macos_arm64-datagen
-        cp target/x86_64-apple-darwin/release/icu4x-datagen bin/macos_x64-datagen
+        cp target/aarch64-apple-darwin/release/icu4x-datagen bin/icu4x-datagen-aarch64-apple-darwin
+        cp target/x86_64-apple-darwin/release/icu4x-datagen bin/icu4x-datagen-x86_64-apple-darwin
   
     - name: Build Windows
       if: matrix.os == 'windows-latest'
@@ -131,9 +131,9 @@ jobs:
         dart pub get
         popd
         
-        dart ffi/dart/lib/src/hook_helpers/build_libs.dart --working_directory . --file bin/windows_arm64_${{ matrix.compiletype }}${{ env.FILENAME_SUFFIX }} --os windows --architecture arm64 --compile_type ${{ matrix.compiletype }} --cargo_features ${{ env.FEATURES }}
-        dart ffi/dart/lib/src/hook_helpers/build_libs.dart --working_directory . --file bin/windows_ia32_${{ matrix.compiletype }}${{ env.FILENAME_SUFFIX }} --os windows --architecture ia32 --compile_type ${{ matrix.compiletype }} --cargo_features ${{ env.FEATURES }}
-        dart ffi/dart/lib/src/hook_helpers/build_libs.dart --working_directory . --file bin/windows_x64_${{ matrix.compiletype }}${{ env.FILENAME_SUFFIX }} --os windows --architecture x64 --compile_type ${{ matrix.compiletype }} --cargo_features ${{ env.FEATURES }}
+        dart ffi/dart/lib/src/hook_helpers/build_libs.dart --working_directory . --file bin/icu4x-2-${{ matrix.compiletype }}${{ env.FILENAME_SUFFIX }}-aarch64-pc-windows-msvc --target aarch64-pc-windows-msvc --compile_type ${{ matrix.compiletype }} --cargo_features ${{ env.FEATURES }}
+        dart ffi/dart/lib/src/hook_helpers/build_libs.dart --working_directory . --file bin/icu4x-2-${{ matrix.compiletype }}${{ env.FILENAME_SUFFIX }}-i686-pc-windows-msvc --target i686-pc-windows-msvc --compile_type ${{ matrix.compiletype }} --cargo_features ${{ env.FEATURES }}
+        dart ffi/dart/lib/src/hook_helpers/build_libs.dart --working_directory . --file bin/icu4x-2-${{ matrix.compiletype }}${{ env.FILENAME_SUFFIX }}-x86_64-pc-windows-msvc --target x86_64-pc-windows-msvc --compile_type ${{ matrix.compiletype }} --cargo_features ${{ env.FEATURES }}
 
     - name: Build Windows data
       if: matrix.os == 'windows-latest' && matrix.compiletype == 'static' && matrix.include_data == false
@@ -145,8 +145,8 @@ jobs:
         cargo build --release --bin icu4x-datagen --no-default-features --features blob_exporter,blob_input,rayon --target x86_64-pc-windows-msvc
         cd ../..
 
-        cp target/aarch64-pc-windows-msvc/release/icu4x-datagen.exe bin/windows_arm64-datagen.exe
-        cp target/x86_64-pc-windows-msvc/release/icu4x-datagen.exe bin/windows_x64-datagen.exe
+        cp target/aarch64-pc-windows-msvc/release/icu4x-datagen.exe bin/icu4x-datagen-aarch64-pc-windows-msvc.exe
+        cp target/x86_64-pc-windows-msvc/release/icu4x-datagen.exe bin/icu4x-datagen-x86_64-pc-windows-msvc-datagen.exe
     
     - name: Upload artifacts
       uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
@@ -191,7 +191,6 @@ jobs:
   release:
     needs: dart-libs
     runs-on: ubuntu-latest
-    if: github.event_name == 'push'
     steps:
       - name: Download binaries
         uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
@@ -201,6 +200,7 @@ jobs:
 
       - name: Release
         uses: softprops/action-gh-release@72f2c25fcb47643c292f7107632f7a47c1df5cd8
+        if: github.event_name == 'push'
         with:
           files: '**'
           fail_on_unmatched_files: true
