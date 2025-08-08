@@ -6,7 +6,7 @@
     - General
     - `icu_calendar`
       - Fix `und-SA-u-ca-islamic` (unicode-org#6736)
-    - 
+    -
 - Data model and providers
     - ...
 - FFI
@@ -16,6 +16,8 @@
     - `yoke`
         - Add four `map_with_cart` methods to `yoke::Yoke`, similar to `Yoke::map_project` but
         additionally providing a reference to the cart. (unicode-org#6781)
+        - Add `Yoke::with_mut_return`, similar to `Yoke::with_mut` but with a callback that may
+        return any `'static` type. (unicode-org#6827)
 
 ## icu4x 2.0.x
 
@@ -272,7 +274,7 @@ Some major changes worth highlighting:
         - No changes other than general cross-crate changes
     - `icu_locale`
         - `LocaleExpander`, `LocaleDirectionality`, and `LocaleCanonicalizer` distinguish between `new_common()` and `new_extended()` constructors (unicode-org#5958)
-    - `icu_locale_core` 
+    - `icu_locale_core`
         - Stop accepting underscores as subtag separators (unicode-org#5943)
         - Make `LocalePreferences` internally-private, move `DataLocale` to `icu_locale_core`, other refactors (unicode-org#5988)
         - Fix `cmn-hans-cn-t-ca-u-ca-x_t-u` (unicode-org#6001)
@@ -662,7 +664,7 @@ Some major changes worth highlighting:
     - Fixed line segmenter, using Unicode 15.0 (https://github.com/unicode-org/icu4x/pull/4389)
     - Fixed grapheme cluster segmenter and updated it to Unicode 15.1 (https://github.com/unicode-org/icu4x/pull/4536)
     - Updated sentence segmenter rules to Unicode 15.1 (https://github.com/unicode-org/icu4x/pull/4625)
-    - Updated word segmenter rules to Unicode 15.1 (https://github.com/unicode-org/icu4x/pull/4625) 
+    - Updated word segmenter rules to Unicode 15.1 (https://github.com/unicode-org/icu4x/pull/4625)
     - Fixed `word_type()` and `is_word_like()` on `WordBreakIterator` for the last segment in complex script (https://github.com/unicode-org/icu4x/pull/4903)
   - `icu_timezone`
     - Added `TimeZoneIdMapper` to replace `IanaToBcp47Mapper` (https://github.com/unicode-org/icu4x/pull/4774)
@@ -764,7 +766,7 @@ Some major changes worth highlighting:
         - Add support to parse UAX#29 properties (https://github.com/unicode-org/icu4x/pull/4175)
 - Data model and providers
     - `icu_provider`
-        - Implement Any/BufferProvider for some smart pointers (https://github.com/unicode-org/icu4x/pull/4255) 
+        - Implement Any/BufferProvider for some smart pointers (https://github.com/unicode-org/icu4x/pull/4255)
     - `icu_provider_blob`
       - New V2 serialization schema (https://github.com/unicode-org/icu4x/pull/4207)
     - `icu_datagen`
@@ -775,7 +777,7 @@ Some major changes worth highlighting:
         - Make datagen work without `CARGO_PKG_RUST_VERSION` environment variable (https://github.com/unicode-org/icu4x/pull/4292)
 - Utilities
     - `databake`
-        - Add implementations for `HashSet`, `HashMap`, `BTreeSet`, `BTreeMap` (https://github.com/unicode-org/icu4x/pull/4268, https://github.com/unicode-org/icu4x/pull/4274, https://github.com/unicode-org/icu4x/pull/4295)  
+        - Add implementations for `HashSet`, `HashMap`, `BTreeSet`, `BTreeMap` (https://github.com/unicode-org/icu4x/pull/4268, https://github.com/unicode-org/icu4x/pull/4274, https://github.com/unicode-org/icu4x/pull/4295)
         - Improvements to `databake::test_bake!()` (https://github.com/unicode-org/icu4x/pull/4182)
     - `fixed_decimal`
         - Experimental rounding increment support (https://github.com/unicode-org/icu4x/pull/4219, https://github.com/unicode-org/icu4x/pull/4246)
@@ -832,13 +834,13 @@ A subset of crates received a 1.3.1 patch release, to incorporate documentation 
     - Make datagen faster by caching more things (https://github.com/unicode-org/icu4x/pull/3625)
     - Consume CLDR-JSON resources keyed with default script (https://github.com/unicode-org/icu4x/pull/3772, https://github.com/unicode-org/icu4x/pull/3786)
     - (cli) Warn for `--locales all` (https://github.com/unicode-org/icu4x/pull/3691)
-  - `icu_provider_adapters`: 
+  - `icu_provider_adapters`:
     - Deprecated `LocaleFallbacker`, use through `icu_locid_transform`
   - `icu_provider_blob`:
     - Returning `ExtraneousLocale` in `BlobDataProvider` (https://github.com/unicode-org/icu4x/pull/3562)
-    - Fix empty keys in `BlobDataProvider` (https://github.com/unicode-org/icu4x/pull/3551) 
+    - Fix empty keys in `BlobDataProvider` (https://github.com/unicode-org/icu4x/pull/3551)
   - `icu_provider_fs`:
-    - Correct error types for `icu_provider_fs` (https://github.com/unicode-org/icu4x/pull/3682) 
+    - Correct error types for `icu_provider_fs` (https://github.com/unicode-org/icu4x/pull/3682)
   - `icu_testdata`:
     - This crate has been superseded by `compiled_data` and is now deprecated.
     - Data for new components will not be added, and it will not be updated for ICU4X 2.0.
@@ -1655,7 +1657,7 @@ Note: A subset of crates received patch releases in the 1.2 stream.
     - `LiteMap`
     - `FixedDecimal`
     - `Pattern`
-  - Early prototype of C API - `icu_capi` 
+  - Early prototype of C API - `icu_capi`
 
 ## icu4x 0.1.0 (October 15, 2020)
   - Initial release of ICU4X.

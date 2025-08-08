@@ -7,6 +7,7 @@ use crate::either::EitherCart;
 #[cfg(feature = "alloc")]
 use crate::erased::{ErasedArcCart, ErasedBoxCart, ErasedRcCart};
 use crate::kinda_sorta_dangling::KindaSortaDangling;
+use crate::utils;
 use crate::Yokeable;
 use core::marker::PhantomData;
 use core::ops::Deref;
@@ -391,6 +392,10 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
 
     /// Mutate the stored [`Yokeable`] data.
     ///
+    /// If the callback needs to return `'static` data, then [`Yoke::with_mut_return`] can be
+    /// used until the next breaking release of `yoke`, at which time the callback to this
+    /// function will be able to return any `'static` data.
+    ///
     /// See [`Yokeable::transform_mut()`] for why this operation is safe.
     ///
     /// # Example
@@ -420,7 +425,7 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
     /// #     })
     /// # }
     ///
-    /// // also implements Yokeable
+    /// #[derive(Yokeable)]
     /// struct Bar<'a> {
     ///     numbers: Cow<'a, [u8]>,
     ///     string: Cow<'a, str>,
@@ -446,35 +451,29 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
     /// // Unchanged and still Cow::Borrowed
     /// assert_eq!(&*bar.get().numbers, &[0x68, 0x65, 0x6c, 0x6c, 0x6f]);
     /// assert!(matches!(bar.get().numbers, Cow::Borrowed(_)));
-    ///
-    /// # unsafe impl<'a> Yokeable<'a> for Bar<'static> {
-    /// #     type Output = Bar<'a>;
-    /// #     fn transform(&'a self) -> &'a Bar<'a> {
-    /// #         self
-    /// #     }
-    /// #
-    /// #     fn transform_owned(self) -> Bar<'a> {
-    /// #         // covariant lifetime cast, can be done safely
-    /// #         self
-    /// #     }
-    /// #
-    /// #     unsafe fn make(from: Bar<'a>) -> Self {
-    /// #         unsafe { mem::transmute(from) }
-    /// #     }
-    /// #
-    /// #     fn transform_mut<F>(&'a mut self, f: F)
-    /// #     where
-    /// #         F: 'static + FnOnce(&'a mut Self::Output),
-    /// #     {
-    /// #         unsafe { f(mem::transmute(self)) }
-    /// #     }
-    /// # }
     /// ```
     pub fn with_mut<'a, F>(&'a mut self, f: F)
     where
         F: 'static + for<'b> FnOnce(&'b mut <Y as Yokeable<'a>>::Output),
     {
-        self.yokeable.transform_mut(f)
+        self.yokeable.transform_mut(f);
+    }
+
+    /// Mutate the stored [`Yokeable`] data, and return `'static` data (possibly just `()`).
+    ///
+    /// See [`Yokeable::transform_mut()`] for why this operation is safe, noting that no
+    /// `'static`.
+    ///
+    /// ### Will be removed
+    /// This method will be removed on the next breaking release of `yoke`, when the callback of
+    /// [`Yoke::with_mut`] will gain the ability to return any `R: 'static` and supersede this
+    /// method.
+    pub fn with_mut_return<'a, F, R>(&'a mut self, f: F) -> R
+    where
+        F: 'static + for<'b> FnOnce(&'b mut <Y as Yokeable<'a>>::Output) -> R,
+        R: 'static,
+    {
+        utils::transform_mut_yokeable(&mut *self.yokeable, f)
     }
 
     /// Helper function allowing one to wrap the cart type `C` in an `Option<T>`.
