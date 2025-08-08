@@ -39,7 +39,7 @@ fn test_monotonic_year() {
     for (kind, monotonic_epoch) in MONOTONIC_EPOCHS.iter() {
         let calendar = Rc::new(AnyCalendar::new(*kind));
 
-        /// Create the first date in the epoch year (monotonic_year = 0)
+        // Create the first date in the epoch year (monotonic_year = 0)
         let date_in_epoch_year =
             Date::try_new_from_codes(None, 0, m_01, 1, calendar.clone()).unwrap();
         let iso_date_in_epoch_year = date_in_epoch_year.to_calendar(iso);
