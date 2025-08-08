@@ -73,7 +73,7 @@ pub trait Calendar: crate::cal::scaffold::UnstableSealed {
     /// "extended year" is an old name, this method should not necessarily match ICU4C extended year,
     /// and instead should attempt to align with
     /// <https://tc39.es/proposal-intl-era-monthcode/> as much as possible.
-    #[deprecated = "Use the monotonic year instead"]
+    #[deprecated(since = "2.1.0", note = "Use `Date::monotonic_year` instead")]
     fn extended_year(&self, date: &Self::DateInner) -> i32 {
         self.year_info(date).into().monotonic_year()
     }
