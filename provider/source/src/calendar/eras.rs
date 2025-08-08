@@ -553,7 +553,7 @@ fn test_calendar_eras() {
 
     for (calendar, data) in era_dates_map {
         let kind = match calendar.as_str() {
-            "generic" | "islamic" | "chinese" | "dangi" => continue,
+            "generic" | "islamic" => continue,
             "ethiopic-amete-alem" => AnyCalendarKind::EthiopianAmeteAlem,
             "gregorian" => AnyCalendarKind::Gregorian,
             "japanese" => AnyCalendarKind::JapaneseExtended,
@@ -623,9 +623,9 @@ fn test_calendar_eras() {
                     // Check that the start/end date uses year 1, and minimal/maximal month/day
                     assert_eq!(era_year.year, 1, "Didn't get correct year for {in_era:?}");
                 }
-                icu::calendar::types::YearInfo::Cyclic(_) => {
-                    assert_eq!(in_era.monotonic_year(), 1);
-                }
+                // Cyclic calendars use related_iso for their arithmetical years, which won't
+                // work with the ICU4C "default" eras. Skip testing them.
+                icu::calendar::types::YearInfo::Cyclic(_) => (),
                 _ => unreachable!(),
             }
 
