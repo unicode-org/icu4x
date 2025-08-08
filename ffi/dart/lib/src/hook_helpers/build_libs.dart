@@ -10,18 +10,14 @@ import 'package:path/path.dart' as path;
 
 Future<void> main(List<String> args) async {
   const fileKey = 'file';
-  const osKey = 'os';
-  const architectureKey = 'architecture';
-  const simulatorKey = 'simulator';
+  const targetKey = 'target';
   const compileTypeKey = 'compile_type';
   const cargoFeaturesKey = 'cargo_features';
   const workingDirectoryKey = 'working_directory';
   final argParser = ArgParser()
     ..addOption(fileKey, mandatory: true)
     ..addOption(compileTypeKey, allowed: ['static', 'dynamic'], mandatory: true)
-    ..addFlag(simulatorKey, defaultsTo: false)
-    ..addOption(osKey, mandatory: true)
-    ..addOption(architectureKey, mandatory: true)
+    ..addOption(targetKey, mandatory: true)
     ..addOption(workingDirectoryKey)
     ..addMultiOption(
       cargoFeaturesKey,
@@ -38,12 +34,8 @@ Future<void> main(List<String> args) async {
   }
 
   final lib = await buildLib(
-    OS.values.firstWhere((o) => o.name == parsed.option(osKey)!),
-    Architecture.values.firstWhere(
-      (o) => o.name == parsed.option(architectureKey)!,
-    ),
+    parsed.option(targetKey)!,
     parsed.option(compileTypeKey)! == 'static',
-    parsed.flag(simulatorKey),
     (parsed.option(workingDirectoryKey) != null
             ? Directory(parsed.option(workingDirectoryKey)!)
             : null) ??
@@ -61,10 +53,8 @@ Future<void> main(List<String> args) async {
 }
 
 Future<File> buildLib(
-  OS targetOS,
-  Architecture targetArchitecture,
+  String rustTarget,
   bool buildStatic,
-  bool isSimulator,
   Directory startingPoint,
   List<String> cargoFeatures,
 ) async {
@@ -77,8 +67,7 @@ Future<File> buildLib(
     workingDirectory = workingDirectory.parent;
   }
 
-  final isNoStd = _isNoStdTarget((targetOS, targetArchitecture));
-  final target = _asRustTarget(targetOS, targetArchitecture, isSimulator);
+  final isNoStd = _isNoStdTarget(rustTarget);
 
   if (buildStatic || isNoStd) {
     await runProcess('rustup', [
@@ -94,7 +83,7 @@ Future<File> buildLib(
   await runProcess('rustup', [
     'target',
     'add',
-    target,
+    rustTarget,
     if (buildStatic || isNoStd) ...['--toolchain', 'nightly'],
   ], workingDirectory: workingDirectory);
 
@@ -116,14 +105,25 @@ Future<File> buildLib(
       '-Zbuild-std=std,panic_abort',
       '-Zbuild-std-features=panic_immediate_abort',
     ],
-    '--target=$target',
+    '--target=$rustTarget',
   ], workingDirectory: workingDirectory);
+
+  final targetOS = switch (rustTarget.split('-')[2]) {
+    'androideabi' => OS.android,
+    'android' => OS.android,
+    'fuchsia' => OS.fuchsia,
+    'ios' => OS.iOS,
+    'linux' => OS.linux,
+    'darwin' => OS.macOS,
+    'windows' => OS.windows,
+    _ => throw UnimplementedError('Unknown platform for target $rustTarget'),
+  };
 
   final file = File(
     path.join(
       workingDirectory.path,
       'target',
-      target,
+      rustTarget,
       'release',
       (buildStatic ? targetOS.staticlibFileName : targetOS.dylibFileName)(
         'icu_capi',
@@ -136,41 +136,8 @@ Future<File> buildLib(
   return file;
 }
 
-String _asRustTarget(OS os, Architecture? architecture, bool isSimulator) {
-  if (os == OS.iOS && architecture == Architecture.arm64 && isSimulator) {
-    return 'aarch64-apple-ios-sim';
-  }
-  return switch ((os, architecture)) {
-    (OS.android, Architecture.arm) => 'armv7-linux-androideabi',
-    (OS.android, Architecture.arm64) => 'aarch64-linux-android',
-    (OS.android, Architecture.ia32) => 'i686-linux-android',
-    (OS.android, Architecture.riscv64) => 'riscv64-linux-android',
-    (OS.android, Architecture.x64) => 'x86_64-linux-android',
-    (OS.fuchsia, Architecture.arm64) => 'aarch64-unknown-fuchsia',
-    (OS.fuchsia, Architecture.x64) => 'x86_64-unknown-fuchsia',
-    (OS.iOS, Architecture.arm64) => 'aarch64-apple-ios',
-    (OS.iOS, Architecture.x64) => 'x86_64-apple-ios',
-    (OS.linux, Architecture.arm) => 'armv7-unknown-linux-gnueabihf',
-    (OS.linux, Architecture.arm64) => 'aarch64-unknown-linux-gnu',
-    (OS.linux, Architecture.ia32) => 'i686-unknown-linux-gnu',
-    (OS.linux, Architecture.riscv32) => 'riscv32gc-unknown-linux-gnu',
-    (OS.linux, Architecture.riscv64) => 'riscv64gc-unknown-linux-gnu',
-    (OS.linux, Architecture.x64) => 'x86_64-unknown-linux-gnu',
-    (OS.macOS, Architecture.arm64) => 'aarch64-apple-darwin',
-    (OS.macOS, Architecture.x64) => 'x86_64-apple-darwin',
-    (OS.windows, Architecture.arm64) => 'aarch64-pc-windows-msvc',
-    (OS.windows, Architecture.ia32) => 'i686-pc-windows-msvc',
-    (OS.windows, Architecture.x64) => 'x86_64-pc-windows-msvc',
-    (_, _) => throw UnimplementedError(
-      'Target ${(os, architecture)} not available for rust',
-    ),
-  };
-}
-
-bool _isNoStdTarget((OS os, Architecture? architecture) arg) => [
-  (OS.android, Architecture.riscv64),
-  (OS.linux, Architecture.riscv64),
-].contains(arg);
+bool _isNoStdTarget(String target) =>
+    ['riscv64-linux-android', 'riscv64gc-unknown-linux-gnu'].contains(target);
 
 Future<void> runProcess(
   String executable,
