@@ -49,7 +49,15 @@ fn test_monotonic_year() {
             "Monotonic year for {date_in_epoch_year:?} should be {monotonic_epoch}"
         );
 
-        let iso_date_in_2025 = Date::try_new_iso(2025, 12, 31).unwrap();
+        // Test that for all calendars except Japanese, the *current* era is
+        // the same as that used for the monotonic year
+        // This date can be anything as long as it is vaguely modern.
+        //
+        // Note that this property is not *required* by the specification, new
+        // calendars may have epochs that do not follow this property. This
+        // property is strongly suggested by the specification as a rule of thumb
+        // to follow where possible.
+        let iso_date_in_2025 = Date::try_new_iso(2025, 1, 1).unwrap();
         let date_in_2025 = iso_date_in_2025.to_calendar(calendar.clone());
 
         // The monotonic year should align with the year in the modern era or related ISO.
