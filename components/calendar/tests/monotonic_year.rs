@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use icu_calendar::types::MonthCode;
 use icu_calendar::AnyCalendar;
 use icu_calendar::AnyCalendarKind;
 use icu_calendar::Date;
@@ -33,15 +34,19 @@ static MONOTONIC_EPOCHS: &[(AnyCalendarKind, i32)] = &[
 
 #[test]
 fn test_monotonic_year() {
+    let iso = icu_calendar::cal::Iso;
+    let m_01 = MonthCode::new_normal(1).unwrap();
     for (kind, monotonic_epoch) in MONOTONIC_EPOCHS.iter() {
         let calendar = Rc::new(AnyCalendar::new(*kind));
 
-        let iso_date_in_epoch_year = Date::try_new_iso(*monotonic_epoch, 12, 31).unwrap();
-        let date_in_epoch_year = iso_date_in_epoch_year.to_calendar(calendar.clone());
+        /// Create the first date in the epoch year (monotonic_year = 0)
+        let date_in_epoch_year =
+            Date::try_new_from_codes(None, 0, m_01, 1, calendar.clone()).unwrap();
+        let iso_date_in_epoch_year = date_in_epoch_year.to_calendar(iso);
         assert_eq!(
-            date_in_epoch_year.monotonic_year(),
-            0,
-            "Monotonic year for {date_in_epoch_year:?} should be 0"
+            iso_date_in_epoch_year.year().monotonic_year(),
+            *monotonic_epoch,
+            "Monotonic year for {date_in_epoch_year:?} should be {monotonic_epoch}"
         );
 
         let iso_date_in_2025 = Date::try_new_iso(2025, 12, 31).unwrap();
