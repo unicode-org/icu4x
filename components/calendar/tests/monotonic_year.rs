@@ -44,7 +44,7 @@ fn test_monotonic_year() {
             Date::try_new_from_codes(None, 0, m_01, 1, calendar.clone()).unwrap();
         let iso_date_in_epoch_year = date_in_epoch_year.to_calendar(iso);
         assert_eq!(
-            iso_date_in_epoch_year.year().monotonic_year(),
+            iso_date_in_epoch_year.monotonic_year(),
             *monotonic_epoch,
             "Monotonic year for {date_in_epoch_year:?} should be {monotonic_epoch}"
         );
