@@ -2,8 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use core::{fmt::Display, marker::PhantomData, str::FromStr};
 use crate::{LanguageIdentifier, Locale};
+use core::{fmt::Display, marker::PhantomData, str::FromStr};
 use serde::{Deserialize, Deserializer, Serialize, Serializer};
 use writeable::Writeable;
 
@@ -66,8 +66,8 @@ impl<'de> Deserialize<'de> for Locale {
 
 #[test]
 fn json() {
-    use crate::{langid, locale};
     use crate::subtags::{Language, Region, Script};
+    use crate::{langid, locale};
 
     assert_eq!(
         serde_json::to_string(&langid!("en-US")).unwrap(),
@@ -142,8 +142,8 @@ fn json() {
 
 #[test]
 fn postcard() {
-    use crate::{langid, locale};
     use crate::subtags::{Language, Region, Script};
+    use crate::{langid, locale};
 
     assert_eq!(
         postcard::to_stdvec(&langid!("en-US")).unwrap(),
