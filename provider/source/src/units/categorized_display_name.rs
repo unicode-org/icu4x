@@ -15,8 +15,6 @@ use icu::plurals::PluralElements;
 use icu_provider::prelude::*;
 use icu_provider::DataMarkerAttributes;
 
-
-
 impl DataProvider<LengthDisplayNameV1> for SourceDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<LengthDisplayNameV1>, DataError> {
         self.check_req::<LengthDisplayNameV1>(req)?;
@@ -53,25 +51,24 @@ impl DataProvider<LengthDisplayNameV1> for SourceDataProvider {
 
         Ok(DataResponse {
             metadata: Default::default(),
-            payload: DataPayload::from_owned(
-                LengthDisplayName {
-                    display_name: UnitsDisplayName {
-                patterns: PluralElements::new(
-                    unit_patterns
-                        .other
-                        .as_deref()
-                        .ok_or_else(|| DataErrorKind::IdentifierNotFound.into_error())?,
-                )
-                .with_zero_value(unit_patterns.zero.as_deref())
-                .with_one_value(unit_patterns.one.as_deref())
-                .with_two_value(unit_patterns.two.as_deref())
-                .with_few_value(unit_patterns.few.as_deref())
-                .with_many_value(unit_patterns.many.as_deref())
-                .with_explicit_one_value(unit_patterns.explicit_one.as_deref())
-                .with_explicit_zero_value(unit_patterns.explicit_zero.as_deref())
-                .into(),
-            },
-        }),
+            payload: DataPayload::from_owned(LengthDisplayName {
+                display_name: UnitsDisplayName {
+                    patterns: PluralElements::new(
+                        unit_patterns
+                            .other
+                            .as_deref()
+                            .ok_or_else(|| DataErrorKind::IdentifierNotFound.into_error())?,
+                    )
+                    .with_zero_value(unit_patterns.zero.as_deref())
+                    .with_one_value(unit_patterns.one.as_deref())
+                    .with_two_value(unit_patterns.two.as_deref())
+                    .with_few_value(unit_patterns.few.as_deref())
+                    .with_many_value(unit_patterns.many.as_deref())
+                    .with_explicit_one_value(unit_patterns.explicit_one.as_deref())
+                    .with_explicit_zero_value(unit_patterns.explicit_zero.as_deref())
+                    .into(),
+                },
+            }),
         })
     }
 }
