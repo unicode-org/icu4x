@@ -281,7 +281,7 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
         DayOfYear(day_of_year + (self.day as u16))
     }
 
-    pub fn extended_year(&self) -> i32 {
+    pub fn monotonic_year(&self) -> i32 {
         self.year.into()
     }
 

@@ -56,8 +56,9 @@ impl Calendar for Gregorian {
         day: u8,
     ) -> Result<Self::DateInner, DateError> {
         let year = match era {
+            None => year,
+            Some("ad" | "ce") => year_check(year, 1..)?,
             Some("bce" | "bc") => 1 - year_check(year, 1..)?,
-            Some("ad" | "ce") | None => year_check(year, 1..)?,
             Some(_) => return Err(DateError::UnknownEra),
         };
 
@@ -111,13 +112,14 @@ impl Calendar for Gregorian {
     }
     /// The calendar-specific year represented by `date`
     fn year_info(&self, date: &Self::DateInner) -> Self::Year {
-        let extended_year = self.extended_year(date);
-        if extended_year > 0 {
+        let monotonic_year = date.0.iso_year();
+        if monotonic_year > 0 {
             types::EraYear {
                 era: tinystr!(16, "ce"),
                 era_index: Some(1),
-                year: extended_year,
-                ambiguity: match extended_year {
+                year: monotonic_year,
+                monotonic_year,
+                ambiguity: match monotonic_year {
                     ..=999 => types::YearAmbiguity::EraAndCenturyRequired,
                     1000..=1949 => types::YearAmbiguity::CenturyRequired,
                     1950..=2049 => types::YearAmbiguity::Unambiguous,
@@ -128,14 +130,11 @@ impl Calendar for Gregorian {
             types::EraYear {
                 era: tinystr!(16, "bce"),
                 era_index: Some(0),
-                year: 1_i32.saturating_sub(extended_year),
+                year: 1_i32.saturating_sub(monotonic_year),
+                monotonic_year,
                 ambiguity: types::YearAmbiguity::EraAndCenturyRequired,
             }
         }
-    }
-
-    fn extended_year(&self, date: &Self::DateInner) -> i32 {
-        Iso.extended_year(&date.0)
     }
 
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {

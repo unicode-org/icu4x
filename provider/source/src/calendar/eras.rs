@@ -187,7 +187,7 @@ fn process_era_dates_map(
                 .unwrap()
                 .to_iso();
             *d = EraStartDate {
-                year: date.extended_year(),
+                year: date.monotonic_year(),
                 month: date.month().ordinal,
                 day: date.day_of_month().0,
             };
@@ -621,11 +621,11 @@ fn test_calendar_eras() {
                     }
 
                     // Check that the start/end date uses year 1, and minimal/maximal month/day
-                    assert_eq!(era_year.year, 1);
+                    assert_eq!(era_year.year, 1, "Didn't get correct year for {in_era:?}");
                 }
-                icu::calendar::types::YearInfo::Cyclic(_) => {
-                    assert_eq!(in_era.extended_year(), 1);
-                }
+                // Cyclic calendars use related_iso for their monotonic years, which won't
+                // work with the CLDR "default" eras. Skip testing them.
+                icu::calendar::types::YearInfo::Cyclic(_) => (),
                 _ => unreachable!(),
             }
 

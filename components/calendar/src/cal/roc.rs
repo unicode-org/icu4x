@@ -67,7 +67,8 @@ impl Calendar for Roc {
         day: u8,
     ) -> Result<Self::DateInner, DateError> {
         let year = match era {
-            Some("roc") | None => ROC_ERA_OFFSET + year_check(year, 1..)?,
+            Some("roc") => ROC_ERA_OFFSET + year_check(year, 1..)?,
+            None => ROC_ERA_OFFSET + year,
             Some("broc") => ROC_ERA_OFFSET + 1 - year_check(year, 1..)?,
             Some(_) => return Err(DateError::UnknownEra),
         };
@@ -126,26 +127,24 @@ impl Calendar for Roc {
     }
 
     fn year_info(&self, date: &Self::DateInner) -> Self::Year {
-        let extended_year = self.extended_year(date);
-        if extended_year > 0 {
+        let monotonic_year = date.0.iso_year() - ROC_ERA_OFFSET;
+        if monotonic_year > 0 {
             types::EraYear {
                 era: tinystr!(16, "roc"),
                 era_index: Some(1),
-                year: extended_year,
+                year: monotonic_year,
+                monotonic_year,
                 ambiguity: types::YearAmbiguity::CenturyRequired,
             }
         } else {
             types::EraYear {
                 era: tinystr!(16, "broc"),
                 era_index: Some(0),
-                year: 1 - extended_year,
+                year: 1 - monotonic_year,
+                monotonic_year,
                 ambiguity: types::YearAmbiguity::EraAndCenturyRequired,
             }
         }
-    }
-
-    fn extended_year(&self, date: &Self::DateInner) -> i32 {
-        Iso.extended_year(&date.0) - ROC_ERA_OFFSET
     }
 
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
@@ -234,7 +233,7 @@ mod test {
             "Failed era check from RD: {case:?}\nISO: {iso_from_rd:?}\nROC: {roc_from_rd:?}"
         );
         assert_eq!(
-            roc_from_rd.extended_year(),
+            roc_from_rd.monotonic_year(),
             if case.expected_era == "roc" {
                 case.expected_year
             } else {

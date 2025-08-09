@@ -473,10 +473,6 @@ impl Calendar for AnyCalendar {
         match_cal_and_date!(match (self, date): (c, d) => c.year_info(d).into())
     }
 
-    fn extended_year(&self, date: &Self::DateInner) -> i32 {
-        match_cal_and_date!(match (self, date): (c, d) => c.extended_year(d))
-    }
-
     /// The calendar-specific check if `date` is in a leap year
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
         match_cal_and_date!(match (self, date): (c, d) => c.is_in_leap_year(d))
@@ -1587,29 +1583,37 @@ mod tests {
             });
 
         let roundtrip_year = date.year();
-        // FIXME: these APIs should be improved
-        let roundtrip_year = roundtrip_year.era_year_or_related_iso();
         let roundtrip_month = date.month().standard_code;
         let roundtrip_day = date.day_of_month().0;
 
         assert_eq!(
-            (year, month, day),
-            (roundtrip_year, roundtrip_month, roundtrip_day),
+            (month, day),
+            (roundtrip_month, roundtrip_day),
             "Failed to roundtrip for calendar {}",
             calendar.debug_name()
         );
 
         if let Some((era_code, era_index)) = era {
             let roundtrip_era_year = date.year().era().expect("year type should be era");
+
+            let roundtrip_year = roundtrip_year.era_year_or_related_iso();
             assert_eq!(
-                (era_code, era_index),
+                (era_code, era_index, year),
                 (
                     roundtrip_era_year.era.as_str(),
-                    roundtrip_era_year.era_index
+                    roundtrip_era_year.era_index,
+                    roundtrip_year
                 ),
                 "Failed to roundtrip era for calendar {}",
                 calendar.debug_name()
             )
+        } else {
+            assert_eq!(
+                year,
+                date.monotonic_year(),
+                "Failed to roundtrip year for calendar {}",
+                calendar.debug_name()
+            );
         }
 
         let iso = date.to_iso();
@@ -1678,7 +1682,8 @@ mod tests {
         let roc = Ref(&roc);
 
         single_test_roundtrip(buddhist, Some(("be", Some(0))), 100, "M03", 1);
-        single_test_roundtrip(buddhist, None, 2000, "M03", 1);
+        single_test_roundtrip(buddhist, None, 100, "M03", 1);
+        single_test_roundtrip(buddhist, None, -100, "M03", 1);
         single_test_roundtrip(buddhist, Some(("be", Some(0))), -100, "M03", 1);
         single_test_error(
             buddhist,
@@ -1691,6 +1696,7 @@ mod tests {
 
         single_test_roundtrip(coptic, Some(("am", Some(0))), 100, "M03", 1);
         single_test_roundtrip(coptic, None, 2000, "M03", 1);
+        single_test_roundtrip(coptic, None, -100, "M03", 1);
         single_test_roundtrip(coptic, Some(("am", Some(0))), -99, "M03", 1);
         single_test_roundtrip(coptic, Some(("am", Some(0))), 100, "M13", 1);
         single_test_error(
@@ -1704,6 +1710,7 @@ mod tests {
 
         single_test_roundtrip(ethiopian, Some(("am", Some(1))), 100, "M03", 1);
         single_test_roundtrip(ethiopian, None, 2000, "M03", 1);
+        single_test_roundtrip(ethiopian, None, -100, "M03", 1);
         single_test_roundtrip(ethiopian, Some(("am", Some(1))), 2000, "M13", 1);
         single_test_roundtrip(ethiopian, Some(("aa", Some(0))), 5400, "M03", 1);
         single_test_error(
@@ -1743,6 +1750,7 @@ mod tests {
 
         single_test_roundtrip(ethioaa, Some(("aa", Some(0))), 7000, "M13", 1);
         single_test_roundtrip(ethioaa, None, 7000, "M13", 1);
+        single_test_roundtrip(ethioaa, None, -100, "M13", 1);
         single_test_roundtrip(ethioaa, Some(("aa", Some(0))), 100, "M03", 1);
         single_test_error(
             ethiopian,
@@ -1755,6 +1763,7 @@ mod tests {
 
         single_test_roundtrip(gregorian, Some(("ce", Some(1))), 100, "M03", 1);
         single_test_roundtrip(gregorian, None, 2000, "M03", 1);
+        single_test_roundtrip(gregorian, None, -100, "M03", 1);
         single_test_roundtrip(gregorian, Some(("bce", Some(0))), 100, "M03", 1);
         single_test_error(
             gregorian,
@@ -1834,6 +1843,8 @@ mod tests {
         single_test_roundtrip(japanese, Some(("meiji", None)), 10, "M03", 1);
         single_test_roundtrip(japanese, Some(("ce", None)), 1000, "M03", 1);
         single_test_roundtrip(japanese, None, 1000, "M03", 1);
+        single_test_roundtrip(japanese, None, -100, "M03", 1);
+        single_test_roundtrip(japanese, None, 2024, "M03", 1);
         single_test_roundtrip(japanese, Some(("bce", None)), 10, "M03", 1);
         single_test_error(
             japanese,
@@ -1915,6 +1926,7 @@ mod tests {
 
         single_test_roundtrip(persian, Some(("ap", Some(0))), 477, "M03", 1);
         single_test_roundtrip(persian, None, 2083, "M07", 21);
+        single_test_roundtrip(persian, None, -100, "M07", 21);
         single_test_roundtrip(persian, Some(("ap", Some(0))), 1600, "M12", 20);
         single_test_error(
             persian,
@@ -1927,6 +1939,7 @@ mod tests {
 
         single_test_roundtrip(hebrew, Some(("am", Some(0))), 5773, "M03", 1);
         single_test_roundtrip(hebrew, None, 4993, "M07", 21);
+        single_test_roundtrip(hebrew, None, -100, "M07", 21);
         single_test_roundtrip(hebrew, Some(("am", Some(0))), 5012, "M12", 20);
         single_test_error(
             hebrew,
@@ -1940,9 +1953,11 @@ mod tests {
         single_test_roundtrip(roc, Some(("roc", Some(1))), 10, "M05", 3);
         single_test_roundtrip(roc, Some(("broc", Some(0))), 15, "M01", 10);
         single_test_roundtrip(roc, None, 100, "M10", 30);
+        single_test_roundtrip(roc, None, -100, "M10", 30);
 
         single_test_roundtrip(hijri_simulated, Some(("ah", Some(0))), 477, "M03", 1);
         single_test_roundtrip(hijri_simulated, None, 2083, "M07", 21);
+        single_test_roundtrip(hijri_simulated, None, -100, "M07", 21);
         single_test_roundtrip(hijri_simulated, Some(("ah", Some(0))), 1600, "M12", 20);
         single_test_error(
             hijri_simulated,
@@ -1955,6 +1970,7 @@ mod tests {
 
         single_test_roundtrip(hijri_civil, Some(("ah", Some(0))), 477, "M03", 1);
         single_test_roundtrip(hijri_civil, None, 2083, "M07", 21);
+        single_test_roundtrip(hijri_civil, None, -100, "M07", 21);
         single_test_roundtrip(hijri_civil, Some(("ah", Some(0))), 1600, "M12", 20);
         single_test_error(
             hijri_civil,
@@ -1967,6 +1983,7 @@ mod tests {
 
         single_test_roundtrip(hijri_umm_al_qura, Some(("ah", Some(0))), 477, "M03", 1);
         single_test_roundtrip(hijri_umm_al_qura, None, 2083, "M07", 21);
+        single_test_roundtrip(hijri_umm_al_qura, None, -100, "M07", 21);
         single_test_roundtrip(hijri_umm_al_qura, Some(("ah", Some(0))), 1600, "M12", 20);
         single_test_error(
             hijri_umm_al_qura,
@@ -1979,6 +1996,7 @@ mod tests {
 
         single_test_roundtrip(hijri_astronomical, Some(("ah", Some(0))), 477, "M03", 1);
         single_test_roundtrip(hijri_astronomical, None, 2083, "M07", 21);
+        single_test_roundtrip(hijri_astronomical, None, -100, "M07", 21);
         single_test_roundtrip(hijri_astronomical, Some(("ah", Some(0))), 1600, "M12", 20);
         single_test_error(
             hijri_astronomical,

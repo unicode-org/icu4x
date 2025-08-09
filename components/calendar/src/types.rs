@@ -48,6 +48,15 @@ impl YearInfo {
         }
     }
 
+    /// Get the monotonic year (See [`Date::monotonic_year`](crate::Date::monotonic_year))
+    /// for more information
+    pub fn monotonic_year(self) -> i32 {
+        match self {
+            YearInfo::Era(e) => e.monotonic_year,
+            YearInfo::Cyclic(c) => c.related_iso,
+        }
+    }
+
     /// Get the era year information, if available
     pub fn era(self) -> Option<EraYear> {
         match self {
@@ -88,6 +97,8 @@ pub enum YearAmbiguity {
 pub struct EraYear {
     /// The numeric year in that era
     pub year: i32,
+    /// See [`YearInfo::monotonic_year()`]
+    pub monotonic_year: i32,
     /// The era code as defined by CLDR, expect for cases where CLDR does not define a code.
     pub era: TinyStr16,
     /// An era index, for calendars with a small set of eras.

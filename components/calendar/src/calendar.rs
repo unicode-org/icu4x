@@ -32,7 +32,7 @@ pub trait Calendar: crate::cal::scaffold::UnstableSealed {
 
     /// Construct a date from era/month codes and fields
     ///
-    /// The year is extended_year if no era is provided
+    /// The year is the [monotonic year](crate::Date::monotonic_year) if no era is provided
     #[expect(clippy::wrong_self_convention)]
     fn from_codes(
         &self,
@@ -68,8 +68,15 @@ pub trait Calendar: crate::cal::scaffold::UnstableSealed {
 
     /// Information about the year
     fn year_info(&self, date: &Self::DateInner) -> Self::Year;
-    /// The extended year value
-    fn extended_year(&self, date: &Self::DateInner) -> i32;
+    /// (Deprecated)
+    ///
+    /// "extended year" is an old name, this method should not necessarily match ICU4C extended year,
+    /// and instead should attempt to align with
+    /// <https://tc39.es/proposal-intl-era-monthcode/> as much as possible.
+    #[deprecated(since = "2.1.0", note = "Use `Date::monotonic_year` instead")]
+    fn extended_year(&self, date: &Self::DateInner) -> i32 {
+        self.year_info(date).into().monotonic_year()
+    }
     /// The calendar-specific month represented by `date`
     fn month(&self, date: &Self::DateInner) -> types::MonthInfo;
     /// The calendar-specific day-of-month represented by `date`
