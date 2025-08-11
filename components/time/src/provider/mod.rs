@@ -24,7 +24,6 @@ use zerovec::ule::vartuple::VarTupleULE;
 use zerovec::ule::{AsULE, NichedOption, RawBytesULE};
 use zerovec::{VarZeroVec, ZeroSlice, ZeroVec};
 
-pub use crate::zone::ule::TimeZoneVariantULE;
 pub use crate::zone::TimeZone;
 pub mod iana;
 pub mod windows;
@@ -64,6 +63,27 @@ pub const MARKERS: &[DataMarkerInfo] = &[
 ];
 
 const SECONDS_TO_EIGHTS_OF_HOURS: i32 = 60 * 60 / 8;
+
+/// A time zone variant used to identify a display name in CLDR.
+#[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd, Hash)]
+#[zerovec::make_ule(TimeZoneVariantULE)]
+#[repr(u8)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_time::provider))]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[non_exhaustive]
+pub enum TimeZoneVariant {
+    /// The variant corresponding to `"standard"` in CLDR.
+    ///
+    /// The semantics vary from time zone to time zone. The time zone display
+    /// name of this variant may or may not be called "Standard Time".
+    Standard = 0,
+    /// The variant corresponding to `"daylight"` in CLDR.
+    ///
+    /// The semantics vary from time zone to time zone. The time zone display
+    /// name of this variant may or may not be called "Daylight Time".
+    Daylight = 1,
+}
 
 /// Metadata about a metazone membership
 #[derive(Debug, Clone, Copy, PartialEq, PartialOrd, Eq, Ord)]

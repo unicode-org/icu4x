@@ -181,39 +181,6 @@ impl TimeZone {
     }
 }
 
-/// This module exists so we can cleanly reexport TimeZoneVariantULE from the provider module, whilst retaining a public stable TimeZoneVariant type.
-pub(crate) mod ule {
-    /// A time zone variant, such as Standard Time, or Daylight/Summer Time.
-    ///
-    /// This should not generally be constructed by client code. Instead, use
-    /// * [`TimeZoneVariant::from_rearguard_isdst`]
-    /// * [`TimeZoneInfo::infer_variant`](crate::TimeZoneInfo::infer_variant)
-    #[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd, Hash)]
-    #[zerovec::make_ule(TimeZoneVariantULE)]
-    #[repr(u8)]
-    #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
-    #[cfg_attr(feature = "datagen", databake(path = icu_time))]
-    #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-    #[non_exhaustive]
-    pub enum TimeZoneVariant {
-        /// The variant corresponding to `"standard"` in CLDR.
-        ///
-        /// The semantics vary from time zone to time zone. The time zone display
-        /// name of this variant may or may not be called "Standard Time".
-        ///
-        /// This is the variant with the lower UTC offset.
-        Standard = 0,
-        /// The variant corresponding to `"daylight"` in CLDR.
-        ///
-        /// The semantics vary from time zone to time zone. The time zone display
-        /// name of this variant may or may not be called "Daylight Time".
-        ///
-        /// This is the variant with the higher UTC offset.
-        Daylight = 1,
-    }
-}
-pub use ule::TimeZoneVariant;
-
 impl Deref for TimeZone {
     type Target = Subtag;
 
@@ -500,6 +467,12 @@ impl TimeZoneInfo<models::AtTime> {
         self.with_variant(variant)
     }
 }
+
+#[deprecated(
+    since = "2.1.0",
+    note = "TimeZoneVariants don't need to be constructed in user code"
+)]
+pub use crate::provider::TimeZoneVariant;
 
 impl TimeZoneVariant {
     /// Creates a zone variant from a TZDB `isdst` flag, if it is known that the TZDB was built with

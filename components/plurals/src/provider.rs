@@ -477,7 +477,7 @@ where
     /// 2. Bytes corresponding to the default V
     /// 3. Bytes corresponding to the specials slice, if present
     #[inline]
-    fn unpack_bytes(bytes: &[u8]) -> Option<PluralElementsUnpackedBytes> {
+    fn unpack_bytes(bytes: &[u8]) -> Option<PluralElementsUnpackedBytes<'_>> {
         let (lead_byte, remainder) = bytes.split_first()?;
         if lead_byte & 0x80 == 0 {
             Some(PluralElementsUnpackedBytes {
@@ -497,7 +497,7 @@ where
     }
 
     /// Unpacks this structure into the default value and the optional list of specials.
-    fn as_parts(&self) -> PluralElementsUnpacked<V> {
+    fn as_parts(&self) -> PluralElementsUnpacked<'_, V> {
         // Safety: the bytes are valid by invariant
         let unpacked_bytes = unsafe { Self::unpack_bytes(&self.bytes).unwrap_unchecked() };
         let metadata = FourBitMetadata(unpacked_bytes.lead_byte & 0x0F);

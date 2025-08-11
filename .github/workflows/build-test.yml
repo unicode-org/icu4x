@@ -323,7 +323,10 @@ jobs:
 
   # ci-job-test-dart
   test-dart:
-    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        os: [ ubuntu-latest, macos-latest, windows-latest ]
+    runs-on: ${{ matrix.os }}
 
     steps:
     - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
@@ -344,11 +347,34 @@ jobs:
     # Job-specific dependencies
     - uses: dart-lang/setup-dart@0a8a0fc875eb934c15d08629302413c671d3f672 # v1.6.5
       with:
-        sdk: ${{ github.event_name != 'schedule' && '3.9.0-138.0.dev' || 'dev' }}
+        sdk: ${{ github.event_name != 'schedule' && '3.10.0-22.0.dev' || 'dev' }}
+    - name: Install yq if Windows
+      if: ${{ matrix.os == 'windows-latest' }}
+      run: choco install yq
 
     # Actual job
     - name: Run `cargo make ci-job-test-dart`
       run: cargo make ci-job-test-dart
+
+    - name: Run `cargo make ci-job-test-dart` in local mode
+      run: |
+        cp ffi/dart/.dart_tool/lib/* dylib
+        yq -i ".hooks.user_defines.icu4x.buildMode = \"local\"" ffi/dart/pubspec.yaml
+        yq -i ".hooks.user_defines.icu4x.localPath = \"file://$(realpath dylib)\"" ffi/dart/pubspec.yaml
+        yq -i ".hooks.user_defines.icu4x.buildMode = \"local\"" examples/dart/pubspec.yaml
+        yq -i ".hooks.user_defines.icu4x.localPath = \"file://$(realpath dylib)\"" examples/dart/pubspec.yaml
+        cargo make ci-job-test-dart
+        rm dylib
+
+    - name: Run `cargo make ci-job-test-dart` in fetch mode
+      # Only run if not PR, or if PR and skip_fetch is false
+      # TODO: Uncomment this after releasing artifacts.
+      # if: github.event_name != 'pull_request' || needs.check_skip_fetch.outputs.skip_fetch == 'false'
+      if: false
+      run: |
+        yq -i ".hooks.user_defines.icu4x.buildMode = \"fetch\"" ffi/dart/pubspec.yaml
+        yq -i ".hooks.user_defines.icu4x.buildMode = \"fetch\"" examples/dart/pubspec.yaml
+        cargo make ci-job-test-dart
  
 
   # ci-job-nostd

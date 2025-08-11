@@ -131,7 +131,7 @@ where
     fn iter_ids_for_marker(
         &self,
         marker: DataMarkerInfo,
-    ) -> Result<BTreeSet<DataIdentifierCow>, DataError> {
+    ) -> Result<BTreeSet<DataIdentifierCow<'_>>, DataError> {
         self.inner.iter_ids_for_marker(marker).map(|set| {
             // Use filter_map instead of filter to avoid cloning the locale
             set.into_iter()
@@ -147,7 +147,7 @@ where
     F: Fn(DataIdentifierBorrowed) -> bool,
     D: IterableDataProvider<M>,
 {
-    fn iter_ids(&self) -> Result<BTreeSet<DataIdentifierCow>, DataError> {
+    fn iter_ids(&self) -> Result<BTreeSet<DataIdentifierCow<'_>>, DataError> {
         self.inner.iter_ids().map(|vec| {
             // Use filter_map instead of filter to avoid cloning the locale
             vec.into_iter()

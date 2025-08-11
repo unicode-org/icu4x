@@ -21,10 +21,10 @@ packages:
     dependency: transitive
     description:
       name: code_assets
-      sha256: dd7ed641b7f642092092969f2dcd5845ab31c9f3efead0c06ca437bf9ce8a8b2
+      sha256: "7f42899e7b22f7810ea8c2b281c979add25555fbe391dde539621069e20b90b4"
       url: "https://pub.dev"
     source: hosted
-    version: "0.19.4"
+    version: "0.19.5"
   collection:
     dependency: transitive
     description:
@@ -69,17 +69,17 @@ packages:
     dependency: transitive
     description:
       name: hooks
-      sha256: "75363eae6c0c2db051c4f6b3b1fcdea8a09c4a596cc83bfff847661da6e80dfc"
+      sha256: "2bd640e4625fdfe5788ef33d825a8639797d44bce05695ab13543cde0ff9a078"
       url: "https://pub.dev"
     source: hosted
-    version: "0.19.5"
+    version: "0.20.0"
   icu4x:
     dependency: "direct main"
     description:
       path: "../../ffi/dart"
       relative: true
     source: path
-    version: "0.1.0-dev"
+    version: "2.0.0-dev.0"
   logging:
     dependency: transitive
     description:
@@ -100,10 +100,10 @@ packages:
     dependency: transitive
     description:
       name: native_toolchain_c
-      sha256: "74a0c80d877c519bc6bde2c4e27b6b01c1f93c9b480f65ceae8bedd3aba3c086"
+      sha256: "7e8358a4f6ec69a4f2d366bb971af298aca50d6c2e8a07be7c12d7f6d40460aa"
       url: "https://pub.dev"
     source: hosted
-    version: "0.16.8"
+    version: "0.17.1"
   path:
     dependency: transitive
     description:

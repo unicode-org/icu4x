@@ -65,8 +65,9 @@ const LEVEL_SEPARATOR_BYTE: u8 = 1;
 ///
 /// Same as the unique primary and identical-level weights of U+FFFE.  Must not
 /// be used as primary compression low terminator.  Otherwise usable.
+const MERGE_SEPARATOR: char = '\u{fffe}';
 const MERGE_SEPARATOR_BYTE: u8 = 2;
-const MERGE_SEPARATOR_PRIMARY: u32 = 0x02000000; // for U+FFFE
+const MERGE_SEPARATOR_PRIMARY: u32 = 0x02000000;
 
 /// Primary compression low terminator, must be greater than MERGE_SEPARATOR_BYTE.
 ///
@@ -133,6 +134,35 @@ const TER_UPPER_FIRST_COMMON: [u8; 4] = [
 
 const QUAT_COMMON: [u8; 4] = [0x1c, 0x1c + 0x70, 0x1c + 0xe0, 0x71];
 const QUAT_SHIFTED_LIMIT_BYTE: u8 = QUAT_COMMON[WEIGHT_LOW] - 1; // 0x1b
+
+// Do not use byte values 0, 1, 2 because they are separators in sort keys.
+const SLOPE_MIN: i32 = 3;
+const SLOPE_MAX: i32 = 0xff;
+const SLOPE_MIDDLE: i32 = 0x81;
+const SLOPE_TAIL_COUNT: i32 = SLOPE_MAX - SLOPE_MIN + 1;
+const SLOPE_SINGLE: i32 = 80;
+const SLOPE_LEAD_2: i32 = 42;
+const SLOPE_LEAD_3: i32 = 3;
+
+// The difference value range for single-byters.
+const SLOPE_REACH_POS_1: i32 = SLOPE_SINGLE;
+const SLOPE_REACH_NEG_1: i32 = -SLOPE_SINGLE;
+
+// The difference value range for double-byters.
+const SLOPE_REACH_POS_2: i32 = SLOPE_LEAD_2 * SLOPE_TAIL_COUNT + (SLOPE_LEAD_2 - 1);
+const SLOPE_REACH_NEG_2: i32 = -SLOPE_REACH_POS_2 - 1;
+
+// The difference value range for 3-byters.
+const SLOPE_REACH_POS_3: i32 = SLOPE_LEAD_3 * SLOPE_TAIL_COUNT * SLOPE_TAIL_COUNT
+    + (SLOPE_LEAD_3 - 1) * SLOPE_TAIL_COUNT
+    + (SLOPE_TAIL_COUNT - 1);
+const SLOPE_REACH_NEG_3: i32 = -SLOPE_REACH_POS_3 - 1;
+
+// The lead byte start values.
+const SLOPE_START_POS_2: i32 = SLOPE_MIDDLE + SLOPE_SINGLE + 1;
+const SLOPE_START_POS_3: i32 = SLOPE_START_POS_2 + SLOPE_LEAD_2;
+const SLOPE_START_NEG_2: i32 = SLOPE_MIDDLE + SLOPE_REACH_NEG_1;
+const SLOPE_START_NEG_3: i32 = SLOPE_START_NEG_2 - SLOPE_LEAD_2;
 
 struct AnyQuaternaryAccumulator(u32);
 
@@ -536,7 +566,7 @@ pub struct Collator {
 
 impl Collator {
     /// Constructs a borrowed version of this type for more efficient querying.
-    pub fn as_borrowed(&self) -> CollatorBorrowed {
+    pub fn as_borrowed(&self) -> CollatorBorrowed<'_> {
         CollatorBorrowed {
             special_primaries: self.special_primaries.get(),
             root: self.root.get(),
@@ -911,7 +941,7 @@ impl CollatorBorrowed<'_> {
     );
 
     #[inline(always)]
-    fn tailoring_or_root(&self) -> &CollationData {
+    fn tailoring_or_root(&self) -> &CollationData<'_> {
         if let Some(tailoring) = &self.tailoring {
             tailoring
         } else {
@@ -1791,7 +1821,7 @@ impl CollatorBorrowed<'_> {
         S: CollationKeySink + ?Sized,
         S::State: Default,
     {
-        self.write_sort_key_impl(s.chars(), sink, |nfd, sink| nfd.normalize_to(s, sink))
+        self.write_sort_key_impl(s.chars(), sink)
     }
 
     /// Given potentially invalid UTF-8, write the sort key bytes up to the collator's strength.
@@ -1802,7 +1832,7 @@ impl CollatorBorrowed<'_> {
         S: CollationKeySink + ?Sized,
         S::State: Default,
     {
-        self.write_sort_key_impl(s.chars(), sink, |nfd, sink| nfd.normalize_utf8_to(s, sink))
+        self.write_sort_key_impl(s.chars(), sink)
     }
 
     /// Given potentially invalid UTF-16, write the sort key bytes up to the collator's strength.
@@ -1813,31 +1843,31 @@ impl CollatorBorrowed<'_> {
         S: CollationKeySink + ?Sized,
         S::State: Default,
     {
-        self.write_sort_key_impl(s.chars(), sink, |nfd, sink| nfd.normalize_utf16_to(s, sink))
+        self.write_sort_key_impl(s.chars(), sink)
     }
 
-    fn write_sort_key_impl<I, S, N>(
-        &self,
-        iter: I,
-        sink: &mut S,
-        normalize: N,
-    ) -> Result<S::Output, S::Error>
+    fn write_sort_key_impl<I, S>(&self, iter: I, sink: &mut S) -> Result<S::Output, S::Error>
     where
-        I: Iterator<Item = char>,
+        I: Iterator<Item = char> + Clone,
         S: CollationKeySink + ?Sized,
         S::State: Default,
-        N: Fn(DecomposingNormalizerBorrowed, &mut SinkAdapter<'_, S>) -> core::fmt::Result,
     {
+        let identical = if self.options.strength() == Strength::Identical {
+            Some(iter.clone())
+        } else {
+            None
+        };
+
         let mut state = S::State::default();
         self.write_sort_key_up_to_quaternary(iter, sink, &mut state)?;
 
-        if self.options.strength() == Strength::Identical {
+        if let Some(iter) = identical {
             let nfd =
                 DecomposingNormalizerBorrowed::new_with_data(self.decompositions, self.tables);
             sink.write_byte(&mut state, LEVEL_SEPARATOR_BYTE)?;
-            let mut adapter = SinkAdapter::new(sink, &mut state);
-            let _ = normalize(nfd, &mut adapter);
-            adapter.finish()?;
+
+            let iter = nfd.normalize_iter(iter);
+            write_identical_level(iter, sink, &mut state)?;
         }
 
         sink.finish(state)
@@ -2424,67 +2454,112 @@ impl SortKeyLevel {
     }
 }
 
-struct SinkAdapter<'a, S: CollationKeySink + ?Sized> {
-    inner: &'a mut S,
-    state: &'a mut S::State,
-    error: Option<S::Error>,
+// The algorithm below (BOCSU or Binary Ordered Compression Scheme for Unicode) is translated
+// from the C++ code in ICU4C at icu4c/source/i18n/bocsu.{cpp,h}.  The algorithm works by
+// converting a sequence of codepoints into a sequence of presumably small differences.  See
+// the C++ code for a more detailed explanation.
+
+macro_rules! negdivmod {
+    ($n:ident, $d:ident, $m:ident) => {
+        $m = $n % $d;
+        $n /= $d;
+        if $m < 0 {
+            $n -= 1;
+            $m += $d;
+        }
+    };
 }
 
-impl<'a, S> SinkAdapter<'a, S>
+fn write_diff<S>(mut diff: i32, sink: &mut S, state: &mut S::State) -> Result<(), S::Error>
 where
     S: CollationKeySink + ?Sized,
 {
-    fn new(inner: &'a mut S, state: &'a mut S::State) -> Self {
-        Self {
-            inner,
-            state,
-            error: None,
+    let mut out = |b| sink.write_byte(state, b);
+
+    if diff >= SLOPE_REACH_NEG_1 {
+        if diff <= SLOPE_REACH_POS_1 {
+            out((SLOPE_MIDDLE + diff) as _)?;
+        } else if diff <= SLOPE_REACH_POS_2 {
+            out((SLOPE_START_POS_2 + (diff / SLOPE_TAIL_COUNT)) as _)?;
+            out((SLOPE_MIN + diff % SLOPE_TAIL_COUNT) as _)?;
+        } else if diff <= SLOPE_REACH_POS_3 {
+            let p2 = SLOPE_MIN + diff % SLOPE_TAIL_COUNT;
+            diff /= SLOPE_TAIL_COUNT;
+            let p1 = SLOPE_MIN + diff % SLOPE_TAIL_COUNT;
+            let p0 = SLOPE_START_POS_3 + (diff / SLOPE_TAIL_COUNT);
+            out(p0 as _)?;
+            out(p1 as _)?;
+            out(p2 as _)?;
+        } else {
+            let p3 = SLOPE_MIN + diff % SLOPE_TAIL_COUNT;
+            diff /= SLOPE_TAIL_COUNT;
+            let p2 = SLOPE_MIN + diff % SLOPE_TAIL_COUNT;
+            diff /= SLOPE_TAIL_COUNT;
+            let p1 = SLOPE_MIN + diff % SLOPE_TAIL_COUNT;
+            out(SLOPE_MAX as _)?;
+            out(p1 as _)?;
+            out(p2 as _)?;
+            out(p3 as _)?;
+        }
+    } else {
+        let mut m;
+
+        if diff >= SLOPE_REACH_NEG_2 {
+            negdivmod!(diff, SLOPE_TAIL_COUNT, m);
+            out((SLOPE_START_NEG_2 + diff) as _)?;
+            out((SLOPE_MIN + m) as _)?;
+        } else if diff >= SLOPE_REACH_NEG_3 {
+            negdivmod!(diff, SLOPE_TAIL_COUNT, m);
+            let p2 = SLOPE_MIN + m;
+            negdivmod!(diff, SLOPE_TAIL_COUNT, m);
+            let p1 = SLOPE_MIN + m;
+            let p0 = SLOPE_START_NEG_3 + diff;
+            out(p0 as _)?;
+            out(p1 as _)?;
+            out(p2 as _)?;
+        } else {
+            negdivmod!(diff, SLOPE_TAIL_COUNT, m);
+            let p3 = SLOPE_MIN + m;
+            negdivmod!(diff, SLOPE_TAIL_COUNT, m);
+            let p2 = SLOPE_MIN + m;
+            negdivmod!(diff, SLOPE_TAIL_COUNT, m);
+            let p1 = SLOPE_MIN + m;
+            let _ = diff;
+            out(SLOPE_MIN as _)?;
+            out(p1 as _)?;
+            out(p2 as _)?;
+            out(p3 as _)?;
         }
     }
 
-    fn finish(self) -> Result<(), S::Error> {
-        self.error.map_or(Ok(()), Err)
-    }
-
-    fn map_err(&mut self, error: S::Error) -> core::fmt::Error {
-        self.error = Some(error);
-        core::fmt::Error
-    }
+    Ok(())
 }
 
-impl<S> core::fmt::Write for SinkAdapter<'_, S>
+fn write_identical_level<I, S>(iter: I, sink: &mut S, state: &mut S::State) -> Result<(), S::Error>
 where
+    I: Iterator<Item = char>,
     S: CollationKeySink + ?Sized,
 {
-    fn write_str(&mut self, s: &str) -> core::fmt::Result {
-        self.inner
-            .write(self.state, s.as_bytes())
-            .map_err(|e| self.map_err(e))
-    }
-}
+    let mut prev = 0i32;
 
-impl<S> write16::Write16 for SinkAdapter<'_, S>
-where
-    S: CollationKeySink + ?Sized,
-{
-    fn write_slice(&mut self, s: &[u16]) -> core::fmt::Result {
-        // For the identical level, if the input is UTF-16, transcode to UTF-8.
-        let iter = char::decode_utf16(s.iter().cloned());
-        let mut bytes = [0u8; 4];
-        for c in iter {
-            let c = c.unwrap_or(char::REPLACEMENT_CHARACTER); // shouldn't happen
-            self.inner
-                .write(self.state, c.encode_utf8(&mut bytes).as_bytes())
-                .map_err(|e| self.map_err(e))?;
+    for c in iter {
+        if !(0x4e00..=0xa000).contains(&prev) {
+            prev = (prev & !0x7f) - SLOPE_REACH_NEG_1;
+        } else {
+            // Unihan U+4e00..U+9fa5:  double-bytes down from the upper end
+            prev = 0x9fff - SLOPE_REACH_POS_2;
         }
-        Ok(())
-    }
 
-    fn write_char(&mut self, c: char) -> core::fmt::Result {
-        self.inner
-            .write(self.state, c.encode_utf8(&mut [0u8; 4]).as_bytes())
-            .map_err(|e| self.map_err(e))
+        if c == MERGE_SEPARATOR {
+            sink.write_byte(state, MERGE_SEPARATOR_BYTE)?;
+            prev = 0;
+        } else {
+            let c = c as i32;
+            write_diff(c - prev, sink, state)?;
+            prev = c;
+        }
     }
+    Ok(())
 }
 
 #[cfg(test)]
@@ -2686,5 +2761,32 @@ mod test {
         let collator = collator_en(Strength::Secondary);
         let mut k = Vec::new();
         let Ok(()) = collator.write_sort_key_to(&"a".repeat(300), &mut k);
+    }
+
+    fn check_sort_key_less(a: &[u16], b: &[u16]) {
+        let collator = collator_en(Strength::Identical);
+        let mut ak = Vec::new();
+        let Ok(()) = collator.write_sort_key_utf16_to(a, &mut ak);
+        let mut bk = Vec::new();
+        let Ok(()) = collator.write_sort_key_utf16_to(b, &mut bk);
+        assert!(ak < bk, "failed: {a:04x?} - {b:04x?}");
+    }
+
+    #[test]
+    fn sort_key_fffe_bug_6811() {
+        check_sort_key_less(
+            &[0xfffe, 0x0001, 0x0002, 0x0003],
+            &[0x0001, 0xfffe, 0x0002, 0x0003],
+        );
+        check_sort_key_less(
+            &[0x0001, 0xfffe, 0x0002, 0x0003],
+            &[0x0001, 0x0002, 0xfffe, 0x0003],
+        );
+        check_sort_key_less(
+            &[0x0001, 0x0002, 0xfffe, 0x0003],
+            &[0x0001, 0x0002, 0x0003, 0xfffe],
+        );
+        check_sort_key_less(&[0xfffe, 0x0000, 0x0000], &[0x0000, 0xfffe, 0x0000]);
+        check_sort_key_less(&[0x0000, 0xfffe, 0x0000], &[0x0000, 0x0000, 0xfffe]);
     }
 }

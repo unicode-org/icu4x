@@ -150,7 +150,7 @@ impl<const N: usize, T> ConstArrayBuilder<N, T> {
     }
 
     /// Returns the initialized elements as a [`ConstSlice`].
-    pub const fn as_const_slice(&self) -> ConstSlice<T> {
+    pub const fn as_const_slice(&self) -> ConstSlice<'_, T> {
         ConstSlice::from_manual_slice(&self.full_array, self.start, self.limit)
     }
 

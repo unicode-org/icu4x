@@ -95,7 +95,7 @@ impl FsDataProvider {
                 }
             }
             let mut string_path = path.into_os_string();
-            write!(&mut string_path, "/{}", req.id.locale).expect("infallible");
+            let _infallible = write!(&mut string_path, "/{}", req.id.locale);
             path = PathBuf::from(string_path);
         }
         path.set_extension(self.manifest.file_extension);

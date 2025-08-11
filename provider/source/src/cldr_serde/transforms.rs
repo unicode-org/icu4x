@@ -2,10 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use std::fmt::Display;
-
-use icu::locale::Locale;
-use serde::{Deserialize, Deserializer};
+use serde::Deserialize;
 
 #[derive(PartialEq, Debug, Deserialize)]
 #[serde(rename_all = "lowercase")]
@@ -21,29 +18,6 @@ pub(crate) enum Visibility {
     Internal,
     #[default]
     External,
-}
-
-#[derive(PartialEq, Debug, Clone)]
-pub(crate) struct LocaleFromString(pub(crate) Locale);
-
-impl<'de> Deserialize<'de> for LocaleFromString {
-    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
-    where
-        D: Deserializer<'de>,
-    {
-        use serde::de::Error;
-        Ok(Self(
-            String::deserialize(deserializer)?
-                .parse()
-                .map_err(|_| D::Error::custom("invalid bcp47"))?,
-        ))
-    }
-}
-
-impl Display for LocaleFromString {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        self.0.fmt(f)
-    }
 }
 
 // cldr-transforms/transforms/<lang>.json

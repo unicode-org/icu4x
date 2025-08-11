@@ -252,7 +252,7 @@ impl VariantOffsetsCalculator {
     /// Returns a borrowed version of the calculator that can be queried.
     ///
     /// This avoids a small potential indirection cost when querying.
-    pub fn as_borrowed(&self) -> VariantOffsetsCalculatorBorrowed {
+    pub fn as_borrowed(&self) -> VariantOffsetsCalculatorBorrowed<'_> {
         VariantOffsetsCalculatorBorrowed {
             offset_period: match self.offset_period {
                 OffsetData::New(ref payload) => OffsetDataBorrowed::New(payload.get()),
