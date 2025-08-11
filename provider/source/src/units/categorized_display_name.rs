@@ -18,12 +18,11 @@ impl DataProvider<LengthDisplayNameV1> for SourceDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<LengthDisplayNameV1>, DataError> {
         self.check_req::<LengthDisplayNameV1>(req)?;
 
-        let (length, rest) = req
+        // TODO: This category is based on the Marker, in the next PR, this will be variable in a Macro based on the category.
+        let category = "length";
+        let (length, unit) = req
             .id
             .marker_attributes
-            .split_once('-')
-            .ok_or_else(|| DataErrorKind::InvalidRequest.into_error())?;
-        let (category, unit) = rest
             .split_once('-')
             .ok_or_else(|| DataErrorKind::InvalidRequest.into_error())?;
 
@@ -116,13 +115,12 @@ impl crate::IterableDataProviderCached<LengthDisplayNameV1> for SourceDataProvid
                         continue;
                     }
                     data_locales.insert(DataIdentifierCow::from_owned(
-                        DataMarkerAttributes::try_from_string(format!(
-                            "{length}-{category}-{unit}"
-                        ))
-                        .map_err(|_| {
-                            DataError::custom("Failed to parse the attribute")
-                                .with_debug_context(&unit)
-                        })?,
+                        DataMarkerAttributes::try_from_string(format!("{length}-{unit}")).map_err(
+                            |_| {
+                                DataError::custom("Failed to parse the attribute")
+                                    .with_debug_context(&unit)
+                            },
+                        )?,
                         locale,
                     ));
                 }
