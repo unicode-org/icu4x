@@ -5,7 +5,7 @@
 #[derive(Debug)]
 pub(crate) struct TzRule {
     /// The amount of seconds to add to standard_offset_seconds
-    /// to get the total offset
+    /// to get the rule offset
     pub(crate) additional_offset_secs: i32,
     /// The yearly start date of the rule
     pub(crate) start: TzRuleDate,
@@ -34,7 +34,7 @@ pub(crate) enum TimeMode {
     /// {millis_of_day} is local wall clock time in the time zone
     /// *before* the transition
     ///
-    /// i.e. if the transition between LST and LDT is to happen at 02:00,
+    /// e.g. if the transition between LST and LDT is to happen at 02:00,
     /// the time that *would be* 02:00 LST would be the first time of LDT.
     ///
     /// This means that `{local_wall_clock_time}` may never actually be the
