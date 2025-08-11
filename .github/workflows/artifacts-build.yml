@@ -588,7 +588,7 @@ jobs:
 
   ffi-libs:
     # This is too expensive to run on every push, so only run it on main.
-    # if: github.ref == 'refs/heads/main' && github.repository == 'unicode-org/icu4x'
+    if: github.ref == 'refs/heads/main' && github.repository == 'unicode-org/icu4x'
     name: Build FFI binaries
     strategy:
       fail-fast: false
