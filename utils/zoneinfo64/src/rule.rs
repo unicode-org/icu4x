@@ -9,7 +9,7 @@ pub(crate) struct TzRule {
     pub(crate) additional_offset_secs: i32,
     /// The yearly start date of the rule
     pub(crate) start: TzRuleDate,
-    /// The end date of Daylight Savings
+    /// The yearly end date of the rule
     pub(crate) end: TzRuleDate,
 }
 
