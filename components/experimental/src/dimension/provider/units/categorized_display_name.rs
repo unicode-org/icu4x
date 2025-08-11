@@ -26,9 +26,7 @@ pub struct LengthDisplayName<'data> {
     pub patterns: PluralElementsPackedCow<'data, SinglePlaceholderPattern>,
 }
 
-
 icu_provider::data_struct!(LengthDisplayName<'_>, #[cfg(feature = "datagen")]);
-
 
 impl<'data> LengthDisplayName<'data> {
     /// Construct an instance directly from a byte slice.
