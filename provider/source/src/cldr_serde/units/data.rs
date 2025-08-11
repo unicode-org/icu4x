@@ -107,11 +107,14 @@ pub(crate) struct UnitsData {
 
 #[derive(PartialEq, Debug)]
 pub(crate) struct UnitsLengthData {
-    pub(crate) units: BTreeMap<String, Patterns>,
+    /// Maps from each category to a map for each units with their associated patterns
+    pub(crate) categories: BTreeMap<String, BTreeMap<String, Patterns>>,
     pub(crate) per: Patterns,
     pub(crate) times: Patterns,
     pub(crate) powers: BTreeMap<usize, Patterns>,
     pub(crate) binary: BTreeMap<u8, Patterns>,
+
+    // TODO: Consider removing this field and accessing the data directly from `categories` if possible.
     pub(crate) decimal: BTreeMap<i8, Patterns>,
 }
 
@@ -151,7 +154,7 @@ impl<'de> Deserialize<'de> for UnitsData {
                 .iter()
                 .filter_map(|(k, v)| Some((k.strip_prefix("10p")?.parse().ok()?, v.clone())))
                 .collect(),
-            units: map
+            categories: map
                 .into_iter()
                 .filter_map(|(k, v)| {
                     if k.starts_with("10p")
@@ -160,9 +163,13 @@ impl<'de> Deserialize<'de> for UnitsData {
                     {
                         return None;
                     }
-                    k.split_once('-').map(|(_, unit)| (unit.to_string(), v))
+                    k.split_once('-')
+                        .map(|(category, unit)| (category.to_string(), unit.to_string(), v))
                 })
-                .collect(),
+                .fold(BTreeMap::new(), |mut acc, (category, unit, pattern)| {
+                    acc.entry(category).or_default().insert(unit, pattern);
+                    acc
+                }),
         };
 
         Ok(Self {

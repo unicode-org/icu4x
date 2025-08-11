@@ -40,8 +40,9 @@ impl DataProvider<UnitsDisplayNameV1> for SourceDataProvider {
                     .with_debug_context(length))
             }
         }
-        .units
-        .get(unit)
+        .categories
+        .iter()
+        .find_map(|(_, units_map)| units_map.get(unit))
         .ok_or_else(|| {
             DataErrorKind::IdentifierNotFound
                 .into_error()
@@ -93,19 +94,21 @@ impl crate::IterableDataProviderCached<UnitsDisplayNameV1> for SourceDataProvide
                     }
                 };
 
-                for (unit, patterns) in &length_patterns.units {
-                    if patterns.other.is_none() {
-                        continue;
+                // TODO: category is not used for now, but will be used when we have categorized data markers.
+                for units_map in length_patterns.categories.values() {
+                    for (unit, patterns) in units_map {
+                        if patterns.other.is_none() {
+                            continue;
+                        }
+                        data_locales.insert(DataIdentifierCow::from_owned(
+                            DataMarkerAttributes::try_from_string(format!("{length}-{unit}"))
+                                .map_err(|_| {
+                                    DataError::custom("Failed to parse the attribute")
+                                        .with_debug_context(&unit)
+                                })?,
+                            locale,
+                        ));
                     }
-                    data_locales.insert(DataIdentifierCow::from_owned(
-                        DataMarkerAttributes::try_from_string(format!("{length}-{unit}")).map_err(
-                            |_| {
-                                DataError::custom("Failed to parse the attribute")
-                                    .with_debug_context(&unit)
-                            },
-                        )?,
-                        locale,
-                    ));
                 }
             }
         }
