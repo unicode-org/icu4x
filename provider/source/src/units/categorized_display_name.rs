@@ -10,7 +10,6 @@ use crate::SourceDataProvider;
 use icu::experimental::dimension::provider::units::categorized_display_name::{
     LengthDisplayName, LengthDisplayNameV1,
 };
-use icu::experimental::dimension::provider::units::display_name::UnitsDisplayName;
 use icu::plurals::PluralElements;
 use icu_provider::prelude::*;
 use icu_provider::DataMarkerAttributes;
@@ -19,9 +18,12 @@ impl DataProvider<LengthDisplayNameV1> for SourceDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<LengthDisplayNameV1>, DataError> {
         self.check_req::<LengthDisplayNameV1>(req)?;
 
-        let (length, unit) = req
+        let (length, rest) = req
             .id
             .marker_attributes
+            .split_once('-')
+            .ok_or_else(|| DataErrorKind::InvalidRequest.into_error())?;
+        let (category, unit) = rest
             .split_once('-')
             .ok_or_else(|| DataErrorKind::InvalidRequest.into_error())?;
 
@@ -41,7 +43,13 @@ impl DataProvider<LengthDisplayNameV1> for SourceDataProvider {
                     .with_debug_context(length))
             }
         }
-        .units
+        .categories
+        .get(category)
+        .ok_or_else(|| {
+            DataErrorKind::IdentifierNotFound
+                .into_error()
+                .with_debug_context(category)
+        })?
         .get(unit)
         .ok_or_else(|| {
             DataErrorKind::IdentifierNotFound
@@ -52,22 +60,20 @@ impl DataProvider<LengthDisplayNameV1> for SourceDataProvider {
         Ok(DataResponse {
             metadata: Default::default(),
             payload: DataPayload::from_owned(LengthDisplayName {
-                display_name: UnitsDisplayName {
-                    patterns: PluralElements::new(
-                        unit_patterns
-                            .other
-                            .as_deref()
-                            .ok_or_else(|| DataErrorKind::IdentifierNotFound.into_error())?,
-                    )
-                    .with_zero_value(unit_patterns.zero.as_deref())
-                    .with_one_value(unit_patterns.one.as_deref())
-                    .with_two_value(unit_patterns.two.as_deref())
-                    .with_few_value(unit_patterns.few.as_deref())
-                    .with_many_value(unit_patterns.many.as_deref())
-                    .with_explicit_one_value(unit_patterns.explicit_one.as_deref())
-                    .with_explicit_zero_value(unit_patterns.explicit_zero.as_deref())
-                    .into(),
-                },
+                patterns: PluralElements::new(
+                    unit_patterns
+                        .other
+                        .as_deref()
+                        .ok_or_else(|| DataErrorKind::IdentifierNotFound.into_error())?,
+                )
+                .with_zero_value(unit_patterns.zero.as_deref())
+                .with_one_value(unit_patterns.one.as_deref())
+                .with_two_value(unit_patterns.two.as_deref())
+                .with_few_value(unit_patterns.few.as_deref())
+                .with_many_value(unit_patterns.many.as_deref())
+                .with_explicit_one_value(unit_patterns.explicit_one.as_deref())
+                .with_explicit_zero_value(unit_patterns.explicit_zero.as_deref())
+                .into(),
             }),
         })
     }
@@ -75,6 +81,9 @@ impl DataProvider<LengthDisplayNameV1> for SourceDataProvider {
 
 impl crate::IterableDataProviderCached<LengthDisplayNameV1> for SourceDataProvider {
     fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
+        // This category is based on the Marker, in the next PR, this will be variable in a Macro based on the category.
+        let category = "length";
+
         let mut data_locales = HashSet::new();
 
         let numbers = self.cldr()?.numbers();
@@ -96,17 +105,24 @@ impl crate::IterableDataProviderCached<LengthDisplayNameV1> for SourceDataProvid
                     }
                 };
 
-                for (unit, patterns) in &length_patterns.units {
+                for (unit, patterns) in
+                    length_patterns.categories.get(category).ok_or_else(|| {
+                        DataErrorKind::IdentifierNotFound
+                            .into_error()
+                            .with_debug_context("length")
+                    })?
+                {
                     if patterns.other.is_none() {
                         continue;
                     }
                     data_locales.insert(DataIdentifierCow::from_owned(
-                        DataMarkerAttributes::try_from_string(format!("{length}-{unit}")).map_err(
-                            |_| {
-                                DataError::custom("Failed to parse the attribute")
-                                    .with_debug_context(&unit)
-                            },
-                        )?,
+                        DataMarkerAttributes::try_from_string(format!(
+                            "{length}-{category}-{unit}"
+                        ))
+                        .map_err(|_| {
+                            DataError::custom("Failed to parse the attribute")
+                                .with_debug_context(&unit)
+                        })?,
                         locale,
                     ));
                 }
