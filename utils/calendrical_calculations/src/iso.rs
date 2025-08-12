@@ -69,7 +69,7 @@ pub fn fixed_from_iso(year: i32, month: u8, day: u8) -> RataDie {
 }
 
 /// Lisp code reference: <https://github.com/EdReingold/calendar-code2/blob/1ee51ecfaae6f856b0d7de3e36e9042100b4f424/calendar.l#L1191-L1217>
-pub(crate) const fn iso_year_from_fixed(date: RataDie) -> i64 {
+pub const fn iso_year_from_fixed(date: RataDie) -> Result<i32, I32CastError> {
     // Shouldn't overflow because it's not possbile to construct extreme values of RataDie
     let date = date.since(EPOCH);
 
@@ -87,9 +87,9 @@ pub(crate) const fn iso_year_from_fixed(date: RataDie) -> i64 {
     let year = 400 * n_400 + 100 * n_100 + 4 * n_4 + n_1;
 
     if n_100 == 4 || n_1 == 4 {
-        year
+        i64_to_i32(year)
     } else {
-        year + 1
+        i64_to_i32(year + 1)
     }
 }
 
@@ -99,8 +99,7 @@ fn iso_new_year(year: i32) -> RataDie {
 
 /// Lisp code reference: <https://github.com/EdReingold/calendar-code2/blob/1ee51ecfaae6f856b0d7de3e36e9042100b4f424/calendar.l#L1525-L1540>
 pub fn iso_from_fixed(date: RataDie) -> Result<(i32, u8, u8), I32CastError> {
-    let year = iso_year_from_fixed(date);
-    let year = i64_to_i32(year)?;
+    let year = iso_year_from_fixed(date)?;
     // Calculates the prior days of the adjusted year, then applies a correction based on leap year conditions for the correct ISO date conversion.
     let prior_days = date - iso_new_year(year);
     let correction = if date < fixed_from_iso(year, 3, 1) {

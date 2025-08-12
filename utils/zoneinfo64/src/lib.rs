@@ -20,6 +20,8 @@ mod chrono_impls;
 mod rule;
 use rule::*;
 
+const EPOCH: RataDie = calendrical_calculations::iso::const_fixed_from_iso(1970, 1, 1);
+
 #[derive(Debug)]
 pub struct ZoneInfo64<'a> {
     zones: Vec<TzZone<'a>>,
@@ -472,6 +474,7 @@ impl From<Transition> for Offset {
     }
 }
 
+#[derive(Debug, PartialEq)]
 pub enum PossibleOffset {
     /// There is a single possible offset
     Single(Offset),
@@ -592,7 +595,6 @@ impl Zone<'_> {
         minute: u8,
         second: u8,
     ) -> PossibleOffset {
-        const EPOCH: RataDie = calendrical_calculations::iso::const_fixed_from_iso(1970, 1, 1);
         let seconds_since_local_epoch =
             (((calendrical_calculations::iso::fixed_from_iso(year, month, day) - EPOCH) * 24
                 + hour as i64)
@@ -830,20 +832,7 @@ mod tests {
 
             let zoneinfo64 = TZDB.get(iana).unwrap();
 
-            // Temporary cap until rules are implemented
-            let max_working_timestamp = if zoneinfo64.final_rule.is_some() {
-                zoneinfo64
-                    .simple
-                    .trans
-                    .len()
-                    .checked_sub(2)
-                    .map(|i| zoneinfo64.simple.trans[i])
-                    .unwrap_or(i32::MAX) as i64
-            } else {
-                FUTURE
-            };
-
-            for seconds_since_epoch in (PAST..max_working_timestamp).step_by(60 * 60) {
+            for seconds_since_epoch in (PAST..FUTURE).step_by(60 * 60) {
                 let utc_datetime = chrono::DateTime::from_timestamp(seconds_since_epoch, 0)
                     .unwrap()
                     .naive_utc();
