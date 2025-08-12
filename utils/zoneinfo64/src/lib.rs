@@ -20,6 +20,8 @@ mod chrono_impls;
 mod rule;
 use rule::*;
 
+const EPOCH: RataDie = calendrical_calculations::iso::const_fixed_from_iso(1970, 1, 1);
+
 #[derive(Debug)]
 pub struct ZoneInfo64<'a> {
     zones: Vec<TzZone<'a>>,
@@ -427,15 +429,6 @@ pub struct Zone<'a> {
     pub region: Region,
 }
 
-#[derive(Debug, Clone, Copy)]
-struct Rule<'a> {
-    /// The year the rule starts applying
-    start_year: u32,
-    /// The offset of standard time
-    standard_offset_seconds: i32,
-    inner: &'a TzRule,
-}
-
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct Offset {
     pub since: i64,
@@ -552,7 +545,6 @@ impl Zone<'_> {
         minute: u8,
         second: u8,
     ) -> PossibleOffset {
-        const EPOCH: RataDie = calendrical_calculations::iso::const_fixed_from_iso(1970, 1, 1);
         let seconds_since_local_epoch =
             (((calendrical_calculations::iso::fixed_from_iso(year, month, day) - EPOCH) * 24
                 + hour as i64)
@@ -615,91 +607,97 @@ impl Zone<'_> {
     }
 }
 
-#[test]
-fn test() {
-    use chrono::Offset;
-    use chrono::TimeZone;
-    use chrono_tz::OffsetComponents;
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::sync::LazyLock;
 
-    // Tests pre32 transitions
-    // 1938-04-24T22:00:00Z
-    const PAST: i64 = -1_000_000_000 - 800;
-    // Tests rules and post32 transitions
-    // 2033-05-18T03:00:00Z
-    const FUTURE: i64 = 3_000_000_000 - 2000;
-
-    let tzdb =
+    pub(crate) static TZDB: LazyLock<ZoneInfo64> = LazyLock::new(|| {
         ZoneInfo64::try_from_u32s(resb::include_bytes_as_u32!("../tests/data/zoneinfo64.res"))
-            .expect("Error processing resource bundle file");
+            .expect("Error processing resource bundle file")
+    });
+    #[test]
+    fn test() {
+        use chrono::Offset;
+        use chrono::TimeZone;
+        use chrono_tz::OffsetComponents;
 
-    for chrono in chrono_tz::TZ_VARIANTS {
-        let iana = chrono.name();
+        // Tests pre32 transitions
+        // 1938-04-24T22:00:00Z
+        const PAST: i64 = -1_000_000_000 - 800;
+        // Tests rules and post32 transitions
+        // 2033-05-18T03:00:00Z
+        const FUTURE: i64 = 3_000_000_000 - 2000;
 
-        if std::env::var("EXHAUSTIVE_TZ_TEST").is_err() && iana != "Europe/Zurich" {
-            continue;
-        }
+        for chrono in chrono_tz::TZ_VARIANTS {
+            let iana = chrono.name();
 
-        println!("{iana}");
-
-        let zoneinfo64 = tzdb.get(iana).unwrap();
-
-        // TODO
-        let max_working_timestamp = if zoneinfo64.final_rule.is_some() {
-            zoneinfo64
-                .simple
-                .trans
-                .len()
-                .checked_sub(2)
-                .map(|i| zoneinfo64.simple.trans[i])
-                .unwrap_or(i32::MAX) as i64
-        } else {
-            FUTURE
-        };
-
-        for seconds_since_epoch in (PAST..max_working_timestamp).step_by(60 * 60) {
-            let utc_datetime = chrono::DateTime::from_timestamp(seconds_since_epoch, 0)
-                .unwrap()
-                .naive_utc();
-
-            let zoneinfo64_date = zoneinfo64.from_utc_datetime(&utc_datetime);
-            let chrono_date = chrono.from_utc_datetime(&utc_datetime);
-            assert_eq!(
-                zoneinfo64_date.offset().fix(),
-                chrono_date.offset().fix(),
-                "{seconds_since_epoch}, {iana:?}",
-            );
-
-            let local_datetime = chrono_date.naive_local();
-            assert_eq!(
-                zoneinfo64
-                    .offset_from_local_datetime(&local_datetime)
-                    .map(|o| o.fix()),
-                chrono
-                    .offset_from_local_datetime(&local_datetime)
-                    .map(|o| o.fix()),
-                "{seconds_since_epoch}, {zoneinfo64:?} {local_datetime}",
-            );
-
-            // Rearguard / vanguard diffs
-            if [
-                "Africa/Casablanca",
-                "Africa/El_Aaiun",
-                "Africa/Windhoek",
-                "Europe/Dublin",
-                "Eire",
-                "Europe/Bratislava",
-                "Europe/Prague",
-            ]
-            .contains(&chrono.name())
-            {
+            if std::env::var("EXHAUSTIVE_TZ_TEST").is_err() && iana != "Europe/Zurich" {
                 continue;
             }
 
-            assert_eq!(
-                zoneinfo64_date.offset().rule_applies(),
-                !chrono_date.offset().dst_offset().is_zero(),
-                "{seconds_since_epoch}, {iana:?}",
-            );
+            println!("{iana}");
+
+            let zoneinfo64 = TZDB.get(iana).unwrap();
+
+            // TODO
+            let max_working_timestamp = if zoneinfo64.final_rule.is_some() {
+                zoneinfo64
+                    .simple
+                    .trans
+                    .len()
+                    .checked_sub(2)
+                    .map(|i| zoneinfo64.simple.trans[i])
+                    .unwrap_or(i32::MAX) as i64
+            } else {
+                FUTURE
+            };
+
+            for seconds_since_epoch in (PAST..max_working_timestamp).step_by(60 * 60) {
+                let utc_datetime = chrono::DateTime::from_timestamp(seconds_since_epoch, 0)
+                    .unwrap()
+                    .naive_utc();
+
+                let zoneinfo64_date = zoneinfo64.from_utc_datetime(&utc_datetime);
+                let chrono_date = chrono.from_utc_datetime(&utc_datetime);
+                assert_eq!(
+                    zoneinfo64_date.offset().fix(),
+                    chrono_date.offset().fix(),
+                    "{seconds_since_epoch}, {iana:?}",
+                );
+
+                let local_datetime = chrono_date.naive_local();
+                assert_eq!(
+                    zoneinfo64
+                        .offset_from_local_datetime(&local_datetime)
+                        .map(|o| o.fix()),
+                    chrono
+                        .offset_from_local_datetime(&local_datetime)
+                        .map(|o| o.fix()),
+                    "{seconds_since_epoch}, {zoneinfo64:?} {local_datetime}",
+                );
+
+                // Rearguard / vanguard diffs
+                if [
+                    "Africa/Casablanca",
+                    "Africa/El_Aaiun",
+                    "Africa/Windhoek",
+                    "Europe/Dublin",
+                    "Eire",
+                    "Europe/Bratislava",
+                    "Europe/Prague",
+                ]
+                .contains(&chrono.name())
+                {
+                    continue;
+                }
+
+                assert_eq!(
+                    zoneinfo64_date.offset().rule_applies(),
+                    !chrono_date.offset().dst_offset().is_zero(),
+                    "{seconds_since_epoch}, {iana:?}",
+                );
+            }
         }
     }
 }
