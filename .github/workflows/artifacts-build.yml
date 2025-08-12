@@ -88,7 +88,7 @@ jobs:
           --exclude zerofrom-derive
           --exclude zerovec-derive
 
-    - uses: actions/upload-artifact@v4
+    - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
       with:
         name: rustdoc
         path: target/doc
@@ -140,7 +140,7 @@ jobs:
       with:
           doxyfile-path: 'tools/doxygen/config.doxy'
 
-    - uses: actions/upload-artifact@v4
+    - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
       id: upload_artifact
       with:
         name: cppdoc
@@ -193,7 +193,7 @@ jobs:
         typedoc
         cd ../..
 
-    - uses: actions/upload-artifact@v4
+    - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
       with:
         name: tsdoc
         path: ffi/npm/docs
@@ -248,7 +248,7 @@ jobs:
         dart doc
         cd ../..
 
-    - uses: actions/upload-artifact@v4
+    - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
       with:
         name: dartdoc
         path: ffi/dart/doc/api
@@ -293,7 +293,7 @@ jobs:
     - name: Run Webpack
       run: npm -C tools/web-demo run build
 
-    - uses: actions/upload-artifact@v4
+    - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
       with:
         name: wasmdemo
         path: tools/web-demo/public
@@ -587,8 +587,7 @@ jobs:
           gsutil -m cp -r benchmarks/binsize/* gs://${{ env.GCP_MAIN_BUCKET_ID }}/gha/benchmarks/binsize
 
   ffi-libs:
-    # This is too expensive to run on every push, so only run it on main.
-    # if: github.ref == 'refs/heads/main' && github.repository == 'unicode-org/icu4x'
+    # if: github.ref_type == 'tag'
     name: Build FFI binaries
     strategy:
       fail-fast: false
@@ -718,8 +717,29 @@ jobs:
     - name: Upload artifacts
       uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
       with:
-        name: dart-${{matrix.os}}-${{ matrix.compiletype }}${{ matrix.compiletype == 'static' && matrix.include_data == true && '-with_data' || '' }}-libs
+        name: ffi-${{matrix.os}}-${{ matrix.compiletype }}${{ matrix.compiletype == 'static' && matrix.include_data == true && '-with_data' || '' }}-libs
         path: bin
+        
+  release-ffi-libs:
+    needs: ffi-libs
+    runs-on: ubuntu-latest
+    # if: github.ref_type == 'tag'
+    steps:
+      - name: Download binaries
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          pattern: ffi-*-libs
+
+      - name: Display structure of downloaded files
+        run: ls -R
+
+      - name: Release
+        uses: softprops/action-gh-release@72f2c25fcb47643c292f7107632f7a47c1df5cd8
+        if: github.ref_type == 'tag'
+        with:
+          files: '**'
+          fail_on_unmatched_files: true
+          body: "`icu_capi` artifacts based on ref ${{ github.ref_name }}"
 
   gh-pages:
     name: "Deploy to GitHub Pages"
