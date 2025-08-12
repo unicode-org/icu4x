@@ -6,6 +6,7 @@
 
 use std::{fmt::Debug, marker::PhantomData};
 
+use calendrical_calculations::iso;
 use calendrical_calculations::rata_die::RataDie;
 use potential_utf::PotentialUtf16;
 use resb::binary::BinaryDeserializerError;
@@ -19,6 +20,9 @@ mod chrono_impls;
 
 mod rule;
 use rule::*;
+
+const EPOCH: RataDie = calendrical_calculations::iso::const_fixed_from_iso(1970, 1, 1);
+const SECONDS_IN_UTC_DAY: i64 = 86400;
 
 #[derive(Debug)]
 pub struct ZoneInfo64<'a> {
@@ -378,6 +382,22 @@ impl<'a> ZoneInfo64<'a> {
         })
     }
 
+    #[cfg(test)]
+    fn is_alias(&self, iana: &str) -> bool {
+        let Some(idx) = self
+            .names
+            .binary_search_by(|&n| n.chars().cmp(iana.chars()))
+            .ok()
+        else {
+            return false;
+        };
+
+        #[expect(clippy::indexing_slicing)] // zones and names have the same length
+        let zone = &self.zones[idx];
+
+        matches!(zone, &TzZone::Int(_))
+    }
+
     pub fn get(&'a self, iana: &str) -> Option<Zone<'a>> {
         let idx = self
             .names
@@ -427,30 +447,53 @@ pub struct Zone<'a> {
     pub region: Region,
 }
 
-#[derive(Debug, Clone, Copy)]
-struct Rule<'a> {
-    /// The year the rule starts applying
-    start_year: u32,
-    /// The offset of standard time
-    standard_offset_seconds: i32,
-    inner: &'a TzRule,
-}
-
-#[derive(Debug, Clone, Copy, PartialEq)]
+/// A resolved offset for a given point in time
+#[derive(Debug, Clone, Copy, PartialEq, Default)]
 pub struct Offset {
-    pub since: i64,
+    /// The offset from UTC of this time zone
     pub offset: UtcOffset,
+    /// Whether or not the Rule (i.e. "non standard" time) applies
     pub rule_applies: bool,
 }
 
+/// A transition (from the non-rule transition array in the data)
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub struct Transition {
+    /// When the transition starts
+    pub since: i64,
+    /// The offset from UTC after this transition
+    pub offset: UtcOffset,
+    /// Whether or not the Rule (i.e. "non standard" time) applies
+    pub rule_applies: bool,
+}
+
+impl From<Transition> for Offset {
+    fn from(other: Transition) -> Self {
+        Self {
+            offset: other.offset,
+            rule_applies: other.rule_applies,
+        }
+    }
+}
+
 pub enum PossibleOffset {
+    /// There is a single possible offset
     Single(Offset),
+    /// There are multiple possible offsets (sorted based on which transition comes first)
+    ///
+    /// Note: Temporal requires these to be in ascending order of offset, Temporal consumers should sort them
+    // <https://tc39.es/proposal-temporal/#sec-getnamedtimezoneepochnanoseconds>
     Ambiguous(Offset, Offset),
+    /// There is no possible offset, this is a gap transition
     None,
 }
 
 impl Zone<'_> {
-    // Returns the index of the previous transition. As this can be -1, it returns an isize.
+    /// Returns the index of the previous transition.
+    ///
+    /// As this can be -1, it returns an isize.
+    ///
+    /// Does not consider rule transitions
     fn offset_idx(&self, seconds_since_epoch: i64) -> isize {
         if seconds_since_epoch < i32::MIN as i64 {
             self.simple
@@ -487,12 +530,18 @@ impl Zone<'_> {
         }
     }
 
-    fn offset_at(&self, idx: isize, seconds_since_epoch: i64) -> Offset {
+    /// Gets the information for the offset at idx.
+    ///
+    /// Invariant: idx must be in-range for the transitions table. It is allowed to be 0
+    /// when the table is empty, and it is allowed to be -1 to refer to the offsets before the transitions table.
+    ///
+    /// Does not handle rule transitions
+    fn offset_at(&self, idx: isize) -> Transition {
         // before first transition don't use `type_map`, just the first entry in `type_offsets`
         if idx < 0 || self.simple.type_map.is_empty() {
             #[expect(clippy::unwrap_used)] // type_offsets non-empty by invariant
             let &(standard, rule_additional) = self.simple.type_offsets.first().unwrap();
-            return Offset {
+            return Transition {
                 since: i64::MIN,
                 offset: UtcOffset::from_seconds_unchecked(standard + rule_additional),
                 rule_applies: rule_additional > 0,
@@ -501,20 +550,14 @@ impl Zone<'_> {
 
         let idx = idx as usize;
 
-        // after the last transition, respect the rule
-        if idx >= self.simple.type_map.len() - 1 {
-            if let Some(rule) = self.final_rule.as_ref() {
-                let (additional_offset_seconds, transition) = rule
-                    .inner
-                    .additional_offset_since(seconds_since_epoch, rule.start_year);
-                return Offset {
-                    since: transition,
-                    rule_applies: additional_offset_seconds != 0,
-                    offset: UtcOffset::from_seconds_unchecked(
-                        rule.standard_offset_seconds + additional_offset_seconds,
-                    ),
-                };
-            }
+        if idx >= self.simple.type_map.len() {
+            debug_assert!(false, "Called offset_at with out-of-range index (got {idx}, but only have {} transitions)", self.simple.type_map.len());
+            // GIGO behavior
+            return Transition {
+                since: i64::MIN,
+                rule_applies: false,
+                offset: Default::default(),
+            };
         }
 
         let idx = core::cmp::min(idx, self.simple.type_map.len() - 1);
@@ -536,170 +579,360 @@ impl Zone<'_> {
             ((hi as u32 as u64) << 32 | (lo as u32 as u64)) as i64
         };
 
-        Offset {
+        Transition {
             since,
             offset: UtcOffset::from_seconds_unchecked(standard + rule_additional),
             rule_applies: rule_additional > 0,
         }
     }
 
-    pub fn for_date_time(
-        &self,
-        year: i32,
-        month: u8,
-        day: u8,
-        hour: u8,
-        minute: u8,
-        second: u8,
-    ) -> PossibleOffset {
-        const EPOCH: RataDie = calendrical_calculations::iso::const_fixed_from_iso(1970, 1, 1);
-        let seconds_since_local_epoch =
-            (((calendrical_calculations::iso::fixed_from_iso(year, month, day) - EPOCH) * 24
-                + hour as i64)
-                * 60
-                + minute as i64)
-                * 60
-                + second as i64;
-
+    /// Get the possible offsets matching to a timestamp given in *local* (wall) time
+    ///
+    /// seconds_since_local_epoch must resolve to a year that is in-range for i32
+    pub fn for_local_timestamp(&self, seconds_since_local_epoch: i64) -> PossibleOffset {
         // Pretend date time is UTC to get a candidate
-        let idx = self.offset_idx(seconds_since_local_epoch);
+        let mut idx = self.offset_idx(seconds_since_local_epoch);
 
-        let candidate = self.offset_at(idx, seconds_since_local_epoch);
-        let before_candidate = self.offset_at(idx - 1, seconds_since_local_epoch);
-        let after_candidate = self.offset_at(idx + 1, seconds_since_local_epoch);
+        // If the index is at the end of the array
+        // Note that offset_idx returns in-bounds values or -1,
+        // so we can't check if it's out of bounds, we need to check if it's the last
+        // element
+        if idx + 1 >= self.simple.type_map.len() as isize {
+            if let Some(rule) = self.final_rule {
+                let rd = rd_for_seconds(seconds_since_local_epoch);
+                let ymd = iso::iso_from_fixed(rd);
+                debug_assert!(ymd.is_ok());
+                let Ok((year, _, _)) = ymd else {
+                    // GIGO behavior for out of range dates
+                    return PossibleOffset::None;
+                };
+                // If rule applies, use it
+                //
+                // Invariants used:
+                // - last-transition-not-in-rule-year: If we are in the rule year,
+                //   the rule is the only transition that matters
+                // - rule-stays-inside-year: We can use local epoch time here because
+                //   the rules do not cross year boundaries.
+                if year >= rule.start_year as i32 {
+                    return rule.resolve_local(year, seconds_since_local_epoch);
+                }
+            }
 
-        let before_candidate_local_until = candidate
+            // Rule doesn't apply. Make sure to reset to a valid index
+            idx = self.simple.type_map.len() as isize - 1;
+        }
+
+        // If we have reached this point, the rule does not apply, either because
+        // idx is not the last index, or because the rule (if any) is irrelevant.
+
+        // `offset_at` always returns a transition that it thinks is *before* this one
+        // We are using local time here, so it *could* be wrong. We need to check
+        // the transition it returned (the transition it thinks is before this one),
+        // and the transition it thinks is after this one.
+        //
+        // We do not need to check transitions that are further back or forward;
+        // since the data does not have any duplicate transitions (invariant: monotonic-transition-times),
+        // and we know that prior transitions are far enough away that there is no chance of their
+        // wall times overlapping (invariant: transition-local-times-do-not-overlap)
+        let first_candidate = self.offset_at(idx);
+
+        let second_candidate = if idx + 1 >= self.simple.type_map.len() as isize {
+            // If out of range, just constrain to first_candidate
+            first_candidate
+        } else {
+            self.offset_at(idx + 1)
+        };
+
+        // Even though we do not need to *check* transitions that are further back,
+        // we do need the transition before `first_candidate` to understand the offset
+        // that came before it.
+        //
+        // When called at the beginning of the array, this just constrains to
+        // first_candidate
+        let before_first_candidate = self.offset_at(idx - 1);
+
+        // Wall time for `first_candidate`'s transition time, before and after its transition
+        let first_candidate_wall_prev = first_candidate
             .since
-            .saturating_add(before_candidate.offset.to_seconds() as i64);
-
-        let candidate_local_since = candidate
+            .saturating_add(before_first_candidate.offset.to_seconds() as i64);
+        let first_candidate_wall_next = first_candidate
             .since
-            .saturating_add(candidate.offset.to_seconds() as i64);
-        let candidate_local_until = after_candidate
-            .since
-            .saturating_add(candidate.offset.to_seconds() as i64);
+            .saturating_add(first_candidate.offset.to_seconds() as i64);
 
-        let after_candidate_local_since = after_candidate
+        // Wall time for `second_candidate`'s transition time, before and after its transition
+        let second_candidate_wall_prev = second_candidate
             .since
-            .saturating_add(after_candidate.offset.to_seconds() as i64);
+            .saturating_add(first_candidate.offset.to_seconds() as i64);
 
-        if seconds_since_local_epoch < before_candidate_local_until
-            && seconds_since_local_epoch >= candidate_local_since
-            && before_candidate != candidate
+        let second_candidate_wall_next = second_candidate
+            .since
+            .saturating_add(second_candidate.offset.to_seconds() as i64);
+
+        // We are within the first candidate's transition
+        if seconds_since_local_epoch < first_candidate_wall_prev
+            && seconds_since_local_epoch >= first_candidate_wall_next
         {
-            return PossibleOffset::Ambiguous(before_candidate, candidate);
+            // This is mathematically impossible: if the candidates are equal then
+            // seconds_since_local_epoch would not be >= wall_prev but <= wall_next
+            debug_assert!(before_first_candidate != first_candidate);
+            return PossibleOffset::Ambiguous(
+                before_first_candidate.into(),
+                first_candidate.into(),
+            );
         }
 
-        if seconds_since_local_epoch < candidate_local_until
-            && seconds_since_local_epoch >= after_candidate_local_since
-            && candidate != after_candidate
+        // We are within the second candidate's transition
+        if seconds_since_local_epoch < second_candidate_wall_prev
+            && seconds_since_local_epoch >= second_candidate_wall_next
         {
-            return PossibleOffset::Ambiguous(candidate, after_candidate);
+            // This is mathematically impossible: if the candidates are equal then
+            // seconds_since_local_epoch would not be >= wall_prev but <= wall_next
+            debug_assert!(first_candidate != second_candidate);
+            return PossibleOffset::Ambiguous(first_candidate.into(), second_candidate.into());
         }
 
-        if seconds_since_local_epoch < before_candidate_local_until {
-            return PossibleOffset::Single(before_candidate);
-        }
-        if seconds_since_local_epoch < candidate_local_until {
-            return PossibleOffset::Single(candidate);
-        }
-        if seconds_since_local_epoch >= after_candidate_local_since {
-            return PossibleOffset::Single(after_candidate);
+        // We are before the first transition entirely
+        if seconds_since_local_epoch < first_candidate_wall_prev {
+            return PossibleOffset::Single(before_first_candidate.into());
         }
 
+        // We are between the two transitions
+        if seconds_since_local_epoch < second_candidate_wall_prev {
+            return PossibleOffset::Single(first_candidate.into());
+        }
+
+        // We are after the second transition entirely
+        if seconds_since_local_epoch >= second_candidate_wall_next {
+            return PossibleOffset::Single(second_candidate.into());
+        }
+
+        // The only other cases are gap transitions (seconds >= wall_prev && seconds < wall_next)
         PossibleOffset::None
     }
 
+    /// Get the offset matching to a timestamp given in UTC time.
+    ///
+    /// seconds_since_epoch must resolve to a year that is in-range for i32
     pub fn for_timestamp(&self, seconds_since_epoch: i64) -> Offset {
-        self.offset_at(self.offset_idx(seconds_since_epoch), seconds_since_epoch)
+        let mut idx = self.offset_idx(seconds_since_epoch);
+        // We add 1 to idx here since idx is the index of the previous transition
+        // but if the previous transition is the last one then we still need to check
+        // against the rule
+        if idx + 1 >= self.simple.type_map.len() as isize {
+            if let Some(rule) = self.final_rule {
+                let rd = rd_for_seconds(seconds_since_epoch);
+                let ymd = iso::iso_from_fixed(rd);
+                debug_assert!(ymd.is_ok());
+                let Ok((year, _, _)) = ymd else {
+                    // GIGO behavior for out of range dates
+                    return Default::default();
+                };
+                // If rule applies, use it
+                //
+                // Invariant used: last-transition-not-in-rule-year
+                if year >= rule.start_year as i32 {
+                    return rule.resolve_utc(year, seconds_since_epoch);
+                }
+            }
+            // Rule doesn't apply, use the last index instead
+            idx = self.simple.type_map.len() as isize - 1;
+        }
+        self.offset_at(idx).into()
     }
 }
 
-#[test]
-fn test() {
-    use chrono::Offset;
-    use chrono::TimeZone;
-    use chrono_tz::OffsetComponents;
+/// Convert a value of seconds since the epoch to a Rata Die.
+fn rd_for_seconds(seconds_since_epoch: i64) -> RataDie {
+    let days = seconds_since_epoch / SECONDS_IN_UTC_DAY;
+    EPOCH + days
+}
 
-    // Tests pre32 transitions
-    // 1938-04-24T22:00:00Z
-    const PAST: i64 = -1_000_000_000 - 800;
-    // Tests rules and post32 transitions
-    // 2033-05-18T03:00:00Z
-    const FUTURE: i64 = 3_000_000_000 - 2000;
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use chrono::Datelike;
+    use std::sync::LazyLock;
 
-    let tzdb =
+    pub(crate) static TZDB: LazyLock<ZoneInfo64> = LazyLock::new(|| {
         ZoneInfo64::try_from_u32s(resb::include_bytes_as_u32!("../tests/data/zoneinfo64.res"))
-            .expect("Error processing resource bundle file");
+            .expect("Error processing resource bundle file")
+    });
 
-    for chrono in chrono_tz::TZ_VARIANTS {
-        let iana = chrono.name();
+    /// This tests invariants we rely on in our code above
+    ///
+    /// These invariants not being upheld should never cause a panic, but can produce garbage behavior.
+    #[test]
+    fn test_invariants() {
+        for chrono in chrono_tz::TZ_VARIANTS {
+            let iana = chrono.name();
 
-        if std::env::var("EXHAUSTIVE_TZ_TEST").is_err() && iana != "Europe/Zurich" {
-            continue;
+            let zoneinfo64 = TZDB.get(iana).unwrap();
+
+            let mut prev_offset = zoneinfo64.offset_at(-1);
+            for idx in 0..zoneinfo64.simple.type_map.len() {
+                let offset = zoneinfo64.offset_at(idx as isize);
+                if prev_offset.since >= offset.since {
+                    debug_assert!(prev_offset.since == offset.since);
+                    debug_assert!(
+                        idx == 0 || idx == zoneinfo64.simple.type_map.len() - 1,
+                        "{iana}: Transition times are monotonically increasing, \
+                                  with no overlaps except at the beginning/end (found at {idx}) \
+                                  (invariant: monotonic-transition-times)"
+                    );
+                    continue;
+                }
+
+                let prev_offset_wall = prev_offset
+                    .since
+                    .saturating_add(prev_offset.offset.to_seconds() as i64);
+                let offset_wall = offset
+                    .since
+                    .saturating_add(offset.offset.to_seconds() as i64);
+
+                debug_assert!(prev_offset_wall < offset_wall, "{iana}: Transition times are never so close as to create \
+                                                               a potential region of ambiguity with multiple transitions \
+                                                               {prev_offset_wall} < {offset_wall} \
+                                                               (invariant: transition-local-times-do-not-overlap)");
+
+                prev_offset = offset;
+            }
+
+            if let Some(rule) = zoneinfo64.final_rule {
+                let final_offset = zoneinfo64.offset_idx(i64::MAX);
+                let offset = zoneinfo64.offset_at(final_offset);
+                let utc_datetime = chrono::DateTime::from_timestamp(offset.since, 0)
+                    .unwrap()
+                    .naive_utc();
+
+                assert!(
+                    utc_datetime.year() < rule.start_year as i32,
+                    "{iana}: Expected last transition to not be in rule year {} < {} \
+                    (invariant: last-transition-not-in-rule-year)",
+                    utc_datetime.year(),
+                    rule.start_year
+                );
+
+                let max_delta = (rule.standard_offset_seconds.abs()
+                    + rule.inner.additional_offset_secs.abs())
+                    as u32;
+                for date in [&rule.inner.start, &rule.inner.end] {
+                    let seconds_of_day = date.transition_time;
+                    if date.month == 0 && date.day == 1 {
+                        assert!(
+                            seconds_of_day > max_delta,
+                            "{iana}: Rule at beginning should not cross year boundary \
+                                 {seconds_of_day} > Δ{max_delta} \
+                                 (invariant: rule-stays-inside-year)"
+                        );
+                    }
+                    if date.month == 11 && date.day == 31 {
+                        assert!(
+                            seconds_of_day + max_delta < SECONDS_IN_UTC_DAY as u32,
+                            "{iana}: Rule at end of year should not cross year boundary \
+                                 {seconds_of_day} + Δ{max_delta} < 24h \
+                                 (invariant: rule-stays-inside-year)"
+                        );
+                    }
+                }
+            }
         }
+    }
 
-        println!("{iana}");
+    #[test]
+    fn test_against_chrono() {
+        use chrono::Offset;
+        use chrono::TimeZone;
+        use chrono_tz::OffsetComponents;
+        use chrono_tz::Tz;
 
-        let zoneinfo64 = tzdb.get(iana).unwrap();
+        // Tests pre32 transitions
+        // 1938-04-24T22:00:00Z
+        const PAST: i64 = -1_000_000_000 - 800;
+        // Tests rules and post32 transitions
+        // 2033-05-18T03:00:00Z
+        const FUTURE: i64 = 3_000_000_000 - 2000;
 
-        // TODO
-        let max_working_timestamp = if zoneinfo64.final_rule.is_some() {
-            zoneinfo64
-                .simple
-                .trans
-                .len()
-                .checked_sub(2)
-                .map(|i| zoneinfo64.simple.trans[i])
-                .unwrap_or(i32::MAX) as i64
+        // To test all timezones, set EXHAUSTIVE_TZ_TEST=1
+        //
+        // We recommend testing with `--profile release-with-assertions`
+        let time_zones_to_test = if std::env::var("EXHAUSTIVE_TZ_TEST").is_err() {
+            // Keep this list small, this test is slow
+            &[
+                // Some normal timezones with DST
+                // Wall rule
+                Tz::America__Los_Angeles,
+                // Standard rules
+                Tz::Europe__London,
+                Tz::Europe__Zurich,
+                // Utc rule
+                Tz::America__Santiago,
+                // Transition skips a day
+                Tz::Pacific__Apia,
+                // Transition removes sub-second offset
+                Tz::Pacific__Niue,
+                // Has a single transition into a rule
+                Tz::Antarctica__Troll,
+            ][..]
         } else {
-            FUTURE
+            &chrono_tz::TZ_VARIANTS[..]
         };
 
-        for seconds_since_epoch in (PAST..max_working_timestamp).step_by(60 * 60) {
-            let utc_datetime = chrono::DateTime::from_timestamp(seconds_since_epoch, 0)
-                .unwrap()
-                .naive_utc();
+        for chrono in time_zones_to_test {
+            let iana = chrono.name();
 
-            let zoneinfo64_date = zoneinfo64.from_utc_datetime(&utc_datetime);
-            let chrono_date = chrono.from_utc_datetime(&utc_datetime);
-            assert_eq!(
-                zoneinfo64_date.offset().fix(),
-                chrono_date.offset().fix(),
-                "{seconds_since_epoch}, {iana:?}",
-            );
-
-            let local_datetime = chrono_date.naive_local();
-            assert_eq!(
-                zoneinfo64
-                    .offset_from_local_datetime(&local_datetime)
-                    .map(|o| o.fix()),
-                chrono
-                    .offset_from_local_datetime(&local_datetime)
-                    .map(|o| o.fix()),
-                "{seconds_since_epoch}, {zoneinfo64:?} {local_datetime}",
-            );
-
-            // Rearguard / vanguard diffs
-            if [
-                "Africa/Casablanca",
-                "Africa/El_Aaiun",
-                "Africa/Windhoek",
-                "Europe/Dublin",
-                "Eire",
-                "Europe/Bratislava",
-                "Europe/Prague",
-            ]
-            .contains(&chrono.name())
-            {
+            if TZDB.is_alias(iana) {
                 continue;
             }
 
-            assert_eq!(
-                zoneinfo64_date.offset().rule_applies(),
-                !chrono_date.offset().dst_offset().is_zero(),
-                "{seconds_since_epoch}, {iana:?}",
-            );
+            println!("{iana}");
+
+            let zoneinfo64 = TZDB.get(iana).unwrap();
+
+            for seconds_since_epoch in (PAST..FUTURE).step_by(60 * 60) {
+                let utc_datetime = chrono::DateTime::from_timestamp(seconds_since_epoch, 0)
+                    .unwrap()
+                    .naive_utc();
+
+                let zoneinfo64_date = zoneinfo64.from_utc_datetime(&utc_datetime);
+                let chrono_date = chrono.from_utc_datetime(&utc_datetime);
+                assert_eq!(
+                    zoneinfo64_date.offset().fix(),
+                    chrono_date.offset().fix(),
+                    "{seconds_since_epoch}, {iana:?}",
+                );
+
+                let local_datetime = chrono_date.naive_local();
+                assert_eq!(
+                    zoneinfo64
+                        .offset_from_local_datetime(&local_datetime)
+                        .map(|o| o.fix()),
+                    chrono
+                        .offset_from_local_datetime(&local_datetime)
+                        .map(|o| o.fix()),
+                    "{seconds_since_epoch}, {zoneinfo64:?} {local_datetime}",
+                );
+
+                // Rearguard / vanguard diffs
+                if [
+                    "Africa/Casablanca",
+                    "Africa/El_Aaiun",
+                    "Africa/Windhoek",
+                    "Europe/Dublin",
+                    "Eire",
+                    "Europe/Bratislava",
+                    "Europe/Prague",
+                ]
+                .contains(&chrono.name())
+                {
+                    continue;
+                }
+
+                assert_eq!(
+                    zoneinfo64_date.offset().rule_applies(),
+                    !chrono_date.offset().dst_offset().is_zero(),
+                    "{seconds_since_epoch}, {iana:?}",
+                );
+            }
         }
     }
 }

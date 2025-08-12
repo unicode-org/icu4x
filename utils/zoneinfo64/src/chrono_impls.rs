@@ -3,9 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::{Offset, PossibleOffset, Zone};
-use chrono::{
-    Datelike, FixedOffset, MappedLocalTime, NaiveDate, NaiveDateTime, TimeZone, Timelike,
-};
+use chrono::{FixedOffset, MappedLocalTime, NaiveDate, NaiveDateTime, TimeZone};
 use icu_time::zone::UtcOffset;
 
 #[derive(Clone, Copy, Debug)]
@@ -39,31 +37,12 @@ impl<'a> TimeZone for Zone<'a> {
     }
 
     fn offset_from_local_date(&self, local: &NaiveDate) -> MappedLocalTime<Self::Offset> {
-        match self.for_date_time(
-            local.year(),
-            local.month() as u8,
-            local.day() as u8,
-            0,
-            0,
-            0,
-        ) {
-            PossibleOffset::None => chrono::MappedLocalTime::None,
-            PossibleOffset::Single(o) => chrono::MappedLocalTime::Single(ChronoOffset(o, *self)),
-            PossibleOffset::Ambiguous(a, b) => {
-                MappedLocalTime::Ambiguous(ChronoOffset(a, *self), ChronoOffset(b, *self))
-            }
-        }
+        self.offset_from_local_datetime(&local.and_time(Default::default()))
     }
 
     fn offset_from_local_datetime(&self, local: &NaiveDateTime) -> MappedLocalTime<Self::Offset> {
-        match self.for_date_time(
-            local.year(),
-            local.month() as u8,
-            local.day() as u8,
-            local.hour() as u8,
-            local.minute() as u8,
-            local.second() as u8,
-        ) {
+        let seconds = local.and_utc().timestamp();
+        match self.for_local_timestamp(seconds) {
             PossibleOffset::None => chrono::MappedLocalTime::None,
             PossibleOffset::Single(o) => chrono::MappedLocalTime::Single(ChronoOffset(o, *self)),
             PossibleOffset::Ambiguous(a, b) => {
