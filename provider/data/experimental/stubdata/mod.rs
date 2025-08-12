@@ -7,17 +7,20 @@ include!("short_quarter_relative_v1.rs.data");
 include!("short_week_relative_v1.rs.data");
 include!("length_display_name_v1.rs.data");
 include!("locale_display_names_v1.rs.data");
+include!("area_display_name_v1.rs.data");
 include!("currency_displayname_v1.rs.data");
 include!("long_minute_relative_v1.rs.data");
 include!("currency_patterns_data_v1.rs.data");
 include!("long_quarter_relative_v1.rs.data");
 include!("short_month_relative_v1.rs.data");
+include!("duration_display_name_v1.rs.data");
 include!("currency_extended_data_v1.rs.data");
 include!("short_compact_decimal_format_data_v1.rs.data");
 include!("narrow_hour_relative_v1.rs.data");
 include!("long_compact_decimal_format_data_v1.rs.data");
 include!("narrow_week_relative_v1.rs.data");
 include!("narrow_second_relative_v1.rs.data");
+include!("volume_display_name_v1.rs.data");
 include!("long_week_relative_v1.rs.data");
 include!("unit_ids_v1.rs.data");
 include!("short_minute_relative_v1.rs.data");
@@ -44,6 +47,7 @@ include!("narrow_minute_relative_v1.rs.data");
 include!("digital_duration_data_v1.rs.data");
 include!("units_info_v1.rs.data");
 include!("narrow_year_relative_v1.rs.data");
+include!("mass_display_name_v1.rs.data");
 /// Marks a type as a data provider. You can then use macros like
 /// `impl_core_helloworld_v1` to add implementations.
 ///
@@ -86,17 +90,20 @@ macro_rules! impl_data_provider {
         impl_short_week_relative_v1!($provider);
         impl_length_display_name_v1!($provider);
         impl_locale_display_names_v1!($provider);
+        impl_area_display_name_v1!($provider);
         impl_currency_displayname_v1!($provider);
         impl_long_minute_relative_v1!($provider);
         impl_currency_patterns_data_v1!($provider);
         impl_long_quarter_relative_v1!($provider);
         impl_short_month_relative_v1!($provider);
+        impl_duration_display_name_v1!($provider);
         impl_currency_extended_data_v1!($provider);
         impl_short_compact_decimal_format_data_v1!($provider);
         impl_narrow_hour_relative_v1!($provider);
         impl_long_compact_decimal_format_data_v1!($provider);
         impl_narrow_week_relative_v1!($provider);
         impl_narrow_second_relative_v1!($provider);
+        impl_volume_display_name_v1!($provider);
         impl_long_week_relative_v1!($provider);
         impl_unit_ids_v1!($provider);
         impl_short_minute_relative_v1!($provider);
@@ -123,5 +130,6 @@ macro_rules! impl_data_provider {
         impl_digital_duration_data_v1!($provider);
         impl_units_info_v1!($provider);
         impl_narrow_year_relative_v1!($provider);
+        impl_mass_display_name_v1!($provider);
     };
 }

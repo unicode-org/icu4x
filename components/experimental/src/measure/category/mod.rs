@@ -4,7 +4,18 @@
 
 use core::marker::PhantomData;
 
-use crate::measure::measureunit::MeasureUnit;
+use icu_provider::DynamicDataMarker;
+
+use crate::{
+    dimension::provider::units::{
+        categorized_display_name::{
+            AreaDisplayNameV1, DurationDisplayNameV1, LengthDisplayNameV1, MassDisplayNameV1,
+            VolumeDisplayNameV1,
+        },
+        display_name::UnitsDisplayName,
+    },
+    measure::measureunit::MeasureUnit,
+};
 
 pub mod area;
 pub mod duration;
@@ -12,7 +23,9 @@ pub mod length;
 pub mod mass;
 pub mod volume;
 
-pub trait MeasureUnitCategory {}
+pub trait MeasureUnitCategory {
+    type DataMarker: DynamicDataMarker<DataStruct = UnitsDisplayName<'static>>;
+}
 
 /// A [`MeasureUnit`] that is related to a specific category.
 ///
@@ -48,8 +61,18 @@ pub struct Mass;
 /// A [`MeasureUnit`] that is related to the volume category.
 pub struct Volume;
 
-impl MeasureUnitCategory for Area {}
-impl MeasureUnitCategory for Duration {}
-impl MeasureUnitCategory for Length {}
-impl MeasureUnitCategory for Mass {}
-impl MeasureUnitCategory for Volume {}
+impl MeasureUnitCategory for Area {
+    type DataMarker = AreaDisplayNameV1;
+}
+impl MeasureUnitCategory for Duration {
+    type DataMarker = DurationDisplayNameV1;
+}
+impl MeasureUnitCategory for Length {
+    type DataMarker = LengthDisplayNameV1;
+}
+impl MeasureUnitCategory for Mass {
+    type DataMarker = MassDisplayNameV1;
+}
+impl MeasureUnitCategory for Volume {
+    type DataMarker = VolumeDisplayNameV1;
+}

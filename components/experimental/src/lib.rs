@@ -53,7 +53,11 @@ pub mod provider {
         impl_currency_patterns_data_v1!(Baked);
         impl_currency_extended_data_v1!(Baked);
         impl_units_display_name_v1!(Baked);
+        impl_area_display_name_v1!(Baked);
+        impl_duration_display_name_v1!(Baked);
         impl_length_display_name_v1!(Baked);
+        impl_mass_display_name_v1!(Baked);
+        impl_volume_display_name_v1!(Baked);
         impl_units_essentials_v1!(Baked);
         impl_language_display_names_v1!(Baked);
         impl_digital_duration_data_v1!(Baked);
@@ -110,7 +114,11 @@ pub mod provider {
         super::dimension::provider::percent::PercentEssentialsV1::INFO,
         super::dimension::provider::units::essentials::UnitsEssentialsV1::INFO,
         super::dimension::provider::units::display_name::UnitsDisplayNameV1::INFO,
+        super::dimension::provider::units::categorized_display_name::AreaDisplayNameV1::INFO,
+        super::dimension::provider::units::categorized_display_name::DurationDisplayNameV1::INFO,
         super::dimension::provider::units::categorized_display_name::LengthDisplayNameV1::INFO,
+        super::dimension::provider::units::categorized_display_name::MassDisplayNameV1::INFO,
+        super::dimension::provider::units::categorized_display_name::VolumeDisplayNameV1::INFO,
         super::displaynames::provider::LanguageDisplayNamesV1::INFO,
         super::duration::provider::DigitalDurationDataV1::INFO,
         super::displaynames::provider::LocaleDisplayNamesV1::INFO,

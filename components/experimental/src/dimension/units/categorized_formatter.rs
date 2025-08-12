@@ -25,9 +25,7 @@ use crate::measure::category::MeasureUnitCategory;
 /// This is useful for type inference and for ensuring that the correct units are used.
 pub struct CategorizedFormatter<C: MeasureUnitCategory> {
     _category: PhantomData<C>,
-
-    // TODO: this should be as following for length:
-    // display_name: DataPayload<LengthDisplayNameV1>,
+    // display_name: DataPayload<C::DataMarker>,
     // decimal_formatter: DecimalFormatter,
     // plural_rules: PluralRules,
     pub formatter: UnitsFormatter,

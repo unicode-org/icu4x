@@ -2,67 +2,44 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use icu_pattern::SinglePlaceholderPattern;
-use icu_plurals::provider::PluralElementsPackedCow;
-use icu_provider::prelude::*;
+use crate::dimension::provider::units::display_name::UnitsDisplayName;
 
 icu_provider::data_marker!(
-    /// `LengthDisplayNameV1`
-    LengthDisplayNameV1,
-    LengthDisplayName<'static>,
+    /// `AreaDisplayNameV1`
+    AreaDisplayNameV1,
+    UnitsDisplayName<'static>,
     #[cfg(feature = "datagen")]
     attributes_domain = "units"
 );
 
-/// Represents the display name data for length units.
-#[derive(Clone, PartialEq, Debug, yoke::Yokeable, zerofrom::ZeroFrom)]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize))]
-#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-#[yoke(prove_covariance_manually)]
-pub struct LengthDisplayName<'data> {
-    // TODO: use `MeasureUnit` for the units key instead of strings.
-    /// Contains the long width patterns for the units.
-    #[cfg_attr(feature = "serde", serde(borrow))]
-    pub patterns: PluralElementsPackedCow<'data, SinglePlaceholderPattern>,
-}
+icu_provider::data_marker!(
+    /// `DurationDisplayNameV1`
+    DurationDisplayNameV1,
+    UnitsDisplayName<'static>,
+    #[cfg(feature = "datagen")]
+    attributes_domain = "units"
+);
 
-icu_provider::data_struct!(LengthDisplayName<'_>, #[cfg(feature = "datagen")]);
+icu_provider::data_marker!(
+    /// `LengthDisplayNameV1`
+    LengthDisplayNameV1,
+    UnitsDisplayName<'static>,
+    #[cfg(feature = "datagen")]
+    attributes_domain = "units"
+);
 
-impl<'data> LengthDisplayName<'data> {
-    /// Construct an instance directly from a byte slice.
-    ///
-    /// # Safety
-    ///
-    /// The bytes must represent a valid [`icu_plurals::provider::PluralElementsPackedULE`]
-    pub const unsafe fn from_bytes_unchecked(bytes: &'data [u8]) -> Self {
-        Self {
-            patterns: icu_plurals::provider::PluralElementsPackedCow {
-                elements: alloc::borrow::Cow::Borrowed(
-                    // Safety: this function's safety invariant guarantees that the bytes
-                    // represent a valid `PluralElementsPackedULE`
-                    icu_plurals::provider::PluralElementsPackedULE::from_bytes_unchecked(bytes),
-                ),
-            },
-        }
-    }
-}
+icu_provider::data_marker!(
+    /// `MassDisplayNameV1`
+    MassDisplayNameV1,
+    UnitsDisplayName<'static>,
+    #[cfg(feature = "datagen")]
+    attributes_domain = "units"
+);
 
-#[cfg(feature = "datagen")]
-impl databake::Bake for LengthDisplayName<'_> {
-    fn bake(&self, ctx: &databake::CrateEnv) -> databake::TokenStream {
-        use zerovec::ule::VarULE;
-        ctx.insert("icu_experimental::dimension::provider::units");
-        let bytes = self.patterns.elements.as_bytes().bake(ctx);
-        // Safety: The bytes are returned by `PluralElementsPackedULE::slice_as_bytes`.
-        databake::quote! { unsafe {
-            icu_experimental::dimension::provider::units::categorized_display_name::LengthDisplayName::from_bytes_unchecked(#bytes)
-        }}
-    }
-}
-
-#[cfg(feature = "datagen")]
-impl databake::BakeSize for LengthDisplayName<'_> {
-    fn borrows_size(&self) -> usize {
-        self.patterns.borrows_size()
-    }
-}
+icu_provider::data_marker!(
+    /// `VolumeDisplayNameV1`
+    VolumeDisplayNameV1,
+    UnitsDisplayName<'static>,
+    #[cfg(feature = "datagen")]
+    attributes_domain = "units"
+);
