@@ -55,7 +55,7 @@ impl databake::Bake for LengthDisplayName<'_> {
         let bytes = self.patterns.elements.as_bytes().bake(ctx);
         // Safety: The bytes are returned by `PluralElementsPackedULE::slice_as_bytes`.
         databake::quote! { unsafe {
-            icu_experimental::dimension::provider::units::display_name::LengthDisplayName::from_bytes_unchecked(#bytes)
+            icu_experimental::dimension::provider::units::categorized_display_name::LengthDisplayName::from_bytes_unchecked(#bytes)
         }}
     }
 }
