@@ -16,6 +16,8 @@
     - `yoke`
         - Add four `map_with_cart` methods to `yoke::Yoke`, similar to `Yoke::map_project` but
         additionally providing a reference to the cart. (unicode-org#6781)
+        - Add `Yoke::with_mut_return`, similar to `Yoke::with_mut` but with a callback that may
+            return any `'static` type. (unicode-org#6827)
 
 ## icu4x 2.0.x
 
