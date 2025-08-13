@@ -364,6 +364,7 @@ pub mod ffi {
 
         /// Returns the monotonic year in the Date
         #[diplomat::rust_link(icu::calendar::Date::monotonic_year, FnInStruct)]
+        #[diplomat::rust_link(::calendar::types::YearInfo::monotonic_year, FnInEnum, hidden)]
         #[diplomat::attr(auto, getter)]
         pub fn monotonic_year(&self) -> i32 {
             self.0.monotonic_year()
