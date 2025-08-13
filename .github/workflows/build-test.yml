@@ -368,10 +368,6 @@ jobs:
         rm dylib
 
     - name: Run `cargo make ci-job-test-dart` in fetch mode
-      # Only run if not PR, or if PR and skip_fetch is false
-      # TODO: Uncomment this after releasing artifacts.
-      # if: github.event_name != 'pull_request' || needs.check_skip_fetch.outputs.skip_fetch == 'false'
-      if: false
       run: |
         git clean -xf ffi examples
         yq -i ".hooks.user_defines.icu4x.buildMode = \"fetch\"" ffi/dart/pubspec.yaml
