@@ -6,7 +6,7 @@ use calendrical_calculations::iso::is_leap_year;
 use icu_time::zone::UtcOffset;
 use std::ops::Range;
 
-const SECONDS_IN_DAY: i64 = 86400;
+const SECONDS_IN_UTC_DAY: i64 = 86400;
 
 #[derive(Debug, Clone, Copy)]
 pub(crate) struct Rule<'a> {
@@ -283,16 +283,16 @@ impl Rule<'_> {
 
         let start = &self.inner.start;
         let start_day_in_year = start.day_in_year(year);
-        let start_seconds_in_day = self.transition_time_to_utc(start, true);
+        let start_seconds = self.transition_time_to_utc(start, true);
         let start_epoch_seconds = (days_since_epoch + i64::from(start_day_in_year))
-            * SECONDS_IN_DAY
-            + i64::from(start_seconds_in_day);
+            * SECONDS_IN_UTC_DAY
+            + i64::from(start_seconds);
 
         let end = &self.inner.end;
         let end_day_in_year = end.day_in_year(year);
-        let end_seconds_in_day = self.transition_time_to_utc(end, false);
-        let end_epoch_seconds = (days_since_epoch + i64::from(end_day_in_year)) * SECONDS_IN_DAY
-            + i64::from(end_seconds_in_day);
+        let end_seconds = self.transition_time_to_utc(end, false);
+        let end_epoch_seconds = (days_since_epoch + i64::from(end_day_in_year)) * SECONDS_IN_UTC_DAY
+            + i64::from(end_seconds);
 
         TransitionsForYear {
             start_epoch_seconds,
@@ -473,10 +473,10 @@ mod tests {
         let epoch_end =
             calendrical_calculations::iso::fixed_from_iso(year, end_month, end_day) - crate::EPOCH;
 
-        let seconds_start_prev = epoch_start * SECONDS_IN_DAY + i64::from(start_hours_prev) * 3600;
-        let seconds_start_next = epoch_start * SECONDS_IN_DAY + i64::from(start_hours_next) * 3600;
-        let seconds_end_prev = epoch_end * SECONDS_IN_DAY + i64::from(end_hours_prev) * 3600;
-        let seconds_end_next = epoch_end * SECONDS_IN_DAY + i64::from(end_hours_next) * 3600;
+        let seconds_start_prev = epoch_start * SECONDS_IN_UTC_DAY + i64::from(start_hours_prev) * 3600;
+        let seconds_start_next = epoch_start * SECONDS_IN_UTC_DAY + i64::from(start_hours_next) * 3600;
+        let seconds_end_prev = epoch_end * SECONDS_IN_UTC_DAY + i64::from(end_hours_prev) * 3600;
+        let seconds_end_next = epoch_end * SECONDS_IN_UTC_DAY + i64::from(end_hours_next) * 3600;
         let transitions = rule.transitions_for_year(year);
 
         let transitions_prev = transitions.to_wall(&rule, WallReference::Prev);
