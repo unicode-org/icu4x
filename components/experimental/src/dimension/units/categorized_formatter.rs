@@ -56,7 +56,6 @@ pub struct CategorizedFormatter<C: MeasureUnitCategory> {
 impl<C: MeasureUnitCategory> CategorizedFormatter<C>
 where
     <C as MeasureUnitCategory>::DataMarker: icu_provider::DataMarker,
-    crate::provider::Baked: DataProvider<C::DataMarker>,
 {
     // TODO: Remove this function once we have separate markers for different widths.
     #[inline]
@@ -98,7 +97,6 @@ where
         options: super::options::UnitsFormatterOptions,
     ) -> Result<Self, DataError>
     where
-        <C as MeasureUnitCategory>::DataMarker: icu_provider::DataMarker,
         crate::provider::Baked: DataProvider<C::DataMarker>,
     {
         let locale = C::DataMarker::make_locale(prefs.locale_preferences);

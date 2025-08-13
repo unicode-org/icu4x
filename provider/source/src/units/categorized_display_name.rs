@@ -42,7 +42,7 @@ macro_rules! impl_categorized_display_name_data_provider {
                     "narrow" => &units_format_data.narrow,
                     _ => {
                         return Err(DataErrorKind::InvalidRequest
-                            .into_error()
+                            .with_req($display_name::INFO, req)
                             .with_debug_context(length))
                     }
                 }
@@ -50,13 +50,13 @@ macro_rules! impl_categorized_display_name_data_provider {
                 .get(category)
                 .ok_or_else(|| {
                     DataErrorKind::IdentifierNotFound
-                        .into_error()
+                        .with_req($display_name::INFO, req)
                         .with_debug_context(category)
                 })?
                 .get(unit)
                 .ok_or_else(|| {
                     DataErrorKind::IdentifierNotFound
-                        .into_error()
+                        .with_req($display_name::INFO, req)
                         .with_debug_context(length)
                 })?;
 
@@ -111,11 +111,7 @@ macro_rules! impl_categorized_display_name_iter_data_provider_cached {
                             "long" => &units_format_data.long,
                             "short" => &units_format_data.short,
                             "narrow" => &units_format_data.narrow,
-                            _ => {
-                                return Err(DataErrorKind::IdentifierNotFound
-                                    .into_error()
-                                    .with_debug_context(length))
-                            }
+                            _ => unreachable!(),
                         };
 
                         for (unit, patterns) in
