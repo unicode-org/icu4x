@@ -246,15 +246,15 @@ impl TransitionsForYear {
     /// For a UTC TransitionsForYear, convert it to the given WallReference mode
     fn to_wall(self, rule: &Rule, mode_to: WallReference) -> Self {
         let standard = i64::from(rule.standard_offset_seconds);
-        let additional = standard + i64::from(rule.inner.additional_offset_secs);
+        let rule = standard + i64::from(rule.inner.additional_offset_secs);
 
         match mode_to {
             WallReference::Prev => TransitionsForYear {
                 start_epoch_seconds: self.start_epoch_seconds + standard,
-                end_epoch_seconds: self.end_epoch_seconds + additional,
+                end_epoch_seconds: self.end_epoch_seconds + rule,
             },
             WallReference::Next => TransitionsForYear {
-                start_epoch_seconds: self.start_epoch_seconds + additional,
+                start_epoch_seconds: self.start_epoch_seconds + rule,
                 end_epoch_seconds: self.end_epoch_seconds + standard,
             },
         }
@@ -305,14 +305,14 @@ impl Rule<'_> {
     fn transition_time_to_utc(&self, date: &TzRuleDate, is_start: bool) -> i32 {
         let seconds_of_day = date.transition_time as i32;
         let standard = self.standard_offset_seconds;
-        let additional = standard + self.inner.additional_offset_secs;
+        let rule = standard + self.inner.additional_offset_secs;
         let offset = match date.time_mode {
             TimeMode::Utc => seconds_of_day,
             TimeMode::Standard => seconds_of_day - standard,
             // Tz before this transition was standard
             TimeMode::Wall if is_start => seconds_of_day - standard,
-            // Tz before this transition was additional
-            TimeMode::Wall => seconds_of_day - additional,
+            // Tz before this transition was rule
+            TimeMode::Wall => seconds_of_day - rule,
         };
 
         offset
