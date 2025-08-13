@@ -25,8 +25,8 @@ use tinystr::tinystr;
 
 /// The number of years the Buddhist Era is ahead of C.E. by
 ///
-/// (1 AD = 544 BE)
-const BUDDHIST_ERA_OFFSET: i32 = 543;
+/// (-543 ISO = 544 BCE = 1 BE)
+const BUDDHIST_ERA_OFFSET: i32 = -543;
 
 #[derive(Copy, Clone, Debug, Default)]
 /// The [Thai Solar Buddhist Calendar][cal]
@@ -65,7 +65,7 @@ impl Calendar for Buddhist {
             Some("be") | None => {}
             _ => return Err(DateError::UnknownEra),
         }
-        let year = year - BUDDHIST_ERA_OFFSET;
+        let year = year + BUDDHIST_ERA_OFFSET;
 
         ArithmeticDate::new_from_codes(self, year, month_code, day).map(IsoDateInner)
     }
@@ -116,16 +116,14 @@ impl Calendar for Buddhist {
 
     /// The calendar-specific year represented by `date`
     fn year_info(&self, date: &Self::DateInner) -> Self::Year {
+        let year = date.iso_year() - BUDDHIST_ERA_OFFSET;
         types::EraYear {
             era: tinystr!(16, "be"),
             era_index: Some(0),
-            year: self.extended_year(date),
+            year,
+            monotonic_year: year,
             ambiguity: types::YearAmbiguity::CenturyRequired,
         }
-    }
-
-    fn extended_year(&self, date: &Self::DateInner) -> i32 {
-        Iso.extended_year(date) + BUDDHIST_ERA_OFFSET
     }
 
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
@@ -172,7 +170,7 @@ impl Date<Buddhist> {
     /// assert_eq!(date_buddhist.day_of_month().0, 2);
     /// ```
     pub fn try_new_buddhist(year: i32, month: u8, day: u8) -> Result<Date<Buddhist>, RangeError> {
-        Date::try_new_iso(year - BUDDHIST_ERA_OFFSET, month, day)
+        Date::try_new_iso(year + BUDDHIST_ERA_OFFSET, month, day)
             .map(|d| Date::new_from_iso(d, Buddhist))
     }
 }

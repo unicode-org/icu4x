@@ -184,7 +184,7 @@ impl serde::Serialize for ZoneNameTimestamp {
         #[cfg(feature = "alloc")]
         if serializer.is_human_readable() {
             let date_time = self.to_zoned_date_time_iso();
-            let year = date_time.date.extended_year();
+            let year = date_time.date.era_year().year;
             let month = date_time.date.month().month_number();
             let day = date_time.date.day_of_month().0;
             let hour = date_time.time.hour.number();
