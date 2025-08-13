@@ -724,8 +724,8 @@ macro_rules! compare {
             }
             let ret = self.compare_impl(left_tail.$left_to_iter(), right_tail.$right_to_iter(), head.$left_to_iter().rev());
             if self.options.strength() == Strength::Identical && ret == Ordering::Equal {
-                return Decomposition::new(left_tail.$left_to_iter(), self.decompositions, self.tables).cmp(
-                    Decomposition::new(right_tail.$right_to_iter(), self.decompositions, self.tables),
+                return Decomposition::new(left_tail.$left_to_iter(), self.decompositions, self.tables).map(|c| if c != MERGE_SEPARATOR { c as i32 } else { -1i32 }).cmp(
+                    Decomposition::new(right_tail.$right_to_iter(), self.decompositions, self.tables).map(|c| if c != MERGE_SEPARATOR { c as i32 } else { -1i32 }),
                 );
             }
             ret
