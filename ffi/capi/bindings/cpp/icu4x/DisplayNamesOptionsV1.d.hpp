@@ -36,6 +36,8 @@ namespace capi {
 
 namespace icu4x {
 /**
+ * 🚧 This API is experimental and may experience breaking changes outside major releases.
+ *
  * See the [Rust documentation for `DisplayNamesOptions`](https://docs.rs/icu/2.0.0/icu/experimental/displaynames/struct.DisplayNamesOptions.html) for more information.
  */
 struct DisplayNamesOptionsV1 {
