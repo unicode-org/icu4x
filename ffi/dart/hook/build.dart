@@ -189,7 +189,8 @@ final class CheckoutMode extends BuildMode {
         'The `Cargo.lock` file could not by found at $checkoutPath',
       );
     }
-    final builtLib = await buildLib(
+    final out = input.outputDirectory.resolve(input.config.filename('icu4x'));
+    await buildLib(
       _asRustTarget(input.config.code),
       input.config.buildStatic,
       Directory.fromUri(checkoutPath!),
@@ -200,8 +201,9 @@ final class CheckoutMode extends BuildMode {
         'buffer_provider',
         'compiled_data',
       ],
+      out,
     );
-    return builtLib.uri;
+    return out;
   }
 
   @override

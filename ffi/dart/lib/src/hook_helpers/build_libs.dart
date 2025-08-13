@@ -5,8 +5,6 @@
 import 'dart:io';
 
 import 'package:args/args.dart';
-import 'package:code_assets/code_assets.dart';
-import 'package:path/path.dart' as path;
 
 Future<void> main(List<String> args) async {
   const fileKey = 'file';
@@ -33,7 +31,7 @@ Future<void> main(List<String> args) async {
     exit(1);
   }
 
-  final lib = await buildLib(
+  await buildLib(
     parsed.option(targetKey)!,
     parsed.option(compileTypeKey)! == 'static',
     (parsed.option(workingDirectoryKey) != null
@@ -41,22 +39,16 @@ Future<void> main(List<String> args) async {
             : null) ??
         File.fromUri(Platform.script).parent,
     parsed.multiOption(cargoFeaturesKey),
+    Uri.file(parsed.option(fileKey)!),
   );
-  if (!lib.existsSync()) {
-    throw FileSystemException('Building the dylib failed', lib.path);
-  }
-  final file = Uri.file(
-    parsed.option(fileKey)!,
-  ).toFilePath(windows: Platform.isWindows);
-  File(file).parent.createSync(recursive: true);
-  await lib.copy(file);
 }
 
-Future<File> buildLib(
+Future buildLib(
   String rustTarget,
   bool buildStatic,
   Directory startingPoint,
   List<String> cargoFeatures,
+  Uri out,
 ) async {
   // We assume that the first folder to contain a cargo.toml above the
   // output directory is the directory containing the ICU4X code.
@@ -106,34 +98,10 @@ Future<File> buildLib(
       '-Zbuild-std-features=panic_immediate_abort',
     ],
     '--target=$rustTarget',
+    '--',
+    '--emit',
+    'link=${out.toFilePath(windows: Platform.isWindows)}',
   ], workingDirectory: workingDirectory);
-
-  final targetOS = switch (rustTarget.split('-')[2]) {
-    'androideabi' => OS.android,
-    'android' => OS.android,
-    'fuchsia' => OS.fuchsia,
-    'ios' => OS.iOS,
-    'linux' => OS.linux,
-    'darwin' => OS.macOS,
-    'windows' => OS.windows,
-    _ => throw UnimplementedError('Unknown platform for target $rustTarget'),
-  };
-
-  final file = File(
-    path.join(
-      workingDirectory.path,
-      'target',
-      rustTarget,
-      'release',
-      (buildStatic ? targetOS.staticlibFileName : targetOS.dylibFileName)(
-        'icu_capi',
-      ),
-    ),
-  );
-  if (!(await file.exists())) {
-    throw FileSystemException('Building the dylib failed', file.path);
-  }
-  return file;
 }
 
 bool _isNoStdTarget(String target) =>
