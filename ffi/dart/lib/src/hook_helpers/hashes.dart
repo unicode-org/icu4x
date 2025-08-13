@@ -3,97 +3,95 @@
 //    dart tool/regenerate_hashes.dart
 //
 
-import 'package:code_assets/code_assets.dart' show Architecture, OS;
-
-const fileHashes = <(OS, Architecture, String), String>{
-  (OS.linux, Architecture.arm, 'dynamic'):
+const fileHashes = <(String, String), String>{
+  ('armv7-unknown-linux-gnueabihf', 'dynamic'):
       '33ad56648fffda232995dddc6182ab31deea173f5c8cdac1bc84fb9636437803',
-  (OS.linux, Architecture.arm, 'static'):
+  ('armv7-unknown-linux-gnueabihf', 'static'):
       '5422aaf811610530eff609034da16654d91714af0c203d498b81807365a020c2',
-  (OS.linux, Architecture.arm, 'static_data'):
+  ('armv7-unknown-linux-gnueabihf', 'static_data'):
       '4330bce3e93d40b339647c44bc794e019659f1429f72a101a7b809150cc3479b',
-  (OS.linux, Architecture.arm64, 'dynamic'):
+  ('aarch64-unknown-linux-gnu', 'dynamic'):
       'a2e2a730d339d12d5742d6f32b17e09425059ee14ef1c484d2c07b7bad7f238d',
-  (OS.linux, Architecture.arm64, 'static'):
+  ('aarch64-unknown-linux-gnu', 'static'):
       '50c066434acea3794f68019f0367b5143840cb50633f7ab350c696a0f429dcdc',
-  (OS.linux, Architecture.arm64, 'static_data'):
+  ('aarch64-unknown-linux-gnu', 'static_data'):
       '80ad7e3a3d8bb4d8a1610b51f273b8eefc739e208cab1c75028cde4596678e2d',
-  (OS.linux, Architecture.riscv64, 'dynamic'):
+  ('riscv64gc-unknown-linux-gnu', 'dynamic'):
       '6a925bbab9fbf7a4f82247ac2c48fb901713cdddc8716e4da467de248018151f',
-  (OS.linux, Architecture.riscv64, 'static'):
+  ('riscv64gc-unknown-linux-gnu', 'static'):
       '4b3f556edfbf3526b0c001036ca025b9d3cc0c6eca5a3c3062ccf9b74a13fc86',
-  (OS.linux, Architecture.riscv64, 'static_data'):
+  ('riscv64gc-unknown-linux-gnu', 'static_data'):
       '37a92ab9b41a0e2eca1b7f6bbfebc5e8596c3d22962fb9f45ae43ac2068a460e',
-  (OS.linux, Architecture.x64, 'dynamic'):
+  ('x86_64-unknown-linux-gnu', 'dynamic'):
       '3f2d43d12d835e336689d44f537123c4c7dea9ea076e7d225e8e60c5b2b10a04',
-  (OS.linux, Architecture.x64, 'static'):
+  ('x86_64-unknown-linux-gnu', 'static'):
       'e8ba6fd6c60da35dad820a0e705507f2172db3f85d6649b2e101acadafa4f514',
-  (OS.linux, Architecture.x64, 'static_data'):
+  ('x86_64-unknown-linux-gnu', 'static_data'):
       '8f1985f70157184e74e1f54cdf597c0650829a7a488129fcf55f562def42a119',
-  (OS.windows, Architecture.arm64, 'dynamic'):
+  ('aarch64-pc-windows-msvc', 'dynamic'):
       '0766cd4887b84be7b56123ebe8b37c4c60049b6bb04c9719dd0b720e1d795c88',
-  (OS.windows, Architecture.arm64, 'static'):
+  ('aarch64-pc-windows-msvc', 'static'):
       'beacece18baa12402517ffcc9a63cac6d7e5d146806f3e21f440a404130250b2',
-  (OS.windows, Architecture.arm64, 'static_data'):
+  ('aarch64-pc-windows-msvc', 'static_data'):
       '7a39d9e5776727196b2e28e3a13038b28e47530202a1cd817165d3a072444b49',
-  (OS.windows, Architecture.ia32, 'dynamic'):
+  ('i686-pc-windows-msvc', 'dynamic'):
       '8d34978f381a76db94a706ea27e71856acdff28d248c68966afb1881e9b9c3c3',
-  (OS.windows, Architecture.ia32, 'static'):
+  ('i686-pc-windows-msvc', 'static'):
       '80d90330f943ef626cca83225f68d8644b6ed3ff681142b8b273607179f49bb0',
-  (OS.windows, Architecture.ia32, 'static_data'):
+  ('i686-pc-windows-msvc', 'static_data'):
       'bff56a759faa8b1a750a7df11dad3b19ec59532abbeef519d80c628cbd8108f9',
-  (OS.windows, Architecture.x64, 'dynamic'):
+  ('x86_64-pc-windows-msvc', 'dynamic'):
       '96877e3d28eec45e25ee59040026391085f95318958725706368a5d0a9b7e34c',
-  (OS.windows, Architecture.x64, 'static'):
+  ('x86_64-pc-windows-msvc', 'static'):
       '96241ab8b5cbe3b345d6ec4ff2897d865686ec6b314faecbf7b13499d1695e22',
-  (OS.windows, Architecture.x64, 'static_data'):
+  ('x86_64-pc-windows-msvc', 'static_data'):
       'f92fdf2ebe0dbb6e5ae2d656f5a260d4ae3685acfd6100430116ad9ffac16a1d',
-  (OS.android, Architecture.arm, 'dynamic'):
+  ('armv7-linux-androideabi', 'dynamic'):
       '5d45a8e310c748030a74cff0883855f33c8a20cc089f247e1768c5d29a67454e',
-  (OS.android, Architecture.arm, 'static'):
+  ('armv7-linux-androideabi', 'static'):
       '2051f77297132f6a7ee33c2c44cd94320d1ba5d774f0feef5efef8dbe7e8edd6',
-  (OS.android, Architecture.arm, 'static_data'):
+  ('armv7-linux-androideabi', 'static_data'):
       'a455bb2d75c621c2974ded1b0b9d1c909f4cfb5c83d0d4cc0e4ad699a161db45',
-  (OS.android, Architecture.arm64, 'dynamic'):
+  ('armv7-linux-androideabi64', 'dynamic'):
       'e678bfeb7b11094be5546411d76a7f8d3ccd8ee2f871d43197c44714fe24f689',
-  (OS.android, Architecture.arm64, 'static'):
+  ('armv7-linux-androideabi64', 'static'):
       '6a42207caa146bf42caf8e2ecc33ea7b29ea2d530fa19b18bdd59bd3e0d52757',
-  (OS.android, Architecture.arm64, 'static_data'):
+  ('armv7-linux-androideabi64', 'static_data'):
       'f1f93f5a9fe24e52f00b31831d9591233b3b21f5fdfa212509f8d6d12331c4d8',
-  (OS.android, Architecture.ia32, 'dynamic'):
+  ('i686-linux-android', 'dynamic'):
       '14bfb64ae4474af442932c4e257ee411865e7a2b76dbf51a32db8b2e1052948b',
-  (OS.android, Architecture.ia32, 'static'):
+  ('i686-linux-android', 'static'):
       '25c346ee6cdf44c0e3198f94b044b96c2fb946076ff225c5e82c431c4f5d2dc9',
-  (OS.android, Architecture.ia32, 'static_data'):
+  ('i686-linux-android', 'static_data'):
       '18d204732ed3b3810b733dd8f714d8b89d6cc2285c131e97b69f45692608242c',
-  (OS.android, Architecture.x64, 'dynamic'):
+  ('x86_64-linux-android', 'dynamic'):
       'dc42195906431fb70cfc6fe8ad2641b43bf3961cc4f472db00042bd3c1461207',
-  (OS.android, Architecture.x64, 'static'):
+  ('x86_64-linux-android', 'static'):
       '7eac855a8732a2bfaac46857bfd1d3612173dab98de7a2f1595c890a7b24a109',
-  (OS.android, Architecture.x64, 'static_data'):
+  ('x86_64-linux-android', 'static_data'):
       '6e5612f474d0c68097c58da2d9ba9c935f691d4a47c12221cddeed8d53a8dfab',
-  (OS.macOS, Architecture.arm64, 'dynamic'):
+  ('aarch64-linux-android', 'dynamic'):
       '859b68ca539e4e00fb6577caa104fdfc787ecdaeba5cec71661f5c1087259449',
-  (OS.macOS, Architecture.arm64, 'static'):
+  ('aarch64-linux-android', 'static'):
       '1e0a2dce3f6bea225bbc2289df6bb23afa9b54a991c3787aa986456817d8e4be',
-  (OS.macOS, Architecture.arm64, 'static_data'):
+  ('aarch64-linux-android', 'static_data'):
       'af1e1fedba96f83ebb9c62d1af549ccc3292399c4cfa906d5521e015ef653410',
-  (OS.macOS, Architecture.x64, 'dynamic'):
+  ('x86_64-apple-darwin', 'dynamic'):
       '698a7ab358c4425708a5664695b3c52d5a5dbe95851e8b948a6a4a19d0dd8ebe',
-  (OS.macOS, Architecture.x64, 'static'):
+  ('x86_64-apple-darwin', 'static'):
       '69067391fd4415a2c20644b8d1862d834431b54a36bbc00ea2edaa41b761a8aa',
-  (OS.macOS, Architecture.x64, 'static_data'):
+  ('x86_64-apple-darwin', 'static_data'):
       'cf6e287b730fcab6132dcdae69f63b243b2403f632bee4cbfc1c8b82c76f4224',
-  (OS.iOS, Architecture.arm64, 'dynamic'):
+  ('aarch64-apple-ios', 'dynamic'):
       '680af0aaac298d7cebab795ab2d52a67842f676a4a8e290c0faa222f28fb589f',
-  (OS.iOS, Architecture.arm64, 'static'):
+  ('aarch64-apple-ios', 'static'):
       '45b17b9125b10fd89e70829cfa84762755e362fc25e7da66d420696ebb0443d1',
-  (OS.iOS, Architecture.arm64, 'static_data'):
+  ('aarch64-apple-ios', 'static_data'):
       '8919e441ff2a8aa525331f665ccbc652de1dd704db9c890740750a17df12265b',
-  (OS.iOS, Architecture.x64, 'dynamic'):
+  ('x86_64-apple-ios', 'dynamic'):
       '00ba73555d2fb1dc12f33e7c5f4f75547277239cb943ceb00ad1ff66964d9c3b',
-  (OS.iOS, Architecture.x64, 'static'):
+  ('x86_64-apple-ios', 'static'):
       'd57ba6626129f5d4b5804cadab02a7948429bb41720d14cdf43ab4c786b1d4bc',
-  (OS.iOS, Architecture.x64, 'static_data'):
+  ('x86_64-apple-ios', 'static_data'):
       '495e0b22b6f95ba6a71449dd030d40e304033d9a1aef6421d97b52f486e35a2c',
 };
