@@ -14,16 +14,16 @@ Future<void> main(List<String> args) async {
     'armv7-linux-androideabi',
     'aarch64-linux-android',
     'i686-linux-android',
-    'riscv64-linux-android',
+    // 'riscv64-linux-android',
     'x86_64-linux-android',
-    'aarch64-unknown-fuchsia',
-    'x86_64-unknown-fuchsia',
+    // 'aarch64-unknown-fuchsia',
+    // 'x86_64-unknown-fuchsia',
     'aarch64-apple-ios',
     'x86_64-apple-ios',
     'armv7-unknown-linux-gnueabihf',
     'aarch64-unknown-linux-gnu',
-    'i686-unknown-linux-gnu',
-    'riscv32gc-unknown-linux-gnu',
+    // 'i686-unknown-linux-gnu',
+    // 'riscv32gc-unknown-linux-gnu',
     'riscv64gc-unknown-linux-gnu',
     'x86_64-unknown-linux-gnu',
     'aarch64-apple-darwin',
@@ -32,8 +32,8 @@ Future<void> main(List<String> args) async {
     'i686-pc-windows-msvc',
     'x86_64-pc-windows-msvc',
   ]) {
-    for (final libraryType in ['dynamic', 'static', 'static_data']) {
-      final target = [rustTarget, libraryType].join('-');
+    for (final libraryType in ['dynamic', 'static', 'static-with_data']) {
+      final target = ['icu4x-2', libraryType, rustTarget].join('-');
       print('Checking hash for $target');
       final success = await _fetchLibrary(target, httpClient, dynamicLibrary);
       if (success) {
@@ -66,7 +66,7 @@ Future<bool> _fetchLibrary(
   File dynamicLibrary,
 ) async {
   final uri = Uri.parse(
-    'https://github.com/unicode/icu4x/releases/download/$version/$target',
+    'https://github.com/unicode-org/icu4x/releases/download/$version/$target',
   );
   print('Fetch file from $uri');
   final request = await httpClient.getUrl(uri);

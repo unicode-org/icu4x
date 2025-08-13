@@ -96,11 +96,13 @@ final class FetchMode extends BuildMode {
   Future<Uri> build() async {
     print('Running in `fetch` mode');
     final rustTarget = _asRustTarget(input.config.code);
-    final libraryType = input.config.buildStatic ? 'static_data' : 'dynamic';
+    final libraryType = input.config.buildStatic
+        ? 'static-with_data'
+        : 'dynamic';
     print('Fetching pre-built binary for $version, $rustTarget, $libraryType');
     final dylibRemoteUri = Uri.parse(
       'https://github.com/unicode-org/icu4x/releases/'
-      'download/$version/$rustTarget-$libraryType',
+      'download/$version/icu4x-2-$libraryType-$rustTarget',
     );
     final library = await fetchToFile(
       dylibRemoteUri,
