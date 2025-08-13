@@ -211,7 +211,6 @@ final class CheckoutMode extends BuildMode {
 String _asRustTarget(CodeConfig code) {
   if (code.targetOS == OS.iOS &&
       code.targetArchitecture == Architecture.arm64 &&
-      code.targetOS == OS.iOS &&
       code.iOS.targetSdk == IOSSdk.iPhoneSimulator) {
     return 'aarch64-apple-ios-sim';
   }
