@@ -106,34 +106,6 @@ pub(crate) enum RuleMode {
     DOW_LEQ_DOM,
 }
 
-/// The offsets for a rule
-#[derive(Copy, Clone, Debug)]
-struct Offsets {
-    /// Are we transitioning off of std?
-    transition_to_additional: bool,
-    /// The standard offset
-    standard: i32,
-    /// The additional offset
-    additional: i32,
-}
-
-impl Offsets {
-    /// Converts a {transition_time} into a time in the UTC day, in seconds
-    fn to_utc(&self, transition_time: u32, mode: TimeMode) -> i32 {
-        let seconds_of_day = i32::try_from(transition_time).unwrap_or_default();
-        let offset = match mode {
-            TimeMode::Utc => seconds_of_day,
-            TimeMode::Standard => seconds_of_day - self.standard,
-            // Tz before this transition was standard
-            TimeMode::Wall if self.transition_to_additional => seconds_of_day - self.standard,
-            // Tz before this transition was additional
-            TimeMode::Wall => seconds_of_day - self.standard - self.additional,
-        };
-
-        offset
-    }
-}
-
 /// The number of days in this year before this month starts
 fn days_before_month(m: u8, is_leap: bool) -> u16 {
     let leap_day = u16::from(is_leap);
@@ -181,23 +153,6 @@ fn days_since_epoch(year: i32) -> i64 {
 }
 
 impl TzRuleDate {
-    // /// Returns the transition time, for a given year,
-    // /// as a UTC epoch offset in seconds
-    // pub(crate) fn transition_time(&self, offsets: Offsets, year: i32) -> i64 {
-    //     let rd = calendrical_calculations::iso::fixed_from_iso(year, 1, 1);
-    //     let mut days_since_epoch = days_since_epoch(year);
-    //     let day_in_year = self.day_in_year(year);
-    //     days_since_epoch += i64::from(self.day_in_year(year));
-    //     let seconds_in_day = offsets.to_utc(self.transition_time, self.time_mode);
-
-    //     days_since_epoch * 86400 + i64::from(seconds_in_day.to_seconds())
-    // }
-
-    /// Obtain the transition time in the day as a number of UTC seconds
-    fn transition_time_in_day(&self, offsets: Offsets) -> i32 {
-        offsets.to_utc(self.transition_time, self.time_mode)
-    }
-
     /// Given a year, return the 0-indexed day number in that year for this transition
     pub(crate) fn day_in_year(&self, year: i32) -> u16 {
         let is_leap = is_leap_year(year);
@@ -328,16 +283,14 @@ impl Rule<'_> {
 
         let start = &self.inner.start;
         let start_day_in_year = start.day_in_year(year);
-        let start_offsets = self.offsets_for_start();
-        let start_seconds_in_day = start.transition_time_in_day(start_offsets);
+        let start_seconds_in_day = self.transition_time_to_utc(start, true);
         let start_epoch_seconds = (days_since_epoch + i64::from(start_day_in_year))
             * SECONDS_IN_DAY
             + i64::from(start_seconds_in_day);
 
         let end = &self.inner.end;
         let end_day_in_year = end.day_in_year(year);
-        let end_offsets = self.offsets_for_end();
-        let end_seconds_in_day = end.transition_time_in_day(end_offsets);
+        let end_seconds_in_day = self.transition_time_to_utc(end, false);
         let end_epoch_seconds = (days_since_epoch + i64::from(end_day_in_year)) * SECONDS_IN_DAY
             + i64::from(end_seconds_in_day);
 
@@ -347,19 +300,22 @@ impl Rule<'_> {
         }
     }
 
-    fn offsets_for_start(&self) -> Offsets {
-        Offsets {
-            transition_to_additional: true,
-            standard: self.standard_offset_seconds,
-            additional: self.inner.additional_offset_secs,
-        }
-    }
-    fn offsets_for_end(&self) -> Offsets {
-        Offsets {
-            transition_to_additional: false,
-            standard: self.standard_offset_seconds,
-            additional: self.inner.additional_offset_secs,
-        }
+    /// Converts the {transition_time} into a time in the UTC day, in seconds
+    /// for either the start or end trnasition
+    fn transition_time_to_utc(&self, date: &TzRuleDate, is_start: bool) -> i32 {
+        let seconds_of_day = i32::try_from(date.transition_time).unwrap_or_default();
+        let standard = self.standard_offset_seconds;
+        let additional = standard + self.inner.additional_offset_secs;
+        let offset = match date.time_mode {
+            TimeMode::Utc => seconds_of_day,
+            TimeMode::Standard => seconds_of_day - standard,
+            // Tz before this transition was standard
+            TimeMode::Wall if is_start => seconds_of_day - standard,
+            // Tz before this transition was additional
+            TimeMode::Wall => seconds_of_day - additional,
+        };
+
+        offset
     }
 
     #[allow(unused)]
