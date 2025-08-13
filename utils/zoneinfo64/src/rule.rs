@@ -270,7 +270,7 @@ impl TransitionsForYear {
         }
     }
 
-    /// Whether transition_range contains standard time
+    /// Whether range() contains standard time
     pub(crate) fn range_contains_standard(&self) -> bool {
         self.start_epoch_seconds > self.end_epoch_seconds
     }
