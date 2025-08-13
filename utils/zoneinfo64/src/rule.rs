@@ -2,14 +2,12 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use super::PossibleOffset;
+use super::{Offset, PossibleOffset, SECONDS_IN_UTC_DAY};
 use calendrical_calculations::iso;
 use calendrical_calculations::rata_die::RataDie;
 use icu_time::zone::UtcOffset;
 use iso::is_leap_year;
 use std::ops::Range;
-
-const SECONDS_IN_UTC_DAY: i64 = 86400;
 
 #[derive(Debug, Clone, Copy)]
 pub(crate) struct Rule<'a> {
@@ -299,7 +297,7 @@ impl Rule<'_> {
     }
 
     /// Converts the {transition_time} into a time in the UTC day, in seconds
-    /// for either the start or end trnasition
+    /// for either the start or end transition
     fn transition_time_to_utc(&self, date: &TzRuleDate, is_start: bool) -> i32 {
         let seconds_of_day = date.transition_time as i32;
         let standard = self.standard_offset_seconds;
@@ -315,7 +313,8 @@ impl Rule<'_> {
     }
 
     #[allow(unused)]
-    pub(crate) fn resolve_utc(&self, local_year: i32, seconds_since_utc_epoch: i64) -> UtcOffset {
+    pub(crate) fn resolve_utc(&self, local_year: i32, seconds_since_utc_epoch: i64) -> Offset {
+        // We assume that transitions do not cross year boundaries (Invariant: rule-stays-inside-year)
         let transitions = self.transitions_for_year(local_year);
 
         let range_is_standard = transitions.range_is_standard();
@@ -324,9 +323,17 @@ impl Rule<'_> {
         let standard = self.standard_offset_seconds;
 
         if range.contains(&seconds_since_utc_epoch) ^ range_is_standard {
-            UtcOffset::from_seconds_unchecked(standard + self.inner.additional_offset_secs)
+            Offset {
+                rule_applies: true,
+                offset: UtcOffset::from_seconds_unchecked(
+                    standard + self.inner.additional_offset_secs,
+                ),
+            }
         } else {
-            UtcOffset::from_seconds_unchecked(standard)
+            Offset {
+                rule_applies: false,
+                offset: UtcOffset::from_seconds_unchecked(standard),
+            }
         }
     }
 
@@ -334,12 +341,76 @@ impl Rule<'_> {
     pub(crate) fn resolve_local(
         &self,
         local_year: i32,
-        _seconds_since_local_epoch: i64,
+        seconds_since_local_epoch: i64,
     ) -> PossibleOffset {
+        // We assume that transitions do not cross year boundaries (Invariant: rule-stays-inside-year)
         let transitions = self.transitions_for_year(local_year);
-        let _transitions_prev = transitions.to_wall(self, WallReference::Prev);
-        let _transitions_next = transitions.to_wall(self, WallReference::Next);
-        unimplemented!()
+        let transitions_prev = transitions.to_wall(self, WallReference::Prev);
+        let transitions_next = transitions.to_wall(self, WallReference::Next);
+        let range_is_standard = transitions.range_is_standard();
+        let range_prev = transitions_prev.range();
+        let range_next = transitions_next.range();
+        let range_prev_contains = range_prev.contains(&seconds_since_local_epoch);
+        let range_next_contains = range_next.contains(&seconds_since_local_epoch);
+
+        let standard = self.standard_offset_seconds;
+        let standard_offset = Offset {
+            offset: UtcOffset::from_seconds_unchecked(standard),
+            rule_applies: false,
+        };
+        let additional = standard + self.inner.additional_offset_secs;
+        let additional_offset = Offset {
+            offset: UtcOffset::from_seconds_unchecked(additional),
+            rule_applies: true,
+        };
+        let (in_range_offset, out_of_range_offset) = if range_is_standard {
+            (standard_offset, additional_offset)
+        } else {
+            (additional_offset, standard_offset)
+        };
+
+        // Prev is in the time zone *before* the transition, Next is in the time zone of and after the transition
+        // This means that when something is >= prev but < next there is no match, but if something is
+        // >= next and < prev there is an ambiguous match
+
+        if seconds_since_local_epoch < range_prev.start
+            && seconds_since_local_epoch < range_next.start
+        {
+            // We're before any of the transitions
+            PossibleOffset::Single(out_of_range_offset)
+        } else if seconds_since_local_epoch >= range_prev.start
+            && seconds_since_local_epoch < range_next.start
+        {
+            // We're in the gap of the first transition
+            PossibleOffset::None
+        } else if seconds_since_local_epoch < range_prev.start
+            && seconds_since_local_epoch >= range_next.start
+        {
+            // We're in the ambiguous part of the first transition
+            // This happens when prev.start > next.start, which happens if the new (in range) offset is smaller
+            debug_assert!(in_range_offset.offset <= out_of_range_offset.offset);
+            PossibleOffset::Ambiguous(out_of_range_offset, in_range_offset)
+        } else if seconds_since_local_epoch < range_prev.end
+            && seconds_since_local_epoch < range_next.end
+        {
+            // We're between the two transitions
+            PossibleOffset::Single(in_range_offset)
+        } else if seconds_since_local_epoch >= range_prev.end
+            && seconds_since_local_epoch < range_next.end
+        {
+            // We're in the gap of the second transition
+            PossibleOffset::None
+        } else if seconds_since_local_epoch < range_prev.end
+            && seconds_since_local_epoch >= range_next.end
+        {
+            // We're in the ambiguous part of the second transition
+            // This happens when prev.end > next.end, which happens if the new (out of range) offset is smaller
+            debug_assert!(out_of_range_offset.offset <= in_range_offset.offset);
+            PossibleOffset::Ambiguous(in_range_offset, out_of_range_offset)
+        } else {
+            // We're out of range
+            PossibleOffset::Single(out_of_range_offset)
+        }
     }
 }
 
@@ -410,30 +481,6 @@ impl TzRuleDate {
             time_mode,
             mode,
         })
-    }
-}
-
-impl TzRule {
-    pub(crate) fn additional_offset_since(
-        &self,
-        seconds_since_epoch: i64,
-        _start_year: u32,
-    ) -> (i32, i64) {
-        let _ = self.start.month;
-        let _ = self.start.day;
-        let _ = self.start.day_of_week;
-        let _ = self.start.transition_time;
-        let _ = self.start.time_mode;
-        let _ = self.start.mode;
-
-        let _ = self.end.month;
-        let _ = self.end.day;
-        let _ = self.end.day_of_week;
-        let _ = self.end.transition_time;
-        let _ = self.end.time_mode;
-        let _ = self.end.mode;
-
-        (self.additional_offset_secs, seconds_since_epoch)
     }
 }
 
