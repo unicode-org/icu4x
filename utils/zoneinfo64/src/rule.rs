@@ -298,16 +298,14 @@ impl Rule<'_> {
         let seconds_of_day = date.transition_time as i32;
         let standard = self.standard_offset_seconds;
         let rule = standard + self.inner.additional_offset_secs;
-        let offset = match date.time_mode {
+        match date.time_mode {
             TimeMode::Utc => seconds_of_day,
             TimeMode::Standard => seconds_of_day - standard,
             // Tz before this transition was standard
             TimeMode::Wall if is_start => seconds_of_day - standard,
             // Tz before this transition was rule
             TimeMode::Wall => seconds_of_day - rule,
-        };
-
-        offset
+        }
     }
 
     #[allow(unused)]
