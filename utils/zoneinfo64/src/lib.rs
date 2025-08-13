@@ -617,7 +617,7 @@ mod tests {
             .expect("Error processing resource bundle file")
     });
     #[test]
-    fn test() {
+    fn test_against_chrono() {
         use chrono::Offset;
         use chrono::TimeZone;
         use chrono_tz::OffsetComponents;
