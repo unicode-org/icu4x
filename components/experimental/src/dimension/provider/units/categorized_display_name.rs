@@ -5,40 +5,40 @@
 use crate::dimension::provider::units::display_name::UnitsDisplayName;
 
 icu_provider::data_marker!(
-    /// `AreaDisplayNameV1`
-    AreaDisplayNameV1,
+    /// Display name for area units
+    UnitsNameAreaV1,
     UnitsDisplayName<'static>,
     #[cfg(feature = "datagen")]
     attributes_domain = "units"
 );
 
 icu_provider::data_marker!(
-    /// `DurationDisplayNameV1`
-    DurationDisplayNameV1,
+    /// Display name for duration units
+    UnitsNameDurationV1,
     UnitsDisplayName<'static>,
     #[cfg(feature = "datagen")]
     attributes_domain = "units"
 );
 
 icu_provider::data_marker!(
-    /// `LengthDisplayNameV1`
-    LengthDisplayNameV1,
+    /// Display name for length units
+    UnitsNameLengthV1,
     UnitsDisplayName<'static>,
     #[cfg(feature = "datagen")]
     attributes_domain = "units"
 );
 
 icu_provider::data_marker!(
-    /// `MassDisplayNameV1`
-    MassDisplayNameV1,
+    /// Display name for mass units
+    UnitsNameMassV1,
     UnitsDisplayName<'static>,
     #[cfg(feature = "datagen")]
     attributes_domain = "units"
 );
 
 icu_provider::data_marker!(
-    /// `VolumeDisplayNameV1`
-    VolumeDisplayNameV1,
+    /// Display name for volume units
+    UnitsNameVolumeV1,
     UnitsDisplayName<'static>,
     #[cfg(feature = "datagen")]
     attributes_domain = "units"

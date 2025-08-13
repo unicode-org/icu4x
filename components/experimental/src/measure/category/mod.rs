@@ -9,8 +9,8 @@ use icu_provider::DynamicDataMarker;
 use crate::{
     dimension::provider::units::{
         categorized_display_name::{
-            AreaDisplayNameV1, DurationDisplayNameV1, LengthDisplayNameV1, MassDisplayNameV1,
-            VolumeDisplayNameV1,
+            UnitsNameAreaV1, UnitsNameDurationV1, UnitsNameLengthV1, UnitsNameMassV1,
+            UnitsNameVolumeV1,
         },
         display_name::UnitsDisplayName,
     },
@@ -62,17 +62,17 @@ pub struct Mass;
 pub struct Volume;
 
 impl MeasureUnitCategory for Area {
-    type DataMarker = AreaDisplayNameV1;
+    type DataMarker = UnitsNameAreaV1;
 }
 impl MeasureUnitCategory for Duration {
-    type DataMarker = DurationDisplayNameV1;
+    type DataMarker = UnitsNameDurationV1;
 }
 impl MeasureUnitCategory for Length {
-    type DataMarker = LengthDisplayNameV1;
+    type DataMarker = UnitsNameLengthV1;
 }
 impl MeasureUnitCategory for Mass {
-    type DataMarker = MassDisplayNameV1;
+    type DataMarker = UnitsNameMassV1;
 }
 impl MeasureUnitCategory for Volume {
-    type DataMarker = VolumeDisplayNameV1;
+    type DataMarker = UnitsNameVolumeV1;
 }

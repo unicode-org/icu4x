@@ -8,8 +8,8 @@ use crate::cldr_serde::{self};
 use crate::SourceDataProvider;
 
 use icu::experimental::dimension::provider::units::categorized_display_name::{
-    AreaDisplayNameV1, DurationDisplayNameV1, LengthDisplayNameV1, MassDisplayNameV1,
-    VolumeDisplayNameV1,
+    UnitsNameAreaV1, UnitsNameDurationV1, UnitsNameLengthV1, UnitsNameMassV1,
+    UnitsNameVolumeV1,
 };
 use icu::experimental::dimension::provider::units::display_name::UnitsDisplayName;
 use icu::plurals::PluralElements;
@@ -84,11 +84,11 @@ macro_rules! impl_categorized_display_name_data_provider {
     };
 }
 
-impl_categorized_display_name_data_provider!("area", AreaDisplayNameV1);
-impl_categorized_display_name_data_provider!("duration", DurationDisplayNameV1);
-impl_categorized_display_name_data_provider!("length", LengthDisplayNameV1);
-impl_categorized_display_name_data_provider!("mass", MassDisplayNameV1);
-impl_categorized_display_name_data_provider!("volume", VolumeDisplayNameV1);
+impl_categorized_display_name_data_provider!("area", UnitsNameAreaV1);
+impl_categorized_display_name_data_provider!("duration", UnitsNameDurationV1);
+impl_categorized_display_name_data_provider!("length", UnitsNameLengthV1);
+impl_categorized_display_name_data_provider!("mass", UnitsNameMassV1);
+impl_categorized_display_name_data_provider!("volume", UnitsNameVolumeV1);
 
 macro_rules! impl_categorized_display_name_iter_data_provider_cached {
     ($category:expr, $display_name:ident) => {
@@ -142,11 +142,11 @@ macro_rules! impl_categorized_display_name_iter_data_provider_cached {
     };
 }
 
-impl_categorized_display_name_iter_data_provider_cached!("area", AreaDisplayNameV1);
-impl_categorized_display_name_iter_data_provider_cached!("duration", DurationDisplayNameV1);
-impl_categorized_display_name_iter_data_provider_cached!("length", LengthDisplayNameV1);
-impl_categorized_display_name_iter_data_provider_cached!("mass", MassDisplayNameV1);
-impl_categorized_display_name_iter_data_provider_cached!("volume", VolumeDisplayNameV1);
+impl_categorized_display_name_iter_data_provider_cached!("area", UnitsNameAreaV1);
+impl_categorized_display_name_iter_data_provider_cached!("duration", UnitsNameDurationV1);
+impl_categorized_display_name_iter_data_provider_cached!("length", UnitsNameLengthV1);
+impl_categorized_display_name_iter_data_provider_cached!("mass", UnitsNameMassV1);
+impl_categorized_display_name_iter_data_provider_cached!("volume", UnitsNameVolumeV1);
 
 #[test]
 fn test_categorized_display_name_length() {
@@ -157,7 +157,7 @@ fn test_categorized_display_name_length() {
 
     let provider = SourceDataProvider::new_testing();
 
-    let us_locale_long_meter: DataPayload<LengthDisplayNameV1> = provider
+    let us_locale_long_meter: DataPayload<UnitsNameLengthV1> = provider
         .load(DataRequest {
             id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                 DataMarkerAttributes::from_str_or_panic("long-meter"),
@@ -174,7 +174,7 @@ fn test_categorized_display_name_length() {
     let long = length_us.patterns.get(1.into(), &en_rules).interpolate([1]);
     assert_writeable_eq!(long, "1 meter");
 
-    let us_locale_short_meter: DataPayload<LengthDisplayNameV1> = provider
+    let us_locale_short_meter: DataPayload<UnitsNameLengthV1> = provider
         .load(DataRequest {
             id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                 DataMarkerAttributes::from_str_or_panic("short-meter"),
@@ -192,7 +192,7 @@ fn test_categorized_display_name_length() {
         .interpolate([5]);
     assert_writeable_eq!(short, "5 m");
 
-    let ar_eg_locale: DataPayload<LengthDisplayNameV1> = provider
+    let ar_eg_locale: DataPayload<UnitsNameLengthV1> = provider
         .load(DataRequest {
             id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                 DataMarkerAttributes::from_str_or_panic("long-meter"),
@@ -211,7 +211,7 @@ fn test_categorized_display_name_length() {
         .interpolate([1]);
     assert_writeable_eq!(long, "متر");
 
-    let fr_locale: DataPayload<LengthDisplayNameV1> = provider
+    let fr_locale: DataPayload<UnitsNameLengthV1> = provider
         .load(DataRequest {
             id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
                 DataMarkerAttributes::from_str_or_panic("short-meter"),
