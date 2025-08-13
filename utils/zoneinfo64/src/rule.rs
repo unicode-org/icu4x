@@ -303,7 +303,7 @@ impl Rule<'_> {
     /// Converts the {transition_time} into a time in the UTC day, in seconds
     /// for either the start or end trnasition
     fn transition_time_to_utc(&self, date: &TzRuleDate, is_start: bool) -> i32 {
-        let seconds_of_day = i32::try_from(date.transition_time).unwrap_or_default();
+        let seconds_of_day = date.transition_time as i32;
         let standard = self.standard_offset_seconds;
         let additional = standard + self.inner.additional_offset_secs;
         let offset = match date.time_mode {
