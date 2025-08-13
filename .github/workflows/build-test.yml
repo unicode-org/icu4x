@@ -357,10 +357,9 @@ jobs:
       run: cargo make ci-job-test-dart
 
     - name: Run `cargo make ci-job-test-dart` in local mode
-      # https://github.com/dart-lang/sdk/issues/61285
-      if:  ${{ github.event_name != 'schedule' || matrix.os != 'macos-latest' }}
       run: |
         cp ffi/dart/.dart_tool/lib/* dylib
+        git clean -xf ffi examples
         yq -i ".hooks.user_defines.icu4x.buildMode = \"local\"" ffi/dart/pubspec.yaml
         yq -i ".hooks.user_defines.icu4x.localPath = \"file://$(realpath dylib)\"" ffi/dart/pubspec.yaml
         yq -i ".hooks.user_defines.icu4x.buildMode = \"local\"" examples/dart/pubspec.yaml
@@ -374,6 +373,7 @@ jobs:
       # if: github.event_name != 'pull_request' || needs.check_skip_fetch.outputs.skip_fetch == 'false'
       if: false
       run: |
+        git clean -xf ffi examples
         yq -i ".hooks.user_defines.icu4x.buildMode = \"fetch\"" ffi/dart/pubspec.yaml
         yq -i ".hooks.user_defines.icu4x.buildMode = \"fetch\"" examples/dart/pubspec.yaml
         cargo make ci-job-test-dart
