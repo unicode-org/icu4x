@@ -604,9 +604,7 @@ jobs:
       FILENAME_SUFFIX: ${{ matrix.compiletype == 'static' && matrix.include_data == true && '-with_data' || '' }}
 
     steps:
-    - uses: actions/checkout@c85c95e3d7251135ab7dc9ce3241c5835cc595a9
-      with:
-        submodules: true
+    - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
 
     - name: Install Rust toolchains
       run: |
