@@ -395,7 +395,7 @@ pub struct PluralElementsPackedCow<'data, V: VarULE + ?Sized> {
 /// A bitpacked DST for [`PluralElements`].
 ///
 /// Can be put in a [`Cow`] or a [`VarZeroSlice`].
-#[derive(Debug, PartialEq, Eq)]
+#[derive(PartialEq, Eq)]
 #[repr(transparent)]
 pub struct PluralElementsPackedULE<V: VarULE + ?Sized> {
     _v: PhantomData<V>,
@@ -414,6 +414,16 @@ pub struct PluralElementsPackedULE<V: VarULE + ?Sized> {
     /// - Bytes 2..(2+L): the default (plural "other") value `V`
     /// - Remainder: [`PluralElementsTupleSliceVarULE`]
     bytes: [u8],
+}
+
+impl<V: VarULE + fmt::Debug + ?Sized> fmt::Debug for PluralElementsPackedULE<V> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let unpacked = self.as_parts();
+        f.debug_struct("PluralElementsPackedULE")
+            .field("parts", &unpacked)
+            .field("bytes", &&self.bytes)
+            .finish()
+    }
 }
 
 impl<V: VarULE + ?Sized> ToOwned for PluralElementsPackedULE<V> {
@@ -755,6 +765,7 @@ struct PluralElementsPackedBuilder<'a, T> {
 }
 
 /// Internal unpacked and deserialized values from a [`PluralElementsPackedULE`].
+#[derive(Debug)]
 struct PluralElementsUnpacked<'a, V: VarULE + ?Sized> {
     pub default: PluralElementWithMetadata<'a, V>,
     pub specials: Option<&'a PluralElementsTupleSliceVarULE<V>>,
