@@ -111,20 +111,36 @@ pub(crate) enum RuleMode {
 
 /// The number of days in this year before this month starts
 fn days_before_month(m: u8, is_leap: bool) -> u16 {
+    const fn days_before_month_in_non_leap_year(month: u8) -> u16 {
+        (iso::const_fixed_from_iso(2021, month, 1).to_i64_date()
+            - iso::const_fixed_from_iso(2021, 1, 1).to_i64_date()) as u16
+    }
+    const DAYS_BEFORE_FEB: u16 = days_before_month_in_non_leap_year(2);
+    const DAYS_BEFORE_MAR: u16 = days_before_month_in_non_leap_year(3);
+    const DAYS_BEFORE_APR: u16 = days_before_month_in_non_leap_year(4);
+    const DAYS_BEFORE_MAY: u16 = days_before_month_in_non_leap_year(5);
+    const DAYS_BEFORE_JUN: u16 = days_before_month_in_non_leap_year(6);
+    const DAYS_BEFORE_JUL: u16 = days_before_month_in_non_leap_year(7);
+    const DAYS_BEFORE_AUG: u16 = days_before_month_in_non_leap_year(8);
+    const DAYS_BEFORE_SEP: u16 = days_before_month_in_non_leap_year(9);
+    const DAYS_BEFORE_OCT: u16 = days_before_month_in_non_leap_year(10);
+    const DAYS_BEFORE_NOV: u16 = days_before_month_in_non_leap_year(11);
+    const DAYS_BEFORE_DEC: u16 = days_before_month_in_non_leap_year(12);
+
     let leap_day = u16::from(is_leap);
     match m {
         0 => 0,
-        1 => 31,
-        2 => 59 + leap_day,
-        3 => 90 + leap_day,
-        4 => 120 + leap_day,
-        5 => 151 + leap_day,
-        6 => 181 + leap_day,
-        7 => 212 + leap_day,
-        8 => 243 + leap_day,
-        9 => 273 + leap_day,
-        10 => 304 + leap_day,
-        11 => 334 + leap_day,
+        1 => DAYS_BEFORE_FEB,
+        2 => DAYS_BEFORE_MAR + leap_day,
+        3 => DAYS_BEFORE_APR + leap_day,
+        4 => DAYS_BEFORE_MAY + leap_day,
+        5 => DAYS_BEFORE_JUN + leap_day,
+        6 => DAYS_BEFORE_JUL + leap_day,
+        7 => DAYS_BEFORE_AUG + leap_day,
+        8 => DAYS_BEFORE_SEP + leap_day,
+        9 => DAYS_BEFORE_OCT + leap_day,
+        10 => DAYS_BEFORE_NOV + leap_day,
+        11 => DAYS_BEFORE_DEC + leap_day,
         _ => unreachable!(),
     }
 }
