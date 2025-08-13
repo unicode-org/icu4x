@@ -29,7 +29,7 @@ on:
   push
 
 permissions:
-  contents: read
+  contents: write
   pages: write
   id-token: write
 
@@ -652,8 +652,6 @@ jobs:
     - name: Build Linux data
       if: matrix.os == 'ubuntu-latest' && matrix.compiletype == 'static' && matrix.include_data == false
       run: |
-        cargo run -p icu4x-datagen -- --locales modern --markers all --format blob --out bin/full.postcard
-
         cd provider/icu4x-datagen # avoid global feature resolution
         rustup target add aarch64-unknown-linux-gnu
         cargo build --release --bin icu4x-datagen --no-default-features --features blob_exporter,blob_input,rayon --target aarch64-unknown-linux-gnu
@@ -682,6 +680,8 @@ jobs:
     - name: Build Mac data
       if: matrix.os == 'macos-latest' && matrix.compiletype == 'static' && matrix.include_data == false
       run: |
+        cargo run -p icu4x-datagen -- --locales modern --markers all --format blob --out bin/full.postcard
+        
         cd provider/icu4x-datagen # avoid global feature resolution
         rustup target add aarch64-apple-darwin
         cargo build --release --bin icu4x-datagen --no-default-features --features blob_exporter,blob_input,rayon --target aarch64-apple-darwin
