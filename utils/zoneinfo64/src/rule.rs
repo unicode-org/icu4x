@@ -2,8 +2,10 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 use super::PossibleOffset;
-use calendrical_calculations::iso::is_leap_year;
+use calendrical_calculations::iso;
+use calendrical_calculations::rata_die::RataDie;
 use icu_time::zone::UtcOffset;
+use iso::is_leap_year;
 use std::ops::Range;
 
 const SECONDS_IN_UTC_DAY: i64 = 86400;
@@ -128,27 +130,15 @@ fn days_before_month(m: u8, is_leap: bool) -> u16 {
 
 /// The weekday before this year started (0 = Sun, 6 -=Sat)
 fn weekday_before_year(year: i32) -> u8 {
-    // This needs to be a multiple of 400
-    let since_2000 = year - 2000;
-    // To avoid overflow, we take a remainder early
-    // Note that (a * b) mod c == (a mod c) * b
-    let days_since_2000 = since_2000.rem_euclid(7) * 365;
-    let mut leaps_since_2000 = since_2000 / 4 - since_2000 / 100 + since_2000 / 400;
-
-    // Don't forget 2000 itself
-    if since_2000 > 0 {
-        leaps_since_2000 += 1;
-    }
-
-    // Jan 1 2000 was a Saturday
-    (5 + days_since_2000 + leaps_since_2000).rem_euclid(7) as u8
+    const SUNDAY: RataDie = iso::const_fixed_from_iso(2000, 1, 2);
+    (iso::fixed_from_iso(year - 1, 12, 31) - SUNDAY).rem_euclid(7) as u8
 }
 
 /// Represent the year as a number of days since the start of the 1970 epoch
 ///
 /// i.e. days_since_epoch(1970) = 0
 fn days_since_epoch(year: i32) -> i64 {
-    let rd = calendrical_calculations::iso::fixed_from_iso(year, 1, 1);
+    let rd = iso::fixed_from_iso(year, 1, 1);
     rd - super::EPOCH
 }
 
@@ -291,7 +281,8 @@ impl Rule<'_> {
         let end = &self.inner.end;
         let end_day_in_year = end.day_in_year(year);
         let end_seconds = self.transition_time_to_utc(end, false);
-        let end_epoch_seconds = (days_since_epoch + i64::from(end_day_in_year)) * SECONDS_IN_UTC_DAY
+        let end_epoch_seconds = (days_since_epoch + i64::from(end_day_in_year))
+            * SECONDS_IN_UTC_DAY
             + i64::from(end_seconds);
 
         TransitionsForYear {
@@ -467,14 +458,13 @@ mod tests {
         (end_month, end_day, (end_hours_prev, end_hours_next)): (u8, u8, (i8, i8)),
     ) {
         let rule = TZDB.get(tz).unwrap().final_rule.unwrap();
-        let epoch_start =
-            calendrical_calculations::iso::fixed_from_iso(year, start_month, start_day)
-                - crate::EPOCH;
-        let epoch_end =
-            calendrical_calculations::iso::fixed_from_iso(year, end_month, end_day) - crate::EPOCH;
+        let epoch_start = iso::fixed_from_iso(year, start_month, start_day) - crate::EPOCH;
+        let epoch_end = iso::fixed_from_iso(year, end_month, end_day) - crate::EPOCH;
 
-        let seconds_start_prev = epoch_start * SECONDS_IN_UTC_DAY + i64::from(start_hours_prev) * 3600;
-        let seconds_start_next = epoch_start * SECONDS_IN_UTC_DAY + i64::from(start_hours_next) * 3600;
+        let seconds_start_prev =
+            epoch_start * SECONDS_IN_UTC_DAY + i64::from(start_hours_prev) * 3600;
+        let seconds_start_next =
+            epoch_start * SECONDS_IN_UTC_DAY + i64::from(start_hours_next) * 3600;
         let seconds_end_prev = epoch_end * SECONDS_IN_UTC_DAY + i64::from(end_hours_prev) * 3600;
         let seconds_end_next = epoch_end * SECONDS_IN_UTC_DAY + i64::from(end_hours_next) * 3600;
         let transitions = rule.transitions_for_year(year);
