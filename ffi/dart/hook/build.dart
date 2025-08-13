@@ -9,6 +9,7 @@ import 'package:icu4x/src/hook_helpers/build_options.dart'
 import 'package:icu4x/src/hook_helpers/hashes.dart' show fileHashes;
 import 'package:icu4x/src/hook_helpers/shared.dart' show assetId, package;
 import 'package:icu4x/src/hook_helpers/version.dart' show version;
+import 'package:path/path.dart' as path;
 
 void main(List<String> args) async {
   await build(args, (input, output) async {
@@ -173,12 +174,9 @@ final class LocalMode extends BuildMode {
 }
 
 final class CheckoutMode extends BuildMode {
-  final Uri? checkoutPath;
+  late final Uri checkoutPath;
 
-  CheckoutMode(super.input, this.checkoutPath);
-
-  @override
-  Future<Uri> build() async {
+  CheckoutMode(super.input, Uri? checkoutPath) {
     print('Running in `checkout` mode');
     if (checkoutPath == null) {
       throw ArgumentError(
@@ -186,7 +184,25 @@ final class CheckoutMode extends BuildMode {
         'pubspec build options.',
       );
     }
-    if (!File.fromUri(checkoutPath!.resolve('Cargo.lock')).existsSync()) {
+    if (checkoutPath.path.contains('\$PUB_CACHE')) {
+      final envVars = Platform.environment;
+      final cache =
+          envVars['PUB_CACHE'] ??
+          ((Platform.isMacOS || Platform.isLinux)
+              ? path.join(envVars['HOME']!, '.pub-cache')
+              : Platform.isWindows
+              ? path.join(envVars['LOCALAPPDATA']!, 'Pub', 'Cache')
+              : throw ArgumentError('Unsupported PUB_CACHE'));
+      checkoutPath = checkoutPath.replace(
+        path: path.join(cache, checkoutPath.path.split('\$PUB_CACHE/')[1]),
+      );
+    }
+    this.checkoutPath = checkoutPath;
+  }
+
+  @override
+  Future<Uri> build() async {
+    if (!File.fromUri(checkoutPath.resolve('Cargo.lock')).existsSync()) {
       throw ArgumentError(
         'The `Cargo.lock` file could not by found at $checkoutPath',
       );
@@ -197,7 +213,7 @@ final class CheckoutMode extends BuildMode {
       input.config.buildStatic,
       input.config.code.targetOS == OS.iOS &&
           input.config.code.iOS.targetSdk == IOSSdk.iPhoneSimulator,
-      Directory.fromUri(checkoutPath!),
+      Directory.fromUri(checkoutPath),
       [
         'default_components',
         'experimental',
@@ -210,7 +226,7 @@ final class CheckoutMode extends BuildMode {
   }
 
   @override
-  List<Uri> get dependencies => [checkoutPath!.resolve('Cargo.lock')];
+  List<Uri> get dependencies => [checkoutPath.resolve('Cargo.lock')];
 }
 
 extension on BuildConfig {
