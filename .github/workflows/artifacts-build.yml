@@ -637,6 +637,8 @@ jobs:
       if: matrix.os == 'ubuntu-latest'
       run: |
         (cd ffi/dart && dart pub get)
+
+        mkdir bin
         
         dart ffi/dart/lib/src/hook_helpers/build_libs.dart --working_directory . --file bin/icu4x-2-${{ matrix.compiletype }}${{ env.FILENAME_SUFFIX }}-armv7-linux-androideabi --target armv7-linux-androideabi --compile_type ${{ matrix.compiletype }} --cargo_features ${{ env.FEATURES }}
         dart ffi/dart/lib/src/hook_helpers/build_libs.dart --working_directory . --file bin/icu4x-2-${{ matrix.compiletype }}${{ env.FILENAME_SUFFIX }}-aarch64-linux-android --target aarch64-linux-android --compile_type ${{ matrix.compiletype }} --cargo_features ${{ env.FEATURES }}
@@ -670,6 +672,8 @@ jobs:
       run: |
         (cd ffi/dart && dart pub get)
 
+        mkdir bin
+
         dart ffi/dart/lib/src/hook_helpers/build_libs.dart --working_directory . --file bin/icu4x-2-${{ matrix.compiletype }}${{ env.FILENAME_SUFFIX }}-aarch64-apple-ios --target aarch64-apple-ios --compile_type ${{ matrix.compiletype }} --cargo_features ${{ env.FEATURES }}
         dart ffi/dart/lib/src/hook_helpers/build_libs.dart --working_directory . --file bin/icu4x-2-${{ matrix.compiletype }}${{ env.FILENAME_SUFFIX }}-x86_64-apple-ios --target x86_64-apple-ios --compile_type ${{ matrix.compiletype }} --cargo_features ${{ env.FEATURES }}
         dart ffi/dart/lib/src/hook_helpers/build_libs.dart --working_directory . --file bin/icu4x-2-${{ matrix.compiletype }}${{ env.FILENAME_SUFFIX }}-aarch64-apple-darwin --target aarch64-apple-darwin --compile_type ${{ matrix.compiletype }} --cargo_features ${{ env.FEATURES }}
@@ -694,6 +698,8 @@ jobs:
         pushd ffi/dart
         dart pub get
         popd
+
+        mkdir bin
         
         dart ffi/dart/lib/src/hook_helpers/build_libs.dart --working_directory . --file bin/icu4x-2-${{ matrix.compiletype }}${{ env.FILENAME_SUFFIX }}-aarch64-pc-windows-msvc --target aarch64-pc-windows-msvc --compile_type ${{ matrix.compiletype }} --cargo_features ${{ env.FEATURES }}
         dart ffi/dart/lib/src/hook_helpers/build_libs.dart --working_directory . --file bin/icu4x-2-${{ matrix.compiletype }}${{ env.FILENAME_SUFFIX }}-i686-pc-windows-msvc --target i686-pc-windows-msvc --compile_type ${{ matrix.compiletype }} --cargo_features ${{ env.FEATURES }}
