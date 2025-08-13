@@ -142,7 +142,7 @@ export class Date {
     get eraYearOrRelatedIso(): number;
 
     /**
-     * Deprecated, use {@link Self::montonic_year}
+     * Deprecated, use {@link Self::monotonic_year}
      *
      * See the [Rust documentation for `extended_year`](https://docs.rs/icu/2.0.0/icu/calendar/struct.Date.html#method.extended_year) for more information.
      */
