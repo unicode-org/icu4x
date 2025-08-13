@@ -43,7 +43,7 @@ prefs_convert!(
 );
 prefs_convert!(CategorizedUnitsFormatterPreferences, PluralRulesPreferences);
 
-/// A [`UnitsFormatter`] that is related to a specific category.
+/// A [`CategorizedFormatter`] is used to format specific units.
 ///
 /// This is useful for type inference and for ensuring that the correct units are used.
 pub struct CategorizedFormatter<C: MeasureUnitCategory> {

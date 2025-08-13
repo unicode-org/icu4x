@@ -8,8 +8,7 @@ use crate::cldr_serde::{self};
 use crate::SourceDataProvider;
 
 use icu::experimental::dimension::provider::units::categorized_display_name::{
-    UnitsNameAreaV1, UnitsNameDurationV1, UnitsNameLengthV1, UnitsNameMassV1,
-    UnitsNameVolumeV1,
+    UnitsNameAreaV1, UnitsNameDurationV1, UnitsNameLengthV1, UnitsNameMassV1, UnitsNameVolumeV1,
 };
 use icu::experimental::dimension::provider::units::display_name::UnitsDisplayName;
 use icu::plurals::PluralElements;
