@@ -147,3 +147,83 @@ impl_categorized_display_name_iter_data_provider_cached!("duration", DurationDis
 impl_categorized_display_name_iter_data_provider_cached!("length", LengthDisplayNameV1);
 impl_categorized_display_name_iter_data_provider_cached!("mass", MassDisplayNameV1);
 impl_categorized_display_name_iter_data_provider_cached!("volume", VolumeDisplayNameV1);
+
+#[test]
+fn test_categorized_display_name_length() {
+    use icu::locale::langid;
+    use icu::plurals::PluralRules;
+    use icu_provider::prelude::*;
+    use writeable::assert_writeable_eq;
+
+    let provider = SourceDataProvider::new_testing();
+
+    let us_locale_long_meter: DataPayload<LengthDisplayNameV1> = provider
+        .load(DataRequest {
+            id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                DataMarkerAttributes::from_str_or_panic("long-meter"),
+                &langid!("en").into(),
+            ),
+            ..Default::default()
+        })
+        .unwrap()
+        .payload;
+
+    let length_us = us_locale_long_meter.get().to_owned();
+
+    let en_rules = PluralRules::try_new_cardinal_unstable(&provider, langid!("en").into()).unwrap();
+    let long = length_us.patterns.get(1.into(), &en_rules).interpolate([1]);
+    assert_writeable_eq!(long, "1 meter");
+
+    let us_locale_short_meter: DataPayload<LengthDisplayNameV1> = provider
+        .load(DataRequest {
+            id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                DataMarkerAttributes::from_str_or_panic("short-meter"),
+                &langid!("en").into(),
+            ),
+            ..Default::default()
+        })
+        .unwrap()
+        .payload;
+
+    let length_us_short = us_locale_short_meter.get().to_owned();
+    let short = length_us_short
+        .patterns
+        .get(5.into(), &en_rules)
+        .interpolate([5]);
+    assert_writeable_eq!(short, "5 m");
+
+    let ar_eg_locale: DataPayload<LengthDisplayNameV1> = provider
+        .load(DataRequest {
+            id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                DataMarkerAttributes::from_str_or_panic("long-meter"),
+                &langid!("ar-EG").into(),
+            ),
+            ..Default::default()
+        })
+        .unwrap()
+        .payload;
+
+    let length_ar_eg = ar_eg_locale.get().to_owned();
+    let ar_rules = PluralRules::try_new_cardinal_unstable(&provider, langid!("ar").into()).unwrap();
+    let long = length_ar_eg
+        .patterns
+        .get(1.into(), &ar_rules)
+        .interpolate([1]);
+    assert_writeable_eq!(long, "متر");
+
+    let fr_locale: DataPayload<LengthDisplayNameV1> = provider
+        .load(DataRequest {
+            id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                DataMarkerAttributes::from_str_or_panic("short-meter"),
+                &langid!("fr").into(),
+            ),
+            ..Default::default()
+        })
+        .unwrap()
+        .payload;
+
+    let length_fr = fr_locale.get().to_owned();
+    let fr_rules = PluralRules::try_new_cardinal_unstable(&provider, langid!("fr").into()).unwrap();
+    let short = length_fr.patterns.get(5.into(), &fr_rules).interpolate([5]);
+    assert_writeable_eq!(short, "5 m");
+}
