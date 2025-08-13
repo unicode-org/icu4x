@@ -443,6 +443,30 @@ mod test {
                 expected_month: 13,
                 expected_day: 30,
             },
+            TestCase {
+                rd: 0,
+                expected_year: 0,
+                expected_month: 12,
+                expected_day: 20,
+            },
+            TestCase {
+                rd: -1,
+                expected_year: 0,
+                expected_month: 12,
+                expected_day: 19,
+            },
+            TestCase {
+                rd: -365,
+                expected_year: -1,
+                expected_month: 12,
+                expected_day: 9,
+            },
+            TestCase {
+                rd: 100,
+                expected_year: 1,
+                expected_month: 3,
+                expected_day: 1,
+            },
         ];
 
         let chinese_calculating = Chinese::new_always_calculating();
