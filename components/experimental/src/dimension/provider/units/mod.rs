@@ -5,3 +5,4 @@
 pub mod display_name;
 pub mod essentials;
 pub mod pattern_key;
+pub mod specific_display_name;
