@@ -28,9 +28,13 @@
 
 extern crate alloc;
 
+pub mod delegate;
 pub mod either;
 pub mod empty;
 pub mod fallback;
 pub mod filter;
 pub mod fixed;
 pub mod fork;
+
+#[doc(hidden)] // internal for macros
+pub use icu_provider;
