@@ -5,11 +5,9 @@
 use crate::dimension::provider::units::display_name::UnitsDisplayName;
 
 icu_provider::data_marker!(
-    /// Display name for area units
+    /// Display name for meter
     UnitsNameMeterV1,
     UnitsDisplayName<'static>,
-    #[cfg(feature = "datagen")]
-    attributes_domain = "units"
 );
 
 // macro_rules! units_specific_display_name_marker {
