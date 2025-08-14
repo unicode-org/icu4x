@@ -587,7 +587,7 @@ jobs:
           gsutil -m cp -r benchmarks/binsize/* gs://${{ env.GCP_MAIN_BUCKET_ID }}/gha/benchmarks/binsize
 
   ffi-libs:
-    # if: github.ref_type == 'tag' && github.repository == 'unicode-org/icu4x'
+    if: github.ref_type == 'tag' && github.repository == 'unicode-org/icu4x'
     name: Build FFI binaries
     strategy:
       fail-fast: false
