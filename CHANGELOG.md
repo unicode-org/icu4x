@@ -13,6 +13,8 @@
     - `icu_capi`
         - All C++ enums now default to a valid value; which is the `Default` impl where there is one, and some semi-logical value otherwise. This has changed defaults in some cases and may cause a behavioral change for people relying on C++ default constructors. (unicode-org#6692)
 - Utils
+    - `calendrical_calculations`
+        - Fix a sign error in `RataDie::until`, add `RataDie::since` (unicode-org#6861)
     - `yoke`
         - Add four `map_with_cart` methods to `yoke::Yoke`, similar to `Yoke::map_project` but
         additionally providing a reference to the cart. (unicode-org#6781)
