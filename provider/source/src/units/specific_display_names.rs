@@ -99,7 +99,7 @@ impl crate::IterableDataProviderCached<UnitsNameMeterV1> for SourceDataProvider 
                             continue;
                         }
                         data_locales.insert(DataIdentifierCow::from_owned(
-                            DataMarkerAttributes::try_from_string(format!("{length}")).map_err(
+                            DataMarkerAttributes::try_from_string(length.to_string()).map_err(
                                 |_| {
                                     DataError::custom("Failed to parse the attribute")
                                         .with_debug_context(&unit)
