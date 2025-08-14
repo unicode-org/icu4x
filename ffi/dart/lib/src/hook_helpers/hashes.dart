@@ -3,97 +3,95 @@
 //    dart tool/regenerate_hashes.dart
 //
 
-import 'package:code_assets/code_assets.dart' show Architecture, OS;
-
-const fileHashes = <(OS, Architecture, String), String>{
-  (OS.linux, Architecture.arm, 'dynamic'):
-      '33ad56648fffda232995dddc6182ab31deea173f5c8cdac1bc84fb9636437803',
-  (OS.linux, Architecture.arm, 'static'):
-      '5422aaf811610530eff609034da16654d91714af0c203d498b81807365a020c2',
-  (OS.linux, Architecture.arm, 'static_data'):
-      '4330bce3e93d40b339647c44bc794e019659f1429f72a101a7b809150cc3479b',
-  (OS.linux, Architecture.arm64, 'dynamic'):
-      'a2e2a730d339d12d5742d6f32b17e09425059ee14ef1c484d2c07b7bad7f238d',
-  (OS.linux, Architecture.arm64, 'static'):
-      '50c066434acea3794f68019f0367b5143840cb50633f7ab350c696a0f429dcdc',
-  (OS.linux, Architecture.arm64, 'static_data'):
-      '80ad7e3a3d8bb4d8a1610b51f273b8eefc739e208cab1c75028cde4596678e2d',
-  (OS.linux, Architecture.riscv64, 'dynamic'):
-      '6a925bbab9fbf7a4f82247ac2c48fb901713cdddc8716e4da467de248018151f',
-  (OS.linux, Architecture.riscv64, 'static'):
-      '4b3f556edfbf3526b0c001036ca025b9d3cc0c6eca5a3c3062ccf9b74a13fc86',
-  (OS.linux, Architecture.riscv64, 'static_data'):
-      '37a92ab9b41a0e2eca1b7f6bbfebc5e8596c3d22962fb9f45ae43ac2068a460e',
-  (OS.linux, Architecture.x64, 'dynamic'):
-      '3f2d43d12d835e336689d44f537123c4c7dea9ea076e7d225e8e60c5b2b10a04',
-  (OS.linux, Architecture.x64, 'static'):
-      'e8ba6fd6c60da35dad820a0e705507f2172db3f85d6649b2e101acadafa4f514',
-  (OS.linux, Architecture.x64, 'static_data'):
-      '8f1985f70157184e74e1f54cdf597c0650829a7a488129fcf55f562def42a119',
-  (OS.windows, Architecture.arm64, 'dynamic'):
-      '0766cd4887b84be7b56123ebe8b37c4c60049b6bb04c9719dd0b720e1d795c88',
-  (OS.windows, Architecture.arm64, 'static'):
-      'beacece18baa12402517ffcc9a63cac6d7e5d146806f3e21f440a404130250b2',
-  (OS.windows, Architecture.arm64, 'static_data'):
-      '7a39d9e5776727196b2e28e3a13038b28e47530202a1cd817165d3a072444b49',
-  (OS.windows, Architecture.ia32, 'dynamic'):
-      '8d34978f381a76db94a706ea27e71856acdff28d248c68966afb1881e9b9c3c3',
-  (OS.windows, Architecture.ia32, 'static'):
-      '80d90330f943ef626cca83225f68d8644b6ed3ff681142b8b273607179f49bb0',
-  (OS.windows, Architecture.ia32, 'static_data'):
-      'bff56a759faa8b1a750a7df11dad3b19ec59532abbeef519d80c628cbd8108f9',
-  (OS.windows, Architecture.x64, 'dynamic'):
-      '96877e3d28eec45e25ee59040026391085f95318958725706368a5d0a9b7e34c',
-  (OS.windows, Architecture.x64, 'static'):
-      '96241ab8b5cbe3b345d6ec4ff2897d865686ec6b314faecbf7b13499d1695e22',
-  (OS.windows, Architecture.x64, 'static_data'):
-      'f92fdf2ebe0dbb6e5ae2d656f5a260d4ae3685acfd6100430116ad9ffac16a1d',
-  (OS.android, Architecture.arm, 'dynamic'):
-      '5d45a8e310c748030a74cff0883855f33c8a20cc089f247e1768c5d29a67454e',
-  (OS.android, Architecture.arm, 'static'):
-      '2051f77297132f6a7ee33c2c44cd94320d1ba5d774f0feef5efef8dbe7e8edd6',
-  (OS.android, Architecture.arm, 'static_data'):
-      'a455bb2d75c621c2974ded1b0b9d1c909f4cfb5c83d0d4cc0e4ad699a161db45',
-  (OS.android, Architecture.arm64, 'dynamic'):
-      'e678bfeb7b11094be5546411d76a7f8d3ccd8ee2f871d43197c44714fe24f689',
-  (OS.android, Architecture.arm64, 'static'):
-      '6a42207caa146bf42caf8e2ecc33ea7b29ea2d530fa19b18bdd59bd3e0d52757',
-  (OS.android, Architecture.arm64, 'static_data'):
-      'f1f93f5a9fe24e52f00b31831d9591233b3b21f5fdfa212509f8d6d12331c4d8',
-  (OS.android, Architecture.ia32, 'dynamic'):
-      '14bfb64ae4474af442932c4e257ee411865e7a2b76dbf51a32db8b2e1052948b',
-  (OS.android, Architecture.ia32, 'static'):
-      '25c346ee6cdf44c0e3198f94b044b96c2fb946076ff225c5e82c431c4f5d2dc9',
-  (OS.android, Architecture.ia32, 'static_data'):
-      '18d204732ed3b3810b733dd8f714d8b89d6cc2285c131e97b69f45692608242c',
-  (OS.android, Architecture.x64, 'dynamic'):
-      'dc42195906431fb70cfc6fe8ad2641b43bf3961cc4f472db00042bd3c1461207',
-  (OS.android, Architecture.x64, 'static'):
-      '7eac855a8732a2bfaac46857bfd1d3612173dab98de7a2f1595c890a7b24a109',
-  (OS.android, Architecture.x64, 'static_data'):
-      '6e5612f474d0c68097c58da2d9ba9c935f691d4a47c12221cddeed8d53a8dfab',
-  (OS.macOS, Architecture.arm64, 'dynamic'):
-      '859b68ca539e4e00fb6577caa104fdfc787ecdaeba5cec71661f5c1087259449',
-  (OS.macOS, Architecture.arm64, 'static'):
-      '1e0a2dce3f6bea225bbc2289df6bb23afa9b54a991c3787aa986456817d8e4be',
-  (OS.macOS, Architecture.arm64, 'static_data'):
-      'af1e1fedba96f83ebb9c62d1af549ccc3292399c4cfa906d5521e015ef653410',
-  (OS.macOS, Architecture.x64, 'dynamic'):
-      '698a7ab358c4425708a5664695b3c52d5a5dbe95851e8b948a6a4a19d0dd8ebe',
-  (OS.macOS, Architecture.x64, 'static'):
-      '69067391fd4415a2c20644b8d1862d834431b54a36bbc00ea2edaa41b761a8aa',
-  (OS.macOS, Architecture.x64, 'static_data'):
-      'cf6e287b730fcab6132dcdae69f63b243b2403f632bee4cbfc1c8b82c76f4224',
-  (OS.iOS, Architecture.arm64, 'dynamic'):
-      '680af0aaac298d7cebab795ab2d52a67842f676a4a8e290c0faa222f28fb589f',
-  (OS.iOS, Architecture.arm64, 'static'):
-      '45b17b9125b10fd89e70829cfa84762755e362fc25e7da66d420696ebb0443d1',
-  (OS.iOS, Architecture.arm64, 'static_data'):
-      '8919e441ff2a8aa525331f665ccbc652de1dd704db9c890740750a17df12265b',
-  (OS.iOS, Architecture.x64, 'dynamic'):
-      '00ba73555d2fb1dc12f33e7c5f4f75547277239cb943ceb00ad1ff66964d9c3b',
-  (OS.iOS, Architecture.x64, 'static'):
-      'd57ba6626129f5d4b5804cadab02a7948429bb41720d14cdf43ab4c786b1d4bc',
-  (OS.iOS, Architecture.x64, 'static_data'):
-      '495e0b22b6f95ba6a71449dd030d40e304033d9a1aef6421d97b52f486e35a2c',
+const fileHashes = <(String, String), String>{
+  ('armv7-linux-androideabi', 'dynamic'):
+      'c906e5ff64dce4dc1883faf2109da241b17c1c633f1bb810a2c4ff0afce35b30',
+  ('armv7-linux-androideabi', 'static'):
+      'c4f518ff277233465b144d57af712c8df397ba1c35f2f6e2c63e8b7d887e2578',
+  ('armv7-linux-androideabi', 'static-with_data'):
+      'aad9593a4bec9308d53ac4cffc5dc84ab7a2c4a8f819877add21acec3ba84878',
+  ('aarch64-linux-android', 'dynamic'):
+      'ef5a6b561100bac2ceb3208f9b346e7261ab100a4a2229cf7769046f93095243',
+  ('aarch64-linux-android', 'static'):
+      '5d589997d86daf7139861ab1cee437b1aec56123d70cf3971dde21107246b316',
+  ('aarch64-linux-android', 'static-with_data'):
+      '24b953f1157cb8e53217aca3f0b2e0dd9a86a6a787825c666e81d6c701b379d5',
+  ('i686-linux-android', 'dynamic'):
+      '5db663db982bb8d4ef945a1c94a3610227daba447f57c7b37f25d8c2540fee3f',
+  ('i686-linux-android', 'static'):
+      'c2667ecb6c473830fb0d8a87f857fdc53c900c07efdce42a75d40a378abe781c',
+  ('i686-linux-android', 'static-with_data'):
+      'ab2784aadc41c769b7de6dc44071e44e57f83ab015a4a84a86c351a54dc8749a',
+  ('x86_64-linux-android', 'dynamic'):
+      '724049186be7f7303c64d97c0de83e018c3d0a4da798eae5eb1ca55bb530e66e',
+  ('x86_64-linux-android', 'static'):
+      'a7c492cf8f96fb1c0a48cb9fadf8306ac0dffd4e6299e79e42d8503ba8a21d9c',
+  ('x86_64-linux-android', 'static-with_data'):
+      'ce10e3d4c92209a1f4a5e3783c1d2c6365391a506d568e3546a95eafda7d0e07',
+  ('aarch64-apple-ios', 'dynamic'):
+      '010d426ea51520fe1fd53b64016762f50ab2acf3e2feb91cf216a6f255fc16fa',
+  ('aarch64-apple-ios', 'static'):
+      '526245f297183438ec9a7986af364e93b6b4637b1fc816bac3921ece459b38c2',
+  ('aarch64-apple-ios', 'static-with_data'):
+      'bc2e359faa2faa1a7521943099be2323481835546862811b872531a406fdb89c',
+  ('x86_64-apple-ios', 'dynamic'):
+      'e152c7a87113f716889572a61f705d599516dccb7905cfb91b70bd73d187cd04',
+  ('x86_64-apple-ios', 'static'):
+      'c5644de27d89c7bf663e16f771a782a71326d573c62a4c9804c4faf5dc6d457c',
+  ('x86_64-apple-ios', 'static-with_data'):
+      'e2cda52615886f23be38c14845c972108d6cc813095ff919e2dff340fd372f18',
+  ('armv7-unknown-linux-gnueabihf', 'dynamic'):
+      '0a88b3cd4c70560f0401150859ae6ebea7e525da5493d5f5bf30620187c643ee',
+  ('armv7-unknown-linux-gnueabihf', 'static'):
+      'a06ed473443896f579a662f0947923c81c0a268c47a2650834c19f70142ab53f',
+  ('armv7-unknown-linux-gnueabihf', 'static-with_data'):
+      'e4b17c45b8706f08119a7bf16229c1212db0bf5ff4ad35e8ff808f428a4c2964',
+  ('aarch64-unknown-linux-gnu', 'dynamic'):
+      'f26e6be5ae636b94c5ee75e90d790adbde38a0bfb52c9c2f06e01c50d2a33a10',
+  ('aarch64-unknown-linux-gnu', 'static'):
+      'f437365f1f002c255cb99d14d5649094c9225313a038907e8602789c45598c23',
+  ('aarch64-unknown-linux-gnu', 'static-with_data'):
+      'd71759e0d58fea7c76037aab58f10c2f9514c986a38f6d0162936c296af65657',
+  ('riscv64gc-unknown-linux-gnu', 'dynamic'):
+      '2531236d7a063db289c28819c074a19f36ad00c19bfcce5d736dabfb16e44635',
+  ('riscv64gc-unknown-linux-gnu', 'static'):
+      '5c53dc61664876e639969ea8d5b596f443ba44c84ee22595d608cc85425f57e7',
+  ('riscv64gc-unknown-linux-gnu', 'static-with_data'):
+      '89abc0b5add96a4badfb981d028a60f18bb17a927587fa38518c4368cfabe4ce',
+  ('x86_64-unknown-linux-gnu', 'dynamic'):
+      '0d6480249beb80d433db591ae1b75e7781bc5316c3df4b36987b7d994820443c',
+  ('x86_64-unknown-linux-gnu', 'static'):
+      'e856ac1ac94b945fb8766bf91af1d2dc7642347b36b405241b2ed242ef6edbf3',
+  ('x86_64-unknown-linux-gnu', 'static-with_data'):
+      'b92a9eaf19fd38c13d4ab8331507e000976d2cf57e52b2413c16c6a416a13616',
+  ('aarch64-apple-darwin', 'dynamic'):
+      'ee2826fbba98003c4c5a17530616bf47d2e357f240925ac915c03e7bc346a23b',
+  ('aarch64-apple-darwin', 'static'):
+      '6fa4db56e5546891d1e7a04f09697cff289d97fd2eff7926b257c9291f64123a',
+  ('aarch64-apple-darwin', 'static-with_data'):
+      '76ccf6cbaee6d3bde5fa858cdb938e39c5a15570d554b9e219140df473f85461',
+  ('x86_64-apple-darwin', 'dynamic'):
+      'b86e1f77e7629e5f29aed4358b7869cd897b9da2bcdd7a3fb1f79a51532d4b41',
+  ('x86_64-apple-darwin', 'static'):
+      'b3282bd08761999badafeab273506c5a3f83f912a8eafa5499fffb6f11ff3fa4',
+  ('x86_64-apple-darwin', 'static-with_data'):
+      'f30edf548317a2cbbeb463ea89c18a84ad0ad42db8c99e790f379061daacfe95',
+  ('aarch64-pc-windows-msvc', 'dynamic'):
+      '3b793f084156fdf3f2a2b64e1c10d94b953bb702dafefc9438604fb428cdd039',
+  ('aarch64-pc-windows-msvc', 'static'):
+      '1b2ed1fb8428332d3b7fef7a37d85ae1978ffa2e091d6fec9bbd0cd353282335',
+  ('aarch64-pc-windows-msvc', 'static-with_data'):
+      'bdf0ee94d8e2984085915558f1c66df4a3836db4e9236be8cf4bab192c6d6a6b',
+  ('i686-pc-windows-msvc', 'dynamic'):
+      '1392ac696d6d02c0f2990ab9119053c5ddabc4514b1573a00515c515a04eebaa',
+  ('i686-pc-windows-msvc', 'static'):
+      'ea0d047bfbac7c20a0e4bd4d893d5898560be49a1b9f09ee076a141394dcb9ee',
+  ('i686-pc-windows-msvc', 'static-with_data'):
+      '94b6f295c132e8fb19e87c4e6ba2ef0e43f610eb9fd8a3d4c495e89344c78316',
+  ('x86_64-pc-windows-msvc', 'dynamic'):
+      'add899ba63713b45254c5dc84587d3b4bb51c60de5d080f3aeaec9a1864bad38',
+  ('x86_64-pc-windows-msvc', 'static'):
+      'd92ca5455b54e3f75018de1e959692afc7f0c00f770c4c124a363f1419f3fb09',
+  ('x86_64-pc-windows-msvc', 'static-with_data'):
+      '2717061a0aa5b437b0815ad7e74faed1859596bb3a8c14c35de9b777c03c067a',
 };

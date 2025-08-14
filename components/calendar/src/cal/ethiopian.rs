@@ -65,6 +65,8 @@ pub enum EthiopianEraStyle {
 pub struct Ethiopian(pub(crate) bool);
 
 /// The inner date type used for representing [`Date`]s of [`Ethiopian`]. See [`Date`] and [`Ethiopian`] for more details.
+///
+/// The year is stored as Amete Alem year
 #[derive(Copy, Clone, Debug, Hash, Eq, PartialEq, PartialOrd, Ord)]
 pub struct EthiopianDateInner(ArithmeticDate<Ethiopian>);
 
@@ -122,9 +124,10 @@ impl Calendar for Ethiopian {
         day: u8,
     ) -> Result<Self::DateInner, DateError> {
         let year = match (self.era_style(), era) {
-            (EthiopianEraStyle::AmeteMihret, Some("am") | None) => {
+            (EthiopianEraStyle::AmeteMihret, Some("am")) => {
                 year_check(year, 1..)? + INCARNATION_OFFSET
             }
+            (EthiopianEraStyle::AmeteMihret, None) => year + INCARNATION_OFFSET,
             (EthiopianEraStyle::AmeteMihret, Some("aa")) => {
                 year_check(year, ..=INCARNATION_OFFSET)?
             }
@@ -196,12 +199,19 @@ impl Calendar for Ethiopian {
     }
 
     fn year_info(&self, date: &Self::DateInner) -> Self::Year {
-        let year = date.0.year;
-        if self.0 || year <= INCARNATION_OFFSET {
+        let year = date.0.monotonic_year();
+        let monotonic_year = if self.0 {
+            year
+        } else {
+            year - INCARNATION_OFFSET
+        };
+
+        if self.0 || monotonic_year <= 0 {
             types::EraYear {
                 era: tinystr!(16, "aa"),
                 era_index: Some(0),
                 year,
+                monotonic_year,
                 ambiguity: types::YearAmbiguity::CenturyRequired,
             }
         } else {
@@ -209,17 +219,9 @@ impl Calendar for Ethiopian {
                 era: tinystr!(16, "am"),
                 era_index: Some(1),
                 year: year - INCARNATION_OFFSET,
+                monotonic_year,
                 ambiguity: types::YearAmbiguity::CenturyRequired,
             }
-        }
-    }
-
-    fn extended_year(&self, date: &Self::DateInner) -> i32 {
-        let year = date.0.extended_year();
-        if self.0 {
-            year
-        } else {
-            year - INCARNATION_OFFSET
         }
     }
 
@@ -307,7 +309,7 @@ mod test {
         // 11th September 2023 in gregorian is 6/13/2015 in ethiopian
         let iso_date = Date::try_new_iso(2023, 9, 11).unwrap();
         let date_ethiopian = Date::new_from_iso(iso_date, Ethiopian::new());
-        assert_eq!(date_ethiopian.extended_year(), 2015);
+        assert_eq!(date_ethiopian.monotonic_year(), 2015);
         assert_eq!(date_ethiopian.month().ordinal, 13);
         assert_eq!(date_ethiopian.day_of_month().0, 6);
     }
@@ -317,7 +319,7 @@ mod test {
         let iso_date = Date::try_new_iso(1970, 1, 2).unwrap();
         let date_ethiopian = Date::new_from_iso(iso_date, Ethiopian::new());
 
-        assert_eq!(date_ethiopian.extended_year(), 1962);
+        assert_eq!(date_ethiopian.monotonic_year(), 1962);
         assert_eq!(date_ethiopian.month().ordinal, 4);
         assert_eq!(date_ethiopian.day_of_month().0, 24);
 
@@ -335,7 +337,7 @@ mod test {
             Ethiopian::new_with_era_style(EthiopianEraStyle::AmeteAlem),
         );
 
-        assert_eq!(date_ethiopian.extended_year(), 7462);
+        assert_eq!(date_ethiopian.monotonic_year(), 7462);
         assert_eq!(date_ethiopian.month().ordinal, 4);
         assert_eq!(date_ethiopian.day_of_month().0, 24);
 
@@ -355,13 +357,13 @@ mod test {
     }
 
     #[test]
-    fn extended_year() {
+    fn monotonic_year() {
         assert_eq!(
             Date::new_from_iso(
                 Date::try_new_iso(-5500 + 9, 1, 1).unwrap(),
                 Ethiopian::new_with_era_style(EthiopianEraStyle::AmeteAlem)
             )
-            .extended_year(),
+            .monotonic_year(),
             1
         );
         assert_eq!(
@@ -369,7 +371,7 @@ mod test {
                 Date::try_new_iso(9, 1, 1).unwrap(),
                 Ethiopian::new_with_era_style(EthiopianEraStyle::AmeteAlem)
             )
-            .extended_year(),
+            .monotonic_year(),
             5501
         );
 
@@ -378,7 +380,7 @@ mod test {
                 Date::try_new_iso(-5500 + 9, 1, 1).unwrap(),
                 Ethiopian::new_with_era_style(EthiopianEraStyle::AmeteMihret)
             )
-            .extended_year(),
+            .monotonic_year(),
             -5499
         );
         assert_eq!(
@@ -386,7 +388,7 @@ mod test {
                 Date::try_new_iso(9, 1, 1).unwrap(),
                 Ethiopian::new_with_era_style(EthiopianEraStyle::AmeteMihret)
             )
-            .extended_year(),
+            .monotonic_year(),
             1
         );
     }

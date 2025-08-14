@@ -163,11 +163,18 @@ public:
   inline int32_t era_year_or_related_iso() const;
 
   /**
-   * Returns the extended year in the Date
+   * Deprecated, use {@link Self::monotonic_year}
    *
    * See the [Rust documentation for `extended_year`](https://docs.rs/icu/2.0.0/icu/calendar/struct.Date.html#method.extended_year) for more information.
    */
   inline int32_t extended_year() const;
+
+  /**
+   * Returns the monotonic year in the Date
+   *
+   * See the [Rust documentation for `monotonic_year`](https://docs.rs/icu/2.0.0/icu/calendar/struct.Date.html#method.monotonic_year) for more information.
+   */
+  inline int32_t monotonic_year() const;
 
   /**
    * Returns the era for this date, or an empty string

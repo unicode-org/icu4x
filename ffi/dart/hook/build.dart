@@ -96,13 +96,14 @@ final class FetchMode extends BuildMode {
   @override
   Future<Uri> build() async {
     print('Running in `fetch` mode');
-    final targetOS = input.config.code.targetOS;
-    final targetArchitecture = input.config.code.targetArchitecture;
-    final libraryType = input.config.buildStatic ? 'static_data' : 'dynamic';
-    final target = [targetOS, targetArchitecture, libraryType].join('_');
-    print('Fetching pre-built binary for $version and $target');
+    final rustTarget = _asRustTarget(input.config.code);
+    final libraryType = input.config.buildStatic
+        ? 'static-with_data'
+        : 'dynamic';
+    print('Fetching pre-built binary for $version, $rustTarget, $libraryType');
     final dylibRemoteUri = Uri.parse(
-      'https://github.com/unicode-org/icu4x/releases/download/$version/$target',
+      'https://github.com/unicode-org/icu4x/releases/'
+      'download/$version/icu4x-2-$libraryType-$rustTarget',
     );
     final library = await fetchToFile(
       dylibRemoteUri,
@@ -111,13 +112,12 @@ final class FetchMode extends BuildMode {
 
     final bytes = await library.readAsBytes();
     final fileHash = sha256.convert(bytes).toString();
-    final expectedFileHash =
-        fileHashes[(targetOS, targetArchitecture, libraryType)];
+    final expectedFileHash = fileHashes[(rustTarget, libraryType)];
     if (fileHash != expectedFileHash) {
       throw Exception(
-        'The pre-built binary for the target $target at $dylibRemoteUri has a'
-        ' hash of $fileHash, which does not match $expectedFileHash fixed in'
-        ' the build hook of package:icu4x.',
+        'The pre-built binary for the target $rustTarget-$libraryType at '
+        '$dylibRemoteUri has a hash of $fileHash, which does not match '
+        '$expectedFileHash fixed in the build hook of package:icu4x.',
       );
     }
     return library.uri;
@@ -207,12 +207,10 @@ final class CheckoutMode extends BuildMode {
         'The `Cargo.lock` file could not by found at $checkoutPath',
       );
     }
-    final builtLib = await buildLib(
-      input.config.code.targetOS,
-      input.config.code.targetArchitecture,
+    final out = input.outputDirectory.resolve(input.config.filename('icu4x'));
+    await buildLib(
+      _asRustTarget(input.config.code),
       input.config.buildStatic,
-      input.config.code.targetOS == OS.iOS &&
-          input.config.code.iOS.targetSdk == IOSSdk.iPhoneSimulator,
       Directory.fromUri(checkoutPath),
       [
         'default_components',
@@ -221,12 +219,44 @@ final class CheckoutMode extends BuildMode {
         'buffer_provider',
         'compiled_data',
       ],
+      out,
     );
-    return builtLib.uri;
+    return out;
   }
 
   @override
   List<Uri> get dependencies => [checkoutPath.resolve('Cargo.lock')];
+}
+
+String _asRustTarget(CodeConfig code) {
+  if (code.targetOS == OS.iOS &&
+      code.targetArchitecture == Architecture.arm64 &&
+      code.iOS.targetSdk == IOSSdk.iPhoneSimulator) {
+    return 'aarch64-apple-ios-sim';
+  }
+  return switch ((code.targetOS, code.targetArchitecture)) {
+    (OS.android, Architecture.arm) => 'armv7-linux-androideabi',
+    (OS.android, Architecture.arm64) => 'aarch64-linux-android',
+    (OS.android, Architecture.ia32) => 'i686-linux-android',
+    (OS.android, Architecture.riscv64) => 'riscv64-linux-android',
+    (OS.android, Architecture.x64) => 'x86_64-linux-android',
+    (OS.fuchsia, Architecture.arm64) => 'aarch64-unknown-fuchsia',
+    (OS.fuchsia, Architecture.x64) => 'x86_64-unknown-fuchsia',
+    (OS.iOS, Architecture.arm64) => 'aarch64-apple-ios',
+    (OS.iOS, Architecture.x64) => 'x86_64-apple-ios',
+    (OS.linux, Architecture.arm) => 'armv7-unknown-linux-gnueabihf',
+    (OS.linux, Architecture.arm64) => 'aarch64-unknown-linux-gnu',
+    (OS.linux, Architecture.ia32) => 'i686-unknown-linux-gnu',
+    (OS.linux, Architecture.riscv32) => 'riscv32gc-unknown-linux-gnu',
+    (OS.linux, Architecture.riscv64) => 'riscv64gc-unknown-linux-gnu',
+    (OS.linux, Architecture.x64) => 'x86_64-unknown-linux-gnu',
+    (OS.macOS, Architecture.arm64) => 'aarch64-apple-darwin',
+    (OS.macOS, Architecture.x64) => 'x86_64-apple-darwin',
+    (OS.windows, Architecture.arm64) => 'aarch64-pc-windows-msvc',
+    (OS.windows, Architecture.ia32) => 'i686-pc-windows-msvc',
+    (OS.windows, Architecture.x64) => 'x86_64-pc-windows-msvc',
+    (_, _) => throw UnimplementedError('Target $code not available for rust'),
+  };
 }
 
 extension on BuildConfig {

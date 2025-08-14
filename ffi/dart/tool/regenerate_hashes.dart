@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:code_assets/code_assets.dart' show Architecture;
 import 'package:crypto/crypto.dart' show sha256;
 import 'package:icu4x/src/hook_helpers/version.dart' show version;
 
@@ -8,23 +7,42 @@ Future<void> main(List<String> args) async {
   final httpClient = HttpClient();
 
   print('Checking hashes for $version');
-  final fileHashes = <(String, Architecture, String), String>{};
+  final fileHashes = <(String, String), String>{};
   final dynamicLibrary = File.fromUri(Directory.systemTemp.uri.resolve('lib'));
   await dynamicLibrary.create();
-  for (final os in ['linux', 'windows', 'fuchsia', 'android', 'macOS', 'iOS']) {
-    for (final architecture in Architecture.values) {
-      for (final libraryType in ['dynamic', 'static', 'static_data']) {
-        final target = [os, architecture, libraryType].join('_');
-        print('Checking hash for $target');
-        final success = await _fetchLibrary(target, httpClient, dynamicLibrary);
-        if (success) {
-          final bytes = await dynamicLibrary.readAsBytes();
-          final fileHash = sha256.convert(bytes).toString();
-          fileHashes[(os, architecture, libraryType)] = fileHash;
-          print('Hash is $fileHash');
-        } else {
-          print('Could not fetch library');
-        }
+  for (final rustTarget in [
+    'armv7-linux-androideabi',
+    'aarch64-linux-android',
+    'i686-linux-android',
+    // 'riscv64-linux-android',
+    'x86_64-linux-android',
+    // 'aarch64-unknown-fuchsia',
+    // 'x86_64-unknown-fuchsia',
+    'aarch64-apple-ios',
+    'x86_64-apple-ios',
+    'armv7-unknown-linux-gnueabihf',
+    'aarch64-unknown-linux-gnu',
+    // 'i686-unknown-linux-gnu',
+    // 'riscv32gc-unknown-linux-gnu',
+    'riscv64gc-unknown-linux-gnu',
+    'x86_64-unknown-linux-gnu',
+    'aarch64-apple-darwin',
+    'x86_64-apple-darwin',
+    'aarch64-pc-windows-msvc',
+    'i686-pc-windows-msvc',
+    'x86_64-pc-windows-msvc',
+  ]) {
+    for (final libraryType in ['dynamic', 'static', 'static-with_data']) {
+      final target = ['icu4x-2', libraryType, rustTarget].join('-');
+      print('Checking hash for $target');
+      final success = await _fetchLibrary(target, httpClient, dynamicLibrary);
+      if (success) {
+        final bytes = await dynamicLibrary.readAsBytes();
+        final fileHash = sha256.convert(bytes).toString();
+        fileHashes[(rustTarget, libraryType)] = fileHash;
+        print('Hash is $fileHash');
+      } else {
+        print('Could not fetch library');
       }
     }
   }
@@ -36,10 +54,8 @@ Future<void> main(List<String> args) async {
 //    dart tool/regenerate_hashes.dart
 //
 
-import 'package:code_assets/code_assets.dart' show Architecture, OS;
-
-const fileHashes = <(OS, Architecture, String), String>{
-${fileHashes.map((key, value) => MapEntry(('OS.${key.$1}', 'Architecture.${key.$2}', "'${key.$3}'"), "'$value'")).entries.map((e) => '  ${e.key}:\n      ${e.value},').join('\n')}
+const fileHashes = <(String, String), String>{
+${fileHashes.map((key, value) => MapEntry(("'${key.$1}'", "'${key.$2}'"), "'$value'")).entries.map((e) => '  ${e.key}:\n      ${e.value},').join('\n')}
 };
 ''');
 }
@@ -50,7 +66,7 @@ Future<bool> _fetchLibrary(
   File dynamicLibrary,
 ) async {
   final uri = Uri.parse(
-    'https://github.com/unicode/icu4x/releases/download/$version/$target',
+    'https://github.com/unicode-org/icu4x/releases/download/$version/$target',
   );
   print('Fetch file from $uri');
   final request = await httpClient.getUrl(uri);

@@ -95,7 +95,8 @@ impl Calendar for Julian {
         day: u8,
     ) -> Result<Self::DateInner, DateError> {
         let year = match era {
-            Some("ce" | "ad") | None => year_check(year, 1..)?,
+            Some("ce" | "ad") => year_check(year, 1..)?,
+            None => year,
             Some("bce" | "bc") => 1 - year_check(year, 1..)?,
             Some(_) => return Err(DateError::UnknownEra),
         };
@@ -155,26 +156,24 @@ impl Calendar for Julian {
     /// The calendar-specific year represented by `date`
     /// Julian has the same era scheme as Gregorian
     fn year_info(&self, date: &Self::DateInner) -> Self::Year {
-        let extended_year = self.extended_year(date);
-        if extended_year > 0 {
+        let monotonic_year = date.0.monotonic_year();
+        if monotonic_year > 0 {
             types::EraYear {
                 era: tinystr!(16, "ce"),
                 era_index: Some(1),
-                year: extended_year,
+                year: monotonic_year,
+                monotonic_year,
                 ambiguity: types::YearAmbiguity::CenturyRequired,
             }
         } else {
             types::EraYear {
                 era: tinystr!(16, "bce"),
                 era_index: Some(0),
-                year: 1_i32.saturating_sub(extended_year),
+                year: 1_i32.saturating_sub(monotonic_year),
+                monotonic_year,
                 ambiguity: types::YearAmbiguity::EraAndCenturyRequired,
             }
         }
-    }
-
-    fn extended_year(&self, date: &Self::DateInner) -> i32 {
-        date.0.extended_year()
     }
 
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {

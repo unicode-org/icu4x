@@ -186,7 +186,7 @@ impl Calendar for Japanese {
             return Err(DateError::UnknownMonthCode(month_code));
         }
 
-        self.new_japanese_date_inner(era.unwrap_or("ce"), year, month, day)
+        self.new_japanese_date_inner(era, year, month, day)
     }
 
     fn from_rata_die(&self, rd: RataDie) -> Self::DateInner {
@@ -252,12 +252,9 @@ impl Calendar for Japanese {
             era: date.era,
             era_index: None,
             year: date.adjusted_year,
+            monotonic_year: date.inner.0.monotonic_year(),
             ambiguity: types::YearAmbiguity::CenturyRequired,
         }
-    }
-
-    fn extended_year(&self, date: &Self::DateInner) -> i32 {
-        Iso.extended_year(&date.inner)
     }
 
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
@@ -357,10 +354,6 @@ impl Calendar for JapaneseExtended {
         Japanese::year_info(&self.0, date)
     }
 
-    fn extended_year(&self, date: &Self::DateInner) -> i32 {
-        Japanese::extended_year(&self.0, date)
-    }
-
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
         Japanese::is_in_leap_year(&self.0, date)
     }
@@ -442,9 +435,10 @@ impl Date<Japanese> {
         day: u8,
         japanese_calendar: A,
     ) -> Result<Date<A>, DateError> {
-        let inner = japanese_calendar
-            .as_calendar()
-            .new_japanese_date_inner(era, year, month, day)?;
+        let inner =
+            japanese_calendar
+                .as_calendar()
+                .new_japanese_date_inner(Some(era), year, month, day)?;
         Ok(Date::from_raw(inner, japanese_calendar))
     }
 }
@@ -490,10 +484,12 @@ impl Date<JapaneseExtended> {
         day: u8,
         japanext_calendar: A,
     ) -> Result<Date<A>, DateError> {
-        let inner = japanext_calendar
-            .as_calendar()
-            .0
-            .new_japanese_date_inner(era, year, month, day)?;
+        let inner = japanext_calendar.as_calendar().0.new_japanese_date_inner(
+            Some(era),
+            year,
+            month,
+            day,
+        )?;
         Ok(Date::from_raw(inner, japanext_calendar))
     }
 }
@@ -638,26 +634,31 @@ impl Japanese {
 
     fn new_japanese_date_inner(
         &self,
-        era: &str,
+        era: Option<&str>,
         year: i32,
         month: u8,
         day: u8,
     ) -> Result<JapaneseDateInner, DateError> {
         let cal = Ref(self);
         let era = match era {
-            "ce" | "ad" => {
+            None => {
+                return Ok(Date::try_new_gregorian(year, month, day)?
+                    .to_calendar(cal)
+                    .inner);
+            }
+            Some("ce" | "ad") => {
                 return Ok(Date::try_new_gregorian(year_check(year, 1..)?, month, day)?
                     .to_calendar(cal)
                     .inner);
             }
-            "bce" | "bc" => {
+            Some("bce" | "bc") => {
                 return Ok(
                     Date::try_new_gregorian(1 - year_check(year, 1..)?, month, day)?
                         .to_calendar(cal)
                         .inner,
                 );
             }
-            e => e.parse().map_err(|_| DateError::UnknownEra)?,
+            Some(e) => e.parse().map_err(|_| DateError::UnknownEra)?,
         };
 
         let (era_start, next_era_start) = self.japanese_era_range_for(era)?;

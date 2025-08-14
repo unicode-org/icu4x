@@ -158,16 +158,14 @@ impl Calendar for Persian {
     }
 
     fn year_info(&self, date: &Self::DateInner) -> Self::Year {
+        let monotonic_year = date.0.monotonic_year();
         types::EraYear {
             era: tinystr!(16, "ap"),
             era_index: Some(0),
-            year: self.extended_year(date),
+            year: monotonic_year,
+            monotonic_year,
             ambiguity: types::YearAmbiguity::CenturyRequired,
         }
-    }
-
-    fn extended_year(&self, date: &Self::DateInner) -> i32 {
-        date.0.extended_year()
     }
 
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {

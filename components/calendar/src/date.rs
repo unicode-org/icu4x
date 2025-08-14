@@ -119,7 +119,7 @@ pub struct Date<A: AsCalendar> {
 impl<A: AsCalendar> Date<A> {
     /// Construct a date from from era/month codes and fields, and some calendar representation
     ///
-    /// The year is `extended_year` if no era is provided
+    /// The year is `monotonic_year` if no era is provided
     #[inline]
     pub fn try_new_from_codes(
         era: Option<&str>,
@@ -236,13 +236,28 @@ impl<A: AsCalendar> Date<A> {
         self.calendar.as_calendar().year_info(&self.inner).into()
     }
 
-    /// The "extended year", typically anchored with year 1 as the year 1 of either the most modern or
-    /// otherwise some "major" era for the calendar
+    /// This currently returns the same value as [`Self::monotonic_year()`]
+    #[deprecated = "Please use monotonic_year() instead"]
+    #[inline]
+    pub fn extended_year(&self) -> i32 {
+        self.monotonic_year()
+    }
+
+    /// The "monotonic year".
+    ///
+    /// This year number can be used when you need a simple numeric representation
+    /// of the year, and can be meaningfully compared with monotonic years from other
+    /// eras or used in arithmetic.
+    ///
+    /// For calendars defined in Temporal, this will match the "arithmetic year"
+    /// as defined in <https://tc39.es/proposal-intl-era-monthcode/>.
+    /// This is typically anchored with year 1 as the year 1 of either the most modern or
+    /// otherwise some "major" era for the calendar.
     ///
     /// See [`Self::year()`] for more information about the year.
     #[inline]
-    pub fn extended_year(&self) -> i32 {
-        self.calendar.as_calendar().extended_year(&self.inner)
+    pub fn monotonic_year(&self) -> i32 {
+        self.year().monotonic_year()
     }
 
     /// Returns whether `self` is in a calendar-specific leap year

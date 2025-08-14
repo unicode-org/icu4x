@@ -25,7 +25,6 @@ use crate::error::DateError;
 use crate::provider::chinese_based::CalendarChineseV1;
 use crate::AsCalendar;
 use crate::{types, Calendar, Date, DateDuration, DateDurationUnit};
-use calendrical_calculations::chinese_based;
 use calendrical_calculations::rata_die::RataDie;
 use core::cmp::Ordering;
 use icu_provider::prelude::*;
@@ -252,10 +251,6 @@ impl Calendar for Chinese {
         }
     }
 
-    fn extended_year(&self, date: &Self::DateInner) -> i32 {
-        chinese_based::extended_from_iso::<chinese_based::Chinese>(date.0.year.related_iso)
-    }
-
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
         Self::provided_year_is_leap(date.0.year)
     }
@@ -366,87 +361,111 @@ mod test {
         let cases = [
             TestCase {
                 rd: -964192,
-                expected_year: -2,
+                expected_year: -2639,
                 expected_month: 1,
                 expected_day: 1,
             },
             TestCase {
                 rd: -963838,
-                expected_year: -1,
+                expected_year: -2638,
                 expected_month: 1,
                 expected_day: 1,
             },
             TestCase {
                 rd: -963129,
-                expected_year: 0,
+                expected_year: -2637,
                 expected_month: 13,
                 expected_day: 1,
             },
             TestCase {
                 rd: -963100,
-                expected_year: 0,
+                expected_year: -2637,
                 expected_month: 13,
                 expected_day: 30,
             },
             TestCase {
                 rd: -963099,
-                expected_year: 1,
+                expected_year: -2636,
                 expected_month: 1,
                 expected_day: 1,
             },
             TestCase {
                 rd: 738700,
-                expected_year: 4660,
+                expected_year: 2023,
                 expected_month: 6,
                 expected_day: 12,
             },
             TestCase {
                 rd: fixed_from_iso(2319, 2, 20).to_i64_date(),
-                expected_year: 2319 + 2636,
+                expected_year: 2318,
                 expected_month: 13,
                 expected_day: 30,
             },
             TestCase {
                 rd: fixed_from_iso(2319, 2, 21).to_i64_date(),
-                expected_year: 2319 + 2636 + 1,
+                expected_year: 2319,
                 expected_month: 1,
                 expected_day: 1,
             },
             TestCase {
                 rd: 738718,
-                expected_year: 4660,
+                expected_year: 2023,
                 expected_month: 6,
                 expected_day: 30,
             },
             TestCase {
                 rd: 738747,
-                expected_year: 4660,
+                expected_year: 2023,
                 expected_month: 7,
                 expected_day: 29,
             },
             TestCase {
                 rd: 738748,
-                expected_year: 4660,
+                expected_year: 2023,
                 expected_month: 8,
                 expected_day: 1,
             },
             TestCase {
                 rd: 738865,
-                expected_year: 4660,
+                expected_year: 2023,
                 expected_month: 11,
                 expected_day: 29,
             },
             TestCase {
                 rd: 738895,
-                expected_year: 4660,
+                expected_year: 2023,
                 expected_month: 12,
                 expected_day: 29,
             },
             TestCase {
                 rd: 738925,
-                expected_year: 4660,
+                expected_year: 2023,
                 expected_month: 13,
                 expected_day: 30,
+            },
+            TestCase {
+                rd: 0,
+                expected_year: 0,
+                expected_month: 12,
+                expected_day: 20,
+            },
+            TestCase {
+                rd: -1,
+                expected_year: 0,
+                expected_month: 12,
+                expected_day: 19,
+            },
+            TestCase {
+                rd: -365,
+                expected_year: -1,
+                expected_month: 12,
+                expected_day: 9,
+            },
+            TestCase {
+                rd: 100,
+                expected_year: 1,
+                expected_month: 3,
+                expected_day: 1,
             },
         ];
 
@@ -462,7 +481,7 @@ mod test {
                     let chinese = Date::from_rata_die(rata_die, chinese);
                     assert_eq!(
                         case.expected_year,
-                        chinese.extended_year(),
+                        chinese.monotonic_year(),
                         "[{calendar_type}] Chinese from RD failed, case: {case:?}"
                     );
                     assert_eq!(

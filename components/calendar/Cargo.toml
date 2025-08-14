@@ -64,3 +64,6 @@ harness = false
 [[bench]]
 name = "convert"
 harness = false
+
+[package.metadata.cargo-semver-checks.lints]
+workspace = true

@@ -1,1 +1,1 @@
-const version = 'icu4x-artifacts-v.0.1.0-dev';
+const version = 'ffi-artifacts/2025-08-13';
