@@ -705,6 +705,10 @@ jobs:
         dart ffi/dart/lib/src/hook_helpers/build_libs.dart --working_directory . --file bin/icu4x-2-${{ matrix.compiletype }}${{ env.FILENAME_SUFFIX }}-i686-pc-windows-msvc --target i686-pc-windows-msvc --compile_type ${{ matrix.compiletype }} --cargo_features ${{ env.FEATURES }}
         dart ffi/dart/lib/src/hook_helpers/build_libs.dart --working_directory . --file bin/icu4x-2-${{ matrix.compiletype }}${{ env.FILENAME_SUFFIX }}-x86_64-pc-windows-msvc --target x86_64-pc-windows-msvc --compile_type ${{ matrix.compiletype }} --cargo_features ${{ env.FEATURES }}
 
+        DEL bin\*.dll.exp
+        DEL bin\*.dll.lib
+        DEL bin\*.pdb
+
     - name: Build Windows data
       if: matrix.os == 'windows-latest' && matrix.compiletype == 'static' && matrix.include_data == false
       run: |
