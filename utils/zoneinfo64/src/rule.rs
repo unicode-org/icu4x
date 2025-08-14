@@ -109,38 +109,28 @@ pub(crate) enum RuleMode {
     DOW_LEQ_DOM,
 }
 
-/// The number of days in this year before this month starts
+/// The number of days in this year before this (0-based, from TzRuleDate.month) month starts
 fn days_before_month(m: u8, is_leap: bool) -> u16 {
+    // This takes a 1-based month
     const fn days_before_month_in_non_leap_year(month: u8) -> u16 {
         (iso::const_fixed_from_iso(2021, month, 1).to_i64_date()
             - iso::const_fixed_from_iso(2021, 1, 1).to_i64_date()) as u16
     }
-    const DAYS_BEFORE_FEB: u16 = days_before_month_in_non_leap_year(2);
-    const DAYS_BEFORE_MAR: u16 = days_before_month_in_non_leap_year(3);
-    const DAYS_BEFORE_APR: u16 = days_before_month_in_non_leap_year(4);
-    const DAYS_BEFORE_MAY: u16 = days_before_month_in_non_leap_year(5);
-    const DAYS_BEFORE_JUN: u16 = days_before_month_in_non_leap_year(6);
-    const DAYS_BEFORE_JUL: u16 = days_before_month_in_non_leap_year(7);
-    const DAYS_BEFORE_AUG: u16 = days_before_month_in_non_leap_year(8);
-    const DAYS_BEFORE_SEP: u16 = days_before_month_in_non_leap_year(9);
-    const DAYS_BEFORE_OCT: u16 = days_before_month_in_non_leap_year(10);
-    const DAYS_BEFORE_NOV: u16 = days_before_month_in_non_leap_year(11);
-    const DAYS_BEFORE_DEC: u16 = days_before_month_in_non_leap_year(12);
 
     let leap_day = u16::from(is_leap);
     match m {
-        0 => 0,
-        1 => DAYS_BEFORE_FEB,
-        2 => DAYS_BEFORE_MAR + leap_day,
-        3 => DAYS_BEFORE_APR + leap_day,
-        4 => DAYS_BEFORE_MAY + leap_day,
-        5 => DAYS_BEFORE_JUN + leap_day,
-        6 => DAYS_BEFORE_JUL + leap_day,
-        7 => DAYS_BEFORE_AUG + leap_day,
-        8 => DAYS_BEFORE_SEP + leap_day,
-        9 => DAYS_BEFORE_OCT + leap_day,
-        10 => DAYS_BEFORE_NOV + leap_day,
-        11 => DAYS_BEFORE_DEC + leap_day,
+        0 => const { days_before_month_in_non_leap_year(1) },
+        1 => const { days_before_month_in_non_leap_year(2) },
+        2 => (const { days_before_month_in_non_leap_year(3) }) + leap_day,
+        3 => (const { days_before_month_in_non_leap_year(4) }) + leap_day,
+        4 => (const { days_before_month_in_non_leap_year(5) }) + leap_day,
+        5 => (const { days_before_month_in_non_leap_year(6) }) + leap_day,
+        6 => (const { days_before_month_in_non_leap_year(7) }) + leap_day,
+        7 => (const { days_before_month_in_non_leap_year(8) }) + leap_day,
+        8 => (const { days_before_month_in_non_leap_year(9) }) + leap_day,
+        9 => (const { days_before_month_in_non_leap_year(10) }) + leap_day,
+        10 => (const { days_before_month_in_non_leap_year(11) }) + leap_day,
+        11 => (const { days_before_month_in_non_leap_year(12) }) + leap_day,
         _ => unreachable!(),
     }
 }
@@ -270,7 +260,7 @@ impl TransitionsForYear {
     /// Returns the range between offsets in this year
     /// This may cover DST or standard time, whichever starts first
     pub(crate) fn range(&self) -> Range<i64> {
-        if self.range_contains_standard() {
+        if self.range_is_standard() {
             self.end_epoch_seconds..self.start_epoch_seconds
         } else {
             self.start_epoch_seconds..self.end_epoch_seconds
@@ -278,7 +268,7 @@ impl TransitionsForYear {
     }
 
     /// Whether range() contains standard time
-    pub(crate) fn range_contains_standard(&self) -> bool {
+    pub(crate) fn range_is_standard(&self) -> bool {
         self.start_epoch_seconds > self.end_epoch_seconds
     }
 }
@@ -328,12 +318,12 @@ impl Rule<'_> {
     pub(crate) fn resolve_utc(&self, local_year: i32, seconds_since_utc_epoch: i64) -> UtcOffset {
         let transitions = self.transitions_for_year(local_year);
 
-        let range_contains_standard = transitions.range_contains_standard();
+        let range_is_standard = transitions.range_is_standard();
         let range = transitions.range();
 
         let standard = self.standard_offset_seconds;
 
-        if range.contains(&seconds_since_utc_epoch) ^ range_contains_standard {
+        if range.contains(&seconds_since_utc_epoch) ^ range_is_standard {
             UtcOffset::from_seconds_unchecked(standard + self.inner.additional_offset_secs)
         } else {
             UtcOffset::from_seconds_unchecked(standard)
@@ -516,23 +506,23 @@ mod tests {
 
     #[test]
     fn test_transitions_for_year() {
-        // This is a Wall timezone
+        // This is a Wall rule
         // so the transition happens at the same time in the
         // previous timezone
         test_single_year(
             "America/Los_Angeles",
             2025,
-            // The transition happens at 02:00 in the previous timezone
+            // The transition happens at 02:00 in the previous offset
             // and 03:00/01:00 in the next
             (3, 9, (2, 3)),
             (11, 2, (2, 1)),
         );
 
-        // This is a Standard timezone, so the transition happens
+        // This is a Standard rule, so the transition happens
         // at the same time in the standard timezone
         test_single_year("Europe/London", 2017, (3, 26, (1, 2)), (10, 29, (2, 1)));
 
-        // This is a Utc timezone, so the transition happens
+        // This is a Utc rule, so the transition happens
         // at the same time in UTC
         test_single_year(
             "America/Santiago",
