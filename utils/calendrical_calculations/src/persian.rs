@@ -7,6 +7,8 @@
 // the Apache License, Version 2.0 which can be found at the calendrical_calculations
 // package root or at http://www.apache.org/licenses/LICENSE-2.0.
 
+//! The Persian calendar
+
 use crate::helpers::{i64_to_i32, I32CastError, IntegerRoundings};
 use crate::rata_die::RataDie;
 
@@ -177,15 +179,16 @@ mod tests {
     #[test]
     fn test_persian_epoch() {
         let epoch = FIXED_PERSIAN_EPOCH.to_i64_date();
-        // Iso year of Persian Epoch
-        let epoch_year_from_fixed = crate::iso::iso_year_from_fixed(RataDie::new(epoch));
-        // 622 is the correct ISO year for the Persian Epoch
+        // Gregorian year of Persian Epoch
+        let epoch_year_from_fixed =
+            crate::gregorian::gregorian_year_from_fixed(RataDie::new(epoch));
+        // 622 is the correct Gregorian year for the Persian Epoch
         assert_eq!(epoch_year_from_fixed, 622);
     }
 
     // Persian New Year occurring in March of Gregorian year (g_year) to fixed date
     fn nowruz(g_year: i32) -> RataDie {
-        let (y, _m, _d) = crate::iso::iso_from_fixed(FIXED_PERSIAN_EPOCH).unwrap();
+        let (y, _m, _d) = crate::gregorian::gregorian_from_fixed(FIXED_PERSIAN_EPOCH).unwrap();
         let persian_year = g_year - y + 1;
         let year = if persian_year <= 0 {
             persian_year - 1
@@ -203,8 +206,8 @@ mod tests {
 
         for year in nowruz_test_year_start..=nowruz_test_year_end {
             let two_thousand_eight_to_fixed = nowruz(year).to_i64_date();
-            let iso_date = crate::iso::fixed_from_iso(year, 3, 21);
-            let (persian_year, _m, _d) = fast_persian_from_fixed(iso_date).unwrap();
+            let gregorian_date = crate::gregorian::fixed_from_gregorian(year, 3, 21);
+            let (persian_year, _m, _d) = fast_persian_from_fixed(gregorian_date).unwrap();
             assert_eq!(
                 fast_persian_from_fixed(RataDie::new(two_thousand_eight_to_fixed))
                     .unwrap()

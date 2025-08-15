@@ -7,6 +7,9 @@
 // the Apache License, Version 2.0 which can be found at the calendrical_calculations
 // package root or at http://www.apache.org/licenses/LICENSE-2.0.
 
+//! Representation of Rata Die (R.D.) dates, which are
+//! represented as the number of days since Gregorian date 0001-01-01.
+
 use core::fmt;
 use core::ops::{Add, AddAssign, Sub, SubAssign};
 #[allow(unused_imports)]
@@ -91,7 +94,7 @@ impl RataDie {
 impl fmt::Debug for RataDie {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         let rd = self.0;
-        if let Ok((y, m, d)) = crate::iso::iso_from_fixed(*self) {
+        if let Ok((y, m, d)) = crate::gregorian::gregorian_from_fixed(*self) {
             write!(f, "{rd} R.D. ({y}-{m:02}-{d:02})")
         } else {
             write!(f, "{rd} R.D. (out of bounds)")

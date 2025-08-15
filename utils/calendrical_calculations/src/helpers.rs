@@ -7,6 +7,8 @@
 // the Apache License, Version 2.0 which can be found at the calendrical_calculations
 // package root or at http://www.apache.org/licenses/LICENSE-2.0.
 
+//! Additional math helpers
+
 use crate::astronomy::Location;
 use crate::rata_die::{Moment, RataDie};
 #[allow(unused_imports)]

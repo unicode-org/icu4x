@@ -8,7 +8,7 @@ pub const UMMALQURA_DATA_STARTING_YEAR: i32 = 1300;
 
 #[rustfmt::skip]
 pub const UMMALQURA_DATA: [PackedHijriYearInfo; 1601 - UMMALQURA_DATA_STARTING_YEAR as usize] = {
-    use calendrical_calculations::iso::const_fixed_from_iso as iso;
+    use calendrical_calculations::gregorian::const_fixed_from_gregorian as iso;
     let l = true; // long
     let s = false; // short
     [

@@ -1,3 +1,14 @@
+// This file is part of ICU4X.
+//
+// The contents of this file implement algorithms from Calendrical Calculations
+// by Reingold & Dershowitz, Cambridge University Press, 4th edition (2018),
+// which have been released as Lisp code at <https://github.com/EdReingold/calendar-code2/>
+// under the Apache-2.0 license. Accordingly, this file is released under
+// the Apache License, Version 2.0 which can be found at the calendrical_calculations
+// package root or at http://www.apache.org/licenses/LICENSE-2.0.
+
+//! Various islamic lunar calendars
+
 use crate::astronomy::*;
 use crate::helpers::{i64_to_saturated_i32, next};
 use crate::rata_die::{Moment, RataDie};
@@ -222,18 +233,20 @@ mod tests {
     #[test]
     fn test_islamic_epoch_friday() {
         let epoch = ISLAMIC_EPOCH_FRIDAY.to_i64_date();
-        // Iso year of Islamic Epoch
-        let epoch_year_from_fixed = crate::iso::iso_year_from_fixed(RataDie::new(epoch));
-        // 622 is the correct ISO year for the Islamic Epoch
+        // Gregorian year of Islamic Epoch
+        let epoch_year_from_fixed =
+            crate::gregorian::gregorian_year_from_fixed(RataDie::new(epoch));
+        // 622 is the correct Gregorian year for the Islamic Epoch
         assert_eq!(epoch_year_from_fixed, 622);
     }
 
     #[test]
     fn test_islamic_epoch_thursday() {
         let epoch = ISLAMIC_EPOCH_THURSDAY.to_i64_date();
-        // Iso year of Islamic Epoch
-        let epoch_year_from_fixed = crate::iso::iso_year_from_fixed(RataDie::new(epoch));
-        // 622 is the correct ISO year for the Islamic Epoch
+        // Gregorian year of Islamic Epoch
+        let epoch_year_from_fixed =
+            crate::gregorian::gregorian_year_from_fixed(RataDie::new(epoch));
+        // 622 is the correct Gregorian year for the Islamic Epoch
         assert_eq!(epoch_year_from_fixed, 622);
     }
 

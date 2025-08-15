@@ -552,9 +552,12 @@ impl Zone<'_> {
         minute: u8,
         second: u8,
     ) -> PossibleOffset {
-        const EPOCH: RataDie = calendrical_calculations::iso::const_fixed_from_iso(1970, 1, 1);
+        const EPOCH: RataDie =
+            calendrical_calculations::gregorian::const_fixed_from_gregorian(1970, 1, 1);
         let seconds_since_local_epoch =
-            (((calendrical_calculations::iso::fixed_from_iso(year, month, day) - EPOCH) * 24
+            (((calendrical_calculations::gregorian::fixed_from_gregorian(year, month, day)
+                - EPOCH)
+                * 24
                 + hour as i64)
                 * 60
                 + minute as i64)

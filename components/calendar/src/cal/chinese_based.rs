@@ -96,7 +96,7 @@ impl<'b, CB: ChineseBased> ChineseBasedPrecomputedData<'b, CB> {
         };
         // compute
 
-        let mid_year = calendrical_calculations::iso::fixed_from_iso(iso.year, 7, 1);
+        let mid_year = calendrical_calculations::gregorian::fixed_from_gregorian(iso.year, 7, 1);
         let year_bounds = YearBounds::compute::<CB>(mid_year);
         let YearBounds { new_year, .. } = year_bounds;
         if rd >= new_year {
@@ -128,7 +128,7 @@ impl From<ChineseBasedYearInfo> for i32 {
 impl ChineseBasedYearInfo {
     /// Compute ChineseBasedYearInfo for a given extended year
     fn compute<CB: ChineseBased>(related_iso: i32) -> Self {
-        let mid_year = calendrical_calculations::iso::fixed_from_iso(related_iso, 7, 1);
+        let mid_year = calendrical_calculations::gregorian::fixed_from_gregorian(related_iso, 7, 1);
         let year_bounds = YearBounds::compute::<CB>(mid_year);
         Self::compute_with_yb::<CB>(related_iso, year_bounds)
     }
@@ -143,7 +143,8 @@ impl ChineseBasedYearInfo {
         let (month_lengths, leap_month) =
             chinese_based::month_structure_for_year::<CB>(new_year, next_new_year);
 
-        let ny_offset = new_year - calendrical_calculations::iso::fixed_from_iso(related_iso, 1, 1);
+        let ny_offset =
+            new_year - calendrical_calculations::gregorian::fixed_from_gregorian(related_iso, 1, 1);
         Self {
             packed_data: PackedChineseBasedYearInfo::new(month_lengths, leap_month, ny_offset),
             related_iso,
@@ -152,7 +153,7 @@ impl ChineseBasedYearInfo {
 
     /// Get the new year R.D.    
     pub(crate) fn new_year(self) -> RataDie {
-        calendrical_calculations::iso::fixed_from_iso(self.related_iso, 1, 1)
+        calendrical_calculations::gregorian::fixed_from_gregorian(self.related_iso, 1, 1)
             + self.packed_data.ny_offset() as i64
     }
 
