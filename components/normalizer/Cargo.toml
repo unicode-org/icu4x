@@ -24,6 +24,7 @@ displaydoc = { workspace = true }
 icu_collections = { workspace = true }
 icu_properties = { workspace = true, optional = true }
 icu_provider = { workspace = true }
+likely_polyfill = { workspace = true, optional = true }
 smallvec = { workspace = true } # alloc
 utf16_iter = { workspace = true, optional = true }
 utf8_iter = { workspace = true, optional = true }
@@ -60,7 +61,14 @@ utf16_iter = ["dep:utf16_iter", "write16"]
 # For dealing with potentially ill-formed UTF8 strings
 utf8_iter = ["dep:utf8_iter"]
 
+# Statically assumes fast-mode trie data
+# unstable_fast_trie_only = ["dep:likely_polyfill"]
+
 [[bench]]
 name = "bench"
 harness = false
 required-features = ["utf16_iter", "utf8_iter"]
+
+# Lint to avoid complaining about unstable_fast_trie_only for now
+[lints.rust]
+unexpected_cfgs = { level = 'allow' }

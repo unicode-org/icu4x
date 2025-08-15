@@ -60,6 +60,31 @@
 
 extern crate alloc;
 
+// TODO: The plan is to replace
+// `#[cfg(not(feature = "unstable_fast_trie_only"))]`
+// with
+// `#[cfg(feature = "serde")]`
+// and
+// `#[cfg(feature = "unstable_fast_trie_only")]`
+// with
+// `#[cfg(not(feature = "serde"))]`
+//
+// Before doing so:
+// * The type of the UTS 46 trie needs to be
+//   disentangled from the type of the NFD/NFKD tries.
+//   This will involve a more generic iterator hidden
+//   inside the public iterator types.
+// * datagen needs to emit fast-mode tries for the
+//   NFD and NFKD tries.
+// * The markers and possibly the data struct type
+//   for NFD and NFKD need to be revised per policy.
+
+#[cfg(not(feature = "unstable_fast_trie_only"))]
+type Trie<'trie> = CodePointTrie<'trie, u32>;
+
+#[cfg(feature = "unstable_fast_trie_only")]
+type Trie<'trie> = FastCodePointTrie<'trie, u32>;
+
 // We don't depend on icu_properties to minimize deps, but we want to be able
 // to ensure we're using the right CCC values
 macro_rules! ccc {
@@ -89,7 +114,12 @@ use core::char::REPLACEMENT_CHARACTER;
 use icu_collections::char16trie::Char16Trie;
 use icu_collections::char16trie::Char16TrieIterator;
 use icu_collections::char16trie::TrieResult;
+#[cfg(not(feature = "unstable_fast_trie_only"))]
 use icu_collections::codepointtrie::CodePointTrie;
+#[cfg(feature = "unstable_fast_trie_only")]
+use icu_collections::codepointtrie::FastCodePointTrie;
+#[cfg(feature = "unstable_fast_trie_only")]
+use icu_collections::codepointtrie::TypedCodePointTrie;
 #[cfg(feature = "icu_properties")]
 use icu_properties::props::CanonicalCombiningClass;
 use icu_provider::prelude::*;
@@ -103,6 +133,21 @@ use utf16_iter::Utf16CharsEx;
 #[cfg(feature = "utf8_iter")]
 use utf8_iter::Utf8CharsEx;
 use zerovec::{zeroslice, ZeroSlice};
+
+// The optimizations in the area where `likely` is used
+// are extremely brittle. `likely` is useful in the typed-trie
+// case, but in order not to disturb the untyped-trie case,
+// make the annotations no-ops in the untyped-trie case.
+
+#[cfg(feature = "unstable_fast_trie_only")]
+use likely_polyfill::likely;
+
+/// No-op for typed trie case.
+#[cfg(not(feature = "unstable_fast_trie_only"))]
+#[inline(always)]
+fn likely(b: bool) -> bool {
+    b
+}
 
 /// This type exists as a shim for icu_properties CanonicalCombiningClass when the crate is disabled
 /// It should not be exposed to users.
@@ -461,7 +506,7 @@ impl CharacterAndClass {
     pub fn character_and_ccc(&self) -> (char, CanonicalCombiningClass) {
         (self.character(), self.ccc())
     }
-    pub fn set_ccc_from_trie_if_not_already_set(&mut self, trie: &CodePointTrie<u32>) {
+    pub fn set_ccc_from_trie_if_not_already_set(&mut self, trie: &Trie) {
         if self.0 >> 24 != 0xFF {
             return;
         }
@@ -473,7 +518,7 @@ impl CharacterAndClass {
 
 // This function exists as a borrow check helper.
 #[inline(always)]
-fn sort_slice_by_ccc(slice: &mut [CharacterAndClass], trie: &CodePointTrie<u32>) {
+fn sort_slice_by_ccc(slice: &mut [CharacterAndClass], trie: &Trie) {
     // We don't look up the canonical combining class for starters
     // of for single combining characters between starters. When
     // there's more than one combining character between starters,
@@ -507,7 +552,7 @@ where
     // may become a non-starter before `decomposing_next()` is called.
     pending: Option<CharacterAndTrieValue>, // None at end of stream
     // See trie-value-format.md
-    trie: &'data CodePointTrie<'data, u32>,
+    trie: &'data Trie<'data>,
     scalars16: &'data ZeroSlice<u16>,
     scalars24: &'data ZeroSlice<char>,
     supplementary_scalars16: &'data ZeroSlice<u16>,
@@ -570,7 +615,8 @@ where
             // Initialize with a placeholder starter in case
             // the real stream starts with a non-starter.
             pending: Some(CharacterAndTrieValue::new('\u{FFFF}', 0)),
-            trie: &decompositions.trie,
+            #[allow(clippy::useless_conversion, clippy::expect_used)] // Expectation always succeeds when untyped tries are in use
+            trie: <&Trie>::try_from(&decompositions.trie).expect("Unexpected trie type in data"),
             scalars16: &tables.scalars16,
             scalars24: &tables.scalars24,
             supplementary_scalars16: if let Some(supplementary) = supplementary_tables {
@@ -1998,12 +2044,27 @@ impl<'data> DecomposingNormalizerBorrowed<'data> {
                         ptr = unsafe { ptr.add(1) };
 
                         let mut upcoming32 = u32::from(upcoming_code_unit);
+                        // The performance of what logically is supposed to be this
+                        // branch is _incredibly_ brittle and what LLVM ends up doing
+                        // that affects the performance of what's logically about this
+                        // decision can swing to double/halve the throughput for Basic
+                        // Latin in ways that are completely unintuitive. Basically _any_
+                        // change to _any_ code that participates in how LLVM sees the
+                        // code around here can make the perf fall over. In seems that
+                        // manually annotating this branch as likely has worse effects
+                        // on non-Basic-Latin input that the case where LLVM just happens to
+                        // do the right thing.
+                        //
+                        // What happens with this branch may depend on what sink type
+                        // this code is monomorphized over.
+                        //
+                        // What a terrible sink of developer time!
                         if upcoming32 < decomposition_passthrough_bound {
                             continue 'fast;
                         }
                         // We might be doing a trie lookup by surrogate. Surrogates get
                         // a decomposition to U+FFFD.
-                        let mut trie_value = decomposition.trie.get32(upcoming32);
+                        let mut trie_value = decomposition.trie.get16(upcoming_code_unit);
                         if starter_and_decomposes_to_self_impl(trie_value) {
                             continue 'fast;
                         }
@@ -2011,12 +2072,19 @@ impl<'data> DecomposingNormalizerBorrowed<'data> {
                         // The loop is only broken out of as goto forward
                         #[expect(clippy::never_loop)]
                         'surrogateloop: loop {
+                            // LLVM's optimizations are incredibly brittle for the code _above_,
+                            // and using `likely` _below_ without using it _above_ helps!
+                            // What a massive sink of developer time!
+                            // Seriously, the effect of these annotations is massively
+                            // unintuitive. Measure everything!
+                            // Notably, the `if likely(...)` formulation optimizes differently
+                            // than just putting `cold_path()` on the `else` path!
                             let surrogate_base = upcoming32.wrapping_sub(0xD800);
-                            if surrogate_base > (0xDFFF - 0xD800) {
+                            if likely(surrogate_base > (0xDFFF - 0xD800)) {
                                 // Not surrogate
                                 break 'surrogateloop;
                             }
-                            if surrogate_base <= (0xDBFF - 0xD800) {
+                            if likely(surrogate_base <= (0xDBFF - 0xD800)) {
                                 // let iter_backup = code_unit_iter.clone();
                                 // if let Some(&low) = code_unit_iter.next() {
                                 if ptr != end {
@@ -2024,7 +2092,7 @@ impl<'data> DecomposingNormalizerBorrowed<'data> {
                                     // `ptr` always advances by one, and we always have a check
                                     // per advancement.
                                     let low = unsafe { *ptr };
-                                    if in_inclusive_range16(low, 0xDC00, 0xDFFF) {
+                                    if likely(in_inclusive_range16(low, 0xDC00, 0xDFFF)) {
                                         // SAFETY: Since `ptr` hadn't reached `end`, yet, advancing
                                         // by one points to the same allocation or to immediately
                                         // after, which is OK.
@@ -2033,8 +2101,19 @@ impl<'data> DecomposingNormalizerBorrowed<'data> {
                                         upcoming32 = (upcoming32 << 10) + u32::from(low)
                                             - (((0xD800u32 << 10) - 0x10000u32) + 0xDC00u32);
                                         // Successfully-paired surrogate. Read from the trie again.
-                                        trie_value = decomposition.trie.get32(upcoming32);
-                                        if starter_and_decomposes_to_self_impl(trie_value) {
+                                        trie_value = {
+                                            // Semantically, this bit of conditional compilation makes no sense.
+                                            // The purpose is to keep LLVM seeing the untyped trie case the way
+                                            // it did before so as not to regress the performance of the untyped
+                                            // case due to unintuitive optimizer effects. If you care about the
+                                            // perf of the untyped trie case and have better ideas, please try
+                                            // something better.
+                                            #[cfg(not(feature = "unstable_fast_trie_only"))]
+                                            {decomposition.trie.get32(upcoming32)}
+                                            #[cfg(feature = "unstable_fast_trie_only")]
+                                            {decomposition.trie.get_supplementary(upcoming32)}
+                                        };
+                                        if likely(starter_and_decomposes_to_self_impl(trie_value)) {
                                             continue 'fast;
                                         }
                                         break 'surrogateloop;
@@ -2599,10 +2678,6 @@ impl<'data> ComposingNormalizerBorrowed<'data> {
                 // allocation is OK.
                 let end: *const u16 = unsafe { ptr.add(delegate_as_slice.len()) };
 
-                let mut upcoming32;
-                // Declaring this up here is useful for getting compile errors about invalid changes
-                // to the code structure below.
-                let mut trie_value;
                 'fast: loop {
                     // if let Some(&upcoming_code_unit) = code_unit_iter.next() {
                     if ptr != end {
@@ -2615,21 +2690,32 @@ impl<'data> ComposingNormalizerBorrowed<'data> {
                         // after, which is OK.
                         ptr = unsafe { ptr.add(1) };
 
-                        upcoming32 = u32::from(upcoming_code_unit); // may be surrogate
+                        let mut upcoming32 = u32::from(upcoming_code_unit); // may be surrogate
+                        // The performance of what logically is supposed to be this
+                        // branch is somewhat brittle and what LLVM ends up doing
+                        // that affects the performance of what's logically about this
+                        // decision can swing to double/halve the throughput for Basic
+                        // Latin in ways that are completely unintuitive. Basically _any_
+                        // change to _any_ code that participates in how LLVM sees the
+                        // code around here can make the perf fall over. In seems that
+                        // manually annotating this branch as likely has worse effects
+                        // on non-Basic-Latin input that the case where LLVM just happens to
+                        // do the right thing.
+                        //
+                        // What happens with this branch may depend on what sink type
+                        // this code is monomorphized over.
+                        //
+                        // What a terrible sink of developer time!
                         if upcoming32 < composition_passthrough_bound {
                             // No need for surrogate or U+FFFD check, because
                             // `composition_passthrough_bound` cannot be higher than
                             // U+0300.
                             // Fast-track succeeded!
-                            // At this point, `trie_value` is out of sync with `upcoming32`.
-                            // However, we either 1) reach the end of `code_unit_iter`, at
-                            // which point nothing reads `trie_value` anymore or we
-                            // execute the line immediately below this loop.
                             continue 'fast;
                         }
                         // We might be doing a trie lookup by surrogate. Surrogates get
                         // a decomposition to U+FFFD.
-                        trie_value = composition.decomposition.trie.get32(upcoming32);
+                        let mut trie_value = composition.decomposition.trie.get16(upcoming_code_unit);
                         if potential_passthrough_and_cannot_combine_backwards_impl(trie_value) {
                             // Can't combine backwards, hence a plain (non-backwards-combining)
                             // starter albeit past `composition_passthrough_bound`
@@ -2642,12 +2728,14 @@ impl<'data> ComposingNormalizerBorrowed<'data> {
                         // The loop is only broken out of as goto forward
                         #[expect(clippy::never_loop)]
                         'surrogateloop: loop {
+                            // The `likely` annotations _below_ exist to make the code _above_
+                            // go faster!
                             let surrogate_base = upcoming32.wrapping_sub(0xD800);
-                            if surrogate_base > (0xDFFF - 0xD800) {
+                            if likely(surrogate_base > (0xDFFF - 0xD800)) {
                                 // Not surrogate
                                 break 'surrogateloop;
                             }
-                            if surrogate_base <= (0xDBFF - 0xD800) {
+                            if likely(surrogate_base <= (0xDBFF - 0xD800)) {
                                 // let iter_backup = code_unit_iter.clone();
                                 // if let Some(&low) = code_unit_iter.next() {
                                 if ptr != end {
@@ -2655,7 +2743,7 @@ impl<'data> ComposingNormalizerBorrowed<'data> {
                                     // `ptr` always advances by one, and we always have a check
                                     // per advancement.
                                     let low = unsafe { *ptr };
-                                    if in_inclusive_range16(low, 0xDC00, 0xDFFF) {
+                                    if likely(in_inclusive_range16(low, 0xDC00, 0xDFFF)) {
                                         // SAFETY: Since `ptr` hadn't reached `end`, yet, advancing
                                         // by one points to the same allocation or to immediately
                                         // after, which is OK.
@@ -2664,8 +2752,19 @@ impl<'data> ComposingNormalizerBorrowed<'data> {
                                         upcoming32 = (upcoming32 << 10) + u32::from(low)
                                             - (((0xD800u32 << 10) - 0x10000u32) + 0xDC00u32);
                                         // Successfully-paired surrogate. Read from the trie again.
-                                        trie_value = composition.decomposition.trie.get32(upcoming32);
-                                        if potential_passthrough_and_cannot_combine_backwards_impl(trie_value) {
+                                        trie_value = {
+                                            // Semantically, this bit of conditional compilation makes no sense.
+                                            // The purpose is to keep LLVM seeing the untyped trie case the way
+                                            // it did before so as not to regress the performance of the untyped
+                                            // case due to unintuitive optimizer effects. If you care about the
+                                            // perf of the untyped trie case and have better ideas, please try
+                                            // something better.
+                                            #[cfg(not(feature = "unstable_fast_trie_only"))]
+                                            {composition.decomposition.trie.get32(upcoming32)}
+                                            #[cfg(feature = "unstable_fast_trie_only")]
+                                            {composition.decomposition.trie.get_supplementary(upcoming32)}
+                                        };
+                                        if likely(potential_passthrough_and_cannot_combine_backwards_impl(trie_value)) {
                                             // Fast-track succeeded!
                                             continue 'fast;
                                         }
