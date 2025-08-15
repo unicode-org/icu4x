@@ -53,7 +53,7 @@ pub fn fixed_from_iso(year: i32, month: u8, day: u8) -> RataDie {
 /// Lisp code reference: <https://github.com/EdReingold/calendar-code2/blob/1ee51ecfaae6f856b0d7de3e36e9042100b4f424/calendar.l#L1191-L1217>
 pub(crate) const fn iso_year_from_fixed(date: RataDie) -> i64 {
     // Shouldn't overflow because it's not possbile to construct extreme values of RataDie
-    let date = date.until(EPOCH);
+    let date = date.since(EPOCH);
 
     // 400 year cycles have 146097 days
     let (n_400, date) = (date.div_euclid(146097), date.rem_euclid(146097));
