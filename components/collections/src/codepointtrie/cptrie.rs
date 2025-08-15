@@ -1462,23 +1462,26 @@ mod tests {
     }
 
     #[test]
+    #[allow(unused_unsafe)] // `unsafe` below is both necessary and unnecessary
     fn databake() {
         databake::test_bake!(
             CodePointTrie<'static, u32>,
             const,
-            crate::codepointtrie::CodePointTrie::from_parts(
-                crate::codepointtrie::CodePointTrieHeader {
-                    high_start: 1u32,
-                    shifted12_high_start: 2u16,
-                    index3_null_offset: 3u16,
-                    data_null_offset: 4u32,
-                    null_value: 5u32,
-                    trie_type: crate::codepointtrie::TrieType::Small,
-                },
-                zerovec::ZeroVec::new(),
-                zerovec::ZeroVec::new(),
-                0u32,
-            ),
+            unsafe {
+                crate::codepointtrie::CodePointTrie::from_parts_unchecked(
+                    crate::codepointtrie::CodePointTrieHeader {
+                        high_start: 1u32,
+                        shifted12_high_start: 2u16,
+                        index3_null_offset: 3u16,
+                        data_null_offset: 4u32,
+                        null_value: 5u32,
+                        trie_type: crate::codepointtrie::TrieType::Small,
+                    },
+                    zerovec::ZeroVec::new(),
+                    zerovec::ZeroVec::new(),
+                    0u32,
+                )
+            },
             icu_collections,
             [zerovec],
         );
