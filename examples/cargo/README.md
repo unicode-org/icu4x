@@ -50,7 +50,7 @@ icu = { version = "2.0.0", features = ["serde"] }
 icu_provider_blob = {version = "2.0.0", features = ["alloc"] }
 ```
 
-To learn about building ICU4X data, including whether to check in the data blob file to your repository, see [data-management.md](./data-management.md).
+To learn about building ICU4X data, including whether to check in the data blob file to your repository, see [data-slimming.md](../tutorials/data-slimming.md) and [data-packs.md](../tutorials/data-packs.md).
 
 [« Fully Working Example »](buffer)
 
