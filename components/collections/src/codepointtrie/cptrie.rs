@@ -17,6 +17,7 @@ use core::num::TryFromIntError;
 use core::ops::RangeInclusive;
 use yoke::Yokeable;
 use zerofrom::ZeroFrom;
+use zerovec::ule::AsULE;
 #[cfg(feature = "alloc")]
 use zerovec::ule::UleError;
 use zerovec::ZeroVec;
@@ -232,7 +233,11 @@ macro_rules! w(
 
 impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
     #[doc(hidden)] // databake internal
-    pub const fn from_parts(
+    /// # Safety
+    ///
+    /// Unsafe, because the length invariants on the
+    /// `ZeroVec`s are not checked.
+    pub const fn from_parts_unchecked(
         header: CodePointTrieHeader,
         index: ZeroVec<'trie, u16>,
         data: ZeroVec<'trie, T>,
@@ -253,19 +258,64 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
         index: ZeroVec<'trie, u16>,
         data: ZeroVec<'trie, T>,
     ) -> Result<CodePointTrie<'trie, T>, Error> {
-        // Validation invariants are not needed here when constructing a new
-        // `CodePointTrie` because:
-        //
-        // - Rust includes the size of a slice (or Vec or similar), which allows it
-        //   to prevent lookups at out-of-bounds indices, whereas in C++, it is the
-        //   programmer's responsibility to keep track of length info.
-        // - For lookups into collections, Rust guarantees that a fallback value will
-        //   be returned in the case of `.get()` encountering a lookup error, via
-        //   the `Option` type.
-        // - The `ZeroVec` serializer stores the length of the array along with the
-        //   ZeroVec data, meaning that a deserializer would also see that length info.
-
         let error_value = data.last().ok_or(Error::EmptyDataVector)?;
+
+        // `CodePointTrie` lookup has two stages: fast and small (the trie types
+        // are also fast and small; they affect where the boundary between fast
+        // and small lookups is).
+        //
+        // The length requirements for `index` and `data` are checked here only
+        // for the fast lookup case so that the fast lookup can omit bound checks
+        // at the time of access. In the small lookup case, bounds are checked at
+        // the time of access.
+        //
+        // The fast lookup happens on the prefixes of `index` and `data` with
+        // more items for the small lookup case afterwards. The check here
+        // only looks at the prefixes relevant to the fast case.
+        //
+        // In the fast lookup case, the bits of the of the code point are
+        // partitioned into a bit prefix and a bit suffix. First, a value
+        // is read from `index` by indexing into it using the bit prefix.
+        // Then `data` is accessed by the value just read from `index` plus
+        // the bit suffix.
+        //
+        // Therefore, the length of `index` needs to accommodate access
+        // by the maximum possible bit prefix, and the length of `data`
+        // needs to accommodate access by the largest value stored in the part
+        // of `data` reachable by the bit prefix plus the maximum possible bit
+        // suffix.
+        //
+        // The maximum possible bit prefix depends on the trie type.
+
+        // The maximum code point that can be used for fast-path access:
+        let fast_max = match header.trie_type {
+            TrieType::Fast => FAST_TYPE_FAST_INDEXING_MAX,
+            TrieType::Small => SMALL_TYPE_FAST_INDEXING_MAX,
+        };
+        // Keep only the prefix bits:
+        let max_bit_prefix = fast_max >> FAST_TYPE_SHIFT;
+        // Attempt slice the part of `index` that the fast path can index into.
+        // Since `max_bit_prefix` is the largest possible value used for
+        // indexing (inclusive bound), we need to add one to get the exclusive
+        // bound, which is what `get_subslice` wants.
+        let fast_index = index
+            .get_subslice(0..(max_bit_prefix as usize) + 1)
+            .ok_or(Error::IndexTooShortForFastAccess)?;
+        // Now find the largest offset in the part of `index` reachable by the
+        // bit prefix. `max` can never actually return `None`, since we already
+        // know the slice isn't empty. Hence, reusing the error kind instead of
+        // minting a new one for this check.
+        let max_offset = fast_index
+            .iter()
+            .max()
+            .ok_or(Error::IndexTooShortForFastAccess)?;
+        // `FAST_TYPE_DATA_MASK` is the maximum possible bit suffix, since the
+        // maximum is when all the bits in the suffix are set, and the mask
+        // has that many bits set.
+        if !((max_offset) as usize + (FAST_TYPE_DATA_MASK as usize) < data.len()) {
+            return Err(Error::DataTooShortForFastAccess);
+        }
+
         let trie: CodePointTrie<'trie, T> = CodePointTrie {
             header,
             index,
@@ -277,7 +327,7 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
 
     /// Returns the position in the data array containing the trie's stored
     /// error value.
-    #[inline(always)] // `always` based on normalizer benchmarking
+    #[inline(always)] // `always` was based on previous normalizer benchmarking
     fn trie_error_val_index(&self) -> u32 {
         // We use wrapping_sub here to avoid panicky overflow checks.
         // len should always be > 1, but if it isn't this will just cause GIGO behavior of producing
@@ -375,7 +425,6 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
     /// array for each block of code points in [0, `fastMax`), which in
     /// turn guarantees that those code points are represented and only need 1
     /// lookup.
-    #[inline(always)] // `always` based on normalizer benchmarking
     fn fast_index(&self, code_point: u32) -> u32 {
         let index_array_pos: u32 = code_point >> FAST_TYPE_SHIFT;
         let index_array_val: u16 =
@@ -388,6 +437,75 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
         let index_array_val = index_array_val as u32;
         let fast_index_val: u32 = w!(index_array_val + masked_cp);
         fast_index_val
+    }
+
+    /// Returns the value that is associated with `code_point` in this [`CodePointTrie`]
+    /// assuming that the fast index path should be used.
+    ///
+    /// # Safety
+    ///
+    /// `code_point` must be at most `FAST_TYPE_FAST_INDEXING_MAX` if
+    /// the trie type is fast or at most `SMALL_TYPE_FAST_INDEXING_MAX`
+    /// if the trie type is small.
+    ///
+    /// # Panics
+    ///
+    /// When debug assertions are enabled, the above precondition and
+    /// slice access bounds are checked.
+    #[inline(always)]
+    unsafe fn get32_by_fast_index(&self, code_point: u32) -> T {
+        debug_assert!(
+            code_point
+                <= match self.header.trie_type {
+                    TrieType::Fast => FAST_TYPE_FAST_INDEXING_MAX,
+                    TrieType::Small => SMALL_TYPE_FAST_INDEXING_MAX,
+                }
+        );
+        let bit_prefix = (code_point as usize) >> FAST_TYPE_SHIFT;
+        debug_assert!(bit_prefix < self.index.len());
+        // SAFETY: The length of `self.index` has been checked
+        // in the constructor.
+        let base_offset_to_data: usize = usize::from(u16::from_unaligned(*unsafe {
+            self.index.as_ule_slice().get_unchecked(bit_prefix)
+        }));
+        let bit_suffix = (code_point & FAST_TYPE_DATA_MASK) as usize;
+        // SAFETY: We have examined the maximum possible value for
+        // `base_offset_to_data` and the maximum possible value for
+        // `bit_suffix` in the constructor, so the addition below
+        // cannot overflow. (Furthermore, the impossibility of overflow
+        // also results from the `u16` type read from `index` and the
+        // number of bits set in `FAST_TYPE_DATA_MASK`).
+        let offset_to_data = w!(base_offset_to_data + bit_suffix);
+        debug_assert!(offset_to_data < self.data.len());
+        // SAFETY: The length of `self.data` has been checked
+        // in the constructor.
+        T::from_unaligned(*unsafe { self.data.as_ule_slice().get_unchecked(offset_to_data) })
+    }
+
+    /// Returns the value that is associated with `code_point` in this [`CodePointTrie`]
+    /// assuming that the small index path should be used.
+    ///
+    /// `code_point` must be at most `CODE_POINT_MAX` AND greter than
+    /// `FAST_TYPE_FAST_INDEXING_MAX` if the trie type is fast or greater
+    /// than `SMALL_TYPE_FAST_INDEXING_MAX` if the trie type is small.
+    /// This is checked when debug assertions are enabled. If this
+    /// precondition is violated, the behavior of this method is
+    /// memory-safe, but the returned value may be bogus (not
+    /// necessarily the designated error value).
+    #[inline(never)]
+    #[cold]
+    fn get32_by_small_index(&self, code_point: u32) -> T {
+        debug_assert!(code_point <= CODE_POINT_MAX);
+        debug_assert!(
+            code_point
+                > match self.header.trie_type {
+                    TrieType::Fast => FAST_TYPE_FAST_INDEXING_MAX,
+                    TrieType::Small => SMALL_TYPE_FAST_INDEXING_MAX,
+                }
+        );
+        self.data
+            .get(self.small_index(code_point) as usize)
+            .unwrap_or(self.error_value)
     }
 
     /// Returns the value that is associated with `code_point` in this [`CodePointTrie`].
@@ -404,11 +522,19 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
     /// ```
     #[inline(always)] // `always` based on normalizer benchmarking
     pub fn get32(&self, code_point: u32) -> T {
-        // If we cannot read from the data array, then return the sentinel value
-        // self.error_value() for the instance type for T: TrieValue.
-        self.get32_ule(code_point)
-            .map(|t| T::from_unaligned(*t))
-            .unwrap_or(self.error_value)
+        let fast_max = match self.header.trie_type {
+            TrieType::Fast => FAST_TYPE_FAST_INDEXING_MAX,
+            TrieType::Small => SMALL_TYPE_FAST_INDEXING_MAX,
+        };
+        if code_point <= fast_max {
+            // SAFETY: We've just checked that `code_point` satisfies
+            // the precondition of `get32_by_fast_index`.
+            unsafe { self.get32_by_fast_index(code_point) }
+        } else if code_point <= CODE_POINT_MAX {
+            self.get32_by_small_index(code_point)
+        } else {
+            self.error_value
+        }
     }
 
     /// Returns the value that is associated with `char` in this [`CodePointTrie`].
@@ -425,7 +551,22 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
     /// ```
     #[inline(always)]
     pub fn get(&self, c: char) -> T {
-        self.get32(u32::from(c))
+        // If we just delegated to `get32` here, the compiler should
+        // eliminate the `code_point <= CODE_POINT_MAX` check, but
+        // let's manually inline here to make sure that the unnecessary
+        // check isn't performed.
+        let code_point = u32::from(c);
+        let fast_max = match self.header.trie_type {
+            TrieType::Fast => FAST_TYPE_FAST_INDEXING_MAX,
+            TrieType::Small => SMALL_TYPE_FAST_INDEXING_MAX,
+        };
+        if code_point <= fast_max {
+            // SAFETY: We've just checked that `code_point` satisfies
+            // the precondition of `get32_by_fast_index`.
+            unsafe { self.get32_by_fast_index(code_point) }
+        } else {
+            self.get32_by_small_index(code_point)
+        }
     }
 
     /// Returns a reference to the ULE of the value that is associated with `code_point` in this [`CodePointTrie`].
@@ -440,7 +581,7 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
     /// assert_eq!(Some(&0), trie.get32_ule(0x13E0)); // 'Ꮰ' as u32
     /// assert_eq!(Some(&1), trie.get32_ule(0x10044)); // '𐁄' as u32
     /// ```
-    #[inline(always)] // `always` based on normalizer benchmarking
+    #[inline(always)] // `always` was based on previous normalizer benchmarking
     pub fn get32_ule(&self, code_point: u32) -> Option<&T::ULE> {
         // All code points up to the fast max limit are represented
         // individually in the `index` array to hold their `data` array position, and
@@ -1045,7 +1186,7 @@ impl<T: TrieValue + databake::Bake> databake::Bake for CodePointTrie<'_, T> {
         let index = self.index.bake(env);
         let data = self.data.bake(env);
         let error_value = self.error_value.bake(env);
-        databake::quote! { icu_collections::codepointtrie::CodePointTrie::from_parts(#header, #index, #data, #error_value) }
+        databake::quote! { unsafe { icu_collections::codepointtrie::CodePointTrie::from_parts_unchecked(#header, #index, #data, #error_value) } }
     }
 }
 
