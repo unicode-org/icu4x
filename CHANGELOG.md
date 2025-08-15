@@ -13,8 +13,6 @@
     - `icu_capi`
         - All C++ enums now default to a valid value; which is the `Default` impl where there is one, and some semi-logical value otherwise. This has changed defaults in some cases and may cause a behavioral change for people relying on C++ default constructors. (unicode-org#6692)
 - Utils
-    - `calendrical_calculations`
-        - Fix a sign error in `RataDie::until`, add `RataDie::since` (unicode-org#6861)
     - `yoke`
         - Add four `map_with_cart` methods to `yoke::Yoke`, similar to `Yoke::map_project` but
         additionally providing a reference to the cart. (unicode-org#6781)
@@ -41,6 +39,8 @@ Several crates have had patch releases in the 2.0 stream:
   - (2.0.2) Add `Locale::set_unicode_extension` (unicode-org#6636)
 - `icu_datetime_data`, `icu_time_data`, `icu_provider_source`
   - (2.0.1) Update to tzdb 2025b
+- `calendrical_calculations`
+    - (0.2.1) Fix a sign error in `RataDie::until`, add `RataDie::since` (unicode-org#6861)
 - `ixdtf`
     - (0.6.0) Add UTF16 handling (unicode-org#6577)
     - (0.6.0) Add TimeZoneParser::parse_identifier for TimeZoneRecord (unicode-org#6584)
