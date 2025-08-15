@@ -1822,6 +1822,7 @@ dependencies = [
  "icu_provider",
  "icu_segmenter_data",
  "itertools 0.14.0",
+ "ndarray",
  "potential_utf",
  "serde",
  "serde_json",
