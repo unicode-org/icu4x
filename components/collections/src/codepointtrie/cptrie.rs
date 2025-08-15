@@ -312,7 +312,7 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
         // `FAST_TYPE_DATA_MASK` is the maximum possible bit suffix, since the
         // maximum is when all the bits in the suffix are set, and the mask
         // has that many bits set.
-        if !((max_offset) as usize + (FAST_TYPE_DATA_MASK as usize) < data.len()) {
+        if ((max_offset) as usize + (FAST_TYPE_DATA_MASK as usize) >= data.len()) {
             return Err(Error::DataTooShortForFastAccess);
         }
 
