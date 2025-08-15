@@ -323,6 +323,11 @@ codegen-units = 1
 inherits = "dev"
 debug-assertions = false
 
+# For slow tests
+[profile.release-with-assertions]
+inherits = "release"
+debug-assertions = true
+
 [profile.bench]
 lto = true
 
