@@ -843,6 +843,7 @@ mod tests {
         use chrono::Offset;
         use chrono::TimeZone;
         use chrono_tz::OffsetComponents;
+        use chrono_tz::Tz;
 
         // Tests pre32 transitions
         // 1938-04-24T22:00:00Z
@@ -851,12 +852,33 @@ mod tests {
         // 2033-05-18T03:00:00Z
         const FUTURE: i64 = 3_000_000_000 - 2000;
 
-        for chrono in chrono_tz::TZ_VARIANTS {
-            let iana = chrono.name();
+        // To test all timezones, set EXHAUSTIVE_TZ_TEST=1
+        //
+        // We recommend testing with `--profile release-with-assertions`
+        let time_zones_to_test = if std::env::var("EXHAUSTIVE_TZ_TEST").is_err() {
+            // Keep this list small, this test is slow
+            &[
+                // Some normal timezones with DST
+                // Wall rule
+                Tz::America__Los_Angeles,
+                // Standard rules
+                Tz::Europe__London,
+                Tz::Europe__Zurich,
+                // Utc rule
+                Tz::America__Santiago,
+                // Transition skips a day
+                Tz::Pacific__Apia,
+                // Transition removes sub-second offset
+                Tz::Pacific__Niue,
+                // Has a single transition into a rule
+                Tz::Antarctica__Troll,
+            ][..]
+        } else {
+            &chrono_tz::TZ_VARIANTS[..]
+        };
 
-            if std::env::var("EXHAUSTIVE_TZ_TEST").is_err() && iana != "Europe/Zurich" {
-                continue;
-            }
+        for chrono in time_zones_to_test {
+            let iana = chrono.name();
 
             if TZDB.is_alias(iana) {
                 continue;
