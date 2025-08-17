@@ -320,7 +320,7 @@ checksum = "d71b6127be86fdcfddb610f7182ac57211d4b18a3e9c82eb2d17662f2227ad6a"
 
 [[package]]
 name = "calendrical_calculations"
-version = "0.2.0"
+version = "0.2.1"
 dependencies = [
  "core_maths",
  "displaydoc",
