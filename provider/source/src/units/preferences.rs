@@ -1,10 +1,3 @@
 // This file is part of ICU4X. For terms of use, please see the file
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
-
-pub(crate) mod display_name;
-pub(crate) mod essentials;
-pub(crate) mod helpers;
-pub(crate) mod ids;
-pub(crate) mod info;
-pub(crate) mod preferences;

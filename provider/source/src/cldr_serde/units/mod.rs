@@ -5,3 +5,5 @@
 pub(crate) mod data;
 #[cfg(feature = "experimental")]
 pub(crate) mod info;
+#[cfg(feature = "experimental")]
+pub(crate) mod preferences;
