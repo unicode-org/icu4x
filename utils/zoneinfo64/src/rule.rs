@@ -411,9 +411,12 @@ impl Rule<'_> {
             }
 
             // This does not handle the case where we are in an overlap offset at the beginning of the year.
+            //
+            // This will only happen during an inverted rule (e.g. when daylight savings ends first, and then starts)
+            //
             // It's not 100% clear how to interpret the data in that case, and at the moment in zoneinfo64
             // all transitions smoothly flow into the rules that come after them (invariant: last-transition-smoothly-into-rule)
-            // so it doesn't matter if you attempt to resolve this via transitions or via rules
+            // so it doesn't matter if you attempt to resolve this via transitions or via rules.
         }
 
         // Prev is in the time zone *before* the transition, Next is in the time zone of and after the transition
