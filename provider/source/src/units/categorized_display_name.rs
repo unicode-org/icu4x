@@ -33,7 +33,7 @@ where
     let units_format_data: &cldr_serde::units::data::Resource = source_data_provider
         .cldr()?
         .units()
-        .read_and_parse(&req.id.locale, "units.json")?;
+        .read_and_parse(req.id.locale, "units.json")?;
 
     let units_format_data = &units_format_data.main.value.units;
 

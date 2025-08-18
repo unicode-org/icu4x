@@ -123,7 +123,7 @@ impl Supplemental {
         let found_in_region = region_units
             .get(region)
             .or_else(|| region_units.get("001"))
-            .map_or(false, |units| Self::unit_matches_any(unit, units));
+            .is_some_and(|units| Self::unit_matches_any(unit, units));
 
         let found_anywhere = region_units
             .values()
