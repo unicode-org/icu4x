@@ -33,7 +33,9 @@ pub const fn const_fixed_from_iso(year: i32, month: u8, day: u8) -> RataDie {
     let prev_year = (year as i64) - 1;
     // Calculate days per year
     let mut fixed: i64 = 365 * prev_year;
-    // Adjust for leap year logic. We can avoid the branch of div_euclid by making prev_year positive
+    // Adjust for leap year logic. We can avoid the branch of div_euclid by making prev_year positive:
+    // YEAR_SHIFT is larger (in magnitude) than any prev_year, and, being divisible by 400,
+    // distributes correctly over the calculation on the next line.
     const YEAR_SHIFT: i64 = (-(i32::MIN as i64 - 1) / 400 + 1) * 400;
     fixed += (prev_year + YEAR_SHIFT) / 4 - (prev_year + YEAR_SHIFT) / 100
         + (prev_year + YEAR_SHIFT) / 400
