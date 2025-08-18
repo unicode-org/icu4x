@@ -614,13 +614,6 @@ impl Zone<'_> {
         // element
         if idx + 1 >= self.simple.type_map.len() as isize {
             if let Some(rule) = self.final_rule {
-                let rd = rd_for_seconds(seconds_since_local_epoch);
-                let ymd = iso::iso_from_fixed(rd);
-                debug_assert!(ymd.is_ok());
-                let Ok((year, _, _)) = ymd else {
-                    // GIGO behavior for out of range dates
-                    return PossibleOffset::None;
-                };
                 // If rule applies, use it
                 //
                 // Invariants used:
@@ -629,15 +622,7 @@ impl Zone<'_> {
                 // - rule-stays-inside-year: We can use local epoch time here because
                 //   the rules do not cross year boundaries.
                 if year >= rule.start_year as i32 {
-                    return rule.resolve_local(
-                        seconds_since_local_epoch,
-                        year,
-                        month,
-                        day,
-                        hour,
-                        minute,
-                        second,
-                    );
+                    return rule.resolve_local(year, month, day, hour, minute, second);
                 }
             }
 

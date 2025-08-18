@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use super::{Offset, PossibleOffset};
+use super::{Offset, PossibleOffset, SECONDS_IN_UTC_DAY};
 
 #[derive(Debug, Clone, Copy)]
 pub(crate) struct Rule<'a> {
@@ -32,7 +32,7 @@ pub(crate) struct TzRuleDate {
     pub(crate) day_of_week: i8,
     /// A 0-indexed month number
     pub(crate) month: u8,
-    /// The time in the day that the transition occurs
+    /// The time in the day (in seconds) that the transition occurs
     pub(crate) transition_time: u32,
     /// How to interpret transition_time
     pub(crate) time_mode: TimeMode,
@@ -142,7 +142,7 @@ impl TzRuleDate {
         if month > 11 {
             return None;
         }
-        if transition_time > 24 * 60 * 60 * 1000 {
+        if i64::from(transition_time) > SECONDS_IN_UTC_DAY {
             return None;
         }
 
@@ -200,7 +200,6 @@ impl Rule<'_> {
     )]
     pub(crate) fn resolve_local(
         &self,
-        _seconds_since_epoch: i64,
         _year: i32,
         _month: u8,
         _day: u8,
