@@ -611,15 +611,7 @@ impl Zone<'_> {
         if idx + 1 == self.simple.type_map.len() as isize {
             if let Some(rule) = self.final_rule {
                 // If rule applies, use it
-                if let Some(result) = rule.resolve_local(
-                    year,
-                    month,
-                    day,
-                    hour,
-                    minute,
-                    second,
-                    seconds_since_local_epoch,
-                ) {
+                if let Some(result) = rule.resolve_local(year, seconds_since_local_epoch) {
                     return result;
                 }
             }

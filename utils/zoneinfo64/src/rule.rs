@@ -358,29 +358,27 @@ impl Rule<'_> {
     }
     /// Get the possible offsets matching to a timestamp given in *local* (wall) time
     ///
-    /// seconds_since_local_epoch is the seconds-since-epoch of the ymdhms data interpreted as
-    /// a UTC timestamp. It's passed in so we don't need to recompute it.
+    /// seconds_since_local_epoch is the seconds-since-epoch of the datetime interpreted as
+    /// a UTC timestamp. This is *not* the seconds since `1970-01-01[tz]`, since that time may have
+    /// its own offset, it is `y-m-dThh:mm:ss` interpreted as a UTC offset.
+    ///
+    /// `local_year` is the year of the local (wall) time.
     ///
     /// Returns None when the rule doesn't apply (this is different from `PossibleOffset::None`,
     /// which means the rule does apply, but the datetime occurred during a gap transition and is thus
     /// invalid).
     pub(crate) fn resolve_local(
         &self,
-        year: i32,
-        _month: u8,
-        _day: u8,
-        _hour: u8,
-        _minute: u8,
-        _second: u8,
+        local_year: i32,
         seconds_since_local_epoch: i64,
     ) -> Option<PossibleOffset> {
         // If we're out of range for the rule, return None.
-        if year < self.start_year as i32 {
+        if local_year < self.start_year as i32 {
             return None;
         }
 
         // We assume that transitions do not cross year boundaries (Invariant: rule-stays-inside-year)
-        let transitions = self.transitions_for_year(year);
+        let transitions = self.transitions_for_year(local_year);
         let transitions_prev = transitions.to_wall(self, WallReference::Prev);
         let transitions_next = transitions.to_wall(self, WallReference::Next);
         let range_is_standard = transitions.range_is_standard();
@@ -403,7 +401,7 @@ impl Rule<'_> {
             (additional_offset, standard_offset)
         };
 
-        if year == self.start_year as i32 {
+        if local_year == self.start_year as i32 {
             // If we're before the first rule transition in the year, we should just
             // use the previous transition
             if seconds_since_local_epoch < range_prev.start
