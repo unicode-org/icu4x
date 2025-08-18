@@ -20,8 +20,6 @@ mod chrono_impls;
 mod rule;
 use rule::*;
 
-const SECONDS_IN_UTC_DAY: i64 = 86400;
-
 #[derive(Debug)]
 pub struct ZoneInfo64<'a> {
     zones: Vec<TzZone<'a>>,

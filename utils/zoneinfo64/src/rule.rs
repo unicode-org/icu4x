@@ -2,7 +2,9 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use super::{Offset, PossibleOffset, SECONDS_IN_UTC_DAY};
+use super::{Offset, PossibleOffset};
+
+const SECONDS_IN_UTC_DAY: i64 = 86400;
 
 #[derive(Debug, Clone, Copy)]
 pub(crate) struct Rule<'a> {
@@ -242,8 +244,8 @@ impl Rule<'_> {
 
 #[cfg(test)]
 mod tests {
+    use super::*;
     use crate::tests::TZDB;
-    use crate::*;
     use chrono::Datelike;
 
     /// This tests invariants we rely on in our code
