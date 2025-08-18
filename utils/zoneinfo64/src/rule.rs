@@ -454,9 +454,12 @@ impl Rule<'_> {
     ///
     /// seconds_since_epoch must resolve to a year that is in-range for i32
     pub(crate) fn resolve_utc(&self, seconds_since_epoch: i64) -> Option<Offset> {
-        let year =
+        let Ok(year) =
             iso::iso_year_from_fixed(super::EPOCH + (seconds_since_epoch / SECONDS_IN_UTC_DAY))
-                .unwrap();
+        else {
+            // Pretend rule doesn't apply anymore after year i32::MAX 
+            return None;
+        };
 
         // No transition happens in a different UTC year, this is verified
         // in `test_rule_not_at_year_boundary`
