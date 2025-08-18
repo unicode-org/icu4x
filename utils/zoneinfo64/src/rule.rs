@@ -239,3 +239,61 @@ impl Rule<'_> {
         None
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use crate::tests::TZDB;
+    use crate::*;
+    use chrono::Datelike;
+
+    /// This tests invariants we rely on in our code
+    ///
+    /// These invariants not being upheld should never cause a panic, but can produce garbage behavior.
+    #[test]
+    fn test_rule_not_at_year_boundary() {
+        for chrono in chrono_tz::TZ_VARIANTS {
+            let iana = chrono.name();
+
+            let zoneinfo64 = TZDB.get(iana).unwrap();
+
+            if let Some(rule) = zoneinfo64.final_rule {
+                let final_offset = zoneinfo64.transition_offset_idx(i64::MAX);
+                let offset = zoneinfo64.transition_offset_at(final_offset);
+                let utc_datetime = chrono::DateTime::from_timestamp(offset.since, 0)
+                    .unwrap()
+                    .naive_utc();
+
+                assert!(
+                    utc_datetime.year() < rule.start_year as i32,
+                    "{iana}: Expected last transition to not be in rule year {} < {} \
+                    (invariant: last-transition-not-in-rule-year)",
+                    utc_datetime.year(),
+                    rule.start_year
+                );
+
+                let max_delta = (rule.standard_offset_seconds.abs()
+                    + rule.inner.additional_offset_secs.abs())
+                    as u32;
+                for date in [&rule.inner.start, &rule.inner.end] {
+                    let seconds_of_day = date.transition_time;
+                    if date.month == 0 && date.day == 1 {
+                        assert!(
+                            seconds_of_day > max_delta,
+                            "{iana}: Rule at beginning should not cross year boundary \
+                                 {seconds_of_day} > Δ{max_delta} \
+                                 (invariant: rule-stays-inside-year)"
+                        );
+                    }
+                    if date.month == 11 && date.day == 31 {
+                        assert!(
+                            seconds_of_day + max_delta < SECONDS_IN_UTC_DAY as u32,
+                            "{iana}: Rule at end of year should not cross year boundary \
+                                 {seconds_of_day} + Δ{max_delta} < 24h \
+                                 (invariant: rule-stays-inside-year)"
+                        );
+                    }
+                }
+            }
+        }
+    }
+}
