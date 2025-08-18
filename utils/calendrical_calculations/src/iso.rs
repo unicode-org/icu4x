@@ -25,24 +25,27 @@ pub const fn is_leap_year(year: i32) -> bool {
 pub const fn const_fixed_from_iso(year: i32, month: u8, day: u8) -> RataDie {
     let prev_year = (year as i64) - 1;
     // Calculate days per year
-    let mut fixed: i64 = (EPOCH.to_i64_date() - 1) + 365 * prev_year;
-    // Calculate leap year offset
-    let offset = prev_year.div_euclid(4) - prev_year.div_euclid(100) + prev_year.div_euclid(400);
+    let mut fixed: i64 = 365 * prev_year;
     // Adjust for leap year logic
-    fixed += offset;
+    fixed += prev_year.div_euclid(4) - prev_year.div_euclid(100) + prev_year.div_euclid(400);
     // Days of current year
-    fixed += (367 * (month as i64) - 362).div_euclid(12);
+    fixed += days_before_month(year, month) as i64;
+    // Days passed in current month
+    fixed += day as i64;
+    RataDie::new(fixed)
+}
+
+/// The number of days in this year before this month starts
+pub const fn days_before_month(year: i32, month: u8) -> u16 {
+    ((367 * (month as i64) - 362).div_euclid(12)
     // Leap year adjustment for the current year
-    fixed += if month <= 2 {
+    + if month <= 2 {
         0
     } else if is_leap_year(year) {
         -1
     } else {
         -2
-    };
-    // Days passed in current month
-    fixed += day as i64;
-    RataDie::new(fixed)
+    }) as u16
 }
 
 /// Non-const version of [`const_fixed_from_iso`]
