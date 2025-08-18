@@ -286,6 +286,9 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
         index: ZeroVec<'trie, u16>,
         data: ZeroVec<'trie, T>,
     ) -> Result<CodePointTrie<'trie, T>, Error> {
+        // SAFETY:
+        // `validate_fields` upholds the invariants for the fields that
+        // fast-path access without bound checks relies on.
         let error_value = Self::validate_fields(header.trie_type, &index, &data)?;
         let trie: CodePointTrie<'trie, T> = CodePointTrie {
             header,
@@ -296,6 +299,8 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
         Ok(trie)
     }
 
+    /// Checks the invariant on the fields that fast-path access relies on for
+    /// safety in order to omit slice bound checks.
     pub(crate) fn validate_fields(
         trie_type: TrieType,
         index: &ZeroSlice<u16>,

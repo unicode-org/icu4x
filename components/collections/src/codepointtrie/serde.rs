@@ -39,6 +39,9 @@ where
         D: Deserializer<'de>,
     {
         let de = CodePointTrieSerde::deserialize(deserializer)?;
+        // SAFETY:
+        // `validate_fields` upholds the invariants for the fields that
+        // fast-path access without bound checks relies on.
         let error_value = match CodePointTrie::validate_fields(
             de.header.trie_type,
             &de.index,
