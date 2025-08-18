@@ -2,13 +2,12 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use super::{Offset, PossibleOffset};
+use super::{Offset, PossibleOffset, EPOCH, SECONDS_IN_UTC_DAY};
 use calendrical_calculations::iso;
 use calendrical_calculations::rata_die::RataDie;
 use core::cmp::Ordering;
 use icu_time::zone::UtcOffset;
 
-const SECONDS_IN_UTC_DAY: i64 = 86400;
 
 #[derive(Debug, Clone, Copy)]
 pub(crate) struct Rule<'a> {
@@ -272,7 +271,7 @@ impl TzRuleDate {
         let day = day_before_year + self.day_in_year(year, day_before_year) as i64;
         let start_seconds =
             self.transition_time_to_utc(standard_offset_seconds, additional_offset_seconds);
-        day.since(super::EPOCH) * SECONDS_IN_UTC_DAY + i64::from(start_seconds)
+        day.since(EPOCH) * SECONDS_IN_UTC_DAY + i64::from(start_seconds)
     }
 
     /// Converts the {transition_time} into a time in the UTC day, in seconds
@@ -469,7 +468,7 @@ impl Rule<'_> {
     /// seconds_since_epoch must resolve to a year that is in-range for i32
     pub(crate) fn resolve_utc(&self, seconds_since_epoch: i64) -> Option<Offset> {
         let Ok(year) =
-            iso::iso_year_from_fixed(super::EPOCH + (seconds_since_epoch / SECONDS_IN_UTC_DAY))
+            iso::iso_year_from_fixed(EPOCH + (seconds_since_epoch / SECONDS_IN_UTC_DAY))
         else {
             // Pretend rule doesn't apply anymore after year i32::MAX
             return None;

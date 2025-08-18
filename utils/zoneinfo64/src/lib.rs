@@ -21,6 +21,7 @@ mod rule;
 use rule::*;
 
 const EPOCH: RataDie = calendrical_calculations::iso::const_fixed_from_iso(1970, 1, 1);
+const SECONDS_IN_UTC_DAY: i64 = 24 * 60 * 60;
 
 #[derive(Debug)]
 pub struct ZoneInfo64<'a> {
@@ -612,11 +613,12 @@ impl Zone<'_> {
 
         // If we have reached this point, the rule does not apply.
 
-        let seconds_since_local_epoch =
-            (day_before_year + day_in_year as i64 - EPOCH) * 24 * 60 * 60
-                + local_time_of_day as i64;
-
         // Pretend date time is UTC to get a candidate
+
+        let seconds_since_local_epoch = (day_before_year + day_in_year as i64 - EPOCH)
+            * SECONDS_IN_UTC_DAY
+            + local_time_of_day as i64;
+
         let idx = core::cmp::min(
             self.transition_offset_idx(seconds_since_local_epoch),
             self.simple.type_map.len() as isize - 1,
