@@ -47,7 +47,7 @@ pub const fn const_fixed_from_iso(year: i32, month: u8, day: u8) -> RataDie {
     RataDie::new(fixed)
 }
 
-/// The number of days in this year before this month starts
+/// The number of days in this year before this (1-indexed) month starts
 ///
 /// Inspired by Neri-Schneider <https://arxiv.org/abs/2102.06959>
 pub const fn days_before_month(year: i32, month: u8) -> u16 {

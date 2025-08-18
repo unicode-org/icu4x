@@ -611,7 +611,15 @@ impl Zone<'_> {
         if idx + 1 == self.simple.type_map.len() as isize {
             if let Some(rule) = self.final_rule {
                 // If rule applies, use it
-                if let Some(result) = rule.resolve_local(year, month, day, hour, minute, second) {
+                if let Some(result) = rule.resolve_local(
+                    year,
+                    month,
+                    day,
+                    hour,
+                    minute,
+                    second,
+                    seconds_since_local_epoch,
+                ) {
                     return result;
                 }
             }
@@ -830,20 +838,7 @@ mod tests {
 
             let zoneinfo64 = TZDB.get(iana).unwrap();
 
-            // Temporary cap until rules are implemented
-            let max_working_timestamp = if zoneinfo64.final_rule.is_some() {
-                zoneinfo64
-                    .simple
-                    .trans
-                    .len()
-                    .checked_sub(2)
-                    .map(|i| zoneinfo64.simple.trans[i])
-                    .unwrap_or(i32::MAX) as i64
-            } else {
-                FUTURE
-            };
-
-            for seconds_since_epoch in (PAST..max_working_timestamp).step_by(60 * 60) {
+            for seconds_since_epoch in (PAST..FUTURE).step_by(60 * 60) {
                 let utc_datetime = chrono::DateTime::from_timestamp(seconds_since_epoch, 0)
                     .unwrap()
                     .naive_utc();
