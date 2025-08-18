@@ -291,7 +291,11 @@ impl TzRuleDate {
         }
     }
 
-    /// Converts the {transition_time} into a time in the local day, in seconds
+    /// Converts the {transition_time} into a time (before the transition) in the local
+    /// day, in seconds
+    /// 
+    /// `additional_offset_seconds` is not necessarily `self.additional_offset_seconds`,
+    /// it might also be 0 if we're currently on standard time.
     fn transition_time_to_wall(
         &self,
         standard_offset_seconds: i32,
@@ -334,9 +338,9 @@ impl Rule<'_> {
             rule: &'a TzRuleDate,
             standard_offset_seconds: i32,
             additional_offset_seconds: i32,
-            // The correction that is applied after calculating the local time.
-            // This lets us distinguish before and after-transition local times.
-            correction: i32,
+            // `transition_time_to_wall` returns the local time for before the transition (the one
+            // that the clock will never reach). This is applied to get the time after the transition.
+            after_correction: i32,
         }
 
         impl PartialEq<LazyRuleEval<'_>> for SecondsInLocalYear {
@@ -352,7 +356,7 @@ impl Rule<'_> {
                 let rule_timestamp = rule.rule.transition_time_to_wall(
                     rule.standard_offset_seconds,
                     rule.additional_offset_seconds,
-                ) + rule.correction;
+                ) + rule.after_correction;
 
                 let rule_seconds_in_local_year =
                     rule_day_in_year as i64 * SECONDS_IN_UTC_DAY + rule_timestamp as i64;
@@ -367,7 +371,7 @@ impl Rule<'_> {
             rule: &self.inner.start,
             standard_offset_seconds: self.standard_offset_seconds,
             additional_offset_seconds: 0,
-            correction: 0,
+            after_correction: 0,
         };
 
         let after_start = LazyRuleEval {
@@ -376,7 +380,7 @@ impl Rule<'_> {
             rule: &self.inner.start,
             standard_offset_seconds: self.standard_offset_seconds,
             additional_offset_seconds: 0,
-            correction: self.inner.additional_offset_secs,
+            after_correction: self.inner.additional_offset_secs,
         };
 
         let before_end = LazyRuleEval {
@@ -385,7 +389,7 @@ impl Rule<'_> {
             rule: &self.inner.end,
             standard_offset_seconds: self.standard_offset_seconds,
             additional_offset_seconds: self.inner.additional_offset_secs,
-            correction: -self.inner.additional_offset_secs,
+            after_correction: -self.inner.additional_offset_secs,
         };
 
         let after_end = LazyRuleEval {
@@ -394,7 +398,7 @@ impl Rule<'_> {
             rule: &self.inner.end,
             standard_offset_seconds: self.standard_offset_seconds,
             additional_offset_seconds: self.inner.additional_offset_secs,
-            correction: 0,
+            after_correction: 0,
         };
 
         // The order of periods depends on both whether the rule is inverted (end before start),
