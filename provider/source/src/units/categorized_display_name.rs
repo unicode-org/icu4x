@@ -7,16 +7,23 @@ use std::collections::HashSet;
 use crate::cldr_serde::{self};
 use crate::SourceDataProvider;
 
-use icu::experimental::dimension::provider::units::categorized_display_name::CoreUnitsNameLengthV1;
+use cldr_serde::units::preferences::UnitType;
+use icu::experimental::dimension::provider::units::categorized_display_name::{
+    CoreUnitsNameLengthV1, CoreUnitsNameMassV1, ExtendedUnitsNameLengthV1, ExtendedUnitsNameMassV1,
+    OutlierUnitsNameLengthV1, OutlierUnitsNameMassV1,
+};
 use icu::experimental::dimension::provider::units::display_name::UnitsDisplayName;
 use icu::plurals::PluralElements;
 use icu_provider::prelude::*;
 use icu_provider::DataMarkerAttributes;
 
-fn get_display_name_payload(
+fn get_display_name_payload<M>(
     source_data_provider: &SourceDataProvider,
     req: DataRequest,
-) -> Result<DataResponse<CoreUnitsNameLengthV1>, DataError> {
+) -> Result<DataResponse<M>, DataError>
+where
+    M: DataMarker<DataStruct = UnitsDisplayName<'static>>,
+{
     let (length, unit) = req
         .id
         .marker_attributes
@@ -72,9 +79,10 @@ fn get_display_name_payload(
 
 fn get_display_name_iter_ids_cached(
     source_data_provider: &SourceDataProvider,
+    unit_type: UnitType,
+    category: &str,
 ) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
     let mut data_locales = HashSet::new();
-
     let numbers = source_data_provider.cldr()?.numbers();
     let locales = numbers.list_locales()?;
     for locale in locales {
@@ -109,33 +117,34 @@ fn get_display_name_iter_ids_cached(
                 }
             };
 
-            // TODO: category is not used for now, but will be used when we have categorized data markers.
-            for units_map in length_patterns.categories.values() {
-                for (unit, patterns) in units_map {
-                    if patterns.other.is_none() {
-                        continue;
-                    }
-
-                    if cldr_serde::units::preferences::Supplemental::unit_type(
-                        "length",
-                        unit,
-                        &region,
-                        &categorized_units_list,
-                    ) != cldr_serde::units::preferences::UnitType::Core
-                    {
-                        continue;
-                    }
-
-                    data_locales.insert(DataIdentifierCow::from_owned(
-                        DataMarkerAttributes::try_from_string(format!("{length}-{unit}")).map_err(
-                            |_| {
-                                DataError::custom("Failed to parse the attribute")
-                                    .with_debug_context(&unit)
-                            },
-                        )?,
-                        locale,
-                    ));
+            let units_map = length_patterns
+                .categories
+                .get(category)
+                .ok_or(DataError::custom("Category not found"))?;
+            for (unit, patterns) in units_map {
+                if patterns.other.is_none() {
+                    continue;
                 }
+
+                if cldr_serde::units::preferences::Supplemental::unit_type(
+                    category,
+                    unit,
+                    &region,
+                    &categorized_units_list,
+                ) != unit_type
+                {
+                    continue;
+                }
+
+                data_locales.insert(DataIdentifierCow::from_owned(
+                    DataMarkerAttributes::try_from_string(format!("{length}-{unit}")).map_err(
+                        |_| {
+                            DataError::custom("Failed to parse the attribute")
+                                .with_debug_context(&unit)
+                        },
+                    )?,
+                    locale,
+                ));
             }
         }
     }
@@ -143,15 +152,26 @@ fn get_display_name_iter_ids_cached(
     Ok(data_locales)
 }
 
-impl DataProvider<CoreUnitsNameLengthV1> for SourceDataProvider {
-    fn load(&self, req: DataRequest) -> Result<DataResponse<CoreUnitsNameLengthV1>, DataError> {
-        self.check_req::<CoreUnitsNameLengthV1>(req)?;
-        get_display_name_payload(self, req)
-    }
+macro_rules! impl_units_display_name_provider {
+    ($marker:ty, $unit_type:expr, $category:expr) => {
+        impl DataProvider<$marker> for SourceDataProvider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<$marker>, DataError> {
+                self.check_req::<$marker>(req)?;
+                get_display_name_payload::<$marker>(self, req)
+            }
+        }
+
+        impl crate::IterableDataProviderCached<$marker> for SourceDataProvider {
+            fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
+                get_display_name_iter_ids_cached(self, $unit_type, $category)
+            }
+        }
+    };
 }
 
-impl crate::IterableDataProviderCached<CoreUnitsNameLengthV1> for SourceDataProvider {
-    fn iter_ids_cached(&self) -> Result<HashSet<DataIdentifierCow<'static>>, DataError> {
-        get_display_name_iter_ids_cached(self)
-    }
-}
+impl_units_display_name_provider!(CoreUnitsNameLengthV1, UnitType::Core, "length");
+impl_units_display_name_provider!(ExtendedUnitsNameLengthV1, UnitType::Extended, "length");
+impl_units_display_name_provider!(OutlierUnitsNameLengthV1, UnitType::Outlier, "length");
+impl_units_display_name_provider!(CoreUnitsNameMassV1, UnitType::Core, "mass");
+impl_units_display_name_provider!(ExtendedUnitsNameMassV1, UnitType::Extended, "mass");
+impl_units_display_name_provider!(OutlierUnitsNameMassV1, UnitType::Outlier, "mass");
