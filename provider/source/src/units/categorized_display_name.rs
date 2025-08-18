@@ -9,8 +9,8 @@ use crate::SourceDataProvider;
 
 use cldr_serde::units::preferences::UnitType;
 use icu::experimental::dimension::provider::units::categorized_display_name::{
-    UnitsNameLengthCoreV1, UnitsNameMassCoreV1, UnitsNameLengthExtendedV1, UnitsNameMassExtendedV1,
-    UnitsNameLengthOutlierV1, UnitsNameMassOutlierV1,
+    UnitsNameLengthCoreV1, UnitsNameLengthExtendedV1, UnitsNameLengthOutlierV1,
+    UnitsNameMassCoreV1, UnitsNameMassExtendedV1, UnitsNameMassOutlierV1,
 };
 use icu::experimental::dimension::provider::units::display_name::UnitsDisplayName;
 use icu::plurals::PluralElements;
@@ -88,6 +88,7 @@ fn get_display_name_iter_ids_cached(
     for locale in locales {
         let region = match locale.region {
             Some(region) => region.to_string(),
+            // TODO: Replace with the most likely region for the language, not always "US".
             None => "US".to_string(),
         };
 
