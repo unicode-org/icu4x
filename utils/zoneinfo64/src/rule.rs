@@ -8,7 +8,6 @@ use calendrical_calculations::rata_die::RataDie;
 use core::cmp::Ordering;
 use icu_time::zone::UtcOffset;
 
-
 #[derive(Debug, Clone, Copy)]
 pub(crate) struct Rule<'a> {
     /// The year the rule starts applying
@@ -467,8 +466,7 @@ impl Rule<'_> {
     ///
     /// seconds_since_epoch must resolve to a year that is in-range for i32
     pub(crate) fn resolve_utc(&self, seconds_since_epoch: i64) -> Option<Offset> {
-        let Ok(year) =
-            iso::iso_year_from_fixed(EPOCH + (seconds_since_epoch / SECONDS_IN_UTC_DAY))
+        let Ok(year) = iso::iso_year_from_fixed(EPOCH + (seconds_since_epoch / SECONDS_IN_UTC_DAY))
         else {
             // Pretend rule doesn't apply anymore after year i32::MAX
             return None;
