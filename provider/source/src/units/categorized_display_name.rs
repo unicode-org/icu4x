@@ -9,8 +9,8 @@ use crate::SourceDataProvider;
 
 use cldr_serde::units::preferences::UnitType;
 use icu::experimental::dimension::provider::units::categorized_display_name::{
-    CoreUnitsNameLengthV1, CoreUnitsNameMassV1, ExtendedUnitsNameLengthV1, ExtendedUnitsNameMassV1,
-    OutlierUnitsNameLengthV1, OutlierUnitsNameMassV1,
+    UnitsNameLengthCoreV1, UnitsNameMassCoreV1, UnitsNameLengthExtendedV1, UnitsNameMassExtendedV1,
+    UnitsNameLengthOutlierV1, UnitsNameMassOutlierV1,
 };
 use icu::experimental::dimension::provider::units::display_name::UnitsDisplayName;
 use icu::plurals::PluralElements;
@@ -169,9 +169,9 @@ macro_rules! impl_units_display_name_provider {
     };
 }
 
-impl_units_display_name_provider!(CoreUnitsNameLengthV1, UnitType::Core, "length");
-impl_units_display_name_provider!(ExtendedUnitsNameLengthV1, UnitType::Extended, "length");
-impl_units_display_name_provider!(OutlierUnitsNameLengthV1, UnitType::Outlier, "length");
-impl_units_display_name_provider!(CoreUnitsNameMassV1, UnitType::Core, "mass");
-impl_units_display_name_provider!(ExtendedUnitsNameMassV1, UnitType::Extended, "mass");
-impl_units_display_name_provider!(OutlierUnitsNameMassV1, UnitType::Outlier, "mass");
+impl_units_display_name_provider!(UnitsNameLengthCoreV1, UnitType::Core, "length");
+impl_units_display_name_provider!(UnitsNameLengthExtendedV1, UnitType::Extended, "length");
+impl_units_display_name_provider!(UnitsNameLengthOutlierV1, UnitType::Outlier, "length");
+impl_units_display_name_provider!(UnitsNameMassCoreV1, UnitType::Core, "mass");
+impl_units_display_name_provider!(UnitsNameMassExtendedV1, UnitType::Extended, "mass");
+impl_units_display_name_provider!(UnitsNameMassOutlierV1, UnitType::Outlier, "mass");

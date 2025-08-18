@@ -6,7 +6,7 @@ use crate::dimension::provider::units::display_name::UnitsDisplayName;
 
 icu_provider::data_marker!(
     /// Display name for core length
-    CoreUnitsNameLengthV1,
+    UnitsNameLengthCoreV1,
     UnitsDisplayName<'static>,
     #[cfg(feature = "datagen")]
     attributes_domain = "units"
@@ -14,7 +14,7 @@ icu_provider::data_marker!(
 
 icu_provider::data_marker!(
     /// Display name for extended length
-    ExtendedUnitsNameLengthV1,
+    UnitsNameLengthExtendedV1,
     UnitsDisplayName<'static>,
     #[cfg(feature = "datagen")]
     attributes_domain = "units"
@@ -22,7 +22,7 @@ icu_provider::data_marker!(
 
 icu_provider::data_marker!(
     /// Display name for outlier length
-    OutlierUnitsNameLengthV1,
+    UnitsNameLengthOutlierV1,
     UnitsDisplayName<'static>,
     #[cfg(feature = "datagen")]
     attributes_domain = "units"
@@ -30,7 +30,7 @@ icu_provider::data_marker!(
 
 icu_provider::data_marker!(
     /// Display name for core mass
-    CoreUnitsNameMassV1,
+    UnitsNameMassCoreV1,
     UnitsDisplayName<'static>,
     #[cfg(feature = "datagen")]
     attributes_domain = "units"
@@ -38,7 +38,7 @@ icu_provider::data_marker!(
 
 icu_provider::data_marker!(
     /// Display name for extended mass
-    ExtendedUnitsNameMassV1,
+    UnitsNameMassExtendedV1,
     UnitsDisplayName<'static>,
     #[cfg(feature = "datagen")]
     attributes_domain = "units"
@@ -46,7 +46,7 @@ icu_provider::data_marker!(
 
 icu_provider::data_marker!(
     /// Display name for outlier mass
-    OutlierUnitsNameMassV1,
+    UnitsNameMassOutlierV1,
     UnitsDisplayName<'static>,
     #[cfg(feature = "datagen")]
     attributes_domain = "units"

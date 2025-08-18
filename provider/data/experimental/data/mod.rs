@@ -10,15 +10,17 @@ include!("currency_displayname_v1.rs.data");
 include!("long_minute_relative_v1.rs.data");
 include!("currency_patterns_data_v1.rs.data");
 include!("long_quarter_relative_v1.rs.data");
+include!("units_name_length_extended_v1.rs.data");
 include!("short_month_relative_v1.rs.data");
+include!("units_name_mass_extended_v1.rs.data");
 include!("currency_extended_data_v1.rs.data");
-include!("core_units_name_mass_v1.rs.data");
+include!("units_name_mass_outlier_v1.rs.data");
+include!("units_name_length_outlier_v1.rs.data");
 include!("short_compact_decimal_format_data_v1.rs.data");
-include!("extended_units_name_length_v1.rs.data");
 include!("narrow_hour_relative_v1.rs.data");
 include!("long_compact_decimal_format_data_v1.rs.data");
+include!("units_name_mass_core_v1.rs.data");
 include!("narrow_week_relative_v1.rs.data");
-include!("outlier_units_name_mass_v1.rs.data");
 include!("narrow_second_relative_v1.rs.data");
 include!("long_week_relative_v1.rs.data");
 include!("unit_ids_v1.rs.data");
@@ -44,11 +46,9 @@ include!("narrow_quarter_relative_v1.rs.data");
 include!("script_display_names_v1.rs.data");
 include!("narrow_minute_relative_v1.rs.data");
 include!("digital_duration_data_v1.rs.data");
-include!("core_units_name_length_v1.rs.data");
+include!("units_name_length_core_v1.rs.data");
 include!("units_info_v1.rs.data");
 include!("narrow_year_relative_v1.rs.data");
-include!("extended_units_name_mass_v1.rs.data");
-include!("outlier_units_name_length_v1.rs.data");
 /// Marks a type as a data provider. You can then use macros like
 /// `impl_core_helloworld_v1` to add implementations.
 ///
@@ -96,15 +96,17 @@ macro_rules! impl_data_provider {
         impl_long_minute_relative_v1!($provider);
         impl_currency_patterns_data_v1!($provider);
         impl_long_quarter_relative_v1!($provider);
+        impl_units_name_length_extended_v1!($provider);
         impl_short_month_relative_v1!($provider);
+        impl_units_name_mass_extended_v1!($provider);
         impl_currency_extended_data_v1!($provider);
-        impl_core_units_name_mass_v1!($provider);
+        impl_units_name_mass_outlier_v1!($provider);
+        impl_units_name_length_outlier_v1!($provider);
         impl_short_compact_decimal_format_data_v1!($provider);
-        impl_extended_units_name_length_v1!($provider);
         impl_narrow_hour_relative_v1!($provider);
         impl_long_compact_decimal_format_data_v1!($provider);
+        impl_units_name_mass_core_v1!($provider);
         impl_narrow_week_relative_v1!($provider);
-        impl_outlier_units_name_mass_v1!($provider);
         impl_narrow_second_relative_v1!($provider);
         impl_long_week_relative_v1!($provider);
         impl_unit_ids_v1!($provider);
@@ -130,10 +132,8 @@ macro_rules! impl_data_provider {
         impl_script_display_names_v1!($provider);
         impl_narrow_minute_relative_v1!($provider);
         impl_digital_duration_data_v1!($provider);
-        impl_core_units_name_length_v1!($provider);
+        impl_units_name_length_core_v1!($provider);
         impl_units_info_v1!($provider);
         impl_narrow_year_relative_v1!($provider);
-        impl_extended_units_name_mass_v1!($provider);
-        impl_outlier_units_name_length_v1!($provider);
     };
 }

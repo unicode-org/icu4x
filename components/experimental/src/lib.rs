@@ -53,12 +53,12 @@ pub mod provider {
         impl_currency_patterns_data_v1!(Baked);
         impl_currency_extended_data_v1!(Baked);
         impl_units_display_name_v1!(Baked);
-        impl_core_units_name_length_v1!(Baked);
-        impl_extended_units_name_length_v1!(Baked);
-        impl_outlier_units_name_length_v1!(Baked);
-        impl_core_units_name_mass_v1!(Baked);
-        impl_extended_units_name_mass_v1!(Baked);
-        impl_outlier_units_name_mass_v1!(Baked);
+        impl_units_name_length_core_v1!(Baked);
+        impl_units_name_length_extended_v1!(Baked);
+        impl_units_name_length_outlier_v1!(Baked);
+        impl_units_name_mass_core_v1!(Baked);
+        impl_units_name_mass_extended_v1!(Baked);
+        impl_units_name_mass_outlier_v1!(Baked);
         impl_units_essentials_v1!(Baked);
         impl_language_display_names_v1!(Baked);
         impl_digital_duration_data_v1!(Baked);
@@ -115,12 +115,12 @@ pub mod provider {
         super::dimension::provider::percent::PercentEssentialsV1::INFO,
         super::dimension::provider::units::essentials::UnitsEssentialsV1::INFO,
         super::dimension::provider::units::display_name::UnitsDisplayNameV1::INFO,
-        super::dimension::provider::units::categorized_display_name::CoreUnitsNameLengthV1::INFO,
-        super::dimension::provider::units::categorized_display_name::ExtendedUnitsNameLengthV1::INFO,
-        super::dimension::provider::units::categorized_display_name::OutlierUnitsNameLengthV1::INFO,
-        super::dimension::provider::units::categorized_display_name::CoreUnitsNameMassV1::INFO,
-        super::dimension::provider::units::categorized_display_name::ExtendedUnitsNameMassV1::INFO,
-        super::dimension::provider::units::categorized_display_name::OutlierUnitsNameMassV1::INFO,
+        super::dimension::provider::units::categorized_display_name::UnitsNameLengthCoreV1::INFO,
+        super::dimension::provider::units::categorized_display_name::UnitsNameLengthExtendedV1::INFO,
+        super::dimension::provider::units::categorized_display_name::UnitsNameLengthOutlierV1::INFO,
+        super::dimension::provider::units::categorized_display_name::UnitsNameMassCoreV1::INFO,
+        super::dimension::provider::units::categorized_display_name::UnitsNameMassExtendedV1::INFO,
+        super::dimension::provider::units::categorized_display_name::UnitsNameMassOutlierV1::INFO,
         super::displaynames::provider::LanguageDisplayNamesV1::INFO,
         super::duration::provider::DigitalDurationDataV1::INFO,
         super::displaynames::provider::LocaleDisplayNamesV1::INFO,
