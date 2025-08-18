@@ -14,8 +14,15 @@ use crate::rata_die::RataDie;
 const EPOCH: RataDie = RataDie::new(1);
 
 /// Whether or not `year` is a leap year
+///
+/// Inspired by Neri-Schneider <https://arxiv.org/abs/2102.06959>
 pub const fn is_leap_year(year: i32) -> bool {
-    year % 4 == 0 && (year % 400 == 0 || year % 100 != 0)
+    // This is branch-free, as it compiles to a conditional move
+    if year % 100 != 0 {
+        year % 4 == 0
+    } else {
+        year % 16 == 0
+    }
 }
 
 // Fixed is day count representation of calendars starting from Jan 1st of year 1.
@@ -25,24 +32,35 @@ pub const fn is_leap_year(year: i32) -> bool {
 pub const fn const_fixed_from_iso(year: i32, month: u8, day: u8) -> RataDie {
     let prev_year = (year as i64) - 1;
     // Calculate days per year
-    let mut fixed: i64 = (EPOCH.to_i64_date() - 1) + 365 * prev_year;
-    // Calculate leap year offset
-    let offset = prev_year.div_euclid(4) - prev_year.div_euclid(100) + prev_year.div_euclid(400);
-    // Adjust for leap year logic
-    fixed += offset;
+    let mut fixed: i64 = 365 * prev_year;
+    // Adjust for leap year logic. We can avoid the branch of div_euclid by making prev_year positive:
+    // YEAR_SHIFT is larger (in magnitude) than any prev_year, and, being divisible by 400,
+    // distributes correctly over the calculation on the next line.
+    const YEAR_SHIFT: i64 = (-(i32::MIN as i64 - 1) / 400 + 1) * 400;
+    fixed += (prev_year + YEAR_SHIFT) / 4 - (prev_year + YEAR_SHIFT) / 100
+        + (prev_year + YEAR_SHIFT) / 400
+        - const { YEAR_SHIFT / 4 - YEAR_SHIFT / 100 + YEAR_SHIFT / 400 };
     // Days of current year
-    fixed += (367 * (month as i64) - 362).div_euclid(12);
-    // Leap year adjustment for the current year
-    fixed += if month <= 2 {
-        0
-    } else if is_leap_year(year) {
-        -1
-    } else {
-        -2
-    };
+    fixed += days_before_month(year, month) as i64;
     // Days passed in current month
     fixed += day as i64;
     RataDie::new(fixed)
+}
+
+/// The number of days in this year before this month starts
+///
+/// Inspired by Neri-Schneider <https://arxiv.org/abs/2102.06959>
+pub const fn days_before_month(year: i32, month: u8) -> u16 {
+    if month < 3 {
+        // This compiles to a conditional move, so there's only one branch in this function
+        if month == 1 {
+            0
+        } else {
+            31
+        }
+    } else {
+        31 + 28 + is_leap_year(year) as u16 + ((979 * (month as u32) - 2919) >> 5) as u16
+    }
 }
 
 /// Non-const version of [`const_fixed_from_iso`]
@@ -59,12 +77,12 @@ pub(crate) const fn iso_year_from_fixed(date: RataDie) -> i64 {
     let (n_400, date) = (date.div_euclid(146097), date.rem_euclid(146097));
 
     // 100 year cycles have 36524 days
-    let (n_100, date) = (date.div_euclid(36524), date.rem_euclid(36524));
+    let (n_100, date) = (date / 36524, date % 36524);
 
     // 4 year cycles have 1461 days
-    let (n_4, date) = (date.div_euclid(1461), date.rem_euclid(1461));
+    let (n_4, date) = (date / 1461, date % 1461);
 
-    let n_1 = date.div_euclid(365);
+    let n_1 = date / 365;
 
     let year = 400 * n_400 + 100 * n_100 + 4 * n_4 + n_1;
 
@@ -92,7 +110,7 @@ pub fn iso_from_fixed(date: RataDie) -> Result<(i32, u8, u8), I32CastError> {
     } else {
         2
     };
-    let month = (12 * (prior_days + correction) + 373).div_euclid(367) as u8; // in 1..12 < u8::MAX
+    let month = ((12 * (prior_days + correction) + 373) / 367) as u8; // in 1..12 < u8::MAX
     let day = (date - fixed_from_iso(year, month, 1) + 1) as u8; // <= days_in_month < u8::MAX
     Ok((year, month, day))
 }

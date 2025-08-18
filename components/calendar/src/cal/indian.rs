@@ -49,11 +49,7 @@ impl CalendarArithmetic for Indian {
 
     fn days_in_provided_month(year: i32, month: u8) -> u8 {
         if month == 1 {
-            if Self::provided_year_is_leap(year) {
-                31
-            } else {
-                30
-            }
+            30 + Self::provided_year_is_leap(year) as u8
         } else if (2..=6).contains(&month) {
             31
         } else if (7..=12).contains(&month) {
@@ -68,7 +64,7 @@ impl CalendarArithmetic for Indian {
     }
 
     fn provided_year_is_leap(year: i32) -> bool {
-        Iso::provided_year_is_leap(year + 78)
+        calendrical_calculations::iso::is_leap_year(year + YEAR_OFFSET)
     }
 
     fn last_month_day_in_provided_year(_year: i32) -> (u8, u8) {
@@ -119,7 +115,9 @@ impl Calendar for Indian {
     // Algorithms directly implemented in icu_calendar since they're not from the book
     fn from_iso(&self, iso: IsoDateInner) -> IndianDateInner {
         // Get day number in year (1 indexed)
-        let day_of_year_iso = Iso::day_of_year(iso);
+        let day_of_year_iso =
+            calendrical_calculations::iso::days_before_month(iso.0.year, iso.0.month)
+                + iso.0.day as u16;
         // Convert to Śaka year
         let mut year = iso.0.year - YEAR_OFFSET;
         // This is in the previous Indian year
@@ -152,7 +150,11 @@ impl Calendar for Indian {
         } else {
             day_of_year_indian + DAY_OFFSET
         };
-        Iso::iso_from_year_day(year, day_of_year_iso)
+
+        IsoDateInner(ArithmeticDate::date_from_year_day(
+            year,
+            day_of_year_iso as u32,
+        ))
     }
 
     fn months_in_year(&self, date: &Self::DateInner) -> u8 {
