@@ -185,7 +185,7 @@ pub fn saudi_islamic_month_days(year: i32, month: u8) -> u8 {
 
     let diff = next_month_start - month_start;
     debug_assert!(
-        diff <= 30,
+        diff <= 30 || !month_start.in_well_behaved_astronomical_range(),
         "umm-al-qura months must not be more than 30 days"
     );
     u8::try_from(diff).unwrap_or(30)

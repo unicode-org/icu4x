@@ -53,6 +53,23 @@ impl RataDie {
         }
     }
 
+    /// See <https://github.com/tc39/proposal-temporal/issues/2869>,
+    /// <https://github.com/unicode-org/icu4x/issues/5778>.
+    ///
+    /// Until we have proleptic approximations of astronomical calendars,
+    /// going too far out of range risks the mathematics starting to misbehave.
+    ///
+    /// We don't wish to trigger debug assertions in these cases.
+    ///
+    /// Temporal's maximum range is roughly ±237k years, which is quite large.
+    /// We pick ±10k as a reasonable amount of time for users, giving plenty of space
+    /// without going too deep in the zone where dates misbehave.
+    ///
+    /// See also: <https://github.com/unicode-org/icu4x/issues/4917>
+    pub(crate) fn in_well_behaved_astronomical_range(self) -> bool {
+        self.0 > 365 * -10_000 && self.0 < 365 * 10_000
+    } 
+
     /// A valid `RataDie` that is intended to be below all dates representable in calendars
     #[doc(hidden)] // for testing only
     pub const fn big_negative() -> Self {
