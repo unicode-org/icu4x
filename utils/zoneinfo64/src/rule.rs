@@ -2,7 +2,9 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use super::{Offset, PossibleOffset, SECONDS_IN_UTC_DAY};
+use super::{Offset, PossibleOffset, EPOCH, SECONDS_IN_UTC_DAY};
+use calendrical_calculations::iso;
+use calendrical_calculations::rata_die::RataDie;
 
 #[derive(Debug, Clone, Copy)]
 pub(crate) struct Rule<'a> {
@@ -227,8 +229,36 @@ impl Rule<'_> {
         PossibleOffset::None
     }
 
-    pub(crate) fn resolve_utc(&self, _year: i32, _seconds_since_epoch: i64) -> Offset {
+    /// Get the offset matching to a timestamp given in UTC time.
+    ///
+    /// Returns None if the seconds_since_epoch is not in range of the Rule.
+    ///
+    /// seconds_since_epoch must resolve to a year that is in-range for i32
+    pub(crate) fn resolve_utc(&self, seconds_since_epoch: i64) -> Option<Offset> {
+        let rd = rd_for_seconds(seconds_since_epoch);
+        let ymd = iso::iso_from_fixed(rd);
+        debug_assert!(ymd.is_ok());
+        let Ok((year, _, _)) = ymd else {
+            // GIGO behavior for out of range dates
+            return Default::default();
+        };
+
+        if year < self.start_year as i32 {
+            // We are before the rule year, return None
+            return None;
+        }
+
+        // The rule applies, use it
+        //
+        // Invariant used: last-transition-not-in-rule-year
+
         // Unimplemented
-        Default::default()
+        None
     }
+}
+
+/// Convert a value of seconds since the epoch to a Rata Die.
+fn rd_for_seconds(seconds_since_epoch: i64) -> RataDie {
+    let days = seconds_since_epoch / SECONDS_IN_UTC_DAY;
+    EPOCH + days
 }

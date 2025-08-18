@@ -6,7 +6,6 @@
 
 use std::{fmt::Debug, marker::PhantomData};
 
-use calendrical_calculations::iso;
 use calendrical_calculations::rata_die::RataDie;
 use potential_utf::PotentialUtf16;
 use resb::binary::BinaryDeserializerError;
@@ -728,18 +727,8 @@ impl Zone<'_> {
         // against the rule
         if idx + 1 >= self.simple.type_map.len() as isize {
             if let Some(rule) = self.final_rule {
-                let rd = rd_for_seconds(seconds_since_epoch);
-                let ymd = iso::iso_from_fixed(rd);
-                debug_assert!(ymd.is_ok());
-                let Ok((year, _, _)) = ymd else {
-                    // GIGO behavior for out of range dates
-                    return Default::default();
-                };
-                // If rule applies, use it
-                //
-                // Invariant used: last-transition-not-in-rule-year
-                if year >= rule.start_year as i32 {
-                    return rule.resolve_utc(year, seconds_since_epoch);
+                if let Some(resolved) = rule.resolve_utc(seconds_since_epoch) {
+                    return resolved;
                 }
             }
             // Rule doesn't apply, use the last index instead
@@ -747,12 +736,6 @@ impl Zone<'_> {
         }
         self.transition_offset_at(idx).into()
     }
-}
-
-/// Convert a value of seconds since the epoch to a Rata Die.
-fn rd_for_seconds(seconds_since_epoch: i64) -> RataDie {
-    let days = seconds_since_epoch / SECONDS_IN_UTC_DAY;
-    EPOCH + days
 }
 
 #[cfg(test)]
