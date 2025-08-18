@@ -645,52 +645,52 @@ impl Zone<'_> {
             idx = self.simple.type_map.len() as isize - 1;
         }
 
-        let candidate = self.transition_offset_at(idx);
-        let before_candidate = self.transition_offset_at(idx - 1);
-        let after_candidate = if idx + 1 >= self.simple.type_map.len() as isize {
-            // If out of range, just constrain to candidate
-            candidate
+        let first_candidate = self.transition_offset_at(idx);
+        let before_first_candidate = self.transition_offset_at(idx - 1);
+        let second_candidate = if idx + 1 >= self.simple.type_map.len() as isize {
+            // If out of range, just constrain to first_candidate
+            first_candidate
         } else {
             self.transition_offset_at(idx + 1)
         };
 
-        let before_candidate_local_until = candidate
+        let first_candidate_wall_prev = first_candidate
             .since
-            .saturating_add(before_candidate.offset.to_seconds() as i64);
+            .saturating_add(before_first_candidate.offset.to_seconds() as i64);
 
-        let candidate_local_since = candidate
+        let first_candidate_wall_next = first_candidate
             .since
-            .saturating_add(candidate.offset.to_seconds() as i64);
-        let candidate_local_until = after_candidate
+            .saturating_add(first_candidate.offset.to_seconds() as i64);
+        let second_candidate_wall_prev = second_candidate
             .since
-            .saturating_add(candidate.offset.to_seconds() as i64);
+            .saturating_add(first_candidate.offset.to_seconds() as i64);
 
-        let after_candidate_local_since = after_candidate
+        let second_candidate_wall_next = second_candidate
             .since
-            .saturating_add(after_candidate.offset.to_seconds() as i64);
+            .saturating_add(second_candidate.offset.to_seconds() as i64);
 
-        if seconds_since_local_epoch < before_candidate_local_until
-            && seconds_since_local_epoch >= candidate_local_since
-            && before_candidate != candidate
+        if seconds_since_local_epoch < first_candidate_wall_prev
+            && seconds_since_local_epoch >= first_candidate_wall_next
+            && before_first_candidate != first_candidate
         {
-            return PossibleOffset::Ambiguous(before_candidate.into(), candidate.into());
+            return PossibleOffset::Ambiguous(before_first_candidate.into(), first_candidate.into());
         }
 
-        if seconds_since_local_epoch < candidate_local_until
-            && seconds_since_local_epoch >= after_candidate_local_since
-            && candidate != after_candidate
+        if seconds_since_local_epoch < second_candidate_wall_prev
+            && seconds_since_local_epoch >= second_candidate_wall_next
+            && first_candidate != second_candidate
         {
-            return PossibleOffset::Ambiguous(candidate.into(), after_candidate.into());
+            return PossibleOffset::Ambiguous(first_candidate.into(), second_candidate.into());
         }
 
-        if seconds_since_local_epoch < before_candidate_local_until {
-            return PossibleOffset::Single(before_candidate.into());
+        if seconds_since_local_epoch < first_candidate_wall_prev {
+            return PossibleOffset::Single(before_first_candidate.into());
         }
-        if seconds_since_local_epoch < candidate_local_until {
-            return PossibleOffset::Single(candidate.into());
+        if seconds_since_local_epoch < second_candidate_wall_prev {
+            return PossibleOffset::Single(first_candidate.into());
         }
-        if seconds_since_local_epoch >= after_candidate_local_since {
-            return PossibleOffset::Single(after_candidate.into());
+        if seconds_since_local_epoch >= second_candidate_wall_next {
+            return PossibleOffset::Single(second_candidate.into());
         }
 
         PossibleOffset::None
