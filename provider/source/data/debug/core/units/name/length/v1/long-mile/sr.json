@@ -1,0 +1,26 @@
+{
+  "patterns": {
+    "few": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " миље"
+        }
+      ]
+    ],
+    "other": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " миља"
+        }
+      ]
+    ]
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "patterns": {
+    "one": [
+      0,
+      [
+        {
+          "Literal": "ميل"
+        }
+      ]
+    ],
+    "other": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " ميل"
+        }
+      ]
+    ]
+  }
+}

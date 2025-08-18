@@ -259,6 +259,7 @@ macro_rules! registry(
             icu::experimental::dimension::provider::currency::extended::CurrencyExtendedDataV1: CurrencyExtendedDataV1,
             icu::experimental::dimension::provider::percent::PercentEssentialsV1: PercentEssentialsV1,
             icu::experimental::dimension::provider::units::display_name::UnitsDisplayNameV1: UnitsDisplayNameV1,
+            icu::experimental::dimension::provider::units::categorized_display_name::CoreUnitsNameLengthV1: CoreUnitsNameLengthV1,
             icu::experimental::dimension::provider::units::essentials::UnitsEssentialsV1: UnitsEssentialsV1,
             icu::experimental::duration::provider::DigitalDurationDataV1: DigitalDurationDataV1,
             icu::experimental::displaynames::provider::RegionDisplayNamesV1: RegionDisplayNamesV1,

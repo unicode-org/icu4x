@@ -1,0 +1,53 @@
+{
+  "patterns": {
+    "one": [
+      0,
+      [
+        {
+          "Literal": "ميل"
+        }
+      ]
+    ],
+    "two": [
+      0,
+      [
+        {
+          "Literal": "ميلان"
+        }
+      ]
+    ],
+    "few": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " أميال"
+        }
+      ]
+    ],
+    "many": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " ميلاً"
+        }
+      ]
+    ],
+    "other": [
+      0,
+      [
+        {
+          "Placeholder": "Singleton"
+        },
+        {
+          "Literal": " ميل"
+        }
+      ]
+    ]
+  }
+}
