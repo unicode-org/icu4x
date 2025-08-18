@@ -15,10 +15,10 @@ const EPOCH: RataDie = RataDie::new(1);
 
 /// Whether or not `year` is a leap year
 ///
-/// Inspired by Neri-Schneider <https://arxiv.org/abs/2102.06959>
+/// Inspired by Neri-Schneider <https://www.youtube.com/watch?v=J9KijLyP-yg&t=1239s>
 pub const fn is_leap_year(year: i32) -> bool {
     // This is branch-free, as it compiles to a conditional move
-    if year % 100 != 0 {
+    if year % 25 != 0 {
         year % 4 == 0
     } else {
         year % 16 == 0
@@ -49,7 +49,7 @@ pub const fn const_fixed_from_iso(year: i32, month: u8, day: u8) -> RataDie {
 
 /// The number of days in this year before this month starts
 ///
-/// Inspired by Neri-Schneider <https://arxiv.org/abs/2102.06959>
+/// Inspired by Neri-Schneider <https://onlinelibrary.wiley.com/doi/10.1002/spe.3172>
 pub const fn days_before_month(year: i32, month: u8) -> u16 {
     if month < 3 {
         // This compiles to a conditional move, so there's only one branch in this function
