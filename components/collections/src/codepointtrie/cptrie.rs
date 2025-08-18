@@ -141,6 +141,8 @@ pub struct CodePointTrie<'trie, T: TrieValue> {
     /// than `FAST_TYPE_FAST_INDEXING_MAX`. Otherwise, `index.len()`
     /// must be greater than `SMALL_TYPE_FAST_INDEXING_MAX`.
     pub(crate) index: ZeroVec<'trie, u16>,
+    /// # Safety Invariant
+    ///
     /// If `header.trie_type == TrieType::Fast`, `data.len()` must be greater
     /// than `FAST_TYPE_DATA_MASK` plus the largest value in
     /// `index[0..FAST_TYPE_FAST_INDEXING_MAX + 1]`. Otherwise, `data.len()`
