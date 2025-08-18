@@ -39,9 +39,7 @@ where
         D: Deserializer<'de>,
     {
         let de = CodePointTrieSerde::deserialize(deserializer)?;
-        let error_value = de.data.last().ok_or_else(|| {
-            D::Error::custom("CodePointTrie vector must have at least one element")
-        })?;
+        let error_value = CodePointTrie::validate_fields(de.header.trie_type, de.index, de.data)?;
         Ok(CodePointTrie {
             header: de.header,
             index: de.index,

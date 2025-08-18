@@ -20,6 +20,7 @@ use zerofrom::ZeroFrom;
 use zerovec::ule::AsULE;
 #[cfg(feature = "alloc")]
 use zerovec::ule::UleError;
+use zerovec::ZeroSlice;
 use zerovec::ZeroVec;
 
 /// The type of trie represents whether the trie has an optimization that
@@ -130,8 +131,21 @@ fn maybe_filter_value<T: TrieValue>(value: T, trie_null_value: T, null_value: T)
 // serde impls in crate::serde
 #[derive(Debug, Eq, PartialEq, Yokeable, ZeroFrom)]
 pub struct CodePointTrie<'trie, T: TrieValue> {
+    /// # Safety Invariant
+    ///
+    /// The value of `header.trie_type` must not change after construction.
     pub(crate) header: CodePointTrieHeader,
+    /// # Safety Invariant
+    ///
+    /// If `header.trie_type == TrieType::Fast`, `index.len()` must be greater
+    /// than `FAST_TYPE_FAST_INDEXING_MAX`. Otherwise, `index.len()`
+    /// must be greater than `SMALL_TYPE_FAST_INDEXING_MAX`.
     pub(crate) index: ZeroVec<'trie, u16>,
+    /// If `header.trie_type == TrieType::Fast`, `data.len()` must be greater
+    /// than `FAST_TYPE_DATA_MASK` plus the largest value in
+    /// `index[0..FAST_TYPE_FAST_INDEXING_MAX + 1]`. Otherwise, `data.len()`
+    /// must be greater than `FAST_TYPE_DATA_MASK` plus the largest value in
+    /// `index[0..SMALL_TYPE_FAST_INDEXING_MAX + 1]`.
     pub(crate) data: ZeroVec<'trie, T>,
     // serde impl skips this field
     #[zerofrom(clone)] // TrieValue is Copy, this allows us to avoid
@@ -140,6 +154,13 @@ pub struct CodePointTrie<'trie, T: TrieValue> {
 }
 
 /// This struct contains the fixed-length header fields of a [`CodePointTrie`].
+///
+/// # Safety Invariant
+///
+/// The `trie_type` field must not change after construction.
+///
+/// (In practice, all the fields here remain unchanged during the lifetime
+/// of the trie.)
 #[cfg_attr(feature = "serde", derive(serde::Deserialize, serde::Serialize))]
 #[cfg_attr(feature = "databake", derive(databake::Bake))]
 #[cfg_attr(feature = "databake", databake(path = icu_collections::codepointtrie))]
@@ -174,6 +195,10 @@ pub struct CodePointTrieHeader {
     pub null_value: u32,
     /// The enum value representing the type of trie, where trie type is as it
     /// is defined in ICU (ex: Fast, Small).
+    ///
+    /// # Safety Invariant
+    ///
+    /// Must not change after construction.
     pub trie_type: TrieType,
 }
 
@@ -237,6 +262,9 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
     ///
     /// Unsafe, because the length invariants on the
     /// `ZeroVec`s are not checked.
+    ///
+    /// Data must have been generated with matching
+    /// ICU4X minor version's datagen.
     pub const fn from_parts_unchecked(
         header: CodePointTrieHeader,
         index: ZeroVec<'trie, u16>,
@@ -258,6 +286,21 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
         index: ZeroVec<'trie, u16>,
         data: ZeroVec<'trie, T>,
     ) -> Result<CodePointTrie<'trie, T>, Error> {
+        let error_value = Self::validate_fields(header.trie_type, &index, &data)?;
+        let trie: CodePointTrie<'trie, T> = CodePointTrie {
+            header,
+            index,
+            data,
+            error_value,
+        };
+        Ok(trie)
+    }
+
+    pub(crate) fn validate_fields(
+        trie_type: TrieType,
+        index: &ZeroSlice<u16>,
+        data: &ZeroSlice<T>,
+    ) -> Result<T, Error> {
         let error_value = data.last().ok_or(Error::EmptyDataVector)?;
 
         // `CodePointTrie` lookup has two stages: fast and small (the trie types
@@ -288,7 +331,7 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
         // The maximum possible bit prefix depends on the trie type.
 
         // The maximum code point that can be used for fast-path access:
-        let fast_max = match header.trie_type {
+        let fast_max = match trie_type {
             TrieType::Fast => FAST_TYPE_FAST_INDEXING_MAX,
             TrieType::Small => SMALL_TYPE_FAST_INDEXING_MAX,
         };
@@ -315,14 +358,7 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
         if (max_offset) as usize + (FAST_TYPE_DATA_MASK as usize) >= data.len() {
             return Err(Error::DataTooShortForFastAccess);
         }
-
-        let trie: CodePointTrie<'trie, T> = CodePointTrie {
-            header,
-            index,
-            data,
-            error_value,
-        };
-        Ok(trie)
+        Ok(error_value)
     }
 
     /// Returns the position in the data array containing the trie's stored
