@@ -611,7 +611,7 @@ impl Zone<'_> {
         // Note that transition_offset_idx returns in-bounds values or -1,
         // so we can't check if it's out of bounds, we need to check if it's the last
         // element
-        if idx + 1 >= self.simple.type_map.len() as isize {
+        if idx + 1 == self.simple.type_map.len() as isize {
             if let Some(rule) = self.final_rule {
                 // If rule applies, use it
                 if let Some(result) = rule.resolve_local(year, month, day, hour, minute, second) {
@@ -637,7 +637,7 @@ impl Zone<'_> {
         // wall times overlapping (invariant: transition-local-times-do-not-overlap)
         let first_candidate = self.transition_offset_at(idx);
 
-        let second_candidate = if idx + 1 >= self.simple.type_map.len() as isize {
+        let second_candidate = if idx + 1 == self.simple.type_map.len() as isize {
             // If out of range, just constrain to first_candidate
             first_candidate
         } else {
