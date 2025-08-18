@@ -401,10 +401,6 @@ impl Rule<'_> {
             after_correction: 0,
         };
 
-        // The order of periods depends on both whether the rule is inverted (end before start),
-        // and whether the rule offset is positive or negative. Currently zoneinfo64 only contains
-        // positive rules.
-
         let standard_offset = Offset {
             offset: UtcOffset::from_seconds_unchecked(self.standard_offset_seconds),
             rule_applies: false,
@@ -415,6 +411,10 @@ impl Rule<'_> {
             ),
             rule_applies: true,
         };
+
+        // The order of periods depends on both whether the rule is inverted (end before start),
+        // and whether the rule offset is positive or negative. Currently zoneinfo64 only contains
+        // positive rules.
 
         #[allow(clippy::collapsible_else_if)] // symmetry
         if !self.inner.end_before_start() {
