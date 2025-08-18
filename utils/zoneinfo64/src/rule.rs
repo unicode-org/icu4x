@@ -518,10 +518,10 @@ impl Rule<'_> {
                 second.1,
             )
         {
-            return Some(Offset {
+            Some(Offset {
                 offset: UtcOffset::from_seconds_unchecked(self.standard_offset_seconds + second.1),
                 rule_applies: second.1 != 0,
-            });
+            })
         } else {
             Some(Offset {
                 offset: UtcOffset::from_seconds_unchecked(self.standard_offset_seconds + first.1),
