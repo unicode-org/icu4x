@@ -419,21 +419,27 @@ impl Rule<'_> {
         #[allow(clippy::collapsible_else_if)] // symmetry
         if !self.inner.is_inverted() {
             if datetime < before_start {
+                // Before spring-forward
                 if year == self.start_year as i32 {
                     return None;
                 }
                 Some(PossibleOffset::Single(standard_offset))
             } else if datetime < after_start {
+                // During spring-forward
                 Some(PossibleOffset::None)
             } else if datetime < before_end {
+                // Before fall-back
                 Some(PossibleOffset::Single(rule_offset))
             } else if datetime < after_end {
+                // During fall-back
                 Some(PossibleOffset::Ambiguous(rule_offset, standard_offset))
             } else {
+                // Before spring-forward
                 Some(PossibleOffset::Single(standard_offset))
             }
         } else {
             if datetime < before_end {
+                // Before spring-back
                 // Here the rule_offset is fine even if year == start_year, as inverted rules seem
                 // to be valid from the start of the year before. This makes sense as TZDB defines
                 // rules in terms of start+end, not end+start, so inverted rules always start in
@@ -441,12 +447,16 @@ impl Rule<'_> {
                 // the next, first full year).
                 Some(PossibleOffset::Single(rule_offset))
             } else if datetime < after_end {
+                // During spring-back
                 Some(PossibleOffset::Ambiguous(rule_offset, standard_offset))
             } else if datetime < before_start {
+                // Before fall-forward
                 Some(PossibleOffset::Single(standard_offset))
             } else if datetime < after_start {
+                // During fall-forward
                 Some(PossibleOffset::None)
             } else {
+                // Before spring-back
                 Some(PossibleOffset::Single(rule_offset))
             }
         }
