@@ -684,4 +684,36 @@ mod tests {
             (4, 6, (0, -1)),
         );
     }
+
+    // DOW_IN_MONTH is not exercised by TZDB
+    #[test]
+    fn day_of_week_in_month() {
+        // First Wednesday in August 2025
+        assert_eq!(
+            TzRuleDate {
+                mode: RuleMode::DOW_IN_MONTH,
+                day: 1,
+                day_of_week: 3,
+                month: 8,
+                transition_time: 0,
+                time_mode: TimeMode::Utc,
+            }
+            .day_in_year(2025, calendrical_calculations::iso::day_before_year(2025)),
+            calendrical_calculations::iso::days_before_month(2025, 8) + 6
+        );
+
+        // Third Saturday in August 2025
+        assert_eq!(
+            TzRuleDate {
+                mode: RuleMode::DOW_IN_MONTH,
+                day: 3,
+                day_of_week: 6,
+                month: 8,
+                transition_time: 0,
+                time_mode: TimeMode::Utc,
+            }
+            .day_in_year(2025, calendrical_calculations::iso::day_before_year(2025)),
+            calendrical_calculations::iso::days_before_month(2025, 8) + 16
+        );
+    }
 }
