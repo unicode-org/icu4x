@@ -12,6 +12,7 @@
 //!
 //! Read more about data providers: [`icu_provider`]
 
+use core::cmp;
 use icu_provider::prelude::*;
 use zerovec::ule::{AsULE, ULE};
 use zerovec::ZeroVec;
@@ -88,18 +89,28 @@ impl PackedChineseBasedYearInfo {
     /// could occur after the Winter Solstice if the solstice is pinned to December 20.
     const FIRST_NY: i64 = 18;
 
+    /// out_of_valid_astronomical_range is true when the data is for a date that is well
+    /// outside calendrical_calculations::chinese_based::WELL_BEHAVED_ASTRONOMICAL_RANGE.
+    /// It clamps some values to avoid debug assertions on calendrical invariants.
     pub(crate) fn new(
         month_lengths: [bool; 13],
         leap_month_idx: Option<u8>,
         ny_offset: i64,
+        out_of_valid_astronomical_range: bool,
     ) -> Self {
+        // This assertion is an API correctness assertion and even bad calendar arithmetic
+        // should not produce this
         debug_assert!(
             !month_lengths[12] || leap_month_idx.is_some(),
             "Last month length should not be set for non-leap years"
         );
-        let ny_offset = ny_offset - Self::FIRST_NY;
+        let mut ny_offset = ny_offset - Self::FIRST_NY;
+        if out_of_valid_astronomical_range {
+            ny_offset = cmp::min(33, cmp::max(0, ny_offset));
+        }
         debug_assert!(ny_offset >= 0, "Year offset too small to store");
         debug_assert!(ny_offset < 34, "Year offset too big to store");
+        // Also an API correctness assertion
         debug_assert!(
             leap_month_idx.map(|l| l <= 13).unwrap_or(true),
             "Leap month indices must be 1 <= i <= 13"
@@ -225,6 +236,7 @@ mod serialization {
                 other.month_has_30_days,
                 other.leap_month_idx,
                 other.ny_offset as i64,
+                false,
             )
         }
     }
@@ -243,7 +255,8 @@ mod test {
             // Avoid bad invariants
             month_lengths[12] = false;
         }
-        let packed = PackedChineseBasedYearInfo::new(month_lengths, leap_month_idx, ny_offset);
+        let packed =
+            PackedChineseBasedYearInfo::new(month_lengths, leap_month_idx, ny_offset, false);
 
         assert_eq!(
             ny_offset,
