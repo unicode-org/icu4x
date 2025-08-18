@@ -439,7 +439,7 @@ impl Rule<'_> {
             }
         } else {
             if datetime < before_end {
-                // Before spring-back
+                // Before fall-back
                 // Here the rule_offset is fine even if year == start_year, as inverted rules seem
                 // to be valid from the start of the year before. This makes sense as TZDB defines
                 // rules in terms of start+end, not end+start, so inverted rules always start in
@@ -447,16 +447,16 @@ impl Rule<'_> {
                 // the next, first full year).
                 Some(PossibleOffset::Single(rule_offset))
             } else if datetime < after_end {
-                // During spring-back
+                // During fall-back
                 Some(PossibleOffset::Ambiguous(rule_offset, standard_offset))
             } else if datetime < before_start {
-                // Before fall-forward
+                // Before spring-forward
                 Some(PossibleOffset::Single(standard_offset))
             } else if datetime < after_start {
-                // During fall-forward
+                // During spring-forward
                 Some(PossibleOffset::None)
             } else {
-                // Before spring-back
+                // Before fall-back
                 Some(PossibleOffset::Single(rule_offset))
             }
         }
