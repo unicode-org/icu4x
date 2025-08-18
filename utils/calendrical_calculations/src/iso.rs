@@ -30,21 +30,9 @@ pub const fn is_leap_year(year: i32) -> bool {
 //
 /// Lisp code reference: <https://github.com/EdReingold/calendar-code2/blob/1ee51ecfaae6f856b0d7de3e36e9042100b4f424/calendar.l#L1167-L1189>
 pub const fn const_fixed_from_iso(year: i32, month: u8, day: u8) -> RataDie {
-    let prev_year = (year as i64) - 1;
-    // Calculate days per year
-    let mut fixed: i64 = 365 * prev_year;
-    // Adjust for leap year logic. We can avoid the branch of div_euclid by making prev_year positive:
-    // YEAR_SHIFT is larger (in magnitude) than any prev_year, and, being divisible by 400,
-    // distributes correctly over the calculation on the next line.
-    const YEAR_SHIFT: i64 = (-(i32::MIN as i64 - 1) / 400 + 1) * 400;
-    fixed += (prev_year + YEAR_SHIFT) / 4 - (prev_year + YEAR_SHIFT) / 100
-        + (prev_year + YEAR_SHIFT) / 400
-        - const { YEAR_SHIFT / 4 - YEAR_SHIFT / 100 + YEAR_SHIFT / 400 };
-    // Days of current year
-    fixed += days_before_month(year, month) as i64;
-    // Days passed in current month
-    fixed += day as i64;
-    RataDie::new(fixed)
+    day_before_year(year)
+        .add(days_before_month(year, month) as i64)
+        .add(day as i64)
 }
 
 /// The number of days in this year before this month starts
@@ -69,7 +57,7 @@ pub fn fixed_from_iso(year: i32, month: u8, day: u8) -> RataDie {
 }
 
 /// Lisp code reference: <https://github.com/EdReingold/calendar-code2/blob/1ee51ecfaae6f856b0d7de3e36e9042100b4f424/calendar.l#L1191-L1217>
-pub(crate) const fn iso_year_from_fixed(date: RataDie) -> i64 {
+pub const fn iso_year_from_fixed(date: RataDie) -> Result<i32, I32CastError> {
     // Shouldn't overflow because it's not possbile to construct extreme values of RataDie
     let date = date.since(EPOCH);
 
@@ -87,28 +75,36 @@ pub(crate) const fn iso_year_from_fixed(date: RataDie) -> i64 {
     let year = 400 * n_400 + 100 * n_100 + 4 * n_4 + n_1;
 
     if n_100 == 4 || n_1 == 4 {
-        year
+        i64_to_i32(year)
     } else {
-        year + 1
+        i64_to_i32(year + 1)
     }
 }
 
-fn iso_new_year(year: i32) -> RataDie {
-    fixed_from_iso(year, 1, 1)
+/// Calculates the day before Jan 1 of `year`.
+pub const fn day_before_year(year: i32) -> RataDie {
+    let prev_year = (year as i64) - 1;
+    // Calculate days per year
+    let mut fixed: i64 = 365 * prev_year;
+    // Adjust for leap year logic. We can avoid the branch of div_euclid by making prev_year positive:
+    // YEAR_SHIFT is larger (in magnitude) than any prev_year, and, being divisible by 400,
+    // distributes correctly over the calculation on the next line.
+    const YEAR_SHIFT: i64 = (-(i32::MIN as i64 - 1) / 400 + 1) * 400;
+    fixed += (prev_year + YEAR_SHIFT) / 4 - (prev_year + YEAR_SHIFT) / 100
+        + (prev_year + YEAR_SHIFT) / 400
+        - const { YEAR_SHIFT / 4 - YEAR_SHIFT / 100 + YEAR_SHIFT / 400 };
+    RataDie::new(fixed)
 }
 
 /// Lisp code reference: <https://github.com/EdReingold/calendar-code2/blob/1ee51ecfaae6f856b0d7de3e36e9042100b4f424/calendar.l#L1525-L1540>
 pub fn iso_from_fixed(date: RataDie) -> Result<(i32, u8, u8), I32CastError> {
-    let year = iso_year_from_fixed(date);
-    let year = i64_to_i32(year)?;
+    let year = iso_year_from_fixed(date)?;
     // Calculates the prior days of the adjusted year, then applies a correction based on leap year conditions for the correct ISO date conversion.
-    let prior_days = date - iso_new_year(year);
-    let correction = if date < fixed_from_iso(year, 3, 1) {
-        0
-    } else if is_leap_year(year) {
-        1
+    let prior_days = date - day_before_year(year);
+    let correction = if prior_days < 31 + 28 + is_leap_year(year) as i64 {
+        -1
     } else {
-        2
+        (!is_leap_year(year)) as i64
     };
     let month = ((12 * (prior_days + correction) + 373) / 367) as u8; // in 1..12 < u8::MAX
     let day = (date - fixed_from_iso(year, month, 1) + 1) as u8; // <= days_in_month < u8::MAX
