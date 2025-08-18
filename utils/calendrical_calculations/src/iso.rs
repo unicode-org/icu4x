@@ -14,8 +14,15 @@ use crate::rata_die::RataDie;
 const EPOCH: RataDie = RataDie::new(1);
 
 /// Whether or not `year` is a leap year
+///
+/// Inspired by Neri-Schneider <https://arxiv.org/abs/2102.06959>
 pub const fn is_leap_year(year: i32) -> bool {
-    year % 4 == 0 && (year % 400 == 0 || year % 100 != 0)
+    // This is branch-free, as it compiles to a conditional move
+    if year % 100 != 0 {
+        year % 4 == 0
+    } else {
+        year % 16 == 0
+    }
 }
 
 // Fixed is day count representation of calendars starting from Jan 1st of year 1.
@@ -36,16 +43,19 @@ pub const fn const_fixed_from_iso(year: i32, month: u8, day: u8) -> RataDie {
 }
 
 /// The number of days in this year before this month starts
+///
+/// Inspired by Neri-Schneider <https://arxiv.org/abs/2102.06959>
 pub const fn days_before_month(year: i32, month: u8) -> u16 {
-    ((367 * (month as i64) - 362).div_euclid(12)
-    // Leap year adjustment for the current year
-    + if month <= 2 {
-        0
-    } else if is_leap_year(year) {
-        -1
+    if month < 3 {
+        // This compiles to a conditional move, so there's only one branch in this function
+        if month == 1 {
+            0
+        } else {
+            31
+        }
     } else {
-        -2
-    }) as u16
+        31 + 28 + is_leap_year(year) as u16 + ((979 * (month as u32) - 2919) >> 5) as u16
+    }
 }
 
 /// Non-const version of [`const_fixed_from_iso`]
