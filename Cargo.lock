@@ -3843,6 +3843,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d1890f4022759daae28ed4fe62859b1236caebfc61ede2f63ed4e695f3f6d936"
 dependencies = [
  "arrayvec",
+ "smallvec",
 ]
 
 [[package]]

@@ -41,7 +41,7 @@ arrayvec = { workspace = true }
 atoi = { workspace = true }
 detone = { workspace = true }
 icu = { path = "../../components/icu", default-features = false }
-write16 = { workspace = true, features = ["arrayvec"] }
+write16 = { workspace = true, features = ["arrayvec", "smallvec"] }
 
 [target.'cfg(not(target_arch = "wasm32"))'.dev-dependencies]
 criterion = { workspace = true }
