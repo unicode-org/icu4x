@@ -20,7 +20,6 @@ mod chrono_impls;
 mod rule;
 use rule::*;
 
-const EPOCH: RataDie = calendrical_calculations::iso::const_fixed_from_iso(1970, 1, 1);
 const SECONDS_IN_UTC_DAY: i64 = 86400;
 
 #[derive(Debug)]
