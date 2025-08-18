@@ -323,15 +323,9 @@ impl Rule<'_> {
             return None;
         }
 
-        struct DateTime {
-            day_in_year: u16,
-            local_time_of_day: i32,
-        }
+        struct SecondsInLocalYear(i64);
 
-        let datetime = DateTime {
-            day_in_year,
-            local_time_of_day,
-        };
+        let datetime = SecondsInLocalYear(day_in_year as i64 * SECONDS_IN_UTC_DAY + local_time_of_day as i64);
 
         struct LazyRuleEval<'a> {
             year: i32,
@@ -339,41 +333,30 @@ impl Rule<'_> {
             rule: &'a TzRuleDate,
             standard_offset_seconds: i32,
             additional_offset_seconds: i32,
+            // The correction that is applied after calculating the local time.
+            // This lets us distinguish before and after-transition local times.
             correction: i32,
         }
 
-        impl PartialEq<LazyRuleEval<'_>> for DateTime {
+        impl PartialEq<LazyRuleEval<'_>> for SecondsInLocalYear {
             fn eq(&self, other: &LazyRuleEval) -> bool {
                 self.partial_cmp(other) == Some(Ordering::Equal)
             }
         }
 
-        impl PartialOrd<LazyRuleEval<'_>> for DateTime {
+        impl PartialOrd<LazyRuleEval<'_>> for SecondsInLocalYear {
             fn partial_cmp(&self, rule: &LazyRuleEval) -> Option<Ordering> {
-                let mut rule_day_in_year = rule.rule.day_in_year(rule.year, rule.day_before_year);
+                let rule_day_in_year = rule.rule.day_in_year(rule.year, rule.day_before_year);
 
-                // Fast paths, don't need to look at time
-                if self.day_in_year > rule_day_in_year + 1 {
-                    return Some(Ordering::Greater);
-                } else if self.day_in_year < rule_day_in_year - 1 {
-                    return Some(Ordering::Less);
-                }
-
-                let mut rule_timestamp = rule.rule.transition_time_to_wall(
+                let rule_timestamp = rule.rule.transition_time_to_wall(
                     rule.standard_offset_seconds,
                     rule.additional_offset_seconds,
                 ) + rule.correction;
-                if rule_timestamp >= SECONDS_IN_UTC_DAY as i32 {
-                    rule_timestamp -= SECONDS_IN_UTC_DAY as i32;
-                    rule_day_in_year += 1;
-                }
-                if rule_timestamp < 0 {
-                    rule_timestamp += SECONDS_IN_UTC_DAY as i32;
-                    rule_day_in_year -= 1;
-                }
 
-                (self.day_in_year, self.local_time_of_day)
-                    .partial_cmp(&(rule_day_in_year, rule_timestamp))
+                let rule_seconds_in_local_year =
+                    rule_day_in_year as i64 * SECONDS_IN_UTC_DAY + rule_timestamp as i64;
+
+                self.0.partial_cmp(&rule_seconds_in_local_year)
             }
         }
 
