@@ -131,7 +131,7 @@ impl TzRule {
         }
     }
 
-    fn is_inverted(&self) -> bool {
+    fn end_before_start(&self) -> bool {
         (self.start.month, self.start.day) > (self.end.month, self.end.day)
     }
 }
@@ -417,7 +417,7 @@ impl Rule<'_> {
         };
 
         #[allow(clippy::collapsible_else_if)] // symmetry
-        if !self.inner.is_inverted() {
+        if !self.inner.end_before_start() {
             if datetime < before_start {
                 // Before spring-forward
                 if year == self.start_year as i32 {
@@ -488,7 +488,7 @@ impl Rule<'_> {
         let start = (&self.inner.start, 0);
         let end = (&self.inner.end, self.inner.additional_offset_secs);
 
-        let (first, second) = if self.inner.is_inverted() {
+        let (first, second) = if self.inner.end_before_start() {
             (end, start)
         } else {
             (start, end)
@@ -502,7 +502,7 @@ impl Rule<'_> {
                 first.1,
             )
         {
-            if !self.inner.is_inverted() && local_year == self.start_year as i32 {
+            if !self.inner.end_before_start() && local_year == self.start_year as i32 {
                 return None;
             }
             return Some(Offset {
