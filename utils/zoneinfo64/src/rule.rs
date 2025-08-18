@@ -229,11 +229,11 @@ impl TzRuleDate {
             RuleMode::DOM | // unreachable
             RuleMode::DOW_IN_MONTH => {
                 // First we calculate the first {day_of_week} of the month
-                let first_weekday = self.day_of_week - weekday_before_month + if self.day_of_week > weekday(day_before_year - 1) {
+                let first_weekday = if self.day_of_week > weekday_before_month {
                     0
                 } else {
                     7
-                };
+                } + self.day_of_week - weekday_before_month;
 
                 // Then we add additional weeks to it if desired
                 first_weekday + (self.day - 1) * 7
@@ -241,20 +241,20 @@ impl TzRuleDate {
             // These two compute after/before an "anchor" day in the month
             RuleMode::DOW_GEQ_DOM => {
                 let weekday_of_anchor = (weekday_before_month + self.day) % 7;
-                let days_to_add = self.day_of_week - weekday_of_anchor + if self.day_of_week >= weekday_of_anchor {
+                let days_to_add = if self.day_of_week >= weekday_of_anchor {
                     0
                 } else {
                     7
-                };
+                } + self.day_of_week - weekday_of_anchor;
                 self.day + days_to_add
             }
             RuleMode::DOW_LEQ_DOM => {
                 let weekday_of_anchor = (weekday_before_month + self.day) % 7;
-                let days_to_subtract = weekday_of_anchor - self.day_of_week + if self.day_of_week <= weekday_of_anchor {
+                let days_to_subtract = if self.day_of_week <= weekday_of_anchor {
                     0
                 } else {
                     7
-                };
+                } + weekday_of_anchor - self.day_of_week;
                 self.day - days_to_subtract
             }
         };
