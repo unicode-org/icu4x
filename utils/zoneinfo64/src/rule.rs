@@ -2,6 +2,19 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use super::{Offset, PossibleOffset};
+
+const SECONDS_IN_UTC_DAY: i64 = 86400;
+
+#[derive(Debug, Clone, Copy)]
+pub(crate) struct Rule<'a> {
+    /// The year the rule starts applying
+    pub(crate) start_year: u32,
+    /// The offset of standard time
+    pub(crate) standard_offset_seconds: i32,
+    pub(crate) inner: &'a TzRule,
+}
+
 #[derive(Debug)]
 pub(crate) struct TzRule {
     /// The amount of seconds to add to standard_offset_seconds
@@ -21,9 +34,9 @@ pub(crate) struct TzRuleDate {
     pub(crate) day_of_week: i8,
     /// A 0-indexed month number
     pub(crate) month: u8,
-    /// The time in the day that the transition occurs
-    pub(crate) millis_of_day: u32,
-    /// How to interpret millis_of_day
+    /// The time in the day (in seconds) that the transition occurs
+    pub(crate) transition_time: u32,
+    /// How to interpret transition_time
     pub(crate) time_mode: TimeMode,
     /// How to interpret day, day_of_week, and month
     pub(crate) mode: RuleMode,
@@ -31,7 +44,7 @@ pub(crate) struct TzRuleDate {
 
 #[derive(Debug)]
 pub(crate) enum TimeMode {
-    /// {millis_of_day} is local wall clock time in the time zone
+    /// {transition_time} is local wall clock time in the time zone
     /// *before* the transition
     ///
     /// e.g. if the transition between LST and LDT is to happen at 02:00,
@@ -47,14 +60,14 @@ pub(crate) enum TimeMode {
     /// This can be turned into Standard by subtracting the offset-from-standard
     /// of the time zone *before* this transition
     Wall = 0,
-    /// {millis_of_day} is local standard time
+    /// {transition_time} is local standard time
     ///
     /// Will produce different results from Wall=0 for DST-to-STD transitions
     ///
     /// This can be turned into Wall by adding the offset-from-standard of the time zone
     /// *before* this transition.
     Standard = 1,
-    /// {millis_of_day} is UTC time
+    /// {transition_time} is UTC time
     ///
     /// This is UTC time *on the UTC day* identified by this rule; which may
     /// end up on a different local day.
@@ -120,7 +133,7 @@ impl TzRuleDate {
         mut day: i8,
         mut day_of_week: i8,
         month: u8,
-        millis_of_day: u32,
+        transition_time: u32,
         time_mode: i8,
     ) -> Option<Self> {
         const GREGORIAN_MONTHS: [i8; 12] = [31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
@@ -131,7 +144,7 @@ impl TzRuleDate {
         if month > 11 {
             return None;
         }
-        if millis_of_day > 24 * 60 * 60 * 1000 {
+        if i64::from(transition_time) > SECONDS_IN_UTC_DAY {
             return None;
         }
 
@@ -175,33 +188,114 @@ impl TzRuleDate {
             day,
             day_of_week,
             month,
-            millis_of_day,
+            transition_time,
             time_mode,
             mode,
         })
     }
 }
 
-impl TzRule {
-    pub(crate) fn additional_offset_since(
+impl Rule<'_> {
+    /// Get the possible offsets matching to a timestamp given in *local* (wall) time
+    ///
+    /// Returns None when the rule doesn't apply (this is different from `PossibleOffset::None`,
+    /// which means the rule does apply, but the datetime occurred during a gap transition and is thus
+    /// invalid).
+    pub(crate) fn resolve_local(
         &self,
-        seconds_since_epoch: i64,
-        _start_year: u32,
-    ) -> (i32, i64) {
-        let _ = self.start.month;
-        let _ = self.start.day;
-        let _ = self.start.day_of_week;
-        let _ = self.start.millis_of_day;
-        let _ = self.start.time_mode;
-        let _ = self.start.mode;
+        _year: i32,
+        _month: u8,
+        _day: u8,
+        _hour: u8,
+        _minute: u8,
+        _second: u8,
+    ) -> Option<PossibleOffset> {
+        // Unimplemented
+        let _ = self.start_year;
+        let _ = self.standard_offset_seconds;
+        let inner = self.inner;
+        let _ = inner.additional_offset_secs;
+        let _ = inner.start.month;
+        let _ = inner.start.day;
+        let _ = inner.start.day_of_week;
+        let _ = inner.start.transition_time;
+        let _ = inner.start.time_mode;
+        let _ = inner.start.mode;
+        let _ = inner.end.month;
+        let _ = inner.end.day;
+        let _ = inner.end.day_of_week;
+        let _ = inner.end.transition_time;
+        let _ = inner.end.time_mode;
+        let _ = inner.end.mode;
 
-        let _ = self.end.month;
-        let _ = self.end.day;
-        let _ = self.end.day_of_week;
-        let _ = self.end.millis_of_day;
-        let _ = self.end.time_mode;
-        let _ = self.end.mode;
+        None
+    }
 
-        (self.additional_offset_secs, seconds_since_epoch)
+    /// Get the offset matching to a timestamp given in UTC time.
+    ///
+    /// Returns None if the seconds_since_epoch is not in range of the Rule.
+    ///
+    /// seconds_since_epoch must resolve to a year that is in-range for i32
+    pub(crate) fn resolve_utc(&self, _seconds_since_epoch: i64) -> Option<Offset> {
+        // Unimplemented
+        None
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::tests::TZDB;
+    use chrono::Datelike;
+
+    /// This tests invariants we rely on in our code
+    ///
+    /// These invariants not being upheld should never cause a panic, but can produce garbage behavior.
+    #[test]
+    fn test_rule_not_at_year_boundary() {
+        for chrono in chrono_tz::TZ_VARIANTS {
+            let iana = chrono.name();
+
+            let zoneinfo64 = TZDB.get(iana).unwrap();
+
+            if let Some(rule) = zoneinfo64.final_rule {
+                let final_offset = zoneinfo64.transition_offset_idx(i64::MAX);
+                let offset = zoneinfo64.transition_offset_at(final_offset);
+                let utc_datetime = chrono::DateTime::from_timestamp(offset.since, 0)
+                    .unwrap()
+                    .naive_utc();
+
+                assert!(
+                    utc_datetime.year() < rule.start_year as i32,
+                    "{iana}: Expected last transition to not be in rule year {} < {} \
+                    (invariant: last-transition-not-in-rule-year)",
+                    utc_datetime.year(),
+                    rule.start_year
+                );
+
+                let max_delta = (rule.standard_offset_seconds.abs()
+                    + rule.inner.additional_offset_secs.abs())
+                    as u32;
+                for date in [&rule.inner.start, &rule.inner.end] {
+                    let seconds_of_day = date.transition_time;
+                    if date.month == 0 && date.day == 1 {
+                        assert!(
+                            seconds_of_day > max_delta,
+                            "{iana}: Rule at beginning should not cross year boundary \
+                                 {seconds_of_day} > Δ{max_delta} \
+                                 (invariant: rule-stays-inside-year)"
+                        );
+                    }
+                    if date.month == 11 && date.day == 31 {
+                        assert!(
+                            seconds_of_day + max_delta < SECONDS_IN_UTC_DAY as u32,
+                            "{iana}: Rule at end of year should not cross year boundary \
+                                 {seconds_of_day} + Δ{max_delta} < 24h \
+                                 (invariant: rule-stays-inside-year)"
+                        );
+                    }
+                }
+            }
+        }
     }
 }
