@@ -293,7 +293,7 @@ impl TzRuleDate {
 
     /// Converts the {transition_time} into a time (before the transition) in the local
     /// day, in seconds
-    /// 
+    ///
     /// `additional_offset_seconds` is not necessarily `self.additional_offset_seconds`,
     /// it might also be 0 if we're currently on standard time.
     fn transition_time_to_wall(
