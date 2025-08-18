@@ -614,14 +614,8 @@ impl Zone<'_> {
         if idx + 1 >= self.simple.type_map.len() as isize {
             if let Some(rule) = self.final_rule {
                 // If rule applies, use it
-                //
-                // Invariants used:
-                // - last-transition-not-in-rule-year: If we are in the rule year,
-                //   the rule is the only transition that matters
-                // - rule-stays-inside-year: We can use local epoch time here because
-                //   the rules do not cross year boundaries.
-                if year >= rule.start_year as i32 {
-                    return rule.resolve_local(year, month, day, hour, minute, second);
+                if let Some(result) = rule.resolve_local(year, month, day, hour, minute, second) {
+                    return result;
                 }
             }
 

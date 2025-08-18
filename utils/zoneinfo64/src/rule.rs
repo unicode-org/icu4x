@@ -196,19 +196,32 @@ impl TzRuleDate {
 }
 
 impl Rule<'_> {
-    #[allow(
-        clippy::too_many_arguments,
-        reason = "We're passing around datetimes, they need many arguments"
-    )]
+    /// Get the possible offsets matching to a timestamp given in *local* (wall) time
+    ///
+    /// Returns None when the rule doesn't apply (this is different from `PossibleOffset::None`,
+    /// which means the rule does apply, but the datetime occurred during a gap transition and is thus
+    /// invalid).
     pub(crate) fn resolve_local(
         &self,
-        _year: i32,
+        year: i32,
         _month: u8,
         _day: u8,
         _hour: u8,
         _minute: u8,
         _second: u8,
-    ) -> PossibleOffset {
+    ) -> Option<PossibleOffset> {
+        if year < self.start_year as i32 {
+            return None;
+        }
+
+        // Now we can apply the rule, unambiguously
+        //
+        // Invariants used:
+        // - last-transition-not-in-rule-year: If we are in the rule year,
+        //   the rule is the only transition that matters
+        // - rule-stays-inside-year: We can use local epoch time here because
+        //   the rules do not cross year boundaries.
+
         // Unimplemented
         let _ = self.standard_offset_seconds;
         let inner = self.inner;
@@ -226,7 +239,7 @@ impl Rule<'_> {
         let _ = inner.end.time_mode;
         let _ = inner.end.mode;
 
-        PossibleOffset::None
+        Some(PossibleOffset::None)
     }
 
     /// Get the offset matching to a timestamp given in UTC time.
