@@ -457,7 +457,7 @@ impl Rule<'_> {
         let Ok(year) =
             iso::iso_year_from_fixed(super::EPOCH + (seconds_since_epoch / SECONDS_IN_UTC_DAY))
         else {
-            // Pretend rule doesn't apply anymore after year i32::MAX 
+            // Pretend rule doesn't apply anymore after year i32::MAX
             return None;
         };
 
@@ -471,13 +471,8 @@ impl Rule<'_> {
 
         let day_before_year = iso::day_before_year(year);
 
-        let start = (&self.inner.start, self.standard_offset_seconds, 0, false);
-        let end = (
-            &self.inner.end,
-            self.standard_offset_seconds,
-            self.inner.additional_offset_secs,
-            true,
-        );
+        let start = (&self.inner.start, 0);
+        let end = (&self.inner.end, self.inner.additional_offset_secs);
 
         let (first, second) = if self.inner.is_inverted() {
             (end, start)
@@ -486,31 +481,37 @@ impl Rule<'_> {
         };
 
         if seconds_since_epoch
-            < first
-                .0
-                .timestamp_for_year(year, day_before_year, first.1, first.2)
+            < first.0.timestamp_for_year(
+                year,
+                day_before_year,
+                self.standard_offset_seconds,
+                first.1,
+            )
         {
             if !self.inner.is_inverted() && local_year == self.start_year as i32 {
                 return None;
             }
             return Some(Offset {
-                offset: UtcOffset::from_seconds_unchecked(first.1 + first.2),
-                rule_applies: first.3,
+                offset: UtcOffset::from_seconds_unchecked(self.standard_offset_seconds + first.1),
+                rule_applies: first.1 != 0,
             });
         }
         if seconds_since_epoch
-            < second
-                .0
-                .timestamp_for_year(year, day_before_year, second.1, second.2)
+            < second.0.timestamp_for_year(
+                year,
+                day_before_year,
+                self.standard_offset_seconds,
+                second.1,
+            )
         {
             return Some(Offset {
-                offset: UtcOffset::from_seconds_unchecked(second.1 + second.2),
-                rule_applies: second.3,
+                offset: UtcOffset::from_seconds_unchecked(self.standard_offset_seconds + second.1),
+                rule_applies: second.1 != 0,
             });
         } else {
             Some(Offset {
-                offset: UtcOffset::from_seconds_unchecked(first.1 + first.2),
-                rule_applies: first.3,
+                offset: UtcOffset::from_seconds_unchecked(self.standard_offset_seconds + first.1),
+                rule_applies: first.1 != 0,
             })
         }
     }
