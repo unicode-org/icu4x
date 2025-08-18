@@ -743,11 +743,11 @@ mod tests {
             .expect("Error processing resource bundle file")
     });
 
-    /// This tests invariants we rely on in our code above
+    /// This tests invariants we rely on in our code
     ///
     /// These invariants not being upheld should never cause a panic, but can produce garbage behavior.
     #[test]
-    fn test_invariants() {
+    fn test_transitions_monotonic() {
         for chrono in chrono_tz::TZ_VARIANTS {
             let iana = chrono.name();
 
@@ -781,6 +781,18 @@ mod tests {
 
                 prev_offset = offset;
             }
+        }
+    }
+
+    /// This tests invariants we rely on in our code
+    ///
+    /// These invariants not being upheld should never cause a panic, but can produce garbage behavior.
+    #[test]
+    fn test_rule_not_at_year_boundary() {
+        for chrono in chrono_tz::TZ_VARIANTS {
+            let iana = chrono.name();
+
+            let zoneinfo64 = TZDB.get(iana).unwrap();
 
             if let Some(rule) = zoneinfo64.final_rule {
                 let final_offset = zoneinfo64.transition_offset_idx(i64::MAX);
