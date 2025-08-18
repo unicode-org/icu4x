@@ -214,14 +214,6 @@ impl Rule<'_> {
             return None;
         }
 
-        // Now we can apply the rule, unambiguously
-        //
-        // Invariants used:
-        // - last-transition-not-in-rule-year: If we are in the rule year,
-        //   the rule is the only transition that matters
-        // - rule-stays-inside-year: We can use local epoch time here because
-        //   the rules do not cross year boundaries.
-
         // Unimplemented
         let _ = self.standard_offset_seconds;
         let inner = self.inner;
@@ -239,7 +231,7 @@ impl Rule<'_> {
         let _ = inner.end.time_mode;
         let _ = inner.end.mode;
 
-        Some(PossibleOffset::None)
+        None
     }
 
     /// Get the offset matching to a timestamp given in UTC time.
@@ -260,10 +252,6 @@ impl Rule<'_> {
             // We are before the rule year, return None
             return None;
         }
-
-        // The rule applies, use it
-        //
-        // Invariant used: last-transition-not-in-rule-year
 
         // Unimplemented
         None
