@@ -33,8 +33,11 @@ pub const fn const_fixed_from_iso(year: i32, month: u8, day: u8) -> RataDie {
     let prev_year = (year as i64) - 1;
     // Calculate days per year
     let mut fixed: i64 = 365 * prev_year;
-    // Adjust for leap year logic
-    fixed += prev_year.div_euclid(4) - prev_year.div_euclid(100) + prev_year.div_euclid(400);
+    // Adjust for leap year logic. We can avoid the branch of div_euclid by making prev_year positive
+    const YEAR_SHIFT: i64 = (-(i32::MIN as i64 - 1) / 400 + 1) * 400;
+    fixed += (prev_year + YEAR_SHIFT) / 4 - (prev_year + YEAR_SHIFT) / 100
+        + (prev_year + YEAR_SHIFT) / 400
+        - const { YEAR_SHIFT / 4 - YEAR_SHIFT / 100 + YEAR_SHIFT / 400 };
     // Days of current year
     fixed += days_before_month(year, month) as i64;
     // Days passed in current month
@@ -72,12 +75,12 @@ pub(crate) const fn iso_year_from_fixed(date: RataDie) -> i64 {
     let (n_400, date) = (date.div_euclid(146097), date.rem_euclid(146097));
 
     // 100 year cycles have 36524 days
-    let (n_100, date) = (date.div_euclid(36524), date.rem_euclid(36524));
+    let (n_100, date) = (date / 36524, date % 36524);
 
     // 4 year cycles have 1461 days
-    let (n_4, date) = (date.div_euclid(1461), date.rem_euclid(1461));
+    let (n_4, date) = (date / 1461, date % 1461);
 
-    let n_1 = date.div_euclid(365);
+    let n_1 = date / 365;
 
     let year = 400 * n_400 + 100 * n_100 + 4 * n_4 + n_1;
 
@@ -105,7 +108,7 @@ pub fn iso_from_fixed(date: RataDie) -> Result<(i32, u8, u8), I32CastError> {
     } else {
         2
     };
-    let month = (12 * (prior_days + correction) + 373).div_euclid(367) as u8; // in 1..12 < u8::MAX
+    let month = ((12 * (prior_days + correction) + 373) / 367) as u8; // in 1..12 < u8::MAX
     let day = (date - fixed_from_iso(year, month, 1) + 1) as u8; // <= days_in_month < u8::MAX
     Ok((year, month, day))
 }
