@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use super::{Offset, PossibleOffset, Transition};
+use super::{Offset, PossibleOffset};
 use calendrical_calculations::iso;
 use calendrical_calculations::rata_die::RataDie;
 use core::cmp::Ordering;
@@ -325,7 +325,8 @@ impl Rule<'_> {
 
         struct SecondsInLocalYear(i64);
 
-        let datetime = SecondsInLocalYear(day_in_year as i64 * SECONDS_IN_UTC_DAY + local_time_of_day as i64);
+        let datetime =
+            SecondsInLocalYear(day_in_year as i64 * SECONDS_IN_UTC_DAY + local_time_of_day as i64);
 
         struct LazyRuleEval<'a> {
             year: i32,
@@ -467,28 +468,13 @@ impl Rule<'_> {
 
         let day_before_year = iso::day_before_year(year);
 
-        let start = Transition {
-            since: self.inner.start.timestamp_for_year(
-                year,
-                day_before_year,
-                self.standard_offset_seconds,
-                0,
-            ),
-            offset: UtcOffset::from_seconds_unchecked(
-                self.standard_offset_seconds + self.inner.additional_offset_secs,
-            ),
-            rule_applies: true,
-        };
-        let end = Transition {
-            since: self.inner.end.timestamp_for_year(
-                year,
-                day_before_year,
-                self.standard_offset_seconds,
-                self.inner.additional_offset_secs,
-            ),
-            offset: UtcOffset::from_seconds_unchecked(self.standard_offset_seconds),
-            rule_applies: false,
-        };
+        let start = (&self.inner.start, self.standard_offset_seconds, 0, false);
+        let end = (
+            &self.inner.end,
+            self.standard_offset_seconds,
+            self.inner.additional_offset_secs,
+            true,
+        );
 
         let (first, second) = if self.inner.is_inverted() {
             (end, start)
@@ -496,15 +482,33 @@ impl Rule<'_> {
             (start, end)
         };
 
-        if seconds_since_epoch < first.since {
+        if seconds_since_epoch
+            < first
+                .0
+                .timestamp_for_year(year, day_before_year, first.1, first.2)
+        {
             if !self.inner.is_inverted() && local_year == self.start_year as i32 {
                 return None;
             }
-            Some(second.into())
-        } else if seconds_since_epoch < second.since {
-            Some(first.into())
+            return Some(Offset {
+                offset: UtcOffset::from_seconds_unchecked(first.1 + first.2),
+                rule_applies: first.3,
+            });
+        }
+        if seconds_since_epoch
+            < second
+                .0
+                .timestamp_for_year(year, day_before_year, second.1, second.2)
+        {
+            return Some(Offset {
+                offset: UtcOffset::from_seconds_unchecked(second.1 + second.2),
+                rule_applies: second.3,
+            });
         } else {
-            Some(second.into())
+            Some(Offset {
+                offset: UtcOffset::from_seconds_unchecked(first.1 + first.2),
+                rule_applies: first.3,
+            })
         }
     }
 }
