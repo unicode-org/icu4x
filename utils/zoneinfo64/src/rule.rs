@@ -209,14 +209,12 @@ impl TzRuleDate {
         })
     }
 
-    /// Given a year, return the 0-indexed day number in that year for this transition, as well as the
-    /// RataDie for the new year's day
-    pub(crate) fn day_in_year_and_ny(&self, year: i32) -> (u16, RataDie) {
-        let ny = iso::fixed_from_iso(year, 1, 1);
+    /// Given a year, return the 1-indexed day number in that year for this transition
+    pub(crate) fn day_in_year(&self, year: i32, day_before_year: RataDie) -> u16 {
         let days_before_month = iso::days_before_month(year, self.month);
 
         if let RuleMode::DOM = self.mode {
-            return (days_before_month + u16::from(self.day), ny);
+            return days_before_month + u16::from(self.day);
         }
 
         fn weekday(rd: RataDie) -> u8 {
@@ -224,7 +222,7 @@ impl TzRuleDate {
             (rd.since(MONDAY) % 7) as u8
         }
 
-        let weekday_before_month = weekday(ny + days_before_month as i64);
+        let weekday_before_month = weekday(day_before_year + days_before_month as i64 + 1);
 
         // Turn this into a zero-indexed day of week
         let day_of_week_0idx = self.day_of_week - 1;
@@ -232,7 +230,7 @@ impl TzRuleDate {
             RuleMode::DOM | // unreachable
             RuleMode::DOW_IN_MONTH => {
                 // First we calculate the first {day_of_week} of the month
-                let first_weekday = day_of_week_0idx - weekday_before_month + if day_of_week_0idx > weekday(ny - 1) {
+                let first_weekday = day_of_week_0idx - weekday_before_month + if day_of_week_0idx > weekday(day_before_year) {
                     0
                 } else {
                     7
@@ -262,21 +260,20 @@ impl TzRuleDate {
             }
         };
         // Subtract one so we get a 0-indexed value (Jan 1 = day 0)
-        (days_before_month + u16::from(day_of_month) - 1, ny)
+        days_before_month + u16::from(day_of_month)
     }
 
     fn timestamp_for_year(
         &self,
         year: i32,
+        day_before_year: RataDie,
         standard_offset_seconds: i32,
         additional_offset_seconds: i32,
     ) -> i64 {
-        let (start_day_in_year, ny) = self.day_in_year_and_ny(year);
-        let days_since_epoch = ny.since(super::EPOCH);
+        let day = day_before_year + self.day_in_year(year, day_before_year) as i64;
         let start_seconds =
             self.transition_time_to_utc(standard_offset_seconds, additional_offset_seconds);
-        (days_since_epoch + i64::from(start_day_in_year)) * SECONDS_IN_UTC_DAY
-            + i64::from(start_seconds)
+        day.since(super::EPOCH) * SECONDS_IN_UTC_DAY + i64::from(start_seconds)
     }
 
     /// Converts the {transition_time} into a time in the UTC day, in seconds
@@ -319,11 +316,9 @@ impl Rule<'_> {
     pub(crate) fn resolve_local(
         &self,
         year: i32,
-        month: u8,
-        day: u8,
-        hour: u8,
-        minute: u8,
-        second: u8,
+        day_before_year: RataDie,
+        day_in_year: u16,
+        local_time_of_day: i32,
     ) -> Option<PossibleOffset> {
         if year < self.start_year as i32 {
             return None;
@@ -331,20 +326,17 @@ impl Rule<'_> {
 
         struct DateTime {
             day_in_year: u16,
-            hour: u8,
-            minute: u8,
-            second: u8,
+            local_time_of_day: i32,
         }
 
         let datetime = DateTime {
-            day_in_year: iso::days_before_month(year, month) + day as u16 - 1,
-            hour,
-            minute,
-            second,
+            day_in_year,
+            local_time_of_day,
         };
 
         struct LazyRuleEval<'a> {
             year: i32,
+            day_before_year: RataDie,
             rule: &'a TzRuleDate,
             standard_offset_seconds: i32,
             additional_offset_seconds: i32,
@@ -359,7 +351,7 @@ impl Rule<'_> {
 
         impl PartialOrd<LazyRuleEval<'_>> for DateTime {
             fn partial_cmp(&self, rule: &LazyRuleEval) -> Option<Ordering> {
-                let mut rule_day_in_year = rule.rule.day_in_year_and_ny(rule.year).0;
+                let mut rule_day_in_year = rule.rule.day_in_year(rule.year, rule.day_before_year);
 
                 // Fast paths, don't need to look at time
                 if self.day_in_year > rule_day_in_year + 1 {
@@ -381,16 +373,14 @@ impl Rule<'_> {
                     rule_day_in_year -= 1;
                 }
 
-                (
-                    self.day_in_year,
-                    ((self.hour as i32 * 60) + self.minute as i32) * 60 + self.second as i32,
-                )
+                (self.day_in_year, self.local_time_of_day)
                     .partial_cmp(&(rule_day_in_year, rule_timestamp))
             }
         }
 
         let before_start = LazyRuleEval {
             year,
+            day_before_year,
             rule: &self.inner.start,
             standard_offset_seconds: self.standard_offset_seconds,
             additional_offset_seconds: 0,
@@ -399,6 +389,7 @@ impl Rule<'_> {
 
         let after_start = LazyRuleEval {
             year,
+            day_before_year,
             rule: &self.inner.start,
             standard_offset_seconds: self.standard_offset_seconds,
             additional_offset_seconds: 0,
@@ -407,6 +398,7 @@ impl Rule<'_> {
 
         let before_end = LazyRuleEval {
             year,
+            day_before_year,
             rule: &self.inner.end,
             standard_offset_seconds: self.standard_offset_seconds,
             additional_offset_seconds: self.inner.additional_offset_secs,
@@ -415,6 +407,7 @@ impl Rule<'_> {
 
         let after_end = LazyRuleEval {
             year,
+            day_before_year,
             rule: &self.inner.end,
             standard_offset_seconds: self.standard_offset_seconds,
             additional_offset_seconds: self.inner.additional_offset_secs,
@@ -490,11 +483,15 @@ impl Rule<'_> {
             return None;
         }
 
+        let day_before_year = iso::day_before_year(year);
+
         let start = Transition {
-            since: self
-                .inner
-                .start
-                .timestamp_for_year(year, self.standard_offset_seconds, 0),
+            since: self.inner.start.timestamp_for_year(
+                year,
+                day_before_year,
+                self.standard_offset_seconds,
+                0,
+            ),
             offset: UtcOffset::from_seconds_unchecked(
                 self.standard_offset_seconds + self.inner.additional_offset_secs,
             ),
@@ -503,6 +500,7 @@ impl Rule<'_> {
         let end = Transition {
             since: self.inner.end.timestamp_for_year(
                 year,
+                day_before_year,
                 self.standard_offset_seconds,
                 self.inner.additional_offset_secs,
             ),
@@ -593,11 +591,11 @@ mod tests {
         (start_month, start_day, (start_before, start_after)): (u8, u8, (i8, i8)),
         (end_month, end_day, (end_before, end_after)): (u8, u8, (i8, i8)),
     ) {
-        let rule = TZDB.get(tz).unwrap().final_rule.unwrap();
+        let zone = TZDB.get(tz).unwrap();
 
         // start_before doesn't actually happen
         assert_eq!(
-            rule.resolve_local(
+            zone.for_date_time(
                 year,
                 start_month,
                 start_day - start_before.div_euclid(24).unsigned_abs(),
@@ -605,12 +603,12 @@ mod tests {
                 0,
                 0
             ),
-            Some(PossibleOffset::None),
+            PossibleOffset::None,
         );
 
         // start_after happens exactly once
         assert!(matches!(
-            rule.resolve_local(
+            zone.for_date_time(
                 year,
                 start_month,
                 start_day - start_after.div_euclid(24).unsigned_abs(),
@@ -618,12 +616,12 @@ mod tests {
                 0,
                 0
             ),
-            Some(PossibleOffset::Single(_))
+            PossibleOffset::Single(_)
         ));
 
         // end_before happens exactly once
         assert!(matches!(
-            rule.resolve_local(
+            zone.for_date_time(
                 year,
                 end_month,
                 end_day - end_before.div_euclid(24).unsigned_abs(),
@@ -631,12 +629,12 @@ mod tests {
                 0,
                 0
             ),
-            Some(PossibleOffset::Single(_))
+            PossibleOffset::Single(_)
         ));
 
         // end_after happens again after falling back
         assert!(matches!(
-            rule.resolve_local(
+            zone.for_date_time(
                 year,
                 end_month,
                 end_day - end_after.div_euclid(24).unsigned_abs(),
@@ -644,7 +642,7 @@ mod tests {
                 0,
                 0
             ),
-            Some(PossibleOffset::Ambiguous(_, _)),
+            PossibleOffset::Ambiguous(_, _),
         ));
     }
 

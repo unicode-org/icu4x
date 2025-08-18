@@ -595,35 +595,32 @@ impl Zone<'_> {
         minute: u8,
         second: u8,
     ) -> PossibleOffset {
-        let seconds_since_local_epoch =
-            (((calendrical_calculations::iso::fixed_from_iso(year, month, day) - EPOCH) * 24
-                + hour as i64)
-                * 60
-                + minute as i64)
-                * 60
-                + second as i64;
+        let day_before_year = calendrical_calculations::iso::day_before_year(year);
+        let day_in_year =
+            calendrical_calculations::iso::days_before_month(year, month) + day as u16;
+        let local_time_of_day = (hour as i32 * 60 + minute as i32) * 60 + second as i32;
 
-        // Pretend date time is UTC to get a candidate
-        let mut idx = self.transition_offset_idx(seconds_since_local_epoch);
-
-        // If the index is at the end of the array
-        // Note that transition_offset_idx returns in-bounds values or -1,
-        // so we can't check if it's out of bounds, we need to check if it's the last
-        // element
-        if idx + 1 == self.simple.type_map.len() as isize {
-            if let Some(rule) = self.final_rule {
-                // If rule applies, use it
-                if let Some(result) = rule.resolve_local(year, month, day, hour, minute, second) {
-                    return result;
-                }
+        // `resolve_local` quickly returns if the rule doesn't apply
+        if let Some(rule) = self.final_rule {
+            // If rule applies, use it
+            if let Some(result) =
+                rule.resolve_local(year, day_before_year, day_in_year, local_time_of_day)
+            {
+                return result;
             }
-
-            // Rule doesn't apply. Make sure to reset to a valid index
-            idx = self.simple.type_map.len() as isize - 1;
         }
 
-        // If we have reached this point, the rule does not apply, either because
-        // idx is not the last index, or because the rule (if any) does not apply yet.
+        // If we have reached this point, the rule does not apply.
+
+        let seconds_since_local_epoch =
+            (day_before_year + day_in_year as i64 - EPOCH) * 24 * 60 * 60
+                + local_time_of_day as i64;
+
+        // Pretend date time is UTC to get a candidate
+        let idx = core::cmp::min(
+            self.transition_offset_idx(seconds_since_local_epoch),
+            self.simple.type_map.len() as isize - 1,
+        );
 
         // `transition_offset_at` always returns a transition that it thinks is *before* this one
         // We are using local time here, so it *could* be wrong. We need to check
