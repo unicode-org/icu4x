@@ -13,6 +13,7 @@ use icu::experimental::dimension::provider::units::categorized_display_name::{
     UnitsNameMassCoreV1, UnitsNameMassExtendedV1, UnitsNameMassOutlierV1,
 };
 use icu::experimental::dimension::provider::units::display_name::UnitsDisplayName;
+use icu::locale::LanguageIdentifier;
 use icu::plurals::PluralElements;
 use icu_provider::prelude::*;
 use icu_provider::DataMarkerAttributes;
@@ -43,7 +44,7 @@ where
         "narrow" => &units_format_data.narrow,
         _ => {
             return Err(DataErrorKind::InvalidRequest
-                .into_error()
+                .with_req(M::INFO, req)
                 .with_debug_context(length))
         }
     }
@@ -52,7 +53,7 @@ where
     .find_map(|(_, units_map)| units_map.get(unit))
     .ok_or_else(|| {
         DataErrorKind::IdentifierNotFound
-            .into_error()
+            .with_req(M::INFO, req)
             .with_debug_context(length)
     })?;
 
@@ -86,11 +87,27 @@ fn get_display_name_iter_ids_cached(
     let numbers = source_data_provider.cldr()?.numbers();
     let locales = numbers.list_locales()?;
     for locale in locales {
-        let region = match locale.region {
-            Some(region) => region.to_string(),
-            // TODO: Replace with the most likely region for the language, not always "US".
-            None => "US".to_string(),
-        };
+        let likely_subtags: &cldr_serde::likely_subtags::Resource = source_data_provider
+            .cldr()?
+            .core()
+            .read_and_parse("supplemental/likelySubtags.json")?;
+
+        // Try to find a likely subtag for the language, and extract its region.
+        let region = locale
+            .region
+            .map(|r| r.to_string())
+            .or_else(|| {
+                let lang_id = LanguageIdentifier::from(locale.language);
+                likely_subtags
+                    .supplemental
+                    .likely_subtags
+                    .get(&lang_id)
+                    .and_then(|id| id.region.map(|r| r.to_string()))
+            })
+            .ok_or_else(|| {
+                let lang_id = LanguageIdentifier::from(locale.language);
+                DataError::custom("No region found for language: {}").with_debug_context(&lang_id)
+            })?;
 
         // Load and parse the unit constants from the supplemental data file.
         let preferences: &cldr_serde::units::preferences::Resource = source_data_provider
