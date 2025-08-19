@@ -139,7 +139,10 @@ pub struct CodePointTrie<'trie, T: TrieValue> {
     ///
     /// If `header.trie_type == TrieType::Fast`, `index.len()` must be greater
     /// than `FAST_TYPE_FAST_INDEXING_MAX`. Otherwise, `index.len()`
-    /// must be greater than `SMALL_TYPE_FAST_INDEXING_MAX`.
+    /// must be greater than `SMALL_TYPE_FAST_INDEXING_MAX`. Furthermore,
+    /// this field must not change after construction. (Strictly: It must
+    /// not become shorter than the length requirement stated above and the
+    /// values within the prefix up to the length requirement must not change.)
     pub(crate) index: ZeroVec<'trie, u16>,
     /// # Safety Invariant
     ///
@@ -147,7 +150,9 @@ pub struct CodePointTrie<'trie, T: TrieValue> {
     /// than `FAST_TYPE_DATA_MASK` plus the largest value in
     /// `index[0..FAST_TYPE_FAST_INDEXING_MAX + 1]`. Otherwise, `data.len()`
     /// must be greater than `FAST_TYPE_DATA_MASK` plus the largest value in
-    /// `index[0..SMALL_TYPE_FAST_INDEXING_MAX + 1]`.
+    /// `index[0..SMALL_TYPE_FAST_INDEXING_MAX + 1]`. Furthermore, this field
+    /// must not change after construction. (Strictly: The stated length
+    /// requirement must continue to hold.)
     pub(crate) data: ZeroVec<'trie, T>,
     // serde impl skips this field
     #[zerofrom(clone)] // TrieValue is Copy, this allows us to avoid
@@ -262,17 +267,19 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
     #[doc(hidden)] // databake internal
     /// # Safety
     ///
-    /// Unsafe, because the length invariants on the
-    /// `ZeroVec`s are not checked.
-    ///
-    /// Data must have been generated with matching
-    /// ICU4X minor version's datagen.
-    pub const fn from_parts_unchecked(
+    /// `header.trie_type`, `index`, and `data` must
+    /// satisfy the invariants for the fields of the
+    /// same names on `CodePointTrie`.
+    pub const unsafe fn from_parts_unstable_unchecked_v1(
         header: CodePointTrieHeader,
         index: ZeroVec<'trie, u16>,
         data: ZeroVec<'trie, T>,
         error_value: T,
     ) -> Self {
+        // Field invariants upheld: The caller is responsible.
+        // In practice, this means that datagen in the databake
+        // mode upholds these invariants when constructing the
+        // `CodePointTrie` that is then baked.
         Self {
             header,
             index,
@@ -288,10 +295,8 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
         index: ZeroVec<'trie, u16>,
         data: ZeroVec<'trie, T>,
     ) -> Result<CodePointTrie<'trie, T>, Error> {
-        // SAFETY:
-        // `validate_fields` upholds the invariants for the fields that
-        // fast-path access without bound checks relies on.
-        let error_value = Self::validate_fields(header.trie_type, &index, &data)?;
+        let error_value = Self::validate_fields(&header, &index, &data)?;
+        // Field invariants upheld: Checked by `validate_fields` above.
         let trie: CodePointTrie<'trie, T> = CodePointTrie {
             header,
             index,
@@ -302,9 +307,16 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
     }
 
     /// Checks the invariant on the fields that fast-path access relies on for
-    /// safety in order to omit slice bound checks.
+    /// safety in order to omit slice bound checks and upon success returns the
+    /// `error_value` for the trie.
+    ///
+    /// # Safety Usable Invariant
+    ///
+    /// Iff this function returns `Ok(T)`, the arguments satisfy the invariants
+    /// for corresponding fields of `CodePointTrie`. (Other than proving that
+    /// nothing else changes the fields subsequently.)
     pub(crate) fn validate_fields(
-        trie_type: TrieType,
+        header: &CodePointTrieHeader,
         index: &ZeroSlice<u16>,
         data: &ZeroSlice<T>,
     ) -> Result<T, Error> {
@@ -338,7 +350,7 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
         // The maximum possible bit prefix depends on the trie type.
 
         // The maximum code point that can be used for fast-path access:
-        let fast_max = match trie_type {
+        let fast_max = match header.trie_type {
             TrieType::Fast => FAST_TYPE_FAST_INDEXING_MAX,
             TrieType::Small => SMALL_TYPE_FAST_INDEXING_MAX,
         };
@@ -351,6 +363,10 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
         let fast_index = index
             .get_subslice(0..(max_bit_prefix as usize) + 1)
             .ok_or(Error::IndexTooShortForFastAccess)?;
+        // Invariant upheld for `index`: If we got this far, the length of `index`
+        // satisfies its length invariant on the assumption that `header.trie_type`
+        // will not change subsequently.
+
         // Now find the largest offset in the part of `index` reachable by the
         // bit prefix. `max` can never actually return `None`, since we already
         // know the slice isn't empty. Hence, reusing the error kind instead of
@@ -365,6 +381,12 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
         if (max_offset) as usize + (FAST_TYPE_DATA_MASK as usize) >= data.len() {
             return Err(Error::DataTooShortForFastAccess);
         }
+
+        // Invariant upheld for `data`: If we got this far, the length of `data`
+        // satisfies `data`'s length invariant on the assumption that the contents
+        // of `fast_index` subslice of `index` and `header.trie_type` will not
+        // change subsequently.
+
         Ok(error_value)
     }
 
@@ -485,43 +507,56 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
     /// Returns the value that is associated with `code_point` in this [`CodePointTrie`]
     /// assuming that the fast index path should be used.
     ///
-    /// # Safety
+    /// # Intended Precondition
     ///
     /// `code_point` must be at most `FAST_TYPE_FAST_INDEXING_MAX` if
     /// the trie type is fast or at most `SMALL_TYPE_FAST_INDEXING_MAX`
     /// if the trie type is small.
     ///
+    /// To avoid having to make this method `unsafe`, the above condition
+    /// is checked in the hope that the optimizer deletes the check due
+    /// to the caller already having checked it correctly. However, if
+    /// the caller is incorrect, a violation of this precondition results
+    /// in a panic when debug assertions are enabled and in returning
+    /// `self.error_value` when they aren't.
+    ///
     /// # Panics
     ///
     /// When debug assertions are enabled, the above precondition and
     /// slice access bounds are checked.
-    #[inline(always)]
-    unsafe fn get32_by_fast_index(&self, code_point: u32) -> T {
-        debug_assert!(
-            code_point
-                <= match self.header.trie_type {
-                    TrieType::Fast => FAST_TYPE_FAST_INDEXING_MAX,
-                    TrieType::Small => SMALL_TYPE_FAST_INDEXING_MAX,
-                }
-        );
+    #[inline(always)] // "always" to make the `fast_max` check collapse away.
+    fn get32_by_fast_index(&self, code_point: u32) -> T {
+        let fast_max = match self.header.trie_type {
+            TrieType::Fast => FAST_TYPE_FAST_INDEXING_MAX,
+            TrieType::Small => SMALL_TYPE_FAST_INDEXING_MAX,
+        };
+        if code_point > fast_max {
+            debug_assert!(false);
+            // TODO: When debug assertions are disabled, it would be
+            // really nice to have a call here to a function that always
+            // fails to link in order to prove that the optimizer has
+            // successfully deleted this path for all callers.
+            return self.error_value;
+        }
         let bit_prefix = (code_point as usize) >> FAST_TYPE_SHIFT;
         debug_assert!(bit_prefix < self.index.len());
-        // SAFETY: The length of `self.index` has been checked
-        // in the constructor.
+        // SAFETY: Relying on the length invariant of `self.index` having
+        // been checked and on the unchangedness invariant of `self.index`
+        // and `self.header.trie_type` after construction.
         let base_offset_to_data: usize = usize::from(u16::from_unaligned(*unsafe {
             self.index.as_ule_slice().get_unchecked(bit_prefix)
         }));
         let bit_suffix = (code_point & FAST_TYPE_DATA_MASK) as usize;
-        // SAFETY: We have examined the maximum possible value for
-        // `base_offset_to_data` and the maximum possible value for
-        // `bit_suffix` in the constructor, so the addition below
-        // cannot overflow. (Furthermore, the impossibility of overflow
-        // also results from the `u16` type read from `index` and the
-        // number of bits set in `FAST_TYPE_DATA_MASK`).
+        // SAFETY: Cannot overflow with supported (32-bit and 64-bit) `usize`
+        // sizes, since `base_offset_to_data` was extended from `u16` and
+        // `bit_suffix` is at most `FAST_TYPE_DATA_MASK`, which is well
+        // under what it takes to reach the 32-bit (or 64-bit) max with
+        // additon from the max of `u16`.
         let offset_to_data = w!(base_offset_to_data + bit_suffix);
         debug_assert!(offset_to_data < self.data.len());
-        // SAFETY: The length of `self.data` has been checked
-        // in the constructor.
+        // SAFETY: Relying on the length invariant of `self.data` having
+        // been checked and on the unchangedness invariant of `self.data`,
+        // `self.index`, and `self.header.trie_type` after construction.
         T::from_unaligned(*unsafe { self.data.as_ule_slice().get_unchecked(offset_to_data) })
     }
 
@@ -570,9 +605,9 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
             TrieType::Small => SMALL_TYPE_FAST_INDEXING_MAX,
         };
         if code_point <= fast_max {
-            // SAFETY: We've just checked that `code_point` satisfies
-            // the precondition of `get32_by_fast_index`.
-            unsafe { self.get32_by_fast_index(code_point) }
+            // We've just checked that `code_point` satisfies
+            // the intended precondition of `get32_by_fast_index`.
+            self.get32_by_fast_index(code_point)
         } else if code_point <= CODE_POINT_MAX {
             self.get32_by_small_index(code_point)
         } else {
@@ -604,9 +639,9 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
             TrieType::Small => SMALL_TYPE_FAST_INDEXING_MAX,
         };
         if code_point <= fast_max {
-            // SAFETY: We've just checked that `code_point` satisfies
-            // the precondition of `get32_by_fast_index`.
-            unsafe { self.get32_by_fast_index(code_point) }
+            // We've just checked that `code_point` satisfies
+            // the intended precondition of `get32_by_fast_index`.
+            self.get32_by_fast_index(code_point)
         } else {
             self.get32_by_small_index(code_point)
         }
@@ -1229,7 +1264,7 @@ impl<T: TrieValue + databake::Bake> databake::Bake for CodePointTrie<'_, T> {
         let index = self.index.bake(env);
         let data = self.data.bake(env);
         let error_value = self.error_value.bake(env);
-        databake::quote! { unsafe { icu_collections::codepointtrie::CodePointTrie::from_parts_unchecked(#header, #index, #data, #error_value) } }
+        databake::quote! { unsafe { icu_collections::codepointtrie::CodePointTrie::from_parts_unstable_unchecked_v1(#header, #index, #data, #error_value) } }
     }
 }
 
@@ -1511,7 +1546,7 @@ mod tests {
             CodePointTrie<'static, u32>,
             const,
             unsafe {
-                crate::codepointtrie::CodePointTrie::from_parts_unchecked(
+                crate::codepointtrie::CodePointTrie::from_parts_unstable_unchecked_v1(
                     crate::codepointtrie::CodePointTrieHeader {
                         high_start: 1u32,
                         shifted12_high_start: 2u16,
