@@ -4,50 +4,27 @@
 
 use crate::dimension::provider::units::display_name::UnitsDisplayName;
 
-icu_provider::data_marker!(
-    /// Display name for core length
-    UnitsNameLengthCoreV1,
-    UnitsDisplayName<'static>,
-    #[cfg(feature = "datagen")]
-    attributes_domain = "units"
-);
+macro_rules! define_units_data_markers {
+    ($($marker:ident, $doc:literal);* $(;)?) => {
+        $(
+            icu_provider::data_marker!(
+                #[doc = $doc]
+                $marker,
+                UnitsDisplayName<'static>,
+                #[cfg(feature = "datagen")]
+                attributes_domain = "units"
+            );
+        )*
+    };
+}
 
-icu_provider::data_marker!(
-    /// Display name for extended length
-    UnitsNameLengthExtendedV1,
-    UnitsDisplayName<'static>,
-    #[cfg(feature = "datagen")]
-    attributes_domain = "units"
-);
-
-icu_provider::data_marker!(
-    /// Display name for outlier length
-    UnitsNameLengthOutlierV1,
-    UnitsDisplayName<'static>,
-    #[cfg(feature = "datagen")]
-    attributes_domain = "units"
-);
-
-icu_provider::data_marker!(
-    /// Display name for core mass
-    UnitsNameMassCoreV1,
-    UnitsDisplayName<'static>,
-    #[cfg(feature = "datagen")]
-    attributes_domain = "units"
-);
-
-icu_provider::data_marker!(
-    /// Display name for extended mass
-    UnitsNameMassExtendedV1,
-    UnitsDisplayName<'static>,
-    #[cfg(feature = "datagen")]
-    attributes_domain = "units"
-);
-
-icu_provider::data_marker!(
-    /// Display name for outlier mass
-    UnitsNameMassOutlierV1,
-    UnitsDisplayName<'static>,
-    #[cfg(feature = "datagen")]
-    attributes_domain = "units"
+define_units_data_markers!(
+    // Length
+    UnitsNameLengthCoreV1, "Display name for core length";
+    UnitsNameLengthExtendedV1, "Display name for extended length";
+    UnitsNameLengthOutlierV1, "Display name for outlier length";
+    // Mass
+    UnitsNameMassCoreV1, "Display name for core mass";
+    UnitsNameMassExtendedV1, "Display name for extended mass";
+    UnitsNameMassOutlierV1, "Display name for outlier mass";
 );
