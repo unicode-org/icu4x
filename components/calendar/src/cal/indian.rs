@@ -130,10 +130,7 @@ impl Calendar for Indian {
         } else {
             day_of_year_iso - DAY_OFFSET
         };
-        IndianDateInner(ArithmeticDate::date_from_year_day(
-            year,
-            day_of_year_indian as u32,
-        ))
+        IndianDateInner(ArithmeticDate::date_from_year_day(year, day_of_year_indian))
     }
 
     // Algorithms directly implemented in icu_calendar since they're not from the book
@@ -151,10 +148,7 @@ impl Calendar for Indian {
             day_of_year_indian + DAY_OFFSET
         };
 
-        IsoDateInner(ArithmeticDate::date_from_year_day(
-            year,
-            day_of_year_iso as u32,
-        ))
+        IsoDateInner(ArithmeticDate::date_from_year_day(year, day_of_year_iso))
     }
 
     fn months_in_year(&self, date: &Self::DateInner) -> u8 {

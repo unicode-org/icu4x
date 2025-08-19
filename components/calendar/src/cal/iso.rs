@@ -75,6 +75,14 @@ impl CalendarArithmetic for Iso {
     fn days_in_provided_year(year: i32) -> u16 {
         365 + calendrical_calculations::iso::is_leap_year(year) as u16
     }
+
+    fn day_of_provided_year(year: Self::YearInfo, month: u8, day: u8) -> u16 {
+        calendrical_calculations::iso::days_before_month(year, month) + day as u16
+    }
+
+    fn date_from_provided_year_day(year: Self::YearInfo, year_day: u16) -> (u8, u8) {
+        calendrical_calculations::iso::year_day(year, year_day)
+    }
 }
 
 impl crate::cal::scaffold::UnstableSealed for Iso {}

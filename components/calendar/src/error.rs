@@ -65,28 +65,29 @@ impl From<RangeError> for DateError {
     }
 }
 
-pub(crate) fn year_check(
-    year: i32,
-    bounds: impl core::ops::RangeBounds<i32>,
-) -> Result<i32, RangeError> {
+pub(crate) fn range_check<T: Ord + Into<i32> + Copy>(
+    value: T,
+    field: &'static str,
+    bounds: impl core::ops::RangeBounds<T>,
+) -> Result<T, RangeError> {
     use core::ops::Bound::*;
 
-    if !bounds.contains(&year) {
+    if !bounds.contains(&value) {
         return Err(RangeError {
-            field: "year",
-            value: year,
+            field,
+            value: value.into(),
             min: match bounds.start_bound() {
-                Included(&m) => m,
-                Excluded(&m) => m + 1,
+                Included(&m) => m.into(),
+                Excluded(&m) => m.into() + 1,
                 Unbounded => i32::MIN,
             },
             max: match bounds.end_bound() {
-                Included(&m) => m,
-                Excluded(&m) => m - 1,
+                Included(&m) => m.into(),
+                Excluded(&m) => m.into() - 1,
                 Unbounded => i32::MAX,
             },
         });
     }
 
-    Ok(year)
+    Ok(value)
 }

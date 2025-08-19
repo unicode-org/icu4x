@@ -18,7 +18,7 @@
 
 use crate::cal::iso::{Iso, IsoDateInner};
 use crate::calendar_arithmetic::ArithmeticDate;
-use crate::error::{year_check, DateError};
+use crate::error::{range_check, DateError};
 use crate::{types, Calendar, Date, DateDuration, DateDurationUnit, RangeError};
 use calendrical_calculations::rata_die::RataDie;
 use tinystr::tinystr;
@@ -57,8 +57,8 @@ impl Calendar for Gregorian {
     ) -> Result<Self::DateInner, DateError> {
         let year = match era {
             None => year,
-            Some("ad" | "ce") => year_check(year, 1..)?,
-            Some("bce" | "bc") => 1 - year_check(year, 1..)?,
+            Some("ad" | "ce") => range_check(year, "year", 1..)?,
+            Some("bce" | "bc") => 1 - range_check(year, "year", 1..)?,
             Some(_) => return Err(DateError::UnknownEra),
         };
 

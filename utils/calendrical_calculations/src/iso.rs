@@ -96,17 +96,23 @@ pub const fn day_before_year(year: i32) -> RataDie {
     RataDie::new(fixed)
 }
 
+/// Calculates the month/day from the 1-based day of the year
+pub fn year_day(year: i32, day_of_year: u16) -> (u8, u8) {
+    // Calculates the prior days of the year, then applies a correction based on leap year conditions for the correct ISO date conversion.
+    let correction = if day_of_year < 31 + 28 + is_leap_year(year) as u16 {
+        -1
+    } else {
+        (!is_leap_year(year)) as i32
+    };
+    let month = ((12 * (day_of_year as i32 + correction) + 373) / 367) as u8; // in 1..12 < u8::MAX
+    let day = (day_of_year - days_before_month(year, month)) as u8; // <= days_in_month < u8::MAX
+    (month, day)
+}
+
 /// Lisp code reference: <https://github.com/EdReingold/calendar-code2/blob/1ee51ecfaae6f856b0d7de3e36e9042100b4f424/calendar.l#L1525-L1540>
 pub fn iso_from_fixed(date: RataDie) -> Result<(i32, u8, u8), I32CastError> {
     let year = iso_year_from_fixed(date)?;
-    // Calculates the prior days of the adjusted year, then applies a correction based on leap year conditions for the correct ISO date conversion.
-    let prior_days = date - day_before_year(year);
-    let correction = if prior_days < 31 + 28 + is_leap_year(year) as i64 {
-        -1
-    } else {
-        (!is_leap_year(year)) as i64
-    };
-    let month = ((12 * (prior_days + correction) + 373) / 367) as u8; // in 1..12 < u8::MAX
-    let day = (date - fixed_from_iso(year, month, 1) + 1) as u8; // <= days_in_month < u8::MAX
+    let day_of_year = date - day_before_year(year);
+    let (month, day) = year_day(year, day_of_year as u16);
     Ok((year, month, day))
 }
