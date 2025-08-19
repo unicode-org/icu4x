@@ -215,7 +215,7 @@ impl Zone<'_> {
     /// As this can be -1, it returns an isize.
     ///
     /// Does not consider rule transitions
-    fn transition_offset_idx(&self, seconds_since_epoch: i64) -> isize {
+    fn prev_transition_offset_idx(&self, seconds_since_epoch: i64) -> isize {
         if seconds_since_epoch < i32::MIN as i64 {
             self.simple
                 .trans_pre32
@@ -341,7 +341,7 @@ impl Zone<'_> {
             + local_time_of_day as i64;
 
         let idx = core::cmp::min(
-            self.transition_offset_idx(seconds_since_local_epoch),
+            self.prev_transition_offset_idx(seconds_since_local_epoch),
             self.simple.type_map.len() as isize - 1,
         );
 
@@ -434,7 +434,7 @@ impl Zone<'_> {
     ///
     /// seconds_since_epoch must resolve to a year that is in-range for i32
     pub fn for_timestamp(&self, seconds_since_epoch: i64) -> Offset {
-        let mut idx = self.transition_offset_idx(seconds_since_epoch);
+        let mut idx = self.prev_transition_offset_idx(seconds_since_epoch);
         // We add 1 to idx here since idx is the index of the previous transition
         // but if the previous transition is the last one then we still need to check
         // against the rule
@@ -449,12 +449,58 @@ impl Zone<'_> {
         }
         self.transition_offset_at(idx).into()
     }
+
+    pub fn prev_transition(
+        &self,
+        seconds_since_epoch: i64,
+        seconds_exact: bool,
+    ) -> Option<Transition> {
+        let mut idx = self.prev_transition_offset_idx(seconds_since_epoch);
+        // We add 1 to idx here since idx is the index of the previous transition
+        // but if the previous transition is the last one then we still need to check
+        // against the rule
+        if idx + 1 >= self.simple.type_map.len() as isize {
+            if let Some(rule) = self.final_rule {
+                if let Some(resolved) = rule.prev_transition(seconds_since_epoch, seconds_exact) {
+                    return Some(resolved);
+                }
+            }
+            // Rule doesn't apply, use the last index instead
+            idx = self.simple.type_map.len() as isize - 1;
+        }
+
+        let candidate = self.transition_offset_at(idx);
+        if candidate.since == seconds_since_epoch && seconds_exact {
+            if idx == -1 {
+                None
+            } else {
+                Some(self.transition_offset_at(idx - 1))
+            }
+        } else {
+            Some(candidate)
+        }
+    }
+
+    pub fn next_transition(&self, seconds_since_epoch: i64) -> Option<Transition> {
+        let idx = self.prev_transition_offset_idx(seconds_since_epoch);
+        if idx + 1 >= self.simple.type_map.len() as isize {
+            if let Some(rule) = self.final_rule {
+                return Some(rule.next_transition(seconds_since_epoch));
+            } else {
+                return None;
+            }
+        }
+
+        Some(self.transition_offset_at(idx + 1))
+    }
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
-    use std::sync::LazyLock;
+    use chrono_tz::Tz;
+    use itertools::Itertools;
+    use std::{str::FromStr, sync::LazyLock};
 
     pub(crate) static TZDB: LazyLock<ZoneInfo64> = LazyLock::new(|| {
         ZoneInfo64::try_from_u32s(resb::include_bytes_as_u32!("../tests/data/zoneinfo64.res"))
@@ -502,24 +548,18 @@ mod tests {
         }
     }
 
-    #[test]
-    fn test_against_chrono() {
-        use chrono::Offset;
-        use chrono::TimeZone;
-        use chrono_tz::OffsetComponents;
-        use chrono_tz::Tz;
+    // Tests pre32 transitions
+    // 1938-04-24T22:00:00Z
+    const PAST: i64 = -1_000_000_000 - 800;
+    // Tests rules and post32 transitions
+    // 2033-05-18T03:00:00Z
+    const FUTURE: i64 = 3_000_000_000 - 2000;
 
-        // Tests pre32 transitions
-        // 1938-04-24T22:00:00Z
-        const PAST: i64 = -1_000_000_000 - 800;
-        // Tests rules and post32 transitions
-        // 2033-05-18T03:00:00Z
-        const FUTURE: i64 = 3_000_000_000 - 2000;
-
-        // To test all timezones, set EXHAUSTIVE_TZ_TEST=1
-        //
-        // We recommend testing with `--profile release-with-assertions`
-        let time_zones_to_test = if std::env::var("EXHAUSTIVE_TZ_TEST").is_err() {
+    // To test all timezones, set EXHAUSTIVE_TZ_TEST=1
+    //
+    // We recommend testing with `--profile release-with-assertions`
+    fn time_zones_to_test() -> &'static [Tz] {
+        if std::env::var("EXHAUSTIVE_TZ_TEST").is_err() {
             // Keep this list small, this test is slow
             &[
                 // Some normal timezones with DST
@@ -539,9 +579,29 @@ mod tests {
             ][..]
         } else {
             &chrono_tz::TZ_VARIANTS[..]
-        };
+        }
+    }
 
-        for chrono in time_zones_to_test {
+    fn has_rearguard_diff(iana: &str) -> bool {
+        matches!(
+            iana,
+            "Africa/Casablanca"
+                | "Africa/El_Aaiun"
+                | "Africa/Windhoek"
+                | "Europe/Dublin"
+                | "Eire"
+                | "Europe/Bratislava"
+                | "Europe/Prague"
+        )
+    }
+
+    #[test]
+    fn test_against_chrono() {
+        use chrono::Offset;
+        use chrono::TimeZone;
+        use chrono_tz::OffsetComponents;
+
+        for chrono in time_zones_to_test() {
             let iana = chrono.name();
 
             if TZDB.is_alias(iana) {
@@ -577,17 +637,7 @@ mod tests {
                 );
 
                 // Rearguard / vanguard diffs
-                if [
-                    "Africa/Casablanca",
-                    "Africa/El_Aaiun",
-                    "Africa/Windhoek",
-                    "Europe/Dublin",
-                    "Eire",
-                    "Europe/Bratislava",
-                    "Europe/Prague",
-                ]
-                .contains(&chrono.name())
-                {
+                if has_rearguard_diff(iana) {
                     continue;
                 }
 
@@ -597,6 +647,75 @@ mod tests {
                     "{seconds_since_epoch}, {iana:?}",
                 );
             }
+        }
+    }
+
+    #[test]
+    fn test_transition_against_jiff() {
+        for zone in time_zones_to_test() {
+            let iana = zone.name();
+
+            if TZDB.is_alias(iana) || has_rearguard_diff(iana) {
+                continue;
+            }
+
+            println!("{iana}");
+
+            let jiff = jiff::tz::TimeZone::get(iana).unwrap();
+            let zoneinfo64 = TZDB.get(iana).unwrap();
+
+            let mut transitions = jiff
+                .preceding(jiff::Timestamp::from_str("2222-01-01T00:00:00Z").unwrap())
+                .collect::<Vec<_>>()
+                .into_iter()
+                .rev()
+                .dedup_by(|a, b| a.offset() == b.offset())
+                .filter(|t| {
+                    t.timestamp() > jiff::Timestamp::from_str("1920-01-01T00:00:00Z").unwrap()
+                })
+                .map(|t| Transition {
+                    since: t.timestamp().as_second(),
+                    offset: UtcOffset::from_seconds_unchecked(t.offset().seconds()),
+                    rule_applies: t.dst().is_dst(),
+                })
+                .collect::<Vec<_>>();
+
+            if transitions.first().is_some_and(|t| t.offset.is_zero()) {
+                transitions.remove(0);
+            }
+
+            for t in &transitions {
+                let exact = zoneinfo64.prev_transition(t.since, true);
+                let after1 = zoneinfo64.prev_transition(t.since, false);
+
+                let before1 = zoneinfo64.prev_transition(t.since - 1, true);
+                let before2 = zoneinfo64.prev_transition(t.since - 1, false);
+
+                let after2 = zoneinfo64.prev_transition(t.since + 1, true);
+                let after3 = zoneinfo64.prev_transition(t.since + 1, false);
+
+                assert_eq!(before1, before2);
+                assert_eq!(before1, exact);
+
+                assert_ne!(exact, after1);
+
+                assert_eq!(after1, after2);
+                assert_eq!(after2, after3);
+
+                assert_eq!(after1, Some(*t));
+            }
+
+            // for t in &transitions {
+            //     let before = zoneinfo64.next_transition(t.since - 1);
+            //     let exact = zoneinfo64.next_transition(t.since);
+            //     let after = zoneinfo64.next_transition(t.since + 1);
+
+            //     assert_ne!(before, exact);
+
+            //     assert_eq!(exact, after);
+
+            //     assert_eq!(before, Some(*t));
+            // }
         }
     }
 }

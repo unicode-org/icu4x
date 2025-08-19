@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use super::{Offset, PossibleOffset, EPOCH, SECONDS_IN_UTC_DAY};
+use super::{Offset, PossibleOffset, Transition, EPOCH, SECONDS_IN_UTC_DAY};
 use calendrical_calculations::iso;
 use calendrical_calculations::rata_die::RataDie;
 use core::cmp::Ordering;
@@ -526,6 +526,151 @@ impl Rule<'_> {
             })
         }
     }
+
+    /// Get the offset matching to a timestamp given in UTC time.
+    ///
+    /// Returns None if the seconds_since_epoch is not in range of the Rule.
+    ///
+    /// seconds_since_epoch must resolve to a year that is in-range for i32
+    pub(crate) fn prev_transition(
+        &self,
+        seconds_since_epoch: i64,
+        seconds_exact: bool,
+    ) -> Option<Transition> {
+        let Ok(year) = iso::iso_year_from_fixed(EPOCH + (seconds_since_epoch / SECONDS_IN_UTC_DAY))
+        else {
+            // Pretend rule doesn't apply anymore after year i32::MAX
+            return None;
+        };
+
+        // No transition happens in a different UTC year, this is verified
+        // in `test_rule_not_at_year_boundary`
+        let local_year = year;
+
+        if local_year < self.start_year as i32 {
+            return None;
+        }
+
+        let day_before_year = iso::day_before_year(local_year);
+
+        let start = (&self.inner.start, 0);
+        let end = (&self.inner.end, self.inner.additional_offset_secs);
+
+        let (first, second) = if self.inner.end_before_start() {
+            (end, start)
+        } else {
+            (start, end)
+        };
+
+        let first_timestamp = first.0.timestamp_for_year(
+            local_year,
+            day_before_year,
+            self.standard_offset_seconds,
+            first.1,
+        );
+
+        if seconds_exact && seconds_since_epoch <= first_timestamp
+            || !seconds_exact && seconds_since_epoch < first_timestamp
+        {
+            return Some(Transition {
+                since: second.0.timestamp_for_year(
+                    local_year - 1,
+                    iso::day_before_year(local_year - 1),
+                    self.standard_offset_seconds,
+                    second.1,
+                ),
+                offset: UtcOffset::from_seconds_unchecked(self.standard_offset_seconds + first.1),
+                rule_applies: first.1 != 0,
+            });
+        }
+        let second_timestamp = second.0.timestamp_for_year(
+            local_year,
+            day_before_year,
+            self.standard_offset_seconds,
+            second.1,
+        );
+        if seconds_exact && seconds_since_epoch <= second_timestamp
+            || !seconds_exact && seconds_since_epoch < second_timestamp
+        {
+            Some(Transition {
+                since: first_timestamp,
+                offset: UtcOffset::from_seconds_unchecked(self.standard_offset_seconds + second.1),
+                rule_applies: second.1 != 0,
+            })
+        } else {
+            Some(Transition {
+                since: second_timestamp,
+                offset: UtcOffset::from_seconds_unchecked(self.standard_offset_seconds + first.1),
+                rule_applies: first.1 != 0,
+            })
+        }
+    }
+
+    /// Get the offset matching to a timestamp given in UTC time.
+    ///
+    /// Returns None if the seconds_since_epoch is not in range of the Rule.
+    ///
+    /// seconds_since_epoch must resolve to a year that is in-range for i32
+    pub(crate) fn next_transition(&self, seconds_since_epoch: i64) -> Transition {
+        let year = iso::iso_year_from_fixed(EPOCH + (seconds_since_epoch / SECONDS_IN_UTC_DAY))
+            .unwrap_or(self.start_year as i32);
+
+        // No transition happens in a different UTC year, this is verified
+        // in `test_rule_not_at_year_boundary`
+        let local_year = year;
+
+        let local_year = core::cmp::max(local_year, self.start_year as i32);
+
+        let day_before_year = iso::day_before_year(local_year);
+
+        let start = (&self.inner.start, 0);
+        let end = (&self.inner.end, self.inner.additional_offset_secs);
+
+        let (first, second) = if self.inner.end_before_start() {
+            (end, start)
+        } else {
+            (start, end)
+        };
+
+        let first_timestamp = first.0.timestamp_for_year(
+            year,
+            day_before_year,
+            self.standard_offset_seconds,
+            first.1,
+        );
+
+        if seconds_since_epoch <= first_timestamp {
+            return Transition {
+                since: first_timestamp,
+                offset: UtcOffset::from_seconds_unchecked(self.standard_offset_seconds + second.1),
+                rule_applies: second.1 != 0,
+            };
+        }
+        let second_timestamp = second.0.timestamp_for_year(
+            year,
+            day_before_year,
+            self.standard_offset_seconds,
+            second.1,
+        );
+        if seconds_since_epoch <= second_timestamp {
+            Transition {
+                since: second_timestamp,
+                offset: UtcOffset::from_seconds_unchecked(self.standard_offset_seconds + first.1),
+                rule_applies: first.1 != 0,
+            }
+        } else {
+            Transition {
+                since: first.0.timestamp_for_year(
+                    year + 1,
+                    iso::day_before_year(year + 1),
+                    self.standard_offset_seconds,
+                    first.1,
+                ),
+                offset: UtcOffset::from_seconds_unchecked(self.standard_offset_seconds + second.1),
+                rule_applies: second.1 != 0,
+            }
+        }
+    }
 }
 
 #[cfg(test)]
@@ -545,7 +690,7 @@ mod tests {
             let zoneinfo64 = TZDB.get(iana).unwrap();
 
             if let Some(rule) = zoneinfo64.final_rule {
-                let final_offset = zoneinfo64.transition_offset_idx(i64::MAX);
+                let final_offset = zoneinfo64.prev_transition_offset_idx(i64::MAX);
                 let offset = zoneinfo64.transition_offset_at(final_offset);
                 let utc_datetime = chrono::DateTime::from_timestamp(offset.since, 0)
                     .unwrap()
