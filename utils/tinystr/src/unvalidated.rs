@@ -38,6 +38,12 @@ impl<const N: usize> UnvalidatedTinyAsciiStr<N> {
     pub const fn from_utf8_unchecked(bytes: [u8; N]) -> Self {
         Self(bytes)
     }
+
+    #[cfg(feature = "potential_utf")]
+    #[inline]
+    pub const fn as_potential_utf8(&self) -> &potential_utf::PotentialUtf8 {
+        potential_utf::PotentialUtf8::from_bytes(&self.0)
+    }
 }
 
 impl<const N: usize> TinyAsciiStr<N> {
