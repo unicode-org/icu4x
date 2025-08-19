@@ -9,7 +9,6 @@ use core::cmp::Ordering;
 use core::convert::TryInto;
 use core::fmt::Debug;
 use core::hash::{Hash, Hasher};
-use core::i32;
 use core::marker::PhantomData;
 use tinystr::tinystr;
 

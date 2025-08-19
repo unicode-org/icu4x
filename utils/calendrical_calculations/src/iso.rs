@@ -96,8 +96,9 @@ pub const fn day_before_year(year: i32) -> RataDie {
     RataDie::new(fixed)
 }
 
-/// Calculates the month/day from the day of the year
+/// Calculates the month/day from the 1-based day of the year
 pub fn year_day(year: i32, day_of_year: u16) -> (u8, u8) {
+    // Calculates the prior days of the year, then applies a correction based on leap year conditions for the correct ISO date conversion.
     let correction = if day_of_year < 31 + 28 + is_leap_year(year) as u16 {
         -1
     } else {

@@ -647,16 +647,20 @@ impl Japanese {
                     .inner);
             }
             Some("ce" | "ad") => {
-                return Ok(Date::try_new_gregorian(range_check(year, "year", 1..)?, month, day)?
-                    .to_calendar(cal)
-                    .inner);
-            }
-            Some("bce" | "bc") => {
                 return Ok(
-                    Date::try_new_gregorian(1 - range_check(year, "year", 1..)?, month, day)?
+                    Date::try_new_gregorian(range_check(year, "year", 1..)?, month, day)?
                         .to_calendar(cal)
                         .inner,
                 );
+            }
+            Some("bce" | "bc") => {
+                return Ok(Date::try_new_gregorian(
+                    1 - range_check(year, "year", 1..)?,
+                    month,
+                    day,
+                )?
+                .to_calendar(cal)
+                .inner);
             }
             Some(e) => e.parse().map_err(|_| DateError::UnknownEra)?,
         };
