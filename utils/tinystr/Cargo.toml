@@ -28,6 +28,7 @@ displaydoc = { workspace = true }
 serde = { workspace = true, features = ["alloc"], optional = true }
 zerovec = { workspace = true, optional = true }
 databake = { workspace = true, optional = true }
+potential_utf = { workspace = true, optional = true }
 
 [dev-dependencies]
 bincode = { workspace = true }
@@ -43,6 +44,7 @@ default = ["alloc"]
 alloc = ["zerovec?/alloc"]
 zerovec = ["dep:zerovec"]
 databake = ["dep:databake"]
+potential_utf = ["dep:potential_utf"]
 serde = ["dep:serde"]
 # No longer does anything
 std = []
