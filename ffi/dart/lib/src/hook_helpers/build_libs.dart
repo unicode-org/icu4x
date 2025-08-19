@@ -61,12 +61,15 @@ Future buildLib(
 
   final isNoStd = _isNoStdTarget(rustTarget);
 
+  final nightly =
+      Platform.environment['PINNED_CI_NIGHTLY'] ?? 'nightly-2025-02-17';
+
   if (buildStatic || isNoStd) {
     await runProcess('rustup', [
       'toolchain',
       'install',
       '--no-self-update',
-      'nightly',
+      nightly,
       '--component',
       'rust-src',
     ], workingDirectory: workingDirectory);
@@ -76,14 +79,14 @@ Future buildLib(
     'target',
     'add',
     rustTarget,
-    if (buildStatic || isNoStd) ...['--toolchain', 'nightly'],
+    if (buildStatic || isNoStd) ...['--toolchain', nightly],
   ], workingDirectory: workingDirectory);
 
   final additionalFeatures = isNoStd
       ? ['libc_alloc', 'looping_panic_handler']
       : ['simple_logger'];
   await runProcess('cargo', [
-    if (buildStatic || isNoStd) '+nightly',
+    if (buildStatic || isNoStd) '+$nightly',
     'rustc',
     '--manifest-path=ffi/capi/Cargo.toml',
     '--crate-type=${buildStatic ? 'staticlib' : 'cdylib'}',
