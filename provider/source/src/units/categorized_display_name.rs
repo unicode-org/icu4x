@@ -9,8 +9,11 @@ use crate::SourceDataProvider;
 
 use cldr_serde::units::preferences::UnitType;
 use icu::experimental::dimension::provider::units::categorized_display_name::{
-    UnitsNameLengthCoreV1, UnitsNameLengthExtendedV1, UnitsNameLengthOutlierV1,
-    UnitsNameMassCoreV1, UnitsNameMassExtendedV1, UnitsNameMassOutlierV1,
+    UnitsNameAreaCoreV1, UnitsNameAreaExtendedV1, UnitsNameAreaOutlierV1, UnitsNameDurationCoreV1,
+    UnitsNameDurationExtendedV1, UnitsNameDurationOutlierV1, UnitsNameLengthCoreV1,
+    UnitsNameLengthExtendedV1, UnitsNameLengthOutlierV1, UnitsNameMassCoreV1,
+    UnitsNameMassExtendedV1, UnitsNameMassOutlierV1, UnitsNameVolumeCoreV1,
+    UnitsNameVolumeExtendedV1, UnitsNameVolumeOutlierV1,
 };
 use icu::experimental::dimension::provider::units::display_name::UnitsDisplayName;
 use icu::locale::LanguageIdentifier;
@@ -187,9 +190,27 @@ macro_rules! impl_units_display_name_provider {
     };
 }
 
+// Area
+impl_units_display_name_provider!(UnitsNameAreaCoreV1, UnitType::Core, "area");
+impl_units_display_name_provider!(UnitsNameAreaExtendedV1, UnitType::Extended, "area");
+impl_units_display_name_provider!(UnitsNameAreaOutlierV1, UnitType::Outlier, "area");
+
+// Duration
+impl_units_display_name_provider!(UnitsNameDurationCoreV1, UnitType::Core, "duration");
+impl_units_display_name_provider!(UnitsNameDurationExtendedV1, UnitType::Extended, "duration");
+impl_units_display_name_provider!(UnitsNameDurationOutlierV1, UnitType::Outlier, "duration");
+
+// Length
 impl_units_display_name_provider!(UnitsNameLengthCoreV1, UnitType::Core, "length");
 impl_units_display_name_provider!(UnitsNameLengthExtendedV1, UnitType::Extended, "length");
 impl_units_display_name_provider!(UnitsNameLengthOutlierV1, UnitType::Outlier, "length");
+
+// Mass
 impl_units_display_name_provider!(UnitsNameMassCoreV1, UnitType::Core, "mass");
 impl_units_display_name_provider!(UnitsNameMassExtendedV1, UnitType::Extended, "mass");
 impl_units_display_name_provider!(UnitsNameMassOutlierV1, UnitType::Outlier, "mass");
+
+// Volume
+impl_units_display_name_provider!(UnitsNameVolumeCoreV1, UnitType::Core, "volume");
+impl_units_display_name_provider!(UnitsNameVolumeExtendedV1, UnitType::Extended, "volume");
+impl_units_display_name_provider!(UnitsNameVolumeOutlierV1, UnitType::Outlier, "volume");

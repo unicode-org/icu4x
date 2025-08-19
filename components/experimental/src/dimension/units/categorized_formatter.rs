@@ -4,31 +4,87 @@
 
 //! Experimental.
 
-use core::marker::PhantomData;
-use fixed_decimal::Decimal;
-
-#[cfg(feature = "compiled_data")]
-use icu_provider::DataError;
-
 use crate::dimension::units::format::FormattedUnit;
-use crate::dimension::units::formatter::UnitsFormatter;
-#[cfg(feature = "compiled_data")]
-use crate::dimension::units::formatter::UnitsFormatterPreferences;
-#[cfg(feature = "compiled_data")]
-use crate::dimension::units::options::UnitsFormatterOptions;
-#[cfg(feature = "compiled_data")]
+use crate::dimension::units::options::Width;
 use crate::measure::category::CategorizedMeasureUnit;
 use crate::measure::category::MeasureUnitCategory;
+use core::marker::PhantomData;
+use fixed_decimal::Decimal;
+use icu_decimal::options::DecimalFormatterOptions;
+use icu_decimal::DecimalFormatter;
+use icu_decimal::DecimalFormatterPreferences;
+use icu_locale_core::preferences::{define_preferences, prefs_convert};
+use icu_plurals::PluralRules;
+use icu_plurals::PluralRulesPreferences;
+use icu_provider::marker::DataMarkerExt;
+use icu_provider::DataError;
+use icu_provider::{
+    DataIdentifierBorrowed, DataMarkerAttributes, DataPayload, DataProvider, DataRequest,
+};
+use smallvec::SmallVec;
 
-/// A [`UnitsFormatter`] that is related to a specific category.
+extern crate alloc;
+
+define_preferences!(
+    /// The preferences for units formatting.
+    [Copy]
+    CategorizedUnitsFormatterPreferences,
+    {
+        /// The user's preferred numbering system.
+        ///
+        /// Corresponds to the `-u-nu` in Unicode Locale Identifier.
+        numbering_system: super::super::preferences::NumberingSystem
+    }
+);
+prefs_convert!(
+    CategorizedUnitsFormatterPreferences,
+    DecimalFormatterPreferences,
+    { numbering_system }
+);
+prefs_convert!(CategorizedUnitsFormatterPreferences, PluralRulesPreferences);
+
+/// A [`CategorizedFormatter`] is used to format specific units.
 ///
 /// This is useful for type inference and for ensuring that the correct units are used.
 pub struct CategorizedFormatter<C: MeasureUnitCategory> {
     _category: PhantomData<C>,
-    pub formatter: UnitsFormatter,
+    display_name: DataPayload<C::DataMarker>,
+    decimal_formatter: DecimalFormatter,
+    plural_rules: PluralRules,
 }
 
-impl<C: MeasureUnitCategory> CategorizedFormatter<C> {
+impl<C: MeasureUnitCategory> CategorizedFormatter<C>
+where
+    <C as MeasureUnitCategory>::DataMarker: icu_provider::DataMarker,
+{
+    // TODO: Remove this function once we have separate markers for different widths.
+    #[inline]
+    fn attribute(width: Width, unit: &str) -> SmallVec<[u8; 32]> {
+        let mut buffer: SmallVec<[u8; 32]> = SmallVec::new();
+        let length = match width {
+            Width::Short => "short-",
+            Width::Narrow => "narrow-",
+            Width::Long => "long-",
+        };
+        buffer.extend_from_slice(length.as_bytes());
+        buffer.extend_from_slice(unit.as_bytes());
+        buffer
+    }
+
+    icu_provider::gen_buffer_data_constructors!(
+        (
+            prefs: CategorizedUnitsFormatterPreferences,
+            categorized_unit: CategorizedMeasureUnit<C>,
+            options: super::options::UnitsFormatterOptions
+        ) -> error: DataError,
+        functions: [
+            try_new: skip,
+            try_new_with_buffer_provider,
+            try_new_unstable,
+            Self
+        ]
+    );
+
     /// Creates a new [`CategorizedFormatter`] from compiled locale data and an options bag.
     ///
     /// ✨ *Enabled with the `compiled_data` Cargo feature.*
@@ -36,20 +92,97 @@ impl<C: MeasureUnitCategory> CategorizedFormatter<C> {
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
     pub fn try_new(
-        prefs: UnitsFormatterPreferences,
+        prefs: CategorizedUnitsFormatterPreferences,
         categorized_unit: CategorizedMeasureUnit<C>,
-        options: UnitsFormatterOptions,
-    ) -> Result<Self, DataError> {
-        let formatter = UnitsFormatter::try_new(prefs, categorized_unit.cldr_id(), options)?;
+        options: super::options::UnitsFormatterOptions,
+    ) -> Result<Self, DataError>
+    where
+        crate::provider::Baked: DataProvider<C::DataMarker>,
+    {
+        let locale = C::DataMarker::make_locale(prefs.locale_preferences);
+        let decimal_formatter: DecimalFormatter =
+            DecimalFormatter::try_new((&prefs).into(), DecimalFormatterOptions::default())?;
+
+        let plural_rules = PluralRules::try_new_cardinal((&prefs).into())?;
+
+        // TODO: Remove this allocation once we have separate markers for different widths.
+        let attribute = Self::attribute(options.width, categorized_unit.cldr_id());
+        let unit_attribute = DataMarkerAttributes::try_from_utf8(&attribute[..attribute.len()])
+            .map_err(|_| DataError::custom("Failed to create a data marker"))?;
+
+        let display_name = crate::provider::Baked
+            .load(DataRequest {
+                id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                    unit_attribute,
+                    &locale,
+                ),
+                ..Default::default()
+            })?
+            .payload;
+
         Ok(Self {
             _category: PhantomData,
-            formatter,
+            display_name,
+            decimal_formatter,
+            plural_rules,
+        })
+    }
+
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
+    pub fn try_new_unstable<D>(
+        provider: &D,
+        prefs: CategorizedUnitsFormatterPreferences,
+        categorized_unit: CategorizedMeasureUnit<C>,
+        options: super::options::UnitsFormatterOptions,
+    ) -> Result<Self, DataError>
+    where
+        D: ?Sized
+            + DataProvider<C::DataMarker>
+            + DataProvider<icu_decimal::provider::DecimalSymbolsV1>
+            + DataProvider<icu_decimal::provider::DecimalDigitsV1>
+            + DataProvider<icu_plurals::provider::PluralsCardinalV1>,
+        <C as MeasureUnitCategory>::DataMarker: icu_provider::DataMarker,
+    {
+        let locale = C::DataMarker::make_locale(prefs.locale_preferences);
+        let decimal_formatter = DecimalFormatter::try_new_unstable(
+            provider,
+            (&prefs).into(),
+            DecimalFormatterOptions::default(),
+        )?;
+
+        let plural_rules = PluralRules::try_new_cardinal_unstable(provider, (&prefs).into())?;
+
+        // TODO: Remove this allocation once we have separate markers for different widths.
+        let attribute = Self::attribute(options.width, categorized_unit.cldr_id());
+        let unit_attribute = DataMarkerAttributes::try_from_utf8(&attribute[..attribute.len()])
+            .map_err(|_| DataError::custom("Failed to create a data marker"))?;
+
+        let display_name = provider
+            .load(DataRequest {
+                id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                    unit_attribute,
+                    &locale,
+                ),
+                ..Default::default()
+            })?
+            .payload;
+
+        Ok(Self {
+            _category: PhantomData,
+            display_name,
+            decimal_formatter,
+            plural_rules,
         })
     }
 
     /// Formats a [`Decimal`] value for the given unit.
     pub fn format_fixed_decimal<'l>(&'l self, value: &'l Decimal) -> FormattedUnit<'l> {
-        self.formatter.format_fixed_decimal(value)
+        FormattedUnit {
+            value,
+            display_name: self.display_name.get(),
+            decimal_formatter: &self.decimal_formatter,
+            plural_rules: &self.plural_rules,
+        }
     }
 }
 
