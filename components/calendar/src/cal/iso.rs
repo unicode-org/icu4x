@@ -65,7 +65,7 @@ impl CalendarArithmetic for Iso {
     }
 
     fn provided_year_is_leap(year: i32) -> bool {
-        calendrical_calculations::iso::is_leap_year(year)
+        calendrical_calculations::gregorian::is_leap_year(year)
     }
 
     fn last_month_day_in_provided_year(_year: i32) -> (u8, u8) {
@@ -98,15 +98,21 @@ impl Calendar for Iso {
     }
 
     fn from_rata_die(&self, date: RataDie) -> IsoDateInner {
-        IsoDateInner(match calendrical_calculations::iso::iso_from_fixed(date) {
-            Err(I32CastError::BelowMin) => ArithmeticDate::min_date(),
-            Err(I32CastError::AboveMax) => ArithmeticDate::max_date(),
-            Ok((year, month, day)) => ArithmeticDate::new_unchecked(year, month, day),
-        })
+        IsoDateInner(
+            match calendrical_calculations::gregorian::gregorian_from_fixed(date) {
+                Err(I32CastError::BelowMin) => ArithmeticDate::min_date(),
+                Err(I32CastError::AboveMax) => ArithmeticDate::max_date(),
+                Ok((year, month, day)) => ArithmeticDate::new_unchecked(year, month, day),
+            },
+        )
     }
 
     fn to_rata_die(&self, date: &IsoDateInner) -> RataDie {
-        calendrical_calculations::iso::fixed_from_iso(date.0.year, date.0.month, date.0.day)
+        calendrical_calculations::gregorian::fixed_from_gregorian(
+            date.0.year,
+            date.0.month,
+            date.0.day,
+        )
     }
 
     fn from_iso(&self, iso: IsoDateInner) -> IsoDateInner {

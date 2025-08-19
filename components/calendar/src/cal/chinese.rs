@@ -335,7 +335,7 @@ impl ChineseBasedWithDataLoading for Chinese {
 mod test {
     use super::*;
     use crate::types::MonthCode;
-    use calendrical_calculations::{iso::fixed_from_iso, rata_die::RataDie};
+    use calendrical_calculations::{gregorian::fixed_from_gregorian, rata_die::RataDie};
     use tinystr::tinystr;
 
     /// Run a test twice, with two calendars
@@ -396,13 +396,13 @@ mod test {
                 expected_day: 12,
             },
             TestCase {
-                rd: fixed_from_iso(2319, 2, 20).to_i64_date(),
+                rd: fixed_from_gregorian(2319, 2, 20).to_i64_date(),
                 expected_year: 2318,
                 expected_month: 13,
                 expected_day: 30,
             },
             TestCase {
-                rd: fixed_from_iso(2319, 2, 21).to_i64_date(),
+                rd: fixed_from_gregorian(2319, 2, 21).to_i64_date(),
                 expected_year: 2319,
                 expected_month: 1,
                 expected_day: 1,

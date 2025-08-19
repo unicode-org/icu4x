@@ -20,7 +20,7 @@ mod rule;
 use rule::*;
 mod deserialize;
 
-const EPOCH: RataDie = calendrical_calculations::iso::const_fixed_from_iso(1970, 1, 1);
+const EPOCH: RataDie = calendrical_calculations::gregorian::const_fixed_from_gregorian(1970, 1, 1);
 const SECONDS_IN_UTC_DAY: i64 = 24 * 60 * 60;
 
 #[derive(Debug)]
@@ -317,9 +317,9 @@ impl Zone<'_> {
         minute: u8,
         second: u8,
     ) -> PossibleOffset {
-        let day_before_year = calendrical_calculations::iso::day_before_year(year);
+        let day_before_year = calendrical_calculations::gregorian::day_before_year(year);
         let day_in_year =
-            calendrical_calculations::iso::days_before_month(year, month) + day as u16;
+            calendrical_calculations::gregorian::days_before_month(year, month) + day as u16;
         let local_time_of_day = (hour as i32 * 60 + minute as i32) * 60 + second as i32;
 
         // `resolve_local` quickly returns if the rule doesn't apply

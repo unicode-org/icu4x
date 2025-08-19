@@ -7,6 +7,8 @@
 // the Apache License, Version 2.0 which can be found at the calendrical_calculations
 // package root or at http://www.apache.org/licenses/LICENSE-2.0.
 
+//! Error handling
+
 use displaydoc::Display;
 
 /// A list of error outcomes for exceeding location bounds

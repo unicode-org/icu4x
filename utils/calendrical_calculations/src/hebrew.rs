@@ -7,6 +7,8 @@
 // the Apache License, Version 2.0 which can be found at the calendrical_calculations
 // package root or at http://www.apache.org/licenses/LICENSE-2.0.
 
+//! The Hebrew calendar
+
 use crate::helpers::{final_func, i64_to_i32, next_u8};
 use crate::rata_die::{Moment, RataDie};
 #[allow(unused_imports)]

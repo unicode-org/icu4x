@@ -116,7 +116,7 @@ impl Calendar for Indian {
     fn from_iso(&self, iso: IsoDateInner) -> IndianDateInner {
         // Get day number in year (1 indexed)
         let day_of_year_iso =
-            calendrical_calculations::iso::days_before_month(iso.0.year, iso.0.month)
+            calendrical_calculations::gregorian::days_before_month(iso.0.year, iso.0.month)
                 + iso.0.day as u16;
         // Convert to Śaka year
         let mut year = iso.0.year - YEAR_OFFSET;

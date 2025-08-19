@@ -207,7 +207,8 @@ pub struct ZonedDateTime<A: AsCalendar, Z> {
     pub zone: Z,
 }
 
-const UNIX_EPOCH: RataDie = calendrical_calculations::iso::const_fixed_from_iso(1970, 1, 1);
+const UNIX_EPOCH: RataDie =
+    calendrical_calculations::gregorian::const_fixed_from_gregorian(1970, 1, 1);
 
 impl ZonedDateTime<Iso, UtcOffset> {
     /// Creates a [`ZonedDateTime`] from an absolute time, in milliseconds since the UNIX Epoch,

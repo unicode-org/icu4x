@@ -1,6 +1,17 @@
+// This file is part of ICU4X.
+//
+// The contents of this file implement algorithms from Calendrical Calculations
+// by Reingold & Dershowitz, Cambridge University Press, 4th edition (2018),
+// which have been released as Lisp code at <https://github.com/EdReingold/calendar-code2/>
+// under the Apache-2.0 license. Accordingly, this file is released under
+// the Apache License, Version 2.0 which can be found at the calendrical_calculations
+// package root or at http://www.apache.org/licenses/LICENSE-2.0.
+
+//! Chinese-like lunar calendars (Chinese, Dangi)
+
 use crate::astronomy::{self, Astronomical, MEAN_SYNODIC_MONTH, MEAN_TROPICAL_YEAR};
+use crate::gregorian::{fixed_from_gregorian, gregorian_from_fixed};
 use crate::helpers::i64_to_i32;
-use crate::iso::{fixed_from_iso, iso_from_fixed};
 use crate::rata_die::{Moment, RataDie};
 use core::num::NonZeroU8;
 #[allow(unused_imports)]
@@ -31,26 +42,31 @@ pub trait ChineseBased {
     const DEBUG_NAME: &'static str;
 }
 
-/// Given an ISO year, return the extended year
-pub fn extended_from_iso<C: ChineseBased>(iso_year: i32) -> i32 {
-    iso_year
+/// Given a Gregorian year, return the extended year
+pub fn extended_from_gregorian<C: ChineseBased>(gregorian_year: i32) -> i32 {
+    gregorian_year
         - const {
-            let Ok(y) = crate::iso::iso_year_from_fixed(C::EPOCH) else {
+            let Ok(y) = crate::gregorian::gregorian_year_from_fixed(C::EPOCH) else {
                 panic!()
             };
             y - 1
         }
 }
-/// Given an extended year, return the ISO year
-pub fn iso_from_extended<C: ChineseBased>(extended_year: i32) -> i32 {
+/// Given an extended year, return the Gregorian year
+pub fn gregorian_from_extended<C: ChineseBased>(extended_year: i32) -> i32 {
     extended_year
         + const {
-            let Ok(y) = crate::iso::iso_year_from_fixed(C::EPOCH) else {
+            let Ok(y) = crate::gregorian::gregorian_year_from_fixed(C::EPOCH) else {
                 panic!()
             };
             y - 1
         }
 }
+
+#[deprecated(since = "0.2.1", note = "use `extended_from_gregorian`")]
+pub use extended_from_gregorian as extended_from_iso;
+#[deprecated(since = "0.2.1", note = "use `gregorian_from_extended`")]
+pub use gregorian_from_extended as iso_from_extended;
 
 /// A type implementing [`ChineseBased`] for the Chinese calendar
 #[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Default, Hash)]
@@ -64,11 +80,11 @@ pub struct Dangi;
 
 impl ChineseBased for Chinese {
     fn utc_offset(fixed: RataDie) -> f64 {
-        use crate::iso::const_fixed_from_iso as iso;
+        use crate::gregorian::const_fixed_from_gregorian as gregorian;
         // Before 1929, local time was used, represented as UTC+(1397/180 h).
         // In 1929, China adopted a standard time zone based on 120 degrees of longitude, meaning
         // from 1929 onward, all new moon calculations are based on UTC+8h.
-        if fixed < const { iso(1929, 1, 1) } {
+        if fixed < const { gregorian(1929, 1, 1) } {
             1397.0 / 180.0 / 24.0
         } else {
             8.0 / 24.0
@@ -76,23 +92,23 @@ impl ChineseBased for Chinese {
     }
 
     /// The equivalent first day in the Chinese calendar (based on inception of the calendar), Feb. 15, -2636
-    const EPOCH: RataDie = crate::iso::const_fixed_from_iso(-2636, 2, 15);
+    const EPOCH: RataDie = crate::gregorian::const_fixed_from_gregorian(-2636, 2, 15);
     const DEBUG_NAME: &'static str = "chinese";
 }
 
 impl ChineseBased for Dangi {
     fn utc_offset(fixed: RataDie) -> f64 {
-        use crate::iso::const_fixed_from_iso as iso;
+        use crate::gregorian::const_fixed_from_gregorian as gregorian;
         // Before 1908, local time was used, represented as UTC+(3809/450 h).
         // This changed multiple times as different standard timezones were adopted in Korea.
         // Currently, UTC+9h is used.
-        if fixed < const { iso(1908, 4, 1) } {
+        if fixed < const { gregorian(1908, 4, 1) } {
             3809.0 / 450.0 / 24.0
-        } else if fixed < const { iso(1912, 1, 1) } {
+        } else if fixed < const { gregorian(1912, 1, 1) } {
             8.5 / 24.0
-        } else if fixed < const { iso(1954, 3, 21) } {
+        } else if fixed < const { gregorian(1954, 3, 21) } {
             9.0 / 24.0
-        } else if fixed < const { iso(1961, 8, 10) } {
+        } else if fixed < const { gregorian(1961, 8, 10) } {
             8.5 / 24.0
         } else {
             9.0 / 24.0
@@ -100,7 +116,7 @@ impl ChineseBased for Dangi {
     }
 
     /// The first day in the Korean Dangi calendar (based on the founding of Gojoseon), lunar new year -2332
-    const EPOCH: RataDie = crate::iso::const_fixed_from_iso(-2332, 2, 15);
+    const EPOCH: RataDie = crate::gregorian::const_fixed_from_gregorian(-2332, 2, 15);
     const DEBUG_NAME: &'static str = "dangi";
 }
 
@@ -235,22 +251,22 @@ pub(crate) fn new_year_in_sui<C: ChineseBased>(prior_solstice: RataDie) -> (Rata
 ///
 /// See: <https://github.com/unicode-org/icu4x/pull/4904>
 fn bind_winter_solstice<C: ChineseBased>(solstice: RataDie) -> RataDie {
-    let (iso_year, iso_month, iso_day) = match iso_from_fixed(solstice) {
+    let (gregorian_year, gregorian_month, gregorian_day) = match gregorian_from_fixed(solstice) {
         Ok(ymd) => ymd,
         Err(_) => {
             debug_assert!(false, "Solstice REALLY out of bounds: {solstice:?}");
             return solstice;
         }
     };
-    let resolved_solstice = if iso_month < 12 || iso_day < 20 {
-        fixed_from_iso(iso_year, 12, 20)
-    } else if iso_day > 23 {
-        fixed_from_iso(iso_year, 12, 23)
+    let resolved_solstice = if gregorian_month < 12 || gregorian_day < 20 {
+        fixed_from_gregorian(gregorian_year, 12, 20)
+    } else if gregorian_day > 23 {
+        fixed_from_gregorian(gregorian_year, 12, 23)
     } else {
         solstice
     };
     if resolved_solstice != solstice {
-        if !(0..=4000).contains(&iso_year) {
+        if !(0..=4000).contains(&gregorian_year) {
             #[cfg(feature = "logging")]
             log::trace!("({}) Solstice out of bounds: {solstice:?}", C::DEBUG_NAME);
         } else {
@@ -375,7 +391,7 @@ pub struct ChineseFromFixedResult {
     pub leap_month: Option<NonZeroU8>,
 }
 
-/// Get a chinese based date from a fixed date, with the related ISO year
+/// Get a chinese based date from a fixed date
 ///
 /// Months are calculated by iterating through the dates of new moons until finding the last month which
 /// does not exceed the given fixed date. The day of month is calculated by subtracting the fixed date
@@ -592,10 +608,10 @@ mod test {
 
     #[test]
     fn test_chinese_new_year_on_or_before() {
-        let fixed = crate::iso::fixed_from_iso(2023, 6, 22);
+        let fixed = crate::gregorian::fixed_from_gregorian(2023, 6, 22);
         let prev_solstice = winter_solstice_on_or_before::<Chinese>(fixed);
         let result_fixed = new_year_on_or_before_fixed_date::<Chinese>(fixed, prev_solstice).0;
-        let (y, m, d) = crate::iso::iso_from_fixed(result_fixed).unwrap();
+        let (y, m, d) = crate::gregorian::gregorian_from_fixed(result_fixed).unwrap();
         assert_eq!(y, 2023);
         assert_eq!(m, 1);
         assert_eq!(d, 22);
@@ -610,7 +626,7 @@ mod test {
     fn test_month_structure() {
         // Mostly just tests that the assertions aren't hit
         for year in 1900..2050 {
-            let fixed = crate::iso::fixed_from_iso(year, 1, 1);
+            let fixed = crate::gregorian::fixed_from_gregorian(year, 1, 1);
             let chinese_year = chinese_based_date_from_fixed::<Chinese>(fixed);
             let (month_lengths, leap) = month_structure_for_year::<Chinese>(
                 chinese_year.year_bounds.new_year,
@@ -642,9 +658,9 @@ mod test {
     fn test_seollal() {
         #[derive(Debug)]
         struct TestCase {
-            iso_year: i32,
-            iso_month: u8,
-            iso_day: u8,
+            gregorian_year: i32,
+            gregorian_month: u8,
+            gregorian_day: u8,
             expected_year: i32,
             expected_month: u8,
             expected_day: u8,
@@ -652,105 +668,105 @@ mod test {
 
         let cases = [
             TestCase {
-                iso_year: 2024,
-                iso_month: 6,
-                iso_day: 6,
+                gregorian_year: 2024,
+                gregorian_month: 6,
+                gregorian_day: 6,
                 expected_year: 2024,
                 expected_month: 2,
                 expected_day: 10,
             },
             TestCase {
-                iso_year: 2024,
-                iso_month: 2,
-                iso_day: 9,
+                gregorian_year: 2024,
+                gregorian_month: 2,
+                gregorian_day: 9,
                 expected_year: 2023,
                 expected_month: 1,
                 expected_day: 22,
             },
             TestCase {
-                iso_year: 2023,
-                iso_month: 1,
-                iso_day: 22,
+                gregorian_year: 2023,
+                gregorian_month: 1,
+                gregorian_day: 22,
                 expected_year: 2023,
                 expected_month: 1,
                 expected_day: 22,
             },
             TestCase {
-                iso_year: 2023,
-                iso_month: 1,
-                iso_day: 21,
+                gregorian_year: 2023,
+                gregorian_month: 1,
+                gregorian_day: 21,
                 expected_year: 2022,
                 expected_month: 2,
                 expected_day: 1,
             },
             TestCase {
-                iso_year: 2022,
-                iso_month: 6,
-                iso_day: 6,
+                gregorian_year: 2022,
+                gregorian_month: 6,
+                gregorian_day: 6,
                 expected_year: 2022,
                 expected_month: 2,
                 expected_day: 1,
             },
             TestCase {
-                iso_year: 2021,
-                iso_month: 6,
-                iso_day: 6,
+                gregorian_year: 2021,
+                gregorian_month: 6,
+                gregorian_day: 6,
                 expected_year: 2021,
                 expected_month: 2,
                 expected_day: 12,
             },
             TestCase {
-                iso_year: 2020,
-                iso_month: 6,
-                iso_day: 6,
+                gregorian_year: 2020,
+                gregorian_month: 6,
+                gregorian_day: 6,
                 expected_year: 2020,
                 expected_month: 1,
                 expected_day: 25,
             },
             TestCase {
-                iso_year: 2019,
-                iso_month: 6,
-                iso_day: 6,
+                gregorian_year: 2019,
+                gregorian_month: 6,
+                gregorian_day: 6,
                 expected_year: 2019,
                 expected_month: 2,
                 expected_day: 5,
             },
             TestCase {
-                iso_year: 2018,
-                iso_month: 6,
-                iso_day: 6,
+                gregorian_year: 2018,
+                gregorian_month: 6,
+                gregorian_day: 6,
                 expected_year: 2018,
                 expected_month: 2,
                 expected_day: 16,
             },
             TestCase {
-                iso_year: 2025,
-                iso_month: 6,
-                iso_day: 6,
+                gregorian_year: 2025,
+                gregorian_month: 6,
+                gregorian_day: 6,
                 expected_year: 2025,
                 expected_month: 1,
                 expected_day: 29,
             },
             TestCase {
-                iso_year: 2026,
-                iso_month: 8,
-                iso_day: 8,
+                gregorian_year: 2026,
+                gregorian_month: 8,
+                gregorian_day: 8,
                 expected_year: 2026,
                 expected_month: 2,
                 expected_day: 17,
             },
             TestCase {
-                iso_year: 2027,
-                iso_month: 4,
-                iso_day: 4,
+                gregorian_year: 2027,
+                gregorian_month: 4,
+                gregorian_day: 4,
                 expected_year: 2027,
                 expected_month: 2,
                 expected_day: 7,
             },
             TestCase {
-                iso_year: 2028,
-                iso_month: 9,
-                iso_day: 21,
+                gregorian_year: 2028,
+                gregorian_month: 9,
+                gregorian_day: 21,
                 expected_year: 2028,
                 expected_month: 1,
                 expected_day: 27,
@@ -758,9 +774,13 @@ mod test {
         ];
 
         for case in cases {
-            let fixed = crate::iso::fixed_from_iso(case.iso_year, case.iso_month, case.iso_day);
+            let fixed = crate::gregorian::fixed_from_gregorian(
+                case.gregorian_year,
+                case.gregorian_month,
+                case.gregorian_day,
+            );
             let seollal = seollal_on_or_before(fixed);
-            let (y, m, d) = crate::iso::iso_from_fixed(seollal).unwrap();
+            let (y, m, d) = crate::gregorian::gregorian_from_fixed(seollal).unwrap();
             assert_eq!(
                 y, case.expected_year,
                 "Year check failed for case: {case:?}"

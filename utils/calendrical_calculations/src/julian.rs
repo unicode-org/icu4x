@@ -7,12 +7,13 @@
 // the Apache License, Version 2.0 which can be found at the calendrical_calculations
 // package root or at http://www.apache.org/licenses/LICENSE-2.0.
 
+//! The Julian calendar
+
 use crate::helpers::{i64_to_i32, I32CastError};
 use crate::rata_die::RataDie;
 
-// Julian epoch is equivalent to fixed_from_iso of December 30th of 0 year
-// 1st Jan of 1st year Julian is equivalent to December 30th of 0th year of ISO year
-const JULIAN_EPOCH: RataDie = RataDie::new(-1);
+// 1st Jan of 1st year Julian is equivalent to December 30th of 0th year Gregorian
+const JULIAN_EPOCH: RataDie = crate::gregorian::const_fixed_from_gregorian(0, 12, 30);
 
 /// Lisp code reference: <https://github.com/EdReingold/calendar-code2/blob/1ee51ecfaae6f856b0d7de3e36e9042100b4f424/calendar.l#L1684-L1687>
 #[inline(always)]

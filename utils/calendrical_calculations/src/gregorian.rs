@@ -7,6 +7,8 @@
 // the Apache License, Version 2.0 which can be found at the calendrical_calculations
 // package root or at http://www.apache.org/licenses/LICENSE-2.0.
 
+//! The proleptic Gregorian calendar
+
 use crate::helpers::{i64_to_i32, I32CastError};
 use crate::rata_die::RataDie;
 
@@ -29,7 +31,7 @@ pub const fn is_leap_year(year: i32) -> bool {
 // The fixed calculations algorithms are from the Calendrical Calculations book.
 //
 /// Lisp code reference: <https://github.com/EdReingold/calendar-code2/blob/1ee51ecfaae6f856b0d7de3e36e9042100b4f424/calendar.l#L1167-L1189>
-pub const fn const_fixed_from_iso(year: i32, month: u8, day: u8) -> RataDie {
+pub const fn const_fixed_from_gregorian(year: i32, month: u8, day: u8) -> RataDie {
     day_before_year(year)
         .add(days_before_month(year, month) as i64)
         .add(day as i64)
@@ -51,13 +53,13 @@ pub const fn days_before_month(year: i32, month: u8) -> u16 {
     }
 }
 
-/// Non-const version of [`const_fixed_from_iso`]
-pub fn fixed_from_iso(year: i32, month: u8, day: u8) -> RataDie {
-    const_fixed_from_iso(year, month, day)
+/// Non-const version of [`const_fixed_from_gregorian`]
+pub fn fixed_from_gregorian(year: i32, month: u8, day: u8) -> RataDie {
+    const_fixed_from_gregorian(year, month, day)
 }
 
 /// Lisp code reference: <https://github.com/EdReingold/calendar-code2/blob/1ee51ecfaae6f856b0d7de3e36e9042100b4f424/calendar.l#L1191-L1217>
-pub const fn iso_year_from_fixed(date: RataDie) -> Result<i32, I32CastError> {
+pub const fn gregorian_year_from_fixed(date: RataDie) -> Result<i32, I32CastError> {
     // Shouldn't overflow because it's not possbile to construct extreme values of RataDie
     let date = date.since(EPOCH);
 
@@ -97,8 +99,8 @@ pub const fn day_before_year(year: i32) -> RataDie {
 }
 
 /// Lisp code reference: <https://github.com/EdReingold/calendar-code2/blob/1ee51ecfaae6f856b0d7de3e36e9042100b4f424/calendar.l#L1525-L1540>
-pub fn iso_from_fixed(date: RataDie) -> Result<(i32, u8, u8), I32CastError> {
-    let year = iso_year_from_fixed(date)?;
+pub fn gregorian_from_fixed(date: RataDie) -> Result<(i32, u8, u8), I32CastError> {
+    let year = gregorian_year_from_fixed(date)?;
     // Calculates the prior days of the adjusted year, then applies a correction based on leap year conditions for the correct ISO date conversion.
     let prior_days = date - day_before_year(year);
     let correction = if prior_days < 31 + 28 + is_leap_year(year) as i64 {
@@ -107,6 +109,6 @@ pub fn iso_from_fixed(date: RataDie) -> Result<(i32, u8, u8), I32CastError> {
         (!is_leap_year(year)) as i64
     };
     let month = ((12 * (prior_days + correction) + 373) / 367) as u8; // in 1..12 < u8::MAX
-    let day = (date - fixed_from_iso(year, month, 1) + 1) as u8; // <= days_in_month < u8::MAX
+    let day = (date - fixed_from_gregorian(year, month, 1) + 1) as u8; // <= days_in_month < u8::MAX
     Ok((year, month, day))
 }

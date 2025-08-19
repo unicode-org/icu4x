@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use super::{Offset, PossibleOffset, EPOCH, SECONDS_IN_UTC_DAY};
-use calendrical_calculations::iso;
+use calendrical_calculations::gregorian;
 use calendrical_calculations::rata_die::RataDie;
 use core::cmp::Ordering;
 use icu_time::zone::UtcOffset;
@@ -209,14 +209,14 @@ impl TzRuleDate {
 
     /// Given a year, return the 1-indexed day number in that year for this transition
     pub(crate) fn day_in_year(&self, year: i32, day_before_year: RataDie) -> u16 {
-        let days_before_month = iso::days_before_month(year, self.month);
+        let days_before_month = gregorian::days_before_month(year, self.month);
 
         if let RuleMode::DOM = self.mode {
             return days_before_month + u16::from(self.day);
         }
 
         fn weekday(rd: RataDie) -> u8 {
-            const SUNDAY: RataDie = iso::const_fixed_from_iso(0, 12, 31);
+            const SUNDAY: RataDie = gregorian::const_fixed_from_gregorian(0, 12, 31);
             (rd.since(SUNDAY) % 7) as u8
         }
 
@@ -466,7 +466,7 @@ impl Rule<'_> {
     ///
     /// seconds_since_epoch must resolve to a year that is in-range for i32
     pub(crate) fn resolve_utc(&self, seconds_since_epoch: i64) -> Option<Offset> {
-        let Ok(year) = iso::iso_year_from_fixed(EPOCH + (seconds_since_epoch / SECONDS_IN_UTC_DAY))
+        let Ok(year) = gregorian::gregorian_year_from_fixed(EPOCH + (seconds_since_epoch / SECONDS_IN_UTC_DAY))
         else {
             // Pretend rule doesn't apply anymore after year i32::MAX
             return None;
@@ -480,7 +480,7 @@ impl Rule<'_> {
             return None;
         }
 
-        let day_before_year = iso::day_before_year(year);
+        let day_before_year = gregorian::day_before_year(year);
 
         let start = (&self.inner.start, 0);
         let end = (&self.inner.end, self.inner.additional_offset_secs);
@@ -698,8 +698,8 @@ mod tests {
                 transition_time: 0,
                 time_mode: TimeMode::Utc,
             }
-            .day_in_year(2025, calendrical_calculations::iso::day_before_year(2025)),
-            calendrical_calculations::iso::days_before_month(2025, 8) + 6
+            .day_in_year(2025, calendrical_calculations::gregorian::day_before_year(2025)),
+            calendrical_calculations::gregorian::days_before_month(2025, 8) + 6
         );
 
         // Third Saturday in August 2025
@@ -712,8 +712,8 @@ mod tests {
                 transition_time: 0,
                 time_mode: TimeMode::Utc,
             }
-            .day_in_year(2025, calendrical_calculations::iso::day_before_year(2025)),
-            calendrical_calculations::iso::days_before_month(2025, 8) + 16
+            .day_in_year(2025, calendrical_calculations::gregorian::day_before_year(2025)),
+            calendrical_calculations::gregorian::days_before_month(2025, 8) + 16
         );
     }
 }
