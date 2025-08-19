@@ -563,6 +563,8 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
     /// Returns the value that is associated with `code_point` in this [`CodePointTrie`]
     /// assuming that the small index path should be used.
     ///
+    /// # Intended Precondition
+    ///
     /// `code_point` must be at most `CODE_POINT_MAX` AND greter than
     /// `FAST_TYPE_FAST_INDEXING_MAX` if the trie type is fast or greater
     /// than `SMALL_TYPE_FAST_INDEXING_MAX` if the trie type is small.
