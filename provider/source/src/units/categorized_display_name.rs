@@ -29,7 +29,7 @@ where
         .id
         .marker_attributes
         .split_once('-')
-        .ok_or_else(|| DataErrorKind::InvalidRequest.into_error())?;
+        .ok_or_else(|| DataErrorKind::InvalidRequest.with_req(M::INFO, req))?;
 
     let units_format_data: &cldr_serde::units::data::Resource = source_data_provider
         .cldr()?
@@ -64,7 +64,7 @@ where
                 unit_patterns
                     .other
                     .as_deref()
-                    .ok_or_else(|| DataErrorKind::IdentifierNotFound.into_error())?,
+                    .ok_or_else(|| DataErrorKind::IdentifierNotFound.with_req(M::INFO, req))?,
             )
             .with_zero_value(unit_patterns.zero.as_deref())
             .with_one_value(unit_patterns.one.as_deref())
