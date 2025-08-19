@@ -335,7 +335,7 @@ checksum = "d71b6127be86fdcfddb610f7182ac57211d4b18a3e9c82eb2d17662f2227ad6a"
 
 [[package]]
 name = "calendrical_calculations"
-version = "0.2.0"
+version = "0.2.1"
 dependencies = [
  "core_maths",
  "displaydoc",
@@ -3843,6 +3843,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d1890f4022759daae28ed4fe62859b1236caebfc61ede2f63ed4e695f3f6d936"
 dependencies = [
  "arrayvec",
+ "smallvec",
 ]
 
 [[package]]

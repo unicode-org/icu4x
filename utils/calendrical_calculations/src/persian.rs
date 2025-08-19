@@ -178,7 +178,7 @@ mod tests {
     fn test_persian_epoch() {
         let epoch = FIXED_PERSIAN_EPOCH.to_i64_date();
         // Iso year of Persian Epoch
-        let epoch_year_from_fixed = crate::iso::iso_year_from_fixed(RataDie::new(epoch));
+        let epoch_year_from_fixed = crate::iso::iso_year_from_fixed(RataDie::new(epoch)).unwrap();
         // 622 is the correct ISO year for the Persian Epoch
         assert_eq!(epoch_year_from_fixed, 622);
     }
