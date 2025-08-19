@@ -21,7 +21,7 @@
 use crate::cal::iso::{Iso, IsoDateInner};
 use crate::calendar_arithmetic::PrecomputedDataSource;
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
-use crate::error::{year_check, DateError};
+use crate::error::{range_check, DateError};
 use crate::provider::hijri::PackedHijriYearInfo;
 use crate::provider::hijri::{CalendarHijriSimulatedMeccaV1, HijriData};
 use crate::types::EraYear;
@@ -387,8 +387,8 @@ impl Calendar for HijriSimulated {
     ) -> Result<Self::DateInner, DateError> {
         let year = match era {
             None => year,
-            Some("ah") => year_check(year, 1..)?,
-            Some("bh") => 1 - year_check(year, 1..)?,
+            Some("ah") => range_check(year, "year", 1..)?,
+            Some("bh") => 1 - range_check(year, "year", 1..)?,
             Some(_) => return Err(DateError::UnknownEra),
         };
         let Some((month, false)) = month_code.parsed() else {
@@ -667,8 +667,8 @@ impl Calendar for HijriUmmAlQura {
     ) -> Result<Self::DateInner, DateError> {
         let year = match era {
             None => year,
-            Some("ah") => year_check(year, 1..)?,
-            Some("bh") => 1 - year_check(year, 1..)?,
+            Some("ah") => range_check(year, "year", 1..)?,
+            Some("bh") => 1 - range_check(year, "year", 1..)?,
             Some(_) => return Err(DateError::UnknownEra),
         };
         let Some((month, false)) = month_code.parsed() else {
@@ -889,8 +889,8 @@ impl Calendar for HijriTabular {
     ) -> Result<Self::DateInner, DateError> {
         let year = match era {
             None => year,
-            Some("ah") => year_check(year, 1..)?,
-            Some("bh") => 1 - year_check(year, 1..)?,
+            Some("ah") => range_check(year, "year", 1..)?,
+            Some("bh") => 1 - range_check(year, "year", 1..)?,
             Some(_) => return Err(DateError::UnknownEra),
         };
 

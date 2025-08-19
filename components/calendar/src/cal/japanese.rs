@@ -22,7 +22,7 @@
 //! ```
 
 use crate::cal::iso::{Iso, IsoDateInner};
-use crate::error::{year_check, DateError};
+use crate::error::{range_check, DateError};
 use crate::provider::{CalendarJapaneseExtendedV1, CalendarJapaneseModernV1, EraStartDate};
 use crate::{types, AsCalendar, Calendar, Date, DateDuration, DateDurationUnit, Ref};
 use calendrical_calculations::rata_die::RataDie;
@@ -647,13 +647,13 @@ impl Japanese {
                     .inner);
             }
             Some("ce" | "ad") => {
-                return Ok(Date::try_new_gregorian(year_check(year, 1..)?, month, day)?
+                return Ok(Date::try_new_gregorian(range_check(year, "year", 1..)?, month, day)?
                     .to_calendar(cal)
                     .inner);
             }
             Some("bce" | "bc") => {
                 return Ok(
-                    Date::try_new_gregorian(1 - year_check(year, 1..)?, month, day)?
+                    Date::try_new_gregorian(1 - range_check(year, "year", 1..)?, month, day)?
                         .to_calendar(cal)
                         .inner,
                 );
