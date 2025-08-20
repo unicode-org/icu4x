@@ -167,7 +167,7 @@ where
         })
     }
 
-    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new_core)]
     pub fn try_new_core_unstable<D>(
         provider: &D,
         prefs: CategorizedUnitsFormatterPreferences,
@@ -255,7 +255,7 @@ where
         })
     }
 
-    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new_outlier)]
     pub fn try_new_outlier_unstable<D>(
         provider: &D,
         prefs: CategorizedUnitsFormatterPreferences,
