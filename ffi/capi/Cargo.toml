@@ -159,3 +159,5 @@ libc_alloc = { workspace = true, features = ["global"], optional = true }
 [target.'cfg(not(any(target_arch = "wasm32", target_os = "none")))'.dependencies]
 icu_provider_fs = { workspace = true, optional = true }
 
+[gn]
+rustflags = []
