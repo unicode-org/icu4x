@@ -251,6 +251,10 @@ impl Zone<'_> {
         }
     }
 
+    fn transition_count(&self) -> isize {
+        self.simple.type_map.len() as isize
+    }
+
     /// Gets the information for the transition offset at idx.
     ///
     /// Invariant: idx must be in-range for the transitions table. It is allowed to be 0
@@ -269,19 +273,11 @@ impl Zone<'_> {
             };
         }
 
+        debug_assert!(idx < self.transition_count(), "Called transition_offset_at with out-of-range index (got {idx}, but only have {} transitions)", self.transition_count());
+
+        let idx = core::cmp::min(idx, self.transition_count() - 1);
+
         let idx = idx as usize;
-
-        if idx >= self.simple.type_map.len() {
-            debug_assert!(false, "Called transition_offset_at with out-of-range index (got {idx}, but only have {} transitions)", self.simple.type_map.len());
-            // GIGO behavior
-            return Transition {
-                since: i64::MIN,
-                rule_applies: false,
-                offset: Default::default(),
-            };
-        }
-
-        let idx = core::cmp::min(idx, self.simple.type_map.len() - 1);
 
         #[expect(clippy::indexing_slicing)]
         // type_map has length sum(trans*), and type_map values are validated to be valid indices in type_offsets
@@ -307,7 +303,7 @@ impl Zone<'_> {
         }
     }
 
-    /// Get the possible offsets matching to a timestamp given in *local* (wall) time
+    /// Get the possible offsets for a local datetime.
     pub fn for_date_time(
         &self,
         year: i32,
@@ -326,7 +322,7 @@ impl Zone<'_> {
         if let Some(rule) = self.final_rule {
             // If rule applies, use it
             if let Some(result) =
-                rule.resolve_local(year, day_before_year, day_in_year, local_time_of_day)
+                rule.for_date_time(year, day_before_year, day_in_year, local_time_of_day)
             {
                 return result;
             }
@@ -342,7 +338,7 @@ impl Zone<'_> {
 
         let idx = core::cmp::min(
             self.prev_transition_offset_idx(seconds_since_local_epoch),
-            self.simple.type_map.len() as isize - 1,
+            self.transition_count() - 1,
         );
 
         // `transition_offset_at` always returns a transition that it thinks is *before* this one
@@ -356,7 +352,7 @@ impl Zone<'_> {
         // wall times overlapping (invariant: transition-local-times-do-not-overlap)
         let first_candidate = self.transition_offset_at(idx);
 
-        let second_candidate = if idx + 1 == self.simple.type_map.len() as isize {
+        let second_candidate = if idx + 1 == self.transition_count() {
             // If out of range, just constrain to first_candidate
             first_candidate
         } else {
@@ -430,73 +426,68 @@ impl Zone<'_> {
         PossibleOffset::None
     }
 
-    /// Get the offset matching to a timestamp given in UTC time.
-    ///
-    /// seconds_since_epoch must resolve to a year that is in-range for i32
+    /// Get the offset for a timestamp.
     pub fn for_timestamp(&self, seconds_since_epoch: i64) -> Offset {
-        let mut idx = self.prev_transition_offset_idx(seconds_since_epoch);
-        // We add 1 to idx here since idx is the index of the previous transition
-        // but if the previous transition is the last one then we still need to check
+        let idx = self.prev_transition_offset_idx(seconds_since_epoch);
+        // If the previous transition is the last one then we need to check
         // against the rule
-        if idx + 1 >= self.simple.type_map.len() as isize {
+        if idx == self.transition_count() - 1 {
             if let Some(rule) = self.final_rule {
-                if let Some(resolved) = rule.resolve_utc(seconds_since_epoch) {
+                if let Some(resolved) = rule.for_timestamp(seconds_since_epoch) {
                     return resolved;
                 }
             }
-            // Rule doesn't apply, use the last index instead
-            idx = self.simple.type_map.len() as isize - 1;
         }
         self.transition_offset_at(idx).into()
     }
 
+    /// Get the last transition before a timestamp.
+    ///
+    /// If `seconds_exact` is false, the transition at `x` is considered
+    /// to be before the timestamp `x`.
     pub fn prev_transition(
         &self,
         seconds_since_epoch: i64,
         seconds_exact: bool,
     ) -> Option<Transition> {
-        let mut idx = self.prev_transition_offset_idx(seconds_since_epoch);
-        // We add 1 to idx here since idx is the index of the previous transition
-        // but if the previous transition is the last one then we still need to check
+        let idx = self.prev_transition_offset_idx(seconds_since_epoch);
+
+        // `self.transition_offset_at()` returns a synthetic transition at `i64::MIN`
+        // for the time range before the actual first transition.
+        // We probably don't want to return this?
+        if idx == -1 {
+            return None;
+        }
+
+        // If the previous transition is the last one then we need to check
         // against the rule
-        if idx + 1 >= self.simple.type_map.len() as isize {
+        if idx == self.transition_count() - 1 {
             if let Some(rule) = self.final_rule {
                 if let Some(resolved) = rule.prev_transition(seconds_since_epoch, seconds_exact) {
                     return Some(resolved);
                 }
             }
-            // Rule doesn't apply, use the last index instead
-            idx = self.simple.type_map.len() as isize - 1;
         }
 
         let candidate = self.transition_offset_at(idx);
         if candidate.since == seconds_since_epoch && seconds_exact {
-            if idx == -1 {
-                None
-            } else {
-                Some(self.transition_offset_at(idx - 1))
-            }
+            // If the transition is an exact hit, we actually want the one before
+            (idx > 0).then(|| self.transition_offset_at(idx - 1))
         } else {
             Some(candidate)
         }
     }
 
+    /// Get the first transition after a timestamp.
     pub fn next_transition(&self, seconds_since_epoch: i64) -> Option<Transition> {
         let idx = self.prev_transition_offset_idx(seconds_since_epoch);
-        if idx + 1 >= self.simple.type_map.len() as isize {
-            if let Some(rule) = self.final_rule {
-                return Some(rule.next_transition(seconds_since_epoch));
-            } else {
-                return None;
-            }
-        }
-
-        let candidate = self.transition_offset_at(idx + 1);
-        if candidate.since == seconds_since_epoch {
-            Some(self.transition_offset_at(idx + 2))
+        // If the previous transition is the last one then the next one (if any)
+        // will definitely be the rule.
+        Some(if idx == self.transition_count() - 1 {
+            self.final_rule?.next_transition(seconds_since_epoch)
         } else {
-            Some(candidate)
-        }
+            self.transition_offset_at(idx + 1)
+        })
     }
 }
 

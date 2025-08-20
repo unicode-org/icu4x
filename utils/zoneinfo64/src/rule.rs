@@ -309,12 +309,12 @@ impl TzRuleDate {
 }
 
 impl Rule<'_> {
-    /// Get the possible offsets matching to a timestamp given in *local* (wall) time
+    /// Get the possible offsets for a local datetime.
     ///
     /// Returns None when the rule doesn't apply (this is different from `PossibleOffset::None`,
     /// which means the rule does apply, but the datetime occurred during a gap transition and is thus
     /// invalid).
-    pub(crate) fn resolve_local(
+    pub(crate) fn for_date_time(
         &self,
         year: i32,
         day_before_year: RataDie,
@@ -460,12 +460,11 @@ impl Rule<'_> {
         }
     }
 
-    /// Get the offset matching to a timestamp given in UTC time.
+    /// Get the offset for to a timestamp.
     ///
-    /// Returns None if the seconds_since_epoch is not in range of the Rule.
-    ///
-    /// seconds_since_epoch must resolve to a year that is in-range for i32
-    pub(crate) fn resolve_utc(&self, seconds_since_epoch: i64) -> Option<Offset> {
+    /// Returns None if `seconds_since_epoch` in UTC is before the start year,
+    /// or after the year `i32::MAX`.
+    pub(crate) fn for_timestamp(&self, seconds_since_epoch: i64) -> Option<Offset> {
         let Ok(year) = iso::iso_year_from_fixed(EPOCH + (seconds_since_epoch / SECONDS_IN_UTC_DAY))
         else {
             // Pretend rule doesn't apply anymore after year i32::MAX
@@ -527,11 +526,14 @@ impl Rule<'_> {
         }
     }
 
-    /// Get the offset matching to a timestamp given in UTC time.
+    /// Get the transition before a timestamp.
     ///
-    /// Returns None if the seconds_since_epoch is not in range of the Rule.
-    ///
-    /// seconds_since_epoch must resolve to a year that is in-range for i32
+    /// If `seconds_exact` is false, the transition at `x` is considered
+    /// to be before the timestamp `x`.
+    //
+    // This is almost the exact same code as `for_timestamp`, just
+    // that it has the `seconds_exact` flag, and that it calculates the
+    // extra transition timestamp if the previous transition is in the previous year.
     pub(crate) fn prev_transition(
         &self,
         seconds_since_epoch: i64,
@@ -606,14 +608,24 @@ impl Rule<'_> {
         }
     }
 
-    /// Get the offset matching to a timestamp given in UTC time.
+    /// Get the next transition after a timestamp.
     ///
-    /// Returns None if the seconds_since_epoch is not in range of the Rule.
+    /// As rules continue forever into the future, this does not return
+    /// an `Option`.
     ///
-    /// seconds_since_epoch must resolve to a year that is in-range for i32
+    ///
+    /// If `seconds_since_epoch` in UTC is after the year `i32::MAX`,
+    /// returns garbage.
     pub(crate) fn next_transition(&self, seconds_since_epoch: i64) -> Transition {
-        let year = iso::iso_year_from_fixed(EPOCH + (seconds_since_epoch / SECONDS_IN_UTC_DAY))
-            .unwrap_or(self.start_year as i32);
+        let Ok(year) = iso::iso_year_from_fixed(EPOCH + (seconds_since_epoch / SECONDS_IN_UTC_DAY))
+        else {
+            // GIGO
+            return Transition {
+                since: i64::MAX,
+                offset: Default::default(),
+                rule_applies: false,
+            };
+        };
 
         // No transition happens in a different UTC year, this is verified
         // in `test_rule_not_at_year_boundary`
