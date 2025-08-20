@@ -495,7 +495,7 @@ impl Zone<'_> {
 mod tests {
     use super::*;
     use chrono_tz::Tz;
-    use std::{str::FromStr, sync::LazyLock};
+    use std::sync::LazyLock;
 
     pub(crate) static TZDB: LazyLock<ZoneInfo64> = LazyLock::new(|| {
         ZoneInfo64::try_from_u32s(resb::include_bytes_as_u32!("../tests/data/zoneinfo64.res"))
@@ -572,7 +572,7 @@ mod tests {
 
             let zoneinfo64 = TZDB.get(iana).unwrap();
 
-            for seconds_since_epoch in jiff_transitions(iana)
+            for seconds_since_epoch in transitions(iana)
                 .into_iter()
                 // 30-minute increments around a transition
                 .flat_map(|t| (-3..=3).map(move |h| t.since + h * 30 * 60))
@@ -613,25 +613,30 @@ mod tests {
         }
     }
 
-    fn jiff_transitions(iana: &str) -> Vec<Transition> {
-        let tz = jiff::tz::TimeZone::get(iana).unwrap();
+    fn transitions(iana: &str) -> Vec<Transition> {
+        let tz = tzdb::tz_by_name(iana).unwrap();
         let mut transitions = tz
-            // Chrono only evaluates rules until 2100
-            .preceding(jiff::Timestamp::from_str("2100-01-01T00:00:00Z").unwrap())
+            .transitions()
+            .iter()
             .map(|t| Transition {
-                since: t.timestamp().as_second(),
-                offset: UtcOffset::from_seconds_unchecked(t.offset().seconds()),
-                rule_applies: t.dst().is_dst(),
+                since: t.unix_leap_time(),
+                offset: UtcOffset::from_seconds_unchecked(
+                    tz.find_local_time_type(t.unix_leap_time())
+                        .unwrap()
+                        .ut_offset(),
+                ),
+                rule_applies: tz
+                    .find_local_time_type(t.unix_leap_time())
+                    .unwrap()
+                    .is_dst(),
             })
             .collect::<Vec<_>>();
 
-        transitions.reverse();
-
-        // jiff returns transitions also if only the name changes, we don't
+        // tzdb returns transitions also if only the name changes, we don't
         transitions.retain(|t| {
-            let before = tz.to_offset_info(jiff::Timestamp::from_second(t.since - 1).unwrap());
-            before.offset().seconds() != t.offset.to_seconds()
-                || before.dst().is_dst() != t.rule_applies
+            let before = tz.find_local_time_type(t.since - 1).unwrap();
+            before.ut_offset() != t.offset.to_seconds()
+                || before.is_dst() != t.rule_applies
                 // This is a super weird transition that would be removed by our rule,
                 // but we want to keep it because it's in zoneinfo64.
                 // 1944-04-03T01:00:00Z, (1.0, 1.0)
@@ -644,10 +649,10 @@ mod tests {
     }
 
     #[test]
-    fn test_transition_against_jiff() {
+    fn test_transition_against_tzdb() {
         for zone in time_zones_to_test() {
             let iana = zone.name();
-            let transitions = jiff_transitions(iana);
+            let transitions = transitions(iana);
 
             if has_rearguard_diff(iana) || transitions.is_empty() {
                 continue;
