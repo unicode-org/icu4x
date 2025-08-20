@@ -336,10 +336,7 @@ impl Zone<'_> {
             * SECONDS_IN_UTC_DAY
             + local_time_of_day as i64;
 
-        let idx = core::cmp::min(
-            self.prev_transition_offset_idx(seconds_since_local_epoch),
-            self.transition_count() - 1,
-        );
+        let idx = self.prev_transition_offset_idx(seconds_since_local_epoch);
 
         // `prev_transition_offset_idx` always returns a transition that is *before* the timestamp.
         // We are using local time here, so we *could* be wrong. We need to check
@@ -352,78 +349,69 @@ impl Zone<'_> {
         // wall times overlapping (`test_transition_local_times_do_not_overlap`)
         let first_candidate = self.transition_offset_at(idx);
 
-        let second_candidate = if idx + 1 == self.transition_count() {
-            // If out of range, just constrain to first_candidate
-            first_candidate
-        } else {
-            self.transition_offset_at(idx + 1)
-        };
+        // There's only a transition into `first_candidate` if there's a transition before it.
+        if idx >= 0 {
+            let before_first_candidate = self.transition_offset_at(idx - 1);
 
-        // Even though we do not need to *check* transitions that are further back,
-        // we do need the transition before `first_candidate` to understand the offset
-        // that came before it.
-        //
-        // When called at the beginning of the array, this just constrains to
-        // first_candidate
-        let before_first_candidate = self.transition_offset_at(idx - 1);
+            let wall_before =
+                first_candidate.since + before_first_candidate.offset.to_seconds() as i64;
+            let wall_after = first_candidate.since + first_candidate.offset.to_seconds() as i64;
 
-        // Wall time for `first_candidate`'s transition time, before and after its transition
-        let first_candidate_wall_prev = first_candidate
-            .since
-            .saturating_add(before_first_candidate.offset.to_seconds() as i64);
-        let first_candidate_wall_next = first_candidate
-            .since
-            .saturating_add(first_candidate.offset.to_seconds() as i64);
+            match (
+                seconds_since_local_epoch < wall_before,
+                seconds_since_local_epoch < wall_after,
+            ) {
+                // We are before the first transition entirely
+                (true, true) => return PossibleOffset::Single(before_first_candidate.into()),
+                // We are within the first candidate's transition
+                (true, false) => {
+                    // This is impossible: if the candidates are equal then
+                    // there can be no repeated local times.
+                    debug_assert_ne!(before_first_candidate.offset, first_candidate.offset);
 
-        // Wall time for `second_candidate`'s transition time, before and after its transition
-        let second_candidate_wall_prev = second_candidate
-            .since
-            .saturating_add(first_candidate.offset.to_seconds() as i64);
-
-        let second_candidate_wall_next = second_candidate
-            .since
-            .saturating_add(second_candidate.offset.to_seconds() as i64);
-
-        // We are within the first candidate's transition
-        if seconds_since_local_epoch < first_candidate_wall_prev
-            && seconds_since_local_epoch >= first_candidate_wall_next
-        {
-            // This is mathematically impossible: if the candidates are equal then
-            // seconds_since_local_epoch would not be >= wall_prev but <= wall_next
-            debug_assert!(before_first_candidate != first_candidate);
-            return PossibleOffset::Ambiguous(
-                before_first_candidate.into(),
-                first_candidate.into(),
-            );
+                    return PossibleOffset::Ambiguous(
+                        before_first_candidate.into(),
+                        first_candidate.into(),
+                    );
+                }
+                // We are in the first candidate's gap
+                (false, true) => return PossibleOffset::None,
+                // We are after the first candidate, try the second
+                (false, false) => {}
+            }
         }
 
-        // We are within the second candidate's transition
-        if seconds_since_local_epoch < second_candidate_wall_prev
-            && seconds_since_local_epoch >= second_candidate_wall_next
-        {
-            // This is mathematically impossible: if the candidates are equal then
-            // seconds_since_local_epoch would not be >= wall_prev but <= wall_next
-            debug_assert!(first_candidate != second_candidate);
-            return PossibleOffset::Ambiguous(first_candidate.into(), second_candidate.into());
+        if idx + 1 < self.transition_count() {
+            let second_candidate = self.transition_offset_at(idx + 1);
+
+            let wall_before = second_candidate.since + first_candidate.offset.to_seconds() as i64;
+            let wall_after = second_candidate.since + second_candidate.offset.to_seconds() as i64;
+
+            match (
+                seconds_since_local_epoch < wall_before,
+                seconds_since_local_epoch < wall_after,
+            ) {
+                // We are before the second transition entirely
+                (true, true) => return PossibleOffset::Single(first_candidate.into()),
+                // We are within the second candidate's transition
+                (true, false) => {
+                    // This is impossible: if the candidates are equal then
+                    // there can be no repeated local times.
+                    debug_assert_ne!(first_candidate.offset, second_candidate.offset);
+
+                    return PossibleOffset::Ambiguous(
+                        first_candidate.into(),
+                        second_candidate.into(),
+                    );
+                }
+                // We are in the second candidate's gap
+                (false, true) => return PossibleOffset::None,
+                // We are after the second candidate
+                (false, false) => return PossibleOffset::Single(second_candidate.into()),
+            }
         }
 
-        // We are before the first transition entirely
-        if seconds_since_local_epoch < first_candidate_wall_prev {
-            return PossibleOffset::Single(before_first_candidate.into());
-        }
-
-        // We are between the two transitions
-        if seconds_since_local_epoch < second_candidate_wall_prev {
-            return PossibleOffset::Single(first_candidate.into());
-        }
-
-        // We are after the second transition entirely
-        if seconds_since_local_epoch >= second_candidate_wall_next {
-            return PossibleOffset::Single(second_candidate.into());
-        }
-
-        // The only other cases are gap transitions (seconds >= wall_prev && seconds < wall_next)
-        PossibleOffset::None
+        PossibleOffset::Single(first_candidate.into())
     }
 
     /// Get the offset for a timestamp.
