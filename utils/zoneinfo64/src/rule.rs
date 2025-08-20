@@ -639,7 +639,7 @@ impl Rule<'_> {
             first.1,
         );
 
-        if seconds_since_epoch <= first_timestamp {
+        if seconds_since_epoch < first_timestamp {
             return Transition {
                 since: first_timestamp,
                 offset: UtcOffset::from_seconds_unchecked(self.standard_offset_seconds + second.1),
@@ -652,7 +652,7 @@ impl Rule<'_> {
             self.standard_offset_seconds,
             second.1,
         );
-        if seconds_since_epoch <= second_timestamp {
+        if seconds_since_epoch < second_timestamp {
             Transition {
                 since: second_timestamp,
                 offset: UtcOffset::from_seconds_unchecked(self.standard_offset_seconds + first.1),

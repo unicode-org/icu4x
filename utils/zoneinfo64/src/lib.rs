@@ -491,7 +491,12 @@ impl Zone<'_> {
             }
         }
 
-        Some(self.transition_offset_at(idx + 1))
+        let candidate = self.transition_offset_at(idx + 1);
+        if candidate.since == seconds_since_epoch {
+            Some(self.transition_offset_at(idx + 2))
+        } else {
+            Some(candidate)
+        }
     }
 }
 
@@ -696,26 +701,24 @@ mod tests {
 
                 assert_eq!(before1, before2);
                 assert_eq!(before1, exact);
-
-                assert_ne!(exact, after1);
-
-                assert_eq!(after1, after2);
-                assert_eq!(after2, after3);
+                assert_ne!(exact, Some(*t));
 
                 assert_eq!(after1, Some(*t));
+                assert_eq!(after2, Some(*t));
+                assert_eq!(after3, Some(*t));
             }
 
-            // for t in &transitions {
-            //     let before = zoneinfo64.next_transition(t.since - 1);
-            //     let exact = zoneinfo64.next_transition(t.since);
-            //     let after = zoneinfo64.next_transition(t.since + 1);
+            for t in &transitions {
+                let before = zoneinfo64.next_transition(t.since - 1);
+                let exact = zoneinfo64.next_transition(t.since);
+                let after = zoneinfo64.next_transition(t.since + 1);
 
-            //     assert_ne!(before, exact);
+                assert_ne!(before, exact);
 
-            //     assert_eq!(exact, after);
+                assert_eq!(exact, after);
 
-            //     assert_eq!(before, Some(*t));
-            // }
+                assert_eq!(before, Some(*t));
+            }
         }
     }
 }
