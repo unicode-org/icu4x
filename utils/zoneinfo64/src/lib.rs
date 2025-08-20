@@ -55,7 +55,7 @@ struct TzZoneData<'a> {
     type_offsets: &'a [(i32, i32)],
     /// An index into the Rules table,
     /// its standard_offset_seconds, and its starting year.
-    final_rule_offset_year: Option<(u32, i32, u32)>,
+    final_rule_offset_year: Option<(u32, i32, i32)>,
     #[allow(dead_code)]
     links: &'a [u32],
 }
@@ -341,15 +341,15 @@ impl Zone<'_> {
             self.transition_count() - 1,
         );
 
-        // `transition_offset_at` always returns a transition that it thinks is *before* this one
-        // We are using local time here, so it *could* be wrong. We need to check
-        // the transition it returned (the transition it thinks is before this one),
-        // and the transition it thinks is after this one.
+        // `prev_transition_offset_idx` always returns a transition that is *before* the timestamp.
+        // We are using local time here, so we *could* be wrong. We need to check
+        // the transition it returned (the transition that is before the timestamp),
+        // and the next transition.
         //
         // We do not need to check transitions that are further back or forward;
-        // since the data does not have any duplicate transitions (invariant: monotonic-transition-times),
+        // since the data does not have any duplicate transitions (`test_monotonic_transition_times`),
         // and we know that prior transitions are far enough away that there is no chance of their
-        // wall times overlapping (invariant: transition-local-times-do-not-overlap)
+        // wall times overlapping (`test_transition_local_times_do_not_overlap`)
         let first_candidate = self.transition_offset_at(idx);
 
         let second_candidate = if idx + 1 == self.transition_count() {
@@ -495,6 +495,7 @@ impl Zone<'_> {
 mod tests {
     use super::*;
     use chrono_tz::Tz;
+    use itertools::Itertools;
     use std::sync::LazyLock;
 
     pub(crate) static TZDB: LazyLock<ZoneInfo64> = LazyLock::new(|| {
@@ -502,48 +503,48 @@ mod tests {
             .expect("Error processing resource bundle file")
     });
 
-    /// This tests invariants we rely on in our code
-    ///
-    /// These invariants not being upheld should never cause a panic, but can produce garbage behavior.
+    /// Tests an invariant we rely on in our code
     #[test]
-    fn test_transitions_monotonic() {
-        for chrono in chrono_tz::TZ_VARIANTS {
+    fn test_monotonic_transition_times() {
+        for chrono in time_zones_to_test() {
             let iana = chrono.name();
-
             let zoneinfo64 = TZDB.get(iana).unwrap();
 
-            let mut prev_offset = zoneinfo64.transition_offset_at(-1);
-            for idx in 0..zoneinfo64.simple.type_map.len() {
-                let offset = zoneinfo64.transition_offset_at(idx as isize);
-                if prev_offset.since >= offset.since {
-                    debug_assert!(prev_offset.since == offset.since);
-                    debug_assert!(
-                        idx == 0 || idx == zoneinfo64.simple.type_map.len() - 1,
-                        "{iana}: Transition times are monotonically increasing, \
-                                  with no overlaps except at the beginning/end (found at {idx}) \
-                                  (invariant: monotonic-transition-times)"
-                    );
-                    continue;
-                }
-
-                let prev_offset_wall = prev_offset
-                    .since
-                    .saturating_add(prev_offset.offset.to_seconds() as i64);
-                let offset_wall = offset
-                    .since
-                    .saturating_add(offset.offset.to_seconds() as i64);
-
-                debug_assert!(prev_offset_wall < offset_wall, "{iana}: Transition times are never so close as to create \
-                                                               a potential region of ambiguity with multiple transitions \
-                                                               {prev_offset_wall} < {offset_wall} \
-                                                               (invariant: transition-local-times-do-not-overlap)");
-
-                prev_offset = offset;
+            for (prev, curr) in (-1..zoneinfo64.transition_count())
+                .map(|idx| zoneinfo64.transition_offset_at(idx))
+                .tuple_windows::<(_, _)>()
+            {
+                assert!(
+                    prev.since < curr.since,
+                    "{iana}: Transition times should be strictly increasing ({prev:?}, {curr:?})"
+                );
             }
         }
     }
 
-    fn time_zones_to_test() -> impl Iterator<Item = Tz> {
+    /// Tests an invariant we rely on in our code
+    #[test]
+    fn test_transition_local_times_do_not_overlap() {
+        for chrono in time_zones_to_test() {
+            let iana = chrono.name();
+            let zoneinfo64 = TZDB.get(iana).unwrap();
+
+            for (prev, curr) in (-1..zoneinfo64.transition_count())
+                .map(|idx| zoneinfo64.transition_offset_at(idx))
+                .tuple_windows::<(_, _)>()
+            {
+                let prev_wall = prev.since.saturating_add(prev.offset.to_seconds() as i64);
+                let curr_wall = curr.since.saturating_add(curr.offset.to_seconds() as i64);
+
+                assert!(
+                    prev_wall < curr_wall,
+                    "{iana}: Transitions should not be so close as to create a ambiguity ({prev:?}, {curr:?}"
+                );
+            }
+        }
+    }
+
+    pub(crate) fn time_zones_to_test() -> impl Iterator<Item = Tz> {
         chrono_tz::TZ_VARIANTS
             .iter()
             .copied()

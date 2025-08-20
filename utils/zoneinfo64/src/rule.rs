@@ -11,7 +11,7 @@ use icu_time::zone::UtcOffset;
 #[derive(Debug, Clone, Copy)]
 pub(crate) struct Rule<'a> {
     /// The year the rule starts applying
-    pub(crate) start_year: u32,
+    pub(crate) start_year: i32,
     /// The offset of standard time
     pub(crate) standard_offset_seconds: i32,
     pub(crate) inner: &'a TzRule,
@@ -321,7 +321,7 @@ impl Rule<'_> {
         day_in_year: u16,
         local_time_of_day: i32,
     ) -> Option<PossibleOffset> {
-        if year < self.start_year as i32 {
+        if year < self.start_year {
             return None;
         }
 
@@ -378,6 +378,8 @@ impl Rule<'_> {
             rule: &self.inner.start,
             standard_offset_seconds: self.standard_offset_seconds,
             additional_offset_seconds: 0,
+            // This relies on `test_offset_before_rule_is_second_offset`
+            // for the start year for start < end rules.
             after_correction: self.inner.additional_offset_secs,
         };
 
@@ -387,6 +389,8 @@ impl Rule<'_> {
             rule: &self.inner.end,
             standard_offset_seconds: self.standard_offset_seconds,
             additional_offset_seconds: self.inner.additional_offset_secs,
+            // This relies on `test_offset_before_rule_is_second_offset`
+            // for the start year for end < start rules.
             after_correction: -self.inner.additional_offset_secs,
         };
 
@@ -412,15 +416,15 @@ impl Rule<'_> {
 
         // The order of periods depends on both whether the rule is inverted (end before start),
         // and whether the rule offset is positive or negative. Currently zoneinfo64 only contains
-        // positive rules.
+        // positive rules, this is verified in `test_rule_offset_positive`, so we only have 2 instead
+        // of 4 cases here.
 
         #[allow(clippy::collapsible_else_if)] // symmetry
         if !self.inner.end_before_start() {
             if datetime < before_start {
                 // Before spring-forward
-                if year == self.start_year as i32 {
-                    return None;
-                }
+                // Here we use the invariant `test_offset_before_rule_is_second_offset`
+                // to return `standard_offset` even if we are in the start year.
                 Some(PossibleOffset::Single(standard_offset))
             } else if datetime < after_start {
                 // During spring-forward
@@ -438,14 +442,13 @@ impl Rule<'_> {
         } else {
             if datetime < before_end {
                 // Before fall-back
-                // Here the rule_offset is fine even if year == start_year, as inverted rules seem
-                // to be valid from the start of the year before. This makes sense as TZDB defines
-                // rules in terms of start+end, not end+start, so inverted rules always start in
-                // the second half of a year (and zoneinfo64 apparently sets the start year to
-                // the next, first full year).
+                // Here we use the invariant `test_offset_before_rule_is_second_offset`
+                // to return `rule_offset` even if we are in the start year.
                 Some(PossibleOffset::Single(rule_offset))
             } else if datetime < after_end {
                 // During fall-back
+                // Here we use the invariant `test_offset_before_rule_is_second_offset`
+                // to return `rule_offset` even if we are in the start year.
                 Some(PossibleOffset::Ambiguous(rule_offset, standard_offset))
             } else if datetime < before_start {
                 // Before spring-forward
@@ -462,7 +465,7 @@ impl Rule<'_> {
 
     /// Get the offset for a timestamp.
     ///
-    /// Returns None if `seconds_since_epoch` in UTC is before the start year,
+    /// Returns None if `seconds_since_epoch` in UTC is before the start of the rule,
     /// or after the year `i32::MAX`.
     pub(crate) fn for_timestamp(&self, seconds_since_epoch: i64) -> Option<Offset> {
         let Ok(year) = iso::iso_year_from_fixed(EPOCH + (seconds_since_epoch / SECONDS_IN_UTC_DAY))
@@ -475,7 +478,7 @@ impl Rule<'_> {
         // in `test_rule_not_at_year_boundary`
         let local_year = year;
 
-        if local_year < self.start_year as i32 {
+        if local_year < self.start_year {
             return None;
         }
 
@@ -498,7 +501,7 @@ impl Rule<'_> {
                 first.1,
             )
         {
-            if !self.inner.end_before_start() && local_year == self.start_year as i32 {
+            if local_year == self.start_year {
                 return None;
             }
             return Some(Offset {
@@ -546,10 +549,10 @@ impl Rule<'_> {
         };
 
         // No transition happens in a different UTC year, this is verified
-        // in `test_rule_not_at_year_boundary`
+        // in `test_rule_stays_inside_year`.
         let local_year = year;
 
-        if local_year < self.start_year as i32 {
+        if local_year < self.start_year {
             return None;
         }
 
@@ -574,6 +577,9 @@ impl Rule<'_> {
         if seconds_exact && seconds_since_epoch <= first_timestamp
             || !seconds_exact && seconds_since_epoch < first_timestamp
         {
+            if local_year == self.start_year {
+                return None;
+            }
             return Some(Transition {
                 since: second.0.timestamp_for_year(
                     local_year - 1,
@@ -631,7 +637,7 @@ impl Rule<'_> {
         // in `test_rule_not_at_year_boundary`
         let local_year = year;
 
-        let local_year = core::cmp::max(local_year, self.start_year as i32);
+        let local_year = core::cmp::max(local_year, self.start_year);
 
         let day_before_year = iso::day_before_year(local_year);
 
@@ -689,54 +695,106 @@ impl Rule<'_> {
 mod tests {
     use super::*;
     use crate::tests::TZDB;
-    use chrono::Datelike;
 
-    /// This tests invariants we rely on in our code
-    ///
-    /// These invariants not being upheld should never cause a panic, but can produce garbage behavior.
+    /// Tests an invariant we rely on in our code
     #[test]
-    fn test_rule_not_at_year_boundary() {
-        for chrono in chrono_tz::TZ_VARIANTS {
+    fn test_last_transition_not_in_rule_year() {
+        for chrono in crate::tests::time_zones_to_test() {
             let iana = chrono.name();
-
             let zoneinfo64 = TZDB.get(iana).unwrap();
 
             if let Some(rule) = zoneinfo64.final_rule {
-                let final_offset = zoneinfo64.prev_transition_offset_idx(i64::MAX);
-                let offset = zoneinfo64.transition_offset_at(final_offset);
-                let utc_datetime = chrono::DateTime::from_timestamp(offset.since, 0)
-                    .unwrap()
-                    .naive_utc();
+                let transition = zoneinfo64.transition_offset_at(zoneinfo64.transition_count() - 1);
+                let utc_year =
+                    iso::iso_year_from_fixed(EPOCH + (transition.since / SECONDS_IN_UTC_DAY))
+                        .unwrap();
 
                 assert!(
-                    utc_datetime.year() < rule.start_year as i32,
-                    "{iana}: Expected last transition to not be in rule year {} < {} \
-                    (invariant: last-transition-not-in-rule-year)",
-                    utc_datetime.year(),
+                    utc_year < rule.start_year,
+                    "last transition should not be in rule year: {utc_year} < {} ({iana})",
                     rule.start_year
                 );
+            }
+        }
+    }
 
-                let max_delta = (rule.standard_offset_seconds.abs()
-                    + rule.inner.additional_offset_secs.abs())
-                    as u32;
+    /// Tests an invariant we rely on in our code
+    #[test]
+    fn test_rule_stays_inside_year() {
+        for chrono in crate::tests::time_zones_to_test() {
+            let iana = chrono.name();
+            let zoneinfo64 = TZDB.get(iana).unwrap();
+
+            if let Some(rule) = zoneinfo64.final_rule {
+                let max_delta = core::cmp::max(
+                    rule.standard_offset_seconds.unsigned_abs(),
+                    (rule.standard_offset_seconds + rule.inner.additional_offset_secs)
+                        .unsigned_abs(),
+                );
                 for date in [&rule.inner.start, &rule.inner.end] {
                     let seconds_of_day = date.transition_time;
                     if date.month == 0 && date.day == 1 {
                         assert!(
                             seconds_of_day > max_delta,
-                            "{iana}: Rule at beginning should not cross year boundary \
-                                {seconds_of_day} > Δ{max_delta} \
-                                (invariant: rule-stays-inside-year)"
+                            "rule at beginning should not cross year boundary {seconds_of_day} > Δ{max_delta} ({iana})"
                         );
                     }
                     if date.month == 11 && date.day == 31 {
                         assert!(
                             seconds_of_day + max_delta < SECONDS_IN_UTC_DAY as u32,
-                            "{iana}: Rule at end of year should not cross year boundary \
-                                {seconds_of_day} + Δ{max_delta} < 24h \
-                                (invariant: rule-stays-inside-year)"
+                            "rule at end of year should not cross year boundary {seconds_of_day} + Δ{max_delta} < 24h ({iana})"
                         );
                     }
+                }
+            }
+        }
+    }
+
+    /// Tests an invariant we rely on in our code
+    #[test]
+    fn test_rule_offset_positive() {
+        for chrono in crate::tests::time_zones_to_test() {
+            let iana = chrono.name();
+            let zoneinfo64 = TZDB.get(iana).unwrap();
+
+            if let Some(rule) = zoneinfo64.final_rule {
+                assert!(
+                    rule.inner.additional_offset_secs > 0,
+                    "additional offset should be positive, is {} ({iana})",
+                    rule.inner.additional_offset_secs,
+                );
+            }
+        }
+    }
+
+    #[test]
+    fn test_offset_before_rule_is_second_offset() {
+        for chrono in crate::tests::time_zones_to_test() {
+            let iana = chrono.name();
+            let zoneinfo64 = TZDB.get(iana).unwrap();
+
+            if let Some(rule) = zoneinfo64.final_rule {
+                let last_transition =
+                    zoneinfo64.transition_offset_at(zoneinfo64.transition_count() - 1);
+
+                if rule.inner.end_before_start() {
+                    assert!(last_transition.rule_applies, "{iana}, {zoneinfo64:?}");
+
+                    assert_eq!(
+                        last_transition.offset,
+                        UtcOffset::from_seconds_unchecked(
+                            rule.standard_offset_seconds + rule.inner.additional_offset_secs
+                        ),
+                        "{iana}, {zoneinfo64:?}"
+                    );
+                } else {
+                    assert!(!last_transition.rule_applies, "{iana}, {zoneinfo64:?}");
+
+                    assert_eq!(
+                        last_transition.offset,
+                        UtcOffset::from_seconds_unchecked(rule.standard_offset_seconds),
+                        "{iana}, {zoneinfo64:?}"
+                    );
                 }
             }
         }
