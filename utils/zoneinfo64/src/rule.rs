@@ -2,10 +2,9 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use super::{Offset, PossibleOffset, Transition, EPOCH, SECONDS_IN_UTC_DAY};
+use super::{Offset, Transition, EPOCH, SECONDS_IN_UTC_DAY};
 use calendrical_calculations::iso;
 use calendrical_calculations::rata_die::RataDie;
-use core::cmp::Ordering;
 use icu_time::zone::UtcOffset;
 
 #[derive(Debug, Clone, Copy)]
@@ -208,7 +207,7 @@ impl TzRuleDate {
     }
 
     /// Given a year, return the 1-indexed day number in that year for this transition
-    pub(crate) fn day_in_year(&self, year: i32, day_before_year: RataDie) -> u16 {
+    fn day_in_year(&self, year: i32, day_before_year: RataDie) -> u16 {
         let days_before_month = iso::days_before_month(year, self.month);
 
         if let RuleMode::DOM = self.mode {
@@ -288,179 +287,49 @@ impl TzRuleDate {
             }
         }
     }
-
-    /// Converts the {transition_time} into a time (before the transition) in the local
-    /// day, in seconds
-    ///
-    /// `additional_offset_seconds` is not necessarily `self.additional_offset_seconds`,
-    /// it might also be 0 if we're currently on standard time.
-    fn transition_time_to_wall(
-        &self,
-        standard_offset_seconds: i32,
-        additional_offset_seconds: i32,
-    ) -> i32 {
-        let seconds_of_day = self.transition_time as i32;
-        match self.time_mode {
-            TimeMode::Utc => seconds_of_day + standard_offset_seconds + additional_offset_seconds,
-            TimeMode::Standard => seconds_of_day + additional_offset_seconds,
-            TimeMode::Wall => seconds_of_day,
-        }
-    }
 }
 
 impl Rule<'_> {
-    /// Get the possible offsets for a local datetime.
-    ///
-    /// Returns None when the rule doesn't apply (this is different from `PossibleOffset::None`,
-    /// which means the rule does apply, but the datetime occurred during a gap transition and is thus
-    /// invalid).
-    pub(crate) fn for_date_time(
+    /// Get the first or second transition for the given year, as well as the offset that
+    /// was active before the transition.
+    pub(crate) fn transition(
         &self,
         year: i32,
         day_before_year: RataDie,
-        day_in_year: u16,
-        local_time_of_day: i32,
-    ) -> Option<PossibleOffset> {
-        if year < self.start_year {
-            return None;
-        }
+        second: bool,
+    ) -> (Offset, Transition) {
+        debug_assert!(year >= self.start_year);
 
-        struct SecondsInLocalYear(i64);
-
-        let datetime =
-            SecondsInLocalYear(day_in_year as i64 * SECONDS_IN_UTC_DAY + local_time_of_day as i64);
-
-        struct LazyRuleEval<'a> {
-            year: i32,
-            day_before_year: RataDie,
-            rule: &'a TzRuleDate,
-            standard_offset_seconds: i32,
-            additional_offset_seconds: i32,
-            // `transition_time_to_wall` returns the local time for before the transition (the one
-            // that the clock will never reach). This is applied to get the time after the transition.
-            after_correction: i32,
-        }
-
-        impl PartialEq<LazyRuleEval<'_>> for SecondsInLocalYear {
-            fn eq(&self, other: &LazyRuleEval) -> bool {
-                self.partial_cmp(other) == Some(Ordering::Equal)
-            }
-        }
-
-        impl PartialOrd<LazyRuleEval<'_>> for SecondsInLocalYear {
-            fn partial_cmp(&self, rule: &LazyRuleEval) -> Option<Ordering> {
-                let rule_day_in_year = rule.rule.day_in_year(rule.year, rule.day_before_year);
-
-                let rule_timestamp = rule.rule.transition_time_to_wall(
-                    rule.standard_offset_seconds,
-                    rule.additional_offset_seconds,
-                ) + rule.after_correction;
-
-                let rule_seconds_in_local_year =
-                    rule_day_in_year as i64 * SECONDS_IN_UTC_DAY + rule_timestamp as i64;
-
-                self.0.partial_cmp(&rule_seconds_in_local_year)
-            }
-        }
-
-        let before_start = LazyRuleEval {
-            year,
-            day_before_year,
-            rule: &self.inner.start,
-            standard_offset_seconds: self.standard_offset_seconds,
-            additional_offset_seconds: 0,
-            after_correction: 0,
-        };
-
-        let after_start = LazyRuleEval {
-            year,
-            day_before_year,
-            rule: &self.inner.start,
-            standard_offset_seconds: self.standard_offset_seconds,
-            additional_offset_seconds: 0,
-            // This relies on `test_offset_before_rule_is_second_offset`
-            // for the start year for start < end rules.
-            after_correction: self.inner.additional_offset_secs,
-        };
-
-        let before_end = LazyRuleEval {
-            year,
-            day_before_year,
-            rule: &self.inner.end,
-            standard_offset_seconds: self.standard_offset_seconds,
-            additional_offset_seconds: self.inner.additional_offset_secs,
-            // This relies on `test_offset_before_rule_is_second_offset`
-            // for the start year for end < start rules.
-            after_correction: -self.inner.additional_offset_secs,
-        };
-
-        let after_end = LazyRuleEval {
-            year,
-            day_before_year,
-            rule: &self.inner.end,
-            standard_offset_seconds: self.standard_offset_seconds,
-            additional_offset_seconds: self.inner.additional_offset_secs,
-            after_correction: 0,
-        };
-
-        let standard_offset = Offset {
-            offset: UtcOffset::from_seconds_unchecked(self.standard_offset_seconds),
-            rule_applies: false,
-        };
-        let rule_offset = Offset {
-            offset: UtcOffset::from_seconds_unchecked(
-                self.standard_offset_seconds + self.inner.additional_offset_secs,
-            ),
-            rule_applies: true,
-        };
-
-        // The order of periods depends on both whether the rule is inverted (end before start),
-        // and whether the rule offset is positive or negative. Currently zoneinfo64 only contains
-        // positive rules, this is verified in `test_rule_offset_positive`, so we only have 2 instead
-        // of 4 cases here.
-
-        #[allow(clippy::collapsible_else_if)] // symmetry
-        if !self.inner.end_before_start() {
-            if datetime < before_start {
-                // Before spring-forward
-                // Here we use the invariant `test_offset_before_rule_is_second_offset`
-                // to return `standard_offset` even if we are in the start year.
-                Some(PossibleOffset::Single(standard_offset))
-            } else if datetime < after_start {
-                // During spring-forward
-                Some(PossibleOffset::None)
-            } else if datetime < before_end {
-                // Before fall-back
-                Some(PossibleOffset::Single(rule_offset))
-            } else if datetime < after_end {
-                // During fall-back
-                Some(PossibleOffset::Ambiguous(rule_offset, standard_offset))
-            } else {
-                // Before spring-forward
-                Some(PossibleOffset::Single(standard_offset))
-            }
+        let (selected, other) = if self.inner.end_before_start() ^ second {
+            (
+                (&self.inner.end, 0),
+                (&self.inner.start, self.inner.additional_offset_secs),
+            )
         } else {
-            if datetime < before_end {
-                // Before fall-back
-                // Here we use the invariant `test_offset_before_rule_is_second_offset`
-                // to return `rule_offset` even if we are in the start year.
-                Some(PossibleOffset::Single(rule_offset))
-            } else if datetime < after_end {
-                // During fall-back
-                // Here we use the invariant `test_offset_before_rule_is_second_offset`
-                // to return `rule_offset` even if we are in the start year.
-                Some(PossibleOffset::Ambiguous(rule_offset, standard_offset))
-            } else if datetime < before_start {
-                // Before spring-forward
-                Some(PossibleOffset::Single(standard_offset))
-            } else if datetime < after_start {
-                // During spring-forward
-                Some(PossibleOffset::None)
-            } else {
-                // Before fall-back
-                Some(PossibleOffset::Single(rule_offset))
-            }
-        }
+            (
+                (&self.inner.start, self.inner.additional_offset_secs),
+                (&self.inner.end, 0),
+            )
+        };
+
+        (
+            Offset {
+                offset: UtcOffset::from_seconds_unchecked(self.standard_offset_seconds + other.1),
+                rule_applies: other.1 != 0,
+            },
+            Transition {
+                since: selected.0.timestamp_for_year(
+                    year,
+                    day_before_year,
+                    self.standard_offset_seconds,
+                    other.1,
+                ),
+                offset: UtcOffset::from_seconds_unchecked(
+                    self.standard_offset_seconds + selected.1,
+                ),
+                rule_applies: selected.1 != 0,
+            },
+        )
     }
 
     /// Get the offset for a timestamp.
@@ -468,64 +337,23 @@ impl Rule<'_> {
     /// Returns None if `seconds_since_epoch` in UTC is before the start of the rule,
     /// or after the year `i32::MAX`.
     pub(crate) fn for_timestamp(&self, seconds_since_epoch: i64) -> Option<Offset> {
-        let Ok(year) = iso::iso_year_from_fixed(EPOCH + (seconds_since_epoch / SECONDS_IN_UTC_DAY))
-        else {
-            // Pretend rule doesn't apply anymore after year i32::MAX
-            return None;
-        };
-
-        // No transition happens in a different UTC year, this is verified
-        // in `test_rule_not_at_year_boundary`
-        let local_year = year;
-
-        if local_year < self.start_year {
-            return None;
-        }
-
+        let local_year = self.local_year_for_timestamp(seconds_since_epoch)?;
         let day_before_year = iso::day_before_year(local_year);
 
-        let start = (&self.inner.start, 0);
-        let end = (&self.inner.end, self.inner.additional_offset_secs);
+        let (before, first) = self.transition(local_year, day_before_year, false);
 
-        let (first, second) = if self.inner.end_before_start() {
-            (end, start)
-        } else {
-            (start, end)
-        };
-
-        if seconds_since_epoch
-            < first.0.timestamp_for_year(
-                local_year,
-                day_before_year,
-                self.standard_offset_seconds,
-                first.1,
-            )
-        {
+        if seconds_since_epoch < first.since {
             if local_year == self.start_year {
                 return None;
             }
-            return Some(Offset {
-                offset: UtcOffset::from_seconds_unchecked(self.standard_offset_seconds + first.1),
-                rule_applies: first.1 != 0,
-            });
+            return Some(before);
         }
-        if seconds_since_epoch
-            < second.0.timestamp_for_year(
-                local_year,
-                day_before_year,
-                self.standard_offset_seconds,
-                second.1,
-            )
-        {
-            Some(Offset {
-                offset: UtcOffset::from_seconds_unchecked(self.standard_offset_seconds + second.1),
-                rule_applies: second.1 != 0,
-            })
+
+        let (_, second) = self.transition(local_year, day_before_year, true);
+        if seconds_since_epoch < second.since {
+            Some(first.into())
         } else {
-            Some(Offset {
-                offset: UtcOffset::from_seconds_unchecked(self.standard_offset_seconds + first.1),
-                rule_applies: first.1 != 0,
-            })
+            Some(second.into())
         }
     }
 
@@ -542,75 +370,30 @@ impl Rule<'_> {
         seconds_since_epoch: i64,
         seconds_exact: bool,
     ) -> Option<Transition> {
-        let Ok(year) = iso::iso_year_from_fixed(EPOCH + (seconds_since_epoch / SECONDS_IN_UTC_DAY))
-        else {
-            // Pretend rule doesn't apply anymore after year i32::MAX
-            return None;
-        };
-
-        // No transition happens in a different UTC year, this is verified
-        // in `test_rule_stays_inside_year`.
-        let local_year = year;
-
-        if local_year < self.start_year {
-            return None;
-        }
-
+        let local_year = self.local_year_for_timestamp(seconds_since_epoch)?;
         let day_before_year = iso::day_before_year(local_year);
 
-        let start = (&self.inner.start, 0);
-        let end = (&self.inner.end, self.inner.additional_offset_secs);
+        let (_, first) = self.transition(local_year, day_before_year, false);
 
-        let (first, second) = if self.inner.end_before_start() {
-            (end, start)
-        } else {
-            (start, end)
-        };
-
-        let first_timestamp = first.0.timestamp_for_year(
-            local_year,
-            day_before_year,
-            self.standard_offset_seconds,
-            first.1,
-        );
-
-        if seconds_exact && seconds_since_epoch <= first_timestamp
-            || !seconds_exact && seconds_since_epoch < first_timestamp
+        if seconds_exact && seconds_since_epoch <= first.since
+            || !seconds_exact && seconds_since_epoch < first.since
         {
             if local_year == self.start_year {
                 return None;
             }
-            return Some(Transition {
-                since: second.0.timestamp_for_year(
-                    local_year - 1,
-                    iso::day_before_year(local_year - 1),
-                    self.standard_offset_seconds,
-                    second.1,
-                ),
-                offset: UtcOffset::from_seconds_unchecked(self.standard_offset_seconds + first.1),
-                rule_applies: first.1 != 0,
-            });
+            return Some(
+                self.transition(local_year - 1, iso::day_before_year(local_year - 1), true)
+                    .1,
+            );
         }
-        let second_timestamp = second.0.timestamp_for_year(
-            local_year,
-            day_before_year,
-            self.standard_offset_seconds,
-            second.1,
-        );
-        if seconds_exact && seconds_since_epoch <= second_timestamp
-            || !seconds_exact && seconds_since_epoch < second_timestamp
+
+        let (_, second) = self.transition(local_year, day_before_year, true);
+        if seconds_exact && seconds_since_epoch <= second.since
+            || !seconds_exact && seconds_since_epoch < second.since
         {
-            Some(Transition {
-                since: first_timestamp,
-                offset: UtcOffset::from_seconds_unchecked(self.standard_offset_seconds + second.1),
-                rule_applies: second.1 != 0,
-            })
+            Some(first)
         } else {
-            Some(Transition {
-                since: second_timestamp,
-                offset: UtcOffset::from_seconds_unchecked(self.standard_offset_seconds + first.1),
-                rule_applies: first.1 != 0,
-            })
+            Some(second)
         }
     }
 
@@ -619,75 +402,44 @@ impl Rule<'_> {
     /// As rules continue forever into the future, this does not return
     /// an `Option`.
     ///
-    ///
     /// If `seconds_since_epoch` in UTC is after the year `i32::MAX`,
     /// returns garbage.
     pub(crate) fn next_transition(&self, seconds_since_epoch: i64) -> Transition {
+        let local_year = self
+            .local_year_for_timestamp(seconds_since_epoch)
+            .unwrap_or(self.start_year);
+        let day_before_year = iso::day_before_year(local_year);
+
+        let (_, first) = self.transition(local_year, day_before_year, false);
+
+        if seconds_since_epoch < first.since {
+            return first;
+        }
+        let (_, second) = self.transition(local_year, day_before_year, true);
+        if seconds_since_epoch < second.since {
+            second
+        } else {
+            self.transition(local_year + 1, iso::day_before_year(local_year + 1), false)
+                .1
+        }
+    }
+
+    fn local_year_for_timestamp(&self, seconds_since_epoch: i64) -> Option<i32> {
         let Ok(year) = iso::iso_year_from_fixed(EPOCH + (seconds_since_epoch / SECONDS_IN_UTC_DAY))
         else {
-            // GIGO
-            return Transition {
-                since: i64::MAX,
-                offset: Default::default(),
-                rule_applies: false,
-            };
+            // Pretend rule doesn't apply anymore after year i32::MAX
+            return None;
         };
 
         // No transition happens in a different UTC year, this is verified
         // in `test_rule_not_at_year_boundary`
         let local_year = year;
 
-        let local_year = core::cmp::max(local_year, self.start_year);
-
-        let day_before_year = iso::day_before_year(local_year);
-
-        let start = (&self.inner.start, 0);
-        let end = (&self.inner.end, self.inner.additional_offset_secs);
-
-        let (first, second) = if self.inner.end_before_start() {
-            (end, start)
-        } else {
-            (start, end)
-        };
-
-        let first_timestamp = first.0.timestamp_for_year(
-            local_year,
-            day_before_year,
-            self.standard_offset_seconds,
-            first.1,
-        );
-
-        if seconds_since_epoch < first_timestamp {
-            return Transition {
-                since: first_timestamp,
-                offset: UtcOffset::from_seconds_unchecked(self.standard_offset_seconds + second.1),
-                rule_applies: second.1 != 0,
-            };
+        if local_year < self.start_year {
+            return None;
         }
-        let second_timestamp = second.0.timestamp_for_year(
-            local_year,
-            day_before_year,
-            self.standard_offset_seconds,
-            second.1,
-        );
-        if seconds_since_epoch < second_timestamp {
-            Transition {
-                since: second_timestamp,
-                offset: UtcOffset::from_seconds_unchecked(self.standard_offset_seconds + first.1),
-                rule_applies: first.1 != 0,
-            }
-        } else {
-            Transition {
-                since: first.0.timestamp_for_year(
-                    local_year + 1,
-                    iso::day_before_year(local_year + 1),
-                    self.standard_offset_seconds,
-                    first.1,
-                ),
-                offset: UtcOffset::from_seconds_unchecked(self.standard_offset_seconds + second.1),
-                rule_applies: second.1 != 0,
-            }
-        }
+
+        Some(local_year)
     }
 }
 
@@ -695,6 +447,7 @@ impl Rule<'_> {
 mod tests {
     use super::*;
     use crate::tests::TZDB;
+    use crate::PossibleOffset;
 
     /// Tests an invariant we rely on in our code
     #[test]
@@ -800,7 +553,6 @@ mod tests {
         }
     }
 
-    #[track_caller]
     fn test_single_year(
         tz: &str,
         year: i32,

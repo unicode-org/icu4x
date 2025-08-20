@@ -314,45 +314,41 @@ impl Zone<'_> {
         second: u8,
     ) -> PossibleOffset {
         let day_before_year = calendrical_calculations::iso::day_before_year(year);
-        let day_in_year =
-            calendrical_calculations::iso::days_before_month(year, month) + day as u16;
-        let local_time_of_day = (hour as i32 * 60 + minute as i32) * 60 + second as i32;
-
-        // `for_date_time` quickly returns if the rule doesn't apply
-        if let Some(rule) = self.final_rule {
-            // If rule applies, use it
-            if let Some(result) =
-                rule.for_date_time(year, day_before_year, day_in_year, local_time_of_day)
-            {
-                return result;
-            }
-        }
-
-        // If we have reached this point, the rule does not apply.
-
-        // Pretend date time is UTC to get a candidate
-
-        let seconds_since_local_epoch = (day_before_year + day_in_year as i64 - EPOCH)
+        let seconds_since_local_epoch = (day_before_year
+            + calendrical_calculations::iso::days_before_month(year, month) as i64
+            + day as i64
+            - EPOCH)
             * SECONDS_IN_UTC_DAY
-            + local_time_of_day as i64;
+            + ((hour as i64 * 60 + minute as i64) * 60 + second as i64);
 
-        let idx = self.prev_transition_offset_idx(seconds_since_local_epoch);
+        let rule = self.final_rule.filter(|rule| year >= rule.start_year);
+        let mut idx = 0;
 
-        // `prev_transition_offset_idx` always returns a transition that is *before* the timestamp.
-        // We are using local time here, so we *could* be wrong. We need to check
-        // the transition it returned (the transition that is before the timestamp),
-        // and the next transition.
-        //
-        // We do not need to check transitions that are further back or forward;
-        // since the data does not have any duplicate transitions (`test_monotonic_transition_times`),
-        // and we know that prior transitions are far enough away that there is no chance of their
-        // wall times overlapping (`test_transition_local_times_do_not_overlap`)
-        let first_candidate = self.transition_offset_at(idx);
+        // Compute the candidate transition and the offset that was used before the transition (which is
+        // required to to validates times around the first transition).
+        // This is either from the rule or the transitions.
+        let (before_first_candidate, first_candidate) = if let Some(rule) = rule {
+            // The rule applies and we use this year's first transition as the first candidate.
+            let (before, candidate) = rule.transition(year, day_before_year, false);
+            (Some(before), candidate)
+        } else {
+            // Pretend date time is UTC to get a candidate
+            idx = self.prev_transition_offset_idx(seconds_since_local_epoch);
 
-        // There's only a transition into `first_candidate` if there's a transition before it.
-        if idx >= 0 {
-            let before_first_candidate = self.transition_offset_at(idx - 1);
+            // We use the transition before the "timestamp" as the first candidate.
+            //
+            // We do not need to check transitions that are further back or forward;
+            // since the data does not have any duplicate transitions (`test_monotonic_transition_times`),
+            // and we know that prior transitions are far enough away that there is no chance of their
+            // wall times overlapping (`test_transition_local_times_do_not_overlap`)
+            (
+                (idx >= 0).then(|| self.transition_offset_at(idx - 1).into()),
+                self.transition_offset_at(idx),
+            )
+        };
 
+        // There's only an actual transition into `first_candidate` if there's an offset before it.
+        if let Some(before_first_candidate) = before_first_candidate {
             let wall_before =
                 first_candidate.since + before_first_candidate.offset.to_seconds() as i64;
             let wall_after = first_candidate.since + first_candidate.offset.to_seconds() as i64;
@@ -362,7 +358,7 @@ impl Zone<'_> {
                 seconds_since_local_epoch < wall_after,
             ) {
                 // We are before the first transition entirely
-                (true, true) => return PossibleOffset::Single(before_first_candidate.into()),
+                (true, true) => return PossibleOffset::Single(before_first_candidate),
                 // We are within the first candidate's transition
                 (true, false) => {
                     // This is impossible: if the candidates are equal then
@@ -370,7 +366,7 @@ impl Zone<'_> {
                     debug_assert_ne!(before_first_candidate.offset, first_candidate.offset);
 
                     return PossibleOffset::Ambiguous(
-                        before_first_candidate.into(),
+                        before_first_candidate,
                         first_candidate.into(),
                     );
                 }
@@ -381,9 +377,15 @@ impl Zone<'_> {
             }
         }
 
-        if idx + 1 < self.transition_count() {
-            let second_candidate = self.transition_offset_at(idx + 1);
+        let second_candidate = if let Some(rule) = rule {
+            // The rule applies and we use this year's second transition as the second candidate.
+            Some(rule.transition(year, day_before_year, true).1)
+        } else {
+            // We use the transition after the "timestamp" as the second candidate.
+            (idx + 1 < self.transition_count()).then(|| self.transition_offset_at(idx + 1))
+        };
 
+        if let Some(second_candidate) = second_candidate {
             let wall_before = second_candidate.since + first_candidate.offset.to_seconds() as i64;
             let wall_after = second_candidate.since + second_candidate.offset.to_seconds() as i64;
 
@@ -442,14 +444,13 @@ impl Zone<'_> {
 
         // `self.transition_offset_at()` returns a synthetic transition at `i64::MIN`
         // for the time range before the actual first transition.
-        // We probably don't want to return this?
         if idx == -1 {
             return None;
         }
 
-        // If the previous transition is the last one then we need to check
-        // against the rule
         if idx == self.transition_count() - 1 {
+            // If the previous transition is the last one then we need to check
+            // against the rule
             if let Some(rule) = self.final_rule {
                 if let Some(resolved) = rule.prev_transition(seconds_since_epoch, seconds_exact) {
                     return Some(resolved);
@@ -470,8 +471,8 @@ impl Zone<'_> {
     pub fn next_transition(&self, seconds_since_epoch: i64) -> Option<Transition> {
         let idx = self.prev_transition_offset_idx(seconds_since_epoch);
         Some(if idx == self.transition_count() - 1 {
-            // If the previous transition is the last one then the next one (if any)
-            // will definitely be the rule.
+            // If the previous transition is the last one then the next one
+            // can only be the rule.
             self.final_rule?.next_transition(seconds_since_epoch)
         } else {
             self.transition_offset_at(idx + 1)
