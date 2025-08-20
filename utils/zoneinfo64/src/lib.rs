@@ -318,7 +318,7 @@ impl Zone<'_> {
             calendrical_calculations::iso::days_before_month(year, month) + day as u16;
         let local_time_of_day = (hour as i32 * 60 + minute as i32) * 60 + second as i32;
 
-        // `resolve_local` quickly returns if the rule doesn't apply
+        // `for_date_time` quickly returns if the rule doesn't apply
         if let Some(rule) = self.final_rule {
             // If rule applies, use it
             if let Some(result) =
@@ -481,9 +481,9 @@ impl Zone<'_> {
     /// Get the first transition after a timestamp.
     pub fn next_transition(&self, seconds_since_epoch: i64) -> Option<Transition> {
         let idx = self.prev_transition_offset_idx(seconds_since_epoch);
-        // If the previous transition is the last one then the next one (if any)
-        // will definitely be the rule.
         Some(if idx == self.transition_count() - 1 {
+            // If the previous transition is the last one then the next one (if any)
+            // will definitely be the rule.
             self.final_rule?.next_transition(seconds_since_epoch)
         } else {
             self.transition_offset_at(idx + 1)
