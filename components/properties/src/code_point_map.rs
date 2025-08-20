@@ -162,11 +162,13 @@ impl<'a, T: TrieValue> CodePointMapDataBorrowed<'a, T> {
     /// assert_eq!(gc.get('木'), GeneralCategory::OtherLetter);  // U+6728
     /// assert_eq!(gc.get('🎃'), GeneralCategory::OtherSymbol);  // U+1F383 JACK-O-LANTERN
     /// ```
+    #[inline]
     pub fn get(self, ch: char) -> T {
-        self.map.get32(ch as u32)
+        self.map.get(ch)
     }
 
     /// See [`Self::get`].
+    #[inline]
     pub fn get32(self, ch: u32) -> T {
         self.map.get32(ch)
     }

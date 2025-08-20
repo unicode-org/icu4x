@@ -934,6 +934,13 @@ impl<'data, T: TrieValue> PropertyCodePointMap<'data, T> {
     }
 
     #[inline]
+    pub(crate) fn get(&self, c: char) -> T {
+        match *self {
+            Self::CodePointTrie(ref t) => t.get(c),
+        }
+    }
+
+    #[inline]
     #[cfg(feature = "alloc")]
     pub(crate) fn try_into_converted<P>(
         self,
