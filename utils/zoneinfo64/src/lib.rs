@@ -618,17 +618,13 @@ mod tests {
         let mut transitions = tz
             .transitions()
             .iter()
-            .map(|t| Transition {
-                since: t.unix_leap_time(),
-                offset: UtcOffset::from_seconds_unchecked(
-                    tz.find_local_time_type(t.unix_leap_time())
-                        .unwrap()
-                        .ut_offset(),
-                ),
-                rule_applies: tz
-                    .find_local_time_type(t.unix_leap_time())
-                    .unwrap()
-                    .is_dst(),
+            .map(|t| {
+                let o = tz.find_local_time_type(t.unix_leap_time()).unwrap();
+                Transition {
+                    since: t.unix_leap_time(),
+                    offset: UtcOffset::from_seconds_unchecked(o.ut_offset()),
+                    rule_applies: o.is_dst(),
+                }
             })
             .collect::<Vec<_>>();
 
