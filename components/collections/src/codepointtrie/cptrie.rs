@@ -533,7 +533,9 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
             // SAFETY: Relying on the length invariant of `self.data` having
             // been checked and on the unchangedness invariant of `self.data`,
             // `self.index`, and `self.header.trie_type` after construction.
-            T::from_unaligned(*unsafe { self.data.as_ule_slice().get_unchecked(offset_to_data) })
+            Some(T::from_unaligned(*unsafe {
+                self.data.as_ule_slice().get_unchecked(offset_to_data)
+            }))
         } else {
             // The caller needs to call `get32_by_small_index` or determine
             // that the argument is above the permitted range.
