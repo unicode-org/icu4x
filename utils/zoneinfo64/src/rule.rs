@@ -460,7 +460,7 @@ impl Rule<'_> {
         }
     }
 
-    /// Get the offset for to a timestamp.
+    /// Get the offset for a timestamp.
     ///
     /// Returns None if `seconds_since_epoch` in UTC is before the start year,
     /// or after the year `i32::MAX`.
