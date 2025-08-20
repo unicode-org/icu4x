@@ -57,6 +57,7 @@ pub struct CategorizedFormatter<C: MeasureUnitCategory> {
 impl<C: MeasureUnitCategory> CategorizedFormatter<C>
 where
     <C as MeasureUnitCategory>::DataMarkerCore: icu_provider::DataMarker,
+    <C as MeasureUnitCategory>::DataMarkerOutlier: icu_provider::DataMarker,
 {
     // TODO: Remove this function once we have separate markers for different widths.
     #[inline]
@@ -86,13 +87,41 @@ where
         ]
     );
 
+    // icu_provider::gen_buffer_data_constructors!(
+    //     (
+    //         prefs: CategorizedUnitsFormatterPreferences,
+    //         categorized_unit: CategorizedMeasureUnit<C>,
+    //         options: super::options::UnitsFormatterOptions
+    //     ) -> error: DataError,
+    //     functions: [
+    //         try_new_outlier: skip,
+    //         try_new_with_buffer_provider,
+    //         try_new_outlier_unstable,
+    //         Self
+    //     ]
+    // );
+
     /// Extracts the needed data for the provider.
+    ///
+    /// This is a helper function for the constructors to avoid writing the same code multiple times.
+    fn extract_needed_data(
+        prefs: CategorizedUnitsFormatterPreferences,
+        categorized_unit: CategorizedMeasureUnit<C>,
+        options: super::options::UnitsFormatterOptions,
+    ) -> Result<
+        (
+            DataLocale,
+            DecimalFormatter,
+            PluralRules,
+            SmallVec<[u8; 32]>,
+        ),
+        DataError,
     > {
         let locale = C::DataMarkerCore::make_locale(prefs.locale_preferences);
         let decimal_formatter: DecimalFormatter =
             DecimalFormatter::try_new((&prefs).into(), DecimalFormatterOptions::default())?;
 
-        let plural_rules = PluralRules::try_new((&prefs).into())?;
+        let plural_rules = PluralRules::try_new_cardinal((&prefs).into())?;
 
         // TODO: Remove this allocation once we have separate markers for different widths.
         let attribute = Self::attribute(options.width, categorized_unit.cldr_id());
@@ -186,7 +215,7 @@ where
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
-    pub fn try_new_outlier(
+    pub fn try_outlier_new(
         prefs: CategorizedUnitsFormatterPreferences,
         categorized_unit: CategorizedMeasureUnit<C>,
         options: super::options::UnitsFormatterOptions,
@@ -201,14 +230,14 @@ where
             .map_err(|_| DataError::custom("Failed to create a data marker"))?;
 
         let req = DataRequest {
-    pub fn try_new_outlier(
+            id: DataIdentifierBorrowed::for_marker_attributes_and_locale(unit_attribute, &locale),
             ..Default::default()
         };
 
         let display_name = <crate::provider::Baked as DataProvider<C::DataMarkerCore>>::load(
             &crate::provider::Baked,
             req,
-        crate::provider::Baked: DataProvider<C::DataMarkerOutlier>,
+        )
         .map(|r| r.payload.cast())
         .or_else(|_| {
             <crate::provider::Baked as DataProvider<C::DataMarkerOutlier>>::load(
@@ -226,7 +255,7 @@ where
         })
     }
 
-            <crate::provider::Baked as DataProvider<C::DataMarkerOutlier>>::load(
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
     pub fn try_new_outlier_unstable<D>(
         provider: &D,
         prefs: CategorizedUnitsFormatterPreferences,
@@ -242,7 +271,7 @@ where
             + DataProvider<icu_plurals::provider::PluralsCardinalV1>,
         <C as MeasureUnitCategory>::DataMarkerCore: icu_provider::DataMarker,
         <C as MeasureUnitCategory>::DataMarkerOutlier: icu_provider::DataMarker,
-    pub fn try_new_outlier_unstable<D>(
+    {
         let (locale, decimal_formatter, plural_rules, attribute) =
             Self::extract_needed_data(prefs, categorized_unit, options)?;
 
@@ -251,12 +280,12 @@ where
 
         let req = DataRequest {
             id: DataIdentifierBorrowed::for_marker_attributes_and_locale(unit_attribute, &locale),
-            + DataProvider<C::DataMarkerOutlier>
+            ..Default::default()
         };
 
         let display_name = DataProvider::<C::DataMarkerCore>::load(provider, req)
             .map(|r| r.payload.cast())
-        <C as MeasureUnitCategory>::DataMarkerOutlier: icu_provider::DataMarker,
+            .or_else(|_| {
                 DataProvider::<C::DataMarkerOutlier>::load(provider, req).map(|r| r.payload.cast())
             })?;
 
@@ -272,7 +301,7 @@ where
     pub fn format_fixed_decimal<'l>(&'l self, value: &'l Decimal) -> FormattedUnit<'l> {
         FormattedUnit {
             value,
-                DataProvider::<C::DataMarkerOutlier>::load(provider, req).map(|r| r.payload.cast())
+            display_name: self.display_name.get(),
             decimal_formatter: &self.decimal_formatter,
             plural_rules: &self.plural_rules,
         }
@@ -339,7 +368,6 @@ mod tests {
                 categorized_unit,
                 options,
             );
-
             let formatter = formatter.unwrap();
             let signed_decimal = Decimal::from_str(value_str).unwrap();
             let formatted = formatter.format_fixed_decimal(&signed_decimal);
@@ -355,6 +383,13 @@ mod tests {
                 locale!("en-US"),
                 Area::square_meter(),
                 "1000",
+                UnitsFormatterOptions::default(),
+                "1,000 m²",
+            ),
+            (
+                locale!("en-US"),
+                Area::square_meter(),
+                "1000",
                 UnitsFormatterOptions {
                     width: Width::Long,
                     ..Default::default()
@@ -364,7 +399,7 @@ mod tests {
             (
                 locale!("fr-FR"),
                 Area::square_meter(),
-    fn test_area_categorized_outlier_formatter() {
+                "1000",
                 UnitsFormatterOptions {
                     width: Width::Long,
                     ..Default::default()
@@ -384,7 +419,7 @@ mod tests {
         ];
 
         for (locale, categorized_unit, value_str, options, expected) in test_cases {
-            let formatter = CategorizedFormatter::<Area>::try_new_outlier(
+            let formatter = CategorizedFormatter::<Area>::try_outlier_new(
                 locale.clone().into(),
                 categorized_unit,
                 options,
@@ -406,7 +441,7 @@ mod tests {
                 "1000",
                 UnitsFormatterOptions::default(),
                 "1,000 sec",
-            let formatter = CategorizedFormatter::<Area>::try_new_outlier(
+            ),
             (
                 locale!("en-US"),
                 Duration::second(),
