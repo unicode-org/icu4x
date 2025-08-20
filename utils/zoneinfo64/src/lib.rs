@@ -485,7 +485,7 @@ mod tests {
     use super::*;
     use chrono_tz::Tz;
     use itertools::Itertools;
-    use std::sync::LazyLock;
+    use std::{str::FromStr, sync::LazyLock};
 
     pub(crate) static TZDB: LazyLock<ZoneInfo64> = LazyLock::new(|| {
         ZoneInfo64::try_from_u32s(resb::include_bytes_as_u32!("../tests/data/zoneinfo64.res"))
@@ -604,25 +604,24 @@ mod tests {
     }
 
     fn transitions(iana: &str) -> Vec<Transition> {
-        let tz = tzdb::tz_by_name(iana).unwrap();
+        let tz = jiff::tz::TimeZone::get(iana).unwrap();
         let mut transitions = tz
-            .transitions()
-            .iter()
-            .map(|t| {
-                let o = tz.find_local_time_type(t.unix_leap_time()).unwrap();
-                Transition {
-                    since: t.unix_leap_time(),
-                    offset: UtcOffset::from_seconds_unchecked(o.ut_offset()),
-                    rule_applies: o.is_dst(),
-                }
+            // Chrono only evaluates rules until 2100
+            .preceding(jiff::Timestamp::from_str("2100-01-01T00:00:00Z").unwrap())
+            .map(|t| Transition {
+                since: t.timestamp().as_second(),
+                offset: UtcOffset::from_seconds_unchecked(t.offset().seconds()),
+                rule_applies: t.dst().is_dst(),
             })
             .collect::<Vec<_>>();
 
-        // tzdb returns transitions also if only the name changes, we don't
+        transitions.reverse();
+
+        // jiff returns transitions also if only the name changes, we don't
         transitions.retain(|t| {
-            let before = tz.find_local_time_type(t.since - 1).unwrap();
-            before.ut_offset() != t.offset.to_seconds()
-                || before.is_dst() != t.rule_applies
+            let before = tz.to_offset_info(jiff::Timestamp::from_second(t.since - 1).unwrap());
+            before.offset().seconds() != t.offset.to_seconds()
+                || before.dst().is_dst() != t.rule_applies
                 // This is a super weird transition that would be removed by our rule,
                 // but we want to keep it because it's in zoneinfo64.
                 // 1944-04-03T01:00:00Z, (1.0, 1.0)
@@ -635,7 +634,7 @@ mod tests {
     }
 
     #[test]
-    fn test_transition_against_tzdb() {
+    fn test_transition_against_jiff() {
         for zone in time_zones_to_test() {
             let iana = zone.name();
             let transitions = transitions(iana);
