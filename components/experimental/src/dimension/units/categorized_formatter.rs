@@ -26,6 +26,14 @@ use smallvec::SmallVec;
 
 extern crate alloc;
 
+/// Type alias for the extracted data needed by the formatter constructors.
+type ExtractedData = (
+    DataLocale,
+    DecimalFormatter,
+    PluralRules,
+    SmallVec<[u8; 32]>,
+);
+
 define_preferences!(
     /// The preferences for units formatting.
     [Copy]
@@ -108,15 +116,7 @@ where
         prefs: CategorizedUnitsFormatterPreferences,
         categorized_unit: CategorizedMeasureUnit<C>,
         options: super::options::UnitsFormatterOptions,
-    ) -> Result<
-        (
-            DataLocale,
-            DecimalFormatter,
-            PluralRules,
-            SmallVec<[u8; 32]>,
-        ),
-        DataError,
-    > {
+    ) -> Result<ExtractedData, DataError> {
         let locale = C::DataMarkerCore::make_locale(prefs.locale_preferences);
         let decimal_formatter: DecimalFormatter =
             DecimalFormatter::try_new((&prefs).into(), DecimalFormatterOptions::default())?;

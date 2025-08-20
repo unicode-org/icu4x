@@ -53,7 +53,6 @@ pub(crate) struct Resource {
 #[derive(PartialEq)]
 pub(crate) enum UnitType {
     Core,
-    Extended,
     Outlier,
 }
 

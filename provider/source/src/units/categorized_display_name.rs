@@ -9,9 +9,9 @@ use crate::SourceDataProvider;
 
 use cldr_serde::units::preferences::UnitType;
 use icu::experimental::dimension::provider::units::categorized_display_name::{
-    UnitsNameAreaCoreV1, UnitsNameAreaOutlierV1, UnitsNameDurationCoreV1, UnitsNameDurationOutlierV1,
-    UnitsNameLengthCoreV1, UnitsNameLengthOutlierV1, UnitsNameMassCoreV1, UnitsNameMassOutlierV1,
-    UnitsNameVolumeCoreV1, UnitsNameVolumeOutlierV1,
+    UnitsNameAreaCoreV1, UnitsNameAreaOutlierV1, UnitsNameDurationCoreV1,
+    UnitsNameDurationOutlierV1, UnitsNameLengthCoreV1, UnitsNameLengthOutlierV1,
+    UnitsNameMassCoreV1, UnitsNameMassOutlierV1, UnitsNameVolumeCoreV1, UnitsNameVolumeOutlierV1,
 };
 use icu::experimental::dimension::provider::units::display_name::UnitsDisplayName;
 use icu::locale::LanguageIdentifier;
