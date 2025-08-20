@@ -479,7 +479,7 @@ impl Rule<'_> {
             return None;
         }
 
-        let day_before_year = iso::day_before_year(year);
+        let day_before_year = iso::day_before_year(local_year);
 
         let start = (&self.inner.start, 0);
         let end = (&self.inner.end, self.inner.additional_offset_secs);
@@ -492,7 +492,7 @@ impl Rule<'_> {
 
         if seconds_since_epoch
             < first.0.timestamp_for_year(
-                year,
+                local_year,
                 day_before_year,
                 self.standard_offset_seconds,
                 first.1,
@@ -508,7 +508,7 @@ impl Rule<'_> {
         }
         if seconds_since_epoch
             < second.0.timestamp_for_year(
-                year,
+                local_year,
                 day_before_year,
                 self.standard_offset_seconds,
                 second.1,
@@ -645,7 +645,7 @@ impl Rule<'_> {
         };
 
         let first_timestamp = first.0.timestamp_for_year(
-            year,
+            local_year,
             day_before_year,
             self.standard_offset_seconds,
             first.1,
@@ -659,7 +659,7 @@ impl Rule<'_> {
             };
         }
         let second_timestamp = second.0.timestamp_for_year(
-            year,
+            local_year,
             day_before_year,
             self.standard_offset_seconds,
             second.1,
@@ -673,8 +673,8 @@ impl Rule<'_> {
         } else {
             Transition {
                 since: first.0.timestamp_for_year(
-                    year + 1,
-                    iso::day_before_year(year + 1),
+                    local_year + 1,
+                    iso::day_before_year(local_year + 1),
                     self.standard_offset_seconds,
                     first.1,
                 ),

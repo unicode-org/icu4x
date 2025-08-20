@@ -4030,7 +4030,6 @@ dependencies = [
  "chrono-tz",
  "icu_locale_core",
  "icu_time",
- "itertools 0.14.0",
  "jiff",
  "potential_utf",
  "resb",
