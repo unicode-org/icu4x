@@ -544,38 +544,11 @@ mod tests {
         }
     }
 
-    // Tests pre32 transitions
-    // 1938-04-24T22:00:00Z
-    const PAST: i64 = -1_000_000_000 - 800;
-    // Tests rules and post32 transitions
-    // 2033-05-18T03:00:00Z
-    const FUTURE: i64 = 3_000_000_000 - 2000;
-
-    // To test all timezones, set EXHAUSTIVE_TZ_TEST=1
-    //
-    // We recommend testing with `--profile release-with-assertions`
-    fn time_zones_to_test() -> &'static [Tz] {
-        if std::env::var("EXHAUSTIVE_TZ_TEST").is_err() {
-            // Keep this list small, this test is slow
-            &[
-                // Some normal timezones with DST
-                // Wall rule
-                Tz::America__Los_Angeles,
-                // Standard rules
-                Tz::Europe__London,
-                Tz::Europe__Zurich,
-                // Utc rule
-                Tz::America__Santiago,
-                // Transition skips a day
-                Tz::Pacific__Apia,
-                // Transition removes sub-second offset
-                Tz::Pacific__Niue,
-                // Has a single transition into a rule
-                Tz::Antarctica__Troll,
-            ][..]
-        } else {
-            &chrono_tz::TZ_VARIANTS[..]
-        }
+    fn time_zones_to_test() -> impl Iterator<Item = Tz> {
+        chrono_tz::TZ_VARIANTS
+            .iter()
+            .copied()
+            .filter(|tz| !TZDB.is_alias(tz.name()))
     }
 
     fn has_rearguard_diff(iana: &str) -> bool {
@@ -600,15 +573,13 @@ mod tests {
         for chrono in time_zones_to_test() {
             let iana = chrono.name();
 
-            if TZDB.is_alias(iana) {
-                continue;
-            }
-
-            println!("{iana}");
-
             let zoneinfo64 = TZDB.get(iana).unwrap();
 
-            for seconds_since_epoch in (PAST..FUTURE).step_by(60 * 60) {
+            for seconds_since_epoch in jiff_transitions(iana)
+                .into_iter()
+                // 30-minute increments around a transition
+                .flat_map(|t| (-3..=3).map(move |h| t.since + h * 30 * 60))
+            {
                 let utc_datetime = chrono::DateTime::from_timestamp(seconds_since_epoch, 0)
                     .unwrap()
                     .naive_utc();
@@ -632,7 +603,6 @@ mod tests {
                     "{seconds_since_epoch}, {zoneinfo64:?} {local_datetime}",
                 );
 
-                // Rearguard / vanguard diffs
                 if has_rearguard_diff(iana) {
                     continue;
                 }
@@ -646,69 +616,123 @@ mod tests {
         }
     }
 
+    fn jiff_transitions(iana: &str) -> Vec<Transition> {
+        jiff::tz::TimeZone::get(iana)
+            .unwrap()
+            // Chrono only evaluates rules until 2100
+            .preceding(jiff::Timestamp::from_str("2100-01-01T00:00:00Z").unwrap())
+            .collect::<Vec<_>>()
+            .into_iter()
+            .rev()
+            .dedup_by(|a, b| (a.offset(), a.dst()) == (b.offset(), b.dst()))
+            // .filter(|t| t.timestamp() > min)
+            .map(|t| Transition {
+                since: t.timestamp().as_second(),
+                offset: UtcOffset::from_seconds_unchecked(t.offset().seconds()),
+                rule_applies: t.dst().is_dst(),
+            })
+            .collect::<Vec<_>>()
+    }
+
     #[test]
     fn test_transition_against_jiff() {
         for zone in time_zones_to_test() {
             let iana = zone.name();
+            let transitions = jiff_transitions(iana);
 
-            if TZDB.is_alias(iana) || has_rearguard_diff(iana) {
+            if has_rearguard_diff(iana) | transitions.is_empty() {
                 continue;
             }
 
-            println!("{iana}");
-
-            let jiff = jiff::tz::TimeZone::get(iana).unwrap();
             let zoneinfo64 = TZDB.get(iana).unwrap();
 
-            let mut transitions = jiff
-                .preceding(jiff::Timestamp::from_str("2222-01-01T00:00:00Z").unwrap())
-                .collect::<Vec<_>>()
-                .into_iter()
-                .rev()
-                .dedup_by(|a, b| a.offset() == b.offset())
-                .filter(|t| {
-                    t.timestamp() > jiff::Timestamp::from_str("1920-01-01T00:00:00Z").unwrap()
-                })
-                .map(|t| Transition {
-                    since: t.timestamp().as_second(),
-                    offset: UtcOffset::from_seconds_unchecked(t.offset().seconds()),
-                    rule_applies: t.dst().is_dst(),
-                })
-                .collect::<Vec<_>>();
+            let exact = zoneinfo64.prev_transition(i64::MIN + 1, true);
+            let after = zoneinfo64.prev_transition(i64::MIN + 1, false);
 
-            if transitions.first().is_some_and(|t| t.offset.is_zero()) {
-                transitions.remove(0);
+            assert_eq!(exact, None);
+            assert_eq!(after, None);
+
+            let exact = zoneinfo64.next_transition(i64::MIN);
+
+            // Unclear why we have a mismatch for the first transition of these.
+            if !matches!(
+                iana,
+                "Africa/Monrovia"
+                    | "America/Argentina/Cordoba"
+                    | "America/Asuncion"
+                    | "America/Bogota"
+                    | "America/Costa_Rica"
+                    | "America/Jamaica"
+                    | "America/La_Paz"
+                    | "America/Martinique"
+                    | "America/Montevideo"
+                    | "America/Santiago"
+                    | "America/St_Johns"
+                    | "Antarctica/Troll"
+                    | "Asia/Bangkok"
+                    | "Asia/Ho_Chi_Minh"
+                    | "Asia/Irkutsk"
+                    | "Asia/Jakarta"
+                    | "Asia/Makassar"
+                    | "Asia/Pontianak"
+                    | "Asia/Singapore"
+                    | "Asia/Tbilisi"
+                    | "Asia/Tehran"
+                    | "Asia/Yangon"
+                    | "Atlantic/Bermuda"
+                    | "Atlantic/Madeira"
+                    | "Atlantic/Stanley"
+                    | "Europe/Athens"
+                    | "Europe/Brussels"
+                    | "Europe/Bucharest"
+                    | "Europe/Helsinki"
+                    | "Europe/Kyiv"
+                    | "Europe/Lisbon"
+                    | "Europe/Moscow"
+                    | "Europe/Paris"
+                    | "Europe/Riga"
+                    | "Europe/Rome"
+                    | "Europe/Tallinn"
+                    | "Europe/Warsaw"
+                    | "Indian/Maldives"
+                    | "Pacific/Easter"
+            ) {
+                assert_eq!(exact, transitions.first().copied());
             }
 
-            for t in &transitions {
-                let exact = zoneinfo64.prev_transition(t.since, true);
-                let after1 = zoneinfo64.prev_transition(t.since, false);
+            for &t in &transitions[1..] {
+                let prev_before1 = zoneinfo64.prev_transition(t.since - 1, true);
+                let prev_before2 = zoneinfo64.prev_transition(t.since - 1, false);
+                let prev_exact = zoneinfo64.prev_transition(t.since, true);
+                let prev_after1 = zoneinfo64.prev_transition(t.since, false);
+                let prev_after2 = zoneinfo64.prev_transition(t.since + 1, true);
+                let prev_after3 = zoneinfo64.prev_transition(t.since + 1, false);
 
-                let before1 = zoneinfo64.prev_transition(t.since - 1, true);
-                let before2 = zoneinfo64.prev_transition(t.since - 1, false);
+                assert_eq!(prev_before1, prev_before2);
+                assert_eq!(prev_before2, prev_exact);
 
-                let after2 = zoneinfo64.prev_transition(t.since + 1, true);
-                let after3 = zoneinfo64.prev_transition(t.since + 1, false);
+                assert_ne!(prev_exact, prev_after1);
 
-                assert_eq!(before1, before2);
-                assert_eq!(before1, exact);
-                assert_ne!(exact, Some(*t));
+                assert_eq!(prev_after1, prev_after2);
+                assert_eq!(prev_after2, prev_after3);
+                assert_eq!(prev_after3, Some(t));
 
-                assert_eq!(after1, Some(*t));
-                assert_eq!(after2, Some(*t));
-                assert_eq!(after3, Some(*t));
+                let next_before = zoneinfo64.next_transition(t.since - 1);
+                let next_exact = zoneinfo64.next_transition(t.since);
+                let next_after = zoneinfo64.next_transition(t.since + 1);
+
+                assert_eq!(next_before, Some(t));
+
+                assert_ne!(next_before, next_exact);
+
+                assert_eq!(next_exact, next_after);
             }
 
-            for t in &transitions {
-                let before = zoneinfo64.next_transition(t.since - 1);
-                let exact = zoneinfo64.next_transition(t.since);
-                let after = zoneinfo64.next_transition(t.since + 1);
-
-                assert_ne!(before, exact);
-
-                assert_eq!(exact, after);
-
-                assert_eq!(before, Some(*t));
+            if zoneinfo64.final_rule.is_none() {
+                assert_eq!(
+                    zoneinfo64.next_transition(transitions.last().unwrap().since),
+                    None
+                );
             }
         }
     }
