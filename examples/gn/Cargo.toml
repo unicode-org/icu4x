@@ -15,6 +15,9 @@ icu = { version = "2.0.0", default-features = false }
 icu_provider = { version = "2.0.0" }
 
 # We need to explicitly specify versions here because these have build scripts and/or we wish to supply flags
+[gn.package.icu_capi."2.0.2"]
+rustflags = []
+
 [gn.package.proc-macro2."1.0.91"]
 rustflags = ["--cfg=use_proc_macro", "--cfg=wrap_proc_macro", "--cfg=proc_macro_span"]
 
