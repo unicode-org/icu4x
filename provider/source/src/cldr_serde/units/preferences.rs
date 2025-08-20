@@ -132,7 +132,8 @@ impl Supplemental {
         if found_in_region {
             UnitType::Core
         } else if found_anywhere {
-            UnitType::Extended
+            // there is only core or outliers
+            UnitType::Core
         } else {
             UnitType::Outlier
         }

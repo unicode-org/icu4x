@@ -21,22 +21,17 @@ macro_rules! define_units_data_markers {
 define_units_data_markers!(
     // Area
     UnitsNameAreaCoreV1, "Display name for core area";
-    UnitsNameAreaExtendedV1, "Display name for extended area";
     UnitsNameAreaOutlierV1, "Display name for outlier area";
     // Duration
     UnitsNameDurationCoreV1, "Display name for core duration";
-    UnitsNameDurationExtendedV1, "Display name for extended duration";
     UnitsNameDurationOutlierV1, "Display name for outlier duration";
     // Length
     UnitsNameLengthCoreV1, "Display name for core length";
-    UnitsNameLengthExtendedV1, "Display name for extended length";
     UnitsNameLengthOutlierV1, "Display name for outlier length";
     // Mass
     UnitsNameMassCoreV1, "Display name for core mass";
-    UnitsNameMassExtendedV1, "Display name for extended mass";
     UnitsNameMassOutlierV1, "Display name for outlier mass";
     // Volume
     UnitsNameVolumeCoreV1, "Display name for core volume";
-    UnitsNameVolumeExtendedV1, "Display name for extended volume";
     UnitsNameVolumeOutlierV1, "Display name for outlier volume";
 );
