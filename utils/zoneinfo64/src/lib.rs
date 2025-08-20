@@ -557,8 +557,6 @@ mod tests {
                 | "Africa/El_Aaiun"
                 | "Africa/Windhoek"
                 | "Europe/Dublin"
-                | "Eire"
-                | "Europe/Bratislava"
                 | "Europe/Prague"
         )
     }
