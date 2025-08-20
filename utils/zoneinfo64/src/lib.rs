@@ -651,7 +651,7 @@ mod tests {
             let iana = zone.name();
             let transitions = jiff_transitions(iana);
 
-            if has_rearguard_diff(iana) | transitions.is_empty() {
+            if has_rearguard_diff(iana) || transitions.is_empty() {
                 continue;
             }
 
