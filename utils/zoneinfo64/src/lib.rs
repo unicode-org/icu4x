@@ -431,10 +431,14 @@ impl Zone<'_> {
         self.transition_offset_at(idx).into()
     }
 
-    /// Get the last transition before a timestamp.
+    /// Returns the latest transition with a `since` field
+    /// strictly less than `seconds_since_epoch` (if `seconds_exact == true`),
+    /// or less or equal than `seconds_since_epoch` (if `seconds_exact == false`).
     ///
-    /// If `seconds_exact` is false, the transition at `x` is considered
-    /// to be before the timestamp `x`.
+    /// `seconds_exact` can be used if the actual timestamp has more precision
+    /// than seconds. Make sure to round in the direction of negative infinity,
+    /// i.e. use `div_euclid` to remove precision and `rem_euclid` to determine
+    /// `seconds_exact`.
     pub fn prev_transition(
         &self,
         seconds_since_epoch: i64,
@@ -467,7 +471,8 @@ impl Zone<'_> {
         }
     }
 
-    /// Get the first transition after a timestamp.
+    /// Returns the earliest transition with a `since` field
+    /// strictly greater than `seconds_since_epoch`.
     pub fn next_transition(&self, seconds_since_epoch: i64) -> Option<Transition> {
         let idx = self.prev_transition_offset_idx(seconds_since_epoch);
         Some(if idx == self.transition_count() - 1 {
