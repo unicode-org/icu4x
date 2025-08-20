@@ -505,59 +505,40 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
     }
 
     /// Returns the value that is associated with `code_point` in this [`CodePointTrie`]
-    /// assuming that the fast index path should be used.
-    ///
-    /// # Intended Precondition
-    ///
-    /// `code_point` must be at most `FAST_TYPE_FAST_INDEXING_MAX` if
-    /// the trie type is fast or at most `SMALL_TYPE_FAST_INDEXING_MAX`
-    /// if the trie type is small.
-    ///
-    /// To avoid having to make this method `unsafe`, the above condition
-    /// is checked in the hope that the optimizer deletes the check due
-    /// to the caller already having checked it correctly. However, if
-    /// the caller is incorrect, a violation of this precondition results
-    /// in a panic when debug assertions are enabled and in returning
-    /// `self.error_value` when they aren't.
-    ///
-    /// # Panics
-    ///
-    /// When debug assertions are enabled, the above precondition and
-    /// slice access bounds are checked.
+    /// if `code_point` uses fast-path lookup or `None` if `code_point`
+    /// should use small-path lookup or is above the supported range.
     #[inline(always)] // "always" to make the `fast_max` check collapse away.
-    fn get32_by_fast_index(&self, code_point: u32) -> T {
+    fn get32_by_fast_index(&self, code_point: u32) -> Option<T> {
         let fast_max = match self.header.trie_type {
             TrieType::Fast => FAST_TYPE_FAST_INDEXING_MAX,
             TrieType::Small => SMALL_TYPE_FAST_INDEXING_MAX,
         };
-        if code_point > fast_max {
-            debug_assert!(false);
-            // TODO: When debug assertions are disabled, it would be
-            // really nice to have a call here to a function that always
-            // fails to link in order to prove that the optimizer has
-            // successfully deleted this path for all callers.
-            return self.error_value;
+        if code_point <= fast_max {
+            let bit_prefix = (code_point as usize) >> FAST_TYPE_SHIFT;
+            debug_assert!(bit_prefix < self.index.len());
+            // SAFETY: Relying on the length invariant of `self.index` having
+            // been checked and on the unchangedness invariant of `self.index`
+            // and `self.header.trie_type` after construction.
+            let base_offset_to_data: usize = usize::from(u16::from_unaligned(*unsafe {
+                self.index.as_ule_slice().get_unchecked(bit_prefix)
+            }));
+            let bit_suffix = (code_point & FAST_TYPE_DATA_MASK) as usize;
+            // SAFETY: Cannot overflow with supported (32-bit and 64-bit) `usize`
+            // sizes, since `base_offset_to_data` was extended from `u16` and
+            // `bit_suffix` is at most `FAST_TYPE_DATA_MASK`, which is well
+            // under what it takes to reach the 32-bit (or 64-bit) max with
+            // additon from the max of `u16`.
+            let offset_to_data = w!(base_offset_to_data + bit_suffix);
+            debug_assert!(offset_to_data < self.data.len());
+            // SAFETY: Relying on the length invariant of `self.data` having
+            // been checked and on the unchangedness invariant of `self.data`,
+            // `self.index`, and `self.header.trie_type` after construction.
+            T::from_unaligned(*unsafe { self.data.as_ule_slice().get_unchecked(offset_to_data) })
+        } else {
+            // The caller needs to call `get32_by_small_index` or determine
+            // that the argument is above the permitted range.
+            None
         }
-        let bit_prefix = (code_point as usize) >> FAST_TYPE_SHIFT;
-        debug_assert!(bit_prefix < self.index.len());
-        // SAFETY: Relying on the length invariant of `self.index` having
-        // been checked and on the unchangedness invariant of `self.index`
-        // and `self.header.trie_type` after construction.
-        let base_offset_to_data: usize = usize::from(u16::from_unaligned(*unsafe {
-            self.index.as_ule_slice().get_unchecked(bit_prefix)
-        }));
-        let bit_suffix = (code_point & FAST_TYPE_DATA_MASK) as usize;
-        // SAFETY: Cannot overflow with supported (32-bit and 64-bit) `usize`
-        // sizes, since `base_offset_to_data` was extended from `u16` and
-        // `bit_suffix` is at most `FAST_TYPE_DATA_MASK`, which is well
-        // under what it takes to reach the 32-bit (or 64-bit) max with
-        // additon from the max of `u16`.
-        let offset_to_data = w!(base_offset_to_data + bit_suffix);
-        debug_assert!(offset_to_data < self.data.len());
-        // SAFETY: Relying on the length invariant of `self.data` having
-        // been checked and on the unchangedness invariant of `self.data`,
-        // `self.index`, and `self.header.trie_type` after construction.
-        T::from_unaligned(*unsafe { self.data.as_ule_slice().get_unchecked(offset_to_data) })
     }
 
     /// Returns the value that is associated with `code_point` in this [`CodePointTrie`]
@@ -602,14 +583,8 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
     /// ```
     #[inline(always)] // `always` based on normalizer benchmarking
     pub fn get32(&self, code_point: u32) -> T {
-        let fast_max = match self.header.trie_type {
-            TrieType::Fast => FAST_TYPE_FAST_INDEXING_MAX,
-            TrieType::Small => SMALL_TYPE_FAST_INDEXING_MAX,
-        };
-        if code_point <= fast_max {
-            // We've just checked that `code_point` satisfies
-            // the intended precondition of `get32_by_fast_index`.
-            self.get32_by_fast_index(code_point)
+        if let Some(v) = self.get32_by_fast_index(code_point) {
+            v
         } else if code_point <= CODE_POINT_MAX {
             self.get32_by_small_index(code_point)
         } else {
@@ -631,19 +606,12 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
     /// ```
     #[inline(always)]
     pub fn get(&self, c: char) -> T {
-        // If we just delegated to `get32` here, the compiler should
-        // eliminate the `code_point <= CODE_POINT_MAX` check, but
-        // let's manually inline here to make sure that the unnecessary
-        // check isn't performed.
+        // LLVM's optimizations have been observed not to be 100%
+        // reliable around collapsing away unnecessary parts of
+        // `get32`, so not just calling `get32` here.
         let code_point = u32::from(c);
-        let fast_max = match self.header.trie_type {
-            TrieType::Fast => FAST_TYPE_FAST_INDEXING_MAX,
-            TrieType::Small => SMALL_TYPE_FAST_INDEXING_MAX,
-        };
-        if code_point <= fast_max {
-            // We've just checked that `code_point` satisfies
-            // the intended precondition of `get32_by_fast_index`.
-            self.get32_by_fast_index(code_point)
+        if let Some(v) = self.get32_by_fast_index(code_point) {
+            v
         } else {
             self.get32_by_small_index(code_point)
         }
