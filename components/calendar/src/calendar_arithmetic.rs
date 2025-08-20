@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::error::DateError;
+use crate::error::{range_check, DateError};
 use crate::types::DayOfYear;
 use crate::{types, Calendar, DateDuration, DateDurationUnit, RangeError};
 use core::cmp::Ordering;
@@ -83,6 +83,14 @@ pub(crate) trait CalendarArithmetic: Calendar {
     fn provided_year_is_leap(year: Self::YearInfo) -> bool;
     fn last_month_day_in_provided_year(year: Self::YearInfo) -> (u8, u8);
 
+    fn day_of_provided_year(year: Self::YearInfo, month: u8, day: u8) -> u16 {
+        let mut day_of_year = 0;
+        for month in 1..month {
+            day_of_year += Self::days_in_provided_month(year, month) as u16;
+        }
+        day_of_year + day as u16
+    }
+
     /// Calculate the days in a given year
     /// Can be overridden with simpler implementations for solar calendars
     /// (typically, 366 in leap, 365 otherwise) Leave this as the default
@@ -96,6 +104,24 @@ pub(crate) trait CalendarArithmetic: Calendar {
             days += Self::days_in_provided_month(year, month) as u16;
         }
         days
+    }
+
+    fn date_from_provided_year_day(year: Self::YearInfo, year_day: u16) -> (u8, u8) {
+        let mut month = 1;
+        let mut day = year_day as i32;
+        while month <= Self::months_in_provided_year(year) {
+            let month_days = Self::days_in_provided_month(year, month) as i32;
+            if day <= month_days {
+                break;
+            } else {
+                day -= month_days;
+                month += 1;
+            }
+        }
+
+        debug_assert!(day <= Self::days_in_provided_month(year, month) as i32);
+
+        (month, day.try_into().unwrap_or(1))
     }
 }
 
@@ -130,12 +156,7 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
     where
         C: CalendarArithmetic<YearInfo = i32>,
     {
-        ArithmeticDate {
-            year: i32::MIN,
-            month: 1,
-            day: 1,
-            marker: PhantomData,
-        }
+        ArithmeticDate::new_unchecked(i32::MIN, 1, 1)
     }
 
     #[inline]
@@ -145,12 +166,7 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
     {
         let year = i32::MAX;
         let (month, day) = C::last_month_day_in_provided_year(year);
-        ArithmeticDate {
-            year: i32::MAX,
-            month,
-            day,
-            marker: PhantomData,
-        }
+        ArithmeticDate::new_unchecked(year, month, day)
     }
 
     #[inline]
@@ -242,29 +258,9 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
     }
 
     #[inline]
-    pub fn date_from_year_day(year: i32, year_day: u32) -> ArithmeticDate<C>
-    where
-        C: CalendarArithmetic<YearInfo = i32>,
-    {
-        let mut month = 1;
-        let mut day = year_day as i32;
-        while month <= C::months_in_provided_year(year) {
-            let month_days = C::days_in_provided_month(year, month) as i32;
-            if day <= month_days {
-                break;
-            } else {
-                day -= month_days;
-                month += 1;
-            }
-        }
-
-        debug_assert!(day <= C::days_in_provided_month(year, month) as i32);
-        ArithmeticDate {
-            year,
-            month,
-            day: day.try_into().unwrap_or(1),
-            marker: PhantomData,
-        }
+    pub fn date_from_year_day(year: C::YearInfo, year_day: u16) -> ArithmeticDate<C> {
+        let (month, day) = C::date_from_provided_year_day(year, year_day);
+        ArithmeticDate::new_unchecked(year, month, day)
     }
 
     #[inline]
@@ -274,11 +270,7 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
 
     #[inline]
     pub fn day_of_year(&self) -> DayOfYear {
-        let mut day_of_year = 0;
-        for month in 1..self.month {
-            day_of_year += C::days_in_provided_month(self.year, month) as u16;
-        }
-        DayOfYear(day_of_year + (self.day as u16))
+        DayOfYear(C::day_of_provided_year(self.year, self.month, self.day))
     }
 
     pub fn monotonic_year(&self) -> i32 {
@@ -332,9 +324,7 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
     where
         C: CalendarArithmetic<YearInfo = i32>,
     {
-        let month = if let Some((ordinal, false)) = month_code.parsed() {
-            ordinal
-        } else {
+        let Some((month, false)) = month_code.parsed() else {
             return Err(DateError::UnknownMonthCode(month_code));
         };
 
@@ -342,15 +332,7 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
             return Err(DateError::UnknownMonthCode(month_code));
         }
 
-        let max_day = C::days_in_provided_month(year, month);
-        if day == 0 || day > max_day {
-            return Err(DateError::Range {
-                field: "day",
-                value: day as i32,
-                min: 1,
-                max: max_day as i32,
-            });
-        }
+        let day = range_check(day, "day", 1..=C::days_in_provided_month(year, month))?;
 
         Ok(Self::new_unchecked(year, month, day))
     }
@@ -358,26 +340,11 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
     /// Construct a new arithmetic date from a year, month ordinal, and day, bounds checking
     /// the month and day
     pub fn new_from_ordinals(year: C::YearInfo, month: u8, day: u8) -> Result<Self, RangeError> {
-        let max_month = C::months_in_provided_year(year);
-        if month == 0 || month > max_month {
-            return Err(RangeError {
-                field: "month",
-                value: month as i32,
-                min: 1,
-                max: max_month as i32,
-            });
-        }
-        let max_day = C::days_in_provided_month(year, month);
-        if day == 0 || day > max_day {
-            return Err(RangeError {
-                field: "day",
-                value: day as i32,
-                min: 1,
-                max: max_day as i32,
-            });
-        }
-
-        Ok(Self::new_unchecked(year, month, day))
+        Ok(Self::new_unchecked(
+            year,
+            range_check(month, "month", 1..=C::months_in_provided_year(year))?,
+            range_check(day, "day", 1..=C::days_in_provided_month(year, month))?,
+        ))
     }
 }
 

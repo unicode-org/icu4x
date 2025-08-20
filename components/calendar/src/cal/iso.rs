@@ -52,12 +52,11 @@ impl CalendarArithmetic for Iso {
     type YearInfo = i32;
 
     fn days_in_provided_month(year: i32, month: u8) -> u8 {
-        match month {
-            4 | 6 | 9 | 11 => 30,
-            2 if Self::provided_year_is_leap(year) => 29,
-            2 => 28,
-            1 | 3 | 5 | 7 | 8 | 10 | 12 => 31,
-            _ => 0,
+        // https://www.youtube.com/watch?v=J9KijLyP-yg&t=1394s
+        if month == 2 {
+            28 + calendrical_calculations::iso::is_leap_year(year) as u8
+        } else {
+            30 | month ^ (month >> 3)
         }
     }
 
@@ -74,11 +73,15 @@ impl CalendarArithmetic for Iso {
     }
 
     fn days_in_provided_year(year: i32) -> u16 {
-        if Self::provided_year_is_leap(year) {
-            366
-        } else {
-            365
-        }
+        365 + calendrical_calculations::iso::is_leap_year(year) as u16
+    }
+
+    fn day_of_provided_year(year: Self::YearInfo, month: u8, day: u8) -> u16 {
+        calendrical_calculations::iso::days_before_month(year, month) + day as u16
+    }
+
+    fn date_from_provided_year_day(year: Self::YearInfo, year_day: u16) -> (u8, u8) {
+        calendrical_calculations::iso::year_day(year, year_day)
     }
 }
 
@@ -211,40 +214,6 @@ impl Iso {
     /// Construct a new ISO Calendar
     pub fn new() -> Self {
         Self
-    }
-
-    pub(crate) fn iso_from_year_day(year: i32, year_day: u16) -> IsoDateInner {
-        let mut month = 1;
-        let mut day = year_day as i32;
-        while month <= 12 {
-            let month_days = Self::days_in_provided_month(year, month) as i32;
-            if day <= month_days {
-                break;
-            } else {
-                debug_assert!(month < 12); // don't try going to month 13
-                day -= month_days;
-                month += 1;
-            }
-        }
-        let day = day as u8; // day <= month_days < u8::MAX
-
-        // month in 1..=12, day <= month_days
-        IsoDateInner(ArithmeticDate::new_unchecked(year, month, day))
-    }
-
-    pub(crate) fn day_of_year(date: IsoDateInner) -> u16 {
-        // Cumulatively how much are dates in each month
-        // offset from "30 days in each month" (in non leap years)
-        let month_offset = [0, 1, -1, 0, 0, 1, 1, 2, 3, 3, 4, 4];
-        #[expect(clippy::indexing_slicing)] // date.0.month in 1..=12
-        let mut offset = month_offset[date.0.month as usize - 1];
-        if Self::provided_year_is_leap(date.0.year) && date.0.month > 2 {
-            // Months after February in a leap year are offset by one less
-            offset += 1;
-        }
-        let prev_month_days = (30 * (date.0.month as i32 - 1) + offset) as u16;
-
-        prev_month_days + date.0.day as u16
     }
 }
 

@@ -18,7 +18,7 @@
 
 use crate::cal::iso::{Iso, IsoDateInner};
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
-use crate::error::{year_check, DateError};
+use crate::error::{range_check, DateError};
 use crate::{types, Calendar, Date, DateDuration, DateDurationUnit, RangeError};
 use calendrical_calculations::helpers::I32CastError;
 use calendrical_calculations::rata_die::RataDie;
@@ -125,11 +125,11 @@ impl Calendar for Ethiopian {
     ) -> Result<Self::DateInner, DateError> {
         let year = match (self.era_style(), era) {
             (EthiopianEraStyle::AmeteMihret, Some("am")) => {
-                year_check(year, 1..)? + INCARNATION_OFFSET
+                range_check(year, "year", 1..)? + INCARNATION_OFFSET
             }
             (EthiopianEraStyle::AmeteMihret, None) => year + INCARNATION_OFFSET,
             (EthiopianEraStyle::AmeteMihret, Some("aa")) => {
-                year_check(year, ..=INCARNATION_OFFSET)?
+                range_check(year, "year", ..=INCARNATION_OFFSET)?
             }
             (EthiopianEraStyle::AmeteAlem, Some("aa") | None) => year,
             (_, Some(_)) => {
