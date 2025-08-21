@@ -53,13 +53,10 @@ final class ZonedDateTime {
 
   /// Creates a new [ZonedDateTime] from an IXDTF string.
   ///
-  /// DEPRECATED
-  ///
-  /// Use `strict_from_string`
-  ///
   /// See the [Rust documentation for `try_full_from_str`](https://docs.rs/icu/2.0.0/icu/time/struct.ZonedDateTime.html#method.try_full_from_str) for more information.
   ///
   /// Throws [Rfc9557ParseError] on failure.
+  @core.Deprecated('use strict_from_string')
   factory ZonedDateTime.fullFromString(String v, Calendar calendar, IanaParser ianaParser, VariantOffsetsCalculator offsetCalculator) {
     final temp = _FinalizedArena();
     final result = _icu4x_ZonedDateTime_full_from_string_mv1(v._utf8AllocIn(temp.arena), calendar._ffi, ianaParser._ffi, offsetCalculator._ffi);

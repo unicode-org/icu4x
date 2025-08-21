@@ -45,10 +45,7 @@ pub mod ffi {
         }
 
         /// Creates a new [`ZonedIsoDateTime`] from an IXDTF string.
-        ///
-        /// DEPRECATED
-        ///
-        /// Use `strict_from_string`.
+        #[deprecated(note = "use strict_from_string")]
         #[diplomat::rust_link(icu::time::ZonedDateTime::try_full_from_str, FnInStruct)]
         #[diplomat::rust_link(icu::time::ZonedDateTime::try_full_from_utf8, FnInStruct, hidden)]
         #[diplomat::attr(all(supports = named_constructors, supports = fallible_constructors), named_constructor = "full_from_string")]
@@ -117,14 +114,10 @@ pub mod ffi {
         }
 
         /// Creates a new [`ZonedDateTime`] from an IXDTF string.
-        ///
-        /// DEPRECATED
-        ///
-        /// Use `strict_from_string`
+        #[deprecated(note = "use strict_from_string")]
         #[diplomat::rust_link(icu::time::ZonedDateTime::try_full_from_str, FnInStruct)]
         #[diplomat::rust_link(icu::time::ZonedDateTime::try_from_utf8, FnInStruct, hidden)]
         #[diplomat::attr(all(supports = named_constructors, supports = fallible_constructors), named_constructor = "full_from_string")]
-        #[allow(deprecated)]
         pub fn full_from_string(
             v: &DiplomatStr,
             calendar: &Calendar,
