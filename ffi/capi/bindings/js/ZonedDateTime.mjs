@@ -149,11 +149,9 @@ export class ZonedDateTime {
     /**
      * Creates a new {@link ZonedDateTime} from an IXDTF string.
      *
-     * DEPRECATED
-     *
-     * Use `strict_from_string`
-     *
      * See the [Rust documentation for `try_full_from_str`](https://docs.rs/icu/2.0.0/icu/time/struct.ZonedDateTime.html#method.try_full_from_str) for more information.
+     *
+     * @deprecated use strict_from_string
      */
     static fullFromString(v, calendar, ianaParser, offsetCalculator) {
         let functionCleanupArena = new diplomatRuntime.CleanupArena();

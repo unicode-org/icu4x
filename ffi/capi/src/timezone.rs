@@ -63,7 +63,7 @@ pub mod ffi {
 
     #[diplomat::enum_convert(icu_time::zone::TimeZoneVariant, needs_wildcard)]
     #[non_exhaustive]
-    /// DEPRECATED
+    #[deprecated(note = "type not needed anymore")]
     pub enum TimeZoneVariant {
         // TimeZoneVariant in Rust doesn't have a default, but it is useful to have one
         // here for consistent behavior.
@@ -72,11 +72,12 @@ pub mod ffi {
         Daylight,
     }
 
+    #[allow(deprecated)]
     impl TimeZoneVariant {
         #[diplomat::rust_link(icu::time::zone::TimeZoneVariant::from_rearguard_isdst, FnInEnum)]
         #[diplomat::rust_link(icu::time::TimeZoneInfo::with_variant, FnInStruct)]
         #[diplomat::rust_link(icu::time::zone::TimeZoneVariant, Enum, compact)]
-        /// DEPRECATED
+        #[deprecated(note = "type not needed anymore")]
         #[allow(deprecated)] // remove in 3.0
         pub fn from_rearguard_isdst(isdst: bool) -> Self {
             icu_time::zone::TimeZoneVariant::from_rearguard_isdst(isdst).into()
@@ -108,6 +109,7 @@ pub mod ffi {
         ///
         /// `variant` is ignored.
         #[diplomat::attr(auto, constructor)]
+        #[allow(deprecated)]
         pub fn from_parts(
             id: &TimeZone,
             offset: Option<&UtcOffset>,
@@ -219,9 +221,8 @@ pub mod ffi {
         }
 
         #[diplomat::rust_link(icu::time::TimeZoneInfo::with_variant, FnInStruct)]
-        /// DEPRECATED
-        ///
-        /// Just clones
+        #[deprecated(note = "returns unmodified copy")]
+        #[allow(deprecated)]
         pub fn with_variant(&self, _time_variant: TimeZoneVariant) -> Box<Self> {
             Box::new(*self)
         }
@@ -231,9 +232,7 @@ pub mod ffi {
             self.offset.map(UtcOffset).map(Box::new)
         }
 
-        /// DEPRECATED
-        ///
-        /// No-op
+        #[deprecated(note = "does nothing")]
         #[diplomat::rust_link(icu::time::TimeZoneInfo::infer_variant, FnInStruct)]
         #[diplomat::rust_link(icu::time::zone::TimeZoneVariant, Enum, compact)]
         pub fn infer_variant(
@@ -245,7 +244,8 @@ pub mod ffi {
 
         #[diplomat::rust_link(icu::time::TimeZoneInfo::variant, FnInStruct)]
         #[diplomat::attr(demo_gen, disable)] // this just returns a constructor argument
-        /// DEPRECATED
+        #[deprecated(note = "always returns null")]
+        #[allow(deprecated)]
         pub fn variant(&self) -> Option<TimeZoneVariant> {
             None
         }
