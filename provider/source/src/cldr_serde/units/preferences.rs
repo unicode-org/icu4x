@@ -7,6 +7,7 @@
 //! The file:
 //! <https://github.com/unicode-org/cldr-json/blob/main/cldr-json/cldr-core/supplemental/unitPreferenceData.json>
 
+use icu_provider::DataError;
 use serde::Deserialize;
 use std::collections::{BTreeMap, HashSet};
 
@@ -113,10 +114,10 @@ impl Supplemental {
         unit: &str,
         region: &str,
         categorized_units_list: &CategorizedUnitsList,
-    ) -> UnitType {
+    ) -> Result<UnitType, DataError> {
         let region_units = match categorized_units_list.get(category) {
             Some(units) => units,
-            None => return UnitType::Outlier,
+            None => return Err(DataError::custom("Category not found")),
         };
 
         let found_in_region = region_units
@@ -129,12 +130,12 @@ impl Supplemental {
             .any(|units| Self::unit_matches_any(unit, units));
 
         if found_in_region {
-            UnitType::Core
+            Ok(UnitType::Core)
         } else if found_anywhere {
             // there is only core or outliers
-            UnitType::Core
+            Ok(UnitType::Core)
         } else {
-            UnitType::Outlier
+            Ok(UnitType::Outlier)
         }
     }
 }

@@ -150,7 +150,7 @@ fn get_display_name_iter_ids_cached(
                     unit,
                     &region,
                     &categorized_units_list,
-                ) != unit_type
+                )? != unit_type
                 {
                     continue;
                 }
