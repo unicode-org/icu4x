@@ -325,7 +325,7 @@ impl Zone<'_> {
         let mut idx = 0;
 
         // Compute the candidate transition and the offset that was used before the transition (which is
-        // required to to validates times around the first transition).
+        // required to validated times around the first transition).
         // This is either from the rule or the transitions.
         let (before_first_candidate, first_candidate) = if let Some(rule) = rule {
             // The rule applies and we use this year's first transition as the first candidate.
