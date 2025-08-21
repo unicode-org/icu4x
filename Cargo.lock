@@ -3134,6 +3134,7 @@ dependencies = [
  "databake",
  "displaydoc",
  "postcard",
+ "potential_utf",
  "rand",
  "serde",
  "serde_json",
