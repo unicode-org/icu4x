@@ -507,7 +507,7 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
     /// Returns the value that is associated with `code_point` in this [`CodePointTrie`]
     /// if `code_point` uses fast-path lookup or `None` if `code_point`
     /// should use small-path lookup or is above the supported range.
-    #[inline(always)] // "always" to make the `fast_max` check collapse away.
+    #[inline(always)] // "always" to make the `Option` collapse away
     fn get32_by_fast_index(&self, code_point: u32) -> Option<T> {
         let fast_max = match self.header.trie_type {
             TrieType::Fast => FAST_TYPE_FAST_INDEXING_MAX,
