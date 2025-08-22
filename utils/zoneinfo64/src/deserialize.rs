@@ -199,7 +199,7 @@ pub struct TzZoneDataRaw<'a> {
     )]
     final_rule: Option<&'a PotentialUtf16>,
     final_raw: Option<i32>,
-    final_year: Option<u32>,
+    final_year: Option<i32>,
     #[allow(dead_code)]
     #[serde(
         borrow,
