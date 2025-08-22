@@ -439,12 +439,16 @@ impl Zone<'_> {
     /// than seconds. Make sure to round in the direction of negative infinity,
     /// i.e. use `div_euclid` to remove precision and `rem_euclid` to determine
     /// `seconds_exact`.
+    ///
+    /// `require_offset_change` can be used to skip transitions where the offset
+    /// does not change (i.e. where only the `rule_applies` flag changes).
     pub fn prev_transition(
         &self,
         seconds_since_epoch: i64,
         seconds_exact: bool,
+        require_offset_change: bool,
     ) -> Option<Transition> {
-        let idx = self.prev_transition_offset_idx(seconds_since_epoch);
+        let mut idx = self.prev_transition_offset_idx(seconds_since_epoch);
 
         // `self.transition_offset_at()` returns a synthetic transition at `i64::MIN`
         // for the time range before the actual first transition.
@@ -462,19 +466,47 @@ impl Zone<'_> {
             }
         }
 
-        let candidate = self.transition_offset_at(idx);
+        let mut candidate = self.transition_offset_at(idx);
         if candidate.since == seconds_since_epoch && seconds_exact {
             // If the transition is an exact hit, we actually want the one before
-            (idx > 0).then(|| self.transition_offset_at(idx - 1))
-        } else {
-            Some(candidate)
+            if idx <= 0 {
+                return None;
+            }
+            idx -= 1;
+            candidate = self.transition_offset_at(idx);
         }
+
+        while require_offset_change && idx > 0 {
+            let prev = self.transition_offset_at(idx - 1);
+            if prev.offset == candidate.offset {
+                candidate = prev;
+                idx -= 1;
+            } else {
+                break;
+            }
+        }
+
+        Some(candidate)
     }
 
     /// Returns the earliest transition with a `since` field
     /// strictly greater than `seconds_since_epoch`.
-    pub fn next_transition(&self, seconds_since_epoch: i64) -> Option<Transition> {
-        let idx = self.prev_transition_offset_idx(seconds_since_epoch);
+    ///
+    /// `require_offset_change` can be used to skip transitions where the offset
+    /// does not change (i.e. where only the `rule_applies` flag changes).
+    pub fn next_transition(
+        &self,
+        seconds_since_epoch: i64,
+        require_offset_change: bool,
+    ) -> Option<Transition> {
+        let mut idx = self.prev_transition_offset_idx(seconds_since_epoch);
+        while require_offset_change
+            && idx < self.transition_count() - 1
+            && self.transition_offset_at(idx).offset == self.transition_offset_at(idx + 1).offset
+        {
+            idx += 1;
+        }
+
         Some(if idx == self.transition_count() - 1 {
             // If the previous transition is the last one then the next one
             // can only be the rule.
@@ -567,7 +599,7 @@ mod tests {
 
             let zoneinfo64 = TZDB.get(iana).unwrap();
 
-            for seconds_since_epoch in transitions(iana)
+            for seconds_since_epoch in transitions(iana, false)
                 .into_iter()
                 // 30-minute increments around a transition
                 .flat_map(|t| (-3..=3).map(move |h| t.since + h * 30 * 60))
@@ -608,7 +640,7 @@ mod tests {
         }
     }
 
-    fn transitions(iana: &str) -> Vec<Transition> {
+    fn transitions(iana: &str, require_offset_change: bool) -> Vec<Transition> {
         let tz = jiff::tz::TimeZone::get(iana).unwrap();
         let mut transitions = tz
             // Chrono only evaluates rules until 2100
@@ -625,7 +657,10 @@ mod tests {
         // jiff returns transitions also if only the name changes, we don't
         transitions.retain(|t| {
             let before = tz.to_offset_info(jiff::Timestamp::from_second(t.since - 1).unwrap());
-            before.offset().seconds() != t.offset.to_seconds()
+            if require_offset_change {
+                before.offset().seconds() != t.offset.to_seconds()
+            } else {
+                before.offset().seconds() != t.offset.to_seconds()
                 || before.dst().is_dst() != t.rule_applies
                 // This is a super weird transition that would be removed by our rule,
                 // but we want to keep it because it's in zoneinfo64.
@@ -633,6 +668,7 @@ mod tests {
                 // 1944-08-24T22:00:00Z, (0.0, 2.0) <- same offset and also DST
                 // 1944-10-07T23:00:00Z, (0.0, 1.0)
                 || (iana == "Europe/Paris" && t.since == -800071200)
+            }
         });
 
         transitions
@@ -640,9 +676,11 @@ mod tests {
 
     #[test]
     fn test_transition_against_jiff() {
-        for zone in time_zones_to_test() {
+        for (zone, require_offset_change) in
+            time_zones_to_test().cartesian_product([true, false].into_iter())
+        {
             let iana = zone.name();
-            let transitions = transitions(iana);
+            let transitions = transitions(iana, require_offset_change);
 
             if has_rearguard_diff(iana) || transitions.is_empty() {
                 continue;
@@ -663,39 +701,67 @@ mod tests {
 
             let zoneinfo64 = TZDB.get(iana).unwrap();
 
-            assert_eq!(zoneinfo64.prev_transition(i64::MIN + 1, true), None);
-            assert_eq!(zoneinfo64.prev_transition(i64::MIN + 1, false), None);
+            assert_eq!(
+                zoneinfo64.prev_transition(i64::MIN + 1, true, require_offset_change),
+                None
+            );
+            assert_eq!(
+                zoneinfo64.prev_transition(i64::MIN + 1, false, require_offset_change),
+                None
+            );
 
             assert_eq!(
-                zoneinfo64.next_transition(i64::MIN),
+                zoneinfo64.next_transition(i64::MIN, true),
                 transitions.first().copied()
             );
 
             for ts in transitions.windows(2) {
                 let &[prev, curr] = ts else { unreachable!() };
 
-                assert_eq!(zoneinfo64.prev_transition(curr.since - 1, true), Some(prev));
                 assert_eq!(
-                    zoneinfo64.prev_transition(curr.since - 1, false),
+                    zoneinfo64.prev_transition(curr.since - 1, true, require_offset_change),
                     Some(prev)
                 );
-                assert_eq!(zoneinfo64.prev_transition(curr.since, true), Some(prev));
-
-                assert_eq!(zoneinfo64.prev_transition(curr.since, false), Some(curr));
-                assert_eq!(zoneinfo64.prev_transition(curr.since + 1, true), Some(curr));
                 assert_eq!(
-                    zoneinfo64.prev_transition(curr.since + 1, false),
+                    zoneinfo64.prev_transition(curr.since - 1, false, require_offset_change),
+                    Some(prev)
+                );
+                assert_eq!(
+                    zoneinfo64.prev_transition(curr.since, true, require_offset_change),
+                    Some(prev)
+                );
+
+                assert_eq!(
+                    zoneinfo64.prev_transition(curr.since, false, require_offset_change),
+                    Some(curr)
+                );
+                assert_eq!(
+                    zoneinfo64.prev_transition(curr.since + 1, true, require_offset_change),
+                    Some(curr)
+                );
+                assert_eq!(
+                    zoneinfo64.prev_transition(curr.since + 1, false, require_offset_change),
                     Some(curr)
                 );
 
-                assert_eq!(zoneinfo64.next_transition(prev.since - 1), Some(prev));
-                assert_eq!(zoneinfo64.next_transition(prev.since), Some(curr));
-                assert_eq!(zoneinfo64.next_transition(prev.since + 1), Some(curr))
+                assert_eq!(
+                    zoneinfo64.next_transition(prev.since - 1, require_offset_change),
+                    Some(prev)
+                );
+                assert_eq!(
+                    zoneinfo64.next_transition(prev.since, require_offset_change),
+                    Some(curr),
+                );
+                assert_eq!(
+                    zoneinfo64.next_transition(prev.since + 1, require_offset_change),
+                    Some(curr)
+                )
             }
 
             if zoneinfo64.final_rule.is_none() {
                 assert_eq!(
-                    zoneinfo64.next_transition(transitions.last().unwrap().since),
+                    zoneinfo64
+                        .next_transition(transitions.last().unwrap().since, require_offset_change),
                     None
                 );
             }
