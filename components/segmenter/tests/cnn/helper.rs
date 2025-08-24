@@ -2,11 +2,11 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use std::vec;
-use std::vec::Vec;
 use core::ops::Range;
 #[allow(unused_imports)]
 use core_maths::*;
+use std::vec;
+use std::vec::Vec;
 use zerovec::ule::AsULE;
 use zerovec::ZeroSlice;
 
@@ -82,6 +82,7 @@ pub(super) struct MatrixBorrowed<'a, const D: usize> {
 
 impl<'a, const D: usize> MatrixBorrowed<'a, D> {
     #[cfg(debug_assertions)]
+    #[allow(dead_code)]
     pub(super) fn debug_assert_dims(&self, dims: [usize; D]) {
         debug_assert_eq!(dims, self.dims);
         let expected_len = dims.iter().product::<usize>();
@@ -171,6 +172,7 @@ impl<const D: usize> MatrixBorrowedMut<'_, D> {
         self.data
     }
 
+    #[allow(dead_code)]
     pub(super) fn copy_submatrix<const M: usize>(&mut self, from: usize, to: usize) {
         let (range_from, _) = self.as_borrowed().submatrix_range::<M>(from);
         let (range_to, _) = self.as_borrowed().submatrix_range::<M>(to);
@@ -183,7 +185,8 @@ impl<const D: usize> MatrixBorrowedMut<'_, D> {
         }
     }
 
-    #[must_use]
+    // #[must_use]
+    #[allow(dead_code)]
     pub(super) fn add(&mut self, other: MatrixZero<'_, D>) -> Option<()> {
         debug_assert_eq!(self.dims, other.dims);
         // TODO: Vectorize?
@@ -205,18 +208,21 @@ impl<const D: usize> MatrixBorrowedMut<'_, D> {
         }
     }
 
+    #[allow(dead_code)]
     pub(super) fn sigmoid_transform(&mut self) {
         for x in &mut self.data.iter_mut() {
             *x = 1.0 / (1.0 + (-*x).exp());
         }
     }
 
+    #[allow(dead_code)]
     pub(super) fn tanh_transform(&mut self) {
         for x in &mut self.data.iter_mut() {
             *x = x.tanh();
         }
     }
 
+    #[allow(dead_code)]
     pub(super) fn convolve(
         &mut self,
         i: MatrixBorrowed<'_, D>,
@@ -240,6 +246,7 @@ impl<const D: usize> MatrixBorrowedMut<'_, D> {
         }
     }
 
+    #[allow(dead_code)]
     pub(super) fn mul_tanh(&mut self, o: MatrixBorrowed<'_, D>, c: MatrixBorrowed<'_, D>) {
         let o = o.as_slice();
         let c = c.as_slice();
@@ -271,6 +278,7 @@ impl MatrixBorrowedMut<'_, 1> {
     ///
     /// Note: For better dot product efficiency, if `b` is MxN, then `a` should be N;
     /// this is the opposite of standard practice.
+    #[allow(dead_code)]
     pub(super) fn add_dot_2d(&mut self, a: MatrixBorrowed<1>, b: MatrixZero<2>) {
         let m = a.dim();
         let n = self.as_borrowed().dim();
@@ -305,6 +313,7 @@ impl MatrixBorrowedMut<'_, 2> {
     /// Calculate the dot product of a and b, adding the result to self.
     ///
     /// Self should be _MxN_; `a`, _O_; and `b`, _MxNxO_.
+    #[allow(dead_code)]
     pub(super) fn add_dot_3d_1(&mut self, a: MatrixBorrowed<1>, b: MatrixZero<3>) {
         let m = a.dim();
         let n = self.as_borrowed().dim().0 * self.as_borrowed().dim().1;
@@ -345,6 +354,7 @@ impl MatrixBorrowedMut<'_, 2> {
     /// Calculate the dot product of a and b, adding the result to self.
     ///
     /// Self should be _MxN_; `a`, _O_; and `b`, _MxNxO_.
+    #[allow(dead_code)]
     pub(super) fn add_dot_3d_2(&mut self, a: MatrixZero<1>, b: MatrixZero<3>) {
         let m = a.dim();
         let n = self.as_borrowed().dim().0 * self.as_borrowed().dim().1;
@@ -419,25 +429,25 @@ pub(super) struct MatrixZero<'a, const D: usize> {
 
 impl<'a> From<&'a crate::CnnMatrix1<'a>> for MatrixZero<'a, 1> {
     fn from(m: &'a crate::CnnMatrix1<'a>) -> Self {
-        Self { 
-            data: &m.data, 
-            dims: m.dims.map(|x| x as usize) 
+        Self {
+            data: &m.data,
+            dims: m.dims.map(|x| x as usize),
         }
     }
 }
 impl<'a> From<&'a crate::CnnMatrix2<'a>> for MatrixZero<'a, 2> {
     fn from(m: &'a crate::CnnMatrix2<'a>) -> Self {
-        Self { 
-            data: &m.data, 
-            dims: m.dims.map(|x| x as usize) 
+        Self {
+            data: &m.data,
+            dims: m.dims.map(|x| x as usize),
         }
     }
 }
 impl<'a> From<&'a crate::CnnMatrix3<'a>> for MatrixZero<'a, 3> {
     fn from(m: &'a crate::CnnMatrix3<'a>) -> Self {
-        Self { 
-            data: &m.data, 
-            dims: m.dims.map(|x| x as usize)           
+        Self {
+            data: &m.data,
+            dims: m.dims.map(|x| x as usize),
         }
     }
 }
@@ -456,6 +466,7 @@ impl<'a, const D: usize> MatrixZero<'a, D> {
     }
 
     #[cfg(debug_assertions)]
+    #[allow(dead_code)]
     pub(super) fn debug_assert_dims(&self, dims: [usize; D]) {
         debug_assert_eq!(dims, self.dims);
         let expected_len = dims.iter().product::<usize>();

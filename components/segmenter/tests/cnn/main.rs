@@ -2,11 +2,11 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use serde::Deserialize;
-use std::fs;
 use ndarray::{Array, Array1, Array2, Array3, ArrayBase, Dim, Dimension, OwnedRepr};
+use serde::Deserialize;
 use std::collections::HashMap;
 use std::fmt::Debug;
+use std::fs;
 use zerovec::ZeroVec;
 
 mod helper;
@@ -32,6 +32,7 @@ pub struct CnnDataFloat32<'data> {
 }
 
 impl<'data> CnnDataFloat32<'data> {
+    #[allow(clippy::too_many_arguments)]
     pub const fn from_parts_unchecked(
         model: ModelType,
         dic: HashMap<String, u16>,
@@ -56,6 +57,7 @@ impl<'data> CnnDataFloat32<'data> {
         }
     }
 
+    #[allow(clippy::too_many_arguments)]
     pub fn try_from_parts(
         model: ModelType,
         dic: HashMap<String, u16>,
@@ -70,7 +72,7 @@ impl<'data> CnnDataFloat32<'data> {
         let dic_len = u16::try_from(dic.len()).map_err(|_| "dictionary too big for u16")?;
 
         let num_classes = embedding.dims[0];
-        let embed_dim   = embedding.dims[1];
+        let embed_dim = embedding.dims[1];
 
         if !(num_classes == dic_len || num_classes == dic_len + 1) {
             return Err("embedding rows must equal dic.len() or dic.len()+1");
@@ -78,23 +80,34 @@ impl<'data> CnnDataFloat32<'data> {
 
         // let c1   = cnn_w1.dims[0];
         // let k1   = cnn_w1.dims[2];
-        let c1   = cnn_w1.dims[2];
-        let k1   = cnn_w1.dims[1];
-        if cnn_w1.dims[1] != embed_dim         { return Err("cnn_w1: embed_dim mismatch"); }
-        if cnn_b1.dims    != [c1]              { return Err("cnn_b1: bias size != out-channels"); }
-        if k1 == 0                              { return Err("cnn_w1: kernel size must be > 0"); }
+        let c1 = cnn_w1.dims[2];
+        let k1 = cnn_w1.dims[1];
+        if cnn_w1.dims[1] != embed_dim {
+            return Err("cnn_w1: embed_dim mismatch");
+        }
+        if cnn_b1.dims != [c1] {
+            return Err("cnn_b1: bias size != out-channels");
+        }
+        if k1 == 0 {
+            return Err("cnn_w1: kernel size must be > 0");
+        }
 
-        // let c2   = cnn_w2.dims[0];
-        // let k2   = cnn_w2.dims[2];
-        let c2   = cnn_w2.dims[2];
-        let k2   = cnn_w2.dims[0];
-        if cnn_w2.dims[1] != embed_dim         { return Err("cnn_w2: embed_dim mismatch"); }
-        if cnn_b2.dims    != [c2]              { return Err("cnn_b2: bias size != out-channels"); }
-        if k2 == 0                              { return Err("cnn_w2: kernel size must be > 0"); }
+        let c2 = cnn_w2.dims[2];
+        let k2 = cnn_w2.dims[0];
+        if cnn_w2.dims[1] != embed_dim {
+            return Err("cnn_w2: embed_dim mismatch");
+        }
+        if cnn_b2.dims != [c2] {
+            return Err("cnn_b2: bias size != out-channels");
+        }
+        if k2 == 0 {
+            return Err("cnn_w2: kernel size must be > 0");
+        }
 
         let classes = softmax_b.dims[0];
-        // if softmax_w.dims != [classes, c2]     { return Err("softmax_w must be [classes, conv2_out]"); }
-        if softmax_w.dims != [c2, classes]     { return Err("softmax_w must be [classes, conv2_out]"); }
+        if softmax_w.dims != [c2, classes] {
+            return Err("softmax_w must be [classes, conv2_out]");
+        }
 
         Ok(Self {
             model,
@@ -117,7 +130,6 @@ pub enum CnnData<'data> {
 
 #[derive(Deserialize, Debug)]
 struct RawCnnMatrix {
-    v: i16,
     dim: Vec<usize>,
     data: Vec<f32>,
 }
@@ -134,12 +146,14 @@ impl RawCnnMatrix {
     }
 
     fn to_ndarray2(&self) -> Result<Array2<f32>, &'static str> {
-        let [d0, d1] = *<&[usize; 2]>::try_from(self.dim.as_slice()).map_err(|_| DIMENSION_MISMATCH)?;
+        let [d0, d1] =
+            *<&[usize; 2]>::try_from(self.dim.as_slice()).map_err(|_| DIMENSION_MISMATCH)?;
         Array::from_shape_vec((d0, d1), self.data.clone()).map_err(|_| DIMENSION_MISMATCH)
     }
 
     fn to_ndarray3(&self) -> Result<Array3<f32>, &'static str> {
-        let [d0, d1, d2] = *<&[usize; 3]>::try_from(self.dim.as_slice()).map_err(|_| DIMENSION_MISMATCH)?;
+        let [d0, d1, d2] =
+            *<&[usize; 3]>::try_from(self.dim.as_slice()).map_err(|_| DIMENSION_MISMATCH)?;
         Array::from_shape_vec((d0, d1, d2), self.data.clone()).map_err(|_| DIMENSION_MISMATCH)
     }
 }
@@ -176,14 +190,6 @@ impl RawCnnData {
         // let mut softmax_w = self.softmax_w.to_ndarray2()?;
         let softmax_w = self.softmax_w.to_ndarray2()?;
         let softmax_b = self.softmax_b.to_ndarray1()?;
-
-        // cnn_w1.swap_axes(0, 2);
-        // cnn_w2.swap_axes(0, 2);
-
-        // let cnn_w1 = cnn_w1.as_standard_layout().into_owned();
-        // let cnn_w2 = cnn_w2.as_standard_layout().into_owned();
-        // let softmax_w = softmax_w.t().to_owned();
-        
         let model = if self.model.contains("_codepoints") {
             ModelType::Codepoints
         } else {
@@ -200,10 +206,10 @@ impl RawCnnData {
             ndarray_to_cnn_matrix1(cnn_b2)?,
             ndarray_to_cnn_matrix2(softmax_w)?,
             ndarray_to_cnn_matrix1(softmax_b)?,
-        ).map_err(|_| "Just checked the shapes")?;
-
+        )
+        .map_err(|_| "Just checked the shapes")?;
         Ok(CnnData::Float32(cnn_data_float32))
-    } 
+    }
 }
 
 macro_rules! cnn_matrix {
@@ -223,7 +229,7 @@ macro_rules! cnn_matrix {
                 if expected != data.len() {
                     Err("Dimension Mismatch")
                 } else {
-                    Ok(Self {dims, data})
+                    Ok(Self { dims, data })
                 }
             }
 
@@ -234,7 +240,7 @@ macro_rules! cnn_matrix {
                 Self { dims, data }
             }
         }
-    }
+    };
 }
 
 cnn_matrix!(CnnMatrix1, 1);
@@ -246,15 +252,25 @@ macro_rules! convert {
         fn $fn_name(
             nd: ArrayBase<OwnedRepr<f32>, Dim<[usize; $generic]>>,
         ) -> Result<$matrix_name<'static>, &'static str>
-        where Dim<[usize; $generic]>: Dimension,
+        where
+            Dim<[usize; $generic]>: Dimension,
         {
             let dims = <[u16; $generic]>::try_from(
-                nd.shape().iter().copied().map(u16::try_from).collect::<Result<Vec<u16>, _>>().map_err(|_| "Bounds too big for u16")?,
-            ).map_err(|_| "Dimensions mismatch")?;
-            let data = nd.as_slice_memory_order().ok_or_else(|| "ndarray matrix not in memory order")?;
-            $matrix_name::from_parts(dims, ZeroVec::alloc_from_slice(data)).map_err(|_| "Dimensions mismatch")
+                nd.shape()
+                    .iter()
+                    .copied()
+                    .map(u16::try_from)
+                    .collect::<Result<Vec<u16>, _>>()
+                    .map_err(|_| "Bounds too big for u16")?,
+            )
+            .map_err(|_| "Dimensions mismatch")?;
+            let data = nd
+                .as_slice_memory_order()
+                .ok_or_else(|| "ndarray matrix not in memory order")?;
+            $matrix_name::from_parts(dims, ZeroVec::alloc_from_slice(data))
+                .map_err(|_| "Dimensions mismatch")
         }
-    }
+    };
 }
 
 convert!(ndarray_to_cnn_matrix1, CnnMatrix1, 1);
@@ -275,34 +291,35 @@ fn conv1d(
     let weights: Vec<f32> = w.as_slice().iter().collect();
     let bias: Vec<f32> = b.as_slice().iter().collect();
     let mut acc = vec![0.0f32; cout];
-    
+
     for t in 0..l {
         // acc = np.zeros((Cout,), dtype=x.dtype)
         acc.fill(0.0f32);
         for ki in 0..k {
             let s = {
                 let s = t as isize + (ki * dilation) as isize - pad as isize;
-                if s < 0 || s >= l as isize { continue; }
+                if s < 0 || s >= l as isize {
+                    continue;
+                }
                 s as usize
             }; // can optimise if minibatch guarantees no padding needed
             let x_src = x.submatrix::<1>(s).unwrap().as_slice(); // x_pad[idx]
             let base = ki * cin * cout; // kernel[k]
-            for o in 0..cout { // equivalent to np.matmul()
-                // dot(x_src, kernel[k][:, o])
+            for (o, acc_o) in acc.iter_mut().enumerate() {
+                // equivalent to np.matmul()
                 let mut sum = 0.0f32;
-                for c in 0..cin {
-                    let w_idx = base + c * cout + o;
-                    sum += x_src[c] * weights[w_idx];
+                for (c, &xi) in x_src.iter().enumerate() {
+                    sum += xi * weights[base + c * cout + o];
                 }
-                acc[o] += sum;
+                *acc_o += sum;
             }
         }
         let start = t * cout;
-        let end   = start + cout;
+        let end = start + cout;
         let dst_row: &mut [f32] = &mut y.as_mut_slice()[start..end];
-        for o in 0..cout {
+        for (o, dst) in dst_row.iter_mut().enumerate() {
             let v = acc[o] + bias[o];
-            dst_row[o] = if v > 0.0 { v } else { 0.0 };
+            *dst = if v > 0.0 { v } else { 0.0 };
         }
     }
 }
@@ -319,7 +336,7 @@ fn elementwise_max(
 
     for t in 0..l {
         let start = t * c;
-        let end   = start + c;
+        let end = start + c;
 
         let ar = &aslice[start..end];
         let br = &bslice[start..end];
@@ -333,13 +350,13 @@ fn elementwise_max(
     }
 }
 
-pub fn dense_softmax(
+fn dense_softmax(
     x: MatrixBorrowed<'_, 2>,
     mut y: MatrixBorrowedMut<'_, 2>,
     w: MatrixZero<'_, 2>,
     b: MatrixZero<'_, 1>,
 ) {
-    let (l, cin) = x.dim();
+    let (l, _cin) = x.dim();
     let (_, classes) = w.dim();
     let classes_usize = classes;
 
@@ -354,17 +371,14 @@ pub fn dense_softmax(
         let x_row = x.submatrix::<1>(t).unwrap().as_slice();
 
         // matmul
-        for o in 0..classes_usize {
+        for (o, acc_o) in acc.iter_mut().enumerate() {
             let mut sum = 0.0f32;
-            let mut c = 0;
-            while c < cin {
-                let w_idx = c * classes_usize + o;
-                let w_val = w_zeroslice.get(w_idx).unwrap();
-                sum += x_row[c] * w_val;
-                c += 1;
+            for (c, &xi) in x_row.iter().enumerate() {
+                let w_val = w_zeroslice.get(c * classes_usize + o).unwrap();
+                sum += xi * w_val;
             }
             sum += b_zeroslice.get(o).unwrap();
-            acc[o] = sum;
+            *acc_o = sum;
         }
 
         // logits -= max(logits)
@@ -408,35 +422,24 @@ fn argmax(slice: &[f32]) -> usize {
     let mut bi = 0usize;
     let mut bv = slice[0];
     for (i, &v) in slice.iter().enumerate().skip(1) {
-        if v > bv { bv = v; bi = i; }
+        if v > bv {
+            bv = v;
+            bi = i;
+        }
     }
     bi
 }
 
 pub struct CnnSegmenterIterator<'s, 'data> {
-    input: &'s str,
-    pos_utf8: usize,
+    _input: &'s str,
+    _pos_utf8: usize,
     bies: BiesIterator<'s, 'data>,
 }
 
-// impl Iterator for CnnSegmenterIterator<'_, '_> {
-//     type Item = usize;
-
-//     fn next(&mut self) -> Option<Self::Item> {
-//         loop {
-//             let is_e = self.bies.next()?;
-//             self.pos_utf8 += self.input[self.pos_utf8..].chars().next()?.len_utf8();
-//             if is_e || self.bies.len() == 0 {
-//                 return Some(self.pos_utf8);
-//             }
-//         }
-//     }
-// }
-
 struct BiesIterator<'l, 'data> {
-    segmenter: &'l CnnSegmenter<'data>,
-    input_seq: core::iter::Enumerate<std::vec::IntoIter<u16>>,
-    pub probs: MatrixOwned<2>
+    _segmenter: &'l CnnSegmenter<'data>,
+    _input_seq: core::iter::Enumerate<std::vec::IntoIter<u16>>,
+    pub probs: MatrixOwned<2>,
 }
 
 impl<'l, 'data> BiesIterator<'l, 'data> {
@@ -449,15 +452,14 @@ impl<'l, 'data> BiesIterator<'l, 'data> {
         for (i, &id) in input_seq.iter().enumerate() {
             let row = (id as usize).min(vocab - 1);
             {
-            let row_view = embed.submatrix::<1>(row).unwrap();
-            let src = row_view.as_slice();
-            let mut row_mut = x.submatrix_mut::<1>(i).unwrap();
-            let dst = row_mut.as_mut_slice();
-            dst.copy_from_slice(src);
+                let row_view = embed.submatrix::<1>(row).unwrap();
+                let src = row_view.as_slice();
+                let mut row_mut = x.submatrix_mut::<1>(i).unwrap();
+                let dst = row_mut.as_mut_slice();
+                dst.copy_from_slice(src);
             }
         }
         let x_t = x.as_borrowed();
-        
         let cout = segmenter.cnn_b1.dim();
         let mut y1 = MatrixOwned::<2>::new_zero([l, cout]); // parallel with y2
         conv1d(x_t, y1.as_mut(), segmenter.cnn_w1, segmenter.cnn_b1, 1);
@@ -469,11 +471,16 @@ impl<'l, 'data> BiesIterator<'l, 'data> {
         elementwise_max(y1.as_borrowed(), y2.as_borrowed(), maximum.as_mut());
 
         let mut probs = MatrixOwned::<2>::new_zero([l, 4]);
-        dense_softmax(maximum.as_borrowed(), probs.as_mut(), segmenter.softmax_w, segmenter.softmax_b);
-    
+        dense_softmax(
+            maximum.as_borrowed(),
+            probs.as_mut(),
+            segmenter.softmax_w,
+            segmenter.softmax_b,
+        );
+
         Self {
-            segmenter,
-            input_seq: input_seq.into_iter().enumerate(),
+            _segmenter: segmenter,
+            _input_seq: input_seq.into_iter().enumerate(),
             probs,
         }
     }
@@ -491,9 +498,7 @@ pub struct CnnSegmenter<'data> {
 }
 
 impl<'data> CnnSegmenter<'data> {
-    pub fn new(
-        lstm: &'data CnnData<'data>,
-    ) -> Self {
+    pub fn new(lstm: &'data CnnData<'data>) -> Self {
         let CnnData::Float32(lstm) = lstm;
         Self {
             dic: &lstm.dic,
@@ -508,12 +513,18 @@ impl<'data> CnnSegmenter<'data> {
     }
 
     pub fn segment_str<'a>(&'a self, input: &'a str) -> CnnSegmenterIterator<'a, 'data> {
-        let input_seq = input.chars().map(|c| {
-            self.dic.get(&c.to_string()).copied().unwrap_or_else(|| self.dic.len() as u16)
-        }).collect();
+        let input_seq = input
+            .chars()
+            .map(|c| {
+                self.dic
+                    .get(&c.to_string())
+                    .copied()
+                    .unwrap_or(self.dic.len() as u16)
+            })
+            .collect();
         CnnSegmenterIterator {
-            input,
-            pos_utf8: 0,
+            _input: input,
+            _pos_utf8: 0,
             bies: BiesIterator::new(self, input_seq),
         }
     }
@@ -525,7 +536,9 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let json = fs::read_to_string(&path)?;
 
     let rawcnndata: RawCnnData = serde_json::from_str(&json)?;
-    let cnndata = rawcnndata.try_convert().map_err(|e| format!("validation/conversion failed"))?;
+    let cnndata = rawcnndata
+        .try_convert()
+        .map_err(|_| "validation/conversion failed".to_string())?;
     let segmenter = CnnSegmenter::new(&cnndata);
 
     let thai = "ปัญหาความแตกต่างที่เกิดขึ้นระหว่างความเป็นธรรมในทางสังคมกับความเป็นธรรมทางกฎหมาย".to_string();
@@ -537,7 +550,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let mut tags = String::with_capacity(l);
     for t in 0..l {
-        let row = &flat[t * c .. (t + 1) * c];
+        let row = &flat[t * c..(t + 1) * c];
         let idx = argmax(row);
         tags.push(class_idx_to_bies(idx));
     }
