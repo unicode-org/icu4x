@@ -4,7 +4,20 @@
 
 use core::marker::PhantomData;
 
-use crate::measure::measureunit::MeasureUnit;
+use icu_provider::DynamicDataMarker;
+
+use crate::{
+    dimension::provider::units::{
+        categorized_display_name::{
+            UnitsNameAreaCoreV1, UnitsNameAreaOutlierV1, UnitsNameDurationCoreV1,
+            UnitsNameDurationOutlierV1, UnitsNameLengthCoreV1, UnitsNameLengthOutlierV1,
+            UnitsNameMassCoreV1, UnitsNameMassOutlierV1, UnitsNameVolumeCoreV1,
+            UnitsNameVolumeOutlierV1,
+        },
+        display_name::UnitsDisplayName,
+    },
+    measure::measureunit::MeasureUnit,
+};
 
 pub mod area;
 pub mod duration;
@@ -12,7 +25,10 @@ pub mod length;
 pub mod mass;
 pub mod volume;
 
-pub trait MeasureUnitCategory {}
+pub trait MeasureUnitCategory {
+    type DataMarkerCore: DynamicDataMarker<DataStruct = UnitsDisplayName<'static>>;
+    type DataMarkerOutlier: DynamicDataMarker<DataStruct = UnitsDisplayName<'static>>;
+}
 
 /// A [`MeasureUnit`] that is related to a specific category.
 ///
@@ -48,8 +64,23 @@ pub struct Mass;
 /// A [`MeasureUnit`] that is related to the volume category.
 pub struct Volume;
 
-impl MeasureUnitCategory for Area {}
-impl MeasureUnitCategory for Duration {}
-impl MeasureUnitCategory for Length {}
-impl MeasureUnitCategory for Mass {}
-impl MeasureUnitCategory for Volume {}
+impl MeasureUnitCategory for Area {
+    type DataMarkerCore = UnitsNameAreaCoreV1;
+    type DataMarkerOutlier = UnitsNameAreaOutlierV1;
+}
+impl MeasureUnitCategory for Duration {
+    type DataMarkerCore = UnitsNameDurationCoreV1;
+    type DataMarkerOutlier = UnitsNameDurationOutlierV1;
+}
+impl MeasureUnitCategory for Length {
+    type DataMarkerCore = UnitsNameLengthCoreV1;
+    type DataMarkerOutlier = UnitsNameLengthOutlierV1;
+}
+impl MeasureUnitCategory for Mass {
+    type DataMarkerCore = UnitsNameMassCoreV1;
+    type DataMarkerOutlier = UnitsNameMassOutlierV1;
+}
+impl MeasureUnitCategory for Volume {
+    type DataMarkerCore = UnitsNameVolumeCoreV1;
+    type DataMarkerOutlier = UnitsNameVolumeOutlierV1;
+}
