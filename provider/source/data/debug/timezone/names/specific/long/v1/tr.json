@@ -93,210 +93,210 @@
     ],
     [
       [
-        14,
+        13,
         "Standard"
       ],
       "Apia Standart Saati"
     ],
     [
       [
-        14,
+        13,
         "Daylight"
       ],
       "Apia Yaz Saati"
     ],
     [
       [
-        15,
+        14,
         "Standard"
       ],
       "Arabistan Standart Saati"
     ],
     [
       [
-        16,
+        15,
         "Standard"
       ],
       "Arjantin Standart Saati"
     ],
     [
       [
-        18,
+        17,
         "Standard"
       ],
       "Atlantik Standart Saati"
     ],
     [
       [
-        18,
+        17,
         "Daylight"
       ],
       "Atlantik Yaz Saati"
     ],
     [
       [
-        19,
+        18,
         "Standard"
       ],
       "Orta Avustralya Standart Saati"
     ],
     [
       [
-        19,
+        18,
         "Daylight"
       ],
       "Orta Avustralya Yaz Saati"
     ],
     [
       [
-        20,
+        19,
         "Standard"
       ],
       "İç Batı Avustralya Standart Saati"
     ],
     [
       [
-        21,
+        20,
         "Standard"
       ],
       "Doğu Avustralya Standart Saati"
     ],
     [
       [
-        21,
+        20,
         "Daylight"
       ],
       "Doğu Avustralya Yaz Saati"
     ],
     [
       [
-        22,
+        21,
         "Standard"
       ],
       "Batı Avustralya Standart Saati"
     ],
     [
       [
-        24,
+        23,
         "Standard"
       ],
       "Azorlar Standart Saati"
     ],
     [
       [
-        24,
+        23,
         "Daylight"
       ],
       "Azorlar Yaz Saati"
     ],
     [
       [
-        28,
+        27,
         "Standard"
       ],
       "Brasilia Standart Saati"
     ],
     [
       [
-        28,
+        27,
         "Daylight"
       ],
       "Brasilia Yaz Saati"
     ],
     [
       [
-        30,
+        29,
         "Standard"
       ],
       "Cape Verde Standart Saati"
     ],
     [
       [
-        34,
+        33,
         "Standard"
       ],
       "Şili Standart Saati"
     ],
     [
       [
-        34,
+        33,
         "Daylight"
       ],
       "Şili Yaz Saati"
     ],
     [
       [
-        35,
+        34,
         "Standard"
       ],
       "Çin Standart Saati"
     ],
     [
       [
-        46,
+        45,
         "Standard"
       ],
       "Orta Avrupa Standart Saati"
     ],
     [
       [
-        46,
+        45,
         "Daylight"
       ],
       "Orta Avrupa Yaz Saati"
     ],
     [
       [
-        47,
+        46,
         "Standard"
       ],
       "Doğu Avrupa Standart Saati"
     ],
     [
       [
-        47,
+        46,
         "Daylight"
       ],
       "Doğu Avrupa Yaz Saati"
     ],
     [
       [
-        48,
+        47,
         "Standard"
       ],
       "Batı Avrupa Standart Saati"
     ],
     [
       [
-        48,
+        47,
         "Daylight"
       ],
       "Batı Avrupa Yaz Saati"
     ],
     [
       [
-        59,
+        58,
         "Standard"
       ],
       "Doğu Grönland Standart Saati"
     ],
     [
       [
-        59,
+        58,
         "Daylight"
       ],
       "Doğu Grönland Yaz Saati"
     ],
     [
       [
-        60,
+        59,
         "Standard"
       ],
       "Batı Grönland Standart Saati"
     ],
     [
       [
-        60,
+        59,
         "Daylight"
       ],
       "Batı Grönland Yaz Saati"
@@ -314,6 +314,20 @@
         "Daylight"
       ],
       "Hawaii-Aleut Yaz Saati"
+    ],
+    [
+      [
+        65,
+        "Standard"
+      ],
+      "Hovd Standart Saati"
+    ],
+    [
+      [
+        65,
+        "Daylight"
+      ],
+      "Hovd Yaz Saati"
     ],
     [
       [
@@ -342,6 +356,13 @@
         "Standard"
       ],
       "Krasnoyarsk Standart Saati"
+    ],
+    [
+      [
+        86,
+        "Standard"
+      ],
+      "Magadan Standart Saati"
     ],
     [
       [
@@ -394,35 +415,42 @@
     ],
     [
       [
-        122,
+        120,
+        "Standard"
+      ],
+      "Samara Standart Saati"
+    ],
+    [
+      [
+        121,
         "Standard"
       ],
       "Samoa Standart Saati"
     ],
     [
       [
-        130,
+        129,
         "Standard"
       ],
       "Taipei Standart Saati"
     ],
     [
       [
-        140,
+        139,
         "Standard"
       ],
       "Özbekistan Standart Saati"
     ],
     [
       [
-        143,
+        142,
         "Standard"
       ],
       "Vladivostok Standart Saati"
     ],
     [
       [
-        148,
+        147,
         "Standard"
       ],
       "Yakutsk Standart Saati"
@@ -457,23 +485,24 @@
     4,
     5,
     6,
+    25,
     26,
-    27,
-    29,
+    28,
+    30,
     31,
-    32,
+    35,
     36,
-    37,
+    40,
     41,
     42,
-    43,
-    45,
+    44,
+    50,
     51,
     52,
     53,
     54,
-    55,
-    57,
+    56,
+    60,
     61,
     62,
     66,
@@ -505,20 +534,20 @@
     117,
     118,
     119,
-    123,
+    122,
+    124,
     125,
     126,
     127,
     128,
-    129,
+    130,
     131,
-    132,
-    134,
-    137,
-    142,
+    133,
+    136,
+    141,
+    144,
     145,
     146,
-    147,
-    150
+    149
   ]
 }

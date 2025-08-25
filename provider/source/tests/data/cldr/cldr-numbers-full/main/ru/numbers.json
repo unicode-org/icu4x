@@ -82,31 +82,517 @@
           "short": {
             "decimalFormat": {
               "1000-count-one": "0 тыс'.'",
+              "1000-count-few": "0 тыс'.'",
+              "1000-count-many": "0 тыс'.'",
               "1000-count-other": "0 тыс'.'",
               "10000-count-one": "00 тыс'.'",
+              "10000-count-few": "00 тыс'.'",
+              "10000-count-many": "00 тыс'.'",
               "10000-count-other": "00 тыс'.'",
               "100000-count-one": "000 тыс'.'",
+              "100000-count-few": "000 тыс'.'",
+              "100000-count-many": "000 тыс'.'",
               "100000-count-other": "000 тыс'.'",
               "1000000-count-one": "0 млн",
+              "1000000-count-few": "0 млн",
+              "1000000-count-many": "0 млн",
               "1000000-count-other": "0 млн",
               "10000000-count-one": "00 млн",
+              "10000000-count-few": "00 млн",
+              "10000000-count-many": "00 млн",
               "10000000-count-other": "00 млн",
               "100000000-count-one": "000 млн",
+              "100000000-count-few": "000 млн",
+              "100000000-count-many": "000 млн",
               "100000000-count-other": "000 млн",
               "1000000000-count-one": "0 млрд",
+              "1000000000-count-few": "0 млрд",
+              "1000000000-count-many": "0 млрд",
               "1000000000-count-other": "0 млрд",
               "10000000000-count-one": "00 млрд",
+              "10000000000-count-few": "00 млрд",
+              "10000000000-count-many": "00 млрд",
               "10000000000-count-other": "00 млрд",
               "100000000000-count-one": "000 млрд",
+              "100000000000-count-few": "000 млрд",
+              "100000000000-count-many": "000 млрд",
               "100000000000-count-other": "000 млрд",
               "1000000000000-count-one": "0 трлн",
+              "1000000000000-count-few": "0 трлн",
+              "1000000000000-count-many": "0 трлн",
               "1000000000000-count-other": "0 трлн",
               "10000000000000-count-one": "00 трлн",
+              "10000000000000-count-few": "00 трлн",
+              "10000000000000-count-many": "00 трлн",
               "10000000000000-count-other": "00 трлн",
               "100000000000000-count-one": "000 трлн",
+              "100000000000000-count-few": "000 трлн",
+              "100000000000000-count-many": "000 трлн",
               "100000000000000-count-other": "000 трлн"
             }
           }
+        },
+        "adlm": {
+          "rationalPattern": "{0}⁄{1}",
+          "integerAndRationalPattern": "{0} {1}",
+          "integerAndRationalPattern-alt-superSub": "{0}⁠{1}",
+          "rationalUsage": "sometimes"
+        },
+        "ahom": {
+          "rationalPattern": "{0}⁄{1}",
+          "integerAndRationalPattern": "{0} {1}",
+          "integerAndRationalPattern-alt-superSub": "{0}⁠{1}",
+          "rationalUsage": "sometimes"
+        },
+        "arab": {
+          "rationalPattern": "{0}⁄{1}",
+          "integerAndRationalPattern": "{0} {1}",
+          "integerAndRationalPattern-alt-superSub": "{0}⁠{1}",
+          "rationalUsage": "sometimes"
+        },
+        "arabext": {
+          "rationalPattern": "{0}⁄{1}",
+          "integerAndRationalPattern": "{0} {1}",
+          "integerAndRationalPattern-alt-superSub": "{0}⁠{1}",
+          "rationalUsage": "sometimes"
+        },
+        "bali": {
+          "rationalPattern": "{0}⁄{1}",
+          "integerAndRationalPattern": "{0} {1}",
+          "integerAndRationalPattern-alt-superSub": "{0}⁠{1}",
+          "rationalUsage": "sometimes"
+        },
+        "beng": {
+          "rationalPattern": "{0}⁄{1}",
+          "integerAndRationalPattern": "{0} {1}",
+          "integerAndRationalPattern-alt-superSub": "{0}⁠{1}",
+          "rationalUsage": "sometimes"
+        },
+        "bhks": {
+          "rationalPattern": "{0}⁄{1}",
+          "integerAndRationalPattern": "{0} {1}",
+          "integerAndRationalPattern-alt-superSub": "{0}⁠{1}",
+          "rationalUsage": "sometimes"
+        },
+        "brah": {
+          "rationalPattern": "{0}⁄{1}",
+          "integerAndRationalPattern": "{0} {1}",
+          "integerAndRationalPattern-alt-superSub": "{0}⁠{1}",
+          "rationalUsage": "sometimes"
+        },
+        "cakm": {
+          "rationalPattern": "{0}⁄{1}",
+          "integerAndRationalPattern": "{0} {1}",
+          "integerAndRationalPattern-alt-superSub": "{0}⁠{1}",
+          "rationalUsage": "sometimes"
+        },
+        "cham": {
+          "rationalPattern": "{0}⁄{1}",
+          "integerAndRationalPattern": "{0} {1}",
+          "integerAndRationalPattern-alt-superSub": "{0}⁠{1}",
+          "rationalUsage": "sometimes"
+        },
+        "deva": {
+          "rationalPattern": "{0}⁄{1}",
+          "integerAndRationalPattern": "{0} {1}",
+          "integerAndRationalPattern-alt-superSub": "{0}⁠{1}",
+          "rationalUsage": "sometimes"
+        },
+        "diak": {
+          "rationalPattern": "{0}⁄{1}",
+          "integerAndRationalPattern": "{0} {1}",
+          "integerAndRationalPattern-alt-superSub": "{0}⁠{1}",
+          "rationalUsage": "sometimes"
+        },
+        "fullwide": {
+          "rationalPattern": "{0}⁄{1}",
+          "integerAndRationalPattern": "{0} {1}",
+          "integerAndRationalPattern-alt-superSub": "{0}⁠{1}",
+          "rationalUsage": "sometimes"
+        },
+        "gara": {
+          "rationalPattern": "{0}⁄{1}",
+          "integerAndRationalPattern": "{0} {1}",
+          "integerAndRationalPattern-alt-superSub": "{0}⁠{1}",
+          "rationalUsage": "sometimes"
+        },
+        "gong": {
+          "rationalPattern": "{0}⁄{1}",
+          "integerAndRationalPattern": "{0} {1}",
+          "integerAndRationalPattern-alt-superSub": "{0}⁠{1}",
+          "rationalUsage": "sometimes"
+        },
+        "gonm": {
+          "rationalPattern": "{0}⁄{1}",
+          "integerAndRationalPattern": "{0} {1}",
+          "integerAndRationalPattern-alt-superSub": "{0}⁠{1}",
+          "rationalUsage": "sometimes"
+        },
+        "gujr": {
+          "rationalPattern": "{0}⁄{1}",
+          "integerAndRationalPattern": "{0} {1}",
+          "integerAndRationalPattern-alt-superSub": "{0}⁠{1}",
+          "rationalUsage": "sometimes"
+        },
+        "gukh": {
+          "rationalPattern": "{0}⁄{1}",
+          "integerAndRationalPattern": "{0} {1}",
+          "integerAndRationalPattern-alt-superSub": "{0}⁠{1}",
+          "rationalUsage": "sometimes"
+        },
+        "guru": {
+          "rationalPattern": "{0}⁄{1}",
+          "integerAndRationalPattern": "{0} {1}",
+          "integerAndRationalPattern-alt-superSub": "{0}⁠{1}",
+          "rationalUsage": "sometimes"
+        },
+        "hanidec": {
+          "rationalPattern": "{0}⁄{1}",
+          "integerAndRationalPattern": "{0} {1}",
+          "integerAndRationalPattern-alt-superSub": "{0}⁠{1}",
+          "rationalUsage": "sometimes"
+        },
+        "hmng": {
+          "rationalPattern": "{0}⁄{1}",
+          "integerAndRationalPattern": "{0} {1}",
+          "integerAndRationalPattern-alt-superSub": "{0}⁠{1}",
+          "rationalUsage": "sometimes"
+        },
+        "hmnp": {
+          "rationalPattern": "{0}⁄{1}",
+          "integerAndRationalPattern": "{0} {1}",
+          "integerAndRationalPattern-alt-superSub": "{0}⁠{1}",
+          "rationalUsage": "sometimes"
+        },
+        "java": {
+          "rationalPattern": "{0}⁄{1}",
+          "integerAndRationalPattern": "{0} {1}",
+          "integerAndRationalPattern-alt-superSub": "{0}⁠{1}",
+          "rationalUsage": "sometimes"
+        },
+        "kali": {
+          "rationalPattern": "{0}⁄{1}",
+          "integerAndRationalPattern": "{0} {1}",
+          "integerAndRationalPattern-alt-superSub": "{0}⁠{1}",
+          "rationalUsage": "sometimes"
+        },
+        "kawi": {
+          "rationalPattern": "{0}⁄{1}",
+          "integerAndRationalPattern": "{0} {1}",
+          "integerAndRationalPattern-alt-superSub": "{0}⁠{1}",
+          "rationalUsage": "sometimes"
+        },
+        "khmr": {
+          "rationalPattern": "{0}⁄{1}",
+          "integerAndRationalPattern": "{0} {1}",
+          "integerAndRationalPattern-alt-superSub": "{0}⁠{1}",
+          "rationalUsage": "sometimes"
+        },
+        "knda": {
+          "rationalPattern": "{0}⁄{1}",
+          "integerAndRationalPattern": "{0} {1}",
+          "integerAndRationalPattern-alt-superSub": "{0}⁠{1}",
+          "rationalUsage": "sometimes"
+        },
+        "krai": {
+          "rationalPattern": "{0}⁄{1}",
+          "integerAndRationalPattern": "{0} {1}",
+          "integerAndRationalPattern-alt-superSub": "{0}⁠{1}",
+          "rationalUsage": "sometimes"
+        },
+        "lana": {
+          "rationalPattern": "{0}⁄{1}",
+          "integerAndRationalPattern": "{0} {1}",
+          "integerAndRationalPattern-alt-superSub": "{0}⁠{1}",
+          "rationalUsage": "sometimes"
+        },
+        "lanatham": {
+          "rationalPattern": "{0}⁄{1}",
+          "integerAndRationalPattern": "{0} {1}",
+          "integerAndRationalPattern-alt-superSub": "{0}⁠{1}",
+          "rationalUsage": "sometimes"
+        },
+        "laoo": {
+          "rationalPattern": "{0}⁄{1}",
+          "integerAndRationalPattern": "{0} {1}",
+          "integerAndRationalPattern-alt-superSub": "{0}⁠{1}",
+          "rationalUsage": "sometimes"
+        },
+        "latn": {
+          "rationalPattern": "{0}⁄{1}",
+          "integerAndRationalPattern": "{0} {1}",
+          "integerAndRationalPattern-alt-superSub": "{0}⁠{1}",
+          "rationalUsage": "sometimes"
+        },
+        "lepc": {
+          "rationalPattern": "{0}⁄{1}",
+          "integerAndRationalPattern": "{0} {1}",
+          "integerAndRationalPattern-alt-superSub": "{0}⁠{1}",
+          "rationalUsage": "sometimes"
+        },
+        "limb": {
+          "rationalPattern": "{0}⁄{1}",
+          "integerAndRationalPattern": "{0} {1}",
+          "integerAndRationalPattern-alt-superSub": "{0}⁠{1}",
+          "rationalUsage": "sometimes"
+        },
+        "mathbold": {
+          "rationalPattern": "{0}⁄{1}",
+          "integerAndRationalPattern": "{0} {1}",
+          "integerAndRationalPattern-alt-superSub": "{0}⁠{1}",
+          "rationalUsage": "sometimes"
+        },
+        "mathdbl": {
+          "rationalPattern": "{0}⁄{1}",
+          "integerAndRationalPattern": "{0} {1}",
+          "integerAndRationalPattern-alt-superSub": "{0}⁠{1}",
+          "rationalUsage": "sometimes"
+        },
+        "mathmono": {
+          "rationalPattern": "{0}⁄{1}",
+          "integerAndRationalPattern": "{0} {1}",
+          "integerAndRationalPattern-alt-superSub": "{0}⁠{1}",
+          "rationalUsage": "sometimes"
+        },
+        "mathsanb": {
+          "rationalPattern": "{0}⁄{1}",
+          "integerAndRationalPattern": "{0} {1}",
+          "integerAndRationalPattern-alt-superSub": "{0}⁠{1}",
+          "rationalUsage": "sometimes"
+        },
+        "mathsans": {
+          "rationalPattern": "{0}⁄{1}",
+          "integerAndRationalPattern": "{0} {1}",
+          "integerAndRationalPattern-alt-superSub": "{0}⁠{1}",
+          "rationalUsage": "sometimes"
+        },
+        "mlym": {
+          "rationalPattern": "{0}⁄{1}",
+          "integerAndRationalPattern": "{0} {1}",
+          "integerAndRationalPattern-alt-superSub": "{0}⁠{1}",
+          "rationalUsage": "sometimes"
+        },
+        "modi": {
+          "rationalPattern": "{0}⁄{1}",
+          "integerAndRationalPattern": "{0} {1}",
+          "integerAndRationalPattern-alt-superSub": "{0}⁠{1}",
+          "rationalUsage": "sometimes"
+        },
+        "mong": {
+          "rationalPattern": "{0}⁄{1}",
+          "integerAndRationalPattern": "{0} {1}",
+          "integerAndRationalPattern-alt-superSub": "{0}⁠{1}",
+          "rationalUsage": "sometimes"
+        },
+        "mroo": {
+          "rationalPattern": "{0}⁄{1}",
+          "integerAndRationalPattern": "{0} {1}",
+          "integerAndRationalPattern-alt-superSub": "{0}⁠{1}",
+          "rationalUsage": "sometimes"
+        },
+        "mtei": {
+          "rationalPattern": "{0}⁄{1}",
+          "integerAndRationalPattern": "{0} {1}",
+          "integerAndRationalPattern-alt-superSub": "{0}⁠{1}",
+          "rationalUsage": "sometimes"
+        },
+        "mymr": {
+          "rationalPattern": "{0}⁄{1}",
+          "integerAndRationalPattern": "{0} {1}",
+          "integerAndRationalPattern-alt-superSub": "{0}⁠{1}",
+          "rationalUsage": "sometimes"
+        },
+        "mymrepka": {
+          "rationalPattern": "{0}⁄{1}",
+          "integerAndRationalPattern": "{0} {1}",
+          "integerAndRationalPattern-alt-superSub": "{0}⁠{1}",
+          "rationalUsage": "sometimes"
+        },
+        "mymrpao": {
+          "rationalPattern": "{0}⁄{1}",
+          "integerAndRationalPattern": "{0} {1}",
+          "integerAndRationalPattern-alt-superSub": "{0}⁠{1}",
+          "rationalUsage": "sometimes"
+        },
+        "mymrshan": {
+          "rationalPattern": "{0}⁄{1}",
+          "integerAndRationalPattern": "{0} {1}",
+          "integerAndRationalPattern-alt-superSub": "{0}⁠{1}",
+          "rationalUsage": "sometimes"
+        },
+        "mymrtlng": {
+          "rationalPattern": "{0}⁄{1}",
+          "integerAndRationalPattern": "{0} {1}",
+          "integerAndRationalPattern-alt-superSub": "{0}⁠{1}",
+          "rationalUsage": "sometimes"
+        },
+        "nagm": {
+          "rationalPattern": "{0}⁄{1}",
+          "integerAndRationalPattern": "{0} {1}",
+          "integerAndRationalPattern-alt-superSub": "{0}⁠{1}",
+          "rationalUsage": "sometimes"
+        },
+        "newa": {
+          "rationalPattern": "{0}⁄{1}",
+          "integerAndRationalPattern": "{0} {1}",
+          "integerAndRationalPattern-alt-superSub": "{0}⁠{1}",
+          "rationalUsage": "sometimes"
+        },
+        "nkoo": {
+          "rationalPattern": "{0}⁄{1}",
+          "integerAndRationalPattern": "{0} {1}",
+          "integerAndRationalPattern-alt-superSub": "{0}⁠{1}",
+          "rationalUsage": "sometimes"
+        },
+        "olck": {
+          "rationalPattern": "{0}⁄{1}",
+          "integerAndRationalPattern": "{0} {1}",
+          "integerAndRationalPattern-alt-superSub": "{0}⁠{1}",
+          "rationalUsage": "sometimes"
+        },
+        "onao": {
+          "rationalPattern": "{0}⁄{1}",
+          "integerAndRationalPattern": "{0} {1}",
+          "integerAndRationalPattern-alt-superSub": "{0}⁠{1}",
+          "rationalUsage": "sometimes"
+        },
+        "orya": {
+          "rationalPattern": "{0}⁄{1}",
+          "integerAndRationalPattern": "{0} {1}",
+          "integerAndRationalPattern-alt-superSub": "{0}⁠{1}",
+          "rationalUsage": "sometimes"
+        },
+        "osma": {
+          "rationalPattern": "{0}⁄{1}",
+          "integerAndRationalPattern": "{0} {1}",
+          "integerAndRationalPattern-alt-superSub": "{0}⁠{1}",
+          "rationalUsage": "sometimes"
+        },
+        "outlined": {
+          "rationalPattern": "{0}⁄{1}",
+          "integerAndRationalPattern": "{0} {1}",
+          "integerAndRationalPattern-alt-superSub": "{0}⁠{1}",
+          "rationalUsage": "sometimes"
+        },
+        "rohg": {
+          "rationalPattern": "{0}⁄{1}",
+          "integerAndRationalPattern": "{0} {1}",
+          "integerAndRationalPattern-alt-superSub": "{0}⁠{1}",
+          "rationalUsage": "sometimes"
+        },
+        "saur": {
+          "rationalPattern": "{0}⁄{1}",
+          "integerAndRationalPattern": "{0} {1}",
+          "integerAndRationalPattern-alt-superSub": "{0}⁠{1}",
+          "rationalUsage": "sometimes"
+        },
+        "segment": {
+          "rationalPattern": "{0}⁄{1}",
+          "integerAndRationalPattern": "{0} {1}",
+          "integerAndRationalPattern-alt-superSub": "{0}⁠{1}",
+          "rationalUsage": "sometimes"
+        },
+        "shrd": {
+          "rationalPattern": "{0}⁄{1}",
+          "integerAndRationalPattern": "{0} {1}",
+          "integerAndRationalPattern-alt-superSub": "{0}⁠{1}",
+          "rationalUsage": "sometimes"
+        },
+        "sind": {
+          "rationalPattern": "{0}⁄{1}",
+          "integerAndRationalPattern": "{0} {1}",
+          "integerAndRationalPattern-alt-superSub": "{0}⁠{1}",
+          "rationalUsage": "sometimes"
+        },
+        "sinh": {
+          "rationalPattern": "{0}⁄{1}",
+          "integerAndRationalPattern": "{0} {1}",
+          "integerAndRationalPattern-alt-superSub": "{0}⁠{1}",
+          "rationalUsage": "sometimes"
+        },
+        "sora": {
+          "rationalPattern": "{0}⁄{1}",
+          "integerAndRationalPattern": "{0} {1}",
+          "integerAndRationalPattern-alt-superSub": "{0}⁠{1}",
+          "rationalUsage": "sometimes"
+        },
+        "sund": {
+          "rationalPattern": "{0}⁄{1}",
+          "integerAndRationalPattern": "{0} {1}",
+          "integerAndRationalPattern-alt-superSub": "{0}⁠{1}",
+          "rationalUsage": "sometimes"
+        },
+        "sunu": {
+          "rationalPattern": "{0}⁄{1}",
+          "integerAndRationalPattern": "{0} {1}",
+          "integerAndRationalPattern-alt-superSub": "{0}⁠{1}",
+          "rationalUsage": "sometimes"
+        },
+        "takr": {
+          "rationalPattern": "{0}⁄{1}",
+          "integerAndRationalPattern": "{0} {1}",
+          "integerAndRationalPattern-alt-superSub": "{0}⁠{1}",
+          "rationalUsage": "sometimes"
+        },
+        "talu": {
+          "rationalPattern": "{0}⁄{1}",
+          "integerAndRationalPattern": "{0} {1}",
+          "integerAndRationalPattern-alt-superSub": "{0}⁠{1}",
+          "rationalUsage": "sometimes"
+        },
+        "tamldec": {
+          "rationalPattern": "{0}⁄{1}",
+          "integerAndRationalPattern": "{0} {1}",
+          "integerAndRationalPattern-alt-superSub": "{0}⁠{1}",
+          "rationalUsage": "sometimes"
+        },
+        "telu": {
+          "rationalPattern": "{0}⁄{1}",
+          "integerAndRationalPattern": "{0} {1}",
+          "integerAndRationalPattern-alt-superSub": "{0}⁠{1}",
+          "rationalUsage": "sometimes"
+        },
+        "thai": {
+          "rationalPattern": "{0}⁄{1}",
+          "integerAndRationalPattern": "{0} {1}",
+          "integerAndRationalPattern-alt-superSub": "{0}⁠{1}",
+          "rationalUsage": "sometimes"
+        },
+        "tibt": {
+          "rationalPattern": "{0}⁄{1}",
+          "integerAndRationalPattern": "{0} {1}",
+          "integerAndRationalPattern-alt-superSub": "{0}⁠{1}",
+          "rationalUsage": "sometimes"
+        },
+        "tirh": {
+          "rationalPattern": "{0}⁄{1}",
+          "integerAndRationalPattern": "{0} {1}",
+          "integerAndRationalPattern-alt-superSub": "{0}⁠{1}",
+          "rationalUsage": "sometimes"
+        },
+        "tnsa": {
+          "rationalPattern": "{0}⁄{1}",
+          "integerAndRationalPattern": "{0} {1}",
+          "integerAndRationalPattern-alt-superSub": "{0}⁠{1}",
+          "rationalUsage": "sometimes"
+        },
+        "vaii": {
+          "rationalPattern": "{0}⁄{1}",
+          "integerAndRationalPattern": "{0} {1}",
+          "integerAndRationalPattern-alt-superSub": "{0}⁠{1}",
+          "rationalUsage": "sometimes"
+        },
+        "wara": {
+          "rationalPattern": "{0}⁄{1}",
+          "integerAndRationalPattern": "{0} {1}",
+          "integerAndRationalPattern-alt-superSub": "{0}⁠{1}",
+          "rationalUsage": "sometimes"
+        },
+        "wcho": {
+          "rationalPattern": "{0}⁄{1}",
+          "integerAndRationalPattern": "{0} {1}",
+          "integerAndRationalPattern-alt-superSub": "{0}⁠{1}",
+          "rationalUsage": "sometimes"
         },
         "scientificFormats-numberSystem-latn": {
           "standard": "#E0"
@@ -128,64 +614,115 @@
             }
           },
           "standard": "#,##0.00 ¤",
-          "standard-alphaNextToNumber": "¤ #,##0.00",
+          "standard-alphaNextToNumber": "#,##0.00 ¤",
           "standard-noCurrency": "#,##0.00",
           "accounting": "#,##0.00 ¤",
-          "accounting-alphaNextToNumber": "¤ #,##0.00",
+          "accounting-alphaNextToNumber": "#,##0.00 ¤",
           "accounting-noCurrency": "#,##0.00",
           "short": {
             "standard": {
               "1000-count-one": "0 тыс'.' ¤",
+              "1000-count-one-alt-alphaNextToNumber": "0 тыс'.' ¤",
               "1000-count-few": "0 тыс'.' ¤",
+              "1000-count-few-alt-alphaNextToNumber": "0 тыс'.' ¤",
               "1000-count-many": "0 тыс'.' ¤",
+              "1000-count-many-alt-alphaNextToNumber": "0 тыс'.' ¤",
               "1000-count-other": "0 тыс'.' ¤",
+              "1000-count-other-alt-alphaNextToNumber": "0 тыс'.' ¤",
               "10000-count-one": "00 тыс'.' ¤",
+              "10000-count-one-alt-alphaNextToNumber": "00 тыс'.' ¤",
               "10000-count-few": "00 тыс'.' ¤",
+              "10000-count-few-alt-alphaNextToNumber": "00 тыс'.' ¤",
               "10000-count-many": "00 тыс'.' ¤",
+              "10000-count-many-alt-alphaNextToNumber": "00 тыс'.' ¤",
               "10000-count-other": "00 тыс'.' ¤",
+              "10000-count-other-alt-alphaNextToNumber": "00 тыс'.' ¤",
               "100000-count-one": "000 тыс'.' ¤",
+              "100000-count-one-alt-alphaNextToNumber": "000 тыс'.' ¤",
               "100000-count-few": "000 тыс'.' ¤",
+              "100000-count-few-alt-alphaNextToNumber": "000 тыс'.' ¤",
               "100000-count-many": "000 тыс'.' ¤",
+              "100000-count-many-alt-alphaNextToNumber": "000 тыс'.' ¤",
               "100000-count-other": "000 тыс'.' ¤",
+              "100000-count-other-alt-alphaNextToNumber": "000 тыс'.' ¤",
               "1000000-count-one": "0 млн ¤",
+              "1000000-count-one-alt-alphaNextToNumber": "0 млн ¤",
               "1000000-count-few": "0 млн ¤",
+              "1000000-count-few-alt-alphaNextToNumber": "0 млн ¤",
               "1000000-count-many": "0 млн ¤",
+              "1000000-count-many-alt-alphaNextToNumber": "0 млн ¤",
               "1000000-count-other": "0 млн ¤",
+              "1000000-count-other-alt-alphaNextToNumber": "0 млн ¤",
               "10000000-count-one": "00 млн ¤",
+              "10000000-count-one-alt-alphaNextToNumber": "00 млн ¤",
               "10000000-count-few": "00 млн ¤",
+              "10000000-count-few-alt-alphaNextToNumber": "00 млн ¤",
               "10000000-count-many": "00 млн ¤",
+              "10000000-count-many-alt-alphaNextToNumber": "00 млн ¤",
               "10000000-count-other": "00 млн ¤",
+              "10000000-count-other-alt-alphaNextToNumber": "00 млн ¤",
               "100000000-count-one": "000 млн ¤",
+              "100000000-count-one-alt-alphaNextToNumber": "000 млн ¤",
               "100000000-count-few": "000 млн ¤",
+              "100000000-count-few-alt-alphaNextToNumber": "000 млн ¤",
               "100000000-count-many": "000 млн ¤",
+              "100000000-count-many-alt-alphaNextToNumber": "000 млн ¤",
               "100000000-count-other": "000 млн ¤",
+              "100000000-count-other-alt-alphaNextToNumber": "000 млн ¤",
               "1000000000-count-one": "0 млрд ¤",
+              "1000000000-count-one-alt-alphaNextToNumber": "0 млрд ¤",
               "1000000000-count-few": "0 млрд ¤",
+              "1000000000-count-few-alt-alphaNextToNumber": "0 млрд ¤",
               "1000000000-count-many": "0 млрд ¤",
+              "1000000000-count-many-alt-alphaNextToNumber": "0 млрд ¤",
               "1000000000-count-other": "0 млрд ¤",
+              "1000000000-count-other-alt-alphaNextToNumber": "0 млрд ¤",
               "10000000000-count-one": "00 млрд ¤",
+              "10000000000-count-one-alt-alphaNextToNumber": "00 млрд ¤",
               "10000000000-count-few": "00 млрд ¤",
+              "10000000000-count-few-alt-alphaNextToNumber": "00 млрд ¤",
               "10000000000-count-many": "00 млрд ¤",
+              "10000000000-count-many-alt-alphaNextToNumber": "00 млрд ¤",
               "10000000000-count-other": "00 млрд ¤",
+              "10000000000-count-other-alt-alphaNextToNumber": "00 млрд ¤",
               "100000000000-count-one": "000 млрд ¤",
+              "100000000000-count-one-alt-alphaNextToNumber": "000 млрд ¤",
               "100000000000-count-few": "000 млрд ¤",
+              "100000000000-count-few-alt-alphaNextToNumber": "000 млрд ¤",
               "100000000000-count-many": "000 млрд ¤",
+              "100000000000-count-many-alt-alphaNextToNumber": "000 млрд ¤",
               "100000000000-count-other": "000 млрд ¤",
+              "100000000000-count-other-alt-alphaNextToNumber": "000 млрд ¤",
               "1000000000000-count-one": "0 трлн ¤",
+              "1000000000000-count-one-alt-alphaNextToNumber": "0 трлн ¤",
               "1000000000000-count-few": "0 трлн ¤",
+              "1000000000000-count-few-alt-alphaNextToNumber": "0 трлн ¤",
               "1000000000000-count-many": "0 трлн ¤",
+              "1000000000000-count-many-alt-alphaNextToNumber": "0 трлн ¤",
               "1000000000000-count-other": "0 трлн ¤",
+              "1000000000000-count-other-alt-alphaNextToNumber": "0 трлн ¤",
               "10000000000000-count-one": "00 трлн ¤",
+              "10000000000000-count-one-alt-alphaNextToNumber": "00 трлн ¤",
               "10000000000000-count-few": "00 трлн ¤",
+              "10000000000000-count-few-alt-alphaNextToNumber": "00 трлн ¤",
               "10000000000000-count-many": "00 трлн ¤",
+              "10000000000000-count-many-alt-alphaNextToNumber": "00 трлн ¤",
               "10000000000000-count-other": "00 трлн ¤",
+              "10000000000000-count-other-alt-alphaNextToNumber": "00 трлн ¤",
               "100000000000000-count-one": "000 трлн ¤",
+              "100000000000000-count-one-alt-alphaNextToNumber": "000 трлн ¤",
               "100000000000000-count-few": "000 трлн ¤",
+              "100000000000000-count-few-alt-alphaNextToNumber": "000 трлн ¤",
               "100000000000000-count-many": "000 трлн ¤",
-              "100000000000000-count-other": "000 трлн ¤"
+              "100000000000000-count-many-alt-alphaNextToNumber": "000 трлн ¤",
+              "100000000000000-count-other": "000 трлн ¤",
+              "100000000000000-count-other-alt-alphaNextToNumber": "000 трлн ¤"
             }
           },
           "currencyPatternAppendISO": "{0} ¤¤",
+          "unitPattern-count-one": "{0} {1}",
+          "unitPattern-count-few": "{0} {1}",
+          "unitPattern-count-many": "{0} {1}",
           "unitPattern-count-other": "{0} {1}"
         },
         "miscPatterns-numberSystem-latn": {

@@ -2,7 +2,7 @@
   "supplemental": {
     "version": {
       "_unicodeVersion": "16.0.0",
-      "_cldrVersion": "47"
+      "_cldrVersion": "48"
     },
     "currencyData": {
       "fractions": {
@@ -60,9 +60,7 @@
         },
         "COP": {
           "_rounding": "0",
-          "_digits": "2",
-          "_cashRounding": "0",
-          "_cashDigits": "0"
+          "_digits": "0"
         },
         "CRC": {
           "_rounding": "0",
@@ -105,15 +103,12 @@
         },
         "HUF": {
           "_rounding": "0",
-          "_digits": "2",
-          "_cashRounding": "0",
-          "_cashDigits": "0"
+          "_digits": "0",
+          "_cashRounding": "5"
         },
         "IDR": {
           "_rounding": "0",
-          "_digits": "2",
-          "_cashRounding": "0",
-          "_cashDigits": "0"
+          "_digits": "0"
         },
         "IQD": {
           "_rounding": "0",
@@ -211,9 +206,7 @@
         },
         "PKR": {
           "_rounding": "0",
-          "_digits": "2",
-          "_cashRounding": "0",
-          "_cashDigits": "0"
+          "_digits": "0"
         },
         "PYG": {
           "_rounding": "0",
@@ -309,9 +302,17 @@
           "_rounding": "0",
           "_digits": "0"
         },
+        "XAD": {
+          "_rounding": "0",
+          "_digits": "2"
+        },
         "XAF": {
           "_rounding": "0",
           "_digits": "0"
+        },
+        "XAU": {
+          "_rounding": "0",
+          "_digits": "2"
         },
         "XOF": {
           "_rounding": "0",
@@ -1099,7 +1100,7 @@
           {
             "CUC": {
               "_from": "1994-01-01",
-              "_to": "2021-01-01"
+              "_to": "2021-06-01"
             }
           },
           {
@@ -3544,6 +3545,12 @@
           }
         ],
         "ZZ": [
+          {
+            "XAD": {
+              "_tender": "false",
+              "_from": "2025-05-12"
+            }
+          },
           {
             "XAG": {
               "_tender": "false"

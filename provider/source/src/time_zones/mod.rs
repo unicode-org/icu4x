@@ -82,12 +82,6 @@ impl SourceDataProvider {
                     .supplemental
                     .meta_zones;
 
-                let metazones_patch =
-                    serde_json::from_str::<cldr_serde::time_zones::meta_zones::Resource>(include_str!("../../data/metaZonesPatched.json"))
-                    .unwrap()
-                    .supplemental
-                    .meta_zones;
-
                 let tzdb = self.tzdb()?.parsed()?;
 
                 let bcp47_tzid_data = self.iana_to_bcp47_map()?;
@@ -112,7 +106,6 @@ impl SourceDataProvider {
                     .meta_zones_territory
                     .0
                     .iter()
-                    .chain(metazones_patch.meta_zones_territory.0.iter())
                     .filter_map(|mt| {
                         if mt.map_zone.territory != region!("001") {
                             return None;
@@ -125,7 +118,6 @@ impl SourceDataProvider {
                     .meta_zone_info
                     .time_zone
                     .iter()
-                    .chain(metazones_patch.meta_zone_info.time_zone.iter())
                     .map(|(iana, periods)| {
                         let &bcp47 = bcp47_tzid_data.get(&iana).unwrap();
                         let mut periods = periods
@@ -180,12 +172,12 @@ impl SourceDataProvider {
                     let mut curr_mz = mzs.next_if(|&(s, _)| s == start).and_then(|(_, mz)| mz);
 
                     loop {
-                        let (mut std, daylight) = curr_mz.and_then(|mzi| {
+                        let (mut std, daylight) = curr_mz.map(|mzi| {
                                 let std_override = mzi.std_offset.as_ref().map(|s| UtcOffset::try_from_str(s).unwrap().to_seconds() as i64);
                                 let dst_override = mzi.dst_offset.as_ref().map(|s| UtcOffset::try_from_str(s).unwrap().to_seconds() as i64);
 
                                 if Some(curr_offset.total_offset()) == std_override {
-                                    Some((curr_offset.total_offset(), None))
+                                    (curr_offset.total_offset(), None)
                                 } else if Some(curr_offset.total_offset()) == dst_override {
                                     let previous_offset = offsets_vec
                                             .iter()
@@ -195,7 +187,7 @@ impl SourceDataProvider {
                                         let next_offset = offsets
                                             .peek()
                                             .filter(|&&(tn, _)| mzi.to.is_none_or(|to| tn < to));
-                                        Some((
+                                        (
                                             // Check the previous or next offset for the standard offset
                                             previous_offset
                                                 .into_iter()
@@ -206,15 +198,21 @@ impl SourceDataProvider {
                                             // Permanent DST
                                             .unwrap_or(curr_offset.total_offset()),
                                             Some(curr_offset.total_offset()),
-                                        ))
+                                        )
                                 } else {
                                     if curr_offset.rearguard_agrees == Some(false) || curr_offset.vanguard_agrees == Some(false) {
                                         log::warn!("Unhandled TZDB inconsistency for {tz:?}: {curr_offset:?}");
                                     }
-                                    None
+                                    (
+                                        curr_offset.utc_offset,
+                                        // If a rule applies, we treat this as DST
+                                        (curr_offset.dst_offset_relative != 0).then_some(curr_offset.utc_offset + curr_offset.dst_offset_relative)
+                                    )
                                 }
                             })
                             .unwrap_or_else(|| {
+                                // This is the no-metazone case, where it doesn't really matter what we consider DST.
+                                // We don't have overrides, so this will produce a negative DST for Casablanca.
                                 (
                                     curr_offset.utc_offset,
                                     // If a rule applies, we treat this as DST
@@ -226,10 +224,6 @@ impl SourceDataProvider {
                         if std == -2670 {
                             std = -2700;
                         };
-
-                        if daylight.map(|d| d - std) == Some(-3600) {
-                            log::error!("{tz:?}, {curr_mz:?}");
-                        }
 
                         let mut os = VariantOffsets::from_standard(UtcOffset::from_seconds_unchecked(std as i32));
                         os.daylight = daylight.map(|o| UtcOffset::from_seconds_unchecked(o as i32));
@@ -561,26 +555,15 @@ impl SourceDataProvider {
 
                 for (&bcp47_tzid, bcp47_tzid_data) in bcp47_tzids_resource {
                     regions_to_zones
-                        .entry(match bcp47_tzid.as_str() {
-                            // backfill since this data is not in 47 yet
-                            "ancur" => region!("CW"),
-                            "fimhq" => region!("AX"),
-                            "gpmsb" => region!("MF"),
-                            "gpsbh" => region!("BL"),
-                            "gazastrp" | "hebron" => region!("PS"),
-                            "jeruslm" => region!("IL"),
-                            _ => {
-                                if bcp47_tzid_data.deprecated == Some(true) {
-                                    continue;
-                                } else if let Some(region) = bcp47_tzid_data.region {
-                                    region
-                                } else if bcp47_tzid.0.len() != 5 {
-                                    // Length-5 ID without override, no region
-                                    continue;
-                                } else {
-                                    bcp47_tzid.as_str()[0..2].parse().unwrap()
-                                }
-                            }
+                        .entry(if bcp47_tzid_data.deprecated == Some(true) {
+                            continue;
+                        } else if let Some(region) = bcp47_tzid_data.region {
+                            region
+                        } else if bcp47_tzid.0.len() != 5 {
+                            // Length-5 ID without override, no region
+                            continue;
+                        } else {
+                            bcp47_tzid.as_str()[0..2].parse().unwrap()
                         })
                         .or_default()
                         .insert(bcp47_tzid);

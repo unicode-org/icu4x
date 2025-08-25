@@ -9,6 +9,7 @@
           "hourFormat": "+HH:mm;-HH:mm",
           "gmtFormat": "GMT{0}",
           "gmtZeroFormat": "GMT",
+          "gmtUnknownFormat": "GMT+?",
           "regionFormat": "{0}",
           "regionFormat-type-daylight": "{0}, летнее время",
           "regionFormat-type-standard": "{0}, стандартное время",
@@ -57,11 +58,7 @@
               },
               "Enderbury": {
                 "_type": "zone",
-                "exemplarCity": "о-в Эндербери"
-              },
-              "Kanton": {
-                "_type": "zone",
-                "exemplarCity": "Кантон"
+                "exemplarCity": "о-в Кантон"
               },
               "Kiritimati": {
                 "_type": "zone",
@@ -1000,6 +997,10 @@
                 "_type": "zone",
                 "exemplarCity": "Сент-Джонс"
               },
+              "Coyhaique": {
+                "_type": "zone",
+                "exemplarCity": "Койайке"
+              },
               "Punta_Arenas": {
                 "_type": "zone",
                 "exemplarCity": "Пунта-Аренас"
@@ -1766,9 +1767,7 @@
             },
             "Africa_Western": {
               "long": {
-                "generic": "Западная Африка",
-                "standard": "Западная Африка, стандартное время",
-                "daylight": "Западная Африка, летнее время"
+                "standard": "Западная Африка"
               }
             },
             "Alaska": {
@@ -2154,6 +2153,11 @@
             "Guyana": {
               "long": {
                 "standard": "Гайана"
+              }
+            },
+            "Hawaii": {
+              "long": {
+                "standard": "Гавайско-алеутское стандартное время"
               }
             },
             "Hawaii_Aleutian": {
@@ -2604,6 +2608,13 @@
             "Truk": {
               "long": {
                 "standard": "Трук"
+              }
+            },
+            "Turkey": {
+              "long": {
+                "generic": "Турецкое время",
+                "standard": "Турецкое стандартное время",
+                "daylight": "Турецкое летнее время"
               }
             },
             "Turkmenistan": {
