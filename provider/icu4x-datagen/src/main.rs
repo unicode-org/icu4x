@@ -335,6 +335,25 @@ fn main() -> eyre::Result<()> {
         None
     };
 
+    fn data_error_message<T>(e: icu_provider::DataError) -> Result<T, eyre::Report> {
+        #[cfg(feature = "provider")]
+        if SourceDataProvider::is_missing_cldr_error(e) {
+            eyre::bail!("CLDR data is required for this invocation, set --cldr-path or --cldr-tag");
+        } else if SourceDataProvider::is_missing_icuexport_error(e) {
+            eyre::bail!(
+                "ICU data is required for this invocation, set --icuexport-path or --icuexport-tag"
+            );
+        } else if SourceDataProvider::is_missing_segmenter_lstm_error(e) {
+            eyre::bail!("Segmentation LSTM data is required for this invocation, set --segementer-lstm-path or --segementer-lstm-tag");
+        } else if SourceDataProvider::is_missing_tzdb_error(e) {
+            eyre::bail!(
+                "Timezone data is required for this invocation, set --tzdb-path or --tzdb-tag"
+            );
+        }
+
+        Err(e.into())
+    }
+
     let (provider, fallbacker): (Box<dyn ExportableProvider>, _) = match () {
         () if markers == [HelloWorldV1::INFO] => {
             // Just do naive fallback instead of pulling in compiled data or something. We only use this code path to debug
@@ -378,11 +397,7 @@ fn main() -> eyre::Result<()> {
                 #[cfg(feature = "networking")]
                 (_, tag) => p.with_cldr_for_tag(tag),
                 #[cfg(not(feature = "networking"))]
-                (None, _) => {
-                    eyre::bail!(
-                        "Please set --cldr-root or enable the `networking` Cargo feature"
-                    )
-                }
+                (None, _) => p,
             };
 
             p = match (cli.icuexport_root, cli.icuexport_tag.as_str()) {
@@ -394,11 +409,7 @@ fn main() -> eyre::Result<()> {
                 #[cfg(feature = "networking")]
                 (_, tag) => p.with_icuexport_for_tag(tag),
                 #[cfg(not(feature = "networking"))]
-                (None, _) => {
-                    eyre::bail!(
-                        "Please set --icuexport-root or enable the `networking` Cargo feature"
-                    )
-                }
+                (None, _) => p,
             };
 
             p = match (cli.segmenter_lstm_root, cli.segmenter_lstm_tag.as_str()) {
@@ -410,11 +421,7 @@ fn main() -> eyre::Result<()> {
                 #[cfg(feature = "networking")]
                 (_, tag) => p.with_segmenter_lstm_for_tag(tag),
                 #[cfg(not(feature = "networking"))]
-                (None, _) => {
-                    eyre::bail!(
-                        "Please set --segmenter-lstm-root or enable the `networking` Cargo feature"
-                    )
-                }
+                (None, _) => p,
             };
 
             p = match (cli.tzdb_root, cli.tzdb_tag.as_str()) {
@@ -426,11 +433,7 @@ fn main() -> eyre::Result<()> {
                 #[cfg(feature = "networking")]
                 (_, tag) => p.with_tzdb_for_tag(tag),
                 #[cfg(not(feature = "networking"))]
-                (None, _) => {
-                    eyre::bail!(
-                        "Please set --tzdb-root or enable the `networking` Cargo feature"
-                    )
-                }
+                (None, _) => p,
             };
 
             if cli.locales.as_slice() == ["recommended"] {
@@ -461,7 +464,7 @@ fn main() -> eyre::Result<()> {
                 ));
             }
 
-            let fallbacker = LocaleFallbacker::try_new_unstable(&p)?;
+            let fallbacker = LocaleFallbacker::try_new_unstable(&p).or_else(data_error_message)?;
             (Box::new(p), fallbacker)
         }
 
@@ -523,7 +526,7 @@ fn main() -> eyre::Result<()> {
         driver.with_segmenter_models(cli.segmenter_models.clone())
     };
 
-    let _metadata = match cli.format {
+    let metadata = match cli.format {
         #[cfg(not(feature = "fs_exporter"))]
         Format::Fs => {
             eyre::bail!("Exporting to an FsProvider requires the `fs_exporter` Cargo feature")
@@ -548,7 +551,7 @@ fn main() -> eyre::Result<()> {
                     options
                 },
             )?
-        })?,
+        }),
         #[cfg(not(feature = "blob_exporter"))]
         Format::Blob => {
             eyre::bail!("Exporting to a BlobProvider requires the `blob_exporter` Cargo feature")
@@ -569,7 +572,7 @@ fn main() -> eyre::Result<()> {
                 Box::new(std::io::stdout())
             };
             BlobExporter::new_with_sink(sink)
-        })?,
+        }),
         #[cfg(not(feature = "baked_exporter"))]
         Format::Baked => {
             eyre::bail!("Exporting to a baked provider requires the `baked_exporter` Cargo feature")
@@ -587,8 +590,10 @@ fn main() -> eyre::Result<()> {
                     options
                 },
             )?
-        })?,
+        }),
     };
+
+    let _metadata = metadata.or_else(data_error_message)?;
 
     Ok(())
 }
