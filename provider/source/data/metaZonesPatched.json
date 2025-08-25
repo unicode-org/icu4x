@@ -118,64 +118,6 @@
                 }
               }
             ],
-            "Anchorage": [
-              {
-                "usesMetazone": {
-                  "_mzone": "Alaska_Hawaii",
-                  "_to": "1983-11-30 09:00",
-                  "_variantOverrides": {
-                    "YST": "daylight"
-                  }
-                }
-              },
-              {
-                "usesMetazone": {
-                  "_mzone": "Alaska",
-                  "_from": "1983-11-30 09:00"
-                }
-              }
-            ],
-            "Cambridge_Bay": [
-              {
-                "usesMetazone": {
-                  "_mzone": "America_Mountain",
-                  "_to": "1999-10-31 08:00"
-                }
-              },
-              {
-                "usesMetazone": {
-                  "_mzone": "America_Central",
-                  "_from": "1999-10-31 08:00",
-                  "_to": "2001-04-01 09:00",
-                  "_variantOverrides": {
-                    "EST": "daylight"
-                  }
-                }
-              },
-              {
-                "usesMetazone": {
-                  "_mzone": "America_Mountain",
-                  "_from": "2001-04-01 09:00"
-                }
-              }
-            ],
-            "Juneau": [
-              {
-                "usesMetazone": {
-                  "_mzone": "America_Pacific",
-                  "_to": "1983-10-30 09:00",
-                  "_variantOverrides": {
-                    "YDT": "standard"
-                  }
-                }
-              },
-              {
-                "usesMetazone": {
-                  "_mzone": "Alaska",
-                  "_from": "1983-10-30 09:00"
-                }
-              }
-            ],
             "Nome": [
               {
                 "usesMetazone": {
@@ -187,42 +129,6 @@
                 "usesMetazone": {
                   "_mzone": "Alaska",
                   "_from": "1983-10-30 12:00"
-                }
-              }
-            ],
-            "Punta_Arenas": [
-              {
-                "usesMetazone": {
-                  "_mzone": "Chile",
-                  "_to": "2016-12-04 03:00"
-                }
-              },{
-                "usesMetazone": {
-                  "_mzone": "Chile",
-                  "_from": "2016-12-04 03:00",
-                  "_variantOverrides": {
-                    "-03": "daylight"
-                  }
-                }
-              }
-            ],
-            "Rankin_Inlet": [
-              {
-                "usesMetazone": {
-                  "_mzone": "America_Central",
-                  "_variantOverrides": {
-                    "EST": "daylight"
-                  }
-                }
-              }
-            ],
-            "Resolute": [
-              {
-                "usesMetazone": {
-                  "_mzone": "America_Central",
-                  "_variantOverrides": {
-                    "EST": "daylight"
-                  }
                 }
               }
             ],
@@ -319,40 +225,6 @@
                 "usesMetazone": {
                   "_mzone": "Yakutsk",
                   "_from": "2016-03-26 18:00"
-                }
-              }
-            ],
-            "Dushanbe": [
-              {
-                "usesMetazone": {
-                  "_mzone": "Dushanbe",
-                  "_to": "1991-09-08 21:00",
-                  "_variantOverrides": {
-                    "+06": "standard"
-                  }
-                }
-              },
-              {
-                "usesMetazone": {
-                  "_mzone": "Tajikistan",
-                  "_from": "1991-09-08 21:00"
-                }
-              }
-            ],
-            "Samarkand": [
-              {
-                "usesMetazone": {
-                  "_mzone": "Samarkand",
-                  "_to": "1991-08-31 18:00",
-                  "_variantOverrides": {
-                    "+06": "daylight"
-                  }
-                }
-              },
-              {
-                "usesMetazone": {
-                  "_mzone": "Uzbekistan",
-                  "_from": "1991-08-31 18:00"
                 }
               }
             ],
