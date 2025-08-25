@@ -30,7 +30,9 @@ use clap::{Parser, ValueEnum};
 use eyre::WrapErr;
 use icu_provider::export::ExportableProvider;
 use icu_provider::hello_world::HelloWorldV1;
+use icu_provider::DataError;
 use icu_provider_export::prelude::*;
+use icu_provider_export::ExportMetadata;
 #[cfg(feature = "provider")]
 use icu_provider_source::SourceDataProvider;
 use simple_logger::SimpleLogger;
@@ -335,7 +337,7 @@ fn main() -> eyre::Result<()> {
         None
     };
 
-    fn data_error_message<T>(e: icu_provider::DataError) -> Result<T, eyre::Report> {
+    fn missing_data_message<T>(e: DataError) -> Result<T, eyre::Report> {
         #[cfg(feature = "provider")]
         if SourceDataProvider::is_missing_cldr_error(e) {
             eyre::bail!("CLDR data is required for this invocation, set --cldr-path or --cldr-tag");
@@ -464,7 +466,7 @@ fn main() -> eyre::Result<()> {
                 ));
             }
 
-            let fallbacker = LocaleFallbacker::try_new_unstable(&p).or_else(data_error_message)?;
+            let fallbacker = LocaleFallbacker::try_new_unstable(&p).or_else(missing_data_message)?;
             (Box::new(p), fallbacker)
         }
 
@@ -526,7 +528,7 @@ fn main() -> eyre::Result<()> {
         driver.with_segmenter_models(cli.segmenter_models.clone())
     };
 
-    let metadata = match cli.format {
+    let metadata: Result<ExportMetadata, DataError> = match cli.format {
         #[cfg(not(feature = "fs_exporter"))]
         Format::Fs => {
             eyre::bail!("Exporting to an FsProvider requires the `fs_exporter` Cargo feature")
@@ -593,7 +595,7 @@ fn main() -> eyre::Result<()> {
         }),
     };
 
-    let _metadata = metadata.or_else(data_error_message)?;
+    let _metadata = metadata.or_else(missing_data_message)?;
 
     Ok(())
 }
