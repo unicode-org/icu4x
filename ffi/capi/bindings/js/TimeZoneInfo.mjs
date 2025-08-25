@@ -174,11 +174,9 @@ export class TimeZoneInfo {
     }
 
     /**
-     * DEPRECATED
-     *
-     * Just clones
-     *
      * See the [Rust documentation for `with_variant`](https://docs.rs/icu/2.0.0/icu/time/struct.TimeZoneInfo.html#method.with_variant) for more information.
+     *
+     * @deprecated returns unmodified copy
      */
     withVariant(timeVariant) {
 
@@ -205,13 +203,11 @@ export class TimeZoneInfo {
     }
 
     /**
-     * DEPRECATED
-     *
-     * No-op
-     *
      * See the [Rust documentation for `infer_variant`](https://docs.rs/icu/2.0.0/icu/time/struct.TimeZoneInfo.html#method.infer_variant) for more information.
      *
      * Additional information: [1](https://docs.rs/icu/2.0.0/icu/time/zone/enum.TimeZoneVariant.html)
+     *
+     * @deprecated does nothing
      */
     inferVariant(offsetCalculator) {
 
@@ -226,9 +222,9 @@ export class TimeZoneInfo {
     }
 
     /**
-     * DEPRECATED
-     *
      * See the [Rust documentation for `variant`](https://docs.rs/icu/2.0.0/icu/time/struct.TimeZoneInfo.html#method.variant) for more information.
+     *
+     * @deprecated always returns null
      */
     variant() {
         const diplomatReceive = new diplomatRuntime.DiplomatReceiveBuf(wasm, 5, 4, true);

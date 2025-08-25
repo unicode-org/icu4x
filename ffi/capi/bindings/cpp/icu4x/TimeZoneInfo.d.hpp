@@ -101,32 +101,31 @@ public:
   inline std::optional<icu4x::IsoDateTime> zone_name_date_time() const;
 
   /**
-   * DEPRECATED
-   *
-   * Just clones
-   *
    * See the [Rust documentation for `with_variant`](https://docs.rs/icu/2.0.0/icu/time/struct.TimeZoneInfo.html#method.with_variant) for more information.
+   *
+   * \deprecated returns unmodified copy
    */
+  [[deprecated("returns unmodified copy")]]
   inline std::unique_ptr<icu4x::TimeZoneInfo> with_variant(icu4x::TimeZoneVariant _time_variant) const;
 
   inline std::unique_ptr<icu4x::UtcOffset> offset() const;
 
   /**
-   * DEPRECATED
-   *
-   * No-op
-   *
    * See the [Rust documentation for `infer_variant`](https://docs.rs/icu/2.0.0/icu/time/struct.TimeZoneInfo.html#method.infer_variant) for more information.
    *
    * Additional information: [1](https://docs.rs/icu/2.0.0/icu/time/zone/enum.TimeZoneVariant.html)
+   *
+   * \deprecated does nothing
    */
+  [[deprecated("does nothing")]]
   inline std::optional<std::monostate> infer_variant(const icu4x::VariantOffsetsCalculator& _offset_calculator);
 
   /**
-   * DEPRECATED
-   *
    * See the [Rust documentation for `variant`](https://docs.rs/icu/2.0.0/icu/time/struct.TimeZoneInfo.html#method.variant) for more information.
+   *
+   * \deprecated always returns null
    */
+  [[deprecated("always returns null")]]
   inline std::optional<icu4x::TimeZoneVariant> variant() const;
 
   inline const icu4x::capi::TimeZoneInfo* AsFFI() const;
