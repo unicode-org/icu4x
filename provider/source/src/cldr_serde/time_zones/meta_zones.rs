@@ -21,15 +21,10 @@ pub(crate) struct UsesMetazone {
     pub(crate) from: Option<ZoneNameTimestamp>,
     #[serde(rename = "_to", default, deserialize_with = "deserialize_date")]
     pub(crate) to: Option<ZoneNameTimestamp>,
-    #[serde(rename = "_variantOverrides")]
-    pub(crate) variant_overrides: Option<BTreeMap<String, Variant>>,
-}
-
-#[derive(PartialEq, Debug, Clone, Deserialize)]
-#[serde(rename_all = "camelCase")]
-pub enum Variant {
-    Standard,
-    Daylight,
+    #[serde(rename = "_stdOffset")]
+    pub(crate) std_offset: Option<String>,
+    #[serde(rename = "_dstOffset")]
+    pub(crate) dst_offset: Option<String>,
 }
 
 #[derive(PartialEq, Debug, Clone, Deserialize)]

@@ -13,19 +13,15 @@
                 "usesMetazone": {
                   "_mzone": "Europe_Western",
                   "_to": "2018-10-28 02:00",
-                  "_variantOverrides": {
-                    "+00": "standard",
-                    "+01": "daylight"
-                  }
+                  "_stdOffset": "+00",
+                  "_dstOffset": "+01"
                 }
               },
               {
                 "usesMetazone": {
                   "_from": "2018-10-28 02:00",
-                  "_variantOverrides": {
-                    "+00": "standard",
-                    "+01": "daylight"
-                  }
+                  "_stdOffset": "+00",
+                  "_dstOffset": "+01"
                 }
               }
             ],
@@ -46,10 +42,8 @@
               {
                 "usesMetazone": {
                   "_from": "2018-10-28 02:00",
-                  "_variantOverrides": {
-                    "+00": "standard",
-                    "+01": "daylight"
-                  }
+                  "_stdOffset": "+00",
+                  "_dstOffset": "+01"
                 }
               }
             ],
@@ -86,19 +80,14 @@
                   "_mzone": "Africa_Western",
                   "_from": "1994-03-20 22:00",
                   "_to": "2017-09-03 01:00",
-                  "_variantOverrides": {
-                    "CAT": "daylight",
-                    "WAT": "standard"
-                  }
+                  "_stdOffset": "+01",
+                  "_dstOffset": "+02"
                 }
               },
               {
                 "usesMetazone": {
                   "_mzone": "Africa_Central",
-                  "_from": "2017-09-03 01:00",
-                  "_variantOverrides": {
-                    "CAT": "standard"
-                  }
+                  "_from": "2017-09-03 01:00"
                 }
               }
             ]
@@ -291,20 +280,16 @@
                 "usesMetazone": {
                   "_mzone": "Irish",
                   "_to": "1971-10-31 02:00",
-                  "_variantOverrides": {
-                    "GMT": "standard",
-                    "IST": "daylight"
-                  }
+                  "_stdOffset": "+00",
+                  "_dstOffset": "+01"
                 }
               },
               {
                 "usesMetazone": {
                   "_mzone": "GMT",
                   "_from": "1971-10-31 02:00",
-                  "_variantOverrides": {
-                    "GMT": "standard",
-                    "IST": "daylight"
-                  }
+                  "_stdOffset": "+00",
+                  "_dstOffset": "+01"
                 }
               }
             ],
