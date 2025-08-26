@@ -186,6 +186,18 @@ impl Date<Gregorian> {
     }
 }
 
+impl Gregorian {
+    /// Returns the date of Easter in the given year.
+    pub fn easter(year: i32) -> Date<Self> {
+        Date::from_rata_die(calendrical_calculations::iso::easter(year), Self)
+    }
+
+    /// Returns the date of Christmas in the given year.
+    pub fn christmas(year: i32) -> Date<Self> {
+        Date::try_new_gregorian(year, 12, 25).unwrap()
+    }
+}
+
 #[cfg(test)]
 mod test {
     use calendrical_calculations::rata_die::RataDie;

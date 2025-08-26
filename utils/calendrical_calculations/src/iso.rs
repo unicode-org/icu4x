@@ -7,7 +7,7 @@
 // the Apache License, Version 2.0 which can be found at the calendrical_calculations
 // package root or at http://www.apache.org/licenses/LICENSE-2.0.
 
-use crate::helpers::{i64_to_i32, I32CastError};
+use crate::helpers::{i64_to_i32, k_day_after, I32CastError};
 use crate::rata_die::RataDie;
 
 // The Gregorian epoch is equivalent to first day in fixed day measurement
@@ -115,4 +115,34 @@ pub fn iso_from_fixed(date: RataDie) -> Result<(i32, u8, u8), I32CastError> {
     let day_of_year = date - day_before_year(year);
     let (month, day) = year_day(year, day_of_year as u16);
     Ok((year, month, day))
+}
+
+/// Calculates the date of Easter in the given year
+pub fn easter(year: i32) -> RataDie {
+    let century = (year / 100) + 1;
+    let shifted_epact =
+        (14 + 11 * year.rem_euclid(19) - century * 3 / 4 + (5 + 8 * century) / 25).rem_euclid(30);
+    let adjusted_epact = shifted_epact
+        + (shifted_epact == 0 || (shifted_epact == 1 && 10 < year.rem_euclid(19))) as i32;
+    let paschal_moon = fixed_from_iso(year, 4, 19) - adjusted_epact as i64;
+
+    k_day_after(0, paschal_moon)
+}
+
+#[test]
+fn test_easter() {
+    // https://en.wikipedia.org/wiki/List_of_dates_for_Easter
+    for (y, m, d) in [
+        (2021, 4, 4),
+        (2022, 4, 17),
+        (2023, 4, 9),
+        (2024, 3, 31),
+        (2025, 4, 20),
+        (2026, 4, 5),
+        (2027, 3, 28),
+        (2028, 4, 16),
+        (2029, 4, 1),
+    ] {
+        assert_eq!(easter(y), fixed_from_iso(y, m, d));
+    }
 }

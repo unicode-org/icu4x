@@ -208,6 +208,16 @@ impl Julian {
     pub fn new() -> Self {
         Self
     }
+
+    /// Returns the date of Easter in the given year.
+    pub fn easter(year: i32) -> Date<Self> {
+        Date::from_rata_die(calendrical_calculations::julian::easter(year), Self)
+    }
+
+    /// Returns the date of Christmas in the given year.
+    pub fn christmas(year: i32) -> Date<Self> {
+        Date::try_new_julian(year, 12, 25).unwrap()
+    }
 }
 
 impl Date<Julian> {
