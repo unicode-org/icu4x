@@ -51,7 +51,9 @@ impl DataProvider<UnitsDisplayNameV1> for SourceDataProvider {
         Ok(DataResponse {
             metadata: Default::default(),
             payload: DataPayload::from_owned(UnitsDisplayName {
-                patterns: unit_patterns.try_into().map_err(DataError::from)?,
+                patterns: unit_patterns
+                    .try_into()
+                    .map_err(|e: DataError| e.with_req(UnitsDisplayNameV1::INFO, req))?,
             }),
         })
     }
