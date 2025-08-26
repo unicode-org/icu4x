@@ -522,7 +522,7 @@ impl<'a> Zone<'a> {
         PossibleOffset::Single(first_candidate.into())
     }
 
-    /// Get the offset for a timestamp (as seconds since the 1970 UTC epoch).
+    /// Get the offset for a timestamp (as seconds since the Unix epoch).
     pub fn for_timestamp(&self, seconds_since_epoch: i64) -> Offset {
         let simple = self.simple();
         let idx = simple.prev_transition_offset_idx(seconds_since_epoch);

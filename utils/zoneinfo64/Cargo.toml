@@ -5,7 +5,6 @@
 [package]
 name = "zoneinfo64"
 version = "0.1.0"
-publish = false
 
 rust-version.workspace = true
 authors.workspace = true
