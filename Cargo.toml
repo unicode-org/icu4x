@@ -196,7 +196,7 @@ fixed_decimal = { version = "0.7.0", path = "utils/fixed_decimal", default-featu
 ixdtf = { version = "0.6.0", path = "utils/ixdtf", default-features = false }
 litemap = { version = "0.8.0", path = "utils/litemap", default-features = false }
 potential_utf = { version = "0.1.1", path = "utils/potential_utf", default-features = false }
-resb = { version = "0.0.0", path = "utils/resb", default-features = false }
+resb = { version = "0.1.0", path = "utils/resb", default-features = false }
 tzif = { version = "0.4.0", path = "utils/tzif", default-features = false }
 tinystr = { version = "0.8.0", path = "utils/tinystr", default-features = false }
 writeable = { version = "0.6.0", path = "utils/writeable", default-features = false }
@@ -207,7 +207,7 @@ zerofrom-derive = { version = "0.1.3", path = "utils/zerofrom/derive", default-f
 zerotrie = { version = "0.2.0", path = "utils/zerotrie", default-features = false }
 zerovec = { version = "0.11.3", path = "utils/zerovec", default-features = false }
 zerovec-derive = { version = "0.11.1", path = "utils/zerovec/derive", default-features = false }
-zoneinfo64 = { version = "0.0.0", path = "utils/zoneinfo64", default-features = false }
+zoneinfo64 = { version = "0.1.0", path = "utils/zoneinfo64", default-features = false }
 
 # Tools
 icu_benchmark_macros = { path = "tools/benchmark/macros" }
