@@ -110,9 +110,10 @@ where
         ]
     );
 
-    /// Extracts the needed data for the provider.
+    /// Extracts the formatting info for that needed to create a stable creator of [`CategorizedFormatter`].
     ///
     /// This is a helper function for the constructors to avoid writing the same code multiple times.
+    #[cfg(feature = "compiled_data")]
     fn extract_formatting_info(
         prefs: CategorizedUnitsFormatterPreferences,
         categorized_unit: CategorizedMeasureUnit<C>,
@@ -123,6 +124,36 @@ where
             DecimalFormatter::try_new((&prefs).into(), DecimalFormatterOptions::default())?;
 
         let plural_rules = PluralRules::try_new_cardinal((&prefs).into())?;
+
+        // TODO: Remove this allocation once we have separate markers for different widths.
+        let attribute = Self::attribute(options.width, categorized_unit.cldr_id());
+
+        Ok((locale, decimal_formatter, plural_rules, attribute))
+    }
+
+    /// Extracts the formatting info for that needed to create an unstable creator of [`CategorizedFormatter`].
+    ///
+    /// This is a helper function for the constructors to avoid writing the same code multiple times.
+    fn extract_formatting_info_unstable<D>(
+        provider: &D,
+        prefs: CategorizedUnitsFormatterPreferences,
+        categorized_unit: CategorizedMeasureUnit<C>,
+        options: super::options::UnitsFormatterOptions,
+    ) -> Result<FormattingInfo, DataError>
+    where
+        D: ?Sized
+            + DataProvider<icu_decimal::provider::DecimalSymbolsV1>
+            + DataProvider<icu_decimal::provider::DecimalDigitsV1>
+            + DataProvider<icu_plurals::provider::PluralsCardinalV1>,
+    {
+        let locale = C::DataMarkerCore::make_locale(prefs.locale_preferences);
+        let decimal_formatter: DecimalFormatter = DecimalFormatter::try_new_unstable(
+            provider,
+            (&prefs).into(),
+            DecimalFormatterOptions::default(),
+        )?;
+
+        let plural_rules = PluralRules::try_new_cardinal_unstable(provider, (&prefs).into())?;
 
         // TODO: Remove this allocation once we have separate markers for different widths.
         let attribute = Self::attribute(options.width, categorized_unit.cldr_id());
@@ -184,7 +215,7 @@ where
         <C as MeasureUnitCategory>::DataMarkerCore: icu_provider::DataMarker,
     {
         let (locale, decimal_formatter, plural_rules, attribute) =
-            Self::extract_formatting_info(prefs, categorized_unit, options)?;
+            Self::extract_formatting_info_unstable(provider, prefs, categorized_unit, options)?;
 
         let unit_attribute = DataMarkerAttributes::try_from_utf8(&attribute[..attribute.len()])
             .map_err(|_| DataError::custom("Failed to create a data marker"))?;
@@ -274,7 +305,7 @@ where
         <C as MeasureUnitCategory>::DataMarkerExtended: icu_provider::DataMarker,
     {
         let (locale, decimal_formatter, plural_rules, attribute) =
-            Self::extract_formatting_info(prefs, categorized_unit, options)?;
+            Self::extract_formatting_info_unstable(provider, prefs, categorized_unit, options)?;
 
         let unit_attribute = DataMarkerAttributes::try_from_utf8(&attribute[..attribute.len()])
             .map_err(|_| DataError::custom("Failed to create a data marker"))?;
@@ -372,7 +403,7 @@ where
         <C as MeasureUnitCategory>::DataMarkerOutlier: icu_provider::DataMarker,
     {
         let (locale, decimal_formatter, plural_rules, attribute) =
-            Self::extract_formatting_info(prefs, categorized_unit, options)?;
+            Self::extract_formatting_info_unstable(provider, prefs, categorized_unit, options)?;
 
         let unit_attribute = DataMarkerAttributes::try_from_utf8(&attribute[..attribute.len()])
             .map_err(|_| DataError::custom("Failed to create a data marker"))?;
