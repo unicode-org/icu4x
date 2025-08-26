@@ -7,7 +7,8 @@
 //! Sample file:
 //! <https://github.com/unicode-org/cldr-json/blob/master/cldr-json/cldr-units-full/main/en/units.json>
 
-use icu_pattern::{PatternString, SinglePlaceholder};
+use icu::plurals::provider::PluralElementsPackedCow;
+use icu_pattern::{PatternString, SinglePlaceholder, SinglePlaceholderPattern};
 use serde::Deserialize;
 use std::collections::BTreeMap;
 
@@ -79,12 +80,7 @@ pub(crate) struct Patterns {
     pub(crate) other_compound_unit_pattern1: Option<String>,
 }
 
-impl TryFrom<&Patterns>
-    for icu::plurals::provider::PluralElementsPackedCow<
-        'static,
-        icu_pattern::SinglePlaceholderPattern,
-    >
-{
+impl TryFrom<&Patterns> for PluralElementsPackedCow<'static, SinglePlaceholderPattern> {
     type Error = DataError;
 
     fn try_from(unit_patterns: &Patterns) -> Result<Self, Self::Error> {
