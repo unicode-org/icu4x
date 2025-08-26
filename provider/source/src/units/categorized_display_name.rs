@@ -129,7 +129,7 @@ fn get_display_name_iter_ids_cached(
             let units_map = length_patterns
                 .categories
                 .get(category)
-                .ok_or(DataError::custom("Category not found"))?;
+                .ok_or(DataErrorKind::InvalidRequest.into_error())?;
             for (unit, patterns) in units_map {
                 if patterns.other.is_none() {
                     continue;
