@@ -46,6 +46,14 @@ use core::str::FromStr;
 /// ICU4X's Locale parsing does not allow for non-BCP-47-compatible locales [allowed by UTS 35 for backwards compatability][tr35-bcp].
 /// Furthermore, it currently does not allow for language tags to have more than three characters.
 ///
+/// # Serde
+///
+/// This type implements `serde::Serialize` and `serde::Deserialize` if the
+/// `"serde"` Cargo feature is enabled on the crate.
+///
+/// The value will be serialized as a string and parsed when deserialized.
+/// For tips on efficient storage and retrieval of locales, see [`crate::zerovec`].
+///
 /// # Examples
 ///
 /// Simple example:

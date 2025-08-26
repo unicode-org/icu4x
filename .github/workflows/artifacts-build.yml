@@ -746,6 +746,7 @@ jobs:
         with:
           files: '**'
           fail_on_unmatched_files: true
+          draft: true
           body: "`icu_capi` artifacts based on ref ${{ github.ref_name }}"
 
   gh-pages:
