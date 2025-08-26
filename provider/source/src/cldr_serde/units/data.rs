@@ -82,7 +82,7 @@ pub(crate) struct Patterns {
 impl TryFrom<&Patterns>
     for icu::plurals::provider::PluralElementsPackedCow<
         'static,
-        icu::pattern::SinglePlaceholderPattern,
+        icu_pattern::SinglePlaceholderPattern,
     >
 {
     type Error = DataError;
