@@ -10,7 +10,6 @@ use crate::SourceDataProvider;
 use icu::experimental::dimension::provider::units::display_name::{
     UnitsDisplayName, UnitsDisplayNameV1,
 };
-use icu::plurals::PluralElements;
 use icu_provider::prelude::*;
 use icu_provider::DataMarkerAttributes;
 
@@ -52,20 +51,7 @@ impl DataProvider<UnitsDisplayNameV1> for SourceDataProvider {
         Ok(DataResponse {
             metadata: Default::default(),
             payload: DataPayload::from_owned(UnitsDisplayName {
-                patterns: PluralElements::new(
-                    unit_patterns
-                        .other
-                        .as_deref()
-                        .ok_or_else(|| DataErrorKind::IdentifierNotFound.into_error())?,
-                )
-                .with_zero_value(unit_patterns.zero.as_deref())
-                .with_one_value(unit_patterns.one.as_deref())
-                .with_two_value(unit_patterns.two.as_deref())
-                .with_few_value(unit_patterns.few.as_deref())
-                .with_many_value(unit_patterns.many.as_deref())
-                .with_explicit_one_value(unit_patterns.explicit_one.as_deref())
-                .with_explicit_zero_value(unit_patterns.explicit_zero.as_deref())
-                .into(),
+                patterns: unit_patterns.try_into().map_err(DataError::from)?,
             }),
         })
     }

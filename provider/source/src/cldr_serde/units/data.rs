@@ -11,6 +11,10 @@ use icu_pattern::{PatternString, SinglePlaceholder};
 use serde::Deserialize;
 use std::collections::BTreeMap;
 
+// Import the types needed for the TryFrom implementation
+use icu::plurals::PluralElements;
+use icu_provider::prelude::*;
+
 /// Represents various patterns for a unit according to plural rules.
 /// The plural rule categories are: zero, one, two, few, many and other.
 /// For more details, refer to the technical report:
@@ -73,6 +77,33 @@ pub(crate) struct Patterns {
 
     #[serde(rename = "compoundUnitPattern1-count-other")]
     pub(crate) other_compound_unit_pattern1: Option<String>,
+}
+
+impl TryFrom<&Patterns>
+    for icu::plurals::provider::PluralElementsPackedCow<
+        'static,
+        icu::pattern::SinglePlaceholderPattern,
+    >
+{
+    type Error = DataError;
+
+    fn try_from(unit_patterns: &Patterns) -> Result<Self, Self::Error> {
+        let other_pattern = unit_patterns.other.as_deref().ok_or_else(|| {
+            DataErrorKind::IdentifierNotFound
+                .into_error()
+                .with_debug_context(unit_patterns)
+        })?;
+
+        Ok(PluralElements::new(other_pattern)
+            .with_zero_value(unit_patterns.zero.as_deref())
+            .with_one_value(unit_patterns.one.as_deref())
+            .with_two_value(unit_patterns.two.as_deref())
+            .with_few_value(unit_patterns.few.as_deref())
+            .with_many_value(unit_patterns.many.as_deref())
+            .with_explicit_one_value(unit_patterns.explicit_one.as_deref())
+            .with_explicit_zero_value(unit_patterns.explicit_zero.as_deref())
+            .into())
+    }
 }
 
 #[derive(PartialEq, Debug, Deserialize)]
