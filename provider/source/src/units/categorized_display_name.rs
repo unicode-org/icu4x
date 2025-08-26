@@ -203,3 +203,83 @@ impl_units_display_name_provider!(UnitsNameMassOutlierV1, UnitType::Outlier, "ma
 impl_units_display_name_provider!(UnitsNameVolumeCoreV1, UnitType::Core, "volume");
 impl_units_display_name_provider!(UnitsNameVolumeExtendedV1, UnitType::Extended, "volume");
 impl_units_display_name_provider!(UnitsNameVolumeOutlierV1, UnitType::Outlier, "volume");
+
+#[test]
+fn test_basic() {
+    use icu::locale::langid;
+    use icu::plurals::PluralRules;
+    use icu_provider::prelude::*;
+    use writeable::assert_writeable_eq;
+
+    let provider = SourceDataProvider::new_testing();
+
+    let us_locale_long_meter: DataPayload<UnitsNameLengthExtendedV1> = provider
+        .load(DataRequest {
+            id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                DataMarkerAttributes::from_str_or_panic("long-meter"),
+                &langid!("en").into(),
+            ),
+            ..Default::default()
+        })
+        .unwrap()
+        .payload;
+
+    let units_us = us_locale_long_meter.get().to_owned();
+
+    let en_rules = PluralRules::try_new_cardinal_unstable(&provider, langid!("en").into()).unwrap();
+    let long = units_us.patterns.get(1.into(), &en_rules).interpolate([1]);
+    assert_writeable_eq!(long, "1 meter");
+
+    let us_locale_short_meter: DataPayload<UnitsNameLengthExtendedV1> = provider
+        .load(DataRequest {
+            id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                DataMarkerAttributes::from_str_or_panic("short-meter"),
+                &langid!("en").into(),
+            ),
+            ..Default::default()
+        })
+        .unwrap()
+        .payload;
+
+    let units_us_short = us_locale_short_meter.get().to_owned();
+    let short = units_us_short
+        .patterns
+        .get(5.into(), &en_rules)
+        .interpolate([5]);
+    assert_writeable_eq!(short, "5 m");
+
+    let ar_eg_locale: DataPayload<UnitsNameLengthCoreV1> = provider
+        .load(DataRequest {
+            id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                DataMarkerAttributes::from_str_or_panic("long-meter"),
+                &langid!("ar-EG").into(),
+            ),
+            ..Default::default()
+        })
+        .unwrap()
+        .payload;
+
+    let ar_eg_units = ar_eg_locale.get().to_owned();
+    let ar_rules = PluralRules::try_new_cardinal_unstable(&provider, langid!("ar").into()).unwrap();
+    let long = ar_eg_units
+        .patterns
+        .get(1.into(), &ar_rules)
+        .interpolate([1]);
+    assert_writeable_eq!(long, "متر");
+
+    let fr_locale: DataPayload<UnitsNameLengthCoreV1> = provider
+        .load(DataRequest {
+            id: DataIdentifierBorrowed::for_marker_attributes_and_locale(
+                DataMarkerAttributes::from_str_or_panic("short-meter"),
+                &langid!("fr").into(),
+            ),
+            ..Default::default()
+        })
+        .unwrap()
+        .payload;
+
+    let fr_units = fr_locale.get().to_owned();
+    let fr_rules = PluralRules::try_new_cardinal_unstable(&provider, langid!("fr").into()).unwrap();
+    let short = fr_units.patterns.get(5.into(), &fr_rules).interpolate([5]);
+    assert_writeable_eq!(short, "5 m");
+}
