@@ -208,6 +208,11 @@ impl Julian {
     pub fn new() -> Self {
         Self
     }
+
+    /// Returns the date of (Orthodox) Easter in the given year.
+    pub fn easter(year: i32) -> Date<Self> {
+        Date::from_rata_die(calendrical_calculations::julian::easter(year), Self)
+    }
 }
 
 impl Date<Julian> {
