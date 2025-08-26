@@ -35,6 +35,7 @@ prefs_convert!(UnitsFormatterPreferences, DecimalFormatterPreferences, {
 });
 prefs_convert!(UnitsFormatterPreferences, PluralRulesPreferences);
 
+// TODO(#6900): Remove the units formatter after migrating all the code to the categorized formatter.
 /// A formatter for measurement unit values.
 ///
 /// [`UnitsFormatter`] supports:
