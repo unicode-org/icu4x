@@ -126,10 +126,11 @@ fn get_display_name_iter_ids_cached(
                 }
             };
 
-            let units_map = length_patterns
-                .categories
-                .get(category)
-                .ok_or(DataErrorKind::InvalidRequest.into_error())?;
+            let units_map = length_patterns.categories.get(category).ok_or(
+                DataErrorKind::InvalidRequest
+                    .into_error()
+                    .with_debug_context(category),
+            )?;
             for (unit, patterns) in units_map {
                 if patterns.other.is_none() {
                     continue;

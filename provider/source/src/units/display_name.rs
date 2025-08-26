@@ -17,11 +17,11 @@ impl DataProvider<UnitsDisplayNameV1> for SourceDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<UnitsDisplayNameV1>, DataError> {
         self.check_req::<UnitsDisplayNameV1>(req)?;
 
-        let (length, unit) = req
-            .id
-            .marker_attributes
-            .split_once('-')
-            .ok_or_else(|| DataErrorKind::InvalidRequest.into_error())?;
+        let (length, unit) = req.id.marker_attributes.split_once('-').ok_or_else(|| {
+            DataErrorKind::InvalidRequest
+                .into_error()
+                .with_req(UnitsDisplayNameV1::INFO, req)
+        })?;
 
         let units_format_data: &cldr_serde::units::data::Resource = self
             .cldr()?
