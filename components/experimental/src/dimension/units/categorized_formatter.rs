@@ -26,6 +26,14 @@ use smallvec::SmallVec;
 
 extern crate alloc;
 
+/// Type alias for the formatting info needed by the formatter constructors.
+type FormattingInfo = (
+    DataLocale,
+    DecimalFormatter,
+    PluralRules,
+    SmallVec<[u8; 32]>,
+);
+
 define_preferences!(
     /// The preferences for units formatting.
     [Copy]
@@ -105,19 +113,11 @@ where
     /// Extracts the needed data for the provider.
     ///
     /// This is a helper function for the constructors to avoid writing the same code multiple times.
-    fn extract_needed_data(
+    fn extract_formatting_info(
         prefs: CategorizedUnitsFormatterPreferences,
         categorized_unit: CategorizedMeasureUnit<C>,
         options: super::options::UnitsFormatterOptions,
-    ) -> Result<
-        (
-            DataLocale,
-            DecimalFormatter,
-            PluralRules,
-            SmallVec<[u8; 32]>,
-        ),
-        DataError,
-    > {
+    ) -> Result<FormattingInfo, DataError> {
         let locale = C::DataMarkerCore::make_locale(prefs.locale_preferences);
         let decimal_formatter: DecimalFormatter =
             DecimalFormatter::try_new((&prefs).into(), DecimalFormatterOptions::default())?;
@@ -145,7 +145,7 @@ where
         crate::provider::Baked: DataProvider<C::DataMarkerCore>,
     {
         let (locale, decimal_formatter, plural_rules, attribute) =
-            Self::extract_needed_data(prefs, categorized_unit, options)?;
+            Self::extract_formatting_info(prefs, categorized_unit, options)?;
         let unit_attribute = DataMarkerAttributes::try_from_utf8(&attribute[..attribute.len()])
             .map_err(|_| DataError::custom("Failed to create a data marker"))?;
 
@@ -168,7 +168,7 @@ where
         })
     }
 
-    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new_core)]
     pub fn try_new_core_unstable<D>(
         provider: &D,
         prefs: CategorizedUnitsFormatterPreferences,
@@ -184,7 +184,7 @@ where
         <C as MeasureUnitCategory>::DataMarkerCore: icu_provider::DataMarker,
     {
         let (locale, decimal_formatter, plural_rules, attribute) =
-            Self::extract_needed_data(prefs, categorized_unit, options)?;
+            Self::extract_formatting_info(prefs, categorized_unit, options)?;
 
         let unit_attribute = DataMarkerAttributes::try_from_utf8(&attribute[..attribute.len()])
             .map_err(|_| DataError::custom("Failed to create a data marker"))?;
@@ -226,7 +226,7 @@ where
         crate::provider::Baked: DataProvider<C::DataMarkerExtended>,
     {
         let (locale, decimal_formatter, plural_rules, attribute) =
-            Self::extract_needed_data(prefs, categorized_unit, options)?;
+            Self::extract_formatting_info(prefs, categorized_unit, options)?;
         let unit_attribute = DataMarkerAttributes::try_from_utf8(&attribute[..attribute.len()])
             .map_err(|_| DataError::custom("Failed to create a data marker"))?;
 
@@ -256,7 +256,7 @@ where
         })
     }
 
-    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
+    #[doc = icu_provider::gen_buffer_unstable_docs!(UNSTABLE, Self::try_new_extended)]
     pub fn try_new_extended_unstable<D>(
         provider: &D,
         prefs: CategorizedUnitsFormatterPreferences,
@@ -274,7 +274,7 @@ where
         <C as MeasureUnitCategory>::DataMarkerExtended: icu_provider::DataMarker,
     {
         let (locale, decimal_formatter, plural_rules, attribute) =
-            Self::extract_needed_data(prefs, categorized_unit, options)?;
+            Self::extract_formatting_info(prefs, categorized_unit, options)?;
 
         let unit_attribute = DataMarkerAttributes::try_from_utf8(&attribute[..attribute.len()])
             .map_err(|_| DataError::custom("Failed to create a data marker"))?;
