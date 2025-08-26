@@ -98,6 +98,10 @@ impl Debug for TzZoneData<'_> {
     }
 }
 
+/// A way to index into ZoneInfo64 without performing string comparisons each time
+#[derive(Clone, Copy, PartialEq, Eq, Debug)]
+pub struct ZoneIndex(usize);
+
 impl<'a> ZoneInfo64<'a> {
     pub fn try_from_u32s(resb: &'a [u32]) -> Result<Self, BinaryDeserializerError> {
         crate::deserialize::deserialize(resb)
@@ -118,11 +122,32 @@ impl<'a> ZoneInfo64<'a> {
         matches!(zone, &TzZone::Int(_))
     }
 
+    /// Get the Zone object corresponding to an iana identifier
     pub fn get(&'a self, iana: &str) -> Option<Zone<'a>> {
+        self.get_indexed(self.index_for(iana)?)
+    }
+
+    /// Lookup the ZoneIndex for an iana string, if any
+    ///
+    /// This is a power user API for users who wish to avoid the costs
+    /// of repeated IANA lookup, or wish to persist timezones as
+    /// a Copy type.
+    pub fn index_for(&self, iana: &str) -> Option<ZoneIndex> {
         let idx = self
             .names
             .binary_search_by(|&n| n.chars().cmp(iana.chars()))
             .ok()?;
+
+        Some(ZoneIndex(idx))
+    }
+
+    /// Get the Zone object corresponding to an index
+    ///
+    /// This is a power user API for users who wish to avoid the costs
+    /// of repeated IANA lookup, or wish to persist timezones as
+    /// a Copy type.
+    pub fn get_indexed(&'a self, index: ZoneIndex) -> Option<Zone<'a>> {
+        let idx = index.0;
 
         #[expect(clippy::indexing_slicing)] // binary search
         let name = self.names[idx];
