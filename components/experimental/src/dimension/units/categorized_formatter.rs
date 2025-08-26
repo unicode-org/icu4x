@@ -82,7 +82,7 @@ where
         ) -> error: DataError,
         functions: [
             try_new_core: skip,
-            try_new_with_buffer_provider,
+            try_new_core_with_buffer_provider,
             try_new_core_unstable,
             Self
         ]
@@ -96,7 +96,7 @@ where
         ) -> error: DataError,
         functions: [
             try_new_extended: skip,
-            try_new_with_buffer_provider,
+            try_new_extended_with_buffer_provider,
             try_new_extended_unstable,
             Self
         ]
@@ -136,7 +136,7 @@ where
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
-    pub fn try_core_new(
+    pub fn try_new_core(
         prefs: CategorizedUnitsFormatterPreferences,
         categorized_unit: CategorizedMeasureUnit<C>,
         options: super::options::UnitsFormatterOptions,
@@ -216,7 +216,7 @@ where
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     #[cfg(feature = "compiled_data")]
-    pub fn try_extended_new(
+    pub fn try_new_extended(
         prefs: CategorizedUnitsFormatterPreferences,
         categorized_unit: CategorizedMeasureUnit<C>,
         options: super::options::UnitsFormatterOptions,
@@ -364,7 +364,7 @@ mod tests {
         ];
 
         for (locale, categorized_unit, value_str, options, expected) in test_cases {
-            let formatter = CategorizedFormatter::<Area>::try_core_new(
+            let formatter = CategorizedFormatter::<Area>::try_new_core(
                 locale.clone().into(),
                 categorized_unit,
                 options,
@@ -428,7 +428,7 @@ mod tests {
         ];
 
         for (locale, categorized_unit, value_str, options, expected) in test_cases {
-            let formatter = CategorizedFormatter::<Area>::try_extended_new(
+            let formatter = CategorizedFormatter::<Area>::try_new_extended(
                 locale.clone().into(),
                 categorized_unit,
                 options,
@@ -484,7 +484,7 @@ mod tests {
         ];
 
         for (locale, categorized_unit, value_str, options, expected) in test_cases {
-            let formatter = CategorizedFormatter::<Duration>::try_core_new(
+            let formatter = CategorizedFormatter::<Duration>::try_new_core(
                 locale.into(),
                 categorized_unit,
                 options,
