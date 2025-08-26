@@ -8,45 +8,6 @@
       "metazoneInfo": {
         "timezone": {
           "Africa": {
-            "Casablanca": [
-              {
-                "usesMetazone": {
-                  "_mzone": "Europe_Western",
-                  "_to": "2018-10-28 02:00",
-                  "_stdOffset": "+00",
-                  "_dstOffset": "+01"
-                }
-              },
-              {
-                "usesMetazone": {
-                  "_from": "2018-10-28 02:00",
-                  "_stdOffset": "+00",
-                  "_dstOffset": "+01"
-                }
-              }
-            ],
-            "El_Aaiun": [
-              {
-                "usesMetazone": {
-                  "_mzone": "Africa_FarWestern",
-                  "_to": "1976-04-14 01:00"
-                }
-              },
-              {
-                "usesMetazone": {
-                  "_mzone": "Europe_Western",
-                  "_from": "1976-04-14 01:00",
-                  "_to": "2018-10-28 02:00"
-                }
-              },
-              {
-                "usesMetazone": {
-                  "_from": "2018-10-28 02:00",
-                  "_stdOffset": "+00",
-                  "_dstOffset": "+01"
-                }
-              }
-            ],
             "Monrovia": [
               {
                 "usesMetazone": {
@@ -79,7 +40,7 @@
                 "usesMetazone": {
                   "_mzone": "Africa_Western",
                   "_from": "1994-03-20 22:00",
-                  "_to": "2017-09-03 01:00",
+                  "_to": "2017-10-23 22:00",
                   "_stdOffset": "+01",
                   "_dstOffset": "+02"
                 }
@@ -87,7 +48,7 @@
               {
                 "usesMetazone": {
                   "_mzone": "Africa_Central",
-                  "_from": "2017-09-03 01:00"
+                  "_from": "2017-10-23 22:00"
                 }
               }
             ]
