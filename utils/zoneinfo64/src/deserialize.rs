@@ -30,6 +30,10 @@ pub(crate) fn deserialize<'a>(resb: &'a [u32]) -> Result<ZoneInfo64<'a>, BinaryD
     let raw_zones = zones;
     let mut zones = Vec::with_capacity(raw_zones.len());
 
+    if zones.capacity() == 0 {
+        return Err(BinaryDeserializerError::unknown("at least one zone is required"));
+    }
+
     for zone in &raw_zones {
         match *zone {
             TzZoneRaw::Int(i) => {

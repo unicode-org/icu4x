@@ -7,7 +7,7 @@ use calendrical_calculations::iso;
 use calendrical_calculations::rata_die::RataDie;
 use icu_time::zone::UtcOffset;
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq)]
 pub(crate) struct Rule<'a> {
     /// The year the rule starts applying
     pub(crate) start_year: i32,
@@ -16,7 +16,7 @@ pub(crate) struct Rule<'a> {
     pub(crate) inner: &'a TzRule,
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub(crate) struct TzRule {
     /// The amount of seconds to add to standard_offset_seconds
     /// to get the rule offset
@@ -27,7 +27,7 @@ pub(crate) struct TzRule {
     end: TzRuleDate,
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 struct TzRuleDate {
     /// A 1-indexed day number
     day: u8,
@@ -43,7 +43,7 @@ struct TzRuleDate {
     mode: RuleMode,
 }
 
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Copy, Clone, PartialEq)]
 enum TimeMode {
     /// {transition_time} is local wall clock time in the time zone
     /// *before* the transition

@@ -25,13 +25,16 @@ const SECONDS_IN_UTC_DAY: i64 = 24 * 60 * 60;
 
 #[derive(Debug)]
 pub struct ZoneInfo64<'a> {
+    // Invariant: non-empty
     zones: Vec<TzZone<'a>>,
+    // Invariant: same size as zones
     names: Vec<&'a PotentialUtf16>,
     rules: Vec<TzRule>,
+    // Invariant: same size as zones
     regions: Vec<Region>,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 enum TzZone<'a> {
     // The rule data is boxed here due to the large size difference between the
     // `TzDataRuleData` struct and `u32`. It's not strictly necessary.
@@ -39,6 +42,7 @@ enum TzZone<'a> {
     Int(u32),
 }
 
+#[derive(Clone)]
 struct TzZoneData<'a> {
     /// Transitions before the epoch of i32::MIN
     trans_pre32: &'a [(i32, i32)],
@@ -117,6 +121,10 @@ impl<'a> ZoneInfo64<'a> {
 
         matches!(zone, &TzZone::Int(_))
     }
+    #[cfg(test)]
+    fn iter(&'a self) -> impl Iterator<Item = Zone<'a>> {
+        (0..self.names.len()).map(move |i| Zone::from_raw_unchecked(RawZone(i as u16), self))
+    }
 
     pub fn get(&'a self, iana: &str) -> Option<Zone<'a>> {
         let idx = self
@@ -124,8 +132,20 @@ impl<'a> ZoneInfo64<'a> {
             .binary_search_by(|&n| n.chars().cmp(iana.chars()))
             .ok()?;
 
-        // SAFETY: idx just obtained by binary search
-        Some(unsafe { Zone::from_raw_unchecked(RawZone(idx as u16), self) })
+        #[expect(clippy::indexing_slicing)] // just validated
+        let resolved_idx = if let TzZone::Int(i) = self.zones[idx] {
+            i as u16
+        } else {
+            idx as u16
+        };
+
+        // idx is a valid index into info.names by binary search
+        // zone_idx is a valid index into info.zones by the invariant that links don't point to links
+        Some(Zone {
+            idx: idx as u16,
+            resolved_idx,
+            info: self,
+        })
     }
 }
 
@@ -148,30 +168,23 @@ impl<'a> Zone<'a> {
 
     /// Reassociates the [`RawZone`] with a [`ZoneInfo64`].
     ///
-    /// This is guaranteed to return `Some` if the [`RawZone`] was obtained from a [`Zone`] that
-    /// was returned by the same [`ZoneInfo64`]. Otherwise it might return `None` or an incorrect
-    /// zone.
-    pub fn from_raw(RawZone(idx): RawZone, info: &'a ZoneInfo64<'a>) -> Option<Self> {
-        // SAFETY: check is right there
-        ((idx as usize) < info.zones.len())
-            .then(|| unsafe { Self::from_raw_unchecked(RawZone(idx), info) })
-    }
-
-    /// Reassociates the [`RawZone`] with a [`ZoneInfo64`].
-    ///
-    /// # SAFETY
-    /// `info` needs to be the same [`ZoneInfo64`] that the [`RawZone`] was obtained from.
-    pub unsafe fn from_raw_unchecked(RawZone(idx): RawZone, info: &'a ZoneInfo64<'a>) -> Self {
-        let resolved_idx = if let &TzZone::Int(i) = info.zones.get_unchecked(idx as usize) {
+    /// Returns garbage if the [`RawZone`] was obtained from a [`Zone`] that
+    /// was returned by a different [`ZoneInfo64`] than `info`.
+    pub fn from_raw_unchecked(RawZone(idx): RawZone, info: &'a ZoneInfo64<'a>) -> Self {
+        let idx = core::cmp::min(info.zones.len() - 1, idx as usize);
+        #[expect(clippy::indexing_slicing)]
+        // zones.len() is a valid index by the invariant that zones is non-empty, and everything
+        // below is trivially
+        let resolved_idx = if let TzZone::Int(i) = info.zones[idx] {
             i as u16
         } else {
-            idx
+            idx as u16
         };
 
         // idx is a valid index into info.names by safety invariant
         // zone_idx is a valid index into info.zones by the invariant that links don't point to links
         Self {
-            idx,
+            idx: idx as u16,
             resolved_idx,
             info,
         }
@@ -186,6 +199,21 @@ impl Debug for Zone<'_> {
             .field("name", &self.name().chars().collect::<String>())
             .field("region", &self.region())
             .finish()
+    }
+}
+
+impl PartialEq for Zone<'_> {
+    fn eq(&self, other: &Self) -> bool {
+        self.name() == other.name()
+            && self.region() == other.region()
+            && self.simple().trans == other.simple().trans
+            && self.simple().trans_post32 == other.simple().trans_post32
+            && self.simple().trans_pre32 == other.simple().trans_pre32
+            && self.simple().type_map == other.simple().type_map
+            && self.simple().type_offsets == other.simple().type_offsets
+            && self.simple().links == other.simple().links
+            && self.simple().final_rule(&self.info.rules)
+                == other.simple().final_rule(&other.info.rules)
     }
 }
 
@@ -830,6 +858,37 @@ mod tests {
                         .next_transition(transitions.last().unwrap().since, require_offset_change),
                     None
                 );
+            }
+        }
+    }
+
+    #[test]
+    fn test_raw() {
+        // non-alias zone without a rule
+        let simple_zone = TZDB
+            .zones
+            .iter()
+            .position(|z| match z {
+                TzZone::Table(z) => z.final_rule_offset_year.is_none(),
+                _ => false,
+            })
+            .unwrap();
+
+        let other_tzdb = ZoneInfo64 {
+            zones: vec![TZDB.zones[simple_zone].clone()],
+            names: vec![TZDB.names[simple_zone]],
+            rules: vec![],
+            regions: vec![TZDB.regions[simple_zone]],
+        };
+
+        for zone in TZDB.iter() {
+            // Rountrips if we observe the precondition
+            assert_eq!(zone, Zone::from_raw_unchecked(zone.into_raw(), &TZDB));
+
+            // If we use a different ZoneInfo64, we get garbage (expect for that
+            // one zone where the garbage matches)
+            if zone.idx as usize != simple_zone {
+                assert_ne!(zone, Zone::from_raw_unchecked(zone.into_raw(), &other_tzdb));
             }
         }
     }
