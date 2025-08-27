@@ -454,9 +454,9 @@ mod tests {
     fn test_last_transition_not_in_rule_year() {
         for chrono in crate::tests::time_zones_to_test() {
             let iana = chrono.name();
-            let zoneinfo64 = TZDB.get(iana).unwrap();
+            let zoneinfo64 = TZDB.get(iana).unwrap().simple();
 
-            if let Some(rule) = zoneinfo64.final_rule {
+            if let Some(rule) = zoneinfo64.final_rule(&TZDB.rules) {
                 let transition = zoneinfo64.transition_offset_at(zoneinfo64.transition_count() - 1);
                 let utc_year =
                     iso::iso_year_from_fixed(EPOCH + (transition.since / SECONDS_IN_UTC_DAY))
@@ -476,9 +476,9 @@ mod tests {
     fn test_rule_stays_inside_year() {
         for chrono in crate::tests::time_zones_to_test() {
             let iana = chrono.name();
-            let zoneinfo64 = TZDB.get(iana).unwrap();
+            let zoneinfo64 = TZDB.get(iana).unwrap().simple();
 
-            if let Some(rule) = zoneinfo64.final_rule {
+            if let Some(rule) = zoneinfo64.final_rule(&TZDB.rules) {
                 let max_delta = core::cmp::max(
                     rule.standard_offset_seconds.unsigned_abs(),
                     (rule.standard_offset_seconds + rule.inner.additional_offset_secs)
@@ -508,9 +508,9 @@ mod tests {
     fn test_rule_offset_positive() {
         for chrono in crate::tests::time_zones_to_test() {
             let iana = chrono.name();
-            let zoneinfo64 = TZDB.get(iana).unwrap();
+            let zoneinfo64 = TZDB.get(iana).unwrap().simple();
 
-            if let Some(rule) = zoneinfo64.final_rule {
+            if let Some(rule) = zoneinfo64.final_rule(&TZDB.rules) {
                 assert!(
                     rule.inner.additional_offset_secs > 0,
                     "additional offset should be positive, is {} ({iana})",
@@ -524,9 +524,9 @@ mod tests {
     fn test_offset_before_rule_is_second_offset() {
         for chrono in crate::tests::time_zones_to_test() {
             let iana = chrono.name();
-            let zoneinfo64 = TZDB.get(iana).unwrap();
+            let zoneinfo64 = TZDB.get(iana).unwrap().simple();
 
-            if let Some(rule) = zoneinfo64.final_rule {
+            if let Some(rule) = zoneinfo64.final_rule(&TZDB.rules) {
                 let last_transition =
                     zoneinfo64.transition_offset_at(zoneinfo64.transition_count() - 1);
 

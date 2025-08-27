@@ -124,47 +124,27 @@ impl<'a> ZoneInfo64<'a> {
             .binary_search_by(|&n| n.chars().cmp(iana.chars()))
             .ok()?;
 
-        #[expect(clippy::indexing_slicing)] // binary search
-        let name = self.names[idx];
-
-        #[expect(clippy::indexing_slicing)] // regions and names have the same length
-        let region = self.regions[idx];
-        #[expect(clippy::indexing_slicing)] // zones and names have the same length
-        let mut zone = &self.zones[idx];
-
-        #[expect(clippy::indexing_slicing)] // TzZone::Ints are validated as indices
-        if let &TzZone::Int(i) = zone {
-            zone = &self.zones[i as usize];
-        }
-        let TzZone::Table(ref zone) = zone else {
-            unreachable!() // data validate to have at most one alias jump
-        };
-
-        #[expect(clippy::indexing_slicing)] // rules indices are all valid
-        let final_rule = zone
-            .final_rule_offset_year
-            .map(|(idx, offset, year)| (&self.rules[idx as usize], offset, year))
-            .map(|(inner, offset_seconds, start_year)| Rule {
-                start_year,
-                standard_offset_seconds: offset_seconds,
-                inner,
-            });
-
-        Some(Zone {
-            simple: zone.as_ref(),
-            final_rule,
-            region,
-            name,
-        })
+        // idx is a valid index into info.names by binary search
+        Some(Zone { idx, info: self })
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Clone, Copy)]
 pub struct Zone<'a> {
-    simple: &'a TzZoneData<'a>,
-    final_rule: Option<Rule<'a>>,
-    pub name: &'a PotentialUtf16,
-    pub region: Region,
+    // a valid index into info.names
+    idx: usize,
+    info: &'a ZoneInfo64<'a>,
+}
+
+impl Debug for Zone<'_> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("Zone")
+            .field("simple", self.simple())
+            .field("rule", &self.simple().final_rule(&self.info.rules))
+            .field("name", &self.name().chars().collect::<String>())
+            .field("region", &self.region())
+            .finish()
+    }
 }
 
 /// A resolved offset for a given point in time
@@ -209,7 +189,7 @@ pub enum PossibleOffset {
     None,
 }
 
-impl Zone<'_> {
+impl<'a> TzZoneData<'a> {
     /// Returns the index of the previous transition.
     ///
     /// As this can be -1, it returns an isize.
@@ -217,8 +197,7 @@ impl Zone<'_> {
     /// Does not consider rule transitions
     fn prev_transition_offset_idx(&self, seconds_since_epoch: i64) -> isize {
         if seconds_since_epoch < i32::MIN as i64 {
-            self.simple
-                .trans_pre32
+            self.trans_pre32
                 .binary_search(&(
                     (seconds_since_epoch >> 32) as i32,
                     (seconds_since_epoch & 0xFFFFFFFF) as i32,
@@ -227,19 +206,17 @@ impl Zone<'_> {
                 // binary_search returns the index of the next (higher) transition, so we subtract one
                 .unwrap_or_else(|i| i as isize - 1)
         } else if seconds_since_epoch <= i32::MAX as i64 {
-            self.simple.trans_pre32.len() as isize
+            self.trans_pre32.len() as isize
                 + self
-                    .simple
                     .trans
                     .binary_search(&(seconds_since_epoch as i32))
                     .map(|i| i as isize)
                     // binary_search returns the index of the next (higher) transition, so we subtract one
                     .unwrap_or_else(|i| i as isize - 1)
         } else {
-            self.simple.trans_pre32.len() as isize
-                + self.simple.trans.len() as isize
+            self.trans_pre32.len() as isize
+                + self.trans.len() as isize
                 + self
-                    .simple
                     .trans_post32
                     .binary_search(&(
                         (seconds_since_epoch >> 32) as i32,
@@ -252,7 +229,7 @@ impl Zone<'_> {
     }
 
     fn transition_count(&self) -> isize {
-        self.simple.type_map.len() as isize
+        self.type_map.len() as isize
     }
 
     /// Gets the information for the transition offset at idx.
@@ -263,9 +240,9 @@ impl Zone<'_> {
     /// Does not handle rule transitions
     fn transition_offset_at(&self, idx: isize) -> Transition {
         // before first transition don't use `type_map`, just the first entry in `type_offsets`
-        if idx < 0 || self.simple.type_map.is_empty() {
+        if idx < 0 || self.type_map.is_empty() {
             #[expect(clippy::unwrap_used)] // type_offsets non-empty by invariant
-            let &(standard, rule_additional) = self.simple.type_offsets.first().unwrap();
+            let &(standard, rule_additional) = self.type_offsets.first().unwrap();
             return Transition {
                 since: i64::MIN,
                 offset: UtcOffset::from_seconds_unchecked(standard + rule_additional),
@@ -281,18 +258,16 @@ impl Zone<'_> {
 
         #[expect(clippy::indexing_slicing)]
         // type_map has length sum(trans*), and type_map values are validated to be valid indices in type_offsets
-        let (standard, rule_additional) =
-            self.simple.type_offsets[self.simple.type_map[idx] as usize];
+        let (standard, rule_additional) = self.type_offsets[self.type_map[idx] as usize];
 
         #[expect(clippy::indexing_slicing)] // by guards or invariant
-        let since = if idx < self.simple.trans_pre32.len() {
-            let (hi, lo) = self.simple.trans_pre32[idx];
+        let since = if idx < self.trans_pre32.len() {
+            let (hi, lo) = self.trans_pre32[idx];
             ((hi as u32 as u64) << 32 | (lo as u32 as u64)) as i64
-        } else if idx - self.simple.trans_pre32.len() < self.simple.trans.len() {
-            self.simple.trans[idx - self.simple.trans_pre32.len()] as i64
+        } else if idx - self.trans_pre32.len() < self.trans.len() {
+            self.trans[idx - self.trans_pre32.len()] as i64
         } else {
-            let (hi, lo) = self.simple.trans_post32
-                [idx - self.simple.trans_pre32.len() - self.simple.trans.len()];
+            let (hi, lo) = self.trans_post32[idx - self.trans_pre32.len() - self.trans.len()];
             ((hi as u32 as u64) << 32 | (lo as u32 as u64)) as i64
         };
 
@@ -301,6 +276,34 @@ impl Zone<'_> {
             offset: UtcOffset::from_seconds_unchecked(standard + rule_additional),
             rule_applies: rule_additional > 0,
         }
+    }
+
+    fn final_rule(&self, rules: &'a [TzRule]) -> Option<Rule<'a>> {
+        #[expect(clippy::indexing_slicing)] // rules indices are all valid
+        self.final_rule_offset_year
+            .map(|(idx, standard_offset_seconds, start_year)| Rule {
+                start_year,
+                standard_offset_seconds,
+                inner: &rules[idx as usize],
+            })
+    }
+}
+
+impl<'a> Zone<'a> {
+    fn simple(&self) -> &'a TzZoneData<'a> {
+        #[expect(clippy::indexing_slicing)]
+        // idx is a valid index into info.names, which has the same length as info.zones
+        let mut zone = &self.info.zones[self.idx];
+
+        #[expect(clippy::indexing_slicing)] // TzZone::Ints are validated as indices
+        if let &TzZone::Int(i) = zone {
+            zone = &self.info.zones[i as usize];
+        }
+        let TzZone::Table(ref zone) = zone else {
+            unreachable!() // data validated to have at most one alias jump
+        };
+
+        zone
     }
 
     /// Get the possible offsets for a local datetime.
@@ -321,7 +324,16 @@ impl Zone<'_> {
             * SECONDS_IN_UTC_DAY
             + ((hour as i64 * 60 + minute as i64) * 60 + second as i64);
 
-        let rule = self.final_rule.filter(|rule| year >= rule.start_year);
+        let simple = self.simple();
+        let rule = simple
+            .final_rule_offset_year
+            .filter(|&(_, _, start_year)| year >= start_year)
+            .map(|(idx, standard_offset_seconds, start_year)| Rule {
+                    start_year,
+                    standard_offset_seconds,
+                    #[expect(clippy::indexing_slicing)] // rules indices are all valid
+                    inner: &self.info.rules[idx as usize],
+                });
         let mut idx = 0;
 
         // Compute the candidate transition and the offset that was used before the transition (which is
@@ -333,7 +345,7 @@ impl Zone<'_> {
             (Some(before), candidate)
         } else {
             // Pretend date time is UTC to get a candidate
-            idx = self.prev_transition_offset_idx(seconds_since_local_epoch);
+            idx = simple.prev_transition_offset_idx(seconds_since_local_epoch);
 
             // We use the transition before the "timestamp" as the first candidate.
             //
@@ -342,8 +354,8 @@ impl Zone<'_> {
             // and we know that prior transitions are far enough away that there is no chance of their
             // wall times overlapping (`test_transition_local_times_do_not_overlap`)
             (
-                (idx >= 0).then(|| self.transition_offset_at(idx - 1).into()),
-                self.transition_offset_at(idx),
+                (idx >= 0).then(|| simple.transition_offset_at(idx - 1).into()),
+                simple.transition_offset_at(idx),
             )
         };
 
@@ -382,7 +394,7 @@ impl Zone<'_> {
             Some(rule.transition(year, day_before_year, true).1)
         } else {
             // We use the transition after the "timestamp" as the second candidate.
-            (idx + 1 < self.transition_count()).then(|| self.transition_offset_at(idx + 1))
+            (idx + 1 < simple.transition_count()).then(|| simple.transition_offset_at(idx + 1))
         };
 
         if let Some(second_candidate) = second_candidate {
@@ -418,17 +430,18 @@ impl Zone<'_> {
 
     /// Get the offset for a timestamp.
     pub fn for_timestamp(&self, seconds_since_epoch: i64) -> Offset {
-        let idx = self.prev_transition_offset_idx(seconds_since_epoch);
+        let simple = self.simple();
+        let idx = simple.prev_transition_offset_idx(seconds_since_epoch);
         // If the previous transition is the last one then we need to check
         // against the rule
-        if idx == self.transition_count() - 1 {
-            if let Some(rule) = self.final_rule {
+        if idx == simple.transition_count() - 1 {
+            if let Some(rule) = simple.final_rule(&self.info.rules) {
                 if let Some(resolved) = rule.for_timestamp(seconds_since_epoch) {
                     return resolved;
                 }
             }
         }
-        self.transition_offset_at(idx).into()
+        simple.transition_offset_at(idx).into()
     }
 
     /// Returns the latest transition with a `since` field
@@ -448,7 +461,8 @@ impl Zone<'_> {
         seconds_exact: bool,
         require_offset_change: bool,
     ) -> Option<Transition> {
-        let mut idx = self.prev_transition_offset_idx(seconds_since_epoch);
+        let simple = self.simple();
+        let mut idx = simple.prev_transition_offset_idx(seconds_since_epoch);
 
         // `self.transition_offset_at()` returns a synthetic transition at `i64::MIN`
         // for the time range before the actual first transition.
@@ -456,28 +470,28 @@ impl Zone<'_> {
             return None;
         }
 
-        if idx == self.transition_count() - 1 {
+        if idx == simple.transition_count() - 1 {
             // If the previous transition is the last one then we need to check
             // against the rule
-            if let Some(rule) = self.final_rule {
+            if let Some(rule) = simple.final_rule(&self.info.rules) {
                 if let Some(resolved) = rule.prev_transition(seconds_since_epoch, seconds_exact) {
                     return Some(resolved);
                 }
             }
         }
 
-        let mut candidate = self.transition_offset_at(idx);
+        let mut candidate = simple.transition_offset_at(idx);
         if candidate.since == seconds_since_epoch && seconds_exact {
             // If the transition is an exact hit, we actually want the one before
             if idx <= 0 {
                 return None;
             }
             idx -= 1;
-            candidate = self.transition_offset_at(idx);
+            candidate = simple.transition_offset_at(idx);
         }
 
         while require_offset_change && idx > 0 {
-            let prev = self.transition_offset_at(idx - 1);
+            let prev = simple.transition_offset_at(idx - 1);
             if prev.offset == candidate.offset {
                 candidate = prev;
                 idx -= 1;
@@ -499,21 +513,38 @@ impl Zone<'_> {
         seconds_since_epoch: i64,
         require_offset_change: bool,
     ) -> Option<Transition> {
-        let mut idx = self.prev_transition_offset_idx(seconds_since_epoch);
+        let simple = self.simple();
+        let mut idx = simple.prev_transition_offset_idx(seconds_since_epoch);
         while require_offset_change
-            && idx < self.transition_count() - 1
-            && self.transition_offset_at(idx).offset == self.transition_offset_at(idx + 1).offset
+            && idx < simple.transition_count() - 1
+            && simple.transition_offset_at(idx).offset
+                == simple.transition_offset_at(idx + 1).offset
         {
             idx += 1;
         }
 
-        Some(if idx == self.transition_count() - 1 {
+        Some(if idx == simple.transition_count() - 1 {
             // If the previous transition is the last one then the next one
             // can only be the rule.
-            self.final_rule?.next_transition(seconds_since_epoch)
+            simple
+                .final_rule(&self.info.rules)?
+                .next_transition(seconds_since_epoch)
         } else {
-            self.transition_offset_at(idx + 1)
+            simple.transition_offset_at(idx + 1)
         })
+    }
+
+    // Returns the name of the timezone
+    pub fn name(&self) -> &'a PotentialUtf16 {
+        #[expect(clippy::indexing_slicing)] // idx is a valid index into info.names
+        self.info.names[self.idx]
+    }
+
+    // Returns the region of the timezone
+    pub fn region(&self) -> Region {
+        #[expect(clippy::indexing_slicing)]
+        // idx is a valid index into info.names, which has the same length as info.regions
+        self.info.regions[self.idx]
     }
 }
 
@@ -534,7 +565,7 @@ mod tests {
     fn test_monotonic_transition_times() {
         for chrono in time_zones_to_test() {
             let iana = chrono.name();
-            let zoneinfo64 = TZDB.get(iana).unwrap();
+            let zoneinfo64 = TZDB.get(iana).unwrap().simple();
 
             for (prev, curr) in (-1..zoneinfo64.transition_count())
                 .map(|idx| zoneinfo64.transition_offset_at(idx))
@@ -553,7 +584,7 @@ mod tests {
     fn test_transition_local_times_do_not_overlap() {
         for chrono in time_zones_to_test() {
             let iana = chrono.name();
-            let zoneinfo64 = TZDB.get(iana).unwrap();
+            let zoneinfo64 = TZDB.get(iana).unwrap().simple();
 
             for (prev, curr) in (-1..zoneinfo64.transition_count())
                 .map(|idx| zoneinfo64.transition_offset_at(idx))
@@ -758,7 +789,7 @@ mod tests {
                 )
             }
 
-            if zoneinfo64.final_rule.is_none() {
+            if zoneinfo64.simple().final_rule_offset_year.is_none() {
                 assert_eq!(
                     zoneinfo64
                         .next_transition(transitions.last().unwrap().since, require_offset_change),
