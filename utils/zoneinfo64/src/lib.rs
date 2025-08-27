@@ -100,7 +100,7 @@ impl Debug for TzZoneData<'_> {
 
 /// A way to index into ZoneInfo64 without performing string comparisons each time
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
-pub struct ZoneIndex(usize);
+pub struct ZoneIndex(pub usize);
 
 impl<'a> ZoneInfo64<'a> {
     pub fn try_from_u32s(resb: &'a [u32]) -> Result<Self, BinaryDeserializerError> {
