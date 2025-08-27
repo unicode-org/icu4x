@@ -31,7 +31,9 @@ pub(crate) fn deserialize<'a>(resb: &'a [u32]) -> Result<ZoneInfo64<'a>, BinaryD
     let mut zones = Vec::with_capacity(raw_zones.len());
 
     if zones.capacity() == 0 {
-        return Err(BinaryDeserializerError::unknown("at least one zone is required"));
+        return Err(BinaryDeserializerError::unknown(
+            "at least one zone is required",
+        ));
     }
 
     for zone in &raw_zones {
