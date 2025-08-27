@@ -124,16 +124,58 @@ impl<'a> ZoneInfo64<'a> {
             .binary_search_by(|&n| n.chars().cmp(iana.chars()))
             .ok()?;
 
-        // idx is a valid index into info.names by binary search
-        Some(Zone { idx, info: self })
+        // SAFETY: idx just obtained by binary search
+        Some(unsafe { Zone::from_raw_unchecked(RawZone(idx as u16), self) })
     }
 }
 
 #[derive(Clone, Copy)]
 pub struct Zone<'a> {
     // a valid index into info.names
-    idx: usize,
+    idx: u16,
+    // a resolved index into info.zones which points to a TzZone::Table
+    resolved_idx: u16,
     info: &'a ZoneInfo64<'a>,
+}
+
+pub struct RawZone(u16);
+
+impl<'a> Zone<'a> {
+    /// Drops the internal reference to the [`ZoneInfo64`], eliminating the lifetime.
+    pub fn into_raw(self) -> RawZone {
+        RawZone(self.idx)
+    }
+
+    /// Reassociates the [`RawZone`] with a [`ZoneInfo64`].
+    ///
+    /// This is guaranteed to return `Some` if the [`RawZone`] was obtained from a [`Zone`] that
+    /// was returned by the same [`ZoneInfo64`]. Otherwise it might return `None` or an incorrect
+    /// zone.
+    pub fn from_raw(RawZone(idx): RawZone, info: &'a ZoneInfo64<'a>) -> Option<Self> {
+        // SAFETY: check is right there
+        ((idx as usize) < info.zones.len())
+            .then(|| unsafe { Self::from_raw_unchecked(RawZone(idx), info) })
+    }
+
+    /// Reassociates the [`RawZone`] with a [`ZoneInfo64`].
+    ///
+    /// # SAFETY
+    /// `info` needs to be the same [`ZoneInfo64`] that the [`RawZone`] was obtained from.
+    pub unsafe fn from_raw_unchecked(RawZone(idx): RawZone, info: &'a ZoneInfo64<'a>) -> Self {
+        let resolved_idx = if let &TzZone::Int(i) = info.zones.get_unchecked(idx as usize) {
+            i as u16
+        } else {
+            idx
+        };
+
+        // idx is a valid index into info.names by safety invariant
+        // zone_idx is a valid index into info.zones by the invariant that links don't point to links
+        Self {
+            idx,
+            resolved_idx,
+            info,
+        }
+    }
 }
 
 impl Debug for Zone<'_> {
@@ -291,16 +333,9 @@ impl<'a> TzZoneData<'a> {
 
 impl<'a> Zone<'a> {
     fn simple(&self) -> &'a TzZoneData<'a> {
-        #[expect(clippy::indexing_slicing)]
-        // idx is a valid index into info.names, which has the same length as info.zones
-        let mut zone = &self.info.zones[self.idx];
-
-        #[expect(clippy::indexing_slicing)] // TzZone::Ints are validated as indices
-        if let &TzZone::Int(i) = zone {
-            zone = &self.info.zones[i as usize];
-        }
-        let TzZone::Table(ref zone) = zone else {
-            unreachable!() // data validated to have at most one alias jump
+        #[expect(clippy::indexing_slicing)] // invariant
+        let TzZone::Table(ref zone) = &self.info.zones[self.resolved_idx as usize] else {
+            unreachable!() // invariant
         };
 
         zone
@@ -537,14 +572,14 @@ impl<'a> Zone<'a> {
     // Returns the name of the timezone
     pub fn name(&self) -> &'a PotentialUtf16 {
         #[expect(clippy::indexing_slicing)] // idx is a valid index into info.names
-        self.info.names[self.idx]
+        self.info.names[self.idx as usize]
     }
 
     // Returns the region of the timezone
     pub fn region(&self) -> Region {
         #[expect(clippy::indexing_slicing)]
         // idx is a valid index into info.names, which has the same length as info.regions
-        self.info.regions[self.idx]
+        self.info.regions[self.idx as usize]
     }
 }
 
