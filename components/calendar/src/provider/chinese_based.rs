@@ -12,7 +12,6 @@
 //!
 //! Read more about data providers: [`icu_provider`]
 
-use core::cmp;
 use icu_provider::prelude::*;
 use zerovec::ule::{AsULE, ULE};
 use zerovec::ZeroVec;
@@ -110,7 +109,7 @@ impl PackedChineseBasedYearInfo {
             // When out of range, just clamp to something we can represent
             // We can store up to 6 bytes for ny_offset, even if our
             // maximum asserted value is otherwise 33
-            ny_offset = cmp::min(0x40, cmp::max(0, ny_offset));
+            ny_offset = ny_offset.clamp(0, 0x40);
         } else {
             debug_assert!(ny_offset >= 0, "Year offset too small to store");
             // The maximum new-year's offset we have found is 33
