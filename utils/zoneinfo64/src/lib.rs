@@ -2,7 +2,33 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! TODO
+//! This crate contains utilities for working with ICU4C's zoneinfo64 format
+//!
+//! ```rust
+//! # use icu_time::zone::UtcOffset;
+//! # use zoneinfo64::{Offset, PossibleOffset, ZoneInfo64};
+//!
+//! // Needs to be u32-aligned
+//! let resb = resb::include_bytes_as_u32!("../tests/data/zoneinfo64.res");
+//! // Then we parse the data
+//! let zoneinfo = ZoneInfo64::try_from_u32s(resb)
+//!            .expect("Error processing resource bundle file");
+//!
+//! let pacific = zoneinfo.get("America/Los_Angeles").unwrap();
+//! // Calculate the timezone offset for 2024-01-01
+//! let offset = pacific.for_timestamp(1704067200000);
+//! let offset_seven = UtcOffset::try_from_seconds(-7 * 3600).unwrap();
+//! assert_eq!(offset.offset, offset_seven);
+//!
+//! // Calculate possible offsets at 2025-11-02T01:00:00
+//! // This is during a DST switchover and is ambiguous
+//! let possible = pacific.for_date_time(2025, 11, 2, 1, 0, 0);
+//! let offset_eight = UtcOffset::try_from_seconds(-8 * 3600).unwrap();
+//! assert_eq!(possible, PossibleOffset::Ambiguous(
+//!     Offset { offset: offset_seven, rule_applies: true },
+//!     Offset { offset: offset_eight, rule_applies: false }
+//! ));
+//! ```
 
 use std::fmt::Debug;
 
@@ -24,6 +50,7 @@ const EPOCH: RataDie = calendrical_calculations::iso::const_fixed_from_iso(1970,
 const SECONDS_IN_UTC_DAY: i64 = 24 * 60 * 60;
 
 #[derive(Debug)]
+/// The primary type containing parsed ZoneInfo64 data
 pub struct ZoneInfo64<'a> {
     // Invariant: non-empty
     zones: Vec<TzZone<'a>>,
@@ -103,6 +130,7 @@ impl Debug for TzZoneData<'_> {
 }
 
 impl<'a> ZoneInfo64<'a> {
+    /// Parse this object from 4-byte aligned data
     pub fn try_from_u32s(resb: &'a [u32]) -> Result<Self, BinaryDeserializerError> {
         crate::deserialize::deserialize(resb)
     }
@@ -126,6 +154,7 @@ impl<'a> ZoneInfo64<'a> {
         (0..self.names.len()).map(move |i| Zone::from_raw_parts((i as u16, self)))
     }
 
+    /// Get data for a given IANA timezone id. Aliases are supported.
     pub fn get(&'a self, iana: &str) -> Option<Zone<'a>> {
         let idx = self
             .names
@@ -149,6 +178,7 @@ impl<'a> ZoneInfo64<'a> {
     }
 }
 
+/// Data for a given time zone
 #[derive(Clone, Copy)]
 pub struct Zone<'a> {
     // a valid index into info.names
@@ -226,14 +256,14 @@ pub struct Offset {
     pub rule_applies: bool,
 }
 
-/// A transition (from the non-rule transition array in the data)
+/// A transition
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct Transition {
     /// When the transition starts
     pub since: i64,
     /// The offset from UTC after this transition
     pub offset: UtcOffset,
-    /// Whether or not the Rule (i.e. "non standard" time) applies
+    /// Whether or not the rule (i.e. "non standard" time) applies
     pub rule_applies: bool,
 }
 
@@ -246,6 +276,7 @@ impl From<Transition> for Offset {
     }
 }
 
+/// Possible offsets for a local datetime
 #[derive(Debug, PartialEq)]
 pub enum PossibleOffset {
     /// There is a single possible offset
@@ -491,7 +522,7 @@ impl<'a> Zone<'a> {
         PossibleOffset::Single(first_candidate.into())
     }
 
-    /// Get the offset for a timestamp.
+    /// Get the offset for a timestamp (as seconds since the Unix epoch).
     pub fn for_timestamp(&self, seconds_since_epoch: i64) -> Offset {
         let simple = self.simple();
         let idx = simple.prev_transition_offset_idx(seconds_since_epoch);
