@@ -105,11 +105,17 @@ impl PackedChineseBasedYearInfo {
             "Last month length should not be set for non-leap years"
         );
         let mut ny_offset = ny_offset - Self::FIRST_NY;
+
         if out_of_valid_astronomical_range {
-            ny_offset = cmp::min(33, cmp::max(0, ny_offset));
+            // When out of range, just clamp to something we can represent
+            // We can store up to 6 bytes for ny_offset, even if our
+            // maximum asserted value is otherwise 33
+            ny_offset = cmp::min(0x40, cmp::max(0, ny_offset));
+        } else {
+            debug_assert!(ny_offset >= 0, "Year offset too small to store");
+            // The maximum new-year's offset we have found is 33
+            debug_assert!(ny_offset < 34, "Year offset too big to store");
         }
-        debug_assert!(ny_offset >= 0, "Year offset too small to store");
-        debug_assert!(ny_offset < 34, "Year offset too big to store");
         // Also an API correctness assertion
         debug_assert!(
             leap_month_idx.map(|l| l <= 13).unwrap_or(true),
