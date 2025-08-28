@@ -1174,7 +1174,7 @@ dependencies = [
 
 [[package]]
 name = "icu_calendar"
-version = "2.0.3"
+version = "2.0.4"
 dependencies = [
  "calendrical_calculations",
  "criterion",
