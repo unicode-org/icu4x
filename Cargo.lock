@@ -335,7 +335,7 @@ checksum = "d71b6127be86fdcfddb610f7182ac57211d4b18a3e9c82eb2d17662f2227ad6a"
 
 [[package]]
 name = "calendrical_calculations"
-version = "0.2.1"
+version = "0.2.2"
 dependencies = [
  "core_maths",
  "displaydoc",
@@ -1202,7 +1202,7 @@ dependencies = [
 
 [[package]]
 name = "icu_calendar"
-version = "2.0.3"
+version = "2.0.4"
 dependencies = [
  "calendrical_calculations",
  "criterion",
@@ -2392,7 +2392,7 @@ dependencies = [
 
 [[package]]
 name = "potential_utf"
-version = "0.1.2"
+version = "0.1.3"
 dependencies = [
  "bincode",
  "databake",

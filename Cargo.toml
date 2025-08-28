@@ -187,7 +187,7 @@ icu_experimental_data = { version = "~0.3.0", path = "provider/data/experimental
 
 # Utils
 bies = { version = "0.2.2", path = "utils/bies", default-features = false }
-calendrical_calculations = { version = "0.2.1", path = "utils/calendrical_calculations", default-features = false }
+calendrical_calculations = { version = "0.2.2", path = "utils/calendrical_calculations", default-features = false }
 crlify = { version = "1.0.4", path = "utils/crlify", default-features = false }
 databake = { version = "0.2.0", path = "utils/databake", default-features = false }
 databake-derive = { version = "0.2.0", path = "utils/databake/derive", default-features = false }
@@ -195,7 +195,7 @@ deduplicating_array = { version = "0.1.6", path = "utils/deduplicating_array", d
 fixed_decimal = { version = "0.7.0", path = "utils/fixed_decimal", default-features = false }
 ixdtf = { version = "0.6.0", path = "utils/ixdtf", default-features = false }
 litemap = { version = "0.8.0", path = "utils/litemap", default-features = false }
-potential_utf = { version = "0.1.1", path = "utils/potential_utf", default-features = false }
+potential_utf = { version = "0.1.3", path = "utils/potential_utf", default-features = false }
 resb = { version = "0.1.0", path = "utils/resb", default-features = false }
 tzif = { version = "0.4.0", path = "utils/tzif", default-features = false }
 tinystr = { version = "0.8.0", path = "utils/tinystr", default-features = false }
