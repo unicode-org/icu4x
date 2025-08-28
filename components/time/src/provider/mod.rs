@@ -16,7 +16,7 @@
 //!
 //! Read more about data providers: [`icu_provider`]
 
-use crate::zone::{UtcOffset, VariantOffsets, ZoneNameTimestamp};
+use crate::zone::{UtcOffset, ZoneNameTimestamp};
 use icu_provider::prelude::*;
 use zerotrie::ZeroTrieSimpleAscii;
 use zerovec::maps::ZeroMapKV;
@@ -98,6 +98,27 @@ pub enum MetazoneMembershipKind {
     /// This happens for example for Phoenix, Regina, Algiers, Brisbane (no DST),
     /// or Chisinau (transitions at different times, not implemented yet).
     CustomTransitions,
+}
+
+/// Represents the different offsets in use for a time zone
+// warning: stable (deprecated) type through reexport in crate::zone::offset
+#[non_exhaustive]
+#[derive(Debug, Clone, Copy, PartialEq, PartialOrd, Eq, Ord)]
+pub struct VariantOffsets {
+    /// The standard offset.
+    pub standard: UtcOffset,
+    /// The daylight-saving offset, if used.
+    pub daylight: Option<UtcOffset>,
+}
+
+impl VariantOffsets {
+    /// Creates a new [`VariantOffsets`] from a [`UtcOffset`] representing standard time.
+    pub fn from_standard(standard: UtcOffset) -> Self {
+        Self {
+            standard,
+            daylight: None,
+        }
+    }
 }
 
 /// A [`VariantOffsets`] and a [`MetazoneMembershipKind`] packed into one byte.

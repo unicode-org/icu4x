@@ -4,6 +4,7 @@
 part of 'lib.g.dart';
 
 /// See the [Rust documentation for `VariantOffsetsCalculator`](https://docs.rs/icu/2.0.0/icu/time/zone/struct.VariantOffsetsCalculator.html) for more information.
+@core.Deprecated('this API is a bad approximation of a time zone database')
 final class VariantOffsetsCalculator implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _ffi;
 
