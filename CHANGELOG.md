@@ -43,7 +43,7 @@ Several crates have had patch releases in the 2.0 stream:
 - `calendrical_calculations`
     - (0.2.1) Fix a sign error in `RataDie::until`, add `RataDie::since` (unicode-org#6861)
     - (0.2.2) Make `iso_year_from_fixed`, `day_before_year` public (unicode-org#6871)
-    - (0.2.2) Optimise `day_of_provided_year`, `date_from_provided_year_day` for ISO/Gregorian (unicode-org#6883)
+    - (0.2.2) Optimise some calculations for `iso` (unicode-org#6883)
     - (0.2.2) Add Easter holiday to `iso` and `julian` (unicode-org#6899)
 - `ixdtf`
     - (0.6.0) Add UTF16 handling (unicode-org#6577)
@@ -54,7 +54,7 @@ Several crates have had patch releases in the 2.0 stream:
     - (0.6.2) Offset must have a sign (#6763)
     - (0.6.2) Correctly handle ambiguous annotations (#6776)
 - `potential_utf`
-    - (0.1.3) Add `.chars()` (unicode-org#6726)
+    - (0.1.3) Add `.chars()` to `PotentialUtf16` (unicode-org#6726)
 - `zerovec`:
   - (0.11.3) Make `VZV::Default` work with non-default index (unicode-org#6661)
   - (0.11.3) Make ZeroVec.iter().collect() faster (unicode-org#6764)
