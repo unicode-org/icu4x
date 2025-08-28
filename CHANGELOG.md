@@ -44,7 +44,7 @@ Several crates have had patch releases in the 2.0 stream:
     - (0.2.1) Fix a sign error in `RataDie::until`, add `RataDie::since` (unicode-org#6861)
     - (0.2.2) Make `iso_year_from_fixed`, `day_before_year` public (unicode-org#6871)
     - (0.2.2) Optimise `day_of_provided_year`, `date_from_provided_year_day` for ISO/Gregorian (unicode-org#6883)
-    - (0.2.2) Add Easter holiday to `Gregorian` and `Julian` (unicode-org#6899)
+    - (0.2.2) Add Easter holiday to `iso` and `julian` (unicode-org#6899)
 - `ixdtf`
     - (0.6.0) Add UTF16 handling (unicode-org#6577)
     - (0.6.0) Add TimeZoneParser::parse_identifier for TimeZoneRecord (unicode-org#6584)
