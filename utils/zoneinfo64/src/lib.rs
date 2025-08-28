@@ -123,7 +123,7 @@ impl<'a> ZoneInfo64<'a> {
     }
     #[cfg(test)]
     fn iter(&'a self) -> impl Iterator<Item = Zone<'a>> {
-        (0..self.names.len()).map(move |i| Zone::from_raw_unchecked(RawZone(i as u16), self))
+        (0..self.names.len()).map(move |i| Zone::from_raw_parts((i as u16, self)))
     }
 
     pub fn get(&'a self, iana: &str) -> Option<Zone<'a>> {
@@ -158,23 +158,23 @@ pub struct Zone<'a> {
     info: &'a ZoneInfo64<'a>,
 }
 
-pub struct RawZone(u16);
-
 impl<'a> Zone<'a> {
-    /// Drops the internal reference to the [`ZoneInfo64`], eliminating the lifetime.
-    pub fn into_raw(self) -> RawZone {
-        RawZone(self.idx)
+    /// Decomposes this [`Zone`] into its raw parts, consisting
+    /// of some state stored in a `u16`, and the associated [`ZoneInfo64`].
+    ///
+    /// See [`Self::from_raw_parts`] for the inverse operation.
+    pub fn into_raw_parts(self) -> (u16, &'a ZoneInfo64<'a>) {
+        (self.idx, self.info)
     }
 
-    /// Reassociates the [`RawZone`] with a [`ZoneInfo64`].
+    /// Recreates the [`Zone`] from raw parts.
     ///
-    /// Returns garbage if the [`RawZone`] was obtained from a [`Zone`] that
-    /// was returned by a different [`ZoneInfo64`] than `info`.
-    pub fn from_raw_unchecked(RawZone(idx): RawZone, info: &'a ZoneInfo64<'a>) -> Self {
+    /// Returns garbage if `parts` was not obtained from [`Self::into_raw_parts`].
+    pub fn from_raw_parts(parts: (u16, &'a ZoneInfo64<'a>)) -> Self {
+        let (idx, info) = parts;
+        // info.zones.len() > 0 by invariant, so this doesn't underflow ...
         let idx = core::cmp::min(info.zones.len() - 1, idx as usize);
-        #[expect(clippy::indexing_slicing)]
-        // zones.len() is a valid index by the invariant that zones is non-empty, and everything
-        // below is trivially
+        #[expect(clippy::indexing_slicing)] // ... and idx is a valid index
         let resolved_idx = if let TzZone::Int(i) = info.zones[idx] {
             i as u16
         } else {
@@ -883,12 +883,21 @@ mod tests {
 
         for zone in TZDB.iter() {
             // Rountrips if we observe the precondition
-            assert_eq!(zone, Zone::from_raw_unchecked(zone.into_raw(), &TZDB));
+            assert_eq!(zone, Zone::from_raw_parts(zone.into_raw_parts()));
 
-            // If we use a different ZoneInfo64, we get garbage (expect for that
-            // one zone where the garbage matches)
+            // If we mess with the state, we get garbage (which sometimes
+            // is just the right garbage)
+            if zone.idx as usize != TZDB.zones.len() - 1 {
+                assert_ne!(
+                    zone,
+                    Zone::from_raw_parts((zone.into_raw_parts().0 + 1, &TZDB)),
+                );
+            }
             if zone.idx as usize != simple_zone {
-                assert_ne!(zone, Zone::from_raw_unchecked(zone.into_raw(), &other_tzdb));
+                assert_ne!(
+                    zone,
+                    Zone::from_raw_parts((zone.into_raw_parts().0, &other_tzdb))
+                );
             }
         }
     }
