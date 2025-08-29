@@ -22,6 +22,9 @@ fn check_extrema<C: Calendar>(cal: C) {
     );
 }
 
+// Test all calendars that have any amount of tricky mathematics
+// to ensure that they do not trigger debug assertions for large dates.
+
 #[test]
 fn check_extrema_chinese() {
     check_extrema(Chinese::new())
@@ -40,4 +43,26 @@ fn check_extrema_hijri_simulated_mecca() {
 #[test]
 fn check_extrema_hijri_uaq() {
     check_extrema(HijriUmmAlQura::new())
+}
+
+#[test]
+fn check_extrema_hijri_tabular() {
+    check_extrema(HijriTabular::new(
+        HijriTabularLeapYears::TypeII,
+        HijriTabularEpoch::Thursday,
+    ));
+    check_extrema(HijriTabular::new(
+        HijriTabularLeapYears::TypeII,
+        HijriTabularEpoch::Friday,
+    ));
+}
+
+#[test]
+fn check_extrema_hebrew() {
+    check_extrema(Hebrew::new())
+}
+
+#[test]
+fn check_extrema_persian() {
+    check_extrema(Persian::new())
 }
