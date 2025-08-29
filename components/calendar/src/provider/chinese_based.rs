@@ -105,17 +105,27 @@ impl PackedChineseBasedYearInfo {
         );
         let mut ny_offset = ny_offset - Self::FIRST_NY;
 
-        if out_of_valid_astronomical_range {
-            // When out of range, just clamp to something we can represent
-            // We can store up to 6 bytes for ny_offset, even if our
-            // maximum asserted value is otherwise 33
-            ny_offset = ny_offset.clamp(0, 0x40);
-        } else {
-            debug_assert!(ny_offset >= 0, "Year offset too small to store");
-            // The maximum new-year's offset we have found is 33
-            debug_assert!(ny_offset < 34, "Year offset too big to store");
-        }
+        // Assert the offset is in range, but allow it to be out of
+        // range when out_of_valid_astronomical_range=true
+        debug_assert!(
+            ny_offset >= 0 || out_of_valid_astronomical_range,
+            "Year offset too small to store"
+        );
+        // The maximum new-year's offset we have found is 33
+        debug_assert!(
+            ny_offset < 34 || out_of_valid_astronomical_range,
+            "Year offset too big to store"
+        );
+        // Just clamp to something we can represent when things get of range.
+        //
+        // This will typically happen when out_of_valid_astronomical_range
+        // is true.
+        //
+        // We can store up to 6 bytes for ny_offset, even if our
+        // maximum asserted value is otherwise 33.
+        ny_offset = ny_offset.clamp(0, 0x40);
         // Also an API correctness assertion
+
         debug_assert!(
             leap_month_idx.map(|l| l <= 13).unwrap_or(true),
             "Leap month indices must be 1 <= i <= 13"
