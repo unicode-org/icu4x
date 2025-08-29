@@ -24,7 +24,6 @@ displaydoc = { workspace = true }
 icu_collections = { workspace = true }
 icu_properties = { workspace = true, optional = true }
 icu_provider = { workspace = true }
-likely_polyfill = { workspace = true, optional = true }
 smallvec = { workspace = true } # alloc
 utf16_iter = { workspace = true, optional = true }
 utf8_iter = { workspace = true, optional = true }
@@ -62,7 +61,11 @@ utf16_iter = ["dep:utf16_iter", "write16"]
 utf8_iter = ["dep:utf8_iter"]
 
 # Statically assumes fast-mode trie data
-# unstable_fast_trie_only = ["dep:likely_polyfill"]
+# Code that's currently behind this feature is expected to go
+# behind `not(serde)` instead. See a comment in `lib.rs` for
+# the TODO list explaining why the relevant bits aren't
+# already behind `not(serde)` instead.
+# unstable_fast_trie_only = []
 
 [[bench]]
 name = "bench"

@@ -1562,7 +1562,6 @@ dependencies = [
  "icu_normalizer_data",
  "icu_properties",
  "icu_provider",
- "likely_polyfill",
  "serde",
  "smallvec",
  "utf16_iter",
@@ -2007,12 +2006,6 @@ dependencies = [
  "libc",
  "redox_syscall",
 ]
-
-[[package]]
-name = "likely_polyfill"
-version = "1.0.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d8e55cefd1bf2a50c446c33adc3cb90ed216ecabe6aef7528d80d1da1aeb691d"
 
 [[package]]
 name = "litemap"

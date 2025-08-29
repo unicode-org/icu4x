@@ -248,7 +248,6 @@ core_maths = { version = "0.1.0", default-features = false }
 displaydoc = { version = "0.2.3", default-features = false }
 either = { version = "1.9.0", default-features = false }
 libc_alloc = { version = "1.0.6", default-features = false }
-likely_polyfill = { version = "1.0.0", default-features = false }
 log = { version = "0.4.17", default-features = false }
 memchr = { version = "2.6.0", default-features = false }
 num-bigint = { version = "0.4.3", default-features = false }

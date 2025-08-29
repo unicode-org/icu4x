@@ -136,14 +136,35 @@ use zerovec::{zeroslice, ZeroSlice};
 
 // The optimizations in the area where `likely` is used
 // are extremely brittle. `likely` is useful in the typed-trie
-// case, but in order not to disturb the untyped-trie case,
-// make the annotations no-ops in the untyped-trie case.
+// case on the UTF-16 fast path, but in order not to disturb
+// the untyped-trie case on the UTF-16 fast path, make the
+// annotations no-ops in the untyped-trie case.
 
-#[cfg(feature = "unstable_fast_trie_only")]
-use likely_polyfill::likely;
+// `cold_path` and `likely` come from
+// https://github.com/rust-lang/hashbrown/commit/64bd7db1d1b148594edfde112cdb6d6260e2cfc3 .
+// See https://github.com/rust-lang/hashbrown/commit/64bd7db1d1b148594edfde112cdb6d6260e2cfc3#commitcomment-164768806
+// for permission to relicense under Unicode-3.0.
+
+#[cfg(all(feature = "unstable_fast_trie_only", feature = "utf16_iter"))]
+#[inline(always)]
+#[cold]
+fn cold_path() {}
+
+#[cfg(all(feature = "unstable_fast_trie_only", feature = "utf16_iter"))]
+#[inline(always)]
+pub(crate) fn likely(b: bool) -> bool {
+    if b {
+        true
+    } else {
+        cold_path();
+        false
+    }
+}
+
+// End import from https://github.com/rust-lang/hashbrown/commit/64bd7db1d1b148594edfde112cdb6d6260e2cfc3 .
 
 /// No-op for typed trie case.
-#[cfg(not(feature = "unstable_fast_trie_only"))]
+#[cfg(all(not(feature = "unstable_fast_trie_only"), feature = "utf16_iter"))]
 #[inline(always)]
 fn likely(b: bool) -> bool {
     b
