@@ -6,6 +6,7 @@ use calendrical_calculations::rata_die::RataDie;
 
 use crate::cal::iso::IsoDateInner;
 use crate::error::DateError;
+use crate::options::DateFromFieldsOptions;
 use crate::{types, DateDuration, DateDurationUnit};
 use core::fmt;
 
@@ -41,6 +42,16 @@ pub trait Calendar: crate::cal::scaffold::UnstableSealed {
         month_code: types::MonthCode,
         day: u8,
     ) -> Result<Self::DateInner, DateError>;
+
+    /// Construct a date from a bag of date fields.
+    #[expect(clippy::wrong_self_convention)]
+    fn from_fields(
+        &self,
+        fields: types::DateFields,
+        options: DateFromFieldsOptions,
+    ) -> Result<Self::DateInner, DateError> {
+        todo!()
+    }
 
     /// Construct the date from an ISO date
     #[expect(clippy::wrong_self_convention)]

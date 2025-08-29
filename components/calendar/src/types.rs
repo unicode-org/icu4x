@@ -7,10 +7,41 @@
 #[doc(no_inline)]
 pub use calendrical_calculations::rata_die::RataDie;
 use core::fmt;
+use core::num::NonZeroU8;
 use tinystr::TinyAsciiStr;
 use tinystr::{TinyStr16, TinyStr4};
 use zerovec::maps::ZeroMapKV;
 use zerovec::ule::AsULE;
+
+/// A bag of various ways of expressing the year, month, and/or day.
+///
+/// Pass this into [`Date::try_from_fields`](crate::Date::try_from_fields).
+#[derive(Copy, Clone, Debug, PartialEq, Default)]
+#[non_exhaustive]
+pub struct DateFields<'a> {
+    /// The era code as defined by CLDR.
+    ///
+    /// If set, [`Self::era_year`] must also be set.
+    pub era: Option<&'a str>,
+    /// The numeric year in [`Self::era`].
+    ///
+    /// If set, [`Self::era`] must also be set.
+    pub era_year: Option<i32>,
+    /// See [`Date::monotonic_year()`](crate::Date::monotonic_year).
+    ///
+    /// If both this and [`Self::era`]/[`Self::era_year`] are set, they must
+    /// refer to the same year.
+    pub monotonic_year: Option<i32>,
+    /// The [`MonthCode`] representing a valid month in this calendar year.
+    pub month_code: Option<MonthCode>,
+    /// See [`MonthInfo::ordinal`].
+    ///
+    /// If both this and [`Self::month_code`] are set, they must refer to
+    /// the same month.
+    pub ordinal_month: Option<NonZeroU8>,
+    /// See [`DayOfMonth`].
+    pub day: Option<NonZeroU8>,
+}
 
 /// The type of year: Calendars like Chinese don't have an era and instead format with cyclic years.
 #[derive(Copy, Clone, Debug, PartialEq)]

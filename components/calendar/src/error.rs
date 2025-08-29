@@ -21,12 +21,167 @@ pub enum DateError {
         /// The maximum value (inclusive). This might not be tight.
         max: i32,
     },
-    /// Unknown era
+    /// The era code is invalid for the calendar.
     #[displaydoc("Unknown era")]
     UnknownEra,
-    /// Unknown month code
+    /// The month code is invalid for the calendar or year.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu_calendar::Date;
+    /// use icu_calendar::DateError;
+    /// use icu_calendar::cal::Hebrew;
+    /// use icu_calendar::types::MonthCode;
+    /// use tinystr::tinystr;
+    ///
+    /// let month_code = MonthCode(tinystr!(4, "M05L"));
+    ///
+    /// Date::try_new_from_codes(
+    ///     None,
+    ///     5784,
+    ///     month_code,
+    ///     1,
+    ///     Hebrew
+    /// )
+    /// .expect("5784 is a leap year");
+    ///
+    /// let err = Date::try_new_from_codes(
+    ///     None,
+    ///     5785,
+    ///     month_code,
+    ///     1,
+    ///     Hebrew
+    /// )
+    /// .expect_err("5785 is a common year");
+    ///
+    /// assert!(matches!(err, DateError::UnknownMonthCode(_)));
+    /// ```
     #[displaydoc("Unknown month code {0:?}")]
     UnknownMonthCode(MonthCode),
+    /// The year was specified in multiple inconsistent ways.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu_calendar::Date;
+    /// use icu_calendar::DateError;
+    /// use icu_calendar::cal::Japanese;
+    /// use icu_calendar::types::DateFields;
+    /// use std::num::NonZeroU8;
+    ///
+    /// let mut fields = DateFields::default();
+    /// fields.era = Some("reiwa");
+    /// fields.era_year = Some(6);
+    /// fields.ordinal_month = NonZeroU8::new(1);
+    /// fields.day = NonZeroU8::new(1);
+    ///
+    /// Date::try_from_fields(
+    ///     fields,
+    ///     Default::default(),
+    ///     Japanese::new()
+    /// )
+    /// .expect("a well-defined Japanese date");
+    ///
+    /// fields.monotonic_year = Some(1900);
+    ///
+    /// let err = Date::try_from_fields(
+    ///     fields,
+    ///     Default::default(),
+    ///     Japanese::new()
+    /// )
+    /// .expect_err("year 1900 is not the same as 6 Reiwa");
+    ///
+    /// assert!(matches!(err, DateError::InconsistentYear));
+    /// ```
+    #[displaydoc("Inconsistent year")]
+    InconsistentYear,
+    /// The month was specified in multiple inconsistent ways.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu_calendar::Date;
+    /// use icu_calendar::DateError;
+    /// use icu_calendar::cal::Hebrew;
+    /// use icu_calendar::types::DateFields;
+    /// use icu_calendar::types::MonthCode;
+    /// use std::num::NonZeroU8;
+    /// use tinystr::tinystr;
+    ///
+    /// let mut fields = DateFields::default();
+    /// fields.monotonic_year = Some(5783);
+    /// fields.month_code = Some(MonthCode(tinystr!(4, "M06")));
+    /// fields.ordinal_month = NonZeroU8::new(6);
+    /// fields.day = NonZeroU8::new(1);
+    ///
+    /// Date::try_from_fields(
+    ///     fields,
+    ///     Default::default(),
+    ///     Hebrew
+    /// )
+    /// .expect("a well-defined Hebrew date in a common year");
+    ///
+    /// fields.monotonic_year = Some(5784);
+    ///
+    /// let err = Date::try_from_fields(
+    ///     fields,
+    ///     Default::default(),
+    ///     Hebrew
+    /// )
+    /// .expect_err("month M06 is not the 6th month in leap year 5784");
+    ///
+    /// assert!(matches!(err, DateError::InconsistentMonth));
+    /// ```
+    #[displaydoc("Inconsistent month")]
+    InconsistentMonth,
+    /// Not enough fields were specified to form a well-defined date.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu_calendar::Date;
+    /// use icu_calendar::DateError;
+    /// use icu_calendar::cal::Hebrew;
+    /// use icu_calendar::types::DateFields;
+    /// use icu_calendar::types::MonthCode;
+    /// use std::num::NonZeroU8;
+    /// use tinystr::tinystr;
+    ///
+    /// let mut fields = DateFields::default();
+    ///
+    /// fields.ordinal_month = NonZeroU8::new(3);
+    ///
+    /// let err = Date::try_from_fields(
+    ///     fields,
+    ///     Default::default(),
+    ///     Hebrew
+    /// )
+    /// .expect_err("need more than just an ordinal month");
+    /// assert!(matches!(err, DateError::NotEnoughFields));
+    ///
+    /// fields.era_year = Some(5783);
+    ///
+    /// let err = Date::try_from_fields(
+    ///     fields,
+    ///     Default::default(),
+    ///     Hebrew
+    /// )
+    /// .expect_err("need more than an ordinal month and an era year");
+    /// assert!(matches!(err, DateError::NotEnoughFields));
+    ///
+    /// fields.era = Some("am");
+    ///
+    /// let date = Date::try_from_fields(
+    ///     fields,
+    ///     Default::default(),
+    ///     Hebrew
+    /// )
+    /// .expect("we have enough fields! (day defaults to 1)");
+    /// assert_eq!(date.day_of_month().0, 1);
+    /// ```
+    #[displaydoc("Not enough fields")]
+    NotEnoughFields,
 }
 
 impl core::error::Error for DateError {}
