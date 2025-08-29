@@ -701,8 +701,8 @@ fn test_en_overlap_patterns() {
     6
   ],
   "elements": [
-    "EEEE, h a",
-    "EEE, h a",
+    "EEEE h a",
+    "E h a",
     "EEEE h:m a",
     "E h:mm a",
     "EEEE h:m:s a",

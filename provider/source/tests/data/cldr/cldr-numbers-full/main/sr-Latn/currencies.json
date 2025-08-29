@@ -1289,7 +1289,8 @@
             "displayName": "saudijski rijal",
             "displayName-count-one": "saudijski rijal",
             "displayName-count-few": "saudijska rijala",
-            "displayName-count-other": "saudijskih rijala"
+            "displayName-count-other": "saudijskih rijala",
+            "symbol-alt-variant": "⃁"
           },
           "SBD": {
             "displayName": "solomonski dolar",

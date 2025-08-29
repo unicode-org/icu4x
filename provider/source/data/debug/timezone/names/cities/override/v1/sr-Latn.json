@@ -1,7 +1,6 @@
 {
   "exemplars": {
     "aganu": "Antigva",
-    "altia": "Tirana",
     "amevn": "Jerevan",
     "atvie": "Beč",
     "bddac": "Daka",
@@ -22,6 +21,7 @@
     "clscl": "Santjago",
     "cmdla": "Duala",
     "cnsha": "Šangaj",
+    "cobog": "Bogota",
     "cxxch": "Božić",
     "czprg": "Prag",
     "dkcph": "Kopenhagen",
@@ -98,6 +98,7 @@
     "rsbeg": "Beograd",
     "saruh": "Rijad",
     "sbhir": "Gvadalkanal",
+    "scmaw": "Mahe",
     "sdkrt": "Kartum",
     "sesto": "Stokholm",
     "sjlyr": "Longjerbjen",
@@ -109,6 +110,7 @@
     "sydam": "Damask",
     "tdndj": "Ndžamena",
     "tfpfr": "Kergelen",
+    "tglfw": "Lome",
     "tjdyu": "Dušanbe",
     "tmasb": "Ašhabad",
     "ttpos": "Port of Spejn",

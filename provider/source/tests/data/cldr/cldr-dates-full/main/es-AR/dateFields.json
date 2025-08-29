@@ -276,8 +276,8 @@
             "relative-type-0": "este domingo",
             "relative-type-1": "el próximo domingo",
             "relativeTime-type-future": {
-              "relativeTimePattern-count-one": "en {0} domingo",
-              "relativeTimePattern-count-other": "en {0} domingos"
+              "relativeTimePattern-count-one": "dentro de {0} domingo",
+              "relativeTimePattern-count-other": "dentro de {0} domingos"
             },
             "relativeTime-type-past": {
               "relativeTimePattern-count-one": "hace {0} domingo",
