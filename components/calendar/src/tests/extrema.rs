@@ -3,50 +3,41 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::cal::*;
+use crate::Calendar;
 use crate::Date;
 use crate::Ref;
 
-#[test]
-fn check_extrema() {
+fn check_extrema<C: Calendar>(cal: C) {
     // Minimum and maximum dates allowed in ECMA-262 Temporal.
     let min_date_iso = Date::try_new_iso(-271821, 4, 19).unwrap();
     let max_date_iso = Date::try_new_iso(275760, 9, 13).unwrap();
-
-    let cal = Chinese::new();
     let min_date = min_date_iso.to_calendar(Ref(&cal));
     let max_date = max_date_iso.to_calendar(Ref(&cal));
 
     println!(
-        "min.year = {:?}, max.year = {:?}",
+        "min.year = {:?}, max.year = {:?} (cal = {})",
         min_date.year(),
-        max_date.year()
+        max_date.year(),
+        cal.debug_name()
     );
+}
 
-    let cal = Dangi::new();
-    let min_date = min_date_iso.to_calendar(Ref(&cal));
-    let max_date = max_date_iso.to_calendar(Ref(&cal));
+#[test]
+fn check_extrema_chinese() {
+    check_extrema(Chinese::new())
+}
 
-    println!(
-        "min.year = {:?}, max.year = {:?}",
-        min_date.year(),
-        max_date.year()
-    );
-    let cal = HijriSimulated::new_mecca();
-    let min_date = min_date_iso.to_calendar(Ref(&cal));
-    let max_date = max_date_iso.to_calendar(Ref(&cal));
+#[test]
+fn check_extrema_dangi() {
+    check_extrema(Dangi::new())
+}
 
-    println!(
-        "min.year = {:?}, max.year = {:?}",
-        min_date.year(),
-        max_date.year()
-    );
-    let cal = HijriUmmAlQura::new();
-    let min_date = min_date_iso.to_calendar(Ref(&cal));
-    let max_date = max_date_iso.to_calendar(Ref(&cal));
+#[test]
+fn check_extrema_hijri_simulated_mecca() {
+    check_extrema(HijriSimulated::new_mecca())
+}
 
-    println!(
-        "min.year = {:?}, max.year = {:?}",
-        min_date.year(),
-        max_date.year()
-    );
+#[test]
+fn check_extrema_hijri_uaq() {
+    check_extrema(HijriUmmAlQura::new())
 }
