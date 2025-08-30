@@ -19,10 +19,12 @@
 
 use crate::cal::chinese_based::{ChineseBasedPrecomputedData, ChineseBasedWithDataLoading};
 use crate::cal::iso::{Iso, IsoDateInner};
-use crate::calendar_arithmetic::PrecomputedDataSource;
+use crate::calendar_arithmetic::{CalendarLunisolar, CalendarWithEras, PrecomputedDataSource};
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
 use crate::error::DateError;
+use crate::options::DateFromFieldsOptions;
 use crate::provider::chinese_based::CalendarChineseV1;
+use crate::types::DateFields;
 use crate::AsCalendar;
 use crate::{types, Calendar, Date, DateDuration, DateDurationUnit};
 use calendrical_calculations::rata_die::RataDie;
@@ -150,35 +152,53 @@ impl Chinese {
     pub(crate) const DEBUG_NAME: &'static str = "Chinese";
 }
 
+impl CalendarWithEras for Chinese {
+    #[inline]
+    fn era_year_to_monotonic(&self, _era: &str, _era_year: i32) -> Result<i32, DateError> {
+        // This calendar has no era codes
+        Err(DateError::UnknownEra)
+    }
+}
+
+impl CalendarLunisolar for Chinese {
+    #[inline]
+    fn variable_monotonic_reference_year(&self, month_code: types::MonthCode, day: u8) -> i32 {
+        todo!()
+    }
+    #[inline]
+    fn variable_ordinal_month(
+            &self,
+            monotonic_year: i32,
+            month_code: types::MonthCode,
+        ) -> Result<core::num::NonZeroU8, DateError> {
+        todo!()
+    }
+}
+
 impl crate::cal::scaffold::UnstableSealed for Chinese {}
 impl Calendar for Chinese {
     type DateInner = ChineseDateInner;
     type Year = types::CyclicYear;
 
-    // Construct a date from era/month codes and fields
-    fn from_codes(
+    fn from_fields(
         &self,
-        era: Option<&str>,
-        year: i32,
-        month_code: types::MonthCode,
-        day: u8,
+        fields: DateFields,
+        options: DateFromFieldsOptions,
     ) -> Result<Self::DateInner, DateError> {
-        match era {
-            None => {}
-            _ => return Err(DateError::UnknownEra),
-        }
-
+        let (year, month, day) = fields.get_lunisolar_ordinals(self)?;
         let year = self.get_precomputed_data().load_or_compute_info(year);
 
-        let Some(month) = year.parse_month_code(month_code) else {
-            return Err(DateError::UnknownMonthCode(month_code));
-        };
+        todo!()
 
-        year.validate_md(month, day)?;
+        // let Some(month) = year.parse_month_code(month_code) else {
+        //     return Err(DateError::UnknownMonthCode(month_code));
+        // };
 
-        Ok(ChineseDateInner(ArithmeticDate::new_unchecked(
-            year, month, day,
-        )))
+        // year.validate_md(month, day)?;
+
+        // Ok(ChineseDateInner(ArithmeticDate::new_unchecked(
+        //     year, month, day,
+        // )))
     }
 
     fn from_rata_die(&self, rd: RataDie) -> Self::DateInner {
