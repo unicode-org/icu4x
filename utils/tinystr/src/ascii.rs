@@ -223,16 +223,19 @@ impl<const N: usize> TinyAsciiStr<N> {
     /// digits are truncated, and the lowest-magnitude digits are returned
     /// as the error.
     ///
+    /// Note: this function takes a u32. Larger integer types should probably
+    /// not be stored in a `TinyAsciiStr`.
+    ///
     /// # Examples
     ///
     /// ```
     /// use tinystr::TinyAsciiStr;
     /// use tinystr::tinystr;
     ///
-    /// let s0_4 = TinyAsciiStr::<4>::new_decimal_usize(0).unwrap();
-    /// let s456_4 = TinyAsciiStr::<4>::new_decimal_usize(456).unwrap();
-    /// let s456_3 = TinyAsciiStr::<3>::new_decimal_usize(456).unwrap();
-    /// let s456_2 = TinyAsciiStr::<2>::new_decimal_usize(456).unwrap_err();
+    /// let s0_4 = TinyAsciiStr::<4>::new_unsigned_decimal(0).unwrap();
+    /// let s456_4 = TinyAsciiStr::<4>::new_unsigned_decimal(456).unwrap();
+    /// let s456_3 = TinyAsciiStr::<3>::new_unsigned_decimal(456).unwrap();
+    /// let s456_2 = TinyAsciiStr::<2>::new_unsigned_decimal(456).unwrap_err();
     ///
     /// assert_eq!(s0_4, tinystr!(4, "0"));
     /// assert_eq!(s456_4, tinystr!(4, "456"));
@@ -246,13 +249,13 @@ impl<const N: usize> TinyAsciiStr<N> {
     /// use tinystr::TinyAsciiStr;
     /// use tinystr::tinystr;
     ///
-    /// let str_truncated = TinyAsciiStr::<2>::new_decimal_usize(456).unwrap_or_else(|s| s);
-    /// let str_saturated = TinyAsciiStr::<2>::new_decimal_usize(456).unwrap_or(tinystr!(2, "99"));
+    /// let str_truncated = TinyAsciiStr::<2>::new_unsigned_decimal(456).unwrap_or_else(|s| s);
+    /// let str_saturated = TinyAsciiStr::<2>::new_unsigned_decimal(456).unwrap_or(tinystr!(2, "99"));
     ///
     /// assert_eq!(str_truncated, tinystr!(2, "56"));
     /// assert_eq!(str_saturated, tinystr!(2, "99"));
     /// ```
-    pub fn new_decimal_usize(number: usize) -> Result<Self, Self> {
+    pub fn new_unsigned_decimal(number: u32) -> Result<Self, Self> {
         let mut bytes = [0; N];
         let mut x = number;
         let mut i = 0usize;
