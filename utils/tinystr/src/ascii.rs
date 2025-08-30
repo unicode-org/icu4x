@@ -216,6 +216,65 @@ impl<const N: usize> TinyAsciiStr<N> {
         })
     }
 
+    /// Creates a `TinyAsciiStr<N>` containing the decimal representation of
+    /// the given unsigned integer.
+    ///
+    /// If the number of decimal digits exceeds `N`, the highest-magnitude
+    /// digits are truncated and returned as the error.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use tinystr::TinyAsciiStr;
+    /// use tinystr::tinystr;
+    ///
+    /// let n456_4 = TinyAsciiStr::<4>::new_decimal_usize(456).unwrap();
+    /// let n456_3 = TinyAsciiStr::<3>::new_decimal_usize(456).unwrap();
+    /// let n456_2 = TinyAsciiStr::<2>::new_decimal_usize(456).unwrap_err();
+    ///
+    /// assert_eq!(n456_4, tinystr!(4, "456"));
+    /// assert_eq!(n456_3, tinystr!(3, "456"));
+    /// assert_eq!(n456_2, tinystr!(2, "56"));
+    /// ```
+    ///
+    /// Example with saturating the value:
+    ///
+    /// ```
+    /// use tinystr::TinyAsciiStr;
+    /// use tinystr::tinystr;
+    ///
+    /// let str_truncated = TinyAsciiStr::<2>::new_decimal_usize(456).unwrap_or_else(|s| s);
+    /// let str_saturated = TinyAsciiStr::<2>::new_decimal_usize(456).unwrap_or(tinystr!(2, "99"));
+    ///
+    /// assert_eq!(str_truncated, tinystr!(2, "56"));
+    /// assert_eq!(str_saturated, tinystr!(2, "99"));
+    /// ```
+    pub fn new_decimal_usize(number: usize) -> Result<Self, Self> {
+        let mut bytes = [0; N];
+        let mut x = number;
+        let mut i = 0usize;
+        #[expect(clippy::indexing_slicing)] // in-range: i < N
+        while x != 0 && i < N {
+            bytes[N - i - 1] = ((x % 10) as u8) + b'0';
+            x /= 10;
+            i += 1;
+        }
+        #[expect(clippy::indexing_slicing)] // in-range: i < N
+        if i < N {
+            bytes.copy_within((N - i)..N, 0);
+            bytes[i..N].fill(0);
+        }
+        let s = Self {
+            // SAFETY: `out` only contains ASCII bytes and has same size as `self.bytes`
+            bytes: unsafe { AsciiByte::to_ascii_byte_array(&bytes) },
+        };
+        if x != 0 {
+            Err(s)
+        } else {
+            Ok(s)
+        }
+    }
+
     #[inline]
     pub const fn as_str(&self) -> &str {
         // as_utf8 is valid utf8
