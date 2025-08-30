@@ -8,10 +8,12 @@
 pub use calendrical_calculations::rata_die::RataDie;
 use core::fmt;
 use core::num::NonZeroU8;
-use tinystr::TinyAsciiStr;
+use tinystr::{tinystr, TinyAsciiStr};
 use tinystr::{TinyStr16, TinyStr4};
 use zerovec::maps::ZeroMapKV;
 use zerovec::ule::AsULE;
+
+use crate::DateError;
 
 /// A bag of various ways of expressing the year, month, and/or day.
 ///
@@ -200,6 +202,13 @@ impl MonthCode {
             return Some((10 + bytes[2] - b'0', is_leap));
         }
         None
+    }
+
+    #[inline]
+    pub(crate) fn parsed_nonzero(self) -> Option<(NonZeroU8, bool)> {
+        let (number, is_leap) = self.parsed()?;
+        let number = NonZeroU8::new(number)?;
+        Some((number, is_leap))
     }
 
     /// Construct a "normal" month code given a number ("Mxx").

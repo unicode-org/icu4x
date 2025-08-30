@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::types::MonthCode;
+use crate::{options::Overflow, types::MonthCode};
 use displaydoc::Display;
 
 #[derive(Debug, Copy, Clone, PartialEq, Display)]
@@ -170,6 +170,16 @@ pub enum DateError {
     /// .expect_err("need more than an ordinal month and an era year");
     /// assert!(matches!(err, DateError::NotEnoughFields));
     ///
+    /// fields.monotonic_year = 5783;
+    ///
+    /// let err = Date::try_from_fields(
+    ///     fields,
+    ///     Default::default(),
+    ///     Hebrew
+    /// )
+    /// .expect_err("era year still needs an era");
+    /// assert!(matches!(err, DateError::NotEnoughFields));
+    ///
     /// fields.era = Some("am");
     ///
     /// let date = Date::try_from_fields(
@@ -201,9 +211,22 @@ pub struct RangeError {
     pub max: i32,
 }
 
+impl RangeError {
+    #[inline]
+    pub(crate) fn maybe_with_month_code(self, month_code: Option<MonthCode>) -> DateError {
+        if let Some(month_code) = month_code {
+            if self.field == "month" {
+                return DateError::UnknownMonthCode(month_code);
+            }
+        }
+        self.into()
+    }
+}
+
 impl core::error::Error for RangeError {}
 
 impl From<RangeError> for DateError {
+    #[inline]
     fn from(value: RangeError) -> Self {
         let RangeError {
             field,
@@ -245,4 +268,17 @@ pub(crate) fn range_check<T: Ord + Into<i32> + Copy>(
     }
 
     Ok(value)
+}
+
+pub(crate) fn range_check_with_overflow<T: Ord + Into<i32> + Copy>(
+    value: T,
+    field: &'static str,
+    bounds: core::ops::RangeInclusive<T>,
+    overflow: Overflow,
+) -> Result<T, RangeError> {
+    if matches!(overflow, Overflow::Constrain) {
+        Ok(value.clamp(*bounds.start(), *bounds.end()))
+    } else {
+        range_check(value, field, bounds)
+    }
 }

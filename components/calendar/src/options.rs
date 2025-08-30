@@ -12,6 +12,13 @@ pub struct DateFromFieldsOptions {
     pub overflow: Overflow,
 }
 
+impl DateFromFieldsOptions {
+    #[inline]
+    pub(crate) fn overflow(self) -> Overflow {
+        self.overflow.unwrap_or_default()
+    }
+}
+
 /// Whether to constrain or reject out-of-bounds values when constructing a Date.
 ///
 /// The behavior conforms to the ECMAScript Temporal specification.
