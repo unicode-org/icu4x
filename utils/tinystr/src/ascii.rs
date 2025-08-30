@@ -262,7 +262,6 @@ impl<const N: usize> TinyAsciiStr<N> {
             x /= 10;
             i += 1;
         }
-        #[expect(clippy::indexing_slicing)] // in-range: i < N
         if i < N {
             bytes.copy_within((N - i)..N, 0);
             bytes[i..N].fill(0);
