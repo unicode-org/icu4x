@@ -229,13 +229,15 @@ impl<const N: usize> TinyAsciiStr<N> {
     /// use tinystr::TinyAsciiStr;
     /// use tinystr::tinystr;
     ///
-    /// let n456_4 = TinyAsciiStr::<4>::new_decimal_usize(456).unwrap();
-    /// let n456_3 = TinyAsciiStr::<3>::new_decimal_usize(456).unwrap();
-    /// let n456_2 = TinyAsciiStr::<2>::new_decimal_usize(456).unwrap_err();
+    /// let s0_4 = TinyAsciiStr::<4>::new_decimal_usize(0).unwrap();
+    /// let s456_4 = TinyAsciiStr::<4>::new_decimal_usize(456).unwrap();
+    /// let s456_3 = TinyAsciiStr::<3>::new_decimal_usize(456).unwrap();
+    /// let s456_2 = TinyAsciiStr::<2>::new_decimal_usize(456).unwrap_err();
     ///
-    /// assert_eq!(n456_4, tinystr!(4, "456"));
-    /// assert_eq!(n456_3, tinystr!(3, "456"));
-    /// assert_eq!(n456_2, tinystr!(2, "56"));
+    /// assert_eq!(s0_4, tinystr!(4, "0"));
+    /// assert_eq!(s456_4, tinystr!(4, "456"));
+    /// assert_eq!(s456_3, tinystr!(3, "456"));
+    /// assert_eq!(s456_2, tinystr!(2, "56"));
     /// ```
     ///
     /// Example with saturating the value:
@@ -255,7 +257,7 @@ impl<const N: usize> TinyAsciiStr<N> {
         let mut x = number;
         let mut i = 0usize;
         #[expect(clippy::indexing_slicing)] // in-range: i < N
-        while x != 0 && i < N {
+        while i < N && (x != 0 || i == 0) {
             bytes[N - i - 1] = ((x % 10) as u8) + b'0';
             x /= 10;
             i += 1;
