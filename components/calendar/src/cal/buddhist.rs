@@ -17,8 +17,10 @@
 //! ```
 
 use crate::cal::iso::{Iso, IsoDateInner};
-use crate::calendar_arithmetic::ArithmeticDate;
+use crate::calendar_arithmetic::{ArithmeticDate, CalendarNonLunisolar, CalendarWithEras};
 use crate::error::DateError;
+use crate::options::DateFromFieldsOptions;
+use crate::types::DateFields;
 use crate::{types, Calendar, Date, DateDuration, DateDurationUnit, RangeError};
 use calendrical_calculations::rata_die::RataDie;
 use tinystr::tinystr;
@@ -49,25 +51,38 @@ const BUDDHIST_ERA_OFFSET: i32 = -543;
 #[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct Buddhist;
 
+impl CalendarWithEras for Buddhist {
+    #[inline]
+    fn era_year_to_monotonic(&self, era: &str, era_year: i32) -> Result<i32, DateError> {
+        match era {
+            "be" => Ok(era_year),
+            _ => Err(DateError::UnknownEra),
+        }
+    }
+}
+
+impl CalendarNonLunisolar for Buddhist {
+    #[inline]
+    fn fixed_monotonic_reference_year(&self) -> i32 {
+        todo!()
+    }
+}
+
 impl crate::cal::scaffold::UnstableSealed for Buddhist {}
 impl Calendar for Buddhist {
     type DateInner = IsoDateInner;
     type Year = types::EraYear;
 
-    fn from_codes(
+    fn from_fields(
         &self,
-        era: Option<&str>,
-        year: i32,
-        month_code: types::MonthCode,
-        day: u8,
+        fields: DateFields,
+        options: DateFromFieldsOptions,
     ) -> Result<Self::DateInner, DateError> {
-        match era {
-            Some("be") | None => {}
-            _ => return Err(DateError::UnknownEra),
-        }
+        let (year, month, day) = fields.get_non_lunisolar_ordinals(self)?;
         let year = year + BUDDHIST_ERA_OFFSET;
-
-        ArithmeticDate::new_from_codes(self, year, month_code, day).map(IsoDateInner)
+        ArithmeticDate::new_from_ordinals(year, month, day, options.overflow())
+            .map(IsoDateInner)
+            .map_err(|e| e.maybe_with_month_code(fields.month_code))
     }
 
     fn from_iso(&self, iso: IsoDateInner) -> Self::DateInner {

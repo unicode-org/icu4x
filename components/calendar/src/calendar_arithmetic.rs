@@ -127,6 +127,14 @@ pub(crate) trait CalendarArithmetic: Calendar {
     }
 }
 
+pub(crate) trait CalendarWithEras {
+    fn era_year_to_monotonic(&self, era: &str, era_year: i32) -> Result<i32, DateError>;
+}
+
+pub(crate) trait CalendarNonLunisolar {
+    fn fixed_monotonic_reference_year(&self) -> i32;
+}
+
 pub(crate) trait PrecomputedDataSource<YearInfo> {
     /// Given a calendar year, load (or compute) the YearInfo for it
     ///
@@ -396,15 +404,15 @@ impl<'a> DateFields<'a> {
     ///
     /// Returns an error when various conditions happen, in accordance with
     /// the ECMAScript Temporal specification.
-    pub(crate) fn get_non_lunisolar_ordinals(
-        self,
-        reference_year: i32,
-        era_year_to_monotonic: impl FnOnce(&str, i32) -> Result<i32, DateError>,
-    ) -> Result<(i32, u8, u8), DateError> {
-        let maybe_year = self.get_monotonic_year(era_year_to_monotonic)?;
+    pub(crate) fn get_non_lunisolar_ordinals<C>(self, cal: &C) -> Result<(i32, u8, u8), DateError>
+    where
+        C: CalendarNonLunisolar + CalendarWithEras,
+    {
+        let maybe_year =
+            self.get_monotonic_year(|era, era_year| cal.era_year_to_monotonic(era, era_year))?;
         let maybe_month = self.get_non_lunisolar_month()?;
         let maybe_day = self.day;
-        let year = maybe_year.unwrap_or(reference_year);
+        let year = maybe_year.unwrap_or(cal.fixed_monotonic_reference_year());
         let month = maybe_month.ok_or(DateError::NotEnoughFields)?.get();
         let day = if maybe_year.is_some() {
             maybe_day.map(|x| x.get()).unwrap_or(1)
