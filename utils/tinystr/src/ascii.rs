@@ -256,23 +256,20 @@ impl<const N: usize> TinyAsciiStr<N> {
     /// assert_eq!(str_saturated, tinystr!(2, "99"));
     /// ```
     pub fn new_unsigned_decimal(number: u32) -> Result<Self, Self> {
-        let mut bytes = [0; N];
+        let mut bytes = [AsciiByte::B0; N];
         let mut x = number;
         let mut i = 0usize;
         #[expect(clippy::indexing_slicing)] // in-range: i < N
         while i < N && (x != 0 || i == 0) {
-            bytes[N - i - 1] = ((x % 10) as u8) + b'0';
+            bytes[N - i - 1] = AsciiByte::from_decimal_digit((x % 10) as u8);
             x /= 10;
             i += 1;
         }
         if i < N {
             bytes.copy_within((N - i)..N, 0);
-            bytes[i..N].fill(0);
+            bytes[i..N].fill(AsciiByte::B0);
         }
-        let s = Self {
-            // SAFETY: `out` only contains ASCII bytes and has same size as `self.bytes`
-            bytes: unsafe { AsciiByte::to_ascii_byte_array(&bytes) },
-        };
+        let s = Self { bytes };
         if x != 0 {
             Err(s)
         } else {
