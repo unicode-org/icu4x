@@ -220,7 +220,8 @@ impl<const N: usize> TinyAsciiStr<N> {
     /// the given unsigned integer.
     ///
     /// If the number of decimal digits exceeds `N`, the highest-magnitude
-    /// digits are truncated and returned as the error.
+    /// digits are truncated, and the lowest-magnitude digits are returned
+    /// as the error.
     ///
     /// # Examples
     ///
