@@ -8,12 +8,10 @@
 pub use calendrical_calculations::rata_die::RataDie;
 use core::fmt;
 use core::num::NonZeroU8;
-use tinystr::{tinystr, TinyAsciiStr};
+use tinystr::TinyAsciiStr;
 use tinystr::{TinyStr16, TinyStr4};
 use zerovec::maps::ZeroMapKV;
 use zerovec::ule::AsULE;
-
-use crate::DateError;
 
 /// A bag of various ways of expressing the year, month, and/or day.
 ///

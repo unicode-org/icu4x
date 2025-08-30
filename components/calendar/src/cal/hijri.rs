@@ -702,7 +702,7 @@ impl Calendar for HijriUmmAlQura {
             options.overflow(),
         )
         .map(HijriUmmAlQuraDateInner)
-            .map_err(|e| e.maybe_with_month_code(fields.month_code))
+        .map_err(|e| e.maybe_with_month_code(fields.month_code))
     }
 
     fn from_rata_die(&self, rd: RataDie) -> Self::DateInner {
@@ -850,7 +850,12 @@ impl Date<HijriUmmAlQura> {
     ) -> Result<Date<HijriUmmAlQura>, RangeError> {
         let y = HijriUmmAlQura.load_or_compute_info(year);
         Ok(Date::from_raw(
-            HijriUmmAlQuraDateInner(ArithmeticDate::new_from_ordinals(y, month, day, Overflow::Reject)?),
+            HijriUmmAlQuraDateInner(ArithmeticDate::new_from_ordinals(
+                y,
+                month,
+                day,
+                Overflow::Reject,
+            )?),
             HijriUmmAlQura,
         ))
     }
@@ -928,7 +933,8 @@ impl Calendar for HijriTabular {
         options: DateFromFieldsOptions,
     ) -> Result<Self::DateInner, DateError> {
         let (year, month, day) = fields.get_non_lunisolar_ordinals(self)?;
-        ArithmeticDate::new_from_ordinals(year, month, day, options.overflow()).map(HijriTabularDateInner)
+        ArithmeticDate::new_from_ordinals(year, month, day, options.overflow())
+            .map(HijriTabularDateInner)
             .map_err(|e| e.maybe_with_month_code(fields.month_code))
     }
 

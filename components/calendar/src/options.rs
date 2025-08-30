@@ -9,7 +9,7 @@
 #[non_exhaustive]
 pub struct DateFromFieldsOptions {
     /// How to behave with out-of-bounds fields.
-    pub overflow: Overflow,
+    pub overflow: Option<Overflow>,
 }
 
 impl DateFromFieldsOptions {
@@ -49,7 +49,7 @@ pub enum Overflow {
     /// use tinystr::tinystr;
     ///
     /// let mut options = DateFromFieldsOptions::default();
-    /// options.overflow = Overflow::Constrain;
+    /// options.overflow = Some(Overflow::Constrain);
     ///
     /// // 5784, a leap year, contains M05L, but the day is too big.
     /// let mut fields = DateFields::default();
@@ -102,7 +102,7 @@ pub enum Overflow {
     /// use tinystr::tinystr;
     ///
     /// let mut options = DateFromFieldsOptions::default();
-    /// options.overflow = Overflow::Reject;
+    /// options.overflow = Some(Overflow::Reject);
     ///
     /// // 5784, a leap year, contains M05L, but the day is too big.
     /// let mut fields = DateFields::default();

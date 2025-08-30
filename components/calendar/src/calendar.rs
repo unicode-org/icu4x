@@ -6,7 +6,7 @@ use calendrical_calculations::rata_die::RataDie;
 
 use crate::cal::iso::IsoDateInner;
 use crate::error::DateError;
-use crate::options::DateFromFieldsOptions;
+use crate::options::{DateFromFieldsOptions, Overflow};
 use crate::{types, DateDuration, DateDurationUnit};
 use core::fmt;
 
@@ -54,7 +54,7 @@ pub trait Calendar: crate::cal::scaffold::UnstableSealed {
         // defaults to 1. Is that a problem?
         fields.day = core::num::NonZeroU8::new(day);
         let options = DateFromFieldsOptions {
-            overflow: crate::options::Overflow::Reject,
+            overflow: Some(Overflow::Reject),
         };
         self.from_fields(fields, options)
     }
