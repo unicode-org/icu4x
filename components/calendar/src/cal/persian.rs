@@ -17,7 +17,10 @@
 
 use crate::cal::iso::{Iso, IsoDateInner};
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
+use crate::calendar_arithmetic::{CalendarNonLunisolar, CalendarWithEras};
 use crate::error::DateError;
+use crate::options::{DateFromFieldsOptions, Overflow};
+use crate::types::DateFields;
 use crate::{types, Calendar, Date, DateDuration, DateDurationUnit, RangeError};
 use ::tinystr::tinystr;
 use calendrical_calculations::helpers::I32CastError;
@@ -84,24 +87,37 @@ impl CalendarArithmetic for Persian {
     }
 }
 
+impl CalendarWithEras for Persian {
+    #[inline]
+    fn era_year_to_monotonic(&self, era: &str, era_year: i32) -> Result<i32, DateError> {
+        match era {
+            "ap" | "sh" | "hs" => Ok(era_year),
+            _ => Err(DateError::UnknownEra),
+        }
+    }
+}
+
+impl CalendarNonLunisolar for Persian {
+    #[inline]
+    fn fixed_monotonic_reference_year(&self) -> i32 {
+        todo!()
+    }
+}
+
 impl crate::cal::scaffold::UnstableSealed for Persian {}
 impl Calendar for Persian {
     type DateInner = PersianDateInner;
     type Year = types::EraYear;
 
-    fn from_codes(
+    fn from_fields(
         &self,
-        era: Option<&str>,
-        year: i32,
-        month_code: types::MonthCode,
-        day: u8,
+        fields: DateFields,
+        options: DateFromFieldsOptions,
     ) -> Result<Self::DateInner, DateError> {
-        let year = match era {
-            Some("ap" | "sh" | "hs") | None => year,
-            Some(_) => return Err(DateError::UnknownEra),
-        };
-
-        ArithmeticDate::new_from_codes(self, year, month_code, day).map(PersianDateInner)
+        let (year, month, day) = fields.get_non_lunisolar_ordinals(self)?;
+        ArithmeticDate::new_from_ordinals(year, month, day, options.overflow())
+            .map(PersianDateInner)
+            .map_err(|e| e.maybe_with_month_code(fields.month_code))
     }
 
     fn from_rata_die(&self, rd: RataDie) -> Self::DateInner {
@@ -216,7 +232,7 @@ impl Date<Persian> {
     /// assert_eq!(date_persian.day_of_month().0, 25);
     /// ```
     pub fn try_new_persian(year: i32, month: u8, day: u8) -> Result<Date<Persian>, RangeError> {
-        ArithmeticDate::new_from_ordinals(year, month, day)
+        ArithmeticDate::new_from_ordinals(year, month, day, Overflow::Reject)
             .map(PersianDateInner)
             .map(|inner| Date::from_raw(inner, Persian))
     }

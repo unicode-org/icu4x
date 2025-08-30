@@ -5,6 +5,7 @@
 use crate::any_calendar::{AnyCalendar, IntoAnyCalendar};
 use crate::calendar_arithmetic::CalendarArithmetic;
 use crate::error::DateError;
+use crate::options::DateFromFieldsOptions;
 use crate::types::{CyclicYear, EraYear, IsoWeekOfYear};
 use crate::week::{RelativeUnit, WeekCalculator, WeekOf};
 use crate::{types, Calendar, DateDuration, DateDurationUnit, Iso};
@@ -131,6 +132,64 @@ impl<A: AsCalendar> Date<A> {
         let inner = calendar
             .as_calendar()
             .from_codes(era, year, month_code, day)?;
+        Ok(Date { inner, calendar })
+    }
+
+    /// Construct a date from from a bag of fields.
+    ///
+    /// This function is fairly lenient. For example:
+    ///
+    /// - If the year and month are set but the day is missing, it defaults to 1.
+    /// - If the month and day are set but the year is missing, it defaults to a reference year.\*
+    /// - Redundant fields may be set, but if they are inconsistent, an error is returned.
+    ///
+    /// This functions aims to conform to ECMAScript Temporal, in particular the union of
+    /// `CalendarResolveFields` and `CalendarDateToISO`.
+    ///
+    /// \* A "reference year" is a specific year in the calendar that contains the given month and
+    /// day. See the Temporal operation [CalendarMonthDayToISOReferenceDate](
+    /// https://tc39.es/proposal-temporal/#sec-temporal-calendarmonthdaytoisoreferencedate).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu_calendar::Date;
+    /// use icu_calendar::DateError;
+    /// use icu_calendar::cal::Gregorian;
+    /// use icu_calendar::types::DateFields;
+    /// use std::num::NonZeroU8;
+    ///
+    /// let mut fields = DateFields::default();
+    /// fields.ordinal_month = NonZeroU8::new(1);
+    /// fields.day = NonZeroU8::new(1);
+    ///
+    /// let d1 = Date::try_from_fields(
+    ///     fields,
+    ///     Default::default(),
+    ///     Gregorian
+    /// )
+    /// .expect("Jan 1 in the reference year");
+    ///
+    /// fields.monotonic_year = Some(1972);
+    ///
+    /// let d2 = Date::try_from_fields(
+    ///     fields,
+    ///     Default::default(),
+    ///     Gregorian
+    /// )
+    /// .expect("Jan 1, 1972");
+    ///
+    /// assert_eq!(d1, d2, "The reference year for Gregorian is 1972");
+    /// ```
+    ///
+    /// See [`DateError`] for examples of error conditions.
+    #[inline]
+    pub fn try_from_fields(
+        fields: types::DateFields,
+        options: DateFromFieldsOptions,
+        calendar: A,
+    ) -> Result<Self, DateError> {
+        let inner = calendar.as_calendar().from_fields(fields, options)?;
         Ok(Date { inner, calendar })
     }
 

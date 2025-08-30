@@ -16,10 +16,11 @@
 //! ```
 
 use crate::cal::iso::{Iso, IsoDateInner};
-use crate::calendar_arithmetic::PrecomputedDataSource;
+use crate::calendar_arithmetic::{CalendarLunisolar, CalendarWithEras, PrecomputedDataSource};
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
 use crate::error::DateError;
-use crate::types::MonthInfo;
+use crate::options::{DateFromFieldsOptions, Overflow};
+use crate::types::{DateFields, MonthInfo};
 use crate::RangeError;
 use crate::{types, Calendar, Date, DateDuration, DateDurationUnit};
 use ::tinystr::tinystr;
@@ -130,25 +131,47 @@ impl PrecomputedDataSource<HebrewYearInfo> for () {
     }
 }
 
+impl CalendarWithEras for Hebrew {
+    #[inline]
+    fn era_year_to_monotonic(&self, era: &str, era_year: i32) -> Result<i32, DateError> {
+        match era {
+            "am" => Ok(era_year),
+            _ => Err(DateError::UnknownEra),
+        }
+    }
+}
+
+impl CalendarLunisolar for Hebrew {
+    #[inline]
+    fn variable_monotonic_reference_year(&self, month_code: types::MonthCode, day: u8) -> i32 {
+        todo!()
+    }
+    #[inline]
+    fn variable_ordinal_month(
+            &self,
+            monotonic_year: i32,
+            month_code: types::MonthCode,
+        ) -> Result<core::num::NonZeroU8, DateError> {
+        todo!()
+    }
+}
+
 impl crate::cal::scaffold::UnstableSealed for Hebrew {}
 impl Calendar for Hebrew {
     type DateInner = HebrewDateInner;
     type Year = types::EraYear;
 
-    fn from_codes(
+    fn from_fields(
         &self,
-        era: Option<&str>,
-        year: i32,
-        month_code: types::MonthCode,
-        day: u8,
+        fields: DateFields,
+        options: DateFromFieldsOptions,
     ) -> Result<Self::DateInner, DateError> {
-        match era {
-            Some("am") | None => {}
-            _ => return Err(DateError::UnknownEra),
-        }
-
+        let (year, month, day) = fields.get_lunisolar_ordinals(self)?;
         let year = HebrewYearInfo::compute(year);
 
+        todo!()
+
+        /*
         let is_leap_year = year.keviyah.is_leap();
 
         let month_code_str = month_code.0.as_str();
@@ -198,6 +221,7 @@ impl Calendar for Hebrew {
             month_ordinal,
             day,
         )?))
+        */
     }
 
     fn from_rata_die(&self, rd: RataDie) -> Self::DateInner {
@@ -356,7 +380,7 @@ impl Date<Hebrew> {
     pub fn try_new_hebrew(year: i32, month: u8, day: u8) -> Result<Date<Hebrew>, RangeError> {
         let year = HebrewYearInfo::compute(year);
 
-        ArithmeticDate::new_from_ordinals(year, month, day)
+        ArithmeticDate::new_from_ordinals(year, month, day, Overflow::Reject)
             .map(HebrewDateInner)
             .map(|inner| Date::from_raw(inner, Hebrew))
     }

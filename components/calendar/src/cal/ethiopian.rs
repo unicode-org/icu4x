@@ -18,7 +18,10 @@
 
 use crate::cal::iso::{Iso, IsoDateInner};
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
-use crate::error::{range_check, DateError};
+use crate::calendar_arithmetic::{CalendarNonLunisolar, CalendarWithEras};
+use crate::error::DateError;
+use crate::options::{DateFromFieldsOptions, Overflow};
+use crate::types::DateFields;
 use crate::{types, Calendar, Date, DateDuration, DateDurationUnit, RangeError};
 use calendrical_calculations::helpers::I32CastError;
 use calendrical_calculations::rata_die::RataDie;
@@ -112,31 +115,42 @@ impl CalendarArithmetic for Ethiopian {
     }
 }
 
+impl CalendarWithEras for Ethiopian {
+    #[inline]
+    fn era_year_to_monotonic(&self, era: &str, era_year: i32) -> Result<i32, DateError> {
+        match (self.era_style(), era) {
+            (EthiopianEraStyle::AmeteMihret, "am") => Ok(era_year),
+            (EthiopianEraStyle::AmeteMihret, "aa") => Ok(era_year - INCARNATION_OFFSET),
+            (EthiopianEraStyle::AmeteAlem, "aa") => Ok(era_year),
+            (_, _) => Err(DateError::UnknownEra),
+        }
+    }
+}
+
+impl CalendarNonLunisolar for Ethiopian {
+    #[inline]
+    fn fixed_monotonic_reference_year(&self) -> i32 {
+        todo!()
+    }
+}
+
 impl crate::cal::scaffold::UnstableSealed for Ethiopian {}
 impl Calendar for Ethiopian {
     type DateInner = EthiopianDateInner;
     type Year = types::EraYear;
-    fn from_codes(
+    fn from_fields(
         &self,
-        era: Option<&str>,
-        year: i32,
-        month_code: types::MonthCode,
-        day: u8,
+        fields: DateFields,
+        options: DateFromFieldsOptions,
     ) -> Result<Self::DateInner, DateError> {
-        let year = match (self.era_style(), era) {
-            (EthiopianEraStyle::AmeteMihret, Some("am")) => {
-                range_check(year, "year", 1..)? + INCARNATION_OFFSET
-            }
-            (EthiopianEraStyle::AmeteMihret, None) => year + INCARNATION_OFFSET,
-            (EthiopianEraStyle::AmeteMihret, Some("aa")) => {
-                range_check(year, "year", ..=INCARNATION_OFFSET)?
-            }
-            (EthiopianEraStyle::AmeteAlem, Some("aa") | None) => year,
-            (_, Some(_)) => {
-                return Err(DateError::UnknownEra);
-            }
-        };
-        ArithmeticDate::new_from_codes(self, year, month_code, day).map(EthiopianDateInner)
+        let (mut year, month, day) = fields.get_non_lunisolar_ordinals(self)?;
+        if matches!(self.era_style(), EthiopianEraStyle::AmeteMihret) {
+            // Year is stored as an Amete Alem year
+            year += INCARNATION_OFFSET;
+        }
+        ArithmeticDate::new_from_ordinals(year, month, day, options.overflow())
+            .map(EthiopianDateInner)
+            .map_err(|e| e.maybe_with_month_code(fields.month_code))
     }
 
     fn from_rata_die(&self, rd: RataDie) -> Self::DateInner {
@@ -294,7 +308,7 @@ impl Date<Ethiopian> {
         if era_style == EthiopianEraStyle::AmeteAlem {
             year -= INCARNATION_OFFSET;
         }
-        ArithmeticDate::new_from_ordinals(year, month, day)
+        ArithmeticDate::new_from_ordinals(year, month, day, Overflow::Reject)
             .map(EthiopianDateInner)
             .map(|inner| Date::from_raw(inner, Ethiopian::new_with_era_style(era_style)))
     }
