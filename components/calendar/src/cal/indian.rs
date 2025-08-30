@@ -18,7 +18,10 @@
 
 use crate::cal::iso::{Iso, IsoDateInner};
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
+use crate::calendar_arithmetic::{CalendarNonLunisolar, CalendarWithEras};
 use crate::error::DateError;
+use crate::options::{DateFromFieldsOptions, Overflow};
+use crate::types::DateFields;
 use crate::{types, Calendar, Date, DateDuration, DateDurationUnit, RangeError};
 use calendrical_calculations::rata_die::RataDie;
 use tinystr::tinystr;
@@ -86,22 +89,36 @@ const DAY_OFFSET: u16 = 80;
 /// The Śaka era is 78 years behind Gregorian. This number should be added to Gregorian dates
 const YEAR_OFFSET: i32 = 78;
 
+impl CalendarWithEras for Indian {
+    #[inline]
+    fn era_year_to_monotonic(&self, era: &str, era_year: i32) -> Result<i32, DateError> {
+        match era {
+            "shaka" => Ok(era_year),
+            _ => Err(DateError::UnknownEra),
+        }
+    }
+}
+
+impl CalendarNonLunisolar for Indian {
+    #[inline]
+    fn fixed_monotonic_reference_year(&self) -> i32 {
+        todo!()
+    }
+}
+
 impl crate::cal::scaffold::UnstableSealed for Indian {}
 impl Calendar for Indian {
     type DateInner = IndianDateInner;
     type Year = types::EraYear;
-    fn from_codes(
+    fn from_fields(
         &self,
-        era: Option<&str>,
-        year: i32,
-        month_code: types::MonthCode,
-        day: u8,
+        fields: DateFields,
+        options: DateFromFieldsOptions,
     ) -> Result<Self::DateInner, DateError> {
-        let year = match era {
-            Some("shaka") | None => year,
-            Some(_) => return Err(DateError::UnknownEra),
-        };
-        ArithmeticDate::new_from_codes(self, year, month_code, day).map(IndianDateInner)
+        let (year, month, day) = fields.get_non_lunisolar_ordinals(self)?;
+        ArithmeticDate::new_from_ordinals(year, month, day, options.overflow())
+            .map(IndianDateInner)
+            .map_err(|e| e.maybe_with_month_code(fields.month_code))
     }
 
     fn from_rata_die(&self, rd: RataDie) -> Self::DateInner {
@@ -235,7 +252,7 @@ impl Date<Indian> {
     /// assert_eq!(date_indian.day_of_month().0, 12);
     /// ```
     pub fn try_new_indian(year: i32, month: u8, day: u8) -> Result<Date<Indian>, RangeError> {
-        ArithmeticDate::new_from_ordinals(year, month, day)
+        ArithmeticDate::new_from_ordinals(year, month, day, Overflow::Reject)
             .map(IndianDateInner)
             .map(|inner| Date::from_raw(inner, Indian))
     }

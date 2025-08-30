@@ -22,8 +22,11 @@
 //! ```
 
 use crate::cal::iso::{Iso, IsoDateInner};
+use crate::calendar_arithmetic::{CalendarNonLunisolar, CalendarWithEras};
 use crate::error::{range_check, DateError};
+use crate::options::DateFromFieldsOptions;
 use crate::provider::{CalendarJapaneseExtendedV1, CalendarJapaneseModernV1, EraStartDate};
+use crate::types::DateFields;
 use crate::{types, AsCalendar, Calendar, Date, DateDuration, DateDurationUnit, Ref};
 use calendrical_calculations::rata_die::RataDie;
 use icu_provider::prelude::*;
@@ -166,27 +169,43 @@ impl JapaneseExtended {
     pub(crate) const DEBUG_NAME: &'static str = "Japanese (historical era data)";
 }
 
+impl CalendarWithEras for Japanese {
+    #[inline]
+    fn era_year_to_monotonic(&self, era: &str, era_year: i32) -> Result<i32, DateError> {
+        match era {
+            qwerty => todo!(),
+            _ => Err(DateError::UnknownEra),
+        }
+    }
+}
+
+impl CalendarNonLunisolar for Japanese {
+    #[inline]
+    fn fixed_monotonic_reference_year(&self) -> i32 {
+        todo!()
+    }
+}
+
 impl crate::cal::scaffold::UnstableSealed for Japanese {}
 impl Calendar for Japanese {
     type DateInner = JapaneseDateInner;
     type Year = types::EraYear;
 
-    fn from_codes(
+    fn from_fields(
         &self,
-        era: Option<&str>,
-        year: i32,
-        month_code: types::MonthCode,
-        day: u8,
+        fields: DateFields,
+        options: DateFromFieldsOptions,
     ) -> Result<Self::DateInner, DateError> {
-        let Some((month, false)) = month_code.parsed() else {
-            return Err(DateError::UnknownMonthCode(month_code));
-        };
+        // let Some((month, false)) = month_code.parsed() else {
+        //     return Err(DateError::UnknownMonthCode(month_code));
+        // };
 
-        if month > 12 {
-            return Err(DateError::UnknownMonthCode(month_code));
-        }
+        // if month > 12 {
+        //     return Err(DateError::UnknownMonthCode(month_code));
+        // }
 
-        self.new_japanese_date_inner(era, year, month, day)
+        // self.new_japanese_date_inner(era, year, month, day)
+        todo!()
     }
 
     fn from_rata_die(&self, rd: RataDie) -> Self::DateInner {
@@ -289,14 +308,12 @@ impl Calendar for JapaneseExtended {
     type DateInner = JapaneseDateInner;
     type Year = types::EraYear;
 
-    fn from_codes(
+    fn from_fields(
         &self,
-        era: Option<&str>,
-        year: i32,
-        month_code: types::MonthCode,
-        day: u8,
+        fields: DateFields,
+        options: DateFromFieldsOptions,
     ) -> Result<Self::DateInner, DateError> {
-        self.0.from_codes(era, year, month_code, day)
+        self.0.from_fields(fields, options)
     }
 
     fn from_rata_die(&self, rd: RataDie) -> Self::DateInner {
