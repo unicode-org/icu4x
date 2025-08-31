@@ -11,9 +11,27 @@
     ],
     [
       [
+        3,
+        {
+          "AlphaNextToNumber": "Other"
+        }
+      ],
+      "0 mil ¤"
+    ],
+    [
+      [
         4,
         {
           "Standard": "Other"
+        }
+      ],
+      "00 mil ¤"
+    ],
+    [
+      [
+        4,
+        {
+          "AlphaNextToNumber": "Other"
         }
       ],
       "00 mil ¤"
@@ -29,12 +47,30 @@
     ],
     [
       [
+        5,
+        {
+          "AlphaNextToNumber": "Other"
+        }
+      ],
+      "000 mil ¤"
+    ],
+    [
+      [
         6,
         {
           "Standard": "Other"
         }
       ],
-      "0 M¤"
+      "0 M ¤"
+    ],
+    [
+      [
+        6,
+        {
+          "AlphaNextToNumber": "Other"
+        }
+      ],
+      "0 M ¤"
     ],
     [
       [
@@ -43,7 +79,16 @@
           "Standard": "Other"
         }
       ],
-      "00 M¤"
+      "00 M ¤"
+    ],
+    [
+      [
+        7,
+        {
+          "AlphaNextToNumber": "Other"
+        }
+      ],
+      "00 M ¤"
     ],
     [
       [
@@ -52,7 +97,16 @@
           "Standard": "Other"
         }
       ],
-      "000 M¤"
+      "000 M ¤"
+    ],
+    [
+      [
+        8,
+        {
+          "AlphaNextToNumber": "Other"
+        }
+      ],
+      "000 M ¤"
     ],
     [
       [
@@ -61,7 +115,16 @@
           "Standard": "Other"
         }
       ],
-      "0000 M¤"
+      "0000 M ¤"
+    ],
+    [
+      [
+        9,
+        {
+          "AlphaNextToNumber": "Other"
+        }
+      ],
+      "0000 M ¤"
     ],
     [
       [
@@ -70,7 +133,16 @@
           "Standard": "Other"
         }
       ],
-      "00 mil M¤"
+      "00 mil M ¤"
+    ],
+    [
+      [
+        10,
+        {
+          "AlphaNextToNumber": "Other"
+        }
+      ],
+      "00 mil M ¤"
     ],
     [
       [
@@ -79,7 +151,16 @@
           "Standard": "Other"
         }
       ],
-      "000 mil M¤"
+      "000 mil M ¤"
+    ],
+    [
+      [
+        11,
+        {
+          "AlphaNextToNumber": "Other"
+        }
+      ],
+      "000 mil M ¤"
     ],
     [
       [
@@ -88,7 +169,16 @@
           "Standard": "Other"
         }
       ],
-      "0 B¤"
+      "0 B ¤"
+    ],
+    [
+      [
+        12,
+        {
+          "AlphaNextToNumber": "Other"
+        }
+      ],
+      "0 B ¤"
     ],
     [
       [
@@ -97,7 +187,16 @@
           "Standard": "Other"
         }
       ],
-      "00 B¤"
+      "00 B ¤"
+    ],
+    [
+      [
+        13,
+        {
+          "AlphaNextToNumber": "Other"
+        }
+      ],
+      "00 B ¤"
     ],
     [
       [
@@ -106,7 +205,16 @@
           "Standard": "Other"
         }
       ],
-      "000 B¤"
+      "000 B ¤"
+    ],
+    [
+      [
+        14,
+        {
+          "AlphaNextToNumber": "Other"
+        }
+      ],
+      "000 B ¤"
     ]
   ]
 }

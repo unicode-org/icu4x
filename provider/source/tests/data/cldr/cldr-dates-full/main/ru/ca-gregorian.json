@@ -338,20 +338,24 @@
                 "Bhms": "h:mm:ss B",
                 "d": "d",
                 "E": "ccc",
+                "EBh": "E, h B",
                 "EBhm": "ccc, h:mm B",
                 "EBhms": "ccc, h:mm:ss B",
                 "Ed": "ccc, d",
+                "Eh": "E, h a",
                 "Ehm": "E h:mm a",
                 "EHm": "E HH:mm",
                 "Ehms": "E h:mm:ss a",
                 "EHms": "E HH:mm:ss",
                 "Gy": "y 'г'. G",
+                "GyM": "MM.y GGGGG",
                 "GyMd": "dd.MM.y GGGGG",
+                "GyMEd": "E, dd.MM.y GGGGG",
                 "GyMMM": "LLL y 'г'. G",
                 "GyMMMd": "d MMM y 'г'. G",
                 "GyMMMEd": "E, d MMM y 'г'. G",
                 "h": "h a",
-                "H": "HH",
+                "H": "H",
                 "hm": "h:mm a",
                 "Hm": "HH:mm",
                 "hms": "h:mm:ss a",
@@ -360,6 +364,8 @@
                 "Hmsv": "HH:mm:ss v",
                 "hmv": "h:mm a v",
                 "Hmv": "HH:mm v",
+                "hv": "h a, v",
+                "Hv": "HH 'ч'. v",
                 "M": "L",
                 "Md": "dd.MM",
                 "MEd": "E, dd.MM",
@@ -376,7 +382,7 @@
                 "y": "y",
                 "yM": "MM.y",
                 "yMd": "dd.MM.y",
-                "yMEd": "ccc, dd.MM.y 'г'.",
+                "yMEd": "ccc, dd.MM.y",
                 "yMM": "MM.y",
                 "yMMM": "LLL y 'г'.",
                 "yMMMd": "d MMM y 'г'.",
@@ -459,7 +465,7 @@
                   "h": "h–h a"
                 },
                 "H": {
-                  "H": "HH–HH"
+                  "H": "HH–HH 'ч'"
                 },
                 "hm": {
                   "a": "h:mm a – h:mm a",
@@ -484,7 +490,7 @@
                   "h": "h–h a v"
                 },
                 "Hv": {
-                  "H": "HH–HH v"
+                  "H": "HH–HH 'ч'. v"
                 },
                 "M": {
                   "M": "M–M"
@@ -549,6 +555,14 @@
               }
             },
             "dateTimeFormats-atTime": {
+              "standard": {
+                "full": "{1} 'в' {0}",
+                "long": "{1} 'в' {0}",
+                "medium": "{1}, {0}",
+                "short": "{1}, {0}"
+              }
+            },
+            "dateTimeFormats-relative": {
               "standard": {
                 "full": "{1} 'в' {0}",
                 "long": "{1} 'в' {0}",
