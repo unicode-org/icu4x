@@ -24,6 +24,7 @@ const CLDR_JSON_GLOB: &[&str] = &[
     "cldr-core/supplemental/calendarData.json",
     "cldr-core/supplemental/currencyData.json",
     "cldr-core/supplemental/units.json",
+    "cldr-core/supplemental/unitPreferenceData.json",
     "cldr-core/supplemental/likelySubtags.json",
     "cldr-core/supplemental/metaZones.json",
     "cldr-core/supplemental/primaryZones.json",
