@@ -15,7 +15,7 @@ pub mod ffi {
     use crate::unstable::iana_parser::ffi::IanaParser;
     use crate::unstable::time::ffi::Time;
     use crate::unstable::timezone::ffi::TimeZoneInfo;
-    use crate::unstable::variant_offset::ffi::{UtcOffset, VariantOffsetsCalculator};
+    use crate::unstable::variant_offset::ffi::UtcOffset;
 
     /// An ICU4X ZonedDateTime object capable of containing a ISO-8601 date, time, and zone.
     #[diplomat::rust_link(icu::time::ZonedDateTime, Struct)]
@@ -49,10 +49,11 @@ pub mod ffi {
         #[diplomat::rust_link(icu::time::ZonedDateTime::try_full_from_str, FnInStruct)]
         #[diplomat::rust_link(icu::time::ZonedDateTime::try_full_from_utf8, FnInStruct, hidden)]
         #[diplomat::attr(all(supports = named_constructors, supports = fallible_constructors), named_constructor = "full_from_string")]
+        #[allow(deprecated)]
         pub fn full_from_string(
             v: &DiplomatStr,
             iana_parser: &IanaParser,
-            _offset_calculator: &VariantOffsetsCalculator,
+            _offset_calculator: &crate::unstable::variant_offset::ffi::VariantOffsetsCalculator,
         ) -> Result<ZonedIsoDateTime, Rfc9557ParseError> {
             Self::strict_from_string(v, iana_parser)
         }
@@ -118,11 +119,12 @@ pub mod ffi {
         #[diplomat::rust_link(icu::time::ZonedDateTime::try_full_from_str, FnInStruct)]
         #[diplomat::rust_link(icu::time::ZonedDateTime::try_from_utf8, FnInStruct, hidden)]
         #[diplomat::attr(all(supports = named_constructors, supports = fallible_constructors), named_constructor = "full_from_string")]
+        #[allow(deprecated)]
         pub fn full_from_string(
             v: &DiplomatStr,
             calendar: &Calendar,
             iana_parser: &IanaParser,
-            _offset_calculator: &VariantOffsetsCalculator,
+            _offset_calculator: &crate::unstable::variant_offset::ffi::VariantOffsetsCalculator,
         ) -> Result<ZonedDateTime, Rfc9557ParseError> {
             Self::strict_from_string(v, calendar, iana_parser)
         }

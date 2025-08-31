@@ -11,6 +11,8 @@ import type { pointer, codepoint } from "./diplomat-runtime.d.ts";
 
 /**
  * See the [Rust documentation for `VariantOffsetsCalculator`](https://docs.rs/icu/2.0.0/icu/time/zone/struct.VariantOffsetsCalculator.html) for more information.
+ *
+ * @deprecated this API is a bad approximation of a time zone database
  */
 export class VariantOffsetsCalculator {
     /** @internal */

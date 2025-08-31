@@ -56,7 +56,9 @@ mod zone_name_timestamp;
 pub use offset::InvalidOffsetError;
 pub use offset::UtcOffset;
 pub use offset::VariantOffsets;
+#[allow(deprecated)]
 pub use offset::VariantOffsetsCalculator;
+#[allow(deprecated)]
 pub use offset::VariantOffsetsCalculatorBorrowed;
 
 #[doc(no_inline)]
