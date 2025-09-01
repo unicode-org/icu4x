@@ -3,9 +3,9 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use super::{Offset, Transition, EPOCH, SECONDS_IN_UTC_DAY};
+use crate::UtcOffsetSeconds;
 use calendrical_calculations::iso;
 use calendrical_calculations::rata_die::RataDie;
-use icu_time::zone::UtcOffset;
 
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub(crate) struct Rule<'a> {
@@ -314,7 +314,7 @@ impl Rule<'_> {
 
         (
             Offset {
-                offset: UtcOffset::from_seconds_unchecked(self.standard_offset_seconds + other.1),
+                offset: UtcOffsetSeconds(self.standard_offset_seconds + other.1),
                 rule_applies: other.1 != 0,
             },
             Transition {
@@ -324,9 +324,7 @@ impl Rule<'_> {
                     self.standard_offset_seconds,
                     other.1,
                 ),
-                offset: UtcOffset::from_seconds_unchecked(
-                    self.standard_offset_seconds + selected.1,
-                ),
+                offset: UtcOffsetSeconds(self.standard_offset_seconds + selected.1),
                 rule_applies: selected.1 != 0,
             },
         )
@@ -535,7 +533,7 @@ mod tests {
 
                     assert_eq!(
                         last_transition.offset,
-                        UtcOffset::from_seconds_unchecked(
+                        UtcOffsetSeconds(
                             rule.standard_offset_seconds + rule.inner.additional_offset_secs
                         ),
                         "{iana}, {zoneinfo64:?}"
@@ -545,7 +543,7 @@ mod tests {
 
                     assert_eq!(
                         last_transition.offset,
-                        UtcOffset::from_seconds_unchecked(rule.standard_offset_seconds),
+                        UtcOffsetSeconds(rule.standard_offset_seconds),
                         "{iana}, {zoneinfo64:?}"
                     );
                 }

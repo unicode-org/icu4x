@@ -5,8 +5,7 @@
 //! This crate contains utilities for working with ICU4C's zoneinfo64 format
 //!
 //! ```rust
-//! # use icu_time::zone::UtcOffset;
-//! # use zoneinfo64::{Offset, PossibleOffset, ZoneInfo64};
+//! # use zoneinfo64::{Offset, PossibleOffset, ZoneInfo64, UtcOffsetSeconds};
 //!
 //! // Needs to be u32-aligned
 //! let resb = resb::include_bytes_as_u32!("../tests/data/zoneinfo64.res");
@@ -17,13 +16,13 @@
 //! let pacific = zoneinfo.get("America/Los_Angeles").unwrap();
 //! // Calculate the timezone offset for 2024-01-01
 //! let offset = pacific.for_timestamp(1704067200000);
-//! let offset_seven = UtcOffset::try_from_seconds(-7 * 3600).unwrap();
+//! let offset_seven = UtcOffsetSeconds(-7 * 3600);
 //! assert_eq!(offset.offset, offset_seven);
 //!
 //! // Calculate possible offsets at 2025-11-02T01:00:00
 //! // This is during a DST switchover and is ambiguous
 //! let possible = pacific.for_date_time(2025, 11, 2, 1, 0, 0);
-//! let offset_eight = UtcOffset::try_from_seconds(-8 * 3600).unwrap();
+//! let offset_eight = UtcOffsetSeconds(-8 * 3600);
 //! assert_eq!(possible, PossibleOffset::Ambiguous(
 //!     Offset { offset: offset_seven, rule_applies: true },
 //!     Offset { offset: offset_eight, rule_applies: false }
@@ -37,7 +36,6 @@ use potential_utf::PotentialUtf16;
 use resb::binary::BinaryDeserializerError;
 
 use icu_locale_core::subtags::Region;
-use icu_time::zone::UtcOffset;
 
 #[cfg(feature = "chrono")]
 mod chrono_impls;
@@ -48,6 +46,10 @@ mod deserialize;
 
 const EPOCH: RataDie = calendrical_calculations::iso::const_fixed_from_iso(1970, 1, 1);
 const SECONDS_IN_UTC_DAY: i64 = 24 * 60 * 60;
+
+/// An offset from UTC, in seconds
+#[derive(Debug, Clone, Copy, PartialEq, Default)]
+pub struct UtcOffsetSeconds(pub i32);
 
 #[derive(Debug)]
 /// The primary type containing parsed ZoneInfo64 data
@@ -251,7 +253,7 @@ impl PartialEq for Zone<'_> {
 #[derive(Debug, Clone, Copy, PartialEq, Default)]
 pub struct Offset {
     /// The offset from UTC of this time zone
-    pub offset: UtcOffset,
+    pub offset: UtcOffsetSeconds,
     /// Whether or not the Rule (i.e. "non standard" time) applies
     pub rule_applies: bool,
 }
@@ -262,7 +264,7 @@ pub struct Transition {
     /// When the transition starts
     pub since: i64,
     /// The offset from UTC after this transition
-    pub offset: UtcOffset,
+    pub offset: UtcOffsetSeconds,
     /// Whether or not the rule (i.e. "non standard" time) applies
     pub rule_applies: bool,
 }
@@ -346,7 +348,7 @@ impl<'a> TzZoneData<'a> {
             let &(standard, rule_additional) = self.type_offsets.first().unwrap();
             return Transition {
                 since: i64::MIN,
-                offset: UtcOffset::from_seconds_unchecked(standard + rule_additional),
+                offset: UtcOffsetSeconds(standard + rule_additional),
                 rule_applies: rule_additional > 0,
             };
         }
@@ -374,7 +376,7 @@ impl<'a> TzZoneData<'a> {
 
         Transition {
             since,
-            offset: UtcOffset::from_seconds_unchecked(standard + rule_additional),
+            offset: UtcOffsetSeconds(standard + rule_additional),
             rule_applies: rule_additional > 0,
         }
     }
@@ -455,9 +457,8 @@ impl<'a> Zone<'a> {
 
         // There's only an actual transition into `first_candidate` if there's an offset before it.
         if let Some(before_first_candidate) = before_first_candidate {
-            let wall_before =
-                first_candidate.since + before_first_candidate.offset.to_seconds() as i64;
-            let wall_after = first_candidate.since + first_candidate.offset.to_seconds() as i64;
+            let wall_before = first_candidate.since + i64::from(before_first_candidate.offset.0);
+            let wall_after = first_candidate.since + i64::from(first_candidate.offset.0);
 
             match (
                 seconds_since_local_epoch < wall_before,
@@ -492,8 +493,8 @@ impl<'a> Zone<'a> {
         };
 
         if let Some(second_candidate) = second_candidate {
-            let wall_before = second_candidate.since + first_candidate.offset.to_seconds() as i64;
-            let wall_after = second_candidate.since + second_candidate.offset.to_seconds() as i64;
+            let wall_before = second_candidate.since + i64::from(first_candidate.offset.0);
+            let wall_after = second_candidate.since + i64::from(second_candidate.offset.0);
 
             match (
                 seconds_since_local_epoch < wall_before,
@@ -684,8 +685,8 @@ mod tests {
                 .map(|idx| zoneinfo64.transition_offset_at(idx))
                 .tuple_windows::<(_, _)>()
             {
-                let prev_wall = prev.since.saturating_add(prev.offset.to_seconds() as i64);
-                let curr_wall = curr.since.saturating_add(curr.offset.to_seconds() as i64);
+                let prev_wall = prev.since.saturating_add(i64::from(prev.offset.0));
+                let curr_wall = curr.since.saturating_add(i64::from(curr.offset.0));
 
                 assert!(
                     prev_wall < curr_wall,
@@ -772,7 +773,7 @@ mod tests {
             .preceding(jiff::Timestamp::from_str("2100-01-01T00:00:00Z").unwrap())
             .map(|t| Transition {
                 since: t.timestamp().as_second(),
-                offset: UtcOffset::from_seconds_unchecked(t.offset().seconds()),
+                offset: UtcOffsetSeconds(t.offset().seconds()),
                 rule_applies: t.dst().is_dst(),
             })
             .collect::<Vec<_>>();
@@ -783,9 +784,9 @@ mod tests {
         transitions.retain(|t| {
             let before = tz.to_offset_info(jiff::Timestamp::from_second(t.since - 1).unwrap());
             if require_offset_change {
-                before.offset().seconds() != t.offset.to_seconds()
+                before.offset().seconds() != t.offset.0
             } else {
-                before.offset().seconds() != t.offset.to_seconds()
+                before.offset().seconds() != t.offset.0
                 || before.dst().is_dst() != t.rule_applies
                 // This is a super weird transition that would be removed by our rule,
                 // but we want to keep it because it's in zoneinfo64.
