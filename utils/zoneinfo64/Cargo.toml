@@ -24,7 +24,6 @@ all-features = true
 
 [dependencies]
 icu_locale_core = { workspace = true }
-icu_time = { workspace = true }
 potential_utf = { workspace = true }
 resb = { workspace = true }
 serde = { workspace = true, features = ["derive"] }

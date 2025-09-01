@@ -18,6 +18,8 @@
         additionally providing a reference to the cart. (unicode-org#6781)
         - Add `Yoke::with_mut_return`, similar to `Yoke::with_mut` but with a callback that may
             return any `'static` type. (unicode-org#6827)
+    - `zoneinfo64`
+        - Remove `icu_time` dependency (unicode-org#6914)
 
 ## icu4x 2.0.x
 
