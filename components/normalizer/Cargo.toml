@@ -65,13 +65,13 @@ utf8_iter = ["dep:utf8_iter"]
 # behind `not(serde)` instead. See a comment in `lib.rs` for
 # the TODO list explaining why the relevant bits aren't
 # already behind `not(serde)` instead.
-# unstable_fast_trie_only = []
+# icu4x_unstable_fast_trie_only = []
 
 [[bench]]
 name = "bench"
 harness = false
 required-features = ["utf16_iter", "utf8_iter"]
 
-# Lint to avoid complaining about unstable_fast_trie_only for now
+# Lint to avoid complaining about icu4x_unstable_fast_trie_only for now
 [lints.rust]
-unexpected_cfgs = { level = 'allow' }
+unexpected_cfgs = { level = "warn", check-cfg = ['cfg(icu4x_unstable_fast_trie_only)'] }

@@ -61,11 +61,11 @@
 extern crate alloc;
 
 // TODO: The plan is to replace
-// `#[cfg(not(feature = "unstable_fast_trie_only"))]`
+// `#[cfg(not(icu4x_unstable_fast_trie_only))]`
 // with
 // `#[cfg(feature = "serde")]`
 // and
-// `#[cfg(feature = "unstable_fast_trie_only")]`
+// `#[cfg(icu4x_unstable_fast_trie_only)]`
 // with
 // `#[cfg(not(feature = "serde"))]`
 //
@@ -79,10 +79,10 @@ extern crate alloc;
 // * The markers and possibly the data struct type
 //   for NFD and NFKD need to be revised per policy.
 
-#[cfg(not(feature = "unstable_fast_trie_only"))]
+#[cfg(not(icu4x_unstable_fast_trie_only))]
 type Trie<'trie> = CodePointTrie<'trie, u32>;
 
-#[cfg(feature = "unstable_fast_trie_only")]
+#[cfg(icu4x_unstable_fast_trie_only)]
 type Trie<'trie> = FastCodePointTrie<'trie, u32>;
 
 // We don't depend on icu_properties to minimize deps, but we want to be able
@@ -114,11 +114,11 @@ use core::char::REPLACEMENT_CHARACTER;
 use icu_collections::char16trie::Char16Trie;
 use icu_collections::char16trie::Char16TrieIterator;
 use icu_collections::char16trie::TrieResult;
-#[cfg(not(feature = "unstable_fast_trie_only"))]
+#[cfg(not(icu4x_unstable_fast_trie_only))]
 use icu_collections::codepointtrie::CodePointTrie;
-#[cfg(feature = "unstable_fast_trie_only")]
+#[cfg(icu4x_unstable_fast_trie_only)]
 use icu_collections::codepointtrie::FastCodePointTrie;
-#[cfg(feature = "unstable_fast_trie_only")]
+#[cfg(icu4x_unstable_fast_trie_only)]
 use icu_collections::codepointtrie::TypedCodePointTrie;
 #[cfg(feature = "icu_properties")]
 use icu_properties::props::CanonicalCombiningClass;
@@ -145,12 +145,12 @@ use zerovec::{zeroslice, ZeroSlice};
 // See https://github.com/rust-lang/hashbrown/commit/64bd7db1d1b148594edfde112cdb6d6260e2cfc3#commitcomment-164768806
 // for permission to relicense under Unicode-3.0.
 
-#[cfg(all(feature = "unstable_fast_trie_only", feature = "utf16_iter"))]
+#[cfg(all(icu4x_unstable_fast_trie_only, feature = "utf16_iter"))]
 #[inline(always)]
 #[cold]
 fn cold_path() {}
 
-#[cfg(all(feature = "unstable_fast_trie_only", feature = "utf16_iter"))]
+#[cfg(all(icu4x_unstable_fast_trie_only, feature = "utf16_iter"))]
 #[inline(always)]
 pub(crate) fn likely(b: bool) -> bool {
     if b {
@@ -164,7 +164,7 @@ pub(crate) fn likely(b: bool) -> bool {
 // End import from https://github.com/rust-lang/hashbrown/commit/64bd7db1d1b148594edfde112cdb6d6260e2cfc3 .
 
 /// No-op for typed trie case.
-#[cfg(all(not(feature = "unstable_fast_trie_only"), feature = "utf16_iter"))]
+#[cfg(all(not(icu4x_unstable_fast_trie_only), feature = "utf16_iter"))]
 #[inline(always)]
 fn likely(b: bool) -> bool {
     b
@@ -2129,10 +2129,10 @@ impl<'data> DecomposingNormalizerBorrowed<'data> {
                                             // case due to unintuitive optimizer effects. If you care about the
                                             // perf of the untyped trie case and have better ideas, please try
                                             // something better.
-                                            #[cfg(not(feature = "unstable_fast_trie_only"))]
+                                            #[cfg(not(icu4x_unstable_fast_trie_only))]
                                             {decomposition.trie.get32(upcoming32)}
-                                            #[cfg(feature = "unstable_fast_trie_only")]
-                                            {decomposition.trie.get_supplementary(upcoming32)}
+                                            #[cfg(icu4x_unstable_fast_trie_only)]
+                                            {decomposition.trie.get32_supplementary(upcoming32)}
                                         };
                                         if likely(starter_and_decomposes_to_self_impl(trie_value)) {
                                             continue 'fast;
@@ -2780,10 +2780,10 @@ impl<'data> ComposingNormalizerBorrowed<'data> {
                                             // case due to unintuitive optimizer effects. If you care about the
                                             // perf of the untyped trie case and have better ideas, please try
                                             // something better.
-                                            #[cfg(not(feature = "unstable_fast_trie_only"))]
+                                            #[cfg(not(icu4x_unstable_fast_trie_only))]
                                             {composition.decomposition.trie.get32(upcoming32)}
-                                            #[cfg(feature = "unstable_fast_trie_only")]
-                                            {composition.decomposition.trie.get_supplementary(upcoming32)}
+                                            #[cfg(icu4x_unstable_fast_trie_only)]
+                                            {composition.decomposition.trie.get32_supplementary(upcoming32)}
                                         };
                                         if likely(potential_passthrough_and_cannot_combine_backwards_impl(trie_value)) {
                                             // Fast-track succeeded!
