@@ -1555,7 +1555,7 @@ impl<'trie, T: TrieValue> TypedCodePointTrie<'trie, T> for FastCodePointTrie<'tr
         debug_assert_eq!(self.as_untyped_ref().header.trie_type, TrieType::Fast);
         let code_point = u32::from(bmp);
         // SAFETY: With `TrieType::Fast`, the `u16` range satisfies
-        -       // the invariant of `get32_assuming_fast_index`, which is
+        // the invariant of `get32_assuming_fast_index`, which is
         // "If `self.header.trie_type == TrieType::Small`, `code_point` must be at most
         // `SMALL_TYPE_FAST_INDEXING_MAX`. If `self.header.trie_type ==
         // TrieType::Fast`, `code_point` must be at most `FAST_TYPE_FAST_INDEXING_MAX`."
