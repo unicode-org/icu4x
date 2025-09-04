@@ -1922,7 +1922,6 @@ name = "ixdtf"
 version = "0.6.3"
 dependencies = [
  "criterion",
- "displaydoc",
  "serde-json-core",
 ]
 

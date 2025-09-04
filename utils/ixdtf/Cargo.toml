@@ -27,7 +27,6 @@ default = ["duration"]
 duration = []
 
 [dependencies]
-displaydoc = { workspace = true }
 
 [dev-dependencies]
 serde-json-core = { workspace = true, features = ["std"] }
