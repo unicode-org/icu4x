@@ -9,7 +9,7 @@
 //! # use zoneinfo64::{Offset, PossibleOffset, ZoneInfo64};
 //!
 //! // Needs to be u32-aligned
-//! let resb = resb::include_bytes_as_u32!("../tests/data/zoneinfo64.res");
+//! let resb = resb::include_bytes_as_u32!("./data/zoneinfo64.res");
 //! // Then we parse the data
 //! let zoneinfo = ZoneInfo64::try_from_u32s(resb)
 //!            .expect("Error processing resource bundle file");
@@ -45,6 +45,10 @@ mod chrono_impls;
 mod rule;
 use rule::*;
 mod deserialize;
+
+/// A bundled zoneinfo64.res that can be used for testing. No guarantee is made
+/// as to the version in use; though we will try to keep it up to date.
+pub const ZONEINFO64_RES_FOR_TESTING: &[u32] = resb::include_bytes_as_u32!("./data/zoneinfo64.res");
 
 const EPOCH: RataDie = calendrical_calculations::iso::const_fixed_from_iso(1970, 1, 1);
 const SECONDS_IN_UTC_DAY: i64 = 24 * 60 * 60;
@@ -650,7 +654,7 @@ mod tests {
     use std::{str::FromStr, sync::LazyLock};
 
     pub(crate) static TZDB: LazyLock<ZoneInfo64> = LazyLock::new(|| {
-        ZoneInfo64::try_from_u32s(resb::include_bytes_as_u32!("../tests/data/zoneinfo64.res"))
+        ZoneInfo64::try_from_u32s(ZONEINFO64_RES_FOR_TESTING)
             .expect("Error processing resource bundle file")
     });
 
