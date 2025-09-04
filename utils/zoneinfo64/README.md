@@ -7,7 +7,7 @@ This crate contains utilities for working with ICU4C's zoneinfo64 format
 ```rust
 
 // Needs to be u32-aligned
-let resb = resb::include_bytes_as_u32!("../tests/data/zoneinfo64.res");
+let resb = resb::include_bytes_as_u32!("./data/zoneinfo64.res");
 // Then we parse the data
 let zoneinfo = ZoneInfo64::try_from_u32s(resb)
            .expect("Error processing resource bundle file");
