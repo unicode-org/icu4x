@@ -11,12 +11,18 @@ use icu::locale::{
 use icu_experimental::displaynames::provider::RegionDisplayNamesV1;
 use icu_provider::prelude::*;
 use icu_provider_source::SourceDataProvider;
+use litemap::LiteMap;
 use ndarray::{Array2, Axis};
 use tinystr::TinyAsciiStr;
+use zerotrie::ZeroTrieSimpleAscii;
 
 #[test]
 fn dnametest() {
-    let provider = SourceDataProvider::new();
+    let provider = SourceDataProvider::new_custom()
+        .with_cldr(&std::path::PathBuf::from(
+            "/home/sffc/lib/cldr-46.0.0-json-full",
+        ))
+        .unwrap();
 
     let locales: BTreeMap<DataIdentifierCow<'_>, usize> =
         IterableDataProvider::<RegionDisplayNamesV1>::iter_ids(&provider)
@@ -40,16 +46,23 @@ fn dnametest() {
         })
         .collect();
 
-    let en_names = payloads
-        .get(&DataIdentifierCow::from_locale(locale!("en").into()))
-        .unwrap();
+    let unique_names: Vec<&str> = payloads
+        .values()
+        .flat_map(|v| v.get().names.iter_values())
+        .collect::<BTreeSet<_>>()
+        .into_iter()
+        .collect();
+    let unique_names_required_bits = (unique_names.len() as f64).log2().ceil() as usize;
+    println!("unique_names: {} ({unique_names_required_bits})", unique_names.len());
 
-    let regions = en_names
+    let regions: BTreeSet<TinyAsciiStr<3>> = payloads
+        .get(&DataIdentifierCow::from_locale(locale!("en").into()))
+        .unwrap()
         .get()
         .names
         .iter_keys()
         .map(|s| s.try_into_tinystr().unwrap())
-        .collect::<BTreeSet<TinyAsciiStr<3>>>();
+        .collect();
 
     let expander = LocaleExpander::try_new_common_unstable(&provider).unwrap();
     let fallbacker = LocaleFallbacker::try_new_unstable(&provider).unwrap();
@@ -80,11 +93,14 @@ fn dnametest() {
         .collect();
 
     let mut dense_matrix =
-        Array2::<Option<&str>>::default((locales.len() + script_locales.len(), regions.len()));
+        Array2::<Option<usize>>::default((locales.len() + script_locales.len(), regions.len()));
 
     for (i, (_locale, payload)) in payloads.iter().enumerate() {
         for (j, region) in regions.iter().enumerate() {
-            dense_matrix[(i, j)] = payload.get().names.get(&region.to_unvalidated());
+            if let Some(name) = payload.get().names.get(&region.to_unvalidated()) {
+                let index = unique_names.binary_search(&name).unwrap();
+                dense_matrix[(i, j)] = Some(index);
+            }
         }
     }
 
@@ -137,11 +153,66 @@ fn dnametest() {
         values.iter().filter(|v| v.is_some()).count()
     });
 
-    for (i, locale) in locales.keys().enumerate() {
+    for (i, locale) in locales.keys().chain(script_locales.keys()).enumerate() {
         println!("{locale:<3}: {}", large_small[i]);
     }
-    for (i, locale) in script_locales.keys().enumerate() {
-        let i = i + locales.len();
-        println!("{locale:<3}: {}", large_small[i]);
-    }
+
+    let locales_only_zerotrie: ZeroTrieSimpleAscii<Vec<u8>> = locales
+        .keys()
+        .chain(script_locales.keys())
+        .enumerate()
+        .map(|(i, locale)| (locale.to_string(), i))
+        .collect();
+    println!("locales_only_zerotrie: {}", locales_only_zerotrie.byte_len());
+
+    let regions_only_zerotrie: ZeroTrieSimpleAscii<Vec<u8>> = regions.iter().enumerate()
+        .map(|(i, locale)| (locale.to_string(), i))
+        .collect();
+
+    println!("regions_only_zerotrie: {}", regions_only_zerotrie.byte_len());
+
+    let sparse_map: LiteMap<String, usize> = locales
+        .keys()
+        .chain(script_locales.keys())
+        .enumerate()
+        .flat_map(|(i, locale)| {
+            let dense_matrix = &dense_matrix;
+            regions.iter().enumerate().filter_map(move |(j, region)| {
+                dense_matrix[(i, j)].map(|index| (format!("{locale}/{region}"), index))
+            })
+        })
+        .collect();
+    println!("sparse_map: {}", sparse_map.len());
+
+    let sparse_zerotrie: ZeroTrieSimpleAscii<Vec<u8>> =
+        sparse_map.iter().map(|(k, v)| (k, *v)).collect();
+    println!("sparse_zerotrie: {}", sparse_zerotrie.byte_len());
+
+    let dense_row_bit_size = regions.len() * unique_names_required_bits;
+
+    let mut num_dense_locales = 0;
+    let hybrid_sparse_map: LiteMap<String, usize> = locales
+        .keys()
+        .chain(script_locales.keys())
+        .enumerate()
+        .flat_map(|(i, locale)| {
+            let dense_matrix = &dense_matrix;
+            let row: Vec<(String, usize)> = regions.iter().enumerate().filter_map(move |(j, region)| {
+                dense_matrix[(i, j)].map(|index| (format!("{locale}/{region}"), index))
+            }).collect();
+            let inner_zerotrie: ZeroTrieSimpleAscii<_> = row.iter().map(|(k, v)| (k, *v)).collect();
+            if inner_zerotrie.byte_len() * 8 > dense_row_bit_size {
+                num_dense_locales += 1;
+                vec![(locale.to_string(), 0)].into_iter()
+            } else {
+                row.into_iter()
+            }
+        })
+        .collect();
+    println!("hybrid_sparse_map: {}", hybrid_sparse_map.len());
+    println!("num_dense_locales: {} ({} B)", num_dense_locales, num_dense_locales * dense_row_bit_size / 8);
+
+    let hybrid_sparse_zerotrie: ZeroTrieSimpleAscii<Vec<u8>> =
+        hybrid_sparse_map.iter().map(|(k, v)| (k, *v)).collect();
+    println!("hybrid_sparse_zerotrie: {}", hybrid_sparse_zerotrie.byte_len());
 }
