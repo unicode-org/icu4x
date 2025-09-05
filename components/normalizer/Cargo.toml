@@ -60,13 +60,6 @@ utf16_iter = ["dep:utf16_iter", "write16"]
 # For dealing with potentially ill-formed UTF8 strings
 utf8_iter = ["dep:utf8_iter"]
 
-# Statically assumes fast-mode trie data
-# Code that's currently behind this feature is expected to go
-# behind `not(serde)` instead. See a comment in `lib.rs` for
-# the TODO list explaining why the relevant bits aren't
-# already behind `not(serde)` instead.
-# icu4x_unstable_fast_trie_only = []
-
 [[bench]]
 name = "bench"
 harness = false
