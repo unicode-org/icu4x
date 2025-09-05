@@ -577,7 +577,7 @@ jobs:
       # This is the baseline for semver-check. It can be changed
       # if unstable APIs were changed but semver-check
       # didn't know that they were unstable.
-      BASELINE_REF: fe588b97f72310dabda1d210444cda0c72cefa26 # a commit on main
+      BASELINE_REF: 7d369fbb651d594322ef44f12ea56066973628e4 # a commit on main
     steps:
 
     # Checkout baseline revision; required because actions/checkout is shallow
@@ -603,8 +603,6 @@ jobs:
     steps:
       - name: Notify slack of failure
         uses: ravsamhq/notify-slack-action@4ed28566c2bdcdaee6dca2b46b9666d01b4ed8a4 # v1
-        # Only notify main slack of failure for beta runs and for failed main CI
-        if: (github.event_name == 'schedule' && github.event.schedule == '1 14 * * *') || github.event_name == 'push'
         with:
           notify_when: failure
           status: failure # We do the filtering earlier
@@ -612,14 +610,5 @@ jobs:
           message_format: ${{ format('{{emoji}} {0} CI failed!' , ((github.event_name == 'schedule') && 'Beta' || (github.event_name == 'push') && 'Main' || 'Manually dispatched')) }}
           footer: '<{run_url}|View failure> | <https://github.com/unicode-org/icu4x/actions?query=event%3A${{ github.event_name }}|CI history for `${{ github.event_name }}`>'
         env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-      - name: Notify nightly slack of failure
-        uses: ravsamhq/notify-slack-action@4ed28566c2bdcdaee6dca2b46b9666d01b4ed8a4 # v1
-        with:
-          notify_when: failure
-          status: failure # We do the filtering earlier
-          notification_title: ''
-          message_format: ${{ format('{{emoji}} {0} CI failed!' , ((github.event_name == 'schedule') && (github.event.schedule == '1 14 * * *' && 'Beta' || 'Nightly') || (github.event_name == 'push') && 'Main' || 'Manually dispatched on `${{ inputs.channel }}`')) }}
-          footer: '<{run_url}|View failure> | <https://github.com/unicode-org/icu4x/actions?query=event%3A${{ github.event_name }}|CI history for `${{ github.event_name }}`>'
-        env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_NIGHTLY_WEBHOOK_URL }}
+          # Notify main slack of failure for beta runs and and main CI, nightly slack otherwise
+          SLACK_WEBHOOK_URL: ${{ ((github.event_name == 'schedule' && github.event.schedule == '1 14 * * *') || github.event_name == 'push') && secrets.SLACK_WEBHOOK_URL || secrets.SLACK_NIGHTLY_WEBHOOK_URL }}

@@ -70,31 +70,27 @@ export class TimeZoneInfo {
     get zoneNameDateTime(): IsoDateTime | null;
 
     /**
-     * DEPRECATED
-     *
-     * Just clones
-     *
      * See the [Rust documentation for `with_variant`](https://docs.rs/icu/2.0.0/icu/time/struct.TimeZoneInfo.html#method.with_variant) for more information.
+     *
+     * @deprecated returns unmodified copy
      */
     withVariant(timeVariant: TimeZoneVariant): TimeZoneInfo;
 
     get offset(): UtcOffset | null;
 
     /**
-     * DEPRECATED
-     *
-     * No-op
-     *
      * See the [Rust documentation for `infer_variant`](https://docs.rs/icu/2.0.0/icu/time/struct.TimeZoneInfo.html#method.infer_variant) for more information.
      *
      * Additional information: [1](https://docs.rs/icu/2.0.0/icu/time/zone/enum.TimeZoneVariant.html)
+     *
+     * @deprecated does nothing
      */
     inferVariant(offsetCalculator: VariantOffsetsCalculator): boolean;
 
     /**
-     * DEPRECATED
-     *
      * See the [Rust documentation for `variant`](https://docs.rs/icu/2.0.0/icu/time/struct.TimeZoneInfo.html#method.variant) for more information.
+     *
+     * @deprecated always returns null
      */
     variant(): TimeZoneVariant | null;
 

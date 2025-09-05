@@ -180,13 +180,14 @@ impl SourceDataProvider {
                     let mut curr_mz = mzs.next_if(|&(s, _)| s == start).and_then(|(_, mz)| mz);
 
                     loop {
-                        let (mut std, daylight) = curr_mz.and_then(|mzi| {
-                                use cldr_serde::time_zones::meta_zones::Variant;
-                                let variants = mzi.variant_overrides.as_ref()?;
-                                Some(match variants.get(&curr_offset.name)? {
-                                    Variant::Standard => (curr_offset.utc_offset + curr_offset.dst_offset_relative, None),
-                                    Variant::Daylight => {
-                                        let previous_offset = offsets_vec
+                        let (mut std, daylight) = curr_mz.map(|mzi| {
+                                let std_override = mzi.std_offset.as_ref().map(|s| UtcOffset::try_from_str(s).unwrap().to_seconds() as i64);
+                                let dst_override = mzi.dst_offset.as_ref().map(|s| UtcOffset::try_from_str(s).unwrap().to_seconds() as i64);
+
+                                if Some(curr_offset.total_offset()) == std_override {
+                                    (curr_offset.total_offset(), None)
+                                } else if Some(curr_offset.total_offset()) == dst_override {
+                                    let previous_offset = offsets_vec
                                             .iter()
                                             .rev()
                                             .find(|&&(tp, _)| curr_offset.transition > tp)
@@ -199,20 +200,27 @@ impl SourceDataProvider {
                                             previous_offset
                                                 .into_iter()
                                                 .chain(next_offset)
-                                                .filter(|(_, o)| variants.get(&o.name) == Some(&Variant::Standard))
-                                                .map(|(_, o)| o.utc_offset + o.dst_offset_relative)
+                                                .filter(|(_, o)| Some(o.total_offset()) != dst_override)
+                                                .map(|(_, o)| o.total_offset())
                                                 .next()
                                             // Permanent DST
-                                            .unwrap_or(curr_offset.utc_offset + curr_offset.dst_offset_relative),
-                                            Some(curr_offset.utc_offset + curr_offset.dst_offset_relative),
+                                            .unwrap_or(curr_offset.total_offset()),
+                                            Some(curr_offset.total_offset()),
                                         )
+                                } else {
+                                    if curr_offset.rearguard_agrees == Some(false) || curr_offset.vanguard_agrees == Some(false) {
+                                        log::warn!("Unhandled TZDB inconsistency for {tz:?}: {curr_offset:?}");
                                     }
-                                })
+                                    (
+                                        curr_offset.utc_offset,
+                                        // If a rule applies, we treat this as DST
+                                        (curr_offset.dst_offset_relative != 0).then_some(curr_offset.utc_offset + curr_offset.dst_offset_relative)
+                                    )
+                                }
                             })
                             .unwrap_or_else(|| {
-                                if curr_offset.rearguard_agrees == Some(false) || curr_offset.vanguard_agrees == Some(false) {
-                                    log::warn!("Unhandled TZDB inconsistency for {tz:?}: {curr_offset:?}");
-                                }
+                                // This is the no-metazone case, where it doesn't really matter what we consider DST.
+                                // We don't have overrides, so this will produce a negative DST for Casablanca.
                                 (
                                     curr_offset.utc_offset,
                                     // If a rule applies, we treat this as DST
@@ -224,10 +232,6 @@ impl SourceDataProvider {
                         if std == -2670 {
                             std = -2700;
                         };
-
-                        if daylight.map(|d| d - std) == Some(-3600) {
-                            log::error!("{tz:?}, {curr_mz:?}");
-                        }
 
                         let mut os = VariantOffsets::from_standard(UtcOffset::from_seconds_unchecked(std as i32));
                         os.daylight = daylight.map(|o| UtcOffset::from_seconds_unchecked(o as i32));
@@ -717,6 +721,12 @@ struct Transition {
     rearguard_agrees: Option<bool>,
     vanguard_agrees: Option<bool>,
     name: String,
+}
+
+impl Transition {
+    fn total_offset(&self) -> i64 {
+        self.utc_offset + self.dst_offset_relative
+    }
 }
 
 impl std::fmt::Debug for Transition {

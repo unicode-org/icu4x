@@ -216,6 +216,67 @@ impl<const N: usize> TinyAsciiStr<N> {
         })
     }
 
+    /// Creates a `TinyAsciiStr<N>` containing the decimal representation of
+    /// the given unsigned integer.
+    ///
+    /// If the number of decimal digits exceeds `N`, the highest-magnitude
+    /// digits are truncated, and the lowest-magnitude digits are returned
+    /// as the error.
+    ///
+    /// Note: this function takes a u32. Larger integer types should probably
+    /// not be stored in a `TinyAsciiStr`.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use tinystr::TinyAsciiStr;
+    /// use tinystr::tinystr;
+    ///
+    /// let s0_4 = TinyAsciiStr::<4>::new_unsigned_decimal(0).unwrap();
+    /// let s456_4 = TinyAsciiStr::<4>::new_unsigned_decimal(456).unwrap();
+    /// let s456_3 = TinyAsciiStr::<3>::new_unsigned_decimal(456).unwrap();
+    /// let s456_2 = TinyAsciiStr::<2>::new_unsigned_decimal(456).unwrap_err();
+    ///
+    /// assert_eq!(s0_4, tinystr!(4, "0"));
+    /// assert_eq!(s456_4, tinystr!(4, "456"));
+    /// assert_eq!(s456_3, tinystr!(3, "456"));
+    /// assert_eq!(s456_2, tinystr!(2, "56"));
+    /// ```
+    ///
+    /// Example with saturating the value:
+    ///
+    /// ```
+    /// use tinystr::TinyAsciiStr;
+    /// use tinystr::tinystr;
+    ///
+    /// let str_truncated = TinyAsciiStr::<2>::new_unsigned_decimal(456).unwrap_or_else(|s| s);
+    /// let str_saturated = TinyAsciiStr::<2>::new_unsigned_decimal(456).unwrap_or(tinystr!(2, "99"));
+    ///
+    /// assert_eq!(str_truncated, tinystr!(2, "56"));
+    /// assert_eq!(str_saturated, tinystr!(2, "99"));
+    /// ```
+    pub fn new_unsigned_decimal(number: u32) -> Result<Self, Self> {
+        let mut bytes = [AsciiByte::B0; N];
+        let mut x = number;
+        let mut i = 0usize;
+        #[expect(clippy::indexing_slicing)] // in-range: i < N
+        while i < N && (x != 0 || i == 0) {
+            bytes[N - i - 1] = AsciiByte::from_decimal_digit((x % 10) as u8);
+            x /= 10;
+            i += 1;
+        }
+        if i < N {
+            bytes.copy_within((N - i)..N, 0);
+            bytes[i..N].fill(AsciiByte::B0);
+        }
+        let s = Self { bytes };
+        if x != 0 {
+            Err(s)
+        } else {
+            Ok(s)
+        }
+    }
+
     #[inline]
     pub const fn as_str(&self) -> &str {
         // as_utf8 is valid utf8

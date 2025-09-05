@@ -63,12 +63,11 @@ struct ZonedIsoDateTime {
   /**
    * Creates a new {@link ZonedIsoDateTime} from an IXDTF string.
    *
-   * DEPRECATED
-   *
-   * Use `strict_from_string`.
-   *
    * See the [Rust documentation for `try_full_from_str`](https://docs.rs/icu/2.0.0/icu/time/struct.ZonedDateTime.html#method.try_full_from_str) for more information.
+   *
+   * \deprecated use strict_from_string
    */
+  [[deprecated("use strict_from_string")]]
   inline static diplomat::result<icu4x::ZonedIsoDateTime, icu4x::Rfc9557ParseError> full_from_string(std::string_view v, const icu4x::IanaParser& iana_parser, const icu4x::VariantOffsetsCalculator& _offset_calculator);
 
   /**

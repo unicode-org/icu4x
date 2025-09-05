@@ -29,9 +29,9 @@ namespace capi {
 
 namespace icu4x {
 /**
- * DEPRECATED
+ * \deprecated type not needed anymore
  */
-class TimeZoneVariant {
+class [[deprecated("type not needed anymore")]] TimeZoneVariant {
 public:
   enum Value {
     Standard = 0,
@@ -47,14 +47,15 @@ public:
   explicit operator bool() const = delete;
 
   /**
-   * DEPRECATED
-   *
    * See the [Rust documentation for `from_rearguard_isdst`](https://docs.rs/icu/2.0.0/icu/time/zone/enum.TimeZoneVariant.html#method.from_rearguard_isdst) for more information.
    *
    * See the [Rust documentation for `with_variant`](https://docs.rs/icu/2.0.0/icu/time/struct.TimeZoneInfo.html#method.with_variant) for more information.
    *
    * Additional information: [1](https://docs.rs/icu/2.0.0/icu/time/zone/enum.TimeZoneVariant.html)
+   *
+   * \deprecated type not needed anymore
    */
+  [[deprecated("type not needed anymore")]]
   inline static icu4x::TimeZoneVariant from_rearguard_isdst(bool isdst);
 
   inline icu4x::capi::TimeZoneVariant AsFFI() const;
