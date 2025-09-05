@@ -264,3 +264,39 @@ fn test_string_impls() {
     let arr: &[&String] = &[&String::new(), &"abc".to_owned()];
     check_writeable_slice(arr);
 }
+
+macro_rules! impl_write_tuple {
+    ($($index:tt $ty:ident),+) => {
+        impl<$($ty),+> $crate::Writeable for ($($ty),+) where $($ty: $crate::Writeable),+ {
+            #[inline]
+            fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
+                $(
+                    <$ty as $crate::Writeable>::write_to(&self.$index, sink)?;
+                )+
+                Ok(())
+            }
+            #[inline]
+            fn write_to_parts<W: PartsWrite + ?Sized>(&self, sink: &mut W) -> fmt::Result {
+                $(
+                    <$ty as $crate::Writeable>::write_to_parts(&self.$index, sink)?;
+                )+
+                Ok(())
+            }
+            #[inline]
+            fn writeable_length_hint(&self) -> LengthHint {
+                let mut sum = LengthHint::exact(0);
+                $(
+                    sum += <$ty as $crate::Writeable>::writeable_length_hint(&self.$index);
+                )+
+                sum
+            }
+        }
+    };
+}
+
+impl_write_tuple!(0 A, 1 B);
+impl_write_tuple!(0 A, 1 B, 2 C);
+impl_write_tuple!(0 A, 1 B, 2 C, 3 D);
+impl_write_tuple!(0 A, 1 B, 2 C, 3 D, 4 E);
+impl_write_tuple!(0 A, 1 B, 2 C, 3 D, 4 E, 5 F);
+impl_write_tuple!(0 A, 1 B, 2 C, 3 D, 4 E, 5 F, 6 G);
