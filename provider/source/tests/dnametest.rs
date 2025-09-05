@@ -157,9 +157,17 @@ fn dnametest() {
         println!("{locale:<3}: {}", large_small[i]);
     }
 
-    let locales_only_zerotrie: ZeroTrieSimpleAscii<Vec<u8>> = locales
+    let locales_with_data: Vec<DataIdentifierBorrowed> = locales
         .keys()
         .chain(script_locales.keys())
+        .enumerate()
+        .filter(|(i, _)| large_small[*i] != 0)
+        .map(|(_, locale)| locale.as_borrowed())
+        .collect();
+    println!("locales_with_data: {}", locales_with_data.len());
+
+    let locales_only_zerotrie: ZeroTrieSimpleAscii<Vec<u8>> = locales_with_data
+        .iter()
         .enumerate()
         .map(|(i, locale)| (locale.to_string(), i))
         .collect();
