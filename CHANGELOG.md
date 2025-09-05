@@ -9,6 +9,8 @@ Several crates have had patch releases in the 2.0 stream:
   - (2.0.2) Respect `-u-fw` keyword in `WeekInformation` (unicode-org#6615)
   - (2.0.3) Fix extended year for Roc/Ethiopic (unicode-org#6721)
   - (2.0.3) Fix treatment of None era code for Gregorian (unicode-org#6794)
+  - (2.0.4) Fix a sign error in `RataDie::until`, add `RataDie::since` (unicode-org#6861)
+  - (2.0.5) Fix calendrical-calculations dependency (unicode-org#6919)
 - `icu_properties`, `icu_properties_data`
   - (2.0.1) Fix a visibility bug in compiled data (unicode-org#6580)
 - `icu_provider_baked`
@@ -21,7 +23,10 @@ Several crates have had patch releases in the 2.0 stream:
 - `icu_datetime_data`, `icu_time_data`, `icu_provider_source`
   - (2.0.1) Update to tzdb 2025b
 - `calendrical_calculations`
-    - (0.2.1) Fix a sign error in `RataDie::until`, add `RataDie::since` (unicode-org#6861)
+    - (0.2.2) Fix a sign error in `RataDie::until`, add `RataDie::since` (unicode-org#6861)
+    - (0.2.2) Make `iso_year_from_fixed`, `day_before_year` public (unicode-org#6871)
+    - (0.2.2) Optimise some calculations for `iso` (unicode-org#6883)
+    - (0.2.2) Add Easter holiday to `iso` and `julian` (unicode-org#6899)
 
 ## icu4x 2.0
 
