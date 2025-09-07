@@ -11,10 +11,8 @@ pub mod ffi {
     use alloc::boxed::Box;
 
     use crate::unstable::{
-        date::ffi::IsoDate,
-        datetime::ffi::IsoDateTime,
-        time::ffi::Time,
-        variant_offset::ffi::{UtcOffset, VariantOffsetsCalculator},
+        date::ffi::IsoDate, datetime::ffi::IsoDateTime, time::ffi::Time,
+        variant_offset::ffi::UtcOffset,
     };
 
     #[diplomat::opaque]
@@ -235,9 +233,10 @@ pub mod ffi {
         #[deprecated(note = "does nothing")]
         #[diplomat::rust_link(icu::time::TimeZoneInfo::infer_variant, FnInStruct)]
         #[diplomat::rust_link(icu::time::zone::TimeZoneVariant, Enum, compact)]
+        #[allow(deprecated)]
         pub fn infer_variant(
             &mut self,
-            _offset_calculator: &VariantOffsetsCalculator,
+            _offset_calculator: &crate::unstable::variant_offset::ffi::VariantOffsetsCalculator,
         ) -> Option<()> {
             Some(())
         }

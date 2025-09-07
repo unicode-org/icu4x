@@ -36,8 +36,10 @@ namespace capi {
 namespace icu4x {
 /**
  * See the [Rust documentation for `VariantOffsetsCalculator`](https://docs.rs/icu/2.0.0/icu/time/zone/struct.VariantOffsetsCalculator.html) for more information.
+ *
+ * \deprecated this API is a bad approximation of a time zone database
  */
-class VariantOffsetsCalculator {
+class [[deprecated("this API is a bad approximation of a time zone database")]] VariantOffsetsCalculator {
 public:
 
   /**
