@@ -315,7 +315,11 @@ pub enum PossibleOffset {
     // <https://tc39.es/proposal-temporal/#sec-getnamedtimezoneepochnanoseconds>
     Ambiguous(Offset, Offset),
     /// There is no possible offset, this is a gap transition
-    None(GapOffsets),
+    None { 
+      before: UtcOffset,
+      after: UtcOffset,
+      transition: i64,
+    },
 }
 
 impl<'a> TzZoneData<'a> {
