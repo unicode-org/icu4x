@@ -315,10 +315,14 @@ pub enum PossibleOffset {
     // <https://tc39.es/proposal-temporal/#sec-getnamedtimezoneepochnanoseconds>
     Ambiguous(Offset, Offset),
     /// There is no possible offset, this is a gap transition
-    None { 
-      before: UtcOffset,
-      after: UtcOffset,
-      transition: i64,
+    None {
+        /// The offset before this transition
+        /// This is useful when performing fallback behavior on hitting a gap
+        /// trannsition.
+        before: UtcOffset,
+        /// The offset after this transition
+        after: UtcOffset,
+        transition: i64,
     },
 }
 
@@ -509,11 +513,11 @@ impl<'a> Zone<'a> {
                 }
                 // We are in the first candidate's gap
                 (false, true) => {
-                    return PossibleOffset::None(GapOffsets {
-                        offset_before: before_first_candidate.offset,
-                        offset_after: first_candidate.offset,
-                        transition_epoch: first_candidate.since,
-                    })
+                    return PossibleOffset::None {
+                        before: before_first_candidate.offset,
+                        after: first_candidate.offset,
+                        transition: first_candidate.since,
+                    }
                 }
                 // We are after the first candidate, try the second
                 (false, false) => {}
@@ -551,11 +555,11 @@ impl<'a> Zone<'a> {
                 }
                 // We are in the second candidate's gap
                 (false, true) => {
-                    return PossibleOffset::None(GapOffsets {
-                        offset_before: first_candidate.offset,
-                        offset_after: second_candidate.offset,
-                        transition_epoch: second_candidate.since,
-                    })
+                    return PossibleOffset::None {
+                        before: first_candidate.offset,
+                        after: second_candidate.offset,
+                        transition: second_candidate.since,
+                    }
                 }
                 // We are after the second candidate
                 (false, false) => return PossibleOffset::Single(second_candidate.into()),

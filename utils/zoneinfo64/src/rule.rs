@@ -567,7 +567,7 @@ mod tests {
                 0,
                 0
             ),
-            PossibleOffset::None(..)
+            PossibleOffset::None { .. }
         ));
 
         // start_after happens exactly once
