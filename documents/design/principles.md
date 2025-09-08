@@ -60,9 +60,9 @@ Runtime customizability of locale data can sometimes come at a performance or me
 
 ## Locale data from multiple sources works seamlessly
 
-*What:* If data is available for a particular constructor and locale, the correctness of behavior should not change based on where the data was sourced, with a narrow exception for data that primarily impacts performance characteristics.
+*What:* If data is available for a particular constructor and locale from multiple data providers derived from the same CLDR version, then i18n correctness should not change based on which data provider is used to load the data.
 
-*Why:* Locale data can be loaded from multiple sources: for example, some data might be baked into the binary, some might be loaded from the operating system, and some might be downloaded on demand in the form of language packs.
+*Why:* Locale data can be loaded from multiple sources: for example, some data might be baked into the binary, some might be loaded from the operating system, and some might be downloaded on demand in the form of language packs. These multiple data sources should be _additive_ in nature: they can add features and locales, but they should not impact the i18n correctness of existing features and locales.
 
 Examples that violate this policy:
 
@@ -72,6 +72,7 @@ Examples that are consistent with this policy:
 
 - A datagen option to tweak the bounds of pre-calculated Chinese year offsets exported into a payload, causing more or fewer years to fall back to expensive calculations at runtime. This impacts performance, but the resulting behavior is the same.
 - A datagen option to remove time zone names from a locale that equal the root time zone names, and a corresponding runtime code change to check both payloads. This does not normally impact behavior as observed by the user; hower, it could still impact behavior in edge cases involving different sources using different CLDR versions, so the ICU4X-WG should discuss and make an informed decision.
+- A language pack derived from CLDR 50 is loaded into an environment that uses CLDR 49 by default. The CLDR 50 data is obviously allowed to improve (or regress) the i18n correctness if it is loaded with higher priority than the CLDR 49 data.
 
 \* If such an optimization is desired, consider using two data payloads, one for "core" and one for "extended", instead of a datagen option. Alternatively, restructure the data to use data marker attributes, which can be safely filtered by datagen.
 
