@@ -71,8 +71,8 @@ Examples that violate this policy:
 Examples that are consistent with this policy:
 
 - A datagen option to tweak the bounds of pre-calculated Chinese year offsets exported into a payload, causing more or fewer years to fall back to expensive calculations at runtime. This impacts performance, but the resulting behavior is the same.
-- A datagen option to remove time zone names from a locale that equal the root time zone names, and a corresponding runtime code change to check both payloads. This does not normally impact behavior as observed by the user; hower, it could still impact behavior in edge cases involving different sources using different CLDR versions, so the ICU4X-WG should discuss and make an informed decision.
 - A language pack derived from CLDR 50 is loaded into an environment that uses CLDR 49 by default. The CLDR 50 data is obviously allowed to improve (or regress) the i18n correctness if it is loaded with higher priority than the CLDR 49 data.
+- A data marker has a checksum field, and two data providers return different checksums, resulting in an error. This does not impact i18n correctness.
 
 \* If such an optimization is desired, consider using two data payloads, one for "core" and one for "extended", instead of a datagen option. Alternatively, restructure the data to use data marker attributes, which can be safely filtered by datagen.
 
