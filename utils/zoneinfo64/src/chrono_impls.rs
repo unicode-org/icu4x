@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::UtcOffsetSeconds;
+use crate::UtcOffset;
 use crate::{Offset, PossibleOffset, Zone};
 use chrono::{
     Datelike, FixedOffset, MappedLocalTime, NaiveDate, NaiveDateTime, TimeZone, Timelike,
@@ -12,7 +12,7 @@ use chrono::{
 pub struct ChronoOffset<'a>(Offset, Zone<'a>);
 
 impl core::ops::Deref for ChronoOffset<'_> {
-    type Target = UtcOffsetSeconds;
+    type Target = UtcOffset;
 
     fn deref(&self) -> &Self::Target {
         &self.0.offset

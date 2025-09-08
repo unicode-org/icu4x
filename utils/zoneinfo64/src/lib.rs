@@ -5,7 +5,7 @@
 //! This crate contains utilities for working with ICU4C's zoneinfo64 format
 //!
 //! ```rust
-//! # use zoneinfo64::{Offset, PossibleOffset, ZoneInfo64, UtcOffsetSeconds};
+//! # use zoneinfo64::{Offset, PossibleOffset, ZoneInfo64, UtcOffset};
 //!
 //! // Needs to be u32-aligned
 //! let resb = resb::include_bytes_as_u32!("../tests/data/zoneinfo64.res");
@@ -16,13 +16,13 @@
 //! let pacific = zoneinfo.get("America/Los_Angeles").unwrap();
 //! // Calculate the timezone offset for 2024-01-01
 //! let offset = pacific.for_timestamp(1704067200000);
-//! let offset_seven = UtcOffsetSeconds::from_seconds(-7 * 3600);
+//! let offset_seven = UtcOffset::from_seconds(-7 * 3600);
 //! assert_eq!(offset.offset, offset_seven);
 //!
 //! // Calculate possible offsets at 2025-11-02T01:00:00
 //! // This is during a DST switchover and is ambiguous
 //! let possible = pacific.for_date_time(2025, 11, 2, 1, 0, 0);
-//! let offset_eight = UtcOffsetSeconds::from_seconds(-8 * 3600);
+//! let offset_eight = UtcOffset::from_seconds(-8 * 3600);
 //! assert_eq!(possible, PossibleOffset::Ambiguous(
 //!     Offset { offset: offset_seven, rule_applies: true },
 //!     Offset { offset: offset_eight, rule_applies: false }
@@ -47,11 +47,11 @@ mod deserialize;
 const EPOCH: RataDie = calendrical_calculations::iso::const_fixed_from_iso(1970, 1, 1);
 const SECONDS_IN_UTC_DAY: i64 = 24 * 60 * 60;
 
-/// An offset from UTC, in seconds
+/// An offset from UTC time (stored to seconds precision)
 #[derive(Debug, Clone, Copy, PartialEq, Default)]
-pub struct UtcOffsetSeconds(i32);
+pub struct UtcOffset(i32);
 
-impl UtcOffsetSeconds {
+impl UtcOffset {
     pub fn from_seconds(x: i32) -> Self {
         Self(x)
     }
@@ -263,7 +263,7 @@ impl PartialEq for Zone<'_> {
 #[derive(Debug, Clone, Copy, PartialEq, Default)]
 pub struct Offset {
     /// The offset from UTC of this time zone
-    pub offset: UtcOffsetSeconds,
+    pub offset: UtcOffset,
     /// Whether or not the Rule (i.e. "non standard" time) applies
     pub rule_applies: bool,
 }
@@ -274,7 +274,7 @@ pub struct Transition {
     /// When the transition starts
     pub since: i64,
     /// The offset from UTC after this transition
-    pub offset: UtcOffsetSeconds,
+    pub offset: UtcOffset,
     /// Whether or not the rule (i.e. "non standard" time) applies
     pub rule_applies: bool,
 }
@@ -358,7 +358,7 @@ impl<'a> TzZoneData<'a> {
             let &(standard, rule_additional) = self.type_offsets.first().unwrap();
             return Transition {
                 since: i64::MIN,
-                offset: UtcOffsetSeconds(standard + rule_additional),
+                offset: UtcOffset(standard + rule_additional),
                 rule_applies: rule_additional > 0,
             };
         }
@@ -386,7 +386,7 @@ impl<'a> TzZoneData<'a> {
 
         Transition {
             since,
-            offset: UtcOffsetSeconds(standard + rule_additional),
+            offset: UtcOffset(standard + rule_additional),
             rule_applies: rule_additional > 0,
         }
     }
@@ -783,7 +783,7 @@ mod tests {
             .preceding(jiff::Timestamp::from_str("2100-01-01T00:00:00Z").unwrap())
             .map(|t| Transition {
                 since: t.timestamp().as_second(),
-                offset: UtcOffsetSeconds(t.offset().seconds()),
+                offset: UtcOffset(t.offset().seconds()),
                 rule_applies: t.dst().is_dst(),
             })
             .collect::<Vec<_>>();
